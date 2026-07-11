@@ -45,7 +45,8 @@
               "version": ""
             },
             "patch": {
-              "mutatedRef": [
+              "patchStrategy": "replace",
+              "mutatorRef": [
                 [
                   "configuration",
                   "spec",
@@ -68,8 +69,7 @@
                   "backend",
                   "servicePort"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ],
@@ -91,7 +91,8 @@
               "version": ""
             },
             "patch": {
-              "mutatorRef": [
+              "patchStrategy": "replace",
+              "mutatedRef": [
                 [
                   "displayName"
                 ],
@@ -102,8 +103,7 @@
                   "0",
                   "port"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ]

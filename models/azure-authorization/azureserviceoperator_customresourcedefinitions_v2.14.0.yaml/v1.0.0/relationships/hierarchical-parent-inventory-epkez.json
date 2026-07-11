@@ -47,7 +47,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
                   "configuration",
                   "spec",
@@ -90,7 +90,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -126,7 +126,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -162,7 +162,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -198,7 +198,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -234,7 +234,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -270,7 +270,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -306,7 +306,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -342,7 +342,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -378,7 +378,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -414,7 +414,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -450,7 +450,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -486,7 +486,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -522,7 +522,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -558,7 +558,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -594,7 +594,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -630,7 +630,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -666,7 +666,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -702,7 +702,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -738,7 +738,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -774,7 +774,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -810,7 +810,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -846,7 +846,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -882,7 +882,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -918,7 +918,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -954,7 +954,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -990,7 +990,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1026,7 +1026,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1062,7 +1062,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1098,7 +1098,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1134,7 +1134,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1170,7 +1170,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1206,7 +1206,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1242,7 +1242,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1278,7 +1278,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1314,7 +1314,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1350,7 +1350,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1386,7 +1386,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1422,7 +1422,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1458,7 +1458,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1494,7 +1494,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1530,7 +1530,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1566,7 +1566,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1602,7 +1602,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1638,7 +1638,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1674,7 +1674,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1710,7 +1710,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1746,7 +1746,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1782,7 +1782,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1818,7 +1818,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1854,7 +1854,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1890,7 +1890,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1926,7 +1926,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1962,7 +1962,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -1998,7 +1998,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2034,7 +2034,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2070,7 +2070,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2106,7 +2106,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2142,7 +2142,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2178,7 +2178,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2214,7 +2214,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2250,7 +2250,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2286,7 +2286,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2322,7 +2322,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2358,7 +2358,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2394,7 +2394,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2430,7 +2430,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2466,7 +2466,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2502,7 +2502,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2538,7 +2538,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2574,7 +2574,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2610,7 +2610,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2646,7 +2646,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2682,7 +2682,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2718,7 +2718,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2754,7 +2754,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2790,7 +2790,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2826,7 +2826,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2862,7 +2862,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2898,7 +2898,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2934,7 +2934,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -2970,7 +2970,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3006,7 +3006,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3042,7 +3042,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3078,7 +3078,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3114,7 +3114,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3150,7 +3150,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3186,7 +3186,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3222,7 +3222,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3258,7 +3258,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3294,7 +3294,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3330,7 +3330,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3366,7 +3366,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3402,7 +3402,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3438,7 +3438,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3474,7 +3474,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3510,7 +3510,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3546,7 +3546,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3582,7 +3582,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3618,7 +3618,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3654,7 +3654,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3690,7 +3690,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3726,7 +3726,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3762,7 +3762,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3798,7 +3798,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3834,7 +3834,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3870,7 +3870,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3906,7 +3906,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3942,7 +3942,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -3978,7 +3978,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4014,7 +4014,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4050,7 +4050,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4086,7 +4086,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4122,7 +4122,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4158,7 +4158,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4194,7 +4194,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4230,7 +4230,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4266,7 +4266,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4302,7 +4302,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4338,7 +4338,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4374,7 +4374,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4410,7 +4410,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4446,7 +4446,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4482,7 +4482,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4518,7 +4518,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4554,7 +4554,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4590,7 +4590,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4626,7 +4626,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4662,7 +4662,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4698,7 +4698,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4734,7 +4734,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4770,7 +4770,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4806,7 +4806,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4842,7 +4842,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4878,7 +4878,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4914,7 +4914,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4950,7 +4950,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -4986,7 +4986,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -5022,7 +5022,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -5058,7 +5058,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -5094,7 +5094,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -5130,7 +5130,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -5166,7 +5166,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -5202,7 +5202,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -5238,7 +5238,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -5274,7 +5274,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -5310,7 +5310,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
@@ -5346,7 +5346,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "group"
