@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Binds PROMETHEUSSERVICE RuleGroupsNamespace to Workspace via spec.workspaceID.",
+    "description": "References a PrometheusService Workspace from a LoggingConfiguration via spec.workspaceRef, identifying the workspace the LoggingConfiguration belongs to.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -19,9 +19,9 @@
     },
     "name": "aws-prometheusservice-controller",
     "registrant": {
-      "kind": "github"
+      "kind": ""
     },
-    "version": "v1.5.2"
+    "version": ""
   },
   "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "Workspace",
+            "kind": "LoggingConfiguration",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -50,7 +50,9 @@
               "mutatorRef": [
                 [
                   "configuration",
-                  "metadata",
+                  "spec",
+                  "workspaceRef",
+                  "from",
                   "name"
                 ]
               ]
@@ -60,7 +62,7 @@
         "to": [
           {
             "id": null,
-            "kind": "RuleGroupsNamespace",
+            "kind": "Workspace",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -79,9 +81,7 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "configuration",
-                  "spec",
-                  "workspaceID"
+                  "displayName"
                 ]
               ]
             }
@@ -94,7 +94,7 @@
       }
     }
   ],
-  "subType": "network",
+  "subType": "reference",
   "status": "enabled",
   "type": "non-binding",
   "version": "v1.0.0"

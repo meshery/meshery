@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Binds DYNAMODB Table to Key via spec.sseSpecification.kmsMasterKeyID.",
+    "description": "References a PrometheusService Workspace from a AlertManagerDefinition via spec.workspaceRef, identifying the workspace the AlertManagerDefinition belongs to.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -15,13 +15,13 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
-      "version": "v1.9.2"
+      "version": "v1.5.2"
     },
-    "name": "aws-dynamodb-controller",
+    "name": "aws-prometheusservice-controller",
     "registrant": {
-      "kind": "github"
+      "kind": ""
     },
-    "version": "v1.9.2"
+    "version": ""
   },
   "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "Key",
+            "kind": "AlertManagerDefinition",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -39,7 +39,7 @@
               "model": {
                 "version": ""
               },
-              "name": "aws-kms-controller",
+              "name": "aws-prometheusservice-controller",
               "registrant": {
                 "kind": "github"
               },
@@ -50,7 +50,9 @@
               "mutatorRef": [
                 [
                   "configuration",
-                  "metadata",
+                  "spec",
+                  "workspaceRef",
+                  "from",
                   "name"
                 ]
               ]
@@ -60,7 +62,7 @@
         "to": [
           {
             "id": null,
-            "kind": "Table",
+            "kind": "Workspace",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -69,7 +71,7 @@
               "model": {
                 "version": ""
               },
-              "name": "aws-dynamodb-controller",
+              "name": "aws-prometheusservice-controller",
               "registrant": {
                 "kind": "github"
               },
@@ -79,10 +81,7 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "configuration",
-                  "spec",
-                  "sseSpecification",
-                  "kmsMasterKeyID"
+                  "displayName"
                 ]
               ]
             }
@@ -95,7 +94,7 @@
       }
     }
   ],
-  "subType": "permission",
+  "subType": "reference",
   "status": "enabled",
   "type": "non-binding",
   "version": "v1.0.0"

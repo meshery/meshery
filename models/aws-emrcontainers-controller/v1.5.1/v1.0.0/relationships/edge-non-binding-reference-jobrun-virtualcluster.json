@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Binds EMRCONTAINERS JobRun to VirtualCluster via spec.virtualClusterID.",
+    "description": "References an EMRContainers VirtualCluster from a JobRun via spec.virtualClusterRef, identifying the virtual cluster the job runs on.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -19,45 +19,15 @@
     },
     "name": "aws-emrcontainers-controller",
     "registrant": {
-      "kind": "github"
+      "kind": ""
     },
-    "version": "v1.5.1"
+    "version": ""
   },
   "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
         "from": [
-          {
-            "id": null,
-            "kind": "VirtualCluster",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "model": {
-                "version": ""
-              },
-              "name": "aws-emrcontainers-controller",
-              "registrant": {
-                "kind": "github"
-              },
-              "version": ""
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "metadata",
-                  "name"
-                ]
-              ]
-            }
-          }
-        ],
-        "to": [
           {
             "id": null,
             "kind": "JobRun",
@@ -77,11 +47,41 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
                   "configuration",
                   "spec",
-                  "virtualClusterID"
+                  "virtualClusterRef",
+                  "from",
+                  "name"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "VirtualCluster",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-emrcontainers-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "displayName"
                 ]
               ]
             }
@@ -94,7 +94,7 @@
       }
     }
   ],
-  "subType": "network",
+  "subType": "reference",
   "status": "enabled",
   "type": "non-binding",
   "version": "v1.0.0"

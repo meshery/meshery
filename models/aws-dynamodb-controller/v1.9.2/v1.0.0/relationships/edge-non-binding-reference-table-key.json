@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Binds PROMETHEUSSERVICE LoggingConfiguration to Workspace via spec.workspaceID.",
+    "description": "References a KMS Key from a DynamoDB Table via spec.sseSpecification.kmsMasterKeyRef, the key used for server-side encryption.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -15,13 +15,13 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
-      "version": "v1.5.2"
+      "version": "v1.9.2"
     },
-    "name": "aws-prometheusservice-controller",
+    "name": "aws-dynamodb-controller",
     "registrant": {
-      "kind": "github"
+      "kind": ""
     },
-    "version": "v1.5.2"
+    "version": ""
   },
   "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "Workspace",
+            "kind": "Table",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -39,7 +39,7 @@
               "model": {
                 "version": ""
               },
-              "name": "aws-prometheusservice-controller",
+              "name": "aws-dynamodb-controller",
               "registrant": {
                 "kind": "github"
               },
@@ -50,7 +50,10 @@
               "mutatorRef": [
                 [
                   "configuration",
-                  "metadata",
+                  "spec",
+                  "sseSpecification",
+                  "kmsMasterKeyRef",
+                  "from",
                   "name"
                 ]
               ]
@@ -60,7 +63,7 @@
         "to": [
           {
             "id": null,
-            "kind": "LoggingConfiguration",
+            "kind": "Key",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -69,7 +72,7 @@
               "model": {
                 "version": ""
               },
-              "name": "aws-prometheusservice-controller",
+              "name": "aws-kms-controller",
               "registrant": {
                 "kind": "github"
               },
@@ -79,9 +82,7 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "configuration",
-                  "spec",
-                  "workspaceID"
+                  "displayName"
                 ]
               ]
             }
@@ -94,7 +95,7 @@
       }
     }
   ],
-  "subType": "network",
+  "subType": "reference",
   "status": "enabled",
   "type": "non-binding",
   "version": "v1.0.0"

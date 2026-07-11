@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Binds CLOUDWATCHLOGS LogGroup to Key via spec.kmsKeyID.",
+    "description": "References a KMS Key from a CloudWatchLogs LogGroup via spec.kmsKeyRef, the key used to encrypt the log group's data.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -19,45 +19,15 @@
     },
     "name": "aws-cloudwatchlogs-controller",
     "registrant": {
-      "kind": "github"
+      "kind": ""
     },
-    "version": "v1.3.2"
+    "version": ""
   },
   "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
         "from": [
-          {
-            "id": null,
-            "kind": "Key",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "model": {
-                "version": ""
-              },
-              "name": "aws-kms-controller",
-              "registrant": {
-                "kind": "github"
-              },
-              "version": ""
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "metadata",
-                  "name"
-                ]
-              ]
-            }
-          }
-        ],
-        "to": [
           {
             "id": null,
             "kind": "LogGroup",
@@ -77,11 +47,41 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
                   "configuration",
                   "spec",
-                  "kmsKeyID"
+                  "kmsKeyRef",
+                  "from",
+                  "name"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Key",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-kms-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "displayName"
                 ]
               ]
             }
@@ -94,7 +94,7 @@
       }
     }
   ],
-  "subType": "permission",
+  "subType": "reference",
   "status": "enabled",
   "type": "non-binding",
   "version": "v1.0.0"
