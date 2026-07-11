@@ -45,14 +45,14 @@
               "version": ""
             },
             "patch": {
-              "mutatedRef": [
+              "patchStrategy": "replace",
+              "mutatorRef": [
                 [
                   "configuration",
                   "auth",
                   "clusterUserName"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ],

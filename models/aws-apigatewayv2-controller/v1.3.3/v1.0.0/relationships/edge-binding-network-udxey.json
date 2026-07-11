@@ -46,14 +46,14 @@
               "version": ""
             },
             "patch": {
-              "mutatedRef": [
+              "patchStrategy": "replace",
+              "mutatorRef": [
                 [
                   "configuration",
                   "status",
                   "vpcLinkID"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ],
@@ -76,14 +76,14 @@
               "version": ""
             },
             "patch": {
-              "mutatorRef": [
+              "patchStrategy": "replace",
+              "mutatedRef": [
                 [
                   "configuration",
                   "spec",
                   "vpcLinkID"
                 ]
-              ],
-              "patchStrategy": "replace"
+              ]
             }
           }
         ]
