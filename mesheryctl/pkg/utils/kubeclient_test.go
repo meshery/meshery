@@ -5,20 +5,17 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	meshkiterrors "github.com/meshery/meshkit/errors"
 )
 
 func TestNewKubeClientMissingConfigPathFallsBack(t *testing.T) {
 	orig := ConfigPath
 	t.Cleanup(func() { ConfigPath = orig })
 
-	// Point at a path that does not exist; ambient resolution may still fail
-	// if the machine has no kubeconfig — we only assert we do not error *because*
-	// of a missing ConfigPath before ambient lookup.
 	ConfigPath = filepath.Join(t.TempDir(), "does-not-exist.yaml")
 
 	_, err := NewKubeClient()
-	// Ambient may succeed or fail depending on environment; missing ConfigPath
-	// must not produce the "invalid Meshery kubeconfig" / "unable to read" errors.
 	if err != nil {
 		msg := err.Error()
 		if strings.Contains(msg, "invalid Meshery kubeconfig") ||
@@ -47,6 +44,9 @@ func TestNewKubeClientEmptyFileFailsLoudly(t *testing.T) {
 	if !strings.Contains(err.Error(), "empty") {
 		t.Fatalf("expected empty-file error, got: %v", err)
 	}
+	if got := meshkiterrors.GetCode(err); got != ErrInvalidFileCode {
+		t.Fatalf("error code = %q, want %q (ErrInvalidFile)", got, ErrInvalidFileCode)
+	}
 }
 
 func TestNewKubeClientInvalidFileFailsLoudly(t *testing.T) {
@@ -67,15 +67,15 @@ func TestNewKubeClientInvalidFileFailsLoudly(t *testing.T) {
 	if !strings.Contains(err.Error(), "invalid Meshery kubeconfig") {
 		t.Fatalf("expected invalid-file error, got: %v", err)
 	}
+	if got := meshkiterrors.GetCode(err); got != ErrInvalidFileCode {
+		t.Fatalf("error code = %q, want %q (ErrInvalidFile)", got, ErrInvalidFileCode)
+	}
 }
 
 func TestNewKubeClientValidFileSucceeds(t *testing.T) {
 	orig := ConfigPath
 	t.Cleanup(func() { ConfigPath = orig })
 
-	// Minimal syntactically valid kubeconfig. Client construction may still
-	// fail later if the API server is unreachable; meshkit.New only needs
-	// a parseable config with a usable rest.Config.
 	valid := []byte(`apiVersion: v1
 kind: Config
 clusters:

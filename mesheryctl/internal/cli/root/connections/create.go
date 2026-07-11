@@ -16,6 +16,7 @@ package connections
 
 import (
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 	"net"
@@ -187,7 +188,6 @@ func createEKSConnection() error {
 }
 
 func createGKEConnection() error {
-	// TODO: move the GenerateConfigGKE logic to meshkit/client-go
 	utils.Log.Info("Configuring Meshery to access GKE...")
 	SAName := "sa-meshery-" + utils.StringWithCharset(8)
 	if err := utils.GenerateConfigGKE(utils.ConfigPath, SAName, "default"); err != nil {
@@ -324,44 +324,47 @@ func setContext(configFile, cname string) error {
 	return nil
 }
 
-// skipContextUploadWarn logs a non-fatal warning when local kubeconfig generation
-// succeeded but Meshery Server is offline for context upload.
 func skipContextUploadWarn() {
 	utils.Log.Warn(fmt.Errorf("Meshery server is not reachable, skipping context upload. Local kubeconfig was written successfully."))
 	utils.Log.Infof("Start Meshery (`mesheryctl system start`), then re-run this command or upload: %s", utils.ConfigPath)
 }
 
-// isMesheryServerUnreachable reports transport-level failure to reach Meshery
-// (server down / connection refused). Application errors (HTTP 4xx/5xx, bad
-// JSON, empty contexts) return false so they still fail hard.
-// errors.As / errors.Is already walk the Unwrap chain (including *url.Error).
 func isMesheryServerUnreachable(err error) bool {
 	if err == nil {
 		return false
 	}
 
 	var opErr *net.OpError
-	if errors.As(err, &opErr) {
+	if stderrors.As(err, &opErr) {
 		return true
 	}
-	if errors.Is(err, syscall.ECONNREFUSED) {
+	if stderrors.Is(err, syscall.ECONNREFUSED) {
 		return true
 	}
 
-	// Fallback: meshkit error wrappers often only preserve the message text.
 	msg := strings.ToLower(err.Error())
 	return strings.Contains(msg, "connection refused") ||
 		strings.Contains(msg, "connectex") ||
 		strings.Contains(msg, "no connection could be made") ||
 		strings.Contains(msg, "actively refused") ||
-		strings.Contains(msg, "dial tcp")
+		strings.Contains(msg, "dial tcp") ||
+		strings.Contains(msg, "meshery server is not reachable")
 }
 
 // Given the token path, get the context and set the token in the chosen context.
-// If Meshery Server is unreachable, context upload is skipped with a warning so
-// local kubeconfig generation still succeeds (exit 0).
+// Skips context upload with a warning when Meshery Server is unreachable.
 func setToken() error {
 	utils.Log.Debugf("Token path: %s", utils.TokenFlag)
+
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return err
+	}
+	if err := utils.IsServerRunning(mctlCfg.GetBaseMesheryURL()); err != nil {
+		skipContextUploadWarn()
+		return nil
+	}
+
 	contexts, err := getContexts(utils.ConfigPath)
 	if err != nil {
 		if isMesheryServerUnreachable(err) {

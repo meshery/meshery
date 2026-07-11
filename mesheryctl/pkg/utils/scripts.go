@@ -7,43 +7,30 @@ import (
 	"path/filepath"
 	"time"
 
+	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 )
 
 const (
-	// tokenSecretPollInterval is how often to check whether the controller has
-	// populated the service-account token Secret.
 	tokenSecretPollInterval = 1 * time.Second
-	// tokenSecretWaitTimeout bounds how long we wait for token/CA data.
-	// The previous shell script used a fixed 10s sleep; polling with a longer
-	// timeout is more reliable across slow API servers without OS-specific tools.
-	tokenSecretWaitTimeout = 30 * time.Second
+	tokenSecretWaitTimeout  = 30 * time.Second
 )
 
 // GKEConfig holds configuration for GKE kubeconfig generation.
-// Despite the name, this generates a ServiceAccount-based kubeconfig against
-// the ambient Kubernetes context (typically obtained via
-// `gcloud container clusters get-credentials` for GKE).
 type GKEConfig struct {
 	ConfigPath string
 	SAName     string
 	Namespace  string
 }
 
-// GenerateConfigGKE generates a kubeconfig that authenticates as a newly
-// created cluster-admin ServiceAccount and writes it to configPath.
-//
+// GenerateConfigGKE generates kubeconfig for GKE.
 // parameters: configPath, SAName = Service Account Name, namespace
-//
-// Implementation is pure Go (client-go + stdlib) so it works on Linux, macOS,
-// and Windows without jq/base64/awk/tail/sh.
 func GenerateConfigGKE(configPath, SAName, namespace string) error {
 	cfg := &GKEConfig{
 		ConfigPath: configPath,
@@ -68,42 +55,49 @@ func (c *GKEConfig) validate() error {
 func (c *GKEConfig) generate() error {
 	ctx := context.Background()
 
-	restConfig, rawConfig, err := loadAmbientKubeConfig()
+	mkClient, err := meshkitkube.New([]byte(""))
 	if err != nil {
-		return ErrKubernetesConnectivity(fmt.Errorf("failed to load kubeconfig: %w", err))
+		return ErrKubernetesConnectivity(fmt.Errorf("failed to create Kubernetes client via meshkit: %w", err))
 	}
 
-	clientset, err := kubernetes.NewForConfig(restConfig)
-	if err != nil {
-		return ErrKubernetesConnectivity(fmt.Errorf("failed to create Kubernetes client: %w", err))
-	}
-
-	if err := c.checkConnectivity(ctx, clientset); err != nil {
+	if err := c.checkConnectivity(ctx, mkClient.KubeClient); err != nil {
 		return err
+	}
+
+	rawConfig, err := loadAmbientRawConfig()
+	if err != nil {
+		return ErrKubernetesConnectivity(fmt.Errorf("failed to load ambient kubeconfig: %w", err))
 	}
 
 	clusterName, endpoint, err := clusterEndpointFromConfig(rawConfig)
 	if err != nil {
 		return ErrKubernetesQuery(err)
 	}
+	if mkClient.RestConfig.Host != "" {
+		endpoint = mkClient.RestConfig.Host
+	}
 
 	if err := os.MkdirAll(filepath.Dir(c.ConfigPath), 0o755); err != nil {
 		return ErrCreateFile(c.ConfigPath, fmt.Errorf("failed to create config directory: %w", err))
 	}
 
-	logInfo("Service Account Creation")
-	if err := c.createServiceAccount(ctx, clientset); err != nil {
+	if Log != nil {
+		Log.Info("Service Account Creation")
+	}
+	if err := c.createServiceAccount(ctx, mkClient.KubeClient); err != nil {
 		return ErrKubernetesQuery(err)
 	}
-	if err := c.createClusterRoleBinding(ctx, clientset); err != nil {
+	if err := c.createClusterRoleBinding(ctx, mkClient.KubeClient); err != nil {
 		return ErrKubernetesQuery(err)
 	}
-	if err := c.createTokenSecret(ctx, clientset); err != nil {
+	if err := c.createTokenSecret(ctx, mkClient.KubeClient); err != nil {
 		return ErrKubernetesQuery(err)
 	}
 
-	logInfo("Waiting for service account token Secret...")
-	token, caCRT, err := c.waitForTokenSecret(ctx, clientset)
+	if Log != nil {
+		Log.Info("Waiting for service account token Secret...")
+	}
+	token, caCRT, err := c.waitForTokenSecret(ctx, mkClient.KubeClient)
 	if err != nil {
 		return ErrKubernetesQuery(err)
 	}
@@ -112,27 +106,17 @@ func (c *GKEConfig) generate() error {
 		return err
 	}
 
-	logInfo(fmt.Sprintf("Configuration generated at: %s", c.ConfigPath))
-	logInfo(fmt.Sprintf("Test access with: KUBECONFIG=%s kubectl get pods", c.ConfigPath))
+	if Log != nil {
+		Log.Infof("Configuration generated at: %s", c.ConfigPath)
+		Log.Infof("Test access with: KUBECONFIG=%s kubectl get pods", c.ConfigPath)
+	}
 	return nil
 }
 
-func loadAmbientKubeConfig() (*rest.Config, clientcmdapi.Config, error) {
+func loadAmbientRawConfig() (clientcmdapi.Config, error) {
 	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
-	configOverrides := &clientcmd.ConfigOverrides{}
-	kubeConfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, configOverrides)
-
-	restConfig, err := kubeConfig.ClientConfig()
-	if err != nil {
-		return nil, clientcmdapi.Config{}, err
-	}
-
-	rawConfig, err := kubeConfig.RawConfig()
-	if err != nil {
-		return nil, clientcmdapi.Config{}, err
-	}
-
-	return restConfig, rawConfig, nil
+	kubeConfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, &clientcmd.ConfigOverrides{})
+	return kubeConfig.RawConfig()
 }
 
 func (c *GKEConfig) checkConnectivity(ctx context.Context, clientset kubernetes.Interface) error {
@@ -181,13 +165,17 @@ func (c *GKEConfig) createServiceAccount(ctx context.Context, clientset kubernet
 	_, err := clientset.CoreV1().ServiceAccounts(c.Namespace).Create(ctx, sa, metav1.CreateOptions{})
 	if err != nil {
 		if apierrors.IsAlreadyExists(err) {
-			logInfo(fmt.Sprintf("Service account %q already exists in namespace %q", c.SAName, c.Namespace))
+			if Log != nil {
+				Log.Infof("Service account %q already exists in namespace %q", c.SAName, c.Namespace)
+			}
 			return nil
 		}
 		return fmt.Errorf("failed to create service account %q: %w", c.SAName, err)
 	}
 
-	logInfo(fmt.Sprintf("Service account created in %s namespace", c.Namespace))
+	if Log != nil {
+		Log.Infof("Service account created in %s namespace", c.Namespace)
+	}
 	return nil
 }
 
@@ -213,13 +201,17 @@ func (c *GKEConfig) createClusterRoleBinding(ctx context.Context, clientset kube
 	_, err := clientset.RbacV1().ClusterRoleBindings().Create(ctx, crb, metav1.CreateOptions{})
 	if err != nil {
 		if apierrors.IsAlreadyExists(err) {
-			logInfo(fmt.Sprintf("Cluster role binding %q already exists", c.SAName))
+			if Log != nil {
+				Log.Infof("Cluster role binding %q already exists", c.SAName)
+			}
 			return nil
 		}
 		return fmt.Errorf("failed to create cluster role binding %q: %w", c.SAName, err)
 	}
 
-	logInfo("Cluster role binding created")
+	if Log != nil {
+		Log.Info("Cluster role binding created")
+	}
 	return nil
 }
 
@@ -242,13 +234,17 @@ func (c *GKEConfig) createTokenSecret(ctx context.Context, clientset kubernetes.
 	_, err := clientset.CoreV1().Secrets(c.Namespace).Create(ctx, secret, metav1.CreateOptions{})
 	if err != nil {
 		if apierrors.IsAlreadyExists(err) {
-			logInfo(fmt.Sprintf("Token secret %q already exists", c.tokenSecretName()))
+			if Log != nil {
+				Log.Infof("Token secret %q already exists", c.tokenSecretName())
+			}
 			return nil
 		}
 		return fmt.Errorf("failed to create token secret %q: %w", c.tokenSecretName(), err)
 	}
 
-	logInfo("Token secret created")
+	if Log != nil {
+		Log.Info("Token secret created")
+	}
 	return nil
 }
 
@@ -290,12 +286,13 @@ func (c *GKEConfig) waitForTokenSecret(ctx context.Context, clientset kubernetes
 	return "", nil, fmt.Errorf("timed out waiting for service account token secret %q", c.tokenSecretName())
 }
 
-// waitPollInterval waits for tokenSecretPollInterval or returns early if ctx is cancelled.
 func waitPollInterval(ctx context.Context) error {
+	timer := time.NewTimer(tokenSecretPollInterval)
+	defer timer.Stop()
 	select {
 	case <-ctx.Done():
 		return ctx.Err()
-	case <-time.After(tokenSecretPollInterval):
+	case <-timer.C:
 		return nil
 	}
 }
@@ -323,23 +320,15 @@ func (c *GKEConfig) writeKubeconfig(clusterName, endpoint, token string, caCRT [
 		return ErrCreateFile(c.ConfigPath, fmt.Errorf("failed to write kubeconfig: %w", err))
 	}
 
-	// Optional: also write ca.crt next to the kubeconfig for parity with the
-	// legacy script (which wrote ${TARGET_FOLDER}/ca.crt). Embed already
-	// includes CA data; writing the file keeps debugging parity.
 	caPath := filepath.Join(filepath.Dir(c.ConfigPath), "ca.crt")
 	if err := os.WriteFile(caPath, caCRT, 0o600); err != nil {
-		// Non-fatal: kubeconfig already embeds the CA.
-		logInfo(fmt.Sprintf("Warning: could not write %s: %v", caPath, err))
+		if Log != nil {
+			Log.Warn(fmt.Errorf("could not write %s: %w", caPath, err))
+		}
 	}
 
-	logInfo("Kubeconfig written")
-	return nil
-}
-
-func logInfo(msg string) {
 	if Log != nil {
-		Log.Info(msg)
-		return
+		Log.Info("Kubeconfig written")
 	}
-	fmt.Println(msg)
+	return nil
 }

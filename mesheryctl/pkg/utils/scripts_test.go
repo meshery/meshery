@@ -83,7 +83,6 @@ func TestGenerateConfigGKERequiresArgs(t *testing.T) {
 }
 
 func TestGenerateConfigGKEFailsWithoutCluster(t *testing.T) {
-	// Point loading at an empty/nonexistent kubeconfig so we never touch a real cluster.
 	t.Setenv("KUBECONFIG", filepath.Join(t.TempDir(), "does-not-exist"))
 
 	err := GenerateConfigGKE(filepath.Join(t.TempDir(), "out.yaml"), "test-sa", "default")
