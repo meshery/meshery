@@ -1,9 +1,9 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "evaluationQuery": "edge_binding_firewall_relationship",
+  "id": "9c5a28ff-ad9e-4a52-8217-8e6cc289700b",
+  "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Binds an RDS DBInstance to an EC2 SecurityGroup as a VPC firewall rule. The DBInstance's vpcSecurityGroupRefs[0].from.name field is populated with the SecurityGroup name to control inbound and outbound database traffic.",
+    "description": "Binds an ElastiCache CacheCluster to an EC2 SecurityGroup as a VPC firewall rule. The CacheCluster's securityGroupRefs[0].from.name field is populated with the SecurityGroup name to control inbound and outbound cache traffic.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -15,19 +15,52 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
-      "version": "v1.10.1"
+      "version": "v1.5.2"
     },
-    "name": "aws-rds-controller",
+    "name": "aws-elasticache-controller",
     "registrant": {
-      "kind": "github"
+      "kind": ""
     },
-    "version": "v1.10.1"
+    "version": "v1.5.2"
   },
   "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
     {
       "allow": {
         "from": [
+          {
+            "id": null,
+            "kind": "CacheCluster",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-elasticache-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "securityGroupRefs",
+                  "0",
+                  "from",
+                  "name"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
           {
             "id": null,
             "kind": "SecurityGroup",
@@ -47,44 +80,9 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "metadata",
-                  "name"
-                ]
-              ]
-            }
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "DBInstance",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "model": {
-                "version": ""
-              },
-              "name": "aws-rds-controller",
-              "registrant": {
-                "kind": "github"
-              },
-              "version": ""
-            },
-            "patch": {
-              "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "configuration",
-                  "spec",
-                  "vpcSecurityGroupRefs",
-                  "0",
-                  "from",
-                  "name"
+                  "displayName"
                 ]
               ]
             }
