@@ -18,12 +18,12 @@ import {
   TableRow,
   Typography,
   useTheme,
+  ViewSwitch,
 } from '@sistent/sistent';
 import MesheryPerformanceComponent from './index';
 import PerformanceProfileGrid from './PerformanceProfileGrid';
 import PerformanceResults from './PerformanceResults';
 import _PromptComponent from '../general/PromptComponent';
-import ViewSwitch from '../general/ViewSwitch';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { iconMedium } from '../../css/icons.styles';
 import {
