@@ -127,46 +127,11 @@ func (r *queryResolver) FetchTelemetryComponents(ctx context.Context, contexts [
 	return r.getTelemetryComps(ctx, provider, contexts)
 }
 
-// SubscribePerfProfiles is the resolver for the subscribePerfProfiles field.
-func (r *subscriptionResolver) SubscribePerfProfiles(ctx context.Context, selector model.PageFilter) (<-chan *model.PerfPageProfiles, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.subscribePerfProfiles(ctx, provider, selector)
-}
-
-// SubscribePerfResults is the resolver for the subscribePerfResults field.
-func (r *subscriptionResolver) SubscribePerfResults(ctx context.Context, selector model.PageFilter, profileID string) (<-chan *model.PerfPageResult, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.subscribePerfResults(ctx, provider, selector, profileID)
-}
-
-// SubscribeConfiguration is the resolver for the subscribeConfiguration field.
-func (r *subscriptionResolver) SubscribeConfiguration(ctx context.Context, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	user := ctx.Value(models.UserCtxKey).(*models.User)
-	return r.subscribeConfiguration(ctx, provider, *user, patternSelector, filterSelector)
-}
-
-// SubscribeClusterResources is the resolver for the subscribeClusterResources field.
-func (r *subscriptionResolver) SubscribeClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (<-chan *model.ClusterResources, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.subscribeClusterResources(ctx, provider, k8scontextIDs, namespace)
-}
-
-// SubscribeMeshModelSummary is the resolver for the subscribeMeshModelSummary field.
-func (r *subscriptionResolver) SubscribeMeshModelSummary(ctx context.Context, selector model.MeshModelSummarySelector) (<-chan *model.MeshModelSummary, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.subscribeMeshModelSummary(ctx, provider, selector)
-}
-
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
-// Subscription returns generated.SubscriptionResolver implementation.
-func (r *Resolver) Subscription() generated.SubscriptionResolver { return &subscriptionResolver{r} }
-
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-type subscriptionResolver struct{ *Resolver }

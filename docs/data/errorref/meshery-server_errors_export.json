@@ -1767,33 +1767,6 @@
         "probable_cause": "Meshery is crashed or not reachable",
         "suggested_remediation": "Restart Meshery Server\nPlease check if Meshery server is accessible to the Database"
       },
-      "1200": {
-        "name": "ErrConfigurationPatternsCode",
-        "code": "1200",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for designs stopped",
-        "short_description": "Configuration Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
-      },
-      "1201": {
-        "name": "ErrConfigurationApplicationsCode",
-        "code": "1201",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for Applications stopped",
-        "short_description": "Configuration Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
-      },
-      "1202": {
-        "name": "ErrConfigurationFiltersCode",
-        "code": "1202",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for Filters stopped",
-        "short_description": "Configuration Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
-      },
       "1203": {
         "name": "ErrK8sContextCode",
         "code": "1203",
@@ -1802,33 +1775,6 @@
         "short_description": "Failed to get k8s context from remote provider",
         "probable_cause": "Could be a network issue",
         "suggested_remediation": ""
-      },
-      "1204": {
-        "name": "ErrClusterResourcesSubscriptionCode",
-        "code": "1204",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for ClusterResources Subscription stopped",
-        "short_description": "ClusterResources Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
-      },
-      "1205": {
-        "name": "ErrGettingClusterResourcesCode",
-        "code": "1205",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to retrieve cluster resources",
-        "probable_cause": "Table in the database might not exists",
-        "suggested_remediation": ""
-      },
-      "1206": {
-        "name": "ErrMeshModelSummarySubscriptionCode",
-        "code": "1206",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for MeshModelSummary Subscription stopped",
-        "short_description": "MeshModelSummary Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
       },
       "1207": {
         "name": "ErrGettingMeshModelSummaryCode",
@@ -1865,24 +1811,6 @@
         "short_description": "Unable to process adapter request, incomplete request",
         "probable_cause": "",
         "suggested_remediation": ""
-      },
-      "1211": {
-        "name": "ErrPerformanceProfilesSubscriptionCode",
-        "code": "1211",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for PerformanceProfiles stopped",
-        "short_description": "PerformanceProfiles Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
-      },
-      "1212": {
-        "name": "ErrPerformanceResultSubscriptionCode",
-        "code": "1212",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for PerformanceResult stopped",
-        "short_description": "PerformanceResult Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
       },
       "1213": {
         "name": "ErrGormDatabaseCode",
