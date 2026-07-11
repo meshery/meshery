@@ -1,3 +1,5 @@
+import { CONNECTION_STATES, MESHSYNC_DEPLOYMENT_TYPE } from './Enum';
+
 /**
  * A function to be used by the requests sent for the
  * operations based on multi-context support
@@ -174,4 +176,45 @@ export function getConnectionIDsFromContextIds(contexts, k8sConfig) {
     contexts.some((context) => context == config.id),
   );
   return filteredK8sConnfigs.map((config) => config.connectionId);
+}
+
+// Reads the MeshSync deployment mode from a k8sConfig/context entry, tolerating
+// both camelCase and snake_case metadata keys.
+function getMeshsyncDeploymentMode(config) {
+  return config?.meshsyncDeploymentMode ?? config?.meshsync_deployment_mode;
+}
+
+// Reads the connection lifecycle status from a k8sConfig/context entry,
+// tolerating the connectionStatus (mapped from the connection) or a status key.
+function getConnectionStatus(config) {
+  return config?.connectionStatus ?? config?.status;
+}
+
+/**
+ * Returns the connection IDs whose controller status is worth streaming, i.e.
+ * connections that are BOTH:
+ *   - in `operator` MeshSync deployment mode — the operator/broker/meshsync
+ *     controllers only exist in-cluster in operator mode; embedded connections
+ *     run MeshSync in-process and have no such resources, so polling their
+ *     controller status just 404s every tick; and
+ *   - in the `connected` state — a discovered/registered/disconnected
+ *     connection has no live controllers running, so there is nothing to poll.
+ *
+ * Scoping the controller-status stream this way avoids pointless per-tick work
+ * and log noise. A missing/embedded mode is treated as non-operator (matching
+ * the embedded default), and a missing status is treated as not-connected.
+ *
+ * @param {Array<Object>} contexts Kubernetes context ids
+ * @param {Array<Object>} k8sConfig Kubernetes config
+ * @returns {Array<string>} connection IDs eligible for controller-status polling
+ */
+export function getControllerPollConnectionIDsFromContextIds(contexts, k8sConfig) {
+  if (!Array.isArray(contexts) || !Array.isArray(k8sConfig)) {
+    return [];
+  }
+  return k8sConfig
+    .filter((config) => contexts.some((context) => context == config.id))
+    .filter((config) => getMeshsyncDeploymentMode(config) === MESHSYNC_DEPLOYMENT_TYPE.OPERATOR)
+    .filter((config) => getConnectionStatus(config) === CONNECTION_STATES.CONNECTED)
+    .map((config) => config.connectionId);
 }

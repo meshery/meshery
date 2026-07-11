@@ -205,7 +205,6 @@ describe('buildPatternsTableOptions', () => {
       setSelectedRowData: vi.fn(),
       deletePatterns: vi.fn(),
       showModal: vi.fn(),
-      initPatternsSubscription: vi.fn(),
       ...overrides,
     });
 
