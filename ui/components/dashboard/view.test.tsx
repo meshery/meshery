@@ -29,6 +29,10 @@ vi.mock('@sistent/sistent', () => {
   };
 });
 
+vi.mock('@/components/sessions/SessionActionsCell', () => ({
+  default: () => <div data-testid="session-actions" />,
+}));
+
 vi.mock('@/constants/common', () => ({
   FALLBACK_MESHERY_IMAGE_PATH: '/fallback.svg',
   KUBERNETES: 'kubernetes',

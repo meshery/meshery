@@ -1,24 +1,18 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import {
   ArticleIcon,
-  Badge,
   Box,
   CloseIcon,
   IconButton,
-  Panel,
   Tab,
   TerminalIcon,
   Tooltip,
 } from '@sistent/sistent';
 import type { SessionKind, SessionTarget } from 'lib/sessions/protocol';
 import SessionPanel from './SessionPanel';
-import {
-  MinimizedSessionsButton,
-  SessionsPanelHost,
-  SessionTabs,
-  TabLabel,
-  TabTitle,
-} from './session-styles';
+import SessionsShell, { type SessionsPanelMode } from './SessionsShell';
+import { bindDock, publishDockState } from './dock-store';
+import { SessionTabs, TabLabel, TabTitle } from './session-styles';
 
 export interface OpenSessionRequest {
   connectionId: string;
@@ -141,20 +135,24 @@ const sessionLabel = ({ target }: OpenSessionRequest): string =>
 /**
  * Hosts the sessions panel and hands its opener to the tree below.
  *
- * The panel is Sistent's `Panel`: draggable by its header, resizable from every
- * edge, and minimizable. It floats over the app rather than docking, so a
- * session stays put while the user navigates.
+ * The panel docks to the foot of the content area, where it shares space with the
+ * page rather than covering it, and detaches into a free-floating window that can
+ * be dragged and resized anywhere over that area. Minimizing hides it and leaves
+ * a badged control at the foot of the Navigator. The panel is mounted app-wide,
+ * so a session survives navigation in any of those states.
  *
  * Every open session stays mounted for as long as it is open — including the
  * ones behind an inactive tab, and including while the panel is minimized. A
- * terminal is stateful on the remote end, so unmounting it to switch tabs, or to
- * minimize, would kill the shell. Hidden panes are hidden with CSS, and xterm
- * refits from its ResizeObserver when they are shown again.
+ * terminal is stateful on the remote end, so unmounting it to switch tabs, to
+ * minimize, or to move between docked and floating would kill the shell. Hidden
+ * panes are hidden with CSS, the shell changes style rather than structure, and
+ * xterm refits from its ResizeObserver when a pane is shown or resized again.
  */
 export const SessionsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [sessions, setSessions] = useState<OpenSession[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [minimized, setMinimized] = useState(false);
+  const [mode, setMode] = useState<SessionsPanelMode>('docked');
 
   const openSession = useCallback((request: OpenSessionRequest) => {
     const id = sessionId(request);
@@ -223,6 +221,13 @@ export const SessionsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     publishOpenSessions(openRequests);
   }, [openRequests]);
 
+  // Feed the Navigator's restore control, which sits outside this context.
+  useEffect(() => {
+    publishDockState({ count: sessions.length, minimized });
+  }, [sessions.length, minimized]);
+
+  useEffect(() => bindDock(() => setMinimized(false)), []);
+
   // Bind the imperative handle to *this* provider for as long as it is mounted.
   // The guard on unbind matters under StrictMode's double-mount, where the new
   // provider binds before the old one's cleanup runs.
@@ -238,25 +243,15 @@ export const SessionsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     <SessionsContext.Provider value={value}>
       {children}
 
-      {/*
-       * `Panel` renders null when `isOpen` is false, which would unmount every
-       * session and kill its shell. Minimizing therefore hides the host, leaving
-       * the panel and its sockets mounted underneath.
-       */}
-      <SessionsPanelHost $hidden={!open || minimized} aria-hidden={!open || minimized}>
-        <Panel
-          id="MesherySessionsPanel"
-          title="Sessions"
-          isOpen={open}
-          handleClose={closeAll}
-          minimizePanel={() => setMinimized(true)}
-          defaultSize={{ width: '58rem', height: '28rem' }}
-          intitialPosition={{ bottom: '1rem', right: '1rem' }}
-          sx={{
-            pointerEvents: 'auto',
-            '& .panel-body': { padding: '0.5rem', display: 'flex', flexDirection: 'column' },
-          }}
-        >
+      <SessionsShell
+        open={open}
+        minimized={minimized}
+        mode={mode}
+        onModeChange={setMode}
+        onMinimize={() => setMinimized(true)}
+        onClose={closeAll}
+        title="Sessions"
+        tabs={
           <SessionTabs
             value={activeId ?? false}
             onChange={(_, id) => setActiveId(id)}
@@ -300,41 +295,31 @@ export const SessionsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
               />
             ))}
           </SessionTabs>
-
-          {sessions.map((session) => (
-            <Box
-              key={session.id}
-              sx={{
-                flex: 1,
-                minHeight: 0,
-                // Hidden rather than unmounted: see the note on this component.
-                display: session.id === activeId ? 'flex' : 'none',
-                flexDirection: 'column',
-                paddingTop: '0.5rem',
-              }}
-            >
-              <SessionPanel
-                connectionId={session.connectionId}
-                target={session.target}
-                kind={session.kind}
-              />
-            </Box>
-          ))}
-        </Panel>
-      </SessionsPanelHost>
-
-      {open && minimized && (
-        <Tooltip title="Restore sessions">
-          <MinimizedSessionsButton
-            aria-label={`Restore ${sessions.length} session(s)`}
-            onClick={() => setMinimized(false)}
+        }
+      >
+        {sessions.map((session) => (
+          <Box
+            key={session.id}
+            sx={{
+              flex: 1,
+              minHeight: 0,
+              // Hidden rather than unmounted: see the note on this component.
+              display: session.id === activeId ? 'flex' : 'none',
+              flexDirection: 'column',
+              paddingTop: '0.5rem',
+            }}
           >
-            <Badge badgeContent={sessions.length} color="primary">
-              <TerminalIcon width={22} height={22} />
-            </Badge>
-          </MinimizedSessionsButton>
-        </Tooltip>
-      )}
+            <SessionPanel
+              connectionId={session.connectionId}
+              target={session.target}
+              kind={session.kind}
+              // Every session stays `active` — and so keeps its socket — while
+              // only the one on show owns the header's controls.
+              focused={session.id === activeId}
+            />
+          </Box>
+        ))}
+      </SessionsShell>
     </SessionsContext.Provider>
   );
 };

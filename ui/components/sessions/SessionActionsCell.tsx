@@ -14,13 +14,15 @@ export interface SessionActionsCellProps {
 const SESSION_RESOURCE = 'pod';
 
 /**
- * Row actions that open a log stream or a shell against the row's resource.
+ * The actions that open a log stream or a shell against a resource — on a table
+ * row, and in the header of that resource's detail view.
  *
- * Whether a target really admits a session is the server's call, resolved
- * against live state by the capabilities endpoint once the panel mounts. This
- * cell only decides whether to *offer* the action, from the cached MeshSync
- * row: a button that opens onto "the pod is Pending" is worse than no button,
- * but a stale row must not be able to hide a session the server would allow.
+ * Whether a target really admits a session is the server's call, resolved against
+ * live state by the capabilities endpoint once the session mounts, which answers
+ * with a reason the panel can show. So the buttons are offered unconditionally
+ * rather than gated on the phase in the cached MeshSync row: that row goes stale,
+ * and a control greyed out against a pod that is in fact running — with the
+ * explanation hidden behind a tooltip — reads as a broken button, not a busy pod.
  */
 const SessionActionsCell: React.FC<SessionActionsCellProps> = ({ resource, k8sConfig }) => {
   const { openSession } = useSessions();
@@ -48,41 +50,24 @@ const SessionActionsCell: React.FC<SessionActionsCellProps> = ({ resource, k8sCo
 
   if (!connectionId || !target) return null;
 
-  // MeshSync stores the pod status as a JSON blob in `status.attribute`.
-  let phase: string | undefined;
-  try {
-    phase = JSON.parse(resource.status?.attribute ?? '{}')?.phase;
-  } catch {
-    phase = undefined;
-  }
-  const running = phase === 'Running';
-
   return (
     <Box sx={{ display: 'flex', gap: '0.25rem' }}>
       <Tooltip title="View logs">
         <IconButton size="small" aria-label="View logs" onClick={open('logs')}>
-          <ArticleIcon width={18} height={18} />
+          {/*
+           * `fill="currentColor"`: sistent's icons carry no fill of their own, so
+           * SVG defaults them to black — invisible against the dark table. Setting
+           * it on the root svg is inherited by the paths, and `currentColor` tracks
+           * the IconButton's own colour in either theme.
+           */}
+          <ArticleIcon width={18} height={18} fill="currentColor" />
         </IconButton>
       </Tooltip>
 
-      <Tooltip
-        title={
-          running
-            ? 'Open a terminal'
-            : `A terminal needs a running pod (this one is ${phase ?? 'not running'})`
-        }
-      >
-        {/* A disabled button emits no events, so the tooltip needs a live wrapper. */}
-        <Box component="span" sx={{ display: 'inline-flex' }}>
-          <IconButton
-            size="small"
-            aria-label="Open a terminal"
-            disabled={!running}
-            onClick={open('terminal')}
-          >
-            <TerminalIcon width={18} height={18} />
-          </IconButton>
-        </Box>
+      <Tooltip title="Open a terminal">
+        <IconButton size="small" aria-label="Open a terminal" onClick={open('terminal')}>
+          <TerminalIcon width={18} height={18} fill="currentColor" />
+        </IconButton>
       </Tooltip>
     </Box>
   );

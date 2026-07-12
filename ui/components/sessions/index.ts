@@ -11,14 +11,16 @@
  *   - `sessions` — the same handle for callers that are not React components,
  *     such as a Kanvas context-menu action dispatched from a plain function.
  *
- *   - `useSessions()` — an imperative handle on the shared bottom drawer
+ *   - `useSessions()` — an imperative handle on the shared sessions panel
  *     (`openSession` / `closeSession` / `hasSession`). Use it to launch a shell
  *     or a log tail from a graph node, a context menu, or a button, and to render
- *     an indicator on a resource that already has a session attached. The drawer
- *     is mounted app-wide in `pages/_app.tsx`, so this works from any page.
+ *     an indicator on a resource that already has a session attached. The panel is
+ *     mounted app-wide in `pages/_app.tsx`, so this works from any page: it docks
+ *     to the foot of the content area, detaches into a floating window, and
+ *     minimizes to a control at the foot of the Navigator.
  *
  *   - `SessionPanel` — one embedded session, for a host that wants to own the
- *     chrome itself rather than use the shared drawer.
+ *     chrome itself rather than use the shared panel.
  *
  * Wire types come from `@meshery/schemas` (the `v1beta1/session` construct);
  * they are re-exported here so an extension need not depend on schemas directly.
@@ -29,6 +31,11 @@ export type { SessionPanelProps } from './SessionPanel';
 
 export { default as SessionsProvider, useSessions, sessions } from './SessionsProvider';
 export type { OpenSessionRequest, SessionsContextValue } from './SessionsProvider';
+
+export { default as MinimizedSessions } from './MinimizedSessions';
+export { restoreSessions, useSessionsDock } from './dock-store';
+export type { SessionsDockState } from './dock-store';
+export type { SessionsPanelMode } from './SessionsShell';
 
 export { default as SessionActionsCell } from './SessionActionsCell';
 

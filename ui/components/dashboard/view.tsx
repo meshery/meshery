@@ -7,8 +7,6 @@ import {
   OperatorDataFormatter,
   Paper,
   styled,
-  Tab,
-  Tabs,
   Typography,
   useResourceCleanData,
 } from '@sistent/sistent';
@@ -24,8 +22,7 @@ import { useRouter } from 'next/router';
 import GetKubernetesNodeIcon from './utils';
 import { CONNECTION_STATES } from '@/utils/Enum';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
-import SessionPanel from '@/components/sessions/SessionPanel';
-import type { SessionKind } from 'lib/sessions/protocol';
+import SessionActionsCell from '@/components/sessions/SessionActionsCell';
 
 const Container = styled('div')({
   margin: '1rem auto',
@@ -49,6 +46,13 @@ const HeaderLeft = styled('div')({
   alignItems: 'center',
 });
 
+/** The session actions, then the connection chip they act through. */
+const HeaderRight = styled('div')({
+  display: 'flex',
+  gap: '0.75rem',
+  alignItems: 'center',
+});
+
 const TitleContainer = styled('div')({
   color: 'inherit',
   cursor: 'pointer',
@@ -60,12 +64,6 @@ const TitleContainer = styled('div')({
 const TitleContent = styled('div')({
   display: 'inherit',
   alignItems: 'center',
-});
-
-/** Fixed-height host for a session pane, so xterm's fit addon has something to measure. */
-const SessionPane = styled('div')({
-  height: '32rem',
-  flexDirection: 'column',
 });
 
 type DashboardViewProps = {
@@ -81,11 +79,6 @@ type DashboardTitleProps = {
   model?: string;
 };
 
-/** Resource kinds that host interactive sessions, as MeshSync spells them. */
-const SESSION_KINDS: Record<string, string> = { Pod: 'pod' };
-
-type DetailTab = 'details' | SessionKind;
-
 const View = ({ setView, resource, k8sConfig }: DashboardViewProps) => {
   const ping = useKubernetesHook();
   const { getResourceCleanData } = useResourceCleanData();
@@ -94,16 +87,6 @@ const View = ({ setView, resource, k8sConfig }: DashboardViewProps) => {
     () => getResourceCleanData({ resource, router }),
     [getResourceCleanData, resource, router],
   );
-
-  const [tab, setTab] = useState<DetailTab>('details');
-  // A tab's panel stays mounted once visited, so switching back to Details does
-  // not kill a live shell or restart a log stream.
-  const [visited, setVisited] = useState<Set<DetailTab>>(() => new Set(['details']));
-
-  const selectTab = (next: DetailTab) => {
-    setTab(next);
-    setVisited((current) => (current.has(next) ? current : new Set(current).add(next)));
-  };
 
   const { data: connections = [] } = useGetConnectionsQuery({
     page: 0,
@@ -120,20 +103,6 @@ const View = ({ setView, resource, k8sConfig }: DashboardViewProps) => {
   const connection = connections?.connections.find((conn) => conn.id === context?.connectionId);
   const connectionStatus = connection?.status || CONNECTION_STATES.DISCONNECTED;
   const iconSrc = normalizeStaticImagePath(resource.component_metadata?.styles?.svgColor);
-
-  // Session tabs appear only for resource kinds that can host one. Whether this
-  // particular resource currently admits a terminal is resolved server-side by
-  // SessionPanel, against live state rather than this cached MeshSync row.
-  const connectionId = context?.connectionId;
-  const sessionResource = SESSION_KINDS[resource.kind];
-  const sessionTarget =
-    sessionResource && resource.metadata?.name
-      ? {
-          resource: sessionResource,
-          namespace: resource.metadata.namespace,
-          name: resource.metadata.name,
-        }
-      : null;
 
   return (
     <Container>
@@ -161,55 +130,30 @@ const View = ({ setView, resource, k8sConfig }: DashboardViewProps) => {
               />
               <Typography variant="h6">{resource?.metadata?.name}</Typography>
             </HeaderLeft>
-            <TooltipWrappedConnectionChip
-              title={context.name}
-              width="100%"
-              handlePing={() => ping(context.name, context.server, context.connectionId)}
-              status={connectionStatus}
-              iconSrc={'/static/img/integrations/kubernetes.svg'}
-            />
-          </Header>
-          {sessionTarget && connectionId ? (
-            <Tabs
-              value={tab}
-              onChange={(_, next: DetailTab) => selectTab(next)}
-              sx={{ borderBottom: 1, borderColor: 'divider', marginBottom: '0.5rem' }}
-            >
-              <Tab value="details" label="Details" sx={{ textTransform: 'none' }} />
-              <Tab value="logs" label="Logs" sx={{ textTransform: 'none' }} />
-              <Tab value="terminal" label="Terminal" sx={{ textTransform: 'none' }} />
-            </Tabs>
-          ) : null}
-
-          <Box hidden={tab !== 'details'}>
-            <ErrorBoundary>
-              <OperatorDataFormatter
-                data={cleanData}
-                FormatStructuredData={ResourceDetailFormatData}
-                ReactJsonFormatter={JSONViewFormatter}
+            <HeaderRight>
+              {/*
+               * Sessions open in the shared panel rather than in a tab of their
+               * own, so a shell keeps running — and stays reachable — once the user
+               * navigates off this resource. It is also the only session surface
+               * that docks, floats and minimizes, and Kanvas already opens onto it.
+               */}
+              <SessionActionsCell resource={resource} k8sConfig={k8sConfig} />
+              <TooltipWrappedConnectionChip
+                title={context.name}
+                width="100%"
+                handlePing={() => ping(context.name, context.server, context.connectionId)}
+                status={connectionStatus}
+                iconSrc={'/static/img/integrations/kubernetes.svg'}
               />
-            </ErrorBoundary>
-          </Box>
-
-          {sessionTarget && connectionId
-            ? (['logs', 'terminal'] as SessionKind[]).map((kind) =>
-                visited.has(kind) ? (
-                  <SessionPane
-                    key={kind}
-                    // Hidden, not unmounted: see `visited` above.
-                    style={{ display: tab === kind ? 'flex' : 'none' }}
-                  >
-                    <ErrorBoundary>
-                      <SessionPanel
-                        connectionId={connectionId}
-                        target={sessionTarget}
-                        kind={kind}
-                      />
-                    </ErrorBoundary>
-                  </SessionPane>
-                ) : null,
-              )
-            : null}
+            </HeaderRight>
+          </Header>
+          <ErrorBoundary>
+            <OperatorDataFormatter
+              data={cleanData}
+              FormatStructuredData={ResourceDetailFormatData}
+              ReactJsonFormatter={JSONViewFormatter}
+            />
+          </ErrorBoundary>
         </Box>
       </Paper>
     </Container>

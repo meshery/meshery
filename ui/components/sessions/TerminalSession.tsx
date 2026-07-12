@@ -1,16 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Box,
-  CircularProgress,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Typography,
-} from '@sistent/sistent';
+import { Box, CircularProgress, Typography } from '@sistent/sistent';
 import { sessionSocketUrl, type SessionTarget } from 'lib/sessions/protocol';
 import { useSessionSocket } from 'lib/sessions/useSessionSocket';
 import { useXTerm } from './useXTerm';
+import SessionControls from './SessionControls';
 import {
   SessionSurface,
   SessionToolbar,
@@ -28,6 +21,8 @@ export interface TerminalSessionProps {
   toolbarEnd?: React.ReactNode;
   /** Held false while the pane is hidden, so a background tab holds no shell. */
   active?: boolean;
+  /** Whether this session is the one on show, and so owns the panel's header. */
+  focused?: boolean;
 }
 
 const encoder = new TextEncoder();
@@ -46,12 +41,14 @@ const TerminalSession: React.FC<TerminalSessionProps> = ({
   containers = [],
   toolbarEnd,
   active = true,
+  focused = true,
 }) => {
   const { resource, namespace, name } = target;
 
   // Switching container opens a shell in a different process namespace, so it is
   // a new session, not a reconfiguration of the running one.
   const [container, setContainer] = useState(target.container ?? '');
+  const [query, setQuery] = useState('');
 
   // Depend on the target's fields, not on the object: callers pass an object
   // literal, and a new identity each render would tear the shell down and open
@@ -83,7 +80,7 @@ const TerminalSession: React.FC<TerminalSessionProps> = ({
     [resize],
   );
 
-  const { containerRef, write, writeln, fit, getGeometry, ready } = useXTerm({
+  const { containerRef, write, writeln, fit, getGeometry, search, ready } = useXTerm({
     onInput: handleInput,
     onResize: handleResize,
     scrollback: 5000,
@@ -119,23 +116,16 @@ const TerminalSession: React.FC<TerminalSessionProps> = ({
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
       <SessionToolbar>
-        {containers.length > 1 && (
-          <FormControl size="small" sx={{ minWidth: 160 }}>
-            <InputLabel id="terminal-container-label">Container</InputLabel>
-            <Select
-              labelId="terminal-container-label"
-              label="Container"
-              value={container}
-              onChange={(event) => setContainer(String(event.target.value))}
-            >
-              {containers.map((candidate) => (
-                <MenuItem key={candidate} value={candidate}>
-                  {candidate}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        )}
+        {/* Container and search render in the panel's header; see SessionControls. */}
+        <SessionControls
+          containers={containers}
+          container={container}
+          onContainerChange={setContainer}
+          query={query}
+          onQueryChange={setQuery}
+          onSearch={search}
+          focused={focused}
+        />
 
         <StatusText $error={Boolean(closed && !closed.graceful)}>
           {closed && !closed.graceful

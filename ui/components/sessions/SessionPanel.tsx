@@ -23,6 +23,12 @@ export interface SessionPanelProps {
   active?: boolean;
   /** Hides the fullscreen control, e.g. where the host already owns that chrome. */
   allowFullScreen?: boolean;
+  /**
+   * Whether this session is the one on show. Distinct from `active`, which keeps a
+   * hidden session's socket alive: a backgrounded tab still holds its shell, but
+   * only the focused one puts its controls in the panel's header.
+   */
+  focused?: boolean;
 }
 
 /**
@@ -40,6 +46,7 @@ const SessionPanel: React.FC<SessionPanelProps> = ({
   kind,
   active = true,
   allowFullScreen = true,
+  focused = true,
 }) => {
   const [fullScreen, setFullScreen] = useState(false);
   const toggleFullScreen = useCallback(() => setFullScreen((current) => !current), []);
@@ -142,6 +149,7 @@ const SessionPanel: React.FC<SessionPanelProps> = ({
         containers={capabilities?.containers ?? []}
         toolbarEnd={fullScreenControl}
         active={active}
+        focused={focused}
       />
     ) : (
       <LogSession
@@ -150,6 +158,7 @@ const SessionPanel: React.FC<SessionPanelProps> = ({
         containers={capabilities?.containers ?? []}
         toolbarEnd={fullScreenControl}
         active={active}
+        focused={focused}
       />
     );
 

@@ -9,7 +9,6 @@ import {
   MenuItem,
   PlayArrowIcon,
   Select,
-  TextField,
   TimerIcon,
   ToggleButton,
   ToggleButtonGroup,
@@ -19,6 +18,7 @@ import {
 import { sessionSocketUrl, type SessionTarget } from 'lib/sessions/protocol';
 import { useSessionSocket } from 'lib/sessions/useSessionSocket';
 import { useXTerm } from './useXTerm';
+import SessionControls from './SessionControls';
 import {
   SessionSurface,
   SessionToolbar,
@@ -35,6 +35,8 @@ export interface LogSessionProps {
   /** Rendered at the right of the toolbar, e.g. the host's fullscreen control. */
   toolbarEnd?: React.ReactNode;
   active?: boolean;
+  /** Whether this session is the one on show, and so owns the panel's header. */
+  focused?: boolean;
 }
 
 /** Tail depths offered in the toolbar. */
@@ -54,6 +56,7 @@ const LogSession: React.FC<LogSessionProps> = ({
   containers = [],
   toolbarEnd,
   active = true,
+  focused = true,
 }) => {
   const { resource, namespace, name } = target;
 
@@ -150,15 +153,6 @@ const LogSession: React.FC<LogSessionProps> = ({
     setPrevious(next.includes('previous'));
   }, []);
 
-  const handleSearch = useCallback(
-    (event: React.KeyboardEvent<HTMLInputElement>) => {
-      if (event.key === 'Enter') {
-        search(query, !event.shiftKey);
-      }
-    },
-    [query, search],
-  );
-
   const statusText = () => {
     if (paused) return 'Paused — the upstream stream is closed';
     if (status === 'connecting') return 'Opening the log stream…';
@@ -170,23 +164,16 @@ const LogSession: React.FC<LogSessionProps> = ({
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
       <SessionToolbar>
-        {containers.length > 1 && (
-          <FormControl size="small" sx={{ minWidth: 160 }}>
-            <InputLabel id="log-container-label">Container</InputLabel>
-            <Select
-              labelId="log-container-label"
-              label="Container"
-              value={container}
-              onChange={(event) => setContainer(String(event.target.value))}
-            >
-              {containers.map((candidate) => (
-                <MenuItem key={candidate} value={candidate}>
-                  {candidate}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        )}
+        {/* Container and search render in the panel's header; see SessionControls. */}
+        <SessionControls
+          containers={containers}
+          container={container}
+          onContainerChange={setContainer}
+          query={query}
+          onQueryChange={setQuery}
+          onSearch={search}
+          focused={focused}
+        />
 
         <FormControl size="small" sx={{ minWidth: 120 }}>
           <InputLabel id="log-tail-label">Tail</InputLabel>
@@ -225,15 +212,6 @@ const LogSession: React.FC<LogSessionProps> = ({
             <CachedIcon width={16} height={16} />
           </ToggleButton>
         </ToggleButtonGroup>
-
-        <TextField
-          size="small"
-          placeholder="Search"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          onKeyDown={handleSearch}
-          sx={{ flex: '1 1 8rem', minWidth: '6rem' }}
-        />
 
         <Tooltip
           title={
