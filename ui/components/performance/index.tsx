@@ -9,7 +9,7 @@ import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { generateTestName, generateUUID } from './helper';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '@/components/general/error-404/index';
 import { api } from '../../rtk-query';
 import { useGetUserPrefWithContextQuery } from '@/rtk-query/user';
@@ -487,7 +487,10 @@ const MesheryPerformanceComponent_ = (props) => {
 
   return (
     <NoSsr>
-      {CAN(keys.VIEW_PERFORMANCE_PROFILES.action, keys.VIEW_PERFORMANCE_PROFILES.subject) ? (
+      {CAN(
+        Keys.PerformanceManagementViewPerformanceProfiles.id,
+        Keys.PerformanceManagementViewPerformanceProfiles.function,
+      ) ? (
         <>
           <React.Fragment>
             <ModalBody>
