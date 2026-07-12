@@ -45,7 +45,7 @@ import {
 import { ActionContainer, CopyLinkButton, CreatAtContainer, ResourceName } from './styles';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import { updateProgress } from '@/store/slices/mesheryUi';
-import { getMeshModels } from '@/api/meshmodel';
+import { getMeshModels } from '@/api/registry';
 import { useSelector } from 'react-redux';
 import RJSFWrapper from '@/components/meshery-mesh-interface/PatternService/RJSF_wrapper';
 

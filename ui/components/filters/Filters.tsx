@@ -10,7 +10,7 @@ import FiltersGrid from './FiltersGrid';
 import fetchCatalogFilter from '@/graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../../css/icons.styles';
 import { modifyRJSFSchema } from '../../utils/utils';
-import { getMeshModels } from '../../api/meshmodel';
+import { getMeshModels } from '../../api/registry';
 import _ from 'lodash';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';

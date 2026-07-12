@@ -14,7 +14,7 @@ import MesheryResultDialog from './MesheryResultDialog';
 import ReactSelectWrapper from './ReactSelectWrapper';
 import ConfirmationMsg from '@/components/designs/lifecycle/DeployConfirmationModal';
 import { ACTIONS } from '../utils/Enum';
-import { getModelByName } from '../api/meshmodel';
+import { getModelByName } from '../api/registry';
 import { EVENT_TYPES } from '../lib/event-types';
 import { useNotification } from '../utils/hooks/useNotification';
 import { useSelector } from 'react-redux';

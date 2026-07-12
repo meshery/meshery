@@ -3490,7 +3490,7 @@ paths:
             text/plain:
               schema:
                 type: string
-  /api/meshmodels/relationships/evaluate:
+  /api/registry/relationships/evaluate:
     post:
       operationId: evaluateRelationships
       x-internal:
@@ -4446,7 +4446,7 @@ paths:
                                                   description: >-
                                                     Catch all for capabilities related to interaction with entities.
                                                     Example: the ability for a component to be dragged and dropped.
-                                                    Example: supports event bubbling to parent components. 
+                                                    Example: supports event bubbling to parent components.
                                               type: string
                                               pattern: ^[a-zA-Z_][a-zA-Z0-9_-]*[a-zA-Z0-9_]$
                                             type:
@@ -5336,7 +5336,7 @@ paths:
                                           description: >-
                                             Catch all for capabilities related to interaction with entities. Example:
                                             the ability for a component to be dragged and dropped. Example: supports
-                                            event bubbling to parent components. 
+                                            event bubbling to parent components.
                                       type: string
                                       pattern: ^[a-zA-Z_][a-zA-Z0-9_-]*[a-zA-Z0-9_]$
                                     type:
@@ -5884,7 +5884,7 @@ paths:
                                           description: >-
                                             Catch all for capabilities related to interaction with entities. Example:
                                             the ability for a component to be dragged and dropped. Example: supports
-                                            event bubbling to parent components. 
+                                            event bubbling to parent components.
                                       type: string
                                       pattern: ^[a-zA-Z_][a-zA-Z0-9_-]*[a-zA-Z0-9_]$
                                     type:
@@ -8760,7 +8760,7 @@ paths:
                                                     description: >-
                                                       Catch all for capabilities related to interaction with entities.
                                                       Example: the ability for a component to be dragged and dropped.
-                                                      Example: supports event bubbling to parent components. 
+                                                      Example: supports event bubbling to parent components.
                                                 type: string
                                                 pattern: ^[a-zA-Z_][a-zA-Z0-9_-]*[a-zA-Z0-9_]$
                                               type:
@@ -9656,7 +9656,7 @@ paths:
                                             description: >-
                                               Catch all for capabilities related to interaction with entities. Example:
                                               the ability for a component to be dragged and dropped. Example: supports
-                                              event bubbling to parent components. 
+                                              event bubbling to parent components.
                                         type: string
                                         pattern: ^[a-zA-Z_][a-zA-Z0-9_-]*[a-zA-Z0-9_]$
                                       type:
@@ -10209,7 +10209,7 @@ paths:
                                             description: >-
                                               Catch all for capabilities related to interaction with entities. Example:
                                               the ability for a component to be dragged and dropped. Example: supports
-                                              event bubbling to parent components. 
+                                              event bubbling to parent components.
                                         type: string
                                         pattern: ^[a-zA-Z_][a-zA-Z0-9_-]*[a-zA-Z0-9_]$
                                       type:
@@ -13704,7 +13704,7 @@ paths:
             text/plain:
               schema:
                 type: string
-  /api/meshmodels/register:
+  /api/registry/register:
     post:
       x-internal:
         - cloud
@@ -25509,7 +25509,7 @@ paths:
             text/plain:
               schema:
                 type: string
-  /api/meshmodels/connections:
+  /api/registry/connections:
     get:
       x-internal:
         - cloud
@@ -26295,7 +26295,7 @@ paths:
             text/plain:
               schema:
                 type: string
-  /api/meshmodels/connections/{connectionDefinitionId}:
+  /api/registry/connections/{connectionDefinitionId}:
     get:
       x-internal:
         - cloud
@@ -33540,7 +33540,7 @@ paths:
                                                             Catch all for capabilities related to interaction with
                                                             entities. Example: the ability for a component to be dragged
                                                             and dropped. Example: supports event bubbling to parent
-                                                            components. 
+                                                            components.
                                                       type: string
                                                       pattern: ^[a-zA-Z_][a-zA-Z0-9_-]*[a-zA-Z0-9_]$
                                                     type:
@@ -34463,7 +34463,7 @@ paths:
                                                   description: >-
                                                     Catch all for capabilities related to interaction with entities.
                                                     Example: the ability for a component to be dragged and dropped.
-                                                    Example: supports event bubbling to parent components. 
+                                                    Example: supports event bubbling to parent components.
                                               type: string
                                               pattern: ^[a-zA-Z_][a-zA-Z0-9_-]*[a-zA-Z0-9_]$
                                             type:
@@ -35024,7 +35024,7 @@ paths:
                                                   description: >-
                                                     Catch all for capabilities related to interaction with entities.
                                                     Example: the ability for a component to be dragged and dropped.
-                                                    Example: supports event bubbling to parent components. 
+                                                    Example: supports event bubbling to parent components.
                                               type: string
                                               pattern: ^[a-zA-Z_][a-zA-Z0-9_-]*[a-zA-Z0-9_]$
                                             type:

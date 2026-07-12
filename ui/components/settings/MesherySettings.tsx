@@ -27,7 +27,7 @@ import {
   getMeshModels,
   getRelationshipsDetail,
   getMeshModelRegistrants,
-} from '../../api/meshmodel';
+} from '../../api/registry';
 import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
 import { ADAPTERS, RESET, OVERVIEW, REGISTRY, CONTROLLERS } from '@/constants/navigator';

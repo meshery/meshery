@@ -84,7 +84,7 @@ vi.mock('../DatabaseSummary', () => ({
   default: () => <div data-testid="database-summary" />,
 }));
 
-vi.mock('../../api/meshmodel', () => ({
+vi.mock('../../api/registry', () => ({
   getComponentsDetail: vi.fn().mockResolvedValue({ totalCount: 0 }),
   getMeshModels: vi.fn().mockResolvedValue({ models: [] }),
   getRelationshipsDetail: vi.fn().mockResolvedValue({ totalCount: 0 }),

@@ -9,7 +9,7 @@ import {
 } from '@sistent/sistent';
 import { isEmpty } from 'lodash';
 import React from 'react';
-import { getMeshModelComponent } from '../../../../api/meshmodel';
+import { getMeshModelComponent } from '../../../../api/registry';
 import { iconMedium } from '../../../../css/icons.styles';
 import PatternServiceForm from '../../../meshery-mesh-interface/PatternServiceForm';
 import { useNotification } from '../../../../utils/hooks/useNotification';

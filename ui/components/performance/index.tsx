@@ -16,7 +16,7 @@ import { useGetUserPrefWithContextQuery } from '@/rtk-query/user';
 import { useSavePerformanceProfileMutation } from '@/rtk-query/performance-profile';
 import { useGetMeshQuery } from '@/rtk-query/mesh';
 import { CenterTimer } from './style';
-import { getMeshModels } from '@/api/meshmodel';
+import { getMeshModels } from '@/api/registry';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { updateLoadTest } from '@/store/slices/prefTest';

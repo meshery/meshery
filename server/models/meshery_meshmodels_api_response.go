@@ -10,7 +10,7 @@ import (
 )
 
 // MeshmodelsAPIResponse is the Meshery-local response envelope for
-// `GET /api/meshmodels/models`. Canonical wire form is camelCase per the
+// `GET /api/registry/models`. Canonical wire form is camelCase per the
 // identifier-naming migration; legacy snake_case keys (`page_size`,
 // `total_count`) are emitted alongside for the deprecation window so
 // external consumers still reading the old spellings keep working.

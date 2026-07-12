@@ -14,7 +14,7 @@ import { useRouter } from 'next/router';
 import ConfigurationSubscription from '@/graphql/subscriptions/ConfigurationSubscription';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import _ from 'lodash';
-import { getMeshModels } from '../../../api/meshmodel';
+import { getMeshModels } from '../../../api/registry';
 import { modifyRJSFSchema } from '../../../utils/utils';
 import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';

@@ -27,7 +27,7 @@ vi.mock('../utils/debounce', () => ({
   default: (fn: any) => fn,
 }));
 
-vi.mock('../api/meshmodel', () => ({
+vi.mock('../api/registry', () => ({
   getDuplicateModels: (...args: any[]) => getDuplicateModelsMock(...args),
   getDuplicateComponents: (...args: any[]) => getDuplicateComponentsMock(...args),
 }));

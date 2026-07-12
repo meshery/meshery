@@ -65,7 +65,7 @@ import { createRelayEnvironment } from '../lib/relayEnvironment';
 import './styles/charts.css';
 import uiConfig from '../ui.config';
 import { NotificationCenterProvider } from '../components/layout/NotificationCenter';
-import { getConnectionDefinitions, getMeshModelComponentByName } from '../api/meshmodel';
+import { getConnectionDefinitions, getMeshModelComponentByName } from '../api/registry';
 import { CONNECTION_KINDS, CONNECTION_KINDS_DEF } from '../utils/Enum';
 import { ability } from '../utils/can';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';

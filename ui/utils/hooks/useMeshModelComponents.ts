@@ -7,7 +7,7 @@ import {
   getComponentFromModelApi,
   getModelFromCategoryApi,
   getVersionedComponentFromModel,
-} from '../../api/meshmodel';
+} from '../../api/registry';
 import { compose } from 'lodash/fp';
 import { useEffect, useState } from 'react';
 import getMostRecentVersion, {

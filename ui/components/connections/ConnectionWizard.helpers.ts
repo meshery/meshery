@@ -34,7 +34,7 @@ export type ConnectionDefinitionStyles = {
 
 /**
  * Shape of a connection definition as returned by the registry endpoint
- * `GET /api/meshmodels/connections`. Only the fields the wizard consumes are
+ * `GET /api/registry/connections`. Only the fields the wizard consumes are
  * declared; the payload carries more (schemaVersion, status, model, ...).
  */
 export type ConnectionDefinition = {

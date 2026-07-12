@@ -9,60 +9,58 @@ vi.mock('../../store', () => ({ store: { dispatch } }));
 import { componentUniqueKey, getComponentDefinition, modelUniqueKey } from '../meshModel';
 
 describe('meshModel – URLs', () => {
-  it('builds /api/meshmodels/models URL', () => {
-    expect(mesheryApiPath('meshmodels/models')).toBe('/api/meshmodels/models');
+  it('builds /api/registry/models URL', () => {
+    expect(mesheryApiPath('meshmodels/models')).toBe('/api/registry/models');
   });
 
-  it('builds /api/meshmodels/components URL', () => {
-    expect(mesheryApiPath('meshmodels/components')).toBe('/api/meshmodels/components');
+  it('builds /api/registry/components URL', () => {
+    expect(mesheryApiPath('meshmodels/components')).toBe('/api/registry/components');
   });
 
-  it('builds /api/meshmodels/relationships URL', () => {
-    expect(mesheryApiPath('meshmodels/relationships')).toBe('/api/meshmodels/relationships');
+  it('builds /api/registry/relationships URL', () => {
+    expect(mesheryApiPath('meshmodels/relationships')).toBe('/api/registry/relationships');
   });
 
-  it('builds /api/meshmodels/registrants URL', () => {
-    expect(mesheryApiPath('meshmodels/registrants')).toBe('/api/meshmodels/registrants');
+  it('builds /api/registry/registrants URL', () => {
+    expect(mesheryApiPath('meshmodels/registrants')).toBe('/api/registry/registrants');
   });
 
   it('builds nested model->components URL', () => {
     expect(mesheryApiPath('meshmodels/models/istio/components')).toBe(
-      '/api/meshmodels/models/istio/components',
+      '/api/registry/models/istio/components',
     );
   });
 
-  it('builds /api/meshmodels/categories URL', () => {
-    expect(mesheryApiPath('meshmodels/categories')).toBe('/api/meshmodels/categories');
+  it('builds /api/registry/categories URL', () => {
+    expect(mesheryApiPath('meshmodels/categories')).toBe('/api/registry/categories');
   });
 
-  it('builds /api/meshmodels/categories/:cat/models URL', () => {
+  it('builds /api/registry/categories/:cat/models URL', () => {
     expect(mesheryApiPath('meshmodels/categories/Networking/models')).toBe(
-      '/api/meshmodels/categories/Networking/models',
+      '/api/registry/categories/Networking/models',
     );
   });
 
-  it('builds /api/meshmodels/components/:name URL', () => {
+  it('builds /api/registry/components/:name URL', () => {
     expect(mesheryApiPath('meshmodels/components/Service')).toBe(
-      '/api/meshmodels/components/Service',
+      '/api/registry/components/Service',
     );
   });
 
-  it('builds /api/meshmodels/models/:name URL', () => {
-    expect(mesheryApiPath('meshmodels/models/istio')).toBe('/api/meshmodels/models/istio');
+  it('builds /api/registry/models/:name URL', () => {
+    expect(mesheryApiPath('meshmodels/models/istio')).toBe('/api/registry/models/istio');
   });
 
-  it('builds /api/meshmodels/export URL', () => {
-    expect(mesheryApiPath('meshmodels/export')).toBe('/api/meshmodels/export');
+  it('builds /api/registry/export URL', () => {
+    expect(mesheryApiPath('meshmodels/export')).toBe('/api/registry/export');
   });
 
-  it('builds /api/meshmodels/register URL', () => {
-    expect(mesheryApiPath('meshmodels/register')).toBe('/api/meshmodels/register');
+  it('builds /api/registry/register URL', () => {
+    expect(mesheryApiPath('meshmodels/register')).toBe('/api/registry/register');
   });
 
-  it('builds /api/meshmodels/:type/status URL', () => {
-    expect(mesheryApiPath('meshmodels/components/status')).toBe(
-      '/api/meshmodels/components/status',
-    );
+  it('builds /api/registry/:type/status URL', () => {
+    expect(mesheryApiPath('meshmodels/components/status')).toBe('/api/registry/components/status');
   });
 });
 
@@ -186,7 +184,7 @@ describe('meshModel – HTTP contracts', () => {
     });
 
     expect(global.fetch).toHaveBeenCalledWith(
-      '/api/meshmodels/components/status',
+      '/api/registry/components/status',
       expect.objectContaining({ method: 'POST' }),
     );
   });
@@ -204,7 +202,7 @@ describe('meshModel – HTTP contracts', () => {
     });
 
     expect(global.fetch).toHaveBeenCalledWith(
-      '/api/meshmodels/register',
+      '/api/registry/register',
       expect.objectContaining({ method: 'POST' }),
     );
   });

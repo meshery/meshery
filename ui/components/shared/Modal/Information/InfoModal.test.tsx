@@ -38,7 +38,7 @@ vi.mock('@/rtk-query/user', () => ({
   useGetUserByIdQuery: (id: string) => mockGetUserById(id),
 }));
 
-vi.mock('@/api/meshmodel', () => ({
+vi.mock('@/api/registry', () => ({
   getMeshModels: () => mockGetMeshModels(),
 }));
 
