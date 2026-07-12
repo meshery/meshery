@@ -21,7 +21,7 @@ import { CONNECTION_STATES } from '../utils/Enum';
 import { TooltipWrappedConnectionChip, ConnectionStateChip } from './connections/ConnectionChip';
 import { getKubernetesContexts } from './connections/ConnectionWizard.helpers';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import useTestIDsGenerator from '@/utils/hooks/useTestIDs';
 import CAN from '@/utils/can';
 import { useAddKubernetesConfigMutation } from '../rtk-query/connection';
@@ -215,7 +215,9 @@ const MesherySettingsEnvButtons = () => {
             borderRadius: 5,
             padding: '8px',
           }}
-          disabled={!CAN(keys.ADD_CLUSTER.action, keys.ADD_CLUSTER.subject)}
+          disabled={
+            !CAN(Keys.LifecycleManagementAddCluster.id, Keys.LifecycleManagementAddCluster.function)
+          }
           data-cy="btnResetDatabase"
         >
           <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
@@ -249,7 +251,12 @@ const ShowDiscoveredContexts = ({
       spacing={2}
       columns={1}
       data-testid={dataTestid}
-      sx={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}
+      sx={{
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+      }}
     >
       {registeredContexts.length > 0 && (
         <K8sConnectionItems
@@ -281,7 +288,7 @@ const ShowDiscoveredContexts = ({
 const K8sConnectionItems = ({ status, contexts, ping }) => {
   const classes = styles();
   return (
-    <Grid2 container spacing={2} size={'grow'}>
+    <Grid2 container spacing={1} size={'grow'} sx={{ flexDirection: 'column', width: '100%' }}>
       {contexts.map((context) => (
         <Grid2
           container
@@ -290,14 +297,19 @@ const K8sConnectionItems = ({ status, contexts, ping }) => {
           id={context.connectionId}
           key={context.connectionId}
           className={classes.chip}
-          sx={{ flexDirection: 'column', alignContent: 'center', alignItems: 'center' }}
+          sx={{
+            flexDirection: 'column',
+            alignContent: 'center',
+            alignItems: 'center',
+            width: '100%',
+          }}
         >
-          <Box sx={{ minWidth: '25%', maxWidth: '50%' }}>
+          <Box sx={{ minWidth: '25%', maxWidth: '100%' }}>
             <Tooltip title={`Server: ${context.server}`}>
               <div
                 style={{
                   display: 'flex',
-                  justifyContent: 'flex-wrap',
+                  justifyContent: 'center',
                   alignItems: 'center',
                 }}
                 whiteSpace="no-wrap"
@@ -313,7 +325,7 @@ const K8sConnectionItems = ({ status, contexts, ping }) => {
               </div>
             </Tooltip>
           </Box>
-          <Box sx={{ minWidth: '25%', maxWidth: '50%' }}>
+          <Box sx={{ minWidth: '25%', maxWidth: '100%' }}>
             <ConnectionStateChip status={status} />
           </Box>
         </Grid2>
