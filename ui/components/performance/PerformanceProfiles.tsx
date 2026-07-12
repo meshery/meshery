@@ -35,7 +35,7 @@ import { updateVisibleColumns } from '@/utils/responsive-column';
 import { useWindowDimensions } from '@/utils/dimension';
 import { ConditionalTooltip } from '@/utils/utils';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { isLocalProvider } from '@/utils/provider';
 import { ButtonTextWrapper, ProfileContainer, ViewSwitchBUtton } from './style';
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
@@ -287,7 +287,10 @@ function PerformanceProfile({ handleDelete }) {
                     }}
                     aria-label="edit"
                     disabled={
-                      !CAN(keys.EDIT_PERFORMANCE_TEST.action, keys.EDIT_PERFORMANCE_TEST.subject)
+                      !CAN(
+                        Keys.PerformanceManagementEditPerformanceTest.id,
+                        Keys.PerformanceManagementEditPerformanceTest.function,
+                      )
                     }
                   >
                     <EditIcon
@@ -309,7 +312,12 @@ function PerformanceProfile({ handleDelete }) {
                       setSelectedProfile({ ...testProfiles[tableMeta.rowIndex], runTest: true });
                     }}
                     aria-label="run"
-                    disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
+                    disabled={
+                      !CAN(
+                        Keys.PerformanceManagementRunTest.id,
+                        Keys.PerformanceManagementRunTest.function,
+                      )
+                    }
                   >
                     <PlayArrowIcon
                       style={{
@@ -449,8 +457,8 @@ function PerformanceProfile({ handleDelete }) {
                     onClick={() => setProfileForModal({})}
                     disabled={
                       !CAN(
-                        keys.ADD_PERFORMANCE_PROFILE.action,
-                        keys.ADD_PERFORMANCE_PROFILE.subject,
+                        Keys.PerformanceManagementAddPerformaceProfile.id,
+                        Keys.PerformanceManagementAddPerformaceProfile.function,
                       )
                     }
                   >
@@ -513,7 +521,10 @@ function PerformanceProfile({ handleDelete }) {
                 size="large"
                 onClick={() => setProfileForModal({})}
                 disabled={
-                  !CAN(keys.ADD_PERFORMANCE_PROFILE.action, keys.ADD_PERFORMANCE_PROFILE.subject)
+                  !CAN(
+                    Keys.PerformanceManagementAddPerformaceProfile.id,
+                    Keys.PerformanceManagementAddPerformaceProfile.function,
+                  )
                 }
               >
                 <Typography className="addIcon">Add Performance Profile</Typography>

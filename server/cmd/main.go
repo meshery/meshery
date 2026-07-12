@@ -27,7 +27,6 @@ import (
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
-	mesherymeshmodel "github.com/meshery/meshery/server/models/meshmodel"
 	"github.com/meshery/meshery/server/router"
 	"github.com/meshery/meshkit/broker/nats"
 	"github.com/meshery/meshkit/logger"
@@ -322,11 +321,7 @@ func main() {
 
 		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
 
-		PatternChannel:            models.NewBroadcaster("Patterns"),
-		FilterChannel:             models.NewBroadcaster("Filters"),
-		EventBroadcaster:          models.NewBroadcaster("Events"),
-		DashboardK8sResourcesChan: models.NewDashboardK8sResourcesHelper(),
-		MeshModelSummaryChannel:   mesherymeshmodel.NewSummaryHelper(),
+		EventBroadcaster: models.NewBroadcaster("Events"),
 
 		K8scontextChannel: models.NewContextHelper(),
 		OperatorTracker:   models.NewOperatorTracker(viper.GetBool("DISABLE_OPERATOR")),
@@ -350,7 +345,6 @@ func main() {
 			rego = *r
 		}
 		krh.SeedKeys(viper.GetString("KEYS_PATH"))
-		hc.MeshModelSummaryChannel.Publish()
 	}()
 
 	lProv.SeedContent(log)

@@ -8,7 +8,7 @@ import { CustomTextTooltip } from '@/components/meshery-mesh-interface/PatternSe
 import { useGetPatternsQuery } from '@/rtk-query/design';
 import { useGetFiltersQuery } from '@/rtk-query/filter';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
@@ -89,7 +89,12 @@ export default function MesheryConfigurationChart() {
       href="/configuration/designs"
       style={{
         textDecoration: 'none',
-        pointerEvents: !CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject) ? 'none' : 'auto',
+        pointerEvents: !CAN(
+          Keys.CatalogManagementViewDesigns.id,
+          Keys.CatalogManagementViewDesigns.function,
+        )
+          ? 'none'
+          : 'auto',
       }}
     >
       <DashboardSection>

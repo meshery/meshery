@@ -7,7 +7,7 @@ import changeAdapterState from '@/graphql/mutations/AdapterStatusMutation';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import BadgeAvatars from './CustomAvatar';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import CAN from '@/utils/can';
 import { iconMedium } from 'css/icons.styles';
 import {
@@ -428,8 +428,8 @@ const MeshAdapterConfigComponent = () => {
                 onClick={handleAdapterUndeploy}
                 disabled={
                   !CAN(
-                    keys.UNDEPLOY_CLOUD_NATIVE_INFRASTRUCTURE.action,
-                    keys.UNDEPLOY_CLOUD_NATIVE_INFRASTRUCTURE.subject,
+                    Keys.InfrastructureManagementUndeployCloudNativeInfrastructure.id,
+                    Keys.InfrastructureManagementUndeployCloudNativeInfrastructure.function,
                   )
                 }
               >
@@ -443,7 +443,12 @@ const MeshAdapterConfigComponent = () => {
                 size="large"
                 onClick={handleSubmit}
                 data-cy="btnSubmitMeshAdapter"
-                disabled={!CAN(keys.CONNECT_ADAPTER.action, keys.CONNECT_ADAPTER.subject)}
+                disabled={
+                  !CAN(
+                    Keys.MesherySystemConnectAdapter.id,
+                    Keys.MesherySystemConnectAdapter.function,
+                  )
+                }
               >
                 Connect
               </AdapterButton>
@@ -491,8 +496,8 @@ const MeshAdapterConfigComponent = () => {
                   onClick={handleAdapterDeploy}
                   disabled={
                     !CAN(
-                      keys.DEPLOY_CLOUD_NATIVE_INFRASTRUCTURE.action,
-                      keys.DEPLOY_CLOUD_NATIVE_INFRASTRUCTURE.subject,
+                      Keys.InfrastructureManagementDeployCloudNativeInfrastructure.id,
+                      Keys.InfrastructureManagementDeployCloudNativeInfrastructure.function,
                     )
                   }
                 >

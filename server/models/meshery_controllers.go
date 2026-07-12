@@ -3,6 +3,8 @@ package models
 import (
 	"context"
 	"fmt"
+	"net"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -58,6 +60,11 @@ type MesheryControllersHelper struct {
 	// meshsync data handler for a particular context
 	ctxMeshsyncDataHandler *MeshsyncDataHandler
 
+	// brokerPortForward is the self-healing port-forward to the NATS pod used when
+	// Meshery runs out-of-cluster and the broker is only reachable on a ClusterIP.
+	// nil when running in-cluster or when managed forwarding is disabled.
+	brokerPortForward *mesherykube.PortForwarder
+
 	log          logger.Handler
 	oprDepConfig controllers.OperatorDeploymentConfig
 	dbHandler    *database.Handler
@@ -75,6 +82,31 @@ type MesheryControllersHelper struct {
 	eventBroadcaster *Broadcast
 	provider         Provider
 	systemID         *core.Uuid
+
+	// lastOperatorError records the most recent failure to set up the operator for
+	// this context — an unreadable kubeconfig, a failed Kubernetes client, or a
+	// failed Deploy — so the connection-diagnostics API can surface *why* the
+	// operator (and therefore MeshSync/broker) isn't running, not just that it
+	// isn't. nil once setup succeeds. Guarded by opErrMu because it is written
+	// from the connect goroutine and read from the diagnostics HTTP handler.
+	opErrMu           sync.RWMutex
+	lastOperatorError error
+}
+
+// setOperatorError records (or clears, when err is nil) the latest operator
+// setup failure for this context. See lastOperatorError.
+func (mch *MesheryControllersHelper) setOperatorError(err error) {
+	mch.opErrMu.Lock()
+	mch.lastOperatorError = err
+	mch.opErrMu.Unlock()
+}
+
+// GetOperatorError returns the most recent operator setup failure for this
+// context, or nil if operator setup last succeeded.
+func (mch *MesheryControllersHelper) GetOperatorError() error {
+	mch.opErrMu.RLock()
+	defer mch.opErrMu.RUnlock()
+	return mch.lastOperatorError
 }
 
 func (mch *MesheryControllersHelper) GetControllerHandlersForEachContext() map[MesheryController]controllers.IMesheryController {
@@ -117,6 +149,20 @@ func NewMesheryControllersHelper(
 func (mch *MesheryControllersHelper) SetMeshsyncDeploymentMode(value connections.MeshsyncDeploymentMode) *MesheryControllersHelper {
 	mch.meshsyncDeploymentMode = value
 	return mch
+}
+
+func (mch *MesheryControllersHelper) GetMeshsyncDeploymentMode() connections.MeshsyncDeploymentMode {
+	return mch.meshsyncDeploymentMode
+}
+
+// GetBrokerPortForwardAddr returns the local address of the managed broker
+// port-forward when one is active (out-of-cluster Meshery), else "". Used to
+// surface how Meshery reaches the broker.
+func (mch *MesheryControllersHelper) GetBrokerPortForwardAddr() string {
+	if mch.brokerPortForward == nil {
+		return ""
+	}
+	return mch.brokerPortForward.LocalAddr()
 }
 
 // SetControllersConfig stashes the resolved controllers configuration for the
@@ -227,26 +273,64 @@ func (mch *MesheryControllersHelper) AddMeshsyncDataHandlers(ctx context.Context
 
 	// }(mch)
 
-	// Emit success event for successful MeshSync data handler attachment
-	var description string
-	if mch.meshsyncDeploymentMode != "" {
-		description = fmt.Sprintf("MeshSync connected in %s mode", string(mch.meshsyncDeploymentMode))
-	} else {
-		description = "MeshSync connected"
+	// Emit the success event only when the data path is actually up. With the
+	// self-healing broker connection, the handler may be attached but still
+	// connecting in the background; in that case meshsyncDataHandlersNatsBroker has
+	// already surfaced the "unreachable, retrying" warning + remediation, and the
+	// status/diagnostics flip to Connected on their own once it connects.
+	if mch.ctxMeshsyncDataHandler != nil && mch.ctxMeshsyncDataHandler.IsConnected() {
+		description := "MeshSync connected"
+		if mch.meshsyncDeploymentMode != "" {
+			description = fmt.Sprintf("MeshSync connected in %s mode", string(mch.meshsyncDeploymentMode))
+		}
+		mch.emitEvent(
+			description,
+			events.Informational,
+			map[string]any{
+				"k8sContextID":           k8scontext.ID,
+				"k8sContextName":         k8scontext.Name,
+				"connectionID":           k8scontext.ConnectionID,
+				"meshsyncDeploymentMode": string(mch.meshsyncDeploymentMode),
+			},
+			userID,
+		)
 	}
-	mch.emitEvent(
-		description,
-		events.Informational,
-		map[string]any{
-			"k8sContextID":           k8scontext.ID,
-			"k8sContextName":         k8scontext.Name,
-			"connectionID":           k8scontext.ConnectionID,
-			"meshsyncDeploymentMode": string(mch.meshsyncDeploymentMode),
-		},
-		userID,
-	)
 
 	return mch
+}
+
+// BrokerUnreachableLongDescription explains why Meshery cannot reach the broker.
+// It is shared by the "broker unreachable" event and the controller-diagnostics
+// API so both surface identical wording.
+const BrokerUnreachableLongDescription = "Meshery could not obtain a reachable endpoint for the Meshery Broker (NATS) in this cluster, so it cannot receive MeshSync data. This typically happens when the broker is only exposed on a cluster-internal (ClusterIP) address while Meshery runs outside the cluster."
+
+// BrokerUnreachableRemediation is surfaced to the user (as an event's
+// SuggestedRemediation and via the controller-diagnostics API) when Meshery
+// cannot obtain a reachable Meshery Broker (NATS) endpoint. The most common
+// cause is Meshery running outside the cluster while the broker is only exposed
+// on a cluster-internal (ClusterIP) address — newer operators deploy NATS via
+// the upstream Helm chart as ClusterIP-only, so the Broker publishes no external
+// endpoint. Each entry renders as its own step in the UI.
+var BrokerUnreachableRemediation = []string{
+	"Port-forward the broker so Meshery can reach it, e.g.: kubectl port-forward -n meshery svc/meshery-nats 4222:4222",
+	"Or expose the broker via a NodePort / LoadBalancer Service so it has an external endpoint.",
+	"Or run Meshery inside the same cluster, so it can reach the broker's internal (ClusterIP) address.",
+}
+
+// BrokerTokenUnavailableLongDescription explains why Meshery has deferred the
+// broker connection: the operator provisions NATS with token auth (secret
+// meshery-nats-auth) and Meshery cannot authenticate until that token exists.
+// This is normally a brief startup race that resolves on its own once the
+// operator finishes provisioning the broker.
+const BrokerTokenUnavailableLongDescription = "Meshery could not read the Meshery Broker (NATS) authentication token yet, so it deferred connecting to avoid an authorization failure. The Meshery Operator provisions the broker's auth token (secret meshery-nats-auth) as part of bringing NATS up; this is usually a brief startup race that clears on its own once provisioning completes, and Meshery retries automatically on the next connect cycle."
+
+// BrokerTokenUnavailableRemediation is surfaced when the broker's auth token is
+// not yet available. It self-heals in the common case; the steps below help only
+// if the token never appears (a stuck or misconfigured operator).
+var BrokerTokenUnavailableRemediation = []string{
+	"No action is usually needed — Meshery retries automatically once the operator provisions the broker.",
+	"If this persists, check the Meshery Operator is healthy: kubectl get pods -n meshery",
+	"Confirm the broker auth secret exists: kubectl get secret meshery-nats-auth -n meshery",
 }
 
 func (mch *MesheryControllersHelper) meshsyncDataHandlersNatsBroker(
@@ -256,51 +340,217 @@ func (mch *MesheryControllersHelper) meshsyncDataHandlersNatsBroker(
 	ctxID := k8scontext.ID
 	controllerHandlers := mch.ctxControllerHandlers
 
-	// brokerStatus := controllerHandlers[MesheryBroker].GetStatus()
+	// The broker controller handler is only populated by AddCtxControllerHandlers,
+	// which bails early (leaving ctxControllerHandlers empty) when it can't read
+	// the kubeconfig or build a Kubernetes client for this context. Guard against a
+	// nil handler here so that failure surfaces as an actionable diagnostic instead
+	// of a nil-pointer panic when we go to read the broker's endpoint below.
+	brokerController := controllerHandlers[MesheryBroker]
+	if brokerController == nil {
+		opErr := mch.GetOperatorError()
+		mch.log.Warnf("Meshery Broker controller unavailable for Kubernetes context (%v); operator setup likely failed", ctxID)
+		mch.emitWarningEvent("Meshery Broker controller unavailable", opErr, map[string]any{
+			"k8sContextID":   ctxID,
+			"k8sContextName": k8scontext.Name,
+			"connectionID":   k8scontext.ConnectionID,
+		}, userID)
+		return nil
+	}
+
+	// Out-of-cluster Meshery can't reach a ClusterIP-only broker directly. Start a
+	// self-healing managed port-forward to the NATS pod first — it selects the pod
+	// by label, so it does not depend on the broker having published an endpoint
+	// yet and can come up (and keep retrying) even when GetPublicEndpoint is still
+	// empty right after deploy. In-cluster Meshery reaches the ClusterIP directly,
+	// so this is a no-op there.
+	forwardAddr := mch.ensureBrokerPortForward(brokerController)
+
+	// brokerStatus := brokerController.GetStatus()
 	// do something if broker is being deployed , maybe try again after sometime
-	brokerEndpoint, err := controllerHandlers[MesheryBroker].GetPublicEndpoint()
-	if brokerEndpoint == "" {
+	brokerEndpoint, err := brokerController.GetPublicEndpoint()
+	if brokerEndpoint == "" && forwardAddr == "" {
+		// Nothing to connect through: no published endpoint and no managed
+		// port-forward to fall back on. Only now do we give up.
 		if err != nil {
 			mch.log.Warn(err)
-			mch.emitWarningEvent("Failed to get Meshery Broker endpoint", err, map[string]any{
-				"k8sContextID":   ctxID,
-				"k8sContextName": k8scontext.Name,
-				"connectionID":   k8scontext.ConnectionID,
-			}, userID)
 		}
 		mch.log.Info(
 			fmt.Sprintf("Meshery Broker unreachable for Kubernetes context (%v)", ctxID),
 		)
-		mch.emitWarningEvent("Meshery Broker unreachable", nil, map[string]any{
-			"k8sContextID":   ctxID,
-			"k8sContextName": k8scontext.Name,
-			"connectionID":   k8scontext.ConnectionID,
+		// Surface a single, actionable event. The err (which carries the broker's
+		// published internal/external endpoints) is attached via emitWarningEvent,
+		// and the LongDescription/SuggestedRemediation keys are rendered by the
+		// notification center so the user knows what to do next.
+		mch.emitWarningEvent("Meshery Broker unreachable", err, map[string]any{
+			"k8sContextID":         ctxID,
+			"k8sContextName":       k8scontext.Name,
+			"connectionID":         k8scontext.ConnectionID,
+			"LongDescription":      BrokerUnreachableLongDescription,
+			"SuggestedRemediation": BrokerUnreachableRemediation,
 		}, userID)
 		return nil
+	}
+	// The operator (>= 1.0.2) provisions NATS with token auth: without the token
+	// the connection is rejected with an authorization violation even when the
+	// endpoint is reachable, and the NATS client treats that rejection as terminal
+	// (RetryOnFailedConnect only retries unreachability, never auth), so a handler
+	// built with the wrong/empty token is permanently poisoned. The token lives in
+	// the meshery-nats-auth secret, which the operator may create moments *after*
+	// the broker pod becomes selectable by label — so proceeding here as soon as we
+	// have a port-forward races that secret and can capture an empty token.
+	//
+	// Read the token and, if it isn't available yet, treat the broker as not-ready
+	// and bail: leaving ctxMeshsyncDataHandler nil means the next connect cycle
+	// retries, by which time the secret exists and we connect cleanly. We no longer
+	// support tokenless brokers, so an empty token is always "not ready yet", never
+	// a legitimately unauthenticated broker.
+	var brokerToken string
+	tokenProvider, ok := brokerController.(interface{ GetToken() (string, error) })
+	if ok {
+		token, terr := tokenProvider.GetToken()
+		if terr != nil {
+			mch.log.Warn(terr)
+		}
+		brokerToken = token
+	}
+	if brokerToken == "" {
+		mch.log.Info(
+			fmt.Sprintf("Meshery Broker auth token not available yet for Kubernetes context (%v); the operator is still provisioning it, retrying on the next connect cycle", ctxID),
+		)
+		mch.emitWarningEvent("Meshery Broker not ready", nil, map[string]any{
+			"k8sContextID":         ctxID,
+			"k8sContextName":       k8scontext.Name,
+			"connectionID":         k8scontext.ConnectionID,
+			"LongDescription":      BrokerTokenUnavailableLongDescription,
+			"SuggestedRemediation": BrokerTokenUnavailableRemediation,
+		}, userID)
+		return nil
+	}
+
+	// Self-healing connection: hand NATS the (managed forward, if any) plus the
+	// resolved endpoint and localhost / host.docker.internal on the same port,
+	// retry on failed connect, and reconnect forever. NATS connects as soon as any
+	// candidate becomes reachable (e.g. once the forward is up) and reconnects if
+	// the broker or the tunnel drops — no restart or manual reconnect needed. When
+	// no endpoint is published yet, the managed forward alone carries the
+	// connection until the broker publishes one.
+	var urls []string
+	if forwardAddr != "" {
+		urls = append(urls, forwardAddr)
+	}
+	if brokerEndpoint != "" {
+		urls = append(urls, brokerConnectURLs(brokerEndpoint)...)
 	}
 	brokerHandler, err := nats.New(nats.Options{
-		// URLS: []string{"localhost:4222"},
-		URLS:           []string{brokerEndpoint},
-		ConnectionName: MesheryServerBrokerConnection,
-		Username:       "",
-		Password:       "",
-		ReconnectWait:  2 * time.Second,
-		MaxReconnect:   60,
+		URLS:                 urls,
+		ConnectionName:       MesheryServerBrokerConnection,
+		Token:                brokerToken,
+		ReconnectWait:        2 * time.Second,
+		MaxReconnect:         -1, // reconnect indefinitely
+		RetryOnFailedConnect: true,
 	})
-
 	if err != nil {
+		// With RetryOnFailedConnect, nats.New only errors on misconfiguration, not
+		// unreachability, so this is rare.
 		mch.log.Warn(err)
 		mch.log.Info(fmt.Sprintf("MeshSync not configured for Kubernetes context (%v) due to '%v'", ctxID, err.Error()))
-		mch.emitWarningEvent("Failed to connect to Meshery Broker", err, map[string]any{
-			"k8sContextID":   ctxID,
-			"k8sContextName": k8scontext.Name,
-			"connectionID":   k8scontext.ConnectionID,
-			"brokerEndpoint": brokerEndpoint,
+		mch.emitWarningEvent("Failed to configure Meshery Broker connection", err, map[string]any{
+			"k8sContextID":         ctxID,
+			"k8sContextName":       k8scontext.Name,
+			"connectionID":         k8scontext.ConnectionID,
+			"brokerEndpoint":       brokerEndpoint,
+			"LongDescription":      BrokerUnreachableLongDescription,
+			"SuggestedRemediation": BrokerUnreachableRemediation,
 		}, userID)
 		return nil
 	}
-	mch.log.Info(fmt.Sprintf("Connected to Meshery Broker (%v) for Kubernetes context (%v)", brokerEndpoint, ctxID))
+
+	if brokerHandler.IsConnected() {
+		mch.log.Info(fmt.Sprintf("Connected to Meshery Broker (%v) for Kubernetes context (%v)", brokerEndpoint, ctxID))
+	} else {
+		// Not reachable yet. The handler keeps retrying in the background and will
+		// connect (and MeshSync data will flow) as soon as the broker becomes
+		// reachable — e.g. once a port-forward is up — with no restart. Surface the
+		// remediation; the status/diagnostics flip to Connected on their own.
+		mch.log.Info(fmt.Sprintf("Meshery Broker not reachable yet for Kubernetes context (%v); retrying in the background", ctxID))
+		mch.emitWarningEvent("Meshery Broker unreachable", nil, map[string]any{
+			"k8sContextID":         ctxID,
+			"k8sContextName":       k8scontext.Name,
+			"connectionID":         k8scontext.ConnectionID,
+			"brokerEndpoint":       brokerEndpoint,
+			"LongDescription":      BrokerUnreachableLongDescription,
+			"SuggestedRemediation": BrokerUnreachableRemediation,
+		}, userID)
+	}
 	return brokerHandler
+}
+
+// brokerConnectURLs returns the NATS server pool for the resolved broker
+// endpoint. It always includes localhost and host.docker.internal on the same
+// port so a port-forward that comes up later (or a Docker Desktop host mapping)
+// is picked up by NATS's reconnect logic without re-resolving — the client
+// simply skips unreachable entries. This is what makes the connection
+// self-healing across a coming-and-going port-forward.
+func brokerConnectURLs(endpoint string) []string {
+	urls := []string{endpoint}
+	_, port, err := net.SplitHostPort(endpoint)
+	if err != nil || port == "" {
+		return urls
+	}
+	for _, extra := range []string{
+		net.JoinHostPort("127.0.0.1", port),
+		net.JoinHostPort("host.docker.internal", port),
+	} {
+		if extra != endpoint {
+			urls = append(urls, extra)
+		}
+	}
+	return urls
+}
+
+// managedBrokerPortForwardEnabled reports whether Meshery should manage a
+// port-forward to the broker. On by default; set
+// MESHERY_MANAGED_BROKER_PORTFORWARD=false to disable (e.g. for a deterministic
+// "unreachable" state in tests, or when a manual/other path is preferred).
+func managedBrokerPortForwardEnabled() bool {
+	return !strings.EqualFold(os.Getenv("MESHERY_MANAGED_BROKER_PORTFORWARD"), "false")
+}
+
+// runningInCluster reports whether Meshery itself runs inside a Kubernetes
+// cluster, where the broker's ClusterIP is directly reachable and no port-forward
+// is needed.
+func runningInCluster() bool {
+	return os.Getenv("KUBERNETES_SERVICE_HOST") != ""
+}
+
+// ensureBrokerPortForward starts (once) a self-healing managed port-forward to the
+// broker's NATS pod when Meshery runs out-of-cluster, and returns its stable local
+// address (or "" when not applicable). The forwarder is stored on the helper and
+// torn down in RemoveMeshSyncDataHandler.
+func (mch *MesheryControllersHelper) ensureBrokerPortForward(broker controllers.IMesheryController) string {
+	if !managedBrokerPortForwardEnabled() || runningInCluster() || broker == nil {
+		return ""
+	}
+	if mch.brokerPortForward != nil {
+		return mch.brokerPortForward.LocalAddr()
+	}
+	provider, ok := broker.(interface {
+		GetPortForwarder(logger.Handler) (*mesherykube.PortForwarder, error)
+	})
+	if !ok {
+		return ""
+	}
+	pf, err := provider.GetPortForwarder(mch.log)
+	if err != nil || pf == nil {
+		if err != nil {
+			mch.log.Warn(err)
+		}
+		return ""
+	}
+	pf.Start()
+	mch.brokerPortForward = pf
+	mch.log.Info(fmt.Sprintf("Started managed broker port-forward at %s", pf.LocalAddr()))
+	return pf.LocalAddr()
 }
 
 // meshsyncDataHandlersStartLibMeshsyncRun starts the libmeshsync run for the given context.
@@ -364,6 +614,11 @@ func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Conte
 		mch.ctxMeshsyncDataHandler.Stop()
 		mch.ctxMeshsyncDataHandler = nil
 	}
+	// Tear down the managed broker port-forward alongside the data handler.
+	if mch.brokerPortForward != nil {
+		mch.brokerPortForward.Stop()
+		mch.brokerPortForward = nil
+	}
 }
 
 func (mch *MesheryControllersHelper) ResyncMeshsync(ctx context.Context) error {
@@ -382,8 +637,14 @@ func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *M
 	// resetting this value as a specific controller handler instance does not have any significance opposed to
 	// a MeshsyncDataHandler instance where it signifies whether or not a listener is attached
 
+	// Fresh setup attempt: clear any error from a previous attempt. It is re-set
+	// below (and in DeployUndeployedOperators) if this attempt fails, so the
+	// diagnostics API always reflects the latest operator setup outcome.
+	mch.setOperatorError(nil)
+
 	cfg, err := ctx.GenerateKubeConfig()
 	if err != nil {
+		mch.setOperatorError(err)
 		mch.log.Error(err)
 		mch.emitErrorEvent("Failed to generate kubeconfig", err, map[string]any{
 			"k8sContextID":   ctx.ID,
@@ -396,6 +657,7 @@ func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *M
 	client, err := mesherykube.New(cfg)
 	// means that the config is invalid
 	if err != nil {
+		mch.setOperatorError(err)
 		mch.log.Error(err)
 		mch.emitErrorEvent("Failed to create Kubernetes client", err, map[string]any{
 			"k8sContextID":   ctx.ID,
@@ -497,6 +759,7 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 				err := operatorHandler.Deploy(false)
 
 				if err != nil {
+					mch.setOperatorError(err)
 					mch.log.Error(err)
 					mch.emitErrorEvent("Failed to deploy Meshery Operator", err, map[string]any{
 						"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
@@ -711,17 +974,26 @@ func (mch *MesheryControllersHelper) emitEvent(description string, severity even
 	if mch.eventBroadcaster != nil && mch.systemID != nil {
 		actedUpon := controllerEventActedUpon(userID, metadata)
 
+		// Own the event by the initiating user when there is one; otherwise fall
+		// back to the system. Controller events are frequently emitted from
+		// background FSM reconciles (server-restart reconnect, MeshSync mode
+		// reconcile) with no user in scope. Owning those by the system keeps them
+		// both persisted and retrievable, since GetEvents matches
+		// owner IN (userID, systemID) — previously a userless event set no owner
+		// and was dropped by the persistence guard, so it was never saved.
+		owner := userID
+		if owner == uuid.Nil {
+			owner = *mch.systemID
+		}
+
 		eventBuilder := events.NewEvent().
 			FromSystem(*mch.systemID).
+			FromOwner(owner).
 			WithCategory("connection").
 			WithAction("update").
 			WithSeverity(severity).
 			WithDescription(description).
 			WithMetadata(metadata)
-
-		if userID != uuid.Nil {
-			eventBuilder = eventBuilder.FromOwner(userID)
-		}
 
 		if actedUpon != uuid.Nil {
 			eventBuilder = eventBuilder.ActedUpon(actedUpon)
@@ -730,15 +1002,15 @@ func (mch *MesheryControllersHelper) emitEvent(description string, severity even
 		event := eventBuilder.Build()
 
 		if mch.provider != nil {
-			if shouldPersistControllerEvent(userID, actedUpon) {
+			if shouldPersistControllerEvent(owner, actedUpon) {
 				if err := mch.provider.PersistSystemEvent(*event); err != nil {
 					mch.log.Error(fmt.Errorf("failed to persist event: %w", err))
 				}
 			} else {
-				mch.log.Debug("skipping remote persistence for controller event without valid user or resource association")
+				mch.log.Debug("skipping persistence for controller event without a resource association")
 			}
 		}
-		go mch.eventBroadcaster.Publish(userID, event)
+		go mch.eventBroadcaster.Publish(owner, event)
 	}
 }
 
@@ -767,8 +1039,13 @@ func controllerEventActedUpon(userID core.Uuid, metadata map[string]any) core.Uu
 	return uuid.Nil
 }
 
-func shouldPersistControllerEvent(userID, actedUpon core.Uuid) bool {
-	return userID != uuid.Nil && actedUpon != uuid.Nil
+// shouldPersistControllerEvent reports whether a controller event is worth
+// persisting: it must have an owner (the initiating user, or the system for
+// background reconciles) and be tied to a specific resource (the connection).
+// This keeps truly context-free events out of the DB while still persisting the
+// background/system-emitted controller events that the FSM raises.
+func shouldPersistControllerEvent(owner, actedUpon core.Uuid) bool {
+	return owner != uuid.Nil && actedUpon != uuid.Nil
 }
 
 // Common helper for both error and warning events with error information
