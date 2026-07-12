@@ -107,10 +107,7 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, resp, http.StatusOK)
 }
 
 func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -135,10 +132,7 @@ func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, resp, http.StatusOK)
 }
 
 func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
@@ -170,11 +164,7 @@ func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request,
 	description := fmt.Sprintf("Workspace %s created.", workspace.Name)
 
 	h.log.Info(description)
-	w.WriteHeader(http.StatusCreated)
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := w.Write(bf); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, bf, http.StatusCreated)
 }
 
 func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -186,10 +176,7 @@ func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request,
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, resp, http.StatusOK)
 }
 
 func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
@@ -228,14 +215,7 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 	description := fmt.Sprintf("Workspace %s updated.", resp.Name)
 	h.log.Info(description)
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	_, err = w.Write(respJSON)
-	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		// Headers already committed; log only. Writing another body would corrupt the stream.
-		return
-	}
+	writeJSONBytes(w, respJSON, http.StatusOK)
 }
 
 func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -248,10 +228,7 @@ func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, resp, http.StatusOK)
 }
 
 func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -264,10 +241,7 @@ func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, resp, http.StatusOK)
 }
 
 func (h *Handler) AddEnvironmentToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -279,10 +253,7 @@ func (h *Handler) AddEnvironmentToWorkspaceHandler(w http.ResponseWriter, req *h
 		writeMeshkitError(w, ErrGetResult(err), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, resp, http.StatusOK)
 }
 
 func (h *Handler) RemoveEnvironmentFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -294,10 +265,7 @@ func (h *Handler) RemoveEnvironmentFromWorkspaceHandler(w http.ResponseWriter, r
 		writeMeshkitError(w, ErrGetResult(err), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, resp, http.StatusOK)
 }
 
 func (h *Handler) AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -309,10 +277,7 @@ func (h *Handler) AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.R
 		writeMeshkitError(w, ErrGetResult(err), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, resp, http.StatusOK)
 }
 
 func (h *Handler) RemoveDesignFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -324,10 +289,7 @@ func (h *Handler) RemoveDesignFromWorkspaceHandler(w http.ResponseWriter, req *h
 		writeMeshkitError(w, ErrGetResult(err), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, resp, http.StatusOK)
 }
 
 func (h *Handler) GetViewsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -339,10 +301,7 @@ func (h *Handler) GetViewsOfWorkspaceHandler(w http.ResponseWriter, req *http.Re
 		writeMeshkitError(w, ErrGetResult(err), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, resp, http.StatusOK)
 }
 
 func (h *Handler) AddViewToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -354,10 +313,7 @@ func (h *Handler) AddViewToWorkspaceHandler(w http.ResponseWriter, req *http.Req
 		writeMeshkitError(w, ErrGetResult(err), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, resp, http.StatusOK)
 }
 
 func (h *Handler) RemoveViewFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -369,10 +325,7 @@ func (h *Handler) RemoveViewFromWorkspaceHandler(w http.ResponseWriter, req *htt
 		writeMeshkitError(w, ErrGetResult(err), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, resp, http.StatusOK)
 }
 
 func (h *Handler) GetTeamsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -384,10 +337,7 @@ func (h *Handler) GetTeamsOfWorkspaceHandler(w http.ResponseWriter, req *http.Re
 		writeMeshkitError(w, ErrGetResult(err), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, resp, http.StatusOK)
 }
 
 func (h *Handler) AddTeamToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -399,10 +349,7 @@ func (h *Handler) AddTeamToWorkspaceHandler(w http.ResponseWriter, req *http.Req
 		writeMeshkitError(w, ErrGetResult(err), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, resp, http.StatusOK)
 }
 
 func (h *Handler) RemoveTeamFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -414,8 +361,5 @@ func (h *Handler) RemoveTeamFromWorkspaceHandler(w http.ResponseWriter, req *htt
 		writeMeshkitError(w, ErrGetResult(err), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	if _, err := w.Write(resp); err != nil {
-		h.log.Error(err)
-	}
+	writeJSONBytes(w, resp, http.StatusOK)
 }

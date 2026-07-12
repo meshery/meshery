@@ -50,6 +50,10 @@ func writeJSONEmptyObject(w http.ResponseWriter, status int) {
 	httputil.WriteJSONEmptyObject(w, status)
 }
 
+func writeJSONBytes(w http.ResponseWriter, data []byte, status int) {
+	httputil.WriteJSONBytes(w, data, status)
+}
+
 const (
 	defaultPageSize = 25
 	queryParamTrue  = "true"
