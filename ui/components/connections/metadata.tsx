@@ -90,6 +90,10 @@ const readMeta = (metadata, ...keys) => {
 
 const countArray = (value) => (Array.isArray(value) ? value.length : 0);
 
+// Schemas wire camelCase (createdAt); some table/legacy rows still use snake_case.
+const connectionTimestamp = (connection, camelKey, snakeKey) =>
+  connection?.[camelKey] ?? connection?.[snakeKey];
+
 const UrlLink = ({ url }) => (url ? <Link title={url} href={url} /> : 'N/A');
 
 const DetailListItem = ({ primary, secondary }) => (
@@ -231,11 +235,15 @@ const TelemetryMetadataFormatter = ({
           <DetailListItem primary="Name" secondary={displayName} />
           <DetailListItem
             primary="Created At"
-            secondary={<FormattedDate date={connection.createdAt} />}
+            secondary={
+              <FormattedDate date={connectionTimestamp(connection, 'createdAt', 'created_at')} />
+            }
           />
           <DetailListItem
             primary="Updated At"
-            secondary={<FormattedDate date={connection.updatedAt} />}
+            secondary={
+              <FormattedDate date={connectionTimestamp(connection, 'updatedAt', 'updated_at')} />
+            }
           />
         </>
       }
@@ -460,13 +468,21 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                 <ListItem>
                   <StyledListItemText
                     primary="Created At"
-                    secondary={<FormattedDate date={connection.createdAt} />}
+                    secondary={
+                      <FormattedDate
+                        date={connectionTimestamp(connection, 'createdAt', 'created_at')}
+                      />
+                    }
                   />
                 </ListItem>
                 <ListItem>
                   <StyledListItemText
                     primary="Updated At"
-                    secondary={<FormattedDate date={connection.updatedAt} />}
+                    secondary={
+                      <FormattedDate
+                        date={connectionTimestamp(connection, 'updatedAt', 'updated_at')}
+                      />
+                    }
                   />
                 </ListItem>
               </List>
@@ -480,7 +496,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                       wordWrap: 'break-word',
                     }}
                     primary="Server"
-                    secondary={<UrlLink url={metadata.server} />}
+                    secondary={<UrlLink url={metadata?.server} />}
                   />
                 </ListItem>
               </List>
@@ -698,11 +714,15 @@ const GithubMetadataFormatter = ({ connection, metadata }) => {
           />
           <DetailListItem
             primary="Created At"
-            secondary={<FormattedDate date={connection.createdAt} />}
+            secondary={
+              <FormattedDate date={connectionTimestamp(connection, 'createdAt', 'created_at')} />
+            }
           />
           <DetailListItem
             primary="Updated At"
-            secondary={<FormattedDate date={connection.updatedAt} />}
+            secondary={
+              <FormattedDate date={connectionTimestamp(connection, 'updatedAt', 'updated_at')} />
+            }
           />
         </>
       }
@@ -767,11 +787,15 @@ const MesheryMetadataFormatter = ({ connection, metadata }) => {
           />
           <DetailListItem
             primary="Created At"
-            secondary={<FormattedDate date={connection.createdAt} />}
+            secondary={
+              <FormattedDate date={connectionTimestamp(connection, 'createdAt', 'created_at')} />
+            }
           />
           <DetailListItem
             primary="Updated At"
-            secondary={<FormattedDate date={connection.updatedAt} />}
+            secondary={
+              <FormattedDate date={connectionTimestamp(connection, 'updatedAt', 'updated_at')} />
+            }
           />
         </>
       }

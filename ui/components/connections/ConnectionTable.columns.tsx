@@ -115,10 +115,33 @@ export const useConnectionColumns = ({
               getColumnValue(tableMeta.rowData, 'metadata.server_location', nextColumns);
             const name = getColumnValue(tableMeta.rowData, 'metadata.name', nextColumns);
             const kind = getColumnValue(tableMeta.rowData, 'kind', nextColumns);
+            const connectionId = getColumnValue(tableMeta.rowData, 'id', nextColumns);
             const iconSrc = normalizeStaticImagePath(
               getColumnValue(tableMeta.rowData, 'kindLogo', nextColumns) ||
                 getFallbackImageBasedOnKind(kind),
             );
+
+            // Only attach handlePing for kinds that support a chip ping.
+            // An always-defined handler makes the chip swallow row clicks
+            // (stopPropagation) even when it cannot ping.
+            let handlePing;
+            if (kind === CONNECTION_KINDS.KUBERNETES) {
+              handlePing = () =>
+                ping(
+                  getColumnValue(tableMeta.rowData, 'metadata.name', nextColumns),
+                  getColumnValue(tableMeta.rowData, 'metadata.server', nextColumns),
+                  connectionId,
+                );
+            } else if (kind === CONNECTION_KINDS.GRAFANA) {
+              handlePing = () =>
+                pingGrafana(connectionId, getColumnValue(tableMeta.rowData, 'name', nextColumns));
+            } else if (kind === CONNECTION_KINDS.PROMETHEUS) {
+              handlePing = () =>
+                pingPrometheus(
+                  connectionId,
+                  getColumnValue(tableMeta.rowData, 'name', nextColumns),
+                );
+            }
 
             return (
               <>
@@ -126,39 +149,8 @@ export const useConnectionColumns = ({
                   tooltip={server ? `Server: ${server}` : ''}
                   title={kind === CONNECTION_KINDS.KUBERNETES ? name : value || name || kind}
                   status={getColumnValue(tableMeta.rowData, 'status', nextColumns)}
-                  onDelete={() =>
-                    handleDeleteConnection(getColumnValue(tableMeta.rowData, 'id', nextColumns))
-                  }
-                  // Only attach handlePing for kinds that support a chip ping.
-                  // An always-defined handler makes the chip swallow row clicks
-                  // (stopPropagation) even when it cannot ping.
-                  handlePing={(() => {
-                    const rowKind = getColumnValue(tableMeta.rowData, 'kind', nextColumns);
-                    const connectionId = getColumnValue(tableMeta.rowData, 'id', nextColumns);
-                    if (rowKind === CONNECTION_KINDS.KUBERNETES) {
-                      return () =>
-                        ping(
-                          getColumnValue(tableMeta.rowData, 'metadata.name', nextColumns),
-                          getColumnValue(tableMeta.rowData, 'metadata.server', nextColumns),
-                          connectionId,
-                        );
-                    }
-                    if (rowKind === CONNECTION_KINDS.GRAFANA) {
-                      return () =>
-                        pingGrafana(
-                          connectionId,
-                          getColumnValue(tableMeta.rowData, 'name', nextColumns),
-                        );
-                    }
-                    if (rowKind === CONNECTION_KINDS.PROMETHEUS) {
-                      return () =>
-                        pingPrometheus(
-                          connectionId,
-                          getColumnValue(tableMeta.rowData, 'name', nextColumns),
-                        );
-                    }
-                    return undefined;
-                  })()}
+                  onDelete={() => handleDeleteConnection(connectionId)}
+                  handlePing={handlePing}
                   iconSrc={iconSrc}
                   width="12rem"
                 />
