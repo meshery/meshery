@@ -256,8 +256,9 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 
 	testName := q.Get("name")
 	if testName == "" {
-		h.log.Error(ErrBlankName(err))
-		writeMeshkitError(w, ErrBlankName(err), http.StatusForbidden)
+		nameErr := fmt.Errorf("name query parameter is empty")
+		h.log.Error(ErrBlankName(nameErr))
+		writeMeshkitError(w, ErrBlankName(nameErr), http.StatusForbidden)
 		return
 	}
 	meshName := q.Get("mesh")
