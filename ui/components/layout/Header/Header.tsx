@@ -38,7 +38,7 @@ import {
   FilterAllIcon,
 } from '@sistent/sistent';
 import { CanShow } from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import OrganizationAndWorkSpaceSwitcher from '../../workspaces/SpacesSwitcher/SpaceSwitcher';
 import HeaderMenu from './HeaderMenu';
 import ConnectionModal from '../../connections/ConnectionFormModal';
@@ -252,7 +252,12 @@ function K8sContextMenu({
   return (
     <>
       <div>
-        <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS}>
+        <CanShow
+          Key={{
+            action: Keys.IdentityAccessManagementViewAllKubernetesClusters.id,
+            subject: Keys.IdentityAccessManagementViewAllKubernetesClusters.function,
+          }}
+        >
           <IconButton
             ref={anchorRef}
             aria-label="contexts"
@@ -303,7 +308,13 @@ function K8sContextMenu({
           unmountOnExit
         >
           <div>
-            <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS} invert_action={['hide']}>
+            <CanShow
+              Key={{
+                action: Keys.IdentityAccessManagementViewAllKubernetesClusters.id,
+                subject: Keys.IdentityAccessManagementViewAllKubernetesClusters.function,
+              }}
+              invert_action={['hide']}
+            >
               <ClickAwayListener
                 onClickAway={(e) => {
                   if (anchorRef.current && anchorRef.current.contains(e.target as Node)) {

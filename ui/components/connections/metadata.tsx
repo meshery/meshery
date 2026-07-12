@@ -1,5 +1,15 @@
-import React, { useMemo } from 'react';
-import { Grid2, List, ListItem, ListItemText, Box, styled, useTheme } from '@sistent/sistent';
+import React, { useMemo, useEffect } from 'react';
+import {
+  Grid2,
+  List,
+  ListItem,
+  ListItemText,
+  Box,
+  Typography,
+  styled,
+  useTheme,
+} from '@sistent/sistent';
+import { useGetControllerDiagnosticsQuery } from '@/rtk-query/connection';
 
 import {
   FormatId,
@@ -55,6 +65,119 @@ const StyledListItemText = styled(ListItemText)(({ theme }) => ({
     color: theme.palette.text.tertiary, // Use the secondary color from the theme
   },
 }));
+
+const DIAGNOSTIC_SEVERITY_PALETTE = {
+  error: 'error',
+  warning: 'warning',
+  info: 'info',
+};
+
+// A single diagnostic: severity-colored card with an explanation, optional
+// endpoint, and an ordered list of remediation steps.
+const DiagnosticCard = ({ diagnostic }) => {
+  const theme = useTheme();
+  const paletteKey = DIAGNOSTIC_SEVERITY_PALETTE[diagnostic.severity] || 'info';
+  const accent = theme.palette[paletteKey]?.main || theme.palette.text.secondary;
+
+  return (
+    <Box
+      sx={{
+        borderLeft: `3px solid ${accent}`,
+        borderRadius: '4px',
+        padding: '0.5rem 0.75rem',
+        marginBottom: '0.5rem',
+        backgroundColor: theme.palette.background.default,
+      }}
+    >
+      <Typography variant="body1" sx={{ fontWeight: 600, color: accent }}>
+        {diagnostic.summary}
+      </Typography>
+      {diagnostic.description && (
+        <Typography
+          variant="body2"
+          sx={{ marginTop: '0.25rem', color: theme.palette.text.tertiary }}
+        >
+          {diagnostic.description}
+        </Typography>
+      )}
+      {diagnostic.endpoint && (
+        <Typography
+          variant="body2"
+          sx={{ marginTop: '0.25rem', color: theme.palette.text.tertiary }}
+        >
+          Endpoint:{' '}
+          <Box component="code" sx={{ fontFamily: 'monospace' }}>
+            {diagnostic.endpoint}
+          </Box>
+        </Typography>
+      )}
+      {Array.isArray(diagnostic.remediation) && diagnostic.remediation.length > 0 && (
+        <>
+          <Typography variant="body2" sx={{ marginTop: '0.5rem', fontWeight: 600 }}>
+            Suggested remediation
+          </Typography>
+          <Box component="ol" sx={{ margin: '0.25rem 0 0', paddingInlineStart: '1.25rem' }}>
+            {diagnostic.remediation.map((step, idx) => (
+              <li key={idx}>
+                <Typography variant="body2" sx={{ color: theme.palette.text.tertiary }}>
+                  {step}
+                </Typography>
+              </li>
+            ))}
+          </Box>
+        </>
+      )}
+    </Box>
+  );
+};
+
+// ControllerDiagnosticsSection fetches human-actionable diagnostics for a
+// connection's controllers on demand (separate from the live status stream) and
+// refetches whenever the connection's live controller status changes, so the
+// section stays in sync without bloating the status SSE payload.
+const ControllerDiagnosticsSection = ({ connectionId, statusKey }) => {
+  const theme = useTheme();
+  const { data, isFetching, refetch } = useGetControllerDiagnosticsQuery(connectionId);
+
+  useEffect(() => {
+    // statusKey changes when any of this connection's controller states change,
+    // so this refetches the diagnostics to stay in sync with the live status.
+    if (connectionId) {
+      refetch();
+    }
+  }, [statusKey, connectionId, refetch]);
+
+  if (!connectionId) {
+    return null;
+  }
+
+  const diagnostics = data?.diagnostics ?? [];
+
+  return (
+    <Grid2 size={{ xs: 12 }}>
+      <ContentContainer container spacing={1} size="grow">
+        <Grid2 size={{ xs: 12 }}>
+          <Typography variant="body1" sx={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>
+            Diagnostics
+          </Typography>
+          {isFetching && !data ? (
+            <Typography variant="body2" sx={{ color: theme.palette.text.tertiary }}>
+              Checking controller health…
+            </Typography>
+          ) : diagnostics.length === 0 ? (
+            <Typography variant="body2" sx={{ color: theme.palette.text.tertiary }}>
+              No issues detected for this connection&apos;s controllers.
+            </Typography>
+          ) : (
+            diagnostics.map((diagnostic) => (
+              <DiagnosticCard key={diagnostic.code} diagnostic={diagnostic} />
+            ))
+          )}
+        </Grid2>
+      </ContentContainer>
+    </Grid2>
+  );
+};
 
 const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, metadata }) => {
   const pingKubernetes = useKubernetesHook();
@@ -260,6 +383,10 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
           </ContentContainer>
         </ColumnWrapper>
       </Grid2>
+      <ControllerDiagnosticsSection
+        connectionId={connection.id}
+        statusKey={`${operatorState}|${meshSyncState}|${natsState}`}
+      />
     </Grid2>
   );
 };
