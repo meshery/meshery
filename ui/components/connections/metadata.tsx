@@ -14,7 +14,9 @@ import { useGetControllerDiagnosticsQuery } from '@/rtk-query/connection';
 import telemetryPrometheusApi, {
   useLazyPingPrometheusConnectionQuery,
 } from '@/rtk-query/telemetryPrometheus';
-import telemetryGrafanaApi, { useLazyPingGrafanaConnectionQuery } from '@/rtk-query/telemetryGrafana';
+import telemetryGrafanaApi, {
+  useLazyPingGrafanaConnectionQuery,
+} from '@/rtk-query/telemetryGrafana';
 
 import {
   FormatId,
@@ -31,11 +33,7 @@ import useKubernetesHook, {
   useNatsController,
 } from '@/utils/hooks/useKubernetesHook';
 import { TooltipWrappedConnectionChip } from './ConnectionChip';
-import {
-  CONNECTION_STATES,
-  CONTROLLER_STATES,
-  MESHSYNC_DEPLOYMENT_TYPE,
-} from '../../utils/Enum';
+import { CONNECTION_STATES, CONTROLLER_STATES, MESHSYNC_DEPLOYMENT_TYPE } from '../../utils/Enum';
 import { formatToTitleCase } from '../../utils/utils';
 
 import { ColumnWrapper, ContentContainer, OperationButton, FormatterWrapper } from './styles';
@@ -143,12 +141,12 @@ const ConnectionDetailPanel = ({ chip, leftItems, rightItems, sidePanel }) => {
 };
 
 /**
- * Prometheus / Grafana detail view.
+ * Prometheus / Grafana detail view (presentational).
  *
- * Ping is chip-only (same model as Kubernetes): expanding the row must NOT hit
- * the telemetry endpoint. We trigger via useLazy*Query, but *read* version /
- * error state from useQueryState so a ping from the table name-column chip
- * (which uses the same RTK cache entry) also refreshes this panel.
+ * Parents call the RTK hooks at their top level and pass `triggerPing` +
+ * `pingState` down - calling hooks via props would violate Rules of Hooks and
+ * trip react-hooks/rules-of-hooks. Version still comes from shared RTK cache
+ * (useQueryState in the parent) so a table name-column chip ping refreshes it.
  *
  * Panel/board counts come from the canonical metadata keys written by the
  * telemetry handlers; version appears only after any successful chip ping.
@@ -160,19 +158,12 @@ const TelemetryMetadataFormatter = ({
   iconSrc,
   countLabel,
   countValue,
-  useLazyPingQuery,
-  usePingQueryState,
+  triggerPing,
+  pingState,
   diagnosticCode,
 }) => {
   const connectionID = connection.id;
-  // Fire the request only on chip click (table chip or detail chip).
-  const [triggerPing] = useLazyPingQuery();
-  // Subscribe to the shared RTK cache without auto-fetching on mount - so a
-  // ping from the name-column chip also updates Version here.
-  const { data, isError, isFetching, isUninitialized, isSuccess } = usePingQueryState(
-    { connectionID },
-    { skip: !connectionID },
-  );
+  const { data, isError, isFetching, isUninitialized, isSuccess } = pingState;
 
   const handlePing = () => {
     if (connectionID) {
@@ -622,39 +613,56 @@ const usePrometheusPingQueryState = (arg, opts) =>
 const useGrafanaPingQueryState = (arg, opts) =>
   telemetryGrafanaApi.endpoints.pingGrafanaConnection.useQueryState(arg, opts);
 
-const PrometheusMetadataFormatter = ({ connection, metadata }) => (
-  <TelemetryMetadataFormatter
-    connection={connection}
-    metadata={metadata}
-    productName="Prometheus"
-    iconSrc={KIND_ICONS[PROMETHEUS]}
-    countLabel="Saved Panels"
-    countValue={countArray(readMeta(metadata, META.PROM_PANELS))}
-    useLazyPingQuery={useLazyPingPrometheusConnectionQuery}
-    usePingQueryState={usePrometheusPingQueryState}
-    diagnosticCode="prometheus-unreachable"
-  />
-);
+const PrometheusMetadataFormatter = ({ connection, metadata }) => {
+  const connectionID = connection.id;
+  const [triggerPing] = useLazyPingPrometheusConnectionQuery();
+  const pingState = usePrometheusPingQueryState({ connectionID }, { skip: !connectionID });
 
-const GrafanaMetadataFormatter = ({ connection, metadata }) => (
-  <TelemetryMetadataFormatter
-    connection={connection}
-    metadata={metadata}
-    productName="Grafana"
-    iconSrc={KIND_ICONS[GRAFANA]}
-    countLabel="Pinned Boards"
-    countValue={countArray(readMeta(metadata, META.GRAFANA_BOARDS))}
-    useLazyPingQuery={useLazyPingGrafanaConnectionQuery}
-    usePingQueryState={useGrafanaPingQueryState}
-    diagnosticCode="grafana-unreachable"
-  />
-);
+  return (
+    <TelemetryMetadataFormatter
+      connection={connection}
+      metadata={metadata}
+      productName="Prometheus"
+      iconSrc={KIND_ICONS[PROMETHEUS]}
+      countLabel="Saved Panels"
+      countValue={countArray(readMeta(metadata, META.PROM_PANELS))}
+      triggerPing={triggerPing}
+      pingState={pingState}
+      diagnosticCode="prometheus-unreachable"
+    />
+  );
+};
+
+const GrafanaMetadataFormatter = ({ connection, metadata }) => {
+  const connectionID = connection.id;
+  const [triggerPing] = useLazyPingGrafanaConnectionQuery();
+  const pingState = useGrafanaPingQueryState({ connectionID }, { skip: !connectionID });
+
+  return (
+    <TelemetryMetadataFormatter
+      connection={connection}
+      metadata={metadata}
+      productName="Grafana"
+      iconSrc={KIND_ICONS[GRAFANA]}
+      countLabel="Pinned Boards"
+      countValue={countArray(readMeta(metadata, META.GRAFANA_BOARDS))}
+      triggerPing={triggerPing}
+      pingState={pingState}
+      diagnosticCode="grafana-unreachable"
+    />
+  );
+};
 
 // GitHub App connections (Layer5 Cloud): metadata carries installationId +
 // snapshotPaths (design snapshot repo paths). Not owner/host/path design-file fields.
 const GithubMetadataFormatter = ({ connection, metadata }) => {
   const installationId = readMeta(metadata, META.INSTALLATION_ID, 'installation_id');
-  const snapshotPaths = readMeta(metadata, META.SNAPSHOT_PATHS, 'snapshot_paths', 'repositoryPaths');
+  const snapshotPaths = readMeta(
+    metadata,
+    META.SNAPSHOT_PATHS,
+    'snapshot_paths',
+    'repositoryPaths',
+  );
   const snapshotCount = countArray(snapshotPaths);
   const displayName = connection.name || 'GitHub App';
   const connectionType = [connection.type, connection.subType].filter(Boolean).join(' / ') || 'N/A';
@@ -686,9 +694,7 @@ const GithubMetadataFormatter = ({ connection, metadata }) => {
         <>
           <DetailListItem
             primary="Snapshot Paths"
-            secondary={
-              snapshotCount > 0 ? `${snapshotCount} configured` : 'None configured'
-            }
+            secondary={snapshotCount > 0 ? `${snapshotCount} configured` : 'None configured'}
           />
           <DetailListItem
             primary="Created At"
