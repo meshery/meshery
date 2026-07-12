@@ -158,3 +158,19 @@ export const reactJsonTheme = (theme: Theme) => {
     base0F: theme.palette.text.secondary,
   };
 };
+
+export const modifyRegistryData = (resourcesDetail: Array<any>, view: string, checked: boolean) => {
+  if (!resourcesDetail) return [];
+
+  if (view === MODELS) {
+    return removeDuplicateVersions(
+      checked ? resourcesDetail.filter((model) => model.duplicates > 0) : resourcesDetail,
+    );
+  } else if (view === RELATIONSHIPS) {
+    return groupRelationshipsByKind(resourcesDetail);
+  } else if (view === REGISTRANTS) {
+    return resourcesDetail || [];
+  } else {
+    return resourcesDetail;
+  }
+};

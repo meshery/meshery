@@ -828,6 +828,34 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	// Calculate total count of registrants with models (without pagination limit)
+	countFilter := &_models.HostFilter{
+		Limit:  0,
+		Offset: 0,
+	}
+	if search != "" {
+		countFilter.Greedy = true
+		countFilter.DisplayName = search
+	}
+	allHosts, _, err := h.registryManager.GetRegistrants(countFilter)
+	if err == nil {
+		var totalCount int64
+		for _, host := range allHosts {
+			if host.Summary.Models > 0 {
+				totalCount++
+			}
+		}
+		count = totalCount
+	}
+
+	var filteredHosts []_models.MeshModelHostsWithEntitySummary
+	for _, host := range hosts {
+		if host.Summary.Models > 0 {
+			filteredHosts = append(filteredHosts, host)
+		}
+	}
+	hosts = filteredHosts
+
 	var pgSize int64
 
 	if limit == 0 {
@@ -1566,6 +1594,91 @@ func (h *Handler) DeleteModel(rw http.ResponseWriter, r *http.Request, _ *models
 			writeJSONError(rw, fmt.Sprintf("model with id %s not found", modelID), http.StatusNotFound)
 			return
 		}
+		mesheryErr := models.ErrDBDelete(err, "")
+		h.log.Error(mesheryErr)
+		writeMeshkitError(rw, mesheryErr, http.StatusInternalServerError)
+		return
+	}
+
+	rw.WriteHeader(http.StatusNoContent)
+}
+
+// DeleteModelsByRegistrant deletes all models of a registrant kind.
+func (h *Handler) DeleteModelsByRegistrant(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	connectionIDStr := mux.Vars(r)["connectionID"]
+	if connectionIDStr == "" {
+		writeJSONError(rw, "connection ID is required", http.StatusBadRequest)
+		return
+	}
+
+	connectionID, err := uuid.FromString(connectionIDStr)
+	if err != nil || connectionID == uuid.Nil {
+		writeJSONError(rw, "invalid connection ID", http.StatusBadRequest)
+		return
+	}
+
+	var modelsList []_model.ModelDefinition
+	if err := h.dbHandler.Where("connection_id = ?", connectionID).Find(&modelsList).Error; err != nil {
+		writeJSONError(rw, fmt.Sprintf("failed to fetch models for connection %s: %s", connectionID, err), http.StatusInternalServerError)
+		return
+	}
+
+	if len(modelsList) == 0 {
+		writeJSONError(rw, fmt.Sprintf("no models found for connection %s", connectionID), http.StatusNotFound)
+		return
+	}
+
+	var modelIDs []uuid.UUID
+	for _, model := range modelsList {
+		modelIDs = append(modelIDs, model.ID)
+	}
+
+	err = h.dbHandler.Transaction(func(tx *gorm.DB) error {
+		// Delete registry entries for components of these models
+		if err := tx.Where("entity IN (?) AND type = ?",
+			tx.Model(&component.ComponentDefinition{}).Select("id").Where("model_id IN ?", modelIDs),
+			entity.ComponentDefinition,
+		).Delete(&registry.Registry{}).Error; err != nil {
+			return err
+		}
+
+		// Delete registry entries for relationships of these models
+		if err := tx.Where("entity IN (?) AND type = ?",
+			tx.Model(&relationship.RelationshipDefinition{}).Select("id").Where("model_id IN ?", modelIDs),
+			entity.RelationshipDefinition,
+		).Delete(&registry.Registry{}).Error; err != nil {
+			return err
+		}
+
+		// Delete registry entries for policies of these models
+		if err := tx.Where("entity IN (?) AND type = ?",
+			tx.Model(&_models.PolicyDefinition{}).Select("id").Where("modelID IN ?", modelIDs),
+			entity.PolicyDefinition,
+		).Delete(&registry.Registry{}).Error; err != nil {
+			return err
+		}
+
+		// Delete model registry entries
+		if err := tx.Where("entity IN (?) AND type = ?", modelIDs, entity.Model).Delete(&registry.Registry{}).Error; err != nil {
+			return err
+		}
+
+		// Delete components, relationships, policies
+		if err := tx.Where("model_id IN ?", modelIDs).Delete(&component.ComponentDefinition{}).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("model_id IN ?", modelIDs).Delete(&relationship.RelationshipDefinition{}).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("modelID IN ?", modelIDs).Delete(&_models.PolicyDefinition{}).Error; err != nil {
+			return err
+		}
+
+		// Delete models themselves
+		return tx.Where("id IN ?", modelIDs).Delete(&_model.ModelDefinition{}).Error
+	})
+
+	if err != nil {
 		mesheryErr := models.ErrDBDelete(err, "")
 		h.log.Error(mesheryErr)
 		writeMeshkitError(rw, mesheryErr, http.StatusInternalServerError)

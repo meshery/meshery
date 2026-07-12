@@ -10,7 +10,12 @@ import {
   Button,
   DownloadIcon,
   ExpandMoreIcon,
+  DeleteIcon,
 } from '@sistent/sistent';
+import _PromptComponent from '../PromptComponent';
+import { useDeleteModelsByRegistrantMutation } from '@/rtk-query/meshModel';
+import { useNotification } from '../../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../../lib/event-types';
 import { useTheme } from '@/theme';
 import { REGISTRY_ITEM_STATES } from '@/utils/Enum';
 import { normalizeStaticImagePath } from '@/utils/fallback';
@@ -34,6 +39,12 @@ import { iconSmall } from 'css/icons.styles';
 const ReactJson = dynamic(() => import('@microlink/react-json-view'), { ssr: false });
 
 const ExportAvailable = true;
+
+const RegistrantHeader = styled('div')(() => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+}));
 
 type KeyValueProps = { property: string; value: string | number | string[] | null | undefined };
 const KeyValue = ({ property, value }: KeyValueProps) => {
@@ -363,7 +374,13 @@ const RelationshipContents = ({ relationshipDef }: { relationshipDef: any }) => 
   );
 };
 
-const RegistrantContent = ({ registrant }: { registrant: any }) => {
+const RegistrantContent = ({
+  registrant,
+  onDelete,
+}: {
+  registrant: any;
+  onDelete: (id: string, name: string) => void;
+}) => {
   const PropertyFormattersLeft = {
     models: (value) => <KeyValue property="Models" value={value} />,
     components: (value) => <KeyValue property="Components" value={value} />,
@@ -391,9 +408,19 @@ const RegistrantContent = ({ registrant }: { registrant: any }) => {
   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <RegistrantHeader>
         <StyledTitle>{registrant?.hostname}</StyledTitle>
-      </div>
+        <Button
+          variant="contained"
+          size="small"
+          onClick={() => onDelete(registrant.id, registrant.name || registrant.hostname)}
+          style={{ backgroundColor: '#eb5757', color: 'white', textTransform: 'none' }}
+          data-testid="delete-all-models-button"
+        >
+          <DeleteIcon style={{ marginRight: '0.25rem', width: '18px', height: '18px' }} />
+          Delete All Models ({registrant?.summary?.models || 0})
+        </Button>
+      </RegistrantHeader>
       <RenderContents
         metaDataLeft={metaDataLeft}
         metaDataRight={metaDataRight}
@@ -506,10 +533,46 @@ const StatusChip = ({ entityData, entityType }: { entityData: any; entityType: s
 const MeshModelDetails = ({
   view,
   showDetailsData,
+  refetch,
 }: {
   view: string;
   showDetailsData: { type: string; data: any };
+  refetch?: () => void;
 }) => {
+  const [deleteModelsByRegistrant] = useDeleteModelsByRegistrantMutation();
+  const { notify } = useNotification();
+  const promptRef = React.useRef<any>(null);
+
+  const handleDeleteModels = async (connectionID: string, registrantName: string) => {
+    const modal = promptRef.current;
+    if (!modal) return;
+    const response = await modal.show({
+      title: 'Delete All Models',
+      subtitle: `Are you sure you want to delete all models registered by "${registrantName}"? This will delete all associated components and relationships from the database.`,
+      variant: 'danger',
+      primaryOption: 'DELETE',
+      secondaryOption: 'CANCEL',
+    });
+
+    if (response === 'DELETE') {
+      try {
+        await deleteModelsByRegistrant({ connectionID }).unwrap();
+        notify({
+          message: `Successfully deleted all models for registrant "${registrantName}"`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+        if (refetch) {
+          refetch();
+        }
+      } catch (err) {
+        console.error('Failed to delete models:', err);
+        notify({
+          message: `Failed to delete models for registrant "${registrantName}"`,
+          event_type: EVENT_TYPES.ERROR,
+        });
+      }
+    }
+  };
   const isEmptyDetails =
     Object.keys(showDetailsData.data).length === 0 || showDetailsData.type === 'none';
 
@@ -526,7 +589,9 @@ const MeshModelDetails = ({
       case COMPONENTS:
         return <ComponentContents componentDef={showDetailsData.data} />;
       case REGISTRANTS:
-        return <RegistrantContent registrant={showDetailsData.data} />;
+        return (
+          <RegistrantContent registrant={showDetailsData.data} onDelete={handleDeleteModels} />
+        );
       default:
         return null;
     }
@@ -535,6 +600,7 @@ const MeshModelDetails = ({
   return (
     <DetailsContainer isEmpty={isEmptyDetails}>
       {isEmptyDetails ? renderEmptyDetails() : getContent(showDetailsData.type)}
+      <_PromptComponent ref={promptRef} />
     </DetailsContainer>
   );
 };

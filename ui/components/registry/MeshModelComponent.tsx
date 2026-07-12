@@ -7,12 +7,10 @@ import {
   CONNECTIONS,
 } from '../../constants/navigator';
 import {
-  MeshModelToolbar,
   MainContainer,
   TreeWrapper,
   DetailsContainer,
   InnerContainer,
-  CardStyle,
   WorkloadsContainer,
 } from '@/assets/styles/general/tool.styles';
 import MesheryTreeView from './MesheryTreeView';
@@ -30,23 +28,16 @@ import {
   useGetRelationshipsQuery,
   useGetRegistrantsQuery,
 } from '@/rtk-query/meshModel';
-import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
+import { removeDuplicateVersions, modifyRegistryData } from './helper';
 import _ from 'lodash';
-import {
-  Button,
-  NoSsr,
-  AddCircleIcon as AddIcon,
-  ExternalLinkIcon as LinkIcon,
-  FileUploadIcon as UploadIcon,
-  useMediaQuery,
-} from '@sistent/sistent';
+import { NoSsr, useMediaQuery } from '@sistent/sistent';
 import { useTheme } from '@/theme';
-import { iconSmall } from 'css/icons.styles';
 import { useInfiniteScrollRef, useMeshModelComponentRouter } from './hooks';
 import ImportModelModal from './ImportModelModal';
 import CreateModelModal from './CreateModelModal';
 import CreateRelationshipModal from './CreateRelationshipModal';
 import MeshModelMobileDetails from './MeshModelMobileDetails';
+import { TabBar, TabCard } from './sub-components';
 
 type MeshModelComponentProps = {
   settingsRouter?: (_router: any) => { handleChangeSelectedTab?: (_tab: string) => void };
@@ -251,25 +242,22 @@ const MeshModelComponent_ = ({
           break;
       }
       if (response?.data && response.data[view.toLowerCase()]) {
-        // When search or "show duplicates" functionality is active:
-        // Avoid appending data to the previous dataset.
-        // preventing duplicate entries and ensuring the UI reflects the API's response accurately.
-        // For instance, during a search, display the data returned by the API instead of appending it to the previous results.
-        // Use functional setState so we don't need resourcesDetail in the
-        // useCallback dependency array (which caused a stale-closure re-fetch
-        // loop and the 2304ms Redux middleware warning).
         setResourcesDetail((prev) => {
           const incoming = response.data[view.toLowerCase()];
           const combined =
             searchText || view === RELATIONSHIPS ? [...incoming] : [...prev, ...incoming];
+          if (view === REGISTRANTS) {
+            const seen = new Set();
+            return [...combined]
+              .reverse()
+              .filter((x) => !x?.id || (!seen.has(x.id) && seen.add(x.id)))
+              .reverse();
+          }
           // Use _.uniqWith for safe deep equality deduplication, as
           // not all objects (e.g. static seed files) carry unique UUIDs.
           return _.uniqWith(combined, _.isEqual);
         });
 
-        // Deeplink may contain higher rowsPerPage val for first time fetch
-        // In such case set it to default as 14 after UI renders
-        // This ensures the correct pagesize for subsequent API calls triggered on scrolling tree.
         if (rowsPerPage !== 25) {
           setRowsPerPage(25);
         }
@@ -295,6 +283,11 @@ const MeshModelComponent_ = ({
     // to avoid stale-closure re-fetch loop and O(n²) _.isEqual dedup.
     checked,
   ]);
+
+  const refetch = useCallback(() => {
+    setResourcesDetail([]);
+    fetchData();
+  }, [fetchData]);
 
   const getRegistrants = async () => {
     let registrantResponse;
@@ -370,26 +363,11 @@ const MeshModelComponent_ = ({
       data: {},
     });
   };
-  const modifyData = () => {
-    if (!resourcesDetail) return [];
 
-    if (view === MODELS) {
-      return removeDuplicateVersions(
-        checked ? resourcesDetail.filter((model) => model.duplicates > 0) : resourcesDetail,
-      );
-    } else if (view === RELATIONSHIPS) {
-      return groupRelationshipsByKind(resourcesDetail);
-    } else if (view === REGISTRANTS) {
-      return resourcesDetail || [];
-    } else {
-      return resourcesDetail;
-    }
-  };
-
-  // Memoize so MesheryTreeView receives the same array reference when nothing
-  // has changed. This is what makes the O(1) referential guard in
-  // MesheryTreeView.tsx safe (prevState.data === data).
-  const treeData = useMemo(modifyData, [resourcesDetail, view, checked]);
+  const treeData = useMemo(
+    () => modifyRegistryData(resourcesDetail, view, checked),
+    [resourcesDetail, view, checked],
+  );
 
   useEffect(() => {
     if (searchText !== null && page[view] > 0) {
@@ -415,7 +393,6 @@ const MeshModelComponent_ = ({
     connectionsFilters,
   ]);
 
-  // Sync view state with externalView or selectedTab (for modal or route usage)
   useEffect(() => {
     const newView =
       externalView ?? (typeof selectedTab === 'string' ? selectedTab : selectedTab?.[0]);
@@ -561,7 +538,7 @@ const MeshModelComponent_ = ({
               setShowDetailsData={setShowDetailsData}
             />
           ) : (
-            <MeshModelDetails view={view} showDetailsData={showDetailsData} />
+            <MeshModelDetails view={view} showDetailsData={showDetailsData} refetch={refetch} />
           )}
         </TreeWrapper>
       </MainContainer>
@@ -569,86 +546,6 @@ const MeshModelComponent_ = ({
   );
 };
 
-const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal }) => {
-  return (
-    <MeshModelToolbar>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'flex-start',
-          alignItems: 'center',
-          gap: '0.75rem',
-          flexWrap: 'wrap',
-        }}
-      >
-        {view === MODELS && (
-          <>
-            <Button
-              aria-label="Create Model"
-              variant="contained"
-              color="primary"
-              onClick={openCreateModal}
-              style={{ display: 'flex' }}
-              disabled={false} //TODO: Need to make key for this component
-              startIcon={<AddIcon style={iconSmall} />}
-              data-testid="TabBar-Button-CreateModel"
-            >
-              Create Model
-            </Button>
-            <Button
-              aria-label="Import Model"
-              variant="contained"
-              color="primary"
-              onClick={openImportModal}
-              style={{ display: 'flex' }}
-              disabled={false} //TODO: Need to make key for this component
-              startIcon={<UploadIcon />}
-              data-testid="TabBar-Button-ImportModel"
-            >
-              Import Model
-            </Button>
-          </>
-        )}
-
-        {view === RELATIONSHIPS && (
-          <Button
-            aria-label="Create Relationship"
-            variant="contained"
-            color="primary"
-            onClick={openRelationshipModal}
-            style={{ display: 'flex' }}
-            disabled={false}
-            startIcon={<LinkIcon />}
-            data-testid="TabBar-Button-CreateRelationship"
-          >
-            Create Relationship
-          </Button>
-        )}
-      </div>
-      {/*
-      This builk operation is not yet supported
-      <DisableButton disabled variant="contained" startIcon={<DoNotDisturbOnIcon />}>
-        Ignore
-      </DisableButton> */}
-    </MeshModelToolbar>
-  );
-};
-
-const TabCard = ({ label, count, active, onClick }) => {
-  return (
-    <CardStyle isSelected={active} elevation={3} onClick={onClick}>
-      <span
-        style={{
-          fontSize: '1rem',
-          marginLeft: '4px',
-        }}
-      >
-        {`(${count?.toLocaleString() || 0})`}
-      </span>
-      {label}
-    </CardStyle>
-  );
-};
 const MeshModelComponent = (props) => {
   return (
     <NoSsr>

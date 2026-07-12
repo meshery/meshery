@@ -131,6 +131,13 @@ const meshModelApi = api
         },
         invalidatesTags: [TAGS.MESH_MODELS],
       }),
+      deleteModelsByRegistrant: builder.mutation({
+        query: (queryArgs) => ({
+          url: mesheryApiPath(`meshmodels/registrants/${queryArgs.connectionID}/models`),
+          method: 'DELETE',
+        }),
+        invalidatesTags: [TAGS.MESH_MODELS],
+      }),
     }),
   });
 
@@ -159,6 +166,7 @@ export const {
   useGetModelFromCategoryQuery,
   useGetComponentsByModelAndKindQuery,
   useImportMeshModelMutation,
+  useDeleteModelsByRegistrantMutation,
 } = meshModelApi;
 
 export const useGetCategoriesSummary = () => {
