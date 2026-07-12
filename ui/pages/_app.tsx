@@ -51,7 +51,7 @@ import 'tippy.js/animations/perspective.css';
 import 'tippy.js/animations/perspective-subtle.css';
 import 'tippy.js/animations/perspective-extreme.css';
 import '@xterm/xterm/css/xterm.css';
-import SessionsProvider from '@/components/sessions/SessionsProvider';
+import ConsoleProvider from '@/components/console/ConsoleProvider';
 import {
   getControllerPollConnectionIDsFromContextIds,
   getK8sConfigIdsFromK8sConfig,
@@ -528,7 +528,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
                             maxSnack={10}
                           >
                             <NotificationCenterProvider>
-                              <SessionsProvider>
+                              <ConsoleProvider>
                                 <MesheryProgressBar />
                                 <KubernetesSubscription setAppState={setAppState} />
                                 {!state.isFullScreenMode && (
@@ -568,7 +568,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
                                     providerCapabilities={providerCapabilities}
                                   />
                                 </StyledContentWrapper>
-                              </SessionsProvider>
+                              </ConsoleProvider>
                             </NotificationCenterProvider>
                           </SnackbarProvider>
                         </StyledAppContent>

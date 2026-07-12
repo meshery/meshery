@@ -235,9 +235,9 @@ const ResourcesTableInner = (props: ResourcesTableProps) => {
       },
       enableNestedDataAccess: '.',
       onCellClick: (_, meta) => {
-        // `sessions` holds buttons that open a terminal or log stream; clicking
+        // `console` holds buttons that open a terminal or log stream; clicking
         // one must not also navigate into the resource's detail view.
-        if (meta.columnName !== 'cluster_id' && meta.columnName !== 'sessions') {
+        if (meta.columnName !== 'cluster_id' && meta.columnName !== 'console') {
           const currentResource = meshSyncResources[meta.rowIndex];
           if (currentResource) {
             switchView(SINGLE_VIEW, currentResource);

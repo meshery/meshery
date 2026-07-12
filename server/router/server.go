@@ -500,16 +500,16 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/integrations/connections/{connectionId}/controllers/config", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateConnectionControllersConfig), models.ProviderAuth))).
 		Methods("PUT")
 
-	// Interactive sessions against the resources of a connection. The terminal
+	// Interactive consoles against the resources of a connection. The terminal
 	// and log routes upgrade to a WebSocket; the browser sends its session
 	// cookie on the handshake, so the usual auth chain applies unchanged. The
-	// session kinds a given resource admits are discovered via /capabilities
+	// console kinds a given resource admits are discovered via /capabilities
 	// before either socket is opened.
-	gMux.Handle("/api/integrations/connections/{connectionId}/sessions/capabilities", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetSessionCapabilities), models.ProviderAuth))).
+	gMux.Handle("/api/integrations/connections/{connectionId}/console/capabilities", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetConsoleCapabilities), models.ProviderAuth))).
 		Methods("GET")
-	gMux.Handle("/api/integrations/connections/{connectionId}/sessions/terminal", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.TerminalSessionHandler), models.ProviderAuth))).
+	gMux.Handle("/api/integrations/connections/{connectionId}/console/terminal", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.TerminalConsoleHandler), models.ProviderAuth))).
 		Methods("GET")
-	gMux.Handle("/api/integrations/connections/{connectionId}/sessions/logs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.LogSessionHandler), models.ProviderAuth))).
+	gMux.Handle("/api/integrations/connections/{connectionId}/console/logs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.LogConsoleHandler), models.ProviderAuth))).
 		Methods("GET")
 
 	gMux.HandleFunc("/auth/redirect", func(w http.ResponseWriter, r *http.Request) {

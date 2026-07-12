@@ -22,7 +22,7 @@ import { useRouter } from 'next/router';
 import GetKubernetesNodeIcon from './utils';
 import { CONNECTION_STATES } from '@/utils/Enum';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
-import SessionActionsCell from '@/components/sessions/SessionActionsCell';
+import ConsoleActionsCell from '@/components/console/ConsoleActionsCell';
 
 const Container = styled('div')({
   margin: '1rem auto',
@@ -46,7 +46,7 @@ const HeaderLeft = styled('div')({
   alignItems: 'center',
 });
 
-/** The session actions, then the connection chip they act through. */
+/** The console actions, then the connection chip they act through. */
 const HeaderRight = styled('div')({
   display: 'flex',
   gap: '0.75rem',
@@ -132,12 +132,12 @@ const View = ({ setView, resource, k8sConfig }: DashboardViewProps) => {
             </HeaderLeft>
             <HeaderRight>
               {/*
-               * Sessions open in the shared panel rather than in a tab of their
+               * Consoles open in the shared panel rather than in a tab of their
                * own, so a shell keeps running — and stays reachable — once the user
-               * navigates off this resource. It is also the only session surface
+               * navigates off this resource. It is also the only console surface
                * that docks, floats and minimizes, and Kanvas already opens onto it.
                */}
-              <SessionActionsCell resource={resource} k8sConfig={k8sConfig} />
+              <ConsoleActionsCell resource={resource} k8sConfig={k8sConfig} />
               <TooltipWrappedConnectionChip
                 title={context.name}
                 width="100%"

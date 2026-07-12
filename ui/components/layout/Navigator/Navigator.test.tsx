@@ -77,7 +77,7 @@ vi.mock('../../meshery-mesh-interface/PatternService/CustomTextTooltip', () => (
   CustomTextTooltip: ({ children }: any) => <>{children}</>,
 }));
 
-vi.mock('@/components/sessions/MinimizedSessions', () => ({
+vi.mock('@/components/console/MinimizedConsoles', () => ({
   default: () => null,
 }));
 
