@@ -94,6 +94,6 @@
   ],
   "subType": "network",
   "status": "enabled",
-  "type": "binding",
+  "type": "non-binding",
   "version": "v1.0.0"
 }
