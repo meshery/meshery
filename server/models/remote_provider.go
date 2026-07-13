@@ -74,6 +74,11 @@ type RemoteProvider struct {
 	TokenStoreMut sync.Mutex
 	Keys          []map[string]string
 
+	// TokenDeletionDelay controls how long refreshToken waits before evicting
+	// the superseded token from TokenStore. Zero uses defaultTokenDeletionDelay.
+	// A field (rather than global state) so tests can shrink it safely.
+	TokenDeletionDelay time.Duration
+
 	// mostRecentToken caches the last valid user token observed during the
 	// session so it can be reused at server shutdown to authenticate the
 	// deregistration call (DeleteMesheryConnection) and the subsequent token
