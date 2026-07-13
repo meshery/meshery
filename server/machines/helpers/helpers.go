@@ -77,22 +77,21 @@ func InitializeMachineWithContext(
 	mtype string,
 	initFunc connections.InitFunc,
 ) (*machines.StateMachine, error) {
-	inst, ok := smInstanceTracker.Get(ID)
-	if ok {
+	// GetOrInit makes the check-build-store sequence atomic per connection ID,
+	// so concurrent requests for the same ID share a single StateMachine
+	// instead of each constructing and starting their own. The machine is only
+	// tracked once build (construction + Start) succeeds, so a failed
+	// initialization is not cached as valid.
+	return smInstanceTracker.GetOrInit(ID, func() (*machines.StateMachine, error) {
+		inst, err := getMachine(initialState, mtype, ID.String(), userID, log, provider.GetGenericPersister())
+		if err != nil {
+			log.Error(err)
+			return nil, err
+		}
+		inst.Provider = provider
+		if _, err := inst.Start(ctx, machineCtx, log, initFunc); err != nil {
+			return nil, err
+		}
 		return inst, nil
-	}
-
-	inst, err := getMachine(initialState, mtype, ID.String(), userID, log, provider.GetGenericPersister())
-	if err != nil {
-		log.Error(err)
-		return nil, err
-	}
-	inst.Provider = provider
-	_, err = inst.Start(ctx, machineCtx, log, initFunc)
-	smInstanceTracker.Add(ID, inst)
-	if err != nil {
-		return nil, err
-	}
-
-	return inst, nil
+	})
 }
