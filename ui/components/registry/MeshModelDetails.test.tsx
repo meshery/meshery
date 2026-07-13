@@ -71,6 +71,7 @@ vi.mock('@/utils/fallback', () => ({
 
 vi.mock('@/rtk-query/meshModel', () => ({
   useUpdateEntityStatusMutation: () => [vi.fn(), { isLoading: false }],
+  useDeleteModelsByRegistrantMutation: () => [vi.fn(), { isLoading: false }],
   useGetComponentsQuery: () => ({
     data: { components: [] },
     isSuccess: true,
