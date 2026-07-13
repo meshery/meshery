@@ -18,7 +18,7 @@ var (
 	ErrParsingRelationshipCode   = "mesheryctl-1130"
 	ErrModelGenerationFailedCode = "mesheryctl-1159"
 	ErrPublishCode               = "mesheryctl-1233"
-	ErrDeleteRegistryCode        = "mesheryctl-1234"
+	ErrDeleteRegistryCode        = "mesheryctl-1249"
 )
 
 func ErrDeleteRegistry(err error, connectionID string) error {
