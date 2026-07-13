@@ -71,6 +71,7 @@ func TestRemoteProviderRefreshToken_TokenStoreConcurrentEviction(t *testing.T) {
 				default:
 				}
 				_, _ = provider.refreshToken(oldToken)
+				time.Sleep(100 * time.Microsecond)
 			}
 		}()
 	}
@@ -78,4 +79,6 @@ func TestRemoteProviderRefreshToken_TokenStoreConcurrentEviction(t *testing.T) {
 	time.Sleep(300 * time.Millisecond)
 	close(stop)
 	wg.Wait()
+	// Allow any in-flight eviction timers to run before the test exits.
+	time.Sleep(5 * provider.TokenDeletionDelay)
 }
