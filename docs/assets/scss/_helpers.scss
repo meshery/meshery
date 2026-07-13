@@ -121,7 +121,8 @@ summary {
   font-size: 1.1rem;
   font-weight: normal;
 
-  a {
+  a,
+  p a {
     color: var(--details-link-color);
     text-decoration: none;
 
