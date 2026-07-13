@@ -18,7 +18,12 @@ var (
 	ErrParsingRelationshipCode   = "mesheryctl-1130"
 	ErrModelGenerationFailedCode = "mesheryctl-1159"
 	ErrPublishCode               = "mesheryctl-1233"
+	ErrDeleteRegistryCode        = "mesheryctl-1234"
 )
+
+func ErrDeleteRegistry(err error, connectionID string) error {
+	return errors.New(ErrDeleteRegistryCode, errors.Alert, []string{"error deleting registry models for connection ", connectionID}, []string{err.Error()}, []string{"Connection ID does not exist", "No models associated with connection"}, []string{"Ensure connection ID is correct", "Check if connection has registered models"})
+}
 
 func ErrUpdateRegistry(err error, path string) error {
 	return errors.New(ErrUpdateRegistryCode, errors.Alert, []string{"error updating registry at ", path}, []string{err.Error()}, []string{"Provided spreadsheet ID is incorrect", "Provided credential is incorrect"}, []string{"Ensure correct spreadsheet ID is provided", "Ensure correct credential is used"})
