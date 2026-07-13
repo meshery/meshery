@@ -1258,7 +1258,7 @@ func (h *Handler) CloneMesheryPatternHandler(
 	patternID := mux.Vars(r)["id"]
 	patternUUID := uuid.FromStringOrNil(patternID)
 	if patternUUID == uuid.Nil {
-		err := ErrInvalidUUID(fmt.Errorf("invalid design id: %q", patternID))
+		err := models.ErrInvalidUUID(fmt.Errorf("invalid design id: %q", patternID))
 		h.log.Error(err)
 		writeMeshkitError(rw, err, http.StatusBadRequest)
 		return
@@ -1575,7 +1575,7 @@ func (h *Handler) GetMesheryPatternHandler(
 	patternID := mux.Vars(r)["id"]
 	patternUUID := uuid.FromStringOrNil(patternID)
 	if patternUUID == uuid.Nil {
-		err := ErrInvalidUUID(fmt.Errorf("invalid design id: %q", patternID))
+		err := models.ErrInvalidUUID(fmt.Errorf("invalid design id: %q", patternID))
 		h.log.Error(err)
 		writeMeshkitError(rw, err, http.StatusBadRequest)
 		return
