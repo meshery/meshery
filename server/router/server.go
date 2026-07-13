@@ -18,16 +18,16 @@ type Router struct {
 	port int
 }
 
-// deprecatedMeshmodelHandler forwards legacy /api/registry(s) requests to
+// deprecatedMeshmodelHandler forwards legacy /api/meshmodel(s) requests to
 // their /api/registry equivalent, and annotates the response with
 // Deprecation/Sunset/Link headers so callers know to migrate.
 func deprecatedMeshmodelHandler(gMux *mux.Router) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Deprecation", "true")
-		w.Header().Set("Sunset", "Wed, 01 Apr 2026 00:00:00 GMT")
+		w.Header().Set("Sunset", "Tue, 01 Dec 2026 00:00:00 GMT")
 
-		newPath := strings.Replace(r.URL.Path, "/api/registry", "/api/registry", 1)
-		newPath = strings.Replace(newPath, "/api/registry", "/api/registry", 1)
+		newPath := strings.Replace(r.URL.Path, "/api/meshmodels", "/api/registry", 1)
+		newPath = strings.Replace(newPath, "/api/meshmodel", "/api/registry", 1)
 		w.Header().Set("Link", fmt.Sprintf(`<%s>; rel="successor-version"`, newPath))
 
 		r.URL.Path = newPath
@@ -285,7 +285,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("POST")
 
 	gMux.Handle("/api/registry/models/{model}/policies", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelPolicies), models.NoAuth))).Methods("GET")
-	gMux.Handle("/api/registry/models/{model}/policies{name}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelPoliciesByName), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/registry/models/{model}/policies/{name}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelPoliciesByName), models.NoAuth))).Methods("GET")
 
 	gMux.Handle("/api/filter/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.FilterFileHandler)), models.ProviderAuth))).
 		Methods("POST", "DELETE")
@@ -520,8 +520,8 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	fs := http.FileServer(http.Dir("../../ui"))
 	gMux.PathPrefix("/ui/public/static/img/meshmodels").Handler(http.StripPrefix("/ui/", fs)).Methods("GET", "HEAD")
 
-	gMux.PathPrefix("/api/registry").Handler(deprecatedMeshmodelHandler(gMux))
-	gMux.PathPrefix("/api/registry").Handler(deprecatedMeshmodelHandler(gMux))
+	gMux.PathPrefix("/api/meshmodels").Handler(deprecatedMeshmodelHandler(gMux))
+	gMux.PathPrefix("/api/meshmodel").Handler(deprecatedMeshmodelHandler(gMux))
 
 	// Serve Next.js build artifacts (/_next/data/<buildId>/<route>.json,
 	// /_next/static/*) without the auth middleware. Next.js client-side

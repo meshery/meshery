@@ -10,57 +10,55 @@ import { componentUniqueKey, getComponentDefinition, modelUniqueKey } from '../m
 
 describe('meshModel – URLs', () => {
   it('builds /api/registry/models URL', () => {
-    expect(mesheryApiPath('meshmodels/models')).toBe('/api/registry/models');
+    expect(mesheryApiPath('registry/models')).toBe('/api/registry/models');
   });
 
   it('builds /api/registry/components URL', () => {
-    expect(mesheryApiPath('meshmodels/components')).toBe('/api/registry/components');
+    expect(mesheryApiPath('registry/components')).toBe('/api/registry/components');
   });
 
   it('builds /api/registry/relationships URL', () => {
-    expect(mesheryApiPath('meshmodels/relationships')).toBe('/api/registry/relationships');
+    expect(mesheryApiPath('registry/relationships')).toBe('/api/registry/relationships');
   });
 
   it('builds /api/registry/registrants URL', () => {
-    expect(mesheryApiPath('meshmodels/registrants')).toBe('/api/registry/registrants');
+    expect(mesheryApiPath('registry/registrants')).toBe('/api/registry/registrants');
   });
 
   it('builds nested model->components URL', () => {
-    expect(mesheryApiPath('meshmodels/models/istio/components')).toBe(
+    expect(mesheryApiPath('registry/models/istio/components')).toBe(
       '/api/registry/models/istio/components',
     );
   });
 
   it('builds /api/registry/categories URL', () => {
-    expect(mesheryApiPath('meshmodels/categories')).toBe('/api/registry/categories');
+    expect(mesheryApiPath('registry/categories')).toBe('/api/registry/categories');
   });
 
   it('builds /api/registry/categories/:cat/models URL', () => {
-    expect(mesheryApiPath('meshmodels/categories/Networking/models')).toBe(
+    expect(mesheryApiPath('registry/categories/Networking/models')).toBe(
       '/api/registry/categories/Networking/models',
     );
   });
 
   it('builds /api/registry/components/:name URL', () => {
-    expect(mesheryApiPath('meshmodels/components/Service')).toBe(
-      '/api/registry/components/Service',
-    );
+    expect(mesheryApiPath('registry/components/Service')).toBe('/api/registry/components/Service');
   });
 
   it('builds /api/registry/models/:name URL', () => {
-    expect(mesheryApiPath('meshmodels/models/istio')).toBe('/api/registry/models/istio');
+    expect(mesheryApiPath('registry/models/istio')).toBe('/api/registry/models/istio');
   });
 
   it('builds /api/registry/export URL', () => {
-    expect(mesheryApiPath('meshmodels/export')).toBe('/api/registry/export');
+    expect(mesheryApiPath('registry/export')).toBe('/api/registry/export');
   });
 
   it('builds /api/registry/register URL', () => {
-    expect(mesheryApiPath('meshmodels/register')).toBe('/api/registry/register');
+    expect(mesheryApiPath('registry/register')).toBe('/api/registry/register');
   });
 
   it('builds /api/registry/:type/status URL', () => {
-    expect(mesheryApiPath('meshmodels/components/status')).toBe('/api/registry/components/status');
+    expect(mesheryApiPath('registry/components/status')).toBe('/api/registry/components/status');
   });
 });
 
@@ -178,7 +176,7 @@ describe('meshModel – HTTP contracts', () => {
       text: () => Promise.resolve('{}'),
     });
 
-    await fetch(mesheryApiPath('meshmodels/components/status'), {
+    await fetch(mesheryApiPath('registry/components/status'), {
       method: 'POST',
       body: JSON.stringify({ ids: ['c1'], status: 'enabled' }),
     });
@@ -189,14 +187,14 @@ describe('meshModel – HTTP contracts', () => {
     );
   });
 
-  it('importMeshModel POSTs to /meshmodels/register', async () => {
+  it('importMeshModel POSTs to /registry/register', async () => {
     (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
       ok: true,
       status: 200,
       text: () => Promise.resolve('{}'),
     });
 
-    await fetch(mesheryApiPath('meshmodels/register'), {
+    await fetch(mesheryApiPath('registry/register'), {
       method: 'POST',
       body: 'binary-bytes',
     });
@@ -214,7 +212,7 @@ describe('meshModel – HTTP contracts', () => {
       text: () => Promise.resolve('database down'),
     });
 
-    const resp = await fetch(mesheryApiPath('meshmodels/models'));
+    const resp = await fetch(mesheryApiPath('registry/models'));
     expect(resp.ok).toBe(false);
   });
 });
