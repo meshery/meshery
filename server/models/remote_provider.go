@@ -75,7 +75,7 @@ type RemoteProvider struct {
 	Keys          []map[string]string
 
 	// TokenDeletionDelay controls how long refreshToken waits before evicting
-	// the superseded token from TokenStore. Zero uses defaultTokenDeletionDelay.
+	// the superseded token from TokenStore. Non-positive uses defaultTokenDeletionDelay.
 	// A field (rather than global state) so tests can shrink it safely.
 	TokenDeletionDelay time.Duration
 
