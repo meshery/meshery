@@ -412,9 +412,10 @@ const RegistrantContent = ({
         <StyledTitle>{registrant?.hostname}</StyledTitle>
         <Button
           variant="contained"
+          color="error"
           size="small"
           onClick={() => onDelete(registrant.id, registrant.name || registrant.hostname)}
-          style={{ backgroundColor: '#eb5757', color: 'white', textTransform: 'none' }}
+          style={{ textTransform: 'none' }}
           data-testid="delete-all-models-button"
         >
           <DeleteIcon style={{ marginRight: '0.25rem', width: '18px', height: '18px' }} />

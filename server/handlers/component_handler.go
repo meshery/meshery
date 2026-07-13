@@ -821,45 +821,48 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 		filter.Greedy = true
 		filter.DisplayName = search
 	}
-	hosts, count, err := h.registryManager.GetRegistrants(filter)
+	// Fetch all hosts without database-level pagination to filter them in-memory
+	filterAll := &_models.HostFilter{
+		Sort:    sort,
+		OrderOn: order,
+	}
+	if search != "" {
+		filterAll.Greedy = true
+		filterAll.DisplayName = search
+	}
+	allHosts, _, err := h.registryManager.GetRegistrants(filterAll)
 	if err != nil {
 		h.log.Error(ErrGetMeshModels(err))
 		writeMeshkitError(rw, ErrGetMeshModels(err), http.StatusInternalServerError)
 		return
 	}
 
-	// Calculate total count of registrants with models (without pagination limit)
-	countFilter := &_models.HostFilter{
-		Limit:  0,
-		Offset: 0,
-	}
-	if search != "" {
-		countFilter.Greedy = true
-		countFilter.DisplayName = search
-	}
-	allHosts, _, err := h.registryManager.GetRegistrants(countFilter)
-	if err == nil {
-		var totalCount int64
-		for _, host := range allHosts {
-			if host.Summary.Models > 0 {
-				totalCount++
-			}
-		}
-		count = totalCount
-	}
-
 	var filteredHosts []_models.MeshModelHostsWithEntitySummary
-	for _, host := range hosts {
+	for _, host := range allHosts {
 		if host.Summary.Models > 0 {
 			filteredHosts = append(filteredHosts, host)
 		}
 	}
-	hosts = filteredHosts
+
+	totalCount := int64(len(filteredHosts))
+
+	startIndex := offset
+	if startIndex > len(filteredHosts) {
+		startIndex = len(filteredHosts)
+	}
+
+	endIndex := offset + limit
+	if limit == 0 || endIndex > len(filteredHosts) {
+		endIndex = len(filteredHosts)
+	}
+
+	paginatedHosts := filteredHosts[startIndex:endIndex]
+	hosts := paginatedHosts
+	count := totalCount
 
 	var pgSize int64
-
 	if limit == 0 {
-		pgSize = count
+		pgSize = totalCount
 	} else {
 		pgSize = int64(limit)
 	}
