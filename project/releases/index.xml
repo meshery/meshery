@@ -1,4 +1,57 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Tue, 07 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.55</title><link>/project/releases/v1.0.55/</link><pubDate>Tue, 07 Jul 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.55/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Mon, 13 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.56</title><link>/project/releases/v1.0.56/</link><pubDate>Mon, 13 Jul 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.56/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Model] Add F5 BIG-IP Controller for Kubernetes model @YASHMAHAKAL (#20570)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Connections] Migrate Kubernetes connection &amp;amp; controller subscriptions from GraphQL to SSE/REST @aabidsofi19 (#20456)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix Category and Subcategory dropdown menus in Create Model wizard @Ayush-kr-giga (#20581)&lt;/li&gt;
+&lt;li&gt;[Server][UI] Retire all GraphQL subscriptions in favour of REST/SSE @aabidsofi19 (#20587)&lt;/li&gt;
+&lt;li&gt;[Connections] Migrate Kubernetes connection &amp;amp; controller subscriptions from GraphQL to SSE/REST @aabidsofi19 (#20456)&lt;/li&gt;
+&lt;li&gt;[UI] Unify the design &amp;ldquo;can edit&amp;rdquo; gate across card and table views @leecalcote (#20533)&lt;/li&gt;
+&lt;li&gt;Resolve permission constants dynamically from schemas @rishiraj38 (#20354)&lt;/li&gt;
+&lt;li&gt;[UI] Fix local-provider sort/search regression from v1beta3 user consolidation @leecalcote (#20528)&lt;/li&gt;
+&lt;li&gt;fix: navbar @KhushamBansal (#20525)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Connections] Migrate Kubernetes connection &amp;amp; controller subscriptions from GraphQL to SSE/REST @aabidsofi19 (#20456)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;docs: remove duplicate heading from HTTP Error Response Contract page @Ayush-kr-giga (#20543)&lt;/li&gt;
+&lt;li&gt;Create a short intro of umar @MuhammadUmar7195 (#20599)&lt;/li&gt;
+&lt;li&gt;Add introduction for Khushal Malhotra @khushal-winner (#20598)&lt;/li&gt;
+&lt;li&gt;Create Aryan-Burnwal-attendance.md @A9RYA6N (#20597)&lt;/li&gt;
+&lt;li&gt;Add Yash Mahakal&amp;rsquo;s introduction to meeting notes @YASHMAHAKAL (#20596)&lt;/li&gt;
+&lt;li&gt;Create Sulagna @suzy-g38 (#20595)&lt;/li&gt;
+&lt;li&gt;docs: Mark attendance for Piyush Tripathi (week-of-07-09-2026) @piyushtripathi9424 (#20594)&lt;/li&gt;
+&lt;li&gt;Add Debjit&amp;rsquo;s attendance and introduction details @D-source1602 (#20593)&lt;/li&gt;
+&lt;li&gt;[Connections] Migrate Kubernetes connection &amp;amp; controller subscriptions from GraphQL to SSE/REST @aabidsofi19 (#20456)&lt;/li&gt;
+&lt;li&gt;Add attendance instructions to meeting notes @YASHMAHAKAL (#20571)&lt;/li&gt;
+&lt;li&gt;Docs add permission key guide @rishiraj38 (#19620)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@A9RYA6N, @Ayush-kr-giga, @D-source1602, @KhushamBansal, @MuhammadUmar7195, @YASHMAHAKAL, @aabidsofi19, @alexquincy, @fitzergerald, @hortison, @khushal-winner, @leecalcote, @meshery-ci, @piyushtripathi9424, @rishiraj38, @suzy-g38, @winkletinkle and @yi-nuo426&lt;/p&gt;</description></item><item><title>v1.0.55</title><link>/project/releases/v1.0.55/</link><pubDate>Tue, 07 Jul 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.55/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -34210,7 +34263,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.55&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.56&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
