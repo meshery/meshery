@@ -803,7 +803,6 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 		writeMeshkitError(rw, wrappedErr, http.StatusInternalServerError)
 		return
 	}
-	go h.config.MeshModelSummaryChannel.Publish()
 }
 
 func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request) {
