@@ -1,12 +1,15 @@
 package model
 
 import (
-	"strings"
+	"path/filepath"
 )
 
 func modelDisplayPath(path string) string {
 	if path == "" {
 		return "."
 	}
-	return strings.ReplaceAll(path, `\`, "/")
+	if filepath.Separator == '\\' {
+		return filepath.ToSlash(path)
+	}
+	return path
 }
