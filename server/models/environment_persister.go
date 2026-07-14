@@ -125,8 +125,8 @@ func (ep *EnvironmentPersister) SaveEnvironment(environment *environment.Environ
 	return envJSON, nil
 }
 
-func (ep *EnvironmentPersister) DeleteEnvironment(environment *environment.Environment) ([]byte, error) {
-	err := ep.DB.Model(&environment).Find(&environment).Error
+func (ep *EnvironmentPersister) DeleteEnvironment(env *environment.Environment) ([]byte, error) {
+	err := ep.DB.Model(&env).Find(&env).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, ErrResultNotFound(err)
@@ -136,18 +136,22 @@ func (ep *EnvironmentPersister) DeleteEnvironment(environment *environment.Envir
 	// Clean up connection mappings for this environment before deleting it,
 	// to avoid orphaned rows in environment_connection_mappings that would
 	// otherwise cause deleted environments to still appear (as blank tags)
-	// against connections that were assigned to them.
-	if err := ep.DB.Exec("DELETE FROM environment_connection_mappings WHERE environment_id = ?", environment.ID).Error; err != nil {
-		return nil, ErrDBDelete(err, ep.fetchUserDetails().ID.String())
-	}
-
-	err = ep.DB.Delete(environment).Error
+	// against connections that were assigned to them. Both deletes run in
+	// a single transaction so a failed environment delete cannot leave
+	// mappings already removed.
+	err = ep.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("environment_id = ?", env.ID).
+			Delete(&environment.EnvironmentConnectionMapping{}).Error; err != nil {
+			return err
+		}
+		return tx.Delete(env).Error
+	})
 	if err != nil {
 		return nil, ErrDBDelete(err, ep.fetchUserDetails().ID.String())
 	}
 
 	// Marshal the environment to JSON
-	envJSON, err := json.Marshal(environment)
+	envJSON, err := json.Marshal(env)
 	if err != nil {
 		return nil, err
 	}
