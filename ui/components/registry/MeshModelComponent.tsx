@@ -12,9 +12,9 @@ import {
   TreeWrapper,
   DetailsContainer,
   InnerContainer,
-  CardStyle,
   WorkloadsContainer,
 } from '@/assets/styles/general/tool.styles';
+import TabCard from './TabCard';
 import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
 import { toLower } from 'lodash';
@@ -133,15 +133,17 @@ const MeshModelComponent_ = ({
   const relationshipsData = relationshipsRes.data;
   const connectionsData = connectionsRes.data;
 
-  const hasMoreModels = modelsData?.totalCount > modelsData?.pageSize * modelsData?.page;
+  const hasMoreModels =
+    !checked && !searchText && modelsData?.totalCount > modelsData?.pageSize * modelsData?.page;
   const hasMoreRegistrants =
-    registrantsData?.totalCount > registrantsData?.pageSize * registrantsData?.page;
+    !searchText && registrantsData?.totalCount > registrantsData?.pageSize * registrantsData?.page;
   const hasMoreComponents =
-    componentsData?.totalCount > componentsData?.pageSize * componentsData?.page;
+    !searchText && componentsData?.totalCount > componentsData?.pageSize * componentsData?.page;
   const hasMoreRelationships =
+    !searchText &&
     relationshipsData?.totalCount > relationshipsData?.pageSize * relationshipsData?.page;
   const hasMoreConnections =
-    connectionsData?.totalCount > connectionsData?.pageSize * connectionsData?.page;
+    !searchText && connectionsData?.totalCount > connectionsData?.pageSize * connectionsData?.page;
 
   const loadNextModelsPage = useCallback(() => {
     if (modelsRes.isLoading || modelsRes.isFetching || !hasMoreModels) {
@@ -640,21 +642,6 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
   );
 };
 
-const TabCard = ({ label, count, active, onClick }) => {
-  return (
-    <CardStyle isSelected={active} elevation={3} onClick={onClick}>
-      <span
-        style={{
-          fontSize: '1rem',
-          marginLeft: '4px',
-        }}
-      >
-        {`(${count?.toLocaleString() || 0})`}
-      </span>
-      {label}
-    </CardStyle>
-  );
-};
 const MeshModelComponent = (props) => {
   return (
     <NoSsr>
