@@ -1620,20 +1620,28 @@ func (h *Handler) DeleteModelsByRegistrant(rw http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	var modelsList []_model.ModelDefinition
-	if err := h.dbHandler.Where("connection_id = ?", connectionID).Find(&modelsList).Error; err != nil {
-		writeJSONError(rw, fmt.Sprintf("failed to fetch models for connection %s: %s", connectionID, err), http.StatusInternalServerError)
-		return
+	var conn struct {
+		ID   uuid.UUID
+		Name string
 	}
-
-	if len(modelsList) == 0 {
-		writeJSONError(rw, fmt.Sprintf("no models found for connection %s", connectionID), http.StatusNotFound)
+	if err := h.dbHandler.Table("connections").Select("id, name").Where("id = ?", connectionID).First(&conn).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			writeJSONError(rw, fmt.Sprintf("connection with ID %s not found", connectionID), http.StatusNotFound)
+			return
+		}
+		writeJSONError(rw, fmt.Sprintf("failed to fetch connection %s: %s", connectionID, err), http.StatusInternalServerError)
 		return
 	}
 
 	var modelIDs []uuid.UUID
-	for _, model := range modelsList {
-		modelIDs = append(modelIDs, model.ID)
+	if err := h.dbHandler.Model(&_model.ModelDefinition{}).Where("connection_id = ?", connectionID).Select("id").Find(&modelIDs).Error; err != nil {
+		writeJSONError(rw, fmt.Sprintf("failed to fetch model IDs for connection %s: %s", connectionID, err), http.StatusInternalServerError)
+		return
+	}
+
+	if len(modelIDs) == 0 {
+		writeJSONError(rw, fmt.Sprintf("no models found to delete for connection %s", connectionID), http.StatusNotFound)
+		return
 	}
 
 	err = h.dbHandler.Transaction(func(tx *gorm.DB) error {
@@ -1688,5 +1696,21 @@ func (h *Handler) DeleteModelsByRegistrant(rw http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	rw.WriteHeader(http.StatusNoContent)
+	type DeleteModelsResponse struct {
+		Message        string `json:"message"`
+		Count          int    `json:"count"`
+		ConnectionName string `json:"connection_name"`
+	}
+
+	resp := DeleteModelsResponse{
+		Message:        fmt.Sprintf("Successfully deleted all models associated with registrant connection ID %q", connectionID),
+		Count:          len(modelIDs),
+		ConnectionName: conn.Name,
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	rw.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(rw).Encode(resp); err != nil {
+		h.log.Error(models.ErrMarshal(err, "delete-models-response"))
+	}
 }

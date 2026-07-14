@@ -548,8 +548,8 @@ const MeshModelDetails = ({
     const modal = promptRef.current;
     if (!modal) return;
     const response = await modal.show({
-      title: 'Delete All Models',
-      subtitle: `Are you sure you want to delete all models registered by "${registrantName}"? This will delete all associated components and relationships from the database.`,
+      title: `Delete all models registered by "${registrantName}"?`,
+      subtitle: `Are you sure you want to delete all models for this registrant? This will delete all associated components, relationships, and policies from the database.`,
       variant: 'danger',
       primaryOption: 'DELETE',
       secondaryOption: 'CANCEL',
@@ -557,9 +557,13 @@ const MeshModelDetails = ({
 
     if (response === 'DELETE') {
       try {
-        await deleteModelsByRegistrant({ connectionID }).unwrap();
+        const res = await deleteModelsByRegistrant({ connectionID }).unwrap();
+        const deletedCount = res?.count;
         notify({
-          message: `Successfully deleted all models for registrant "${registrantName}"`,
+          message:
+            deletedCount !== undefined
+              ? `Successfully deleted ${deletedCount} models for registrant "${registrantName}"`
+              : `Successfully deleted all models for registrant "${registrantName}"`,
           event_type: EVENT_TYPES.SUCCESS,
         });
         if (refetch) {

@@ -15,6 +15,7 @@
 package registry
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -51,12 +52,33 @@ mesheryctl registry delete [connection-id]
 		}
 
 		if resp.StatusCode == http.StatusNotFound {
+			var bodyMap map[string]string
+			if err := json.NewDecoder(resp.Body).Decode(&bodyMap); err == nil {
+				if errMsg, ok := bodyMap["error"]; ok {
+					utils.Log.Warnf("%s", errMsg)
+					return nil
+				}
+			}
 			utils.Log.Warnf("No registrant connection with ID %q found or no models to delete", connectionID)
 			return nil
 		}
 
 		if resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusOK {
 			return fmt.Errorf("unexpected status code from Meshery Server: %d", resp.StatusCode)
+		}
+
+		type DeleteModelsResponse struct {
+			Message        string `json:"message"`
+			Count          int    `json:"count"`
+			ConnectionName string `json:"connection_name"`
+		}
+
+		if resp.StatusCode == http.StatusOK {
+			var successResp DeleteModelsResponse
+			if err := json.NewDecoder(resp.Body).Decode(&successResp); err == nil {
+				utils.Log.Infof("Deleted %d models for registrant %s.", successResp.Count, successResp.ConnectionName)
+				return nil
+			}
 		}
 
 		utils.Log.Infof("Successfully deleted all models associated with registrant connection ID %q", connectionID)
