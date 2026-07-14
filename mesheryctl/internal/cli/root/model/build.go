@@ -75,7 +75,7 @@ mesheryctl model build [model-name]/[model-version]
 					errBuildUsage,
 					fmt.Sprintf(
 						errBuildFolderNotFound,
-						folder,
+						modelDisplayPath(folder),
 					),
 				)
 			}
