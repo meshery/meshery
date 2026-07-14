@@ -27,6 +27,8 @@ import {
   useVerifyAndRegisterConnectionMutation,
 } from '@/rtk-query/connection';
 import { useGetCredentialsQuery } from '@/rtk-query/credentials';
+import { useNotification } from '@/utils/hooks/useNotification';
+import { EVENT_TYPES } from '@/lib/event-types';
 
 const CONNECTION_TYPES = ['Prometheus Connection', 'Grafana Connection'];
 
@@ -38,6 +40,7 @@ const schema = selectCompSchema(
 );
 export const SelectConnection = ({ setSharedData, handleNext }) => {
   const formRef = useRef();
+  const { notify } = useNotification();
   const [registerConnection] = useVerifyAndRegisterConnectionMutation();
 
   const handleRegisterConnection = async (componentName) => {
@@ -65,7 +68,11 @@ export const SelectConnection = ({ setSharedData, handleNext }) => {
 
       handleNext();
     } catch (error) {
-      console.error('Failed to register connection:', error);
+      notify({
+        message: 'Failed to register connection',
+        event_type: EVENT_TYPES.ERROR,
+        details: error instanceof Error ? error.message : String(error),
+      });
     }
   };
 
@@ -215,6 +222,7 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
 
 export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationComplete }) => {
   const { data: credentialsData } = useGetCredentialsQuery();
+  const { notify } = useNotification();
   const [verifyAndRegisterConnection] = useVerifyAndRegisterConnectionMutation();
   const [connectToConnection] = useConnectToConnectionMutation();
   const [selectedCredential, setSelectedCredential] = useState(null);
@@ -265,7 +273,11 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
         setIsSuccess(false);
       }
     } catch (error) {
-      console.error('Error verifying connection:', error);
+      notify({
+        message: 'Error verifying connection',
+        event_type: EVENT_TYPES.ERROR,
+        details: error instanceof Error ? error.message : String(error),
+      });
       setIsSuccess(false);
     }
   };
@@ -304,7 +316,11 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
         setIsSuccess(false);
       }
     } catch (error) {
-      console.error('Error connecting to connection:', error);
+      notify({
+        message: 'Error connecting to connection',
+        event_type: EVENT_TYPES.ERROR,
+        details: error instanceof Error ? error.message : String(error),
+      });
       setIsSuccess(false);
     }
   };
