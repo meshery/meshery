@@ -4398,7 +4398,10 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 	// gets the requested path from user_account extension UI in Meshery UI
 	// splits the requested path into '/api/extensions' and '/<remote-provider-endpoint>'
 	p := req.URL.Path
-	split := strings.Split(p, "/api/extensions")
+	split := strings.SplitN(p, "/api/extensions", 2)
+	if len(split) < 2 || split[0] != "" || (split[1] != "" && !strings.HasPrefix(split[1], "/")) {
+		return nil, ErrInvalidExtensionProxyPath(p)
+	}
 	path := split[1]
 	// gets the available query parameters
 	q := req.URL.Query().Encode()

@@ -155,6 +155,7 @@ const (
 	ErrInvalidUUIDValueCode               = "meshery-server-1432"
 	ErrSystemSettingsCode                 = "meshery-server-1439"
 	ErrApplyControllersConfigCode         = "meshery-server-1440"
+	ErrInvalidExtensionProxyPathCode      = "meshery-server-1442"
 )
 
 var (
@@ -709,3 +710,16 @@ func ErrSystemSettings(err error) error {
 func ErrApplyControllersConfig(err error) error {
 	return errors.New(ErrApplyControllersConfigCode, errors.Alert, []string{"Error applying controllers configuration to the cluster"}, []string{err.Error()}, []string{"The MeshSync or Broker custom resource could not be patched, or the MeshSync deployment overlay could not be applied.", "The Meshery Operator may not be deployed on the target cluster yet."}, []string{"Confirm the cluster is reachable and the Meshery Operator is deployed (operator deployment mode).", "Retry the change; configuration is re-applied whenever the connection reconnects."})
 }
+
+// ErrInvalidExtensionProxyPath is the error for an invalid extension proxy path
+func ErrInvalidExtensionProxyPath(path string) error {
+	return errors.New(
+		ErrInvalidExtensionProxyPathCode,
+		errors.Alert,
+		[]string{"Invalid extension proxy path"},
+		[]string{"Path: " + path},
+		[]string{"The request path must be of the form /api/extensions or /api/extensions/<remote-provider-endpoint>."},
+		[]string{"Ensure the request path starts with /api/extensions and that any remainder begins with '/'."},
+	)
+}
+
