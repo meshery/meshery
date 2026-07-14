@@ -24,7 +24,6 @@ import {
   CustomTooltip,
   Drawer,
   DatabaseIcon,
-  DARK_BLUE_GRAY,
   useMediaQuery,
 } from '@sistent/sistent';
 import { styled, useTheme } from '@/theme';
@@ -69,7 +68,9 @@ const StyledDrawer = styled(Drawer, { shouldForwardProp: (prop) => prop !== 'ope
       height: '100%',
       width: DRAWER_WIDTH,
       backgroundColor:
-        theme.palette.mode == 'light' ? theme.palette.background.paper : DARK_BLUE_GRAY,
+        theme.palette.mode == 'light'
+          ? theme.palette.background.paper
+          : theme.palette.background.card,
       transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
@@ -91,7 +92,9 @@ const StyledDrawer = styled(Drawer, { shouldForwardProp: (prop) => prop !== 'ope
       position: 'relative',
       height: '100%',
       backgroundColor:
-        theme.palette.mode == 'light' ? theme.palette.background.paper : DARK_BLUE_GRAY,
+        theme.palette.mode == 'light'
+          ? theme.palette.background.paper
+          : theme.palette.background.card,
       transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
@@ -120,8 +123,12 @@ const StyledRegistryModal = styled(Modal)(({ theme }) => ({
   zIndex: 1500,
   '& .MuiDialog-paperFullScreen': {
     margin: 0,
+    width: '100%',
+    height: '100%',
+    maxWidth: '100%',
+    maxHeight: '100%',
   },
-  '& .MuiDialog-paperFullWidth': {
+  '& .MuiDialog-paperFullWidth:not(.MuiDialog-paperFullScreen)': {
     width: '90%',
     height: '80%',
   },
@@ -287,7 +294,7 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
     if (item) {
       setHeaderInfo({
         title: `Registry - ${id}`,
-        icon: <FileIcon {...iconMedium} fill={theme.palette.common.white} />,
+        icon: <FileIcon {...iconMedium} fill={theme.palette.icon.default} />,
       });
     }
   };
