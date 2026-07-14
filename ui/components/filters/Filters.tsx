@@ -60,7 +60,6 @@ import {
   createHandlePublish,
   createHandleSubmit,
   createHandleUnpublishModal,
-  createInitFiltersSubscription,
   createUploadHandler,
 } from './Filters.fileActions';
 import type { TypeView } from './Filters.types';
@@ -129,7 +128,6 @@ function MesheryFilters() {
 
   const catalogContentRef = useRef<any[]>([]);
   const catalogVisibilityRef = useRef<boolean>(false);
-  const disposeConfSubscriptionRef = useRef<{ dispose: () => void } | null>(null);
   const [selectedFilters, setSelectedFilters] = useState<{ visibility: string }>(() => ({
     visibility: tableState.filters.vis || 'All',
   }));
@@ -260,13 +258,6 @@ function MesheryFilters() {
   const handleClone = createHandleClone({ cloneFilter, notify, handleError });
   const handleDownload = createHandleDownload({ notify });
   const deleteFilter = createDeleteFilter({ deleteFilterFile, notify, handleError });
-  const initFiltersSubscription = createInitFiltersSubscription({
-    page,
-    pageSize,
-    search,
-    sortOrder,
-    disposeConfSubscriptionRef,
-  });
   const handleSubmit = createHandleSubmit({
     notify,
     handleError,
@@ -348,14 +339,12 @@ function MesheryFilters() {
     }).subscribe({
       next: (result) => {
         catalogContentRef.current = result?.catalogFilters;
-        initFiltersSubscription();
       },
       error: (err) => console.log('There was an error fetching Catalog Filter: ', err),
     });
 
     return () => {
       fetchCatalogFilters.unsubscribe();
-      disposeConfSubscriptionRef.current?.dispose();
     };
   }, []);
 
@@ -386,7 +375,6 @@ function MesheryFilters() {
     setSearch,
     setSortOrder,
     setSelectedRowData,
-    initFiltersSubscription,
     showmodal,
     deleteFilter,
   });
@@ -486,12 +474,6 @@ function MesheryFilters() {
                   <SearchBar
                     onSearch={(value) => {
                       setSearch(value);
-                      initFiltersSubscription(
-                        page.toString(),
-                        pageSize.toString(),
-                        value,
-                        sortOrder,
-                      );
                     }}
                     expanded={isSearchExpanded}
                     setExpanded={setIsSearchExpanded}

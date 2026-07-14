@@ -11,7 +11,6 @@ import _PromptComponent from '../../PromptComponent';
 import LoadingScreen from '../../shared/LoadingState/LoadingComponent';
 import { MesheryPatternsCatalog, VISIBILITY } from '../../../utils/Enum';
 import { useRouter } from 'next/router';
-import ConfigurationSubscription from '@/graphql/subscriptions/ConfigurationSubscription';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import _ from 'lodash';
 import { getMeshModels } from '../../../api/meshmodel';
@@ -241,7 +240,6 @@ function MesheryPatterns({
 
   const catalogVisibilityRef = useRef(false);
   const catalogContentRef = useRef();
-  const disposeConfSubscriptionRef = useRef(null);
 
   /**
    * Checking whether users are signed in under a provider that doesn't have
@@ -284,51 +282,6 @@ function MesheryPatterns({
     );
   }, [viewType]);
 
-  const initPatternsSubscription = (
-    pageNo = page.toString(),
-    pagesize = pageSize.toString(),
-    searchText = search,
-    order = sortOrder,
-  ) => {
-    if (disposeConfSubscriptionRef.current) {
-      disposeConfSubscriptionRef.current.dispose();
-    }
-    const configurationSubscription = ConfigurationSubscription(
-      () => {
-        // stillLoading(false);
-        /**
-         * We are not using pattern subscription and this code is commented to prevent
-         * unnecessary state updates
-         */
-        // setPage(result.configuration?.patterns?.page || 0);
-        // setPageSize(result.configuration?.patterns?.page_size || 10);
-        // setCount(result.configuration?.patterns?.total_count || 0);
-        // handleSetPatterns(result.configuration?.patterns?.patterns);
-      },
-      {
-        applicationSelector: {
-          pageSize: pagesize,
-          page: pageNo,
-          search: searchText,
-          order: order,
-        },
-        patternSelector: {
-          pageSize: pagesize,
-          page: pageNo,
-          search: searchText,
-          order: order,
-        },
-        filterSelector: {
-          pageSize: pagesize,
-          page: pageNo,
-          search: searchText,
-          order: order,
-        },
-      },
-    );
-    disposeConfSubscriptionRef.current = configurationSubscription;
-  };
-
   useEffect(() => {
     const fetchMeshModels = async () => {
       try {
@@ -362,31 +315,8 @@ function MesheryPatterns({
 
     void fetchMeshModels();
 
-    /*
-                                       Below is a graphql query that fetches the catalog patterns that is published so
-                                       when catalogVisibility is true, we fetch the catalog patterns and set it to the patterns state
-                                       which show the catalog patterns only in the UI at the top of the list always whether we filter for public or private patterns.
-                                       Meshery's REST API already fetches catalog items with `published` visibility, hence this function is commented out.
-                                      */
-    // const fetchCatalogPatterns = fetchCatalogPattern({
-    //   selector: {
-    //     search: '',
-    //     order: '',
-    //     page: 0,
-    //     pagesize: 0,
-    //   },
-    // }).subscribe({
-    //   next: (result) => {
-    //     catalogContentRef.current = result?.catalogPatterns;
-    //     initPatternsSubscription();
-    //   },
-    //   error: (err) => console.log('There was an error fetching Catalog Filter: ', err),
-    // });
-
-    // return () => {
-    //   fetchCatalogPatterns.unsubscribe();
-    //   disposeConfSubscriptionRef.current?.dispose();
-    // };
+    // Meshery's REST API already returns catalog items with `published`
+    // visibility, so no separate catalog-pattern fetch is needed here.
   }, []);
 
   // useEffect(() => {
@@ -480,7 +410,6 @@ function MesheryPatterns({
     setSelectedRowData,
     deletePatterns,
     showModal,
-    initPatternsSubscription,
   });
 
   if (ispatternsLoading) {
@@ -542,10 +471,6 @@ function MesheryPatterns({
               router={router}
               handleUploadImport={handleUploadImport}
               setSearch={setSearch}
-              initPatternsSubscription={initPatternsSubscription}
-              page={page}
-              pageSize={pageSize}
-              sortOrder={sortOrder}
               filter={filter}
               selectedFilters={selectedFilters}
               setSelectedFilters={setSelectedFilters}
