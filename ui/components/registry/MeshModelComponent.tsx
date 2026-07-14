@@ -134,16 +134,16 @@ const MeshModelComponent_ = ({
   const connectionsData = connectionsRes.data;
 
   const hasMoreModels =
-    !checked && !searchText && modelsData?.totalCount > modelsData?.pageSize * modelsData?.page;
+    modelsData?.totalCount > modelsData?.pageSize * ((modelsData?.page || 0) + 1);
   const hasMoreRegistrants =
-    !searchText && registrantsData?.totalCount > registrantsData?.pageSize * registrantsData?.page;
+    registrantsData?.totalCount > registrantsData?.pageSize * ((registrantsData?.page || 0) + 1);
   const hasMoreComponents =
-    !searchText && componentsData?.totalCount > componentsData?.pageSize * componentsData?.page;
+    componentsData?.totalCount > componentsData?.pageSize * ((componentsData?.page || 0) + 1);
   const hasMoreRelationships =
-    !searchText &&
-    relationshipsData?.totalCount > relationshipsData?.pageSize * relationshipsData?.page;
+    relationshipsData?.totalCount >
+    relationshipsData?.pageSize * ((relationshipsData?.page || 0) + 1);
   const hasMoreConnections =
-    !searchText && connectionsData?.totalCount > connectionsData?.pageSize * connectionsData?.page;
+    connectionsData?.totalCount > connectionsData?.pageSize * ((connectionsData?.page || 0) + 1);
 
   const loadNextModelsPage = useCallback(() => {
     if (modelsRes.isLoading || modelsRes.isFetching || !hasMoreModels) {

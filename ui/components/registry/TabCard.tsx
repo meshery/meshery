@@ -1,6 +1,11 @@
-/* eslint-disable react/forbid-dom-props */
 import React from 'react';
+import { styled } from '@sistent/sistent';
 import { CardStyle } from '@/assets/styles/general/tool.styles';
+
+const CountSpan = styled('span')(() => ({
+  fontSize: '1rem',
+  marginLeft: '4px',
+}));
 
 const TabCard = ({
   label,
@@ -15,14 +20,7 @@ const TabCard = ({
 }) => {
   return (
     <CardStyle isSelected={active} elevation={3} onClick={onClick}>
-      <span
-        style={{
-          fontSize: '1rem',
-          marginLeft: '4px',
-        }}
-      >
-        {`(${count?.toLocaleString() || 0})`}
-      </span>
+      <CountSpan>{`(${count?.toLocaleString() || 0})`}</CountSpan>
       {label}
     </CardStyle>
   );
