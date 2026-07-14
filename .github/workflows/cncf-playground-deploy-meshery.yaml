@@ -17,7 +17,7 @@ jobs:
         runs-on: ubuntu-24.04
         steps:
         - name: Reconcile env from manifest, then roll image forward
-          uses: appleboy/ssh-action@master
+          uses: appleboy/ssh-action@068c0c7a4e59a5ae12fb7cb454b05735d830c82b # master
           env:
               MANIFEST_REF: ${{ github.sha }}
           with:
