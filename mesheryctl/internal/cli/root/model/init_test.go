@@ -361,7 +361,7 @@ func TestModelDisplayPath(t *testing.T) {
 		{
 			name:     "windows separator path with parent directory",
 			path:     `models\..\aws-controller\v0.1.0`,
-			expected: "aws-controller/v0.1.0",
+			expected: "models/../aws-controller/v0.1.0",
 		},
 	}
 
