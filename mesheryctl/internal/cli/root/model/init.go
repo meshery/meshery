@@ -84,20 +84,29 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 		{
 			// if model/version folder already exists return with error
 			info, err := os.Stat(modelVersionFolder)
-			if !os.IsNotExist(err) && info.IsDir() {
-				return ErrModelInitFromString(
-					fmt.Sprintf(
-						errInitFolderExists,
-						displayModelVersionFolder,
-					),
-				)
+			if err == nil {
+				if info.IsDir() {
+					return ErrModelInitFromString(
+						fmt.Sprintf(
+							errInitFolderExists,
+							displayModelVersionFolder,
+						),
+					)
+				}
+			} else if !os.IsNotExist(err) {
+				return ErrModelInit(err)
 			}
 		}
 
 		infoOnModelFolder, err := os.Stat(modelFolder)
 		// this indicates if model folder already exists (before we created it)
 		// this information will be used for clean up
-		isModelFolderAlreadyExists := !os.IsNotExist(err) && infoOnModelFolder.IsDir()
+		isModelFolderAlreadyExists := false
+		if err == nil {
+			isModelFolderAlreadyExists = infoOnModelFolder.IsDir()
+		} else if !os.IsNotExist(err) {
+			return ErrModelInit(err)
+		}
 
 		utils.Log.Infof("Creating directory structure...")
 		err = os.MkdirAll(modelVersionFolder, initModelDirPerm)
