@@ -64,10 +64,6 @@ vi.mock('@/utils/can', () => ({
   default: (...args: unknown[]) => canSpy(...args),
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: { VIEW_CONNECTIONS: { action: 'view', subject: 'connections' } },
-}));
-
 vi.mock('next/router', () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));

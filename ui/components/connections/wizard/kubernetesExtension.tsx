@@ -12,6 +12,7 @@ import {
   AssignmentTurnedInIcon,
   SettingsIcon,
 } from '@sistent/sistent';
+import { useSelector } from 'react-redux';
 import { alpha, styled } from '@/theme';
 import { EVENT_TYPES } from 'lib/event-types';
 import { CONNECTION_STATES } from '@/utils/Enum';
@@ -20,8 +21,9 @@ import { formatWizardError } from './errors';
 import {
   DEFAULT_MESHSYNC_DEPLOYMENT_MODE,
   MESHSYNC_DEPLOYMENT_MODE_OPTIONS,
-  kubernetesDeploymentModeStep,
 } from './kubernetesDeploymentMode';
+import { kubernetesSettingsStep } from './kubernetesSettings';
+import FormatConnectionMetadata from '../metadata';
 import { ConnectionStateChip } from '../ConnectionChip';
 import { KubernetesImportStep, StepHeader } from '../ConnectionWizardStepContent';
 import type {
@@ -545,6 +547,33 @@ const kubernetesContextsStep: WizardStep = {
 // ---------------------------------------------------------------------------
 
 const KubernetesReceiptBody = ({ ctx }: { ctx: WizardContext }) => {
+  const controllerState = useSelector(
+    (state: { ui: { controllerState: unknown } }) => state.ui.controllerState,
+  );
+
+  // Configure mode operates on a single connection: show the same live detail
+  // "receipt" that the Connections table renders when a row is expanded —
+  // status chips, controller versions, and the Diagnostics section.
+  const configuredConnection = (ctx.data.registrationResult as GenericRecord) || {};
+  if (
+    ctx.mode === 'configure' &&
+    configuredConnection.kind === 'kubernetes' &&
+    configuredConnection.id
+  ) {
+    return (
+      <Box sx={{ display: 'grid', gap: 2 }}>
+        <StepHeader
+          title="Connection details"
+          subtitle="Live status and diagnostics for this Kubernetes connection."
+        />
+        <FormatConnectionMetadata
+          connection={configuredConnection}
+          meshsyncControllerState={controllerState}
+        />
+      </Box>
+    );
+  }
+
   const imported =
     (ctx.data.postConfig.importedContexts as { name: string; status: string }[]) || [];
   const created = Number(ctx.data.postConfig.createdCount ?? imported.length);
@@ -601,6 +630,6 @@ export const kubernetesExtension: ConnectionExtension = {
   detailsStep: kubernetesDetailsStep,
   credentialStep: null, // the kubeconfig is the credential
   registerStep: kubernetesReviewStep,
-  postConfigSteps: [kubernetesDeploymentModeStep, kubernetesContextsStep],
+  postConfigSteps: [kubernetesSettingsStep, kubernetesContextsStep],
   receiptStep: kubernetesReceiptStep,
 };

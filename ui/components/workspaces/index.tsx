@@ -38,7 +38,7 @@ import { useNotification, useNotificationHandlers } from '../../utils/hooks/useN
 import { RJSFModalWrapper } from '../shared/Modal/Modal';
 import _PromptComponent from '../PromptComponent';
 import { EVENT_TYPES } from '../../lib/event-types';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import CAN from '@/utils/can';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import ViewSwitch from '@/components/ViewSwitch';
@@ -434,7 +434,12 @@ const Workspaces = ({ onSelectWorkspace }) => {
                   borderRadius: '5px',
                   marginRight: '2rem',
                 }}
-                disabled={!CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)}
+                disabled={
+                  !CAN(
+                    Keys.WorkspaceManagementCreateWorkspace.id,
+                    Keys.WorkspaceManagementCreateWorkspace.function,
+                  )
+                }
                 data-cy="btnResetDatabase"
               >
                 <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
@@ -509,8 +514,14 @@ const Workspaces = ({ onSelectWorkspace }) => {
           )}
         </>
         {(actionType === WORKSPACE_ACTION_TYPES.CREATE
-          ? CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)
-          : CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)) &&
+          ? CAN(
+              Keys.WorkspaceManagementCreateWorkspace.id,
+              Keys.WorkspaceManagementCreateWorkspace.function,
+            )
+          : CAN(
+              Keys.WorkspaceManagementEditWorkspace.id,
+              Keys.WorkspaceManagementEditWorkspace.function,
+            )) &&
           workspaceModal.open && (
             <Modal
               open={workspaceModal.open}
@@ -543,12 +554,21 @@ const Workspaces = ({ onSelectWorkspace }) => {
           <WorkspaceTeamsTable
             workspaceId={teamsModal.workspaceId}
             isAssignTeamAllowed={CAN(
-              keys.ASSIGN_TEAM_TO_WORKSPACE.action,
-              keys.ASSIGN_TEAM_TO_WORKSPACE.subject,
+              Keys.WorkspaceManagementAssignTeamToWorkspace.id,
+              Keys.WorkspaceManagementAssignTeamToWorkspace.function,
             )}
-            isDeleteTeamAllowed={CAN(keys.DELETE_TEAM.action, keys.DELETE_TEAM.subject)}
-            isEditTeamAllowed={CAN(keys.EDIT_TEAM.action, keys.EDIT_TEAM.subject)}
-            isLeaveTeamAllowed={CAN(keys.LEAVE_TEAM.action, keys.LEAVE_TEAM.subject)}
+            isDeleteTeamAllowed={CAN(
+              Keys.IdentityAccessManagementDeleteTeam.id,
+              Keys.IdentityAccessManagementDeleteTeam.function,
+            )}
+            isEditTeamAllowed={CAN(
+              Keys.IdentityAccessManagementEditTeam.id,
+              Keys.IdentityAccessManagementEditTeam.function,
+            )}
+            isLeaveTeamAllowed={CAN(
+              Keys.IdentityAccessManagementLeaveTeam.id,
+              Keys.IdentityAccessManagementLeaveTeam.function,
+            )}
             useAssignTeamToWorkspaceMutation={useAssignTeamToWorkspaceMutation}
             useGetTeamsOfWorkspaceQuery={useGetTeamsOfWorkspaceQuery}
             useUnassignTeamFromWorkspaceMutation={useUnassignTeamFromWorkspaceMutation}
@@ -559,8 +579,8 @@ const Workspaces = ({ onSelectWorkspace }) => {
             useNotificationHandlers={useNotificationHandlers}
             useRemoveUserFromTeamMutation={useRemoveUserFromTeamMutation}
             isRemoveTeamFromWorkspaceAllowed={CAN(
-              keys.REMOVE_TEAM_FROM_WORKSPACE.action,
-              keys.REMOVE_TEAM_FROM_WORKSPACE.subject,
+              Keys.WorkspaceManagementRemoveTeamFromWorkspace.id,
+              Keys.WorkspaceManagementRemoveTeamFromWorkspace.function,
             )}
           />
           <ModalFooter variant="filled"></ModalFooter>

@@ -199,19 +199,27 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, broadcast *Broa
 func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler, includeUnreachable bool) []*K8sContext {
 	kcs := []*K8sContext{}
 
-	parsed, _, err := kubernetes.ProcessConfig(kubeconfig, "")
-	if err != nil {
-		return kcs
-	}
-
 	userUUID := uuid.FromStringOrNil(userID)
 
+	// Enumerate contexts from the raw kubeconfig rather than via
+	// kubernetes.ProcessConfig: ProcessConfig runs clientcmd MinifyConfig, which
+	// prunes every context except current-context. Driving the loop from its
+	// output therefore discovered only the current context and dropped the rest.
+	// The import wizard needs *every* context in the file, so enumerate them from
+	// the un-minified config here; each context is still validated individually
+	// below when its kube handler is built (unreachable ones are surfaced or
+	// skipped per includeUnreachable).
 	kcfg := InternalKubeConfig{}
 	if err := yaml.Unmarshal(kubeconfig, &kcfg); err != nil {
 		return kcs
 	}
 
-	for name := range parsed.Contexts {
+	for _, ctxEntry := range kcfg.Contexts {
+		ctxEntry = utils.RecursiveCastMapStringInterfaceToMapStringInterface(ctxEntry)
+		name, _ := ctxEntry["name"].(string)
+		if name == "" {
+			continue
+		}
 		metadata := map[string]interface{}{}
 		kc, _ := kcfg.K8sContext(name, instanceID, log)
 		eventBuilder := events.NewEvent().ActedUpon(uuid.FromStringOrNil(kc.ConnectionID)).WithCategory("connection").WithAction("register").FromSystem(*instanceID).FromOwner(userUUID)

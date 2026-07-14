@@ -14,6 +14,10 @@ import (
 	"github.com/meshery/meshkit/models/events"
 )
 
+// Deprecated: GetAllContexts (GET /api/system/kubernetes/contexts) is being
+// retired in favor of the connections API (kind=kubernetes) — everything is now
+// connection-driven. The UI derives its k8s context list from connections; this
+// endpoint remains only for the search-as-you-type context lookup.
 func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
