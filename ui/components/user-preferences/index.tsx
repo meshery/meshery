@@ -56,6 +56,7 @@ import { ThemeTogglerCore } from '@/themes/hooks';
 import { SecondaryTab, SecondaryTabs } from '../dashboard/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleCatalogContent, updateProgress } from '@/store/slices/mesheryUi';
+import LoadingScreen from '../shared/LoadingState/LoadingComponent';
 
 interface ThemeTogglerProps {
   handleUpdateUserPref: (_theme: string) => void;
@@ -143,10 +144,14 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
     isSuccess: isUserDataFetched,
     isError: isUserDataError,
     error: userDataError,
+    isLoading: isUserPrefLoading,
   } = useGetUserPrefQuery();
 
-  const { data: capabilitiesData, isSuccess: isCapabilitiesDataFetched } =
-    useGetProviderCapabilitiesQuery();
+  const {
+    data: capabilitiesData,
+    isSuccess: isCapabilitiesDataFetched,
+    isLoading: isCapabilitiesLoading,
+  } = useGetProviderCapabilitiesQuery();
 
   const [updateUserPref] = useUpdateUserPrefMutation();
   const [updateUserPrefWithContext] = useUpdateUserPrefWithContextMutation();
@@ -529,6 +534,11 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
     const updates = _.set(_.cloneDeep(userData), key, value);
     updateUserPrefWithContext(updates);
   };
+
+  if (isUserPrefLoading || isCapabilitiesLoading) {
+    return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading User Preferences..." />;
+  }
+
   return (
     <>
       <NoSsr>

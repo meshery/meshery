@@ -4,7 +4,6 @@ import {
   AddIcon,
   Box,
   Button,
-  CircularProgress,
   Drawer,
   InsertChartIcon,
   Typography,
@@ -25,6 +24,7 @@ import { DEFAULT_RANGE, resolveWindow } from '../common/time';
 import BoardLibrary from './BoardLibrary';
 import BoardView from './BoardView';
 import type { PinnedBoard } from './types';
+import LoadingScreen from '../../shared/LoadingState/LoadingComponent';
 
 const Toolbar = styled(Box)(({ theme }) => ({
   position: 'sticky',
@@ -134,9 +134,7 @@ const TelemetryDashboards: React.FC = () => {
 
   if (connectionsLoading) {
     return (
-      <Centered>
-        <CircularProgress />
-      </Centered>
+      <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Telemetry Dashboards..." />
     );
   }
 

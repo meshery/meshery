@@ -39,6 +39,7 @@ import MesheryConfigurationChart from '../dashboard/charts/MesheryConfigurationC
 import ConnectionStatsChart from '../dashboard/charts/ConnectionCharts';
 import { useSelector } from 'react-redux';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import LoadingScreen from '../shared/LoadingState/LoadingComponent';
 
 const StyledPaper = styled(Paper)(() => ({
   flexGrow: 1,
@@ -120,7 +121,8 @@ const MesherySettings = () => {
   const theme = useTheme();
   const { k8sConfig } = useSelector((state) => state.ui);
   const { meshAdapters } = useSelector((state) => state.adapter);
-  const { data: providerCapabilities } = useGetProviderCapabilitiesQuery();
+  const { data: providerCapabilities, isLoading: isCapabilitiesLoading } =
+    useGetProviderCapabilitiesQuery();
   const [state, setState] = useState({
     meshAdapters,
     tabVal: selectedSettingsCategory || OVERVIEW,
@@ -130,6 +132,7 @@ const MesherySettings = () => {
     registrantCount: 0,
     isMeshConfigured: k8sConfig.clusterConfigured,
   });
+  const [isCountsLoading, setIsCountsLoading] = useState(true);
 
   const systemResetPromptRef = useRef<{ show: (_args: any) => Promise<string> } | null>(null);
 
@@ -155,6 +158,8 @@ const MesherySettings = () => {
         }));
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsCountsLoading(false);
       }
     };
     fetchData();
@@ -198,6 +203,11 @@ const MesherySettings = () => {
       </div>
     );
   }
+
+  if (isCapabilitiesLoading || isCountsLoading) {
+    return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Meshery Settings..." />;
+  }
+
   return (
     <>
       {CAN(Keys.MesherySystemViewSettings.id, Keys.MesherySystemViewSettings.function) ? (
