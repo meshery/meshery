@@ -1,15 +1,11 @@
 package model
 
-import (
-	"path/filepath"
-)
+import "strings"
 
 func modelDisplayPath(path string) string {
 	if path == "" {
 		return "."
 	}
-	if filepath.Separator == '\\' {
-		return filepath.ToSlash(path)
-	}
-	return path
+	// Normalize displayed paths to forward slashes (filesystem behavior is unchanged).
+	return strings.ReplaceAll(path, "\\", "/")
 }
