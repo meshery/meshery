@@ -75,11 +75,13 @@ repository:
   core-team:
     - name: Lee Calcote
       affiliation: Layer5
-      primary: true
+      primary: false
     - name: Sangram Rath
       affiliation: OD10
+      primary: true
     - name: Mia Grenell
       affiliation: The University of Texas at Austin
+      primary: false
   license:
     url: https://github.com/meshery/meshery/blob/master/LICENSE
     expression: Apache-2.0
