@@ -22,6 +22,7 @@ import { useRouter } from 'next/router';
 import GetKubernetesNodeIcon from './utils';
 import { CONNECTION_STATES } from '@/utils/Enum';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
+import ConsoleActionsCell from '@/components/console/ConsoleActionsCell';
 
 const Container = styled('div')({
   margin: '1rem auto',
@@ -42,6 +43,13 @@ const Header = styled('div')({
 const HeaderLeft = styled('div')({
   display: 'flex',
   gap: '1rem',
+  alignItems: 'center',
+});
+
+/** The console actions, then the connection chip they act through. */
+const HeaderRight = styled('div')({
+  display: 'flex',
+  gap: '0.75rem',
   alignItems: 'center',
 });
 
@@ -122,13 +130,22 @@ const View = ({ setView, resource, k8sConfig }: DashboardViewProps) => {
               />
               <Typography variant="h6">{resource?.metadata?.name}</Typography>
             </HeaderLeft>
-            <TooltipWrappedConnectionChip
-              title={context.name}
-              width="100%"
-              handlePing={() => ping(context.name, context.server, context.connectionId)}
-              status={connectionStatus}
-              iconSrc={'/static/img/integrations/kubernetes.svg'}
-            />
+            <HeaderRight>
+              {/*
+               * Consoles open in the shared panel rather than in a tab of their
+               * own, so a shell keeps running — and stays reachable — once the user
+               * navigates off this resource. It is also the only console surface
+               * that docks, floats and minimizes, and Kanvas already opens onto it.
+               */}
+              <ConsoleActionsCell resource={resource} k8sConfig={k8sConfig} />
+              <TooltipWrappedConnectionChip
+                title={context.name}
+                width="100%"
+                handlePing={() => ping(context.name, context.server, context.connectionId)}
+                status={connectionStatus}
+                iconSrc={'/static/img/integrations/kubernetes.svg'}
+              />
+            </HeaderRight>
           </Header>
           <ErrorBoundary>
             <OperatorDataFormatter

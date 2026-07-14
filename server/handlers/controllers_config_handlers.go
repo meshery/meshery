@@ -7,8 +7,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gofrs/uuid"
-	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
@@ -260,20 +258,8 @@ func (h *Handler) readControllersConfigPayload(w http.ResponseWriter, req *http.
 // Kubernetes connection. On failure it writes the HTTP error response and
 // returns ok=false.
 func (h *Handler) fetchKubernetesConnection(w http.ResponseWriter, req *http.Request, token string, provider models.Provider) (*connections.Connection, bool) {
-	connectionID, err := uuid.FromString(mux.Vars(req)["connectionId"])
-	if err != nil || connectionID == uuid.Nil {
-		idErr := ErrEmptyConnectionID()
-		h.log.Error(idErr)
-		writeMeshkitError(w, idErr, http.StatusBadRequest)
-		return nil, false
-	}
-	connection, statusCode, err := provider.GetConnectionByID(token, connectionID)
-	if err != nil {
-		h.log.Error(err)
-		if statusCode < http.StatusContinue {
-			statusCode = http.StatusInternalServerError
-		}
-		writeMeshkitError(w, err, statusCode)
+	connection, ok := h.fetchConnection(w, req, token, provider)
+	if !ok {
 		return nil, false
 	}
 	if connection.Kind != "kubernetes" {

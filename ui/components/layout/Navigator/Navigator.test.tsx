@@ -77,6 +77,10 @@ vi.mock('../../meshery-mesh-interface/PatternService/CustomTextTooltip', () => (
   CustomTextTooltip: ({ children }: any) => <>{children}</>,
 }));
 
+vi.mock('@/components/console/MinimizedConsoles', () => ({
+  default: () => null,
+}));
+
 vi.mock('../../../utils/ExtensionPointSchemaValidator', () => ({
   default: () => () => [],
 }));

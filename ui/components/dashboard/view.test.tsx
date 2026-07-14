@@ -29,6 +29,10 @@ vi.mock('@sistent/sistent', () => {
   };
 });
 
+vi.mock('@/components/console/ConsoleActionsCell', () => ({
+  default: () => <div data-testid="console-actions" />,
+}));
+
 vi.mock('@/constants/common', () => ({
   FALLBACK_MESHERY_IMAGE_PATH: '/fallback.svg',
   KUBERNETES: 'kubernetes',

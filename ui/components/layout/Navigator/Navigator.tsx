@@ -75,6 +75,7 @@ import {
 import { useRouter } from 'next/router';
 import { setAdapter } from '@/store/slices/adapter';
 import { getNavigatorComponents } from './navigatorComponents';
+import MinimizedConsoles from '@/components/console/MinimizedConsoles';
 
 const externalLinkIconStyle = { width: '17.76px', fontSize: '1.11rem' };
 
@@ -917,6 +918,7 @@ const NavigatorContent = () => {
         {Title}
         {Menu}
         <FixedSidebarFooter>
+          <MinimizedConsoles isDrawerCollapsed={isDrawerCollapsed} />
           {Chevron}
           {HelpIcons}
           {Version}
