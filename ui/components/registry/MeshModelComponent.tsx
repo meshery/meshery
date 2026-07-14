@@ -267,7 +267,7 @@ const MeshModelComponent_ = ({
         setResourcesDetail((prev) => {
           const incoming = response.data[view.toLowerCase()];
           const combined =
-            searchText || checked || view === RELATIONSHIPS
+            searchText || (checked && view === MODELS) || view === RELATIONSHIPS
               ? [...incoming]
               : [...prev, ...incoming];
           // Use _.uniqWith for safe deep equality deduplication, as
