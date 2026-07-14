@@ -11,7 +11,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/meshery/meshery/server/models"
-	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta3/environment"
 )
 
 // environmentPayloadWire is a handler-local dual-accept wrapper around
@@ -39,7 +39,7 @@ func (p *environmentPayloadWire) UnmarshalJSON(data []byte) error {
 
 	// Zero OrgId so a reused receiver does not carry stale data when the
 	// next payload omits both spellings.
-	p.OrgId = uuid.UUID{}
+	p.OrgID = uuid.UUID{}
 
 	if err := json.Unmarshal(data, &aux); err != nil {
 		return err
@@ -47,9 +47,9 @@ func (p *environmentPayloadWire) UnmarshalJSON(data []byte) error {
 	// Canonical wins when both are supplied.
 	switch {
 	case aux.OrgIdCamel != nil:
-		p.OrgId = *aux.OrgIdCamel
+		p.OrgID = *aux.OrgIdCamel
 	case aux.OrgIdSnake != nil:
-		p.OrgId = *aux.OrgIdSnake
+		p.OrgID = *aux.OrgIdSnake
 	}
 	return nil
 }

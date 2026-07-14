@@ -23,7 +23,7 @@ import (
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	mErrors "github.com/meshery/meshkit/errors"
-	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta3/environment"
 	"github.com/spf13/cobra"
 )
 
@@ -53,7 +53,7 @@ mesheryctl environment create --orgId [orgId] --name [name] --description [descr
 		}
 
 		createEnvironmentPayload := environment.EnvironmentPayload{
-			OrgId:       organizationID,
+			OrgID:       organizationID,
 			Name:        createEnvironmentFlags.Name,
 			Description: createEnvironmentFlags.Description,
 		}
