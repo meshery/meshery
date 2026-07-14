@@ -89,7 +89,7 @@ const STATE_CHIP_CONFIG = {
   },
   [CONNECTION_STATES.DISCONNECTED]: {
     Component: DisconnectedChip,
-    avatar: <DisconnectIcon fill={notificationColors.lightwarning} width={24} height={24} />,
+    avatar: <DisconnectIcon fill={notificationColors.error} width={24} height={24} />,
   },
   [CONNECTION_STATES.NOTFOUND]: {
     Component: NotFoundChip,

@@ -128,7 +128,7 @@ export const DiscoveredChip = styled(Chip)(({ theme }) => ({
   '& .MuiChip-label': {
     color: theme.palette.info.main,
   },
-  background: `${theme.palette.info.main}30 !important`,
+  background: `${alpha(theme.palette.info.main, 0.3)} !important`,
   '& .MuiSvgIcon-root': {
     color: `${theme.palette.info.main} !important`,
   },
@@ -139,7 +139,7 @@ export const DeletedChip = styled(Chip)(({ theme }) => ({
   '& .MuiChip-label': {
     color: theme.palette.background.error.default,
   },
-  background: `${theme.palette.background.error.default}30 !important`,
+  background: `${alpha(theme.palette.background.error.default, 0.3)} !important`,
   '& .MuiSvgIcon-root': {
     color: `${theme.palette.background.error.default} !important`,
   },
@@ -150,7 +150,7 @@ export const RegisteredChip = styled(Chip)(({ theme }) => ({
   '& .MuiChip-label': {
     color: theme.palette.info.main,
   },
-  background: `${theme.palette.info.main}30 !important`,
+  background: `${alpha(theme.palette.info.main, 0.3)} !important`,
   '& .MuiSvgIcon-root': {
     color: `${theme.palette.info.main} !important`,
   },
@@ -161,7 +161,7 @@ export const ConnectedChip = styled(Chip)(({ theme }) => ({
   '& .MuiChip-label': {
     color: theme.palette.background.success.default,
   },
-  background: `${theme.palette.background.success.default}30 !important`,
+  background: `${alpha(theme.palette.background.success.default, 0.3)} !important`,
   '& .MuiSvgIcon-root': {
     color: `${theme.palette.background.success.default} !important`,
   },
@@ -172,7 +172,7 @@ export const IgnoredChip = styled(Chip)(({ theme }) => ({
   '& .MuiChip-label': {
     color: theme.palette.text.secondary,
   },
-  background: `${theme.palette.text.secondary}30 !important`,
+  background: `${alpha(theme.palette.text.secondary, 0.3)} !important`,
   '& .MuiSvgIcon-root': {
     color: `${theme.palette.text.secondary} !important`,
   },
@@ -181,11 +181,11 @@ export const IgnoredChip = styled(Chip)(({ theme }) => ({
 export const DisconnectedChip = styled(Chip)(({ theme }) => ({
   ...baseChipStyles(theme),
   '& .MuiChip-label': {
-    color: theme.palette.background.warning.default,
+    color: theme.palette.background.error.default,
   },
-  background: `${theme.palette.background.warning.default}30 !important`,
+  background: `${alpha(theme.palette.background.error.default, 0.3)} !important`,
   '& .MuiSvgIcon-root': {
-    color: `${theme.palette.background.warning.default} !important`,
+    color: `${theme.palette.background.error.default} !important`,
   },
 }));
 
@@ -194,7 +194,7 @@ export const NotFoundChip = styled(Chip)(({ theme }) => ({
   '& .MuiChip-label': {
     color: theme.palette.text.disabled,
   },
-  background: `${theme.palette.background.disabled}30 !important`,
+  background: `${alpha(theme.palette.text.disabled, 0.3)} !important`,
   '& .MuiSvgIcon-root': {
     color: `${theme.palette.icon.default} !important`,
   },
@@ -205,7 +205,7 @@ export const MaintainanceChip = styled(Chip)(({ theme }) => ({
   '& .MuiChip-label': {
     color: theme.palette.warning.main,
   },
-  background: `${theme.palette.warning.main}30 !important`,
+  background: `${alpha(theme.palette.warning.main, 0.3)} !important`,
   '& .MuiSvgIcon-root': {
     color: `${theme.palette.warning.main} !important`,
   },
@@ -271,8 +271,9 @@ export const getConnectionStateColors = (theme: Theme) => ({
   [CONNECTION_STATES.REGISTERED]: theme.palette.primary.main,
   [CONNECTION_STATES.DISCOVERED]: theme.palette.warning.main,
   [CONNECTION_STATES.IGNORED]: theme.palette.warning.main,
-  [CONNECTION_STATES.DELETED]: theme.palette.error.main,
+  [CONNECTION_STATES.DELETED]: theme.palette.background?.error?.default || theme.palette.error.main,
   [CONNECTION_STATES.MAINTENANCE]: theme.palette.warning.main,
-  [CONNECTION_STATES.DISCONNECTED]: theme.palette.warning.main,
+  [CONNECTION_STATES.DISCONNECTED]:
+    theme.palette.background?.error?.default || theme.palette.error.main,
   [CONNECTION_STATES.NOTFOUND]: theme.palette.warning.main,
 });

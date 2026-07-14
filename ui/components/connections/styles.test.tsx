@@ -203,6 +203,7 @@ describe('getConnectionStateColors', () => {
       primary: { main: '#1976d2' },
       warning: { main: '#ed6c02' },
       error: { main: '#d32f2f' },
+      background: {},
     },
   } as never;
 
@@ -214,7 +215,7 @@ describe('getConnectionStateColors', () => {
     expect(colors.ignored).toBe('#ed6c02');
     expect(colors.deleted).toBe('#d32f2f');
     expect(colors.maintenance).toBe('#ed6c02');
-    expect(colors.disconnected).toBe('#ed6c02');
+    expect(colors.disconnected).toBe('#d32f2f');
     // CONNECTION_STATES.NOTFOUND === 'not found'
     expect(colors['not found']).toBe('#ed6c02');
   });
@@ -222,5 +223,22 @@ describe('getConnectionStateColors', () => {
   it('always exposes a key for every CONNECTION_STATE', () => {
     const colors = getConnectionStateColors(baseTheme);
     expect(Object.keys(colors).length).toBe(8);
+  });
+
+  it('prefers the custom background error token when available', () => {
+    const themeWithCustomBackgroundError = {
+      palette: {
+        primary: { main: '#1976d2' },
+        warning: { main: '#ed6c02' },
+        error: { main: '#d32f2f' },
+        background: {
+          error: { default: '#b71c1c' },
+        },
+      },
+    } as never;
+
+    const colors = getConnectionStateColors(themeWithCustomBackgroundError);
+    expect(colors.deleted).toBe('#b71c1c');
+    expect(colors.disconnected).toBe('#b71c1c');
   });
 });
