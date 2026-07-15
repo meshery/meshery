@@ -158,7 +158,7 @@ const Environments = () => {
 
   useEffect(() => {
     if (isEnvironmentsError) {
-      handleError('Environments Fetching Error')(environmentsError);
+      handleError('Environments Fetch Error')(environmentsError);
     }
     if (isEnvironmentConnectionsError) {
       handleError('Connections of a Environment fetching Error')(environmentConnectionsError);
