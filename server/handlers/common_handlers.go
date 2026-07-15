@@ -9,9 +9,11 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/meshery/meshery/server/core"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/utils"
 )
 
 // LoginHandler redirects user for auth or issues session
@@ -63,6 +65,34 @@ func (h *Handler) TokenHandler(w http.ResponseWriter, r *http.Request, p models.
 	p.TokenHandler(w, r, fromMiddleWare)
 }
 
+// isSafePath checks if the target file path resides inside the Meshery home directory (~/.meshery)
+func isSafePath(filePath string) (bool, error) {
+	// Get the absolute path of the requested file
+	absPath, err := filepath.Abs(filePath)
+	if err != nil {
+		return false, err
+	}
+
+	// Get the absolute path of the Meshery home directory
+	homeDir := utils.GetHome()
+	mesheryHome, err := filepath.Abs(filepath.Join(homeDir, ".meshery"))
+	if err != nil {
+		return false, err
+	}
+
+	// Ensure the path starts with the allowed mesheryHome directory prefix
+	// Clean both paths to handle different OS path separators consistently
+	cleanAbsPath := filepath.Clean(absPath)
+	cleanMesheryHome := filepath.Clean(mesheryHome)
+
+	// Since Clean on Windows might produce C:\Users\..., let's do a case-insensitive prefix check on Windows
+	// or case-sensitive on Unix systems
+	if strings.HasPrefix(strings.ToLower(cleanAbsPath), strings.ToLower(cleanMesheryHome)+string(os.PathSeparator)) || strings.EqualFold(cleanAbsPath, cleanMesheryHome) {
+		return true, nil
+	}
+	return false, nil
+}
+
 // ViewHandler handles viewing the file content.
 func (h *Handler) ViewHandler(responseWriter http.ResponseWriter, request *http.Request) {
 	filePath, err := url.QueryUnescape(request.URL.Query().Get("file"))
@@ -71,6 +101,13 @@ func (h *Handler) ViewHandler(responseWriter http.ResponseWriter, request *http.
 		writeMeshkitError(responseWriter, ErrInvalidFileRequest(err), http.StatusBadRequest)
 		return
 	}
+
+	safe, err := isSafePath(filePath)
+	if err != nil || !safe {
+		writeMeshkitError(responseWriter, ErrPathTraversal(filePath), http.StatusBadRequest)
+		return
+	}
+
 	file, err := os.Open(filePath)
 	if err != nil {
 		writeMeshkitError(responseWriter, ErrReadFileContent(err, filePath), http.StatusInternalServerError)
@@ -100,6 +137,12 @@ func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *h
 	filePath, err := url.QueryUnescape(request.URL.Query().Get("file"))
 	if err != nil {
 		writeMeshkitError(responseWriter, ErrInvalidFileRequest(err), http.StatusBadRequest)
+		return
+	}
+
+	safe, err := isSafePath(filePath)
+	if err != nil || !safe {
+		writeMeshkitError(responseWriter, ErrPathTraversal(filePath), http.StatusBadRequest)
 		return
 	}
 
