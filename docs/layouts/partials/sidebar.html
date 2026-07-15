@@ -40,6 +40,9 @@
           childLi.classList.add("show");
         });
       } else {
+        li.querySelectorAll("ul").forEach(function(descendantUl) {
+           descendantUl.hidden = true;
+         });
         li.querySelectorAll("li").forEach(function(descendantLi) {
           descendantLi.classList.remove("active-path");
           descendantLi.classList.remove("show");
