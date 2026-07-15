@@ -126,7 +126,8 @@ export const formatApiError = (error: unknown, fallbackTitle?: string): Formatte
   // (e.g. "TypeError: Failed to fetch") that is identical across every failed
   // request, so it can't distinguish "create" from "fetch" errors. Prefer the
   // operation-specific fallbackTitle in that case.
-  const status = (error as Record<string, unknown> | null | undefined)?.status;
+  const status =
+    error && typeof error === 'object' ? (error as Record<string, unknown>).status : undefined;
   const isNetworkError = status === 'FETCH_ERROR' || status === 'TIMEOUT_ERROR';
 
   const fallback =

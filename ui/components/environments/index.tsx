@@ -18,6 +18,7 @@ import EnvironmentIcon from '../../assets/icons/Environment';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { formatApiError } from '../../utils/helpers/meshkitError';
+import { getErrorMessage } from '../connections/ConnectionTable.constants';
 import { RJSFModalWrapper } from '../shared/Modal/Modal';
 import _PromptComponent from '../PromptComponent';
 import { EmptyState } from '../lifecycle/general';
@@ -50,7 +51,7 @@ import {
 import { Keys } from '@meshery/schemas/permissions';
 import CAN from '@/utils/can';
 import DefaultError from '../general/error-404/index';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
 const ACTION_TYPES = {
@@ -61,6 +62,7 @@ const ACTION_TYPES = {
 const Environments = () => {
   const theme = useTheme();
   const { organization } = useSelector((state) => state.ui);
+  const dispatch = useDispatch();
   const [environmentModal, setEnvironmentModal] = useState({
     open: false,
     schema: {},
@@ -176,19 +178,19 @@ const Environments = () => {
   ]);
 
   function handleError(action) {
-    return (error) => {
-      updateProgress({ showProgress: false });
+    return (error: unknown) => {
+      dispatch(updateProgress({ showProgress: false }));
       const { message } = formatApiError(error, action);
       notify({
         message,
         event_type: EVENT_TYPES.ERROR,
-        details: error?.toString(),
+        details: getErrorMessage(error),
       });
     };
   }
 
   const handleSuccess = (msg) => {
-    updateProgress({ showProgress: false });
+    dispatch(updateProgress({ showProgress: false }));
     notify({
       message: msg,
       event_type: EVENT_TYPES.SUCCESS,
