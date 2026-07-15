@@ -21533,7 +21533,7 @@ emove border radius from all of the buttons\ @amitamrutiya (#13874)&lt;/li&gt;
 &lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;Generate new components and dump csv @Revolyssup (#7349)&lt;/li&gt;
-&lt;li&gt;Add trim flag for /api/registry/model/&lt;modelname&gt; @Revolyssup (#7344)&lt;/li&gt;
+&lt;li&gt;Add trim flag for /api/meshmodel/model/&lt;modelname&gt; @Revolyssup (#7344)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="-meshery-cli"&gt;
 	⌨️ Meshery CLI
@@ -22564,7 +22564,7 @@ emove border radius from all of the buttons\ @amitamrutiya (#13874)&lt;/li&gt;
 	🔤 General
 &lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;Fix bug on /api/registry/components/types @Revolyssup (#6763)&lt;/li&gt;
+&lt;li&gt;Fix bug on /api/meshmodel/components/types @Revolyssup (#6763)&lt;/li&gt;
 &lt;li&gt;[Server] MeshModel Updater Comments and Doc @leecalcote (#6748)&lt;/li&gt;
 &lt;li&gt;Add &amp;ldquo;Kubernetes&amp;rdquo; in meshmodel components @Revolyssup (#6751)&lt;/li&gt;
 &lt;li&gt;Fix APIVersion bug in Meshmodel components @Revolyssup (#6757)&lt;/li&gt;
