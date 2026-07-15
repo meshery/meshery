@@ -17,11 +17,9 @@ const DuplicatesDataTable = ({ view, rowData, classes }) => {
 
   const getDuplicatedModels = async (model, version) => {
     try {
-      const response = await triggerGetModelByName({ name: model, params: { version } });
-      if (response?.data) {
-        setCount(response.data.totalCount || 0);
-        setResourcesDetail(response.data.models || []);
-      }
+      const response = await triggerGetModelByName({ name: model, params: { version } }).unwrap();
+      setCount(response.totalCount || 0);
+      setResourcesDetail(response.models || []);
     } catch (e) {
       console.error(e);
     }
@@ -32,11 +30,9 @@ const DuplicatesDataTable = ({ view, rowData, classes }) => {
       const response = await triggerGetComponentByName({
         name: componentKind,
         params: { apiVersion, model: modelName },
-      });
-      if (response?.data) {
-        setCount(response.data.totalCount || 0);
-        setResourcesDetail(response.data.components || []);
-      }
+      }).unwrap();
+      setCount(response.totalCount || 0);
+      setResourcesDetail(response.components || []);
     } catch (e) {
       console.error(e);
     }

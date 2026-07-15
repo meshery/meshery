@@ -155,11 +155,12 @@ export function useMeshModelComponents() {
     }
 
     triggerGetModelFromCategory({ category, params: { pagesize: 'all' } })
+      .unwrap()
       .then((response) => {
-        if (response?.data?.models) {
+        if (response?.models) {
           setModels((prevModels) => ({
             ...prevModels,
-            [category]: sortAndGroupVersionsInModel(response.data.models),
+            [category]: sortAndGroupVersionsInModel(response.models),
           }));
         }
       })
@@ -173,12 +174,12 @@ export function useMeshModelComponents() {
           const response = await triggerGetComponentsFromModal({
             model: modelName,
             params: { pagesize: 'all', trim: true },
-          });
+          }).unwrap();
 
-          if (response?.data?.components) {
+          if (response?.components) {
             setMeshModelComponents((prev) => ({
               ...prev,
-              [modelName]: getProcessedComponentsData(response.data.components),
+              [modelName]: getProcessedComponentsData(response.components),
             }));
           }
         } catch (e) {
@@ -198,12 +199,12 @@ export function useMeshModelComponents() {
         const response = await triggerGetComponentsFromModal({
           model: modelName,
           params: { version, pagesize: 'all', trim: true },
-        });
+        }).unwrap();
 
-        if (response?.data?.components) {
+        if (response?.components) {
           setMeshModelComponents((prev) => ({
             ...prev,
-            [modelName]: getProcessedComponentsData(response.data.components),
+            [modelName]: getProcessedComponentsData(response.components),
           }));
         }
       } catch (e) {

@@ -297,8 +297,8 @@ function MesheryFilters() {
   useEffect(() => {
     const fetchSchemaData = async () => {
       try {
-        const response = await triggerGetMeshModels();
-        const models = response?.data?.models;
+        const response = await triggerGetMeshModels().unwrap();
+        const models = response?.models;
         const modelNames = _.uniq(models?.map((model) => model.displayName));
         modelNames.sort();
 

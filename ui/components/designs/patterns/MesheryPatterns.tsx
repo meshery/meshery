@@ -286,8 +286,8 @@ function MesheryPatterns({
   useEffect(() => {
     const fetchMeshModels = async () => {
       try {
-        const response = await triggerGetMeshModels();
-        const models = response?.data?.models;
+        const response = await triggerGetMeshModels().unwrap();
+        const models = response?.models;
         const modelNames = _.uniqBy(
           models?.map((model) => {
             if (model.displayName && model.displayName !== '') {

@@ -55,12 +55,11 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
     } = model;
     try {
       if (isEmpty(schemaSet)) {
-        const res = await triggerGetComponentsByModelAndKind({
+        const data = await triggerGetComponentsByModelAndKind({
           model: modelName,
           component: kind,
           params: { version, apiVersion },
-        });
-        const data = res?.data;
+        }).unwrap();
         if (data?.components?.[0]) {
           setSchemaSet({
             workload: JSON.parse(data.components[0].component.schema), // has to be removed
