@@ -1,7 +1,7 @@
 ---
 title: Confidential Containers
 subtitle: Collaborative and visual infrastructure as design for Confidential Containers
-image: /extensions/models/confidential-containers/icons/color/confidential-containers-color.svg
+image: extensions/models/confidential-containers/icons/color/confidential-containers-color.svg
 aliases: /extensibility/integrations/confidential-containers
 docURL: https://docs.meshery.io/extensibility/integrations/confidential containers
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Security & Compliance
 registrant: GitHub
 components: 
 - name: cc-runtime
-  colorIcon: content/en/extensions/models/confidential-containers/components/cc-runtime/icons/color/cc-runtime-color.svg
-  whiteIcon: content/en/extensions/models/confidential-containers/components/cc-runtime/icons/white/cc-runtime-white.svg
+  colorIcon: extensions/models/confidential-containers/components/cc-runtime/icons/color/cc-runtime-color.svg
+  whiteIcon: extensions/models/confidential-containers/components/cc-runtime/icons/white/cc-runtime-white.svg
   description: 
 components-count: 1
 relationships: 

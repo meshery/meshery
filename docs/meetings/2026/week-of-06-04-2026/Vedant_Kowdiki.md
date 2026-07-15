@@ -1,0 +1,1 @@
+Hi everyone, I'm Vedant, an engineering student currently learning Golang and backend development. I'm excited to contribute to Meshery, learn from the community, and grow as an open-source contributor.

@@ -71,9 +71,18 @@ describe('NotificationCenter constants', () => {
   });
 
   it('describes well-known event types', () => {
-    expect(EVENT_TYPE.DEPLOY_DESIGN).toEqual({ category: 'pattern', action: 'deploy' });
-    expect(EVENT_TYPE.UNDEPLOY_DESIGN).toEqual({ category: 'pattern', action: 'undeploy' });
-    expect(EVENT_TYPE.VALIDATE_DESIGN).toEqual({ category: 'pattern', action: 'validate' });
+    expect(EVENT_TYPE.CatalogManagementDeployDesign).toEqual({
+      category: 'pattern',
+      action: 'deploy',
+    });
+    expect(EVENT_TYPE.CatalogManagementUndeployDesign).toEqual({
+      category: 'pattern',
+      action: 'undeploy',
+    });
+    expect(EVENT_TYPE.CatalogManagementValidateDesign).toEqual({
+      category: 'pattern',
+      action: 'validate',
+    });
     expect(EVENT_TYPE.EVALUATE_DESIGN).toEqual({ category: 'relationship', action: 'evaluation' });
     expect(EVENT_TYPE.REGISTRANT_SUMMARY).toEqual({ category: 'entity', action: 'get_summary' });
     expect(EVENT_TYPE.ACADEMY_QUIZ_EVALUATION).toEqual({
@@ -84,7 +93,9 @@ describe('NotificationCenter constants', () => {
 
   it('joins action and category into a stable formatter key', () => {
     expect(eventDetailFormatterKey({ action: 'foo', category: 'bar' })).toBe('foo-bar');
-    expect(eventDetailFormatterKey(EVENT_TYPE.DEPLOY_DESIGN)).toBe('deploy-pattern');
+    expect(eventDetailFormatterKey(EVENT_TYPE.CatalogManagementDeployDesign)).toBe(
+      'deploy-pattern',
+    );
   });
 
   it('produces a theme-aware status style map', () => {

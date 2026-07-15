@@ -306,7 +306,7 @@ var TemplateContext = config.Context{
 // Services is the built-in fallback docker-compose definition used when the install
 // docker-compose file cannot be downloaded. The provider list is sourced from the
 // canonical install/providers.env via DefaultProviderBaseURLs (see providers_gen.go);
-// edit providers.env and run `make generate-install` rather than hardcoding URLs here.
+// edit providers.env and run `make providers-propagate` rather than hardcoding URLs here.
 //
 //go:generate python3 ../../../install/scripts/sync-provider-urls.py
 var Services = map[string]Service{

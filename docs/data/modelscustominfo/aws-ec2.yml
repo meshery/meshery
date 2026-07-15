@@ -22,7 +22,7 @@ content: |
   </p>
 
   <p>
-    <a href="/guides/tutorials/deploy-aws-ec2-instances-with-meshery"
+    <a href="https://docs.meshery.io/guides/tutorials/aws/deploy-aws-ec2-instances-with-meshery"
       >Read the full guide on deploying AWS EC2 instances with Meshery ➔</a
     >
   </p>

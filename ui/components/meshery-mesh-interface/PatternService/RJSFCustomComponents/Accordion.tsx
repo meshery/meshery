@@ -1,6 +1,4 @@
 import React, { useEffect } from 'react';
-import DeleteIcon from '../../../../assets/icons/DeleteIcon';
-import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
 import {
   IconButton,
   Accordion as MuiAccordion,
@@ -9,6 +7,8 @@ import {
   Typography,
   Box,
   useTheme,
+  ExpandMoreIcon,
+  DeleteIcon,
 } from '@sistent/sistent';
 import { iconSmall } from '../../../../css/icons.styles';
 import { safeStringTitle } from '../helper';
@@ -50,8 +50,7 @@ export default function SimpleAccordion(props) {
 
           {props.childProps.hasRemove && (
             <IconButton
-              style={{ padding: '0', iconSmall }}
-              // style={btnStyle, iconSmall}
+              style={{ padding: '0', ...iconSmall }}
               disabled={props.childProps.disabled || props.childProps.readonly}
               onClick={props.childProps.onDropIndexClick(props.childProps.index)}
             >

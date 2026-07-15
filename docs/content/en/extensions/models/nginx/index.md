@@ -1,7 +1,7 @@
 ---
 title: NGINX
 subtitle: Collaborative and visual infrastructure as design for NGINX
-image: /extensions/models/nginx/icons/color/nginx-color.svg
+image: extensions/models/nginx/icons/color/nginx-color.svg
 aliases: /extensibility/integrations/nginx
 docURL: https://docs.meshery.io/extensibility/integrations/nginx
 description: 

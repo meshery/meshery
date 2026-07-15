@@ -10,8 +10,10 @@ import {
   Avatar,
   useTheme,
   InfoOutlinedIcon,
+  FullScreenIcon,
+  FullScreenExitIcon,
 } from '@sistent/sistent';
-import { Delete as DeleteIcon, Fullscreen, Save, FullscreenExit } from '@/assets/icons';
+import { Delete as DeleteIcon, Save } from '@/assets/icons';
 import Moment from 'react-moment';
 import FlipCard from '../FlipCard';
 import { UnControlled as CodeMirror } from '../CodeMirror';
@@ -33,7 +35,7 @@ import TooltipButton from '../../utils/TooltipButton';
 import { VISIBILITY } from '../../utils/Enum';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import CAN from '@/utils/can';
 import { VisibilityChipMenu } from '@sistent/sistent';
 import { VIEW_VISIBILITY } from '../shared/Modal/Information/InfoModal';
@@ -161,7 +163,12 @@ function FiltersCard_({
                     borderRadius: '8px',
                   }}
                   onClick={(ev) => genericClickHandler(ev, handlePublishModal)}
-                  disabled={!CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject)}
+                  disabled={
+                    !CAN(
+                      Keys.CatalogManagementPublishWasmFilter.id,
+                      Keys.CatalogManagementPublishWasmFilter.function,
+                    )
+                  }
                 >
                   <PublicIcon style={iconMedium} />
                   <> Publish </>
@@ -176,7 +183,10 @@ function FiltersCard_({
                   }}
                   onClick={(ev) => genericClickHandler(ev, handleUnpublishModal)}
                   disabled={
-                    !CAN(keys.UNPUBLISH_WASM_FILTER.action, keys.UNPUBLISH_WASM_FILTER.subject)
+                    !CAN(
+                      Keys.CatalogManagementUnpublishWasmFilter.id,
+                      Keys.CatalogManagementUnpublishWasmFilter.function,
+                    )
                   }
                 >
                   <PublicIcon style={iconMedium} />
@@ -193,7 +203,10 @@ function FiltersCard_({
                   borderRadius: '8px',
                 }}
                 disabled={
-                  !CAN(keys.DOWNLOAD_A_WASM_FILTER.action, keys.DOWNLOAD_A_WASM_FILTER.subject)
+                  !CAN(
+                    Keys.CatalogManagementDownloadAWasmFilter.id,
+                    Keys.CatalogManagementDownloadAWasmFilter.function,
+                  )
                 }
               >
                 <GetAppIcon fill={theme.palette.background.constant.white} style={iconMedium} />
@@ -210,7 +223,12 @@ function FiltersCard_({
                     borderRadius: '8px',
                   }}
                   onClick={(ev) => genericClickHandler(ev, handleClone)}
-                  disabled={!CAN(keys.CLONE_WASM_FILTER.action, keys.CLONE_WASM_FILTER.subject)}
+                  disabled={
+                    !CAN(
+                      Keys.CatalogManagementCloneWasmFilter.id,
+                      Keys.CatalogManagementCloneWasmFilter.function,
+                    )
+                  }
                 >
                   <CloneIcon fill={theme.palette.background.constant.white} style={iconMedium} />
                   <GridCloneBtnText>Clone</GridCloneBtnText>
@@ -226,7 +244,10 @@ function FiltersCard_({
                   borderRadius: '8px',
                 }}
                 disabled={
-                  !CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject)
+                  !CAN(
+                    Keys.CatalogManagementDetailsOfWasmFilter.id,
+                    Keys.CatalogManagementDetailsOfWasmFilter.function,
+                  )
                 }
               >
                 <InfoOutlinedIcon
@@ -258,7 +279,7 @@ function FiltersCard_({
                       })
                     }
                   >
-                    {fullScreen ? <FullscreenExit /> : <Fullscreen />}
+                    {fullScreen ? <FullScreenExitIcon /> : <FullScreenIcon />}
                   </IconButton>
                 </Tooltip>
               </CardHeaderRight>
@@ -309,7 +330,12 @@ function FiltersCard_({
                 {/* Save button */}
                 <Tooltip title="Save" arrow interactive placement="bottom">
                   <IconButton
-                    disabled={!CAN(keys.EDIT_WASM_FILTER.action, keys.EDIT_WASM_FILTER.subject)}
+                    disabled={
+                      !CAN(
+                        Keys.CatalogManagementEditWasmFilter.id,
+                        Keys.CatalogManagementEditWasmFilter.function,
+                      )
+                    }
                     onClick={(ev) => genericClickHandler(ev, updateHandler)}
                   >
                     <Save fill={theme.palette.icon.default} />
@@ -319,7 +345,12 @@ function FiltersCard_({
                 {/* Delete Button */}
                 <Tooltip title="Delete" arrow interactive placement="bottom">
                   <IconButton
-                    disabled={!CAN(keys.DELETE_WASM_FILTER.action, keys.DELETE_WASM_FILTER.subject)}
+                    disabled={
+                      !CAN(
+                        Keys.CatalogManagementDeleteWasmFilter.id,
+                        Keys.CatalogManagementDeleteWasmFilter.function,
+                      )
+                    }
                     onClick={(ev) => genericClickHandler(ev, deleteHandler)}
                   >
                     <DeleteIcon fill={theme.palette.icon.default} />

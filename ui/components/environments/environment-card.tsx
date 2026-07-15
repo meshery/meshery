@@ -2,7 +2,7 @@ import React from 'react';
 import { FlipCard } from '../lifecycle/general';
 import { useGetEnvironmentConnectionsQuery } from '../../rtk-query/environments';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { DeleteIcon, EditIcon, Grid2, SyncAltIcon, useTheme } from '@sistent/sistent';
 
 import {
@@ -31,7 +31,7 @@ export const formattoLongDate = (date) => {
 export const TransferButton = ({ title, count, onAssign, disabled }) => {
   const theme = useTheme();
   return (
-    <PopupButton disabled={disabled} onClick={onAssign} s>
+    <PopupButton disabled={disabled} onClick={onAssign}>
       <Grid2>
         <TabCount>{count}</TabCount>
         <TabTitle>{title}</TabTitle>
@@ -169,7 +169,12 @@ const EnvironmentCard = ({
                     title="Assigned Connections"
                     count={environmentConnectionsCount}
                     onAssign={onAssignConnection}
-                    disabled={!CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)}
+                    disabled={
+                      !CAN(
+                        Keys.WorkspaceManagementViewConnections.id,
+                        Keys.WorkspaceManagementViewConnections.function,
+                      )
+                    }
                   />
                 </AllocationButton>
                 {/* temporary disable workspace allocation button  */}
@@ -181,7 +186,7 @@ const EnvironmentCard = ({
                         environmentDetails.workspaces ? environmentDetails.workspaces?.length : 0
                       }
                       onAssign={onAssignConnection}
-                      disabled={!CAN(keys.VIEW_WORKSPACE.action, keys.VIEW_WORKSPACE.subject)}
+                      disabled={!CAN(Keys.WorkspaceManagementViewWorkspace.id, Keys.WorkspaceManagementViewWorkspace.function)}
                     />
                   </AllocationButton>
                 )} */}
@@ -225,7 +230,10 @@ const EnvironmentCard = ({
                   disabled={
                     selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
                       ? true
-                      : !CAN(keys.EDIT_ENVIRONMENT.action, keys.EDIT_ENVIRONMENT.subject)
+                      : !CAN(
+                          Keys.WorkspaceManagementEditEnvironment.id,
+                          Keys.WorkspaceManagementEditEnvironment.function,
+                        )
                   }
                 >
                   <EditIcon fill="white" style={{ margin: '0 2px' }} />
@@ -235,7 +243,10 @@ const EnvironmentCard = ({
                   disabled={
                     selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
                       ? true
-                      : !CAN(keys.DELETE_ENVIRONMENT.action, keys.DELETE_ENVIRONMENT.subject)
+                      : !CAN(
+                          Keys.WorkspaceManagementDeleteEnvironment.id,
+                          Keys.WorkspaceManagementDeleteEnvironment.function,
+                        )
                   }
                 >
                   <DeleteIcon fill="white" style={{ margin: '0 2px' }} />

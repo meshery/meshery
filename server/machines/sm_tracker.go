@@ -29,3 +29,21 @@ func (smt *ConnectionToStateMachineInstanceTracker) Add(id core.Uuid, inst *Stat
 	defer smt.mx.Unlock()
 	smt.ConnectToInstanceMap[id] = inst
 }
+
+// Range calls fn for a snapshot of the tracked connection/state-machine
+// pairs. Iteration happens over a copy taken under the read lock, so fn may
+// safely interact with the tracker or perform slow work.
+func (smt *ConnectionToStateMachineInstanceTracker) Range(fn func(id core.Uuid, inst *StateMachine) bool) {
+	smt.mx.RLock()
+	snapshot := make(map[core.Uuid]*StateMachine, len(smt.ConnectToInstanceMap))
+	for id, inst := range smt.ConnectToInstanceMap {
+		snapshot[id] = inst
+	}
+	smt.mx.RUnlock()
+
+	for id, inst := range snapshot {
+		if !fn(id, inst) {
+			return
+		}
+	}
+}

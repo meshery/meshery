@@ -5,11 +5,14 @@ import (
 	"slices"
 	"time"
 
-	SMP "github.com/service-mesh-performance/service-mesh-performance/spec"
+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 )
 
-// SMPPerformanceTestConfigValidator performs validations on the given PerformanceTestConfig object
-func SMPPerformanceTestConfigValidator(perfTest *SMP.PerformanceTestConfig) error {
+// PerformanceTestConfigValidator performs validations on the given PerformanceTestConfig object
+func PerformanceTestConfigValidator(perfTest *perfprofile.PerformanceTestConfig) error {
+	if perfTest == nil {
+		return ErrField
+	}
 	if perfTest.Name == "" {
 		return ErrField
 	}
@@ -28,7 +31,7 @@ func SMPPerformanceTestConfigValidator(perfTest *SMP.PerformanceTestConfig) erro
 	// treated as the default (fortio). Any other value is rejected.
 	validGenerators := []string{FortioLG.Name(), "wrk2", ""}
 	for _, testClient := range perfTest.Clients {
-		if testClient.Protocol.String() == "" {
+		if testClient.Protocol == "" {
 			return ErrProtocol
 		}
 		isValidGenerator := slices.Contains(validGenerators, testClient.LoadGenerator)

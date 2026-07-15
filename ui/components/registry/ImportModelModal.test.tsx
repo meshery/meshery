@@ -105,6 +105,9 @@ vi.mock('./importModelSchema', () => ({
   findSelectedModelFile: () => null,
   importModelSchema: { properties: { uploadType: { description: 'Import help text' } } },
   importModelUiSchema: {},
+}));
+
+vi.mock('@/utils/fileUpload', () => ({
   readFileAsBytes: vi.fn(),
 }));
 
