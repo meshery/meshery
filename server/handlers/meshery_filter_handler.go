@@ -28,8 +28,8 @@ func (h *Handler) GetMesheryFilterFileHandler(
 	provider models.Provider,
 ) {
         filterID := mux.Vars(r)["id"]
-	if uuid.FromStringOrNil(filterID) == uuid.Nil {
-		err := models.ErrInvalidUUID(fmt.Errorf("invalid filter id: %q", filterID))
+	if _, err := uuid.FromString(filterID); err != nil {
+		err := models.ErrInvalidUUID(fmt.Errorf("invalid filter id: %q: %w", filterID, err))
 		h.log.Error(err)
 		writeMeshkitError(rw, err, http.StatusBadRequest)
 		return
@@ -295,8 +295,8 @@ func (h *Handler) DeleteMesheryFilterHandler(
 	provider models.Provider,
 ) {
 	filterID := mux.Vars(r)["id"]
-	if uuid.FromStringOrNil(filterID) == uuid.Nil {
-		err := models.ErrInvalidUUID(fmt.Errorf("invalid filter id: %q", filterID))
+	if _, err := uuid.FromString(filterID); err != nil {
+		err := models.ErrInvalidUUID(fmt.Errorf("invalid filter id: %q: %w", filterID, err))
 		h.log.Error(err)
 		writeMeshkitError(rw, err, http.StatusBadRequest)
 		return
@@ -503,8 +503,8 @@ func (h *Handler) GetMesheryFilterHandler(
 	provider models.Provider,
 ) {
 	filterID := mux.Vars(r)["id"]
-	if uuid.FromStringOrNil(filterID) == uuid.Nil {
-		err := models.ErrInvalidUUID(fmt.Errorf("invalid filter id: %q", filterID))
+	if _, err := uuid.FromString(filterID); err != nil {
+		err := models.ErrInvalidUUID(fmt.Errorf("invalid filter id: %q: %w", filterID, err))
 		h.log.Error(err)
 		writeMeshkitError(rw, err, http.StatusBadRequest)
 		return
