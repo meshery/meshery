@@ -801,6 +801,9 @@ func ErrServeSchema(err error) error {
 func ErrInvalidFileRequest(err error) error {
 	return errors.New(ErrInvalidFileRequestCode, errors.Alert, []string{"Invalid file request"}, []string{err.Error()}, []string{"The provided file query parameter could not be decoded"}, []string{"Ensure the file parameter is a properly URL-encoded path"})
 }
+func ErrPathTraversal(file string) error {
+	return errors.New(ErrInvalidFileRequestCode, errors.Alert, []string{"Path traversal detected", file}, []string{"Access denied to files outside Meshery home directory"}, []string{"The requested file path points outside the allowed directory"}, []string{"Request files only within the allowed Meshery directory (~/.meshery)"})
+}
 func ErrReadFileContent(err error, file string) error {
 	return errors.New(ErrReadFileContentCode, errors.Alert, []string{"Failed to read file content", file}, []string{err.Error()}, []string{"The file could not be opened or streamed to the response"}, []string{"Verify the file exists and the server has permission to read it"})
 }
