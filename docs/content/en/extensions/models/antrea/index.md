@@ -1,7 +1,7 @@
 ---
 title: Antrea
 subtitle: Collaborative and visual infrastructure as design for Antrea
-image: /extensions/models/antrea/icons/color/antrea-color.svg
+image: extensions/models/antrea/icons/color/antrea-color.svg
 aliases: /extensibility/integrations/antrea
 docURL: https://docs.meshery.io/extensibility/integrations/antrea
 description: 

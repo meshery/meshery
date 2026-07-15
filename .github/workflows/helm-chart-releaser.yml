@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-24.04
     if: ${{github.event_name == 'pull_request'}}
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v6
     - uses: azure/setup-helm@v3.5
       with:
         version: 'v3.6.0' # default is latest stable
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-24.04
     if: ${{ github.event_name != 'pull_request' }}
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v6
       - name: set env
         id: vars
         # https://github.community/t/how-to-get-just-the-tag-name/16241/7

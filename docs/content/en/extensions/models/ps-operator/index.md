@@ -1,7 +1,7 @@
 ---
 title: Percona Operator for MySQL
 subtitle: Collaborative and visual infrastructure as design for Percona Operator for MySQL
-image: /extensions/models/ps-operator/icons/color/ps-operator-color.svg
+image: extensions/models/ps-operator/icons/color/ps-operator-color.svg
 aliases: /extensibility/integrations/ps-operator
 docURL: https://docs.meshery.io/extensibility/integrations/ps-operator
 description: 
@@ -21,7 +21,11 @@ components:
   colorIcon: extensions/models/ps-operator/components/percona-server-my-sql/icons/color/percona-server-my-sql-color.svg
   whiteIcon: extensions/models/ps-operator/components/percona-server-my-sql/icons/white/percona-server-my-sql-white.svg
   description: 
-components-count: 3
+- name: percona-server-my-sql-cluster-set
+  colorIcon: extensions/models/ps-operator/components/percona-server-my-sql-cluster-set/icons/color/percona-server-my-sql-cluster-set-color.svg
+  whiteIcon: extensions/models/ps-operator/components/percona-server-my-sql-cluster-set/icons/white/percona-server-my-sql-cluster-set-white.svg
+  description: 
+components-count: 4
 relationships: 
 relationship-count: 0
 featureList: [

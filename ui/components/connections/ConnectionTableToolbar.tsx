@@ -3,7 +3,7 @@ import { CustomColumnVisibilityControl, SearchBar, UniversalFilter } from '@sist
 import { CreateButton } from './styles';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { styled } from '@/theme';
-import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
+import ConnectionWizardLauncher from './ConnectionWizardLauncher';
 import { getVisibilityColums } from '../../utils/utils';
 import type { SelectedFilters } from './ConnectionTable.types';
 
@@ -42,7 +42,7 @@ export const ConnectionTableToolbar = ({
   return (
     <ToolWrapper style={{ marginBottom: '5px', marginTop: '-30px' }}>
       <CreateButton>
-        <MesherySettingsEnvButtons />
+        <ConnectionWizardLauncher />
       </CreateButton>
       <ToolbarActions>
         <div data-testid="ConnectionTable-search">

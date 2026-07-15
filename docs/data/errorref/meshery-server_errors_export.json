@@ -1227,15 +1227,6 @@
         "probable_cause": "unable to convert helm chart to design\nhelm chart may be corrupted\nincorrect source type selected",
         "suggested_remediation": "check if the helm chart is valid and not corrupted\ncheck if the source type selected is Helm Chart"
       },
-      "1137": {
-        "name": "ErrInvalidUUIDCode",
-        "code": "1137",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "invalid or empty uuid",
-        "probable_cause": "provided id is not a valid uuid",
-        "suggested_remediation": "provide a valid uuid"
-      },
       "1138": {
         "name": "ErrErrNewDynamicClientGeneratorCode",
         "code": "1138",
@@ -1776,33 +1767,6 @@
         "probable_cause": "Meshery is crashed or not reachable",
         "suggested_remediation": "Restart Meshery Server\nPlease check if Meshery server is accessible to the Database"
       },
-      "1200": {
-        "name": "ErrConfigurationPatternsCode",
-        "code": "1200",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for designs stopped",
-        "short_description": "Configuration Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
-      },
-      "1201": {
-        "name": "ErrConfigurationApplicationsCode",
-        "code": "1201",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for Applications stopped",
-        "short_description": "Configuration Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
-      },
-      "1202": {
-        "name": "ErrConfigurationFiltersCode",
-        "code": "1202",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for Filters stopped",
-        "short_description": "Configuration Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
-      },
       "1203": {
         "name": "ErrK8sContextCode",
         "code": "1203",
@@ -1811,33 +1775,6 @@
         "short_description": "Failed to get k8s context from remote provider",
         "probable_cause": "Could be a network issue",
         "suggested_remediation": ""
-      },
-      "1204": {
-        "name": "ErrClusterResourcesSubscriptionCode",
-        "code": "1204",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for ClusterResources Subscription stopped",
-        "short_description": "ClusterResources Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
-      },
-      "1205": {
-        "name": "ErrGettingClusterResourcesCode",
-        "code": "1205",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to retrieve cluster resources",
-        "probable_cause": "Table in the database might not exists",
-        "suggested_remediation": ""
-      },
-      "1206": {
-        "name": "ErrMeshModelSummarySubscriptionCode",
-        "code": "1206",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for MeshModelSummary Subscription stopped",
-        "short_description": "MeshModelSummary Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
       },
       "1207": {
         "name": "ErrGettingMeshModelSummaryCode",
@@ -1874,24 +1811,6 @@
         "short_description": "Unable to process adapter request, incomplete request",
         "probable_cause": "",
         "suggested_remediation": ""
-      },
-      "1211": {
-        "name": "ErrPerformanceProfilesSubscriptionCode",
-        "code": "1211",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for PerformanceProfiles stopped",
-        "short_description": "PerformanceProfiles Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
-      },
-      "1212": {
-        "name": "ErrPerformanceResultSubscriptionCode",
-        "code": "1212",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for PerformanceResult stopped",
-        "short_description": "PerformanceResult Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
       },
       "1213": {
         "name": "ErrGormDatabaseCode",
@@ -2726,7 +2645,7 @@
         "code": "1305",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Unable to flush MeshSync data for context %s at %s ",
+        "short_description": "",
         "probable_cause": "Meshery Database handler is not accessible to perform operations",
         "suggested_remediation": "Restart Meshery Server or Perform Hard Reset"
       },
@@ -3837,14 +3756,122 @@
         "probable_cause": "The requested event is not valid from the connection's current state.\nA side-effect action attached to the transition (e.g. provisioning, discovery) returned an error.",
         "suggested_remediation": "Inspect the connection's current status before retrying. If the failure originates from a side-effect action, address the underlying cause (e.g. cluster reachability, credential validity) and retry."
       },
+      "1430": {
+        "name": "ErrTelemetryGrafanaCode",
+        "code": "1430",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The Grafana instance is unreachable or returned an error.\nThe stored credential (API key / basic auth) is missing, expired, or lacks permission.\nThe connection's URL is incorrect.",
+        "suggested_remediation": "Verify the Grafana URL is reachable from the Meshery server and that the connection's credential is valid, then retry."
+      },
       "1431": {
-        "name": "ErrYAMLUnmarshalCode",
+        "name": "ErrTelemetryPrometheusCode",
         "code": "1431",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The Prometheus instance is unreachable or returned an error.\nThe stored credential (API key / basic auth) is missing, expired, or lacks permission.\nThe connection's URL is incorrect.",
+        "suggested_remediation": "Verify the Prometheus URL is reachable from the Meshery server and that the connection's credential is valid, then retry."
+      },
+      "1432": {
+        "name": "ErrInvalidUUIDValueCode",
+        "code": "1432",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid UUID",
+        "probable_cause": "The provided identifier is not a valid UUID",
+        "suggested_remediation": "Provide a valid UUID"
+      },
+      "1433": {
+        "name": "ErrTelemetryGrafanaDatasourceCode",
+        "code": "1433",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The dashboard references a datasource by a name or uid that does not exist in this Grafana instance.\nThe datasource is provisioned only in a different environment.\nThe connection's credential cannot list datasources, so a name could not be resolved to a uid.",
+        "suggested_remediation": "Confirm the datasource exists in this Grafana instance and that the connection's credential has permission to read datasources."
+      },
+      "1434": {
+        "name": "ErrTelemetryGrafanaAuthCode",
+        "code": "1434",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Grafana rejected the connection's credential",
+        "probable_cause": "The API key / token is missing, expired, or invalid.\nThe credential lacks permission for this operation.",
+        "suggested_remediation": "Update the connection with a valid Grafana credential that has the required permissions, then retry."
+      },
+      "1435": {
+        "name": "ErrTelemetryPrometheusAuthCode",
+        "code": "1435",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Prometheus rejected the connection's credential",
+        "probable_cause": "The API key / token is missing, expired, or invalid.\nThe credential lacks permission for this operation.",
+        "suggested_remediation": "Update the connection with a valid Prometheus credential that has the required permissions, then retry."
+      },
+      "1436": {
+        "name": "ErrYAMLUnmarshalCode",
+        "code": "1436",
         "severity": "Alert",
         "long_description": "",
         "short_description": "failed to parse YAML configuration",
         "probable_cause": "malformed YAML in component configuration",
         "suggested_remediation": "verify the YAML syntax in your design configuration"
+      },
+      "1437": {
+        "name": "ErrControllersConfigInvalidCode",
+        "code": "1437",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid controllers configuration.",
+        "probable_cause": "The submitted Meshery Operator / MeshSync / Broker configuration violates a validation rule.",
+        "suggested_remediation": "Correct the highlighted field and resubmit. Replica counts must be 1-10, a watch list sets at most one of whitelist or blacklist, and load-balancer settings require the LoadBalancer service type."
+      },
+      "1438": {
+        "name": "ErrControllersConfigMetadataCode",
+        "code": "1438",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to read or write the connection's controllers configuration.",
+        "probable_cause": "The controllers_config entry on the connection's metadata is not valid JSON or does not match the expected schema.",
+        "suggested_remediation": "Clear the connection's controllers configuration override and reapply it from the Connections page."
+      },
+      "1439": {
+        "name": "ErrSystemSettingsCode",
+        "code": "1439",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error accessing server-wide system settings",
+        "probable_cause": "The system_settings store could not be read or written, or the stored value is not valid JSON.",
+        "suggested_remediation": "Verify Meshery Server's database is reachable and writable, then retry the operation."
+      },
+      "1440": {
+        "name": "ErrApplyControllersConfigCode",
+        "code": "1440",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error applying controllers configuration to the cluster",
+        "probable_cause": "The MeshSync or Broker custom resource could not be patched, or the MeshSync deployment overlay could not be applied.\nThe Meshery Operator may not be deployed on the target cluster yet.",
+        "suggested_remediation": "Confirm the cluster is reachable and the Meshery Operator is deployed (operator deployment mode).\nRetry the change; configuration is re-applied whenever the connection reconnects."
+      },
+      "1441": {
+        "name": "ErrEmptyMeshSyncHandlerCode",
+        "code": "1441",
+        "severity": "Alert",
+        "long_description": "The MeshSync database handler is nil, or its underlying database connection is not initialized",
+        "short_description": "MeshSync data flush skipped: database handler is not usable",
+        "probable_cause": "Meshery Database handler is not accessible to perform operations\nMeshery Database is crashed or not reachable",
+        "suggested_remediation": "Restart Meshery Server\nVerify that Meshery Server can reach the database"
+      },
+      "1442": {
+        "name": "ErrMeshsyncReconcileCode",
+        "code": "1442",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to reconcile MeshSync deployment mode",
+        "probable_cause": "The connection's state machine or Kubernetes controllers may not be ready, or the cluster is unreachable",
+        "suggested_remediation": "Ensure the connection is connected and the cluster is reachable, then retry the mode change"
       }
     }
   }

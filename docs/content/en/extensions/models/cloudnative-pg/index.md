@@ -1,7 +1,7 @@
 ---
 title: CloudNativePG
 subtitle: Collaborative and visual infrastructure as design for CloudNativePG
-image: /extensions/models/cloudnative-pg/icons/color/cloudnative-pg-color.svg
+image: extensions/models/cloudnative-pg/icons/color/cloudnative-pg-color.svg
 aliases: /extensibility/integrations/cloudnative-pg
 docURL: https://docs.meshery.io/extensibility/integrations/cloudnative-pg
 description: CloudNativePG is the Kubernetes operator that covers the full lifecycle of a highly available PostgreSQL database cluster with a primary/standby architecture, using native streaming replication.
@@ -49,7 +49,11 @@ components:
   colorIcon: extensions/models/cloudnative-pg/components/failover-quorum/icons/color/failover-quorum-color.svg
   whiteIcon: extensions/models/cloudnative-pg/components/failover-quorum/icons/white/failover-quorum-white.svg
   description: 
-components-count: 10
+- name: database-role
+  colorIcon: extensions/models/cloudnative-pg/components/database-role/icons/color/database-role-color.svg
+  whiteIcon: extensions/models/cloudnative-pg/components/database-role/icons/white/database-role-white.svg
+  description: 
+components-count: 11
 relationships: 
 relationship-count: 0
 featureList: [

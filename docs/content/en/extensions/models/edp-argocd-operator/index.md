@@ -1,7 +1,7 @@
 ---
 title: EDP Argocd Operator
 subtitle: Collaborative and visual infrastructure as design for EDP Argocd Operator
-image: /extensions/models/edp-argocd-operator/icons/color/edp-argocd-operator-color.svg
+image: extensions/models/edp-argocd-operator/icons/color/edp-argocd-operator-color.svg
 aliases: /extensibility/integrations/edp-argocd-operator
 docURL: https://docs.meshery.io/extensibility/integrations/edp-argocd-operator
 description: 

@@ -1,7 +1,7 @@
 ---
 title: Helm Controller
 subtitle: Collaborative and visual infrastructure as design for Helm Controller
-image: /extensions/models/helm-controller/icons/color/helm-controller-color.svg
+image: extensions/models/helm-controller/icons/color/helm-controller-color.svg
 aliases: /extensibility/integrations/helm-controller
 docURL: https://docs.meshery.io/installation/kubernetes/helm
 description: 

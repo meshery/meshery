@@ -1,7 +1,7 @@
 ---
 title: Contour
 subtitle: Collaborative and visual infrastructure as design for Contour
-image: /extensions/models/contour-operator/icons/color/contour-operator-color.svg
+image: extensions/models/contour-operator/icons/color/contour-operator-color.svg
 aliases: /extensibility/integrations/contour-operator
 docURL: https://docs.meshery.io/extensibility/integrations/contour-operator
 description: 

@@ -1,7 +1,7 @@
 ---
 title: Azure Synapse
 subtitle: Collaborative and visual infrastructure as design for Azure Synapse
-image: /extensions/models/azure-synapse/icons/color/azure-synapse-color.svg
+image: extensions/models/azure-synapse/icons/color/azure-synapse-color.svg
 aliases: /extensibility/integrations/azure-synapse
 docURL: https://docs.meshery.io/extensibility/integrations/azure-synapse
 description: 

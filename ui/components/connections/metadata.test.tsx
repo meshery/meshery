@@ -84,6 +84,16 @@ vi.mock('@/utils/hooks/useKubernetesHook', () => ({
   useNatsController: () => ({ ping: pingNats }),
 }));
 
+// ControllerDiagnosticsSection calls this RTK Query hook, which needs a Redux
+// <Provider>. Stub it so the metadata component renders without a store.
+vi.mock('@/rtk-query/connection', () => ({
+  useGetControllerDiagnosticsQuery: () => ({
+    data: { diagnostics: [] },
+    isFetching: false,
+    refetch: vi.fn(),
+  }),
+}));
+
 vi.mock('./ConnectionChip', () => ({
   TooltipWrappedConnectionChip: ({ title, handlePing, disabled }) => (
     <button disabled={disabled} onClick={handlePing} type="button">

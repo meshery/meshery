@@ -7,14 +7,26 @@ import { iconSmall } from '../../../css/icons.styles';
 import { CustomTextTooltip } from '@/components/meshery-mesh-interface/PatternService/CustomTextTooltip';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { useRouter } from 'next/router';
-import { DashboardSection } from '../style';
+import { DashboardSection, LoadingContainer } from '../style';
 import ConnectCluster from './ConnectCluster';
-import { Box, InfoOutlinedIcon, KubernetesIcon, Typography, useTheme } from '@sistent/sistent';
+import {
+  Box,
+  CircularProgress,
+  InfoOutlinedIcon,
+  KubernetesIcon,
+  Typography,
+  useTheme,
+} from '@sistent/sistent';
+import WidgetErrorFallback from '../widgets/WidgetErrorFallback';
 
 export default function KubernetesConnectionStatsChart() {
-  const { data: connectionData } = useGetConnectionsQuery({
+  const {
+    data: connectionData,
+    isLoading,
+    isError,
+  } = useGetConnectionsQuery({
     page: 0,
     pagesize: 'all',
     kind: JSON.stringify(['kubernetes']),
@@ -78,7 +90,10 @@ export default function KubernetesConnectionStatsChart() {
     [chartData, router, theme],
   );
 
-  const canViewConnections = CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject);
+  const canViewConnections = CAN(
+    Keys.WorkspaceManagementViewConnections.id,
+    Keys.WorkspaceManagementViewConnections.function,
+  );
   const header = (
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -106,6 +121,29 @@ export default function KubernetesConnectionStatsChart() {
       </div>
     </div>
   );
+
+  if (isLoading) {
+    return (
+      <DashboardSection>
+        {header}
+        <LoadingContainer>
+          <CircularProgress />
+        </LoadingContainer>
+      </DashboardSection>
+    );
+  }
+
+  if (isError) {
+    return (
+      <DashboardSection>
+        {header}
+        <WidgetErrorFallback
+          widgetTitle="Kubernetes Cluster Status"
+          message="Unable to load your cluster connections. Please try again later."
+        />
+      </DashboardSection>
+    );
+  }
 
   if (chartData.length === 0) {
     return (

@@ -14,6 +14,10 @@ import (
 	"github.com/meshery/meshkit/models/events"
 )
 
+// Deprecated: GetAllContexts (GET /api/system/kubernetes/contexts) is being
+// retired in favor of the connections API (kind=kubernetes) — everything is now
+// connection-driven. The UI derives its k8s context list from connections; this
+// endpoint remains only for the search-as-you-type context lookup.
 func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
@@ -44,7 +48,8 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 	}
 }
 
-// not being used....
+// GetContext serves GET /api/system/kubernetes/contexts/{id}, returning the
+// single Kubernetes context for the given connection id.
 func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
@@ -52,7 +57,6 @@ func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models
 		return
 	}
 
-	h.log.Info("this is being used\n\n\n")
 	val, err := provider.GetK8sContext(token, mux.Vars(req)["id"])
 	if err != nil {
 		h.log.Error(ErrGetK8sContexts(err))
@@ -71,7 +75,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	userID := user.ID
 	contextID := mux.Vars(req)["id"]
 
-	eventBuilder := events.NewEvent().ActedUpon(uuid.FromStringOrNil(contextID)).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
+	eventBuilder := events.NewEvent().ActedUpon(uuid.FromStringOrNil(contextID)).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
 
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {

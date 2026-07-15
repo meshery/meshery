@@ -1,7 +1,7 @@
 ---
 title: KubeRocketCI Pipeline Operator
 subtitle: Collaborative and visual infrastructure as design for KubeRocketCI Pipeline Operator
-image: /extensions/models/cd-pipeline-operator/icons/color/cd-pipeline-operator-color.svg
+image: extensions/models/cd-pipeline-operator/icons/color/cd-pipeline-operator-color.svg
 aliases: /extensibility/integrations/cd-pipeline-operator
 docURL: https://docs.meshery.io/extensibility/integrations/cd-pipeline-operator
 description: 

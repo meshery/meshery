@@ -1,7 +1,7 @@
 ---
 title: HAProxy Kubernetes Ingress
 subtitle: Collaborative and visual infrastructure as design for HAProxy Kubernetes Ingress
-image: /extensions/models/kubernetes-ingress/icons/color/kubernetes-ingress-color.svg
+image: extensions/models/kubernetes-ingress/icons/color/kubernetes-ingress-color.svg
 aliases: /extensibility/integrations/kubernetes-ingress
 docURL: https://docs.meshery.io/extensibility/integrations/kubernetes-ingress
 description: 

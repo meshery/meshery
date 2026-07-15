@@ -86,6 +86,42 @@ func ShouldConnectionBeManaged(c Connection) bool {
 
 type ConnectionPage = schemasConnection.ConnectionPage
 
+// MergePayloadOntoExisting backfills fields the caller left empty in payload
+// with the values from the persisted connection. UpdateConnectionById persists
+// via a full-row write (GORM Save() locally, a full PUT remotely), so a partial
+// payload — e.g. the UI's connect action sending only {status}, or an FSM status
+// transition sending only {kind, metadata, status} — would otherwise zero every
+// field it omits. Wiping a kubernetes connection's kind to "" in particular
+// later trips the FSM's "connection is not of kind kubernetes" guard on connect.
+// It never overwrites a field the caller explicitly set, so intentional changes
+// still apply.
+func MergePayloadOntoExisting(payload *ConnectionPayload, existing *Connection) {
+	if payload == nil || existing == nil {
+		return
+	}
+	if payload.Kind == "" {
+		payload.Kind = existing.Kind
+	}
+	if payload.Name == "" {
+		payload.Name = existing.Name
+	}
+	if payload.Type == "" {
+		payload.Type = existing.ConnectionType
+	}
+	if payload.SubType == "" {
+		payload.SubType = existing.SubType
+	}
+	if payload.Status == "" {
+		payload.Status = existing.Status
+	}
+	if payload.MetaData == nil {
+		payload.MetaData = existing.Metadata
+	}
+	if payload.CredentialID == nil {
+		payload.CredentialID = existing.CredentialID
+	}
+}
+
 type ConnectionStatusInfo struct {
 	Status string `json:"status" db:"status"`
 	Count  int    `json:"count" db:"count"`

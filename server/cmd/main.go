@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"net/url"
 	"os"
 	"os/signal"
@@ -28,7 +27,6 @@ import (
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
-	mesherymeshmodel "github.com/meshery/meshery/server/models/meshmodel"
 	"github.com/meshery/meshery/server/router"
 	"github.com/meshery/meshkit/broker/nats"
 	"github.com/meshery/meshkit/logger"
@@ -60,7 +58,7 @@ const (
 	// primary provider host (install/providers.env) so it cannot drift from the
 	// PROVIDER_BASE_URLS default seeded into viper below.
 	DefaultProviderURL = models.PrimaryProviderURL
-	RelationshipsPath  = "../meshmodel/kubernetes/"
+	RelationshipsPath  = "../../models/kubernetes/"
 )
 
 func main() {
@@ -215,7 +213,6 @@ func main() {
 	adapterURLs := utils.SplitAndTrim(viper.GetString("ADAPTER_URLS"), ", \t\n\r")
 
 	adapterTracker := helpers.NewAdaptersTracker(adapterURLs)
-	queryTracker := helpers.NewUUIDQueryTracker()
 
 	// Uncomment line below to generate a new UUID and force the user to login every time Meshery is started.
 	// fileSessionStore := sessions.NewFilesystemStore("", []byte(uuid.NewV4().Bytes()))
@@ -259,6 +256,7 @@ func main() {
 		models.K8sContext{},
 		schemasOrganization.Organization{},
 		models.Key{},
+		&models.Credential{},
 		connections.Connection{},
 		environment.Environment{},
 		environment.EnvironmentConnectionMapping{},
@@ -268,6 +266,7 @@ func main() {
 		workspace.WorkspacesTeamsMapping{},
 		workspace.WorkspacesViewsMapping{},
 		_events.Event{},
+		&models.SystemSetting{},
 	)
 	if err != nil {
 		log.Error(ErrDatabaseAutoMigration(err))
@@ -319,21 +318,10 @@ func main() {
 		// assignment, but every route is registered after.
 		PlaygroundBuild: viper.GetBool("PLAYGROUND"),
 		AdapterTracker:  adapterTracker,
-		QueryTracker:    queryTracker,
 
 		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
 
-		GrafanaClient:         models.NewGrafanaClient(&log),
-		GrafanaClientForQuery: models.NewGrafanaClientWithHTTPClient(&http.Client{Timeout: time.Second}, &log),
-
-		PrometheusClient:         models.NewPrometheusClient(&log),
-		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}, &log),
-
-		PatternChannel:            models.NewBroadcaster("Patterns"),
-		FilterChannel:             models.NewBroadcaster("Filters"),
-		EventBroadcaster:          models.NewBroadcaster("Events"),
-		DashboardK8sResourcesChan: models.NewDashboardK8sResourcesHelper(),
-		MeshModelSummaryChannel:   mesherymeshmodel.NewSummaryHelper(),
+		EventBroadcaster: models.NewBroadcaster("Events"),
 
 		K8scontextChannel: models.NewContextHelper(),
 		OperatorTracker:   models.NewOperatorTracker(viper.GetBool("DISABLE_OPERATOR")),
@@ -357,7 +345,6 @@ func main() {
 			rego = *r
 		}
 		krh.SeedKeys(viper.GetString("KEYS_PATH"))
-		hc.MeshModelSummaryChannel.Publish()
 	}()
 
 	lProv.SeedContent(log)

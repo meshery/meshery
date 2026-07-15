@@ -1,7 +1,7 @@
 ---
 title: Kubevault Operator
 subtitle: Collaborative and visual infrastructure as design for Kubevault Operator
-image: /extensions/models/kubevault-operator/icons/color/kubevault-operator-color.svg
+image: extensions/models/kubevault-operator/icons/color/kubevault-operator-color.svg
 aliases: /extensibility/integrations/kubevault-operator
 docURL: https://docs.meshery.io/extensibility/integrations/kubevault-operator
 description: 

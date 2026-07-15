@@ -1,7 +1,7 @@
 ---
 title: Vela Workflow
 subtitle: Collaborative and visual infrastructure as design for Vela Workflow
-image: /extensions/models/vela-workflow/icons/color/vela-workflow-color.svg
+image: extensions/models/vela-workflow/icons/color/vela-workflow-color.svg
 aliases: /extensibility/integrations/vela-workflow
 docURL: https://docs.meshery.io/extensibility/integrations/vela-workflow
 description: 

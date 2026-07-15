@@ -1,7 +1,7 @@
 ---
 title: Percona Postgres Operator
 subtitle: Create and manage highly available, enterprise-ready MySQL, PostgreSQL, and MongoDB clusters on Kubernetes.
-image: /extensions/models/pg-operator/icons/color/pg-operator-color.svg
+image: extensions/models/pg-operator/icons/color/pg-operator-color.svg
 aliases: /extensibility/integrations/pg-operator
 docURL: https://docs.meshery.io/extensibility/integrations/pg-operator
 description: 

@@ -1,7 +1,7 @@
 ---
 title: AWS Target Group Binding
 subtitle: Collaborative and visual infrastructure as design for AWS Target Group Binding
-image: /extensions/models/aws-target-group-binding/icons/color/aws-target-group-binding-color.svg
+image: extensions/models/aws-target-group-binding/icons/color/aws-target-group-binding-color.svg
 aliases: /extensibility/integrations/aws-target-group-binding
 docURL: https://docs.meshery.io/extensibility/integrations/aws-target-group-binding
 description: 

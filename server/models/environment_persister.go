@@ -25,7 +25,7 @@ type EnvironmentPersister struct {
 func (ep *EnvironmentPersister) fetchUserDetails() *User {
 
 	return &User{
-		UserId:    "meshery",
+		ID:        LocalProviderUserID,
 		FirstName: "Meshery",
 		LastName:  "Meshery",
 	}
@@ -134,7 +134,7 @@ func (ep *EnvironmentPersister) DeleteEnvironment(environment *environment.Envir
 	}
 	err = ep.DB.Delete(environment).Error
 	if err != nil {
-		return nil, ErrDBDelete(err, ep.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, ep.fetchUserDetails().ID.String())
 	}
 
 	// Marshal the environment to JSON
@@ -332,7 +332,7 @@ func (ep *EnvironmentPersister) DeleteConnectionFromEnvironment(environmentID, c
 
 	// Delete the connection mapping
 	if err := ep.DB.Delete(&envConMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, ep.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, ep.fetchUserDetails().ID.String())
 	}
 
 	envJSON, err := json.Marshal(envConMapping)

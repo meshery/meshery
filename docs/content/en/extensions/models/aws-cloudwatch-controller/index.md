@@ -1,7 +1,7 @@
 ---
 title: AWS CloudWatch
 subtitle: Collaborative and visual infrastructure as design for AWS CloudWatch
-image: /extensions/models/aws-cloudwatch-controller/icons/color/aws-cloudwatch-controller-color.svg
+image: extensions/models/aws-cloudwatch-controller/icons/color/aws-cloudwatch-controller-color.svg
 aliases: /extensibility/integrations/aws-cloudwatch-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-cloudwatch-controller
 description: 

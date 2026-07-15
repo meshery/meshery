@@ -1,7 +1,7 @@
 ---
 title: Istio
 subtitle: The easiest way to get production-grade Istio service mesh up and running
-image: /extensions/models/istio-base/icons/color/istio-base-color.svg
+image: extensions/models/istio-base/icons/color/istio-base-color.svg
 aliases: /extensibility/integrations/istio-base
 docURL: https://docs.meshery.io/extensibility/adapters/istio
 description: 

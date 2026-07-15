@@ -1,7 +1,7 @@
 ---
 title: Azure Key Vault
 subtitle: Collaborative and visual infrastructure as design for Azure Key Vault
-image: /extensions/models/azure-key-vault/icons/color/azure-key-vault-color.svg
+image: extensions/models/azure-key-vault/icons/color/azure-key-vault-color.svg
 aliases: /extensibility/integrations/azure-key-vault
 docURL: https://docs.meshery.io/extensibility/integrations/azure-key-vault
 description: 

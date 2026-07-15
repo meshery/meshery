@@ -86,56 +86,9 @@ type performanceTestParameterWrapper struct {
 	Body *models.PerformanceTestParameters
 }
 
-type grafanaConfigParamsWrapper struct {
-	// in: body
-	// required: true
-	Body *models.GrafanaConfigParams
-}
-
-type grafanaConfigResponseWrapper struct {
-	// in: body
-	Body *models.Grafana
-}
-
-type grafanaBoardsParamsWrapper struct {
-	// in: query
-	DashboardSearch string `json:"dashboardSearch"`
-}
-
-type grafanaBoardsResponseWrapper struct {
-	// in: body
-	Body []*models.GrafanaBoard
-}
-
 type v1ServicesMapResponseWrapper struct {
 	// in: body
 	Body map[string][]v1.Service
-}
-
-type prometheusConfigParamsWrapper struct {
-	// in: body
-	PrometheusURL string `json:"prometheusURL,omitempty"`
-}
-
-type prometheusConfigResponseWrapper struct {
-	// in: body
-	Body *models.Prometheus
-}
-
-type prometheusBoardImportRespWrapper struct {
-	// in: body
-	Body *models.GrafanaBoard
-}
-
-type prometheusStaticBoardRespWrapper struct {
-	// in: body
-	Body map[string]*models.GrafanaBoard
-}
-
-type prometheusBoardParamsWrapper struct {
-	// in: body
-	// required: true
-	Body []*models.SelectedGrafanaConfig
 }
 
 type userLoadTestPrefsRespWrapper struct {
@@ -446,16 +399,7 @@ var (
 	_ performanceProfileResponseWrapper
 	_ performanceProfileParameterWrapper
 	_ performanceTestParameterWrapper
-	_ grafanaConfigParamsWrapper
-	_ grafanaConfigResponseWrapper
-	_ grafanaBoardsParamsWrapper
-	_ grafanaBoardsResponseWrapper
 	_ v1ServicesMapResponseWrapper
-	_ prometheusConfigParamsWrapper
-	_ prometheusConfigResponseWrapper
-	_ prometheusBoardImportRespWrapper
-	_ prometheusStaticBoardRespWrapper
-	_ prometheusBoardParamsWrapper
 	_ userLoadTestPrefsRespWrapper
 	_ anonymousStatsParamsWrapper
 	_ loadTestPreferencesRespWrapper

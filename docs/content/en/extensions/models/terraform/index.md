@@ -1,7 +1,7 @@
 ---
 title: Terraform
 subtitle: Collaborative and visual infrastructure as design for Terraform
-image: /extensions/models/terraform/icons/color/terraform-color.svg
+image: extensions/models/terraform/icons/color/terraform-color.svg
 aliases: /extensibility/integrations/terraform
 docURL: https://docs.meshery.io/extensibility/integrations/terraform
 description: 

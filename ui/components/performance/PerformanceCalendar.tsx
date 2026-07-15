@@ -3,7 +3,6 @@ import { momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import GenericModal from '../shared/Modal/GenericModal';
-import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import MesheryChart from '../MesheryChart';
 import { Typography, Paper } from '@sistent/sistent';
 import { useNotification } from '../../utils/hooks/useNotification';
@@ -148,10 +147,6 @@ function PerformanceCalendar({ style }) {
     const row = result.runnerResults;
     if (!row) return <div />;
 
-    const boardConfig = result.serverBoardConfig;
-    const serverMetrics = result.serverMetrics;
-    const startTime = new Date(row.StartTime || result.testStartTime);
-    const endTime = new Date(startTime.getTime() + (row.ActualDuration ?? 0) / 1000000);
     return (
       <Paper
         style={{
@@ -169,20 +164,6 @@ function PerformanceCalendar({ style }) {
             data={[result && result.runnerResults ? result.runnerResults : {}]}
           />
         </div>
-        {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
-          <div>
-            <GrafanaCustomCharts
-              boardPanelConfigs={[boardConfig]}
-              // @ts-ignore
-              boardPanelData={[serverMetrics]}
-              startDate={startTime}
-              from={startTime.getTime().toString()}
-              endDate={endTime}
-              to={endTime.getTime().toString()}
-              liveTail={false}
-            />
-          </div>
-        )}
       </Paper>
     );
   }

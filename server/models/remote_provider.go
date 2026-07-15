@@ -107,7 +107,7 @@ type RemoteProvider struct {
 }
 type AnonymousFlowResponse struct {
 	AccessToken string    `json:"accessToken"`
-	UserID      core.Uuid `json:"userId,omitempty"`
+	Owner       core.Uuid `json:"owner,omitempty"`
 }
 
 type userSession struct {
@@ -552,9 +552,9 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 
 	l.SetJWTCookie(res, flowResponse.AccessToken)
 
-	err = l.WriteCapabilitiesForUser(flowResponse.UserID.String(), &providerProperties)
+	err = l.WriteCapabilitiesForUser(flowResponse.Owner.String(), &providerProperties)
 	if err != nil {
-		err = ErrDBPut(fmt.Errorf("failed to write capabilities for the user %s: %w", flowResponse.UserID.String(), err))
+		err = ErrDBPut(fmt.Errorf("failed to write capabilities for the user %s: %w", flowResponse.Owner.String(), err))
 		l.Log.Error(err)
 		http.Redirect(res, req, errorUI, http.StatusFound)
 
@@ -697,10 +697,15 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 		return nil, ErrUnmarshal(err, "User Pref")
 	}
 
-	prefLocal, _ := l.ReadFromPersister(up.UserId)
+	prefLocal, _ := l.ReadFromPersister(up.ID.String())
 
-	if prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) || !reflect.DeepEqual(up.Preferences.RemoteProviderPreferences, prefLocal.RemoteProviderPreferences) {
-		_ = l.WriteToPersister(up.UserId, up.Preferences)
+	// Guard up.Preferences: up is pre-initialized with a non-nil Preferences, so
+	// an absent `preferences` field stays non-nil; but an explicit
+	// `"preferences": null` from the remote provider overwrites it to nil, and
+	// dereferencing UpdatedAt / RemoteProviderPreferences below would then panic.
+	// Nothing to persist in that case.
+	if up.Preferences != nil && (prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) || !reflect.DeepEqual(up.Preferences.RemoteProviderPreferences, prefLocal.RemoteProviderPreferences)) {
+		_ = l.WriteToPersister(up.ID.String(), up.Preferences)
 	}
 
 	// Uncomment when Debug verbosity is figured out project wide. | @leecalcote
@@ -1050,7 +1055,12 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 		}
 	}
 
-	k8sServerID := *k8sContext.KubernetesServerID
+	// An unreachable context has no server ID assigned; persist it anyway as a
+	// discovered connection rather than dereferencing a nil pointer.
+	var k8sServerID uuid.UUID
+	if k8sContext.KubernetesServerID != nil {
+		k8sServerID = *k8sContext.KubernetesServerID
+	}
 
 	_metadata := map[string]string{
 		"id":                 k8sContext.ID,
@@ -1094,13 +1104,21 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 	}
 
 	connection, err := l.SaveConnection(conn, token, true)
-
-	l.Log.Infof("Persisting k8s context to remote_provider, %v %v", connection, err)
-
 	if err != nil {
 		l.Log.Error(ErrPersistConnection(err))
 		return connections.Connection{}, err
 	}
+	if connection == nil {
+		// SaveConnection can return (nil, nil) when the remote provider answers
+		// 2xx but the connection page is empty or carries a null element. Guard
+		// the dereference below so a malformed response is a structured error,
+		// not a panic.
+		err := ErrPersistConnection(fmt.Errorf("remote provider returned a nil connection for kubernetes context %q", conn.Name))
+		l.Log.Error(err)
+		return connections.Connection{}, err
+	}
+
+	l.Log.Infof("persisted kubernetes context %q to remote provider as connection %s", connection.Name, connection.ID)
 
 	return *connection, nil
 }
@@ -1214,42 +1232,6 @@ func (l *RemoteProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) 
 	}
 
 	return results, nil
-}
-
-func (l *RemoteProvider) DeleteK8sContext(token, id string) (K8sContext, error) {
-	l.Log.Info("attempting to delete kubernetes context from cloud for id: ", id)
-	if !l.Capabilities.IsSupported(PersistConnection) {
-		l.Log.Error(ErrOperationNotAvailable)
-		return K8sContext{}, ErrInvalidCapability("PersistConnection", l.ProviderName)
-	}
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, id))
-	l.Log.Debug("constructed kubernetes contexts url: ", remoteProviderURL.String())
-	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
-
-	resp, err := l.DoRequest(cReq, token)
-	if err != nil {
-		if resp == nil {
-			return K8sContext{}, ErrUnreachableRemoteProvider(err)
-		}
-		err = ErrDelete(err, "Kubernetes Context", resp.StatusCode)
-		l.Log.Error(err)
-		return K8sContext{}, err
-	}
-
-	if resp.StatusCode == http.StatusOK {
-		defer func() {
-			_ = resp.Body.Close()
-		}()
-
-		deletedContext := K8sContext{}
-		_ = json.NewDecoder(resp.Body).Decode(&deletedContext)
-		l.Log.Info("kubernetes deleted from remote provider")
-		return deletedContext, nil
-	}
-	err = ErrDelete(fmt.Errorf("unable to delete kubernetes context with id: %s", id), "Kubernetes Context", resp.StatusCode)
-	l.Log.Error(err)
-	return K8sContext{}, err
 }
 
 func (l *RemoteProvider) GetK8sContext(token, connectionID string) (K8sContext, error) {
@@ -4735,6 +4717,23 @@ func (l *RemoteProvider) UpdateConnectionById(token string, connection *connecti
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
+	// Ensure the payload carries the URL id so the remote provider keys the
+	// update on the intended connection even if the client omitted `id`
+	// (avoids duplicate-row creation). Fail fast on an unparseable connId.
+	if connection.ID == uuid.Nil {
+		parsedID, err := uuid.FromString(connId)
+		if err != nil {
+			return nil, err
+		}
+		connection.ID = parsedID
+	}
+	// A partial payload (e.g. the UI's connect action sending only {status}, or an
+	// FSM status transition sending only {kind, metadata, status}) must not
+	// clobber the fields it omits on the remote row. Backfill omitted fields from
+	// the persisted connection before sending the full PUT.
+	if existing, _, gerr := l.GetConnectionByID(token, connection.ID); gerr == nil && existing != nil {
+		connections.MergePayloadOntoExisting(connection, existing)
+	}
 	_conn, err := json.Marshal(connection)
 	if err != nil {
 		return nil, err

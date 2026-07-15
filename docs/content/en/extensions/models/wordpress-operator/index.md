@@ -1,7 +1,7 @@
 ---
 title: Wordpress Operator
 subtitle: Collaborative and visual infrastructure as design for Wordpress Operator
-image: /extensions/models/wordpress-operator/icons/color/wordpress-operator-color.svg
+image: extensions/models/wordpress-operator/icons/color/wordpress-operator-color.svg
 aliases: /extensibility/integrations/wordpress-operator
 docURL: https://docs.meshery.io/extensibility/integrations/wordpress-operator
 description: 

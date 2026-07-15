@@ -43,7 +43,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 		return
 	}
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*h.SystemID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*h.SystemID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
 
 	if string(connectionRegisterPayload.Status) == string(machines.Init) {
 		h.handleRegistrationInitEvent(w, req, &connectionRegisterPayload)
@@ -131,7 +131,7 @@ func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.R
 	}
 	// id act as a connection registration process tracker.
 	// The clients should always include this "id" in the subsequent API calls until the process is completed or terminated.
-	id, _ := uuid.NewV4()
+	id := uuid.Must(uuid.NewV4())
 	schema["id"] = id
 
 	err := json.NewEncoder(w).Encode(&schema)
@@ -159,7 +159,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 		return
 	}
 
-	eventBuilder := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
+	eventBuilder := events.NewEvent().ActedUpon(userID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	if token == "" {
@@ -198,7 +198,12 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 	page, _ := strconv.Atoi(q.Get("page"))
 	order := q.Get("order")
 	search := q.Get("search")
-	pageSizeStr := q.Get("pagesize")
+	// Canonical camelCase `pageSize` (matches the schemas wire contract); fall
+	// back to legacy lowercase `pagesize` for older clients.
+	pageSizeStr := q.Get("pageSize")
+	if pageSizeStr == "" {
+		pageSizeStr = q.Get("pagesize")
+	}
 	filter := q.Get("filter")
 	name := q.Get("name")
 
@@ -229,40 +234,17 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 		return
 	}
 
+	// Filters are passed as repeated query params — the standard convention
+	// across the API (e.g. ?kind=kubernetes&kind=meshery&status=connected). No
+	// per-param JSON decoding.
 	queryParam := struct {
-		Status []string `json:"status"`
-		Kind   []string `json:"kind"`
-		Type   []string `json:"type"`
-	}{}
-
-	status := q.Get("status")
-	kind := q.Get("kind")
-	connType := q.Get("type")
-	if status != "" {
-		err := json.Unmarshal([]byte(status), &queryParam.Status)
-		if err != nil {
-			h.log.Error(ErrGetConnections(err))
-			writeMeshkitError(w, ErrGetConnections(err), http.StatusInternalServerError)
-			return
-		}
-	}
-
-	if kind != "" {
-		err := json.Unmarshal([]byte(kind), &queryParam.Kind)
-		if err != nil {
-			h.log.Error(ErrGetConnections(err))
-			writeMeshkitError(w, ErrGetConnections(err), http.StatusInternalServerError)
-			return
-		}
-	}
-
-	if connType != "" {
-		err := json.Unmarshal([]byte(connType), &queryParam.Type)
-		if err != nil {
-			h.log.Error(ErrGetConnections(err))
-			writeMeshkitError(w, ErrGetConnections(err), http.StatusInternalServerError)
-			return
-		}
+		Status []string
+		Kind   []string
+		Type   []string
+	}{
+		Status: q["status"],
+		Kind:   q["kind"],
+		Type:   q["type"],
 	}
 
 	connectionsPage, err := provider.GetConnections(req, user.ID.String(), page, pageSize, search, order, filter, queryParam.Status, queryParam.Kind, queryParam.Type, name)
@@ -333,7 +315,7 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	if connectionID == uuid.Nil {
-		invalidIDErr := ErrInvalidUUID(fmt.Errorf("invalid connection ID"))
+		invalidIDErr := models.ErrInvalidUUID(fmt.Errorf("invalid connection ID"))
 		h.log.Error(invalidIDErr)
 		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
 		return
@@ -367,7 +349,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
 
 	connection := &connections.ConnectionPayload{}
 	err = json.Unmarshal(bd, connection)
@@ -378,52 +360,11 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	// Check if meshsync deployment mode is specified in the payload metadata.
-	// Only handle mode changes if a mode is explicitly provided (not undefined).
-	// In fact this method is used (for now) only for perform meshsync deployment mode change.
-	// If mode change fails return error.
-	// TODO: also check that kind = "kubernetes" (when client starts to send full connection object)
-	if connections.MeshsyncDeploymentModeFromMetadata(connection.MetaData) != connections.MeshsyncDeploymentModeUndefined {
-		// Handle meshsync deployment mode changes before connection update
-		token, _ := req.Context().Value(models.TokenCtxKey).(string)
-		oldMode, newMode, modeChanged, err := h.handleMeshSyncDeploymentModeChange(
-			req.Context(),
-			connectionID,
-			connection,
-			token,
-			userID,
-			provider,
-		)
-		if err != nil {
-			meshSyncErr := fmt.Errorf("error handling meshsync deployment mode change: %w", err)
-			metadata := map[string]any{
-				"error":        meshSyncErr,
-				"connectionId": connectionID,
-			}
-			event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to handle meshsync deployment mode change").WithMetadata(metadata).Build()
-			_ = provider.PersistEvent(*event, token)
-			go h.config.EventBroadcaster.Publish(userID, event)
-
-			h.log.Error(meshSyncErr)
-			writeMeshkitError(w, meshSyncErr, http.StatusInternalServerError)
-			return
-		}
-
-		// Log and emit event if mode actually changed
-		if modeChanged {
-			description := fmt.Sprintf("MeshSync deployment mode changed from '%s' to '%s' for connection %s", oldMode, newMode, connectionID)
-			metadata := map[string]any{
-				"meshsyncDeploymentModeOld": oldMode,
-				"meshsyncDeploymentModeNew": newMode,
-				"connectionId":              connectionID,
-			}
-			event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
-			_ = provider.PersistEvent(*event, token)
-			go h.config.EventBroadcaster.Publish(userID, event)
-
-			h.log.Info(description)
-		}
-	}
+	// MeshSync deployment-mode changes are handled by the dedicated
+	// POST /api/integrations/connections/{connectionId}/actions endpoint
+	// (PerformConnectionAction), which owns the metadata merge and cluster-side
+	// redeploy. PUT here only updates connection fields; it no longer sniffs the
+	// metadata for a mode change.
 
 	token, err := provider.GetProviderToken(req)
 	if err != nil {
@@ -436,6 +377,11 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		writeMeshkitError(w, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
+
+	// A PUT here is a partial update (the UI's connect action sends only
+	// {status}); the provider's UpdateConnectionById backfills any omitted field
+	// from the persisted row so a partial payload never clobbers columns like
+	// kind/name/type/metadata.
 	updatedConnection, err := provider.UpdateConnectionById(token, connection, mux.Vars(req)["connectionId"])
 	if err != nil {
 		_err := ErrFailToSave(err, obj)
@@ -470,7 +416,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID core.Uuid, provider models.Provider, token string, connection *connections.ConnectionPayload) (events.Event, error) {
 	connectionID := connection.ID
 
-	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
 
 	if connection.Status != "" {
 		smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
@@ -553,7 +499,7 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		writeMeshkitError(w, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
-	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
 
 	deletedConnection, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {
@@ -671,7 +617,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 				SetMeshsyncDeploymentMode(newMeshSyncMode).
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
 				DeployUndeployedOperators(machineCtx.OperatorTracker).
-				AddMeshsynDataHandlers(ctx, machineCtx.K8sContext, userID, mesheryInstanceID, provider)
+				AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, mesheryInstanceID, provider)
 		}
 
 	}

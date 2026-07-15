@@ -1,7 +1,7 @@
 ---
 title: Azure Managed Identity
 subtitle: Collaborative and visual infrastructure as design for Azure Managed Identity
-image: /extensions/models/azure-managed-identity/icons/color/azure-managed-identity-color.svg
+image: extensions/models/azure-managed-identity/icons/color/azure-managed-identity-color.svg
 aliases: /extensibility/integrations/azure-managed-identity
 docURL: https://docs.meshery.io/extensibility/integrations/azure-managed-identity
 description: 

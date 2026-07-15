@@ -11,7 +11,7 @@ import {
 } from '../designs/patterns/Grid.styles';
 import { RJSFModalWrapper } from '../shared/Modal/Modal';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { Modal as SistentModal } from '@sistent/sistent';
 import Filter from '../../public/static/img/drawer-icons/filter_svg';
 
@@ -231,7 +231,12 @@ function FiltersGrid({
                 aria-label="Add Application"
                 variant="contained"
                 color="primary"
-                disabled={!CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject)}
+                disabled={
+                  !CAN(
+                    Keys.CatalogManagementImportFilter.id,
+                    Keys.CatalogManagementImportFilter.function,
+                  )
+                }
                 size="large"
                 // @ts-ignore
                 onClick={handleUploadImport}

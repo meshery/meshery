@@ -63,7 +63,7 @@ type PerformanceResult struct {
 	Name               string        `json:"name,omitempty"`
 	Mesh               string        `json:"mesh,omitempty"`
 	PerformanceProfile *core.Uuid    `json:"performanceProfile,omitempty"`
-	UserID             *core.Uuid    `json:"userId"`
+	Owner              *core.Uuid    `json:"owner"`
 	RunnerResults      RunnerResults `json:"runnerResults"`
 	ServerMetrics      interface{}   `json:"serverMetrics"`
 	ServerBoardConfig  interface{}   `json:"serverBoardConfig,omitempty"`

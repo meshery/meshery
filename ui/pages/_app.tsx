@@ -18,12 +18,10 @@ import { startSessionTimer } from '../lib/sessionTimer';
 import Header from '../components/layout/Header/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import getPageContext from '../components/PageContext';
-import { MESHERY_CONTROLLER_SUBSCRIPTION } from '../components/subscription/helpers';
-import { GQLSubscription } from '../components/subscription/subscriptionhandler';
+import { subscribeToControllersStatus } from 'lib/controllersStatusSubscription';
 import { useLazyGetSystemSyncQuery, useLazyGetKubernetesContextsQuery } from '../rtk-query/system';
 import { useGetUserPrefQuery } from '../rtk-query/user';
 import { api } from '../rtk-query';
-import { useLazyGetConnectionsQuery } from '../rtk-query/connection';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 // Host-side CSS for packages shared with extensions via remote-component.
@@ -53,7 +51,10 @@ import 'tippy.js/animations/perspective.css';
 import 'tippy.js/animations/perspective-subtle.css';
 import 'tippy.js/animations/perspective-extreme.css';
 import '@xterm/xterm/css/xterm.css';
-import { getConnectionIDsFromContextIds, getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
+import {
+  getControllerPollConnectionIDsFromContextIds,
+  getK8sConfigIdsFromK8sConfig,
+} from '../utils/multi-ctx';
 import './../public/static/style/index.css';
 import './styles/AnimatedFilter.css';
 import './styles/AnimatedMeshery.css';
@@ -66,10 +67,9 @@ import { createRelayEnvironment } from '../lib/relayEnvironment';
 import './styles/charts.css';
 import uiConfig from '../ui.config';
 import { NotificationCenterProvider } from '../components/layout/NotificationCenter';
-import { getMeshModelComponentByName } from '../api/meshmodel';
-import { CONNECTION_KINDS, CONNECTION_KINDS_DEF, CONNECTION_STATES } from '../utils/Enum';
+import { getConnectionDefinitions, getMeshModelComponentByName } from '../api/meshmodel';
+import { CONNECTION_KINDS, CONNECTION_KINDS_DEF } from '../utils/Enum';
 import { ability } from '../utils/can';
-import { useLazyGetCredentialByIdQuery } from '@/rtk-query/credentials';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
 import { formatToTitleCase } from '@/utils/utils';
 import { useThemePreference } from '@/themes/hooks';
@@ -95,7 +95,6 @@ import {
   updateExtensionType,
 } from '@/store/slices/mesheryUi';
 import { updateLoadTestPref } from '@/store/slices/prefTest';
-import { updateGrafanaConfig, updatePrometheusConfig } from '@/store/slices/telemetry';
 import { updateAdaptersInfo } from '@/store/slices/adapter';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import WorkspaceModalContextProvider from '@/utils/context/WorkspaceModalContextProvider';
@@ -119,12 +118,10 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
   const { k8sConfig } = useSelector((state) => state.ui);
   const { providerCapabilities } = useSelector((state) => state.ui);
   const { isDrawerCollapsed } = useSelector((state) => state.ui);
-  const [fetchCredentialById] = useLazyGetCredentialByIdQuery();
   const [fetchSystemSync] = useLazyGetSystemSyncQuery();
   const [fetchKubernetesContexts] = useLazyGetKubernetesContextsQuery();
   const [fetchOrganizations] = api.endpoints.getOrgs.useLazyQuery();
   const [fetchUserKeys] = api.endpoints.getUserKeys.useLazyQuery();
-  const [fetchConnections] = useLazyGetConnectionsQuery();
   const { data: userPrefData } = useGetUserPrefQuery();
   const dispatch = useDispatch();
   const [state, setState] = useState({
@@ -135,7 +132,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     k8sContexts: { totalCount: 0, contexts: [] },
     activeK8sContexts: [],
     mesheryControllerSubscription: null,
-    disposeK8sContextSubscription: null,
     theme: 'light',
     isOpen: false,
     relayEnvironment: createRelayEnvironment(),
@@ -145,13 +141,10 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     abilityUpdated: false,
   });
 
-  // Mirror the dispose callback into a ref so the bootstrap effect's cleanup
-  // can call the latest value rather than the (always-null) initial-mount
-  // closure of `state.disposeK8sContextSubscription`.
-  const disposeK8sContextSubscriptionRef = useRef<null | (() => void)>(null);
-  useEffect(() => {
-    disposeK8sContextSubscriptionRef.current = state.disposeK8sContextSubscription;
-  }, [state.disposeK8sContextSubscription]);
+  // Holds the live controller-status SSE subscription ({ dispose }) so
+  // initSubscriptions can tear down the previous stream and the bootstrap
+  // cleanup can dispose it on unmount, without racing a stale state closure.
+  const mesheryControllerSubscriptionRef = useRef<null | { dispose: () => void }>(null);
 
   const setAppState = useCallback((partialState, callback) => {
     setState((prevState) => {
@@ -163,47 +156,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     });
   }, []);
 
-  const loadPromGrafanaConnection = useCallback(async () => {
-    try {
-      const res = await fetchConnections({
-        page: 0,
-        pagesize: 2,
-        status: JSON.stringify([CONNECTION_STATES.CONNECTED, CONNECTION_STATES.REGISTERED]),
-        kind: JSON.stringify([CONNECTION_KINDS.PROMETHEUS, CONNECTION_KINDS.GRAFANA]),
-      }).unwrap();
-
-      res?.connections?.forEach((connection) => {
-        if (connection.kind == CONNECTION_KINDS.PROMETHEUS) {
-          const promCfg = {
-            prometheusURL: connection?.metadata?.url || '',
-            selectedPrometheusBoardsConfigs: connection?.metadata['prometheus_boards'] || [],
-            connectionID: connection?.id,
-            connectionName: connection?.name,
-          };
-          dispatch(updatePrometheusConfig(promCfg));
-        } else {
-          const credentialID = connection?.credentialId;
-          fetchCredentialById(credentialID)
-            .unwrap()
-            .then((credRes) => {
-              const grafanaCfg = {
-                grafanaURL: connection?.metadata?.url || '',
-                grafanaAPIKey: credRes?.secret?.secret || '',
-                grafanaBoardSearch: '',
-                grafanaBoards: connection?.metadata['grafana_boards'] || [],
-                selectedBoardsConfigs: [],
-                connectionID: connection?.id,
-                connectionName: connection?.name,
-              };
-              dispatch(updateGrafanaConfig(grafanaCfg));
-            });
-        }
-      });
-    } catch (err) {
-      console.error('Failed to load telemetry connections:', err);
-    }
-  }, [dispatch, fetchConnections, fetchCredentialById]);
-
   const fullScreenChanged = useCallback(() => {
     setState((prevState) => {
       return { ...prevState, isFullScreenMode: !prevState.isFullScreenMode };
@@ -213,13 +165,39 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
   const loadMeshModelComponent = useCallback(async () => {
     const connectionDef = {};
 
+    // Connection definitions are the source of truth for a kind's icon
+    // (styles.svgColor) and its state machine (transitionMap). Seed the metadata
+    // from them — these entries must survive even when the legacy
+    // `<Kind>Connection` *component* no longer exists (connection definitions
+    // replaced those components), otherwise the kind has no transitionMap and
+    // the status dropdown shows "No transitions Available".
+    try {
+      const res = await getConnectionDefinitions();
+      (res?.connectionDefinitions || []).forEach((definition) => {
+        if (definition?.kind) {
+          connectionDef[definition.kind] = {
+            transitionMap: definition.transitionMap,
+            icon: definition.styles?.svgColor,
+          };
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching connection definitions:', error);
+    }
+
+    // Fall back to the legacy `<Kind>Connection` component for kinds without a
+    // first-class connection definition yet (e.g. meshery, github), and to
+    // backfill the flat `transitions` list / icon the definition did not provide.
     const promises = CONNECTION_KINDS_DEF.map(async (kind) => {
       try {
         const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
-        if (res?.components) {
-          connectionDef[CONNECTION_KINDS[kind]] = {
-            transitions: res?.components[0].metadata.transitions,
-            icon: res?.components[0].styles.svgColor,
+        if (res?.components?.length) {
+          const kindKey = CONNECTION_KINDS[kind];
+          const existing = connectionDef[kindKey] || {};
+          connectionDef[kindKey] = {
+            ...existing,
+            transitions: existing.transitions ?? res.components[0].metadata?.transitions,
+            icon: existing.icon || res.components[0].styles?.svgColor,
           };
         }
       } catch (error) {
@@ -243,25 +221,37 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
       if (!k8sConfig?.length) {
         return;
       }
-      const connectionIDs = getConnectionIDsFromContextIds(contexts, k8sConfig);
-      // No need to create a controller subscription if there are no connections
+      // Only watch controller status for connections that are BOTH in operator
+      // mode AND connected: the operator/broker/meshsync controllers exist
+      // in-cluster only in operator mode, and only a connected connection has
+      // live controllers to poll. Embedded or not-connected connections have
+      // nothing to poll. This re-scopes automatically — a mode/status change
+      // invalidates the connections cache, refetching k8sConfig and re-running
+      // initSubscriptions with the updated eligible set.
+      const connectionIDs = getControllerPollConnectionIDsFromContextIds(contexts, k8sConfig);
+
+      // Tear down any prior controller-status stream before opening a new one,
+      // so re-subscribing on a context change never leaks an EventSource.
+      mesheryControllerSubscriptionRef.current?.dispose?.();
+      mesheryControllerSubscriptionRef.current = null;
+
+      // No operator-mode connections → no controller-status stream to open.
       if (connectionIDs.length < 1) {
-        setState((prevState) => ({ ...prevState, mesheryControllerSubscription: () => {} }));
+        setState((prevState) => ({ ...prevState, mesheryControllerSubscription: null }));
         return;
       }
 
-      const mesheryControllerSubscription = new GQLSubscription({
-        type: MESHERY_CONTROLLER_SUBSCRIPTION,
-        connectionIDs: connectionIDs,
-        callbackFunction: (data) => {
-          dispatch(setControllerState({ controllerState: data }));
-        },
+      // SSE stream (replaces the subscribeMesheryControllersStatus GraphQL
+      // subscription). The server sends the full controller-status array on
+      // every change, so we just replace the redux state — no client merge.
+      const mesheryControllerSubscription = subscribeToControllersStatus(connectionIDs, (data) => {
+        dispatch(setControllerState({ controllerState: data }));
       });
-      mesheryControllerSubscription.initSubscription();
+      mesheryControllerSubscriptionRef.current = mesheryControllerSubscription;
 
       setState((prevState) => ({ ...prevState, mesheryControllerSubscription }));
     },
-    [k8sConfig],
+    [k8sConfig, dispatch],
   );
 
   const handleDrawerToggle = useCallback(() => {
@@ -442,7 +432,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     const loadAll = async () => {
       try {
         loadConfigFromServer();
-        loadPromGrafanaConnection();
         await loadOrg();
 
         initSubscriptions([]);
@@ -468,7 +457,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
 
     return () => {
       document.removeEventListener('fullscreenchange', fullScreenChanged);
-      disposeK8sContextSubscriptionRef.current?.();
+      mesheryControllerSubscriptionRef.current?.dispose?.();
     };
   }, []);
 
@@ -483,15 +472,11 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     }
 
     if (k8sConfig?.length > 0) {
-      const { mesheryControllerSubscription } = state;
+      // initSubscriptions disposes any existing stream and re-subscribes with
+      // the current connection set, so it is safe to call on every k8sConfig
+      // change.
       const ids = getK8sConfigIdsFromK8sConfig(k8sConfig);
-      if (mesheryControllerSubscription) {
-        mesheryControllerSubscription.updateSubscription(
-          getConnectionIDsFromContextIds(ids, k8sConfig),
-        );
-      } else {
-        initSubscriptions(ids);
-      }
+      initSubscriptions(ids);
     }
   }, [k8sConfig, providerCapabilities]);
 

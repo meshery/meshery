@@ -29,6 +29,10 @@ const BaseInput = (props) => {
   const focused = props.options?.focused; // true for datetime-local
   const isRequired = props?.required;
   const prettifiedName = name || 'Enter a value';
+  // `ui:placeholder` reaches widgets as `props.placeholder`; some templates
+  // surface it under `options.placeholder`. Honor either so a schema can hint
+  // the expected input (e.g. an example URL) inside the empty field.
+  const placeholder = props.placeholder || props.options?.placeholder || undefined;
   const [, setIsFocused] = React.useState(false);
   const style = {
     display: 'flex',
@@ -83,6 +87,7 @@ const BaseInput = (props) => {
           } // remove the default value i.e. New Value for additionalFields
           id={props.id}
           margin="dense"
+          placeholder={placeholder}
           label={xRjsfGridArea ? '' : `${prettifiedName}`}
           rows={props.options?.rows}
           multiline={props?.multiline}

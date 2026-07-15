@@ -1,7 +1,6 @@
 package connections
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/url"
 
@@ -56,23 +55,13 @@ mesheryctl connection list --count
 		urlPath := connectionApiPath
 		querySearch := url.Values{}
 
-		kindQuery, err := json.Marshal(connectionListFlagsProvided.kind)
-		if err != nil {
-			return utils.ErrMarshal(err)
+		// Filters are repeated query params (kind=a&kind=b, status=x&status=y),
+		// the standard convention across the API — no JSON encoding.
+		for _, kind := range connectionListFlagsProvided.kind {
+			querySearch.Add("kind", kind)
 		}
-		if len(connectionListFlagsProvided.kind) > 0 {
-			utils.Log.Debug("Adding kind to query: ", string(kindQuery))
-			querySearch.Add("kind", string(kindQuery))
-		}
-
-		statusQuery, err := json.Marshal(connectionListFlagsProvided.status)
-		if err != nil {
-			return utils.ErrMarshal(err)
-		}
-
-		if len(connectionListFlagsProvided.status) > 0 {
-			utils.Log.Debug("Adding status to query: ", string(statusQuery))
-			querySearch.Add("status", string(statusQuery))
+		for _, status := range connectionListFlagsProvided.status {
+			querySearch.Add("status", status)
 		}
 
 		if len(querySearch) > 0 {
@@ -115,7 +104,7 @@ func getConnectionDetail(connection *connection.Connection) []string {
 		data[1] = "N/A"
 	}
 
-	data[2] = connection.Type
+	data[2] = connection.ConnectionType
 
 	data[3] = connection.Kind
 
