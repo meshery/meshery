@@ -25,43 +25,47 @@ let capabilitiesReturn: any = {
   isSuccess: false,
 };
 
-vi.mock('@sistent/sistent', () => ({
-  Tab: ({ label, ...rest }: any) => <button {...rest}>{label}</button>,
-  Tabs: ({ children, value, onChange }: any) => (
-    <div data-testid="tabs" data-value={value} onClick={(e) => onChange?.(e, 0)}>
-      {children}
-    </div>
-  ),
-  Typography: ({ children, ...rest }: any) => <span {...rest}>{children}</span>,
-  Grid2: ({ children }: any) => <div>{children}</div>,
-  FormGroup: ({ children }: any) => <div>{children}</div>,
-  FormControlLabel: ({ label, control }: any) => (
-    <label>
-      {control}
-      {label}
-    </label>
-  ),
-  Switch: ({ checked, onChange, ...rest }: any) => (
-    <input
-      type="checkbox"
-      checked={!!checked}
-      onChange={onChange}
-      data-testid={rest['data-cy'] || 'switch'}
-    />
-  ),
-  IconButton: ({ children, onClick }: any) => <button onClick={onClick}>{children}</button>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
-  CardHeader: ({ children }: any) => <div>{children}</div>,
-  CustomTooltip: ({ children }: any) => <>{children}</>,
-  NoSsr: ({ children }: any) => <>{children}</>,
-  TachometerIcon: () => <svg />,
-  SettingsCellIcon: () => <svg />,
-  SettingsRemoteIcon: () => <svg />,
-  useTheme: () => ({
-    palette: { icon: { default: 'icon' }, mode: 'light' },
-  }),
-  ErrorBoundary: ({ children }: any) => <>{children}</>,
-}));
+vi.mock('@sistent/sistent', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@sistent/sistent')>();
+  return {
+    ...actual,
+    Tab: ({ label, ...rest }: any) => <button {...rest}>{label}</button>,
+    Tabs: ({ children, value, onChange }: any) => (
+      <div data-testid="tabs" data-value={value} onClick={(e) => onChange?.(e, 0)}>
+        {children}
+      </div>
+    ),
+    Typography: ({ children, ...rest }: any) => <span {...rest}>{children}</span>,
+    Grid2: ({ children }: any) => <div>{children}</div>,
+    FormGroup: ({ children }: any) => <div>{children}</div>,
+    FormControlLabel: ({ label, control }: any) => (
+      <label>
+        {control}
+        {label}
+      </label>
+    ),
+    Switch: ({ checked, onChange, ...rest }: any) => (
+      <input
+        type="checkbox"
+        checked={!!checked}
+        onChange={onChange}
+        data-testid={rest['data-cy'] || 'switch'}
+      />
+    ),
+    IconButton: ({ children, onClick }: any) => <button onClick={onClick}>{children}</button>,
+    CardContent: ({ children }: any) => <div>{children}</div>,
+    CardHeader: ({ children }: any) => <div>{children}</div>,
+    CustomTooltip: ({ children }: any) => <>{children}</>,
+    NoSsr: ({ children }: any) => <>{children}</>,
+    TachometerIcon: () => <svg />,
+    SettingsCellIcon: () => <svg />,
+    SettingsRemoteIcon: () => <svg />,
+    useTheme: () => ({
+      palette: { icon: { default: 'icon' }, mode: 'light' },
+    }),
+    ErrorBoundary: ({ children }: any) => <>{children}</>,
+  };
+});
 
 vi.mock('../../assets/icons/CopyIcon', () => ({
   default: () => <svg />,

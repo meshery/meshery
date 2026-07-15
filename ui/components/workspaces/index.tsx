@@ -389,7 +389,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
 
   const [columnVisibility, setColumnVisibility] = useState({});
 
-  if (!organization?.id || isWorkspacesFetching) {
+  if (isWorkspacesFetching && !workspacesData) {
     return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Workspaces..." />;
   }
 

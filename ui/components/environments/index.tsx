@@ -449,7 +449,7 @@ const Environments = () => {
     }
   };
 
-  if (!orgId || isEnvironmentsFetching) {
+  if (isEnvironmentsFetching && !environmentsData) {
     return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Environments..." />;
   }
 
