@@ -24,7 +24,7 @@ func TestDeprecatedMeshmodelHandler_ForwardsAndSetsHeaders(t *testing.T) {
 	gMux := mux.NewRouter()
 	gMux.HandleFunc("/api/registry/models", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("ok:" + r.URL.RawQuery))
+		_, _ = w.Write([]byte("ok:" + r.URL.RawQuery))
 	}).Methods("GET")
 
 	gMux.PathPrefix("/api/meshmodels").Handler(deprecatedMeshmodelHandler(gMux))
@@ -41,6 +41,9 @@ func TestDeprecatedMeshmodelHandler_ForwardsAndSetsHeaders(t *testing.T) {
 	}
 	if got := resp.Header.Get("Deprecation"); got != "true" {
 		t.Errorf("Deprecation header = %q, want %q", got, "true")
+	}
+	if got := resp.Header.Get("Sunset"); got != "Tue, 01 Dec 2026 00:00:00 GMT" {
+		t.Errorf("Sunset header = %q, want %q", got, "Tue, 01 Dec 2026 00:00:00 GMT")
 	}
 	wantLink := `</api/registry/models?page=1&pagesize=5>; rel="successor-version"`
 	if got := resp.Header.Get("Link"); got != wantLink {
