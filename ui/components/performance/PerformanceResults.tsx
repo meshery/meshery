@@ -9,7 +9,7 @@ import NodeDetails from './NodeDetails';
 import FacebookIcon from './assets/facebookIcon';
 import LinkedinIcon from './assets/linkedinIcon';
 import TwitterIcon from './assets/twitterIcon';
-import { iconMedium, iconLarge } from '../../css/icons.styles';
+import { iconMedium } from '../../css/icons.styles';
 import { TwitterShareButton, LinkedinShareButton, FacebookShareButton } from 'react-share';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
@@ -211,7 +211,7 @@ function generateColumnsForDisplay(
               color="inherit"
               onClick={() => setSelectedProfileIdxForChart(tableMeta.rowIndex)}
             >
-              <BarChartIcon style={iconMedium} /> {/* can change it to large */}
+              <BarChartIcon style={{ fill: theme.palette.icon.default, ...iconMedium }} />
             </IconButton>
           );
         },
@@ -233,7 +233,7 @@ function generateColumnsForDisplay(
               color="inherit"
               onClick={() => setSelectedProfileIdxForNodeDetails(tableMeta.rowIndex)}
             >
-              <InfoIcon style={iconMedium} /> {/* can change it to large */}
+              <InfoIcon style={{ fill: theme.palette.icon.default, ...iconMedium }} />
             </IconButton>
           );
         },
@@ -251,16 +251,12 @@ function generateColumnsForDisplay(
         customBodyRender: function CustomBody(_, tableMeta) {
           return (
             <>
-              <IconButton
-                style={iconMedium}
-                aria-label="Share"
-                onClick={(e) => handleSocialExpandClick(e, tableMeta)}
-              >
+              <IconButton aria-label="Share" onClick={(e) => handleSocialExpandClick(e, tableMeta)}>
                 <ReplyIcon
                   style={{
                     transform: 'scaleX(-1)',
-                    color: theme.palette.icon.default,
-                    ...iconLarge,
+                    fill: theme.palette.icon.default,
+                    ...iconMedium,
                   }}
                 />
               </IconButton>

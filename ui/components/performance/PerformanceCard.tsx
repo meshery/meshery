@@ -321,7 +321,7 @@ function PerformanceCard({
                     )
                   }
                 >
-                  <EditIcon style={iconMedium} />
+                  <EditIcon style={{ fill: theme.palette.icon.default, ...iconMedium }} />
                 </IconButton>
               </CustomTooltip>
               <CustomTooltip title="Delete">
@@ -335,7 +335,7 @@ function PerformanceCard({
                     )
                   }
                 >
-                  <DeleteIcon style={iconMedium} />
+                  <DeleteIcon style={{ fill: theme.palette.icon.default, ...iconMedium }} />
                 </IconButton>
               </CustomTooltip>
             </div>

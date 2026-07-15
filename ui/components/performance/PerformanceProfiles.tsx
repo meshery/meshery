@@ -295,7 +295,7 @@ function PerformanceProfile({ handleDelete }) {
                   >
                     <EditIcon
                       style={{
-                        fill: theme.palette.icon.secondary,
+                        fill: theme.palette.icon.default,
                         ...iconMedium,
                       }}
                     />
@@ -321,7 +321,7 @@ function PerformanceProfile({ handleDelete }) {
                   >
                     <PlayArrowIcon
                       style={{
-                        fill: theme.palette.icon.secondary,
+                        fill: theme.palette.icon.default,
                         ...iconMedium,
                       }}
                     />
