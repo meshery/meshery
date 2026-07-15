@@ -10,7 +10,7 @@ import FiltersGrid from './FiltersGrid';
 import fetchCatalogFilter from '@/graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../../css/icons.styles';
 import { modifyRJSFSchema } from '../../utils/utils';
-import { getMeshModels } from '../../api/meshmodel';
+import { useLazyGetMeshModelsQuery } from '../../rtk-query/meshModel';
 import _ from 'lodash';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
@@ -99,6 +99,7 @@ function MesheryFilters() {
   const [canPublishFilter, setCanPublishFilter] = useState(false);
   const [publishSchema, setPublishSchema] = useState<{ rjsfSchema?: any; uiSchema?: any }>({});
   const { width } = useWindowDimensions();
+  const [triggerGetMeshModels] = useLazyGetMeshModelsQuery();
   const [meshModels, setMeshModels] = useState<any[]>([]);
   const { user, catalogVisibility } = useSelector((state) => state.ui);
   const [viewType, setViewType] = useState<TypeView>('grid');
@@ -296,7 +297,8 @@ function MesheryFilters() {
   useEffect(() => {
     const fetchSchemaData = async () => {
       try {
-        const { models } = await getMeshModels();
+        const response = await triggerGetMeshModels();
+        const models = response?.data?.models;
         const modelNames = _.uniq(models?.map((model) => model.displayName));
         modelNames.sort();
 

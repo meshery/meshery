@@ -67,7 +67,8 @@ import { createRelayEnvironment } from '../lib/relayEnvironment';
 import './styles/charts.css';
 import uiConfig from '../ui.config';
 import { NotificationCenterProvider } from '../components/layout/NotificationCenter';
-import { getConnectionDefinitions, getMeshModelComponentByName } from '../api/meshmodel';
+import { initiateQuery } from '../rtk-query/utils';
+import { meshModelApi } from '../rtk-query/meshModel';
 import { CONNECTION_KINDS, CONNECTION_KINDS_DEF } from '../utils/Enum';
 import { ability } from '../utils/can';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
@@ -172,8 +173,10 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     // replaced those components), otherwise the kind has no transitionMap and
     // the status dropdown shows "No transitions Available".
     try {
-      const res = await getConnectionDefinitions();
-      (res?.connectionDefinitions || []).forEach((definition) => {
+      const res = await initiateQuery(meshModelApi.endpoints.getConnectionDefinitions, {
+        params: { pagesize: 'all' },
+      });
+      (res?.data?.connectionDefinitions || []).forEach((definition) => {
         if (definition?.kind) {
           connectionDef[definition.kind] = {
             transitionMap: definition.transitionMap,
@@ -190,14 +193,16 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     // backfill the flat `transitions` list / icon the definition did not provide.
     const promises = CONNECTION_KINDS_DEF.map(async (kind) => {
       try {
-        const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
-        if (res?.components?.length) {
+        const res = await initiateQuery(meshModelApi.endpoints.getComponentByName, {
+          name: formatToTitleCase(kind).concat('Connection'),
+        });
+        if (res?.data?.components?.length) {
           const kindKey = CONNECTION_KINDS[kind];
           const existing = connectionDef[kindKey] || {};
           connectionDef[kindKey] = {
             ...existing,
-            transitions: existing.transitions ?? res.components[0].metadata?.transitions,
-            icon: existing.icon || res.components[0].styles?.svgColor,
+            transitions: existing.transitions ?? res.data.components[0].metadata?.transitions,
+            icon: existing.icon || res.data.components[0].styles?.svgColor,
           };
         }
       } catch (error) {
