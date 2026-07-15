@@ -34,10 +34,6 @@ function MesheryPatternsToolbar({
   router,
   handleUploadImport,
   setSearch,
-  initPatternsSubscription,
-  page,
-  pageSize,
-  sortOrder,
   filter,
   selectedFilters,
   setSelectedFilters,
@@ -118,7 +114,6 @@ function MesheryPatternsToolbar({
           <SearchBar
             onSearch={(value) => {
               setSearch(value);
-              initPatternsSubscription(page.toString(), pageSize.toString(), value, sortOrder);
             }}
             expanded={isSearchExpanded}
             setExpanded={setIsSearchExpanded}

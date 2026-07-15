@@ -51,14 +51,7 @@ Deploy Linkerd mesh and wait for it to be deployed
 mesheryctl adapter deploy linkerd --watch
 
 </div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-		
-
-</div>
-</pre> 
+</pre>
 
 ## Options
 

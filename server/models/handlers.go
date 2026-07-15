@@ -5,7 +5,6 @@ import (
 
 	"time"
 
-	"github.com/meshery/meshery/server/models/meshmodel"
 	"github.com/meshery/meshkit/utils/events"
 )
 
@@ -295,14 +294,7 @@ type HandlerConfig struct {
 	// to be removed
 	BrokerEndpointURL *string
 
-	PerformanceChannel       chan struct{}
-	PerformanceResultChannel chan struct{}
-
-	PatternChannel            *Broadcast
-	FilterChannel             *Broadcast
-	EventBroadcaster          *Broadcast
-	DashboardK8sResourcesChan *DashboardK8sResourcesChan
-	MeshModelSummaryChannel   *meshmodel.SummaryChannel
+	EventBroadcaster *Broadcast
 
 	K8scontextChannel *K8scontextChan
 	EventsBuffer      *events.EventStreamer
