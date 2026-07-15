@@ -1606,7 +1606,11 @@ func (h *Handler) DeleteModel(rw http.ResponseWriter, r *http.Request, _ *models
 	rw.WriteHeader(http.StatusNoContent)
 }
 
-// DeleteModelsByRegistrant deletes all models of a registrant kind.
+// swagger:route DELETE /api/meshmodels/registrants/{connectionID}/models DeleteModelsByRegistrant
+//
+// Delete all models of a registrant.
+//
+// Delete all model definitions, components, relationships, and policies belonging to a specific registrant connection ID.
 func (h *Handler) DeleteModelsByRegistrant(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	connectionIDStr := mux.Vars(r)["connectionID"]
 	if connectionIDStr == "" {
@@ -1645,48 +1649,7 @@ func (h *Handler) DeleteModelsByRegistrant(rw http.ResponseWriter, r *http.Reque
 	}
 
 	err = h.dbHandler.Transaction(func(tx *gorm.DB) error {
-		// Delete registry entries for components of these models
-		if err := tx.Where("entity IN (?) AND type = ?",
-			tx.Model(&component.ComponentDefinition{}).Select("id").Where("model_id IN ?", modelIDs),
-			entity.ComponentDefinition,
-		).Delete(&registry.Registry{}).Error; err != nil {
-			return err
-		}
-
-		// Delete registry entries for relationships of these models
-		if err := tx.Where("entity IN (?) AND type = ?",
-			tx.Model(&relationship.RelationshipDefinition{}).Select("id").Where("model_id IN ?", modelIDs),
-			entity.RelationshipDefinition,
-		).Delete(&registry.Registry{}).Error; err != nil {
-			return err
-		}
-
-		// Delete registry entries for policies of these models
-		if err := tx.Where("entity IN (?) AND type = ?",
-			tx.Model(&_models.PolicyDefinition{}).Select("id").Where("modelID IN ?", modelIDs),
-			entity.PolicyDefinition,
-		).Delete(&registry.Registry{}).Error; err != nil {
-			return err
-		}
-
-		// Delete model registry entries
-		if err := tx.Where("entity IN (?) AND type = ?", modelIDs, entity.Model).Delete(&registry.Registry{}).Error; err != nil {
-			return err
-		}
-
-		// Delete components, relationships, policies
-		if err := tx.Where("model_id IN ?", modelIDs).Delete(&component.ComponentDefinition{}).Error; err != nil {
-			return err
-		}
-		if err := tx.Where("model_id IN ?", modelIDs).Delete(&relationship.RelationshipDefinition{}).Error; err != nil {
-			return err
-		}
-		if err := tx.Where("modelID IN ?", modelIDs).Delete(&_models.PolicyDefinition{}).Error; err != nil {
-			return err
-		}
-
-		// Delete models themselves
-		return tx.Where("id IN ?", modelIDs).Delete(&_model.ModelDefinition{}).Error
+		return h.deleteModelsAndRegistryResources(tx, modelIDs)
 	})
 
 	if err != nil {
@@ -1713,4 +1676,43 @@ func (h *Handler) DeleteModelsByRegistrant(rw http.ResponseWriter, r *http.Reque
 	if err := json.NewEncoder(rw).Encode(resp); err != nil {
 		h.log.Error(models.ErrMarshal(err, "delete-models-response"))
 	}
+}
+
+func (h *Handler) deleteModelsAndRegistryResources(tx *gorm.DB, modelIDs []uuid.UUID) error {
+	if err := tx.Where("entity IN (?) AND type = ?",
+		tx.Model(&component.ComponentDefinition{}).Select("id").Where("model_id IN ?", modelIDs),
+		entity.ComponentDefinition,
+	).Delete(&registry.Registry{}).Error; err != nil {
+		return err
+	}
+
+	if err := tx.Where("entity IN (?) AND type = ?",
+		tx.Model(&relationship.RelationshipDefinition{}).Select("id").Where("model_id IN ?", modelIDs),
+		entity.RelationshipDefinition,
+	).Delete(&registry.Registry{}).Error; err != nil {
+		return err
+	}
+
+	if err := tx.Where("entity IN (?) AND type = ?",
+		tx.Model(&_models.PolicyDefinition{}).Select("id").Where("modelID IN ?", modelIDs),
+		entity.PolicyDefinition,
+	).Delete(&registry.Registry{}).Error; err != nil {
+		return err
+	}
+
+	if err := tx.Where("entity IN (?) AND type = ?", modelIDs, entity.Model).Delete(&registry.Registry{}).Error; err != nil {
+		return err
+	}
+
+	if err := tx.Where("model_id IN ?", modelIDs).Delete(&component.ComponentDefinition{}).Error; err != nil {
+		return err
+	}
+	if err := tx.Where("model_id IN ?", modelIDs).Delete(&relationship.RelationshipDefinition{}).Error; err != nil {
+		return err
+	}
+	if err := tx.Where("modelID IN ?", modelIDs).Delete(&_models.PolicyDefinition{}).Error; err != nil {
+		return err
+	}
+
+	return tx.Where("id IN ?", modelIDs).Delete(&_model.ModelDefinition{}).Error
 }

@@ -27,10 +27,10 @@ import (
 
 var deleteCmd = &cobra.Command{
 	Use:   "delete [connection-id]",
-	Short: "Delete all models of a registrant connection",
-	Long:  `Delete all model definitions, components, policies, and relationships associated with a registrant connection ID.`,
+	Short: "Delete all models associated with a connection",
+	Long:  `Delete all cached model definitions, components, policies, and relationships associated with a registrant connection ID. Note that this command does not delete the connection itself.`,
 	Example: `
-// Delete all models of a registrant connection by ID
+// Delete all models associated with a connection by ID
 mesheryctl registry delete [connection-id]
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
