@@ -447,7 +447,7 @@ function PerformanceProfile({ handleDelete }) {
         <DataTableToolbar
           primaryActions={
             !(width < 550 && isSearchExpanded) &&
-            (testProfiles.length > 0 || viewType == 'table') ? (
+            (testProfiles.length > 0 || viewType === 'table') ? (
               <Button
                 aria-label="Add Performance Profile"
                 variant="contained"
