@@ -23,8 +23,8 @@ import (
 	meshkitutils "github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
-	"github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta3/component"
 )
 
 func (h *Handler) handleError(rw http.ResponseWriter, err error, logMsg string) {
@@ -209,7 +209,7 @@ func incrementCountersOnSuccess(mu *sync.Mutex, entityType entity.EntityType, co
 }
 
 func (h *Handler) sendErrorEvent(userID core.Uuid, provider models.Provider, description string, err error, token string) {
-	event := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithAction("register").WithSeverity(events.Error).WithDescription(description).WithMetadata(map[string]interface{}{
+	event := events.NewEvent().ActedUpon(userID).FromOwner(userID).FromSystem(*h.SystemID).WithAction("register").WithSeverity(events.Error).WithDescription(description).WithMetadata(map[string]interface{}{
 		"error": err,
 	}).Build()
 	_ = provider.PersistEvent(*event, token)
@@ -360,7 +360,7 @@ func (h *Handler) sendFileEvent(userID core.Uuid, provider models.Provider, resp
 
 	event := events.NewEvent().
 		ActedUpon(userID).
-		FromUser(userID).
+		FromOwner(userID).
 		FromSystem(*h.SystemID).
 		WithAction("register").
 		WithDescription(description).
@@ -393,7 +393,7 @@ func (h *Handler) sendEventForImport(userID core.Uuid, provider models.Provider,
 	}
 	event := events.NewEvent().
 		ActedUpon(userID).
-		FromUser(userID).
+		FromOwner(userID).
 		FromSystem(*h.SystemID).
 		WithAction("generate").
 		WithDescription(description).
@@ -412,25 +412,25 @@ func writeMessageString(response *models.RegistryAPIResponse) string {
 		}
 		modelName := ModelNames(response)
 		modelWord := determinePluralWord(response.EntityCount.ModelCount, "model")
-		message.WriteString(fmt.Sprintf("Imported %s %s ", modelWord, modelName))
+		fmt.Fprintf(&message, "Imported %s %s ", modelWord, modelName)
 	}
 	if response.EntityCount.CompCount > 0 || response.EntityCount.RelCount > 0 {
 		message.WriteString("(")
 	}
 	if response.EntityCount.CompCount > 0 {
 		componentWord := determinePluralWord(response.EntityCount.CompCount, "component")
-		message.WriteString(fmt.Sprintf("%d %s", response.EntityCount.CompCount, componentWord))
+		fmt.Fprintf(&message, "%d %s", response.EntityCount.CompCount, componentWord)
 	}
 	if response.EntityCount.RelCount > 0 && response.EntityCount.CompCount > 0 {
 		if message.Len() > 0 {
 			message.WriteString(" and ")
 		}
 		relationshipWord := determinePluralWord(response.EntityCount.RelCount, "relationship")
-		message.WriteString(fmt.Sprintf("%d %s", response.EntityCount.RelCount, relationshipWord))
+		fmt.Fprintf(&message, "%d %s", response.EntityCount.RelCount, relationshipWord)
 	}
 	if response.EntityCount.CompCount == 0 && response.EntityCount.RelCount > 0 {
 		relationshipWord := determinePluralWord(response.EntityCount.RelCount, "relationship")
-		message.WriteString(fmt.Sprintf("%d %s", response.EntityCount.RelCount, relationshipWord))
+		fmt.Fprintf(&message, "%d %s", response.EntityCount.RelCount, relationshipWord)
 	}
 	if response.EntityCount.CompCount > 0 || response.EntityCount.RelCount > 0 {
 		message.WriteString(")")

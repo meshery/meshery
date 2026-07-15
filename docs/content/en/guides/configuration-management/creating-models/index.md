@@ -6,14 +6,14 @@ aliases:
 categories: [configuration]
 ---
 
-Meshery offers two primary ways to bring models into your system: **Create** and **[Import](/guides/configuration-management/importing-models)**.
+Meshery offers two primary ways to bring models into your system: **Create** and **[Import]({{< ref "guides/configuration-management/importing-models/index.md" >}})**.
 
 - **Import** is ideal when you already have a model definition file (e.g., JSON, CSV) and simply want to bring it into Meshery.
 - **Create** is the recommended approach if you’re starting fresh — it guides you through building a model step by step using an intuitive UI wizard.
 
 This section walks you through the **Create** workflow — perfect for users who want full control over naming, styling, and categorizing their models while sourcing CRDs from GitHub or ArtifactHub.
 
-> Tip: If you don’t have any files yet, start with **Create**. You can always [export](/guides/configuration-management/exporting-models) or re-import your model later.
+> Tip: If you don’t have any files yet, start with **Create**. You can always [export]({{< ref "guides/configuration-management/exporting-models/index.md" >}}) or re-import your model later.
 
 {{< tabs id="creating-models-tabs" >}}
 Meshery UI | fa fa-desktop
@@ -109,7 +109,7 @@ When a model is marked for visual annotation only, it means the model will be us
 <h4>Step 8: Check Model Generation Status</h4>
 <p>Once the model is successfully generated, a confirmation message will appear. You'll be able to view the model along with its components and relationships directly in the Registry page.</p>
 <p>If any issues occur, Meshery will display an error message detailing what went wrong so you can correct it and try again.</p>
-<p>A notification will also appear in the <a href="/guides/events-management">Notification Center</a> to confirm whether the operation succeeded or failed, providing additional context if needed.</p>
+<p>A notification will also appear in the <a href="{{< ref "guides/infrastructure-management/notification-management/index.md" >}}">Notification Center</a> to confirm whether the operation succeeded or failed, providing additional context if needed.</p>
 
 {{% alert color="warning" title="Note on Deletion" %}}
 Once a model is generated, it cannot be deleted from the Meshery UI. If you no longer wish to use it, you may mark it as ignored instead.
@@ -121,7 +121,7 @@ mesheryctl | fa fa-terminal
 <h3>Prerequisites:</h3>
 <ul>
   <li>Fork the <a href="https://github.com/meshery/meshery" target="_blank" rel="noopener">meshery/meshery repository.</a></li>
-  <li>Install the Meshery CLI by following the <a href="/installation/" target="_blank" rel="noopener">installation instructions.</a></li>
+  <li>Install the Meshery CLI by following the <a href="{{< ref "installation/_index.md" >}}" target="_blank" rel="noopener">installation instructions.</a></li>
 </ul>
 
 {{% alert color="info" title="Generating Models does not require Meshery Server" %}}
@@ -155,7 +155,7 @@ Using CSV | fa fa-list
 <code>mesheryctl registry generate --directory templates-csvs --model "YOUR_MODEL_NAME"</code>
 
 <h4>4. Locating Generated Files</h4>
-<p>After successful generation, your model's files will be created in the Meshery server's model directory. You can find these files at <code>meshery/server/meshmodel/[YOUR_MODEL_NAME]/</code>. Take time to review these generated files to ensure they accurately reflect your intended model structure.</p>
+<p>After successful generation, your model's files will be created in the repository's <code>models/</code> directory. You can find these files at <code>meshery/models/[YOUR_MODEL_NAME]/</code>. Take time to review these generated files to ensure they accurately reflect your intended model structure.</p>
 
 <h4>5. Troubleshooting</h4>
 <p>If you encounter issues during the generation process, you can use these diagnostic approaches to identify and resolve problems:</p>
@@ -241,7 +241,7 @@ Using Integration Spreadsheet | fa fa-table
 </ul>
 
 <h4>3. Verification</h4>
-<p>The model will be generated in <code>meshery/server/meshmodels/[YOUR_MODEL_NAME]</code></p>
+<p>The model will be generated in <code>meshery/models/[YOUR_MODEL_NAME]</code></p>
 
 {{% alert color="info" title="Using Meshery CLI with the Meshery Registry and Meshery Models" %}}
 Meshery CLI has a set of commands that pertain to the lifecycle management of models:

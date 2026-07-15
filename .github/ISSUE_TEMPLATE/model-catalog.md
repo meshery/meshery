@@ -20,7 +20,7 @@ assignees: ''
 <!-- Add your model publishing instructions -->
 - Fork the meshery/meshery repository.
 - Run `mesheryctl system start`
-- Head to [meshmodel](https://github.com/meshery/meshery/tree/master/server/meshmodel) in your local meshery repository
+- Head to [meshmodel](https://github.com/meshery/meshery/tree/master/models) in your local meshery repository
 - Import model definition file (JSON file) by using `mesheryctl model import [model-name/model-version]`
 - Use `meshery model build [model-name/model-version]`, this build the model OCI image.
 
@@ -41,5 +41,5 @@ Now to publish your model to catalog:
 - 📚 [Creating models](https://docs.meshery.io/guides/configuration-management/creating-models#create-models)
 - 📚 [Components](https://docs.meshery.io/concepts/logical/components)
 - 📚 [Relationships](https://docs.meshery.io/concepts/logical/relationships)
-- 👨‍💻 [Models Repository](https://github.com/meshery/meshery/tree/master/server/meshmodel)
+- 👨‍💻 [Models Repository](https://github.com/meshery/meshery/tree/master/models)
 - 📺 [Self-paced Contributor Trainings](https://meshery.io/talks-and-trainings#trainings)

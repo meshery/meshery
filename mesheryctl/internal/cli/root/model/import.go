@@ -205,13 +205,13 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 
 func displayEntities(response *models.RegistryAPIResponse) {
 	displaySummary(response)
-	ok := displayEmtpyModel(response)
+	ok := displayEmptyModel(response)
 	if !ok {
 		return
 	}
-	displayEntitisIfModel(response)
+	displayEntitiesIfModel(response)
 }
-func displayEmtpyModel(response *models.RegistryAPIResponse) bool {
+func displayEmptyModel(response *models.RegistryAPIResponse) bool {
 	if len(response.ModelName) != 0 && response.EntityCount.CompCount == 0 && response.EntityCount.RelCount == 0 {
 		if response.EntityCount.TotalErrCount == 0 {
 			return false
@@ -220,13 +220,13 @@ func displayEmtpyModel(response *models.RegistryAPIResponse) bool {
 	return true
 }
 
-// TO check the case if we were never able to read the file at first palce
+// TO check the case if we were never able to read the file at first place
 func hasExtension(name string) bool {
 	extension := filepath.Ext(name)
 	return extension != ""
 }
 
-func displayEntitisIfModel(response *models.RegistryAPIResponse) {
+func displayEntitiesIfModel(response *models.RegistryAPIResponse) {
 	var modelsWithoutExtension []string
 	var modelsWithExtension []string
 

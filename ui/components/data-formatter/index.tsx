@@ -381,6 +381,7 @@ export const FormatStructuredData = ({
       <Grid
         container
         style={{
+          flexDirection: 'column',
           wordBreak: 'break-word',
           overflowWrap: 'break-word',
         }}

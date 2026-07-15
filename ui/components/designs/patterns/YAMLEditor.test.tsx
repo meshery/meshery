@@ -32,14 +32,14 @@ vi.mock('@sistent/sistent', () => {
         {children}
       </button>
     ),
+    FullScreenIcon: () => <svg data-testid="fullscreen-icon" />,
+    FullScreenExitIcon: () => <svg data-testid="fullscreen-exit-icon" />,
   };
 });
 
 vi.mock('@/assets/icons', () => ({
   Close: () => <svg data-testid="close-icon" />,
   Delete: () => <svg data-testid="delete-icon" />,
-  Fullscreen: () => <svg data-testid="fullscreen-icon" />,
-  FullscreenExit: () => <svg data-testid="fullscreen-exit-icon" />,
   Save: () => <svg data-testid="save-icon" />,
 }));
 
@@ -59,13 +59,6 @@ vi.mock('../../../utils/Enum', () => ({
 
 vi.mock('@/utils/can', () => ({
   default: () => true,
-}));
-
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    EDIT_DESIGN: { action: 'edit', subject: 'design' },
-    DELETE_A_DESIGN: { action: 'delete', subject: 'design' },
-  },
 }));
 
 vi.mock('./MesheryPatterns.styled', () => ({

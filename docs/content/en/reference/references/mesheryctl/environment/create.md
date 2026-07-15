@@ -1,0 +1,57 @@
+---
+title: mesheryctl-environment-create
+display_title: false
+command: environment
+subcommand: create
+---
+
+# mesheryctl environment create
+
+Create a new environment
+
+## Synopsis
+
+Create a new environment by providing the name and description of the environment
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl environment create [flags]
+
+</div>
+</pre> 
+
+## Examples
+
+Create a new environment
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl environment create --orgId [orgId] --name [name] --description [description]
+
+</div>
+</pre> 
+
+## Options
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+  -d, --description string   Description of the environment
+  -h, --help                 help for create
+  -n, --name string          Name of the environment
+  -o, --orgId string         Organization ID
+
+</div>
+</pre>
+
+## Options inherited from parent commands
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+  -v, --verbose         verbose output
+
+</div>
+</pre>
+
+## See Also
+
+Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

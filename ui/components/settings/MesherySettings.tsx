@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { NoSsr } from '@sistent/sistent';
 import {
   CustomTooltip,
-  AppBar,
   Typography,
   styled,
   Tabs,
@@ -11,17 +10,15 @@ import {
   Paper,
   Grid2,
   LeftArrowIcon,
-  PollIcon,
   DatabaseIcon,
   MendeleyIcon,
   FileIcon,
+  SettingsIcon,
   useTheme,
 } from '@sistent/sistent';
 import DashboardMeshModelGraph from '../dashboard/charts/DashboardMeshModelGraph';
 import Link from 'next/link';
-import GrafanaComponent from '../telemetry/grafana/GrafanaComponent';
 import MeshAdapterConfigComponent from '../MeshAdapterConfigComponent';
-import PrometheusComponent from '../telemetry/prometheus/PrometheusComponent';
 import _PromptComponent from '../PromptComponent';
 import { iconMedium } from '../../css/icons.styles';
 import DatabaseSummary from '../DatabaseSummary';
@@ -32,22 +29,14 @@ import {
   getMeshModelRegistrants,
 } from '../../api/meshmodel';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
-import {
-  METRICS,
-  ADAPTERS,
-  RESET,
-  GRAFANA,
-  PROMETHEUS,
-  OVERVIEW,
-  REGISTRY,
-} from '@/constants/navigator';
+import { Keys } from '@meshery/schemas/permissions';
+import { ADAPTERS, RESET, OVERVIEW, REGISTRY, CONTROLLERS } from '@/constants/navigator';
+import MesheryControllersConfig from './MesheryControllersConfig';
 import { removeDuplicateVersions } from '../registry/helper';
 import MeshModelComponent from '../registry/MeshModelComponent';
 import DefaultError from '../general/error-404';
 import MesheryConfigurationChart from '../dashboard/charts/MesheryConfigurationCharts';
 import ConnectionStatsChart from '../dashboard/charts/ConnectionCharts';
-import { SecondaryTab, SecondaryTabs } from '../dashboard/style';
 import { useSelector } from 'react-redux';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 
@@ -55,18 +44,6 @@ const StyledPaper = styled(Paper)(() => ({
   flexGrow: 1,
   maxWidth: '100%',
   height: 'auto',
-}));
-
-const IconText = styled('div')(() => ({
-  display: 'inline',
-  verticalAlign: 'middle',
-}));
-
-const StyledIcon = styled('img')(({ theme }) => ({
-  display: 'inline',
-  verticalAlign: 'text-top',
-  width: theme.spacing(1.75),
-  marginLeft: theme.spacing(0.5),
 }));
 
 const RootClass = styled('div')(({ theme }) => ({
@@ -139,26 +116,19 @@ const settingsRouter = (router: ReturnType<typeof useRouter>): SettingsRouter =>
 //TODO: Tabs are hardcoded everywhere
 const MesherySettings = () => {
   const router = useRouter();
-  const { selectedSettingsCategory, selectedTab } = settingsRouter(router);
+  const { selectedSettingsCategory } = settingsRouter(router);
   const theme = useTheme();
   const { k8sConfig } = useSelector((state) => state.ui);
-  const { prometheus } = useSelector((state) => state.telemetry);
-  const { grafana } = useSelector((state) => state.telemetry);
   const { meshAdapters } = useSelector((state) => state.adapter);
   const { data: providerCapabilities } = useGetProviderCapabilitiesQuery();
   const [state, setState] = useState({
     meshAdapters,
-    grafana,
-    prometheus,
     tabVal: selectedSettingsCategory || OVERVIEW,
-    subTabVal: selectedTab || GRAFANA,
     modelsCount: 0,
     componentsCount: 0,
     relationshipsCount: 0,
     registrantCount: 0,
     isMeshConfigured: k8sConfig.clusterConfigured,
-    scannedPrometheus: [],
-    scannedGrafana: [],
   });
 
   const systemResetPromptRef = useRef<{ show: (_args: any) => Promise<string> } | null>(null);
@@ -201,39 +171,20 @@ const MesherySettings = () => {
   }, [router]);
 
   const handleChange = (val) => {
-    const {
-      handleChangeSettingsCategory,
-      handleChangeSelectedTab,
-      handleChangeSelectedTabCustomCategory,
-    } = settingsRouter(router);
+    const { handleChangeSettingsCategory } = settingsRouter(router);
 
     return (_event, newVal, ..._args) => {
       if (val === 'tabVal') {
-        if (newVal === METRICS) {
-          handleChangeSelectedTabCustomCategory(newVal, GRAFANA);
-          setState((prevState) => ({
-            ...prevState,
-            tabVal: newVal,
-            subTabVal: GRAFANA,
-          }));
-        } else {
-          handleChangeSettingsCategory(newVal);
-          setState((prevState) => ({
-            ...prevState,
-            tabVal: newVal,
-          }));
-        }
-      } else if (val === 'subTabVal') {
-        handleChangeSelectedTab(newVal);
+        handleChangeSettingsCategory(newVal);
         setState((prevState) => ({
           ...prevState,
-          subTabVal: newVal,
+          tabVal: newVal,
         }));
       }
     };
   };
 
-  const { tabVal, subTabVal } = state;
+  const { tabVal } = state;
   let backToPlay = '';
   if (k8sConfig.clusterConfigured === true && meshAdapters.length > 0) {
     backToPlay = (
@@ -249,7 +200,7 @@ const MesherySettings = () => {
   }
   return (
     <>
-      {CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject) ? (
+      {CAN(Keys.MesherySystemViewSettings.id, Keys.MesherySystemViewSettings.function) ? (
         <>
           <div sx={{ flexGrow: 1, maxWidth: '100%', height: 'auto' }}>
             <StyledPaper square>
@@ -275,7 +226,7 @@ const MesherySettings = () => {
                     label="Overview"
                     // tab="Overview"
                     value={OVERVIEW}
-                    // disabled={!CAN(keys.VIEW_OVERVIEW.action, keys.VIEW_OVERVIEW.subject)}
+                    // disabled={!CAN(Keys.VIEW_OVERVIEW.id, Keys.VIEW_OVERVIEW.function)}
                   />
                 </CustomTooltip>
                 <CustomTooltip
@@ -291,30 +242,37 @@ const MesherySettings = () => {
                     value={ADAPTERS}
                     disabled={
                       !CAN(
-                        keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
-                        keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.subject,
+                        Keys.InfrastructureManagementViewCloudNativeInfrastructure.id,
+                        Keys.InfrastructureManagementViewCloudNativeInfrastructure.function,
                       )
                     }
                   />
                 </CustomTooltip>
-                <CustomTooltip title="Configure Metrics backends" placement="top" value={METRICS}>
-                  <Tab
-                    icon={<PollIcon {...iconMedium} fill={theme.palette.icon.default} />}
-                    label="Metrics"
-                    data-testid="settings-tab-metrics"
-                    // tab="tabMetrics"
-                    value={METRICS}
-                    disabled={!CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject)}
-                  />
-                </CustomTooltip>
-
                 <CustomTooltip title="Registry" placement="top" value={REGISTRY}>
                   <Tab
                     icon={<FileIcon {...iconMedium} fill={theme.palette.icon.default} />}
                     label="Registry"
                     data-testid="settings-tab-registry"
                     value={REGISTRY}
-                    disabled={!CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)}
+                    disabled={
+                      !CAN(
+                        Keys.MesherySystemViewRegistry.id,
+                        Keys.MesherySystemViewRegistry.function,
+                      )
+                    }
+                  />
+                </CustomTooltip>
+
+                <CustomTooltip
+                  title="Meshery Operator, MeshSync & Broker defaults"
+                  placement="top"
+                  value={CONTROLLERS}
+                >
+                  <Tab
+                    icon={<SettingsIcon {...iconMedium} fill={theme.palette.icon.default} />}
+                    label="Operator, MeshSync & Broker"
+                    data-testid="settings-tab-controllers"
+                    value={CONTROLLERS}
                   />
                 </CustomTooltip>
 
@@ -325,7 +283,7 @@ const MesherySettings = () => {
                     data-testid="settings-tab-reset"
                     // tab="systemReset"
                     value={RESET}
-                    // disabled={!CAN(keys.VIEW_SYSTEM_RESET.action, keys.VIEW_SYSTEM_RESET.subject)} TODO: uncomment when key get seeded
+                    // disabled={!CAN(Keys.VIEW_SYSTEM_RESET.id, Keys.VIEW_SYSTEM_RESET.function)} TODO: uncomment when key get seeded
                   />
                 </CustomTooltip>
               </Tabs>
@@ -381,65 +339,22 @@ const MesherySettings = () => {
             )}
             {tabVal === ADAPTERS &&
               CAN(
-                keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
-                keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.subject,
+                Keys.InfrastructureManagementViewCloudNativeInfrastructure.id,
+                Keys.InfrastructureManagementViewCloudNativeInfrastructure.function,
               ) && (
                 <TabContainer>
                   <MeshAdapterConfigComponent />
                 </TabContainer>
               )}
-            {tabVal === METRICS && CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject) && (
-              <TabContainer>
-                <AppBar position="static" color="default">
-                  <SecondaryTabs
-                    value={subTabVal}
-                    onChange={handleChange('subTabVal')}
-                    indicatorColor="primary"
-                    textColor="primary"
-                    variant="fullWidth"
-                  >
-                    <SecondaryTab
-                      value={GRAFANA}
-                      label={
-                        <IconText>
-                          Grafana
-                          <StyledIcon src="/static/img/integrations/grafana_icon.svg" />
-                        </IconText>
-                      }
-                    />
-                    <SecondaryTab
-                      value={PROMETHEUS}
-                      label={
-                        <IconText>
-                          Prometheus
-                          <StyledIcon src="/static/img/integrations/prometheus_logo_orange_circle.svg" />
-                        </IconText>
-                      }
-                    />
-                  </SecondaryTabs>
-                </AppBar>
-                {subTabVal === GRAFANA && (
-                  <TabContainer>
-                    <GrafanaComponent
-                      scannedGrafana={state.scannedGrafana}
-                      isMeshConfigured={state.isMeshConfigured}
-                    />
-                  </TabContainer>
-                )}
-                {subTabVal === PROMETHEUS && (
-                  <TabContainer>
-                    <PrometheusComponent
-                      scannedPrometheus={state.scannedPrometheus}
-                      isMeshConfigured={state.isMeshConfigured}
-                    />
-                  </TabContainer>
-                )}
-              </TabContainer>
-            )}
-
             {tabVal === REGISTRY && (
               <TabContainer>
                 <MeshModelComponent settingsRouter={settingsRouter} />
+              </TabContainer>
+            )}
+
+            {tabVal === CONTROLLERS && (
+              <TabContainer>
+                <MesheryControllersConfig />
               </TabContainer>
             )}
 

@@ -26,29 +26,60 @@ jobs:
     env:
       HUGO_VERSION: 0.157.0
     steps:
+      - name: Checkout docs source
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+          # Only the Hugo site input is needed to build docs.meshery.io.
+          # A blobless, cone-mode sparse checkout pulls the docs/ tree (plus
+          # the root files the Makefile target needs) instead of cloning the
+          # entire repository, which materially cuts checkout IO. There are no
+          # submodules, so submodule fetching is intentionally omitted.
+          filter: blob:none
+          sparse-checkout: docs
+          sparse-checkout-cone-mode: true
+      - name: Checkout gh-pages for preview retention
+        if: github.event.action != 'closed'
+        uses: actions/checkout@v6
+        with:
+          ref: gh-pages
+          persist-credentials: false
+          fetch-depth: 1
+          # Blobless sparse checkout: we only read the existing pr-preview/
+          # umbrella so the full-site deploy below can carry it forward and
+          # avoid clobbering live PR previews. No history or other blobs needed.
+          filter: blob:none
+          sparse-checkout: |
+            pr-preview
+          path: gh-pages-maintenance
       - name: Install Hugo CLI
         run: |
           wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
           && sudo dpkg -i ${{ runner.temp }}/hugo.deb
       - name: Install Dart Sass
-        run: sudo snap install dart-sass
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          submodules: recursive
-          fetch-depth: 1
-      - name: Checkout existing GitHub Pages content
-        uses: actions/checkout@v6
-        with:
-          ref: gh-pages
-          path: gh-pages-existing
-          fetch-depth: 1
-          sparse-checkout: pr-preview
-          sparse-checkout-cone-mode: false
+        # Direct download from the dart-sass GitHub release rather than
+        # `sudo snap install dart-sass` (snap.io's storeserver was flaky on
+        # GitHub-hosted runners and broke docs builds on unrelated PRs, see
+        # #19574). Hugo Extended ships embedded Dart Sass as of v0.114+ but
+        # keeping the standalone binary on PATH is the most reliable path
+        # through `resources.toCSS` with transpiler "dartsass".
+        env:
+          DART_SASS_VERSION: 1.79.5
+        run: |
+          set -eu
+          cd "${RUNNER_TEMP}"
+          curl -fsSL -o dart-sass.tar.gz "https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz"
+          sudo tar -xzf dart-sass.tar.gz -C /usr/local/lib
+          sudo ln -sf /usr/local/lib/dart-sass/sass /usr/local/bin/sass
+          sudo ln -sf /usr/local/lib/dart-sass/sass /usr/local/bin/dart-sass
+          dart-sass --version
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: docs/package-lock.json
       - name: Install Node.js dependencies
         run: |
           cd docs
@@ -59,14 +90,19 @@ jobs:
           HUGO_ENVIRONMENT: production
           HUGO_ENV: production
         run: |
-          make docs-build-production BASE_URL="/"
+          make -C docs build-production BASE_URL="/"
           cp docs/CNAME docs/public/CNAME
           touch docs/public/.nojekyll
-          if [ -d gh-pages-existing/pr-preview ]; then
-            cp -a gh-pages-existing/pr-preview docs/public/pr-preview
+          if [ -d gh-pages-maintenance/pr-preview ]; then
+            cp -a gh-pages-maintenance/pr-preview docs/public/pr-preview
           fi
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+        # Pinned to v4.0.0 (node20) to avoid the intermittent crash introduced in
+        # v4.1.0 (node24). The @v4 floating tag now resolves to v4.1.0 which
+        # occasionally kills the runner process without a clean exit (step stays
+        # "in_progress" while the job concludes as "failure" in ~30 s). Downgrade
+        # to the last stable release until the upstream issue is resolved.
+        uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4.0.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/public

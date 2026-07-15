@@ -3,7 +3,7 @@ import { usePublishPatternMutation, useUpdatePatternFileMutation } from '@/rtk-q
 import TooltipButton from '@/utils/TooltipButton';
 import CAN from '@/utils/can';
 import { filterEmptyFields } from '@/utils/objects';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import {
   Avatar,
   Box,
@@ -27,7 +27,7 @@ import {
   useTheme,
 } from '@sistent/sistent';
 import { Close, Lock, Public } from '@/assets/icons';
-import yaml from 'js-yaml';
+import * as yaml from 'js-yaml';
 import _ from 'lodash';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useRef, useState, FC } from 'react';
@@ -479,8 +479,10 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
                 !isPublished
                   ? false
                   : !(
-                      CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject) &&
-                      currentUser?.id === selectedResource?.userId
+                      CAN(
+                        Keys.CatalogManagementPublishDesign.id,
+                        Keys.CatalogManagementPublishDesign.function,
+                      ) && currentUser?.id === selectedResource?.userId
                     ) || isPublished
               }
             >

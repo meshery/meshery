@@ -6,6 +6,7 @@
  * shape and the rationale behind each consumer-specific override.
  */
 import { ModelImportRjsfSchemaV1Beta2, ModelImportRjsfUiSchemaV1Beta2 } from '@meshery/schemas';
+import { findSelectedFileInDialog } from '@/utils/fileUpload';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';
 
 // Canonical RJSF form schemas authored in `meshery/schemas` and validated
@@ -130,29 +131,5 @@ export const decodeDataUrlToBytes = (dataUrl: string | undefined): number[] | nu
 // can't hard-code `root_modelFile`. Scope the query to the active modal
 // dialog to avoid false matches from other file inputs on the page.
 export const findSelectedModelFile = (): File | undefined => {
-  if (typeof document === 'undefined') return undefined;
-  const dialog = document.querySelector<HTMLElement>('[role="dialog"]');
-  const root = dialog ?? document;
-  const inputs = root.querySelectorAll<HTMLInputElement>('input[type="file"][id$="_modelFile"]');
-  for (const input of Array.from(inputs)) {
-    const file = input.files?.[0];
-    if (file) return file;
-  }
-  return undefined;
+  return findSelectedFileInDialog('input[type="file"][id$="_modelFile"]');
 };
-
-// Read a `File` synchronously-from-the-DOM-but-asynchronously-into-bytes,
-// matching the wire shape `getUnit8ArrayDecodedFile` produces from a
-// data URL. Used as the synchronous fallback when RJSF's form data
-// hasn't received the data URL yet (the FileReader chain inside
-// CustomFileWidget can lose the race against a quick Next-click).
-export const readFileAsBytes = (file: File): Promise<number[]> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const buffer = reader.result as ArrayBuffer;
-      resolve(Array.from(new Uint8Array(buffer)));
-    };
-    reader.onerror = () => reject(reader.error);
-    reader.readAsArrayBuffer(file);
-  });

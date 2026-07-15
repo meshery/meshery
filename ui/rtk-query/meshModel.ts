@@ -49,6 +49,13 @@ const meshModelApi = api
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
+      getConnectionDefinitions: builder.query({
+        query: (queryArgs) => ({
+          url: mesheryApiPath(`meshmodels/connections`),
+          params: _.merge({}, defaultOptions, queryArgs.params),
+        }),
+        providesTags: () => [{ type: TAGS.MESH_MODELS }],
+      }),
       getComponentsFromModal: builder.query({
         query: (queryArgs) => ({
           url: mesheryApiPath(`meshmodels/models/${queryArgs.model}/components`),
@@ -135,6 +142,8 @@ export const {
   useGetRegistrantsQuery,
   useGetRelationshipsQuery,
   useLazyGetRegistrantsQuery,
+  useGetConnectionDefinitionsQuery,
+  useLazyGetConnectionDefinitionsQuery,
   useGetComponentsFromModalQuery,
   useLazyGetComponentsFromModalQuery,
   useGetRelationshipsFromModalQuery,

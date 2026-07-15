@@ -11,24 +11,25 @@ import (
 
 // ProviderHandler - handles the choice of provider
 func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
-	provider := models.NormalizeProviderName(r.URL.Query().Get("provider"))
-	// Match against the registration map key, not p.Name(). When two
-	// remote URLs report the same providerName from /capabilities, the
-	// server keys the second by its URL host so both stay addressable;
-	// p.Name() would only ever match the first.
-	for key := range h.config.Providers {
-		if provider == key {
-			http.SetCookie(w, &http.Cookie{
-				Name:     h.config.ProviderCookieName,
-				Value:    key,
-				Path:     "/",
-				HttpOnly: true,
-			})
-			redirectURL := "/user/login?" + r.URL.RawQuery
-			http.Redirect(w, r, redirectURL, http.StatusFound)
-			return
-		}
+	providerKey, ok := models.ResolveProviderKey(r.URL.Query().Get("provider"), h.config.Providers)
+	if !ok {
+		// An unknown or unregistered provider (e.g. a stale UI sending a
+		// name that no longer maps to a registered provider) would
+		// otherwise fall through to a silent 200 with an empty body,
+		// leaving the browser with no actionable signal. Send the user
+		// back to the provider chooser so they can pick a valid one.
+		http.Redirect(w, r, "/provider", http.StatusFound)
+		return
 	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     h.config.ProviderCookieName,
+		Value:    providerKey,
+		Path:     "/",
+		HttpOnly: true,
+	})
+	redirectURL := "/user/login?" + r.URL.RawQuery
+	http.Redirect(w, r, redirectURL, http.StatusFound)
 }
 
 // ProvidersHandler returns a list of providers
@@ -163,10 +164,10 @@ func (h *Handler) ProvidersStreamHandler(w http.ResponseWriter, r *http.Request)
 func (h *Handler) ProviderUIHandler(w http.ResponseWriter, r *http.Request) {
 	enforcedProvider := models.NormalizeProviderName(h.Provider)
 	if enforcedProvider != "" {
-		if h.config.Providers[enforcedProvider] != nil {
+		if providerKey, ok := models.ResolveProviderKey(enforcedProvider, h.config.Providers); ok {
 			http.SetCookie(w, &http.Cookie{
 				Name:     h.config.ProviderCookieName,
-				Value:    enforcedProvider,
+				Value:    providerKey,
 				Path:     "/",
 				HttpOnly: true,
 			})

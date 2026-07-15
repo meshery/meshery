@@ -192,12 +192,6 @@ vi.mock('@/utils/can', () => ({
   CanShow: ({ children }: any) => <>{children}</>,
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    VIEW_ALL_KUBERNETES_CLUSTERS: { action: 'view', subject: 'k8s' },
-  },
-}));
-
 vi.mock('../../workspaces/SpacesSwitcher/SpaceSwitcher', () => ({
   default: () => <div data-testid="space-switcher" />,
 }));

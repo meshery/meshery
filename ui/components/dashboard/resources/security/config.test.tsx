@@ -27,10 +27,10 @@ vi.mock('../../view', () => ({
 }));
 vi.mock('../config', () => ({ SINGLE_VIEW: 'single' }));
 
-import { SecurityTypesConfig } from './config';
+import { useSecurityTypesConfig } from './config';
 
-describe('SecurityTypesConfig', () => {
-  const config = SecurityTypesConfig(vi.fn(), [], {}, {}, 'ServiceAccount');
+describe('useSecurityTypesConfig', () => {
+  const config = useSecurityTypesConfig(vi.fn(), [], {}, {}, 'ServiceAccount');
 
   it('exposes the documented security resource kinds', () => {
     expect(Object.keys(config)).toEqual([

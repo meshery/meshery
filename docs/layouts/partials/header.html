@@ -1,15 +1,15 @@
-{{ $linkUrlSelected := "/" }}
+{{ $linkUrlSelected := "" }}
 {{ $current := .RelPermalink }}
 {{ range .Site.Data.versions }}
   {{ $linkUrl := cond (ne .url "") (printf "/%s/" .url) "/" }}
   {{ if or (eq $current $linkUrl) (strings.HasPrefix $current $linkUrl) }}
-    {{ $linkUrlSelected = $linkUrl }}
+    {{ $linkUrlSelected = cond (ne .url "") (printf "%s/" .url) "" }}
   {{ end }}
 {{ end }}
 
 <header>
   <nav class="js-navbar-scroll navbar">
-    <a class="navbar-brand" href="{{ .Site.BaseURL }}{{ strings.TrimPrefix "/" $linkUrlSelected }}">
+    <a class="navbar-brand" href="{{ $linkUrlSelected | relURL }}">
       <div class="navbar-logo">
         {{ partial "svg/meshery-docs.html" . }}
       </div>
@@ -26,7 +26,7 @@
         <li class="nav-item">
           <a
             class="nav-link"
-            href="{{ if .url }}{{ $.Site.BaseURL }}{{ strings.TrimPrefix "/" .url }}{{ else }}{{ .external_url }}{{ end }}">
+            href="{{ if .url }}{{ (printf "%s/" .url) | relURL }}{{ else }}{{ .external_url }}{{ end }}">
             <span>{{ .title }}</span>
           </a>
         </li>
@@ -47,7 +47,7 @@
           {{ $current := .RelPermalink }}
           {{ range .Site.Data.versions }}
             {{ $linkUrl := cond (ne .url "") (printf "/%s/" .url) "/" }}
-            {{ $optionUrl := cond (ne .url "") (printf "%s%s/" $.Site.BaseURL (strings.TrimPrefix "/" .url)) $.Site.BaseURL }}
+            {{ $optionUrl := cond (ne .url "") ((printf "%s/" .url) | relURL) ("" | relURL) }}
 
             {{ if or (eq $current $linkUrl) (strings.HasPrefix $current $linkUrl) }}
             <option
@@ -91,9 +91,9 @@
         <img
           class="logo-dark-light"
           style="visibility: hidden;"
-          src="{{ .Site.BaseURL }}images/nav-icons/mode-toggle-icon-moon.png"
-          data-logo-for-dark="{{ .Site.BaseURL }}images/nav-icons/mode-toggle-icon-moon.png"
-          data-logo-for-light="{{ .Site.BaseURL }}images/nav-icons/mode-toggle-icon-sun.png"
+          src="{{ "images/nav-icons/mode-toggle-icon-moon.png" | relURL }}"
+          data-logo-for-dark="{{ "images/nav-icons/mode-toggle-icon-moon.png" | relURL }}"
+          data-logo-for-light="{{ "images/nav-icons/mode-toggle-icon-sun.png" | relURL }}"
         />
       </button>
     </div>

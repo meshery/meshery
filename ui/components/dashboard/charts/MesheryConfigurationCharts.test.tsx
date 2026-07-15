@@ -56,10 +56,6 @@ vi.mock('@/rtk-query/filter', () => ({
 
 vi.mock('@/utils/can', () => ({ default: () => true }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: { VIEW_DESIGNS: { action: 'view', subject: 'designs' } },
-}));
-
 vi.mock('next/router', () => ({ useRouter: () => ({ push: vi.fn() }) }));
 
 vi.mock('../style', () => ({

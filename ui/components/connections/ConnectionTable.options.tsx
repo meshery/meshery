@@ -3,7 +3,7 @@ import { Button, Grid2, Table, TableCell, TableRow, DeleteIcon, useTheme } from 
 import { ContentContainer, InnerTableContainer } from './styles';
 import { iconMedium } from '../../css/icons.styles';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import FormatConnectionMetadata from './metadata';
 import type { ConnectionRow, ExpansionFlags, SelectedRows } from './ConnectionTable.types';
 
@@ -76,7 +76,12 @@ export const useConnectionTableOptions = ({
           size="large"
           onClick={() => handleDeleteConnections(selected)}
           sx={{ backgroundColor: `${theme.palette.error.dark} !important`, marginRight: '10px' }}
-          disabled={!CAN(keys.DELETE_A_CONNECTION.action, keys.DELETE_A_CONNECTION.subject)}
+          disabled={
+            !CAN(
+              Keys.LifecycleManagementDeleteAConnection.id,
+              Keys.LifecycleManagementDeleteAConnection.function,
+            )
+          }
           data-testid="Button-delete-connections"
         >
           <DeleteIcon style={iconMedium} fill={theme.palette.common.white} />
