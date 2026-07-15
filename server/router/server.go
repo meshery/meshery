@@ -31,7 +31,7 @@ func deprecatedMeshmodelHandler(gMux *mux.Router) http.Handler {
 
 		successor := newPath
 		if r.URL.RawQuery != "" {
-    		successor = successor + "?" + r.URL.RawQuery
+			successor = successor + "?" + r.URL.RawQuery
 		}
 		w.Header().Set("Link", fmt.Sprintf(`<%s>; rel="successor-version"`, successor))
 
@@ -247,7 +247,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 
 	gMux.Handle("/api/registry/validate", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.ValidationHandler), models.NoAuth))).Methods("POST")
 	gMux.Handle("/api/registry/components", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelComponents), models.NoAuth))).Methods("POST") //This should also be left with NoAuth
-	gMux.Handle("/api/registry/components/register", h.ProviderMiddleware((http.HandlerFunc(h.RegisterMeshmodelComponents)))).Methods("POST")                        //For backwards compatibility with previous registrants
+	gMux.Handle("/api/registry/components/register", h.ProviderMiddleware((http.HandlerFunc(h.RegisterMeshmodelComponents)))).Methods("POST")                       //For backwards compatibility with previous registrants
 	gMux.Handle("/api/registry/{entityType}/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateEntityStatus), models.NoAuth))).Methods("POST")
 	gMux.Handle("/api/registry/components", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelComponents), models.NoAuth))).Methods("GET")
 
