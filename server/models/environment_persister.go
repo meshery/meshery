@@ -126,11 +126,12 @@ func (ep *EnvironmentPersister) SaveEnvironment(environment *environment.Environ
 }
 
 func (ep *EnvironmentPersister) DeleteEnvironment(env *environment.Environment) ([]byte, error) {
-	err := ep.DB.Model(&env).Find(&env).Error
+	err := ep.DB.Model(env).Find(env).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, ErrResultNotFound(err)
 		}
+		return nil, ErrDBRead(err)
 	}
 
 	// Clean up connection mappings for this environment before deleting it,
