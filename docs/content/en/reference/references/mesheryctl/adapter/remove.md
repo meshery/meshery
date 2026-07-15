@@ -35,14 +35,7 @@ Remove a Linkerd control plane found under a specific namespace (linkerd-ns)
 mesheryctl adapter remove linkerd --namespace linkerd-ns
 
 </div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-		
-
-</div>
-</pre> 
+</pre>
 
 ## Options
 

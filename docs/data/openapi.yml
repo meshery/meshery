@@ -12806,7 +12806,7 @@ paths:
           in: query
           description: Get responses by page
           schema:
-            type: string
+            type: integer
         - name: pageSize
           in: query
           description: >-
@@ -12820,7 +12820,7 @@ paths:
           description: Get responses by pagesize. Deprecated alias of pageSize.
           deprecated: true
           schema:
-            type: string
+            type: integer
         - name: search
           in: query
           description: Get responses that match search param value
@@ -13524,7 +13524,7 @@ paths:
           in: query
           description: Get responses by page
           schema:
-            type: string
+            type: integer
         - name: pageSize
           in: query
           description: >-
@@ -13538,7 +13538,7 @@ paths:
           description: Get responses by pagesize. Deprecated alias of pageSize.
           deprecated: true
           schema:
-            type: string
+            type: integer
       responses:
         '200':
           description: Returns user keys based on roles assigned to user
@@ -13941,6 +13941,10 @@ paths:
                           x-go-type-skip-optional-pointer: true
                         region:
                           description: Region of the organization.
+                          type: string
+                          x-go-type-skip-optional-pointer: true
+                        domain:
+                          description: Custom domain assigned to the organization, when configured.
                           type: string
                           x-go-type-skip-optional-pointer: true
                         owner:
@@ -14484,6 +14488,10 @@ paths:
                           description: Region of the organization.
                           type: string
                           x-go-type-skip-optional-pointer: true
+                        domain:
+                          description: Custom domain assigned to the organization, when configured.
+                          type: string
+                          x-go-type-skip-optional-pointer: true
                         owner:
                           description: Display name of the organization owner.
                           type: string
@@ -14966,6 +14974,10 @@ paths:
                           x-go-type-skip-optional-pointer: true
                         region:
                           description: Region of the organization.
+                          type: string
+                          x-go-type-skip-optional-pointer: true
+                        domain:
+                          description: Custom domain assigned to the organization, when configured.
                           type: string
                           x-go-type-skip-optional-pointer: true
                         owner:
@@ -15581,6 +15593,10 @@ paths:
                           x-go-type-skip-optional-pointer: true
                         region:
                           description: Region of the organization.
+                          type: string
+                          x-go-type-skip-optional-pointer: true
+                        domain:
+                          description: Custom domain assigned to the organization, when configured.
                           type: string
                           x-go-type-skip-optional-pointer: true
                         owner:
@@ -16621,12 +16637,12 @@ paths:
           in: query
           description: Get responses by page
           schema:
-            type: string
+            type: integer
         - name: pageSize
           in: query
           description: Get responses by page size
           schema:
-            type: string
+            type: integer
         - name: search
           in: query
           description: Get responses that match search param value
@@ -17306,12 +17322,12 @@ paths:
           in: query
           description: Get responses by page
           schema:
-            type: string
+            type: integer
         - name: pageSize
           in: query
           description: Get responses by page size
           schema:
-            type: string
+            type: integer
         - name: search
           in: query
           description: Get responses that match search param value
@@ -27397,7 +27413,7 @@ paths:
           in: query
           description: Get responses by page
           schema:
-            type: string
+            type: integer
         - name: pageSize
           in: query
           description: >-
@@ -27411,7 +27427,7 @@ paths:
           description: Get responses by pagesize. Deprecated alias of pageSize.
           deprecated: true
           schema:
-            type: string
+            type: integer
         - name: orgId
           in: query
           description: User's organization ID
@@ -28176,7 +28192,7 @@ paths:
           in: query
           description: Get responses by page
           schema:
-            type: string
+            type: integer
         - name: pageSize
           in: query
           description: >-
@@ -28190,7 +28206,7 @@ paths:
           description: Get responses by pagesize. Deprecated alias of pageSize.
           deprecated: true
           schema:
-            type: string
+            type: integer
         - name: filter
           in: query
           required: false
@@ -28587,7 +28603,7 @@ paths:
           in: query
           description: Get responses by page
           schema:
-            type: string
+            type: integer
         - name: pagesize
           in: query
           description: Get responses by pagesize
@@ -30181,7 +30197,7 @@ paths:
           in: query
           description: Get responses by page
           schema:
-            type: string
+            type: integer
         - name: pagesize
           in: query
           description: Get responses by pagesize
@@ -30401,7 +30417,7 @@ paths:
           in: query
           description: Get responses by page
           schema:
-            type: string
+            type: integer
         - name: pagesize
           in: query
           description: Get responses by pagesize
@@ -30645,7 +30661,7 @@ paths:
           in: query
           description: Get responses by page
           schema:
-            type: string
+            type: integer
         - name: pageSize
           in: query
           description: >-
@@ -30659,7 +30675,7 @@ paths:
           description: Get responses by pagesize. Deprecated alias of pageSize.
           deprecated: true
           schema:
-            type: string
+            type: integer
         - name: filter
           in: query
           description: JSON-encoded filter string used for assignment and soft-delete filters.
@@ -31483,7 +31499,7 @@ paths:
           in: query
           description: Get responses by page
           schema:
-            type: string
+            type: integer
         - name: pageSize
           in: query
           description: >-
@@ -31497,7 +31513,7 @@ paths:
           description: Get responses by pagesize. Deprecated alias of pageSize.
           deprecated: true
           schema:
-            type: string
+            type: integer
         - name: filter
           in: query
           description: JSON-encoded filter string used for assignment and soft-delete filters.
@@ -31924,7 +31940,7 @@ paths:
           in: query
           description: Get responses by page
           schema:
-            type: string
+            type: integer
         - name: pageSize
           in: query
           description: >-
@@ -31938,7 +31954,7 @@ paths:
           description: Get responses by pagesize. Deprecated alias of pageSize.
           deprecated: true
           schema:
-            type: string
+            type: integer
         - name: filter
           in: query
           description: JSON-encoded filter string used for assignment and soft-delete filters.
@@ -32428,7 +32444,7 @@ paths:
           in: query
           description: Get responses by page
           schema:
-            type: string
+            type: integer
         - name: pageSize
           in: query
           description: >-
@@ -32442,7 +32458,7 @@ paths:
           description: Get responses by pagesize. Deprecated alias of pageSize.
           deprecated: true
           schema:
-            type: string
+            type: integer
         - name: filter
           in: query
           description: JSON-encoded filter string used for assignment and soft-delete filters.
@@ -37314,7 +37330,7 @@ paths:
           in: query
           description: Get responses by page
           schema:
-            type: string
+            type: integer
         - name: pageSize
           in: query
           description: >-
@@ -37328,7 +37344,7 @@ paths:
           description: Get responses by pagesize. Deprecated alias of pageSize.
           deprecated: true
           schema:
-            type: string
+            type: integer
         - name: filter
           in: query
           description: JSON-encoded filter string used for assignment and soft-delete filters.
