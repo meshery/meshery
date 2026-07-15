@@ -46,7 +46,7 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
 
     setExpanded(true);
     const {
-      component: { vesion: apiVersion, kind },
+      component: { apiVersion, kind },
       model,
     } = component;
     const {

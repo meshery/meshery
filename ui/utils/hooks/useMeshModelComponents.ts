@@ -192,7 +192,7 @@ export function useMeshModelComponents() {
     if (
       !meshmodelComponents[modelName] ||
       !convertToArray(meshmodelComponents[modelName])?.find(
-        (model) => model.model.version === version,
+        (item) => item.version === version,
       )
     ) {
       try {
