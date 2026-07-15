@@ -3,6 +3,7 @@ package model
 import (
 	"errors"
 	"fmt"
+	"net/url"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -68,10 +69,18 @@ func TestExportModelToFile(t *testing.T) {
 	const modelName = "test-model"
 	exportedContent := []byte("exported-model-archive-bytes")
 
-	// RunE builds the query string with url.Values.Encode(), which sorts the
-	// keys alphabetically. The defaults are: components/relationships enabled,
-	// file_type=oci, output_format=yaml, page=1.
-	exportURL := fmt.Sprintf("%s/api/meshmodels/export?components=true&file_type=oci&name=%s&output_format=yaml&page=1&relationships=true", testContext.BaseURL, modelName)
+	// Mirror the query RunE builds, so the expectation tracks export.go rather
+	// than restating url.Values.Encode() ordering. Flag defaults: components and
+	// relationships enabled, file_type=oci, output_format=yaml, page=1.
+	queryParams := url.Values{}
+	queryParams.Set("name", modelName)
+	queryParams.Set("output_format", "yaml")
+	queryParams.Set("file_type", "oci")
+	queryParams.Set("components", "true")
+	queryParams.Set("relationships", "true")
+	queryParams.Set("page", "1")
+
+	exportURL := fmt.Sprintf("%s/api/meshmodels/export?%s", testContext.BaseURL, queryParams.Encode())
 	httpmock.RegisterResponder("GET", exportURL,
 		httpmock.NewBytesResponder(200, exportedContent))
 
