@@ -461,7 +461,7 @@ function PerformanceProfile({ handleDelete }) {
                   )
                 }
               >
-                <AddIcon style={{ paddingRight: '0.5', ...iconMedium }} />
+                <AddIcon style={{ paddingRight: '0.5rem', ...iconMedium }} />
                 <ButtonTextWrapper> Add Performance Profile </ButtonTextWrapper>
               </Button>
             ) : null
