@@ -28,7 +28,12 @@ func deprecatedMeshmodelHandler(gMux *mux.Router) http.Handler {
 
 		newPath := strings.Replace(r.URL.Path, "/api/meshmodels", "/api/registry", 1)
 		newPath = strings.Replace(newPath, "/api/meshmodel", "/api/registry", 1)
-		w.Header().Set("Link", fmt.Sprintf(`<%s>; rel="successor-version"`, newPath))
+
+		successor := newPath
+		if r.URL.RawQuery != "" {
+    		successor = successor + "?" + r.URL.RawQuery
+		}
+		w.Header().Set("Link", fmt.Sprintf(`<%s>; rel="successor-version"`, successor))
 
 		r.URL.Path = newPath
 		gMux.ServeHTTP(w, r)
