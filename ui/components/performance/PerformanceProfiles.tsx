@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Moment from 'react-moment';
-import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import {
   AddCircleIcon as AddIcon,
   Button,
@@ -18,6 +17,7 @@ import {
   TableRow,
   Typography,
   useTheme,
+  DataTableToolbar,
 } from '@sistent/sistent';
 import MesheryPerformanceComponent from './index';
 import PerformanceProfileGrid from './PerformanceProfileGrid';
@@ -37,7 +37,7 @@ import { ConditionalTooltip } from '@/utils/utils';
 import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
 import { isLocalProvider } from '@/utils/provider';
-import { ButtonTextWrapper, ProfileContainer, ViewSwitchBUtton } from './style';
+import { ButtonTextWrapper, ProfileContainer } from './style';
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProgressAction } from '@/store/slices/mesheryUi';
@@ -444,32 +444,29 @@ function PerformanceProfile({ handleDelete }) {
   return (
     <>
       <div style={{ padding: '0.5rem' }}>
-        <ToolWrapper>
-          {width < 550 && isSearchExpanded ? null : (
-            <>
-              {(testProfiles.length > 0 || viewType == 'table') && (
-                <div style={{ width: 'fit-content', alignSelf: 'flex-start' }}>
-                  <Button
-                    aria-label="Add Performance Profile"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    onClick={() => setProfileForModal({})}
-                    disabled={
-                      !CAN(
-                        Keys.PerformanceManagementAddPerformaceProfile.id,
-                        Keys.PerformanceManagementAddPerformaceProfile.function,
-                      )
-                    }
-                  >
-                    <AddIcon style={{ paddingRight: '0.5', ...iconMedium }} />
-                    <ButtonTextWrapper> Add Performance Profile </ButtonTextWrapper>
-                  </Button>
-                </div>
-              )}
-            </>
-          )}
-          <ViewSwitchBUtton>
+        <DataTableToolbar
+          primaryActions={
+            !(width < 550 && isSearchExpanded) &&
+            (testProfiles.length > 0 || viewType == 'table') ? (
+              <Button
+                aria-label="Add Performance Profile"
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={() => setProfileForModal({})}
+                disabled={
+                  !CAN(
+                    Keys.PerformanceManagementAddPerformaceProfile.id,
+                    Keys.PerformanceManagementAddPerformaceProfile.function,
+                  )
+                }
+              >
+                <AddIcon style={{ paddingRight: '0.5', ...iconMedium }} />
+                <ButtonTextWrapper> Add Performance Profile </ButtonTextWrapper>
+              </Button>
+            ) : null
+          }
+          search={
             <SearchBar
               onSearch={(value) => {
                 setSearch(value);
@@ -478,16 +475,18 @@ function PerformanceProfile({ handleDelete }) {
               setExpanded={setIsSearchExpanded}
               placeholder="Search Profiles..."
             />
-            {viewType === 'table' && (
+          }
+          columnVisibility={
+            viewType === 'table' ? (
               <CustomColumnVisibilityControl
                 id="ref"
                 columns={columns}
                 customToolsProps={{ columnVisibility, setColumnVisibility }}
               />
-            )}
-            <ViewSwitch view={viewType} changeView={setViewType} />
-          </ViewSwitchBUtton>
-        </ToolWrapper>
+            ) : null
+          }
+          viewSwitch={<ViewSwitch view={viewType} changeView={setViewType} />}
+        />
 
         {viewType === 'grid' ? (
           <PerformanceProfileGrid
