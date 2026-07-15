@@ -25,7 +25,7 @@ import PerformanceResults from './PerformanceResults';
 import _PromptComponent from '../PromptComponent';
 import ViewSwitch from '../ViewSwitch';
 import { EVENT_TYPES } from '../../lib/event-types';
-import { iconMedium } from '../../css/icons.styles';
+import { iconMedium, iconLarge } from '../../css/icons.styles';
 import {
   useDeletePerformanceProfileMutation,
   useGetPerformanceProfilesQuery,
@@ -280,7 +280,7 @@ function PerformanceProfile({ handleDelete }) {
               <CustomTooltip title="Edit">
                 <div>
                   <IconButton
-                    style={iconMedium}
+                    style={iconLarge}
                     onClick={(ev) => {
                       ev.stopPropagation();
                       setSelectedProfile(testProfiles[tableMeta.rowIndex]);
@@ -296,7 +296,7 @@ function PerformanceProfile({ handleDelete }) {
                     <EditIcon
                       style={{
                         fill: theme.palette.icon.default,
-                        ...iconMedium,
+                        ...iconLarge,
                       }}
                     />
                   </IconButton>
@@ -306,7 +306,7 @@ function PerformanceProfile({ handleDelete }) {
               <CustomTooltip title="Run test">
                 <div>
                   <IconButton
-                    style={iconMedium}
+                    style={iconLarge}
                     onClick={(ev) => {
                       ev.stopPropagation();
                       setSelectedProfile({ ...testProfiles[tableMeta.rowIndex], runTest: true });
@@ -322,7 +322,7 @@ function PerformanceProfile({ handleDelete }) {
                     <PlayArrowIcon
                       style={{
                         fill: theme.palette.icon.default,
-                        ...iconMedium,
+                        ...iconLarge,
                       }}
                     />
                   </IconButton>
