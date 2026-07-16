@@ -32,6 +32,14 @@ const defaultEventProperties = {
   status: STATUS.UNREAD,
 };
 
+const isEventVisibleInView = (event, currentFilters = {}) => {
+  const shouldBeInCurrentFilteredView = currentFilters.status
+    ? currentFilters.status == event.status
+    : true;
+  const isDeleted = event.is_deleted || false;
+  return !isDeleted && shouldBeInCurrentFilteredView;
+};
+
 const eventsEntityAdapter = createEntityAdapter({
   selectId: (event) => event.id,
   //sort based on createdAt timestamp(utc)
@@ -88,12 +96,15 @@ export const eventsSlice = createSlice({
     },
 
     updateCheckAllEvents: (state, { payload }) => {
-      const updates = Object.keys(state.entities).map((id) => ({
-        id,
-        changes: {
-          checked: payload,
-        },
-      }));
+      const currentFilters = state.current_view?.filters || {};
+      const updates = Object.values(state.entities)
+        .filter((event) => event && isEventVisibleInView(event, currentFilters))
+        .map((event) => ({
+          id: event.id,
+          changes: {
+            checked: payload,
+          },
+        }));
       eventsEntityAdapter.updateMany(state, updates);
     },
 
@@ -201,7 +212,7 @@ export const updateEventStatus =
 export const deleteEvent =
   ({ id }) =>
   (dispatch) => {
-    dispatch(updateEvent({ id, changes: { is_deleted: true } }));
+    dispatch(updateEvent({ id, changes: { is_deleted: true, checked: false } }));
     //mutator({ id });
   };
 
@@ -214,6 +225,7 @@ export const deleteEvents =
           id,
           changes: {
             is_deleted: true,
+            checked: false,
           },
         })),
       ),
@@ -228,7 +240,8 @@ export const selectEvents = (state) => {
 };
 
 export const selectCheckedEvents = (state) => {
-  return selectEvents(state).filter((e) => e.checked);
+  const currentFilters = state.events.current_view?.filters || {};
+  return selectEvents(state).filter((e) => e.checked && isEventVisibleInView(e, currentFilters));
 };
 
 export const selectEventById = (state, id) => {
@@ -240,20 +253,20 @@ export const selectIsEventChecked = (state, id) => {
 };
 
 export const selectAreAllEventsChecked = (state) => {
-  if (selectEvents(state).length == 0) {
+  const currentFilters = state.events.current_view?.filters || {};
+  const visibleEvents = selectEvents(state).filter((event) =>
+    isEventVisibleInView(event, currentFilters),
+  );
+  if (visibleEvents.length == 0) {
     return false;
   }
-  return selectEvents(state).reduce((selected, event) => (event.checked ? selected : false), true);
+  return visibleEvents.reduce((selected, event) => (event.checked ? selected : false), true);
 };
 
 export const selectIsEventVisible = (state, id) => {
   const event = selectEventById(state, id);
   const currentFilters = state.events.current_view?.filters || {};
-  const shouldBeInCurrentFilteredView = currentFilters.status
-    ? currentFilters.status == event.status
-    : true;
-  const isDeleted = event.is_deleted || false;
-  return !isDeleted && shouldBeInCurrentFilteredView;
+  return isEventVisibleInView(event, currentFilters);
 };
 export const selectSeverity = (state) => {
   const currentSeverityList = state.events?.current_view?.filters?.severity;
