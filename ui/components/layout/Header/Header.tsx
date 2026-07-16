@@ -6,8 +6,7 @@ import { successHandlerGenerator, errorHandlerGenerator } from '../../../utils/h
 import { ConnectionChip } from '../../connections/ConnectionChip';
 import { normalizeStaticImagePath } from '../../../utils/fallback';
 import { useLazyGetSystemSyncQuery } from '../../../rtk-query/system';
-import { useUpdateConnectionStatusMutation } from '../../../rtk-query/connection';
-import { CONNECTION_KINDS, CONNECTION_STATES } from '../../../utils/Enum';
+import { CONNECTION_KINDS } from '../../../utils/Enum';
 import _PromptComponent from '../../PromptComponent';
 import { iconMedium, iconSmall } from '../../../css/icons.styles';
 import { createPathForRemoteComponent } from '../../ExtensionSandbox';
@@ -62,6 +61,7 @@ import {
   useGetProviderCapabilitiesQuery,
 } from '@/rtk-query/user';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
+import { useDeleteKubernetesContextMutation } from '@/rtk-query/system';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateK8SConfig } from '@/store/slices/mesheryUi';
@@ -151,7 +151,7 @@ function K8sContextMenu({
   const deleteCtxtRef = React.createRef();
   const { notify } = useNotification();
   const [fetchSystemSync] = useLazyGetSystemSyncQuery();
-  const [updateConnectionStatus] = useUpdateConnectionStatusMutation();
+  const [deleteKubernetesContext] = useDeleteKubernetesContextMutation();
   const { controllerState: meshsyncControllerState, connectionMetadataState } = useSelector(
     (state) => state.ui,
   );
@@ -227,15 +227,13 @@ function K8sContextMenu({
           if (Array.isArray(res?.k8sConfig)) {
             dispatch(updateK8SConfig({ k8sConfig: res.k8sConfig }));
           }
+          await searchContexts('');
         } catch (e) {
           console.error('An error occurred while loading k8sconfig', e);
         }
       };
       try {
-        await updateConnectionStatus({
-          kind: CONNECTION_KINDS.KUBERNETES,
-          body: { [connectionID]: CONNECTION_STATES.DELETED },
-        }).unwrap();
+        await deleteKubernetesContext({ connectionId: connectionID }).unwrap();
         successHandlerGenerator(
           notify,
           `Kubernetes connection "${name}" removed`,

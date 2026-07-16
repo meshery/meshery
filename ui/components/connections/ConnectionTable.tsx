@@ -4,7 +4,7 @@ import LoadingScreen from '../shared/LoadingState/LoadingComponent';
 import { EVENT_TYPES } from '../../lib/event-types';
 import _PromptComponent from '../PromptComponent';
 
-import { CONNECTION_KINDS, CONNECTION_STATES } from '../../utils/Enum';
+import { CONNECTION_KINDS } from '../../utils/Enum';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import useGrafanaPingHook from '@/utils/hooks/useGrafanaPingHook';
 import { getResponsiveColumnVisibility } from '../../utils/responsive-column';
@@ -130,6 +130,7 @@ const ConnectionTable = ({
     removeConnectionFromEnvironment,
     saveEnvironment,
     updateConnectionStatus,
+    deleteConnection,
   } = useConnectionActions({ organizationId: organization?.id });
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [configureConnection, setConfigureConnection] = useState<ConfigurableConnection | null>(
@@ -316,10 +317,10 @@ const ConnectionTable = ({
       });
 
       if (response === 'DELETE') {
-        await updateConnectionStatus(connectionId, CONNECTION_STATES.DELETED);
+        await deleteConnection(connectionId);
       }
     },
-    [updateConnectionStatus],
+    [deleteConnection],
   );
 
   const handleDeleteConnections = useCallback(
@@ -350,14 +351,10 @@ const ConnectionTable = ({
       });
 
       if (response === 'DELETE') {
-        await Promise.all(
-          ids.map((connectionId) =>
-            updateConnectionStatus(connectionId, CONNECTION_STATES.DELETED),
-          ),
-        );
+        await Promise.all(ids.map((connectionId) => deleteConnection(connectionId)));
       }
     },
-    [filteredConnections, updateConnectionStatus],
+    [deleteConnection, filteredConnections],
   );
 
   const handleActionMenuClose = useCallback(() => {

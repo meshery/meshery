@@ -5,6 +5,7 @@ import {
   useSaveEnvironmentMutation,
 } from '../../rtk-query/environments';
 import { useUpdateConnectionByIdMutation } from '@/rtk-query/connection';
+import { useDeleteKubernetesContextMutation } from '@/rtk-query/system';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { ACTION_TYPES, getErrorMessage } from './ConnectionTable.constants';
@@ -16,6 +17,7 @@ type UseConnectionActionsArgs = {
 export const useConnectionActions = ({ organizationId }: UseConnectionActionsArgs) => {
   const { notify } = useNotification();
   const [updateConnectionByIdMutator] = useUpdateConnectionByIdMutation();
+  const [deleteKubernetesContextMutator] = useDeleteKubernetesContextMutation();
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
   const [saveEnvironmentMutator] = useSaveEnvironmentMutation();
@@ -118,6 +120,26 @@ export const useConnectionActions = ({ organizationId }: UseConnectionActionsArg
     [notify, updateConnectionByIdMutator],
   );
 
+  const deleteConnection = useCallback(
+    async (connectionId: string) => {
+      try {
+        await deleteKubernetesContextMutator({ connectionId }).unwrap();
+
+        notify({
+          message: `Connection status updated`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      } catch (error) {
+        notify({
+          message: `${ACTION_TYPES.UPDATE_CONNECTION.error_msg}: ${getErrorMessage(error)}`,
+          event_type: EVENT_TYPES.ERROR,
+          details: String(error),
+        });
+      }
+    },
+    [deleteKubernetesContextMutator, notify],
+  );
+
   return {
     notify,
     updateConnectionByIdMutator,
@@ -125,5 +147,6 @@ export const useConnectionActions = ({ organizationId }: UseConnectionActionsArg
     removeConnectionFromEnvironment,
     saveEnvironment,
     updateConnectionStatus,
+    deleteConnection,
   };
 };
