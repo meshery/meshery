@@ -4,7 +4,7 @@ categories: [kubernetes]
 aliases:
 - /installation/platforms/minikube
 display-title: false
-image: installation/kubernetes/images/minikube.png
+image: installation/kubernetes/minikube/images/minikube.png
 description: Install Meshery on Minikube. Deploy Meshery in Minikube in-cluster or outside of Minikube out-of-cluster.
 ---
 

@@ -4,7 +4,7 @@ categories: [kubernetes]
 aliases:
 - /installation/platforms/kind
 display_title: false
-image: installation/kubernetes/kinD/images/kind.png
+image: installation/kubernetes/kind/images/kind.png
 description: Install Meshery on KinD. Deploy Meshery in KinD in-cluster or outside of KinD out-of-cluster.
 ---
 
