@@ -44,7 +44,8 @@ vi.mock('@sistent/sistent', () => {
       palette: {
         background: {
           brand: { default: 'brand' },
-          warning: { default: 'warning' },
+          // Yellow / amber bucket for partial (registered, discovered, …)
+          warning: { default: 'yellow' },
         },
         text: { disabled: 'disabled' },
       },
@@ -58,7 +59,8 @@ vi.mock('@/utils/fallback', () => ({
 
 vi.mock('../../themes', () => ({
   notificationColors: {
-    lightwarning: 'warning',
+    // Orange bucket for disconnected / maintenance
+    lightwarning: 'orange',
     info: 'info',
   },
 }));
@@ -173,6 +175,27 @@ describe('ConnectionChip', () => {
 
     expect(handlePing).not.toHaveBeenCalled();
     expect(screen.queryByRole('button', { name: 'delete' })).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ['connected', 'brand'],
+    ['registered', 'yellow'],
+    ['discovered', 'yellow'],
+    ['disconnected', 'orange'],
+    ['maintenance', 'orange'],
+    ['ignored', 'disabled'],
+    ['deleted', 'disabled'],
+    ['not found', 'disabled'],
+  ] as const)('maps status "%s" to status-dot color token "%s"', (status, expectedColor) => {
+    render(<ConnectionChip title="cluster" status={status} />);
+
+    expect(screen.getByTestId('badge-avatar')).toHaveAttribute('data-color', expectedColor);
+  });
+
+  it('omits the status badge when status is not provided', () => {
+    render(<ConnectionChip title="cluster" />);
+
+    expect(screen.queryByTestId('badge-avatar')).not.toBeInTheDocument();
   });
 });
 

@@ -2,6 +2,8 @@ import {
   mesheryApi,
   useGetConnectionsQuery as useSchemasGetConnectionsQuery,
   useGetControllerDiagnosticsQuery as useSchemasGetControllerDiagnosticsQuery,
+  useGetUserCredentialsQuery as useSchemasGetUserCredentialsQuery,
+  useUpdateConnectionMutation as useSchemasUpdateConnectionMutation,
 } from '@meshery/schemas/mesheryApi';
 import { api, mesheryApiPath } from './index';
 
@@ -12,20 +14,11 @@ import { api, mesheryApiPath } from './index';
 // string isn't a registered tag type and silently invalidates nothing.
 const TAGS = {
   CONNECTIONS: 'Connection_API_Connections',
-  CREDENTIALS: 'credential_credentials',
 };
 
 const connectionsApi = api.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({
-    getCredentials: builder.query({
-      query: () => ({
-        url: mesheryApiPath('integrations/credentials'),
-        method: 'GET',
-      }),
-      providesTags: [TAGS.CREDENTIALS],
-    }),
-
     verifyAndRegisterConnection: builder.mutation({
       query: (queryArg) => ({
         url: mesheryApiPath('integrations/connections/register'),
@@ -69,17 +62,6 @@ const connectionsApi = api.injectEndpoints({
         method: 'POST',
         body: queryArg.body,
       }),
-    }),
-    updateConnectionById: builder.mutation({
-      query: (queryArg) => ({
-        url: mesheryApiPath(`integrations/connections/${queryArg.connectionId}`),
-        method: 'PUT',
-        body: {
-          status: queryArg.body?.status,
-          metadata: queryArg.body?.metadata,
-        },
-      }),
-      invalidatesTags: () => [{ type: TAGS.CONNECTIONS }],
     }),
     cancelConnectionRegister: builder.mutation({
       query: (queryArg) => ({
@@ -127,20 +109,49 @@ const connectionsApi = api.injectEndpoints({
 });
 
 export const {
-  useGetCredentialsQuery,
   useVerifyAndRegisterConnectionMutation,
   useConnectToConnectionMutation,
   useLazyGetConnectionDetailsQuery,
   useVerifyConnectionURLMutation,
   useConnectionMetaDataMutation,
   useConfigureConnectionMutation,
-  useUpdateConnectionByIdMutation,
   useCancelConnectionRegisterMutation,
   useAddKubernetesConfigMutation,
   useDiscoverKubernetesContextsMutation,
   useLazyPingKubernetesQuery,
   useUpdateConnectionStatusMutation,
 } = connectionsApi;
+
+// Backed by the schemas-generated `getUserCredentials` (GET
+// /api/integrations/credentials) rather than a local re-declaration of the same
+// endpoint. Callers pass no list args, so every schemas param stays undefined
+// and the request is the bare GET this module used to build. queryArg is
+// forwarded as-is rather than defaulted to `{}`, because RTK derives the cache
+// key from it: `{}` would key separately from a plain schemas call.
+export const useGetCredentialsQuery = (queryArg?: undefined, options?: object) =>
+  useSchemasGetUserCredentialsQuery(queryArg, options);
+
+// Backed by the schemas-generated `updateConnection` (PUT
+// /api/integrations/connections/{connectionId}). The body is still narrowed to
+// status + metadata: those are the only fields the server honours here, and
+// forwarding a caller's whole object would start sending the rest.
+export const useUpdateConnectionByIdMutation = () => {
+  const [trigger, result] = useSchemasUpdateConnectionMutation();
+
+  const wrappedTrigger = (queryArg: {
+    connectionId: string;
+    body?: { status?: unknown; metadata?: unknown };
+  }) =>
+    trigger({
+      connectionId: queryArg.connectionId,
+      body: {
+        status: queryArg.body?.status,
+        metadata: queryArg.body?.metadata,
+      },
+    });
+
+  return [wrappedTrigger, result] as const;
+};
 
 // One-shot controller status pings, backed by the schemas-generated endpoints
 // (getOperatorControllerStatus / getMeshsyncControllerStatus /

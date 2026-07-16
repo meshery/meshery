@@ -9,7 +9,10 @@ vi.mock('@/utils/eventBus', () => ({
   },
 }));
 
+const persistSelectedK8sContextsMock = vi.fn();
+
 vi.mock('@/utils/multi-ctx', () => ({
+  persistSelectedK8sContexts: (...args: unknown[]) => persistSelectedK8sContextsMock(...args),
   getK8sClusterIdsFromCtxId: vi.fn((selectedContexts, k8sconfig) => {
     if (!selectedContexts || !k8sconfig || selectedContexts.length === 0) return [];
     if (selectedContexts.includes('all')) {
@@ -216,6 +219,13 @@ describe('mesheryUi slice', () => {
         type: 'K8S_CONTEXTS_UPDATED',
         data: { selectedK8sContexts: ['ctx-1'] },
       });
+    });
+
+    it('session-persists the selection (side effect lives in the thunk, not the reducer)', () => {
+      const dispatch = vi.fn();
+      setK8sContexts({ selectedK8sContexts: ['ctx-1', 'ctx-2'] })(dispatch);
+
+      expect(persistSelectedK8sContextsMock).toHaveBeenCalledWith(['ctx-1', 'ctx-2']);
     });
   });
 

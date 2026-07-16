@@ -1,6 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import {
   ctxUrl,
+  loadSelectedK8sContexts,
+  persistSelectedK8sContexts,
   getK8sClusterIdsFromCtxId,
   getFirstCtxIdFromSelectedCtxIds,
   getK8sConfigIdsFromK8sConfig,
@@ -222,5 +224,44 @@ describe('getControllerPollConnectionIDsFromContextIds', () => {
 
   it('respects the context filter', () => {
     expect(getControllerPollConnectionIDsFromContextIds(['ctx-1'], pollConfig)).toEqual(['conn-1']);
+  });
+});
+
+describe('selected k8s contexts session persistence', () => {
+  beforeEach(() => {
+    window.sessionStorage.clear();
+  });
+
+  it('round-trips a selection through sessionStorage', () => {
+    persistSelectedK8sContexts(['ctx-1', 'ctx-2']);
+    expect(loadSelectedK8sContexts()).toEqual(['ctx-1', 'ctx-2']);
+  });
+
+  it('round-trips the sentinel and empty selections', () => {
+    persistSelectedK8sContexts(['all']);
+    expect(loadSelectedK8sContexts()).toEqual(['all']);
+
+    persistSelectedK8sContexts([]);
+    expect(loadSelectedK8sContexts()).toEqual([]);
+  });
+
+  it('returns null when nothing is persisted', () => {
+    expect(loadSelectedK8sContexts()).toBeNull();
+  });
+
+  it('returns null for corrupt or non-array persisted values', () => {
+    window.sessionStorage.setItem('selectedK8sContexts', 'not-json');
+    expect(loadSelectedK8sContexts()).toBeNull();
+
+    window.sessionStorage.setItem('selectedK8sContexts', JSON.stringify({ ctx: true }));
+    expect(loadSelectedK8sContexts()).toBeNull();
+
+    window.sessionStorage.setItem('selectedK8sContexts', JSON.stringify([1, 2]));
+    expect(loadSelectedK8sContexts()).toBeNull();
+  });
+
+  it('ignores non-array input on persist', () => {
+    persistSelectedK8sContexts('all' as unknown as string[]);
+    expect(loadSelectedK8sContexts()).toBeNull();
   });
 });
