@@ -28,10 +28,11 @@ func (h *Handler) GetMesheryFilterFileHandler(
 	provider models.Provider,
 ) {
         filterID := mux.Vars(r)["id"]
-	if _, err := uuid.FromString(filterID); err != nil {
-		err := models.ErrInvalidUUID(fmt.Errorf("invalid filter id: %q: %w", filterID, err))
-		h.log.Error(err)
-		writeMeshkitError(rw, err, http.StatusBadRequest)
+	filterUUID, err := uuid.FromString(filterID)
+	if err != nil || filterUUID == uuid.Nil {
+		invalidErr := models.ErrInvalidUUID(fmt.Errorf("invalid filter id: %q", filterID))
+		h.log.Error(invalidErr)
+		writeMeshkitError(rw, invalidErr, http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.GetMesheryFilterFile(r, filterID)
@@ -295,10 +296,11 @@ func (h *Handler) DeleteMesheryFilterHandler(
 	provider models.Provider,
 ) {
 	filterID := mux.Vars(r)["id"]
-	if _, err := uuid.FromString(filterID); err != nil {
-		err := models.ErrInvalidUUID(fmt.Errorf("invalid filter id: %q: %w", filterID, err))
-		h.log.Error(err)
-		writeMeshkitError(rw, err, http.StatusBadRequest)
+	filterUUID, err := uuid.FromString(filterID)
+	if err != nil || filterUUID == uuid.Nil {
+		invalidErr := models.ErrInvalidUUID(fmt.Errorf("invalid filter id: %q", filterID))
+		h.log.Error(invalidErr)
+		writeMeshkitError(rw, invalidErr, http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.DeleteMesheryFilter(r, filterID)
@@ -503,10 +505,11 @@ func (h *Handler) GetMesheryFilterHandler(
 	provider models.Provider,
 ) {
 	filterID := mux.Vars(r)["id"]
-	if _, err := uuid.FromString(filterID); err != nil {
-		err := models.ErrInvalidUUID(fmt.Errorf("invalid filter id: %q: %w", filterID, err))
-		h.log.Error(err)
-		writeMeshkitError(rw, err, http.StatusBadRequest)
+	filterUUID, err := uuid.FromString(filterID)
+	if err != nil || filterUUID == uuid.Nil {
+		invalidErr := models.ErrInvalidUUID(fmt.Errorf("invalid filter id: %q", filterID))
+		h.log.Error(invalidErr)
+		writeMeshkitError(rw, invalidErr, http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.GetMesheryFilter(r, filterID)
