@@ -24,6 +24,23 @@ func mustCanonical(t *testing.T, path string) string {
 	return resolved
 }
 
+// symlinkSupported reports whether the host can create symlinks in dir. On
+// Windows this requires administrator privileges or Developer Mode, so the
+// symlink-specific cases are skipped rather than failing the whole suite.
+func symlinkSupported(dir string) bool {
+	target := filepath.Join(dir, ".symlink-probe-target")
+	link := filepath.Join(dir, ".symlink-probe-link")
+	if err := os.WriteFile(target, []byte("x"), 0o644); err != nil {
+		return false
+	}
+	defer func() { _ = os.Remove(target) }()
+	if err := os.Symlink(target, link); err != nil {
+		return false
+	}
+	_ = os.Remove(link)
+	return true
+}
+
 // TestResolveFileWithinDir exercises the single validation boundary shared by
 // ViewHandler and DownloadHandler. It covers the concrete bypasses called out in
 // issues #18442, #18375 and #14193: "../" traversal, absolute paths outside the
@@ -73,14 +90,18 @@ func TestResolveFileWithinDir(t *testing.T) {
 	}
 
 	// A symlink INSIDE the base that points OUTSIDE it (symlink traversal).
-	symlinkOut := filepath.Join(base, "evil_link")
-	if err := os.Symlink(outsideFile, symlinkOut); err != nil {
-		t.Fatalf("symlink out: %v", err)
-	}
-	// A symlink INSIDE the base that points to another file INSIDE it (allowed).
-	symlinkIn := filepath.Join(base, "good_link")
-	if err := os.Symlink(rootLog, symlinkIn); err != nil {
-		t.Fatalf("symlink in: %v", err)
+	// Symlink fixtures are only created where the host permits them; the cases
+	// that depend on them are skipped otherwise (see needsSymlink below).
+	supportsSymlinks := symlinkSupported(base)
+	symlinkOut := filepath.Join(base, "evil_link") // inside base -> points OUTSIDE
+	symlinkIn := filepath.Join(base, "good_link")  // inside base -> points INSIDE
+	if supportsSymlinks {
+		if err := os.Symlink(outsideFile, symlinkOut); err != nil {
+			t.Fatalf("symlink out: %v", err)
+		}
+		if err := os.Symlink(rootLog, symlinkIn); err != nil {
+			t.Fatalf("symlink in: %v", err)
+		}
 	}
 
 	tests := []struct {
@@ -89,18 +110,20 @@ func TestResolveFileWithinDir(t *testing.T) {
 		wantOK       bool
 		wantResolved string // only checked when wantOK
 		reasonSubstr string // only checked when !wantOK && non-empty
+		needsSymlink bool   // skipped when the host cannot create symlinks
 	}{
 		{name: "legit file at base root", requested: rootLog, wantOK: true, wantResolved: mustCanonical(t, rootLog)},
 		{name: "legit nested file", requested: nestedLog, wantOK: true, wantResolved: mustCanonical(t, nestedLog)},
 		{name: "relative path within base", requested: "registry/model-generation.log", wantOK: true, wantResolved: mustCanonical(t, nestedLog)},
-		{name: "symlink within base is allowed", requested: symlinkIn, wantOK: true, wantResolved: mustCanonical(t, rootLog)},
+		{name: "symlink within base is allowed", requested: symlinkIn, wantOK: true, wantResolved: mustCanonical(t, rootLog), needsSymlink: true},
 
 		{name: "absolute path outside base", requested: outsideFile, wantOK: false, reasonSubstr: "escapes"},
 		{name: "relative dotdot traversal", requested: "../escape.txt", wantOK: false, reasonSubstr: "escapes"},
 		{name: "deep dotdot traversal to etc", requested: "../../../../../../etc/hosts", wantOK: false},
-		{name: "symlink traversal outside base", requested: symlinkOut, wantOK: false, reasonSubstr: "escapes"},
+		{name: "symlink traversal outside base", requested: symlinkOut, wantOK: false, reasonSubstr: "escapes", needsSymlink: true},
 		{name: "sibling prefix bypass", requested: siblingFile, wantOK: false, reasonSubstr: "escapes"},
 		{name: "base directory itself", requested: base, wantOK: false, reasonSubstr: "escapes"},
+		{name: "directory within base is not a regular file", requested: filepath.Join(base, "registry"), wantOK: false, reasonSubstr: "regular file"},
 		{name: "empty path", requested: "", wantOK: false, reasonSubstr: "empty"},
 		{name: "nul byte injection", requested: "registry/model.log\x00.png", wantOK: false, reasonSubstr: "NUL"},
 		{name: "non-existent file within base fails closed", requested: filepath.Join(base, "does-not-exist.log"), wantOK: false},
@@ -108,6 +131,9 @@ func TestResolveFileWithinDir(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+			if tc.needsSymlink && !supportsSymlinks {
+				t.Skip("symlinks not supported/permitted on this host")
+			}
 			resolved, ok, reason := resolveFileWithinDir(tc.requested, base)
 			if ok != tc.wantOK {
 				t.Fatalf("resolveFileWithinDir(%q) ok=%v reason=%q, want ok=%v", tc.requested, ok, reason, tc.wantOK)
@@ -215,24 +241,32 @@ func TestFileHandlers_RejectTraversal(t *testing.T) {
 				t.Fatalf("write secret: %v", err)
 			}
 
-			// A symlink planted inside the logs dir pointing at the secret.
+			// A symlink planted inside the logs dir pointing at the secret. Only
+			// created where the host permits it; the case is skipped otherwise.
+			supportsSymlinks := symlinkSupported(logsDir)
 			planted := filepath.Join(logsDir, "evil_link")
-			if err := os.Symlink(secret, planted); err != nil {
-				t.Fatalf("symlink: %v", err)
+			if supportsSymlinks {
+				if err := os.Symlink(secret, planted); err != nil {
+					t.Fatalf("symlink: %v", err)
+				}
 			}
 
 			cases := []struct {
-				name string
-				file string
+				name         string
+				file         string
+				needsSymlink bool
 			}{
-				{"absolute etc passwd", "/etc/passwd"},
-				{"relative traversal", "../../../../../../etc/passwd"},
-				{"meshery config secret", secret},
-				{"symlink escape", planted},
-				{"sibling prefix", logsDir + "-backup/secret.txt"},
+				{name: "absolute etc passwd", file: "/etc/passwd"},
+				{name: "relative traversal", file: "../../../../../../etc/passwd"},
+				{name: "meshery config secret", file: secret},
+				{name: "symlink escape", file: planted, needsSymlink: true},
+				{name: "sibling prefix", file: logsDir + "-backup/secret.txt"},
 			}
 			for _, c := range cases {
 				t.Run(c.name, func(t *testing.T) {
+					if c.needsSymlink && !supportsSymlinks {
+						t.Skip("symlinks not supported/permitted on this host")
+					}
 					rec := httptest.NewRecorder()
 					hc.call(h, rec, newFileRequest(t, hc.endpoint, c.file))
 

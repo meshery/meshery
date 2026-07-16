@@ -71,6 +71,11 @@ func (h *Handler) TokenHandler(w http.ResponseWriter, r *http.Request, p models.
 // generation logs. Confining reads to that directory is the trust boundary: it
 // keeps ~/.meshery/config (the mesherydb.sql dump and provider auth tokens) and
 // everything outside the Meshery home off-limits.
+//
+// NOTE: the server creates ~/.meshery/logs on startup (see cmd/main.go). Until
+// it exists, resolveFileWithinDir fails closed and every request is rejected
+// with 403 - correct for security, but worth knowing when debugging a fresh
+// install that has not yet produced any logs.
 func mesheryFileServingDir() (string, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -122,6 +127,18 @@ func resolveFileWithinDir(requested, baseDir string) (resolved string, ok bool, 
 	if !strings.HasPrefix(target, base+string(os.PathSeparator)) {
 		return "", false, "resolved path escapes permitted directory " + base
 	}
+
+	// Only serve regular files. This rejects directories (which would fail with
+	// EISDIR on read) and, more importantly, refuses to open a FIFO, socket, or
+	// device node - opening a named pipe would block the handler goroutine
+	// indefinitely waiting for a writer.
+	info, err := os.Stat(target)
+	if err != nil {
+		return "", false, "resolved path could not be inspected: " + err.Error()
+	}
+	if !info.Mode().IsRegular() {
+		return "", false, "resolved path is not a regular file"
+	}
 	return target, true, ""
 }
 
@@ -146,8 +163,10 @@ func (h *Handler) ViewHandler(responseWriter http.ResponseWriter, request *http.
 
 	resolvedPath, ok, reason := h.validateRequestedFile(filePath)
 	if !ok {
+		// Log the offending path server-side only; it is deliberately kept out
+		// of the response so probing input is not reflected back to the caller.
 		h.log.Warnf("rejected fileView request for %q: %s", filePath, reason)
-		writeMeshkitError(responseWriter, ErrInvalidFilePath(filePath), http.StatusForbidden)
+		writeMeshkitError(responseWriter, ErrInvalidFilePath(), http.StatusForbidden)
 		return
 	}
 
@@ -185,8 +204,10 @@ func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *h
 
 	resolvedPath, ok, reason := h.validateRequestedFile(filePath)
 	if !ok {
+		// Log the offending path server-side only; it is deliberately kept out
+		// of the response so probing input is not reflected back to the caller.
 		h.log.Warnf("rejected fileDownload request for %q: %s", filePath, reason)
-		writeMeshkitError(responseWriter, ErrInvalidFilePath(filePath), http.StatusForbidden)
+		writeMeshkitError(responseWriter, ErrInvalidFilePath(), http.StatusForbidden)
 		return
 	}
 
