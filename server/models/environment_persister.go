@@ -12,7 +12,7 @@ import (
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
-	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta3/environment"
 	"gorm.io/gorm"
 )
 
@@ -125,20 +125,34 @@ func (ep *EnvironmentPersister) SaveEnvironment(environment *environment.Environ
 	return envJSON, nil
 }
 
-func (ep *EnvironmentPersister) DeleteEnvironment(environment *environment.Environment) ([]byte, error) {
-	err := ep.DB.Model(&environment).Find(&environment).Error
+func (ep *EnvironmentPersister) DeleteEnvironment(env *environment.Environment) ([]byte, error) {
+	err := ep.DB.Model(env).Find(env).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, ErrResultNotFound(err)
 		}
+		return nil, ErrDBRead(err)
 	}
-	err = ep.DB.Delete(environment).Error
+
+	// Clean up connection mappings for this environment before deleting it,
+	// to avoid orphaned rows in environment_connection_mappings that would
+	// otherwise cause deleted environments to still appear (as blank tags)
+	// against connections that were assigned to them. Both deletes run in
+	// a single transaction so a failed environment delete cannot leave
+	// mappings already removed.
+	err = ep.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("environment_id = ?", env.ID).
+			Delete(&environment.EnvironmentConnectionMapping{}).Error; err != nil {
+			return err
+		}
+		return tx.Delete(env).Error
+	})
 	if err != nil {
 		return nil, ErrDBDelete(err, ep.fetchUserDetails().ID.String())
 	}
 
 	// Marshal the environment to JSON
-	envJSON, err := json.Marshal(environment)
+	envJSON, err := json.Marshal(env)
 	if err != nil {
 		return nil, err
 	}
@@ -192,7 +206,7 @@ func (ep *EnvironmentPersister) UpdateEnvironment(environmentID core.Uuid, paylo
 
 	env.Name = payload.Name
 	env.Description = payload.Description
-	env.OrganizationID = core.Uuid(payload.OrgId)
+	env.OrganizationID = core.Uuid(payload.OrgID)
 
 	return ep.UpdateEnvironmentByID(env)
 }
@@ -210,8 +224,8 @@ func (ep *EnvironmentPersister) DeleteEnvironmentByID(environmentID core.Uuid) (
 // AddConnectionToEnvironment adds a connection to an environment
 func (ep *EnvironmentPersister) AddConnectionToEnvironment(environmentID, connectionID core.Uuid) ([]byte, error) {
 	envConMapping := environment.EnvironmentConnectionMapping{
-		ConnectionId:  &connectionID,
-		EnvironmentId: &environmentID,
+		ConnectionID:  &connectionID,
+		EnvironmentID: &environmentID,
 		CreatedAt:     time.Now(),
 		UpdatedAt:     time.Now(),
 	}
@@ -284,6 +298,13 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uui
 
 	count := int64(0)
 	query.Count(&count)
+
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
 
 	var connectionsFetched []*connections.Connection
 	pageUint, err := strconv.ParseUint(page, 10, 32)
