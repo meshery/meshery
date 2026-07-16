@@ -70,19 +70,22 @@ export const getNextStates = (
   currentStatus: string,
 ): string[] => (transitionMap?.[currentStatus] ?? []).map((transition) => transition.nextState);
 
-// The human-readable description for a specific transition, falling back to a
-// generic prompt when the definition does not describe it.
-export const getStatusTransition = (
+// The definition-authored description for a specific transition, or undefined
+// when the definition does not describe it. Connection definitions
+// (models/.../connections/*.json) are the source of truth for this copy; the
+// transition modal supplies its own generic fallback, so no prompt is
+// synthesized here.
+export const getTransitionDescription = (
   transitionMap: ConnectionTransitionMap | undefined,
-  connectionState: string,
-  transitionState: string,
-) => {
-  const transition = transitionMap?.[connectionState]?.find((t) => t.nextState === transitionState);
-
-  return (
-    transition?.description ||
-    `Are you sure you want to transition from ${connectionState.toUpperCase()} to ${transitionState.toUpperCase()}?`
-  );
+  currentStatus: string | undefined,
+  targetStatus: string,
+): string | undefined => {
+  if (!currentStatus) {
+    return undefined;
+  }
+  return transitionMap?.[currentStatus.toLowerCase()]?.find(
+    (transition) => transition.nextState === targetStatus.toLowerCase(),
+  )?.description;
 };
 
 export const CONNECTION_DOCS_URL = `https://docs.meshery.io/concepts/logical/connections#states-and-the-lifecycle-of-connections`;

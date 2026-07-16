@@ -31,17 +31,20 @@ vi.mock('next/router', () => ({
 }));
 
 vi.mock('@sistent/sistent', () => ({
-  CustomTooltip: ({ children }) => <div>{children}</div>,
+  CustomTooltip: ({ children, title }) => (
+    <div data-testid="custom-tooltip" data-title={String(title)}>
+      {children}
+    </div>
+  ),
+  // Same helpers FormattedTime uses; identity stubs keep cell tests deterministic.
+  getRelativeTime: (date: string) => `rel(${date})`,
+  getFullFormattedTime: (date: string) => `full(${date})`,
   CustomColumnVisibilityControl: () => <div data-testid="column-visibility-control" />,
   SearchBar: () => <div data-testid="search-bar" />,
   UniversalFilter: () => <div data-testid="universal-filter" />,
   ResponsiveDataTable: (props) => {
     dataTableProps = props;
     return <div data-testid="responsive-data-table" />;
-  },
-  PROMPT_VARIANTS: {
-    DANGER: 'danger',
-    WARNING: 'warning',
   },
   MenuItem: ({ children }) => <div>{children}</div>,
   Box: ({ children }) => <div>{children}</div>,
@@ -95,7 +98,6 @@ vi.mock('./styles', () => ({
 
 vi.mock('../data-formatter', () => ({
   FormatId: ({ id }) => <span>{id}</span>,
-  formatDate: (value) => value,
 }));
 
 vi.mock('../../css/icons.styles', () => ({
@@ -190,12 +192,12 @@ vi.mock('../../assets/icons/disconnect', () => ({
   default: () => <svg />,
 }));
 
-vi.mock('../PromptComponent', () => ({
-  default: React.forwardRef(function PromptComponentMock(_, ref) {
+vi.mock('./ConnectionStateTransitionModal', () => ({
+  default: React.forwardRef(function ConnectionStateTransitionModalMock(_, ref) {
     React.useImperativeHandle(ref, () => ({
       show: modalShow,
     }));
-    return <div data-testid="prompt-component" />;
+    return <div data-testid="connection-transition-modal" />;
   }),
 }));
 
@@ -235,8 +237,8 @@ const makeConnection = (overrides = {}) => ({
     server: 'https://cluster-a.local',
   },
   environments: [],
-  createdAt: '2026-05-08',
-  updatedAt: '2026-05-09',
+  createdAt: '2026-05-08T12:00:00Z',
+  updatedAt: '2026-05-09T12:00:00Z',
   ...overrides,
 });
 
@@ -281,7 +283,8 @@ describe('ConnectionTable', () => {
     saveEnvironmentMutator.mockImplementation(() => ({
       unwrap: () => Promise.resolve({ id: 'env-1', name: 'dev' }),
     }));
-    modalShow.mockResolvedValue('DELETE');
+    // The transition modal resolves `true` when the user confirms.
+    modalShow.mockResolvedValue(true);
 
     router.query = {};
 
@@ -365,7 +368,7 @@ describe('ConnectionTable', () => {
     expect(dataTableProps.options.sortOrder).toEqual({ name: 'createdAt', direction: 'desc' });
   });
 
-  it('shows the Discovered At column by default and populates it from createdAt', async () => {
+  it('shows the Discovered At column by default and renders a shrink-wrapped timestamp cell', async () => {
     render(<ConnectionTable />);
 
     await waitFor(() => {
@@ -379,13 +382,45 @@ describe('ConnectionTable', () => {
 
     const discoveredAtColumn = dataTableProps.tableCols.find((col) => col.name === 'createdAt');
     expect(discoveredAtColumn?.label).toBe('Discovered At');
-    // formatDate is mocked as identity in this file; the real formatting is
-    // covered by data-formatter's own tests.
+    // Header carries an info tooltip explaining Discovered At.
+    expect(discoveredAtColumn.options.customHeadRender).toEqual(expect.any(Function));
+
     const { container, unmount } = render(
-      <>{discoveredAtColumn.options.customBodyRender('2026-05-08')}</>,
+      <>{discoveredAtColumn.options.customBodyRender('2026-05-08T12:00:00Z')}</>,
     );
-    expect(container.textContent).toContain('2026-05-08');
+    const stamp = container.querySelector('[data-testid="formatted-time"]') as HTMLElement;
+    expect(stamp).toHaveTextContent('rel(2026-05-08T12:00:00Z)');
+    // Inline shrink-wrap so the full-datetime tooltip anchors on the text,
+    // not the full table-cell width (Sistent FormattedTime uses a block div).
+    expect(stamp.style.display).toBe('inline-block');
+    expect(container.querySelector('[data-testid="custom-tooltip"]')).toHaveAttribute(
+      'data-title',
+      'full(2026-05-08T12:00:00Z)',
+    );
     unmount();
+
+    // Empty and Go zero-time sentinel render as '-' (not "2025 years ago").
+    const { container: emptyContainer, unmount: unmountEmpty } = render(
+      <>{discoveredAtColumn.options.customBodyRender(undefined)}</>,
+    );
+    expect(emptyContainer.textContent).toBe('-');
+    unmountEmpty();
+
+    const { container: zeroContainer, unmount: unmountZero } = render(
+      <>{discoveredAtColumn.options.customBodyRender('0001-01-01T00:00:00Z')}</>,
+    );
+    expect(zeroContainer.textContent).toBe('-');
+    unmountZero();
+
+    // Updated At shares the same cell renderer when enabled via View Columns.
+    const updatedAtColumn = dataTableProps.tableCols.find((col) => col.name === 'updatedAt');
+    const { container: updatedContainer, unmount: unmountUpdated } = render(
+      <>{updatedAtColumn.options.customBodyRender('2026-05-09T12:00:00Z')}</>,
+    );
+    expect(updatedContainer.querySelector('[data-testid="formatted-time"]')).toHaveTextContent(
+      'rel(2026-05-09T12:00:00Z)',
+    );
+    unmountUpdated();
   });
 
   it('surfaces query failures through notifications', async () => {
@@ -432,7 +467,16 @@ describe('ConnectionTable', () => {
     await user.click(screen.getByRole('button', { name: /delete/i }));
 
     await waitFor(() => {
-      expect(modalShow).toHaveBeenCalled();
+      expect(modalShow).toHaveBeenCalledWith(
+        expect.objectContaining({
+          targetStatus: 'deleted',
+          kind: 'kubernetes',
+          connections: [
+            expect.objectContaining({ id: 'connection-1', name: 'cluster-a' }),
+            expect.objectContaining({ id: 'connection-2', name: 'cluster-b' }),
+          ],
+        }),
+      );
       expect(updateConnectionByIdMutator).toHaveBeenCalledTimes(2);
     });
 
@@ -444,6 +488,25 @@ describe('ConnectionTable', () => {
       connectionId: 'connection-2',
       body: { status: 'deleted' },
     });
+  });
+
+  it('applies no transition when the bulk delete confirmation is cancelled', async () => {
+    const user = userEvent.setup();
+    modalShow.mockResolvedValue(false);
+
+    render(<ConnectionTable />);
+
+    const toolbar = dataTableProps.options.customToolbarSelect({
+      data: [{ index: 0 }, { index: 1 }],
+    });
+    render(toolbar);
+
+    await user.click(screen.getByRole('button', { name: /delete/i }));
+
+    await waitFor(() => {
+      expect(modalShow).toHaveBeenCalled();
+    });
+    expect(updateConnectionByIdMutator).not.toHaveBeenCalled();
   });
 
   it('recomputes responsive column visibility when the window width changes', async () => {

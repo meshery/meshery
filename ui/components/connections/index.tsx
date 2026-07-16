@@ -98,7 +98,6 @@ function Connections() {
     delete nextQuery[CREATE_CONNECTION_QUERY.create];
     delete nextQuery[CREATE_CONNECTION_QUERY.kind];
     replace({ pathname, query: nextQuery }, undefined, { shallow: true });
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deep-link flags only
   }, [isReady, createFlag, kindFromQuery, openCreateConnection]);
 
   // Next.js's pages-router `router.query` and `router.push` get fresh

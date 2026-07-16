@@ -1,5 +1,41 @@
 import { describe, expect, it } from 'vitest';
-import { toServerSortOrder, toUiSortOrder } from './ConnectionTable.constants';
+import {
+  getTransitionDescription,
+  toServerSortOrder,
+  toUiSortOrder,
+  type ConnectionTransitionMap,
+} from './ConnectionTable.constants';
+
+describe('getTransitionDescription', () => {
+  const transitionMap: ConnectionTransitionMap = {
+    connected: [
+      { nextState: 'disconnected', description: 'Stops managing the cluster.' },
+      { nextState: 'deleted' },
+    ],
+  };
+
+  it('returns the definition-authored description for a known transition', () => {
+    expect(getTransitionDescription(transitionMap, 'connected', 'disconnected')).toBe(
+      'Stops managing the cluster.',
+    );
+  });
+
+  it('normalizes status casing from callers that do not lowercase', () => {
+    expect(getTransitionDescription(transitionMap, 'CONNECTED', 'DISCONNECTED')).toBe(
+      'Stops managing the cluster.',
+    );
+  });
+
+  it('returns undefined when the transition has no authored description', () => {
+    expect(getTransitionDescription(transitionMap, 'connected', 'deleted')).toBeUndefined();
+  });
+
+  it('returns undefined for unknown states, missing maps, and unknown current status', () => {
+    expect(getTransitionDescription(transitionMap, 'discovered', 'registered')).toBeUndefined();
+    expect(getTransitionDescription(undefined, 'connected', 'disconnected')).toBeUndefined();
+    expect(getTransitionDescription(transitionMap, undefined, 'disconnected')).toBeUndefined();
+  });
+});
 
 describe('toServerSortOrder', () => {
   it('maps camelCase wire fields to the server DB sort columns', () => {
