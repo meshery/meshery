@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/meshery/meshery/server/core"
 	"github.com/meshery/meshery/server/models"
@@ -63,6 +64,77 @@ func (h *Handler) TokenHandler(w http.ResponseWriter, r *http.Request, p models.
 	p.TokenHandler(w, r, fromMiddleWare)
 }
 
+// mesheryFileServingDir returns the canonical directory that ViewHandler and
+// DownloadHandler are permitted to serve files from. Every producer of the
+// "ViewLink"/"DownloadLink" event metadata that drives these endpoints writes
+// under ~/.meshery/logs - registration logs (REGISTRY_LOG_FILE) and model
+// generation logs. Confining reads to that directory is the trust boundary: it
+// keeps ~/.meshery/config (the mesherydb.sql dump and provider auth tokens) and
+// everything outside the Meshery home off-limits.
+func mesheryFileServingDir() (string, error) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(home, ".meshery", "logs"), nil
+}
+
+// resolveFileWithinDir resolves requested against baseDir and reports whether
+// the result is a real file confined to baseDir, returning the safe absolute
+// path to open. It is the single validation boundary for the file view/download
+// handlers and defends against:
+//   - "../" traversal and absolute paths outside the base
+//   - symlink traversal, e.g. a link inside the base pointing to /etc/shadow
+//   - sibling-prefix bypass such as "<base>-backup" (via the trailing separator)
+//   - NUL-byte injection
+//
+// It fails closed: ok is false for every rejection - including a target that
+// cannot be resolved (a missing file) - so callers never receive a path outside
+// the permitted directory. reason is a short diagnostic for server-side logging;
+// it is deliberately not surfaced to the client.
+func resolveFileWithinDir(requested, baseDir string) (resolved string, ok bool, reason string) {
+	if requested == "" {
+		return "", false, "empty file path"
+	}
+	if strings.ContainsRune(requested, '\x00') {
+		return "", false, "file path contains a NUL byte"
+	}
+
+	// Canonicalize the base so the containment comparison runs against a fully
+	// symlink-resolved absolute path (macOS /var, /home symlinks, t.TempDir).
+	base, err := filepath.EvalSymlinks(baseDir)
+	if err != nil {
+		return "", false, "serving directory is unavailable: " + err.Error()
+	}
+
+	target := requested
+	if !filepath.IsAbs(target) {
+		target = filepath.Join(base, target)
+	}
+
+	// Resolve symlinks on the target so links that escape the base are caught,
+	// then require the resolved path to sit strictly inside base. The trailing
+	// separator stops a sibling like "<base>-backup" from satisfying the prefix.
+	target, err = filepath.EvalSymlinks(filepath.Clean(target))
+	if err != nil {
+		return "", false, "file path could not be resolved: " + err.Error()
+	}
+	if !strings.HasPrefix(target, base+string(os.PathSeparator)) {
+		return "", false, "resolved path escapes permitted directory " + base
+	}
+	return target, true, ""
+}
+
+// validateRequestedFile resolves the user-supplied file path against the
+// permitted serving directory, returning the safe absolute path to open.
+func (h *Handler) validateRequestedFile(filePath string) (resolved string, ok bool, reason string) {
+	baseDir, err := mesheryFileServingDir()
+	if err != nil {
+		return "", false, "could not determine serving directory: " + err.Error()
+	}
+	return resolveFileWithinDir(filePath, baseDir)
+}
+
 // ViewHandler handles viewing the file content.
 func (h *Handler) ViewHandler(responseWriter http.ResponseWriter, request *http.Request) {
 	filePath, err := url.QueryUnescape(request.URL.Query().Get("file"))
@@ -71,7 +143,15 @@ func (h *Handler) ViewHandler(responseWriter http.ResponseWriter, request *http.
 		writeMeshkitError(responseWriter, ErrInvalidFileRequest(err), http.StatusBadRequest)
 		return
 	}
-	file, err := os.Open(filePath)
+
+	resolvedPath, ok, reason := h.validateRequestedFile(filePath)
+	if !ok {
+		h.log.Warnf("rejected fileView request for %q: %s", filePath, reason)
+		writeMeshkitError(responseWriter, ErrInvalidFilePath(filePath), http.StatusForbidden)
+		return
+	}
+
+	file, err := os.Open(resolvedPath)
 	if err != nil {
 		writeMeshkitError(responseWriter, ErrReadFileContent(err, filePath), http.StatusInternalServerError)
 		return
@@ -103,7 +183,14 @@ func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *h
 		return
 	}
 
-	file, err := os.Open(filePath)
+	resolvedPath, ok, reason := h.validateRequestedFile(filePath)
+	if !ok {
+		h.log.Warnf("rejected fileDownload request for %q: %s", filePath, reason)
+		writeMeshkitError(responseWriter, ErrInvalidFilePath(filePath), http.StatusForbidden)
+		return
+	}
+
+	file, err := os.Open(resolvedPath)
 	if err != nil {
 		writeMeshkitError(responseWriter, ErrReadFileContent(err, filePath), http.StatusInternalServerError)
 		return
@@ -114,7 +201,7 @@ func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *h
 		}
 	}()
 
-	fileName := filepath.Base(filePath)
+	fileName := filepath.Base(resolvedPath)
 	responseWriter.Header().Set("Content-Type", "text/plain")
 	responseWriter.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", fileName))
 
