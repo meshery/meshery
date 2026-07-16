@@ -33,7 +33,6 @@ import {
   TOGGLER,
 } from '../../../constants/navigator';
 import { iconSmall } from '../../../css/icons.styles';
-import CAN from '@/utils/can';
 import { CustomTextTooltip } from '../../meshery-mesh-interface/PatternService/CustomTextTooltip';
 import {
   HideScrollbar,
@@ -571,7 +570,7 @@ const NavigatorContent = () => {
             show: showc,
             link: linkc,
             children: childrenc,
-            permission: permissionc,
+            permissionKey: permissionc,
           }) => {
             if (typeof showc !== 'undefined' && !showc) {
               return null;
@@ -602,7 +601,8 @@ const NavigatorContent = () => {
                       router.push(hrefc);
                     }
                   }}
-                  disabled={permissionc ? !CAN(permissionc.action, permissionc.subject) : false}
+                  permissionKey={permissionc}
+                  permissionAction="showShield"
                 >
                   {linkContent(iconc, titlec, hrefc, false, isDrawerCollapsed)}
                 </ListItemComponent>
@@ -699,7 +699,7 @@ const NavigatorContent = () => {
             children,
             hovericon,
             submenu,
-            permission,
+            permissionKey,
           }) => {
             const hasChildren = Array.isArray(children) && children.length > 0;
             return (
@@ -723,7 +723,8 @@ const NavigatorContent = () => {
                   onMouseLeave={() =>
                     !submenu || !openItems.includes(childId) ? setHoveredId(null) : null
                   }
-                  disabled={permission ? !CAN(permission.action, permission.subject) : false}
+                  permissionKey={permissionKey}
+                  permissionAction="showShield"
                   {...(link && href ? { component: Link, href } : {})}
                 >
                   <NavigatorLink data-testid={childId}>
