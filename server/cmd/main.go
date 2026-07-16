@@ -20,7 +20,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/helpers"
-	"github.com/meshery/meshery/server/helpers/utils"
+	utils "github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/internal/graphql"
 	"github.com/meshery/meshery/server/internal/store"
 	"github.com/meshery/meshery/server/machines"

@@ -19,6 +19,7 @@ import (
 	"k8s.io/client-go/util/homedir"
 
 	"github.com/gofrs/uuid"
+	helperutils "github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/database"
@@ -1964,17 +1965,20 @@ func githubRepoFilterScan(
 }
 
 func genericHTTPPatternFile(fileURL string, log logger.Handler) ([]MesheryPattern, error) {
-	resp, err := http.Get(fileURL)
+	if err := helperutils.ValidateURLForOutboundRequest(fileURL); err != nil {
+		return nil, err
+	}
+	resp, err := helperutils.NewSafeHTTPClient(30 * time.Second).Get(fileURL)
 	if err != nil {
 		return nil, err
 	}
+	defer SafeClose(resp.Body, log)
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("file not found")
 	}
 
-	defer SafeClose(resp.Body, log)
+	body, err := io.ReadAll(io.LimitReader(resp.Body, 16<<20)) // cap at 16MiB
 
-	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -2001,17 +2005,21 @@ func genericHTTPPatternFile(fileURL string, log logger.Handler) ([]MesheryPatter
 }
 
 func genericHTTPFilterFile(fileURL string, log logger.Handler) ([]MesheryFilter, error) {
-	resp, err := http.Get(fileURL)
+	if err := helperutils.ValidateURLForOutboundRequest(fileURL); err != nil {
+		return nil, err
+	}
+	resp, err := helperutils.NewSafeHTTPClient(30 * time.Second).Get(fileURL)
 	if err != nil {
 		return nil, err
 	}
+	defer SafeClose(resp.Body, log)
+
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("file not found")
 	}
 
-	defer SafeClose(resp.Body, log)
+	body, err := io.ReadAll(io.LimitReader(resp.Body, 16<<20)) // cap at 16MiB
 
-	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
