@@ -54,3 +54,42 @@ svg.css-19bqh2r:hover {
 ::-webkit-scrollbar-thumb:horizontal:active {
   background: #a8a8a8;
 }
+
+/* MeshMap / Kanvas UI Fixes */
+/* Ensure the FABs stay on top */
+.MuiSpeedDial-fab {
+  z-index: 10 !important;
+}
+
+/* Left FAB (Nodes icon) - shift right by 15px to match toolbar shrink */
+.MuiSpeedDial-root:has(> button[aria-label="CANVAS_CONTROLS"]):has(svg[viewBox="0 0 65 64"]) {
+  transform: scale(0.9) translate(-10px, -10px) !important;
+  transform-origin: bottom center !important;
+}
+
+/* Right FAB (+ icon) - shift left by 15px to match toolbar shrink */
+.MuiSpeedDial-root:has(> button[aria-label="CANVAS_CONTROLS"]):not(:has(svg[viewBox="0 0 65 64"])) {
+  transform: scale(0.9) translate(10px, -10px) !important;
+  transform-origin: bottom center !important;
+}
+
+/* Target the main Kanvas toolbar securely using its exact ID */
+#kanvas-bottom-dock {
+  transform: scale(0.8) translate(-32px, -24px) !important;
+  transform-origin: bottom center !important;
+}
+
+/* The dark background belongs to the first child of the dock */
+#kanvas-bottom-dock > div {
+  border-radius: 16px !important;
+  overflow: hidden !important;
+}
+
+/* Top Navbar alignment fix for Kanvas */
+.MuiBox-root:has(> div > [data-testid="notification-button"]) > div {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  margin-top: -30px !important;
+  margin-left: 16px !important;
+}
