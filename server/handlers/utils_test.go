@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 )
 
@@ -60,6 +61,27 @@ func TestHandlerWrappers_ForwardToHttputil(t *testing.T) {
 		}
 		if decoded["message"] != "ok" {
 			t.Errorf("expected wrapper to pass payload through, got %q", decoded["message"])
+		}
+	})
+
+	t.Run("writeJSONOperationResponse", func(t *testing.T) {
+		rec := httptest.NewRecorder()
+		writeJSONOperationResponse(rec, "op-123", http.StatusAccepted)
+
+		if rec.Code != http.StatusAccepted {
+			t.Fatalf("expected status %d, got %d", http.StatusAccepted, rec.Code)
+		}
+		if got := rec.Header().Get(operationIDHeader); got != "op-123" {
+			t.Errorf("expected %s header %q, got %q", operationIDHeader, "op-123", got)
+		}
+
+		var decoded operationResponse
+		if err := json.NewDecoder(rec.Body).Decode(&decoded); err != nil {
+			t.Fatalf("body did not parse as JSON: %v", err)
+		}
+		expected := operationResponse{OperationID: "op-123"}
+		if !reflect.DeepEqual(decoded, expected) {
+			t.Errorf("expected body %v, got %v", expected, decoded)
 		}
 	})
 
