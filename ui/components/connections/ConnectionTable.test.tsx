@@ -8,6 +8,7 @@ const notify = vi.fn();
 const push = vi.fn();
 const ping = vi.fn();
 const pingGrafana = vi.fn();
+const pingPrometheus = vi.fn();
 const modalShow = vi.fn();
 const updateConnectionByIdMutator = vi.fn();
 const addConnectionToEnvironmentMutator = vi.fn();
@@ -128,6 +129,10 @@ vi.mock('@/utils/hooks/useKubernetesHook', () => ({
 
 vi.mock('@/utils/hooks/useGrafanaPingHook', () => ({
   default: () => pingGrafana,
+}));
+
+vi.mock('@/utils/hooks/usePrometheusPingHook', () => ({
+  default: () => pingPrometheus,
 }));
 
 vi.mock('./ConnectionChip', () => ({

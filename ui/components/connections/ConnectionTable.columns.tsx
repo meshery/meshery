@@ -47,6 +47,7 @@ type UseConnectionColumnsArgs = {
   handleActionMenuOpen: (event: any, tableMeta: RowData) => void;
   ping: (name: string, server: string, id: string) => void;
   pingGrafana: (connectionID: string, name?: string) => void;
+  pingPrometheus: (connectionID: string, name?: string) => void;
   // Per-kind connection state machine, keyed by connection kind. Sourced from
   // the connection definitions' `transitionMap` (see `_app.tsx`).
   transitionMapByKind: Record<string, ConnectionTransitionMap | undefined> | null;
@@ -64,6 +65,7 @@ export const useConnectionColumns = ({
   handleActionMenuOpen,
   ping,
   pingGrafana,
+  pingPrometheus,
   transitionMapByKind,
 }: UseConnectionColumnsArgs) => {
   return useMemo(() => {
@@ -113,10 +115,33 @@ export const useConnectionColumns = ({
               getColumnValue(tableMeta.rowData, 'metadata.server_location', nextColumns);
             const name = getColumnValue(tableMeta.rowData, 'metadata.name', nextColumns);
             const kind = getColumnValue(tableMeta.rowData, 'kind', nextColumns);
+            const connectionId = getColumnValue(tableMeta.rowData, 'id', nextColumns);
             const iconSrc = normalizeStaticImagePath(
               getColumnValue(tableMeta.rowData, 'kindLogo', nextColumns) ||
                 getFallbackImageBasedOnKind(kind),
             );
+
+            // Only attach handlePing for kinds that support a chip ping. An
+            // always-defined no-op handler still makes the chip swallow row
+            // clicks (stopPropagation) even when it cannot ping.
+            let handlePing: (() => void) | undefined;
+            if (kind === CONNECTION_KINDS.KUBERNETES) {
+              handlePing = () =>
+                ping(
+                  getColumnValue(tableMeta.rowData, 'metadata.name', nextColumns),
+                  getColumnValue(tableMeta.rowData, 'metadata.server', nextColumns),
+                  connectionId,
+                );
+            } else if (kind === CONNECTION_KINDS.GRAFANA) {
+              handlePing = () =>
+                pingGrafana(connectionId, getColumnValue(tableMeta.rowData, 'name', nextColumns));
+            } else if (kind === CONNECTION_KINDS.PROMETHEUS) {
+              handlePing = () =>
+                pingPrometheus(
+                  connectionId,
+                  getColumnValue(tableMeta.rowData, 'name', nextColumns),
+                );
+            }
 
             return (
               <>
@@ -124,24 +149,8 @@ export const useConnectionColumns = ({
                   tooltip={server ? `Server: ${server}` : ''}
                   title={kind === CONNECTION_KINDS.KUBERNETES ? name : value || name || kind}
                   status={getColumnValue(tableMeta.rowData, 'status', nextColumns)}
-                  onDelete={() =>
-                    handleDeleteConnection(getColumnValue(tableMeta.rowData, 'id', nextColumns))
-                  }
-                  handlePing={() => {
-                    const rowKind = getColumnValue(tableMeta.rowData, 'kind', nextColumns);
-                    if (rowKind === CONNECTION_KINDS.KUBERNETES) {
-                      ping(
-                        getColumnValue(tableMeta.rowData, 'metadata.name', nextColumns),
-                        getColumnValue(tableMeta.rowData, 'metadata.server', nextColumns),
-                        getColumnValue(tableMeta.rowData, 'id', nextColumns),
-                      );
-                    } else if (rowKind === CONNECTION_KINDS.GRAFANA) {
-                      pingGrafana(
-                        getColumnValue(tableMeta.rowData, 'id', nextColumns),
-                        getColumnValue(tableMeta.rowData, 'name', nextColumns),
-                      );
-                    }
-                  }}
+                  onDelete={() => handleDeleteConnection(connectionId)}
+                  handlePing={handlePing}
                   iconSrc={iconSrc}
                   width="12rem"
                 />
@@ -506,6 +515,7 @@ export const useConnectionColumns = ({
     isEnvironmentsSuccess,
     ping,
     pingGrafana,
+    pingPrometheus,
     transitionMapByKind,
     updatingConnection,
     url,

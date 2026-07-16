@@ -7,6 +7,7 @@ import _PromptComponent from '../PromptComponent';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '../../utils/Enum';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import useGrafanaPingHook from '@/utils/hooks/useGrafanaPingHook';
+import usePrometheusPingHook from '@/utils/hooks/usePrometheusPingHook';
 import { getResponsiveColumnVisibility } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import { useGetEnvironmentsQuery } from '../../rtk-query/environments';
@@ -81,6 +82,7 @@ const ConnectionTable = ({
   );
   const ping = useKubernetesHook();
   const pingGrafana = useGrafanaPingHook();
+  const pingPrometheus = usePrometheusPingHook();
   const { width } = useWindowDimensions();
 
   const { tableState, updateTableState, copyRowDeepLink } = useTableUrlState({
@@ -564,6 +566,7 @@ const ConnectionTable = ({
     handleActionMenuOpen,
     ping,
     pingGrafana,
+    pingPrometheus,
     transitionMapByKind,
   });
   const columnNames = useMemo(

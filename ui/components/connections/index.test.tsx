@@ -57,6 +57,14 @@ vi.mock('./ConnectionTable', () => ({
   },
 }));
 
+vi.mock('@/utils/context/ConnectionWizardContextProvider', () => ({
+  useConnectionWizardModal: () => ({
+    openCreateConnection: vi.fn(),
+    closeCreateConnection: vi.fn(),
+    open: false,
+  }),
+}));
+
 vi.mock('./meshSync', () => ({
   default: ({ selectedResourceId, updateUrlWithResourceId }) => (
     <div>

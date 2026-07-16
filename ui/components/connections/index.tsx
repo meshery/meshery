@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { NoSsr } from '@sistent/sistent';
 import { ErrorBoundary, AppBar } from '@sistent/sistent';
 import Modal from '../shared/Modal/Modal';
@@ -12,6 +12,8 @@ import DefaultError from '../general/error-404/index';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
 import CustomErrorFallback from '../shared/ErrorBoundary/ErrorBoundary';
 import ConnectionTable from './ConnectionTable';
+import { CREATE_CONNECTION_QUERY, isCreateConnectionQuery } from './ConnectionWizard.helpers';
+import { useConnectionWizardModal } from '@/utils/context/ConnectionWizardContextProvider';
 import { useRouter } from 'next/router';
 
 /**
@@ -66,11 +68,38 @@ function ConnectionManagementPage(props) {
 }
 function Connections() {
   const router = useRouter();
-  const { query, pathname, push, isReady } = router;
+  const { query, pathname, push, isReady, replace } = router;
+  const { openCreateConnection } = useConnectionWizardModal();
   const tabParam = typeof query.tab === 'string' ? query.tab.toLowerCase() : undefined;
   const connectionId = typeof query.connectionId === 'string' ? query.connectionId : undefined;
 
   const tab = useMemo(() => (tabParam === 'meshsync' ? 1 : 0), [tabParam]);
+
+  // Optional shareable deep link: ?create=true&kind=kubernetes
+  const createParam = query[CREATE_CONNECTION_QUERY.create];
+  const kindParam = query[CREATE_CONNECTION_QUERY.kind];
+  const createFlag = Array.isArray(createParam) ? createParam[0] : createParam;
+  const kindFromQuery =
+    typeof kindParam === 'string' && kindParam.length > 0
+      ? kindParam
+      : Array.isArray(kindParam) && kindParam[0]
+        ? kindParam[0]
+        : null;
+
+  useEffect(() => {
+    if (!isReady || !isCreateConnectionQuery(createFlag)) {
+      return;
+    }
+    openCreateConnection({
+      kind: kindFromQuery,
+      skipKindSelection: Boolean(kindFromQuery),
+    });
+    const nextQuery = { ...query };
+    delete nextQuery[CREATE_CONNECTION_QUERY.create];
+    delete nextQuery[CREATE_CONNECTION_QUERY.kind];
+    replace({ pathname, query: nextQuery }, undefined, { shallow: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- deep-link flags only
+  }, [isReady, createFlag, kindFromQuery, openCreateConnection]);
 
   // Next.js's pages-router `router.query` and `router.push` get fresh
   // references on each render, which previously cascaded into a new

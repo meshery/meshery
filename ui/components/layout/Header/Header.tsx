@@ -398,7 +398,7 @@ function K8sContextMenu({
                       );
                     })}
                     <Box sx={{ marginTop: '1rem' }}>
-                      <MesherySettingsEnvButtons />
+                      <MesherySettingsEnvButtons onOpened={() => setShowFullContextMenu(false)} />
                     </Box>
                   </div>
                 </CMenuContainer>
