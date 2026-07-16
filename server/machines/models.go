@@ -138,12 +138,19 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	defer sm.mx.Unlock()
 	var event *events.Event
 	var err error
+	// Set when the transition loop aborts on an invalid transition (e.g. an
+	// action redirects to an event the current state has no edge for). In that
+	// case the machine may have advanced into an intermediate state it was only
+	// passing through, so the status update below is skipped to avoid persisting
+	// a partially-transitioned state.
+	partialTransition := false
 	for eventType != NoOp {
 		nextState, err := sm.getNextState(eventType)
 		if err != nil {
 			sm.Log.Error(err)
 			event = defaultEvent.WithMetadata(map[string]interface{}{"error": err}).Build()
 			sm.Log.Debug(defaultEvent.WithMetadata(map[string]interface{}{"error": err}).Build())
+			partialTransition = true
 			break
 		}
 
@@ -155,6 +162,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			sm.Log.Error(err)
 			event = defaultEvent.WithMetadata(map[string]interface{}{"error": ErrInvalidTransition(sm.CurrentState, nextState)}).Build()
 			sm.Log.Debug(event)
+			partialTransition = true
 			break
 		}
 
@@ -198,7 +206,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		sm.CurrentState = nextState
 	}
 
-	if sm.Provider != nil && eventType != Exit {
+	if sm.Provider != nil && eventType != Exit && !partialTransition {
 		token, _ := ctx.Value(models.TokenCtxKey).(string)
 		connection, _, err := sm.Provider.GetConnectionByID(token, sm.ID)
 

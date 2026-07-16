@@ -35,6 +35,10 @@ func Registered() machines.State {
 		Events: machines.Events{
 			machines.Connect: machines.CONNECTED,
 			machines.Ignore:  machines.IGNORED,
+			// RegisterAction redirects here to NOTFOUND when the cluster ping
+			// fails; without this edge the redirect is dropped and the
+			// connection is wrongly left/persisted as REGISTERED.
+			machines.NotFound: machines.NOTFOUND,
 		},
 		Action: &RegisterAction{},
 	}
