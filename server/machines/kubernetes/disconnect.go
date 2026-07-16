@@ -30,14 +30,14 @@ func (da *DisconnectAction) Execute(ctx context.Context, machineCtx interface{},
 	}
 
 	contextID := machinectx.K8sContext.ID
-	go func() {
+	machinectx.SideEffects().Submit(func() {
 		machinectx.MesheryCtrlsHelper.
 			UpdateOperatorsStatusMap(machinectx.OperatorTracker).
 			UndeployDeployedOperators(machinectx.OperatorTracker).
 			RemoveCtxControllerHandler(ctx, contextID)
 		machinectx.MesheryCtrlsHelper.RemoveMeshSyncDataHandler(ctx, contextID)
 
-	}()
+	})
 
 	_ctx, cancel := context.WithTimeout(ctx, 100*time.Millisecond)
 	defer cancel()

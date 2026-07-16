@@ -3,7 +3,6 @@ package kubernetes
 import (
 	"context"
 	"os"
-	"time"
 
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
@@ -49,22 +48,20 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 
 	contextID := machinectx.K8sContext.ID
 
-	go func() {
-
+	se := machinectx.SideEffects()
+	se.Submit(func() {
 		machinectx.MesheryCtrlsHelper.UpdateOperatorsStatusMap(machinectx.OperatorTracker).
 			UndeployDeployedOperators(machinectx.OperatorTracker).
 			RemoveCtxControllerHandler(ctx, contextID)
 
 		machinectx.MesheryCtrlsHelper.RemoveMeshSyncDataHandler(ctx, contextID)
-	}()
 
-	_ctx, cancel := context.WithTimeout(ctx, 100*time.Millisecond)
-	defer cancel()
-	context.AfterFunc(_ctx, func() {
-		// machinectx.MesheryCtrlsHelper.UpdateOperatorsStatusMap(machinectx.OperatorTracker)
+		models.FlushMeshSyncData(ctx, machinectx.K8sContext, provider, machinectx.EventBroadcaster, user.ID.String(), sysID, log)
 	})
-
-	go models.FlushMeshSyncData(ctx, machinectx.K8sContext, provider, machinectx.EventBroadcaster, user.ID.String(), sysID, log)
+	// Delete is terminal for this connection's machine: stop the executor once
+	// the queued side effects above have run so its worker goroutine does not
+	// outlive the connection.
+	se.Close()
 
 	return machines.NoOp, nil, nil
 }

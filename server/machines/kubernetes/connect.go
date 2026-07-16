@@ -96,7 +96,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 		}
 	}
 
-	go func() {
+	machinectx.SideEffects().Submit(func() {
 		ctrlHelper := machinectx.MesheryCtrlsHelper.
 			AddCtxControllerHandlers(machinectx.K8sContext).
 			SetMeshsyncDeploymentMode(meshsyncDeploymentMode).
@@ -127,7 +127,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 				machinectx.log.Error(errApply)
 			}
 		}
-	}()
+	})
 	return machines.NoOp, nil, nil
 }
 

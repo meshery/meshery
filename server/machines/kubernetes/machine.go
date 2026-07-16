@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"context"
+	"sync"
 
 	"github.com/meshery/schemas/models/core"
 
@@ -114,11 +115,36 @@ type MachineCtx struct {
 	OperatorTracker    *models.OperatorTracker
 	K8scontextChannel  *models.K8scontextChan
 	RegistryManager    *meshmodel.RegistryManager
+
+	// sideEffects serializes the connect/disconnect/delete cluster side effects
+	// for this connection so they run in event order against the shared
+	// MesheryCtrlsHelper instead of racing in independent goroutines. Created on
+	// first use via SideEffects().
+	sideEffectsOnce sync.Once
+	sideEffects     *machines.SerialExecutor
 }
 
 const (
 	machineName = "kubernetes"
+
+	// sideEffectQueueBuffer bounds the per-connection side-effect queue. A
+	// connection sees only a handful of rapid lifecycle events, so this sits
+	// comfortably above any realistic burst; exceeding it applies back-pressure
+	// rather than dropping work.
+	sideEffectQueueBuffer = 64
 )
+
+// SideEffects returns the per-connection serial executor that the connect,
+// disconnect and delete actions route their cluster side effects through,
+// creating it on first use. All three actions share one MesheryControllersHelper;
+// serializing here keeps their deploy/undeploy work ordered and free of the data
+// race that independent goroutines caused.
+func (mc *MachineCtx) SideEffects() *machines.SerialExecutor {
+	mc.sideEffectsOnce.Do(func() {
+		mc.sideEffects = machines.NewSerialExecutor(sideEffectQueueBuffer)
+	})
+	return mc.sideEffects
+}
 
 func New(ID string, userID core.Uuid, log logger.Handler) (*machines.StateMachine, error) {
 	connectionID, err := uuid.FromString(ID)
