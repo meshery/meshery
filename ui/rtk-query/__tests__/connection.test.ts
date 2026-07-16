@@ -125,7 +125,7 @@ describe('useGetConnectionsQuery wrapper', () => {
     expect(schemasGetConnections).toHaveBeenCalledWith(
       {
         page: '3',
-        pagesize: '25',
+        pageSize: '25',
         search: 'foo',
         order: 'asc',
         status: 'connected',

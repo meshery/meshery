@@ -43,7 +43,7 @@ import { EVENT_TYPES } from '../../../lib/event-types';
 import { K8sEmptyState } from '../../shared/EmptyState/K8sContextEmptyState';
 import { ACTIONS } from '../../../utils/Enum';
 import CAN from '../../../utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { TooltipWrappedConnectionChip } from '../../connections/ConnectionChip';
 import { setK8sContexts, updateProgress } from '@/store/slices/mesheryUi';
 import {
@@ -248,13 +248,25 @@ const ConfirmationMsg: FC<ConfirmationMsgProps> = (props) => {
                 )}
               </div>
             }
-            disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject)}
+            disabled={
+              !CAN(
+                Keys.CatalogManagementValidateDesign.id,
+                Keys.CatalogManagementValidateDesign.function,
+              )
+            }
           />
         )}
         <Tab
           disabled={
-            !CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) ||
-            (CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) && isDisabled)
+            !CAN(
+              Keys.CatalogManagementUndeployDesign.id,
+              Keys.CatalogManagementUndeployDesign.function,
+            ) ||
+            (CAN(
+              Keys.CatalogManagementUndeployDesign.id,
+              Keys.CatalogManagementUndeployDesign.function,
+            ) &&
+              isDisabled)
           }
           data-cy="Undeploy-btn-modal"
           onClick={(event) => handleTabValChange(event, ACTIONS.UNDEPLOY)}
@@ -275,8 +287,15 @@ const ConfirmationMsg: FC<ConfirmationMsgProps> = (props) => {
         />
         <Tab
           disabled={
-            !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) ||
-            (CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) && isDisabled)
+            !CAN(
+              Keys.CatalogManagementDeployDesign.id,
+              Keys.CatalogManagementDeployDesign.function,
+            ) ||
+            (CAN(
+              Keys.CatalogManagementDeployDesign.id,
+              Keys.CatalogManagementDeployDesign.function,
+            ) &&
+              isDisabled)
           }
           data-cy="deploy-btn-modal"
           onClick={(event) => handleTabValChange(event, ACTIONS.DEPLOY)}

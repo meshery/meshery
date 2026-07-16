@@ -24,21 +24,18 @@ const (
 	ErrInvalidOAMTypeCode                   = "meshery-server-1197"
 	ErrKubectlDescribeCode                  = "meshery-server-1198"
 	ErrEmptyCurrentK8sContextCode           = "meshery-server-1199"
-	ErrConfigurationPatternsCode            = "meshery-server-1200"
-	ErrConfigurationApplicationsCode        = "meshery-server-1201"
-	ErrConfigurationFiltersCode             = "meshery-server-1202"
 	ErrK8sContextCode                       = "meshery-server-1203"
-	ErrClusterResourcesSubscriptionCode     = "meshery-server-1204"
-	ErrGettingClusterResourcesCode          = "meshery-server-1205"
-	ErrMeshModelSummarySubscriptionCode     = "meshery-server-1206"
 	ErrGettingMeshModelSummaryCode          = "meshery-server-1207"
 	ErrGettingRegistryManagerCode           = "meshery-server-1208"
 	ErrGettingTelemetryComponentsCode       = "meshery-server-1209"
 	ErrAdapterInsufficientInformationCode   = "meshery-server-1210"
-	ErrPerformanceProfilesSubscriptionCode  = "meshery-server-1211"
-	ErrPerformanceResultSubscriptionCode    = "meshery-server-1212"
 	ErrGormDatabaseCode                     = "meshery-server-1213"
 	ErrResyncClusterCode                    = "meshery-server-1369"
+
+	// Retired with the removal of every GraphQL subscription (subscribeConfiguration,
+	// subscribeClusterResources, subscribeMeshModelSummary, subscribePerfProfiles,
+	// subscribePerfResults). Error codes are stable identifiers — do not reuse
+	// 1200, 1201, 1202, 1204, 1205, 1206, 1211 or 1212 for new errors.
 )
 
 var (
@@ -59,14 +56,6 @@ func ErrOperatorSubscription(err error) error {
 
 func ErrAddonSubscription(err error) error {
 	return errors.New(ErrAddonSubscriptionCode, errors.Alert, []string{"Addons Subscription failed", err.Error()}, []string{"GraphQL subscription for Addons stopped"}, []string{"Could be a network issue"}, []string{"Check if meshery server is reachable from the browser"})
-}
-
-func ErrPerformanceProfilesSubscription(err error) error {
-	return errors.New(ErrPerformanceProfilesSubscriptionCode, errors.Alert, []string{"PerformanceProfiles Subscription failed", err.Error()}, []string{"GraphQL subscription for PerformanceProfiles stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
-}
-
-func ErrPerformanceResultSubscription(err error) error {
-	return errors.New(ErrPerformanceResultSubscriptionCode, errors.Alert, []string{"PerformanceResult Subscription failed", err.Error()}, []string{"GraphQL subscription for PerformanceResult stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
 }
 
 func ErrGormDatabase(err error) error {
@@ -111,49 +100,6 @@ func ErrKubectlDescribe(err error) error {
 		[]string{err.Error(), "invalid kubernetes resource type or couldn't find the specified resource"},
 		[]string{}, []string{},
 	)
-}
-
-func ErrPatternsSubscription(err error) error {
-	return errors.New(ErrConfigurationPatternsCode, errors.Alert, []string{"Configuration Subscription failed", err.Error()}, []string{"GraphQL subscription for designs stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
-}
-
-func ErrApplicationsSubscription(err error) error {
-	return errors.New(ErrConfigurationApplicationsCode, errors.Alert, []string{"Configuration Subscription failed", err.Error()}, []string{"GraphQL subscription for Applications stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
-}
-
-func ErrFiltersSubscription(err error) error {
-	return errors.New(ErrConfigurationFiltersCode, errors.Alert, []string{"Configuration Subscription failed", err.Error()}, []string{"GraphQL subscription for Filters stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
-}
-
-func ErrClusterResourcesSubscription(err error) error {
-	return errors.New(
-		ErrClusterResourcesSubscriptionCode,
-		errors.Alert,
-		[]string{"ClusterResources Subscription failed", err.Error()},
-		[]string{"GraphQL subscription for ClusterResources Subscription stopped"},
-		[]string{"Could be a network issue"},
-		[]string{"Confirm that Meshery Server is reachable from your browser."})
-}
-
-func ErrGettingClusterResources(err error) error {
-	return errors.New(
-		ErrGettingClusterResourcesCode,
-		errors.Alert,
-		[]string{"Unable to retrieve cluster resources"},
-		[]string{err.Error()},
-		[]string{"Table in the database might not exists"},
-		[]string{""},
-	)
-}
-
-func ErrMeshModelSummarySubscription(err error) error {
-	return errors.New(
-		ErrMeshModelSummarySubscriptionCode,
-		errors.Alert,
-		[]string{"MeshModelSummary Subscription failed", err.Error()},
-		[]string{"GraphQL subscription for MeshModelSummary Subscription stopped"},
-		[]string{"Could be a network issue"},
-		[]string{"Confirm that Meshery Server is reachable from your browser."})
 }
 
 func ErrGettingMeshModelSummary(err error) error {

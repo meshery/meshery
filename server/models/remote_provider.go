@@ -697,10 +697,15 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 		return nil, ErrUnmarshal(err, "User Pref")
 	}
 
-	prefLocal, _ := l.ReadFromPersister(up.UserId)
+	prefLocal, _ := l.ReadFromPersister(up.ID.String())
 
-	if prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) || !reflect.DeepEqual(up.Preferences.RemoteProviderPreferences, prefLocal.RemoteProviderPreferences) {
-		_ = l.WriteToPersister(up.UserId, up.Preferences)
+	// Guard up.Preferences: up is pre-initialized with a non-nil Preferences, so
+	// an absent `preferences` field stays non-nil; but an explicit
+	// `"preferences": null` from the remote provider overwrites it to nil, and
+	// dereferencing UpdatedAt / RemoteProviderPreferences below would then panic.
+	// Nothing to persist in that case.
+	if up.Preferences != nil && (prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) || !reflect.DeepEqual(up.Preferences.RemoteProviderPreferences, prefLocal.RemoteProviderPreferences)) {
+		_ = l.WriteToPersister(up.ID.String(), up.Preferences)
 	}
 
 	// Uncomment when Debug verbosity is figured out project wide. | @leecalcote
@@ -4712,6 +4717,23 @@ func (l *RemoteProvider) UpdateConnectionById(token string, connection *connecti
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
+	// Ensure the payload carries the URL id so the remote provider keys the
+	// update on the intended connection even if the client omitted `id`
+	// (avoids duplicate-row creation). Fail fast on an unparseable connId.
+	if connection.ID == uuid.Nil {
+		parsedID, err := uuid.FromString(connId)
+		if err != nil {
+			return nil, err
+		}
+		connection.ID = parsedID
+	}
+	// A partial payload (e.g. the UI's connect action sending only {status}, or an
+	// FSM status transition sending only {kind, metadata, status}) must not
+	// clobber the fields it omits on the remote row. Backfill omitted fields from
+	// the persisted connection before sending the full PUT.
+	if existing, _, gerr := l.GetConnectionByID(token, connection.ID); gerr == nil && existing != nil {
+		connections.MergePayloadOntoExisting(connection, existing)
+	}
 	_conn, err := json.Marshal(connection)
 	if err != nil {
 		return nil, err

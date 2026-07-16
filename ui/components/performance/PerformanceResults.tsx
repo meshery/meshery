@@ -28,6 +28,7 @@ import {
 
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
 import { useDispatch, useSelector } from 'react-redux';
+import { isLocalProvider } from '@/utils/provider';
 import { updateProgressAction } from '@/store/slices/mesheryUi';
 import { updateResultsSelection } from '@/store/slices/prefTest';
 import { useGetPerformanceProfileResultsQuery } from '@meshery/schemas/mesheryApi';
@@ -464,7 +465,7 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
   const [anchorEl, setAnchorEl] = useState([]);
   const [socialMessage, setSocialMessage] = useState();
   const theme = useTheme();
-  const { user } = useSelector((state) => state.ui);
+  const { providerCapabilities } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
   const { results_selection } = useSelector((state) => state.prefTest);
   const searchTimeout = useRef();
@@ -557,8 +558,8 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
   const options = {
     elevation: elevation,
     filter: false,
-    sort: !(user?.userId === 'meshery'),
-    search: !(user?.userId === 'meshery'),
+    sort: !isLocalProvider(providerCapabilities),
+    search: !isLocalProvider(providerCapabilities),
     filterType: 'textField',
     responsive: 'standard',
     resizableColumns: true,

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button, Typography } from '@sistent/sistent';
 import { styled } from '@/theme';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import AddIconCircleBorder from '@/assets/icons/AddIconCircleBorder';
 import ConnectionWizardModal from './ConnectionWizardModal';
 const LaunchButton = styled(Button)({
@@ -12,8 +12,8 @@ const LaunchButton = styled(Button)({
 });
 
 const canOpenConnectionWizard = () =>
-  CAN(keys.ADD_CLUSTER.action, keys.ADD_CLUSTER.subject) ||
-  CAN(keys.CONNECT_METRICS.action, keys.CONNECT_METRICS.subject);
+  CAN(Keys.LifecycleManagementAddCluster.id, Keys.LifecycleManagementAddCluster.function) ||
+  CAN(Keys.MesherySystemConnectMetrics.id, Keys.MesherySystemConnectMetrics.function);
 
 const ConnectionWizardLauncher = () => {
   const [isOpen, setIsOpen] = useState(false);

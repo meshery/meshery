@@ -11,7 +11,6 @@ import _PromptComponent from '../../PromptComponent';
 import LoadingScreen from '../../shared/LoadingState/LoadingComponent';
 import { MesheryPatternsCatalog, VISIBILITY } from '../../../utils/Enum';
 import { useRouter } from 'next/router';
-import ConfigurationSubscription from '@/graphql/subscriptions/ConfigurationSubscription';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import _ from 'lodash';
 import { getMeshModels } from '../../../api/meshmodel';
@@ -23,7 +22,8 @@ import { useColumnVisibilityPreference } from '@/utils/hooks/useColumnVisibility
 import InfoModal from '../../shared/Modal/Information/InfoModal';
 import DefaultError from '../../general/error-404/index';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
+import { canEditDesign } from './design-permissions';
 import ExportDesignModal from '../export/ExportDesignModal';
 import { useModal, Modal as SistentModal } from '@sistent/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
@@ -45,6 +45,7 @@ import {
 } from '@/rtk-query/design';
 // import { useGetUserPrefQuery } from '@/rtk-query/user';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import { isLocalProvider } from '@/utils/provider';
 import { useSelector } from 'react-redux';
 import { ACTION_TYPES, resetSelectedPattern } from './MesheryPatterns.constants';
 import YAMLEditor from './YAMLEditor';
@@ -239,7 +240,6 @@ function MesheryPatterns({
 
   const catalogVisibilityRef = useRef(false);
   const catalogContentRef = useRef();
-  const disposeConfSubscriptionRef = useRef(null);
 
   /**
    * Checking whether users are signed in under a provider that doesn't have
@@ -282,51 +282,6 @@ function MesheryPatterns({
     );
   }, [viewType]);
 
-  const initPatternsSubscription = (
-    pageNo = page.toString(),
-    pagesize = pageSize.toString(),
-    searchText = search,
-    order = sortOrder,
-  ) => {
-    if (disposeConfSubscriptionRef.current) {
-      disposeConfSubscriptionRef.current.dispose();
-    }
-    const configurationSubscription = ConfigurationSubscription(
-      () => {
-        // stillLoading(false);
-        /**
-         * We are not using pattern subscription and this code is commented to prevent
-         * unnecessary state updates
-         */
-        // setPage(result.configuration?.patterns?.page || 0);
-        // setPageSize(result.configuration?.patterns?.page_size || 10);
-        // setCount(result.configuration?.patterns?.total_count || 0);
-        // handleSetPatterns(result.configuration?.patterns?.patterns);
-      },
-      {
-        applicationSelector: {
-          pageSize: pagesize,
-          page: pageNo,
-          search: searchText,
-          order: order,
-        },
-        patternSelector: {
-          pageSize: pagesize,
-          page: pageNo,
-          search: searchText,
-          order: order,
-        },
-        filterSelector: {
-          pageSize: pagesize,
-          page: pageNo,
-          search: searchText,
-          order: order,
-        },
-      },
-    );
-    disposeConfSubscriptionRef.current = configurationSubscription;
-  };
-
   useEffect(() => {
     const fetchMeshModels = async () => {
       try {
@@ -360,31 +315,8 @@ function MesheryPatterns({
 
     void fetchMeshModels();
 
-    /*
-                                       Below is a graphql query that fetches the catalog patterns that is published so
-                                       when catalogVisibility is true, we fetch the catalog patterns and set it to the patterns state
-                                       which show the catalog patterns only in the UI at the top of the list always whether we filter for public or private patterns.
-                                       Meshery's REST API already fetches catalog items with `published` visibility, hence this function is commented out.
-                                      */
-    // const fetchCatalogPatterns = fetchCatalogPattern({
-    //   selector: {
-    //     search: '',
-    //     order: '',
-    //     page: 0,
-    //     pagesize: 0,
-    //   },
-    // }).subscribe({
-    //   next: (result) => {
-    //     catalogContentRef.current = result?.catalogPatterns;
-    //     initPatternsSubscription();
-    //   },
-    //   error: (err) => console.log('There was an error fetching Catalog Filter: ', err),
-    // });
-
-    // return () => {
-    //   fetchCatalogPatterns.unsubscribe();
-    //   disposeConfSubscriptionRef.current?.dispose();
-    // };
+    // Meshery's REST API already returns catalog items with `published`
+    // visibility, so no separate catalog-pattern fetch is needed here.
   }, []);
 
   // useEffect(() => {
@@ -412,11 +344,7 @@ function MesheryPatterns({
       handleUndeploy,
     });
 
-  const userCanEdit = (pattern) => {
-    return (
-      CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject) && user?.userId == pattern?.userId
-    );
-  };
+  const userCanEdit = (pattern) => canEditDesign(user, pattern);
 
   const handleOpenInConfigurator = (id) => {
     router.push('/configuration/designs/configurator?design_id=' + id);
@@ -473,7 +401,7 @@ function MesheryPatterns({
     page,
     search,
     sortOrder,
-    user,
+    isLocalProvider: isLocalProvider(capabilitiesData),
     searchTimeout,
     setPage,
     setPageSize,
@@ -482,7 +410,6 @@ function MesheryPatterns({
     setSelectedRowData,
     deletePatterns,
     showModal,
-    initPatternsSubscription,
   });
 
   if (ispatternsLoading) {
@@ -520,7 +447,7 @@ function MesheryPatterns({
   return (
     <>
       <NoSsr>
-        {CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject) ? (
+        {CAN(Keys.CatalogManagementViewDesigns.id, Keys.CatalogManagementViewDesigns.function) ? (
           <>
             {selectedRowData && Object.keys(selectedRowData).length > 0 && (
               <YAMLEditor
@@ -544,10 +471,6 @@ function MesheryPatterns({
               router={router}
               handleUploadImport={handleUploadImport}
               setSearch={setSearch}
-              initPatternsSubscription={initPatternsSubscription}
-              page={page}
-              pageSize={pageSize}
-              sortOrder={sortOrder}
               filter={filter}
               selectedFilters={selectedFilters}
               setSelectedFilters={setSelectedFilters}
@@ -612,7 +535,10 @@ function MesheryPatterns({
 
             <SistentModal maxWidth="sm" {...designLifecycleModal}></SistentModal>
             <SistentModal {...sistentInfoModal}>
-              {CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject) &&
+              {CAN(
+                Keys.CatalogManagementDetailsOfDesign.id,
+                Keys.CatalogManagementDetailsOfDesign.function,
+              ) &&
                 infoModal.open && (
                   <InfoModal
                     infoModalOpen={true}
@@ -626,7 +552,10 @@ function MesheryPatterns({
 
             {canPublishPattern &&
               publishModal.open &&
-              CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject) && (
+              CAN(
+                Keys.CatalogManagementPublishDesign.id,
+                Keys.CatalogManagementPublishDesign.function,
+              ) && (
                 <PublishDesignModal
                   publishFormSchema={publishSchema}
                   handleClose={handlePublishModalClose}
@@ -634,12 +563,16 @@ function MesheryPatterns({
                   handleSubmit={handlePublish}
                 />
               )}
-            {importModal.open && CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject) && (
-              <ImportDesignModal
-                handleClose={handleUploadImportClose}
-                handleImportDesign={handleImportDesign}
-              />
-            )}
+            {importModal.open &&
+              CAN(
+                Keys.CatalogManagementImportDesign.id,
+                Keys.CatalogManagementImportDesign.function,
+              ) && (
+                <ImportDesignModal
+                  handleClose={handleUploadImportClose}
+                  handleImportDesign={handleImportDesign}
+                />
+              )}
             <_PromptComponent ref={modalRef} />
           </>
         ) : (

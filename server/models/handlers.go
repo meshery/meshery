@@ -5,7 +5,6 @@ import (
 
 	"time"
 
-	"github.com/meshery/meshery/server/models/meshmodel"
 	"github.com/meshery/meshkit/utils/events"
 )
 
@@ -73,6 +72,11 @@ type HandlerInterface interface {
 	AvailableAdaptersHandler(w http.ResponseWriter, req *http.Request)
 	EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	SubscribeEventsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	SubscribeMesheryControllersStatusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	OperatorStatusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	MeshsyncStatusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	BrokerStatusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	ControllerDiagnosticsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	ClientEventHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AdapterPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
@@ -211,6 +215,7 @@ type HandlerInterface interface {
 	GetConnectionsByKind(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetConnectionByID(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UpdateConnectionById(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	PerformConnectionAction(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	ProcessConnectionRegistration(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
@@ -289,14 +294,7 @@ type HandlerConfig struct {
 	// to be removed
 	BrokerEndpointURL *string
 
-	PerformanceChannel       chan struct{}
-	PerformanceResultChannel chan struct{}
-
-	PatternChannel            *Broadcast
-	FilterChannel             *Broadcast
-	EventBroadcaster          *Broadcast
-	DashboardK8sResourcesChan *DashboardK8sResourcesChan
-	MeshModelSummaryChannel   *meshmodel.SummaryChannel
+	EventBroadcaster *Broadcast
 
 	K8scontextChannel *K8scontextChan
 	EventsBuffer      *events.EventStreamer
