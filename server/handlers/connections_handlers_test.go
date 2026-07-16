@@ -57,3 +57,26 @@ func TestCancelConnectionRegistration_UnknownIdIsIdempotent(t *testing.T) {
 		t.Fatalf("expected %d, got %d", http.StatusNoContent, rec.Code)
 	}
 }
+
+func TestCancelConnectionRegistration_MalformedIdIsRejected(t *testing.T) {
+	tracker := newRegistrationTracker()
+	// A malformed id must not be coerced to uuid.Nil: anything tracked under
+	// the nil UUID would be silently discarded. Seed a nil-keyed instance and
+	// assert it survives the rejected request.
+	tracker.Add(uuid.Nil, &machines.StateMachine{})
+
+	h := &Handler{
+		log:                                     newTestLogger(t),
+		ConnectionToStateMachineInstanceTracker: tracker,
+	}
+	rec := httptest.NewRecorder()
+
+	h.CancelConnectionRegistration(rec, cancelRegistrationRequest("not-a-uuid"), nil, nil, nil)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected %d, got %d", http.StatusBadRequest, rec.Code)
+	}
+	if _, ok := tracker.Get(uuid.Nil); !ok {
+		t.Fatal("expected the nil-keyed state machine to remain tracked")
+	}
+}

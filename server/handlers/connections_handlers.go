@@ -115,13 +115,21 @@ func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Requ
 
 // CancelConnectionRegistration discards the in-progress connection
 // registration state machine tracked by registrationId. Nothing is persisted
-// for the abandoned process. Idempotent: unknown ids are ignored.
-// Defined in meshery/schemas as operation cancelConnectionRegister.
+// for the abandoned process. Idempotent for unknown ids; a malformed id is a
+// 400 rather than being coerced to the nil UUID, which could silently discard
+// an unrelated tracked process. Defined in meshery/schemas as operation
+// cancelConnectionRegister.
 //
 // DELETE /api/integrations/connections/register/{registrationId}
 func (h *Handler) CancelConnectionRegistration(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
-	registrationID := mux.Vars(req)["registrationId"]
-	h.ConnectionToStateMachineInstanceTracker.Remove(uuid.FromStringOrNil(registrationID))
+	registrationID, err := uuid.FromString(mux.Vars(req)["registrationId"])
+	if err != nil {
+		invalidIDErr := models.ErrInvalidUUID(err)
+		h.log.Error(invalidIDErr)
+		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
+		return
+	}
+	h.ConnectionToStateMachineInstanceTracker.Remove(registrationID)
 	w.WriteHeader(http.StatusNoContent)
 }
 
