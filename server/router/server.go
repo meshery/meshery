@@ -493,6 +493,11 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("POST")
 	gMux.Handle("/api/integrations/connections/register", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ProcessConnectionRegistration), models.ProviderAuth))).
 		Methods("POST", "DELETE")
+	// Path-param cancellation per the schemas contract (cancelConnectionRegister).
+	// The DELETE method on /register above is the legacy body-form, retained
+	// only until consumers migrate.
+	gMux.Handle("/api/integrations/connections/register/{registrationId}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.CancelConnectionRegistration), models.ProviderAuth))).
+		Methods("DELETE")
 	gMux.Handle("/api/integrations/connections/{connectionId}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteConnection), models.ProviderAuth))).
 		Methods("DELETE")
 	gMux.Handle("/api/integrations/connections/{connectionId}/controllers/config", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetConnectionControllersConfig), models.ProviderAuth))).

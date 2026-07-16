@@ -91,6 +91,11 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 	}
 }
 
+// handleProcessTermination is the legacy cancellation form: DELETE with the
+// tracker id in a JSON body. The schemas contract defines the path-param
+// CancelConnectionRegistration instead (DELETE .../register/{registrationId});
+// this form is retained only until consumers migrate, then the DELETE method
+// on /register goes away with it.
 func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Request) {
 	body := make(map[string]string, 0)
 	err := json.NewDecoder(req.Body).Decode(&body)
@@ -106,6 +111,18 @@ func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Requ
 	if ok {
 		smInstancetracker.Remove(uuid.FromStringOrNil(id))
 	}
+}
+
+// CancelConnectionRegistration discards the in-progress connection
+// registration state machine tracked by registrationId. Nothing is persisted
+// for the abandoned process. Idempotent: unknown ids are ignored.
+// Defined in meshery/schemas as operation cancelConnectionRegister.
+//
+// DELETE /api/integrations/connections/register/{registrationId}
+func (h *Handler) CancelConnectionRegistration(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
+	registrationID := mux.Vars(req)["registrationId"]
+	h.ConnectionToStateMachineInstanceTracker.Remove(uuid.FromStringOrNil(registrationID))
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.Request, payload *connections.ConnectionPayload) {
