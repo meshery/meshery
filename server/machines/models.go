@@ -138,6 +138,12 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	defer sm.mx.Unlock()
 	var event *events.Event
 
+	// eventType is reassigned inside the transition loop (to the recovery event,
+	// then ultimately to NoOp), so capture the caller's original event up front.
+	// It is needed after the loop to (a) skip the status update on an Exit event
+	// and (b) restrict failure de-duplication to the background Discovery path.
+	originalEventType := eventType
+
 	// actionErr and actionErrEvent capture the FIRST genuine action failure: the
 	// non-nil error returned by a state's entry/execute action, together with the
 	// Error event that action built. A failing action may return a non-NoOp
@@ -234,12 +240,20 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	// still report failures.
 	statusChanged := true
 
-	if sm.Provider != nil && eventType != Exit {
+	if sm.Provider != nil && originalEventType != Exit {
 		token, _ := ctx.Value(models.TokenCtxKey).(string)
 		connection, _, err := sm.Provider.GetConnectionByID(token, sm.ID)
 
 		if err != nil {
 
+			return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
+		}
+
+		// Defensive guard: a provider that reports no error but hands back a nil
+		// connection would panic on the field access below. Treat it as a
+		// retrieval failure so the caller sees an error instead of a crash.
+		if connection == nil {
+			err = ErrConnectionNotFound(sm.ID.String())
 			return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
 		}
 
@@ -277,7 +291,14 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	// status did not change, so a repeatedly re-discovered down connection does
 	// not spam a notification on every request.
 	if actionErr != nil {
-		if !statusChanged {
+		// De-duplicate ONLY the background discovery path. K8sFSMMiddleware
+		// re-runs SendEvent(Discovery) on every request, so a cluster that stays
+		// down must not re-emit an Error event once its status is already the
+		// recovery state. User-initiated events (Register, Connect, ...) always
+		// propagate their failure — a manual action that fails must be reported
+		// even when the persisted status does not change (e.g. it was already
+		// NOTFOUND/DISCONNECTED), otherwise the request silently "succeeds".
+		if !statusChanged && originalEventType == Discovery {
 			return nil, nil
 		}
 		// Guarantee a non-nil event on the error return: callers such as the K8s

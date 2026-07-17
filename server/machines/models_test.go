@@ -131,7 +131,7 @@ func newTestContext(t *testing.T) context.Context {
 	if err != nil {
 		t.Fatalf("failed to generate user UUID: %v", err)
 	}
-	sysID := core.Uuid(uuid.FromStringOrNil("00000000-0000-0000-0000-000000000000"))
+	sysID := core.Uuid(uuid.Nil)
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, models.UserCtxKey, &models.User{ID: core.Uuid(userID)})
 	ctx = context.WithValue(ctx, models.SystemIDKey, &sysID)
@@ -261,5 +261,65 @@ func TestSendEvent_DeDuplicatesRepeatFailure(t *testing.T) {
 	}
 	if event != nil {
 		t.Fatalf("expected no event on a suppressed repeat failure, got %#v", event)
+	}
+}
+
+// TestSendEvent_UserInitiatedFailureAlwaysPropagates guards the boundary of the
+// de-duplication gate: suppression is restricted to the background Discovery
+// path. A user-initiated event (here Connect) whose action fails must surface
+// its Error event + error even when the persisted status does not change, so a
+// manual action never silently "succeeds" when it actually failed.
+func TestSendEvent_UserInitiatedFailureAlwaysPropagates(t *testing.T) {
+	log, err := logger.New("test", logger.Options{})
+	if err != nil {
+		t.Fatalf("failed to build test logger: %v", err)
+	}
+	connectionID, err := uuid.NewV4()
+	if err != nil {
+		t.Fatalf("failed to generate connection UUID: %v", err)
+	}
+
+	// The connection is ALREADY persisted as NOTFOUND, so the failing Connect
+	// below settles back in NOTFOUND with no status change.
+	provider := &fakeProvider{status: connections.NOTFOUND}
+
+	failErr := errors.New("connection unreachable")
+	failEvent := events.NewEvent().WithSeverity(events.Error).WithDescription("connect failed").Build()
+
+	sm := &StateMachine{
+		ID:            core.Uuid(connectionID),
+		Name:          "kubernetes",
+		InitialState:  InitialState,
+		CurrentState:  InitialState,
+		PreviousState: DefaultState,
+		Log:           log,
+		Provider:      provider,
+		States: States{
+			InitialState: State{
+				Events: Events{Connect: CONNECTED},
+				Action: nil,
+			},
+			CONNECTED: State{
+				Events: Events{NotFound: NOTFOUND, Disconnect: DISCONNECTED},
+				Action: &stubAction{execNext: NotFound, execEvent: failEvent, execErr: failErr},
+			},
+			NOTFOUND: State{
+				Events: Events{Discovery: DISCOVERED, Delete: DELETED},
+				Action: &stubAction{execNext: NoOp},
+			},
+		},
+	}
+	ctx := newTestContext(t)
+
+	// A user-initiated Connect that fails, with the connection already NOTFOUND.
+	event, err := sm.SendEvent(ctx, Connect, nil)
+	if err == nil {
+		t.Fatal("expected a user-initiated failure to propagate even with no status change, got nil error")
+	}
+	if !errors.Is(err, failErr) {
+		t.Fatalf("expected the original action error, got %v", err)
+	}
+	if event != failEvent {
+		t.Fatalf("expected the original Error event, got %#v", event)
 	}
 }
