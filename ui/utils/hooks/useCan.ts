@@ -22,19 +22,11 @@ export function useCan(action?: string, subject?: string): boolean {
 
   const [allowed, setAllowed] = useState(evaluate);
 
-  // Update state during render to avoid a stale state render cycle
-  // if the action or subject props ever change.
-  const [prevAction, setPrevAction] = useState(action);
-  const [prevSubject, setPrevSubject] = useState(subject);
-
-  if (action !== prevAction || subject !== prevSubject) {
-    setPrevAction(action);
-    setPrevSubject(subject);
-    setAllowed(evaluate());
-  }
-
   useEffect(() => {
-    if (!action || !subject) return;
+    if (!action || !subject) {
+      setAllowed(false);
+      return;
+    }
 
     // Re-evaluate immediately in case rules changed between render and effect
     setAllowed(evaluate());

@@ -67,7 +67,10 @@ function Dashboard() {
     Keys.PerformanceManagementViewPerformanceProfiles.id,
     Keys.PerformanceManagementViewPerformanceProfiles.function,
   );
-  const canRunTest = useCan(Keys.PerformanceManagementRunTest.id, Keys.PerformanceManagementRunTest.function);
+  const canRunTest = useCan(
+    Keys.PerformanceManagementRunTest.id,
+    Keys.PerformanceManagementRunTest.function,
+  );
   const {
     data: performanceProfilesData,
     isFetching: isFetchingProfiles,
