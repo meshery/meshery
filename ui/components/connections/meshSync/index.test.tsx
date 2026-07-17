@@ -37,6 +37,24 @@ vi.mock('@sistent/sistent', () => ({
     return StyledComponent;
   },
   accentGrey: 'gray',
+  DataTableToolbar: ({
+    search,
+    filter,
+    columnVisibility,
+    tabs,
+  }: {
+    search?: React.ReactNode;
+    filter?: React.ReactNode;
+    columnVisibility?: React.ReactNode;
+    tabs?: React.ReactNode;
+  }) => (
+    <div data-testid="datatable-toolbar">
+      {search}
+      {filter}
+      {columnVisibility}
+      {tabs}
+    </div>
+  ),
 }));
 
 vi.mock('../../../utils/hooks/useNotification', () => ({
