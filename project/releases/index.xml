@@ -1,4 +1,63 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Mon, 13 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.56</title><link>/project/releases/v1.0.56/</link><pubDate>Mon, 13 Jul 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.56/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Fri, 17 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.57</title><link>/project/releases/v1.0.57/</link><pubDate>Fri, 17 Jul 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.57/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Bump websocket-driver from 0.7.4 to 0.7.5 in /install/docker-extension/ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20688)&lt;/li&gt;
+&lt;li&gt;Added missing &lt;code&gt;parent&lt;/code&gt; capability to VPC @YASHMAHAKAL (#20645)&lt;/li&gt;
+&lt;li&gt;corrected reference relationship between eks addon and cluster @YASHMAHAKAL (#20636)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Adopt meshery/schemas v1.3.32: connection registration and system/kubernetes contracts @leecalcote (#20727)&lt;/li&gt;
+&lt;li&gt;Update Provider.style.js with background styles @marblom007 (#20720)&lt;/li&gt;
+&lt;li&gt;[UI] Add info tooltips to remaining Connections table columns @leecalcote (#20718)&lt;/li&gt;
+&lt;li&gt;fix: Align enter port input field with deploy button @Ayush-kr-giga (#20510)&lt;/li&gt;
+&lt;li&gt;Fix/connections toolbar sistent 20655 @emphor11 (#20695)&lt;/li&gt;
+&lt;li&gt;[UI] Show connection status dots in cluster switcher and deployment target selector @chaitanyamedidar (#20686)&lt;/li&gt;
+&lt;li&gt;[UI] Consolidate connection state-transition confirmations into one modal @hortison (#20694)&lt;/li&gt;
+&lt;li&gt;[UI] Show Discovered At and fix invalid date on connections @chaitanyamedidar (#20689)&lt;/li&gt;
+&lt;li&gt;fix(security): prevent path traversal in file handlers @shteypandey28-hue (#20133)&lt;/li&gt;
+&lt;li&gt;[UI] Back duplicated connection/credential endpoints with schemas @ritzorama (#20708)&lt;/li&gt;
+&lt;li&gt;[UI] Fix Connections table wire-field reads, action alignment, and expanded details @hortison (#20693)&lt;/li&gt;
+&lt;li&gt;[UI] Persist Kubernetes context selection across navigation @hortison (#20692)&lt;/li&gt;
+&lt;li&gt;[Chore]: Update to Sistent v0.21.37 @l5io (#18991)&lt;/li&gt;
+&lt;li&gt;[UI] Open Create Connection wizard in place for Add Cluster and telemetry @chaitanyamedidar (#20691)&lt;/li&gt;
+&lt;li&gt;[UI] Integrate Sistent PermissionProvider and migrate Navigator permissions @rishiraj38 (#20590)&lt;/li&gt;
+&lt;li&gt;chore: bump @sistent/sistent to v0.21.35 @KhushamBansal (#20680)&lt;/li&gt;
+&lt;li&gt;chore(ui): bump @sistent/sistent from v0.21.26 to v0.21.34 @KhushamBansal (#20652)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Security] Fix SECURITY-INSIGHTS.yml schema compliance @ishwar170695 (#20428)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Docs] Remove moniker column and unused permission constants @rishiraj38 (#20676)&lt;/li&gt;
+&lt;li&gt;[docs] fix: replace deprecated word-wrap with overflow-wrap in _table.scss @addielaruee (#20668)&lt;/li&gt;
+&lt;li&gt;Create index.md @YASHMAHAKAL (#20707)&lt;/li&gt;
+&lt;li&gt;docs: remove empty code blocks from mesheryctl adapter documentation @emphor11 (#20653)&lt;/li&gt;
+&lt;li&gt;Add &amp;lsquo;Browse Academies&amp;rsquo; section to documentation @yi-nuo426 (#20643)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-security"&gt;
+	🔒 Security
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[server] Sanitize order parameter in GetUserCredentials @leecalcote (#20709)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@Ayush-kr-giga, @Copilot, @KhushamBansal, @YASHMAHAKAL, @addielaruee, @chaitanyamedidar, @dependabot[bot], @emphor11, @fitzergerald, @hortison, @ishwar170695, @jamieplu, @l5io, @leecalcote, @marblom007, @meshery-ci, @rishiraj38, @ritzorama, @shteypandey28-hue, @simihablo, @winkletinkle, @yi-nuo426 and [dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;)&lt;/p&gt;</description></item><item><title>v1.0.56</title><link>/project/releases/v1.0.56/</link><pubDate>Mon, 13 Jul 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.56/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -34263,7 +34322,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.56&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.57&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
