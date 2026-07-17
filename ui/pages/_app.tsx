@@ -77,7 +77,7 @@ import { useThemePreference } from '@/themes/hooks';
 import { CssBaseline, NoSsr, SistentThemeProvider } from '@/theme';
 import { ErrorBoundary } from '@sistent/sistent';
 import { LoadSessionGuard } from '@/rtk-query/ability';
-import { useGetLoggedInUserQuery, useGetSelectedOrganization } from '@/rtk-query/user';
+import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import CustomErrorFallback from '@/components/shared/ErrorBoundary/ErrorBoundary';
 import { normalizeLoadTestPrefs } from '../lib/load-test-prefs';
 import {
@@ -158,18 +158,22 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
   );
 
   const { data: loggedInUser } = useGetLoggedInUserQuery({});
-  const { selectedOrganization } = useGetSelectedOrganization();
 
   const permissionUserContext = useMemo(() => {
     const firstName = loggedInUser?.firstName || loggedInUser?.first_name || '';
     const lastName = loggedInUser?.lastName || loggedInUser?.last_name || '';
     const userName = `${firstName} ${lastName}`.trim() || loggedInUser?.name || loggedInUser?.email;
+
+    // Show the provider/registration org (e.g. "Meshery Cloud", "Exoscale")
+    // identity regardless of which org they've switched to.
+    const orgName = providerCapabilities?.providerName || '';
+
     return {
       userName,
-      orgName: selectedOrganization?.name,
+      orgName,
       roleNames: loggedInUser?.roleNames || [],
     };
-  }, [loggedInUser, selectedOrganization]);
+  }, [loggedInUser, providerCapabilities?.providerName]);
 
   // Holds the live controller-status SSE subscription ({ dispose }) so
   // initSubscriptions can tear down the previous stream and the bootstrap

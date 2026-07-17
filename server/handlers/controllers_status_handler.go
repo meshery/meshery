@@ -51,63 +51,50 @@ const (
 	controllersStatusWriteTimeout = 30 * time.Second
 )
 
-// ControllerStatusItem is one controller's status for one connection. It is the
-// element type of both the SSE snapshot array and the operator REST response.
-type ControllerStatusItem struct {
-	ConnectionID string `json:"connectionId"`
-	Controller   string `json:"controller"` // OPERATOR | MESHSYNC | BROKER
-	Status       string `json:"status"`
-	Version      string `json:"version"`
-}
+// The SSE snapshot element / operator REST response (system.ControllerStatus)
+// and the MeshSync / Broker one-shot payload (system.ControllerInfo) are the
+// schemas-generated types; the wire contract lives in
+// meshery/schemas (v1beta1/system).
 
-// ControllerInfo is the MeshSync / Broker one-shot status payload. Its status
-// string may be composed (e.g. "Connected <endpoint>"), mirroring the old
-// getMeshsyncStatus / getNatsStatus queries the UI branches on.
-type ControllerInfo struct {
-	Name         string `json:"name"`
-	Version      string `json:"version"`
-	Status       string `json:"status"`
-	ConnectionID string `json:"connectionId"`
-}
-
-// controllersStatusUnknown is the status string emitted when a connection has no
-// ready FSM instance or its context can't be read.
-const controllersStatusUnknown = "UNKOWN"
+// controllersStatusUnknown is the status emitted when a connection has no
+// ready FSM instance or its context can't be read. The published "UNKOWN"
+// spelling is load-bearing (see the schemas ControllerStatusValue docs).
+const controllersStatusUnknown = system.UNKOWN
 
 // internalControllerName reproduces model.GetInternalController: the wire name
 // for a controller enum.
-func internalControllerName(c models.MesheryController) string {
+func internalControllerName(c models.MesheryController) system.ControllerStatusController {
 	switch c {
 	case models.MesheryBroker:
-		return "BROKER"
+		return system.ControllerStatusControllerBROKER
 	case models.MesheryOperator:
-		return "OPERATOR"
+		return system.ControllerStatusControllerOPERATOR
 	case models.Meshsync:
-		return "MESHSYNC"
+		return system.ControllerStatusControllerMESHSYNC
 	}
 	return ""
 }
 
 // internalControllerStatus reproduces model.GetInternalControllerStatus: the
-// wire status string for a meshkit controller status.
-func internalControllerStatus(status controllers.MesheryControllerStatus) string {
+// wire status value for a meshkit controller status.
+func internalControllerStatus(status controllers.MesheryControllerStatus) system.ControllerStatusValue {
 	switch status {
 	case controllers.Deployed:
-		return "DEPLOYED"
+		return system.DEPLOYED
 	case controllers.NotDeployed:
-		return "NOTDEPLOYED"
+		return system.NOTDEPLOYED
 	case controllers.Deploying:
-		return "DEPLOYING"
+		return system.DEPLOYING
 	case controllers.Unknown:
 		return controllersStatusUnknown
 	case controllers.Undeployed:
-		return "UNDEPLOYED"
+		return system.UNDEPLOYED
 	case controllers.Enabled:
-		return "ENABLED"
+		return system.ENABLED
 	case controllers.Running:
-		return "RUNNING"
+		return system.RUNNING
 	case controllers.Connected:
-		return "CONNECTED"
+		return system.CONNECTED
 	}
 	return ""
 }
@@ -164,7 +151,7 @@ func (h *Handler) mesheryHoldsLiveBrokerConnection(machinectx *kubernetes.Machin
 // controller that is already present (running/deployed/enabled) — a
 // not-deployed controller is never reported as connected — and the operator's
 // status is left untouched (it is unrelated to broker connectivity).
-func deriveControllerStatus(controller models.MesheryController, status string, brokerConnected bool) string {
+func deriveControllerStatus(controller models.MesheryController, status system.ControllerStatusValue, brokerConnected bool) system.ControllerStatusValue {
 	if !brokerConnected {
 		return status
 	}
@@ -172,8 +159,8 @@ func deriveControllerStatus(controller models.MesheryController, status string, 
 		return status
 	}
 	switch status {
-	case "RUNNING", "DEPLOYED", "ENABLED":
-		return "CONNECTED"
+	case system.RUNNING, system.DEPLOYED, system.ENABLED:
+		return system.CONNECTED
 	}
 	return status
 }
@@ -181,8 +168,8 @@ func deriveControllerStatus(controller models.MesheryController, status string, 
 // collectControllersStatus builds the full status list for the requested
 // connections. The result is sorted (connectionId, controller) so callers can
 // compare successive snapshots byte-for-byte to detect changes.
-func (h *Handler) collectControllersStatus(connectionIDs []string) []ControllerStatusItem {
-	items := make([]ControllerStatusItem, 0)
+func (h *Handler) collectControllersStatus(connectionIDs []string) []system.ControllerStatus {
+	items := make([]system.ControllerStatus, 0)
 	for _, connectionID := range connectionIDs {
 		machinectx, ok := h.machineCtxForConnection(connectionID)
 		if !ok {
@@ -196,8 +183,10 @@ func (h *Handler) collectControllersStatus(connectionIDs []string) []ControllerS
 				h.log.Debugf("controllers status: version for %s on %s: %v", internalControllerName(controller), connectionID, err)
 			}
 			status := deriveControllerStatus(controller, internalControllerStatus(ctrlHandler.GetStatus()), brokerConnected)
-			items = append(items, ControllerStatusItem{
-				ConnectionID: connectionID,
+			items = append(items, system.ControllerStatus{
+				// machineCtxForConnection only resolves valid UUIDs, so the parse
+				// cannot yield the zero UUID here.
+				ConnectionId: uuid.FromStringOrNil(connectionID),
 				Controller:   internalControllerName(controller),
 				Status:       status,
 				Version:      version,
@@ -205,8 +194,8 @@ func (h *Handler) collectControllersStatus(connectionIDs []string) []ControllerS
 		}
 	}
 	sort.Slice(items, func(i, j int) bool {
-		if items[i].ConnectionID != items[j].ConnectionID {
-			return items[i].ConnectionID < items[j].ConnectionID
+		if items[i].ConnectionId != items[j].ConnectionId {
+			return items[i].ConnectionId.String() < items[j].ConnectionId.String()
 		}
 		return items[i].Controller < items[j].Controller
 	})
@@ -312,8 +301,16 @@ func (h *Handler) SubscribeMesheryControllersStatusHandler(w http.ResponseWriter
 // GET /api/system/controllers/operator/status?connectionId=<id>
 func (h *Handler) OperatorStatusHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
 	connectionID := req.URL.Query().Get("connectionId")
-	item := ControllerStatusItem{
-		ConnectionID: connectionID,
+	// Reject a malformed connectionId rather than falling back to uuid.Nil: a
+	// zero UUID is never a real connection and would echo an invalid id back to
+	// the client.
+	connectionUUID, err := uuid.FromString(connectionID)
+	if err != nil {
+		writeMeshkitError(w, models.ErrInvalidUUID(err), http.StatusBadRequest)
+		return
+	}
+	item := system.ControllerStatus{
+		ConnectionId: connectionUUID,
 		Controller:   internalControllerName(models.MesheryOperator),
 		Status:       controllersStatusUnknown,
 	}
@@ -331,15 +328,21 @@ func (h *Handler) OperatorStatusHandler(w http.ResponseWriter, req *http.Request
 // GET /api/system/controllers/meshsync/status?connectionId=<id>
 func (h *Handler) MeshsyncStatusHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
 	connectionID := req.URL.Query().Get("connectionId")
-	info := ControllerInfo{
-		ConnectionID: connectionID,
+	// Reject a malformed connectionId rather than falling back to uuid.Nil.
+	connectionUUID, err := uuid.FromString(connectionID)
+	if err != nil {
+		writeMeshkitError(w, models.ErrInvalidUUID(err), http.StatusBadRequest)
+		return
+	}
+	info := system.ControllerInfo{
+		ConnectionId: connectionUUID,
 		Name:         "MeshSync",
-		Status:       controllersStatusUnknown,
+		Status:       string(controllersStatusUnknown),
 	}
 	if machinectx, ok := h.machineCtxForConnection(connectionID); ok {
 		ctrlHandlers := machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
 		info = h.meshsyncInfo(ctrlHandlers[models.Meshsync], ctrlHandlers[models.MesheryBroker], h.mesheryHoldsLiveBrokerConnection(machinectx))
-		info.ConnectionID = connectionID
+		info.ConnectionId = connectionUUID
 	}
 	writeJSONMessage(w, info, http.StatusOK)
 }
@@ -349,15 +352,21 @@ func (h *Handler) MeshsyncStatusHandler(w http.ResponseWriter, req *http.Request
 // GET /api/system/controllers/broker/status?connectionId=<id>
 func (h *Handler) BrokerStatusHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
 	connectionID := req.URL.Query().Get("connectionId")
-	info := ControllerInfo{
-		ConnectionID: connectionID,
+	// Reject a malformed connectionId rather than falling back to uuid.Nil.
+	connectionUUID, err := uuid.FromString(connectionID)
+	if err != nil {
+		writeMeshkitError(w, models.ErrInvalidUUID(err), http.StatusBadRequest)
+		return
+	}
+	info := system.ControllerInfo{
+		ConnectionId: connectionUUID,
 		Name:         "MesheryBroker",
-		Status:       controllersStatusUnknown,
+		Status:       string(controllersStatusUnknown),
 	}
 	if machinectx, ok := h.machineCtxForConnection(connectionID); ok {
 		ctrlHandlers := machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
 		info = h.brokerInfo(ctrlHandlers[models.MesheryBroker], h.mesheryHoldsLiveBrokerConnection(machinectx))
-		info.ConnectionID = connectionID
+		info.ConnectionId = connectionUUID
 	}
 	writeJSONMessage(w, info, http.StatusOK)
 }
@@ -387,9 +396,9 @@ func composeConnectedBrokerStatus(broker controllers.IMesheryController) string 
 // (handlers cannot import internal/graphql/model — it imports handlers).
 // brokerConnected upgrades a present-but-unverified broker to Connected when
 // Meshery already holds a live broker connection.
-func (h *Handler) brokerInfo(broker controllers.IMesheryController, brokerConnected bool) ControllerInfo {
+func (h *Handler) brokerInfo(broker controllers.IMesheryController, brokerConnected bool) system.ControllerInfo {
 	if broker == nil {
-		return ControllerInfo{Status: controllersStatusUnknown}
+		return system.ControllerInfo{Status: string(controllersStatusUnknown)}
 	}
 	status := broker.GetStatus().String()
 	if status == controllers.Connected.String() {
@@ -399,7 +408,7 @@ func (h *Handler) brokerInfo(broker controllers.IMesheryController, brokerConnec
 		status = composeConnectedBrokerStatus(broker)
 	}
 	version, _ := broker.GetVersion()
-	return ControllerInfo{
+	return system.ControllerInfo{
 		Name:    broker.GetName(),
 		Status:  status,
 		Version: version,
@@ -409,9 +418,9 @@ func (h *Handler) brokerInfo(broker controllers.IMesheryController, brokerConnec
 // meshsyncInfo reproduces model.GetMeshSyncInfo without the gqlgen model
 // dependency. brokerConnected upgrades a present-but-unverified MeshSync to
 // Connected when Meshery already holds a live broker connection.
-func (h *Handler) meshsyncInfo(meshsync, broker controllers.IMesheryController, brokerConnected bool) ControllerInfo {
+func (h *Handler) meshsyncInfo(meshsync, broker controllers.IMesheryController, brokerConnected bool) system.ControllerInfo {
 	if meshsync == nil {
-		return ControllerInfo{Status: controllersStatusUnknown}
+		return system.ControllerInfo{Status: string(controllersStatusUnknown)}
 	}
 	status := meshsync.GetStatus().String()
 	if broker == nil {
@@ -429,7 +438,7 @@ func (h *Handler) meshsyncInfo(meshsync, broker controllers.IMesheryController, 
 		status = composeConnectedBrokerStatus(broker)
 	}
 	version, _ := meshsync.GetVersion()
-	return ControllerInfo{
+	return system.ControllerInfo{
 		Name:    meshsync.GetName(),
 		Status:  status,
 		Version: version,

@@ -43,7 +43,7 @@ const ACTION_TYPES = {
 };
 
 export default function MeshSyncTable(props) {
-  const { selectedResourceId, updateUrlWithResourceId } = props;
+  const { selectedResourceId, updateUrlWithResourceId, tabs } = props;
   const callbackRef = useRef();
   const [openRegistrationModal, setRegistrationModal] = useState(false);
   const [page, setPage] = useState(0);
@@ -722,6 +722,8 @@ export default function MeshSyncTable(props) {
           />
         </div>
       </ToolWrapper>
+
+      {tabs}
 
       {!meshSyncResources || meshSyncResources.length === 0 ? (
         <MeshSyncEmptyState />

@@ -61,6 +61,7 @@ const ConnectionTable = ({
   selectedFilter,
   selectedConnectionId,
   updateUrlWithConnectionId,
+  tabs,
 }: ConnectionTableProps) => {
   const {
     organization,
@@ -654,6 +655,7 @@ const ConnectionTable = ({
         columns={columns}
         columnVisibility={columnVisibility}
         setColumnVisibility={setColumnVisibilityByUser}
+        tabs={tabs}
       />
 
       <ResponsiveDataTable

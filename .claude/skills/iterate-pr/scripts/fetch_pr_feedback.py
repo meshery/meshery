@@ -6,26 +6,12 @@
 Fetch and categorize PR review feedback.
 
 Usage:
-    python fetch_pr_feedback.py [--pr PR_NUMBER]
+    uv run fetch_pr_feedback.py [--pr PR_NUMBER]
+    python3 fetch_pr_feedback.py [--pr PR_NUMBER]
 
 If --pr is not specified, uses the PR for the current branch.
-
-Output: JSON to stdout with categorized feedback.
-
-Categories (using LOGAF scale - see https://develop.sentry.dev/engineering-practices/code-review/#logaf-scale):
-- high: Must address before merge (h:, blocker, changes requested)
-- medium: Should address (m:, standard feedback)
-- low: Optional suggestions (l:, nit, style)
-- bot: Informational automated comments (Codecov, Dependabot, etc.)
-- resolved: Already resolved threads
-
-Bot classification:
-- Review bots (Sentry, Warden, Cursor, Bugbot, etc.) provide actionable code
-  feedback. Their comments are categorized by content into high/medium/low with
-  a ``review_bot: true`` flag — they are NOT placed in the ``bot`` bucket.
-- Info bots (Codecov, Dependabot, Renovate, etc.) post status reports and are
-  placed in the ``bot`` bucket for silent skipping.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -33,11 +19,9 @@ import json
 import re
 import subprocess
 import sys
-from typing import Any
+from typing import Any, NoReturn
 
 
-# Bots that provide actionable code review feedback (security issues, lint
-# violations, bugs). Their comments are categorized by content, not skipped.
 REVIEW_BOT_PATTERNS = [
     r"(?i)^sentry",
     r"(?i)^warden",
@@ -50,8 +34,6 @@ REVIEW_BOT_PATTERNS = [
     r"(?i)^codeql",
 ]
 
-# Bots that post informational status reports (coverage, dependency updates).
-# These are placed in the ``bot`` bucket and skipped silently.
 INFO_BOT_PATTERNS = [
     r"(?i)^codecov",
     r"(?i)^dependabot",
@@ -65,96 +47,144 @@ INFO_BOT_PATTERNS = [
     r"(?i)\[bot\]$",
 ]
 
+LOGAF_PATTERNS = [
+    (re.compile(r"^\s*(?:h:|h\s*:|high:|\[h\])", re.IGNORECASE), "high"),
+    (re.compile(r"^\s*(?:m:|m\s*:|medium:|\[m\])", re.IGNORECASE), "medium"),
+    (re.compile(r"^\s*(?:l:|l\s*:|low:|\[l\])", re.IGNORECASE), "low"),
+]
 
-def run_gh(args: list[str]) -> dict[str, Any] | list[Any] | None:
-    """Run a gh CLI command and return parsed JSON output."""
+HIGH_PATTERNS = [
+    re.compile(pattern, re.IGNORECASE)
+    for pattern in (
+        r"must\s+(fix|change|update|address)",
+        r"this\s+(is\s+)?(wrong|incorrect|broken|buggy)",
+        r"security\s+(issue|vulnerability|concern)",
+        r"will\s+(break|cause|fail)",
+        r"\bcritical\b",
+        r"\bblocker\b",
+    )
+]
+
+LOW_PATTERNS = [
+    re.compile(pattern, re.IGNORECASE)
+    for pattern in (
+        r"nit[:\s]",
+        r"nitpick",
+        r"suggestion[:\s]",
+        r"consider\s+",
+        r"could\s+(also\s+)?",
+        r"might\s+(want\s+to|be\s+better)",
+        r"optional[:\s]",
+        r"minor[:\s]",
+        r"style[:\s]",
+        r"prefer\s+",
+        r"what\s+do\s+you\s+think",
+        r"up\s+to\s+you",
+        r"take\s+it\s+or\s+leave",
+        r"\bfwiw\b",
+    )
+]
+
+
+def fail(message: str) -> NoReturn:
+    print(json.dumps({"error": message}))
+    sys.exit(1)
+
+
+def run_gh_json(args: list[str]) -> Any:
     try:
         result = subprocess.run(
-            ["gh"] + args,
+            ["gh", *args],
             capture_output=True,
             text=True,
-            check=True,
         )
-        return json.loads(result.stdout) if result.stdout.strip() else None
-    except subprocess.CalledProcessError as e:
-        print(f"Error running gh {' '.join(args)}: {e.stderr}", file=sys.stderr)
+    except OSError as exc:
+        raise RuntimeError(f"failed to run gh CLI: {exc}") from exc
+    if result.returncode != 0:
+        stderr = (result.stderr or result.stdout).strip() or "unknown gh error"
+        raise RuntimeError(f"gh {' '.join(args)} failed: {stderr}")
+
+    stdout = result.stdout.strip()
+    if not stdout:
         return None
-    except json.JSONDecodeError:
-        return None
+
+    try:
+        return json.loads(stdout)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(f"gh {' '.join(args)} returned non-JSON output") from exc
 
 
-def get_repo_info() -> tuple[str, str] | None:
-    """Get owner and repo name from current directory."""
-    result = run_gh(["repo", "view", "--json", "owner,name"])
-    if result:
-        return result.get("owner", {}).get("login"), result.get("name")
-    return None
+def get_repo_info() -> tuple[str, str]:
+    result = run_gh_json(["repo", "view", "--json", "owner,name"])
+    if not isinstance(result, dict):
+        raise RuntimeError("could not determine repository from current directory")
+    owner = result.get("owner", {}).get("login")
+    repo = result.get("name")
+    if not owner or not repo:
+        raise RuntimeError("could not determine repository owner/name")
+    return str(owner), str(repo)
 
 
-def get_pr_info(pr_number: int | None = None) -> dict[str, Any] | None:
-    """Get PR info, optionally by number or for current branch."""
+def get_pr_info(pr_number: int | None = None) -> dict[str, Any]:
     args = ["pr", "view", "--json", "number,url,headRefName,author,reviews,reviewDecision"]
-    if pr_number:
+    if pr_number is not None:
         args.insert(2, str(pr_number))
-    return run_gh(args)
+    result = run_gh_json(args)
+    if not isinstance(result, dict):
+        raise RuntimeError("unable to determine PR for current branch")
+    return result
 
 
 def is_review_bot(username: str) -> bool:
-    """Check if username matches a review bot that posts actionable feedback."""
     return any(re.search(p, username) for p in REVIEW_BOT_PATTERNS)
 
 
 def is_info_bot(username: str) -> bool:
-    """Check if username matches an informational bot (skip silently)."""
     return any(re.search(p, username) for p in INFO_BOT_PATTERNS)
 
 
-def is_bot(username: str) -> bool:
-    """Check if username matches any known bot pattern."""
-    return is_review_bot(username) or is_info_bot(username)
-
-
-def get_review_comments(owner: str, repo: str, pr_number: int) -> list[dict[str, Any]]:
-    """Get inline code review comments via API."""
-    result = run_gh([
-        "api",
-        f"repos/{owner}/{repo}/pulls/{pr_number}/comments",
-        "--paginate",
-    ])
-    return result if isinstance(result, list) else []
-
-
 def get_issue_comments(owner: str, repo: str, pr_number: int) -> list[dict[str, Any]]:
-    """Get PR conversation comments (includes bot comments)."""
-    result = run_gh([
+    result = run_gh_json([
         "api",
         f"repos/{owner}/{repo}/issues/{pr_number}/comments",
         "--paginate",
+        "--slurp",
     ])
-    return result if isinstance(result, list) else []
+    if not isinstance(result, list):
+        return []
+
+    comments: list[dict[str, Any]] = []
+    for page in result:
+        if isinstance(page, list):
+            comments.extend(entry for entry in page if isinstance(entry, dict))
+        elif isinstance(page, dict):
+            comments.append(page)
+    return comments
 
 
 def get_review_threads(owner: str, repo: str, pr_number: int) -> list[dict[str, Any]]:
-    """Get review threads with resolution status via GraphQL."""
     query = """
-    query($owner: String!, $repo: String!, $pr: Int!) {
+    query($owner: String!, $repo: String!, $pr: Int!, $after: String) {
       repository(owner: $owner, name: $repo) {
         pullRequest(number: $pr) {
-          reviewThreads(first: 100) {
+          reviewThreads(first: 100, after: $after) {
+            pageInfo {
+              hasNextPage
+              endCursor
+            }
             nodes {
               id
               isResolved
               isOutdated
               path
               line
-              comments(first: 10) {
+              comments(first: 1) {
                 nodes {
-                  id
                   body
+                  createdAt
                   author {
                     login
                   }
-                  createdAt
                 }
               }
             }
@@ -163,113 +193,79 @@ def get_review_threads(owner: str, repo: str, pr_number: int) -> list[dict[str, 
       }
     }
     """
-    try:
-        result = subprocess.run(
-            [
-                "gh", "api", "graphql",
-                "-f", f"query={query}",
-                "-F", f"owner={owner}",
-                "-F", f"repo={repo}",
-                "-F", f"pr={pr_number}",
-            ],
-            capture_output=True,
-            text=True,
-            check=True,
+    threads: list[dict[str, Any]] = []
+    cursor: str | None = None
+    while True:
+        args = [
+            "api",
+            "graphql",
+            "-f",
+            f"query={query}",
+            "-F",
+            f"owner={owner}",
+            "-F",
+            f"repo={repo}",
+            "-F",
+            f"pr={pr_number}",
+        ]
+        if cursor is not None:
+            args.extend(["-F", f"after={cursor}"])
+
+        result = run_gh_json(args)
+        if not isinstance(result, dict):
+            break
+
+        review_threads = (
+            result.get("data", {})
+            .get("repository", {})
+            .get("pullRequest", {})
+            .get("reviewThreads", {})
         )
-        data = json.loads(result.stdout)
-        threads = data.get("data", {}).get("repository", {}).get("pullRequest", {}).get("reviewThreads", {}).get("nodes", [])
-        return threads
-    except (subprocess.CalledProcessError, json.JSONDecodeError):
-        return []
+        nodes = review_threads.get("nodes", [])
+        if isinstance(nodes, list):
+            threads.extend(nodes)
+
+        page_info = review_threads.get("pageInfo", {})
+        if not page_info.get("hasNextPage"):
+            break
+        cursor = page_info.get("endCursor")
+        if not cursor:
+            break
+
+    return threads
 
 
 def detect_logaf(body: str) -> str | None:
-    """Detect LOGAF scale markers in comment body.
-
-    LOGAF scale (https://develop.sentry.dev/engineering-practices/code-review/#logaf-scale):
-    - l: / [l] / low: → low priority (optional)
-    - m: / [m] / medium: → medium priority (should address)
-    - h: / [h] / high: → high priority (must address)
-
-    Returns 'high', 'medium', 'low', or None if no marker found.
-    """
-    # Check for LOGAF markers at start of comment (with optional whitespace)
-    logaf_patterns = [
-        # h: or [h] or high: patterns
-        (r"^\s*(?:h:|h\s*:|high:|\[h\])", "high"),
-        # m: or [m] or medium: patterns
-        (r"^\s*(?:m:|m\s*:|medium:|\[m\])", "medium"),
-        # l: or [l] or low: patterns
-        (r"^\s*(?:l:|l\s*:|low:|\[l\])", "low"),
-    ]
-
-    for pattern, level in logaf_patterns:
-        if re.search(pattern, body, re.IGNORECASE):
+    for pattern, level in LOGAF_PATTERNS:
+        if pattern.search(body):
             return level
-
     return None
 
 
-def categorize_comment(comment: dict[str, Any], body: str) -> str:
-    """Categorize a comment based on content and author.
-
-    Uses LOGAF scale: high (must fix), medium (should fix), low (optional).
-    """
-    author = comment.get("author", {}).get("login", "") or comment.get("user", {}).get("login", "")
-
-    # Info bots are skipped silently; review bots fall through to content
-    # categorization so their actionable feedback is not lost.
+def categorize_comment(author: str, body: str) -> str:
     if is_info_bot(author) and not is_review_bot(author):
         return "bot"
 
-    # Check for explicit LOGAF markers first
     logaf_level = detect_logaf(body)
     if logaf_level:
         return logaf_level
 
-    # Look for high-priority (blocking) indicators
-    high_patterns = [
-        r"(?i)must\s+(fix|change|update|address)",
-        r"(?i)this\s+(is\s+)?(wrong|incorrect|broken|buggy)",
-        r"(?i)security\s+(issue|vulnerability|concern)",
-        r"(?i)will\s+(break|cause|fail)",
-        r"(?i)critical",
-        r"(?i)blocker",
-    ]
-
-    for pattern in high_patterns:
-        if re.search(pattern, body):
-            return "high"
-
-    # Look for low-priority (suggestion) indicators
-    low_patterns = [
-        r"(?i)nit[:\s]",
-        r"(?i)nitpick",
-        r"(?i)suggestion[:\s]",
-        r"(?i)consider\s+",
-        r"(?i)could\s+(also\s+)?",
-        r"(?i)might\s+(want\s+to|be\s+better)",
-        r"(?i)optional[:\s]",
-        r"(?i)minor[:\s]",
-        r"(?i)style[:\s]",
-        r"(?i)prefer\s+",
-        r"(?i)what\s+do\s+you\s+think",
-        r"(?i)up\s+to\s+you",
-        r"(?i)take\s+it\s+or\s+leave",
-        r"(?i)fwiw",
-    ]
-
-    for pattern in low_patterns:
-        if re.search(pattern, body):
-            return "low"
-
-    # Default to medium for non-bot comments without clear indicators
+    if any(pattern.search(body) for pattern in HIGH_PATTERNS):
+        return "high"
+    if any(pattern.search(body) for pattern in LOW_PATTERNS):
+        return "low"
     return "medium"
+
+
+def item_sort_key(item: dict[str, Any]) -> str:
+    return item.get("_created_at", "")
 
 
 def extract_feedback_item(
     body: str,
     author: str,
+    *,
+    created_at: str = "",
     path: str | None = None,
     line: int | None = None,
     url: str | None = None,
@@ -278,20 +274,19 @@ def extract_feedback_item(
     review_bot: bool = False,
     thread_id: str | None = None,
 ) -> dict[str, Any]:
-    """Create a standardized feedback item."""
-    # Truncate long bodies for summary
     summary = body[:200] + "..." if len(body) > 200 else body
     summary = summary.replace("\n", " ").strip()
 
-    item = {
+    item: dict[str, Any] = {
         "author": author,
         "body": summary,
         "full_body": body,
+        "_created_at": created_at,
     }
 
     if path:
         item["path"] = path
-    if line:
+    if line is not None:
         item["line"] = line
     if url:
         item["url"] = url
@@ -307,138 +302,116 @@ def extract_feedback_item(
     return item
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Fetch and categorize PR feedback")
     parser.add_argument("--pr", type=int, help="PR number (defaults to current branch PR)")
     args = parser.parse_args()
 
-    # Get repo info
-    repo_info = get_repo_info()
-    if not repo_info:
-        print(json.dumps({"error": "Could not determine repository"}))
-        sys.exit(1)
-    owner, repo = repo_info
-
-    # Get PR info
-    pr_info = get_pr_info(args.pr)
-    if not pr_info:
-        print(json.dumps({"error": "No PR found for current branch"}))
-        sys.exit(1)
+    try:
+        owner, repo = get_repo_info()
+        pr_info = get_pr_info(args.pr)
+    except RuntimeError as error:
+        fail(str(error))
 
     pr_number = pr_info["number"]
     pr_author = pr_info.get("author", {}).get("login", "")
-
-    # Get review decision
     review_decision = pr_info.get("reviewDecision", "")
 
-    # Categorized feedback using LOGAF scale
-    feedback = {
-        "high": [],      # Must address before merge
-        "medium": [],    # Should address
-        "low": [],       # Optional suggestions
+    feedback: dict[str, list[dict[str, Any]]] = {
+        "high": [],
+        "medium": [],
+        "low": [],
         "bot": [],
         "resolved": [],
     }
 
-    # Process reviews for overall status
     reviews = pr_info.get("reviews", [])
-    for review in reviews:
-        if review.get("state") == "CHANGES_REQUESTED":
+    if isinstance(reviews, list):
+        for review in reviews:
+            if not isinstance(review, dict):
+                continue
+            if review.get("state") != "CHANGES_REQUESTED":
+                continue
             author = review.get("author", {}).get("login", "")
             body = review.get("body", "")
-            if body and author != pr_author:
-                item = extract_feedback_item(body, author)
-                item["type"] = "changes_requested"
-                feedback["high"].append(item)
+            if not author or not body or author == pr_author:
+                continue
+            item = extract_feedback_item(
+                body=body,
+                author=author,
+                created_at=str(review.get("submittedAt", "")),
+            )
+            item["type"] = "changes_requested"
+            feedback["high"].append(item)
 
-    # Get review threads (inline comments with resolution status)
-    threads = get_review_threads(owner, repo, pr_number)
-    seen_thread_ids = set()
+    try:
+        threads = get_review_threads(owner, repo, pr_number)
+        issue_comments = get_issue_comments(owner, repo, pr_number)
+    except RuntimeError as error:
+        fail(str(error))
 
-    for thread in threads:
-        if not thread.get("comments", {}).get("nodes"):
-            continue
+    if isinstance(threads, list):
+        for thread in threads:
+            if not isinstance(thread, dict):
+                continue
+            comments = thread.get("comments", {}).get("nodes", [])
+            if not comments or not isinstance(comments, list):
+                continue
 
-        first_comment = thread["comments"]["nodes"][0]
-        author = first_comment.get("author", {}).get("login", "")
-        body = first_comment.get("body", "")
+            first_comment = comments[0] if comments and isinstance(comments[0], dict) else {}
+            author = first_comment.get("author", {}).get("login", "")
+            body = first_comment.get("body", "")
+            if not author or not body or author == pr_author or len(body.strip()) < 3:
+                continue
 
-        # Skip if author is PR author (self-comments)
-        if author == pr_author:
-            continue
+            is_resolved = bool(thread.get("isResolved", False))
+            thread_id = thread.get("id")
+            category = "resolved" if is_resolved else categorize_comment(author, body)
 
-        # Skip empty or very short comments
-        if not body or len(body.strip()) < 3:
-            continue
-
-        is_resolved = thread.get("isResolved", False)
-        is_outdated = thread.get("isOutdated", False)
-
-        thread_id = thread.get("id")
-        item = extract_feedback_item(
-            body=body,
-            author=author,
-            path=thread.get("path"),
-            line=thread.get("line"),
-            is_resolved=is_resolved,
-            is_outdated=is_outdated,
-            thread_id=thread_id,
-        )
-
-        if thread_id:
-            seen_thread_ids.add(thread_id)
-
-        if is_resolved:
-            feedback["resolved"].append(item)
-        elif is_review_bot(author):
-            category = categorize_comment(first_comment, body)
-            item["review_bot"] = True
-            feedback[category].append(item)
-        elif is_info_bot(author):
-            feedback["bot"].append(item)
-        else:
-            category = categorize_comment(first_comment, body)
+            item = extract_feedback_item(
+                body=body,
+                author=author,
+                created_at=str(first_comment.get("createdAt", "")),
+                path=thread.get("path"),
+                line=thread.get("line"),
+                is_resolved=is_resolved,
+                is_outdated=bool(thread.get("isOutdated", False)),
+                thread_id=thread_id if isinstance(thread_id, str) else None,
+                review_bot=category in {"high", "medium", "low"} and is_review_bot(author),
+            )
             feedback[category].append(item)
 
-    # Get issue comments (general PR conversation)
-    issue_comments = get_issue_comments(owner, repo, pr_number)
+    if isinstance(issue_comments, list):
+        for comment in issue_comments:
+            if not isinstance(comment, dict):
+                continue
+            author = comment.get("user", {}).get("login", "")
+            body = comment.get("body", "")
+            if not author or not body or author == pr_author or len(body.strip()) < 3:
+                continue
 
-    for comment in issue_comments:
-        author = comment.get("user", {}).get("login", "")
-        body = comment.get("body", "")
-
-        # Skip if author is PR author
-        if author == pr_author:
-            continue
-
-        # Skip empty comments
-        if not body or len(body.strip()) < 3:
-            continue
-
-        item = extract_feedback_item(
-            body=body,
-            author=author,
-            url=comment.get("html_url"),
-        )
-
-        if is_review_bot(author):
-            category = categorize_comment(comment, body)
-            item["review_bot"] = True
-            feedback[category].append(item)
-        elif is_info_bot(author):
-            feedback["bot"].append(item)
-        else:
-            category = categorize_comment(comment, body)
+            category = categorize_comment(author, body)
+            item = extract_feedback_item(
+                body=body,
+                author=author,
+                created_at=str(comment.get("created_at", "")),
+                url=comment.get("html_url"),
+                review_bot=category in {"high", "medium", "low"} and is_review_bot(author),
+            )
             feedback[category].append(item)
 
-    # Count review bot items across priority buckets
+    for bucket in feedback.values():
+        bucket.sort(key=item_sort_key)
+        for item in bucket:
+            item.pop("_created_at", None)
+
     review_bot_count = sum(
-        1 for bucket in ("high", "medium", "low")
+        1
+        for bucket in ("high", "medium", "low")
         for item in feedback[bucket]
         if item.get("review_bot")
     )
 
-    # Build output
     output = {
         "pr": {
             "number": pr_number,
@@ -458,7 +431,6 @@ def main():
         "feedback": feedback,
     }
 
-    # Add actionable summary based on LOGAF priorities
     if feedback["high"]:
         output["action_required"] = "Address high-priority feedback before merge"
     elif feedback["medium"]:

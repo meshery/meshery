@@ -44,10 +44,11 @@ vi.mock('./styles', () => ({
 const connectionTableCallbackRefs: Array<unknown> = [];
 
 vi.mock('./ConnectionTable', () => ({
-  default: ({ selectedConnectionId, updateUrlWithConnectionId }) => {
+  default: ({ selectedConnectionId, updateUrlWithConnectionId, tabs }) => {
     connectionTableCallbackRefs.push(updateUrlWithConnectionId);
     return (
       <div>
+        {tabs}
         <div data-testid="connection-table">connection:{selectedConnectionId ?? 'none'}</div>
         <button onClick={() => updateUrlWithConnectionId?.('cluster-2')} type="button">
           Update Connection Id
@@ -66,8 +67,9 @@ vi.mock('@/utils/context/ConnectionWizardContextProvider', () => ({
 }));
 
 vi.mock('./meshSync', () => ({
-  default: ({ selectedResourceId, updateUrlWithResourceId }) => (
+  default: ({ selectedResourceId, updateUrlWithResourceId, tabs }) => (
     <div>
+      {tabs}
       <div data-testid="meshsync-table">resource:{selectedResourceId ?? 'none'}</div>
       <button onClick={() => updateUrlWithResourceId?.('resource-2')} type="button">
         Update Resource Id

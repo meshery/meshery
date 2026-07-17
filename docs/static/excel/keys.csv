@@ -99,7 +99,7 @@ Workspace,Assign Designs to Workspaces,Assign designs to workspaces,,,,,X,,X,X,W
 Workspace,Remove Designs from Workspaces,Remove designs from workspaces,,,,,X,,X,X,Workspace Management,076515f1-f696-4211-ae27-58d5463a229e,X,TRUE
 Settings,Reset Database,Reset Meshery database,,,,,,,X,X,Settings Management,84fc402c-f33e-4a21-a0e3-e14f9e20b125,X,TRUE
 Administration,Access the Academy console,View and assess the performance of learners and of your organization's academy content.,,,,,,,,,Academy Management,045fad17-d2cc-46e8-bb10-f9ee026c799f,,FALSE
-Operator,View Views,See all views within a workspace,X,X,,,X,,X,X,View Management,93cba7f8-82ec-4a64-b384-f81d6acc8db3,X,FALSE
+Operator,View Views,See all views within a workspace,X,X,,,X,,X,X,View Management,4b3117e6-176c-4d9b-8e09-4278d2f48280,X,FALSE
 Operator,Delete View,Dissolve environment and all connection memberships. Leave associated resources intact.,X*,X*,,,X,,X,X,View Management,48076416-bc07-456b-bbea-49bdca239d0f,X,FALSE
 Operator,Assign Views to Workspace,Add new views to workspace,,,,,X,,X,X,Workspace Management,fb6c987b-e54c-4016-b3f3-0488228ee998,X,FALSE
 Operator,Unassign Views from Workspace,Remove views from workspace ,,,,,X,,X,X,Workspace Management,f77d74ef-1cae-4527-b45e-ecc1431681df,X,FALSE

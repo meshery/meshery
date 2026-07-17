@@ -42,6 +42,28 @@ vi.mock('@sistent/sistent', () => ({
   CustomColumnVisibilityControl: () => <div data-testid="column-visibility-control" />,
   SearchBar: () => <div data-testid="search-bar" />,
   UniversalFilter: () => <div data-testid="universal-filter" />,
+
+  DataTableToolbar: ({
+    primaryActions,
+    search,
+    filter,
+    columnVisibility,
+    tabs,
+  }: {
+    primaryActions?: React.ReactNode;
+    search?: React.ReactNode;
+    filter?: React.ReactNode;
+    columnVisibility?: React.ReactNode;
+    tabs?: React.ReactNode;
+  }) => (
+    <div data-testid="data-table-toolbar">
+      {primaryActions}
+      {search}
+      {filter}
+      {columnVisibility}
+      {tabs}
+    </div>
+  ),
   ResponsiveDataTable: (props) => {
     dataTableProps = props;
     return <div data-testid="responsive-data-table" />;
@@ -693,5 +715,57 @@ describe('ConnectionTable', () => {
     rerender(<ConnectionTable />);
 
     expect(dataTableProps.options).toBe(firstOptions);
+  });
+
+  // Every data column's header carries an info affordance explaining what the
+  // column means and how to read its values, so the table is self-describing.
+  // `Actions` is excluded: it holds controls rather than values.
+  it('gives every data column an info icon and tooltip in its header', () => {
+    render(<ConnectionTable />);
+
+    // Internal metadata columns and control columns that do not require tooltips.
+    const internalColumns = [
+      'id',
+      'metadata.server_location',
+      'metadata.serverLocation',
+      'metadata.server',
+      'nextStatus',
+      'kindLogo',
+      'metadata.name',
+      'Actions',
+    ];
+
+    const dataColumns = dataTableProps.columns.filter((c) => !internalColumns.includes(c.name));
+
+    dataColumns.forEach((col) => {
+      const name = col.name;
+      expect(
+        typeof col.options?.customHeadRender,
+        `column "${name}" is missing customHeadRender`,
+      ).toBe('function');
+
+      const head = col.options.customHeadRender({ index: 0, label: col.label, name }, () => {}, {});
+
+      expect(head.props.icon, `column "${name}" has no info icon`).toBeTruthy();
+      expect(
+        typeof head.props.tooltip === 'string' && head.props.tooltip.length > 0,
+        `column "${name}" has no info tooltip`,
+      ).toBe(true);
+    });
+  });
+  // Regression coverage for the review feedback on PR #20695: the
+  // Connections/MeshSync tab switcher must be passed down through the
+  // toolbar (rendered between the toolbar and the data table), not dropped.
+  it('renders the tabs prop inside the toolbar, ahead of the data table', () => {
+    render(<ConnectionTable tabs={<div data-testid="connection-tabs">tabs</div>} />);
+
+    const toolbar = screen.getByTestId('data-table-toolbar');
+    expect(toolbar).toContainElement(screen.getByTestId('connection-tabs'));
+
+    const positions = screen
+      .getByTestId('connection-tabs')
+      .compareDocumentPosition(screen.getByTestId('responsive-data-table'));
+
+    expect(positions & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 });
