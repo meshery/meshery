@@ -117,6 +117,9 @@ export const IconButtonMenu = styled(IconButton)(({ theme }) => ({
 export const UserInfoContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
+  gap: '16px',
+  marginTop: '-30px',
+  marginLeft: '16px',
   [theme.breakpoints.down('399')]: {
     gap: '0.3rem',
   },
