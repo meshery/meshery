@@ -15,7 +15,7 @@ const defaultOptions = {
   pagesize: 'all',
 };
 
-const meshModelApi = api
+export const meshModelApi = api
   .enhanceEndpoints({
     addTagTypes: [TAGS.MESH_MODELS],
   })

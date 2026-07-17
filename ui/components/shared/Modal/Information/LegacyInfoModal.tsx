@@ -45,7 +45,7 @@ import {
 import { ActionContainer, CopyLinkButton, CreatAtContainer, ResourceName } from './styles';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import { updateProgress } from '@/store/slices/mesheryUi';
-import { getMeshModels } from '@/api/meshmodel';
+import { useLazyGetMeshModelsQuery } from '@/rtk-query/meshModel';
 import { useSelector } from 'react-redux';
 import RJSFWrapper from '@/components/meshery-mesh-interface/PatternService/RJSF_wrapper';
 
@@ -91,11 +91,13 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const isOwner = currentUserID === resourceOwnerID;
   const [meshModels, setMeshModels] = useState([]);
+  const [triggerGetMeshModels] = useLazyGetMeshModelsQuery();
   const [publishSchema, setPublishSchema] = useState({});
 
   useEffect(() => {
     const fetchModels = async () => {
-      const { models } = await getMeshModels();
+      const response = await triggerGetMeshModels().unwrap();
+      const models = response?.models;
       const modelNames = _.uniqBy(
         models?.map((model) => {
           if (model.displayName && model.displayName !== '') {

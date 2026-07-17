@@ -3,11 +3,10 @@ import _ from 'lodash';
 export const WILDCARD_V = 'All Versions';
 
 import {
-  fetchCategories,
-  getComponentFromModelApi,
-  getModelFromCategoryApi,
-  getVersionedComponentFromModel,
-} from '../../api/meshmodel';
+  useGetModelCategoriesQuery,
+  useLazyGetModelFromCategoryQuery,
+  useLazyGetComponentsFromModalQuery,
+} from '../../rtk-query/meshModel';
 import { compose } from 'lodash/fp';
 import { useEffect, useState } from 'react';
 import getMostRecentVersion, {
@@ -133,19 +132,21 @@ function convertToArray(item) {
 }
 
 export function useMeshModelComponents() {
+  const { data: categoriesData } = useGetModelCategoriesQuery();
+  const [triggerGetModelFromCategory] = useLazyGetModelFromCategoryQuery();
+  const [triggerGetComponentsFromModal] = useLazyGetComponentsFromModalQuery();
+
   const [meshmodelComponents, setMeshModelComponents] = useState({});
   const [categories, setCategories] = useState([]);
   const [models, setModels] = useState({});
 
   useEffect(() => {
-    fetchCategories()
-      .then((categoryJson) => {
-        setCategories(
-          categoryJson.categories.sort((catA, catB) => catA.name.localeCompare(catB.name)),
-        );
-      })
-      .catch(handleError);
-  }, []);
+    if (categoriesData?.categories) {
+      setCategories(
+        [...categoriesData.categories].sort((catA, catB) => catA.name.localeCompare(catB.name)),
+      );
+    }
+  }, [categoriesData]);
 
   async function getModelFromCategory(category) {
     // already fetched the models from catgory and stored
@@ -153,16 +154,15 @@ export function useMeshModelComponents() {
       return;
     }
 
-    getModelFromCategoryApi(category)
+    triggerGetModelFromCategory({ category, params: { pagesize: 'all' } })
+      .unwrap()
       .then((response) => {
-        setModels(
-          Object.assign(
-            { ...models },
-            {
-              [category]: sortAndGroupVersionsInModel(response.models),
-            },
-          ),
-        );
+        if (response?.models) {
+          setModels((prevModels) => ({
+            ...prevModels,
+            [category]: sortAndGroupVersionsInModel(response.models),
+          }));
+        }
       })
       .catch(handleError);
   }
@@ -170,16 +170,21 @@ export function useMeshModelComponents() {
   async function getComponentsFromModel(modelName, version) {
     if (!version) {
       if (!meshmodelComponents[modelName]) {
-        const modelData = await getComponentFromModelApi(modelName);
+        try {
+          const response = await triggerGetComponentsFromModal({
+            model: modelName,
+            params: { pagesize: 'all', trim: true },
+          }).unwrap();
 
-        setMeshModelComponents(
-          Object.assign(
-            { ...meshmodelComponents },
-            {
-              [modelName]: getProcessedComponentsData(modelData.components),
-            },
-          ),
-        );
+          if (response?.components) {
+            setMeshModelComponents((prev) => ({
+              ...prev,
+              [modelName]: getProcessedComponentsData(response.components),
+            }));
+          }
+        } catch (e) {
+          handleError(e);
+        }
       }
       return;
     }
@@ -187,18 +192,24 @@ export function useMeshModelComponents() {
     if (
       !meshmodelComponents[modelName] ||
       !convertToArray(meshmodelComponents[modelName])?.find(
-        (model) => model.model.version === version,
+        (item) => item.version === version,
       )
     ) {
-      const modelData = await getVersionedComponentFromModel(modelName, version);
-      setMeshModelComponents(
-        Object.assign(
-          { ...meshmodelComponents },
-          {
-            [modelName]: getProcessedComponentsData(modelData.components),
-          },
-        ),
-      );
+      try {
+        const response = await triggerGetComponentsFromModal({
+          model: modelName,
+          params: { version, pagesize: 'all', trim: true },
+        }).unwrap();
+
+        if (response?.components) {
+          setMeshModelComponents((prev) => ({
+            ...prev,
+            [modelName]: getProcessedComponentsData(response.components),
+          }));
+        }
+      } catch (e) {
+        handleError(e);
+      }
     }
   }
 

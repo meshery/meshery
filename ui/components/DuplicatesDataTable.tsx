@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import MUIDataTable from '@sistent/mui-datatables';
 import { Tooltip, TableCell, TableSortLabel } from '@sistent/sistent';
 import debounce from '../utils/debounce';
-import { getDuplicateModels, getDuplicateComponents } from '../api/meshmodel';
+import { useLazyGetModelByNameQuery, useLazyGetComponentByNameQuery } from '../rtk-query/meshModel';
 import { MODELS, COMPONENTS } from '../constants/navigator';
 
 const DuplicatesDataTable = ({ view, rowData, classes }) => {
+  const [triggerGetModelByName] = useLazyGetModelByNameQuery();
+  const [triggerGetComponentByName] = useLazyGetComponentByNameQuery();
   const [resourcesDetail, setResourcesDetail] = useState();
   const [count, setCount] = useState();
   const [page, setPage] = useState(0);
@@ -14,19 +16,26 @@ const DuplicatesDataTable = ({ view, rowData, classes }) => {
   const { kind, model, version } = rowData;
 
   const getDuplicatedModels = async (model, version) => {
-    const { totalCount, models } = await getDuplicateModels(model, version);
-    setCount(totalCount);
-    setResourcesDetail(models);
+    try {
+      const response = await triggerGetModelByName({ name: model, params: { version } }).unwrap();
+      setCount(response.totalCount || 0);
+      setResourcesDetail(response.models || []);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const getDuplicatedComponents = async (componentKind, apiVersion, modelName) => {
-    const { totalCount, components } = await getDuplicateComponents(
-      componentKind,
-      modelName,
-      apiVersion,
-    );
-    setCount(totalCount);
-    setResourcesDetail(components);
+  const getDuplicatedComponents = async (componentKind, modelName, apiVersion) => {
+    try {
+      const response = await triggerGetComponentByName({
+        name: componentKind,
+        params: { apiVersion, model: modelName },
+      }).unwrap();
+      setCount(response.totalCount || 0);
+      setResourcesDetail(response.components || []);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const meshmodel_columns = [

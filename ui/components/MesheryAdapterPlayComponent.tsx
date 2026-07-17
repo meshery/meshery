@@ -14,7 +14,7 @@ import MesheryResultDialog from './MesheryResultDialog';
 import ReactSelectWrapper from './ReactSelectWrapper';
 import ConfirmationMsg from '@/components/designs/lifecycle/DeployConfirmationModal';
 import { ACTIONS } from '../utils/Enum';
-import { getModelByName } from '../api/meshmodel';
+import { useLazyGetModelByNameQuery } from '../rtk-query/meshModel';
 import { EVENT_TYPES } from '../lib/event-types';
 import { useNotification } from '../utils/hooks/useNotification';
 import { useSelector } from 'react-redux';
@@ -61,6 +61,7 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
   const [triggerAdapterOp] = useAdapterOperationMutation();
   const [triggerPingAdapter] = useLazyPingAdapterQuery();
   const [triggerGetSmiResults] = useLazyGetSmiResultsQuery();
+  const [triggerGetModelByName] = useLazyGetModelByNameQuery();
   const router = useRouter();
   const addIconEles = useRef({});
   const delIconEles = useRef({});
@@ -216,7 +217,8 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
 
   const getMeshVersions = () => {
     const activeMesh = adapter?.name;
-    getModelByName(activeMesh.toLowerCase()).then((res) => {
+    triggerGetModelByName({ name: activeMesh.toLowerCase() }).then((response) => {
+      const res = response?.data;
       let uniqueVersions = [...new Set(res?.models?.map((model) => model?.version))].reverse();
       if (uniqueVersions.length === 0) {
         uniqueVersions = [''];

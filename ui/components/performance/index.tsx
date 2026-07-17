@@ -16,7 +16,7 @@ import { useGetUserPrefWithContextQuery } from '@/rtk-query/user';
 import { useSavePerformanceProfileMutation } from '@/rtk-query/performance-profile';
 import { useGetMeshQuery } from '@/rtk-query/mesh';
 import { CenterTimer } from './style';
-import { getMeshModels } from '@/api/meshmodel';
+import { useGetMeshModelsQuery } from '@/rtk-query/meshModel';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { updateLoadTest } from '@/store/slices/prefTest';
@@ -99,14 +99,14 @@ const MesheryPerformanceComponent_ = (props) => {
     isError: isSMPMeshError,
   } = useGetMeshQuery();
 
+  const { data: meshModelsData } = useGetMeshModelsQuery({});
+
   useEffect(() => {
-    const fetchMeshModels = async () => {
-      const { models } = await getMeshModels();
-      const modelNames = models.map((model) => model.displayName);
+    if (meshModelsData?.models) {
+      const modelNames = meshModelsData.models.map((model) => model.displayName);
       setMeshModels(modelNames);
-    };
-    fetchMeshModels();
-  }, []);
+    }
+  }, [meshModelsData]);
 
   const handleChange = createPerformanceFormChangeHandler({
     setProfileName,

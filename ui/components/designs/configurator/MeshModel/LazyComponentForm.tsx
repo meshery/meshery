@@ -9,7 +9,7 @@ import {
 } from '@sistent/sistent';
 import { isEmpty } from 'lodash';
 import React from 'react';
-import { getMeshModelComponent } from '../../../../api/meshmodel';
+import { useLazyGetComponentsByModelAndKindQuery } from '../../../../rtk-query/meshModel';
 import { iconMedium } from '../../../../css/icons.styles';
 import PatternServiceForm from '../../../meshery-mesh-interface/PatternServiceForm';
 import { useNotification } from '../../../../utils/hooks/useNotification';
@@ -36,6 +36,7 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
   const [expanded, setExpanded] = React.useState(false);
   const [schemaSet, setSchemaSet] = React.useState({});
   const { notify } = useNotification();
+  const [triggerGetComponentsByModelAndKind] = useLazyGetComponentsByModelAndKindQuery();
 
   async function expand(state) {
     if (!state) {
@@ -45,7 +46,7 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
 
     setExpanded(true);
     const {
-      component: { vesion: apiVersion, kind },
+      component: { apiVersion, kind },
       model,
     } = component;
     const {
@@ -54,10 +55,14 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
     } = model;
     try {
       if (isEmpty(schemaSet)) {
-        const res = await getMeshModelComponent(modelName, kind, version, apiVersion);
-        if (res.components[0]) {
+        const data = await triggerGetComponentsByModelAndKind({
+          model: modelName,
+          component: kind,
+          params: { version, apiVersion },
+        }).unwrap();
+        if (data?.components?.[0]) {
           setSchemaSet({
-            workload: JSON.parse(res.components[0].component.schema), // has to be removed
+            workload: JSON.parse(data.components[0].component.schema), // has to be removed
           });
         } else {
           throw new Error('found null in component definition');

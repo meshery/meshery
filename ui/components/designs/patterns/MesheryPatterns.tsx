@@ -13,7 +13,7 @@ import { MesheryPatternsCatalog, VISIBILITY } from '../../../utils/Enum';
 import { useRouter } from 'next/router';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import _ from 'lodash';
-import { getMeshModels } from '../../../api/meshmodel';
+import { useLazyGetMeshModelsQuery } from '../../../rtk-query/meshModel';
 import { modifyRJSFSchema } from '../../../utils/utils';
 import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
@@ -95,6 +95,7 @@ function MesheryPatterns({
 
   const [count, setCount] = useState(0);
   const modalRef = useRef();
+  const [triggerGetMeshModels] = useLazyGetMeshModelsQuery();
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
@@ -285,7 +286,8 @@ function MesheryPatterns({
   useEffect(() => {
     const fetchMeshModels = async () => {
       try {
-        const { models } = await getMeshModels();
+        const response = await triggerGetMeshModels().unwrap();
+        const models = response?.models;
         const modelNames = _.uniqBy(
           models?.map((model) => {
             if (model.displayName && model.displayName !== '') {
