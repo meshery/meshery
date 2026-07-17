@@ -496,13 +496,35 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
                 onChange={(e) => setModelSource(e.target.value.toLowerCase())}
                 style={{ gap: '2rem' }}
               >
-                {['Artifact Hub', 'GitHub'].map((source, idx) => (
+                {[
+                  {
+                    value: 'artifacthub',
+                    label: 'Artifact Hub',
+                    icon: '/static/img/integrations/artifacthub.svg',
+                  },
+                  {
+                    value: 'github',
+                    label: 'GitHub',
+                    icon: '/static/img/extensions/github.svg',
+                  },
+                ].map((source) => (
                   <FormControlLabel
-                    key={idx}
-                    value={source.toLowerCase()}
+                    key={source.value}
+                    value={source.value}
                     control={<Radio />}
-                    label={<>{source}</>}
-                    data-testid={`UrlStepper-Select-Source-${source}`}
+                    label={
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <img
+                          src={source.icon}
+                          alt=""
+                          height={18}
+                          width={18}
+                          style={{ objectFit: 'contain' }}
+                        />
+                        {source.label}
+                      </span>
+                    }
+                    data-testid={`UrlStepper-Select-Source-${source.label}`}
                   />
                 ))}
               </RadioGroup>
@@ -521,7 +543,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
                 placeholder={
                   modelSource === 'github'
                     ? 'git://github.com/cert-manager/cert-manager/master/deploy/crds'
-                    : modelSource === 'artifact hub'
+                    : modelSource === 'artifacthub'
                       ? 'https://artifacthub.io/packages/search?ts_query_web={model-name}'
                       : 'Select a source first'
                 }

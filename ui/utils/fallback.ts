@@ -1,9 +1,33 @@
+/**
+ * Normalize a connection/registrant kind for icon lookup
+ * (e.g. "Artifact Hub" / "artifact_hub" -> "artifacthub").
+ */
+export function normalizeKindKey(kind) {
+  if (kind == null || kind === '') {
+    return '';
+  }
+  return String(kind)
+    .toLowerCase()
+    .replace(/[\s_-]+/g, '');
+}
+
+/**
+ * Static fallback icons when connectionMetadata / model styles do not provide one.
+ * Paths are relative to the UI public root (normalizeStaticImagePath prefixes "/").
+ */
+const KIND_FALLBACK_ICONS = {
+  meshery: 'static/img/meshery-logo/meshery-logo.png',
+  kubernetes: 'static/img/integrations/kubernetes.svg',
+  github: 'static/img/extensions/github.svg',
+  prometheus: 'static/img/integrations/prometheus_logo_orange_circle.svg',
+  grafana: 'static/img/integrations/grafana_icon.svg',
+  artifacthub: 'static/img/integrations/artifacthub.svg',
+  helm: 'static/img/extensions/helm_chart.svg',
+};
+
 export function getFallbackImageBasedOnKind(kind) {
-  const fallbackComponent = {
-    meshery: 'static/img/meshery-logo/meshery-logo.png',
-    kubernetes: 'static/img/integrations/kubernetes.svg',
-  };
-  return fallbackComponent[kind];
+  const key = normalizeKindKey(kind);
+  return KIND_FALLBACK_ICONS[key];
 }
 
 export function normalizeStaticImagePath(path) {

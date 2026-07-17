@@ -68,6 +68,7 @@ const KIND_ICONS = {
   [GRAFANA]: '/static/img/integrations/grafana_icon.svg',
   [GITHUB]: '/static/img/extensions/github.svg',
   [MESHERY]: '/static/img/meshery-logo/meshery-logo.png',
+  artifacthub: '/static/img/integrations/artifacthub.svg',
 };
 
 const StyledListItemText = styled(ListItemText)(({ theme }) => ({

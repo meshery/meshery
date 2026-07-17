@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Simplified Artifact Hub mark: blue rounded diamond with package glyph -->
+  <rect width="64" height="64" rx="12" fill="#417598"/>
+  <path d="M32 10L50 20.5V43.5L32 54L14 43.5V20.5L32 10Z" fill="#FFFFFF"/>
+  <path d="M32 18L42 24V40L32 46L22 40V24L32 18Z" fill="#417598"/>
+  <path d="M32 18V46M22 24L42 40M42 24L22 40" stroke="#FFFFFF" stroke-width="1.5" opacity="0.35"/>
+  <path d="M26 30H38V36H26V30Z" fill="#FFFFFF"/>
+</svg>
