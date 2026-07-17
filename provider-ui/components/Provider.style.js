@@ -52,6 +52,9 @@ export const MenuProviderDisabled = styled(MenuItem)(({ theme }) => ({
   "&.Mui-disabled": {
     cursor: "not-allowed",
     pointerEvents: "auto",
+    "&:hover": {
+      backgroundColor: theme.palette.text.default,
+    },
   },
 }));
 
