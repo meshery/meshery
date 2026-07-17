@@ -39928,6 +39928,8 @@ Server is deployed inside or outside of the clusters under management.&lt;/p&gt;
 &lt;div id="tablesContainer"&gt;&lt;/div&gt;
 
 &lt;script type="module"&gt;
+ import { keys } from '/js/permission_constants.js';
+
  window.onload = function () {
  const xhr = new XMLHttpRequest();
  xhr.open('GET', '/excel/keys.csv', true);
@@ -39971,7 +39973,7 @@ Server is deployed inside or outside of the clusters under management.&lt;/p&gt;
  categories[category].push(row);
  });
 
- const headers = ["Category", "Key Name", "Description", "Key ID"];
+ const headers = ["Category", "Key Name", "Description", "Key ID", "Moniker"];
 
  
  const container = document.getElementById('tablesContainer');
@@ -40004,6 +40006,13 @@ Server is deployed inside or outside of the clusters under management.&lt;/p&gt;
  tr.appendChild(td);
  }
  });
+
+ 
+ const monikerTd = document.createElement('td');
+ monikerTd.style.padding = '1rem';
+ const matchingPermissionKey = Object.keys(keys).find(key =&gt; keys[key].subject === row[1]);
+ monikerTd.textContent = matchingPermissionKey ?? '—';
+ tr.appendChild(monikerTd);
 
  tbody.appendChild(tr);
  });
