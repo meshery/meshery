@@ -62,13 +62,13 @@ html body .MuiSpeedDial-fab {
 }
 
 /* Left FAB (Nodes icon) - shift left by 10px to match toolbar shrink */
-html body .MuiSpeedDial-root:has(> button[aria-label="CANVAS_CONTROLS"]):first-of-type {
+html body .MuiSpeedDial-root:has(> button[aria-label="CANVAS_CONTROLS"]):not(:has(.MuiSpeedDialIcon-root)) {
   transform: scale(0.9) translate(-10px, -10px);
   transform-origin: bottom center;
 }
 
 /* Right FAB (+ icon) - shift right by 10px to match toolbar shrink */
-html body .MuiSpeedDial-root:has(> button[aria-label="CANVAS_CONTROLS"]):last-of-type {
+html body .MuiSpeedDial-root:has(> button[aria-label="CANVAS_CONTROLS"]):has(.MuiSpeedDialIcon-root) {
   transform: scale(0.9) translate(10px, -10px);
   transform-origin: bottom center;
 }
