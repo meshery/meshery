@@ -9,11 +9,11 @@ import {
   UniversalFilter,
   TableCell,
   TableRow,
+  DataTableToolbar,
 } from '@sistent/sistent';
 import { MeshSyncDataFormatter } from '../metadata';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { DefaultTableCell, SortableTableCell } from '../common';
-import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import {
   JsonParse,
   camelcaseToSnakecase,
@@ -689,41 +689,35 @@ export default function MeshSyncTable(props) {
 
   return (
     <>
-      <ToolWrapper style={{ marginBottom: '5px', marginTop: '-30px' }}>
-        <div
-          style={{
-            display: 'flex',
-            borderRadius: '0.5rem 0.5rem 0 0',
-            width: '100%',
-            justifyContent: 'end',
-          }}
-        >
-          <SearchBar
-            onSearch={(value) => {
-              setSearch(value);
-            }}
-            expanded={isSearchExpanded}
-            setExpanded={setIsSearchExpanded}
-            placeholder="Search Connections..."
-          />
-
+      <DataTableToolbar
+        search={
+          <div data-testid="MeshSyncTable-search">
+            <SearchBar
+              onSearch={(value) => setSearch(value)}
+              expanded={isSearchExpanded}
+              setExpanded={setIsSearchExpanded}
+              placeholder="Search Connections..."
+            />
+          </div>
+        }
+        filter={
           <UniversalFilter
-            id="ref"
+            id="meshsync-table-filter"
             filters={filters}
             selectedFilters={selectedFilters}
             setSelectedFilters={setSelectedFilters}
             handleApplyFilter={handleApplyFilter}
           />
-
+        }
+        columnVisibility={
           <CustomColumnVisibilityControl
-            id="ref"
+            id="meshsync-table-column-visibility"
             columns={getVisibilityColums(columns)}
             customToolsProps={{ columnVisibility, setColumnVisibility }}
           />
-        </div>
-      </ToolWrapper>
-
-      {tabs}
+        }
+        tabs={tabs}
+      />
 
       {!meshSyncResources || meshSyncResources.length === 0 ? (
         <MeshSyncEmptyState />
