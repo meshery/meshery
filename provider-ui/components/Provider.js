@@ -1033,7 +1033,15 @@ export default function Provider() {
           aria-controls="provider-guidance-dialog"
           data-cy="providers-learn-more"
         >
-          Learn more about providers
+          Learn more about providers&nbsp;
+          <sup style={{ lineHeight: 0 }}>
+            <ExternalLinkIcon
+              width={12}
+              height={12}
+              aria-hidden="true"
+              style={{ verticalAlign: "middle", color: "inherit" }}
+            />
+          </sup>
         </LearnMore>
       )}
       <CustomDialog

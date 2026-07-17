@@ -49,6 +49,10 @@ export const MenuProviderDisabled = styled(MenuItem)(({ theme }) => ({
     fontStyle: "italic",
   },
   textOverflow: "ellipsis",
+  "&.Mui-disabled": {
+    cursor: "not-allowed",
+    pointerEvents: "auto",
+  },
 }));
 
 export const CustomDialog = styled(Dialog)(({ theme }) => ({
