@@ -12,7 +12,7 @@ import {
 import { alpha, styled } from '@/theme';
 import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import {
   buildCredentialSecret,
   filterCredentialsForKind,
@@ -26,6 +26,7 @@ import {
   CredentialAssociationStep,
   GenericConnectionDetailsStep,
 } from '../ConnectionWizardStepContent';
+import { connectionCreatedNotify } from '../ConnectionWizard.helpers';
 import type { WizardContext, WizardStep } from './types';
 
 export const kindPermission = (config?: ConnectionWizardKindConfig | null) => {
@@ -34,8 +35,8 @@ export const kindPermission = (config?: ConnectionWizardKindConfig | null) => {
   }
 
   return config.flow === 'kubernetes'
-    ? CAN(keys.ADD_CLUSTER.action, keys.ADD_CLUSTER.subject)
-    : CAN(keys.CONNECT_METRICS.action, keys.CONNECT_METRICS.subject);
+    ? CAN(Keys.LifecycleManagementAddCluster.id, Keys.LifecycleManagementAddCluster.function)
+    : CAN(Keys.MesherySystemConnectMetrics.id, Keys.MesherySystemConnectMetrics.function);
 };
 
 const existingCredentialsFor = (ctx: WizardContext) =>
@@ -269,10 +270,7 @@ export const genericRegisterStep: WizardStep = {
       const result = await ctx.services.connectConnection({ ...basePayload, status: 'connect' });
 
       ctx.patch({ registrationResult: result ?? basePayload });
-      ctx.services.notify({
-        message: `${kindConfig.label} connection created.`,
-        event_type: EVENT_TYPES.SUCCESS,
-      });
+      ctx.services.notify(connectionCreatedNotify(kindConfig.label));
       return true;
     } catch (error) {
       ctx.patch({ registrationError: error });

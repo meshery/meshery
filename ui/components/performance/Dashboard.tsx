@@ -5,7 +5,7 @@ import MesheryPerformanceComponent from './index';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '@/components/general/error-404/index';
 import { Modal, Button, Grid2, Paper, Typography, useTheme, styled } from '@sistent/sistent';
 import { updateProgressAction } from '@/store/slices/mesheryUi';
@@ -131,7 +131,10 @@ function Dashboard() {
 
   return (
     <>
-      {CAN(keys.VIEW_PERFORMANCE_PROFILES.action, keys.VIEW_PERFORMANCE_PROFILES.subject) ? (
+      {CAN(
+        Keys.PerformanceManagementViewPerformanceProfiles.id,
+        Keys.PerformanceManagementViewPerformanceProfiles.function,
+      ) ? (
         <>
           <Grid2
             container
@@ -172,7 +175,12 @@ function Dashboard() {
                       <div style={{ margin: '2rem 0 0 auto', width: 'fit-content' }}>
                         <StyledButton
                           onClick={() => setRunTest(true)}
-                          disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
+                          disabled={
+                            !CAN(
+                              Keys.PerformanceManagementRunTest.id,
+                              Keys.PerformanceManagementRunTest.function,
+                            )
+                          }
                           variant="contained"
                         >
                           Run Test

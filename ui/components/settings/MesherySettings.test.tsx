@@ -47,6 +47,7 @@ vi.mock('@sistent/sistent', () => ({
   DatabaseIcon: () => <svg />,
   MendeleyIcon: () => <svg />,
   FileIcon: () => <svg />,
+  SettingsIcon: () => <svg />,
   useTheme: () => ({
     palette: {
       icon: { default: 'icon' },
@@ -95,16 +96,6 @@ vi.mock('@/utils/can', () => ({
   default: () => canMockReturn,
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    VIEW_SETTINGS: { action: 'a', subject: 's' },
-    VIEW_CLOUD_NATIVE_INFRASTRUCTURE: { action: 'a', subject: 's' },
-    VIEW_METRICS: { action: 'a', subject: 's' },
-    VIEW_REGISTRY: { action: 'a', subject: 's' },
-    VIEW_OVERVIEW: { action: 'a', subject: 's' },
-  },
-}));
-
 vi.mock('@/constants/navigator', () => ({
   METRICS: 'Metrics',
   ADAPTERS: 'Adapters',
@@ -113,6 +104,7 @@ vi.mock('@/constants/navigator', () => ({
   PROMETHEUS: 'Prometheus',
   OVERVIEW: 'Overview',
   REGISTRY: 'Registry',
+  CONTROLLERS: 'Controllers',
 }));
 
 vi.mock('../registry/helper', () => ({
@@ -121,6 +113,10 @@ vi.mock('../registry/helper', () => ({
 
 vi.mock('../registry/MeshModelComponent', () => ({
   default: () => <div data-testid="mesh-model-component" />,
+}));
+
+vi.mock('./MesheryControllersConfig', () => ({
+  default: () => <div data-testid="controllers-config" />,
 }));
 
 vi.mock('../general/error-404', () => ({
@@ -170,14 +166,21 @@ describe('MesherySettings', () => {
     };
   });
 
-  it('renders the main settings tab bar with the 4 settings categories', () => {
+  it('renders the main settings tab bar with the 5 settings categories', () => {
     render(<MesherySettings />);
 
     expect(screen.getByTestId('tab-Overview')).toBeInTheDocument();
     expect(screen.getByTestId('tab-Adapters')).toBeInTheDocument();
     expect(screen.getByTestId('tab-Registry')).toBeInTheDocument();
+    expect(screen.getByTestId('tab-Controllers')).toBeInTheDocument();
     expect(screen.getByTestId('tab-Reset')).toBeInTheDocument();
     expect(screen.queryByTestId('tab-Metrics')).not.toBeInTheDocument();
+  });
+
+  it('renders the controllers configuration tab when selected', () => {
+    routerState.query = { settingsCategory: 'Controllers' };
+    render(<MesherySettings />);
+    expect(screen.getByTestId('controllers-config')).toBeInTheDocument();
   });
 
   it('renders the Overview tab content (dashboard graph) by default', () => {
@@ -187,7 +190,7 @@ describe('MesherySettings', () => {
     expect(screen.getByTestId('connection-charts')).toBeInTheDocument();
   });
 
-  it('returns null when VIEW_SETTINGS permission is denied', () => {
+  it('returns null when MesherySystemViewSettings permission is denied', () => {
     canMockReturn = false;
     const { container } = render(<MesherySettings />);
     expect(container.textContent).toBe('');

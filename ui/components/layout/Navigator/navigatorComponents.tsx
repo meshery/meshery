@@ -33,7 +33,7 @@ import {
   WORKSPACE,
 } from '../../../constants/navigator';
 import { iconSmall } from '../../../css/icons.styles';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 
 export const drawerIconsStyle = {
   height: '19.36px',
@@ -73,10 +73,7 @@ export const getNavigatorComponents = (
         title: 'Connections',
         show: providerUiAccessControl.isNavigatorComponentEnabled([LIFECYCLE, CONNECTION]),
         link: true,
-        permission: {
-          action: keys.VIEW_CONNECTIONS.action,
-          subject: keys.VIEW_CONNECTIONS.subject,
-        },
+        permissionKey: Keys.WorkspaceManagementViewConnections,
       },
       {
         id: CREDENTIAL,
@@ -85,10 +82,7 @@ export const getNavigatorComponents = (
         title: 'Credentials',
         show: providerUiAccessControl.isNavigatorComponentEnabled([LIFECYCLE, CREDENTIAL]),
         link: true,
-        permission: {
-          action: keys.VIEW_CREDENTIALS.action,
-          subject: keys.VIEW_CREDENTIALS.subject,
-        },
+        permissionKey: Keys.SecurityManagementViewCredentials,
       },
       {
         id: ENVIRONMENT,
@@ -97,10 +91,7 @@ export const getNavigatorComponents = (
         title: 'Environments',
         show: providerUiAccessControl.isNavigatorComponentEnabled([LIFECYCLE, ENVIRONMENT]),
         link: true,
-        permission: {
-          action: keys.VIEW_ENVIRONMENTS.action,
-          subject: keys.VIEW_ENVIRONMENTS.subject,
-        },
+        permissionKey: Keys.WorkspaceManagementViewEnvironment,
       },
       {
         id: WORKSPACE,
@@ -109,10 +100,7 @@ export const getNavigatorComponents = (
         title: 'Workspaces',
         show: providerUiAccessControl.isNavigatorComponentEnabled([LIFECYCLE, WORKSPACE]),
         link: true,
-        permission: {
-          action: keys.VIEW_WORKSPACE.action,
-          subject: keys.VIEW_WORKSPACE.subject,
-        },
+        permissionKey: Keys.WorkspaceManagementViewWorkspace,
       },
       {
         id: SERVICE_MESH,
@@ -121,10 +109,7 @@ export const getNavigatorComponents = (
         link: true,
         icon: <ServiceMeshIcon style={{ ...drawerIconsStyle }} />,
         show: true,
-        permission: {
-          action: keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
-          subject: keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.subject,
-        },
+        permissionKey: Keys.InfrastructureManagementViewCloudNativeInfrastructure,
       },
     ],
   },
@@ -161,10 +146,7 @@ export const getNavigatorComponents = (
         show: providerUiAccessControl.isNavigatorComponentEnabled([CONFIGURATION, CATALOG]),
         link: true,
         isBeta: true,
-        permission: {
-          action: keys.VIEW_CATALOG.action,
-          subject: keys.VIEW_CATALOG.subject,
-        },
+        permissionKey: Keys.CatalogManagementViewCatalog,
       },
       {
         id: DESIGN,
@@ -174,10 +156,7 @@ export const getNavigatorComponents = (
         show: providerUiAccessControl.isNavigatorComponentEnabled([CONFIGURATION, DESIGN]),
         link: true,
         isBeta: true,
-        permission: {
-          action: keys.VIEW_DESIGNS.action,
-          subject: keys.VIEW_DESIGNS.subject,
-        },
+        permissionKey: Keys.CatalogManagementViewDesigns,
       },
     ],
   },
@@ -228,10 +207,7 @@ export const getNavigatorComponents = (
         title: 'Profiles',
         show: providerUiAccessControl.isNavigatorComponentEnabled([PERFORMANCE, PROFILES]),
         link: true,
-        permission: {
-          action: keys.VIEW_PERFORMANCE_PROFILES.action,
-          subject: keys.VIEW_PERFORMANCE_PROFILES.subject,
-        },
+        permissionKey: Keys.PerformanceManagementViewPerformanceProfiles,
       },
     ],
   },
@@ -245,9 +221,6 @@ export const getNavigatorComponents = (
     link: true,
     href: '/extensions',
     submenu: false,
-    permission: {
-      action: keys.VIEW_EXTENSIONS.action,
-      subject: keys.VIEW_EXTENSIONS.subject,
-    },
+    permissionKey: Keys.ExtensibilityViewExtensions,
   },
 ];

@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net"
 	"os"
@@ -18,11 +17,13 @@ import (
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/utils/kubernetes"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"gopkg.in/yaml.v2"
+	"gorm.io/gorm"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -198,19 +199,27 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, broadcast *Broa
 func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler, includeUnreachable bool) []*K8sContext {
 	kcs := []*K8sContext{}
 
-	parsed, _, err := kubernetes.ProcessConfig(kubeconfig, "")
-	if err != nil {
-		return kcs
-	}
-
 	userUUID := uuid.FromStringOrNil(userID)
 
+	// Enumerate contexts from the raw kubeconfig rather than via
+	// kubernetes.ProcessConfig: ProcessConfig runs clientcmd MinifyConfig, which
+	// prunes every context except current-context. Driving the loop from its
+	// output therefore discovered only the current context and dropped the rest.
+	// The import wizard needs *every* context in the file, so enumerate them from
+	// the un-minified config here; each context is still validated individually
+	// below when its kube handler is built (unreachable ones are surfaced or
+	// skipped per includeUnreachable).
 	kcfg := InternalKubeConfig{}
 	if err := yaml.Unmarshal(kubeconfig, &kcfg); err != nil {
 		return kcs
 	}
 
-	for name := range parsed.Contexts {
+	for _, ctxEntry := range kcfg.Contexts {
+		ctxEntry = utils.RecursiveCastMapStringInterfaceToMapStringInterface(ctxEntry)
+		name, _ := ctxEntry["name"].(string)
+		if name == "" {
+			continue
+		}
 		metadata := map[string]interface{}{}
 		kc, _ := kcfg.K8sContext(name, instanceID, log)
 		eventBuilder := events.NewEvent().ActedUpon(uuid.FromStringOrNil(kc.ConnectionID)).WithCategory("connection").WithAction("register").FromSystem(*instanceID).FromOwner(userUUID)
@@ -529,7 +538,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 		if provider.GetGenericPersister() == nil {
 
 			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromOwner(userUUID).WithMetadata(map[string]interface{}{
-				"error": ErrFlushMeshSyncData(errors.New("meshery Database handler is not accessible to perform operations"), ctxName, serverURL),
+				"error": ErrEmptyMeshSyncHandler(),
 			}).Build()
 			err := provider.PersistSystemEvent(*event)
 			if err != nil {
@@ -540,81 +549,12 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 			return
 		}
 
-		err := provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KubernetesKeyValue{}).Error
-		if err != nil {
-
+		if err := FlushMeshSyncResourcesForCluster(provider.GetGenericPersister(), sid); err != nil {
 			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromOwner(userUUID).WithMetadata(map[string]interface{}{
 				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
 			}).Build()
-			err := provider.PersistSystemEvent(*event)
-			if err != nil {
-				err = ErrPersistEvent(err)
-				log.Error(err)
-			}
-
-			eventsChan.Publish(userUUID, event)
-			return
-		}
-
-		err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KubernetesResourceSpec{}).Error
-		if err != nil {
-
-			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromOwner(userUUID).WithMetadata(map[string]interface{}{
-				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
-			}).Build()
-			err := provider.PersistSystemEvent(*event)
-			if err != nil {
-				err = ErrPersistEvent(err)
-				log.Error(err)
-			}
-
-			eventsChan.Publish(userUUID, event)
-			return
-		}
-
-		err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KubernetesResourceStatus{}).Error
-		if err != nil {
-
-			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromOwner(userUUID).WithMetadata(map[string]interface{}{
-				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
-			}).Build()
-
-			err := provider.PersistSystemEvent(*event)
-			if err != nil {
-				err = ErrPersistEvent(err)
-				log.Error(err)
-			}
-
-			eventsChan.Publish(userUUID, event)
-			return
-		}
-
-		err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KubernetesResourceObjectMeta{}).Error
-		if err != nil {
-
-			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromOwner(userUUID).WithMetadata(map[string]interface{}{
-				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
-			}).Build()
-			err := provider.PersistSystemEvent(*event)
-			if err != nil {
-				err = ErrPersistEvent(err)
-				log.Error(err)
-			}
-
-			eventsChan.Publish(userUUID, event)
-			return
-		}
-
-		err = provider.GetGenericPersister().Where("cluster_id = ?", sid).Delete(&meshsyncmodel.KubernetesResource{}).Error
-		if err != nil {
-
-			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromOwner(userUUID).WithMetadata(map[string]interface{}{
-				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
-			}).Build()
-			err := provider.PersistSystemEvent(*event)
-			if err != nil {
-				err = ErrPersistEvent(err)
-				log.Error(err)
+			if perr := provider.PersistSystemEvent(*event); perr != nil {
+				log.Error(ErrPersistEvent(perr))
 			}
 
 			eventsChan.Publish(userUUID, event)
@@ -630,6 +570,57 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 		}
 		eventsChan.Publish(userUUID, event)
 	}
+}
+
+// FlushMeshSyncResourcesForCluster removes every MeshSync-discovered Kubernetes
+// resource that belongs to the given cluster (Kubernetes server) ID, together with
+// its child spec, status, object-meta, and key-value rows.
+//
+// Every child row shares its `id` primary key with the parent KubernetesResource.
+// The spec, status, and key-value children carry no cluster_id column of their own
+// (only the resource and its object-meta do), so all children are scoped uniformly
+// by a single subquery over the resource IDs owned by the cluster. Children are
+// deleted before the parent rows so that subquery still resolves to the IDs being
+// removed.
+//
+// Every table name is derived from the GORM models (via Model/Delete) rather than
+// hard-coded strings, so a future model rename or naming-strategy change cannot
+// silently orphan child rows - the defect this function was extracted to fix, where
+// the subqueries referenced a stale "objects" table that no longer existed and left
+// child rows behind on every cluster deletion.
+func FlushMeshSyncResourcesForCluster(db *database.Handler, clusterID string) error {
+	// The embedded *gorm.DB can be nil even when the handler is not, in which case
+	// the db.Transaction call below would panic; guard both.
+	if db == nil || db.DB == nil {
+		return ErrEmptyMeshSyncHandler()
+	}
+
+	// Run all deletes in one transaction so a mid-way failure rolls back rather than
+	// leaving the cluster partially flushed (e.g. children gone but parents kept).
+	return db.Transaction(func(tx *gorm.DB) error {
+		// The IDs of the resources being removed; reused as the scoping subquery for
+		// every child delete since each child row shares the parent resource's id.
+		resourceIDs := tx.Model(&meshsyncmodel.KubernetesResource{}).
+			Select("id").
+			Where("cluster_id = ?", clusterID)
+
+		// Child rows keyed by the parent resource's id, deleted before the parent so
+		// the subquery still resolves.
+		childModels := []any{
+			&meshsyncmodel.KubernetesKeyValue{},
+			&meshsyncmodel.KubernetesResourceSpec{},
+			&meshsyncmodel.KubernetesResourceStatus{},
+			&meshsyncmodel.KubernetesResourceObjectMeta{},
+		}
+		for _, child := range childModels {
+			if err := tx.Where("id IN (?)", resourceIDs).Delete(child).Error; err != nil {
+				return err
+			}
+		}
+
+		// Finally remove the parent resources for the cluster.
+		return tx.Where("cluster_id = ?", clusterID).Delete(&meshsyncmodel.KubernetesResource{}).Error
+	})
 }
 
 func RedactCredentialsForContext(ctx *K8sContext) (redactedContext K8sContext) {

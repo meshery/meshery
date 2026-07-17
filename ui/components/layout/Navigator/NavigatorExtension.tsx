@@ -7,7 +7,6 @@ import {
 import MesheryPerformanceComponent from '../../performance';
 import PatternServiceFormCore from '../../meshery-mesh-interface/PatternServiceFormCore';
 import InfoModal from '../../shared/Modal/Information/InfoModal';
-import ConfigurationSubscription from '@/graphql/subscriptions/ConfigurationSubscription';
 import _PromptComponent from '../../PromptComponent';
 import { ProviderUiAccessControl } from '../../../utils/disabledComponents';
 import { useNotification } from '../../../utils/hooks/useNotification';
@@ -54,6 +53,14 @@ const extensionExposedMesheryStore = {
   },
 };
 
+/**
+ * Inert stand-in for the removed `subscribeConfiguration` GraphQL subscription.
+ * Matches the old call shape — `(onNext, variables) => ({ dispose })` — so an
+ * extension bundle published against the previous host contract still mounts and
+ * unmounts cleanly. It never emits: `onNext` is intentionally never invoked.
+ */
+const noopSubscription = () => ({ dispose: () => {} });
+
 function PerformanceTestComponent(props: React.ComponentProps<typeof MesheryPerformanceComponent>) {
   return (
     <ProviderStoreWrapper>
@@ -89,6 +96,15 @@ function NavigatorExtension({ url }: NavigatorExtensionProps) {
     selectedK8sContexts,
     organization: currentOrganization,
   } = useSelector((state) => state.ui);
+  // `useRemoteComponent` fetches the bundle, evaluates it as a CommonJS module,
+  // and returns `module.exports.default` as the component. The remote bundle MUST
+  // therefore export the component as a CommonJS default
+  // (`module.exports = { default: Component, __esModule: true }`). NOTE: the hook
+  // does NOT throw when `.default` is missing — it returns `RemoteComponent ===
+  // undefined` with `err === undefined`, so a mis-built bundle fails silently
+  // (no loader error; React then throws "Element type is invalid … got: undefined").
+  // If an extension renders as undefined with no error, inspect the bundle's export
+  // shape, not this code. See meshery-extensions/docs/troubleshoot.md.
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
   const { openModalWithDefault, onLoadResource } = useContext(WorkspaceModalContext);
   const registryModal = useRegistryModal();
@@ -99,11 +115,17 @@ function NavigatorExtension({ url }: NavigatorExtensionProps) {
       RelationshipEvaluationResponseFormatter: RelationshipEvaluationTraceFormatter,
       MesheryPerformanceComponent: PerformanceTestComponent,
       selectedK8sContexts,
+      // Meshery Server no longer exposes any GraphQL subscription. `resolver` is
+      // kept only for backward compatibility with already-published extension
+      // bundles: they call `resolver.subscription.ConfigurationSubscription(cb, vars)`
+      // and later `.dispose()` on the result. Handing them `undefined` would throw
+      // at mount, so we hand them an inert subscription that never emits. New
+      // extensions should read designs/filters from the REST API instead.
       resolver: {
         query: {},
         mutation: {},
         subscription: {
-          ConfigurationSubscription,
+          ConfigurationSubscription: noopSubscription,
         },
       },
       InfoModal,

@@ -8,7 +8,8 @@ import { normalizeStaticImagePath } from '../../../utils/fallback';
 import { useLazyGetSystemSyncQuery } from '../../../rtk-query/system';
 import { useUpdateConnectionStatusMutation } from '../../../rtk-query/connection';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '../../../utils/Enum';
-import _PromptComponent from '../../PromptComponent';
+import ConnectionStateTransitionModal from '../../connections/ConnectionStateTransitionModal';
+import type { ConnectionStateTransitionModalRef } from '../../connections/ConnectionStateTransitionModal';
 import { iconMedium, iconSmall } from '../../../css/icons.styles';
 import { createPathForRemoteComponent } from '../../ExtensionSandbox';
 import RemoteComponent from '../../RemoteComponent';
@@ -21,9 +22,6 @@ import {
   Checkbox,
   Box,
   CustomTooltip,
-  Typography,
-  styled,
-  PROMPT_VARIANTS,
   TextField,
   ClickAwayListener,
   IconButton,
@@ -35,9 +33,10 @@ import {
   useMediaQuery,
   SearchIcon,
   SettingsIcon,
+  FilterAllIcon,
 } from '@sistent/sistent';
 import { CanShow } from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import OrganizationAndWorkSpaceSwitcher from '../../workspaces/SpacesSwitcher/SpaceSwitcher';
 import HeaderMenu from './HeaderMenu';
 import ConnectionModal from '../../connections/ConnectionFormModal';
@@ -84,11 +83,19 @@ const K8sContextConnectionChip_ = ({
     ctx.connectionId,
   );
 
+  // Prefer status already mapped onto the context (connectionsToK8sContexts
+  // sets `connectionStatus`). Fall back to a connections-list lookup for
+  // callers that only pass connectionId + a connections array.
   const connectionStatus = useMemo(() => {
-    if (!connections || !ctx.connectionId) return null;
+    if (ctx.connectionStatus) {
+      return ctx.connectionStatus;
+    }
+    if (!connections?.length || !ctx.connectionId) {
+      return null;
+    }
     const connection = connections.find((conn) => conn.id === ctx.connectionId);
     return connection?.status || null;
-  }, [connections, ctx.connectionId]);
+  }, [connections, ctx.connectionId, ctx.connectionStatus]);
 
   return (
     <Box id={ctx.id} sx={{ margin: '0.25rem 0' }}>
@@ -142,11 +149,13 @@ function K8sContextMenu({
   setActiveContexts = () => {},
   searchContexts = () => {},
 }) {
+  const theme = useTheme();
   const [showFullContextMenu, setShowFullContextMenu] = useState(false);
   const anchorRef = React.useRef(null);
   // The dropdown slides up from below; its translate distance scales with the
   // number of context rows it will render so it ends up flush against the badge.
-  const deleteCtxtRef = React.createRef();
+  // useRef (not createRef) so the same ref instance survives re-renders.
+  const deleteCtxtRef = React.useRef<ConnectionStateTransitionModalRef | null>(null);
   const { notify } = useNotification();
   const [fetchSystemSync] = useLazyGetSystemSyncQuery();
   const [updateConnectionStatus] = useUpdateConnectionStatusMutation();
@@ -155,14 +164,12 @@ function K8sContextMenu({
   );
   const dispatch = useDispatch();
 
-  // ->using same data source as we use in conn.table
+  // Same filter shape as KubernetesSubscription / the connections table:
+  // plain kind=kubernetes (not JSON-encoded) and pageSize=all so status dots
+  // resolve for every cluster in the switcher.
   const { data: connectionData } = useGetConnectionsQuery({
-    page: 0,
-    pagesize: 100,
-    search: '',
-    order: '',
-    status: '',
-    kind: JSON.stringify(['kubernetes']), // -> Kubernetes connections
+    kind: CONNECTION_KINDS.KUBERNETES,
+    pageSize: 'all',
   });
 
   const connections = connectionData?.connections || [];
@@ -174,51 +181,21 @@ function K8sContextMenu({
     top: '60px',
   };
 
-  const StateTransitionDetails = styled(Box)(({ theme }) => ({
-    backgroundColor: theme.palette.background.secondary,
-    padding: '1rem',
-    borderRadius: '0.5rem',
-    textAlign: 'left',
-  }));
   const handleKubernetesDelete = async (name, connectionID) => {
-    let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
-      title: `Delete Kubernetes connection?`,
-      subtitle: (
-        <>
-          <Typography variant="body">
-            {' '}
-            Are you sure you want to delete Kubernetes connection &quot;{name}&quot; and associated
-            credential?
-          </Typography>
-          <details>
-            <summary style={{ textAlign: 'left', marginTop: '1rem', cursor: 'pointer' }}>
-              <strong>What does this mean?</strong>
-            </summary>
-
-            <StateTransitionDetails>
-              <Typography variant="body2">
-                Deleting a connection administratively removes the cluster from Meshery&apos;s
-                purview of management, which includes the removal of Meshery Operator from the
-                cluster. Record of this Kubernetes connection and all associated data collected
-                through MeshSync for this connection will be purged from Meshery&apos;s database.
-                Note: By deleting this connection, you are not deleting the Kubernetes cluster
-                itself.
-              </Typography>
-              <Typography variant="body2" sx={{ marginTop: '1rem' }}>
-                <strong>Reconnecting:</strong> You can always reconnect Meshery to the cluster
-                again. By default, Meshery will automatically reconnect to the cluster when next
-                presented with the same kubeconfig file / context. If you wish to prevent
-                reconnection, *disconnect* this connection instead of *deleting* this connection.
-              </Typography>
-            </StateTransitionDetails>
-          </details>
-        </>
-      ),
-      primaryOption: 'CONFIRM',
-      variant: PROMPT_VARIANTS.DANGER,
-      showInfoIcon: `Learn more about the [lifecycle of connections](https://docs.meshery.io/concepts/logical/connections) and what it means to delete a connection.`,
+    // The shared transition modal explains what deleting this connection means
+    // by resolving the Kubernetes connection definition's transition copy for
+    // (current state → deleted); pass the connection's current state so that
+    // lookup can resolve (connectionsToK8sContexts maps it onto each ctx).
+    const currentStatus = contexts?.contexts?.find(
+      (ctx) => ctx.connectionId === connectionID,
+    )?.connectionStatus;
+    const confirmed = await deleteCtxtRef.current?.show({
+      targetStatus: CONNECTION_STATES.DELETED,
+      kind: CONNECTION_KINDS.KUBERNETES,
+      currentStatus,
+      connections: [{ id: connectionID, name, status: currentStatus }],
     });
-    if (responseOfDeleteK8sCtx === 'CONFIRM') {
+    if (confirmed) {
       const successCallback = async () => {
         try {
           const res = await fetchSystemSync().unwrap();
@@ -250,7 +227,12 @@ function K8sContextMenu({
   return (
     <>
       <div>
-        <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS}>
+        <CanShow
+          Key={{
+            action: Keys.IdentityAccessManagementViewAllKubernetesClusters.id,
+            subject: Keys.IdentityAccessManagementViewAllKubernetesClusters.function,
+          }}
+        >
           <IconButton
             ref={anchorRef}
             aria-label="contexts"
@@ -301,7 +283,13 @@ function K8sContextMenu({
           unmountOnExit
         >
           <div>
-            <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS} invert_action={['hide']}>
+            <CanShow
+              Key={{
+                action: Keys.IdentityAccessManagementViewAllKubernetesClusters.id,
+                subject: Keys.IdentityAccessManagementViewAllKubernetesClusters.function,
+              }}
+              invert_action={['hide']}
+            >
               <ClickAwayListener
                 onClickAway={(e) => {
                   if (anchorRef.current && anchorRef.current.contains(e.target as Node)) {
@@ -338,7 +326,7 @@ function K8sContextMenu({
                           marginTop: '1rem',
                         }}
                       >
-                        <div>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
                           <>
                             <Checkbox
                               checked={activeContexts.includes('all')}
@@ -347,9 +335,18 @@ function K8sContextMenu({
                                   ? setActiveContexts([])
                                   : setActiveContexts('all')
                               }
+                              icon={
+                                <FilterAllIcon
+                                  fill={theme.palette.background.brand.default}
+                                  style={{ opacity: 0.4 }}
+                                />
+                              }
+                              inputProps={{ 'aria-label': 'select all contexts' }}
                             />
                           </>
-                          <span style={{ fontWeight: 'bolder' }}>select all</span>
+                          <span style={{ fontWeight: 'bolder', whiteSpace: 'nowrap' }}>
+                            select all
+                          </span>
                         </div>
                         <CustomTooltip title="Configure Connections">
                           <div>
@@ -376,7 +373,7 @@ function K8sContextMenu({
                       );
                     })}
                     <Box sx={{ marginTop: '1rem' }}>
-                      <MesherySettingsEnvButtons />
+                      <MesherySettingsEnvButtons onOpened={() => setShowFullContextMenu(false)} />
                     </Box>
                   </div>
                 </CMenuContainer>
@@ -385,7 +382,7 @@ function K8sContextMenu({
           </div>
         </Slide>
       </div>
-      <_PromptComponent ref={deleteCtxtRef} />
+      <ConnectionStateTransitionModal ref={deleteCtxtRef} />
       <ConnectionModal
         isOpenModal={isConnectionOpenModal}
         setIsOpenModal={setIsConnectionOpenModal}

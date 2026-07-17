@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { Button, CatalogIcon, Grid2, Switch, Typography, useTheme, Box } from '@sistent/sistent';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
-import { Adapters, KanvasExtension } from '../components/extensions';
+import { Adapters, VisualDesignerExtension } from '../components/extensions';
 import DefaultError from '@/components/general/error-404';
 import { EVENT_TYPES } from '../lib/event-types';
 import { useNotification, usePageTitle } from '@/utils/hooks';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { CardContainer, FrontSideDescription } from '../css/icons.styles';
 import { useDispatch } from 'react-redux';
 import { toggleCatalogContent } from '@/store/slices/mesheryUi';
@@ -623,9 +623,9 @@ const Extensions = () => {
       <Head>
         <title>Extensions | Meshery</title>
       </Head>
-      {CAN(keys.VIEW_EXTENSIONS.action, keys.VIEW_EXTENSIONS.subject) ? (
+      {CAN(Keys.ExtensibilityViewExtensions.id, Keys.ExtensibilityViewExtensions.function) ? (
         <Grid2 container spacing={2} size="grow">
-          <KanvasExtension />
+          <VisualDesignerExtension />
           <WrappedMeshMapSnapShopCard githubActionEnabled={false} />
           <WrappedMesheryPerformanceAction githubActionEnabled={false} />
           <WrappedMesheryHelmExtension />

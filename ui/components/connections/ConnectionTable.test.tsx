@@ -8,6 +8,7 @@ const notify = vi.fn();
 const push = vi.fn();
 const ping = vi.fn();
 const pingGrafana = vi.fn();
+const pingPrometheus = vi.fn();
 const modalShow = vi.fn();
 const updateConnectionByIdMutator = vi.fn();
 const addConnectionToEnvironmentMutator = vi.fn();
@@ -30,17 +31,42 @@ vi.mock('next/router', () => ({
 }));
 
 vi.mock('@sistent/sistent', () => ({
-  CustomTooltip: ({ children }) => <div>{children}</div>,
+  CustomTooltip: ({ children, title }) => (
+    <div data-testid="custom-tooltip" data-title={String(title)}>
+      {children}
+    </div>
+  ),
+  // Same helpers FormattedTime uses; identity stubs keep cell tests deterministic.
+  getRelativeTime: (date: string) => `rel(${date})`,
+  getFullFormattedTime: (date: string) => `full(${date})`,
   CustomColumnVisibilityControl: () => <div data-testid="column-visibility-control" />,
   SearchBar: () => <div data-testid="search-bar" />,
   UniversalFilter: () => <div data-testid="universal-filter" />,
+
+  DataTableToolbar: ({
+    primaryActions,
+    search,
+    filter,
+    columnVisibility,
+    tabs,
+  }: {
+    primaryActions?: React.ReactNode;
+    search?: React.ReactNode;
+    filter?: React.ReactNode;
+    columnVisibility?: React.ReactNode;
+    tabs?: React.ReactNode;
+  }) => (
+    <div data-testid="data-table-toolbar">
+      {primaryActions}
+      {search}
+      {filter}
+      {columnVisibility}
+      {tabs}
+    </div>
+  ),
   ResponsiveDataTable: (props) => {
     dataTableProps = props;
     return <div data-testid="responsive-data-table" />;
-  },
-  PROMPT_VARIANTS: {
-    DANGER: 'danger',
-    WARNING: 'warning',
   },
   MenuItem: ({ children }) => <div>{children}</div>,
   Box: ({ children }) => <div>{children}</div>,
@@ -94,7 +120,6 @@ vi.mock('./styles', () => ({
 
 vi.mock('../data-formatter', () => ({
   FormatId: ({ id }) => <span>{id}</span>,
-  formatDate: (value) => value,
 }));
 
 vi.mock('../../css/icons.styles', () => ({
@@ -122,16 +147,16 @@ vi.mock('../../utils/utils', () => ({
   },
 }));
 
-vi.mock('@/graphql/queries/ResetDatabaseQuery', () => ({
-  default: vi.fn(),
-}));
-
 vi.mock('@/utils/hooks/useKubernetesHook', () => ({
   default: () => ping,
 }));
 
 vi.mock('@/utils/hooks/useGrafanaPingHook', () => ({
   default: () => pingGrafana,
+}));
+
+vi.mock('@/utils/hooks/usePrometheusPingHook', () => ({
+  default: () => pingPrometheus,
 }));
 
 vi.mock('./ConnectionChip', () => ({
@@ -179,30 +204,22 @@ vi.mock('@/utils/can', () => ({
   default: () => true,
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    ASSIGN_CONNECTIONS_TO_ENVIRONMENT: { action: 'assign', subject: 'environment' },
-    CHANGE_CONNECTION_STATE: { action: 'change', subject: 'connection' },
-    DELETE_A_CONNECTION: { action: 'delete', subject: 'connection' },
-    FLUSH_MESHSYNC_DATA: { action: 'flush', subject: 'meshsync' },
-  },
-}));
-
 vi.mock('@/rtk-query/connection', () => ({
   useGetConnectionsQuery: (...args) => getConnectionsQuery(...args),
   useUpdateConnectionByIdMutation: () => [updateConnectionByIdMutator],
+  usePerformConnectionActionMutation: () => [vi.fn(() => ({ unwrap: () => Promise.resolve({}) }))],
 }));
 
 vi.mock('../../assets/icons/disconnect', () => ({
   default: () => <svg />,
 }));
 
-vi.mock('../PromptComponent', () => ({
-  default: React.forwardRef(function PromptComponentMock(_, ref) {
+vi.mock('./ConnectionStateTransitionModal', () => ({
+  default: React.forwardRef(function ConnectionStateTransitionModalMock(_, ref) {
     React.useImperativeHandle(ref, () => ({
       show: modalShow,
     }));
-    return <div data-testid="prompt-component" />;
+    return <div data-testid="connection-transition-modal" />;
   }),
 }));
 
@@ -234,13 +251,16 @@ const makeConnection = (overrides = {}) => ({
   kind: 'kubernetes',
   status: 'connected',
   type: 'cluster',
+  // v1beta3 camelCase wire shape (subType/createdAt/updatedAt), matching what
+  // GET /api/integrations/connections actually returns.
   subType: 'managed',
   metadata: {
     name: 'cluster-a',
     server: 'https://cluster-a.local',
   },
   environments: [],
-  created_at: '2026-05-08',
+  createdAt: '2026-05-08T12:00:00Z',
+  updatedAt: '2026-05-09T12:00:00Z',
   ...overrides,
 });
 
@@ -285,7 +305,8 @@ describe('ConnectionTable', () => {
     saveEnvironmentMutator.mockImplementation(() => ({
       unwrap: () => Promise.resolve({ id: 'env-1', name: 'dev' }),
     }));
-    modalShow.mockResolvedValue('DELETE');
+    // The transition modal resolves `true` when the user confirms.
+    modalShow.mockResolvedValue(true);
 
     router.query = {};
 
@@ -333,6 +354,97 @@ describe('ConnectionTable', () => {
     });
   });
 
+  it('defaults to Discovered At (createdAt) descending, mapped to the server sort column', async () => {
+    render(<ConnectionTable />);
+
+    await waitFor(() => {
+      expect(dataTableProps).toBeDefined();
+    });
+
+    // The server's order param addresses the DB column...
+    expect(getConnectionsQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ order: 'created_at desc' }),
+      undefined,
+    );
+    // ...while the table's active-sort indicator uses the wire/column name.
+    expect(dataTableProps.options.sortOrder).toEqual({ name: 'createdAt', direction: 'desc' });
+  });
+
+  it('keeps a bookmarked snake_case sort working, indicator included', async () => {
+    // A URL bookmarked before the columns moved to the camelCase wire shape.
+    router.query = { con_sort: 'created_at desc' };
+
+    render(<ConnectionTable />);
+
+    await waitFor(() => {
+      expect(dataTableProps).toBeDefined();
+    });
+
+    // The server column is already snake_case, so it passes straight through...
+    expect(getConnectionsQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ order: 'created_at desc' }),
+      undefined,
+    );
+    // ...and the indicator resolves to a real column rather than silently
+    // matching nothing.
+    expect(dataTableProps.options.sortOrder).toEqual({ name: 'createdAt', direction: 'desc' });
+  });
+
+  it('shows the Discovered At column by default and renders a shrink-wrapped timestamp cell', async () => {
+    render(<ConnectionTable />);
+
+    await waitFor(() => {
+      expect(dataTableProps).toBeDefined();
+    });
+
+    // The responsive defaults are computed from colViews; 'xs' marks the
+    // column visible at every breakpoint (previously 'na' = always hidden).
+    const colViewsArg = updateVisibleColumns.mock.calls[0][1];
+    expect(colViewsArg).toContainEqual(['createdAt', 'xs']);
+
+    const discoveredAtColumn = dataTableProps.tableCols.find((col) => col.name === 'createdAt');
+    expect(discoveredAtColumn?.label).toBe('Discovered At');
+    // Header carries an info tooltip explaining Discovered At.
+    expect(discoveredAtColumn.options.customHeadRender).toEqual(expect.any(Function));
+
+    const { container, unmount } = render(
+      <>{discoveredAtColumn.options.customBodyRender('2026-05-08T12:00:00Z')}</>,
+    );
+    const stamp = container.querySelector('[data-testid="formatted-time"]') as HTMLElement;
+    expect(stamp).toHaveTextContent('rel(2026-05-08T12:00:00Z)');
+    // Inline shrink-wrap so the full-datetime tooltip anchors on the text,
+    // not the full table-cell width (Sistent FormattedTime uses a block div).
+    expect(stamp.style.display).toBe('inline-block');
+    expect(container.querySelector('[data-testid="custom-tooltip"]')).toHaveAttribute(
+      'data-title',
+      'full(2026-05-08T12:00:00Z)',
+    );
+    unmount();
+
+    // Empty and Go zero-time sentinel render as '-' (not "2025 years ago").
+    const { container: emptyContainer, unmount: unmountEmpty } = render(
+      <>{discoveredAtColumn.options.customBodyRender(undefined)}</>,
+    );
+    expect(emptyContainer.textContent).toBe('-');
+    unmountEmpty();
+
+    const { container: zeroContainer, unmount: unmountZero } = render(
+      <>{discoveredAtColumn.options.customBodyRender('0001-01-01T00:00:00Z')}</>,
+    );
+    expect(zeroContainer.textContent).toBe('-');
+    unmountZero();
+
+    // Updated At shares the same cell renderer when enabled via View Columns.
+    const updatedAtColumn = dataTableProps.tableCols.find((col) => col.name === 'updatedAt');
+    const { container: updatedContainer, unmount: unmountUpdated } = render(
+      <>{updatedAtColumn.options.customBodyRender('2026-05-09T12:00:00Z')}</>,
+    );
+    expect(updatedContainer.querySelector('[data-testid="formatted-time"]')).toHaveTextContent(
+      'rel(2026-05-09T12:00:00Z)',
+    );
+    unmountUpdated();
+  });
+
   it('surfaces query failures through notifications', async () => {
     getConnectionsQuery.mockReturnValue({
       data: { connections: [], totalCount: 0 },
@@ -377,7 +489,16 @@ describe('ConnectionTable', () => {
     await user.click(screen.getByRole('button', { name: /delete/i }));
 
     await waitFor(() => {
-      expect(modalShow).toHaveBeenCalled();
+      expect(modalShow).toHaveBeenCalledWith(
+        expect.objectContaining({
+          targetStatus: 'deleted',
+          kind: 'kubernetes',
+          connections: [
+            expect.objectContaining({ id: 'connection-1', name: 'cluster-a' }),
+            expect.objectContaining({ id: 'connection-2', name: 'cluster-b' }),
+          ],
+        }),
+      );
       expect(updateConnectionByIdMutator).toHaveBeenCalledTimes(2);
     });
 
@@ -389,6 +510,25 @@ describe('ConnectionTable', () => {
       connectionId: 'connection-2',
       body: { status: 'deleted' },
     });
+  });
+
+  it('applies no transition when the bulk delete confirmation is cancelled', async () => {
+    const user = userEvent.setup();
+    modalShow.mockResolvedValue(false);
+
+    render(<ConnectionTable />);
+
+    const toolbar = dataTableProps.options.customToolbarSelect({
+      data: [{ index: 0 }, { index: 1 }],
+    });
+    render(toolbar);
+
+    await user.click(screen.getByRole('button', { name: /delete/i }));
+
+    await waitFor(() => {
+      expect(modalShow).toHaveBeenCalled();
+    });
+    expect(updateConnectionByIdMutator).not.toHaveBeenCalled();
   });
 
   it('recomputes responsive column visibility when the window width changes', async () => {
@@ -567,18 +707,65 @@ describe('ConnectionTable', () => {
     expect(setRowsExpandedSpy).not.toHaveBeenCalled();
   });
 
-  it('reuses the same onFlushMeshSync callback across rerenders so children are not invalidated', () => {
+  it('keeps the ResponsiveDataTable options referentially stable across rerenders', () => {
     const { rerender } = render(<ConnectionTable />);
 
-    // The action menu only renders when an anchor is set. Capture the
-    // identity of the JSX-bound `onFlushMeshSync` by re-rendering with the
-    // same props and asserting the prop bag handed to ResponsiveDataTable
-    // (the only render-time reflection of `handleFlushMeshSync` available
-    // here) is referentially stable across renders.
     const firstOptions = dataTableProps.options;
 
     rerender(<ConnectionTable />);
 
     expect(dataTableProps.options).toBe(firstOptions);
+  });
+
+  // Every data column's header carries an info affordance explaining what the
+  // column means and how to read its values, so the table is self-describing.
+  // `Actions` is excluded: it holds controls rather than values.
+  it('gives every data column an info icon and tooltip in its header', () => {
+    render(<ConnectionTable />);
+
+    // Internal metadata columns and control columns that do not require tooltips.
+    const internalColumns = [
+      'id',
+      'metadata.server_location',
+      'metadata.serverLocation',
+      'metadata.server',
+      'nextStatus',
+      'kindLogo',
+      'metadata.name',
+      'Actions',
+    ];
+
+    const dataColumns = dataTableProps.columns.filter((c) => !internalColumns.includes(c.name));
+
+    dataColumns.forEach((col) => {
+      const name = col.name;
+      expect(
+        typeof col.options?.customHeadRender,
+        `column "${name}" is missing customHeadRender`,
+      ).toBe('function');
+
+      const head = col.options.customHeadRender({ index: 0, label: col.label, name }, () => {}, {});
+
+      expect(head.props.icon, `column "${name}" has no info icon`).toBeTruthy();
+      expect(
+        typeof head.props.tooltip === 'string' && head.props.tooltip.length > 0,
+        `column "${name}" has no info tooltip`,
+      ).toBe(true);
+    });
+  });
+  // Regression coverage for the review feedback on PR #20695: the
+  // Connections/MeshSync tab switcher must be passed down through the
+  // toolbar (rendered between the toolbar and the data table), not dropped.
+  it('renders the tabs prop inside the toolbar, ahead of the data table', () => {
+    render(<ConnectionTable tabs={<div data-testid="connection-tabs">tabs</div>} />);
+
+    const toolbar = screen.getByTestId('data-table-toolbar');
+    expect(toolbar).toContainElement(screen.getByTestId('connection-tabs'));
+
+    const positions = screen
+      .getByTestId('connection-tabs')
+      .compareDocumentPosition(screen.getByTestId('responsive-data-table'));
+
+    expect(positions & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 });

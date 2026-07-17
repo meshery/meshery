@@ -95,7 +95,7 @@ RUN update-ca-certificates
 #     apk add --no-cache libstdc++
 
 COPY ./server/cmd/server-config.env /app/server/cmd/server-config.env
-COPY ./server/meshmodel /app/server/meshmodel
+COPY ./models /app/models
 COPY ./server/permissions /app/server/permissions/
 COPY --from=meshery-server /meshery /app/server/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
