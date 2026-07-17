@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/router';
 import {
   AddIcon,
   Box,
@@ -17,6 +16,8 @@ import {
   usePingGrafanaConnectionQuery,
   useUpdatePinnedBoardsMutation,
 } from '@/rtk-query/telemetryGrafana';
+import { CONNECTION_KINDS } from '@/utils/Enum';
+import { useConnectionWizardModal } from '@/utils/context/ConnectionWizardContextProvider';
 import ConnectionPicker, { TelemetryConnection } from '../common/ConnectionPicker';
 import PingStatus from '../common/PingStatus';
 import TimeRangePicker from '../common/TimeRangePicker';
@@ -74,7 +75,7 @@ const DrawerBody = styled(Box)(({ theme }) => ({
  */
 const TelemetryDashboards: React.FC = () => {
   const theme = useTheme();
-  const router = useRouter();
+  const { openCreateConnection } = useConnectionWizardModal();
 
   const { data: connectionsData, isLoading: connectionsLoading } = useGetConnectionsQuery({
     kind: JSON.stringify(['grafana']),
@@ -149,14 +150,19 @@ const TelemetryDashboards: React.FC = () => {
             No Grafana connections yet
           </Typography>
           <Typography color="textSecondary" sx={{ maxWidth: 460 }}>
-            Add a Grafana connection to browse and render its dashboards here. Connections are
-            managed from the Connections page.
+            Add a Grafana connection to browse and render its dashboards here. You can manage all
+            connections anytime under Lifecycle → Connections.
           </Typography>
         </Box>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => router.push('/management/connections')}
+          onClick={() =>
+            openCreateConnection({
+              kind: CONNECTION_KINDS.GRAFANA,
+              skipKindSelection: true,
+            })
+          }
         >
           Add a Grafana connection
         </Button>

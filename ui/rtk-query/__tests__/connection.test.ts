@@ -14,8 +14,19 @@ import { mesheryApiPath } from '../index';
 // We need the real mesheryApi (used by connection.ts to inject endpoints)
 // but a controlled stub of the wrapped hooks. Use importActual to preserve
 // the rest of the module.
-const { schemasGetConnections, lazyTriggerRef, lazyResult, lazyLastInfo } = vi.hoisted(() => ({
+const {
+  schemasGetConnections,
+  schemasGetUserCredentials,
+  schemasUpdateConnectionTrigger,
+  schemasUpdateConnectionResult,
+  lazyTriggerRef,
+  lazyResult,
+  lazyLastInfo,
+} = vi.hoisted(() => ({
   schemasGetConnections: vi.fn(),
+  schemasGetUserCredentials: vi.fn(),
+  schemasUpdateConnectionTrigger: vi.fn(),
+  schemasUpdateConnectionResult: { isLoading: false },
   lazyTriggerRef: { current: vi.fn() },
   lazyResult: { isFetching: false },
   lazyLastInfo: { lastArg: null },
@@ -29,6 +40,11 @@ vi.mock('@meshery/schemas/mesheryApi', async () => {
   return {
     ...actual,
     useGetConnectionsQuery: (...args: unknown[]) => schemasGetConnections(...args),
+    useGetUserCredentialsQuery: (...args: unknown[]) => schemasGetUserCredentials(...args),
+    useUpdateConnectionMutation: () => [
+      schemasUpdateConnectionTrigger,
+      schemasUpdateConnectionResult,
+    ],
     mesheryApi: {
       ...mesheryApi,
       endpoints: {
@@ -42,7 +58,12 @@ vi.mock('@meshery/schemas/mesheryApi', async () => {
   };
 });
 
-import { useGetConnectionsQuery, useLazyGetConnectionsQuery } from '../connection';
+import {
+  useGetConnectionsQuery,
+  useGetCredentialsQuery,
+  useLazyGetConnectionsQuery,
+  useUpdateConnectionByIdMutation,
+} from '../connection';
 
 describe('connection – URLs', () => {
   it('builds the credentials URL', () => {
@@ -267,6 +288,73 @@ describe('connection mutations – HTTP contracts', () => {
     expect(resp.ok).toBe(false);
     expect(resp.status).toBe(500);
     expect(await resp.text()).toContain('internal');
+  });
+});
+
+// These two endpoints used to be re-declared locally even though
+// @meshery/schemas/mesheryApi already generates them. They now delegate, so the
+// tests below pin the delegation rather than a hand-built URL.
+describe('useGetCredentialsQuery wrapper', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('delegates to the schemas getUserCredentials query', () => {
+    useGetCredentialsQuery();
+    // Forwarded as-is, not defaulted to `{}`: RTK keys the cache off this arg,
+    // so `{}` would key separately from a plain schemas call. Either way every
+    // param is undefined, giving the bare GET /api/integrations/credentials.
+    expect(schemasGetUserCredentials).toHaveBeenCalledWith(undefined, undefined);
+  });
+
+  it('forwards options so callers can still skip the query', () => {
+    useGetCredentialsQuery(undefined, { skip: true });
+    expect(schemasGetUserCredentials).toHaveBeenCalledWith(undefined, { skip: true });
+  });
+});
+
+describe('useUpdateConnectionByIdMutation wrapper', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('delegates to the schemas updateConnection mutation', () => {
+    const [trigger] = useUpdateConnectionByIdMutation();
+    trigger({ connectionId: 'conn-1', body: { status: 'CONNECTED' } });
+
+    expect(schemasUpdateConnectionTrigger).toHaveBeenCalledWith({
+      connectionId: 'conn-1',
+      body: { status: 'CONNECTED', metadata: undefined },
+    });
+  });
+
+  it('returns the trigger result untouched so callers keep .unwrap()', () => {
+    // Every caller does updateConnectionById(...).unwrap(); the wrapper has to
+    // hand back RTK's promise rather than swallow it.
+    const promise = { unwrap: () => Promise.resolve({ id: 'conn-1' }) };
+    schemasUpdateConnectionTrigger.mockReturnValue(promise);
+
+    const [trigger] = useUpdateConnectionByIdMutation();
+    const returned = trigger({ connectionId: 'conn-1', body: { status: 'CONNECTED' } });
+
+    expect(returned).toBe(promise);
+    expect(typeof (returned as typeof promise).unwrap).toBe('function');
+  });
+
+  it('narrows the body to status + metadata', () => {
+    const [trigger] = useUpdateConnectionByIdMutation();
+    // @ts-expect-error extra fields are passed on purpose, to prove they are stripped
+    trigger({
+      connectionId: 'conn-1',
+      body: { status: 'CONNECTED', metadata: { a: 1 }, name: 'nope', kind: 'nope' },
+    });
+
+    // `name`/`kind` must not reach the server: the endpoint only honours status
+    // and metadata, and the local declaration used to strip everything else.
+    expect(schemasUpdateConnectionTrigger).toHaveBeenCalledWith({
+      connectionId: 'conn-1',
+      body: { status: 'CONNECTED', metadata: { a: 1 } },
+    });
   });
 });
 

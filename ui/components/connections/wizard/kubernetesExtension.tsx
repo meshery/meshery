@@ -26,6 +26,7 @@ import { kubernetesSettingsStep } from './kubernetesSettings';
 import FormatConnectionMetadata from '../metadata';
 import { ConnectionStateChip } from '../ConnectionChip';
 import { KubernetesImportStep, StepHeader } from '../ConnectionWizardStepContent';
+import { kubernetesImportedNotify } from '../ConnectionWizard.helpers';
 import type {
   ConnectionExtension,
   DiscoveredKubeContext,
@@ -379,10 +380,7 @@ const kubernetesReviewStep: WizardStep = {
         connectedCount: connectedIds.size,
         unreachableCount: created.filter((context) => !context.reachable).length,
       });
-      ctx.services.notify({
-        message: `Imported ${created.length} Kubernetes connection${created.length === 1 ? '' : 's'}.`,
-        event_type: created.length > 0 ? EVENT_TYPES.SUCCESS : EVENT_TYPES.WARNING,
-      });
+      ctx.services.notify(kubernetesImportedNotify(created.length));
       return true;
     } catch (error) {
       ctx.patch({ registrationError: error });

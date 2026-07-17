@@ -3872,6 +3872,15 @@
         "short_description": "Failed to reconcile MeshSync deployment mode",
         "probable_cause": "The connection's state machine or Kubernetes controllers may not be ready, or the cluster is unreachable",
         "suggested_remediation": "Ensure the connection is connected and the cluster is reachable, then retry the mode change"
+      },
+      "1443": {
+        "name": "ErrUnsafeFilePathCode",
+        "code": "1443",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unsafe file path requested",
+        "probable_cause": "The requested file path resolves outside the directories these endpoints are permitted to serve (the Meshery log directory under ~/.meshery/logs)",
+        "suggested_remediation": "Request only files that live under ~/.meshery/logs; paths outside it, or symlinks that escape it, are rejected"
       }
     }
   }

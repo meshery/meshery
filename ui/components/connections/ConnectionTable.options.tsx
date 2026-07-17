@@ -172,7 +172,11 @@ export const useConnectionTableOptions = ({
               <Table>
                 <TableRow style={{ padding: 0 }}>
                   <TableCell style={{ overflowX: 'hidden', padding: 0 }}>
-                    <Grid2 container style={{ textTransform: 'lowercase' }} size="grow">
+                    {/* No text-transform here: the details include IDs, URLs,
+                        build SHAs, and version strings whose casing is
+                        meaningful - lowercasing them made the expanded view
+                        hard to read (and wrong to copy). */}
+                    <Grid2 container size="grow">
                       <ContentContainer size={{ xs: 12 }}>
                         <FormatConnectionMetadata
                           connection={connection}

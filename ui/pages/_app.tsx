@@ -101,6 +101,9 @@ import { updateAdaptersInfo } from '@/store/slices/adapter';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import WorkspaceModalContextProvider from '@/utils/context/WorkspaceModalContextProvider';
 import RegistryModalContextProvider from '@/utils/context/RegistryModalContextProvider';
+import ConnectionWizardContextProvider, {
+  ConnectionWizardHost,
+} from '@/utils/context/ConnectionWizardContextProvider';
 import { DynamicFullScreenLoader } from '@/components/shared/LoadingState/DynamicFullscreenLoader';
 
 export const mesheryExtensionRoute = '/extension/meshmap';
@@ -150,7 +153,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     (key) => ability.can(key.id, _.lowerCase(key.function)),
     // `ability` is a module-level singleton; the reference never changes.
     // Re-creating this callback is intentionally avoided.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     [],
   );
 
@@ -521,89 +524,93 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
                   <LoadSessionGuard>
                     <WorkspaceModalContextProvider>
                       <RegistryModalContextProvider>
-                        <StyledRoot>
-                          <CssBaseline />
-                          <NavigationBar
-                            isDrawerCollapsed={isDrawerCollapsed}
-                            mobileOpen={state.mobileOpen}
-                            handleDrawerToggle={handleDrawerToggle}
-                            updateExtensionType={updateCurrentExtensionType}
-                            canShowNav={canShowNav}
-                          />
-                          <StyledAppContent
-                            canShowNav={canShowNav}
-                            isDrawerCollapsed={isDrawerCollapsed}
-                          >
-                            <SnackbarProvider
-                              anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'right',
-                              }}
-                              iconVariant={{
-                                success: <CheckCircle style={{ marginRight: '0.5rem' }} />,
-                                error: <Error style={{ marginRight: '0.5rem' }} />,
-                                warning: <Warning style={{ marginRight: '0.5rem' }} />,
-                                info: <Info style={{ marginRight: '0.5rem' }} />,
-                              }}
-                              Components={{
-                                info: ThemeResponsiveSnackbar,
-                                success: ThemeResponsiveSnackbar,
-                                error: ThemeResponsiveSnackbar,
-                                warning: ThemeResponsiveSnackbar,
-                                loading: ThemeResponsiveSnackbar,
-                              }}
-                              maxSnack={10}
+                        <ConnectionWizardContextProvider>
+                          <StyledRoot>
+                            <CssBaseline />
+                            <NavigationBar
+                              isDrawerCollapsed={isDrawerCollapsed}
+                              mobileOpen={state.mobileOpen}
+                              handleDrawerToggle={handleDrawerToggle}
+                              updateExtensionType={updateCurrentExtensionType}
+                              canShowNav={canShowNav}
+                            />
+                            <StyledAppContent
+                              canShowNav={canShowNav}
+                              isDrawerCollapsed={isDrawerCollapsed}
                             >
-                              <NotificationCenterProvider>
-                                <MesheryProgressBar />
-                                <KubernetesSubscription setAppState={setAppState} />
-                                {!state.isFullScreenMode && (
-                                  <Header
-                                    onDrawerToggle={handleDrawerToggle}
-                                    onDrawerCollapse={isDrawerCollapsed}
-                                    contexts={state.k8sContexts}
-                                    activeContexts={state.activeK8sContexts}
-                                    setActiveContexts={setActiveContexts}
-                                    searchContexts={searchContexts}
-                                    updateExtensionType={updateCurrentExtensionType}
-                                    abilityUpdated={state.abilityUpdated}
-                                  />
-                                )}
-                                <StyledContentWrapper>
-                                  <StyledMainContent
-                                    id="meshery-main"
-                                    style={{
-                                      padding: extensionType === 'navigator' && '0px',
-                                    }}
-                                  >
-                                    <LocalizationProvider dateAdapter={AdapterMoment}>
-                                      <ErrorBoundary customFallback={CustomErrorFallback}>
-                                        <Component
-                                          pageContext={pageContext}
-                                          contexts={state.k8sContexts}
-                                          activeContexts={state.activeK8sContexts}
-                                          setActiveContexts={setActiveContexts}
-                                          searchContexts={searchContexts}
-                                          {...pageProps}
-                                        />
-                                      </ErrorBoundary>
-                                    </LocalizationProvider>
-                                  </StyledMainContent>
-                                  <Footer
-                                    handleMesheryCommunityClick={handleMesheryCommunityClick}
-                                    providerCapabilities={providerCapabilities}
-                                  />
-                                </StyledContentWrapper>
-                              </NotificationCenterProvider>
-                            </SnackbarProvider>
-                          </StyledAppContent>
-                        </StyledRoot>
-                        <PlaygroundMeshDeploy
-                          closeForm={() =>
-                            setState((prevState) => ({ ...prevState, isOpen: false }))
-                          }
-                          isOpen={state.isOpen}
-                        />
+                              <SnackbarProvider
+                                anchorOrigin={{
+                                  vertical: 'bottom',
+                                  horizontal: 'right',
+                                }}
+                                iconVariant={{
+                                  success: <CheckCircle style={{ marginRight: '0.5rem' }} />,
+                                  error: <Error style={{ marginRight: '0.5rem' }} />,
+                                  warning: <Warning style={{ marginRight: '0.5rem' }} />,
+                                  info: <Info style={{ marginRight: '0.5rem' }} />,
+                                }}
+                                Components={{
+                                  info: ThemeResponsiveSnackbar,
+                                  success: ThemeResponsiveSnackbar,
+                                  error: ThemeResponsiveSnackbar,
+                                  warning: ThemeResponsiveSnackbar,
+                                  loading: ThemeResponsiveSnackbar,
+                                }}
+                                maxSnack={10}
+                              >
+                                <NotificationCenterProvider>
+                                  <MesheryProgressBar />
+                                  <KubernetesSubscription setAppState={setAppState} />
+                                  {!state.isFullScreenMode && (
+                                    <Header
+                                      onDrawerToggle={handleDrawerToggle}
+                                      onDrawerCollapse={isDrawerCollapsed}
+                                      contexts={state.k8sContexts}
+                                      activeContexts={state.activeK8sContexts}
+                                      setActiveContexts={setActiveContexts}
+                                      searchContexts={searchContexts}
+                                      updateExtensionType={updateCurrentExtensionType}
+                                      abilityUpdated={state.abilityUpdated}
+                                    />
+                                  )}
+                                  <StyledContentWrapper>
+                                    <StyledMainContent
+                                      id="meshery-main"
+                                      style={{
+                                        padding: extensionType === 'navigator' && '0px',
+                                      }}
+                                    >
+                                      <LocalizationProvider dateAdapter={AdapterMoment}>
+                                        <ErrorBoundary customFallback={CustomErrorFallback}>
+                                          <Component
+                                            pageContext={pageContext}
+                                            contexts={state.k8sContexts}
+                                            activeContexts={state.activeK8sContexts}
+                                            setActiveContexts={setActiveContexts}
+                                            searchContexts={searchContexts}
+                                            {...pageProps}
+                                          />
+                                        </ErrorBoundary>
+                                      </LocalizationProvider>
+                                    </StyledMainContent>
+                                    <Footer
+                                      handleMesheryCommunityClick={handleMesheryCommunityClick}
+                                      providerCapabilities={providerCapabilities}
+                                    />
+                                  </StyledContentWrapper>
+                                  {/* App-level Create Connection wizard (context switcher, telemetry, deep links). */}
+                                  <ConnectionWizardHost />
+                                </NotificationCenterProvider>
+                              </SnackbarProvider>
+                            </StyledAppContent>
+                          </StyledRoot>
+                          <PlaygroundMeshDeploy
+                            closeForm={() =>
+                              setState((prevState) => ({ ...prevState, isOpen: false }))
+                            }
+                            isOpen={state.isOpen}
+                          />
+                        </ConnectionWizardContextProvider>
                       </RegistryModalContextProvider>
                     </WorkspaceModalContextProvider>
                   </LoadSessionGuard>

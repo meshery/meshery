@@ -26,6 +26,7 @@ import {
   CredentialAssociationStep,
   GenericConnectionDetailsStep,
 } from '../ConnectionWizardStepContent';
+import { connectionCreatedNotify } from '../ConnectionWizard.helpers';
 import type { WizardContext, WizardStep } from './types';
 
 export const kindPermission = (config?: ConnectionWizardKindConfig | null) => {
@@ -269,10 +270,7 @@ export const genericRegisterStep: WizardStep = {
       const result = await ctx.services.connectConnection({ ...basePayload, status: 'connect' });
 
       ctx.patch({ registrationResult: result ?? basePayload });
-      ctx.services.notify({
-        message: `${kindConfig.label} connection created.`,
-        event_type: EVENT_TYPES.SUCCESS,
-      });
+      ctx.services.notify(connectionCreatedNotify(kindConfig.label));
       return true;
     } catch (error) {
       ctx.patch({ registrationError: error });

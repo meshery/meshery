@@ -29,6 +29,16 @@ export type UseConnectionWizardParams = {
   /** configure mode: the connection being (re)configured. */
   initialKindConfig?: ConnectionWizardKindConfig | null;
   initialRegistrationResult?: GenericRecord | null;
+  /**
+   * create mode deep-link: kind string (e.g. "kubernetes") resolved against
+   * `availableKinds` once the registry definitions load.
+   */
+  presetKind?: string | null;
+  /**
+   * When true with `presetKind`, advance past the "Choose Connection" step so
+   * the user lands on Import Kubeconfig (or the kind's details step).
+   */
+  skipKindSelection?: boolean;
   onComplete?: () => void;
 };
 
@@ -102,6 +112,39 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
     }));
   }, [mode, initialKindConfig, initialRegistrationResult]);
 
+  // Create-mode deep link: once kind definitions load, pre-select `presetKind`
+  // and optionally land on the step after "Choose Connection" (Import Kubeconfig
+  // for Kubernetes). Applied once per open so user navigation is not overwritten.
+  const { presetKind, skipKindSelection } = params;
+  const appliedPresetRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!isOpen) {
+      appliedPresetRef.current = null;
+      return;
+    }
+    if (mode !== 'create' || !presetKind || !availableKinds?.length) {
+      return;
+    }
+    if (appliedPresetRef.current === presetKind) {
+      return;
+    }
+
+    const normalized = presetKind.toLowerCase();
+    const kindConfig =
+      availableKinds.find((config) => config.kind.toLowerCase() === normalized) ?? null;
+    if (!kindConfig) {
+      return;
+    }
+
+    appliedPresetRef.current = presetKind;
+    setData((current) => ({ ...current, kindConfig }));
+    if (skipKindSelection) {
+      // `select` is always step 0 in create mode; index 1 is the kind details
+      // step (Import Kubeconfig for the kubernetes extension).
+      setActiveIndex(1);
+    }
+  }, [isOpen, mode, presetKind, skipKindSelection, availableKinds]);
+
   // Keep `reset` stable while still resetting from the latest params: read them
   // from a ref updated in the render body (not an effect, so children never see
   // stale values during commit).
@@ -111,6 +154,7 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
     setData(makeInitialData(paramsRef.current));
     setActiveIndex(0);
     setIsBusy(false);
+    appliedPresetRef.current = null;
   }, []);
 
   const services = useMemo<WizardServices>(
