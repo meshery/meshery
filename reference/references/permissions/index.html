@@ -10,8 +10,6 @@
 / <a href=/reference/>📖 extensibility & reference</a>
 / <a href=/reference/references/>📖 reference</a>
 / permission keys</div></li></ol></nav><div class=td-content><h1>Permission Keys</h1><p>Permissions are represented as <b>keys</b>, each serving as a unique identifier for a specific permission. One or more keys can be grouped together and assigned to a <b>keychain</b>.<br></p><div class="alert alert-info" role=alert><div class="h4 alert-heading" role=heading>Customizable Permissions</div><p>Default permissions can be easily customized by simply creating your own keychains and roles.</div></p><div class="alert alert-info" role=alert><div class="h4 alert-heading" role=heading>Contributing to Permission Keys</div><p>To contribute permission keys, see the <a href=/reference/extensibility/authorization/#adding-a-new-permission-key>Adding a New Permission Key Guide</a>. This guide explains Meshery&rsquo;s extensible authorization system.</div></p><div style=overflow-x:auto><style>tbody{display:table-row-group;vertical-align:middle;unicode-bidi:isolate;border-color:inherit}td{padding:1rem;border-top:2px solid var(--color-primary-dark)}tr{cursor:default}th{cursor:default}@media screen and (min-width:1366px){table{width:100%;table-layout:fixed}td{word-wrap:break-word}#tablesContainer{max-width:1200px;margin:auto}}tr:nth-child(even){background-color:var(--color-primary-medium)!important}</style><div id=tablesContainer></div><script type=module>
-  import { keys } from '/js/permission_constants.js';
-
   window.onload = function () {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', '/excel/keys.csv', true);
@@ -55,7 +53,7 @@
           categories[category].push(row);
         });
 
-        const headers = ["Category", "Key Name", "Description", "Key ID", "Moniker"];
+        const headers = ["Category", "Key Name", "Description", "Key ID"];
 
         
         const container = document.getElementById('tablesContainer');
@@ -88,13 +86,6 @@
                 tr.appendChild(td);
               }
             });
-
-            
-            const monikerTd = document.createElement('td');
-            monikerTd.style.padding = '1rem';
-            const matchingPermissionKey = Object.keys(keys).find(key => keys[key].subject === row[1]);
-            monikerTd.textContent = matchingPermissionKey ?? '—';
-            tr.appendChild(monikerTd);
 
             tbody.appendChild(tr);
           });
