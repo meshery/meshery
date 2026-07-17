@@ -85,11 +85,3 @@ html body #kanvas-bottom-dock > div {
   overflow: hidden;
 }
 
-/* Top Navbar alignment fix for Kanvas */
-html body .MuiBox-root:has(> div > [data-testid="notification-button"]) > div {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-top: -30px;
-  margin-left: 16px;
-}

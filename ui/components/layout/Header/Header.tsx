@@ -504,7 +504,15 @@ const Header = ({
                     />
                   )}
                 </ErrorBoundary>
-                <UserInfoContainer>
+                <UserInfoContainer
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '16px',
+                    marginTop: '-30px',
+                    marginLeft: '16px',
+                  }}
+                >
                   <UserSpan
                     sx={{
                       display: {
