@@ -142,6 +142,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
   const pageSize = 10;
   const sortOrder = 'updated_at desc';
   const [search, setSearch] = useState('');
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [actionType, setActionType] = useState('');
   const [initialData, setInitialData] = useState({});
   const [editWorkspaceId, setEditWorkspaceId] = useState('');
@@ -468,7 +469,9 @@ const Workspaces = ({ onSelectWorkspace }) => {
                 onSearch={(value) => {
                   setSearch(value);
                 }}
-                placeholder="Search Workspaces..."
+                placeholder="Search by name"
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
               />
             }
             columns={viewType !== 'grid' ? columnList : undefined}
