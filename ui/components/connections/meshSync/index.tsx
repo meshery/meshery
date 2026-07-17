@@ -689,7 +689,7 @@ export default function MeshSyncTable(props) {
 
   return (
     <>
-      <ToolWrapper style={{ marginBottom: '5px', marginTop: '-30px' }}>
+      <ToolWrapper style={{ marginBottom: '5px' }}>
         <div
           style={{
             display: 'flex',
