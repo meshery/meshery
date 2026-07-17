@@ -473,7 +473,14 @@ const MeshAdapterConfigComponent = () => {
               />
             </Grid2>
           </Grid2>
-          <Grid2 container spacing={1} alignItems="flex-end" justifyContent="flex-end" size="grow">
+          <Grid2
+            container
+            spacing={1}
+            alignItems="flex-end"
+            justifyContent="flex-end"
+            size="grow"
+            sx={{ pt: 4 }}
+          >
             <div ref={labelRef}>
               <TextField
                 id="deployPort"
@@ -486,24 +493,22 @@ const MeshAdapterConfigComponent = () => {
               />
             </div>
             <React.Fragment>
-              <AdapterButtons>
-                <AdapterButton
-                  type="submit"
-                  variant="contained"
-                  data-testid="adapter-deploy-button"
-                  color="primary"
-                  size="large"
-                  onClick={handleAdapterDeploy}
-                  disabled={
-                    !CAN(
-                      Keys.InfrastructureManagementDeployCloudNativeInfrastructure.id,
-                      Keys.InfrastructureManagementDeployCloudNativeInfrastructure.function,
-                    )
-                  }
-                >
-                  Deploy
-                </AdapterButton>
-              </AdapterButtons>
+              <AdapterButton
+                type="submit"
+                variant="contained"
+                data-testid="adapter-deploy-button"
+                color="primary"
+                size="large"
+                onClick={handleAdapterDeploy}
+                disabled={
+                  !CAN(
+                    Keys.InfrastructureManagementDeployCloudNativeInfrastructure.id,
+                    Keys.InfrastructureManagementDeployCloudNativeInfrastructure.function,
+                  )
+                }
+              >
+                Deploy
+              </AdapterButton>
             </React.Fragment>
           </Grid2>
         </WrapperStyledDiv>

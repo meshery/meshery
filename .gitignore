@@ -5,6 +5,7 @@
 *.dll
 *.so
 *.dylib
+*.pyc
 
 # Test binary, build with `go test -c`
 *.test
@@ -17,7 +18,7 @@
 .vscode/
 .cusorignore
 *.config
-.claude
+**/__pycache__/
 
 Chart.min.js
 
@@ -101,3 +102,4 @@ docs/hugo_stats.json
 LLMs
 .copilot-tmp/*
 .claude/worktrees/*
+

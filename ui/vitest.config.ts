@@ -14,13 +14,12 @@ export default defineConfig({
       '.next',
       'out',
       'tests/e2e',
-      // TODO: these four files use shallow vi.mock() stubs for @sistent/sistent.
-      // Their transitive imports pull in styled-component modules that the
+      // TODO: these three files use shallow vi.mock() stubs for @sistent/sistent.
+      // Their transitive imports pull in styled-components modules that the
       // stubs don't cover. Fixing properly requires either (a) converting the
       // mock to vi.mock(..., async (importOriginal) => ...) and wrapping render()
       // in SistentThemeProvider, or (b) exhaustively stubbing the imported
       // exports. Tracked separately from the Nighthawk removal.
-      'components/layout/Header/Header.test.tsx',
       'components/registry/ImportModelModal.test.tsx',
       'components/registry/CreateModelModal.test.tsx',
       'components/registry/MeshModelComponent.test.tsx',

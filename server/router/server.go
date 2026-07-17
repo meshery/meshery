@@ -491,8 +491,14 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	// mode). Separate from PUT so resource updates don't carry cluster effects.
 	gMux.Handle("/api/integrations/connections/{connectionId}/actions", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PerformConnectionAction), models.ProviderAuth))).
 		Methods("POST")
+	// POST drives the registration state machine; the DELETE method on the same
+	// path is the deprecated body-based cancel (see ProcessConnectionRegistration).
 	gMux.Handle("/api/integrations/connections/register", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ProcessConnectionRegistration), models.ProviderAuth))).
 		Methods("POST", "DELETE")
+	// Schemas-defined cancel: the registration tracker id travels in the path
+	// (operationId cancelConnectionRegister).
+	gMux.Handle("/api/integrations/connections/register/{registrationId}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.CancelConnectionRegister), models.ProviderAuth))).
+		Methods("DELETE")
 	gMux.Handle("/api/integrations/connections/{connectionId}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteConnection), models.ProviderAuth))).
 		Methods("DELETE")
 	gMux.Handle("/api/integrations/connections/{connectionId}/controllers/config", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetConnectionControllersConfig), models.ProviderAuth))).

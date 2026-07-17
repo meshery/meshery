@@ -20,6 +20,10 @@ import WizardStepper from './wizard/WizardStepper';
 type ConnectionWizardModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  /** Pre-select a connection kind once definitions load (e.g. "kubernetes"). */
+  presetKind?: string | null;
+  /** When true with presetKind, land on the step after "Choose Connection". */
+  skipKindSelection?: boolean;
 };
 
 // The stepper renders each step's `icon` component bare (no size props), so it
@@ -30,7 +34,12 @@ const StepConnectionIcon = (props: { width?: number; height?: number }) => (
   <ConnectionIcon width={24} height={24} {...props} />
 );
 
-const ConnectionWizardModal = ({ isOpen, onClose }: ConnectionWizardModalProps) => {
+const ConnectionWizardModal = ({
+  isOpen,
+  onClose,
+  presetKind = null,
+  skipKindSelection = false,
+}: ConnectionWizardModalProps) => {
   const { connectionMetadataState } = useSelector((state: RootState) => state.ui);
   const { data: connectionDefinitionsResponse, isFetching: isLoadingKinds } =
     useListConnectionDefinitionsQuery({}, { skip: !isOpen });
@@ -48,6 +57,8 @@ const ConnectionWizardModal = ({ isOpen, onClose }: ConnectionWizardModalProps) 
     availableKinds: kindConfigs,
     isLoadingKinds,
     connectionIconMap: connectionMetadataState || undefined,
+    presetKind,
+    skipKindSelection,
     onComplete: onClose,
   });
 

@@ -1601,6 +1601,7 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 		result = result.Where("(lower(name) like ?)", like)
 	}
 
+	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	result = result.Order(order)
 
 	var count int64
