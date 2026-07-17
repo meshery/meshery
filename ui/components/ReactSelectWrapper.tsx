@@ -77,7 +77,11 @@ function Placeholder(props) {
 }
 
 function SingleValue(props) {
-  return <Typography {...props.innerProps}>{props.children}</Typography>;
+  return (
+    <Typography {...props.innerProps} sx={{ pl: 2 }}>
+      {props.children}
+    </Typography>
+  );
 }
 
 function ValueContainer(props) {
@@ -149,6 +153,7 @@ const ReactSelectWrapper = ({
       input: (base) => ({
         ...base,
         color: theme.palette.text.primary,
+        paddingLeft: '16px',
         '& input': { font: 'inherit' },
       }),
 

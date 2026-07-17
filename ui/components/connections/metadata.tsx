@@ -50,8 +50,11 @@ const DefaultPropertyFormatters = {
   id: (value) => customIdFormatter('Id', value),
   uid: (value) => customIdFormatter('Uid', value),
   server_id: (value) => customIdFormatter('Server Id', value),
+  serverId: (value) => customIdFormatter('Server Id', value),
   created_at: (value) => customDateFormatter('Created At', value),
+  createdAt: (value) => customDateFormatter('Created At', value),
   updated_at: (value) => customDateFormatter('Updated At', value),
+  updatedAt: (value) => customDateFormatter('Updated At', value),
   creation_timestamp: (value) => customDateFormatter('Creation Timestamp', value),
   creationTimestamp: (value) => customDateFormatter('Creation Timestamp', value),
   last_seen: (value) => customDateFormatter('Last Seen', value),
@@ -264,7 +267,13 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                       wordWrap: 'break-word',
                     }}
                     primary="Server"
-                    secondary={<Link title={metadata.server}>{metadata.server}</Link>}
+                    secondary={
+                      metadata.server ? (
+                        <Link href={metadata.server} title={metadata.server} />
+                      ) : (
+                        '-'
+                      )
+                    }
                   />
                 </ListItem>
               </List>
@@ -391,25 +400,109 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
   );
 };
 
+// Well-known metadata written for meshery-kind connections at registration
+// time (see BuildMesheryConnectionPayload in server/models/connections).
+// Current records use camelCase keys; snake_case fallbacks cover older rows.
+const MESHERY_SERVER_METADATA_KEYS = [
+  'serverId',
+  'server_id',
+  'serverVersion',
+  'server_version',
+  'serverBuildSha',
+  'server_build_sha',
+  'serverLocation',
+  'server_location',
+];
+
 const MesheryMetadataFormatter = ({ connection }) => {
+  const metadata = connection.metadata || {};
+  const serverId = metadata.serverId ?? metadata.server_id;
+  const serverVersion = metadata.serverVersion ?? metadata.server_version;
+  const serverBuildSha = metadata.serverBuildSha ?? metadata.server_build_sha;
+  const serverLocation = metadata.serverLocation ?? metadata.server_location;
+
+  // Metadata beyond the well-known server fields still renders (below, via the
+  // generic structured formatter) so nothing is silently dropped.
+  const extraMetadata = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(connection.metadata || {}).filter(
+          ([key]) => !MESHERY_SERVER_METADATA_KEYS.includes(key),
+        ),
+      ),
+    [connection.metadata],
+  );
+  const hasExtraMetadata = Object.keys(extraMetadata).length > 0;
+
   const uiSchema = useMemo(
     () =>
       createColumnUiSchema({
-        metadata: connection.metadata || {},
+        metadata: extraMetadata,
         numCols: {
           xs: 2,
           md: 4,
         },
       }),
-    [connection.metadata],
+    [extraMetadata],
   );
 
   return (
-    <FormatStructuredData
-      data={connection.metadata}
-      uiSchema={uiSchema}
-      propertyFormatters={DefaultPropertyFormatters}
-    />
+    <Grid2 container spacing={1} sx={{ textTransform: 'none' }} size="grow">
+      <Grid2 size={{ xs: 12, md: 6 }}>
+        <List>
+          <ListItem>
+            <StyledListItemText
+              primary="Server ID"
+              secondary={serverId ? <FormatId id={serverId} /> : 'Not available'}
+            />
+          </ListItem>
+          <ListItem>
+            <StyledListItemText
+              style={{ wordWrap: 'break-word' }}
+              primary="Server Location"
+              secondary={
+                serverLocation ? <Link href={serverLocation} title={serverLocation} /> : 'Unknown'
+              }
+            />
+          </ListItem>
+          <ListItem>
+            <StyledListItemText
+              primary="Discovered At"
+              secondary={<FormattedDate date={connection.createdAt} />}
+            />
+          </ListItem>
+        </List>
+      </Grid2>
+      <Grid2 size={{ xs: 12, md: 6 }}>
+        <List>
+          <ListItem>
+            <StyledListItemText primary="Server Version" secondary={serverVersion || 'Unknown'} />
+          </ListItem>
+          <ListItem>
+            <StyledListItemText
+              style={{ wordBreak: 'break-all' }}
+              primary="Server Build SHA"
+              secondary={serverBuildSha || 'Unknown'}
+            />
+          </ListItem>
+          <ListItem>
+            <StyledListItemText
+              primary="Updated At"
+              secondary={<FormattedDate date={connection.updatedAt} />}
+            />
+          </ListItem>
+        </List>
+      </Grid2>
+      {hasExtraMetadata && (
+        <Grid2 size={{ xs: 12 }}>
+          <FormatStructuredData
+            data={extraMetadata}
+            uiSchema={uiSchema}
+            propertyFormatters={DefaultPropertyFormatters}
+          />
+        </Grid2>
+      )}
+    </Grid2>
   );
 };
 

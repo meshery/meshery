@@ -1,6 +1,58 @@
 import { CONNECTION_KINDS } from '@/utils/Enum';
+import { EVENT_TYPES } from 'lib/event-types';
 
 export type SupportedConnectionWizardKind = string;
+
+/** Lifecycle Connections page path (deep links + post-create navigation). */
+export const CONNECTIONS_PATH = '/management/connections';
+
+export const CREATE_CONNECTION_QUERY = {
+  create: 'create',
+  kind: 'kind',
+} as const;
+
+export const isCreateConnectionQuery = (value: string | string[] | undefined): boolean =>
+  value === 'true' || value === '1';
+
+export type ConnectionCreatedNotifyPayload = {
+  message: string;
+  event_type: typeof EVENT_TYPES.SUCCESS | typeof EVENT_TYPES.WARNING;
+  link?: { href: string; label: string };
+};
+
+const isOnConnectionsPage = (): boolean =>
+  typeof window !== 'undefined' && window.location.pathname.startsWith(CONNECTIONS_PATH);
+
+/**
+ * Success snackbar after create/import. Plain string (BasicMarkdown-safe) plus an
+ * optional same-tab action when not already on the Connections page.
+ */
+export const connectionCreatedNotify = (label: string): ConnectionCreatedNotifyPayload => {
+  const name = (label && String(label).trim()) || '';
+  const summary = name ? `${name} connection created.` : 'Connection created.';
+  if (isOnConnectionsPage()) {
+    return { message: summary, event_type: EVENT_TYPES.SUCCESS };
+  }
+  return {
+    message: summary,
+    event_type: EVENT_TYPES.SUCCESS,
+    link: { href: CONNECTIONS_PATH, label: 'View connections' },
+  };
+};
+
+export const kubernetesImportedNotify = (count: number): ConnectionCreatedNotifyPayload => {
+  const noun = count === 1 ? 'connection' : 'connections';
+  const summary = `Imported ${count} Kubernetes ${noun}.`;
+  const event_type = count > 0 ? EVENT_TYPES.SUCCESS : EVENT_TYPES.WARNING;
+  if (isOnConnectionsPage() || count === 0) {
+    return { message: summary, event_type };
+  }
+  return {
+    message: summary,
+    event_type,
+    link: { href: CONNECTIONS_PATH, label: 'View connections' },
+  };
+};
 
 export type ConnectionWizardFlow = 'kubernetes' | 'generic';
 

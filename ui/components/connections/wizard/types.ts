@@ -77,7 +77,12 @@ export type KubeconfigImportOptions = {
 };
 
 export type WizardServices = {
-  notify: (opts: { message: string; event_type: number; details?: string }) => void;
+  notify: (opts: {
+    message: string;
+    event_type: number | string | { type?: string };
+    details?: string;
+    link?: { href: string; label: string };
+  }) => void;
   /** POST /integrations/connections/register with the given body. */
   registerConnection: (body: GenericRecord) => Promise<GenericRecord>;
   /** POST /integrations/connections/register (status: connect). */
