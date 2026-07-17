@@ -367,8 +367,7 @@ const RegistrantContent = ({ registrant }: { registrant: any }) => {
   const kindKey = registrant?.kind || registrant?.hostname;
   const iconSrc =
     getFallbackImageBasedOnKind(kindKey) || getFallbackImageBasedOnKind(registrant?.hostname);
-  const displayName =
-    registrant?.name || registrant?.hostname || registrant?.kind || 'Registrant';
+  const displayName = registrant?.name || registrant?.hostname || registrant?.kind || 'Registrant';
 
   const PropertyFormattersLeft = {
     kind: (value) => <KeyValue property="Kind" value={value} />,
