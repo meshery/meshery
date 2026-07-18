@@ -1039,7 +1039,8 @@ export default function Provider() {
               width={12}
               height={12}
               aria-hidden="true"
-              style={{ verticalAlign: "middle", color: "inherit" }}
+              fill="#fff"
+              style={{ verticalAlign: "middle" }}
             />
           </sup>
         </LearnMore>
