@@ -336,7 +336,6 @@ export function buildPatternsTableOptions({
   setSelectedRowData,
   deletePatterns,
   showModal,
-  initPatternsSubscription,
 }) {
   return {
     customToolbarSelect: (selectedRows, displayData, setSelectedRows) => (
@@ -401,16 +400,9 @@ export function buildPatternsTableOptions({
 
       switch (action) {
         case 'changePage':
-          initPatternsSubscription(tableState.page.toString(), pageSize.toString(), search, order);
           setPage(tableState.page);
           break;
         case 'changeRowsPerPage':
-          initPatternsSubscription(
-            page.toString(),
-            tableState.rowsPerPage.toString(),
-            search,
-            order,
-          );
           setPageSize(tableState.rowsPerPage);
           break;
         case 'search':
@@ -432,7 +424,6 @@ export function buildPatternsTableOptions({
             }
           }
           if (order !== sortOrder) {
-            initPatternsSubscription(page.toString(), pageSize.toString(), search, order);
             setSortOrder(order);
           }
           break;

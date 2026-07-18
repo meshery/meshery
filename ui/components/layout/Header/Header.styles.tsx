@@ -7,7 +7,7 @@ export const HeaderAppBar = styled(AppBar)(({ theme }) => ({
 
 export const StyledToolbar = styled(Toolbar, {
   shouldForwardProp: (prop) => prop !== 'isDrawerCollapsed',
-})(({ theme, isDrawerCollapsed }: { theme?: any; isDrawerCollapsed?: boolean }) => ({
+})<{ isDrawerCollapsed?: boolean }>(({ theme, isDrawerCollapsed }) => ({
   minHeight: 59,
   padding: 16,
   paddingLeft: isDrawerCollapsed ? 0 : 14,

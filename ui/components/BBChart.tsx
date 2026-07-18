@@ -1,6 +1,6 @@
+import ErrorBoundary from 'shared/ErrorBoundary/ErrorBoundary';
 import { useRef, useEffect, memo } from 'react';
 import { bb, ChartOptions } from 'billboard.js';
-import { ErrorBoundary } from '@sistent/sistent';
 
 const BBChart = ({ options }: { options: ChartOptions }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);

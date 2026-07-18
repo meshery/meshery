@@ -140,6 +140,20 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	// SSE stream of live events; replaces the subscribeEvents GraphQL subscription.
 	gMux.Handle("/api/system/events/subscribe", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SubscribeEventsHandler), models.ProviderAuth))).
 		Methods("GET")
+
+	// Controller (operator/MeshSync/broker) status: SSE stream replaces the
+	// subscribeMesheryControllersStatus GraphQL subscription; the three one-shot
+	// GETs replace getOperatorStatus/getMeshsyncStatus/getNatsStatus.
+	gMux.Handle("/api/system/controllers/status/subscribe", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SubscribeMesheryControllersStatusHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/system/controllers/operator/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.OperatorStatusHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/system/controllers/meshsync/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.MeshsyncStatusHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/system/controllers/broker/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.BrokerStatusHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/system/controllers/diagnostics", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ControllerDiagnosticsHandler), models.ProviderAuth))).
+		Methods("GET")
 	gMux.Handle("/api/system/events/types", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetEventTypes), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/system/events/status/bulk", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.BulkUpdateEventStatus), models.ProviderAuth))).
@@ -473,8 +487,18 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("GET")
 	gMux.Handle("/api/integrations/connections/{connectionId}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateConnectionById), models.ProviderAuth))).
 		Methods("PUT")
+	// Side-effecting connection operations (e.g. switch MeshSync deployment
+	// mode). Separate from PUT so resource updates don't carry cluster effects.
+	gMux.Handle("/api/integrations/connections/{connectionId}/actions", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PerformConnectionAction), models.ProviderAuth))).
+		Methods("POST")
+	// POST drives the registration state machine; the DELETE method on the same
+	// path is the deprecated body-based cancel (see ProcessConnectionRegistration).
 	gMux.Handle("/api/integrations/connections/register", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ProcessConnectionRegistration), models.ProviderAuth))).
 		Methods("POST", "DELETE")
+	// Schemas-defined cancel: the registration tracker id travels in the path
+	// (operationId cancelConnectionRegister).
+	gMux.Handle("/api/integrations/connections/register/{registrationId}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.CancelConnectionRegister), models.ProviderAuth))).
+		Methods("DELETE")
 	gMux.Handle("/api/integrations/connections/{connectionId}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteConnection), models.ProviderAuth))).
 		Methods("DELETE")
 	gMux.Handle("/api/integrations/connections/{connectionId}/controllers/config", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetConnectionControllersConfig), models.ProviderAuth))).

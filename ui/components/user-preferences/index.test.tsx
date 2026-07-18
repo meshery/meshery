@@ -131,7 +131,7 @@ vi.mock('@/rtk-query/user', () => ({
   useUpdateUserPrefWithContextMutation: () => [updateUserPrefWithContext],
 }));
 
-vi.mock('@/themes/hooks', () => ({
+vi.mock('@/theme/hooks', () => ({
   ThemeTogglerCore: ({ Component }: any) => (
     <div data-testid="theme-toggler">
       <Component mode="light" toggleTheme={() => {}} />

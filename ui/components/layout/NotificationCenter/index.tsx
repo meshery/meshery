@@ -1,3 +1,4 @@
+import ErrorBoundary from '../../shared/ErrorBoundary/ErrorBoundary';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { CustomTooltip, NoSsr } from '@sistent/sistent';
 import {
@@ -62,7 +63,7 @@ import { useNotification } from '../../../utils/hooks/useNotification';
 import { useActorRef } from '@xstate/react';
 import { operationsCenterActor } from 'machines/operationsCenter';
 import { useDispatch, useSelector } from 'react-redux';
-import { DeleteIcon, ErrorBoundary } from '@sistent/sistent';
+import { DeleteIcon } from '@sistent/sistent';
 import CustomErrorFallback from '../../shared/ErrorBoundary/ErrorBoundary';
 
 export const NotificationCenterContext = React.createContext({

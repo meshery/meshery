@@ -37,7 +37,11 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 	err = machinectx.K8sContext.PingTest()
 
 	if err != nil {
-		eventBuilder.WithDescription(fmt.Sprintf("Unable to ping kubernetes context %s at %s", machinectx.K8sContext.Name, machinectx.K8sContext.Server)).WithMetadata(map[string]interface{}{"error": err})
+		// Mark the ping/reachability failure as an Error so it is findable under
+		// the notification center's Error filter, matching the sibling
+		// ConnectAction and DiscoverAction failure events. Without this the event
+		// lands with an empty severity and is effectively invisible to users.
+		eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to ping kubernetes context %s at %s", machinectx.K8sContext.Name, machinectx.K8sContext.Server)).WithMetadata(map[string]interface{}{"error": err})
 		machinectx.log.Error(err)
 		return machines.NotFound, eventBuilder.Build(), err
 	}
