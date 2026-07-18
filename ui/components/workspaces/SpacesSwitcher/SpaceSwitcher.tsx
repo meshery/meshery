@@ -62,13 +62,13 @@ export const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
 }));
 
 export const StyledSelect = styled(Select)(({ theme }) => ({
-  color: theme.palette.text.default,
+  color: theme.palette.common.white,
   backgroundColor: 'transparent',
   '& .OrgClass': {
     display: 'none',
   },
   '& svg': {
-    fill: theme.palette.icon.default,
+    fill: theme.palette.background.constant.white,
   },
 
   [theme.breakpoints.down('md')]: {
@@ -115,17 +115,18 @@ export const StyledTextField = styled(TextField)(({ theme }) => ({
 export const StyledHeader = styled(Typography)(({ theme }) => ({
   paddingLeft: theme.spacing(1),
   fontSize: '1.65rem',
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  minWidth: 0,
+
   [theme.breakpoints.down('sm')]: {
     fontSize: '1.25rem',
+    maxWidth: '7rem',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
   },
-  color: theme.palette.text.default,
+  color: theme.palette.common.white,
 }));
 export const StyledBetaHeader = styled('sup')(({ theme }) => ({
-  color: theme.palette.text.default,
+  color: theme.palette.background.constant.white,
   fontWeight: '300',
   fontSize: '0.8125rem',
 }));
@@ -133,30 +134,16 @@ export const StyledBetaHeader = styled('sup')(({ theme }) => ({
 const StyledSwitcher = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
-  justifyContent: 'flex-start',
+  justifyContent: 'center',
   alignItems: 'center',
   fontSize: '1.5rem',
   userSelect: 'none',
   transition: 'width 2s ease-in',
-  color: theme.palette.text.default,
+  color: theme.palette.common.white,
   gap: '0.5rem 0rem',
+  flex: 0.75,
   minWidth: 0,
   overflow: 'hidden',
-  flex: 1,
-  '& > #meshery-dynamic-header': {
-    minWidth: 0,
-    overflow: 'hidden',
-    display: 'flex',
-    alignItems: 'center',
-    flex: 1,
-    whiteSpace: 'nowrap',
-  },
-  '& > #meshery-dynamic-header > *': {
-    minWidth: 0,
-  },
-  '& > #meshery-dynamic-header svg': {
-    flexShrink: 0,
-  },
 }));
 
 export function OrgMenu(props) {
@@ -233,10 +220,12 @@ export function OrgMenu(props) {
                           style: {
                             display: 'flex',
                             flexDirection: 'row',
-                            fill: theme.palette.icon.default,
+                            fill: theme.palette.background.constant.white,
                             paddingBlock: '9px 8px',
                             paddingInline: '18px 34px',
-                            color: theme.palette.text.default,
+                            color: fromMobileView
+                              ? theme.palette.text.default
+                              : theme.palette.background.constant.white,
                           },
                         }}
                         renderValue={() => {
@@ -326,7 +315,7 @@ function OrganizationAndWorkSpaceSwitcher() {
                   }}
                   style={{ marginRight: orgOpen ? '1rem' : '0' }}
                 >
-                  <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.icon.default} />
+                  <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
                 </Button>
               </div>
             </CustomTooltip>
@@ -341,8 +330,8 @@ function OrganizationAndWorkSpaceSwitcher() {
                 >
                   <WorkspaceIcon
                     {...iconLarge}
-                    secondaryFill={theme.palette.icon.default}
-                    fill={theme.palette.icon.default}
+                    secondaryFill={theme.palette.common.white}
+                    fill={theme.palette.common.white}
                   />
                 </Button>
               </div>

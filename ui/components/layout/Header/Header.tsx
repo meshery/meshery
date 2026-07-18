@@ -462,7 +462,6 @@ const Header = ({
                   </MenuIconButton>
                 </Grid2>
               </Hidden>
-
               {/* Extension Point for Logo */}
               <Box
                 id="nav-header-logo"
@@ -474,7 +473,6 @@ const Header = ({
                   order: { xs: 1, md: 1 },
                 }}
               ></Box>
-
               {/* Title Section (Drops to row 2 on mobile) */}
               <Box
                 component={PageTitleWrapper}
@@ -486,7 +484,6 @@ const Header = ({
               >
                 <OrganizationAndWorkSpaceSwitcher />
               </Box>
-
               {/* Right Side Icons */}
               <Box
                 component={UserContainer}
