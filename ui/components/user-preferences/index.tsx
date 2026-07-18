@@ -52,7 +52,7 @@ import {
   useUpdateUserPrefMutation,
   useUpdateUserPrefWithContextMutation,
 } from '@/rtk-query/user';
-import { ThemeTogglerCore } from '@/themes/hooks';
+import { ThemeTogglerCore } from '@/theme/hooks';
 import { SecondaryTab, SecondaryTabs } from '../dashboard/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleCatalogContent, updateProgress } from '@/store/slices/mesheryUi';

@@ -114,7 +114,7 @@ vi.mock('@/utils/eventBus', () => ({
   mesheryEventBus: { publish: vi.fn() },
 }));
 
-vi.mock('@/themes/hooks', () => ({
+vi.mock('@/theme/hooks', () => ({
   ThemeTogglerCore: () => null,
 }));
 

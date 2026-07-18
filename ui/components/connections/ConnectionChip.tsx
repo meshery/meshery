@@ -1,5 +1,11 @@
 import React, { memo } from 'react';
-import { Avatar, AssignmentTurnedInIcon, CustomTooltip, useTheme } from '@sistent/sistent';
+import {
+  Avatar,
+  AssignmentTurnedInIcon,
+  CustomTooltip,
+  notificationColors,
+  useTheme,
+} from '@sistent/sistent';
 import {
   CheckCircle as CheckCircleIcon,
   Explore as ExploreIcon,
@@ -9,7 +15,6 @@ import {
   NotInterestedRounded as NotInterestedRoundedIcon,
 } from '@/assets/icons';
 import BadgeAvatars from '../CustomAvatar';
-import { notificationColors } from '../../themes';
 import DisconnectIcon from '../../assets/icons/disconnect';
 import {
   CONNECTION_STATE_TO_TRANSITION_MAP,
@@ -101,7 +106,7 @@ const STATE_CHIP_CONFIG = {
   },
   [CONNECTION_STATES.DISCONNECTED]: {
     Component: DisconnectedChip,
-    avatar: <DisconnectIcon fill={notificationColors.lightwarning} width={24} height={24} />,
+    avatar: <DisconnectIcon fill={notificationColors.warning.light} width={24} height={24} />,
   },
   [CONNECTION_STATES.NOTFOUND]: {
     Component: NotFoundChip,
@@ -147,7 +152,7 @@ const getStatusColor = (theme: ReturnType<typeof useTheme>, status?: string) => 
       return theme.palette.background.warning.default;
     case 'warning':
       // Orange (same token used by the disconnected state chip icon)
-      return notificationColors.lightwarning;
+      return notificationColors.warning.light;
     default:
       // Gray
       return theme.palette.text.disabled;

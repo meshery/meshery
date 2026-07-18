@@ -38,6 +38,8 @@ vi.mock('@sistent/sistent', () => {
     HandymanIcon: () => <svg data-testid="handyman-icon" />,
     RemoveIcon: () => <svg data-testid="remove-icon" />,
     Typography: ({ children }) => <span>{children}</span>,
+    // Orange bucket for disconnected / maintenance
+    notificationColors: { warning: { light: 'orange' } },
     styled,
     createTheme: () => ({ breakpoints: {} }),
     useTheme: () => ({
@@ -55,14 +57,6 @@ vi.mock('@sistent/sistent', () => {
 
 vi.mock('@/utils/fallback', () => ({
   normalizeStaticImagePath: (...args) => normalizeStaticImagePath(...args),
-}));
-
-vi.mock('../../themes', () => ({
-  notificationColors: {
-    // Orange bucket for disconnected / maintenance
-    lightwarning: 'orange',
-    info: 'info',
-  },
 }));
 
 vi.mock('../CustomAvatar', () => ({
