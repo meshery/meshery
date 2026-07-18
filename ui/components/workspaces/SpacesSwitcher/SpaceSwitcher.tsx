@@ -62,13 +62,13 @@ export const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
 }));
 
 export const StyledSelect = styled(Select)(({ theme }) => ({
-  color: theme.palette.common.white,
+  color: theme.palette.text.default,
   backgroundColor: 'transparent',
   '& .OrgClass': {
     display: 'none',
   },
   '& svg': {
-    fill: theme.palette.background.constant.white,
+    fill: theme.palette.icon.default,
   },
 
   [theme.breakpoints.down('md')]: {
@@ -123,10 +123,10 @@ export const StyledHeader = styled(Typography)(({ theme }) => ({
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
   },
-  color: theme.palette.common.white,
+  color: theme.palette.text.default,
 }));
 export const StyledBetaHeader = styled('sup')(({ theme }) => ({
-  color: theme.palette.background.constant.white,
+  color: theme.palette.text.default,
   fontWeight: '300',
   fontSize: '0.8125rem',
 }));
@@ -139,7 +139,7 @@ const StyledSwitcher = styled('div')(({ theme }) => ({
   fontSize: '1.5rem',
   userSelect: 'none',
   transition: 'width 2s ease-in',
-  color: theme.palette.common.white,
+  color: theme.palette.text.default,
   gap: '0.5rem 0rem',
 }));
 
@@ -217,12 +217,10 @@ export function OrgMenu(props) {
                           style: {
                             display: 'flex',
                             flexDirection: 'row',
-                            fill: theme.palette.background.constant.white,
+                            fill: theme.palette.icon.default,
                             paddingBlock: '9px 8px',
                             paddingInline: '18px 34px',
-                            color: fromMobileView
-                              ? theme.palette.text.default
-                              : theme.palette.background.constant.white,
+                            color: theme.palette.text.default,
                           },
                         }}
                         renderValue={() => {
@@ -312,7 +310,7 @@ function OrganizationAndWorkSpaceSwitcher() {
                   }}
                   style={{ marginRight: orgOpen ? '1rem' : '0' }}
                 >
-                  <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
+                  <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.icon.default} />
                 </Button>
               </div>
             </CustomTooltip>
@@ -327,8 +325,8 @@ function OrganizationAndWorkSpaceSwitcher() {
                 >
                   <WorkspaceIcon
                     {...iconLarge}
-                    secondaryFill={theme.palette.common.white}
-                    fill={theme.palette.common.white}
+                    secondaryFill={theme.palette.icon.default}
+                    fill={theme.palette.icon.default}
                   />
                 </Button>
               </div>

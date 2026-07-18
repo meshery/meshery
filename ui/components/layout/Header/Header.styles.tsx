@@ -1,4 +1,4 @@
-import { styled, AppBar, Toolbar, Paper, MenuIcon, IconButton, darkTeal } from '@sistent/sistent';
+import { styled, AppBar, Toolbar, Paper, MenuIcon, IconButton } from '@sistent/sistent';
 
 export const HeaderAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.background.tabs,
@@ -12,7 +12,6 @@ export const StyledToolbar = styled(Toolbar, {
   padding: 16,
   paddingLeft: isDrawerCollapsed ? 0 : 14,
   paddingRight: 14,
-  backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.card : darkTeal.main,
   boxShadow: `3px 0px 4px ${theme.palette.background.brand.default}`,
   [theme.breakpoints.down('sm')]: {
     paddingRight: 8,
@@ -66,7 +65,7 @@ export const HeaderIcons = styled(MenuIcon)(({ theme }) => ({
   fontSize: '1.5rem',
   height: '24px',
   width: '24px',
-  fill: theme.palette.background.constant.white,
+  fill: theme.palette.icon.default,
   '&:hover': {
     fill: theme.palette.background.brand.default,
   },
@@ -106,12 +105,12 @@ export const CMenuContainer = styled(Paper)(({ theme }) => ({
 
 export const IconButtonAvatar = styled(IconButton)(({ theme }) => ({
   padding: 2,
-  color: theme.palette.common.white,
+  color: theme.palette.icon.default,
 }));
 
 export const IconButtonMenu = styled(IconButton)(({ theme }) => ({
   padding: 6,
-  color: theme.palette.common.white,
+  color: theme.palette.icon.default,
 }));
 
 export const UserInfoContainer = styled('div')(({ theme }) => ({
