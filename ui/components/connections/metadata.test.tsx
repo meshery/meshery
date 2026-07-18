@@ -112,8 +112,11 @@ const emptyPingState = {
 };
 
 vi.mock('@/rtk-query/telemetryPrometheus', () => ({
-  // Lazy: trigger only - cache reads go through useQueryState.
-  useLazyPingPrometheusConnectionQuery: () => [triggerPrometheusPing, emptyPingState],
+  useLazyPingPrometheusConnectionQuery: () => [
+    triggerPrometheusPing,
+    emptyPingState,
+    { lastArg: undefined },
+  ],
   default: {
     endpoints: {
       pingPrometheusConnection: {
@@ -124,7 +127,11 @@ vi.mock('@/rtk-query/telemetryPrometheus', () => ({
 }));
 
 vi.mock('@/rtk-query/telemetryGrafana', () => ({
-  useLazyPingGrafanaConnectionQuery: () => [triggerGrafanaPing, emptyPingState],
+  useLazyPingGrafanaConnectionQuery: () => [
+    triggerGrafanaPing,
+    emptyPingState,
+    { lastArg: undefined },
+  ],
   default: {
     endpoints: {
       pingGrafanaConnection: {

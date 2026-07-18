@@ -1,5 +1,4 @@
-/* eslint-disable max-lines */
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import {
   Grid2,
   List,
@@ -145,17 +144,9 @@ const ConnectionDetailPanel = ({ chip, leftItems, rightItems, sidePanel }) => {
   );
 };
 
-/**
- * Prometheus / Grafana detail view (presentational).
- *
- * Parents call the RTK hooks at their top level and pass `triggerPing` +
- * `pingState` down - calling hooks via props would violate Rules of Hooks and
- * trip react-hooks/rules-of-hooks. Version still comes from shared RTK cache
- * (useQueryState in the parent) so a table name-column chip ping refreshes it.
- *
- * Panel/board counts come from the canonical metadata keys written by the
- * telemetry handlers; version appears only after any successful chip ping.
- */
+// Prometheus / Grafana detail panel. Parents own RTK hooks (Rules of Hooks);
+// version + reachability come from the shared telemetry ping cache after a chip
+// ping — not from connection.status (lifecycle) and not from register metadata.
 const TelemetryMetadataFormatter = ({
   connection,
   metadata,
@@ -170,6 +161,28 @@ const TelemetryMetadataFormatter = ({
   const connectionID = connection.id;
   const { data, isError, isFetching, isUninitialized, isSuccess } = pingState;
 
+  // Latch the last settled ping so diagnostics/version stay visible if RTK
+  // drops the cache entry (useQueryState has no subscription; keepUnusedDataFor
+  // can clear error state while the panel is still open). Cleared on connection change.
+  const [pingOutcome, setPingOutcome] = useState(null);
+
+  useEffect(() => {
+    setPingOutcome(null);
+  }, [connectionID]);
+
+  useEffect(() => {
+    if (isUninitialized || isFetching) {
+      return;
+    }
+    if (isError) {
+      setPingOutcome({ reachable: false, version: undefined });
+      return;
+    }
+    if (isSuccess) {
+      setPingOutcome({ reachable: true, version: data?.version });
+    }
+  }, [isUninitialized, isFetching, isError, isSuccess, data?.version]);
+
   const handlePing = () => {
     if (connectionID) {
       triggerPing({ connectionID });
@@ -181,19 +194,19 @@ const TelemetryMetadataFormatter = ({
   let version = '-';
   if (isFetching) {
     version = 'Checking…';
-  } else if (!isUninitialized && isError) {
+  } else if (pingOutcome?.reachable === false) {
     version = 'Unavailable';
-  } else if (data?.version) {
-    version = data.version;
-  } else if (isSuccess || !isUninitialized) {
+  } else if (pingOutcome?.version) {
+    version = pingOutcome.version;
+  } else if (pingOutcome?.reachable === true) {
     version = 'Unknown';
   }
-  // Only override chip status after a failed chip-initiated ping.
+  // Live ping failure only — does not mutate connection.status on the server/table.
   const displayedStatus =
-    !isUninitialized && isError ? CONNECTION_STATES.DISCONNECTED : connection.status;
+    pingOutcome?.reachable === false ? CONNECTION_STATES.DISCONNECTED : connection.status;
 
   const diagnostics = [];
-  if (!isUninitialized && isError) {
+  if (pingOutcome?.reachable === false) {
     diagnostics.push({
       code: diagnosticCode,
       severity: 'error',
@@ -624,16 +637,30 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
   );
 };
 
-const usePrometheusPingQueryState = (arg, opts) =>
-  telemetryPrometheusApi.endpoints.pingPrometheusConnection.useQueryState(arg, opts);
-
-const useGrafanaPingQueryState = (arg, opts) =>
-  telemetryGrafanaApi.endpoints.pingGrafanaConnection.useQueryState(arg, opts);
+// Prefer this panel's lazy result (keeps an RTK subscription while mounted);
+// fall back to shared cache so a table name-column chip ping still updates Version.
+const resolveTelemetryPingState = (connectionID, lazyResult, lastArg, cacheResult) => {
+  const lazyMatches =
+    lastArg &&
+    typeof lastArg === 'object' &&
+    lastArg.connectionID === connectionID &&
+    !lazyResult.isUninitialized;
+  return lazyMatches ? lazyResult : cacheResult;
+};
 
 const PrometheusMetadataFormatter = ({ connection, metadata }) => {
   const connectionID = connection.id;
-  const [triggerPing] = useLazyPingPrometheusConnectionQuery();
-  const pingState = usePrometheusPingQueryState({ connectionID }, { skip: !connectionID });
+  const [triggerPing, lazyResult, lazyMeta] = useLazyPingPrometheusConnectionQuery();
+  const cacheResult = telemetryPrometheusApi.endpoints.pingPrometheusConnection.useQueryState(
+    { connectionID },
+    { skip: !connectionID },
+  );
+  const pingState = resolveTelemetryPingState(
+    connectionID,
+    lazyResult,
+    lazyMeta?.lastArg,
+    cacheResult,
+  );
 
   return (
     <TelemetryMetadataFormatter
@@ -652,8 +679,17 @@ const PrometheusMetadataFormatter = ({ connection, metadata }) => {
 
 const GrafanaMetadataFormatter = ({ connection, metadata }) => {
   const connectionID = connection.id;
-  const [triggerPing] = useLazyPingGrafanaConnectionQuery();
-  const pingState = useGrafanaPingQueryState({ connectionID }, { skip: !connectionID });
+  const [triggerPing, lazyResult, lazyMeta] = useLazyPingGrafanaConnectionQuery();
+  const cacheResult = telemetryGrafanaApi.endpoints.pingGrafanaConnection.useQueryState(
+    { connectionID },
+    { skip: !connectionID },
+  );
+  const pingState = resolveTelemetryPingState(
+    connectionID,
+    lazyResult,
+    lazyMeta?.lastArg,
+    cacheResult,
+  );
 
   return (
     <TelemetryMetadataFormatter
