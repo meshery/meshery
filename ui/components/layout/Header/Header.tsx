@@ -149,7 +149,7 @@ function K8sContextMenu({
   // The dropdown slides up from below; its translate distance scales with the
   // number of context rows it will render so it ends up flush against the badge.
   const deleteCtxtRef = React.createRef();
-  const { notify } = useNotification();
+  const { notify } = useNotification() || { notify: () => {} };
   const [fetchSystemSync] = useLazyGetSystemSyncQuery();
   const [updateConnectionStatus] = useUpdateConnectionStatusMutation();
   const { controllerState: meshsyncControllerState, connectionMetadataState } = useSelector(
