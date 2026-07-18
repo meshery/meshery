@@ -35,8 +35,8 @@ export const UserContainer = styled('div')(({ theme }) => ({
   paddingLeft: 1,
   display: 'flex',
   alignItems: 'center',
+  flexShrink: 0,
   [theme.breakpoints.down('sm')]: {
-    width: '100%',
     justifyContent: 'flex-end',
     marginBlock: '0.5rem',
   },
@@ -51,6 +51,9 @@ export const PageTitleWrapper = styled('div')({
   marginRight: 'auto',
   flexWrap: 'nowrap',
   marginBlock: '0.5rem',
+  minWidth: 0,
+  overflow: 'hidden',
+  display: 'flex',
 });
 
 export const MenuIconButton = styled(IconButton)(({ theme }) => ({
