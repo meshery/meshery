@@ -78,6 +78,6 @@ svg.css-19bqh2r:hover {
   transform: scale(0.9) translate(10px, -10px);
 }
 
-.MuiSpeedDial-fab {
+.MuiSpeedDial-root:has(> button[aria-label="CANVAS_CONTROLS"]) .MuiSpeedDial-fab {
   z-index: 10;
 }

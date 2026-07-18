@@ -143,7 +143,16 @@ const StyledSwitcher = styled('div')(({ theme }) => ({
   gap: '0.5rem 0rem',
   flex: 0.75,
   minWidth: 0,
-  overflow: 'hidden',
+  '& #meshery-dynamic-header': {
+    minWidth: 0,
+    overflow: 'hidden',
+  },
+  '& [data-cy="headerPageTitle"]': {
+    minWidth: 0,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
 }));
 
 export function OrgMenu(props) {
