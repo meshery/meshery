@@ -115,13 +115,12 @@ export const StyledTextField = styled(TextField)(({ theme }) => ({
 export const StyledHeader = styled(Typography)(({ theme }) => ({
   paddingLeft: theme.spacing(1),
   fontSize: '1.65rem',
-
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  minWidth: 0,
   [theme.breakpoints.down('sm')]: {
     fontSize: '1.25rem',
-    maxWidth: '7rem',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
   },
   color: theme.palette.text.default,
 }));
@@ -134,13 +133,30 @@ export const StyledBetaHeader = styled('sup')(({ theme }) => ({
 const StyledSwitcher = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
-  justifyContent: 'center',
+  justifyContent: 'flex-start',
   alignItems: 'center',
   fontSize: '1.5rem',
   userSelect: 'none',
   transition: 'width 2s ease-in',
   color: theme.palette.text.default,
   gap: '0.5rem 0rem',
+  minWidth: 0,
+  overflow: 'hidden',
+  flex: 1,
+  '& > #meshery-dynamic-header': {
+    minWidth: 0,
+    overflow: 'hidden',
+    display: 'flex',
+    alignItems: 'center',
+    flex: 1,
+    whiteSpace: 'nowrap',
+  },
+  '& > #meshery-dynamic-header > *': {
+    minWidth: 0,
+  },
+  '& > #meshery-dynamic-header svg': {
+    flexShrink: 0,
+  },
 }));
 
 export function OrgMenu(props) {
