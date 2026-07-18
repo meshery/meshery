@@ -1,10 +1,9 @@
-import ErrorBoundary from '../../shared/ErrorBoundary/ErrorBoundary';
 import React, { useEffect } from 'react';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useNotification } from 'utils/hooks/useNotification';
 import { useGetOrgsQuery } from 'rtk-query/organization';
 import OrgIcon from 'assets/icons/OrgIcon';
-import { FormControl, FormGroup, MenuItem, useTheme, NoSsr } from '@sistent/sistent';
+import { ErrorBoundary, FormControl, FormGroup, MenuItem, useTheme, NoSsr } from '@sistent/sistent';
 import {
   OrgName,
   StyledSelect,

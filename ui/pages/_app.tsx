@@ -1,4 +1,3 @@
-import ErrorBoundary from '../components/shared/ErrorBoundary/ErrorBoundary';
 import {
   CheckCircleIcon as CheckCircle,
   ErrorIcon as Error,
@@ -76,6 +75,7 @@ import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
 import { formatToTitleCase } from '@/utils/utils';
 import { useThemePreference } from '@/theme/hooks';
 import { CssBaseline, NoSsr, SistentThemeProvider } from '@/theme';
+import { ErrorBoundary } from '@sistent/sistent';
 import { LoadSessionGuard } from '@/rtk-query/ability';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import CustomErrorFallback from '@/components/shared/ErrorBoundary/ErrorBoundary';

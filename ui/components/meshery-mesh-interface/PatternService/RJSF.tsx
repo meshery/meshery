@@ -1,4 +1,3 @@
-import ErrorBoundary from '../../shared/ErrorBoundary/ErrorBoundary';
 import RJSFProvider from '../../shared/FormFields/RJSFProvider';
 import customValidator from '../../../utils/rjsfValidator';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -19,6 +18,7 @@ import CustomFileWidget from './RJSFCustomComponents/CustomFileWidget';
 import CustomURLWidget from './RJSFCustomComponents/CustomURLWidget';
 import CustomColorWidget from './RJSFCustomComponents/CustomColorWidget';
 import CustomRadioWidget from './RJSFCustomComponents/CustomRadioWidget';
+import { ErrorBoundary } from '@sistent/sistent';
 import CustomErrorFallback from '@/components/shared/ErrorBoundary/ErrorBoundary';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 /**

@@ -1,6 +1,5 @@
-import ErrorBoundary from '../../../shared/ErrorBoundary/ErrorBoundary';
 import React, { useState } from 'react';
-import { Box, Typography, styled, CustomTooltip, Collapse } from '@sistent/sistent';
+import { Box, Typography, styled, CustomTooltip, Collapse, ErrorBoundary } from '@sistent/sistent';
 import { ComponentIcon } from '@/components/designs/lifecycle/common';
 import { InfoIcon } from '@sistent/sistent'; // Assuming MUI icons are available
 import ExpandLessIcon from '@/assets/icons/ExpandLessIcon';

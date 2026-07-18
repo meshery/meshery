@@ -1,7 +1,6 @@
-import ErrorBoundary from '../shared/ErrorBoundary/ErrorBoundary';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { NoSsr } from '@sistent/sistent';
-import { AppBar } from '@sistent/sistent';
+import { ErrorBoundary, AppBar } from '@sistent/sistent';
 import Modal from '../shared/Modal/Modal';
 import { ConnectionIconText, ConnectionTab, ConnectionTabs } from './styles';
 import MeshSyncTable from './meshSync';
