@@ -1,22 +1,15 @@
-import React, { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useGetUserPrefQuery, useUpdateUserPrefWithContextMutation } from '@/rtk-query/user';
-import { useState } from 'react';
 import _ from 'lodash/fp';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
-
-export const useGetSystemTheme = () => {
-  const [theme, setTheme] = React.useState('dark');
-  useEffect(() => {
-    const systemPref = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    setTheme(systemPref);
-  }, []);
-  return theme;
-};
+import { useMediaQuery } from '@sistent/sistent';
 
 export const useThemePreference = () => {
   const { data, ...res } = useGetUserPrefQuery();
-  const systemPref = useGetSystemTheme();
-  const mode = data?.remoteProviderPreferences?.theme || systemPref || 'dark';
+  // Default to dark on the server and first client render, matching the
+  // pre-hydration UI; resolves to the real system preference after mount.
+  const prefersDark = useMediaQuery('(prefers-color-scheme: dark)', { defaultMatches: true });
+  const mode = data?.remoteProviderPreferences?.theme || (prefersDark ? 'dark' : 'light');
 
   return {
     data: {
@@ -46,13 +39,12 @@ const ThemeTogglerCore_ = ({ Component }) => {
     });
   };
 
-  return (
-    <ProviderStoreWrapper>
-      <Component mode={mode} toggleTheme={toggleTheme} />
-    </ProviderStoreWrapper>
-  );
+  return <Component mode={mode} toggleTheme={toggleTheme} />;
 };
 
+// The single ProviderStoreWrapper here is what gives ThemeTogglerCore_'s RTK
+// Query hooks their store context; ThemeTogglerCore is mounted from extension
+// surfaces that render outside the app's Redux provider tree.
 export const ThemeTogglerCore = (props) => {
   return (
     <ProviderStoreWrapper>

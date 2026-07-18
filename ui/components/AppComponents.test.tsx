@@ -60,7 +60,7 @@ vi.mock('./layout/Navigator/Navigator', () => ({
   default: () => null,
 }));
 
-vi.mock('../themes/App.styles', () => ({
+vi.mock('./App.styles', () => ({
   StyledDrawer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   StyledFooterBody: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   StyledFooterText: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,

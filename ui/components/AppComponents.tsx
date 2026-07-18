@@ -9,7 +9,7 @@ import { useGetConnectionsQuery } from '@/rtk-query/connection';
 import { CONNECTION_KINDS } from '@/utils/Enum';
 import { setK8sContexts, updateK8SConfig } from '@/store/slices/mesheryUi';
 import { loadSelectedK8sContexts, persistSelectedK8sContexts } from '@/utils/multi-ctx';
-import { StyledDrawer, StyledFooterBody, StyledFooterText } from '../themes/App.styles';
+import { StyledDrawer, StyledFooterBody, StyledFooterText } from './App.styles';
 
 // Order-insensitive equality for context-id selections: ['a','b'] and
 // ['b','a'] are the same selection.

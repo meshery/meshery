@@ -1,7 +1,5 @@
 import { createTheme } from '@sistent/sistent';
 
-const breakpoints = createTheme().breakpoints;
-
 export const rjsfTheme = createTheme({
   palette: {
     primary: {
@@ -208,7 +206,7 @@ export const rjsfTheme = createTheme({
     },
     MuiGrid: {
       styleOverrides: {
-        root: {
+        root: ({ theme }) => ({
           '& > *': {
             border: 'none !important',
           },
@@ -219,7 +217,7 @@ export const rjsfTheme = createTheme({
           '&:hover': {
             overflow: 'visible',
           },
-          [breakpoints.up('lg')]: {
+          [theme.breakpoints.up('lg')]: {
             '& > *:nth-child(2)': {
               '& > *:nth-child(1)': {
                 '& > *:nth-child(2)': {
@@ -228,7 +226,7 @@ export const rjsfTheme = createTheme({
               },
             },
           },
-        },
+        }),
       },
     },
     MuiIconButton: {
@@ -429,7 +427,7 @@ export const darkRjsfTheme = createTheme({
     },
     MuiGrid: {
       styleOverrides: {
-        root: {
+        root: ({ theme }) => ({
           '& > *': {
             border: 'none !important',
           },
@@ -441,7 +439,7 @@ export const darkRjsfTheme = createTheme({
             overflow: 'visible',
           },
           background: 'none',
-          [breakpoints.up('lg')]: {
+          [theme.breakpoints.up('lg')]: {
             '& > *:nth-child(2)': {
               '& > *:nth-child(1)': {
                 '& > *:nth-child(2)': {
@@ -450,7 +448,7 @@ export const darkRjsfTheme = createTheme({
               },
             },
           },
-        },
+        }),
       },
     },
     MuiIconButton: {
@@ -475,5 +473,3 @@ export const darkRjsfTheme = createTheme({
     },
   },
 });
-
-export default darkRjsfTheme;

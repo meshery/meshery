@@ -4,7 +4,7 @@ description: Iterate on a PR until CI passes. Optionally merge or merge and publ
 argument-hint: "[--full] [--release]"
 metadata:
   author: leecalcote
-  version: "2.2.0"
+  version: "2.3.0"
 ---
 
 # Iterate on PR Until CI Passes
@@ -63,7 +63,7 @@ Do not fail because hints are missing or unrecognized; default safely.
 | Mode | Behavior |
 |---|---|
 | Default (`/iterate-pr`) | Iterates on CI + high/medium feedback, asks user about low-priority items, then exits without merging. |
-| `--full` | Fully autonomous: handles every non-resolved feedback item, replies to every item, re-requests review (Gemini or Copilot) after each push, iterates until no new feedback and CI is green, then merges the PR. |
+| `--full` | Fully autonomous: handles every non-resolved feedback item, replies to every item, re-requests review (Gemini or Copilot) after each push, iterates until no new feedback and CI is green, then administratively merges the PR without waiting for a required-approval status. |
 | `--release` | Does everything in `--full`, then cuts/publishes a release for the repository. |
 
 ## Bundled Scripts
@@ -276,11 +276,19 @@ In full modes, continue looping until both conditions are true:
 ### 9. Finish by Mode
 
 - Default mode: stop after success conditions are met (do not merge automatically)
-- `full`: merge once CI is green and no new feedback remains:
+- `full`: once CI is green and no new feedback remains, merge administratively - do not wait for a required-approval status to clear:
 
 ```bash
-gh pr merge <PR_NUMBER> --auto --delete-branch
+gh pr merge <PR_NUMBER> --admin --delete-branch
 ```
+
+`--admin` uses the authenticated account's admin/maintainer permissions to bypass the
+required-approving-review branch-protection rule; it does not bypass or skip the CI-green
+and feedback-resolved checks this skill already enforces in steps 4-7, and it never fabricates
+or requests an approving review from another account. If the command fails (e.g. the
+authenticated account lacks admin/maintainer rights on the repo, or a check can't be
+bypassed), stop and surface the `gh` error to the user - do not retry under a different
+identity and do not fall back silently.
 
 - `--release`: complete `--full` mode merge, then cut a release:
   1. Find the draft release tag:
@@ -300,11 +308,11 @@ gh pr merge <PR_NUMBER> --auto --delete-branch
 
 **Success (default):** All checks pass, post-CI feedback re-check is clean (no new unaddressed high/medium feedback including review bot findings), user has decided on low-priority items.
 
-**Success (`full`):** All checks pass, no new non-resolved feedback remains after the latest review request, every feedback item has a reply, and the PR is merged.
+**Success (`full`):** All checks pass, no new non-resolved feedback remains after the latest review request, every feedback item has a reply, and the PR is administratively merged (no wait on a required-approval status).
 
 **Success (`--release`):** `--full` success criteria are met and the draft GitHub release has been published.
 
-**Ask for help:** Same failure after 2 attempts, feedback needs clarification, infrastructure issues.
+**Ask for help:** Same failure after 2 attempts, feedback needs clarification, infrastructure issues, or `gh pr merge --admin` fails (insufficient permissions or an unbypassable check) - surface the error rather than retrying under a different identity or falling back silently.
 
 **Stop:** No PR exists, branch needs rebase.
 
