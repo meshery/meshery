@@ -1,4 +1,3 @@
-import ErrorBoundary from '../../shared/ErrorBoundary/ErrorBoundary';
 import React, { useState, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { NotificationDrawerButton } from '../NotificationCenter/index';
@@ -10,7 +9,7 @@ import { useLazyGetSystemSyncQuery } from '../../../rtk-query/system';
 import { useUpdateConnectionStatusMutation } from '../../../rtk-query/connection';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '../../../utils/Enum';
 import ConnectionStateTransitionModal from '../../connections/ConnectionStateTransitionModal';
-
+import type { ConnectionStateTransitionModalRef } from '../../connections/ConnectionStateTransitionModal';
 import { iconMedium, iconSmall } from '../../../css/icons.styles';
 import { createPathForRemoteComponent } from '../../ExtensionSandbox';
 import RemoteComponent from '../../RemoteComponent';
@@ -64,6 +63,7 @@ import { useGetConnectionsQuery } from '@/rtk-query/connection';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateK8SConfig } from '@/store/slices/mesheryUi';
+import { ErrorBoundary } from '@sistent/sistent';
 import { WorkspaceModalContext } from '../../../utils/context/WorkspaceModalContextProvider';
 
 const K8sContextConnectionChip_ = ({
@@ -155,7 +155,7 @@ function K8sContextMenu({
   // The dropdown slides up from below; its translate distance scales with the
   // number of context rows it will render so it ends up flush against the badge.
   // useRef (not createRef) so the same ref instance survives re-renders.
-  const deleteCtxtRef = React.useRef<any | null>(null);
+  const deleteCtxtRef = React.useRef<ConnectionStateTransitionModalRef | null>(null);
   const { notify } = useNotification();
   const [fetchSystemSync] = useLazyGetSystemSyncQuery();
   const [updateConnectionStatus] = useUpdateConnectionStatusMutation();
