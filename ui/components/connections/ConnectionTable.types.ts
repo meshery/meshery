@@ -4,7 +4,6 @@ export type ConnectionTableProps = {
   selectedFilter?: string;
   selectedConnectionId?: string;
   updateUrlWithConnectionId?: (connectionId: string) => void;
-  tabs?: ReactNode;
 };
 
 export type EnvironmentOption = {

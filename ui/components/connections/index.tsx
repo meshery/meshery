@@ -218,6 +218,7 @@ function Connections() {
         Keys.WorkspaceManagementViewConnections.function,
       ) ? (
         <>
+          {tabs}
           {tab === 0 &&
             CAN(
               Keys.WorkspaceManagementViewConnections.id,
@@ -226,14 +227,12 @@ function Connections() {
               <ConnectionTable
                 selectedConnectionId={connectionId}
                 updateUrlWithConnectionId={updateUrlWithConnectionId}
-                tabs={tabs}
               />
             )}
           {tab === 1 && (
             <MeshSyncTable
               selectedResourceId={connectionId}
               updateUrlWithResourceId={updateUrlWithConnectionId}
-              tabs={tabs}
             />
           )}
         </>
