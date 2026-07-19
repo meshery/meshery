@@ -1,5 +1,3 @@
-import type { ReactNode } from 'react';
-
 export type ConnectionTableProps = {
   selectedFilter?: string;
   selectedConnectionId?: string;

@@ -44,11 +44,10 @@ vi.mock('./styles', () => ({
 const connectionTableCallbackRefs: Array<unknown> = [];
 
 vi.mock('./ConnectionTable', () => ({
-  default: ({ selectedConnectionId, updateUrlWithConnectionId, tabs }) => {
+  default: ({ selectedConnectionId, updateUrlWithConnectionId }) => {
     connectionTableCallbackRefs.push(updateUrlWithConnectionId);
     return (
       <div>
-        {tabs}
         <div data-testid="connection-table">connection:{selectedConnectionId ?? 'none'}</div>
         <button onClick={() => updateUrlWithConnectionId?.('cluster-2')} type="button">
           Update Connection Id
@@ -67,9 +66,8 @@ vi.mock('@/utils/context/ConnectionWizardContextProvider', () => ({
 }));
 
 vi.mock('./meshSync', () => ({
-  default: ({ selectedResourceId, updateUrlWithResourceId, tabs }) => (
+  default: ({ selectedResourceId, updateUrlWithResourceId }) => (
     <div>
-      {tabs}
       <div data-testid="meshsync-table">resource:{selectedResourceId ?? 'none'}</div>
       <button onClick={() => updateUrlWithResourceId?.('resource-2')} type="button">
         Update Resource Id
@@ -204,5 +202,20 @@ describe('connections index page', () => {
     for (const ref of rest) {
       expect(ref).toBe(first);
     }
+  });
+
+  // Regression coverage for the review feedback on PR #20695 and #20741: the
+  // Connections/MeshSync tab switcher must be rendered ahead of the child table
+  // and its action toolbars, not trapped inside or dropped.
+  it('renders the tabs ahead of the child table', () => {
+    router.query = {};
+    render(<ConnectionManagementPageWithErrorBoundary />);
+
+    const tabs = screen.getByText('Connections Tab');
+    const table = screen.getByTestId('connection-table');
+
+    // The tabs must physically precede the table in the DOM
+    const positions = tabs.compareDocumentPosition(table);
+    expect(positions & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 });
