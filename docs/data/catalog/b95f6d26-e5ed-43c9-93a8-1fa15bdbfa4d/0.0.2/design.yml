@@ -1,0 +1,75 @@
+{
+  "id": "b95f6d26-e5ed-43c9-93a8-1fa15bdbfa4d",
+  "name": "config.yaml",
+  "schemaVersion": "designs.meshery.io/v1beta3",
+  "version": "0.0.2",
+  "components": [
+    {
+      "id": "86a78439-4dde-433a-a5d0-aa800c06cd17",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "appconfig",
+      "description": "",
+      "format": "",
+      "model": null,
+      "modelReference": {
+        "displayName": "Dapr",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "model": {
+          "version": "1.17.0-rc.7"
+        },
+        "name": "dapr",
+        "registrant": {
+          "kind": "artifacthub"
+        },
+        "version": "v1.0.0"
+      },
+      "styles": {
+        "position": {
+          "x": 729,
+          "y": 390.5
+        },
+        "primaryColor": "#0d2192",
+        "secondaryColor": "#5266D7",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/dapr/color/configuration-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/dapr/white/configuration-white.svg"
+      },
+      "capabilities": null,
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": true,
+        "published": false,
+        "source_uri": "https://dapr.github.io/helm-charts/dapr-1.17.0-rc.7.tgz"
+      },
+      "configuration": {
+        "metadata": {
+          "name": "appconfig"
+        },
+        "spec": {
+          "httpPipeline": {
+            "handlers": [
+              {
+                "name": "wasm",
+                "type": "middleware.http.wasm"
+              }
+            ]
+          }
+        }
+      },
+      "component": {
+        "version": "dapr.io/v1alpha1",
+        "kind": "Configuration",
+        "schema": ""
+      },
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "relationships": []
+}

@@ -73,7 +73,7 @@ import { CONNECTION_KINDS, CONNECTION_KINDS_DEF } from '../utils/Enum';
 import { ability } from '../utils/can';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
 import { formatToTitleCase } from '@/utils/utils';
-import { useThemePreference } from '@/themes/hooks';
+import { useThemePreference } from '@/theme/hooks';
 import { CssBaseline, NoSsr, SistentThemeProvider } from '@/theme';
 import { ErrorBoundary } from '@sistent/sistent';
 import { LoadSessionGuard } from '@/rtk-query/ability';
@@ -85,8 +85,8 @@ import {
   StyledMainContent,
   StyledContentWrapper,
   StyledRoot,
-  ThemeResponsiveSnackbar,
-} from '../themes/App.styles';
+} from '../components/App.styles';
+import { ThemeResponsiveSnackbar } from '@/theme/snackbar';
 import {
   setConnectionMetadata,
   setControllerState,

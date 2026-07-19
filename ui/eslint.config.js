@@ -84,7 +84,6 @@ const legacyRestrictedImportOffenders = [
   'components/Settings/Registry/Stepper/UrlStepper.tsx',
   'components/SpacesSwitcher/MainDesignsContent.tsx',
   'components/SpacesSwitcher/components.tsx',
-  'components/UserPreferences/index.tsx',
   'components/ViewSwitch.tsx',
   'components/YamlDialog.tsx',
   'components/configuratorComponents/MeshModel/index.tsx',
@@ -499,8 +498,9 @@ module.exports = [
       // the rules to errors.
       // ---------------------------------------------------------------------
 
-      // Ban Material UI and legacy theme imports. @sistent/sistent is the
-      // only UI kit; @/theme is the approved Phase 1 theme entry point.
+      // Ban Material UI imports and deep imports of the local theme entry
+      // point. @sistent/sistent is the only UI kit; @/theme is the approved
+      // Phase 1 theme entry point.
       'no-restricted-imports': [
         'warn',
         {
@@ -530,18 +530,6 @@ module.exports = [
             {
               name: '@rjsf/mui',
               message: 'Use the shared RJSF wrapper; do not import @rjsf/mui directly.',
-            },
-            {
-              name: '@/themes',
-              message: 'Use @/theme, the approved Phase 1 theme entry point.',
-            },
-            {
-              name: '@/themes/app',
-              message: 'Use @/theme and theme.palette.* instead of the legacy Colors object.',
-            },
-            {
-              name: '@/themes/index',
-              message: 'Use @/theme and theme.palette.* instead of NOTIFICATIONCOLORS.',
             },
           ],
           patterns: [
@@ -575,9 +563,7 @@ module.exports = [
   // to contain a literal color are:
   //
   //   - ui/theme/**       (the theme module itself)
-  //   - ui/themes/**      (legacy theme module, scheduled for deletion)
   //   - ui/assets/**      (SVG icons encoded as React components)
-  //   - ui/constants/**   (legacy color constants, scheduled for deletion)
   //   - ui/lib/**         (third-party integration helpers)
   //   - ui/public/**      (static assets)
   // ---------------------------------------------------------------------
@@ -585,9 +571,7 @@ module.exports = [
     files: ['**/*.{ts,tsx,js,jsx}'],
     ignores: [
       'theme/**',
-      'themes/**',
       'assets/**',
-      'constants/**',
       'lib/**',
       'public/**',
       'tests/**',
@@ -621,16 +605,14 @@ module.exports = [
   // colors, typography, or spacing tokens.
   //
   // Scoped to .tsx/.jsx component sources. The same dirs the hex-literal
-  // guardrail ignores are ignored here (theme/themes/assets/lib/public are
+  // guardrail ignores are ignored here (theme/assets/lib/public are
   // not component code, and tests/scripts/the config itself are tooling).
   // ---------------------------------------------------------------------
   {
     files: ['**/*.{tsx,jsx}'],
     ignores: [
       'theme/**',
-      'themes/**',
       'assets/**',
-      'constants/**',
       'lib/**',
       'public/**',
       'tests/**',
