@@ -204,7 +204,10 @@ const MesherySettings = () => {
     );
   }
 
-  if (isCapabilitiesLoading || isCountsLoading) {
+  if (
+    CAN(Keys.MesherySystemViewSettings.id, Keys.MesherySystemViewSettings.function) &&
+    (isCapabilitiesLoading || isCountsLoading)
+  ) {
     return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Meshery Settings..." />;
   }
 

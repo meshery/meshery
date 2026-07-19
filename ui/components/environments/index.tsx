@@ -449,7 +449,14 @@ const Environments = () => {
     }
   };
 
-  if (isEnvironmentsFetching && !environmentsData) {
+  if (
+    CAN(
+      Keys.WorkspaceManagementViewEnvironment.id,
+      Keys.WorkspaceManagementViewEnvironment.function,
+    ) &&
+    isEnvironmentsFetching &&
+    !environmentsData
+  ) {
     return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Environments..." />;
   }
 
