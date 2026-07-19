@@ -53,10 +53,6 @@ vi.mock('../../shared/Modal/Information/InfoModal', () => ({
   default: () => <div data-testid="info-modal" />,
 }));
 
-vi.mock('@/graphql/subscriptions/ConfigurationSubscription', () => ({
-  default: vi.fn(),
-}));
-
 vi.mock('../../PromptComponent', () => ({
   default: React.forwardRef(() => <div data-testid="prompt" />),
 }));
@@ -118,7 +114,7 @@ vi.mock('@/utils/eventBus', () => ({
   mesheryEventBus: { publish: vi.fn() },
 }));
 
-vi.mock('@/themes/hooks', () => ({
+vi.mock('@/theme/hooks', () => ({
   ThemeTogglerCore: () => null,
 }));
 

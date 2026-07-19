@@ -38,13 +38,16 @@ vi.mock('@sistent/sistent', () => {
     HandymanIcon: () => <svg data-testid="handyman-icon" />,
     RemoveIcon: () => <svg data-testid="remove-icon" />,
     Typography: ({ children }) => <span>{children}</span>,
+    // Orange bucket for disconnected / maintenance
+    notificationColors: { warning: { light: 'orange' } },
     styled,
     createTheme: () => ({ breakpoints: {} }),
     useTheme: () => ({
       palette: {
         background: {
           brand: { default: 'brand' },
-          warning: { default: 'warning' },
+          // Yellow / amber bucket for partial (registered, discovered, …)
+          warning: { default: 'yellow' },
         },
         text: { disabled: 'disabled' },
       },
@@ -54,13 +57,6 @@ vi.mock('@sistent/sistent', () => {
 
 vi.mock('@/utils/fallback', () => ({
   normalizeStaticImagePath: (...args) => normalizeStaticImagePath(...args),
-}));
-
-vi.mock('../../themes', () => ({
-  notificationColors: {
-    lightwarning: 'warning',
-    info: 'info',
-  },
 }));
 
 vi.mock('../CustomAvatar', () => ({
@@ -173,6 +169,27 @@ describe('ConnectionChip', () => {
 
     expect(handlePing).not.toHaveBeenCalled();
     expect(screen.queryByRole('button', { name: 'delete' })).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ['connected', 'brand'],
+    ['registered', 'yellow'],
+    ['discovered', 'yellow'],
+    ['disconnected', 'orange'],
+    ['maintenance', 'orange'],
+    ['ignored', 'disabled'],
+    ['deleted', 'disabled'],
+    ['not found', 'disabled'],
+  ] as const)('maps status "%s" to status-dot color token "%s"', (status, expectedColor) => {
+    render(<ConnectionChip title="cluster" status={status} />);
+
+    expect(screen.getByTestId('badge-avatar')).toHaveAttribute('data-color', expectedColor);
+  });
+
+  it('omits the status badge when status is not provided', () => {
+    render(<ConnectionChip title="cluster" />);
+
+    expect(screen.queryByTestId('badge-avatar')).not.toBeInTheDocument();
   });
 });
 

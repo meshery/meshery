@@ -45,20 +45,6 @@ vi.mock('@/utils/can', () => ({
   default: (...args: any[]) => canMock(...args),
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    EDIT_DESIGN: { action: 'edit', subject: 'design' },
-    CLONE_DESIGN: { action: 'clone', subject: 'design' },
-    VALIDATE_DESIGN: { action: 'validate', subject: 'design' },
-    UNDEPLOY_DESIGN: { action: 'undeploy', subject: 'design' },
-    DEPLOY_DESIGN: { action: 'deploy', subject: 'design' },
-    DOWNLOAD_A_DESIGN: { action: 'download', subject: 'design' },
-    DETAILS_OF_DESIGN: { action: 'details', subject: 'design' },
-    UNPUBLISH_DESIGN: { action: 'unpublish', subject: 'design' },
-    EVALUATE_RELATIONSHIPS: { action: 'evaluate', subject: 'evaluate relationships' },
-  },
-}));
-
 vi.mock('@/assets/icons/CheckIcon', () => ({
   default: () => <svg data-testid="check-icon" />,
 }));
@@ -201,8 +187,8 @@ describe('buildPatternColumns', () => {
 });
 
 describe('buildPatternsTableOptions', () => {
-  it('returns a config preserving the supplied page, page size and counts', () => {
-    const options = buildPatternsTableOptions({
+  const build = (overrides: any = {}) =>
+    buildPatternsTableOptions({
       patterns: [],
       columns: [],
       count: 42,
@@ -210,7 +196,7 @@ describe('buildPatternsTableOptions', () => {
       page: 3,
       search: '',
       sortOrder: 'name asc',
-      user: null,
+      isLocalProvider: false,
       searchTimeout: { current: null },
       setPage: vi.fn(),
       setPageSize: vi.fn(),
@@ -219,8 +205,11 @@ describe('buildPatternsTableOptions', () => {
       setSelectedRowData: vi.fn(),
       deletePatterns: vi.fn(),
       showModal: vi.fn(),
-      initPatternsSubscription: vi.fn(),
+      ...overrides,
     });
+
+  it('returns a config preserving the supplied page, page size and counts', () => {
+    const options = build();
 
     expect(options.count).toBe(42);
     expect(options.rowsPerPage).toBe(10);
@@ -228,5 +217,10 @@ describe('buildPatternsTableOptions', () => {
     expect(options.sortOrder).toEqual({ name: 'name', direction: 'asc' });
     expect(options.print).toBe(false);
     expect(options.download).toBe(false);
+  });
+
+  it('disables sort on the local provider and enables it on a remote provider', () => {
+    expect(build({ isLocalProvider: true }).sort).toBe(false);
+    expect(build().sort).toBe(true);
   });
 });

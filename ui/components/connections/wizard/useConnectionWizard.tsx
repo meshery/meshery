@@ -2,11 +2,11 @@ import { createRef, useCallback, useEffect, useMemo, useRef, useState } from 're
 import { useNotification } from '@/utils/hooks/useNotification';
 import {
   useAddKubernetesConfigMutation,
-  useConnectToConnectionMutation,
   useDiscoverKubernetesContextsMutation,
   useGetCredentialsQuery,
+  usePerformConnectionActionMutation,
+  useProcessConnectionRegistrationMutation,
   useUpdateConnectionByIdMutation,
-  useVerifyAndRegisterConnectionMutation,
 } from '@/rtk-query/connection';
 import type { ConnectionWizardKindConfig } from '../ConnectionWizard.helpers';
 import { buildSteps } from './registry';
@@ -28,6 +28,16 @@ export type UseConnectionWizardParams = {
   /** configure mode: the connection being (re)configured. */
   initialKindConfig?: ConnectionWizardKindConfig | null;
   initialRegistrationResult?: GenericRecord | null;
+  /**
+   * create mode deep-link: kind string (e.g. "kubernetes") resolved against
+   * `availableKinds` once the registry definitions load.
+   */
+  presetKind?: string | null;
+  /**
+   * When true with `presetKind`, advance past the "Choose Connection" step so
+   * the user lands on Import Kubeconfig (or the kind's details step).
+   */
+  skipKindSelection?: boolean;
   onComplete?: () => void;
 };
 
@@ -52,11 +62,14 @@ const makeInitialData = (params: UseConnectionWizardParams): WizardData => ({
 export const useConnectionWizard = (params: UseConnectionWizardParams) => {
   const { mode, isOpen, onComplete } = params;
   const { notify } = useNotification();
-  const [verifyAndRegisterConnection] = useVerifyAndRegisterConnectionMutation();
-  const [connectToConnection] = useConnectToConnectionMutation();
+  // Both the register and connect steps dispatch through the single
+  // schemas-generated state-machine endpoint; the event's `status` field is
+  // what advances the registration.
+  const [processConnectionRegistration] = useProcessConnectionRegistrationMutation();
   const [addKubernetesConfig] = useAddKubernetesConfigMutation();
   const [discoverKubernetesContexts] = useDiscoverKubernetesContextsMutation();
   const [updateConnectionById] = useUpdateConnectionByIdMutation();
+  const [performConnectionAction] = usePerformConnectionActionMutation();
   const { data: credentialsResponse } = useGetCredentialsQuery(undefined, { skip: !isOpen });
 
   const formRefs = useRef<WizardFormRefs>({
@@ -100,6 +113,39 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
     }));
   }, [mode, initialKindConfig, initialRegistrationResult]);
 
+  // Create-mode deep link: once kind definitions load, pre-select `presetKind`
+  // and optionally land on the step after "Choose Connection" (Import Kubeconfig
+  // for Kubernetes). Applied once per open so user navigation is not overwritten.
+  const { presetKind, skipKindSelection } = params;
+  const appliedPresetRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!isOpen) {
+      appliedPresetRef.current = null;
+      return;
+    }
+    if (mode !== 'create' || !presetKind || !availableKinds?.length) {
+      return;
+    }
+    if (appliedPresetRef.current === presetKind) {
+      return;
+    }
+
+    const normalized = presetKind.toLowerCase();
+    const kindConfig =
+      availableKinds.find((config) => config.kind.toLowerCase() === normalized) ?? null;
+    if (!kindConfig) {
+      return;
+    }
+
+    appliedPresetRef.current = presetKind;
+    setData((current) => ({ ...current, kindConfig }));
+    if (skipKindSelection) {
+      // `select` is always step 0 in create mode; index 1 is the kind details
+      // step (Import Kubeconfig for the kubernetes extension).
+      setActiveIndex(1);
+    }
+  }, [isOpen, mode, presetKind, skipKindSelection, availableKinds]);
+
   // Keep `reset` stable while still resetting from the latest params: read them
   // from a ref updated in the render body (not an effect, so children never see
   // stale values during commit).
@@ -109,13 +155,22 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
     setData(makeInitialData(paramsRef.current));
     setActiveIndex(0);
     setIsBusy(false);
+    appliedPresetRef.current = null;
   }, []);
+
+  // The wizard assembles registration events dynamically (GenericRecord); the
+  // generated trigger types the body as the schemas ConnectionRegistrationEvent.
+  // This is the single boundary where the loose wizard data meets the typed
+  // wire contract.
+  type RegistrationEventBody = Parameters<typeof processConnectionRegistration>[0]['body'];
 
   const services = useMemo<WizardServices>(
     () => ({
       notify,
-      registerConnection: (body) => verifyAndRegisterConnection({ body }).unwrap(),
-      connectConnection: (body) => connectToConnection({ body }).unwrap(),
+      registerConnection: (body) =>
+        processConnectionRegistration({ body: body as RegistrationEventBody }).unwrap(),
+      connectConnection: (body) =>
+        processConnectionRegistration({ body: body as RegistrationEventBody }).unwrap(),
       discoverKubeContexts: async (file) => {
         const formData = new FormData();
         formData.append('k8sfile', file);
@@ -138,15 +193,29 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
       },
       updateConnectionById: (connectionId, body) =>
         updateConnectionById({ connectionId, body }).unwrap(),
+      setMeshsyncMode: (connectionId, mode) =>
+        performConnectionAction({
+          connectionId,
+          body: { action: 'setMeshsyncMode', mode },
+        }).unwrap(),
+      flushMeshsync: (connectionId) =>
+        performConnectionAction({
+          connectionId,
+          // `flushMeshsync` is a valid server action but is not yet part of the
+          // published schemas action enum (a closed union of `setMeshsyncMode`),
+          // so cast until the schemas enum change ships. FOLLOW-UP: drop the cast
+          // once @meshery/schemas exposes the `flushMeshsync` action.
+          body: { action: 'flushMeshsync' } as unknown as { action: 'setMeshsyncMode' },
+        }).unwrap(),
       credentials: credentialsResponse?.credentials || [],
     }),
     [
       notify,
-      verifyAndRegisterConnection,
-      connectToConnection,
+      processConnectionRegistration,
       addKubernetesConfig,
       discoverKubernetesContexts,
       updateConnectionById,
+      performConnectionAction,
       credentialsResponse,
     ],
   );

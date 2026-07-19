@@ -54,15 +54,6 @@ vi.mock('../css/icons.styles', () => ({
   iconMedium: { width: 24 },
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    MANAGE_CLOUD_NATIVE_INFRASTRUCTURE_LIFE_CYCLE: { action: 'a1', subject: 's1' },
-    APPLY_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION: { action: 'a2', subject: 's2' },
-    VALIDATE_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION: { action: 'a3', subject: 's3' },
-    APPLY_CUSTOM_CLOUD_NATIVE_CONFIGURATION: { action: 'a4', subject: 's4' },
-  },
-}));
-
 vi.mock('@/utils/can', () => ({
   default: (...args: any[]) => CAN_mock(...args),
 }));

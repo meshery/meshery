@@ -7,7 +7,7 @@ import changeAdapterState from '@/graphql/mutations/AdapterStatusMutation';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import BadgeAvatars from './CustomAvatar';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import CAN from '@/utils/can';
 import { iconMedium } from 'css/icons.styles';
 import {
@@ -428,8 +428,8 @@ const MeshAdapterConfigComponent = () => {
                 onClick={handleAdapterUndeploy}
                 disabled={
                   !CAN(
-                    keys.UNDEPLOY_CLOUD_NATIVE_INFRASTRUCTURE.action,
-                    keys.UNDEPLOY_CLOUD_NATIVE_INFRASTRUCTURE.subject,
+                    Keys.InfrastructureManagementUndeployCloudNativeInfrastructure.id,
+                    Keys.InfrastructureManagementUndeployCloudNativeInfrastructure.function,
                   )
                 }
               >
@@ -443,7 +443,12 @@ const MeshAdapterConfigComponent = () => {
                 size="large"
                 onClick={handleSubmit}
                 data-cy="btnSubmitMeshAdapter"
-                disabled={!CAN(keys.CONNECT_ADAPTER.action, keys.CONNECT_ADAPTER.subject)}
+                disabled={
+                  !CAN(
+                    Keys.MesherySystemConnectAdapter.id,
+                    Keys.MesherySystemConnectAdapter.function,
+                  )
+                }
               >
                 Connect
               </AdapterButton>
@@ -468,7 +473,14 @@ const MeshAdapterConfigComponent = () => {
               />
             </Grid2>
           </Grid2>
-          <Grid2 container spacing={1} alignItems="flex-end" justifyContent="flex-end" size="grow">
+          <Grid2
+            container
+            spacing={1}
+            alignItems="flex-end"
+            justifyContent="flex-end"
+            size="grow"
+            sx={{ pt: 4 }}
+          >
             <div ref={labelRef}>
               <TextField
                 id="deployPort"
@@ -481,24 +493,22 @@ const MeshAdapterConfigComponent = () => {
               />
             </div>
             <React.Fragment>
-              <AdapterButtons>
-                <AdapterButton
-                  type="submit"
-                  variant="contained"
-                  data-testid="adapter-deploy-button"
-                  color="primary"
-                  size="large"
-                  onClick={handleAdapterDeploy}
-                  disabled={
-                    !CAN(
-                      keys.DEPLOY_CLOUD_NATIVE_INFRASTRUCTURE.action,
-                      keys.DEPLOY_CLOUD_NATIVE_INFRASTRUCTURE.subject,
-                    )
-                  }
-                >
-                  Deploy
-                </AdapterButton>
-              </AdapterButtons>
+              <AdapterButton
+                type="submit"
+                variant="contained"
+                data-testid="adapter-deploy-button"
+                color="primary"
+                size="large"
+                onClick={handleAdapterDeploy}
+                disabled={
+                  !CAN(
+                    Keys.InfrastructureManagementDeployCloudNativeInfrastructure.id,
+                    Keys.InfrastructureManagementDeployCloudNativeInfrastructure.function,
+                  )
+                }
+              >
+                Deploy
+              </AdapterButton>
             </React.Fragment>
           </Grid2>
         </WrapperStyledDiv>

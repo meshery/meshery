@@ -1,5 +1,15 @@
-import React, { useMemo } from 'react';
-import { Grid2, List, ListItem, ListItemText, Box, styled, useTheme } from '@sistent/sistent';
+import React, { useMemo, useEffect } from 'react';
+import {
+  Grid2,
+  List,
+  ListItem,
+  ListItemText,
+  Box,
+  Typography,
+  styled,
+  useTheme,
+} from '@sistent/sistent';
+import { useGetControllerDiagnosticsQuery } from '@/rtk-query/connection';
 
 import {
   FormatId,
@@ -40,8 +50,11 @@ const DefaultPropertyFormatters = {
   id: (value) => customIdFormatter('Id', value),
   uid: (value) => customIdFormatter('Uid', value),
   server_id: (value) => customIdFormatter('Server Id', value),
+  serverId: (value) => customIdFormatter('Server Id', value),
   created_at: (value) => customDateFormatter('Created At', value),
+  createdAt: (value) => customDateFormatter('Created At', value),
   updated_at: (value) => customDateFormatter('Updated At', value),
+  updatedAt: (value) => customDateFormatter('Updated At', value),
   creation_timestamp: (value) => customDateFormatter('Creation Timestamp', value),
   creationTimestamp: (value) => customDateFormatter('Creation Timestamp', value),
   last_seen: (value) => customDateFormatter('Last Seen', value),
@@ -55,6 +68,119 @@ const StyledListItemText = styled(ListItemText)(({ theme }) => ({
     color: theme.palette.text.tertiary, // Use the secondary color from the theme
   },
 }));
+
+const DIAGNOSTIC_SEVERITY_PALETTE = {
+  error: 'error',
+  warning: 'warning',
+  info: 'info',
+};
+
+// A single diagnostic: severity-colored card with an explanation, optional
+// endpoint, and an ordered list of remediation steps.
+const DiagnosticCard = ({ diagnostic }) => {
+  const theme = useTheme();
+  const paletteKey = DIAGNOSTIC_SEVERITY_PALETTE[diagnostic.severity] || 'info';
+  const accent = theme.palette[paletteKey]?.main || theme.palette.text.secondary;
+
+  return (
+    <Box
+      sx={{
+        borderLeft: `3px solid ${accent}`,
+        borderRadius: '4px',
+        padding: '0.5rem 0.75rem',
+        marginBottom: '0.5rem',
+        backgroundColor: theme.palette.background.default,
+      }}
+    >
+      <Typography variant="body1" sx={{ fontWeight: 600, color: accent }}>
+        {diagnostic.summary}
+      </Typography>
+      {diagnostic.description && (
+        <Typography
+          variant="body2"
+          sx={{ marginTop: '0.25rem', color: theme.palette.text.tertiary }}
+        >
+          {diagnostic.description}
+        </Typography>
+      )}
+      {diagnostic.endpoint && (
+        <Typography
+          variant="body2"
+          sx={{ marginTop: '0.25rem', color: theme.palette.text.tertiary }}
+        >
+          Endpoint:{' '}
+          <Box component="code" sx={{ fontFamily: 'monospace' }}>
+            {diagnostic.endpoint}
+          </Box>
+        </Typography>
+      )}
+      {Array.isArray(diagnostic.remediation) && diagnostic.remediation.length > 0 && (
+        <>
+          <Typography variant="body2" sx={{ marginTop: '0.5rem', fontWeight: 600 }}>
+            Suggested remediation
+          </Typography>
+          <Box component="ol" sx={{ margin: '0.25rem 0 0', paddingInlineStart: '1.25rem' }}>
+            {diagnostic.remediation.map((step, idx) => (
+              <li key={idx}>
+                <Typography variant="body2" sx={{ color: theme.palette.text.tertiary }}>
+                  {step}
+                </Typography>
+              </li>
+            ))}
+          </Box>
+        </>
+      )}
+    </Box>
+  );
+};
+
+// ControllerDiagnosticsSection fetches human-actionable diagnostics for a
+// connection's controllers on demand (separate from the live status stream) and
+// refetches whenever the connection's live controller status changes, so the
+// section stays in sync without bloating the status SSE payload.
+const ControllerDiagnosticsSection = ({ connectionId, statusKey }) => {
+  const theme = useTheme();
+  const { data, isFetching, refetch } = useGetControllerDiagnosticsQuery(connectionId);
+
+  useEffect(() => {
+    // statusKey changes when any of this connection's controller states change,
+    // so this refetches the diagnostics to stay in sync with the live status.
+    if (connectionId) {
+      refetch();
+    }
+  }, [statusKey, connectionId, refetch]);
+
+  if (!connectionId) {
+    return null;
+  }
+
+  const diagnostics = data?.diagnostics ?? [];
+
+  return (
+    <Grid2 size={{ xs: 12 }}>
+      <ContentContainer container spacing={1} size="grow">
+        <Grid2 size={{ xs: 12 }}>
+          <Typography variant="body1" sx={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>
+            Diagnostics
+          </Typography>
+          {isFetching && !data ? (
+            <Typography variant="body2" sx={{ color: theme.palette.text.tertiary }}>
+              Checking controller health…
+            </Typography>
+          ) : diagnostics.length === 0 ? (
+            <Typography variant="body2" sx={{ color: theme.palette.text.tertiary }}>
+              No issues detected for this connection&apos;s controllers.
+            </Typography>
+          ) : (
+            diagnostics.map((diagnostic) => (
+              <DiagnosticCard key={diagnostic.code} diagnostic={diagnostic} />
+            ))
+          )}
+        </Grid2>
+      </ContentContainer>
+    </Grid2>
+  );
+};
 
 const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, metadata }) => {
   const pingKubernetes = useKubernetesHook();
@@ -141,7 +267,13 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                       wordWrap: 'break-word',
                     }}
                     primary="Server"
-                    secondary={<Link title={metadata.server}>{metadata.server}</Link>}
+                    secondary={
+                      metadata.server ? (
+                        <Link href={metadata.server} title={metadata.server} />
+                      ) : (
+                        '-'
+                      )
+                    }
                   />
                 </ListItem>
               </List>
@@ -260,29 +392,117 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
           </ContentContainer>
         </ColumnWrapper>
       </Grid2>
+      <ControllerDiagnosticsSection
+        connectionId={connection.id}
+        statusKey={`${operatorState}|${meshSyncState}|${natsState}`}
+      />
     </Grid2>
   );
 };
 
+// Well-known metadata written for meshery-kind connections at registration
+// time (see BuildMesheryConnectionPayload in server/models/connections).
+// Current records use camelCase keys; snake_case fallbacks cover older rows.
+const MESHERY_SERVER_METADATA_KEYS = [
+  'serverId',
+  'server_id',
+  'serverVersion',
+  'server_version',
+  'serverBuildSha',
+  'server_build_sha',
+  'serverLocation',
+  'server_location',
+];
+
 const MesheryMetadataFormatter = ({ connection }) => {
+  const metadata = connection.metadata || {};
+  const serverId = metadata.serverId ?? metadata.server_id;
+  const serverVersion = metadata.serverVersion ?? metadata.server_version;
+  const serverBuildSha = metadata.serverBuildSha ?? metadata.server_build_sha;
+  const serverLocation = metadata.serverLocation ?? metadata.server_location;
+
+  // Metadata beyond the well-known server fields still renders (below, via the
+  // generic structured formatter) so nothing is silently dropped.
+  const extraMetadata = useMemo(
+    () =>
+      Object.fromEntries(
+        Object.entries(connection.metadata || {}).filter(
+          ([key]) => !MESHERY_SERVER_METADATA_KEYS.includes(key),
+        ),
+      ),
+    [connection.metadata],
+  );
+  const hasExtraMetadata = Object.keys(extraMetadata).length > 0;
+
   const uiSchema = useMemo(
     () =>
       createColumnUiSchema({
-        metadata: connection.metadata || {},
+        metadata: extraMetadata,
         numCols: {
           xs: 2,
           md: 4,
         },
       }),
-    [connection.metadata],
+    [extraMetadata],
   );
 
   return (
-    <FormatStructuredData
-      data={connection.metadata}
-      uiSchema={uiSchema}
-      propertyFormatters={DefaultPropertyFormatters}
-    />
+    <Grid2 container spacing={1} sx={{ textTransform: 'none' }} size="grow">
+      <Grid2 size={{ xs: 12, md: 6 }}>
+        <List>
+          <ListItem>
+            <StyledListItemText
+              primary="Server ID"
+              secondary={serverId ? <FormatId id={serverId} /> : 'Not available'}
+            />
+          </ListItem>
+          <ListItem>
+            <StyledListItemText
+              style={{ wordWrap: 'break-word' }}
+              primary="Server Location"
+              secondary={
+                serverLocation ? <Link href={serverLocation} title={serverLocation} /> : 'Unknown'
+              }
+            />
+          </ListItem>
+          <ListItem>
+            <StyledListItemText
+              primary="Discovered At"
+              secondary={<FormattedDate date={connection.createdAt} />}
+            />
+          </ListItem>
+        </List>
+      </Grid2>
+      <Grid2 size={{ xs: 12, md: 6 }}>
+        <List>
+          <ListItem>
+            <StyledListItemText primary="Server Version" secondary={serverVersion || 'Unknown'} />
+          </ListItem>
+          <ListItem>
+            <StyledListItemText
+              style={{ wordBreak: 'break-all' }}
+              primary="Server Build SHA"
+              secondary={serverBuildSha || 'Unknown'}
+            />
+          </ListItem>
+          <ListItem>
+            <StyledListItemText
+              primary="Updated At"
+              secondary={<FormattedDate date={connection.updatedAt} />}
+            />
+          </ListItem>
+        </List>
+      </Grid2>
+      {hasExtraMetadata && (
+        <Grid2 size={{ xs: 12 }}>
+          <FormatStructuredData
+            data={extraMetadata}
+            uiSchema={uiSchema}
+            propertyFormatters={DefaultPropertyFormatters}
+          />
+        </Grid2>
+      )}
+    </Grid2>
   );
 };
 

@@ -28,7 +28,7 @@ import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import InfoModal from '../shared/Modal/Information/InfoModal';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '../general/error-404/index';
 import {
   useGetFiltersQuery,
@@ -41,6 +41,7 @@ import {
 } from '@/rtk-query/filter';
 import LoadingScreen from '../shared/LoadingState/LoadingComponent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import { isLocalProvider } from '@/utils/provider';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
@@ -59,7 +60,6 @@ import {
   createHandlePublish,
   createHandleSubmit,
   createHandleUnpublishModal,
-  createInitFiltersSubscription,
   createUploadHandler,
 } from './Filters.fileActions';
 import type { TypeView } from './Filters.types';
@@ -128,7 +128,6 @@ function MesheryFilters() {
 
   const catalogContentRef = useRef<any[]>([]);
   const catalogVisibilityRef = useRef<boolean>(false);
-  const disposeConfSubscriptionRef = useRef<{ dispose: () => void } | null>(null);
   const [selectedFilters, setSelectedFilters] = useState<{ visibility: string }>(() => ({
     visibility: tableState.filters.vis || 'All',
   }));
@@ -259,13 +258,6 @@ function MesheryFilters() {
   const handleClone = createHandleClone({ cloneFilter, notify, handleError });
   const handleDownload = createHandleDownload({ notify });
   const deleteFilter = createDeleteFilter({ deleteFilterFile, notify, handleError });
-  const initFiltersSubscription = createInitFiltersSubscription({
-    page,
-    pageSize,
-    search,
-    sortOrder,
-    disposeConfSubscriptionRef,
-  });
   const handleSubmit = createHandleSubmit({
     notify,
     handleError,
@@ -347,14 +339,12 @@ function MesheryFilters() {
     }).subscribe({
       next: (result) => {
         catalogContentRef.current = result?.catalogFilters;
-        initFiltersSubscription();
       },
       error: (err) => console.log('There was an error fetching Catalog Filter: ', err),
     });
 
     return () => {
       fetchCatalogFilters.unsubscribe();
-      disposeConfSubscriptionRef.current?.dispose();
     };
   }, []);
 
@@ -371,7 +361,7 @@ function MesheryFilters() {
   });
 
   const options = buildFiltersTableOptions({
-    user,
+    isLocalProvider: isLocalProvider(capabilitiesData),
     count,
     page,
     pageSize,
@@ -385,7 +375,6 @@ function MesheryFilters() {
     setSearch,
     setSortOrder,
     setSelectedRowData,
-    initFiltersSubscription,
     showmodal,
     deleteFilter,
   });
@@ -440,7 +429,7 @@ function MesheryFilters() {
     <>
       <>
         <NoSsr>
-          {CAN(keys.VIEW_FILTERS.action, keys.VIEW_FILTERS.subject) ? (
+          {CAN(Keys.CatalogManagementViewFilters.id, Keys.CatalogManagementViewFilters.function) ? (
             <>
               {selectedRowData && Object.keys(selectedRowData).length > 0 && (
                 <YAMLEditor
@@ -460,7 +449,12 @@ function MesheryFilters() {
                           color="primary"
                           size="large"
                           onClick={handleUploadImport}
-                          disabled={!CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject)}
+                          disabled={
+                            !CAN(
+                              Keys.CatalogManagementImportFilter.id,
+                              Keys.CatalogManagementImportFilter.function,
+                            )
+                          }
                         >
                           <PublishIcon style={iconMedium} data-cy="import-button" />
                           <BtnText> Import Filters </BtnText>
@@ -480,12 +474,6 @@ function MesheryFilters() {
                   <SearchBar
                     onSearch={(value) => {
                       setSearch(value);
-                      initFiltersSubscription(
-                        page.toString(),
-                        pageSize.toString(),
-                        value,
-                        sortOrder,
-                      );
                     }}
                     expanded={isSearchExpanded}
                     setExpanded={setIsSearchExpanded}
@@ -547,21 +535,31 @@ function MesheryFilters() {
               )}
               {canPublishFilter &&
                 publishModal.open &&
-                CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject) && (
+                CAN(
+                  Keys.CatalogManagementPublishWasmFilter.id,
+                  Keys.CatalogManagementPublishWasmFilter.function,
+                ) && (
                   <PublishModal
                     handleClose={handlePublishModalClose}
                     title={publishModal.filter?.name}
                     handleSubmit={handlePublish}
                   />
                 )}
-              {importModal.open && CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject) && (
-                <ImportModal
-                  handleClose={handleUploadImportClose}
-                  handleImportFilter={handleImportFilter}
-                />
-              )}
+              {importModal.open &&
+                CAN(
+                  Keys.CatalogManagementImportFilter.id,
+                  Keys.CatalogManagementImportFilter.function,
+                ) && (
+                  <ImportModal
+                    handleClose={handleUploadImportClose}
+                    handleImportFilter={handleImportFilter}
+                  />
+                )}
               {infoModal.open &&
-                CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject) && (
+                CAN(
+                  Keys.CatalogManagementDetailsOfWasmFilter.id,
+                  Keys.CatalogManagementDetailsOfWasmFilter.function,
+                ) && (
                   <InfoModal
                     handlePublish={handlePublish}
                     infoModalOpen={true}
