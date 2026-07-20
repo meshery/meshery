@@ -60,7 +60,33 @@
 	👨🏽‍💻 Contributors
 &lt;/h2&gt;
 &lt;p&gt;Thank you to our contributors for making this release possible:
-@Ayush-kr-giga, @Bhavesh189, @Copilot, @Jayasuryanarayana007, @Katotodan, @NSTKrishna, @Piyush4801, @SHIVIKA330, @YASHMAHAKAL, @akshatsinghai6682-sketch, @alexquincy, @anjalichhikara-0907, @chaitanyamedidar, @dhruv-programmes, @fitzergerald, @l5io, @leecalcote, @marblom007, @meshery-ci, @nimonain, @padmasri-web, @rishiraj38, @suzy-g38, @tanuku-saikarthik, @yi-nuo426 and Piyush4801&lt;/p&gt;</description></item><item><title>v1.0.57</title><link>/project/releases/v1.0.57/</link><pubDate>Fri, 17 Jul 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.57/</guid><description>&lt;h2 id="whats-new"&gt;
+@Ayush-kr-giga, @Bhavesh189, @Copilot, @Jayasuryanarayana007, @Katotodan, @NSTKrishna, @Piyush4801, @SHIVIKA330, @YASHMAHAKAL, @akshatsinghai6682-sketch, @alexquincy, @anjalichhikara-0907, @chaitanyamedidar, @dhruv-programmes, @fitzergerald, @l5io, @leecalcote, @marblom007, @meshery-ci, @nimonain, @padmasri-web, @rishiraj38, @suzy-g38, @tanuku-saikarthik, @yi-nuo426 and Piyush4801&lt;/p&gt;</description></item><item><title>v1.0.59</title><link>/project/releases/v1.0.59/</link><pubDate>Mon, 20 Jul 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.59/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Server] Log human-readable summary in SaveConnection debug line @leecalcote (#20797)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;feat(ui): improve environment assignment discoverability @emphor11 (#20780)&lt;/li&gt;
+&lt;li&gt;[Docs] Fix illegible contrast on secondary alerts @SHIVIKA330 (#20796)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Docs] Fix illegible contrast on secondary alerts @SHIVIKA330 (#20796)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@SHIVIKA330, @emphor11, @leecalcote, @marblom007 and @ritzorama&lt;/p&gt;</description></item><item><title>v1.0.57</title><link>/project/releases/v1.0.57/</link><pubDate>Fri, 17 Jul 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.57/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -34384,7 +34410,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.58&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.59&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
