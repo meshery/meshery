@@ -253,6 +253,13 @@ describe('makeTitle', () => {
     expect(result.find((s: string) => s.startsWith('Destination:'))).toBeUndefined();
   });
 
+  it('handles empty Percentiles array correctly', () => {
+    const res = makeResult();
+    res.DurationHistogram.Percentiles = [];
+    const result = makeTitle(null, res);
+    expect(result).toContain('Percentiles: ');
+  });
+
   it('includes No Error when all responses succeeded', () => {
     const result = makeTitle(null, makeResult());
     expect(result).toContain('Errors: No Error');
