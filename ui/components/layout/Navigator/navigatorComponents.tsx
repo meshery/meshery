@@ -162,9 +162,9 @@ export const getNavigatorComponents = (
   },
   {
     id: TELEMETRY,
-    icon: <InsertChartIcon style={{ ...drawerIconsStyle }} fill={theme.palette.icon.default} />,
+    icon: <InsertChartIcon style={{ ...drawerIconsStyle }} />,
     hovericon: (
-      <InsertChartIcon style={{ ...drawerIconsStyle }} fill={theme.palette.icon.default} />
+      <InsertChartIcon style={{ ...drawerIconsStyle }} />
     ),
     href: '/telemetry',
     title: 'Telemetry',
@@ -174,7 +174,7 @@ export const getNavigatorComponents = (
     children: [
       {
         id: GRAFANA,
-        icon: <InsertChartIcon style={{ ...drawerIconsStyle }} fill={theme.palette.icon.default} />,
+        icon: <InsertChartIcon style={{ ...drawerIconsStyle }} />,
         href: '/telemetry/charts',
         title: 'Charts',
         show: providerUiAccessControl.isNavigatorComponentEnabled([TELEMETRY, GRAFANA]),
@@ -182,7 +182,7 @@ export const getNavigatorComponents = (
       },
       {
         id: PROMETHEUS,
-        icon: <TachographDigitalIcon fill={theme.palette.icon.default} style={drawerIconsStyle} />,
+        icon: <TachographDigitalIcon style={drawerIconsStyle} />,
         href: '/telemetry/metrics',
         title: 'Metrics',
         show: providerUiAccessControl.isNavigatorComponentEnabled([TELEMETRY, PROMETHEUS]),
@@ -202,7 +202,7 @@ export const getNavigatorComponents = (
     children: [
       {
         id: PROFILES,
-        icon: <TachographDigitalIcon fill={theme.palette.icon.default} />,
+        icon: <TachographDigitalIcon />,
         href: '/performance/profiles',
         title: 'Profiles',
         show: providerUiAccessControl.isNavigatorComponentEnabled([PERFORMANCE, PROFILES]),
