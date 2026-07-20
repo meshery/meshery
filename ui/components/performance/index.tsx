@@ -8,7 +8,7 @@ import { ctxUrl, getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { generateTestName, generateUUID } from './helper';
-import CAN from '@/utils/can';
+import { useCan } from '@/utils/hooks/useCan';
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '@/components/general/error-404/index';
 import { api } from '../../rtk-query';
@@ -89,6 +89,10 @@ const MesheryPerformanceComponent_ = (props) => {
   const [metadataState, setMetadata] = useState(metadata);
   const { notify } = useNotification();
   const dispatch = useDispatch();
+  const canViewProfiles = useCan(
+    Keys.PerformanceManagementViewPerformanceProfiles.id,
+    Keys.PerformanceManagementViewPerformanceProfiles.function,
+  );
   const { data: userData, isSuccess: isUserDataFetched } =
     useGetUserPrefWithContextQuery(selectedK8sContexts);
 
@@ -487,10 +491,7 @@ const MesheryPerformanceComponent_ = (props) => {
 
   return (
     <NoSsr>
-      {CAN(
-        Keys.PerformanceManagementViewPerformanceProfiles.id,
-        Keys.PerformanceManagementViewPerformanceProfiles.function,
-      ) ? (
+      {canViewProfiles ? (
         <>
           <React.Fragment>
             <ModalBody>

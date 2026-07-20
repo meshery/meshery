@@ -4,7 +4,7 @@ import PerformanceCalendar from './PerformanceCalendar';
 import MesheryPerformanceComponent from './index';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
-import CAN from '@/utils/can';
+import { useCan } from '@/utils/hooks/useCan';
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '@/components/general/error-404/index';
 import { Modal, Button, Grid2, Paper, Typography, useTheme, styled } from '@sistent/sistent';
@@ -63,6 +63,14 @@ function Dashboard() {
   const router = useRouter();
   const dispatch = useDispatch();
   const theme = useTheme();
+  const canViewProfiles = useCan(
+    Keys.PerformanceManagementViewPerformanceProfiles.id,
+    Keys.PerformanceManagementViewPerformanceProfiles.function,
+  );
+  const canRunTest = useCan(
+    Keys.PerformanceManagementRunTest.id,
+    Keys.PerformanceManagementRunTest.function,
+  );
   const {
     data: performanceProfilesData,
     isFetching: isFetchingProfiles,
@@ -131,10 +139,7 @@ function Dashboard() {
 
   return (
     <>
-      {CAN(
-        Keys.PerformanceManagementViewPerformanceProfiles.id,
-        Keys.PerformanceManagementViewPerformanceProfiles.function,
-      ) ? (
+      {canViewProfiles ? (
         <>
           <Grid2
             container
@@ -175,12 +180,7 @@ function Dashboard() {
                       <div style={{ margin: '2rem 0 0 auto', width: 'fit-content' }}>
                         <StyledButton
                           onClick={() => setRunTest(true)}
-                          disabled={
-                            !CAN(
-                              Keys.PerformanceManagementRunTest.id,
-                              Keys.PerformanceManagementRunTest.function,
-                            )
-                          }
+                          disabled={!canRunTest}
                           variant="contained"
                         >
                           Run Test

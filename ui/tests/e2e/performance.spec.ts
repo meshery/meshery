@@ -10,14 +10,6 @@ test.describe('Performance Section Tests', () => {
     await dashboardPage.navigateToDashboard();
     await dashboardPage.navigateToPerformance();
     // Readiness signal for the performance dashboard.
-    //
-    // Known flake (meshery/meshery#20504): "performance-dashboard" only renders
-    // when CAN(VIEW_PERFORMANCE_PROFILES) is true, and CAN() (ui/utils/can.ts)
-    // reads a non-reactive module-level casl ability singleton. If the user's
-    // capabilities load after Dashboard mounts, it renders <DefaultError/> and
-    // never re-renders, so this element can time out regardless of how long we
-    // wait - a longer timeout does not fix it. The real fix is a reactive
-    // permission gate, tracked in #20504.
     await expect(page.getByTestId('performance-dashboard')).toBeVisible();
   });
 

@@ -5,7 +5,12 @@ export class ProviderSelectionPage {
   }
 
   getProviderMenuItem(providerName) {
-    return this.page.getByRole('menuitem', { name: providerName });
+    // Escape providerName to avoid regex injection, then match the label at the start followed by whitespace/end.
+    // We cannot use exact: true because the accessible name includes tooltip text.
+    const escapedName = providerName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return this.page.getByRole('menuitem', {
+      name: new RegExp('^' + escapedName + '(?:\\s|$)', 'i'),
+    });
   }
 
   async navigateToProviderSelection() {
