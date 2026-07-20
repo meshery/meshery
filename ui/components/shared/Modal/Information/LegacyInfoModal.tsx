@@ -283,7 +283,17 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
 
   useEffect(() => {
     if (publishSchema) {
-      const newUiSchema = { ...publishSchema.uiSchema };
+      const newUiSchema = {
+        ...publishSchema.uiSchema,
+        // Force a multi-select dropdown for the compatibility/Technology field.
+        // RJSF v5 auto-selects CheckboxesWidget when schema has uniqueItems:true + items.enum,
+        // which causes formData.compatibility to be submitted as a string instead of an array.
+        // Explicitly setting 'ui:widget': 'select' restores multi-select array behaviour.
+        compatibility: {
+          ...(publishSchema.uiSchema?.compatibility || {}),
+          'ui:widget': 'select',
+        },
+      };
 
       if (isReadOnly) {
         newUiSchema['ui:readonly'] = true;
@@ -454,6 +464,18 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
                     liveValidate={false}
                     formRef={formRef}
                     hideTitle={true}
+                    transformErrors={(errors) => {
+                      return errors?.map((error) => {
+                        if (
+                          error.property === '.compatibility' ||
+                          (error.name === 'required' &&
+                            error.params?.missingProperty === 'compatibility')
+                        ) {
+                          error.message = 'Please select at least one technology.';
+                        }
+                        return error;
+                      });
+                    }}
                   />
                 </Grid>
               </Grid>

@@ -13,7 +13,10 @@ import { Modal } from '@/components/shared/Modal';
 import ConnectionIcon from '@/assets/icons/Connection';
 import type { RootState } from '../../store';
 import { useListConnectionDefinitionsQuery } from '@meshery/schemas/mesheryApi';
-import { buildConnectionWizardKindConfigs } from './ConnectionWizard.helpers';
+import {
+  buildConnectionWizardKindConfigs,
+  DEFAULT_CONNECTION_DOCS_URL,
+} from './ConnectionWizard.helpers';
 import { useConnectionWizard } from './wizard/useConnectionWizard';
 import WizardStepper from './wizard/WizardStepper';
 
@@ -26,13 +29,19 @@ type ConnectionWizardModalProps = {
   skipKindSelection?: boolean;
 };
 
-// The stepper renders each step's `icon` component bare (no size props), so it
-// relies on the icon's own defaults — `CheckIcon`/`DescriptionIcon` default to
-// 24px, but `ConnectionIcon` has no size default and would collapse to zero.
-// Wrap it with an explicit size so the first step's icon actually shows.
-const StepConnectionIcon = (props: { width?: number; height?: number }) => (
-  <ConnectionIcon width={24} height={24} {...props} />
-);
+// Stepper passes `fill` from theme; force monochrome so ConnectionIcon is not
+// brand-green before the step completes (issue #20767).
+const StepConnectionIcon = (props: { width?: number; height?: number; fill?: string }) => {
+  const { fill, width = 24, height = 24, ...rest } = props;
+  return (
+    <ConnectionIcon
+      width={width}
+      height={height}
+      {...(fill ? { fill, primaryFill: fill, secondaryFill: fill } : {})}
+      {...rest}
+    />
+  );
+};
 
 const ConnectionWizardModal = ({
   isOpen,
@@ -88,6 +97,23 @@ const ConnectionWizardModal = ({
 
   const ActiveBody = wizard.activeStep?.Component;
 
+  // Step-specific footer help with docs links (#20767); fall back to kind copy.
+  const helpText = useMemo(() => {
+    const stepHelp = wizard.activeStep?.helpText;
+    if (typeof stepHelp === 'function') {
+      return stepHelp(wizard.ctx);
+    }
+    if (typeof stepHelp === 'string' && stepHelp.length > 0) {
+      return stepHelp;
+    }
+    const kindConfig = wizard.ctx.data.kindConfig;
+    if (kindConfig) {
+      const docsUrl = kindConfig.docsUrl || DEFAULT_CONNECTION_DOCS_URL;
+      return `Meshery connections are first-class constructs. This wizard registers a ${kindConfig.label} connection. [Learn more](${docsUrl}).`;
+    }
+    return `Choose a supported connection kind to continue. [Learn more about connections](${DEFAULT_CONNECTION_DOCS_URL}).`;
+  }, [wizard.activeStep, wizard.ctx]);
+
   const handleClose = () => {
     if (wizard.isBusy) {
       return;
@@ -102,14 +128,7 @@ const ConnectionWizardModal = ({
           {ActiveBody ? <ActiveBody ctx={wizard.ctx} /> : <></>}
         </WizardStepper>
       </ModalBody>
-      <ModalFooter
-        variant="filled"
-        helpText={
-          wizard.ctx.data.kindConfig
-            ? `Meshery connections are first-class constructs. This wizard registers a ${wizard.ctx.data.kindConfig.label} connection.`
-            : 'Choose a supported connection kind to continue.'
-        }
-      >
+      <ModalFooter variant="filled" helpText={helpText}>
         <Box sx={{ width: '100%', display: 'flex', justifyContent: 'end', gap: 2 }}>
           <ModalButtonSecondary
             onClick={wizard.canGoBack ? wizard.back : handleClose}

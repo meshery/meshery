@@ -1,10 +1,13 @@
 import { useMemo, useState } from 'react';
+import Link from 'next/link';
 import {
   Alert,
   Box,
   Checkbox,
   CheckCircleIcon,
+  Chip,
   CircularProgress,
+  CustomTooltip,
   MenuItem,
   TextField,
   Typography,
@@ -16,17 +19,22 @@ import { useSelector } from 'react-redux';
 import { alpha, styled } from '@/theme';
 import { EVENT_TYPES } from 'lib/event-types';
 import { CONNECTION_STATES } from '@/utils/Enum';
-import { getKubernetesContexts } from '../ConnectionWizard.helpers';
+import {
+  CONNECTIONS_PATH,
+  getKubernetesContexts,
+  kubernetesImportedNotify,
+} from '../ConnectionWizard.helpers';
 import { formatWizardError } from './errors';
 import {
   DEFAULT_MESHSYNC_DEPLOYMENT_MODE,
+  getMeshsyncModeTooltip,
   MESHSYNC_DEPLOYMENT_MODE_OPTIONS,
+  MESHSYNC_MODES_DOCS_URL,
 } from './kubernetesDeploymentMode';
 import { kubernetesSettingsStep } from './kubernetesSettings';
 import FormatConnectionMetadata from '../metadata';
 import { ConnectionStateChip } from '../ConnectionChip';
 import { KubernetesImportStep, StepHeader } from '../ConnectionWizardStepContent';
-import { kubernetesImportedNotify } from '../ConnectionWizard.helpers';
 import type {
   ConnectionExtension,
   DiscoveredKubeContext,
@@ -34,6 +42,10 @@ import type {
   WizardContext,
   WizardStep,
 } from './types';
+
+const KUBECONFIG_DOCS_URL = 'https://docs.meshery.io/installation/kubernetes';
+const KUBERNETES_CONNECTION_DOCS_URL =
+  'https://docs.meshery.io/guides/infrastructure-management/kubernetes-connection-lifecycle';
 
 const ContextRow = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'muted',
@@ -78,25 +90,11 @@ const SuccessIcon = styled(CheckCircleIcon)(({ theme }) => ({
   fill: theme.palette.background.brand?.default,
 }));
 
-const SummaryList = styled(Box)(({ theme }) => ({
-  width: '100%',
-  maxWidth: 460,
-  borderRadius: theme.spacing(1.5),
-  border: `1px solid ${theme.palette.divider}`,
-  background: theme.palette.background.card,
-  overflow: 'hidden',
-  textAlign: 'left',
-}));
-
-const SummaryListRow = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  gap: theme.spacing(2),
-  padding: theme.spacing(1.25, 2),
-  '& + &': {
-    borderTop: `1px solid ${theme.palette.divider}`,
-  },
+const ConnectionsLink = styled(Link)(({ theme }) => ({
+  color: theme.palette.background.brand?.default || theme.palette.primary.main,
+  fontWeight: 600,
+  textDecoration: 'underline',
+  textUnderlineOffset: 2,
 }));
 
 type ContextChoice = { selected: boolean; name: string; meshsyncDeploymentMode: string };
@@ -144,7 +142,8 @@ const kubernetesDetailsStep: WizardStep = {
   icon: CloudUploadIcon,
   Component: KubeconfigStepBody,
   canProceed: (ctx) => Boolean(ctx.data.kubeconfigFile),
-  nextLabel: () => 'Discover Contexts',
+  nextLabel: () => 'Continue',
+  helpText: `Upload a kubeconfig with embedded certificates. Meshery reads the file's contexts, then registers the ones you select as Kubernetes connections. [Learn more about connecting Kubernetes](${KUBECONFIG_DOCS_URL}).`,
   onNext: async (ctx) => {
     if (!ctx.data.kubeconfigFile) {
       return false;
@@ -225,14 +224,27 @@ const ReviewContextsStepBody = ({ ctx }: { ctx: WizardContext }) => {
                   value={choice.name}
                   disabled={!choice.selected}
                   onChange={(event) => updateChoice(context.id, { name: event.target.value })}
-                  inputProps={{ 'aria-label': `Name for ${context.name}` }}
+                  inputProps={{
+                    'aria-label': `Name for ${context.name}`,
+                    title: choice.name,
+                  }}
+                  sx={{
+                    maxWidth: '100%',
+                    '& .MuiInput-input': {
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    },
+                    '& .MuiInput-underline:before, & .MuiInput-underline:after': {
+                      maxWidth: '100%',
+                    },
+                  }}
                 />
                 <Typography variant="caption" color="text.secondary" noWrap component="div">
                   {context.server || 'unknown server'}
                 </Typography>
               </Box>
-              {/* Per-context MeshSync deployment mode; persisted to the
-                  connection's metadata when the context is imported. */}
+              {/* MeshSync mode per context; hover shows details + docs link. */}
               <TextField
                 select
                 variant="standard"
@@ -247,12 +259,18 @@ const ReviewContextsStepBody = ({ ctx }: { ctx: WizardContext }) => {
               >
                 {MESHSYNC_DEPLOYMENT_MODE_OPTIONS.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
-                    {option.label}
+                    <CustomTooltip
+                      interactive
+                      title={getMeshsyncModeTooltip(option)}
+                      placement="left"
+                    >
+                      <Box component="span" sx={{ display: 'block', width: '100%' }}>
+                        {option.label}
+                      </Box>
+                    </CustomTooltip>
                   </MenuItem>
                 ))}
               </TextField>
-              {/* Reachable contexts land in the Discovered state; unreachable
-                  ones could not be contacted, mirroring the Not Found state. */}
               <ConnectionStateChip
                 status={
                   context.reachable ? CONNECTION_STATES.DISCOVERED : CONNECTION_STATES.NOTFOUND
@@ -311,6 +329,7 @@ const kubernetesReviewStep: WizardStep = {
   icon: AssignmentTurnedInIcon,
   Component: ReviewContextsStepBody,
   nextLabel: () => 'Import',
+  helpText: `Select which contexts to import, choose a MeshSync mode (embedded or operator), and decide whether reachable clusters should connect immediately. Hover a MeshSync option for details. [MeshSync modes](${MESHSYNC_MODES_DOCS_URL}). [Kubernetes connection lifecycle](${KUBERNETES_CONNECTION_DOCS_URL}).`,
   canProceed: (ctx) => getDiscovered(ctx).some((context) => getChoices(ctx)[context.id]?.selected),
   onNext: async (ctx) => {
     const discovered = getDiscovered(ctx);
@@ -582,7 +601,7 @@ const KubernetesReceiptBody = ({ ctx }: { ctx: WizardContext }) => {
   const summaryParts = [
     `${created} imported`,
     connected > 0 ? `${connected} connected` : null,
-    unreachable > 0 ? `${unreachable} pending` : null,
+    unreachable > 0 ? `${unreachable} not found` : null,
   ].filter(Boolean);
 
   return (
@@ -597,20 +616,41 @@ const KubernetesReceiptBody = ({ ctx }: { ctx: WizardContext }) => {
       </Typography>
       {isImport && (
         <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 440 }}>
-          {summaryParts.join(' · ')}. Manage these connections anytime from the Connections table.
+          {summaryParts.join(' · ')}. Manage these anytime from{' '}
+          <ConnectionsLink href={CONNECTIONS_PATH}>connections</ConnectionsLink>.
         </Typography>
       )}
       {imported.length > 0 && (
-        <SummaryList>
-          {imported.map((context) => (
-            <SummaryListRow key={context.name}>
-              <Typography variant="body2" noWrap sx={{ minWidth: 0 }}>
-                {context.name}
-              </Typography>
+        <Box sx={{ display: 'grid', gap: 1, width: '100%', maxWidth: 460, textAlign: 'left' }}>
+          {imported.map((context, index) => (
+            <Box
+              key={`${context.name}-${index}`}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 1.5,
+                minWidth: 0,
+              }}
+            >
+              <Chip
+                label={context.name || 'Unnamed context'}
+                size="small"
+                title={context.name}
+                sx={{
+                  minWidth: 0,
+                  flex: '1 1 auto',
+                  '& .MuiChip-label': {
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  },
+                }}
+              />
               <ConnectionStateChip status={context.status} />
-            </SummaryListRow>
+            </Box>
           ))}
-        </SummaryList>
+        </Box>
       )}
     </Box>
   );
@@ -621,6 +661,7 @@ const kubernetesReceiptStep: WizardStep = {
   label: 'Done',
   Component: KubernetesReceiptBody,
   nextLabel: () => 'Finish',
+  helpText: `Import complete. Manage connections anytime from the Connections page. [Learn more about Kubernetes connection lifecycle](${KUBERNETES_CONNECTION_DOCS_URL}).`,
 };
 
 export const kubernetesExtension: ConnectionExtension = {

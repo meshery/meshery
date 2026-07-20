@@ -199,6 +199,7 @@ const MultiSelectWrapper = (props) => {
         ...props.components,
       }}
       filterOption={customFilterOption}
+      noOptionsMessage={props.noOptionsMessage}
       menuPlacement={props.menuPlacement ?? 'auto'}
       styles={customStyles}
       theme={(selectTheme) => ({

@@ -34,11 +34,11 @@ import useKubernetesHook, {
 import { TooltipWrappedConnectionChip } from './ConnectionChip';
 import { CONNECTION_STATES, CONTROLLER_STATES, MESHSYNC_DEPLOYMENT_TYPE } from '../../utils/Enum';
 import { formatToTitleCase } from '../../utils/utils';
+import { KUBERNETES } from '@/constants/common';
 
 import { ColumnWrapper, ContentContainer, OperationButton, FormatterWrapper } from './styles';
 
 const DISABLED = 'DISABLED';
-const KUBERNETES = 'kubernetes';
 const MESHERY = 'meshery';
 const PROMETHEUS = 'prometheus';
 const GRAFANA = 'grafana';
