@@ -27,7 +27,7 @@ func (h *Handler) GetMesheryFilterFileHandler(
 	_ *models.User,
 	provider models.Provider,
 ) {
-        filterID := mux.Vars(r)["id"]
+	filterID := mux.Vars(r)["id"]
 	filterUUID, err := uuid.FromString(filterID)
 	if err != nil || filterUUID == uuid.Nil {
 		invalidErr := models.ErrInvalidUUID(fmt.Errorf("invalid filter id: %q", filterID))
