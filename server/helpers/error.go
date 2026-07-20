@@ -38,6 +38,7 @@ const (
 	ErrDeployingAdapterCode                = "meshery-server-1167"
 	ErrUnDeployingAdapterCode              = "meshery-server-1168"
 	ErrClientSetCode                       = "meshery-server-1169"
+	ErrNoInClusterK8sContextCode           = "meshery-server-1445"
 )
 
 func ErrNewDynamicClientGenerator(err error) error {
@@ -154,4 +155,8 @@ func ErrDeployingAdapterInUnknownPlatform(err error) error {
 
 func ErrUnDeployingAdapterInUnknownPlatform(err error) error {
 	return errors.New(ErrUnDeployingAdapterCode, errors.Critical, []string{"Unable to undeploy Meshery Adapter in the current environment"}, []string{err.Error()}, []string{"Current platform is not supported for undeploying Meshery Adapters"}, []string{"Consider using a supported platform for undeploying Meshery Adapters"})
+}
+
+func ErrNoInClusterK8sContext() error {
+	return errors.New(ErrNoInClusterK8sContextCode, errors.Critical, []string{"No in-cluster Kubernetes context found"}, []string{"the request context did not contain a Kubernetes context named \"in-cluster\""}, []string{"Meshery server is not configured with an in-cluster Kubernetes context"}, []string{"Ensure Meshery server has access to an in-cluster Kubernetes context before deploying or undeploying an adapter"})
 }

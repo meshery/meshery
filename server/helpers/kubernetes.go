@@ -48,8 +48,6 @@ func FetchKubernetesNodes(kubeconfig []byte, contextName string, log logger.Hand
 	if err != nil {
 		return nil, ErrFetchKubernetesNodes(err)
 	}
-	var nodes []*models.K8SNode
-
 	// nodes
 	nodesClient := clientset.CoreV1().Nodes()
 	log.Debug("Listing nodes")
@@ -57,6 +55,7 @@ func FetchKubernetesNodes(kubeconfig []byte, contextName string, log logger.Hand
 	if err != nil {
 		return nil, ErrFetchNodes(err)
 	}
+	nodes := make([]*models.K8SNode, 0, len(nodelist.Items))
 	for _, n := range nodelist.Items {
 		// logrus.Debugf(" * %s (%d replicas)", n.Name, *d.Spec.Replicas)
 		node := &models.K8SNode{}

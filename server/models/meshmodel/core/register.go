@@ -31,6 +31,7 @@ import (
 
 	"github.com/meshery/schemas/models/v1beta3"
 
+	"github.com/meshery/meshkit/utils"
 	_component "github.com/meshery/meshkit/utils/component"
 	"github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/meshkit/utils/manifests"
@@ -66,7 +67,7 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	}
 	k8sContext := map[string]interface{}{}
 	if len(ctx) > 0 {
-		k8sContext, _ = mesheryutils.MarshalAndUnmarshal[models.K8sContext, map[string]interface{}](*ctx[0])
+		k8sContext, _ = utils.MarshalAndUnmarshal[models.K8sContext, map[string]interface{}](*ctx[0])
 	}
 	count := 0
 	for _, c := range man {
