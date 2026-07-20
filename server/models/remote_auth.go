@@ -8,18 +8,18 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"fmt"
+	"github.com/golang-jwt/jwt/v5"
+	helperutils "github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/tracing"
+	"github.com/spf13/viper"
+	"golang.org/x/oauth2"
 	"io"
 	"math/big"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
-
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/meshery/meshkit/logger"
-	"github.com/meshery/meshkit/tracing"
-	"github.com/spf13/viper"
-	"golang.org/x/oauth2"
 )
 
 const (
@@ -102,7 +102,17 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 	if err != nil {
 		return "", ErrMarshal(err, "refreshing token")
 	}
-	r, err := http.Post(l.RemoteProviderURL+"/refresh", "application/json; charset=utf-8", bytes.NewReader(jsonString))
+	refreshURL := l.RemoteProviderURL + "/refresh"
+
+	if err := helperutils.URLValidator(refreshURL); err != nil {
+		return "", err
+	}
+
+	r, err := helperutils.NewSafeHTTPClient(30*time.Second).Post(
+		refreshURL,
+		"application/json; charset=utf-8",
+		bytes.NewReader(jsonString),
+	)
 	if err != nil {
 		return "", err
 	}
@@ -166,9 +176,9 @@ func cloneRequestForRetry(req *http.Request) (*http.Request, error) {
 }
 
 func (l *RemoteProvider) doRequestHelper(req *http.Request, token string) (*http.Response, error) {
-	c := &http.Client{
-		Transport: tracing.NewTransport(http.DefaultTransport), // Create tracing transport to pass tracing context
-	}
+	safeClient := helperutils.NewSafeHTTPClient(30 * time.Second)
+	safeClient.Transport = tracing.NewTransport(safeClient.Transport)
+	c := safeClient
 	req.Header.Set("Authorization", fmt.Sprintf("bearer %s", token))
 	if token == GlobalTokenForAnonymousResults {
 		req.Header.Set("X-API-Key", token)
@@ -214,7 +224,13 @@ func (l *RemoteProvider) DecodeTokenData(tokenStringB64 string) (*oauth2.Token, 
 
 // UpdateJWKs - Updates Keys to the JWKS
 func (l *RemoteProvider) UpdateJWKs() error {
-	resp, err := http.Get(l.RemoteProviderURL + "/keys")
+	keysURL := l.RemoteProviderURL + "/keys"
+
+	if err := helperutils.URLValidator(keysURL); err != nil {
+		return err
+	}
+
+	resp, err := helperutils.NewSafeHTTPClient(30 * time.Second).Get(keysURL)
 	if err != nil {
 		return ErrJWKsKeys(err)
 	}
@@ -376,7 +392,17 @@ func (l *RemoteProvider) revokeToken(tokenString string) error {
 		l.Log.Error(ErrUrlParse(err))
 		return err
 	}
-	r, err := http.Post(remoteURL.String(), "application/json", bytes.NewReader(body))
+	revokeURL := remoteURL.String()
+
+	if err := helperutils.URLValidator(revokeURL); err != nil {
+		return err
+	}
+
+	r, err := helperutils.NewSafeHTTPClient(30*time.Second).Post(
+		revokeURL,
+		"application/json",
+		bytes.NewReader(body),
+	)
 
 	if err != nil {
 		err = ErrTokenRevoke(err)
@@ -411,7 +437,17 @@ func (l *RemoteProvider) introspectToken(tokenString string) error {
 		l.Log.Error(ErrUrlParse(err))
 		return err
 	}
-	r, err := http.Post(remoteURL.String(), "application/json", bytes.NewReader(body))
+	introspectURL := remoteURL.String()
+
+	if err := helperutils.URLValidator(introspectURL); err != nil {
+		return err
+	}
+
+	r, err := helperutils.NewSafeHTTPClient(30*time.Second).Post(
+		introspectURL,
+		"application/json",
+		bytes.NewReader(body),
+	)
 	if err != nil {
 		err = ErrTokenIntrospect(err)
 		l.Log.Error(err)

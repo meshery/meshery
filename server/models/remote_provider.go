@@ -27,6 +27,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	servercore "github.com/meshery/meshery/server/core"
+	helperutils "github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/database"
@@ -308,7 +309,7 @@ func (l *RemoteProvider) fetchCapabilities(ctx context.Context, token string, ve
 
 	var resp *http.Response
 	if token == "" {
-		c := &http.Client{Timeout: 3 * time.Second}
+		c := helperutils.NewSafeHTTPClient(3 * time.Second)
 		const maxRetries = 3
 		for i := 0; i < maxRetries; i++ {
 			resp, err = c.Do(req)
@@ -544,8 +545,16 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 	buf, _ := encoding.Marshal(connectionPayload)
 	data := bytes.NewReader(buf)
 
-	client := &http.Client{}
 	newReq, _ := http.NewRequest("POST", anonnymouseUserEp.String(), data)
+
+	if err := helperutils.URLValidator(newReq.URL.String()); err != nil {
+		err = ErrUnreachableRemoteProvider(err)
+		l.Log.Error(err)
+		http.Redirect(res, req, errorUI, http.StatusFound)
+		return
+	}
+
+	client := helperutils.NewSafeHTTPClient(30 * time.Second)
 
 	newReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
 
@@ -4947,7 +4956,11 @@ func TarXZF(srcURL, destination string, log logger.Handler) error {
 		return fmt.Errorf("file is not of type tar.gz or tgz")
 	}
 
-	resp, err := http.Get(srcURL)
+	if err := helperutils.URLValidator(srcURL); err != nil {
+		return err
+	}
+
+	resp, err := helperutils.NewSafeHTTPClient(30 * time.Second).Get(srcURL)
 	if err != nil {
 		if resp == nil {
 			return fmt.Errorf("could not reach %v: %w", srcURL, err)

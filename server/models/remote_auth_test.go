@@ -15,10 +15,30 @@ import (
 	"testing"
 	"time"
 
+	helperutils "github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshkit/logger"
 	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
+	"os"
+	"syscall"
 )
+
+func TestMain(m *testing.M) {
+	origValidator := helperutils.URLValidator
+	origDial := helperutils.DialControl
+
+	helperutils.URLValidator = func(string) error { return nil }
+	helperutils.DialControl = func(network, address string, c syscall.RawConn) error {
+		return nil
+	}
+
+	code := m.Run()
+
+	helperutils.URLValidator = origValidator
+	helperutils.DialControl = origDial
+
+	os.Exit(code)
+}
 
 func newTestRemoteProvider(t *testing.T, remoteProviderURL string) *RemoteProvider {
 	t.Helper()
