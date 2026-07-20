@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@sistent/sistent', () => ({
   InfoIcon: () => null,
+  CheckCircleIcon: () => null,
   notificationColors: {
     info: { main: '#info' },
     error: { main: '#error', dark: '#error_dark' },
