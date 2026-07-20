@@ -26,7 +26,7 @@ vi.mock('@sistent/sistent', () => {
       </div>
     ),
     AssignmentTurnedInIcon: () => <svg data-testid="assignment-icon" />,
-    CancelIcon: () => <svg data-testid="cancel-icon" />,
+    CancelIcon: () => <svg data-testid="cancel-icon-svg" />,
     CheckCircleIcon: () => <svg data-testid="check-circle-icon" />,
     CustomTooltip: ({ title, children }) => (
       <div data-testid="tooltip" data-title={String(title)}>
@@ -37,6 +37,9 @@ vi.mock('@sistent/sistent', () => {
     ExploreIcon: () => <svg data-testid="explore-icon" />,
     HandymanIcon: () => <svg data-testid="handyman-icon" />,
     RemoveIcon: () => <svg data-testid="remove-icon" />,
+    WarningIcon: (props: { 'data-testid'?: string }) => (
+      <svg data-testid={props['data-testid'] || 'WarningIcon'} />
+    ),
     Typography: ({ children }) => <span>{children}</span>,
     // Orange bucket for disconnected / maintenance
     notificationColors: { warning: { light: 'orange' } },
@@ -226,5 +229,15 @@ describe('ConnectionStateChip', () => {
 
     expect(screen.getByTestId('deleted-state-chip')).toHaveTextContent('deleted');
     expect(screen.getByTestId('delete-forever-icon')).toBeInTheDocument();
+  });
+
+  it('uses a warning indicator for not-found instead of a cancel/X icon', () => {
+    // CancelIcon was aliased as NotInterestedRounded and looked like a
+    // destructive delete control on not-found connection chips.
+    render(<ConnectionStateChip status="not found" />);
+
+    expect(screen.getByTestId('not-found-state-chip')).toHaveTextContent('not found');
+    expect(screen.getByTestId('not-found-warning-icon')).toBeInTheDocument();
+    expect(screen.queryByTestId('cancel-icon-svg')).not.toBeInTheDocument();
   });
 });

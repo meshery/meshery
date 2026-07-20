@@ -15,17 +15,40 @@ vi.mock('@/utils/can', () => ({
   default: (...args: unknown[]) => can(...args),
 }));
 
-vi.mock('@sistent/sistent', () => ({
-  DeleteIcon: () => <svg data-testid="delete-icon" />,
-  EditIcon: () => <svg data-testid="edit-icon" />,
-  Grid2: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  SyncAltIcon: () => <svg data-testid="sync-icon" />,
-  useTheme: () => ({
-    palette: {
-      background: { neutral: { default: 'neutral' } },
-    },
-  }),
-}));
+vi.mock('@sistent/sistent', () => {
+  const styled = (Component: any) => () => {
+    const StyledComponent = ({ children, ...props }: any) => (
+      <Component {...props}>{children}</Component>
+    );
+    StyledComponent.displayName = 'StyledSistentMock';
+    return StyledComponent;
+  };
+
+  return {
+    DeleteIcon: () => <svg data-testid="delete-icon" />,
+    EditIcon: () => <svg data-testid="edit-icon" />,
+    Grid2: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    SyncAltIcon: () => <svg data-testid="sync-icon" />,
+    IconButton: ({ children, onClick, disabled, ...props }: any) => (
+      <button data-testid="sistent-icon-button" onClick={onClick} disabled={disabled} {...props}>
+        {children}
+      </button>
+    ),
+    CustomTooltip: ({ children, title }: any) => (
+      <div data-testid="custom-tooltip" title={title}>
+        {children}
+      </div>
+    ),
+    Typography: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    useTheme: () => ({
+      palette: {
+        background: { neutral: { default: 'neutral' } },
+        icon: { secondary: 'secondary' },
+      },
+    }),
+    styled,
+  };
+});
 
 vi.mock('../lifecycle/general', () => ({
   FlipCard: ({ frontComponents, backComponents, disableFlip }: any) => (

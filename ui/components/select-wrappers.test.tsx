@@ -24,6 +24,21 @@ describe('select wrappers', () => {
     capturedSelectProps = [];
   });
 
+  it('passes a custom noOptionsMessage to CreatableSelect', () => {
+    const customMessage = () => 'Custom empty state';
+
+    render(
+      <MultiSelectWrapper
+        onChange={vi.fn()}
+        options={[]}
+        value={[]}
+        noOptionsMessage={customMessage}
+      />,
+    );
+
+    expect(capturedSelectProps.at(-1).noOptionsMessage).toBe(customMessage);
+  });
+
   it('renders ReactSelectWrapper option content without a menu context error', () => {
     render(
       <ReactSelectWrapper

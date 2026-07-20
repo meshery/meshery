@@ -3,11 +3,19 @@ import { FlipCard } from '../lifecycle/general';
 import { useGetEnvironmentConnectionsQuery } from '../../rtk-query/environments';
 import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
-import { DeleteIcon, EditIcon, Grid2, SyncAltIcon, useTheme } from '@sistent/sistent';
+import {
+  DeleteIcon,
+  EditIcon,
+  Grid2,
+  SyncAltIcon,
+  useTheme,
+  IconButton,
+  CustomTooltip,
+} from '@sistent/sistent';
+import { iconMedium } from '../../css/icons.styles';
 
 import {
   Name,
-  IconButton,
   CardWrapper,
   DateLabel,
   DescriptionLabel,
@@ -225,32 +233,44 @@ const EnvironmentCard = ({
                   justifyContent: 'flex-end',
                 }}
               >
-                <IconButton
-                  onClick={onEdit}
-                  disabled={
-                    selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
-                      ? true
-                      : !CAN(
-                          Keys.WorkspaceManagementEditEnvironment.id,
-                          Keys.WorkspaceManagementEditEnvironment.function,
-                        )
-                  }
-                >
-                  <EditIcon fill="white" style={{ margin: '0 2px' }} />
-                </IconButton>
-                <IconButton
-                  onClick={onDelete}
-                  disabled={
-                    selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
-                      ? true
-                      : !CAN(
-                          Keys.WorkspaceManagementDeleteEnvironment.id,
-                          Keys.WorkspaceManagementDeleteEnvironment.function,
-                        )
-                  }
-                >
-                  <DeleteIcon fill="white" style={{ margin: '0 2px' }} />
-                </IconButton>
+                <CustomTooltip title="Edit">
+                  <IconButton
+                    onClick={(ev) => {
+                      ev.stopPropagation();
+                      onEdit(ev);
+                    }}
+                    sx={{ color: 'white' }}
+                    disabled={
+                      selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
+                        ? true
+                        : !CAN(
+                            Keys.WorkspaceManagementEditEnvironment.id,
+                            Keys.WorkspaceManagementEditEnvironment.function,
+                          )
+                    }
+                  >
+                    <EditIcon style={{ ...iconMedium, margin: '0 2px' }} />
+                  </IconButton>
+                </CustomTooltip>
+                <CustomTooltip title="Delete">
+                  <IconButton
+                    onClick={(ev) => {
+                      ev.stopPropagation();
+                      onDelete(ev);
+                    }}
+                    sx={{ color: 'white' }}
+                    disabled={
+                      selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
+                        ? true
+                        : !CAN(
+                            Keys.WorkspaceManagementDeleteEnvironment.id,
+                            Keys.WorkspaceManagementDeleteEnvironment.function,
+                          )
+                    }
+                  >
+                    <DeleteIcon style={{ ...iconMedium, margin: '0 2px' }} />
+                  </IconButton>
+                </CustomTooltip>
               </Grid2>
             </Grid2>
             <Grid2 sx={{ display: 'flex', flexDirection: 'row', color: 'white' }}>

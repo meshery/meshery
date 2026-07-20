@@ -12,7 +12,9 @@ import {
   RemoveCircle as RemoveCircleIcon,
   DeleteForever as DeleteForeverIcon,
   Handyman as HandymanIcon,
-  NotInterestedRounded as NotInterestedRoundedIcon,
+  // Warning — not Cancel/X. CancelIcon was re-exported as NotInterestedRounded
+  // and read as a destructive delete action on "not found" chips.
+  Warning as WarningIcon,
 } from '@/assets/icons';
 import BadgeAvatars from '../CustomAvatar';
 import DisconnectIcon from '../../assets/icons/disconnect';
@@ -110,7 +112,16 @@ const STATE_CHIP_CONFIG = {
   },
   [CONNECTION_STATES.NOTFOUND]: {
     Component: NotFoundChip,
-    avatar: <NotInterestedRoundedIcon />,
+    // Explicit fill + size: WarningIcon has no path fill by default, so without
+    // currentColor the glyph can disappear on dark/disabled chip backgrounds.
+    avatar: (
+      <WarningIcon
+        data-testid="not-found-warning-icon"
+        fill="currentColor"
+        width={20}
+        height={20}
+      />
+    ),
   },
 } as const;
 
