@@ -81,51 +81,51 @@ Users can also narrow down the tests to just check the status of the Meshery ope
 
 ## FAQ
 
-##### Question: While running `mesheryctl system check --preflight` it says I didn't install Kubernetes, but I have Docker installed and the test returned "Meshery prerequisites met". Is that all good?
+### Question: While running `mesheryctl system check --preflight` it says I didn't install Kubernetes, but I have Docker installed and the test returned "Meshery prerequisites met". Is that all good?
 
 **Answer**: _Yes, as long as you've Docker installed, it's fine to run Meshery. But you will need a Kubernetes cluster to handle tasks such as deploying infrastructure and so on, if you want to do them via Meshery._
 
-##### Question: I ran a preflight check to see if I satisfy all requirements for Meshery in my system. It returned positive results but I couldn't start Meshery. What to do?
+### Question: I ran a preflight check to see if I satisfy all requirements for Meshery in my system. It returned positive results but I couldn't start Meshery. What to do?
 
 **Answer**: _Make sure if you've configured your system to run Meshery in smooth manner. For configuration, do check out the docs site and [this page]({{< ref "installation/_index.md" >}}) to see instructions related to the platform you use._
 
-##### Question: Do I need a Kubernetes cluster or will a Docker host suffice for Meshery deployments?
+### Question: Do I need a Kubernetes cluster or will a Docker host suffice for Meshery deployments?
 
 **Answer**: _Meshery's [performance management]({{< ref "guides/performance-management/managing-performance/index.md" >}}) functionality does not require a Kubernetes cluster. The rest of Meshery's functionality (e.g. cloud native management) does require a Kubernetes cluster._
 
-##### Question: What are Meshery's production deployment requirements?
+### Question: What are Meshery's production deployment requirements?
 
 **Answer**: _One or more Kubernetes clusters. A stateful set for Meshery Server in order to persist performance test results. See [#2451](https://github.com/meshery/meshery/issues/2451)._
 
-##### Question: For system checks, do I need any add-ons to pass the check?
+### Question: For system checks, do I need any add-ons to pass the check?
 
 **Answer**: _Not necessary. Basic requirements are enough to pass the check._
 
-##### Question: The Adapter check is failing, it returns "Auth token not found".
+### Question: The Adapter check is failing, it returns "Auth token not found".
 
 **Answer**: _You can log in to Meshery using `mesheryctl system login` which would generate an OAuth token. Once the OAuth token is generated, the check will start to function_
 
-##### Question: I have a Kubernetes cluster enabled but Meshery couldn't reach the cluster and the checks are failing! What to do?
+### Question: I have a Kubernetes cluster enabled but Meshery couldn't reach the cluster and the checks are failing! What to do?
 
 **Answer**: _To resolve this error, you can upload your kubeconfig file in the Meshery UI under settings and Meshery will reconfigure to use your Kubernetes cluster._
 
-##### Question: Under Meshery Version test, I'm getting an error like "CLI is not up-to-date". Should I update mesheryctl often?
+### Question: Under Meshery Version test, I'm getting an error like "CLI is not up-to-date". Should I update mesheryctl often?
 
 **Answer**: _Yes! You should update the mesheryctl often in order to run Meshery smoothly. The reason behind it is because not only the CLI is updated, but also the Meshery app. So it is advisable to update Meshery often._
 
-##### Question: Is it advisable to keep Meshery in sleep mode while running system checks?
+### Question: Is it advisable to keep Meshery in sleep mode while running system checks?
 
 **Answer**: _Not necessary. It is good to keep Meshery up and running, else the system checks will fail to detect the Meshery version._
 
-##### Question: What is the minimum version of k8s cluster and kubectl required to run Meshery?
+### Question: What is the minimum version of k8s cluster and kubectl required to run Meshery?
 
 **Answer**: _For current Meshery deployments, prefer one of the Kubernetes upstream-supported minor releases and keep `kubectl` aligned with your cluster under the Kubernetes version skew policy. See the [Kubernetes release history](https://kubernetes.io/releases/) for actively maintained minors._
 
-##### Question: In the "Meshery Adapter" section of check, I could see only some Meshery adapters up and running and not all. Is this fine?
+### Question: In the "Meshery Adapter" section of check, I could see only some Meshery adapters up and running and not all. Is this fine?
 
 **Answer**: _Not a problem, if you feel you need to have all mesh adapters to be up running, you can do so by creating a new context `mesheryctl system context create [context-name] --set` (if you voluntarily deleted mesh adapters in your current context)_
 
-##### Question: I started Meshery fresh, didn't change any of the details in the context I have. But I see that all adapter checks are failing. What to do?
+### Question: I started Meshery fresh, didn't change any of the details in the context I have. But I see that all adapter checks are failing. What to do?
 
 **Answer**: _Configure Meshery to use on your Kubernetes cluster, then upload the kubeconfig file via Meshery UI to notify Meshery to use that cluster. If that didn't work, feel free to [open up an issue](https://github.com/meshery/meshery/issues) in GitHub._
 
@@ -138,4 +138,3 @@ For an exhaustive list of `mesheryctl` commands and syntax:
 Guides to using Meshery's various features and components.
 
 {{< related-discussions tag="mesheryctl" >}}
-
