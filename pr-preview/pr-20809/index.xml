@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Meshery Documentation on Documentation</title><link>/pr-preview/pr-20809/</link><description>Recent content in Meshery Documentation on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Fri, 17 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="/pr-preview/pr-20809/index.xml" rel="self" type="application/rss+xml"/><item><title>Overview</title><link>/pr-preview/pr-20809/guides/infrastructure-management/overview/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/guides/infrastructure-management/overview/</guid><description>&lt;h2 id="using-meshery-designs-to-manage-your-infrastructure"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Meshery Documentation on Documentation</title><link>/pr-preview/pr-20809/</link><description>Recent content in Meshery Documentation on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Mon, 20 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="/pr-preview/pr-20809/index.xml" rel="self" type="application/rss+xml"/><item><title>Overview</title><link>/pr-preview/pr-20809/guides/infrastructure-management/overview/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/guides/infrastructure-management/overview/</guid><description>&lt;h2 id="using-meshery-designs-to-manage-your-infrastructure"&gt;
 	Using Meshery Designs to Manage Your Infrastructure
 &lt;/h2&gt;
 &lt;p&gt;Meshery is a versatile platform designed to streamline the lifecycle, configuration, and performance management of infrastructure across Kubernetes clusters.&lt;/p&gt;
@@ -260,7 +260,95 @@ independently. For Kubernetes production deployments:&lt;/p&gt;</description></i
  &lt;summary&gt;
  &lt;h6&gt;Question: Why was Meshery created?&lt;/h6&gt;
 &lt;/summary&gt;
-&lt;p&gt;&lt;strong&gt;Answer:&lt;/strong&gt; As an open source, vendor-neutral project, Meshery was created out of the necessity to enable platform engineers, site reliability engineers, and DevSecOps teams to collaborate in the management of their infrastructure and workloads. Meshery was created as an extensible platform to serve a broad set of modern application management needs.&lt;/p&gt;</description></item><item><title>v1.0.57</title><link>/pr-preview/pr-20809/project/releases/v1.0.57/</link><pubDate>Fri, 17 Jul 2026 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/project/releases/v1.0.57/</guid><description>&lt;h2 id="whats-new"&gt;
+&lt;p&gt;&lt;strong&gt;Answer:&lt;/strong&gt; As an open source, vendor-neutral project, Meshery was created out of the necessity to enable platform engineers, site reliability engineers, and DevSecOps teams to collaborate in the management of their infrastructure and workloads. Meshery was created as an extensible platform to serve a broad set of modern application management needs.&lt;/p&gt;</description></item><item><title>v1.0.58</title><link>/pr-preview/pr-20809/project/releases/v1.0.58/</link><pubDate>Mon, 20 Jul 2026 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/project/releases/v1.0.58/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Chore]: Bump meshery/schemas to v1.3.34 @l5io (#20776)&lt;/li&gt;
+&lt;li&gt;[Chore]: Bump meshery/schemas to v1.3.33 @l5io (#19633)&lt;/li&gt;
+&lt;li&gt;[Server] Surface real connection failures from state machine SendEvent @marblom007 (#20756)&lt;/li&gt;
+&lt;li&gt;[Server] Record failed Kubernetes connections as Error notifications @leecalcote (#20728)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Rename meshmodel API routes to /api/registry with deprecated aliases @marblom007 (#20775)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[UI] Point Enum.ts status constants at their meshery/schemas source of truth @marblom007 (#20760)&lt;/li&gt;
+&lt;li&gt;[UI] Connection Wizard UX polish and terminology @chaitanyamedidar (#20787)&lt;/li&gt;
+&lt;li&gt;fix: advance connection wizard on kind selection @Ayush-kr-giga (#20784)&lt;/li&gt;
+&lt;li&gt;[UI] Constants Consolidation @marblom007 (#20773)&lt;/li&gt;
+&lt;li&gt;[UI] Fix Publish to Catalog validation failure and RJSF multi-select crash @NSTKrishna (#20786)&lt;/li&gt;
+&lt;li&gt;Rename meshmodel API routes to /api/registry with deprecated aliases @marblom007 (#20775)&lt;/li&gt;
+&lt;li&gt;[UI] Consolidate legacy themes/ directory into theme/ module @marblom007 (#20768)&lt;/li&gt;
+&lt;li&gt;[UI] Bump @meshery/schemas to v1.3.33 @marblom007 (#20772)&lt;/li&gt;
+&lt;li&gt;[UI] Use registration/provider org name in PermissionShield context @rishiraj38 (#20726)&lt;/li&gt;
+&lt;li&gt;[UI] refine expand button spacing and collapsed hover styling @Katotodan (#20735)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Rename meshmodel API routes to /api/registry with deprecated aliases @marblom007 (#20775)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Docs] Correct meshery.io/blog link at security-vulnerabilities page @SHIVIKA330 (#20790)&lt;/li&gt;
+&lt;li&gt;Rename meshmodel API routes to /api/registry with deprecated aliases @marblom007 (#20775)&lt;/li&gt;
+&lt;li&gt;Add Vinay Nain&amp;rsquo;s meeting notes @nimonain (#20754)&lt;/li&gt;
+&lt;li&gt;Add introduction for Jayasurya in meeting notes @Jayasuryanarayana007 (#20752)&lt;/li&gt;
+&lt;li&gt;Create Piyush-Sarode.md @Piyush4801 (#20749)&lt;/li&gt;
+&lt;li&gt;Attendance and Introduction @Jayasuryanarayana007 (#20750)&lt;/li&gt;
+&lt;li&gt;Bhavesh Sharma Attendance @Bhavesh189 (#20748)&lt;/li&gt;
+&lt;li&gt;Create Sulagna Ghosh.md @suzy-g38 (#20747)&lt;/li&gt;
+&lt;li&gt;marking attendence - dhruv padhiyar @dhruv-programmes (#20745)&lt;/li&gt;
+&lt;li&gt;Add Padmasri Chikle&amp;rsquo;s introduction to meetings docs @padmasri-web (#20744)&lt;/li&gt;
+&lt;li&gt;Anjali_Chhikara.md @anjalichhikara-0907 (#20740)&lt;/li&gt;
+&lt;li&gt;Introduction for T Sai Karthik @tanuku-saikarthik (#20739)&lt;/li&gt;
+&lt;li&gt;Create Yash-Mahakal.md @YASHMAHAKAL (#20737)&lt;/li&gt;
+&lt;li&gt;[Docs] fix: improve code block copy button feedback and spacing consistency @akshatsinghai6682-sketch (#20251)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@Ayush-kr-giga, @Bhavesh189, @Copilot, @Jayasuryanarayana007, @Katotodan, @NSTKrishna, @Piyush4801, @SHIVIKA330, @YASHMAHAKAL, @akshatsinghai6682-sketch, @alexquincy, @anjalichhikara-0907, @chaitanyamedidar, @dhruv-programmes, @fitzergerald, @l5io, @leecalcote, @marblom007, @meshery-ci, @nimonain, @padmasri-web, @rishiraj38, @suzy-g38, @tanuku-saikarthik, @yi-nuo426 and Piyush4801&lt;/p&gt;</description></item><item><title>v1.0.59</title><link>/pr-preview/pr-20809/project/releases/v1.0.59/</link><pubDate>Mon, 20 Jul 2026 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/project/releases/v1.0.59/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Server] Log human-readable summary in SaveConnection debug line @leecalcote (#20797)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;feat(ui): improve environment assignment discoverability @emphor11 (#20780)&lt;/li&gt;
+&lt;li&gt;[Docs] Fix illegible contrast on secondary alerts @SHIVIKA330 (#20796)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Docs] Fix illegible contrast on secondary alerts @SHIVIKA330 (#20796)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@SHIVIKA330, @emphor11, @leecalcote, @marblom007 and @ritzorama&lt;/p&gt;</description></item><item><title>v1.0.57</title><link>/pr-preview/pr-20809/project/releases/v1.0.57/</link><pubDate>Fri, 17 Jul 2026 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/project/releases/v1.0.57/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -35456,7 +35544,7 @@ A &lt;strong&gt;&lt;a href="/pr-preview/pr-20809/concepts/logical/designs/"&gt;d
 &lt;h2 id="hands-on-lab"&gt;
 	Hands-on Lab
 &lt;/h2&gt;
-&lt;p&gt;Perform the following steps in order:&lt;/p&gt;</description></item><item><title>Kubevault</title><link>/pr-preview/pr-20809/extensions/models/kubevault/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kubevault/</guid><description/></item><item><title>Kubevault Catalog</title><link>/pr-preview/pr-20809/extensions/models/kubevault-catalog/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kubevault-catalog/</guid><description/></item><item><title>Kubevault Crds</title><link>/pr-preview/pr-20809/extensions/models/kubevault-crds/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kubevault-crds/</guid><description/></item><item><title>Kubevault Metrics</title><link>/pr-preview/pr-20809/extensions/models/kubevault-metrics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kubevault-metrics/</guid><description/></item><item><title>Kubevault Operator</title><link>/pr-preview/pr-20809/extensions/models/kubevault-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kubevault-operator/</guid><description/></item><item><title>Kubevela</title><link>/pr-preview/pr-20809/extensions/models/kubevela/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kubevela/</guid><description/></item><item><title>Kubevirt</title><link>/pr-preview/pr-20809/extensions/models/kubevirt/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kubevirt/</guid><description/></item><item><title>Kuma</title><link>/pr-preview/pr-20809/extensions/models/kuma/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kuma/</guid><description/></item><item><title>Kured</title><link>/pr-preview/pr-20809/extensions/models/kured/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kured/</guid><description/></item><item><title>Kusk Gateway</title><link>/pr-preview/pr-20809/extensions/models/kusk-gateway/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kusk-gateway/</guid><description/></item><item><title>Kyverno</title><link>/pr-preview/pr-20809/extensions/models/kyverno/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kyverno/</guid><description/></item><item><title>Kyverno Monitor</title><link>/pr-preview/pr-20809/extensions/models/kyverno-monitor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kyverno-monitor/</guid><description/></item><item><title>Kyverno Operator</title><link>/pr-preview/pr-20809/extensions/models/kyverno-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kyverno-operator/</guid><description/></item><item><title>Latest Release</title><link>/pr-preview/pr-20809/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.57&lt;/h2&gt;</description></item><item><title>Linkerd</title><link>/pr-preview/pr-20809/extensions/models/linkerd/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/linkerd/</guid><description/></item><item><title>Linux</title><link>/pr-preview/pr-20809/extensions/models/linux/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/linux/</guid><description/></item><item><title>Litmus Chaos</title><link>/pr-preview/pr-20809/extensions/models/litmus-core/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/litmus-core/</guid><description/></item><item><title>Loki</title><link>/pr-preview/pr-20809/extensions/models/loki/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/loki/</guid><description/></item><item><title>Loki Simple Scalable</title><link>/pr-preview/pr-20809/extensions/models/loki-simple-scalable/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/loki-simple-scalable/</guid><description/></item><item><title>Longhorn</title><link>/pr-preview/pr-20809/extensions/models/longhorn/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/longhorn/</guid><description/></item><item><title>LoxiLB</title><link>/pr-preview/pr-20809/extensions/models/loxilb/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/loxilb/</guid><description/></item><item><title>Managing Connections</title><link>/pr-preview/pr-20809/guides/infrastructure-management/lifecycle-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/guides/infrastructure-management/lifecycle-management/</guid><description>&lt;p&gt;&lt;a name="lifecycle-management"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Perform the following steps in order:&lt;/p&gt;</description></item><item><title>Kubevault</title><link>/pr-preview/pr-20809/extensions/models/kubevault/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kubevault/</guid><description/></item><item><title>Kubevault Catalog</title><link>/pr-preview/pr-20809/extensions/models/kubevault-catalog/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kubevault-catalog/</guid><description/></item><item><title>Kubevault Crds</title><link>/pr-preview/pr-20809/extensions/models/kubevault-crds/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kubevault-crds/</guid><description/></item><item><title>Kubevault Metrics</title><link>/pr-preview/pr-20809/extensions/models/kubevault-metrics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kubevault-metrics/</guid><description/></item><item><title>Kubevault Operator</title><link>/pr-preview/pr-20809/extensions/models/kubevault-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kubevault-operator/</guid><description/></item><item><title>Kubevela</title><link>/pr-preview/pr-20809/extensions/models/kubevela/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kubevela/</guid><description/></item><item><title>Kubevirt</title><link>/pr-preview/pr-20809/extensions/models/kubevirt/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kubevirt/</guid><description/></item><item><title>Kuma</title><link>/pr-preview/pr-20809/extensions/models/kuma/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kuma/</guid><description/></item><item><title>Kured</title><link>/pr-preview/pr-20809/extensions/models/kured/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kured/</guid><description/></item><item><title>Kusk Gateway</title><link>/pr-preview/pr-20809/extensions/models/kusk-gateway/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kusk-gateway/</guid><description/></item><item><title>Kyverno</title><link>/pr-preview/pr-20809/extensions/models/kyverno/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kyverno/</guid><description/></item><item><title>Kyverno Monitor</title><link>/pr-preview/pr-20809/extensions/models/kyverno-monitor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kyverno-monitor/</guid><description/></item><item><title>Kyverno Operator</title><link>/pr-preview/pr-20809/extensions/models/kyverno-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/kyverno-operator/</guid><description/></item><item><title>Latest Release</title><link>/pr-preview/pr-20809/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.59&lt;/h2&gt;</description></item><item><title>Linkerd</title><link>/pr-preview/pr-20809/extensions/models/linkerd/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/linkerd/</guid><description/></item><item><title>Linux</title><link>/pr-preview/pr-20809/extensions/models/linux/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/linux/</guid><description/></item><item><title>Litmus Chaos</title><link>/pr-preview/pr-20809/extensions/models/litmus-core/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/litmus-core/</guid><description/></item><item><title>Loki</title><link>/pr-preview/pr-20809/extensions/models/loki/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/loki/</guid><description/></item><item><title>Loki Simple Scalable</title><link>/pr-preview/pr-20809/extensions/models/loki-simple-scalable/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/loki-simple-scalable/</guid><description/></item><item><title>Longhorn</title><link>/pr-preview/pr-20809/extensions/models/longhorn/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/longhorn/</guid><description/></item><item><title>LoxiLB</title><link>/pr-preview/pr-20809/extensions/models/loxilb/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/extensions/models/loxilb/</guid><description/></item><item><title>Managing Connections</title><link>/pr-preview/pr-20809/guides/infrastructure-management/lifecycle-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20809/guides/infrastructure-management/lifecycle-management/</guid><description>&lt;p&gt;&lt;a name="lifecycle-management"&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Meshery manages hundreds of different types of cloud native infrastructure. See the &lt;a href="/pr-preview/pr-20809/extensions/models/"&gt;full set of integrations&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id="cloud-native-infrastructure-lifecycle-management"&gt;
 	Cloud Native Infrastructure Lifecycle Management
