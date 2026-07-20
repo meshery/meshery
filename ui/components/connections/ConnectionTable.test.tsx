@@ -282,7 +282,7 @@ describe('ConnectionTable', () => {
     updateVisibleColumns.mockReset();
     windowWidth = 1280;
 
-    // Restore the populated Redux state - individual tests below flip
+    // Restore the populated Redux state — individual tests below flip
     // `connectionMetadataState` to `null` to exercise the pre-hydration path.
     uiState.organization = { id: 'org-1' };
     uiState.connectionMetadataState = {
@@ -591,7 +591,7 @@ describe('ConnectionTable', () => {
     expect(environmentsSelectIsRendered()).toBe(true);
   });
 
-  // Regression for issue #19405 - `/management/connections` crashes with
+  // Regression for issue #19405 — `/management/connections` crashes with
   // "React error #185" / a `TypeError: Cannot read properties of null` in
   // production. The Redux slice (`store/slices/mesheryUi.ts`) initialises
   // `connectionMetadataState` to `null` and `_app.tsx` only populates it after
@@ -624,7 +624,7 @@ describe('ConnectionTable', () => {
   // `updateUrlWithConnectionId('')` when the selected id wasn't on the
   // current page. RTK Query returns a fresh array reference on every cache
   // hit, so this fired on every refetch, pushing a new URL, re-rendering the
-  // parent, minting another RTK array - a textbook React #185 update-depth
+  // parent, minting another RTK array — a textbook React #185 update-depth
   // loop. The effect now reads `filteredConnections` via a ref and never
   // clears the URL.
   it('does not clear the connectionId URL param when the connection is not on the current page', async () => {
@@ -650,7 +650,7 @@ describe('ConnectionTable', () => {
   // of this effect listed `filteredConnections` in its deps (loop-prone, was
   // the cause of issue #19405) and the intermediate fix moved it to a ref
   // and dropped the dep entirely, but set `lastProcessedId` *before*
-  // confirming the row was found - locking the effect out for the rest of
+  // confirming the row was found — locking the effect out for the rest of
   // the session whenever the user landed on a page that didn't contain the
   // deep-linked id (slow network, page 2, filtered view).
   it('still expands the row when the deep-linked id arrives on a later page', async () => {

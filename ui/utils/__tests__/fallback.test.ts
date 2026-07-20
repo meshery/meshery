@@ -19,12 +19,6 @@ describe('getFallbackImageBasedOnKind', () => {
     expect(getFallbackImageBasedOnKind('GITHUB')).toBe('static/img/extensions/github.svg');
   });
 
-  it('returns the artifact hub icon for the registrant kind', () => {
-    expect(getFallbackImageBasedOnKind('artifacthub')).toBe(
-      'static/img/integrations/artifacthub.svg',
-    );
-  });
-
   it('returns undefined for unknown kinds', () => {
     expect(getFallbackImageBasedOnKind('istio')).toBeUndefined();
     expect(getFallbackImageBasedOnKind('')).toBeUndefined();

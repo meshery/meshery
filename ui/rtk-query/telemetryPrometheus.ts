@@ -56,7 +56,7 @@ const telemetryPrometheusApi = api.injectEndpoints({
       }),
     }),
 
-    // Single range query - used by the explorer's live preview.
+    // Single range query — used by the explorer's live preview.
     queryPrometheusRange: builder.query({
       query: ({ connectionID, query, start, end, step }) => ({
         url: mesheryApiPath(`${base(connectionID)}/query_range`),

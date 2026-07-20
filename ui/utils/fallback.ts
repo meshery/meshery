@@ -1,7 +1,7 @@
 import { CONNECTION_KINDS } from './Enum';
 
 /**
- * Last-resort static icons by connection/registrant kind.
+ * Last-resort static icons for known CONNECTION_KINDS only.
  *
  * Prefer dynamic sources first (callers already do this):
  * 1. `connection.kindLogo` / model styles / definition SVG
@@ -17,9 +17,6 @@ const KIND_FALLBACK_ICONS = {
   [CONNECTION_KINDS.GITHUB]: 'static/img/extensions/github.svg',
   [CONNECTION_KINDS.PROMETHEUS]: 'static/img/integrations/prometheus_logo_orange_circle.svg',
   [CONNECTION_KINDS.GRAFANA]: 'static/img/integrations/grafana_icon.svg',
-  // Registry registrants (not CONNECTION_KINDS, but share this helper)
-  artifacthub: 'static/img/integrations/artifacthub.svg',
-  helm: 'static/img/extensions/helm_chart.svg',
 };
 
 /**

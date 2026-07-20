@@ -13,7 +13,7 @@ import {
 } from '@sistent/sistent';
 import { useTheme } from '@/theme';
 import { REGISTRY_ITEM_STATES } from '@/utils/Enum';
-import { getFallbackImageBasedOnKind, normalizeStaticImagePath } from '@/utils/fallback';
+import { normalizeStaticImagePath } from '@/utils/fallback';
 import {
   useUpdateEntityStatusMutation,
   useGetComponentsQuery,
@@ -364,46 +364,35 @@ const RelationshipContents = ({ relationshipDef }: { relationshipDef: any }) => 
 };
 
 const RegistrantContent = ({ registrant }: { registrant: any }) => {
-  const kindKey = registrant?.kind || registrant?.hostname;
-  const iconSrc =
-    getFallbackImageBasedOnKind(kindKey) || getFallbackImageBasedOnKind(registrant?.hostname);
-  const displayName = registrant?.name || registrant?.hostname || registrant?.kind || 'Registrant';
-
   const PropertyFormattersLeft = {
-    kind: (value) => <KeyValue property="Kind" value={value} />,
-    hostname: (value) => <KeyValue property="Hostname" value={value} />,
     models: (value) => <KeyValue property="Models" value={value} />,
     components: (value) => <KeyValue property="Components" value={value} />,
   };
 
   const metaDataLeft = {
-    kind: registrant?.kind,
-    hostname: registrant?.hostname,
     models: registrant?.summary?.models?.toString(),
-    components: registrant?.summary?.components?.toString(),
+    components: registrant.summary?.components?.toString(),
   };
 
-  const orderLeft = ['kind', 'hostname', 'models', 'components'];
+  const orderLeft = ['models', 'components'];
   const orderdMetadataLeft = reorderObjectProperties(metaDataLeft, orderLeft);
 
   const PropertyFormattersRight = {
     relationships: (value) => <KeyValue property="Relationships" value={value} />,
     policies: (value) => <KeyValue property="Policies" value={value} />,
-    id: (value) => <KeyValue property="ID" value={value} />,
   };
 
   const metaDataRight = {
-    relationships: registrant?.summary?.relationships?.toString(),
-    policies: registrant?.summary?.policies?.toString(),
-    id: registrant?.id,
+    relationships: registrant.summary?.relationships?.toString(),
+    policies: registrant.summary?.policies?.toString(),
   };
 
-  const orderRight = ['relationships', 'policies', 'id'];
+  const orderRight = ['relationships', 'policies'];
   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <TitleWithImg displayName={displayName} iconSrc={iconSrc} />
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <StyledTitle>{registrant?.hostname}</StyledTitle>
       </div>
       <RenderContents
         metaDataLeft={metaDataLeft}

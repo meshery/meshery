@@ -7,23 +7,6 @@ import PlusSquare from '../../assets/icons/PlusSquare';
 import DotSquare from '../../assets/icons/DotSquare';
 import StyledTreeItem from './StyledTreeItem';
 import MesheryTreeViewItem from './MesheryTreeViewItem';
-import { getFallbackImageBasedOnKind, normalizeStaticImagePath } from '@/utils/fallback';
-
-const RegistrantLabel = ({ registrant }: { registrant: any }) => {
-  const iconSrc = normalizeStaticImagePath(
-    getFallbackImageBasedOnKind(registrant?.kind) ||
-      getFallbackImageBasedOnKind(registrant?.hostname),
-  );
-  const label = registrant?.name || registrant?.hostname || registrant?.kind || 'Registrant';
-  return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
-      {iconSrc ? (
-        <img src={iconSrc} alt="" height={18} width={18} style={{ objectFit: 'contain' }} />
-      ) : null}
-      {label}
-    </span>
-  );
-};
 
 type MesheryTreeViewRegistrantsProps = {
   data: any[];
@@ -68,7 +51,7 @@ const MesheryTreeViewRegistrants = ({
             itemId={registrant.id}
             data-id={registrant.id}
             top
-            labelText={<RegistrantLabel registrant={registrant} />}
+            labelText={registrant?.name}
             newParentId={registrant.id}
             onClick={() => {
               setShowDetailsData({

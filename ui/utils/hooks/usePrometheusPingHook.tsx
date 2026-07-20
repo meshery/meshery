@@ -7,10 +7,9 @@ import { EVENT_TYPES } from '../../lib/event-types';
 import { updateProgressAction } from '@/store/slices/mesheryUi';
 
 /**
- * usePrometheusPingHook returns an imperative `ping(connectionID, name)` that
- * checks a registered Prometheus connection's reachability via the telemetry
- * ping endpoint and surfaces the outcome as a notification. Mirrors
- * useGrafanaPingHook; the server also emits a persisted connection event.
+ * Imperative `ping(connectionID, name)` for a registered Prometheus connection.
+ * Mirrors useGrafanaPingHook; hits GET /api/telemetry/prometheus/{id}/ping and
+ * surfaces reachability (+ version when returned) as a notification.
  */
 export default function usePrometheusPingHook() {
   const { notify } = useNotification();
@@ -32,7 +31,7 @@ export default function usePrometheusPingHook() {
         });
       } catch (err) {
         notify({
-          message: `Connection failed for ${label} - unable to reach Prometheus`,
+          message: `Connection failed for ${label} — unable to reach Prometheus`,
           details: getErrorMessage(err, 'Unable to reach Prometheus'),
           event_type: EVENT_TYPES.ERROR,
         });
