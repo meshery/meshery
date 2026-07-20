@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	stderrs "errors"
 	"fmt"
 	"testing"
 
@@ -21,7 +22,8 @@ func TestErrInvalidK8SConfig(t *testing.T) {
 	expectedProbableCause := "Kubernetes config is not accessible to meshery or not valid"
 	expectedSuggestedRemediation := "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
 
-	if e, ok := err.(*errors.Error); ok {
+	var e *errors.Error
+	if stderrs.As(err, &e) {
 		if e.Code != expectedCode {
 			t.Errorf("Expected code %s, got %s", expectedCode, e.Code)
 		}
