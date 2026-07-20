@@ -31,7 +31,7 @@ import {
   eventDetailFormatterKey,
   getStatusStyle,
 } from './constants';
-import { notificationColors } from '@sistent/sistent';
+import { CheckCircleIcon, InfoIcon, notificationColors } from '@sistent/sistent';
 
 describe('NotificationCenter constants', () => {
   it('defines severity levels', () => {
@@ -63,6 +63,10 @@ describe('NotificationCenter constants', () => {
     expect(SEVERITY_STYLE[SEVERITY.ERROR].darkColor).toBe(notificationColors.error.dark);
     expect(SEVERITY_STYLE[SEVERITY.WARNING].color).toBe(notificationColors.warning.main);
     expect(SEVERITY_STYLE[SEVERITY.SUCCESS].color).toBe(notificationColors.success.main);
+    
+    expect(SEVERITY_STYLE[SEVERITY.SUCCESS].icon).toBe(CheckCircleIcon);
+    expect(SEVERITY_STYLE[SEVERITY.INFO].icon).toBe(InfoIcon);
+
     Object.values(SEVERITY_STYLE).forEach((style) => {
       expect(style.icon).toBeDefined();
     });
