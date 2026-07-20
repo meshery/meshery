@@ -35,5 +35,5 @@ assignees: ''
 - 📚 [Instructions for contributing to documentation](https://docs.meshery.io/project/contributing/contributing-docs)
    - Meshery documentation [site](https://docs.meshery.io/) and [source](https://github.com/meshery/meshery/tree/master/docs)
 - 🎨 Wireframes and [designs for Meshery UI](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI) in Figma [(open invite)](https://www.figma.com/team_invite/redeem/GvB8SudhEOoq3JOvoLaoMs)
-- 📺 [Self-paced Contributor Trainings](https://meshery.io/talks-and-trainings#trainings)
+- 🖥️ [Self-paced Contributor Trainings](https://meshery.io/talks-and-trainings#trainings)
 - 🙋🏾🙋🏼 Questions: [Discussion Forum](https://meshery.io/community#community-forums) and [Community Slack](https://slack.meshery.io)

@@ -45,4 +45,4 @@ meshery/hacktoberfest_contributions/<design-name>/<design.yaml>
 - 📚 [Components](https://docs.meshery.io/concepts/logical/components)
 - 📚 [Relationships](https://docs.meshery.io/concepts/logical/relationships)
 - 👨‍💻 [Models Repository](https://github.com/meshery/meshery/tree/master/models)
-- 📺 [Self-paced Contributor Trainings](https://meshery.io/talks-and-trainings#trainings)
+- 🖥️ [Self-paced Contributor Trainings](https://meshery.io/talks-and-trainings#trainings)
