@@ -108,10 +108,40 @@ func TestOperatorStatusHandler_UnknownForUnresolvedConnection(t *testing.T) {
 		t.Fatalf("status = %d, want 200", rec.Code)
 	}
 	body := rec.Body.String()
-	if !strings.Contains(body, `"controller":"OPERATOR"`) || !strings.Contains(body, `"status":"`+controllersStatusUnknown+`"`) {
+	if !strings.Contains(body, `"controller":"OPERATOR"`) || !strings.Contains(body, `"status":"`+string(controllersStatusUnknown)+`"`) {
 		t.Fatalf("expected unknown operator status payload, got: %q", body)
 	}
 	if !strings.Contains(body, `"connectionId":`) {
 		t.Fatalf("expected canonical connectionId key, got: %q", body)
+	}
+}
+
+// A malformed connectionId must be rejected with 400 rather than falling back
+// to uuid.Nil and echoing a zero UUID. Covers all three one-shot status
+// handlers, which share the same validation.
+func TestControllerStatusHandlers_RejectInvalidConnectionID(t *testing.T) {
+	h := newControllersStatusTestHandler(t)
+
+	handlers := map[string]func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider){
+		"operator": h.OperatorStatusHandler,
+		"meshsync": h.MeshsyncStatusHandler,
+		"broker":   h.BrokerStatusHandler,
+	}
+
+	for name, handler := range handlers {
+		t.Run(name, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodGet,
+				"/api/system/controllers/"+name+"/status?connectionId=not-a-uuid", nil)
+			rec := httptest.NewRecorder()
+
+			handler(rec, req, nil, nil, nil)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("status = %d, want 400 for a malformed connectionId", rec.Code)
+			}
+			if strings.Contains(rec.Body.String(), uuid.Nil.String()) {
+				t.Fatalf("response must not echo the zero UUID, got: %q", rec.Body.String())
+			}
+		})
 	}
 }

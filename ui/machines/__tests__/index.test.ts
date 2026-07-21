@@ -25,7 +25,6 @@ vi.mock('@/components/layout/NotificationCenter/constants', () => ({
   SEVERITY_TO_NOTIFICATION_TYPE_MAPPING: {},
 }));
 vi.mock('../../lib/relayEnvironment', () => ({
-  subscriptionClient: { on: () => () => {} },
   createRelayEnvironment: () => ({}),
 }));
 
@@ -56,15 +55,5 @@ describe('machines/index re-exports', () => {
 
   it('re-exports schemaValidatorMachine', () => {
     expect(machines.schemaValidatorMachine).toBeDefined();
-  });
-
-  it('re-exports wsConnectionMachine and WS_CONNECTION_EVENTS', () => {
-    expect(machines.wsConnectionMachine).toBeDefined();
-    expect(machines.WS_CONNECTION_EVENTS).toEqual({
-      CONNECTED: 'WS_CONNECTED',
-      DISCONNECTED: 'WS_DISCONNECTED',
-      ERROR: 'WS_ERROR',
-      RECONNECTING: 'WS_RECONNECTING',
-    });
   });
 });

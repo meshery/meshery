@@ -283,6 +283,11 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
 
   useEffect(() => {
     if (publishSchema) {
+      // The compatibility/Technology field's `ui:widget: select` is defined in
+      // the canonical catalog form UI schema in meshery/schemas
+      // (constructs/v1beta2/catalog/forms/publish.ui.json), so it flows in via
+      // publishSchema.uiSchema. Do not re-patch it here - keeping presentation
+      // in the construct's schema is the single source of truth.
       const newUiSchema = { ...publishSchema.uiSchema };
 
       if (isReadOnly) {
@@ -454,6 +459,18 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
                     liveValidate={false}
                     formRef={formRef}
                     hideTitle={true}
+                    transformErrors={(errors) => {
+                      return errors?.map((error) => {
+                        if (
+                          error.property === '.compatibility' ||
+                          (error.name === 'required' &&
+                            error.params?.missingProperty === 'compatibility')
+                        ) {
+                          error.message = 'Please select at least one technology.';
+                        }
+                        return error;
+                      });
+                    }}
                   />
                 </Grid>
               </Grid>
