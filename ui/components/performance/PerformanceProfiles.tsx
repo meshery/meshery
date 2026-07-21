@@ -22,8 +22,8 @@ import {
 import MesheryPerformanceComponent from './index';
 import PerformanceProfileGrid from './PerformanceProfileGrid';
 import PerformanceResults from './PerformanceResults';
-import _PromptComponent from '../PromptComponent';
-import ViewSwitch from '../ViewSwitch';
+import _PromptComponent from '../general/PromptComponent';
+import ViewSwitch from '../general/ViewSwitch';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { iconMedium } from '../../css/icons.styles';
 import {
@@ -34,8 +34,8 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { updateVisibleColumns } from '@/utils/responsive-column';
 import { useWindowDimensions } from '@/utils/dimension';
 import { ConditionalTooltip } from '@/utils/utils';
-import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+
+import { Keys } from '@meshery/schemas/permissions';
 import { isLocalProvider } from '@/utils/provider';
 import { ButtonTextWrapper, ProfileContainer, ViewSwitchBUtton } from './style';
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
@@ -280,15 +280,12 @@ function PerformanceProfile({ handleDelete }) {
               <CustomTooltip title="Edit">
                 <div>
                   <IconButton
-                    style={iconMedium}
                     onClick={(ev) => {
                       ev.stopPropagation();
                       setSelectedProfile(testProfiles[tableMeta.rowIndex]);
                     }}
                     aria-label="edit"
-                    disabled={
-                      !CAN(keys.EDIT_PERFORMANCE_TEST.action, keys.EDIT_PERFORMANCE_TEST.subject)
-                    }
+                    permissionKey={Keys.PerformanceManagementEditPerformanceTest}
                   >
                     <EditIcon
                       style={{
@@ -303,13 +300,12 @@ function PerformanceProfile({ handleDelete }) {
               <CustomTooltip title="Run test">
                 <div>
                   <IconButton
-                    style={iconMedium}
                     onClick={(ev) => {
                       ev.stopPropagation();
                       setSelectedProfile({ ...testProfiles[tableMeta.rowIndex], runTest: true });
                     }}
                     aria-label="run"
-                    disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
+                    permissionKey={Keys.PerformanceManagementRunTest}
                   >
                     <PlayArrowIcon
                       style={{
@@ -447,12 +443,7 @@ function PerformanceProfile({ handleDelete }) {
                     color="primary"
                     size="large"
                     onClick={() => setProfileForModal({})}
-                    disabled={
-                      !CAN(
-                        keys.ADD_PERFORMANCE_PROFILE.action,
-                        keys.ADD_PERFORMANCE_PROFILE.subject,
-                      )
-                    }
+                    permissionKey={Keys.PerformanceManagementAddPerformaceProfile}
                   >
                     <AddIcon style={{ paddingRight: '0.5', ...iconMedium }} />
                     <ButtonTextWrapper> Add Performance Profile </ButtonTextWrapper>
@@ -512,9 +503,7 @@ function PerformanceProfile({ handleDelete }) {
                 color="primary"
                 size="large"
                 onClick={() => setProfileForModal({})}
-                disabled={
-                  !CAN(keys.ADD_PERFORMANCE_PROFILE.action, keys.ADD_PERFORMANCE_PROFILE.subject)
-                }
+                permissionKey={Keys.PerformanceManagementAddPerformaceProfile}
               >
                 <Typography className="addIcon">Add Performance Profile</Typography>
               </Button>

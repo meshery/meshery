@@ -214,6 +214,8 @@ const (
 	ErrTelemetryGrafanaDatasourceCode      = "meshery-server-1433"
 	ErrTelemetryGrafanaAuthCode            = "meshery-server-1434"
 	ErrTelemetryPrometheusAuthCode         = "meshery-server-1435"
+	ErrMeshsyncReconcileCode               = "meshery-server-1442"
+	ErrUnsafeFilePathCode                  = "meshery-server-1443"
 )
 
 var (
@@ -435,6 +437,12 @@ func ErrRetrieveUserToken(err error) error {
 
 func ErrFailToSave(err error, obj string) error {
 	return errors.New(ErrFailToSaveCode, errors.Alert, []string{"Failed to Save: ", obj}, []string{err.Error()}, []string{"Provider Database could be down or not reachable"}, []string{"Make sure provider is up and reachable"})
+}
+
+// ErrMeshsyncReconcile reports a failure to (re)deploy MeshSync for a
+// connection's chosen deployment mode after the mode was persisted.
+func ErrMeshsyncReconcile(reason string) error {
+	return errors.New(ErrMeshsyncReconcileCode, errors.Alert, []string{"Failed to reconcile MeshSync deployment mode"}, []string{reason}, []string{"The connection's state machine or Kubernetes controllers may not be ready, or the cluster is unreachable"}, []string{"Ensure the connection is connected and the cluster is reachable, then retry the mode change"})
 }
 func ErrFailToDelete(err error, obj string) error {
 	return errors.New(ErrFailToDeleteCode, errors.Alert, []string{"Failed to Delete: ", obj}, []string{err.Error()}, []string{"Provider Database could be down or not reachable"}, []string{"Make sure provider is up and reachable"})
@@ -793,6 +801,9 @@ func ErrServeSchema(err error) error {
 }
 func ErrInvalidFileRequest(err error) error {
 	return errors.New(ErrInvalidFileRequestCode, errors.Alert, []string{"Invalid file request"}, []string{err.Error()}, []string{"The provided file query parameter could not be decoded"}, []string{"Ensure the file parameter is a properly URL-encoded path"})
+}
+func ErrUnsafeFilePath(err error) error {
+	return errors.New(ErrUnsafeFilePathCode, errors.Alert, []string{"Unsafe file path requested"}, []string{err.Error()}, []string{"The requested file path resolves outside the directories these endpoints are permitted to serve (the Meshery log directory under ~/.meshery/logs)"}, []string{"Request only files that live under ~/.meshery/logs; paths outside it, or symlinks that escape it, are rejected"})
 }
 func ErrReadFileContent(err error, file string) error {
 	return errors.New(ErrReadFileContentCode, errors.Alert, []string{"Failed to read file content", file}, []string{err.Error()}, []string{"The file could not be opened or streamed to the response"}, []string{"Verify the file exists and the server has permission to read it"})

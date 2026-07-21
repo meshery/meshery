@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
 import { donut } from 'billboard.js';
-import BBChart from '../../BBChart';
+import BBChart from '../../general/BBChart';
 import { dataToColors, isValidColumnName } from '../../../utils/charts';
 import Link from 'next/link';
 import { iconSmall } from '../../../css/icons.styles';
 import { CustomTextTooltip } from '@/components/meshery-mesh-interface/PatternService/CustomTextTooltip';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { useRouter } from 'next/router';
 import { DashboardSection, LoadingContainer } from '../style';
 import ConnectCluster from './ConnectCluster';
@@ -90,7 +90,10 @@ export default function KubernetesConnectionStatsChart() {
     [chartData, router, theme],
   );
 
-  const canViewConnections = CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject);
+  const canViewConnections = CAN(
+    Keys.WorkspaceManagementViewConnections.id,
+    Keys.WorkspaceManagementViewConnections.function,
+  );
   const header = (
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

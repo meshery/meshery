@@ -147,6 +147,7 @@ const (
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
 	ErrMeshsyncDataHandlerCode            = "meshery-server-1370"
+	ErrReconcileServerIDCode              = "meshery-server-1445"
 	ErrWorkspaceMissingInputCode          = "meshery-server-1375"
 	ErrMeshsyncEventCode                  = "meshery-server-1379"
 	ErrMeshsyncStoreUpdatesCode           = "meshery-server-1380"
@@ -670,6 +671,14 @@ func ErrMarshallingDesignIntoYAML(err error) error {
 
 func ErrMeshsyncDataHandler(err error) error {
 	return errors.New(ErrMeshsyncDataHandlerCode, errors.Alert, []string{"Error in meshsync data hadler"}, []string{err.Error()}, []string{"not deployed operator", "issue with connection to broker"}, []string{"check that operator is deployed", "check that server can establish connection to broker"})
+}
+
+// ErrReconcileServerID wraps a failure to back-fill an already-persisted
+// kubernetes connection's kubernetesServerId with the server ID freshly resolved
+// from the reachable cluster. It is best-effort and non-fatal: the reconcile
+// retries on the next discovery cycle, so it is surfaced at None severity.
+func ErrReconcileServerID(err error) error {
+	return errors.New(ErrReconcileServerIDCode, errors.None, []string{"Failed to reconcile the persisted Kubernetes server ID for the connection"}, []string{err.Error()}, []string{"The connection's persisted kubernetesServerId could not be read from or written to the connection store while syncing it with the live cluster's server ID."}, []string{"Verify the connection still exists and Meshery can reach the provider's connection store. The reconcile is retried automatically on the next discovery cycle."})
 }
 
 // ErrWorkspaceMissingInput is used by both the list-workspaces handler

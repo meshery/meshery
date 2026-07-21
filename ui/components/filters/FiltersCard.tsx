@@ -15,8 +15,8 @@ import {
 } from '@sistent/sistent';
 import { Delete as DeleteIcon, Save } from '@/assets/icons';
 import Moment from 'react-moment';
-import FlipCard from '../FlipCard';
-import { UnControlled as CodeMirror } from '../CodeMirror';
+import FlipCard from '../general/FlipCard';
+import { UnControlled as CodeMirror } from '../general/CodeMirror';
 import {
   BottomContainer,
   CardBackGrid,
@@ -28,15 +28,15 @@ import {
   CardHeaderRight,
   StyledCodeMirrorWrapper,
 } from '../designs/patterns/Cards.styles';
-import YAMLDialog from '../YamlDialog';
+import YAMLDialog from '../general/YamlDialog';
 import CloneIcon from '../../public/static/img/CloneIcon';
 import { Public as PublicIcon, GetApp as GetAppIcon, Public, Lock } from '@/assets/icons';
 import TooltipButton from '../../utils/TooltipButton';
 import { VISIBILITY } from '../../utils/Enum';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
-import { keys } from '@/utils/permission_constants';
-import CAN from '@/utils/can';
+import { Keys } from '@meshery/schemas/permissions';
+
 import { VisibilityChipMenu } from '@sistent/sistent';
 import { VIEW_VISIBILITY } from '../shared/Modal/Information/InfoModal';
 import { iconMedium } from 'css/icons.styles';
@@ -163,7 +163,7 @@ function FiltersCard_({
                     borderRadius: '8px',
                   }}
                   onClick={(ev) => genericClickHandler(ev, handlePublishModal)}
-                  disabled={!CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject)}
+                  permissionKey={Keys.CatalogManagementPublishWasmFilter}
                 >
                   <PublicIcon style={iconMedium} />
                   <> Publish </>
@@ -177,9 +177,7 @@ function FiltersCard_({
                     borderRadius: '8px',
                   }}
                   onClick={(ev) => genericClickHandler(ev, handleUnpublishModal)}
-                  disabled={
-                    !CAN(keys.UNPUBLISH_WASM_FILTER.action, keys.UNPUBLISH_WASM_FILTER.subject)
-                  }
+                  permissionKey={Keys.CatalogManagementUnpublishWasmFilter}
                 >
                   <PublicIcon style={iconMedium} />
                   <GridBtnText> Unpublish </GridBtnText>
@@ -194,9 +192,7 @@ function FiltersCard_({
                   padding: '6px 9px',
                   borderRadius: '8px',
                 }}
-                disabled={
-                  !CAN(keys.DOWNLOAD_A_WASM_FILTER.action, keys.DOWNLOAD_A_WASM_FILTER.subject)
-                }
+                permissionKey={Keys.CatalogManagementDownloadAWasmFilter}
               >
                 <GetAppIcon fill={theme.palette.background.constant.white} style={iconMedium} />
                 <GridBtnText>Download</GridBtnText>
@@ -212,7 +208,7 @@ function FiltersCard_({
                     borderRadius: '8px',
                   }}
                   onClick={(ev) => genericClickHandler(ev, handleClone)}
-                  disabled={!CAN(keys.CLONE_WASM_FILTER.action, keys.CLONE_WASM_FILTER.subject)}
+                  permissionKey={Keys.CatalogManagementCloneWasmFilter}
                 >
                   <CloneIcon fill={theme.palette.background.constant.white} style={iconMedium} />
                   <GridCloneBtnText>Clone</GridCloneBtnText>
@@ -227,9 +223,7 @@ function FiltersCard_({
                   padding: '6px 9px',
                   borderRadius: '8px',
                 }}
-                disabled={
-                  !CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject)
-                }
+                permissionKey={Keys.CatalogManagementDetailsOfWasmFilter}
               >
                 <InfoOutlinedIcon
                   fill={theme.palette.background.constant.white}
@@ -311,7 +305,7 @@ function FiltersCard_({
                 {/* Save button */}
                 <Tooltip title="Save" arrow interactive placement="bottom">
                   <IconButton
-                    disabled={!CAN(keys.EDIT_WASM_FILTER.action, keys.EDIT_WASM_FILTER.subject)}
+                    permissionKey={Keys.CatalogManagementEditWasmFilter}
                     onClick={(ev) => genericClickHandler(ev, updateHandler)}
                   >
                     <Save fill={theme.palette.icon.default} />
@@ -321,7 +315,7 @@ function FiltersCard_({
                 {/* Delete Button */}
                 <Tooltip title="Delete" arrow interactive placement="bottom">
                   <IconButton
-                    disabled={!CAN(keys.DELETE_WASM_FILTER.action, keys.DELETE_WASM_FILTER.subject)}
+                    permissionKey={Keys.CatalogManagementDeleteWasmFilter}
                     onClick={(ev) => genericClickHandler(ev, deleteHandler)}
                   >
                     <DeleteIcon fill={theme.palette.icon.default} />

@@ -7,8 +7,7 @@ import {
 import MesheryPerformanceComponent from '../../performance';
 import PatternServiceFormCore from '../../meshery-mesh-interface/PatternServiceFormCore';
 import InfoModal from '../../shared/Modal/Information/InfoModal';
-import ConfigurationSubscription from '@/graphql/subscriptions/ConfigurationSubscription';
-import _PromptComponent from '../../PromptComponent';
+import _PromptComponent from '../../general/PromptComponent';
 import { ProviderUiAccessControl } from '../../../utils/disabledComponents';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import Modal from '../../shared/Modal/Modal';
@@ -22,7 +21,7 @@ import { DeployStepper, UnDeployStepper } from '../../designs/lifecycle/DeploySt
 import { designValidationMachine } from 'machines/validator/designValidator';
 import CAN from '@/utils/can';
 import { mesheryEventBus } from '@/utils/eventBus';
-import { ThemeTogglerCore } from '@/themes/hooks';
+import { ThemeTogglerCore } from '@/theme/hooks';
 import RJSFForm from '../../meshery-mesh-interface/PatternService/RJSF';
 import { DynamicFullScreenLoader } from '../../shared/LoadingState/DynamicFullscreenLoader';
 import Troubleshoot from '../../TroubleshootingComponent';
@@ -53,6 +52,14 @@ const extensionExposedMesheryStore = {
     get: () => selectK8sConfig(store.getState()),
   },
 };
+
+/**
+ * Inert stand-in for the removed `subscribeConfiguration` GraphQL subscription.
+ * Matches the old call shape — `(onNext, variables) => ({ dispose })` — so an
+ * extension bundle published against the previous host contract still mounts and
+ * unmounts cleanly. It never emits: `onNext` is intentionally never invoked.
+ */
+const noopSubscription = () => ({ dispose: () => {} });
 
 function PerformanceTestComponent(props: React.ComponentProps<typeof MesheryPerformanceComponent>) {
   return (
@@ -108,11 +115,17 @@ function NavigatorExtension({ url }: NavigatorExtensionProps) {
       RelationshipEvaluationResponseFormatter: RelationshipEvaluationTraceFormatter,
       MesheryPerformanceComponent: PerformanceTestComponent,
       selectedK8sContexts,
+      // Meshery Server no longer exposes any GraphQL subscription. `resolver` is
+      // kept only for backward compatibility with already-published extension
+      // bundles: they call `resolver.subscription.ConfigurationSubscription(cb, vars)`
+      // and later `.dispose()` on the result. Handing them `undefined` would throw
+      // at mount, so we hand them an inert subscription that never emits. New
+      // extensions should read designs/filters from the REST API instead.
       resolver: {
         query: {},
         mutation: {},
         subscription: {
-          ConfigurationSubscription,
+          ConfigurationSubscription: noopSubscription,
         },
       },
       InfoModal,

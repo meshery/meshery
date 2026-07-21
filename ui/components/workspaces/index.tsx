@@ -36,12 +36,12 @@ import {
 } from '../../rtk-query/workspace';
 import { useNotification, useNotificationHandlers } from '../../utils/hooks/useNotification';
 import { RJSFModalWrapper } from '../shared/Modal/Modal';
-import _PromptComponent from '../PromptComponent';
+import _PromptComponent from '../general/PromptComponent';
 import { EVENT_TYPES } from '../../lib/event-types';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import CAN from '@/utils/can';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
-import ViewSwitch from '@/components/ViewSwitch';
+import ViewSwitch from '@/components/general/ViewSwitch';
 import { CreateButtonWrapper } from './styles';
 import WorkspaceGridView from './WorkspaceGridView';
 import RightArrowIcon from '@/assets/icons/RightArrowIcon';
@@ -193,12 +193,12 @@ const Workspaces = ({ onSelectWorkspace }) => {
   const [deleteWorkspace] = useDeleteWorkspaceMutation();
 
   const workspaces = workspacesData?.workspaces ? workspacesData.workspaces : [];
-  const handleCreateWorkspace = ({ organization, name, description }) => {
+  const handleCreateWorkspace = ({ organizationId, name, description }) => {
     createWorkspace({
       workspacePayload: {
         name: name,
         description: description,
-        organization_id: organization,
+        organization_id: organizationId,
       },
     })
       .unwrap()
@@ -215,13 +215,13 @@ const Workspaces = ({ onSelectWorkspace }) => {
     }
   }, [workspaceModalContext.createNewWorkspaceModalOpen]);
 
-  const handleEditWorkspace = ({ organization, name, description }) => {
+  const handleEditWorkspace = ({ organizationId, name, description }) => {
     updateWorkspace({
       workspaceId: editWorkspaceId,
       workspacePayload: {
         name: name,
         description: description,
-        organization_id: organization,
+        organization_id: organizationId,
       },
     })
       .unwrap()
@@ -240,36 +240,21 @@ const Workspaces = ({ onSelectWorkspace }) => {
   };
 
   const fetchSchema = (workspaceActionType) => {
+    // Organization is derived from the user's active session and hidden by the
+    // canonical form UI schema (organizationId -> "ui:widget": "hidden" in
+    // meshery/schemas workspace/forms/createOrEdit.ui.json). Its value is
+    // seeded into the form via initialData, so no per-render schema patching is
+    // required here.
     const baseSchema =
       workspaceActionType === WORKSPACE_ACTION_TYPES.EDIT
         ? editWorkspaceSchema
         : createAndEditWorkspaceSchema;
-    const updatedSchema = {
-      schema: baseSchema,
-      uiSchema: createAndEditWorkspaceUiSchema,
-    };
-    updatedSchema.schema?.properties?.organization &&
-      ((updatedSchema.schema = {
-        ...updatedSchema.schema,
-        properties: {
-          ...updatedSchema.schema.properties,
-          organization: {
-            ...updatedSchema.schema.properties.organization,
-            enum: [organization?.id],
-            enumNames: [organization?.name],
-          },
-        },
-      }),
-      (updatedSchema.uiSchema = {
-        ...updatedSchema.uiSchema,
-        organization: {
-          ...updatedSchema.uiSchema.organization,
-          ['ui:widget']: 'hidden',
-        },
-      }));
     setWorkspaceModal({
       open: true,
-      schema: updatedSchema,
+      schema: {
+        schema: baseSchema,
+        uiSchema: createAndEditWorkspaceUiSchema,
+      },
     });
   };
 
@@ -297,7 +282,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
       setInitialData({
         name: workspaceObject.name,
         description: workspaceObject.description,
-        organization: workspaceObject.organizationId,
+        organizationId: workspaceObject.organizationId,
       });
       setEditWorkspaceId(workspaceObject.id);
     } else {
@@ -305,7 +290,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
       setInitialData({
         name: undefined,
         description: '',
-        organization: organization?.id,
+        organizationId: organization?.id,
       });
       setEditWorkspaceId('');
     }
@@ -419,7 +404,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
         </div>
         {!selectedWorkspace.id && (
           <ToolWrapper>
-            <CreateButtonWrapper>
+            <CreateButtonWrapper style={{ marginRight: '2rem' }}>
               <Button
                 type="submit"
                 variant="contained"
@@ -432,9 +417,8 @@ const Workspaces = ({ onSelectWorkspace }) => {
                   backgroundColor: '#607d8b',
                   padding: '8px',
                   borderRadius: '5px',
-                  marginRight: '2rem',
                 }}
-                disabled={!CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)}
+                permissionKey={Keys.WorkspaceManagementCreateWorkspace}
                 data-cy="btnResetDatabase"
               >
                 <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
@@ -509,8 +493,14 @@ const Workspaces = ({ onSelectWorkspace }) => {
           )}
         </>
         {(actionType === WORKSPACE_ACTION_TYPES.CREATE
-          ? CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)
-          : CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)) &&
+          ? CAN(
+              Keys.WorkspaceManagementCreateWorkspace.id,
+              Keys.WorkspaceManagementCreateWorkspace.function,
+            )
+          : CAN(
+              Keys.WorkspaceManagementEditWorkspace.id,
+              Keys.WorkspaceManagementEditWorkspace.function,
+            )) &&
           workspaceModal.open && (
             <Modal
               open={workspaceModal.open}
@@ -543,12 +533,21 @@ const Workspaces = ({ onSelectWorkspace }) => {
           <WorkspaceTeamsTable
             workspaceId={teamsModal.workspaceId}
             isAssignTeamAllowed={CAN(
-              keys.ASSIGN_TEAM_TO_WORKSPACE.action,
-              keys.ASSIGN_TEAM_TO_WORKSPACE.subject,
+              Keys.WorkspaceManagementAssignTeamToWorkspace.id,
+              Keys.WorkspaceManagementAssignTeamToWorkspace.function,
             )}
-            isDeleteTeamAllowed={CAN(keys.DELETE_TEAM.action, keys.DELETE_TEAM.subject)}
-            isEditTeamAllowed={CAN(keys.EDIT_TEAM.action, keys.EDIT_TEAM.subject)}
-            isLeaveTeamAllowed={CAN(keys.LEAVE_TEAM.action, keys.LEAVE_TEAM.subject)}
+            isDeleteTeamAllowed={CAN(
+              Keys.IdentityAccessManagementDeleteTeam.id,
+              Keys.IdentityAccessManagementDeleteTeam.function,
+            )}
+            isEditTeamAllowed={CAN(
+              Keys.IdentityAccessManagementEditTeam.id,
+              Keys.IdentityAccessManagementEditTeam.function,
+            )}
+            isLeaveTeamAllowed={CAN(
+              Keys.IdentityAccessManagementLeaveTeam.id,
+              Keys.IdentityAccessManagementLeaveTeam.function,
+            )}
             useAssignTeamToWorkspaceMutation={useAssignTeamToWorkspaceMutation}
             useGetTeamsOfWorkspaceQuery={useGetTeamsOfWorkspaceQuery}
             useUnassignTeamFromWorkspaceMutation={useUnassignTeamFromWorkspaceMutation}
@@ -559,8 +558,8 @@ const Workspaces = ({ onSelectWorkspace }) => {
             useNotificationHandlers={useNotificationHandlers}
             useRemoveUserFromTeamMutation={useRemoveUserFromTeamMutation}
             isRemoveTeamFromWorkspaceAllowed={CAN(
-              keys.REMOVE_TEAM_FROM_WORKSPACE.action,
-              keys.REMOVE_TEAM_FROM_WORKSPACE.subject,
+              Keys.WorkspaceManagementRemoveTeamFromWorkspace.id,
+              Keys.WorkspaceManagementRemoveTeamFromWorkspace.function,
             )}
           />
           <ModalFooter variant="filled"></ModalFooter>

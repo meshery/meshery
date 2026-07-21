@@ -1,10 +1,11 @@
 //NOTE: This file is being refactored to use the new notification center
 
-import { CloseIcon, IconButton, ToggleButtonGroup } from '@sistent/sistent';
+import { CloseIcon, IconButton, styled, ToggleButtonGroup } from '@sistent/sistent';
 import { useSnackbar } from 'notistack';
 import { iconMedium } from '../../css/icons.styles';
 import moment from 'moment';
 import { v4 } from 'uuid';
+import Router from 'next/router';
 import { store as rtkStore } from '../../store/index';
 import { toggleNotificationCenter } from '../../store/slices/events';
 import { NOTIFICATION_CENTER_TOGGLE_CLASS } from '../../components/layout/NotificationCenter/constants';
@@ -17,6 +18,39 @@ import { formatApiError } from '../helpers/meshkitError';
 const openEvent = () => {
   rtkStore.dispatch(toggleNotificationCenter());
 };
+
+/**
+ * Only allow same-app relative paths for snackbar navigation actions.
+ * Blocks open redirects: `https://…`, `//evil`, `javascript:`, etc.
+ */
+export const isSafeInternalNavPath = (href) => {
+  if (typeof href !== 'string') {
+    return false;
+  }
+  const path = href.trim();
+  if (!path.startsWith('/') || path.startsWith('//') || path.includes('\\')) {
+    return false;
+  }
+  // Reject scheme-like prefixes that could slip past a leading slash after decode tricks.
+  const lower = path.toLowerCase();
+  if (lower.includes('javascript:') || lower.includes('data:')) {
+    return false;
+  }
+  return true;
+};
+
+/** Same-tab action link in snackbars (underlined so it reads as a link). */
+const SnackbarActionLink = styled('button')(() => ({
+  color: 'inherit',
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  textDecoration: 'underline',
+  font: 'inherit',
+  fontWeight: 600,
+  padding: '0 0.5rem',
+  whiteSpace: 'nowrap',
+}));
 
 /**
  * A React hook to facilitate emitting events from the client.
@@ -41,9 +75,19 @@ export const useNotification = () => {
       customEvent = null,
       showInNotificationCenter = false,
       pushToServer = false,
+      /**
+       * Optional same-tab navigation action. Prefer this over markdown links in
+       * `message`: ThemeResponsiveSnackbar renders messages via BasicMarkdown,
+       * which always opens anchors in a new tab.
+       */
+      link = null,
     }) => {
       timestamp = timestamp ?? moment.utc().valueOf();
       id = id || v4();
+      const safeLink =
+        link?.href && isSafeInternalNavPath(link.href)
+          ? { href: link.href.trim(), label: link.label || 'Open' }
+          : null;
 
       enqueueSnackbar(message, {
         //NOTE: Need to Consolidate the variant and event_type
@@ -51,6 +95,20 @@ export const useNotification = () => {
         action: function Action(key) {
           return (
             <ToggleButtonGroup data-testid={dataTestID}>
+              {safeLink && (
+                <SnackbarActionLink
+                  type="button"
+                  key={`link-${id}`}
+                  data-testid={`${dataTestID}-link`}
+                  onClick={() => {
+                    closeSnackbar(key);
+                    // Same-tab SPA navigation; href already allowlisted as internal.
+                    Router.push(safeLink.href);
+                  }}
+                >
+                  {safeLink.label}
+                </SnackbarActionLink>
+              )}
               {showInNotificationCenter && (
                 <AddClassRecursively className={NOTIFICATION_CENTER_TOGGLE_CLASS}>
                   <IconButton

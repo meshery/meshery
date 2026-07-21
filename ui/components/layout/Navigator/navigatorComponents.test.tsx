@@ -73,20 +73,7 @@ vi.mock('../../../css/icons.styles', () => ({
   iconSmall: {},
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    VIEW_CONNECTIONS: { action: 'view', subject: 'connection' },
-    VIEW_CREDENTIALS: { action: 'view', subject: 'credential' },
-    VIEW_ENVIRONMENTS: { action: 'view', subject: 'environment' },
-    VIEW_WORKSPACE: { action: 'view', subject: 'workspace' },
-    VIEW_CLOUD_NATIVE_INFRASTRUCTURE: { action: 'view', subject: 'infra' },
-    VIEW_CATALOG: { action: 'view', subject: 'catalog' },
-    VIEW_DESIGNS: { action: 'view', subject: 'design' },
-    VIEW_PERFORMANCE_PROFILES: { action: 'view', subject: 'profile' },
-    VIEW_EXTENSIONS: { action: 'view', subject: 'extension' },
-  },
-}));
-
+import { Keys } from '@meshery/schemas/permissions';
 import { drawerIconsStyle, getNavigatorComponents } from './navigatorComponents';
 
 const fakeProviderUiAccessControl = (allowed: Record<string, boolean>) => ({
@@ -193,7 +180,7 @@ describe('navigatorComponents', () => {
     const items = getNavigatorComponents(fakeProviderUiAccessControl({ LIFECYCLE: true }), theme);
     const lifecycle = items.find((i: any) => i.id === 'LIFECYCLE');
     const connection = lifecycle?.children?.find((c: any) => c.id === 'CONNECTION');
-    expect(connection?.permission).toEqual({ action: 'view', subject: 'connection' });
+    expect(connection?.permissionKey).toEqual(Keys.WorkspaceManagementViewConnections);
   });
 
   it('passes white fills to CatalogIcon when on the catalog route', () => {

@@ -4,7 +4,6 @@ description: How Meshery Server responds to error conditions over HTTP, and how 
 categories: [contributing]
 ---
 
-# HTTP Error Response Contract
 
 Every non-2xx HTTP response from Meshery Server carries a JSON body with
 `Content-Type: application/json; charset=utf-8`. Clients should parse the body
