@@ -9,6 +9,7 @@ import {
   TableCell,
   TableSortLabel,
   Tooltip,
+  useTheme,
 } from '@sistent/sistent';
 import Modal from './shared/Modal/Modal';
 import { CONNECTION_KINDS, CON_OPS } from '../utils/Enum';
@@ -96,6 +97,7 @@ const MesheryCredentialComponent: React.FC = () => {
   const { notify } = useNotification();
   const { notifyApiError } = useNotificationHandlers();
   const { width } = useWindowDimensions();
+  const theme = useTheme();
 
   const schemaChangeHandler = (type: CredentialType): void => {
     setCredentialType(type);
@@ -302,7 +304,7 @@ const MesheryCredentialComponent: React.FC = () => {
                   }
                   size="large"
                 >
-                  <DeleteIcon />
+                  <DeleteIcon fill={theme.palette.icon.default} />
                 </IconButton>
               </Tooltip>
             </ActionContainer>
