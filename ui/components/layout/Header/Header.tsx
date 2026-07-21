@@ -12,7 +12,7 @@ import ConnectionStateTransitionModal from '../../connections/ConnectionStateTra
 import type { ConnectionStateTransitionModalRef } from '../../connections/ConnectionStateTransitionModal';
 import { iconMedium, iconSmall } from '../../../css/icons.styles';
 import { createPathForRemoteComponent } from '../../ExtensionSandbox';
-import RemoteComponent from '../../RemoteComponent';
+import RemoteComponent from '../../general/RemoteComponent';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from '@/utils/hooks/useKubernetesHook';
 import { formatToTitleCase } from '../../../utils/utils';
@@ -34,8 +34,8 @@ import {
   SearchIcon,
   SettingsIcon,
   FilterAllIcon,
+  useHasPermission,
 } from '@sistent/sistent';
-import { CanShow } from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
 import OrganizationAndWorkSpaceSwitcher from '../../workspaces/SpacesSwitcher/SpaceSwitcher';
 import HeaderMenu from './HeaderMenu';
@@ -150,6 +150,7 @@ function K8sContextMenu({
   searchContexts = () => {},
 }) {
   const theme = useTheme();
+  const hasK8sPermission = useHasPermission(Keys.IdentityAccessManagementViewAllKubernetesClusters);
   const [showFullContextMenu, setShowFullContextMenu] = useState(false);
   const anchorRef = React.useRef(null);
   // The dropdown slides up from below; its translate distance scales with the
@@ -227,52 +228,47 @@ function K8sContextMenu({
   return (
     <>
       <div>
-        <CanShow
-          Key={{
-            action: Keys.IdentityAccessManagementViewAllKubernetesClusters.id,
-            subject: Keys.IdentityAccessManagementViewAllKubernetesClusters.function,
+        <IconButton
+          ref={anchorRef}
+          aria-label="contexts"
+          className="k8s-icon-button"
+          onClick={(e) => {
+            e.preventDefault();
+            setShowFullContextMenu((prev) => !prev);
           }}
+          aria-controls={showFullContextMenu ? 'menu-list-grow' : undefined}
+          aria-haspopup="true"
+          style={{
+            marginRight: '0.5rem',
+          }}
+          permissionKey={Keys.IdentityAccessManagementViewAllKubernetesClusters}
+          permissionAction="hide"
         >
-          <IconButton
-            ref={anchorRef}
-            aria-label="contexts"
-            className="k8s-icon-button"
-            onClick={(e) => {
-              e.preventDefault();
-              setShowFullContextMenu((prev) => !prev);
-            }}
-            aria-controls={showFullContextMenu ? 'menu-list-grow' : undefined}
-            aria-haspopup="true"
-            style={{
-              marginRight: '0.5rem',
-            }}
-          >
-            <CBadgeContainer>
-              <img
-                className="k8s-image"
-                src={
-                  normalizeStaticImagePath(
-                    connectionMetadataState?.[CONNECTION_KINDS.KUBERNETES]?.icon,
-                  ) || '/static/img/integrations/kubernetes.svg'
-                }
-                onError={(e) => {
-                  e.target.src = '/static/img/integrations/kubernetes.svg';
-                }}
-                width="24px"
-                height="24px"
-                style={{ objectFit: 'contain' }}
-              />
-              <CBadge
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowFullContextMenu((prev) => !prev);
-                }}
-              >
-                {contexts?.totalCount || 0}
-              </CBadge>
-            </CBadgeContainer>
-          </IconButton>
-        </CanShow>
+          <CBadgeContainer>
+            <img
+              className="k8s-image"
+              src={
+                normalizeStaticImagePath(
+                  connectionMetadataState?.[CONNECTION_KINDS.KUBERNETES]?.icon,
+                ) || '/static/img/integrations/kubernetes.svg'
+              }
+              onError={(e) => {
+                e.target.src = '/static/img/integrations/kubernetes.svg';
+              }}
+              width="24px"
+              height="24px"
+              style={{ objectFit: 'contain' }}
+            />
+            <CBadge
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowFullContextMenu((prev) => !prev);
+              }}
+            >
+              {contexts?.totalCount || 0}
+            </CBadge>
+          </CBadgeContainer>
+        </IconButton>
 
         <Slide
           direction="down"
@@ -283,13 +279,7 @@ function K8sContextMenu({
           unmountOnExit
         >
           <div>
-            <CanShow
-              Key={{
-                action: Keys.IdentityAccessManagementViewAllKubernetesClusters.id,
-                subject: Keys.IdentityAccessManagementViewAllKubernetesClusters.function,
-              }}
-              invert_action={['hide']}
-            >
+            {hasK8sPermission && (
               <ClickAwayListener
                 onClickAway={(e) => {
                   if (anchorRef.current && anchorRef.current.contains(e.target as Node)) {
@@ -378,7 +368,7 @@ function K8sContextMenu({
                   </div>
                 </CMenuContainer>
               </ClickAwayListener>
-            </CanShow>
+            )}
           </div>
         </Slide>
       </div>

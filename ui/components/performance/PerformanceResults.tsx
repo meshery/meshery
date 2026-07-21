@@ -251,11 +251,7 @@ function generateColumnsForDisplay(
         customBodyRender: function CustomBody(_, tableMeta) {
           return (
             <>
-              <IconButton
-                style={iconMedium}
-                aria-label="Share"
-                onClick={(e) => handleSocialExpandClick(e, tableMeta)}
-              >
+              <IconButton aria-label="Share" onClick={(e) => handleSocialExpandClick(e, tableMeta)}>
                 <ReplyIcon
                   style={{
                     transform: 'scaleX(-1)',

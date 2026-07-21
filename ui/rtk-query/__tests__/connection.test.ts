@@ -223,7 +223,7 @@ describe('connection mutations – HTTP contracts', () => {
     vi.restoreAllMocks();
   });
 
-  it('verifyAndRegisterConnection POSTs to /integrations/connections/register', async () => {
+  it('processConnectionRegistration POSTs to /integrations/connections/register', async () => {
     (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
       ok: true,
       status: 200,
@@ -232,7 +232,7 @@ describe('connection mutations – HTTP contracts', () => {
 
     await fetch(mesheryApiPath('integrations/connections/register'), {
       method: 'POST',
-      body: JSON.stringify({ kind: 'aws' }),
+      body: JSON.stringify({ kind: 'aws', status: 'initialize' }),
     });
 
     expect(global.fetch).toHaveBeenCalledWith(
@@ -259,20 +259,21 @@ describe('connection mutations – HTTP contracts', () => {
     );
   });
 
-  it('cancelConnectionRegister sends DELETE with a body', async () => {
+  it('cancelConnectionRegister sends DELETE with the registration id in the path', async () => {
     (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
       ok: true,
       status: 204,
       text: () => Promise.resolve(''),
     });
 
-    await fetch(mesheryApiPath('integrations/connections/register'), {
+    // Schemas contract: DELETE /api/integrations/connections/register/{registrationId}
+    // — no request body; unknown ids are ignored (idempotent).
+    await fetch(mesheryApiPath('integrations/connections/register/reg-1'), {
       method: 'DELETE',
-      body: JSON.stringify({ id: 'conn-1' }),
     });
 
     expect(global.fetch).toHaveBeenCalledWith(
-      '/api/integrations/connections/register',
+      '/api/integrations/connections/register/reg-1',
       expect.objectContaining({ method: 'DELETE' }),
     );
   });
@@ -362,16 +363,20 @@ describe('connection module surface', () => {
   it('exports all expected mutation/query hooks', async () => {
     const mod = await import('../connection');
     expect(typeof mod.useGetCredentialsQuery).toBe('function');
-    expect(typeof mod.useVerifyAndRegisterConnectionMutation).toBe('function');
-    expect(typeof mod.useConnectToConnectionMutation).toBe('function');
+    // Schemas-generated since @meshery/schemas 1.3.32 — re-exported (or thinly
+    // wrapped) rather than re-declared locally.
+    expect(typeof mod.useProcessConnectionRegistrationMutation).toBe('function');
+    expect(typeof mod.useCancelConnectionRegisterMutation).toBe('function');
+    expect(typeof mod.useAddKubernetesConfigMutation).toBe('function');
+    expect(typeof mod.useDiscoverKubernetesContextsMutation).toBe('function');
+    expect(typeof mod.useLazyPingKubernetesQuery).toBe('function');
+    // Still hand-rolled: the {kind}-scoped connection routes are not yet
+    // defined in meshery/schemas.
     expect(typeof mod.useLazyGetConnectionDetailsQuery).toBe('function');
     expect(typeof mod.useVerifyConnectionURLMutation).toBe('function');
     expect(typeof mod.useConnectionMetaDataMutation).toBe('function');
     expect(typeof mod.useConfigureConnectionMutation).toBe('function');
     expect(typeof mod.useUpdateConnectionByIdMutation).toBe('function');
-    expect(typeof mod.useCancelConnectionRegisterMutation).toBe('function');
-    expect(typeof mod.useAddKubernetesConfigMutation).toBe('function');
-    expect(typeof mod.useLazyPingKubernetesQuery).toBe('function');
     expect(typeof mod.useUpdateConnectionStatusMutation).toBe('function');
   });
 });

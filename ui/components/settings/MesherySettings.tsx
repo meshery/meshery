@@ -19,7 +19,7 @@ import {
 import DashboardMeshModelGraph from '../dashboard/charts/DashboardMeshModelGraph';
 import Link from 'next/link';
 import MeshAdapterConfigComponent from '../MeshAdapterConfigComponent';
-import _PromptComponent from '../PromptComponent';
+import _PromptComponent from '../general/PromptComponent';
 import { iconMedium } from '../../css/icons.styles';
 import DatabaseSummary from '../DatabaseSummary';
 import {

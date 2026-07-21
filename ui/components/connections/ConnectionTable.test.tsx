@@ -181,7 +181,7 @@ vi.mock('../../utils/dimension', () => ({
   useWindowDimensions: () => ({ width: windowWidth }),
 }));
 
-vi.mock('../multi-select-wrapper', () => ({
+vi.mock('../general/multi-select-wrapper', () => ({
   default: () => <div data-testid="multi-select-wrapper" />,
 }));
 
@@ -717,6 +717,42 @@ describe('ConnectionTable', () => {
     expect(dataTableProps.options).toBe(firstOptions);
   });
 
+  // Every data column's header carries an info affordance explaining what the
+  // column means and how to read its values, so the table is self-describing.
+  // `Actions` is excluded: it holds controls rather than values.
+  it('gives every data column an info icon and tooltip in its header', () => {
+    render(<ConnectionTable />);
+
+    // Internal metadata columns and control columns that do not require tooltips.
+    const internalColumns = [
+      'id',
+      'metadata.server_location',
+      'metadata.serverLocation',
+      'metadata.server',
+      'nextStatus',
+      'kindLogo',
+      'metadata.name',
+      'Actions',
+    ];
+
+    const dataColumns = dataTableProps.columns.filter((c) => !internalColumns.includes(c.name));
+
+    dataColumns.forEach((col) => {
+      const name = col.name;
+      expect(
+        typeof col.options?.customHeadRender,
+        `column "${name}" is missing customHeadRender`,
+      ).toBe('function');
+
+      const head = col.options.customHeadRender({ index: 0, label: col.label, name }, () => {}, {});
+
+      expect(head.props.icon, `column "${name}" has no info icon`).toBeTruthy();
+      expect(
+        typeof head.props.tooltip === 'string' && head.props.tooltip.length > 0,
+        `column "${name}" has no info tooltip`,
+      ).toBe(true);
+    });
+  });
   // Regression coverage for the review feedback on PR #20695: the
   // Connections/MeshSync tab switcher must be passed down through the
   // toolbar (rendered between the toolbar and the data table), not dropped.

@@ -2,12 +2,11 @@ import { createRef, useCallback, useEffect, useMemo, useRef, useState } from 're
 import { useNotification } from '@/utils/hooks/useNotification';
 import {
   useAddKubernetesConfigMutation,
-  useConnectToConnectionMutation,
   useDiscoverKubernetesContextsMutation,
   useGetCredentialsQuery,
   usePerformConnectionActionMutation,
+  useProcessConnectionRegistrationMutation,
   useUpdateConnectionByIdMutation,
-  useVerifyAndRegisterConnectionMutation,
 } from '@/rtk-query/connection';
 import type { ConnectionWizardKindConfig } from '../ConnectionWizard.helpers';
 import { buildSteps } from './registry';
@@ -63,8 +62,10 @@ const makeInitialData = (params: UseConnectionWizardParams): WizardData => ({
 export const useConnectionWizard = (params: UseConnectionWizardParams) => {
   const { mode, isOpen, onComplete } = params;
   const { notify } = useNotification();
-  const [verifyAndRegisterConnection] = useVerifyAndRegisterConnectionMutation();
-  const [connectToConnection] = useConnectToConnectionMutation();
+  // Both the register and connect steps dispatch through the single
+  // schemas-generated state-machine endpoint; the event's `status` field is
+  // what advances the registration.
+  const [processConnectionRegistration] = useProcessConnectionRegistrationMutation();
   const [addKubernetesConfig] = useAddKubernetesConfigMutation();
   const [discoverKubernetesContexts] = useDiscoverKubernetesContextsMutation();
   const [updateConnectionById] = useUpdateConnectionByIdMutation();
@@ -157,11 +158,19 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
     appliedPresetRef.current = null;
   }, []);
 
+  // The wizard assembles registration events dynamically (GenericRecord); the
+  // generated trigger types the body as the schemas ConnectionRegistrationEvent.
+  // This is the single boundary where the loose wizard data meets the typed
+  // wire contract.
+  type RegistrationEventBody = Parameters<typeof processConnectionRegistration>[0]['body'];
+
   const services = useMemo<WizardServices>(
     () => ({
       notify,
-      registerConnection: (body) => verifyAndRegisterConnection({ body }).unwrap(),
-      connectConnection: (body) => connectToConnection({ body }).unwrap(),
+      registerConnection: (body) =>
+        processConnectionRegistration({ body: body as RegistrationEventBody }).unwrap(),
+      connectConnection: (body) =>
+        processConnectionRegistration({ body: body as RegistrationEventBody }).unwrap(),
       discoverKubeContexts: async (file) => {
         const formData = new FormData();
         formData.append('k8sfile', file);
@@ -202,8 +211,7 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
     }),
     [
       notify,
-      verifyAndRegisterConnection,
-      connectToConnection,
+      processConnectionRegistration,
       addKubernetesConfig,
       discoverKubernetesContexts,
       updateConnectionById,
@@ -212,12 +220,23 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
     ],
   );
 
-  const ctx: WizardContext = { mode, data, patch, patchPostConfig, services, formRefs };
+  const advancingRef = useRef(false);
+  const advance = useCallback(() => {
+    if (advancingRef.current) return;
+    advancingRef.current = true;
+    setActiveIndex((index) => index + 1);
+  }, []);
+
+  const ctx: WizardContext = { mode, data, patch, patchPostConfig, services, formRefs, advance };
 
   const steps = buildSteps(data.kindConfig, mode).filter((step) => !step.hidden?.(ctx));
   const safeIndex = steps.length === 0 ? 0 : Math.min(activeIndex, steps.length - 1);
   const activeStep = steps[safeIndex] ?? null;
   const isLast = safeIndex >= steps.length - 1;
+
+  useEffect(() => {
+    advancingRef.current = false;
+  }, [safeIndex]);
 
   const canProceed = activeStep?.canProceed ? activeStep.canProceed(ctx) : true;
   const canGoBack = safeIndex > 0;

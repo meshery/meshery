@@ -7,7 +7,7 @@ import {
 import MesheryPerformanceComponent from '../../performance';
 import PatternServiceFormCore from '../../meshery-mesh-interface/PatternServiceFormCore';
 import InfoModal from '../../shared/Modal/Information/InfoModal';
-import _PromptComponent from '../../PromptComponent';
+import _PromptComponent from '../../general/PromptComponent';
 import { ProviderUiAccessControl } from '../../../utils/disabledComponents';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import Modal from '../../shared/Modal/Modal';
@@ -21,7 +21,7 @@ import { DeployStepper, UnDeployStepper } from '../../designs/lifecycle/DeploySt
 import { designValidationMachine } from 'machines/validator/designValidator';
 import CAN from '@/utils/can';
 import { mesheryEventBus } from '@/utils/eventBus';
-import { ThemeTogglerCore } from '@/themes/hooks';
+import { ThemeTogglerCore } from '@/theme/hooks';
 import RJSFForm from '../../meshery-mesh-interface/PatternService/RJSF';
 import { DynamicFullScreenLoader } from '../../shared/LoadingState/DynamicFullscreenLoader';
 import Troubleshoot from '../../TroubleshootingComponent';

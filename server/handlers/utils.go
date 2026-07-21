@@ -63,7 +63,13 @@ func getPaginationParams(req *http.Request) (page, offset, limit int, search, or
 
 	urlValues := req.URL.Query()
 	page, _ = strconv.Atoi(urlValues.Get("page"))
-	limitstr := urlValues.Get("pagesize")
+	// pageSize is the canonical camelCase wire param (schemas registry
+	// construct); pagesize is the legacy spelling still sent by
+	// pre-/api/registry clients.
+	limitstr := urlValues.Get("pageSize")
+	if limitstr == "" {
+		limitstr = urlValues.Get("pagesize")
+	}
 	if limitstr != "all" {
 		limit, _ = strconv.Atoi(limitstr)
 		if limit == 0 {

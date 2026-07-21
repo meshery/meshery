@@ -3881,6 +3881,24 @@
         "short_description": "Unsafe file path requested",
         "probable_cause": "The requested file path resolves outside the directories these endpoints are permitted to serve (the Meshery log directory under ~/.meshery/logs)",
         "suggested_remediation": "Request only files that live under ~/.meshery/logs; paths outside it, or symlinks that escape it, are rejected"
+      },
+      "1444": {
+        "name": "ErrConnectionNotFoundCode",
+        "code": "1444",
+        "severity": "Alert",
+        "long_description": "The provider returned no connection for the given id without reporting an error.",
+        "short_description": "",
+        "probable_cause": "The connection may have been deleted, or the persisted record is missing.",
+        "suggested_remediation": "Reinitialise the connection, or verify the connection id exists in the provider."
+      },
+      "1445": {
+        "name": "ErrReconcileServerIDCode",
+        "code": "1445",
+        "severity": "None",
+        "long_description": "",
+        "short_description": "Failed to reconcile the persisted Kubernetes server ID for the connection",
+        "probable_cause": "The connection's persisted kubernetesServerId could not be read from or written to the connection store while syncing it with the live cluster's server ID.",
+        "suggested_remediation": "Verify the connection still exists and Meshery can reach the provider's connection store. The reconcile is retried automatically on the next discovery cycle."
       }
     }
   }

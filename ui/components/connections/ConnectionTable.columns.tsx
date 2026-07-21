@@ -17,7 +17,7 @@ import { TooltipWrappedConnectionChip } from './ConnectionChip';
 import { ConnectionStatusSelect } from './ConnectionStatusSelect';
 import { DefaultTableCell, SortableTableCell } from './common';
 import { getColumnValue } from '../../utils/utils';
-import MultiSelectWrapper from '../multi-select-wrapper';
+import MultiSelectWrapper from '../general/multi-select-wrapper';
 import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
 import { CustomTextTooltip } from '../meshery-mesh-interface/PatternService/CustomTextTooltip';
@@ -162,8 +162,8 @@ export const useConnectionColumns = ({
                 columnData={column}
                 columnMeta={columnMeta}
                 onSort={() => sortColumn(index)}
-                icon={null}
-                tooltip=""
+                icon={<ColumnInfoIcon />}
+                tooltip={`The name of the connection, taken from the discovered infrastructure — for example the Kubernetes context name. Hover the name to see the server it points to. [Learn more](${url})`}
               />
             );
           },
@@ -276,7 +276,10 @@ export const useConnectionColumns = ({
                         }
                         options={environmentOptions}
                         value={cleanedEnvs}
-                        placeholder={`Assigned Environments`}
+                        placeholder={`Select or create an environment`}
+                        noOptionsMessage={() =>
+                          'No matching environments. Type to create a new one.'
+                        }
                         isSelectAll={true}
                         menuPlacement={'bottom'}
                         disabled={
@@ -307,8 +310,8 @@ export const useConnectionColumns = ({
                 columnData={column}
                 columnMeta={columnMeta}
                 onSort={() => sortColumn(index)}
-                icon={null}
-                tooltip=""
+                icon={<ColumnInfoIcon />}
+                tooltip={`The kind of infrastructure this connection points to — for example kubernetes, prometheus, grafana, or github. Kind determines which actions and lifecycle states are available. [Learn more](${url})`}
               />
             );
           },
@@ -327,8 +330,8 @@ export const useConnectionColumns = ({
                 columnData={column}
                 columnMeta={columnMeta}
                 onSort={() => sortColumn(index)}
-                icon={null}
-                tooltip=""
+                icon={<ColumnInfoIcon />}
+                tooltip={`The broad classification of the connection: platform, telemetry, or collaboration. [Learn more](${url})`}
               />
             );
           },
@@ -351,8 +354,8 @@ export const useConnectionColumns = ({
                 columnData={column}
                 columnMeta={columnMeta}
                 onSort={() => sortColumn(index)}
-                icon={null}
-                tooltip=""
+                icon={<ColumnInfoIcon />}
+                tooltip={`A finer classification within the category — for example cloud, identity, metrics, chat, git, or orchestration. [Learn more](${url})`}
               />
             );
           },
@@ -416,8 +419,8 @@ export const useConnectionColumns = ({
                 columnData={column}
                 columnMeta={columnMeta}
                 onSort={() => sortColumn(index)}
-                icon={null}
-                tooltip=""
+                icon={<ColumnInfoIcon />}
+                tooltip={`Meshery's unique identifier (UUID) for this connection. Use it to reference the connection from the API or mesheryctl; click the value to copy it. [Learn more](${url})`}
               />
             );
           },

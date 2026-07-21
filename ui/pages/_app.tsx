@@ -5,7 +5,11 @@ import {
   PermissionProvider,
   WarningIcon as Warning,
 } from '@sistent/sistent';
-import { Footer, KubernetesSubscription, NavigationBar } from '../components/AppComponents';
+import {
+  Footer,
+  KubernetesSubscription,
+  NavigationBar,
+} from '../components/layout/AppShell/AppComponents';
 import { AdapterMoment, LocalizationProvider } from '@/components/shared/DatePicker';
 import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
@@ -17,7 +21,7 @@ import React, { useEffect, useMemo, useCallback, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { startSessionTimer } from '../lib/sessionTimer';
 import Header from '../components/layout/Header/Header';
-import MesheryProgressBar from '../components/MesheryProgressBar';
+import MesheryProgressBar from '../components/general/MesheryProgressBar';
 import getPageContext from '../components/PageContext';
 import { subscribeToControllersStatus } from 'lib/controllersStatusSubscription';
 import { useLazyGetSystemSyncQuery, useLazyGetKubernetesContextsQuery } from '../rtk-query/system';
@@ -73,11 +77,11 @@ import { CONNECTION_KINDS, CONNECTION_KINDS_DEF } from '../utils/Enum';
 import { ability } from '../utils/can';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
 import { formatToTitleCase } from '@/utils/utils';
-import { useThemePreference } from '@/themes/hooks';
+import { useThemePreference } from '@/theme/hooks';
 import { CssBaseline, NoSsr, SistentThemeProvider } from '@/theme';
 import { ErrorBoundary } from '@sistent/sistent';
 import { LoadSessionGuard } from '@/rtk-query/ability';
-import { useGetLoggedInUserQuery, useGetSelectedOrganization } from '@/rtk-query/user';
+import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import CustomErrorFallback from '@/components/shared/ErrorBoundary/ErrorBoundary';
 import { normalizeLoadTestPrefs } from '../lib/load-test-prefs';
 import {
@@ -85,8 +89,8 @@ import {
   StyledMainContent,
   StyledContentWrapper,
   StyledRoot,
-  ThemeResponsiveSnackbar,
-} from '../themes/App.styles';
+} from '../components/layout/AppShell/App.styles';
+import { ThemeResponsiveSnackbar } from '@/theme/snackbar';
 import {
   setConnectionMetadata,
   setControllerState,
@@ -158,18 +162,22 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
   );
 
   const { data: loggedInUser } = useGetLoggedInUserQuery({});
-  const { selectedOrganization } = useGetSelectedOrganization();
 
   const permissionUserContext = useMemo(() => {
     const firstName = loggedInUser?.firstName || loggedInUser?.first_name || '';
     const lastName = loggedInUser?.lastName || loggedInUser?.last_name || '';
     const userName = `${firstName} ${lastName}`.trim() || loggedInUser?.name || loggedInUser?.email;
+
+    // Show the provider/registration org (e.g. "Meshery Cloud", "Exoscale")
+    // identity regardless of which org they've switched to.
+    const orgName = providerCapabilities?.providerName || '';
+
     return {
       userName,
-      orgName: selectedOrganization?.name,
+      orgName,
       roleNames: loggedInUser?.roleNames || [],
     };
-  }, [loggedInUser, selectedOrganization]);
+  }, [loggedInUser, providerCapabilities?.providerName]);
 
   // Holds the live controller-status SSE subscription ({ dispose }) so
   // initSubscriptions can tear down the previous stream and the bootstrap

@@ -22,12 +22,14 @@ const canOpenConnectionWizard = () =>
 const ConnectionWizardLauncher = () => {
   const { openCreateConnection } = useConnectionWizardModal();
 
+  const hasPermission = canOpenConnectionWizard();
+
   return (
     <LaunchButton
       type="button"
       variant="contained"
       onClick={() => openCreateConnection()}
-      disabled={!canOpenConnectionWizard()}
+      permissionKey={!hasPermission ? Keys.LifecycleManagementAddCluster : undefined}
       data-testid="connection-create-connection"
     >
       <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
