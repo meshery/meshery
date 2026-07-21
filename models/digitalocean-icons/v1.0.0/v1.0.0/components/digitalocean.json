@@ -45,7 +45,7 @@
     "model": {
       "version": "v1.0.0"
     },
-    "components_count": 0,
+    "components_count": 2,
     "relationships_count": 0,
     "created_at": "0001-01-01T00:00:00Z",
     "updated_at": "0001-01-01T00:00:00Z",
