@@ -1,4 +1,55 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Mon, 20 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.58</title><link>/project/releases/v1.0.58/</link><pubDate>Mon, 20 Jul 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.58/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Tue, 21 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.60</title><link>/project/releases/v1.0.60/</link><pubDate>Tue, 21 Jul 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.60/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Chore]: Bump meshery/schemas to v1.3.35 @l5io (#20833)&lt;/li&gt;
+&lt;li&gt;Bump shell-quote from 1.8.4 to 1.10.0 in /install/docker-extension/ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20836)&lt;/li&gt;
+&lt;li&gt;Bump body-parser from 1.20.4 to 1.20.6 in /install/docker-extension/ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20842)&lt;/li&gt;
+&lt;li&gt;purge old model versions @simihablo (#20846)&lt;/li&gt;
+&lt;li&gt;upgrade to schemas 1.3.35 @simihablo (#20838)&lt;/li&gt;
+&lt;li&gt;[Server] Fix variable name typo sucess to success in design engine handler @shivv23 (#20816)&lt;/li&gt;
+&lt;li&gt;[Server] Fix master build break: restore loop in auto_register.go toConnectionDefinitions @marblom007 (#20814)&lt;/li&gt;
+&lt;li&gt;[Server] Fix nil pointer crash in MeshSync auto-registration @Atishyy27 (#20733)&lt;/li&gt;
+&lt;li&gt;[Server] Accept camelCase sort keys in SanitizeOrderInput @leecalcote (#20717)&lt;/li&gt;
+&lt;li&gt;[Server] Fix typo respone body to response body in remote provider error strings @shivv23 (#20811)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Bump js-yaml from 5.2.0 to 5.2.1 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20834)&lt;/li&gt;
+&lt;li&gt;[UI] Source catalog compatibility widget from schemas (correct #20786) @simihablo (#20843)&lt;/li&gt;
+&lt;li&gt;[UI] Reorganize reusable components into components/general/ @simihablo (#20841)&lt;/li&gt;
+&lt;li&gt;[Chore]: Update to Sistent v0.21.38 @l5io (#20839)&lt;/li&gt;
+&lt;li&gt;[UI] Derive organization from session in create/edit environment &amp;amp; workspace forms @simihablo (#20832)&lt;/li&gt;
+&lt;li&gt;Bump axios from 1.16.1 to 1.18.1 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20828)&lt;/li&gt;
+&lt;li&gt;[UI] Fix icon disappearing on first hover when sidebar is collapsed @Katotodan (#20827)&lt;/li&gt;
+&lt;li&gt;[Server] Fix connected clusters showing no MeshSync data when kubernetesServerId is stale @marblom007 (#20798)&lt;/li&gt;
+&lt;li&gt;[UI] Fix performance page sizing issues, modal closing, and align environment card flip actions @rishiraj38 (#20805)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Bump js-yaml from 5.2.0 to 5.2.1 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20834)&lt;/li&gt;
+&lt;li&gt;Bump axios from 1.16.1 to 1.18.1 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20828)&lt;/li&gt;
+&lt;li&gt;[CI] Add Self-paced Contributor Trainings link to playground issue template @Sathwik-parimi-07 (#20792)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Bump tar from 7.5.11 to 7.5.20 in /docs @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20835)&lt;/li&gt;
+&lt;li&gt;docs: fix broken MetalLB installation link #20810 @Zara-5 (#20815)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@Atishyy27, @Bhumikagarggg, @Katotodan, @Sathwik-parimi-07, @Zara-5, @dependabot[bot], @fitzergerald, @l5io, @leecalcote, @marblom007, @meshery-ci, @rishiraj38, @ritzorama, @shivv23, @simihablo and [dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;)&lt;/p&gt;</description></item><item><title>v1.0.58</title><link>/project/releases/v1.0.58/</link><pubDate>Mon, 20 Jul 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.58/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -34410,7 +34461,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.59&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.60&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
