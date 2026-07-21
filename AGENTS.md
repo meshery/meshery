@@ -14,6 +14,50 @@ Meshery is a self-service engineering platform and open source cloud native mana
 | `/provider-ui` | Provider-specific React UI extensions |
 | `/.github` | GitHub Actions, issue templates, Copilot agent definitions |
 
+## Cloning the Repository
+
+The Meshery repository is large. Depending on which functional area you are working on, you may not
+want to clone the entire repository. Consider using **sparse cloning** to exclude large directories
+that are irrelevant to your work.
+
+### Large directories to consider excluding
+
+| Directory | Size | When to exclude |
+|-----------|------|-----------------|
+| `/models` | ~1 GB | When not working on Meshery models |
+| `/docs/static/v*` | Large | When not working on older versions of Meshery Docs |
+
+### Sparse clone (exclude large directories)
+
+```bash
+# 1. Clone metadata only — no blobs, no working tree yet
+git clone --filter=blob:none --no-checkout https://github.com/meshery/meshery.git
+cd meshery
+
+# 2. Enable sparse-checkout in non-cone (pattern) mode so directories can be excluded
+git sparse-checkout set --no-cone '/*' '!/models/' '!/docs/static/v*/'
+
+# 3. Check out the working tree (excluded directories are skipped)
+git checkout master
+```
+
+`/*` includes everything at the repository root; each `!` line then excludes a large directory.
+To pull an excluded directory back later, re-run the `set` command without its `!` line, or run
+`git sparse-checkout disable` to restore the full working tree.
+
+### Shallow clone (less history, faster)
+
+A shallow clone reduces history depth but still downloads all current files (including `/models`).
+Combine it with the sparse-checkout above if you also want to skip the large directories:
+
+```bash
+git clone --depth=1 --filter=blob:none --no-checkout https://github.com/meshery/meshery.git
+```
+
+> **Note for agents**: Avoid cloning or processing the `/models` directory unless the task
+> explicitly involves model definitions. Similarly, skip `/docs/static/v*` unless working on
+> archived documentation versions.
+
 ## Identifier Naming Conventions — MANDATORY
 
 Authoritative guide: <https://github.com/meshery/schemas/blob/master/docs/identifier-naming-contributor-guide.md>
