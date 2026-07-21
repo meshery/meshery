@@ -323,7 +323,7 @@ export const ImportButton = ({ workspaceId, disabled = false, refetch }) => {
   const handleImportModalClose = () => {
     setImportModal(false);
   };
-  const [importPattern] = useImportPatternMutation();
+  const [importPattern, { isLoading: isImportingDesign }] = useImportPatternMutation();
   const { notify } = useNotification();
   const theme = useTheme();
   async function handleImportDesign(data) {
@@ -375,6 +375,7 @@ export const ImportButton = ({ workspaceId, disabled = false, refetch }) => {
         <ImportDesignModal
           handleClose={handleImportModalClose}
           handleImportDesign={handleImportDesign}
+          isSubmitting={isImportingDesign}
         />
       )}
       <StyledResponsiveButton
