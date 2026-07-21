@@ -18,6 +18,7 @@ import { useNotification, useNotificationHandlers } from '../utils/hooks/useNoti
 import { EVENT_TYPES } from '../lib/event-types';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
+import { normalizeStaticImagePath } from '../utils/fallback';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import {
   useCreateCredentialMutation,
@@ -142,7 +143,9 @@ const MesheryCredentialComponent: React.FC = () => {
           <CredentialIcon
             src={
               connectionMetadataState
-                ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                ? normalizeStaticImagePath(
+                    connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon,
+                  )
                 : ''
             }
           />
