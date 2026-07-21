@@ -1,9 +1,17 @@
 export function getFallbackImageBasedOnKind(kind) {
+  // Last-resort icons when connection.kindLogo / definition icon is missing.
+  // Connections table: kindLogo || getFallbackImageBasedOnKind(kind).
   const fallbackComponent = {
     meshery: 'static/img/meshery-logo/meshery-logo.png',
     kubernetes: 'static/img/integrations/kubernetes.svg',
+    // Artifact Hub is a registrant/connection kind on Lifecycle → Connections;
+    // without this entry the name chip falls through to a generic icon (#20864).
+    artifacthub: 'static/img/integrations/artifacthub.svg',
   };
-  return fallbackComponent[kind];
+  if (kind == null || kind === '') {
+    return undefined;
+  }
+  return fallbackComponent[String(kind).trim().toLowerCase()];
 }
 
 export function normalizeStaticImagePath(path) {
