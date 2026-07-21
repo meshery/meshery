@@ -9,11 +9,7 @@ let profile: {
 } = {
   data: { preferences: { remoteProviderPreferences: { getstarted: ['step-1'] } } },
 };
-let userPrefsMock: {
-  data?: { remoteProviderPreferences?: { getstarted?: unknown[] } };
-} = {
-  data: { remoteProviderPreferences: { getstarted: ['step-1'] } },
-};
+
 let currentOrg: { id?: string } | null = { id: 'org-1' };
 
 const actionCardSpy = vi.fn();
@@ -32,7 +28,8 @@ vi.mock('@/rtk-query/orgRoles', () => ({
 vi.mock('@meshery/schemas/mesheryApi', () => ({
   useGetOrgsQuery: () => ({ data: [] }),
   useGetUserQuery: () => loggedIn,
-  useGetUserProfileByIdQuery: () => profile,
+  useGetUserProfileByIdQuery: ({ id }: any = {}, { skip }: any = {}) =>
+    skip || !id ? { data: undefined } : profile,
 }));
 
 vi.mock('@/utils/hooks/useNotification', () => ({
@@ -102,9 +99,7 @@ describe('GetStarted', () => {
     profile = {
       data: { preferences: { remoteProviderPreferences: { getstarted: ['step-1'] } } },
     };
-    userPrefsMock = {
-      data: { remoteProviderPreferences: { getstarted: ['step-1'] } },
-    };
+
     currentOrg = { id: 'org-1' };
   });
 
@@ -140,7 +135,7 @@ describe('GetStarted', () => {
 
   it('defaults completedSteps to [] when remoteProviderPreferences.getstarted is missing', () => {
     profile = { data: { preferences: {} } };
-    userPrefsMock = { data: {} };
+
     render(<GetStarted />);
     const props = actionCardSpy.mock.calls[0][0];
     expect(props.completedSteps).toEqual([]);
