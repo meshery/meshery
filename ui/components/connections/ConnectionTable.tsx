@@ -290,8 +290,15 @@ const ConnectionTable = ({
     }));
   }, [connectionData?.connections, connectionMetadataState]) as ConnectionRow[];
 
-  // API already applies status/kind from URL state; do not re-filter locally.
-  const filteredConnections = enhancedConnections;
+  const filteredConnections = useMemo(
+    () =>
+      enhancedConnections.filter(({ status, kind }) => {
+        const statusMatch = selectedFilters.status === 'All' || status === selectedFilters.status;
+        const kindMatch = selectedFilters.kind === 'All' || kind === selectedFilters.kind;
+        return statusMatch && kindMatch;
+      }),
+    [enhancedConnections, selectedFilters],
+  );
 
   const colViews = useMemo(
     () => [

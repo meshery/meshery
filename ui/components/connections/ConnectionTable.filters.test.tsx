@@ -58,7 +58,29 @@ vi.mock('@sistent/sistent', () => ({
           handleApplyFilter(next);
         }}
       >
-        Apply all
+        Apply status all
+      </button>
+      <button
+        type="button"
+        data-testid="apply-kind-kubernetes"
+        onClick={() => {
+          const next = { ...selectedFilters, kind: 'kubernetes' };
+          setSelectedFilters(next);
+          handleApplyFilter(next);
+        }}
+      >
+        Apply kubernetes
+      </button>
+      <button
+        type="button"
+        data-testid="apply-kind-all"
+        onClick={() => {
+          const next = { ...selectedFilters, kind: 'All' };
+          setSelectedFilters(next);
+          handleApplyFilter(next);
+        }}
+      >
+        Apply kind all
       </button>
     </div>
   ),
@@ -290,7 +312,7 @@ describe('ConnectionTable filters', () => {
     );
   });
 
-  it('clears status/kind from the connections query when filters are reset to All', async () => {
+  it('clears status from the connections query when status is reset to All', async () => {
     const user = userEvent.setup();
     const { rerender } = render(<ConnectionTable />);
 
@@ -309,7 +331,33 @@ describe('ConnectionTable filters', () => {
 
     await waitFor(() => {
       expect(getConnectionsQuery).toHaveBeenLastCalledWith(
-        expect.objectContaining({ status: undefined, kind: undefined }),
+        expect.objectContaining({ status: undefined }),
+        undefined,
+      );
+    });
+    expect(dataTableProps?.data).toHaveLength(2);
+  });
+
+  it('clears kind from the connections query when kind is reset to All', async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(<ConnectionTable />);
+
+    await user.click(screen.getByTestId('apply-kind-kubernetes'));
+    rerender(<ConnectionTable />);
+
+    await waitFor(() => {
+      expect(getConnectionsQuery).toHaveBeenLastCalledWith(
+        expect.objectContaining({ kind: 'kubernetes' }),
+        undefined,
+      );
+    });
+
+    await user.click(screen.getByTestId('apply-kind-all'));
+    rerender(<ConnectionTable />);
+
+    await waitFor(() => {
+      expect(getConnectionsQuery).toHaveBeenLastCalledWith(
+        expect.objectContaining({ kind: undefined }),
         undefined,
       );
     });
