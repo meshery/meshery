@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/meshery/schemas/models/core"
+	connectionv1beta3 "github.com/meshery/schemas/models/v1beta3/connection"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -21,15 +22,26 @@ import (
 	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/events"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
+	"github.com/meshery/meshkit/utils"
 )
 
+// ProcessConnectionRegistration drives the connection registration state
+// machine (POST /api/integrations/connections/register). The wire contract is
+// the schemas-defined ConnectionRegistrationEvent: an `initialize` event
+// returns the registration bootstrap, every other event advances the tracked
+// registration and responds with an empty body.
 func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method == http.MethodDelete {
+		// Deprecated: cancelling via DELETE on this route with the tracker id in
+		// the body predates the schemas contract (v1.3.32). New clients cancel via
+		// DELETE /api/integrations/connections/register/{registrationId}
+		// (CancelConnectionRegister). Retire this branch once no supported client
+		// sends the legacy shape.
 		h.handleProcessTermination(w, req)
 		return
 	}
 
-	connectionRegisterPayload := connections.ConnectionPayload{}
+	registrationEvent := connectionv1beta3.ConnectionRegistrationEvent{}
 	userUUID := user.ID
 	token, err := provider.GetProviderToken(req)
 	if err != nil {
@@ -37,7 +49,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 		writeMeshkitError(w, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
-	err = json.NewDecoder(req.Body).Decode(&connectionRegisterPayload)
+	err = json.NewDecoder(req.Body).Decode(&registrationEvent)
 	if err != nil {
 		writeMeshkitError(w, models.ErrUnmarshal(err, "connection registration payload"), http.StatusBadRequest)
 		return
@@ -45,10 +57,11 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*h.SystemID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
 
-	if string(connectionRegisterPayload.Status) == string(machines.Init) {
-		h.handleRegistrationInitEvent(w, req, &connectionRegisterPayload)
+	if registrationEvent.Status == connectionv1beta3.ConnectionRegistrationEventStatusInitialize {
+		h.handleRegistrationInitEvent(w, &registrationEvent)
 	} else {
 		smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
+		connectionRegisterPayload := registrationEventToConnectionPayload(&registrationEvent)
 
 		machineCtx := make(map[string]string, 0)
 		inst, err := helpers.InitializeMachineWithContext(
@@ -77,7 +90,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 			return
 		}
 
-		event, err := inst.SendEvent(req.Context(), machines.EventType(connectionRegisterPayload.Status), connectionRegisterPayload)
+		event, err := inst.SendEvent(req.Context(), machines.EventType(registrationEvent.Status), connectionRegisterPayload)
 		if err != nil {
 			wrappedErr := ErrSendMachineEvent(err)
 			h.log.Error(wrappedErr)
@@ -91,6 +104,31 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 	}
 }
 
+// registrationEventToConnectionPayload converts the schemas wire event into the
+// internal payload the connection state machines consume
+// (machines/*/register.go casts the event data to connections.ConnectionPayload).
+// The two shapes share the same wire fields; only the Go types differ.
+func registrationEventToConnectionPayload(event *connectionv1beta3.ConnectionRegistrationEvent) connections.ConnectionPayload {
+	payload := connections.ConnectionPayload{
+		Kind:                       event.Kind,
+		SubType:                    event.SubType,
+		Type:                       event.Type,
+		MetaData:                   event.Metadata,
+		Status:                     connections.ConnectionStatus(event.Status),
+		CredentialSecret:           event.CredentialSecret,
+		Name:                       event.Name,
+		CredentialID:               event.CredentialID,
+		Model:                      event.Model,
+		SkipCredentialVerification: event.SkipCredentialVerification,
+	}
+	if event.ID != nil {
+		payload.ID = *event.ID
+	}
+	return payload
+}
+
+// handleProcessTermination is the deprecated body-based cancel path; see the
+// deprecation note in ProcessConnectionRegistration.
 func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Request) {
 	body := make(map[string]string, 0)
 	err := json.NewDecoder(req.Body).Decode(&body)
@@ -108,33 +146,64 @@ func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Requ
 	}
 }
 
-func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.Request, payload *connections.ConnectionPayload) {
-	compFilter := &regv1beta1.ComponentFilter{
-		Name:  fmt.Sprintf("%sConnection", payload.Kind),
-		Limit: 1,
-	}
-	schema := make(map[string]interface{}, 1)
-	connectionComponent, _, _, _ := h.registryManager.GetEntities(compFilter)
-	if len(connectionComponent) == 0 {
-		writeMeshkitError(w, ErrUnknownConnectionKind(payload.Kind), http.StatusBadRequest)
+// CancelConnectionRegister discards the in-progress registration state machine
+// tracked by the {registrationId} path parameter
+// (DELETE /api/integrations/connections/register/{registrationId}). Idempotent:
+// unknown ids are ignored. Nothing is persisted for the abandoned process.
+func (h *Handler) CancelConnectionRegister(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
+	registrationID, err := uuid.FromString(mux.Vars(req)["registrationId"])
+	if err != nil {
+		invalidIDErr := models.ErrInvalidUUID(err)
+		h.log.Error(invalidIDErr)
+		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
 		return
 	}
 
-	schema["connection"] = connectionComponent[0]
+	h.ConnectionToStateMachineInstanceTracker.Remove(registrationID)
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, event *connectionv1beta3.ConnectionRegistrationEvent) {
+	compFilter := &regv1beta1.ComponentFilter{
+		Name:  fmt.Sprintf("%sConnection", event.Kind),
+		Limit: 1,
+	}
+	connectionComponent, _, _, _ := h.registryManager.GetEntities(compFilter)
+	if len(connectionComponent) == 0 {
+		writeMeshkitError(w, ErrUnknownConnectionKind(event.Kind), http.StatusBadRequest)
+		return
+	}
+
+	connectionDefinition, err := utils.MarshalAndUnmarshal[interface{}, core.Map](connectionComponent[0])
+	if err != nil {
+		h.log.Error(ErrWriteResponse(err))
+		writeMeshkitError(w, ErrWriteResponse(err), http.StatusInternalServerError)
+		return
+	}
+
+	// The bootstrap id acts as the connection registration process tracker.
+	// Clients echo it on every subsequent event until the process completes or
+	// is cancelled.
+	bootstrap := connectionv1beta3.ConnectionRegistrationBootstrap{
+		Connection: connectionDefinition,
+		ID:         uuid.Must(uuid.NewV4()),
+	}
+
 	credential, _, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
-		Name:  fmt.Sprintf("%sCredential", payload.Kind),
+		Name:  fmt.Sprintf("%sCredential", event.Kind),
 		Limit: 1,
 	})
-
 	if len(credential) > 0 {
-		schema["credential"] = credential[0]
+		credentialDefinition, err := utils.MarshalAndUnmarshal[interface{}, core.Map](credential[0])
+		if err != nil {
+			h.log.Error(ErrWriteResponse(err))
+			writeMeshkitError(w, ErrWriteResponse(err), http.StatusInternalServerError)
+			return
+		}
+		bootstrap.Credential = credentialDefinition
 	}
-	// id act as a connection registration process tracker.
-	// The clients should always include this "id" in the subsequent API calls until the process is completed or terminated.
-	id := uuid.Must(uuid.NewV4())
-	schema["id"] = id
 
-	err := json.NewEncoder(w).Encode(&schema)
+	err = json.NewEncoder(w).Encode(&bootstrap)
 	if err != nil {
 		h.log.Error(ErrWriteResponse(err))
 	}

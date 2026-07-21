@@ -33,7 +33,7 @@ type componentFlags struct {
 var (
 	availableSubcommands = []*cobra.Command{listComponentCmd, viewComponentCmd, searchComponentsCmd}
 
-	componentApiPath       = "api/meshmodels/components"
+	componentApiPath       = "api/registry/components"
 	componentFlagsProvided = &componentFlags{}
 )
 

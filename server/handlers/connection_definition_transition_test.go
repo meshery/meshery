@@ -38,11 +38,11 @@ func TestConnectionDefinitionTransitionMapRoundTrips(t *testing.T) {
 		Status:         connectionv1beta3.ConnectionStatusDiscovered,
 		TransitionMap: map[string][]connectionv1beta3.ConnectionStateTransition{
 			"connected": {
-				{NextState: connectionv1beta3.ConnectionStatusValueDisconnected},
-				{NextState: connectionv1beta3.ConnectionStatusValueDeleted},
+				{NextState: connectionv1beta3.Disconnected},
+				{NextState: connectionv1beta3.Deleted},
 			},
 			"disconnected": {
-				{NextState: connectionv1beta3.ConnectionStatusValueConnected, Description: &desc},
+				{NextState: connectionv1beta3.Connected, Description: &desc},
 			},
 		},
 		ModelReference: &model.ModelReference{
@@ -67,7 +67,7 @@ func TestConnectionDefinitionTransitionMapRoundTrips(t *testing.T) {
 	require.NotEmpty(t, got.TransitionMap, "transitionMap was dropped on the DB round-trip")
 	require.Len(t, got.TransitionMap["connected"], 2)
 	require.Equal(t,
-		connectionv1beta3.ConnectionStatusValueConnected,
+		connectionv1beta3.Connected,
 		got.TransitionMap["disconnected"][0].NextState,
 	)
 	require.NotNil(t, got.TransitionMap["disconnected"][0].Description)

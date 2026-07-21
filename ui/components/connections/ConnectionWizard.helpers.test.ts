@@ -1,12 +1,15 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { CONNECTION_KINDS } from '@/utils/Enum';
 import {
   buildConnectionWizardKindConfigs,
   buildCredentialSecret,
   buildKubernetesImportSummary,
+  connectionCreatedNotify,
   DEFAULT_CONNECTION_DOCS_URL,
   filterCredentialsForKind,
   getWizardStepLabels,
+  isCreateConnectionQuery,
+  kubernetesImportedNotify,
   normalizeCredentialPayload,
   resolveConnectionName,
 } from './ConnectionWizard.helpers';
@@ -208,5 +211,27 @@ describe('ConnectionWizard.helpers', () => {
       resolveConnectionName(CONNECTION_KINDS.PROMETHEUS, { url: 'https://prom.example' }),
     ).toBe('https://prom.example');
     expect(resolveConnectionName(CONNECTION_KINDS.PROMETHEUS, {})).toBe('prometheus-connection');
+  });
+
+  it('recognizes create-connection query flags', () => {
+    expect(isCreateConnectionQuery('true')).toBe(true);
+    expect(isCreateConnectionQuery('1')).toBe(true);
+    expect(isCreateConnectionQuery('false')).toBe(false);
+  });
+
+  it('builds connection-created notify payloads with optional View connections action', () => {
+    vi.stubGlobal('window', { location: { pathname: '/dashboard' } });
+    const payload = connectionCreatedNotify('Prometheus');
+    expect(payload.message).toBe('Prometheus connection created.');
+    expect(payload.link?.href).toBe('/management/connections');
+    vi.stubGlobal('window', { location: { pathname: '/management/connections' } });
+    expect(connectionCreatedNotify('Grafana').link).toBeUndefined();
+    vi.unstubAllGlobals();
+  });
+
+  it('formats kubernetes import notify summaries', () => {
+    vi.stubGlobal('window', { location: { pathname: '/dashboard' } });
+    expect(kubernetesImportedNotify(2).message).toBe('Imported 2 Kubernetes connections.');
+    vi.unstubAllGlobals();
   });
 });
