@@ -47,11 +47,12 @@ To pull an excluded directory back later, re-run the `set` command without its `
 
 ### Shallow clone (less history, faster)
 
-A shallow clone reduces history depth but still downloads all current files (including `/models`).
-Combine it with the sparse-checkout above if you also want to skip the large directories:
+A shallow clone fetches only the latest commit. It is faster, but still checks out the full
+working tree (including `/models`). To exclude the large directories, use the sparse-checkout
+above instead.
 
 ```bash
-git clone --depth=1 --filter=blob:none --no-checkout https://github.com/meshery/meshery.git
+git clone --depth=1 https://github.com/meshery/meshery.git
 ```
 
 > **Note for agents**: Avoid cloning or processing the `/models` directory unless the task

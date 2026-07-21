@@ -40,10 +40,10 @@ git checkout master
 
 Here `/*` includes everything at the repository root, and each `!` line excludes a large directory. To restore an excluded directory later, re-run the `set` command without its `!` line, or run `git sparse-checkout disable` for the full working tree.
 
-**Shallow clone** (less history, faster) — note this still downloads all current files, including `/models`; combine it with the sparse-checkout above to also skip the large directories:
+**Shallow clone** (less history, faster) — fetches only the latest commit, but still checks out the full working tree (including `/models`). To exclude the large directories, use the sparse-checkout above instead.
 
 ```bash
-git clone --depth=1 --filter=blob:none --no-checkout https://github.com/meshery/meshery.git
+git clone --depth=1 https://github.com/meshery/meshery.git
 ```
 
 To contribute to Meshery, please follow this basic fork-and-pull request [gitflow]({{< ref "project/contributing/contributing-gitflow.md" >}}).
