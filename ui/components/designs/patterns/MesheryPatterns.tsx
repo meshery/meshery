@@ -7,7 +7,7 @@ import {
 import { NoSsr } from '@sistent/sistent';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import MesheryPatternGrid from './MesheryPatternGridView';
-import _PromptComponent from '../../PromptComponent';
+import _PromptComponent from '../../general/PromptComponent';
 import LoadingScreen from '../../shared/LoadingState/LoadingComponent';
 import { MesheryPatternsCatalog, VISIBILITY } from '../../../utils/Enum';
 import { useRouter } from 'next/router';

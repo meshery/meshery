@@ -12,7 +12,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshkit/database"
-	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta3/environment"
 	// NOTE: workspace_persister uses v1beta3/workspace for the canonical
 	// camelCase wire form (Phase 5 identifier-naming flip). Designs nested
 	// inside workspace pages still ride on v1beta1/pattern because both

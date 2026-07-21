@@ -17,7 +17,7 @@ import { TooltipWrappedConnectionChip } from './ConnectionChip';
 import { ConnectionStatusSelect } from './ConnectionStatusSelect';
 import { DefaultTableCell, SortableTableCell } from './common';
 import { getColumnValue } from '../../utils/utils';
-import MultiSelectWrapper from '../multi-select-wrapper';
+import MultiSelectWrapper from '../general/multi-select-wrapper';
 import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
 import { CustomTextTooltip } from '../meshery-mesh-interface/PatternService/CustomTextTooltip';

@@ -7,7 +7,7 @@ import {
 import MesheryPerformanceComponent from '../../performance';
 import PatternServiceFormCore from '../../meshery-mesh-interface/PatternServiceFormCore';
 import InfoModal from '../../shared/Modal/Information/InfoModal';
-import _PromptComponent from '../../PromptComponent';
+import _PromptComponent from '../../general/PromptComponent';
 import { ProviderUiAccessControl } from '../../../utils/disabledComponents';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import Modal from '../../shared/Modal/Modal';

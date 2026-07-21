@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { donut } from 'billboard.js';
-import BBChart from '../../BBChart';
+import BBChart from '../../general/BBChart';
 import { dataToColors, isValidColumnName } from '../../../utils/charts';
 import ConnectClustersBtn from '../../general/ConnectClustersBtn';
 import Link from 'next/link';
