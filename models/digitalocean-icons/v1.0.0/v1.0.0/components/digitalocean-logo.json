@@ -1,0 +1,101 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "digitalocean-logo",
+  "description": "DigitalOcean Full Wordmark Logo",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta2",
+    "version": "v1.0.0",
+    "name": "digitalocean-icons",
+    "displayName": "DigitalOcean Icons",
+    "description": "A curated collection of high-quality icons designed by DigitalOcean.",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "digitalocean-icons",
+      "type": "registry",
+      "subType": "",
+      "kind": "meshery",
+      "status": "discovered",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": null,
+      "schemaVersion": ""
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Orchestration & Management"
+    },
+    "subCategory": "Application Definition & Image Build",
+    "metadata": {
+      "capabilities": null,
+      "isAnnotation": true,
+      "primaryColor": "#0080FF",
+      "secondaryColor": "#0069D9",
+      "shape": "circle",
+      "styleOverrides": "",
+      "svgColor": "<svg role=\"img\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\"><title>DigitalOcean</title><path fill=\"#0080FF\" d=\"M12.04 0C5.408-.02.005 5.37.005 11.992h4.638c0-4.923 4.882-8.731 10.064-6.855a6.95 6.95 0 014.147 4.148c1.889 5.177-1.924 10.055-6.84 10.064v-4.61H7.391v4.623h4.61V24c7.86 0 13.967-7.588 11.397-15.83-1.115-3.59-3.985-6.446-7.575-7.575A12.8 12.8 0 0012.039 0zM7.39 19.362H3.828v3.564H7.39zm-3.563 0v-2.978H.85v2.978z\"/></svg>",
+      "svgComplete": "",
+      "svgWhite": "<svg role=\"img\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\"><title>DigitalOcean</title><path fill=\"#FFFFFF\" d=\"M12.04 0C5.408-.02.005 5.37.005 11.992h4.638c0-4.923 4.882-8.731 10.064-6.855a6.95 6.95 0 014.147 4.148c1.889 5.177-1.924 10.055-6.84 10.064v-4.61H7.391v4.623h4.61V24c7.86 0 13.967-7.588 11.397-15.83-1.115-3.59-3.985-6.446-7.575-7.575A12.8 12.8 0 0012.039 0zM7.39 19.362H3.828v3.564H7.39zm-3.563 0v-2.978H.85v2.978z\"/></svg>"
+    },
+    "model": {
+      "version": "v1.0.0"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "background-opacity": 0,
+    "data": {
+      "label": ""
+    },
+    "primaryColor": "#0080FF",
+    "secondaryColor": "#0069D9",
+    "shape": "circle",
+    "svgColor": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 354 354\" width=\"20\" height=\"20\"><g fill=\"#0080FF\"><path d=\"M177,221.5l0-34.2c36.2,0,64.3-35.9,50.4-74C222.3,99.3,211,88,196.9,82.9c-38.1-13.8-74,14.2-74,50.4l-34.1,0c0-57.7,55.8-102.7,116.3-83.8c26.4,8.3,47.5,29.3,55.7,55.7C279.7,165.7,234.7,221.5,177,221.5z\"/><polygon points=\"177.1,187.5 143,187.5 143,153.4 177.1,153.4\"/><polygon points=\"143,213.6 116.9,213.6 116.9,187.5 143,187.5\"/><path d=\"M116.9,187.5H95v-21.9h21.9V187.5z\"/><path d=\"M31.2,256.1c-4.4-3.1-10-4.6-16.4-4.6H0.8V296h14.1c6.4,0,12-1.6,16.4-4.9c2.4-1.7,4.3-4.1,5.7-7.1c1.3-3,2-6.6,2-10.5c0-3.9-0.7-7.4-2-10.4C35.6,260.1,33.7,257.7,31.2,256.1z M9,259h4.4c4.9,0,8.9,1,12,2.9c3.4,2.1,5.1,6,5.1,11.6c0,5.8-1.7,9.9-5.1,12.1H9V259z\"/></g></svg>",
+    "svgComplete": "",
+    "svgWhite": "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 354 354\" width=\"20\" height=\"20\"><g fill=\"#FFFFFF\"><path d=\"M177,221.5l0-34.2c36.2,0,64.3-35.9,50.4-74C222.3,99.3,211,88,196.9,82.9c-38.1-13.8-74,14.2-74,50.4l-34.1,0c0-57.7,55.8-102.7,116.3-83.8c26.4,8.3,47.5,29.3,55.7,55.7C279.7,165.7,234.7,221.5,177,221.5z\"/><polygon points=\"177.1,187.5 143,187.5 143,153.4 177.1,153.4\"/><polygon points=\"143,213.6 116.9,213.6 116.9,187.5 143,187.5\"/><path d=\"M116.9,187.5H95v-21.9h21.9V187.5z\"/><path d=\"M31.2,256.1c-4.4-3.1-10-4.6-16.4-4.6H0.8V296h14.1c6.4,0,12-1.6,16.4-4.9c2.4-1.7,4.3-4.1,5.7-7.1c1.3-3,2-6.6,2-10.5c0-3.9-0.7-7.4-2-10.4C35.6,260.1,33.7,257.7,31.2,256.1z M9,259h4.4c4.9,0,8.9,1,12,2.9c3.4,2.1,5.1,6,5.1,11.6c0,5.8-1.7,9.9-5.1,12.1H9V259z\"/></g></svg>"
+  },
+  "capabilities": [
+    {
+      "description": "Configure visual styles for component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": true,
+    "isNamespaced": false,
+    "published": false
+  },
+  "configuration": null,
+  "component": {
+    "version": "",
+    "kind": "digitalocean-logo",
+    "schema": ""
+  },
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
+  "deletedAt": null
+}
