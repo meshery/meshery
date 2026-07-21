@@ -109,6 +109,10 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 							arh.log.Error(ErrAutoRegister(err, connType))
 						}
 
+						if machineInst == nil {
+							continue
+						}
+
 						_, err = machineInst.SendEvent(ctx, machines.Register, connectionPayload)
 
 						// If connection does not exist, transition to next states because in the "connect" event the connection will get created.
