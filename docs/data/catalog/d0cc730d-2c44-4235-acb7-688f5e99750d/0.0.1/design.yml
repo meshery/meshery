@@ -1,0 +1,85 @@
+{
+  "id": "d0cc730d-2c44-4235-acb7-688f5e99750d",
+  "name": "DigitalOcean Icons Design",
+  "version": "0.0.1",
+  "components": [
+    {
+      "id": "e0aa730d-2c44-4235-acb7-688f5e99750d",
+      "model": {
+        "name": "digitalocean-icons",
+        "version": "v1.0.0",
+        "displayName": "DigitalOcean Icons",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#0080FF",
+          "secondaryColor": "#0069D9",
+          "shape": "circle"
+        }
+      },
+      "format": "JSON",
+      "status": "enabled",
+      "styles": {
+        "shape": "circle",
+        "primaryColor": "#0080FF",
+        "secondaryColor": "#0069D9",
+        "position": {
+          "x": 100,
+          "y": 100
+        }
+      },
+      "version": "v1.0.0",
+      "metadata": {
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": true
+      },
+      "component": {
+        "kind": "digitalocean",
+        "schema": "",
+        "version": ""
+      },
+      "description": "DigitalOcean Logomark Icon",
+      "displayName": "digitalocean-icon-1"
+    },
+    {
+      "id": "e0ab730d-2c44-4235-acb7-688f5e99750d",
+      "model": {
+        "name": "digitalocean-icons",
+        "version": "v1.0.0",
+        "displayName": "DigitalOcean Icons",
+        "metadata": {
+          "isAnnotation": true,
+          "primaryColor": "#0080FF",
+          "secondaryColor": "#0069D9",
+          "shape": "circle"
+        }
+      },
+      "format": "JSON",
+      "status": "enabled",
+      "styles": {
+        "shape": "circle",
+        "primaryColor": "#0080FF",
+        "secondaryColor": "#0069D9",
+        "position": {
+          "x": 250,
+          "y": 100
+        }
+      },
+      "version": "v1.0.0",
+      "metadata": {
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "published": true
+      },
+      "component": {
+        "kind": "digitalocean-logo",
+        "schema": "",
+        "version": ""
+      },
+      "description": "DigitalOcean Full Wordmark Logo",
+      "displayName": "digitalocean-logo-1"
+    }
+  ],
+  "relationships": [],
+  "schemaVersion": "designs.meshery.io/v1beta1"
+}
