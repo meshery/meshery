@@ -3,9 +3,9 @@ import { useTableUrlState } from '@/utils/hooks/useTableUrlState';
 import { useColumnVisibilityPreference } from '@/utils/hooks/useColumnVisibilityPreference';
 import { NoSsr } from '@sistent/sistent';
 import { Publish as PublishIcon } from '@/assets/icons';
-import _PromptComponent from '../PromptComponent';
+import _PromptComponent from '../general/PromptComponent';
 import { MesheryFiltersCatalog, VISIBILITY } from '../../utils/Enum';
-import ViewSwitch from '../ViewSwitch';
+import ViewSwitch from '../general/ViewSwitch';
 import FiltersGrid from './FiltersGrid';
 import fetchCatalogFilter from '@/graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../../css/icons.styles';
@@ -449,12 +449,7 @@ function MesheryFilters() {
                           color="primary"
                           size="large"
                           onClick={handleUploadImport}
-                          disabled={
-                            !CAN(
-                              Keys.CatalogManagementImportFilter.id,
-                              Keys.CatalogManagementImportFilter.function,
-                            )
-                          }
+                          permissionKey={Keys.CatalogManagementImportFilter}
                         >
                           <PublishIcon style={iconMedium} data-cy="import-button" />
                           <BtnText> Import Filters </BtnText>

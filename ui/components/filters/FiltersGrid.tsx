@@ -10,7 +10,7 @@ import {
   GridPaginationStyles,
 } from '../designs/patterns/Grid.styles';
 import { RJSFModalWrapper } from '../shared/Modal/Modal';
-import CAN from '@/utils/can';
+
 import { Keys } from '@meshery/schemas/permissions';
 import { Modal as SistentModal } from '@sistent/sistent';
 import Filter from '../../public/static/img/drawer-icons/filter_svg';
@@ -226,21 +226,15 @@ function FiltersGrid({
             <GridNoTextStyles align="center" color="textSecondary">
               No Filters Found
             </GridNoTextStyles>
-            <div>
+            <div style={{ marginRight: '2rem' }}>
               <Button
                 aria-label="Add Application"
                 variant="contained"
                 color="primary"
-                disabled={
-                  !CAN(
-                    Keys.CatalogManagementImportFilter.id,
-                    Keys.CatalogManagementImportFilter.function,
-                  )
-                }
+                permissionKey={Keys.CatalogManagementImportFilter}
                 size="large"
                 // @ts-ignore
                 onClick={handleUploadImport}
-                style={{ marginRight: '2rem' }}
               >
                 <GridAddIconStyles />
                 Import Filter

@@ -283,17 +283,12 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
 
   useEffect(() => {
     if (publishSchema) {
-      const newUiSchema = {
-        ...publishSchema.uiSchema,
-        // Force a multi-select dropdown for the compatibility/Technology field.
-        // RJSF v5 auto-selects CheckboxesWidget when schema has uniqueItems:true + items.enum,
-        // which causes formData.compatibility to be submitted as a string instead of an array.
-        // Explicitly setting 'ui:widget': 'select' restores multi-select array behaviour.
-        compatibility: {
-          ...(publishSchema.uiSchema?.compatibility || {}),
-          'ui:widget': 'select',
-        },
-      };
+      // The compatibility/Technology field's `ui:widget: select` is defined in
+      // the canonical catalog form UI schema in meshery/schemas
+      // (constructs/v1beta2/catalog/forms/publish.ui.json), so it flows in via
+      // publishSchema.uiSchema. Do not re-patch it here - keeping presentation
+      // in the construct's schema is the single source of truth.
+      const newUiSchema = { ...publishSchema.uiSchema };
 
       if (isReadOnly) {
         newUiSchema['ui:readonly'] = true;

@@ -53,7 +53,7 @@ vi.mock('../../shared/Modal/Information/InfoModal', () => ({
   default: () => <div data-testid="info-modal" />,
 }));
 
-vi.mock('../../PromptComponent', () => ({
+vi.mock('../../general/PromptComponent', () => ({
   default: React.forwardRef(() => <div data-testid="prompt" />),
 }));
 
