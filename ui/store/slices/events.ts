@@ -32,6 +32,11 @@ const defaultEventProperties = {
   status: STATUS.UNREAD,
 };
 
+/**
+ * Determines if an event should be visible in the current view based on active filters and deletion status.
+ * This function also governs the bulk selection ("Select All") behavior, ensuring that bulk selection
+ * applies only to notifications visible under the current filters and strictly excludes deleted notifications.
+ */
 const isEventVisibleInView = (event, currentFilters = {}) => {
   const shouldBeInCurrentFilteredView = currentFilters.status
     ? currentFilters.status == event.status
