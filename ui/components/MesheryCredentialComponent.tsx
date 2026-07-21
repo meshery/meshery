@@ -144,11 +144,9 @@ const MesheryCredentialComponent: React.FC = () => {
         return (
           <CredentialIcon
             src={
-              connectionMetadataState
-                ? normalizeStaticImagePath(
-                    connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon,
-                  )
-                : ''
+              normalizeStaticImagePath(
+                connectionMetadataState?.[CONNECTION_KINDS.KUBERNETES]?.icon,
+              ) || undefined
             }
           />
         );
