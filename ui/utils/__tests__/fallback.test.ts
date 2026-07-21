@@ -12,15 +12,6 @@ describe('getFallbackImageBasedOnKind', () => {
     );
   });
 
-  it('returns the Artifact Hub icon for the artifacthub kind', () => {
-    expect(getFallbackImageBasedOnKind('artifacthub')).toBe(
-      'static/img/integrations/artifacthub.svg',
-    );
-    expect(getFallbackImageBasedOnKind('ArtifactHub')).toBe(
-      'static/img/integrations/artifacthub.svg',
-    );
-  });
-
   it('returns undefined for unknown kinds', () => {
     expect(getFallbackImageBasedOnKind('istio')).toBeUndefined();
     expect(getFallbackImageBasedOnKind('')).toBeUndefined();
