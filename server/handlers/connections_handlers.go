@@ -417,6 +417,11 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		writeMeshkitError(w, ErrRequestBody(err), http.StatusInternalServerError)
 		return
 	}
+	var (
+		oldDeploymentMode     connections.MeshsyncDeploymentMode
+		newDeploymentMode     connections.MeshsyncDeploymentMode
+		deploymentModeChanged bool
+	)
 
 	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
 
@@ -429,6 +434,55 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
+	// Check if meshsync deployment mode is specified in the payload metadata.
+	// Only handle mode changes if a mode is explicitly provided (not undefined).
+	// In fact this method is used (for now) only for perform meshsync deployment mode change.
+	// If mode change fails return error.
+	// TODO: also check that kind = "kubernetes" (when client starts to send full connection object)
+	if connections.MeshsyncDeploymentModeFromMetadata(connection.MetaData) != connections.MeshsyncDeploymentModeUndefined {
+		// Handle meshsync deployment mode changes before connection update
+		token, _ := req.Context().Value(models.TokenCtxKey).(string)
+		oldMode, newMode, modeChanged, err := h.handleMeshSyncDeploymentModeChange(
+			req.Context(),
+			connectionID,
+			connection,
+			token,
+			userID,
+			provider,
+		)
+		if err != nil {
+			meshSyncErr := fmt.Errorf("error handling meshsync deployment mode change: %w", err)
+			metadata := map[string]any{
+				"error":        meshSyncErr,
+				"connectionId": connectionID,
+			}
+			event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to handle meshsync deployment mode change").WithMetadata(metadata).Build()
+			_ = provider.PersistEvent(*event, token)
+			go h.config.EventBroadcaster.Publish(userID, event)
+
+			h.log.Error(meshSyncErr)
+			writeMeshkitError(w, meshSyncErr, http.StatusInternalServerError)
+			return
+		}
+
+		// Log and emit event if mode actually changed
+		if modeChanged {
+			oldDeploymentMode = oldMode
+			newDeploymentMode = newMode
+			deploymentModeChanged = modeChanged
+			description := fmt.Sprintf("MeshSync deployment mode changed from '%s' to '%s' for connection %s", oldMode, newMode, connectionID)
+			metadata := map[string]any{
+				"meshsyncDeploymentModeOld": oldMode,
+				"meshsyncDeploymentModeNew": newMode,
+				"connectionId":              connectionID,
+			}
+			event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
+			_ = provider.PersistEvent(*event, token)
+			go h.config.EventBroadcaster.Publish(userID, event)
+
+			h.log.Info(description)
+		}
+	}
 	// MeshSync deployment-mode changes are handled by the dedicated
 	// POST /api/integrations/connections/{connectionId}/actions endpoint
 	// (PerformConnectionAction), which owns the metadata merge and cluster-side
@@ -468,6 +522,14 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 
 	// TODO enhance event with information about meshsync deployment mode change
 	description := fmt.Sprintf("Connection %s updated.", updatedConnection.Name)
+	if deploymentModeChanged {
+		description = fmt.Sprintf(
+			"Connection %s updated. MeshSync deployment mode changed from '%s' to '%s'.",
+			updatedConnection.Name,
+			oldDeploymentMode,
+			newDeploymentMode,
+		)
+	}
 	eventBuilder = eventBuilder.WithDescription(description)
 
 	if connection.Status != "" {
