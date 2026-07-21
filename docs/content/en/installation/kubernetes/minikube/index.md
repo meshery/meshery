@@ -159,7 +159,7 @@ Next, run the following command to configure Meshery to access your cluster.
 
 {{< code code="mesheryctl connection create --type minikube" >}}
 
-**Note**: An alternative to running the mesheryctl connection create --type minikube command for Meshery to discover your cluster is manually uploading your config file to the UI.
+**Note**: An alternative to running the `mesheryctl connection create --type minikube` command for Meshery to discover your cluster is manually uploading your config file to the UI.
 
 # Uploading Configuration File in the Meshery Web UI
 

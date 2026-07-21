@@ -88,13 +88,7 @@ Then open the Meshery UI (default: [`http://localhost:9081`](http://localhost:90
 
 #### Prerequisite
 
-Create a cert-manager that is necessary for deployment of Azure Service operator
-
-<pre class="codeblock-pre"><div class="codeblock">
-kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
-</code>
-</div></pre>
-
+Ensure cert-manager is installed in your cluster. It is required for deployment of Azure Service Operator.
 
 #### 3.1 Deploy ASO Operator
 

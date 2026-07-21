@@ -15,7 +15,7 @@ Manage your Kubernetes clusters with Meshery. Deploy Meshery in Kubernetes [in-c
 
 <div class="prereqs"><h4>Prerequisites</h4>
   <ol>
-    <li>Install the Meshery command line client, <a href="{{< ref "/installation/mesheryctl/_index.md" >}}" class="meshery-light">mesheryctl</a>.</li>
+    <li>Install the Meshery command line client, <a href="{{< ref "installation/mesheryctl/_index.md" >}}" class="meshery-light">mesheryctl</a>.</li>
     <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> on your local machine.</li>
     <li>Access to an active Kubernetes cluster.</li>
   </ol>
@@ -33,7 +33,6 @@ Manage your Kubernetes clusters with Meshery. Deploy Meshery in Kubernetes [in-c
 - [Out-of-cluster Installation](#out-of-cluster-installation)
   - [Set up Ingress on Minikube with the NGINX Ingress Controller](#set-up-ingress-on-minikube-with-the-nginx-ingress-controller)
   - [Installing cert-manager with kubectl](#installing-cert-manager-with-kubectl)
-    - [See Also](#see-also)
 
 # In-cluster Installation
 
@@ -63,7 +62,7 @@ For detailed instructions on installing Meshery using Helm V3, please refer to t
 
 ## Post-Installation Steps
 
-Optionally, you can verify the health of your Meshery deployment using <a href='{{< ref "/reference/references/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
+Optionally, you can verify the health of your Meshery deployment using <a href='{{< ref "reference/references/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
 
 You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 
@@ -84,7 +83,7 @@ If the `Service` was previously set to another type (for example, `ClusterIP`), 
 {{< code code=`kubectl patch service meshery --namespace meshery --type merge -p '{"spec":{"type":"LoadBalancer"}}'` >}}
 
 {{% alert title="EXTERNAL-IP not assigned?" color="warning" %}}
-A `LoadBalancer` `Service` is only assigned an external address when the cluster runs a load balancer controller. Managed clouds provide one out of the box; bare-metal and local clusters (for example, Minikube or kind) do not. On those clusters, install a load balancer implementation such as [MetalLB](https://metallb.universe.tf/), expose Meshery through a `NodePort` `Service` instead, or reach the UI with port-forwarding by following the [mesheryctl system dashboard]({{< ref "/reference/references/mesheryctl/system/dashboard.md" >}}) guide.
+A `LoadBalancer` `Service` is only assigned an external address when the cluster runs a load balancer controller. Managed clouds provide one out of the box; bare-metal and local clusters (for example, Minikube or kind) do not. On those clusters, install a load balancer implementation such as [MetalLB](https://metallb.universe.tf/), expose Meshery through a `NodePort` `Service` instead, or reach the UI with port-forwarding by following the [mesheryctl system dashboard]({{< ref "reference/references/mesheryctl/system/dashboard.md" >}}) guide.
 {{% /alert %}}
 
 # Out-of-cluster Installation
@@ -113,10 +112,7 @@ Install Meshery on Docker (out-of-cluster) and connect it to your Kubernetes clu
 
 ## Installing cert-manager with kubectl
 
-- Run the below command to install cert-manager for your cluster:
-
-{{< code code="kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml" >}}
+- Install cert-manager for your cluster if it is not already present.
 
 {{< related-discussions tag="meshery" >}}
 
-### See Also 
