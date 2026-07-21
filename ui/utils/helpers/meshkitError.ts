@@ -3,7 +3,7 @@ import type { MeshkitError, MeshkitFetchBaseQueryError } from '@meshery/schemas/
 /**
  * Result of formatting an RTK Query error for the user-facing notification
  * layer. The notification system renders `message` through `BasicMarkdown`
- * (see `ThemeResponsiveSnackbar` in `themes/App.styles.tsx`), which means the
+ * (see `ThemeResponsiveSnackbar` in `theme/snackbar.tsx`), which means the
  * formatter can use markdown — bold, lists, italics — to surface multiple
  * lines of MeshKit metadata in a single toast.
  */
