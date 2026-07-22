@@ -92,7 +92,7 @@ const View = ({ setView, resource, k8sConfig }: DashboardViewProps) => {
   if (!resource) return null;
 
   const context = getK8sContextFromClusterId(resource.cluster_id, k8sConfig);
-  const connection = connections?.connections.find((conn) => conn.id === context?.connectionId);
+  const connection = connections?.connections?.find((conn) => conn.id === context?.connectionId);
   const connectionStatus = connection?.status || CONNECTION_STATES.DISCONNECTED;
   const iconSrc = normalizeStaticImagePath(resource.component_metadata?.styles?.svgColor);
 
