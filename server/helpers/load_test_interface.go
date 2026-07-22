@@ -4,9 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
-	"time"
 
 	"fortio.org/fortio/fgrpc"
 	"fortio.org/fortio/fhttp"
@@ -84,20 +82,14 @@ func FortioLoadTest(opts *models.LoadTestOptions, log logger.Handler) (map[strin
 	}
 	log.Debug(fmt.Sprintf("original version of the test: %+#v", res))
 
-	var result *periodic.RunnerResults
-	var bd []byte
-	if opts.SupportedLoadTestMethods == 2 {
-		gres, _ := res.(*fgrpc.GRPCRunnerResults)
-		bd, err = json.Marshal(gres)
-		result = gres.Result()
-	} else {
-		hres, _ := res.(*fhttp.HTTPRunnerResults)
-		bd, err = json.Marshal(hres)
-		result = hres.Result()
-	}
+	// res already holds the concrete *GRPCRunnerResults/*HTTPRunnerResults
+	// value behind the HasRunnerResult interface, so it can be marshaled
+	// and have Result() called on it directly without re-asserting the type.
+	bd, err := json.Marshal(res)
 	if err != nil {
 		return nil, nil, ErrConvertingResultToMap(err)
 	}
+	result := res.Result()
 
 	resultsMap := map[string]interface{}{}
 	err = json.Unmarshal(bd, &resultsMap)
@@ -106,44 +98,6 @@ func FortioLoadTest(opts *models.LoadTestOptions, log logger.Handler) (map[strin
 	}
 	log.Debug(fmt.Sprintf("Mapped version of the test: %+#v", resultsMap))
 	return resultsMap, result, nil
-}
-
-type HTTPRunnerResults fhttp.HTTPRunnerResults
-
-func (r *HTTPRunnerResults) UnmarshalJSON(data []byte) error {
-	type HTTPRunnerResultsAlias HTTPRunnerResults
-	rr := &struct {
-		*HTTPRunnerResultsAlias
-		RequestedQPS      int
-		ActualDuration    interface{}
-		RetCodes          interface{}
-		Sizes             interface{}
-		HeaderSizes       interface{}
-		DurationHistogram interface{}
-	}{
-		HTTPRunnerResultsAlias: (*HTTPRunnerResultsAlias)(r),
-	}
-
-	if err := json.Unmarshal(data, &rr); err != nil {
-		return err
-	}
-	r.RequestedQPS = fmt.Sprint(rr.RequestedQPS)
-
-	updatedMap := make(map[int]int64)
-	marshalledMap := rr.RetCodes.(map[string]interface{})
-
-	for k, v := range marshalledMap {
-		key, _ := strconv.Atoi(k)
-		val, ok := v.(uint64)
-		if ok {
-			updatedMap[key] = int64(val)
-		}
-	}
-
-	duration := rr.ActualDuration.(float64)
-	r.ActualDuration = time.Duration(duration * 1e9)
-	r.RetCodes = updatedMap
-	return nil
 }
 
 // sharedHTTPOptions is the flag->httpoptions transfer code shared between

@@ -56,19 +56,38 @@ func (a *AdaptersTracker) RemoveAdapter(_ context.Context, adapter models.Adapte
 	delete(a.adapters, adapter.Location)
 }
 
+// findInClusterK8sContext returns the "in-cluster" K8sContext out of the
+// contexts stashed on the request context, or ErrNoInClusterK8sContext if
+// none is present.
+func findInClusterK8sContext(ctx context.Context) (models.K8sContext, error) {
+	allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
+	if !ok || len(allContexts) == 0 {
+		return models.K8sContext{}, ErrNoInClusterK8sContext()
+	}
+	for _, k8sctxPtr := range allContexts {
+		if k8sctxPtr == nil {
+			continue
+		}
+		if k8sctxPtr.Name == "in-cluster" {
+			return *k8sctxPtr, nil
+		}
+	}
+	return models.K8sContext{}, ErrNoInClusterK8sContext()
+}
+
 // GetAdapters returns the list of existing adapters
 func (a *AdaptersTracker) GetAdapters(_ context.Context) []models.Adapter {
 	a.adaptersLock.Lock()
 	defer a.adaptersLock.Unlock()
 
-	ad := make([]models.Adapter, 0)
+	ad := make([]models.Adapter, 0, len(a.adapters))
 	for _, x := range a.adapters {
 		ad = append(ad, x)
 	}
 	return ad
 }
 
-// AddAdapter is used to add new adapters to the collection
+// DeployAdapter deploys the given adapter to the currently configured platform (docker or kubernetes)
 func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adapter) (err error) {
 	platform := utils.GetPlatform()
 
@@ -117,11 +136,11 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 			return ErrDeployingAdapterInDocker(fmt.Errorf("meshery network not found"))
 		}
 
+		nets, err := cli.NetworkList(ctx, network.ListOptions{})
+		if err != nil {
+			return ErrDeployingAdapterInDocker(err)
+		}
 		for netName := range mesheryNetworkSettings.Networks {
-			nets, err := cli.NetworkList(ctx, network.ListOptions{})
-			if err != nil {
-				return ErrDeployingAdapterInDocker(err)
-			}
 			for _, net := range nets {
 				if net.Name == netName {
 					// Create and start the container
@@ -172,21 +191,9 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		if err != nil {
 			return ErrDeployingAdapterInK8s(err)
 		}
-		var k8scontext models.K8sContext
-		allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
-		if !ok || len(allContexts) == 0 {
-			fmt.Println("No context found")
-			return ErrDeployingAdapterInK8s(fmt.Errorf("no context found"))
-		}
-		for _, k8sctxPtr := range allContexts {
-			if k8sctxPtr == nil {
-				continue
-			}
-			k8sctx := *k8sctxPtr
-			if k8sctx.Name == "in-cluster" {
-				k8scontext = k8sctx
-				break
-			}
+		k8scontext, err := findInClusterK8sContext(ctx)
+		if err != nil {
+			return ErrDeployingAdapterInK8s(err)
 		}
 
 		kubeclient, err := k8scontext.GenerateKubeHandler()
@@ -221,7 +228,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 	return nil
 }
 
-// RemoveAdapter is used to remove existing adapters from the collection
+// UndeployAdapter undeploys the given adapter from the currently configured platform (docker or kubernetes)
 func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Adapter) (err error) {
 	platform := utils.GetPlatform()
 
@@ -270,22 +277,9 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 		if err != nil {
 			return ErrUnDeployingAdapterInK8s(err)
 		}
-		var k8scontext models.K8sContext
-		allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
-		if !ok || len(allContexts) == 0 {
-			fmt.Println("No context found")
-			return ErrUnDeployingAdapterInK8s(fmt.Errorf("no context found"))
-		}
-		for _, k8sctxPtr := range allContexts {
-			if k8sctxPtr == nil {
-				continue
-			}
-			k8sctx := *k8sctxPtr
-			if k8sctx.Name == "in-cluster" {
-				k8scontext = k8sctx
-				break
-			}
-
+		k8scontext, err := findInClusterK8sContext(ctx)
+		if err != nil {
+			return ErrUnDeployingAdapterInK8s(err)
 		}
 		kubeclient, err := k8scontext.GenerateKubeHandler()
 		if err != nil {

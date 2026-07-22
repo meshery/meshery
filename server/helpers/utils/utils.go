@@ -1,20 +1,14 @@
 package utils
 
 import (
-	"database/sql/driver"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"html/template"
 	"io"
-	"net/http"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strconv"
 	"strings"
 
-	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta3/component"
@@ -135,16 +129,10 @@ func FlattenMap(prefix string, src map[string]interface{}, dest map[string]inter
 //
 // If the conversion fails then returns an empty map
 func ToMapStringInterface(mp interface{}) map[string]interface{} {
-	byt, err := json.Marshal(mp)
+	res, err := utils.MarshalAndUnmarshal[interface{}, map[string]interface{}](mp)
 	if err != nil {
 		return map[string]interface{}{}
 	}
-
-	res := map[string]interface{}{}
-	if err := json.Unmarshal(byt, &res); err != nil {
-		return map[string]interface{}{}
-	}
-
 	return res
 }
 
@@ -152,7 +140,6 @@ const UI = "../../ui/public/static/img/meshmodels" //Relative to cmd/main.go
 var UISVGPaths = make([]string, 1)
 
 func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename string) (svgColorPath, svgWhitePath, svgCompletePath string) {
-
 	filename = strings.ToLower(filename)
 	successCreatingDirectory := false
 	defer func() {
@@ -160,72 +147,38 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 			UISVGPaths = append(UISVGPaths, filepath.Join(UI, dirname))
 		}
 	}()
-	if svgColor != "" {
-		path := filepath.Join(UI, dirname, "color")
-		err := os.MkdirAll(path, 0777)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		successCreatingDirectory = true
 
-		f, err := os.Create(filepath.Join(path, filename+"-color.svg"))
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		_, err = f.WriteString(svgColor)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		svgColorPath = getRelativePathForAPI(filepath.Join(dirname, "color", filename+"-color.svg")) //Replace the actual SVG with path to SVG
-
+	variants := []struct {
+		data   string
+		suffix string
+		out    *string
+	}{
+		{svgColor, "color", &svgColorPath},
+		{svgWhite, "white", &svgWhitePath},
+		{svgComplete, "complete", &svgCompletePath},
 	}
-
-	if svgWhite != "" {
-		path := filepath.Join(UI, dirname, "white")
-		err := os.MkdirAll(path, 0777)
-		if err != nil {
+	for _, variant := range variants {
+		if variant.data == "" {
+			continue
+		}
+		path := filepath.Join(UI, dirname, variant.suffix)
+		if err := os.MkdirAll(path, 0777); err != nil {
 			fmt.Println(err)
 			return
 		}
 		successCreatingDirectory = true
 
-		f, err := os.Create(filepath.Join(path, filename+"-white.svg"))
+		svgFileName := filename + "-" + variant.suffix + ".svg"
+		f, err := os.Create(filepath.Join(path, svgFileName))
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		_, err = f.WriteString(svgWhite)
-		if err != nil {
+		if _, err := f.WriteString(variant.data); err != nil {
 			fmt.Println(err)
 			return
 		}
-		svgWhitePath = getRelativePathForAPI(filepath.Join(dirname, "white", filename+"-white.svg")) //Replace the actual SVG with path to SVG
-
-	}
-	if svgComplete != "" {
-		path := filepath.Join(UI, dirname, "complete")
-		err := os.MkdirAll(path, 0777)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		successCreatingDirectory = true
-
-		f, err := os.Create(filepath.Join(path, filename+"-complete.svg"))
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		_, err = f.WriteString(svgComplete)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		svgCompletePath = getRelativePathForAPI(filepath.Join(dirname, "complete", filename+"-complete.svg")) //Replace the actual SVG with path to SVG
-
+		*variant.out = getRelativePathForAPI(filepath.Join(dirname, variant.suffix, svgFileName)) //Replace the actual SVG with path to SVG
 	}
 	return
 }
@@ -304,72 +257,7 @@ func isRunningInContainer() bool {
 
 func SanitizeFileName(fileName string) string {
 	extensionIndex := strings.LastIndex(fileName, ".")
-	tempPath := strings.Split(fileName, "")
-
-	finalPath := tempPath[:extensionIndex]
-	suffixPath := strings.Join(tempPath[(extensionIndex+1):len(fileName)], "")
-	finalPath = append(finalPath, "-*.", suffixPath)
-	return strings.Join(finalPath, "")
-}
-
-func GetComponentFieldPathFromK8sFieldPath(path string) (newpath string) {
-	if strings.HasPrefix(path, "metadata.") {
-		path = strings.TrimPrefix(path, "metadata.")
-		paths := strings.Split(path, ".")
-		if len(paths) != 0 {
-			if paths[0] == "name" || paths[0] == "namespace" || paths[0] == "labels" || paths[0] == "annotations" {
-				return paths[0]
-			}
-		}
-		return
-	}
-	return fmt.Sprintf("%s.%s", "settings", path)
-}
-
-// Prunes the diff part present in the k8s response message.
-// Diff corresponds to the previous change and applied change, and doesn't contain any info which can be helpful to the user.
-// If we want we can show this in a CodeEditor component.
-func FormatK8sMessage(message string) string {
-	exp, err := regexp.Compile(`(/?[a-zA-Z]).*\n([-,+])+`)
-	if err != nil {
-		return message
-	}
-	index := exp.FindStringIndex(message)
-	if index == nil {
-		return message
-	}
-	// If index is not nil, there will always be an array of length 2.
-	// 0th index since we want the start index of matched string.
-	return message[:index[0]]
-}
-
-func MarshalAndUnmarshal[k any, v any](val k) (unmarshalledvalue v, err error) {
-	data, err := utils.Marshal(val)
-	if err != nil {
-		return
-	}
-
-	err = encoding.Unmarshal([]byte(data), &unmarshalledvalue)
-	if err != nil {
-		return
-	}
-	return
-}
-
-type JSONMap map[string]interface{}
-
-// Value converts the JSON map to a database value.
-func (j JSONMap) Value() (driver.Value, error) {
-	return json.Marshal(j)
-}
-
-// Scan converts the database value to a JSON map.
-func (j *JSONMap) Scan(value interface{}) error {
-	bytes, ok := value.([]byte)
-	if !ok {
-		return errors.New("type assertion to []byte failed")
-	}
-	return json.Unmarshal(bytes, j)
+	return fileName[:extensionIndex] + "-*" + fileName[extensionIndex:]
 }
 
 // ApplyFilters applies dynamic filters to the GORM query
@@ -405,30 +293,6 @@ func FormatToTitleCase(s string) string {
 	c := cases.Title(language.English)
 	return c.String(s)
 }
-func ExtractFile(filePath string, destDir string) error {
-
-	if utils.IsTarGz(filePath) {
-		return utils.ExtractTarGz(destDir, filePath)
-	} else if utils.IsZip(filePath) {
-		return utils.ExtractZip(destDir, filePath)
-	}
-	return utils.ErrExtractType
-}
-func ConvertToJSONCompatible(data interface{}) interface{} {
-	switch v := data.(type) {
-	case map[interface{}]interface{}:
-		m := make(map[string]interface{})
-		for key, value := range v {
-			m[key.(string)] = ConvertToJSONCompatible(value)
-		}
-		return m
-	case []interface{}:
-		for i, item := range v {
-			v[i] = ConvertToJSONCompatible(item)
-		}
-	}
-	return data
-}
 func ReplaceSVGData(model *model.ModelDefinition) error {
 	// Function to read SVG data from file
 	readSVGData := func(path string) (string, error) {
@@ -439,25 +303,29 @@ func ReplaceSVGData(model *model.ModelDefinition) error {
 		}
 		return string(svgData), nil
 	}
+	// replaceIfSet overwrites *field with the SVG data found at *field's
+	// current value (a path), leaving it untouched if empty.
+	replaceIfSet := func(field *string) error {
+		if *field == "" {
+			return nil
+		}
+		svgData, err := readSVGData(*field)
+		if err != nil {
+			return err
+		}
+		*field = svgData
+		return nil
+	}
 
 	// Replace SVG paths with actual data in metadata
 	metadata := model.Metadata
-	if metadata.SvgColor != "" {
-		svgData, err := readSVGData(metadata.SvgColor)
-		if err == nil {
-			metadata.SvgColor = svgData
-		} else {
-			return err
-		}
+	if err := replaceIfSet(&metadata.SvgColor); err != nil {
+		return err
 	}
-	if metadata.SvgWhite != "" {
-		svgData, err := readSVGData(metadata.SvgWhite)
-		if err == nil {
-			metadata.SvgWhite = svgData
-		} else {
-			return err
-		}
+	if err := replaceIfSet(&metadata.SvgWhite); err != nil {
+		return err
 	}
+
 	components, ok := model.Components.([]component.ComponentDefinition)
 	if !ok {
 		return fmt.Errorf("invalid type for Components field")
@@ -466,16 +334,10 @@ func ReplaceSVGData(model *model.ModelDefinition) error {
 	for i := range components {
 		compStyle := components[i].Styles
 		if compStyle != nil {
-			svgColor, err := readSVGData(compStyle.SvgColor)
-			if err == nil {
-				compStyle.SvgColor = svgColor
-			} else {
+			if err := replaceIfSet(&compStyle.SvgColor); err != nil {
 				return err
 			}
-			svgWhite, err := readSVGData(compStyle.SvgWhite)
-			if err == nil {
-				compStyle.SvgWhite = svgWhite
-			} else {
+			if err := replaceIfSet(&compStyle.SvgWhite); err != nil {
 				return err
 			}
 		}
@@ -558,13 +420,4 @@ func copyFile(src, dst string) (err error) {
 		return err
 	}
 	return os.Chmod(dst, srcInfo.Mode())
-}
-
-func WriteEscaped(w http.ResponseWriter, data []byte, contentType string) (int, error) {
-	if contentType == "" {
-		contentType = "text/plain; charset=utf-8"
-	}
-	w.Header().Set("Content-Type", contentType)
-	escaped := template.HTMLEscapeString(string(data))
-	return w.Write([]byte(escaped))
 }
