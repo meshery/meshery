@@ -203,6 +203,10 @@ make helm-docs      # Generate Helm chart docs
 - Only `utils.Log.Error(err)` renders a MeshKit error's code, cause and remediation; cobra's
   default print shows just the message. In `mesheryctl` commands, log the structured error
   for the user *and* return it for the exit path.
+- Server handler error paths: never reuse another operation's error code, and never hardcode the
+  HTTP status of a provider failure - read it back with `providerStatus(err)`
+  (`server/handlers/utils.go`), which defaults to 502, not 404. Both rules and the JSON wire shape
+  are in `docs/content/en/project/contributing/error-contract.md`.
 - Tests in `*_test.go`; manage deps with `go mod tidy`.
 
 ### JavaScript/React

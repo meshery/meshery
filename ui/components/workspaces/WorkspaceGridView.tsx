@@ -18,6 +18,7 @@ import { useDeleteWorkspaceMutation } from '@/rtk-query/workspace';
 import { Keys } from '@meshery/schemas/permissions';
 import CAN from '@/utils/can';
 import { useNotificationHandlers } from '@/utils/hooks/useNotification';
+import { formatApiError } from '../../utils/helpers/meshkitError';
 import { UserCommonBox } from './styles';
 import MesheryWorkspaceCard from './MesheryWorkspaceCard';
 import { debounce } from 'lodash';
@@ -49,7 +50,9 @@ const WorkspaceGridView = ({
     })
       .unwrap()
       .then(() => handleSuccess(`Workspace deleted`))
-      .catch((error) => handleError(`Workspace Delete Error: ${error?.data}`));
+      // `${error?.data}` rendered the JSON error envelope as "[object Object]".
+      // formatApiError unpacks the MeshKit code, cause and remediation instead.
+      .catch((error) => handleError(formatApiError(error, 'Unable to delete workspace').message));
   };
 
   const handleBulkDeleteEnv = () => {

@@ -17,6 +17,7 @@ import EnvironmentCard from './environment-card';
 import EnvironmentIcon from '../../assets/icons/Environment';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
+import { formatApiError } from '../../utils/helpers/meshkitError';
 import { RJSFModalWrapper } from '../shared/Modal/Modal';
 import _PromptComponent from '../general/PromptComponent';
 import { EmptyState } from '../lifecycle/general';
@@ -155,17 +156,47 @@ const Environments = () => {
     setEnvironmentConnectionsData((prevData) => [...prevData, ...environmentConnectionsDataRtk]);
   }, [environmentConnections]);
 
+  /**
+   * Surface a failed environment operation.
+   *
+   * This used to be a curried `handleError(action) => (error) => ...`, but
+   * every call site invoked it as `handleError('some message')` - producing a
+   * function that was then thrown away, so the error toast never appeared.
+   * It also read `action.error_msg` off a plain string, which is always
+   * undefined. Both are gone: this is a plain two-argument function, so
+   * misuse is a syntax-level mistake rather than a silent no-op.
+   *
+   * `formatApiError` consumes the MeshKit envelope the server now sends
+   * (code, probable cause, suggested remediation) and renders it as the
+   * markdown that `notify` displays through BasicMarkdown.
+   */
+  const handleError = (action, error) => {
+    updateProgress({ showProgress: false });
+    const { message, meshkit } = formatApiError(error, action);
+    notify({
+      message,
+      event_type: EVENT_TYPES.ERROR,
+      details: meshkit?.probableCause?.join('\n') || message,
+    });
+  };
+
+  const handleSuccess = (msg) => {
+    updateProgress({ showProgress: false });
+    notify({
+      message: msg,
+      event_type: EVENT_TYPES.SUCCESS,
+    });
+  };
+
   useEffect(() => {
     if (isEnvironmentsError) {
-      handleError(`Environments Fetching Error: ${environmentsError?.data}`);
+      handleError('Unable to fetch environments', environmentsError);
     }
     if (isEnvironmentConnectionsError) {
-      handleError(
-        `Connections of a Environment fetching Error: ${environmentConnectionsError?.data}`,
-      );
+      handleError("Unable to fetch an environment's connections", environmentConnectionsError);
     }
     if (isConnectionsError) {
-      handleError(`Connections fetching Error: ${connectionsError?.data}`);
+      handleError('Unable to fetch connections', connectionsError);
     }
   }, [
     isEnvironmentsError,
@@ -175,25 +206,6 @@ const Environments = () => {
     environmentConnectionsError,
     connectionsError,
   ]);
-
-  function handleError(action) {
-    return (error) => {
-      updateProgress({ showProgress: false });
-      notify({
-        message: `${action.error_msg}: ${error}`,
-        event_type: EVENT_TYPES.ERROR,
-        details: error.toString(),
-      });
-    };
-  }
-
-  const handleSuccess = (msg) => {
-    updateProgress({ showProgress: false });
-    notify({
-      message: msg,
-      event_type: EVENT_TYPES.SUCCESS,
-    });
-  };
 
   useEffect(() => {
     setOrgId(organization?.id);
@@ -217,13 +229,17 @@ const Environments = () => {
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
 
-  const addConnectionToEnvironment = async (environmentId, connectionId) => {
-    addConnectionToEnvironmentMutator({ environmentId, connectionId });
-  };
+  // Both mutators previously fired and discarded the returned promise, so a
+  // rejected assignment left the transfer list looking like it had succeeded.
+  const addConnectionToEnvironment = (environmentId, connectionId) =>
+    addConnectionToEnvironmentMutator({ environmentId, connectionId })
+      .unwrap()
+      .catch((error) => handleError('Unable to assign connection to environment', error));
 
-  const removeConnectionFromEnvironment = (environmentId, connectionId) => {
-    removeConnectionFromEnvMutator({ environmentId, connectionId });
-  };
+  const removeConnectionFromEnvironment = (environmentId, connectionId) =>
+    removeConnectionFromEnvMutator({ environmentId, connectionId })
+      .unwrap()
+      .catch((error) => handleError('Unable to remove connection from environment', error));
 
   const handleEnvironmentModalOpen = (e, actionType, envObject) => {
     e.stopPropagation();
@@ -264,8 +280,12 @@ const Environments = () => {
       },
     })
       .unwrap()
-      .then(handleSuccess(`Environment "${name}" created `))
-      .catch((error) => handleError(`Environment Create Error: ${error?.data}`));
+      // `.then(handleSuccess(...))` - note the immediate call - ran the success
+      // notification while the callback was still being constructed, so a
+      // rejected create still showed "Environment created". It must stay a
+      // deferred callback.
+      .then(() => handleSuccess(`Environment "${name}" created`))
+      .catch((error) => handleError(`Unable to create environment "${name}"`, error));
     handleEnvironmentModalClose();
   };
 
@@ -279,8 +299,8 @@ const Environments = () => {
       },
     })
       .unwrap()
-      .then(handleSuccess(`Environment "${name}" updated`))
-      .catch((error) => handleError(`Environment Update Error: ${error?.data}`));
+      .then(() => handleSuccess(`Environment "${name}" updated`))
+      .catch((error) => handleError(`Unable to update environment "${name}"`, error));
     handleEnvironmentModalClose();
   };
 
@@ -305,8 +325,8 @@ const Environments = () => {
       environmentId: id,
     })
       .unwrap()
-      .then(handleSuccess(`Environment deleted`))
-      .catch((error) => handleError(`Environment Delete Error: ${error?.data}`));
+      .then(() => handleSuccess('Environment deleted'))
+      .catch((error) => handleError('Unable to delete environment', error));
   };
 
   const deleteEnvironmentModalContent = (environment) => (
