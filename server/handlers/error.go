@@ -215,6 +215,7 @@ const (
 	ErrTelemetryGrafanaAuthCode            = "meshery-server-1434"
 	ErrTelemetryPrometheusAuthCode         = "meshery-server-1435"
 	ErrMeshsyncReconcileCode               = "meshery-server-1442"
+	ErrUnsafeFilePathCode                  = "meshery-server-1443"
 )
 
 var (
@@ -800,6 +801,9 @@ func ErrServeSchema(err error) error {
 }
 func ErrInvalidFileRequest(err error) error {
 	return errors.New(ErrInvalidFileRequestCode, errors.Alert, []string{"Invalid file request"}, []string{err.Error()}, []string{"The provided file query parameter could not be decoded"}, []string{"Ensure the file parameter is a properly URL-encoded path"})
+}
+func ErrUnsafeFilePath(err error) error {
+	return errors.New(ErrUnsafeFilePathCode, errors.Alert, []string{"Unsafe file path requested"}, []string{err.Error()}, []string{"The requested file path resolves outside the directories these endpoints are permitted to serve (the Meshery log directory under ~/.meshery/logs)"}, []string{"Request only files that live under ~/.meshery/logs; paths outside it, or symlinks that escape it, are rejected"})
 }
 func ErrReadFileContent(err error, file string) error {
 	return errors.New(ErrReadFileContentCode, errors.Alert, []string{"Failed to read file content", file}, []string{err.Error()}, []string{"The file could not be opened or streamed to the response"}, []string{"Verify the file exists and the server has permission to read it"})

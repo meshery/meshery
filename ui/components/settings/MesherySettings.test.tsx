@@ -72,7 +72,7 @@ vi.mock('../MeshAdapterConfigComponent', () => ({
   default: () => <div data-testid="adapter-config" />,
 }));
 
-vi.mock('../PromptComponent', () => ({
+vi.mock('../general/PromptComponent', () => ({
   default: () => <div data-testid="prompt-component" />,
 }));
 

@@ -151,7 +151,7 @@ func sendEvaluationRequest(designPayload pattern.PatternFile) (*pattern.Evaluati
 
 	s := utils.CreateDefaultSpinner("Evaluating design", "")
 	s.Start()
-	resp, err := api.Add("api/meshmodels/relationships/evaluate", bytes.NewBuffer(payloadBytes), nil)
+	resp, err := api.Add("api/registry/relationships/evaluate", bytes.NewBuffer(payloadBytes), nil)
 	s.Stop()
 	if err != nil {
 		return nil, err
