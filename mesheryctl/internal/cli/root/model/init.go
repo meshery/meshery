@@ -39,7 +39,7 @@ mesheryctl model init [model-name] --version [version] (default is v0.1.0)
 mesheryctl model init [model-name] --path [path-to-location] (default is current folder)
 
 // generate a folder structure in json format
-mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is json)
+mesheryctl model init [model-name] --output-format [json|yaml] (default is json)
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &modelInitFlags)
@@ -121,6 +121,13 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 					if err != nil {
 						return ErrModelInit(err)
 					}
+					// Inject model name into the model definition file
+					if name == "model" {
+						content, err = initModelInjectModelName(content, modelInitFlags.OutputFormat, modelName)
+						if err != nil {
+							return ErrModelInit(err)
+						}
+					}
 					filePath := filepath.Join(
 
 						itemFolderPath,
@@ -172,7 +179,6 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 			return err
 		}
 
-		// TODO put a model name into generated model file
 		return nil
 	},
 }
@@ -195,9 +201,6 @@ const (
 // This constant is not currently in use.
 // const initModelTemplatePathConnection = "schemas/constructs/v1beta1/connection/connection_template"
 
-// TODO
-// if csv output is not directory based
-// should it have different text for csv output format?
 const initModelNextStepsText = `Next steps:
 1. cd {modelVersionFolder}
 2. Edit model.{outputFormat} to customize your model configuration
@@ -215,9 +218,6 @@ $ mesheryctl model build {modelName}/{modelVersion} --path {path}
 
 Detailed guide: https://docs.meshery.io/guides/creating-new-model-with-mesheryctl`
 
-// TODO
-// initModelData fits well for json and yaml format
-// if csv output is different (non folder based), will initModelData fit it?
 var initModelData = []struct {
 	folderPath string
 	files      map[string]string
@@ -286,13 +286,32 @@ func getTemplateInOutputFormat(templatePath string, outputFormat string) ([]byte
 		)
 	}
 
-	if outputFormat == "csv" {
-		// impossible to reach here, as outputFormat is validated in prerun
-		return nil, ErrModelUnsupportedOutputFormat("TODO implement csv")
-	}
-
 	// impossible to reach here, as outputFormat is validated in prerun
 	return nil, ErrModelUnsupportedOutputFormat("unsupported output format")
+}
+
+// initModelInjectModelName injects the model name and display name into the
+// generated model definition file content.
+// It replaces the placeholder name ("untitled-model") and displayName
+// ("Untitled Model") with values derived from the provided modelName.
+func initModelInjectModelName(content []byte, outputFormat string, modelName string) ([]byte, error) {
+	// derive a human-readable display name from the kebab-case model name
+	// e.g. "my-awesome-model" -> "My Awesome Model"
+	var words []string
+	for _, w := range strings.Split(modelName, "-") {
+		if len(w) > 0 {
+			words = append(words, strings.ToUpper(w[:1])+w[1:])
+		}
+	}
+	displayName := strings.Join(words, " ")
+
+	replacements := map[string]string{
+		"untitled-model": modelName,
+		"Untitled Model": displayName,
+	}
+
+	result := initModelReplacePlaceholders(string(content), replacements)
+	return []byte(result), nil
 }
 
 func initModelReplacePlaceholders(input string, replacements map[string]string) string {
