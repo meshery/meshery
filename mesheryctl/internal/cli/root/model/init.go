@@ -77,24 +77,36 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 
 		modelFolder := filepath.Join(path, modelName)
 		modelVersionFolder := filepath.Join(modelFolder, modelInitFlags.Version)
+		displayPath := modelDisplayPath(path)
+		displayModelFolder := modelDisplayPath(modelFolder)
+		displayModelVersionFolder := modelDisplayPath(modelVersionFolder)
 
 		{
 			// if model/version folder already exists return with error
 			info, err := os.Stat(modelVersionFolder)
-			if !os.IsNotExist(err) && info.IsDir() {
-				return ErrModelInitFromString(
-					fmt.Sprintf(
-						errInitFolderExists,
-						modelVersionFolder,
-					),
-				)
+			if err == nil {
+				if info.IsDir() {
+					return ErrModelInitFromString(
+						fmt.Sprintf(
+							errInitFolderExists,
+							displayModelVersionFolder,
+						),
+					)
+				}
+			} else if !os.IsNotExist(err) {
+				return ErrModelInit(err)
 			}
 		}
 
 		infoOnModelFolder, err := os.Stat(modelFolder)
 		// this indicates if model folder already exists (before we created it)
 		// this information will be used for clean up
-		isModelFolderAlreadyExists := !os.IsNotExist(err) && infoOnModelFolder.IsDir()
+		isModelFolderAlreadyExists := false
+		if err == nil {
+			isModelFolderAlreadyExists = infoOnModelFolder.IsDir()
+		} else if !os.IsNotExist(err) {
+			return ErrModelInit(err)
+		}
 
 		utils.Log.Infof("Creating directory structure...")
 		err = os.MkdirAll(modelVersionFolder, initModelDirPerm)
@@ -141,18 +153,18 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 					}
 				}
 			}
-			utils.Log.Infof("Created %s model at %s", modelName, modelFolder)
+			utils.Log.Infof("Created %s model at %s", modelName, displayModelFolder)
 			utils.Log.Info("")
 			utils.Log.Info(
 				initModelReplacePlaceholders(
 					initModelNextStepsText,
 					map[string]string{
-						"{path}":               path,
+						"{path}":               displayPath,
 						"{modelName}":          modelName,
 						"{modelVersion}":       modelInitFlags.Version,
-						"{modelFolder}":        modelFolder,
+						"{modelFolder}":        displayModelFolder,
 						"{outputFormat}":       modelInitFlags.OutputFormat,
-						"{modelVersionFolder}": modelVersionFolder,
+						"{modelVersionFolder}": displayModelVersionFolder,
 					},
 				),
 			)
@@ -162,11 +174,11 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 			utils.Log.Info("Failure, cleaning up...")
 			if !isModelFolderAlreadyExists {
 				// if model folder didn't exist before -> delete it
-				utils.Log.Infof("Removing %s", modelFolder)
+				utils.Log.Infof("Removing %s", displayModelFolder)
 				_ = os.RemoveAll(modelFolder)
 			} else {
 				// otherwise remove only version folder
-				utils.Log.Infof("Removing %s", modelVersionFolder)
+				utils.Log.Infof("Removing %s", displayModelVersionFolder)
 				_ = os.RemoveAll(modelVersionFolder)
 			}
 			return err

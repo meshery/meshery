@@ -75,7 +75,7 @@ mesheryctl model build [model-name]/[model-version]
 					errBuildUsage,
 					fmt.Sprintf(
 						errBuildFolderNotFound,
-						folder,
+						modelDisplayPath(folder),
 					),
 				)
 			}
@@ -119,7 +119,7 @@ mesheryctl model build [model-name]/[model-version]
 		// validation done above that args contains exactly one argument
 		folder := buildModelCompileFolderName(cmdModelBuildFlagsProvided.Path, name, version)
 
-		utils.Log.Infof("Building meshery model from path %s", folder)
+		utils.Log.Infof("Building meshery model from path %s", modelDisplayPath(folder))
 		img, errBuildImage := meshkitOci.BuildImage(folder)
 		if errBuildImage != nil {
 			return ErrModelBuild(errBuildImage)

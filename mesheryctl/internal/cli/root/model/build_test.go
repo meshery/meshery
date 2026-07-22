@@ -221,6 +221,20 @@ func TestModelBuild(t *testing.T) {
 			IsOutputGolden:   false,
 			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --path './%s': directory does not exist", buildTestNonExistentFolder)),
 		},
+		{
+			Name:             "given model folder does not exist when model build then throw error with display path",
+			Args:             []string{"build", buildTestNonExistentFolder + "/" + buildTestVersion, "--path", "."},
+			ExpectError:      true,
+			ExpectedResponse: "",
+			IsOutputGolden:   false,
+			ExpectedError: ErrModelBuildFromStrings(
+				errBuildUsage,
+				fmt.Sprintf(
+					errBuildFolderNotFound,
+					modelDisplayPath(filepath.Join(".", buildTestNonExistentFolder, buildTestVersion)),
+				),
+			),
+		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {

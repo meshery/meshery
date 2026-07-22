@@ -219,7 +219,7 @@ func TestModelInit(t *testing.T) {
 			ExpectedResponse:   "",
 			AfterTestRemoveDir: "./" + initTestEC2Controller,
 			IsOutputGolden:     false,
-			ExpectedError:      ErrModelInitFromString(fmt.Sprintf(errInitFolderExists, filepath.Join(initTestEC2Controller, initTestInvalidVersion))),
+			ExpectedError:      ErrModelInitFromString(fmt.Sprintf(errInitFolderExists, modelDisplayPath(filepath.Join(initTestEC2Controller, initTestInvalidVersion)))),
 		},
 		{
 			Name:             "given invalid version format when model init then throw error",
@@ -333,6 +333,41 @@ func TestModelInit(t *testing.T) {
 					}
 				}
 			}
+		})
+	}
+}
+
+func TestModelDisplayPath(t *testing.T) {
+	tests := []struct {
+		name     string
+		path     string
+		expected string
+	}{
+		{
+			name:     "empty path",
+			path:     "",
+			expected: ".",
+		},
+		{
+			name:     "slash path",
+			path:     "models/aws-controller/v0.1.0",
+			expected: "models/aws-controller/v0.1.0",
+		},
+		{
+			name:     "windows separator path",
+			path:     `models\aws-controller\v0.1.0`,
+			expected: "models/aws-controller/v0.1.0",
+		},
+		{
+			name:     "windows separator path with parent directory",
+			path:     `models\..\aws-controller\v0.1.0`,
+			expected: "models/../aws-controller/v0.1.0",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.expected, modelDisplayPath(tc.path))
 		})
 	}
 }
