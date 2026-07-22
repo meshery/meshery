@@ -51,6 +51,42 @@ func TestWriteJSONError_ShapeIsParseableJSON(t *testing.T) {
 	}
 }
 
+func TestWriteJSONError_RedactsSensitiveValues(t *testing.T) {
+	rec := httptest.NewRecorder()
+	WriteJSONError(rec, `provider failed: "Authorization": "Bearer raw-token" "api_key":"sk-live-secret"`, http.StatusBadRequest)
+
+	var decoded map[string]string
+	if err := json.NewDecoder(rec.Body).Decode(&decoded); err != nil {
+		t.Fatalf("body did not parse as JSON: %v", err)
+	}
+	for _, leaked := range []string{"raw-token", "sk-live-secret"} {
+		if strings.Contains(decoded["error"], leaked) {
+			t.Fatalf("error response leaked %q in %q", leaked, decoded["error"])
+		}
+	}
+	if !strings.Contains(decoded["error"], redactedErrorValue) {
+		t.Fatalf("error response = %q, want redacted placeholder", decoded["error"])
+	}
+}
+
+func TestWriteJSONError_RedactsQueryCookieAndJWTValues(t *testing.T) {
+	rec := httptest.NewRecorder()
+	WriteJSONError(rec, "request failed: /callback?access_token=query-secret&next=/ Set-Cookie: session=cookie-secret; bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjMifQ.signature", http.StatusBadRequest)
+
+	var decoded map[string]string
+	if err := json.NewDecoder(rec.Body).Decode(&decoded); err != nil {
+		t.Fatalf("body did not parse as JSON: %v", err)
+	}
+	for _, leaked := range []string{"query-secret", "cookie-secret", "eyJhbGciOiJIUzI1NiJ9"} {
+		if strings.Contains(decoded["error"], leaked) {
+			t.Fatalf("error response leaked %q in %q", leaked, decoded["error"])
+		}
+	}
+	if strings.Count(decoded["error"], redactedErrorValue) < 3 {
+		t.Fatalf("error response = %q, want at least 3 redactions", decoded["error"])
+	}
+}
+
 // TestWriteJSONError_DoesNotStartWithBareWord pins the regression-of-interest:
 // a plain-text body beginning with "W" (as http.Error would emit for the
 // "WorkspaceID or OrgID cannot be empty" message) is exactly what crashed
@@ -119,6 +155,40 @@ func TestWriteMeshkitError_SerializesMeshKitStructure(t *testing.T) {
 	}
 	if decoded.Error == "" {
 		t.Errorf("expected non-empty error message; decoded = %+v", decoded)
+	}
+}
+
+func TestWriteMeshkitError_RedactsSensitiveMeshKitFields(t *testing.T) {
+	err := meshkiterrors.New(
+		"meshery-test-0002",
+		meshkiterrors.Alert,
+		[]string{"AI completion failed token=raw-token"},
+		[]string{"provider returned api_key=sk-live-secret"},
+		[]string{"Authorization: Bearer raw-token"},
+		[]string{"Rotate -----BEGIN PRIVATE KEY-----raw-----END PRIVATE KEY-----"},
+	)
+
+	rec := httptest.NewRecorder()
+	WriteMeshkitError(rec, err, http.StatusInternalServerError)
+
+	var decoded struct {
+		Error                string   `json:"error"`
+		ProbableCause        []string `json:"probableCause"`
+		SuggestedRemediation []string `json:"suggestedRemediation"`
+		LongDescription      []string `json:"longDescription"`
+	}
+	if decodeErr := json.NewDecoder(rec.Body).Decode(&decoded); decodeErr != nil {
+		t.Fatalf("body did not parse as JSON: %v", decodeErr)
+	}
+
+	serialized := fmt.Sprintf("%v", decoded)
+	for _, leaked := range []string{"raw-token", "sk-live-secret", "BEGIN PRIVATE KEY"} {
+		if strings.Contains(serialized, leaked) {
+			t.Fatalf("MeshKit error response leaked %q in %+v", leaked, decoded)
+		}
+	}
+	if !strings.Contains(serialized, redactedErrorValue) {
+		t.Fatalf("MeshKit error response = %+v, want redacted placeholder", decoded)
 	}
 }
 

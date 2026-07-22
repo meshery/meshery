@@ -25,9 +25,40 @@ package httputil
 import (
 	"encoding/json"
 	"net/http"
+	"regexp"
 
 	meshkiterrors "github.com/meshery/meshkit/errors"
 )
+
+const redactedErrorValue = "[REDACTED]"
+
+type errorRedactionPattern struct {
+	pattern     *regexp.Regexp
+	replacement string
+}
+
+var errorSecretPatterns = []errorRedactionPattern{
+	{
+		pattern:     regexp.MustCompile(`(?i)(["']?authorization["']?\s*[:=]\s*["']?bearer\s+)[^"'\s,;&}]+`),
+		replacement: "${1}" + redactedErrorValue,
+	},
+	{
+		pattern:     regexp.MustCompile(`(?i)(["']?(?:api[-_ ]?key|access[-_ ]?token|refresh[-_ ]?token|id[-_ ]?token|token|secret|password)["']?\s*[:=]\s*["']?)[^"'\s,;&}]+`),
+		replacement: "${1}" + redactedErrorValue,
+	},
+	{
+		pattern:     regexp.MustCompile(`(?i)(set-cookie\s*:\s*[^=;\s]+=["']?)[^"'\s;]+`),
+		replacement: "${1}" + redactedErrorValue,
+	},
+	{
+		pattern:     regexp.MustCompile(`\beyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\b`),
+		replacement: redactedErrorValue,
+	},
+	{
+		pattern:     regexp.MustCompile(`(?is)-----BEGIN [^-]*PRIVATE KEY-----.*?-----END [^-]*PRIVATE KEY-----`),
+		replacement: redactedErrorValue,
+	},
+}
 
 // WriteJSONError writes a JSON-encoded {"error": message} body with the given
 // HTTP status. Using JSON (instead of http.Error's plain text) keeps client
@@ -38,7 +69,7 @@ func WriteJSONError(w http.ResponseWriter, message string, status int) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.WriteHeader(status)
-	_ = json.NewEncoder(w).Encode(map[string]string{"error": message})
+	_ = json.NewEncoder(w).Encode(map[string]string{"error": redactErrorResponseString(message)})
 }
 
 // errorResponse is the wire shape for all non-2xx responses from Meshery Server.
@@ -74,8 +105,6 @@ func WriteMeshkitError(w http.ResponseWriter, err error, status int) {
 		return
 	}
 
-	resp.Error = err.Error()
-
 	// Populate MeshKit fields only when the error carries them. GetCode etc.
 	// return the "None" sentinel for non-MeshKit errors; treat that as absent.
 	if code := meshkiterrors.GetCode(err); code != "" && code != "None" {
@@ -84,20 +113,32 @@ func WriteMeshkitError(w http.ResponseWriter, err error, status int) {
 		if short := meshkiterrors.GetSDescription(err); short != "" && short != "None" {
 			// Use ShortDescription as the user-facing `error` when available —
 			// err.Error() on a MeshKit error concatenates every field with pipes.
-			resp.Error = short
+			resp.Error = redactErrorResponseString(short)
 		}
 		if long := meshkiterrors.GetLDescription(err); long != "" && long != "None" {
-			resp.LongDescription = []string{long}
+			resp.LongDescription = []string{redactErrorResponseString(long)}
 		}
 		if cause := meshkiterrors.GetCause(err); cause != "" && cause != "None" {
-			resp.ProbableCause = []string{cause}
+			resp.ProbableCause = []string{redactErrorResponseString(cause)}
 		}
 		if remedy := meshkiterrors.GetRemedy(err); remedy != "" && remedy != "None" {
-			resp.SuggestedRemediation = []string{remedy}
+			resp.SuggestedRemediation = []string{redactErrorResponseString(remedy)}
 		}
+		if resp.Error == "" {
+			resp.Error = redactErrorResponseString(err.Error())
+		}
+	} else {
+		resp.Error = redactErrorResponseString(err.Error())
 	}
 
 	_ = json.NewEncoder(w).Encode(resp)
+}
+
+func redactErrorResponseString(value string) string {
+	for _, pattern := range errorSecretPatterns {
+		value = pattern.pattern.ReplaceAllString(value, pattern.replacement)
+	}
+	return value
 }
 
 // severityString converts a MeshKit Severity enum to the string label used on
