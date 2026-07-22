@@ -24,6 +24,10 @@ The Meshery repository is large. Depending on which functional area you are work
 | `/models` | ~1 GB | Only needed when working on Meshery models |
 | `/docs/static/v*` | Large | Old, archived versions of Meshery Docs |
 
+{{% alert color="warning" title="Excluding /models limits your local registry" %}}
+The `/models` directory populates Meshery's model registry when you build and run Meshery. If you exclude it, your local instance will register only a minimal set of models, which severely limits your ability to create sophisticated Meshery designs. Only exclude `/models` if you are not working with models or designs. To restore it later, re-run `git sparse-checkout set` without the `!/models/` pattern and rebuild.
+{{% /alert %}}
+
 **Sparse clone** (check out everything except the large directories):
 
 ```bash

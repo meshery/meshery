@@ -27,6 +27,9 @@ that are irrelevant to your work.
 | `/models` | ~1 GB | When not working on Meshery models |
 | `/docs/static/v*` | Large | When not working on older versions of Meshery Docs |
 
+> [!WARNING]
+> The `/models` directory populates Meshery's model registry when you build and run Meshery. Excluding it leaves your local instance with only a minimal set of models, severely limiting your ability to create sophisticated designs. Only exclude `/models` if you are not working with models or designs; re-include the directory and rebuild to restore them.
+
 ### Sparse clone (exclude large directories)
 
 ```bash
