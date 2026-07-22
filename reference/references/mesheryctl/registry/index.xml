@@ -39,7 +39,16 @@ mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [model
 
 &lt;/div&gt;
 &lt;/pre&gt; 
-&lt;p&gt;Publish To Meshery&lt;/p&gt;</description></item><item><title>mesheryctl-registry-update</title><link>/reference/references/mesheryctl/registry/update/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/registry/update/</guid><description>&lt;h1 id="mesheryctl-registry-update"&gt;
+&lt;p&gt;Publish To Meshery&lt;/p&gt;</description></item><item><title>mesheryctl-registry-purge</title><link>/reference/references/mesheryctl/registry/purge/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/registry/purge/</guid><description>&lt;h1 id="mesheryctl-registry-purge"&gt;
+	mesheryctl registry purge
+&lt;/h1&gt;
+&lt;p&gt;Prune old model version directories&lt;/p&gt;
+&lt;h2 id="synopsis"&gt;
+	Synopsis
+&lt;/h2&gt;
+&lt;p&gt;Prune older versions of Meshery Models under ./models, retaining only the most recent &amp;ndash;retain versions of each model.&lt;/p&gt;
+&lt;p&gt;Prerequisite: Execute this command from the root of a meshery/meshery repo fork; it operates on the &amp;ldquo;./models&amp;rdquo; directory relative to the current working directory.&lt;/p&gt;
+&lt;p&gt;The &amp;ldquo;kubernetes&amp;rdquo; and &amp;ldquo;meshery-core&amp;rdquo; models are always excluded from purging, regardless of flags. Use &amp;ndash;exclude to skip additional models.&lt;/p&gt;</description></item><item><title>mesheryctl-registry-update</title><link>/reference/references/mesheryctl/registry/update/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/registry/update/</guid><description>&lt;h1 id="mesheryctl-registry-update"&gt;
 	mesheryctl registry update
 &lt;/h1&gt;
 &lt;p&gt;Update the registry with latest data.&lt;/p&gt;
