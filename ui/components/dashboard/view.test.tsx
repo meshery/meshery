@@ -146,6 +146,23 @@ describe('View', () => {
     expect(back).toHaveBeenCalled();
     expect(setView).toHaveBeenCalledWith('all');
   });
+
+  it('renders cleanly without crashing when connection data is loading (undefined)', () => {
+    useGetConnectionsQuery.mockReturnValue({ data: undefined });
+    render(
+      <View
+        setView={setView}
+        resource={{
+          kind: 'Pod',
+          cluster_id: 'cluster-1',
+          metadata: { name: 'pod-1' },
+          component_metadata: { styles: {} },
+        }}
+        k8sConfig={{}}
+      />,
+    );
+    expect(screen.getByText('pod-1')).toBeInTheDocument();
+  });
 });
 
 describe('Title', () => {
