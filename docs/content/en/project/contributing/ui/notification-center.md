@@ -110,7 +110,7 @@ The BodySectionRenderer is responsible for formatting and rendering raw text str
 
 ### ArrayRenderer
 
-The ArrayRenderer is responsible for rendering an array of items in a recursive manner, presenting them as a bulletized list using the MetadataFormatter.
+The ArrayRenderer is responsible for rendering an array of items in a recursive manner, presenting them as a bulletized list using the StructuredDataFormatter.
 
 ### KeyValueRenderer
 
@@ -217,7 +217,7 @@ The `ErrorMetadataFormatter` is used for formatting error-related notifications 
 
 **Example:**
 
-```javascript
+```tsx
 <ErrorMetadataFormatter
   metadata={{
     LongDescription: ["An unexpected error occurred while deploying the mesh."],
