@@ -146,6 +146,29 @@ import Environments from './index';
 const EVENT_ERROR = 'error';
 const EVENT_SUCCESS = 'success';
 
+// Shape the real chain produces for a provider-rejected create: `data` is the
+// verbatim server envelope (camelCase, per server/models/httputil/httputil.go)
+// and `meshkit` is what the @meshery/schemas baseQuery wrapper attaches - which
+// today is message/code/severity only, because that wrapper reads the
+// snake_case spellings the server does not emit (meshery/schemas#1081).
+// `utils/helpers/__tests__/meshkitErrorChain.test.ts` pins that transform
+// against the real client; this fixture mirrors its output.
+const REJECTED_CREATE = {
+  status: 403,
+  data: {
+    error: 'Unable to create the environment',
+    code: 'meshery-server-1448',
+    severity: 'ALERT',
+    probableCause: ['Your account does not have permission.'],
+    suggestedRemediation: ['Ask an organization owner to grant the Environment role.'],
+  },
+  meshkit: {
+    message: 'Unable to create the environment',
+    code: 'meshery-server-1448',
+    severity: 'ALERT',
+  },
+};
+
 const openCreateModalAndSubmit = async () => {
   const user = userEvent.setup();
   render(<Environments />);
@@ -165,21 +188,7 @@ describe('Environments create flow notifications', () => {
   });
 
   it('does not report success when the provider rejects the create', async () => {
-    createEnvironment.mockReturnValue({
-      unwrap: () =>
-        Promise.reject({
-          status: 403,
-          data: { error: 'Unable to create the environment', code: 'meshery-server-1448' },
-          meshkit: {
-            message: 'Unable to create the environment',
-            code: 'meshery-server-1448',
-            probableCause: [
-              'Your account does not have permission to create environments in this organization.',
-            ],
-            suggestedRemediation: ['Confirm your role in the selected organization.'],
-          },
-        }),
-    });
+    createEnvironment.mockReturnValue({ unwrap: () => Promise.reject(REJECTED_CREATE) });
 
     await openCreateModalAndSubmit();
 
@@ -191,18 +200,7 @@ describe('Environments create flow notifications', () => {
   });
 
   it('carries the MeshKit code and remediation into the failure notification', async () => {
-    createEnvironment.mockReturnValue({
-      unwrap: () =>
-        Promise.reject({
-          status: 403,
-          meshkit: {
-            message: 'Unable to create the environment',
-            code: 'meshery-server-1448',
-            probableCause: ['Your account does not have permission.'],
-            suggestedRemediation: ['Ask an organization owner to grant the Environment role.'],
-          },
-        }),
-    });
+    createEnvironment.mockReturnValue({ unwrap: () => Promise.reject(REJECTED_CREATE) });
 
     await openCreateModalAndSubmit();
 

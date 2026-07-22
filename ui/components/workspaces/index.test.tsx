@@ -154,15 +154,27 @@ describe('Workspaces create flow notifications', () => {
   });
 
   it('surfaces the failure when the provider rejects the create', async () => {
+    // `data` is the verbatim server envelope (camelCase, per
+    // server/models/httputil/httputil.go); `meshkit` is what the
+    // @meshery/schemas baseQuery wrapper actually attaches - message/code/
+    // severity only, because it reads snake_case spellings the server does not
+    // emit (meshery/schemas#1081). The real transform is pinned in
+    // `utils/helpers/__tests__/meshkitErrorChain.test.ts`.
     createWorkspace.mockReturnValue({
       unwrap: () =>
         Promise.reject({
           status: 403,
+          data: {
+            error: 'Unable to create the workspace',
+            code: 'meshery-server-1454',
+            severity: 'ALERT',
+            probableCause: ['Your account does not have permission to create workspaces.'],
+            suggestedRemediation: ['Ask an organization owner to grant the Workspace role.'],
+          },
           meshkit: {
             message: 'Unable to create the workspace',
             code: 'meshery-server-1454',
-            probableCause: ['Your account does not have permission to create workspaces.'],
-            suggestedRemediation: ['Ask an organization owner to grant the Workspace role.'],
+            severity: 'ALERT',
           },
         }),
     });
