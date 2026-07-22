@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/gorilla/mux"
@@ -28,6 +29,11 @@ func (m *filterSpyProvider) DeleteMesheryFilter(_ *http.Request, _ string) ([]by
 }
 
 func (m *filterSpyProvider) GetMesheryFilter(_ *http.Request, _ string) ([]byte, error) {
+	m.called = true
+	return nil, nil
+}
+
+func (m *filterSpyProvider) CloneMesheryFilter(_ *http.Request, _ string, _ *models.MesheryCloneFilterRequestBody) ([]byte, error) {
 	m.called = true
 	return nil, nil
 }
@@ -137,6 +143,44 @@ func TestGetMesheryFilterHandler_NilUUIDReturns400(t *testing.T) {
 	rec := httptest.NewRecorder()
 
 	h.GetMesheryFilterHandler(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400, got %d", rec.Code)
+	}
+	if provider.called {
+		t.Error("provider should not be called for nil UUID")
+	}
+}
+
+func TestCloneMesheryFilterHandler_InvalidUUIDReturns400(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	provider := newFilterSpyProvider()
+
+	body := strings.NewReader(`{"name":"cloned-filter"}`)
+	req := httptest.NewRequest(http.MethodPost, "/api/filter/clone/not-a-uuid", body)
+	req = mux.SetURLVars(req, map[string]string{"id": "not-a-uuid"})
+	rec := httptest.NewRecorder()
+
+	h.CloneMesheryFilterHandler(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400, got %d", rec.Code)
+	}
+	if provider.called {
+		t.Error("provider should not be called for invalid UUID")
+	}
+}
+
+func TestCloneMesheryFilterHandler_NilUUIDReturns400(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	provider := newFilterSpyProvider()
+
+	body := strings.NewReader(`{"name":"cloned-filter"}`)
+	req := httptest.NewRequest(http.MethodPost, "/api/filter/clone/00000000-0000-0000-0000-000000000000", body)
+	req = mux.SetURLVars(req, map[string]string{"id": "00000000-0000-0000-0000-000000000000"})
+	rec := httptest.NewRecorder()
+
+	h.CloneMesheryFilterHandler(rec, req, nil, nil, provider)
 
 	if rec.Code != http.StatusBadRequest {
 		t.Fatalf("expected 400, got %d", rec.Code)
