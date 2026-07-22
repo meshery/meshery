@@ -18,7 +18,7 @@ import EnvironmentIcon from '../../assets/icons/Environment';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { RJSFModalWrapper } from '../shared/Modal/Modal';
-import _PromptComponent from '../PromptComponent';
+import _PromptComponent from '../general/PromptComponent';
 import { EmptyState } from '../lifecycle/general';
 import {
   Modal as SisitentModal,
@@ -200,32 +200,17 @@ const Environments = () => {
   }, [organization]);
 
   const fetchSchema = () => {
-    const updatedSchema = {
-      schema: createAndEditEnvironmentSchema,
-      uischema: createAndEditEnvironmentUiSchema,
-    };
-    updatedSchema.schema.properties?.organization &&
-      ((updatedSchema.schema = {
-        ...updatedSchema.schema,
-        properties: {
-          ...updatedSchema.schema.properties,
-          organization: {
-            ...updatedSchema.schema.properties.organization,
-            enum: [organization?.id],
-            enumNames: [organization?.name],
-          },
-        },
-      }),
-      (updatedSchema.uischema = {
-        ...updatedSchema.uischema,
-        organization: {
-          ...updatedSchema.uischema.organization,
-          ['ui:widget']: 'hidden',
-        },
-      }));
+    // Organization is derived from the user's active session and hidden by the
+    // canonical form UI schema (organizationId -> "ui:widget": "hidden" in
+    // meshery/schemas environment/forms/createOrEdit.ui.json). Its value is
+    // seeded into the form via initialData, so no per-render schema patching is
+    // required here.
     setEnvironmentModal({
       open: true,
-      schema: updatedSchema,
+      schema: {
+        schema: createAndEditEnvironmentSchema,
+        uischema: createAndEditEnvironmentUiSchema,
+      },
     });
   };
 
@@ -247,7 +232,7 @@ const Environments = () => {
       setInitialData({
         name: envObject.name,
         description: envObject.description,
-        organization: envObject.organizationId,
+        organizationId: envObject.organizationId,
       });
       setEditEnvId(envObject.id);
     } else {
@@ -255,7 +240,7 @@ const Environments = () => {
       setInitialData({
         name: undefined,
         description: '',
-        organization: orgId,
+        organizationId: orgId,
       });
       setEditEnvId('');
     }
@@ -270,12 +255,12 @@ const Environments = () => {
     setActionType('');
   };
 
-  const handleCreateEnvironment = ({ organization, name, description }) => {
+  const handleCreateEnvironment = ({ organizationId, name, description }) => {
     createEnvironment({
       environmentPayload: {
         name: name,
         description: description,
-        organization_id: organization,
+        organization_id: organizationId,
       },
     })
       .unwrap()
@@ -290,7 +275,7 @@ const Environments = () => {
       environmentPayload: {
         name: name,
         description: description,
-        organization_id: initialData.organization,
+        organization_id: initialData.organizationId,
       },
     })
       .unwrap()
@@ -455,7 +440,7 @@ const Environments = () => {
       ) ? (
         <>
           <ToolWrapper>
-            <CreateButtonWrapper>
+            <CreateButtonWrapper style={{ marginRight: '2rem' }}>
               <Button
                 type="submit"
                 variant="contained"
@@ -465,14 +450,8 @@ const Environments = () => {
                 sx={{
                   padding: '8px',
                   borderRadius: '5px',
-                  marginRight: '2rem',
                 }}
-                disabled={
-                  !CAN(
-                    Keys.WorkspaceManagementCreateEnvironment.id,
-                    Keys.WorkspaceManagementCreateEnvironment.function,
-                  )
-                }
+                permissionKey={Keys.WorkspaceManagementCreateEnvironment}
                 data-cy="btnResetDatabase"
               >
                 <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
@@ -504,14 +483,7 @@ const Environments = () => {
               </Typography>
               <Button
                 onClick={handleBulkDeleteEnvironmentConfirm}
-                disabled={
-                  selectedEnvironments.length > 0
-                    ? !CAN(
-                        Keys.WorkspaceManagementDeleteEnvironment.id,
-                        Keys.WorkspaceManagementDeleteEnvironment.function,
-                      )
-                    : true
-                }
+                permissionKey={Keys.WorkspaceManagementDeleteEnvironment}
               >
                 <DeleteIcon fill="red" style={{ margin: '0 2px' }} />
               </Button>

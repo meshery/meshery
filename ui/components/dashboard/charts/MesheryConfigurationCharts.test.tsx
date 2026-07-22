@@ -15,7 +15,7 @@ const bbChartSpy = vi.fn();
 
 vi.mock('billboard.js', () => ({ donut: () => 'donut' }));
 
-vi.mock('../../BBChart', () => ({
+vi.mock('../../general/BBChart', () => ({
   default: (props: { options: unknown }) => {
     bbChartSpy(props.options);
     return <div data-testid="bb-chart" />;

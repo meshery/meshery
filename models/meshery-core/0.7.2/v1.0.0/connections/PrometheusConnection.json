@@ -10,41 +10,41 @@
     "discovered": [
       {
         "nextState": "registered",
-        "description": "Are you sure you want to transition from DISCOVERED to REGISTERED? This will register the discovered Prometheus connection with Meshery."
+        "description": "Registers the discovered Prometheus connection with Meshery so it can be managed. Meshery does not query it until you connect it."
       },
       {
         "nextState": "ignored",
-        "description": "Are you sure you want to transition from DISCOVERED to IGNORED? This will ignore the discovered Prometheus connection."
+        "description": "Ignores the discovered Prometheus connection: Meshery takes no further action on it. You can register it again whenever you choose."
       }
     ],
     "registered": [
       {
         "nextState": "connected",
-        "description": "Are you sure you want to transition from REGISTERED to CONNECTED? This will connect to the Prometheus connection."
+        "description": "Connects to Prometheus and makes its metrics and queries available in Meshery."
       },
       {
         "nextState": "ignored",
-        "description": "Are you sure you want to transition from REGISTERED to IGNORED? This will keep the Prometheus registration but not connect to it."
+        "description": "Keeps the Prometheus registration but stops Meshery from connecting to or acting on it. You can register it again whenever you choose."
       }
     ],
     "connected": [
       {
         "nextState": "disconnected",
-        "description": "Are you sure you want to transition from CONNECTED to DISCONNECTED? This will disconnect the Prometheus connection."
+        "description": "Disconnects Prometheus: its metrics and queries stop being available in Meshery. The registration is kept, so you can connect it again later."
       },
       {
         "nextState": "deleted",
-        "description": "Are you sure you want to transition from CONNECTED to DELETED? This will remove the Prometheus connection completely."
+        "description": "Removes the Prometheus connection and its record from Meshery's database. The Prometheus deployment itself is not deleted or modified."
       }
     ],
     "disconnected": [
       {
         "nextState": "connected",
-        "description": "Are you sure you want to transition from DISCONNECTED to CONNECTED? This will reconnect the Prometheus connection."
+        "description": "Reconnects Prometheus and makes its metrics and queries available in Meshery again."
       },
       {
         "nextState": "deleted",
-        "description": "Are you sure you want to transition from DISCONNECTED to DELETED? This will remove the Prometheus connection completely."
+        "description": "Removes the Prometheus connection and its record from Meshery's database. The Prometheus deployment itself is not deleted or modified."
       }
     ]
   },

@@ -11,20 +11,18 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/meshery/meshery/server/models"
-	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta3/environment"
 )
 
 // environmentPayloadWire is a handler-local dual-accept wrapper around
-// environment.EnvironmentPayload. The schemas-generated struct tags
-// OrgId as json:"organization_id" (required by the current published
-// v1beta1 contract), but the canonical wire contract and every in-repo
-// consumer now emit the camelCase `organizationId`. Because Go's
-// encoding/json case-insensitive tag fallback will not match across an
-// underscore boundary, a struct tagged `organization_id` would silently
-// drop a JSON key of `organizationId`. This wrapper intercepts both
-// spellings during the Phase 2 deprecation window. Canonical wins when
-// both are present. Retire once schemas v1beta2 flips the tag and this
-// handler consumes the new version.
+// environment.EnvironmentPayload (now v1beta3, canonical camelCase). The
+// canonical wire form emits `organizationId`; the legacy `organization_id`
+// spelling is still accepted for the Phase 2 deprecation window so any
+// unmigrated client (e.g. mesheryctl) keeps working. Go's encoding/json
+// case-insensitive tag fallback does NOT match across an underscore
+// boundary, so the legacy spelling cannot simply piggy-back on the
+// canonical tag. Canonical wins when both are present. Retire once every
+// known consumer is on the canonical spelling.
 type environmentPayloadWire struct {
 	environment.EnvironmentPayload
 }
@@ -33,13 +31,13 @@ func (p *environmentPayloadWire) UnmarshalJSON(data []byte) error {
 	type alias environment.EnvironmentPayload
 	aux := struct {
 		*alias
-		OrgIdCamel  *uuid.UUID `json:"organizationId,omitempty"`
-		OrgIdSnake  *uuid.UUID `json:"organization_id,omitempty"`
+		OrgIdCamel *uuid.UUID `json:"organizationId,omitempty"`
+		OrgIdSnake *uuid.UUID `json:"organization_id,omitempty"`
 	}{alias: (*alias)(&p.EnvironmentPayload)}
 
-	// Zero OrgId so a reused receiver does not carry stale data when the
+	// Zero OrgID so a reused receiver does not carry stale data when the
 	// next payload omits both spellings.
-	p.OrgId = uuid.UUID{}
+	p.OrgID = uuid.UUID{}
 
 	if err := json.Unmarshal(data, &aux); err != nil {
 		return err
@@ -47,9 +45,9 @@ func (p *environmentPayloadWire) UnmarshalJSON(data []byte) error {
 	// Canonical wins when both are supplied.
 	switch {
 	case aux.OrgIdCamel != nil:
-		p.OrgId = *aux.OrgIdCamel
+		p.OrgID = *aux.OrgIdCamel
 	case aux.OrgIdSnake != nil:
-		p.OrgId = *aux.OrgIdSnake
+		p.OrgID = *aux.OrgIdSnake
 	}
 	return nil
 }
