@@ -212,7 +212,6 @@ describe('Environments create flow notifications', () => {
     expect(payload.message).toContain('Unable to create the environment');
     expect(payload.message).toContain('meshery-server-1448');
     expect(payload.message).toContain('Ask an organization owner to grant the Environment role.');
-    expect(payload.details).toContain('Your account does not have permission.');
   });
 
   it('reports success only once the create actually resolves', async () => {

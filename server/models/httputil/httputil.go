@@ -99,24 +99,6 @@ func WriteMeshkitError(w http.ResponseWriter, err error, status int) {
 		resp.ProbableCause = causes
 		resp.SuggestedRemediation = remedies
 		resp.LongDescription = longs
-
-		// Fall back to the joined accessors if the typed slices were unavailable
-		// (an error that reports a code but is neither *Error nor *ErrorV2).
-		if resp.LongDescription == nil {
-			if long := meshkiterrors.GetLDescription(err); long != "" && long != "None" {
-				resp.LongDescription = []string{long}
-			}
-		}
-		if resp.ProbableCause == nil {
-			if cause := meshkiterrors.GetCause(err); cause != "" && cause != "None" {
-				resp.ProbableCause = []string{cause}
-			}
-		}
-		if resp.SuggestedRemediation == nil {
-			if remedy := meshkiterrors.GetRemedy(err); remedy != "" && remedy != "None" {
-				resp.SuggestedRemediation = []string{remedy}
-			}
-		}
 	}
 
 	_ = json.NewEncoder(w).Encode(resp)
@@ -125,8 +107,7 @@ func WriteMeshkitError(w http.ResponseWriter, err error, status int) {
 // meshkitDetailSlices returns the probable-cause, suggested-remediation and
 // long-description slices carried by err, with MeshKit's "None" sentinel and
 // blank entries removed. Each result is nil when the error carries nothing for
-// that field, which lets the caller distinguish "absent" from "empty" and fall
-// back to the joined accessors.
+// that field, so `omitempty` keeps it off the wire entirely.
 func meshkitDetailSlices(err error) (causes, remedies, longs []string) {
 	var errV2 *meshkiterrors.ErrorV2
 	if errors.As(err, &errV2) && errV2 != nil {

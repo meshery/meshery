@@ -167,16 +167,15 @@ const Environments = () => {
    * misuse is a syntax-level mistake rather than a silent no-op.
    *
    * `formatApiError` consumes the MeshKit envelope the server now sends
-   * (code, probable cause, suggested remediation) and renders it as the
-   * markdown that `notify` displays through BasicMarkdown.
+   * (code and suggested remediation) and renders it as the markdown that
+   * `notify` displays through BasicMarkdown.
    */
   const handleError = (action, error) => {
     updateProgress({ showProgress: false });
-    const { message, meshkit } = formatApiError(error, action);
+    const { message } = formatApiError(error, action);
     notify({
       message,
       event_type: EVENT_TYPES.ERROR,
-      details: meshkit?.probableCause?.join('\n') || message,
     });
   };
 

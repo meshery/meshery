@@ -1160,7 +1160,7 @@ func ErrDeleteEnvironment(err error) error {
 // held by an environment. action is the operation being attempted, e.g.
 // "assign connection to", so the message reads as a sentence.
 func ErrEnvironmentConnection(err error, action string) error {
-	return errors.New(ErrEnvironmentConnectionCode, errors.Alert, []string{"Unable to ", action, " environment"}, []string{err.Error()}, []string{"Your account does not have permission to modify this environment's connections.", "The environment or the connection has been deleted, or they belong to different organizations.", "The provider could not be reached or rejected the request."}, []string{"Confirm both the environment and the connection still exist in the same organization and that your role grants write access to the environment."})
+	return errors.New(ErrEnvironmentConnectionCode, errors.Alert, []string{fmt.Sprintf("Unable to %s environment", action)}, []string{err.Error()}, []string{"Your account does not have permission to modify this environment's connections.", "The environment or the connection has been deleted, or they belong to different organizations.", "The provider could not be reached or rejected the request."}, []string{"Confirm both the environment and the connection still exist in the same organization and that your role grants write access to the environment."})
 }
 
 func ErrGetWorkspaces(err error) error {
@@ -1188,7 +1188,7 @@ func ErrDeleteWorkspace(err error) error {
 // ("assign design to", "list teams of") so one code can describe the whole
 // family without losing precision in the message.
 func ErrWorkspaceResource(err error, action string) error {
-	return errors.New(ErrWorkspaceResourceCode, errors.Alert, []string{"Unable to ", action, " workspace"}, []string{err.Error()}, []string{"Your account does not have permission to modify this workspace's contents.", "The workspace or the resource being associated has been deleted, or they belong to different organizations.", "The provider could not be reached or rejected the request."}, []string{"Confirm both the workspace and the resource still exist in the same organization and that your role grants write access to the workspace."})
+	return errors.New(ErrWorkspaceResourceCode, errors.Alert, []string{fmt.Sprintf("Unable to %s workspace", action)}, []string{err.Error()}, []string{"Your account does not have permission to modify this workspace's contents.", "The workspace or the resource being associated has been deleted, or they belong to different organizations.", "The provider could not be reached or rejected the request."}, []string{"Confirm both the workspace and the resource still exist in the same organization and that your role grants write access to the workspace."})
 }
 
 func ErrGetOrganizations(err error) error {
