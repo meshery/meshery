@@ -1,0 +1,20 @@
+# Every commit needs a Developer Certificate of Origin sign-off; the DCO check
+# enforces it in CI, where the only remedy is rewriting the branch. Catch it here
+# instead, while `--amend -s` is still cheap.
+# See docs/content/en/project/contributing/_index.md for the certification text.
+
+# Merge commits are exempt: git generates their message and the DCO check skips them.
+if [ "${2:-}" = "merge" ]; then
+	exit 0
+fi
+
+# `interpret-trailers --parse` is git's own trailer reader, so comments, the
+# verbose-diff scissors block and folded trailers are all handled for us.
+if git interpret-trailers --parse <"$1" | grep -qi '^Signed-off-by:'; then
+	exit 0
+fi
+
+echo "husky - commit rejected: no 'Signed-off-by' trailer, so the DCO check would fail."
+echo "        Sign off as you commit:        git commit -s"
+echo "        Or sign off what you just wrote: git commit --amend -s --no-edit"
+exit 1
