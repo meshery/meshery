@@ -3,9 +3,9 @@ import { useTableUrlState } from '@/utils/hooks/useTableUrlState';
 import { useColumnVisibilityPreference } from '@/utils/hooks/useColumnVisibilityPreference';
 import { NoSsr } from '@sistent/sistent';
 import { Publish as PublishIcon } from '@/assets/icons';
-import _PromptComponent from '../PromptComponent';
+import _PromptComponent from '../general/PromptComponent';
 import { MesheryFiltersCatalog, VISIBILITY } from '../../utils/Enum';
-import ViewSwitch from '../ViewSwitch';
+import ViewSwitch from '../general/ViewSwitch';
 import FiltersGrid from './FiltersGrid';
 import fetchCatalogFilter from '@/graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../../css/icons.styles';
@@ -60,7 +60,6 @@ import {
   createHandlePublish,
   createHandleSubmit,
   createHandleUnpublishModal,
-  createInitFiltersSubscription,
   createUploadHandler,
 } from './Filters.fileActions';
 import type { TypeView } from './Filters.types';
@@ -129,7 +128,6 @@ function MesheryFilters() {
 
   const catalogContentRef = useRef<any[]>([]);
   const catalogVisibilityRef = useRef<boolean>(false);
-  const disposeConfSubscriptionRef = useRef<{ dispose: () => void } | null>(null);
   const [selectedFilters, setSelectedFilters] = useState<{ visibility: string }>(() => ({
     visibility: tableState.filters.vis || 'All',
   }));
@@ -260,13 +258,6 @@ function MesheryFilters() {
   const handleClone = createHandleClone({ cloneFilter, notify, handleError });
   const handleDownload = createHandleDownload({ notify });
   const deleteFilter = createDeleteFilter({ deleteFilterFile, notify, handleError });
-  const initFiltersSubscription = createInitFiltersSubscription({
-    page,
-    pageSize,
-    search,
-    sortOrder,
-    disposeConfSubscriptionRef,
-  });
   const handleSubmit = createHandleSubmit({
     notify,
     handleError,
@@ -348,14 +339,12 @@ function MesheryFilters() {
     }).subscribe({
       next: (result) => {
         catalogContentRef.current = result?.catalogFilters;
-        initFiltersSubscription();
       },
       error: (err) => console.log('There was an error fetching Catalog Filter: ', err),
     });
 
     return () => {
       fetchCatalogFilters.unsubscribe();
-      disposeConfSubscriptionRef.current?.dispose();
     };
   }, []);
 
@@ -386,7 +375,6 @@ function MesheryFilters() {
     setSearch,
     setSortOrder,
     setSelectedRowData,
-    initFiltersSubscription,
     showmodal,
     deleteFilter,
   });
@@ -461,12 +449,7 @@ function MesheryFilters() {
                           color="primary"
                           size="large"
                           onClick={handleUploadImport}
-                          disabled={
-                            !CAN(
-                              Keys.CatalogManagementImportFilter.id,
-                              Keys.CatalogManagementImportFilter.function,
-                            )
-                          }
+                          permissionKey={Keys.CatalogManagementImportFilter}
                         >
                           <PublishIcon style={iconMedium} data-cy="import-button" />
                           <BtnText> Import Filters </BtnText>
@@ -486,12 +469,6 @@ function MesheryFilters() {
                   <SearchBar
                     onSearch={(value) => {
                       setSearch(value);
-                      initFiltersSubscription(
-                        page.toString(),
-                        pageSize.toString(),
-                        value,
-                        sortOrder,
-                      );
                     }}
                     expanded={isSearchExpanded}
                     setExpanded={setIsSearchExpanded}

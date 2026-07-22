@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import BBChart from '../../BBChart';
+import BBChart from '../../general/BBChart';
 import { donut } from 'billboard.js';
 import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';

@@ -180,10 +180,7 @@ describe('navigatorComponents', () => {
     const items = getNavigatorComponents(fakeProviderUiAccessControl({ LIFECYCLE: true }), theme);
     const lifecycle = items.find((i: any) => i.id === 'LIFECYCLE');
     const connection = lifecycle?.children?.find((c: any) => c.id === 'CONNECTION');
-    expect(connection?.permission).toEqual({
-      action: Keys.WorkspaceManagementViewConnections.id,
-      subject: Keys.WorkspaceManagementViewConnections.function,
-    });
+    expect(connection?.permissionKey).toEqual(Keys.WorkspaceManagementViewConnections);
   });
 
   it('passes white fills to CatalogIcon when on the catalog route', () => {

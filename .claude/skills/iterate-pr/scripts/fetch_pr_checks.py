@@ -3,15 +3,14 @@
 # requires-python = ">=3.9"
 # ///
 """
-Fetch PR CI checks and extract relevant failure snippets.
+Fetch PR CI checks and optional failure snippets.
 
 Usage:
     python fetch_pr_checks.py [--pr PR_NUMBER]
 
 If --pr is not specified, uses the PR for the current branch.
-
-Output: JSON to stdout with structured check data.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -21,203 +20,171 @@ import subprocess
 import sys
 from typing import Any
 
+RUN_ID_PATTERN = re.compile(r"/actions/runs/(\d+)")
+FAILURE_PATTERNS = [
+    re.compile(pattern, re.IGNORECASE)
+    for pattern in (
+        r"\berror[:\s]",
+        r"\bfailed[:\s]",
+        r"\bfailure[:\s]",
+        r"\btraceback\b",
+        r"\bexception\b",
+        r"\bpanic:",
+        r"\bfatal:",
+        r"\bnpm ERR!",
+        r"\bTypeError\b",
+        r"\bSyntaxError\b",
+        r"\bImportError\b",
+        r"\bModuleNotFoundError\b",
+        r"===.*FAILURES.*===",
+    )
+]
 
-def run_gh(args: list[str]) -> dict[str, Any] | list[Any] | None:
-    """Run a gh CLI command and return parsed JSON output."""
+
+def fail(message: str) -> None:
+    print(json.dumps({"error": message}))
+    sys.exit(1)
+
+
+def run_gh_json(args: list[str], allowed_exit_codes: tuple[int, ...] = (0,)) -> Any:
+    result = subprocess.run(
+        ["gh", *args],
+        capture_output=True,
+        text=True,
+    )
+
+    if result.returncode not in allowed_exit_codes:
+        stderr = (result.stderr or result.stdout).strip() or "unknown gh error"
+        raise RuntimeError(f"gh {' '.join(args)} failed: {stderr}")
+
+    stdout = result.stdout.strip()
+    if not stdout:
+        return None
+
     try:
-        result = subprocess.run(
-            ["gh"] + args,
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        return json.loads(result.stdout) if result.stdout.strip() else None
-    except subprocess.CalledProcessError as e:
-        print(f"Error running gh {' '.join(args)}: {e.stderr}", file=sys.stderr)
-        return None
-    except json.JSONDecodeError:
-        return None
+        return json.loads(stdout)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(f"gh {' '.join(args)} returned non-JSON output") from exc
 
 
 def get_pr_info(pr_number: int | None = None) -> dict[str, Any] | None:
-    """Get PR info, optionally by number or for current branch."""
     args = ["pr", "view", "--json", "number,url,headRefName,baseRefName"]
-    if pr_number:
+    if pr_number is not None:
         args.insert(2, str(pr_number))
-    return run_gh(args)
+    result = run_gh_json(args)
+    if not isinstance(result, dict):
+        raise RuntimeError("unable to determine PR for current branch")
+    return result
 
 
 def get_checks(pr_number: int | None = None) -> list[dict[str, Any]]:
-    """Get all checks for a PR by parsing tab-separated gh output."""
-    args = ["gh", "pr", "checks"]
-    if pr_number:
-        args.append(str(pr_number))
-    try:
-        result = subprocess.run(
-            args,
-            capture_output=True,
-            text=True,
-        )
-        if not result.stdout.strip():
-            return []
-        checks = []
-        for line in result.stdout.strip().split("\n"):
-            if not line.strip():
-                continue
-            parts = line.split("\t")
-            if len(parts) >= 2:
-                checks.append({
-                    "name": parts[0].strip(),
-                    "bucket": parts[1].strip(),
-                    "link": parts[3].strip() if len(parts) > 3 else "",
-                    "workflow": "",
-                })
-        return checks
-    except Exception:
-        return []
+    args = ["pr", "checks", "--json", "name,bucket,state,link,workflow"]
+    if pr_number is not None:
+        args.insert(2, str(pr_number))
 
-
-def get_failed_runs(branch: str) -> list[dict[str, Any]]:
-    """Get recent failed workflow runs for a branch."""
-    result = run_gh([
-        "run", "list",
-        "--branch", branch,
-        "--limit", "10",
-        "--json", "databaseId,name,status,conclusion,headSha"
-    ])
+    result = run_gh_json(args, allowed_exit_codes=(0, 8))
     if not isinstance(result, list):
         return []
-    # Return runs that failed or are in progress
-    return [r for r in result if r.get("conclusion") == "failure"]
+
+    checks: list[dict[str, Any]] = []
+    for entry in result:
+        if not isinstance(entry, dict):
+            continue
+        checks.append(
+            {
+                "name": str(entry.get("name") or "unknown"),
+                "status": str(entry.get("bucket") or entry.get("state") or "unknown"),
+                "link": str(entry.get("link") or ""),
+                "workflow": str(entry.get("workflow") or ""),
+            }
+        )
+
+    checks.sort(key=lambda check: (check["name"].lower(), check["workflow"].lower(), check["status"], check["link"]))
+    return checks
+
+
+def get_run_id(check_link: str) -> int | None:
+    match = RUN_ID_PATTERN.search(check_link)
+    if not match:
+        return None
+    return int(match.group(1))
 
 
 def extract_failure_snippet(log_text: str, max_lines: int = 50) -> str:
-    """Extract relevant failure snippet from log text.
+    lines = log_text.splitlines()
+    if not lines:
+        return ""
 
-    Looks for common failure markers and extracts surrounding context.
-    """
-    lines = log_text.split("\n")
+    first_failure = None
+    for index, line in enumerate(lines):
+        if any(pattern.search(line) for pattern in FAILURE_PATTERNS):
+            first_failure = index
+            break
 
-    # Patterns that indicate failure points (case-insensitive via re.IGNORECASE)
-    failure_patterns = [
-        r"error[:\s]",
-        r"failed[:\s]",
-        r"failure[:\s]",
-        r"traceback",
-        r"exception",
-        r"assert(ion)?.*failed",
-        r"FAILED",
-        r"panic:",
-        r"fatal:",
-        r"npm ERR!",
-        r"yarn error",
-        r"ModuleNotFoundError",
-        r"ImportError",
-        r"SyntaxError",
-        r"TypeError",
-        r"ValueError",
-        r"KeyError",
-        r"AttributeError",
-        r"NameError",
-        r"IndentationError",
-        r"===.*FAILURES.*===",
-        r"___.*___",  # pytest failure separators
-    ]
-
-    combined_pattern = "|".join(failure_patterns)
-
-    # Find lines matching failure patterns
-    failure_indices = []
-    for i, line in enumerate(lines):
-        if re.search(combined_pattern, line, re.IGNORECASE):
-            failure_indices.append(i)
-
-    if not failure_indices:
-        # No clear failure point, return last N lines
+    if first_failure is None:
         return "\n".join(lines[-max_lines:])
 
-    # Extract context around first failure point
-    # Include some context before and after
-    first_failure = failure_indices[0]
     start = max(0, first_failure - 5)
-    end = min(len(lines), first_failure + max_lines - 5)
-
-    snippet_lines = lines[start:end]
-
-    # If there are more failures after our snippet, note it
-    remaining_failures = [i for i in failure_indices if i >= end]
-    if remaining_failures:
-        snippet_lines.append(f"\n... ({len(remaining_failures)} more error(s) follow)")
-
-    return "\n".join(snippet_lines)
+    end = min(len(lines), start + max_lines)
+    return "\n".join(lines[start:end])
 
 
 def get_run_logs(run_id: int) -> str | None:
-    """Get failed logs for a workflow run."""
-    try:
-        result = subprocess.run(
-            ["gh", "run", "view", str(run_id), "--log-failed"],
-            capture_output=True,
-            text=True,
-            timeout=60,
-        )
-        return result.stdout if result.stdout else result.stderr
-    except subprocess.TimeoutExpired:
+    result = subprocess.run(
+        ["gh", "run", "view", str(run_id), "--log-failed"],
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    if result.returncode != 0:
         return None
-    except subprocess.CalledProcessError:
-        return None
+    return result.stdout if result.stdout.strip() else None
 
 
-def main():
+def summarize(checks: list[dict[str, Any]]) -> dict[str, int]:
+    return {
+        "total": len(checks),
+        "passed": sum(1 for check in checks if check["status"] == "pass"),
+        "failed": sum(1 for check in checks if check["status"] == "fail"),
+        "pending": sum(1 for check in checks if check["status"] == "pending"),
+        "skipped": sum(1 for check in checks if check["status"] in {"skipping", "cancel"}),
+    }
+
+
+def main() -> None:
     parser = argparse.ArgumentParser(description="Fetch PR CI checks with failure snippets")
     parser.add_argument("--pr", type=int, help="PR number (defaults to current branch PR)")
     args = parser.parse_args()
 
-    # Get PR info
-    pr_info = get_pr_info(args.pr)
-    if not pr_info:
-        print(json.dumps({"error": "No PR found for current branch"}))
-        sys.exit(1)
+    try:
+        pr_info = get_pr_info(args.pr)
+        checks = get_checks(pr_info["number"])
+    except RuntimeError as error:
+        fail(str(error))
 
     pr_number = pr_info["number"]
     branch = pr_info["headRefName"]
 
-    # Get checks
-    checks = get_checks(pr_number)
-
-    # Process checks and add failure snippets
     processed_checks = []
-    failed_runs = None  # Lazy load
+    log_cache: dict[int, str | None] = {}
 
     for check in checks:
-        processed = {
-            "name": check.get("name", "unknown"),
-            "status": check.get("bucket", check.get("state", "unknown")),
-            "link": check.get("link", ""),
-            "workflow": check.get("workflow", ""),
-        }
+        processed = dict(check)
 
-        # For failures, try to get log snippet
         if processed["status"] == "fail":
-            if failed_runs is None:
-                failed_runs = get_failed_runs(branch)
-
-            # Find matching run by workflow name
-            workflow_name = processed["workflow"] or processed["name"]
-            matching_run = next(
-                (r for r in failed_runs if workflow_name in r.get("name", "")),
-                None
-            )
-
-            if matching_run:
-                logs = get_run_logs(matching_run["databaseId"])
+            run_id = get_run_id(processed.get("link", ""))
+            if run_id is not None:
+                processed["run_id"] = run_id
+                if run_id not in log_cache:
+                    log_cache[run_id] = get_run_logs(run_id)
+                logs = log_cache[run_id]
                 if logs:
-                    processed["log_snippet"] = extract_failure_snippet(logs)
-                    processed["run_id"] = matching_run["databaseId"]
+                    snippet = extract_failure_snippet(logs)
+                    if snippet:
+                        processed["log_snippet"] = snippet
 
         processed_checks.append(processed)
 
-    # Build output
     output = {
         "pr": {
             "number": pr_number,
@@ -225,13 +192,7 @@ def main():
             "branch": branch,
             "base": pr_info.get("baseRefName", ""),
         },
-        "summary": {
-            "total": len(processed_checks),
-            "passed": sum(1 for c in processed_checks if c["status"] == "pass"),
-            "failed": sum(1 for c in processed_checks if c["status"] == "fail"),
-            "pending": sum(1 for c in processed_checks if c["status"] == "pending"),
-            "skipped": sum(1 for c in processed_checks if c["status"] in ("skipping", "cancel")),
-        },
+        "summary": summarize(processed_checks),
         "checks": processed_checks,
     }
 

@@ -343,12 +343,12 @@ ui-provider-test: dep-check-node
 	cd provider-ui; npm run test; cd ..
 
 ## Builds all Meshery UIs  on your local machine.
-ui-build: ui-setup wasm-engine
+ui-build: ui-setup policy-engine
 	cd ui; npm run lint:fix || echo "Warning: Lint issues detected in ui but continuing build"; npm run build; cd ..
 	cd provider-ui; npm run lint:fix || echo "Warning: Lint issues detected in provider-ui but continuing build"; npm run build; cd ..
 
 ## Build only Meshery UI on your local machine.
-ui-meshery-build: dep-check-node wasm-engine
+ui-meshery-build: dep-check-node policy-engine
 	cd ui; npm run build; cd ..
 
 ## Builds only the provider user interface on your local machine
@@ -477,9 +477,9 @@ policy-test:
 	@cd server/policies && go test -v ./...
 
 ## Build the Go relationship engine as a wasm binary for browser/extension use
-.PHONY: wasm-engine
-wasm-engine: dep-check-go
-	@echo "Building Go relationship engine wasm..."
+.PHONY: policy-engine
+policy-engine: dep-check-go
+	@echo "Building policy engine WASM..."
 	@cd server/policies/wasm && \
 		go mod tidy && \
 		GOOS=js GOARCH=wasm go build -trimpath -ldflags="-s -w" -o policy_engine.wasm .

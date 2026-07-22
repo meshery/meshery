@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import {
   Alert,
   Box,
@@ -16,6 +16,8 @@ import { useGetControllerDiagnosticsQuery } from '@/rtk-query/connection';
 import { formatWizardError } from './errors';
 import { StepHeader } from '../ConnectionWizardStepContent';
 import { ConnectionStatusSelect } from '../ConnectionStatusSelect';
+import ConnectionStateTransitionModal from '../ConnectionStateTransitionModal';
+import type { ConnectionStateTransitionModalRef } from '../ConnectionStateTransitionModal';
 import type { ConnectionTransitionMap } from '../ConnectionTable.constants';
 import {
   MeshsyncDeploymentModePicker,
@@ -96,18 +98,40 @@ const SettingsStepBody = ({ ctx }: { ctx: WizardContext }) => {
   // since the UI supplies its own label.
   const brokerTransport = (networking?.summary ?? '').replace(/^Broker networking:\s*/i, '');
 
+  const transitionModalRef = useRef<ConnectionStateTransitionModalRef | null>(null);
+
   // Transition the connection to the picked lifecycle state (reuses the shared
-  // status selector). Applied immediately, like the table.
+  // status selector). Confirmed through the same state-transition modal the
+  // Connections table uses - this dropdown previously applied destructive
+  // transitions (e.g. deleted) with no confirmation at all.
   const changeStatus = async (nextStatus: string) => {
     if (!connectionId || nextStatus === status) {
       return;
     }
+    // Pass the connection's actual kind (undefined falls back to the modal's
+    // generic copy) rather than forcing kubernetes-specific wording. The modal
+    // resolves the definition-authored description for this transition itself.
+    // The modal mounts alongside this component, so the ref is always set by
+    // the time the dropdown is interactive; if it ever were not, treating the
+    // undefined result as "not confirmed" is the safe outcome.
+    // Lowercase so modal maps / isDelete match CONNECTION_STATES (table does
+    // the same). Keep the API payload on the same normalized value.
+    const normalizedStatus = nextStatus.toLowerCase();
+    const confirmed = await transitionModalRef.current?.show({
+      targetStatus: normalizedStatus,
+      currentStatus: status,
+      kind: typeof connection.kind === 'string' ? connection.kind : undefined,
+      connections: [{ id: connectionId, name: getCurrentName(ctx) }],
+    });
+    if (!confirmed) {
+      return;
+    }
     setStatusBusy(true);
     try {
-      await ctx.services.updateConnectionById(connectionId, { status: nextStatus });
-      ctx.patch({ registrationResult: { ...connection, status: nextStatus } });
+      await ctx.services.updateConnectionById(connectionId, { status: normalizedStatus });
+      ctx.patch({ registrationResult: { ...connection, status: normalizedStatus } });
       ctx.services.notify({
-        message: `Connection transitioned to ${nextStatus}.`,
+        message: `Connection transitioned to ${normalizedStatus}.`,
         event_type: EVENT_TYPES.SUCCESS,
       });
     } catch (error) {
@@ -146,6 +170,7 @@ const SettingsStepBody = ({ ctx }: { ctx: WizardContext }) => {
 
   return (
     <Box sx={{ display: 'grid', gap: 2.5 }}>
+      <ConnectionStateTransitionModal ref={transitionModalRef} />
       <StepHeader
         title="Settings"
         subtitle="Rename the connection, change its lifecycle status, choose how MeshSync runs, and flush MeshSync data for this cluster."

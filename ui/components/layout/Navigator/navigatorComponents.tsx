@@ -73,10 +73,7 @@ export const getNavigatorComponents = (
         title: 'Connections',
         show: providerUiAccessControl.isNavigatorComponentEnabled([LIFECYCLE, CONNECTION]),
         link: true,
-        permission: {
-          action: Keys.WorkspaceManagementViewConnections.id,
-          subject: Keys.WorkspaceManagementViewConnections.function,
-        },
+        permissionKey: Keys.WorkspaceManagementViewConnections,
       },
       {
         id: CREDENTIAL,
@@ -85,10 +82,7 @@ export const getNavigatorComponents = (
         title: 'Credentials',
         show: providerUiAccessControl.isNavigatorComponentEnabled([LIFECYCLE, CREDENTIAL]),
         link: true,
-        permission: {
-          action: Keys.SecurityManagementViewCredentials.id,
-          subject: Keys.SecurityManagementViewCredentials.function,
-        },
+        permissionKey: Keys.SecurityManagementViewCredentials,
       },
       {
         id: ENVIRONMENT,
@@ -97,10 +91,7 @@ export const getNavigatorComponents = (
         title: 'Environments',
         show: providerUiAccessControl.isNavigatorComponentEnabled([LIFECYCLE, ENVIRONMENT]),
         link: true,
-        permission: {
-          action: Keys.WorkspaceManagementViewEnvironment.id,
-          subject: Keys.WorkspaceManagementViewEnvironment.function,
-        },
+        permissionKey: Keys.WorkspaceManagementViewEnvironment,
       },
       {
         id: WORKSPACE,
@@ -109,10 +100,7 @@ export const getNavigatorComponents = (
         title: 'Workspaces',
         show: providerUiAccessControl.isNavigatorComponentEnabled([LIFECYCLE, WORKSPACE]),
         link: true,
-        permission: {
-          action: Keys.WorkspaceManagementViewWorkspace.id,
-          subject: Keys.WorkspaceManagementViewWorkspace.function,
-        },
+        permissionKey: Keys.WorkspaceManagementViewWorkspace,
       },
       {
         id: SERVICE_MESH,
@@ -121,10 +109,7 @@ export const getNavigatorComponents = (
         link: true,
         icon: <ServiceMeshIcon style={{ ...drawerIconsStyle }} />,
         show: true,
-        permission: {
-          action: Keys.InfrastructureManagementViewCloudNativeInfrastructure.id,
-          subject: Keys.InfrastructureManagementViewCloudNativeInfrastructure.function,
-        },
+        permissionKey: Keys.InfrastructureManagementViewCloudNativeInfrastructure,
       },
     ],
   },
@@ -161,10 +146,7 @@ export const getNavigatorComponents = (
         show: providerUiAccessControl.isNavigatorComponentEnabled([CONFIGURATION, CATALOG]),
         link: true,
         isBeta: true,
-        permission: {
-          action: Keys.CatalogManagementViewCatalog.id,
-          subject: Keys.CatalogManagementViewCatalog.function,
-        },
+        permissionKey: Keys.CatalogManagementViewCatalog,
       },
       {
         id: DESIGN,
@@ -174,10 +156,7 @@ export const getNavigatorComponents = (
         show: providerUiAccessControl.isNavigatorComponentEnabled([CONFIGURATION, DESIGN]),
         link: true,
         isBeta: true,
-        permission: {
-          action: Keys.CatalogManagementViewDesigns.id,
-          subject: Keys.CatalogManagementViewDesigns.function,
-        },
+        permissionKey: Keys.CatalogManagementViewDesigns,
       },
     ],
   },
@@ -228,10 +207,7 @@ export const getNavigatorComponents = (
         title: 'Profiles',
         show: providerUiAccessControl.isNavigatorComponentEnabled([PERFORMANCE, PROFILES]),
         link: true,
-        permission: {
-          action: Keys.PerformanceManagementViewPerformanceProfiles.id,
-          subject: Keys.PerformanceManagementViewPerformanceProfiles.function,
-        },
+        permissionKey: Keys.PerformanceManagementViewPerformanceProfiles,
       },
     ],
   },
@@ -245,9 +221,6 @@ export const getNavigatorComponents = (
     link: true,
     href: '/extensions',
     submenu: false,
-    permission: {
-      action: Keys.ExtensibilityViewExtensions.id,
-      subject: Keys.ExtensibilityViewExtensions.function,
-    },
+    permissionKey: Keys.ExtensibilityViewExtensions,
   },
 ];

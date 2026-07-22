@@ -2054,6 +2054,42 @@
         "short_description": "Failed to evaluate design",
         "probable_cause": "The Meshery server returned an error while evaluating the design\nThe design file may be invalid or the server may be experiencing issues",
         "suggested_remediation": "Ensure the design file is valid\nCheck that the Meshery server is running and accessible\nVerify that the server has the required policies loaded"
+      },
+      "1249": {
+        "name": "ErrPurgeInvalidRetainCode",
+        "code": "1249",
+        "severity": "Alert",
+        "long_description": "--retain must be a positive integer, but a value less than 1 was provided",
+        "short_description": "",
+        "probable_cause": "A value less than 1 was passed to the --retain flag",
+        "suggested_remediation": "Pass --retain with a value of 1 or greater"
+      },
+      "1250": {
+        "name": "ErrPurgeReadModelsDirCode",
+        "code": "1250",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The ./models directory is not readable\nInsufficient filesystem permissions",
+        "suggested_remediation": "Ensure ./models exists and is readable\nRun mesheryctl registry purge from the root of a meshery/meshery fork"
+      },
+      "1251": {
+        "name": "ErrPurgeRemoveCode",
+        "code": "1251",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Insufficient filesystem permissions\nThe directory is in use by another process",
+        "suggested_remediation": "Ensure sufficient permissions to delete the directory\nRetry the purge after closing any process using the directory"
+      },
+      "1252": {
+        "name": "ErrPurgeUnsafePathCode",
+        "code": "1252",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "A model version directory name escapes the models directory\nThe models directory layout was modified while the purge was running",
+        "suggested_remediation": "Inspect the models directory for unexpected entries\nRe-run mesheryctl registry purge from the root of a meshery/meshery fork"
       }
     }
   }
