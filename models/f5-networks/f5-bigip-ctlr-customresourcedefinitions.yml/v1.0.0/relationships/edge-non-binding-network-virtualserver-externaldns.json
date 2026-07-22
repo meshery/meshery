@@ -1,9 +1,9 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "",
-  "kind": "hierarchical",
+  "kind": "edge",
   "metadata": {
-    "description": "",
+    "description": "ExternalDNS monitors the hostname of an F5 VirtualServer to automatically create and manage external DNS records for the virtual server's public IP.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -15,9 +15,9 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
-      "version": "v1.18.2"
+      "version": "f5-bigip-ctlr-customresourcedefinitions.yml"
     },
-    "name": "aws-ec2-controller",
+    "name": "f5-networks",
     "registrant": {
       "kind": ""
     },
@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "SecurityGroup",
+            "kind": "VirtualServer",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -39,7 +39,37 @@
               "model": {
                 "version": ""
               },
-              "name": "aws-ec2-controller",
+              "name": "f5-networks",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "host"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "ExternalDNS",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "f5-networks",
               "registrant": {
                 "kind": "github"
               },
@@ -50,37 +80,7 @@
                 [
                   "configuration",
                   "spec",
-                  "vpcRef",
-                  "from",
-                  "name"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "VPC",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "model": {
-                "version": ""
-              },
-              "name": "aws-ec2-controller",
-              "registrant": {
-                "kind": "github"
-              },
-              "version": ""
-            },
-            "patch": {
-              "mutatorRef": [
-                [
-                  "displayName"
+                  "domainName"
                 ]
               ],
               "patchStrategy": "replace"
@@ -94,8 +94,8 @@
       }
     }
   ],
-  "subType": "inventory",
+  "subType": "network",
   "status": "enabled",
-  "type": "parent",
+  "type": "non-binding",
   "version": "v1.0.0"
 }

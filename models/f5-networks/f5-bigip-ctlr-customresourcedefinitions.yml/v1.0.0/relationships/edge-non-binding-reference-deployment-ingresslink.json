@@ -1,9 +1,9 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "",
-  "kind": "hierarchical",
+  "kind": "edge",
   "metadata": {
-    "description": "",
+    "description": "An IngressLink selects pods of a Kubernetes Deployment (typically an NGINX Ingress Controller) via label selectors to proxy ingress traffic through F5 BIG-IP.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -15,9 +15,9 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
-      "version": "v1.18.2"
+      "version": "f5-bigip-ctlr-customresourcedefinitions.yml"
     },
-    "name": "aws-ec2-controller",
+    "name": "f5-networks",
     "registrant": {
       "kind": ""
     },
@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "SecurityGroup",
+            "kind": "Deployment",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -39,7 +39,39 @@
               "model": {
                 "version": ""
               },
-              "name": "aws-ec2-controller",
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "template",
+                  "metadata",
+                  "labels"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "IngressLink",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "f5-networks",
               "registrant": {
                 "kind": "github"
               },
@@ -50,37 +82,8 @@
                 [
                   "configuration",
                   "spec",
-                  "vpcRef",
-                  "from",
-                  "name"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "VPC",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "model": {
-                "version": ""
-              },
-              "name": "aws-ec2-controller",
-              "registrant": {
-                "kind": "github"
-              },
-              "version": ""
-            },
-            "patch": {
-              "mutatorRef": [
-                [
-                  "displayName"
+                  "selector",
+                  "matchLabels"
                 ]
               ],
               "patchStrategy": "replace"
@@ -94,8 +97,8 @@
       }
     }
   ],
-  "subType": "inventory",
+  "subType": "reference",
   "status": "enabled",
-  "type": "parent",
+  "type": "non-binding",
   "version": "v1.0.0"
 }
