@@ -1,11 +1,15 @@
 package models
 
 import (
+	"context"
+	"sync"
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/controllers"
+	controllersconfig "github.com/meshery/schemas/models/v1alpha1/controllers_config"
 )
 
 func TestControllerEventActedUponPrefersConnectionID(t *testing.T) {
@@ -93,4 +97,79 @@ func TestAddCtxControllerHandlersReturnsEarlyOnInvalidConfig(t *testing.T) {
 	if len(mch.ctxControllerHandlers) != 0 {
 		t.Fatalf("expected ctxControllerHandlers to be empty, got %d", len(mch.ctxControllerHandlers))
 	}
+}
+
+func TestGetControllerHandlersForEachContextReturnsCopy(t *testing.T) {
+	mch := &MesheryControllersHelper{
+		ctxControllerHandlers: map[MesheryController]controllers.IMesheryController{
+			MesheryOperator: nil,
+		},
+	}
+
+	got := mch.GetControllerHandlersForEachContext()
+	if len(got) != 1 {
+		t.Fatalf("expected 1 handler in the returned map, got %d", len(got))
+	}
+
+	// The returned map must be a copy: callers range it outside the lock, so
+	// mutating it must not leak into the helper's internal state.
+	got[MesheryBroker] = nil
+	delete(got, MesheryOperator)
+
+	if _, ok := mch.ctxControllerHandlers[MesheryOperator]; !ok {
+		t.Fatal("deleting from the returned map removed an entry from the helper's internal map")
+	}
+	if _, ok := mch.ctxControllerHandlers[MesheryBroker]; ok {
+		t.Fatal("adding to the returned map added an entry to the helper's internal map")
+	}
+
+	// A helper with no handlers attached returns nil, not a shared empty map.
+	if (&MesheryControllersHelper{}).GetControllerHandlersForEachContext() != nil {
+		t.Fatal("expected nil for a helper with no controller handlers")
+	}
+}
+
+// TestMesheryControllersHelperConcurrentStateAccess drives the controller-state
+// writers (the connect / reconcile / config-apply goroutines) against the
+// readers (the controllers-status SSE stream and the status REST handlers) the
+// way they run in production. It guards the data race fixed in #20807 and is
+// meaningful under `go test -race`.
+func TestMesheryControllersHelperConcurrentStateAccess(t *testing.T) {
+	mch := &MesheryControllersHelper{
+		ctxControllerHandlers:  map[MesheryController]controllers.IMesheryController{MesheryBroker: nil},
+		ctxOperatorStatus:      controllers.Unknown,
+		meshsyncDeploymentMode: connections.MeshsyncDeploymentModeOperator,
+	}
+
+	// Seed the tracker single-threaded, before any goroutine starts, so that
+	// during the concurrent phase IsUndeployed only reads its own map — the
+	// tracker's accessors are unsynchronized and out of scope for this test.
+	ot := NewOperatorTracker(false)
+	ot.Undeployed(mch.contextID, true)
+
+	ops := []func(){
+		// writers
+		func() { mch.SetMeshsyncDeploymentMode(connections.MeshsyncDeploymentModeOperator) },
+		func() { mch.SetControllersConfig(&controllersconfig.MesheryControllersConfig{}) },
+		func() { mch.RemoveCtxControllerHandler(context.Background(), "ctx") },
+		func() { mch.UpdateOperatorsStatusMap(ot) },
+		// readers
+		func() { _ = mch.GetControllerHandlersForEachContext() },
+		func() { _ = mch.GetOperatorsStatusMap() },
+		func() { _ = mch.GetMeshsyncDeploymentMode() },
+	}
+
+	const iterations = 1000
+	var wg sync.WaitGroup
+	for _, op := range ops {
+		op := op
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for i := 0; i < iterations; i++ {
+				op()
+			}
+		}()
+	}
+	wg.Wait()
 }
