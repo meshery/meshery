@@ -39,7 +39,7 @@
               "model": {
                 "version": ""
               },
-              "name": "",
+              "name": "aws-lambda-controller",
               "registrant": {
                 "kind": "github"
               },
