@@ -122,6 +122,18 @@ export const formatApiError = (error: unknown, fallbackTitle?: string): Formatte
     };
   }
 
-  const fallback = extractFallbackMessage(error) ?? fallbackTitle ?? 'An unexpected error occurred';
+  // Network-level failures (offline, timeout) carry a generic browser message
+  // (e.g. "TypeError: Failed to fetch") that is identical across every failed
+  // request, so it can't distinguish "create" from "fetch" errors. Prefer the
+  // operation-specific fallbackTitle in that case.
+  const status =
+    error && typeof error === 'object' ? (error as Record<string, unknown>).status : undefined;
+  const isNetworkError = status === 'FETCH_ERROR' || status === 'TIMEOUT_ERROR';
+
+  const fallback =
+    (isNetworkError ? fallbackTitle : undefined) ??
+    extractFallbackMessage(error) ??
+    fallbackTitle ??
+    'An unexpected error occurred';
   return { message: fallback };
 };

@@ -17,6 +17,8 @@ import EnvironmentCard from './environment-card';
 import EnvironmentIcon from '../../assets/icons/Environment';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
+import { formatApiError } from '../../utils/helpers/meshkitError';
+import { getErrorMessage } from '../connections/ConnectionTable.constants';
 import { RJSFModalWrapper } from '../shared/Modal/Modal';
 import _PromptComponent from '../general/PromptComponent';
 import { EmptyState } from '../lifecycle/general';
@@ -157,15 +159,13 @@ const Environments = () => {
 
   useEffect(() => {
     if (isEnvironmentsError) {
-      handleError(`Environments Fetching Error: ${environmentsError?.data}`);
+      handleError('Environments Fetch Error')(environmentsError);
     }
     if (isEnvironmentConnectionsError) {
-      handleError(
-        `Connections of a Environment fetching Error: ${environmentConnectionsError?.data}`,
-      );
+      handleError('Connections of a Environment fetching Error')(environmentConnectionsError);
     }
     if (isConnectionsError) {
-      handleError(`Connections fetching Error: ${connectionsError?.data}`);
+      handleError('Connections fetching Error')(connectionsError);
     }
   }, [
     isEnvironmentsError,
@@ -177,12 +177,13 @@ const Environments = () => {
   ]);
 
   function handleError(action) {
-    return (error) => {
+    return (error: unknown) => {
       updateProgress({ showProgress: false });
+      const { message } = formatApiError(error, action);
       notify({
-        message: `${action.error_msg}: ${error}`,
+        message,
         event_type: EVENT_TYPES.ERROR,
-        details: error.toString(),
+        details: getErrorMessage(error),
       });
     };
   }
@@ -264,8 +265,8 @@ const Environments = () => {
       },
     })
       .unwrap()
-      .then(handleSuccess(`Environment "${name}" created `))
-      .catch((error) => handleError(`Environment Create Error: ${error?.data}`));
+      .then(() => handleSuccess(`Environment "${name}" created `))
+      .catch(handleError('Environment Create Error'));
     handleEnvironmentModalClose();
   };
 
@@ -279,8 +280,8 @@ const Environments = () => {
       },
     })
       .unwrap()
-      .then(handleSuccess(`Environment "${name}" updated`))
-      .catch((error) => handleError(`Environment Update Error: ${error?.data}`));
+      .then(() => handleSuccess(`Environment "${name}" updated`))
+      .catch(handleError('Environment Update Error'));
     handleEnvironmentModalClose();
   };
 
@@ -305,8 +306,8 @@ const Environments = () => {
       environmentId: id,
     })
       .unwrap()
-      .then(handleSuccess(`Environment deleted`))
-      .catch((error) => handleError(`Environment Delete Error: ${error?.data}`));
+      .then(() => handleSuccess(`Environment deleted`))
+      .catch(handleError('Environment Delete Error'));
   };
 
   const deleteEnvironmentModalContent = (environment) => (

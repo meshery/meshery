@@ -115,4 +115,19 @@ describe('formatApiError', () => {
     const result = formatApiError(undefined);
     expect(result.message).toBe('An unexpected error occurred');
   });
+
+  it('prefers fallbackTitle over the generic browser message on FETCH_ERROR (offline)', () => {
+    const networkError = { status: 'FETCH_ERROR', error: 'TypeError: Failed to fetch' };
+    expect(formatApiError(networkError, 'Environment Create Error').message).toBe(
+      'Environment Create Error',
+    );
+    expect(formatApiError(networkError, 'Environments Fetch Error').message).toBe(
+      'Environments Fetch Error',
+    );
+  });
+
+  it('falls back to the generic browser message on FETCH_ERROR when no title is supplied', () => {
+    const networkError = { status: 'FETCH_ERROR', error: 'TypeError: Failed to fetch' };
+    expect(formatApiError(networkError).message).toBe('TypeError: Failed to fetch');
+  });
 });
