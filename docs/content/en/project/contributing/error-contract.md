@@ -65,7 +65,7 @@ originated outside the MeshKit error catalog.
 
 - Do not rely on plain-text error bodies — they are always JSON.
 - When `code` is present, prefer it over string matching on `error`.
-- When `suggested_remediation` is non-empty, surface it alongside `error`.
+- When `suggestedRemediation` is non-empty, surface every entry alongside `error`.
 - When the body is not valid JSON, treat the response as a bug and report
   the offending endpoint; do not attempt a text fallback.
 

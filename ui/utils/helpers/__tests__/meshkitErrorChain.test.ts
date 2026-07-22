@@ -107,7 +107,10 @@ describe('MeshKit error chain (real schemas client)', () => {
   it('renders the title, every remediation bullet and the code from a real 403', async () => {
     respondWith(403, CREATE_ENVIRONMENT_403);
 
-    const formatted = formatApiError(await createEnvironmentError(), 'Failed to create environment');
+    const formatted = formatApiError(
+      await createEnvironmentError(),
+      'Failed to create environment',
+    );
 
     expect(formatted.message).toContain('**Unable to create the environment**');
     expect(formatted.message).toContain('*Try:*');
@@ -145,7 +148,10 @@ describe('MeshKit error chain (real schemas client)', () => {
   it('degrades to a single-line message when the body is not a MeshKit envelope', async () => {
     respondWith(500, { message: 'internal server error' });
 
-    const formatted = formatApiError(await createEnvironmentError(), 'Failed to create environment');
+    const formatted = formatApiError(
+      await createEnvironmentError(),
+      'Failed to create environment',
+    );
 
     expect(formatted.meshkit).toBeUndefined();
     expect(formatted.message).toBe('internal server error');
