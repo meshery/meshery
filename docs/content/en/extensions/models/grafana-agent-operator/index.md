@@ -1,7 +1,7 @@
 ---
 title: Grafana Agent Operator
 subtitle: Operational dashboards for your data with Grafana and Meshery
-image: /extensions/models/grafana-agent-operator/icons/color/grafana-agent-operator-color.svg
+image: extensions/models/grafana-agent-operator/icons/color/grafana-agent-operator-color.svg
 aliases: /extensibility/integrations/grafana-agent-operator
 docURL: https://docs.meshery.io/extensibility/integrations/grafana-agent-operator
 description: 

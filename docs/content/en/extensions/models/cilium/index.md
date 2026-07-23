@@ -1,7 +1,7 @@
 ---
 title: Cilium
 subtitle: The easiest way to get production-grade Kubernetes clusters with Cilium up and running
-image: /extensions/models/cilium/icons/color/cilium-color.svg
+image: extensions/models/cilium/icons/color/cilium-color.svg
 aliases: /extensibility/integrations/cilium
 docURL: https://docs.meshery.io/extensibility/adapters/cilium
 description: 

@@ -1,7 +1,7 @@
 ---
 title: Postgres Database (CrunchyData)
 subtitle: Collaborative and visual infrastructure as design for Postgres Database (CrunchyData)
-image: /extensions/models/pg-db/icons/color/pg-db-color.svg
+image: extensions/models/pg-db/icons/color/pg-db-color.svg
 aliases: /extensibility/integrations/pg-db
 docURL: https://docs.meshery.io/extensibility/integrations/pg-db
 description: 

@@ -1,7 +1,7 @@
 ---
 title: NATS Operator
 subtitle: Collaborative and visual infrastructure as design for NATS Operator
-image: /extensions/models/nats-operator/icons/color/nats-operator-color.svg
+image: extensions/models/nats-operator/icons/color/nats-operator-color.svg
 aliases: /extensibility/integrations/nats-operator
 docURL: https://docs.meshery.io/extensibility/integrations/nats-operator
 description: 

@@ -15,7 +15,6 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
-	guid "github.com/google/uuid"
 	"github.com/gorilla/mux"
 	helpers "github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/meshes"
@@ -161,9 +160,9 @@ type DesignPostPayload struct {
 	ID         *core.Uuid         `json:"id,omitempty"`
 	Name       string             `json:"name,omitempty"`
 	DesignFile design.PatternFile `json:"designFile"`
-	// Meshery doesn't have the user id fields
+	// Meshery doesn't have the owner field
 	// but the remote provider is allowed to provide one
-	UserID      *string              `json:"userId"`
+	Owner       *string              `json:"owner"`
 	Visibility  string               `json:"visibility"`
 	CatalogData v1alpha1.CatalogData `json:"catalogData,omitempty"`
 }
@@ -350,7 +349,7 @@ func (h *Handler) handlePatternPOST(
 	var err error
 
 	userID := user.ID
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(models.Create).WithSeverity(events.Informational).WithDescription("Save design ")
+	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(models.Create).WithSeverity(events.Informational).WithDescription("Save design ")
 
 	requestPayload := &DesignPostPayload{}
 	if err := json.NewDecoder(r.Body).Decode(&requestPayload); err != nil {
@@ -384,7 +383,7 @@ func (h *Handler) handlePatternPOST(
 	mesheryPatternRecord := models.MesheryPattern{
 		ID:          requestPayload.ID,
 		PatternFile: designFile,
-		UserID:      requestPayload.UserID,
+		Owner:       requestPayload.Owner,
 		Name:        requestPayload.Name,
 		Visibility:  requestPayload.Visibility,
 		CatalogData: requestPayload.CatalogData,
@@ -756,8 +755,15 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	provider models.Provider,
 ) {
 	patternID := mux.Vars(r)["id"]
+	patternUUID, err := uuid.FromString(patternID)
+	if err != nil || patternUUID == uuid.Nil {
+		deleteErr := ErrDeletePattern(fmt.Errorf("invalid design ID: %s", patternID))
+		h.log.Error(deleteErr)
+		writeMeshkitError(rw, deleteErr, http.StatusBadRequest)
+		return
+	}
 	userID := user.ID
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("delete").ActedUpon(uuid.FromStringOrNil(patternID))
+	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("delete").ActedUpon(patternUUID)
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
@@ -791,7 +797,6 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Pattern %s deleted.", mesheryPattern.Name)).Build()
 	_ = provider.PersistEvent(*event, token)
 	go h.config.EventBroadcaster.Publish(userID, event)
-	go h.config.PatternChannel.Publish(user.ID, struct{}{})
 
 	rw.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
@@ -810,7 +815,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 ) {
 	var formatConverter converter.ConvertFormat
 	userID := user.ID
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("download").ActedUpon(userID).WithSeverity(events.Informational)
+	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("download").ActedUpon(userID).WithSeverity(events.Informational)
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
@@ -883,7 +888,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 
 	err = h.VerifyAndConvertToDesign(r.Context(), pattern, provider)
 	if err != nil {
-		event := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert").WithDescription(fmt.Sprintf("The \"%s\" is not in the design format, failed to convert and persist the original source content from \"%s\" to design file format", pattern.Name, pattern.Type.String)).WithMetadata(map[string]interface{}{"error": err}).Build()
+		event := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("convert").WithDescription(fmt.Sprintf("The \"%s\" is not in the design format, failed to convert and persist the original source content from \"%s\" to design file format", pattern.Name, pattern.Type.String)).WithMetadata(map[string]interface{}{"error": err}).Build()
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		h.log.Error(err)
@@ -895,7 +900,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	isOldFormat, err := patternutils.IsDesignInAlpha2Format(pattern.PatternFile)
 	if err != nil {
 		err = ErrPatternFile(err)
-		event := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("download").WithDescription(fmt.Sprintf("Failed to parse design \"%s\".", pattern.Name)).WithMetadata(map[string]interface{}{"error": err, "id": pattern.ID}).Build()
+		event := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("download").WithDescription(fmt.Sprintf("Failed to parse design \"%s\".", pattern.Name)).WithMetadata(map[string]interface{}{"error": err, "id": pattern.ID}).Build()
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		h.log.Error(err)
@@ -905,7 +910,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 
 	if isOldFormat {
 
-		eventBuilder := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert")
+		eventBuilder := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("convert")
 		_, patternFileStr, err := h.convertV1alpha2ToV1beta3(pattern, eventBuilder)
 		event := eventBuilder.Build()
 		_ = provider.PersistEvent(*event, token)
@@ -1254,7 +1259,7 @@ func (h *Handler) CloneMesheryPatternHandler(
 	patternUUID := uuid.FromStringOrNil(patternID)
 
 	userID := user.ID
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("clone").ActedUpon(patternUUID).WithSeverity(events.Informational)
+	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("clone").ActedUpon(patternUUID).WithSeverity(events.Informational)
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
@@ -1310,7 +1315,7 @@ func (h *Handler) CloneMesheryPatternHandler(
 	isOldFormat, err := patternutils.IsDesignInAlpha2Format(pattern.PatternFile)
 	if err != nil {
 		err = ErrPatternFile(err)
-		event := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromUser(userID).WithDescription(fmt.Sprintf("Failed to parse design \"%s\".", pattern.Name)).WithMetadata(map[string]interface{}{"error": err, "id": patternID}).Build()
+		event := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromOwner(userID).WithDescription(fmt.Sprintf("Failed to parse design \"%s\".", pattern.Name)).WithMetadata(map[string]interface{}{"error": err, "id": patternID}).Build()
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		h.log.Error(err)
@@ -1319,7 +1324,7 @@ func (h *Handler) CloneMesheryPatternHandler(
 	}
 
 	if isOldFormat {
-		eventBuilder := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert")
+		eventBuilder := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("convert")
 		_, patternFileStr, err := h.convertV1alpha2ToV1beta3(pattern, eventBuilder)
 		event := eventBuilder.Build()
 		_ = provider.PersistEvent(*event, token)
@@ -1352,7 +1357,6 @@ func (h *Handler) CloneMesheryPatternHandler(
 		return
 	}
 
-	go h.config.PatternChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
 		h.log.Error(err)
@@ -1372,7 +1376,7 @@ func (h *Handler) PublishCatalogPatternHandler(
 
 	userID := user.ID
 	eventBuilder := events.NewEvent().
-		FromUser(userID).
+		FromOwner(userID).
 		FromSystem(*h.SystemID).
 		WithCategory("pattern").
 		WithAction("publish").
@@ -1434,7 +1438,6 @@ func (h *Handler) PublishCatalogPatternHandler(
 	_ = provider.PersistEvent(*e, token)
 	go h.config.EventBroadcaster.Publish(userID, e)
 
-	go h.config.PatternChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	rw.WriteHeader(http.StatusAccepted)
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
@@ -1455,7 +1458,7 @@ func (h *Handler) UnPublishCatalogPatternHandler(
 
 	userID := user.ID
 	eventBuilder := events.NewEvent().
-		FromUser(userID).
+		FromOwner(userID).
 		FromSystem(*h.SystemID).
 		WithCategory("pattern").
 		WithAction("unpublish_request").
@@ -1517,7 +1520,6 @@ func (h *Handler) UnPublishCatalogPatternHandler(
 	_ = provider.PersistEvent(*e, token)
 	go h.config.EventBroadcaster.Publish(userID, e)
 
-	go h.config.PatternChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
 		h.log.Error(err)
@@ -1550,7 +1552,6 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 		writeMeshkitError(rw, ErrDeletePattern(err), http.StatusInternalServerError)
 		return
 	}
-	go h.config.PatternChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
 		h.log.Error(err)
@@ -1568,7 +1569,7 @@ func (h *Handler) GetMesheryPatternHandler(
 	patternID := mux.Vars(r)["id"]
 	patternUUID := uuid.FromStringOrNil(patternID)
 	userID := user.ID
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("view").ActedUpon(patternUUID)
+	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("view").ActedUpon(patternUUID)
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
@@ -1598,7 +1599,7 @@ func (h *Handler) GetMesheryPatternHandler(
 
 	err = h.VerifyAndConvertToDesign(r.Context(), pattern, provider)
 	if err != nil {
-		event := events.NewEvent().ActedUpon(patternUUID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert").WithDescription(fmt.Sprintf("The \"%s\" is not in the design format, failed to convert and persist the original source content from \"%s\" to design file format", pattern.Name, pattern.Type.String)).WithMetadata(map[string]interface{}{"error": err}).Build()
+		event := events.NewEvent().ActedUpon(patternUUID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("convert").WithDescription(fmt.Sprintf("The \"%s\" is not in the design format, failed to convert and persist the original source content from \"%s\" to design file format", pattern.Name, pattern.Type.String)).WithMetadata(map[string]interface{}{"error": err}).Build()
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		h.log.Error(err)
@@ -1609,7 +1610,7 @@ func (h *Handler) GetMesheryPatternHandler(
 	isOldFormat, err := patternutils.IsDesignInAlpha2Format(pattern.PatternFile)
 	if err != nil {
 		err = ErrPatternFile(err)
-		event := events.NewEvent().ActedUpon(patternUUID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("view").WithDescription(fmt.Sprintf("Failed to parse design \"%s\".", pattern.Name)).WithMetadata(map[string]interface{}{"error": err, "id": pattern.ID}).Build()
+		event := events.NewEvent().ActedUpon(patternUUID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("view").WithDescription(fmt.Sprintf("Failed to parse design \"%s\".", pattern.Name)).WithMetadata(map[string]interface{}{"error": err, "id": pattern.ID}).Build()
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		h.log.Error(err)
@@ -1618,7 +1619,7 @@ func (h *Handler) GetMesheryPatternHandler(
 	}
 
 	if isOldFormat {
-		eventBuilder := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert")
+		eventBuilder := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("convert")
 		_, patternFileStr, err := h.convertV1alpha2ToV1beta3(pattern, eventBuilder)
 		event := eventBuilder.Build()
 		_ = provider.PersistEvent(*event, token)
@@ -1755,7 +1756,7 @@ func (h *Handler) handlePatternUpdate(
 		_ = r.Body.Close()
 	}()
 	userID := user.ID
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("update").FromUser(userID)
+	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("update").FromOwner(userID)
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
@@ -1772,7 +1773,7 @@ func (h *Handler) handlePatternUpdate(
 	res := meshes.EventsResponse{
 		Component:     "core",
 		ComponentName: "Design",
-		OperationId:   guid.NewString(),
+		OperationId:   uuid.Must(uuid.NewV4()).String(),
 		EventType:     meshes.EventType_INFO,
 	}
 
@@ -1831,7 +1832,6 @@ func (h *Handler) handlePatternUpdate(
 		writeMeshkitError(rw, errPatternSave, http.StatusInternalServerError)
 		return
 	}
-	go h.config.PatternChannel.Publish(userID, struct{}{})
 
 	eventBuilder = eventBuilder.WithSeverity(events.Informational).ActedUpon(*mesheryPattern.ID)
 

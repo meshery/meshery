@@ -1,7 +1,7 @@
 ---
 title: AMD GPU
 subtitle: Collaborative and visual infrastructure as design for AMD GPU
-image: /extensions/models/amd-gpu/icons/color/amd-gpu-color.svg
+image: extensions/models/amd-gpu/icons/color/amd-gpu-color.svg
 aliases: /extensibility/integrations/amd-gpu
 docURL: https://docs.meshery.io/extensibility/integrations/amd-gpu
 description: 

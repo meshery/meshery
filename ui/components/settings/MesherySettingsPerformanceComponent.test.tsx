@@ -88,6 +88,11 @@ vi.mock('@sistent/sistent', () => ({
   ),
   NoSsr: ({ children }: any) => <>{children}</>,
   Radio: () => <input type="radio" />,
+  Box: ({ children, sx, ...rest }: any) => (
+    <div data-sx={JSON.stringify(sx || {})} {...rest}>
+      {children}
+    </div>
+  ),
   SaveIcon: () => <svg data-testid="save-icon" />,
 }));
 

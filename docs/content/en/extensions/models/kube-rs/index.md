@@ -1,7 +1,7 @@
 ---
 title: kube-rs
 subtitle: Collaborative and visual infrastructure as design for kube-rs
-image: /extensions/models/kube-rs/icons/color/kube-rs-color.svg
+image: extensions/models/kube-rs/icons/color/kube-rs-color.svg
 aliases: /extensibility/integrations/kube-rs
 docURL: https://docs.meshery.io/extensibility/integrations/kube-rs
 description: 

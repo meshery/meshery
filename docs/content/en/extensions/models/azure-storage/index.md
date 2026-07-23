@@ -1,7 +1,7 @@
 ---
 title: Azure Storage
 subtitle: Collaborative and visual infrastructure as design for Azure Storage
-image: /extensions/models/azure-storage/icons/color/azure-storage-color.svg
+image: extensions/models/azure-storage/icons/color/azure-storage-color.svg
 aliases: /extensibility/integrations/azure-storage
 docURL: https://docs.meshery.io/extensibility/integrations/azure-storage
 description: 

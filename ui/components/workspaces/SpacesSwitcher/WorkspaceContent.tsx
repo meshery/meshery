@@ -1,5 +1,5 @@
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import {
   Box,
   FormControl,
@@ -38,7 +38,7 @@ import { useSelector } from 'react-redux';
 import { useNotification } from '@/utils/hooks/useNotification';
 
 const WorkspaceContent = ({ workspace }) => {
-  const isViewVisible = CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject);
+  const isViewVisible = CAN(Keys.KanvasViewViews.id, Keys.KanvasViewViews.function);
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
 
   const [filters, setFilters] = useState({
@@ -247,8 +247,8 @@ const WorkspaceContent = ({ workspace }) => {
                 workspaceId={workspace?.id}
                 disabled={
                   !CAN(
-                    keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
-                    keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
+                    Keys.WorkspaceManagementAssignDesignsToWorkspaces.id,
+                    Keys.WorkspaceManagementAssignDesignsToWorkspaces.function,
                   )
                 }
               />
@@ -276,16 +276,16 @@ const WorkspaceContent = ({ workspace }) => {
             assignDesignToWorkspace={assignDesignToWorkspace}
             assignViewToWorkspace={assignViewToWorkspace}
             isCreateWorkspaceAllowed={CAN(
-              keys.CREATE_WORKSPACE.action,
-              keys.CREATE_WORKSPACE.subject,
+              Keys.WorkspaceManagementCreateWorkspace.id,
+              Keys.WorkspaceManagementCreateWorkspace.function,
             )}
             isMoveDesignAllowed={CAN(
-              keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
-              keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
+              Keys.WorkspaceManagementAssignDesignsToWorkspaces.id,
+              Keys.WorkspaceManagementAssignDesignsToWorkspaces.function,
             )}
             isMoveViewAllowed={CAN(
-              keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
-              keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
+              Keys.KanvasAssignViewsToWorkspace.id,
+              Keys.KanvasAssignViewsToWorkspace.function,
             )}
             currentOrgId={currentOrganization?.id}
             notify={notify}

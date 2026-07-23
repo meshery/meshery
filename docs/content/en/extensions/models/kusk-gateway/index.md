@@ -1,7 +1,7 @@
 ---
 title: Kusk Gateway
 subtitle: Collaborative and visual infrastructure as design for Kusk Gateway
-image: /extensions/models/kusk-gateway/icons/color/kusk-gateway-color.svg
+image: extensions/models/kusk-gateway/icons/color/kusk-gateway-color.svg
 aliases: /extensibility/integrations/kusk-gateway
 docURL: https://docs.meshery.io/extensibility/integrations/kusk-gateway
 description: 

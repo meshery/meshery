@@ -1,7 +1,7 @@
 ---
 title: Sidekick
 subtitle: Collaborative and visual infrastructure as design for Sidekick
-image: /extensions/models/sidekick/icons/color/sidekick-color.svg
+image: extensions/models/sidekick/icons/color/sidekick-color.svg
 aliases: /extensibility/integrations/sidekick
 docURL: https://docs.meshery.io/extensibility/integrations/sidekick
 description: 

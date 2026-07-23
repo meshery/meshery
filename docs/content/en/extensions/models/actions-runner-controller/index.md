@@ -1,7 +1,7 @@
 ---
 title: Actions Runner Controller (ARC)
 subtitle: Collaborative and visual infrastructure as design for Actions Runner Controller (ARC)
-image: /extensions/models/actions-runner-controller/icons/color/actions-runner-controller-color.svg
+image: extensions/models/actions-runner-controller/icons/color/actions-runner-controller-color.svg
 aliases: /extensibility/integrations/actions-runner-controller
 docURL: https://docs.meshery.io/extensibility/integrations/actions-runner-controller
 description: 

@@ -1,7 +1,7 @@
 ---
 title: Kubedb Ops Manager
 subtitle: Collaborative and visual infrastructure as design for Kubedb Ops Manager
-image: /extensions/models/kubedb-ops-manager/icons/color/kubedb-ops-manager-color.svg
+image: extensions/models/kubedb-ops-manager/icons/color/kubedb-ops-manager-color.svg
 aliases: /extensibility/integrations/kubedb-ops-manager
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb-ops-manager
 description: 

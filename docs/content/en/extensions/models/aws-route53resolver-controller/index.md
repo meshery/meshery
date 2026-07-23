@@ -1,7 +1,7 @@
 ---
 title: AWS Route 53 Resolver
 subtitle: Collaborative and visual infrastructure as design for AWS Route 53 Resolver
-image: /extensions/models/aws-route53resolver-controller/icons/color/aws-route53resolver-controller-color.svg
+image: extensions/models/aws-route53resolver-controller/icons/color/aws-route53resolver-controller-color.svg
 aliases: /extensibility/integrations/aws-route53resolver-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-route53resolver-controller
 description: 
@@ -33,7 +33,15 @@ components:
   colorIcon: extensions/models/aws-route53resolver-controller/components/resolver-rule-association/icons/color/resolver-rule-association-color.svg
   whiteIcon: extensions/models/aws-route53resolver-controller/components/resolver-rule-association/icons/white/resolver-rule-association-white.svg
   description: 
-components-count: 6
+- name: resolver-query-log-config-association
+  colorIcon: extensions/models/aws-route53resolver-controller/components/resolver-query-log-config-association/icons/color/resolver-query-log-config-association-color.svg
+  whiteIcon: extensions/models/aws-route53resolver-controller/components/resolver-query-log-config-association/icons/white/resolver-query-log-config-association-white.svg
+  description: 
+- name: resolver-query-log-config
+  colorIcon: extensions/models/aws-route53resolver-controller/components/resolver-query-log-config/icons/color/resolver-query-log-config-color.svg
+  whiteIcon: extensions/models/aws-route53resolver-controller/components/resolver-query-log-config/icons/white/resolver-query-log-config-white.svg
+  description: 
+components-count: 8
 relationships: 
 - type: "non-binding"
   kind: "edge"

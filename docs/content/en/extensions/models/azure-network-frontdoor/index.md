@@ -1,7 +1,7 @@
 ---
 title: Azure Network Front Door
 subtitle: Collaborative and visual infrastructure as design for Azure Network Front Door
-image: /extensions/models/azure-network-frontdoor/icons/color/azure-network-frontdoor-color.svg
+image: extensions/models/azure-network-frontdoor/icons/color/azure-network-frontdoor-color.svg
 aliases: /extensibility/integrations/azure-network-frontdoor
 docURL: https://docs.meshery.io/extensibility/integrations/azure-network-frontdoor
 description: 

@@ -1,7 +1,7 @@
 ---
 title: Azure Kubernetes Service
 subtitle: Collaborative and visual infrastructure as design for Azure Kubernetes Service
-image: /extensions/models/azure-kubernetes-service/icons/color/azure-kubernetes-service-color.svg
+image: extensions/models/azure-kubernetes-service/icons/color/azure-kubernetes-service-color.svg
 aliases: /extensibility/integrations/azure-kubernetes-service
 docURL: https://docs.meshery.io/extensibility/integrations/Azure Kubernetes Service
 description: 

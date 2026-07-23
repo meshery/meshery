@@ -15,9 +15,9 @@ type MesheryFilter struct {
 
 	Name       string `json:"name,omitempty"`
 	FilterFile []byte `json:"filterFile"`
-	// Meshery doesn't have the user id fields
+	// Meshery doesn't have the owner field
 	// but the remote provider is allowed to provide one
-	UserID *string `json:"userId"`
+	Owner *string `json:"owner" gorm:"-"`
 
 	Location       sql.Map    `json:"location"`
 	Visibility     string     `json:"visibility"`
@@ -32,9 +32,9 @@ type MesheryFilterPayload struct {
 
 	Name       string `json:"name,omitempty"`
 	FilterFile []byte `json:"filterFile"`
-	// Meshery doesn't have the user id fields
+	// Meshery doesn't have the owner field
 	// but the remote provider is allowed to provide one
-	UserID *string `json:"userId"`
+	Owner *string `json:"owner"`
 
 	Location       sql.Map    `json:"location"`
 	Visibility     string     `json:"visibility"`

@@ -72,6 +72,14 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 
+		// When the user did not pass --input explicitly, auto-detect the
+		// repo-root models directory so the command works whether it is run
+		// from the repository root (the documented prerequisite) or from a
+		// subdirectory such as mesheryctl/.
+		if !cmd.Flags().Changed("input") {
+			modelLocation = defaultModelsLocation()
+		}
+
 		srv, err := mutils.NewSheetSRV(spreadsheeetCred)
 		if err != nil {
 			utils.Log.Error(ErrUpdateRegistry(err, modelLocation))
@@ -244,10 +252,13 @@ func logModelUpdateSummary(modelToCompUpdateTracker *store.GenerticThreadSafeSto
 }
 
 func init() {
-	updateCmd.PersistentFlags().StringVarP(&modelLocation, "input", "i", "../server/meshmodel", "relative or absolute input path to the models directory")
-	_ = updateCmd.MarkPersistentFlagRequired("path")
+	updateCmd.PersistentFlags().StringVarP(&modelLocation, "input", "i", "./models", "relative or absolute input path to the models directory; when unset, the repo-root models directory is auto-detected (models from the repo root, ../models from a subdirectory)")
+	// NOTE: `input` is intentionally not marked required - it has a default and is
+	// auto-detected in RunE. A prior version called MarkPersistentFlagRequired("path")
+	// here, which silently no-op'd (the flag is named `input`, not `path`, and the
+	// returned error was discarded), so the requirement never took effect. See #18633.
 
-	updateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet it for the integration spreadsheet")
+	updateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
 	updateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
 	updateCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "", "specific model name to be generated")
 

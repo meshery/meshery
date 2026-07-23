@@ -1,7 +1,7 @@
 ---
 title: Nirmata AWS Adapter
 subtitle: Collaborative and visual infrastructure as design for Nirmata AWS Adapter
-image: /extensions/models/nirmata-aws-adapter/icons/color/nirmata-aws-adapter-color.svg
+image: extensions/models/nirmata-aws-adapter/icons/color/nirmata-aws-adapter-color.svg
 aliases: /extensibility/integrations/nirmata-aws-adapter
 docURL: https://docs.meshery.io/extensibility/integrations/nirmata-aws-adapter
 description: 

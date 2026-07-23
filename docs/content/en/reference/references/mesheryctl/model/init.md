@@ -49,7 +49,7 @@ mesheryctl model init [model-name] --path [path-to-location] (default is current
 generate a folder structure in json format
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is json)
+mesheryctl model init [model-name] --output-format [json|yaml] (default is json)
 
 </div>
 </pre> 
@@ -85,4 +85,4 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 
 ## See Also
 
-Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/contributing-cli.md#preserving-manually-added-documentation" >}}) for guidance.
+Go back to [command reference index]({{< ref "reference/references/mesheryctl/_index.md" >}}), if you want to add content manually to the CLI documentation, please refer to the [instruction]({{< ref "project/contributing/cli/cli.md#preserving-manually-added-documentation" >}}) for guidance.

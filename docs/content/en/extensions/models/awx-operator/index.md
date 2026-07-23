@@ -1,7 +1,7 @@
 ---
 title: AWX Operator
 subtitle: Collaborative and visual infrastructure as design for AWX Operator
-image: /extensions/models/awx-operator/icons/color/awx-operator-color.svg
+image: extensions/models/awx-operator/icons/color/awx-operator-color.svg
 aliases: /extensibility/integrations/awx-operator
 docURL: https://docs.meshery.io/extensibility/integrations/awx-operator
 description: 

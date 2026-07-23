@@ -1,7 +1,7 @@
 ---
 title: Kubeslice Worker
 subtitle: Collaborative and visual infrastructure as design for Kubeslice Worker
-image: /extensions/models/kubeslice-worker/icons/color/kubeslice-worker-color.svg
+image: extensions/models/kubeslice-worker/icons/color/kubeslice-worker-color.svg
 aliases: /extensibility/integrations/kubeslice-worker
 docURL: https://docs.meshery.io/extensibility/integrations/kubeslice-worker
 description: 

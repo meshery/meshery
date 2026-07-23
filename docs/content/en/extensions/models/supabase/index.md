@@ -1,7 +1,7 @@
 ---
 title: supabase
 subtitle: Collaborative and visual infrastructure as design for supabase
-image: /extensions/models/supabase/icons/color/supabase-color.svg
+image: extensions/models/supabase/icons/color/supabase-color.svg
 aliases: /extensibility/integrations/supabase
 docURL: https://docs.meshery.io/extensibility/integrations/supabase
 description: 

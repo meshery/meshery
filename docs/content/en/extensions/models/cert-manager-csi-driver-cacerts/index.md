@@ -1,7 +1,7 @@
 ---
 title: cert-manager ca-certificates CSI Driver
 subtitle: Collaborative and visual infrastructure as design for cert-manager ca-certificates CSI Driver
-image: /extensions/models/cert-manager-csi-driver-cacerts/icons/color/cert-manager-csi-driver-cacerts-color.svg
+image: extensions/models/cert-manager-csi-driver-cacerts/icons/color/cert-manager-csi-driver-cacerts-color.svg
 aliases: /extensibility/integrations/cert-manager-csi-driver-cacerts
 docURL: https://docs.meshery.io/extensibility/integrations/cert-manager-csi-driver-cacerts
 description: 

@@ -1,7 +1,7 @@
 ---
 title: Apache Cassandra
 subtitle: Collaborative and visual infrastructure as design for Apache Cassandra
-image: /extensions/models/cass-operator/icons/color/cass-operator-color.svg
+image: extensions/models/cass-operator/icons/color/cass-operator-color.svg
 aliases: /extensibility/integrations/cass-operator
 docURL: https://docs.meshery.io/extensibility/integrations/cass-operator
 description: 

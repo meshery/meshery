@@ -1,7 +1,7 @@
 ---
 title: Azure API Management
 subtitle: Collaborative and visual infrastructure as design for Azure API Management
-image: /extensions/models/azure-api-management/icons/color/azure-api-management-color.svg
+image: extensions/models/azure-api-management/icons/color/azure-api-management-color.svg
 aliases: /extensibility/integrations/azure-api-management
 docURL: https://docs.meshery.io/extensibility/integrations/azure-api-management
 description: 

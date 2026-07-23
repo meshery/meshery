@@ -15,7 +15,7 @@ import {
   ErrorBoundary,
 } from '@sistent/sistent';
 import { useDeleteWorkspaceMutation } from '@/rtk-query/workspace';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import CAN from '@/utils/can';
 import { useNotificationHandlers } from '@/utils/hooks/useNotification';
 import { UserCommonBox } from './styles';
@@ -42,14 +42,16 @@ const WorkspaceGridView = ({
     setDeleteWorkspacesModal(true);
   };
 
-  const { handleSuccess, handleError } = useNotificationHandlers();
+  const { handleSuccess, notifyApiError } = useNotificationHandlers();
   const handleDeleteWorkspace = (id) => {
     deleteWorkspace({
       workspaceId: id,
     })
       .unwrap()
       .then(() => handleSuccess(`Workspace deleted`))
-      .catch((error) => handleError(`Workspace Delete Error: ${error?.data}`));
+      // `${error?.data}` rendered the JSON error envelope as "[object Object]".
+      // notifyApiError unpacks the MeshKit code, cause and remediation instead.
+      .catch((error) => notifyApiError(error, 'Unable to delete workspace'));
   };
 
   const handleBulkDeleteEnv = () => {
@@ -94,7 +96,10 @@ const WorkspaceGridView = ({
               onClick={handleDeleteWorkspacesModalOpen}
               disabled={
                 selectedWorkspaces.length > 0
-                  ? !CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject)
+                  ? !CAN(
+                      Keys.WorkspaceManagementDeleteWorkspace.id,
+                      Keys.WorkspaceManagementDeleteWorkspace.function,
+                    )
                   : true
               }
             />
@@ -135,7 +140,10 @@ const WorkspaceGridView = ({
           )}
         />
       </Grid2>
-      {CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject) && (
+      {CAN(
+        Keys.WorkspaceManagementDeleteWorkspace.id,
+        Keys.WorkspaceManagementDeleteWorkspace.function,
+      ) && (
         <Modal
           open={deleteWorkspacesModal}
           closeModal={handleDeleteWorkspacesModalClose}
