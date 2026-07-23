@@ -10,7 +10,7 @@ import {
 import { ActionListItem } from './styles';
 import { iconMedium } from '../../css/icons.styles';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { MESHSYNC_DEPLOYMENT_TYPE } from '../../utils/Enum';
 
 type ConnectionActionMenuProps = {
@@ -90,7 +90,12 @@ export const ConnectionActionMenu = ({
           type="submit"
           onClick={onFlushMeshSync}
           data-cy="btnResetDatabase"
-          disabled={!CAN(keys.FLUSH_MESHSYNC_DATA.action, keys.FLUSH_MESHSYNC_DATA.subject)}
+          disabled={
+            !CAN(
+              Keys.LifecycleManagementFlushMeshsyncData.id,
+              Keys.LifecycleManagementFlushMeshsyncData.function,
+            )
+          }
         >
           <SyncAltIcon {...iconMedium} />
           <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>

@@ -6,7 +6,7 @@ import CloneIcon from '../../public/static/img/CloneIcon';
 import { iconMedium } from '../../css/icons.styles';
 import { VISIBILITY } from '../../utils/Enum';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { DefaultTableCell, SortableTableCell } from '../connections/common/index';
 import TooltipIcon from './TooltipIcon';
 import { ActionsBox } from './Filters.styled';
@@ -137,7 +137,12 @@ export function buildFiltersColumns({
                     e.stopPropagation();
                     handleClone(rowData.id, rowData.name);
                   }}
-                  disabled={!CAN(keys.CLONE_WASM_FILTER.action, keys.CLONE_WASM_FILTER.subject)}
+                  disabled={
+                    !CAN(
+                      Keys.CatalogManagementCloneWasmFilter.id,
+                      Keys.CatalogManagementCloneWasmFilter.function,
+                    )
+                  }
                 >
                   <CloneIcon fill="currentColor" />
                 </TooltipIcon>
@@ -148,7 +153,12 @@ export function buildFiltersColumns({
                     e.stopPropagation();
                     setSelectedRowData(filters[tableMeta.rowIndex]);
                   }}
-                  disabled={!CAN(keys.EDIT_WASM_FILTER.action, keys.EDIT_WASM_FILTER.subject)}
+                  disabled={
+                    !CAN(
+                      Keys.CatalogManagementEditWasmFilter.id,
+                      Keys.CatalogManagementEditWasmFilter.function,
+                    )
+                  }
                 >
                   <EditIcon aria-label="config" color="inherit" style={iconMedium} />
                 </TooltipIcon>
@@ -157,7 +167,10 @@ export function buildFiltersColumns({
                 title="Download"
                 onClick={(e) => handleDownload(e, rowData.id, rowData.name)}
                 disabled={
-                  !CAN(keys.DOWNLOAD_A_WASM_FILTER.action, keys.DOWNLOAD_A_WASM_FILTER.subject)
+                  !CAN(
+                    Keys.CatalogManagementDownloadAWasmFilter.id,
+                    Keys.CatalogManagementDownloadAWasmFilter.function,
+                  )
                 }
               >
                 <GetAppIcon data-cy="download-button" />
@@ -166,7 +179,10 @@ export function buildFiltersColumns({
                 title="Filter Information"
                 onClick={() => handleInfoModal(rowData)}
                 disabled={
-                  !CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject)
+                  !CAN(
+                    Keys.CatalogManagementDetailsOfWasmFilter.id,
+                    Keys.CatalogManagementDetailsOfWasmFilter.function,
+                  )
                 }
               >
                 <InfoOutlinedIcon data-cy="information-button" />
@@ -175,7 +191,12 @@ export function buildFiltersColumns({
                 <TooltipIcon
                   title="Publish"
                   onClick={(ev) => handlePublishModal(ev, rowData)}
-                  disabled={!CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject)}
+                  disabled={
+                    !CAN(
+                      Keys.CatalogManagementPublishWasmFilter.id,
+                      Keys.CatalogManagementPublishWasmFilter.function,
+                    )
+                  }
                 >
                   <PublicIcon fill="#F91313" data-cy="publish-button" />
                 </TooltipIcon>
@@ -184,7 +205,10 @@ export function buildFiltersColumns({
                   title="Unpublish"
                   onClick={(ev) => handleUnpublishModal(ev, rowData)?.()}
                   disabled={
-                    !CAN(keys.UNPUBLISH_WASM_FILTER.action, keys.UNPUBLISH_WASM_FILTER.subject)
+                    !CAN(
+                      Keys.CatalogManagementUnpublishWasmFilter.id,
+                      Keys.CatalogManagementUnpublishWasmFilter.function,
+                    )
                   }
                 >
                   <PublicIcon fill="#F91313" data-cy="unpublish-button" />

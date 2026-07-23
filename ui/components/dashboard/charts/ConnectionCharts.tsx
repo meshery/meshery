@@ -7,7 +7,7 @@ import { iconSmall } from '../../../css/icons.styles';
 import { CustomTextTooltip } from '@/components/meshery-mesh-interface/PatternService/CustomTextTooltip';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
@@ -69,7 +69,10 @@ export default function ConnectionStatsChart() {
     [chartData, router, theme],
   );
 
-  const canViewConnections = CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject);
+  const canViewConnections = CAN(
+    Keys.WorkspaceManagementViewConnections.id,
+    Keys.WorkspaceManagementViewConnections.function,
+  );
 
   return (
     <Link

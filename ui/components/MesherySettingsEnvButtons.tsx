@@ -21,7 +21,7 @@ import { CONNECTION_STATES } from '../utils/Enum';
 import { TooltipWrappedConnectionChip, ConnectionStateChip } from './connections/ConnectionChip';
 import { getKubernetesContexts } from './connections/ConnectionWizard.helpers';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import useTestIDsGenerator from '@/utils/hooks/useTestIDs';
 import CAN from '@/utils/can';
 import { useAddKubernetesConfigMutation } from '../rtk-query/connection';
@@ -215,7 +215,9 @@ const MesherySettingsEnvButtons = () => {
             borderRadius: 5,
             padding: '8px',
           }}
-          disabled={!CAN(keys.ADD_CLUSTER.action, keys.ADD_CLUSTER.subject)}
+          disabled={
+            !CAN(Keys.LifecycleManagementAddCluster.id, Keys.LifecycleManagementAddCluster.function)
+          }
           data-cy="btnResetDatabase"
         >
           <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
