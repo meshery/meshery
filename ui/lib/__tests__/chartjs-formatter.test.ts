@@ -257,7 +257,7 @@ describe('makeTitle', () => {
     const res = makeResult();
     res.DurationHistogram.Percentiles = [];
     const result = makeTitle(null, res);
-    
+
     // Verify percentiles line is exactly 'Percentiles: ' when empty
     expect(result).toContain('Percentiles: ');
     
