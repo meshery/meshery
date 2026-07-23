@@ -117,16 +117,19 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		kubernetes.AssignInitialCtx,
 	)
 	go func(inst *machines.StateMachine) {
-		event, err = inst.SendEvent(req.Context(), machines.Delete, nil)
-		if err != nil {
-			h.log.Error(err)
-			h.log.Debug(event)
-			return
-		}
+	if inst == nil {
+		return
+	}
 
-		smInstanceTracker.Remove(connectionUUID)
-	}(inst)
+	event, sendErr := inst.SendEvent(req.Context(), machines.Delete, nil)
+	if sendErr != nil {
+		h.log.Error(sendErr)
+		h.log.Debug(event)
+		return
+	}
 
+	smInstanceTracker.Remove(connectionUUID)
+}(inst)
 	if err != nil {
 		h.log.Error(err)
 		eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", contextID)).WithMetadata(map[string]interface{}{
