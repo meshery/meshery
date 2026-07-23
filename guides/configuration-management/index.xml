@@ -53,4 +53,8 @@ A &lt;strong&gt;&lt;a href="/concepts/logical/designs/"&gt;design&lt;/a&gt;&lt;/
 &lt;p&gt;The &lt;code&gt;mesheryctl model import&lt;/code&gt; command currently supports importing Models containing Components, Relationships, and Policies. Importing Models with &lt;code&gt;Connection&lt;/code&gt; definitions is not yet supported. This functionality may be added in a future release.&lt;/p&gt;</description></item><item><title>Push or Pull a Model Image</title><link>/guides/configuration-management/push-pull-model-image/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/configuration-management/push-pull-model-image/</guid><description>&lt;h2 id="use-mesheryctl-to-push-or-pull-a-model-image"&gt;
 	Use mesheryctl to Push or Pull a Model Image
 &lt;/h2&gt;
-&lt;p&gt;You can push or pull Meshery model images to or from any OCI-compatible image repository.&lt;/p&gt;</description></item></channel></rss>
+&lt;p&gt;A Meshery &lt;a href="/concepts/logical/models/"&gt;Model&lt;/a&gt; can be packaged as an
+&lt;strong&gt;OCI image&lt;/strong&gt; - a portable, versioned artifact that bundles the model definition together with
+all of its components and relationships. Because the package is OCI-compliant, it can be moved
+between Meshery Servers and stored in any OCI-compatible image repository (Docker Hub, GitHub
+Container Registry, AWS ECR, and so on), exactly like a container image.&lt;/p&gt;</description></item></channel></rss>
