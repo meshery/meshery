@@ -3899,6 +3899,150 @@
         "short_description": "Failed to reconcile the persisted Kubernetes server ID for the connection",
         "probable_cause": "The connection's persisted kubernetesServerId could not be read from or written to the connection store while syncing it with the live cluster's server ID.",
         "suggested_remediation": "Verify the connection still exists and Meshery can reach the provider's connection store. The reconcile is retried automatically on the next discovery cycle."
+      },
+      "1446": {
+        "name": "ErrGetEnvironmentsCode",
+        "code": "1446",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch environments",
+        "probable_cause": "Your account does not have permission to list environments in this organization.\nThe organization identifier in the request does not exist or is not one you belong to.\nThe provider could not be reached or returned an error.",
+        "suggested_remediation": "Confirm you are a member of the selected organization and that your role grants read access to environments. If the organization is correct, retry once the provider is reachable."
+      },
+      "1447": {
+        "name": "ErrGetEnvironmentCode",
+        "code": "1447",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch the environment",
+        "probable_cause": "Your account does not have permission to view this environment.\nThe environment has been deleted, or the identifier belongs to a different organization.\nThe provider could not be reached or returned an error.",
+        "suggested_remediation": "Verify the environment still exists in the selected organization and that your role grants read access to it."
+      },
+      "1448": {
+        "name": "ErrSaveEnvironmentCode",
+        "code": "1448",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to create the environment",
+        "probable_cause": "Your account does not have permission to create environments in this organization.\nAn environment with the same name already exists in this organization.\nThe organization identifier is missing or does not exist.\nThe provider could not be reached or rejected the request.",
+        "suggested_remediation": "Confirm your role in the selected organization grants permission to create environments, and that the environment name is not already in use. The environment was NOT created - retry after resolving the cause."
+      },
+      "1449": {
+        "name": "ErrUpdateEnvironmentCode",
+        "code": "1449",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to update the environment",
+        "probable_cause": "Your account does not have permission to modify this environment.\nThe environment has been deleted, or another name in the organization conflicts with the new one.\nThe provider could not be reached or rejected the request.",
+        "suggested_remediation": "Confirm your role grants write access to this environment and that the new name is unique within the organization. The environment was NOT updated - retry after resolving the cause."
+      },
+      "1450": {
+        "name": "ErrDeleteEnvironmentCode",
+        "code": "1450",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to delete the environment",
+        "probable_cause": "Your account does not have permission to delete this environment.\nThe environment has already been deleted.\nThe provider could not be reached or rejected the request.",
+        "suggested_remediation": "Confirm your role grants delete access to this environment. If it no longer appears in the list, it has already been removed."
+      },
+      "1451": {
+        "name": "ErrEnvironmentConnectionCode",
+        "code": "1451",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The environment or the connection has been deleted, or they belong to different organizations.\nThe provider could not be reached or rejected the request.",
+        "suggested_remediation": ""
+      },
+      "1452": {
+        "name": "ErrGetWorkspacesCode",
+        "code": "1452",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch workspaces",
+        "probable_cause": "Your account does not have permission to list workspaces in this organization.\nThe organization identifier in the request does not exist or is not one you belong to.\nThe provider could not be reached or returned an error.",
+        "suggested_remediation": "Confirm you are a member of the selected organization and that your role grants read access to workspaces."
+      },
+      "1453": {
+        "name": "ErrGetWorkspaceCode",
+        "code": "1453",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch the workspace",
+        "probable_cause": "Your account does not have permission to view this workspace.\nThe workspace has been deleted, or the identifier belongs to a different organization.\nThe provider could not be reached or returned an error.",
+        "suggested_remediation": "Verify the workspace still exists in the selected organization and that your role grants read access to it."
+      },
+      "1454": {
+        "name": "ErrSaveWorkspaceCode",
+        "code": "1454",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to create the workspace",
+        "probable_cause": "Your account does not have permission to create workspaces in this organization.\nA workspace with the same name already exists in this organization.\nThe organization identifier is missing or does not exist.\nThe provider could not be reached or rejected the request.",
+        "suggested_remediation": "Confirm your role in the selected organization grants permission to create workspaces, and that the workspace name is not already in use. The workspace was NOT created - retry after resolving the cause."
+      },
+      "1455": {
+        "name": "ErrUpdateWorkspaceCode",
+        "code": "1455",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to update the workspace",
+        "probable_cause": "Your account does not have permission to modify this workspace.\nThe workspace has been deleted, or another name in the organization conflicts with the new one.\nThe provider could not be reached or rejected the request.",
+        "suggested_remediation": "Confirm your role grants write access to this workspace and that the new name is unique within the organization. The workspace was NOT updated - retry after resolving the cause."
+      },
+      "1456": {
+        "name": "ErrDeleteWorkspaceCode",
+        "code": "1456",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to delete the workspace",
+        "probable_cause": "Your account does not have permission to delete this workspace.\nThe workspace has already been deleted.\nThe provider could not be reached or rejected the request.",
+        "suggested_remediation": "Confirm your role grants delete access to this workspace. If it no longer appears in the list, it has already been removed."
+      },
+      "1457": {
+        "name": "ErrWorkspaceResourceCode",
+        "code": "1457",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The workspace or the resource being associated has been deleted, or they belong to different organizations.\nThe provider could not be reached or rejected the request.",
+        "suggested_remediation": ""
+      },
+      "1458": {
+        "name": "ErrGetOrganizationsCode",
+        "code": "1458",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch organizations",
+        "probable_cause": "Your session has expired or your account is not a member of any organization.\nThe provider could not be reached or returned an error.",
+        "suggested_remediation": "Sign in again and retry. If the problem persists, verify the remote provider is reachable from this Meshery instance."
+      },
+      "1459": {
+        "name": "ErrGetUsersCode",
+        "code": "1459",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch users",
+        "probable_cause": "Your account does not have permission to list users.\nThe provider could not be reached or returned an error.",
+        "suggested_remediation": "Confirm your role grants permission to view the user directory for this organization."
+      },
+      "1460": {
+        "name": "ErrGetUserCode",
+        "code": "1460",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch the user",
+        "probable_cause": "Your account does not have permission to view this user.\nNo user exists with the requested identifier.\nThe provider could not be reached or returned an error.",
+        "suggested_remediation": "Verify the user identifier is correct and that your role grants permission to view other users."
+      },
+      "1461": {
+        "name": "ErrGetUsersKeysCode",
+        "code": "1461",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch API keys",
+        "probable_cause": "Your account does not have permission to list API keys for this organization.\nThe organization identifier in the request does not exist or is not one you belong to.\nThe provider could not be reached or returned an error.",
+        "suggested_remediation": "Confirm you are a member of the selected organization and that your role grants permission to view its keys."
       }
     }
   }

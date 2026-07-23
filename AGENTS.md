@@ -135,6 +135,20 @@ make ui-lint               # Lint UI code
 make ui-integration-tests  # Run E2E tests
 ```
 
+`ui/tsconfig.tsbuildinfo` is a tracked build artifact that is not gitignored, so any local
+`tsc --noEmit` leaves it modified and it has repeatedly been committed by accident. Stage
+explicit paths rather than `git add -A`, and `git checkout -- ui/tsconfig.tsbuildinfo`
+before committing.
+
+When a change depends on an unreleased `@sistent/sistent` (or any sibling-repo package),
+`ui/node_modules/@sistent/sistent` is often overwritten in place with a locally-built dist.
+A local test run is then green against code that is not published, and CI fails on the same
+commit. Re-verify with `npm ci` after any local sibling build before trusting a green run or
+declaring a dependency bump done - a local build usually keeps the published version string,
+so matching versions are not evidence that the installed contents are the published ones.
+A version *mismatch* against `ui/package.json` is a useful tell that this has happened, but
+a match proves nothing.
+
 ### CLI (mesheryctl)
 
 ```bash
@@ -143,6 +157,15 @@ cd mesheryctl && go test --short ./...      # Unit tests
 cd mesheryctl && go test -run Integration ./...  # Integration tests
 make docs-mesheryctl                        # Generate CLI docs
 ```
+
+`make docs-mesheryctl` (i.e. `cd mesheryctl/doc && go run doc.go`) bakes the machine's
+`$HOME` into every generated page's "Options inherited from parent commands" block (the
+`--config` default path). Running it locally rewrites all ~100 pages under
+`docs/content/en/reference/references/mesheryctl/` with your local home directory even
+though only one command changed. CI/committed docs use `/home/runner/...` (the GitHub
+Actions runner home). After regenerating, `git diff --stat` the docs dir, `git checkout --`
+every file whose only change is that path, and manually fix the path back to
+`/home/runner/...` in the pages you actually intended to change.
 
 ### Docker
 
@@ -173,6 +196,13 @@ make helm-docs      # Generate Helm chart docs
 
 - Format with `gofmt`/`goimports`; lint with `make golangci` (config: `.golangci.yml`).
 - Use MeshKit error utilities (`github.com/meshery/meshkit/errors`); run `make error` for codes.
+  `make error` skips `mesheryctl` - a new `mesheryctl` code is taken from
+  `mesheryctl/helpers/component_info.json` (`next_error_code`) and that value bumped in the
+  same commit. `.github/workflows/error-codes-updater.yaml` re-runs errorutil and fails the
+  PR if its analysis reports anything.
+- Only `utils.Log.Error(err)` renders a MeshKit error's code, cause and remediation; cobra's
+  default print shows just the message. In `mesheryctl` commands, log the structured error
+  for the user *and* return it for the exit path.
 - Tests in `*_test.go`; manage deps with `go mod tidy`.
 
 ### JavaScript/React
@@ -273,7 +303,9 @@ Protocol: `server/meshes/meshops.proto` — adapters self-register on startup. E
 
 ### UI Extensions
 
-Remote Components loaded via `@paciolan/remote-component`. Bundle **must** expose `module.exports = { default: Component, __esModule: true }`. Silent-undefined gotcha: a mis-built bundle renders as `undefined` with no loader error — React throws "Element type is invalid" at render. Check bundle export shape first. See `ui/components/layout/Navigator/NavigatorExtension.tsx`.
+Remote Components loaded via `@paciolan/remote-component`. Bundle **must** expose `module.exports = { default: Component, __esModule: true }`; a bundle built without `output.library.type = "commonjs2"` resolves to `undefined` with no loader error, so `NavigatorExtension` guards for it explicitly and reports the export shape as the cause. See `ui/components/layout/Navigator/NavigatorExtension.tsx`.
+
+The host <-> extension contract (injected capability keys, event-bus event literals, contract version) is declared once in `@sistent/sistent`'s `mesheryExtensionContract` module and shared by both sides. Derive every event literal from `MESHERY_EXTENSION_EVENT` and every injected key from that module rather than typing strings: hand-duplicated literals are why `OPEN_DESIGN_IN_KANVAS` -> `OPEN_DESIGN_IN_EXTENSION` and `capabilitiesRegistry` -> `providerCapabilities` both shipped as silent runtime no-ops. `ui/utils/eventBus.ts` must stay typed as `EventBus<MesheryExtensionEvent>`; a bare `new EventBus()` widens `T` to its constraint and disables publish-site checking entirely. The `NavigatorExtension` unit test asserts the built `injectProps` bag against the contract, which is the gate that catches a capability rename before merge.
 
 ### GraphQL
 
@@ -335,3 +367,10 @@ Scripts in `.agents/hooks/`:
 - [Community Handbook](https://meshery.io/community#handbook)
 - [Security Policy](./SECURITY.md)
 - [Governance](./GOVERNANCE.md)
+
+## Maintaining this file
+
+Keep this file for knowledge useful to almost every future agent session in this project.
+Do not repeat what the codebase already shows; point to the authoritative file or command instead.
+Prefer rewriting or pruning existing entries over appending new ones.
+When updating this file, preserve this bar for all agents and keep entries concise.
