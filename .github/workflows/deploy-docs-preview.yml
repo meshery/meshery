@@ -1,28 +1,29 @@
-name: Deploy Docs Preview
+name: Docs Preview Post-Build
 
 on:
   workflow_run:
     workflows: ["Build Docs Preview"]
     types: [completed]
-    
+
 permissions:
   contents: write
   pull-requests: write
-  actions: read 
+  actions: read
 
 concurrency:
-  group: deploy-preview-${{ github.event.workflow_run.head_branch }}
+  group: preview-post-build-${{ github.event.workflow_run.head_branch }}
   cancel-in-progress: true
 
 env:
   PREVIEW_RETENTION_LIMIT: 6
 
 jobs:
-  deploy:
-    if: >
-        github.event.workflow_run.event == 'pull_request' &&
-        github.event.workflow_run.conclusion == 'success'
+  read-metadata:
+    if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-24.04
+    outputs:
+      pr-number: ${{ steps.pr.outputs.PULL_REQUEST }}
+      action: ${{ steps.pr.outputs.ACTION }}
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
@@ -35,19 +36,41 @@ jobs:
           name: docs-preview-build
           path: docs-preview-build
           run-id: ${{ github.event.workflow_run.id }}
-    
-      - name: Retrieve PR Number
+
+      - name: Retrieve PR metadata
         id: pr
         run: |
-         echo "PULL_REQUEST=$(cat ./docs-preview-build/pr/number)" >> $GITHUB_OUTPUT
+          echo "PULL_REQUEST=$(cat ./docs-preview-build/pr/number)" >> "$GITHUB_OUTPUT"
+          echo "ACTION=$(cat ./docs-preview-build/pr/action)" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    needs: read-metadata
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: docs-preview-build
+          path: docs-preview-build
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy PR preview
-        uses: rossjrw/pr-preview-action@8ff09e486b4c23709012eedd3b42e9f0b95dd0c5 #1.6.3
+        uses: rossjrw/pr-preview-action@ffa7509e91a3ec8dfc2e5536c4d5c1acdf7a6de9 #1.8.1
         with:
           source-dir: ./docs-preview-build/docs/public
-          action: deploy
-          comment: false
+          qr-code: false
+          action: ${{ needs.read-metadata.outputs.action == 'closed' && 'remove' || 'deploy' }}
+          pr-number: ${{ needs.read-metadata.outputs.pr-number }}
 
+  prune:
+    needs: read-metadata
+    runs-on: ubuntu-24.04
+    if: needs.read-metadata.outputs.action != 'closed'
+    outputs:
+      removed_prs: ${{ steps.prune-previews.outputs.removed_prs }}
+      removed_prs_json: ${{ steps.prune-previews.outputs.removed_prs_json }}
+    steps:
       - name: Checkout gh-pages for preview retention
         uses: actions/checkout@v6
         with:
@@ -141,19 +164,8 @@ jobs:
               echo "removed_prs_json=$(printf '%s\n' "${removed_prs[@]}" | jq -R . | jq -sc .)"
             } >> "$GITHUB_OUTPUT"
           fi
-
-      - name: Comment PR with Preview URL
-        uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 #v3.0.5
-        with:
-          number: ${{ steps.pr.outputs.PULL_REQUEST }}
-          header: pr-preview
-          message: |
-            🚀 Preview deployment: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/pr-preview/pr-${{ steps.pr.outputs.PULL_REQUEST }}/
-            > *Note: Preview may take a moment (GitHub Pages deployment in progress). Please wait and refresh. Track deployment [here](https://github.com/${{ github.repository }}/actions/workflows/pages/pages-build-deployment)*
-
       - name: Comment on pruned previews
         uses: actions/github-script@v8
-        if: steps.prune-previews.outputs.removed_prs_json != '[]'
         env:
           REMOVED_PRS_JSON: ${{ steps.prune-previews.outputs.removed_prs_json }}
           PREVIEW_RETENTION_LIMIT: ${{ env.PREVIEW_RETENTION_LIMIT }}
@@ -200,12 +212,3 @@ jobs:
                 body,
               });
             }
-      - name: Comment PR on preview failure
-        if: failure() 
-        uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 #v3.0.5
-        with:
-          header: pr-preview-status
-          message: |
-            ❌ Docs preview build failed for `${{ github.workflow }}`.
-            Please review the [workflow logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for remediation details.
-      

@@ -3,11 +3,13 @@ name: Build Docs Preview
 on:
   pull_request:
     branches: [master]
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, closed]
     paths:
       - 'docs/**'
-      - '.github/workflows/build-and-preview-docs.yml'
       - 'mesheryctl/doc/**'
+      - '.github/workflows/build-docs-preview.yml'
+      - '.github/workflows/deploy-docs-preview.yml'
+      - '.github/workflows/docs-preview-cleanup.yml'
 
 permissions:
   contents: read
@@ -19,6 +21,7 @@ concurrency:
 jobs:
   build-docs-preview:
     runs-on: ubuntu-24.04
+    if: github.event.action != 'closed'
     env:
       HUGO_VERSION: 0.157.0
 
@@ -88,18 +91,22 @@ jobs:
           Disallow: /
           ROBOTS
           
+  upload-build-artifact:
+    runs-on: ubuntu-24.04
+    needs: build-docs-preview
+    steps:
       - name: Save PR Metadata
-        if: ${{ github.event_name == 'pull_request' }}
         run: |
             mkdir -p ./pr
             echo "${{ github.event.number }}" > ./pr/number
             echo "${{ github.event.pull_request.head.sha }}" > ./pr/sha
+            echo "${{ github.event.action }}" > ./pr/action
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-            name: docs-preview-build
-            path: | 
-                docs/public
-                ${{ github.event_name == 'pull_request' && 'pr/' || '' }}
-            if-no-files-found: error
+          name: docs-preview-build
+          path: |
+            ${{ github.event.action != 'closed' && 'docs/public' || '' }}
+            pr/
+          if-no-files-found: error
