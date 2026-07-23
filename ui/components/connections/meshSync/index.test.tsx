@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import MeshSyncTable from './index';
 
@@ -26,7 +27,40 @@ vi.mock('@sistent/sistent', () => ({
     return <div data-testid="mesh-sync-table" />;
   },
   SearchBar: () => <div />,
-  UniversalFilter: () => <div />,
+  UniversalFilter: ({
+    selectedFilters,
+    setSelectedFilters,
+    handleApplyFilter,
+  }: {
+    selectedFilters: Record<string, string>;
+    setSelectedFilters: (filters: Record<string, string>) => void;
+    handleApplyFilter: (filters?: Record<string, string>) => void;
+  }) => (
+    <div data-testid="universal-filter">
+      <button
+        type="button"
+        data-testid="apply-kind-pod"
+        onClick={() => {
+          const next = { ...selectedFilters, kind: 'Pod' };
+          setSelectedFilters(next);
+          handleApplyFilter(next);
+        }}
+      >
+        Apply Pod
+      </button>
+      <button
+        type="button"
+        data-testid="apply-kind-all"
+        onClick={() => {
+          const next = { ...selectedFilters, kind: 'All' };
+          setSelectedFilters(next);
+          handleApplyFilter(next);
+        }}
+      >
+        Apply kind All
+      </button>
+    </div>
+  ),
   TableCell: ({ children }) => <div>{children}</div>,
   TableRow: ({ children }) => <div>{children}</div>,
   styled: (Component) => () => {
@@ -168,6 +202,29 @@ describe('MeshSyncTable', () => {
         clusterIds: ['cluster-a', 'cluster-b'],
       }),
     );
+  });
+
+  it('clears kind from the MeshSync query when kind is reset to All', async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(<MeshSyncTable />);
+
+    await user.click(screen.getByTestId('apply-kind-pod'));
+    rerender(<MeshSyncTable />);
+
+    await waitFor(() => {
+      expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+        expect.objectContaining({ kind: 'Pod' }),
+      );
+    });
+
+    await user.click(screen.getByTestId('apply-kind-all'));
+    rerender(<MeshSyncTable />);
+
+    await waitFor(() => {
+      expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+        expect.objectContaining({ kind: null }),
+      );
+    });
   });
 
   it('notifies when fetching mesh sync resources fails', () => {
