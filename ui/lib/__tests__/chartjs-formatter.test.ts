@@ -253,11 +253,18 @@ describe('makeTitle', () => {
     expect(result.find((s: string) => s.startsWith('Destination:'))).toBeUndefined();
   });
 
-  it('handles empty Percentiles array correctly', () => {
+  it('handles empty Percentiles array correctly without corrupting output', () => {
     const res = makeResult();
     res.DurationHistogram.Percentiles = [];
     const result = makeTitle(null, res);
+    
+    // Verify percentiles line is exactly 'Percentiles: ' when empty
     expect(result).toContain('Percentiles: ');
+    
+    // Verify that other lines remain intact and are not truncated by any slice bugs
+    const maxStr = result.find((s: string) => s.startsWith('Maximum:'));
+    expect(maxStr).toBeDefined();
+    expect(maxStr?.endsWith('ms')).toBe(true);
   });
 
   it('includes No Error when all responses succeeded', () => {
