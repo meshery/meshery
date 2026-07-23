@@ -407,9 +407,11 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
                 <Grid size={6}>
                   <Typography gutterBottom variant="subtitle1">
                     <CustomTooltip
-                      title={`Owner: ${
-                        resourceUserProfile?.firstName + ' ' + resourceUserProfile?.lastName
-                      }`}
+                      title={
+                        resourceUserProfile
+                          ? `Owner: ${resourceUserProfile.firstName} ${resourceUserProfile.lastName}`
+                          : 'Owner'
+                      }
                     >
                       <div>
                         <OwnerChip userProfile={resourceUserProfile} />

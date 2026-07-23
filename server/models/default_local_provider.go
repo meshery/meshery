@@ -1468,7 +1468,6 @@ func (l *DefaultLocalProvider) GetKubeClient() *mesherykube.Client {
 
 func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	seedContents := []string{"Pattern"}
-	nilOwner := ""
 
 	// Use the relative directory for patterns
 	catalogDir := filepath.Join("..", "..", "docs", "data", "catalog")
@@ -1503,7 +1502,6 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 					PatternFile: file.Content,
 					Name:        patternName,
 					ID:          &id,
-					Owner:       &nilOwner,
 					Visibility:  Published,
 					Location: map[string]interface{}{
 						"host":   "",
