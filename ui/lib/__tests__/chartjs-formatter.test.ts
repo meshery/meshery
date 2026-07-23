@@ -259,12 +259,11 @@ describe('makeTitle', () => {
     const result = makeTitle(null, res);
 
     // Verify percentiles line is exactly 'Percentiles: ' when empty
-    expect(result).toContain('Percentiles: ');
+    expect(result.find((s: string) => s.startsWith('Percentiles:'))).toBe('Percentiles: ');
     
     // Verify that other lines remain intact and are not truncated by any slice bugs
     const maxStr = result.find((s: string) => s.startsWith('Maximum:'));
-    expect(maxStr).toBeDefined();
-    expect(maxStr?.endsWith('ms')).toBe(true);
+    expect(maxStr).toBe('Maximum: 20 ms');
   });
 
   it('includes No Error when all responses succeeded', () => {
