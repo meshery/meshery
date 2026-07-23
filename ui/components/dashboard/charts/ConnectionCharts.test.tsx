@@ -12,7 +12,7 @@ vi.mock('billboard.js', () => ({
   donut: () => 'donut',
 }));
 
-vi.mock('../../BBChart', () => ({
+vi.mock('../../general/BBChart', () => ({
   default: (props: { options: unknown }) => {
     bbChartSpy(props.options);
     return <div data-testid="bb-chart" />;
@@ -56,10 +56,6 @@ vi.mock('@/rtk-query/connection', () => ({
 
 vi.mock('@/utils/can', () => ({
   default: (...args: unknown[]) => canSpy(...args),
-}));
-
-vi.mock('@/utils/permission_constants', () => ({
-  keys: { VIEW_CONNECTIONS: { action: 'view', subject: 'connections' } },
 }));
 
 vi.mock('next/router', () => ({

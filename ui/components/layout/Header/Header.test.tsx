@@ -75,7 +75,7 @@ vi.mock('../../../utils/Enum', () => ({
   CONNECTION_STATES: { DELETED: 'deleted' },
 }));
 
-vi.mock('../../PromptComponent', () => ({
+vi.mock('../../general/PromptComponent', () => ({
   default: React.forwardRef((_props: any, ref: any) => {
     if (ref) {
       ref.current = { show: vi.fn(() => Promise.resolve('CANCEL')) };
@@ -93,7 +93,7 @@ vi.mock('../../ExtensionSandbox', () => ({
   createPathForRemoteComponent: (uri: string) => `/remote/${uri}`,
 }));
 
-vi.mock('../../RemoteComponent', () => ({
+vi.mock('../../general/RemoteComponent', () => ({
   default: () => <div data-testid="remote-component" />,
 }));
 
@@ -178,8 +178,10 @@ vi.mock('@sistent/sistent', () => ({
     shadows: [],
   }),
   useMediaQuery: () => useMediaQueryMock(),
+  useHasPermission: () => true,
   SearchIcon: () => <svg data-testid="search-icon" />,
   SettingsIcon: () => <svg data-testid="settings-icon" />,
+  FilterAllIcon: () => <svg data-testid="filter-all-icon" />,
   ErrorBoundary: ({ children }: any) => <>{children}</>,
   darkTeal: { main: '#000' },
   AppBar: ({ children }: any) => <header>{children}</header>,
@@ -190,12 +192,6 @@ vi.mock('@sistent/sistent', () => ({
 
 vi.mock('@/utils/can', () => ({
   CanShow: ({ children }: any) => <>{children}</>,
-}));
-
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    VIEW_ALL_KUBERNETES_CLUSTERS: { action: 'view', subject: 'k8s' },
-  },
 }));
 
 vi.mock('../../workspaces/SpacesSwitcher/SpaceSwitcher', () => ({
@@ -288,6 +284,44 @@ describe('K8sContextConnectionChip', () => {
     const chip = screen.getByTestId('connection-chip');
     expect(chip).toHaveAttribute('data-status', 'connected');
     expect(screen.getByRole('button', { name: 'cluster-a' })).toBeInTheDocument();
+  });
+
+  it('prefers ctx.connectionStatus over the connections-list lookup', () => {
+    render(
+      <K8sContextConnectionChip
+        ctx={{
+          id: 'ctx-1',
+          name: 'cluster-a',
+          server: 'https://a',
+          connectionId: 'conn-1',
+          connectionStatus: 'disconnected',
+        }}
+        connectionMetadataState={{}}
+        meshsyncControllerState={{}}
+        connections={[{ id: 'conn-1', status: 'connected' }]}
+      />,
+    );
+
+    expect(screen.getByTestId('connection-chip')).toHaveAttribute('data-status', 'disconnected');
+  });
+
+  it('uses ctx.connectionStatus when the connections list is empty', () => {
+    render(
+      <K8sContextConnectionChip
+        ctx={{
+          id: 'ctx-1',
+          name: 'cluster-a',
+          server: 'https://a',
+          connectionId: 'conn-1',
+          connectionStatus: 'registered',
+        }}
+        connectionMetadataState={{}}
+        meshsyncControllerState={{}}
+        connections={[]}
+      />,
+    );
+
+    expect(screen.getByTestId('connection-chip')).toHaveAttribute('data-status', 'registered');
   });
 
   it('does not render a delete control when onDelete is not provided', () => {

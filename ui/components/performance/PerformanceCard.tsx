@@ -15,12 +15,12 @@ import {
   TableRow,
   EditIcon,
 } from '@sistent/sistent';
-import FlipCard from '../FlipCard';
+import FlipCard from '../general/FlipCard';
 import PerformanceResults from './PerformanceResults';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { iconMedium } from '../../css/icons.styles';
-import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+
+import { Keys } from '@meshery/schemas/permissions';
 import { useGetUserByIdQuery } from '@/rtk-query/user';
 import useTestIDsGenerator from '@/utils/hooks/useTestIDs';
 import { BottomPart, CardButton, ResultContainer } from './style';
@@ -232,7 +232,7 @@ function PerformanceCard({
                   });
                 })
               }
-              disabled={!CAN(keys.VIEW_RESULTS.action, keys.VIEW_RESULTS.subject)}
+              permissionKey={Keys.PerformanceManagementViewResults}
               sx={{ marginRight: '0.5rem' }}
             >
               {renderTable ? 'Hide' : 'View'} Results
@@ -241,7 +241,7 @@ function PerformanceCard({
               color="primary"
               variant="contained"
               onClick={(ev) => genericClickHandler(ev, handleProfile)}
-              disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
+              permissionKey={Keys.PerformanceManagementEditPerformanceTest}
               sx={{ marginRight: '0.5rem' }}
             >
               Edit Profile
@@ -250,7 +250,7 @@ function PerformanceCard({
               color="primary"
               variant="contained"
               onClick={(ev) => genericClickHandler(ev, handleRunTest)}
-              disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
+              permissionKey={Keys.PerformanceManagementRunTest}
             >
               Run Test
             </Button>
@@ -299,9 +299,7 @@ function PerformanceCard({
                 <IconButton
                   onClick={(ev) => genericClickHandler(ev, handleEdit)}
                   data-testid={dataTestIDs('edit')}
-                  disabled={
-                    !CAN(keys.EDIT_PERFORMANCE_TEST.action, keys.EDIT_PERFORMANCE_TEST.subject)
-                  }
+                  permissionKey={Keys.PerformanceManagementEditPerformanceTest}
                 >
                   <EditIcon style={iconMedium} />
                 </IconButton>
@@ -310,9 +308,7 @@ function PerformanceCard({
                 <IconButton
                   onClick={(ev) => genericClickHandler(ev, handleDelete)}
                   data-testid={dataTestIDs('delete')}
-                  disabled={
-                    !CAN(keys.DELETE_PERFORMANCE_TEST.action, keys.DELETE_PERFORMANCE_TEST.subject)
-                  }
+                  permissionKey={Keys.PerformanceManagementDeletePerformanceTest}
                 >
                   <DeleteIcon style={iconMedium} />
                 </IconButton>

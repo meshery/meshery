@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/router';
 import {
   AddIcon,
   Box,
@@ -17,6 +16,8 @@ import {
   usePingPrometheusConnectionQuery,
   useUpdatePrometheusPanelsMutation,
 } from '@/rtk-query/telemetryPrometheus';
+import { CONNECTION_KINDS } from '@/utils/Enum';
+import { useConnectionWizardModal } from '@/utils/context/ConnectionWizardContextProvider';
 import ConnectionPicker, { TelemetryConnection } from '../common/ConnectionPicker';
 import PingStatus from '../common/PingStatus';
 import TimeRangePicker from '../common/TimeRangePicker';
@@ -85,7 +86,7 @@ const newId = () =>
  */
 const TelemetryMetrics: React.FC = () => {
   const theme = useTheme();
-  const router = useRouter();
+  const { openCreateConnection } = useConnectionWizardModal();
 
   const { data: connectionsData, isLoading: connectionsLoading } = useGetConnectionsQuery({
     kind: JSON.stringify(['prometheus']),
@@ -161,14 +162,19 @@ const TelemetryMetrics: React.FC = () => {
             No Prometheus connections yet
           </Typography>
           <Typography color="textSecondary" sx={{ maxWidth: 460 }}>
-            Add a Prometheus connection to explore its metrics and build panels here. Connections
-            are managed from the Connections page.
+            Add a Prometheus connection to explore its metrics and build panels here. You can manage
+            all connections anytime under Lifecycle → Connections.
           </Typography>
         </Box>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => router.push('/management/connections')}
+          onClick={() =>
+            openCreateConnection({
+              kind: CONNECTION_KINDS.PROMETHEUS,
+              skipKindSelection: true,
+            })
+          }
         >
           Add a Prometheus connection
         </Button>

@@ -82,7 +82,7 @@ export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
       onClose={handleClose}
       onInputChange={handleInputChange}
       onChange={(_, value) => {
-        handleAuthorChange(value?.userId || null);
+        handleAuthorChange(value?.id || null);
       }}
       inputValue={inputValue}
       options={options}

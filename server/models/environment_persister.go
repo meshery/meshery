@@ -12,7 +12,7 @@ import (
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
-	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta3/environment"
 	"gorm.io/gorm"
 )
 
@@ -25,7 +25,7 @@ type EnvironmentPersister struct {
 func (ep *EnvironmentPersister) fetchUserDetails() *User {
 
 	return &User{
-		UserId:    "meshery",
+		ID:        LocalProviderUserID,
 		FirstName: "Meshery",
 		LastName:  "Meshery",
 	}
@@ -134,7 +134,7 @@ func (ep *EnvironmentPersister) DeleteEnvironment(environment *environment.Envir
 	}
 	err = ep.DB.Delete(environment).Error
 	if err != nil {
-		return nil, ErrDBDelete(err, ep.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, ep.fetchUserDetails().ID.String())
 	}
 
 	// Marshal the environment to JSON
@@ -192,7 +192,7 @@ func (ep *EnvironmentPersister) UpdateEnvironment(environmentID core.Uuid, paylo
 
 	env.Name = payload.Name
 	env.Description = payload.Description
-	env.OrganizationID = core.Uuid(payload.OrgId)
+	env.OrganizationID = core.Uuid(payload.OrgID)
 
 	return ep.UpdateEnvironmentByID(env)
 }
@@ -210,8 +210,8 @@ func (ep *EnvironmentPersister) DeleteEnvironmentByID(environmentID core.Uuid) (
 // AddConnectionToEnvironment adds a connection to an environment
 func (ep *EnvironmentPersister) AddConnectionToEnvironment(environmentID, connectionID core.Uuid) ([]byte, error) {
 	envConMapping := environment.EnvironmentConnectionMapping{
-		ConnectionId:  &connectionID,
-		EnvironmentId: &environmentID,
+		ConnectionID:  &connectionID,
+		EnvironmentID: &environmentID,
 		CreatedAt:     time.Now(),
 		UpdatedAt:     time.Now(),
 	}
@@ -332,7 +332,7 @@ func (ep *EnvironmentPersister) DeleteConnectionFromEnvironment(environmentID, c
 
 	// Delete the connection mapping
 	if err := ep.DB.Delete(&envConMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, ep.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, ep.fetchUserDetails().ID.String())
 	}
 
 	envJSON, err := json.Marshal(envConMapping)
