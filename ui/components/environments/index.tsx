@@ -17,8 +17,9 @@ import EnvironmentCard from './environment-card';
 import EnvironmentIcon from '../../assets/icons/Environment';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
+import { formatApiError } from '../../utils/helpers/meshkitError';
 import { RJSFModalWrapper } from '../shared/Modal/Modal';
-import _PromptComponent from '../PromptComponent';
+import _PromptComponent from '../general/PromptComponent';
 import { EmptyState } from '../lifecycle/general';
 import {
   Modal as SisitentModal,
@@ -46,7 +47,7 @@ import {
   useUpdateEnvironmentMutation,
   useDeleteEnvironmentMutation,
 } from '../../rtk-query/environments';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import CAN from '@/utils/can';
 import DefaultError from '../general/error-404/index';
 import { useSelector } from 'react-redux';
@@ -157,15 +158,15 @@ const Environments = () => {
 
   useEffect(() => {
     if (isEnvironmentsError) {
-      handleError(`Environments Fetching Error: ${environmentsError?.data}`);
+      handleError({ error_msg: 'Unable to fetch environments' })(environmentsError);
     }
     if (isEnvironmentConnectionsError) {
-      handleError(
-        `Connections of a Environment fetching Error: ${environmentConnectionsError?.data}`,
+      handleError({ error_msg: "Unable to fetch an environment's connections" })(
+        environmentConnectionsError,
       );
     }
     if (isConnectionsError) {
-      handleError(`Connections fetching Error: ${connectionsError?.data}`);
+      handleError({ error_msg: 'Unable to fetch connections' })(connectionsError);
     }
   }, [
     isEnvironmentsError,
@@ -176,13 +177,20 @@ const Environments = () => {
     connectionsError,
   ]);
 
+  // Curried so a call site can name the failing operation once and hand the
+  // raw error to the returned callback: `handleError({ error_msg })(error)`.
+  // `formatApiError` consumes the MeshKit envelope the server now sends (code
+  // and suggested remediation) and renders it as the markdown that `notify`
+  // displays through BasicMarkdown; `error_msg` is the fallback title used only
+  // when the response carries no envelope. The raw error must be passed
+  // through - do not pre-flatten it to a string, or the envelope is lost.
   function handleError(action) {
     return (error) => {
       updateProgress({ showProgress: false });
+      const { message } = formatApiError(error, action?.error_msg);
       notify({
-        message: `${action.error_msg}: ${error}`,
+        message,
         event_type: EVENT_TYPES.ERROR,
-        details: error.toString(),
       });
     };
   }
@@ -200,45 +208,34 @@ const Environments = () => {
   }, [organization]);
 
   const fetchSchema = () => {
-    const updatedSchema = {
-      schema: createAndEditEnvironmentSchema,
-      uischema: createAndEditEnvironmentUiSchema,
-    };
-    updatedSchema.schema.properties?.organization &&
-      ((updatedSchema.schema = {
-        ...updatedSchema.schema,
-        properties: {
-          ...updatedSchema.schema.properties,
-          organization: {
-            ...updatedSchema.schema.properties.organization,
-            enum: [organization?.id],
-            enumNames: [organization?.name],
-          },
-        },
-      }),
-      (updatedSchema.uischema = {
-        ...updatedSchema.uischema,
-        organization: {
-          ...updatedSchema.uischema.organization,
-          ['ui:widget']: 'hidden',
-        },
-      }));
+    // Organization is derived from the user's active session and hidden by the
+    // canonical form UI schema (organizationId -> "ui:widget": "hidden" in
+    // meshery/schemas environment/forms/createOrEdit.ui.json). Its value is
+    // seeded into the form via initialData, so no per-render schema patching is
+    // required here.
     setEnvironmentModal({
       open: true,
-      schema: updatedSchema,
+      schema: {
+        schema: createAndEditEnvironmentSchema,
+        uischema: createAndEditEnvironmentUiSchema,
+      },
     });
   };
 
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
 
-  const addConnectionToEnvironment = async (environmentId, connectionId) => {
-    addConnectionToEnvironmentMutator({ environmentId, connectionId });
-  };
+  // Both mutators previously fired and discarded the returned promise, so a
+  // rejected assignment left the transfer list looking like it had succeeded.
+  const addConnectionToEnvironment = (environmentId, connectionId) =>
+    addConnectionToEnvironmentMutator({ environmentId, connectionId })
+      .unwrap()
+      .catch(handleError({ error_msg: 'Unable to assign connection to environment' }));
 
-  const removeConnectionFromEnvironment = (environmentId, connectionId) => {
-    removeConnectionFromEnvMutator({ environmentId, connectionId });
-  };
+  const removeConnectionFromEnvironment = (environmentId, connectionId) =>
+    removeConnectionFromEnvMutator({ environmentId, connectionId })
+      .unwrap()
+      .catch(handleError({ error_msg: 'Unable to remove connection from environment' }));
 
   const handleEnvironmentModalOpen = (e, actionType, envObject) => {
     e.stopPropagation();
@@ -247,7 +244,7 @@ const Environments = () => {
       setInitialData({
         name: envObject.name,
         description: envObject.description,
-        organization: envObject.organizationId,
+        organizationId: envObject.organizationId,
       });
       setEditEnvId(envObject.id);
     } else {
@@ -255,7 +252,7 @@ const Environments = () => {
       setInitialData({
         name: undefined,
         description: '',
-        organization: orgId,
+        organizationId: orgId,
       });
       setEditEnvId('');
     }
@@ -270,18 +267,20 @@ const Environments = () => {
     setActionType('');
   };
 
-  const handleCreateEnvironment = ({ organization, name, description }) => {
+  const handleCreateEnvironment = ({ organizationId, name, description }) => {
     createEnvironment({
       environmentPayload: {
         name: name,
         description: description,
-        organization_id: organization,
+        organizationId: organizationId,
       },
     })
       .unwrap()
-      .then(handleSuccess(`Environment "${name}" created `))
-      .catch((error) => handleError(`Environment Create Error: ${error?.data}`));
-    handleEnvironmentModalClose();
+      .then(() => {
+        handleSuccess(`Environment "${name}" created`);
+        handleEnvironmentModalClose();
+      })
+      .catch(handleError({ error_msg: `Unable to create environment "${name}"` }));
   };
 
   const handleEditEnvironment = ({ name, description }) => {
@@ -290,13 +289,15 @@ const Environments = () => {
       environmentPayload: {
         name: name,
         description: description,
-        organization_id: initialData.organization,
+        organizationId: initialData.organizationId,
       },
     })
       .unwrap()
-      .then(handleSuccess(`Environment "${name}" updated`))
-      .catch((error) => handleError(`Environment Update Error: ${error?.data}`));
-    handleEnvironmentModalClose();
+      .then(() => {
+        handleSuccess(`Environment "${name}" updated`);
+        handleEnvironmentModalClose();
+      })
+      .catch(handleError({ error_msg: `Unable to update environment "${name}"` }));
   };
 
   const handleDeleteEnvironmentConfirm = async (e, environment) => {
@@ -320,8 +321,8 @@ const Environments = () => {
       environmentId: id,
     })
       .unwrap()
-      .then(handleSuccess(`Environment deleted`))
-      .catch((error) => handleError(`Environment Delete Error: ${error?.data}`));
+      .then(() => handleSuccess(`Environment deleted`))
+      .catch(handleError({ error_msg: 'Unable to delete environment' }));
   };
 
   const deleteEnvironmentModalContent = (environment) => (
@@ -366,13 +367,21 @@ const Environments = () => {
     setSelectedEnvironments([]);
   };
 
-  const handleAssignConnection = () => {
+  const handleAssignConnection = async () => {
     const { addedConnectionsIds, removedConnectionsIds } =
       getAddedAndRemovedConnection(assignedConnections);
 
-    addedConnectionsIds.map((id) => addConnectionToEnvironment(connectionAssignEnv.id, id));
-
-    removedConnectionsIds.map((id) => removeConnectionFromEnvironment(connectionAssignEnv.id, id));
+    // Await every assignment/removal before closing so a rejected mutation
+    // surfaces its error toast while the modal is still open, rather than the
+    // modal vanishing as if the change had succeeded. allSettled keeps a single
+    // failure from aborting the rest; each rejection is reported by the
+    // mutators' own .catch above.
+    await Promise.allSettled([
+      ...addedConnectionsIds.map((id) => addConnectionToEnvironment(connectionAssignEnv.id, id)),
+      ...removedConnectionsIds.map((id) =>
+        removeConnectionFromEnvironment(connectionAssignEnv.id, id),
+      ),
+    ]);
     setEnvironmentConnectionsData([]);
     setConnectionsData([]);
     handleonAssignConnectionModalClose();
@@ -399,12 +408,12 @@ const Environments = () => {
       getAddedAndRemovedConnection(updatedAssignedData);
     (addedConnectionsIds.length > 0 || removedConnectionsIds.length) > 0 &&
     (CAN(
-      keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
-      keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
+      Keys.WorkspaceManagementAssignConnectionsToEnvironment.id,
+      Keys.WorkspaceManagementAssignConnectionsToEnvironment.function,
     ) ||
       CAN(
-        keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.action,
-        keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.subject,
+        Keys.WorkspaceManagementRemoveConnectionsFromEnvironments.id,
+        Keys.WorkspaceManagementRemoveConnectionsFromEnvironments.function,
       ))
       ? setDisableTranferButton(false)
       : setDisableTranferButton(true);
@@ -449,10 +458,13 @@ const Environments = () => {
 
   return (
     <NoSsr>
-      {CAN(keys.VIEW_ENVIRONMENTS.action, keys.VIEW_ENVIRONMENTS.subject) ? (
+      {CAN(
+        Keys.WorkspaceManagementViewEnvironment.id,
+        Keys.WorkspaceManagementViewEnvironment.function,
+      ) ? (
         <>
           <ToolWrapper>
-            <CreateButtonWrapper>
+            <CreateButtonWrapper style={{ marginRight: '2rem' }}>
               <Button
                 type="submit"
                 variant="contained"
@@ -462,9 +474,8 @@ const Environments = () => {
                 sx={{
                   padding: '8px',
                   borderRadius: '5px',
-                  marginRight: '2rem',
                 }}
-                disabled={!CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject)}
+                permissionKey={Keys.WorkspaceManagementCreateEnvironment}
                 data-cy="btnResetDatabase"
               >
                 <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
@@ -496,11 +507,7 @@ const Environments = () => {
               </Typography>
               <Button
                 onClick={handleBulkDeleteEnvironmentConfirm}
-                disabled={
-                  selectedEnvironments.length > 0
-                    ? !CAN(keys.DELETE_ENVIRONMENT.action, keys.DELETE_ENVIRONMENT.subject)
-                    : true
-                }
+                permissionKey={Keys.WorkspaceManagementDeleteEnvironment}
               >
                 <DeleteIcon fill="red" style={{ margin: '0 2px' }} />
               </Button>
@@ -559,8 +566,14 @@ const Environments = () => {
               pointerLabel="Click “Create” to establish your first environment."
             />
           )}
-          {(CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject) ||
-            CAN(keys.EDIT_ENVIRONMENT.action, keys.EDIT_ENVIRONMENT.subject)) &&
+          {(CAN(
+            Keys.WorkspaceManagementCreateEnvironment.id,
+            Keys.WorkspaceManagementCreateEnvironment.function,
+          ) ||
+            CAN(
+              Keys.WorkspaceManagementEditEnvironment.id,
+              Keys.WorkspaceManagementEditEnvironment.function,
+            )) &&
             environmentModal.open && (
               <SisitentModal
                 open={environmentModal.open}
@@ -618,12 +631,12 @@ const Environments = () => {
                 originalLeftCount={connections?.totalCount}
                 originalRightCount={environmentConnections?.totalCount}
                 leftPermission={CAN(
-                  keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.action,
-                  keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.subject,
+                  Keys.WorkspaceManagementRemoveConnectionsFromEnvironments.id,
+                  Keys.WorkspaceManagementRemoveConnectionsFromEnvironments.function,
                 )}
                 rightPermission={CAN(
-                  keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
-                  keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
+                  Keys.WorkspaceManagementAssignConnectionsToEnvironment.id,
+                  Keys.WorkspaceManagementAssignConnectionsToEnvironment.function,
                 )}
               />
             </ModalBody>

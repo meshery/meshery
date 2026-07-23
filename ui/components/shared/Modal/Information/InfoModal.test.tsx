@@ -62,10 +62,6 @@ vi.mock('@/utils/objects', () => ({
   filterEmptyFields: (obj: any) => obj || {},
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: { PUBLISH_DESIGN: { action: 'publish', subject: 'design' } },
-}));
-
 vi.mock('@/utils/TooltipButton', () => ({
   default: ({ children, title, onClick }: any) => (
     <span data-testid="tooltip-btn" data-title={title} onClick={onClick}>

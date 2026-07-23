@@ -9,13 +9,6 @@ vi.mock('@/utils/can', () => ({
   default: (...args: unknown[]) => can(...args),
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    EDIT_WASM_FILTER: { action: 'edit', subject: 'wasm-filter' },
-    DELETE_WASM_FILTER: { action: 'delete', subject: 'wasm-filter' },
-  },
-}));
-
 vi.mock('@/assets/icons', () => ({
   Close: () => <svg data-testid="close-icon" />,
   Delete: () => <svg data-testid="delete-icon" />,
@@ -36,18 +29,22 @@ vi.mock('@sistent/sistent', () => {
     DialogActions: ({ children }: any) => <div data-testid="actions">{children}</div>,
     DialogTitle: ({ children }: any) => <div data-testid="title">{children}</div>,
     Divider: () => <hr data-testid="divider" />,
-    IconButton: ({ children, onClick, disabled, ...props }: any) => (
-      <button onClick={onClick} disabled={disabled} {...props}>
-        {children}
-      </button>
-    ),
+    IconButton: ({ children, onClick, disabled, permissionKey, ...props }: any) => {
+      const isDisabled =
+        disabled || (permissionKey && !can(permissionKey.id, permissionKey.function));
+      return (
+        <button onClick={onClick} disabled={isDisabled} {...props}>
+          {children}
+        </button>
+      );
+    },
     styled,
     FullScreenIcon: () => <svg data-testid="fullscreen-icon" />,
     FullScreenExitIcon: () => <svg data-testid="fullscreen-exit-icon" />,
   };
 });
 
-vi.mock('../CodeMirror', () => ({
+vi.mock('../general/CodeMirror', () => ({
   UnControlled: ({ value, onChange }: any) => (
     <textarea
       data-testid="codemirror"

@@ -12,7 +12,6 @@ Meshery is a self-service engineering platform and open source cloud native mana
 | `/docs` | Hugo documentation site |
 | `/install` | Dockerfiles, Kubernetes manifests, Helm charts |
 | `/provider-ui` | Provider-specific React UI extensions |
-| `/policies` | OPA Rego policies for relationship evaluation |
 | `/.github` | GitHub Actions, issue templates, Copilot agent definitions |
 
 ## Identifier Naming Conventions — MANDATORY
@@ -52,7 +51,67 @@ Authoritative guide: <https://github.com/meshery/schemas/blob/master/docs/identi
 
 > `meshery/schemas/AGENTS.md` is authoritative. On conflicts, schemas wins.
 
+## API Changes — MUST Go Through Schemas — MANDATORY
+
+**Any new or changed HTTP API (new endpoint, new/renamed query param, new
+request/response field) MUST be defined in `meshery/schemas` first and consumed
+via the generated client. Do NOT hand-roll RTK Query endpoints, response types,
+or ad-hoc `fetch`/`axios` calls for an API that can live in schemas.**
+
+Schemas is the single source of truth: one OpenAPI definition drives the Go
+models, TypeScript types, and the RTK Query client (`@meshery/schemas/{mesheryApi,cloudApi}`)
+consumed here. Hand-rolling any of these silently diverges the wire contract
+across `meshery/meshery` and `meshery-cloud`.
+
+### Workflow (adding/updating an endpoint)
+
+1. **Define** the path + schemas in the matching construct's `api.yml`
+   (e.g. `../schemas/schemas/constructs/v1beta1/system/api.yml` for `/api/system/*`,
+   `.../connection/api.yml` for `/api/integrations/connections*`). Follow the
+   schemas conventions: `operationId` = lower-camel `verbNoun`, camelCase wire
+   params/properties, `x-internal: ["meshery"]` for Meshery-only endpoints,
+   `additionalProperties: false`, `maxLength` on strings.
+2. **Regenerate** in `../schemas`: `make bundle-openapi generate-rtk generate-golang`
+   (or `make build` for the full dist). Verify the new `useXQuery` /
+   `mesheryApi.endpoints.X` hooks appear.
+3. **Validate**: `cd ../schemas && make validate-schemas && make consumer-audit`.
+4. **Consume** the generated hook in the UI (import from `@meshery/schemas/mesheryApi`;
+   wrap in `ui/rtk-query/*` only for thin ergonomics like bare-id args or cache
+   tags — never to re-declare the request). Use the generated Go models on the
+   server where applicable.
+5. **Release coupling**: schemas releases are automated ("do not manually create
+   releases"). Until a new `@meshery/schemas` is published and this repo's
+   dependency is bumped, a **local link** is used for development
+   (`ui/package.json` → `"@meshery/schemas": "file:../schemas"` and the
+   `replace github.com/meshery/schemas => ../schemas` directive in `go.mod`).
+   Both the version bump and reverting the local link happen as part of the
+   normal release/upgrade flow — do not commit the local link as the permanent
+   dependency.
+
+### Narrow exceptions (still prefer schemas)
+
+- **Server-Sent Events / streaming**: RTK codegen can't produce a useful hook
+  for `text/event-stream`. Still **document** the endpoint in `api.yml`, but
+  consume it with a native `EventSource` client under `ui/lib/*`
+  (e.g. `ui/lib/controllersStatusSubscription.ts`).
+- Truly Meshery-internal endpoints with no cross-repo consumer may skip schemas,
+  but must be justified in the PR description.
+
+### Forbidden
+
+- MUST NOT add a `builder.query`/`builder.mutation` in `ui/rtk-query/*` that
+  issues a request to an API which is (or should be) defined in schemas.
+- MUST NOT hand-write response/param TypeScript types or Go structs that
+  duplicate a schemas-generated type.
+- MUST NOT change wire casing/field names only in this repo — change the schema
+  and regenerate (see the naming conventions above).
+
 ## Build & Development Commands
+
+- Use the `gh-axi` CLI tool to interact with GitHub. Prefer `gh-axi` over `gh`.
+- Use `chrome-devtools-axi` for browser automation (navigate, snapshot, click, fill forms, run JS, inspect console/network) in place of raw Playwright/chrome-devtools MCP for ad hoc tasks.
+- Run `quota-axi` to check local agent-provider quota windows before long-running work.
+- Use the `lavish` skill (`lavish-axi` CLI) to turn a plan, comparison, or report into a reviewable HTML artifact.
 
 ### Server (Go)
 
@@ -76,6 +135,20 @@ make ui-lint               # Lint UI code
 make ui-integration-tests  # Run E2E tests
 ```
 
+`ui/tsconfig.tsbuildinfo` is a tracked build artifact that is not gitignored, so any local
+`tsc --noEmit` leaves it modified and it has repeatedly been committed by accident. Stage
+explicit paths rather than `git add -A`, and `git checkout -- ui/tsconfig.tsbuildinfo`
+before committing.
+
+When a change depends on an unreleased `@sistent/sistent` (or any sibling-repo package),
+`ui/node_modules/@sistent/sistent` is often overwritten in place with a locally-built dist.
+A local test run is then green against code that is not published, and CI fails on the same
+commit. Re-verify with `npm ci` after any local sibling build before trusting a green run or
+declaring a dependency bump done - a local build usually keeps the published version string,
+so matching versions are not evidence that the installed contents are the published ones.
+A version *mismatch* against `ui/package.json` is a useful tell that this has happened, but
+a match proves nothing.
+
 ### CLI (mesheryctl)
 
 ```bash
@@ -84,6 +157,15 @@ cd mesheryctl && go test --short ./...      # Unit tests
 cd mesheryctl && go test -run Integration ./...  # Integration tests
 make docs-mesheryctl                        # Generate CLI docs
 ```
+
+`make docs-mesheryctl` (i.e. `cd mesheryctl/doc && go run doc.go`) bakes the machine's
+`$HOME` into every generated page's "Options inherited from parent commands" block (the
+`--config` default path). Running it locally rewrites all ~100 pages under
+`docs/content/en/reference/references/mesheryctl/` with your local home directory even
+though only one command changed. CI/committed docs use `/home/runner/...` (the GitHub
+Actions runner home). After regenerating, `git diff --stat` the docs dir, `git checkout --`
+every file whose only change is that path, and manually fix the path back to
+`/home/runner/...` in the pages you actually intended to change.
 
 ### Docker
 
@@ -114,6 +196,13 @@ make helm-docs      # Generate Helm chart docs
 
 - Format with `gofmt`/`goimports`; lint with `make golangci` (config: `.golangci.yml`).
 - Use MeshKit error utilities (`github.com/meshery/meshkit/errors`); run `make error` for codes.
+  `make error` skips `mesheryctl` - a new `mesheryctl` code is taken from
+  `mesheryctl/helpers/component_info.json` (`next_error_code`) and that value bumped in the
+  same commit. `.github/workflows/error-codes-updater.yaml` re-runs errorutil and fails the
+  PR if its analysis reports anything.
+- Only `utils.Log.Error(err)` renders a MeshKit error's code, cause and remediation; cobra's
+  default print shows just the message. In `mesheryctl` commands, log the structured error
+  for the user *and* return it for the exit path.
 - Tests in `*_test.go`; manage deps with `go mod tidy`.
 
 ### JavaScript/React
@@ -214,7 +303,9 @@ Protocol: `server/meshes/meshops.proto` — adapters self-register on startup. E
 
 ### UI Extensions
 
-Remote Components loaded via `@paciolan/remote-component`. Bundle **must** expose `module.exports = { default: Component, __esModule: true }`. Silent-undefined gotcha: a mis-built bundle renders as `undefined` with no loader error — React throws "Element type is invalid" at render. Check bundle export shape first. See `ui/components/layout/Navigator/NavigatorExtension.tsx`.
+Remote Components loaded via `@paciolan/remote-component`. Bundle **must** expose `module.exports = { default: Component, __esModule: true }`; a bundle built without `output.library.type = "commonjs2"` resolves to `undefined` with no loader error, so `NavigatorExtension` guards for it explicitly and reports the export shape as the cause. See `ui/components/layout/Navigator/NavigatorExtension.tsx`.
+
+The host <-> extension contract (injected capability keys, event-bus event literals, contract version) is declared once in `@sistent/sistent`'s `mesheryExtensionContract` module and shared by both sides. Derive every event literal from `MESHERY_EXTENSION_EVENT` and every injected key from that module rather than typing strings: hand-duplicated literals are why `OPEN_DESIGN_IN_KANVAS` -> `OPEN_DESIGN_IN_EXTENSION` and `capabilitiesRegistry` -> `providerCapabilities` both shipped as silent runtime no-ops. `ui/utils/eventBus.ts` must stay typed as `EventBus<MesheryExtensionEvent>`; a bare `new EventBus()` widens `T` to its constraint and disables publish-site checking entirely. The `NavigatorExtension` unit test asserts the built `injectProps` bag against the contract, which is the gate that catches a capability rename before merge.
 
 ### GraphQL
 
@@ -276,3 +367,10 @@ Scripts in `.agents/hooks/`:
 - [Community Handbook](https://meshery.io/community#handbook)
 - [Security Policy](./SECURITY.md)
 - [Governance](./GOVERNANCE.md)
+
+## Maintaining this file
+
+Keep this file for knowledge useful to almost every future agent session in this project.
+Do not repeat what the codebase already shows; point to the authoritative file or command instead.
+Prefer rewriting or pruning existing entries over appending new ones.
+When updating this file, preserve this bar for all agents and keep entries concise.

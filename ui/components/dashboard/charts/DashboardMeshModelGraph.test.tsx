@@ -12,7 +12,7 @@ const bbChartSpy = vi.fn();
 
 vi.mock('billboard.js', () => ({ donut: () => 'donut' }));
 
-vi.mock('../../BBChart', () => ({
+vi.mock('../../general/BBChart', () => ({
   default: (props: { options: unknown }) => {
     bbChartSpy(props.options);
     return <div data-testid="bb-chart" />;
@@ -52,10 +52,6 @@ vi.mock('@/rtk-query/meshModel', () => ({
 }));
 
 vi.mock('@/utils/can', () => ({ default: () => true }));
-
-vi.mock('@/utils/permission_constants', () => ({
-  keys: { VIEW_REGISTRY: { action: 'view', subject: 'registry' } },
-}));
 
 vi.mock('next/router', () => ({ useRouter: () => ({ push: vi.fn() }) }));
 

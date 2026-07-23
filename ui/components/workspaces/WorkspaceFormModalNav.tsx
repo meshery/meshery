@@ -28,9 +28,10 @@ import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { DrawerHeader, StyledDrawer, StyledMainContent } from './SpacesSwitcher/styles';
 import WorkspaceContent from './SpacesSwitcher/WorkspaceContent';
 import { useGetProviderCapabilitiesQuery, useGetSelectedOrganization } from '@/rtk-query/user';
+import { isLocalProvider } from '@/utils/provider';
 import SharedContent from './SpacesSwitcher/SharedContent';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 import type { Theme } from '@/theme';
 import { NavItem, WorkspacesSection, NavConfigItem } from './WorkspaceFormModalSections';
@@ -71,7 +72,7 @@ const getNavItem = (theme: Theme): NavConfigItem[] => {
       id: 'My-Views',
       label: 'My Views',
       icon: <ViewIcon {...iconSmall} fill={theme.palette.icon.default} />,
-      enabled: CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject),
+      enabled: CAN(Keys.KanvasViewViews.id, Keys.KanvasViewViews.function),
       content: <MyViewsContent />,
     },
     {
@@ -133,7 +134,7 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
   const closeList = useMediaQuery(theme.breakpoints.down('xl'));
   const [open, setOpen] = useState(!closeList);
   const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
-  const isLocalProvider = capabilitiesData?.providerType === 'local';
+  const isLocal = isLocalProvider(capabilitiesData);
   const workspaceSwitcherContext = useContext(WorkspaceModalContext);
   const { selectedWorkspace } = workspaceSwitcherContext;
   const [selectedId, setSelectedId] = useState<string>(selectedWorkspace?.id || 'Recents (Global)');
@@ -215,7 +216,7 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
           }}
         >
           <List>
-            {!isLocalProvider &&
+            {!isLocal &&
               navConfig.map((item) => (
                 <NavItem
                   key={item.id}

@@ -253,7 +253,10 @@ func logModelUpdateSummary(modelToCompUpdateTracker *store.GenerticThreadSafeSto
 
 func init() {
 	updateCmd.PersistentFlags().StringVarP(&modelLocation, "input", "i", "./models", "relative or absolute input path to the models directory; when unset, the repo-root models directory is auto-detected (models from the repo root, ../models from a subdirectory)")
-	_ = updateCmd.MarkPersistentFlagRequired("path")
+	// NOTE: `input` is intentionally not marked required - it has a default and is
+	// auto-detected in RunE. A prior version called MarkPersistentFlagRequired("path")
+	// here, which silently no-op'd (the flag is named `input`, not `path`, and the
+	// returned error was discarded), so the requirement never took effect. See #18633.
 
 	updateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
 	updateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")

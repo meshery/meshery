@@ -87,6 +87,74 @@ describe('formatApiError', () => {
     expect(result.message).toContain('`meshery-server-1014`');
   });
 
+  // The schemas baseQuery wrapper drops the detail arrays (meshery/schemas#1081),
+  // so `formatApiError` recovers them from the raw response body. The real
+  // transform is exercised in `meshkitErrorChain.test.ts`; these pin the merge
+  // rules in isolation.
+  it('recovers camelCase detail arrays from the raw body', () => {
+    const result = formatApiError({
+      status: 403,
+      data: {
+        error: 'Unable to create the environment',
+        code: 'meshery-server-1448',
+        probableCause: ['Missing permission.'],
+        suggestedRemediation: ['Ask an owner for the Environment role.'],
+        longDescription: ['The provider rejected the request.'],
+      },
+      meshkit: { message: 'Unable to create the environment', code: 'meshery-server-1448' },
+    });
+
+    expect(result.message).toContain('*Try:*');
+    expect(result.message).toContain('- Ask an owner for the Environment role.');
+    expect(result.meshkit?.probableCause).toEqual(['Missing permission.']);
+    expect(result.meshkit?.longDescription).toEqual(['The provider rejected the request.']);
+  });
+
+  it('recovers snake_case detail arrays from the raw body', () => {
+    const result = formatApiError({
+      status: 409,
+      data: { error: 'duplicate', suggested_remediation: ['Pick a different name.'] },
+      meshkit: { message: 'duplicate' },
+    });
+
+    expect(result.message).toContain('- Pick a different name.');
+  });
+
+  it('prefers camelCase over snake_case when the body carries both', () => {
+    const result = formatApiError({
+      status: 409,
+      data: {
+        error: 'duplicate',
+        suggestedRemediation: ['camel wins'],
+        suggested_remediation: ['snake loses'],
+      },
+      meshkit: { message: 'duplicate' },
+    });
+
+    expect(result.meshkit?.suggestedRemediation).toEqual(['camel wins']);
+  });
+
+  it('keeps the envelope values when meshkit already carries the details', () => {
+    const result = formatApiError({
+      status: 409,
+      data: { error: 'duplicate', suggestedRemediation: ['from body'] },
+      meshkit: { message: 'duplicate', suggestedRemediation: ['from envelope'] },
+    });
+
+    expect(result.meshkit?.suggestedRemediation).toEqual(['from envelope']);
+  });
+
+  it('ignores blank and non-string detail entries on the raw body', () => {
+    const result = formatApiError({
+      status: 500,
+      data: { error: 'boom', suggestedRemediation: ['', '   ', 42] },
+      meshkit: { message: 'boom' },
+    });
+
+    expect(result.message).toBe('**boom**');
+    expect(result.meshkit?.suggestedRemediation).toBeUndefined();
+  });
+
   it('falls back to FetchBaseQueryError.data string', () => {
     const result = formatApiError(
       { status: 500, data: 'internal server error' },

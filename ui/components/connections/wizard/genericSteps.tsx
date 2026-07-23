@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import Link from 'next/link';
 import { v4 as uuidv4 } from 'uuid';
 import {
   Alert,
@@ -12,9 +13,12 @@ import {
 import { alpha, styled } from '@/theme';
 import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import {
   buildCredentialSecret,
+  CONNECTIONS_PATH,
+  connectionCreatedNotify,
+  DEFAULT_CONNECTION_DOCS_URL,
   filterCredentialsForKind,
   resolveConnectionName,
   type ConnectionWizardKindConfig,
@@ -34,8 +38,8 @@ export const kindPermission = (config?: ConnectionWizardKindConfig | null) => {
   }
 
   return config.flow === 'kubernetes'
-    ? CAN(keys.ADD_CLUSTER.action, keys.ADD_CLUSTER.subject)
-    : CAN(keys.CONNECT_METRICS.action, keys.CONNECT_METRICS.subject);
+    ? CAN(Keys.LifecycleManagementAddCluster.id, Keys.LifecycleManagementAddCluster.function)
+    : CAN(Keys.MesherySystemConnectMetrics.id, Keys.MesherySystemConnectMetrics.function);
 };
 
 const existingCredentialsFor = (ctx: WizardContext) =>
@@ -70,6 +74,7 @@ const SelectStepBody = ({ ctx }: { ctx: WizardContext }) => (
         registrationError: null,
         postConfig: {},
       });
+      ctx.advance();
     }}
     canUseKind={kindPermission}
   />
@@ -80,6 +85,7 @@ export const selectStep: WizardStep = {
   label: 'Choose Connection',
   Component: SelectStepBody,
   canProceed: (ctx) => Boolean(ctx.data.kindConfig && kindPermission(ctx.data.kindConfig)),
+  helpText: `Choose the type of connection you want to create. Each connection type lets Meshery manage a different kind of infrastructure and interface with another managed service. [Learn more about connections](${DEFAULT_CONNECTION_DOCS_URL}).`,
 };
 
 // ---------------------------------------------------------------------------
@@ -104,6 +110,11 @@ export const genericDetailsStep: WizardStep = {
   Component: DetailsStepBody,
   canProceed: (ctx) => Boolean(ctx.data.kindConfig?.connectionSchema),
   onNext: (ctx) => Boolean(ctx.formRefs.connection.current?.validateForm()),
+  helpText: (ctx) => {
+    const label = ctx.data.kindConfig?.label || 'connection';
+    const docsUrl = ctx.data.kindConfig?.docsUrl || DEFAULT_CONNECTION_DOCS_URL;
+    return `Fill in the details for your ${label} connection. These fields are specific to this connection type. [Learn more](${docsUrl}).`;
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -169,6 +180,7 @@ export const genericCredentialStep: WizardStep = {
     }
     return Boolean(ctx.formRefs.credential.current?.validateForm());
   },
+  helpText: `Credentials store secrets that authenticate this connection. Reuse an existing credential or create a new one. [Learn more about connections](${DEFAULT_CONNECTION_DOCS_URL}).`,
 };
 
 // ---------------------------------------------------------------------------
@@ -246,6 +258,11 @@ export const genericRegisterStep: WizardStep = {
   icon: AssignmentTurnedInIcon,
   Component: RegisterStepBody,
   nextLabel: () => 'Create Connection',
+  helpText: (ctx) => {
+    const label = ctx.data.kindConfig?.label || 'connection';
+    const docsUrl = ctx.data.kindConfig?.docsUrl || DEFAULT_CONNECTION_DOCS_URL;
+    return `Review your ${label} details. When you click "Create Connection", Meshery will register the new connection, then verify reachability of the system/service, verify credentials, and run discovery (if applicable). [Learn more](${docsUrl}).`;
+  },
   onNext: async (ctx) => {
     const { kindConfig } = ctx.data;
     if (!kindConfig) {
@@ -269,10 +286,7 @@ export const genericRegisterStep: WizardStep = {
       const result = await ctx.services.connectConnection({ ...basePayload, status: 'connect' });
 
       ctx.patch({ registrationResult: result ?? basePayload });
-      ctx.services.notify({
-        message: `${kindConfig.label} connection created.`,
-        event_type: EVENT_TYPES.SUCCESS,
-      });
+      ctx.services.notify(connectionCreatedNotify(kindConfig.label));
       return true;
     } catch (error) {
       ctx.patch({ registrationError: error });
@@ -305,6 +319,13 @@ const SuccessIcon = styled(CheckCircleIcon)(({ theme }) => ({
   fill: theme.palette.background.brand?.default,
 }));
 
+const ConnectionsLink = styled(Link)(({ theme }) => ({
+  color: theme.palette.background.brand?.default || theme.palette.primary.main,
+  fontWeight: 600,
+  textDecoration: 'underline',
+  textUnderlineOffset: 2,
+}));
+
 const ReceiptStepBody = ({ ctx }: { ctx: WizardContext }) => {
   const { kindConfig } = ctx.data;
   const connectionName = resolveConnectionName(
@@ -323,8 +344,8 @@ const ReceiptStepBody = ({ ctx }: { ctx: WizardContext }) => {
         {kindConfig?.label} connection created
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 420 }}>
-        <strong>{connectionName}</strong> is now a first-class Meshery connection. You can manage it
-        from the Connections table.
+        <strong>{connectionName}</strong> is now a registered for use. Manage your new connection
+        anytime on <ConnectionsLink href={CONNECTIONS_PATH}>Connections</ConnectionsLink>.
       </Typography>
     </Box>
   );
@@ -335,4 +356,5 @@ export const genericReceiptStep: WizardStep = {
   label: 'Done',
   Component: ReceiptStepBody,
   nextLabel: () => 'Finish',
+  helpText: `Your connection is ready. Manage it anytime from [connections](${DEFAULT_CONNECTION_DOCS_URL})—change its status, assign it to environments, or remove it. [Learn more](${DEFAULT_CONNECTION_DOCS_URL}).`,
 };

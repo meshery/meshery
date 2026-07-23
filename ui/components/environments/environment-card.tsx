@@ -1,13 +1,21 @@
 import React from 'react';
 import { FlipCard } from '../lifecycle/general';
 import { useGetEnvironmentConnectionsQuery } from '../../rtk-query/environments';
-import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
-import { DeleteIcon, EditIcon, Grid2, SyncAltIcon, useTheme } from '@sistent/sistent';
+
+import { Keys } from '@meshery/schemas/permissions';
+import {
+  DeleteIcon,
+  EditIcon,
+  Grid2,
+  SyncAltIcon,
+  useTheme,
+  IconButton,
+  CustomTooltip,
+} from '@sistent/sistent';
+import { iconMedium } from '../../css/icons.styles';
 
 import {
   Name,
-  IconButton,
   CardWrapper,
   DateLabel,
   DescriptionLabel,
@@ -28,10 +36,10 @@ export const formattoLongDate = (date) => {
   });
 };
 
-export const TransferButton = ({ title, count, onAssign, disabled }) => {
+export const TransferButton = ({ title, count, onAssign, permissionKey }) => {
   const theme = useTheme();
   return (
-    <PopupButton disabled={disabled} onClick={onAssign}>
+    <PopupButton permissionKey={permissionKey} onClick={onAssign}>
       <Grid2>
         <TabCount>{count}</TabCount>
         <TabTitle>{title}</TabTitle>
@@ -169,7 +177,7 @@ const EnvironmentCard = ({
                     title="Assigned Connections"
                     count={environmentConnectionsCount}
                     onAssign={onAssignConnection}
-                    disabled={!CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)}
+                    permissionKey={Keys.WorkspaceManagementViewConnections}
                   />
                 </AllocationButton>
                 {/* temporary disable workspace allocation button  */}
@@ -181,7 +189,7 @@ const EnvironmentCard = ({
                         environmentDetails.workspaces ? environmentDetails.workspaces?.length : 0
                       }
                       onAssign={onAssignConnection}
-                      disabled={!CAN(keys.VIEW_WORKSPACE.action, keys.VIEW_WORKSPACE.subject)}
+                      disabled={!CAN(Keys.WorkspaceManagementViewWorkspace.id, Keys.WorkspaceManagementViewWorkspace.function)}
                     />
                   </AllocationButton>
                 )} */}
@@ -220,26 +228,36 @@ const EnvironmentCard = ({
                   justifyContent: 'flex-end',
                 }}
               >
-                <IconButton
-                  onClick={onEdit}
-                  disabled={
-                    selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
-                      ? true
-                      : !CAN(keys.EDIT_ENVIRONMENT.action, keys.EDIT_ENVIRONMENT.subject)
-                  }
-                >
-                  <EditIcon fill="white" style={{ margin: '0 2px' }} />
-                </IconButton>
-                <IconButton
-                  onClick={onDelete}
-                  disabled={
-                    selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
-                      ? true
-                      : !CAN(keys.DELETE_ENVIRONMENT.action, keys.DELETE_ENVIRONMENT.subject)
-                  }
-                >
-                  <DeleteIcon fill="white" style={{ margin: '0 2px' }} />
-                </IconButton>
+                <CustomTooltip title="Edit">
+                  <IconButton
+                    onClick={(ev) => {
+                      ev.stopPropagation();
+                      onEdit(ev);
+                    }}
+                    sx={{ color: 'white' }}
+                    disabled={
+                      selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
+                    }
+                    permissionKey={Keys.WorkspaceManagementEditEnvironment}
+                  >
+                    <EditIcon style={{ ...iconMedium, margin: '0 2px' }} />
+                  </IconButton>
+                </CustomTooltip>
+                <CustomTooltip title="Delete">
+                  <IconButton
+                    onClick={(ev) => {
+                      ev.stopPropagation();
+                      onDelete(ev);
+                    }}
+                    sx={{ color: 'white' }}
+                    disabled={
+                      selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
+                    }
+                    permissionKey={Keys.WorkspaceManagementDeleteEnvironment}
+                  >
+                    <DeleteIcon style={{ ...iconMedium, margin: '0 2px' }} />
+                  </IconButton>
+                </CustomTooltip>
               </Grid2>
             </Grid2>
             <Grid2 sx={{ display: 'flex', flexDirection: 'row', color: 'white' }}>
