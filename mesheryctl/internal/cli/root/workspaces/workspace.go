@@ -16,6 +16,8 @@ package workspaces
 
 import (
 	"fmt"
+	"sort"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 
@@ -23,14 +25,14 @@ import (
 )
 
 var (
-	availableSubcommands = []*cobra.Command{listWorkspaceCmd, createWorkspaceCmd, viewWorkspaceCmd}
+	availableSubcommands = []*cobra.Command{listWorkspaceCmd, createWorkspaceCmd, viewWorkspaceCmd, deleteWorkspaceCmd}
 	workspacesApiPath    = "api/workspaces"
 )
 
 var WorkSpaceCmd = &cobra.Command{
 	Use:   "workspace",
 	Short: "Manage workspaces under an organization",
-	Long: `Create, list of workspaces under an organization
+	Long: `Create, list, view, and delete workspaces under an organization
 Find more information at: https://docs.meshery.io/reference/mesheryctl/workspace`,
 	Example: `
 
@@ -39,6 +41,9 @@ mesheryctl workspace list --orgId [orgId]
 
 // To create a workspace
 mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
+
+// To delete a workspace
+mesheryctl workspace delete [workspaceId]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 || len(args) > 1 {
@@ -49,7 +54,12 @@ mesheryctl workspace create --orgId [orgId] --name [name] --description [descrip
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [create, list]. Use 'mesheryctl workspace --help' to display usage guide", args[0]))
+			names := make([]string, 0, len(availableSubcommands))
+			for _, sub := range availableSubcommands {
+				names = append(names, sub.Name())
+			}
+			sort.Strings(names)
+			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid subcommand. Please provide required options from [%s]. Use 'mesheryctl workspace --help' to display usage guide", args[0], strings.Join(names, ", ")))
 		}
 
 		return nil
