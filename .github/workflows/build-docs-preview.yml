@@ -90,11 +90,7 @@ jobs:
           User-agent: *
           Disallow: /
           ROBOTS
-          
-  upload-build-artifact:
-    runs-on: ubuntu-24.04
-    needs: build-docs-preview
-    steps:
+
       - name: Save PR Metadata
         run: |
             mkdir -p ./pr
