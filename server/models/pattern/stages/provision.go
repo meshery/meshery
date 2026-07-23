@@ -29,8 +29,6 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 			return
 		}
 
-		processAnnotations(data.Pattern)
-
 		// Create provision plan
 		plan, err := planner.CreatePlan(*data.Pattern, prov.IsDelete())
 		if err != nil {
@@ -87,6 +85,23 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 
 		if next != nil {
 			next(data, mergeErrors(errs))
+		}
+	}
+}
+
+func FilterAnnotations() ChainStageFunction {
+	return func(data *Data, err error, next ChainStageNextFunction) {
+		if err != nil {
+			if next != nil {
+				next(data, err)
+			}
+			return
+		}
+
+		processAnnotations(data.Pattern)
+
+		if next != nil {
+			next(data, nil)
 		}
 	}
 }

@@ -17,7 +17,6 @@ func DryRun(_ ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction
 			act.Terminate(err)
 			return
 		}
-		processAnnotations(data.Pattern)
 
 		resp, err := act.DryRun(data.Pattern.Components)
 		if err != nil {
