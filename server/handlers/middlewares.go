@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
@@ -201,6 +202,11 @@ func (h *Handler) KubernetesMiddleware(next func(http.ResponseWriter, *http.Requ
 	}
 }
 
+const (
+	transientRetryAttempts = 2
+	transientRetryBackoff  = 300 * time.Millisecond
+)
+
 // SessionInjectorMiddleware - is a middleware which injects user and session object
 func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider)) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
@@ -225,6 +231,10 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		// }
 
 		user, err := provider.GetUserDetails(req)
+		for attempt := 0; err != nil && isTransientProviderError(err) && attempt < transientRetryAttempts; attempt++ {
+			time.Sleep(transientRetryBackoff)
+			user, err = provider.GetUserDetails(req)
+		}
 		if err != nil {
 			h.log.Error(ErrGetUserDetails(err))
 			// INTENTIONAL log/wire divergence. We log ErrGetUserDetails so the
