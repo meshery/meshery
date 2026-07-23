@@ -224,7 +224,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     }
 
     // Fall back to the legacy `<Kind>Connection` component for kinds without a
-    // first-class connection definition yet (e.g. meshery, github), and to
+    // first-class connection definition yet (e.g. meshery), and to
     // backfill the flat `transitions` list / icon the definition did not provide.
     const promises = CONNECTION_KINDS_DEF.map(async (kind) => {
       try {

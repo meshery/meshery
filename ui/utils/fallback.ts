@@ -1,9 +1,34 @@
+import { CONNECTION_KINDS } from './Enum';
+
+/**
+ * Last-resort static icons for known CONNECTION_KINDS only.
+ *
+ * Prefer dynamic sources first (callers already do this):
+ * 1. `connection.kindLogo` / model styles / definition SVG
+ * 2. `connectionMetadataState[kind].icon` (server connection definitions)
+ * 3. only then `getFallbackImageBasedOnKind`
+ *
+ * Keys reuse CONNECTION_KINDS values so we do not invent a parallel kind vocabulary.
+ * Paths are relative to the UI public root (`normalizeStaticImagePath` prefixes "/").
+ */
+const KIND_FALLBACK_ICONS = {
+  [CONNECTION_KINDS.MESHERY]: 'static/img/meshery-logo/meshery-logo.png',
+  [CONNECTION_KINDS.KUBERNETES]: 'static/img/integrations/kubernetes.svg',
+  [CONNECTION_KINDS.GITHUB]: 'static/img/extensions/github.svg',
+  [CONNECTION_KINDS.PROMETHEUS]: 'static/img/integrations/prometheus_logo_orange_circle.svg',
+  [CONNECTION_KINDS.GRAFANA]: 'static/img/integrations/grafana_icon.svg',
+};
+
+/**
+ * Resolve a well-known kind to a static fallback image path, or undefined.
+ * Case-insensitive exact key match only — kinds on the wire already use
+ * CONNECTION_KINDS values (e.g. "prometheus", not "Prometheus" / "prometheus_").
+ */
 export function getFallbackImageBasedOnKind(kind) {
-  const fallbackComponent = {
-    meshery: 'static/img/meshery-logo/meshery-logo.png',
-    kubernetes: 'static/img/integrations/kubernetes.svg',
-  };
-  return fallbackComponent[kind];
+  if (kind == null || kind === '') {
+    return undefined;
+  }
+  return KIND_FALLBACK_ICONS[String(kind).trim().toLowerCase()];
 }
 
 export function normalizeStaticImagePath(path) {

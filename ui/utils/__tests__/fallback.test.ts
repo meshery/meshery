@@ -12,6 +12,13 @@ describe('getFallbackImageBasedOnKind', () => {
     );
   });
 
+  it('resolves known connection kinds case-insensitively without rewriting the key', () => {
+    expect(getFallbackImageBasedOnKind('Prometheus')).toBe(
+      'static/img/integrations/prometheus_logo_orange_circle.svg',
+    );
+    expect(getFallbackImageBasedOnKind('GITHUB')).toBe('static/img/extensions/github.svg');
+  });
+
   it('returns undefined for unknown kinds', () => {
     expect(getFallbackImageBasedOnKind('istio')).toBeUndefined();
     expect(getFallbackImageBasedOnKind('')).toBeUndefined();
