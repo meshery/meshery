@@ -5,7 +5,11 @@ import {
   PermissionProvider,
   WarningIcon as Warning,
 } from '@sistent/sistent';
-import { Footer, KubernetesSubscription, NavigationBar } from '../components/AppComponents';
+import {
+  Footer,
+  KubernetesSubscription,
+  NavigationBar,
+} from '../components/layout/AppShell/AppComponents';
 import { AdapterMoment, LocalizationProvider } from '@/components/shared/DatePicker';
 import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
@@ -17,7 +21,7 @@ import React, { useEffect, useMemo, useCallback, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { startSessionTimer } from '../lib/sessionTimer';
 import Header from '../components/layout/Header/Header';
-import MesheryProgressBar from '../components/MesheryProgressBar';
+import MesheryProgressBar from '../components/general/MesheryProgressBar';
 import getPageContext from '../components/PageContext';
 import { subscribeToControllersStatus } from 'lib/controllersStatusSubscription';
 import { useLazyGetSystemSyncQuery, useLazyGetKubernetesContextsQuery } from '../rtk-query/system';
@@ -85,7 +89,7 @@ import {
   StyledMainContent,
   StyledContentWrapper,
   StyledRoot,
-} from '../components/App.styles';
+} from '../components/layout/AppShell/App.styles';
 import { ThemeResponsiveSnackbar } from '@/theme/snackbar';
 import {
   setConnectionMetadata,

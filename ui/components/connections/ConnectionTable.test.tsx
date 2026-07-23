@@ -181,7 +181,7 @@ vi.mock('../../utils/dimension', () => ({
   useWindowDimensions: () => ({ width: windowWidth }),
 }));
 
-vi.mock('../multi-select-wrapper', () => ({
+vi.mock('../general/multi-select-wrapper', () => ({
   default: () => <div data-testid="multi-select-wrapper" />,
 }));
 

@@ -74,6 +74,67 @@ export const formatMeshkitErrorMarkdown = (
   return lines.join('\n');
 };
 
+type MeshkitDetailKey = 'probableCause' | 'suggestedRemediation' | 'longDescription';
+
+/**
+ * Wire aliases for each MeshKit detail array, most-preferred spelling first.
+ *
+ * The Meshery server emits camelCase - see the `errorResponse` struct in
+ * `server/models/httputil/httputil.go` and the identifier-naming contract in
+ * AGENTS.md - but the `withMeshkitError` baseQuery wrapper in
+ * `@meshery/schemas` reads the snake_case spellings (`probable_cause`,
+ * `suggested_remediation`, `long_description`) instead. The result is an
+ * `error.meshkit` carrying only message/code/severity, so the "*Try:*" section
+ * below never renders even though the server sent remediations.
+ *
+ * Tracked upstream as meshery/schemas#1081
+ * (https://github.com/meshery/schemas/issues/1081). The defect is present in
+ * the pinned 1.3.x line and in 1.4.0. Once it is fixed upstream and this
+ * repo's dependency is bumped past it, the raw-body fallback in
+ * `resolveMeshkitError` becomes redundant and can be deleted.
+ */
+const MESHKIT_DETAIL_ALIASES: Record<MeshkitDetailKey, readonly string[]> = {
+  probableCause: ['probableCause', 'probable_cause'],
+  suggestedRemediation: ['suggestedRemediation', 'suggested_remediation'],
+  longDescription: ['longDescription', 'long_description'],
+};
+
+/** Narrow an unknown value to a non-empty array of non-blank strings. */
+const toStringArray = (value: unknown): string[] | undefined => {
+  if (!Array.isArray(value)) return undefined;
+  const entries = value.filter(
+    (entry): entry is string => typeof entry === 'string' && entry.trim().length > 0,
+  );
+  return entries.length > 0 ? entries : undefined;
+};
+
+/**
+ * Merge the MeshKit envelope attached by the schemas baseQuery with the detail
+ * arrays still present on the raw response body at `error.data`. Values already
+ * on `meshkit` win; within the body camelCase wins over snake_case, so a future
+ * producer emitting either spelling keeps working.
+ */
+const resolveMeshkitError = (error: { meshkit: MeshkitError; data?: unknown }): MeshkitError => {
+  const body =
+    error.data && typeof error.data === 'object' && !Array.isArray(error.data)
+      ? (error.data as Record<string, unknown>)
+      : undefined;
+  if (!body) return error.meshkit;
+
+  const resolved: MeshkitError = { ...error.meshkit };
+  for (const key of Object.keys(MESHKIT_DETAIL_ALIASES) as MeshkitDetailKey[]) {
+    if (toStringArray(resolved[key])) continue;
+    for (const alias of MESHKIT_DETAIL_ALIASES[key]) {
+      const fromBody = toStringArray(body[alias]);
+      if (fromBody) {
+        resolved[key] = fromBody;
+        break;
+      }
+    }
+  }
+  return resolved;
+};
+
 /**
  * Extract a single best-effort string from a non-MeshKit RTK Query error or
  * any thrown value. Mirrors the legacy `error?.data` / `error?.message`
@@ -116,9 +177,10 @@ const extractFallbackMessage = (error: unknown): string | undefined => {
  */
 export const formatApiError = (error: unknown, fallbackTitle?: string): FormattedApiError => {
   if (hasMeshkitError(error)) {
+    const meshkit = resolveMeshkitError(error);
     return {
-      message: formatMeshkitErrorMarkdown(error.meshkit, fallbackTitle),
-      meshkit: error.meshkit,
+      message: formatMeshkitErrorMarkdown(meshkit, fallbackTitle),
+      meshkit,
     };
   }
 

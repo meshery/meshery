@@ -280,9 +280,11 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			}
 
 			// An unreachable context cannot build a client set, so the state
-			// machine fails to initialize and inst is nil. The connection has
-			// still been persisted in the discovered state; just skip the event.
-			if inst != nil {
+			// machine fails to initialize - either returning a nil instance, or,
+			// on a cache hit, one whose Context was never assigned. The connection
+			// has still been persisted in the discovered state; just skip the
+			// event. See mhelpers.HasMachineContext.
+			if mhelpers.HasMachineContext(inst) {
 				go func(inst *machines.StateMachine) {
 					event, err := inst.SendEvent(req.Context(), machines.EventType(mhelpers.StatusToEvent(status)), nil)
 					if err != nil {
