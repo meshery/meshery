@@ -568,9 +568,6 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 		if err != nil {
 			return nil, fmt.Errorf("error creating a mesh client: %v", err)
 		}
-		defer func() {
-			_ = mClient.Close()
-		}()
 
 		// Else it is an  adapter call
 		//TODO: Accommodate gRPC calls to use context mapping with kubeconfig
@@ -581,6 +578,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 		compStr, err := utils.Marshal(ccp.Component)
 		if err != nil {
 			err = errors.Wrapf(err, "error marshalling component \"%s\" of type : %s", ccp.Component.DisplayName, ccp.Component.Component.Kind)
+			_ = mClient.Close()
 			return nil, err
 		}
 		resp, err := mClient.MClient.Provision(context.TODO(), &meshes.ProvisionRequest{
@@ -589,6 +587,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 			KubeConfigs:  kconfigs,
 			Declarations: []string{compStr},
 		})
+		_ = mClient.Close()
 		success := err == nil
 		msgs = append(msgs, patterns.DeploymentMessagePerContext{
 			SystemName: hostName,
