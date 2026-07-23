@@ -1,18 +1,19 @@
 package model
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"net/url"
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestExportModel(t *testing.T) {
@@ -100,6 +101,10 @@ func TestExportModelToFile(t *testing.T) {
 	if readErr != nil {
 		t.Fatalf("expected exported file at %s: %v", exportedPath, readErr)
 	}
-	assert.Equal(t, exportedContent, got)
-	assert.Contains(t, buf.String(), "Exported model to")
+	if !bytes.Equal(exportedContent, got) {
+		t.Errorf("exported content mismatch: got %q, want %q", got, exportedContent)
+	}
+	if !strings.Contains(buf.String(), "Exported model to") {
+		t.Errorf("expected completion log, got %q", buf.String())
+	}
 }
