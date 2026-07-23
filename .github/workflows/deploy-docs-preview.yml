@@ -37,6 +37,7 @@ jobs:
           name: docs-preview-build
           path: docs-preview-build
           run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Retrieve PR metadata
         id: pr
