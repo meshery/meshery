@@ -52,6 +52,7 @@ import CAN from '@/utils/can';
 import DefaultError from '../general/error-404/index';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import LoadingScreen from '../shared/LoadingState/LoadingComponent';
 
 const ACTION_TYPES = {
   CREATE: 'create',
@@ -93,6 +94,7 @@ const Environments = () => {
     data: environmentsData,
     isError: isEnvironmentsError,
     error: environmentsError,
+    isFetching: isEnvironmentsFetching,
   } = useGetEnvironmentsQuery(
     {
       search: search,
@@ -455,6 +457,17 @@ const Environments = () => {
       );
     }
   };
+
+  if (
+    CAN(
+      Keys.WorkspaceManagementViewEnvironment.id,
+      Keys.WorkspaceManagementViewEnvironment.function,
+    ) &&
+    isEnvironmentsFetching &&
+    !environmentsData
+  ) {
+    return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Environments..." />;
+  }
 
   return (
     <NoSsr>

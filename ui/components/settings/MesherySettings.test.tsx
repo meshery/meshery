@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const routerState = {
@@ -17,52 +17,56 @@ vi.mock('next/link', () => ({
   default: ({ children, href }: any) => <a href={href}>{children}</a>,
 }));
 
-vi.mock('@sistent/sistent', () => ({
-  NoSsr: ({ children }: any) => <>{children}</>,
-  CustomTooltip: ({ children, title, value }: any) => (
-    <span data-tooltip-title={String(title)} data-tooltip-value={String(value)}>
-      {children}
-    </span>
-  ),
-  AppBar: ({ children }: any) => <div>{children}</div>,
-  Typography: ({ children, sx, color, variant, ...rest }: any) => (
-    <span data-variant={variant} {...rest}>
-      {children}
-    </span>
-  ),
-  Tabs: ({ children, value, onChange }: any) => (
-    <div data-testid="tabs" data-value={value} onClick={(e) => onChange?.(e, 'mock-tab')}>
-      {children}
-    </div>
-  ),
-  Tab: ({ label, value, disabled }: any) => (
-    <button data-testid={`tab-${value}`} disabled={disabled}>
-      {label}
-    </button>
-  ),
-  Paper: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
-  Grid2: ({ children }: any) => <div>{children}</div>,
-  LeftArrowIcon: () => <svg />,
-  PollIcon: () => <svg />,
-  DatabaseIcon: () => <svg />,
-  MendeleyIcon: () => <svg />,
-  FileIcon: () => <svg />,
-  SettingsIcon: () => <svg />,
-  useTheme: () => ({
-    palette: {
-      icon: { default: 'icon' },
-      primary: { main: 'primary' },
+vi.mock('@sistent/sistent', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@sistent/sistent')>();
+  return {
+    ...actual,
+    NoSsr: ({ children }: any) => <>{children}</>,
+    CustomTooltip: ({ children, title, value }: any) => (
+      <span data-tooltip-title={String(title)} data-tooltip-value={String(value)}>
+        {children}
+      </span>
+    ),
+    AppBar: ({ children }: any) => <div>{children}</div>,
+    Typography: ({ children, sx, color, variant, ...rest }: any) => (
+      <span data-variant={variant} {...rest}>
+        {children}
+      </span>
+    ),
+    Tabs: ({ children, value, onChange }: any) => (
+      <div data-testid="tabs" data-value={value} onClick={(e) => onChange?.(e, 'mock-tab')}>
+        {children}
+      </div>
+    ),
+    Tab: ({ label, value, disabled }: any) => (
+      <button data-testid={`tab-${value}`} disabled={disabled}>
+        {label}
+      </button>
+    ),
+    Paper: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
+    Grid2: ({ children }: any) => <div>{children}</div>,
+    LeftArrowIcon: () => <svg />,
+    PollIcon: () => <svg />,
+    DatabaseIcon: () => <svg />,
+    MendeleyIcon: () => <svg />,
+    FileIcon: () => <svg />,
+    SettingsIcon: () => <svg />,
+    useTheme: () => ({
+      palette: {
+        icon: { default: 'icon' },
+        primary: { main: 'primary' },
+      },
+      spacing: (n: number) => n,
+    }),
+    styled: (Component: any) => () => {
+      const StyledComponent = ({ children, ...rest }: any) =>
+        typeof Component === 'string'
+          ? React.createElement(Component, rest, children)
+          : React.createElement(Component, rest, children);
+      return StyledComponent;
     },
-    spacing: (n: number) => n,
-  }),
-  styled: (Component: any) => () => {
-    const StyledComponent = ({ children, ...rest }: any) =>
-      typeof Component === 'string'
-        ? React.createElement(Component, rest, children)
-        : React.createElement(Component, rest, children);
-    return StyledComponent;
-  },
-}));
+  };
+});
 
 vi.mock('../dashboard/charts/DashboardMeshModelGraph', () => ({
   default: () => <div data-testid="dashboard-graph" />,
@@ -166,10 +170,10 @@ describe('MesherySettings', () => {
     };
   });
 
-  it('renders the main settings tab bar with the 5 settings categories', () => {
+  it('renders the main settings tab bar with the 5 settings categories', async () => {
     render(<MesherySettings />);
 
-    expect(screen.getByTestId('tab-Overview')).toBeInTheDocument();
+    expect(await screen.findByTestId('tab-Overview')).toBeInTheDocument();
     expect(screen.getByTestId('tab-Adapters')).toBeInTheDocument();
     expect(screen.getByTestId('tab-Registry')).toBeInTheDocument();
     expect(screen.getByTestId('tab-Controllers')).toBeInTheDocument();
@@ -177,22 +181,22 @@ describe('MesherySettings', () => {
     expect(screen.queryByTestId('tab-Metrics')).not.toBeInTheDocument();
   });
 
-  it('renders the controllers configuration tab when selected', () => {
+  it('renders the controllers configuration tab when selected', async () => {
     routerState.query = { settingsCategory: 'Controllers' };
     render(<MesherySettings />);
-    expect(screen.getByTestId('controllers-config')).toBeInTheDocument();
+    expect(await screen.findByTestId('controllers-config')).toBeInTheDocument();
   });
 
-  it('renders the Overview tab content (dashboard graph) by default', () => {
+  it('renders the Overview tab content (dashboard graph) by default', async () => {
     render(<MesherySettings />);
-    expect(screen.getByTestId('dashboard-graph')).toBeInTheDocument();
+    expect(await screen.findByTestId('dashboard-graph')).toBeInTheDocument();
     expect(screen.getByTestId('config-charts')).toBeInTheDocument();
     expect(screen.getByTestId('connection-charts')).toBeInTheDocument();
   });
 
-  it('returns null when MesherySystemViewSettings permission is denied', () => {
+  it('returns null when MesherySystemViewSettings permission is denied', async () => {
     canMockReturn = false;
     const { container } = render(<MesherySettings />);
-    expect(container.textContent).toBe('');
+    await waitFor(() => expect(container.textContent).toBe(''));
   });
 });

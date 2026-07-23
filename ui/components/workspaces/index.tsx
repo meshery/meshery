@@ -54,6 +54,7 @@ import { updateProgress } from '@/store/slices/mesheryUi';
 import { useContext } from 'react';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 import { useEffect } from 'react';
+import LoadingScreen from '../shared/LoadingState/LoadingComponent';
 
 export const WORKSPACE_ACTION_TYPES = {
   CREATE: 'create',
@@ -174,7 +175,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
   const bulkDeleteRef = useRef(null);
   const { notify } = useNotification();
 
-  const { data: workspacesData } = useGetWorkspacesQuery(
+  const { data: workspacesData, isFetching: isWorkspacesFetching } = useGetWorkspacesQuery(
     {
       page: page,
       pagesize: pageSize,
@@ -393,6 +394,10 @@ const Workspaces = ({ onSelectWorkspace }) => {
   };
 
   const [columnVisibility, setColumnVisibility] = useState({});
+
+  if (isWorkspacesFetching && !workspacesData) {
+    return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Workspaces..." />;
+  }
 
   return (
     <NoSsr>
