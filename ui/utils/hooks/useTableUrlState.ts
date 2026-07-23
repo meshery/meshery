@@ -58,6 +58,23 @@ function decodeParam(value: string | string[] | undefined): string {
   return typeof value === 'string' ? decodeURIComponent(value) : '';
 }
 
+/** Merge router.query with the live URL bar (router.query can lag after shallow replace). */
+function getCurrentQueryParams(
+  routerQuery: Record<string, string | string[] | undefined>,
+): Record<string, string | undefined> {
+  const next: Record<string, string | undefined> = {};
+  for (const [key, value] of Object.entries(routerQuery)) {
+    if (value === undefined) continue;
+    next[key] = Array.isArray(value) ? value[0] : String(value);
+  }
+  if (typeof window !== 'undefined') {
+    for (const [key, value] of new URLSearchParams(window.location.search)) {
+      next[key] = value;
+    }
+  }
+  return next;
+}
+
 export function useTableUrlState<F extends Record<string, string> = Record<string, string>>(
   options: UseTableUrlStateOptions<F>,
 ) {
@@ -94,11 +111,9 @@ export function useTableUrlState<F extends Record<string, string> = Record<strin
 
   const updateTableState = useCallback(
     (updates: Partial<TableUrlState<F>>) => {
-      const { query: currentQuery } = routerRef.current;
-      const next: Record<string, string | undefined> = { ...currentQuery } as Record<
-        string,
-        string | undefined
-      >;
+      const next: Record<string, string | undefined> = getCurrentQueryParams(
+        routerRef.current.query as Record<string, string | string[] | undefined>,
+      );
 
       if (updates.page !== undefined) {
         if (updates.page === 0) delete next[`${prefix}page`];

@@ -89,7 +89,8 @@ function MesheryFilters() {
     [updateTableState],
   );
 
-  const visibilityFilter = tableState.filters.vis || null;
+  const visibilityFilter =
+    tableState.filters.vis && tableState.filters.vis !== 'All' ? tableState.filters.vis : null;
 
   const [count, setCount] = useState(0);
   const modalRef = useRef<{ show: (_args: any) => Promise<string> } | null>(null);
@@ -131,6 +132,10 @@ function MesheryFilters() {
   const [selectedFilters, setSelectedFilters] = useState<{ visibility: string }>(() => ({
     visibility: tableState.filters.vis || 'All',
   }));
+
+  useEffect(() => {
+    setSelectedFilters({ visibility: tableState.filters.vis || 'All' });
+  }, [tableState.filters.vis]);
 
   const {
     data: filtersData,
@@ -215,9 +220,10 @@ function MesheryFilters() {
     });
   };
 
-  const handleApplyFilter = () => {
+  const handleApplyFilter = (filters?: { visibility: string }) => {
+    const next = filters ?? selectedFilters;
     updateTableState({
-      filters: { vis: selectedFilters.visibility === 'All' ? '' : selectedFilters.visibility },
+      filters: { vis: !next.visibility || next.visibility === 'All' ? '' : next.visibility },
       page: 0,
     });
   };
@@ -285,9 +291,8 @@ function MesheryFilters() {
       });
       setCount(filtersData.totalCount || 0);
       handleSetFilters(filteredWasmFilters);
-      setFilters(filtersData.filters || []);
     }
-  }, [filtersData]);
+  }, [filtersData, visibilityFilter]);
 
   /**
    * Checking whether users are signed in under a provider that doesn't have
@@ -323,9 +328,17 @@ function MesheryFilters() {
     fetchSchemaData();
   }, [capabilitiesData]);
 
+  const prevViewType = useRef<TypeView | null>(null);
   useEffect(() => {
-    if (viewType === 'grid') setSearch('');
-  }, [viewType]);
+    if (prevViewType.current === null) {
+      prevViewType.current = viewType;
+      return;
+    }
+    if (prevViewType.current !== viewType) {
+      if (viewType === 'grid') setSearch('');
+      prevViewType.current = viewType;
+    }
+  }, [viewType, setSearch]);
 
   useEffect(() => {
     catalogVisibilityRef.current = catalogVisibility;
