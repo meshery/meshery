@@ -1,12 +1,15 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/meshery/meshery/server/models"
 )
 
 // TestResolveProviderName covers the precedence rules for picking the
@@ -272,5 +275,49 @@ func TestIsTransientProviderError(t *testing.T) {
 				t.Errorf("isTransientProviderError(%v) = %v, want %v", tc.err, got, tc.want)
 			}
 		})
+	}
+}
+
+type stubProvider struct {
+	models.Provider
+	getUserDetailsFunc func(*http.Request) (*models.User, error)
+}
+
+func (s *stubProvider) GetUserDetails(req *http.Request) (*models.User, error) {
+	return s.getUserDetailsFunc(req)
+}
+
+func (s *stubProvider) ReadFromPersister(userID string) (*models.Preference, error) {
+	return models.NewDefaultPreference(), nil
+}
+
+func (s *stubProvider) UpdateToken(w http.ResponseWriter, req *http.Request) string {
+	return "test-token"
+}
+func TestSessionInjectorMiddleware_RetriesTransientProviderError(t *testing.T) {
+	calls := 0
+	stub := &stubProvider{
+		getUserDetailsFunc: func(*http.Request) (*models.User, error) {
+			calls++
+			if calls == 1 {
+				return nil, errors.New("Could not reach remote provider: dial tcp: i/o timeout")
+			}
+			return &models.User{}, nil
+		},
+	}
+	h := &Handler{log: newTestLogger(t)}
+	req := httptest.NewRequest("GET", "/", nil)
+	req = req.WithContext(context.WithValue(req.Context(), models.ProviderCtxKey, models.Provider(stub)))
+	rec := httptest.NewRecorder()
+
+	h.SessionInjectorMiddleware(func(w http.ResponseWriter, r *http.Request, p *models.Preference, u *models.User, prov models.Provider) {
+		w.WriteHeader(http.StatusOK)
+	}).ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Errorf("expected 200 after retry, got %d", rec.Code)
+	}
+	if calls != 2 {
+		t.Errorf("expected 2 calls (fail once, succeed on retry), got %d", calls)
 	}
 }
