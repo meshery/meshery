@@ -231,8 +231,15 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		// }
 
 		user, err := provider.GetUserDetails(req)
-		for attempt := 0; err != nil && isTransientProviderError(err) && attempt < transientRetryAttempts; attempt++ {
-			time.Sleep(transientRetryBackoff)
+	retryGetUserDetails:
+		for attempt := 1; err != nil && isTransientProviderError(err) && attempt < transientRetryAttempts; attempt++ {
+			timer := time.NewTimer(transientRetryBackoff)
+			select {
+			case <-timer.C:
+			case <-req.Context().Done():
+				timer.Stop()
+				break retryGetUserDetails
+			}
 			user, err = provider.GetUserDetails(req)
 		}
 		if err != nil {
