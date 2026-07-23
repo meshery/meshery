@@ -236,13 +236,13 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
   // Function to compare objects while normalizing case in compatibility array
   function isEqualIgnoringCase(obj1, obj2) {
     // Check each property one by one
-    const isEqualPatternCaveats = obj1.pattern_caveats === obj2.pattern_caveats;
-    const isEqualPatternInfo = obj1.pattern_info === obj2.pattern_info;
-    const isEqualType = obj1.type?.toLowerCase() === obj2.type?.toLowerCase();
+    const isEqualPatternCaveats = obj1?.patternCaveats === obj2?.patternCaveats;
+    const isEqualPatternInfo = obj1?.patternInfo === obj2?.patternInfo;
+    const isEqualType = obj1?.type?.toLowerCase() === obj2?.type?.toLowerCase();
 
     // Normalize and compare compatibility array
-    const normalizedCompat1 = normalizeCompatibility(obj1.compatibility);
-    const normalizedCompat2 = normalizeCompatibility(obj2.compatibility);
+    const normalizedCompat1 = normalizeCompatibility(obj1?.compatibility);
+    const normalizedCompat2 = normalizeCompatibility(obj2?.compatibility);
     const isEqualCompatibility = _.isEqual(normalizedCompat1, normalizedCompat2);
 
     // Return true only if all properties are equal
