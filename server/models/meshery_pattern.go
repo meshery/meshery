@@ -88,11 +88,11 @@ type MesheryPattern struct {
 
 	Name        string `json:"name,omitempty"`
 	PatternFile string `json:"patternFile"`
-	// UserId is the UUID of the user who owns this design. On the wire the
+	// UserID is the UUID of the user who owns this design. On the wire the
 	// field is "userId" per the schemas v1beta3 MesheryPattern contract.
 	// Not persisted locally (gorm:"-"); the remote provider (meshery-cloud)
 	// populates this field.
-	UserId *core.Uuid `json:"userId,omitempty" gorm:"-"`
+	UserID *core.Uuid `json:"userId,omitempty" gorm:"-"`
 	// User is the full profile of the owning user, server-joined at response
 	// time by the remote provider when it expands the owner. This is NOT a
 	// DB column (db:"-"); it is injected into the response JSON only.

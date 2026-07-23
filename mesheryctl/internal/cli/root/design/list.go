@@ -111,15 +111,15 @@ func processDesignData(data *models.PatternsAPIResponse) ([][]string, int64) {
 		updatedAt := formatTimeToString(v.UpdatedAt, verbose)
 
 		if !utils.IsLocalProvider(provider) {
-			owner := func(owner *string) string {
-				if owner != nil {
+			owner := func() string {
+				if v.UserID != nil {
 					if verbose {
-						return *owner
+						return v.UserID.String()
 					}
-					return utils.TruncateID(*owner)
+					return utils.TruncateID(v.UserID.String())
 				}
 				return "null"
-			}(v.Owner)
+			}()
 			displayData = append(displayData, []string{designId, owner, designName, createdAt, updatedAt})
 		} else {
 			displayData = append(displayData, []string{designId, designName, createdAt, updatedAt})

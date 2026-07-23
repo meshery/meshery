@@ -160,10 +160,6 @@ type DesignPostPayload struct {
 	ID         *core.Uuid         `json:"id,omitempty"`
 	Name       string             `json:"name,omitempty"`
 	DesignFile design.PatternFile `json:"designFile"`
-	// UserId is the UUID of the user who owns this design, per the
-	// schemas v1beta3 MesheryPatternPayload wire contract (json:"userId").
-	// The remote provider populates this field.
-	UserId      *core.Uuid           `json:"userId,omitempty"`
 	Visibility  string               `json:"visibility"`
 	CatalogData v1alpha1.CatalogData `json:"catalogData,omitempty"`
 }
@@ -384,7 +380,6 @@ func (h *Handler) handlePatternPOST(
 	mesheryPatternRecord := models.MesheryPattern{
 		ID:          requestPayload.ID,
 		PatternFile: designFile,
-		UserId:      requestPayload.UserId,
 		Name:        requestPayload.Name,
 		Visibility:  requestPayload.Visibility,
 		CatalogData: requestPayload.CatalogData,
