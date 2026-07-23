@@ -60,6 +60,13 @@ If everything is fine, by viewing the connection in Meshery UI, MeshSync should 
    _or_
 2. Meshery is managing multiple clusters, some of which are not the cluster unto which Meshery Server is deployed.
 
+In this model Meshery Server must both **reach** and **authenticate to** the in-cluster Meshery Broker (NATS):
+
+- **Reachability.** The Broker is usually exposed as `ClusterIP` only, which is not reachable from outside the cluster. When Meshery Server runs out-of-cluster it **automatically establishes a self-healing port-forward** to the Broker's NATS pod through the Kubernetes API server (like `kubectl port-forward`, using the credentials Meshery already holds) and connects over it - no manual step required. This is on by default out-of-cluster, skipped automatically in-cluster, and can be disabled with `MESHERY_MANAGED_BROKER_PORTFORWARD=false` (after which you must provide your own path, e.g. `kubectl port-forward -n meshery svc/meshery-nats 4222:4222`, or expose the Broker via NodePort/LoadBalancer).
+- **Authentication.** The Operator provisions NATS with token authentication (secret `meshery-nats-auth`); Meshery Server reads that token and presents it automatically. Without it the Broker rejects the connection with an authorization violation.
+
+For the full walkthrough of the Kubernetes connection lifecycle, its components, and these connectivity behaviors, see [Kubernetes Connection Lifecycle]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md" >}}).
+
 ## Common Failure Scenarios
 
 Some common failure situations that Meshery users might face are described below.
@@ -71,6 +78,9 @@ Some common failure situations that Meshery users might face are described below
    2. Meshery Server lost subscription to Meshery Broker; Broker server not exposed to external IP; MeshSync not connected to Broker; MeshSync not running; Meshery Database is stale.
    3. The SQL database in Meshery serves as a cache for cluster state. A single button allows users to dump/reset the Meshery Database.
    4. Orphaned MeshSync and Broker controllers - Meshery Operator is not present, but MeshSync and Broker controllers are running.
+   5. **Broker unreachable / not authenticated (out-of-cluster Meshery):** the Broker is `ClusterIP`-only and unreachable, or Meshery is not presenting the NATS token. See [Out-of-Cluster Deployment](#out-of-cluster-deployment); the connection's [Diagnostics](#diagnostics-in-the-connection-detail-view) will report `broker_unreachable` with remediation.
+1. **Situation:** The `meshery-nats` (Broker) pod is in `CrashLoopBackOff` and never becomes ready.
+   1. **Probable cause:** Some Meshery Operator versions inject the NATS token into `nats.conf` **unquoted** (`token: $NATS_TOKEN`). When the generated token happens to look like a number, the NATS config parser rejects it and the pod crash-loops. Confirm with `kubectl logs -n meshery meshery-nats-0 -c nats` (look for a `variable reference for 'NATS_TOKEN' ... could not be parsed` error). The fix belongs in the Operator (quote it: `token: "$NATS_TOKEN"`); redeploying often generates a token that parses.
 
 ## Operating Meshery without Meshery Operator
 
@@ -101,6 +111,18 @@ Based on discussed scenarios, the UI exposes tools to perform the following acti
 - Reconnect Meshery Server to Meshery Broker.
 - Ad hoc Connectivity Test for Kubernetes context.
 - Rediscover kubeconfig, delete, (re)upload kubeconfig.
+
+### Diagnostics in the connection detail view
+
+Click a Kubernetes connection's row in the Connections table to open its detail view. Below the Operator / MeshSync / Broker status chips, a **Diagnostics** section lists actionable problems and remediation, derived from the live controller status and Meshery's actual Broker connection:
+
+| Code | Meaning | Remediation |
+|---|---|---|
+| `connection_inactive` | No active session for the connection yet. | Connect the cluster. |
+| `operator_not_deployed` | The Operator is not deployed (operator mode). | Reconnect the cluster, or switch MeshSync mode; ensure Meshery can create resources in the `meshery` namespace. |
+| `broker_unreachable` | The Broker is up but Meshery cannot reach/authenticate to it. | The managed port-forward normally handles reachability out-of-cluster; otherwise port-forward the Broker, expose it via NodePort/LoadBalancer, or run Meshery in-cluster. |
+
+The same data is available at `GET /api/system/controllers/diagnostics?connectionId=<id>`.
 
 ### Synthetic Test for Ensuring Change in Cluster State
 
@@ -156,6 +178,7 @@ kubectl -n meshery get deploy meshery-meshsync \
 
 ## See Also
 
+- [Kubernetes Connection Lifecycle]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md" >}})
 - [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation.md" >}})
 - [Troubleshooting Errors while running Meshery]({{< ref "guides/troubleshooting/meshery-server.md" >}})
 

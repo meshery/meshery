@@ -42,14 +42,16 @@ const WorkspaceGridView = ({
     setDeleteWorkspacesModal(true);
   };
 
-  const { handleSuccess, handleError } = useNotificationHandlers();
+  const { handleSuccess, notifyApiError } = useNotificationHandlers();
   const handleDeleteWorkspace = (id) => {
     deleteWorkspace({
       workspaceId: id,
     })
       .unwrap()
       .then(() => handleSuccess(`Workspace deleted`))
-      .catch((error) => handleError(`Workspace Delete Error: ${error?.data}`));
+      // `${error?.data}` rendered the JSON error envelope as "[object Object]".
+      // notifyApiError unpacks the MeshKit code, cause and remediation instead.
+      .catch((error) => notifyApiError(error, 'Unable to delete workspace'));
   };
 
   const handleBulkDeleteEnv = () => {

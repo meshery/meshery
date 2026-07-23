@@ -154,7 +154,7 @@ func hasCSVs(path string) bool {
 }
 
 func registerModel(data []byte, componentData []byte, relationshipData []byte, filename string, dataType string, sourceURI string, register bool) error {
-	urlPath := "api/meshmodels/register"
+	urlPath := "api/registry/register"
 	var importRequest schemav1beta1.ImportRequest
 	importRequest.UploadType = dataType
 	switch dataType {

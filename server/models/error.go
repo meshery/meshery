@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/errors"
 )
 
@@ -147,6 +148,7 @@ const (
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
 	ErrMeshsyncDataHandlerCode            = "meshery-server-1370"
+	ErrReconcileServerIDCode              = "meshery-server-1445"
 	ErrWorkspaceMissingInputCode          = "meshery-server-1375"
 	ErrMeshsyncEventCode                  = "meshery-server-1379"
 	ErrMeshsyncStoreUpdatesCode           = "meshery-server-1380"
@@ -275,12 +277,23 @@ func ErrEncoding(err error, obj string) error {
 	return errors.New(ErrEncodingCode, errors.Alert, []string{"Error encoding the : ", obj}, []string{err.Error()}, []string{"Object is not a valid json object"}, []string{"Make sure if the object passed is a valid json"})
 }
 
+// ErrFetch and ErrPost are the two provider-layer constructors that know the
+// HTTP status the remote provider actually responded with. Both tag the error
+// with that status via httputil.WithProviderStatus so handlers can propagate
+// the real failure (see httputil.StatusForProviderError) instead of hardcoding
+// one. Without the tag a provider 403 surfaced to the browser as a 404.
 func ErrFetch(err error, obj string, statusCode int) error {
-	return errors.New(ErrFetchCode, errors.Alert, []string{"Unable to fetch data from the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{}, []string{})
+	return httputil.WithProviderStatus(
+		errors.New(ErrFetchCode, errors.Alert, []string{"Unable to fetch data from the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{}, []string{}),
+		statusCode,
+	)
 }
 
 func ErrPost(err error, obj string, statusCode int) error {
-	return errors.New(ErrPostCode, errors.Alert, []string{"Unable to post data to the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{}, []string{})
+	return httputil.WithProviderStatus(
+		errors.New(ErrPostCode, errors.Alert, []string{"Unable to post data to the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{}, []string{}),
+		statusCode,
+	)
 }
 func ErrStatusCode(statusCode int) error {
 	return errors.New(
@@ -670,6 +683,14 @@ func ErrMarshallingDesignIntoYAML(err error) error {
 
 func ErrMeshsyncDataHandler(err error) error {
 	return errors.New(ErrMeshsyncDataHandlerCode, errors.Alert, []string{"Error in meshsync data hadler"}, []string{err.Error()}, []string{"not deployed operator", "issue with connection to broker"}, []string{"check that operator is deployed", "check that server can establish connection to broker"})
+}
+
+// ErrReconcileServerID wraps a failure to back-fill an already-persisted
+// kubernetes connection's kubernetesServerId with the server ID freshly resolved
+// from the reachable cluster. It is best-effort and non-fatal: the reconcile
+// retries on the next discovery cycle, so it is surfaced at None severity.
+func ErrReconcileServerID(err error) error {
+	return errors.New(ErrReconcileServerIDCode, errors.None, []string{"Failed to reconcile the persisted Kubernetes server ID for the connection"}, []string{err.Error()}, []string{"The connection's persisted kubernetesServerId could not be read from or written to the connection store while syncing it with the live cluster's server ID."}, []string{"Verify the connection still exists and Meshery can reach the provider's connection store. The reconcile is retried automatically on the next discovery cycle."})
 }
 
 // ErrWorkspaceMissingInput is used by both the list-workspaces handler

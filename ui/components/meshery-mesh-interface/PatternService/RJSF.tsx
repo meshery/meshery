@@ -1,8 +1,7 @@
 import RJSFProvider from '../../shared/FormFields/RJSFProvider';
 import customValidator from '../../../utils/rjsfValidator';
 import React, { useEffect, useMemo, useState } from 'react';
-import { rjsfTheme } from '../../../themes';
-import darkRjsfTheme from '../../../themes/rjsf';
+import { darkRjsfTheme, rjsfTheme } from '@/theme/rjsf';
 import { createTheme, useTheme, ThemeProvider } from '@sistent/sistent';
 import { CustomTextTooltip } from './CustomTextTooltip';
 import MesheryArrayFieldTemplate from './RJSFCustomComponents/ArrayFieldTemlate';

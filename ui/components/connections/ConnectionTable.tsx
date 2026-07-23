@@ -1,13 +1,14 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { PROMPT_VARIANTS, ResponsiveDataTable } from '@sistent/sistent';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ResponsiveDataTable } from '@sistent/sistent';
 import LoadingScreen from '../shared/LoadingState/LoadingComponent';
 import { EVENT_TYPES } from '../../lib/event-types';
-import _PromptComponent from '../PromptComponent';
-import resetDatabase from '@/graphql/queries/ResetDatabaseQuery';
+import ConnectionStateTransitionModal from './ConnectionStateTransitionModal';
+import type { ConnectionStateTransitionModalRef } from './ConnectionStateTransitionModal';
 
 import { CONNECTION_KINDS, CONNECTION_STATES } from '../../utils/Enum';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import useGrafanaPingHook from '@/utils/hooks/useGrafanaPingHook';
+import usePrometheusPingHook from '@/utils/hooks/usePrometheusPingHook';
 import { getResponsiveColumnVisibility } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import { useGetEnvironmentsQuery } from '../../rtk-query/environments';
@@ -16,7 +17,6 @@ import { useTableUrlState } from '@/utils/hooks/useTableUrlState';
 import { useColumnVisibilityPreference } from '@/utils/hooks/useColumnVisibilityPreference';
 
 import { useSelector } from 'react-redux';
-import { updateProgress } from '@/store/slices/mesheryUi';
 
 import type {
   ConnectionTableProps,
@@ -32,13 +32,14 @@ import {
   CONNECTION_DOCS_URL,
   ENVIRONMENT_DOCS_URL,
   getErrorMessage,
-  getStatusTransition,
+  toServerSortOrder,
+  toUiSortOrder,
 } from './ConnectionTable.constants';
 import type { ConnectionTransitionMap } from './ConnectionTable.constants';
 import { useConnectionActions } from './ConnectionTable.hooks';
 import { useConnectionColumns } from './ConnectionTable.columns';
 import { useConnectionTableOptions } from './ConnectionTable.options';
-import { ConnectionActionMenu, ConnectionDeploymentModeMenu } from './ConnectionActionMenu';
+import { ConnectionActionMenu } from './ConnectionActionMenu';
 import { ConnectionTableToolbar } from './ConnectionTableToolbar';
 import dynamic from 'next/dynamic';
 import type { ConfigurableConnection } from './ConnectionConfigureModal';
@@ -60,6 +61,7 @@ const ConnectionTable = ({
   selectedFilter,
   selectedConnectionId,
   updateUrlWithConnectionId,
+  tabs,
 }: ConnectionTableProps) => {
   const {
     organization,
@@ -83,6 +85,7 @@ const ConnectionTable = ({
   );
   const ping = useKubernetesHook();
   const pingGrafana = useGrafanaPingHook();
+  const pingPrometheus = usePrometheusPingHook();
   const { width } = useWindowDimensions();
 
   const { tableState, updateTableState, copyRowDeepLink } = useTableUrlState({
@@ -93,7 +96,7 @@ const ConnectionTable = ({
     defaults: {
       page: 0,
       pageSize: 10,
-      sortOrder: 'created_at desc',
+      sortOrder: 'createdAt desc',
       search: '',
       filters: { status: '', kind: '' },
     },
@@ -134,15 +137,13 @@ const ConnectionTable = ({
     updateConnectionStatus,
   } = useConnectionActions({ organizationId: organization?.id });
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const [deploymentModeAnchorEl, setDeploymentModeAnchorEl] = useState<HTMLElement | null>(null);
   const [configureConnection, setConfigureConnection] = useState<ConfigurableConnection | null>(
     null,
   );
   const [controllersConfigConnection, setControllersConfigConnection] =
     useState<ConfigurableConnection | null>(null);
   const open = Boolean(anchorEl);
-  const deploymentModeOpen = Boolean(deploymentModeAnchorEl);
-  const modalRef = useRef<{ show: (options: unknown) => Promise<string | null> } | null>(null);
+  const modalRef = useRef<ConnectionStateTransitionModalRef | null>(null);
   const lastNotifiedErrorsRef = useRef<{ environments: string; connections: string }>({
     environments: '',
     connections: '',
@@ -194,15 +195,12 @@ const ConnectionTable = ({
   } = useGetConnectionsQuery(
     {
       page: page,
-      pagesize: pageSize,
+      pageSize: pageSize,
       search: search,
-      order: sortOrder,
-      status: statusFilter ? JSON.stringify([statusFilter]) : '',
-      kind: selectedFilter
-        ? JSON.stringify([selectedFilter])
-        : kindFilter
-          ? JSON.stringify([kindFilter])
-          : '',
+      order: toServerSortOrder(sortOrder),
+      // Repeated query params (?status=connected, ?kind=kubernetes) — no JSON.
+      status: statusFilter || undefined,
+      kind: selectedFilter || kindFilter || undefined,
     },
     undefined,
   );
@@ -272,18 +270,17 @@ const ConnectionTable = ({
     // only populated after `_app.tsx`'s async `loadMeshModelComponent`
     // completes. The pages-router routes to /management/connections before
     // that promise resolves, so this memo must tolerate a null map.
-    // A connection only needs a kind and a status to render; the display name
-    // falls back to `metadata.name`/kind in the Name column. Requiring a
-    // top-level `name` here wrongly hid connections (e.g. kubernetes, grafana)
-    // whose name lives only in `metadata.name`.
-    return connectionData.connections
-      .filter((conn) => conn && conn.kind && conn.status)
-      .map((connection) => ({
-        ...connection,
-        nextStatus:
-          connection.nextStatus || connectionMetadataState?.[connection.kind]?.transitions,
-        kindLogo: connection.kindLogo || connectionMetadataState?.[connection.kind]?.icon,
-      }));
+    // Render every connection the API returns — the columns already fall back
+    // for missing fields (the Name column uses `metadata.name`/kind, etc.).
+    // Do NOT drop connections for a missing name/kind/status: that wrongly hid
+    // real connections. The only guard is against null/undefined array entries.
+    // Columns read the v1beta3 camelCase wire shape (createdAt, updatedAt,
+    // subType). Sort clicks map to DB snake_case via toServerSortOrder.
+    return connectionData.connections.filter(Boolean).map((connection) => ({
+      ...connection,
+      nextStatus: connection.nextStatus || connectionMetadataState?.[connection.kind]?.transitions,
+      kindLogo: connection.kindLogo || connectionMetadataState?.[connection.kind]?.icon,
+    }));
   }, [connectionData?.connections, connectionMetadataState]) as ConnectionRow[];
 
   const filteredConnections = useMemo(
@@ -302,8 +299,11 @@ const ConnectionTable = ({
       ['environments', 'm'],
       ['kind', 'm'],
       ['type', 's'],
-      ['sub_type', 'na'],
-      ['created_at', 'na'],
+      // subType stays hidden by default, as it was before; users can enable it
+      // from the column-visibility control.
+      ['subType', 'na'],
+      // Discovered At visible by default at every breakpoint (master: 'xs').
+      ['createdAt', 'xs'],
       ['status', 'xs'],
       ['Actions', 'xs'],
       ['transitionMap', 'xs'],
@@ -317,19 +317,19 @@ const ConnectionTable = ({
         return;
       }
 
-      const response = await modalRef.current.show({
-        title: `Delete Connection`,
-        subtitle: `Are you sure that you want to delete the connection?`,
-        primaryOption: 'DELETE',
-        showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-        variant: PROMPT_VARIANTS.DANGER,
+      const connection = filteredConnections.find((conn) => conn.id === connectionId);
+      const confirmed = await modalRef.current.show({
+        targetStatus: CONNECTION_STATES.DELETED,
+        currentStatus: connection?.status,
+        kind: connection?.kind,
+        connections: [{ id: connectionId, name: connection?.name, status: connection?.status }],
       });
 
-      if (response === 'DELETE') {
+      if (confirmed) {
         await updateConnectionStatus(connectionId, CONNECTION_STATES.DELETED);
       }
     },
-    [updateConnectionStatus],
+    [filteredConnections, updateConnectionStatus],
   );
 
   const handleDeleteConnections = useCallback(
@@ -343,26 +343,29 @@ const ConnectionTable = ({
       // be invalidated/reordered by an in-flight refetch in that window — using
       // the index after-the-fact dereferenced stale rows and silently no-op'd
       // (no PUT, no notification), which surfaced as a hung e2e snackbar wait.
-      const ids = selected.data
-        .map(({ index }) => filteredConnections[index]?.id)
-        .filter(Boolean) as string[];
+      const selectedConnections = selected.data
+        .map(({ index }) => filteredConnections[index])
+        .filter(Boolean);
 
-      if (ids.length === 0) {
+      if (selectedConnections.length === 0) {
         return;
       }
 
-      const response = await modalRef.current.show({
-        title: `Delete Connections`,
-        subtitle: `Are you sure that you want to delete the connections?`,
-        primaryOption: 'DELETE',
-        showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-        variant: PROMPT_VARIANTS.DANGER,
+      // Kind-specific ramifications only apply when the whole selection is of
+      // one kind; a mixed selection gets the generic copy. Per-connection
+      // status lets the modal resolve the definition-authored description when
+      // the selection's current states agree.
+      const kinds = new Set(selectedConnections.map((connection) => connection.kind));
+      const confirmed = await modalRef.current.show({
+        targetStatus: CONNECTION_STATES.DELETED,
+        kind: kinds.size === 1 ? selectedConnections[0].kind : undefined,
+        connections: selectedConnections.map(({ id, name, status }) => ({ id, name, status })),
       });
 
-      if (response === 'DELETE') {
+      if (confirmed) {
         await Promise.all(
-          ids.map((connectionId) =>
-            updateConnectionStatus(connectionId, CONNECTION_STATES.DELETED),
+          selectedConnections.map(({ id }) =>
+            updateConnectionStatus(id, CONNECTION_STATES.DELETED),
           ),
         );
       }
@@ -370,35 +373,9 @@ const ConnectionTable = ({
     [filteredConnections, updateConnectionStatus],
   );
 
-  const handleError = useCallback(
-    (action: { error_msg?: string } | string) => (error: unknown) => {
-      updateProgress({ showProgress: false });
-
-      const message =
-        typeof action === 'string'
-          ? action
-          : `${action.error_msg}: ${getErrorMessage(error, 'Request failed')}`;
-
-      notify({
-        message,
-        event_type: EVENT_TYPES.ERROR,
-        details: String(error),
-      });
-    },
-    [notify],
-  );
-
   const handleActionMenuClose = useCallback(() => {
     setAnchorEl(null);
     setRowData(null);
-  }, []);
-
-  const handleDeploymentModeMenuClose = useCallback(() => {
-    setDeploymentModeAnchorEl(null);
-  }, []);
-
-  const handleDeploymentModeAnchorOpen = useCallback((event: React.MouseEvent<HTMLElement>) => {
-    setDeploymentModeAnchorEl(event.currentTarget);
   }, []);
 
   const getConnectionAtRowIndex = useCallback(
@@ -429,94 +406,6 @@ const ConnectionTable = ({
       setControllersConfigConnection(connection as ConfigurableConnection);
     }
   }, [getConnectionAtRowIndex, handleActionMenuClose, rowData?.rowIndex]);
-
-  const handleDeploymentModeChange = useCallback(
-    async (newMode: string) => {
-      const connection = getConnectionAtRowIndex(rowData?.rowIndex);
-
-      if (!connection) {
-        handleDeploymentModeMenuClose();
-        handleActionMenuClose();
-        return;
-      }
-
-      try {
-        await updateConnectionByIdMutator({
-          connectionId: connection.id,
-          body: {
-            ...connection,
-            metadata: {
-              ...connection.metadata,
-              meshsync_deployment_mode: newMode,
-            },
-          },
-        }).unwrap();
-
-        notify({
-          message: `Deployment mode changed to ${newMode}`,
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-      } catch (error) {
-        notify({
-          message: `Failed to change deployment mode: ${getErrorMessage(error)}`,
-          event_type: EVENT_TYPES.ERROR,
-        });
-      }
-
-      handleDeploymentModeMenuClose();
-      handleActionMenuClose();
-    },
-    [
-      getConnectionAtRowIndex,
-      handleActionMenuClose,
-      handleDeploymentModeMenuClose,
-      notify,
-      rowData?.rowIndex,
-      updateConnectionByIdMutator,
-    ],
-  );
-
-  // The previous shape was `useCallback(() => async () => {...})` invoked as
-  // `handleFlushMeshSync()` in JSX, which created a new async closure on
-  // every render and minted a fresh `onFlushMeshSync` prop reference each
-  // commit. Returning the async function directly keeps the prop stable.
-  const handleFlushMeshSync = useCallback(async () => {
-    handleActionMenuClose();
-
-    const connection = getConnectionAtRowIndex(rowData?.rowIndex);
-    const connectionName = connection?.metadata?.name;
-
-    if (!connection || !modalRef.current) {
-      return;
-    }
-
-    const response = await modalRef.current.show({
-      title: `Flush MeshSync data for ${connectionName} ?`,
-      subtitle: `Are you sure to Flush MeshSync data for “${connectionName}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
-      primaryOption: 'PROCEED',
-      variant: PROMPT_VARIANTS.WARNING,
-    });
-
-    if (response === 'PROCEED') {
-      updateProgress({ showProgress: true });
-      resetDatabase({
-        selector: {
-          clearDB: 'true',
-          ReSync: 'true',
-          hardReset: 'false',
-        },
-        k8scontextID: connection.metadata?.id || '',
-      }).subscribe({
-        next: (result) => {
-          updateProgress({ showProgress: false });
-          if (result.resetStatus === 'PROCESSING') {
-            notify({ message: `Database reset successful.`, event_type: EVENT_TYPES.SUCCESS });
-          }
-        },
-        error: handleError('Database is not reachable, try restarting server.'),
-      });
-    }
-  }, [getConnectionAtRowIndex, handleActionMenuClose, handleError, notify, rowData?.rowIndex]);
 
   const handleEnvironmentSelect = useCallback(
     async (
@@ -576,32 +465,31 @@ const ConnectionTable = ({
   );
 
   const handleStatusChange = useCallback(
-    async (event, connectionId: string, connectionKind: string, connectionStatus: string) => {
-      event.stopPropagation();
-
+    async (
+      status: string,
+      connectionId: string,
+      connectionKind: string,
+      connectionStatus: string,
+    ) => {
       if (!modalRef.current) {
         return;
       }
 
-      const status = event.target.value;
-      const subtitle = getStatusTransition(
-        connectionMetadataState?.[connectionKind]?.transitionMap,
-        connectionStatus,
-        status.toLowerCase(),
-      );
-      const response = await modalRef.current.show({
-        title: `Transition connection to ${status.toUpperCase()}?`,
-        subtitle,
-        primaryOption: 'Confirm',
-        showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-        variant: PROMPT_VARIANTS.WARNING,
+      const connection = filteredConnections.find((conn) => conn.id === connectionId);
+      // The modal resolves the definition-authored description for this
+      // transition itself (kind + currentStatus → connectionMetadataState).
+      const confirmed = await modalRef.current.show({
+        targetStatus: status.toLowerCase(),
+        currentStatus: connectionStatus,
+        kind: connectionKind,
+        connections: [{ id: connectionId, name: connection?.name }],
       });
 
-      if (response === 'Confirm') {
+      if (confirmed) {
         await updateConnectionStatus(connectionId, status);
       }
     },
-    [connectionMetadataState, updateConnectionStatus],
+    [filteredConnections, updateConnectionStatus],
   );
 
   const handleActionMenuOpen = useCallback((event, tableMeta: RowData) => {
@@ -686,6 +574,7 @@ const ConnectionTable = ({
     handleActionMenuOpen,
     ping,
     pingGrafana,
+    pingPrometheus,
     transitionMapByKind,
   });
   const columnNames = useMemo(
@@ -699,7 +588,10 @@ const ConnectionTable = ({
     pageSize,
     setPage,
     setPageSize,
-    sortOrder,
+    // Normalized to column names: a bookmarked snake_case param would not
+    // match any column, dropping the active-sort indicator. The server query
+    // above translates the other way, via toServerSortOrder.
+    sortOrder: toUiSortOrder(sortOrder),
     setSortOrder,
     rowsExpanded,
     setRowsExpanded,
@@ -763,6 +655,7 @@ const ConnectionTable = ({
         columns={columns}
         columnVisibility={columnVisibility}
         setColumnVisibility={setColumnVisibilityByUser}
+        tabs={tabs}
       />
 
       <ResponsiveDataTable
@@ -774,13 +667,11 @@ const ConnectionTable = ({
         columnVisibility={columnVisibility}
       />
 
-      <_PromptComponent ref={modalRef} />
+      <ConnectionStateTransitionModal ref={modalRef} />
       <ConnectionActionMenu
         anchorEl={anchorEl}
         open={open}
         onClose={handleActionMenuClose}
-        onFlushMeshSync={handleFlushMeshSync}
-        onDeploymentModeAnchor={handleDeploymentModeAnchorOpen}
         onConfigure={handleConfigureConnection}
         onConfigureControllers={
           rowData?.rowIndex != null &&
@@ -816,13 +707,6 @@ const ConnectionTable = ({
           onClose={() => setControllersConfigConnection(null)}
         />
       )}
-
-      <ConnectionDeploymentModeMenu
-        anchorEl={deploymentModeAnchorEl}
-        open={deploymentModeOpen}
-        onClose={handleDeploymentModeMenuClose}
-        onSelectMode={handleDeploymentModeChange}
-      />
     </>
   );
 };
