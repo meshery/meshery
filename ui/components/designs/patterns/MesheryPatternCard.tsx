@@ -369,7 +369,11 @@ function MesheryPatternCard_({
                       })
                     }
                   >
-                    {fullScreen ? <FullScreenExitIcon /> : <FullScreenIcon />}
+                    {fullScreen ? (
+                      <FullScreenExitIcon fill="currentColor" />
+                    ) : (
+                      <FullScreenIcon fill="currentColor" />
+                    )}
                   </IconButton>
                 </CustomTooltip>
               </CardHeaderRight>
