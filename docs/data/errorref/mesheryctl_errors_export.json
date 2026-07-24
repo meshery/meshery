@@ -397,7 +397,7 @@
         "long_description": "No profile found with given name",
         "short_description": "No profile found",
         "probable_cause": "Invalid profile name or no profile name provided",
-        "suggested_remediation": "Ensure a valid profile name is inputted. See https://docs.meshery.io/reference/mesheryctl/perf/apply for more details"
+        "suggested_remediation": "Ensure a valid profile name is inputted. See https://docs.meshery.io/reference/references/mesheryctl/perf/apply for more details"
       },
       "1047": {
         "name": "ErrInvalidOutputChoiceCode",
@@ -460,7 +460,7 @@
         "long_description": "",
         "short_description": "Healthchecks Failed",
         "probable_cause": "Failed to initialize healthchecker",
-        "suggested_remediation": "Ensure Mesheryctl is running and has the right configurations. See https://docs.meshery.io/reference/mesheryctl/system/check for checking Meshery components"
+        "suggested_remediation": "Ensure Mesheryctl is running and has the right configurations. See https://docs.meshery.io/reference/references/mesheryctl/system/check for checking Meshery components"
       },
       "1054": {
         "name": "ErrPerformanceProfileResultCode",

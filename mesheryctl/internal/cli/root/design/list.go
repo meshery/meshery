@@ -41,7 +41,7 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List designs",
 	Long: `Display list of all available designs.
-Find more information at: https://docs.meshery.io/reference/mesheryctl/design/list
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/design/list
 `,
 	Args: cobra.MinimumNArgs(0),
 	Example: `
