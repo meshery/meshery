@@ -131,15 +131,33 @@ func registerRegistrant(t *testing.T, db *database.Handler, kind string, entityT
 	if err != nil {
 		t.Fatalf("create %s registrant: %v", kind, err)
 	}
+	linkRegistryEntry(t, db, registrantID, entityType)
+	return registrantID
+}
+
+// insertRegistrant creates a registrant Connection under an explicitly chosen id,
+// so a test can place a row at a specific point in the id ordering.
+func insertRegistrant(t *testing.T, db *database.Handler, id core.Uuid, kind string, entityType entity.EntityType) {
+	t.Helper()
+
+	registrant := connectionv1beta1.Connection{ID: id, Kind: kind, Type: "registry"}
+	if err := db.Create(&registrant).Error; err != nil {
+		t.Fatalf("create %s registrant %s: %v", kind, id, err)
+	}
+	linkRegistryEntry(t, db, id, entityType)
+}
+
+func linkRegistryEntry(t *testing.T, db *database.Handler, registrantID core.Uuid, entityType entity.EntityType) {
+	t.Helper()
+
 	if err := db.Create(&meshmodel.Registry{
 		ID:           uuid.Must(uuid.NewV4()),
 		RegistrantID: registrantID,
 		Entity:       uuid.Must(uuid.NewV4()),
 		Type:         entityType,
 	}).Error; err != nil {
-		t.Fatalf("create %s registry entry: %v", kind, err)
+		t.Fatalf("create registry entry for %s: %v", registrantID, err)
 	}
-	return registrantID
 }
 
 // TestSeedConnectionsMaterializesDefinitionBackedConnections is the core
@@ -247,9 +265,10 @@ func TestSeedConnectionsIsIdempotentAcrossRestarts(t *testing.T) {
 	assertSteadyStateWritesNothing(t, db, regm)
 }
 
-// assertSteadyStateWritesNothing re-runs the seeding decision and fails if it
-// would write anything.
-func assertSteadyStateWritesNothing(t *testing.T, db *database.Handler, regm *meshmodel.RegistryManager) {
+// runSeedingPass performs one seeding pass exactly as SeedConnections does and
+// reports how many rows it wrote, which SeedConnections itself only surfaces as
+// a log line.
+func runSeedingPass(t *testing.T, db *database.Handler, regm *meshmodel.RegistryManager) int {
 	t.Helper()
 
 	byKind, err := registrantConnectionsByKind(db)
@@ -264,6 +283,8 @@ func assertSteadyStateWritesNothing(t *testing.T, db *database.Handler, regm *me
 	if err != nil {
 		t.Fatalf("read connection definitions: %v", err)
 	}
+
+	written := 0
 	for _, def := range defs {
 		if !isSeedable(def, byKind) {
 			continue
@@ -272,9 +293,18 @@ func assertSteadyStateWritesNothing(t *testing.T, db *database.Handler, regm *me
 		if err != nil {
 			t.Fatalf("kind %q: %v", def.Kind, err)
 		}
-		if changed != 0 {
-			t.Errorf("kind %q: steady-state seeding wrote %d row(s), want 0", def.Kind, changed)
-		}
+		written += changed
+	}
+	return written
+}
+
+// assertSteadyStateWritesNothing re-runs the seeding decision and fails if it
+// would write anything.
+func assertSteadyStateWritesNothing(t *testing.T, db *database.Handler, regm *meshmodel.RegistryManager) {
+	t.Helper()
+
+	if written := runSeedingPass(t, db, regm); written != 0 {
+		t.Errorf("steady-state seeding wrote %d row(s), want 0", written)
 	}
 }
 
@@ -282,8 +312,9 @@ func assertSteadyStateWritesNothing(t *testing.T, db *database.Handler, regm *me
 // single-model-per-kind fixtures cannot reach: the shipped `registrant` blobs
 // are not uniform, so a kind legitimately holds more than one registrant row
 // (meshery/meshery#20950). Seeding must stamp exactly one - deterministically,
-// the lowest id - and leave the sibling exactly as registration wrote it, rather
-// than turning both rows into indistinguishable copies of the definition.
+// the lowest id when none is stamped yet - and leave the sibling exactly as
+// registration wrote it, rather than turning both rows into indistinguishable
+// copies of the definition.
 func TestSeedConnectionsStampsOneCanonicalRegistrantPerKind(t *testing.T) {
 	db, regm := seedTestRegistry(t, mesheryCoreModelDir, artifactHubRegistrantModelDir, artifactHubOwnedRegistrantModelDir)
 
@@ -336,6 +367,118 @@ func TestSeedConnectionsStampsOneCanonicalRegistrantPerKind(t *testing.T) {
 	}
 
 	// Picking one row of several must still be a fixed point across restarts.
+	assertSteadyStateWritesNothing(t, db, regm)
+}
+
+// TestSeedConnectionsCanonicalPickSurvivesRegistrantGrowth covers the stability
+// the lowest-id rule alone does not give. Registrant ids are content hashes of
+// the hand-authored model.json `registrant` blob, so a later models release can
+// introduce a spelling that hashes BELOW the row already stamped. The stamp must
+// not migrate to it: doing so would leave the previously stamped row carrying
+// the definition identity forever, producing the duplicate-identity outcome the
+// single-canonical rule exists to prevent, with no self-healing on later boots.
+func TestSeedConnectionsCanonicalPickSurvivesRegistrantGrowth(t *testing.T) {
+	db, regm := seedTestRegistry(t, mesheryCoreModelDir, artifactHubRegistrantModelDir)
+	log := newSeedTestLogger(t)
+
+	SeedConnections(log, db, regm)
+	stampedID := soleConnection(t, connectionsByKind(t, db), "artifacthub").ID
+
+	// A registrant of the same kind whose id sorts below every content hash.
+	lowestID := uuid.Must(uuid.FromString("00000000-0000-0000-0000-000000000001"))
+	insertRegistrant(t, db, lowestID, "artifacthub", entity.Model)
+	if lowestID.String() >= stampedID.String() {
+		t.Fatalf("precondition: new registrant %s must sort below the stamped one %s", lowestID, stampedID)
+	}
+
+	SeedConnections(log, db, regm)
+
+	after := connectionsByKind(t, db)
+	if got := len(after["artifacthub"]); got != 2 {
+		t.Fatalf("expected the grown registrant set to still be 2 rows, got %d", got)
+	}
+
+	carriers := []core.Uuid{}
+	for _, conn := range after["artifacthub"] {
+		if conn.Name == "Artifact Hub" && conn.ConnectionType == "source" && conn.SubType == "registry" {
+			carriers = append(carriers, conn.ID)
+		}
+	}
+	if len(carriers) != 1 {
+		t.Fatalf("expected exactly one row carrying the definition identity, got %d: %v", len(carriers), carriers)
+	}
+	if carriers[0] != stampedID {
+		t.Errorf("the stamp moved on registrant growth: %s -> %s", stampedID, carriers[0])
+	}
+
+	assertSteadyStateWritesNothing(t, db, regm)
+}
+
+// TestSeedConnectionsWritesOncePerKindWithDuplicateDefinitions guards against
+// accumulated connection definitions multiplying the work. Registration inserts
+// a definition row unconditionally under a freshly minted random id, so every
+// boot adds another copy of every definition; without reducing them by kind the
+// same canonical row is rewritten once per copy in a single pass and the seeded
+// count reports copies rather than rows.
+func TestSeedConnectionsWritesOncePerKindWithDuplicateDefinitions(t *testing.T) {
+	db, regm := seedTestRegistry(t, mesheryCoreModelDir, artifactHubRegistrantModelDir, gitHubRegistrantModelDir)
+
+	// Re-registering the definitions is what a restart does, and what leaves a
+	// second copy of every definition behind.
+	regHelper := registration.NewRegistrationHelper(t.TempDir(), regm, NewRegistrationFailureLogHandler())
+	regHelper.Register(registration.NewDir(mesheryCoreModelDir))
+
+	var copies int64
+	if err := db.Table("connection_definition_dbs").Count(&copies).Error; err != nil {
+		t.Fatalf("count connection definitions: %v", err)
+	}
+	defs, err := registeredConnectionDefinitions(regm)
+	if err != nil {
+		t.Fatalf("read connection definitions: %v", err)
+	}
+	if copies <= int64(len(defs)) {
+		t.Fatalf("precondition: expected accumulated definition copies, got %d rows for %d kinds", copies, len(defs))
+	}
+
+	seenKinds := map[string]bool{}
+	for _, def := range defs {
+		if seenKinds[def.Kind] {
+			t.Errorf("kind %q returned more than once after de-duplication", def.Kind)
+		}
+		seenKinds[def.Kind] = true
+	}
+
+	if written := runSeedingPass(t, db, regm); written != 2 {
+		t.Errorf("seeding wrote %d row(s) for 2 seedable kinds, want 2", written)
+	}
+	assertSteadyStateWritesNothing(t, db, regm)
+}
+
+// TestSeedConnectionsPreservesUserAttachedCredential mirrors the status
+// carve-out for credentials. Both seedable kinds are seedable precisely because
+// their credentialSchema marks nothing required - Artifact Hub's API key and
+// GitHub's token are optional and raise the rate limit - so attaching one is a
+// legitimate user action that a restart must not silently revoke.
+func TestSeedConnectionsPreservesUserAttachedCredential(t *testing.T) {
+	db, regm := seedTestRegistry(t, mesheryCoreModelDir, artifactHubRegistrantModelDir, gitHubRegistrantModelDir)
+	log := newSeedTestLogger(t)
+
+	SeedConnections(log, db, regm)
+
+	credentialID := uuid.Must(uuid.NewV4())
+	gitHubID := soleConnection(t, connectionsByKind(t, db), "github").ID
+	if err := db.Model(&connectionv1beta3.Connection{}).
+		Where("id = ?", gitHubID).
+		Update("credential_id", credentialID).Error; err != nil {
+		t.Fatalf("attach credential: %v", err)
+	}
+
+	SeedConnections(log, db, regm)
+
+	gitHub := soleConnection(t, connectionsByKind(t, db), "github")
+	if gitHub.CredentialID == nil || *gitHub.CredentialID != credentialID {
+		t.Errorf("credential_id = %v, want it preserved as %s", gitHub.CredentialID, credentialID)
+	}
 	assertSteadyStateWritesNothing(t, db, regm)
 }
 
@@ -570,10 +713,12 @@ func TestSeedUpdatesForWritesBothSchemaHalves(t *testing.T) {
 	})
 }
 
-// TestSeedUpdatesForClearsCredentialAndOwner covers the system-owned invariant:
-// a seeded Connection uses its kind's API anonymously, so any credential or
-// owner found on either half of the split schema is cleared on both.
-func TestSeedUpdatesForClearsCredentialAndOwner(t *testing.T) {
+// TestSeedUpdatesForClearsOwnerButKeepsCredential covers the two halves of the
+// system-owned invariant, which are not symmetric. Ownership is asserted: no
+// path gives a registrant an owner, so writing it can only repair a row. A
+// credential is not: both seedable kinds accept an optional one through the
+// wizard, so it belongs to the user exactly as `status` does.
+func TestSeedUpdatesForClearsOwnerButKeepsCredential(t *testing.T) {
 	credentialID := uuid.Must(uuid.NewV4())
 	ownerID := uuid.Must(uuid.NewV4())
 
@@ -589,8 +734,7 @@ func TestSeedUpdatesForClearsCredentialAndOwner(t *testing.T) {
 		}
 		legacy := connectionv1beta1.Connection{Kind: "github", Type: "source"}
 
-		updates := seedUpdatesFor(conn, legacy, def)
-		assertOwnershipCleared(t, updates)
+		assertOwnershipCleared(t, seedUpdatesFor(conn, legacy, def))
 	})
 
 	t.Run("carried on the legacy columns", func(t *testing.T) {
@@ -603,16 +747,29 @@ func TestSeedUpdatesForClearsCredentialAndOwner(t *testing.T) {
 			UserID:       &ownerID,
 		}
 
-		updates := seedUpdatesFor(conn, legacy, def)
-		assertOwnershipCleared(t, updates)
+		assertOwnershipCleared(t, seedUpdatesFor(conn, legacy, def))
+	})
+
+	t.Run("a credential alone needs no write at all", func(t *testing.T) {
+		conn := connectionv1beta3.Connection{
+			Kind: "github", Name: "GitHub", ConnectionType: "source", SubType: "git",
+			CredentialID: &credentialID,
+		}
+		legacy := connectionv1beta1.Connection{
+			Kind: "github", Type: "source", CredentialID: &credentialID,
+		}
+
+		if updates := seedUpdatesFor(conn, legacy, def); len(updates) != 0 {
+			t.Errorf("a credentialed connection matching its definition needs no writes, got %v", updates)
+		}
 	})
 }
 
 func assertOwnershipCleared(t *testing.T, updates map[string]interface{}) {
 	t.Helper()
 
-	if updates["credential_id"] != uuid.Nil {
-		t.Errorf("credential_id = %v, want it cleared", updates["credential_id"])
+	if _, wrote := updates["credential_id"]; wrote {
+		t.Errorf("credential_id must never be written, got %v", updates["credential_id"])
 	}
 	if updates["owner"] != uuid.Nil {
 		t.Errorf("owner = %v, want it cleared", updates["owner"])

@@ -98,21 +98,57 @@ func SeedConnections(log logger.Handler, db *database.Handler, regm *meshmodel.R
 	}
 }
 
-// registeredConnectionDefinitions reads every connection definition currently in
-// the registry.
+// registeredConnectionDefinitions reads the connection definitions currently in
+// the registry, reduced to one per kind and ordered by kind.
+//
+// The registry accumulates copies: ConnectionDefinition.Create mints a fresh
+// random id and inserts unconditionally, and every boot re-registers every model
+// directory, so connection_definition_dbs grows by a row per definition per
+// boot. Seeding is a per-kind operation, so the copies are reduced here rather
+// than left to re-issue the same UPDATE once per copy and report copies instead
+// of rows.
+//
+// The surviving copy is the most recently registered one - a later models
+// release supersedes an accumulated older row - with the definition's own
+// identity as the tie-break, so the choice is content-derived and cannot
+// oscillate between boots even when accumulated copies of a kind disagree.
 func registeredConnectionDefinitions(regm *meshmodel.RegistryManager) ([]*connectionv1beta3.ConnectionDefinition, error) {
 	entities, _, _, err := regm.GetEntities(&regv1beta1.ConnectionFilter{})
 	if err != nil {
 		return nil, err
 	}
 
-	defs := make([]*connectionv1beta3.ConnectionDefinition, 0, len(entities))
+	byKind := make(map[string]*connectionv1beta3.ConnectionDefinition, len(entities))
 	for _, en := range entities {
-		if def, ok := en.(*connectionv1beta3.ConnectionDefinition); ok && def != nil {
-			defs = append(defs, def)
+		def, ok := en.(*connectionv1beta3.ConnectionDefinition)
+		if !ok || def == nil || def.Kind == "" {
+			continue
+		}
+		if incumbent, seen := byKind[def.Kind]; !seen || supersedes(def, incumbent) {
+			byKind[def.Kind] = def
 		}
 	}
+
+	defs := make([]*connectionv1beta3.ConnectionDefinition, 0, len(byKind))
+	for _, def := range byKind {
+		defs = append(defs, def)
+	}
+	sort.Slice(defs, func(i, j int) bool { return defs[i].Kind < defs[j].Kind })
 	return defs, nil
+}
+
+// supersedes reports whether an accumulated copy of a connection definition
+// should replace the copy already chosen for its kind.
+func supersedes(candidate, incumbent *connectionv1beta3.ConnectionDefinition) bool {
+	if !candidate.CreatedAt.Equal(incumbent.CreatedAt) {
+		return candidate.CreatedAt.After(incumbent.CreatedAt)
+	}
+	return definitionIdentity(candidate) < definitionIdentity(incumbent)
+}
+
+// definitionIdentity is the identity a definition stamps onto its Connection.
+func definitionIdentity(def *connectionv1beta3.ConnectionDefinition) string {
+	return def.Name + "\x00" + def.ConnectionType + "\x00" + def.SubType
 }
 
 // registrantConnectionsByKind returns the registrant Connections (see
@@ -247,11 +283,8 @@ func seedConnectionForDefinition(
 	//
 	// Seeding therefore stamps the definition's identity onto exactly one
 	// canonical registrant and leaves every sibling exactly as registration
-	// wrote it. The canonical row is the one with the lowest id: ids are content
-	// hashes of data that does not change between boots, so the same row is
-	// picked every time, independent of registration order or how many registry
-	// entries happen to point at each row.
-	canonical := registrants[0]
+	// wrote it.
+	canonical := canonicalRegistrantFor(registrants, def)
 
 	updates := seedUpdatesFor(canonical, legacyByID[canonical.ID], def)
 	if len(updates) == 0 {
@@ -263,6 +296,34 @@ func seedConnectionForDefinition(
 		return 0, err
 	}
 	return 1, nil
+}
+
+// canonicalRegistrantFor picks the one registrant row of a kind that carries the
+// kind's definition identity.
+//
+// The pick is sticky: a registrant that already carries the identity wins, and
+// only when none does is the lowest id taken (registrants arrive ordered by id).
+// Stickiness is what keeps the pick stable as the registrant set GROWS - a later
+// models release can introduce a new `registrant` spelling whose content hash
+// sorts below the stamped row, and a pure lowest-id rule would move the identity
+// onto it while the previously stamped row kept the definition's name, type and
+// subType forever, leaving two identical-looking Connections for the kind with
+// no self-healing. Siblings are never un-stamped or otherwise mutated.
+func canonicalRegistrantFor(registrants []connectionv1beta3.Connection, def *connectionv1beta3.ConnectionDefinition) connectionv1beta3.Connection {
+	for _, conn := range registrants {
+		if carriesDefinitionIdentity(conn, def) {
+			return conn
+		}
+	}
+	return registrants[0]
+}
+
+// carriesDefinitionIdentity reports whether a Connection already presents the
+// identity its kind's definition declares.
+func carriesDefinitionIdentity(conn connectionv1beta3.Connection, def *connectionv1beta3.ConnectionDefinition) bool {
+	return conn.Name == def.Name &&
+		conn.ConnectionType == def.ConnectionType &&
+		conn.SubType == def.SubType
 }
 
 // seedUpdatesFor returns the columns that have to change for a registrant
@@ -285,20 +346,21 @@ func seedUpdatesFor(conn connectionv1beta3.Connection, legacy connectionv1beta1.
 	if conn.SubType != def.SubType {
 		updates["sub_type"] = def.SubType
 	}
-	// A seeded Connection is owned by the system and uses its kind's API
-	// anonymously; it must never carry a credential or an owner.
-	if carriesID(conn.CredentialID) || carriesID(legacy.CredentialID) {
-		updates["credential_id"] = uuid.Nil
-	}
+	// A seeded Connection is owned by the system. No path creates a registrant
+	// with an owner and none sets one afterwards, so asserting it can only
+	// repair a row, never contend with a user's action.
 	if carriesID(conn.Owner) || carriesID(legacy.UserID) {
 		updates["owner"] = uuid.Nil
 		updates["user_id"] = uuid.Nil
 	}
 
-	// `status` is deliberately absent. The definition's status is the state a
-	// *new* Connection starts in; once the Connection exists its state belongs
-	// to the connection state machine, and re-asserting it on every boot would
-	// undo a user who connected or ignored it.
+	// `status` and `credential_id` are deliberately absent. Both describe the
+	// state a *new* Connection starts in, and both belong to the user once the
+	// Connection exists: re-asserting `status` on every boot would undo a user
+	// who connected or ignored it, and clearing `credential_id` would silently
+	// revoke the optional Artifact Hub API key or GitHub token they attached
+	// through the wizard - a seeded kind is seedable precisely because its
+	// credential is optional, so attaching one is a legitimate user action.
 
 	return updates
 }
