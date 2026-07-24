@@ -13,10 +13,8 @@ import (
 	"github.com/meshery/meshery/server/internal/graphql/model"
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/models"
-	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
-	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/spf13/viper"
 )
 
@@ -103,30 +101,11 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			}
 
 			r.Log.Info("Migrating Meshery Database")
-			err = dbHandler.AutoMigrate(
-				&meshsyncmodel.KubernetesKeyValue{},
-				&meshsyncmodel.KubernetesResource{},
-				&meshsyncmodel.KubernetesResourceSpec{},
-				&meshsyncmodel.KubernetesResourceStatus{},
-				&meshsyncmodel.KubernetesResourceObjectMeta{},
-				&models.PerformanceProfile{},
-				&models.MesheryResult{},
-				&models.MesheryPattern{},
-				&models.MesheryFilter{},
-				&models.PatternResource{},
-				&models.MesheryApplication{},
-				&models.UserPreference{},
-				&models.PerformanceTestConfig{},
-				&models.SmiResultWithID{},
-				&models.K8sContext{},
-				// The registry manager below migrates the `connections` table
-				// from the v1beta1 Connection, which does not carry the
-				// canonical columns (`connection_type`, `owner`, `url`, ...).
-				// Without this the hard reset leaves a table the canonical model
-				// cannot be written through, exactly as cmd/main.go migrates it
-				// on boot.
-				connections.Connection{},
-			)
+			// The events table is intentionally left in place above; re-migrating
+			// it here is idempotent. Share models.SystemDatabaseModels with boot
+			// and the database reset handler so the hard reset can never
+			// re-create only a stale subset of tables.
+			err = models.AutoMigrateSystemTables(dbHandler)
 			if err != nil {
 				r.Log.Error(err)
 				return "", err
