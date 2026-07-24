@@ -103,3 +103,8 @@ LLMs
 .copilot-tmp/*
 .claude/worktrees/*
 
+# Machine-local agent session state, rewritten continuously by the `remember`
+# plugin inside whatever checkout an agent runs in. Tracking it leaves every
+# worktree permanently dirty, which breaks `git rebase` and validation runs.
+.remember/
+
