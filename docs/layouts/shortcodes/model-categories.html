@@ -1,17 +1,18 @@
 {{- /*
-  Renders a list of model category names, each with a parenthetical count of
-  the models in that category (e.g. "Provisioning (69)"). Counts are derived
-  from the `integrations-category` param on each model page, so they stay
-  accurate as models are added, removed, or recategorized. Categories are
-  ordered by count (descending) so the largest are surfaced first.
-
-  Category names are plain labels, not links: the models index is a single
-  alphabetized page with no per-category filtering, so a category link would
-  resolve to the same unfiltered page for every category. The "See all models"
-  link in the parent list provides navigation to that index.
+  Renders a bulleted list of model category names, each with a parenthetical
+  count of the models in that category (e.g. "Provisioning (69)"). Counts are
+  derived from the `integrations-category` param on each model page, so they
+  stay accurate as models are added, removed, or recategorized. Categories are
+  ordered by count (descending) so the largest are surfaced first. Each category
+  links to its `category-<slug>` anchor on the models index page (see
+  layouts/models/list.html), which groups models into those same categories.
 */ -}}
 {{- $models := where site.RegularPages ".File.Dir" "like" `^extensions/models/` -}}
 {{- $groups := $models.GroupByParam "integrations-category" -}}
+{{- $modelsURL := relURL "/extensions/models/" -}}
+{{- with site.GetPage "/extensions/models" -}}
+  {{- $modelsURL = .RelPermalink -}}
+{{- end -}}
 {{- $categories := slice -}}
 {{- range $groups -}}
   {{- if .Key -}}
@@ -19,6 +20,6 @@
   {{- end -}}
 {{- end -}}
 {{- $categories = sort $categories "count" "desc" -}}
-{{- range $categories -}}
-<li>{{ .name }} ({{ .count }})</li>
+{{- range $categories }}
+<li><a href="{{ $modelsURL }}#category-{{ anchorize .name }}">{{ .name }}</a> ({{ .count }})</li>
 {{- end -}}

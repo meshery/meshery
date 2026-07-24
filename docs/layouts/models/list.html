@@ -5,45 +5,56 @@
 {{ $currentSection := .Section }}
 {{ $models := where site.RegularPages "Section" $currentSection }}
 {{ $modelPages := slice }}
-{{ $modelGroups := newScratch }}
-{{ $groupOrder := slice "#" "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z" }}
 
 {{ range sort $models "Title" }}
   {{ if and (ne .Kind "section") (strings.Contains .File.Dir "/models/") }}
     {{ $modelPages = $modelPages | append . }}
-
-    {{ $groupKey := "#" }}
-    {{ $firstCharacter := upper (substr .Title 0 1) }}
-    {{ if gt (len (findRE "^[A-Z]" $firstCharacter)) 0 }}
-      {{ $groupKey = $firstCharacter }}
-    {{ end }}
-
-    {{ $existingGroup := $modelGroups.Get $groupKey }}
-    {{ if $existingGroup }}
-      {{ $modelGroups.Set $groupKey ($existingGroup | append .) }}
-    {{ else }}
-      {{ $modelGroups.Set $groupKey (slice .) }}
-    {{ end }}
   {{ end }}
 {{ end }}
 
 {{ if gt (len $modelPages) 0 }}
+{{/* Group the (already Title-sorted) model pages by their integration category
+     so each category renders as an anchored section. Pages missing the param
+     are collected under an "Other" group rendered last, so nothing is dropped
+     from the listing. The homepage `model-categories` shortcode links to these
+     same `category-<slug>` anchors. */}}
+{{ $modelGroups := newScratch }}
+{{ $categoryKeys := slice }}
+{{ $otherPages := slice }}
+{{ range $modelPages }}
+  {{ $category := index .Params "integrations-category" }}
+  {{ if $category }}
+    {{ $existing := $modelGroups.Get $category }}
+    {{ if $existing }}
+      {{ $modelGroups.Set $category ($existing | append .) }}
+    {{ else }}
+      {{ $modelGroups.Set $category (slice .) }}
+      {{ $categoryKeys = $categoryKeys | append $category }}
+    {{ end }}
+  {{ else }}
+    {{ $otherPages = $otherPages | append . }}
+  {{ end }}
+{{ end }}
+{{ $categoryKeys = sort $categoryKeys }}
+{{ if gt (len $otherPages) 0 }}
+  {{ $modelGroups.Set "Other" $otherPages }}
+  {{ $categoryKeys = $categoryKeys | append "Other" }}
+{{ end }}
+
 <div class="models-list" id="models-top">
-  <nav aria-label="Browse models alphabetically">
+  <nav aria-label="Browse models by category">
     <p>
       Jump to:
-      {{ range $group := $groupOrder }}
-        {{ with $modelGroups.Get $group }}
-          <a href="#models-group-{{ lower (replace $group "#" "symbols") }}">{{ $group }}</a>
-        {{ end }}
+      {{ range $category := $categoryKeys }}
+        <a href="#category-{{ anchorize $category }}">{{ $category }}</a>
       {{ end }}
     </p>
   </nav>
 
-  {{ range $group := $groupOrder }}
-    {{ with $modelGroups.Get $group }}
-      <section id="models-group-{{ lower (replace $group "#" "symbols") }}">
-        <h3>{{ if eq $group "#" }}0-9 and Symbols{{ else }}{{ $group }}{{ end }}</h3>
+  {{ range $category := $categoryKeys }}
+    {{ with $modelGroups.Get $category }}
+      <section id="category-{{ anchorize $category }}">
+        <h3>{{ $category }} ({{ len . }})</h3>
         <ul>
           {{ range . }}
             <li style="list-style-type: disc !important; margin: 2px 0 !important">
