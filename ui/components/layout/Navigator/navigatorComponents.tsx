@@ -200,7 +200,7 @@ export const getNavigatorComponents = (
     children: [
       {
         id: PROFILES,
-        icon: <TachographDigitalIcon />,
+        icon: <TachographDigitalIcon style={drawerIconsStyle} />,
         href: '/performance/profiles',
         title: 'Profiles',
         show: providerUiAccessControl.isNavigatorComponentEnabled([PERFORMANCE, PROFILES]),
