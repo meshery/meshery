@@ -117,7 +117,7 @@ func NewHealthChecker(options *HealthCheckOptions) (*HealthChecker, error) {
 }
 
 var linkDocCheck = map[string]string{
-	"link":    "![check-usage](/reference/images/check.png)",
+	"link":    "![check-usage](../../../images/check.png)",
 	"caption": "Usage of mesheryctl system check",
 }
 
@@ -125,7 +125,7 @@ var checkCmd = &cobra.Command{
 	Use:   "check",
 	Short: "Pre-deployment and post-deployment healthchecks for Meshery",
 	Long: `Verify environment pre/post-deployment of Meshery.
-Find more information at: https://docs.meshery.io/reference/mesheryctl/system/check`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/check`,
 	Args: cobra.MaximumNArgs(1),
 	Example: `
 // Run all system checks for both pre and post-deployment scenarios

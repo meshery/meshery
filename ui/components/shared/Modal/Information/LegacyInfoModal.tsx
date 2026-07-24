@@ -1,9 +1,8 @@
 import ServiceMesheryIcon from '@/assets/icons/ServiceMesheryIcon';
 import { usePublishPatternMutation, useUpdatePatternFileMutation } from '@/rtk-query/design';
 import TooltipButton from '@/utils/TooltipButton';
-import CAN from '@/utils/can';
 import { filterEmptyFields } from '@/utils/objects';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import {
   Avatar,
   Box,
@@ -24,10 +23,11 @@ import {
   Skeleton,
   Typography,
   VisibilityChipMenu,
+  useHasPermission,
   useTheme,
 } from '@sistent/sistent';
 import { Close, Lock, Public } from '@/assets/icons';
-import yaml from 'js-yaml';
+import * as yaml from 'js-yaml';
 import _ from 'lodash';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useRef, useState, FC } from 'react';
@@ -83,6 +83,7 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
   const [saveFormLoading, setSaveFormLoading] = useState(false);
   const [uiSchema, setUiSchema] = useState({});
   const { notify } = useNotification();
+  const canPublishDesign = useHasPermission(Keys.CatalogManagementPublishDesign);
 
   const [updatePattern] = useUpdatePatternFileMutation();
   const currentUserID = currentUser?.id;
@@ -283,6 +284,11 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
 
   useEffect(() => {
     if (publishSchema) {
+      // The compatibility/Technology field's `ui:widget: select` is defined in
+      // the canonical catalog form UI schema in meshery/schemas
+      // (constructs/v1beta2/catalog/forms/publish.ui.json), so it flows in via
+      // publishSchema.uiSchema. Do not re-patch it here - keeping presentation
+      // in the construct's schema is the single source of truth.
       const newUiSchema = { ...publishSchema.uiSchema };
 
       if (isReadOnly) {
@@ -454,6 +460,18 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
                     liveValidate={false}
                     formRef={formRef}
                     hideTitle={true}
+                    transformErrors={(errors) => {
+                      return errors?.map((error) => {
+                        if (
+                          error.property === '.compatibility' ||
+                          (error.name === 'required' &&
+                            error.params?.missingProperty === 'compatibility')
+                        ) {
+                          error.message = 'Please select at least one technology.';
+                        }
+                        return error;
+                      });
+                    }}
                   />
                 </Grid>
               </Grid>
@@ -476,12 +494,7 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
               variant="outlined"
               onClick={handlePublishController}
               disabled={
-                !isPublished
-                  ? false
-                  : !(
-                      CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject) &&
-                      currentUser?.id === selectedResource?.userId
-                    ) || isPublished
+                isPublished || !(canPublishDesign && currentUser?.id === selectedResource?.userId)
               }
             >
               {isPublished ? 'Published' : 'Publish to Catalog'}

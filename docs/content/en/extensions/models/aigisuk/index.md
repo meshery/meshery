@@ -1,7 +1,7 @@
 ---
 title: AIGIS UK
 subtitle: Collaborative and visual infrastructure as design for AIGIS UK
-image: /extensions/models/aigisuk/icons/color/aigisuk-color.svg
+image: extensions/models/aigisuk/icons/color/aigisuk-color.svg
 aliases: /extensibility/integrations/aigisuk
 docURL: https://docs.meshery.io/extensibility/integrations/aigisuk
 description: 

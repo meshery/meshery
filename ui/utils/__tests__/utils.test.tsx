@@ -31,6 +31,7 @@ vi.mock('react-redux', () => ({
   useSelector: (sel: (s: unknown) => unknown) => hoisted.useSelectorMock(sel),
 }));
 
+import { MESHERY_EXTENSION_EVENT } from '@sistent/sistent';
 import {
   ConditionalTooltip,
   ResizableCell,
@@ -204,7 +205,10 @@ describe('generateValidatePayload', () => {
         },
       },
     ];
-    const result = generateValidatePayload(yaml, workloads);
+    const result = generateValidatePayload(yaml, workloads) as Record<
+      string,
+      { schema: string; value: string; valueType: string }
+    >;
     expect(result).toHaveProperty('svc1');
     expect(result.svc1).toEqual({
       schema: '{"type":"object"}',
@@ -437,8 +441,22 @@ describe('processDesign', () => {
     const result = processDesign({ schemaVersion: 'designs.meshery.io/v1alpha1', components: [] });
     expect(result.configurableComponents).toEqual([]);
     expect(result.annotationComponents).toEqual([]);
-    expect(result.designJson.name).toBe('');
+    expect((result.designJson as { name?: string }).name).toBe('');
     errSpy.mockRestore();
+  });
+
+  it('accepts v1beta3 designs and preserves their components', () => {
+    const design = {
+      schemaVersion: 'designs.meshery.io/v1beta3',
+      components: [{ id: 'a' }, { id: 'b', metadata: { isAnnotation: true } }],
+    };
+
+    const result = processDesign(design);
+
+    expect(result.components).toEqual(design.components);
+    expect(result.configurableComponents.map((c: { id: string }) => c.id)).toEqual(['a']);
+    expect(result.annotationComponents.map((c: { id: string }) => c.id)).toEqual(['b']);
+    expect(result.designJson).toBe(design);
   });
 
   it('separates annotation components from configurable ones', () => {
@@ -557,7 +575,7 @@ describe('event-bus router helpers', () => {
     setLocation('http://localhost:9081/extension/meshmap');
     openViewScopedToDesignInOperator('My Design', 'd-1', { push: vi.fn() });
     expect(eventBus.publish).toHaveBeenCalledWith({
-      type: 'OPEN_VIEW_SCOPED_TO_DESIGN',
+      type: MESHERY_EXTENSION_EVENT.OpenViewScopedToDesign,
       data: { designId: 'd-1', designName: 'My Design' },
     });
   });
@@ -575,7 +593,7 @@ describe('event-bus router helpers', () => {
   it('publishes MERGE_DESIGN unconditionally', () => {
     mergeDesignWithCurrent('d-1', 'D1');
     expect(eventBus.publish).toHaveBeenCalledWith({
-      type: 'MERGE_DESIGN',
+      type: MESHERY_EXTENSION_EVENT.MergeDesign,
       data: { id: 'd-1', name: 'D1' },
     });
   });
@@ -583,7 +601,13 @@ describe('event-bus router helpers', () => {
   it('openDesignInExtension publishes inside extension and routes outside', () => {
     setLocation('http://localhost:9081/extension/meshmap');
     openDesignInExtension('d-1', 'D1', { push: vi.fn() });
-    expect(eventBus.publish).toHaveBeenCalled();
+    // Asserting the exact event, not just that something was published: the
+    // published literal is the half of the contract the extension matches on,
+    // and a rename of it is invisible to a bare `toHaveBeenCalled`.
+    expect(eventBus.publish).toHaveBeenCalledWith({
+      type: MESHERY_EXTENSION_EVENT.OpenDesignInExtension,
+      data: { designId: 'd-1', designName: 'D1' },
+    });
     eventBus.publish.mockClear();
     setLocation('http://localhost:9081/dashboard');
     const router = { push: vi.fn() };
@@ -594,7 +618,10 @@ describe('event-bus router helpers', () => {
   it('openViewInExtension publishes inside extension and routes outside', () => {
     setLocation('http://localhost:9081/extension/meshmap');
     openViewInExtension('v-1', 'V1', { push: vi.fn() });
-    expect(eventBus.publish).toHaveBeenCalled();
+    expect(eventBus.publish).toHaveBeenCalledWith({
+      type: MESHERY_EXTENSION_EVENT.OpenViewInExtension,
+      data: { viewId: 'v-1', viewName: 'V1' },
+    });
     eventBus.publish.mockClear();
     setLocation('http://localhost:9081/dashboard');
     const router = { push: vi.fn() };

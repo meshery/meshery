@@ -3,11 +3,11 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
-	"os"
 	"path/filepath"
 
 	"github.com/meshery/meshery/server/core"
@@ -65,47 +65,34 @@ func (h *Handler) TokenHandler(w http.ResponseWriter, r *http.Request, p models.
 
 // ViewHandler handles viewing the file content.
 func (h *Handler) ViewHandler(responseWriter http.ResponseWriter, request *http.Request) {
-	filePath, err := url.QueryUnescape(request.URL.Query().Get("file"))
-
-	if err != nil {
-		writeMeshkitError(responseWriter, ErrInvalidFileRequest(err), http.StatusBadRequest)
-		return
-	}
-	file, err := os.Open(filePath)
-	if err != nil {
-		writeMeshkitError(responseWriter, ErrReadFileContent(err, filePath), http.StatusInternalServerError)
-		return
-	}
-	defer func() {
-		if err := file.Close(); err != nil {
-			h.log.Error(err)
-		}
-	}()
-
-	// Set the content type to plain text
-	responseWriter.Header().Set("Content-Type", "text/plain")
-
-	// Copy the file content to the response writer. If io.Copy fails mid-stream
-	// the response status and headers are already committed, so we log the
-	// error for diagnostics and return rather than attempting a second write.
-	_, err = io.Copy(responseWriter, file)
-	if err != nil {
-		h.log.Error(models.ErrCopy(err, filePath))
-		return
-	}
+	h.serveFile(responseWriter, request, false)
 }
 
 // DownloadHandler handles downloading the file.
 func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *http.Request) {
+	h.serveFile(responseWriter, request, true)
+}
+
+// serveFile streams the file named by the "file" query parameter, confined by
+// SafeOpenFile to the directories these endpoints are permitted to serve. When
+// asAttachment is true it sets a Content-Disposition header so browsers download
+// the file instead of rendering it inline.
+func (h *Handler) serveFile(responseWriter http.ResponseWriter, request *http.Request, asAttachment bool) {
 	filePath, err := url.QueryUnescape(request.URL.Query().Get("file"))
 	if err != nil {
 		writeMeshkitError(responseWriter, ErrInvalidFileRequest(err), http.StatusBadRequest)
 		return
 	}
 
-	file, err := os.Open(filePath)
+	// SafeOpenFile validates and opens in one step, so there is no window in
+	// which a validated path could be swapped for a symlink before opening.
+	file, err := SafeOpenFile(filePath)
 	if err != nil {
-		writeMeshkitError(responseWriter, ErrReadFileContent(err, filePath), http.StatusInternalServerError)
+		if errors.Is(err, errFileOutsideAllowedDirs) {
+			writeMeshkitError(responseWriter, ErrUnsafeFilePath(err), http.StatusBadRequest)
+		} else {
+			writeMeshkitError(responseWriter, ErrReadFileContent(err, filePath), http.StatusInternalServerError)
+		}
 		return
 	}
 	defer func() {
@@ -114,14 +101,18 @@ func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *h
 		}
 	}()
 
-	fileName := filepath.Base(filePath)
 	responseWriter.Header().Set("Content-Type", "text/plain")
-	responseWriter.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", fileName))
+	if asAttachment {
+		// Derive the download name from the requested path, not the opened file,
+		// so a symlinked or rotated log keeps the name the client asked for.
+		fileName := filepath.Base(filepath.Clean(filePath))
+		responseWriter.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%q", fileName))
+	}
 
-	// See ViewHandler: response has already started streaming, so a second
-	// error write would corrupt the body. Log and return.
-	_, err = io.Copy(responseWriter, file)
-	if err != nil {
+	// If io.Copy fails mid-stream the response status and headers are already
+	// committed, so log the error for diagnostics and return rather than
+	// attempting a second write.
+	if _, err := io.Copy(responseWriter, file); err != nil {
 		h.log.Error(models.ErrCopy(err, filePath))
 		return
 	}

@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { CircularProgress } from '@sistent/sistent';
 import { COMPONENTS } from '../../constants/navigator';
 import StyledTreeItem from './StyledTreeItem';
-import { getFilteredDataForDetailsComponent } from './helper';
 import { useGetComponentsFromModalQuery } from '@/rtk-query/meshModel';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
@@ -35,25 +34,34 @@ const VersionedModelComponentTree = ({
   });
   const { selectedItemUUID } = useRegistryRouter();
 
+  // Stable ref so the deeplink effect can read showDetailsData without
+  // subscribing to it as a dependency (which would cause an infinite loop).
+  const showDetailsDataRef = useRef(showDetailsData);
   useEffect(() => {
-    if (componentsData && componentsData.components && componentsData.components.length > 0) {
+    showDetailsDataRef.current = showDetailsData;
+  }, [showDetailsData]);
+
+  useEffect(() => {
+    if (componentsData?.components?.length > 0) {
       const selectedIdArr = selectedItemUUID.split('.');
-      // Check if selected item is a component
+      // Only act when the deeplink targets a component inside this model+version.
+      // selectedIdArr[2] === '1' is the Components group node constant from itemId.
       if (
-        selectedIdArr.length > 0 &&
+        selectedIdArr.length > 3 &&
         selectedIdArr[0] === modelDef.id &&
-        selectedIdArr[1] === versionedModelDef.id
+        selectedIdArr[1] === versionedModelDef.id &&
+        selectedIdArr[2] === '1'
       ) {
-        const showData = getFilteredDataForDetailsComponent(
-          componentsData.components,
-          selectedIdArr[selectedIdArr.length - 1],
-        );
-        if (JSON.stringify(showData) !== JSON.stringify(showDetailsData)) {
-          setShowDetailsData(showData);
+        const componentId = selectedIdArr[selectedIdArr.length - 1];
+        const component = componentsData.components.find((c) => c.id === componentId);
+        if (component && component.id !== showDetailsDataRef.current?.data?.id) {
+          setShowDetailsData({ type: COMPONENTS, data: component });
         }
       }
     }
-  }, [componentsData, showDetailsData]);
+    // showDetailsData intentionally omitted — read via showDetailsDataRef to
+    // prevent the infinite loop described above.
+  }, [componentsData, selectedItemUUID, modelDef.id, versionedModelDef.id]);
 
   useEffect(() => {
     if (isError) {
@@ -92,7 +100,8 @@ const VersionedModelComponentTree = ({
                     versionedModelDef.id
                   }.1.${component.id}`}
                   labelText={component.displayName}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     setShowDetailsData({
                       type: COMPONENTS,
                       data: component,

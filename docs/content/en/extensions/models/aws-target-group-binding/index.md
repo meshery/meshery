@@ -1,7 +1,7 @@
 ---
 title: AWS Target Group Binding
 subtitle: Collaborative and visual infrastructure as design for AWS Target Group Binding
-image: /extensions/models/aws-target-group-binding/icons/color/aws-target-group-binding-color.svg
+image: extensions/models/aws-target-group-binding/icons/color/aws-target-group-binding-color.svg
 aliases: /extensibility/integrations/aws-target-group-binding
 docURL: https://docs.meshery.io/extensibility/integrations/aws-target-group-binding
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Service Proxy
 registrant: Artifact Hub
 components: 
 - name: target-group-binding
-  colorIcon: content/en/extensions/models/aws-target-group-binding/components/target-group-binding/icons/color/target-group-binding-color.svg
-  whiteIcon: content/en/extensions/models/aws-target-group-binding/components/target-group-binding/icons/white/target-group-binding-white.svg
+  colorIcon: extensions/models/aws-target-group-binding/components/target-group-binding/icons/color/target-group-binding-color.svg
+  whiteIcon: extensions/models/aws-target-group-binding/components/target-group-binding/icons/white/target-group-binding-white.svg
   description: 
 components-count: 1
 relationships: 

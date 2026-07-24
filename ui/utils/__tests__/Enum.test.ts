@@ -13,12 +13,10 @@ import {
   EVENT_TYPES,
   EXTENSIONS,
   FILE_OPS,
-  FILTER,
   MESHSYNC_DEPLOYMENT_TYPE,
   MESHSYNC_STATES,
   MesheryFiltersCatalog,
   MesheryPatternsCatalog,
-  PATTERN,
   REGISTRY_ITEM_STATES,
   REGISTRY_ITEM_STATES_TO_TRANSITION_MAP,
   RESOURCE_TYPE,
@@ -147,11 +145,6 @@ describe('Enum constants', () => {
   it('TRANSFER_COMPONENT distinguishes chip vs other transfer payloads', () => {
     expect(TRANSFER_COMPONENT.CHIP).toBe('chip');
     expect(TRANSFER_COMPONENT.OTHER).toBe('other');
-  });
-
-  it('FILTER / PATTERN constants are short lowercase identifiers', () => {
-    expect(FILTER).toBe('filter');
-    expect(PATTERN).toBe('pattern');
   });
 
   it('EXTENSIONS map contains the registered extension entries keyed by EXTENSION_NAMES', () => {

@@ -715,7 +715,7 @@ and revoked at offboarding:
 - **CNCF Zoom** for community and maintainer meetings.
 - **Slack** ([slack.meshery.io](https://slack.meshery.io)); workspace administration
   is held by a small number of Maintainers and Community Managers.
-- **Discussion forum** ([community forum](https://meshery.io/community#discussion-forums)).
+- **Discussion forum** ([community forum](https://discuss.meshery.io)).
 - **Community calendar** ([meshery.io/calendar](https://meshery.io/calendar)).
 - **Documentation and website** publishing.
 - **Release and registry systems**, including container registries and package
@@ -735,7 +735,7 @@ purpose is also listed.
 
 - **Slack:** [slack.meshery.io](https://slack.meshery.io), including
   subproject-specific and topic-specific channels.
-- **Discussion forum:** [meshery.io/community#discussion-forums](https://meshery.io/community#discussion-forums).
+- **Discussion forum:** [discuss.meshery.io](https://discuss.meshery.io).
 - **GitHub issues, pull requests, and discussions** across
   [github.com/meshery](https://github.com/meshery) and
   [github.com/meshery-extensions](https://github.com/meshery-extensions).

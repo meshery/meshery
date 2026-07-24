@@ -39,7 +39,8 @@
     padding: 0.5rem;
 
     width: var(--sidebar-wrapper-width);
-    background: var(--background-grey);
+    background: #121212;
+    background: linear-gradient(37deg, rgba(71, 126, 150, 0.52) 0%, rgba(0, 0, 0, 0.81) 12%, rgba(60, 73, 79, 1) 100%);
     box-shadow: var(--box-shadow-primary);
   }
   & .icon-container {
@@ -67,6 +68,11 @@
   padding: 5px;
   cursor: pointer;
   justify-content: center;
+  transition: background-color 0.2s ease;
+  &:hover {
+    background-color: var(--brand-color);
+    & svg { fill: #fff; }
+  }
 }
 #document-nav-toggle-btn {
   width: 2.2rem;
@@ -75,9 +81,10 @@
 }
 
 .sidebar-container {
-  padding: .25rem min(2vh, 2vw);
+/* Symmetric, breathable padding replacing the skewed viewport units */
+  padding: 0;
   overscroll-behavior: contain;
-  overflow-y: scroll;
+  overflow-y: auto; /* Swapped scroll for auto to hide inactive scrollbars */
   scrollbar-gutter: stable;
   height: calc(100vh - var(--navbar-height) - 3vh);
   transition: all 0.5s ease-in-out;
@@ -86,13 +93,20 @@
   max-width: var(--sidebar-width);
   min-width: var(--sidebar-width);
 
+  /* Sidebar scrollbar aligned with global docs design */
   &::-webkit-scrollbar {
-    width: 5px;
+    width: 0.5rem;
   }
-
+  &::-webkit-scrollbar-track {
+    background: var(--background-light);
+  }
   &::-webkit-scrollbar-thumb {
-    background: #868e96;
-    border-radius: 11px;
+    background: var(--scrollbar-color);
+    border-radius: 0.3rem;
+    
+    &:hover {
+      background: #555;
+    }
   }
 
  
@@ -103,11 +117,10 @@
     width: 100%;
     z-index: 9;
     transition: 0.5s ease-in-out;
-    padding: 1rem 2rem;
   }
 
   @media (max-width: 37.5em) {
-    padding: 1rem 1.5rem;
+    width: 100%;
   }
 
   & .td-sidebar__inner {
@@ -116,11 +129,20 @@
     height: 100%;
     position: static;
     top: auto;
+    padding: 1.25rem 1rem;
+
+    @media (max-width: 75em) {
+      padding: 1rem 2rem;
+    }
+
+    @media (max-width: 37.5em) {
+      padding: 1rem 1.5rem;
+    }
   }
 
   & .td-sidebar__search {
     width: 100%;
-    margin: 1rem 0 1.35rem;
+    margin: 0.5rem 0 1.75rem; /* Better spacing around search */
     padding: 0;
     position: sticky;
     top: 0;
@@ -134,21 +156,27 @@
   }
 
   & .td-search__input {
-    border: none;
+    border: 1px solid transparent; /* Prep for focus state */
     width: 100%;
-    min-height: 2.6rem;
+    min-height: 2.8rem; /* Slightly taller for touch targets */
     font-size: 1rem;
     border-radius: 999px;
     background: var(--color-primary-dark);
     color: var(--color-secondary-light);
     padding: 0.55rem 1rem 0.55rem 2.5rem;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08); /* Softer inset shadow */
+
+    &:focus {
+      outline: none;
+      border-color: var(--brand-color);
+      box-shadow: 0 0 0 3px rgba(0, 179, 159, 0.15); /* Meshery brand color focus ring */
+    }
   }
 
   & .td-search__input::placeholder {
     font-family: inherit;
     color: var(--color-secondary-light);
-    opacity: 0.72;
+    opacity: 0.6; /* Slightly softer placeholder */
   }
 
   & .td-sidebar__toggle {
@@ -172,12 +200,13 @@
 
   & .td-sidebar-nav>.td-sidebar-nav__section>.td-sidebar-nav__section {
     border-bottom: 1px solid rgba(229, 232, 236, 0.38);
-    padding: 1rem 0 0.95rem;
+    padding: 1.25rem 0 1rem; /* Breathed out padding */
   }
 
   & .td-sidebar-nav .ul-1>li {
-    border-bottom: 1px solid rgba(229, 232, 236, 0.38);
+    border-bottom: 1px solid rgba(134, 142, 150, 0.15); /* Softer divider */        
     margin-bottom: 0.9rem;
+    // padding-bottom: 0.9rem;
 
     &:last-child {
       border-bottom: none;
@@ -200,16 +229,32 @@
   }
 
   & .sidebar-section-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: none;
     border: none;
-    color: var(--color-secondary-medium);
+    color: var(--sidebar-text-color);
     cursor: pointer;
     font-size: 1rem;
-    padding: 0 0.5rem 0 0;
+    padding: 0 0.4rem 0 0;
     line-height: 1;
     opacity: 0.7;
     flex-shrink: 0;
-    transition: opacity 0.2s, color 0.2s, transform 0.2s ease-in-out;
+    transition: opacity 0.2s, color 0.2s;
+
+    // Caret/chevron disclosure indicator. Points right when collapsed and
+    // rotates to point down when the section is expanded (see .active-path
+    // rule below) to convey expanded vs. collapsed state.
+    .caret-icon {
+      display: block;
+      font-size: 1.45rem;
+      width: 0.85em;
+      height: 0.85em;
+      transform: rotate(0deg);
+      transform-origin: center;
+      transition: transform 0.25s ease-in-out;
+    }
 
     &:hover {
       opacity: 1;
@@ -220,9 +265,20 @@
       font-size: 0.75rem;
       padding: 0;
       width: 1.5rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    }
+  }
+
+  // When a section is expanded, its <li> carries the `active-path` class.
+  // Rotate the caret 90deg (right -> down) and bring the toggle to full
+  // opacity so the expanded state reads clearly.
+  & li.active-path > .sidebar-section-flex-wrapper > .sidebar-section-toggle {
+    opacity: 1;
+    color: var(--brand-color); /* Highlight caret on active path */
+
+    .caret-icon {
+      font-size: 1.35rem;
+      transform: rotate(90deg);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1); /* Smoother rotation */
     }
   }
 
@@ -234,12 +290,11 @@
   }
 
   & .td-sidebar-nav__section ul {
-    padding-inline-start: 0.3rem;
-  }
+    padding-inline-start: 0.5rem; /* Slightly more indent for clear hierarchy */  }
 
   & .td-sidebar-nav .ul-1 ul>li>a.td-sidebar-link::before {
     content: "•";
-    color: var(--color-secondary-medium);
+    color: var(--sidebar-text-color);
     font-size: 1.25rem;
     font-weight: 900;
     display: inline-flex;
@@ -259,12 +314,12 @@
   }
 
   & .td-sidebar-nav__section-title {
-    color: var(--color-secondary-medium);
+    color: var(--sidebar-text-color);
     font-weight: 400;
   }
 
   & .td-sidebar-link {
-    color: var(--color-secondary-medium);
+    color: var(--sidebar-text-color);
     letter-spacing: 0;
     padding-bottom: 0.15rem;
     text-decoration: none;
@@ -278,24 +333,47 @@
     width: fit-content;
 
     &>span {
-      color: var(--color-secondary-medium);
+      color: var(--sidebar-text-color);
     }
   }
+  // Breathing room between lists
+  & .td-sidebar-nav ul > li > ul:first-of-type {
+    padding-top: 1rem;
+    // background-color: purple;
+  }
 
+  // The last item in each list should have some breathing room at the bottom.
+   & .td-sidebar-nav ul:has(.with-child) > li:last-of-type {
+    padding-bottom: 1rem;
+    // background-color: orange;
+
+  }
+  // Root level sections
   & .td-sidebar-nav .ul-1>li>a.td-sidebar-link,
   & .td-sidebar-nav .ul-1>li>.sidebar-section-flex-wrapper>a.td-sidebar-link {
     font-weight: 600;
+    font-size: 1.30rem;
+    // background-color: red;
+
   }
 
-  & .td-sidebar-nav ul:not(.ul-1) .td-sidebar-link,
-  & .td-sidebar-nav ul:not(.ul-1) .td-sidebar-link.td-sidebar-link__section {
+  // Leaf pages
+  & .td-sidebar-nav ul:not(.with-child) > li > a.td-sidebar-link {
     font-weight: 400;
-    font-size: 1rem;
+    // background-color: green;
   }
 
-  & .td-sidebar-link.td-sidebar-link__page {
+  // Sections that contain child pages are emphasised over leaf pages so the
+  // navigation hierarchy reads clearly at a glance.
+  & .td-sidebar-nav__section.with-child > a.td-sidebar-link,
+  & .td-sidebar-nav__section.with-child > .sidebar-section-flex-wrapper > a.td-sidebar-link {
+    font-weight: 800;
+    font-size: 1.2rem;
+  }
+
+  & .td-sidebar-nav__section.without-child > a.td-sidebar-link {
     font-weight: 400;
-    font-size: 1rem;
+    
   }
 
   & .td-sidebar-link:hover,
@@ -319,11 +397,11 @@
   }
 
   & .td-sidebar-nav__section-title.active-path>.td-sidebar-link {
-    color: var(--color-secondary-medium);
+    color: var(--sidebar-active-text-color);
     text-decoration: none;
 
     &>span {
-      color: var(--color-secondary-medium);
+      color: var(--sidebar-active-text-color);
     }
   }
 
@@ -380,7 +458,7 @@
   & .td-sidebar-nav__section-title.active-path>.td-sidebar-link,
   & .td-sidebar-nav__section-title.active-path>.td-sidebar-link span {
     scroll-margin-bottom: 8rem;
-    color: var(--color-secondary-medium);
+    color: var(--sidebar-active-text-color);
   }
 }
 .dark-mode .sidebar-container {
@@ -430,4 +508,9 @@
     -webkit-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
   }
+}
+
+/* Sidebar toggle button arrows - white color */
+#td-sidebar-menu .sidebar-section-toggle .caret-icon path {
+  stroke: var(--sidebar-text-color);
 }

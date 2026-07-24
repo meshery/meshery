@@ -51,7 +51,7 @@ func (h *Handler) SavePerformanceProfileHandler(
 		return
 	}
 	if user != nil && user.ID != uuid.Nil {
-		parsedBody.UserID = user.ID
+		parsedBody.Owner = user.ID
 	}
 
 	j, _ := json.Marshal(parsedBody)
@@ -72,10 +72,6 @@ func (h *Handler) SavePerformanceProfileHandler(
 		h.log.Error(ErrFailToSave(err, obj))
 		writeMeshkitError(rw, ErrFailToSave(err, obj), http.StatusInternalServerError)
 		return
-	}
-
-	if h.config.PerformanceChannel != nil {
-		h.config.PerformanceChannel <- struct{}{}
 	}
 
 	rw.Header().Set("Content-Type", "application/json")

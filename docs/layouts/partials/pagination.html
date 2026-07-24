@@ -6,10 +6,10 @@
 {{- $pages := $pageTree.Get "pages" -}}
 
 {{ $index := -1 }}
-{{ $current := trim .RelPermalink "/" }} {{/* Get current page path */}}
+{{ $current := .RelPermalink }} {{/* Get current page path */}}
 
 {{ range $i, $p := $pages }}
-  {{ $normalizedURL := trim ($p.url | relURL) "/" }}
+  {{ $normalizedURL := $p.url }}
   {{ if eq $normalizedURL $current }}
     {{ $index = $i }}
   {{ end }}
@@ -21,7 +21,7 @@
 
   {{ if gt $index 0 }}
     {{ $prev := index $pages (sub $index 1) }}
-    <a class="toc-card prev" href="{{ $prev.url | relURL }}">   
+    <a class="toc-card prev" href="{{ $prev.url }}">
       <div class="toc-label">Previous</div>
       <div class="toc-title">
         <span class="arrow"><i class="fa-solid fa-chevron-left"></i></span>
@@ -32,7 +32,7 @@
 
   {{ if lt $index (sub (len $pages) 1) }}
     {{ $next := index $pages (add $index 1) }}
-    <a class="toc-card next" href="{{ $next.url | relURL }}">
+    <a class="toc-card next" href="{{ $next.url }}">
       <div class="toc-label">Next</div>
       <div class="toc-title">
         {{ replaceRE "\\s*[ↆ↓]$" "" (replaceRE "^[^a-zA-Z0-9]+" "" $next.title) }}
