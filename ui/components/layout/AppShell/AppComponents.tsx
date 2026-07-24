@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { FavoriteIcon, Hidden, Typography, useTheme } from '@sistent/sistent';
+import { FavoriteIcon, Hidden, Typography, useHasPermission, useTheme } from '@sistent/sistent';
 import Navigator from '../Navigator/Navigator';
-import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
 import { useDispatch, useSelector } from 'react-redux';
 import { connectionsToK8sContexts } from '@/rtk-query/transforms';
@@ -80,10 +79,7 @@ type SetAppState = (partial: Record<string, unknown>) => void;
 // refetches this query. Everything is connection-driven.
 export const KubernetesSubscription = ({ setAppState }: { setAppState: SetAppState }) => {
   const dispatch = useDispatch();
-  const canViewClusters = CAN(
-    Keys.IdentityAccessManagementViewAllKubernetesClusters.id,
-    Keys.IdentityAccessManagementViewAllKubernetesClusters.function,
-  );
+  const canViewClusters = useHasPermission(Keys.IdentityAccessManagementViewAllKubernetesClusters);
 
   const { data: connectionData } = useGetConnectionsQuery(
     // Filter by kind via a plain repeated query param (?kind=kubernetes);

@@ -214,6 +214,9 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
       (res?.connectionDefinitions || []).forEach((definition) => {
         if (definition?.kind) {
           connectionDef[definition.kind] = {
+            // The definition's authored display name ("Artifact Hub", "GitHub"),
+            // which title-casing the kind slug cannot reproduce.
+            name: definition.name,
             transitionMap: definition.transitionMap,
             icon: definition.styles?.svgColor,
           };
@@ -224,8 +227,8 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     }
 
     // Fall back to the legacy `<Kind>Connection` component for kinds without a
-    // first-class connection definition yet (e.g. meshery, github), and to
-    // backfill the flat `transitions` list / icon the definition did not provide.
+    // first-class connection definition yet (e.g. meshery), and to backfill the
+    // flat `transitions` list / icon the definition did not provide.
     const promises = CONNECTION_KINDS_DEF.map(async (kind) => {
       try {
         const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));

@@ -100,6 +100,7 @@ vi.mock('@sistent/sistent', () => ({
   useTheme: () => ({
     palette: { mode: 'light', icon: { default: '#000', disabled: '#777' } },
   }),
+  useHasPermission: () => canSpy(),
 }));
 
 import KubernetesConnectionStatsChart from './KubernetesConnectionChart';

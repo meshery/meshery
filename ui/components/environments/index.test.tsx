@@ -120,6 +120,9 @@ vi.mock('../../assets/icons/Environment', () => ({ default: () => null }));
 vi.mock('../../assets/icons/Connection', () => ({ default: () => null }));
 
 vi.mock('@sistent/sistent', () => ({
+  // This suite exercises the create flow, not authorization: grant every
+  // capability so the permission gates never mask the behaviour under test.
+  useHasPermission: () => true,
   Button: ({ children, onClick, ...rest }: any) => (
     <button onClick={onClick} {...rest}>
       {children}

@@ -12,8 +12,6 @@ import {
 } from '@sistent/sistent';
 import { alpha, styled } from '@/theme';
 import { EVENT_TYPES } from 'lib/event-types';
-import CAN from '@/utils/can';
-import { Keys } from '@meshery/schemas/permissions';
 import {
   buildCredentialSecret,
   CONNECTIONS_PATH,
@@ -21,7 +19,6 @@ import {
   DEFAULT_CONNECTION_DOCS_URL,
   filterCredentialsForKind,
   resolveConnectionName,
-  type ConnectionWizardKindConfig,
 } from '../ConnectionWizard.helpers';
 import { formatWizardError } from './errors';
 import {
@@ -30,17 +27,8 @@ import {
   CredentialAssociationStep,
   GenericConnectionDetailsStep,
 } from '../ConnectionWizardStepContent';
+import { useKindPermission } from './useKindPermission';
 import type { WizardContext, WizardStep } from './types';
-
-export const kindPermission = (config?: ConnectionWizardKindConfig | null) => {
-  if (!config) {
-    return false;
-  }
-
-  return config.flow === 'kubernetes'
-    ? CAN(Keys.LifecycleManagementAddCluster.id, Keys.LifecycleManagementAddCluster.function)
-    : CAN(Keys.MesherySystemConnectMetrics.id, Keys.MesherySystemConnectMetrics.function);
-};
 
 const existingCredentialsFor = (ctx: WizardContext) =>
   filterCredentialsForKind(ctx.services.credentials, ctx.data.kindConfig?.kind);
@@ -49,42 +37,45 @@ const existingCredentialsFor = (ctx: WizardContext) =>
 // 1. Choose connection
 // ---------------------------------------------------------------------------
 
-const SelectStepBody = ({ ctx }: { ctx: WizardContext }) => (
-  <ConnectionKindSelectionStep
-    kinds={ctx.data.availableKinds}
-    isLoading={ctx.data.isLoadingKinds}
-    selectedKind={ctx.data.kindConfig?.kind ?? null}
-    connectionIconMap={ctx.data.connectionIconMap}
-    onSelectKind={(kind) => {
-      if (kind === ctx.data.kindConfig?.kind) {
-        return;
-      }
-      const kindConfig = ctx.data.availableKinds.find((config) => config.kind === kind) || null;
-      // Reset every downstream field so switching kinds never leaks state.
-      ctx.patch({
-        kindConfig,
-        connectionFormData: {},
-        credentialFormData: {},
-        selectedCredentialId: '',
-        credentialMode: 'existing',
-        skipCredentialVerification: false,
-        kubeconfigFile: null,
-        registrationId: null,
-        registrationResult: null,
-        registrationError: null,
-        postConfig: {},
-      });
-      ctx.advance();
-    }}
-    canUseKind={kindPermission}
-  />
-);
+const SelectStepBody = ({ ctx }: { ctx: WizardContext }) => {
+  const kindPermission = useKindPermission();
+  return (
+    <ConnectionKindSelectionStep
+      kinds={ctx.data.availableKinds}
+      isLoading={ctx.data.isLoadingKinds}
+      selectedKind={ctx.data.kindConfig?.kind ?? null}
+      connectionIconMap={ctx.data.connectionIconMap}
+      onSelectKind={(kind) => {
+        if (kind === ctx.data.kindConfig?.kind) {
+          return;
+        }
+        const kindConfig = ctx.data.availableKinds.find((config) => config.kind === kind) || null;
+        // Reset every downstream field so switching kinds never leaks state.
+        ctx.patch({
+          kindConfig,
+          connectionFormData: {},
+          credentialFormData: {},
+          selectedCredentialId: '',
+          credentialMode: 'existing',
+          skipCredentialVerification: false,
+          kubeconfigFile: null,
+          registrationId: null,
+          registrationResult: null,
+          registrationError: null,
+          postConfig: {},
+        });
+        ctx.advance();
+      }}
+      canUseKind={kindPermission}
+    />
+  );
+};
 
 export const selectStep: WizardStep = {
   id: 'select',
   label: 'Choose Connection',
   Component: SelectStepBody,
-  canProceed: (ctx) => Boolean(ctx.data.kindConfig && kindPermission(ctx.data.kindConfig)),
+  canProceed: (ctx) => Boolean(ctx.data.kindConfig),
   helpText: `Choose the type of connection you want to create. Each connection type lets Meshery manage a different kind of infrastructure and interface with another managed service. [Learn more about connections](${DEFAULT_CONNECTION_DOCS_URL}).`,
 };
 

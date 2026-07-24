@@ -83,16 +83,18 @@ Below is a complete, minimal definition for a hypothetical telemetry backend. It
 These three fields identify the Connection and determine how the wizard treats it:
 
 - **`kind`** - the genre of Connection (e.g. `grafana`, `prometheus`, `kubernetes`). The wizard groups credentials and renders icons by `kind`.
-- **`type`** - a broad classification: `platform`, `telemetry`, `collaboration`, and so on.
-- **`subType`** - a finer classification: `orchestration`, `metrics`, `git`, `chat`, and so on.
+- **`type`** - a broad classification: `platform`, `telemetry`, `source`, `collaboration`, and so on.
+- **`subType`** - a finer classification: `orchestration`, `metrics`, `git`, `registry`, `chat`, and so on.
 
 Together they let the UI target a specific Connection with a [custom wizard extension](#advanced-customizing-the-wizard) when the generic flow is not enough. For reference, the definitions Meshery ships with:
 
-| Connection | `kind`       | `type`      | `subType`       | initial `status` |
-| ---------- | ------------ | ----------- | --------------- | ---------------- |
-| Kubernetes | `kubernetes` | `platform`  | `orchestration` | `discovered`     |
-| Grafana    | `grafana`    | `telemetry` | `metrics`       | `registered`     |
-| Prometheus | `prometheus` | `telemetry` | `metrics`       | `registered`     |
+| Connection   | `kind`        | `type`      | `subType`       | initial `status` |
+| ------------ | ------------- | ----------- | --------------- | ---------------- |
+| Kubernetes   | `kubernetes`  | `platform`  | `orchestration` | `discovered`     |
+| Grafana      | `grafana`     | `telemetry` | `metrics`       | `registered`     |
+| Prometheus   | `prometheus`  | `telemetry` | `metrics`       | `registered`     |
+| Artifact Hub | `artifacthub` | `source`    | `registry`      | `registered`     |
+| GitHub       | `github`      | `source`    | `git`           | `registered`     |
 
 ### Lifecycle: `status` and `transitionMap`
 
@@ -132,7 +134,7 @@ Place the definition as a JSON file in a `connections/` folder inside its Model,
 models/<model>/<version>/connections/<Name>Connection.json
 ```
 
-For example, the shipped definitions live under [`models/meshery-core/.../connections/`](https://github.com/meshery/meshery/tree/master/models) as `KubernetesConnection.json`, `GrafanaConnection.json`, and `PrometheusConnection.json`. A Model may include any number of connection definitions. Use these existing files as templates.
+For example, the shipped definitions live under [`models/meshery-core/.../connections/`](https://github.com/meshery/meshery/tree/master/models) as `KubernetesConnection.json`, `GrafanaConnection.json`, `PrometheusConnection.json`, `ArtifactHubConnection.json`, and `GitHubConnection.json`. A Model may include any number of connection definitions. Use these existing files as templates.
 
 ## How the definition is registered and consumed
 
@@ -147,6 +149,8 @@ For example, the shipped definitions live under [`models/meshery-core/.../connec
    | `DELETE` | `/api/registry/connections/{id}`                | Remove a definition                    |
 
 2. **Consumption.** The [Connection Wizard]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}) lists every registered definition as a creatable kind and renders its `connectionSchema` and `credentialSchema` as wizard steps. **Register your definition and it appears in the wizard automatically** - no UI changes required.
+
+3. **Lifecycle.** Registration drives the default connection state machine, which implements these transitions: `discovered → registered | ignored`, `registered → connected | ignored`, `connected → disconnected | deleted`, and `disconnected → connected | deleted`. Connecting persists the Connection and its credential. **No server code is required** - add a kind-specific action only when the kind needs a reachability probe before it may advance to `connected` (Grafana and Prometheus verify their endpoint; Kubernetes has a bespoke machine altogether). Keep the [`transitionMap`](#lifecycle-status-and-transitionmap) you author in step with this machine: it is the copy the UI shows for each transition.
 
 {{% alert color="info" title="Verify it appears" %}}
 After registering, open the Connection Wizard (**Connections → Create Connection**) and confirm your kind is listed with its icon, that the Configure and Associate Credential steps render your schemas, and that creating a Connection drives the states you declared in the `transitionMap`.

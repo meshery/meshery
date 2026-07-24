@@ -9,6 +9,7 @@ import {
   CustomTooltip,
   getRelativeTime,
   getFullFormattedTime,
+  useHasPermission,
 } from '@sistent/sistent';
 import { FormatId } from '../data-formatter';
 import { iconMedium } from '../../css/icons.styles';
@@ -18,7 +19,7 @@ import { ConnectionStatusSelect } from './ConnectionStatusSelect';
 import { DefaultTableCell, SortableTableCell } from './common';
 import { getColumnValue } from '../../utils/utils';
 import MultiSelectWrapper from '../general/multi-select-wrapper';
-import CAN from '@/utils/can';
+
 import { Keys } from '@meshery/schemas/permissions';
 import { CustomTextTooltip } from '../meshery-mesh-interface/PatternService/CustomTextTooltip';
 import { getFallbackImageBasedOnKind, normalizeStaticImagePath } from '@/utils/fallback';
@@ -116,6 +117,11 @@ export const useConnectionColumns = ({
   pingPrometheus,
   transitionMapByKind,
 }: UseConnectionColumnsArgs) => {
+  const canAssignConnectionsToEnv = useHasPermission(
+    Keys.WorkspaceManagementAssignConnectionsToEnvironment,
+  );
+  const canChangeConnectionState = useHasPermission(Keys.LifecycleManagementChangeConnectionState);
+
   return useMemo(() => {
     const nextColumns = [
       {
@@ -282,12 +288,7 @@ export const useConnectionColumns = ({
                         }
                         isSelectAll={true}
                         menuPlacement={'bottom'}
-                        disabled={
-                          !CAN(
-                            Keys.WorkspaceManagementAssignConnectionsToEnvironment.id,
-                            Keys.WorkspaceManagementAssignConnectionsToEnvironment.function,
-                          )
-                        }
+                        disabled={!canAssignConnectionsToEnv}
                       />
                     </Grid2>
                   </Grid2>
@@ -450,13 +451,7 @@ export const useConnectionColumns = ({
           },
           customBodyRender: function CustomBody(value, tableMeta) {
             const kind = getColumnValue(tableMeta.rowData, 'kind', nextColumns);
-            const disabled =
-              value === 'deleted'
-                ? true
-                : !CAN(
-                    Keys.LifecycleManagementChangeConnectionState.id,
-                    Keys.LifecycleManagementChangeConnectionState.function,
-                  );
+            const disabled = value === 'deleted' ? true : !canChangeConnectionState;
 
             return (
               <ConnectionStatusSelect
@@ -536,6 +531,8 @@ export const useConnectionColumns = ({
 
     return nextColumns;
   }, [
+    canAssignConnectionsToEnv,
+    canChangeConnectionState,
     envUrl,
     environmentOptions,
     handleActionMenuOpen,

@@ -1,7 +1,6 @@
 import ServiceMesheryIcon from '@/assets/icons/ServiceMesheryIcon';
 import { usePublishPatternMutation, useUpdatePatternFileMutation } from '@/rtk-query/design';
 import TooltipButton from '@/utils/TooltipButton';
-import CAN from '@/utils/can';
 import { filterEmptyFields } from '@/utils/objects';
 import { Keys } from '@meshery/schemas/permissions';
 import {
@@ -24,6 +23,7 @@ import {
   Skeleton,
   Typography,
   VisibilityChipMenu,
+  useHasPermission,
   useTheme,
 } from '@sistent/sistent';
 import { Close, Lock, Public } from '@/assets/icons';
@@ -83,6 +83,7 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
   const [saveFormLoading, setSaveFormLoading] = useState(false);
   const [uiSchema, setUiSchema] = useState({});
   const { notify } = useNotification();
+  const canPublishDesign = useHasPermission(Keys.CatalogManagementPublishDesign);
 
   const [updatePattern] = useUpdatePatternFileMutation();
   const currentUserID = currentUser?.id;
@@ -493,14 +494,7 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
               variant="outlined"
               onClick={handlePublishController}
               disabled={
-                !isPublished
-                  ? false
-                  : !(
-                      CAN(
-                        Keys.CatalogManagementPublishDesign.id,
-                        Keys.CatalogManagementPublishDesign.function,
-                      ) && currentUser?.id === selectedResource?.userId
-                    ) || isPublished
+                isPublished || !(canPublishDesign && currentUser?.id === selectedResource?.userId)
               }
             >
               {isPublished ? 'Published' : 'Publish to Catalog'}

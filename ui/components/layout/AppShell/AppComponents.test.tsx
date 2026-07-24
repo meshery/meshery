@@ -54,6 +54,7 @@ vi.mock('@sistent/sistent', () => ({
       background: { brand: { default: '#00b39f' } },
     },
   }),
+  useHasPermission: () => true,
 }));
 
 vi.mock('../Navigator/Navigator', () => ({

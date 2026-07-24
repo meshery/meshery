@@ -80,6 +80,7 @@ vi.mock('@sistent/sistent', () => ({
     </button>
   ),
   Typography: ({ children }) => <span>{children}</span>,
+  useHasPermission: () => true,
   Table: ({ children }) => <div>{children}</div>,
   Grid2: ({ children }) => <div>{children}</div>,
   Button: ({ children, onClick, disabled, ...props }) => (

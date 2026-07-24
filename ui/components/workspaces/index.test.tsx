@@ -113,6 +113,9 @@ vi.mock('@/assets/icons/RightArrowIcon', () => ({ default: () => null }));
 vi.mock('css/icons.styles', () => ({ iconMedium: {} }));
 
 vi.mock('@sistent/sistent', () => ({
+  // This suite exercises the create flow, not authorization: grant every
+  // capability so the permission gates never mask the behaviour under test.
+  useHasPermission: () => true,
   Box: ({ children }: any) => <div>{children}</div>,
   Breadcrumbs: ({ children }: any) => <nav>{children}</nav>,
   Button: ({ children, onClick, ...rest }: any) => (

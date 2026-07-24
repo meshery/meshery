@@ -1,7 +1,35 @@
 import { CONNECTION_KINDS } from '@/utils/Enum';
 import { EVENT_TYPES } from 'lib/event-types';
 
+/*
+ * Pure, presentation-free helpers for the Create Connection wizard: kind-config
+ * derivation from the registry, credential shaping, kubeconfig-import parsing,
+ * step labels, and success notifications. No JSX or React state lives here so it
+ * stays trivially unit-testable (see ConnectionWizard.helpers.test.ts).
+ */
+
+// ---------------------------------------------------------------------------
+// Shared types
+// ---------------------------------------------------------------------------
+
+/**
+ * Connection-kind identifier as it appears on a registry connection definition
+ * (e.g. "kubernetes", "prometheus"). Intentionally a widened `string`: the set
+ * of registerable kinds is registry-driven, not a fixed enum.
+ */
 export type SupportedConnectionWizardKind = string;
+
+/** A JSON Schema object carried on a connection/credential definition. */
+export type JsonSchema = Record<string, unknown>;
+
+/** Loosely-typed form/record payload exchanged with the wizard steps. */
+type GenericRecord = Record<string, unknown>;
+
+export type ConnectionWizardFlow = 'kubernetes' | 'generic';
+
+// ---------------------------------------------------------------------------
+// Connections page navigation + create-connection deep link
+// ---------------------------------------------------------------------------
 
 /** Lifecycle Connections page path (deep links + post-create navigation). */
 export const CONNECTIONS_PATH = '/management/connections';
@@ -13,6 +41,10 @@ export const CREATE_CONNECTION_QUERY = {
 
 export const isCreateConnectionQuery = (value: string | string[] | undefined): boolean =>
   value === 'true' || value === '1';
+
+// ---------------------------------------------------------------------------
+// Success notifications
+// ---------------------------------------------------------------------------
 
 export type ConnectionCreatedNotifyPayload = {
   message: string;
@@ -54,9 +86,9 @@ export const kubernetesImportedNotify = (count: number): ConnectionCreatedNotify
   };
 };
 
-export type ConnectionWizardFlow = 'kubernetes' | 'generic';
-
-export type JsonSchema = Record<string, unknown>;
+// ---------------------------------------------------------------------------
+// Registry connection definitions -> wizard kind configs
+// ---------------------------------------------------------------------------
 
 export type ConnectionWizardKindConfig = {
   kind: SupportedConnectionWizardKind;
@@ -104,10 +136,11 @@ export type ConnectionDefinition = {
   } & Record<string, unknown>;
 };
 
+export const DEFAULT_CONNECTION_DOCS_URL = 'https://docs.meshery.io/concepts/logical/connections';
+
+/** Treat empty/non-object schema payloads as absent so steps can branch on null. */
 const asSchema = (value?: JsonSchema | null): JsonSchema | null =>
   value && typeof value === 'object' && Object.keys(value).length > 0 ? value : null;
-
-export const DEFAULT_CONNECTION_DOCS_URL = 'https://docs.meshery.io/concepts/logical/connections';
 
 /**
  * Determines which wizard flow a connection kind drives. Kubernetes is unique:
@@ -128,7 +161,8 @@ export const resolveConnectionWizardFlow = (
  * Maps the connection definitions returned by the registry endpoint into the
  * config the wizard renders. Replaces the previously hardcoded kind list so the
  * set of registerable connections is driven by what is registered in the
- * registry. Definitions without a `kind` are skipped.
+ * registry. Definitions without a `kind` are skipped and duplicates (by
+ * kind|type|subType) are collapsed to the first occurrence.
  */
 export const buildConnectionWizardKindConfigs = (
   definitions?: ConnectionDefinition[] | null,
@@ -170,6 +204,10 @@ export const buildConnectionWizardKindConfigs = (
   }, []);
 };
 
+// ---------------------------------------------------------------------------
+// Credential shaping
+// ---------------------------------------------------------------------------
+
 export type CredentialRecord = {
   id?: string;
   name?: string;
@@ -178,9 +216,22 @@ export type CredentialRecord = {
   secret?: Record<string, unknown>;
 };
 
-type GenericRecord = Record<string, unknown>;
+/**
+ * The `credentialSecret` payload handed to the registration state machine. It is
+ * either the forwarded fields of an existing credential or an arbitrary
+ * normalized form record, so it keeps the open `GenericRecord` index while
+ * naming the fields callers commonly read/stamp.
+ */
+export type CredentialSecretPayload = GenericRecord & {
+  id?: string;
+  name?: string;
+  secret?: unknown;
+};
 
-export const filterCredentialsForKind = (credentials: CredentialRecord[], kind?: string | null) => {
+export const filterCredentialsForKind = (
+  credentials: CredentialRecord[],
+  kind?: string | null,
+): CredentialRecord[] => {
   if (!kind) {
     return [];
   }
@@ -193,7 +244,7 @@ export const filterCredentialsForKind = (credentials: CredentialRecord[], kind?:
   });
 };
 
-export const normalizeCredentialPayload = (formData?: GenericRecord | null) => {
+export const normalizeCredentialPayload = (formData?: GenericRecord | null): GenericRecord => {
   if (!formData) {
     return {};
   }
@@ -222,7 +273,7 @@ export const normalizeCredentialPayload = (formData?: GenericRecord | null) => {
 export const buildCredentialSecret = (
   selectedCredential?: CredentialRecord | null,
   credentialFormData?: GenericRecord | null,
-) => {
+): CredentialSecretPayload => {
   if (selectedCredential) {
     return {
       id: selectedCredential.id,
@@ -234,6 +285,10 @@ export const buildCredentialSecret = (
   return normalizeCredentialPayload(credentialFormData);
 };
 
+// ---------------------------------------------------------------------------
+// Wizard step labels
+// ---------------------------------------------------------------------------
+
 export const getWizardStepLabels = ({
   kind,
   flow,
@@ -242,7 +297,7 @@ export const getWizardStepLabels = ({
   kind?: SupportedConnectionWizardKind | null;
   flow?: ConnectionWizardKindConfig['flow'];
   hasCredentialSchema?: boolean;
-}) => {
+}): string[] => {
   const configureLabel = flow === 'kubernetes' ? 'Import Kubeconfig' : 'Configure Connection';
 
   const steps = ['Choose Kind', configureLabel];
@@ -256,30 +311,43 @@ export const getWizardStepLabels = ({
   return steps;
 };
 
+// ---------------------------------------------------------------------------
+// Kubernetes kubeconfig-import result parsing
+// ---------------------------------------------------------------------------
+
+export type KubernetesContextBucket = 'connected' | 'registered' | 'ignored' | 'errored';
+
 // The kubeconfig upload endpoint (POST /system/kubernetes) returns its context
 // buckets in camelCase (registeredContexts, ...); older/mocked payloads used
-// snake_case, so accept either form.
+// snake_case, so accept either form. Keyed once at module scope rather than
+// rebuilt per call.
+const KUBERNETES_CONTEXT_KEYS: Record<KubernetesContextBucket, { camel: string; snake: string }> = {
+  connected: { camel: 'connectedContexts', snake: 'connected_contexts' },
+  registered: { camel: 'registeredContexts', snake: 'registered_contexts' },
+  ignored: { camel: 'ignoredContexts', snake: 'ignored_contexts' },
+  errored: { camel: 'erroredContexts', snake: 'errored_contexts' },
+};
+
 export const getKubernetesContexts = (
   response: GenericRecord | null | undefined,
-  bucket: 'connected' | 'registered' | 'ignored' | 'errored',
+  bucket: KubernetesContextBucket,
 ): GenericRecord[] => {
-  const camel = {
-    connected: 'connectedContexts',
-    registered: 'registeredContexts',
-    ignored: 'ignoredContexts',
-    errored: 'erroredContexts',
-  }[bucket];
-  const snake = {
-    connected: 'connected_contexts',
-    registered: 'registered_contexts',
-    ignored: 'ignored_contexts',
-    errored: 'errored_contexts',
-  }[bucket];
+  const { camel, snake } = KUBERNETES_CONTEXT_KEYS[bucket];
   const value = response?.[camel] ?? response?.[snake];
   return Array.isArray(value) ? (value as GenericRecord[]) : [];
 };
 
-export const buildKubernetesImportSummary = (response?: GenericRecord | null) => {
+export type KubernetesImportSummary = {
+  connectedCount: number;
+  registeredCount: number;
+  ignoredCount: number;
+  erroredCount: number;
+  importedCount: number;
+};
+
+export const buildKubernetesImportSummary = (
+  response?: GenericRecord | null,
+): KubernetesImportSummary => {
   const connectedCount = getKubernetesContexts(response, 'connected').length;
   const registeredCount = getKubernetesContexts(response, 'registered').length;
   const ignoredCount = getKubernetesContexts(response, 'ignored').length;
@@ -294,7 +362,11 @@ export const buildKubernetesImportSummary = (response?: GenericRecord | null) =>
   };
 };
 
-export const resolveConnectionName = (kind: string, formData?: GenericRecord | null) => {
+// ---------------------------------------------------------------------------
+// Connection naming
+// ---------------------------------------------------------------------------
+
+export const resolveConnectionName = (kind: string, formData?: GenericRecord | null): string => {
   const explicitName = formData?.name;
   if (typeof explicitName === 'string' && explicitName.trim().length > 0) {
     return explicitName.trim();

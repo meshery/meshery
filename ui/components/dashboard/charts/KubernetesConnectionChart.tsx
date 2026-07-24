@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { iconSmall } from '../../../css/icons.styles';
 import { CustomTextTooltip } from '@/components/meshery-mesh-interface/PatternService/CustomTextTooltip';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
-import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
 import { useRouter } from 'next/router';
 import { DashboardSection, LoadingContainer } from '../style';
@@ -17,6 +16,7 @@ import {
   InfoOutlinedIcon,
   KubernetesIcon,
   Typography,
+  useHasPermission,
   useTheme,
 } from '@sistent/sistent';
 import WidgetErrorFallback from '../widgets/WidgetErrorFallback';
@@ -90,10 +90,7 @@ export default function KubernetesConnectionStatsChart() {
     [chartData, router, theme],
   );
 
-  const canViewConnections = CAN(
-    Keys.WorkspaceManagementViewConnections.id,
-    Keys.WorkspaceManagementViewConnections.function,
-  );
+  const canViewConnections = useHasPermission(Keys.WorkspaceManagementViewConnections);
   const header = (
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

@@ -65,7 +65,7 @@
     "@rjsf/utils": "^6.6.2",
     "@rjsf/validator-ajv8": "^6.6.2",
     "@sistent/mui-datatables": "^8.0.0",
-    "@sistent/sistent": "^0.21.41",
+    "@sistent/sistent": "^0.21.42",
     "@tippyjs/react": "^4.2.6",
     "@uiw/codemirror-theme-material": "^4.25.10",
     "@uiw/react-codemirror": "^4.25.10",

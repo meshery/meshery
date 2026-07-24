@@ -12,6 +12,7 @@ import {
   crimson,
   FullScreenIcon,
   FullScreenExitIcon,
+  useHasPermission,
 } from '@sistent/sistent';
 import { CustomTooltip, VisibilityChipMenu } from '@sistent/sistent';
 import {
@@ -101,7 +102,8 @@ function MesheryPatternCard_({
   const editInConfigurator = () => {
     router.push('/configuration/designs/configurator?design_id=' + id);
   };
-  const userCanEdit = canEditDesign(user, pattern);
+  const hasEditPermission = useHasPermission(Keys.CatalogManagementEditDesign);
+  const userCanEdit = canEditDesign(user, pattern, hasEditPermission);
 
   const formatPatternFile = (file) => {
     try {
