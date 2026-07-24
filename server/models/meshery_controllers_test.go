@@ -135,9 +135,23 @@ func TestGetControllerHandlersForEachContextReturnsCopy(t *testing.T) {
 // way they run in production. It guards the data race fixed in #20807 and is
 // meaningful under `go test -race`.
 func TestMesheryControllersHelperConcurrentStateAccess(t *testing.T) {
+	log, _ := logger.New("test", logger.Options{})
+
+	// Seed a MeshSync data handler so RemoveMeshSyncDataHandler actually
+	// exercises the clear-the-pointer-under-lock path. broker is nil and no
+	// listeners are registered, so Stop() closes stopCh once and returns
+	// immediately — safe to drive from the concurrent phase.
+	seededHandler := &MeshsyncDataHandler{
+		stopCh:     make(chan struct{}),
+		stopOnce:   &sync.Once{},
+		listenerWg: &sync.WaitGroup{},
+	}
+
 	mch := &MesheryControllersHelper{
+		log:                    log,
 		ctxControllerHandlers:  map[MesheryController]controllers.IMesheryController{MesheryBroker: nil},
 		ctxOperatorStatus:      controllers.Unknown,
+		ctxMeshsyncDataHandler: seededHandler,
 		meshsyncDeploymentMode: connections.MeshsyncDeploymentModeOperator,
 	}
 
@@ -147,16 +161,23 @@ func TestMesheryControllersHelperConcurrentStateAccess(t *testing.T) {
 	ot := NewOperatorTracker(false)
 	ot.Undeployed(mch.contextID, true)
 
+	k8scontext := K8sContext{ID: "ctx", Name: "test"}
+
 	ops := []func(){
 		// writers
 		func() { mch.SetMeshsyncDeploymentMode(connections.MeshsyncDeploymentModeOperator) },
 		func() { mch.SetControllersConfig(&controllersconfig.MesheryControllersConfig{}) },
 		func() { mch.RemoveCtxControllerHandler(context.Background(), "ctx") },
 		func() { mch.UpdateOperatorsStatusMap(ot) },
+		func() {
+			mch.AddMeshsyncDataHandlers(context.Background(), k8scontext, uuid.Nil, uuid.Nil, nil)
+		},
+		func() { mch.RemoveMeshSyncDataHandler(context.Background(), "ctx") },
 		// readers
 		func() { _ = mch.GetControllerHandlersForEachContext() },
 		func() { _ = mch.GetOperatorsStatusMap() },
 		func() { _ = mch.GetMeshsyncDeploymentMode() },
+		func() { _ = mch.GetMeshSyncDataHandlersForEachContext() },
 	}
 
 	const iterations = 1000

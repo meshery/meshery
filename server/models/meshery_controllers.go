@@ -89,8 +89,9 @@ type MesheryControllersHelper struct {
 	// rebuilt by the connect, mode-reconcile and server-wide config-apply
 	// goroutines while the controllers-status SSE stream and the operator /
 	// MeshSync / broker status HTTP handlers read it: ctxControllerHandlers,
-	// ctxOperatorStatus, meshsyncDeploymentMode and controllersConfig.
-	// (ctxMeshsyncDataHandler / brokerPortForward have their own lifecycle.)
+	// ctxOperatorStatus, ctxMeshsyncDataHandler, meshsyncDeploymentMode and
+	// controllersConfig.
+	// (brokerPortForward has its own lifecycle.)
 	stateMu sync.RWMutex
 
 	// event broadcasting dependencies
@@ -139,6 +140,8 @@ func (mch *MesheryControllersHelper) GetControllerHandlersForEachContext() map[M
 }
 
 func (mch *MesheryControllersHelper) GetMeshSyncDataHandlersForEachContext() *MeshsyncDataHandler {
+	mch.stateMu.RLock()
+	defer mch.stateMu.RUnlock()
 	return mch.ctxMeshsyncDataHandler
 }
 
@@ -242,8 +245,9 @@ func (mch *MesheryControllersHelper) AddMeshsyncDataHandlers(ctx context.Context
 	ctxID := k8scontext.ID
 	mch.stateMu.RLock()
 	deploymentMode := mch.meshsyncDeploymentMode
+	dataHandler := mch.ctxMeshsyncDataHandler
 	mch.stateMu.RUnlock()
-	if mch.ctxMeshsyncDataHandler == nil {
+	if dataHandler == nil {
 		var brokerHandler broker.Handler
 		var stopFunc func()
 
@@ -303,7 +307,10 @@ func (mch *MesheryControllersHelper) AddMeshsyncDataHandlers(ctx context.Context
 			}, userID)
 			return mch
 		}
+		mch.stateMu.Lock()
 		mch.ctxMeshsyncDataHandler = msDataHandler
+		mch.stateMu.Unlock()
+		dataHandler = msDataHandler
 		mch.log.Info(fmt.Sprintf("MeshSync connected for Kubernetes context (%s)", ctxID))
 	}
 
@@ -316,8 +323,8 @@ func (mch *MesheryControllersHelper) AddMeshsyncDataHandlers(ctx context.Context
 	// later AddMeshsyncDataHandlers call (once IsConnected) emits the event once.
 	// Deduplicate so repeated reconcile calls do not spam the same snackbar.
 	// CompareAndSwap so concurrent AddMeshsyncDataHandlers callers emit once.
-	if mch.ctxMeshsyncDataHandler != nil &&
-		mch.ctxMeshsyncDataHandler.IsConnected() &&
+	if dataHandler != nil &&
+		dataHandler.IsConnected() &&
 		mch.meshsyncConnectedEventEmitted.CompareAndSwap(false, true) {
 		description := "MeshSync connected"
 		if deploymentMode != "" {
@@ -656,10 +663,15 @@ func (mch *MesheryControllersHelper) meshsyncDataHandlersStartLibMeshsyncRun(
 }
 
 func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Context, contextID string) {
-	if mch.ctxMeshsyncDataHandler != nil {
+	mch.stateMu.RLock()
+	dataHandler := mch.ctxMeshsyncDataHandler
+	mch.stateMu.RUnlock()
+	if dataHandler != nil {
 		mch.log.Infof("MesheryControllersHelper::RemoveMeshSyncDataHandler for contextID = %s", contextID)
-		mch.ctxMeshsyncDataHandler.Stop()
+		dataHandler.Stop()
+		mch.stateMu.Lock()
 		mch.ctxMeshsyncDataHandler = nil
+		mch.stateMu.Unlock()
 	}
 	// Allow a fresh "MeshSync connected" event when a new handler is attached.
 	mch.meshsyncConnectedEventEmitted.Store(false)
