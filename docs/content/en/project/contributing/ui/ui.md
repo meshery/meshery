@@ -29,6 +29,10 @@ Meshery UI uses a schema-driven approach where components and forms are generate
 
 **⚠️ Required Reading:** Before contributing, you must read the [Schema-Driven UI Development Guide]({{< ref "project/contributing/ui/schemas" >}}) to understand how Meshery's UI components are generated and maintained using schemas.
 
+## Meshery Extensions
+
+Meshery extensions are separately-published bundles that Meshery UI loads at runtime and hands a bag of injected capabilities and a shared event bus. Because there is no compile-time link across that boundary, a renamed key or event literal becomes a silent runtime no-op rather than a build failure. If your change touches `NavigatorExtension`, `mesheryEventBus`, or anything an extension reads, see the [Extension Contract and Event Bus guide]({{< ref "project/contributing/ui/extension-contract" >}}).
+
 ## Meshery Server APIs
 
 The [API overview]({{< ref "reference/extensibility/api.md" >}}) in the Extensibility guide offers high-level insight, while each API reference (below) offers details pertaining to each API endpoints' behavior and use.
