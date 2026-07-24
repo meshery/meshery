@@ -72,9 +72,9 @@ The `NotificationCenter` component of Meshery UI uses GraphQL subscriptions and 
 
 ### State Management and Internal Details
 
-- The State on the client is managed using `Redux Toolkit` and `RTK Query`.
+- The state on the client is managed using `Redux Toolkit` and `RTK Query`.
 - Update and Delete operations are optimistically handled.
-- Network Requests are cached and invalidated when new events arrive or when events are deleted or updated.
+- Network requests are cached and invalidated when new events arrive or when events are deleted or updated.
 - Due to need for infinite scroll and optimistic update the events are stored globally in Redux.
 
 ### Bulk Operations
@@ -110,7 +110,7 @@ The BodySectionRenderer is responsible for formatting and rendering raw text str
 
 ### ArrayRenderer
 
-The ArrayRenderer is responsible for rendering an array of items in a recursive manner, presenting them as a bulletized list using the StructuredDataFormatter.
+The ArrayRenderer is responsible for rendering an array of items in a recursive manner, presenting them as a bulletized list using the FormatStructuredData.
 
 ### KeyValueRenderer
 
@@ -136,7 +136,7 @@ The core logic for rendering metadata is handled by the `FormattedMetadata` comp
 2. **Fallback to Property-Based Formatting**  
    If no event-specific formatter is found, the `FormattedMetadata` component falls back to the `FormatStructuredData` component (imported from `ui/components/data-formatter/index.tsx`).
 
-   - This function renders each key-value pair from the `metadata` using the mappings defined in:
+   - This component renders each key-value pair from the `metadata` using the mappings defined in:
      - `PropertyFormatters` – for structured or specialized visual formats.
      - `PropertyLinkFormatters` – for rendering clickable links (e.g., file paths, URLs).
 
@@ -327,7 +327,7 @@ The **Relationship Evaluation Formatter** is specifically designed to handle not
 
 The **Dry Run Formatter** is responsible for rendering notifications related to the dry run validation of a design. A dry run simulates the deployment or undeployment of a design to identify potential errors without actually applying the changes.
 
-**Path:** `ui/components/designs/lifecycle/DryRun.tsx`
+**Path:** [DryRun.tsx](https://github.com/meshery/meshery/blob/master/ui/components/designs/lifecycle/DryRun.tsx)
 
 #### Key Components
 
@@ -359,7 +359,7 @@ The **Dry Run Formatter** is used in the following scenarios:
 
 The **Deployment Summary Formatter** is responsible for rendering notifications related to the deployment or undeployment of components in a design.
 
-**Path:** `ui/components/designs/lifecycle/DeploymentSummary.tsx`
+**Path:** [DeploymentSummary.tsx](https://github.com/meshery/meshery/blob/master/ui/components/designs/lifecycle/DeploymentSummary.tsx)
 
 #### Key Components
 
