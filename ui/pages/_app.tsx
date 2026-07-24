@@ -73,7 +73,6 @@ import './styles/charts.css';
 import uiConfig from '../ui.config';
 import { NotificationCenterProvider } from '../components/layout/NotificationCenter';
 import { getConnectionDefinitions, getMeshModelComponentByName } from '../api/meshmodel';
-import { CONNECTION_KINDS, CONNECTION_KINDS_DEF } from '../utils/Enum';
 import { ability } from '../utils/can';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
 import { formatToTitleCase } from '@/utils/utils';
@@ -226,16 +225,17 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
       console.error('Error fetching connection definitions:', error);
     }
 
-    // Fall back to the legacy `<Kind>Connection` component for kinds without a
-    // first-class connection definition yet (e.g. meshery), and to backfill the
-    // flat `transitions` list / icon the definition did not provide.
-    const promises = CONNECTION_KINDS_DEF.map(async (kind) => {
+    // Backfill each discovered kind from its legacy `<Kind>Connection` mesh-model
+    // component to supply the flat `transitions` list / icon the definition did
+    // not provide. The kind set is driven by the fetched definitions above (no
+    // hardcoded list); a kind without a matching legacy component simply returns
+    // nothing and is skipped.
+    const promises = Object.keys(connectionDef).map(async (kind) => {
       try {
         const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
         if (res?.components?.length) {
-          const kindKey = CONNECTION_KINDS[kind];
-          const existing = connectionDef[kindKey] || {};
-          connectionDef[kindKey] = {
+          const existing = connectionDef[kind] || {};
+          connectionDef[kind] = {
             ...existing,
             transitions: existing.transitions ?? res.components[0].metadata?.transitions,
             icon: existing.icon || res.components[0].styles?.svgColor,
