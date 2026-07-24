@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -130,16 +131,19 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	if !mhelpers.HasMachineContext(inst) {
 		smInstanceTracker.Remove(connectionUUID)
 	} else {
-		go func(inst *machines.StateMachine) {
-			event, err := inst.SendEvent(req.Context(), machines.Delete, nil)
+		// Detach from request cancellation so delete processing can complete after
+		// the handler returns while preserving request-scoped values.
+		detachedCtx := context.WithoutCancel(req.Context())
+		go func(inst *machines.StateMachine, ctx context.Context) {
+			defer smInstanceTracker.Remove(connectionUUID)
+
+			event, err := inst.SendEvent(ctx, machines.Delete, nil)
 			if err != nil {
 				h.log.Error(err)
 				h.log.Debug(event)
 				return
 			}
-
-			smInstanceTracker.Remove(connectionUUID)
-		}(inst)
+		}(inst, detachedCtx)
 	}
 
 	if err != nil {
