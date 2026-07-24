@@ -130,7 +130,7 @@ function MesheryPatterns({
   const [publishCatalog] = usePublishPatternMutation();
   const [unpublishCatalog] = useUnpublishPatternMutation();
   const [deletePattern] = useDeletePatternMutation();
-  const [importPattern] = useImportPatternMutation();
+  const [importPattern, { isLoading: isImportingDesign }] = useImportPatternMutation();
   const [updatePattern] = useUpdatePatternFileMutation();
   const [uploadPatternFile] = useUploadPatternFileMutation();
   const [deletePatternFile] = useDeletePatternFileMutation();
@@ -571,6 +571,7 @@ function MesheryPatterns({
                 <ImportDesignModal
                   handleClose={handleUploadImportClose}
                   handleImportDesign={handleImportDesign}
+                  isSubmitting={isImportingDesign}
                 />
               )}
             <_PromptComponent ref={modalRef} />

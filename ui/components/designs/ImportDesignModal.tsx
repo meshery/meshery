@@ -24,11 +24,18 @@ export interface ImportDesignModalProps {
    * YAML/JSON) — same shape RJSF emits for `importDesignSchema`.
    */
   handleImportDesign: (formData: unknown) => void;
+  /**
+   * Whether an import request is currently in flight (e.g. the caller's
+   * `useImportPatternMutation()` `isLoading`). Disables the submit button so
+   * rapid/repeated clicks can't fire duplicate import requests.
+   */
+  isSubmitting?: boolean;
 }
 
 const ImportDesignModalComponent: FC<ImportDesignModalProps> = ({
   handleClose,
   handleImportDesign,
+  isSubmitting = false,
 }) => (
   <FormModal
     isOpen
@@ -40,6 +47,7 @@ const ImportDesignModalComponent: FC<ImportDesignModalProps> = ({
     uiSchema={importDesignUiSchema}
     submitText="Import"
     onSubmit={handleImportDesign}
+    isSubmitDisabled={isSubmitting}
   />
 );
 
