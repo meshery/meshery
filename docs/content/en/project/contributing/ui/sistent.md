@@ -19,8 +19,8 @@ Sistent leverages Material UI libraries and provides a custom theme on top of it
 
 - This `Modal` is a Sistent Standard Modal used in validation of design.
 
-<a href="images/sistent-modal.png">
-<img style= "width: 600px;" src="images/sistent-modal.png" />
+<a href="../images/sistent-modal.png">
+<img style= "width: 600px;" src="../images/sistent-modal.png" />
 </a>
 
 ### How to use Sistent in Meshery UI
