@@ -16,7 +16,7 @@ export const DEFAULT_LAYOUT = {
       static: false,
       w: 3,
       x: 0,
-      y: 0,
+      y: 3,
     },
     {
       h: 2,
@@ -25,11 +25,11 @@ export const DEFAULT_LAYOUT = {
       static: false,
       w: 3,
       x: 0,
-      y: 0,
+      y: 5,
     },
-    { h: 2, i: 'MY_DESIGNS', moved: false, static: false, w: 3, x: 3, y: 0 },
-    { h: 2, i: 'WORKSPACE_ACTIVITY', moved: false, static: false, w: 6, x: 6, y: 0 },
-    { h: 2, i: 'CONNECTIONS_STATUS_CHART', moved: false, static: false, w: 6, x: 3, y: 2 },
+    { h: 2, i: 'MY_DESIGNS', moved: false, static: false, w: 3, x: 3, y: 3 },
+    { h: 2, i: 'WORKSPACE_ACTIVITY', moved: false, static: false, w: 6, x: 6, y: 3 },
+    { h: 2, i: 'CONNECTIONS_STATUS_CHART', moved: false, static: false, w: 6, x: 3, y: 5 },
   ],
   md: [
     {
@@ -48,7 +48,7 @@ export const DEFAULT_LAYOUT = {
       static: false,
       w: 3,
       x: 0,
-      y: 0,
+      y: 3,
     },
     {
       h: 2,
@@ -57,11 +57,11 @@ export const DEFAULT_LAYOUT = {
       static: false,
       w: 3,
       x: 6,
-      y: 0,
+      y: 3,
     },
-    { h: 2, i: 'MY_DESIGNS', moved: false, static: false, w: 3, x: 3, y: 0 },
-    { h: 2, i: 'WORKSPACE_ACTIVITY', moved: false, static: false, w: 6, x: 0, y: 0 },
-    { h: 2, i: 'CONNECTIONS_STATUS_CHART', moved: false, static: false, w: 6, x: 0, y: 2 },
+    { h: 2, i: 'MY_DESIGNS', moved: false, static: false, w: 3, x: 3, y: 3 },
+    { h: 2, i: 'WORKSPACE_ACTIVITY', moved: false, static: false, w: 6, x: 0, y: 5 },
+    { h: 2, i: 'CONNECTIONS_STATUS_CHART', moved: false, static: false, w: 6, x: 0, y: 7 },
   ],
   sm: [
     {
@@ -80,7 +80,7 @@ export const DEFAULT_LAYOUT = {
       static: false,
       w: 3,
       x: 0,
-      y: 0,
+      y: 3,
     },
     {
       h: 2,
@@ -88,12 +88,12 @@ export const DEFAULT_LAYOUT = {
       moved: false,
       static: false,
       w: 3,
-      x: 0,
-      y: 0,
+      x: 3,
+      y: 3,
     },
-    { h: 2, i: 'MY_DESIGNS', moved: false, static: false, w: 3, x: 3, y: 0 },
-    { h: 2, i: 'WORKSPACE_ACTIVITY', moved: false, static: false, w: 6, x: 6, y: 0 },
-    { h: 2, i: 'CONNECTIONS_STATUS_CHART', moved: false, static: false, w: 6, x: 0, y: 2 },
+    { h: 2, i: 'MY_DESIGNS', moved: false, static: false, w: 3, x: 0, y: 5 },
+    { h: 2, i: 'WORKSPACE_ACTIVITY', moved: false, static: false, w: 6, x: 0, y: 7 },
+    { h: 2, i: 'CONNECTIONS_STATUS_CHART', moved: false, static: false, w: 6, x: 0, y: 9 },
   ],
   xs: [
     {
@@ -112,7 +112,7 @@ export const DEFAULT_LAYOUT = {
       static: false,
       w: 2,
       x: 0,
-      y: 0,
+      y: 3,
     },
     {
       h: 2,
@@ -120,12 +120,12 @@ export const DEFAULT_LAYOUT = {
       moved: false,
       static: false,
       w: 2,
-      x: 0,
-      y: 0,
+      x: 2,
+      y: 3,
     },
-    { h: 2, i: 'MY_DESIGNS', moved: false, static: false, w: 2, x: 0, y: 2 },
-    { h: 2, i: 'WORKSPACE_ACTIVITY', moved: false, static: false, w: 6, x: 0, y: 4 },
-    { h: 2, i: 'CONNECTIONS_STATUS_CHART', moved: false, static: false, w: 6, x: 0, y: 6 },
+    { h: 2, i: 'MY_DESIGNS', moved: false, static: false, w: 2, x: 0, y: 5 },
+    { h: 2, i: 'WORKSPACE_ACTIVITY', moved: false, static: false, w: 6, x: 0, y: 7 },
+    { h: 2, i: 'CONNECTIONS_STATUS_CHART', moved: false, static: false, w: 6, x: 0, y: 9 },
   ],
   xxs: [
     {
@@ -144,7 +144,7 @@ export const DEFAULT_LAYOUT = {
       static: false,
       w: 2,
       x: 0,
-      y: 0,
+      y: 3,
     },
     {
       h: 2,
@@ -153,11 +153,11 @@ export const DEFAULT_LAYOUT = {
       static: false,
       w: 2,
       x: 0,
-      y: 0,
+      y: 5,
     },
-    { h: 2, i: 'MY_DESIGNS', moved: false, static: false, w: 2, x: 0, y: 2 },
-    { h: 2, i: 'WORKSPACE_ACTIVITY', moved: false, static: false, w: 6, x: 0, y: 4 },
-    { h: 2, i: 'CONNECTIONS_STATUS_CHART', moved: false, static: false, w: 6, x: 0, y: 6 },
+    { h: 2, i: 'MY_DESIGNS', moved: false, static: false, w: 2, x: 0, y: 7 },
+    { h: 2, i: 'WORKSPACE_ACTIVITY', moved: false, static: false, w: 6, x: 0, y: 9 },
+    { h: 2, i: 'CONNECTIONS_STATUS_CHART', moved: false, static: false, w: 6, x: 0, y: 11 },
   ],
 };
 
