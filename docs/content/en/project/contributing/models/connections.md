@@ -152,8 +152,30 @@ For example, the shipped definitions live under [`models/meshery-core/.../connec
 
 3. **Lifecycle.** Registration drives the default connection state machine, which implements these transitions: `discovered → registered | ignored`, `registered → connected | ignored`, `connected → disconnected | deleted`, and `disconnected → connected | deleted`. Connecting persists the Connection and its credential. **No server code is required** - add a kind-specific action only when the kind needs a reachability probe before it may advance to `connected` (Grafana and Prometheus verify their endpoint; Kubernetes has a bespoke machine altogether). Keep the [`transitionMap`](#lifecycle-status-and-transitionmap) you author in step with this machine: it is the copy the UI shows for each transition.
 
+4. **Seeding.** Most Connections are created by a user through the wizard. A few, though, describe something Meshery itself uses, and Meshery seeds those for itself at boot so they are present out of the box - see [System-owned Connections](#system-owned-connections) below.
+
 {{% alert color="info" title="Verify it appears" %}}
 After registering, open the Connection Wizard (**Connections → Create Connection**) and confirm your kind is listed with its icon, that the Configure and Associate Credential steps render your schemas, and that creating a Connection drives the states you declared in the `transitionMap`.
+{{% /alert %}}
+
+## System-owned Connections
+
+Meshery generates Models and Components from sources it reaches on its own: it pulls packages from [Artifact Hub]({{< ref "guides/configuration-management/importing-models/index.md" >}}) and reads manifests from GitHub repositories. Those sources are Connections too, and Meshery **seeds them for itself during boot-time seed-data initialization** so a user finds them already present rather than having to create them by hand.
+
+Seeding runs at the end of model registration (`SeedComponents` → `SeedConnections` in `server/models/`), which is also when every path that rebuilds the registry - server start, database reset, hard reset - picks it up. It is driven entirely by the registry: the set of Connections seeded is derived from the registered connection definitions, never from a list of kinds written into the server. A definition is seeded when **both** of the following hold:
+
+1. **Meshery already sources content through the kind** - it holds a *registrant* Connection of that kind, the host that Models, Components and Relationships are registered under. This is what separates Artifact Hub and GitHub from Kubernetes, Grafana and Prometheus: the latter describe resources a *user* brings, and would be meaningless as empty, endpoint-less rows.
+2. **The kind works anonymously** - its `credentialSchema` marks nothing as `required`. A seeded Connection is owned by the system and carries no credential, so a kind that cannot be used without one is never seeded.
+
+A seeded Connection takes its `name`, `type` and `subType` from its definition, which is the authoritative identity for the kind. Two properties are deliberately left alone:
+
+- **`status`** is not re-asserted. The definition's `status` is the state a *new* Connection starts in; once the Connection exists its state belongs to the state machine, so seeding never undoes a user who connected or ignored it.
+- **A user's own Connections are never touched.** Seeding only ever writes the registrant rows Meshery created itself, so a Connection you created of the same kind is left exactly as you left it.
+
+Seeding is idempotent across restarts. It writes a row only when that row does not already match its definition, so a restarted server performs no seeding work and can never produce a second Connection for a kind.
+
+{{% alert color="warning" title="Seeding is not a default for your kind" %}}
+Authoring a definition does **not** get your kind seeded, and it should not: a Connection to *your* Grafana or *your* cluster is yours to create. Seeding exists only for the sources Meshery itself reads from anonymously.
 {{% /alert %}}
 
 ## Advanced: customizing the wizard

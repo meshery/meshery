@@ -174,7 +174,7 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 			return
 		}
 		go func() {
-			models.SeedComponents(h.log, h.config, h.registryManager)
+			models.SeedComponents(h.log, h.config, h.registryManager, dbHandler)
 			krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		}()
 		writeJSONMessage(w, system.SystemMessageResponse{Message: "Database reset successful"}, http.StatusOK)

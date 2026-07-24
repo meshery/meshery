@@ -336,7 +336,7 @@ func main() {
 
 	go func() {
 		// This is where models are seeded from meshmodel directory to registry
-		models.SeedComponents(log, hc, regManager)
+		models.SeedComponents(log, hc, regManager, dbHandler)
 		// Rego is intialized for passing of policy if the policies are made to be per model base this needs to be removed.
 		r, err := policies.NewRegoInstance(models.PoliciesPath, regManager)
 		if err != nil {

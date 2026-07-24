@@ -135,7 +135,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			}
 
 			go func() {
-				models.SeedComponents(r.Log, r.Config, rm)
+				models.SeedComponents(r.Log, r.Config, rm, dbHandler)
 				krh.SeedKeys(viper.GetString("KEYS_PATH"))
 			}()
 			r.Log.Info("Hard reset complete.")
