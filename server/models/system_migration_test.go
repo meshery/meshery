@@ -14,7 +14,7 @@ import (
 // registered as a value or a pointer.
 func indirectType(m interface{}) reflect.Type {
 	t := reflect.TypeOf(m)
-	for t.Kind() == reflect.Ptr {
+	for t.Kind() == reflect.Pointer {
 		t = t.Elem()
 	}
 	return t
