@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
@@ -154,6 +155,12 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 			&models.PerformanceTestConfig{},
 			&models.SmiResultWithID{},
 			&models.K8sContext{},
+			// The registry manager below migrates the `connections` table from
+			// the v1beta1 Connection, which does not carry the canonical
+			// columns (`connection_type`, `owner`, `url`, ...). Without this the
+			// reset leaves a table the canonical model cannot be written
+			// through, exactly as cmd/main.go migrates it on boot.
+			connections.Connection{},
 		)
 
 		if err != nil {

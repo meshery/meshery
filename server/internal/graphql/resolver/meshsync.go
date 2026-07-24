@@ -13,6 +13,7 @@ import (
 	"github.com/meshery/meshery/server/internal/graphql/model"
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
@@ -118,6 +119,13 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				&models.PerformanceTestConfig{},
 				&models.SmiResultWithID{},
 				&models.K8sContext{},
+				// The registry manager below migrates the `connections` table
+				// from the v1beta1 Connection, which does not carry the
+				// canonical columns (`connection_type`, `owner`, `url`, ...).
+				// Without this the hard reset leaves a table the canonical model
+				// cannot be written through, exactly as cmd/main.go migrates it
+				// on boot.
+				connections.Connection{},
 			)
 			if err != nil {
 				r.Log.Error(err)

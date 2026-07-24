@@ -164,7 +164,7 @@ Meshery generates Models and Components from sources it reaches on its own: it p
 
 Seeding runs at the end of model registration (`SeedComponents` → `SeedConnections` in `server/models/`), which is also when every path that rebuilds the registry - server start, database reset, hard reset - picks it up. It is driven entirely by the registry: the set of Connections seeded is derived from the registered connection definitions, never from a list of kinds written into the server. A definition is seeded when **both** of the following hold:
 
-1. **Meshery already sources content through the kind** - it holds a *registrant* Connection of that kind, the host that Models, Components and Relationships are registered under. This is what separates Artifact Hub and GitHub from Kubernetes, Grafana and Prometheus: the latter describe resources a *user* brings, and would be meaningless as empty, endpoint-less rows.
+1. **Meshery already sources content through the kind** - it holds a *registrant* Connection of that kind that owns registered **Models**, the host those Models, and the Components and Relationships beneath them, are registered under. This is what separates Artifact Hub and GitHub from Kubernetes, Grafana and Prometheus: the latter describe resources a *user* brings, and would be meaningless as empty, endpoint-less rows. Registered Models are required rather than merely any registered entity, because registering a connection definition through `POST /api/registry/connections` creates a registrant of whatever kind the request body names; requiring Models keeps the rule out of reach of request input.
 2. **The kind works anonymously** - its `credentialSchema` marks nothing as `required`. A seeded Connection is owned by the system and carries no credential, so a kind that cannot be used without one is never seeded.
 
 A seeded Connection takes its `name`, `type` and `subType` from its definition, which is the authoritative identity for the kind. Two properties are deliberately left alone:
@@ -172,7 +172,11 @@ A seeded Connection takes its `name`, `type` and `subType` from its definition, 
 - **`status`** is not re-asserted. The definition's `status` is the state a *new* Connection starts in; once the Connection exists its state belongs to the state machine, so seeding never undoes a user who connected or ignored it.
 - **A user's own Connections are never touched.** Seeding only ever writes the registrant rows Meshery created itself, so a Connection you created of the same kind is left exactly as you left it.
 
-Seeding is idempotent across restarts. It writes a row only when that row does not already match its definition, so a restarted server performs no seeding work and can never produce a second Connection for a kind.
+Seeding is idempotent across restarts, and it **never adds a Connection row**. It only ever rewrites rows that model registration already created, and it writes one only when that row does not already match its definition, so a restarted server performs no seeding work at all.
+
+{{% alert color="warning" title="A kind may already hold more than one registrant" %}}
+The `registrant` block is hand-authored into every `model.json`, and the shipped blocks are not uniform - some carry a `user_id`, some omit it. A registrant's id is a hash of its content, so those spellings register as *separate* rows and a kind such as `artifacthub` can already hold several. Seeding stamps the definition's identity onto exactly **one** canonical registrant per kind - deterministically, the lowest id, so the same row is picked on every boot - and leaves every sibling exactly as registration wrote it. Deduplicating the registrant rows themselves would have to repoint `registries.registrant_id` and is tracked separately in [meshery/meshery#20950](https://github.com/meshery/meshery/issues/20950).
+{{% /alert %}}
 
 {{% alert color="warning" title="Seeding is not a default for your kind" %}}
 Authoring a definition does **not** get your kind seeded, and it should not: a Connection to *your* Grafana or *your* cluster is yours to create. Seeding exists only for the sources Meshery itself reads from anonymously.

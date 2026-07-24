@@ -4,11 +4,13 @@ import (
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/meshmodel/entity"
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/models/registration"
+	"github.com/meshery/schemas/models/core"
 	connectionv1beta1 "github.com/meshery/schemas/models/v1beta1/connection"
 	connectionv1beta3 "github.com/meshery/schemas/models/v1beta3/connection"
 	"github.com/sirupsen/logrus"
@@ -20,9 +22,17 @@ const mesheryCoreModelDir = "../../models/meshery-core/0.7.2/v1.0.0"
 // Representative models whose model.json registrant is `artifacthub` and
 // `github` respectively. Registering them is what creates the registrant
 // Connections that seeding is scoped to.
+//
+// The shipped `registrant` blobs are not uniform: some carry `user_id`, some
+// omit it. Since the registrant id is an md5 over the whole connection, the two
+// spellings hash to different rows, so a kind can hold more than one registrant
+// (meshery/meshery#20950). artifactHubOwnedRegistrantModelDir is the `user_id`
+// variant of the same kind as artifactHubRegistrantModelDir, which is what makes
+// the canonical-pick test exercise real data rather than a synthetic fixture.
 const (
-	artifactHubRegistrantModelDir = "../../models/kubevault/2026.1.8-rc.0/v1.0.0"
-	gitHubRegistrantModelDir      = "../../models/azure-operational-insights/azureserviceoperator_customresourcedefinitions_v2.13.0.yaml/v1.0.0"
+	artifactHubRegistrantModelDir      = "../../models/kubevault/2026.1.8-rc.0/v1.0.0"
+	artifactHubOwnedRegistrantModelDir = "../../models/couchbase-operator/2.81.0/v1.0.0"
+	gitHubRegistrantModelDir           = "../../models/azure-operational-insights/azureserviceoperator_customresourcedefinitions_v2.13.0.yaml/v1.0.0"
 )
 
 func newSeedTestLogger(t *testing.T) logger.Handler {
@@ -36,6 +46,11 @@ func newSeedTestLogger(t *testing.T) logger.Handler {
 
 // seedTestRegistry registers the given model directories into a fresh in-memory
 // registry and returns it alongside its database handler.
+//
+// The canonical v1beta3 Connection is migrated alongside the registry manager's
+// v1beta1 one, mirroring what cmd/main.go does on boot: the `connections` table
+// carries both column sets, and a fixture holding only the legacy half would let
+// a legacy-only write pass unnoticed.
 func seedTestRegistry(t *testing.T, modelDirs ...string) (*database.Handler, *meshmodel.RegistryManager) {
 	t.Helper()
 
@@ -47,6 +62,9 @@ func seedTestRegistry(t *testing.T, modelDirs ...string) (*database.Handler, *me
 	if err != nil {
 		t.Fatalf("new registry manager: %v", err)
 	}
+	if err := db.AutoMigrate(connections.Connection{}); err != nil {
+		t.Fatalf("migrate canonical connection: %v", err)
+	}
 
 	regHelper := registration.NewRegistrationHelper(t.TempDir(), regm, NewRegistrationFailureLogHandler())
 	for _, dir := range modelDirs {
@@ -55,25 +73,73 @@ func seedTestRegistry(t *testing.T, modelDirs ...string) (*database.Handler, *me
 	return &db, regm
 }
 
-// connectionsByKind reads the connections table into a kind-keyed map, failing
-// the test if a kind ever has more than one row - the duplicate-row regression
-// this seeding must never introduce.
-func connectionsByKind(t *testing.T, db *database.Handler) map[string]connectionv1beta1.Connection {
+// connectionsByKind reads the connections table through the canonical v1beta3
+// model - the same model ConnectionPersister serves the API from - and groups
+// the rows by kind. Asserting through this path is what makes a write that lands
+// only in the legacy v1beta1 columns fail.
+func connectionsByKind(t *testing.T, db *database.Handler) map[string][]connectionv1beta3.Connection {
 	t.Helper()
 
-	var conns []connectionv1beta1.Connection
+	var conns []connectionv1beta3.Connection
 	if err := db.Find(&conns).Error; err != nil {
 		t.Fatalf("read connections: %v", err)
 	}
 
-	byKind := make(map[string]connectionv1beta1.Connection, len(conns))
+	byKind := make(map[string][]connectionv1beta3.Connection, len(conns))
 	for _, conn := range conns {
-		if existing, dup := byKind[conn.Kind]; dup {
-			t.Fatalf("duplicate connection rows for kind %q: %s and %s", conn.Kind, existing.ID, conn.ID)
-		}
-		byKind[conn.Kind] = conn
+		byKind[conn.Kind] = append(byKind[conn.Kind], conn)
 	}
 	return byKind
+}
+
+// soleConnection returns the single Connection of a kind, failing the test when
+// the kind is missing or holds more than one row.
+func soleConnection(t *testing.T, byKind map[string][]connectionv1beta3.Connection, kind string) connectionv1beta3.Connection {
+	t.Helper()
+
+	conns := byKind[kind]
+	switch len(conns) {
+	case 1:
+		return conns[0]
+	case 0:
+		t.Fatalf("no connection row for kind %q", kind)
+	default:
+		t.Fatalf("expected exactly one connection row for kind %q, got %d", kind, len(conns))
+	}
+	return connectionv1beta3.Connection{}
+}
+
+// legacyConnection reads the duplicated v1beta1 columns (`type`, `user_id`) of a
+// row, so a test can assert that both halves of the split schema were written.
+func legacyConnection(t *testing.T, db *database.Handler, id core.Uuid) connectionv1beta1.Connection {
+	t.Helper()
+
+	var conn connectionv1beta1.Connection
+	if err := db.Table("connections").Where("id = ?", id).First(&conn).Error; err != nil {
+		t.Fatalf("read legacy columns of %s: %v", id, err)
+	}
+	return conn
+}
+
+// registerRegistrant creates a registrant Connection of the given kind owning one
+// registry entry of the given entity type, the way registration itself does.
+func registerRegistrant(t *testing.T, db *database.Handler, kind string, entityType entity.EntityType) core.Uuid {
+	t.Helper()
+
+	registrant := connectionv1beta1.Connection{Kind: kind, Type: "registry"}
+	registrantID, err := registrant.Create(db)
+	if err != nil {
+		t.Fatalf("create %s registrant: %v", kind, err)
+	}
+	if err := db.Create(&meshmodel.Registry{
+		ID:           uuid.Must(uuid.NewV4()),
+		RegistrantID: registrantID,
+		Entity:       uuid.Must(uuid.NewV4()),
+		Type:         entityType,
+	}).Error; err != nil {
+		t.Fatalf("create %s registry entry: %v", kind, err)
+	}
+	return registrantID
 }
 
 // TestSeedConnectionsMaterializesDefinitionBackedConnections is the core
@@ -85,13 +151,18 @@ func TestSeedConnectionsMaterializesDefinitionBackedConnections(t *testing.T) {
 
 	// Registration alone leaves the registrant rows disagreeing with the
 	// definitions; assert that starting point so the test proves seeding did
-	// the work rather than the registrant blobs happening to be right.
+	// the work rather than the registrant blobs happening to be right. The
+	// registrant is written through the v1beta1 model, so the canonical
+	// `connection_type` column is not populated at all.
 	before := connectionsByKind(t, db)
-	if got := before["github"].Name; got != "Github" {
+	if got := soleConnection(t, before, "github").Name; got != "Github" {
 		t.Fatalf("precondition: expected registrant name %q, got %q", "Github", got)
 	}
-	if got := before["artifacthub"].Type; got != "registry" {
-		t.Fatalf("precondition: expected registrant type %q, got %q", "registry", got)
+	if got := soleConnection(t, before, "artifacthub").ConnectionType; got != "" {
+		t.Fatalf("precondition: expected an unset canonical connection type, got %q", got)
+	}
+	if got := legacyConnection(t, db, soleConnection(t, before, "artifacthub").ID).Type; got != "registry" {
+		t.Fatalf("precondition: expected legacy registrant type %q, got %q", "registry", got)
 	}
 
 	SeedConnections(newSeedTestLogger(t), db, regm)
@@ -103,31 +174,35 @@ func TestSeedConnectionsMaterializesDefinitionBackedConnections(t *testing.T) {
 		{kind: "artifacthub", name: "Artifact Hub", connType: "source", subType: "registry"},
 		{kind: "github", name: "GitHub", connType: "source", subType: "git"},
 	} {
-		conn, ok := after[tc.kind]
-		if !ok {
-			t.Fatalf("no connection seeded for kind %q", tc.kind)
-		}
+		conn := soleConnection(t, after, tc.kind)
 		if conn.Name != tc.name {
 			t.Errorf("kind %q: name = %q, want %q", tc.kind, conn.Name, tc.name)
 		}
-		if conn.Type != tc.connType {
-			t.Errorf("kind %q: type = %q, want %q", tc.kind, conn.Type, tc.connType)
+		// The canonical column is what the API and UI render.
+		if conn.ConnectionType != tc.connType {
+			t.Errorf("kind %q: connection_type = %q, want %q", tc.kind, conn.ConnectionType, tc.connType)
 		}
 		if conn.SubType != tc.subType {
 			t.Errorf("kind %q: subType = %q, want %q", tc.kind, conn.SubType, tc.subType)
 		}
-		// System-owned and anonymous: no credential, no owner.
-		if conn.CredentialID != nil && *conn.CredentialID != uuid.Nil {
-			t.Errorf("kind %q: seeded connection carries credential %s", tc.kind, *conn.CredentialID)
+		// The legacy column is what ConnectionPersister.GetConnections filters
+		// on; both halves have to agree or filtering and rendering disagree.
+		legacy := legacyConnection(t, db, conn.ID)
+		if legacy.Type != tc.connType {
+			t.Errorf("kind %q: legacy type = %q, want %q", tc.kind, legacy.Type, tc.connType)
 		}
-		if conn.UserID != nil && *conn.UserID != uuid.Nil {
-			t.Errorf("kind %q: seeded connection carries owner %s", tc.kind, *conn.UserID)
+		// System-owned and anonymous: no credential, no owner, on either half.
+		if carriesID(conn.CredentialID) || carriesID(legacy.CredentialID) {
+			t.Errorf("kind %q: seeded connection carries a credential", tc.kind)
+		}
+		if carriesID(conn.Owner) || carriesID(legacy.UserID) {
+			t.Errorf("kind %q: seeded connection carries an owner", tc.kind)
 		}
 	}
 }
 
 // TestSeedConnectionsIsIdempotentAcrossRestarts proves the restart behavior the
-// issue calls for: no duplicate rows, and no write at all on a second boot.
+// issue calls for: no new rows, and no write at all on a second boot.
 func TestSeedConnectionsIsIdempotentAcrossRestarts(t *testing.T) {
 	db, regm := seedTestRegistry(t, mesheryCoreModelDir, artifactHubRegistrantModelDir, gitHubRegistrantModelDir)
 	log := newSeedTestLogger(t)
@@ -143,30 +218,47 @@ func TestSeedConnectionsIsIdempotentAcrossRestarts(t *testing.T) {
 	}
 	SeedConnections(log, db, regm)
 
-	// connectionsByKind fails on any duplicate, so reaching here already proves
-	// the row count per kind held at one.
 	second := connectionsByKind(t, db)
 	if len(second) != len(first) {
-		t.Fatalf("restart changed connection count: %d -> %d", len(first), len(second))
+		t.Fatalf("restart changed the number of connection kinds: %d -> %d", len(first), len(second))
 	}
 	for kind, before := range first {
 		after, ok := second[kind]
 		if !ok {
 			t.Fatalf("kind %q disappeared across restart", kind)
 		}
-		if after.ID != before.ID {
-			t.Errorf("kind %q: id changed across restart: %s -> %s", kind, before.ID, after.ID)
+		if len(after) != len(before) {
+			t.Errorf("kind %q: row count changed across restart: %d -> %d", kind, len(before), len(after))
+			continue
 		}
-		if after.Name != before.Name || after.Type != before.Type || after.SubType != before.SubType {
-			t.Errorf("kind %q: identity changed across restart: %+v -> %+v", kind, before, after)
+		for i := range before {
+			if after[i].ID != before[i].ID {
+				t.Errorf("kind %q: id changed across restart: %s -> %s", kind, before[i].ID, after[i].ID)
+			}
+			if after[i].Name != before[i].Name || after[i].ConnectionType != before[i].ConnectionType || after[i].SubType != before[i].SubType {
+				t.Errorf("kind %q: identity changed across restart: %+v -> %+v", kind, before[i], after[i])
+			}
 		}
 	}
 
-	// The second boot must do no work at all: every registrant already matches
-	// its definition, so there is nothing left to update.
+	// The second boot must do no work at all: every canonical registrant already
+	// matches its definition, on both halves of the split schema, so there is
+	// nothing left to update.
+	assertSteadyStateWritesNothing(t, db, regm)
+}
+
+// assertSteadyStateWritesNothing re-runs the seeding decision and fails if it
+// would write anything.
+func assertSteadyStateWritesNothing(t *testing.T, db *database.Handler, regm *meshmodel.RegistryManager) {
+	t.Helper()
+
 	byKind, err := registrantConnectionsByKind(db)
 	if err != nil {
 		t.Fatalf("read registrant connections: %v", err)
+	}
+	legacyByID, err := legacyRegistrantColumnsByID(db)
+	if err != nil {
+		t.Fatalf("read legacy registrant columns: %v", err)
 	}
 	defs, err := registeredConnectionDefinitions(regm)
 	if err != nil {
@@ -176,7 +268,7 @@ func TestSeedConnectionsIsIdempotentAcrossRestarts(t *testing.T) {
 		if !isSeedable(def, byKind) {
 			continue
 		}
-		changed, err := seedConnectionForDefinition(db, def, byKind[def.Kind])
+		changed, err := seedConnectionForDefinition(db, def, byKind[def.Kind], legacyByID)
 		if err != nil {
 			t.Fatalf("kind %q: %v", def.Kind, err)
 		}
@@ -184,6 +276,67 @@ func TestSeedConnectionsIsIdempotentAcrossRestarts(t *testing.T) {
 			t.Errorf("kind %q: steady-state seeding wrote %d row(s), want 0", def.Kind, changed)
 		}
 	}
+}
+
+// TestSeedConnectionsStampsOneCanonicalRegistrantPerKind covers the case the
+// single-model-per-kind fixtures cannot reach: the shipped `registrant` blobs
+// are not uniform, so a kind legitimately holds more than one registrant row
+// (meshery/meshery#20950). Seeding must stamp exactly one - deterministically,
+// the lowest id - and leave the sibling exactly as registration wrote it, rather
+// than turning both rows into indistinguishable copies of the definition.
+func TestSeedConnectionsStampsOneCanonicalRegistrantPerKind(t *testing.T) {
+	db, regm := seedTestRegistry(t, mesheryCoreModelDir, artifactHubRegistrantModelDir, artifactHubOwnedRegistrantModelDir)
+
+	before := connectionsByKind(t, db)
+	if got := len(before["artifacthub"]); got != 2 {
+		t.Fatalf("precondition: expected the two registrant blob variants to produce 2 artifacthub rows, got %d", got)
+	}
+
+	SeedConnections(newSeedTestLogger(t), db, regm)
+
+	after := connectionsByKind(t, db)
+	if got := len(after["artifacthub"]); got != 2 {
+		t.Fatalf("seeding changed the artifacthub row count: 2 -> %d", got)
+	}
+
+	registrants, err := registrantConnectionsByKind(db)
+	if err != nil {
+		t.Fatalf("read registrant connections: %v", err)
+	}
+	canonicalID := registrants["artifacthub"][0].ID
+	for _, other := range registrants["artifacthub"][1:] {
+		if other.ID.String() < canonicalID.String() {
+			t.Fatalf("canonical pick is not the lowest id: picked %s, saw %s", canonicalID, other.ID)
+		}
+	}
+
+	stamped := 0
+	for _, conn := range after["artifacthub"] {
+		legacy := legacyConnection(t, db, conn.ID)
+		if conn.ID == canonicalID {
+			stamped++
+			if conn.ConnectionType != "source" || conn.SubType != "registry" {
+				t.Errorf("canonical registrant %s was not stamped: type=%q subType=%q", conn.ID, conn.ConnectionType, conn.SubType)
+			}
+			if legacy.Type != "source" {
+				t.Errorf("canonical registrant %s: legacy type = %q, want %q", conn.ID, legacy.Type, "source")
+			}
+			continue
+		}
+		// The sibling is left exactly as registration wrote it.
+		if conn.ConnectionType != "" || conn.SubType != "" {
+			t.Errorf("sibling registrant %s was rewritten: type=%q subType=%q", conn.ID, conn.ConnectionType, conn.SubType)
+		}
+		if legacy.Type != "registry" {
+			t.Errorf("sibling registrant %s: legacy type = %q, want %q", conn.ID, legacy.Type, "registry")
+		}
+	}
+	if stamped != 1 {
+		t.Errorf("stamped %d artifacthub registrants, want exactly 1", stamped)
+	}
+
+	// Picking one row of several must still be a fixed point across restarts.
+	assertSteadyStateWritesNothing(t, db, regm)
 }
 
 // TestSeedConnectionsSkipsKindsWithoutRegistrants guards the scoping rule: a
@@ -213,51 +366,66 @@ func TestSeedConnectionsSkipsKindsWithoutRegistrants(t *testing.T) {
 }
 
 // TestSeedConnectionsSkipsKubernetesRegistrant covers the case the credential
-// rule actually exists for. Registering a cluster's components creates a
-// `kubernetes` registrant Connection (server/models/meshmodel/core/register.go
-// types it `registry`), so the kind does acquire a registrant the moment a user
-// connects a cluster. Kubernetes cannot be used anonymously - its
-// credentialSchema requires a kubeconfig - so it must still never be seeded,
-// and its registrant must be left exactly as registration wrote it.
+// rule actually exists for. A user who imports Models registered under a
+// `kubernetes` registrant satisfies the registrant rule, so only the credential
+// rule stands between Kubernetes and being seeded. Kubernetes cannot be used
+// anonymously - its credentialSchema requires a kubeconfig - so it must still
+// never be seeded, and its registrant must be left exactly as registration
+// wrote it.
 func TestSeedConnectionsSkipsKubernetesRegistrant(t *testing.T) {
 	db, regm := seedTestRegistry(t, mesheryCoreModelDir, artifactHubRegistrantModelDir)
 
-	// Register a component under a kubernetes registrant the same way cluster
-	// component registration does, so a `kubernetes` registrant row exists.
-	k8sRegistrant := connectionv1beta1.Connection{Kind: "kubernetes", Type: "registry"}
-	registrantID, err := k8sRegistrant.Create(db)
-	if err != nil {
-		t.Fatalf("create kubernetes registrant: %v", err)
-	}
-	if err := db.Create(&meshmodel.Registry{
-		ID:           uuid.Must(uuid.NewV4()),
-		RegistrantID: registrantID,
-		Entity:       uuid.Must(uuid.NewV4()),
-		Type:         entity.ComponentDefinition,
-	}).Error; err != nil {
-		t.Fatalf("create registry entry: %v", err)
-	}
+	registerRegistrant(t, db, "kubernetes", entity.Model)
 
 	SeedConnections(newSeedTestLogger(t), db, regm)
 
 	after := connectionsByKind(t, db)
-	k8s, ok := after["kubernetes"]
-	if !ok {
-		t.Fatal("the kubernetes registrant connection disappeared")
-	}
+	k8s := soleConnection(t, after, "kubernetes")
 	// Untouched: still the registrant identity, not the definition's
 	// platform/orchestration identity.
-	if k8s.Type != "registry" || k8s.SubType != "" {
-		t.Errorf("kubernetes registrant was seeded: type=%q subType=%q, want registry/\"\"", k8s.Type, k8s.SubType)
+	if k8s.ConnectionType != "" || k8s.SubType != "" {
+		t.Errorf("kubernetes registrant was seeded: connection_type=%q subType=%q", k8s.ConnectionType, k8s.SubType)
+	}
+	if got := legacyConnection(t, db, k8s.ID).Type; got != "registry" {
+		t.Errorf("kubernetes registrant was seeded: legacy type = %q, want %q", got, "registry")
 	}
 
 	// The anonymous kind alongside it still seeds, so this proves the credential
 	// rule did the skipping rather than seeding having failed wholesale.
-	if got := after["artifacthub"].SubType; got != "registry" {
-		t.Errorf("artifacthub subType = %q, want %q", got, "registry")
+	artifactHub := soleConnection(t, after, "artifacthub")
+	if artifactHub.ConnectionType != "source" || artifactHub.SubType != "registry" {
+		t.Errorf("artifacthub connection_type/subType = %q/%q, want source/registry", artifactHub.ConnectionType, artifactHub.SubType)
 	}
-	if got := after["artifacthub"].Type; got != "source" {
-		t.Errorf("artifacthub type = %q, want %q", got, "source")
+}
+
+// TestSeedConnectionsIgnoresConnectionDefinitionOnlyRegistrant pins the rule
+// that keeps the registrant signal Meshery-internal. POST
+// /api/registry/connections registers a caller-supplied connection definition
+// under a caller-supplied registrant kind, which leaves a registrant row owning
+// nothing but that `connection` entity. Grafana ships a definition and requires
+// no credential, so the registrant rule is the only thing standing between a
+// request body and a system-owned, endpoint-less Grafana connection.
+func TestSeedConnectionsIgnoresConnectionDefinitionOnlyRegistrant(t *testing.T) {
+	db, regm := seedTestRegistry(t, mesheryCoreModelDir, artifactHubRegistrantModelDir)
+
+	registerRegistrant(t, db, "grafana", entity.ConnectionDefinition)
+
+	registrants, err := registrantConnectionsByKind(db)
+	if err != nil {
+		t.Fatalf("read registrant connections: %v", err)
+	}
+	if len(registrants["grafana"]) != 0 {
+		t.Errorf("a registrant owning only a connection definition must not count as a registrant, got %d row(s)", len(registrants["grafana"]))
+	}
+
+	SeedConnections(newSeedTestLogger(t), db, regm)
+
+	grafana := soleConnection(t, connectionsByKind(t, db), "grafana")
+	if grafana.ConnectionType != "" || grafana.SubType != "" {
+		t.Errorf("grafana was seeded from an externally created registrant: connection_type=%q subType=%q", grafana.ConnectionType, grafana.SubType)
+	}
+	if got := legacyConnection(t, db, grafana.ID).Type; got != "registry" {
+		t.Errorf("grafana was seeded from an externally created registrant: legacy type = %q, want %q", got, "registry")
 	}
 }
 
@@ -266,7 +434,7 @@ func TestSeedConnectionsSkipsKubernetesRegistrant(t *testing.T) {
 // that cannot be used anonymously, so the system must not seed it even when it
 // does have a registrant.
 func TestIsSeedableRequiresAnonymousUse(t *testing.T) {
-	registrants := map[string][]connectionv1beta1.Connection{
+	registrants := map[string][]connectionv1beta3.Connection{
 		"anonymous":  {{Kind: "anonymous"}},
 		"authed":     {{Kind: "authed"}},
 		"typedreq":   {{Kind: "typedreq"}},
@@ -353,22 +521,58 @@ func TestSeedUpdatesForLeavesStatusAlone(t *testing.T) {
 		SubType:        "registry",
 		Status:         connectionv1beta3.ConnectionStatusRegistered,
 	}
-	conn := connectionv1beta1.Connection{
-		Kind:    "artifacthub",
-		Name:    "Artifact Hub",
-		Type:    "source",
-		SubType: "registry",
-		Status:  connectionv1beta1.ConnectionStatus("connected"),
+	conn := connectionv1beta3.Connection{
+		Kind:           "artifacthub",
+		Name:           "Artifact Hub",
+		ConnectionType: "source",
+		SubType:        "registry",
+		Status:         connectionv1beta3.ConnectionStatus("connected"),
 	}
+	legacy := connectionv1beta1.Connection{Kind: "artifacthub", Type: "source"}
 
-	if updates := seedUpdatesFor(conn, def); len(updates) != 0 {
+	if updates := seedUpdatesFor(conn, legacy, def); len(updates) != 0 {
 		t.Errorf("a connected connection matching its definition needs no writes, got %v", updates)
 	}
 }
 
+// TestSeedUpdatesForWritesBothSchemaHalves covers the split-column invariant: the
+// legacy v1beta1 columns and the canonical v1beta3 columns describe the same
+// field, so seeding writes them together and treats either half disagreeing as
+// stale. Without this, `type` (what GetConnections filters on) and
+// `connection_type` (what the API renders) drift apart.
+func TestSeedUpdatesForWritesBothSchemaHalves(t *testing.T) {
+	def := &connectionv1beta3.ConnectionDefinition{
+		Kind: "artifacthub", Name: "Artifact Hub", ConnectionType: "source", SubType: "registry",
+	}
+
+	t.Run("canonical column already correct but legacy one stale", func(t *testing.T) {
+		conn := connectionv1beta3.Connection{
+			Kind: "artifacthub", Name: "Artifact Hub", ConnectionType: "source", SubType: "registry",
+		}
+		legacy := connectionv1beta1.Connection{Kind: "artifacthub", Type: "registry"}
+
+		updates := seedUpdatesFor(conn, legacy, def)
+		if updates["type"] != "source" || updates["connection_type"] != "source" {
+			t.Errorf("both halves must be rewritten, got %v", updates)
+		}
+	})
+
+	t.Run("legacy column already correct but canonical one unset", func(t *testing.T) {
+		conn := connectionv1beta3.Connection{
+			Kind: "artifacthub", Name: "Artifact Hub", SubType: "registry",
+		}
+		legacy := connectionv1beta1.Connection{Kind: "artifacthub", Type: "source"}
+
+		updates := seedUpdatesFor(conn, legacy, def)
+		if updates["type"] != "source" || updates["connection_type"] != "source" {
+			t.Errorf("both halves must be rewritten, got %v", updates)
+		}
+	})
+}
+
 // TestSeedUpdatesForClearsCredentialAndOwner covers the system-owned invariant:
 // a seeded Connection uses its kind's API anonymously, so any credential or
-// owner found on it is cleared.
+// owner found on either half of the split schema is cleared on both.
 func TestSeedUpdatesForClearsCredentialAndOwner(t *testing.T) {
 	credentialID := uuid.Must(uuid.NewV4())
 	ownerID := uuid.Must(uuid.NewV4())
@@ -376,15 +580,42 @@ func TestSeedUpdatesForClearsCredentialAndOwner(t *testing.T) {
 	def := &connectionv1beta3.ConnectionDefinition{
 		Kind: "github", Name: "GitHub", ConnectionType: "source", SubType: "git",
 	}
-	conn := connectionv1beta1.Connection{
-		Kind: "github", Name: "GitHub", Type: "source", SubType: "git",
-		CredentialID: &credentialID,
-		UserID:       &ownerID,
-	}
 
-	updates := seedUpdatesFor(conn, def)
+	t.Run("carried on the canonical columns", func(t *testing.T) {
+		conn := connectionv1beta3.Connection{
+			Kind: "github", Name: "GitHub", ConnectionType: "source", SubType: "git",
+			CredentialID: &credentialID,
+			Owner:        &ownerID,
+		}
+		legacy := connectionv1beta1.Connection{Kind: "github", Type: "source"}
+
+		updates := seedUpdatesFor(conn, legacy, def)
+		assertOwnershipCleared(t, updates)
+	})
+
+	t.Run("carried on the legacy columns", func(t *testing.T) {
+		conn := connectionv1beta3.Connection{
+			Kind: "github", Name: "GitHub", ConnectionType: "source", SubType: "git",
+		}
+		legacy := connectionv1beta1.Connection{
+			Kind: "github", Type: "source",
+			CredentialID: &credentialID,
+			UserID:       &ownerID,
+		}
+
+		updates := seedUpdatesFor(conn, legacy, def)
+		assertOwnershipCleared(t, updates)
+	})
+}
+
+func assertOwnershipCleared(t *testing.T, updates map[string]interface{}) {
+	t.Helper()
+
 	if updates["credential_id"] != uuid.Nil {
 		t.Errorf("credential_id = %v, want it cleared", updates["credential_id"])
+	}
+	if updates["owner"] != uuid.Nil {
+		t.Errorf("owner = %v, want it cleared", updates["owner"])
 	}
 	if updates["user_id"] != uuid.Nil {
 		t.Errorf("user_id = %v, want it cleared", updates["user_id"])
