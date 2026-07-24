@@ -31,7 +31,7 @@ var importModelCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import models",
 	Long: `Import models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name
-Find more information at: https://docs.meshery.io/reference/mesheryctl/model/import`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/model/import`,
 	Example: `
 // Import model
 mesheryctl model import --file [URI]

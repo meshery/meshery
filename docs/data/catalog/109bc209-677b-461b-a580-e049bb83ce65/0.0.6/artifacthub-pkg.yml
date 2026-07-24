@@ -1,0 +1,20 @@
+version: 0.0.6
+name: hello_wasm_config
+displayName: Hello_Wasm_config
+createdAt: "2026-07-20T07:49:21Z"
+description: Hello_Wasm_config
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/109bc209-677b-461b-a580-e049bb83ce65/0.0.6/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 37add44e-ee00-4095-bc47-59ee3506728f
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

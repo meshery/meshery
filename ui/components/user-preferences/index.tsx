@@ -38,7 +38,7 @@ import {
   FormGroupWrapper,
 } from './style';
 import ExtensionSandbox from '../ExtensionSandbox';
-import RemoteComponent from '../RemoteComponent';
+import RemoteComponent from '../general/RemoteComponent';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
 import MesherySettingsPerformanceComponent from '../settings/MesherySettingsPerformanceComponent';
 import { iconMedium } from '../../css/icons.styles';

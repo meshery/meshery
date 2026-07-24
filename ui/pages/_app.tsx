@@ -5,7 +5,11 @@ import {
   PermissionProvider,
   WarningIcon as Warning,
 } from '@sistent/sistent';
-import { Footer, KubernetesSubscription, NavigationBar } from '../components/AppComponents';
+import {
+  Footer,
+  KubernetesSubscription,
+  NavigationBar,
+} from '../components/layout/AppShell/AppComponents';
 import { AdapterMoment, LocalizationProvider } from '@/components/shared/DatePicker';
 import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
@@ -17,7 +21,7 @@ import React, { useEffect, useMemo, useCallback, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { startSessionTimer } from '../lib/sessionTimer';
 import Header from '../components/layout/Header/Header';
-import MesheryProgressBar from '../components/MesheryProgressBar';
+import MesheryProgressBar from '../components/general/MesheryProgressBar';
 import getPageContext from '../components/PageContext';
 import { subscribeToControllersStatus } from 'lib/controllersStatusSubscription';
 import { useLazyGetSystemSyncQuery, useLazyGetKubernetesContextsQuery } from '../rtk-query/system';
@@ -85,7 +89,7 @@ import {
   StyledMainContent,
   StyledContentWrapper,
   StyledRoot,
-} from '../components/App.styles';
+} from '../components/layout/AppShell/App.styles';
 import { ThemeResponsiveSnackbar } from '@/theme/snackbar';
 import {
   setConnectionMetadata,
@@ -210,6 +214,9 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
       (res?.connectionDefinitions || []).forEach((definition) => {
         if (definition?.kind) {
           connectionDef[definition.kind] = {
+            // The definition's authored display name ("Artifact Hub", "GitHub"),
+            // which title-casing the kind slug cannot reproduce.
+            name: definition.name,
             transitionMap: definition.transitionMap,
             icon: definition.styles?.svgColor,
           };
@@ -220,8 +227,8 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     }
 
     // Fall back to the legacy `<Kind>Connection` component for kinds without a
-    // first-class connection definition yet (e.g. meshery, github), and to
-    // backfill the flat `transitions` list / icon the definition did not provide.
+    // first-class connection definition yet (e.g. meshery), and to backfill the
+    // flat `transitions` list / icon the definition did not provide.
     const promises = CONNECTION_KINDS_DEF.map(async (kind) => {
       try {
         const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));

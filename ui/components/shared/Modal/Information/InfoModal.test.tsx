@@ -2,6 +2,9 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+const canSpy = vi.fn((_key?: unknown) => true);
+import { Keys } from '@meshery/schemas/permissions';
 import InfoModal from './InfoModal';
 
 const notify = vi.fn();
@@ -52,10 +55,6 @@ vi.mock('@/store/ProviderStoreWrapper', () => ({
 
 vi.mock('@/store/slices/mesheryUi', () => ({
   updateProgress: vi.fn(),
-}));
-
-vi.mock('@/utils/can', () => ({
-  default: () => true,
 }));
 
 vi.mock('@/utils/objects', () => ({
@@ -204,6 +203,7 @@ vi.mock('@sistent/sistent', () => {
       shadows: ['none', 's1', 's2', 's3', 's4', 's5', 's6', 's7', 's8'],
     }),
     styled,
+    useHasPermission: (key: { id?: string }) => canSpy(key),
   };
 });
 
@@ -225,6 +225,8 @@ const baseSelectedResource = {
 
 describe('InfoModal', () => {
   beforeEach(() => {
+    canSpy.mockClear();
+    canSpy.mockReturnValue(true);
     notify.mockReset();
     enqueueSnackbar.mockReset();
     closeSnackbar.mockReset();
@@ -292,6 +294,51 @@ describe('InfoModal', () => {
     );
 
     expect(screen.getByTestId('publish-btn')).toHaveTextContent('Publish to Catalog');
+  });
+
+  it('enables Publish to Catalog for an owner holding the publish permission', () => {
+    render(
+      <InfoModal
+        infoModalOpen={true}
+        handleInfoModalClose={vi.fn()}
+        resourceOwnerID="u1"
+        selectedResource={baseSelectedResource}
+        patternFetcher={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId('publish-btn')).toBeEnabled();
+    expect(canSpy).toHaveBeenCalledWith(Keys.CatalogManagementPublishDesign);
+  });
+
+  it('disables Publish to Catalog when the publish permission is denied', () => {
+    canSpy.mockReturnValue(false);
+    render(
+      <InfoModal
+        infoModalOpen={true}
+        handleInfoModalClose={vi.fn()}
+        resourceOwnerID="u1"
+        selectedResource={baseSelectedResource}
+        patternFetcher={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId('publish-btn')).toBeDisabled();
+  });
+
+  it('disables Publish to Catalog when the signed-in user does not own the design', () => {
+    mockState = { ui: { user: { id: 'someone-else', roleNames: ['admin'] } } };
+    render(
+      <InfoModal
+        infoModalOpen={true}
+        handleInfoModalClose={vi.fn()}
+        resourceOwnerID="u1"
+        selectedResource={baseSelectedResource}
+        patternFetcher={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId('publish-btn')).toBeDisabled();
   });
 
   it('shows Published when the resource is already published', () => {
