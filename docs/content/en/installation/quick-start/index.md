@@ -64,6 +64,23 @@ Select from the list of [Providers]({{< ref "reference/extensibility/providers/i
 **Out-of-Cluster Deployments**
 If you have deployed Meshery out-of-cluster, Meshery Server will automatically attempt to connect to any available Kubernetes clusters found in your kubeconfig (under `$HOME/.kube/config`) and in kubeconfigs uploaded through Meshery UI. Meshery Server deploys [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}}), [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}), and Broker into the `meshery` namespace (by default).
 
+{{% alert color="warning" title="Cluster Access and Connectivity Requirements" %}}
+When running Meshery Server out-of-cluster (e.g., via Docker) and attempting to connect to a local cluster like `kind` or `minikube`, connection failures can occur if your `kubeconfig` uses `127.0.0.1` or `localhost`. 
+
+From inside the Meshery container, `localhost` resolves to the container itself, not the host machine running your cluster. **The cluster server URL must be network-accessible to the Meshery Server container.**
+
+**Local Clusters (kind, minikube, Docker Desktop):**
+* **Docker Desktop:** It is recommended to create a copy of your `kubeconfig` specifically for Meshery. In this copy, change `127.0.0.1` to `host.docker.internal`. This ensures Meshery can connect while your host's `kubectl` remains functional using the original config.
+* kind: Use host.docker.internal (on Docker Desktop) or the container's IP address and port 6443.
+* minikube: Use the IP address returned by minikube ip instead of localhost.
+* Linux: Use your host machine's LAN IP address or deploy the Meshery container using the --network host flag (no kubeconfig changes required in this case).
+
+**Managed Cloud Clusters (EKS, GKE, AKS, etc.):**
+* Ensure the cluster's API server endpoint (the `server` URL in your `kubeconfig`) is accessible from the network where Meshery is running.
+* You may need to update your cloud provider's firewall rules or security groups (e.g., AWS Security Groups, GCP Firewall Rules) to allow inbound traffic on the API port (usually `6443` or `443`) from the IP address of the machine hosting Meshery.
+{{% /alert %}}
+
+
 **In-Cluster Deployments**
 If you have deployed Meshery in-cluster, Meshery Server will automatically connect to the Kubernetes API Server available in the control plane.
 
