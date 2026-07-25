@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { NoSsr } from '@sistent/sistent';
-import { ErrorBoundary, AppBar } from '@sistent/sistent';
+import { NoSsr, ErrorBoundary, AppBar, useHasPermission } from '@sistent/sistent';
 import Modal from '../shared/Modal/Modal';
 import { ConnectionIconText, ConnectionTab, ConnectionTabs } from './styles';
 import MeshSyncTable from './meshSync';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
-import CAN from '@/utils/can';
+
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '../general/error-404/index';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
@@ -67,6 +66,7 @@ function ConnectionManagementPage(props) {
   );
 }
 function Connections() {
+  const hasViewConnections = useHasPermission(Keys.WorkspaceManagementViewConnections);
   const router = useRouter();
   const { query, pathname, push, isReady, replace } = router;
   const { openCreateConnection } = useConnectionWizardModal();
@@ -213,22 +213,15 @@ function Connections() {
 
   return (
     <NoSsr>
-      {CAN(
-        Keys.WorkspaceManagementViewConnections.id,
-        Keys.WorkspaceManagementViewConnections.function,
-      ) ? (
+      {hasViewConnections ? (
         <>
-          {tab === 0 &&
-            CAN(
-              Keys.WorkspaceManagementViewConnections.id,
-              Keys.WorkspaceManagementViewConnections.function,
-            ) && (
-              <ConnectionTable
-                selectedConnectionId={connectionId}
-                updateUrlWithConnectionId={updateUrlWithConnectionId}
-                tabs={tabs}
-              />
-            )}
+          {tab === 0 && (
+            <ConnectionTable
+              selectedConnectionId={connectionId}
+              updateUrlWithConnectionId={updateUrlWithConnectionId}
+              tabs={tabs}
+            />
+          )}
           {tab === 1 && (
             <MeshSyncTable
               selectedResourceId={connectionId}

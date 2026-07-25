@@ -27,12 +27,11 @@ import (
 	"github.com/meshery/meshkit/utils"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/meshkit/utils/walker"
-	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta2/organization"
 	pattern "github.com/meshery/schemas/models/v1beta3/design"
+	"github.com/meshery/schemas/models/v1beta3/environment"
 	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
-	"github.com/oapi-codegen/runtime/types"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
@@ -372,15 +371,7 @@ func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Requ
 }
 
 func (l *DefaultLocalProvider) fetchUserDetails() *User {
-	avatarUrl := ""
-	localEmail := types.Email("meshery@meshery.local")
-	return &User{
-		ID:        LocalProviderUserID,
-		FirstName: "Meshery",
-		LastName:  "Meshery",
-		Email:     localEmail,
-		AvatarUrl: &avatarUrl,
-	}
+	return LocalProviderUser()
 }
 
 // GetUserDetails - returns the user details
@@ -388,8 +379,22 @@ func (l *DefaultLocalProvider) GetUserDetails(_ *http.Request) (*User, error) {
 	return l.fetchUserDetails(), nil
 }
 
-func (l *DefaultLocalProvider) GetUserByID(_ *http.Request, _ string) ([]byte, error) {
-	return nil, nil
+// GetUserByID resolves a user profile by id. The built-in provider is
+// single-user, so the only id that resolves is its own system user's; every
+// other id has no record here and is reported as not found by the handler.
+// Resolving it is what lets an owner id stamped onto a locally persisted
+// resource render as a real name instead of an unresolvable lookup.
+func (l *DefaultLocalProvider) GetUserByID(_ *http.Request, userID string) ([]byte, error) {
+	if userID != LocalProviderUserID.String() {
+		return nil, nil
+	}
+
+	body, err := json.Marshal(l.fetchUserDetails())
+	if err != nil {
+		return nil, ErrMarshal(err, "user profile")
+	}
+
+	return body, nil
 }
 
 func (l *DefaultLocalProvider) GetUsers(_, _, _, _, _, _ string) ([]byte, error) {
@@ -411,7 +416,7 @@ func (l *DefaultLocalProvider) DeleteEnvironment(_ *http.Request, environmentID 
 }
 
 func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
-	orgId := core.Uuid(environmentPayload.OrgId)
+	orgId := core.Uuid(environmentPayload.OrgID)
 	environment := &environment.Environment{
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
@@ -428,7 +433,7 @@ func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPay
 	if err != nil {
 		return nil, ErrInvalidUUID(err)
 	}
-	orgId := core.Uuid(environmentPayload.OrgId)
+	orgId := core.Uuid(environmentPayload.OrgID)
 	environment := &environment.Environment{
 		ID:             id,
 		CreatedAt:      time.Now(),
@@ -1468,7 +1473,6 @@ func (l *DefaultLocalProvider) GetKubeClient() *mesherykube.Client {
 
 func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	seedContents := []string{"Pattern"}
-	nilOwner := ""
 
 	// Use the relative directory for patterns
 	catalogDir := filepath.Join("..", "..", "docs", "data", "catalog")
@@ -1503,7 +1507,6 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 					PatternFile: file.Content,
 					Name:        patternName,
 					ID:          &id,
-					Owner:       &nilOwner,
 					Visibility:  Published,
 					Location: map[string]interface{}{
 						"host":   "",

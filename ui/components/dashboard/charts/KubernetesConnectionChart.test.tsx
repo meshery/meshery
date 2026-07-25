@@ -20,7 +20,7 @@ vi.mock('billboard.js', () => ({
   donut: () => 'donut',
 }));
 
-vi.mock('../../BBChart', () => ({
+vi.mock('../../general/BBChart', () => ({
   default: (props: { options: unknown }) => {
     bbChartSpy(props.options);
     return <div data-testid="bb-chart" />;
@@ -100,6 +100,7 @@ vi.mock('@sistent/sistent', () => ({
   useTheme: () => ({
     palette: { mode: 'light', icon: { default: '#000', disabled: '#777' } },
   }),
+  useHasPermission: () => canSpy(),
 }));
 
 import KubernetesConnectionStatsChart from './KubernetesConnectionChart';

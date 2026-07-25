@@ -6,7 +6,7 @@ import {
   UniversalFilter,
 } from '@sistent/sistent';
 import { Publish as PublishIcon } from '@/assets/icons';
-import ViewSwitch from '../../ViewSwitch';
+import ViewSwitch from '../../general/ViewSwitch';
 import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
 import TooltipButton from '@/utils/TooltipButton';
@@ -83,9 +83,9 @@ function MesheryPatternsToolbar({
             !CAN(Keys.CatalogManagementImportDesign.id, Keys.CatalogManagementImportDesign.function)
           }
         >
-          <AddIconStyled>
+          <span style={{ paddingRight: '.35rem', display: 'inline-flex' }}>
             <PublishIcon />
-          </AddIconStyled>
+          </span>
           <BtnText> Import Design </BtnText>
         </TooltipButton>
       </div>
