@@ -145,9 +145,9 @@ func InitializeMachineWithContext(
 			return inst, nil
 		}
 
-		_, err := inst.Start(ctx, machineCtx, log, initFunc) 
+		_, err := inst.Start(ctx, machineCtx, log, initFunc)
 		if err != nil {
-			return nil, err 
+			return nil, err
 		}
 		return inst, nil
 	}
