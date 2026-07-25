@@ -140,6 +140,15 @@ func InitializeMachineWithContext(
 ) (*machines.StateMachine, error) {
 	inst, ok := smInstanceTracker.Get(ID)
 	if ok {
+
+		if initFunc == nil || HasMachineContext(inst) {
+			return inst, nil
+		}
+
+		_, err := inst.Start(ctx, machineCtx, log, initFunc) 
+		if err != nil {
+			return nil, err 
+		}
 		return inst, nil
 	}
 
