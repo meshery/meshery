@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { CONNECTION_KINDS } from '@/utils/Enum';
+import { CoreConnectionKinds } from '@/utils/Enum';
 import {
   buildConnectionWizardKindConfigs,
   buildCredentialSecret,
@@ -17,16 +17,16 @@ import {
 describe('ConnectionWizard.helpers', () => {
   it('filters credentials by the selected connection kind', () => {
     const credentials = [
-      { id: '1', name: 'prom-a', type: CONNECTION_KINDS.PROMETHEUS },
-      { id: '2', name: 'graf-a', type: CONNECTION_KINDS.GRAFANA },
-      { id: '3', name: 'prom-b', kind: CONNECTION_KINDS.PROMETHEUS },
+      { id: '1', name: 'prom-a', type: CoreConnectionKinds.prometheus },
+      { id: '2', name: 'graf-a', type: CoreConnectionKinds.grafana },
+      { id: '3', name: 'prom-b', kind: CoreConnectionKinds.prometheus },
     ];
 
-    expect(filterCredentialsForKind(credentials, CONNECTION_KINDS.PROMETHEUS)).toEqual([
+    expect(filterCredentialsForKind(credentials, CoreConnectionKinds.prometheus)).toEqual([
       credentials[0],
       credentials[2],
     ]);
-    expect(filterCredentialsForKind(credentials, CONNECTION_KINDS.KUBERNETES)).toEqual([]);
+    expect(filterCredentialsForKind(credentials, CoreConnectionKinds.kubernetes)).toEqual([]);
   });
 
   it('normalizes credentialName into the canonical name property', () => {
@@ -78,7 +78,7 @@ describe('ConnectionWizard.helpers', () => {
 
     const configs = buildConnectionWizardKindConfigs([
       {
-        kind: CONNECTION_KINDS.PROMETHEUS,
+        kind: CoreConnectionKinds.prometheus,
         type: 'telemetry',
         subType: 'metrics',
         name: 'Prometheus',
@@ -87,7 +87,7 @@ describe('ConnectionWizard.helpers', () => {
         credentialSchema: promCredentialSchema,
       },
       {
-        kind: CONNECTION_KINDS.KUBERNETES,
+        kind: CoreConnectionKinds.kubernetes,
         name: 'Kubernetes',
         description: 'Import clusters from a kubeconfig.',
         metadata: { docsURL: 'https://docs.meshery.io/installation/kubernetes' },
@@ -96,7 +96,7 @@ describe('ConnectionWizard.helpers', () => {
 
     expect(configs).toEqual([
       {
-        kind: CONNECTION_KINDS.PROMETHEUS,
+        kind: CoreConnectionKinds.prometheus,
         type: 'telemetry',
         subType: 'metrics',
         label: 'Prometheus',
@@ -109,7 +109,7 @@ describe('ConnectionWizard.helpers', () => {
         svgWhite: null,
       },
       {
-        kind: CONNECTION_KINDS.KUBERNETES,
+        kind: CoreConnectionKinds.kubernetes,
         type: '',
         subType: '',
         label: 'Kubernetes',
@@ -127,7 +127,7 @@ describe('ConnectionWizard.helpers', () => {
   it('extracts svgColor/svgWhite from the definition styles', () => {
     const [config] = buildConnectionWizardKindConfigs([
       {
-        kind: CONNECTION_KINDS.KUBERNETES,
+        kind: CoreConnectionKinds.kubernetes,
         name: 'Kubernetes',
         styles: { svgColor: '<svg>color</svg>', svgWhite: '<svg>white</svg>' },
       },
@@ -140,7 +140,7 @@ describe('ConnectionWizard.helpers', () => {
   it('treats empty connection/credential schema objects as absent', () => {
     const [config] = buildConnectionWizardKindConfigs([
       {
-        kind: CONNECTION_KINDS.PROMETHEUS,
+        kind: CoreConnectionKinds.prometheus,
         name: 'Prometheus',
         connectionSchema: {},
         credentialSchema: undefined,
@@ -154,12 +154,12 @@ describe('ConnectionWizard.helpers', () => {
   it('skips definitions without a kind and de-duplicates by kind', () => {
     const configs = buildConnectionWizardKindConfigs([
       { name: 'Missing kind' },
-      { kind: CONNECTION_KINDS.GRAFANA, name: 'Grafana' },
-      { kind: CONNECTION_KINDS.GRAFANA, name: 'Grafana duplicate' },
+      { kind: CoreConnectionKinds.grafana, name: 'Grafana' },
+      { kind: CoreConnectionKinds.grafana, name: 'Grafana duplicate' },
     ]);
 
     expect(configs).toHaveLength(1);
-    expect(configs[0].kind).toBe(CONNECTION_KINDS.GRAFANA);
+    expect(configs[0].kind).toBe(CoreConnectionKinds.grafana);
     expect(configs[0].label).toBe('Grafana');
   });
 
@@ -171,7 +171,7 @@ describe('ConnectionWizard.helpers', () => {
   it('builds the credential step only for generic flows with credential schemas', () => {
     expect(
       getWizardStepLabels({
-        kind: CONNECTION_KINDS.GRAFANA,
+        kind: CoreConnectionKinds.grafana,
         flow: 'generic',
         hasCredentialSchema: true,
       }),
@@ -179,7 +179,7 @@ describe('ConnectionWizard.helpers', () => {
 
     expect(
       getWizardStepLabels({
-        kind: CONNECTION_KINDS.KUBERNETES,
+        kind: CoreConnectionKinds.kubernetes,
         flow: 'kubernetes',
         hasCredentialSchema: false,
       }),
@@ -204,13 +204,13 @@ describe('ConnectionWizard.helpers', () => {
   });
 
   it('resolves a stable connection name from form data', () => {
-    expect(resolveConnectionName(CONNECTION_KINDS.PROMETHEUS, { name: 'prod-prom' })).toBe(
+    expect(resolveConnectionName(CoreConnectionKinds.prometheus, { name: 'prod-prom' })).toBe(
       'prod-prom',
     );
     expect(
-      resolveConnectionName(CONNECTION_KINDS.PROMETHEUS, { url: 'https://prom.example' }),
+      resolveConnectionName(CoreConnectionKinds.prometheus, { url: 'https://prom.example' }),
     ).toBe('https://prom.example');
-    expect(resolveConnectionName(CONNECTION_KINDS.PROMETHEUS, {})).toBe('prometheus-connection');
+    expect(resolveConnectionName(CoreConnectionKinds.prometheus, {})).toBe('prometheus-connection');
   });
 
   it('recognizes create-connection query flags', () => {

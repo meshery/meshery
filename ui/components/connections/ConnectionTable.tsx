@@ -5,7 +5,7 @@ import { EVENT_TYPES } from '../../lib/event-types';
 import ConnectionStateTransitionModal from './ConnectionStateTransitionModal';
 import type { ConnectionStateTransitionModalRef } from './ConnectionStateTransitionModal';
 
-import { CONNECTION_KINDS, CONNECTION_STATES } from '../../utils/Enum';
+import { CONNECTION_STATES } from '../../utils/Enum';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import useGrafanaPingHook from '@/utils/hooks/useGrafanaPingHook';
 import usePrometheusPingHook from '@/utils/hooks/usePrometheusPingHook';
@@ -13,6 +13,7 @@ import { getResponsiveColumnVisibility } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import { useGetEnvironmentsQuery } from '../../rtk-query/environments';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
+import { useListConnectionDefinitionsQuery } from '@meshery/schemas/mesheryApi';
 import { useTableUrlState } from '@/utils/hooks/useTableUrlState';
 import { useColumnVisibilityPreference } from '@/utils/hooks/useColumnVisibilityPreference';
 
@@ -149,6 +150,24 @@ const ConnectionTable = ({
     connections: '',
   });
 
+  // The set of connection kinds is fetched from the registry rather than
+  // hardcoded, so the Kind filter reflects whatever connections are registered.
+  const { data: connectionDefinitionsResponse } = useListConnectionDefinitionsQuery({});
+  const kindFilterOptions = useMemo(() => {
+    const seen = new Set<string>();
+    return (connectionDefinitionsResponse?.connectionDefinitions || []).reduce<
+      { label: string; value: string }[]
+    >((options, definition) => {
+      const kind = definition?.kind;
+      if (!kind || seen.has(kind)) {
+        return options;
+      }
+      seen.add(kind);
+      options.push({ label: definition?.name || kind, value: kind });
+      return options;
+    }, []);
+  }, [connectionDefinitionsResponse?.connectionDefinitions]);
+
   const filters = useMemo(
     () => ({
       status: {
@@ -166,10 +185,10 @@ const ConnectionTable = ({
       },
       kind: {
         name: 'Kind',
-        options: Object.entries(CONNECTION_KINDS).map(([key, value]) => ({ label: key, value })),
+        options: kindFilterOptions,
       },
     }),
-    [],
+    [kindFilterOptions],
   );
 
   const handleApplyFilter = () => {

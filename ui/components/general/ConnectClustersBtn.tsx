@@ -1,7 +1,7 @@
 import React from 'react';
 import { iconMedium } from '../../css/icons.styles';
 import { AddCircleIcon as AddIcon, Button, useTheme } from '@sistent/sistent';
-import { CONNECTION_KINDS } from '@/utils/Enum';
+import { CoreConnectionKinds } from '@/utils/Enum';
 import { useConnectionWizardModal } from '@/utils/context/ConnectionWizardContextProvider';
 
 /**
@@ -17,7 +17,7 @@ function ConnectClustersBtn() {
 
   const handleClick = () => {
     openCreateConnection({
-      kind: CONNECTION_KINDS.KUBERNETES,
+      kind: CoreConnectionKinds.kubernetes,
       skipKindSelection: true,
     });
   };
