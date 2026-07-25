@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { Delete as DeleteIcon, Edit as EditIcon } from '@/assets/icons';
 import {
   CustomTooltip,
   Typography,
@@ -13,6 +12,8 @@ import {
   Table,
   TableCell,
   TableRow,
+  EditIcon,
+  DeleteIcon,
 } from '@sistent/sistent';
 import FlipCard from '../FlipCard';
 import PerformanceResults from './PerformanceResults';
@@ -290,6 +291,9 @@ function PerformanceCard({
               style={{
                 width: 'fit-content',
                 margin: '0 0 0 auto',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.25rem',
               }}
             >
               <CustomTooltip title="Edit">
@@ -299,6 +303,7 @@ function PerformanceCard({
                   disabled={
                     !CAN(keys.EDIT_PERFORMANCE_TEST.action, keys.EDIT_PERFORMANCE_TEST.subject)
                   }
+                  size="small"
                 >
                   <EditIcon style={iconMedium} />
                 </IconButton>
@@ -310,6 +315,7 @@ function PerformanceCard({
                   disabled={
                     !CAN(keys.DELETE_PERFORMANCE_TEST.action, keys.DELETE_PERFORMANCE_TEST.subject)
                   }
+                  size="small"
                 >
                   <DeleteIcon style={iconMedium} />
                 </IconButton>

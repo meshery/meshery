@@ -4,6 +4,7 @@ import { useGetEnvironmentConnectionsQuery } from '../../rtk-query/environments'
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { DeleteIcon, EditIcon, Grid2, SyncAltIcon, useTheme } from '@sistent/sistent';
+import { iconMedium } from '../../css/icons.styles';
 
 import {
   Name,
@@ -218,6 +219,7 @@ const EnvironmentCard = ({
                   display: 'flex',
                   alignItems: 'flex-start',
                   justifyContent: 'flex-end',
+                  gap: '0.25rem',
                 }}
               >
                 <IconButton
@@ -227,8 +229,9 @@ const EnvironmentCard = ({
                       ? true
                       : !CAN(keys.EDIT_ENVIRONMENT.action, keys.EDIT_ENVIRONMENT.subject)
                   }
+                  style={{ padding: '4px' }}
                 >
-                  <EditIcon fill="white" style={{ margin: '0 2px' }} />
+                  <EditIcon fill="white" style={iconMedium} />
                 </IconButton>
                 <IconButton
                   onClick={onDelete}
@@ -237,8 +240,9 @@ const EnvironmentCard = ({
                       ? true
                       : !CAN(keys.DELETE_ENVIRONMENT.action, keys.DELETE_ENVIRONMENT.subject)
                   }
+                  style={{ padding: '4px' }}
                 >
-                  <DeleteIcon fill="white" style={{ margin: '0 2px' }} />
+                  <DeleteIcon fill="white" style={iconMedium} />
                 </IconButton>
               </Grid2>
             </Grid2>
