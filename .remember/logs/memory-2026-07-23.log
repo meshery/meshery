@@ -1,0 +1,1095 @@
+00:01:58 [hook] session-start: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:02:17 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:02:18 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:02:25 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:02:26 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:02:43 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:02:43 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:02:43 [extract] session 449601f8-20d5-4894-ac98-e69462299ff3
+00:02:43 [extract] 9 exchanges (1 human)
+00:02:43 [extract] 1 human msgs < 3, skip
+00:02:52 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:02:52 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:02:52 [cooldown] 9s < 120s, skip
+00:02:59 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:02:59 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:02:59 [cooldown] 16s < 120s, skip
+00:03:15 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:03:15 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:03:15 [cooldown] 32s < 120s, skip
+00:03:16 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:03:16 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:03:16 [cooldown] 33s < 120s, skip
+00:03:25 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:03:25 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:03:25 [cooldown] 42s < 120s, skip
+00:03:27 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:03:28 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:03:28 [cooldown] 45s < 120s, skip
+00:04:22 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:04:23 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:04:23 [cooldown] 100s < 120s, skip
+00:04:23 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:04:23 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:04:23 [cooldown] 100s < 120s, skip
+00:06:08 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:06:08 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:06:08 [extract] session 449601f8-20d5-4894-ac98-e69462299ff3
+00:06:08 [extract] 24 exchanges (1 human)
+00:06:08 [extract] 1 human msgs < 3, skip
+00:06:09 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:06:09 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:06:09 [cooldown] 1s < 120s, skip
+00:06:23 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:06:23 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:06:23 [cooldown] 15s < 120s, skip
+00:06:24 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:06:24 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:06:24 [cooldown] 16s < 120s, skip
+00:06:57 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:06:57 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:06:57 [cooldown] 49s < 120s, skip
+00:07:01 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:07:01 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:07:01 [cooldown] 53s < 120s, skip
+00:07:40 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:07:40 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:07:40 [cooldown] 92s < 120s, skip
+00:07:41 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:07:41 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:07:41 [cooldown] 93s < 120s, skip
+00:08:08 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:08:08 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:08:08 [extract] session 449601f8-20d5-4894-ac98-e69462299ff3
+00:08:08 [extract] 33 exchanges (1 human)
+00:08:08 [extract] 1 human msgs < 3, skip
+00:08:11 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:08:11 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:08:11 [cooldown] 3s < 120s, skip
+00:08:35 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:08:35 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:08:35 [cooldown] 27s < 120s, skip
+00:08:49 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:08:49 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:08:49 [cooldown] 41s < 120s, skip
+00:09:31 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:09:31 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:09:31 [cooldown] 83s < 120s, skip
+00:10:05 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:10:05 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:10:05 [cooldown] 117s < 120s, skip
+00:10:30 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:10:30 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:10:30 [extract] session 449601f8-20d5-4894-ac98-e69462299ff3
+00:10:30 [extract] 46 exchanges (1 human)
+00:10:30 [extract] 1 human msgs < 3, skip
+00:10:50 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:10:50 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:10:50 [cooldown] 20s < 120s, skip
+00:10:59 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:11:00 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:11:00 [cooldown] 30s < 120s, skip
+00:11:44 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:11:44 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:11:44 [cooldown] 74s < 120s, skip
+00:12:02 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:12:02 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:12:02 [cooldown] 92s < 120s, skip
+00:12:09 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:12:10 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:12:10 [cooldown] 100s < 120s, skip
+00:12:15 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:12:15 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:12:15 [cooldown] 105s < 120s, skip
+00:12:21 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:12:21 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:12:21 [cooldown] 111s < 120s, skip
+00:12:26 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:12:26 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:12:26 [cooldown] 116s < 120s, skip
+00:12:32 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:12:32 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:12:32 [extract] session 449601f8-20d5-4894-ac98-e69462299ff3
+00:12:32 [extract] 59 exchanges (1 human)
+00:12:32 [extract] 1 human msgs < 3, skip
+00:12:38 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:12:38 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:12:38 [cooldown] 6s < 120s, skip
+00:12:43 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:12:43 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:12:43 [cooldown] 11s < 120s, skip
+00:13:05 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:13:06 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:13:06 [cooldown] 34s < 120s, skip
+00:13:21 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:13:21 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:13:21 [cooldown] 49s < 120s, skip
+00:13:43 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:13:43 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:13:43 [cooldown] 71s < 120s, skip
+00:14:15 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:14:16 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:14:16 [cooldown] 104s < 120s, skip
+00:14:30 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:14:30 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:14:30 [cooldown] 118s < 120s, skip
+00:14:58 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:14:58 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:14:58 [extract] session 449601f8-20d5-4894-ac98-e69462299ff3
+00:14:58 [extract] 69 exchanges (1 human)
+00:14:58 [extract] 1 human msgs < 3, skip
+00:15:03 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:15:03 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:15:03 [cooldown] 5s < 120s, skip
+00:15:28 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:15:28 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:15:28 [cooldown] 30s < 120s, skip
+00:15:56 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:15:56 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:15:56 [cooldown] 58s < 120s, skip
+00:15:59 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:16:00 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:16:00 [cooldown] 62s < 120s, skip
+00:16:38 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:16:38 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:16:38 [cooldown] 100s < 120s, skip
+00:17:01 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:17:01 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:17:01 [extract] session 449601f8-20d5-4894-ac98-e69462299ff3
+00:17:01 [extract] 81 exchanges (1 human)
+00:17:01 [extract] 1 human msgs < 3, skip
+00:17:43 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:17:43 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:17:43 [cooldown] 42s < 120s, skip
+00:18:55 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:18:55 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:18:55 [cooldown] 114s < 120s, skip
+00:18:59 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:19:00 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:19:00 [cooldown] 119s < 120s, skip
+00:19:39 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:19:39 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:19:39 [extract] session 449601f8-20d5-4894-ac98-e69462299ff3
+00:19:39 [extract] 88 exchanges (1 human)
+00:19:39 [extract] 1 human msgs < 3, skip
+00:20:28 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:20:28 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:20:28 [cooldown] 49s < 120s, skip
+00:21:03 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:21:03 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:21:03 [cooldown] 84s < 120s, skip
+00:21:27 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:21:28 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:21:28 [cooldown] 109s < 120s, skip
+00:21:39 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:21:39 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:21:39 [extract] session 449601f8-20d5-4894-ac98-e69462299ff3
+00:21:39 [extract] 96 exchanges (1 human)
+00:21:39 [extract] 1 human msgs < 3, skip
+00:21:53 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:21:53 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:21:53 [cooldown] 14s < 120s, skip
+00:22:03 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:22:03 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:22:03 [cooldown] 24s < 120s, skip
+00:22:21 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:22:22 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:22:22 [cooldown] 43s < 120s, skip
+00:22:24 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:22:24 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:22:24 [cooldown] 45s < 120s, skip
+00:22:49 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:22:49 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:22:49 [cooldown] 70s < 120s, skip
+00:23:06 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:23:06 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:23:06 [cooldown] 87s < 120s, skip
+00:23:41 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:23:41 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:23:41 [extract] session 449601f8-20d5-4894-ac98-e69462299ff3
+00:23:41 [extract] 109 exchanges (1 human)
+00:23:41 [extract] 1 human msgs < 3, skip
+00:23:54 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:23:54 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:23:54 [cooldown] 13s < 120s, skip
+00:26:18 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:26:18 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:26:18 [extract] session 449601f8-20d5-4894-ac98-e69462299ff3
+00:26:18 [extract] 113 exchanges (1 human)
+00:26:18 [extract] 1 human msgs < 3, skip
+00:26:25 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:26:25 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:26:25 [cooldown] 7s < 120s, skip
+00:26:42 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:26:42 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:26:42 [cooldown] 24s < 120s, skip
+00:28:05 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:28:05 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:28:05 [cooldown] 107s < 120s, skip
+00:28:10 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:28:10 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:28:10 [cooldown] 112s < 120s, skip
+00:28:22 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:28:22 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:28:22 [extract] session 449601f8-20d5-4894-ac98-e69462299ff3
+00:28:23 [extract] 121 exchanges (1 human)
+00:28:23 [extract] 1 human msgs < 3, skip
+00:28:49 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:28:50 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:28:50 [cooldown] 27s < 120s, skip
+00:29:05 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:29:05 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:29:05 [cooldown] 42s < 120s, skip
+00:29:41 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:29:42 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:29:42 [cooldown] 79s < 120s, skip
+00:32:44 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:32:44 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:32:44 [extract] session 449601f8-20d5-4894-ac98-e69462299ff3
+00:32:44 [extract] 127 exchanges (1 human)
+00:32:44 [extract] 1 human msgs < 3, skip
+00:33:16 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:33:16 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:33:16 [cooldown] 32s < 120s, skip
+00:33:32 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:33:32 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:33:32 [cooldown] 48s < 120s, skip
+00:33:41 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:33:41 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:33:41 [cooldown] 57s < 120s, skip
+00:34:06 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:34:06 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:34:06 [cooldown] 82s < 120s, skip
+00:34:15 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:34:15 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+00:34:15 [cooldown] 91s < 120s, skip
+13:13:44 [hook] session-start: PROJECT_DIR=/Users/l/code/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+13:14:23 [hook] session-start: PROJECT_DIR=/Users/l/code/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:48:25 [hook] session-start: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:48:38 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:48:44 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:48:52 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:49:00 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:49:10 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:49:10 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:49:10 [extract] session 4f98b673-91a2-4c9b-9232-88e7159639ea
+14:49:10 [extract] 11 exchanges (1 human)
+14:49:10 [extract] 1 human msgs < 3, skip
+14:49:13 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:49:13 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:49:13 [cooldown] 3s < 120s, skip
+14:49:26 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:49:27 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:49:27 [cooldown] 17s < 120s, skip
+14:49:34 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:49:34 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:49:34 [cooldown] 24s < 120s, skip
+14:49:39 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:49:39 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:49:39 [cooldown] 29s < 120s, skip
+14:49:44 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:49:44 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:49:44 [cooldown] 34s < 120s, skip
+14:49:51 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:49:52 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:49:52 [cooldown] 42s < 120s, skip
+14:50:15 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:50:15 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:50:15 [cooldown] 65s < 120s, skip
+14:50:27 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:50:27 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:50:27 [cooldown] 77s < 120s, skip
+14:50:40 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:50:41 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:50:41 [cooldown] 91s < 120s, skip
+14:50:51 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:50:52 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:50:52 [cooldown] 102s < 120s, skip
+14:51:04 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:51:04 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:51:04 [cooldown] 114s < 120s, skip
+14:51:09 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:51:09 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:51:09 [cooldown] 119s < 120s, skip
+14:51:35 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:51:35 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:51:35 [extract] session 4f98b673-91a2-4c9b-9232-88e7159639ea
+14:51:35 [extract] 34 exchanges (1 human)
+14:51:35 [extract] 1 human msgs < 3, skip
+14:51:41 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:51:41 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:51:41 [cooldown] 6s < 120s, skip
+14:51:58 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:51:58 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:51:58 [cooldown] 23s < 120s, skip
+14:52:14 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:52:14 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:52:14 [cooldown] 39s < 120s, skip
+14:52:53 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:52:53 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:52:53 [cooldown] 78s < 120s, skip
+14:53:02 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:53:02 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:53:02 [cooldown] 87s < 120s, skip
+14:53:38 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:53:38 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:53:38 [extract] session 4f98b673-91a2-4c9b-9232-88e7159639ea
+14:53:38 [extract] 45 exchanges (1 human)
+14:53:38 [extract] 1 human msgs < 3, skip
+14:53:44 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:53:44 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:53:44 [cooldown] 6s < 120s, skip
+14:54:12 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:54:13 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:54:13 [cooldown] 35s < 120s, skip
+14:55:05 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:55:06 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:55:06 [cooldown] 88s < 120s, skip
+14:55:27 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:55:27 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:55:27 [cooldown] 109s < 120s, skip
+14:55:36 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:55:36 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:55:36 [cooldown] 118s < 120s, skip
+14:55:59 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:55:59 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:55:59 [extract] session 4f98b673-91a2-4c9b-9232-88e7159639ea
+14:55:59 [extract] 56 exchanges (1 human)
+14:56:00 [extract] 1 human msgs < 3, skip
+14:56:12 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:56:13 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:56:13 [cooldown] 14s < 120s, skip
+14:56:54 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:56:54 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:56:54 [cooldown] 55s < 120s, skip
+14:56:56 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:56:56 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:56:56 [cooldown] 57s < 120s, skip
+14:57:01 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:57:01 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:57:01 [cooldown] 62s < 120s, skip
+14:57:12 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:57:12 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+14:57:12 [cooldown] 73s < 120s, skip
+15:01:57 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:01:57 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:01:57 [extract] session 4f98b673-91a2-4c9b-9232-88e7159639ea
+15:01:58 [extract] 68 exchanges (2 human)
+15:01:58 [extract] 2 human msgs < 3, skip
+15:02:48 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:02:48 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:02:48 [cooldown] 50s < 120s, skip
+15:02:56 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:02:56 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:02:56 [cooldown] 58s < 120s, skip
+15:03:29 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:03:29 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:03:29 [cooldown] 91s < 120s, skip
+15:04:32 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:04:32 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:04:32 [extract] session 4f98b673-91a2-4c9b-9232-88e7159639ea
+15:04:32 [extract] 76 exchanges (2 human)
+15:04:32 [extract] 2 human msgs < 3, skip
+15:04:41 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:04:41 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:04:42 [cooldown] 9s < 120s, skip
+15:05:21 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:05:22 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:05:22 [cooldown] 50s < 120s, skip
+15:06:15 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:06:16 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:06:16 [cooldown] 104s < 120s, skip
+15:06:23 [hook] session-start: PROJECT_DIR=/Users/l/code/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:07:02 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:07:02 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:07:02 [extract] session 4f98b673-91a2-4c9b-9232-88e7159639ea
+15:07:02 [extract] 83 exchanges (2 human)
+15:07:02 [extract] 2 human msgs < 3, skip
+15:07:26 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:07:26 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:07:26 [cooldown] 24s < 120s, skip
+15:07:34 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:07:34 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:07:34 [cooldown] 32s < 120s, skip
+15:07:47 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:07:47 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:07:47 [cooldown] 45s < 120s, skip
+15:08:17 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:08:17 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:08:17 [cooldown] 75s < 120s, skip
+15:08:38 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:08:38 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:08:38 [cooldown] 96s < 120s, skip
+15:08:55 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:08:55 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:08:55 [cooldown] 113s < 120s, skip
+15:09:23 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:09:23 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:09:23 [extract] session 4f98b673-91a2-4c9b-9232-88e7159639ea
+15:09:23 [extract] 96 exchanges (2 human)
+15:09:23 [extract] 2 human msgs < 3, skip
+15:09:54 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:09:54 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:09:54 [cooldown] 31s < 120s, skip
+15:10:02 [hook] session-start: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:10:14 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:10:14 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:10:14 [cooldown] 51s < 120s, skip
+15:10:18 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:10:18 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:10:24 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:10:26 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:10:33 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:10:35 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:10:38 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:10:38 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:10:38 [cooldown] 75s < 120s, skip
+15:10:44 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:10:46 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:10:47 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:10:47 [cooldown] 84s < 120s, skip
+15:10:53 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:10:53 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:10:53 [cooldown] 90s < 120s, skip
+15:10:54 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:10:54 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:10:54 [cooldown] 91s < 120s, skip
+15:10:57 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:10:58 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:10:58 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:10:58 [cooldown] 95s < 120s, skip
+15:11:08 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:08 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:08 [cooldown] 105s < 120s, skip
+15:11:24 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:24 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:24 [extract] session ecc82863-4f76-4be1-bbfe-be04f00c739e
+15:11:24 [extract] 14 exchanges (1 human)
+15:11:24 [extract] 1 human msgs < 3, skip
+15:11:25 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:25 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:25 [cooldown] 1s < 120s, skip
+15:11:30 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:30 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:30 [cooldown] 6s < 120s, skip
+15:11:31 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:32 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:32 [cooldown] 8s < 120s, skip
+15:11:38 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:38 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:38 [cooldown] 14s < 120s, skip
+15:11:43 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:43 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:43 [cooldown] 19s < 120s, skip
+15:11:46 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:46 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:46 [cooldown] 22s < 120s, skip
+15:11:48 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:49 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:49 [cooldown] 25s < 120s, skip
+15:11:52 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:53 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:53 [cooldown] 29s < 120s, skip
+15:11:54 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:54 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:54 [cooldown] 30s < 120s, skip
+15:11:57 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:57 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:11:58 [cooldown] 34s < 120s, skip
+15:12:04 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:04 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:04 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:04 [cooldown] 40s < 120s, skip
+15:12:09 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:10 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:10 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:10 [cooldown] 46s < 120s, skip
+15:12:18 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:19 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:19 [cooldown] 55s < 120s, skip
+15:12:22 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:22 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:22 [cooldown] 58s < 120s, skip
+15:12:24 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:24 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:24 [cooldown] 60s < 120s, skip
+15:12:25 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:25 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:25 [cooldown] 61s < 120s, skip
+15:12:37 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:38 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:38 [cooldown] 74s < 120s, skip
+15:12:38 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:39 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:39 [cooldown] 75s < 120s, skip
+15:12:42 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:42 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:42 [cooldown] 78s < 120s, skip
+15:12:47 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:47 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:47 [cooldown] 83s < 120s, skip
+15:12:55 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:55 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:55 [cooldown] 91s < 120s, skip
+15:12:56 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:56 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:12:56 [cooldown] 92s < 120s, skip
+15:13:00 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:00 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:00 [cooldown] 96s < 120s, skip
+15:13:02 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:02 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:02 [cooldown] 98s < 120s, skip
+15:13:04 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:04 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:04 [cooldown] 100s < 120s, skip
+15:13:10 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:10 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:10 [cooldown] 106s < 120s, skip
+15:13:13 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:13 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:13 [cooldown] 109s < 120s, skip
+15:13:18 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:18 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:18 [cooldown] 114s < 120s, skip
+15:13:27 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:27 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:27 [extract] session 4f98b673-91a2-4c9b-9232-88e7159639ea
+15:13:28 [extract] 121 exchanges (2 human)
+15:13:28 [extract] 2 human msgs < 3, skip
+15:13:36 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:36 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:36 [cooldown] 8s < 120s, skip
+15:13:42 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:42 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:42 [cooldown] 14s < 120s, skip
+15:13:49 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:50 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:50 [cooldown] 22s < 120s, skip
+15:13:51 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:51 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:51 [cooldown] 23s < 120s, skip
+15:13:56 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:56 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:13:56 [cooldown] 28s < 120s, skip
+15:14:05 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:14:06 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:14:06 [cooldown] 38s < 120s, skip
+15:14:07 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:14:07 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:14:07 [cooldown] 39s < 120s, skip
+15:14:15 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:14:16 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:14:16 [cooldown] 48s < 120s, skip
+15:14:25 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:14:25 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:14:25 [cooldown] 57s < 120s, skip
+15:14:30 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:14:30 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:14:30 [cooldown] 62s < 120s, skip
+15:14:43 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:14:43 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:14:43 [cooldown] 75s < 120s, skip
+15:15:06 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:15:06 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:15:06 [cooldown] 98s < 120s, skip
+15:15:07 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:15:07 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:15:07 [cooldown] 99s < 120s, skip
+15:15:10 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:15:10 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:15:10 [cooldown] 102s < 120s, skip
+15:15:36 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:15:36 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:15:36 [extract] session ecc82863-4f76-4be1-bbfe-be04f00c739e
+15:15:36 [extract] 51 exchanges (1 human)
+15:15:36 [extract] 1 human msgs < 3, skip
+15:15:47 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:15:47 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:15:47 [cooldown] 11s < 120s, skip
+15:15:54 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:15:54 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:15:54 [cooldown] 18s < 120s, skip
+15:15:55 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:15:56 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:15:56 [cooldown] 20s < 120s, skip
+15:15:59 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:15:59 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:15:59 [cooldown] 23s < 120s, skip
+15:16:21 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:16:22 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:16:22 [cooldown] 46s < 120s, skip
+15:16:26 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:16:26 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:16:26 [cooldown] 50s < 120s, skip
+15:16:44 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:16:44 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:16:44 [cooldown] 68s < 120s, skip
+15:16:48 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:16:48 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:16:48 [cooldown] 72s < 120s, skip
+15:16:52 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:16:52 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:16:52 [cooldown] 76s < 120s, skip
+15:16:55 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:16:56 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:16:56 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:16:56 [cooldown] 80s < 120s, skip
+15:17:33 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:17:33 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:17:33 [cooldown] 117s < 120s, skip
+15:17:37 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:17:37 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:17:37 [extract] session ecc82863-4f76-4be1-bbfe-be04f00c739e
+15:17:37 [extract] 62 exchanges (1 human)
+15:17:37 [extract] 1 human msgs < 3, skip
+15:17:43 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:17:44 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:17:44 [cooldown] 7s < 120s, skip
+15:17:51 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:17:52 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:17:52 [cooldown] 15s < 120s, skip
+15:17:55 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:17:55 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:17:55 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:17:55 [cooldown] 18s < 120s, skip
+15:18:01 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:18:02 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:18:02 [cooldown] 25s < 120s, skip
+15:18:02 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:18:02 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:18:02 [cooldown] 25s < 120s, skip
+15:18:05 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:18:05 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:18:05 [cooldown] 28s < 120s, skip
+15:18:06 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:18:07 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:18:07 [cooldown] 30s < 120s, skip
+15:18:15 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:18:15 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:18:15 [cooldown] 38s < 120s, skip
+15:18:33 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:18:33 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:18:34 [cooldown] 56s < 120s, skip
+15:18:37 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:18:37 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:18:37 [cooldown] 60s < 120s, skip
+15:18:49 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:18:49 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:18:49 [cooldown] 72s < 120s, skip
+15:18:50 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:18:50 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:18:50 [cooldown] 73s < 120s, skip
+15:19:10 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:19:10 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:19:10 [cooldown] 93s < 120s, skip
+15:19:24 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:19:25 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:19:25 [cooldown] 108s < 120s, skip
+15:19:31 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:19:31 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:19:31 [cooldown] 114s < 120s, skip
+15:19:40 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:19:40 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:19:40 [extract] session ecc82863-4f76-4be1-bbfe-be04f00c739e
+15:19:40 [extract] 74 exchanges (1 human)
+15:19:40 [extract] 1 human msgs < 3, skip
+15:19:44 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:19:45 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:19:45 [cooldown] 5s < 120s, skip
+15:20:02 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:20:02 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:20:02 [cooldown] 22s < 120s, skip
+15:20:44 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:20:45 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:20:45 [cooldown] 65s < 120s, skip
+15:21:11 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:21:11 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:21:11 [cooldown] 91s < 120s, skip
+15:21:26 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:21:26 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:21:26 [cooldown] 106s < 120s, skip
+15:25:32 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:25:32 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:25:32 [extract] session ecc82863-4f76-4be1-bbfe-be04f00c739e
+15:25:33 [extract] 79 exchanges (1 human)
+15:25:33 [extract] 1 human msgs < 3, skip
+15:25:37 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:25:37 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:25:37 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:25:37 [cooldown] 4s < 120s, skip
+15:25:37 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:25:37 [cooldown] 4s < 120s, skip
+15:25:41 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:25:42 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:25:42 [cooldown] 9s < 120s, skip
+15:25:42 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:25:42 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:25:42 [cooldown] 9s < 120s, skip
+15:25:56 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:25:56 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:25:56 [cooldown] 23s < 120s, skip
+15:26:13 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:26:14 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:26:14 [cooldown] 41s < 120s, skip
+15:26:18 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:26:18 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:26:18 [cooldown] 45s < 120s, skip
+15:28:02 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:28:02 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:28:02 [extract] session ecc82863-4f76-4be1-bbfe-be04f00c739e
+15:28:02 [extract] 88 exchanges (1 human)
+15:28:02 [extract] 1 human msgs < 3, skip
+15:28:05 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:28:06 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:28:06 [cooldown] 4s < 120s, skip
+15:28:09 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:28:09 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:28:09 [cooldown] 7s < 120s, skip
+15:29:27 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:29:27 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:29:27 [cooldown] 85s < 120s, skip
+15:29:32 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:29:32 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:29:32 [cooldown] 90s < 120s, skip
+15:30:03 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:30:04 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:30:04 [extract] session ecc82863-4f76-4be1-bbfe-be04f00c739e
+15:30:04 [extract] 93 exchanges (1 human)
+15:30:04 [extract] 1 human msgs < 3, skip
+15:30:16 [hook] session-start: PROJECT_DIR=/Users/l/code/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:35:33 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:35:34 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:35:34 [extract] session 4f98b673-91a2-4c9b-9232-88e7159639ea
+15:35:34 [extract] 151 exchanges (3 human)
+15:35:34 [haiku] calling (branch: fix/connect-clusters-open-wizard)
+15:35:34 [haiku] ERROR: call-haiku error: [Errno 2] No such file or directory: 'claude'
+15:35:44 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:35:44 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:35:44 [cooldown] 10s < 120s, skip
+15:35:55 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:35:55 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:35:55 [cooldown] 21s < 120s, skip
+15:36:13 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:36:13 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:36:13 [cooldown] 39s < 120s, skip
+15:36:42 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:36:42 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:36:42 [cooldown] 68s < 120s, skip
+15:36:53 [hook] post-tool: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:36:54 [hook] save-session: PROJECT_DIR=/Users/l/.treehouse/meshery-4cfef9/1/meshery PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:36:54 [cooldown] 80s < 120s, skip
+15:52:03 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:52:04 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:52:04 [extract] session ecc82863-4f76-4be1-bbfe-be04f00c739e
+15:52:04 [extract] 95 exchanges (3 human)
+15:52:04 [haiku] calling (branch: work/artifact-hub-github-connections-98eea6)
+15:52:08 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:52:11 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:52:25 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:52:26 [tokens] tokens: 9+20308cache→1852out ($0.041096)
+15:52:26 [write] appended: ## 15:52 | work/artifact-hub-github-connections-98eea6
+15:52:26 [write] position → 543
+15:52:27 [ndc] now.md → today-2026-07-23.md
+15:52:27 [git-backup] removed per-slug .gitignore (legacy bootstrap artifact)
+15:52:27 [ndc] running (PID 8713)
+15:52:27 [git-backup] nothing to commit for .remember, skip
+15:52:43 [ndc] tokens: 9+21168cache→1270out ($0.028106)
+15:52:43 [ndc] 260→245b (-5%)
+15:53:03 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:53:08 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:53:14 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:53:15 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:53:21 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:53:21 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:53:21 [cooldown] 77s < 120s, skip
+15:53:27 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:53:27 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:53:28 [cooldown] 84s < 120s, skip
+15:53:39 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:53:39 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:53:39 [cooldown] 95s < 120s, skip
+15:53:44 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:53:44 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:53:44 [cooldown] 100s < 120s, skip
+15:53:50 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:53:50 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:53:50 [cooldown] 106s < 120s, skip
+15:53:54 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:53:55 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:53:55 [cooldown] 111s < 120s, skip
+15:53:59 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:54:00 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:54:00 [cooldown] 116s < 120s, skip
+15:54:05 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:54:05 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:54:05 [extract] session ecc82863-4f76-4be1-bbfe-be04f00c739e
+15:54:05 [extract] 20 exchanges (0 human)
+15:54:05 [extract] 0 human msgs < 3, skip
+15:54:09 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:54:10 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:54:10 [cooldown] 5s < 120s, skip
+15:54:18 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:54:19 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:54:19 [cooldown] 14s < 120s, skip
+15:54:25 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:54:25 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:54:25 [cooldown] 20s < 120s, skip
+15:54:31 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:54:31 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:54:32 [cooldown] 26s < 120s, skip
+15:54:41 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:54:41 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:54:41 [cooldown] 36s < 120s, skip
+15:54:55 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:54:55 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:54:55 [cooldown] 50s < 120s, skip
+15:55:05 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:55:05 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:55:05 [cooldown] 60s < 120s, skip
+15:55:12 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:55:13 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:55:13 [cooldown] 68s < 120s, skip
+15:55:18 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:55:18 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:55:18 [cooldown] 73s < 120s, skip
+15:55:22 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:55:23 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:55:23 [cooldown] 78s < 120s, skip
+15:55:28 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:55:28 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:55:28 [cooldown] 83s < 120s, skip
+15:55:33 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:55:33 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:55:33 [cooldown] 88s < 120s, skip
+15:56:37 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:56:37 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:56:37 [extract] session ecc82863-4f76-4be1-bbfe-be04f00c739e
+15:56:38 [extract] 36 exchanges (0 human)
+15:56:38 [extract] 0 human msgs < 3, skip
+15:56:46 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:56:47 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:56:47 [cooldown] 9s < 120s, skip
+15:56:53 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:56:53 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:56:53 [cooldown] 15s < 120s, skip
+15:57:40 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:57:40 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:57:40 [cooldown] 62s < 120s, skip
+15:58:33 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:58:33 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:58:33 [cooldown] 115s < 120s, skip
+15:59:25 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:59:25 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:59:25 [extract] session ecc82863-4f76-4be1-bbfe-be04f00c739e
+15:59:26 [extract] 43 exchanges (0 human)
+15:59:26 [extract] 0 human msgs < 3, skip
+15:59:26 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:59:26 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:59:26 [cooldown] 0s < 120s, skip
+15:59:31 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:59:31 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:59:31 [cooldown] 5s < 120s, skip
+15:59:37 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:59:37 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:59:37 [cooldown] 11s < 120s, skip
+15:59:41 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:59:41 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:59:41 [cooldown] 15s < 120s, skip
+15:59:50 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:59:51 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:59:51 [cooldown] 25s < 120s, skip
+15:59:56 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:59:56 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+15:59:56 [cooldown] 30s < 120s, skip
+16:00:01 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:00:02 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:00:02 [cooldown] 36s < 120s, skip
+16:00:10 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:00:11 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:00:11 [cooldown] 45s < 120s, skip
+16:00:19 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:00:20 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:00:20 [cooldown] 54s < 120s, skip
+16:00:27 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:00:28 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:00:28 [cooldown] 62s < 120s, skip
+16:00:37 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:00:38 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:00:38 [cooldown] 72s < 120s, skip
+16:00:48 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:00:49 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:00:49 [cooldown] 83s < 120s, skip
+16:00:57 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:00:57 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:00:57 [cooldown] 91s < 120s, skip
+16:01:28 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:01:28 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:01:28 [extract] session ecc82863-4f76-4be1-bbfe-be04f00c739e
+16:01:28 [extract] 58 exchanges (0 human)
+16:01:28 [extract] 0 human msgs < 3, skip
+16:01:38 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:01:39 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:01:39 [cooldown] 11s < 120s, skip
+16:01:40 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:01:40 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:01:40 [cooldown] 12s < 120s, skip
+16:01:53 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:01:53 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:01:53 [cooldown] 25s < 120s, skip
+16:02:09 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:02:10 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:02:10 [cooldown] 42s < 120s, skip
+16:02:14 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:02:15 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:02:15 [cooldown] 47s < 120s, skip
+16:02:25 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:02:25 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:02:25 [cooldown] 57s < 120s, skip
+16:02:33 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:02:34 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:02:34 [cooldown] 66s < 120s, skip
+16:02:37 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:02:37 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:02:37 [cooldown] 69s < 120s, skip
+16:02:46 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:02:47 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:02:47 [cooldown] 79s < 120s, skip
+16:03:13 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:03:14 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:03:14 [cooldown] 106s < 120s, skip
+16:03:22 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:03:22 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:03:22 [cooldown] 114s < 120s, skip
+16:03:30 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:03:30 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:03:31 [extract] session ecc82863-4f76-4be1-bbfe-be04f00c739e
+16:03:31 [extract] 70 exchanges (0 human)
+16:03:31 [extract] 0 human msgs < 3, skip
+16:03:38 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:03:38 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:03:39 [cooldown] 7s < 120s, skip
+16:03:47 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:03:47 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:03:48 [cooldown] 17s < 120s, skip
+16:03:51 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:03:51 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:03:51 [cooldown] 20s < 120s, skip
+16:03:53 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:03:54 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:03:54 [cooldown] 23s < 120s, skip
+16:04:25 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:04:26 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:04:26 [cooldown] 55s < 120s, skip
+16:04:30 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:04:31 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:04:31 [cooldown] 60s < 120s, skip
+16:28:56 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:28:56 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:28:56 [extract] session ecc82863-4f76-4be1-bbfe-be04f00c739e
+16:28:56 [extract] 80 exchanges (1 human)
+16:28:56 [extract] 1 human msgs < 3, skip
+16:28:57 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:28:58 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:28:58 [cooldown] 2s < 120s, skip
+16:29:05 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:29:05 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:29:05 [cooldown] 9s < 120s, skip
+16:29:07 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:29:07 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:29:07 [cooldown] 11s < 120s, skip
+16:29:17 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:29:17 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:29:17 [cooldown] 21s < 120s, skip
+16:29:18 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:29:18 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:29:18 [cooldown] 22s < 120s, skip
+16:29:27 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:29:27 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:29:27 [cooldown] 31s < 120s, skip
+16:29:27 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:29:28 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:29:28 [cooldown] 32s < 120s, skip
+16:29:42 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:29:43 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:29:43 [cooldown] 47s < 120s, skip
+16:29:44 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:29:44 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:29:44 [cooldown] 48s < 120s, skip
+16:29:49 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:29:49 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:29:49 [cooldown] 53s < 120s, skip
+16:30:36 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:30:36 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:30:36 [cooldown] 100s < 120s, skip
+16:30:46 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:30:46 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:30:46 [cooldown] 110s < 120s, skip
+16:30:57 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:30:57 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:30:57 [extract] session ecc82863-4f76-4be1-bbfe-be04f00c739e
+16:30:58 [extract] 92 exchanges (1 human)
+16:30:58 [extract] 1 human msgs < 3, skip
+16:54:50 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:54:50 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:54:50 [extract] session ecc82863-4f76-4be1-bbfe-be04f00c739e
+16:54:50 [extract] 96 exchanges (2 human)
+16:54:50 [extract] 2 human msgs < 3, skip
+16:54:53 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:54:53 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:54:53 [cooldown] 3s < 120s, skip
+16:55:11 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:55:11 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:55:11 [cooldown] 21s < 120s, skip
+16:55:13 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:55:13 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:55:13 [cooldown] 23s < 120s, skip
+16:55:18 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:55:19 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:55:19 [cooldown] 29s < 120s, skip
+16:56:13 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:56:13 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:56:13 [cooldown] 83s < 120s, skip
+16:56:28 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:56:28 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:56:28 [cooldown] 98s < 120s, skip
+16:56:33 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:56:33 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:56:33 [cooldown] 103s < 120s, skip
+16:56:40 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:56:41 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:56:41 [cooldown] 111s < 120s, skip
+16:56:47 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:56:47 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:56:47 [cooldown] 117s < 120s, skip
+16:56:54 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:56:54 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:56:54 [extract] session ecc82863-4f76-4be1-bbfe-be04f00c739e
+16:56:55 [extract] 105 exchanges (2 human)
+16:56:55 [extract] 2 human msgs < 3, skip
+16:57:25 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:57:26 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:57:26 [cooldown] 31s < 120s, skip
+16:57:39 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:57:40 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:57:40 [cooldown] 45s < 120s, skip
+16:57:53 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:57:53 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+16:57:53 [cooldown] 58s < 120s, skip
+18:37:36 [hook] session-start: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+18:37:38 [hook] session-start: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/artifact-hub-github-connections-98eea6 PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+18:39:01 [hook] session-start: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/dazzling-chaplygin-4284ca PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+18:39:25 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/dazzling-chaplygin-4284ca PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+18:39:25 [hook] save-session: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/dazzling-chaplygin-4284ca PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+18:39:25 [extract] session ecc82863-4f76-4be1-bbfe-be04f00c739e
+18:39:25 [extract] 117 exchanges (4 human)
+18:39:25 [haiku] calling (branch: work/artifact-hub-github-connections-98eea6)
+18:39:34 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/dazzling-chaplygin-4284ca PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+18:39:41 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/dazzling-chaplygin-4284ca PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+18:39:43 [hook] post-tool: PROJECT_DIR=/Users/l/code/meshery/.claude/worktrees/dazzling-chaplygin-4284ca PIPELINE_DIR=/Users/l/.claude/plugins/cache/claude-plugins-official/remember/0.8.3 PYTHON=python3 REMEMBER_DIR=/Users/l/code/meshery/.remember
+18:39:47 [tokens] tokens: 9+20308cache→1570out ($0.047878)
+18:39:47 [write] appended: ## 18:39 | work/artifact-hub-github-connections-98eea6
+18:39:48 [write] position → 1146
+18:39:48 [git-backup] removed per-slug .gitignore (legacy bootstrap artifact)
+18:39:48 [ndc] now.md → today-2026-07-23.md
+18:39:48 [ndc] running (PID 28709)
