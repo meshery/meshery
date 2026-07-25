@@ -84,7 +84,7 @@ afterEach(() => {
 });
 
 describe('MeshKit error chain (real schemas client)', () => {
-  it('surfaces the schemas transform gap this helper compensates for', async () => {
+  it('carries the camelCase detail arrays the server emits, post-#1081', async () => {
     respondWith(403, CREATE_ENVIRONMENT_403);
 
     const error = (await createEnvironmentError()) as {
@@ -92,16 +92,19 @@ describe('MeshKit error chain (real schemas client)', () => {
       meshkit?: Record<string, unknown>;
     };
 
-    // The wrapper does attach an envelope, and it does carry message/code...
+    // The wrapper attaches an envelope carrying message/code...
     expect(error?.status).toBe(403);
     expect(error?.meshkit?.message).toBe('Unable to create the environment');
     expect(error?.meshkit?.code).toBe('meshery-server-1448');
-    // ...but the detail arrays are dropped, because the wrapper reads
-    // `probable_cause`/`suggested_remediation` and the server sends camelCase.
-    // Delete this assertion (and the fallback it justifies) once
-    // meshery/schemas#1081 ships and the dependency is bumped.
-    expect(error?.meshkit?.suggestedRemediation).toBeUndefined();
-    expect(error?.meshkit?.probableCause).toBeUndefined();
+    // ...and, now that meshery/schemas#1081 shipped and the dependency is
+    // bumped, the wrapper reads the camelCase spellings the server emits, so
+    // the detail arrays survive the transform instead of being dropped. The
+    // app-side alias fallback in `meshkitError.ts` is retained only for
+    // legacy snake_case producers (see the snake_case case below).
+    expect(error?.meshkit?.suggestedRemediation).toEqual(
+      CREATE_ENVIRONMENT_403.suggestedRemediation,
+    );
+    expect(error?.meshkit?.probableCause).toEqual(CREATE_ENVIRONMENT_403.probableCause);
   });
 
   it('renders the title, every remediation bullet and the code from a real 403', async () => {
