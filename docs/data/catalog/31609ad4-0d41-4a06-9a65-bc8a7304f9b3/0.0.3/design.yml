@@ -2,7 +2,7 @@
   "id": "31609ad4-0d41-4a06-9a65-bc8a7304f9b3",
   "name": "NGINX Demo",
   "schemaVersion": "designs.meshery.io/v1beta3",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "components": [
     {
       "id": "9b533f05-2aee-4fdd-8d4b-ce914399cb79",
@@ -30,7 +30,7 @@
         "border-width": 2,
         "position": {
           "x": 674.6629601101201,
-          "y": 823.9218118758985
+          "y": 863.9218118758985
         },
         "primaryColor": "#326CE5",
         "secondaryColor": "#7aa1f0",
@@ -202,7 +202,8 @@
         "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg",
         "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg",
         "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg",
-        "width": 80
+        "width": 80,
+        "z-index": 4
       },
       "capabilities": null,
       "status": null,
@@ -249,13 +250,18 @@
         "border-style": "dashed",
         "border-width": 2,
         "height": 80,
+        "position": {
+          "x": 878.5258986602418,
+          "y": 861.136601878744
+        },
         "primaryColor": "#326CE5",
         "secondaryColor": "#7aa1f0",
         "shape": "rectangle",
         "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg",
         "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg",
         "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg",
-        "width": 80
+        "width": 80,
+        "z-index": 5
       },
       "capabilities": null,
       "status": null,
@@ -302,7 +308,8 @@
         "shape": "circle",
         "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/container-color.svg",
         "svgComplete": "",
-        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/container-white.svg"
+        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/container-white.svg",
+        "z-index": 6
       },
       "capabilities": null,
       "status": null,
