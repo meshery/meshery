@@ -12,6 +12,16 @@ const TAGS = {
   VIEWS: 'workspaces_views',
   TEAMS: 'workspaces_teams',
 };
+
+// The workspace designs/views endpoints return the schemas v1beta1 workspace
+// page contract, whose owner id is a `core.Id` ([16]byte) value. Go's
+// `omitempty` cannot omit a zero-valued array, so an ownerless or published
+// resource serializes its owner id as the all-zeros UUID rather than omitting
+// it. That string is truthy, so a naive by-id profile lookup fires a
+// guaranteed-miss request per resource. Guard against the nil UUID (and an
+// absent id) before dispatching the lookup.
+const NIL_UUID = '00000000-0000-0000-0000-000000000000';
+const isResolvableOwnerId = (id?: string): id is string => Boolean(id) && id !== NIL_UUID;
 const workspacesApi = api
   .enhanceEndpoints({
     addTagTypes: [TAGS.WORKSPACES, TAGS.DESIGNS, TAGS.ENVIRONMENTS, TAGS.VIEWS, TAGS.TEAMS],
@@ -132,13 +142,16 @@ const workspacesApi = api
               ? { ...designs, data: normalizePaginatedCollectionResponse(designs.data, 'designs') }
               : designs;
           if (expandUser && normalizedDesigns.data && !normalizedDesigns.error) {
+            // The `user_id` fallback is live, not legacy: the workspace designs
+            // endpoint returns the schemas v1beta1 workspace.MesheryDesignPage,
+            // whose design contract spells the owner `user_id` (unlike the
+            // v1beta3 design contract's `userId`).
             const withUsersPromises = normalizedDesigns.data.designs.map(async (design) => {
-              const user = await dispatch(
-                mesheryApi.endpoints.getUserProfileById.initiate({
-                  id: design.userId ?? design.user_id,
-                }),
-              );
-              const normalizedUser = normalizeUserProfileSummary(user.data);
+              const ownerId = design.userId ?? design.user_id;
+              const user = isResolvableOwnerId(ownerId)
+                ? await dispatch(mesheryApi.endpoints.getUserProfileById.initiate({ id: ownerId }))
+                : undefined;
+              const normalizedUser = normalizeUserProfileSummary(user?.data);
               return {
                 ...design,
                 firstName: normalizedUser?.firstName || '[deleted]',
@@ -214,12 +227,11 @@ const workspacesApi = api
               : views;
           if (expandUser && normalizedViews.data && !normalizedViews.error) {
             const withUsersPromises = normalizedViews.data.views.map(async (view) => {
-              const user = await dispatch(
-                mesheryApi.endpoints.getUserProfileById.initiate({
-                  id: view.userId ?? view.user_id,
-                }),
-              );
-              const normalizedUser = normalizeUserProfileSummary(user.data);
+              const ownerId = view.userId ?? view.user_id;
+              const user = isResolvableOwnerId(ownerId)
+                ? await dispatch(mesheryApi.endpoints.getUserProfileById.initiate({ id: ownerId }))
+                : undefined;
+              const normalizedUser = normalizeUserProfileSummary(user?.data);
               return {
                 ...view,
                 firstName: normalizedUser?.firstName || '[deleted]',
