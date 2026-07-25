@@ -114,6 +114,11 @@ func makeRequest(urlPath string, httpMethod string, body io.Reader, headers map[
 }
 
 func generateErrorReferenceDetails(referenceCodeName, code string) string {
-	codeNumber := strings.Split(code, "-")[1]
+	parts := strings.Split(code, "-")
+	codeNumber := code
+
+	if len(parts) > 1 {
+		codeNumber = parts[1]
+	}
 	return fmt.Sprintf("\nFor additional details see https://docs.meshery.io/reference/error-codes#%s-%s", referenceCodeName, codeNumber)
 }

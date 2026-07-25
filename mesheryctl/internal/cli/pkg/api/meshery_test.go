@@ -76,3 +76,40 @@ func TestMakeRequest_Failures(t *testing.T) {
 		})
 	}
 }
+
+func TestGenerateErrorReferenceDetails(t *testing.T) {
+	tests := []struct {
+		name              string
+		referenceCodeName string
+		code              string
+		expected          string
+	}{
+		{
+			name:              "well-formed error code",
+			referenceCodeName: "ErrFailRequestCode",
+			code:              "mesheryctl-1090",
+			expected:          "\nFor additional details see https://docs.meshery.io/reference/error-codes#ErrFailRequestCode-1090",
+		},
+		{
+			name:              "malformed error code without hyphen",
+			referenceCodeName: "ErrNoHyphenCode",
+			code:              "mesheryctl1090",
+			expected:          "\nFor additional details see https://docs.meshery.io/reference/error-codes#ErrNoHyphenCode-mesheryctl1090",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			actual := generateErrorReferenceDetails(tt.referenceCodeName, tt.code)
+			if actual != tt.expected {
+				t.Errorf(
+					"generateErrorReferenceDetails(%q, %q) = %q, want %q",
+					tt.referenceCodeName,
+					tt.code,
+					actual,
+					tt.expected,
+				)
+			}
+		})
+	}
+}
