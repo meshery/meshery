@@ -413,7 +413,7 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
                     <CustomTooltip
                       title={
                         resourceUserProfile
-                          ? `Owner: ${resourceUserProfile.firstName} ${resourceUserProfile.lastName}`
+                          ? `Owner: ${resourceUserProfile.firstName || ''} ${resourceUserProfile.lastName || ''}`
                           : 'Owner'
                       }
                     >
@@ -554,7 +554,7 @@ const OwnerChip = ({ userProfile, hasCloudProfile = true }) => {
       ) : (
         avatar
       )}
-      <Typography>{`${userProfile.firstName} ${userProfile.lastName}`}</Typography>
+      <Typography>{`${userProfile.firstName || ''} ${userProfile.lastName || ''}`}</Typography>
     </Box>
   );
 };
