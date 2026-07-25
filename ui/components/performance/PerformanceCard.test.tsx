@@ -45,7 +45,11 @@ vi.mock('@sistent/sistent', () => ({
   Grid2: ({ children }: any) => <div>{children}</div>,
   IconButton: ({ children, onClick }: any) => <button onClick={onClick}>{children}</button>,
   Link: ({ children }: any) => <a>{children}</a>,
-  Table: ({ children }: any) => <table><tbody>{children}</tbody></table>,
+  Table: ({ children }: any) => (
+    <table>
+      <tbody>{children}</tbody>
+    </table>
+  ),
   TableCell: ({ children }: any) => <td>{children}</td>,
   TableRow: ({ children }: any) => <tr>{children}</tr>,
   EditIcon: () => <svg data-testid="edit-icon" />,
