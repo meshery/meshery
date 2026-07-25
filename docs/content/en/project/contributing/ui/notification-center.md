@@ -138,7 +138,7 @@ The core logic for rendering metadata is handled by the `FormattedMetadata` comp
 
    - This component renders each key-value pair from the `metadata` using the mappings defined in:
      - `PropertyFormatters` – for structured or specialized visual formats.
-     - `PropertyLinkFormatters` – for rendering clickable links (e.g., file paths, URLs).
+     - `PropertyLinkFormatters` – used separately in `notification.tsx` for overflow-menu link actions.
 
 ### Key Files and Directories
 
