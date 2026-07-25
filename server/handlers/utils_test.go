@@ -183,6 +183,8 @@ func TestSafeOpenFile(t *testing.T) {
 	})
 }
 
+// TestGetPaginationParams verifies that invalid numeric page sizes fall back
+// to the default while preserving positive and "all" pagination behavior.
 func TestGetPaginationParams(t *testing.T) {
 	tests := []struct {
 		name          string
