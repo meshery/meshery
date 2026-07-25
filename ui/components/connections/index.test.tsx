@@ -19,6 +19,7 @@ vi.mock('@sistent/sistent', () => ({
   NoSsr: ({ children }) => <>{children}</>,
   ErrorBoundary: ({ children }) => <>{children}</>,
   AppBar: ({ children }) => <div>{children}</div>,
+  useHasPermission: () => true,
 }));
 
 vi.mock('./styles', () => ({

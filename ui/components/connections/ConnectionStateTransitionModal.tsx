@@ -38,7 +38,7 @@ export const KUBERNETES_CONNECTION_LIFECYCLE_DOCS_URL =
 // transition means; this modal only resolves and renders it.
 type ConnectionMetadataState = Record<
   string,
-  { transitionMap?: ConnectionTransitionMap } | undefined
+  { name?: string; transitionMap?: ConnectionTransitionMap } | undefined
 > | null;
 
 const getDocsTooltipMarkdown = (kind: string | undefined): string =>
@@ -188,14 +188,23 @@ export const getTransitionActionLabel = (targetStatus: string): string => {
 export const buildTransitionTitle = ({
   targetStatus,
   kind,
+  kindName,
   count,
 }: {
   targetStatus: string;
   kind?: string;
+  /**
+   * The kind's authored display name from its connection definition. Preferred
+   * over title-casing the kind slug, which cannot recover the intended casing
+   * for multi-word or camel-cased kinds ("artifacthub" -> "Artifacthub",
+   * "github" -> "Github").
+   */
+  kindName?: string;
   count: number;
 }): string => {
   const plural = count > 1;
-  const kindLabel = kind ? `${formatToTitleCase(kind)} ` : '';
+  const label = kindName?.trim() || (kind ? formatToTitleCase(kind) : '');
+  const kindLabel = label ? `${label} ` : '';
   const connectionWord = `connection${plural ? 's' : ''}`;
   const countLabel = plural ? `${count} ` : '';
 
@@ -301,7 +310,8 @@ const ConnectionStateTransitionModal = forwardRef<ConnectionStateTransitionModal
     // connection definition. Bulk selections resolve per connection; the copy
     // is shown only when every selected connection lands on the same one
     // (mixed current states get the generic fallback line instead).
-    const transitionMap = kind ? connectionMetadataState?.[kind]?.transitionMap : undefined;
+    const kindMetadata = kind ? connectionMetadataState?.[kind] : undefined;
+    const transitionMap = kindMetadata?.transitionMap;
     const resolvedDescriptions = new Set(
       connections.map((connection) =>
         getTransitionDescription(transitionMap, connection.status ?? currentStatus, targetStatus),
@@ -316,7 +326,12 @@ const ConnectionStateTransitionModal = forwardRef<ConnectionStateTransitionModal
       ? definitionDescription
       : undefined;
     const actionLabel = getTransitionActionLabel(targetStatus);
-    const title = buildTransitionTitle({ targetStatus, kind, count });
+    const title = buildTransitionTitle({
+      targetStatus,
+      kind,
+      kindName: kindMetadata?.name,
+      count,
+    });
     const connectionPhrase = (
       <>
         {plural ? `${count} connections` : 'the connection'}
