@@ -24,11 +24,13 @@ export const store = configureStore({
 
 export type RootState = ReturnType<typeof store.getState>;
 
-mesheryEventBus.on(MESHERY_EXTENSION_EVENT.DispatchToMesheryStore).subscribe((event) => {
-  // `EventBus.on` filters at runtime but is typed as the full event union, so the
-  // discriminant has to be re-checked here for `event.data` to narrow to a
-  // dispatchable action rather than the union of every event payload.
-  if (event.type !== MESHERY_EXTENSION_EVENT.DispatchToMesheryStore) return;
-  console.log('Dispatching to Meshery Store:', event.data);
-  store.dispatch(event.data);
-});
+if (MESHERY_EXTENSION_EVENT?.DispatchToMesheryStore) {
+  mesheryEventBus.on(MESHERY_EXTENSION_EVENT.DispatchToMesheryStore).subscribe((event) => {
+    // `EventBus.on` filters at runtime but is typed as the full event union, so the
+    // discriminant has to be re-checked here for `event.data` to narrow to a
+    // dispatchable action rather than the union of every event payload.
+    if (event.type !== MESHERY_EXTENSION_EVENT.DispatchToMesheryStore) return;
+    console.log('Dispatching to Meshery Store:', event.data);
+    store.dispatch(event.data);
+  });
+}
