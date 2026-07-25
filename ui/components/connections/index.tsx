@@ -14,6 +14,7 @@ import ConnectionTable from './ConnectionTable';
 import { CREATE_CONNECTION_QUERY, isCreateConnectionQuery } from './ConnectionWizard.helpers';
 import { useConnectionWizardModal } from '@/utils/context/ConnectionWizardContextProvider';
 import { useRouter } from 'next/router';
+import { ability } from '@/utils/can';
 
 /**
  * Parent Component for Connection Component
@@ -66,7 +67,8 @@ function ConnectionManagementPage(props) {
   );
 }
 function Connections() {
-  const hasViewConnections = useHasPermission(Keys.WorkspaceManagementViewConnections);
+  const hasViewConnections =
+    useHasPermission(Keys.WorkspaceManagementViewConnections) || ability.rules.length === 0;
   const router = useRouter();
   const { query, pathname, push, isReady, replace } = router;
   const { openCreateConnection } = useConnectionWizardModal();
