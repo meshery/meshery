@@ -29,7 +29,7 @@ func TestModelGenerate(t *testing.T) {
 	testdataDir := filepath.Join(currDir, "testdata")
 	fixturesDir := filepath.Join(currDir, "fixtures")
 
-	apiURL := "/api/meshmodels/register"
+	apiURL := "/api/registry/register"
 
 	type tc struct {
 		Name             string

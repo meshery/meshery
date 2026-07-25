@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "",
+    "description": "Defines the non-binding reference from a PriorityClass to a Pod. Evaluates and automatically patches the priorityClassName field within the Pod's configuration.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -31,7 +31,12 @@
           {
             "id": null,
             "kind": "PriorityClass",
-            "match_strategy_matrix": null,
+            "match_strategy_matrix": [
+              [
+                "equal",
+                "not_null"
+              ]
+            ],
             "model": {
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",

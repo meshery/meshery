@@ -11,6 +11,7 @@ import {
   useRoomActivity,
   ExportIcon,
   WorkspaceContentMoveModal,
+  useHasPermission,
 } from '@sistent/sistent';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
@@ -29,8 +30,7 @@ import { openViewInExtension, useIsOperatorEnabled } from '@/utils/utils';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import { Router, useRouter } from 'next/router';
-import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 import { useSelector } from 'react-redux';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
@@ -102,6 +102,13 @@ const MainViewsContent = ({
   const ghostRef = useRef(null);
   const ghostTextNodeRef = useRef(null);
 
+  const isAssignViewsAllowed = useHasPermission(Keys.KanvasAssignViewsToWorkspace);
+  const isDeleteViewAllowed = useHasPermission(Keys.KanvasDeleteView);
+  const isCreateWorkspaceAllowed = useHasPermission(Keys.WorkspaceManagementCreateWorkspace);
+  const isAssignDesignsAllowed = useHasPermission(
+    Keys.WorkspaceManagementAssignDesignsToWorkspaces,
+  );
+
   const theme = useTheme();
 
   const { handleViewDownload } = useContentDownload();
@@ -120,8 +127,7 @@ const MainViewsContent = ({
       id: 'MOVE_VIEW',
       title: 'Move View',
       icon: <MoveFileIcon fill={theme.palette.icon.default} />,
-      enabled: () =>
-        CAN(keys.ASSIGN_VIEWS_TO_WORKSPACE.action, keys.ASSIGN_VIEWS_TO_WORKSPACE.subject),
+      enabled: () => isAssignViewsAllowed,
     },
 
     VIEW_INFO: {
@@ -140,8 +146,7 @@ const MainViewsContent = ({
       id: 'DELETE_VIEW',
       title: 'Delete View',
       icon: <DeleteIcon fill={theme.palette.icon.default} />,
-      enabled: ({ view, userId }) =>
-        CAN(keys.DELETE_VIEW.action, keys.DELETE_VIEW.subject) && view.userId === userId,
+      enabled: ({ view, userId }) => isDeleteViewAllowed && view.userId === userId,
     },
   };
   const getMenuOptions = ({
@@ -314,18 +319,9 @@ const MainViewsContent = ({
           WorkspaceModalContext={WorkspaceModalContext}
           assignDesignToWorkspace={assignDesignToWorkspace}
           assignViewToWorkspace={assignViewToWorkspace}
-          isCreateWorkspaceAllowed={CAN(
-            keys.CREATE_WORKSPACE.action,
-            keys.CREATE_WORKSPACE.subject,
-          )}
-          isMoveDesignAllowed={CAN(
-            keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
-            keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
-          )}
-          isMoveViewAllowed={CAN(
-            keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
-            keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
-          )}
+          isCreateWorkspaceAllowed={isCreateWorkspaceAllowed}
+          isMoveDesignAllowed={isAssignDesignsAllowed}
+          isMoveViewAllowed={isAssignViewsAllowed}
           currentOrgId={currentOrganization?.id}
           notify={notify}
           router={router}

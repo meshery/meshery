@@ -11,11 +11,11 @@ import {
   FullScreenIcon,
   FullScreenExitIcon,
 } from '@sistent/sistent';
-import { UnControlled as CodeMirror } from '../CodeMirror';
+import { UnControlled as CodeMirror } from '../general/CodeMirror';
 import { FILE_OPS } from '../../utils/Enum';
 import { iconMedium } from '../../css/icons.styles';
-import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+
+import { Keys } from '@meshery/schemas/permissions';
 import TooltipIcon from './TooltipIcon';
 import { YmlDialogTitle, YmlDialogTitleText } from './Filters.styled';
 import type { YAMLEditorProps } from './Filters.types';
@@ -98,7 +98,7 @@ function YAMLEditor({ filter, onClose, onSubmit }: YAMLEditorProps) {
         <CustomTooltip title="Update Filter">
           <IconButton
             aria-label="Update"
-            disabled={!CAN(keys.EDIT_WASM_FILTER.action, keys.EDIT_WASM_FILTER.subject)}
+            permissionKey={Keys.CatalogManagementEditWasmFilter}
             onClick={() =>
               onSubmit({
                 data: yaml,
@@ -115,7 +115,7 @@ function YAMLEditor({ filter, onClose, onSubmit }: YAMLEditorProps) {
         <CustomTooltip title="Delete Filter">
           <IconButton
             aria-label="Delete"
-            disabled={!CAN(keys.DELETE_WASM_FILTER.action, keys.DELETE_WASM_FILTER.subject)}
+            permissionKey={Keys.CatalogManagementDeleteWasmFilter}
             onClick={() =>
               onSubmit({
                 data: yaml,
