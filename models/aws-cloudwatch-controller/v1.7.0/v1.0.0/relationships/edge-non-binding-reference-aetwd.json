@@ -15,9 +15,9 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
-      "version": "v1.37.0-alpha.2"
+      "version": "v1.7.0"
     },
-    "name": "kubernetes",
+    "name": "aws-cloudwatch-controller",
     "registrant": {
       "kind": ""
     },
@@ -30,7 +30,8 @@
         "from": [
           {
             "id": null,
-            "kind": "PriorityClass",
+            "kind": "AdoptedResource",
+            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "displayName": "",
@@ -38,7 +39,7 @@
               "model": {
                 "version": ""
               },
-              "name": "kubernetes",
+              "name": "aws-cloudwatch-controller",
               "registrant": {
                 "kind": "github"
               },
@@ -47,7 +48,10 @@
             "patch": {
               "mutatorRef": [
                 [
-                  "displayName"
+                  "configuration",
+                  "spec",
+                  "aws",
+                  "nameOrID"
                 ]
               ],
               "patchStrategy": "replace"
@@ -57,7 +61,8 @@
         "to": [
           {
             "id": null,
-            "kind": "Pod",
+            "kind": "MetricStream",
+            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "displayName": "",
@@ -65,7 +70,7 @@
               "model": {
                 "version": ""
               },
-              "name": "kubernetes",
+              "name": "aws-cloudwatch-controller",
               "registrant": {
                 "kind": "github"
               },
@@ -74,9 +79,7 @@
             "patch": {
               "mutatedRef": [
                 [
-                  "configuration",
-                  "spec",
-                  "priorityClassName"
+                  "displayName"
                 ]
               ],
               "patchStrategy": "replace"
