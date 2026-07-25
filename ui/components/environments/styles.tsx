@@ -245,7 +245,7 @@ export const IconButton = styled('button')({
   borderRadius: '4px',
   cursor: 'pointer',
   transition: 'background-color 150ms ease',
-  '&:hover': {
+  '&:hover:not(:disabled)': {
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
   },
   '&:disabled': {
