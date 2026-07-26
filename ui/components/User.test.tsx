@@ -238,7 +238,7 @@ describe('User component', () => {
     );
   });
 
-  it('does not redirect when no profile URL is present', async () => {
+  it('shows a warning when no profile URL is present', async () => {
     const user = userEvent.setup();
     mockGetUserQuery = {
       data: { status: 'authenticated' },
