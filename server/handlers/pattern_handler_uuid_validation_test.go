@@ -51,7 +51,7 @@ func TestGetMesheryPatternHandler_InvalidIDReturns400(t *testing.T) {
 			req = mux.SetURLVars(req, map[string]string{"id": tc.id})
 			rec := httptest.NewRecorder()
 
-			h.GetMesheryPatternHandler(rec, req, nil, &models.User{ID: "test-user"}, spy)
+			h.GetMesheryPatternHandler(rec, req, nil, &models.User{}, spy)
 
 			if rec.Code != http.StatusBadRequest {
 				t.Errorf("expected 400, got %d (body=%q)", rec.Code, rec.Body.String())
@@ -75,7 +75,7 @@ func TestGetMesheryPatternHandler_ValidIDProceedsToProvider(t *testing.T) {
 	req = mux.SetURLVars(req, map[string]string{"id": validID})
 	rec := httptest.NewRecorder()
 
-	h.GetMesheryPatternHandler(rec, req, nil, &models.User{ID: "test-user"}, spy)
+	h.GetMesheryPatternHandler(rec, req, nil, &models.User{}, spy)
 
 	// 400 must NOT be the UUID-guard 400 — if we got here, the guard passed.
 	if rec.Code == http.StatusBadRequest {
@@ -106,7 +106,7 @@ func TestCloneMesheryPatternHandler_InvalidIDReturns400(t *testing.T) {
 			req = mux.SetURLVars(req, map[string]string{"id": tc.id})
 			rec := httptest.NewRecorder()
 
-			h.CloneMesheryPatternHandler(rec, req, nil, &models.User{ID: "test-user"}, spy)
+			h.CloneMesheryPatternHandler(rec, req, nil, &models.User{}, spy)
 
 			if rec.Code != http.StatusBadRequest {
 				t.Errorf("expected 400, got %d (body=%q)", rec.Code, rec.Body.String())
