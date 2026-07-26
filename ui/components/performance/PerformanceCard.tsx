@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import moment from 'moment';
 import { Delete as DeleteIcon } from '@/assets/icons';
 import {
@@ -21,7 +21,7 @@ import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { iconMedium } from '../../css/icons.styles';
 
 import { Keys } from '@meshery/schemas/permissions';
-import { useGetUserByIdQuery } from '@/rtk-query/user';
+import { useResourceOwner } from '@/utils/hooks/useResourceOwner';
 import useTestIDsGenerator from '@/utils/hooks/useTestIDs';
 import { BottomPart, CardButton, ResultContainer } from './style';
 
@@ -35,21 +35,8 @@ function PerformanceCard({
   requestSizeRestore,
 }) {
   const theme = useTheme();
-  const [userAvatar, setUserAvatar] = useState(null);
-  const {
-    data: userData,
-    isSuccess: isUserDataFetched,
-    isError: userError,
-  } = useGetUserByIdQuery(profile.userId);
+  const { owner, hasCloudProfile } = useResourceOwner(profile.userId);
   const dataTestIDs = useTestIDsGenerator('performanceProfileCard');
-
-  useEffect(() => {
-    if (isUserDataFetched && userData && userData.avatarUrl) {
-      setUserAvatar(userData.avatarUrl);
-    } else if (userError) {
-      console.error('Failed to fetch user profile with ID');
-    }
-  }, [isUserDataFetched, userError, userData]);
 
   const {
     id,
@@ -192,9 +179,13 @@ function PerformanceCard({
         </ResultContainer>
         <div style={{}}>
           <BottomPart>
-            <Link href={`${MESHERY_CLOUD_PROD}/user/${profile.userId}`} target="_blank">
-              <Avatar alt="profile-avatar" src={userAvatar} />
-            </Link>
+            {hasCloudProfile ? (
+              <Link href={`${MESHERY_CLOUD_PROD}/user/${profile.userId}`} target="_blank">
+                <Avatar alt="profile-avatar" src={owner?.avatarUrl} />
+              </Link>
+            ) : (
+              <Avatar alt="profile-avatar" src={owner?.avatarUrl} />
+            )}
             <div
               style={{
                 marginRight: '0.5rem',

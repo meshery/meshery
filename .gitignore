@@ -102,4 +102,13 @@ docs/hugo_stats.json
 LLMs
 .copilot-tmp/*
 .claude/worktrees/*
+# Per-machine Claude Code overrides. Tracking it lets an agent spawn in a fresh
+# worktree truncate/rewrite it, clobbering everyone's local settings and leaving
+# validation worktrees dirty. Machine-local; must never be tracked.
+.claude/settings.local.json
+
+# Machine-local agent session state, rewritten continuously by the `remember`
+# plugin inside whatever checkout an agent runs in. Tracking it leaves every
+# worktree permanently dirty, which breaks `git rebase` and validation runs.
+.remember/
 

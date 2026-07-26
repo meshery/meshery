@@ -144,6 +144,8 @@ const (
 	ErrUpdateResourceCode                 = "meshery-server-1355"
 	ErrEmptySessionCode                   = "meshery-server-1356"
 	ErrSeedingComponentsCode              = "meshery-server-1358"
+	ErrSeedingConnectionsCode             = "meshery-server-1462"
+	ErrSeedingConnectionKindCode          = "meshery-server-1463"
 	ErrImportFailureCode                  = "meshery-server-1359"
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
@@ -663,6 +665,28 @@ func ErrSeedingComponents(err error) error {
 		[]string{err.Error()},
 		[]string{"Given models may not be in accordance with Meshery's schema", "Internal(OS level) error while reading files"},
 		[]string{"Make sure the models being seeded are valid in accordance with Meshery's schema", "If it is an internal error, please try again after some time"},
+	)
+}
+
+func ErrSeedingConnections(err error) error {
+	return errors.New(
+		ErrSeedingConnectionsCode,
+		errors.Alert,
+		[]string{"Failed to seed Meshery's system-owned connections"},
+		[]string{err.Error()},
+		[]string{"The registry could not be read for registered connection definitions", "Meshery's database is unreachable or its connections table could not be queried"},
+		[]string{"Confirm Meshery's database is reachable and that model registration completed; the connections are seeded again on the next restart"},
+	)
+}
+
+func ErrSeedingConnectionKind(err error, kind string) error {
+	return errors.New(
+		ErrSeedingConnectionKindCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("Failed to seed the system-owned \"%s\" connection", kind)},
+		[]string{err.Error()},
+		[]string{fmt.Sprintf("The %s connection could not be written to Meshery's database", kind), "The connection definition for this kind may disagree with the connections table schema"},
+		[]string{fmt.Sprintf("Confirm the %s connection definition is valid; other connection kinds are unaffected and this one is seeded again on the next restart", kind)},
 	)
 }
 
