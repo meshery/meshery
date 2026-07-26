@@ -354,6 +354,12 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 			h.log.Error(err)
 		}
 
+		// Skip a machine that failed to initialize rather than nil-dereferencing
+		// on ResetState/SendEvent. The connection stays stuck until the tracker
+		// entry is removed; see mhelpers.HasMachineContext for why.
+		if !mhelpers.HasMachineContext(inst) {
+			continue
+		}
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
@@ -413,6 +419,12 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 			h.log.Error(err)
 		}
 
+		// Skip a machine that failed to initialize rather than nil-dereferencing
+		// on ResetState/SendEvent, or type-asserting its nil Context on the Cast
+		// below. See mhelpers.HasMachineContext for why.
+		if !mhelpers.HasMachineContext(inst) {
+			continue
+		}
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
