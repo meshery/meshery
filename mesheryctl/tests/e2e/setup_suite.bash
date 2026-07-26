@@ -11,15 +11,15 @@ create_meshery_config_folder() {
 
 # Generate auth file to communicate with meshery server
 create_auth_file() {
-    echo "start: authentication configuration" 
-    echo '{ "meshery-provider": "Layer5", "token": null }' | jq -c '.token = "'$MESHERY_PROVIDER_TOKEN'"' > "$MESHERY_AUTH_FILE"
+    echo "start: authentication configuration"
+    echo '{ "meshery-provider": "Meshery", "token": null }' | jq -c '.token = "'$MESHERY_PROVIDER_TOKEN'"' > "$MESHERY_AUTH_FILE"
     echo "done: authentication configuration"
 }
 
-set_context_to_layer5() {
-    echo "start: set context to Layer5"
-    yq -i '.contexts.local.provider = "Layer5"' "$MESHERY_CONFIG_FILE_PATH"
-    echo "done: set context to Layer5"
+set_context_to_meshery() {
+    echo "start: set context to Meshery"
+    yq -i '.contexts.local.provider = "Meshery"' "$MESHERY_CONFIG_FILE_PATH"
+    echo "done: set context to Meshery"
 }
 
 
@@ -38,8 +38,8 @@ main() {
     export TEMP_DATA_DIR=$TEMP_DATA_DIR
 
     create_meshery_config_folder
-    create_auth_file 
-    set_context_to_layer5
+    create_auth_file
+    set_context_to_meshery
 
     echo -e "### done: Test environment setup ###\n"
 }

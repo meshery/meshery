@@ -1,7 +1,7 @@
 ---
 title: Tikv Operator
 subtitle: Collaborative and visual infrastructure as design for Tikv Operator
-image: /extensions/models/tikv-operator/icons/color/tikv-operator-color.svg
+image: extensions/models/tikv-operator/icons/color/tikv-operator-color.svg
 aliases: /extensibility/integrations/tikv-operator
 docURL: https://docs.meshery.io/extensibility/integrations/tikv-operator
 description: 

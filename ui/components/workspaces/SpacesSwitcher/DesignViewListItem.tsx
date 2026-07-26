@@ -97,7 +97,7 @@ const DesignViewListItem = ({
           }
         }}
       >
-        <Grid2 container alignItems="center" size="grow">
+        <Grid2 container size="grow" sx={{ alignItems: 'center' }}>
           {isMultiSelectMode && (
             <Grid2 size={{ xs: 1, md: 0.5, lg: 0.25 }}>
               <FormGroup>
@@ -236,7 +236,7 @@ export const DesignViewListItemSkeleton = ({ isMultiSelectMode = false }) => {
   return (
     <>
       <StyledListItem>
-        <Grid2 container alignItems={'center'} size="grow">
+        <Grid2 container size="grow" sx={{ alignItems: 'center' }}>
           {isMultiSelectMode && (
             <Grid2 size={{ xs: 1, md: 0.5, lg: 0.25 }}>
               <Skeleton variant="rectangular" animation="wave" {...iconMedium} />

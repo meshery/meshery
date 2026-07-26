@@ -46,7 +46,7 @@ var viewCmd = &cobra.Command{
 	Use:   "view",
 	Short: "view release channel and version",
 	Long: `View release channel and version of context in focus
-Find more information at: https://docs.meshery.io/reference/mesheryctl/system/channel/view`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/channel/view`,
 	Example: `
 // View current release channel
 mesheryctl system channel view edge
@@ -100,7 +100,7 @@ var setCmd = &cobra.Command{
 	Use:   "set [stable|stable-version|edge|edge-version]",
 	Short: "set release channel and version",
 	Long: `Set release channel and version of context in focus
-Find more information at: https://docs.meshery.io/reference/mesheryctl/system/channel/set`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/channel/set`,
 	Example: `
 // Subscribe to release channel or version
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
@@ -125,27 +125,24 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
 		channelVersion := args[0]
 
-		channelNameSeperated := strings.SplitN(channelVersion, "-", 2)
+		channelNameSeparated := strings.SplitN(channelVersion, "-", 2)
 
-		if !IsBetaOrStable(channelNameSeperated[0]) {
-			return ErrSystemSetInvalidReleaseChannel(channelNameSeperated[0])
+		if !IsBetaOrStable(channelNameSeparated[0]) {
+			return ErrSystemSetInvalidReleaseChannel(channelNameSeparated[0])
 		}
 
 		version := "latest"
 
-		if len(channelNameSeperated) > 1 {
-			switch channelNameSeperated[0] {
+		if len(channelNameSeparated) > 1 {
+			switch channelNameSeparated[0] {
 			case "edge":
-				if channelNameSeperated[1] != "latest" {
-					return ErrSystemSetInvalidEdgeRelease(channelNameSeperated[1])
+				if channelNameSeparated[1] != "latest" {
+					return ErrSystemSetInvalidEdgeRelease(channelNameSeparated[1])
 				}
 			case "stable":
-				if channelNameSeperated[1] != "latest" {
-					currCtx := mctlCfg.Contexts[focusedContext]
-					currCtx.Version = channelNameSeperated[1]
-				}
+				// version is set after the switch block
 			}
-			version = channelNameSeperated[1]
+			version = channelNameSeparated[1]
 		}
 
 		ContextContent, ok := mctlCfg.Contexts[focusedContext]
@@ -154,12 +151,11 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 		}
 
 		ContextContent.Version = version
-		ContextContent.Channel = channelNameSeperated[0]
+		ContextContent.Channel = channelNameSeparated[0]
 
 		err = ContextContent.ValidateVersion()
 		if err != nil {
-			// TODO: Move to proper meshkit error
-			return err
+			return ErrValidateVersion(err)
 		}
 
 		mctlCfg.Contexts[focusedContext] = ContextContent
@@ -177,7 +173,7 @@ var switchCmd = &cobra.Command{
 	Use:   "switch [stable|stable-version|edge|edge-version]",
 	Short: "switch release channel and version",
 	Long: `Switch release channel and version of context in focus
-Find more information at: https://docs.meshery.io/reference/mesheryctl/system/channel/switch`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/channel/switch`,
 	Example: `
 // Switch between release channels
 mesheryctl system channel switch [stable|stable-version|edge|edge-version]
@@ -242,7 +238,7 @@ var channelCmd = &cobra.Command{
 	Use:   "channel",
 	Short: "Switch between release channels",
 	Long: `Subscribe to a release channel. Choose between either 'stable' or 'edge' channels.
-Find more information at: https://docs.meshery.io/reference/mesheryctl/system/channel`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/channel`,
 	Example: `
 // Subscribe to release channel or version
 mesheryctl system channel

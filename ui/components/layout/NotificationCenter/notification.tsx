@@ -35,7 +35,7 @@ import FacebookIcon from '../../../assets/icons/FacebookIcon';
 import LinkedInIcon from '../../../assets/icons/LinkedInIcon';
 import TwitterIcon from '../../../assets/icons/TwitterIcon';
 import ShareIcon from '../../../assets/icons/ShareIcon';
-import DeleteIcon from '../../../assets/icons/DeleteIcon';
+import { DeleteIcon } from '@sistent/sistent';
 import ErrorIcon from '@/assets/icons/ErrorIcon';
 import {
   useUpdateStatusMutation,
@@ -319,7 +319,7 @@ export const Notification = ({ event_id }) => {
       ? [
           {
             name: 'Meshery',
-            avatarUrl: '/static/img/meshery-logo.png',
+            avatarUrl: '/static/img/meshery-logo/meshery-logo.png',
             tooltip: `System ID: ${event.systemID}`,
           },
         ]

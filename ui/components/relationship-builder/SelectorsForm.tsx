@@ -152,8 +152,8 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
     const selectors = selectorsData[type][direction] || [];
 
     return (
-      <Box mt={2}>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+      <Box sx={{ mt: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
           <Typography variant="subtitle1">{direction} selectors</Typography>
           <ModalButtonPrimary
             size="small"
@@ -183,10 +183,12 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
               >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Box
-                    width="100%"
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
+                    sx={{
+                      width: '100%',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
                   >
                     <Typography variant="subtitle2">
                       Selector {index + 1}: {selector.kind || 'New Selector'}
@@ -300,7 +302,7 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
 
   return (
     <div>
-      <Box display="flex" alignItems="center" mb={2}>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
         <Typography>Define allowed and denied relationships using selectors.</Typography>
       </Box>
 
@@ -316,14 +318,14 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
       </Tabs>
 
       {tabValue === 0 && (
-        <Box mt={2}>
+        <Box sx={{ mt: 2 }}>
           {renderSelectorForm('allow', 'from')}
           {renderSelectorForm('allow', 'to')}
         </Box>
       )}
 
       {tabValue === 1 && (
-        <Box mt={2}>
+        <Box sx={{ mt: 2 }}>
           {renderSelectorForm('deny', 'from')}
           {renderSelectorForm('deny', 'to')}
         </Box>

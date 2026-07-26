@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from '@sistent/sistent';
 import Modal from './shared/Modal/Modal';
-import { CONNECTION_KINDS, CON_OPS } from '../utils/Enum';
+import { CON_OPS, CoreConnectionKinds } from '../utils/Enum';
 import Moment from 'react-moment';
 import LoadingScreen from './shared/LoadingState/LoadingComponent';
 import { useNotification, useNotificationHandlers } from '../utils/hooks/useNotification';
@@ -27,7 +27,7 @@ import {
 } from '@/rtk-query/credentials';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
-import type { RootState } from '@/store/store';
+import type { RootState } from '../store';
 import type { MUIDataTableColumn, MUIDataTableMeta } from '@sistent/mui-datatables';
 
 const CredentialIcon = styled('img')({
@@ -134,15 +134,15 @@ const MesheryCredentialComponent: React.FC = () => {
   const getCredentialsIcon = (type: string): React.ReactNode => {
     switch (type) {
       case 'prometheus':
-        return <CredentialIcon src="/static/img/prometheus_logo_orange_circle.svg" />;
+        return <CredentialIcon src="/static/img/integrations/prometheus_logo_orange_circle.svg" />;
       case 'grafana':
-        return <CredentialIcon src="/static/img/grafana_icon.svg" />;
+        return <CredentialIcon src="/static/img/integrations/grafana_icon.svg" />;
       case 'kubernetes':
         return (
           <CredentialIcon
             src={
               connectionMetadataState
-                ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                ? connectionMetadataState[CoreConnectionKinds.kubernetes]?.icon
                 : ''
             }
           />

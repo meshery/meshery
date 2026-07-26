@@ -144,7 +144,6 @@ const (
 	ErrConvertingK8sManifestToDesignCode   = "meshery-server-1133"
 	ErrConvertingDockerComposeToDesignCode = "meshery-server-1134"
 	ErrConvertingHelmChartToDesignCode     = "meshery-server-1136"
-	ErrInvalidUUIDCode                     = "meshery-server-1137"
 	ErrPersistEventToRemoteProviderCode    = "meshery-server-1320"
 	ErrEventStreamingNotSupportedCode      = "meshery-server-1324"
 	ErrGenerateClusterContextCode          = "meshery-server-1325"
@@ -210,6 +209,34 @@ const (
 	ErrExtensionProxyCode                  = "meshery-server-1427"
 	ErrInitializeMachineCode               = "meshery-server-1428"
 	ErrSendMachineEventCode                = "meshery-server-1429"
+	ErrTelemetryGrafanaCode                = "meshery-server-1430"
+	ErrTelemetryPrometheusCode             = "meshery-server-1431"
+	ErrTelemetryGrafanaDatasourceCode      = "meshery-server-1433"
+	ErrTelemetryGrafanaAuthCode            = "meshery-server-1434"
+	ErrTelemetryPrometheusAuthCode         = "meshery-server-1435"
+	ErrMeshsyncReconcileCode               = "meshery-server-1442"
+	ErrUnsafeFilePathCode                  = "meshery-server-1443"
+	// Environment, workspace, organization, user and key operations previously
+	// reported every failure as ErrGetResult ("unable to get result", probable
+	// cause "Result Identifier provided is not valid") - a performance-results
+	// code with nothing to do with any of them. The codes below exist so the
+	// error a user and a maintainer see actually describes what failed.
+	ErrGetEnvironmentsCode       = "meshery-server-1446"
+	ErrGetEnvironmentCode        = "meshery-server-1447"
+	ErrSaveEnvironmentCode       = "meshery-server-1448"
+	ErrUpdateEnvironmentCode     = "meshery-server-1449"
+	ErrDeleteEnvironmentCode     = "meshery-server-1450"
+	ErrEnvironmentConnectionCode = "meshery-server-1451"
+	ErrGetWorkspacesCode         = "meshery-server-1452"
+	ErrGetWorkspaceCode          = "meshery-server-1453"
+	ErrSaveWorkspaceCode         = "meshery-server-1454"
+	ErrUpdateWorkspaceCode       = "meshery-server-1455"
+	ErrDeleteWorkspaceCode       = "meshery-server-1456"
+	ErrWorkspaceResourceCode     = "meshery-server-1457"
+	ErrGetOrganizationsCode      = "meshery-server-1458"
+	ErrGetUsersCode              = "meshery-server-1459"
+	ErrGetUserCode               = "meshery-server-1460"
+	ErrGetUsersKeysCode          = "meshery-server-1461"
 )
 
 var (
@@ -354,7 +381,7 @@ func ErrParseForm(err error) error {
 }
 
 func ErrQueryGet(obj string) error {
-	return errors.New(ErrQueryGetCode, errors.Alert, []string{"unable to get: ", obj}, []string{}, []string{"Query parameter is not a part of the request"}, []string{"Make sure to pass the query paramater in the request"})
+	return errors.New(ErrQueryGetCode, errors.Alert, []string{"unable to get: ", obj}, []string{}, []string{"Query parameter is not a part of the request"}, []string{"Make sure to pass the query parameter in the request"})
 }
 
 func ErrGetResult(err error) error {
@@ -431,6 +458,12 @@ func ErrRetrieveUserToken(err error) error {
 
 func ErrFailToSave(err error, obj string) error {
 	return errors.New(ErrFailToSaveCode, errors.Alert, []string{"Failed to Save: ", obj}, []string{err.Error()}, []string{"Provider Database could be down or not reachable"}, []string{"Make sure provider is up and reachable"})
+}
+
+// ErrMeshsyncReconcile reports a failure to (re)deploy MeshSync for a
+// connection's chosen deployment mode after the mode was persisted.
+func ErrMeshsyncReconcile(reason string) error {
+	return errors.New(ErrMeshsyncReconcileCode, errors.Alert, []string{"Failed to reconcile MeshSync deployment mode"}, []string{reason}, []string{"The connection's state machine or Kubernetes controllers may not be ready, or the cluster is unreachable"}, []string{"Ensure the connection is connected and the cluster is reachable, then retry the mode change"})
 }
 func ErrFailToDelete(err error, obj string) error {
 	return errors.New(ErrFailToDeleteCode, errors.Alert, []string{"Failed to Delete: ", obj}, []string{err.Error()}, []string{"Provider Database could be down or not reachable"}, []string{"Make sure provider is up and reachable"})
@@ -509,7 +542,7 @@ func ErrGetFilter(err error) error {
 }
 
 func ErrSaveFilter(err error) error {
-	return errors.New(ErrSaveFilterCode, errors.Alert, []string{"Error failed to save filter"}, []string{err.Error()}, []string{"Cannot save the Filter due to wrong path or URL", "Filter is corrupted."}, []string{"Check if the given path or URL of the filter is correct", "Try uplaoding a different filter"})
+	return errors.New(ErrSaveFilterCode, errors.Alert, []string{"Error failed to save filter"}, []string{err.Error()}, []string{"Cannot save the Filter due to wrong path or URL", "Filter is corrupted."}, []string{"Check if the given path or URL of the filter is correct", "Try uploading a different filter"})
 }
 
 func ErrDecodeFilter(err error) error {
@@ -656,7 +689,7 @@ func ErrPublishCatalogFilter(err error) error {
 }
 
 func ErrGetMeshModels(err error) error {
-	return errors.New(ErrGetMeshModelsCode, errors.Alert, []string{"could not get meshmodel entitities"}, []string{err.Error()}, []string{"Meshmodel entity could not be converted into valid json", "data in the registry was inconsistent"}, []string{"make sure correct and consistent data is present inside the registry", "drop the Meshmodel tables and restart Meshery server"})
+	return errors.New(ErrGetMeshModelsCode, errors.Alert, []string{"could not get meshmodel entities"}, []string{err.Error()}, []string{"Meshmodel entity could not be converted into valid json", "data in the registry was inconsistent"}, []string{"make sure correct and consistent data is present inside the registry", "drop the Meshmodel tables and restart Meshery server"})
 }
 
 func ErrGetComponentDefinition(err error) error {
@@ -668,7 +701,7 @@ func ErrGetUserDetails(err error) error {
 }
 
 func ErrResolvingRegoRelationship(err error) error {
-	return errors.New(ErrResolvingRelationshipCode, errors.Alert, []string{"could not resolve rego relationship"}, []string{err.Error()}, []string{"The rego evaluation engine failed to resolve policies", "Design-File/Application-File is in incorrect format", "The policy query is invalid", "The evaluation engine response is unexpected for the code written"}, []string{"Make sure the design-file/application-file is a valid yaml", "Make sure you're proving correct rego query", "Make sure the server is evaluating the query correctly, add some logs"})
+	return errors.New(ErrResolvingRelationshipCode, errors.Alert, []string{"could not resolve rego relationship"}, []string{err.Error()}, []string{"The rego evaluation engine failed to resolve policies", "Design-File/Application-File is in incorrect format", "The policy query is invalid", "The evaluation engine response is unexpected for the code written"}, []string{"Make sure the design-file/application-file is a valid yaml", "Make sure you're providing correct rego query", "Make sure the server is evaluating the query correctly, add some logs"})
 }
 
 func ErrCreateFile(err error, obj string) error {
@@ -724,7 +757,7 @@ func ErrGetConnections(err error) error {
 }
 
 func ErrWritingIntoFile(err error, obj string) error {
-	return errors.New(ErrWritingIntoFileCode, errors.Alert, []string{fmt.Sprintf("failed to write into file %s", obj)}, []string{err.Error()}, []string{"Insufficient permissions to write into file", "file might be corrupted"}, []string{"check if sufficient permissions are givent to the file", "check if the file is corrupted"})
+	return errors.New(ErrWritingIntoFileCode, errors.Alert, []string{fmt.Sprintf("failed to write into file %s", obj)}, []string{err.Error()}, []string{"Insufficient permissions to write into file", "file might be corrupted"}, []string{"check if sufficient permissions are given to the file", "check if the file is corrupted"})
 }
 
 func ErrBuildOCIImg(err error) error {
@@ -761,15 +794,11 @@ func ErrConvertingHelmChartToDesign(err error) error {
 	return errors.New(ErrConvertingHelmChartToDesignCode, errors.Alert, []string{"Failed to convert helm chart to design"}, []string{err.Error()}, []string{"unable to convert helm chart to design", "helm chart may be corrupted", "incorrect source type selected"}, []string{"check if the helm chart is valid and not corrupted", "check if the source type selected is Helm Chart"})
 }
 
-func ErrInvalidUUID(err error) error {
-	return errors.New(ErrInvalidUUIDCode, errors.Alert, []string{"invalid or empty uuid"}, []string{err.Error()}, []string{"provided id is not a valid uuid"}, []string{"provide a valid uuid"})
-}
-
 func ErrPersistEventToRemoteProvider(err error) error {
 	return errors.New(ErrPersistEventToRemoteProviderCode, errors.Alert, []string{"failed to persist event to remote provider"}, []string{err.Error()}, []string{"token is expired/revoked", "Remote Provider is not reachable or unavailable"}, []string{"Try re-authenticating with the remote provider", "Verify remote provider for its reachability or availability."})
 }
 func ErrNoTarInsideOCi() error {
-	return errors.New(ErrNoTarInsideOCiCode, errors.Alert, []string{"No tar file found inside OCI image"}, []string{"Unable to locate the compressed file(.tar.gz) inside the OCI image."}, []string{"The OCI image does not contain a ziped file."}, []string{"Verify that the OCI image contains a ziped file."})
+	return errors.New(ErrNoTarInsideOCiCode, errors.Alert, []string{"No tar file found inside OCI image"}, []string{"Unable to locate the compressed file(.tar.gz) inside the OCI image."}, []string{"The OCI image does not contain a zipped file."}, []string{"Verify that the OCI image contains a zipped file."})
 }
 func ErrEmptyOCIImage(err error) error {
 	return errors.New(ErrEmptyOCIImageCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
@@ -793,6 +822,9 @@ func ErrServeSchema(err error) error {
 }
 func ErrInvalidFileRequest(err error) error {
 	return errors.New(ErrInvalidFileRequestCode, errors.Alert, []string{"Invalid file request"}, []string{err.Error()}, []string{"The provided file query parameter could not be decoded"}, []string{"Ensure the file parameter is a properly URL-encoded path"})
+}
+func ErrUnsafeFilePath(err error) error {
+	return errors.New(ErrUnsafeFilePathCode, errors.Alert, []string{"Unsafe file path requested"}, []string{err.Error()}, []string{"The requested file path resolves outside the directories these endpoints are permitted to serve (the Meshery log directory under ~/.meshery/logs)"}, []string{"Request only files that live under ~/.meshery/logs; paths outside it, or symlinks that escape it, are rejected"})
 }
 func ErrReadFileContent(err error, file string) error {
 	return errors.New(ErrReadFileContentCode, errors.Alert, []string{"Failed to read file content", file}, []string{err.Error()}, []string{"The file could not be opened or streamed to the response"}, []string{"Verify the file exists and the server has permission to read it"})
@@ -930,6 +962,44 @@ func ErrUpdateConnection(err error) error {
 	return errors.New(ErrUpdateConnectionCode, errors.Alert, []string{"Could not update the connection"}, []string{err.Error()}, []string{"Remote provider is unreachable.", "Connection has been deleted since it was loaded.", "Persisted metadata is corrupt."}, []string{"Verify provider connectivity and that the connection still exists, then retry."})
 }
 
+// ErrTelemetryGrafana wraps failures talking to a Grafana telemetry connection
+// (health, board search/fetch, datasource listing, or datasource query proxy).
+// The op string identifies the operation that failed. Emitted with HTTP 502.
+func ErrTelemetryGrafana(err error, op string) error {
+	return errors.New(ErrTelemetryGrafanaCode, errors.Alert, []string{fmt.Sprintf("Grafana telemetry request failed during %s", op)}, []string{err.Error()}, []string{"The Grafana instance is unreachable or returned an error.", "The stored credential (API key / basic auth) is missing, expired, or lacks permission.", "The connection's URL is incorrect."}, []string{"Verify the Grafana URL is reachable from the Meshery server and that the connection's credential is valid, then retry."})
+}
+
+// ErrTelemetryGrafanaDatasource reports that a panel referenced a datasource the
+// Grafana instance could not resolve (by uid or name). Emitted with HTTP 404.
+func ErrTelemetryGrafanaDatasource(ref string, available []string) error {
+	longDesc := fmt.Sprintf("Grafana could not resolve a datasource identified by %q to a known datasource.", ref)
+	if len(available) > 0 {
+		longDesc = fmt.Sprintf("%s Available datasources: %s.", longDesc, strings.Join(available, ", "))
+	} else {
+		longDesc = fmt.Sprintf("%s No datasources were listable, so the credential may lack permission to read datasources.", longDesc)
+	}
+	return errors.New(ErrTelemetryGrafanaDatasourceCode, errors.Alert, []string{fmt.Sprintf("Datasource %q used by this panel was not found in Grafana", ref)}, []string{longDesc}, []string{"The dashboard references a datasource by a name or uid that does not exist in this Grafana instance.", "The datasource is provisioned only in a different environment.", "The connection's credential cannot list datasources, so a name could not be resolved to a uid."}, []string{"Confirm the datasource exists in this Grafana instance and that the connection's credential has permission to read datasources."})
+}
+
+// ErrTelemetryGrafanaAuth reports that Grafana rejected the connection's
+// credential (HTTP 401/403). Emitted with HTTP 502.
+func ErrTelemetryGrafanaAuth(err error) error {
+	return errors.New(ErrTelemetryGrafanaAuthCode, errors.Alert, []string{"Grafana rejected the connection's credential"}, []string{err.Error()}, []string{"The API key / token is missing, expired, or invalid.", "The credential lacks permission for this operation."}, []string{"Update the connection with a valid Grafana credential that has the required permissions, then retry."})
+}
+
+// ErrTelemetryPrometheus wraps failures talking to a Prometheus telemetry
+// connection (health, metric/label discovery, metadata, or query/query_range).
+// The op string identifies the operation that failed. Emitted with HTTP 502.
+func ErrTelemetryPrometheus(err error, op string) error {
+	return errors.New(ErrTelemetryPrometheusCode, errors.Alert, []string{fmt.Sprintf("Prometheus telemetry request failed during %s", op)}, []string{err.Error()}, []string{"The Prometheus instance is unreachable or returned an error.", "The stored credential (API key / basic auth) is missing, expired, or lacks permission.", "The connection's URL is incorrect."}, []string{"Verify the Prometheus URL is reachable from the Meshery server and that the connection's credential is valid, then retry."})
+}
+
+// ErrTelemetryPrometheusAuth reports that Prometheus rejected the connection's
+// credential (HTTP 401/403). Emitted with HTTP 502.
+func ErrTelemetryPrometheusAuth(err error) error {
+	return errors.New(ErrTelemetryPrometheusAuthCode, errors.Alert, []string{"Prometheus rejected the connection's credential"}, []string{err.Error()}, []string{"The API key / token is missing, expired, or invalid.", "The credential lacks permission for this operation."}, []string{"Update the connection with a valid Prometheus credential that has the required permissions, then retry."})
+}
+
 // ErrExportModel wraps failures in the ExportModel pipeline — building the
 // OCI image, writing the model definition, saving the tar/gzip archive, or
 // creating the scratch directories. The origin string identifies which
@@ -1047,4 +1117,104 @@ func ErrInitializeMachine(err error) error {
 // caller input.
 func ErrSendMachineEvent(err error) error {
 	return errors.New(ErrSendMachineEventCode, errors.Alert, []string{"Failed to advance connection state machine"}, []string{err.Error()}, []string{"The requested event is not valid from the connection's current state.", "A side-effect action attached to the transition (e.g. provisioning, discovery) returned an error."}, []string{"Inspect the connection's current status before retrying. If the failure originates from a side-effect action, address the underlying cause (e.g. cluster reachability, credential validity) and retry."})
+}
+
+// Environment, workspace, organization, user and API-key failures
+// ---------------------------------------------------------------
+//
+// Every one of these operations is a pass-through to the configured provider.
+// They used to report failures as ErrGetResult with a hardcoded HTTP 404,
+// which meant a provider 403 on "create environment" reached the browser as a
+// 404 carrying "unable to get result - Result Identifier provided is not
+// valid". The UI never recognised that as a failure and showed a success
+// toast, and the server log pointed maintainers at the performance-results
+// subsystem. The constructors below name the operation that actually failed;
+// the handlers pair them with httputil.StatusForProviderError so the status
+// reflects the provider's real response.
+//
+// The probable causes are ordered by how often each is the real one for a
+// provider-backed CRUD call: permissions first (the 403 that started this),
+// then a stale/incorrect identifier, then provider reachability.
+
+func ErrGetEnvironments(err error) error {
+	return errors.New(ErrGetEnvironmentsCode, errors.Alert, []string{"Unable to fetch environments"}, []string{err.Error()}, []string{"Your account does not have permission to list environments in this organization.", "The organization identifier in the request does not exist or is not one you belong to.", "The provider could not be reached or returned an error."}, []string{"Confirm you are a member of the selected organization and that your role grants read access to environments. If the organization is correct, retry once the provider is reachable."})
+}
+
+func ErrGetEnvironment(err error) error {
+	return errors.New(ErrGetEnvironmentCode, errors.Alert, []string{"Unable to fetch the environment"}, []string{err.Error()}, []string{"Your account does not have permission to view this environment.", "The environment has been deleted, or the identifier belongs to a different organization.", "The provider could not be reached or returned an error."}, []string{"Verify the environment still exists in the selected organization and that your role grants read access to it."})
+}
+
+func ErrSaveEnvironment(err error) error {
+	return errors.New(ErrSaveEnvironmentCode, errors.Alert, []string{"Unable to create the environment"}, []string{err.Error()}, []string{"Your account does not have permission to create environments in this organization.", "An environment with the same name already exists in this organization.", "The organization identifier is missing or does not exist.", "The provider could not be reached or rejected the request."}, []string{"Confirm your role in the selected organization grants permission to create environments, and that the environment name is not already in use. The environment was NOT created - retry after resolving the cause."})
+}
+
+func ErrUpdateEnvironment(err error) error {
+	return errors.New(ErrUpdateEnvironmentCode, errors.Alert, []string{"Unable to update the environment"}, []string{err.Error()}, []string{"Your account does not have permission to modify this environment.", "The environment has been deleted, or another name in the organization conflicts with the new one.", "The provider could not be reached or rejected the request."}, []string{"Confirm your role grants write access to this environment and that the new name is unique within the organization. The environment was NOT updated - retry after resolving the cause."})
+}
+
+func ErrDeleteEnvironment(err error) error {
+	return errors.New(ErrDeleteEnvironmentCode, errors.Alert, []string{"Unable to delete the environment"}, []string{err.Error()}, []string{"Your account does not have permission to delete this environment.", "The environment has already been deleted.", "The provider could not be reached or rejected the request."}, []string{"Confirm your role grants delete access to this environment. If it no longer appears in the list, it has already been removed."})
+}
+
+// ErrEnvironmentConnection covers adding, removing and listing the connections
+// held by an environment. action is the operation being attempted, e.g.
+// "assign connection to", so the message reads as a sentence.
+func ErrEnvironmentConnection(err error, action string) error {
+	// The listing actions are reads; assign/remove are writes. Tell a denied
+	// read that it needs read access, not write access.
+	permission, access := "modify this environment's connections", "write access to the environment"
+	if strings.HasPrefix(action, "list") {
+		permission, access = "view this environment's connections", "read access to the environment"
+	}
+	return errors.New(ErrEnvironmentConnectionCode, errors.Alert, []string{fmt.Sprintf("Unable to %s environment", action)}, []string{err.Error()}, []string{fmt.Sprintf("Your account does not have permission to %s.", permission), "The environment or the connection has been deleted, or they belong to different organizations.", "The provider could not be reached or rejected the request."}, []string{fmt.Sprintf("Confirm both the environment and the connection still exist in the same organization and that your role grants %s.", access)})
+}
+
+func ErrGetWorkspaces(err error) error {
+	return errors.New(ErrGetWorkspacesCode, errors.Alert, []string{"Unable to fetch workspaces"}, []string{err.Error()}, []string{"Your account does not have permission to list workspaces in this organization.", "The organization identifier in the request does not exist or is not one you belong to.", "The provider could not be reached or returned an error."}, []string{"Confirm you are a member of the selected organization and that your role grants read access to workspaces."})
+}
+
+func ErrGetWorkspace(err error) error {
+	return errors.New(ErrGetWorkspaceCode, errors.Alert, []string{"Unable to fetch the workspace"}, []string{err.Error()}, []string{"Your account does not have permission to view this workspace.", "The workspace has been deleted, or the identifier belongs to a different organization.", "The provider could not be reached or returned an error."}, []string{"Verify the workspace still exists in the selected organization and that your role grants read access to it."})
+}
+
+func ErrSaveWorkspace(err error) error {
+	return errors.New(ErrSaveWorkspaceCode, errors.Alert, []string{"Unable to create the workspace"}, []string{err.Error()}, []string{"Your account does not have permission to create workspaces in this organization.", "A workspace with the same name already exists in this organization.", "The organization identifier is missing or does not exist.", "The provider could not be reached or rejected the request."}, []string{"Confirm your role in the selected organization grants permission to create workspaces, and that the workspace name is not already in use. The workspace was NOT created - retry after resolving the cause."})
+}
+
+func ErrUpdateWorkspace(err error) error {
+	return errors.New(ErrUpdateWorkspaceCode, errors.Alert, []string{"Unable to update the workspace"}, []string{err.Error()}, []string{"Your account does not have permission to modify this workspace.", "The workspace has been deleted, or another name in the organization conflicts with the new one.", "The provider could not be reached or rejected the request."}, []string{"Confirm your role grants write access to this workspace and that the new name is unique within the organization. The workspace was NOT updated - retry after resolving the cause."})
+}
+
+func ErrDeleteWorkspace(err error) error {
+	return errors.New(ErrDeleteWorkspaceCode, errors.Alert, []string{"Unable to delete the workspace"}, []string{err.Error()}, []string{"Your account does not have permission to delete this workspace.", "The workspace has already been deleted.", "The provider could not be reached or rejected the request."}, []string{"Confirm your role grants delete access to this workspace. If it no longer appears in the list, it has already been removed."})
+}
+
+// ErrWorkspaceResource covers every workspace association endpoint -
+// environments, designs, views and teams. action names the operation
+// ("assign design to", "list teams of") so one code can describe the whole
+// family without losing precision in the message.
+func ErrWorkspaceResource(err error, action string) error {
+	// The listing actions are reads; assign/remove are writes. Tell a denied
+	// read that it needs read access, not write access.
+	permission, access := "modify this workspace's contents", "write access to the workspace"
+	if strings.HasPrefix(action, "list") {
+		permission, access = "view this workspace's contents", "read access to the workspace"
+	}
+	return errors.New(ErrWorkspaceResourceCode, errors.Alert, []string{fmt.Sprintf("Unable to %s workspace", action)}, []string{err.Error()}, []string{fmt.Sprintf("Your account does not have permission to %s.", permission), "The workspace or the resource being associated has been deleted, or they belong to different organizations.", "The provider could not be reached or rejected the request."}, []string{fmt.Sprintf("Confirm both the workspace and the resource still exist in the same organization and that your role grants %s.", access)})
+}
+
+func ErrGetOrganizations(err error) error {
+	return errors.New(ErrGetOrganizationsCode, errors.Alert, []string{"Unable to fetch organizations"}, []string{err.Error()}, []string{"Your session has expired or your account is not a member of any organization.", "The provider could not be reached or returned an error."}, []string{"Sign in again and retry. If the problem persists, verify the remote provider is reachable from this Meshery instance."})
+}
+
+func ErrGetUsers(err error) error {
+	return errors.New(ErrGetUsersCode, errors.Alert, []string{"Unable to fetch users"}, []string{err.Error()}, []string{"Your account does not have permission to list users.", "The provider could not be reached or returned an error."}, []string{"Confirm your role grants permission to view the user directory for this organization."})
+}
+
+func ErrGetUser(err error) error {
+	return errors.New(ErrGetUserCode, errors.Alert, []string{"Unable to fetch the user"}, []string{err.Error()}, []string{"Your account does not have permission to view this user.", "No user exists with the requested identifier.", "The provider could not be reached or returned an error."}, []string{"Verify the user identifier is correct and that your role grants permission to view other users."})
+}
+
+func ErrGetUsersKeys(err error) error {
+	return errors.New(ErrGetUsersKeysCode, errors.Alert, []string{"Unable to fetch API keys"}, []string{err.Error()}, []string{"Your account does not have permission to list API keys for this organization.", "The organization identifier in the request does not exist or is not one you belong to.", "The provider could not be reached or returned an error."}, []string{"Confirm you are a member of the selected organization and that your role grants permission to view its keys."})
 }

@@ -7,6 +7,8 @@ import ConnectionTable from './ConnectionTable';
 const notify = vi.fn();
 const push = vi.fn();
 const ping = vi.fn();
+const pingGrafana = vi.fn();
+const pingPrometheus = vi.fn();
 const modalShow = vi.fn();
 const updateConnectionByIdMutator = vi.fn();
 const addConnectionToEnvironmentMutator = vi.fn();
@@ -29,28 +31,56 @@ vi.mock('next/router', () => ({
 }));
 
 vi.mock('@sistent/sistent', () => ({
-  CustomTooltip: ({ children }) => <div>{children}</div>,
+  CustomTooltip: ({ children, title }) => (
+    <div data-testid="custom-tooltip" data-title={String(title)}>
+      {children}
+    </div>
+  ),
+  // Same helpers FormattedTime uses; identity stubs keep cell tests deterministic.
+  getRelativeTime: (date: string) => `rel(${date})`,
+  getFullFormattedTime: (date: string) => `full(${date})`,
   CustomColumnVisibilityControl: () => <div data-testid="column-visibility-control" />,
   SearchBar: () => <div data-testid="search-bar" />,
   UniversalFilter: () => <div data-testid="universal-filter" />,
+
+  DataTableToolbar: ({
+    primaryActions,
+    search,
+    filter,
+    columnVisibility,
+    tabs,
+  }: {
+    primaryActions?: React.ReactNode;
+    search?: React.ReactNode;
+    filter?: React.ReactNode;
+    columnVisibility?: React.ReactNode;
+    tabs?: React.ReactNode;
+  }) => (
+    <div data-testid="data-table-toolbar">
+      {primaryActions}
+      {search}
+      {filter}
+      {columnVisibility}
+      {tabs}
+    </div>
+  ),
   ResponsiveDataTable: (props) => {
     dataTableProps = props;
     return <div data-testid="responsive-data-table" />;
   },
-  PROMPT_VARIANTS: {
-    DANGER: 'danger',
-    WARNING: 'warning',
-  },
   MenuItem: ({ children }) => <div>{children}</div>,
   Box: ({ children }) => <div>{children}</div>,
   SyncAltIcon: () => <svg data-testid="sync-alt-icon" />,
+  SettingsIcon: () => <svg data-testid="settings-icon" />,
   MoreVertIcon: () => <svg data-testid="more-vert-icon" />,
+  InfoOutlinedIcon: () => <svg data-testid="info-outlined-icon" />,
   IconButton: ({ children, onClick, ...props }) => (
     <button onClick={onClick} type="button" {...props}>
       {children}
     </button>
   ),
   Typography: ({ children }) => <span>{children}</span>,
+  useHasPermission: () => true,
   Table: ({ children }) => <div>{children}</div>,
   Grid2: ({ children }) => <div>{children}</div>,
   Button: ({ children, onClick, disabled, ...props }) => (
@@ -91,7 +121,6 @@ vi.mock('./styles', () => ({
 
 vi.mock('../data-formatter', () => ({
   FormatId: ({ id }) => <span>{id}</span>,
-  formatDate: (value) => value,
 }));
 
 vi.mock('../../css/icons.styles', () => ({
@@ -107,8 +136,8 @@ vi.mock('@/assets/styles/general/tool.styles', () => ({
   ToolWrapper: ({ children }) => <div>{children}</div>,
 }));
 
-vi.mock('../MesherySettingsEnvButtons', () => ({
-  default: () => <div data-testid="settings-buttons" />,
+vi.mock('./ConnectionWizardLauncher', () => ({
+  default: () => <div data-testid="connection-wizard-launcher" />,
 }));
 
 vi.mock('../../utils/utils', () => ({
@@ -119,12 +148,16 @@ vi.mock('../../utils/utils', () => ({
   },
 }));
 
-vi.mock('@/graphql/queries/ResetDatabaseQuery', () => ({
-  default: vi.fn(),
-}));
-
 vi.mock('@/utils/hooks/useKubernetesHook', () => ({
   default: () => ping,
+}));
+
+vi.mock('@/utils/hooks/useGrafanaPingHook', () => ({
+  default: () => pingGrafana,
+}));
+
+vi.mock('@/utils/hooks/usePrometheusPingHook', () => ({
+  default: () => pingPrometheus,
 }));
 
 vi.mock('./ConnectionChip', () => ({
@@ -149,7 +182,7 @@ vi.mock('../../utils/dimension', () => ({
   useWindowDimensions: () => ({ width: windowWidth }),
 }));
 
-vi.mock('../multi-select-wrapper', () => ({
+vi.mock('../general/multi-select-wrapper', () => ({
   default: () => <div data-testid="multi-select-wrapper" />,
 }));
 
@@ -172,48 +205,49 @@ vi.mock('@/utils/can', () => ({
   default: () => true,
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    ASSIGN_CONNECTIONS_TO_ENVIRONMENT: { action: 'assign', subject: 'environment' },
-    CHANGE_CONNECTION_STATE: { action: 'change', subject: 'connection' },
-    DELETE_A_CONNECTION: { action: 'delete', subject: 'connection' },
-    FLUSH_MESHSYNC_DATA: { action: 'flush', subject: 'meshsync' },
-  },
-}));
-
 vi.mock('@/rtk-query/connection', () => ({
   useGetConnectionsQuery: (...args) => getConnectionsQuery(...args),
   useUpdateConnectionByIdMutation: () => [updateConnectionByIdMutator],
+  usePerformConnectionActionMutation: () => [vi.fn(() => ({ unwrap: () => Promise.resolve({}) }))],
 }));
 
-vi.mock('../../assets/icons/InfoOutlined', () => ({
-  default: () => <svg />,
+vi.mock('@meshery/schemas/mesheryApi', () => ({
+  useListConnectionDefinitionsQuery: () => ({ data: { connectionDefinitions: [] } }),
 }));
 
 vi.mock('../../assets/icons/disconnect', () => ({
   default: () => <svg />,
 }));
 
-vi.mock('../PromptComponent', () => ({
-  default: React.forwardRef(function PromptComponentMock(_, ref) {
+vi.mock('./ConnectionStateTransitionModal', () => ({
+  default: React.forwardRef(function ConnectionStateTransitionModalMock(_, ref) {
     React.useImperativeHandle(ref, () => ({
       show: modalShow,
     }));
-    return <div data-testid="prompt-component" />;
+    return <div data-testid="connection-transition-modal" />;
   }),
 }));
 
+// Mutable container so individual tests can flip `connectionMetadataState`
+// (e.g., simulate the pre-hydration `null` state) without re-defining the
+// mock between tests.
+const uiState: {
+  organization: { id: string };
+  connectionMetadataState: Record<string, { transitions?: string[]; icon?: string }> | null;
+  controllerState: Record<string, unknown> | null;
+} = {
+  organization: { id: 'org-1' },
+  connectionMetadataState: {
+    kubernetes: {
+      transitions: ['connected'],
+      icon: '/static/img/integrations/kubernetes.svg',
+    },
+  },
+  controllerState: {},
+};
+
 vi.mock('react-redux', () => ({
-  useSelector: (selector) =>
-    selector({
-      ui: {
-        organization: { id: 'org-1' },
-        connectionMetadataState: {
-          kubernetes: { transitions: ['connected'], icon: '/static/img/kubernetes.svg' },
-        },
-        controllerState: {},
-      },
-    }),
+  useSelector: (selector) => selector({ ui: uiState }),
 }));
 
 const makeConnection = (overrides = {}) => ({
@@ -222,13 +256,16 @@ const makeConnection = (overrides = {}) => ({
   kind: 'kubernetes',
   status: 'connected',
   type: 'cluster',
+  // v1beta3 camelCase wire shape (subType/createdAt/updatedAt), matching what
+  // GET /api/integrations/connections actually returns.
   subType: 'managed',
   metadata: {
     name: 'cluster-a',
     server: 'https://cluster-a.local',
   },
   environments: [],
-  created_at: '2026-05-08',
+  createdAt: '2026-05-08T12:00:00Z',
+  updatedAt: '2026-05-09T12:00:00Z',
   ...overrides,
 });
 
@@ -250,6 +287,17 @@ describe('ConnectionTable', () => {
     updateVisibleColumns.mockReset();
     windowWidth = 1280;
 
+    // Restore the populated Redux state — individual tests below flip
+    // `connectionMetadataState` to `null` to exercise the pre-hydration path.
+    uiState.organization = { id: 'org-1' };
+    uiState.connectionMetadataState = {
+      kubernetes: {
+        transitions: ['connected'],
+        icon: '/static/img/integrations/kubernetes.svg',
+      },
+    };
+    uiState.controllerState = {};
+
     updateConnectionByIdMutator.mockImplementation(({ connectionId, body }) => ({
       unwrap: () => Promise.resolve({ connectionId, body }),
     }));
@@ -262,7 +310,8 @@ describe('ConnectionTable', () => {
     saveEnvironmentMutator.mockImplementation(() => ({
       unwrap: () => Promise.resolve({ id: 'env-1', name: 'dev' }),
     }));
-    modalShow.mockResolvedValue('DELETE');
+    // The transition modal resolves `true` when the user confirms.
+    modalShow.mockResolvedValue(true);
 
     router.query = {};
 
@@ -298,7 +347,7 @@ describe('ConnectionTable', () => {
   });
 
   it('hydrates search from a string router query and passes it to the connections query', async () => {
-    router.query = { searchText: 'cluster-a' };
+    router.query = { con_q: 'cluster-a' };
 
     render(<ConnectionTable />);
 
@@ -308,6 +357,97 @@ describe('ConnectionTable', () => {
         undefined,
       );
     });
+  });
+
+  it('defaults to Discovered At (createdAt) descending, mapped to the server sort column', async () => {
+    render(<ConnectionTable />);
+
+    await waitFor(() => {
+      expect(dataTableProps).toBeDefined();
+    });
+
+    // The server's order param addresses the DB column...
+    expect(getConnectionsQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ order: 'created_at desc' }),
+      undefined,
+    );
+    // ...while the table's active-sort indicator uses the wire/column name.
+    expect(dataTableProps.options.sortOrder).toEqual({ name: 'createdAt', direction: 'desc' });
+  });
+
+  it('keeps a bookmarked snake_case sort working, indicator included', async () => {
+    // A URL bookmarked before the columns moved to the camelCase wire shape.
+    router.query = { con_sort: 'created_at desc' };
+
+    render(<ConnectionTable />);
+
+    await waitFor(() => {
+      expect(dataTableProps).toBeDefined();
+    });
+
+    // The server column is already snake_case, so it passes straight through...
+    expect(getConnectionsQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({ order: 'created_at desc' }),
+      undefined,
+    );
+    // ...and the indicator resolves to a real column rather than silently
+    // matching nothing.
+    expect(dataTableProps.options.sortOrder).toEqual({ name: 'createdAt', direction: 'desc' });
+  });
+
+  it('shows the Discovered At column by default and renders a shrink-wrapped timestamp cell', async () => {
+    render(<ConnectionTable />);
+
+    await waitFor(() => {
+      expect(dataTableProps).toBeDefined();
+    });
+
+    // The responsive defaults are computed from colViews; 'xs' marks the
+    // column visible at every breakpoint (previously 'na' = always hidden).
+    const colViewsArg = updateVisibleColumns.mock.calls[0][1];
+    expect(colViewsArg).toContainEqual(['createdAt', 'xs']);
+
+    const discoveredAtColumn = dataTableProps.tableCols.find((col) => col.name === 'createdAt');
+    expect(discoveredAtColumn?.label).toBe('Discovered At');
+    // Header carries an info tooltip explaining Discovered At.
+    expect(discoveredAtColumn.options.customHeadRender).toEqual(expect.any(Function));
+
+    const { container, unmount } = render(
+      <>{discoveredAtColumn.options.customBodyRender('2026-05-08T12:00:00Z')}</>,
+    );
+    const stamp = container.querySelector('[data-testid="formatted-time"]') as HTMLElement;
+    expect(stamp).toHaveTextContent('rel(2026-05-08T12:00:00Z)');
+    // Inline shrink-wrap so the full-datetime tooltip anchors on the text,
+    // not the full table-cell width (Sistent FormattedTime uses a block div).
+    expect(stamp.style.display).toBe('inline-block');
+    expect(container.querySelector('[data-testid="custom-tooltip"]')).toHaveAttribute(
+      'data-title',
+      'full(2026-05-08T12:00:00Z)',
+    );
+    unmount();
+
+    // Empty and Go zero-time sentinel render as '-' (not "2025 years ago").
+    const { container: emptyContainer, unmount: unmountEmpty } = render(
+      <>{discoveredAtColumn.options.customBodyRender(undefined)}</>,
+    );
+    expect(emptyContainer.textContent).toBe('-');
+    unmountEmpty();
+
+    const { container: zeroContainer, unmount: unmountZero } = render(
+      <>{discoveredAtColumn.options.customBodyRender('0001-01-01T00:00:00Z')}</>,
+    );
+    expect(zeroContainer.textContent).toBe('-');
+    unmountZero();
+
+    // Updated At shares the same cell renderer when enabled via View Columns.
+    const updatedAtColumn = dataTableProps.tableCols.find((col) => col.name === 'updatedAt');
+    const { container: updatedContainer, unmount: unmountUpdated } = render(
+      <>{updatedAtColumn.options.customBodyRender('2026-05-09T12:00:00Z')}</>,
+    );
+    expect(updatedContainer.querySelector('[data-testid="formatted-time"]')).toHaveTextContent(
+      'rel(2026-05-09T12:00:00Z)',
+    );
+    unmountUpdated();
   });
 
   it('surfaces query failures through notifications', async () => {
@@ -354,7 +494,16 @@ describe('ConnectionTable', () => {
     await user.click(screen.getByRole('button', { name: /delete/i }));
 
     await waitFor(() => {
-      expect(modalShow).toHaveBeenCalled();
+      expect(modalShow).toHaveBeenCalledWith(
+        expect.objectContaining({
+          targetStatus: 'deleted',
+          kind: 'kubernetes',
+          connections: [
+            expect.objectContaining({ id: 'connection-1', name: 'cluster-a' }),
+            expect.objectContaining({ id: 'connection-2', name: 'cluster-b' }),
+          ],
+        }),
+      );
       expect(updateConnectionByIdMutator).toHaveBeenCalledTimes(2);
     });
 
@@ -368,6 +517,25 @@ describe('ConnectionTable', () => {
     });
   });
 
+  it('applies no transition when the bulk delete confirmation is cancelled', async () => {
+    const user = userEvent.setup();
+    modalShow.mockResolvedValue(false);
+
+    render(<ConnectionTable />);
+
+    const toolbar = dataTableProps.options.customToolbarSelect({
+      data: [{ index: 0 }, { index: 1 }],
+    });
+    render(toolbar);
+
+    await user.click(screen.getByRole('button', { name: /delete/i }));
+
+    await waitFor(() => {
+      expect(modalShow).toHaveBeenCalled();
+    });
+    expect(updateConnectionByIdMutator).not.toHaveBeenCalled();
+  });
+
   it('recomputes responsive column visibility when the window width changes', async () => {
     const { rerender } = render(<ConnectionTable />);
 
@@ -379,5 +547,230 @@ describe('ConnectionTable', () => {
     await waitFor(() => {
       expect(dataTableProps.columnVisibility.kind).toBe(false);
     });
+  });
+
+  // Regression: the Environments select disappeared from the table. The cells
+  // come from a memoized `columns` whose `customBodyRender` closes over
+  // `isEnvironmentsSuccess` at definition time, and ResponsiveDataTable renders
+  // from a `tableCols` *snapshot* that it only re-syncs to the live `columns`
+  // when `columnVisibility` identity changes. On first render the environments
+  // query is still pending (isEnvironmentsSuccess=false), so the snapshot froze
+  // a cell that renders nothing; once the query resolved the snapshot was never
+  // refreshed and the select never reappeared. ConnectionTable now keeps
+  // `tableCols` following `columns`, so the resolved cell reaches the table.
+  it('re-renders the Environments select once the environments query resolves', async () => {
+    getEnvironmentsQuery.mockReturnValue({
+      data: { environments: [] },
+      isSuccess: false,
+      isError: false,
+      error: undefined,
+    });
+
+    const { rerender } = render(<ConnectionTable />);
+
+    // Render the snapshot's environments cell and report whether the select
+    // (mocked as `multi-select-wrapper`) is present.
+    const environmentsSelectIsRendered = () => {
+      const envColumn = dataTableProps.tableCols.find((col) => col.name === 'environments');
+      const { container, unmount } = render(
+        <>{envColumn.options.customBodyRender([], { rowData: [] })}</>,
+      );
+      const present = !!container.querySelector('[data-testid="multi-select-wrapper"]');
+      unmount();
+      return present;
+    };
+
+    expect(environmentsSelectIsRendered()).toBe(false);
+
+    getEnvironmentsQuery.mockReturnValue({
+      data: { environments: [{ id: 'env-1', name: 'dev' }] },
+      isSuccess: true,
+      isError: false,
+      error: undefined,
+    });
+    // Re-render under act() so the tableCols-sync effect flushes; then assert
+    // once (no render() inside waitFor, so a regression fails fast instead of
+    // looping the snapshot render until timeout).
+    rerender(<ConnectionTable />);
+
+    expect(environmentsSelectIsRendered()).toBe(true);
+  });
+
+  // Regression for issue #19405 — `/management/connections` crashes with
+  // "React error #185" / a `TypeError: Cannot read properties of null` in
+  // production. The Redux slice (`store/slices/mesheryUi.ts`) initialises
+  // `connectionMetadataState` to `null` and `_app.tsx` only populates it after
+  // `getMeshModelComponentByName` resolves. The pages-router renders the
+  // connections page before that promise settles, so the `enhancedConnections`
+  // memo must tolerate a null map. The pre-fix code wrote
+  // `connectionMetadataState[connection.kind]?.transitions` which protected
+  // the property access but not the lookup itself.
+  it('renders without throwing when connectionMetadataState is null (pre-hydration state)', () => {
+    uiState.connectionMetadataState = null;
+
+    expect(() => render(<ConnectionTable />)).not.toThrow();
+  });
+
+  it('falls back to undefined nextStatus/kindLogo when metadata is null', async () => {
+    uiState.connectionMetadataState = null;
+
+    render(<ConnectionTable />);
+
+    await waitFor(() => {
+      expect(dataTableProps).toBeDefined();
+    });
+    // The rows still render even though metadata is unavailable. Downstream
+    // columns/cells handle the missing transitions gracefully.
+    expect(dataTableProps.data).toHaveLength(2);
+  });
+
+  // Regression for the URL-clear loop described in issue #19405. The
+  // pre-fix effect listed `filteredConnections` in its deps and called
+  // `updateUrlWithConnectionId('')` when the selected id wasn't on the
+  // current page. RTK Query returns a fresh array reference on every cache
+  // hit, so this fired on every refetch, pushing a new URL, re-rendering the
+  // parent, minting another RTK array — a textbook React #185 update-depth
+  // loop. The effect now reads `filteredConnections` via a ref and never
+  // clears the URL.
+  it('does not clear the connectionId URL param when the connection is not on the current page', async () => {
+    const updateUrlWithConnectionId = vi.fn();
+
+    render(
+      <ConnectionTable
+        selectedConnectionId="connection-not-on-this-page"
+        updateUrlWithConnectionId={updateUrlWithConnectionId}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(dataTableProps).toBeDefined();
+    });
+
+    // Wait an extra tick to make sure no deferred call clears the URL.
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(updateUrlWithConnectionId).not.toHaveBeenCalledWith('');
+  });
+
+  // Regression for the Copilot review feedback on PR #19544: the prior shape
+  // of this effect listed `filteredConnections` in its deps (loop-prone, was
+  // the cause of issue #19405) and the intermediate fix moved it to a ref
+  // and dropped the dep entirely, but set `lastProcessedId` *before*
+  // confirming the row was found — locking the effect out for the rest of
+  // the session whenever the user landed on a page that didn't contain the
+  // deep-linked id (slow network, page 2, filtered view).
+  it('still expands the row when the deep-linked id arrives on a later page', async () => {
+    const setRowsExpandedSpy = vi.fn();
+
+    // First load: deep-linked id is NOT in the visible page.
+    getConnectionsQuery.mockReturnValue({
+      data: {
+        connections: [
+          makeConnection({ id: 'page-1-conn-a' }),
+          makeConnection({ id: 'page-1-conn-b' }),
+        ],
+        totalCount: 4,
+      },
+      isError: false,
+      error: undefined,
+      refetch: refetchConnections,
+      isLoading: false,
+    });
+
+    const { rerender } = render(<ConnectionTable selectedConnectionId="deep-link-target" />);
+
+    await waitFor(() => {
+      expect(dataTableProps).toBeDefined();
+    });
+
+    // The row isn't on this page, so nothing should be expanded yet.
+    const initialRowsExpanded = dataTableProps.options.rowsExpanded;
+    expect(initialRowsExpanded).toEqual([]);
+
+    // User paginates and the deep-linked id is now in the visible set.
+    getConnectionsQuery.mockReturnValue({
+      data: {
+        connections: [
+          makeConnection({ id: 'page-2-conn-a' }),
+          makeConnection({ id: 'deep-link-target', name: 'cluster-deep' }),
+        ],
+        totalCount: 4,
+      },
+      isError: false,
+      error: undefined,
+      refetch: refetchConnections,
+      isLoading: false,
+    });
+
+    rerender(<ConnectionTable selectedConnectionId="deep-link-target" />);
+
+    // The effect must re-fire and expand index 1 now that the id is visible.
+    await waitFor(() => {
+      expect(dataTableProps.options.rowsExpanded).toEqual([1]);
+    });
+
+    // Sanity check that the linter isn't optimizing the spy away.
+    expect(setRowsExpandedSpy).not.toHaveBeenCalled();
+  });
+
+  it('keeps the ResponsiveDataTable options referentially stable across rerenders', () => {
+    const { rerender } = render(<ConnectionTable />);
+
+    const firstOptions = dataTableProps.options;
+
+    rerender(<ConnectionTable />);
+
+    expect(dataTableProps.options).toBe(firstOptions);
+  });
+
+  // Every data column's header carries an info affordance explaining what the
+  // column means and how to read its values, so the table is self-describing.
+  // `Actions` is excluded: it holds controls rather than values.
+  it('gives every data column an info icon and tooltip in its header', () => {
+    render(<ConnectionTable />);
+
+    // Internal metadata columns and control columns that do not require tooltips.
+    const internalColumns = [
+      'id',
+      'metadata.server_location',
+      'metadata.serverLocation',
+      'metadata.server',
+      'nextStatus',
+      'kindLogo',
+      'metadata.name',
+      'Actions',
+    ];
+
+    const dataColumns = dataTableProps.columns.filter((c) => !internalColumns.includes(c.name));
+
+    dataColumns.forEach((col) => {
+      const name = col.name;
+      expect(
+        typeof col.options?.customHeadRender,
+        `column "${name}" is missing customHeadRender`,
+      ).toBe('function');
+
+      const head = col.options.customHeadRender({ index: 0, label: col.label, name }, () => {}, {});
+
+      expect(head.props.icon, `column "${name}" has no info icon`).toBeTruthy();
+      expect(
+        typeof head.props.tooltip === 'string' && head.props.tooltip.length > 0,
+        `column "${name}" has no info tooltip`,
+      ).toBe(true);
+    });
+  });
+  // Regression coverage for the review feedback on PR #20695: the
+  // Connections/MeshSync tab switcher must be passed down through the
+  // toolbar (rendered between the toolbar and the data table), not dropped.
+  it('renders the tabs prop inside the toolbar, ahead of the data table', () => {
+    render(<ConnectionTable tabs={<div data-testid="connection-tabs">tabs</div>} />);
+
+    const toolbar = screen.getByTestId('data-table-toolbar');
+    expect(toolbar).toContainElement(screen.getByTestId('connection-tabs'));
+
+    const positions = screen
+      .getByTestId('connection-tabs')
+      .compareDocumentPosition(screen.getByTestId('responsive-data-table'));
+
+    expect(positions & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 });

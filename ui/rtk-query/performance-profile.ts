@@ -1,86 +1,42 @@
-import { api } from './index';
+import {
+  useDeletePerformanceProfileMutation as useSchemasDeletePerformanceProfileMutation,
+  useGetPerformanceProfileQuery as useSchemasGetPerformanceProfileQuery,
+  useGetPerformanceProfilesQuery as useSchemasGetPerformanceProfilesQuery,
+  useUpsertPerformanceProfileMutation as useSchemasUpsertPerformanceProfileMutation,
+} from '@meshery/schemas/mesheryApi';
 
-const TAGS = {
-  PERFORMANCE_PROFILE: 'performance-profile',
+export const useGetPerformanceProfilesQuery = (queryArg, options) =>
+  useSchemasGetPerformanceProfilesQuery(
+    {
+      page: queryArg?.page?.toString(),
+      pagesize: queryArg?.pagesize?.toString(),
+      search: queryArg?.search,
+      order: queryArg?.order,
+    },
+    options,
+  );
+
+export const useSavePerformanceProfileMutation = () => {
+  const [trigger, result] = useSchemasUpsertPerformanceProfileMutation();
+  const wrappedTrigger = (queryArg) => trigger({ body: queryArg?.body });
+
+  return [wrappedTrigger, result] as const;
 };
 
-const performanceProfile = api
-  .enhanceEndpoints({
-    addTagTypes: [TAGS.PERFORMANCE_PROFILE],
-  })
-  .injectEndpoints({
-    endpoints: (builder) => ({
-      getPerformanceProfiles: builder.query({
-        query: (queryArg) => ({
-          url: `/api/user/performance/profiles`,
-          params: {
-            page: queryArg.page,
-            pagesize: queryArg.pagesize,
-            search: queryArg.search,
-            order: queryArg.order,
-          },
-          method: 'GET',
-        }),
-        providesTags: () => [{ type: TAGS.PERFORMANCE_PROFILE }],
-      }),
-      savePerformanceProfile: builder.mutation({
-        query: (queryArg) => ({
-          url: `/api/user/performance/profiles`,
-          method: 'POST',
-          body: queryArg.body,
-        }),
-        invalidatesTags: [{ type: TAGS.PERFORMANCE_PROFILE }],
-      }),
-      getProfileResults: builder.query({
-        query: (queryArg) => ({
-          url: `/api/user/performance/profiles/results`,
-          params: {
-            page: queryArg.page,
-            pagesize: queryArg.pagesize,
-            search: queryArg.search,
-            order: queryArg.order,
-            from: queryArg.from,
-            to: queryArg.to,
-          },
-          method: 'GET',
-        }),
-        providesTags: () => [{ type: TAGS.PERFORMANCE_PROFILE }],
-      }),
-      getPerformanceProfileById: builder.query({
-        query: (queryArg) => ({
-          url: `/api/user/performance/profiles/${queryArg.id}`,
-          method: 'GET',
-        }),
-        providesTags: () => [{ type: TAGS.PERFORMANCE_PROFILE }],
-      }),
-      deletePerformanceProfile: builder.mutation({
-        query: (queryArg) => ({
-          url: `/api/user/performance/profiles/${queryArg.id}`,
-          method: 'DELETE',
-        }),
-        invalidatesTags: [{ type: TAGS.PERFORMANCE_PROFILE }],
-      }),
-      getProfileResultsById: builder.query({
-        query: (queryArg) => ({
-          url: `/api/user/performance/profiles/${queryArg.id}/results`,
-          params: {
-            page: queryArg.page,
-            pagesize: queryArg.pagesize,
-            search: queryArg.search,
-            order: queryArg.order,
-          },
-          method: 'GET',
-        }),
-        providesTags: () => [{ type: TAGS.PERFORMANCE_PROFILE }],
-      }),
-    }),
-  });
+export const useGetPerformanceProfileByIdQuery = (queryArg, options) =>
+  useSchemasGetPerformanceProfileQuery(
+    {
+      performanceProfileId: queryArg?.id,
+    },
+    options,
+  );
 
-export const {
-  useGetPerformanceProfilesQuery,
-  useSavePerformanceProfileMutation,
-  useGetProfileResultsQuery,
-  useGetPerformanceProfileByIdQuery,
-  useDeletePerformanceProfileMutation,
-  useGetProfileResultsByIdQuery,
-} = performanceProfile;
+export const useDeletePerformanceProfileMutation = () => {
+  const [trigger, result] = useSchemasDeletePerformanceProfileMutation();
+  const wrappedTrigger = (queryArg) =>
+    trigger({
+      performanceProfileId: queryArg?.id,
+    });
+
+  return [wrappedTrigger, result] as const;
+};

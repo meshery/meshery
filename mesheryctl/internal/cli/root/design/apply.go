@@ -40,7 +40,7 @@ var (
 )
 
 var linkDocPatternApply = map[string]string{
-	"link":    "![pattern-apply-usage](/reference/images/patternApply.png)",
+	"link":    "![pattern-apply-usage](../../../images/patternApply.png)",
 	"caption": "Usage of mesheryctl design apply",
 }
 
@@ -210,6 +210,10 @@ mesheryctl design apply [design-name]
 				err = json.Unmarshal(body, &response)
 				if err != nil {
 					return utils.ErrUnmarshal(err)
+				}
+
+				if len(response) == 0 || response[0] == nil {
+					return ErrDesignNotFound(file)
 				}
 
 				// setup pattern file here

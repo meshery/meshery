@@ -1,22 +1,16 @@
 import React from 'react';
-import { NoSsr } from '@sistent/sistent';
-import Head from 'next/head';
 import { VISIBILITY } from '../../utils/Enum';
-import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
-import DefaultError from '@/components/general/error-404';
+import { Keys } from '@meshery/schemas/permissions';
+import { useHasPermission } from '@sistent/sistent';
+import DefaultError from '@/components/general/error-404/index';
 import MesheryPatterns from '@/components/designs/patterns/MesheryPatterns';
-import { usePageTitle } from '@/utils/hooks';
+import { MesheryPage } from '@/components/general/MesheryPage';
 
 function CatalogPage() {
-  usePageTitle('Catalog');
-
+  const hasPermission = useHasPermission(Keys.CatalogManagementViewCatalog);
   return (
-    <NoSsr>
-      <Head>
-        <title>Catalog | Meshery</title>
-      </Head>
-      {CAN(keys.VIEW_CATALOG.action, keys.VIEW_CATALOG.subject) || false ? (
+    <MesheryPage title="Catalog">
+      {hasPermission ? (
         <MesheryPatterns
           disableCreateImportDesignButton={true}
           disableUniversalFilter={true}
@@ -28,7 +22,7 @@ function CatalogPage() {
       ) : (
         <DefaultError />
       )}
-    </NoSsr>
+    </MesheryPage>
   );
 }
 

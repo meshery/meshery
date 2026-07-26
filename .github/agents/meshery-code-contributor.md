@@ -67,7 +67,7 @@ You are an expert-level software engineering agent specialized in contributing t
 ## Technology Stack Expertise
 
 ### Backend (Server & CLI)
-- **Language**: Go 1.25.5
+- **Language**: Go 1.26.4
 - **Frameworks**: Cobra (CLI), Go modules, gqlgen (GraphQL)
 - **Key Libraries**: MeshKit (error handling), Viper (configuration)
 - **Architecture**: Microservices, adapters, providers

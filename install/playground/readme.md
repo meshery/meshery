@@ -3,6 +3,23 @@
 
 _Deployment Topology - see Meshery Architecture deck_
 
+## Production (CNCF) Deployment
+
+The live playground (`playground.meshery.io`) runs as the `playground` Deployment in the
+`meshery` namespace on the CNCF cluster (kube-context `prod`). Its canonical spec lives at
+[`kubernetes/playground-deployment.yaml`](kubernetes/playground-deployment.yaml) - apply it
+with `kubectl -n meshery apply -f kubernetes/playground-deployment.yaml`.
+
+Provider configuration is set there: the playground offers only the **Meshery** provider
+(`PROVIDER_BASE_URLS=https://cloud.meshery.io`) and pre-selects it on load
+(`PROVIDER=Meshery`). Releases reconcile the spec from this manifest and then roll the
+container image forward via `.github/workflows/cncf-playground-deploy-meshery.yaml`
+(`kubectl apply` then `kubectl set image`), so env changes ride in with the next release.
+Out-of-band edits on the cluster will be overwritten on the next deploy - put the change
+in this manifest instead.
+
+_The bare-metal/Equinix notes below describe an earlier topology and are retained for reference._
+
 ### DNS
 playground.meshery.io - 147.28.141.9
 
@@ -49,7 +66,7 @@ chmod +x protect-kubelet
 
 ## Reinstalling Meshery after a clean Meshery uninstall
 If mistakenly or for some reason Meshery is uninstalled (along with `meshery` namespace) then follow the below steps to bring it back up.
-1. `helm install meshery meshery/meshery --namespace meshery --set env.PROVIDER=Layer5`
+1. `helm install meshery meshery/meshery --namespace meshery --set env.PROVIDER=Meshery`
 2. `kubectl create secret tls -n meshery tls-secret-meshery --cert=/etc/letsencrypt/live/playground.meshery.io-0001/fullchain.pem --key=/etc/letsencrypt/live/playground.meshery.io-0001/privkey.pem`  Make sure to have private and public keys generated for `playground.meshery.io` in appropriate directories.
 3. kubectl apply -f contour-http-proxy.yaml 
 ## Prometheus deployment

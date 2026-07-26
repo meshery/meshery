@@ -18,6 +18,7 @@ import { NoSsr } from '@sistent/sistent';
 import { StyledSelect } from './SpaceSwitcher';
 import { iconMedium } from 'css/icons.styles';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { Keys } from '@meshery/schemas/permissions';
 import {
   useGetSelectedOrganization,
   useGetSelectedWorkspace,
@@ -112,7 +113,7 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
               <FormControlLabel
                 key="SpacesPreferences"
                 control={
-                  <Grid2 container spacing={1} alignItems="flex-end" size="grow">
+                  <Grid2 container spacing={1} size="grow" sx={{ alignItems: 'flex-end' }}>
                     <Grid2 size={{ xs: 12 }} data-cy="mesh-adapter-url">
                       <StyledSelect
                         size="small"
@@ -171,18 +172,21 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
                           </HoverMenuItem>
                         ))}
                         <Divider />
-                        <Box gap={2} px={2} display={'flex'}>
+                        <Box sx={{ gap: 2, px: 2, display: 'flex' }}>
                           <Button
                             variant="contained"
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               openWorkspaceModal(true);
                             }}
+                            permissionKey={Keys.WorkspaceManagementViewWorkspace}
                           >
                             Explore Workspaces
                           </Button>
                           <Button
                             variant="outlined"
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               setSelectedWorkspace({
                                 id: 'All Workspaces',
                                 name: 'All Workspaces',
@@ -190,6 +194,7 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
                               setCreateNewWorkspaceModalOpen(true);
                               openWorkspaceModal(true);
                             }}
+                            permissionKey={Keys.WorkspaceManagementCreateWorkspace}
                           >
                             Create Workspace
                           </Button>

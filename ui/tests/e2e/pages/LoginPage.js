@@ -17,7 +17,7 @@ export class LoginPage {
     await this.page.goto('/login');
   }
 
-  async loginWithToken(token, baseURL, provider = 'Layer5') {
+  async loginWithToken(token, baseURL, provider = 'Meshery') {
     if (!token) {
       throw new Error('Token is required for token-based authentication');
     }

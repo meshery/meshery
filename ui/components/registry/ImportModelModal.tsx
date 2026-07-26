@@ -45,6 +45,7 @@ import { StyledDocsRedirectLink } from './Stepper/style';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
+import { readFileAsBytes } from '@/utils/fileUpload';
 import {
   UPLOAD_TYPE_CSV,
   UPLOAD_TYPE_FILE,
@@ -54,7 +55,6 @@ import {
   findSelectedModelFile,
   importModelSchema,
   importModelUiSchema,
-  readFileAsBytes,
 } from './importModelSchema';
 
 const FinishDeploymentStep = ({ deploymentType }: { deploymentType: string }) => {
@@ -273,23 +273,23 @@ const ImportModelModal = memo<ImportModelModalProps>(
         }
       }
 
-      // Fire the request first; only advance to the Finish step on success so
-      // a failed import doesn't strand the user on a perpetual loading screen
-      // (the Finish step subscribes to the operations-center event bus and
-      // only ever stops loading on a SUCCESS event).
       updateProgress({ showProgress: true });
-      try {
-        await importModelReq({ importBody: requestBody }).unwrap();
-        setActiveStep(1);
-      } catch (err) {
-        console.error('Failed to import model:', err);
-        notify({
-          message: 'Model import failed. Please verify the file or URL and try again.',
-          event_type: EVENT_TYPES.ERROR,
-        });
-      } finally {
-        updateProgress({ showProgress: false });
-      }
+      setActiveStep(1);
+
+      (async () => {
+        try {
+          await importModelReq({ importBody: requestBody }).unwrap();
+        } catch (err) {
+          console.error('Failed to import model:', err);
+          notify({
+            message: 'Model import failed. Please verify the file or URL and try again.',
+            event_type: EVENT_TYPES.ERROR,
+          });
+          setActiveStep(0); // Move back on failure
+        } finally {
+          updateProgress({ showProgress: false });
+        }
+      })();
     };
 
     const helpText = (
@@ -321,6 +321,7 @@ const ImportModelModal = memo<ImportModelModalProps>(
             onSubmit={handleImportModelSubmit}
             submitText="Next"
             helpText={helpText}
+            sx={{ zIndex: 1600 }}
           />
         ) : (
           <Modal
@@ -330,6 +331,7 @@ const ImportModelModal = memo<ImportModelModalProps>(
             size="sm"
             helpText="Click Finish to complete the model import process. The imported model will be available in your Model Registry."
             actions={<ModalButtonPrimary onClick={handleClose}>Finish</ModalButtonPrimary>}
+            sx={{ zIndex: 1600 }}
           >
             <FinishDeploymentStep deploymentType="register" />
           </Modal>
@@ -341,6 +343,7 @@ const ImportModelModal = memo<ImportModelModalProps>(
           title="Import CSV"
           size="sm"
           disableBodyWrap
+          sx={{ zIndex: 1600 }}
         >
           <CsvStepper handleClose={handleClose} />
         </Modal>

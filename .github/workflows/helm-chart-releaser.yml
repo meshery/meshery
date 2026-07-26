@@ -24,12 +24,17 @@ on:
           description: 'Release Version'     
           required: false
           default: 'v'
+
+permissions:
+  contents: write      # Needs to create/push releases
+  packages: write      # Helm charts go to registry
+
 jobs:
   validate:
     runs-on: ubuntu-24.04
     if: ${{github.event_name == 'pull_request'}}
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v6
     - uses: azure/setup-helm@v3.5
       with:
         version: 'v3.6.0' # default is latest stable
@@ -40,9 +45,9 @@ jobs:
       run: helm lint install/kubernetes/helm/meshery-operator --with-subcharts
   release-chart:
     runs-on: ubuntu-24.04
-    if: ${{ github.event_name != 'pull_request' }} && ${{ github.ref == 'refs/heads/master' }}
+    if: ${{ github.event_name != 'pull_request' }}
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v6
       - name: set env
         id: vars
         # https://github.community/t/how-to-get-just-the-tag-name/16241/7

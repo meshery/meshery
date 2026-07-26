@@ -4,16 +4,29 @@ import { describe, expect, it, vi } from 'vitest';
 vi.mock('@sistent/sistent', () => ({
   CatalogIcon: (props: any) => <svg data-testid="catalog-icon" {...props} />,
   TachographDigitalIcon: (props: any) => <svg data-testid="tachograph-icon" {...props} />,
+  InsertChartIcon: (props: any) => <svg data-testid="insert-chart-icon" {...props} />,
 }));
 
 vi.mock('../../../assets/icons/ConfigurationIcon', () => ({
   default: () => <svg data-testid="configuration-icon" />,
 }));
+vi.mock('../../../assets/icons/Connection', () => ({
+  default: () => <svg data-testid="connection-icon" />,
+}));
+vi.mock('../../../assets/icons/CredentialIcon', () => ({
+  default: () => <svg data-testid="credential-icon" />,
+}));
 vi.mock('@/assets/icons/DashboardIcon', () => ({
   default: () => <svg data-testid="dashboard-icon" />,
 }));
+vi.mock('../../../assets/icons/Environment', () => ({
+  default: () => <svg data-testid="environment-icon" />,
+}));
 vi.mock('../../../assets/icons/ServiceMeshIcon', () => ({
   default: () => <svg data-testid="service-mesh-icon" />,
+}));
+vi.mock('../../../assets/icons/WorkspaceOutlined', () => ({
+  default: () => <svg data-testid="workspace-outlined-icon" />,
 }));
 vi.mock('../../../public/static/img/drawer-icons/lifecycle_mgmt_svg', () => ({
   default: () => <svg data-testid="lifecycle-icon" />,
@@ -41,14 +54,18 @@ vi.mock('../../../constants/navigator', () => ({
   CATALOG: 'CATALOG',
   CONFIGURATION: 'CONFIGURATION',
   CONNECTION: 'CONNECTION',
+  CREDENTIAL: 'CREDENTIAL',
   DASHBOARD: 'DASHBOARD',
   DESIGN: 'DESIGN',
   ENVIRONMENT: 'ENVIRONMENT',
   EXTENSIONS: 'EXTENSIONS',
+  GRAFANA: 'GRAFANA',
   LIFECYCLE: 'LIFECYCLE',
   PERFORMANCE: 'PERFORMANCE',
   PROFILES: 'PROFILES',
+  PROMETHEUS: 'PROMETHEUS',
   SERVICE_MESH: 'SERVICE_MESH',
+  TELEMETRY: 'TELEMETRY',
   WORKSPACE: 'WORKSPACE',
 }));
 
@@ -56,19 +73,7 @@ vi.mock('../../../css/icons.styles', () => ({
   iconSmall: {},
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    VIEW_CONNECTIONS: { action: 'view', subject: 'connection' },
-    VIEW_ENVIRONMENTS: { action: 'view', subject: 'environment' },
-    VIEW_WORKSPACE: { action: 'view', subject: 'workspace' },
-    VIEW_CLOUD_NATIVE_INFRASTRUCTURE: { action: 'view', subject: 'infra' },
-    VIEW_CATALOG: { action: 'view', subject: 'catalog' },
-    VIEW_DESIGNS: { action: 'view', subject: 'design' },
-    VIEW_PERFORMANCE_PROFILES: { action: 'view', subject: 'profile' },
-    VIEW_EXTENSIONS: { action: 'view', subject: 'extension' },
-  },
-}));
-
+import { Keys } from '@meshery/schemas/permissions';
 import { drawerIconsStyle, getNavigatorComponents } from './navigatorComponents';
 
 const fakeProviderUiAccessControl = (allowed: Record<string, boolean>) => ({
@@ -108,6 +113,7 @@ describe('navigatorComponents', () => {
       'Dashboard',
       'Lifecycle',
       'Configuration',
+      'Telemetry',
       'Performance',
       'Extensions',
     ]);
@@ -153,6 +159,7 @@ describe('navigatorComponents', () => {
     const lifecycle = items.find((i: any) => i.id === 'LIFECYCLE');
     expect(lifecycle?.children?.map((c: any) => c.id)).toEqual([
       'CONNECTION',
+      'CREDENTIAL',
       'ENVIRONMENT',
       'WORKSPACE',
       'SERVICE_MESH',
@@ -173,7 +180,7 @@ describe('navigatorComponents', () => {
     const items = getNavigatorComponents(fakeProviderUiAccessControl({ LIFECYCLE: true }), theme);
     const lifecycle = items.find((i: any) => i.id === 'LIFECYCLE');
     const connection = lifecycle?.children?.find((c: any) => c.id === 'CONNECTION');
-    expect(connection?.permission).toEqual({ action: 'view', subject: 'connection' });
+    expect(connection?.permissionKey).toEqual(Keys.WorkspaceManagementViewConnections);
   });
 
   it('passes white fills to CatalogIcon when on the catalog route', () => {

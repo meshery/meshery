@@ -6,10 +6,10 @@ import { Title } from '../../view';
 import { TooltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
-import { CONNECTION_KINDS } from '../../../../utils/Enum';
+import { CoreConnectionKinds } from '../../../../utils/Enum';
 import { FormatId } from '@/components/data-formatter';
 
-export const SecurityTypesConfig = (
+export const useSecurityTypesConfig = (
   switchView,
   meshSyncResources,
   k8sConfig,
@@ -96,7 +96,7 @@ export const SecurityTypesConfig = (
                   title={context.name}
                   iconSrc={
                     connectionMetadataState
-                      ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                      ? connectionMetadataState[CoreConnectionKinds.kubernetes]?.icon
                       : ''
                   }
                   handlePing={() => ping(context.name, context.server, context.connectionId)}
@@ -233,7 +233,7 @@ export const SecurityTypesConfig = (
                   title={context.name}
                   iconSrc={
                     connectionMetadataState
-                      ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                      ? connectionMetadataState[CoreConnectionKinds.kubernetes]?.icon
                       : ''
                   }
                   handlePing={() => ping(context.name, context.server, context.connectionId)}
@@ -339,7 +339,7 @@ export const SecurityTypesConfig = (
                   title={context.name}
                   iconSrc={
                     connectionMetadataState
-                      ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                      ? connectionMetadataState[CoreConnectionKinds.kubernetes]?.icon
                       : ''
                   }
                   handlePing={() => ping(context.name, context.server, context.connectionId)}
@@ -445,7 +445,7 @@ export const SecurityTypesConfig = (
                   title={context.name}
                   iconSrc={
                     connectionMetadataState
-                      ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                      ? connectionMetadataState[CoreConnectionKinds.kubernetes]?.icon
                       : ''
                   }
                   handlePing={() => ping(context.name, context.server, context.connectionId)}
@@ -551,7 +551,7 @@ export const SecurityTypesConfig = (
                   title={context.name}
                   iconSrc={
                     connectionMetadataState
-                      ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                      ? connectionMetadataState[CoreConnectionKinds.kubernetes]?.icon
                       : ''
                   }
                   handlePing={() => ping(context.name, context.server, context.connectionId)}

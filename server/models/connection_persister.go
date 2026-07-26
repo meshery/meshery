@@ -65,18 +65,42 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 	query.Table("connections").Count(&count)
 	Paginate(uint(page), uint(pageSize))(query).Find(&connectionsFetched)
 
-	for _, connectionFetched := range connectionsFetched {
-		// Declare a fresh slice per iteration so GORM's Find(&slice)
-		// populates a distinct underlying array for each connection. If
-		// the slice were hoisted out of the loop, all connections would
-		// end up sharing the same header and subsequent iterations would
-		// clobber earlier results.
-		environmentsFetched := []*environments.EnvironmentData{}
-		cp.DB.Table("environment_connection_mappings").Joins("LEFT JOIN environments ON environments.id = environment_connection_mappings.environment_id").Select("environments.*").
-			Where("connection_id = ?", connectionFetched.ID).
-			Find(&environmentsFetched)
+	// Batch-load environments for all connections on the page in a single
+	// query rather than issuing one query per connection (N+1 problem).
+	if len(connectionsFetched) > 0 {
+		connectionIDs := make([]core.Uuid, len(connectionsFetched))
+		for i, conn := range connectionsFetched {
+			connectionIDs[i] = conn.ID
+		}
 
-		connectionFetched.Environments = environmentsFetched
+		// envWithConnID augments EnvironmentData with the join-table's
+		// connection_id so we can group results after scanning.
+		type envWithConnID struct {
+			environments.EnvironmentData
+			ConnectionID core.Uuid `gorm:"column:connection_id"`
+		}
+
+		var envMappings []envWithConnID
+		if err := cp.DB.Table("environment_connection_mappings").
+			Joins("LEFT JOIN environments ON environments.id = environment_connection_mappings.environment_id").
+			Select("environments.*, environment_connection_mappings.connection_id").
+			Where("environment_connection_mappings.connection_id IN ?", connectionIDs).
+			Find(&envMappings).Error; err != nil {
+			return nil, fmt.Errorf("error fetching environments for connections: %v", err)
+		}
+
+		envsByConnID := make(map[core.Uuid][]*environments.EnvironmentData)
+		for i := range envMappings {
+			connID := envMappings[i].ConnectionID
+			envsByConnID[connID] = append(envsByConnID[connID], &envMappings[i].EnvironmentData)
+		}
+
+		for _, conn := range connectionsFetched {
+			conn.Environments = envsByConnID[conn.ID]
+			if conn.Environments == nil {
+				conn.Environments = []*environments.EnvironmentData{}
+			}
+		}
 	}
 	statusSummary, err := cp.getConnectionsStatusSummary()
 	if err != nil {
@@ -135,12 +159,51 @@ func (cp *ConnectionPersister) SaveConnection(connection *connections.Connection
 	err := cp.DB.Transaction(func(tx *gorm.DB) error {
 		existingConnection := connections.Connection{}
 
-		// Check if there is already an entry for this context
+		// A kubernetes context's connection ID is deterministic, so re-importing
+		// the same cluster collides here. Preserve the existing connection (its
+		// current status and metadata) and return *that* record, rather than
+		// leaving the caller's transient payload — which previously surfaced a
+		// stale/empty status on re-import.
 		if err := tx.First(&existingConnection, "id = ?", connection.ID).Error; err == nil {
-			return err
+			// Safety net: if the persisted row is missing identity fields (e.g. a
+			// kind wiped by an earlier partial update), heal them from the incoming
+			// payload so a re-import can repair an otherwise permanently malformed
+			// row. Live status/metadata are still preserved.
+			healed := false
+			if existingConnection.Kind == "" && connection.Kind != "" {
+				existingConnection.Kind = connection.Kind
+				healed = true
+			}
+			if existingConnection.Name == "" && connection.Name != "" {
+				existingConnection.Name = connection.Name
+				healed = true
+			}
+			if existingConnection.ConnectionType == "" && connection.ConnectionType != "" {
+				existingConnection.ConnectionType = connection.ConnectionType
+				healed = true
+			}
+			if existingConnection.SubType == "" && connection.SubType != "" {
+				existingConnection.SubType = connection.SubType
+				healed = true
+			}
+			if existingConnection.Status == "" && connection.Status != "" {
+				existingConnection.Status = connection.Status
+				healed = true
+			}
+			if existingConnection.Metadata == nil && connection.Metadata != nil {
+				existingConnection.Metadata = connection.Metadata
+				healed = true
+			}
+			if healed {
+				if err := tx.Save(&existingConnection).Error; err != nil {
+					return err
+				}
+			}
+			*connection = existingConnection
+			return nil
 		}
 
-		return tx.Save(&connection).Error
+		return tx.Save(connection).Error
 	})
 
 	return connection, err
@@ -156,19 +219,14 @@ func (cp *ConnectionPersister) DeleteConnectionById(connectionID core.Uuid) (*co
 	}
 	err = cp.DB.Delete(connection).Error
 	if err != nil {
-		return nil, ErrDBDelete(err, cp.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, cp.fetchUserDetails().ID.String())
 	}
 
 	return &connection, nil
 }
 
 func (cp *ConnectionPersister) fetchUserDetails() *User {
-
-	return &User{
-		UserId:    "meshery",
-		FirstName: "Meshery",
-		LastName:  "Meshery",
-	}
+	return LocalProviderUser()
 }
 
 func (cp *ConnectionPersister) UpdateConnectionStatusByID(connectionID core.Uuid, connectionStatus connections.ConnectionStatus) (*connections.Connection, error) {

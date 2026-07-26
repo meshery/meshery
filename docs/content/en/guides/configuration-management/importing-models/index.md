@@ -6,7 +6,7 @@ categories: [configuration]
 
 Import your existing Models and existing custom resource definition (CRD) into Meshery. The platform supports a variety of application definition formats, and you can import designs using either the Meshery CLI or the Meshery UI.
 
-**Note:** A [Model](/concepts/logical/models) can be only imported if it contains atleast a valid [Component](/concepts/logical/components) or [Relationship](/concepts/logical/relationships).
+**Note:** A [Model]({{< ref "concepts/logical/models/index.md" >}}) can be only imported if it contains atleast a valid [Component]({{< ref "concepts/logical/components.md" >}}) or [Relationship]({{< ref "concepts/logical/relationships/index.md" >}}).
 
 ## Import Models Using Meshery CLI
 
@@ -16,7 +16,7 @@ The `mesheryctl model import` command currently supports importing Models contai
 
 **Step 1: Install Meshery CLI**
 
-Before you can use the Meshery CLI to import a [Model](/concepts/logical/models), you must first install it. You can install Meshery CLI by [following the instructions](/installation#install-mesheryctl).
+Before you can use the Meshery CLI to import a [Model]({{< ref "concepts/logical/models/index.md" >}}), you must first install it. You can install Meshery CLI by [following the instructions]({{< ref "installation/_index.md#install-mesheryctl" >}}).
 
 
 **Step 2: Import the Model**
@@ -48,13 +48,13 @@ https://github.com/{owner}/{repo}/raw/refs/heads/main/filename
 
 **Step 1: Access the Meshery UI**
 
-To import a model into Meshery using the Meshery UI, you must first [install Meshery](/installation/quick-start)
+To import a model into Meshery using the Meshery UI, you must first [install Meshery]({{< ref "installation/quick-start/index.md" >}})
 
 **Step 2: Navigate to Registry under Settings Page**
 
 Once you have accessed the Meshery UI, navigate to the Registry under Settings. This page can be accessed by clicking on the Settings on the top right on setting icon and then selecting "Registry" and then choose model.
 
-<a href="./images/Registry.png"><img alt="Registry-Navigator" style="width:500px;height:auto;" src="./images/Registry.png" /></a>
+<a href="../images/Registry.png"><img alt="Registry-Navigator" style="width:500px;height:auto;" src="../images/Registry.png" /></a>
 
 **Step 3: Upload the Model**
 

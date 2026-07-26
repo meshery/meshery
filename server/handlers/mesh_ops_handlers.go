@@ -147,7 +147,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	}
 
 	prefObj.MeshAdapters = meshAdapters
-	err = provider.RecordPreferences(req, user.UserId, prefObj)
+	err = provider.RecordPreferences(req, user.ID.String(), prefObj)
 	if err != nil {
 		h.log.Error(ErrRecordPreferences(err))
 		writeMeshkitError(w, ErrRecordPreferences(err), http.StatusInternalServerError)
@@ -184,7 +184,7 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 	if err != nil {
 		// Caller decides how loudly to surface this. SessionSyncHandler probes
 		// tracked adapters on every page load and these probes routinely fail
-		// for stale or never-deployed adapters (e.g., the Layer5 Playground),
+		// for stale or never-deployed adapters (e.g., the Meshery Playground),
 		// which otherwise floods server logs with ERROR entries.
 		//
 		// Log both the raw transport `err` and the MeshKit error code so
@@ -339,7 +339,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	_, err = mClient.MClient.ApplyOperation(req.Context(), &meshes.ApplyRuleRequest{
 		OperationId: operationID.String(),
 		OpName:      opName,
-		Username:    user.UserId,
+		Username:    user.ID.String(),
 		Namespace:   namespace,
 		CustomBody:  customBody,
 		DeleteOp:    (deleteOp != ""),

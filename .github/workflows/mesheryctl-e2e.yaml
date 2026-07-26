@@ -35,11 +35,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - go: '1.25'
+          - go: '1.26.4'
             k8s_version: 'v1.33.0'
             platform: 'kubernetes'
             publish_to_qa: false
-          - go: '1.25'
+          - go: '1.26.4'
             k8s_version: 'v1.34.3'
             platform: 'kubernetes'
             publish_to_qa: true
@@ -171,7 +171,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v6
         with:
-          go-version: '1.25'
+          go-version-file: go.mod
 
       - name: Run Performance Tests
         env:
@@ -190,13 +190,13 @@ jobs:
               components: []
               channel: stable
               version: latest
-              provider: Layer5
+              provider: Meshery
           current-context: local
           tokens:
             - location: auth.json
               name: default
           EOF
-          echo '{ "meshery-provider": "Layer5", "token": null }' | jq -c '.token = env.PROVIDER_TOKEN' > "$HOME/.meshery/auth.json"
+          echo '{ "meshery-provider": "Meshery", "token": null }' | jq -c '.token = env.PROVIDER_TOKEN' > "$HOME/.meshery/auth.json"
           cp "$HOME/.meshery/auth.json" "$RUNNER_TEMP/auth.json"
           chmod 600 "$RUNNER_TEMP/auth.json"
           make build
@@ -265,7 +265,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v6
         with:
-          go-version: '1.25'
+          go-version-file: go.mod
 
       - name: Run Performance Tests
         env:
@@ -284,13 +284,13 @@ jobs:
               components: []
               channel: stable
               version: latest
-              provider: Layer5
+              provider: Meshery
           current-context: local
           tokens:
             - location: auth.json
               name: default
           EOF
-          echo '{ "meshery-provider": "Layer5", "token": null }' | jq -c '.token = env.PROVIDER_TOKEN' > "$HOME/.meshery/auth.json"
+          echo '{ "meshery-provider": "Meshery", "token": null }' | jq -c '.token = env.PROVIDER_TOKEN' > "$HOME/.meshery/auth.json"
           cp "$HOME/.meshery/auth.json" "$RUNNER_TEMP/auth.json"
           chmod 600 "$RUNNER_TEMP/auth.json"
           make build
@@ -315,21 +315,21 @@ jobs:
         shell: '/bin/bash {0}'
 
       # - name: Apply BookInfo Pattern
-      #   uses: layer5io/mesheryctl-service-mesh-patterns-action@master
+      #   uses: meshery-extensions/mesheryctl-service-mesh-patterns-action@master
       #   with:
       #     provider_token: ${{ secrets.PROVIDER_TOKEN }}
       #     platform: ${{ matrix.platform }}
       #     pattern_url: https://raw.githubusercontent.com/service-mesh-patterns/service-mesh-patterns/master/samples/bookInfoPattern.yaml
 
       - name: Apply Kubernetes Metrics Service Pattern
-        uses: layer5io/mesheryctl-service-mesh-patterns-action@master
+        uses: meshery-extensions/mesheryctl-service-mesh-patterns-action@master
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: ${{ matrix.platform }}
           pattern_url: https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/57f7230d-015b-4892-9042-cd1ea97fcb30.yaml
 
       - name: Load "Serve An LLM With Multiple GPUs In GKE" design
-        uses: layer5io/mesheryctl-service-mesh-patterns-action@master
+        uses: meshery-extensions/mesheryctl-service-mesh-patterns-action@master
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: ${{ matrix.platform }}

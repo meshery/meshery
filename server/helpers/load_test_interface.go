@@ -11,7 +11,6 @@ import (
 	"fortio.org/fortio/fgrpc"
 	"fortio.org/fortio/fhttp"
 	"fortio.org/fortio/periodic"
-	"github.com/layer5io/gowrk2/api"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
 )
@@ -80,75 +79,6 @@ func FortioLoadTest(opts *models.LoadTestOptions, log logger.Handler) (map[strin
 		}
 		res, err = fhttp.RunHTTPTest(&o)
 	}
-	if err != nil {
-		return nil, nil, ErrRunningTest(err)
-	}
-	log.Debug(fmt.Sprintf("original version of the test: %+#v", res))
-
-	var result *periodic.RunnerResults
-	var bd []byte
-	if opts.SupportedLoadTestMethods == 2 {
-		gres, _ := res.(*fgrpc.GRPCRunnerResults)
-		bd, err = json.Marshal(gres)
-		result = gres.Result()
-	} else {
-		hres, _ := res.(*fhttp.HTTPRunnerResults)
-		bd, err = json.Marshal(hres)
-		result = hres.Result()
-	}
-	if err != nil {
-		return nil, nil, ErrConvertingResultToMap(err)
-	}
-
-	resultsMap := map[string]interface{}{}
-	err = json.Unmarshal(bd, &resultsMap)
-	if err != nil {
-		return nil, nil, models.ErrUnmarshal(err, "data to map")
-	}
-	log.Debug(fmt.Sprintf("Mapped version of the test: %+#v", resultsMap))
-	return resultsMap, result, nil
-}
-
-// WRK2LoadTest is the actual code which invokes Wrk2 to run the load test
-func WRK2LoadTest(opts *models.LoadTestOptions, log logger.Handler) (map[string]interface{}, *periodic.RunnerResults, error) {
-	qps := opts.HTTPQPS // TODO possibly use translated <=0 to "max" from results/options normalization in periodic/
-	if qps <= 0 {
-		qps = -1 // 0==unitialized struct == default duration, -1 (0 for flag) is max
-	}
-	rURL := strings.TrimLeft(opts.URL, " \t\r\n")
-
-	labels := opts.Name + " -_- " + rURL
-	ro := &api.GoWRK2Config{
-		DurationInSeconds: opts.Duration.Seconds(),
-		Thread:            opts.HTTPNumThreads,
-		RQPS:              qps,
-		URL:               rURL,
-		Labels:            labels,
-		Percentiles:       []float64{50, 75, 90, 99, 99.99, 99.999},
-	}
-
-	log.Debug("options string: ", opts.Options)
-	if opts.Options != "" {
-		log.Debug(fmt.Sprintf("GoWrk2 config: %+#v", ro))
-		err := json.Unmarshal([]byte(opts.Options), &ro)
-		if err != nil {
-			return nil, nil, models.ErrUnmarshal(err, "options string")
-		}
-		log.Debug(fmt.Sprintf("GoWrk2 config with options: %+#v", ro))
-	}
-
-	var res periodic.HasRunnerResult
-	var err error
-	if opts.SupportedLoadTestMethods == 2 {
-		return nil, nil, ErrGrpcSupport(err, "Wrk2")
-	}
-	var gres *api.GoWRK2
-	gres, err = api.WRKRun(ro)
-	if err == nil {
-		log.Debug(fmt.Sprintf("WRK Result: %+v", gres))
-		res, err = api.TransformWRKToFortio(gres, ro)
-	}
-
 	if err != nil {
 		return nil, nil, ErrRunningTest(err)
 	}

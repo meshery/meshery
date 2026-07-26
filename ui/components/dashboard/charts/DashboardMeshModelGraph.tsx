@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import BBChart from '../../BBChart';
+import BBChart from '../../general/BBChart';
 import { donut } from 'billboard.js';
 import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';
@@ -13,10 +13,9 @@ import {
   useGetRegistrantsQuery,
 } from '@/rtk-query/meshModel';
 import { DashboardSection } from '../style';
-import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { useRouter } from 'next/router';
-import { Grid2, InfoOutlined, Typography, useTheme } from '@sistent/sistent';
+import { Grid2, InfoOutlinedIcon, Typography, useHasPermission, useTheme } from '@sistent/sistent';
 
 function MeshModelContructs() {
   const params = {
@@ -67,14 +66,14 @@ function MeshModelContructs() {
     [data, theme],
   );
 
+  const canViewRegistry = useHasPermission(Keys.MesherySystemViewRegistry);
+
   return (
     <Link
       href="/settings?settingsCategory=Registry"
       style={{
         textDecoration: 'none',
-        pointerEvents: !CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)
-          ? 'none'
-          : 'auto',
+        pointerEvents: !canViewRegistry ? 'none' : 'auto',
       }}
     >
       <DashboardSection>
@@ -90,7 +89,7 @@ function MeshModelContructs() {
               title={`The Meshery Registry is a critical component acting as the central repository for all capabilities known to Meshery. [Learn More](https://docs.meshery.io/concepts/logical/registry)`}
             >
               <div>
-                <InfoOutlined
+                <InfoOutlinedIcon
                   color={theme.palette.icon.default}
                   style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
                 />
@@ -168,7 +167,7 @@ function MeshModelCategories() {
               placement="left"
             >
               <div>
-                <InfoOutlined
+                <InfoOutlinedIcon
                   color={theme.palette.icon.default}
                   style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
                 />
