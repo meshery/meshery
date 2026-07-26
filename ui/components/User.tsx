@@ -33,9 +33,13 @@ const User = (props) => {
   const goToProfile = () => {
     const profileUrl = getProfileUrl();
     if (profileUrl) {
-      window.location = profileUrl;
+      window.open(profileUrl, '_blank', 'noopener,noreferrer');
       return;
     }
+    notify({
+      message: 'Profile URL not available. Please try again later.',
+      event_type: EVENT_TYPES.WARNING,
+    });
   };
 
   useEffect(() => {
