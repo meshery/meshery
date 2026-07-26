@@ -229,35 +229,35 @@ const EnvironmentCard = ({
                 }}
               >
                 <CustomTooltip title="Edit">
-                <IconButton
-                  onClick={(ev) => {
-                    ev.stopPropagation();
-                    onEdit(ev);
-                  }}
-                  sx={{ color: 'white' }}
-                  disabled={
-                    selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
-                  }
-                  permissionKey={Keys.WorkspaceManagementEditEnvironment}
-                >
-                  <EditIcon style={{ ...iconMedium, margin: '0 2px' }} />
-                </IconButton>
-              </CustomTooltip>
-              <CustomTooltip title="Delete">
-                <IconButton
-                  onClick={(ev) => {
-                    ev.stopPropagation();
-                    onDelete(ev);
-                  }}
-                  sx={{ color: 'white' }}
-                  disabled={
-                    selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
-                  }
-                  permissionKey={Keys.WorkspaceManagementDeleteEnvironment}
-                >
-                  <DeleteIcon style={{ ...iconMedium, margin: '0 2px' }} />
-                </IconButton>
-              </CustomTooltip>
+                  <IconButton
+                    onClick={(ev) => {
+                      ev.stopPropagation();
+                      onEdit(ev);
+                    }}
+                    sx={{ color: 'white' }}
+                    disabled={
+                      selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
+                    }
+                    permissionKey={Keys.WorkspaceManagementEditEnvironment}
+                  >
+                    <EditIcon style={{ ...iconMedium, margin: '0 2px' }} />
+                  </IconButton>
+                </CustomTooltip>
+                <CustomTooltip title="Delete">
+                  <IconButton
+                    onClick={(ev) => {
+                      ev.stopPropagation();
+                      onDelete(ev);
+                    }}
+                    sx={{ color: 'white' }}
+                    disabled={
+                      selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
+                    }
+                    permissionKey={Keys.WorkspaceManagementDeleteEnvironment}
+                  >
+                    <DeleteIcon style={{ ...iconMedium, margin: '0 2px' }} />
+                  </IconButton>
+                </CustomTooltip>
               </Grid2>
             </Grid2>
             <Grid2 sx={{ display: 'flex', flexDirection: 'row', color: 'white' }}>
