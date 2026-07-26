@@ -254,8 +254,8 @@ describe('User component', () => {
     render(<UserProvider />);
 
     await user.click(screen.getByTestId('icon-button-avatar'));
-    expect(notify).toHaveBeenCalledWith({
-      message: 'Profile URL not available. Please try again later.',
-    });
+    await waitFor(() => expect(notify).toHaveBeenCalled());
+    const [payload] = notify.mock.calls[0];
+    expect(payload.message).toBe('Profile URL not available. Please try again later.');
   });
 });
