@@ -216,6 +216,27 @@ const (
 	ErrTelemetryPrometheusAuthCode         = "meshery-server-1435"
 	ErrMeshsyncReconcileCode               = "meshery-server-1442"
 	ErrUnsafeFilePathCode                  = "meshery-server-1443"
+	// Environment, workspace, organization, user and key operations previously
+	// reported every failure as ErrGetResult ("unable to get result", probable
+	// cause "Result Identifier provided is not valid") - a performance-results
+	// code with nothing to do with any of them. The codes below exist so the
+	// error a user and a maintainer see actually describes what failed.
+	ErrGetEnvironmentsCode       = "meshery-server-1446"
+	ErrGetEnvironmentCode        = "meshery-server-1447"
+	ErrSaveEnvironmentCode       = "meshery-server-1448"
+	ErrUpdateEnvironmentCode     = "meshery-server-1449"
+	ErrDeleteEnvironmentCode     = "meshery-server-1450"
+	ErrEnvironmentConnectionCode = "meshery-server-1451"
+	ErrGetWorkspacesCode         = "meshery-server-1452"
+	ErrGetWorkspaceCode          = "meshery-server-1453"
+	ErrSaveWorkspaceCode         = "meshery-server-1454"
+	ErrUpdateWorkspaceCode       = "meshery-server-1455"
+	ErrDeleteWorkspaceCode       = "meshery-server-1456"
+	ErrWorkspaceResourceCode     = "meshery-server-1457"
+	ErrGetOrganizationsCode      = "meshery-server-1458"
+	ErrGetUsersCode              = "meshery-server-1459"
+	ErrGetUserCode               = "meshery-server-1460"
+	ErrGetUsersKeysCode          = "meshery-server-1461"
 )
 
 var (
@@ -1096,4 +1117,104 @@ func ErrInitializeMachine(err error) error {
 // caller input.
 func ErrSendMachineEvent(err error) error {
 	return errors.New(ErrSendMachineEventCode, errors.Alert, []string{"Failed to advance connection state machine"}, []string{err.Error()}, []string{"The requested event is not valid from the connection's current state.", "A side-effect action attached to the transition (e.g. provisioning, discovery) returned an error."}, []string{"Inspect the connection's current status before retrying. If the failure originates from a side-effect action, address the underlying cause (e.g. cluster reachability, credential validity) and retry."})
+}
+
+// Environment, workspace, organization, user and API-key failures
+// ---------------------------------------------------------------
+//
+// Every one of these operations is a pass-through to the configured provider.
+// They used to report failures as ErrGetResult with a hardcoded HTTP 404,
+// which meant a provider 403 on "create environment" reached the browser as a
+// 404 carrying "unable to get result - Result Identifier provided is not
+// valid". The UI never recognised that as a failure and showed a success
+// toast, and the server log pointed maintainers at the performance-results
+// subsystem. The constructors below name the operation that actually failed;
+// the handlers pair them with httputil.StatusForProviderError so the status
+// reflects the provider's real response.
+//
+// The probable causes are ordered by how often each is the real one for a
+// provider-backed CRUD call: permissions first (the 403 that started this),
+// then a stale/incorrect identifier, then provider reachability.
+
+func ErrGetEnvironments(err error) error {
+	return errors.New(ErrGetEnvironmentsCode, errors.Alert, []string{"Unable to fetch environments"}, []string{err.Error()}, []string{"Your account does not have permission to list environments in this organization.", "The organization identifier in the request does not exist or is not one you belong to.", "The provider could not be reached or returned an error."}, []string{"Confirm you are a member of the selected organization and that your role grants read access to environments. If the organization is correct, retry once the provider is reachable."})
+}
+
+func ErrGetEnvironment(err error) error {
+	return errors.New(ErrGetEnvironmentCode, errors.Alert, []string{"Unable to fetch the environment"}, []string{err.Error()}, []string{"Your account does not have permission to view this environment.", "The environment has been deleted, or the identifier belongs to a different organization.", "The provider could not be reached or returned an error."}, []string{"Verify the environment still exists in the selected organization and that your role grants read access to it."})
+}
+
+func ErrSaveEnvironment(err error) error {
+	return errors.New(ErrSaveEnvironmentCode, errors.Alert, []string{"Unable to create the environment"}, []string{err.Error()}, []string{"Your account does not have permission to create environments in this organization.", "An environment with the same name already exists in this organization.", "The organization identifier is missing or does not exist.", "The provider could not be reached or rejected the request."}, []string{"Confirm your role in the selected organization grants permission to create environments, and that the environment name is not already in use. The environment was NOT created - retry after resolving the cause."})
+}
+
+func ErrUpdateEnvironment(err error) error {
+	return errors.New(ErrUpdateEnvironmentCode, errors.Alert, []string{"Unable to update the environment"}, []string{err.Error()}, []string{"Your account does not have permission to modify this environment.", "The environment has been deleted, or another name in the organization conflicts with the new one.", "The provider could not be reached or rejected the request."}, []string{"Confirm your role grants write access to this environment and that the new name is unique within the organization. The environment was NOT updated - retry after resolving the cause."})
+}
+
+func ErrDeleteEnvironment(err error) error {
+	return errors.New(ErrDeleteEnvironmentCode, errors.Alert, []string{"Unable to delete the environment"}, []string{err.Error()}, []string{"Your account does not have permission to delete this environment.", "The environment has already been deleted.", "The provider could not be reached or rejected the request."}, []string{"Confirm your role grants delete access to this environment. If it no longer appears in the list, it has already been removed."})
+}
+
+// ErrEnvironmentConnection covers adding, removing and listing the connections
+// held by an environment. action is the operation being attempted, e.g.
+// "assign connection to", so the message reads as a sentence.
+func ErrEnvironmentConnection(err error, action string) error {
+	// The listing actions are reads; assign/remove are writes. Tell a denied
+	// read that it needs read access, not write access.
+	permission, access := "modify this environment's connections", "write access to the environment"
+	if strings.HasPrefix(action, "list") {
+		permission, access = "view this environment's connections", "read access to the environment"
+	}
+	return errors.New(ErrEnvironmentConnectionCode, errors.Alert, []string{fmt.Sprintf("Unable to %s environment", action)}, []string{err.Error()}, []string{fmt.Sprintf("Your account does not have permission to %s.", permission), "The environment or the connection has been deleted, or they belong to different organizations.", "The provider could not be reached or rejected the request."}, []string{fmt.Sprintf("Confirm both the environment and the connection still exist in the same organization and that your role grants %s.", access)})
+}
+
+func ErrGetWorkspaces(err error) error {
+	return errors.New(ErrGetWorkspacesCode, errors.Alert, []string{"Unable to fetch workspaces"}, []string{err.Error()}, []string{"Your account does not have permission to list workspaces in this organization.", "The organization identifier in the request does not exist or is not one you belong to.", "The provider could not be reached or returned an error."}, []string{"Confirm you are a member of the selected organization and that your role grants read access to workspaces."})
+}
+
+func ErrGetWorkspace(err error) error {
+	return errors.New(ErrGetWorkspaceCode, errors.Alert, []string{"Unable to fetch the workspace"}, []string{err.Error()}, []string{"Your account does not have permission to view this workspace.", "The workspace has been deleted, or the identifier belongs to a different organization.", "The provider could not be reached or returned an error."}, []string{"Verify the workspace still exists in the selected organization and that your role grants read access to it."})
+}
+
+func ErrSaveWorkspace(err error) error {
+	return errors.New(ErrSaveWorkspaceCode, errors.Alert, []string{"Unable to create the workspace"}, []string{err.Error()}, []string{"Your account does not have permission to create workspaces in this organization.", "A workspace with the same name already exists in this organization.", "The organization identifier is missing or does not exist.", "The provider could not be reached or rejected the request."}, []string{"Confirm your role in the selected organization grants permission to create workspaces, and that the workspace name is not already in use. The workspace was NOT created - retry after resolving the cause."})
+}
+
+func ErrUpdateWorkspace(err error) error {
+	return errors.New(ErrUpdateWorkspaceCode, errors.Alert, []string{"Unable to update the workspace"}, []string{err.Error()}, []string{"Your account does not have permission to modify this workspace.", "The workspace has been deleted, or another name in the organization conflicts with the new one.", "The provider could not be reached or rejected the request."}, []string{"Confirm your role grants write access to this workspace and that the new name is unique within the organization. The workspace was NOT updated - retry after resolving the cause."})
+}
+
+func ErrDeleteWorkspace(err error) error {
+	return errors.New(ErrDeleteWorkspaceCode, errors.Alert, []string{"Unable to delete the workspace"}, []string{err.Error()}, []string{"Your account does not have permission to delete this workspace.", "The workspace has already been deleted.", "The provider could not be reached or rejected the request."}, []string{"Confirm your role grants delete access to this workspace. If it no longer appears in the list, it has already been removed."})
+}
+
+// ErrWorkspaceResource covers every workspace association endpoint -
+// environments, designs, views and teams. action names the operation
+// ("assign design to", "list teams of") so one code can describe the whole
+// family without losing precision in the message.
+func ErrWorkspaceResource(err error, action string) error {
+	// The listing actions are reads; assign/remove are writes. Tell a denied
+	// read that it needs read access, not write access.
+	permission, access := "modify this workspace's contents", "write access to the workspace"
+	if strings.HasPrefix(action, "list") {
+		permission, access = "view this workspace's contents", "read access to the workspace"
+	}
+	return errors.New(ErrWorkspaceResourceCode, errors.Alert, []string{fmt.Sprintf("Unable to %s workspace", action)}, []string{err.Error()}, []string{fmt.Sprintf("Your account does not have permission to %s.", permission), "The workspace or the resource being associated has been deleted, or they belong to different organizations.", "The provider could not be reached or rejected the request."}, []string{fmt.Sprintf("Confirm both the workspace and the resource still exist in the same organization and that your role grants %s.", access)})
+}
+
+func ErrGetOrganizations(err error) error {
+	return errors.New(ErrGetOrganizationsCode, errors.Alert, []string{"Unable to fetch organizations"}, []string{err.Error()}, []string{"Your session has expired or your account is not a member of any organization.", "The provider could not be reached or returned an error."}, []string{"Sign in again and retry. If the problem persists, verify the remote provider is reachable from this Meshery instance."})
+}
+
+func ErrGetUsers(err error) error {
+	return errors.New(ErrGetUsersCode, errors.Alert, []string{"Unable to fetch users"}, []string{err.Error()}, []string{"Your account does not have permission to list users.", "The provider could not be reached or returned an error."}, []string{"Confirm your role grants permission to view the user directory for this organization."})
+}
+
+func ErrGetUser(err error) error {
+	return errors.New(ErrGetUserCode, errors.Alert, []string{"Unable to fetch the user"}, []string{err.Error()}, []string{"Your account does not have permission to view this user.", "No user exists with the requested identifier.", "The provider could not be reached or returned an error."}, []string{"Verify the user identifier is correct and that your role grants permission to view other users."})
+}
+
+func ErrGetUsersKeys(err error) error {
+	return errors.New(ErrGetUsersKeysCode, errors.Alert, []string{"Unable to fetch API keys"}, []string{err.Error()}, []string{"Your account does not have permission to list API keys for this organization.", "The organization identifier in the request does not exist or is not one you belong to.", "The provider could not be reached or returned an error."}, []string{"Confirm you are a member of the selected organization and that your role grants permission to view its keys."})
 }

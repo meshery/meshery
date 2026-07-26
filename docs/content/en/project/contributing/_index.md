@@ -57,6 +57,15 @@ To ensure all your commits are signed, you may choose to add this alias to your 
 Or you may configure your IDE, for example, VSCode to automatically sign-off commits for you:<a href="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" ><img src="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" width="50%"/></a>
 
 </li>
+
+<li>
+Should an unsigned commit slip through anyway, the repository's <code>commit-msg</code> hook
+(installed with the UI dependencies, see <code>ui/.husky/</code>) rejects it locally rather than
+letting the DCO check fail in CI, where the only remedy is rewriting the branch. To sign off
+a commit you have already written:
+
+<pre><code>$ git commit --amend -s --no-edit</code></pre>
+</li>
 </ul>
 </details>
 

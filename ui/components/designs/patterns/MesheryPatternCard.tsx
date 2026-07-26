@@ -12,6 +12,7 @@ import {
   crimson,
   FullScreenIcon,
   FullScreenExitIcon,
+  useHasPermission,
 } from '@sistent/sistent';
 import { CustomTooltip, VisibilityChipMenu } from '@sistent/sistent';
 import {
@@ -41,7 +42,7 @@ import TooltipButton from '@/utils/TooltipButton';
 import CloneIcon from '../../../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
 import { MESHERY_CLOUD_PROD } from '../../../constants/endpoints';
-import { useGetUserByIdQuery } from '../../../rtk-query/user';
+import { useResourceOwner } from '@/utils/hooks/useResourceOwner';
 import { Keys } from '@meshery/schemas/permissions';
 import { canEditDesign } from './design-permissions';
 import ActionButton from './ActionButton';
@@ -93,7 +94,7 @@ function MesheryPatternCard_({
     setFullScreen(!fullScreen);
   };
 
-  const { data: owner } = useGetUserByIdQuery(pattern.userId);
+  const { owner, hasCloudProfile } = useResourceOwner(pattern.userId, pattern.user);
   const catalogContentKeys = Object.keys(description);
   const catalogContentValues = Object.values(description);
   const theme = useTheme();
@@ -101,7 +102,8 @@ function MesheryPatternCard_({
   const editInConfigurator = () => {
     router.push('/configuration/designs/configurator?design_id=' + id);
   };
-  const userCanEdit = canEditDesign(user, pattern);
+  const hasEditPermission = useHasPermission(Keys.CatalogManagementEditDesign);
+  const userCanEdit = canEditDesign(user, pattern, hasEditPermission);
 
   const formatPatternFile = (file) => {
     try {
@@ -356,9 +358,13 @@ function MesheryPatternCard_({
                 {name}
               </Typography>
               <CardHeaderRight>
-                <Link href={`${MESHERY_CLOUD_PROD}/user/${pattern?.userId}`} target="_blank">
+                {hasCloudProfile ? (
+                  <Link href={`${MESHERY_CLOUD_PROD}/user/${pattern?.userId}`} target="_blank">
+                    <Avatar alt="profile-avatar" src={owner?.avatarUrl} />
+                  </Link>
+                ) : (
                   <Avatar alt="profile-avatar" src={owner?.avatarUrl} />
-                </Link>
+                )}
                 <CustomTooltip title="Enter Fullscreen" arrow interactive placement="top">
                   <IconButton
                     onClick={(ev) =>
