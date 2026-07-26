@@ -37,7 +37,7 @@ const User = (props) => {
       return;
     }
     notify({
-      message: 'Profile URL not available. Please try again later.',
+      message: 'Please log in to access this profile',
       event_type: EVENT_TYPES.WARNING,
     });
   };
