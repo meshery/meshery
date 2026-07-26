@@ -1,4 +1,87 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Wed, 22 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.62</title><link>/project/releases/v1.0.62/</link><pubDate>Wed, 22 Jul 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.62/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Sun, 26 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.63</title><link>/project/releases/v1.0.63/</link><pubDate>Sun, 26 Jul 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.63/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Bump github.com/getkin/kin-openapi from 0.140.0 to 0.144.0 in /server/policies/wasm @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20961)&lt;/li&gt;
+&lt;li&gt;[Relationships] Add PriorityClass Reference Relationships for Kubernetes Workloads @YASHMAHAKAL (#20368)&lt;/li&gt;
+&lt;li&gt;[Chore]: Bump meshery/schemas to v1.3.37 @l5io (#20939)&lt;/li&gt;
+&lt;li&gt;Bump google.golang.org/grpc from 1.81.1 to 1.82.1 in /server/policies/wasm @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20885)&lt;/li&gt;
+&lt;li&gt;Bump jsonpath from 1.2.1 to 1.3.0 in /install/docker-extension/ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20936)&lt;/li&gt;
+&lt;li&gt;Bump fast-uri from 3.1.2 to 3.1.4 in /install/docker-extension/ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20883)&lt;/li&gt;
+&lt;li&gt;[Models] Add F5 Networks Relationships @YASHMAHAKAL (#20615)&lt;/li&gt;
+&lt;li&gt;feat(model): add AWS VPC core relationship definitions @Junnygram (#20644)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix: source the design owner contract from schemas, fixing &amp;ldquo;Owner: undefined undefined&amp;rdquo; @jijillery (#20962)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Update broken links @Bharath314 (#20918)&lt;/li&gt;
+&lt;li&gt;fix(mesheryctl): repair design import, model init scaffold, and registry flag bugs @simihablo (#20903)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix(ui): inherit theme color for fullscreen icon @emphor11 (#20924)&lt;/li&gt;
+&lt;li&gt;Bump js-yaml from 5.2.1 to 5.2.2 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20959)&lt;/li&gt;
+&lt;li&gt;[UI] Add MeshSync info button and fix Kubernetes Cluster Status tooltip @chaitanyamedidar (#20117)&lt;/li&gt;
+&lt;li&gt;Drive connection kinds from the registry instead of a hardcoded list @aabidsofi19 (#20949)&lt;/li&gt;
+&lt;li&gt;[UI] Fix Telemetry sidebar icon visibility in light mode @Sathwik-parimi-07 (#20461)&lt;/li&gt;
+&lt;li&gt;fix: source the design owner contract from schemas, fixing &amp;ldquo;Owner: undefined undefined&amp;rdquo; @jijillery (#20962)&lt;/li&gt;
+&lt;li&gt;[UI] Consume @meshery/schemas MeshKit detail arrays; drop raw-body stopgap @leecalcote (#20958)&lt;/li&gt;
+&lt;li&gt;[Chore]: Update to Sistent v0.21.43 @l5io (#20952)&lt;/li&gt;
+&lt;li&gt;Migrate legacy CAN() permission checks to Sistent useHasPermission hook (Pattern C) @rishiraj38 (#20860)&lt;/li&gt;
+&lt;li&gt;Bump fast-uri from 3.1.2 to 3.1.4 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20882)&lt;/li&gt;
+&lt;li&gt;Bump uuid and istanbul-lib-processinfo in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20937)&lt;/li&gt;
+&lt;li&gt;Bump vite from 8.0.10 to 8.1.5 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20934)&lt;/li&gt;
+&lt;li&gt;Bump next from 16.2.9 to 16.2.11 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20935)&lt;/li&gt;
+&lt;li&gt;[Chore]: Update to Sistent v0.21.42 @l5io (#20933)&lt;/li&gt;
+&lt;li&gt;fix(ui): open Connection Wizard from Connect Clusters @chaitanyamedidar (#20878)&lt;/li&gt;
+&lt;li&gt;[Models] Add Artifact Hub and GitHub connection definitions @leecalcote (#20926)&lt;/li&gt;
+&lt;li&gt;fix(ui): handle environment creation errors and conditionally close m… @Myself-Praveen (#20894)&lt;/li&gt;
+&lt;li&gt;Bump fast-uri from 3.1.2 to 3.1.4 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20884)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Bump js-yaml from 5.2.1 to 5.2.2 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20959)&lt;/li&gt;
+&lt;li&gt;chore: untrack machine-local agent state and ignore it @jijillery (#20955)&lt;/li&gt;
+&lt;li&gt;Bump fast-uri from 3.1.2 to 3.1.4 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20882)&lt;/li&gt;
+&lt;li&gt;[CI] Add connections/credentials doc links to model issue templates @Sohamsig (#20909)&lt;/li&gt;
+&lt;li&gt;Bump uuid and istanbul-lib-processinfo in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20937)&lt;/li&gt;
+&lt;li&gt;Bump vite from 8.0.10 to 8.1.5 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20934)&lt;/li&gt;
+&lt;li&gt;Bump next from 16.2.9 to 16.2.11 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20935)&lt;/li&gt;
+&lt;li&gt;Bump fast-uri from 3.1.2 to 3.1.4 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#20884)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;feat(server): seed system-owned Artifact Hub and GitHub connections at boot @jijillery (#20956)&lt;/li&gt;
+&lt;li&gt;Add introduction for Ankit Rewar @AnkitRewar11 (#20957)&lt;/li&gt;
+&lt;li&gt;Add attendance note for Aditya Kumar Puri @puri-adityakumar (#20948)&lt;/li&gt;
+&lt;li&gt;Add introduction for Advik Divekar @advikdivekar (#20947)&lt;/li&gt;
+&lt;li&gt;Add Yash-Mahakal.md with introduction @YASHMAHAKAL (#20944)&lt;/li&gt;
+&lt;li&gt;Create Rishav Bagri.md @Rishav-Bagri (#20943)&lt;/li&gt;
+&lt;li&gt;[Docs] Homepage: list model categories with parenthetical counts @yi-nuo426 (#20931)&lt;/li&gt;
+&lt;li&gt;[Docs] Fix broken image references in sistent.md @wnomunomu (#20938)&lt;/li&gt;
+&lt;li&gt;fix(ui): open Connection Wizard from Connect Clusters @chaitanyamedidar (#20878)&lt;/li&gt;
+&lt;li&gt;[Docs] Update AnchorJS library from 4.2.2 to 5.0.0 @Junnygram (#18493)&lt;/li&gt;
+&lt;li&gt;[Models] Add Artifact Hub and GitHub connection definitions @leecalcote (#20926)&lt;/li&gt;
+&lt;li&gt;Create index.md @YASHMAHAKAL (#20928)&lt;/li&gt;
+&lt;li&gt;fix(mesheryctl): repair design import, model init scaffold, and registry flag bugs @simihablo (#20903)&lt;/li&gt;
+&lt;li&gt;fix(ui): handle environment creation errors and conditionally close m… @Myself-Praveen (#20894)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@AnkitRewar11, @Bharath314, @CodeAhmedJamil, @Junnygram, @Myself-Praveen, @Rishav-Bagri, @Sathwik-parimi-07, @Sohamsig, @YASHMAHAKAL, @aabidsofi19, @advikdivekar, @alexquincy, @arjunmehta-git, @banana-three-join, @carlosriosilva, @chaitanyamedidar, @dependabot[bot], @emphor11, @fitzergerald, @hamza-mohd, @hortison, @jamieplu, @jijillery, @l5io, @leecalcote, @marblom007, @mascot-five, @meshery-ci, @miacycle, @pontusringblom, @puri-adityakumar, @rishiraj38, @ritzorama, @sangramrath, @sarajkrishnasingh, @simihablo, @wnomunomu, @yi-nuo426 and [dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;)&lt;/p&gt;</description></item><item><title>v1.0.62</title><link>/project/releases/v1.0.62/</link><pubDate>Wed, 22 Jul 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.62/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -34522,7 +34605,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.62&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.63&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
