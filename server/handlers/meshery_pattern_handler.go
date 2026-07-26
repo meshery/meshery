@@ -1258,7 +1258,7 @@ func (h *Handler) CloneMesheryPatternHandler(
 	patternID := mux.Vars(r)["id"]
 	patternUUID := uuid.FromStringOrNil(patternID)
 	if patternUUID == uuid.Nil {
-		err := models.ErrInvalidUUID(fmt.Errorf("invalid design id: %q", patternID))
+		err := models.ErrInvalidUUID(fmt.Errorf("invalid design ID: %q", patternID))
 		h.log.Error(err)
 		writeMeshkitError(rw, err, http.StatusBadRequest)
 		return
@@ -1575,11 +1575,12 @@ func (h *Handler) GetMesheryPatternHandler(
 	patternID := mux.Vars(r)["id"]
 	patternUUID := uuid.FromStringOrNil(patternID)
 	if patternUUID == uuid.Nil {
-		err := models.ErrInvalidUUID(fmt.Errorf("invalid design id: %q", patternID))
+		err := models.ErrInvalidUUID(fmt.Errorf("invalid design ID: %q", patternID))
 		h.log.Error(err)
 		writeMeshkitError(rw, err, http.StatusBadRequest)
 		return
 	}
+
 	userID := user.ID
 	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("view").ActedUpon(patternUUID)
 
