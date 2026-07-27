@@ -12,7 +12,7 @@ import {
   ExpandMoreIcon,
   DeleteIcon,
 } from '@sistent/sistent';
-import _PromptComponent from '../PromptComponent';
+import PromptComponent from '@/components/general/PromptComponent';
 import { useDeleteModelsByRegistrantMutation } from '@/rtk-query/meshModel';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
@@ -606,7 +606,7 @@ const MeshModelDetails = ({
   return (
     <DetailsContainer isEmpty={isEmptyDetails}>
       {isEmptyDetails ? renderEmptyDetails() : getContent(showDetailsData.type)}
-      <_PromptComponent ref={promptRef} />
+      <PromptComponent ref={promptRef} />
     </DetailsContainer>
   );
 };

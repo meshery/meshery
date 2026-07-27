@@ -44,7 +44,7 @@ mesheryctl registry delete [connection-id]
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		connectionID := args[0]
-		
+
 		url := fmt.Sprintf("api/meshmodels/registrants/%s/models", connectionID)
 		resp, err := api.Delete(url)
 		if err != nil {

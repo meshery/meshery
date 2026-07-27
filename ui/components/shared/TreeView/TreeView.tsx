@@ -6,13 +6,26 @@
  * rather than importing `@mui/x-tree-view` directly. The ESLint rule
  * `no-restricted-imports` enforces this boundary; the only intentional escape
  * hatch is this file.
- *
- * Re-exports the primitives currently used by the Registry surfaces. Add more
- * primitives here (e.g. `RichTreeView`, `TreeView`) on an as-needed basis;
- * keep the surface intentionally small.
  */
 /* eslint-disable no-restricted-imports */
-export { SimpleTreeView, TreeItem, treeItemClasses } from '@mui/x-tree-view';
+import React from 'react';
+import { SimpleTreeView, TreeItem as MuiTreeItem, treeItemClasses } from '@mui/x-tree-view';
+import { Collapse } from '@sistent/sistent';
+
+const GroupTransitionComponent = (Collapse as any)?.default || Collapse;
+
+export const TreeItem = React.forwardRef((props: any, ref: any) => {
+  return (
+    <MuiTreeItem
+      ref={ref}
+      slots={{ groupTransition: GroupTransitionComponent, ...props?.slots }}
+      {...props}
+    />
+  );
+});
+TreeItem.displayName = 'TreeItem';
+
+export { SimpleTreeView, treeItemClasses };
 export type {
   SimpleTreeViewProps,
   SimpleTreeViewSlots,
