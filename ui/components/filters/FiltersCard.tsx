@@ -33,7 +33,7 @@ import CloneIcon from '../../public/static/img/CloneIcon';
 import { Public as PublicIcon, GetApp as GetAppIcon, Public, Lock } from '@/assets/icons';
 import TooltipButton from '../../utils/TooltipButton';
 import { VISIBILITY } from '../../utils/Enum';
-import { useGetUserByIdQuery } from '../../rtk-query/user';
+import { useResourceOwner } from '@/utils/hooks/useResourceOwner';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { Keys } from '@meshery/schemas/permissions';
 
@@ -90,7 +90,7 @@ function FiltersCard_({
   const [fullScreen, setFullScreen] = useState(false);
   const [showCode, setShowCode] = useState(false);
 
-  const { data: owner } = useGetUserByIdQuery(ownerId);
+  const { owner, hasCloudProfile } = useResourceOwner(ownerId);
 
   const toggleFullScreen = () => {
     setFullScreen(!fullScreen);
@@ -241,9 +241,13 @@ function FiltersCard_({
             <YamlDialogTitleGrid item xs={12}>
               <Typography variant="h6">{name}</Typography>
               <CardHeaderRight>
-                <Link href={`${MESHERY_CLOUD_PROD}/user/${ownerId}`} target="_blank">
+                {hasCloudProfile ? (
+                  <Link href={`${MESHERY_CLOUD_PROD}/user/${ownerId}`} target="_blank">
+                    <Avatar alt="profile-avatar" src={owner?.avatarUrl} />
+                  </Link>
+                ) : (
                   <Avatar alt="profile-avatar" src={owner?.avatarUrl} />
-                </Link>
+                )}
                 <Tooltip title="Enter Fullscreen" arrow interactive placement="top">
                   <IconButton
                     onClick={(ev) =>
