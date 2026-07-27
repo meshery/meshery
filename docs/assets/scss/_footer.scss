@@ -1,3 +1,10 @@
+// Theme-independent base colors for the footer.
+// These are pinned explicitly (and scoped to both data-theme values) so that
+// site-wide light/dark theme variables (e.g. Infima/Docusaurus link colors)
+// can't leak in and change the footer's grey/white/color states.
+$footer-grey: #999;
+$footer-white: #fff;
+
 .social-links {
   a {
     text-decoration: none;
@@ -22,18 +29,18 @@
     margin: 6px 0;
 
     a {
-      color: #999;
+      color: $footer-grey;
       text-decoration: none;
 
       &:hover {
-        color: #fff;
+        color: $footer-white;
         text-decoration: none;
       }
 
       svg {
-        fill: #999;
+        fill: $footer-grey;
         margin-right: 8px;
-        transition: fill 0.2s ease;
+        transition: fill 0.2s ease, filter 0.2s ease;
         vertical-align: middle;
         position: relative;
         top: -2px;
@@ -42,19 +49,24 @@
       }
 
       &:hover svg {
-        fill: #fff;
+        fill: $footer-white;
+        filter: none;
       }
 
       &.twitter-icon:hover svg {
         fill: #fff;
       }
 
+      &.youtube-icon:hover svg {
+        fill: #cd201f;
+      }
+
       &.dockerhub-icon:hover svg {
         fill: #029cec;
       }
 
-      &.youtube-icon:hover svg {
-        fill: #cd201f;
+      &.github-icon:hover svg {
+        fill: #fff;
       }
 
       &.linkedin-icon:hover svg {
@@ -65,70 +77,75 @@
         fill: #1185fe;
       }
 
-      &.github-icon:hover svg {
-        fill: #fff;
+      &.slack-icon svg .first,
+      &.slack-icon svg .second,
+      &.slack-icon svg .third,
+      &.slack-icon svg .fourth,
+      &.slack-icon svg .fifth,
+      &.slack-icon svg .sixth,
+      &.slack-icon svg .seventh,
+      &.slack-icon svg .eighth {
+        fill: $footer-grey;
       }
 
-      &.slack-icon:hover svg .first {
-        fill: #e91e63;
-      }
-
+      &.slack-icon:hover svg .first,
       &.slack-icon:hover svg .second {
         fill: #e91e63;
       }
 
-      &.slack-icon:hover svg .third {
-        fill: #00bcd4;
-      }
-
+      &.slack-icon:hover svg .third,
       &.slack-icon:hover svg .fourth {
         fill: #00bcd4;
       }
 
-      &.slack-icon:hover svg .fifth {
-        fill: #4caf50;
-      }
-
+      &.slack-icon:hover svg .fifth,
       &.slack-icon:hover svg .sixth {
         fill: #4caf50;
       }
 
-      &.slack-icon:hover svg .seventh {
-        fill: #ff9800;
-      }
-
+      &.slack-icon:hover svg .seventh,
       &.slack-icon:hover svg .eighth {
         fill: #ff9800;
       }
     }
 
+    &.social-links a:hover {
+      color: $footer-grey;
+    }
+
     &.footer-heading {
       margin-bottom: 12px;
-      color: #fff;
+      color: $footer-grey;
       font-size: 1em;
       font-weight: bold;
 
       a {
-        color: #fff;
+        color: $footer-grey;
         font-size: 1em;
         font-weight: bold;
 
         &:hover {
-          color: #fff;
+          color: $footer-white;
         }
       }
     }
   }
+
 }
 
 footer {
   font-size: 0.85rem;
   position: relative;
   background: linear-gradient(to right top, #3d3d3d, #343434, #2b2b2b, #222222, #1a1a1a, #181818, #161616, #141414, #181818, #1c1c1c, #212121, #252525);
-  color: #999;
+  color: $footer-grey;
 
   .footer-top {
-    padding: 50px 0 40px;
+    padding: 50px 0 15px;
+  }
+
+  .footer-divider {
+    max-width: 1000px;
+    margin: 15px auto 0;
     border-bottom: 1px solid #3c494f;
   }
 
@@ -140,7 +157,7 @@ footer {
     gap: 20px 80px;
     max-width: 1000px;
     margin: 0 auto;
-    padding: 0 40px;
+    padding: 45px 0px 0px;
   }
 
   .footer-bottom-inner {
@@ -160,25 +177,25 @@ footer {
     flex: 1;
     text-align: center;
     padding: 0 8px;
-    color: #999;
+    color: $footer-grey;
     font-size: 0.8rem;
 
     a {
-      color: #999;
+      color: $footer-grey;
       text-decoration: none;
 
       &:hover {
-        color: #fff;
+        color: $footer-white;
       }
     }
   }
 
   a {
-    color: #999;
+    color: $footer-grey;
     text-decoration: none;
 
     &:hover {
-      color: #fff;
+      color: $footer-white;
     }
   }
 
@@ -206,5 +223,26 @@ footer {
       flex-direction: column;
       padding: 0 50px;
     }
+  }
+}
+
+html[data-theme='light'] footer,
+html[data-theme='dark'] footer {
+  color: $footer-grey;
+
+  a {
+    color: $footer-grey;
+
+    &:hover {
+      color: $footer-white;
+    }
+  }
+
+  svg {
+    fill: $footer-grey;
+  }
+
+  a:hover svg {
+    fill: $footer-white;
   }
 }
