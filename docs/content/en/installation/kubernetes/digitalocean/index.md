@@ -15,8 +15,9 @@ Deploy and manage your DigitalOcean infrastructure with Meshery. You can run Mes
 
 <div class="prereqs"><h4>Prerequisites</h4>
 <ol>
-<li>Install the <a href="https://docs.digitalocean.com/reference/doctl/how-to/install/">DigitalOcean CLI (doctl)</a> on your local machine.</li>
+<li>Install the <a href="https://docs.digitalocean.com/reference/doctl/how-to/install/">DigitalOcean CLI (doctl)</a> and authenticate it for your account with <code>doctl auth init</code>.</li>
 <li>A <a href="https://www.digitalocean.com/">DigitalOcean</a> account with access to either a Droplet or an active DOKS cluster.</li>
+<li><strong>Option 1 only:</strong> An SSH key registered with your DigitalOcean account. See DigitalOcean's guide to <a href="https://docs.digitalocean.com/products/droplets/how-to/add-ssh-keys/">adding SSH keys</a>.</li>
 <li><strong>Option 2 only:</strong> Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> and the Meshery CLI, <a href="{{< ref "installation/mesheryctl/_index.md" >}}" class="meshery-light">mesheryctl</a>, on your local machine. If you use Helm, also install <a href="https://helm.sh/docs/intro/install/">Helm</a> v3.</li>
 </ol>
 </div>
@@ -26,8 +27,6 @@ Also see: [Install Meshery on Kubernetes]({{< ref "installation/kubernetes/_inde
 ## Available Deployment Methods
 
 - [Option 1: Docker on a Droplet (Out-of-Cluster)](#option-1-docker-on-a-droplet-out-of-cluster)
-  - [Authenticate `doctl`](#authenticate-doctl)
-  - [Register an SSH key](#register-an-ssh-key)
   - [Provision a Droplet](#provision-a-droplet)
   - [Install Docker and mesheryctl on the Droplet](#install-docker-and-mesheryctl-on-the-droplet)
   - [Install Meshery on Docker](#install-meshery-on-docker)
@@ -41,146 +40,111 @@ Also see: [Install Meshery on Kubernetes]({{< ref "installation/kubernetes/_inde
 
 # Option 1: Docker on a Droplet (Out-of-Cluster)
 
-Run Meshery as a standalone management plane on a DigitalOcean Droplet using Docker. This out-of-cluster deployment is well suited for managing one or more remote clusters from a single, always-on host.
-
-## Authenticate `doctl`
-
-Before creating resources, authenticate `doctl` with a [personal access token](https://docs.digitalocean.com/reference/api/create-personal-access-token/) from your DigitalOcean account:
-
-{{< code code="doctl auth init" >}}
-
-## Register an SSH key
-
-Droplet creation requires an SSH key that is already registered with DigitalOcean. List keys already on your account:
-
-{{< code code="doctl compute ssh-key list" >}}
-
-If the list is empty, generate a key locally (if you do not already have one), then import the **public** key into DigitalOcean:
-
-{{< code code=`ssh-keygen -t ed25519 -C "meshery-droplet" -f ~/.ssh/id_ed25519
-doctl compute ssh-key import meshery-key --public-key-file ~/.ssh/id_ed25519.pub
-doctl compute ssh-key list` >}}
-
-Copy the fingerprint (or key ID) from the list. You will pass it to `--ssh-keys` in the next step.
+Run Meshery on a DigitalOcean Droplet with Docker so you can manage remote clusters from one host.
 
 ## Provision a Droplet
 
-Create an Ubuntu Droplet from the [DigitalOcean Control Panel](https://docs.digitalocean.com/products/droplets/how-to/create/), or with `doctl`:
+On your local machine, authenticate `doctl` with a [personal access token](https://docs.digitalocean.com/reference/api/create-personal-access-token/):
 
-{{< code code="doctl compute droplet create meshery --image ubuntu-22-04-x64 --size s-2vcpu-4gb --region nyc1 --ssh-keys [YOUR_SSH_KEY_FINGERPRINT]" >}}
+{{< code code="doctl auth init" >}}
 
-Meshery runs comfortably on a Droplet with at least 2 vCPUs and 4 GB of memory.
+Create an Ubuntu Droplet (2 vCPU / 4 GB or larger) from the [Control Panel](https://docs.digitalocean.com/products/droplets/how-to/create/) or with `doctl`. Replace `[SSH_KEY_FINGERPRINT]` with your key fingerprint:
 
-`doctl compute droplet create` returns immediately while the Droplet is still provisioning (`status: new`) and often **before** a public IPv4 address is assigned. Note the Droplet `ID` from the create output, then poll until the Droplet is `active` and has a public IP:
+{{< code code="doctl compute droplet create meshery --image ubuntu-22-04-x64 --size s-2vcpu-4gb --region nyc1 --ssh-keys [SSH_KEY_FINGERPRINT]" >}}
 
-{{< code code="doctl compute droplet get [DROPLET_ID] --format ID,Name,PublicIPv4,Status" >}}
+From the create output, copy **ID**. Public IPv4 may still be empty while **Status** is `new`. Poll until **Status** is `active` and **Public IPv4** is set:
 
-Repeat the get command until `Status` is `active` and `PublicIPv4` is populated. Then connect over SSH:
+{{< code code="doctl compute droplet get [ID] --format ID,Name,PublicIPv4,Status" >}}
 
-{{< code code="ssh root@[DROPLET_IP]" >}}
+**Example output:**
+
+| ID | Name | Public IPv4 | Status |
+| --- | --- | --- | --- |
+| `XXXXXXXXX` | meshery | `XXX.XXX.XXX.XXX` | active |
+
+Use **ID** for later `doctl` commands (get, firewall). Use **Public IPv4** for SSH, browser, and tunnel:
+
+{{< code code="ssh root@[Public IPv4]" >}}
 
 ## Install Docker and mesheryctl on the Droplet
 
-On the Droplet (Ubuntu), install Docker Engine and the Compose plugin using Docker's distribution-specific guides (keep these links so you can follow the correct steps for your image and version):
-
-- [Install Docker Engine on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
-- [Install Docker Compose](https://docs.docker.com/compose/install/)
-
-This guide uses an **Ubuntu** Droplet, so install `mesheryctl` with the **Bash** installer (not Homebrew or Scoop). Install the CLI only, then start Meshery in the next section:
+On the Droplet, install [Docker Engine](https://docs.docker.com/engine/install/ubuntu/) and [Docker Compose](https://docs.docker.com/compose/install/), then install `mesheryctl` only (Ubuntu Bash path):
 
 {{< code code="curl -L https://meshery.io/install | DEPLOY_MESHERY=false bash -" >}}
 
-For other operating systems or package managers, see [Install mesheryctl]({{< ref "installation/mesheryctl/_index.md" >}}).
-
-{{% alert title="Install CLI only on the Droplet" color="info" %}}
-Using `DEPLOY_MESHERY=false` installs `mesheryctl` without auto-deploying Meshery. That keeps this guide's next step (`mesheryctl system start -p docker`) as the single, intentional start command. If you instead run `curl -L https://meshery.io/install | PLATFORM=docker bash -`, the script installs `mesheryctl` **and** starts Meshery for you—you can skip the start command below.
-{{% /alert %}}
+`DEPLOY_MESHERY=false` installs the CLI without starting Meshery. To install and start in one step instead, use `curl -L https://meshery.io/install | PLATFORM=docker bash -` and skip the next section. Other install methods: [Install mesheryctl]({{< ref "installation/mesheryctl/_index.md" >}}).
 
 ## Install Meshery on Docker
-
-On the Droplet, start Meshery on Docker:
 
 {{< code code="mesheryctl system start -p docker" >}}
 
 ## Access Meshery UI
 
-By default, Meshery UI is served on port `9081` on the Droplet. You are typically SSHed into a headless host, so open the UI from **your local machine**, not from a browser on the Droplet.
+After Meshery is running, open `http://[Public IPv4]:9081` in your browser.
 
-**Recommended:** keep port `9081` closed to the public internet and use an SSH tunnel from your local machine:
+Without a [Cloud Firewall](https://docs.digitalocean.com/products/networking/firewalls/how-to/configure-rules/), a Droplet does not filter inbound traffic at the network edge, so port `9081` can be reachable from the public internet once Meshery is listening. Optionally restrict who can reach the UI (keep SSH open so you do not lock yourself out):
 
-{{< code code="ssh -L 9081:localhost:9081 root@[DROPLET_IP]" >}}
+<pre class="codeblock-pre"><div class="codeblock"><code class="clipboardjs" style="white-space: pre-wrap; overflow-wrap: anywhere;">doctl compute firewall create --name meshery-ui --inbound-rules "protocol:tcp,ports:22,address:0.0.0.0/0 protocol:tcp,ports:9081,address:[YOUR_IP]/32" --droplet-ids [ID]</code></div></pre>
 
-Then open [http://localhost:9081](http://localhost:9081) in your local browser.
-
-**Optional:** allow inbound traffic with a [DigitalOcean Cloud Firewall](https://docs.digitalocean.com/products/networking/firewalls/how-to/configure-rules/) restricted to your IP, then open `http://[DROPLET_IP]:9081`:
-
-{{< code code=`doctl compute firewall create --name meshery-ui --inbound-rules "protocol:tcp,ports:9081,address:[YOUR_IP]/32" --droplet-ids [DROPLET_ID]` >}}
-
-{{% alert title="Secure your Droplet" color="warning" %}}
-Avoid exposing Meshery UI to the public internet. Prefer the SSH tunnel, or restrict any firewall rule to your own IP address only.
-{{% /alert %}}
+Or leave `9081` closed and use an SSH tunnel instead: `ssh -L 9081:localhost:9081 root@[Public IPv4]`, then open [http://localhost:9081](http://localhost:9081).
 
 ## Connect a remote Kubernetes cluster
 
-After a fresh out-of-cluster install, Meshery UI will not show any connected Kubernetes clusters. That is expected: the Droplet does not ship with a kubeconfig for DOKS or any other cluster.
+An empty cluster list in the UI is expected until you attach a kubeconfig.
 
-To manage a remote cluster (for example, a DOKS cluster) from this deployment:
-
-1. Obtain the cluster kubeconfig on a machine that can reach the cluster (for DOKS: `doctl kubernetes cluster kubeconfig save [CLUSTER_NAME]`).
-2. Make that kubeconfig available to Meshery on the Droplet. See [Customizing Kubernetes Configuration Location]({{< ref "installation/docker/_index.md#customizing-kubernetes-configuration-location" >}}).
-3. In the Meshery UI, open **Lifecycle → Connections** and confirm the cluster appears and is marked `Connected`.
+1. For DOKS: `doctl kubernetes cluster kubeconfig save [CLUSTER_NAME]`.
+2. Make that kubeconfig available to Meshery on the Droplet ([Customizing Kubernetes Configuration Location]({{< ref "installation/docker/_index.md#customizing-kubernetes-configuration-location" >}})).
+3. In the UI: **Lifecycle → Connections** → confirm the cluster is `Connected`.
 
 # Option 2: DigitalOcean Kubernetes (In-Cluster)
 
-Follow the steps below to install Meshery into your DigitalOcean Kubernetes (DOKS) cluster.
+Install Meshery into a DigitalOcean Kubernetes (DOKS) cluster.
 
 ## Preflight: Cluster Connectivity
 
-1. Authenticate `doctl` with your DigitalOcean account using a [personal access token](https://docs.digitalocean.com/reference/api/create-personal-access-token/). Your token must include permission to **manage Kubernetes clusters** (read and write). A token that can only list account resources may pass `doctl auth init` but fail later when downloading kubeconfig (`403`).
+**1.** Authenticate `doctl` with a [personal access token](https://docs.digitalocean.com/reference/api/create-personal-access-token/) that can manage Kubernetes clusters:
 
 {{< code code="doctl auth init" >}}
 
-2. Download your cluster's credentials and set it as the current `kubectl` context. Replace `[CLUSTER_NAME]` with the name or ID of your DOKS cluster.
+**2.** Download cluster credentials (replace `[CLUSTER_NAME]`):
 
 {{< code code="doctl kubernetes cluster kubeconfig save [CLUSTER_NAME]" >}}
 
-3. Verify your kubeconfig's current context and that the API server is reachable.
+**3.** Confirm connectivity:
 
 {{< code code=`kubectl config current-context
 kubectl get nodes` >}}
 
 ## Installation: Using `mesheryctl`
 
-Set the Meshery context platform to Kubernetes, then start Meshery. Prefer the CLI over editing `~/.meshery/config.yaml` by hand:
+Set the platform to Kubernetes, then start Meshery:
 
 {{< code code=`mesheryctl system context create doks --platform kubernetes --set
 mesheryctl system start` >}}
 
-You can also pass the platform on start:
+Or in one step: `mesheryctl system start -p kubernetes`.
 
-{{< code code="mesheryctl system start -p kubernetes" >}}
-
-If you encounter Meshery **provider** authentication issues (sign-in to a Remote Provider), use `mesheryctl system login`. For more information, see [Authenticate with Meshery via CLI]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli/index.md" >}}). This is separate from Kubernetes API authentication configured by your kubeconfig.
+If provider login fails, see [Authenticate with Meshery via CLI]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli/index.md" >}}). That login is separate from your kubeconfig.
 
 ## Installation: Using Helm
 
-Install [Helm](https://helm.sh/docs/intro/install/) v3 if it is not already available, then deploy Meshery. Enable the Meshery Operator so MeshSync and Broker are installed; without the operator, the UI may load while cluster lifecycle features remain unavailable.
+Deploy with the Operator enabled (required for MeshSync and Broker):
 
 {{< code code=`helm repo add meshery https://meshery.io/charts/
 helm repo update
 helm install meshery meshery/meshery --namespace meshery --create-namespace --set meshery-operator.enabled=true` >}}
 
-For additional configuration options, see the [Helm Installation]({{< ref "installation/kubernetes/helm.md" >}}) guide.
+More options: [Helm Installation]({{< ref "installation/kubernetes/helm.md" >}}).
 
 ## Post-Installation Steps
 
-Optionally, you can verify the health of your Meshery deployment using <a href='{{< ref "reference/references/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
+Optional health check: <a href='{{< ref "reference/references/mesheryctl/system/check.md" >}}'>mesheryctl system check</a>.
 
-Meshery is deployed with a Kubernetes `Service` of type `LoadBalancer` by default. On DOKS, DigitalOcean provisions a [Load Balancer](https://docs.digitalocean.com/products/kubernetes/how-to/add-load-balancers/) and assigns an external IP. Watch for the address:
+Meshery uses a `LoadBalancer` Service by default. On DOKS, wait for the external IP:
 
 {{< code code="kubectl get svc -n meshery meshery -w" >}}
 
-Alternatively, use port-forwarding via [mesheryctl system dashboard]({{< ref "reference/references/mesheryctl/system/dashboard.md" >}}) or:
+Or port-forward with [mesheryctl system dashboard]({{< ref "reference/references/mesheryctl/system/dashboard.md" >}}) or:
 
 {{< code code="kubectl port-forward svc/meshery -n meshery 9081:9081" >}}
 
