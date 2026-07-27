@@ -17,6 +17,7 @@ import {
   Button,
   Typography,
   SearchBar,
+  useHasPermission,
   useTheme,
   PROMPT_VARIANTS,
   ModalFooter,
@@ -40,7 +41,6 @@ import { RJSFModalWrapper } from '../shared/Modal/Modal';
 import _PromptComponent from '../general/PromptComponent';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { Keys } from '@meshery/schemas/permissions';
-import CAN from '@/utils/can';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import ViewSwitch from '@/components/general/ViewSwitch';
 import { CreateButtonWrapper } from './styles';
@@ -125,6 +125,15 @@ const columnList = [
 
 const Workspaces = ({ onSelectWorkspace }) => {
   const theme = useTheme();
+  const canCreateWorkspace = useHasPermission(Keys.WorkspaceManagementCreateWorkspace);
+  const canEditWorkspace = useHasPermission(Keys.WorkspaceManagementEditWorkspace);
+  const canAssignTeam = useHasPermission(Keys.WorkspaceManagementAssignTeamToWorkspace);
+  const canDeleteTeam = useHasPermission(Keys.IdentityAccessManagementDeleteTeam);
+  const canEditTeam = useHasPermission(Keys.IdentityAccessManagementEditTeam);
+  const canLeaveTeam = useHasPermission(Keys.IdentityAccessManagementLeaveTeam);
+  const canRemoveTeamFromWorkspace = useHasPermission(
+    Keys.WorkspaceManagementRemoveTeamFromWorkspace,
+  );
   const [workspaceModal, setWorkspaceModal] = useState({
     open: false,
     schema: {},
@@ -513,15 +522,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
             />
           )}
         </>
-        {(actionType === WORKSPACE_ACTION_TYPES.CREATE
-          ? CAN(
-              Keys.WorkspaceManagementCreateWorkspace.id,
-              Keys.WorkspaceManagementCreateWorkspace.function,
-            )
-          : CAN(
-              Keys.WorkspaceManagementEditWorkspace.id,
-              Keys.WorkspaceManagementEditWorkspace.function,
-            )) &&
+        {(actionType === WORKSPACE_ACTION_TYPES.CREATE ? canCreateWorkspace : canEditWorkspace) &&
           workspaceModal.open && (
             <Modal
               open={workspaceModal.open}
@@ -553,22 +554,10 @@ const Workspaces = ({ onSelectWorkspace }) => {
         >
           <WorkspaceTeamsTable
             workspaceId={teamsModal.workspaceId}
-            isAssignTeamAllowed={CAN(
-              Keys.WorkspaceManagementAssignTeamToWorkspace.id,
-              Keys.WorkspaceManagementAssignTeamToWorkspace.function,
-            )}
-            isDeleteTeamAllowed={CAN(
-              Keys.IdentityAccessManagementDeleteTeam.id,
-              Keys.IdentityAccessManagementDeleteTeam.function,
-            )}
-            isEditTeamAllowed={CAN(
-              Keys.IdentityAccessManagementEditTeam.id,
-              Keys.IdentityAccessManagementEditTeam.function,
-            )}
-            isLeaveTeamAllowed={CAN(
-              Keys.IdentityAccessManagementLeaveTeam.id,
-              Keys.IdentityAccessManagementLeaveTeam.function,
-            )}
+            isAssignTeamAllowed={canAssignTeam}
+            isDeleteTeamAllowed={canDeleteTeam}
+            isEditTeamAllowed={canEditTeam}
+            isLeaveTeamAllowed={canLeaveTeam}
             useAssignTeamToWorkspaceMutation={useAssignTeamToWorkspaceMutation}
             useGetTeamsOfWorkspaceQuery={useGetTeamsOfWorkspaceQuery}
             useUnassignTeamFromWorkspaceMutation={useUnassignTeamFromWorkspaceMutation}
@@ -578,10 +567,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
             useGetUsersForOrgQuery={useGetUsersForOrgQuery}
             useNotificationHandlers={useNotificationHandlers}
             useRemoveUserFromTeamMutation={useRemoveUserFromTeamMutation}
-            isRemoveTeamFromWorkspaceAllowed={CAN(
-              Keys.WorkspaceManagementRemoveTeamFromWorkspace.id,
-              Keys.WorkspaceManagementRemoveTeamFromWorkspace.function,
-            )}
+            isRemoveTeamFromWorkspaceAllowed={canRemoveTeamFromWorkspace}
           />
           <ModalFooter variant="filled"></ModalFooter>
         </Modal>
