@@ -5,7 +5,7 @@ import { Keys } from '@meshery/schemas/permissions';
 import { useDispatch, useSelector } from 'react-redux';
 import { connectionsToK8sContexts } from '@/rtk-query/transforms';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
-import { CONNECTION_KINDS } from '@/utils/Enum';
+import { CoreConnectionKinds } from '@/utils/Enum';
 import { setK8sContexts, updateK8SConfig } from '@/store/slices/mesheryUi';
 import { loadSelectedK8sContexts, persistSelectedK8sContexts } from '@/utils/multi-ctx';
 import { StyledDrawer, StyledFooterBody, StyledFooterText } from './App.styles';
@@ -84,7 +84,7 @@ export const KubernetesSubscription = ({ setAppState }: { setAppState: SetAppSta
   const { data: connectionData } = useGetConnectionsQuery(
     // Filter by kind via a plain repeated query param (?kind=kubernetes);
     // pageSize=all fetches every cluster in one shot.
-    { kind: CONNECTION_KINDS.KUBERNETES, pageSize: 'all' },
+    { kind: CoreConnectionKinds.kubernetes, pageSize: 'all' },
     { skip: !canViewClusters },
   );
 

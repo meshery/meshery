@@ -17,9 +17,9 @@ import {
 } from '@sistent/sistent';
 import { iconLarge } from '../../css/icons.styles';
 import {
-  CONNECTION_KINDS,
   CONNECTION_STATES,
   CONNECTION_STATE_TO_TRANSITION_MAP,
+  CoreConnectionKinds,
 } from '../../utils/Enum';
 import { formatToTitleCase } from '../../utils/utils';
 import {
@@ -42,7 +42,7 @@ type ConnectionMetadataState = Record<
 > | null;
 
 const getDocsTooltipMarkdown = (kind: string | undefined): string =>
-  kind === CONNECTION_KINDS.KUBERNETES
+  kind === CoreConnectionKinds.kubernetes
     ? `Every connection moves through a defined lifecycle of states. Learn more about the [Kubernetes connection lifecycle](${KUBERNETES_CONNECTION_LIFECYCLE_DOCS_URL}) and the [behavior of state transitions](${CONNECTION_DOCS_URL}) in Meshery Docs.`
     : `Every connection moves through a defined lifecycle of states. Learn more about the [lifecycle of connections and the behavior of state transitions](${CONNECTION_DOCS_URL}) in Meshery Docs.`;
 

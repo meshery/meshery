@@ -1,7 +1,7 @@
 import { AddIcon, Button, styled, Typography, useTheme } from '@sistent/sistent';
 import OperatorLight from '../../../assets/img/OperatorLight';
 import Operator from '../../../assets/img/Operator';
-import { CONNECTION_KINDS } from '@/utils/Enum';
+import { CoreConnectionKinds } from '@/utils/Enum';
 import { useConnectionWizardModal } from '@/utils/context/ConnectionWizardContextProvider';
 
 const TextContent = styled('div')({
@@ -29,7 +29,7 @@ export const K8sEmptyState = ({ message }) => {
 
   const handleClick = () => {
     openCreateConnection({
-      kind: CONNECTION_KINDS.KUBERNETES,
+      kind: CoreConnectionKinds.kubernetes,
       skipKindSelection: true,
     });
   };

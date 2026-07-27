@@ -1,4 +1,4 @@
-import { CONNECTION_KINDS } from '@/utils/Enum';
+import { CoreConnectionKinds } from '@/utils/Enum';
 import { EVENT_TYPES } from 'lib/event-types';
 
 /*
@@ -154,7 +154,7 @@ export const resolveConnectionWizardFlow = (
     return definition.metadata.flow;
   }
 
-  return definition.kind === CONNECTION_KINDS.KUBERNETES ? 'kubernetes' : 'generic';
+  return definition.kind === CoreConnectionKinds.kubernetes ? 'kubernetes' : 'generic';
 };
 
 /**
@@ -306,7 +306,7 @@ export const getWizardStepLabels = ({
     steps.push('Associate Credential');
   }
 
-  steps.push(kind === CONNECTION_KINDS.KUBERNETES ? 'Review Import' : 'Review Connection');
+  steps.push(kind === CoreConnectionKinds.kubernetes ? 'Review Import' : 'Review Connection');
 
   return steps;
 };
