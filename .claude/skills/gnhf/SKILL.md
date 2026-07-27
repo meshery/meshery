@@ -29,7 +29,6 @@ Use when the task is bounded, verification is clear, and the user wants one conf
 Examples:
 
 - English: "I'm going to bed. Use GNHF with Copilot to keep working on this branch and stop when the test suite passes."
-- Chinese: "我要睡了。用 GNHF 接着跑这个分支，测试都过了就停。"
 
 ### Companion
 
@@ -46,7 +45,6 @@ Default to Companion when the user asks to iterate until satisfied, requests mul
 Examples:
 
 - English: "Run GNHF for a few rounds on this onboarding flow. Check the diff between rounds and tighten the next prompt if it starts polishing the wrong thing."
-- Chinese: "用 GNHF 多跑几轮这个 onboarding 流程。每轮看一下 diff，如果它开始改偏了，就收窄下一轮 prompt。"
 
 ## Launch
 
