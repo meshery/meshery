@@ -42,7 +42,8 @@ var (
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List filters",
-	Long:  `Display list of all available filter files.`,
+	Long: `Display list of all available filter files.
+	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/filter/list`,
 	Example: `
 // List all WASM filter files present
 mesheryctl filter list	(maximum 25 filters)
