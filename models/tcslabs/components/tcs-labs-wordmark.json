@@ -2,14 +2,14 @@
   "id": "00000000-0000-0000-0000-000000000000",
   "schemaVersion": "components.meshery.io/v1beta1",
   "version": "v0.0.1",
-  "displayName": "tcslabs-wordmark",
+  "displayName": "tcs-labs-wordmark",
   "description": "This icon can be used to represent the tcs labs platform.",
   "format": "JSON",
   "model": {
     "id": "00000000-0000-0000-0000-000000000000",
     "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v0.0.1",
-    "name": "tcslabs-icons",
+    "name": "tcs-labs",
     "displayName": "Tcs Labs Wordmark",
     "description": "A curated collection of high-quality icons designed for TCS Labs.",
     "status": "enabled",
@@ -173,7 +173,7 @@
   "configuration": null,
   "component": {
     "version": "",
-    "kind": "tcslabs-wordmark",
+    "kind": "tcs-labs-wordmark",
     "schema": ""
   },
   "createdAt": "0001-01-01T00:00:00Z",
