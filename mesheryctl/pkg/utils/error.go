@@ -573,9 +573,9 @@ func ErrJSONToYAML(err error) error {
 func ErrOutFormatFlag() error {
 	return errors.New(ErrOutFormatFlagCode, errors.Alert,
 		[]string{"Invalid output format choice"},
-		[]string{"Output format choice is invalid, use [json|yaml]"},
-		[]string{"Invalid JSON or YAML content"},
-		[]string{"Check the JSON or YAML structure."})
+		[]string{"Output format choice is invalid, use [json|yaml|toon]"},
+		[]string{"Invalid JSON, YAML, or TOON content"},
+		[]string{"Check the JSON, YAML, or TOON structure."})
 }
 
 func ErrReadConfigFile(err error) error {
