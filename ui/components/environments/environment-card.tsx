@@ -1,7 +1,7 @@
 import React from 'react';
 import { FlipCard } from '../lifecycle/general';
 import { useGetEnvironmentConnectionsQuery } from '../../rtk-query/environments';
-import { Keys } from '@meshery/schemas/permissions';
+import { PermissionKeys } from '@meshery/schemas/permissions';
 import {
   DeleteIcon,
   EditIcon,
@@ -176,7 +176,7 @@ const EnvironmentCard = ({
                     title="Assigned Connections"
                     count={environmentConnectionsCount}
                     onAssign={onAssignConnection}
-                    permissionKey={Keys.WorkspaceManagementViewConnections}
+                    permissionKey={PermissionKeys.WorkspaceManagementViewConnections}
                   />
                 </AllocationButton>
                 {/* temporary disable workspace allocation button  */}
@@ -188,7 +188,7 @@ const EnvironmentCard = ({
                         environmentDetails.workspaces ? environmentDetails.workspaces?.length : 0
                       }
                       onAssign={onAssignConnection}
-                      disabled={false} // TODO: re-enable with permissionKey={Keys.WorkspaceManagementViewWorkspace}
+                      disabled={false} // TODO: re-enable with permissionKey={PermissionKeys.WorkspaceManagementViewWorkspace}
                     />
                   </AllocationButton>
                 )} */}
@@ -238,7 +238,7 @@ const EnvironmentCard = ({
                     disabled={
                       selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
                     }
-                    permissionKey={Keys.WorkspaceManagementEditEnvironment}
+                    permissionKey={PermissionKeys.WorkspaceManagementEditEnvironment}
                   >
                     <EditIcon style={{ ...iconMedium, margin: '0 2px' }} />
                   </IconButton>
@@ -253,7 +253,7 @@ const EnvironmentCard = ({
                     disabled={
                       selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
                     }
-                    permissionKey={Keys.WorkspaceManagementDeleteEnvironment}
+                    permissionKey={PermissionKeys.WorkspaceManagementDeleteEnvironment}
                   >
                     <DeleteIcon style={{ ...iconMedium, margin: '0 2px' }} />
                   </IconButton>
