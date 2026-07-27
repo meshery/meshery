@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Binds EFS FileSystem replication role to IAM Role.",
+    "description": "Binds an EKS Nodegroup to a VPC Subnet for worker node placement. The Nodegroup's subnetRefs[0].from.name field is populated with the Subnet name to determine which AZs worker nodes are launched in.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "FileSystem",
+            "kind": "Nodegroup",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -39,7 +39,7 @@
               "model": {
                 "version": ""
               },
-              "name": "aws-efs-controller",
+              "name": "aws-eks-controller",
               "registrant": {
                 "kind": "github"
               },
@@ -51,7 +51,8 @@
                 [
                   "configuration",
                   "spec",
-                  "roleRef",
+                  "subnetRefs",
+                  "0",
                   "from",
                   "name"
                 ]
@@ -62,7 +63,7 @@
         "to": [
           {
             "id": null,
-            "kind": "Role",
+            "kind": "Subnet",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -71,7 +72,7 @@
               "model": {
                 "version": ""
               },
-              "name": "aws-iam-controller",
+              "name": "aws-ec2-controller",
               "registrant": {
                 "kind": "github"
               },
@@ -94,8 +95,8 @@
       }
     }
   ],
-  "subType": "permission",
+  "subType": "network",
   "status": "enabled",
-  "type": "binding",
+  "type": "non-binding",
   "version": "v1.0.0"
 }

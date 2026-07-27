@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "LaunchTemplate to EKS Nodegroup network binding. A Nodegroup references a LaunchTemplate by name to define the EC2 instance configuration (AMI, instance type, user data) for its worker nodes. This relationship represents the second link in the EKS compute stack.",
+    "description": "Binds a Kubernetes ServiceAccount to an AWS IAM Role for AWS permissions.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "Nodegroup",
+            "kind": "ServiceAccount",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -39,7 +39,7 @@
               "model": {
                 "version": ""
               },
-              "name": "aws-eks-controller",
+              "name": "kubernetes",
               "registrant": {
                 "kind": "github"
               },
@@ -50,9 +50,9 @@
               "mutatedRef": [
                 [
                   "configuration",
-                  "spec",
-                  "launchTemplate",
-                  "name"
+                  "metadata",
+                  "annotations",
+                  "eks.amazonaws.com/role-arn"
                 ]
               ]
             }
@@ -61,7 +61,7 @@
         "to": [
           {
             "id": null,
-            "kind": "LaunchTemplate",
+            "kind": "Role",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -70,7 +70,7 @@
               "model": {
                 "version": ""
               },
-              "name": "aws-ec2-controller",
+              "name": "aws-iam-controller",
               "registrant": {
                 "kind": "github"
               },
@@ -81,8 +81,9 @@
               "mutatorRef": [
                 [
                   "configuration",
-                  "metadata",
-                  "name"
+                  "status",
+                  "ackResourceMetadata",
+                  "arn"
                 ]
               ]
             }
@@ -95,8 +96,8 @@
       }
     }
   ],
-  "subType": "network",
+  "subType": "permission",
   "status": "enabled",
-  "type": "binding",
+  "type": "non-binding",
   "version": "v1.0.0"
 }

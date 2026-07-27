@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Binds a Kubernetes ServiceAccount to an AWS IAM Role for AWS permissions.",
+    "description": "Binds EFS FileSystem replication role to IAM Role.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "ServiceAccount",
+            "kind": "FileSystem",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -39,7 +39,7 @@
               "model": {
                 "version": ""
               },
-              "name": "kubernetes",
+              "name": "aws-efs-controller",
               "registrant": {
                 "kind": "github"
               },
@@ -50,9 +50,10 @@
               "mutatedRef": [
                 [
                   "configuration",
-                  "metadata",
-                  "annotations",
-                  "eks.amazonaws.com/role-arn"
+                  "spec",
+                  "roleRef",
+                  "from",
+                  "name"
                 ]
               ]
             }
@@ -80,10 +81,7 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "configuration",
-                  "status",
-                  "ackResourceMetadata",
-                  "arn"
+                  "displayName"
                 ]
               ]
             }
@@ -98,6 +96,6 @@
   ],
   "subType": "permission",
   "status": "enabled",
-  "type": "binding",
+  "type": "non-binding",
   "version": "v1.0.0"
 }

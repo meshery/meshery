@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "Binds an EKS Nodegroup to an IAM Role for node instance permissions. The Nodegroup's nodeRoleRef.from.name field is populated with the IAM Role name to grant worker nodes permission to make AWS API calls via the node instance profile.",
+    "description": "EKS Nodegroup to Cluster network binding. A Nodegroup references its parent Cluster via the clusterName field. This relationship represents the first link in the EKS compute stack: the cluster defines the control plane, and nodegroups provision the worker nodes within it.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -51,7 +51,7 @@
                 [
                   "configuration",
                   "spec",
-                  "nodeRoleRef",
+                  "clusterRef",
                   "from",
                   "name"
                 ]
@@ -62,7 +62,7 @@
         "to": [
           {
             "id": null,
-            "kind": "Role",
+            "kind": "Cluster",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -71,7 +71,7 @@
               "model": {
                 "version": ""
               },
-              "name": "aws-iam-controller",
+              "name": "aws-eks-controller",
               "registrant": {
                 "kind": "github"
               },
@@ -81,7 +81,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "displayName"
+                  "configuration",
+                  "metadata",
+                  "name"
                 ]
               ]
             }
@@ -94,8 +96,8 @@
       }
     }
   ],
-  "subType": "permission",
+  "subType": "network",
   "status": "enabled",
-  "type": "binding",
+  "type": "non-binding",
   "version": "v1.0.0"
 }
