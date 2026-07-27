@@ -15,7 +15,7 @@ import (
 )
 
 type workspaceViewFlags struct {
-	OutputFormat string `json:"output-format" validate:"required,oneof=json yaml"`
+	OutputFormat string `json:"output-format" validate:"required,oneof=json yaml toon"`
 	Save         bool   `json:"save" validate:"boolean"`
 	OrgID        string `json:"orgId" validate:"required,uuid"`
 }
@@ -147,7 +147,7 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 }
 
 func init() {
-	viewWorkspaceCmd.Flags().StringVarP(&workspaceViewFlagsProvided.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	viewWorkspaceCmd.Flags().BoolVarP(&workspaceViewFlagsProvided.Save, "save", "s", false, "(optional) save output as a JSON/YAML file")
+	viewWorkspaceCmd.Flags().StringVarP(&workspaceViewFlagsProvided.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml|toon]")
+	viewWorkspaceCmd.Flags().BoolVarP(&workspaceViewFlagsProvided.Save, "save", "s", false, "(optional) save output as a JSON/YAML/TOON file")
 	viewWorkspaceCmd.Flags().StringVarP(&workspaceViewFlagsProvided.OrgID, "orgId", "", "", "(required) organization ID")
 }

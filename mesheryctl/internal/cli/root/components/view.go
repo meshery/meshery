@@ -29,7 +29,7 @@ import (
 )
 
 type componentViewFlags struct {
-	OutputFormat string `json:"output-format" validate:"required,oneof=json yaml"`
+	OutputFormat string `json:"output-format" validate:"required,oneof=json yaml toon"`
 	Save         bool   `json:"save" validate:"boolean"`
 }
 
@@ -127,8 +127,8 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 
 func init() {
 	// Add the new components commands to the ComponentsCmd
-	viewComponentCmd.Flags().StringVarP(&cmdComponentViewFlags.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	viewComponentCmd.Flags().BoolVarP(&cmdComponentViewFlags.Save, "save", "s", false, "(optional) save output as a JSON/YAML file")
+	viewComponentCmd.Flags().StringVarP(&cmdComponentViewFlags.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml|toon]")
+	viewComponentCmd.Flags().BoolVarP(&cmdComponentViewFlags.Save, "save", "s", false, "(optional) save output as a JSON/YAML/TOON file")
 }
 
 func formatLabel(components []component.ComponentDefinition) []string {

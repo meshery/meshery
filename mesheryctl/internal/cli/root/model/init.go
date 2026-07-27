@@ -21,7 +21,7 @@ import (
 type cmdModelInitFlags struct {
 	Path         string `json:"path" validate:"omitempty,relabspath"`
 	Version      string `json:"version" validate:"semver"`
-	OutputFormat string `json:"output-format" validate:"oneof=json yaml"`
+	OutputFormat string `json:"output-format" validate:"oneof=json yaml toon"`
 }
 
 var modelInitFlags cmdModelInitFlags
@@ -243,7 +243,7 @@ func initModelDeriveDisplayName(modelName string) string {
 func init() {
 	initModelCmd.Flags().StringVarP(&modelInitFlags.Path, "path", "p", ".", "(optional) target directory (default: current dir)")
 	initModelCmd.Flags().StringVarP(&modelInitFlags.Version, "version", "", "v0.1.0", "(optional) model version (default: v0.1.0)")
-	initModelCmd.Flags().StringVarP(&modelInitFlags.OutputFormat, "output-format", "o", "json", "(optional) format to display in [json|yaml]")
+	initModelCmd.Flags().StringVarP(&modelInitFlags.OutputFormat, "output-format", "o", "json", "(optional) format to display in [json|yaml|toon]")
 }
 
 const (

@@ -141,5 +141,5 @@ func getDesignViewUrlPath(design string, isID bool, viewAll bool) string {
 
 func init() {
 	viewCmd.Flags().BoolVarP(&designViewFlagsProvided.All, "all", "a", false, "(optional) view all designs available")
-	viewCmd.Flags().StringVarP(&designViewFlagsProvided.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewCmd.Flags().StringVarP(&designViewFlagsProvided.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml|toon]")
 }

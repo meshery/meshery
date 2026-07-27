@@ -12,8 +12,8 @@ import (
 )
 
 type testStruct struct {
-	Name    string `json:"name" yaml:"name"`
-	Content string `json:"content" yaml:"content"`
+	Name    string `json:"name" yaml:"name" toon:"name"`
+	Content string `json:"content" yaml:"content" toon:"content"`
 }
 
 var data = testStruct{
@@ -42,6 +42,13 @@ func Test_Given_OutputFormatter_When_Display_Then_Content_Is_Displayed_Without_E
 			name:        "Given yaml data when encoded then content is displayed without error",
 			input:       data,
 			formatter:   NewYAMLOutputFormatter(data),
+			buf:         &bytes.Buffer{},
+			expectError: false,
+		},
+		{
+			name:        "Given toon data when encoded then content is displayed without error",
+			input:       data,
+			formatter:   NewTOONOutputFormatter(data),
 			buf:         &bytes.Buffer{},
 			expectError: false,
 		},
@@ -165,5 +172,39 @@ func TestYAMLOutputFormatterSaver_Save_WriteError(t *testing.T) {
 
 	saver := NewYAMLOutputFormatterSaver(yamlFormatter).WithFilePath(tmpDir)
 	err = saver.Save()
+	assert.Error(t, err)
+}
+
+func Test_Given_TOONOutputFormatterSaver_With_Filepath_When_Save_Then_File_Is_Created(t *testing.T) {
+	utils.SetupMeshkitLoggerTesting(t, false)
+	tmpFile, err := os.CreateTemp("", "meshery_output_*.toon")
+	assert.NoError(t, err)
+	tmpFilePath := tmpFile.Name()
+	_ = tmpFile.Close()
+	defer func() {
+		assert.NoError(t, os.Remove(tmpFilePath))
+	}()
+
+	toonFormatter := TOONOutputFormatter[testStruct]{
+		Data: data,
+	}
+
+	saver := NewTOONOutputFormatterSaver(toonFormatter).WithFilePath(tmpFilePath)
+	err := saver.Save()
+	assert.NoError(t, err)
+
+	content, err := os.ReadFile(tmpFilePath)
+	assert.NoError(t, err)
+	assert.Contains(t, string(content), data.Name)
+	assert.Contains(t, string(content), data.Content)
+}
+
+func Test_Given_TOONOutputFormatterSaver_With_NoFilepath_When_Save_Then_Error_Is_Returned(t *testing.T) {
+	toonFormatter := TOONOutputFormatter[testStruct]{
+		Data: data,
+	}
+
+	saver := NewTOONOutputFormatterSaver(toonFormatter) // no file path set
+	err := saver.Save()
 	assert.Error(t, err)
 }

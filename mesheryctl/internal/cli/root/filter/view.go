@@ -35,7 +35,7 @@ import (
 
 type filterViewFlags struct {
 	ViewAllFlag  bool   `json:"all" validate:"boolean"`
-	OutputFormat string `json:"output-format" validate:"required,oneof=json yaml"`
+	OutputFormat string `json:"output-format" validate:"required,oneof=json yaml toon"`
 	Save         bool   `json:"save" validate:"boolean"`
 }
 
@@ -195,6 +195,6 @@ func saveToFile(
 
 func init() {
 	viewCmd.Flags().BoolVarP(&filterViewFlagsProvided.ViewAllFlag, "all", "a", false, "(optional) view all filters available")
-	viewCmd.Flags().StringVarP(&filterViewFlagsProvided.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	viewCmd.Flags().BoolVarP(&filterViewFlagsProvided.Save, "save", "s", false, "(optional) save output as a JSON/YAML file")
+	viewCmd.Flags().StringVarP(&filterViewFlagsProvided.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml|toon]")
+	viewCmd.Flags().BoolVarP(&filterViewFlagsProvided.Save, "save", "s", false, "(optional) save output as a JSON/YAML/TOON file")
 }

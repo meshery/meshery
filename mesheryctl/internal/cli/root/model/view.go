@@ -15,7 +15,7 @@ import (
 )
 
 type cmdModelViewFlags struct {
-	OutputFormat string `json:"output-format" validate:"oneof=json yaml"`
+	OutputFormat string `json:"output-format" validate:"oneof=json yaml toon"`
 	Save         bool   `json:"save" validate:"boolean"`
 }
 
@@ -114,6 +114,6 @@ func getModelViewUrlPath(modelNameOrId string) string {
 }
 
 func init() {
-	viewModelCmd.Flags().StringVarP(&modelViewFlags.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	viewModelCmd.Flags().BoolVarP(&modelViewFlags.Save, "save", "s", false, "(optional) save output as a JSON/YAML file")
+	viewModelCmd.Flags().StringVarP(&modelViewFlags.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml|toon]")
+	viewModelCmd.Flags().BoolVarP(&modelViewFlags.Save, "save", "s", false, "(optional) save output as a JSON/YAML/TOON file")
 }

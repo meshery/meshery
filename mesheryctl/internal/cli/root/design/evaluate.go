@@ -42,7 +42,7 @@ import (
 type evaluateDesignFlag struct {
 	File         string `json:"file"          validate:"omitempty,filepath"`
 	OutputFile   string `json:"output"        validate:"required"`
-	OutputFormat string `json:"output-format" validate:"required,oneof=json yaml"`
+	OutputFormat string `json:"output-format" validate:"required,oneof=json yaml toon"`
 }
 
 var evaluateFlags = &evaluateDesignFlag{}
@@ -465,5 +465,5 @@ func init() {
 
 	evaluateCmd.Flags().StringVarP(&evaluateFlags.File, "file", "f", "", "Path to design file")
 	evaluateCmd.Flags().StringVarP(&evaluateFlags.OutputFile, "output", "o", "", "Path to save the evaluated design")
-	evaluateCmd.Flags().StringVar(&evaluateFlags.OutputFormat, "output-format", "yaml", "Output format for the evaluated design [json|yaml]")
+	evaluateCmd.Flags().StringVar(&evaluateFlags.OutputFormat, "output-format", "yaml", "Output format for the evaluated design [json|yaml|toon]")
 }

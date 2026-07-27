@@ -187,6 +187,6 @@ func fetchConnectionByName(connectionName string) (*connection.Connection, error
 }
 
 func init() {
-	viewConnectionCmd.Flags().StringVarP(&connectionViewFlagsProvided.outputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	viewConnectionCmd.Flags().BoolVarP(&connectionViewFlagsProvided.save, "save", "s", false, "(optional) save output as a JSON/YAML file")
+	viewConnectionCmd.Flags().StringVarP(&connectionViewFlagsProvided.outputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml|toon]")
+	viewConnectionCmd.Flags().BoolVarP(&connectionViewFlagsProvided.save, "save", "s", false, "(optional) save output as a JSON/YAML/TOON file")
 }

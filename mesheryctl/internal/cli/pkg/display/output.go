@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+	"github.com/toon-format/toon-go"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"gopkg.in/yaml.v3"
@@ -36,6 +37,8 @@ func (o *OutputFormatterFactory[T]) New(format string, data T) (OutputFormatter[
 		return NewJSONOutputFormatter(data), nil
 	case "yaml":
 		return NewYAMLOutputFormatter(data), nil
+	case "toon":
+		return NewTOONOutputFormatter(data), nil
 	default:
 		return nil, ErrUnsupportedFormat(format)
 	}
@@ -55,6 +58,12 @@ func (o *OutputFormatterSaverFactory[T]) New(format string, outputFormatter Outp
 			return nil, ErrUnsupportedFormat(format)
 		}
 		return NewYAMLOutputFormatterSaver(*yamlFormatter), nil
+	case "toon":
+		toonFormatter, ok := outputFormatter.(*TOONOutputFormatter[T])
+		if !ok {
+			return nil, ErrUnsupportedFormat(format)
+		}
+		return NewTOONOutputFormatterSaver(*toonFormatter), nil
 	default:
 		return nil, ErrUnsupportedFormat(format)
 	}
@@ -84,6 +93,16 @@ type YAMLOutputFormatter[T any] struct {
 
 type YAMLOutputFormatterSaver[T any] struct {
 	OutputFormatter YAMLOutputFormatter[T]
+	FilePath        string
+}
+
+type TOONOutputFormatter[T any] struct {
+	Data T
+	Out  io.Writer
+}
+
+type TOONOutputFormatterSaver[T any] struct {
+	OutputFormatter TOONOutputFormatter[T]
 	FilePath        string
 }
 
@@ -205,6 +224,67 @@ func (y *YAMLOutputFormatterSaver[T]) Save() error {
 	return nil
 }
 
+func NewTOONOutputFormatter[T any](data T) OutputFormatter[T] {
+	return &TOONOutputFormatter[T]{
+		Data: data,
+		Out:  nil,
+	}
+}
+
+func NewTOONOutputFormatterSaver[T any](outputFormatter TOONOutputFormatter[T]) OutputFormatterSaver[T] {
+	return &TOONOutputFormatterSaver[T]{
+		OutputFormatter: outputFormatter,
+		FilePath:        "",
+	}
+}
+
+func (t *TOONOutputFormatterSaver[T]) WithFilePath(filePath string) OutputFormatterSaver[T] {
+	t.FilePath = filePath
+	return t
+}
+
+func (t *TOONOutputFormatterSaver[T]) Save() error {
+	if t.FilePath == "" {
+		return ErrOutputFileNotSpecified()
+	}
+
+	var output []byte
+	var err error
+
+	fmt.Println()
+	if output, err = toon.Marshal(t.OutputFormatter.Data); err != nil {
+		return utils.ErrMarshal(errors.Wrap(err, "failed to format output in toon"))
+	}
+
+	err = writeFile(t.FilePath, output)
+	if err != nil {
+		return utils.ErrCreateFile(t.FilePath, errors.Wrap(err, "failed to save output as toon file"))
+	}
+
+	utils.Log.Info("Data saved to file: ", t.FilePath)
+	return nil
+}
+
+func (t *TOONOutputFormatter[T]) WithOutput(out io.Writer) OutputFormatter[T] {
+	t.Out = out
+	return t
+}
+
+func (t *TOONOutputFormatter[T]) Display() error {
+	utils.Log.Debug("\nDebug: Displaying data using TOON output formatter\n")
+	if t.Out == nil {
+		t.Out = os.Stdout
+	}
+
+	output, err := toon.Marshal(t.Data)
+	if err != nil {
+		return ErrEncodingData(err, "toon")
+	}
+
+	_, err = t.Out.Write(output)
+	return err
+}
+
 func writeFile(filePath string, data []byte) error {
 	err := os.WriteFile(filePath, data, 0644)
 	if err != nil {
@@ -234,7 +314,7 @@ func (y *YAMLOutputFormatter[T]) Display() error {
 	return nil
 }
 
-var validOutputFormat = []string{"json", "yaml"}
+var validOutputFormat = []string{"json", "yaml", "toon"}
 
 func ValidateOutputFormat(outputFormat string) error {
 	if !slices.Contains(validOutputFormat, strings.ToLower(outputFormat)) {

@@ -16,7 +16,7 @@ import (
 type exportModelFlags struct {
 	DiscardComponents    bool   `json:"discard-components" validate:"boolean"`
 	DiscardRelationships bool   `json:"discard-relationships" validate:"boolean"`
-	OutputFormat         string `json:"output-format" validate:"required,oneof=json yaml"`
+	OutputFormat         string `json:"output-format" validate:"required,oneof=json yaml toon"`
 	OutputLocation       string `json:"output-location" validate:"required,dirpath"`
 	OutputType           string `json:"output-type" validate:"required,oneof=oci tar"`
 	Page                 int    `json:"page" validate:"omitempty,min=1"`
@@ -122,7 +122,7 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 func init() {
 	exportModelCmd.Flags().BoolVarP(&exportModelFlagsProvided.DiscardComponents, "discard-components", "c", false, "(optional) whether to discard components in the exported model definition (default = false)")
 	exportModelCmd.Flags().BoolVarP(&exportModelFlagsProvided.DiscardRelationships, "discard-relationships", "r", false, "(optional) whether to discard relationships in the exported model definition (default = false)")
-	exportModelCmd.Flags().StringVarP(&exportModelFlagsProvided.OutputFormat, "output-format", "t", "yaml", "(optional) format to display in [json|yaml] (default = yaml)")
+	exportModelCmd.Flags().StringVarP(&exportModelFlagsProvided.OutputFormat, "output-format", "t", "yaml", "(optional) format to display in [json|yaml|toon] (default = yaml)")
 	exportModelCmd.Flags().StringVarP(&exportModelFlagsProvided.OutputLocation, "output-location", "l", "./", "(optional) output location (default = current directory)")
 	exportModelCmd.Flags().StringVarP(&exportModelFlagsProvided.OutputType, "output-type", "o", "oci", "(optional) format to display in [oci|tar] (default = oci)")
 	exportModelCmd.Flags().IntVarP(&exportModelFlagsProvided.Page, "page", "p", 1, "(optional) page number for paginated results (default = 1)")

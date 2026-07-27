@@ -120,7 +120,7 @@ mesheryctl environment view --orgId [orgId]
 }
 
 func init() {
-	viewEnvironmentCmd.Flags().StringVarP(&environmentViewFlagsProvided.outputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	viewEnvironmentCmd.Flags().BoolVarP(&environmentViewFlagsProvided.save, "save", "s", false, "(optional) save output as a JSON/YAML file")
+	viewEnvironmentCmd.Flags().StringVarP(&environmentViewFlagsProvided.outputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml|toon]")
+	viewEnvironmentCmd.Flags().BoolVarP(&environmentViewFlagsProvided.save, "save", "s", false, "(optional) save output as a JSON/YAML/TOON file")
 	viewEnvironmentCmd.Flags().StringVarP(&environmentViewFlagsProvided.orgId, "orgId", "", "", "Organization ID")
 }
