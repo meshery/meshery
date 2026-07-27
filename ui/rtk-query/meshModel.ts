@@ -117,8 +117,8 @@ const exportArg = (queryArg?: { params?: Record<string, any> }): any => ({
 const deleteModelsByRegistrantApi = api.injectEndpoints({
   endpoints: (builder) => ({
     deleteModelsByRegistrant: builder.mutation({
-      query: (queryArgs) => ({
-        url: `api/meshmodels/registrants/${queryArgs.connectionID}/models`,
+      query: (queryArgs: { connectionId: string }) => ({
+        url: `api/meshmodels/registrants/${queryArgs.connectionId}/models`,
         method: 'DELETE',
       }),
       invalidatesTags: [REGISTRY_TAG],

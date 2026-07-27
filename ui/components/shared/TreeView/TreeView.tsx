@@ -18,8 +18,8 @@ export const TreeItem = React.forwardRef((props: any, ref: any) => {
   return (
     <MuiTreeItem
       ref={ref}
-      slots={{ groupTransition: GroupTransitionComponent, ...props?.slots }}
       {...props}
+      slots={{ groupTransition: GroupTransitionComponent, ...props?.slots }}
     />
   );
 });

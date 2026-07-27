@@ -544,7 +544,7 @@ const MeshModelDetails = ({
   const { notify } = useNotification();
   const promptRef = React.useRef<any>(null);
 
-  const handleDeleteModels = async (connectionID: string, registrantName: string) => {
+  const handleDeleteModels = async (connectionId: string, registrantName: string) => {
     const modal = promptRef.current;
     if (!modal) return;
     const modelCount = showDetailsData.data?.summary?.models || 0;
@@ -552,13 +552,12 @@ const MeshModelDetails = ({
       title: `Delete all models registered by "${registrantName}"?`,
       subtitle: `Are you sure you want to delete all ${modelCount} models for this registrant? This will delete all associated components, relationships, and policies from the database.`,
       variant: 'danger',
-      primaryOption: 'DELETE',
-      secondaryOption: 'CANCEL',
+      options: ['DELETE', 'CANCEL'],
     });
 
     if (response === 'DELETE') {
       try {
-        const res = await deleteModelsByRegistrant({ connectionID }).unwrap();
+        const res = await deleteModelsByRegistrant({ connectionId }).unwrap();
         const deletedCount = res?.count;
         notify({
           message:

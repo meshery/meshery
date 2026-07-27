@@ -1677,7 +1677,7 @@ func (h *Handler) DeleteModelsByRegistrant(rw http.ResponseWriter, r *http.Reque
 	type DeleteModelsResponse struct {
 		Message        string `json:"message"`
 		Count          int    `json:"count"`
-		ConnectionName string `json:"connection_name"`
+		ConnectionName string `json:"connectionName"`
 	}
 
 	resp := DeleteModelsResponse{
@@ -1694,40 +1694,52 @@ func (h *Handler) DeleteModelsByRegistrant(rw http.ResponseWriter, r *http.Reque
 }
 
 func (h *Handler) deleteModelsAndRegistryResources(tx *gorm.DB, modelIDs []uuid.UUID) error {
-	if err := tx.Where("entity IN (?) AND type = ?",
-		tx.Model(&component.ComponentDefinition{}).Select("id").Where("model_id IN ?", modelIDs),
-		entity.ComponentDefinition,
-	).Delete(&registry.Registry{}).Error; err != nil {
-		return err
-	}
+	const batchSize = 100
+	for i := 0; i < len(modelIDs); i += batchSize {
+		end := i + batchSize
+		if end > len(modelIDs) {
+			end = len(modelIDs)
+		}
+		batch := modelIDs[i:end]
 
-	if err := tx.Where("entity IN (?) AND type = ?",
-		tx.Model(&relationship.RelationshipDefinition{}).Select("id").Where("model_id IN ?", modelIDs),
-		entity.RelationshipDefinition,
-	).Delete(&registry.Registry{}).Error; err != nil {
-		return err
-	}
+		if err := tx.Where("entity IN (?) AND type = ?",
+			tx.Model(&component.ComponentDefinition{}).Select("id").Where("model_id IN ?", batch),
+			entity.ComponentDefinition,
+		).Delete(&registry.Registry{}).Error; err != nil {
+			return err
+		}
 
-	if err := tx.Where("entity IN (?) AND type = ?",
-		tx.Model(&_models.PolicyDefinition{}).Select("id").Where("modelID IN ?", modelIDs),
-		entity.PolicyDefinition,
-	).Delete(&registry.Registry{}).Error; err != nil {
-		return err
-	}
+		if err := tx.Where("entity IN (?) AND type = ?",
+			tx.Model(&relationship.RelationshipDefinition{}).Select("id").Where("model_id IN ?", batch),
+			entity.RelationshipDefinition,
+		).Delete(&registry.Registry{}).Error; err != nil {
+			return err
+		}
 
-	if err := tx.Where("entity IN (?) AND type = ?", modelIDs, entity.Model).Delete(&registry.Registry{}).Error; err != nil {
-		return err
-	}
+		if err := tx.Where("entity IN (?) AND type = ?",
+			tx.Model(&_models.PolicyDefinition{}).Select("id").Where("modelID IN ?", batch),
+			entity.PolicyDefinition,
+		).Delete(&registry.Registry{}).Error; err != nil {
+			return err
+		}
 
-	if err := tx.Where("model_id IN ?", modelIDs).Delete(&component.ComponentDefinition{}).Error; err != nil {
-		return err
-	}
-	if err := tx.Where("model_id IN ?", modelIDs).Delete(&relationship.RelationshipDefinition{}).Error; err != nil {
-		return err
-	}
-	if err := tx.Where("modelID IN ?", modelIDs).Delete(&_models.PolicyDefinition{}).Error; err != nil {
-		return err
-	}
+		if err := tx.Where("entity IN (?) AND type = ?", batch, entity.Model).Delete(&registry.Registry{}).Error; err != nil {
+			return err
+		}
 
-	return tx.Where("id IN ?", modelIDs).Delete(&_model.ModelDefinition{}).Error
+		if err := tx.Where("model_id IN ?", batch).Delete(&component.ComponentDefinition{}).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("model_id IN ?", batch).Delete(&relationship.RelationshipDefinition{}).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("modelID IN ?", batch).Delete(&_models.PolicyDefinition{}).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Where("id IN ?", batch).Delete(&_model.ModelDefinition{}).Error; err != nil {
+			return err
+		}
+	}
+	return nil
 }

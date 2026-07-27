@@ -231,7 +231,7 @@ describe('User component', () => {
     expect(window.location.href).toContain('https://cloud.test/profile');
   });
 
-  it('does not redirect when no profile URL is present', async () => {
+  it('shows a warning when no profile URL is present', async () => {
     const user = userEvent.setup();
     mockGetUserQuery = {
       data: { status: 'authenticated' },
@@ -244,7 +244,9 @@ describe('User component', () => {
     render(<UserProvider />);
 
     await user.click(screen.getByTestId('icon-button-avatar'));
-    // window.location.href should still be the same since profileUrl is undefined
     expect(window.location.href).toBe(startingHref);
+    await waitFor(() => expect(notify).toHaveBeenCalled());
+    const [payload] = notify.mock.calls[0];
+    expect(payload.message).toBe('Profile URL not available. Please try again later.');
   });
 });

@@ -36,6 +36,10 @@ const User = (props) => {
       window.location = profileUrl;
       return;
     }
+    notify({
+      message: 'Profile URL not available. Please try again later.',
+      event_type: EVENT_TYPES.WARNING,
+    });
   };
 
   useEffect(() => {

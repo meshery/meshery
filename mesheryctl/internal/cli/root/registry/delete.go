@@ -60,8 +60,10 @@ mesheryctl registry delete [connection-id]
 				utils.Log.Warnf("No registrant connection with ID %q found or no models to delete", connectionID)
 				return nil
 			}
+			utils.Log.Error(err)
 			return ErrDeleteRegistry(err, connectionID)
 		}
+		defer resp.Body.Close()
 
 		if resp.StatusCode == http.StatusNotFound {
 			var bodyMap map[string]string
@@ -76,13 +78,15 @@ mesheryctl registry delete [connection-id]
 		}
 
 		if resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusOK {
-			return fmt.Errorf("unexpected status code from Meshery Server: %d", resp.StatusCode)
+			err := fmt.Errorf("unexpected status code from Meshery Server: %d", resp.StatusCode)
+			utils.Log.Error(err)
+			return ErrDeleteRegistry(err, connectionID)
 		}
 
 		type DeleteModelsResponse struct {
 			Message        string `json:"message"`
 			Count          int    `json:"count"`
-			ConnectionName string `json:"connection_name"`
+			ConnectionName string `json:"connectionName"`
 		}
 
 		if resp.StatusCode == http.StatusOK {
