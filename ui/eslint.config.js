@@ -240,7 +240,6 @@ const legacyInlineStyleOffenders = [
   'components/designs/lifecycle/ValidateDesign.tsx',
   'components/designs/lifecycle/common.tsx',
   'components/designs/lifecycle/finalizeDeployment.tsx',
-  'components/DuplicatesDataTable.tsx',
   'components/general/FlipCard.tsx',
   'components/general/ConnectClustersBtn.tsx',
   'components/general/CreateDesignBtn.tsx',

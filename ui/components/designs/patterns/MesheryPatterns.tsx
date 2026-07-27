@@ -3,6 +3,7 @@ import {
   publishCatalogItemSchema,
   publishCatalogItemUiSchema,
   ResponsiveDataTable,
+  useHasPermission,
 } from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -21,7 +22,7 @@ import { useTableUrlState } from '@/utils/hooks/useTableUrlState';
 import { useColumnVisibilityPreference } from '@/utils/hooks/useColumnVisibilityPreference';
 import InfoModal from '../../shared/Modal/Information/InfoModal';
 import DefaultError from '../../general/error-404/index';
-import CAN from '@/utils/can';
+
 import { Keys } from '@meshery/schemas/permissions';
 import { canEditDesign } from './design-permissions';
 import ExportDesignModal from '../export/ExportDesignModal';
@@ -68,6 +69,20 @@ function MesheryPatterns({
   pageTitle = 'Designs',
   arePatternsReadOnly = false,
 }) {
+  const canViewDesigns = useHasPermission(Keys.CatalogManagementViewDesigns);
+  const canViewCatalog = useHasPermission(Keys.CatalogManagementViewCatalog);
+  const canViewPage = canViewDesigns || (pageTitle === 'Catalog' && canViewCatalog);
+  const canViewDesignDetails = useHasPermission(Keys.CatalogManagementDetailsOfDesign);
+  const canPublishDesign = useHasPermission(Keys.CatalogManagementPublishDesign);
+  const canImportDesign = useHasPermission(Keys.CatalogManagementImportDesign);
+  const canEditDesignPermission = useHasPermission(Keys.CatalogManagementEditDesign);
+  const canCloneDesign = useHasPermission(Keys.CatalogManagementCloneDesign);
+  const canValidateDesign = useHasPermission(Keys.CatalogManagementValidateDesign);
+  const canEvaluateRelationships = useHasPermission(Keys.CatalogManagementEvaluateRelationships);
+  const canUndeployDesign = useHasPermission(Keys.CatalogManagementUndeployDesign);
+  const canDeployDesign = useHasPermission(Keys.CatalogManagementDeployDesign);
+  const canDownloadDesign = useHasPermission(Keys.CatalogManagementDownloadADesign);
+  const canUnpublishDesign = useHasPermission(Keys.CatalogManagementUnpublishDesign);
   const router = useRouter();
 
   const { tableState, updateTableState } = useTableUrlState({
@@ -344,7 +359,7 @@ function MesheryPatterns({
       handleUndeploy,
     });
 
-  const userCanEdit = (pattern) => canEditDesign(user, pattern);
+  const userCanEdit = (pattern) => canEditDesign(user, pattern, canEditDesignPermission);
 
   const handleOpenInConfigurator = (id) => {
     router.push('/configuration/designs/configurator?design_id=' + id);
@@ -364,6 +379,18 @@ function MesheryPatterns({
       handleUnpublishModal,
       handleEvaluateRelationship,
       userCanEdit,
+    },
+    permissions: {
+      editDesign: canEditDesignPermission,
+      cloneDesign: canCloneDesign,
+      validateDesign: canValidateDesign,
+      evaluateRelationships: canEvaluateRelationships,
+      undeployDesign: canUndeployDesign,
+      deployDesign: canDeployDesign,
+      downloadDesign: canDownloadDesign,
+      detailsOfDesign: canViewDesignDetails,
+      publishDesign: canPublishDesign,
+      unpublishDesign: canUnpublishDesign,
     },
   });
 
@@ -447,7 +474,7 @@ function MesheryPatterns({
   return (
     <>
       <NoSsr>
-        {CAN(Keys.CatalogManagementViewDesigns.id, Keys.CatalogManagementViewDesigns.function) ? (
+        {canViewPage ? (
           <>
             {selectedRowData && Object.keys(selectedRowData).length > 0 && (
               <YAMLEditor
@@ -535,44 +562,31 @@ function MesheryPatterns({
 
             <SistentModal maxWidth="sm" {...designLifecycleModal}></SistentModal>
             <SistentModal {...sistentInfoModal}>
-              {CAN(
-                Keys.CatalogManagementDetailsOfDesign.id,
-                Keys.CatalogManagementDetailsOfDesign.function,
-              ) &&
-                infoModal.open && (
-                  <InfoModal
-                    infoModalOpen={true}
-                    handleInfoModalClose={handleInfoModalClose}
-                    selectedResource={infoModal.selectedResource}
-                    resourceOwnerID={infoModal.ownerID}
-                    patternFetcher={getPatterns}
-                  />
-                )}
+              {canViewDesignDetails && infoModal.open && (
+                <InfoModal
+                  infoModalOpen={true}
+                  handleInfoModalClose={handleInfoModalClose}
+                  selectedResource={infoModal.selectedResource}
+                  resourceOwnerID={infoModal.ownerID}
+                  patternFetcher={getPatterns}
+                />
+              )}
             </SistentModal>
 
-            {canPublishPattern &&
-              publishModal.open &&
-              CAN(
-                Keys.CatalogManagementPublishDesign.id,
-                Keys.CatalogManagementPublishDesign.function,
-              ) && (
-                <PublishDesignModal
-                  publishFormSchema={publishSchema}
-                  handleClose={handlePublishModalClose}
-                  title={publishModal.pattern?.name || ''}
-                  handleSubmit={handlePublish}
-                />
-              )}
-            {importModal.open &&
-              CAN(
-                Keys.CatalogManagementImportDesign.id,
-                Keys.CatalogManagementImportDesign.function,
-              ) && (
-                <ImportDesignModal
-                  handleClose={handleUploadImportClose}
-                  handleImportDesign={handleImportDesign}
-                />
-              )}
+            {canPublishPattern && publishModal.open && canPublishDesign && (
+              <PublishDesignModal
+                publishFormSchema={publishSchema}
+                handleClose={handlePublishModalClose}
+                title={publishModal.pattern?.name || ''}
+                handleSubmit={handlePublish}
+              />
+            )}
+            {importModal.open && canImportDesign && (
+              <ImportDesignModal
+                handleClose={handleUploadImportClose}
+                handleImportDesign={handleImportDesign}
+              />
+            )}
             <_PromptComponent ref={modalRef} />
           </>
         ) : (

@@ -12,7 +12,7 @@ import {
   useTheme,
 } from '@sistent/sistent';
 import Modal from './shared/Modal/Modal';
-import { CONNECTION_KINDS, CON_OPS } from '../utils/Enum';
+import { CON_OPS, CoreConnectionKinds } from '../utils/Enum';
 import Moment from 'react-moment';
 import LoadingScreen from './shared/LoadingState/LoadingComponent';
 import { useNotification, useNotificationHandlers } from '../utils/hooks/useNotification';
@@ -145,7 +145,7 @@ const MesheryCredentialComponent: React.FC = () => {
           <CredentialIcon
             src={
               normalizeStaticImagePath(
-                connectionMetadataState?.[CONNECTION_KINDS.KUBERNETES]?.icon,
+                connectionMetadataState?.[CoreConnectionKinds.kubernetes]?.icon,
               ) || undefined
             }
           />

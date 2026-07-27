@@ -71,7 +71,13 @@ vi.mock('@/rtk-query/connection', () => ({
 }));
 
 vi.mock('../../../utils/Enum', () => ({
-  CONNECTION_KINDS: { KUBERNETES: 'kubernetes' },
+  CoreConnectionKinds: {
+    meshery: 'meshery',
+    kubernetes: 'kubernetes',
+    prometheus: 'prometheus',
+    grafana: 'grafana',
+    github: 'github',
+  },
   CONNECTION_STATES: { DELETED: 'deleted' },
 }));
 
@@ -178,6 +184,7 @@ vi.mock('@sistent/sistent', () => ({
     shadows: [],
   }),
   useMediaQuery: () => useMediaQueryMock(),
+  useHasPermission: () => true,
   SearchIcon: () => <svg data-testid="search-icon" />,
   SettingsIcon: () => <svg data-testid="settings-icon" />,
   FilterAllIcon: () => <svg data-testid="filter-all-icon" />,

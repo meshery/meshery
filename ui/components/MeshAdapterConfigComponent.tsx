@@ -8,7 +8,7 @@ import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import BadgeAvatars from './general/CustomAvatar';
 import { Keys } from '@meshery/schemas/permissions';
-import CAN from '@/utils/can';
+
 import { iconMedium } from 'css/icons.styles';
 import {
   useGetAdaptersQuery,
@@ -426,12 +426,7 @@ const MeshAdapterConfigComponent = () => {
                 color="primary"
                 size="large"
                 onClick={handleAdapterUndeploy}
-                disabled={
-                  !CAN(
-                    Keys.InfrastructureManagementUndeployCloudNativeInfrastructure.id,
-                    Keys.InfrastructureManagementUndeployCloudNativeInfrastructure.function,
-                  )
-                }
+                permissionKey={Keys.InfrastructureManagementUndeployCloudNativeInfrastructure}
               >
                 Undeploy
               </AdapterButton>
@@ -443,12 +438,7 @@ const MeshAdapterConfigComponent = () => {
                 size="large"
                 onClick={handleSubmit}
                 data-cy="btnSubmitMeshAdapter"
-                disabled={
-                  !CAN(
-                    Keys.MesherySystemConnectAdapter.id,
-                    Keys.MesherySystemConnectAdapter.function,
-                  )
-                }
+                permissionKey={Keys.MesherySystemConnectAdapter}
               >
                 Connect
               </AdapterButton>
@@ -500,12 +490,7 @@ const MeshAdapterConfigComponent = () => {
                 color="primary"
                 size="large"
                 onClick={handleAdapterDeploy}
-                disabled={
-                  !CAN(
-                    Keys.InfrastructureManagementDeployCloudNativeInfrastructure.id,
-                    Keys.InfrastructureManagementDeployCloudNativeInfrastructure.function,
-                  )
-                }
+                permissionKey={Keys.InfrastructureManagementDeployCloudNativeInfrastructure}
               >
                 Deploy
               </AdapterButton>
