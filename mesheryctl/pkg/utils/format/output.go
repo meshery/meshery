@@ -48,6 +48,8 @@ func OutputYaml(component interface{}) error {
 	return nil
 }
 
+// OutputToon takes a component struct as input, marshals it into a nicely formatted TOON representation,
+// and prints it to standard output.
 func OutputToon(component interface{}) error {
 	// Marshal the component struct into TOON format.
 	output, err := toon.Marshal(component)
@@ -58,4 +60,3 @@ func OutputToon(component interface{}) error {
 	fmt.Print(string(output))
 	return nil
 }
-

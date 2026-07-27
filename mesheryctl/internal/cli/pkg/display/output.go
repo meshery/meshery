@@ -10,9 +10,9 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/toon-format/toon-go"
+	"gopkg.in/yaml.v3"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"gopkg.in/yaml.v3"
 )
 
 type OutputFormatter[T any] interface {
@@ -96,11 +96,13 @@ type YAMLOutputFormatterSaver[T any] struct {
 	FilePath        string
 }
 
+// TOONOutputFormatter is a formatter for TOON data.
 type TOONOutputFormatter[T any] struct {
 	Data T
 	Out  io.Writer
 }
 
+// TOONOutputFormatterSaver is a saver for TOON data.
 type TOONOutputFormatterSaver[T any] struct {
 	OutputFormatter TOONOutputFormatter[T]
 	FilePath        string

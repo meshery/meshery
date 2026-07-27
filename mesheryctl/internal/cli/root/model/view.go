@@ -31,10 +31,10 @@ Find more information at: https://docs.meshery.io/reference/references/mesheryct
 mesheryctl model view [model-name]
 
 // View a specific model in specified format
-mesheryctl model view [model-name] --output-format [json|yaml]
+mesheryctl model view [model-name] --output-format [json|yaml|toon]
 
 // View a specific model in specified format and save it as a file
-mesheryctl model view [model-name] --output-format [json|yaml] --save
+mesheryctl model view [model-name] --output-format [json|yaml|toon] --save
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &modelViewFlags)

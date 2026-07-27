@@ -46,10 +46,10 @@ Find more information at: https://docs.meshery.io/reference/references/mesheryct
 mesheryctl component view [component-name | component-id]
 
 // View details of a specific component in specified format
-mesheryctl component view [component-name | component-id] -o [json|yaml]
+mesheryctl component view [component-name | component-id] -o [json|yaml|toon]
 
 // View details of a specific component in specified format and save it as a file
-mesheryctl component view [component-name | component-id] -o [json|yaml] --save
+mesheryctl component view [component-name | component-id] -o [json|yaml|toon] --save
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &cmdComponentViewFlags)

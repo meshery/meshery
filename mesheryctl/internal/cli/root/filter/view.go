@@ -53,11 +53,11 @@ mesheryctl filter view "[filter-name | ID]"
 // View all filter files
 mesheryctl filter view --all
 
-// View all filter files in json
-mesheryctl filter view --all --output-format json
+// View all filter files in a specific format
+mesheryctl filter view --all --output-format [json|yaml|toon]
 
-// View all filter files in json and save it to a file
-mesheryctl filter view --all --output-format json -s
+// View all filter files in a specific format and save it to a file
+mesheryctl filter view --all --output-format [json|yaml|toon] -s
 
 //View multi-word named filter files. Multi-word filter names should be enclosed in quotes
 mesheryctl filter view "filter name"

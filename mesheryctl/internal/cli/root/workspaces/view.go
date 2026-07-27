@@ -42,11 +42,11 @@ mesheryctl workspace view [workspace-id] --orgId [orgId]
 // View details of a specific workspace by name
 mesheryctl workspace view [workspace-name] --orgId [orgId]
 
-// View details of a specific workspace in JSON format
-mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json
+// View details of a specific workspace in a specific format
+mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format [json|yaml|toon]
 
-// View details of a specific workspace and save it to a file
-mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --save
+// View details of a specific workspace in a specific format and save it to a file
+mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format [json|yaml|toon] --save
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &workspaceViewFlagsProvided)

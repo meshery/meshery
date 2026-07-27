@@ -24,6 +24,7 @@ func ErrOutputToYaml() error {
 		[]string{"Check the Yaml structure you are providing for formatting."})
 }
 
+// ErrOutputToToon is the error for failing to format output in TOON
 func ErrOutputToToon() error {
 	return errors.New(ErrOutputToToonCode, errors.Alert,
 		[]string{"Failed to format output in TOON"},

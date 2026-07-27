@@ -46,11 +46,11 @@ Find more information at: https://docs.meshery.io/reference/references/mesheryct
 // View details of a specific connection in default format (yaml)
 mesheryctl connection view [connection-name|connection-id]
 
-// View details of a specific connection in JSON format
-mesheryctl connection view [connection-name|connection-id] --output-format json
+// View details of a specific connection in JSON, YAML or TOON format
+mesheryctl connection view [connection-name|connection-id] --output-format [json|yaml|toon]
 
-// View details of a specific connection in json format and save it to a file
-mesheryctl connection view [connection-name|connection-id] --output-format json --save
+// View details of a specific connection in specified format and save it to a file
+mesheryctl connection view [connection-name|connection-id] --output-format [json|yaml|toon] --save
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		if len(args) == 0 {

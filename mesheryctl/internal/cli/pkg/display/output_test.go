@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -65,6 +66,10 @@ func Test_Given_OutputFormatter_When_Display_Then_Content_Is_Displayed_Without_E
 			output := tc.buf.String()
 			assert.Contains(t, output, data.Name, "Output should contain name")
 			assert.Contains(t, output, data.Content, "Output should contain content")
+			if strings.Contains(tc.name, "toon data") {
+				assert.Contains(t, output, "name:", "Output should contain field key 'name:'")
+				assert.Contains(t, output, "content:", "Output should contain field key 'content:'")
+			}
 			tc.buf.Reset()
 		})
 	}
@@ -195,7 +200,9 @@ func Test_Given_TOONOutputFormatterSaver_With_Filepath_When_Save_Then_File_Is_Cr
 
 	content, err := os.ReadFile(tmpFilePath)
 	assert.NoError(t, err)
+	assert.Contains(t, string(content), "name:")
 	assert.Contains(t, string(content), data.Name)
+	assert.Contains(t, string(content), "content:")
 	assert.Contains(t, string(content), data.Content)
 }
 
