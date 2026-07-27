@@ -195,7 +195,7 @@ func Test_Given_TOONOutputFormatterSaver_With_Filepath_When_Save_Then_File_Is_Cr
 	}
 
 	saver := NewTOONOutputFormatterSaver(toonFormatter).WithFilePath(tmpFilePath)
-	err := saver.Save()
+	err = saver.Save()
 	assert.NoError(t, err)
 
 	content, err := os.ReadFile(tmpFilePath)
