@@ -194,3 +194,102 @@ func TestMesheryControllersHelperConcurrentStateAccess(t *testing.T) {
 	}
 	wg.Wait()
 }
+
+// fakeController is a controllers.IMesheryController whose methods mutate an
+// internal counter instead of reaching a cluster, so a data race on a shared
+// handler surfaces under `go test -race`. It mirrors how the real meshkit
+// handlers cache their status in place.
+type fakeController struct {
+	calls int
+}
+
+func (f *fakeController) GetName() string {
+	f.calls++
+	return "fake"
+}
+
+func (f *fakeController) GetStatus() controllers.MesheryControllerStatus {
+	f.calls++
+	return controllers.Deployed
+}
+
+func (f *fakeController) Deploy(force bool) error {
+	f.calls++
+	return nil
+}
+
+func (f *fakeController) Undeploy() error {
+	f.calls++
+	return nil
+}
+
+func (f *fakeController) GetPublicEndpoint() (string, error) {
+	f.calls++
+	return "", nil
+}
+
+func (f *fakeController) GetVersion() (string, error) {
+	f.calls++
+	return "v1", nil
+}
+
+func (f *fakeController) GetEndpointForPort(string) (string, error) {
+	f.calls++
+	return "", nil
+}
+
+// TestControllerHandlerCallsSerialized drives the shared meshkit controller
+// handler concurrently from both paths that use it in production — the status
+// handlers (through the wrappers GetControllerHandlersForEachContext hands out)
+// and the FSM reconcile (UpdateOperatorsStatusMap) — against a handler that
+// mutates internal state on every call. It guards the data race raised in review
+// on #20887 (a copied map still leaks the underlying mutable handlers) and is
+// meaningful under `go test -race`.
+func TestControllerHandlerCallsSerialized(t *testing.T) {
+	mch := &MesheryControllersHelper{
+		ctxControllerHandlers: map[MesheryController]controllers.IMesheryController{
+			MesheryOperator: &fakeController{},
+		},
+		meshsyncDeploymentMode: connections.MeshsyncDeploymentModeOperator,
+	}
+
+	// Seed the tracker single-threaded so IsUndeployed only reads during the
+	// concurrent phase, and return false so UpdateOperatorsStatusMap actually
+	// invokes the operator handler's GetStatus — the call being serialized.
+	ot := NewOperatorTracker(false)
+	ot.Undeployed(mch.contextID, false)
+
+	ops := []func(){
+		// reader: the status handlers only ever touch the handlers via these wrappers
+		func() {
+			for _, h := range mch.GetControllerHandlersForEachContext() {
+				if h == nil {
+					continue
+				}
+				_ = h.GetStatus()
+				_, _ = h.GetVersion()
+			}
+		},
+		// writer: the FSM reconcile invokes the same handler's GetStatus
+		func() { mch.UpdateOperatorsStatusMap(ot) },
+	}
+
+	const (
+		iterations  = 1000
+		concurrency = 4
+	)
+	var wg sync.WaitGroup
+	for _, op := range ops {
+		op := op
+		for g := 0; g < concurrency; g++ {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				for i := 0; i < iterations; i++ {
+					op()
+				}
+			}()
+		}
+	}
+	wg.Wait()
+}

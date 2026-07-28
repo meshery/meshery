@@ -94,6 +94,17 @@ type MesheryControllersHelper struct {
 	// (brokerPortForward has its own lifecycle.)
 	stateMu sync.RWMutex
 
+	// ctrlHandlerMu serializes calls into the meshkit controller handlers held in
+	// ctxControllerHandlers. Those handlers cache their status in place — their
+	// GetStatus (and the operator's Deploy/Undeploy) mutate the receiver's status
+	// field — and are not safe for concurrent use, so the controllers-status SSE
+	// stream, the status REST handlers and the FSM reconcile goroutines must not
+	// invoke the same handler at once. stateMu only guards the map pointer; it
+	// cannot protect the shared objects the map's values reference. This lock is
+	// acquired only for a single handler method call and never while stateMu is
+	// held, so the two never nest.
+	ctrlHandlerMu sync.Mutex
+
 	// event broadcasting dependencies
 	eventBroadcaster *Broadcast
 	provider         Provider
@@ -125,17 +136,84 @@ func (mch *MesheryControllersHelper) GetOperatorError() error {
 	return mch.lastOperatorError
 }
 
+// lockedController wraps a meshkit controller handler so that every method call
+// is serialized through mu (the owning helper's ctrlHandlerMu). The meshkit
+// handlers cache their status in place and are not safe for concurrent use, so
+// the helper hands out these wrappers — and takes the same lock around its own
+// controller calls — to guarantee no underlying handler is ever invoked
+// concurrently. See GetControllerHandlersForEachContext.
+type lockedController struct {
+	inner controllers.IMesheryController
+	mu    *sync.Mutex
+}
+
+func (l lockedController) GetName() string {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	return l.inner.GetName()
+}
+
+func (l lockedController) GetStatus() controllers.MesheryControllerStatus {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	return l.inner.GetStatus()
+}
+
+func (l lockedController) Deploy(force bool) error {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	return l.inner.Deploy(force)
+}
+
+func (l lockedController) Undeploy() error {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	return l.inner.Undeploy()
+}
+
+func (l lockedController) GetPublicEndpoint() (string, error) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	return l.inner.GetPublicEndpoint()
+}
+
+func (l lockedController) GetVersion() (string, error) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	return l.inner.GetVersion()
+}
+
+func (l lockedController) GetEndpointForPort(portName string) (string, error) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	return l.inner.GetEndpointForPort(portName)
+}
+
+// GetControllerHandlersForEachContext returns the per-controller handlers for
+// this context, each wrapped so that every method call is serialized through
+// ctrlHandlerMu. The meshkit handlers cache their status in place (GetStatus
+// mutates the receiver) and are not safe for concurrent use, so returning the
+// raw handlers — even in a copied map — would let the SSE stream, the status
+// REST handlers and the FSM reconcile goroutines invoke the same handler at
+// once. The map itself is a fresh copy, so callers may range it without racing
+// an AddCtxControllerHandlers / RemoveCtxControllerHandler that replaces the
+// live map.
 func (mch *MesheryControllersHelper) GetControllerHandlersForEachContext() map[MesheryController]controllers.IMesheryController {
 	mch.stateMu.RLock()
 	defer mch.stateMu.RUnlock()
 	if mch.ctxControllerHandlers == nil {
 		return nil
 	}
-	// Return a copy: callers range/read the result outside this lock, so handing
-	// back the live map would still race a concurrent AddCtxControllerHandlers /
-	// RemoveCtxControllerHandler that replaces it.
 	handlers := make(map[MesheryController]controllers.IMesheryController, len(mch.ctxControllerHandlers))
-	maps.Copy(handlers, mch.ctxControllerHandlers)
+	for controller, handler := range mch.ctxControllerHandlers {
+		if handler == nil {
+			// Preserve the present-but-nil semantics callers nil-check against;
+			// wrapping nil would hand back a non-nil wrapper over a nil handler.
+			handlers[controller] = nil
+			continue
+		}
+		handlers[controller] = lockedController{inner: handler, mu: &mch.ctrlHandlerMu}
+	}
 	return handlers
 }
 
@@ -762,13 +840,17 @@ func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracke
 	}
 
 	// Resolve the new status first — GetStatus reaches the cluster, so it must
-	// not run under the lock — then commit it under the write lock.
+	// not run under stateMu — then commit it under the write lock. GetStatus
+	// mutates the shared handler's cached status, so serialize it through
+	// ctrlHandlerMu against the status handlers reading the same handler.
 	var newStatus controllers.MesheryControllerStatus
 	if ot.IsUndeployed(mch.contextID) {
 		// this code is probably never reached as mch.contextID is never set
 		newStatus = controllers.Undeployed
 	} else if hasOperator {
+		mch.ctrlHandlerMu.Lock()
 		newStatus = operatorHandler.GetStatus()
+		mch.ctrlHandlerMu.Unlock()
 	} else {
 		return mch
 	}
@@ -832,7 +914,14 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 	}
 
 	if operatorStatus == controllers.NotDeployed && hasOperator {
+		// Deploy mutates the shared handler's cached status, so serialize it
+		// through ctrlHandlerMu against the status handlers reading the same
+		// handler. The lock is held across the deploy — deploys are per-connection
+		// and infrequent, so briefly serializing this connection's status reads is
+		// an acceptable price for a race-free handler.
+		mch.ctrlHandlerMu.Lock()
 		err := operatorHandler.Deploy(false)
+		mch.ctrlHandlerMu.Unlock()
 
 		if err != nil {
 			mch.setOperatorError(err)
@@ -855,7 +944,11 @@ func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTrack
 	mch.stateMu.RUnlock()
 
 	if operatorStatus != controllers.Undeployed && hasOperator {
+		// Undeploy mutates the shared handler's cached status; serialize it through
+		// ctrlHandlerMu against the status handlers reading the same handler.
+		mch.ctrlHandlerMu.Lock()
 		err := operatorHandler.Undeploy()
+		mch.ctrlHandlerMu.Unlock()
 
 		if err != nil {
 			mch.log.Error(err)
