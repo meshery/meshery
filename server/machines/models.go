@@ -313,24 +313,21 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		token, _ := ctx.Value(models.TokenCtxKey).(string)
 		connection, statusCode, err := sm.Provider.GetConnectionByID(token, sm.ID)
 
-		// Generic kinds (prometheus, grafana, …) verify on register and only
-		// persist on connect (DefaultConnectAction). Until that insert, there is
-		// no row to patch — treating not-found as hard failure aborted wizard
-		// create with "record not found" after a successful register. Real
-		// provider/DB failures still surface below.
-		if connectionMissing(statusCode, err) {
+		// Prometheus/grafana verify on register but only insert the row on connect
+		// (DefaultConnectAction). A 404 here means not-yet-persisted — skip the
+		// status write rather than aborting a successful register. Other get
+		// failures still surface.
+		if connectionMissing(statusCode) {
 			sm.Log.Debugf("%s: connection %s not yet persisted after %q; skipping status update", sm.Name, sm.ID, originalEventType)
 		} else if err != nil {
 			return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
 		} else if connection == nil {
-			// Provider reported success without a row — not the early-lifecycle
-			// missing case (that is connectionMissing). Fail closed.
+			// Non-404 empty result — not the early-lifecycle missing case. Fail closed.
 			err = ErrConnectionNotFound(sm.ID.String())
 			return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
 		} else {
-			// Compare the currently persisted status against the state the machine
-			// settled in. Only an actual change should produce a user-facing failure
-			// event (see statusChanged above).
+			// Only a real status change should produce a user-facing failure event
+			// (see statusChanged above).
 			statusChanged = connection.Status != connections.ConnectionStatus(sm.CurrentState)
 
 			connectionPayload := &connections.ConnectionPayload{
@@ -400,12 +397,9 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	return event, nil
 }
 
-// connectionMissing reports whether GetConnectionByID indicated the row does not
-// exist yet. Both local and remote providers report that case with HTTP 404
-// (local pairs gorm.ErrRecordNotFound with StatusNotFound). Status code is the
-// stable contract — do not string-match error text. Used so early lifecycle
-// transitions (register before DefaultConnectAction persists) do not hard-fail
-// status sync.
-func connectionMissing(statusCode int, _ error) bool {
+// connectionMissing is true when GetConnectionByID reported no row (HTTP 404).
+// Local and remote providers both use StatusNotFound for that case; the status
+// code is the contract (do not string-match error text).
+func connectionMissing(statusCode int) bool {
 	return statusCode == http.StatusNotFound
 }
