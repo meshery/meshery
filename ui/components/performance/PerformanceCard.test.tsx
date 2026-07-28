@@ -53,6 +53,7 @@ vi.mock('@sistent/sistent', () => ({
   TableCell: ({ children }: any) => <td>{children}</td>,
   TableRow: ({ children }: any) => <tr>{children}</tr>,
   EditIcon: () => <svg data-testid="edit-icon" />,
+  DeleteIcon: () => <svg data-testid="delete-icon" />,
 }));
 
 vi.mock('../general/FlipCard', () => ({
