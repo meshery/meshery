@@ -20,8 +20,10 @@ const FlipCardInner = styled('div')({
 const FlipCardBack = styled('div')({
   flex: 1,
   display: 'flex',
+  position: 'absolute',
+  top: 0,
   width: '100%',
-  height: 'fit-content',
+  height: '100%',
   WebkitBackfaceVisibility: 'hidden', // Updated to camelCase
   backfaceVisibility: 'hidden',
   transform: 'rotateY(180deg)',
