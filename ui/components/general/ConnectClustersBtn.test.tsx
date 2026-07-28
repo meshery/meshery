@@ -1,30 +1,51 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
-import ConnectClustersBtn from './ConnectClustersBtn';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
+
+const h = vi.hoisted(() => ({
+  openCreateConnectionMock: vi.fn(),
+}));
+
+vi.mock('@/utils/context/ConnectionWizardContextProvider', () => ({
+  useConnectionWizardModal: () => ({
+    openCreateConnection: h.openCreateConnectionMock,
+    closeCreateConnection: vi.fn(),
+    open: false,
+    presetKind: null,
+    skipKindSelection: false,
+  }),
+}));
 
 vi.mock('@sistent/sistent', () => ({
   AddCircleIcon: (props: any) => <svg data-testid="add-icon" {...props} />,
-  Button: ({ children, ...props }: any) => (
-    <button type="button" {...props}>
+  Button: ({ children, onClick, ...props }: any) => (
+    <button type="button" onClick={onClick} {...props}>
       {children}
     </button>
   ),
   useTheme: () => ({ spacing: (n: number) => `${n * 8}px` }),
 }));
 
-vi.mock('next/link', () => ({
-  default: ({ children, href }: any) => <a href={href}>{children}</a>,
-}));
-
 vi.mock('../../css/icons.styles', () => ({
   iconMedium: {},
 }));
 
+import ConnectClustersBtn from './ConnectClustersBtn';
+
 describe('ConnectClustersBtn', () => {
-  it('renders a link to the connections page', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('opens the Create Connection wizard in place with Kubernetes pre-selected', () => {
     render(<ConnectClustersBtn />);
-    expect(screen.getByRole('link')).toHaveAttribute('href', '/management/connections');
+
+    fireEvent.click(screen.getByRole('button', { name: /Connect Clusters/i }));
+
+    expect(h.openCreateConnectionMock).toHaveBeenCalledWith({
+      kind: 'kubernetes',
+      skipKindSelection: true,
+    });
   });
 
   it('renders the Connect Clusters label and add icon', () => {

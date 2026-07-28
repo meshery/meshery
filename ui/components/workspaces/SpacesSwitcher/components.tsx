@@ -314,7 +314,7 @@ export const TableListHeader = ({
   );
 };
 
-export const ImportButton = ({ workspaceId, disabled = false, refetch }) => {
+export const ImportButton = ({ workspaceId, disabled = false, refetch, permissionKey }) => {
   const [importModal, setImportModal] = useState(false);
   const handleImportModalOpen = () => {
     setImportModal(true);
@@ -382,6 +382,7 @@ export const ImportButton = ({ workspaceId, disabled = false, refetch }) => {
         variant="contained"
         onClick={handleImportModalOpen}
         disabled={disabled}
+        permissionKey={permissionKey}
         sx={{
           minWidth: 'fit-content',
           padding: '0.85rem !important',
