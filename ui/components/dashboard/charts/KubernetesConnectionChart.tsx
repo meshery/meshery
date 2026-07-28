@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
 import { Keys } from '@meshery/schemas/permissions';
 import { useRouter } from 'next/router';
+import { CoreConnectionKinds } from '@/utils/Enum';
 import { DashboardSection, LoadingContainer } from '../style';
 import ConnectCluster from './ConnectCluster';
 import {
@@ -26,8 +27,9 @@ export default function KubernetesConnectionStatsChart() {
     isError,
   } = useGetConnectionsQuery({
     page: 0,
-    pagesize: 'all',
-    kind: JSON.stringify(['kubernetes']),
+    // Plain ?kind=kubernetes (not JSON-encoded); pageSize matches Header filter shape.
+    pageSize: 'all',
+    kind: CoreConnectionKinds.kubernetes,
   });
   const router = useRouter();
   const theme = useTheme();

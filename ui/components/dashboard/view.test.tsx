@@ -73,6 +73,14 @@ vi.mock('./utils', () => ({
 
 vi.mock('@/utils/Enum', () => ({
   CONNECTION_STATES: { DISCONNECTED: 'disconnected', CONNECTED: 'connected' },
+  // view.tsx uses CoreConnectionKinds.kubernetes for GetConnections kind filter (#20617 / #20949)
+  CoreConnectionKinds: {
+    meshery: 'meshery',
+    kubernetes: 'kubernetes',
+    prometheus: 'prometheus',
+    grafana: 'grafana',
+    github: 'github',
+  },
 }));
 
 vi.mock('@/rtk-query/connection', () => ({

@@ -88,15 +88,18 @@ const TelemetryMetrics: React.FC = () => {
   const theme = useTheme();
   const { openCreateConnection } = useConnectionWizardModal();
 
+  // kind is a plain repeated query param (?kind=prometheus) — never JSON-encoded.
+  // JSON.stringify(['prometheus']) becomes kind=["prometheus"] and matches nothing.
+  // Use CoreConnectionKinds (schemas) so literals stay single-sourced after #20949.
   const { data: connectionsData, isLoading: connectionsLoading } = useGetConnectionsQuery({
-    kind: JSON.stringify(['prometheus']),
-    pagesize: 200,
+    kind: CoreConnectionKinds.prometheus,
+    pageSize: 100,
   });
 
   const connections: TelemetryConnection[] = useMemo(
     () =>
       ((connectionsData as any)?.connections ?? [])
-        .filter((c: any) => c.kind === 'prometheus' && c.status !== 'deleted')
+        .filter((c: any) => c.kind === CoreConnectionKinds.prometheus && c.status !== 'deleted')
         .map((c: any) => ({ id: c.id, name: c.name, kind: c.kind, metadata: c.metadata })),
     [connectionsData],
   );
