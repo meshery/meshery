@@ -146,6 +146,9 @@ vi.mock('@sistent/sistent', () => ({
       background: { brand: { default: '#000' }, constant: { table: '#fff' } },
     },
   }),
+  ViewSwitch: ({ view, changeView }: any) => (
+    <div data-testid="view-switch" data-view={view} onClick={() => changeView?.('grid')} />
+  ),
 }));
 
 import Workspaces from './index';

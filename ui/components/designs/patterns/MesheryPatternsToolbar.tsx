@@ -6,7 +6,6 @@ import {
   ViewSwitch,
 } from '@sistent/sistent';
 import { Publish as PublishIcon } from '@/assets/icons';
-import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
 import TooltipButton from '@/utils/TooltipButton';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
