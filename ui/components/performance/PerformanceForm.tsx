@@ -35,7 +35,9 @@ interface PerformanceFormProps {
   url: string;
   urlError: boolean;
   c: string | number;
+  cError: boolean;
   qps: string | number;
+  qpsError: boolean;
   t: string;
   tValue: string;
   tError: string;
@@ -72,7 +74,9 @@ const PerformanceForm: React.FC<PerformanceFormProps> = ({
   url,
   urlError,
   c,
+  cError,
   qps,
+  qpsError,
   t,
   tValue,
   tError,
@@ -171,6 +175,8 @@ const PerformanceForm: React.FC<PerformanceFormProps> = ({
           fullWidth
           value={c}
           inputProps={{ min: '0', step: '1' }}
+          error={cError}
+          helperText={cError ? 'Concurrent requests must be greater than 0' : ''}
           margin="normal"
           variant="outlined"
           onChange={handleChange('c')}
@@ -194,6 +200,8 @@ const PerformanceForm: React.FC<PerformanceFormProps> = ({
           fullWidth
           value={qps}
           inputProps={{ min: '0', step: '1' }}
+          error={qpsError}
+          helperText={qpsError ? 'Queries per second cannot be negative' : ''}
           margin="normal"
           variant="outlined"
           onChange={handleChange('qps')}
