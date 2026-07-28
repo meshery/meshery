@@ -348,12 +348,25 @@ Per-tool discovery, so no skill is ever copied per tool:
 | Tool | How it finds these skills |
 |---|---|
 | Codex | Natively scans `$REPO_ROOT/.agents/skills` - nothing to configure ([docs](https://learn.chatgpt.com/docs/build-skills)) |
-| OpenCode | Natively scans `.agents/skills` (and `.claude/skills`) ([docs](https://opencode.ai/docs/skills/)) |
+| OpenCode | Natively scans `.agents/skills`, one of six roots it searches alongside `.opencode/skills` and `.claude/skills` ([docs](https://opencode.ai/docs/skills/)) |
 | Claude Code | Reads `.claude/skills`, which is a relative symlink to `../.agents/skills` |
 
-`.claude/skills` exists **only** as that symlink. Never replace it with real directories or copies -
-that reintroduces the drift this layout removes. Neither `.codex/skills` nor `.opencode/skills`
-exists, because neither tool reads such a path.
+`.claude/skills` is that symlink and nothing else. Never replace it with real directories or copies -
+that reintroduces the drift this layout removes. It is also a runtime dependency, not just a
+discovery path: `.agents/skills/iterate-pr/SKILL.md` invokes its scripts as
+`python3 .claude/skills/iterate-pr/scripts/<script>.py` in 13 places, which resolve only through it.
+Deleting the symlink later - say on learning Claude Code reads `.agents/skills` natively - breaks
+iterate-pr with no other signal.
+
+Neither `.codex/skills` nor `.opencode/skills` is created: both tools already read `.agents/skills`
+natively, so a second copy or link would be redundant. `.opencode/skills` is a real OpenCode search
+root, just an unnecessary one here; `.codex/skills` is not a path Codex scans at all.
+
+Windows caveat: on a checkout with `core.symlinks=false` - the default outside developer mode - git
+materialises `.claude/skills` as a regular text file containing the literal string
+`../.agents/skills`. Claude Code then discovers no project skills, and the iterate-pr script paths
+above fail with "No such file or directory". Enable Windows developer mode or set
+`git config core.symlinks true`, then re-checkout.
 
 ## Automation Hooks
 
