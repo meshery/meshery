@@ -25,7 +25,6 @@ import (
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -152,7 +151,7 @@ mesheryctl system status --verbose
 			// display pod status in the MesheryNamespace
 
 			// create an kubernetes client
-			client, err := meshkitkube.New([]byte(""))
+			client, err := utils.NewKubeClient()
 			if err != nil {
 				return err
 			}

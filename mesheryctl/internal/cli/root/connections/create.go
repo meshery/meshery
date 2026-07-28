@@ -16,13 +16,16 @@ package connections
 
 import (
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"os"
 	"os/exec"
 	"slices"
 	"strings"
+	"syscall"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -185,7 +188,6 @@ func createEKSConnection() error {
 }
 
 func createGKEConnection() error {
-	// TODO: move the GenerateConfigGKE logic to meshkit/client-go
 	utils.Log.Info("Configuring Meshery to access GKE...")
 	SAName := "sa-meshery-" + utils.StringWithCharset(8)
 	if err := utils.GenerateConfigGKE(utils.ConfigPath, SAName, "default"); err != nil {
@@ -322,11 +324,53 @@ func setContext(configFile, cname string) error {
 	return nil
 }
 
-// Given the token path, get the context and set the token in the chosen context
+func skipContextUploadWarn() {
+	utils.Log.Warn(fmt.Errorf("Meshery server is not reachable, skipping context upload. Local kubeconfig was written successfully."))
+	utils.Log.Infof("Start Meshery (`mesheryctl system start`), then re-run this command or upload: %s", utils.ConfigPath)
+}
+
+func isMesheryServerUnreachable(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	var opErr *net.OpError
+	if stderrors.As(err, &opErr) {
+		return true
+	}
+	if stderrors.Is(err, syscall.ECONNREFUSED) {
+		return true
+	}
+
+	msg := strings.ToLower(err.Error())
+	return strings.Contains(msg, "connection refused") ||
+		strings.Contains(msg, "connectex") ||
+		strings.Contains(msg, "no connection could be made") ||
+		strings.Contains(msg, "actively refused") ||
+		strings.Contains(msg, "dial tcp") ||
+		strings.Contains(msg, "meshery server is not reachable")
+}
+
+// Given the token path, get the context and set the token in the chosen context.
+// Skips context upload with a warning when Meshery Server is unreachable.
 func setToken() error {
 	utils.Log.Debugf("Token path: %s", utils.TokenFlag)
+
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return err
+	}
+	if err := utils.IsServerRunning(mctlCfg.GetBaseMesheryURL()); err != nil {
+		skipContextUploadWarn()
+		return nil
+	}
+
 	contexts, err := getContexts(utils.ConfigPath)
 	if err != nil {
+		if isMesheryServerUnreachable(err) {
+			skipContextUploadWarn()
+			return nil
+		}
 		return utils.ErrGetKubernetesContexts(err)
 	}
 
@@ -347,6 +391,10 @@ func setToken() error {
 
 	err = setContext(utils.ConfigPath, chosenCtx)
 	if err != nil {
+		if isMesheryServerUnreachable(err) {
+			skipContextUploadWarn()
+			return nil
+		}
 		return utils.ErrSetKubernetesContext(err)
 	}
 

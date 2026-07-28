@@ -119,7 +119,7 @@ mesheryctl system update --skip-reset
 
 		case platformKubernetes:
 			// create a client
-			kubeClient, err := meshkitkube.New([]byte(""))
+			kubeClient, err := utils.NewKubeClient()
 			if err != nil {
 				return err
 			}

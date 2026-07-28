@@ -27,7 +27,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitutils "github.com/meshery/meshkit/utils"
-	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -122,7 +121,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 				utils.Log.Warn(fmt.Errorf("--port-forward is not supported using Docker as Meshery's deployment platform"))
 			}
 		case platformKubernetes:
-			client, err := meshkitkube.New([]byte(""))
+			client, err := utils.NewKubeClient()
 			if err != nil {
 				return err
 			}

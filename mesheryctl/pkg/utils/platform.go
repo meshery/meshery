@@ -796,7 +796,7 @@ func SetKubeConfig() {
 }
 
 func ForceCleanupCluster() error {
-	client, err := meshkitkube.New([]byte(""))
+	client, err := NewKubeClient()
 	if err != nil {
 		return errors.Wrap(err, "failed to create new client")
 	}

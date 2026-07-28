@@ -495,6 +495,7 @@ func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token
 }
 
 func IsServerRunning(serverAddr string) error {
+	serverAddr = strings.TrimPrefix(serverAddr, "https://")
 	serverAddr = strings.TrimPrefix(serverAddr, "http://")
 	// Attempt to establish a connection to the server
 	conn, err := net.DialTimeout("tcp", serverAddr, 2*time.Second)
