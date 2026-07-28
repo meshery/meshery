@@ -148,6 +148,8 @@ const MesheryCredentialComponent: React.FC = () => {
                 connectionMetadataState?.[CoreConnectionKinds.kubernetes]?.icon,
               ) || undefined
             }
+            alt=""
+            aria-hidden="true"
           />
         );
       default:
