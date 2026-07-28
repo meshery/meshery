@@ -7,6 +7,7 @@ import { useGetWorkspacesQuery } from './workspace';
 import { normalizeLoadTestPrefs } from '../lib/load-test-prefs';
 import { normalizeLoggedInUser, normalizeProviderCapabilities } from './transforms';
 import { normalizeUserProfileSummary } from './userProfile';
+import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 
 const Tags = {
   USER_PREF: 'userPref',
@@ -151,8 +152,6 @@ export const userApi = api
           }
 
           try {
-            const ExtensionPointSchemaValidator =
-              require('../utils/ExtensionPointSchemaValidator').default;
             return ExtensionPointSchemaValidator(type)(response?.extensions[type]);
           } catch (error) {
             console.group('extension error');

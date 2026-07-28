@@ -35,13 +35,9 @@ vi.mock('../utils', () => ({
   ),
 }));
 
-// ExtensionPointSchemaValidator is loaded via dynamic `require` inside
+// ExtensionPointSchemaValidator is loaded statically inside
 // getExtensionsByType.transformResponse — its real module is not necessary
 // for our tests. Provide a no-op default that returns the array passed in.
-// The path here matches what user.ts uses: `require('../utils/ExtensionPointSchemaValidator')`.
-vi.mock('../../utils/ExtensionPointSchemaValidator', () => ({
-  default: (_type: string) => (items: unknown) => items,
-}));
 vi.mock('../utils/ExtensionPointSchemaValidator', () => ({
   default: (_type: string) => (items: unknown) => items,
 }));
