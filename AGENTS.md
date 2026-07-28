@@ -353,10 +353,10 @@ Per-tool discovery, so no skill is ever copied per tool:
 
 `.claude/skills` is that symlink and nothing else. Never replace it with real directories or copies -
 that reintroduces the drift this layout removes. It is also a runtime dependency, not just a
-discovery path: `.agents/skills/iterate-pr/SKILL.md` invokes its scripts as
-`python3 .claude/skills/iterate-pr/scripts/<script>.py` in 13 places, which resolve only through it.
-Deleting the symlink later - say on learning Claude Code reads `.agents/skills` natively - breaks
-iterate-pr with no other signal.
+discovery path: `.agents/skills/iterate-pr/SKILL.md` invokes its scripts through
+`.claude/skills/iterate-pr/scripts/<script>.py` in 13 places (12 `python3`, one `uv run`), which
+resolve only through it. Deleting the symlink later - say on learning Claude Code reads
+`.agents/skills` natively - breaks iterate-pr with no other signal.
 
 Neither `.codex/skills` nor `.opencode/skills` is created: both tools already read `.agents/skills`
 natively, so a second copy or link would be redundant. `.opencode/skills` is a real OpenCode search
