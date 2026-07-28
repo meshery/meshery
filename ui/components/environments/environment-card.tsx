@@ -1,7 +1,7 @@
 import React from 'react';
 import { FlipCard } from '../lifecycle/general';
 import { useGetEnvironmentConnectionsQuery } from '../../rtk-query/environments';
-import { PermissionKeys } from '@meshery/schemas/permissions';
+import { Keys } from '@meshery/schemas/permissions';
 import {
   DeleteIcon,
   EditIcon,
@@ -176,7 +176,7 @@ const EnvironmentCard = ({
                     title="Assigned Connections"
                     count={environmentConnectionsCount}
                     onAssign={onAssignConnection}
-                    permissionKey={PermissionKeys.WorkspaceManagementViewConnections}
+                    permissionKey={Keys.WorkspaceManagementViewConnections}
                   />
                 </AllocationButton>
                 {/* temporary disable workspace allocation button  */}
@@ -188,7 +188,7 @@ const EnvironmentCard = ({
                         environmentDetails.workspaces ? environmentDetails.workspaces?.length : 0
                       }
                       onAssign={onAssignConnection}
-                      disabled={false} // TODO: re-enable with permissionKey={PermissionKeys.WorkspaceManagementViewWorkspace}
+                      disabled={false} // TODO: re-enable with permissionKey={Keys.WorkspaceManagementViewWorkspace}
                     />
                   </AllocationButton>
                 )} */}
@@ -238,9 +238,9 @@ const EnvironmentCard = ({
                     disabled={
                       selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
                     }
-                    permissionKey={PermissionKeys.WorkspaceManagementEditEnvironment}
+                    permissionKey={Keys.WorkspaceManagementEditEnvironment}
                   >
-                    <EditIcon style={{ ...iconMedium, margin: '0 2px' }} />
+                    <EditIcon style={iconMedium} />
                   </IconButton>
                 </CustomTooltip>
                 <CustomTooltip title="Delete">
@@ -253,9 +253,9 @@ const EnvironmentCard = ({
                     disabled={
                       selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
                     }
-                    permissionKey={PermissionKeys.WorkspaceManagementDeleteEnvironment}
+                    permissionKey={Keys.WorkspaceManagementDeleteEnvironment}
                   >
-                    <DeleteIcon style={{ ...iconMedium, margin: '0 2px' }} />
+                    <DeleteIcon style={iconMedium} />
                   </IconButton>
                 </CustomTooltip>
               </Grid2>
