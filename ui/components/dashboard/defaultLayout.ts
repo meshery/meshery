@@ -179,7 +179,7 @@ export const LOCAL_PROVIDER_LAYOUT = {
       static: false,
       w: 3,
       x: 0,
-      y: 0,
+      y: 3,
     },
   ],
   md: [
@@ -199,7 +199,7 @@ export const LOCAL_PROVIDER_LAYOUT = {
       static: false,
       w: 3,
       x: 0,
-      y: 0,
+      y: 3,
     },
   ],
   sm: [
@@ -219,7 +219,7 @@ export const LOCAL_PROVIDER_LAYOUT = {
       static: false,
       w: 3,
       x: 0,
-      y: 0,
+      y: 3,
     },
   ],
   xs: [
@@ -239,7 +239,7 @@ export const LOCAL_PROVIDER_LAYOUT = {
       static: false,
       w: 3,
       x: 0,
-      y: 0,
+      y: 3,
     },
   ],
   xxs: [
@@ -259,7 +259,7 @@ export const LOCAL_PROVIDER_LAYOUT = {
       static: false,
       w: 3,
       x: 0,
-      y: 0,
+      y: 3,
     },
   ],
 };
