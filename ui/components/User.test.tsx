@@ -207,11 +207,11 @@ describe('User component', () => {
     expect(payload.details).toBe('oops');
   });
 
-  it('navigates to the profile URL when the avatar is clicked', async () => {
-    const mockOpen = vi.fn();
-    vi.stubGlobal('open', mockOpen);
-
+  it('opens profile URL in a new tab when avatar is clicked', async () => {
     const user = userEvent.setup();
+    const mockOpen = vi.fn();
+    window.open = mockOpen;
+
     mockGetUserQuery = {
       data: { status: 'authenticated' },
       isSuccess: true,
@@ -246,6 +246,7 @@ describe('User component', () => {
       isError: false,
       error: undefined,
     };
+    // no extensions.account → profileUrl will be undefined
     mockProviderCapabilities = {
       providerUrl: 'https://provider.test',
     };
