@@ -339,13 +339,21 @@ Agent definitions in `.agents/` (LLM-agnostic):
 
 ## Skills
 
-Packaged workflows in `.agents/skills/`:
+`.agents/skills/` is the single source of truth for every packaged workflow in this repo - one
+directory per skill, each with a `SKILL.md`. Do not enumerate them here; list the directory. Add a
+new skill only there.
 
-| Skill | Directory | Purpose |
-|-------|-----------|---------|
-| gen-test | `.agents/skills/gen-test/` | Generate idiomatic Go tests |
-| api-doc | `.agents/skills/api-doc/` | Document REST/GraphQL endpoints |
-| gen-relationship | `.agents/skills/gen-relationship/` | Generate schema-backed relationships |
+Per-tool discovery, so no skill is ever copied per tool:
+
+| Tool | How it finds these skills |
+|---|---|
+| Codex | Natively scans `$REPO_ROOT/.agents/skills` - nothing to configure ([docs](https://learn.chatgpt.com/docs/build-skills)) |
+| OpenCode | Natively scans `.agents/skills` (and `.claude/skills`) ([docs](https://opencode.ai/docs/skills/)) |
+| Claude Code | Reads `.claude/skills`, which is a relative symlink to `../.agents/skills` |
+
+`.claude/skills` exists **only** as that symlink. Never replace it with real directories or copies -
+that reintroduces the drift this layout removes. Neither `.codex/skills` nor `.opencode/skills`
+exists, because neither tool reads such a path.
 
 ## Automation Hooks
 
