@@ -3,7 +3,7 @@ import type { MeshkitError, MeshkitFetchBaseQueryError } from '@meshery/schemas/
 /**
  * Result of formatting an RTK Query error for the user-facing notification
  * layer. The notification system renders `message` through `BasicMarkdown`
- * (see `ThemeResponsiveSnackbar` in `themes/App.styles.tsx`), which means the
+ * (see `ThemeResponsiveSnackbar` in `theme/snackbar.tsx`), which means the
  * formatter can use markdown — bold, lists, italics — to surface multiple
  * lines of MeshKit metadata in a single toast.
  */
@@ -16,10 +16,14 @@ export interface FormattedApiError {
 
 /**
  * Type-guard that narrows an unknown RTK Query error to one carrying a
- * MeshKit envelope. The schemas package's `transformErrorResponse` wrapper
- * (v1.2.2+) sets `error.meshkit` on every non-2xx JSON response that matches
- * the MeshKit shape, so this guard can be used directly on the `error`
- * returned by mutation/query hooks without manual casting.
+ * MeshKit envelope. The schemas package's `withMeshkitErrorTransform`
+ * baseQuery wrapper sets `error.meshkit` — message, code, severity and the
+ * `probableCause`/`suggestedRemediation`/`longDescription` detail arrays — on
+ * every non-2xx JSON response that matches the MeshKit shape. Since
+ * @meshery/schemas v1.3.37 (meshery/schemas#1081) the wrapper reads the
+ * server's camelCase spellings with a snake_case fallback, so the detail
+ * arrays arrive fully populated. Callers can therefore read `error.meshkit`
+ * directly, without manual casting or re-parsing the raw response body.
  */
 export const hasMeshkitError = (
   error: unknown,
@@ -116,9 +120,10 @@ const extractFallbackMessage = (error: unknown): string | undefined => {
  */
 export const formatApiError = (error: unknown, fallbackTitle?: string): FormattedApiError => {
   if (hasMeshkitError(error)) {
+    const { meshkit } = error;
     return {
-      message: formatMeshkitErrorMarkdown(error.meshkit, fallbackTitle),
-      meshkit: error.meshkit,
+      message: formatMeshkitErrorMarkdown(meshkit, fallbackTitle),
+      meshkit,
     };
   }
 

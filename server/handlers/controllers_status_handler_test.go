@@ -9,8 +9,112 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/machines"
+	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/schemas/models/core"
 )
+
+// trackerWith builds an instance tracker holding a single connection->machine
+// mapping, for exercising machineCtxForConnection without standing up real FSMs.
+func trackerWith(id core.Uuid, inst *machines.StateMachine) *machines.ConnectionToStateMachineInstanceTracker {
+	return &machines.ConnectionToStateMachineInstanceTracker{
+		ConnectToInstanceMap: map[core.Uuid]*machines.StateMachine{id: inst},
+	}
+}
+
+// machineCtxForConnection must treat an unassigned Context on a tracked machine
+// - a non-kubernetes connection, or a kubernetes one whose cluster was
+// unreachable when the machine was created - as an expected "not ready" state
+// (nil,false) and, crucially, must NOT type-assert that nil Context, which
+// previously logged meshkit-11180 on every controller-status poll. Missing,
+// nil, typed-nil, wrongly-typed and half-built contexts are all not-ready;
+// only a fully-initialized kubernetes machine (a *kubernetes.MachineCtx
+// carrying a controllers helper) resolves as ready.
+func TestMachineCtxForConnection(t *testing.T) {
+	connID := uuid.Must(uuid.NewV4())
+	mctx := &kubernetes.MachineCtx{MesheryCtrlsHelper: &models.MesheryControllersHelper{}}
+
+	tests := []struct {
+		name     string
+		tracker  *machines.ConnectionToStateMachineInstanceTracker
+		lookupID uuid.UUID
+		wantOK   bool
+		wantCtx  *kubernetes.MachineCtx
+	}{
+		{
+			name:     "nil Context is not-ready",
+			tracker:  trackerWith(connID, &machines.StateMachine{ID: connID, Context: nil}),
+			lookupID: connID,
+			wantOK:   false,
+		},
+		{
+			name:     "untracked connection is not-ready",
+			tracker:  trackerWith(uuid.Must(uuid.NewV4()), &machines.StateMachine{Context: nil}),
+			lookupID: uuid.Must(uuid.NewV4()),
+			wantOK:   false,
+		},
+		{
+			name:     "nil tracked instance is not-ready",
+			tracker:  trackerWith(connID, nil),
+			lookupID: connID,
+			wantOK:   false,
+		},
+		{
+			// A boxed typed-nil *MachineCtx is non-nil as an interface, so a bare
+			// `Context == nil` check would let it through and the cast would hand
+			// back a nil pointer with a nil error - dereferenced one line later.
+			name:     "typed-nil Context is not-ready",
+			tracker:  trackerWith(connID, &machines.StateMachine{ID: connID, Context: (*kubernetes.MachineCtx)(nil)}),
+			lookupID: connID,
+			wantOK:   false,
+		},
+		{
+			// A non-kubernetes Context is a genuine type error, distinct from
+			// "not ready": it takes the cast's err != nil branch and is logged.
+			name:     "wrong Context type is not-ready",
+			tracker:  trackerWith(connID, &machines.StateMachine{ID: connID, Context: &struct{ notAMachineCtx bool }{}}),
+			lookupID: connID,
+			wantOK:   false,
+		},
+		{
+			// A kubernetes machine that initialized but has no controllers helper
+			// cannot answer a status query either.
+			name:     "missing controllers helper is not-ready",
+			tracker:  trackerWith(connID, &machines.StateMachine{ID: connID, Context: &kubernetes.MachineCtx{}}),
+			lookupID: connID,
+			wantOK:   false,
+		},
+		{
+			name:     "valid Context is ready",
+			tracker:  trackerWith(connID, &machines.StateMachine{ID: connID, Context: mctx}),
+			lookupID: connID,
+			wantOK:   true,
+			wantCtx:  mctx,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := &Handler{
+				config:                                  &models.HandlerConfig{},
+				log:                                     newTestLogger(t),
+				ConnectionToStateMachineInstanceTracker: tt.tracker,
+			}
+
+			ctx, ok := h.machineCtxForConnection(tt.lookupID.String())
+			if ok != tt.wantOK {
+				t.Fatalf("ok = %v, want %v", ok, tt.wantOK)
+			}
+			if tt.wantCtx == nil && ctx != nil {
+				t.Fatalf("expected nil machine context, got %#v", ctx)
+			}
+			if tt.wantCtx != nil && ctx != tt.wantCtx {
+				t.Fatalf("expected the tracked machine context to be returned, got %#v", ctx)
+			}
+		})
+	}
+}
 
 func newControllersStatusTestHandler(t *testing.T) *Handler {
 	t.Helper()
