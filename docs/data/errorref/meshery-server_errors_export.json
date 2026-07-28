@@ -4043,6 +4043,24 @@
         "short_description": "Unable to fetch API keys",
         "probable_cause": "Your account does not have permission to list API keys for this organization.\nThe organization identifier in the request does not exist or is not one you belong to.\nThe provider could not be reached or returned an error.",
         "suggested_remediation": "Confirm you are a member of the selected organization and that your role grants permission to view its keys."
+      },
+      "1462": {
+        "name": "ErrSeedingConnectionsCode",
+        "code": "1462",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to seed Meshery's system-owned connections",
+        "probable_cause": "The registry could not be read for registered connection definitions\nMeshery's database is unreachable or its connections table could not be queried",
+        "suggested_remediation": "Confirm Meshery's database is reachable and that model registration completed; the connections are seeded again on the next restart"
+      },
+      "1463": {
+        "name": "ErrSeedingConnectionKindCode",
+        "code": "1463",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The connection definition for this kind may disagree with the connections table schema",
+        "suggested_remediation": ""
       }
     }
   }

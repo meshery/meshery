@@ -206,7 +206,10 @@ function MesheryFilters() {
   const handleInfoModal = (filter: any) => {
     setInfoModal({
       open: true,
-      ownerID: filter.userId,
+      // Filters key the owner as `owner`, not `userId`: that is the canonical
+      // wire key in the schemas v1beta3 filter contract and what both providers
+      // emit. Designs are the ones that use `userId`.
+      ownerID: filter.owner,
       selectedResource: filter,
     });
   };

@@ -339,13 +339,45 @@ Agent definitions in `.agents/` (LLM-agnostic):
 
 ## Skills
 
-Packaged workflows in `.agents/skills/`:
+`.agents/skills/` is the single source of truth for every packaged workflow in this repo - one
+directory per skill, each with a `SKILL.md`. Do not enumerate them here; list the directory. Add a
+new skill only there.
 
-| Skill | Directory | Purpose |
-|-------|-----------|---------|
-| gen-test | `.agents/skills/gen-test/` | Generate idiomatic Go tests |
-| api-doc | `.agents/skills/api-doc/` | Document REST/GraphQL endpoints |
-| gen-relationship | `.agents/skills/gen-relationship/` | Generate schema-backed relationships |
+Per-tool discovery, so no skill is ever copied per tool:
+
+| Tool | How it finds these skills |
+|---|---|
+| Codex | Natively scans `$REPO_ROOT/.agents/skills` - nothing to configure ([docs](https://learn.chatgpt.com/docs/build-skills)) |
+| OpenCode | Natively scans `.agents/skills`, one of six roots it searches alongside `.opencode/skills` and `.claude/skills` ([docs](https://opencode.ai/docs/skills/)) |
+| Claude Code | Reads `.claude/skills`, which is a relative symlink to `../.agents/skills` |
+
+`.claude/skills` is that symlink and nothing else. Never replace it with real directories or copies -
+that reintroduces the drift this layout removes. It is also a runtime dependency, not just a
+discovery path: `.agents/skills/iterate-pr/SKILL.md` invokes its scripts through
+`.claude/skills/iterate-pr/scripts/<script>.py` in 13 places (12 `python3`, one `uv run`), which
+resolve only through it. Deleting the symlink later - say on learning Claude Code reads
+`.agents/skills` natively - breaks iterate-pr with no other signal.
+
+The four skills tracked in `skills-lock.json` - `chrome-devtools-axi`, `gh-axi`, `lavish`,
+`quota-axi` - are installed by the AXI installer, and its layout is skill content at
+`.agents/skills/<name>/` *plus* a per-skill symlink at `.claude/skills/<name>`. Those per-skill
+symlinks were installer-owned, not hand-made, and this layout removed them as redundant. The next
+installer run recreates them, and `.claude/skills/<name>` now resolves *through* the directory
+symlink onto `.agents/skills/<name>` - an existing real directory holding the canonical content.
+Best case the installer fails with `EEXIST`. Worst case a force-replacing installer destroys that
+canonical directory and leaves a self-referential symlink loop. Which of the two occurs is not
+established, and must not be determined by running the installer against a real checkout: the
+failure mode under test is destruction of the canonical skill content.
+
+Neither `.codex/skills` nor `.opencode/skills` is created: both tools already read `.agents/skills`
+natively, so a second copy or link would be redundant. `.opencode/skills` is a real OpenCode search
+root, just an unnecessary one here; `.codex/skills` is not a path Codex scans at all.
+
+Windows caveat: on a checkout with `core.symlinks=false` - the default outside developer mode - git
+materialises `.claude/skills` as a regular text file containing the literal string
+`../.agents/skills`. Claude Code then discovers no project skills, and the iterate-pr script paths
+above fail with "No such file or directory". Enable Windows developer mode or set
+`git config core.symlinks true`, then re-checkout.
 
 ## Automation Hooks
 
