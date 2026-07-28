@@ -401,14 +401,11 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 }
 
 // connectionMissing reports whether GetConnectionByID indicated the row does not
-// exist yet. Local and remote providers both use HTTP 404 for that case; local
-// also returns gorm.ErrRecordNotFound ("record not found"). Used so early
-// lifecycle transitions (register before DefaultConnectAction persists) do not
-// hard-fail status sync.
-func connectionMissing(statusCode int, err error) bool {
-	if statusCode == http.StatusNotFound {
-		return true
-	}
-	// Fallback when a provider sets the gorm not-found error without 404.
-	return err != nil && err.Error() == "record not found"
+// exist yet. Both local and remote providers report that case with HTTP 404
+// (local pairs gorm.ErrRecordNotFound with StatusNotFound). Status code is the
+// stable contract — do not string-match error text. Used so early lifecycle
+// transitions (register before DefaultConnectAction persists) do not hard-fail
+// status sync.
+func connectionMissing(statusCode int, _ error) bool {
+	return statusCode == http.StatusNotFound
 }
