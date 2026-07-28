@@ -1,11 +1,15 @@
 package models
 
 import (
+	"context"
+	"sync"
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/controllers"
+	controllersconfig "github.com/meshery/schemas/models/v1alpha1/controllers_config"
 )
 
 func TestControllerEventActedUponPrefersConnectionID(t *testing.T) {
@@ -78,7 +82,7 @@ func TestAddCtxControllerHandlersReturnsEarlyOnInvalidConfig(t *testing.T) {
 		nil,
 		nil,
 	)
-	
+
 	// A successful execution of this function without panicking indicates the fix is working.
 	// We wrap in a defer-recover just to explicitly fail the test if a panic occurs.
 	defer func() {
@@ -93,4 +97,92 @@ func TestAddCtxControllerHandlersReturnsEarlyOnInvalidConfig(t *testing.T) {
 	if len(mch.ctxControllerHandlers) != 0 {
 		t.Fatalf("expected ctxControllerHandlers to be empty, got %d", len(mch.ctxControllerHandlers))
 	}
+}
+
+// The state a MesheryControllersHelper keeps for its Kubernetes context is
+// written from the connect goroutine that machines/kubernetes spawns
+// (AddCtxControllerHandlers -> SetMeshsyncDeploymentMode -> SetControllersConfig
+// -> UpdateOperatorsStatusMap -> AddMeshsyncDataHandlers) while the
+// controller-status and MeshSync HTTP handlers read the same fields through the
+// exported getters. The tests below reproduce that shape so `go test -race`
+// fails if the guarding on those fields regresses.
+
+func newTestControllersHelper() *MesheryControllersHelper {
+	log, _ := logger.New("test", logger.Options{})
+	return NewMesheryControllersHelper(log, controllers.OperatorDeploymentConfig{}, nil, nil, nil, nil)
+}
+
+// raceHammer runs a writer and a reader concurrently over the same helper.
+func raceHammer(write, read func()) {
+	const iterations = 200
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		for i := 0; i < iterations; i++ {
+			write()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		for i := 0; i < iterations; i++ {
+			read()
+		}
+	}()
+	wg.Wait()
+}
+
+func TestMeshsyncDeploymentModeConcurrentAccess(t *testing.T) {
+	mch := newTestControllersHelper()
+	modes := []connections.MeshsyncDeploymentMode{
+		connections.MeshsyncDeploymentModeOperator,
+		connections.MeshsyncDeploymentModeEmbedded,
+	}
+	i := 0
+	raceHammer(
+		func() { mch.SetMeshsyncDeploymentMode(modes[i%len(modes)]); i++ },
+		func() { _ = mch.GetMeshsyncDeploymentMode() },
+	)
+}
+
+func TestControllersConfigConcurrentAccess(t *testing.T) {
+	mch := newTestControllersHelper()
+	cfg := &controllersconfig.MesheryControllersConfig{}
+	raceHammer(
+		func() { mch.SetControllersConfig(cfg) },
+		func() { _ = mch.getControllersConfig() },
+	)
+}
+
+func TestControllerHandlersConcurrentAccess(t *testing.T) {
+	mch := newTestControllersHelper()
+	raceHammer(
+		func() {
+			mch.setCtxControllerHandlers(map[MesheryController]controllers.IMesheryController{})
+			mch.RemoveCtxControllerHandler(context.Background(), "ctx")
+		},
+		func() { _ = mch.GetControllerHandlersForEachContext() },
+	)
+}
+
+func TestOperatorStatusConcurrentAccess(t *testing.T) {
+	mch := newTestControllersHelper()
+	statuses := []controllers.MesheryControllerStatus{
+		controllers.Deployed,
+		controllers.NotDeployed,
+		controllers.Undeployed,
+	}
+	i := 0
+	raceHammer(
+		func() { mch.setCtxOperatorStatus(statuses[i%len(statuses)]); i++ },
+		func() { _ = mch.GetOperatorsStatusMap() },
+	)
+}
+
+func TestMeshsyncDataHandlerConcurrentAccess(t *testing.T) {
+	mch := newTestControllersHelper()
+	raceHammer(
+		func() { mch.setCtxMeshsyncDataHandler(nil) },
+		func() { _ = mch.GetMeshSyncDataHandlersForEachContext() },
+	)
 }
