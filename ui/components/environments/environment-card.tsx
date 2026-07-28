@@ -243,7 +243,7 @@ const EnvironmentCard = ({
                   >
                     <EditIcon
                       style={{ ...iconMedium, margin: '0 2px' }}
-                      fill={theme.palette.icon.default}
+                      fill={theme?.palette?.icon?.default}
                     />
                   </IconButton>
                 </CustomTooltip>
@@ -261,7 +261,7 @@ const EnvironmentCard = ({
                   >
                     <DeleteIcon
                       style={{ ...iconMedium, margin: '0 2px' }}
-                      fill={theme.palette.icon.default}
+                      fill={theme?.palette?.icon?.default}
                     />
                   </IconButton>
                 </CustomTooltip>

@@ -304,7 +304,7 @@ const MesheryCredentialComponent: React.FC = () => {
                   }
                   size="large"
                 >
-                  <DeleteIcon fill={theme.palette.icon.default} />
+                  <DeleteIcon fill={theme?.palette?.icon?.default} />
                 </IconButton>
               </Tooltip>
             </ActionContainer>
