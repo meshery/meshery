@@ -358,6 +358,17 @@ discovery path: `.agents/skills/iterate-pr/SKILL.md` invokes its scripts through
 resolve only through it. Deleting the symlink later - say on learning Claude Code reads
 `.agents/skills` natively - breaks iterate-pr with no other signal.
 
+The four skills tracked in `skills-lock.json` - `chrome-devtools-axi`, `gh-axi`, `lavish`,
+`quota-axi` - are installed by the AXI installer, and its layout is skill content at
+`.agents/skills/<name>/` *plus* a per-skill symlink at `.claude/skills/<name>`. Those per-skill
+symlinks were installer-owned, not hand-made, and this layout removed them as redundant. The next
+installer run recreates them, and `.claude/skills/<name>` now resolves *through* the directory
+symlink onto `.agents/skills/<name>` - an existing real directory holding the canonical content.
+Best case the installer fails with `EEXIST`. Worst case a force-replacing installer destroys that
+canonical directory and leaves a self-referential symlink loop. Which of the two occurs is not
+established, and must not be determined by running the installer against a real checkout: the
+failure mode under test is destruction of the canonical skill content.
+
 Neither `.codex/skills` nor `.opencode/skills` is created: both tools already read `.agents/skills`
 natively, so a second copy or link would be redundant. `.opencode/skills` is a real OpenCode search
 root, just an unnecessary one here; `.codex/skills` is not a path Codex scans at all.
