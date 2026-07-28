@@ -3,8 +3,6 @@ import { donut } from 'billboard.js';
 import BBChart from '../../general/BBChart';
 import { dataToColors, isValidColumnName } from '../../../utils/charts';
 import Link from 'next/link';
-import { iconSmall } from '../../../css/icons.styles';
-import { CustomTextTooltip } from '@/components/meshery-mesh-interface/PatternService/CustomTextTooltip';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
 import { Keys } from '@meshery/schemas/permissions';
 import { useRouter } from 'next/router';
@@ -13,7 +11,7 @@ import ConnectCluster from './ConnectCluster';
 import {
   Box,
   CircularProgress,
-  InfoOutlinedIcon,
+  InfoTooltip,
   KubernetesIcon,
   Typography,
   useHasPermission,
@@ -106,15 +104,11 @@ export default function KubernetesConnectionStatsChart() {
           KUBERNETES CLUSTER STATUS
         </Typography>
       </div>
-      <div onClick={(e) => e.stopPropagation()}>
-        <CustomTextTooltip title="This chart shows the status of connections to your Kubernetes clusters.">
-          <div>
-            <InfoOutlinedIcon
-              color={theme.palette.icon.default}
-              style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-            />
-          </div>
-        </CustomTextTooltip>
+      <div onClick={(e) => e.stopPropagation()} style={{ color: theme.palette.icon.default }}>
+        <InfoTooltip
+          helpText="This chart shows the status of connections to your Kubernetes clusters."
+          style={{ marginLeft: '5px' }}
+        />
       </div>
     </div>
   );

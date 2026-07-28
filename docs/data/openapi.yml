@@ -64293,6 +64293,12 @@ paths:
             text/plain:
               schema:
                 type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
         '500':
           description: Internal server error
           content:
@@ -64775,6 +64781,12 @@ paths:
             text/plain:
               schema:
                 type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
         '404':
           description: Result not found
           content:
@@ -64825,6 +64837,12 @@ paths:
                 type: string
         '401':
           description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
           content:
             text/plain:
               schema:
@@ -65400,6 +65418,12 @@ paths:
             text/plain:
               schema:
                 type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
         '404':
           description: Result not found
           content:
@@ -65654,6 +65678,12 @@ paths:
             text/plain:
               schema:
                 type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
         '404':
           description: Result not found
           content:
@@ -65902,6 +65932,12 @@ paths:
           description: Bad request
         '401':
           description: Unauthorized
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
         '404':
           description: Not found
         '500':
@@ -66046,6 +66082,12 @@ paths:
           description: Bad request
         '401':
           description: Unauthorized
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
         '404':
           description: Not found
         '500':
@@ -66108,6 +66150,12 @@ paths:
                 type: string
         '401':
           description: Unauthorized
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
         '404':
           description: Result not found
           content:
@@ -66162,6 +66210,12 @@ paths:
           description: User removed from organization
         '401':
           description: Unauthorized
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
         '404':
           description: Result not found
           content:
@@ -66849,6 +66903,12 @@ paths:
             text/plain:
               schema:
                 type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
         '404':
           description: Result not found
           content:
@@ -67492,6 +67552,12 @@ paths:
             text/plain:
               schema:
                 type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
         '404':
           description: Result not found
           content:
@@ -68115,6 +68181,12 @@ paths:
             text/plain:
               schema:
                 type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
         '500':
           description: Internal server error
           content:
@@ -68259,6 +68331,12 @@ paths:
                       x-go-type-skip-optional-pointer: true
         '401':
           description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
           content:
             text/plain:
               schema:

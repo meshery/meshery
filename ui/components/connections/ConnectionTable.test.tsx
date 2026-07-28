@@ -211,6 +211,10 @@ vi.mock('@/rtk-query/connection', () => ({
   usePerformConnectionActionMutation: () => [vi.fn(() => ({ unwrap: () => Promise.resolve({}) }))],
 }));
 
+vi.mock('@meshery/schemas/mesheryApi', () => ({
+  useListConnectionDefinitionsQuery: () => ({ data: { connectionDefinitions: [] } }),
+}));
+
 vi.mock('../../assets/icons/disconnect', () => ({
   default: () => <svg />,
 }));

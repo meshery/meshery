@@ -4,8 +4,8 @@ import {
   DialogActions,
   DialogContent,
   Divider,
-  FullScreenExitIcon,
   FullScreenIcon,
+  FullScreenExitIcon,
   IconButton,
   SaveIcon,
   Tooltip,
@@ -36,7 +36,11 @@ const YAMLDialog = ({
         <YamlDialogTitleText variant="h6">{name}</YamlDialogTitleText>
         <Tooltip title="Exit Fullscreen" arrow placement="bottom">
           <IconButton onClick={toggleFullScreen} size="large">
-            {fullScreen ? <FullScreenExitIcon /> : <FullScreenIcon />}
+            {fullScreen ? (
+              <FullScreenExitIcon fill="currentColor" />
+            ) : (
+              <FullScreenIcon fill="currentColor" />
+            )}
           </IconButton>
         </Tooltip>
       </StyledDialog>
