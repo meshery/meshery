@@ -208,6 +208,9 @@ describe('User component', () => {
   });
 
   it('navigates to the profile URL when the avatar is clicked', async () => {
+    const mockOpen = vi.fn();
+    vi.stubGlobal('open', mockOpen);
+
     const user = userEvent.setup();
     mockGetUserQuery = {
       data: { status: 'authenticated' },
@@ -228,7 +231,11 @@ describe('User component', () => {
     await waitFor(() => expect(ExtensionPointSchemaValidator).toHaveBeenCalledWith('account'));
 
     await user.click(screen.getByTestId('icon-button-avatar'));
-    expect(window.location.href).toContain('https://cloud.test/profile');
+    expect(mockOpen).toHaveBeenCalledWith(
+      'https://cloud.test/profile',
+      '_blank',
+      'noopener,noreferrer',
+    );
   });
 
   it('shows a warning when no profile URL is present', async () => {
@@ -239,12 +246,13 @@ describe('User component', () => {
       isError: false,
       error: undefined,
     };
+    mockProviderCapabilities = {
+      providerUrl: 'https://provider.test',
+    };
 
-    const startingHref = window.location.href;
     render(<UserProvider />);
 
     await user.click(screen.getByTestId('icon-button-avatar'));
-    expect(window.location.href).toBe(startingHref);
     await waitFor(() => expect(notify).toHaveBeenCalled());
     const [payload] = notify.mock.calls[0];
     expect(payload.message).toBe('Profile URL not available. Please try again later.');
