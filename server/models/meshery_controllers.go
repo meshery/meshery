@@ -832,7 +832,7 @@ func (mch *MesheryControllersHelper) RemoveCtxControllerHandler(ctx context.Cont
 func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracker) *MesheryControllersHelper {
 	mch.stateMu.RLock()
 	deploymentMode := mch.meshsyncDeploymentMode
-	operatorHandler, hasOperator := mch.ctxControllerHandlers[MesheryOperator]
+	operatorHandler := mch.ctxControllerHandlers[MesheryOperator]
 	mch.stateMu.RUnlock()
 
 	if deploymentMode != connections.MeshsyncDeploymentModeOperator {
@@ -847,7 +847,7 @@ func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracke
 	if ot.IsUndeployed(mch.contextID) {
 		// this code is probably never reached as mch.contextID is never set
 		newStatus = controllers.Undeployed
-	} else if hasOperator {
+	} else if operatorHandler != nil {
 		mch.ctrlHandlerMu.Lock()
 		newStatus = operatorHandler.GetStatus()
 		mch.ctrlHandlerMu.Unlock()
@@ -906,14 +906,14 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 	mch.stateMu.RLock()
 	deploymentMode := mch.meshsyncDeploymentMode
 	operatorStatus := mch.ctxOperatorStatus
-	operatorHandler, hasOperator := mch.ctxControllerHandlers[MesheryOperator]
+	operatorHandler := mch.ctxControllerHandlers[MesheryOperator]
 	mch.stateMu.RUnlock()
 
 	if deploymentMode != connections.MeshsyncDeploymentModeOperator {
 		return mch
 	}
 
-	if operatorStatus == controllers.NotDeployed && hasOperator {
+	if operatorStatus == controllers.NotDeployed && operatorHandler != nil {
 		// Deploy mutates the shared handler's cached status, so serialize it
 		// through ctrlHandlerMu against the status handlers reading the same
 		// handler. The lock is held across the deploy — deploys are per-connection
@@ -940,10 +940,10 @@ func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTrack
 	mch.stateMu.RLock()
 	deploymentMode := mch.meshsyncDeploymentMode
 	operatorStatus := mch.ctxOperatorStatus
-	operatorHandler, hasOperator := mch.ctxControllerHandlers[MesheryOperator]
+	operatorHandler := mch.ctxControllerHandlers[MesheryOperator]
 	mch.stateMu.RUnlock()
 
-	if operatorStatus != controllers.Undeployed && hasOperator {
+	if operatorStatus != controllers.Undeployed && operatorHandler != nil {
 		// Undeploy mutates the shared handler's cached status; serialize it through
 		// ctrlHandlerMu against the status handlers reading the same handler.
 		mch.ctrlHandlerMu.Lock()

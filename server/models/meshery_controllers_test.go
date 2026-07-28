@@ -293,3 +293,25 @@ func TestControllerHandlerCallsSerialized(t *testing.T) {
 	}
 	wg.Wait()
 }
+
+// TestOperatorFSMHandlesNilHandler ensures the operator FSM methods don't panic
+// when ctxControllerHandlers holds a present-but-nil MesheryOperator entry — the
+// map type allows it and the handler getter guards against it, so the FSM must
+// gate on the handler value, not merely the map key's presence.
+func TestOperatorFSMHandlesNilHandler(t *testing.T) {
+	log, _ := logger.New("test", logger.Options{})
+	mch := &MesheryControllersHelper{
+		log:                    log,
+		ctxControllerHandlers:  map[MesheryController]controllers.IMesheryController{MesheryOperator: nil},
+		ctxOperatorStatus:      controllers.NotDeployed,
+		meshsyncDeploymentMode: connections.MeshsyncDeploymentModeOperator,
+	}
+
+	ot := NewOperatorTracker(false)
+	ot.Undeployed(mch.contextID, false)
+
+	// A present-but-nil handler must be skipped, not dereferenced.
+	mch.UpdateOperatorsStatusMap(ot)
+	mch.DeployUndeployedOperators(ot)
+	mch.UndeployDeployedOperators(ot)
+}
