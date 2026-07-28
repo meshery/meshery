@@ -85,11 +85,11 @@ After Meshery is running, open `http://[Public IPv4]:9081` in your browser.
 {{% alert color="warning" title="Secure your Droplet" %}}
 By default, a DigitalOcean Droplet does not restrict inbound traffic at the network edge. Once Meshery is listening, port `9081` may be reachable from the public internet. Use a [DigitalOcean Cloud Firewall](https://docs.digitalocean.com/products/networking/firewalls/how-to/configure-rules/) to control access. Create the firewall from your local machine with `doctl`:
 
-<pre class="codeblock-pre" style="margin-bottom: 1rem;"><div class="codeblock"><code class="clipboardjs" style="white-space: pre-wrap; overflow-wrap: anywhere;">doctl compute firewall create --name meshery-ui --inbound-rules "protocol:tcp,ports:22,address:0.0.0.0/0 protocol:tcp,ports:9081,address:[YOUR_IP]/32" --outbound-rules "protocol:tcp,ports:0,address:0.0.0.0/0 protocol:udp,ports:0,address:0.0.0.0/0 protocol:icmp,address:0.0.0.0/0" --droplet-ids [ID]</code></div></pre>
+<pre class="codeblock-pre" style="margin-bottom: 1rem;"><div class="codeblock"><code class="clipboardjs" style="white-space: pre-wrap; overflow-wrap: anywhere;">doctl compute firewall create --name meshery-ui --inbound-rules "protocol:tcp,ports:22,address:[YOUR_IP]/32 protocol:tcp,ports:9081,address:[YOUR_IP]/32" --outbound-rules "protocol:tcp,ports:0,address:0.0.0.0/0 protocol:udp,ports:0,address:0.0.0.0/0 protocol:icmp,address:0.0.0.0/0" --droplet-ids [ID]</code></div></pre>
 
 <ul>
-<li><code>--inbound-rules</code>: allow SSH on port <code>22</code>; limit Meshery UI (<code>9081</code>) to <code>[YOUR_IP]</code>.</li>
-<li><code>--outbound-rules</code>: permit DNS and HTTPS egress so Meshery can communicate with remote Kubernetes APIs.</li>
+<li><code>--inbound-rules</code>: limit SSH (<code>22</code>) and Meshery UI (<code>9081</code>) to <code>[YOUR_IP]</code>.</li>
+<li><code>--outbound-rules</code>: allow egress (including DNS and HTTPS) so the Droplet can reach remote Kubernetes APIs and pull images. This example permits all outbound traffic suitable for a lab setup.</li>
 <li><code>--droplet-ids [ID]</code>: attach the firewall to the Droplet <strong>ID</strong> from provisioning.</li>
 </ul>
 
@@ -101,7 +101,7 @@ Alternatively, leave port `9081` closed on the public interface and access the U
 An empty cluster list in the UI is expected until you attach a kubeconfig.
 
 1. For DOKS: `doctl kubernetes cluster kubeconfig save [CLUSTER_NAME]`.
-2. Make that kubeconfig available to Meshery on the Droplet ([Customizing Kubernetes Configuration Location]({{< ref "installation/docker/_index.md#customizing-kubernetes-configuration-location" >}})). If the file uses `exec`/`doctl` from your laptop, use a portable token-based kubeconfig on the Droplet instead.
+2. Make that kubeconfig available to Meshery on the Droplet ([Customizing Kubernetes Configuration Location]({{< ref "installation/docker/_index.md#customizing-kubernetes-configuration-location" >}})). If the file uses `exec`/`doctl` from your laptop, use a portable token-based kubeconfig on the Droplet instead. Token credentials typically expire after about seven days—regenerate or re-save the kubeconfig on the Droplet when connections fail after that.
 3. In the UI: **Lifecycle → Connections** → confirm the cluster is `Connected`.
 
 # Option 2: DigitalOcean Kubernetes (In-Cluster)
