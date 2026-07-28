@@ -256,6 +256,6 @@ describe('User component', () => {
     await user.click(screen.getByTestId('icon-button-avatar'));
     await waitFor(() => expect(notify).toHaveBeenCalled());
     const [payload] = notify.mock.calls[0];
-    expect(payload.message).toBe('Profile URL not available. Please try again later.');
+    expect(payload.message).toBe('Please log in to access this profile');
   });
 });
