@@ -80,6 +80,7 @@ vi.mock('@sistent/sistent', () => ({
     </button>
   ),
   Typography: ({ children }) => <span>{children}</span>,
+  useHasPermission: () => true,
   Table: ({ children }) => <div>{children}</div>,
   Grid2: ({ children }) => <div>{children}</div>,
   Button: ({ children, onClick, disabled, ...props }) => (
@@ -208,6 +209,10 @@ vi.mock('@/rtk-query/connection', () => ({
   useGetConnectionsQuery: (...args) => getConnectionsQuery(...args),
   useUpdateConnectionByIdMutation: () => [updateConnectionByIdMutator],
   usePerformConnectionActionMutation: () => [vi.fn(() => ({ unwrap: () => Promise.resolve({}) }))],
+}));
+
+vi.mock('@meshery/schemas/mesheryApi', () => ({
+  useListConnectionDefinitionsQuery: () => ({ data: { connectionDefinitions: [] } }),
 }));
 
 vi.mock('../../assets/icons/disconnect', () => ({
