@@ -15,6 +15,10 @@ vi.mock('@/utils/can', () => ({
   default: (...args: unknown[]) => can(...args),
 }));
 
+vi.mock('@meshery/schemas/permissions', () => ({
+  Keys: new Proxy({}, { get: () => ({}) }),
+}));
+
 vi.mock('@sistent/sistent', () => {
   const styled = (Component: any) => () => {
     const StyledComponent = ({ children, ...props }: any) => (
