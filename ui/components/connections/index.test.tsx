@@ -19,7 +19,9 @@ vi.mock('@sistent/sistent', () => ({
   NoSsr: ({ children }) => <>{children}</>,
   ErrorBoundary: ({ children }) => <>{children}</>,
   AppBar: ({ children }) => <div>{children}</div>,
+  InfoTooltip: () => <svg data-testid="info-icon" />,
   useHasPermission: () => true,
+  useTheme: () => ({ palette: { icon: { default: '#000' } } }),
 }));
 
 vi.mock('./styles', () => ({

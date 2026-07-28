@@ -48,14 +48,6 @@ vi.mock('next/link', () => ({
   ),
 }));
 
-vi.mock('../../../css/icons.styles', () => ({
-  iconSmall: {},
-}));
-
-vi.mock('@/components/meshery-mesh-interface/PatternService/CustomTextTooltip', () => ({
-  CustomTextTooltip: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
-}));
-
 vi.mock('@/rtk-query/connection', () => ({
   useGetConnectionsQuery: () => connectionsQueryReturn,
 }));
@@ -94,7 +86,7 @@ vi.mock('../style', () => ({
 vi.mock('@sistent/sistent', () => ({
   Box: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
   CircularProgress: () => <div data-testid="circular-progress" />,
-  InfoOutlinedIcon: () => <svg data-testid="info-icon" />,
+  InfoTooltip: () => <svg data-testid="info-icon" />,
   KubernetesIcon: () => <svg data-testid="k8s-icon" />,
   Typography: ({ children }: { children?: React.ReactNode }) => <p>{children}</p>,
   useTheme: () => ({
