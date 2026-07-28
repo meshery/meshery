@@ -33,7 +33,7 @@ jobs:
     secrets:
       REMOTE_PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TOKEN }}
   publish-allure-report:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}    
+    if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/master') || github.event_name == 'pull_request' }}    
     needs: [build-meshery, tests-e2e]
     uses: ./.github/workflows/publish-allure-report.yml
     with:
