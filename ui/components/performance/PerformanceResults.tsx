@@ -24,6 +24,7 @@ import {
   NoSsr,
   Fade,
   BarChartIcon,
+  CustomTooltip,
 } from '@sistent/sistent';
 
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
@@ -205,14 +206,16 @@ function generateColumnsForDisplay(
         },
         customBodyRender: function CustomBody(value, tableMeta) {
           return (
-            <IconButton
-              aria-label="more"
-              data-testid="open-performance-result-bar-chart"
-              color="inherit"
-              onClick={() => setSelectedProfileIdxForChart(tableMeta.rowIndex)}
-            >
-              <BarChartIcon style={iconMedium} /> {/* can change it to large */}
-            </IconButton>
+            <CustomTooltip title="View Chart">
+              <IconButton
+                aria-label="more"
+                data-testid="open-performance-result-bar-chart"
+                size="small"
+                onClick={() => setSelectedProfileIdxForChart(tableMeta.rowIndex)}
+              >
+                <BarChartIcon style={iconMedium} />
+              </IconButton>
+            </CustomTooltip>
           );
         },
       },
