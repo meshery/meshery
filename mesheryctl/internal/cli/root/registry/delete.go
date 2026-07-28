@@ -63,7 +63,7 @@ mesheryctl registry delete [connection-id]
 			utils.Log.Error(err)
 			return ErrDeleteRegistry(err, connectionID)
 		}
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		if resp.StatusCode == http.StatusNotFound {
 			var bodyMap map[string]string
