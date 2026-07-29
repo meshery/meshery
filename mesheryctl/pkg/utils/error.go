@@ -678,7 +678,7 @@ func ErrUpdateComponent(err error, modelName, compName string) error {
 }
 
 func ErrInvalidModel() error {
-	return errors.New(ErrInvalidModelCode, errors.Alert, []string{"No valid component or relationship found in the model provided"}, []string{"No valid component or relationship found in the Model provided. A Model can be only imported if it contains at least one valid Component or Relationship."}, []string{"Provided components or relationships might have incorrect format", "Folder structure might be incorrect"}, []string{"Know about Meshery Models and Importing instructions here: https://docs.meshery.io/guides/configuration-management/importing-models"})
+	return errors.New(ErrInvalidModelCode, errors.Alert, []string{"No valid component or relationship found in the model provided"}, []string{"No valid component or relationship found in the Model provided. A Model can be only imported if it contains at least one valid Component or Relationship."}, []string{"Provided components or relationships might have incorrect format", "Folder structure might be incorrect", "Unsupported schemaVersion (e.g., using v1beta3 components with an older server that only supports v1beta1)"}, []string{"Verify that the schemaVersion in your component and relationship definitions is supported by the targeted Meshery Server", "Know about Meshery Models and Importing instructions here: https://docs.meshery.io/guides/configuration-management/importing-models"})
 }
 
 func ErrMissingCommands(err error) error {
