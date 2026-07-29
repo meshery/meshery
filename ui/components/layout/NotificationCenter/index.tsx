@@ -97,7 +97,8 @@ export const NotificationCenterProvider = ({ children }) => {
 };
 
 const getSeverityCount = (countBySeverityLevel, severity) => {
-  return countBySeverityLevel.find((item) => item.severity === severity)?.count || 0;
+  const severityLevels = countBySeverityLevel || [];
+  return severityLevels.find((item) => item.severity === severity)?.count || 0;
 };
 
 const EmptyState = () => {
