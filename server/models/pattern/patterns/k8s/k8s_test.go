@@ -245,6 +245,10 @@ func TestDryRunReturnsErrorWhenRESTClientFails(t *testing.T) {
 		t.Fatal("expected error, got nil")
 	}
 
+	if !strings.Contains(err.Error(), "connection failed") {
+		t.Fatalf("expected 'connection failed' error, got %v", err)
+	}
+
 	if success {
 		t.Fatal("expected success to be false")
 	}
