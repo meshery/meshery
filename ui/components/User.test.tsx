@@ -3,6 +3,8 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { EVENT_TYPES } from 'lib/event-types';
+
 const dispatch = vi.fn();
 const notify = vi.fn();
 
@@ -33,7 +35,7 @@ vi.mock('@/utils/hooks/useNotification', () => ({
 }));
 
 vi.mock('lib/event-types', () => ({
-  EVENT_TYPES: { ERROR: { type: 'error' } },
+  EVENT_TYPES: { ERROR: { type: 'error' }, WARNING: { type: 'warning' } },
 }));
 
 const ExtensionPointSchemaValidator = vi.fn((type: string) => (input: any) => input ?? []);

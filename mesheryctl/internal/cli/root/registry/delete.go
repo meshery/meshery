@@ -49,14 +49,6 @@ mesheryctl registry delete [connection-id]
 		resp, err := api.Delete(url)
 		if err != nil {
 			if errors.GetCode(err) == utils.ErrNotFoundCode {
-				errStr := err.Error()
-				var bodyMap map[string]string
-				if json.Unmarshal([]byte(errStr), &bodyMap) == nil {
-					if errMsg, ok := bodyMap["error"]; ok {
-						utils.Log.Warnf("%s", errMsg)
-						return nil
-					}
-				}
 				utils.Log.Warnf("No registrant connection with ID %q found or no models to delete", connectionID)
 				return nil
 			}
@@ -64,18 +56,6 @@ mesheryctl registry delete [connection-id]
 			return ErrDeleteRegistry(err, connectionID)
 		}
 		defer func() { _ = resp.Body.Close() }()
-
-		if resp.StatusCode == http.StatusNotFound {
-			var bodyMap map[string]string
-			if err := json.NewDecoder(resp.Body).Decode(&bodyMap); err == nil {
-				if errMsg, ok := bodyMap["error"]; ok {
-					utils.Log.Warnf("%s", errMsg)
-					return nil
-				}
-			}
-			utils.Log.Warnf("No registrant connection with ID %q found or no models to delete", connectionID)
-			return nil
-		}
 
 		if resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusOK {
 			err := fmt.Errorf("unexpected status code from Meshery Server: %d", resp.StatusCode)
