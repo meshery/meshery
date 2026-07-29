@@ -39,7 +39,7 @@
               "model": {
                 "version": ""
               },
-              "name": "",
+              "name": "aws-s3-controller",
               "registrant": {
                 "kind": "github"
               },
@@ -72,7 +72,7 @@
               "model": {
                 "version": ""
               },
-              "name": "",
+              "name": "aws-lambda-controller",
               "registrant": {
                 "kind": "github"
               },

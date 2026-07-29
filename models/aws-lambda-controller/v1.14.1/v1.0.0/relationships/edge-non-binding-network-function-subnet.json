@@ -90,7 +90,7 @@
               "model": {
                 "version": ""
               },
-              "name": "",
+              "name": "aws-ec2-controller",
               "registrant": {
                 "kind": "github"
               },

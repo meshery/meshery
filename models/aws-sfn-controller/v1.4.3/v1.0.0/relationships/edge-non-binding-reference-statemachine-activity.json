@@ -39,7 +39,7 @@
               "model": {
                 "version": ""
               },
-              "name": "",
+              "name": "aws-sfn-controller",
               "registrant": {
                 "kind": "github"
               },
@@ -69,7 +69,7 @@
               "model": {
                 "version": ""
               },
-              "name": "",
+              "name": "aws-sfn-controller",
               "registrant": {
                 "kind": "github"
               },

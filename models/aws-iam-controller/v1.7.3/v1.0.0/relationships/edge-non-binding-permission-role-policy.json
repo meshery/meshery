@@ -39,7 +39,7 @@
               "model": {
                 "version": ""
               },
-              "name": "",
+              "name": "aws-iam-controller",
               "registrant": {
                 "kind": "github"
               },
@@ -86,7 +86,7 @@
               "model": {
                 "version": ""
               },
-              "name": "",
+              "name": "aws-iam-controller",
               "registrant": {
                 "kind": "github"
               },
