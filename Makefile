@@ -175,6 +175,7 @@ server: dep-check
 	PROVIDER_CAPABILITIES_FILEPATH=$(PROVIDER_CAPABILITIES_FILEPATH) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
+	MESHSYNC_DEFAULT_DEPLOYMENT_MODE=$${MESHSYNC_DEFAULT_DEPLOYMENT_MODE:-operator} \
 	go run main.go error.go;
 
 ## Build and run Meshery Server with some Meshery Adapters on your local machine.
@@ -342,12 +343,12 @@ ui-provider-test: dep-check-node
 	cd provider-ui; npm run test; cd ..
 
 ## Builds all Meshery UIs  on your local machine.
-ui-build: ui-setup wasm-engine
+ui-build: ui-setup policy-engine
 	cd ui; npm run lint:fix || echo "Warning: Lint issues detected in ui but continuing build"; npm run build; cd ..
 	cd provider-ui; npm run lint:fix || echo "Warning: Lint issues detected in provider-ui but continuing build"; npm run build; cd ..
 
 ## Build only Meshery UI on your local machine.
-ui-meshery-build: dep-check-node wasm-engine
+ui-meshery-build: dep-check-node policy-engine
 	cd ui; npm run build; cd ..
 
 ## Builds only the provider user interface on your local machine
@@ -397,8 +398,7 @@ docs-build-production:
 
 ## Run Meshery Docs in a Docker container. Listen for changes.
 docs-docker:
-	cd docs; docker run --rm --name meshery-docs -p 1313:1313 -v `pwd`:/src -w /src ghcr.io/gohugoio/hugo:v0.157.0 server -D -F --bind 0.0.0.0
-
+	cd docs; docker run --rm --name meshery-docs -p 1313:1313 -v `pwd`:/src -w /src ghcr.io/gohugoio/hugo:v0.163.3 server -D -F --bind 0.0.0.0
 
 ## Build Meshery CLI docs
 docs-mesheryctl:
@@ -477,9 +477,9 @@ policy-test:
 	@cd server/policies && go test -v ./...
 
 ## Build the Go relationship engine as a wasm binary for browser/extension use
-.PHONY: wasm-engine
-wasm-engine: dep-check-go
-	@echo "Building Go relationship engine wasm..."
+.PHONY: policy-engine
+policy-engine: dep-check-go
+	@echo "Building policy engine WASM..."
 	@cd server/policies/wasm && \
 		go mod tidy && \
 		GOOS=js GOARCH=wasm go build -trimpath -ldflags="-s -w" -o policy_engine.wasm .
