@@ -69,8 +69,9 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 	}
 	resp, err := provider.GetEnvironments(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		writeMeshkitError(w, ErrGetResult(err), http.StatusNotFound)
+		handlerErr := ErrGetEnvironments(err)
+		h.log.Error(handlerErr)
+		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 
@@ -91,8 +92,9 @@ func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Reque
 	}
 	resp, err := provider.GetEnvironmentByID(r, environmentID, orgID)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		writeMeshkitError(w, ErrGetResult(err), http.StatusNotFound)
+		handlerErr := ErrGetEnvironment(err)
+		h.log.Error(handlerErr)
+		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 
@@ -123,8 +125,9 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 	environment := wire.EnvironmentPayload
 	resp, err := provider.SaveEnvironment(req, &environment, "", false)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		writeMeshkitError(w, ErrGetResult(err), http.StatusNotFound)
+		handlerErr := ErrSaveEnvironment(err)
+		h.log.Error(handlerErr)
+		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 
@@ -142,8 +145,9 @@ func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Reques
 	environmentID := mux.Vars(r)["id"]
 	resp, err := provider.DeleteEnvironment(r, environmentID)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		writeMeshkitError(w, ErrGetResult(err), http.StatusNotFound)
+		handlerErr := ErrDeleteEnvironment(err)
+		h.log.Error(handlerErr)
+		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 
@@ -175,15 +179,17 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 	environment := wire.EnvironmentPayload
 	resp, err := provider.UpdateEnvironment(req, &environment, environmentID)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		writeMeshkitError(w, ErrGetResult(err), http.StatusNotFound)
+		handlerErr := ErrUpdateEnvironment(err)
+		h.log.Error(handlerErr)
+		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 
 	respJSON, err := json.Marshal(resp)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		writeMeshkitError(w, models.ErrMarshal(err, "environment update response"), http.StatusInternalServerError)
+		marshalErr := models.ErrMarshal(err, "environment update response")
+		h.log.Error(marshalErr)
+		writeMeshkitError(w, marshalErr, http.StatusInternalServerError)
 		return
 	}
 	description := fmt.Sprintf("Environment %s updated.", environment.Name)
@@ -191,10 +197,9 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	_, err = w.Write(respJSON)
-	if err != nil {
-		h.log.Error(ErrGetResult(err))
+	if _, err = w.Write(respJSON); err != nil {
 		// Headers already committed; log only. Writing another body would corrupt the stream.
+		h.log.Error(err)
 		return
 	}
 }
@@ -204,8 +209,9 @@ func (h *Handler) AddConnectionToEnvironmentHandler(w http.ResponseWriter, r *ht
 	connectionID := mux.Vars(r)["connectionID"]
 	resp, err := provider.AddConnectionToEnvironment(r, environmentID, connectionID)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		writeMeshkitError(w, ErrGetResult(err), http.StatusNotFound)
+		handlerErr := ErrEnvironmentConnection(err, "assign connection to")
+		h.log.Error(handlerErr)
+		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 
@@ -220,8 +226,9 @@ func (h *Handler) RemoveConnectionFromEnvironmentHandler(w http.ResponseWriter, 
 	connectionID := mux.Vars(r)["connectionID"]
 	resp, err := provider.RemoveConnectionFromEnvironment(r, environmentID, connectionID)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		writeMeshkitError(w, ErrGetResult(err), http.StatusNotFound)
+		handlerErr := ErrEnvironmentConnection(err, "remove connection from")
+		h.log.Error(handlerErr)
+		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 
@@ -236,8 +243,9 @@ func (h *Handler) GetConnectionsOfEnvironmentHandler(w http.ResponseWriter, r *h
 	q := r.URL.Query()
 	resp, err := provider.GetConnectionsOfEnvironment(r, environmentID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		writeMeshkitError(w, ErrGetResult(err), http.StatusInternalServerError)
+		handlerErr := ErrEnvironmentConnection(err, "list the connections of")
+		h.log.Error(handlerErr)
+		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")

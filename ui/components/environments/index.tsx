@@ -6,6 +6,7 @@ import {
   NoSsr,
   Pagination,
   PaginationItem,
+  useHasPermission,
   useTheme,
 } from '@sistent/sistent';
 import { withRouter } from 'next/router';
@@ -17,6 +18,7 @@ import EnvironmentCard from './environment-card';
 import EnvironmentIcon from '../../assets/icons/Environment';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
+import { formatApiError } from '../../utils/helpers/meshkitError';
 import { RJSFModalWrapper } from '../shared/Modal/Modal';
 import _PromptComponent from '../general/PromptComponent';
 import { EmptyState } from '../lifecycle/general';
@@ -47,7 +49,6 @@ import {
   useDeleteEnvironmentMutation,
 } from '../../rtk-query/environments';
 import { Keys } from '@meshery/schemas/permissions';
-import CAN from '@/utils/can';
 import DefaultError from '../general/error-404/index';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
@@ -58,6 +59,15 @@ const ACTION_TYPES = {
 };
 
 const Environments = () => {
+  const canViewEnv = useHasPermission(Keys.WorkspaceManagementViewEnvironment);
+  const canCreateEnv = useHasPermission(Keys.WorkspaceManagementCreateEnvironment);
+  const canEditEnv = useHasPermission(Keys.WorkspaceManagementEditEnvironment);
+  const canAssignConnToEnv = useHasPermission(
+    Keys.WorkspaceManagementAssignConnectionsToEnvironment,
+  );
+  const canRemoveConnFromEnv = useHasPermission(
+    Keys.WorkspaceManagementRemoveConnectionsFromEnvironments,
+  );
   const theme = useTheme();
   const { organization } = useSelector((state) => state.ui);
   const [environmentModal, setEnvironmentModal] = useState({
@@ -157,15 +167,15 @@ const Environments = () => {
 
   useEffect(() => {
     if (isEnvironmentsError) {
-      handleError(`Environments Fetching Error: ${environmentsError?.data}`);
+      handleError({ error_msg: 'Unable to fetch environments' })(environmentsError);
     }
     if (isEnvironmentConnectionsError) {
-      handleError(
-        `Connections of a Environment fetching Error: ${environmentConnectionsError?.data}`,
+      handleError({ error_msg: "Unable to fetch an environment's connections" })(
+        environmentConnectionsError,
       );
     }
     if (isConnectionsError) {
-      handleError(`Connections fetching Error: ${connectionsError?.data}`);
+      handleError({ error_msg: 'Unable to fetch connections' })(connectionsError);
     }
   }, [
     isEnvironmentsError,
@@ -176,13 +186,20 @@ const Environments = () => {
     connectionsError,
   ]);
 
+  // Curried so a call site can name the failing operation once and hand the
+  // raw error to the returned callback: `handleError({ error_msg })(error)`.
+  // `formatApiError` consumes the MeshKit envelope the server now sends (code
+  // and suggested remediation) and renders it as the markdown that `notify`
+  // displays through BasicMarkdown; `error_msg` is the fallback title used only
+  // when the response carries no envelope. The raw error must be passed
+  // through - do not pre-flatten it to a string, or the envelope is lost.
   function handleError(action) {
     return (error) => {
       updateProgress({ showProgress: false });
+      const { message } = formatApiError(error, action?.error_msg);
       notify({
-        message: `${action.error_msg}: ${error}`,
+        message,
         event_type: EVENT_TYPES.ERROR,
-        details: error.toString(),
       });
     };
   }
@@ -217,13 +234,17 @@ const Environments = () => {
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
 
-  const addConnectionToEnvironment = async (environmentId, connectionId) => {
-    addConnectionToEnvironmentMutator({ environmentId, connectionId });
-  };
+  // Both mutators previously fired and discarded the returned promise, so a
+  // rejected assignment left the transfer list looking like it had succeeded.
+  const addConnectionToEnvironment = (environmentId, connectionId) =>
+    addConnectionToEnvironmentMutator({ environmentId, connectionId })
+      .unwrap()
+      .catch(handleError({ error_msg: 'Unable to assign connection to environment' }));
 
-  const removeConnectionFromEnvironment = (environmentId, connectionId) => {
-    removeConnectionFromEnvMutator({ environmentId, connectionId });
-  };
+  const removeConnectionFromEnvironment = (environmentId, connectionId) =>
+    removeConnectionFromEnvMutator({ environmentId, connectionId })
+      .unwrap()
+      .catch(handleError({ error_msg: 'Unable to remove connection from environment' }));
 
   const handleEnvironmentModalOpen = (e, actionType, envObject) => {
     e.stopPropagation();
@@ -260,13 +281,15 @@ const Environments = () => {
       environmentPayload: {
         name: name,
         description: description,
-        organization_id: organizationId,
+        organizationId: organizationId,
       },
     })
       .unwrap()
-      .then(handleSuccess(`Environment "${name}" created `))
-      .catch((error) => handleError(`Environment Create Error: ${error?.data}`));
-    handleEnvironmentModalClose();
+      .then(() => {
+        handleSuccess(`Environment "${name}" created`);
+        handleEnvironmentModalClose();
+      })
+      .catch(handleError({ error_msg: `Unable to create environment "${name}"` }));
   };
 
   const handleEditEnvironment = ({ name, description }) => {
@@ -275,13 +298,15 @@ const Environments = () => {
       environmentPayload: {
         name: name,
         description: description,
-        organization_id: initialData.organizationId,
+        organizationId: initialData.organizationId,
       },
     })
       .unwrap()
-      .then(handleSuccess(`Environment "${name}" updated`))
-      .catch((error) => handleError(`Environment Update Error: ${error?.data}`));
-    handleEnvironmentModalClose();
+      .then(() => {
+        handleSuccess(`Environment "${name}" updated`);
+        handleEnvironmentModalClose();
+      })
+      .catch(handleError({ error_msg: `Unable to update environment "${name}"` }));
   };
 
   const handleDeleteEnvironmentConfirm = async (e, environment) => {
@@ -305,8 +330,8 @@ const Environments = () => {
       environmentId: id,
     })
       .unwrap()
-      .then(handleSuccess(`Environment deleted`))
-      .catch((error) => handleError(`Environment Delete Error: ${error?.data}`));
+      .then(() => handleSuccess(`Environment deleted`))
+      .catch(handleError({ error_msg: 'Unable to delete environment' }));
   };
 
   const deleteEnvironmentModalContent = (environment) => (
@@ -351,13 +376,21 @@ const Environments = () => {
     setSelectedEnvironments([]);
   };
 
-  const handleAssignConnection = () => {
+  const handleAssignConnection = async () => {
     const { addedConnectionsIds, removedConnectionsIds } =
       getAddedAndRemovedConnection(assignedConnections);
 
-    addedConnectionsIds.map((id) => addConnectionToEnvironment(connectionAssignEnv.id, id));
-
-    removedConnectionsIds.map((id) => removeConnectionFromEnvironment(connectionAssignEnv.id, id));
+    // Await every assignment/removal before closing so a rejected mutation
+    // surfaces its error toast while the modal is still open, rather than the
+    // modal vanishing as if the change had succeeded. allSettled keeps a single
+    // failure from aborting the rest; each rejection is reported by the
+    // mutators' own .catch above.
+    await Promise.allSettled([
+      ...addedConnectionsIds.map((id) => addConnectionToEnvironment(connectionAssignEnv.id, id)),
+      ...removedConnectionsIds.map((id) =>
+        removeConnectionFromEnvironment(connectionAssignEnv.id, id),
+      ),
+    ]);
     setEnvironmentConnectionsData([]);
     setConnectionsData([]);
     handleonAssignConnectionModalClose();
@@ -383,14 +416,7 @@ const Environments = () => {
     const { addedConnectionsIds, removedConnectionsIds } =
       getAddedAndRemovedConnection(updatedAssignedData);
     (addedConnectionsIds.length > 0 || removedConnectionsIds.length) > 0 &&
-    (CAN(
-      Keys.WorkspaceManagementAssignConnectionsToEnvironment.id,
-      Keys.WorkspaceManagementAssignConnectionsToEnvironment.function,
-    ) ||
-      CAN(
-        Keys.WorkspaceManagementRemoveConnectionsFromEnvironments.id,
-        Keys.WorkspaceManagementRemoveConnectionsFromEnvironments.function,
-      ))
+    (canAssignConnToEnv || canRemoveConnFromEnv)
       ? setDisableTranferButton(false)
       : setDisableTranferButton(true);
 
@@ -434,10 +460,7 @@ const Environments = () => {
 
   return (
     <NoSsr>
-      {CAN(
-        Keys.WorkspaceManagementViewEnvironment.id,
-        Keys.WorkspaceManagementViewEnvironment.function,
-      ) ? (
+      {canViewEnv ? (
         <>
           <ToolWrapper>
             <CreateButtonWrapper style={{ marginRight: '2rem' }}>
@@ -542,36 +565,26 @@ const Environments = () => {
               pointerLabel="Click “Create” to establish your first environment."
             />
           )}
-          {(CAN(
-            Keys.WorkspaceManagementCreateEnvironment.id,
-            Keys.WorkspaceManagementCreateEnvironment.function,
-          ) ||
-            CAN(
-              Keys.WorkspaceManagementEditEnvironment.id,
-              Keys.WorkspaceManagementEditEnvironment.function,
-            )) &&
-            environmentModal.open && (
-              <SisitentModal
-                open={environmentModal.open}
-                closeModal={handleEnvironmentModalClose}
-                title={
-                  actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
+          {(canCreateEnv || canEditEnv) && environmentModal.open && (
+            <SisitentModal
+              open={environmentModal.open}
+              closeModal={handleEnvironmentModalClose}
+              title={actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'}
+            >
+              <RJSFModalWrapper
+                schema={environmentModal.schema.schema}
+                uiSchema={environmentModal.schema.uischema}
+                handleSubmit={
+                  actionType === ACTION_TYPES.CREATE
+                    ? handleCreateEnvironment
+                    : handleEditEnvironment
                 }
-              >
-                <RJSFModalWrapper
-                  schema={environmentModal.schema.schema}
-                  uiSchema={environmentModal.schema.uischema}
-                  handleSubmit={
-                    actionType === ACTION_TYPES.CREATE
-                      ? handleCreateEnvironment
-                      : handleEditEnvironment
-                  }
-                  submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
-                  initialData={initialData}
-                  handleClose={handleEnvironmentModalClose}
-                />
-              </SisitentModal>
-            )}
+                submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
+                initialData={initialData}
+                handleClose={handleEnvironmentModalClose}
+              />
+            </SisitentModal>
+          )}
           <SisitentModal
             open={assignConnectionModal}
             closeModal={handleonAssignConnectionModalClose}
@@ -606,14 +619,8 @@ const Environments = () => {
                 assignedPage={handleAssignedPage}
                 originalLeftCount={connections?.totalCount}
                 originalRightCount={environmentConnections?.totalCount}
-                leftPermission={CAN(
-                  Keys.WorkspaceManagementRemoveConnectionsFromEnvironments.id,
-                  Keys.WorkspaceManagementRemoveConnectionsFromEnvironments.function,
-                )}
-                rightPermission={CAN(
-                  Keys.WorkspaceManagementAssignConnectionsToEnvironment.id,
-                  Keys.WorkspaceManagementAssignConnectionsToEnvironment.function,
-                )}
+                leftPermission={canRemoveConnFromEnv}
+                rightPermission={canAssignConnToEnv}
               />
             </ModalBody>
             <ModalFooter variant="filled" helpText="Assign connections to environment">

@@ -9,6 +9,7 @@ import {
   Menu,
   MenuItem,
   MoreVertIcon,
+  useHasPermission,
   useTheme,
   useWindowDimensions,
 } from '@sistent/sistent';
@@ -16,7 +17,6 @@ import { useState } from 'react';
 import { TableIconsContainer, IconWrapper } from './styles';
 import { iconMedium } from 'css/icons.styles';
 import { WORKSPACE_ACTION_TYPES } from '.';
-import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
 
 const WorkspaceActionList = ({
@@ -31,6 +31,8 @@ const WorkspaceActionList = ({
   const { width } = useWindowDimensions();
   const isMobile = width < 1024;
   const theme = useTheme();
+  const canEditWorkspace = useHasPermission(Keys.WorkspaceManagementEditWorkspace);
+  const canDeleteWorkspace = useHasPermission(Keys.WorkspaceManagementDeleteWorkspace);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -65,20 +67,14 @@ const WorkspaceActionList = ({
       label: 'Edit Workspace',
       icon: <EditIcon style={{ fill: theme.palette.icon.default, ...iconMedium }} />,
       onClick: (e) => handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.EDIT, selectedWorkspace),
-      disabled: !CAN(
-        Keys.WorkspaceManagementEditWorkspace.id,
-        Keys.WorkspaceManagementEditWorkspace.function,
-      ),
+      disabled: !canEditWorkspace,
     },
     {
       key: 'delete-workspace',
       label: 'Delete Workspace',
       icon: <DeleteIcon style={{ fill: theme.palette.icon.default, ...iconMedium }} />,
       onClick: (e) => handleDeleteWorkspaceConfirm(e, selectedWorkspace),
-      disabled: !CAN(
-        Keys.WorkspaceManagementDeleteWorkspace.id,
-        Keys.WorkspaceManagementDeleteWorkspace.function,
-      ),
+      disabled: !canDeleteWorkspace,
     },
   ];
 
