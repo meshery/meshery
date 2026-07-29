@@ -28,9 +28,10 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.base_ref }}
+          ref: ${{ github.event.pull_request.base.sha }}
           path: .baseline
           fetch-depth: 1
+          persist-credentials: false
       - uses: actions/checkout@v6
         if: ${{ github.event_name == 'push' }}
         with:
@@ -49,6 +50,7 @@ jobs:
 
       - name: Run Utility For Meshery Server
         run: |
+          set -eo pipefail
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             ~/errorutil -d .baseline analyze -i .baseline/server/helpers -o .baseline/server/helpers --skip-dirs mesheryctl,docs
             
@@ -65,6 +67,7 @@ jobs:
 
       - name: Run Utility For Mesheryctl
         run: |
+          set -eo pipefail
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             ~/errorutil -d .baseline/mesheryctl analyze -i .baseline/mesheryctl/helpers -o .baseline/mesheryctl/helpers
             
