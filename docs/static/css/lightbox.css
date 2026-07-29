@@ -40,13 +40,10 @@
     cursor: zoom-in;
 }
 
-/* Image inside lightbox */
-#lightbox img {
-    max-width: 90%;
-    max-height: 85%;
-    width: auto;
-    height: auto;
-    object-fit: contain;
+#lightbox-img {
+    width: 90vw !important;
+    height: 85vh !important;
+    object-fit: contain !important;
     cursor: default;
     pointer-events: none;
     border-radius: 4px;
@@ -117,9 +114,9 @@
         padding: 1rem;
     }
 
-    #lightbox img {
-        max-width: 95vw;
-        max-height: 80vh;
+    #lightbox-img {
+        width: 95vw !important;
+        height: 80vh !important;
     }
 
     #lightbox-close {
