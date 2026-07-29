@@ -257,5 +257,6 @@ describe('User component', () => {
     await waitFor(() => expect(notify).toHaveBeenCalled());
     const [payload] = notify.mock.calls[0];
     expect(payload.message).toBe('Profile URL not available. Please try again later.');
+    expect(payload.event_type).toEqual(EVENT_TYPES.WARNING);
   });
 });

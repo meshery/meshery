@@ -377,9 +377,11 @@ const RelationshipContents = ({ relationshipDef }: { relationshipDef: any }) => 
 const RegistrantContent = ({
   registrant,
   onDelete,
+  isDeleting,
 }: {
   registrant: any;
   onDelete: (id: string, name: string) => void;
+  isDeleting?: boolean;
 }) => {
   const PropertyFormattersLeft = {
     models: (value) => <KeyValue property="Models" value={value} />,
@@ -414,6 +416,7 @@ const RegistrantContent = ({
           variant="contained"
           color="error"
           size="small"
+          disabled={isDeleting || !registrant?.summary?.models || registrant?.summary?.models === 0}
           onClick={() => onDelete(registrant.id, registrant.name || registrant.hostname)}
           style={{ textTransform: 'none' }}
           data-testid="delete-all-models-button"
