@@ -24,6 +24,13 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 1
+      - name: Checkout base branch
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.base_ref }}
+          path: .baseline
+          fetch-depth: 1
       - uses: actions/checkout@v6
         if: ${{ github.event_name == 'push' }}
         with:
@@ -42,8 +49,15 @@ jobs:
 
       - name: Run Utility For Meshery Server
         run: |
-          ~/errorutil update -d . -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl,docs
-          output=$(~/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl | wc -c)
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            ~/errorutil -d .baseline analyze -i .baseline/server/helpers -o .baseline/server/helpers --skip-dirs mesheryctl,docs
+            
+            ~/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl,.baseline
+            ~/errorutil check .baseline/server/helpers/errorutil_analyze_errors.json ./server/helpers/errorutil_analyze_errors.json
+          fi
+
+          ~/errorutil update -d . -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl,docs,.baseline
+          output=$(~/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl,.baseline | wc -c)
           if [ "$output" -ne 0 ]; then
             exit 1
           fi
@@ -51,6 +65,15 @@ jobs:
 
       - name: Run Utility For Mesheryctl
         run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            ~/errorutil -d .baseline/mesheryctl analyze -i .baseline/mesheryctl/helpers -o .baseline/mesheryctl/helpers
+            
+            cd ./mesheryctl
+            ~/errorutil -d . analyze -i ./helpers -o ./helpers
+            ~/errorutil check ../.baseline/mesheryctl/helpers/errorutil_analyze_errors.json ./helpers/errorutil_analyze_errors.json
+            cd ..
+          fi
+
           cd ./mesheryctl
           ~/errorutil update -d . -i ./helpers -o ./helpers
           output=$(~/errorutil -d . analyze -i ./helpers -o ./helpers | wc -c)
