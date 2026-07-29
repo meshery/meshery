@@ -16,7 +16,7 @@ import {
   usePingPrometheusConnectionQuery,
   useUpdatePrometheusPanelsMutation,
 } from '@/rtk-query/telemetryPrometheus';
-import { CONNECTION_KINDS } from '@/utils/Enum';
+import { CoreConnectionKinds } from '@/utils/Enum';
 import { useConnectionWizardModal } from '@/utils/context/ConnectionWizardContextProvider';
 import ConnectionPicker, { TelemetryConnection } from '../common/ConnectionPicker';
 import PingStatus from '../common/PingStatus';
@@ -171,7 +171,7 @@ const TelemetryMetrics: React.FC = () => {
           startIcon={<AddIcon />}
           onClick={() =>
             openCreateConnection({
-              kind: CONNECTION_KINDS.PROMETHEUS,
+              kind: CoreConnectionKinds.prometheus,
               skipKindSelection: true,
             })
           }
