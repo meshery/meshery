@@ -20,7 +20,13 @@
 &lt;h2 id="ways-to-create-a-design"&gt;
 	Ways to Create a Design
 &lt;/h2&gt;
-&lt;p&gt;You can create a Meshery Design in two ways:&lt;/p&gt;</description></item><item><title>Edge Styles Guide</title><link>/guides/configuration-management/edges-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/configuration-management/edges-guide/</guid><description>&lt;p&gt;In Meshery, the line that connects &lt;a href="/concepts/logical/components/"&gt;components&lt;/a&gt; is called an &lt;strong&gt;edge&lt;/strong&gt;. Each edge visually represents a &lt;a href="/concepts/logical/relationships/"&gt;relationship&lt;/a&gt; and uses a specific style to communicate its nature.&lt;/p&gt;
+&lt;div class="tab-container tab-level-1"&gt;&lt;input id="creating-a-meshery-design-tabs-1-1" type="radio" name="creating-a-meshery-design-tabs-1" checked&gt;
+ &lt;label for="creating-a-meshery-design-tabs-1-1"&gt;&lt;i class="fa fa-desktop" aria-hidden="true"&gt;&lt;/i&gt;Meshery UI
+ &lt;/label&gt;
+ &lt;section class="tabbed" id="creating-a-meshery-design-tabs-1-content-1"&gt;&lt;h2 id="using-the-design-configurator-in-meshery-ui"&gt;
+	Using the Design Configurator in Meshery UI
+&lt;/h2&gt;
+&lt;p&gt;The Design Configurator is a built-in tool in Meshery UI. It lets you browse infrastructure categories and models, add components to a design, configure each component through guided forms, and save the resulting design — all without writing YAML by hand.&lt;/p&gt;</description></item><item><title>Edge Styles Guide</title><link>/guides/configuration-management/edges-guide/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/configuration-management/edges-guide/</guid><description>&lt;p&gt;In Meshery, the line that connects &lt;a href="/concepts/logical/components/"&gt;components&lt;/a&gt; is called an &lt;strong&gt;edge&lt;/strong&gt;. Each edge visually represents a &lt;a href="/concepts/logical/relationships/"&gt;relationship&lt;/a&gt; and uses a specific style to communicate its nature.&lt;/p&gt;
 &lt;p&gt;This guide helps you interpret the most common edge styles you will encounter.&lt;/p&gt;
 &lt;h3 id="interpreting-common-edge-styles"&gt;
 	Interpreting Common Edge Styles
