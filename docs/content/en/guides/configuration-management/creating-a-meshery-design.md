@@ -13,12 +13,7 @@ See [Meshery Designs]({{< ref "concepts/logical/designs.md" >}}) for a full desc
 
 ## Ways to Create a Design
 
-You can create a Meshery Design in two ways:
-
-| Method | When to use |
-|---|---|
-| **Meshery UI — Design Configurator** | Visual, form-driven authoring with live component discovery |
-| **mesheryctl** | Scripted or file-based workflows |
+Choose the tab that matches your preferred workflow. The UI tab covers visual authoring in the Design Configurator, and the CLI tab covers file-based workflows with `mesheryctl`.
 
 {{< tabs id="creating-a-meshery-design-tabs" >}}
 Meshery UI | fa fa-desktop
