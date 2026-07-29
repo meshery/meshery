@@ -27,7 +27,7 @@ aliases:
   - A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.
 
 - [Bookinfo]({{< ref "guides/infrastructure-management/sample-apps/index.md#bookinfo" >}})
-
+  - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
 - [Httpbin]({{< ref "guides/infrastructure-management/sample-apps/index.md#httpbin" >}})
 
   - Httpbin is a simple HTTP request and response service.
