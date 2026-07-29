@@ -35312,7 +35312,13 @@ off; see the &lt;a href="/pr-preview/pr-20998/project/contributing/"&gt;Contribu
 &lt;h2 id="ways-to-create-a-design"&gt;
 	Ways to Create a Design
 &lt;/h2&gt;
-&lt;p&gt;Choose the tab that matches your preferred workflow. The UI tab covers visual authoring in the Design Configurator, and the CLI tab covers file-based workflows with &lt;code&gt;mesheryctl&lt;/code&gt;.&lt;/p&gt;</description></item><item><title>Credentials</title><link>/pr-preview/pr-20998/concepts/logical/credentials/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20998/concepts/logical/credentials/</guid><description>&lt;p&gt;Meshery uses one or more Credentials when authenticating to a managed or unmanaged Connection. Credentials are based on the Meshery&amp;rsquo;s &lt;a href="https://github.com/meshery/schemas/blob/master/schemas/constructs/v1beta2/credential/api.yml"&gt;Credential Schema&lt;/a&gt; with defined attributes.&lt;/p&gt;
+&lt;div class="tab-container tab-level-1"&gt;&lt;input id="creating-a-meshery-design-tabs-1-1" type="radio" name="creating-a-meshery-design-tabs-1" checked&gt;
+ &lt;label for="creating-a-meshery-design-tabs-1-1"&gt;&lt;i class="fa fa-desktop" aria-hidden="true"&gt;&lt;/i&gt;Meshery UI
+ &lt;/label&gt;
+ &lt;section class="tabbed" id="creating-a-meshery-design-tabs-1-content-1"&gt;&lt;h2 id="using-the-design-configurator-in-meshery-ui"&gt;
+	Using the Design Configurator in Meshery UI
+&lt;/h2&gt;
+&lt;p&gt;The Design Configurator is a built-in tool in Meshery UI. It lets you browse infrastructure categories and models, add components to a design, configure each component through guided forms, and save the resulting design — all without writing YAML by hand.&lt;/p&gt;</description></item><item><title>Credentials</title><link>/pr-preview/pr-20998/concepts/logical/credentials/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20998/concepts/logical/credentials/</guid><description>&lt;p&gt;Meshery uses one or more Credentials when authenticating to a managed or unmanaged Connection. Credentials are based on the Meshery&amp;rsquo;s &lt;a href="https://github.com/meshery/schemas/blob/master/schemas/constructs/v1beta2/credential/api.yml"&gt;Credential Schema&lt;/a&gt; with defined attributes.&lt;/p&gt;
 &lt;h2 id="understanding-credentials-in-meshery"&gt;
 	Understanding Credentials in Meshery
 &lt;/h2&gt;
