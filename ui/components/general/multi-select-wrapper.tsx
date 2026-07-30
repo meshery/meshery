@@ -1,7 +1,22 @@
 import { useState } from 'react';
 import { components } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
-import { Checkbox, ListItemButton, Paper, FormControlLabel, useTheme } from '@sistent/sistent';
+import {
+  Checkbox,
+  ListItemButton,
+  Paper,
+  FormControlLabel,
+  useTheme,
+  alpha,
+} from '@sistent/sistent';
+
+/** Brand-tinted option row highlight; exported for contrast / regression tests. */
+export function getMultiSelectOptionHighlight(theme) {
+  return alpha(
+    theme.palette.primary.main,
+    theme.palette.mode === 'dark' ? 0.28 : 0.12,
+  );
+}
 
 const MultiSelectWrapper = (props) => {
   const [selectInput, setSelectInput] = useState('');
@@ -21,6 +36,24 @@ const MultiSelectWrapper = (props) => {
   let filteredOptions = filterOptions(props.options, selectInput).sort(comparator);
   let filteredSelectedOptions = filterOptions(props.value, selectInput).sort(comparator);
 
+  const menuBackground =
+    theme.palette.mode === 'dark' ? theme.palette.background.card : theme.palette.common.white;
+
+  // Closed control should sit flush with the table row (transparent over the
+  // cell/row surface). The open menu keeps the solid card fill separately.
+  const controlBackground = 'transparent';
+
+  // Opaque chip fill (action.selected is translucent and breaks getContrastText /
+  // paint contrast). elevatedComponents / background.secondary are mode-aware
+  // solids — not grey[300].
+  const chipBackground =
+    theme.palette.mode === 'dark'
+      ? theme.palette.background.elevatedComponents
+      : theme.palette.background.secondary;
+  const chipForeground = theme.palette.getContrastText(chipBackground);
+
+  const optionHighlight = getMultiSelectOptionHighlight(theme);
+
   const Option = (props) => {
     return (
       <ListItemButton
@@ -28,9 +61,28 @@ const MultiSelectWrapper = (props) => {
         selected={props.isFocused}
         {...props.innerProps}
         component="div"
-        style={{
+        data-testid="multi-select-option"
+        sx={{
           fontWeight: props.isSelected ? 500 : 400,
           padding: '0.4rem 1rem',
+          backgroundColor: props.isFocused ? optionHighlight : 'transparent',
+          color: theme.palette.text.primary,
+          // Intentional redundancy: react-select sets isFocused for both keyboard and
+          // mouse-hovered rows, so the ternary already covers hover. Keep `&:hover`
+          // (and `&.Mui-selected:hover`) as a defensive fallback so MUI default hover
+          // styles cannot wash the row back to a faint action.hover.
+          '&:hover': {
+            backgroundColor: optionHighlight,
+          },
+          '&.Mui-selected': {
+            backgroundColor: optionHighlight,
+            '&:hover': {
+              backgroundColor: optionHighlight,
+            },
+          },
+          '& .MuiFormControlLabel-label': {
+            color: theme.palette.text.primary,
+          },
         }}
       >
         <FormControlLabel
@@ -66,25 +118,24 @@ const MultiSelectWrapper = (props) => {
     );
   };
 
-  const CustomInput = (props) => {
-    return selectInput.length === 0 ? (
-      <components.Input autoFocus={props.selectProps.menuIsOpen} {...props}>
-        {props.children}
-      </components.Input>
-    ) : (
-      <div>
-        <components.Input autoFocus={props.selectProps.menuIsOpen} {...props}>
-          {props.children}
-        </components.Input>
-      </div>
-    );
-  };
+  // Keep Input as a direct child of the value container so react-select's
+  // grid-area stacking with the placeholder stays intact (no caret overlap).
+  const CustomInput = (props) => (
+    <components.Input autoFocus={props.selectProps.menuIsOpen} {...props}>
+      {props.children}
+    </components.Input>
+  );
 
   const Menu = (props) => {
     return (
       <Paper
         square
-        style={{ zIndex: 9999, width: '100%', position: 'absolute' }}
+        style={{
+          zIndex: 9999,
+          width: '100%',
+          position: 'absolute',
+          backgroundColor: menuBackground,
+        }}
         {...props.innerProps}
       >
         {props.children}
@@ -150,20 +201,29 @@ const MultiSelectWrapper = (props) => {
   const customStyles = {
     multiValueLabel: (def) => ({
       ...def,
-      backgroundColor: theme.palette.grey[300],
+      backgroundColor: chipBackground,
+      color: chipForeground,
     }),
     multiValueRemove: (def) => ({
       ...def,
-      backgroundColor: theme.palette.grey[300],
+      backgroundColor: chipBackground,
+      color: chipForeground,
+      // Keep the x readable on hover; only the wash changes.
+      ':hover': {
+        backgroundColor: theme.palette.action.hover,
+        color: chipForeground,
+      },
     }),
     valueContainer: (base) => ({
       ...base,
       maxHeight: '65px',
       overflow: 'auto',
+      paddingLeft: '8px',
+      paddingRight: '8px',
     }),
     control: (base) => ({
       ...base,
-      backgroundColor: base.backgroundColor2,
+      backgroundColor: controlBackground,
       borderColor: theme.palette.primary.main,
       color: theme.palette.primary.main,
       boxShadow: 'none',
@@ -176,7 +236,23 @@ const MultiSelectWrapper = (props) => {
     }),
     menu: (base) => ({
       ...base,
-      backgroundColor: base.backgroundColor2,
+      backgroundColor: menuBackground,
+      paddingLeft: '4px',
+      paddingRight: '4px',
+    }),
+    menuList: (base) => ({
+      ...base,
+      // Small padding keeps the create-option from sitting flush against the border
+      // while removing the large empty bands above first / below last option.
+      paddingTop: '4px',
+      paddingBottom: '4px',
+    }),
+    placeholder: (base, state) => ({
+      ...base,
+      color: theme.palette.text.disabled,
+      // Hide once focused or while typing so the caret never overlaps ghost text.
+      display:
+        state.isFocused || state.selectProps.inputValue ? 'none' : base.display,
     }),
     input: (base) => ({
       ...base,
@@ -202,16 +278,6 @@ const MultiSelectWrapper = (props) => {
       noOptionsMessage={props.noOptionsMessage}
       menuPlacement={props.menuPlacement ?? 'auto'}
       styles={customStyles}
-      theme={(selectTheme) => ({
-        ...selectTheme,
-        colors: {
-          ...selectTheme.colors,
-          backgroundColor2:
-            theme.palette.mode === 'dark'
-              ? theme.palette.background.card
-              : theme.palette.common.white,
-        },
-      })}
       isMulti
       closeMenuOnSelect={false}
       tabSelectsValue={false}
