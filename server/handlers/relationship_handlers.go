@@ -64,7 +64,7 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 	page, offset, limit, _, order, sort, _ := getPaginationParams(r)
 	typ := mux.Vars(r)["model"]
 
-	entities, count, _, _ := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{
+	entities, count, _, err := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{
 		Id:               r.URL.Query().Get("id"),
 		Version:          r.URL.Query().Get("version"),
 		ModelName:        typ,
@@ -76,6 +76,11 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		SubType:          r.URL.Query().Get("subType"),
 		RelationshipType: r.URL.Query().Get("type"),
 	})
+	if err != nil {
+		h.log.Error(ErrGetMeshModels(err))
+		writeMeshkitError(rw, ErrGetMeshModels(err), http.StatusInternalServerError)
+		return
+	}
 
 	var pgSize int64
 	if limit == 0 {

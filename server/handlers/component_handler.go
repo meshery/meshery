@@ -184,7 +184,12 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		filter.Greedy = true
 	}
 
-	entities, count, _, _ := h.registryManager.GetEntities(filter)
+	entities, count, _, err := h.registryManager.GetEntities(filter)
+	if err != nil {
+		h.log.Error(ErrGetMeshModels(err))
+		writeMeshkitError(rw, ErrGetMeshModels(err), http.StatusInternalServerError)
+		return
+	}
 	var modelDefs []_model.ModelDefinition
 	for _, model := range entities {
 		model, ok := model.(*_model.ModelDefinition)
@@ -590,7 +595,12 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		filter.Greedy = true
 		filter.DisplayName = search
 	}
-	entities, count, _, _ := h.registryManager.GetEntities(filter)
+	entities, count, _, err := h.registryManager.GetEntities(filter)
+	if err != nil {
+		h.log.Error(ErrGetMeshModels(err))
+		writeMeshkitError(rw, ErrGetMeshModels(err), http.StatusInternalServerError)
+		return
+	}
 	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
@@ -738,7 +748,12 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		filter.Greedy = true
 		filter.DisplayName = search
 	}
-	entities, count, _, _ := h.registryManager.GetEntities(filter)
+	entities, count, _, err := h.registryManager.GetEntities(filter)
+	if err != nil {
+		h.log.Error(ErrGetMeshModels(err))
+		writeMeshkitError(rw, ErrGetMeshModels(err), http.StatusInternalServerError)
+		return
+	}
 	comps := processComponentDefinitions(entities)
 
 	var pgSize int64
