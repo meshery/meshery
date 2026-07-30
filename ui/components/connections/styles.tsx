@@ -68,10 +68,10 @@ export const ConnectionStyledSelect = styled(Select)(({ theme }) => ({
     padding: '0 !important',
   },
   '& .MuiOutlinedInput-notchedOutline': {
-    borderColor: alpha(theme.palette.text.secondary, 0.35),
+    borderColor: theme.palette.border.normal,
   },
   '&:hover .MuiOutlinedInput-notchedOutline': {
-    borderColor: alpha(theme.palette.text.secondary, 0.5),
+    borderColor: theme.palette.border.brand,
   },
 }));
 
@@ -107,7 +107,7 @@ export const ChipWrapper = styled(Chip)(({ theme }) => ({
   overflow: 'hidden',
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
-  border: `1px solid ${alpha(theme.palette.common.white, 0.23)}`,
+  border: `1px solid ${theme.palette.border.normal}`,
   textTransform: 'lowercase',
   color: theme.palette.text.primary,
 }));
