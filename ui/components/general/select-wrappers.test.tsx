@@ -55,7 +55,13 @@ vi.mock('react-select', () => ({
 /** Relative luminance + WCAG contrast for solid hex colors. */
 function hexToRgb(hex: string) {
   const h = hex.replace('#', '');
-  const full = h.length === 3 ? h.split('').map((c) => c + c).join('') : h;
+  const full =
+    h.length === 3
+      ? h
+          .split('')
+          .map((c) => c + c)
+          .join('')
+      : h;
   return [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16));
 }
 
@@ -161,10 +167,7 @@ describe('select wrappers', () => {
   it('keeps label text WCAG AA (≥4.5:1) on the blended option highlight', () => {
     const primary = '#00B39F';
 
-    const darkBlended = blendRgbaOverHex(
-      alpha(primary, 0.28),
-      darkModePalette.background.card,
-    );
+    const darkBlended = blendRgbaOverHex(alpha(primary, 0.28), darkModePalette.background.card);
     expect(contrastRatio(darkModePalette.text.default, darkBlended)).toBeGreaterThanOrEqual(4.5);
 
     const lightBlended = blendRgbaOverHex(alpha(primary, 0.12), '#ffffff');

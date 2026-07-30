@@ -12,10 +12,7 @@ import {
 
 /** Brand-tinted option row highlight; exported for contrast / regression tests. */
 export function getMultiSelectOptionHighlight(theme) {
-  return alpha(
-    theme.palette.primary.main,
-    theme.palette.mode === 'dark' ? 0.28 : 0.12,
-  );
+  return alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.28 : 0.12);
 }
 
 const MultiSelectWrapper = (props) => {
@@ -251,8 +248,7 @@ const MultiSelectWrapper = (props) => {
       ...base,
       color: theme.palette.text.disabled,
       // Hide once focused or while typing so the caret never overlaps ghost text.
-      display:
-        state.isFocused || state.selectProps.inputValue ? 'none' : base.display,
+      display: state.isFocused || state.selectProps.inputValue ? 'none' : base.display,
     }),
     input: (base) => ({
       ...base,
