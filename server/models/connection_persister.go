@@ -226,12 +226,7 @@ func (cp *ConnectionPersister) DeleteConnectionById(connectionID core.Uuid) (*co
 }
 
 func (cp *ConnectionPersister) fetchUserDetails() *User {
-
-	return &User{
-		ID:        LocalProviderUserID,
-		FirstName: "Meshery",
-		LastName:  "Meshery",
-	}
+	return LocalProviderUser()
 }
 
 func (cp *ConnectionPersister) UpdateConnectionStatusByID(connectionID core.Uuid, connectionStatus connections.ConnectionStatus) (*connections.Connection, error) {

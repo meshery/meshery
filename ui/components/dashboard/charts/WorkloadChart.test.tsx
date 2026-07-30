@@ -70,6 +70,7 @@ vi.mock('@sistent/sistent', () => ({
   Typography: ({ children, className }: { children?: React.ReactNode; className?: string }) => (
     <p className={className}>{children}</p>
   ),
+  useHasPermission: () => canSpy(),
 }));
 
 vi.mock('@/theme', () => ({

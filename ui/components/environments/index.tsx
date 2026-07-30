@@ -6,6 +6,7 @@ import {
   NoSsr,
   Pagination,
   PaginationItem,
+  useHasPermission,
   useTheme,
 } from '@sistent/sistent';
 import { withRouter } from 'next/router';
@@ -48,7 +49,6 @@ import {
   useDeleteEnvironmentMutation,
 } from '../../rtk-query/environments';
 import { Keys } from '@meshery/schemas/permissions';
-import CAN from '@/utils/can';
 import DefaultError from '../general/error-404/index';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
@@ -59,6 +59,15 @@ const ACTION_TYPES = {
 };
 
 const Environments = () => {
+  const canViewEnv = useHasPermission(Keys.WorkspaceManagementViewEnvironment);
+  const canCreateEnv = useHasPermission(Keys.WorkspaceManagementCreateEnvironment);
+  const canEditEnv = useHasPermission(Keys.WorkspaceManagementEditEnvironment);
+  const canAssignConnToEnv = useHasPermission(
+    Keys.WorkspaceManagementAssignConnectionsToEnvironment,
+  );
+  const canRemoveConnFromEnv = useHasPermission(
+    Keys.WorkspaceManagementRemoveConnectionsFromEnvironments,
+  );
   const theme = useTheme();
   const { organization } = useSelector((state) => state.ui);
   const [environmentModal, setEnvironmentModal] = useState({
@@ -407,14 +416,7 @@ const Environments = () => {
     const { addedConnectionsIds, removedConnectionsIds } =
       getAddedAndRemovedConnection(updatedAssignedData);
     (addedConnectionsIds.length > 0 || removedConnectionsIds.length) > 0 &&
-    (CAN(
-      Keys.WorkspaceManagementAssignConnectionsToEnvironment.id,
-      Keys.WorkspaceManagementAssignConnectionsToEnvironment.function,
-    ) ||
-      CAN(
-        Keys.WorkspaceManagementRemoveConnectionsFromEnvironments.id,
-        Keys.WorkspaceManagementRemoveConnectionsFromEnvironments.function,
-      ))
+    (canAssignConnToEnv || canRemoveConnFromEnv)
       ? setDisableTranferButton(false)
       : setDisableTranferButton(true);
 
@@ -458,10 +460,7 @@ const Environments = () => {
 
   return (
     <NoSsr>
-      {CAN(
-        Keys.WorkspaceManagementViewEnvironment.id,
-        Keys.WorkspaceManagementViewEnvironment.function,
-      ) ? (
+      {canViewEnv ? (
         <>
           <ToolWrapper>
             <CreateButtonWrapper style={{ marginRight: '2rem' }}>
@@ -566,36 +565,26 @@ const Environments = () => {
               pointerLabel="Click “Create” to establish your first environment."
             />
           )}
-          {(CAN(
-            Keys.WorkspaceManagementCreateEnvironment.id,
-            Keys.WorkspaceManagementCreateEnvironment.function,
-          ) ||
-            CAN(
-              Keys.WorkspaceManagementEditEnvironment.id,
-              Keys.WorkspaceManagementEditEnvironment.function,
-            )) &&
-            environmentModal.open && (
-              <SisitentModal
-                open={environmentModal.open}
-                closeModal={handleEnvironmentModalClose}
-                title={
-                  actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
+          {(canCreateEnv || canEditEnv) && environmentModal.open && (
+            <SisitentModal
+              open={environmentModal.open}
+              closeModal={handleEnvironmentModalClose}
+              title={actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'}
+            >
+              <RJSFModalWrapper
+                schema={environmentModal.schema.schema}
+                uiSchema={environmentModal.schema.uischema}
+                handleSubmit={
+                  actionType === ACTION_TYPES.CREATE
+                    ? handleCreateEnvironment
+                    : handleEditEnvironment
                 }
-              >
-                <RJSFModalWrapper
-                  schema={environmentModal.schema.schema}
-                  uiSchema={environmentModal.schema.uischema}
-                  handleSubmit={
-                    actionType === ACTION_TYPES.CREATE
-                      ? handleCreateEnvironment
-                      : handleEditEnvironment
-                  }
-                  submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
-                  initialData={initialData}
-                  handleClose={handleEnvironmentModalClose}
-                />
-              </SisitentModal>
-            )}
+                submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
+                initialData={initialData}
+                handleClose={handleEnvironmentModalClose}
+              />
+            </SisitentModal>
+          )}
           <SisitentModal
             open={assignConnectionModal}
             closeModal={handleonAssignConnectionModalClose}
@@ -630,14 +619,8 @@ const Environments = () => {
                 assignedPage={handleAssignedPage}
                 originalLeftCount={connections?.totalCount}
                 originalRightCount={environmentConnections?.totalCount}
-                leftPermission={CAN(
-                  Keys.WorkspaceManagementRemoveConnectionsFromEnvironments.id,
-                  Keys.WorkspaceManagementRemoveConnectionsFromEnvironments.function,
-                )}
-                rightPermission={CAN(
-                  Keys.WorkspaceManagementAssignConnectionsToEnvironment.id,
-                  Keys.WorkspaceManagementAssignConnectionsToEnvironment.function,
-                )}
+                leftPermission={canRemoveConnFromEnv}
+                rightPermission={canAssignConnToEnv}
               />
             </ModalBody>
             <ModalFooter variant="filled" helpText="Assign connections to environment">

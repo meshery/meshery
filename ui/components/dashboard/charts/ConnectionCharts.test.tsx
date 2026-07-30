@@ -5,7 +5,7 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 let connectionsQueryReturn: { data?: { connections?: Array<{ status?: string }> } } = {
   data: { connections: [] },
 };
-const canSpy = vi.fn(() => true);
+const canSpy = vi.fn((_key?: unknown) => true);
 const bbChartSpy = vi.fn();
 
 vi.mock('billboard.js', () => ({
@@ -54,10 +54,6 @@ vi.mock('@/rtk-query/connection', () => ({
   useGetConnectionsQuery: () => connectionsQueryReturn,
 }));
 
-vi.mock('@/utils/can', () => ({
-  default: (...args: unknown[]) => canSpy(...args),
-}));
-
 vi.mock('next/router', () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
@@ -79,8 +75,12 @@ vi.mock('@sistent/sistent', () => ({
   InfoOutlinedIcon: () => <svg data-testid="info-icon" />,
   Typography: ({ children }: { children?: React.ReactNode }) => <p>{children}</p>,
   useTheme: () => ({ palette: { mode: 'light', icon: { default: '#000' } } }),
+  // Forward the requested key so tests can pin *which* permission the chart
+  // authorizes against, not just that it asked for one.
+  useHasPermission: (key: unknown) => canSpy(key),
 }));
 
+import { Keys } from '@meshery/schemas/permissions';
 import ConnectionStatsChart from './ConnectionCharts';
 
 describe('ConnectionStatsChart (Connections donut chart)', () => {
@@ -127,6 +127,11 @@ describe('ConnectionStatsChart (Connections donut chart)', () => {
     connectionsQueryReturn = { data: { connections: [{ status: 'connected' }] } };
     render(<ConnectionStatsChart />);
     expect(screen.getByRole('link')).toHaveStyle({ pointerEvents: 'none' });
+  });
+
+  it('authorizes the connections link against WorkspaceManagementViewConnections', () => {
+    render(<ConnectionStatsChart />);
+    expect(canSpy).toHaveBeenCalledWith(Keys.WorkspaceManagementViewConnections);
   });
 
   it('renders the Connections heading regardless of state', () => {
