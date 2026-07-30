@@ -2,7 +2,7 @@
   "id": "b95f6d26-e5ed-43c9-93a8-1fa15bdbfa4d",
   "name": "config.yaml",
   "schemaVersion": "designs.meshery.io/v1beta3",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "components": [
     {
       "id": "86a78439-4dde-433a-a5d0-aa800c06cd17",
@@ -26,8 +26,8 @@
       },
       "styles": {
         "position": {
-          "x": 729,
-          "y": 390.5
+          "x": 728.6555188068803,
+          "y": 389.52280987861707
         },
         "primaryColor": "#0d2192",
         "secondaryColor": "#5266D7",

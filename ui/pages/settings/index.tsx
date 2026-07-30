@@ -1,6 +1,6 @@
 import React from 'react';
 import MesherySettings from '@/components/settings/MesherySettings';
-import { MesheryPage } from '../../components/MesheryPage';
+import { MesheryPage } from '../../components/general/MesheryPage';
 
 function Settings() {
   return (
