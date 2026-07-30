@@ -292,7 +292,7 @@ function PerformanceCard({
                   data-testid={dataTestIDs('edit')}
                   permissionKey={Keys.PerformanceManagementEditPerformanceTest}
                 >
-                  <EditIcon style={iconMedium} />
+                  <EditIcon style={iconMedium} fill={theme?.palette?.icon?.default} />
                 </IconButton>
               </CustomTooltip>
               <CustomTooltip title="Delete">
@@ -301,7 +301,7 @@ function PerformanceCard({
                   data-testid={dataTestIDs('delete')}
                   permissionKey={Keys.PerformanceManagementDeletePerformanceTest}
                 >
-                  <DeleteIcon style={iconMedium} />
+                  <DeleteIcon style={iconMedium} fill={theme?.palette?.icon?.default} />
                 </IconButton>
               </CustomTooltip>
             </div>
