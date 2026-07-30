@@ -6,7 +6,7 @@ aliases: [project/contributing/contributing-models-quick-start]
 weight: -5
 ---
 
-**Models follow Meshery's schema-driven development approach.** Model, Component, and Relationship definitions are validated against schemas in [`Model schema`](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/model). See [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas.md" >}}) for details.
+**Models follow Meshery's schema-driven development approach.** Model, Component, and Relationship definitions are validated against schemas in [`Model schema`](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/model). See [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas/_index.md" >}}) for details.
 
 [Meshery Models]({{< ref "concepts/logical/models/index.md" >}}) are a way to represent the architecture of a system or application. Models are defined in JSON and can be used to visualize the components and relationships between them. This guide will walk you through the process of creating a new model.
 

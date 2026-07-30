@@ -8,7 +8,7 @@ aliases:
 weight: 15
 ---
 
-**Connections are schema-driven.** A Connection's structure, identity, lifecycle, and the forms Meshery renders for it are declared in a **connection definition** that conforms to the [Connection schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta3/connection) (`connections.meshery.io/v1beta3`) in [`meshery/schemas`](https://github.com/meshery/schemas). Before contributing, familiarize yourself with that schema and read [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas.md" >}}) for the development workflow.
+**Connections are schema-driven.** A Connection's structure, identity, lifecycle, and the forms Meshery renders for it are declared in a **connection definition** that conforms to the [Connection schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta3/connection) (`connections.meshery.io/v1beta3`) in [`meshery/schemas`](https://github.com/meshery/schemas). Before contributing, familiarize yourself with that schema and read [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas/_index.md" >}}) for the development workflow.
 
 This guide explains how to author a connection definition so that Meshery understands a new kind of [Connection]({{< ref "concepts/logical/connections/index.md" >}}) and offers it in the [Connection Wizard]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}). In most cases, **authoring a JSON definition is all you need** - no UI or server code.
 
