@@ -280,7 +280,6 @@ function PerformanceProfile({ handleDelete }) {
               <CustomTooltip title="Edit">
                 <div>
                   <IconButton
-                    style={iconMedium}
                     onClick={(ev) => {
                       ev.stopPropagation();
                       setSelectedProfile(testProfiles[tableMeta.rowIndex]);
@@ -306,7 +305,6 @@ function PerformanceProfile({ handleDelete }) {
               <CustomTooltip title="Run test">
                 <div>
                   <IconButton
-                    style={iconMedium}
                     onClick={(ev) => {
                       ev.stopPropagation();
                       setSelectedProfile({ ...testProfiles[tableMeta.rowIndex], runTest: true });

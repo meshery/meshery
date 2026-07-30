@@ -108,6 +108,11 @@ across `meshery/meshery` and `meshery-cloud`.
 
 ## Build & Development Commands
 
+- Use the `gh-axi` CLI tool to interact with GitHub. Prefer `gh-axi` over `gh`.
+- Use `chrome-devtools-axi` for browser automation (navigate, snapshot, click, fill forms, run JS, inspect console/network) in place of raw Playwright/chrome-devtools MCP for ad hoc tasks.
+- Run `quota-axi` to check local agent-provider quota windows before long-running work.
+- Use the `lavish` skill (`lavish-axi` CLI) to turn a plan, comparison, or report into a reviewable HTML artifact.
+
 ### Server (Go)
 
 ```bash

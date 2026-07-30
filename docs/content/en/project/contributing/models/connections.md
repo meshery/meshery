@@ -140,11 +140,11 @@ For example, the shipped definitions live under [`models/meshery-core/.../connec
 
    | Method   | Endpoint                                          | Purpose                                |
    | -------- | ------------------------------------------------- | -------------------------------------- |
-   | `GET`    | `/api/meshmodels/connections`                     | List connection definitions            |
-   | `GET`    | `/api/meshmodels/connections/{id}`                | Fetch one definition                   |
-   | `POST`   | `/api/meshmodels/connections`                     | Register a definition (needs a Model)  |
-   | `PUT`    | `/api/meshmodels/connections/{id}`                | Update a definition                    |
-   | `DELETE` | `/api/meshmodels/connections/{id}`                | Remove a definition                    |
+   | `GET`    | `/api/registry/connections`                     | List connection definitions            |
+   | `GET`    | `/api/registry/connections/{id}`                | Fetch one definition                   |
+   | `POST`   | `/api/registry/connections`                     | Register a definition (needs a Model)  |
+   | `PUT`    | `/api/registry/connections/{id}`                | Update a definition                    |
+   | `DELETE` | `/api/registry/connections/{id}`                | Remove a definition                    |
 
 2. **Consumption.** The [Connection Wizard]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}) lists every registered definition as a creatable kind and renders its `connectionSchema` and `credentialSchema` as wizard steps. **Register your definition and it appears in the wizard automatically** - no UI changes required.
 
