@@ -58,7 +58,7 @@ mesheryctl relationship view [model-name] --output-format json --save
 	RunE: func(cmd *cobra.Command, args []string) error {
 		model := args[0]
 
-		relationshipAPIPath := fmt.Sprintf("api/meshmodels/models/%s/relationships", model)
+		relationshipAPIPath := fmt.Sprintf("api/registry/models/%s/relationships", model)
 
 		selectedModel := new(relationship.RelationshipDefinition)
 

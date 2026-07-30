@@ -37,7 +37,7 @@ var listWorkspaceCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered workspaces",
 	Long: `List name of all registered workspaces
-Find more information at: https://docs.meshery.io/reference/mesheryctl/workspace/list`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/workspace/list`,
 	Example: `
 // List of workspace under a specific organization
 mesheryctl workspace list --orgId [orgId]
@@ -95,7 +95,7 @@ func processDataToDisplay(workspaceResponse *workspace.WorkspacePage) ([][]strin
 		if workspace.Description != "" {
 			description = workspace.Description
 		}
-		rows = append(rows, []string{workspace.ID.String(), workspace.Name, workspace.OrganizationId.String(), description, workspace.CreatedAt.String(), workspace.UpdatedAt.String()})
+		rows = append(rows, []string{workspace.ID.String(), workspace.Name, workspace.OrganizationID.String(), description, workspace.CreatedAt.String(), workspace.UpdatedAt.String()})
 	}
 
 	return rows, int64(workspaceResponse.TotalCount)
