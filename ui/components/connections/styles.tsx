@@ -76,9 +76,10 @@ export const ConnectionStyledSelect = styled(Select)(({ theme }) => ({
 }));
 
 export const ConnectionStyledMenuItem = styled(MenuItem)({
-  padding: '0 !important',
-  minHeight: '0 !important',
+  padding: 0,
+  // Override MUI's 48px minHeight; lock to pill height.
   height: '32px',
+  minHeight: 0,
   borderRadius: '3px',
   '& + &': {
     marginTop: '4px',
@@ -200,9 +201,6 @@ export const DisconnectedChip = styled(Chip)(({ theme }) => ({
 
 export const NotFoundChip = styled(Chip)(({ theme }) => ({
   ...baseChipStyles(theme),
-  // Keep not-found readable on both light and dark surfaces — disabled-only
-  // tokens made the chip (and custom SVG avatars that use currentColor) hard to
-  // see on the wizard receipt step.
   '& .MuiChip-label': {
     color: theme.palette.text.secondary,
   },
