@@ -34,7 +34,7 @@ import (
 )
 
 var (
-	supportedConnectionTypes = []string{"aks", "eks", "gke", "minikube"}
+	supportedConnectionTypes = []string{"aks", "eks", "gke", "minikube", "kind"}
 	connectionType           string
 )
 
@@ -53,6 +53,7 @@ mesheryctl connection create --type aks
 mesheryctl connection create --type eks
 mesheryctl connection create --type gke
 mesheryctl connection create --type minikube
+mesheryctl connection create --type kind
 
 // Create a connection with a token
 mesheryctl connection create --type gke --token auth.json
@@ -75,7 +76,9 @@ mesheryctl connection create --type gke --token auth.json
 		case "gke":
 			return createGKEConnection()
 		case "minikube":
-			return createMinikubeConnection()
+			return createLocalConnection("Minikube")
+		case "kind":
+			return createLocalConnection("Kind")
 		default:
 			return fmt.Errorf("unsupported connection type: %s", connectionType)
 		}
@@ -203,8 +206,8 @@ func createGKEConnection() error {
 	return nil
 }
 
-func createMinikubeConnection() error {
-	utils.Log.Info("Configuring Meshery to access Minikube...")
+func createLocalConnection(clusterType string) error {
+	utils.Log.Infof("Configuring Meshery to access %s...", clusterType)
 	// Get the config from the default config path
 	if _, err := os.Stat(utils.KubeConfig); err != nil {
 		return errReadKubeConfig(err)
@@ -223,7 +226,7 @@ func createMinikubeConnection() error {
 	if err != nil {
 		return errWriteKubeConfig(err)
 	}
-	utils.Log.Debugf("Minikube configuration is written to: %s", utils.ConfigPath)
+	utils.Log.Debugf("%s configuration is written to: %s", clusterType, utils.ConfigPath)
 
 	// set the token in the chosen context
 	err = setToken()
@@ -231,7 +234,7 @@ func createMinikubeConnection() error {
 		return err
 	}
 
-	utils.Log.Info("Minikube connection created.")
+	utils.Log.Infof("%s connection created.", clusterType)
 	return nil
 }
 
@@ -355,6 +358,6 @@ func setToken() error {
 }
 
 func init() {
-	createConnectionCmd.Flags().StringVarP(&connectionType, "type", "t", "", "Type of connection to create (aks|eks|gke|minikube)")
+	createConnectionCmd.Flags().StringVarP(&connectionType, "type", "t", "", fmt.Sprintf("Type of connection to create (%s)", strings.Join(supportedConnectionTypes, "|")))
 	createConnectionCmd.Flags().StringVar(&utils.TokenFlag, "token", "", "Path to token for authenticating to Meshery API")
 }
