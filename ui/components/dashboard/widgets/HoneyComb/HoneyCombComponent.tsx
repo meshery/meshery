@@ -34,6 +34,7 @@ import {
   useResourceOptions,
 } from './useResourceOptions';
 import GetKubernetesNodeIcon from '../../utils';
+import WidgetErrorFallback from '../WidgetErrorFallback';
 
 type HoneycombComponentProps = {
   kinds?: ResourceKind[];
@@ -113,7 +114,11 @@ const HoneycombComponent = ({
   const hasFilteredKinds = filteredKinds.length > 0;
 
   return (
-    <ErrorBoundary>
+    <ErrorBoundary
+      customFallback={(fallbackProps) => (
+        <WidgetErrorFallback {...fallbackProps} widgetTitle="Cluster Resource Overview" />
+      )}
+    >
       <HoneycombRoot isEditMode={isEditMode}>
         <HeaderContainer>
           <Typography variant="h6" fontWeight="700">

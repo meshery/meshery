@@ -5,8 +5,8 @@ import Moment from 'react-moment';
 import CloneIcon from '../../public/static/img/CloneIcon';
 import { iconMedium } from '../../css/icons.styles';
 import { VISIBILITY } from '../../utils/Enum';
-import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+
+import { Keys } from '@meshery/schemas/permissions';
 import { DefaultTableCell, SortableTableCell } from '../connections/common/index';
 import TooltipIcon from './TooltipIcon';
 import { ActionsBox } from './Filters.styled';
@@ -137,7 +137,7 @@ export function buildFiltersColumns({
                     e.stopPropagation();
                     handleClone(rowData.id, rowData.name);
                   }}
-                  disabled={!CAN(keys.CLONE_WASM_FILTER.action, keys.CLONE_WASM_FILTER.subject)}
+                  permissionKey={Keys.CatalogManagementCloneWasmFilter}
                 >
                   <CloneIcon fill="currentColor" />
                 </TooltipIcon>
@@ -148,7 +148,7 @@ export function buildFiltersColumns({
                     e.stopPropagation();
                     setSelectedRowData(filters[tableMeta.rowIndex]);
                   }}
-                  disabled={!CAN(keys.EDIT_WASM_FILTER.action, keys.EDIT_WASM_FILTER.subject)}
+                  permissionKey={Keys.CatalogManagementEditWasmFilter}
                 >
                   <EditIcon aria-label="config" color="inherit" style={iconMedium} />
                 </TooltipIcon>
@@ -156,18 +156,14 @@ export function buildFiltersColumns({
               <TooltipIcon
                 title="Download"
                 onClick={(e) => handleDownload(e, rowData.id, rowData.name)}
-                disabled={
-                  !CAN(keys.DOWNLOAD_A_WASM_FILTER.action, keys.DOWNLOAD_A_WASM_FILTER.subject)
-                }
+                permissionKey={Keys.CatalogManagementDownloadAWasmFilter}
               >
                 <GetAppIcon data-cy="download-button" />
               </TooltipIcon>
               <TooltipIcon
                 title="Filter Information"
                 onClick={() => handleInfoModal(rowData)}
-                disabled={
-                  !CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject)
-                }
+                permissionKey={Keys.CatalogManagementDetailsOfWasmFilter}
               >
                 <InfoOutlinedIcon data-cy="information-button" />
               </TooltipIcon>
@@ -175,7 +171,7 @@ export function buildFiltersColumns({
                 <TooltipIcon
                   title="Publish"
                   onClick={(ev) => handlePublishModal(ev, rowData)}
-                  disabled={!CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject)}
+                  permissionKey={Keys.CatalogManagementPublishWasmFilter}
                 >
                   <PublicIcon fill="#F91313" data-cy="publish-button" />
                 </TooltipIcon>
@@ -183,9 +179,7 @@ export function buildFiltersColumns({
                 <TooltipIcon
                   title="Unpublish"
                   onClick={(ev) => handleUnpublishModal(ev, rowData)?.()}
-                  disabled={
-                    !CAN(keys.UNPUBLISH_WASM_FILTER.action, keys.UNPUBLISH_WASM_FILTER.subject)
-                  }
+                  permissionKey={Keys.CatalogManagementUnpublishWasmFilter}
                 >
                   <PublicIcon fill="#F91313" data-cy="unpublish-button" />
                 </TooltipIcon>

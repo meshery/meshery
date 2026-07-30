@@ -15,6 +15,8 @@ Meshery's REST API specifications are now maintained and published from the [mes
 - Source repository: [github.com/meshery/schemas](https://github.com/meshery/schemas)
 - Contributor guide: [Schema-Driven Development](https://docs.meshery.io/project/contributing/contributing-schemas)
 
+{{% alert color="info" title="Registry API paths" %}}Operations on Meshery's capabilities registry (models, components, relationships, categories, registrants, policies, and connection definitions) are canonically served under <code>/api/registry</code>. The legacy <code>/api/meshmodels</code> routes remain available as deprecated aliases of the same operations, and the singular <code>/api/meshmodel/components/register</code> registrant route is retained for backward compatibility, so existing clients keep working.{{% /alert %}}
+
 Each of Meshery's APIs is subject to Meshery's authentication and authorization system. Meshery requires a valid token in order to allow clients to invoke its APIs.
 
 <details>

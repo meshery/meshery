@@ -11,7 +11,7 @@ import {
 import fetchAvailableAddons from '@/graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from '@/graphql/queries/NamespaceQuery';
 import MesheryResultDialog from './MesheryResultDialog';
-import ReactSelectWrapper from './ReactSelectWrapper';
+import ReactSelectWrapper from './general/ReactSelectWrapper';
 import ConfirmationMsg from '@/components/designs/lifecycle/DeployConfirmationModal';
 import { ACTIONS } from '../utils/Enum';
 import { getModelByName } from '../api/meshmodel';
@@ -672,7 +672,6 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
             pageSize={pageSize}
             search={search}
             sortOrder={sortOrder}
-            user={props.user}
             fetchSMIResults={fetchSMIResults}
             onPageChange={setPage}
             onPageSizeChange={setPageSize}

@@ -41,7 +41,7 @@ var createWorkspaceCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new workspace under an organization",
 	Long: `Create a new workspace by providing the name, description, and organization ID
-Find more information at: https://docs.meshery.io/reference/mesheryctl/workspace/create`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/workspace/create`,
 	Example: `
 // Create a new workspace in an organization
 mesheryctl workspace create --orgId [orgId] --name [name] --description [description]

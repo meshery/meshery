@@ -11,8 +11,8 @@ import {
   PlayArrowIcon as PlayIcon,
 } from '@sistent/sistent';
 import { iconMedium } from '../css/icons.styles';
-import { keys } from '@/utils/permission_constants';
-import CAN from '@/utils/can';
+import { Keys } from '@meshery/schemas/permissions';
+
 import { AdapterCard } from './adapter-play-styled';
 
 interface AdapterOperation {
@@ -48,40 +48,40 @@ const CATEGORY_DEFS: Record<number, CategoryContent> = {
     content: 'Manage Cloud Native Infrastructure Lifecycle',
     description: 'Deploy cloud native infrastructure or SMI adapter on your cluster.',
     permission: {
-      action: keys.MANAGE_CLOUD_NATIVE_INFRASTRUCTURE_LIFE_CYCLE.action,
-      subject: keys.MANAGE_CLOUD_NATIVE_INFRASTRUCTURE_LIFE_CYCLE.subject,
+      action: Keys.InfrastructureManagementManageCloudNativeInfrastructureLifeCycle.id,
+      subject: Keys.InfrastructureManagementManageCloudNativeInfrastructureLifeCycle.function,
     },
   },
   1: {
     content: 'Manage Sample Application Lifecycle',
     description: 'Deploy sample applications on/off the service mesh.',
     permission: {
-      action: keys.MANAGE_CLOUD_NATIVE_INFRASTRUCTURE_LIFE_CYCLE.action,
-      subject: keys.MANAGE_CLOUD_NATIVE_INFRASTRUCTURE_LIFE_CYCLE.subject,
+      action: Keys.InfrastructureManagementManageCloudNativeInfrastructureLifeCycle.id,
+      subject: Keys.InfrastructureManagementManageCloudNativeInfrastructureLifeCycle.function,
     },
   },
   2: {
     content: 'Apply Cloud Native Infrastructure Configuration',
     description: 'Configure your cloud native infrastructure using some pre-defined options.',
     permission: {
-      action: keys.APPLY_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION.action,
-      subject: keys.APPLY_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION.subject,
+      action: Keys.InfrastructureManagementApplyCloudNativeInfrastructureConfiguration.id,
+      subject: Keys.InfrastructureManagementApplyCloudNativeInfrastructureConfiguration.function,
     },
   },
   3: {
     content: 'Validate Cloud Native Infrastructure Configuration',
     description: 'Validate your cloud native infrastructure configuration against best practices.',
     permission: {
-      action: keys.VALIDATE_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION.action,
-      subject: keys.VALIDATE_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION.subject,
+      action: Keys.InfrastructureManagementValidateCloudNativeInfrastructureConfiguration.id,
+      subject: Keys.InfrastructureManagementValidateCloudNativeInfrastructureConfiguration.function,
     },
   },
   4: {
     content: 'Apply Custom Configuration',
     description: 'Customize the configuration of your cloud native infrastructure.',
     permission: {
-      action: keys.APPLY_CUSTOM_CLOUD_NATIVE_CONFIGURATION.action,
-      subject: keys.APPLY_CUSTOM_CLOUD_NATIVE_CONFIGURATION.subject,
+      action: Keys.InfrastructureManagementApplyCustomCloudNativeConfiguration.id,
+      subject: Keys.InfrastructureManagementApplyCustomCloudNativeConfiguration.function,
     },
   },
 };
@@ -150,7 +150,7 @@ const AdapterCategoryCard: React.FC<AdapterCategoryCardProps> = ({
           aria-label="install"
           ref={(ch) => (addIconEles.current[cat] = ch)}
           onClick={() => onMenuToggle(cat, false)}
-          disabled={!CAN(permission.action, permission.subject)}
+          permissionKey={{ id: permission.action, function: permission.subject }}
         >
           {cat !== 4 ? <AddIcon style={iconMedium} /> : <PlayIcon style={iconMedium} />}
         </IconButton>
@@ -172,7 +172,7 @@ const AdapterCategoryCard: React.FC<AdapterCategoryCardProps> = ({
               ref={(ch) => (delIconEles.current[cat] = ch)}
               style={{ float: 'right' }}
               onClick={() => onMenuToggle(cat, true)}
-              disabled={!CAN(permission.action, permission.subject)}
+              permissionKey={{ id: permission.action, function: permission.subject }}
             >
               <DeleteIcon style={iconMedium} />
             </IconButton>

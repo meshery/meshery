@@ -212,6 +212,10 @@ mesheryctl design apply [design-name]
 					return utils.ErrUnmarshal(err)
 				}
 
+				if len(response) == 0 || response[0] == nil {
+					return ErrDesignNotFound(file)
+				}
+
 				// setup pattern file here
 				designFile = response[0].PatternFile
 			}

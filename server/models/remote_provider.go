@@ -34,7 +34,7 @@ import (
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
-	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta3/environment"
 	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 	"github.com/spf13/viper"
@@ -697,10 +697,15 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 		return nil, ErrUnmarshal(err, "User Pref")
 	}
 
-	prefLocal, _ := l.ReadFromPersister(up.UserId)
+	prefLocal, _ := l.ReadFromPersister(up.ID.String())
 
-	if prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) || !reflect.DeepEqual(up.Preferences.RemoteProviderPreferences, prefLocal.RemoteProviderPreferences) {
-		_ = l.WriteToPersister(up.UserId, up.Preferences)
+	// Guard up.Preferences: up is pre-initialized with a non-nil Preferences, so
+	// an absent `preferences` field stays non-nil; but an explicit
+	// `"preferences": null` from the remote provider overwrites it to nil, and
+	// dereferencing UpdatedAt / RemoteProviderPreferences below would then panic.
+	// Nothing to persist in that case.
+	if up.Preferences != nil && (prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) || !reflect.DeepEqual(up.Preferences.RemoteProviderPreferences, prefLocal.RemoteProviderPreferences)) {
+		_ = l.WriteToPersister(up.ID.String(), up.Preferences)
 	}
 
 	// Uncomment when Debug verbosity is figured out project wide. | @leecalcote
@@ -1165,7 +1170,7 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -1582,7 +1587,7 @@ func (l *RemoteProvider) PublishResults(req *http.Request, result *MesheryResult
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return "", ErrDataRead(err, "Perf Result")
 	}
 	if resp.StatusCode == http.StatusCreated {
@@ -2175,7 +2180,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 	if resp.StatusCode == http.StatusOK {
 		var pr PatternResourcePage
 		if err := json.NewDecoder(resp.Body).Decode(&pr); err != nil {
-			l.Log.Error(ErrDataRead(err, "respone body"))
+			l.Log.Error(ErrDataRead(err, "response body"))
 			return nil, ErrUnmarshal(err, "design Page Resource")
 		}
 
@@ -2310,7 +2315,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -2395,7 +2400,7 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -2542,7 +2547,7 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string, 
 	bdr, err := io.ReadAll(resp.Body)
 
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return bdr, ErrDataRead(err, "design:"+patternID)
 	}
 
@@ -2595,7 +2600,7 @@ func (l *RemoteProvider) DeleteMesheryPattern(req *http.Request, patternID strin
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -2653,7 +2658,7 @@ func (l *RemoteProvider) CloneMesheryPattern(req *http.Request, patternID string
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -2708,7 +2713,7 @@ func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPattern
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -2763,7 +2768,7 @@ func (l *RemoteProvider) UnPublishCatalogPattern(req *http.Request, publishPatte
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -2819,7 +2824,7 @@ func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns Meshe
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -3232,7 +3237,7 @@ func (l *RemoteProvider) CloneMesheryFilter(req *http.Request, filterID string, 
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -3287,7 +3292,7 @@ func (l *RemoteProvider) PublishCatalogFilter(req *http.Request, publishFilterRe
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -3342,7 +3347,7 @@ func (l *RemoteProvider) UnPublishCatalogFilter(req *http.Request, publishFilter
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -3445,7 +3450,7 @@ func (l *RemoteProvider) GetApplicationSourceContent(req *http.Request, applicat
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, ErrDataRead(err, "Application")
 	}
 
@@ -3487,7 +3492,7 @@ func (l *RemoteProvider) GetDesignSourceContent(token, designID string) ([]byte,
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, ErrDataRead(err, "Pattern")
 	}
 
@@ -3547,7 +3552,7 @@ func (l *RemoteProvider) GetMesheryApplications(tokenString string, page, pageSi
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, ErrDataRead(err, "Application")
 	}
 
@@ -4490,7 +4495,8 @@ func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, tok
 		if err != nil {
 			return nil, ErrUnmarshal(err, "Connection \"%s\" of type \"%s\" with status \"%s\" from the remote provider")
 		}
-		l.Log.Debug("connections, ", connectionPage)
+		l.Log.Debugf("RemoteProvider::SaveConnection: parsed %d connection(s) (page=%d, pageSize=%d, totalCount=%d)",
+			len(connectionPage.Connections), connectionPage.Page, connectionPage.PageSize, connectionPage.TotalCount)
 		// On POST request to Remote Provider API, the response always contains single entry/connection.
 		if len(connectionPage.Connections) > 0 {
 			return connectionPage.Connections[0], nil
@@ -4712,6 +4718,23 @@ func (l *RemoteProvider) UpdateConnectionById(token string, connection *connecti
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
+	// Ensure the payload carries the URL id so the remote provider keys the
+	// update on the intended connection even if the client omitted `id`
+	// (avoids duplicate-row creation). Fail fast on an unparseable connId.
+	if connection.ID == uuid.Nil {
+		parsedID, err := uuid.FromString(connId)
+		if err != nil {
+			return nil, err
+		}
+		connection.ID = parsedID
+	}
+	// A partial payload (e.g. the UI's connect action sending only {status}, or an
+	// FSM status transition sending only {kind, metadata, status}) must not
+	// clobber the fields it omits on the remote row. Backfill omitted fields from
+	// the persisted connection before sending the full PUT.
+	if existing, _, gerr := l.GetConnectionByID(token, connection.ID); gerr == nil && existing != nil {
+		connections.MergePayloadOntoExisting(connection, existing)
+	}
 	_conn, err := json.Marshal(connection)
 	if err != nil {
 		return nil, err
@@ -5343,7 +5366,7 @@ func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID, or
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -5431,7 +5454,7 @@ func (l *RemoteProvider) DeleteEnvironment(req *http.Request, environmentID stri
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -5520,7 +5543,7 @@ func (l *RemoteProvider) AddConnectionToEnvironment(req *http.Request, environme
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -5560,7 +5583,7 @@ func (l *RemoteProvider) RemoveConnectionFromEnvironment(req *http.Request, envi
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -5620,7 +5643,7 @@ func (l *RemoteProvider) GetConnectionsOfEnvironment(req *http.Request, environm
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
