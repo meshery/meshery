@@ -244,6 +244,20 @@ describe('select wrappers', () => {
         innerRef={vi.fn()}
         innerProps={{ onClick: vi.fn(), role: 'option' }}
         isFocused={false}
+        isSelected={true}
+        label="Production"
+        value="prod"
+      />,
+    );
+    expect(container.querySelector('[data-testid="multi-select-option"]')).toHaveClass(
+      'Mui-selected',
+    );
+
+    rerender(
+      <Option
+        innerRef={vi.fn()}
+        innerProps={{ onClick: vi.fn(), role: 'option' }}
+        isFocused={false}
         isSelected={false}
         label="Production"
         value="prod"

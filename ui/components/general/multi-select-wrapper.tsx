@@ -55,7 +55,7 @@ const MultiSelectWrapper = (props) => {
     return (
       <ListItemButton
         ref={props.innerRef}
-        selected={props.isFocused}
+        selected={props.isFocused || props.isSelected}
         {...props.innerProps}
         component="div"
         data-testid="multi-select-option"
