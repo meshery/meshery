@@ -8,7 +8,7 @@ import {
   styled,
   NoSsr,
 } from '@sistent/sistent';
-import MesheryChartDialog from './MesheryChartDialog';
+import MesheryChartDialog from './general/MesheryChartDialog';
 import MesheryChart from './MesheryChart';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearResultsSelection } from '@/store/slices/prefTest';
