@@ -41,9 +41,9 @@
 }
 
 #lightbox-img {
-    width: 90vw !important;
-    height: 85vh !important;
-    object-fit: contain !important;
+    width: 90vw ;
+    height: 85vh ;
+    object-fit: contain ;
     cursor: default;
     pointer-events: none;
     border-radius: 4px;
@@ -115,8 +115,8 @@
     }
 
     #lightbox-img {
-        width: 95vw !important;
-        height: 80vh !important;
+        width: 95vw ;
+        height: 80vh ;
     }
 
     #lightbox-close {
