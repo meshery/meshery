@@ -321,6 +321,8 @@ Each policy has a set of evaluation rules defined and the `evaluationQuery` attr
 
 <a id="relationship-testing"></a>
 
+### 5. Relationship Testing
+
 #### Relationship Authoring Best Practices and Considerations
 
 ##### General
@@ -359,7 +361,7 @@ Each policy has a set of evaluation rules defined and the `evaluationQuery` attr
 
 <a class="anchorjs-link" id="relationship-contribution"></a>
 
-#### 4. Contribute your relationship to the Meshery project
+### 6. Contribute your relationship to the Meshery project
 
 Submit a pull request to the Meshery repository with your new relationship definition, so that all users can benefit from the relationship(s) you have defined.
 
