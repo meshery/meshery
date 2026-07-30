@@ -1,15 +1,22 @@
 import React, { memo } from 'react';
-import { Avatar, AssignmentTurnedInIcon, CustomTooltip, useTheme } from '@sistent/sistent';
+import {
+  Avatar,
+  AssignmentTurnedInIcon,
+  CustomTooltip,
+  notificationColors,
+  useTheme,
+} from '@sistent/sistent';
 import {
   CheckCircle as CheckCircleIcon,
   Explore as ExploreIcon,
   RemoveCircle as RemoveCircleIcon,
   DeleteForever as DeleteForeverIcon,
   Handyman as HandymanIcon,
-  NotInterestedRounded as NotInterestedRoundedIcon,
+  // Warning — not Cancel/X. CancelIcon was re-exported as NotInterestedRounded
+  // and read as a destructive delete action on "not found" chips.
+  Warning as WarningIcon,
 } from '@/assets/icons';
-import BadgeAvatars from '../CustomAvatar';
-import { notificationColors } from '../../themes';
+import BadgeAvatars from '../general/CustomAvatar';
 import DisconnectIcon from '../../assets/icons/disconnect';
 import {
   CONNECTION_STATE_TO_TRANSITION_MAP,
@@ -101,11 +108,20 @@ const STATE_CHIP_CONFIG = {
   },
   [CONNECTION_STATES.DISCONNECTED]: {
     Component: DisconnectedChip,
-    avatar: <DisconnectIcon fill={notificationColors.lightwarning} width={24} height={24} />,
+    avatar: <DisconnectIcon fill={notificationColors.warning.light} width={24} height={24} />,
   },
   [CONNECTION_STATES.NOTFOUND]: {
     Component: NotFoundChip,
-    avatar: <NotInterestedRoundedIcon />,
+    // Explicit fill + size: WarningIcon has no path fill by default, so without
+    // currentColor the glyph can disappear on dark/disabled chip backgrounds.
+    avatar: (
+      <WarningIcon
+        data-testid="not-found-warning-icon"
+        fill="currentColor"
+        width={20}
+        height={20}
+      />
+    ),
   },
 } as const;
 
@@ -147,7 +163,7 @@ const getStatusColor = (theme: ReturnType<typeof useTheme>, status?: string) => 
       return theme.palette.background.warning.default;
     case 'warning':
       // Orange (same token used by the disconnected state chip icon)
-      return notificationColors.lightwarning;
+      return notificationColors.warning.light;
     default:
       // Gray
       return theme.palette.text.disabled;

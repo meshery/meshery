@@ -9,18 +9,32 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import kubernetesDefinition from '../../../models/meshery-core/0.7.2/v1.0.0/connections/KubernetesConnection.json';
 import grafanaDefinition from '../../../models/meshery-core/0.7.2/v1.0.0/connections/GrafanaConnection.json';
 import prometheusDefinition from '../../../models/meshery-core/0.7.2/v1.0.0/connections/PrometheusConnection.json';
+import artifactHubDefinition from '../../../models/meshery-core/0.7.2/v1.0.0/connections/ArtifactHubConnection.json';
+import githubDefinition from '../../../models/meshery-core/0.7.2/v1.0.0/connections/GitHubConnection.json';
 
 // Mutable store state so individual tests can swap in stale/absent definition
 // data. Reset in beforeEach.
 const mockStoreState: {
-  ui: { connectionMetadataState: Record<string, { transitionMap?: unknown }> | null };
+  ui: {
+    connectionMetadataState: Record<string, { name?: string; transitionMap?: unknown }> | null;
+  };
 } = { ui: { connectionMetadataState: null } };
 
-const defaultConnectionMetadataState = () => ({
-  kubernetes: { transitionMap: kubernetesDefinition.transitionMap },
-  grafana: { transitionMap: grafanaDefinition.transitionMap },
-  prometheus: { transitionMap: prometheusDefinition.transitionMap },
-});
+const seed = (definition: { name: string; kind: string; transitionMap: unknown }) => [
+  definition.kind,
+  { name: definition.name, transitionMap: definition.transitionMap },
+];
+
+const defaultConnectionMetadataState = () =>
+  Object.fromEntries(
+    [
+      kubernetesDefinition,
+      grafanaDefinition,
+      prometheusDefinition,
+      artifactHubDefinition,
+      githubDefinition,
+    ].map(seed),
+  );
 
 vi.mock('react-redux', () => ({
   useSelector: (selector: (state: unknown) => unknown) => selector(mockStoreState),
@@ -150,6 +164,8 @@ describe('shouldShowTransitionDescription', () => {
     ['KubernetesConnection.json', kubernetesDefinition],
     ['GrafanaConnection.json', grafanaDefinition],
     ['PrometheusConnection.json', prometheusDefinition],
+    ['ArtifactHubConnection.json', artifactHubDefinition],
+    ['GitHubConnection.json', githubDefinition],
   ])('every authored description in %s is displayable (no prompt-style copy)', (_name, def) => {
     Object.entries(def.transitionMap).forEach(([currentStatus, transitions]) => {
       (transitions as { nextState: string; description?: string }[]).forEach((transition) => {
@@ -206,6 +222,55 @@ describe('ConnectionStateTransitionModal', () => {
     await userEvent.click(confirm);
     expect(resolved).toBe(true);
     expect(screen.queryByTestId('modal')).not.toBeInTheDocument();
+  });
+
+  // Title casing the kind slug yields "Github"/"Artifacthub". The definition's
+  // authored `name` is the display label, so the dialog must use it.
+  it.each([
+    ['github', 'Delete GitHub connection?', 'repository itself is not modified'],
+    [
+      'artifacthub',
+      'Delete Artifact Hub connection?',
+      'Artifact Hub instance itself is not modified',
+    ],
+  ])(
+    'titles a %s transition with the definition-authored display name',
+    async (kind, expectedTitle, expectedCopy) => {
+      const ref = setup();
+
+      act(() => {
+        ref.current.show({
+          targetStatus: 'deleted',
+          currentStatus: 'connected',
+          kind,
+          connections: [{ id: 'c1', name: 'meshery/meshery' }],
+        });
+      });
+
+      expect(await screen.findByText(expectedTitle)).toBeInTheDocument();
+      expect(screen.getByTestId('connection-transition-description')).toHaveTextContent(
+        expectedCopy,
+      );
+      expect(screen.queryByTestId('connection-transition-fallback')).not.toBeInTheDocument();
+    },
+  );
+
+  it('falls back to title-cased kind when the definition carries no display name', async () => {
+    mockStoreState.ui.connectionMetadataState = {
+      github: { transitionMap: githubDefinition.transitionMap },
+    };
+    const ref = setup();
+
+    act(() => {
+      ref.current.show({
+        targetStatus: 'deleted',
+        currentStatus: 'connected',
+        kind: 'github',
+        connections: [{ id: 'c1', name: 'meshery/meshery' }],
+      });
+    });
+
+    expect(await screen.findByText('Delete Github connection?')).toBeInTheDocument();
   });
 
   it('falls back to the generic line when the current state is unknown', async () => {

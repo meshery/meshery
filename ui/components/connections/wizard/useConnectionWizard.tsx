@@ -2,15 +2,15 @@ import { createRef, useCallback, useEffect, useMemo, useRef, useState } from 're
 import { useNotification } from '@/utils/hooks/useNotification';
 import {
   useAddKubernetesConfigMutation,
-  useConnectToConnectionMutation,
   useDiscoverKubernetesContextsMutation,
   useGetCredentialsQuery,
   usePerformConnectionActionMutation,
+  useProcessConnectionRegistrationMutation,
   useUpdateConnectionByIdMutation,
-  useVerifyAndRegisterConnectionMutation,
 } from '@/rtk-query/connection';
 import type { ConnectionWizardKindConfig } from '../ConnectionWizard.helpers';
 import { buildSteps } from './registry';
+import { useKindPermission } from './useKindPermission';
 import type {
   GenericRecord,
   WizardContext,
@@ -42,6 +42,15 @@ export type UseConnectionWizardParams = {
   onComplete?: () => void;
 };
 
+const shallowEqualArray = <T,>(a: readonly T[], b: readonly T[]): boolean =>
+  a === b || (a.length === b.length && a.every((item, index) => item === b[index]));
+
+const shallowEqualRecord = <T,>(a: Record<string, T>, b: Record<string, T>): boolean => {
+  if (a === b) return true;
+  const keys = Object.keys(a);
+  return keys.length === Object.keys(b).length && keys.every((key) => a[key] === b[key]);
+};
+
 const makeInitialData = (params: UseConnectionWizardParams): WizardData => ({
   availableKinds: params.availableKinds ?? [],
   isLoadingKinds: params.isLoadingKinds ?? false,
@@ -63,8 +72,10 @@ const makeInitialData = (params: UseConnectionWizardParams): WizardData => ({
 export const useConnectionWizard = (params: UseConnectionWizardParams) => {
   const { mode, isOpen, onComplete } = params;
   const { notify } = useNotification();
-  const [verifyAndRegisterConnection] = useVerifyAndRegisterConnectionMutation();
-  const [connectToConnection] = useConnectToConnectionMutation();
+  // Both the register and connect steps dispatch through the single
+  // schemas-generated state-machine endpoint; the event's `status` field is
+  // what advances the registration.
+  const [processConnectionRegistration] = useProcessConnectionRegistrationMutation();
   const [addKubernetesConfig] = useAddKubernetesConfigMutation();
   const [discoverKubernetesContexts] = useDiscoverKubernetesContextsMutation();
   const [updateConnectionById] = useUpdateConnectionByIdMutation();
@@ -88,14 +99,32 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
   }, []);
 
   // Keep the externally-owned inputs (kind list, icons) in sync with the store.
+  //
+  // These params are plain literals at most call sites, so their identity
+  // changes on every render of the caller. Writing a fresh state object
+  // unconditionally would therefore re-render the caller, mint new params, and
+  // re-run this effect forever. Returning `current` unchanged makes React bail
+  // out of the re-render, so the sync has to compare by value, not identity.
   const { availableKinds, isLoadingKinds, connectionIconMap } = params;
   useEffect(() => {
-    setData((current) => ({
-      ...current,
-      availableKinds: availableKinds ?? [],
-      isLoadingKinds: isLoadingKinds ?? false,
-      connectionIconMap: connectionIconMap ?? {},
-    }));
+    setData((current) => {
+      const nextKinds = availableKinds ?? [];
+      const nextIsLoading = isLoadingKinds ?? false;
+      const nextIconMap = connectionIconMap ?? {};
+      if (
+        current.isLoadingKinds === nextIsLoading &&
+        shallowEqualArray(current.availableKinds, nextKinds) &&
+        shallowEqualRecord(current.connectionIconMap, nextIconMap)
+      ) {
+        return current;
+      }
+      return {
+        ...current,
+        availableKinds: nextKinds,
+        isLoadingKinds: nextIsLoading,
+        connectionIconMap: nextIconMap,
+      };
+    });
   }, [availableKinds, isLoadingKinds, connectionIconMap]);
 
   // In configure mode the connection (kind + details) is resolved
@@ -105,12 +134,17 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
     if (mode !== 'configure') {
       return;
     }
-    setData((current) => ({
-      ...current,
-      kindConfig: initialKindConfig ?? null,
-      registrationResult: initialRegistrationResult ?? current.registrationResult,
-    }));
+    setData((current) => {
+      const nextKindConfig = initialKindConfig ?? null;
+      const nextResult = initialRegistrationResult ?? current.registrationResult;
+      if (current.kindConfig === nextKindConfig && current.registrationResult === nextResult) {
+        return current;
+      }
+      return { ...current, kindConfig: nextKindConfig, registrationResult: nextResult };
+    });
   }, [mode, initialKindConfig, initialRegistrationResult]);
+
+  const kindPermission = useKindPermission();
 
   // Create-mode deep link: once kind definitions load, pre-select `presetKind`
   // and optionally land on the step after "Choose Connection" (Import Kubeconfig
@@ -136,6 +170,16 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
       return;
     }
 
+    // Resolve permission *before* recording the preset as applied. Permissions
+    // resolve asynchronously, so marking the preset applied while access is
+    // still denied would latch the preset in on a later re-run and never advance
+    // an authorized user. Leaving it unapplied keeps the kind chooser in charge:
+    // it disables the kinds the user cannot use, which is a clearer dead end
+    // than a pre-selected kind with a permanently disabled "Next".
+    if (!kindPermission(kindConfig)) {
+      return;
+    }
+
     appliedPresetRef.current = presetKind;
     setData((current) => ({ ...current, kindConfig }));
     if (skipKindSelection) {
@@ -143,7 +187,7 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
       // step (Import Kubeconfig for the kubernetes extension).
       setActiveIndex(1);
     }
-  }, [isOpen, mode, presetKind, skipKindSelection, availableKinds]);
+  }, [isOpen, mode, presetKind, skipKindSelection, availableKinds, kindPermission]);
 
   // Keep `reset` stable while still resetting from the latest params: read them
   // from a ref updated in the render body (not an effect, so children never see
@@ -157,11 +201,19 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
     appliedPresetRef.current = null;
   }, []);
 
+  // The wizard assembles registration events dynamically (GenericRecord); the
+  // generated trigger types the body as the schemas ConnectionRegistrationEvent.
+  // This is the single boundary where the loose wizard data meets the typed
+  // wire contract.
+  type RegistrationEventBody = Parameters<typeof processConnectionRegistration>[0]['body'];
+
   const services = useMemo<WizardServices>(
     () => ({
       notify,
-      registerConnection: (body) => verifyAndRegisterConnection({ body }).unwrap(),
-      connectConnection: (body) => connectToConnection({ body }).unwrap(),
+      registerConnection: (body) =>
+        processConnectionRegistration({ body: body as RegistrationEventBody }).unwrap(),
+      connectConnection: (body) =>
+        processConnectionRegistration({ body: body as RegistrationEventBody }).unwrap(),
       discoverKubeContexts: async (file) => {
         const formData = new FormData();
         formData.append('k8sfile', file);
@@ -202,8 +254,7 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
     }),
     [
       notify,
-      verifyAndRegisterConnection,
-      connectToConnection,
+      processConnectionRegistration,
       addKubernetesConfig,
       discoverKubernetesContexts,
       updateConnectionById,
@@ -212,14 +263,26 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
     ],
   );
 
-  const ctx: WizardContext = { mode, data, patch, patchPostConfig, services, formRefs };
+  const advancingRef = useRef(false);
+  const advance = useCallback(() => {
+    if (advancingRef.current) return;
+    advancingRef.current = true;
+    setActiveIndex((index) => index + 1);
+  }, []);
+
+  const ctx: WizardContext = { mode, data, patch, patchPostConfig, services, formRefs, advance };
 
   const steps = buildSteps(data.kindConfig, mode).filter((step) => !step.hidden?.(ctx));
   const safeIndex = steps.length === 0 ? 0 : Math.min(activeIndex, steps.length - 1);
   const activeStep = steps[safeIndex] ?? null;
   const isLast = safeIndex >= steps.length - 1;
 
-  const canProceed = activeStep?.canProceed ? activeStep.canProceed(ctx) : true;
+  useEffect(() => {
+    advancingRef.current = false;
+  }, [safeIndex]);
+
+  const isKindAllowed = !data.kindConfig || kindPermission(data.kindConfig);
+  const canProceed = isKindAllowed && (activeStep?.canProceed ? activeStep.canProceed(ctx) : true);
   const canGoBack = safeIndex > 0;
   const nextLabel = activeStep?.nextLabel ? activeStep.nextLabel(ctx) : isLast ? 'Finish' : 'Next';
 
