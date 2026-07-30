@@ -63,22 +63,31 @@ export const ConnectionTabs = styled(Tabs)(({ theme }) => ({
   },
 }));
 
-export const ConnectionStyledSelect = styled(Select)({
+export const ConnectionStyledSelect = styled(Select)(({ theme }) => ({
   '& .MuiSelect-select': {
     padding: '0 !important',
   },
-  '& .MuiMenuItem-root': {
-    padding: '0 !important',
+  '& .MuiOutlinedInput-notchedOutline': {
+    borderColor: alpha(theme.palette.text.secondary, 0.35),
   },
-});
+  '&:hover .MuiOutlinedInput-notchedOutline': {
+    borderColor: alpha(theme.palette.text.secondary, 0.5),
+  },
+}));
 
 export const ConnectionStyledMenuItem = styled(MenuItem)({
-  padding: 0,
-  '&.MuiMenuItem-root': {
-    padding: 0,
+  padding: '0 !important',
+  minHeight: '0 !important',
+  height: '32px',
+  borderRadius: '3px',
+  '& + &': {
+    marginTop: '4px',
   },
-  '& .MuiButtonBase-root': {
-    padding: 0,
+  '& .MuiChip-root': {
+    minWidth: 'unset !important',
+    maxWidth: 'none !important',
+    width: '100%',
+    height: '100%',
   },
 });
 
@@ -198,7 +207,6 @@ export const NotFoundChip = styled(Chip)(({ theme }) => ({
     color: theme.palette.text.secondary,
   },
   background: `${theme.palette.text.secondary}22 !important`,
-  border: `1px solid ${alpha(theme.palette.text.secondary, 0.35)}`,
   '& .MuiSvgIcon-root, & svg': {
     color: `${theme.palette.text.secondary} !important`,
     fill: `${theme.palette.text.secondary} !important`,

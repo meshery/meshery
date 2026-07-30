@@ -1,5 +1,5 @@
 import { FormControl, MenuItem } from '@sistent/sistent';
-import { ConnectionStyledSelect } from './styles';
+import { ConnectionStyledSelect, ConnectionStyledMenuItem } from './styles';
 import { ConnectionStateChip } from './ConnectionChip';
 import { getNextStates, type ConnectionTransitionMap } from './ConnectionTable.constants';
 
@@ -44,23 +44,24 @@ export const ConnectionStatusSelect = ({
           transformOrigin: { vertical: 'top', horizontal: 'left' },
           getContentAnchorEl: null,
           MenuListProps: { disablePadding: true },
+          sx: { '& .MuiList-root': { padding: '4px' } },
           PaperProps: { square: true },
         }}
       >
-        {options.length === 1 && <MenuItem disabled>No transitions Available</MenuItem>}
+        {options.length === 1 && (
+          <MenuItem disabled sx={{ padding: '4px 8px !important' }}>
+            No transitions Available
+          </MenuItem>
+        )}
         {options.map((option) => (
-          <MenuItem
+          <ConnectionStyledMenuItem
             disabled={option === status}
-            style={{
-              padding: 0,
-              display: option === status ? 'none' : 'flex',
-              justifyContent: 'center',
-            }}
+            sx={{ display: option === status ? 'none' : 'flex' }}
             value={option}
             key={option}
           >
             <ConnectionStateChip status={option} actionable={option !== status} />
-          </MenuItem>
+          </ConnectionStyledMenuItem>
         ))}
       </ConnectionStyledSelect>
     </FormControl>
