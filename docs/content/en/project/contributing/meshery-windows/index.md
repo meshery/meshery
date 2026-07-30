@@ -98,20 +98,7 @@ Feel free to use any distro of your choice.
 
 The Docker Desktop application for Windows includes a comprehensive set of tools, including Docker Engine, Docker CLI client, Docker Compose, Notary, Kubernetes, and a Credential Helper.
 
-<table id="compatibility-table">
-  <tr>
-    <th id="model">Windows 10 Version</th>
-    <th id="model">Docker Desktop</th> 
-  </tr>
-  <tr>
-    <td>Pro/Education/Enterprise</td>
-    <td><a href="https://docs.docker.com/docker-for-windows/install/">Docker Desktop for Windows Pro</a></td>
-  </tr>
-  <tr>
-    <td>Home</td>
-    <td><a href="https://docs.docker.com/docker-for-windows/install-windows-home/">Docker Desktop for Windows Home</a></td>
-  </tr>
-</table>
+Install [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/). One installer covers every Windows edition, including Home; Docker no longer publishes a separate Windows Home download.
 
 ## Natively on Windows
 
