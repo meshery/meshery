@@ -17,6 +17,7 @@ import {
   useUpdatePinnedBoardsMutation,
 } from '@/rtk-query/telemetryGrafana';
 import { CoreConnectionKinds } from '@/utils/Enum';
+import { Keys } from '@meshery/schemas/permissions';
 import { useConnectionWizardModal } from '@/utils/context/ConnectionWizardContextProvider';
 import ConnectionPicker, { TelemetryConnection } from '../common/ConnectionPicker';
 import PingStatus from '../common/PingStatus';
@@ -163,6 +164,7 @@ const TelemetryDashboards: React.FC = () => {
               skipKindSelection: true,
             })
           }
+          permissionKey={Keys.MesherySystemConnectMetrics}
         >
           Add a Grafana connection
         </Button>
