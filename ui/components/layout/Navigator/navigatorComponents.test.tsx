@@ -180,10 +180,7 @@ describe('navigatorComponents', () => {
     const items = getNavigatorComponents(fakeProviderUiAccessControl({ LIFECYCLE: true }), theme);
     const lifecycle = items.find((i: any) => i.id === 'LIFECYCLE');
     const connection = lifecycle?.children?.find((c: any) => c.id === 'CONNECTION');
-    expect(connection?.permission).toEqual({
-      action: Keys.WorkspaceManagementViewConnections.id,
-      subject: Keys.WorkspaceManagementViewConnections.function,
-    });
+    expect(connection?.permissionKey).toEqual(Keys.WorkspaceManagementViewConnections);
   });
 
   it('passes white fills to CatalogIcon when on the catalog route', () => {
@@ -200,5 +197,25 @@ describe('navigatorComponents', () => {
       ?.children?.find((c: any) => c.id === 'CATALOG');
     // Just sanity-check that a React element was provided as an icon
     expect(React.isValidElement(catalog?.icon)).toBe(true);
+  });
+
+  it('attaches ViewMetrics permission to Charts child', () => {
+    const items = getNavigatorComponents(
+      fakeProviderUiAccessControl({ TELEMETRY: true, GRAFANA: true }),
+      theme,
+    );
+    const telemetry = items.find((i: any) => i.id === 'TELEMETRY');
+    const charts = telemetry?.children?.find((c: any) => c.id === 'GRAFANA');
+    expect(charts?.permissionKey).toEqual(Keys.MesherySystemViewMetrics);
+  });
+
+  it('attaches ViewMetrics permission to Metrics child', () => {
+    const items = getNavigatorComponents(
+      fakeProviderUiAccessControl({ TELEMETRY: true, PROMETHEUS: true }),
+      theme,
+    );
+    const telemetry = items.find((i: any) => i.id === 'TELEMETRY');
+    const metrics = telemetry?.children?.find((c: any) => c.id === 'PROMETHEUS');
+    expect(metrics?.permissionKey).toEqual(Keys.MesherySystemViewMetrics);
   });
 });
