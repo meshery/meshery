@@ -32,7 +32,6 @@ function MesheryPatternsToolbar({
   setViewType,
   disableCreateImportDesignButton,
   disableUniversalFilter,
-  pageTitle,
   router,
   handleUploadImport,
   setSearch,
@@ -101,7 +100,7 @@ function MesheryPatternsToolbar({
           }}
           expanded={isSearchExpanded}
           setExpanded={setIsSearchExpanded}
-          placeholder={`Search ${pageTitle.toLowerCase()}...`}
+          placeholder="Search by name"
           data-testid="meshery-patterns-search-bar"
         />
       }
