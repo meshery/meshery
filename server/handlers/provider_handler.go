@@ -269,7 +269,7 @@ func (h *Handler) ProviderComponentsHandler(
 			event := eventBuilder.
 				WithSeverity(events.Error).
 				WithDescription(fmt.Sprintf(
-					"Failed to load extension %s (version %s).",
+					"Failed to load extension %s (%s).",
 					providerProps.ProviderName,
 					providerProps.PackageVersion,
 				)).
@@ -286,7 +286,7 @@ func (h *Handler) ProviderComponentsHandler(
 		event := eventBuilder.
 			WithSeverity(events.Informational).
 			WithDescription(fmt.Sprintf(
-				"Extension %s (version %s) loaded successfully.",
+				"Extension %s (%s) loaded successfully.",
 				providerProps.ProviderName,
 				providerProps.PackageVersion,
 			)).
