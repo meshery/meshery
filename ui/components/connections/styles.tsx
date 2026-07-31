@@ -197,7 +197,7 @@ export const DisconnectedChip = styled(Chip)(({ theme }) => ({
 
 export const NotFoundChip = styled(Chip)(({ theme }) => ({
   ...baseChipStyles(theme),
-  // Keep not-found readable on both light and dark surfaces â€” disabled-only
+  // Keep not-found readable on both light and dark surfaces -- disabled-only
   // tokens made the chip (and custom SVG avatars that use currentColor) hard to
   // see on the wizard receipt step.
   '& .MuiChip-label': {

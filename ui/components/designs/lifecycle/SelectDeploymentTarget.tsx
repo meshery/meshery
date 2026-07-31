@@ -67,7 +67,13 @@ const K8sContextConnection = ({ connection, environment }) => {
   const toggleK8sConnection = () => dispatch(toggleConnection(environment, connection));
   return (
     <K8sContextConnectionChip
-      ctx={{ ...connection.metadata, connectionId: connection.id }}
+      ctx={{
+        ...connection.metadata,
+        connectionId: connection.id,
+        // Surface lifecycle status so the avatar status-dot renders without a
+        // separate connections-list lookup.
+        connectionStatus: connection.status,
+      }}
       onSelectChange={toggleK8sConnection}
       selected={isSelected}
       selectable
