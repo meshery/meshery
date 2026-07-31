@@ -244,11 +244,6 @@ func waitForSSEEvent(ctx context.Context, event <-chan utils.Event, query string
 				}
 				summary := strings.ToLower(i.Data.Summary)
 				details := strings.ToLower(i.Data.Details)
-				if strings.Contains(summary, "error") || strings.Contains(details, "error") {
-					utils.Log.Infof(errorLogFormat, i.Data.Summary)
-					eventChan <- sseEventError
-					return
-				}
 				switch {
 				case matchSummary && strings.Contains(summary, queryLower):
 					utils.Log.Infof(successLogFormat, i.Data.Summary, i.Data.Details)
@@ -257,6 +252,10 @@ func waitForSSEEvent(ctx context.Context, event <-chan utils.Event, query string
 				case !matchSummary && strings.Contains(details, queryLower):
 					utils.Log.Infof(successLogFormat, i.Data.Summary, i.Data.Details)
 					eventChan <- sseEventSuccessful
+					return
+				case strings.Contains(summary, "error") || strings.Contains(details, "error"):
+					utils.Log.Infof(errorLogFormat, i.Data.Summary)
+					eventChan <- sseEventError
 					return
 				}
 			}
