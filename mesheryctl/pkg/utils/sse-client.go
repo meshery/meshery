@@ -42,7 +42,9 @@ func loop(ctx context.Context, resp *http.Response, reader *bufio.Reader, events
 		})
 	}
 	defer closeEvents()
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	stopCtxMonitor := make(chan struct{})
 	defer close(stopCtxMonitor)
@@ -50,7 +52,7 @@ func loop(ctx context.Context, resp *http.Response, reader *bufio.Reader, events
 	go func() {
 		select {
 		case <-ctx.Done():
-			resp.Body.Close()
+			_ = resp.Body.Close()
 		case <-stopCtxMonitor:
 		}
 	}()
