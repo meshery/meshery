@@ -234,6 +234,7 @@ func waitForSSEEvent(ctx context.Context, event <-chan utils.Event, query string
 	queryLower := strings.ToLower(query)
 
 	go func() {
+		defer close(eventChan)
 		for {
 			select {
 			case <-ctx.Done():
