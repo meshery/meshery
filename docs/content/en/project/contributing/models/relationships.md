@@ -24,7 +24,7 @@ weight: 20
 
 **Postwork:**
 
-5. [Relationship Testing](#relationship-testing)
+5. [Relationship Authoring Best Practices and Considerations](#relationship-authoring-best-practices-and-considerations)
 6. [Relationship Contribution](#relationship-contribution)
 
 ## Prework
@@ -319,28 +319,27 @@ Each policy has a set of evaluation rules defined and the `evaluationQuery` attr
 
 ## Postwork
 
+<a id="relationship-authoring-best-practices-and-considerations"></a>
 <a id="relationship-testing"></a>
 
-### 5. Relationship Testing
+### 5. Relationship Authoring Best Practices and Considerations
 
-#### Relationship Authoring Best Practices and Considerations
-
-##### General
+#### General
 
 1. Use camelCasing as the formatting convention.
 
-##### Scoping
+#### Scoping
 
 1. To configure a relationship to be applied across models, ensure the `model` property for those relationships is set to `*`, to limit the relationships to a specific model, specify the correct `model`(case sensitive).
 1. To configure a relationship to be applied across all versions of a particular model, ensure the `version` property for those relationships is set to `*`, to limit the relationships to a specific version of a model, specify the correct model version.
 1. Specify `version` property as a regex to ensure relationships are applied to a subset of versions of a model.
 
-##### Actions
+#### Actions
 
 1. If a path `mutatedRef/mutatorRef` contains more than one array path then only the first array position can be specified as `\_` for others explicitly mention them as 0
 1. Currently `mutatedRef` doesn’t support having an array.
 
-##### Matching
+#### Matching
 
 1. Targets of a Relationship can be specific Components or entire Models.
 1. Values for propoerties like `kind`, `version`, and `model` are case-sensitive.
@@ -349,7 +348,7 @@ Each policy has a set of evaluation rules defined and the `evaluationQuery` attr
      means that all the versions of the Kubernetes Pod resource (k8s.io/v1/betav2) will match the selector.
 1. The `evaluationQuery` property determines the OPA policy to invoke for relationship evaluation, specify the correct rego query.
 
-##### Conflicts
+#### Conflicts
 
 1. Ensure that the `deny` selectors and `allow` selectors do not conflict with each other i.e. relations are not getting overlapped for `allow` and `deny` selectors.
 1. In the event of conflicting Relationship Definitions, the union between them is taken.
