@@ -31,7 +31,7 @@ The Meshery Adapter for NGINX Service Mesh includes a handful of sample applicat
   - A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.
 
 - [Bookinfo]({{< ref "guides/infrastructure-management/sample-apps/index.md" >}})
-
+  - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
 - [Httpbin]({{< ref "guides/infrastructure-management/sample-apps/index.md" >}})
 
   - Httpbin is a simple HTTP request and response service.
