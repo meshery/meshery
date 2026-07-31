@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"sync"
 )
 
 // Event represents a Server-Sent Event
@@ -28,12 +29,32 @@ func ConvertRespToSSE(ctx context.Context, resp *http.Response) (<-chan Event, e
 	events := make(chan Event)
 	reader := bufio.NewReader(resp.Body)
 
-	go loop(ctx, reader, events)
+	go loop(ctx, resp, reader, events)
 
 	return events, nil
 }
 
-func loop(ctx context.Context, reader *bufio.Reader, events chan<- Event) {
+func loop(ctx context.Context, resp *http.Response, reader *bufio.Reader, events chan<- Event) {
+	var once sync.Once
+	closeEvents := func() {
+		once.Do(func() {
+			close(events)
+		})
+	}
+	defer closeEvents()
+	defer resp.Body.Close()
+
+	stopCtxMonitor := make(chan struct{})
+	defer close(stopCtxMonitor)
+
+	go func() {
+		select {
+		case <-ctx.Done():
+			resp.Body.Close()
+		case <-stopCtxMonitor:
+		}
+	}()
+
 	ev := Event{}
 
 	var buf bytes.Buffer
@@ -41,16 +62,15 @@ func loop(ctx context.Context, reader *bufio.Reader, events chan<- Event) {
 	for {
 		select {
 		case <-ctx.Done():
-			close(events)
 			return
 		default:
 		}
 
 		line, err := reader.ReadBytes('\n')
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "error during resp.Body read:%s\n", err)
-
-			close(events)
+			if ctx.Err() == nil {
+				fmt.Fprintf(os.Stderr, "error during resp.Body read:%s\n", err)
+			}
 			return
 		}
 
@@ -93,7 +113,6 @@ func loop(ctx context.Context, reader *bufio.Reader, events chan<- Event) {
 					select {
 					case events <- ev:
 					case <-ctx.Done():
-						close(events)
 						return
 					}
 					ev = Event{}
@@ -101,7 +120,6 @@ func loop(ctx context.Context, reader *bufio.Reader, events chan<- Event) {
 			}
 
 		default:
-			close(events)
 			return
 		}
 	}
