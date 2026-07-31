@@ -49,3 +49,35 @@ func TestCompileFolderName(t *testing.T) {
 		t.Fatalf("expected %q, got %q", expected, actual)
 	}
 }
+
+func TestValidateArtifactIdentifier(t *testing.T) {
+	tests := []struct {
+		name        string
+		modelName   string
+		version     string
+		expectError bool
+	}{
+		{name: "valid name and version", modelName: "exoscale-icons", version: "0.1.0"},
+		{name: "valid name without version", modelName: "exoscale-icons"},
+		{name: "empty model name", modelName: "", expectError: true},
+		{name: "dot model name", modelName: ".", expectError: true},
+		{name: "parent model name", modelName: "..", expectError: true},
+		{name: "slash in model name", modelName: "exoscale/icons", expectError: true},
+		{name: "backslash in model name", modelName: `exoscale\icons`, expectError: true},
+		{name: "dot version", modelName: "exoscale-icons", version: ".", expectError: true},
+		{name: "parent version", modelName: "exoscale-icons", version: "..", expectError: true},
+		{name: "slash in version", modelName: "exoscale-icons", version: "0.1/0", expectError: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := ValidateArtifactIdentifier(tt.modelName, tt.version)
+			if tt.expectError && err == nil {
+				t.Fatal("expected error, got nil")
+			}
+			if !tt.expectError && err != nil {
+				t.Fatalf("expected no error, got %v", err)
+			}
+		})
+	}
+}

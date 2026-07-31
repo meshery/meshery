@@ -63,6 +63,9 @@ mesheryctl model build [model-name]/[model-version]
 		if name == "" {
 			return ErrModelBuildFromStrings(errBuildUsage)
 		}
+		if err := modeloci.ValidateArtifactIdentifier(name, version); err != nil {
+			return ErrModelBuildFromStrings(errBuildUsage, err.Error())
+		}
 
 		folder := modeloci.CompileFolderName(cmdModelBuildFlagsProvided.Path, name, version)
 		// check if combined folder exists
@@ -117,7 +120,7 @@ mesheryctl model build [model-name]/[model-version]
 		folder := modeloci.CompileFolderName(cmdModelBuildFlagsProvided.Path, name, version)
 
 		utils.Log.Infof("Building meshery model from path %s", folder)
-		artifactPath, err := modeloci.BuildModelOCIArtifact(cmdModelBuildFlagsProvided.Path, "", name, version)
+		artifactPath, err := modeloci.BuildModelOCIArtifactFromFolder(folder, "", name, version)
 		if err != nil {
 			return ErrModelBuild(err)
 		}

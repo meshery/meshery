@@ -46,11 +46,38 @@ func CompileImageName(name string, version string, extension string) string {
 	)
 }
 
+func ValidateArtifactIdentifier(name, version string) error {
+	if err := validateArtifactComponent(name, false, "model name"); err != nil {
+		return err
+	}
+	return validateArtifactComponent(version, true, "model version")
+}
+
+func validateArtifactComponent(component string, allowEmpty bool, label string) error {
+	if component == "" {
+		if allowEmpty {
+			return nil
+		}
+		return fmt.Errorf("invalid %s %q", label, component)
+	}
+	if component == "." || component == ".." || strings.ContainsAny(component, `/\\`) {
+		return fmt.Errorf("invalid %s %q", label, component)
+	}
+	return nil
+}
+
 func BuildModelOCIArtifact(sourcePath, outputPath, name, version string) (string, error) {
+	if err := ValidateArtifactIdentifier(name, version); err != nil {
+		return "", err
+	}
 	return BuildModelOCIArtifactFromFolder(CompileFolderName(sourcePath, name, version), outputPath, name, version)
 }
 
 func BuildModelOCIArtifactFromFolder(folder, outputPath, name, version string) (string, error) {
+	if err := ValidateArtifactIdentifier(name, version); err != nil {
+		return "", err
+	}
+
 	info, err := os.Stat(folder)
 	if err != nil {
 		return "", err

@@ -86,27 +86,21 @@ func resolveModelOCISource(sourcePath, modelName string, model meshkitRegistryUt
 }
 
 func resolveModelOCISourceDir(sourcePath, modelName, rawModelName string) (string, error) {
-	candidates := []string{modelName, rawModelName}
-	seen := map[string]bool{}
-	for _, candidate := range candidates {
-		if candidate == "" || seen[candidate] {
-			continue
-		}
-		seen[candidate] = true
-		candidatePath := filepath.Join(sourcePath, candidate)
-		info, err := os.Stat(candidatePath)
-		if err == nil && info.IsDir() {
-			return candidatePath, nil
-		}
-	}
-
 	entries, err := os.ReadDir(sourcePath)
 	if err != nil {
 		return "", err
 	}
+
+	normalizedRawModelName := meshkitUtils.FormatName(rawModelName)
 	for _, entry := range entries {
-		if entry.IsDir() && meshkitUtils.FormatName(entry.Name()) == modelName {
-			return filepath.Join(sourcePath, entry.Name()), nil
+		if !entry.IsDir() {
+			continue
+		}
+
+		entryName := entry.Name()
+		normalizedEntryName := meshkitUtils.FormatName(entryName)
+		if entryName == modelName || entryName == rawModelName || normalizedEntryName == modelName || normalizedEntryName == normalizedRawModelName {
+			return filepath.Join(sourcePath, entryName), nil
 		}
 	}
 
@@ -163,15 +157,88 @@ func compareVersionStrings(left, right string) int {
 		}
 	}
 
-	leftHasDash := strings.Contains(left, "-")
-	rightHasDash := strings.Contains(right, "-")
-	if leftHasDash && !rightHasDash {
+	leftPrerelease := prereleaseIdentifier(left)
+	rightPrerelease := prereleaseIdentifier(right)
+	if leftPrerelease != "" && rightPrerelease == "" {
 		return -1
 	}
-	if !leftHasDash && rightHasDash {
+	if leftPrerelease == "" && rightPrerelease != "" {
 		return 1
 	}
+	if leftPrerelease != "" && rightPrerelease != "" {
+		if result := comparePrereleaseIdentifiers(leftPrerelease, rightPrerelease); result != 0 {
+			return result
+		}
+	}
 	return strings.Compare(left, right)
+}
+
+func prereleaseIdentifier(version string) string {
+	version = strings.TrimPrefix(version, "v")
+	if idx := strings.Index(version, "+"); idx != -1 {
+		version = version[:idx]
+	}
+	idx := strings.Index(version, "-")
+	if idx == -1 || idx == len(version)-1 {
+		return ""
+	}
+	return version[idx+1:]
+}
+
+func comparePrereleaseIdentifiers(left, right string) int {
+	leftParts := strings.Split(left, ".")
+	rightParts := strings.Split(right, ".")
+	maxLen := len(leftParts)
+	if len(rightParts) > maxLen {
+		maxLen = len(rightParts)
+	}
+
+	for i := 0; i < maxLen; i++ {
+		if i >= len(leftParts) {
+			return -1
+		}
+		if i >= len(rightParts) {
+			return 1
+		}
+
+		leftNum, leftIsNum := parseNumericIdentifier(leftParts[i])
+		rightNum, rightIsNum := parseNumericIdentifier(rightParts[i])
+		switch {
+		case leftIsNum && rightIsNum:
+			if leftNum > rightNum {
+				return 1
+			}
+			if leftNum < rightNum {
+				return -1
+			}
+		case leftIsNum && !rightIsNum:
+			return -1
+		case !leftIsNum && rightIsNum:
+			return 1
+		default:
+			if result := strings.Compare(leftParts[i], rightParts[i]); result != 0 {
+				return result
+			}
+		}
+	}
+
+	return 0
+}
+
+func parseNumericIdentifier(identifier string) (int, bool) {
+	if identifier == "" {
+		return 0, false
+	}
+	for _, r := range identifier {
+		if !unicode.IsDigit(r) {
+			return 0, false
+		}
+	}
+	value, err := strconv.Atoi(identifier)
+	if err != nil {
+		return 0, false
+	}
+	return value, true
 }
 
 func versionNumberParts(version string) []int {

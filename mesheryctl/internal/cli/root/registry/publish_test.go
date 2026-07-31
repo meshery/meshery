@@ -34,6 +34,11 @@ func TestResolveModelOCIVersion(t *testing.T) {
 			versions: []string{"v1.20.0-beta.0", "v1.20.0"},
 			expected: "v1.20.0",
 		},
+		{
+			name:     "latest pre-release numeric identifier",
+			versions: []string{"v1.0.0-beta.2", "v1.0.0-beta.11"},
+			expected: "v1.0.0-beta.11",
+		},
 	}
 
 	for _, tt := range tests {
@@ -74,6 +79,23 @@ func TestResolveModelOCISourceDirWithRawModelName(t *testing.T) {
 	}
 	if version != "0.1.0" {
 		t.Fatalf("expected version %q, got %q", "0.1.0", version)
+	}
+}
+
+func TestResolveModelOCISourceDirDoesNotEscapeSourcePath(t *testing.T) {
+	root := t.TempDir()
+	sourcePath := filepath.Join(root, "source")
+	outsidePath := filepath.Join(root, "escaped-model", "0.1.0")
+	if err := os.MkdirAll(sourcePath, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(outsidePath, 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	_, err := resolveModelOCISourceDir(sourcePath, "escaped-model", "../escaped-model")
+	if err == nil {
+		t.Fatal("expected error, got nil")
 	}
 }
 
