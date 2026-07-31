@@ -37,6 +37,7 @@ import { ConditionalTooltip } from '@/utils/utils';
 
 import { Keys } from '@meshery/schemas/permissions';
 import { isLocalProvider } from '@/utils/provider';
+import CAN from '@/utils/can';
 import { ButtonTextWrapper, ProfileContainer } from './style';
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
 import { useDispatch, useSelector } from 'react-redux';
@@ -461,7 +462,7 @@ function PerformanceProfile({ handleDelete }) {
               }}
               expanded={isSearchExpanded}
               setExpanded={setIsSearchExpanded}
-              placeholder="Search Profiles..."
+              placeholder="Search by name"
             />
           }
           columnVisibility={
