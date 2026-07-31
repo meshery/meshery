@@ -77,7 +77,12 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
   const { user: currentUser } = useSelector((state) => state.ui);
   const formRef = React.createRef();
   const formStateRef = useRef();
-  const [isCatalogDataEqual, setIsCatalogDataEqual] = useState(false);
+  // Holds the initial processed form data (display names) so equality checks
+  // always compare display-name format vs display-name format — never raw
+  // server model names vs display names.
+  const initialFormDataRef = useRef(undefined);
+  const [formData, setFormData] = useState(undefined);
+  const [isCatalogDataEqual, setIsCatalogDataEqual] = useState(true);
   const [dataIsUpdated, setDataIsUpdated] = useState(false);
   const [visibility, setVisibility] = useState(selectedResource?.visibility);
   const [saveFormLoading, setSaveFormLoading] = useState(false);
@@ -237,6 +242,7 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
       }) || []
     );
   }
+
   // Function to compare objects while normalizing case in compatibility array
   function isEqualIgnoringCase(obj1, obj2) {
     // Check each property one by one
@@ -254,7 +260,10 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
   }
   const handleFormChange = (data) => {
     formStateRef.current = data;
-    setIsCatalogDataEqual(isEqualIgnoringCase(selectedResource?.catalogData, data));
+    // Compare against the initial processed form data (display names vs display
+    // names) — selectedResource.catalogData uses raw model names that don't
+    // match display names for most integrations.
+    setIsCatalogDataEqual(isEqualIgnoringCase(initialFormDataRef.current, data));
   };
 
   useEffect(() => {
@@ -278,10 +287,22 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
           type: _.startCase(selectedResource?.catalogData?.type),
           compatibility: filteredCompatibilityArray,
         };
-        formStateRef.current = filterEmptyFields(modifiedData);
+        const filtered = filterEmptyFields(modifiedData);
+        formStateRef.current = filtered;
+        // Snapshot initial processed (display-name) form data for onChange comparisons.
+        initialFormDataRef.current = filtered;
+        // Drive a re-render so the RJSF form picks up the resolved displayNames.
+        // Without this, writing only to the ref leaves the form stale when
+        // meshModels arrives asynchronously after the initial render.
+        setFormData(filtered);
+        setIsCatalogDataEqual(true);
       }
     } else {
-      formStateRef.current = filterEmptyFields(selectedResource?.catalogData);
+      const filtered = filterEmptyFields(selectedResource?.catalogData);
+      formStateRef.current = filtered;
+      initialFormDataRef.current = filtered;
+      setFormData(filtered);
+      setIsCatalogDataEqual(true);
     }
   }, [selectedResource?.catalogData, meshModels]);
 
@@ -458,7 +479,7 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
                   }}
                 >
                   <RJSFWrapper
-                    formData={formStateRef.current}
+                    formData={formData}
                     jsonSchema={{
                       ...publishSchema.rjsfSchema,
                       required: [],

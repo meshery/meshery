@@ -219,8 +219,8 @@ const baseSelectedResource = {
   userId: 'u1',
   visibility: 'public',
   catalogData: {
-    pattern_caveats: 'foo',
-    pattern_info: 'bar',
+    patternCaveats: 'foo',
+    patternInfo: 'bar',
     type: 'pattern',
     compatibility: ['kubernetes'],
   },
