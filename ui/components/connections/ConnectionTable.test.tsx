@@ -48,20 +48,17 @@ vi.mock('@sistent/sistent', () => ({
     search,
     filter,
     columnVisibility,
-    tabs,
   }: {
     primaryActions?: React.ReactNode;
     search?: React.ReactNode;
     filter?: React.ReactNode;
     columnVisibility?: React.ReactNode;
-    tabs?: React.ReactNode;
   }) => (
     <div data-testid="data-table-toolbar">
       {primaryActions}
       {search}
       {filter}
       {columnVisibility}
-      {tabs}
     </div>
   ),
   ResponsiveDataTable: (props) => {
@@ -758,19 +755,24 @@ describe('ConnectionTable', () => {
       ).toBe(true);
     });
   });
-  // Regression coverage for the review feedback on PR #20695: the
-  // Connections/MeshSync tab switcher must be passed down through the
-  // toolbar (rendered between the toolbar and the data table), not dropped.
-  it('renders the tabs prop inside the toolbar, ahead of the data table', () => {
+  // Regression coverage: the Connections/MeshSync tab switcher must render
+  // above the toolbar (not inside it), ahead of the data table (#20791).
+  it('renders the tabs prop above the toolbar, ahead of the data table', () => {
     render(<ConnectionTable tabs={<div data-testid="connection-tabs">tabs</div>} />);
 
+    // Tabs should NOT be inside the toolbar — they are a sibling rendered before it.
     const toolbar = screen.getByTestId('data-table-toolbar');
-    expect(toolbar).toContainElement(screen.getByTestId('connection-tabs'));
+    const tabs = screen.getByTestId('connection-tabs');
+    expect(toolbar).not.toContainElement(tabs);
 
-    const positions = screen
-      .getByTestId('connection-tabs')
-      .compareDocumentPosition(screen.getByTestId('responsive-data-table'));
+    // Tabs should appear before the toolbar in DOM order.
+    const tabsBeforeToolbar = tabs.compareDocumentPosition(toolbar);
+    expect(tabsBeforeToolbar & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
 
-    expect(positions & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // Tabs should appear before the data table in DOM order.
+    const tabsBeforeTable = tabs.compareDocumentPosition(
+      screen.getByTestId('responsive-data-table'),
+    );
+    expect(tabsBeforeTable & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 });

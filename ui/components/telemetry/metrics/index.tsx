@@ -17,6 +17,7 @@ import {
   useUpdatePrometheusPanelsMutation,
 } from '@/rtk-query/telemetryPrometheus';
 import { CoreConnectionKinds } from '@/utils/Enum';
+import { Keys } from '@meshery/schemas/permissions';
 import { useConnectionWizardModal } from '@/utils/context/ConnectionWizardContextProvider';
 import ConnectionPicker, { TelemetryConnection } from '../common/ConnectionPicker';
 import PingStatus from '../common/PingStatus';
@@ -175,6 +176,7 @@ const TelemetryMetrics: React.FC = () => {
               skipKindSelection: true,
             })
           }
+          permissionKey={Keys.MesherySystemConnectMetrics}
         >
           Add a Prometheus connection
         </Button>
