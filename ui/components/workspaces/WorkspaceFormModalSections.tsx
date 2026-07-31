@@ -146,7 +146,6 @@ export const WorkspacesSection: FC<WorkspacesSectionProps> = ({
   const theme = useTheme();
 
   const handleWorkspacesClick = () => {
-    console.log('hey');
     onSelect('All Workspaces');
   };
 
