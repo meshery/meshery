@@ -249,16 +249,25 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	}
 
 	timer := time.NewTimer(time.Duration(1200) * time.Second)
-	eventChan := make(chan string)
+	defer timer.Stop()
+	eventChan := make(chan string, 1)
 
 	// Run a goroutine to wait for the response
 	go func() {
 		for i := range event {
 			if strings.Contains(i.Data.Details, query) {
-				eventChan <- "successful"
+				select {
+				case eventChan <- "successful":
+				case <-ctx.Done():
+					return
+				}
 				utils.Log.Infof("%s\n%s\n", i.Data.Summary, i.Data.Details)
 			} else if strings.Contains(i.Data.Details, "Error") {
-				eventChan <- "error"
+				select {
+				case eventChan <- "error":
+				case <-ctx.Done():
+					return
+				}
 				utils.Log.Infof("%s\n", i.Data.Summary)
 			}
 		}
@@ -288,7 +297,7 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 
 	res, err := client.Do(req)
 	if err != nil {
-		return "", ErrCreatingValidateRequest(err)
+		return "", ErrCreatingValidateResponseRequest(err)
 	}
 	defer func() {
 		if err := res.Body.Close(); err != nil {
@@ -305,16 +314,25 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	}
 
 	timer := time.NewTimer(time.Duration(1200) * time.Second)
-	eventChan := make(chan string)
+	defer timer.Stop()
+	eventChan := make(chan string, 1)
 
 	// Run a goroutine to wait for the response
 	go func() {
 		for i := range event {
 			if strings.Contains(i.Data.Summary, query) {
-				eventChan <- "successful"
+				select {
+				case eventChan <- "successful":
+				case <-ctx.Done():
+					return
+				}
 				utils.Log.Infof("%s\n%s", i.Data.Summary, i.Data.Details)
 			} else if strings.Contains(i.Data.Details, "error") {
-				eventChan <- "error"
+				select {
+				case eventChan <- "error":
+				case <-ctx.Done():
+					return
+				}
 				utils.Log.Infof("%s", i.Data.Summary)
 			}
 		}
