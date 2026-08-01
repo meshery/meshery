@@ -161,6 +161,7 @@ describe('useConnectionColumns Environments multi-select UX', () => {
     const { noOptionsMessage } = renderEnvironmentsCell();
 
     expect(noOptionsMessage({ inputValue: '' })).toBeNull();
+    expect(noOptionsMessage({ inputValue: '   ' })).toBeNull();
     expect(noOptionsMessage({ inputValue: 'zzz' })).toBe(
       'No matching environments. Type to create a new one.',
     );

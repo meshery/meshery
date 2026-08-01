@@ -284,7 +284,9 @@ export const useConnectionColumns = ({
                         value={cleanedEnvs}
                         placeholder="Select or create..."
                         noOptionsMessage={({ inputValue }) =>
-                          inputValue ? 'No matching environments. Type to create a new one.' : null
+                          inputValue?.trim()
+                            ? 'No matching environments. Type to create a new one.'
+                            : null
                         }
                         isSelectAll={true}
                         menuPlacement={'bottom'}

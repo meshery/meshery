@@ -50,20 +50,31 @@ const MultiSelectWrapper = (props) => {
   const chipForeground = theme.palette.getContrastText(chipBackground);
 
   const optionHighlight = getMultiSelectOptionHighlight(theme);
+  // Quieter fill for selected (checked) rows so keyboard/hover focus (optionHighlight)
+  // stays visually distinct from "already selected".
+  const optionSelectedFill = alpha(
+    theme.palette.primary.main,
+    theme.palette.mode === 'dark' ? 0.14 : 0.06,
+  );
+  const optionTextColor = theme.palette.text.default ?? theme.palette.text.primary;
 
   const Option = (props) => {
     return (
       <ListItemButton
         ref={props.innerRef}
-        selected={props.isFocused || props.isSelected}
+        selected={props.isSelected}
         {...props.innerProps}
         component="div"
         data-testid="multi-select-option"
         sx={{
           fontWeight: props.isSelected ? 500 : 400,
           padding: '0.4rem 1rem',
-          backgroundColor: props.isFocused ? optionHighlight : 'transparent',
-          color: theme.palette.text.primary,
+          backgroundColor: props.isFocused
+            ? optionHighlight
+            : props.isSelected
+              ? optionSelectedFill
+              : 'transparent',
+          color: optionTextColor,
           // Intentional redundancy: react-select sets isFocused for both keyboard and
           // mouse-hovered rows, so the ternary already covers hover. Keep `&:hover`
           // (and `&.Mui-selected:hover`) as a defensive fallback so MUI default hover
@@ -72,13 +83,13 @@ const MultiSelectWrapper = (props) => {
             backgroundColor: optionHighlight,
           },
           '&.Mui-selected': {
-            backgroundColor: optionHighlight,
+            backgroundColor: props.isFocused ? optionHighlight : optionSelectedFill,
             '&:hover': {
               backgroundColor: optionHighlight,
             },
           },
           '& .MuiFormControlLabel-label': {
-            color: theme.palette.text.primary,
+            color: optionTextColor,
           },
         }}
       >
@@ -132,6 +143,7 @@ const MultiSelectWrapper = (props) => {
           width: '100%',
           position: 'absolute',
           backgroundColor: menuBackground,
+          ...props.getStyles('menu', props),
         }}
         {...props.innerProps}
       >
@@ -196,6 +208,12 @@ const MultiSelectWrapper = (props) => {
   };
 
   const customStyles = {
+    multiValue: (def) => ({
+      ...def,
+      backgroundColor: chipBackground,
+      border: 'none',
+      overflow: 'hidden',
+    }),
     multiValueLabel: (def) => ({
       ...def,
       backgroundColor: chipBackground,
@@ -205,9 +223,9 @@ const MultiSelectWrapper = (props) => {
       ...def,
       backgroundColor: chipBackground,
       color: chipForeground,
-      // Keep the x readable on hover; only the wash changes.
+      // Soft error tint — action.hover flashes near-white in dark mode.
       ':hover': {
-        backgroundColor: theme.palette.action.hover,
+        backgroundColor: alpha(theme.palette.error.main, 0.16),
         color: chipForeground,
       },
     }),

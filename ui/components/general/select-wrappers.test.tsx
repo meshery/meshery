@@ -28,9 +28,11 @@ vi.mock('@sistent/sistent', async (importOriginal) => {
           common: { white: '#ffffff' },
           primary: { main: '#00B39F' },
           text: {
+            default: isDark ? darkModePalette.text.default : lightModePalette.text.default,
             primary: isDark ? darkModePalette.text.default : lightModePalette.text.default,
             disabled: '#999',
           },
+          error: { main: '#B32700' },
           action: { selected: 'rgba(0,0,0,0.08)', hover: 'rgba(0,0,0,0.04)' },
           getContrastText: (bg: string) => actual.createTheme({}).palette.getContrastText(bg),
         },
@@ -208,7 +210,7 @@ describe('select wrappers', () => {
     assertChipContrast('light');
   });
 
-  it('marks a focused MultiSelectWrapper option as Mui-selected with the highlight path', () => {
+  it('marks Mui-selected from isSelected only, not isFocused alone', () => {
     themeMode = 'dark';
 
     render(
@@ -235,8 +237,9 @@ describe('select wrappers', () => {
       />,
     );
 
-    const focused = container.querySelector('[data-testid="multi-select-option"]');
-    expect(focused).toHaveClass('Mui-selected');
+    expect(container.querySelector('[data-testid="multi-select-option"]')).toHaveClass(
+      'Mui-selected',
+    );
     expect(screen.getByText('Production')).toBeInTheDocument();
 
     rerender(
@@ -257,6 +260,20 @@ describe('select wrappers', () => {
       <Option
         innerRef={vi.fn()}
         innerProps={{ onClick: vi.fn(), role: 'option' }}
+        isFocused={true}
+        isSelected={false}
+        label="Production"
+        value="prod"
+      />,
+    );
+    expect(container.querySelector('[data-testid="multi-select-option"]')).not.toHaveClass(
+      'Mui-selected',
+    );
+
+    rerender(
+      <Option
+        innerRef={vi.fn()}
+        innerProps={{ onClick: vi.fn(), role: 'option' }}
         isFocused={false}
         isSelected={false}
         label="Production"
@@ -264,8 +281,9 @@ describe('select wrappers', () => {
       />,
     );
 
-    const unfocused = container.querySelector('[data-testid="multi-select-option"]');
-    expect(unfocused).not.toHaveClass('Mui-selected');
+    expect(container.querySelector('[data-testid="multi-select-option"]')).not.toHaveClass(
+      'Mui-selected',
+    );
   });
 
   it('renders ReactSelectWrapper option content without a menu context error', () => {
