@@ -287,21 +287,44 @@ func displaySuccessfulRelationships(response *models.RegistryAPIResponse, model 
 		relationshipMap := make(map[string][][]string)
 
 		for _, rel := range response.EntityTypeSummary.SuccessfulRelationships {
-			kind := rel["Kind"].(string)
-			subtype := rel["Subtype"].(string)
-			relationshipType := rel["RelationshipType"].(string)
-			modelName := rel["Model"].(string)
-			if modelName != model {
+			modelName, ok := rel["Model"].(string)
+			if !ok || modelName != model {
 				continue
 			}
-			selectors := rel["Selectors"].([]interface{})
+			kind, _ := rel["Kind"].(string)
+			subtype, _ := rel["Subtype"].(string)
+			relationshipType, _ := rel["RelationshipType"].(string)
+			selectors, ok := rel["Selectors"].([]interface{})
+			if !ok {
+				continue
+			}
 			for _, selector := range selectors {
-				selectorMap := selector.(map[string]interface{})
-				allow := selectorMap["allow"].(map[string]interface{})
-				from := allow["from"].([]interface{})
-				to := allow["to"].([]interface{})
-				fromComponent := fmt.Sprintf("%s", from[0].(map[string]interface{})["kind"])
-				toComponent := fmt.Sprintf("%s", to[0].(map[string]interface{})["kind"])
+				selectorMap, ok := selector.(map[string]interface{})
+				if !ok {
+					continue
+				}
+				allow, ok := selectorMap["allow"].(map[string]interface{})
+				if !ok {
+					continue
+				}
+				from, ok := allow["from"].([]interface{})
+				if !ok || len(from) == 0 {
+					continue
+				}
+				to, ok := allow["to"].([]interface{})
+				if !ok || len(to) == 0 {
+					continue
+				}
+				fromMap, ok := from[0].(map[string]interface{})
+				if !ok {
+					continue
+				}
+				toMap, ok := to[0].(map[string]interface{})
+				if !ok {
+					continue
+				}
+				fromComponent := fmt.Sprintf("%s", fromMap["kind"])
+				toComponent := fmt.Sprintf("%s", toMap["kind"])
 				key := fmt.Sprintf("%s/%s/%s", kind, subtype, relationshipType)
 				if seen[key+fromComponent+toComponent] {
 					continue
