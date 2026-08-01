@@ -110,7 +110,7 @@
     "react-big-calendar": "^1.20.0",
     "react-codemirror2": "^9.0.1",
     "react-dom": "^19.2.7",
-    "react-grid-layout": "^2.2.3",
+    "react-grid-layout": "^2.2.4",
     "react-mentions": "^4.4.10",
     "react-moment": "^2.0.2",
     "react-redux": "9.3.0",
