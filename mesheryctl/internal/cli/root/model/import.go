@@ -410,12 +410,18 @@ func buildEntityTypeLine(names, entityTypes []interface{}, longDescription, prob
 	compCount, relCount := 0, 0
 	EntityTypeLine := ""
 	for i, name := range names {
+		nameStr, ok := name.(string)
+		if !ok {
+			continue
+		}
 		entityType := ""
 		if i < len(entityTypes) {
-			entityType = entityTypes[i].(string)
+			if et, ok := entityTypes[i].(string); ok {
+				entityType = et
+			}
 		}
 		if modelName != "" {
-			if modelName != name.(string) {
+			if modelName != nameStr {
 				continue
 			}
 		} else if modelName == "" {
@@ -425,7 +431,7 @@ func buildEntityTypeLine(names, entityTypes []interface{}, longDescription, prob
 		}
 		switch entityType {
 		case "unknown":
-			utils.Log.Infof("\n%s: Error encountered while importing model %s: \n    %s\n\n    Ensure that you are importing an existing model.\n    Create a new model to import or find an existing model in the Meshery \x1b]8;;https://meshery.io/catalog/models\x1b\\catalog\x1b]8;;\x1b\\.", utils.BoldString("ERROR"), name.(string), longDescription)
+			utils.Log.Infof("\n%s: Error encountered while importing model %s: \n    %s\n\n    Ensure that you are importing an existing model.\n    Create a new model to import or find an existing model in the Meshery \x1b]8;;https://meshery.io/catalog/models\x1b\\catalog\x1b]8;;\x1b\\.", utils.BoldString("ERROR"), nameStr, longDescription)
 			if probableCause != "" {
 				utils.Log.Infof("\n  %s:\n  %s", utils.BoldString("PROBABLE CAUSE"), probableCause)
 			}
