@@ -7,6 +7,8 @@
   // Colors that will change in the dark mode.
   --brand-color-primary: #00d3a9;
   --brand-color-secondary: #00b39f;
+  --brand-color-secondary-hover: #008274;
+  --brand-color-secondary-dark: #006358;
   --details-link-color: #3c494f;
   --brand-color-secondary-50: #3c494f;
   --color-white: #fff;
@@ -93,6 +95,8 @@
 .dark-mode {
   --brand-color-primary: #00d3a9;
   --brand-color-secondary: #00b39f;
+  --brand-color-secondary-hover: #00d3a9;
+  --brand-color-secondary-dark: #008274;
   --details-link-color: #00d3a9;
   --brand-color: #00d3a9;
   --brand-color-tertiary: #3C494F;

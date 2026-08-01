@@ -17,8 +17,8 @@
   transition: border-color 200ms cubic-bezier(.08,.52,.52,1), background-color 200ms cubic-bezier(.08,.52,.52,1);
 
   &:hover {
-    border-color: var(--brand-color-secondary);
-    background-color: var(--brand-color-secondary);
+    border-color: var(--brand-color-secondary-hover);
+    background-color: var(--brand-color-secondary-dark);
 
     .toc-label {
       color: rgba(255, 255, 255, 0.85);

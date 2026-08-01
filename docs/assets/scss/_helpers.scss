@@ -127,7 +127,7 @@ summary {
     text-decoration: none;
 
     &:hover {
-      color: var(--brand-color-secondary);
+      color: var(--brand-color-secondary-hover);
     }
   }
 }
@@ -166,7 +166,7 @@ details > ul {
     color: var(--details-link-color);
 
     &:hover {
-      color: var(--brand-color-secondary);
+      color: var(--brand-color-secondary-hover);
     }
   }
 }
