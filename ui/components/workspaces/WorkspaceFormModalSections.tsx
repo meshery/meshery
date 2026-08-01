@@ -15,7 +15,7 @@ import {
 import { useTheme } from '@/theme';
 import { iconSmall } from 'css/icons.styles';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
-import { useIsTextTruncated } from '@/utils/hooks/useIsTextTruncated';
+import { useIsTextTruncated } from '@/utils/hooks';
 
 export type NavConfigItem = {
   id: string;
