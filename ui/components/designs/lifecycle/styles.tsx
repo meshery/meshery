@@ -73,6 +73,8 @@ export const DryRunRootListStyled = styled(List)({
   width: '100%',
   position: 'relative',
   marginBottom: '0.5rem',
+  maxHeight: '18rem',
+  overflowY: 'auto',
 });
 
 export const DryRunSignleError = styled(ListItemText)(({ theme }) => ({
