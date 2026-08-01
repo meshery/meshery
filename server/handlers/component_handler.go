@@ -728,6 +728,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		Version:     v,
 		Trim:        queryParams.Get("trim") == queryParamTrue,
 		APIVersion:  queryParams.Get("apiVersion"),
+		ModelName:   queryParams.Get("model"),
 		Limit:       limit,
 		Offset:      offset,
 		OrderOn:     order,
