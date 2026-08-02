@@ -28,6 +28,7 @@ import {
 } from '@/store/slices/globalEnvironmentContext';
 import { Button } from '@sistent/sistent';
 import { AddIcon, AddCircleIcon } from '@sistent/sistent';
+import { Keys } from '@meshery/schemas/permissions';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const DeploymentTargetContext = createContext({
@@ -194,6 +195,7 @@ export const EnvironmentsEmptyState = ({ message, onButtonClick }) => {
         color="primary"
         onClick={onButtonClick}
         style={{ margin: '0.6rem 0.6rem', whiteSpace: 'nowrap' }}
+        permissionKey={Keys.WorkspaceManagementCreateEnvironment}
       >
         <AddIcon fill={theme.palette.background.constant.white} />
         Add Environments

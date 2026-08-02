@@ -28,13 +28,14 @@ vi.mock('@sistent/sistent', () => {
 
   return {
     AddIcon: (props: any) => <svg data-testid="add-icon" {...props} />,
-    Button: ({ children, type, variant, color, sx, onClick, ...rest }: any) => (
+    Button: ({ children, type, variant, color, sx, onClick, permissionKey, ...rest }: any) => (
       <button
         type={type}
         data-variant={variant}
         data-color={color}
         data-sx={JSON.stringify(sx || {})}
         onClick={onClick}
+        data-permission-key={permissionKey?.id ?? ''}
         {...rest}
       >
         {children}
@@ -100,5 +101,13 @@ describe('K8sEmptyState', () => {
     render(<K8sEmptyState message="No active cluster found" />);
 
     expect(screen.getByTestId('typography')).toHaveTextContent('No active cluster found');
+  });
+
+  it('passes the LifecycleManagementAddCluster permission key to the Button', () => {
+    mockMode = 'light';
+    render(<K8sEmptyState message={undefined} />);
+    const button = screen.getByRole('button', { name: /Connect Clusters/i });
+    expect(button).toHaveAttribute('data-permission-key');
+    expect(button.getAttribute('data-permission-key')).not.toBe('');
   });
 });
