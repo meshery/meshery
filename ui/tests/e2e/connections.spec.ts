@@ -6,9 +6,8 @@ import { test } from './fixtures/project';
 import { DashboardPage } from './pages/DashboardPage';
 import { waitForSnackBar } from './utils/waitForSnackBar';
 import {
-  CONN_CLIENT,
-  CONN_EPIC,
   annotateConnCase,
+  annotateConnCaseUntracked,
   connTags,
   connTagsUntracked,
 } from './connections.testmap';
@@ -73,11 +72,7 @@ test.describe.serial('Connection Management Tests', () => {
     'Verify that UI components are displayed',
     { tag: connTagsUntracked('UI/Connections') },
     async ({ page }, testInfo) => {
-      testInfo.annotations.push(
-        { type: 'epic', description: CONN_EPIC },
-        { type: 'feature', description: 'Connections table' },
-        { type: 'client', description: CONN_CLIENT },
-      );
+      annotateConnCaseUntracked(testInfo, { feature: 'Connections table' });
       // Verify that connections table is displayed (by checking for table headings)
       const headings = ['Name', 'Environments', 'Kind', 'Category', 'Status', 'Actions'];
       for (const heading of headings) {
@@ -137,10 +132,14 @@ test.describe.serial('Connection Management Tests', () => {
       await page.getByTestId('connection-wizard-next').click();
 
       const response = await discoverRes;
-      if (!response || response.status() !== 200) {
+      if (!response) {
         test.skip(true, 'Context discovery endpoint unavailable; skipping context listing.');
         return;
       }
+      expect(
+        response.status(),
+        `context discovery POST returned ${response.status()} ${response.statusText()}`,
+      ).toBe(200);
 
       // The fixture has three contexts (alpha, beta, gamma); each renders one
       // review row. All three are unreachable, so none cascades to connected.
@@ -274,12 +273,10 @@ test.describe.serial('Connection Management Tests', () => {
     'Delete Kubernetes cluster connections',
     { tag: connTagsUntracked('UI/Connections') },
     async ({ page, clusterMetaData }, testInfo) => {
-      testInfo.annotations.push(
-        { type: 'epic', description: CONN_EPIC },
-        { type: 'feature', description: 'Connection lifecycle' },
-        { type: 'story', description: 'Hard delete a connection' },
-        { type: 'client', description: CONN_CLIENT },
-      );
+      annotateConnCaseUntracked(testInfo, {
+        feature: 'Connection lifecycle',
+        story: 'Hard delete a connection',
+      });
       // The full search -> delete -> confirm -> snackbar flow can be slow in CI.
       test.slow();
 

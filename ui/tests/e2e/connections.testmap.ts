@@ -137,3 +137,24 @@ export function annotateConnCase(testInfo: TestInfo, key: ConnCaseKey): void {
     { type: 'story', description: testCase.story },
   );
 }
+
+/**
+ * Emit the shared Allure label contract for an untracked connection case - one
+ * with no dedicated sheet Test # yet (see {@link connTagsUntracked}): `epic`,
+ * `client`, `feature`, and `story` when provided. Mirrors
+ * {@link annotateConnCase} so the sheet<->code label contract stays defined in
+ * this file rather than inlined per spec.
+ */
+export function annotateConnCaseUntracked(
+  testInfo: TestInfo,
+  { feature, story }: { feature: string; story?: string },
+): void {
+  testInfo.annotations.push(
+    { type: 'epic', description: CONN_EPIC },
+    { type: 'client', description: CONN_CLIENT },
+    { type: 'feature', description: feature },
+  );
+  if (story) {
+    testInfo.annotations.push({ type: 'story', description: story });
+  }
+}
