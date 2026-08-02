@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { K8sEmptyState } from './K8sContextEmptyState';
+import { Keys } from '@meshery/schemas/permissions';
 
 const h = vi.hoisted(() => ({
   openCreateConnectionMock: vi.fn(),
@@ -107,7 +108,6 @@ describe('K8sEmptyState', () => {
     mockMode = 'light';
     render(<K8sEmptyState message={undefined} />);
     const button = screen.getByRole('button', { name: /Connect Clusters/i });
-    expect(button).toHaveAttribute('data-permission-key');
-    expect(button.getAttribute('data-permission-key')).not.toBe('');
+    expect(button).toHaveAttribute('data-permission-key', Keys.LifecycleManagementAddCluster.id);
   });
 });
