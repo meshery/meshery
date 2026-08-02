@@ -19,6 +19,10 @@ header {
 html {
   scroll-padding-top: var(--navbar-height);
   scroll-behavior: smooth;
+
+  @media (max-width: 600px) {
+    scroll-padding-top: calc(var(--navbar-height) - 2.5rem);
+  }
 }
 
 // Navbar styles
