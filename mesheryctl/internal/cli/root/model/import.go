@@ -291,9 +291,18 @@ func displaySuccessfulRelationships(response *models.RegistryAPIResponse, model 
 			if !ok || modelName != model {
 				continue
 			}
-			kind, _ := rel["Kind"].(string)
-			subtype, _ := rel["Subtype"].(string)
-			relationshipType, _ := rel["RelationshipType"].(string)
+			kind, ok := rel["Kind"].(string)
+			if !ok {
+				continue
+			}
+			subtype, ok := rel["Subtype"].(string)
+			if !ok {
+				continue
+			}
+			relationshipType, ok := rel["RelationshipType"].(string)
+			if !ok {
+				continue
+			}
 			selectors, ok := rel["Selectors"].([]interface{})
 			if !ok {
 				continue
@@ -323,8 +332,14 @@ func displaySuccessfulRelationships(response *models.RegistryAPIResponse, model 
 				if !ok {
 					continue
 				}
-				fromComponent := fmt.Sprintf("%s", fromMap["kind"])
-				toComponent := fmt.Sprintf("%s", toMap["kind"])
+				fromComponent, ok := fromMap["kind"].(string)
+				if !ok {
+					continue
+				}
+				toComponent, ok := toMap["kind"].(string)
+				if !ok {
+					continue
+				}
 				key := fmt.Sprintf("%s/%s/%s", kind, subtype, relationshipType)
 				if seen[key+fromComponent+toComponent] {
 					continue
