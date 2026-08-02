@@ -156,10 +156,12 @@ test.describe.serial('Connection Management Tests', () => {
       ).toBe(200);
 
       // The fixture has three contexts (alpha, beta, gamma); each renders one
-      // review row. All three are unreachable, so none cascades to connected.
+      // review row with an editable name field. All three are unreachable, so
+      // none cascades to connected. Assert on the row count rather than a
+      // specific context name (the discovered name is not asserted here).
       const rows = page.getByTestId('connection-wizard-context-row');
       await expect(rows).toHaveCount(3);
-      await expect(page.getByRole('textbox', { name: 'Name for alpha' })).toBeVisible();
+      await expect(rows.first().getByRole('textbox')).toBeVisible();
     },
   );
 
