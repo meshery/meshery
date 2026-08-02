@@ -9,13 +9,14 @@ import type { TestInfo } from '@playwright/test';
  * (BATS) and reporting lanes use lets the Connections Allure report line up
  * results across clients on a single Test #.
  *
- * IMPORTANT: `testId`s are reused from EXISTING sheet rows, never invented. As
- * of this writing the sheet's connection rows are Test # 96-104 (the sheet has
- * no higher connection-lifecycle numbering yet). New lifecycle scenarios that
- * do not yet have a sheet row are grouped by feature only (see
- * {@link connTagsUntracked}) until the Test Plan is expanded and their Test #s
- * assigned - at which point they graduate into {@link CONN_CASES}. This file is
- * the single reconciliation point between the sheet and the specs.
+ * IMPORTANT: `testId`s are reused from EXISTING sheet rows, never invented. The
+ * Kubernetes Connection lifecycle cases live at Test # 1012-1089 (the "Latest"
+ * tab is contiguous 1..1011 then 1012..1089), and each row's `[matrix Rn]`
+ * remark ties it to the connection scenario matrix. Only the Client=UI / Both
+ * rows are automated here; scenarios without a rewritten test yet are grouped by
+ * feature only (see {@link connTagsUntracked}) until a test is added - at which
+ * point they graduate into {@link CONN_CASES}. This file is the single
+ * reconciliation point between the sheet and the specs.
  */
 
 /** Allure epic shared by every connection case (groups the Connections report). */
@@ -38,49 +39,43 @@ export interface ConnCase {
 }
 
 /**
- * Tracked connection cases, keyed by a stable symbol used in the specs.
- *
- * The `componentUnderTest` values are copied from the sheet as-authored; note
- * that Test # 104 predates the consolidation of kubeconfig upload into the
- * Connection Wizard, so its component still reads "UI/Settings" even though the
- * test now drives the wizard. The traceability id is what must stay stable;
- * updating the sheet's column C is a Test-Plan edit owned separately.
+ * Tracked connection cases, keyed by a stable symbol used in the specs. Each maps
+ * to a Client=UI row in the Test Plan's connection block (Test # 1012-1089); the
+ * `[matrix Rn]` id from the sheet is noted for cross-reference. `componentUnderTest`
+ * is copied from the sheet's column C verbatim.
  */
 export const CONN_CASES = {
-  wizardOpen: {
-    testId: 'TC-96',
-    sheetRow: 96,
-    componentUnderTest: 'UI/Connection Wizard',
-    feature: 'Connection wizard',
-    story: 'Open wizard and show kubeconfig upload',
-  },
-  wizardDiscoverContexts: {
-    testId: 'TC-97',
-    sheetRow: 97,
-    componentUnderTest: 'UI/Connection Wizard',
-    feature: 'Connection wizard',
-    story: 'Discover kubeconfig contexts',
-  },
-  stateTransition: {
-    testId: 'TC-98',
-    sheetRow: 98,
-    componentUnderTest: 'UI/Connection Wizard',
-    feature: 'Connection state transitions',
-    story: 'Transition a connection between lifecycle states',
-  },
-  operatorStatus: {
-    testId: 'TC-101',
-    sheetRow: 101,
-    componentUnderTest: 'UI/Settings',
-    feature: 'Meshery Operator',
-    story: 'Operator and controller status for a connected cluster',
-  },
+  // matrix R1
   kubeconfigConnect: {
-    testId: 'TC-104',
-    sheetRow: 104,
-    componentUnderTest: 'UI/Settings',
+    testId: 'TC-1012',
+    sheetRow: 1012,
+    componentUnderTest: 'UI/Connection Wizard',
     feature: 'Kubeconfig import',
-    story: 'Register and connect a cluster via kubeconfig upload',
+    story: 'Register reachable single-context kubeconfig',
+  },
+  // matrix R3 (this test covers the multi-context discover + review-listing portion)
+  wizardDiscoverContexts: {
+    testId: 'TC-1014',
+    sheetRow: 1014,
+    componentUnderTest: 'UI/Connection Wizard',
+    feature: 'Connection wizard',
+    story: 'Register multi-context kubeconfig (discover + review contexts)',
+  },
+  // matrix X1
+  stateTransition: {
+    testId: 'TC-1061',
+    sheetRow: 1061,
+    componentUnderTest: 'UI/Connections Table',
+    feature: 'Connection state transitions',
+    story: 'Disconnect a connected cluster',
+  },
+  // matrix X3
+  delete: {
+    testId: 'TC-1063',
+    sheetRow: 1063,
+    componentUnderTest: 'UI/Connections Table',
+    feature: 'Connection lifecycle',
+    story: 'FSM delete (graceful)',
   },
 } as const satisfies Record<string, ConnCase>;
 

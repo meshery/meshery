@@ -70,7 +70,7 @@ test.describe.serial('Connection Management Tests', () => {
 
   test(
     'Verify that UI components are displayed',
-    { tag: connTagsUntracked('UI/Connections') },
+    { tag: connTagsUntracked('UI/Connections Table') },
     async ({ page }, testInfo) => {
       annotateConnCaseUntracked(testInfo, { feature: 'Connections table' });
       // Verify that connections table is displayed (by checking for table headings)
@@ -81,14 +81,18 @@ test.describe.serial('Connection Management Tests', () => {
     },
   );
 
-  // TC-96: opening the Kubernetes wizard surfaces the kubeconfig upload. This is
+  // Opening the Kubernetes wizard surfaces the kubeconfig upload. This is
   // deterministic - it needs a running Meshery UI but no cluster - so it runs in
-  // CI rather than self-skipping.
+  // CI rather than self-skipping. Untracked: it is a UI smoke of the wizard entry
+  // with no dedicated Test Plan row (the matrix begins at registration, R1).
   test(
     'Open the Kubernetes connection wizard and show kubeconfig upload',
-    { tag: connTags('wizardOpen') },
+    { tag: connTagsUntracked('UI/Connection Wizard') },
     async ({ page }, testInfo) => {
-      annotateConnCase(testInfo, 'wizardOpen');
+      annotateConnCaseUntracked(testInfo, {
+        feature: 'Connection wizard',
+        story: 'Open wizard and show kubeconfig upload',
+      });
 
       await openKubernetesWizard(page);
 
@@ -100,10 +104,10 @@ test.describe.serial('Connection Management Tests', () => {
     },
   );
 
-  // TC-97: uploading a multi-context kubeconfig lists every context in the
-  // "Review contexts" step (one row per context). Uses a committed 3-context
-  // fixture with unreachable servers, so it needs the discovery endpoint (a
-  // running server) but no real clusters. Self-skips if discovery is
+  // TC-1014 (matrix R3): uploading a multi-context kubeconfig lists every context
+  // in the "Review contexts" step (one row per context). Uses a committed
+  // 3-context fixture with unreachable servers, so it needs the discovery
+  // endpoint (a running server) but no real clusters. Self-skips if discovery is
   // unavailable.
   test(
     'Discover multiple kubeconfig contexts in the wizard',
@@ -149,9 +153,9 @@ test.describe.serial('Connection Management Tests', () => {
     },
   );
 
-  // TC-104: register + connect a cluster by uploading a kubeconfig through the
-  // wizard. Requires a reachable cluster (the host/CI kubeconfig), so it
-  // self-skips when no kubeconfig is present or the import call does not
+  // TC-1012 (matrix R1): register + connect a cluster by uploading a kubeconfig
+  // through the wizard. Requires a reachable cluster (the host/CI kubeconfig), so
+  // it self-skips when no kubeconfig is present or the import call does not
   // succeed.
   test(
     'Register and connect a Kubernetes cluster via kubeconfig upload',
@@ -213,7 +217,7 @@ test.describe.serial('Connection Management Tests', () => {
     },
   );
 
-  // TC-98: transition a connected cluster to another lifecycle state and back,
+  // TC-1061 (matrix X1): transition a connected cluster to disconnected (and back),
   // via the table status dropdown and the shared confirmation modal. Requires a
   // pre-connected cluster, so it self-skips in environments without one.
   test(
@@ -269,14 +273,14 @@ test.describe.serial('Connection Management Tests', () => {
     },
   );
 
+  // TC-1063 (matrix X3): FSM delete (graceful) - the UI bulk-delete sets status
+  // to `deleted` via the shared transition modal (PUT /connections/{id}), not the
+  // hard DELETE endpoint. Self-skips without a connected cluster.
   test(
     'Delete Kubernetes cluster connections',
-    { tag: connTagsUntracked('UI/Connections') },
+    { tag: connTags('delete') },
     async ({ page, clusterMetaData }, testInfo) => {
-      annotateConnCaseUntracked(testInfo, {
-        feature: 'Connection lifecycle',
-        story: 'Hard delete a connection',
-      });
+      annotateConnCase(testInfo, 'delete');
       // The full search -> delete -> confirm -> snackbar flow can be slow in CI.
       test.slow();
 

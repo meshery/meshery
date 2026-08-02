@@ -215,10 +215,10 @@ connections suite that map is
 {{< code code=`import { annotateConnCase, connTags } from './connections.testmap';
 
 test(
-  'Open the Kubernetes connection wizard and show kubeconfig upload',
-  { tag: connTags('wizardOpen') },
+  'Register and connect a Kubernetes cluster via kubeconfig upload',
+  { tag: connTags('kubeconfigConnect') },
   async ({ page }, testInfo) => {
-    annotateConnCase(testInfo, 'wizardOpen'); // emits the shared Allure labels
+    annotateConnCase(testInfo, 'kubeconfigConnect'); // emits the shared Allure labels
     // ...
   },
 );` >}}
@@ -226,4 +226,4 @@ test(
 Behaviors that do not yet have a Test Plan row use `connTagsUntracked('<Component>')`
 so they still land in the report grouped by component; graduate them into the
 map once a Test # is assigned. Run a single Test # with
-`npx playwright test --grep @TC-98`.
+`npx playwright test --grep @TC-1012`.
