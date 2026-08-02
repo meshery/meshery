@@ -117,9 +117,10 @@ export function connTagsUntracked(componentUnderTest: string): string[] {
 /**
  * Emit the shared Allure label contract via Playwright annotations:
  * `testId`, `componentUnderTest`, `client`, `epic`, `feature`, `story`.
- * allure-playwright maps epic/feature/story to Allure labels and captures the
- * rest; the repo's custom reporter also reads annotations. No extra dependency
- * is introduced.
+ * allure-playwright maps epic/feature/story to Allure labels and records the
+ * rest as parameters, so no extra dependency is introduced. (The repo's custom
+ * Playwright reporter only processes `relationship` annotations - it does not
+ * read these; the tags from {@link connTags} are what it surfaces.)
  */
 export function annotateConnCase(testInfo: TestInfo, key: ConnCaseKey): void {
   const testCase = CONN_CASES[key];

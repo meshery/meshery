@@ -28,10 +28,16 @@ import {
 const MULTI_CONTEXT_KUBECONFIG = path.join(__dirname, 'assets', 'kubeconfig-multi-context.yaml');
 const HOST_KUBECONFIG = path.join(os.homedir(), '.kube', 'config');
 
+// Wait for the connections LIST response specifically. Matching any 200 whose
+// URL merely contains "/api/integrations/connections" would also resolve on the
+// PUT /connections/{id} status-update, letting a table-refresh wait complete on
+// an unrelated request; restrict to the GET collection endpoint.
 function waitForConnectionsApiResponse(page: Page): Promise<Response> {
   return page.waitForResponse(
     (response) =>
-      response.url().includes('/api/integrations/connections') && response.status() === 200,
+      response.request().method() === 'GET' &&
+      /\/api\/integrations\/connections(\?|$)/.test(response.url()) &&
+      response.status() === 200,
   );
 }
 
@@ -40,7 +46,11 @@ async function openKubernetesWizard(page: Page): Promise<void> {
   await page.goto('/management/connections?create=true&kind=kubernetes', {
     waitUntil: 'domcontentloaded',
   });
-  await expect(page.getByRole('heading', { name: 'Create Connection' })).toBeVisible();
+  // The wizard opens preset to Kubernetes on the "Import Kubeconfig" step. Its
+  // StepHeader is an h6 ("Upload a kubeconfig"), a reliable heading anchor for
+  // "the wizard opened and reached the kubeconfig step". The modal chrome title
+  // ("Create Connection") is not rendered as a heading element, so it must not
+  // be asserted via getByRole('heading').
   await expect(page.getByRole('heading', { name: 'Upload a kubeconfig' })).toBeVisible();
 }
 
@@ -236,7 +246,9 @@ test.describe.serial('Connection Management Tests', () => {
       const row = page
         .locator('tbody tr')
         .filter({ hasText: clusterMetaData.name })
-        .filter({ hasText: 'connected' })
+        // Exact status match: `hasText: 'connected'` also matches "disconnected"
+        // (substring), which could select an already-disconnected row.
+        .filter({ has: page.getByText('connected', { exact: true }) })
         .first();
 
       if ((await row.count()) === 0) {
@@ -263,13 +275,17 @@ test.describe.serial('Connection Management Tests', () => {
       const restored = page
         .locator('tbody tr')
         .filter({ hasText: clusterMetaData.name })
-        .filter({ hasText: 'disconnected' })
+        .filter({ has: page.getByText('disconnected', { exact: true }) })
         .first();
       await restored.locator('#connection-status-select').click();
       await page.getByRole('option', { name: 'connected' }).click();
       await expect(page.getByTestId('connection-transition-modal')).toBeVisible();
+      // Verify the restore PUT like the disconnect leg, so a failed restore is
+      // surfaced (not left to the snackbar alone) and state is left as found.
+      const restoreRes = waitForConnectionsApiResponse(page);
       await page.getByTestId('connection-transition-confirm').click();
       await waitForSnackBar(page, 'Connection status updated');
+      await restoreRes;
     },
   );
 
@@ -302,7 +318,9 @@ test.describe.serial('Connection Management Tests', () => {
       const row = page
         .locator('tbody tr')
         .filter({ hasText: clusterMetaData.name })
-        .filter({ hasText: 'connected' })
+        // Exact status match: `hasText: 'connected'` also matches "disconnected"
+        // (substring), which could select an already-disconnected row.
+        .filter({ has: page.getByText('connected', { exact: true }) })
         .first();
 
       // Skip the test if no connected cluster is found (e.g., CI environments without a pre-connected cluster)
