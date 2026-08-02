@@ -62,8 +62,8 @@ func TestSearchComponent(t *testing.T) {
 			Name:             "given valid name and model flag provided when component search then display matching results",
 			Args:             []string{"search", "Test", "--model", "component-test-0"},
 			URL:              fmt.Sprintf("/%s?model=component-test-0&search=Test&page=0&pagesize=10", componentApiPath),
-			Fixture:          "components.api.response.golden",
-			ExpectedResponse: "components.search.success.output.golden",
+			Fixture:          "components.model.filter.api.response.golden",
+			ExpectedResponse: "components.model.filter.search.output.golden",
 			ExpectError:      false,
 		},
 	}
