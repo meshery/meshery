@@ -32,7 +32,12 @@ export const ConnectionActionMenu = ({
     >
       {onConfigure && (
         <ActionListItem>
-          <ActionButton type="button" onClick={onConfigure} data-cy="btnConfigureConnection" permissionKey={Keys.LifecycleManagementEditConnection}>
+          <ActionButton
+            type="button"
+            onClick={onConfigure}
+            data-cy="btnConfigureConnection"
+            permissionKey={Keys.LifecycleManagementEditConnection}
+          >
             <SettingsIcon {...iconMedium} />
             <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
               Configure
