@@ -1,0 +1,67 @@
+{
+  "id": "0fc2886e-a27c-428e-a2ce-eb5e3c5fa6fd",
+  "evaluationQuery": "",
+  "kind": "edge",
+  "metadata": {
+    "description": "Network connection from AWS Load Balancer to EC2 Instance",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.18.4"
+    },
+    "name": "aws-ec2-controller",
+    "registrant": {
+      "kind": ""
+    },
+    "version": ""
+  },
+  "schemaVersion": "relationships.meshery.io/v1beta2",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "AWS Elastic Load Balancing",
+            "match": {},
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {},
+              "name": "aws"
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Instance",
+            "match": {},
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {},
+              "name": "aws-ec2-controller"
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "network",
+  "status": "enabled",
+  "type": "connection",
+  "version": "v1.0.0"
+}
