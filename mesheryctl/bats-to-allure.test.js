@@ -56,6 +56,23 @@ test("cut token maps to componentUnderTest and derives the connection epic", () 
   assert.equal(labelValue(labels, "testId"), "TC-1042");
 });
 
+test("tg token maps to a testGroup label and is stripped from the name", () => {
+  const { name, labels } = parseTitleTokens(
+    "[TC-1042][cut=Kubernetes Connection][tg=Connection Lifecycle] view works"
+  );
+  assert.equal(name, "view works");
+  assert.equal(labelValue(labels, "testGroup"), "Connection Lifecycle");
+  assert.equal(labelValue(labels, "componentUnderTest"), "Kubernetes Connection");
+  assert.equal(labelValue(labels, "testId"), "TC-1042");
+});
+
+test("tg token is independent of cut/epic and carries an arbitrary Test Group", () => {
+  const { labels } = parseTitleTokens("[TC-2001][cut=Model][tg=Model Import] import works");
+  assert.equal(labelValue(labels, "testGroup"), "Model Import");
+  // A non-connection cut still gets no connection epic.
+  assert.equal(labelValue(labels, "epic"), undefined);
+});
+
 test("explicit epic token overrides the derived epic", () => {
   const { labels } = parseTitleTokens("[cut=Kubernetes Connection][epic=Something Else] t");
   assert.equal(labelValue(labels, "epic"), "Something Else");

@@ -1,4 +1,5 @@
 import { expect, Page, Response } from '@playwright/test';
+import * as allure from 'allure-js-commons';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
@@ -24,6 +25,21 @@ import {
 // Tests that need a live Meshery server and a reachable cluster self-skip when
 // the environment cannot provide one (mirroring the delete test), so an
 // infra-less run degrades to "skipped" rather than a false failure.
+
+// Test Plan Test Group (col B) for every case in this spec. Emitted once as an
+// Allure `testGroup` label in the describe's beforeEach so a single mechanism
+// covers the whole file - this is the UI-lane counterpart to the BATS
+// `[tg=Connection Lifecycle]` title token (see mesheryctl/bats-to-allure.js).
+// The meshery/qa "Connection Lifecycle" report keys on this label. Any other
+// Test Group can drive its own filtered report the same way. This is a real
+// Allure label emitted via `allure.label`, not a Playwright annotation:
+// allure-playwright only maps known annotation types (epic/feature/story) to
+// labels, so a custom `testGroup` must be set through allure.label to become a
+// label the meshery/qa report can filter on. The runtime API comes from
+// `allure-js-commons` (Allure's documented Playwright API and an exact-pinned
+// dependency of allure-playwright); allure-playwright's own `allure` export is
+// deprecated in favor of it.
+const TEST_GROUP = 'Connection Lifecycle';
 
 const MULTI_CONTEXT_KUBECONFIG = path.join(__dirname, 'assets', 'kubeconfig-multi-context.yaml');
 const HOST_KUBECONFIG = path.join(os.homedir(), '.kube', 'config');
@@ -69,6 +85,11 @@ test.describe.serial('Connection Management Tests', () => {
   test.describe.configure({ timeout: 180_000 });
 
   test.beforeEach(async ({ page }) => {
+    // Tag every test in this spec with its Test Plan Test Group (col B) so the
+    // Test-Group-keyed meshery/qa report picks them up. One call here covers
+    // all cases in the describe block.
+    await allure.label('testGroup', TEST_GROUP);
+
     const initialConnectionsRes = waitForConnectionsApiResponse(page);
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.navigateToDashboard();
