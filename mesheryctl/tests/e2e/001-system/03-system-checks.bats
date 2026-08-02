@@ -40,7 +40,7 @@ setup() {
    assert_output --partial "$CHECK_PREREQUISISTE_RESULT"
 }
 
-@test "[TC-1040][cut=Kubernetes Connection] given all requirements are met, when running mesheryctl system check --operator then operators are shown in running state" {
+@test "[TC-1034][cut=Kubernetes Connection] given all requirements are met, when running mesheryctl system check --operator then operators are shown in running state" {
    run $MESHERYCTL_BIN system check --operator
    assert_success
 

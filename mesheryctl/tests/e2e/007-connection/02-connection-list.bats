@@ -5,35 +5,35 @@ setup() {
     load "$E2E_HELPERS_PATH/constants"
 }
 
-@test "[TC-1016][cut=Kubernetes Connection] given all requirements met when running mesheryctl connection list --status status then the conections of specified status is displayed" {
+@test "[TC-1078][cut=Kubernetes Connection] given all requirements met when running mesheryctl connection list --status status then the conections of specified status is displayed" {
     run $MESHERYCTL_BIN connection list --status connected --page 1
 
     assert_success
     assert_output --partial "Total number of connection"
 }
 
-@test "[TC-1017][cut=Kubernetes Connection] given all requirements met when running mesheryctl connection list --kind kind-name then the connections of specified kind is displayed" {
+@test "[TC-1077][cut=Kubernetes Connection] given all requirements met when running mesheryctl connection list --kind kind-name then the connections of specified kind is displayed" {
     run $MESHERYCTL_BIN connection list --kind kubernetes --page 1
 
     assert_success
     assert_output --partial "Total number of connection"
 }
 
-@test "[TC-1018][cut=Kubernetes Connection] given all requirements met when running mesheryctl connection list --pagesize size then the conections of specified size is displayed" {
+@test "[TC-1076][cut=Kubernetes Connection] given all requirements met when running mesheryctl connection list --pagesize size then the conections of specified size is displayed" {
     run $MESHERYCTL_BIN connection list --pagesize 1 --page 1
 
     assert_success
     assert_output --partial "Total number of connection"
 }
 
-@test "[TC-1019][cut=Kubernetes Connection] given all requirements met when running mesheryctl connection list then header of total number of connections followed by a list are displayed" {
+@test "[TC-1076][cut=Kubernetes Connection] given all requirements met when running mesheryctl connection list then header of total number of connections followed by a list are displayed" {
     run $MESHERYCTL_BIN connection list --page 1
 
     assert_success
     assert_output --partial "Total number of connection"
 }
 
-@test "[TC-1020][cut=Kubernetes Connection] given all requirements met when running mesheryctl connection list --count then only the total number of available connections is displayed" {
+@test "[TC-1076][cut=Kubernetes Connection] given all requirements met when running mesheryctl connection list --count then only the total number of available connections is displayed" {
     run $MESHERYCTL_BIN connection list --count
 
     assert_success

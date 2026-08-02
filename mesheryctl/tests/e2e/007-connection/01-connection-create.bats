@@ -8,7 +8,7 @@ setup() {
     mkdir -p "$TESTDATA_DIR"
 }
 
-@test "[TC-1012][cut=Kubernetes Connection] given missing --type flag when running mesheryctl connection create then it fails displaying error message" {
+@test "[TC-1013][cut=Kubernetes Connection] given missing --type flag when running mesheryctl connection create then it fails displaying error message" {
     run $MESHERYCTL_BIN connection create
 
     assert_failure
@@ -25,7 +25,7 @@ setup() {
     assert_output --partial "Error"
 }
 
-@test "[TC-1014][cut=Kubernetes Connection] given no argument for --type flag when running mesheryctl connection create --type then it fails displaying error message" {
+@test "[TC-1013][cut=Kubernetes Connection] given no argument for --type flag when running mesheryctl connection create --type then it fails displaying error message" {
     run $MESHERYCTL_BIN connection create --type
 
     assert_failure
@@ -33,7 +33,7 @@ setup() {
     assert_output --partial "Error"
 }
 
-@test "[TC-1015][cut=Kubernetes Connection] given valid type minikube is provided when running mesheryctl connection create --type minikube then a new connection is created" {
+@test "[TC-1013][cut=Kubernetes Connection] given valid type minikube is provided when running mesheryctl connection create --type minikube then a new connection is created" {
     if ! command -v minikube >/dev/null 2>&1; then
         skip "minikube not installed"
     fi
