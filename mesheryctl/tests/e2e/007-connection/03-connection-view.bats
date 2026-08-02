@@ -87,7 +87,10 @@ require_connection_id() {
     assert_output --partial "id: $CONNECTION_ID"
     assert_output --partial "name"
     assert_output --partial "metadata"
-    assert_output --partial "user_id"
+    # Wire fields are camelCase (schemas Connection: json/yaml tags); createdAt is
+    # always present, whereas userId is omitempty. Asserting "user_id" would fail
+    # against the real output.
+    assert_output --partial "createdAt"
 }
 
 @test "[TC-1080][cut=Kubernetes Connection] given a valid argument is provided as an argument when running mesheryctl connection view connection-id --output-format json then a details in default format is displayed" {
@@ -98,7 +101,8 @@ require_connection_id() {
     assert_output --partial "\"id\": \"$CONNECTION_ID\""
     assert_output --partial "\"name\""
     assert_output --partial "\"metadata\""
-    assert_output --partial "\"user_id\""
+    # camelCase wire field (see the yaml case above); "user_id" is not emitted.
+    assert_output --partial "\"createdAt\""
 }
 
 @test "[TC-1080][cut=Kubernetes Connection] given an invalid connection-id is provided as an argument when running mesheryctl connection view --output-format json/yaml then a message error is displayed" {
