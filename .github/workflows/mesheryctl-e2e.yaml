@@ -137,7 +137,7 @@ jobs:
         if: ${{ !cancelled() && github.event_name == 'push' && matrix.publish_to_qa == true }}
         working-directory: qa
         run: |
-          make mesheryctl-results-sync MESHERYCTL_RESULTS_PATH=../mesheryctl/allure-results
+          make mesheryctl-bats-results-sync MESHERYCTL_BATS_RESULTS_PATH=../mesheryctl/allure-results
 
       - name: Commit & push to qa
         if: ${{ !cancelled() && github.event_name == 'push' && matrix.publish_to_qa == true }}
