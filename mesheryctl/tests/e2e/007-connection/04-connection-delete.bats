@@ -49,6 +49,10 @@ teardown_file() {
     assert_failure
     run $MESHERYCTL_BIN connection ignore
     assert_failure
+    # Note: "connect" is a substring of "connection", so it is asserted only via
+    # the failing invocation (not refute_output, which would false-positive).
+    run $MESHERYCTL_BIN connection connect
+    assert_failure
 }
 
 # Scenario M9 (documented gap): there is no CLI command to view or reset MeshSync

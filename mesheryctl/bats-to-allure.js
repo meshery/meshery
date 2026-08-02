@@ -164,6 +164,33 @@ function baseLabels(extraLabels) {
   ];
 }
 
+// Label names that may legitimately appear more than once on one result.
+// Everything else is single-valued and must not be duplicated (a duplicate
+// e.g. `client` or `epic` label breaks downstream report filtering).
+const MULTI_VALUED_LABELS = new Set(["tag"]);
+
+// dedupeLabels collapses single-valued labels so the LAST occurrence wins,
+// while preserving multi-valued labels (e.g. `tag`). Precedence therefore runs
+// base -> ALLURE_LABELS -> per-test title tokens (most specific wins), which is
+// why the base `client=CLI` is overridable by a `[client=...]` token.
+function dedupeLabels(labels) {
+  const indexByName = new Map();
+  const out = [];
+  for (const label of labels) {
+    if (MULTI_VALUED_LABELS.has(label.name)) {
+      out.push(label);
+      continue;
+    }
+    if (indexByName.has(label.name)) {
+      out[indexByName.get(label.name)] = label; // last value wins, in place
+    } else {
+      indexByName.set(label.name, out.length);
+      out.push(label);
+    }
+  }
+  return out;
+}
+
 function createAllureResult({ name, status, start, stop, details, labels }) {
   return {
     uuid: uuid(),
@@ -205,7 +232,7 @@ function convertTapToAllure(tapFile) {
         start,
         stop: start + 1,
         details: parsed.skipReason || null,
-        labels: [...baseLabels(extraLabels), ...parsed.labels]
+        labels: dedupeLabels([...baseLabels(extraLabels), ...parsed.labels])
       });
 
       results.push(result);
@@ -236,6 +263,7 @@ function convertTapToAllure(tapFile) {
 module.exports = {
   parseTitleTokens,
   parseTestLine,
+  dedupeLabels,
   convertTapToAllure,
   CONNECTION_EPIC
 };

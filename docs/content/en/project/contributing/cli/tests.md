@@ -270,7 +270,7 @@ A test that maps to a row in the [Meshery Test Plan](https://docs.google.com/spr
 The tokens are stripped from the displayed test name, so the naming convention above still applies to the remainder:
 
 ```bash
-@test "[TC-1015][cut=Kubernetes Connection] mesheryctl connection create --type minikube creates a new connection" {
+@test "[TC-1013][cut=Kubernetes Connection] mesheryctl connection create --type minikube creates a new connection" {
   ... test implementation ...
 }
 ```

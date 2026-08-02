@@ -12,6 +12,7 @@ const path = require("node:path");
 const {
   parseTitleTokens,
   parseTestLine,
+  dedupeLabels,
   convertTapToAllure,
   CONNECTION_EPIC
 } = require("./bats-to-allure.js");
@@ -118,6 +119,35 @@ test("ALLURE_LABELS epic is not duplicated by the derived connection epic", () =
     process.chdir(cwd);
     if (prevLabels === undefined) delete process.env.ALLURE_LABELS;
     else process.env.ALLURE_LABELS = prevLabels;
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("dedupeLabels collapses single-valued labels (last wins) and keeps tags", () => {
+  const out = dedupeLabels([
+    { name: "client", value: "CLI" },
+    { name: "epic", value: "MesheryCtl" },
+    { name: "client", value: "UI" },   // token override wins
+    { name: "tag", value: "TC-1" },
+    { name: "tag", value: "TC-2" }      // multiple tags preserved
+  ]);
+  assert.deepEqual(out.filter(l => l.name === "client"), [{ name: "client", value: "UI" }]);
+  assert.equal(out.filter(l => l.name === "epic").length, 1);
+  assert.deepEqual(out.filter(l => l.name === "tag").map(l => l.value), ["TC-1", "TC-2"]);
+});
+
+test("a [client=...] token does not produce a duplicate client label", () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "b2a-"));
+  const cwd = process.cwd();
+  try {
+    process.chdir(tmp);
+    fs.writeFileSync(path.join(tmp, "s.tap"), "1..1\nok 1 [client=UI] t\n");
+    const [r] = convertTapToAllure(path.join(tmp, "s.tap"));
+    const clients = r.labels.filter(l => l.name === "client");
+    assert.equal(clients.length, 1);
+    assert.equal(clients[0].value, "UI");
+  } finally {
+    process.chdir(cwd);
     fs.rmSync(tmp, { recursive: true, force: true });
   }
 });
