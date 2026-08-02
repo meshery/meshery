@@ -1,8 +1,17 @@
 import { expect, Page, Response } from '@playwright/test';
+import * as allure from 'allure-js-commons';
 import { test } from './fixtures/project';
 import { ENV } from './env';
 import { DashboardPage } from './pages/DashboardPage';
 import { waitForSnackBar } from './utils/waitForSnackBar';
+
+// Test Plan Test Group (col B) for every case in this spec. Emitted once as an
+// Allure `testGroup` label in the describe's beforeEach so a single mechanism
+// covers the whole file — this is the UI-lane counterpart to the BATS
+// `[tg=Connection Lifecycle]` title token (see mesheryctl/bats-to-allure.js).
+// The meshery/qa "Connection Lifecycle" report keys on this label. Any other
+// Test Group can drive its own filtered report the same way.
+const TEST_GROUP = 'Connection Lifecycle';
 
 // Define the shape of the transition test objects
 interface TransitionTest {
@@ -56,6 +65,11 @@ test.describe.serial('Connection Management Tests', () => {
   test.describe.configure({ timeout: 180_000 });
 
   test.beforeEach(async ({ page }) => {
+    // Tag every test in this spec with its Test Plan Test Group (col B) so the
+    // Test-Group-keyed meshery/qa report picks them up. One call here covers
+    // all cases in the describe block.
+    await allure.label('testGroup', TEST_GROUP);
+
     const initialConnectionsRes = waitForConnectionsApiResponse(page);
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.navigateToDashboard();
