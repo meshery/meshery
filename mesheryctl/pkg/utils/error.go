@@ -355,6 +355,7 @@ var cmdUsageURLs = map[cmdType]string{
 	cmdWorkspaceList:            workspaceListURL,
 	cmdRelationshipView:         relationshipViewURL,
 	cmdRelationships:            relationshipUsageURL,
+	cmdRelationship:             relationshipUsageURL,
 	cmdRelationshipGenerateDocs: cmdRelationshipGenerateDocsURL,
 	cmdComponent:                componentUsageURL,
 	cmdComponentList:            componentListURL,
