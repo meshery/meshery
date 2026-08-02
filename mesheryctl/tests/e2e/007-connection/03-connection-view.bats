@@ -16,32 +16,32 @@ require_connection_id() {
     [ -n "$CONNECTION_ID" ] || skip "No connection ID available"
 }
 
-@test "given no connection-id is provided as an argument when running mesheryctl connection view then a message error is displayed" {
+@test "[TC-1022][cut=Kubernetes Connection] given no connection-id is provided as an argument when running mesheryctl connection view then a message error is displayed" {
     run $MESHERYCTL_BIN connection view
     assert_failure
-    assert_output --partial "Error" 
+    assert_output --partial "Error"
     assert_output --partial "Invalid Argument"
 }
 
-@test "given a valid connection-id is provided as an argument when running meshery connection view connection-id then the connection details in default format is displayed" {
+@test "[TC-1023][cut=Kubernetes Connection] given a valid connection-id is provided as an argument when running meshery connection view connection-id then the connection details in default format is displayed" {
     require_connection_id
 
     run $MESHERYCTL_BIN connection view "$CONNECTION_ID"
     assert_success
-    assert_output --partial "id" 
-    assert_output --partial "name" 
-    assert_output --partial "metadata" 
+    assert_output --partial "id"
+    assert_output --partial "name"
+    assert_output --partial "metadata"
 }
 
-@test "given no connection-id is provided as an argument when running mesheryctl connection view --save then a message error is displayed" {
+@test "[TC-1024][cut=Kubernetes Connection] given no connection-id is provided as an argument when running mesheryctl connection view --save then a message error is displayed" {
     run $MESHERYCTL_BIN connection view --save
     assert_failure
-    assert_output --partial "Error" 
+    assert_output --partial "Error"
     assert_output --partial "Invalid Argument"
     assert_output --partial "ID isn't specified"
 }
 
-@test "given a valid connection-id is provided as an argument when running mesheryctl connection view --save then a details in default format is displayed" {
+@test "[TC-1025][cut=Kubernetes Connection] given a valid connection-id is provided as an argument when running mesheryctl connection view --save then a details in default format is displayed" {
     require_connection_id
 
     run $MESHERYCTL_BIN connection view --save "$CONNECTION_ID"
@@ -51,46 +51,46 @@ require_connection_id() {
     assert_file_exists "$SAVED_FILE"
 }
 
-@test "given an invalid connection-id is provided as an argument when running mesheryctl connection view --save then a message error is displayed" {
+@test "[TC-1026][cut=Kubernetes Connection] given an invalid connection-id is provided as an argument when running mesheryctl connection view --save then a message error is displayed" {
     NONEXISTENT_ID="00000000-0000-0000-0000-000000000000"
-    
+
     run $MESHERYCTL_BIN connection view --save "$NONEXISTENT_ID"
     assert_failure
     assert_output --partial "Error"
     assert_output --partial "Invalid connection ID"
 }
 
-@test "given no argument is provided when running mesheryctl connection view connection-id --output-format then a message error is displayed" {
+@test "[TC-1027][cut=Kubernetes Connection] given no argument is provided when running mesheryctl connection view connection-id --output-format then a message error is displayed" {
     require_connection_id
 
     run $MESHERYCTL_BIN connection view "$CONNECTION_ID" --output-format
     assert_failure
-    assert_output --partial "Error" 
+    assert_output --partial "Error"
     assert_output --partial "flag needs an argument"
 }
 
-@test "given invalid argument is provided as an argument when running mesheryctl connection view connection-id --output-format then a message error is displayed" {
+@test "[TC-1028][cut=Kubernetes Connection] given invalid argument is provided as an argument when running mesheryctl connection view connection-id --output-format then a message error is displayed" {
     require_connection_id
 
     run $MESHERYCTL_BIN connection view "$CONNECTION_ID" --output-format foo
     assert_failure
-    assert_output --partial "Error" 
-    assert_output --partial "output-format choice is invalid" 
-    assert_output --partial "use [json|yaml]" 
+    assert_output --partial "Error"
+    assert_output --partial "output-format choice is invalid"
+    assert_output --partial "use [json|yaml]"
 }
 
-@test "given a valid argument is provided as an argument when running mesheryctl connection view connection-id --output-format yaml then a details in default format is displayed" {
+@test "[TC-1029][cut=Kubernetes Connection] given a valid argument is provided as an argument when running mesheryctl connection view connection-id --output-format yaml then a details in default format is displayed" {
     require_connection_id
 
     run $MESHERYCTL_BIN connection view "$CONNECTION_ID" --output-format yaml
     assert_success
-    assert_output --partial "id: $CONNECTION_ID" 
+    assert_output --partial "id: $CONNECTION_ID"
     assert_output --partial "name"
     assert_output --partial "metadata"
     assert_output --partial "user_id"
 }
 
-@test "given a valid argument is provided as an argument when running mesheryctl connection view connection-id --output-format json then a details in default format is displayed" {
+@test "[TC-1030][cut=Kubernetes Connection] given a valid argument is provided as an argument when running mesheryctl connection view connection-id --output-format json then a details in default format is displayed" {
     require_connection_id
 
     run $MESHERYCTL_BIN connection view "$CONNECTION_ID" --output-format json
@@ -101,18 +101,36 @@ require_connection_id() {
     assert_output --partial "\"user_id\""
 }
 
-@test "given an invalid connection-id is provided as an argument when running mesheryctl connection view --output-format json/yaml then a message error is displayed" {
+@test "[TC-1031][cut=Kubernetes Connection] given an invalid connection-id is provided as an argument when running mesheryctl connection view --output-format json/yaml then a message error is displayed" {
     NONEXISTENT_ID="00000000-0000-0000-0000-000000000000"
-    
+
     run $MESHERYCTL_BIN connection view "$NONEXISTENT_ID" --output-format json
     assert_failure
     assert_output --partial "Error"
     assert_output --partial "Invalid connection ID"
 }
 
-@test "given no connection-id is provided as an argument when running mesheryctl connection view --output-format then a message error is displayed" {
+@test "[TC-1032][cut=Kubernetes Connection] given no connection-id is provided as an argument when running mesheryctl connection view --output-format then a message error is displayed" {
     run $MESHERYCTL_BIN connection view --output-format yaml
     assert_failure
-    assert_output --partial "Error" 
-    assert_output --partial "ID isn't specified" 
+    assert_output --partial "Error"
+    assert_output --partial "ID isn't specified"
+}
+
+# Scenario L5 (view by name): the kubernetes connection's name is its context
+# name (e.g. "minikube"). Resolving a connection by name exercises the
+# fetchConnectionByName search path (view.go), distinct from view-by-id.
+@test "[TC-1033][cut=Kubernetes Connection] given a valid connection name is provided when running mesheryctl connection view name then the connection details are displayed" {
+    require_connection_id
+
+    # Resolve the connection's name from its id, then view by that name.
+    run $MESHERYCTL_BIN connection view "$CONNECTION_ID" --output-format json
+    assert_success
+    CONNECTION_NAME="$(echo "$output" | sed -n 's/.*"name": "\([^"]*\)".*/\1/p' | head -n1)"
+    [ -n "$CONNECTION_NAME" ] || skip "connection has no name to resolve by"
+
+    run $MESHERYCTL_BIN connection view "$CONNECTION_NAME" --output-format json
+    assert_success
+    assert_output --partial "\"id\": \"$CONNECTION_ID\""
+    assert_output --partial "\"name\": \"$CONNECTION_NAME\""
 }
