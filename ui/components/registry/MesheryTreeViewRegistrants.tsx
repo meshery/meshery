@@ -90,8 +90,11 @@ const MesheryTreeViewRegistrants = ({
             </div>
           </StyledTreeItem>
         ))}
-      <div ref={lastRegistrantRef} style={{ height: '48px' }}></div>
-      {isRegistrantFetching && <CircularProgress />}
+      {isRegistrantFetching && (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '0.5rem' }}>
+          <CircularProgress size={24} />
+        </div>
+      )}
     </SimpleTreeView>
   );
 };

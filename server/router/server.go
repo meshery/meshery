@@ -270,6 +270,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	handleRegistry("/models", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelModels), models.NoAuth)), "GET")
 	handleRegistry("/models/{model}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelModelsByName), models.NoAuth)), "GET")
 	handleRegistry("/models/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteModel), models.ProviderAuth)), "DELETE")
+	handleRegistry("/registrants/{connectionID}/models", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteModelsByRegistrant), models.ProviderAuth)), "DELETE")
 
 	handleRegistry("/registrants", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelRegistrants), models.NoAuth)), "GET")
 
