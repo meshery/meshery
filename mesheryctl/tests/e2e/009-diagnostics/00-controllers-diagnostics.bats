@@ -50,7 +50,7 @@ _diagnostics() {
         "${MESHERY_URL}/api/system/controllers/diagnostics?connectionId=${conn_id}"
 }
 
-@test "kubernetes connection broker diagnostics recover once NATS is reachable" {
+@test "[TC-1031][cut=Kubernetes Connection] kubernetes connection broker diagnostics recover once NATS is reachable" {
     _need jq
     _need kubectl
     _need curl
