@@ -6,7 +6,7 @@ setup() {
 
 }
 
-@test "mesheryctl system status display meshery operator running pods" {
+@test "[TC-1036][cut=Kubernetes Connection] mesheryctl system status display meshery operator running pods" {
     run $MESHERYCTL_BIN system status -y
     assert_success
 
