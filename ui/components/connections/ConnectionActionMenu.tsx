@@ -1,5 +1,6 @@
 import { Popover, Typography, SettingsIcon, CopyLinkIcon } from '@sistent/sistent';
 import { ActionButton, ActionListItem } from './styles';
+import { Keys } from '@meshery/schemas/permissions';
 import { iconMedium } from '../../css/icons.styles';
 
 type ConnectionActionMenuProps = {
@@ -31,7 +32,7 @@ export const ConnectionActionMenu = ({
     >
       {onConfigure && (
         <ActionListItem>
-          <ActionButton type="button" onClick={onConfigure} data-cy="btnConfigureConnection">
+          <ActionButton type="button" onClick={onConfigure} data-cy="btnConfigureConnection" permissionKey={Keys.LifecycleManagementEditConnection}>
             <SettingsIcon {...iconMedium} />
             <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
               Configure
@@ -45,6 +46,7 @@ export const ConnectionActionMenu = ({
             type="button"
             onClick={onConfigureControllers}
             data-cy="btnConfigureConnectionControllers"
+            permissionKey={Keys.LifecycleManagementEditConnection}
           >
             <SettingsIcon {...iconMedium} />
             <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
