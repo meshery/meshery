@@ -32,9 +32,13 @@ import {
 // `[tg=Connection Lifecycle]` title token (see mesheryctl/bats-to-allure.js).
 // The meshery/qa "Connection Lifecycle" report keys on this label. Any other
 // Test Group can drive its own filtered report the same way. This is a real
-// Allure label (allure-js-commons), not a Playwright annotation: allure-
-// playwright only maps known annotation types (epic/feature/story) to labels,
-// so a custom `testGroup` must be emitted via allure.label to become one.
+// Allure label emitted via `allure.label`, not a Playwright annotation:
+// allure-playwright only maps known annotation types (epic/feature/story) to
+// labels, so a custom `testGroup` must be set through allure.label to become a
+// label the meshery/qa report can filter on. The runtime API comes from
+// `allure-js-commons` (Allure's documented Playwright API and an exact-pinned
+// dependency of allure-playwright); allure-playwright's own `allure` export is
+// deprecated in favor of it.
 const TEST_GROUP = 'Connection Lifecycle';
 
 const MULTI_CONTEXT_KUBECONFIG = path.join(__dirname, 'assets', 'kubeconfig-multi-context.yaml');
