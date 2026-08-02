@@ -74,6 +74,30 @@ Collectively, Meshery repositories will generally have CI workflow for commits a
 - Helm charts lint (helm)
 - Helm charts release, tag and push(stefanprodan/helm-gh-pages@master)
 
+### Test result reporting (QA dashboard)
+
+Test results from across the Meshery ecosystem are published as [Allure](https://allurereport.org/) reports on the QA dashboard at [qa.meshery.io](https://qa.meshery.io). CI in each repository converts its test output to Allure results and commits them to the [`meshery/qa`](https://github.com/meshery/qa) repository, which regenerates and deploys the dashboard via GitHub Pages. Each report on the dashboard (Meshery, Mesheryctl, Kubernetes Connections, and extension reports) is a filtered view over one shared pool of results, selected by the **labels** on each result.
+
+Result labels are injected at each test source:
+
+- **UI (Playwright):** global labels via `ALLURE_LABEL_<name>=<value>` (see `ui/package.json`), Playwright `@tag`s (surfaced as `tag` labels), and per-test `allure.label()` from `allure-js-commons`.
+- **CLI / server (Go, BATS):** the `ALLURE_LABELS="key=value,..."` env var consumed by `mesheryctl/bats-to-allure.js` and `server/gotest-to-allure.js`.
+
+#### Kubernetes Connections tagging contract
+
+The **Kubernetes Connections** report aggregates connection tests from both the UI and the CLI. A connection test - identified from the [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit) - MUST carry these labels (this is the shared, cross-client contract; use these exact names so both clients group together and the report filter matches):
+
+| Label | Source (Test Plan) | Values | Purpose |
+| --- | --- | --- | --- |
+| `epic` | - | `Kubernetes Connections` (constant) | Report filter key |
+| `componentUnderTest` | column C | e.g. `Kubernetes` | Fallback filter key; component grouping |
+| `testId` | column A ("Test #") | `TC-<n>` | Stable per-behavior id |
+| `client` | - | `UI` or `CLI` | Groups results by which client exercised the behavior |
+
+The report keys on `epic` (falling back to `componentUnderTest`), so tagged tests still appear in their `project` report (Meshery or Mesheryctl); the Connections report is an additional lens, not a relocation.
+
+> The `mesheryctl` BATS e2e results and Go unit results are committed to separate directories (`mesheryctl-bats-results/` and `mesheryctl-unit-results/`) in `meshery/qa` and merged at report-build time, so the two feeders no longer overwrite each other.
+
 ### UI Build System
 
 Meshery UI (`/ui`) and Provider UI (`/provider-ui`) are built using [Next.js](https://nextjs.org/) with [SWC](https://swc.rs/) (Speedy Web Compiler) as the default compiler.

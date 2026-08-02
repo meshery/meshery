@@ -54,6 +54,25 @@ func writeJSONEmptyObject(w http.ResponseWriter, status int) {
 	httputil.WriteJSONEmptyObject(w, status)
 }
 
+// providerStatus returns the HTTP status to surface for a failure that came
+// back from the provider layer.
+//
+// Handlers used to hardcode http.StatusNotFound on every provider error, so a
+// 403 from the remote provider reached the browser as a 404 - a response the
+// UI did not recognise as a failure at all, which is how a rejected "create
+// environment" produced a success toast. ErrFetch/ErrPost now tag the error
+// with the provider's real status (see models/httputil.WithProviderStatus);
+// this reads it back.
+//
+// The fallback is http.StatusBadGateway: when the provider never produced an
+// HTTP status the failure is still an upstream one (unreachable provider,
+// unsupported capability, unreadable response body), and 502 says that
+// honestly. It is never 404, because "not found" is a claim about the
+// resource that we have no evidence for.
+func providerStatus(err error) int {
+	return httputil.StatusForProviderError(err, http.StatusBadGateway)
+}
+
 const (
 	defaultPageSize = 25
 	queryParamTrue  = "true"

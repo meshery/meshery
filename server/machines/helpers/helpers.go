@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/machines/grafana"
@@ -35,35 +34,58 @@ func StatusToEvent(status connections.ConnectionStatus) machines.EventType {
 	}
 	return machines.EventType(machines.DefaultState)
 }
+
+// getMachine builds the lifecycle state machine for a connection kind.
+//
+// Kubernetes has a bespoke machine (extra states, cluster-specific actions).
+// Every other kind runs the default machine, whose transitions mirror the
+// `transitionMap` authored on the kind's connection definition
+// (models/.../connections/*.json): discovered -> registered/ignored,
+// registered -> connected/ignored, connected -> disconnected/deleted,
+// disconnected -> connected/deleted.
+//
+// Kinds differ only in whether the REGISTERED state carries a verification
+// action. Grafana and Prometheus verify their endpoint is reachable before
+// advancing; kinds without a reachability probe (e.g. artifacthub, github)
+// register with no extra action and persist on connect.
+//
+// This deliberately does NOT allowlist kinds. The set of registerable kinds is
+// the set of registered connection definitions - that is what drives the Create
+// Connection wizard (buildConnectionWizardKindConfigs) - so an allowlist here
+// would be a second, silently divergent source of truth: shipping a definition
+// would surface the kind in the wizard and then fail registration with
+// meshery-server-1218.
 func getMachine(initialState machines.StateType, mtype, id string, userID core.Uuid, log logger.Handler, dbHandler *database.Handler) (*machines.StateMachine, error) {
-	switch mtype {
-	case "kubernetes":
+	if mtype == "kubernetes" {
 		return kubernetes.New(id, userID, log)
-	case "grafana":
-		mch, err := machines.New(initialState, id, userID, log, mtype)
-		if err != nil {
-			return mch, err
-		}
-		register := mch.States[machines.REGISTERED]
-		mch.States[machines.REGISTERED] = *register.RegisterAction(&grafana.RegisterAction{})
-
-		connect := mch.States[machines.CONNECTED]
-		mch.States[machines.CONNECTED] = *connect.RegisterAction(&machines.DefaultConnectAction{})
-		return mch, nil
-	case "prometheus":
-		mch, err := machines.New(initialState, id, userID, log, mtype)
-		if err != nil {
-			return mch, err
-		}
-		register := mch.States[machines.REGISTERED]
-		mch.States[machines.REGISTERED] = *register.RegisterAction(&prometheus.RegisterAction{})
-
-		connect := mch.States[machines.CONNECTED]
-		mch.States[machines.CONNECTED] = *connect.RegisterAction(&machines.DefaultConnectAction{})
-
-		return mch, nil
 	}
-	return nil, machines.ErrInvalidType(fmt.Errorf("invlaid type requested"))
+
+	mch, err := machines.New(initialState, id, userID, log, mtype)
+	if err != nil {
+		return mch, err
+	}
+
+	if action := registerActionForKind(mtype); action != nil {
+		register := mch.States[machines.REGISTERED]
+		mch.States[machines.REGISTERED] = *register.RegisterAction(action)
+	}
+
+	connect := mch.States[machines.CONNECTED]
+	mch.States[machines.CONNECTED] = *connect.RegisterAction(&machines.DefaultConnectAction{})
+
+	return mch, nil
+}
+
+// registerActionForKind returns the kind-specific action run on entry to the
+// REGISTERED state, or nil when the kind has no verification step.
+func registerActionForKind(mtype string) machines.Action {
+	switch mtype {
+	case "grafana":
+		return &grafana.RegisterAction{}
+	case "prometheus":
+		return &prometheus.RegisterAction{}
+	}
+	return nil
 }
 
 // HasMachineContext reports whether a state machine instance exists and carries

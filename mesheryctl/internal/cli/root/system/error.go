@@ -81,13 +81,13 @@ var (
 	errArgMsg             = "only one argument must be provided"
 	contextCreateUsageMsg = `Usage: mesheryctl system context create [context-name]`
 	contextDeleteUsageMsg = `Usage: mesheryctl system context delete [context name]`
-	contextdocs           = "See https://docs.meshery.io/reference/mesheryctl/system/context for usage details."
+	contextdocs           = "See https://docs.meshery.io/reference/references/mesheryctl/system/context for usage details."
 	contextDir            = "See that you have a correct context in your  meshconfig at `$HOME/.meshery/config.yaml`."
 )
 
 // A Format reference that returns Mesheryctl's URL docs for system command and sub commands
 func FormatErrorReference() string {
-	baseURL := "https://docs.meshery.io/reference/mesheryctl/system"
+	baseURL := "https://docs.meshery.io/reference/references/mesheryctl/system"
 	switch cmdType {
 	case "channel":
 		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/channel")
