@@ -42,7 +42,7 @@ async function openKubernetesWizard(page: Page): Promise<void> {
     waitUntil: 'domcontentloaded',
   });
   await expect(page.getByRole('heading', { name: 'Create Connection' })).toBeVisible();
-  await expect(page.getByText('Upload a kubeconfig')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Upload a kubeconfig' })).toBeVisible();
 }
 
 /** Attach a kubeconfig to the wizard's hidden file input. */
@@ -208,7 +208,9 @@ test.describe.serial('Connection Management Tests', () => {
       ).toBe(200);
 
       // The receipt step confirms the import.
-      await expect(page.getByText(/import complete|Configuration saved/i)).toBeVisible();
+      await expect(
+        page.getByRole('heading', { name: /Kubernetes import complete|Configuration saved/i }),
+      ).toBeVisible();
     },
   );
 
