@@ -346,18 +346,16 @@ func setContext(configFile, cname string) (string, error) {
 	return connectionIDForContext(response, cname), nil
 }
 
-// connectionIDForContext resolves the connection id for the given context name,
-// preferring an exact name match and falling back to the first entry so the id
-// is still surfaced when the server does not echo the context name.
+// connectionIDForContext resolves the connection id for the given context name.
+// It returns the id only on an exact name match; when the server does not echo
+// the requested context name it returns "" rather than guessing. A
+// multi-context kubeconfig registers every context, so an arbitrary fallback
+// could surface a different context's id than the one the user selected and
+// mis-target `connection view`/`connection delete`.
 func connectionIDForContext(response saveK8sContextResponse, cname string) string {
 	all := append(append([]registeredK8sContext{}, response.ConnectedContexts...), response.RegisteredContexts...)
 	for _, ctx := range all {
 		if ctx.Name == cname && ctx.ConnectionID != "" {
-			return ctx.ConnectionID
-		}
-	}
-	for _, ctx := range all {
-		if ctx.ConnectionID != "" {
 			return ctx.ConnectionID
 		}
 	}

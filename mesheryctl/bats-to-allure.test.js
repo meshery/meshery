@@ -60,6 +60,16 @@ test("explicit epic token overrides the derived epic", () => {
   assert.equal(labelValue(labels, "epic"), "Something Else");
 });
 
+test("suite-wide epic (ALLURE_LABELS) suppresses the derived connection epic", () => {
+  const { labels } = parseTitleTokens(
+    "[cut=Kubernetes Connection] t",
+    [{ name: "epic", value: "MesheryCtl" }]
+  );
+  // The suite-wide epic already supplies an epic; deriving would file the test
+  // under two epics.
+  assert.equal(labels.filter(l => l.name === "epic").length, 0);
+});
+
 test("non-connection cut does not get the connection epic", () => {
   const { labels } = parseTitleTokens("[TC-2001][cut=Model] import works");
   assert.equal(labelValue(labels, "componentUnderTest"), "Model");
@@ -83,6 +93,33 @@ test("skip directive and title tokens compose", () => {
   assert.equal(r.skipReason, "no id");
   assert.equal(r.name, "positive delete");
   assert.equal(labelValue(r.labels, "testId"), "TC-1044");
+});
+
+test("ALLURE_LABELS epic is not duplicated by the derived connection epic", () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "b2a-"));
+  const cwd = process.cwd();
+  const prevLabels = process.env.ALLURE_LABELS;
+  try {
+    process.chdir(tmp);
+    process.env.ALLURE_LABELS = "epic=MesheryCtl,layer=cli";
+    const tap = [
+      "1..1",
+      "ok 1 [TC-1041][cut=Kubernetes Connection] list works"
+    ].join("\n");
+    fs.writeFileSync(path.join(tmp, "sample.tap"), tap);
+
+    const results = convertTapToAllure(path.join(tmp, "sample.tap"));
+    assert.equal(results.length, 1);
+
+    const epics = results[0].labels.filter(l => l.name === "epic");
+    assert.equal(epics.length, 1);
+    assert.equal(epics[0].value, "MesheryCtl");
+  } finally {
+    process.chdir(cwd);
+    if (prevLabels === undefined) delete process.env.ALLURE_LABELS;
+    else process.env.ALLURE_LABELS = prevLabels;
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
 });
 
 test("convertTapToAllure end-to-end writes results with base + per-test labels", () => {

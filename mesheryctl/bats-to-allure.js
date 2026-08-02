@@ -67,8 +67,11 @@ function tapStatusToAllure(status) {
 
 // parseTitleTokens splits leading "[...]" tokens off a BATS test title and maps
 // them to Allure labels per the traceability contract above. Returns the
-// display name (tokens stripped) and the derived per-test labels.
-function parseTitleTokens(rawName) {
+// display name (tokens stripped) and the derived per-test labels. extraLabels
+// are the suite-wide labels (from ALLURE_LABELS) that will also be attached, so
+// the cut->epic derivation can defer to a suite-wide epic instead of emitting a
+// duplicate.
+function parseTitleTokens(rawName, extraLabels = []) {
   const labels = [];
   let name = rawName;
   let cut = null;
@@ -117,9 +120,12 @@ function parseTitleTokens(rawName) {
     }
   }
 
-  // Derive the connection epic from cut when not set explicitly, mirroring the
-  // qa "Kubernetes Connections" plugin's componentUnderTest fallback.
-  if (!epic && cut && CONNECTION_COMPONENTS.has(cut.toLowerCase())) {
+  // Derive the connection epic from cut only when no epic is set by any source
+  // — neither a title [epic=...] token nor a suite-wide ALLURE_LABELS epic —
+  // mirroring the qa "Kubernetes Connections" plugin's componentUnderTest
+  // fallback. Emitting a second epic here would file the test under two epics.
+  const epicAlreadyPresent = epic !== null || extraLabels.some(l => l.name === "epic");
+  if (!epicAlreadyPresent && cut && CONNECTION_COMPONENTS.has(cut.toLowerCase())) {
     labels.push({ name: "epic", value: CONNECTION_EPIC });
   }
 
@@ -129,7 +135,7 @@ function parseTitleTokens(rawName) {
 // parseTestLine turns a single TAP "ok/not ok" line into a normalized record:
 // status (passed|failed|skipped), the clean display name, any skip reason, and
 // the per-test traceability labels parsed from the title tokens.
-function parseTestLine(rawStatus, rawName) {
+function parseTestLine(rawStatus, rawName, extraLabels = []) {
   let status = tapStatusToAllure(rawStatus);
   let name = rawName;
   let skipReason = null;
@@ -143,7 +149,7 @@ function parseTestLine(rawStatus, rawName) {
     name = name.slice(0, skipMatch.index);
   }
 
-  const { name: cleanName, labels } = parseTitleTokens(name);
+  const { name: cleanName, labels } = parseTitleTokens(name, extraLabels);
   return { status, name: cleanName, skipReason, labels };
 }
 
@@ -190,7 +196,7 @@ function convertTapToAllure(tapFile) {
     if (testMatch) {
       testCount++;
       const [, rawStatus, rawName] = testMatch;
-      const parsed = parseTestLine(rawStatus, rawName);
+      const parsed = parseTestLine(rawStatus, rawName, extraLabels);
 
       const start = Date.now();
       const result = createAllureResult({

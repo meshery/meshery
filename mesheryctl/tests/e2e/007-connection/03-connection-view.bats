@@ -120,14 +120,29 @@ require_connection_id() {
 # Scenario L5 (view by name): the kubernetes connection's name is its context
 # name (e.g. "minikube"). Resolving a connection by name exercises the
 # fetchConnectionByName search path (view.go), distinct from view-by-id.
+#
+# fetchConnectionByName issues a substring `search` and, when more than one
+# connection matches, falls to an interactive promptui.Select that cannot be
+# answered under bats `run` (no TTY). To stay deterministic and non-blocking we
+# only exercise the by-name path when the name resolves to a single kubernetes
+# connection and skip otherwise, so the prompt can never be reached.
 @test "[TC-1033][cut=Kubernetes Connection] given a valid connection name is provided when running mesheryctl connection view name then the connection details are displayed" {
     require_connection_id
 
-    # Resolve the connection's name from its id, then view by that name.
+    # Resolve the connection's name from its id.
     run $MESHERYCTL_BIN connection view "$CONNECTION_ID" --output-format json
     assert_success
     CONNECTION_NAME="$(echo "$output" | sed -n 's/.*"name": "\([^"]*\)".*/\1/p' | head -n1)"
     [ -n "$CONNECTION_NAME" ] || skip "connection has no name to resolve by"
+
+    # Guard: count kubernetes connections whose row carries this name. The
+    # server's by-name search is a substring match, so grep -F (fixed-string,
+    # substring) is the conservative mirror — any collision over-counts and
+    # skips rather than risking the interactive prompt.
+    run $MESHERYCTL_BIN connection list --kind kubernetes --pagesize 10000
+    assert_success
+    MATCH_COUNT="$(echo "$output" | grep -cF "$CONNECTION_NAME" || true)"
+    [ "$MATCH_COUNT" -eq 1 ] || skip "connection name '$CONNECTION_NAME' is not unique (matched $MATCH_COUNT); by-name resolution would prompt"
 
     run $MESHERYCTL_BIN connection view "$CONNECTION_NAME" --output-format json
     assert_success
