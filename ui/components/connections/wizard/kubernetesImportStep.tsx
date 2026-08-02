@@ -164,6 +164,8 @@ const KubeconfigStepBody = ({ ctx }: { ctx: WizardContext }) => {
   const requestVersionRef = useRef(0);
 
   const handlePickFile = async (kubeconfigFile: File | null) => {
+    const requestVersion = ++requestVersionRef.current;
+
     ctx.patch({
       kubeconfigFile,
       registrationResult: null,
@@ -180,7 +182,6 @@ const KubeconfigStepBody = ({ ctx }: { ctx: WizardContext }) => {
       return;
     }
 
-    const requestVersion = ++requestVersionRef.current;
     setPreviewLoading(true);
 
     try {

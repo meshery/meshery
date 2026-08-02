@@ -8,6 +8,8 @@ import {
   Typography,
   SettingsIcon,
 } from '@sistent/sistent';
+import { EVENT_TYPES } from 'lib/event-types';
+import { formatWizardError } from './errors';
 import { useSelector } from 'react-redux';
 import { alpha, styled } from '@/theme';
 import { CONNECTION_STATES } from '@/utils/Enum';
@@ -114,8 +116,8 @@ const ContextsStepBody = ({ ctx }: { ctx: WizardContext }) => {
       });
     } catch (error) {
       ctx.services.notify({
-        message: `Failed to update ${context.name}: ${error}`,
-        event_type: 'error',
+        message: `Failed to update ${context.name}: ${formatWizardError(error)}`,
+        event_type: EVENT_TYPES.ERROR,
       });
     } finally {
       setBusyId(null);
