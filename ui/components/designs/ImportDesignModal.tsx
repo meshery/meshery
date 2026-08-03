@@ -11,7 +11,7 @@
  * handles the RJSF ref + submit plumbing, so callers only need to provide
  * a close handler and a submit callback receiving the form data.
  */
-import { FC, memo } from 'react';
+import { FC, memo, useCallback, useState } from 'react';
 import { importDesignSchema, importDesignUiSchema } from '@sistent/sistent';
 import { FormModal } from '@/components/shared/Modal';
 import { DesignModalHeaderIcon } from './design-modal-header';
@@ -22,26 +22,45 @@ export interface ImportDesignModalProps {
   /**
    * Called with the validated import payload (URL, uploaded file, or pasted
    * YAML/JSON) — same shape RJSF emits for `importDesignSchema`.
+   * May return a Promise; the modal disables the submit button until it settles.
    */
-  handleImportDesign: (formData: unknown) => void;
+  handleImportDesign: (formData: unknown) => void | Promise<void>;
 }
 
 const ImportDesignModalComponent: FC<ImportDesignModalProps> = ({
   handleClose,
   handleImportDesign,
-}) => (
-  <FormModal
-    isOpen
-    onClose={handleClose}
-    title="Import Design"
-    headerIcon={<DesignModalHeaderIcon />}
-    size="sm"
-    schema={importDesignSchema}
-    uiSchema={importDesignUiSchema}
-    submitText="Import"
-    onSubmit={handleImportDesign}
-  />
-);
+}) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = useCallback(
+    async (formData: unknown) => {
+      if (isSubmitting) return;
+      setIsSubmitting(true);
+      try {
+        await handleImportDesign(formData);
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [isSubmitting, handleImportDesign],
+  );
+
+  return (
+    <FormModal
+      isOpen
+      onClose={handleClose}
+      title="Import Design"
+      headerIcon={<DesignModalHeaderIcon />}
+      size="sm"
+      schema={importDesignSchema}
+      uiSchema={importDesignUiSchema}
+      submitText={isSubmitting ? 'Importing…' : 'Import'}
+      isSubmitDisabled={isSubmitting}
+      onSubmit={handleSubmit}
+    />
+  );
+};
 
 ImportDesignModalComponent.displayName = 'ImportDesignModal';
 

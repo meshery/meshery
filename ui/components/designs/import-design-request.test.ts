@@ -28,7 +28,7 @@ describe('buildImportDesignRequestBody', () => {
     ).resolves.toEqual({
       requestBody: JSON.stringify({
         name: 'Imported design',
-        file_name: 'imported-design.yaml',
+        fileName: 'imported-design.yaml',
         file: [1, 2, 3],
       }),
     });
