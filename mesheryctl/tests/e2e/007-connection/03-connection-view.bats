@@ -57,7 +57,10 @@ require_connection_id() {
     run $MESHERYCTL_BIN connection view --save "$NONEXISTENT_ID"
     assert_failure
     assert_output --partial "Error"
-    assert_output --partial "Invalid connection ID"
+    # Server rejects a non-parseable/nil connection id with ErrInvalidUUID
+    # ("Invalid UUID", meshery-server-1432). Assert on the stable error code
+    # rather than the human-readable message, which has drifted before.
+    assert_output --partial "meshery-server-1432"
 }
 
 @test "[TC-1080][cut=Kubernetes Connection][tg=Connection Lifecycle] given no argument is provided when running mesheryctl connection view connection-id --output-format then a message error is displayed" {
@@ -111,7 +114,10 @@ require_connection_id() {
     run $MESHERYCTL_BIN connection view "$NONEXISTENT_ID" --output-format json
     assert_failure
     assert_output --partial "Error"
-    assert_output --partial "Invalid connection ID"
+    # Server rejects a non-parseable/nil connection id with ErrInvalidUUID
+    # ("Invalid UUID", meshery-server-1432). Assert on the stable error code
+    # rather than the human-readable message, which has drifted before.
+    assert_output --partial "meshery-server-1432"
 }
 
 @test "[TC-1080][cut=Kubernetes Connection][tg=Connection Lifecycle] given no connection-id is provided as an argument when running mesheryctl connection view --output-format then a message error is displayed" {
