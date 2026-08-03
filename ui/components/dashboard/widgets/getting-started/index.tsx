@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import { iconMedium } from 'css/icons.styles';
-import { useTheme, ActionButtonCard, GetStartedModal, GetStartedIcon } from '@sistent/sistent';
+import {
+  useTheme,
+  ActionButtonCard,
+  GetStartedModal,
+  GetStartedIcon,
+  useHasPermission,
+} from '@sistent/sistent';
 import {
   useHandleUserInviteMutation,
   useLazyGetTeamsQuery,
@@ -29,6 +35,7 @@ const GetStarted = (props: { iconsProps?: object }) => {
   );
   const { organization: currentOrg } = useSelector((state: RootState) => state.ui);
   const org_id = currentOrg?.id;
+  const canAssignUserRoles = useHasPermission(Keys.IdentityAccessManagementAssignUserRoles);
   return (
     <>
       <ActionButtonCard
@@ -57,10 +64,7 @@ const GetStarted = (props: { iconsProps?: object }) => {
         useGetUserOrgRolesQuery={useGetUserOrgRolesQuery}
         useHandleUserInviteMutation={useHandleUserInviteMutation}
         useNotificationHandlers={useNotificationHandlers}
-        isAssignUserRolesAllowed={CAN(
-          Keys.IdentityAccessManagementAssignUserRoles.id,
-          Keys.IdentityAccessManagementAssignUserRoles.function,
-        )}
+        isAssignUserRolesAllowed={canAssignUserRoles}
         useLazyGetTeamsQuery={useLazyGetTeamsQuery}
         embedDesignPath="/static/img/getting-started/embedded-design-edge-stack.js"
         isFromMeshery={true}

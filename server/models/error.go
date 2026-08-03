@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/errors"
 )
 
@@ -143,6 +144,8 @@ const (
 	ErrUpdateResourceCode                 = "meshery-server-1355"
 	ErrEmptySessionCode                   = "meshery-server-1356"
 	ErrSeedingComponentsCode              = "meshery-server-1358"
+	ErrSeedingConnectionsCode             = "meshery-server-1462"
+	ErrSeedingConnectionKindCode          = "meshery-server-1463"
 	ErrImportFailureCode                  = "meshery-server-1359"
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
@@ -276,12 +279,23 @@ func ErrEncoding(err error, obj string) error {
 	return errors.New(ErrEncodingCode, errors.Alert, []string{"Error encoding the : ", obj}, []string{err.Error()}, []string{"Object is not a valid json object"}, []string{"Make sure if the object passed is a valid json"})
 }
 
+// ErrFetch and ErrPost are the two provider-layer constructors that know the
+// HTTP status the remote provider actually responded with. Both tag the error
+// with that status via httputil.WithProviderStatus so handlers can propagate
+// the real failure (see httputil.StatusForProviderError) instead of hardcoding
+// one. Without the tag a provider 403 surfaced to the browser as a 404.
 func ErrFetch(err error, obj string, statusCode int) error {
-	return errors.New(ErrFetchCode, errors.Alert, []string{"Unable to fetch data from the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{}, []string{})
+	return httputil.WithProviderStatus(
+		errors.New(ErrFetchCode, errors.Alert, []string{"Unable to fetch data from the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{}, []string{}),
+		statusCode,
+	)
 }
 
 func ErrPost(err error, obj string, statusCode int) error {
-	return errors.New(ErrPostCode, errors.Alert, []string{"Unable to post data to the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{}, []string{})
+	return httputil.WithProviderStatus(
+		errors.New(ErrPostCode, errors.Alert, []string{"Unable to post data to the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{}, []string{}),
+		statusCode,
+	)
 }
 func ErrStatusCode(statusCode int) error {
 	return errors.New(
@@ -651,6 +665,28 @@ func ErrSeedingComponents(err error) error {
 		[]string{err.Error()},
 		[]string{"Given models may not be in accordance with Meshery's schema", "Internal(OS level) error while reading files"},
 		[]string{"Make sure the models being seeded are valid in accordance with Meshery's schema", "If it is an internal error, please try again after some time"},
+	)
+}
+
+func ErrSeedingConnections(err error) error {
+	return errors.New(
+		ErrSeedingConnectionsCode,
+		errors.Alert,
+		[]string{"Failed to seed Meshery's system-owned connections"},
+		[]string{err.Error()},
+		[]string{"The registry could not be read for registered connection definitions", "Meshery's database is unreachable or its connections table could not be queried"},
+		[]string{"Confirm Meshery's database is reachable and that model registration completed; the connections are seeded again on the next restart"},
+	)
+}
+
+func ErrSeedingConnectionKind(err error, kind string) error {
+	return errors.New(
+		ErrSeedingConnectionKindCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("Failed to seed the system-owned \"%s\" connection", kind)},
+		[]string{err.Error()},
+		[]string{fmt.Sprintf("The %s connection could not be written to Meshery's database", kind), "The connection definition for this kind may disagree with the connections table schema"},
+		[]string{fmt.Sprintf("Confirm the %s connection definition is valid; other connection kinds are unaffected and this one is seeded again on the next restart", kind)},
 	)
 }
 
