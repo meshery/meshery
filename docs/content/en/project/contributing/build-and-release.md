@@ -99,6 +99,10 @@ The "Latest" tab columns are: **A = Test #, B = Test Group, C = Client, D = Comp
 
 The report keys on `testGroup`, so tagged tests still appear in their `project` report (Meshery or Mesheryctl); the Connection Lifecycle report is an additional lens, not a relocation. **Transitional:** results carrying no `testGroup` label are still matched via the legacy `epic` (with a `componentUnderTest` fallback) selector, so results predating the `testGroup` label remain visible; this fallback drops once every connection result carries `testGroup`. The full token-to-label mapping lives in the [`mesheryctl/bats-to-allure.js`](https://github.com/meshery/meshery/blob/master/mesheryctl/bats-to-allure.js) header (CLI `[tg=...]`/`[cut=...]` tokens) and `ui/tests/e2e/connections.testmap.ts` (UI).
 
+**Row deep-link.** Each connection result also carries an Allure `tms` **link** ("Test Plan TC-\<n\>") that opens that test's exact row on the "Latest" tab, so a reviewer can click from a report test back to its source case. Both lanes derive the row from the Test # by the same fixed offset (`ROW = TestNum - 778`) encoding the *current* tab layout; the offset lives - with a prominent regenerate-if-re-sorted caveat - in `mesheryctl/bats-to-allure.js` (CLI) and `ui/tests/e2e/connections.testmap.ts` (UI), and the two MUST stay in lockstep.
+
+**Failure evidence.** A failed test carries its captured run output in the report, not just the assertion line. The CLI lane runs BATS with `--print-output-on-failure` and the converter attaches the captured `mesheryctl` transcript (`statusDetails` message + trace, plus a "CLI output (bats)" text attachment); the UI lane runs Playwright with `trace`, `screenshot`, and `video` all `retain-on-failure`, which the `allure-playwright` reporter attaches to each failed result alongside the error and stack.
+
 > The `mesheryctl` BATS e2e results and Go unit results are committed to separate directories (`mesheryctl-bats-results/` and `mesheryctl-unit-results/`) in `meshery/qa` and merged at report-build time, so the two feeders no longer overwrite each other.
 
 ### UI Build System
