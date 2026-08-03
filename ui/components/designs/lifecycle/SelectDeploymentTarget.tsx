@@ -227,6 +227,7 @@ export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
               <IconButton
                 onClick={() => setIsEnvrionmentModalOpen(true)}
                 aria-label="edit-environments"
+                permissionKey={Keys.WorkspaceManagementEditEnvironment}
               >
                 <Edit fill={theme.palette.icon.default} />
               </IconButton>

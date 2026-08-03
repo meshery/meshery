@@ -128,6 +128,8 @@ function MesheryPatternCard_({
           deleteHandler={deleteHandler}
           type={'pattern'}
           isReadOnly={isReadOnly}
+          updatePermissionKey={Keys.CatalogManagementEditDesign}
+          deletePermissionKey={Keys.CatalogManagementDeleteADesign}
         />
       )}
       <FlipCard
@@ -167,7 +169,7 @@ function MesheryPatternCard_({
                 <div data-testid="visibility-chip-menu">
                   <VisibilityChipMenu
                     value={visibility}
-                    onChange={() => {}}
+                    onChange={() => { }}
                     enabled={false}
                     options={[
                       [VIEW_VISIBILITY.PUBLIC, Public],
@@ -287,7 +289,7 @@ function MesheryPatternCard_({
                   <img
                     src="/static/img/designs/pattern_trans.svg"
                     style={{ borderRadius: '50%', ...iconMedium }}
-                    // imgProps={{ height: '16px', width: '16px' }}
+                  // imgProps={{ height: '16px', width: '16px' }}
                   />
                   <GridBtnText> Design </GridBtnText>
                 </TooltipButton>
@@ -384,7 +386,7 @@ function MesheryPatternCard_({
                 </CustomTooltip>
               </CardHeaderRight>
             </YamlDialogTitleGrid>
-            <Grid2 size={{ xs: 12 }} onClick={(ev) => genericClickHandler(ev, () => {})}>
+            <Grid2 size={{ xs: 12 }} onClick={(ev) => genericClickHandler(ev, () => { })}>
               <Divider variant="fullWidth" light />
               {catalogContentKeys.length === 0 ? (
                 <StyledCodeMirrorWrapper fullScreen={fullScreen}>
@@ -421,9 +423,8 @@ function MesheryPatternCard_({
                       variant="caption"
                       style={{
                         fontStyle: 'italic',
-                        color: `${
-                          theme.palette.type === 'dark' ? 'rgba(255, 255, 255, 0.7)' : '#647881'
-                        }`,
+                        color: `${theme.palette.type === 'dark' ? 'rgba(255, 255, 255, 0.7)' : '#647881'
+                          }`,
                       }}
                       data-testid="pattern-card-created-at"
                     >

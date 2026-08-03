@@ -111,6 +111,9 @@ function FiltersCard_({
           setYaml={setYaml}
           deleteHandler={deleteHandler}
           updateHandler={updateHandler}
+          type={'filter'}
+          updatePermissionKey={Keys.CatalogManagementEditWasmFilter}
+          deletePermissionKey={Keys.CatalogManagementDeleteWasmFilter}
         />
       )}
       <FlipCard
@@ -133,7 +136,7 @@ function FiltersCard_({
               <div>
                 <VisibilityChipMenu
                   value={visibility}
-                  onChange={() => {}}
+                  onChange={() => { }}
                   enabled={false}
                   options={[
                     [VIEW_VISIBILITY.PUBLIC, Public],
@@ -263,7 +266,7 @@ function FiltersCard_({
                 </Tooltip>
               </CardHeaderRight>
             </YamlDialogTitleGrid>
-            <Grid2 size={{ xs: 12 }} onClick={(ev) => genericClickHandler(ev, () => {})}>
+            <Grid2 size={{ xs: 12 }} onClick={(ev) => genericClickHandler(ev, () => { })}>
               <Divider variant="fullWidth" light />
 
               {catalogContentKeys.length === 0 ? (
