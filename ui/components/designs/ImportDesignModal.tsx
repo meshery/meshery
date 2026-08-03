@@ -11,7 +11,7 @@
  * handles the RJSF ref + submit plumbing, so callers only need to provide
  * a close handler and a submit callback receiving the form data.
  */
-import { FC, memo, useCallback, useState } from 'react';
+import { FC, memo, useCallback, useRef, useState } from 'react';
 import { importDesignSchema, importDesignUiSchema } from '@sistent/sistent';
 import { FormModal } from '@/components/shared/Modal';
 import { DesignModalHeaderIcon } from './design-modal-header';
@@ -32,18 +32,21 @@ const ImportDesignModalComponent: FC<ImportDesignModalProps> = ({
   handleImportDesign,
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isSubmittingRef = useRef(false);
 
   const handleSubmit = useCallback(
     async (formData: unknown) => {
-      if (isSubmitting) return;
+      if (isSubmittingRef.current) return;
+      isSubmittingRef.current = true;
       setIsSubmitting(true);
       try {
         await handleImportDesign(formData);
       } finally {
+        isSubmittingRef.current = false;
         setIsSubmitting(false);
       }
     },
-    [isSubmitting, handleImportDesign],
+    [handleImportDesign],
   );
 
   return (
