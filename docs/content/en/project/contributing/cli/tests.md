@@ -280,6 +280,12 @@ The tokens are stripped from the displayed test name, so the naming convention a
 
 The full token-to-label mapping (including how the report `epic` is derived from the component) is documented in the header comment of [`mesheryctl/bats-to-allure.js`](https://github.com/meshery/meshery/blob/master/mesheryctl/bats-to-allure.js), the single injection point for this contract. Do not restate the mapping here; keep it in sync there.
 
+From a `[TC-<n>]` token in the connection block, the converter also emits an Allure `tms` **link** ("Test Plan TC-\<n\>") that deep-links straight to that test's row on the Test Plan "Latest" tab, so a reviewer can click from a report test to its source case. The row is derived from the Test # by a fixed offset (`ROW = TestNum - 778`) that encodes the *current* Latest-tab layout - if the tab is re-sorted, the offset must be regenerated (see the prominent caveat in [`mesheryctl/bats-to-allure.js`](https://github.com/meshery/meshery/blob/master/mesheryctl/bats-to-allure.js) and its UI-lane twin `ui/tests/e2e/connections.testmap.ts`).
+
+##### Failure output in the report
+
+The BATS suite runs with `--print-output-on-failure`, so a failing test's captured `mesheryctl` output (`$output`/`$stderr`) is emitted as TAP diagnostics. The converter turns that into debuggable Allure detail on the failed result: a concise headline (`statusDetails.message`), the full transcript (`statusDetails.trace`), and the same transcript as a **text attachment** ("CLI output (bats)"). Passing and skipped tests carry no such attachment. No test needs to opt in - this is automatic for every failure.
+
 #### Test Data
 
 If a command requries a specific id, name or any predefined value ensure that the data is created by your test or another test beforehand. Do not rely on external or uncontrolled data as it will lead to unexpected results.
