@@ -55,6 +55,7 @@ import mesheryUiReducer, {
   selectK8sConfig,
   selectedOrg,
 } from '../mesheryUi';
+import { MESHERY_EXTENSION_EVENT } from '@sistent/sistent';
 import { mesheryEventBus } from '@/utils/eventBus';
 import { store } from '../..';
 
@@ -216,7 +217,7 @@ describe('mesheryUi slice', () => {
       expect(dispatched.payload).toEqual(payload);
 
       expect(mesheryEventBus.publish).toHaveBeenCalledWith({
-        type: 'K8S_CONTEXTS_UPDATED',
+        type: MESHERY_EXTENSION_EVENT.K8sContextsUpdated,
         data: { selectedK8sContexts: ['ctx-1'] },
       });
     });

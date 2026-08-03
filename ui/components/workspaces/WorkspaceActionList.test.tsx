@@ -3,11 +3,11 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const can = vi.fn(() => true);
+const mockCan = vi.fn(() => true);
 let width = 1280;
 
 vi.mock('@/utils/can', () => ({
-  default: (...args: unknown[]) => can(...args),
+  default: (...args: unknown[]) => mockCan(...args),
 }));
 
 vi.mock('@meshery/schemas/permissions', () => ({
@@ -40,6 +40,7 @@ vi.mock('@sistent/sistent', () => ({
   MoreVertIcon: () => <svg data-testid="more-vert-icon" />,
   useTheme: () => ({ palette: { icon: { default: 'icon-default' } } }),
   useWindowDimensions: () => ({ width }),
+  useHasPermission: (key: any) => mockCan(key?.id || key),
 }));
 
 vi.mock('./styles', () => ({
@@ -69,8 +70,8 @@ describe('WorkspaceActionList', () => {
     handleActivityModalOpen.mockReset();
     handleWorkspaceModalOpen.mockReset();
     handleDeleteWorkspaceConfirm.mockReset();
-    can.mockReset();
-    can.mockReturnValue(true);
+    mockCan.mockReset();
+    mockCan.mockReturnValue(true);
     width = 1280;
   });
 
@@ -129,7 +130,7 @@ describe('WorkspaceActionList', () => {
   });
 
   it('disables edit/delete when permission CAN returns false', () => {
-    can.mockImplementation((action: string) => {
+    mockCan.mockImplementation((action: string) => {
       if (action === 'edit' || action === 'delete') return false;
       return true;
     });

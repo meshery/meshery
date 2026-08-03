@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
-import { Button, CatalogIcon, Grid2, Switch, Typography, useTheme, Box } from '@sistent/sistent';
+import {
+  Button,
+  CatalogIcon,
+  Grid2,
+  Switch,
+  Typography,
+  useTheme,
+  Box,
+  useHasPermission,
+} from '@sistent/sistent';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import { Adapters, VisualDesignerExtension } from '../components/extensions';
 import DefaultError from '@/components/general/error-404';
 import { EVENT_TYPES } from '../lib/event-types';
 import { useNotification, usePageTitle } from '@/utils/hooks';
-import CAN from '@/utils/can';
+
 import { Keys } from '@meshery/schemas/permissions';
 import { CardContainer, FrontSideDescription } from '../css/icons.styles';
 import { useDispatch } from 'react-redux';
@@ -581,6 +590,7 @@ export const WrappedShapeBuilderExtension = ShapeBuilderExtension;
 const Extensions = () => {
   usePageTitle('Extensions');
   const { notify } = useNotification();
+  const hasPermission = useHasPermission(Keys.ExtensibilityViewExtensions);
   const [updateUserPref] = useUpdateUserPrefMutation();
   const dispatch = useDispatch();
   const theme = useTheme();
@@ -623,7 +633,7 @@ const Extensions = () => {
       <Head>
         <title>Extensions | Meshery</title>
       </Head>
-      {CAN(Keys.ExtensibilityViewExtensions.id, Keys.ExtensibilityViewExtensions.function) ? (
+      {hasPermission ? (
         <Grid2 container spacing={2} size="grow">
           <VisualDesignerExtension />
           <WrappedMeshMapSnapShopCard githubActionEnabled={false} />
