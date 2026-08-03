@@ -7,8 +7,6 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkiterrors "github.com/meshery/meshkit/errors"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestInvokeCompUpdate_PropagatesComponentCSVReadError(t *testing.T) {
@@ -30,7 +28,9 @@ func TestInvokeCompUpdate_PropagatesComponentCSVReadError(t *testing.T) {
 	})
 
 	testLogFile, err := os.CreateTemp(t.TempDir(), "registry-update-*")
-	require.NoError(t, err)
+	if err != nil {
+		t.Fatalf("expected no error, got: %v", err)
+	}
 	logFile = testLogFile
 
 	componentCSVFilePath = filepath.Join(t.TempDir(), "missing-components.csv")
@@ -40,6 +40,10 @@ func TestInvokeCompUpdate_PropagatesComponentCSVReadError(t *testing.T) {
 	sheetGID = 1
 
 	err = InvokeCompUpdate()
-	require.Error(t, err)
-	assert.Equal(t, ErrUpdateRegistryCode, meshkiterrors.GetCode(err))
+	if err == nil {
+		t.Fatal("expected an error, got nil")
+	}
+	if meshkiterrors.GetCode(err) != ErrUpdateRegistryCode {
+		t.Errorf("expected error code %v, got %v", ErrUpdateRegistryCode, meshkiterrors.GetCode(err))
+	}
 }
