@@ -260,6 +260,26 @@ It must follow this naming convention
 }
 ```
 
+##### Traceability Tokens (optional)
+
+A test that maps to a row in the [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?usp=sharing) may prefix its `@test` title with bracketed tokens so the TAP-to-Allure converter emits traceability labels on the report:
+
+The Test Plan "Latest" tab columns are: column A = Test #, column B = Test Group, column C = Client, column D = Component Under Test.
+
+- `[TC-<n>]` - the Test Plan "Test #" (column A), emitted as the `testId` label and a matching filter tag.
+- `[tg=<Test Group>]` - the Test Group (column B), emitted as the `testGroup` label, e.g. `[tg=Connection Lifecycle]`. This is the general report key: any Test Group can drive its own filtered [meshery/qa](https://github.com/meshery/qa) report by keying on this label.
+- `[cut=<component>]` - the Component-Under-Test (column D), e.g. `[cut=Kubernetes Connection]`.
+
+The tokens are stripped from the displayed test name, so the naming convention above still applies to the remainder:
+
+```bash
+@test "[TC-1013][cut=Kubernetes Connection][tg=Connection Lifecycle] mesheryctl connection create --type minikube creates a new connection" {
+  ... test implementation ...
+}
+```
+
+The full token-to-label mapping (including how the report `epic` is derived from the component) is documented in the header comment of [`mesheryctl/bats-to-allure.js`](https://github.com/meshery/meshery/blob/master/mesheryctl/bats-to-allure.js), the single injection point for this contract. Do not restate the mapping here; keep it in sync there.
+
 #### Test Data
 
 If a command requries a specific id, name or any predefined value ensure that the data is created by your test or another test beforehand. Do not rely on external or uncontrolled data as it will lead to unexpected results.
