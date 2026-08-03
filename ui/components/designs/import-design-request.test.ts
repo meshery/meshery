@@ -51,6 +51,27 @@ describe('buildImportDesignRequestBody', () => {
     expect(resolveImportedDesignFile).not.toHaveBeenCalled();
   });
 
+  it('returns a user-facing error when the URL import has a missing or blank URL', async () => {
+    await expect(
+      buildImportDesignRequestBody({
+        uploadType: 'URL Import',
+        name: 'Imported design',
+        url: '   ',
+      }),
+    ).resolves.toEqual({
+      errorMessage: 'Please enter a design URL before continuing.',
+    });
+
+    await expect(
+      buildImportDesignRequestBody({
+        uploadType: 'URL Import',
+        name: 'Imported design',
+      }),
+    ).resolves.toEqual({
+      errorMessage: 'Please enter a design URL before continuing.',
+    });
+  });
+
   it('returns a user-facing error for an unrecognized upload type', async () => {
     await expect(
       buildImportDesignRequestBody({

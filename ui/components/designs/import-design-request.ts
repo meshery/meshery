@@ -57,10 +57,15 @@ export const buildImportDesignRequestBody = async (
       }
     }
     case 'URL Import': {
-      // The "URL Import" branch is only reached with a URL-bearing form; the
-      // form model types `url` as optional, so narrow it to the contract's
-      // required `url` without altering the emitted wire value.
-      const requestBody: ImportDesignUrlVariant = { url: url as string, name };
+      // Reject a missing or blank URL up front, mirroring the File-Upload guard
+      // above. This narrows `url` to the contract's required `string`, so
+      // `ImportDesignUrlVariant` is satisfied without a cast, and it avoids
+      // emitting a body whose `url` key `JSON.stringify` would silently drop.
+      if (typeof url !== 'string' || url.trim().length === 0) {
+        return { errorMessage: 'Please enter a design URL before continuing.' };
+      }
+
+      const requestBody: ImportDesignUrlVariant = { url, name };
       return { requestBody: JSON.stringify(requestBody) };
     }
     default:
