@@ -1541,7 +1541,7 @@ func (h *Handler) deleteModelByID(tx *gorm.DB, modelUUID uuid.UUID) error {
 
 	// Delete registry entries for policies belonging to this model
 	if err := tx.Where("entity IN (?) AND type = ?",
-		tx.Model(&_models.PolicyDefinition{}).Select("id").Where("modelID = ?", modelUUID),
+		tx.Model(&_models.PolicyDefinition{}).Select("id").Where("model_id = ?", modelUUID),
 		entity.PolicyDefinition,
 	).Delete(&registry.Registry{}).Error; err != nil {
 		return err
@@ -1559,7 +1559,7 @@ func (h *Handler) deleteModelByID(tx *gorm.DB, modelUUID uuid.UUID) error {
 	if err := tx.Where("model_id = ?", modelUUID).Delete(&relationship.RelationshipDefinition{}).Error; err != nil {
 		return err
 	}
-	if err := tx.Where("modelID = ?", modelUUID).Delete(&_models.PolicyDefinition{}).Error; err != nil {
+	if err := tx.Where("model_id = ?", modelUUID).Delete(&_models.PolicyDefinition{}).Error; err != nil {
 		return err
 	}
 
@@ -1617,26 +1617,31 @@ func (h *Handler) DeleteModelsByRegistrant(rw http.ResponseWriter, r *http.Reque
 		Name string
 	}
 	if err := h.dbHandler.Table("connections").Select("id, name").Where("id = ?", connectionID).First(&conn).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			writeJSONError(rw, fmt.Sprintf("connection with ID %s not found", connectionID), http.StatusNotFound)
 			return
 		}
-		writeJSONError(rw, fmt.Sprintf("failed to fetch connection %s: %s", connectionID, err), http.StatusInternalServerError)
+		h.log.Error(err)
+		writeJSONError(rw, "failed to fetch connection", http.StatusInternalServerError)
 		return
 	}
 
-	var modelIDs []uuid.UUID
-	if err := h.dbHandler.Model(&_model.ModelDefinition{}).Where("connection_id = ?", connectionID).Pluck("id", &modelIDs).Error; err != nil {
-		writeJSONError(rw, fmt.Sprintf("failed to fetch model IDs for connection %s: %s", connectionID, err), http.StatusInternalServerError)
-		return
+	type DeleteModelsResponse struct {
+		Message        string `json:"message"`
+		Count          int    `json:"count"`
+		ConnectionName string `json:"connectionName"`
 	}
 
-	if len(modelIDs) == 0 {
-		writeJSONError(rw, fmt.Sprintf("no models found to delete for connection %s", connectionID), http.StatusNotFound)
-		return
-	}
-
+	var count int
 	err = h.dbHandler.Transaction(func(tx *gorm.DB) error {
+		var modelIDs []uuid.UUID
+		if err := tx.Model(&_model.ModelDefinition{}).Where("connection_id = ?", connectionID).Pluck("id", &modelIDs).Error; err != nil {
+			return err
+		}
+		count = len(modelIDs)
+		if count == 0 {
+			return nil
+		}
 		for _, modelUUID := range modelIDs {
 			if err := h.deleteModelByID(tx, modelUUID); err != nil {
 				return err
@@ -1652,21 +1657,11 @@ func (h *Handler) DeleteModelsByRegistrant(rw http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	type DeleteModelsResponse struct {
-		Message        string `json:"message"`
-		Count          int    `json:"count"`
-		ConnectionName string `json:"connectionName"`
-	}
-
-	resp := DeleteModelsResponse{
-		Message:        fmt.Sprintf("Successfully deleted all models associated with registrant connection ID %q", connectionID),
-		Count:          len(modelIDs),
-		ConnectionName: conn.Name,
-	}
-
 	rw.Header().Set("Content-Type", "application/json")
 	rw.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(rw).Encode(resp); err != nil {
-		h.log.Error(models.ErrMarshal(err, "delete-models-response"))
-	}
+	_ = json.NewEncoder(rw).Encode(DeleteModelsResponse{
+		Message:        fmt.Sprintf("Successfully deleted %d models for registrant %s", count, conn.Name),
+		Count:          count,
+		ConnectionName: conn.Name,
+	})
 }

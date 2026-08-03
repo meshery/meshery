@@ -16,7 +16,7 @@ type MesheryTreeViewRegistrantsProps = {
   expanded: string[];
   selected: string[];
   setShowDetailsData: (_data: { type: string; data: any }) => void;
-  lastRegistrantRef: React.MutableRefObject<any>;
+  lastRegistrantRef?: React.MutableRefObject<any>;
   isRegistrantFetching: boolean;
   showDetailsData: { type: string; data: any };
 };

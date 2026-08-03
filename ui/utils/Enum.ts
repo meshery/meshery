@@ -101,13 +101,7 @@ export const MesheryFiltersCatalog = 'meshery-filters-catalog';
 // Grafana/Prometheus telemetry + ping hooks) are named by
 // `CoreConnectionKinds`, sourced from meshery/schemas so the literals live
 // in one place. The `kind` field itself stays open-ended.
-export const CoreConnectionKinds = {
-  kubernetes: 'kubernetes',
-  meshery: 'meshery',
-  prometheus: 'prometheus',
-  grafana: 'grafana',
-  github: 'github',
-} as const;
+export { CoreConnectionKinds } from '@meshery/schemas';
 export type { CoreConnectionKind } from '@meshery/schemas';
 
 export const MESHSYNC_DEPLOYMENT_TYPE = {

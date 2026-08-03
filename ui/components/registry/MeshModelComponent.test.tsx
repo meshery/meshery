@@ -2,7 +2,14 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const lazyMock = () => [vi.fn(), { data: undefined, isLoading: false, isFetching: false }];
+const lazyMock = () => [
+  vi.fn().mockImplementation(() => ({
+    unwrap: vi
+      .fn()
+      .mockResolvedValue({ registrants: [], models: [], components: [], relationships: [] }),
+  })),
+  { data: undefined, isLoading: false, isFetching: false },
+];
 
 vi.mock('next/router', () => ({
   useRouter: () => ({

@@ -141,6 +141,8 @@ const MeshModelComponent_ = ({
       );
     } catch (err) {
       console.error('Error fetching registrants:', err);
+      response = { data: { registrants: [] } };
+      setActiveRegistrantsCount(0);
     }
     setRowsPerPage(25);
     return response;

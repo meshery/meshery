@@ -420,7 +420,7 @@ const RegistrantContent = ({
             disabled={
               isDeleting || !registrant?.summary?.models || registrant?.summary?.models === 0
             }
-            onClick={() => onDelete(registrant.id, registrant.name || registrant.hostname)}
+            onClick={() => onDelete(registrant.id, registrant.hostname || registrant.name)}
             style={{ textTransform: 'none' }}
             data-testid="delete-all-models-button"
           >
@@ -586,6 +586,9 @@ const MeshModelDetails = ({
         event_type: EVENT_TYPES.SUCCESS,
       });
       setDeleteModalState((prev) => ({ ...prev, open: false }));
+      if (showDetailsData?.data?.summary) {
+        showDetailsData.data.summary.models = 0;
+      }
       if (refetch) {
         refetch();
       }

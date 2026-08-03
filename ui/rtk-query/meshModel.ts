@@ -119,7 +119,7 @@ const deleteModelsByRegistrantApi = api.injectEndpoints({
         url: `api/meshmodels/registrants/${queryArgs.connectionId}/models`,
         method: 'DELETE',
       }),
-      invalidatesTags: [REGISTRY_TAG],
+      invalidatesTags: [REGISTRY_TAG, CONNECTION_DEFINITIONS_TAG],
     }),
   }),
 });
