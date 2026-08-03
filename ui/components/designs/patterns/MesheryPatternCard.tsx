@@ -128,6 +128,8 @@ function MesheryPatternCard_({
           deleteHandler={deleteHandler}
           type={'pattern'}
           isReadOnly={isReadOnly}
+          updatePermissionKey={Keys.CatalogManagementEditDesign}
+          deletePermissionKey={Keys.CatalogManagementDeleteADesign}
         />
       )}
       <FlipCard
@@ -421,9 +423,7 @@ function MesheryPatternCard_({
                       variant="caption"
                       style={{
                         fontStyle: 'italic',
-                        color: `${
-                          theme.palette.type === 'dark' ? 'rgba(255, 255, 255, 0.7)' : '#647881'
-                        }`,
+                        color: `${theme.palette.type === 'dark' ? 'rgba(255, 255, 255, 0.7)' : '#647881'}`,
                       }}
                       data-testid="pattern-card-created-at"
                     >

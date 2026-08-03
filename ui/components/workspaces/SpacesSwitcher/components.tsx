@@ -1,3 +1,4 @@
+import { Keys } from '@meshery/schemas/permissions';
 import {
   Autocomplete,
   Avatar,
@@ -457,6 +458,11 @@ export const MultiContentSelectToolbar = ({
                   handleContentMove(true);
                 }}
                 disabled={!multiSelectedContent.length}
+                permissionKey={
+                  type === RESOURCE_TYPE.DESIGN
+                    ? Keys.WorkspaceManagementAssignDesignsToWorkspaces
+                    : undefined
+                }
               >
                 <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Move</Box>
               </StyledResponsiveButton>
@@ -471,6 +477,9 @@ export const MultiContentSelectToolbar = ({
                 setMultiSelectedContent([]);
               }}
               disabled={!multiSelectedContent.length}
+              permissionKey={
+                type === RESOURCE_TYPE.DESIGN ? Keys.CatalogManagementDownloadADesign : undefined
+              }
             >
               <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Download</Box>
             </StyledResponsiveButton>{' '}
@@ -483,6 +492,9 @@ export const MultiContentSelectToolbar = ({
                   setMultiSelectedContent([]);
                 }}
                 disabled={!multiSelectedContent.length}
+                permissionKey={
+                  type === RESOURCE_TYPE.DESIGN ? Keys.CatalogManagementShareDesign : undefined
+                }
               >
                 <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Share</Box>
               </StyledResponsiveButton>
@@ -498,6 +510,9 @@ export const MultiContentSelectToolbar = ({
                 );
                 setMultiSelectedContent([]);
               }}
+              permissionKey={
+                type === RESOURCE_TYPE.DESIGN ? Keys.CatalogManagementDeleteADesign : undefined
+              }
               sx={{
                 backgroundColor: `${theme.palette.error.dark} !important`,
               }}
