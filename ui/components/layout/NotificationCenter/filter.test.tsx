@@ -2,8 +2,20 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Hoisted query data we can swap between tests.
+// Hoisted query data and Redux filters we can swap between tests.
 const queryState: { data: any } = { data: undefined };
+const sliceState = {
+  filters: { status: 'unread' } as Record<string, unknown>,
+};
+
+vi.mock('react-redux', () => ({
+  useSelector: (sel: any) =>
+    sel({
+      events: {
+        current_view: { filters: sliceState.filters },
+      },
+    }),
+}));
 
 vi.mock('../../../rtk-query/notificationCenter', () => ({
   useGetEventFiltersQuery: () => queryState,
@@ -26,9 +38,10 @@ import Filter from './filter';
 describe('NotificationCenter Filter', () => {
   beforeEach(() => {
     queryState.data = undefined;
+    sliceState.filters = { status: 'unread' };
   });
 
-  it('renders a TypingFilter with the right placeholder and default filters', () => {
+  it('renders a TypingFilter with the right placeholder and filters from Redux', () => {
     const handleFilter = vi.fn();
     render(<Filter handleFilter={handleFilter} />);
 
@@ -37,6 +50,24 @@ describe('NotificationCenter Filter', () => {
       'Filter Notifications',
     );
     expect(screen.getByTestId('default-filters')).toHaveTextContent('"status: unread"');
+  });
+
+  it('maps current Redux filters into TypingFilter chips', () => {
+    sliceState.filters = {
+      status: 'read',
+      severity: ['error', 'warning'],
+    };
+    render(<Filter handleFilter={vi.fn()} />);
+
+    const chips = JSON.parse(screen.getByTestId('default-filters').textContent || '[]');
+    expect(chips).toEqual(
+      expect.arrayContaining([
+        { type: 'STATUS', value: 'read', label: 'status: read' },
+        { type: 'SEVERITY', value: 'error', label: 'severity: error' },
+        { type: 'SEVERITY', value: 'warning', label: 'severity: warning' },
+      ]),
+    );
+    expect(chips).toHaveLength(3);
   });
 
   it('forwards handleFilter to TypingFilter', () => {
