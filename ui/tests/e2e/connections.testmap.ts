@@ -1,5 +1,6 @@
 import type { TestInfo } from '@playwright/test';
 import * as allure from 'allure-js-commons';
+import { testPlanLink } from './testPlanLink';
 
 /**
  * Traceability map for the Kubernetes Connection Playwright suite.
@@ -29,36 +30,14 @@ export const CONN_EPIC = 'Kubernetes Connections';
 /** Client label for the shared cross-lane contract (UI vs CLI). */
 export const CONN_CLIENT = 'UI';
 
-// Test Plan deep-link (part A). Each tracked case links back to its exact row in
-// the Meshery Test Plan "Latest" tab so a reviewer can click from a report test
-// straight to its source case. The row is derived from the Test # (col A):
-//   ROW = TestNum - CONN_ROW_OFFSET
-//
-// !!!  CURRENT-LAYOUT-DEPENDENT - REGENERATE IF THE SHEET IS RE-SORTED  !!!
-// The offset encodes the CURRENT "Latest" tab layout, in which the connection
-// cases Test# 1012..1089 occupy the contiguous rows 234..311 (1012 - 778 = 234
-// ... 1089 - 778 = 311). This is the SAME offset used by the CLI lane in
-// mesheryctl/bats-to-allure.js; the two MUST be kept in lockstep. If the Latest
-// tab is re-sorted, or rows are inserted above the connection block, recompute
-// the offset in BOTH files. Every CONN_CASES testId is inside that block by
-// construction (see CONN_CASES below).
-const CONN_ROW_OFFSET = 778;
-const TEST_PLAN_SHEET_ID = '13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs';
-const TEST_PLAN_GID = '838298230';
-
-/**
- * Build the Test Plan "Latest" tab deep-link for a connection Test # (`TC-<n>`).
- * Returns the URL and the human-facing link name used across both lanes
- * ("Test Plan TC-<n>"). See the offset caveat above.
- */
-export function testPlanLink(testId: string): { url: string; name: string } {
-  const testNum = Number(testId.replace(/^TC-/i, ''));
-  const row = testNum - CONN_ROW_OFFSET;
-  const url =
-    `https://docs.google.com/spreadsheets/d/${TEST_PLAN_SHEET_ID}` +
-    `/edit?gid=${TEST_PLAN_GID}#gid=${TEST_PLAN_GID}&range=A${row}`;
-  return { url, name: `Test Plan ${testId}` };
-}
+// Test Plan deep-link (part A): the row-derivation contract lives in the pure,
+// unit-tested `./testPlanLink` helper (guards the `TC-<n>` shape and the
+// 1012..1089 connection block, returning null otherwise so a malformed/
+// out-of-block id never becomes a wrong link). Every CONN_CASES testId is inside
+// that block by construction (see CONN_CASES below), so the guard normally
+// passes - it exists so a future out-of-block id fails safe instead of emitting
+// `range=ANaN`. Re-exported here for back-compat with existing importers.
+export { testPlanLink } from './testPlanLink';
 
 export interface ConnCase {
   /** Meshery Test Plan "Latest" tab, column A ("Test #"), e.g. `TC-98`. */
@@ -172,9 +151,13 @@ export async function annotateConnCase(testInfo: TestInfo, key: ConnCaseKey): Pr
   // counterpart to the CLI converter's `links` entry. This uses the
   // allure-js-commons runtime API for the same reason as the testGroup label:
   // allure-playwright maps only known annotation types (epic/feature/story) to
-  // the report, so a custom link must be set through allure.link to appear.
-  const { url, name } = testPlanLink(testCase.testId);
-  await allure.link(url, name, 'tms');
+  // the report, so a custom link must be set through allure.link to appear. The
+  // helper returns null for an out-of-block/malformed id (fail-safe, no wrong
+  // link); every tracked case is in-block so this normally yields a link.
+  const link = testPlanLink(testCase.testId);
+  if (link) {
+    await allure.link(link.url, link.name, 'tms');
+  }
 }
 
 /**
