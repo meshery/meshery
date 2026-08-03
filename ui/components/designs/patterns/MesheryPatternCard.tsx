@@ -361,7 +361,11 @@ function MesheryPatternCard_({
               </Typography>
               <CardHeaderRight>
                 {hasCloudProfile ? (
-                  <Link href={`${MESHERY_CLOUD_PROD}/user/${pattern?.userId}`} target="_blank">
+                  <Link
+                    href={`${MESHERY_CLOUD_PROD}/user/${pattern?.userId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <Avatar alt="profile-avatar" src={owner?.avatarUrl} />
                   </Link>
                 ) : (

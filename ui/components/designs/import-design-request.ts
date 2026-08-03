@@ -25,7 +25,7 @@ export const buildImportDesignRequestBody = async (
         return {
           requestBody: JSON.stringify({
             name,
-            file_name: importedFile.fileName,
+            fileName: importedFile.fileName,
             file: importedFile.fileData,
           }),
         };
