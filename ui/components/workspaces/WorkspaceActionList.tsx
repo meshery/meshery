@@ -103,7 +103,11 @@ const WorkspaceActionList = ({
           <>
             {actionItems.map(({ key, label, icon, onClick, permissionKey }) => (
               <CustomTooltip title={label} key={key}>
-                <IconButton aria-label={key} onClick={(e) => onClick(e)} permissionKey={permissionKey}>
+                <IconButton
+                  aria-label={key}
+                  onClick={(e) => onClick(e)}
+                  permissionKey={permissionKey}
+                >
                   {icon}
                 </IconButton>
               </CustomTooltip>

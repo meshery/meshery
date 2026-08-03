@@ -103,6 +103,7 @@ const EnvironmentConnections = ({ environment, connections, onAddConnection }) =
             color="primary"
             onClick={onAddConnection}
             startIcon={<AddCircleIcon />}
+            permissionKey={Keys.WorkspaceManagementEditEnvironment}
           >
             Add a connection
           </InlineButton>{' '}

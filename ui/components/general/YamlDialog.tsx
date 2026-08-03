@@ -29,12 +29,26 @@ const YAMLDialog = ({
   deletePermissionKey,
 }) => {
   const defaultUpdateKey =
-    type === 'pattern' ? Keys.CatalogManagementEditDesign : Keys.CatalogManagementEditWasmFilter;
+    type === 'pattern'
+      ? Keys.CatalogManagementEditDesign
+      : type === 'filter'
+        ? Keys.CatalogManagementEditWasmFilter
+        : undefined;
   const defaultDeleteKey =
-    type === 'pattern' ? Keys.CatalogManagementDeleteADesign : Keys.CatalogManagementDeleteWasmFilter;
+    type === 'pattern'
+      ? Keys.CatalogManagementDeleteADesign
+      : type === 'filter'
+        ? Keys.CatalogManagementDeleteWasmFilter
+        : undefined;
 
   const resolvedUpdateKey = updatePermissionKey || defaultUpdateKey;
   const resolvedDeleteKey = deletePermissionKey || defaultDeleteKey;
+
+  if (process.env.NODE_ENV !== 'production' && (!resolvedUpdateKey || !resolvedDeleteKey)) {
+    console.warn(
+      `YAMLDialog: could not resolve a permission key (type="${type}"). Pass a valid type ('pattern' | 'filter') or explicit updatePermissionKey/deletePermissionKey props.`,
+    );
+  }
   return (
     <Dialog
       aria-labelledby="filter-dialog-title"
