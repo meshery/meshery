@@ -34,6 +34,55 @@ describe('buildImportDesignRequestBody', () => {
     });
   });
 
+  it('builds the URL import request body with contract-ordered fields', async () => {
+    await expect(
+      buildImportDesignRequestBody({
+        uploadType: 'URL Import',
+        name: 'Imported design',
+        url: 'https://example.com/design.yaml',
+      }),
+    ).resolves.toEqual({
+      requestBody: JSON.stringify({
+        url: 'https://example.com/design.yaml',
+        name: 'Imported design',
+      }),
+    });
+
+    expect(resolveImportedDesignFile).not.toHaveBeenCalled();
+  });
+
+  it('returns a user-facing error when the URL import has a missing or blank URL', async () => {
+    await expect(
+      buildImportDesignRequestBody({
+        uploadType: 'URL Import',
+        name: 'Imported design',
+        url: '   ',
+      }),
+    ).resolves.toEqual({
+      errorMessage: 'Please enter a design URL before continuing.',
+    });
+
+    await expect(
+      buildImportDesignRequestBody({
+        uploadType: 'URL Import',
+        name: 'Imported design',
+      }),
+    ).resolves.toEqual({
+      errorMessage: 'Please enter a design URL before continuing.',
+    });
+  });
+
+  it('returns a user-facing error for an unrecognized upload type', async () => {
+    await expect(
+      buildImportDesignRequestBody({
+        uploadType: 'Something Else',
+        name: 'Imported design',
+      }),
+    ).resolves.toEqual({
+      errorMessage: 'Please choose a valid design import source before continuing.',
+    });
+  });
+
   it('returns a user-facing error when no design file is available', async () => {
     resolveImportedDesignFile.mockResolvedValue(null);
 

@@ -1,3 +1,4 @@
+import type { ImportDesignApiArg } from '@meshery/schemas/mesheryApi';
 import { resolveImportedDesignFile } from './import-design-file';
 
 export type ImportDesignFormData = {
@@ -8,6 +9,28 @@ export type ImportDesignFormData = {
 };
 
 export type ImportDesignRequestResult = { requestBody: string } | { errorMessage: string };
+
+/**
+ * Wire contract for `POST /api/pattern/import`, sourced from the schemas
+ * generated client (`ImportDesignApiArg`, produced from
+ * `MesheryPatternImportRequestBody`) rather than re-declared here. Anchoring the
+ * request shape to the generated type keeps the wire field names - notably
+ * `fileName` - locked to the API contract so they cannot silently drift back to
+ * snake_case (the bug fixed in meshery/meshery#21105).
+ */
+type ImportDesignRequestBody = ImportDesignApiArg['body'];
+type ImportDesignFileVariant = Extract<ImportDesignRequestBody, { fileName: string }>;
+type ImportDesignUrlVariant = Extract<ImportDesignRequestBody, { url: string }>;
+
+/**
+ * File-Upload variant as this client emits it. The fields are pinned to the
+ * contract via `ImportDesignFileVariant`; only `file` is widened: the openapi
+ * contract types it as a base64 string (`format: byte`), while the browser
+ * sends the decoded byte array produced after reading the upload. The server's
+ * Go `[]byte` decoder accepts either representation, so the byte array is a
+ * conformant alternative and is preserved here unchanged.
+ */
+type ImportDesignFileWireBody = Omit<ImportDesignFileVariant, 'file'> & { file: number[] };
 
 export const buildImportDesignRequestBody = async (
   data: ImportDesignFormData,
@@ -22,25 +45,29 @@ export const buildImportDesignRequestBody = async (
           return { errorMessage: 'Please choose a design file before continuing.' };
         }
 
-        return {
-          requestBody: JSON.stringify({
-            name,
-            fileName: importedFile.fileName,
-            file: importedFile.fileData,
-          }),
+        const requestBody: ImportDesignFileWireBody = {
+          name,
+          fileName: importedFile.fileName,
+          file: importedFile.fileData,
         };
+        return { requestBody: JSON.stringify(requestBody) };
       } catch (error) {
         console.error('Error resolving design import file:', error);
         return { errorMessage: 'Unable to read the selected design file. Please try again.' };
       }
     }
-    case 'URL Import':
-      return {
-        requestBody: JSON.stringify({
-          url,
-          name,
-        }),
-      };
+    case 'URL Import': {
+      // Reject a missing or blank URL up front, mirroring the File-Upload guard
+      // above. This narrows `url` to the contract's required `string`, so
+      // `ImportDesignUrlVariant` is satisfied without a cast, and it avoids
+      // emitting a body whose `url` key `JSON.stringify` would silently drop.
+      if (typeof url !== 'string' || url.trim().length === 0) {
+        return { errorMessage: 'Please enter a design URL before continuing.' };
+      }
+
+      const requestBody: ImportDesignUrlVariant = { url, name };
+      return { requestBody: JSON.stringify(requestBody) };
+    }
     default:
       return { errorMessage: 'Please choose a valid design import source before continuing.' };
   }
