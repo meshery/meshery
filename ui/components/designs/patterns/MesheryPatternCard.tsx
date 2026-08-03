@@ -289,7 +289,7 @@ function MesheryPatternCard_({
                   <img
                     src="/static/img/designs/pattern_trans.svg"
                     style={{ borderRadius: '50%', ...iconMedium }}
-                  // imgProps={{ height: '16px', width: '16px' }}
+                    // imgProps={{ height: '16px', width: '16px' }}
                   />
                   <GridBtnText> Design </GridBtnText>
                 </TooltipButton>
