@@ -3,19 +3,26 @@
 // bats-to-allure.js — convert a BATS TAP report into Allure result JSON files.
 //
 // Beyond the raw TAP → Allure mapping this converter is the single injection
-// point for the Kubernetes Connection test-plan traceability contract shared
-// with the UI lane and the meshery/qa "Kubernetes Connections" report:
+// point for the test-plan traceability contract shared with the UI lane and the
+// meshery/qa Test-Group-keyed reports (e.g. "Connection Lifecycle"). The Test
+// Plan "Latest" tab columns are: col A = Test #, col B = Test Group,
+// col C = Client, col D = Component Under Test.
 //
 //   testId            = TC-<n>   (Test Plan "Test #", col A)   [title token: [TC-<n>]]
-//   componentUnderTest = <col C value>                          [title token: [cut=<value>]]
-//   epic              = "Kubernetes Connections"  (report bucket) [token [epic=<v>] or derived from cut]
-//   client            = "CLI"    (this converter only ever sees mesheryctl results)
+//   testGroup         = <col B value>  (report bucket)          [title token: [tg=<value>]]
+//   client            = <col C value>  (CLI here; this converter only ever sees mesheryctl results)
+//   componentUnderTest = <col D value>                          [title token: [cut=<value>]]
+//   epic              = "Kubernetes Connections"  (legacy report bucket) [token [epic=<v>] or derived from cut]
 //   tag               = TC-<n>   (chip / filter passthrough of the testId)
 //
 // A BATS test opts in by prefixing its `@test` title with leading bracket
 // tokens, e.g.
-//   @test "[TC-1042][cut=Kubernetes Connection] connection create ... creates a connection" { ... }
+//   @test "[TC-1042][cut=Kubernetes Connection][tg=Connection Lifecycle] connection create ... creates a connection" { ... }
 // The tokens are stripped from the displayed Allure name.
+//
+// `testGroup` is the general report key: any Test Group (col B) can become its
+// own filtered report in meshery/qa by keying on this label. "Connection
+// Lifecycle" is the first consumer; the mechanism is not connection-specific.
 
 const fs = require("fs");
 const path = require("path");
@@ -111,6 +118,11 @@ function parseTitleTokens(rawName, extraLabels = []) {
       case "epic":
         epic = value;
         labels.push({ name: "epic", value });
+        break;
+      case "tg":
+        // [tg=<Test Group>] — Test Plan Test Group (col B). The general report
+        // key: any Test Group can drive its own filtered meshery/qa report.
+        labels.push({ name: "testGroup", value });
         break;
       case "client":
         labels.push({ name: "client", value });

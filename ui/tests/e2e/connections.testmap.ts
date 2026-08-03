@@ -4,10 +4,13 @@ import type { TestInfo } from '@playwright/test';
  * Traceability map for the Kubernetes Connection Playwright suite.
  *
  * Each tracked case mirrors a row in the Meshery Test Plan spreadsheet
- * ("Latest" tab): `testId` is column A ("Test #") and `componentUnderTest` is
- * column C ("Component"), verbatim. Keeping the same `testId` here that the CLI
- * (BATS) and reporting lanes use lets the Connections Allure report line up
- * results across clients on a single Test #.
+ * ("Latest" tab). The tab's columns are: A = Test #, B = Test Group,
+ * C = Client, D = Component Under Test. So `testId` is column A ("Test #") and
+ * `componentUnderTest` is column D, verbatim. Every case's Test Group (column B)
+ * is "Connection Lifecycle", emitted once as the `testGroup` Allure label in the
+ * spec's describe-level beforeEach (see connections.spec.ts). Keeping the same
+ * `testId` here that the CLI (BATS) and reporting lanes use lets the Connection
+ * Lifecycle Allure report line up results across clients on a single Test #.
  *
  * IMPORTANT: `testId`s are reused from EXISTING sheet rows, never invented. The
  * Kubernetes Connection lifecycle cases live at Test # 1012-1089 (the "Latest"
@@ -30,7 +33,7 @@ export interface ConnCase {
   testId: string;
   /** Numeric sheet row, for diffing this map against the sheet. */
   sheetRow: number;
-  /** Meshery Test Plan "Latest" tab, column C ("Component"), verbatim. */
+  /** Meshery Test Plan "Latest" tab, column D ("Component Under Test"), verbatim. */
   componentUnderTest: string;
   /** Allure feature grouping. */
   feature: string;
@@ -42,7 +45,7 @@ export interface ConnCase {
  * Tracked connection cases, keyed by a stable symbol used in the specs. Each maps
  * to a Client=UI row in the Test Plan's connection block (Test # 1012-1089); the
  * `[matrix Rn]` id from the sheet is noted for cross-reference. `componentUnderTest`
- * is copied from the sheet's column C verbatim.
+ * is copied from the sheet's column D ("Component Under Test") verbatim.
  */
 export const CONN_CASES = {
   // matrix R1
