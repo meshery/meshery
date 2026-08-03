@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -189,8 +190,15 @@ func TestDisplaySuccessfulRelationshipsSkipsMalformedOutput(t *testing.T) {
 		out := captureStdout(t, func() {
 			displaySuccessfulRelationships(resp, "mymodel")
 		})
-		if out == "" {
-			t.Error("expected output for a well-formed relationship, got none")
+		// Assert the actual rendered content, not just that something printed:
+		// displaySuccessfulRelationships emits a leading `fmt.Println("")`, so a
+		// non-empty check alone would pass even if the table never rendered.
+		// The table headers render uppercase ("FROM"/"TO"); X and Y are the
+		// endpoint kinds from the selector.
+		for _, want := range []string{"FROM", "TO", "X", "Y"} {
+			if !strings.Contains(out, want) {
+				t.Errorf("expected rendered output to contain %q, got:\n%s", want, out)
+			}
 		}
 	})
 }
