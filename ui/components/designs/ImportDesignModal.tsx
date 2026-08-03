@@ -52,7 +52,7 @@ const ImportDesignModalComponent: FC<ImportDesignModalProps> = ({
   return (
     <FormModal
       isOpen
-      onClose={handleClose}
+      onClose={isSubmitting ? () => {} : handleClose}
       title="Import Design"
       headerIcon={<DesignModalHeaderIcon />}
       size="sm"
