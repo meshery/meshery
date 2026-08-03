@@ -47,7 +47,8 @@ const Filter = ({ handleFilter }: { handleFilter: (filters: unknown) => void }) 
     const upperKey = key.toUpperCase();
     const schema = filterSchema[upperKey as keyof typeof filterSchema];
     if (!schema) return [];
-    const values = Array.isArray(value) ? value : [value];
+    const rawValues = Array.isArray(value) ? value : [value];
+    const values = schema.multiple === false ? rawValues.slice(0, 1) : rawValues;
     return values.map((v) => ({ type: upperKey, value: v, label: `${schema.value}: ${v}` }));
   });
 
