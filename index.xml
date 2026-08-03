@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Meshery Documentation on Documentation</title><link>/</link><description>Recent content in Meshery Documentation on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Sun, 26 Jul 2026 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml"/><item><title>Overview</title><link>/guides/infrastructure-management/overview/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/overview/</guid><description>&lt;h2 id="using-meshery-designs-to-manage-your-infrastructure"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Meshery Documentation on Documentation</title><link>/</link><description>Recent content in Meshery Documentation on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Mon, 03 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml"/><item><title>Overview</title><link>/guides/infrastructure-management/overview/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/overview/</guid><description>&lt;h2 id="using-meshery-designs-to-manage-your-infrastructure"&gt;
 	Using Meshery Designs to Manage Your Infrastructure
 &lt;/h2&gt;
 &lt;p&gt;Meshery is a versatile platform designed to streamline the lifecycle, configuration, and performance management of infrastructure across Kubernetes clusters.&lt;/p&gt;
@@ -260,7 +260,118 @@ independently. For Kubernetes production deployments:&lt;/p&gt;</description></i
  &lt;summary&gt;
  &lt;h6&gt;Question: Why was Meshery created?&lt;/h6&gt;
 &lt;/summary&gt;
-&lt;p&gt;&lt;strong&gt;Answer:&lt;/strong&gt; As an open source, vendor-neutral project, Meshery was created out of the necessity to enable platform engineers, site reliability engineers, and DevSecOps teams to collaborate in the management of their infrastructure and workloads. Meshery was created as an extensible platform to serve a broad set of modern application management needs.&lt;/p&gt;</description></item><item><title>v1.0.63</title><link>/project/releases/v1.0.63/</link><pubDate>Sun, 26 Jul 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.63/</guid><description>&lt;h2 id="whats-new"&gt;
+&lt;p&gt;&lt;strong&gt;Answer:&lt;/strong&gt; As an open source, vendor-neutral project, Meshery was created out of the necessity to enable platform engineers, site reliability engineers, and DevSecOps teams to collaborate in the management of their infrastructure and workloads. Meshery was created as an extensible platform to serve a broad set of modern application management needs.&lt;/p&gt;</description></item><item><title>v1.0.64</title><link>/project/releases/v1.0.64/</link><pubDate>Mon, 03 Aug 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.64/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;chore(skills): hard-rename iterate-pr &amp;ndash;full mode to &amp;ndash;merge @hamza-mohd (#21111)&lt;/li&gt;
+&lt;li&gt;Bump brace-expansion from 1.1.13 to 1.1.18 in /install/docker-extension/ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#21110)&lt;/li&gt;
+&lt;li&gt;[Server] Fix more response body leaks in remote auth and local provid… @KushagraB424 (#21107)&lt;/li&gt;
+&lt;li&gt;fix(server): add REGISTERED -&amp;gt; NOTFOUND transition for Kubernetes FSM @Om-Beast (#21030)&lt;/li&gt;
+&lt;li&gt;chore(agents): consolidate skills into .agents/skills as single source of truth @leecalcote (#20985)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix connection tests @aabidsofi19 (#21093)&lt;/li&gt;
+&lt;li&gt;[mesheryctl][UI] Link Connection Lifecycle tests to Test Plan rows + capture run output @marblom007 (#21091)&lt;/li&gt;
+&lt;li&gt;[mesheryctl][UI] Emit testGroup Allure label from Test Plan Test Group (col B) @marblom007 (#21089)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] K8s Connection e2e coverage + TAP-&amp;gt;Allure skip fix + Test-Plan traceability @hamza-mohd (#21064)&lt;/li&gt;
+&lt;li&gt;test(mesheryctl): add e2e test for design view @dhruveshmishra (#21039)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[UI] Security: Add rel=noopener noreferrer to target=_blank links @anushkagupta200615-jpg (#21070)&lt;/li&gt;
+&lt;li&gt;[UI] Fix design import: correct fileName wire field and prevent duplicate submissions @NSTKrishna (#21105)&lt;/li&gt;
+&lt;li&gt;[UI] Add missing permission keys to Configure Environments, YamlDialog, and WorkspaceActionList actions @Maanvi212006 (#21104)&lt;/li&gt;
+&lt;li&gt;[mesheryctl][UI] Link Connection Lifecycle tests to Test Plan rows + capture run output @marblom007 (#21091)&lt;/li&gt;
+&lt;li&gt;[UI] Left-align Connections actions menu items @chaitanyamedidar (#21075)&lt;/li&gt;
+&lt;li&gt;[mesheryctl][UI] Emit testGroup Allure label from Test Plan Test Group (col B) @marblom007 (#21089)&lt;/li&gt;
+&lt;li&gt;[UI] Add missing permission keys to action buttons across Connections, Workspaces, and Empty States @Maanvi212006 (#21076)&lt;/li&gt;
+&lt;li&gt;[UI] Kubernetes Connection e2e: rewrite against wizard + Test-Plan traceability @fitzergerald (#21065)&lt;/li&gt;
+&lt;li&gt;[Dashboard] Fix broken Mastering Meshery learning path URL @piyushtripathi9424 (#20586)&lt;/li&gt;
+&lt;li&gt;[UI] Add permission shield to Connect Clusters button @rishiraj38 (#21068)&lt;/li&gt;
+&lt;li&gt;[UI] Normalize Connections table cell typography @ayanasarkar (#21029)&lt;/li&gt;
+&lt;li&gt;Bump @vitest/coverage-v8 from 4.1.9 to 4.1.10 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#21059)&lt;/li&gt;
+&lt;li&gt;Bump react-grid-layout from 2.2.3 to 2.2.4 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#21056)&lt;/li&gt;
+&lt;li&gt;Bump eslint from 10.6.0 to 10.8.0 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#21058)&lt;/li&gt;
+&lt;li&gt;Bump @rjsf/mui from 6.6.2 to 6.7.1 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#21060)&lt;/li&gt;
+&lt;li&gt;Bump @mui/material from 9.1.2 to 9.2.0 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#21057)&lt;/li&gt;
+&lt;li&gt;Bump eslint from 10.7.0 to 10.8.0 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#21054)&lt;/li&gt;
+&lt;li&gt;[UI] Move controllers config helper text into info tooltips @chaitanyamedidar (#20981)&lt;/li&gt;
+&lt;li&gt;[UI] Reposition toolbar below Connections/MeshSync tabs @rishiraj38 (#21021)&lt;/li&gt;
+&lt;li&gt;[UI] Add permission keys to Telemetry sidebar icons and connection buttons @rishiraj38 (#21008)&lt;/li&gt;
+&lt;li&gt;[Chore]: Update to Sistent v0.21.44 @l5io (#20997)&lt;/li&gt;
+&lt;li&gt;[UI]: Fix broken radio buttons and silent form submission failure in Import Model dialog @Utkarsh-Mauryaa (#19525)&lt;/li&gt;
+&lt;li&gt;Fix[UI]: broken kubernetes icon and DeleteIcon in Credentials table @KhushamBansal (#20858)&lt;/li&gt;
+&lt;li&gt;Profile navigation to new tab @Utkarsh-Mauryaa (#19628)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[server] Replace log.Fatal with regexp.MustCompile in filler @KushagraB424 (#21088)&lt;/li&gt;
+&lt;li&gt;[ci] Point mesheryctl-e2e BATS suite at the dedicated remote-provider test-user token @marblom007 (#21108)&lt;/li&gt;
+&lt;li&gt;fix connection tests @aabidsofi19 (#21093)&lt;/li&gt;
+&lt;li&gt;[mesheryctl][UI] Link Connection Lifecycle tests to Test Plan rows + capture run output @marblom007 (#21091)&lt;/li&gt;
+&lt;li&gt;[mesheryctl][UI] Emit testGroup Allure label from Test Plan Test Group (col B) @marblom007 (#21089)&lt;/li&gt;
+&lt;li&gt;[UI] Kubernetes Connection e2e: rewrite against wizard + Test-Plan traceability @fitzergerald (#21065)&lt;/li&gt;
+&lt;li&gt;[CI] Split mesheryctl QA results dirs; document Kubernetes Connections tagging contract @marblom007 (#21063)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] K8s Connection e2e coverage + TAP-&amp;gt;Allure skip fix + Test-Plan traceability @hamza-mohd (#21064)&lt;/li&gt;
+&lt;li&gt;test(mesheryctl): add e2e test for design view @dhruveshmishra (#21039)&lt;/li&gt;
+&lt;li&gt;Bump @vitest/coverage-v8 from 4.1.9 to 4.1.10 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#21059)&lt;/li&gt;
+&lt;li&gt;Bump react-grid-layout from 2.2.3 to 2.2.4 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#21056)&lt;/li&gt;
+&lt;li&gt;Bump eslint from 10.6.0 to 10.8.0 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#21058)&lt;/li&gt;
+&lt;li&gt;Bump @rjsf/mui from 6.6.2 to 6.7.1 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#21060)&lt;/li&gt;
+&lt;li&gt;Bump @mui/material from 9.1.2 to 9.2.0 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#21057)&lt;/li&gt;
+&lt;li&gt;Bump eslint from 10.7.0 to 10.8.0 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#21054)&lt;/li&gt;
+&lt;li&gt;[bug]: Fix docs preview URL not being commented on PRs @banana-three-join (#20996)&lt;/li&gt;
+&lt;li&gt;ci: add checkout action to deploy docs preview workflow @ianrwhitney (#20986)&lt;/li&gt;
+&lt;li&gt;ci: split docs preview build and deploy workflows @ianrwhitney (#20539)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Bump postcss from 8.5.12 to 8.5.25 in /docs @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#21109)&lt;/li&gt;
+&lt;li&gt;[Docs] Remove stale Examples link from Sistent docs TOC @hiyach28 (#21103)&lt;/li&gt;
+&lt;li&gt;[mesheryctl][UI] Link Connection Lifecycle tests to Test Plan rows + capture run output @marblom007 (#21091)&lt;/li&gt;
+&lt;li&gt;mark attendance with hiya.md @hiyach28 (#21090)&lt;/li&gt;
+&lt;li&gt;[mesheryctl][UI] Emit testGroup Allure label from Test Plan Test Group (col B) @marblom007 (#21089)&lt;/li&gt;
+&lt;li&gt;[UI] Kubernetes Connection e2e: rewrite against wizard + Test-Plan traceability @fitzergerald (#21065)&lt;/li&gt;
+&lt;li&gt;[CI] Split mesheryctl QA results dirs; document Kubernetes Connections tagging contract @marblom007 (#21063)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] K8s Connection e2e coverage + TAP-&amp;gt;Allure skip fix + Test-Plan traceability @hamza-mohd (#21064)&lt;/li&gt;
+&lt;li&gt;[Docs][Server] Sparse-clone guidance + make connection-seeding tests sparse-clone-safe @miacycle (#21062)&lt;/li&gt;
+&lt;li&gt;Add Aryan Agarwal&amp;rsquo;s introduction to meetings directory @a-simptoad (#21037)&lt;/li&gt;
+&lt;li&gt;Create Suryansh-Garg.md @SuryanshGarg04 (#21036)&lt;/li&gt;
+&lt;li&gt;Add introduction note from Sulagna Ghosh @suzy-g38 (#21035)&lt;/li&gt;
+&lt;li&gt;[Docs] Fix Codespaces image link redirection in lightbox @hiyach28 (#21003)&lt;/li&gt;
+&lt;li&gt;[Docs] Fix inconsistent formatting of Overview of Steps section @rid325 (#20569)&lt;/li&gt;
+&lt;li&gt;docs: add Hritesh Saha to July 31 newcomers @hritesh-saha (#21024)&lt;/li&gt;
+&lt;li&gt;Add attendance instructions to meeting notes @YASHMAHAKAL (#21022)&lt;/li&gt;
+&lt;li&gt;[Docs] Fix broken image paths on contributing pages @Appleple47 (#21019)&lt;/li&gt;
+&lt;li&gt;fix(docs): correct broken installation image references @Bhavesh189 (#20702)&lt;/li&gt;
+&lt;li&gt;fix: add tabpanes to design docs @Sbragul26 (#20998)&lt;/li&gt;
+&lt;li&gt;[Docs] Hide images and SVGs in Table of Contents sidebar @IshanKale (#20857)&lt;/li&gt;
+&lt;li&gt;[Docs] Add missing Bookinfo descriptions to adapter documentation pages @11yashiagrawal (#20433)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-security"&gt;
+	🔒 Security
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[UI] Security: Add rel=noopener noreferrer to target=_blank links @anushkagupta200615-jpg (#21070)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@11yashiagrawal, @Appleple47, @Bhavesh189, @IshanKale, @KhushamBansal, @KushagraB424, @Maanvi212006, @NSTKrishna, @Om-Beast, @Sbragul26, @SuryanshGarg04, @Utkarsh-Mauryaa, @YASHMAHAKAL, @a-simptoad, @aabidsofi19, @alexquincy, @anushkagupta200615-jpg, @ayanasarkar, @banana-three-join, @chaitanyamedidar, @dependabot[bot], @dhruveshmishra, @fitzergerald, @hamza-mohd, @hiyach28, @hortison, @hritesh-saha, @ianrwhitney, @l5io, @leecalcote, @marblom007, @meshery-ci, @miacycle, @piyushtripathi9424, @pontusringblom, @rid325, @rishiraj38, @ritzorama, @sarajkrishnasingh, @simihablo, @suzy-g38, @winkletinkle and [dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;)&lt;/p&gt;</description></item><item><title>v1.0.63</title><link>/project/releases/v1.0.63/</link><pubDate>Sun, 26 Jul 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.63/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -35745,7 +35856,7 @@ A &lt;strong&gt;&lt;a href="/concepts/logical/designs/"&gt;design&lt;/a&gt;&lt;/
 &lt;h2 id="hands-on-lab"&gt;
 	Hands-on Lab
 &lt;/h2&gt;
-&lt;p&gt;Perform the following steps in order:&lt;/p&gt;</description></item><item><title>Kubevault</title><link>/extensions/models/kubevault/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault/</guid><description/></item><item><title>Kubevault Catalog</title><link>/extensions/models/kubevault-catalog/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-catalog/</guid><description/></item><item><title>Kubevault Crds</title><link>/extensions/models/kubevault-crds/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-crds/</guid><description/></item><item><title>Kubevault Metrics</title><link>/extensions/models/kubevault-metrics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-metrics/</guid><description/></item><item><title>Kubevault Operator</title><link>/extensions/models/kubevault-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-operator/</guid><description/></item><item><title>Kubevela</title><link>/extensions/models/kubevela/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevela/</guid><description/></item><item><title>Kubevirt</title><link>/extensions/models/kubevirt/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevirt/</guid><description/></item><item><title>Kuma</title><link>/extensions/models/kuma/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kuma/</guid><description/></item><item><title>Kured</title><link>/extensions/models/kured/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kured/</guid><description/></item><item><title>Kusk Gateway</title><link>/extensions/models/kusk-gateway/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kusk-gateway/</guid><description/></item><item><title>Kyverno</title><link>/extensions/models/kyverno/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno/</guid><description/></item><item><title>Kyverno Monitor</title><link>/extensions/models/kyverno-monitor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno-monitor/</guid><description/></item><item><title>Kyverno Operator</title><link>/extensions/models/kyverno-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno-operator/</guid><description/></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.63&lt;/h2&gt;</description></item><item><title>Linkerd</title><link>/extensions/models/linkerd/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/linkerd/</guid><description/></item><item><title>Linux</title><link>/extensions/models/linux/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/linux/</guid><description/></item><item><title>Litmus Chaos</title><link>/extensions/models/litmus-core/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/litmus-core/</guid><description/></item><item><title>Loki</title><link>/extensions/models/loki/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loki/</guid><description/></item><item><title>Loki Simple Scalable</title><link>/extensions/models/loki-simple-scalable/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loki-simple-scalable/</guid><description/></item><item><title>Longhorn</title><link>/extensions/models/longhorn/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/longhorn/</guid><description/></item><item><title>LoxiLB</title><link>/extensions/models/loxilb/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loxilb/</guid><description/></item><item><title>Managing Connections</title><link>/guides/infrastructure-management/lifecycle-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/lifecycle-management/</guid><description>&lt;p&gt;&lt;a name="lifecycle-management"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Perform the following steps in order:&lt;/p&gt;</description></item><item><title>Kubevault</title><link>/extensions/models/kubevault/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault/</guid><description/></item><item><title>Kubevault Catalog</title><link>/extensions/models/kubevault-catalog/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-catalog/</guid><description/></item><item><title>Kubevault Crds</title><link>/extensions/models/kubevault-crds/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-crds/</guid><description/></item><item><title>Kubevault Metrics</title><link>/extensions/models/kubevault-metrics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-metrics/</guid><description/></item><item><title>Kubevault Operator</title><link>/extensions/models/kubevault-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevault-operator/</guid><description/></item><item><title>Kubevela</title><link>/extensions/models/kubevela/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevela/</guid><description/></item><item><title>Kubevirt</title><link>/extensions/models/kubevirt/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kubevirt/</guid><description/></item><item><title>Kuma</title><link>/extensions/models/kuma/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kuma/</guid><description/></item><item><title>Kured</title><link>/extensions/models/kured/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kured/</guid><description/></item><item><title>Kusk Gateway</title><link>/extensions/models/kusk-gateway/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kusk-gateway/</guid><description/></item><item><title>Kyverno</title><link>/extensions/models/kyverno/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno/</guid><description/></item><item><title>Kyverno Monitor</title><link>/extensions/models/kyverno-monitor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno-monitor/</guid><description/></item><item><title>Kyverno Operator</title><link>/extensions/models/kyverno-operator/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/kyverno-operator/</guid><description/></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.64&lt;/h2&gt;</description></item><item><title>Linkerd</title><link>/extensions/models/linkerd/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/linkerd/</guid><description/></item><item><title>Linux</title><link>/extensions/models/linux/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/linux/</guid><description/></item><item><title>Litmus Chaos</title><link>/extensions/models/litmus-core/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/litmus-core/</guid><description/></item><item><title>Loki</title><link>/extensions/models/loki/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loki/</guid><description/></item><item><title>Loki Simple Scalable</title><link>/extensions/models/loki-simple-scalable/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loki-simple-scalable/</guid><description/></item><item><title>Longhorn</title><link>/extensions/models/longhorn/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/longhorn/</guid><description/></item><item><title>LoxiLB</title><link>/extensions/models/loxilb/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/loxilb/</guid><description/></item><item><title>Managing Connections</title><link>/guides/infrastructure-management/lifecycle-management/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/infrastructure-management/lifecycle-management/</guid><description>&lt;p&gt;&lt;a name="lifecycle-management"&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Meshery manages hundreds of different types of cloud native infrastructure. See the &lt;a href="/extensions/models/"&gt;full set of integrations&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id="cloud-native-infrastructure-lifecycle-management"&gt;
 	Cloud Native Infrastructure Lifecycle Management
