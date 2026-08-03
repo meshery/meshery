@@ -357,7 +357,7 @@ ui-provider-build:
 
 ## Run Meshery End-to-End Integration Tests against your local Meshery UI (runs in non-interactive mode).
 ui-integration-tests: ui-setup
-	cd ui; npm run ci-test-integration; cd ..
+	cd ui; npm run test:e2e:ci:local; cd ..
 
 #-----------------------------------------------------------------------------
 # Meshery Docs

@@ -264,18 +264,27 @@ It must follow this naming convention
 
 A test that maps to a row in the [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?usp=sharing) may prefix its `@test` title with bracketed tokens so the TAP-to-Allure converter emits traceability labels on the report:
 
+The Test Plan "Latest" tab columns are: column A = Test #, column B = Test Group, column C = Client, column D = Component Under Test.
+
 - `[TC-<n>]` - the Test Plan "Test #" (column A), emitted as the `testId` label and a matching filter tag.
-- `[cut=<component>]` - the Component-Under-Test (column C), e.g. `[cut=Kubernetes Connection]`.
+- `[tg=<Test Group>]` - the Test Group (column B), emitted as the `testGroup` label, e.g. `[tg=Connection Lifecycle]`. This is the general report key: any Test Group can drive its own filtered [meshery/qa](https://github.com/meshery/qa) report by keying on this label.
+- `[cut=<component>]` - the Component-Under-Test (column D), e.g. `[cut=Kubernetes Connection]`.
 
 The tokens are stripped from the displayed test name, so the naming convention above still applies to the remainder:
 
 ```bash
-@test "[TC-1013][cut=Kubernetes Connection] mesheryctl connection create --type minikube creates a new connection" {
+@test "[TC-1013][cut=Kubernetes Connection][tg=Connection Lifecycle] mesheryctl connection create --type minikube creates a new connection" {
   ... test implementation ...
 }
 ```
 
 The full token-to-label mapping (including how the report `epic` is derived from the component) is documented in the header comment of [`mesheryctl/bats-to-allure.js`](https://github.com/meshery/meshery/blob/master/mesheryctl/bats-to-allure.js), the single injection point for this contract. Do not restate the mapping here; keep it in sync there.
+
+From a `[TC-<n>]` token in the connection block, the converter also emits an Allure `tms` **link** ("Test Plan TC-\<n\>") that deep-links straight to that test's row on the Test Plan "Latest" tab, so a reviewer can click from a report test to its source case. The row is derived from the Test # by a fixed offset (`ROW = TestNum - 778`) that encodes the *current* Latest-tab layout - if the tab is re-sorted, the offset must be regenerated (see the prominent caveat in [`mesheryctl/bats-to-allure.js`](https://github.com/meshery/meshery/blob/master/mesheryctl/bats-to-allure.js) and its UI-lane twin `ui/tests/e2e/connections.testmap.ts`).
+
+##### Failure output in the report
+
+The BATS suite runs with `--print-output-on-failure`, so a failing test's captured `mesheryctl` output (`$output`/`$stderr`) is emitted as TAP diagnostics. The converter turns that into debuggable Allure detail on the failed result: a concise headline (`statusDetails.message`), the full transcript (`statusDetails.trace`), and the same transcript as a **text attachment** ("CLI output (bats)"). Passing and skipped tests carry no such attachment. No test needs to opt in - this is automatic for every failure.
 
 #### Test Data
 
