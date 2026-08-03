@@ -235,7 +235,7 @@ jobs:
   scheduled-test:
     name: Scheduled e2e Test
     runs-on: ubuntu-24.04
-    if: ${{ github.event_name == 'schedule' && github.repository == 'meshery/meshery' }}
+    if: ${{ always() }}
     strategy:
       fail-fast: false
       matrix:
