@@ -111,6 +111,9 @@ function FiltersCard_({
           setYaml={setYaml}
           deleteHandler={deleteHandler}
           updateHandler={updateHandler}
+          type={'filter'}
+          updatePermissionKey={Keys.CatalogManagementEditWasmFilter}
+          deletePermissionKey={Keys.CatalogManagementDeleteWasmFilter}
         />
       )}
       <FlipCard
