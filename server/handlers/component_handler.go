@@ -1542,7 +1542,7 @@ func (h *Handler) deleteModelByID(tx *gorm.DB, modelUUID uuid.UUID) error {
 
 	// Delete registry entries for policies belonging to this model
 	if err := tx.Where("entity IN (?) AND type = ?",
-		tx.Model(&_models.PolicyDefinition{}).Select("id").Where("model_id = ?", modelUUID),
+		tx.Model(&_models.PolicyDefinition{}).Select("id").Where("modelID = ?", modelUUID),
 		entity.PolicyDefinition,
 	).Delete(&registry.Registry{}).Error; err != nil {
 		return err
@@ -1560,7 +1560,7 @@ func (h *Handler) deleteModelByID(tx *gorm.DB, modelUUID uuid.UUID) error {
 	if err := tx.Where("model_id = ?", modelUUID).Delete(&relationship.RelationshipDefinition{}).Error; err != nil {
 		return err
 	}
-	if err := tx.Where("model_id = ?", modelUUID).Delete(&_models.PolicyDefinition{}).Error; err != nil {
+	if err := tx.Where("modelID = ?", modelUUID).Delete(&_models.PolicyDefinition{}).Error; err != nil {
 		return err
 	}
 

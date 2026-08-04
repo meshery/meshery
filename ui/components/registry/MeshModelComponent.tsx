@@ -339,6 +339,7 @@ const MeshModelComponent_ = ({
   ]);
 
   const refetch = useCallback(() => {
+    setActiveRegistrantsCount(null);
     fetchData();
   }, [fetchData]);
   const handleTabClick = (selectedView) => {
