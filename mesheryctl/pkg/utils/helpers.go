@@ -1267,6 +1267,18 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 			break
 		}
 
+		// Same reasoning as display.listPageHandler: without a terminal there is
+		// nobody to press the key, and keyboard.GetKeys fails on /dev/tty rather
+		// than blocking. Stop after this page instead of turning a successful
+		// listing into a non-zero exit.
+		if !IsInteractiveTerminal() {
+			Log.Infof(
+				"Showing page %d only: paging through results needs an interactive terminal. Use --page to select a page.",
+				startIndex/pageSize+1,
+			)
+			break
+		}
+
 		keysEvents, err := keyboard.GetKeys(10)
 		if err != nil {
 			return err

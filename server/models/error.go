@@ -347,8 +347,17 @@ func ErrRemoteProviderAuthExhausted(err error) error {
 	)
 }
 
+// ErrDelete reports a delete that the remote provider refused. Like ErrFetch
+// and ErrPost it tags the error with the provider's own HTTP status, so a
+// handler can answer with the status the provider actually returned instead of
+// fabricating one. Without the tag a DELETE of an id the provider had never
+// issued reached the client as a 500 "Failed to Save: .connection", which
+// reads as "the provider database is down" for what is only a missing record.
 func ErrDelete(err error, obj string, statusCode int) error {
-	return errors.New(ErrDeleteCode, errors.Alert, []string{"Unable to de-register Meshery Server from Remote Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{"Network connectivity to Remote Provider may not be available. Session might have expired; token could be invalid."}, []string{"Verify that the Remote Provider is available. Ensure that you have an active session / valid token."})
+	return httputil.WithProviderStatus(
+		errors.New(ErrDeleteCode, errors.Alert, []string{"Unable to de-register Meshery Server from Remote Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{"Network connectivity to Remote Provider may not be available. Session might have expired; token could be invalid."}, []string{"Verify that the Remote Provider is available. Ensure that you have an active session / valid token."}),
+		statusCode,
+	)
 }
 
 func ErrDecodeBase64(err error, obj string) error {
