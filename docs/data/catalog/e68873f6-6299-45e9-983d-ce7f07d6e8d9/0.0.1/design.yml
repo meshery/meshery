@@ -1,0 +1,2117 @@
+components:
+- capabilities: null
+  component:
+    kind: VPC
+    schema: ''
+    version: ec2.services.k8s.aws/v1alpha1
+  configuration:
+    metadata:
+      namespace: default
+    spec:
+      cidrBlocks: []
+  created_at: '0001-01-01T00:00:00Z'
+  description: ''
+  displayName: VPC-A
+  format: JSON
+  id: cb488712-94c9-4cef-b73f-398df5ec9821
+  metadata:
+    configurationUISchema: ''
+    genealogy: parent
+    instanceDetails: null
+    isAnnotation: false
+    isNamespaced: true
+    published: false
+    source_uri: git://github.com/aws-controllers-k8s/ec2-controller/main/helm
+  model: null
+  modelReference:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: components.meshery.io/v1beta2
+  status: enabled
+  styles:
+    background-opacity: 1
+    body-text: ''
+    body-text-color: '#808080'
+    body-text-font-family: Qanelas Soft
+    body-text-font-size: 12
+    body-text-font-weight: '400'
+    body-text-horizontal-align: center
+    body-text-text-decoration: none
+    body-text-vertical-align: center
+    border-width: 0
+    height: 234.67717
+    opacity: 1
+    padding: 6
+    position:
+      x: 470.4751237107232
+      y: 864.7561867839063
+    primaryColor: '#ED7100'
+    secondaryColor: '#00D3A9'
+    shape: rectangle
+    svgColor: ui/public/static/img/meshmodels/aws-ec2-controller/color/vpc-color.svg
+    svgComplete: ''
+    svgWhite: ui/public/static/img/meshmodels/aws-ec2-controller/white/vpc-white.svg
+    width: 141.33821
+    z-index: 3
+  updated_at: '0001-01-01T00:00:00Z'
+  version: v1.0.0
+- capabilities: null
+  component:
+    kind: VPC
+    schema: ''
+    version: ec2.services.k8s.aws/v1alpha1
+  configuration:
+    metadata:
+      namespace: default
+    spec:
+      cidrBlocks: []
+  created_at: '0001-01-01T00:00:00Z'
+  description: ''
+  displayName: VPC-B
+  format: JSON
+  id: d2962eb5-a925-458b-837f-d516ad81dcbe
+  metadata:
+    configurationUISchema: ''
+    genealogy: parent
+    instanceDetails: null
+    isAnnotation: false
+    isNamespaced: true
+    published: false
+    source_uri: git://github.com/aws-controllers-k8s/ec2-controller/main/helm
+  model: null
+  modelReference:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: components.meshery.io/v1beta2
+  status: enabled
+  styles:
+    background-opacity: 1
+    body-text: ''
+    body-text-color: '#808080'
+    body-text-font-family: Qanelas Soft
+    body-text-font-size: 12
+    body-text-font-weight: '400'
+    body-text-horizontal-align: center
+    body-text-text-decoration: none
+    body-text-vertical-align: center
+    border-width: 0
+    height: 242.1924
+    opacity: 1
+    padding: 6
+    position:
+      x: 862.6213355112617
+      y: 887.1943038127303
+    primaryColor: '#ED7100'
+    secondaryColor: '#00D3A9'
+    shape: rectangle
+    svgColor: ui/public/static/img/meshmodels/aws-ec2-controller/color/vpc-color.svg
+    svgComplete: ''
+    svgWhite: ui/public/static/img/meshmodels/aws-ec2-controller/white/vpc-white.svg
+    width: 103.034164
+    z-index: 4
+  updated_at: '0001-01-01T00:00:00Z'
+  version: v1.0.0
+- capabilities: null
+  component:
+    kind: Subnet
+    schema: ''
+    version: ec2.services.k8s.aws/v1alpha1
+  configuration:
+    spec:
+      vpcRef:
+        from:
+          name: VPC-B
+  created_at: '0001-01-01T00:00:00Z'
+  description: ''
+  displayName: Subnet-B-Private
+  format: JSON
+  id: aab67469-a978-4037-8c61-54ce19c0d22e
+  metadata:
+    configurationUISchema: ''
+    genealogy: parent
+    instanceDetails: null
+    isAnnotation: false
+    isNamespaced: true
+    published: false
+    source_uri: git://github.com/aws-controllers-k8s/ec2-controller/main/helm
+  model: null
+  modelReference:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: components.meshery.io/v1beta2
+  status: enabled
+  styles:
+    background-opacity: 1
+    body-text: ''
+    body-text-color: '#808080'
+    body-text-font-family: Qanelas Soft
+    body-text-font-size: 12
+    body-text-font-weight: '400'
+    body-text-horizontal-align: center
+    body-text-text-decoration: none
+    body-text-vertical-align: center
+    border-width: 0
+    height: 24
+    opacity: 1
+    padding: 6
+    position:
+      x: 925.1117717670428
+      y: 862.7949764538653
+    primaryColor: '#ED7100'
+    secondaryColor: '#00D3A9'
+    shape: rectangle
+    svgColor: ui/public/static/img/meshmodels/aws-ec2-controller/color/subnet-color.svg
+    svgComplete: ''
+    svgWhite: ui/public/static/img/meshmodels/aws-ec2-controller/white/subnet-white.svg
+    width: 24
+    z-index: 5
+  updated_at: '0001-01-01T00:00:00Z'
+  version: v1.0.0
+- capabilities: null
+  component:
+    kind: Subnet
+    schema: ''
+    version: ec2.services.k8s.aws/v1alpha1
+  configuration:
+    spec:
+      vpcRef:
+        from:
+          name: VPC-B
+  created_at: '0001-01-01T00:00:00Z'
+  description: ''
+  displayName: Subnet-B-Public
+  format: JSON
+  id: 0ae7e1ca-0e69-43b8-a2bb-4dadf86146ab
+  metadata:
+    configurationUISchema: ''
+    genealogy: parent
+    instanceDetails: null
+    isAnnotation: false
+    isNamespaced: true
+    published: false
+    source_uri: git://github.com/aws-controllers-k8s/ec2-controller/main/helm
+  model: null
+  modelReference:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: components.meshery.io/v1beta2
+  status: enabled
+  styles:
+    background-opacity: 1
+    body-text: ''
+    body-text-color: '#808080'
+    body-text-font-family: Qanelas Soft
+    body-text-font-size: 12
+    body-text-font-weight: '400'
+    body-text-horizontal-align: center
+    body-text-text-decoration: none
+    body-text-vertical-align: center
+    border-width: 0
+    height: 24
+    opacity: 1
+    padding: 6
+    position:
+      x: 900.4536670770601
+      y: 728.4474003259063
+    primaryColor: '#ED7100'
+    secondaryColor: '#00D3A9'
+    shape: rectangle
+    svgColor: ui/public/static/img/meshmodels/aws-ec2-controller/color/subnet-color.svg
+    svgComplete: ''
+    svgWhite: ui/public/static/img/meshmodels/aws-ec2-controller/white/subnet-white.svg
+    width: 24
+    z-index: 6
+  updated_at: '0001-01-01T00:00:00Z'
+  version: v1.0.0
+- capabilities: null
+  component:
+    kind: Subnet
+    schema: ''
+    version: ec2.services.k8s.aws/v1alpha1
+  configuration:
+    spec:
+      vpcRef:
+        from:
+          name: VPC-A
+  created_at: '0001-01-01T00:00:00Z'
+  description: ''
+  displayName: Subnet-A-Public
+  format: JSON
+  id: d0c995e8-cf0e-40a9-bebe-e36c01a9915d
+  metadata:
+    configurationUISchema: ''
+    genealogy: parent
+    instanceDetails: null
+    isAnnotation: false
+    isNamespaced: true
+    published: false
+    source_uri: git://github.com/aws-controllers-k8s/ec2-controller/main/helm
+  model: null
+  modelReference:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: components.meshery.io/v1beta2
+  status: enabled
+  styles:
+    background-opacity: 1
+    body-text: ''
+    body-text-color: '#808080'
+    body-text-font-family: Qanelas Soft
+    body-text-font-size: 12
+    body-text-font-weight: '400'
+    body-text-horizontal-align: center
+    body-text-text-decoration: none
+    body-text-vertical-align: center
+    border-width: 0
+    height: 24
+    opacity: 1
+    padding: 6
+    position:
+      x: 500.4974812326985
+      y: 702.232873042181
+    primaryColor: '#ED7100'
+    secondaryColor: '#00D3A9'
+    shape: rectangle
+    svgColor: ui/public/static/img/meshmodels/aws-ec2-controller/color/subnet-color.svg
+    svgComplete: ''
+    svgWhite: ui/public/static/img/meshmodels/aws-ec2-controller/white/subnet-white.svg
+    width: 24
+    z-index: 7
+  updated_at: '0001-01-01T00:00:00Z'
+  version: v1.0.0
+- capabilities: null
+  component:
+    kind: Subnet
+    schema: ''
+    version: ec2.services.k8s.aws/v1alpha1
+  configuration:
+    spec:
+      vpcRef:
+        from:
+          name: VPC-A
+  created_at: '0001-01-01T00:00:00Z'
+  description: ''
+  displayName: Subnet-A-Private
+  format: JSON
+  id: 62bc27eb-7ea9-4103-9ab0-b9da45c8f69c
+  metadata:
+    configurationUISchema: ''
+    genealogy: parent
+    instanceDetails: null
+    isAnnotation: false
+    isNamespaced: true
+    published: false
+    source_uri: git://github.com/aws-controllers-k8s/ec2-controller/main/helm
+  model: null
+  modelReference:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: components.meshery.io/v1beta2
+  status: enabled
+  styles:
+    background-opacity: 1
+    body-text: ''
+    body-text-color: '#808080'
+    body-text-font-family: Qanelas Soft
+    body-text-font-size: 12
+    body-text-font-weight: '400'
+    body-text-horizontal-align: center
+    body-text-text-decoration: none
+    body-text-vertical-align: center
+    border-width: 0
+    height: 24
+    opacity: 1
+    padding: 6
+    position:
+      x: 513.899025753574
+      y: 844.634462549343
+    primaryColor: '#ED7100'
+    secondaryColor: '#00D3A9'
+    shape: rectangle
+    svgColor: ui/public/static/img/meshmodels/aws-ec2-controller/color/subnet-color.svg
+    svgComplete: ''
+    svgWhite: ui/public/static/img/meshmodels/aws-ec2-controller/white/subnet-white.svg
+    width: 24
+    z-index: 8
+  updated_at: '0001-01-01T00:00:00Z'
+  version: v1.0.0
+- capabilities: null
+  component:
+    kind: RouteTable
+    schema: ''
+    version: ec2.services.k8s.aws/v1alpha1
+  configuration:
+    metadata:
+      namespace: default
+  created_at: '0001-01-01T00:00:00Z'
+  description: ''
+  displayName: RouteTable-B
+  format: JSON
+  id: 323e5b6b-4f1f-4a0a-a3d4-ac5a634de348
+  metadata:
+    configurationUISchema: ''
+    genealogy: ''
+    instanceDetails: null
+    isAnnotation: false
+    isNamespaced: true
+    published: false
+    source_uri: git://github.com/aws-controllers-k8s/ec2-controller/main/helm
+  model: null
+  modelReference:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: components.meshery.io/v1beta2
+  status: enabled
+  styles:
+    background-opacity: 1
+    body-text: ''
+    body-text-color: '#808080'
+    body-text-font-family: Qanelas Soft
+    body-text-font-size: 12
+    body-text-font-weight: '400'
+    body-text-horizontal-align: center
+    body-text-text-decoration: none
+    body-text-vertical-align: center
+    border-width: 0
+    height: 24
+    opacity: 1
+    padding: 6
+    position:
+      x: 798.1308992554806
+      y: 1019.9412072995542
+    primaryColor: '#ED7100'
+    secondaryColor: '#00D3A9'
+    shape: rectangle
+    svgColor: ui/public/static/img/meshmodels/aws-ec2-controller/color/routetable-color.svg
+    svgComplete: ''
+    svgWhite: ui/public/static/img/meshmodels/aws-ec2-controller/white/routetable-white.svg
+    width: 24
+    z-index: 9
+  updated_at: '0001-01-01T00:00:00Z'
+  version: v1.0.0
+- capabilities: null
+  component:
+    kind: RouteTable
+    schema: ''
+    version: ec2.services.k8s.aws/v1alpha1
+  configuration:
+    metadata:
+      namespace: default
+  created_at: '0001-01-01T00:00:00Z'
+  description: ''
+  displayName: RouteTable-A
+  format: JSON
+  id: 4df53cd7-9ada-445b-970a-79a4e8884314
+  metadata:
+    configurationUISchema: ''
+    genealogy: ''
+    instanceDetails: null
+    isAnnotation: false
+    isNamespaced: true
+    published: false
+    source_uri: git://github.com/aws-controllers-k8s/ec2-controller/main/helm
+  model: null
+  modelReference:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: components.meshery.io/v1beta2
+  status: enabled
+  styles:
+    background-opacity: 1
+    body-text: ''
+    body-text-color: '#808080'
+    body-text-font-family: Qanelas Soft
+    body-text-font-size: 12
+    body-text-font-weight: '400'
+    body-text-horizontal-align: center
+    body-text-text-decoration: none
+    body-text-vertical-align: center
+    border-width: 0
+    height: 24
+    opacity: 1
+    padding: 6
+    position:
+      x: 426.0512216678723
+      y: 1001.2795005256318
+    primaryColor: '#ED7100'
+    secondaryColor: '#00D3A9'
+    shape: rectangle
+    svgColor: ui/public/static/img/meshmodels/aws-ec2-controller/color/routetable-color.svg
+    svgComplete: ''
+    svgWhite: ui/public/static/img/meshmodels/aws-ec2-controller/white/routetable-white.svg
+    width: 24
+    z-index: 10
+  updated_at: '0001-01-01T00:00:00Z'
+  version: v1.0.0
+- capabilities: null
+  component:
+    kind: Instance
+    schema: ''
+    version: ec2.services.k8s.aws/v1alpha1
+  configuration:
+    metadata:
+      namespace: default
+    spec:
+      subnetRef:
+        from:
+          name: Subnet-A-Private
+  created_at: '0001-01-01T00:00:00Z'
+  description: ''
+  displayName: EC2-Instance-A
+  format: JSON
+  id: 0b2bb3a5-4365-4c84-8a89-17df7d202ed6
+  metadata:
+    configurationUISchema: ''
+    genealogy: ''
+    instanceDetails: null
+    isAnnotation: false
+    isNamespaced: true
+    published: false
+    source_uri: git://github.com/aws-controllers-k8s/ec2-controller/main/helm
+  model: null
+  modelReference:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: components.meshery.io/v1beta2
+  status: enabled
+  styles:
+    background-opacity: 1
+    body-text: ''
+    body-text-color: '#808080'
+    body-text-font-family: Qanelas Soft
+    body-text-font-size: 12
+    body-text-font-weight: '400'
+    body-text-horizontal-align: center
+    body-text-text-decoration: none
+    body-text-vertical-align: center
+    border-width: 0
+    height: 24
+    opacity: 1
+    padding: 6
+    position:
+      x: 513.899025753574
+      y: 831.634462549343
+    primaryColor: '#ED7100'
+    secondaryColor: '#00D3A9'
+    shape: rectangle
+    svgColor: ui/public/static/img/meshmodels/aws-ec2-controller/color/instance-color.svg
+    svgComplete: ''
+    svgWhite: ui/public/static/img/meshmodels/aws-ec2-controller/white/instance-white.svg
+    width: 24
+    z-index: 11
+  updated_at: '0001-01-01T00:00:00Z'
+  version: v1.0.0
+- capabilities: null
+  component:
+    kind: Instance
+    schema: ''
+    version: ec2.services.k8s.aws/v1alpha1
+  configuration:
+    metadata:
+      namespace: default
+    spec:
+      subnetRef:
+        from:
+          name: Subnet-B-Private
+  created_at: '0001-01-01T00:00:00Z'
+  description: ''
+  displayName: EC2-Instance-B
+  format: JSON
+  id: 352481b8-502f-498a-a751-c268f5cfdbc6
+  metadata:
+    configurationUISchema: ''
+    genealogy: ''
+    instanceDetails: null
+    isAnnotation: false
+    isNamespaced: true
+    published: false
+    source_uri: git://github.com/aws-controllers-k8s/ec2-controller/main/helm
+  model: null
+  modelReference:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: components.meshery.io/v1beta2
+  status: enabled
+  styles:
+    background-opacity: 1
+    body-text: ''
+    body-text-color: '#808080'
+    body-text-font-family: Qanelas Soft
+    body-text-font-size: 12
+    body-text-font-weight: '400'
+    body-text-horizontal-align: center
+    body-text-text-decoration: none
+    body-text-vertical-align: center
+    border-width: 0
+    height: 24
+    opacity: 1
+    padding: 6
+    position:
+      x: 925.1117717670428
+      y: 849.7949764538653
+    primaryColor: '#ED7100'
+    secondaryColor: '#00D3A9'
+    shape: rectangle
+    svgColor: ui/public/static/img/meshmodels/aws-ec2-controller/color/instance-color.svg
+    svgComplete: ''
+    svgWhite: ui/public/static/img/meshmodels/aws-ec2-controller/white/instance-white.svg
+    width: 24
+    z-index: 12
+  updated_at: '0001-01-01T00:00:00Z'
+  version: v1.0.0
+- capabilities: null
+  component:
+    kind: TransitGatewayVPCAttachment
+    schema: ''
+    version: ec2.services.k8s.aws/v1alpha1
+  configuration:
+    metadata:
+      namespace: default
+  created_at: '0001-01-01T00:00:00Z'
+  description: ''
+  displayName: TGW-Attachment-A
+  format: JSON
+  id: a2abd14c-319b-4533-a168-6e66504395bc
+  metadata:
+    configurationUISchema: ''
+    genealogy: ''
+    instanceDetails: null
+    isAnnotation: false
+    isNamespaced: true
+    published: false
+    source_uri: git://github.com/aws-controllers-k8s/ec2-controller/main/helm
+  model: null
+  modelReference:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: components.meshery.io/v1beta2
+  status: enabled
+  styles:
+    background-opacity: 1
+    body-text: ''
+    body-text-color: '#808080'
+    body-text-font-family: Qanelas Soft
+    body-text-font-size: 12
+    body-text-font-weight: '400'
+    body-text-horizontal-align: center
+    body-text-text-decoration: none
+    body-text-vertical-align: center
+    border-width: 0
+    height: 24
+    opacity: 1
+    padding: 6
+    position:
+      x: 496.88173902048317
+      y: 557.0462817330342
+    primaryColor: '#ED7100'
+    secondaryColor: '#00D3A9'
+    shape: rectangle
+    svgColor: ui/public/static/img/meshmodels/aws-ec2-controller/color/transitgatewayvpcattachment-color.svg
+    svgComplete: ''
+    svgWhite: ui/public/static/img/meshmodels/aws-ec2-controller/white/transitgatewayvpcattachment-white.svg
+    width: 24
+    z-index: 13
+  updated_at: '0001-01-01T00:00:00Z'
+  version: v1.0.0
+- capabilities: null
+  component:
+    kind: TransitGatewayVPCAttachment
+    schema: ''
+    version: ec2.services.k8s.aws/v1alpha1
+  configuration:
+    metadata:
+      namespace: default
+  created_at: '0001-01-01T00:00:00Z'
+  description: ''
+  displayName: TGW-Attachment-B
+  format: JSON
+  id: b184fbd3-9d07-4be7-a74b-0d04898eced0
+  metadata:
+    configurationUISchema: ''
+    genealogy: ''
+    instanceDetails: null
+    isAnnotation: false
+    isNamespaced: true
+    published: false
+    source_uri: git://github.com/aws-controllers-k8s/ec2-controller/main/helm
+  model: null
+  modelReference:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: components.meshery.io/v1beta2
+  status: enabled
+  styles:
+    background-opacity: 1
+    body-text: ''
+    body-text-color: '#808080'
+    body-text-font-family: Qanelas Soft
+    body-text-font-size: 12
+    body-text-font-weight: '400'
+    body-text-horizontal-align: center
+    body-text-text-decoration: none
+    body-text-vertical-align: center
+    border-width: 0
+    height: 24
+    opacity: 1
+    padding: 6
+    position:
+      x: 811.5681594039839
+      y: 580.5941541385654
+    primaryColor: '#ED7100'
+    secondaryColor: '#00D3A9'
+    shape: rectangle
+    svgColor: ui/public/static/img/meshmodels/aws-ec2-controller/color/transitgatewayvpcattachment-color.svg
+    svgComplete: ''
+    svgWhite: ui/public/static/img/meshmodels/aws-ec2-controller/white/transitgatewayvpcattachment-white.svg
+    width: 24
+    z-index: 14
+  updated_at: '0001-01-01T00:00:00Z'
+  version: v1.0.0
+- capabilities: null
+  component:
+    kind: TransitGateway
+    schema: ''
+    version: ec2.services.k8s.aws/v1alpha1
+  configuration:
+    metadata:
+      namespace: default
+  created_at: '0001-01-01T00:00:00Z'
+  description: ''
+  displayName: TransitGateway-Hub
+  format: JSON
+  id: 6b59cfea-3721-49e6-a01b-8147b645d0d9
+  metadata:
+    configurationUISchema: ''
+    genealogy: ''
+    instanceDetails: null
+    isAnnotation: false
+    isNamespaced: true
+    published: false
+    source_uri: git://github.com/aws-controllers-k8s/ec2-controller/main/helm
+  model: null
+  modelReference:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: components.meshery.io/v1beta2
+  status: enabled
+  styles:
+    background-opacity: 1
+    body-text: ''
+    body-text-color: '#808080'
+    body-text-font-family: Qanelas Soft
+    body-text-font-size: 12
+    body-text-font-weight: '400'
+    body-text-horizontal-align: center
+    body-text-text-decoration: none
+    body-text-vertical-align: center
+    border-width: 0
+    height: 24
+    opacity: 1
+    padding: 6
+    position:
+      x: 641.6345565220591
+      y: 444.3662412036331
+    primaryColor: '#ED7100'
+    secondaryColor: '#00D3A9'
+    shape: rectangle
+    svgColor: ui/public/static/img/meshmodels/aws-ec2-controller/color/transitgateway-color.svg
+    svgComplete: ''
+    svgWhite: ui/public/static/img/meshmodels/aws-ec2-controller/white/transitgateway-white.svg
+    width: 24
+    z-index: 15
+  updated_at: '0001-01-01T00:00:00Z'
+  version: v1.0.0
+id: e68873f6-6299-45e9-983d-ce7f07d6e8d9
+name: AWS Enterprise Hub and Spoke Network
+preferences:
+  layers:
+    expandedComponents:
+      62bc27eb-7ea9-4103-9ab0-b9da45c8f69c: true
+      aab67469-a978-4037-8c61-54ce19c0d22e: true
+      cb488712-94c9-4cef-b73f-398df5ec9821: true
+      d2962eb5-a925-458b-837f-d516ad81dcbe: true
+relationships:
+- evaluationQuery: null
+  id: ce921e16-2df8-4224-a101-3ca08403770d
+  kind: hierarchical
+  metadata:
+    description: ''
+    isAnnotation: false
+    styles:
+      primaryColor: ''
+      svgColor: ''
+      svgWhite: ''
+  model:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: ''
+  selectors:
+  - allow:
+      from:
+      - id: 62bc27eb-7ea9-4103-9ab0-b9da45c8f69c
+        kind: Subnet
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: github
+          version: ''
+        patch:
+          mutatedRef:
+          - - configuration
+            - spec
+            - vpcRef
+            - from
+            - name
+          patchStrategy: replace
+      to:
+      - id: cb488712-94c9-4cef-b73f-398df5ec9821
+        kind: VPC
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: github
+          version: ''
+        patch:
+          mutatorRef:
+          - - displayName
+          patchStrategy: replace
+    deny:
+      from: []
+      to: []
+  status: pending
+  subType: inventory
+  type: parent
+  version: ''
+- evaluationQuery: null
+  id: dcff085e-de4d-45de-b4a0-df2fbaaa4bcf
+  kind: hierarchical
+  metadata:
+    description: ''
+    isAnnotation: false
+    styles:
+      primaryColor: ''
+      svgColor: ''
+      svgWhite: ''
+  model:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: ''
+  selectors:
+  - allow:
+      from:
+      - id: d0c995e8-cf0e-40a9-bebe-e36c01a9915d
+        kind: Subnet
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: github
+          version: ''
+        patch:
+          mutatedRef:
+          - - configuration
+            - spec
+            - vpcRef
+            - from
+            - name
+          patchStrategy: replace
+      to:
+      - id: cb488712-94c9-4cef-b73f-398df5ec9821
+        kind: VPC
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: github
+          version: ''
+        patch:
+          mutatorRef:
+          - - displayName
+          patchStrategy: replace
+    deny:
+      from: []
+      to: []
+  status: pending
+  subType: inventory
+  type: parent
+  version: ''
+- evaluationQuery: ''
+  id: 7a753d3c-017a-5a4c-aea8-f7443a629c3d
+  kind: edge
+  metadata:
+    description: Binds an EC2 Subnet to its VPC via spec.vpcRef.
+    isAnnotation: false
+    styles:
+      primaryColor: ''
+      svgColor: ''
+      svgWhite: ''
+  model:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: relationships.meshery.io/v1beta2
+  selectors:
+  - allow:
+      from:
+      - id: 62bc27eb-7ea9-4103-9ab0-b9da45c8f69c
+        kind: Subnet
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: github
+          version: ''
+        patch:
+          mutatedRef:
+          - - configuration
+            - spec
+            - vpcRef
+            - from
+            - name
+          patchStrategy: replace
+      to:
+      - id: cb488712-94c9-4cef-b73f-398df5ec9821
+        kind: VPC
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: github
+          version: ''
+        patch:
+          mutatorRef:
+          - - displayName
+          patchStrategy: replace
+  status: approved
+  subType: network
+  type: non-binding
+  version: v1.0.0
+- evaluationQuery: null
+  id: 2e706d62-f483-49ca-97cc-5568a58b6b2f
+  kind: hierarchical
+  metadata:
+    description: ''
+    isAnnotation: false
+    styles:
+      primaryColor: ''
+      svgColor: ''
+      svgWhite: ''
+  model:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: ''
+  selectors:
+  - allow:
+      from:
+      - id: 0ae7e1ca-0e69-43b8-a2bb-4dadf86146ab
+        kind: Subnet
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: github
+          version: ''
+        patch:
+          mutatedRef:
+          - - configuration
+            - spec
+            - vpcRef
+            - from
+            - name
+          patchStrategy: replace
+      to:
+      - id: d2962eb5-a925-458b-837f-d516ad81dcbe
+        kind: VPC
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: github
+          version: ''
+        patch:
+          mutatorRef:
+          - - displayName
+          patchStrategy: replace
+    deny:
+      from: []
+      to: []
+  status: pending
+  subType: inventory
+  type: parent
+  version: ''
+- evaluationQuery: ''
+  id: a154a7fb-2e4b-540c-b63b-e019588abad4
+  kind: edge
+  metadata:
+    description: Binds an EC2 Subnet to its VPC via spec.vpcRef.
+    isAnnotation: false
+    styles:
+      primaryColor: ''
+      svgColor: ''
+      svgWhite: ''
+  model:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: relationships.meshery.io/v1beta2
+  selectors:
+  - allow:
+      from:
+      - id: d0c995e8-cf0e-40a9-bebe-e36c01a9915d
+        kind: Subnet
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: github
+          version: ''
+        patch:
+          mutatedRef:
+          - - configuration
+            - spec
+            - vpcRef
+            - from
+            - name
+          patchStrategy: replace
+      to:
+      - id: cb488712-94c9-4cef-b73f-398df5ec9821
+        kind: VPC
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: github
+          version: ''
+        patch:
+          mutatorRef:
+          - - displayName
+          patchStrategy: replace
+  status: approved
+  subType: network
+  type: non-binding
+  version: v1.0.0
+- evaluationQuery: null
+  id: 7fbbb9bf-7928-4aab-8a0f-81953b9bc959
+  kind: hierarchical
+  metadata:
+    description: ''
+    isAnnotation: false
+    styles:
+      primaryColor: ''
+      svgColor: ''
+      svgWhite: ''
+  model:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: ''
+  selectors:
+  - allow:
+      from:
+      - id: aab67469-a978-4037-8c61-54ce19c0d22e
+        kind: Subnet
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: github
+          version: ''
+        patch:
+          mutatedRef:
+          - - configuration
+            - spec
+            - vpcRef
+            - from
+            - name
+          patchStrategy: replace
+      to:
+      - id: d2962eb5-a925-458b-837f-d516ad81dcbe
+        kind: VPC
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: github
+          version: ''
+        patch:
+          mutatorRef:
+          - - displayName
+          patchStrategy: replace
+    deny:
+      from: []
+      to: []
+  status: pending
+  subType: inventory
+  type: parent
+  version: ''
+- evaluationQuery: ''
+  id: ac97172f-38f4-515e-8c1e-1753a2fd8d84
+  kind: edge
+  metadata:
+    description: Binds an EC2 Subnet to its VPC via spec.vpcRef.
+    isAnnotation: false
+    styles:
+      primaryColor: ''
+      svgColor: ''
+      svgWhite: ''
+  model:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: relationships.meshery.io/v1beta2
+  selectors:
+  - allow:
+      from:
+      - id: 0ae7e1ca-0e69-43b8-a2bb-4dadf86146ab
+        kind: Subnet
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: github
+          version: ''
+        patch:
+          mutatedRef:
+          - - configuration
+            - spec
+            - vpcRef
+            - from
+            - name
+          patchStrategy: replace
+      to:
+      - id: d2962eb5-a925-458b-837f-d516ad81dcbe
+        kind: VPC
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: github
+          version: ''
+        patch:
+          mutatorRef:
+          - - displayName
+          patchStrategy: replace
+  status: approved
+  subType: network
+  type: non-binding
+  version: v1.0.0
+- evaluationQuery: ''
+  id: e0f7faac-abf1-5512-a119-d9ea939c94a7
+  kind: edge
+  metadata:
+    description: Binds an EC2 Subnet to its VPC via spec.vpcRef.
+    isAnnotation: false
+    styles:
+      primaryColor: ''
+      svgColor: ''
+      svgWhite: ''
+  model:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: relationships.meshery.io/v1beta2
+  selectors:
+  - allow:
+      from:
+      - id: aab67469-a978-4037-8c61-54ce19c0d22e
+        kind: Subnet
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: github
+          version: ''
+        patch:
+          mutatedRef:
+          - - configuration
+            - spec
+            - vpcRef
+            - from
+            - name
+          patchStrategy: replace
+      to:
+      - id: d2962eb5-a925-458b-837f-d516ad81dcbe
+        kind: VPC
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: github
+          version: ''
+        patch:
+          mutatorRef:
+          - - displayName
+          patchStrategy: replace
+  status: approved
+  subType: network
+  type: non-binding
+  version: v1.0.0
+- evaluationQuery: null
+  id: 72e5d748-82a2-4093-a951-07bb2ffaf47b
+  kind: hierarchical
+  metadata:
+    description: ''
+    isAnnotation: false
+    styles:
+      primaryColor: ''
+      svgColor: ''
+      svgWhite: ''
+  model:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: ''
+  selectors:
+  - allow:
+      from:
+      - id: 4df53cd7-9ada-445b-970a-79a4e8884314
+        kind: RouteTable
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: github
+          version: ''
+        patch:
+          mutatorRef:
+          - - configuration
+            - spec
+            - vpcID
+          patchStrategy: replace
+      to:
+      - id: cb488712-94c9-4cef-b73f-398df5ec9821
+        kind: VPC
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: github
+          version: ''
+        patch:
+          mutatedRef:
+          - - displayName
+          patchStrategy: replace
+    deny:
+      from: []
+      to: []
+  status: pending
+  subType: inventory
+  type: parent
+  version: ''
+- evaluationQuery: null
+  id: f3824e1f-949e-4eb8-8207-912f2f570e2c
+  kind: hierarchical
+  metadata:
+    description: ''
+    isAnnotation: false
+    styles:
+      primaryColor: ''
+      svgColor: ''
+      svgWhite: ''
+  model:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: ''
+  selectors:
+  - allow:
+      from:
+      - id: 323e5b6b-4f1f-4a0a-a3d4-ac5a634de348
+        kind: RouteTable
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: github
+          version: ''
+        patch:
+          mutatorRef:
+          - - configuration
+            - spec
+            - vpcID
+          patchStrategy: replace
+      to:
+      - id: d2962eb5-a925-458b-837f-d516ad81dcbe
+        kind: VPC
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: github
+          version: ''
+        patch:
+          mutatedRef:
+          - - displayName
+          patchStrategy: replace
+    deny:
+      from: []
+      to: []
+  status: pending
+  subType: inventory
+  type: parent
+  version: ''
+- evaluationQuery: null
+  id: 773f7971-16d2-4f16-947e-a80a43fc2c9d
+  kind: hierarchical
+  metadata:
+    description: Nests EC2 Instances inside a Subnet
+    isAnnotation: false
+    styles:
+      primaryColor: ''
+      svgColor: ''
+      svgWhite: ''
+  model:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: ''
+  selectors:
+  - allow:
+      from:
+      - id: 0b2bb3a5-4365-4c84-8a89-17df7d202ed6
+        kind: Instance
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: ''
+          version: ''
+        patch:
+          mutatedRef:
+          - - configuration
+            - spec
+            - subnetRef
+            - from
+            - name
+          patchStrategy: replace
+      to:
+      - id: 62bc27eb-7ea9-4103-9ab0-b9da45c8f69c
+        kind: Subnet
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: ''
+          version: ''
+        patch:
+          mutatorRef:
+          - - displayName
+          patchStrategy: replace
+    deny:
+      from: []
+      to: []
+  status: pending
+  subType: inventory
+  type: parent
+  version: ''
+- evaluationQuery: null
+  id: ea2a9d34-d816-447c-8d0d-e203c5a18d90
+  kind: hierarchical
+  metadata:
+    description: Nests EC2 Instances inside a Subnet
+    isAnnotation: false
+    styles:
+      primaryColor: ''
+      svgColor: ''
+      svgWhite: ''
+  model:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model:
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant:
+      kind: github
+    version: v1.0.0
+  schemaVersion: ''
+  selectors:
+  - allow:
+      from:
+      - id: 352481b8-502f-498a-a751-c268f5cfdbc6
+        kind: Instance
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: ''
+          version: ''
+        patch:
+          mutatedRef:
+          - - configuration
+            - spec
+            - subnetRef
+            - from
+            - name
+          patchStrategy: replace
+      to:
+      - id: aab67469-a978-4037-8c61-54ce19c0d22e
+        kind: Subnet
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model:
+            version: ''
+          name: aws-ec2-controller
+          registrant:
+            kind: ''
+          version: ''
+        patch:
+          mutatorRef:
+          - - displayName
+          patchStrategy: replace
+    deny:
+      from: []
+      to: []
+  status: pending
+  subType: inventory
+  type: parent
+  version: ''
+- evaluationQuery: ''
+  id: b08c3ee0-fff4-54e1-a3cf-fe9e9c0b5788
+  kind: edge
+  metadata:
+    description: RouteTable-A routes cross-VPC traffic (10.1.0.0/16) to the Transit Gateway via spec.routes[].transitGatewayRef.
+    isAnnotation: false
+    styles:
+      primaryColor: ''
+      svgColor: ''
+      svgWhite: ''
+  model:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model: &id003
+      version: v1.18.4
+    name: aws-ec2-controller
+    registrant: &id004
+      kind: github
+    version: v1.0.0
+  schemaVersion: relationships.meshery.io/v1beta2
+  selectors:
+  - allow:
+      from:
+      - id: 4df53cd7-9ada-445b-970a-79a4e8884314
+        kind: RouteTable
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model: &id001
+            version: ''
+          name: aws-ec2-controller
+          registrant: &id002
+            kind: github
+          version: ''
+        patch:
+          mutatedRef:
+          - - configuration
+            - spec
+            - routes
+          patchStrategy: replace
+      to:
+      - id: 6b59cfea-3721-49e6-a01b-8147b645d0d9
+        kind: TransitGateway
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model: *id001
+          name: aws-ec2-controller
+          registrant: *id002
+          version: ''
+        patch:
+          mutatorRef:
+          - - displayName
+          patchStrategy: replace
+    deny:
+      from: []
+      to: []
+  status: approved
+  subType: network
+  type: non-binding
+  version: v1.0.0
+- evaluationQuery: ''
+  id: 7e792159-1837-5af7-9799-719d89547eb0
+  kind: edge
+  metadata:
+    description: RouteTable-B routes cross-VPC traffic (10.0.0.0/16) to the Transit Gateway via spec.routes[].transitGatewayRef.
+    isAnnotation: false
+    styles:
+      primaryColor: ''
+      svgColor: ''
+      svgWhite: ''
+  model:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model: *id003
+    name: aws-ec2-controller
+    registrant: *id004
+    version: v1.0.0
+  schemaVersion: relationships.meshery.io/v1beta2
+  selectors:
+  - allow:
+      from:
+      - id: 323e5b6b-4f1f-4a0a-a3d4-ac5a634de348
+        kind: RouteTable
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model: *id001
+          name: aws-ec2-controller
+          registrant: *id002
+          version: ''
+        patch:
+          mutatedRef:
+          - - configuration
+            - spec
+            - routes
+          patchStrategy: replace
+      to:
+      - id: 6b59cfea-3721-49e6-a01b-8147b645d0d9
+        kind: TransitGateway
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model: *id001
+          name: aws-ec2-controller
+          registrant: *id002
+          version: ''
+        patch:
+          mutatorRef:
+          - - displayName
+          patchStrategy: replace
+    deny:
+      from: []
+      to: []
+  status: approved
+  subType: network
+  type: non-binding
+  version: v1.0.0
+- evaluationQuery: ''
+  id: 049a0bd9-2013-5d56-a403-05d1f473958f
+  kind: edge
+  metadata:
+    description: TGW-Attachment-A attaches VPC-A to the Transit Gateway via spec.vpcRef.
+    isAnnotation: false
+    styles:
+      primaryColor: ''
+      svgColor: ''
+      svgWhite: ''
+  model:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model: *id003
+    name: aws-ec2-controller
+    registrant: *id004
+    version: v1.0.0
+  schemaVersion: relationships.meshery.io/v1beta2
+  selectors:
+  - allow:
+      from:
+      - id: a2abd14c-319b-4533-a168-6e66504395bc
+        kind: TransitGatewayVPCAttachment
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model: *id001
+          name: aws-ec2-controller
+          registrant: *id002
+          version: ''
+        patch:
+          mutatedRef:
+          - - configuration
+            - spec
+            - vpcRef
+          patchStrategy: replace
+      to:
+      - id: cb488712-94c9-4cef-b73f-398df5ec9821
+        kind: VPC
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model: *id001
+          name: aws-ec2-controller
+          registrant: *id002
+          version: ''
+        patch:
+          mutatorRef:
+          - - displayName
+          patchStrategy: replace
+    deny:
+      from: []
+      to: []
+  status: approved
+  subType: network
+  type: non-binding
+  version: v1.0.0
+- evaluationQuery: ''
+  id: 41850a40-ef23-5fbb-8060-8401b0cd7815
+  kind: edge
+  metadata:
+    description: TGW-Attachment-B attaches VPC-B to the Transit Gateway via spec.vpcRef.
+    isAnnotation: false
+    styles:
+      primaryColor: ''
+      svgColor: ''
+      svgWhite: ''
+  model:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model: *id003
+    name: aws-ec2-controller
+    registrant: *id004
+    version: v1.0.0
+  schemaVersion: relationships.meshery.io/v1beta2
+  selectors:
+  - allow:
+      from:
+      - id: b184fbd3-9d07-4be7-a74b-0d04898eced0
+        kind: TransitGatewayVPCAttachment
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model: *id001
+          name: aws-ec2-controller
+          registrant: *id002
+          version: ''
+        patch:
+          mutatedRef:
+          - - configuration
+            - spec
+            - vpcRef
+          patchStrategy: replace
+      to:
+      - id: d2962eb5-a925-458b-837f-d516ad81dcbe
+        kind: VPC
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model: *id001
+          name: aws-ec2-controller
+          registrant: *id002
+          version: ''
+        patch:
+          mutatorRef:
+          - - displayName
+          patchStrategy: replace
+    deny:
+      from: []
+      to: []
+  status: approved
+  subType: network
+  type: non-binding
+  version: v1.0.0
+- evaluationQuery: ''
+  id: c8135191-1a59-5e46-b3ff-e9a4c5c4ea73
+  kind: edge
+  metadata:
+    description: TGW-Attachment-A connects to TransitGateway-Hub via spec.transitGatewayRef.
+    isAnnotation: false
+    styles:
+      primaryColor: ''
+      svgColor: ''
+      svgWhite: ''
+  model:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model: *id003
+    name: aws-ec2-controller
+    registrant: *id004
+    version: v1.0.0
+  schemaVersion: relationships.meshery.io/v1beta2
+  selectors:
+  - allow:
+      from:
+      - id: a2abd14c-319b-4533-a168-6e66504395bc
+        kind: TransitGatewayVPCAttachment
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model: *id001
+          name: aws-ec2-controller
+          registrant: *id002
+          version: ''
+        patch:
+          mutatedRef:
+          - - configuration
+            - spec
+            - transitGatewayRef
+          patchStrategy: replace
+      to:
+      - id: 6b59cfea-3721-49e6-a01b-8147b645d0d9
+        kind: TransitGateway
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model: *id001
+          name: aws-ec2-controller
+          registrant: *id002
+          version: ''
+        patch:
+          mutatorRef:
+          - - displayName
+          patchStrategy: replace
+    deny:
+      from: []
+      to: []
+  status: approved
+  subType: network
+  type: non-binding
+  version: v1.0.0
+- evaluationQuery: ''
+  id: 8030c2a2-8dd9-5f8a-bfdf-263baccc38f1
+  kind: edge
+  metadata:
+    description: TGW-Attachment-B connects to TransitGateway-Hub via spec.transitGatewayRef.
+    isAnnotation: false
+    styles:
+      primaryColor: ''
+      svgColor: ''
+      svgWhite: ''
+  model:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model: *id003
+    name: aws-ec2-controller
+    registrant: *id004
+    version: v1.0.0
+  schemaVersion: relationships.meshery.io/v1beta2
+  selectors:
+  - allow:
+      from:
+      - id: b184fbd3-9d07-4be7-a74b-0d04898eced0
+        kind: TransitGatewayVPCAttachment
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model: *id001
+          name: aws-ec2-controller
+          registrant: *id002
+          version: ''
+        patch:
+          mutatedRef:
+          - - configuration
+            - spec
+            - transitGatewayRef
+          patchStrategy: replace
+      to:
+      - id: 6b59cfea-3721-49e6-a01b-8147b645d0d9
+        kind: TransitGateway
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model: *id001
+          name: aws-ec2-controller
+          registrant: *id002
+          version: ''
+        patch:
+          mutatorRef:
+          - - displayName
+          patchStrategy: replace
+    deny:
+      from: []
+      to: []
+  status: approved
+  subType: network
+  type: non-binding
+  version: v1.0.0
+- evaluationQuery: ''
+  id: 2a731dd5-9733-5f12-bad3-bf331052c0b6
+  kind: edge
+  metadata:
+    description: TGW-Attachment-A places its ENI in Subnet-A-Private via spec.subnetRefs.
+    isAnnotation: false
+    styles:
+      primaryColor: ''
+      svgColor: ''
+      svgWhite: ''
+  model:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model: *id003
+    name: aws-ec2-controller
+    registrant: *id004
+    version: v1.0.0
+  schemaVersion: relationships.meshery.io/v1beta2
+  selectors:
+  - allow:
+      from:
+      - id: a2abd14c-319b-4533-a168-6e66504395bc
+        kind: TransitGatewayVPCAttachment
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model: *id001
+          name: aws-ec2-controller
+          registrant: *id002
+          version: ''
+        patch:
+          mutatedRef:
+          - - configuration
+            - spec
+            - subnetRefs
+          patchStrategy: replace
+      to:
+      - id: 62bc27eb-7ea9-4103-9ab0-b9da45c8f69c
+        kind: Subnet
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model: *id001
+          name: aws-ec2-controller
+          registrant: *id002
+          version: ''
+        patch:
+          mutatorRef:
+          - - displayName
+          patchStrategy: replace
+    deny:
+      from: []
+      to: []
+  status: approved
+  subType: network
+  type: non-binding
+  version: v1.0.0
+- evaluationQuery: ''
+  id: 056e3e81-df0d-564b-a377-13e7c1bd3f44
+  kind: edge
+  metadata:
+    description: TGW-Attachment-B places its ENI in Subnet-B-Private via spec.subnetRefs.
+    isAnnotation: false
+    styles:
+      primaryColor: ''
+      svgColor: ''
+      svgWhite: ''
+  model:
+    displayName: AWS EC2
+    id: 00000000-0000-0000-0000-000000000000
+    model: *id003
+    name: aws-ec2-controller
+    registrant: *id004
+    version: v1.0.0
+  schemaVersion: relationships.meshery.io/v1beta2
+  selectors:
+  - allow:
+      from:
+      - id: b184fbd3-9d07-4be7-a74b-0d04898eced0
+        kind: TransitGatewayVPCAttachment
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model: *id001
+          name: aws-ec2-controller
+          registrant: *id002
+          version: ''
+        patch:
+          mutatedRef:
+          - - configuration
+            - spec
+            - subnetRefs
+          patchStrategy: replace
+      to:
+      - id: aab67469-a978-4037-8c61-54ce19c0d22e
+        kind: Subnet
+        match: {}
+        matchStrategyMatrix: null
+        model:
+          displayName: ''
+          id: 00000000-0000-0000-0000-000000000000
+          model: *id001
+          name: aws-ec2-controller
+          registrant: *id002
+          version: ''
+        patch:
+          mutatorRef:
+          - - displayName
+          patchStrategy: replace
+    deny:
+      from: []
+      to: []
+  status: approved
+  subType: network
+  type: non-binding
+  version: v1.0.0
+schemaVersion: designs.meshery.io/v1beta3
+version: 0.0.43
