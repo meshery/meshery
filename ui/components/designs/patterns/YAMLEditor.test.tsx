@@ -43,7 +43,7 @@ vi.mock('@/assets/icons', () => ({
   Save: () => <svg data-testid="save-icon" />,
 }));
 
-vi.mock('../../CodeMirror', () => ({
+vi.mock('../../general/CodeMirror', () => ({
   UnControlled: ({ value, onChange }: any) => (
     <textarea
       data-testid="codemirror"
@@ -59,13 +59,6 @@ vi.mock('../../../utils/Enum', () => ({
 
 vi.mock('@/utils/can', () => ({
   default: () => true,
-}));
-
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    EDIT_DESIGN: { action: 'edit', subject: 'design' },
-    DELETE_A_DESIGN: { action: 'delete', subject: 'design' },
-  },
 }));
 
 vi.mock('./MesheryPatterns.styled', () => ({

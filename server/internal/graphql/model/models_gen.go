@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"strconv"
-	"time"
 )
 
 type AdapterStatusInput struct {
@@ -25,25 +24,6 @@ type AddonStatusInput struct {
 	Selector     *MeshType `json:"selector,omitempty"`
 	K8scontextID string    `json:"k8scontextID"`
 	TargetStatus Status    `json:"targetStatus"`
-}
-
-type ApplicationPage struct {
-	Page         int                  `json:"page"`
-	PageSize     int                  `json:"page_size"`
-	TotalCount   int                  `json:"total_count"`
-	Applications []*ApplicationResult `json:"applications,omitempty"`
-}
-
-type ApplicationResult struct {
-	ID              string      `json:"id"`
-	Name            string      `json:"name"`
-	ApplicationFile string      `json:"application_file"`
-	Type            *NullString `json:"type"`
-	Owner           string      `json:"owner"`
-	Location        *Location   `json:"location"`
-	Visibility      string      `json:"visibility"`
-	CreatedAt       *string     `json:"created_at,omitempty"`
-	UpdatedAt       *string     `json:"updated_at,omitempty"`
 }
 
 type CatalogFilter struct {
@@ -84,16 +64,6 @@ type CatalogSelector struct {
 	Userid      []*string `json:"userid,omitempty"`
 	OrgID       []*string `json:"orgID,omitempty"`
 	WorkspaceID []*string `json:"workspaceID,omitempty"`
-}
-
-type ClusterResources struct {
-	Resources []*Resource `json:"resources"`
-}
-
-type ConfigurationPage struct {
-	Applications *ApplicationPage   `json:"applications,omitempty"`
-	Patterns     *PatternPageResult `json:"patterns,omitempty"`
-	Filters      *FilterPage        `json:"filters,omitempty"`
 }
 
 type Container struct {
@@ -144,43 +114,6 @@ type DataPlane struct {
 type Error struct {
 	Code        string `json:"code"`
 	Description string `json:"description"`
-}
-
-type Event struct {
-	ID          string         `json:"id"`
-	Owner       string         `json:"owner"`
-	ActedUpon   string         `json:"actedUpon"`
-	OperationID string         `json:"operationID"`
-	SystemID    string         `json:"systemID"`
-	Severity    Severity       `json:"severity"`
-	Action      string         `json:"action"`
-	Status      string         `json:"status"`
-	Category    string         `json:"category"`
-	Description string         `json:"description"`
-	Metadata    map[string]any `json:"metadata,omitempty"`
-	CreatedAt   time.Time      `json:"createdAt"`
-	UpdatedAt   time.Time      `json:"updatedAt"`
-	DeletedAt   *time.Time     `json:"deletedAt,omitempty"`
-}
-
-type FilterPage struct {
-	Page       int             `json:"page"`
-	PageSize   int             `json:"page_size"`
-	TotalCount int             `json:"total_count"`
-	Filters    []*FilterResult `json:"filters,omitempty"`
-}
-
-type FilterResult struct {
-	ID             string         `json:"id"`
-	Name           string         `json:"name"`
-	FilterFile     string         `json:"filter_file"`
-	FilterResource string         `json:"filter_resource"`
-	Owner          string         `json:"owner"`
-	Location       *Location      `json:"location"`
-	Visibility     string         `json:"visibility"`
-	CatalogData    map[string]any `json:"catalog_data,omitempty"`
-	CreatedAt      *string        `json:"created_at,omitempty"`
-	UpdatedAt      *string        `json:"updated_at,omitempty"`
 }
 
 type K8sContext struct {
@@ -366,17 +299,9 @@ type ReSyncActions struct {
 	HardReset string `json:"hardReset"`
 }
 
-type Resource struct {
-	Kind  string `json:"kind"`
-	Count int    `json:"count"`
-}
-
 type ServiceMeshFilter struct {
 	Type          *MeshType `json:"type,omitempty"`
 	K8sClusterIDs []string  `json:"k8sClusterIDs,omitempty"`
-}
-
-type Subscription struct {
 }
 
 type TelemetryComp struct {
@@ -642,71 +567,6 @@ func (e *MesheryControllerStatus) UnmarshalJSON(b []byte) error {
 }
 
 func (e MesheryControllerStatus) MarshalJSON() ([]byte, error) {
-	var buf bytes.Buffer
-	e.MarshalGQL(&buf)
-	return buf.Bytes(), nil
-}
-
-type Severity string
-
-const (
-	SeverityAlert         Severity = "alert"
-	SeverityCritical      Severity = "critical"
-	SeverityDebug         Severity = "debug"
-	SeverityEmergency     Severity = "emergency"
-	SeverityError         Severity = "error"
-	SeverityWarning       Severity = "warning"
-	SeverityInformational Severity = "informational"
-)
-
-var AllSeverity = []Severity{
-	SeverityAlert,
-	SeverityCritical,
-	SeverityDebug,
-	SeverityEmergency,
-	SeverityError,
-	SeverityWarning,
-	SeverityInformational,
-}
-
-func (e Severity) IsValid() bool {
-	switch e {
-	case SeverityAlert, SeverityCritical, SeverityDebug, SeverityEmergency, SeverityError, SeverityWarning, SeverityInformational:
-		return true
-	}
-	return false
-}
-
-func (e Severity) String() string {
-	return string(e)
-}
-
-func (e *Severity) UnmarshalGQL(v any) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = Severity(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid Severity", str)
-	}
-	return nil
-}
-
-func (e Severity) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-func (e *Severity) UnmarshalJSON(b []byte) error {
-	s, err := strconv.Unquote(string(b))
-	if err != nil {
-		return err
-	}
-	return e.UnmarshalGQL(s)
-}
-
-func (e Severity) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	e.MarshalGQL(&buf)
 	return buf.Bytes(), nil
