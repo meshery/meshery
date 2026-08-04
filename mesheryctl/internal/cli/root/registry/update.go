@@ -132,6 +132,8 @@ func InvokeCompUpdate() error {
 
 	componentCSVHelper, err := meshkitRegistryUtils.NewComponentCSVHelper(url, "Components", sheetGID, componentCSVFilePath)
 	if err != nil {
+		err = ErrUpdateRegistry(err, modelLocation)
+		utils.Log.Error(err)
 		return err
 	}
 
