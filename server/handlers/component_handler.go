@@ -1601,7 +1601,7 @@ func (h *Handler) DeleteModel(rw http.ResponseWriter, r *http.Request, _ *models
 //
 // Delete all model definitions, components, relationships, and policies belonging to a specific registrant connection ID.
 func (h *Handler) DeleteModelsByRegistrant(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	connectionIDStr := mux.Vars(r)["connectionID"]
+	connectionIDStr := mux.Vars(r)["connectionId"]
 	if connectionIDStr == "" {
 		writeJSONError(rw, "connection ID is required", http.StatusBadRequest)
 		return
