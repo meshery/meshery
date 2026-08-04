@@ -187,6 +187,8 @@ export const TextWithLinks = ({ text, ...typographyProps }) => {
 
 export const KeyValue = ({ Key, Value, style }) => {
   const theme = useTheme();
+  const formattedKey =
+    typeof Key === 'string' ? Key.replace(/([a-z])([A-Z])/g, '$1 $2').replaceAll('_', ' ') : Key;
   return (
     <div
       style={{
@@ -198,7 +200,7 @@ export const KeyValue = ({ Key, Value, style }) => {
       }}
     >
       <SectionBody
-        body={Key.replaceAll('_', ' ')}
+        body={formattedKey}
         style={{
           textTransform: 'capitalize',
           overflow: 'hidden',
@@ -228,6 +230,10 @@ export const SectionHeading = ({ children, isLevel, ...props }) => {
   const level = useContext(LevelContext);
   const fontSize = isLevel ? Math.max(0.9, 1.3 - 0.1 * level) + 'rem' : '1rem';
   const margin = isLevel ? Math.max(0.25, 0.55 - 0.15 * level) + 'rem' : 'inherit';
+  const formattedText =
+    typeof children === 'string'
+      ? children.replace(/([a-z])([A-Z])/g, '$1 $2').replaceAll('_', ' ')
+      : children;
 
   return (
     <div style={{ marginBlock: margin }}>
@@ -241,7 +247,7 @@ export const SectionHeading = ({ children, isLevel, ...props }) => {
         }}
         {...props}
       >
-        {children}
+        {formattedText}
       </Typography>
     </div>
   );
