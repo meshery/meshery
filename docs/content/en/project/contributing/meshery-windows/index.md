@@ -98,7 +98,7 @@ Feel free to use any distro of your choice.
 
 The Docker Desktop application for Windows includes a comprehensive set of tools, including Docker Engine, Docker CLI client, Docker Compose, Notary, Kubernetes, and a Credential Helper.
 
-Install [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/). One installer covers all editions, as Docker no longer publishes a separate Windows Home download. On Home and Education editions it runs Linux containers only, which is what Meshery needs.
+Install [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/) using the official installation guide.
 
 ## Natively on Windows
 
