@@ -8,7 +8,8 @@ components:
     metadata:
       namespace: default
     spec:
-      cidrBlocks: []
+      cidrBlocks:
+      - 10.1.0.0/16
   created_at: '0001-01-01T00:00:00Z'
   description: ''
   displayName: VPC-A
@@ -70,7 +71,8 @@ components:
     metadata:
       namespace: default
     spec:
-      cidrBlocks: []
+      cidrBlocks:
+      - 10.2.0.0/16
   created_at: '0001-01-01T00:00:00Z'
   description: ''
   displayName: VPC-B
@@ -1386,7 +1388,7 @@ relationships:
             kind: github
           version: ''
         patch:
-          mutatorRef:
+          mutatedRef:
           - - configuration
             - spec
             - vpcID
@@ -1406,7 +1408,7 @@ relationships:
             kind: github
           version: ''
         patch:
-          mutatedRef:
+          mutatorRef:
           - - displayName
           patchStrategy: replace
     deny:
@@ -1453,7 +1455,7 @@ relationships:
             kind: github
           version: ''
         patch:
-          mutatorRef:
+          mutatedRef:
           - - configuration
             - spec
             - vpcID
@@ -1473,7 +1475,7 @@ relationships:
             kind: github
           version: ''
         patch:
-          mutatedRef:
+          mutatorRef:
           - - displayName
           patchStrategy: replace
     deny:
