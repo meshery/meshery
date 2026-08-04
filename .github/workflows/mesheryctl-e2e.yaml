@@ -103,6 +103,50 @@ jobs:
             MESHERY_MANAGED_BROKER_PORTFORWARD=false
           kubectl -n meshery rollout status deployment/meshery --timeout=180s
         shell: bash
+      - name: Wait for the Meshery Broker to be ready
+        # 000-prerequisites/00-servert.bats and 001-system/03-system-checks.bats:49
+        # both assert the broker is up, and nothing else in the job waits for it:
+        # the previous step waits only on the meshery deployment. The broker is
+        # deployed indirectly - Meshery installs the Meshery Operator, the
+        # operator reconciles the Broker CR into the meshery-broker statefulset,
+        # and only then does a pod appear - so it can trail the meshery rollout
+        # by a long way.
+        #
+        # `kubectl rollout status` cannot express that wait on its own: against a
+        # statefulset that does not exist *yet* it fails immediately with
+        # NotFound instead of waiting, so a bare `rollout status ... || true`
+        # returns at once and waits for nothing. Poll for the object to appear
+        # first, then hand over to rollout status for readiness.
+        #
+        # Never fails the job: a broker that never arrives is a finding for the
+        # tests that assert on it, not a reason to skip the other 190. The
+        # diagnostics below exist so that finding is explainable from this log
+        # instead of only visible as "Meshery Broker is not running".
+        run: |
+          set +e
+          deadline=$(( SECONDS + 300 ))
+          until kubectl -n meshery get statefulset/meshery-broker >/dev/null 2>&1; do
+            if [ "$SECONDS" -ge "$deadline" ]; then
+              echo "::warning::meshery-broker statefulset did not appear within 300s"
+              break
+            fi
+            sleep 5
+          done
+
+          if kubectl -n meshery get statefulset/meshery-broker >/dev/null 2>&1; then
+            kubectl -n meshery rollout status statefulset/meshery-broker --timeout=180s
+          fi
+
+          echo "### broker / operator state ###"
+          kubectl -n meshery get pods -o wide
+          kubectl -n meshery get statefulsets,deployments
+          echo "### operator custom resources ###"
+          kubectl -n meshery get brokers.core.meshery.io,meshsyncs.core.meshery.io -o wide 2>&1 \
+            || echo "(operator CRDs not registered)"
+          echo "### meshery-operator log tail ###"
+          kubectl -n meshery logs deployment/meshery-operator --tail=100 2>&1 \
+            || echo "(no meshery-operator deployment)"
+        shell: bash
       - name: Run mesheryctl end2end tests
         run: |
           bash run_tests.bash | tee bats.tap
