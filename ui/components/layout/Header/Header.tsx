@@ -29,7 +29,6 @@ import {
   IconButton,
   Slide,
   Grid2,
-  Hidden,
   NoSsr,
   useTheme,
   useMediaQuery,
@@ -455,13 +454,11 @@ const Header = ({
         <HeaderAppBar id="top-navigation-bar" color="primary" position="sticky">
           <StyledToolbar disableGutters isDrawerCollapsed={onDrawerCollapse}>
             <Grid2 container size="grow" sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
-              <Hidden smUp>
-                <Grid2 style={{ display: 'none' }}>
-                  <MenuIconButton aria-label="Open drawer" onClick={onDrawerToggle}>
-                    <HeaderIcons style={iconMedium} />
-                  </MenuIconButton>
-                </Grid2>
-              </Hidden>
+              <Grid2 sx={{ display: { xs: 'block', sm: 'none' } }}>
+                <MenuIconButton aria-label="Open drawer" onClick={onDrawerToggle}>
+                  <HeaderIcons style={iconMedium} />
+                </MenuIconButton>
+              </Grid2>
               {/* Extension Point for Logo */}
               <Box
                 id="nav-header-logo"
