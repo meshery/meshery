@@ -47,13 +47,16 @@ const useFilterSchema = () => {
 
 /**
  * Map Redux filter object → TypingFilter chips.
- * Falls back to unread (product default) for unset / `{ initial: true }` views.
+ * Unread chip only for the pre-fetch `{ initial: true }` sentinel — not after user clear.
  */
 export const filtersToChips = (filters, filterSchema) => {
-  if (!filters || filters.initial) {
+  if (filters?.initial) {
     return [DEFAULT_STATUS_CHIP];
   }
 
+  if (!filters || Object.keys(filters).length === 0) {
+    return [];
+  }
   const valueToSchemaKey = Object.entries(filterSchema).reduce((acc, [schemaKey, schema]) => {
     acc[schema.value] = schemaKey;
     return acc;
@@ -77,7 +80,7 @@ export const filtersToChips = (filters, filterSchema) => {
     });
   });
 
-  return chips.length > 0 ? chips : [DEFAULT_STATUS_CHIP];
+  return chips;
 };
 
 /** Coerce array-valued `multiple: false` filters to the last selected scalar. */
@@ -118,12 +121,12 @@ const Filter = ({ handleFilter }: { handleFilter: (filters: unknown) => void }) 
     [selectedFilters, resetVersion],
   );
 
-  // Clear restores unread — the product default — not an unfiltered fetch.
+  // User clear removes all filters (including unread); remount so TypingFilter resyncs.
   const onFilterChange = (filters: Record<string, unknown>) => {
     const normalized = normalizeFilterPayload(filters || {}, filterSchema);
     if (Object.keys(normalized).length === 0) {
       setResetVersion((version) => version + 1);
-      handleFilter({ status: STATUS.UNREAD });
+      handleFilter({});
       return;
     }
     handleFilter(normalized);

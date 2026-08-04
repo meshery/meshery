@@ -86,27 +86,26 @@ describe('NotificationCenter Filter', () => {
     expect(chips).toHaveLength(3);
   });
 
-  it('restores unread when the typing filter is cleared', () => {
+  it('allows clearing all filters including unread', () => {
+    sliceState.filters = { status: 'unread' };
     const handleFilter = vi.fn();
     render(<Filter handleFilter={handleFilter} />);
 
     act(() => {
       screen.getByText('clear-filters').click();
     });
-    expect(handleFilter).toHaveBeenCalledWith({ status: 'unread' });
+    expect(handleFilter).toHaveBeenCalledWith({});
   });
 
-  it('remounts TypingFilter when clearing from { initial: true } so unread chips reappear', () => {
+  it('shows no chips after user clears filters in Redux', () => {
+    sliceState.filters = {};
     render(<Filter handleFilter={vi.fn()} />);
-    expect(typingFilterMountCount).toBe(1);
 
-    act(() => {
-      screen.getByText('clear-filters').click();
-    });
-    expect(typingFilterMountCount).toBe(2);
+    const chips = JSON.parse(screen.getByTestId('default-filters').textContent || '[]');
+    expect(chips).toEqual([]);
   });
 
-  it('remounts TypingFilter when clearing from { status: unread } default state', () => {
+  it('remounts TypingFilter when clearing so local chip state resyncs', () => {
     sliceState.filters = { status: 'unread' };
     render(<Filter handleFilter={vi.fn()} />);
     expect(typingFilterMountCount).toBe(1);
@@ -133,14 +132,14 @@ describe('NotificationCenter Filter', () => {
     expect(handleFilter).toHaveBeenCalledWith({ status: 'read' });
   });
 
-  it('restores unread when normalized payload is empty after empty status array', () => {
+  it('forwards empty payload when normalized status array is empty', () => {
     const handleFilter = vi.fn();
     render(<Filter handleFilter={handleFilter} />);
 
     act(() => {
       screen.getByText('empty-status').click();
     });
-    expect(handleFilter).toHaveBeenCalledWith({ status: 'unread' });
+    expect(handleFilter).toHaveBeenCalledWith({});
   });
 
   it('includes severity, status, action, author, and category filter definitions', () => {
@@ -173,13 +172,14 @@ describe('filtersToChips', () => {
     SEVERITY: { value: 'severity' },
   };
 
-  it('falls back to unread for initial/empty filters', () => {
+  it('shows unread chip only for the initial pre-fetch sentinel', () => {
     expect(filtersToChips({ initial: true }, schema)).toEqual([
       expect.objectContaining({ type: 'STATUS', value: 'unread' }),
     ]);
-    expect(filtersToChips({}, schema)).toEqual([
-      expect.objectContaining({ type: 'STATUS', value: 'unread' }),
-    ]);
+  });
+
+  it('returns no chips for an empty cleared filter object', () => {
+    expect(filtersToChips({}, schema)).toEqual([]);
   });
 
   it('maps status and severity filters to chips', () => {
@@ -208,7 +208,7 @@ describe('normalizeFilterPayload', () => {
     ).toEqual({ status: 'unread', severity: ['error', 'warning'] });
   });
 
-  it('removes empty array status so onFilterChange can restore unread', () => {
+  it('removes empty array status so clear yields an empty payload', () => {
     expect(normalizeFilterPayload({ status: [] }, schema)).toEqual({});
   });
 });
