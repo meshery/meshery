@@ -342,20 +342,22 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID core.Uuid, se
 		return nil, err
 	}
 
+	var resolvedPageSize int
 	if pageSize == "all" {
 		query.Find(&environmentsFetched)
+		resolvedPageSize = int(count)
 	} else {
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, strconv.IntSize)
 		if err != nil {
 			return nil, err
 		}
-
+		resolvedPageSize = int(pageSizeUint)
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&environmentsFetched)
 	}
 
 	environmentsPage := &environment.EnvironmentPage{
 		Page:         int(pageUint),
-		PageSize:     len(environmentsFetched),
+		PageSize:     resolvedPageSize,
 		TotalCount:   int(count),
 		Environments: environmentsFetched,
 	}
