@@ -90,14 +90,17 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 		return nil, err
 	}
 	// Fetch all workspaces if pageSize is "all"
+	var resolvedPageSize int
 	if pageSize == "all" {
 		query.Find(&workspacesFetched)
+		resolvedPageSize = int(count)
 	} else {
 		// Convert page and pageSize from string to uint
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
 		if err != nil {
 			return nil, err
 		}
+		resolvedPageSize = int(pageSizeUint)
 
 		// Fetch workspaces with pagination
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&workspacesFetched)
@@ -122,7 +125,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 	// Prepare the response
 	workspacesPage := &workspace.WorkspacePage{
 		Page:       int(pageUint),
-		PageSize:   len(workspacesFetched),
+		PageSize:   resolvedPageSize,
 		TotalCount: int(count),
 		Workspaces: availableWorkspaces,
 	}
@@ -510,13 +513,16 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID core.Uuid, search,
 		return nil, err
 	}
 
+	var resolvedPageSize int
 	if pageSize == "all" {
 		query.Find(&designsFetched)
+		resolvedPageSize = int(count)
 	} else {
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 64)
 		if err != nil {
 			return nil, err
 		}
+		resolvedPageSize = int(pageSizeUint)
 
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&designsFetched)
 	}
@@ -528,7 +534,7 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID core.Uuid, search,
 
 	designsPage := &workspace.MesheryDesignPage{
 		Page:       int(pageUint),
-		PageSize:   len(designsFetched),
+		PageSize:   resolvedPageSize,
 		TotalCount: int(count),
 		Designs:    schemaDesigns,
 	}
@@ -658,19 +664,22 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
 		return nil, err
 	}
 
+	var resolvedPageSize int
 	if pageSize == "all" {
 		query.Find(&viewsFetched)
+		resolvedPageSize = int(count)
 	} else {
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
 		if err != nil {
 			return nil, err
 		}
+		resolvedPageSize = int(pageSizeUint)
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&viewsFetched)
 	}
 
 	viewsPage := &viewv1beta2.MesheryViewPage{
 		Page:       int(pageUint),
-		PageSize:   len(viewsFetched),
+		PageSize:   resolvedPageSize,
 		TotalCount: int(count),
 		Views:      viewsFetched,
 	}
@@ -794,13 +803,16 @@ func (wp *WorkspacePersister) GetWorkspaceTeams(workspaceID core.Uuid, search, o
 		return nil, err
 	}
 
+	var resolvedPageSize int
 	if pageSize == "all" {
 		query.Find(&teamsFetched)
+		resolvedPageSize = int(count)
 	} else {
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
 		if err != nil {
 			return nil, err
 		}
+		resolvedPageSize = int(pageSizeUint)
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&teamsFetched)
 	}
 
@@ -813,7 +825,7 @@ func (wp *WorkspacePersister) GetWorkspaceTeams(workspaceID core.Uuid, search, o
 
 	teamsPage := &TeamPage{
 		Page:       int(pageUint),
-		PageSize:   len(teamsFetched),
+		PageSize:   resolvedPageSize,
 		TotalCount: int(count),
 		Teams:      teamsFetched,
 	}

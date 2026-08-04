@@ -74,14 +74,17 @@ func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, page
 		return nil, err
 	}
 	// Fetch all environments if pageSize is "all"
+	var resolvedPageSize int
 	if pageSize == "all" {
 		query.Find(&environmentsFetched)
+		resolvedPageSize = int(count)
 	} else {
 		// Convert page and pageSize from string to uint
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
 		if err != nil {
 			return nil, err
 		}
+		resolvedPageSize = int(pageSizeUint)
 
 		// Fetch environments with pagination
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&environmentsFetched)
@@ -90,7 +93,7 @@ func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, page
 	// Prepare the response
 	environmentsPage := &environment.EnvironmentPage{
 		Page:         int(pageUint),
-		PageSize:     len(environmentsFetched),
+		PageSize:     resolvedPageSize,
 		TotalCount:   int(count),
 		Environments: environmentsFetched,
 	}
