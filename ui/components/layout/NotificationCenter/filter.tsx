@@ -80,6 +80,25 @@ export const filtersToChips = (filters, filterSchema) => {
   return chips.length > 0 ? chips : [DEFAULT_STATUS_CHIP];
 };
 
+/** Coerce array-valued `multiple: false` filters to the last selected scalar. */
+export const normalizeFilterPayload = (filters, filterSchema) => {
+  const normalized = { ...filters };
+  Object.values(filterSchema).forEach((schema) => {
+    if (schema.multiple !== false) {
+      return;
+    }
+    const value = normalized[schema.value];
+    if (Array.isArray(value)) {
+      if (value.length > 0) {
+        normalized[schema.value] = value[value.length - 1];
+      } else {
+        delete normalized[schema.value];
+      }
+    }
+  });
+  return normalized;
+};
+
 /**
  * Notification Center filter bar: NC schema, Redux→chip mapping, unread default.
  * TypingFilter is left unchanged (shared). Remount via `key` when chips change so
@@ -97,11 +116,12 @@ const Filter = ({ handleFilter }: { handleFilter: (filters: unknown) => void }) 
 
   // Clear restores unread — the product default — not an unfiltered fetch.
   const onFilterChange = (filters: Record<string, unknown>) => {
-    if (!filters || Object.keys(filters).length === 0) {
+    const normalized = normalizeFilterPayload(filters || {}, filterSchema);
+    if (Object.keys(normalized).length === 0) {
       handleFilter({ status: STATUS.UNREAD });
       return;
     }
-    handleFilter(filters);
+    handleFilter(normalized);
   };
 
   return (

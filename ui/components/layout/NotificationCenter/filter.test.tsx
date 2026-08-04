@@ -30,13 +30,19 @@ vi.mock('@/components/shared/FormFields/typing-filter', () => ({
       <button type="button" onClick={() => handleFilter({ status: 'read', severity: ['error'] })}>
         invoke-filter
       </button>
+      <button type="button" onClick={() => handleFilter({ status: ['unread', 'read'] })}>
+        replace-status
+      </button>
+      <button type="button" onClick={() => handleFilter({ status: [] })}>
+        empty-status
+      </button>
       <span data-testid="default-filters">{JSON.stringify(defaultFilters)}</span>
       <span data-testid="schema-json">{JSON.stringify(filterSchema)}</span>
     </div>
   ),
 }));
 
-import Filter, { filtersToChips } from './filter';
+import Filter, { filtersToChips, normalizeFilterPayload } from './filter';
 
 describe('NotificationCenter Filter', () => {
   beforeEach(() => {
@@ -89,6 +95,22 @@ describe('NotificationCenter Filter', () => {
     expect(handleFilter).toHaveBeenCalledWith({ status: 'read', severity: ['error'] });
   });
 
+  it('normalizes array status from TypingFilter to scalar read when replacing unread', () => {
+    const handleFilter = vi.fn();
+    render(<Filter handleFilter={handleFilter} />);
+
+    screen.getByText('replace-status').click();
+    expect(handleFilter).toHaveBeenCalledWith({ status: 'read' });
+  });
+
+  it('restores unread when normalized payload is empty after empty status array', () => {
+    const handleFilter = vi.fn();
+    render(<Filter handleFilter={handleFilter} />);
+
+    screen.getByText('empty-status').click();
+    expect(handleFilter).toHaveBeenCalledWith({ status: 'unread' });
+  });
+
   it('includes severity, status, action, author, and category filter definitions', () => {
     render(<Filter handleFilter={vi.fn()} />);
     const schema = JSON.parse(screen.getByTestId('schema-json').textContent || '{}');
@@ -133,5 +155,28 @@ describe('filtersToChips', () => {
       { type: 'STATUS', value: 'read', label: 'status: read' },
       { type: 'SEVERITY', value: 'warning', label: 'severity: warning' },
     ]);
+  });
+});
+
+describe('normalizeFilterPayload', () => {
+  const schema = {
+    STATUS: { value: 'status', multiple: false },
+    SEVERITY: { value: 'severity' },
+  };
+
+  it('coerces array status to the last selected value', () => {
+    expect(normalizeFilterPayload({ status: ['unread', 'read'] }, schema)).toEqual({
+      status: 'read',
+    });
+  });
+
+  it('leaves scalar status and array severity unchanged', () => {
+    expect(
+      normalizeFilterPayload({ status: 'unread', severity: ['error', 'warning'] }, schema),
+    ).toEqual({ status: 'unread', severity: ['error', 'warning'] });
+  });
+
+  it('removes empty array status so onFilterChange can restore unread', () => {
+    expect(normalizeFilterPayload({ status: [] }, schema)).toEqual({});
   });
 });
