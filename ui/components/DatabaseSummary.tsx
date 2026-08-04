@@ -65,8 +65,8 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
               notify({ message: 'Database reset successful.', event_type: EVENT_TYPES.SUCCESS });
               try {
                 refetch();
-              } catch {
-                // Ignore if query has not been started yet
+              } catch (err) {
+                console.error('Database summary refetch skipped:', err);
               }
             }
           },

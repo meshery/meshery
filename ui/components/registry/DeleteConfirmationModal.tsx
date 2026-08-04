@@ -34,8 +34,9 @@ const DeleteConfirmationModal = ({
     >
       <ModalBody>
         <Typography variant="body2" sx={{ my: 1 }}>
-          Are you sure you want to delete all {modelCount} models for this registrant? This will
-          delete all associated components, relationships, and policies from the database.
+          Are you sure you want to delete{' '}
+          {modelCount === 1 ? 'this model' : `all ${modelCount} models`} for this registrant? This
+          will delete all associated components, relationships, and policies from the database.
         </Typography>
       </ModalBody>
       <ModalFooter variant="filled">

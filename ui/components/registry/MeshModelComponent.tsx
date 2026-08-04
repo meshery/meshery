@@ -149,6 +149,10 @@ const MeshModelComponent_ = ({
   }, [getRegistrantsData, searchText]);
 
   useEffect(() => {
+    setActiveRegistrantsCount(null);
+  }, [searchText]);
+
+  useEffect(() => {
     if (activeRegistrantsCount === null) {
       getRegistrants();
     }
