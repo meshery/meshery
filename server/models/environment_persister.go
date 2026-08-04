@@ -64,7 +64,7 @@ func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, page
 		pageSize = "10"
 	}
 
-	pageUint, err := strconv.ParseUint(page, 10, 32)
+	pageUint, err := strconv.ParseUint(page, 10, strconv.IntSize)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, page
 		resolvedPageSize = int(count)
 	} else {
 		// Convert page and pageSize from string to uint
-		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
+		pageSizeUint, err := strconv.ParseUint(pageSize, 10, strconv.IntSize)
 		if err != nil {
 			return nil, err
 		}
@@ -284,7 +284,7 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uui
 	query.Count(&count)
 
 	var connectionsFetched []*connections.Connection
-	pageUint, err := strconv.ParseUint(page, 10, 32)
+	pageUint, err := strconv.ParseUint(page, 10, strconv.IntSize)
 	if err != nil {
 		return nil, err
 	}
@@ -293,7 +293,7 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uui
 		query.Find(&connectionsFetched)
 	} else {
 		// Convert page and pageSize from string to uint
-		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
+		pageSizeUint, err := strconv.ParseUint(pageSize, 10, strconv.IntSize)
 		if err != nil {
 			return nil, err
 		}

@@ -81,7 +81,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 	query.Table("workspaces").Count(&count)
 
 	workspacesFetched := []workspace.Workspace{}
-	pageUint, err := strconv.ParseUint(page, 10, 32)
+	pageUint, err := strconv.ParseUint(page, 10, strconv.IntSize)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +92,7 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 		resolvedPageSize = int(count)
 	} else {
 		// Convert page and pageSize from string to uint
-		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
+		pageSizeUint, err := strconv.ParseUint(pageSize, 10, strconv.IntSize)
 		if err != nil {
 			return nil, err
 		}
@@ -337,7 +337,7 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID core.Uuid, se
 	}
 
 	environmentsFetched := []environment.Environment{}
-	pageUint, err := strconv.ParseUint(page, 10, 32)
+	pageUint, err := strconv.ParseUint(page, 10, strconv.IntSize)
 	if err != nil {
 		return nil, err
 	}
@@ -345,7 +345,7 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID core.Uuid, se
 	if pageSize == "all" {
 		query.Find(&environmentsFetched)
 	} else {
-		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
+		pageSizeUint, err := strconv.ParseUint(pageSize, 10, strconv.IntSize)
 		if err != nil {
 			return nil, err
 		}
@@ -504,7 +504,7 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID core.Uuid, search,
 	}
 
 	designsFetched := []*MesheryPattern{}
-	pageUint, err := strconv.ParseUint(page, 10, 64)
+	pageUint, err := strconv.ParseUint(page, 10, strconv.IntSize)
 	if err != nil {
 		return nil, err
 	}
@@ -514,7 +514,7 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID core.Uuid, search,
 		query.Find(&designsFetched)
 		resolvedPageSize = int(count)
 	} else {
-		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 64)
+		pageSizeUint, err := strconv.ParseUint(pageSize, 10, strconv.IntSize)
 		if err != nil {
 			return nil, err
 		}
@@ -671,7 +671,7 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
 	}
 
 	viewsFetched := []viewv1beta2.MesheryViewWithLocation{}
-	pageUint, err := strconv.ParseUint(page, 10, 32)
+	pageUint, err := strconv.ParseUint(page, 10, strconv.IntSize)
 	if err != nil {
 		return nil, err
 	}
@@ -681,7 +681,7 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
 		query.Find(&viewsFetched)
 		resolvedPageSize = int(count)
 	} else {
-		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
+		pageSizeUint, err := strconv.ParseUint(pageSize, 10, strconv.IntSize)
 		if err != nil {
 			return nil, err
 		}
@@ -810,7 +810,7 @@ func (wp *WorkspacePersister) GetWorkspaceTeams(workspaceID core.Uuid, search, o
 	}
 
 	teamsFetched := []Team{}
-	pageUint, err := strconv.ParseUint(page, 10, 32)
+	pageUint, err := strconv.ParseUint(page, 10, strconv.IntSize)
 	if err != nil {
 		return nil, err
 	}
@@ -820,7 +820,7 @@ func (wp *WorkspacePersister) GetWorkspaceTeams(workspaceID core.Uuid, search, o
 		query.Find(&teamsFetched)
 		resolvedPageSize = int(count)
 	} else {
-		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
+		pageSizeUint, err := strconv.ParseUint(pageSize, 10, strconv.IntSize)
 		if err != nil {
 			return nil, err
 		}
