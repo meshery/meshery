@@ -233,10 +233,17 @@ registered provider and the `auth.json` shape (token length only) to tell the tw
 **MeshSync runs in operator mode, and the broker is waited for.** The job sets
 `MESHSYNC_DEFAULT_DEPLOYMENT_MODE=operator` and `MESHERY_MANAGED_BROKER_PORTFORWARD=false` so
 the `009-diagnostics` suite has a real in-cluster broker and a deterministic unreachable
-baseline, then waits for the `meshery-broker` statefulset. The broker arrives indirectly -
-Meshery installs the Meshery Operator, the operator reconciles the Broker custom resource -
-so it trails the `meshery` deployment rollout, and the wait step prints pod, statefulset,
+baseline, then waits for the broker statefulset. The broker arrives indirectly - Meshery
+installs the Meshery Operator, the operator reconciles the Broker custom resource - so it
+trails the `meshery` deployment rollout, and the wait step prints pod, statefulset,
 custom-resource and operator-log state when it does not arrive.
+
+Mind the name. Meshery Operator >= 1.0.0 renders the broker from the official NATS chart, so
+the workload is `meshery-nats` (pod `meshery-nats-0`, service `meshery-nats`); earlier
+operators used `meshery-broker`. Only the *workload* was renamed - the Broker custom resource
+is still `meshery-broker`. Anything matching on the workload name should accept both, since
+the operator version belongs to the cluster under test. Assuming the old name is why a healthy,
+Running broker was reported for a long time as `!! Meshery Broker is not running`.
 
 **Nothing is attached to a terminal.** Commands that page interactively stop after the first
 page and say so rather than prompting; commands that would resolve an ambiguous name by
