@@ -29,34 +29,18 @@ vi.mock('@/components/data-formatter', () => ({
   reorderObjectProperties: (o: any) => o,
 }));
 
-vi.mock('@sistent/sistent', () => ({
-  FormControl: ({ children }: any) => <div>{children}</div>,
-  Select: ({ children }: any) => <select>{children}</select>,
-  MenuItem: ({ children }: any) => <option>{children}</option>,
-  CircularProgress: () => <div data-testid="loading" />,
-  useTheme: () => ({ palette: { text: { default: 'black' } } }),
-  Button: ({ children, onClick, ...rest }: any) => (
-    <button onClick={onClick} {...rest}>
-      {children}
-    </button>
-  ),
-  DownloadIcon: () => <svg />,
-  ExpandMoreIcon: () => <svg />,
-  InfoIcon: () => <svg data-testid="info-icon" />,
-  InfoOutlinedIcon: () => <svg data-testid="info-outlined-icon" />,
-  DeleteIcon: () => <svg data-testid="delete-icon" />,
-  CheckCircleIcon: () => <svg />,
-  ErrorIcon: () => <svg />,
-  WarningIcon: () => <svg />,
-  Accordion: ({ children }: any) => <div>{children}</div>,
-  AccordionSummary: ({ children }: any) => <div>{children}</div>,
-  AccordionDetails: ({ children }: any) => <div>{children}</div>,
-  styled: (Component: any) => () => {
-    const StyledComponent = ({ children, ...props }: any) =>
-      React.createElement(Component, props, children);
-    return StyledComponent;
-  },
-}));
+vi.mock('@sistent/sistent', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@sistent/sistent')>();
+  return {
+    ...actual,
+    useTheme: () => ({ palette: { text: { default: 'black' } } }),
+    Button: ({ children, onClick, ...rest }: any) => (
+      <button onClick={onClick} {...rest}>
+        {children}
+      </button>
+    ),
+  };
+});
 
 vi.mock('@/utils/Enum', () => ({
   REGISTRY_ITEM_STATES: { IGNORED: 'ignored', ENABLED: 'enabled' },

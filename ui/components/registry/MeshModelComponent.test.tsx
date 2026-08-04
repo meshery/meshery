@@ -20,23 +20,18 @@ vi.mock('next/router', () => ({
   }),
 }));
 
-vi.mock('@sistent/sistent', () => ({
-  Button: ({ children, onClick }: any) => (
-    <button onClick={onClick} data-testid={`btn-${String(children).trim()}`}>
-      {children}
-    </button>
-  ),
-  NoSsr: ({ children }: any) => <>{children}</>,
-  AddCircleIcon: () => <svg data-testid="add-icon" />,
-  ExternalLinkIcon: () => <svg data-testid="ext-icon" />,
-  FileUploadIcon: () => <svg data-testid="upload-icon" />,
-  InfoIcon: () => <svg data-testid="info-icon" />,
-  InfoOutlinedIcon: () => <svg data-testid="info-outlined-icon" />,
-  CheckCircleIcon: () => <svg />,
-  ErrorIcon: () => <svg />,
-  WarningIcon: () => <svg />,
-  useMediaQuery: () => false,
-}));
+vi.mock('@sistent/sistent', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@sistent/sistent')>();
+  return {
+    ...actual,
+    Button: ({ children, onClick }: any) => (
+      <button onClick={onClick} data-testid={`btn-${String(children).trim()}`}>
+        {children}
+      </button>
+    ),
+    useMediaQuery: () => false,
+  };
+});
 
 vi.mock('@/theme', () => ({
   useTheme: () => ({
