@@ -116,7 +116,7 @@ const deleteModelsByRegistrantApi = api.injectEndpoints({
   endpoints: (builder) => ({
     deleteModelsByRegistrant: builder.mutation({
       query: (queryArgs: { connectionId: string }) => ({
-        url: `api/meshmodels/registrants/${queryArgs.connectionId}/models`,
+        url: `/api/registry/registrants/${queryArgs.connectionId}/models`,
         method: 'DELETE',
       }),
       invalidatesTags: [REGISTRY_TAG, CONNECTION_DEFINITIONS_TAG],

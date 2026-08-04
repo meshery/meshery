@@ -30,6 +30,11 @@ vi.mock('@sistent/sistent', () => ({
   AddCircleIcon: () => <svg data-testid="add-icon" />,
   ExternalLinkIcon: () => <svg data-testid="ext-icon" />,
   FileUploadIcon: () => <svg data-testid="upload-icon" />,
+  InfoIcon: () => <svg data-testid="info-icon" />,
+  InfoOutlinedIcon: () => <svg data-testid="info-outlined-icon" />,
+  CheckCircleIcon: () => <svg />,
+  ErrorIcon: () => <svg />,
+  WarningIcon: () => <svg />,
   useMediaQuery: () => false,
 }));
 
