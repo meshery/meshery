@@ -16,7 +16,6 @@ func Test_importPattern_DisplayErrorsMissingFlags(t *testing.T) {
 		sourceType string
 		file       string
 		patternURL string
-		save       bool
 	}
 
 	tests := []struct {
@@ -27,20 +26,20 @@ func Test_importPattern_DisplayErrorsMissingFlags(t *testing.T) {
 	}{
 		{
 			name:    "given invalid source type when design import then error is thrown",
-			args:    args{"invalid source type", "file.yaml", "", false},
+			args:    args{"invalid source type", "file.yaml", ""},
 			want:    ErrInValidSource("invalid source type", validDesignSourceTypes),
 			wantErr: true,
 		},
 		{
 			name:    "given missing file flag when design import then error is thrown",
-			args:    args{"helm", "", "", false},
+			args:    args{"helm", "", ""},
 			want:    ErrDesignFileNotProvided(),
 			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := importPattern(tt.args.sourceType, tt.args.file, tt.args.patternURL, tt.args.save)
+			_, err := importPattern(tt.args.sourceType, tt.args.file, tt.args.patternURL)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("importPattern() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -11,6 +11,17 @@ const TAGS = {
 export const designsApi = api
   .enhanceEndpoints({
     addTagTypes: [TAGS.DESIGNS],
+    endpoints: {
+      // `importDesign` (POST /api/pattern/import) is the schemas-generated
+      // endpoint - the request is NOT re-declared here. It already invalidates
+      // the schemas tag `Design_designs`; the local design lists provide the
+      // `designs` tag, so both are listed to keep every design cache entry
+      // refreshed after an import. This is the cache-tag ergonomics wrapper
+      // AGENTS.md permits, not a second declaration of the request.
+      importDesign: {
+        invalidatesTags: ['Design_designs', { type: TAGS.DESIGNS }],
+      },
+    },
   })
   .injectEndpoints({
     endpoints: (builder) => ({
@@ -148,14 +159,6 @@ export const designsApi = api
         }),
         invalidatesTags: [{ type: TAGS.DESIGNS }],
       }),
-      importPattern: builder.mutation({
-        query: (queryArg) => ({
-          url: mesheryApiPath(`pattern/import`),
-          method: 'POST',
-          body: queryArg.importBody,
-        }),
-        invalidatesTags: [{ type: TAGS.DESIGNS }],
-      }),
       deletePatternFile: builder.mutation({
         query: (queryArg) => ({
           url: mesheryApiPath(`pattern/${queryArg.id}`),
@@ -207,7 +210,10 @@ export const {
   usePublishPatternMutation,
   useUnpublishPatternMutation,
   useDeletePatternMutation,
-  useImportPatternMutation,
+  // Re-exported from the schemas-generated client (see the `importDesign`
+  // enhancement above) so design-import callers stay on the canonical
+  // `@meshery/schemas` mutation instead of a locally declared one.
+  useImportDesignMutation,
   useUpdatePatternFileMutation,
   useUploadPatternFileMutation,
   useDeletePatternFileMutation,

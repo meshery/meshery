@@ -106,6 +106,25 @@ across `meshery/meshery` and `meshery-cloud`.
 - MUST NOT change wire casing/field names only in this repo — change the schema
   and regenerate (see the naming conventions above).
 
+### Attaching local cache tags to a generated endpoint
+
+`ui/rtk-query/index.js` re-exports the schemas client itself (`mesheryApi as api`),
+so every `ui/rtk-query/*` module injects into that same API instance — generated
+hooks are therefore already available from those local modules and need no
+re-declaration. To give a generated endpoint a local cache tag, pass it through
+`enhanceEndpoints({ endpoints: { <operationId>: { invalidatesTags: [...] } } })`
+and re-export the generated hook; list the generated tag alongside the local one
+so the schemas-side invalidation is not dropped. See the `importDesign`
+enhancement in `ui/rtk-query/design.ts`. Re-declaring the endpoint with
+`builder.mutation` to get a tag is the forbidden path above — it forks the wire
+contract silently.
+
+On the Go side, schemas ships **models only, no generated HTTP client**, so
+`mesheryctl` builds request bodies from the generated structs (and, for `oneOf`
+bodies, the `From<Variant>Payload` union builders) rather than a
+`map[string]interface{}` — see `mesheryctl/internal/cli/root/design/import.go`.
+A hand-written map is how camelCase `fileName` regressed to `file_name`.
+
 ## Build & Development Commands
 
 - Use the `gh-axi` CLI tool to interact with GitHub. Prefer `gh-axi` over `gh`.
