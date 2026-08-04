@@ -121,40 +121,58 @@ jobs:
         # both assert the broker is up, and nothing else in the job waits for it:
         # the previous step waits only on the meshery deployment. The broker is
         # deployed indirectly - Meshery installs the Meshery Operator, the
-        # operator reconciles the Broker CR into the meshery-broker statefulset,
-        # and only then does a pod appear - so it can trail the meshery rollout
-        # by a long way.
+        # operator reconciles the Broker custom resource into a statefulset, and
+        # only then does a pod appear - so it can trail the meshery rollout by a
+        # long way.
         #
-        # `kubectl rollout status` cannot express that wait on its own: against a
+        # Both workload names are accepted: Meshery Operator >= 1.0.0 renders the
+        # broker from the official NATS chart as meshery-nats, earlier operators
+        # used meshery-broker (see the same note in
+        # server/integration-tests/meshsync/infrastructure/setup.sh). Only the
+        # workload was renamed - the Broker custom resource is still called
+        # meshery-broker.
+        #
+        # `kubectl rollout status` cannot express this wait on its own: against a
         # statefulset that does not exist *yet* it fails immediately with
         # NotFound instead of waiting, so a bare `rollout status ... || true`
         # returns at once and waits for nothing. Poll for the object to appear
         # first, then hand over to rollout status for readiness.
         #
         # Never fails the job: a broker that never arrives is a finding for the
-        # tests that assert on it, not a reason to skip the other 190. The
-        # diagnostics below exist so that finding is explainable from this log
-        # instead of only visible as "Meshery Broker is not running".
+        # handful of tests that assert on it, not a reason to skip the other 190.
+        # The diagnostics below exist so that finding is explainable from this
+        # log instead of only visible as "Meshery Broker is not running".
         run: |
           set +e
+          find_broker() {
+            for sts in meshery-nats meshery-broker; do
+              if kubectl -n meshery get "statefulset/$sts" >/dev/null 2>&1; then
+                echo "$sts"
+                return 0
+              fi
+            done
+            return 1
+          }
+
           deadline=$(( SECONDS + 300 ))
-          until kubectl -n meshery get statefulset/meshery-broker >/dev/null 2>&1; do
+          until broker=$(find_broker); do
             if [ "$SECONDS" -ge "$deadline" ]; then
-              echo "::warning::meshery-broker statefulset did not appear within 300s"
+              echo "::warning::no broker statefulset (meshery-nats or meshery-broker) appeared within 300s"
               break
             fi
             sleep 5
           done
 
-          if kubectl -n meshery get statefulset/meshery-broker >/dev/null 2>&1; then
-            kubectl -n meshery rollout status statefulset/meshery-broker --timeout=180s
+          if [ -n "$broker" ]; then
+            echo "Broker statefulset: $broker"
+            kubectl -n meshery rollout status "statefulset/$broker" --timeout=180s
           fi
 
           echo "### broker / operator state ###"
           kubectl -n meshery get pods -o wide
           kubectl -n meshery get statefulsets,deployments
           echo "### operator custom resources ###"
-          kubectl -n meshery get brokers.core.meshery.io,meshsyncs.core.meshery.io -o wide 2>&1 \
+          kubectl -n meshery get brokers.meshery.io,meshsyncs.meshery.io -o wide 2>&1 \
             || echo "(operator CRDs not registered)"
           echo "### meshery-operator log tail ###"
           kubectl -n meshery logs deployment/meshery-operator --tail=100 2>&1 \
