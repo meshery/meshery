@@ -11,6 +11,7 @@ const TAGS = {
   ENVIRONMENTS: 'workspaces_environments',
   VIEWS: 'workspaces_views',
   TEAMS: 'workspaces_teams',
+  EVENTS: 'workspaces_events',
 };
 
 // The workspace designs/views endpoints return the schemas v1beta1 workspace
@@ -24,7 +25,14 @@ const NIL_UUID = '00000000-0000-0000-0000-000000000000';
 const isResolvableOwnerId = (id?: string): id is string => Boolean(id) && id !== NIL_UUID;
 const workspacesApi = api
   .enhanceEndpoints({
-    addTagTypes: [TAGS.WORKSPACES, TAGS.DESIGNS, TAGS.ENVIRONMENTS, TAGS.VIEWS, TAGS.TEAMS],
+    addTagTypes: [
+      TAGS.WORKSPACES,
+      TAGS.DESIGNS,
+      TAGS.ENVIRONMENTS,
+      TAGS.VIEWS,
+      TAGS.TEAMS,
+      TAGS.EVENTS,
+    ],
   })
   .injectEndpoints({
     endpoints: (builder) => ({
@@ -340,7 +348,7 @@ const workspacesApi = api
             order: queryArg.order,
           },
         }),
-        invalidatesTags: () => [{ type: TAGS.TEAMS }],
+        providesTags: () => [{ type: TAGS.EVENTS }],
       }),
 
       createWorkspace: builder.mutation({
