@@ -1,0 +1,35 @@
+{
+  "id": "b3f5c1e2-0000-4000-8000-000000000002",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Test Component",
+  "description": "Test-only component. Registration silently skips a model with no components or relationships, so this fixture ships one. Its content is irrelevant to the test; only the parent model's `artifacthub` registrant matters.",
+  "format": "JSON",
+  "model": {
+    "id": "b3f5c1e2-0000-4000-8000-000000000001",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "meshery-test-artifacthub-registrant",
+    "registrant": {
+      "kind": "artifacthub"
+    }
+  },
+  "component": {
+    "version": "meshery.test/v1",
+    "kind": "TestComponent",
+    "schema": "{\"type\":\"object\",\"properties\":{}}"
+  },
+  "capabilities": [],
+  "styles": {
+    "primaryColor": "#00b39f",
+    "shape": "circle",
+    "svgColor": "",
+    "svgWhite": ""
+  },
+  "metadata": {
+    "isAnnotation": false,
+    "isNamespaced": false,
+    "published": false
+  },
+  "status": "enabled"
+}
