@@ -1,4 +1,4 @@
-﻿package models
+package models
 
 import (
 	"encoding/json"
@@ -52,9 +52,14 @@ func TestPageSizeMatchesRequested(t *testing.T) {
 
 	t.Run("json round-trip preserves pageSize", func(t *testing.T) {
 		original := pageResponse{Page: 2, PageSize: 10, TotalCount: 23}
-		b, _ := json.Marshal(original)
+		b, err := json.Marshal(original)
+		if err != nil {
+			t.Fatalf("failed to marshal JSON: %v", err)
+		}
 		var decoded pageResponse
-		json.Unmarshal(b, &decoded)
+		if err := json.Unmarshal(b, &decoded); err != nil {
+			t.Fatalf("failed to unmarshal JSON: %v", err)
+		}
 		if decoded.PageSize != 10 {
 			t.Errorf("PageSize after JSON round-trip = %d, want 10", decoded.PageSize)
 		}
