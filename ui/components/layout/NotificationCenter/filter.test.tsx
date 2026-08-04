@@ -3,20 +3,7 @@ import { act, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const queryState: { data: any } = { data: undefined };
-const sliceState = {
-  // Match events slice: current_view.filters starts as { initial: true } until loadEvents resolves.
-  filters: { initial: true } as Record<string, unknown>,
-};
 let typingFilterMountCount = 0;
-
-vi.mock('react-redux', () => ({
-  useSelector: (sel: any) =>
-    sel({
-      events: {
-        current_view: { filters: sliceState.filters },
-      },
-    }),
-}));
 
 vi.mock('../../../rtk-query/notificationCenter', () => ({
   useGetEventFiltersQuery: () => queryState,
@@ -53,12 +40,11 @@ import Filter, { filtersToChips, normalizeFilterPayload } from './filter';
 describe('NotificationCenter Filter', () => {
   beforeEach(() => {
     queryState.data = undefined;
-    sliceState.filters = { initial: true };
     typingFilterMountCount = 0;
   });
 
   it('shows unread chips on startup when current_view.filters is still { initial: true }', () => {
-    render(<Filter handleFilter={vi.fn()} />);
+    render(<Filter handleFilter={vi.fn()} currentFilters={{ initial: true }} />);
 
     expect(screen.getByTestId('typing-filter')).toHaveAttribute(
       'data-placeholder',
@@ -69,11 +55,12 @@ describe('NotificationCenter Filter', () => {
   });
 
   it('maps post-fetch Redux filters into TypingFilter chips', () => {
-    sliceState.filters = {
-      status: 'read',
-      severity: ['error', 'warning'],
-    };
-    render(<Filter handleFilter={vi.fn()} />);
+    render(
+      <Filter
+        handleFilter={vi.fn()}
+        currentFilters={{ status: 'read', severity: ['error', 'warning'] }}
+      />,
+    );
 
     const chips = JSON.parse(screen.getByTestId('default-filters').textContent || '[]');
     expect(chips).toEqual(
@@ -87,9 +74,8 @@ describe('NotificationCenter Filter', () => {
   });
 
   it('allows clearing all filters including unread', () => {
-    sliceState.filters = { status: 'unread' };
     const handleFilter = vi.fn();
-    render(<Filter handleFilter={handleFilter} />);
+    render(<Filter handleFilter={handleFilter} currentFilters={{ status: 'unread' }} />);
 
     act(() => {
       screen.getByText('clear-filters').click();
@@ -98,16 +84,14 @@ describe('NotificationCenter Filter', () => {
   });
 
   it('shows no chips after user clears filters in Redux', () => {
-    sliceState.filters = {};
-    render(<Filter handleFilter={vi.fn()} />);
+    render(<Filter handleFilter={vi.fn()} currentFilters={{}} />);
 
     const chips = JSON.parse(screen.getByTestId('default-filters').textContent || '[]');
     expect(chips).toEqual([]);
   });
 
   it('remounts TypingFilter when clearing so local chip state resyncs', () => {
-    sliceState.filters = { status: 'unread' };
-    render(<Filter handleFilter={vi.fn()} />);
+    render(<Filter handleFilter={vi.fn()} currentFilters={{ status: 'unread' }} />);
     expect(typingFilterMountCount).toBe(1);
 
     act(() => {
@@ -118,7 +102,7 @@ describe('NotificationCenter Filter', () => {
 
   it('forwards non-empty filter changes', () => {
     const handleFilter = vi.fn();
-    render(<Filter handleFilter={handleFilter} />);
+    render(<Filter handleFilter={handleFilter} currentFilters={{ initial: true }} />);
 
     screen.getByText('invoke-filter').click();
     expect(handleFilter).toHaveBeenCalledWith({ status: 'read', severity: ['error'] });
@@ -126,7 +110,7 @@ describe('NotificationCenter Filter', () => {
 
   it('normalizes array status from TypingFilter to scalar read when replacing unread', () => {
     const handleFilter = vi.fn();
-    render(<Filter handleFilter={handleFilter} />);
+    render(<Filter handleFilter={handleFilter} currentFilters={{ initial: true }} />);
 
     screen.getByText('replace-status').click();
     expect(handleFilter).toHaveBeenCalledWith({ status: 'read' });
@@ -134,7 +118,7 @@ describe('NotificationCenter Filter', () => {
 
   it('forwards empty payload when normalized status array is empty', () => {
     const handleFilter = vi.fn();
-    render(<Filter handleFilter={handleFilter} />);
+    render(<Filter handleFilter={handleFilter} currentFilters={{ initial: true }} />);
 
     act(() => {
       screen.getByText('empty-status').click();
@@ -143,7 +127,7 @@ describe('NotificationCenter Filter', () => {
   });
 
   it('includes severity, status, action, author, and category filter definitions', () => {
-    render(<Filter handleFilter={vi.fn()} />);
+    render(<Filter handleFilter={vi.fn()} currentFilters={{ initial: true }} />);
     const schema = JSON.parse(screen.getByTestId('schema-json').textContent || '{}');
 
     expect(schema.SEVERITY.values).toEqual(
@@ -158,7 +142,7 @@ describe('NotificationCenter Filter', () => {
 
   it('uses action/category values from the RTK query response when available', () => {
     queryState.data = { action: ['deploy', 'undeploy'], category: ['pattern'] };
-    render(<Filter handleFilter={vi.fn()} />);
+    render(<Filter handleFilter={vi.fn()} currentFilters={{ initial: true }} />);
     const schema = JSON.parse(screen.getByTestId('schema-json').textContent || '{}');
 
     expect(schema.ACTION.values).toEqual(['deploy', 'undeploy']);

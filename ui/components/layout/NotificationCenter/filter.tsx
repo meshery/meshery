@@ -1,5 +1,4 @@
-import { useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { useGetEventFiltersQuery } from '../../../rtk-query/notificationCenter';
 import TypingFilter from '@/components/shared/FormFields/typing-filter';
 import { SEVERITY, STATUS } from './constants';
@@ -11,7 +10,10 @@ const DEFAULT_STATUS_CHIP = {
 };
 
 const useFilterSchema = () => {
-  const { data } = useGetEventFiltersQuery();
+  // Only subscribe to `data` so isFetching/etc. don't re-render Filter.
+  const { data } = useGetEventFiltersQuery(undefined, {
+    selectFromResult: ({ data }) => ({ data }),
+  });
 
   return useMemo(
     () => ({
@@ -108,39 +110,51 @@ export const normalizeFilterPayload = (filters, filterSchema) => {
  * its local state initializes from the new `defaultFilters` without a Redux↔
  * useEffect sync loop.
  */
-const Filter = ({ handleFilter }: { handleFilter: (filters: unknown) => void }) => {
-  const filterSchema = useFilterSchema();
-  const currentFilters = useSelector((state: any) => state.events.current_view.filters);
-  const [resetVersion, setResetVersion] = useState(0);
-  const selectedFilters = useMemo(
-    () => filtersToChips(currentFilters, filterSchema),
-    [currentFilters, filterSchema],
-  );
-  const filtersKey = useMemo(
-    () => JSON.stringify({ selectedFilters, resetVersion }),
-    [selectedFilters, resetVersion],
-  );
+const Filter = memo(
+  ({
+    handleFilter,
+    currentFilters,
+  }: {
+    handleFilter: (filters: unknown) => void;
+    currentFilters: Record<string, unknown>;
+  }) => {
+    const filterSchema = useFilterSchema();
+    const [resetVersion, setResetVersion] = useState(0);
+    const selectedFilters = useMemo(
+      () => filtersToChips(currentFilters, filterSchema),
+      [currentFilters, filterSchema],
+    );
+    const filtersKey = useMemo(
+      () => JSON.stringify({ selectedFilters, resetVersion }),
+      [selectedFilters, resetVersion],
+    );
 
-  // User clear removes all filters (including unread); remount so TypingFilter resyncs.
-  const onFilterChange = (filters: Record<string, unknown>) => {
-    const normalized = normalizeFilterPayload(filters || {}, filterSchema);
-    if (Object.keys(normalized).length === 0) {
-      setResetVersion((version) => version + 1);
-      handleFilter({});
-      return;
-    }
-    handleFilter(normalized);
-  };
+    // User clear removes all filters (including unread); remount so TypingFilter resyncs.
+    const onFilterChange = useCallback(
+      (filters: Record<string, unknown>) => {
+        const normalized = normalizeFilterPayload(filters || {}, filterSchema);
+        if (Object.keys(normalized).length === 0) {
+          setResetVersion((version) => version + 1);
+          handleFilter({});
+          return;
+        }
+        handleFilter(normalized);
+      },
+      [filterSchema, handleFilter],
+    );
 
-  return (
-    <TypingFilter
-      key={filtersKey}
-      handleFilter={onFilterChange}
-      filterSchema={filterSchema}
-      defaultFilters={selectedFilters}
-      placeholder="Filter Notifications"
-    />
-  );
-};
+    return (
+      <TypingFilter
+        key={filtersKey}
+        handleFilter={onFilterChange}
+        filterSchema={filterSchema}
+        defaultFilters={selectedFilters}
+        placeholder="Filter Notifications"
+      />
+    );
+  },
+);
+
+Filter.displayName = 'Filter';
 
 export default Filter;
