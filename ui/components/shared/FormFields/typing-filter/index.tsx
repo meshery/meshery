@@ -92,7 +92,7 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
 
   useEffect(() => {
     setSelectedFilters(defaultFilters);
-  }, [JSON.stringify(defaultFilters)]);
+  }, [defaultFilters.length]);
 
   const getOptions = () => {
     if (inputValue.includes(':')) {

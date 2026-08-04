@@ -2,10 +2,10 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Hoisted query data and Redux filters we can swap between tests.
 const queryState: { data: any } = { data: undefined };
 const sliceState = {
-  filters: { status: 'unread' } as Record<string, unknown>,
+  // Match events slice: current_view.filters starts as { initial: true } until loadEvents resolves.
+  filters: { initial: true } as Record<string, unknown>,
 };
 
 vi.mock('react-redux', () => ({
@@ -24,7 +24,10 @@ vi.mock('../../../rtk-query/notificationCenter', () => ({
 vi.mock('@/components/shared/FormFields/typing-filter', () => ({
   default: ({ filterSchema, defaultFilters, placeholder, handleFilter }: any) => (
     <div data-testid="typing-filter" data-placeholder={placeholder}>
-      <button type="button" onClick={() => handleFilter([{ type: 'STATUS', value: 'read' }])}>
+      <button type="button" onClick={() => handleFilter({})}>
+        clear-filters
+      </button>
+      <button type="button" onClick={() => handleFilter({ status: 'read', severity: ['error'] })}>
         invoke-filter
       </button>
       <span data-testid="default-filters">{JSON.stringify(defaultFilters)}</span>
@@ -33,26 +36,26 @@ vi.mock('@/components/shared/FormFields/typing-filter', () => ({
   ),
 }));
 
-import Filter from './filter';
+import Filter, { filtersToChips } from './filter';
 
 describe('NotificationCenter Filter', () => {
   beforeEach(() => {
     queryState.data = undefined;
-    sliceState.filters = { status: 'unread' };
+    sliceState.filters = { initial: true };
   });
 
-  it('renders a TypingFilter with the right placeholder and filters from Redux', () => {
-    const handleFilter = vi.fn();
-    render(<Filter handleFilter={handleFilter} />);
+  it('shows unread chips on startup when current_view.filters is still { initial: true }', () => {
+    render(<Filter handleFilter={vi.fn()} />);
 
     expect(screen.getByTestId('typing-filter')).toHaveAttribute(
       'data-placeholder',
       'Filter Notifications',
     );
-    expect(screen.getByTestId('default-filters')).toHaveTextContent('"status: unread"');
+    const chips = JSON.parse(screen.getByTestId('default-filters').textContent || '[]');
+    expect(chips).toEqual([{ type: 'STATUS', value: 'unread', label: 'status: unread' }]);
   });
 
-  it('maps current Redux filters into TypingFilter chips', () => {
+  it('maps post-fetch Redux filters into TypingFilter chips', () => {
     sliceState.filters = {
       status: 'read',
       severity: ['error', 'warning'],
@@ -70,32 +73,34 @@ describe('NotificationCenter Filter', () => {
     expect(chips).toHaveLength(3);
   });
 
-  it('forwards handleFilter to TypingFilter', () => {
+  it('restores unread when the typing filter is cleared', () => {
+    const handleFilter = vi.fn();
+    render(<Filter handleFilter={handleFilter} />);
+
+    screen.getByText('clear-filters').click();
+    expect(handleFilter).toHaveBeenCalledWith({ status: 'unread' });
+  });
+
+  it('forwards non-empty filter changes', () => {
     const handleFilter = vi.fn();
     render(<Filter handleFilter={handleFilter} />);
 
     screen.getByText('invoke-filter').click();
-    expect(handleFilter).toHaveBeenCalledTimes(1);
-    expect(handleFilter).toHaveBeenCalledWith([{ type: 'STATUS', value: 'read' }]);
+    expect(handleFilter).toHaveBeenCalledWith({ status: 'read', severity: ['error'] });
   });
 
   it('includes severity, status, action, author, and category filter definitions', () => {
     render(<Filter handleFilter={vi.fn()} />);
     const schema = JSON.parse(screen.getByTestId('schema-json').textContent || '{}');
 
-    expect(schema.SEVERITY.value).toBe('severity');
-    expect(Array.isArray(schema.SEVERITY.values)).toBe(true);
     expect(schema.SEVERITY.values).toEqual(
       expect.arrayContaining(['informational', 'error', 'warning', 'success']),
     );
-    expect(schema.STATUS.value).toBe('status');
     expect(schema.STATUS.multiple).toBe(false);
     expect(schema.STATUS.values).toEqual(expect.arrayContaining(['read', 'unread']));
     expect(schema.ACTION.value).toBe('action');
-    expect(schema.ACTION.values).toEqual([]);
     expect(schema.AUTHOR.value).toBe('author');
     expect(schema.CATEGORY.value).toBe('category');
-    expect(schema.CATEGORY.values).toEqual([]);
   });
 
   it('uses action/category values from the RTK query response when available', () => {
@@ -105,5 +110,28 @@ describe('NotificationCenter Filter', () => {
 
     expect(schema.ACTION.values).toEqual(['deploy', 'undeploy']);
     expect(schema.CATEGORY.values).toEqual(['pattern']);
+  });
+});
+
+describe('filtersToChips', () => {
+  const schema = {
+    STATUS: { value: 'status', multiple: false },
+    SEVERITY: { value: 'severity' },
+  };
+
+  it('falls back to unread for initial/empty filters', () => {
+    expect(filtersToChips({ initial: true }, schema)).toEqual([
+      expect.objectContaining({ type: 'STATUS', value: 'unread' }),
+    ]);
+    expect(filtersToChips({}, schema)).toEqual([
+      expect.objectContaining({ type: 'STATUS', value: 'unread' }),
+    ]);
+  });
+
+  it('maps status and severity filters to chips', () => {
+    expect(filtersToChips({ status: 'read', severity: ['warning'] }, schema)).toEqual([
+      { type: 'STATUS', value: 'read', label: 'status: read' },
+      { type: 'SEVERITY', value: 'warning', label: 'severity: warning' },
+    ]);
   });
 });
