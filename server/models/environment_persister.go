@@ -288,22 +288,25 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uui
 	if err != nil {
 		return nil, err
 	}
+	var resolvedPageSize int
 	// Fetch all connections if pageSize is "all"
 	if pageSize == "all" {
 		query.Find(&connectionsFetched)
+		resolvedPageSize = int(count)
 	} else {
 		// Convert page and pageSize from string to uint
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, strconv.IntSize)
 		if err != nil {
 			return nil, err
 		}
+		resolvedPageSize = int(pageSizeUint)
 
 		// Fetch connections with pagination
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&connectionsFetched)
 	}
 	connectionsPage := &connections.ConnectionPage{
 		Page:        int(pageUint),
-		PageSize:    len(connectionsFetched),
+		PageSize:    resolvedPageSize,
 		TotalCount:  int(count),
 		Connections: connectionsFetched,
 	}
