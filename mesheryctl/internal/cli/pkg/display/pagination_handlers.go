@@ -118,14 +118,18 @@ func promptPageHandler[T any, R any](displayData DisplayDataAsync, processData p
 			return false, nil
 		}
 
-		// Auto-select if only one result on the first page
-		if len(rows) == 1 && currentPage == 0 {
+		// Auto-select the sole match. The test is on totalCount, not on the size
+		// of this page: a page can hold one row while further pages hold more
+		// (the caller chooses the page size, and --pagesize 1 makes every page
+		// look like a single match), and selecting then would act on the first
+		// of several candidates as though the search had been unambiguous.
+		if totalCount == 1 && len(rows) == 1 && currentPage == 0 {
 			*selectedItem = rows[0]
 			return false, nil
 		}
 
-		// An ambiguous match needs a choice, and a choice needs somebody to make
-		// it. Unlike paging there is no sensible non-interactive fallback -
+		// More than one match needs a choice, and a choice needs somebody to
+		// make it. Unlike paging there is no sensible non-interactive fallback -
 		// picking for the user would act on a resource they did not name - so
 		// this is a genuine failure. Say what happened and what to do about it,
 		// rather than letting promptui fail on /dev/tty with an error that

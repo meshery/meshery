@@ -110,3 +110,32 @@ func TestPromptPageHandlerAutoSelectsSingleMatch(t *testing.T) {
 		t.Errorf("selected = %q, want %q", selected.ID, "only")
 	}
 }
+
+// TestPromptPageHandlerDoesNotAutoSelectOnePageOfMany is the other side of that
+// boundary. A page holding one row is not the same as one match: the caller
+// picks the page size, and `--pagesize 1` makes every page look like a single
+// match. Auto-selecting there would act on the first of several candidates as
+// though the search had been unambiguous - the exact outcome the terminal check
+// exists to prevent.
+func TestPromptPageHandlerDoesNotAutoSelectOnePageOfMany(t *testing.T) {
+	withTerminal(t, false)
+
+	var selected paginationTestItem
+	handler := promptPageHandler(
+		DisplayDataAsync{DataType: "connections"},
+		func(rows []paginationTestItem) []string { return []string{rows[0].ID} },
+		func(_ *[]paginationTestItem) ([]paginationTestItem, int64) {
+			// One row on this page, 93 matches overall - `connection view
+			// minikube` against the CI provider account.
+			return []paginationTestItem{{ID: "first-of-93"}}, 93
+		},
+		&selected,
+	)
+
+	if _, err := handler(&[]paginationTestItem{}, 0, 1); err == nil {
+		t.Fatal("expected an ambiguous-match error, got nil")
+	}
+	if selected.ID != "" {
+		t.Errorf("expected nothing to be selected, got %q", selected.ID)
+	}
+}

@@ -29,9 +29,33 @@ setup() {
     _load_bats_libraries
     load "$E2E_HELPERS_PATH/constants"
 
-    export MESHERY_URL="${MESHERY_SERVER_URL:-http://localhost:9081}"
     export MESHERY_NS="meshery"
     export MESHERY_AUTH_FILE="${MESHERY_AUTH_FILE:-$HOME/.meshery/auth.json}"
+    export MESHERY_CONFIG_FILE="${MESHERY_CONFIG_FILE_PATH:-$HOME/.meshery/config.yaml}"
+    export MESHERY_URL="${MESHERY_SERVER_URL:-$(_meshery_endpoint)}"
+}
+
+# _meshery_endpoint returns the server URL mesheryctl is configured to talk to.
+#
+# http://localhost:9081 is only right when the server is reachable on loopback,
+# as it is under `make server`. Started with
+# `mesheryctl system start --platform kubernetes` it is published at the
+# context's endpoint instead, and the raw curl below then failed to connect
+# (curl exit 7) - which aborted the test outright, since the failure propagated
+# out of the `diag=$(...)` assignment before the reachability guard that was
+# meant to skip could run. Read the endpoint the rest of the suite already uses,
+# and keep loopback only as the last resort.
+_meshery_endpoint() {
+    local endpoint=""
+    if [ -r "${MESHERY_CONFIG_FILE:-$HOME/.meshery/config.yaml}" ] && command -v yq >/dev/null 2>&1; then
+        endpoint=$(yq -r '.contexts.local.endpoint // ""' \
+            "${MESHERY_CONFIG_FILE:-$HOME/.meshery/config.yaml}" 2>/dev/null)
+    fi
+    if [ -n "$endpoint" ] && [ "$endpoint" != "null" ]; then
+        echo "$endpoint"
+        return
+    fi
+    echo "http://localhost:9081"
 }
 
 # _need skips the test unless the given command is available.
@@ -46,8 +70,12 @@ _diagnostics() {
     local token provider
     token=$(jq -r '.token // empty' "$MESHERY_AUTH_FILE")
     provider=$(jq -r '."meshery-provider" // "Meshery"' "$MESHERY_AUTH_FILE")
+    # `|| true` so an unreachable server yields empty output instead of a
+    # non-zero exit: every caller assigns this with `diag=$(_diagnostics ...)`,
+    # and the failure would otherwise abort the test before the guard that is
+    # meant to skip on exactly that condition.
     curl -s --cookie "token=${token}; meshery-provider=${provider}" \
-        "${MESHERY_URL}/api/system/controllers/diagnostics?connectionId=${conn_id}"
+        "${MESHERY_URL}/api/system/controllers/diagnostics?connectionId=${conn_id}" || true
 }
 
 @test "[TC-1031][cut=Kubernetes Connection][tg=Connection Lifecycle] kubernetes connection broker diagnostics recover once NATS is reachable" {
