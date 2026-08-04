@@ -109,7 +109,16 @@ jobs:
         shell: bash
         working-directory: ./mesheryctl/tests/e2e
         env:
-          MESHERY_PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
+          # Authenticate the BATS suite as the dedicated remote-provider CI test
+          # user. The connection (and perf) tests round-trip through the remote
+          # provider (setup_suite.bash sets context to "Meshery"), so they need a
+          # valid session token. The previous PROVIDER_TOKEN secret was a static
+          # token last refreshed 2024-03-08 and had expired, so the remote
+          # provider answered every call with a 401 ("user must be logged in") —
+          # surfacing as meshery-server-1032 on reads and meshery-server-1051 on
+          # delete. REMOTE_PROVIDER_TEST_USER_TOKEN is the maintained token for a
+          # purpose-built CI test user.
+          MESHERY_PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
           MESHERY_PLATFORM: ${{ matrix.platform }}
           BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
           E2E_HELPERS_PATH: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers"

@@ -180,7 +180,11 @@ function PerformanceCard({
         <div style={{}}>
           <BottomPart>
             {hasCloudProfile ? (
-              <Link href={`${MESHERY_CLOUD_PROD}/user/${profile.userId}`} target="_blank">
+              <Link
+                href={`${MESHERY_CLOUD_PROD}/user/${profile.userId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Avatar alt="profile-avatar" src={owner?.avatarUrl} />
               </Link>
             ) : (
