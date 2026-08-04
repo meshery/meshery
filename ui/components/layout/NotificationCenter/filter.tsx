@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useGetEventFiltersQuery } from '../../../rtk-query/notificationCenter';
 import TypingFilter from '@/components/shared/FormFields/typing-filter';
@@ -108,16 +108,21 @@ export const normalizeFilterPayload = (filters, filterSchema) => {
 const Filter = ({ handleFilter }: { handleFilter: (filters: unknown) => void }) => {
   const filterSchema = useFilterSchema();
   const currentFilters = useSelector((state: any) => state.events.current_view.filters);
+  const [resetVersion, setResetVersion] = useState(0);
   const selectedFilters = useMemo(
     () => filtersToChips(currentFilters, filterSchema),
     [currentFilters, filterSchema],
   );
-  const filtersKey = useMemo(() => JSON.stringify(selectedFilters), [selectedFilters]);
+  const filtersKey = useMemo(
+    () => JSON.stringify({ selectedFilters, resetVersion }),
+    [selectedFilters, resetVersion],
+  );
 
   // Clear restores unread — the product default — not an unfiltered fetch.
   const onFilterChange = (filters: Record<string, unknown>) => {
     const normalized = normalizeFilterPayload(filters || {}, filterSchema);
     if (Object.keys(normalized).length === 0) {
+      setResetVersion((version) => version + 1);
       handleFilter({ status: STATUS.UNREAD });
       return;
     }

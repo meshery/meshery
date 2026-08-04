@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const queryState: { data: any } = { data: undefined };
@@ -7,6 +7,7 @@ const sliceState = {
   // Match events slice: current_view.filters starts as { initial: true } until loadEvents resolves.
   filters: { initial: true } as Record<string, unknown>,
 };
+let typingFilterMountCount = 0;
 
 vi.mock('react-redux', () => ({
   useSelector: (sel: any) =>
@@ -22,24 +23,29 @@ vi.mock('../../../rtk-query/notificationCenter', () => ({
 }));
 
 vi.mock('@/components/shared/FormFields/typing-filter', () => ({
-  default: ({ filterSchema, defaultFilters, placeholder, handleFilter }: any) => (
-    <div data-testid="typing-filter" data-placeholder={placeholder}>
-      <button type="button" onClick={() => handleFilter({})}>
-        clear-filters
-      </button>
-      <button type="button" onClick={() => handleFilter({ status: 'read', severity: ['error'] })}>
-        invoke-filter
-      </button>
-      <button type="button" onClick={() => handleFilter({ status: ['unread', 'read'] })}>
-        replace-status
-      </button>
-      <button type="button" onClick={() => handleFilter({ status: [] })}>
-        empty-status
-      </button>
-      <span data-testid="default-filters">{JSON.stringify(defaultFilters)}</span>
-      <span data-testid="schema-json">{JSON.stringify(filterSchema)}</span>
-    </div>
-  ),
+  default: ({ filterSchema, defaultFilters, placeholder, handleFilter }: any) => {
+    React.useEffect(() => {
+      typingFilterMountCount += 1;
+    }, []);
+    return (
+      <div data-testid="typing-filter" data-placeholder={placeholder}>
+        <button type="button" onClick={() => handleFilter({})}>
+          clear-filters
+        </button>
+        <button type="button" onClick={() => handleFilter({ status: 'read', severity: ['error'] })}>
+          invoke-filter
+        </button>
+        <button type="button" onClick={() => handleFilter({ status: ['unread', 'read'] })}>
+          replace-status
+        </button>
+        <button type="button" onClick={() => handleFilter({ status: [] })}>
+          empty-status
+        </button>
+        <span data-testid="default-filters">{JSON.stringify(defaultFilters)}</span>
+        <span data-testid="schema-json">{JSON.stringify(filterSchema)}</span>
+      </div>
+    );
+  },
 }));
 
 import Filter, { filtersToChips, normalizeFilterPayload } from './filter';
@@ -48,6 +54,7 @@ describe('NotificationCenter Filter', () => {
   beforeEach(() => {
     queryState.data = undefined;
     sliceState.filters = { initial: true };
+    typingFilterMountCount = 0;
   });
 
   it('shows unread chips on startup when current_view.filters is still { initial: true }', () => {
@@ -83,8 +90,31 @@ describe('NotificationCenter Filter', () => {
     const handleFilter = vi.fn();
     render(<Filter handleFilter={handleFilter} />);
 
-    screen.getByText('clear-filters').click();
+    act(() => {
+      screen.getByText('clear-filters').click();
+    });
     expect(handleFilter).toHaveBeenCalledWith({ status: 'unread' });
+  });
+
+  it('remounts TypingFilter when clearing from { initial: true } so unread chips reappear', () => {
+    render(<Filter handleFilter={vi.fn()} />);
+    expect(typingFilterMountCount).toBe(1);
+
+    act(() => {
+      screen.getByText('clear-filters').click();
+    });
+    expect(typingFilterMountCount).toBe(2);
+  });
+
+  it('remounts TypingFilter when clearing from { status: unread } default state', () => {
+    sliceState.filters = { status: 'unread' };
+    render(<Filter handleFilter={vi.fn()} />);
+    expect(typingFilterMountCount).toBe(1);
+
+    act(() => {
+      screen.getByText('clear-filters').click();
+    });
+    expect(typingFilterMountCount).toBe(2);
   });
 
   it('forwards non-empty filter changes', () => {
@@ -107,7 +137,9 @@ describe('NotificationCenter Filter', () => {
     const handleFilter = vi.fn();
     render(<Filter handleFilter={handleFilter} />);
 
-    screen.getByText('empty-status').click();
+    act(() => {
+      screen.getByText('empty-status').click();
+    });
     expect(handleFilter).toHaveBeenCalledWith({ status: 'unread' });
   });
 
