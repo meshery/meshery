@@ -66,18 +66,18 @@ svg.css-19bqh2r:hover {
   overflow: hidden;
 }
 
-.MuiSpeedDial-root:has(> button[aria-label="CANVAS_CONTROLS"]) {
+.MuiSpeedDial-root:has(> button[aria-label='CANVAS_CONTROLS']) {
   transform-origin: bottom center;
 }
 
-.MuiSpeedDial-root:has(> button[aria-label="CANVAS_CONTROLS"]):has(svg[viewBox="0 0 65 64"]) {
+.MuiSpeedDial-root:has(> button[aria-label='CANVAS_CONTROLS']):first-of-type {
   transform: scale(0.9) translate(-10px, -10px);
 }
 
-.MuiSpeedDial-root:has(> button[aria-label="CANVAS_CONTROLS"]):not(:has(svg[viewBox="0 0 65 64"])) {
+.MuiSpeedDial-root:has(> button[aria-label='CANVAS_CONTROLS']):last-of-type {
   transform: scale(0.9) translate(10px, -10px);
 }
 
-.MuiSpeedDial-root:has(> button[aria-label="CANVAS_CONTROLS"]) .MuiSpeedDial-fab {
+.MuiSpeedDial-root:has(> button[aria-label='CANVAS_CONTROLS']) .MuiSpeedDial-fab {
   z-index: 10;
 }
