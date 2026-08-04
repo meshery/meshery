@@ -341,7 +341,7 @@ export const ImportButton = ({ workspaceId, disabled = false, refetch, permissio
       return;
     }
 
-    importPattern({
+    return importPattern({
       importBody: importRequest.requestBody,
     })
       .unwrap()
