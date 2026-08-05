@@ -89,6 +89,79 @@ func Test_importPattern_SendsCamelCaseFileName(t *testing.T) {
 	assert.Equal(t, "sampleDesign.golden", capturedBody["fileName"])
 }
 
+// Test_importPattern_SendsContractUrlPayload covers the URL oneOf arm, the one
+// the camelCase regression test above cannot reach. Both arms are now built from
+// the same generated MesheryPatternImportRequestBody, so the URL arm has to carry
+// exactly the contract's `url`/`name` fields - and specifically NOT the legacy
+// `save` key, which was never part of the request contract and which the server's
+// DesignFileImportHandler never read.
+func Test_importPattern_SendsContractUrlPayload(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	output := utils.SetupMeshkitLoggerTesting(t, false)
+	defer utils.StopMockery(t)
+	defer resetVariables()
+	defer utils.ResetCommandFlags(DesignCmd, t)
+
+	utils.TokenFlag = utils.GetToken(t)
+
+	var capturedBody map[string]interface{}
+	httpmock.RegisterResponder(
+		"POST",
+		testContext.BaseURL+"/api/pattern/import",
+		func(req *http.Request) (*http.Response, error) {
+			raw, err := io.ReadAll(req.Body)
+			assert.NoError(t, err)
+			assert.NoError(t, json.Unmarshal(raw, &capturedBody))
+			t.Logf("Captured URL-import request body: %s", raw)
+			return httpmock.NewStringResponse(
+				200,
+				`[{"id":"3817ec9a-1d83-4f6f-9154-0fd4408ba9f0","name":"RemoteApp"}]`,
+			), nil
+		},
+	)
+
+	DesignCmd.SetArgs([]string{
+		"import", "-f", "https://example.com/design.yaml", "-n", "RemoteApp",
+	})
+	assert.NoError(t, DesignCmd.Execute())
+
+	assert.Equal(t, "https://example.com/design.yaml", capturedBody["url"])
+	assert.Equal(t, "RemoteApp", capturedBody["name"])
+	assert.NotContains(t, capturedBody, "save", "`save` is not part of the import request contract")
+	assert.ElementsMatch(t, []string{"url", "name"}, mapKeys(capturedBody))
+	t.Logf("mesheryctl output: %s", output.String())
+}
+
+// Test_importPattern_EmptyResponseCollection pins the guard added when both oneOf
+// arms were folded into postDesignImport: the server returns the saved design(s)
+// as a collection, and both arms previously indexed response[0] unguarded, so an
+// empty collection panicked with an index-out-of-range instead of surfacing an
+// error the user can act on.
+func Test_importPattern_EmptyResponseCollection(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	defer utils.StopMockery(t)
+	defer resetVariables()
+	defer utils.ResetCommandFlags(DesignCmd, t)
+
+	utils.TokenFlag = utils.GetToken(t)
+
+	httpmock.RegisterResponder(
+		"POST",
+		testContext.BaseURL+"/api/pattern/import",
+		func(_ *http.Request) (*http.Response, error) {
+			return httpmock.NewStringResponse(200, `[]`), nil
+		},
+	)
+
+	DesignCmd.SetArgs([]string{"import", "-f", "fixtures/sampleDesign.golden", "-n", "SampleApp"})
+
+	err := DesignCmd.Execute()
+	assert.Error(t, err, "an empty design collection must surface as an error, not a panic")
+	assert.Equal(t, ErrDesignInvalidApiResponse("design import returned no design").Error(), err.Error())
+	t.Logf("structured error returned instead of panicking: %v", err)
+}
+
 func mapKeys(m map[string]interface{}) []string {
 	keys := make([]string, 0, len(m))
 	for k := range m {
