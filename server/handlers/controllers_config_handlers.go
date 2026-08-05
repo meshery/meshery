@@ -283,6 +283,13 @@ func (h *Handler) fetchKubernetesConnection(w http.ResponseWriter, req *http.Req
 
 // buildConnectionControllersConfig assembles the layered view (override,
 // server default, effective) for a connection.
+//
+// The effective document reports the deployment mode the connection actually
+// runs, not just the one the two editable layers set: clients decide from it
+// which settings can reach anything on this cluster (Meshery Operator manages
+// MeshSync and Meshery Broker, so in embedded mode most of the document is
+// inert), and that decision has to be made against the mode the apply path
+// resolves.
 func (h *Handler) buildConnectionControllersConfig(connection *connections.Connection) (*controllersconfig.ConnectionControllersConfig, error) {
 	override, err := connections.ControllersConfigFromMetadata(connection.Metadata)
 	if err != nil {
@@ -292,7 +299,9 @@ func (h *Handler) buildConnectionControllersConfig(connection *connections.Conne
 	if err != nil {
 		return nil, err
 	}
-	_, effective := connections.ResolveControllersConfig(override, serverDefaults)
+	_, effective, _ := connections.ResolveConnectionControllersConfig(
+		override, serverDefaults, connection.Metadata, h.MeshsyncDefaultDeploymentMode,
+	)
 	return &controllersconfig.ConnectionControllersConfig{
 		Override:  override,
 		Default:   serverDefaults,
@@ -356,6 +365,17 @@ func (h *Handler) applyControllersConfigToConnection(
 		ctrlHelper.AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, *h.SystemID, provider)
 		h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Informational, "Controllers configuration applied: embedded MeshSync restarted with the updated configuration.", map[string]interface{}{"connectionId": connectionID})
 	case connections.MeshsyncDeploymentModeOperator:
+		// operator.version fixes the Helm chart version the operator is
+		// deployed at, and the controller handler captures it at construction,
+		// so a changed version has to be redeployed here rather than waiting
+		// for the connection to reconnect.
+		if chartVersion, redeployed, verr := ctrlHelper.ReconcileOperatorChartVersion(machineCtx.K8sContext, machineCtx.OperatorTracker); verr != nil {
+			h.log.Error(verr)
+			h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Error, "Failed to deploy Meshery Operator at the configured chart version.", map[string]interface{}{"error": verr, "connectionId": connectionID, "operatorChartVersion": chartVersion})
+		} else if redeployed {
+			h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Informational, fmt.Sprintf("Meshery Operator redeployed at chart version %q.", chartVersion), map[string]interface{}{"connectionId": connectionID, "operatorChartVersion": chartVersion})
+		}
+
 		kubeClient, err := machineCtx.K8sContext.GenerateKubeHandler()
 		if err != nil {
 			h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Error, "Failed to reach the connection's cluster to apply the controllers configuration.", map[string]interface{}{"error": err, "connectionId": connectionID})
@@ -426,11 +446,20 @@ func (h *Handler) reconcileInheritedDeploymentMode(
 
 	override, err := connections.ControllersConfigFromMetadata(metadata)
 	if err != nil {
-		// A malformed override invalidates only that layer; the server-wide
-		// default still applies. Surfaced to the user by the per-connection
-		// GET endpoint.
+		// An unreadable override is unknown intent, not absent intent. Treating
+		// it as absent used to resolve the connection to the server-wide
+		// default, find that it differed from the materialized mode, and
+		// reconcile - tearing down and redeploying MeshSync into a mode the
+		// user never chose, on the strength of corrupt data. Skip this
+		// connection instead and leave it exactly as it is; the per-connection
+		// GET surfaces the parse failure so it can be corrected deliberately.
 		h.log.Error(err)
-		override = nil
+		h.emitControllersConfigApplyEvent(
+			eventBuilder, provider, token, userID, events.Error,
+			"Skipped reconciling this connection's MeshSync deployment mode: its stored controllers configuration could not be parsed.",
+			map[string]interface{}{"error": err, "connectionId": connection.ID},
+		)
+		return
 	}
 	merged, _ := connections.ResolveControllersConfig(override, serverDefaults)
 	desired := connections.ResolveDeploymentMode(merged, metadata, h.MeshsyncDefaultDeploymentMode)
@@ -457,7 +486,7 @@ func (h *Handler) reconcileInheritedDeploymentMode(
 		return
 	}
 
-	if err := h.reconcileMeshsyncDeploymentMode(context.Background(), connection.ID, desired.Mode, userID, provider); err != nil {
+	if err := h.reconcileMeshsyncDeploymentMode(context.Background(), connection.ID, desired.Mode, merged, userID, provider); err != nil {
 		h.log.Error(err)
 		h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Error, "Failed to redeploy MeshSync for the deployment mode inherited from the server-wide default.", map[string]interface{}{"error": err, "connectionId": connection.ID})
 		return
