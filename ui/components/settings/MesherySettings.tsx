@@ -11,6 +11,7 @@ import {
   Grid2,
   LeftArrowIcon,
   DatabaseIcon,
+  SettingsIcon,
   MendeleyIcon,
   useTheme,
   OutlinedResetIcon,

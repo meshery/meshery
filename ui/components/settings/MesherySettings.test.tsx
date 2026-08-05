@@ -56,6 +56,7 @@ vi.mock('@sistent/sistent', () => ({
   DatabaseIcon: () => <svg />,
   MendeleyIcon: () => <svg />,
   OutlinedResetIcon: () => <svg />,
+  SettingsIcon: () => <svg />,
   useTheme: () => ({
     palette: {
       icon: { default: 'icon' },
