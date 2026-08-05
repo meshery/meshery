@@ -54,12 +54,12 @@ jobs:
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             ~/errorutil -d .baseline analyze -i .baseline/server/helpers -o .baseline/server/helpers --skip-dirs mesheryctl,docs
             
-            ~/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl,.baseline
+            ~/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl,docs,.baseline
             ~/errorutil check .baseline/server/helpers/errorutil_analyze_errors.json ./server/helpers/errorutil_analyze_errors.json
           fi
 
           ~/errorutil update -d . -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl,docs,.baseline
-          output=$(~/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl,.baseline | wc -c)
+          output=$(~/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl,docs,.baseline | wc -c)
           if [ "$output" -ne 0 ]; then
             exit 1
           fi
