@@ -3,65 +3,82 @@ package models
 import (
 	"encoding/json"
 	"testing"
+	"time"
+
+	"github.com/gofrs/uuid"
+	"github.com/meshery/schemas/models/core"
+	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 )
 
-// pageResponse decodes any paginated response that has page, pageSize, and totalCount.
-type pageResponse struct {
-	Page       int `json:"page"`
-	PageSize   int `json:"pageSize"`
-	TotalCount int `json:"totalCount"`
-}
+// TestGetWorkspacesPageSizeMatchesRequested verifies that GetWorkspaces returns
+// the requested pageSize in the response, not len(fetched). Before the fix,
+// PageSize was set to len(fetched), which broke the UI hasMore formula on the
+// last page and caused infinite empty network requests.
+func TestGetWorkspacesPageSizeMatchesRequested(t *testing.T) {
+	dbHandler := newWorkspaceTestDB(t)
+	if err := dbHandler.AutoMigrate(&workspace.Workspace{}); err != nil {
+		t.Fatalf("failed to auto-migrate workspace: %v", err)
+	}
 
-// TestPageSizeMatchesRequested checks that pageSize in the response equals what
-// the caller asked for, not how many rows came back. Before the fix, PageSize was
-// set to len(fetched), which broke the UI hasMore formula on the last page and
-// caused infinite empty network requests.
-func TestPageSizeMatchesRequested(t *testing.T) {
+	orgID, err := uuid.NewV4()
+	if err != nil {
+		t.Fatalf("failed to generate org id: %v", err)
+	}
+
+	// Insert 13 workspaces so the last page has only 3 items when pageSize=10.
+	now := time.Now().UTC()
+	for i := 0; i < 13; i++ {
+		id, _ := uuid.NewV4()
+		ws := workspace.Workspace{
+			ID:             id,
+			Name:           "ws",
+			OrganizationID: orgID,
+			Metadata:       core.Map{},
+			CreatedAt:      now,
+			UpdatedAt:      now,
+		}
+		if err := dbHandler.Create(&ws).Error; err != nil {
+			t.Fatalf("failed to seed workspace: %v", err)
+		}
+	}
+
+	persister := &WorkspacePersister{DB: dbHandler}
+
 	t.Run("last page - pageSize is requested, not len(fetched)", func(t *testing.T) {
-		// 13 total, request page 1 with pageSize=10 => only 3 items come back.
-		// Old: PageSize=3 => hasMore = 13 > 3*(1+1) = true  (wrong)
-		// New: PageSize=10 => hasMore = 13 > 10*(1+1) = false (correct)
-		resp := pageResponse{Page: 1, PageSize: 10, TotalCount: 13}
-		hasMore := resp.TotalCount > resp.PageSize*(resp.Page+1)
-		if hasMore {
-			t.Errorf("hasMore=true on last page (totalCount=%d, pageSize=%d, page=%d), want false",
-				resp.TotalCount, resp.PageSize, resp.Page)
+		// Page 1 with pageSize=10 => only 3 rows fetched, but response must report pageSize=10.
+		raw, err := persister.GetWorkspaces(orgID.String(), "", "", "1", "10", "")
+		if err != nil {
+			t.Fatalf("GetWorkspaces failed: %v", err)
+		}
+		var resp struct {
+			PageSize   int `json:"pageSize"`
+			TotalCount int `json:"totalCount"`
+		}
+		if err := json.Unmarshal(raw, &resp); err != nil {
+			t.Fatalf("failed to unmarshal response: %v", err)
+		}
+		if resp.PageSize != 10 {
+			t.Errorf("pageSize = %d, want 10 (the requested size, not len(fetched))", resp.PageSize)
+		}
+		if resp.TotalCount != 13 {
+			t.Errorf("totalCount = %d, want 13", resp.TotalCount)
 		}
 	})
 
 	t.Run("pageSize=all sets pageSize to totalCount", func(t *testing.T) {
-		resp := pageResponse{Page: 0, PageSize: 42, TotalCount: 42}
-		if hasMore := resp.TotalCount > resp.PageSize*(resp.Page+1); hasMore {
-			t.Errorf("hasMore=true for pageSize=all (totalCount=%d), want false", resp.TotalCount)
-		}
-	})
-
-	t.Run("middle page - hasMore is true", func(t *testing.T) {
-		resp := pageResponse{Page: 0, PageSize: 10, TotalCount: 25}
-		if hasMore := resp.TotalCount > resp.PageSize*(resp.Page+1); !hasMore {
-			t.Errorf("hasMore=false on page 0 of 25 items with pageSize 10, want true")
-		}
-	})
-
-	t.Run("exact last page - hasMore is false", func(t *testing.T) {
-		resp := pageResponse{Page: 1, PageSize: 10, TotalCount: 20}
-		if hasMore := resp.TotalCount > resp.PageSize*(resp.Page+1); hasMore {
-			t.Errorf("hasMore=true for exact last page, want false")
-		}
-	})
-
-	t.Run("json round-trip preserves pageSize", func(t *testing.T) {
-		original := pageResponse{Page: 2, PageSize: 10, TotalCount: 23}
-		b, err := json.Marshal(original)
+		raw, err := persister.GetWorkspaces(orgID.String(), "", "", "0", "all", "")
 		if err != nil {
-			t.Fatalf("failed to marshal JSON: %v", err)
+			t.Fatalf("GetWorkspaces failed: %v", err)
 		}
-		var decoded pageResponse
-		if err := json.Unmarshal(b, &decoded); err != nil {
-			t.Fatalf("failed to unmarshal JSON: %v", err)
+		var resp struct {
+			PageSize   int `json:"pageSize"`
+			TotalCount int `json:"totalCount"`
 		}
-		if decoded.PageSize != 10 {
-			t.Errorf("PageSize after JSON round-trip = %d, want 10", decoded.PageSize)
+		if err := json.Unmarshal(raw, &resp); err != nil {
+			t.Fatalf("failed to unmarshal response: %v", err)
+		}
+		if resp.PageSize != resp.TotalCount {
+			t.Errorf("pageSize=all: pageSize=%d, totalCount=%d, want them equal", resp.PageSize, resp.TotalCount)
 		}
 	})
 }
