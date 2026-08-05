@@ -321,7 +321,7 @@ export function createPatternsActions(deps) {
       return;
     }
 
-    importPattern({
+    return importPattern({
       importBody: importRequest.requestBody,
     })
       .unwrap()
