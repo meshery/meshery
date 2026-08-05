@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ModalBody, ModalFooter, NoSsr } from '@sistent/sistent';
+import { ModalBody, ModalFooter, NoSsr, useHasPermission } from '@sistent/sistent';
 import { URLValidator } from '../../utils/URLValidator';
 import { isValidJSON } from '../../utils/validators';
 import LoadTestTimerDialog from '../load-test-timer-dialog';
@@ -8,7 +8,7 @@ import { ctxUrl, getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { generateTestName, generateUUID } from './helper';
-import CAN from '@/utils/can';
+
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '@/components/general/error-404/index';
 import { api } from '../../rtk-query';
@@ -35,6 +35,7 @@ let eventStream = null;
 const PERFORMANCE_RTK_TAG = 'Performance_Profile_performance';
 
 const MesheryPerformanceComponent_ = (props) => {
+  const hasPermission = useHasPermission(Keys.PerformanceManagementViewPerformanceProfiles);
   const {
     testName = '',
     meshName = '',
@@ -487,10 +488,7 @@ const MesheryPerformanceComponent_ = (props) => {
 
   return (
     <NoSsr>
-      {CAN(
-        Keys.PerformanceManagementViewPerformanceProfiles.id,
-        Keys.PerformanceManagementViewPerformanceProfiles.function,
-      ) ? (
+      {hasPermission ? (
         <>
           <React.Fragment>
             <ModalBody>

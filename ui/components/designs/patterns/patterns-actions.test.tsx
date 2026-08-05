@@ -226,7 +226,7 @@ describe('createPatternsActions', () => {
     buildImportDesignRequestBody.mockResolvedValue({
       requestBody: JSON.stringify({
         name: 'Imported design',
-        file_name: 'imported-design.yaml',
+        fileName: 'imported-design.yaml',
         file: [1, 2, 3],
       }),
     });
@@ -246,7 +246,7 @@ describe('createPatternsActions', () => {
     expect(deps.importPattern).toHaveBeenCalledWith({
       importBody: JSON.stringify({
         name: 'Imported design',
-        file_name: 'imported-design.yaml',
+        fileName: 'imported-design.yaml',
         file: [1, 2, 3],
       }),
     });
