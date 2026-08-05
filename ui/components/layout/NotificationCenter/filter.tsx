@@ -155,6 +155,5 @@ const Filter = memo(
   },
 );
 
-Filter.displayName = 'Filter';
 
 export default Filter;
