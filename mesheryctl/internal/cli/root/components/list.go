@@ -25,7 +25,7 @@ import (
 type componentListFlag struct {
 	Count    bool   `json:"count" validate:"boolean"`
 	Page     int    `json:"page" validate:"omitempty,gte=1"`
-	PageSize int    `json:"page-size" validate:"omitempty,gte=1"`
+	PageSize int    `json:"pagesize" validate:"omitempty,gte=1"`
 	Model    string `json:"model"`
 }
 
@@ -49,6 +49,9 @@ mesheryctl component list --page [page-number] --pagesize [page-size]
 
 // Display the number of components present in Meshery
 mesheryctl component list --count
+
+// View list of components filtered by a specific model
+mesheryctl component list --model [model-name]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &cmdComponentListFlag)
