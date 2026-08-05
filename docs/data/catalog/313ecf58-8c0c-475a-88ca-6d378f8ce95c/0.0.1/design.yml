@@ -10,7 +10,8 @@ components:
         aws-3tier-vpc: ''
       namespace: default
     spec:
-      cidrBlocks: []
+      cidrBlocks:
+      - 10.0.0.0/16
   created_at: '0001-01-01T00:00:00Z'
   description: ''
   displayName: aws-3tier-vpc
@@ -72,6 +73,8 @@ components:
     metadata:
       namespace: default
     spec:
+      cidrBlock: 10.0.3.0/24
+      availabilityZone: us-east-1c
       vpcRef:
         from:
           name: aws-3tier-vpc
@@ -136,6 +139,8 @@ components:
     metadata:
       namespace: default
     spec:
+      cidrBlock: 10.0.2.0/24
+      availabilityZone: us-east-1b
       vpcRef:
         from:
           name: aws-3tier-vpc
@@ -200,6 +205,9 @@ components:
     metadata:
       namespace: default
     spec:
+      cidrBlock: 10.0.1.0/24
+      availabilityZone: us-east-1a
+      mapPublicIPOnLaunch: true
       vpcRef:
         from:
           name: aws-3tier-vpc
@@ -321,6 +329,8 @@ components:
     metadata:
       namespace: default
     spec:
+      imageID: ami-0c02fb55956c7d316
+      instanceType: t3.micro
       subnetRef:
         from:
           name: private-app-subnet
@@ -328,7 +338,7 @@ components:
   description: AWS EC2 Instance represents a virtual compute resource.
   displayName: aws-instance
   format: JSON
-  id: a0f2b2c1-d3c4-4a5b-6c7d-8e9f0a1b2c3d
+  id: 79548ad5-fcbf-495c-9786-353832b50257
   metadata:
     configurationUISchema: ''
     genealogy: child
@@ -395,7 +405,7 @@ components:
   description: AWS RDS DBInstance represents a secure relational database instance.
   displayName: aws-rds-db
   format: JSON
-  id: b0f3c3d2-e4d5-5a6b-7c8d-9e0f1a2b3c4d
+  id: b083c727-a274-46c9-946f-02db402f71ac
   metadata:
     configurationUISchema: ''
     genealogy: child
@@ -766,7 +776,7 @@ components:
   updated_at: '0001-01-01T00:00:00Z'
   version: v1.0.0
 id: 313ecf58-8c0c-475a-88ca-6d378f8ce95c
-name: AWS 3-Tier Web Application Better
+name: AWS 3-Tier Web Application
 preferences:
   layers:
     expandedComponents:
@@ -1049,7 +1059,7 @@ relationships:
   selectors:
   - allow:
       from:
-      - id: a0f2b2c1-d3c4-4a5b-6c7d-8e9f0a1b2c3d
+      - id: 79548ad5-fcbf-495c-9786-353832b50257
         kind: Instance
         match: {}
         model:
@@ -1108,7 +1118,7 @@ relationships:
   selectors:
   - allow:
       from:
-      - id: b0f3c3d2-e4d5-5a6b-7c8d-9e0f1a2b3c4d
+      - id: b083c727-a274-46c9-946f-02db402f71ac
         kind: DBInstance
         match: {}
         model:
@@ -1156,7 +1166,7 @@ relationships:
         model:
           name: aws
       to:
-      - id: a0f2b2c1-d3c4-4a5b-6c7d-8e9f0a1b2c3d
+      - id: 79548ad5-fcbf-495c-9786-353832b50257
         kind: Instance
         model:
           name: aws-ec2-controller
@@ -1170,12 +1180,12 @@ relationships:
   selectors:
   - allow:
       from:
-      - id: a0f2b2c1-d3c4-4a5b-6c7d-8e9f0a1b2c3d
+      - id: 79548ad5-fcbf-495c-9786-353832b50257
         kind: Instance
         model:
           name: aws-ec2-controller
       to:
-      - id: b0f3c3d2-e4d5-5a6b-7c8d-9e0f1a2b3c4d
+      - id: b083c727-a274-46c9-946f-02db402f71ac
         kind: DBInstance
         model:
           name: aws-rds-controller

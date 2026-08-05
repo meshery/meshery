@@ -17,7 +17,8 @@ provider:
   name: 54a58e68-8c83-4683-a84e-4cf8d3256649
 readme: "Provisions a standard 3-tier web application infrastructure utilizing VPC,\
   \ public/private subnets, Elastic Load Balancers, EC2 Web/App instances, and RDS\
-  \ databases.\n ##h4 Caveats and Consideration \n"
+  \ databases.\n\n#### Caveats and Consideration\n\nSubnet parenting relationships\
+  \ require PR #21072 to be merged for full visual nesting.\n"
 screenshots:
 - title: Meshery Project
   url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
