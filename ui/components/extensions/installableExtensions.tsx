@@ -280,7 +280,7 @@ const InstallableExtension: React.FC<InstallableExtensionProps> = ({ extension }
                   data-testid="uninstall-btn"
                   disabled={isMutating}
                   sx={{ marginRight: 2 }}
-                  permissionKey={Keys.ExtensibilityInstallExtension}
+                  permissionKey={Keys.ExtensibilityUninstallExtension}
                 >
                   {isRemoving || isRemovingFromProvider ? 'Removing...' : 'Remove'}
                 </Button>
