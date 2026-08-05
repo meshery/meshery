@@ -1,0 +1,129 @@
+#lightbox {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 9999999;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+#lightbox.active {
+    display: flex;
+    animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+#lightbox, #lightbox * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.content-image {
+    cursor: zoom-in;
+}
+
+/* Image inside lightbox */
+#lightbox img {
+    max-width: 90%;
+    max-height: 85%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    cursor: default;
+    pointer-events: none;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.8);
+    display: block;
+    margin: auto;
+}
+
+#lightbox-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    z-index: 10000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.2s ease;
+    border: none;
+    padding: 0;
+}
+
+#lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.35);
+    transform: scale(1.1);
+}
+
+#lightbox-close::before,
+#lightbox-close::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 2px;
+    background: white;
+}
+
+#lightbox-close::before {
+    transform: rotate(45deg);
+}
+
+#lightbox-close::after {
+    transform: rotate(-45deg);
+}
+
+#lightbox-caption {
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-size: 14px;
+    line-height: 1.4;
+    pointer-events: none;
+    text-shadow:
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px 1px 0 #000;
+}
+
+@media screen and (max-width: 768px) {
+    #lightbox {
+        padding: 1rem;
+    }
+
+    #lightbox img {
+        max-width: 95vw;
+        max-height: 80vh;
+    }
+
+    #lightbox-close {
+        top: 10px;
+        right: 10px;
+    }
+}
