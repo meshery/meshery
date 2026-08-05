@@ -57,14 +57,9 @@ mesheryctl component list --model [model-name]
 		return mesheryctlflags.ValidateCmdFlags(cmd, &cmdComponentListFlag)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		params := url.Values{}
-		if cmdComponentListFlag.Model != "" {
-			params.Set("model", cmdComponentListFlag.Model)
-		}
-
 		urlPath := componentApiPath
-		if q := params.Encode(); q != "" {
-			urlPath += "?" + q
+		if cmdComponentListFlag.Model != "" {
+			urlPath = "api/registry/models/" + url.PathEscape(cmdComponentListFlag.Model) + "/components"
 		}
 
 		componentData := display.DisplayDataAsync{

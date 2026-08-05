@@ -49,7 +49,7 @@ func TestListComponent(t *testing.T) {
 		{
 			Name:             "list components with model",
 			Args:             []string{"list", "--model", "kubernetes"},
-			URL:              fmt.Sprintf("/%s?model=kubernetes&page=0&pagesize=10", componentApiPath),
+			URL:              "/api/registry/models/kubernetes/components?page=0&pagesize=10",
 			Fixture:          "components.api.response.golden",
 			ExpectedResponse: "components.list.output.golden",
 			ExpectError:      false,
