@@ -51,15 +51,15 @@ const (
 	MeshsyncURL   = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
 
 	// Documentation URLs
-	docsBaseURL                    = "https://docs.meshery.io/"
-	rootUsageURL                   = docsBaseURL + "reference/references/mesheryctl"
-	perfUsageURL                   = docsBaseURL + "reference/references/mesheryctl/perf"
-	systemUsageURL                 = docsBaseURL + "reference/references/mesheryctl/system"
-	systemStopURL                  = docsBaseURL + "reference/references/mesheryctl/system/stop"
-	systemUpdateURL                = docsBaseURL + "reference/references/mesheryctl/system/update"
-	systemResetURL                 = docsBaseURL + "reference/references/mesheryctl/system/reset"
-	systemStatusURL                = docsBaseURL + "reference/references/mesheryctl/system/status"
-	systemRestartURL               = docsBaseURL + "reference/references/mesheryctl/system/restart"
+	docsBaseURL      = "https://docs.meshery.io/"
+	rootUsageURL     = docsBaseURL + "reference/references/mesheryctl"
+	perfUsageURL     = docsBaseURL + "reference/references/mesheryctl/perf"
+	systemUsageURL   = docsBaseURL + "reference/references/mesheryctl/system"
+	systemStopURL    = docsBaseURL + "reference/references/mesheryctl/system/stop"
+	systemUpdateURL  = docsBaseURL + "reference/references/mesheryctl/system/update"
+	systemResetURL   = docsBaseURL + "reference/references/mesheryctl/system/reset"
+	systemStatusURL  = docsBaseURL + "reference/references/mesheryctl/system/status"
+	systemRestartURL = docsBaseURL + "reference/references/mesheryctl/system/restart"
 	// No dedicated page exists for `mesheryctl mesh`; point at the command
 	// reference index rather than a 404.
 	meshUsageURL                   = docsBaseURL + "reference/references/mesheryctl"
