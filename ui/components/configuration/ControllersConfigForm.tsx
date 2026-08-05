@@ -13,7 +13,19 @@ import {
   TextField,
   Typography,
 } from '@sistent/sistent';
-import type { ControllersConfigDoc } from '@/rtk-query/controllersConfig';
+import type { UpdateControllersDefaultConfigApiArg } from '@meshery/schemas/mesheryApi';
+import { getPath, setPath, type FieldPath } from './fieldPath';
+
+/**
+ * The editable controllers configuration document: the generated PUT request
+ * body, i.e. the wire document without the server-stamped `schemaVersion`.
+ * Both layers (server-wide defaults and the per-connection override) accept
+ * this exact shape.
+ */
+export type ControllersConfigDoc = UpdateControllersDefaultConfigApiArg['body'];
+
+/** As returned by the server, which stamps the schema revision onto the document. */
+export type VersionedControllersConfigDoc = ControllersConfigDoc & { schemaVersion?: string };
 
 // Built-in defaults mirrored from Meshery Server (BuiltInControllersConfig):
 // what applies when no layer sets a field.
@@ -25,55 +37,6 @@ export const BUILT_IN_CONTROLLERS_CONFIG: ControllersConfigDoc = {
 
 const INHERIT = '__inherit__';
 const WATCH_EVENTS = ['ADDED', 'MODIFIED', 'DELETED'] as const;
-
-type FieldPath = (string | number)[];
-
-const getPath = (doc: ControllersConfigDoc | null | undefined, path: FieldPath): unknown => {
-  let node: unknown = doc;
-  for (const key of path) {
-    if (node == null || typeof node !== 'object') return undefined;
-    node = (node as Record<string | number, unknown>)[key];
-  }
-  return node;
-};
-
-// deleteAtPath removes the leaf at path and prunes any parents left empty,
-// so an all-inherit section disappears from the document entirely.
-const deleteAtPath = (node: unknown, path: FieldPath): void => {
-  if (node == null || typeof node !== 'object' || path.length === 0) return;
-  const obj = node as Record<string | number, unknown>;
-  const [head, ...rest] = path;
-  if (rest.length === 0) {
-    delete obj[head];
-    return;
-  }
-  deleteAtPath(obj[head], rest);
-  const child = obj[head];
-  if (child && typeof child === 'object' && Object.keys(child as object).length === 0) {
-    delete obj[head];
-  }
-};
-
-const setPath = (
-  doc: ControllersConfigDoc,
-  path: FieldPath,
-  value: unknown,
-): ControllersConfigDoc => {
-  const next: ControllersConfigDoc = JSON.parse(JSON.stringify(doc ?? {}));
-  if (value === undefined) {
-    deleteAtPath(next, path);
-    return next;
-  }
-  let node: Record<string | number, unknown> = next as Record<string | number, unknown>;
-  for (const key of path.slice(0, -1)) {
-    if (node[key] == null || typeof node[key] !== 'object') {
-      node[key] = {};
-    }
-    node = node[key] as Record<string | number, unknown>;
-  }
-  node[path[path.length - 1]] = value;
-  return next;
-};
 
 type SourceInfo = { label: string; overridden: boolean };
 
