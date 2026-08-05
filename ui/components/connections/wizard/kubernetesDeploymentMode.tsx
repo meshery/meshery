@@ -126,6 +126,36 @@ export const MeshsyncDeploymentModePicker = ({
 export const getConfiguredConnection = (ctx: WizardContext): GenericRecord =>
   (ctx.data.registrationResult as GenericRecord) || {};
 
+/**
+ * The connection as the server left it after a setMeshsyncMode action.
+ *
+ * The server stores the choice once - in the connection's layered
+ * controllers-configuration override - and refreshes the
+ * `meshsync_deployment_mode` materialization from it. Adopting the response
+ * verbatim keeps the wizard from carrying a second, hand-assembled copy of the
+ * same fact that the controllers editor would then contradict.
+ *
+ * A provider may answer 2xx with an empty body; only then does the local merge
+ * of the selected mode apply, so the step still shows what the user just chose.
+ */
+export const applyMeshsyncModeResult = (
+  connection: GenericRecord,
+  response: GenericRecord | undefined | null,
+  selectedMode: string,
+): GenericRecord => {
+  const serverMetadata = (response?.metadata as GenericRecord) || null;
+  if (serverMetadata) {
+    return { ...connection, ...response, metadata: serverMetadata };
+  }
+  return {
+    ...connection,
+    metadata: {
+      ...((connection.metadata as GenericRecord) || {}),
+      meshsync_deployment_mode: selectedMode,
+    },
+  };
+};
+
 // The persisted mode, accepting either the camelCase or snake_case metadata key
 // (mirrors how the connections table reads it).
 export const getCurrentDeploymentMode = (ctx: WizardContext): string => {
@@ -186,12 +216,15 @@ export const kubernetesDeploymentModeStep: WizardStep = {
     try {
       // Dedicated action endpoint: the server owns the metadata merge and the
       // MeshSync redeploy, keyed on the connection id.
-      await ctx.services.setMeshsyncMode(connectionId, selectedMode as 'operator' | 'embedded');
+      const updated = await ctx.services.setMeshsyncMode(
+        connectionId,
+        selectedMode as 'operator' | 'embedded',
+      );
       // Keep the local connection in sync so the step shows the new mode as
       // current if the user steps back into it.
-      const metadata = (connection.metadata as GenericRecord) || {};
-      const nextMetadata = { ...metadata, meshsync_deployment_mode: selectedMode };
-      ctx.patch({ registrationResult: { ...connection, metadata: nextMetadata } });
+      ctx.patch({
+        registrationResult: applyMeshsyncModeResult(connection, updated, selectedMode),
+      });
       ctx.services.notify({
         message: `MeshSync deployment mode set to ${selectedMode}.`,
         event_type: EVENT_TYPES.SUCCESS,
