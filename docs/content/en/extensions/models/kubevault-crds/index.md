@@ -1,7 +1,7 @@
 ---
 title: Kubevault Crds
 subtitle: Collaborative and visual infrastructure as design for Kubevault Crds
-image: /extensions/models/kubevault-crds/icons/color/kubevault-crds-color.svg
+image: extensions/models/kubevault-crds/icons/color/kubevault-crds-color.svg
 aliases: /extensibility/integrations/kubevault-crds
 docURL: https://docs.meshery.io/extensibility/integrations/kubevault-crds
 description: 
@@ -117,7 +117,15 @@ components:
   colorIcon: extensions/models/kubevault-crds/components/order/icons/color/order-color.svg
   whiteIcon: extensions/models/kubevault-crds/components/order/icons/white/order-white.svg
   description: 
-components-count: 27
+- name: namespace-slice
+  colorIcon: extensions/models/kubevault-crds/components/namespace-slice/icons/color/namespace-slice-color.svg
+  whiteIcon: extensions/models/kubevault-crds/components/namespace-slice/icons/white/namespace-slice-white.svg
+  description: 
+- name: vault-relay
+  colorIcon: extensions/models/kubevault-crds/components/vault-relay/icons/color/vault-relay-color.svg
+  whiteIcon: extensions/models/kubevault-crds/components/vault-relay/icons/white/vault-relay-white.svg
+  description: 
+components-count: 29
 relationships: 
 relationship-count: 0
 featureList: [

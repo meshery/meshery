@@ -1,7 +1,7 @@
 ---
 title: LoxiLB
 subtitle: Collaborative and visual infrastructure as design for LoxiLB
-image: /extensions/models/loxilb/icons/color/loxilb-color.svg
+image: extensions/models/loxilb/icons/color/loxilb-color.svg
 aliases: /extensibility/integrations/loxilb
 docURL: https://docs.meshery.io/extensibility/integrations/loxilb
 description: 

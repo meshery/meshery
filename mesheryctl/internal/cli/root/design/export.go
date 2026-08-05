@@ -293,7 +293,7 @@ func selectPatternPrompt(patterns []models.MesheryPattern, baseURL string) (mode
 			updatedAt = pattern.UpdatedAt.Format("2006-01-02 15:04:05")
 		}
 		if pattern.UserID != nil {
-			ownerName, err := getOwnerName(*pattern.UserID, baseURL)
+			ownerName, err := getOwnerName(pattern.UserID.String(), baseURL)
 			if err == nil {
 				owner = ownerName
 			}

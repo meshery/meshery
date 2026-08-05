@@ -1,7 +1,7 @@
 ---
 title: Azure Resources
 subtitle: Collaborative and visual infrastructure as design for Azure Resources
-image: /extensions/models/azure-resources/icons/color/azure-resources-color.svg
+image: extensions/models/azure-resources/icons/color/azure-resources-color.svg
 aliases: /extensibility/integrations/azure-resources
 docURL: https://docs.meshery.io/extensibility/integrations/azure-resources
 description: 

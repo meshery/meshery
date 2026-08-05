@@ -1,6 +1,7 @@
 ---
 title: "Extensibility: Load Generators"
 description: Meshery offers support for more types of Kubernetes and cloud native infrastructure than any other project or product in the world. Meshery uses adapters for more deeply managing specific types of infrastructure.
+categories: [extensibility]
 aliases:
 - /extensibility/load-generators
 ---

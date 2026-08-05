@@ -1,7 +1,7 @@
 ---
 title: Karpenter
 subtitle: Collaborative and visual infrastructure as design for Karpenter
-image: /extensions/models/karpenter/icons/color/karpenter-color.svg
+image: extensions/models/karpenter/icons/color/karpenter-color.svg
 aliases: /extensibility/integrations/karpenter
 docURL: https://docs.meshery.io/extensibility/integrations/karpenter
 description: 
@@ -29,7 +29,15 @@ components:
   colorIcon: extensions/models/karpenter/components/oci-node-class/icons/color/oci-node-class-color.svg
   whiteIcon: extensions/models/karpenter/components/oci-node-class/icons/white/oci-node-class-white.svg
   description: 
-components-count: 5
+- name: gce-node-class
+  colorIcon: extensions/models/karpenter/components/gce-node-class/icons/color/gce-node-class-color.svg
+  whiteIcon: extensions/models/karpenter/components/gce-node-class/icons/white/gce-node-class-white.svg
+  description: 
+- name: node-overlay
+  colorIcon: extensions/models/karpenter/components/node-overlay/icons/color/node-overlay-color.svg
+  whiteIcon: extensions/models/karpenter/components/node-overlay/icons/white/node-overlay-white.svg
+  description: 
+components-count: 7
 relationships: 
 relationship-count: 0
 featureList: [

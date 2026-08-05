@@ -1,7 +1,7 @@
 ---
 title: Azure DocumentDB
 subtitle: Collaborative and visual infrastructure as design for Azure DocumentDB
-image: /extensions/models/azure-documentdb/icons/color/azure-documentdb-color.svg
+image: extensions/models/azure-documentdb/icons/color/azure-documentdb-color.svg
 aliases: /extensibility/integrations/azure-documentdb
 docURL: https://docs.meshery.io/extensibility/integrations/azure-documentdb
 description: 

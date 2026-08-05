@@ -8,15 +8,16 @@ import (
 	"time"
 
 	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/models/registration"
 	meshkitUtils "github.com/meshery/meshkit/utils"
 )
 
-var ModelsPath = "../meshmodel"
+var ModelsPath = "../../models"
 
-const PoliciesPath = "../meshmodel/meshery-core/0.7.2/v1.0.0/policies"
+const PoliciesPath = "../../models/meshery-core/0.7.2/v1.0.0/policies"
 
 // versionInfo holds information about a version directory
 type versionInfo struct {
@@ -60,7 +61,7 @@ func GetModelDirectoryPaths(modelPath string) ([]string, error) {
 		// NOTE
 		// Temporarily:  remove this once the connection and credentials of k8s is written to repective version is implemented in the generator, and the namespace bug (where the component isNamespace is incorrectly marked as true) is resolved.
 		// if modelName == "kubernetes" {
-		// 	sortedVersionDirs[0] = "../meshmodel/kubernetes/v1.32.0-alpha.3"
+		// 	sortedVersionDirs[0] = "../../models/kubernetes/v1.32.0-alpha.3"
 		// }
 		modelDefDirPath, err := getLatestModelDefDir(sortedVersionDirs[0])
 		if err != nil {
@@ -114,7 +115,7 @@ func getLatestModelDefDir(latestVersionDirPath string) (string, error) {
 }
 
 // SeedComponents registers the latest versions of models
-func SeedComponents(log logger.Handler, hc *HandlerConfig, regm *meshmodel.RegistryManager) {
+func SeedComponents(log logger.Handler, hc *HandlerConfig, regm *meshmodel.RegistryManager, db *database.Handler) {
 	regErrorStore := NewRegistrationFailureLogHandler()
 	regHelper := registration.NewRegistrationHelper(utils.UI, regm, regErrorStore)
 	modelDirPaths, err := GetModelDirectoryPaths(ModelsPath)
@@ -128,4 +129,10 @@ func SeedComponents(log logger.Handler, hc *HandlerConfig, regm *meshmodel.Regis
 	}
 
 	RegistryLog(log, hc, regm, regErrorStore)
+
+	// Registration has now put every connection definition in the registry and
+	// created the registrant Connections they describe. Seeding is folded in
+	// here, rather than left to each caller, so that every path that rebuilds
+	// the registry - boot, database reset, hard reset - seeds too.
+	SeedConnections(log, db, regm)
 }

@@ -1,7 +1,7 @@
 ---
 title: Vault Config Operator
 subtitle: Collaborative and visual infrastructure as design for Vault Config Operator
-image: /extensions/models/vault-config-operator/icons/color/vault-config-operator-color.svg
+image: extensions/models/vault-config-operator/icons/color/vault-config-operator-color.svg
 aliases: /extensibility/integrations/vault-config-operator
 docURL: https://docs.meshery.io/extensibility/integrations/vault-config-operator
 description: 
@@ -209,7 +209,11 @@ components:
   colorIcon: extensions/models/vault-config-operator/components/identity-token-role/icons/color/identity-token-role-color.svg
   whiteIcon: extensions/models/vault-config-operator/components/identity-token-role/icons/white/identity-token-role-white.svg
   description: 
-components-count: 50
+- name: namespace
+  colorIcon: extensions/models/vault-config-operator/components/namespace/icons/color/namespace-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/namespace/icons/white/namespace-white.svg
+  description: 
+components-count: 51
 relationships: 
 relationship-count: 0
 featureList: [

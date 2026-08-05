@@ -129,11 +129,15 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 			return nil, utils.ErrFileRead(err)
 		}
 
+		// The /api/pattern/import File-import variant expects camelCase `fileName`
+		// (the canonical wire form per the schemas naming conventions). Sending the
+		// legacy snake_case `file_name` leaves the server's oneOf unmatched and the
+		// request is rejected with "Invalid design import request" (meshery-server-1422).
 		jsonValues, err := json.Marshal(map[string]interface{}{
-			"name":      patternName,
-			"file":      content,
-			"file_name": fileName,
-			"save":      save,
+			"name":     patternName,
+			"file":     content,
+			"fileName": fileName,
+			"save":     save,
 		})
 		if err != nil {
 			return nil, utils.ErrMarshal(err)

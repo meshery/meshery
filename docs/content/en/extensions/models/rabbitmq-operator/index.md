@@ -1,7 +1,7 @@
 ---
 title: RabbitMQ Operator
 subtitle: Collaborative and visual infrastructure as design for RabbitMQ Operator
-image: /extensions/models/rabbitmq-operator/icons/color/rabbitmq-operator-color.svg
+image: extensions/models/rabbitmq-operator/icons/color/rabbitmq-operator-color.svg
 aliases: /extensibility/integrations/rabbitmq-operator
 docURL: https://docs.meshery.io/extensibility/integrations/rabbitmq-operator
 description: 

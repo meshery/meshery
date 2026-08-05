@@ -1,7 +1,7 @@
 ---
 title: EDP Component Operator
 subtitle: Collaborative and visual infrastructure as design for EDP Component Operator
-image: /extensions/models/edp-component-operator/icons/color/edp-component-operator-color.svg
+image: extensions/models/edp-component-operator/icons/color/edp-component-operator-color.svg
 aliases: /extensibility/integrations/edp-component-operator
 docURL: https://docs.meshery.io/extensibility/integrations/edp-component-operator
 description: 

@@ -1,7 +1,7 @@
 ---
 title: Kubegems Installer
 subtitle: Collaborative and visual infrastructure as design for Kubegems Installer
-image: /extensions/models/kubegems-installer/icons/color/kubegems-installer-color.svg
+image: extensions/models/kubegems-installer/icons/color/kubegems-installer-color.svg
 aliases: /extensibility/integrations/kubegems-installer
 docURL: https://docs.meshery.io/extensibility/integrations/kubegems-installer
 description: 

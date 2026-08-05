@@ -1,7 +1,7 @@
 ---
 title: Percona Server for MongoDB
 subtitle: Collaborative and visual infrastructure as design for Percona Server for MongoDB
-image: /extensions/models/psmdb-db/icons/color/psmdb-db-color.svg
+image: extensions/models/psmdb-db/icons/color/psmdb-db-color.svg
 aliases: /extensibility/integrations/psmdb-db
 docURL: https://docs.meshery.io/extensibility/integrations/psmdb-db
 description: 
@@ -25,7 +25,11 @@ components:
   colorIcon: extensions/models/psmdb-db/components/percona-server-mongo-db/icons/color/percona-server-mongo-db-color.svg
   whiteIcon: extensions/models/psmdb-db/components/percona-server-mongo-db/icons/white/percona-server-mongo-db-white.svg
   description: 
-components-count: 4
+- name: percona-server-mongo-db-cluster-sync
+  colorIcon: extensions/models/psmdb-db/components/percona-server-mongo-db-cluster-sync/icons/color/percona-server-mongo-db-cluster-sync-color.svg
+  whiteIcon: extensions/models/psmdb-db/components/percona-server-mongo-db-cluster-sync/icons/white/percona-server-mongo-db-cluster-sync-white.svg
+  description: 
+components-count: 5
 relationships: 
 relationship-count: 0
 featureList: [

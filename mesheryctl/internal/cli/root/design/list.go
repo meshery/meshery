@@ -41,7 +41,7 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List designs",
 	Long: `Display list of all available designs.
-Find more information at: https://docs.meshery.io/reference/mesheryctl/design/list
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/design/list
 `,
 	Args: cobra.MinimumNArgs(0),
 	Example: `
@@ -84,7 +84,7 @@ mesheryctl design list --count
 			if utils.IsLocalProvider(provider) {
 				return []string{"DESIGN ID", "NAME", "CREATED", "UPDATED"}
 			}
-			return []string{"DESIGN ID", "USER ID", "NAME", "CREATED", "UPDATED"}
+			return []string{"DESIGN ID", "OWNER", "NAME", "CREATED", "UPDATED"}
 		}(provider)
 
 		designData := display.DisplayDataAsync{
@@ -111,16 +111,14 @@ func processDesignData(data *models.PatternsAPIResponse) ([][]string, int64) {
 		updatedAt := formatTimeToString(v.UpdatedAt, verbose)
 
 		if !utils.IsLocalProvider(provider) {
-			userID := func(userID *string) string {
-				if userID != nil {
-					if verbose {
-						return *userID
-					}
-					return utils.TruncateID(*userID)
+			owner := "null"
+			if v.UserID != nil {
+				owner = v.UserID.String()
+				if !verbose {
+					owner = utils.TruncateID(owner)
 				}
-				return "null"
-			}(v.UserID)
-			displayData = append(displayData, []string{designId, userID, designName, createdAt, updatedAt})
+			}
+			displayData = append(displayData, []string{designId, owner, designName, createdAt, updatedAt})
 		} else {
 			displayData = append(displayData, []string{designId, designName, createdAt, updatedAt})
 		}
@@ -136,7 +134,7 @@ func formatTimeToString(t *time.Time, isVerbose bool) string {
 }
 
 func init() {
-	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "(optional) Display full length user identifiers and detailed timestamps")
+	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "(optional) Display full length owner identifiers and detailed timestamps")
 	listCmd.Flags().IntVarP(&page, "page", "p", 1, "(optional) List next set of designs with --page")
 	listCmd.Flags().IntVarP(&pageSize, "pagesize", "", 10, "(optional) Number of designs to be displayed per page")
 	listCmd.Flags().BoolP("count", "c", false, "(optional) Display count only")

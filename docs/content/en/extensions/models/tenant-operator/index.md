@@ -1,7 +1,7 @@
 ---
 title: Tenant Operator
 subtitle: Collaborative and visual infrastructure as design for Tenant Operator
-image: /extensions/models/tenant-operator/icons/color/tenant-operator-color.svg
+image: extensions/models/tenant-operator/icons/color/tenant-operator-color.svg
 aliases: /extensibility/integrations/tenant-operator
 docURL: https://docs.meshery.io/extensibility/integrations/tenant-operator
 description: 

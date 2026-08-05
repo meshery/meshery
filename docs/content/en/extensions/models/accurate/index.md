@@ -1,7 +1,7 @@
 ---
 title: Accurate
 subtitle: Collaborative and visual infrastructure as design for Accurate
-image: /extensions/models/accurate/icons/color/accurate-color.svg
+image: extensions/models/accurate/icons/color/accurate-color.svg
 aliases: /extensibility/integrations/accurate
 docURL: https://docs.meshery.io/extensibility/integrations/accurate
 description: 

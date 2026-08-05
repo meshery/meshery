@@ -1,7 +1,7 @@
 ---
 title: Armory Spinnaker Operator
 subtitle: Collaborative and visual infrastructure as design for Armory Spinnaker Operator
-image: /extensions/models/armory-spinnaker-operator/icons/color/armory-spinnaker-operator-color.svg
+image: extensions/models/armory-spinnaker-operator/icons/color/armory-spinnaker-operator-color.svg
 aliases: /extensibility/integrations/armory-spinnaker-operator
 docURL: https://docs.meshery.io/extensibility/integrations/armory-spinnaker-operator
 description: 

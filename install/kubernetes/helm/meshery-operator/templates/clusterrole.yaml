@@ -1,4 +1,6 @@
 ---
+# Grants GET /metrics; bind a scraper's ServiceAccount to this role to scrape
+# the manager's TLS metrics endpoint (authn/authz filtered).
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -11,6 +13,9 @@ rules:
   verbs:
   - get
 ---
+# Mirrors config/rbac/role.yaml in meshery/meshery-operator (the
+# controller-gen output of the +kubebuilder:rbac markers). Least-privilege:
+# no wildcards.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -19,9 +24,11 @@ metadata:
 {{- include "meshery-operator.labels" . | nindent 4 }}
 rules:
 - apiGroups:
-  - meshery.io
+  - ""
   resources:
-  - brokers
+  - configmaps
+  - secrets
+  - services
   verbs:
   - create
   - delete
@@ -31,21 +38,18 @@ rules:
   - update
   - watch
 - apiGroups:
-  - meshery.io
+  - apps
   resources:
-  - brokers/status
+  - deployments
+  - statefulsets
   verbs:
+  - create
+  - delete
   - get
+  - list
   - patch
   - update
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: meshery-proxy-role
-  labels:
-{{- include "meshery-operator.labels" . | nindent 4 }}
-rules:
+  - watch
 - apiGroups:
   - authentication.k8s.io
   resources:
@@ -58,54 +62,11 @@ rules:
   - subjectaccessreviews
   verbs:
   - create
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: meshery-leader-election-role
-  namespace: {{ .Release.Namespace }}
-  labels:
-{{- include "meshery-operator.labels" . | nindent 4 }}
-rules:
 - apiGroups:
-  - ""
+  - meshery.io
   resources:
-  - configmaps
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - patch
-  - delete
-- apiGroups:
-  - ""
-  resources:
-  - configmaps/status
-  verbs:
-  - get
-  - update
-  - patch
-- apiGroups:
-  - ""
-  resources:
-  - events
-  verbs:
-  - create
-  - patch
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: meshery-controller-role
-  labels:
-  {{- include "meshery-operator.labels" . | nindent 4 }}
-rules:
-- apiGroups:
-  - '*'
-  resources:
-  - '*'
+  - brokers
+  - meshsyncs
   verbs:
   - create
   - delete
@@ -114,3 +75,19 @@ rules:
   - patch
   - update
   - watch
+- apiGroups:
+  - meshery.io
+  resources:
+  - brokers/finalizers
+  - meshsyncs/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - meshery.io
+  resources:
+  - brokers/status
+  - meshsyncs/status
+  verbs:
+  - get
+  - patch
+  - update

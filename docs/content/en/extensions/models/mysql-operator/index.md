@@ -1,7 +1,7 @@
 ---
 title: MySQL Operator
 subtitle: Collaborative and visual infrastructure as design for MySQL Operator
-image: /extensions/models/mysql-operator/icons/color/mysql-operator-color.svg
+image: extensions/models/mysql-operator/icons/color/mysql-operator-color.svg
 aliases: /extensibility/integrations/mysql-operator
 docURL: https://docs.meshery.io/extensibility/integrations/mysql-operator
 description: 

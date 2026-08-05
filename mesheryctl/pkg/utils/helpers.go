@@ -93,6 +93,7 @@ const (
 	registryPublishURL             = docsBaseURL + "reference/mesheryctl/registry/publish"
 	registryGenerateURL            = docsBaseURL + "reference/mesheryctl/registry/generate"
 	registryUpdateURL              = docsBaseURL + "reference/mesheryctl/registry/update"
+	registryPurgeURL               = docsBaseURL + "reference/mesheryctl/registry/purge"
 	relationshipUsageURL           = docsBaseURL + "reference/mesheryctl/relationships"
 	cmdRelationshipGenerateDocsURL = docsBaseURL + "reference/mesheryctl/relationships/generate"
 	relationshipViewURL            = docsBaseURL + "reference/mesheryctl/relationships/view"
@@ -164,6 +165,7 @@ const (
 	cmdRegistryPublish          cmdType = "registry publish"
 	cmdRegistryGenerate         cmdType = "registry generate"
 	cmdRegistryUpdate           cmdType = "registry update"
+	cmdRegistryPurge            cmdType = "registry purge"
 	cmdConnection               cmdType = "connection"
 	cmdConnectionList           cmdType = "connection list"
 	cmdConnectionDelete         cmdType = "connection delete"
@@ -1262,6 +1264,18 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 
 		// No user interaction required if no more data to display
 		if !hasDataToDisplay(len(data), remaining, startIndex, pageSize) {
+			break
+		}
+
+		// Same reasoning as display.listPageHandler: without a terminal there is
+		// nobody to press the key, and keyboard.GetKeys fails on /dev/tty rather
+		// than blocking. Stop after this page instead of turning a successful
+		// listing into a non-zero exit.
+		if !IsInteractiveTerminal() {
+			Log.Infof(
+				"Showing page %d only: paging through results needs an interactive terminal. Use --page to select a page.",
+				startIndex/pageSize+1,
+			)
 			break
 		}
 

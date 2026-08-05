@@ -1,13 +1,11 @@
 import { trueRandom } from '../lib/trueRandom';
-import jsYaml from 'js-yaml';
+import * as jsYaml from 'js-yaml';
 import { findWorkloadByName } from './workloadFilter';
 import { APP_MODE, EVENT_TYPES } from './Enum';
 import _ from 'lodash';
 import { getWebAdress } from './webApis';
 import { APPLICATION, DESIGN, FILTER } from '../constants/navigator';
-import { Tooltip } from '@sistent/sistent';
-import jsyaml from 'js-yaml';
-import yaml from 'js-yaml';
+import { MESHERY_EXTENSION_EVENT, Tooltip } from '@sistent/sistent';
 import { mesheryExtensionRoute } from '../pages/_app';
 import { mesheryEventBus } from './eventBus';
 import { useSelector } from 'react-redux';
@@ -376,7 +374,7 @@ export const ResizableCell = ({ value }) => (
 
 export const parseDesignFile = (designFile) => {
   try {
-    return jsyaml.load(designFile);
+    return jsYaml.load(designFile);
   } catch (e) {
     console.error('Error parsing design file', e);
     return null;
@@ -385,7 +383,7 @@ export const parseDesignFile = (designFile) => {
 
 export const encodeDesignFile = (designJson) => {
   try {
-    return jsyaml.dump(designJson);
+    return jsYaml.dump(designJson);
   } catch (e) {
     console.error('Error encoding design file', e);
     return null;
@@ -445,7 +443,7 @@ export const getDesignVersion = (design) => {
     return design.catalog_data?.published_version;
   } else {
     try {
-      const parsedYaml = yaml.load(design.patternFile);
+      const parsedYaml = jsYaml.load(design.patternFile);
       return parsedYaml?.version;
     } catch (error) {
       console.error('Version is not available for this design: ', error);
@@ -511,7 +509,7 @@ export const useIsDesignerEnabled = useIsExtensionEnabled;
 export const openViewScopedToDesignInOperator = (designName, designId, router) => {
   if (isExtensionOpen()) {
     mesheryEventBus.publish({
-      type: 'OPEN_VIEW_SCOPED_TO_DESIGN',
+      type: MESHERY_EXTENSION_EVENT.OpenViewScopedToDesign,
       data: {
         designId,
         designName,
@@ -525,7 +523,7 @@ export const openViewScopedToDesignInOperator = (designName, designId, router) =
 
 export const mergeDesignWithCurrent = (designId, designName) => {
   mesheryEventBus.publish({
-    type: 'MERGE_DESIGN',
+    type: MESHERY_EXTENSION_EVENT.MergeDesign,
     data: {
       id: designId,
       name: designName,
@@ -537,7 +535,7 @@ export const mergeDesignWithCurrent = (designId, designName) => {
 export const openDesignInExtension = (designId, designName, router) => {
   if (isExtensionOpen()) {
     mesheryEventBus.publish({
-      type: 'OPEN_DESIGN_IN_EXTENSION',
+      type: MESHERY_EXTENSION_EVENT.OpenDesignInExtension,
       data: {
         designId,
         designName,
@@ -550,10 +548,9 @@ export const openDesignInExtension = (designId, designName, router) => {
 };
 
 export const openViewInExtension = (viewId, viewName, router) => {
-  console.log('openViewInExtension', viewId, viewName, router);
   if (isExtensionOpen()) {
     mesheryEventBus.publish({
-      type: 'OPEN_VIEW_IN_EXTENSION',
+      type: MESHERY_EXTENSION_EVENT.OpenViewInExtension,
       data: {
         viewId,
         viewName,

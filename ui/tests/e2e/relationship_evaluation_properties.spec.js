@@ -120,15 +120,12 @@ function deleteAtPath(obj, pathSegments) {
 }
 
 async function evaluateDesign(request, design) {
-  const resp = await request.post(
-    `${ENV.MESHERY_SERVER_URL}/api/meshmodels/relationships/evaluate`,
-    {
-      data: {
-        design: { ...design, relationships: [] },
-        options: { returnDiffOnly: false, trace: false },
-      },
+  const resp = await request.post(`${ENV.MESHERY_SERVER_URL}/api/registry/relationships/evaluate`, {
+    data: {
+      design: { ...design, relationships: [] },
+      options: { returnDiffOnly: false, enableTrace: false },
     },
-  );
+  });
   expect(resp.ok()).toBeTruthy();
   return resp.json();
 }
@@ -237,11 +234,11 @@ test.describe('Relationship Evaluation Properties', { tag: '@relationship' }, ()
 
         // Step 4: Re-evaluate WITH relationships so the engine patches values back
         const resp = await request.post(
-          `${ENV.MESHERY_SERVER_URL}/api/meshmodels/relationships/evaluate`,
+          `${ENV.MESHERY_SERVER_URL}/api/registry/relationships/evaluate`,
           {
             data: {
               design: tampered,
-              options: { returnDiffOnly: false, trace: false },
+              options: { returnDiffOnly: false, enableTrace: false },
             },
           },
         );
@@ -268,11 +265,11 @@ test.describe('Relationship Evaluation Properties', { tag: '@relationship' }, ()
 
         // Pass design WITH relationships intact for re-evaluation
         const resp = await request.post(
-          `${ENV.MESHERY_SERVER_URL}/api/meshmodels/relationships/evaluate`,
+          `${ENV.MESHERY_SERVER_URL}/api/registry/relationships/evaluate`,
           {
             data: {
               design,
-              options: { returnDiffOnly: false, trace: false },
+              options: { returnDiffOnly: false, enableTrace: false },
             },
           },
         );

@@ -1,7 +1,7 @@
 ---
 title: Litmus Chaos
 subtitle: Collaborative and visual infrastructure as design for Litmus Chaos
-image: /extensions/models/litmus-core/icons/color/litmus-core-color.svg
+image: extensions/models/litmus-core/icons/color/litmus-core-color.svg
 aliases: /extensibility/integrations/litmus-core
 docURL: https://docs.meshery.io/extensibility/integrations/litmus-core
 description: 

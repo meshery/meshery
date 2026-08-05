@@ -1,7 +1,7 @@
 ---
 title: Fluentbit Operator
 subtitle: Collaborative and visual infrastructure as design for Fluentbit Operator
-image: /extensions/models/fluentbit-operator/icons/color/fluentbit-operator-color.svg
+image: extensions/models/fluentbit-operator/icons/color/fluentbit-operator-color.svg
 aliases: /extensibility/integrations/fluentbit-operator
 docURL: https://docs.meshery.io/extensibility/integrations/fluentbit-operator
 description: 

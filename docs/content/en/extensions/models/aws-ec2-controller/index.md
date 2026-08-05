@@ -1,7 +1,7 @@
 ---
 title: AWS EC2
 subtitle: Collaborative and visual infrastructure as design for AWS EC2
-image: /extensions/models/aws-ec2-controller/icons/color/aws-ec2-controller-color.svg
+image: extensions/models/aws-ec2-controller/icons/color/aws-ec2-controller-color.svg
 aliases: /extensibility/integrations/aws-ec2-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-ec2-controller
 description: 
@@ -142,8 +142,8 @@ relationships:
 - type: "non-binding"
   kind: "edge"
   description: ""
-- type: "non-binding"
-  kind: "edge"
+- type: "parent"
+  kind: "hierarchical"
   description: ""
 - type: "non-binding"
   kind: "edge"
@@ -151,11 +151,11 @@ relationships:
 - type: "non-binding"
   kind: "edge"
   description: ""
-- type: "non-binding"
-  kind: "edge"
+- type: "parent"
+  kind: "hierarchical"
   description: ""
-- type: "non-binding"
-  kind: "edge"
+- type: "parent"
+  kind: "hierarchical"
   description: ""
 - type: "parent"
   kind: "hierarchical"

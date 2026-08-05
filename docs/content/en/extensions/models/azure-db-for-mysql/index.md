@@ -1,7 +1,7 @@
 ---
 title: Azure DB for MySQL
 subtitle: Collaborative and visual infrastructure as design for Azure DB for MySQL
-image: /extensions/models/azure-db-for-mysql/icons/color/azure-db-for-mysql-color.svg
+image: extensions/models/azure-db-for-mysql/icons/color/azure-db-for-mysql-color.svg
 aliases: /extensibility/integrations/azure-db-for-mysql
 docURL: https://docs.meshery.io/extensibility/integrations/azure-db-for-mysql
 description: 

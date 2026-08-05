@@ -1,7 +1,7 @@
 ---
 title: Pravega
 subtitle: Collaborative and visual infrastructure as design for Pravega
-image: /extensions/models/pravega/icons/color/pravega-color.svg
+image: extensions/models/pravega/icons/color/pravega-color.svg
 aliases: /extensibility/integrations/pravega
 docURL: https://docs.meshery.io/extensibility/integrations/pravega
 description: 

@@ -1,7 +1,7 @@
 ---
 title: Loki
 subtitle: Collaborative and visual infrastructure as design for Loki
-image: /extensions/models/loki/icons/color/loki-color.svg
+image: extensions/models/loki/icons/color/loki-color.svg
 aliases: /extensibility/integrations/loki
 docURL: https://docs.meshery.io/extensibility/integrations/loki
 description: Loki is a horizontally scalable, highly available, multi-tenant log aggregation system inspired by Prometheus. It is designed to be very cost effective and easy to operate. It does not index the contents of the logs, but rather a set of labels for each log stream.
