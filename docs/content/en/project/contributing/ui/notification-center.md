@@ -110,7 +110,7 @@ The BodySectionRenderer is responsible for formatting and rendering raw text str
 
 ### ArrayRenderer
 
-The ArrayRenderer is responsible for rendering an array of items in a recursive manner, presenting them as a bulletized list using the FormatStructuredData.
+The ArrayRenderer is responsible for rendering an array of items as an ordered list. Each item is wrapped in a `Level` context to track nesting depth and passed to `DynamicFormatter`, which handles rendering based on the item's type — strings, nested arrays, or objects are each rendered differently.
 
 ### KeyValueRenderer
 
