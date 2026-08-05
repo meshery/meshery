@@ -26,6 +26,7 @@ vi.mock('../../store', () => ({ store: { dispatch } }));
 
 import { api } from '../index';
 import { designsApi } from '../design';
+import { appendInvalidatesTags } from '../utils';
 
 // Nothing in the generated client provides the schemas-side `Design_designs`
 // tag, so this stands in for any future consumer of it: it is the only way to
@@ -58,13 +59,16 @@ const methodOf = (call: unknown[]) =>
     : (call[0] as Request).method;
 
 /**
- * `enhanceEndpoints` applies a partial definition with
- * `Object.assign(getEndpointDefinition(context, name) || {}, partial)`. When the
- * named endpoint is absent at enhance time the assignment lands on a throwaway
- * object and the enhancement is a SILENT no-op. These tests pin both halves of
- * the design-import wiring: that `importDesign` really is the generated endpoint
- * being enhanced, and that an import actually invalidates the local `designs`
- * tag the design lists provide.
+ * `design.ts` attaches the local `designs` cache tag to the schemas-generated
+ * `importDesign` endpoint through the callback form of `enhanceEndpoints`, which
+ * is handed the live definition from `getEndpointDefinition(context, name)`. That
+ * lookup has no fallback, so a missing endpoint fails at module load instead of
+ * enhancing a throwaway object the way the object form
+ * (`Object.assign(getEndpointDefinition(...) || {}, partial)`) silently would.
+ * These tests pin the three parts of that wiring: that `importDesign` is the
+ * generated endpoint and no local duplicate has come back, that an import
+ * invalidates the local `designs` tag the design lists provide, and that the tags
+ * schemas itself declares are still invalidated alongside it.
  */
 describe('importDesign — schemas-generated endpoint with local cache tag', () => {
   const setup = () => {
@@ -105,12 +109,17 @@ describe('importDesign — schemas-generated endpoint with local cache tag', () 
 
   it('is the schemas-generated endpoint, never a locally re-declared one', () => {
     // `enhanceEndpoints` only ever mutates an existing definition, so a defined
-    // `importDesign` proves the generated endpoint was there to enhance. If this
-    // fails, the enhancement in design.ts is a no-op and the local `designs` tag
-    // silently stops being invalidated on import.
+    // `importDesign` is the generated one design.ts enhanced.
     expect(api.endpoints.importDesign).toBeDefined();
     // The local duplicate that used to declare POST /api/pattern/import.
     expect(designsApi.endpoints.importPattern).toBeUndefined();
+  });
+
+  it('names the endpoint and the package if schemas stops generating it', () => {
+    const attachTag = appendInvalidatesTags('importDesign', { type: 'designs' });
+    expect(() => attachTag(undefined)).toThrow(/importDesign/);
+    expect(() => attachTag(undefined)).toThrow(/@meshery\/schemas/);
+    expect(() => attachTag(undefined)).toThrow(/renamed or removed/);
   });
 
   it('POSTs the generated /api/pattern/import request and refetches the designs list', async () => {

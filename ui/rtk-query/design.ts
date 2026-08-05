@@ -1,7 +1,7 @@
 import { urlEncodeParams } from '@/utils/utils';
 import { api, mesheryApiPath } from './index';
 import { ctxUrl } from '@/utils/multi-ctx';
-import { initiateQuery } from './utils';
+import { appendInvalidatesTags, initiateQuery } from './utils';
 import _ from 'lodash';
 
 const TAGS = {
@@ -13,21 +13,11 @@ export const designsApi = api
     addTagTypes: [TAGS.DESIGNS],
     endpoints: {
       // `importDesign` (POST /api/pattern/import) is the schemas-generated
-      // endpoint - the request is NOT re-declared here. The callback form of
-      // `enhanceEndpoints` hands over the generated definition, so the local
-      // `designs` tag the design lists provide is appended to whatever tags
-      // schemas declares; the object form would `Object.assign` over them. This
-      // is the cache-tag ergonomics wrapper AGENTS.md permits, not a second
-      // declaration of the request.
-      importDesign: (definition) => {
-        const generatedTags = definition.invalidatesTags;
-        definition.invalidatesTags = (result, error, arg, meta) => [
-          ...(typeof generatedTags === 'function'
-            ? generatedTags(result, error, arg, meta)
-            : (generatedTags ?? [])),
-          { type: TAGS.DESIGNS },
-        ];
-      },
+      // endpoint - the request is NOT re-declared here. `appendInvalidatesTags`
+      // adds the local `designs` tag the design lists provide on top of the tags
+      // schemas already declares. This is the cache-tag ergonomics wrapper
+      // AGENTS.md permits, not a second declaration of the request.
+      importDesign: appendInvalidatesTags('importDesign', { type: TAGS.DESIGNS }),
     },
   })
   .injectEndpoints({

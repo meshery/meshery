@@ -108,16 +108,22 @@ across `meshery/meshery` and `meshery-cloud`.
 
 ### Attaching local cache tags to a generated endpoint
 
-`ui/rtk-query/index.js` re-exports the schemas client itself (`mesheryApi as api`),
-so every `ui/rtk-query/*` module injects into that same API instance — generated
+`ui/rtk-query/index.ts` re-exports the schemas client itself (`mesheryApi as api`),
+so every `ui/rtk-query/*` module injects into that same API instance - generated
 hooks are therefore already available from those local modules and need no
-re-declaration. To give a generated endpoint a local cache tag, pass it through
-`enhanceEndpoints({ endpoints: { <operationId>: { invalidatesTags: [...] } } })`
-and re-export the generated hook; list the generated tag alongside the local one
-so the schemas-side invalidation is not dropped. See the `importDesign`
-enhancement in `ui/rtk-query/design.ts`. Re-declaring the endpoint with
-`builder.mutation` to get a tag is the forbidden path above — it forks the wire
-contract silently.
+re-declaration. To give a generated endpoint a local cache tag, use the **callback
+form** of `enhanceEndpoints` via `appendInvalidatesTags` from `ui/rtk-query/utils`,
+then re-export the generated hook - see the `importDesign` enhancement in
+`ui/rtk-query/design.ts`. Do **not** use the object form
+(`{ <operationId>: { invalidatesTags: [...] } }`): `enhanceEndpoints` applies an
+object partial with `Object.assign(getEndpointDefinition(...) || {}, partial)`, so
+it REPLACES `invalidatesTags` wholesale and every schemas-side tag has to be
+hand-relisted - drift the moment schemas adds one. The callback form is handed the
+live definition by reference, so the local tag is appended to the generated ones
+and cannot drop them; that same lookup has no fallback, so `appendInvalidatesTags`
+fails loudly and by name when the operationId is gone from schemas rather than
+enhancing a throwaway object. Re-declaring the endpoint with `builder.mutation` to
+get a tag is the forbidden path above - it forks the wire contract silently.
 
 On the Go side, schemas ships **models only, no generated HTTP client**, so
 `mesheryctl` builds request bodies from the generated structs (and, for `oneOf`
