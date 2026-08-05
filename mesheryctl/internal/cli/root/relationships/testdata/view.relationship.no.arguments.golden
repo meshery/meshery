@@ -2,6 +2,5 @@
 
 Usage: mesheryctl relationship view [model-name]
 Run 'mesheryctl relationship view --help' to see detailed help message
-See https://docs.meshery.io/reference/mesheryctl/relationships/view for usage details
+See https://docs.meshery.io/reference/references/mesheryctl/relationship/view for usage details
 
-TODO: find correct link
