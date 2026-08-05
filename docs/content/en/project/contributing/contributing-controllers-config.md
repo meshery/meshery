@@ -130,16 +130,50 @@ Contributors changing controller behavior must account for them.
 
 | Setting | Where | Storage | Notes |
 | --- | --- | --- | --- |
-| `MESHSYNC_DEFAULT_DEPLOYMENT_MODE` | Server env / `viper` | Process config | Last-resort fallback when no layer sets a deployment mode. Logged at boot. |
-| MeshSync deployment mode (wizard) | Connection Wizard -> **MeshSync Mode** step | `connection.metadata.meshsync_deployment_mode` | Registration-time and reconfigure-time picker. Writes the legacy key directly via `PUT /api/integrations/connections/{id}/meshsync-mode`. |
-| MeshSync deployment mode (per-context, at import) | Connection Wizard -> kubeconfig context review | Same key, per context | Set on every Kubernetes connection at registration. |
+| `MESHSYNC_DEFAULT_DEPLOYMENT_MODE` | Server env / `viper` | Process config | Fallback when no layer and no materialization sets a deployment mode. Logged at boot. |
+| MeshSync deployment mode (wizard) | Connection Wizard -> **MeshSync Mode** step | `controllers_config.operator.deploymentMode` | Reconfigure-time picker. Writes the override through `connections.SetDeploymentModeOverride` via `POST /api/integrations/connections/{id}/actions` (`setMeshsyncMode`). |
+| MeshSync deployment mode (per-context, at import) | Connection Wizard -> kubeconfig context review | Same field, per context | Written only when the user actually picks one; otherwise the connection inherits. |
 | Operator status | GraphQL `changeOperatorStatus` | Cluster state | Deploys/undeploys the operator directly, bypassing the layered document. |
 
-`meshsync_deployment_mode` is the **legacy materialization** of
-`operator.deploymentMode`. Every consumer that predates the layered document -
-the connection state machine, the header status chips, the kubeconfig flows -
-reads that key, so `UpdateConnectionControllersConfig` rewrites it on every
-update using the full precedence chain.
+### One store for the deployment mode
+
+`connection.metadata.meshsync_deployment_mode` used to carry two different
+facts under one key - the user's explicit per-connection choice *and* a
+materialized cache of the resolved mode - and that ambiguity was the root cause
+of two separate defects. The two are now separated
+(`server/models/connections/deployment_mode_resolution.go`):
+
+- **`controllers_config.operator.deploymentMode`** is the only store of the
+  explicit choice. Every entry point - the wizard's MeshSync Mode step, the
+  kubeconfig import picker, the controllers editor - writes it through
+  `connections.SetDeploymentModeOverride`, so no two controls can disagree
+  about what a connection is set to.
+- **`meshsync_deployment_mode`** is only the materialization of the *resolved*
+  mode, written through `connections.MaterializeMeshsyncDeploymentMode` and
+  read by the consumers that predate the layered document (the connection state
+  machine, the header status chips, the kubeconfig flows).
+
+`connections.ResolveDeploymentMode` is the single decision point, and it reports
+the layer it resolved from:
+
+| Precedence | Layer | Reported as |
+| --- | --- | --- |
+| 1 (highest) | Layered document (per-connection override over server-wide default) | `layeredConfig` |
+| 2 | Materialized `meshsync_deployment_mode` | `legacyConnectionMetadata` |
+| 3 | `MESHSYNC_DEFAULT_DEPLOYMENT_MODE` | `serverEnvDefault` |
+| 4 (lowest) | Compiled-in default (`embedded`) | `builtIn` |
+
+Ranking the materialization *below* the layered document is what lets a
+server-wide default reach an existing connection: every Kubernetes connection
+has that key written at registration, so while it sat on top no fan-out could
+ever change a mode. It survives as a compatibility floor for connections
+registered before the layered document existed - their recorded mode is kept
+when, and only when, no layer sets one.
+
+A server-wide default change is not just a document to re-apply.
+`reconcileInheritedDeploymentMode` persists the refreshed materialization and
+drives the same undeploy/redeploy path the wizard uses, so an inheriting
+connection actually switches modes on the cluster.
 
 ## API
 
@@ -169,18 +203,20 @@ Tracked here so they are not rediscovered. Each is a defect, not a design.
    Deployment. Nothing reads `operator.version`. A user who sets it sees no
    effect and no error.
 
-2. **A server-wide `operator.deploymentMode` change cannot reach an existing
-   connection.** `applyControllersConfigToConnection` resolves the mode as
-   `metadata.meshsync_deployment_mode` first, falling back to the resolved
-   document only when that key is undefined. Every Kubernetes connection has
-   that key written at registration, so the fallback is unreachable and the
-   fanned-out re-apply silently keeps the old mode.
+2. **The form ignores the dependency structure.** Meshery Operator manages
+   MeshSync and Broker, so in `embedded` mode there is no in-cluster MeshSync,
+   no Broker and no `meshery.io` custom resources: `meshsync.version`,
+   `meshsync.replicas`, `meshsync.watchList` and every `broker.*` field are
+   inert and the server reports them in
+   `ControllersConfigApplyResult.Skipped`. The form still renders all three
+   sections as equally-live groups, so a user in embedded mode can set Broker
+   replicas, save, and see a success toast for a change that reached nothing.
 
-3. **The wizard's mode picker and the layered override diverge.** The wizard
-   writes `metadata.meshsync_deployment_mode` alone, leaving any
-   `controllers_config.operator.deploymentMode` untouched. The controllers
-   editor then reports an "Override" chip for a mode the connection is not
-   running.
+3. **The apply result is invisible.** `ApplyControllersConfigToCluster` returns
+   which custom resources it patched, whether MeshSync was restarted, and a
+   `Skipped[]` list with human-readable reasons. That result only reaches event
+   metadata; both editors report "saved" either way, so a save that changed
+   nothing on the cluster looks identical to one that changed everything.
 
 ## Test coverage
 
@@ -193,6 +229,9 @@ Unit coverage:
 
 - `server/models/connections/controllers_config_test.go` - precedence, atomic
   collection merge, metadata round-trip, validation.
+- `server/models/connections/deployment_mode_resolution_test.go` - deployment
+  mode precedence (a server-wide default reaching an inheriting connection) and
+  the wizard/editor convergence on one store.
 - `server/models/controllers_config_apply_test.go` - cluster propagation,
   withdrawal, restart-only-on-watch-list-change.
 - `ui/components/configuration/__tests__/ControllersConfigForm.test.tsx` -
