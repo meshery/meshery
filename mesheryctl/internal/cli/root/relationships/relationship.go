@@ -29,7 +29,7 @@ import (
 
 var (
 	availableSubcommands = []*cobra.Command{viewCmd, generateCmd, listCmd, searchCmd}
-	relationshipApiPath  = "api/meshmodels/relationships"
+	relationshipApiPath  = "api/registry/relationships"
 )
 
 type MeshmodelRelationshipsAPIResponse struct {
