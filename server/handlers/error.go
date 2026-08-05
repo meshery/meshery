@@ -1045,7 +1045,7 @@ func ErrInvalidBase64Data(err error) error {
 // set, or neither. Emitted with HTTP 400 because the caller needs to
 // correct the request shape, not the server to recover.
 func ErrInvalidImportRequest(err error) error {
-	return errors.New(ErrInvalidImportRequestCode, errors.Alert, []string{"Invalid design import request"}, []string{err.Error()}, []string{"The request body did not match exactly one variant of the import oneOf — the File variant requires `file` and `file_name`, the URL variant requires `url`.", "Both variants were provided, or neither was."}, []string{"Send a request body with exactly one variant set: either {\"file\": <bytes>, \"file_name\": \"design.yml\"} or {\"url\": \"https://...\"}."})
+	return errors.New(ErrInvalidImportRequestCode, errors.Alert, []string{"Invalid design import request"}, []string{err.Error()}, []string{"The request body did not match exactly one variant of the import oneOf — the File variant requires `file` and `fileName`, the URL variant requires `url`.", "Both variants were provided, or neither was."}, []string{"Send a request body with exactly one variant set: either {\"file\": <bytes>, \"fileName\": \"design.yml\"} or {\"url\": \"https://...\"}."})
 }
 
 // ErrConvertToDesign wraps failures in the conversion pipeline that
