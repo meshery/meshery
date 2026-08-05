@@ -262,6 +262,18 @@ make golangci    # before Go commits
 make ui-lint     # before UI commits
 ```
 
+### QA Allure traceability (Test-Group-keyed reports)
+
+Test results feed the [meshery/qa](https://github.com/meshery/qa) Allure dashboard
+(qa.meshery.io), where each report is a filtered view over one shared result pool
+**keyed on the Test Plan Test Group** (Latest tab, col B) via the `testGroup`
+label. Emit it from both lanes: CLI via the `[tg=<Test Group>]` `@test` title
+token (parser + full token→label mapping in `mesheryctl/bats-to-allure.js`), UI
+via `allure.label('testGroup', …)` (see `ui/tests/e2e/connections.spec.ts` and
+the sheet↔code map `ui/tests/e2e/connections.testmap.ts`). Contract docs:
+`docs/content/en/project/contributing/{cli/tests.md,build-and-release.md}`.
+"Connection Lifecycle" is the first such report.
+
 ## Security & Compliance
 
 - Report vulnerabilities: [security@meshery.dev](mailto:security@meshery.dev) — acknowledged in 10 business days.
