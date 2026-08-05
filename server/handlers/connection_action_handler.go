@@ -107,26 +107,50 @@ func (h *Handler) setMeshsyncDeploymentModeAction(
 		return
 	}
 
-	oldMode := connections.MeshsyncDeploymentModeFromMetadata(existing.Metadata)
-	if oldMode == connections.MeshsyncDeploymentModeUndefined {
-		oldMode = h.MeshsyncDefaultDeploymentMode
-		if oldMode == connections.MeshsyncDeploymentModeUndefined {
-			oldMode = connections.MeshsyncDeploymentModeDefault
-		}
+	// Resolve the mode this connection is actually running through the same
+	// chain the rest of the server uses, rather than trusting the materialized
+	// cache alone: a server-wide default changed since the last write would
+	// otherwise make this handler compare against a stale value.
+	override, err := connections.ControllersConfigFromMetadata(existing.Metadata)
+	if err != nil {
+		h.log.Error(err)
+		writeMeshkitError(w, err, http.StatusBadRequest)
+		return
 	}
+	serverDefaults, err := models.GetControllersConfigDefaults(h.dbHandler)
+	if err != nil {
+		h.log.Error(err)
+		writeMeshkitError(w, err, http.StatusInternalServerError)
+		return
+	}
+	merged, _ := connections.ResolveControllersConfig(override, serverDefaults)
+	oldMode := connections.ResolveDeploymentMode(merged, existing.Metadata, h.MeshsyncDefaultDeploymentMode).Mode
 
 	// Idempotent: mode already at target — return current connection unchanged.
+	// An inherited mode that already equals the target is still recorded as an
+	// explicit override below only when it differs, so pressing "operator" on a
+	// connection already inheriting "operator" does not pin it.
 	if oldMode == newMode {
 		writeJSONMessage(w, existing, http.StatusOK)
 		return
 	}
 
 	// Server owns the merge: preserve all existing metadata, set only the mode.
+	// The choice is stored once, in the layered controllers-configuration
+	// override — the same field the controllers editor writes — so the two
+	// entry points can never disagree about what this connection is set to.
+	// The meshsync_deployment_mode entry is refreshed purely as the
+	// materialization legacy consumers read.
 	metadata := existing.Metadata
 	if metadata == nil {
 		metadata = core.Map{}
 	}
-	connections.SetMeshsyncDeploymentModeToMetadata(metadata, newMode)
+	if err := connections.SetDeploymentModeOverride(metadata, newMode); err != nil {
+		h.log.Error(err)
+		writeMeshkitError(w, err, http.StatusBadRequest)
+		return
+	}
+	connections.MaterializeMeshsyncDeploymentMode(metadata, newMode)
 
 	// Persist to the connection identified by the URL id (never a nil id).
 	payload := &connections.ConnectionPayload{

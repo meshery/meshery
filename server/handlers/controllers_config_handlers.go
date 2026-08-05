@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"time"
@@ -148,29 +149,24 @@ func (h *Handler) UpdateConnectionControllersConfig(w http.ResponseWriter, req *
 		writeMeshkitError(w, err, http.StatusBadRequest)
 		return
 	}
-	// Materialize the effective deployment mode into the legacy
-	// meshsync_deployment_mode key so every existing consumer (state
-	// machine, header chips, kubeconfig flows) keeps working unchanged. The
-	// key is written on every update using the full precedence chain
-	// (override -> Settings-persisted server default -> server env default),
-	// not only when the override sets it: returning the field to Inherit
-	// therefore replaces a stale materialized override with the inherited
-	// mode, and the mode-change machinery below sees the correct desired
-	// mode.
+	// Refresh the materialized meshsync_deployment_mode cache so every consumer
+	// that predates the layered document (state machine, header chips,
+	// kubeconfig flows) keeps seeing the truth. The cache is recomputed from
+	// the layered document on every update, not only when the override sets a
+	// mode: returning the field to Inherit therefore replaces a stale
+	// materialization with the inherited mode, and the mode-change machinery
+	// below sees the correct desired mode. Resolution deliberately reads the
+	// *pre-update* cache only as a compatibility floor, so it can never mask
+	// the value the user just saved.
 	serverDefaults, err := models.GetControllersConfigDefaults(h.dbHandler)
 	if err != nil {
 		h.log.Error(err)
 		writeMeshkitError(w, err, http.StatusInternalServerError)
 		return
 	}
-	desiredMode := connections.DeploymentModeFromControllersConfig(override)
-	if desiredMode == connections.MeshsyncDeploymentModeUndefined {
-		desiredMode = connections.DeploymentModeFromControllersConfig(serverDefaults)
-	}
-	if desiredMode == connections.MeshsyncDeploymentModeUndefined {
-		desiredMode = h.MeshsyncDefaultDeploymentMode
-	}
-	connections.SetMeshsyncDeploymentModeToMetadata(metadata, desiredMode)
+	mergedForMode, _ := connections.ResolveControllersConfig(override, serverDefaults)
+	desiredMode := connections.ResolveDeploymentMode(mergedForMode, metadata, h.MeshsyncDefaultDeploymentMode)
+	connections.MaterializeMeshsyncDeploymentMode(metadata, desiredMode.Mode)
 
 	payload := &connections.ConnectionPayload{
 		ID:           connection.ID,
@@ -345,18 +341,12 @@ func (h *Handler) applyControllersConfigToConnection(
 	}
 	ctrlHelper.SetControllersConfig(merged)
 
-	// Deployment-mode precedence: explicit metadata entry -> mode carried by
-	// the resolved configuration (per-connection override merged over the
-	// Settings-persisted server default) -> server env default.
-	mode := connections.MeshsyncDeploymentModeFromMetadata(metadata)
-	if mode == connections.MeshsyncDeploymentModeUndefined {
-		mode = connections.DeploymentModeFromControllersConfig(merged)
-	}
-	if mode == connections.MeshsyncDeploymentModeUndefined {
-		mode = h.MeshsyncDefaultDeploymentMode
-	}
+	// The layered document outranks the materialized meshsync_deployment_mode
+	// cache, so a server-wide default change reaches connections that inherit
+	// it (see connections.ResolveDeploymentMode).
+	resolvedMode := connections.ResolveDeploymentMode(merged, metadata, h.MeshsyncDefaultDeploymentMode)
 
-	switch mode {
+	switch resolvedMode.Mode {
 	case connections.MeshsyncDeploymentModeEmbedded:
 		// Restart the in-process run so libmeshsync options (output
 		// filters) and, when the target cluster carries a MeshSync CR, the
@@ -388,6 +378,11 @@ func (h *Handler) reapplyControllersConfigToTrackedConnections(token string, use
 	if h.ConnectionToStateMachineInstanceTracker == nil {
 		return
 	}
+	serverDefaults, err := models.GetControllersConfigDefaults(h.dbHandler)
+	if err != nil {
+		h.log.Error(err)
+		return
+	}
 	h.ConnectionToStateMachineInstanceTracker.Range(func(connectionID core.Uuid, _ *machines.StateMachine) bool {
 		connection, _, err := provider.GetConnectionByID(token, connectionID)
 		if err != nil {
@@ -398,8 +393,79 @@ func (h *Handler) reapplyControllersConfigToTrackedConnections(token string, use
 			return true
 		}
 		eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+		// A deployment-mode change is not just a document to re-apply: it
+		// deploys or undeploys the operator and re-attaches the MeshSync data
+		// pipeline. Reconcile it first so the subsequent apply targets the
+		// cluster shape the new mode implies.
+		h.reconcileInheritedDeploymentMode(connection, serverDefaults, token, userID, provider, eventBuilder)
 		h.applyControllersConfigToConnection(context.Background(), connectionID, connection.Metadata, token, userID, provider, eventBuilder)
 		return true
+	})
+}
+
+// reconcileInheritedDeploymentMode brings one connection into line with the
+// server-wide defaults after they change. A connection that overrides the
+// deployment mode is untouched (its override still wins); a connection that
+// inherits follows the new default, which means persisting the refreshed
+// materialization and actually tearing down and re-attaching the controller
+// machinery. Without this, a server-wide mode change reached the document but
+// never the cluster.
+func (h *Handler) reconcileInheritedDeploymentMode(
+	connection *connections.Connection,
+	serverDefaults *controllersconfig.MesheryControllersConfig,
+	token string,
+	userID core.Uuid,
+	provider models.Provider,
+	eventBuilder *events.EventBuilder,
+) {
+	metadata := connection.Metadata
+	if metadata == nil {
+		metadata = core.Map{}
+		connection.Metadata = metadata
+	}
+
+	override, err := connections.ControllersConfigFromMetadata(metadata)
+	if err != nil {
+		// A malformed override invalidates only that layer; the server-wide
+		// default still applies. Surfaced to the user by the per-connection
+		// GET endpoint.
+		h.log.Error(err)
+		override = nil
+	}
+	merged, _ := connections.ResolveControllersConfig(override, serverDefaults)
+	desired := connections.ResolveDeploymentMode(merged, metadata, h.MeshsyncDefaultDeploymentMode)
+
+	previous := connections.MeshsyncDeploymentModeFromMetadata(metadata)
+	if previous == desired.Mode {
+		return
+	}
+	connections.MaterializeMeshsyncDeploymentMode(metadata, desired.Mode)
+
+	payload := &connections.ConnectionPayload{
+		ID:           connection.ID,
+		Kind:         connection.Kind,
+		SubType:      connection.SubType,
+		Type:         connection.ConnectionType,
+		Name:         connection.Name,
+		MetaData:     metadata,
+		Status:       connection.Status,
+		CredentialID: connection.CredentialID,
+	}
+	if _, err := provider.UpdateConnectionById(token, payload, connection.ID.String()); err != nil {
+		h.log.Error(err)
+		h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Error, "Failed to persist the MeshSync deployment mode inherited from the server-wide default.", map[string]interface{}{"error": err, "connectionId": connection.ID})
+		return
+	}
+
+	if err := h.reconcileMeshsyncDeploymentMode(context.Background(), connection.ID, desired.Mode, userID, provider); err != nil {
+		h.log.Error(err)
+		h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Error, "Failed to redeploy MeshSync for the deployment mode inherited from the server-wide default.", map[string]interface{}{"error": err, "connectionId": connection.ID})
+		return
+	}
+	h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Informational, fmt.Sprintf("MeshSync deployment mode changed from '%s' to '%s' following the server-wide default.", previous, desired.Mode), map[string]interface{}{
+		"meshsyncDeploymentModeOld": previous,
+		"meshsyncDeploymentModeNew": desired.Mode,
+		"connectionId":              connection.ID,
 	})
 }
 

@@ -184,12 +184,32 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		// Create context-specific metadata with appropriate meshsync deployment
 		// mode. Resolve the mode before any rename so the lookup still keys off
 		// the discovered context ID.
-		k8sContextsMetadata := make(map[string]any, 1)
-		meshsyncMode := getMeshsyncModeForContext(ctx)
-		connections.SetMeshsyncDeploymentModeToMetadata(
-			k8sContextsMetadata,
-			connections.MeshsyncDeploymentModeFromString(meshsyncMode),
-		)
+		//
+		// A mode picked here is an explicit per-context choice, so it is stored
+		// where every explicit choice is stored - the layered
+		// controllers-configuration override - and only materialized into
+		// meshsync_deployment_mode for the consumers that read that cache.
+		// Picking nothing writes neither, leaving the connection inheriting the
+		// server-wide default (SaveK8sContext seeds the cache).
+		k8sContextsMetadata := make(map[string]any, 2)
+		meshsyncMode := connections.MeshsyncDeploymentModeFromString(getMeshsyncModeForContext(ctx))
+		if meshsyncMode != connections.MeshsyncDeploymentModeUndefined {
+			if modeErr := connections.SetDeploymentModeOverride(k8sContextsMetadata, meshsyncMode); modeErr != nil {
+				// Recording the choice in only one of the two stores is exactly
+				// the divergence this write-through exists to prevent, so the
+				// context is reported as errored rather than imported with a
+				// mode the controllers editor would contradict.
+				h.log.Error(modeErr)
+				saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, *ctx)
+				metadata["description"] = fmt.Sprintf("Unable to record the MeshSync deployment mode for context \"%s\" at %s", ctx.Name, ctx.Server)
+				metadata["error"] = modeErr
+				event := eventBuilder.WithSeverity(events.Error).WithDescription(metadata["description"].(string)).WithMetadata(metadata).Build()
+				_ = provider.PersistEvent(*event, token)
+				go h.config.EventBroadcaster.Publish(userID, event)
+				continue
+			}
+			connections.MaterializeMeshsyncDeploymentMode(k8sContextsMetadata, meshsyncMode)
+		}
 
 		// Apply an optional name override. The identity is derived from the name,
 		// so regenerate the context ID to keep the struct's ID in sync with the
