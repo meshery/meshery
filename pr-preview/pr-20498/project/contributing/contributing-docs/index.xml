@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Contributing to Meshery Docs on Documentation</title><link>/pr-preview/pr-20498/project/contributing/contributing-docs/</link><description>Recent content in Contributing to Meshery Docs on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/pr-preview/pr-20498/project/contributing/contributing-docs/index.xml" rel="self" type="application/rss+xml"/><item><title>Shortcode Formatting Examples</title><link>/pr-preview/pr-20498/project/contributing/contributing-docs/shortcode-examples/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-20498/project/contributing/contributing-docs/shortcode-examples/</guid><description>&lt;p&gt;The Meshery documentation utilizes a variety of shortcodes to create rich, formatted content such as callouts, alerts, and embedded media.&lt;/p&gt;
+&lt;p&gt;This page serves as a visual reference guide for documentation contributors. It allows you to see exactly how these shortcodes render on the live site before you use them. Below, you will find the required markdown syntax to invoke each custom Meshery shortcode, followed immediately by its rendered output.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="meshery-custom-shortcodes"&gt;
+	Meshery Custom Shortcodes
+&lt;/h2&gt;
+&lt;h3 id="1-discuss-shortcode"&gt;
+	1. Discuss Shortcode
+&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;discuss&lt;/code&gt; shortcode renders a static alert box linking to the Meshery Discussion Forum. It does not require any parameters.&lt;/p&gt;</description></item></channel></rss>
