@@ -1,12 +1,26 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach, afterAll } from 'vitest';
 import { configureStore } from '@reduxjs/toolkit';
 
 // The schemas client reads its base URL from the environment at module-load
 // time, and the app relies on a relative base in the browser. Under the test
 // runner a relative base has no origin to resolve against, so pin an absolute
 // one before the client is imported (vi.hoisted runs ahead of the imports).
-vi.hoisted(() => {
-  process.env.RTK_MESHERY_ENDPOINT_PREFIX = 'http://meshery.test';
+//
+// Use the same value every other rtk-query suite uses, and restore whatever was
+// there afterwards: test files sharing a worker process share `process.env`, so
+// a divergent value left behind here is a way for suite order to start mattering.
+const { previousEndpointPrefix } = vi.hoisted(() => {
+  const previous = process.env.RTK_MESHERY_ENDPOINT_PREFIX;
+  process.env.RTK_MESHERY_ENDPOINT_PREFIX = 'http://localhost';
+  return { previousEndpointPrefix: previous };
+});
+
+afterAll(() => {
+  if (previousEndpointPrefix === undefined) {
+    delete process.env.RTK_MESHERY_ENDPOINT_PREFIX;
+  } else {
+    process.env.RTK_MESHERY_ENDPOINT_PREFIX = previousEndpointPrefix;
+  }
 });
 
 // design.ts pulls in @/utils/utils + @/utils/multi-ctx, which transitively

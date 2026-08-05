@@ -11,38 +11,58 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_importPattern_DisplayErrorsMissingFlags(t *testing.T) {
-	type args struct {
-		sourceType string
-		file       string
-		patternURL string
-	}
-
+// Test_designImport_FlagValidation covers the two validation paths
+// `mesheryctl design import` actually has, and asserts the error each one
+// returns is the expected one.
+//
+// It previously called importPattern directly. importPattern performs no flag
+// validation at all - the source type is checked in RunE via
+// retrieveProvidedSourceType, and the required -f flag in the command's Args -
+// so both cases were passing on an incidental "no such file or directory" from
+// os.ReadFile while the declared `want` was never compared to anything. Both
+// assertions below fail if that error identity regresses.
+func Test_designImport_FlagValidation(t *testing.T) {
 	tests := []struct {
-		name    string
-		args    args
-		want    error
-		wantErr bool
+		name string
+		run  func(t *testing.T) error
+		want error
 	}{
 		{
-			name:    "given invalid source type when design import then error is thrown",
-			args:    args{"invalid source type", "file.yaml", ""},
-			want:    ErrInValidSource("invalid source type", validDesignSourceTypes),
-			wantErr: true,
+			name: "given invalid source type when design import then error is thrown",
+			run: func(_ *testing.T) error {
+				_, err := retrieveProvidedSourceType("invalid source type", validDesignSourceTypes)
+				return err
+			},
+			want: ErrInValidSource("invalid source type", validDesignSourceTypes),
 		},
 		{
-			name:    "given missing file flag when design import then error is thrown",
-			args:    args{"helm", "", ""},
-			want:    ErrDesignFileNotProvided(),
-			wantErr: true,
+			name: "given missing file flag when design import then error is thrown",
+			run: func(t *testing.T) error {
+				// `file` is a package-level flag target shared by every design
+				// subcommand, so restore it rather than leaving it blank for
+				// whatever test runs next.
+				previous := file
+				file = ""
+				t.Cleanup(func() { file = previous })
+
+				return importCmd.Args(importCmd, nil)
+			},
+			want: ErrDesignFileNotProvided(),
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := importPattern(tt.args.sourceType, tt.args.file, tt.args.patternURL)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("importPattern() error = %v, wantErr %v", err, tt.wantErr)
-				return
+			// The Args validator logs before returning; without this the
+			// nil logger panics.
+			_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+			err := tt.run(t)
+			if err == nil {
+				t.Fatalf("expected error %v, got nil", tt.want)
+			}
+			if err.Error() != tt.want.Error() {
+				t.Fatalf("error mismatch\n got: %v\nwant: %v", err, tt.want)
 			}
 		})
 	}
