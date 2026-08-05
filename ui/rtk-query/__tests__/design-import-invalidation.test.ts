@@ -27,6 +27,18 @@ vi.mock('../../store', () => ({ store: { dispatch } }));
 import { api } from '../index';
 import { designsApi } from '../design';
 
+// Nothing in the generated client provides the schemas-side `Design_designs`
+// tag, so this stands in for any future consumer of it: it is the only way to
+// observe from the outside that the enhancement kept the generated tag.
+const schemasTaggedApi = api.injectEndpoints({
+  endpoints: (builder) => ({
+    designsTaggedBySchemas: builder.query({
+      query: () => '/api/test/schemas-tagged-designs',
+      providesTags: ['Design_designs'],
+    }),
+  }),
+});
+
 const jsonResponse = (body: unknown) =>
   Promise.resolve(
     new Response(JSON.stringify(body), {
@@ -55,22 +67,7 @@ const methodOf = (call: unknown[]) =>
  * tag the design lists provide.
  */
 describe('importDesign — schemas-generated endpoint with local cache tag', () => {
-  beforeEach(() => {
-    vi.restoreAllMocks();
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
-  it('is already present on the schemas client before design.ts enhances it', () => {
-    // If this ever fails, the enhanceEndpoints call in design.ts is a no-op and
-    // the local `designs` tag silently stops being invalidated on import.
-    expect(api.endpoints.importDesign).toBeDefined();
-    expect(designsApi.endpoints.importDesign).toBe(api.endpoints.importDesign);
-  });
-
-  it('POSTs the generated /api/pattern/import request and refetches the designs list', async () => {
+  const setup = () => {
     const fetchMock = vi.fn((input: RequestInfo | URL) => {
       const url = typeof input === 'string' ? input : (input as Request).url;
       if (url.includes('/api/pattern/import')) {
@@ -85,6 +82,40 @@ describe('importDesign — schemas-generated endpoint with local cache tag', () 
       middleware: (getDefault) => getDefault().concat(api.middleware),
     });
 
+    return { fetchMock, store };
+  };
+
+  const importDesign = (store: ReturnType<typeof setup>['store']) =>
+    store
+      .dispatch(
+        designsApi.endpoints.importDesign.initiate({
+          body: { url: 'https://example.com/design.yaml', name: 'Imported design' },
+        }),
+      )
+      .unwrap();
+
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
+
+  it('is the schemas-generated endpoint, never a locally re-declared one', () => {
+    // `enhanceEndpoints` only ever mutates an existing definition, so a defined
+    // `importDesign` proves the generated endpoint was there to enhance. If this
+    // fails, the enhancement in design.ts is a no-op and the local `designs` tag
+    // silently stops being invalidated on import.
+    expect(api.endpoints.importDesign).toBeDefined();
+    // The local duplicate that used to declare POST /api/pattern/import.
+    expect(designsApi.endpoints.importPattern).toBeUndefined();
+  });
+
+  it('POSTs the generated /api/pattern/import request and refetches the designs list', async () => {
+    const { fetchMock, store } = setup();
+
     // Subscribe to the designs list so RTK will act on the invalidation.
     const listSub = store.dispatch(
       designsApi.endpoints.getPatterns.initiate({ page: 0, pagesize: 10 }),
@@ -92,13 +123,7 @@ describe('importDesign — schemas-generated endpoint with local cache tag', () 
     await listSub;
     const fetchesAfterList = fetchMock.mock.calls.length;
 
-    await store
-      .dispatch(
-        designsApi.endpoints.importDesign.initiate({
-          body: { url: 'https://example.com/design.yaml', name: 'Imported design' },
-        }),
-      )
-      .unwrap();
+    await importDesign(store);
 
     const importCall = fetchMock.mock.calls.find((call) =>
       urlOf(call).includes('/api/pattern/import'),
@@ -115,5 +140,25 @@ describe('importDesign — schemas-generated endpoint with local cache tag', () 
     expect(listRefetches.length, 'designs list refetched after import').toBeGreaterThan(0);
 
     listSub.unsubscribe();
+  });
+
+  it('keeps the tags the generated definition declares, not just the local one', async () => {
+    const { fetchMock, store } = setup();
+
+    const schemasTagSub = store.dispatch(
+      schemasTaggedApi.endpoints.designsTaggedBySchemas.initiate(undefined),
+    );
+    await schemasTagSub;
+    const fetchesAfterSubscribe = fetchMock.mock.calls.length;
+
+    await importDesign(store);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    const refetches = fetchMock.mock.calls
+      .slice(fetchesAfterSubscribe)
+      .filter((call) => urlOf(call).includes('/api/test/schemas-tagged-designs'));
+    expect(refetches.length, 'Design_designs consumer refetched after import').toBeGreaterThan(0);
+
+    schemasTagSub.unsubscribe();
   });
 });
