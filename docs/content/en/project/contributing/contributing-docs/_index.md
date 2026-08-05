@@ -1,7 +1,9 @@
 ---
 title: Contributing to Meshery Docs
-description: How to contribute to Meshery Docs.
+display_title: false
 categories: [contributing]
+display-suggested-reading: false
+description: How to contribute to Meshery Docs.
 ---
 
 {{% alert color="info" title="Important" %}}
