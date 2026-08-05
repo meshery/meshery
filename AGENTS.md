@@ -255,6 +255,28 @@ make helm-docs      # Generate Helm chart docs
 - E2E (Playwright): `make ui-integration-tests` or `npm run test:e2e` in `ui/`
 - Setup: `make test-setup-ui`
 
+**The E2E job is gated on the Playwright verdict - keep it that way.** The gate is the
+final step of `.github/workflows/test-e2e.yml` and keys on
+`steps.playwright-tests.outcome`, *not* `.conclusion`: the run step keeps
+`continue-on-error: true` so artifacts upload on failure, which makes its `conclusion`
+permanently `success`. Gating on `conclusion` silently disarms the gate. That is how the
+suite spent its history reporting `success` 19 times out of 19 across the 20
+`Meshery Build And Test` runs to 2026-08-05 - 8 of them with real test failures, 0 failing
+the build - which made every test in it decorative. Never re-disarm it to get a red build
+green; fix or `test.fixme` the test, with the tracking issue in the annotation.
+
+To run the suite locally you need three things, and the failure when one is missing does
+not name it:
+
+1. `make ui-provider-build` first. A source checkout has no `provider-ui/out`, so the
+   server 404s `/provider`; every project's auth setup then dies on a provider-dropdown
+   click timeout that looks like a UI bug.
+2. A server on `:9081` (`make server`, then pick the Local provider) and `make ui` on
+   `:3000`.
+3. `MESHERY_SERVER_URL=http://localhost:3000` on the Playwright run - the dev server
+   proxies `/api`, `/provider` and the auth routes to `:9081`, and the built UI that
+   `:9081` would otherwise serve does not exist in a source checkout.
+
 ### Local Validation
 
 ```bash

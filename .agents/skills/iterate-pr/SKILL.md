@@ -293,15 +293,15 @@ identity and do not fall back silently.
 - `--release`: complete `--merge` mode merge, then cut a release:
   1. Find the draft release tag:
      ```bash
-     gh release list --repo layer5io/meshery-cloud --json tagName,isDraft --jq '.[] | select(.isDraft) | .tagName'
+     gh release list --repo meshery/meshery --json tagName,isDraft --jq '.[] | select(.isDraft) | .tagName'
      ```
   2. Review draft notes:
      ```bash
-     gh release view vX.Y.Z --repo layer5io/meshery-cloud
+     gh release view vX.Y.Z --repo meshery/meshery
      ```
   3. Publish the release:
      ```bash
-     gh release edit vX.Y.Z --repo layer5io/meshery-cloud --draft=false --latest
+     gh release edit vX.Y.Z --repo meshery/meshery --draft=false --latest
      ```
 
 ## Exit Conditions
