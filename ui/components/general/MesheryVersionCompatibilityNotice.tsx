@@ -35,7 +35,9 @@ const MesheryVersionCompatibilityNotice: React.FC<MesheryVersionCompatibilityNot
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(upgradeCommand);
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(upgradeCommand);
+    }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -50,9 +52,7 @@ const MesheryVersionCompatibilityNotice: React.FC<MesheryVersionCompatibilityNot
         padding: theme.spacing(3),
         borderRadius: '12px',
         backgroundColor:
-          theme.palette.mode === 'dark'
-            ? 'rgba(255, 255, 255, 0.05)'
-            : 'rgba(0, 0, 0, 0.02)',
+          theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
         border: `1px solid ${
           theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)'
         }`,
@@ -112,8 +112,7 @@ const MesheryVersionCompatibilityNotice: React.FC<MesheryVersionCompatibilityNot
       <Box
         sx={{
           width: '100%',
-          backgroundColor:
-            theme.palette.mode === 'dark' ? '#1e1e1e' : '#f5f5f5',
+          backgroundColor: theme.palette.mode === 'dark' ? '#1e1e1e' : '#f5f5f5',
           borderRadius: '8px',
           padding: '8px 14px',
           display: 'flex',
@@ -121,9 +120,7 @@ const MesheryVersionCompatibilityNotice: React.FC<MesheryVersionCompatibilityNot
           justifyContent: 'space-between',
           marginBottom: theme.spacing(2.5),
           fontFamily: 'monospace',
-          border: `1px solid ${
-            theme.palette.mode === 'dark' ? '#333' : '#e0e0e0'
-          }`,
+          border: `1px solid ${theme.palette.mode === 'dark' ? '#333' : '#e0e0e0'}`,
         }}
       >
         <Typography
@@ -139,7 +136,7 @@ const MesheryVersionCompatibilityNotice: React.FC<MesheryVersionCompatibilityNot
         <CustomTooltip title={copied ? 'Copied!' : 'Copy command'}>
           <IconButton size="small" onClick={handleCopy} aria-label="Copy upgrade command">
             {copied ? (
-              <CheckIcon size={18} style={{ color: theme.palette.success.main }} />
+              <CheckIcon style={{ fontSize: 18, color: theme.palette.success.main }} />
             ) : (
               <ContentCopyIcon style={{ fontSize: 18 }} />
             )}
