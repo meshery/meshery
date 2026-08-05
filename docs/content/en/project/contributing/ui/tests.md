@@ -192,3 +192,38 @@ To filter and view only UI-related tests using the Sheet Views feature:
 2. Choose the pre-defined view labeled "UI"
 
 ![Meshery Test Plan Screenshot](../../images/meshery-test-plan-v0.8.0-ui.png)
+
+## Linking tests to the Test Plan (traceability)
+
+To make Playwright results traceable back to the Meshery Test Plan and to group
+them in the Allure report by behavior, tests are tagged with their Test Plan
+identifiers. The Kubernetes Connection suite is the reference implementation.
+
+- **`@TC-<n>`** - the Test Plan "Test #" (column A). Reuse the existing sheet
+  number for the scenario; never invent one, so the UI, CLI (BATS), and
+  reporting lanes line up on the same id.
+- **`@cut:<slug>`** - the "Component" under test (column C), slugified.
+- **`@client:ui`** and **`@connections`** - client and suite selectors, so a
+  behavior can be run in isolation with `--grep @connections`.
+
+The tag list and the matching Allure labels (`epic`, `feature`, `story`,
+`testId`, `componentUnderTest`, `client`) are produced from a single map so the
+spec stays declarative and the sheet ↔ code link lives in one place. For the
+connections suite that map is
+[`ui/tests/e2e/connections.testmap.ts`](https://github.com/meshery/meshery/blob/master/ui/tests/e2e/connections.testmap.ts):
+
+{{< code code=`import { annotateConnCase, connTags } from './connections.testmap';
+
+test(
+  'Register and connect a Kubernetes cluster via kubeconfig upload',
+  { tag: connTags('kubeconfigConnect') },
+  async ({ page }, testInfo) => {
+    annotateConnCase(testInfo, 'kubeconfigConnect'); // emits the shared Allure labels
+    // ...
+  },
+);` >}}
+
+Behaviors that do not yet have a Test Plan row use `connTagsUntracked('<Component>')`
+so they still land in the report grouped by component; graduate them into the
+map once a Test # is assigned. Run a single Test # with
+`npx playwright test --grep @TC-1012`.

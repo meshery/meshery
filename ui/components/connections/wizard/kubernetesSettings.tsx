@@ -9,6 +9,7 @@ import {
   Typography,
   SettingsIcon,
 } from '@sistent/sistent';
+import { Keys } from '@meshery/schemas/permissions';
 import { useSelector } from 'react-redux';
 import { EVENT_TYPES } from 'lib/event-types';
 import { CONNECTION_STATES, MESHSYNC_DEPLOYMENT_TYPE } from '@/utils/Enum';
@@ -257,7 +258,12 @@ const SettingsStepBody = ({ ctx }: { ctx: WizardContext }) => {
             Clear this cluster&apos;s cached state; it is repopulated by a running MeshSync.
           </Typography>
         </Box>
-        <Button variant="outlined" onClick={flushMeshSync} disabled={flushBusy}>
+        <Button
+          variant="outlined"
+          onClick={flushMeshSync}
+          disabled={flushBusy}
+          permissionKey={Keys.LifecycleManagementFlushMeshsyncData}
+        >
           {flushBusy ? <CircularProgress size={16} /> : 'Flush MeshSync'}
         </Button>
       </Box>

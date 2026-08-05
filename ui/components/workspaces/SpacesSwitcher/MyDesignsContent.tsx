@@ -1,5 +1,6 @@
 import { useGetUserDesignsQuery } from '@/rtk-query/design';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
+import { Keys } from '@meshery/schemas/permissions';
 import React, { useCallback, useRef, useState } from 'react';
 import MainDesignsContent from './MainDesignsContent';
 import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
@@ -138,7 +139,7 @@ const MyDesignsContent = () => {
 
         {/* Import Button */}
         <Grid2 size={{ xs: 4, md: 1 }}>
-          <ImportButton refetch={refetch} />
+          <ImportButton refetch={refetch} permissionKey={Keys.CatalogManagementImportDesign} />
         </Grid2>
       </Grid2>
       <MultiContentSelectToolbar
