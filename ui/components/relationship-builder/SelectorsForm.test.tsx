@@ -84,7 +84,7 @@ vi.mock('@meshery/schemas', () => ({
             category: {
               properties: {
                 name: {
-                  helperText: 'Select a model category',
+                  helperText: 'schema helper category',
                 },
               },
             },
@@ -112,7 +112,7 @@ describe('SelectorsForm', () => {
                 properties: {
                   kind: {},
                   model: {
-                    helperText: 'Select a model',
+                    helperText: 'schema helper model',
                   },
                   matchLabels: { type: 'string' },
                 },
@@ -245,7 +245,7 @@ describe('SelectorsForm', () => {
       />,
     );
 
-    expect(screen.getByText('Select a model category')).toBeInTheDocument();
-    expect(screen.getByText('Select a model')).toBeInTheDocument();
+    expect(screen.getByText('schema helper category')).toBeInTheDocument();
+    expect(screen.getByText('schema helper model')).toBeInTheDocument();
   });
 });

@@ -17,7 +17,7 @@ vi.mock('@meshery/schemas', () => ({
             kind: { type: 'string' },
             capabilities: { type: 'array' },
             model: {
-              helperText: 'Select a model',
+              helperText: 'schema helper model',
             },
             selectors: {
               items: {
@@ -41,7 +41,7 @@ vi.mock('@meshery/schemas', () => ({
             category: {
               properties: {
                 name: {
-                  helperText: 'Select a model category',
+                  helperText: 'schema helper category',
                 },
               },
             },
@@ -224,7 +224,7 @@ describe('RelationshipFormStepper', () => {
 
     render(<RelationshipFormStepper handleClose={vi.fn()} />);
 
-    expect(screen.getByText('Select a model category')).toBeInTheDocument();
-    expect(screen.getByText('Select a model')).toBeInTheDocument();
+    expect(screen.getByText('schema helper category')).toBeInTheDocument();
+    expect(screen.getByText('schema helper model')).toBeInTheDocument();
   });
 });
