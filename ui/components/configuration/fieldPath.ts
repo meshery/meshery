@@ -34,6 +34,11 @@ const deleteAtPath = (node: unknown, path: FieldPath): void => {
 
 /** Returns a deep copy of `doc` with `path` set to `value`, or deleted when `value` is undefined. */
 export const setPath = <T>(doc: T, path: FieldPath, value: unknown): T => {
+  // An empty path names no leaf to write. Without this guard
+  // `path[path.length - 1]` is `undefined` and the assignment lands on an
+  // "undefined" key, silently corrupting the draft's shape instead of failing.
+  // `deleteAtPath` already refuses an empty path, so the delete branch is safe.
+  if (path.length === 0) return doc;
   const next: T = JSON.parse(JSON.stringify(doc ?? {}));
   if (value === undefined) {
     deleteAtPath(next, path);
