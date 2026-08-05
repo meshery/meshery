@@ -110,50 +110,47 @@ export const normalizeFilterPayload = (filters, filterSchema) => {
  * its local state initializes from the new `defaultFilters` without a Redux↔
  * useEffect sync loop.
  */
-const Filter = memo(
-  ({
-    handleFilter,
-    currentFilters,
-  }: {
-    handleFilter: (filters: unknown) => void;
-    currentFilters: Record<string, unknown>;
-  }) => {
-    const filterSchema = useFilterSchema();
-    const [resetVersion, setResetVersion] = useState(0);
-    const selectedFilters = useMemo(
-      () => filtersToChips(currentFilters, filterSchema),
-      [currentFilters, filterSchema],
-    );
-    const filtersKey = useMemo(
-      () => JSON.stringify({ selectedFilters, resetVersion }),
-      [selectedFilters, resetVersion],
-    );
+const Filter = memo(function Filter({
+  handleFilter,
+  currentFilters,
+}: {
+  handleFilter: (filters: unknown) => void;
+  currentFilters: Record<string, unknown>;
+}) {
+  const filterSchema = useFilterSchema();
+  const [resetVersion, setResetVersion] = useState(0);
+  const selectedFilters = useMemo(
+    () => filtersToChips(currentFilters, filterSchema),
+    [currentFilters, filterSchema],
+  );
+  const filtersKey = useMemo(
+    () => JSON.stringify({ selectedFilters, resetVersion }),
+    [selectedFilters, resetVersion],
+  );
 
-    // User clear removes all filters (including unread); remount so TypingFilter resyncs.
-    const onFilterChange = useCallback(
-      (filters: Record<string, unknown>) => {
-        const normalized = normalizeFilterPayload(filters || {}, filterSchema);
-        if (Object.keys(normalized).length === 0) {
-          setResetVersion((version) => version + 1);
-          handleFilter({});
-          return;
-        }
-        handleFilter(normalized);
-      },
-      [filterSchema, handleFilter],
-    );
+  // User clear removes all filters (including unread); remount so TypingFilter resyncs.
+  const onFilterChange = useCallback(
+    (filters: Record<string, unknown>) => {
+      const normalized = normalizeFilterPayload(filters || {}, filterSchema);
+      if (Object.keys(normalized).length === 0) {
+        setResetVersion((version) => version + 1);
+        handleFilter({});
+        return;
+      }
+      handleFilter(normalized);
+    },
+    [filterSchema, handleFilter],
+  );
 
-    return (
-      <TypingFilter
-        key={filtersKey}
-        handleFilter={onFilterChange}
-        filterSchema={filterSchema}
-        defaultFilters={selectedFilters}
-        placeholder="Filter Notifications"
-      />
-    );
-  },
-);
-
+  return (
+    <TypingFilter
+      key={filtersKey}
+      handleFilter={onFilterChange}
+      filterSchema={filterSchema}
+      defaultFilters={selectedFilters}
+      placeholder="Filter Notifications"
+    />
+  );
+});
 
 export default Filter;
