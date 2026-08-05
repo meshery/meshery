@@ -531,16 +531,26 @@ test.describe.serial('Operator, MeshSync & Broker Settings', () => {
 
       try {
         // Layer 3 only: nothing set anywhere.
+        //
+        // deploymentMode is deliberately excluded here. Unlike every other
+        // setting, it has a layer BENEATH the document that the client cannot
+        // see - the server's MESHSYNC_DEFAULT_DEPLOYMENT_MODE - so the resolved
+        // value with nothing set is the server's env default, not the compiled
+        // built-in. Asserting the built-in made this test pass in CI (where the
+        // variable is unset) and fail for anyone running the repo's own
+        // `make server`, which sets it to `operator` by default. The mode's
+        // full precedence, including that env layer, is covered by
+        // TestB3ServerWideDeploymentModeReachesInheritingConnection.
         const builtIn = await getConnectionConfig(request, connectionId);
         expect(builtIn.override).toBeUndefined();
         expect(builtIn.effective).toMatchObject({
-          operator: { deploymentMode: BUILT_IN.deploymentMode },
           meshsync: { replicas: BUILT_IN.meshsyncReplicas },
           broker: {
             replicas: BUILT_IN.brokerReplicas,
             service: { type: BUILT_IN.brokerServiceType },
           },
         });
+        expect(['operator', 'embedded']).toContain(builtIn.effective.operator?.deploymentMode);
 
         // Layer 2: the server-wide default reaches a connection that overrides
         // nothing.
@@ -557,9 +567,11 @@ test.describe.serial('Operator, MeshSync & Broker Settings', () => {
         expect(defaulted.effective).toMatchObject({
           meshsync: { replicas: 5 },
           broker: { replicas: 3, service: { type: 'NodePort' } },
-          // Untouched by either editable layer, so still the built-in value.
-          operator: { deploymentMode: BUILT_IN.deploymentMode },
         });
+        // deploymentMode is excluded for the same reason as above: with neither
+        // editable layer setting it, the resolved value is the server's
+        // MESHSYNC_DEFAULT_DEPLOYMENT_MODE, which the client cannot observe.
+        expect(['operator', 'embedded']).toContain(defaulted.effective.operator?.deploymentMode);
 
         // Layer 1: the override wins for the fields it sets, and only those.
         const overridden = await putConnectionConfig(request, connectionId, {
