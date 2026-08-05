@@ -469,6 +469,27 @@ touching any of them.
 - Hooks in `.agents/hooks/`: `format-frontend.sh` (post-edit Prettier) and
   `block-lockfiles.sh` (pre-edit lock-file guard).
 
+## Reusable Workflows Consumed by Other Repos
+
+`.github/workflows/*.yaml` here are called by repos across `meshery` and `meshery-extensions`
+via `uses: meshery/meshery/.github/workflows/<file>@master`. Two traps, both of which have
+shipped as silent no-ops:
+
+- **`with:` values are Actions expressions, not shell.** `${GITHUB_REF/refs\/tags\//}` in a
+  `with:` value is forwarded verbatim - GitHub never evaluates it. Use `${{ github.ref_name }}`.
+  The same substitution inside a `run:` step is correct, because a shell evaluates it there;
+  don't "fix" those. `build-and-release-stable.yml` contains both forms.
+- **`if: github.repository == 'meshery/meshery'` disables the job for every external caller.**
+  In a reusable workflow the `github` context is the *caller's*, so this guard is false from
+  any other repo. Jobs in caller files carry it too, and a job whose `needs:` dependency is
+  skipped is itself skipped. Changing such a guard activates dormant deploys - a product
+  decision, not a repair.
+
+Before editing a shared workflow, find its callers:
+`gh api -X GET search/code -f q='<workflow-file> path:.github/workflows'`. A caller having
+zero runs (no matching tags/releases) means changes there are untested by CI - verify by
+reading, not by waiting for a green check.
+
 ## Further Reading
 
 The rules above are complete on their own. These files hold the reasoning, evidence and
