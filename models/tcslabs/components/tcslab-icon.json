@@ -53,7 +53,7 @@
   "metadata": {
     "configurationUISchema": "",
     "genealogy": "",
-    "hasInvalidSchema": true,
+    "hasInvalidSchema": false,
     "instanceDetails": null,
     "isAnnotation": true,
     "isNamespaced": false,
