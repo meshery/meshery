@@ -46,6 +46,14 @@ func TestListComponent(t *testing.T) {
 			ExpectedResponse: "components.list.count.empty.ouput.golden",
 			ExpectError:      false,
 		},
+		{
+			Name:             "list components with model",
+			Args:             []string{"list", "--model", "kubernetes"},
+			URL:              fmt.Sprintf("/%s?model=kubernetes&page=0&pagesize=10", componentApiPath),
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "components.list.output.golden",
+			ExpectError:      false,
+		},
 	}
 
 	mesheryctlflags.InitValidators(ComponentCmd)
