@@ -1590,7 +1590,7 @@
 &lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;Fix docs versions @CodexRaunak (#19736)&lt;/li&gt;
-&lt;li&gt;Update the go.mod to use the latest layer5io/docs @CodexRaunak (#19728)&lt;/li&gt;
+&lt;li&gt;Update the go.mod to use the latest docs @CodexRaunak (#19728)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="-contributors"&gt;
 	👨🏽‍💻 Contributors
