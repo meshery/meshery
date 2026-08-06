@@ -199,12 +199,17 @@ export default function DesignConfigurator() {
                               {model.displayName}
                             </MenuItem>
                           ))
-                        : [
-                            // TODO: handle failed getModelFromCategory so "Loading…" doesn't persist
-                            <MenuItem key="loading" disabled>
-                              Loading…
-                            </MenuItem>,
-                          ]),
+                        : models?.[browseCategory]
+                          ? [
+                              <MenuItem key="empty" disabled>
+                                No models found
+                              </MenuItem>,
+                            ]
+                          : [
+                              <MenuItem key="loading" disabled>
+                                Loading…
+                              </MenuItem>,
+                            ]),
                     ]}
               </Menu>
             </FormControl>

@@ -5,6 +5,7 @@ export class DesignConfiguratorPage {
     this.appBar = page.getByTestId('design-configurator-app-bar');
     this.codeEditor = page.getByTestId('design-configurator-code-editor');
     this.categoryModelSelector = page.getByTestId('category-model-selector');
+    this.categoryModelInput = page.getByTestId('category-model-selector').locator('input');
     this.databaseCategory = page.getByTestId('Database');
     this.backToCategories = page.getByTestId('back-to-categories');
     this.clearSelector = page.getByTestId('clear-category-model-selector');

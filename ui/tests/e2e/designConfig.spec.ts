@@ -175,8 +175,8 @@ test.describe('Design Configurator Tests', () => {
     await designConfigPage.clearSelector.click();
 
     await expect(designConfigPage.modelContainer).not.toBeVisible();
-    await expect(designConfigPage.categoryModelSelector).toHaveValue('');
-    await expect(designConfigPage.categoryModelSelector).toHaveAttribute(
+    await expect(designConfigPage.categoryModelInput).toHaveValue('');
+    await expect(designConfigPage.categoryModelInput).toHaveAttribute(
       'placeholder',
       'Select Category & Model',
     );
