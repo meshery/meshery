@@ -11,6 +11,7 @@ import {
   Toolbar,
   CustomTooltip,
   styled,
+  useTheme,
 } from '@sistent/sistent';
 import React, { useEffect, useRef, useState } from 'react';
 import AppBarComponent from './styledComponents/AppBar';
@@ -61,6 +62,8 @@ export default function DesignConfigurator() {
 
   const router = useRouter();
   const { design_id } = router.query;
+
+  const theme = useTheme();
 
   useEffect(
     function loadDesignOnMount() {
@@ -223,7 +226,7 @@ export default function DesignConfigurator() {
                 onClick={designSave}
                 permissionKey={Keys.CatalogManagementCreateNewDesign}
               >
-                <SaveAsIcon style={iconMedium} />
+                <SaveAsIcon fill={theme.palette.icon.default} style={iconMedium} />
               </IconButton>
             </div>
           </CustomTooltip>
