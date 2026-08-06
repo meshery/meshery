@@ -1,77 +1,61 @@
 ---
-title: "Shortcode Formatting Examples"
-description: "A visual reference guide for shortcodes available in the Meshery documentation theme."
+title: Shortcode Formatting Examples
+description: A visual reference guide for shortcodes available in the Meshery documentation theme.
 categories: [contributing]
 aliases: [/project/contributing/shortcode-examples]
 ---
-The Meshery documentation utilizes a variety of shortcodes to create rich, formatted content such as callouts, alerts, and embedded media.
 
-This page serves as a visual reference guide for documentation contributors. It allows you to see exactly how these shortcodes render on the live site before you use them. Below, you will find the required markdown syntax to invoke each custom Meshery shortcode, followed immediately by its rendered output.
+The Meshery documentation uses a variety of shortcodes to create rich, formatted content such as callouts, tabs, and generated tables.
+
+This page is a visual reference for documentation contributors. It shows the markdown syntax required to invoke each shortcode, followed by its rendered output, so you can see exactly how a shortcode behaves before using it.
+
+Shortcodes come from two places:
+
+- [`docs/layouts/shortcodes/`](https://github.com/meshery/meshery/tree/master/docs/layouts/shortcodes) — defined in this repository and documented in full below.
+- The [Docsy theme](https://www.docsy.dev/docs/adding-content/shortcodes/) — inherited, and summarized under [Inherited Shortcodes](#inherited-shortcodes).
+
+The Meshery documentation also imports `github.com/layer5io/docs` as a Hugo module, but that import is mounted to a single partial in `hugo.toml` and contributes no shortcodes.
 
 ---
-## Meshery Custom Shortcodes
 
-### 1. Discuss Shortcode
+## Shortcode Delimiters
 
-The `discuss` shortcode renders a static alert box linking to the Meshery Discussion Forum. It does not require any parameters.
+Hugo shortcodes are invoked with one of two delimiter pairs, and the choice changes how the shortcode's body is treated:
 
-**Syntax:**
-```markdown
-{{</* discuss */>}}
-```
-Rendered Output:
+| Delimiter | Body treatment |
+|---|---|
+| `{{</* name */>}}` | The body is passed to the shortcode as raw text. |
+| `{{%/* name */%}}` | The body is rendered as Markdown before the shortcode receives it. |
 
-{{< discuss >}}
+Shortcodes defined in this repository that take a body render it themselves via `.Page.RenderString`, and therefore expect the `{{</* */>}}` form. The inherited Docsy callouts expect `{{%/* */%}}`. Each entry states which form to use.
 
-### 2. Relationships Shortcode
+The form a shortcode expects is determined by its implementation, not by convention. When an entry here disagrees with what you see on the site, the file in `docs/layouts/shortcodes/` is the source of truth, and the entry needs fixing.
 
-The `relationships` shortcode inserts a predefined, interactive hierarchical visual representation of components and bindings. It does not require any parameters.
+---
 
-**Syntax:**
-```markdown
-{{</* relationships */>}}
-```
-Rendered Output:
+## Meshery Shortcodes
 
-{{< relationships >}}
+Listed alphabetically.
 
-### 3. Tabs Shortcode
+### code
 
-The `tabs` shortcode allows you to organize content into selectable tabs. It requires a unique `id` argument. Separate individual tabs using the `<!-- tab -->` HTML comment.
+Wraps a snippet in a styled code block with a copy-to-clipboard button, without needing a manually assigned ID per snippet.
 
-**Syntax:**
-```markdown
-{{</* tabs id="example-tab-group" */>}}
-Tab 1 Title
+**Use when** the reader is expected to copy and run the snippet. For code that is only being read — illustrative output, config fragments under discussion — a standard fenced block is lighter and easier to maintain.
 
-This is the content for the first tab.
-<!-- tab -->
-Tab 2 Title
+| Parameter | Required | Default | Description |
+|---|---|---|---|
+| `code` | Yes | — | The snippet to render. HTML-escaped on output. Multi-line values are supported; wrap the value in backticks rather than quotes when the snippet itself contains quotes. |
 
-This is the content for the second tab.
-{{</* /tabs */>}}
-```
-Rendered Output:
+Takes no body. Use the `{{</* */>}}` form.
 
-{{< tabs id="example-tab-group" >}}
-Tab 1 Title
+#### Syntax
 
-This is the content for the first tab.
-<!-- tab -->
-Tab 2 Title
-
-This is the content for the second tab.
-{{< /tabs >}}
-
-### 4. Code Shortcode
-
-The `code` shortcode wraps a snippet in a styled code block with a "copy to clipboard" button, without needing a manually assigned ID per snippet.
-
-**Syntax:**
 ```markdown
 {{</* code code="make site" */>}}
 ```
-Rendered Output:
+
+#### Rendered output
 
 {{< code code="make site" >}}
 
@@ -79,22 +63,42 @@ Rendered Output:
 Don't use the `code` shortcode when the snippet appears between items of an ordered list — it breaks the numbering, and the item following the snippet restarts at 1.
 {{% /alert %}}
 
-### 5. Static Shortcode
+### discuss
 
-The `static` shortcode resolves a relative path into a proper site-relative URL, most commonly used inside an `<img>` tag or Markdown image link so that asset paths keep working regardless of the page's location or `baseURL` setting.
+Renders a static callout linking to the Meshery Discussion Forum.
 
-**Syntax:**
+**Use when** closing a page where readers are likely to have follow-up questions. The text is fixed, so one per page at most.
+
+Takes no parameters and no body.
+
+#### Syntax
+
 ```markdown
-![Meshery Architecture]({{</* static "images/meshery-architecture.webp" */>}})
+{{</* discuss */>}}
 ```
-Rendered Output:
-![Meshery Architecture]({{< static "images/meshery-architecture.webp" >}})
 
-### 6. Extension Guide Shortcode
+#### Rendered output
 
-The `extension-guide` shortcode renders a responsive card grid from a data file in `docs/data/`. Each card shows an SVG/image, a title, and a description. It requires `data_file`, `guide_title`, `guide_description`, `guide_svg`, and `guide_assests_folder` (spelling intentional) parameters that map to keys/paths in the referenced data file.
+{{< discuss >}}
 
-**Syntax:**
+### extension-guide
+
+Renders a responsive card grid from a data file in `docs/data/`. Each card shows an image, a title, and a description.
+
+**Use when** presenting a set of parallel options the reader chooses between — component types, extension points — where a visual grid aids scanning. For a linear list of links, use `section-pages`.
+
+| Parameter | Required | Default | Description |
+|---|---|---|---|
+| `data_file` | Yes | — | Base name of the file in `docs/data/` supplying the card entries, without extension. |
+| `guide_title` | Yes | — | Key in each data entry whose value is used as the card title, and as the image `alt` text. |
+| `guide_description` | Yes | — | Key in each data entry whose value is used as the card description. Entries missing this key render a card with no description. |
+| `guide_svg` | Yes | — | Key in each data entry whose value is the image filename. Entries missing this key render a card with no image. |
+| `guide_assests_folder` | Yes | — | Folder name under `images/`. Lowercased before use, producing `images/<folder>/<filename>`. Note the spelling — `assests` is the parameter name in the implementation. |
+
+Takes no body. Use the `{{</* */>}}` form.
+
+#### Syntax
+
 ```markdown
 {{</* extension-guide
   data_file="edges"
@@ -104,7 +108,8 @@ The `extension-guide` shortcode renders a responsive card grid from a data file 
   guide_assests_folder="shapes"
 */>}}
 ```
-Rendered Output:
+
+#### Rendered output
 
 {{< extension-guide
   data_file="edges"
@@ -114,57 +119,223 @@ Rendered Output:
   guide_assests_folder="shapes"
 >}}
 
-### 7. Related Discussions Shortcode
+### latest-release
 
-The `related-discussions` shortcode pulls up to eight recent topics from the Meshery Discussion Forum matching a given `tag`, plus a link to view all discussions with that tag.
+Prints the tag of the most recent non-prerelease entry under the `releases` content type.
 
-**Syntax:**
-```markdown
-{{</* related-discussions tag="meshery" */>}}
-```
-Rendered Output:
+**Use when** a page needs to show the current release and would otherwise go stale. Note that it emits an `<h2>`, so the release tag appears in the page's table of contents.
 
-{{< related-discussions tag="meshery" >}}
+Takes no parameters and no body.
 
-### 8. Section Pages Shortcode
+#### Syntax
 
-The `section-pages` shortcode auto-generates a linked list of the immediate child pages of a given `section`, along with each page's `description` (when set in front matter). If `section` is omitted, it defaults to the page’s top-level Hugo section (Hugo’s `.Page.Section`), so for nested paths you’ll usually want to set `section` explicitly.
-
-**Syntax:**
-```markdown
-{{</* section-pages section="concepts/architecture" */>}}
-```
-Rendered Output:
-
-{{< section-pages section="concepts/architecture" >}}
-
-### 9. Latest Release Shortcode
-
-The `latest-release` shortcode looks up all non-prerelease entries under the `releases` content type and prints the tag of the most recent one as an `<h2>` heading. It does not require any parameters.
-
-**Syntax:**
 ```markdown
 {{</* latest-release */>}}
 ```
-Rendered Output:
+
+#### Rendered output
 
 {{< latest-release >}}
 
-### 10. Model Count Shortcode
+### model-categories
 
-The `model-count` shortcode prints the current total number of Meshery models, useful for inline sentences that need to stay accurate as new models are added. It does not require any parameters.
+Renders one `<li>` per model category, each with a parenthetical count of the models in that category, ordered by count descending.
 
-**Syntax:**
+**Use when** listing categories inside an existing list. This shortcode emits list items only — **you must supply the surrounding `<ul>` or `<ol>` yourself**, or the items will render unwrapped.
+
+Counts are derived from the `integrations-category` param on each model page, so they stay accurate as models are added or recategorized. Category names are plain labels rather than links, because the models index is a single alphabetized page with no per-category filtering.
+
+Takes no parameters and no body.
+
+#### Syntax
+
+```markdown
+<ul>
+  {{</* model-categories */>}}
+</ul>
+```
+
+#### Rendered output
+
+<ul>
+  {{< model-categories >}}
+</ul>
+
+### model-count
+
+Prints the current total number of Meshery models, counted from the pages under `extensions/models/`.
+
+**Use when** a sentence quotes the model total and would otherwise need manual updating as models are added.
+
+Takes no parameters and no body. Emits a bare number, so it composes inline.
+
+#### Syntax
+
 ```markdown
 Meshery currently supports {{</* model-count */>}} models.
 ```
-Rendered Output:
+
+#### Rendered output
+
 Meshery currently supports {{< model-count >}} models.
 
----
-## Reference & Data Shortcodes
+### related-discussions
 
-The shortcodes below each render a full, live dataset (error codes, vulnerabilities, mesheryctl commands, permissions, and so on) pulled directly from `docs/data/` or the site's own content. Because their real output can run to dozens or hundreds of rows and changes as that underlying data changes, this guide shows the invocation syntax and links to the page where each one is actually used, rather than re-rendering the full table here — that avoids maintaining the same large dataset in two places.
+Lists up to eight forum topics matching a tag, plus a link to view all discussions with that tag.
+
+**Use when** an active forum tag maps closely to the page topic. Topics are read from `site.Data.discuss.<tag>`, not fetched at request time — if no data file exists for the tag, only the "view all" link renders, with no error. Output changes as that data is refreshed, so don't write prose that depends on which topics appear.
+
+| Parameter | Required | Default | Description |
+|---|---|---|---|
+| `tag` | No | `meshery` | Forum tag to match. Must correspond to a key under `site.Data.discuss`. |
+
+Takes no body. Use the `{{</* */>}}` form.
+
+#### Syntax
+
+```markdown
+{{</* related-discussions tag="meshery" */>}}
+```
+
+#### Rendered output
+
+{{< related-discussions tag="meshery" >}}
+
+### relationships
+
+Inserts a predefined, collapsible set of visual examples of component relationships, grouped by kind and subtype, each linking to the design in the playground.
+
+**Use when** explaining how components relate structurally. The content is fixed — it takes no parameters and cannot be scoped to a subset of relationship kinds.
+
+Takes no parameters and no body.
+
+#### Syntax
+
+```markdown
+{{</* relationships */>}}
+```
+
+#### Rendered output
+
+{{< relationships >}}
+
+### section-pages
+
+Renders one `<li>` per immediate child page of a section, each linking to the page and appending its `description` from front matter when set.
+
+**Use when** a landing page should index its children and stay correct as pages are added or removed. This shortcode emits list items only — **you must supply the surrounding `<ul>` or `<ol>` yourself**.
+
+| Parameter | Required | Default | Description |
+|---|---|---|---|
+| `section` | No | The page's own Hugo section (`.Page.Section`) | Section whose children are listed. For nested paths the default is rarely what you want — set it explicitly. |
+
+Pages are sorted by title. A page is excluded when its front matter sets `hide_homepage`, and the section's own landing page is always excluded. The final path segments `quick-start` and `faq` are excluded unconditionally by the implementation. When nothing matches, a single italic "No pages found in this section." item renders in place of the list.
+
+Takes no body. Use the `{{</* */>}}` form.
+
+#### Syntax
+
+```markdown
+<ul>
+  {{</* section-pages section="concepts/architecture" */>}}
+</ul>
+```
+
+#### Rendered output
+
+<ul>
+  {{< section-pages section="concepts/architecture" >}}
+</ul>
+
+### static
+
+Resolves a path into a site-relative URL.
+
+**Use when** referencing an asset from a page that may be moved, or where `baseURL` differs between local and production builds. Most commonly nested inside an `<img>` tag or a Markdown image link.
+
+| Parameter | Required | Default | Description |
+|---|---|---|---|
+| _positional_ | Yes | — | Path relative to the site root, passed as the first unnamed argument. Emitted as a bare URL with no surrounding markup. |
+
+Takes no body. Use the `{{</* */>}}` form.
+
+#### Syntax
+
+```markdown
+![Meshery Architecture]({{</* static "images/meshery-architecture.webp" */>}})
+```
+
+#### Rendered output
+
+![Meshery Architecture]({{< static "images/meshery-architecture.webp" >}})
+
+### tabs
+
+Organizes content into selectable tabs.
+
+**Use when** presenting the same task across mutually exclusive contexts — operating systems, installation methods — where the reader needs exactly one branch. Don't use it for sequential content; readers miss what's behind an unselected tab.
+
+| Parameter | Required | Default | Description |
+|---|---|---|---|
+| `id` | Yes | — | Identifier for the tab group. Omitting it raises a build error naming the file and position. Each invocation is additionally given an instance number, so repeating an `id` on one page does not cause tab groups to interfere. |
+| `level` | No | `1` | Nesting level. Values above `1` add a nested-container class, for tabs inside tabs. |
+
+Takes a body. Use the `{{</* */>}}` form. Within the body:
+
+- Separate tabs with an `<!-- tab -->` HTML comment.
+- The **first line of each block is the tab label**; the content begins after the first blank line.
+- A label may carry an icon by appending `| ` and an icon value. A value starting with `fa` is treated as a Font Awesome class; anything else is inserted as raw markup.
+- The first non-empty block is selected by default.
+
+#### Syntax
+
+```markdown
+{{</* tabs id="example-tab-group" */>}}
+Tab 1 Title
+
+This is the content for the first tab.
+<!-- tab -->
+Tab 2 Title | fas fa-cog
+
+This is the content for the second tab.
+{{</* /tabs */>}}
+```
+
+#### Rendered output
+
+{{< tabs id="example-tab-group" >}}
+Tab 1 Title
+
+This is the content for the first tab.
+<!-- tab -->
+Tab 2 Title | fas fa-cog
+
+This is the content for the second tab.
+{{< /tabs >}}
+
+### Snippet shortcodes
+
+Some shortcodes are Markdown files in subdirectories of `docs/layouts/shortcodes/` rather than templates, and are invoked by path. They take no parameters and no body, and exist to keep a reusable block of prose in one place:
+
+| Shortcode | Content |
+|---|---|
+| `{{</* mesheryctl/installation-bash */>}}` | `mesheryctl` installation via bash |
+| `{{</* mesheryctl/installation-brew */>}}` | `mesheryctl` installation via Homebrew |
+| `{{</* mesheryctl/installation-scoop */>}}` | `mesheryctl` installation via Scoop |
+| `{{</* mesheryctl/system-dashboard */>}}` | `mesheryctl system dashboard` usage |
+| `{{</* compatibility/adapter-status */>}}` | Adapter status block |
+| `{{</* compatibility/compatibilityMatrix */>}}` | Compatibility matrix prose |
+| `{{</* compatibility/rancher */>}}` | Rancher-specific notes |
+
+To add one, drop a `.md` file into the relevant subdirectory — no template is required.
+
+---
+
+## Data-Driven Shortcodes
+
+The shortcodes below each render a full, live dataset — error codes, vulnerabilities, `mesheryctl` commands, permissions, and so on — pulled from `docs/data/` or the site's own content. Because their real output can run to hundreds of rows and changes as that underlying data changes, this section shows the invocation syntax and links to the page where each one is used, rather than re-rendering the full table here.
+
+All of them take no body, and all take no parameters except `mesheryctl-command-table`, which requires a `command` naming the command whose subcommands are tabulated.
 
 | Shortcode | Syntax | See it rendered live |
 |---|---|---|
@@ -181,6 +352,96 @@ The shortcodes below each render a full, live dataset (error codes, vulnerabilit
 | `tutorials-list` | `{{</* tutorials-list */>}}` | [Quick Start]({{< ref "installation/quick-start/index.md" >}}) |
 | `vulnerabilities-table` | `{{</* vulnerabilities-table */>}}` | [Security Vulnerabilities]({{< ref "project/security-vulnerabilities.md" >}}) |
 
-{{% alert color="info" title="Scope note for reviewers" %}}
-This page covers every shortcode in `docs/layouts/shortcodes/` except the ones nested under `compatibility/`, `installation/`, `mesheryctl/`, and `svg/` — those are single-purpose content fragments authored for one specific page each, rather than general-purpose formatting shortcodes, so they aren't included here.
+---
+
+## Inherited Shortcodes
+
+These come from the Docsy theme rather than this repository. They are listed here because they appear throughout the Meshery documentation and contributors will encounter them; the [Docsy shortcode reference](https://www.docsy.dev/docs/adding-content/shortcodes/) is authoritative for their full behavior.
+
+### alert
+
+Renders a coloured callout box with a heading.
+
+**Use when** flagging a warning, prerequisite, or caveat that would interrupt the flow of the surrounding paragraph. For inline emphasis, use bold instead — a page dense with callouts trains readers to skip them.
+
+| Parameter | Required | Default | Description |
+|---|---|---|---|
+| `color` | No | `primary` | Bootstrap contextual class: `primary`, `secondary`, `success`, `info`, `warning`, `danger`. |
+| `title` | No | — | Bold heading above the body. |
+
+Takes a body. Use the `{{%/* */%}}` form, or the body's Markdown will render as literal asterisks and backticks.
+
+#### Syntax
+
+```markdown
+{{%/* alert color="warning" title="Note" %}}
+Run `make site` locally before opening your PR.
+{{% /alert */%}}
+```
+
+#### Rendered output
+
+{{% alert color="warning" title="Note" %}}
+Run `make site` locally before opening your PR.
+{{% /alert %}}
+
+### pageinfo
+
+Renders a page-scoped information banner.
+
+**Use when** the note applies to the whole page — deprecation, beta status, "applies to version X" — and belongs above the content. For a note scoped to one section, use `alert`.
+
+| Parameter | Required | Default | Description |
+|---|---|---|---|
+| `color` | No | `primary` | Bootstrap contextual class, as for `alert`. |
+
+Takes a body. Use the `{{%/* */%}}` form.
+
+#### Syntax
+
+```markdown
+{{%/* pageinfo color="info" %}}
+This page describes a **beta** feature.
+{{% /pageinfo */%}}
+```
+
+#### Rendered output
+
+{{% pageinfo color="info" %}}
+This page describes a **beta** feature.
+{{% /pageinfo %}}
+
+Docsy also provides `youtube`, `imgproc`, `blocks/*`, `cardpane`, and others. See the Docsy reference for those.
+
+---
+
+## Adding a New Shortcode
+
+Shortcode implementations live in `docs/layouts/shortcodes/`. The filename becomes the shortcode name: `docs/layouts/shortcodes/model-count.html` is invoked as `{{</* model-count */>}}`, and a file in a subdirectory is invoked by path, as `{{</* mesheryctl/installation-bash */>}}`.
+
+A template in this repository overrides a theme template of the same name, so adding `docs/layouts/shortcodes/alert.html` would replace Docsy's `alert` site-wide. Do that deliberately, if at all.
+
+1. **Create the template.** Open with a comment block stating what the shortcode outputs, any assumptions it makes about page location or front matter, and a usage line.
+
+2. **Guard your assumptions.** Shortcodes are invoked from pages you did not write. Check that the values you depend on exist before indexing into them.
+
+3. **Choose a failure mode deliberately.** Use `errorf` when a missing argument means the author made a mistake that must be fixed, as `tabs` does when `id` is absent. Use `warnf`, or emit nothing, when the page still renders usefully without the output. Both take `.Position` so the message names the file and line.
+
+4. **Control whitespace.** Use `{{- -}}` trim markers so the shortcode does not emit stray newlines into the surrounding Markdown, which can break list numbering and inline usage.
+
+5. **Say what wrapping the caller must supply.** A shortcode that emits bare `<li>` elements, as `section-pages` and `model-categories` do, is unusable without that fact being written down.
+
+6. **Document it here.** Add an entry to the catalog above with the parts every entry carries: a description, a "use when" line, a parameter table, and a syntax and rendered-output pair. A shortcode that isn't on this page is a shortcode contributors won't find.
+
+**Example.** `model-count` derives its number from the site's own content rather than a hardcoded value, so the figure never goes stale:
+
+```go-html-template
+{{- $models := where site.RegularPages ".File.Dir" "like" `^extensions/models/` -}}
+{{- len $models -}}
+```
+
+Note: When a shortcode can produce empty or zero output without failing, its entry above must say so, or contributors will read the result as a bug and file it as one.
+
+{{% alert color="warning" title="Register your shortcode" %}}
+If a new shortcode ships without an entry on this page, contributors have no way to discover it short of reading `docs/layouts/shortcodes/`, which is the problem this page exists to solve. Treat the catalog entry as part of the shortcode, not as follow-up work.
 {{% /alert %}}
