@@ -320,7 +320,7 @@ ui-setup: dep-check-node
 
 ## Clean Install dependencies for building Meshery UI.
 ui-setup-ci: dep-check-node
-	cd ui; npm ci; cd ..
+	cd ui && npm ci
 
 ## Run Meshery UI on your local machine. Listen for changes.
 ui: dep-check-node
@@ -357,7 +357,7 @@ ui-provider-build:
 
 ## Run Meshery End-to-End Integration Tests against your local Meshery UI (runs in non-interactive mode).
 ui-integration-tests: ui-setup
-	cd ui; npm run ci-test-integration; cd ..
+	cd ui; npm run test:e2e:ci:local; cd ..
 
 #-----------------------------------------------------------------------------
 # Meshery Docs
@@ -558,7 +558,7 @@ server-integration-tests-meshsync: docker-build server-integration-tests-meshsyn
 .PHONY: ui-test-setup ui-test ui-test-e2e-full ui-test-e2e-local
 ## Install Playwright dependencies for UI tests
 ui-test-setup: dep-check-node
-	cd ui; npx playwright install chromium --with-deps; cd ..
+	cd ui && npx playwright install chromium --with-deps
 
 ## Run Meshery UI End-to-End Tests
 ui-test: dep-check-node
@@ -568,12 +568,12 @@ ui-test: dep-check-node
 ## Run Meshery UI End-to-End Tests in CI environment (Local and Remote Providers)
 ui-test-e2e-full: dep-check-node
 	 touch .env
-	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci:full ; cd ..
+	 @set -a; source .env; set +a; cd ui && npm run test:e2e:ci:full
 
 ## Run Meshery UI End-to-End Tests in CI environment (Local Provider)
 ui-test-e2e-local: dep-check-node
 	 touch .env
-	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci:local ; cd ..
+	 @set -a; source .env; set +a; cd ui && npm run test:e2e:ci:local
 
 #-----------------------------------------------------------------------------
 # Testing - Meshery CLI
