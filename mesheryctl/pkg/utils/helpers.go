@@ -15,6 +15,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -517,6 +518,24 @@ func IsValidSubcommand(available []*cobra.Command, sub string) bool {
 		}
 	}
 	return false
+}
+
+// SubcommandNames renders the names of available subcommands for use in an
+// "invalid subcommand" message, e.g. "generate, list, search, view".
+//
+// Callers pass the same slice they hand IsValidSubcommand, so the set a command
+// advertises cannot drift from the set it accepts. Hand-listing the names in the
+// message string is how `mesheryctl relationship` came to offer only "[view]"
+// while accepting four subcommands.
+func SubcommandNames(available []*cobra.Command) string {
+	names := make([]string, 0, len(available))
+	for _, s := range available {
+		if name := s.Name(); name != "" {
+			names = append(names, name)
+		}
+	}
+	sort.Strings(names)
+	return strings.Join(names, ", ")
 }
 
 // ContentTypeIsHTML Checks if the response is an HTML resposnse
