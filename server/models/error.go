@@ -159,7 +159,7 @@ const (
 	ErrInvalidUUIDValueCode               = "meshery-server-1432"
 	ErrSystemSettingsCode                 = "meshery-server-1439"
 	ErrApplyControllersConfigCode         = "meshery-server-1440"
-	ErrReconcileOperatorChartVersionCode  = "meshery-server-1464"
+	ErrReconcileOperatorChartVersionCode  = "meshery-server-1466"
 	ErrOperatorHandlerNotAttachedCode     = "meshery-server-1465"
 )
 
