@@ -264,8 +264,8 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
                           fullWidth
                           variant="outlined"
                           helperText={
-                            selectorsSchema?.items?.properties?.[type]?.properties?.[direction]?.items
-                              ?.properties?.model?.helperText
+                            selectorsSchema?.items?.properties?.[type]?.properties?.[direction]
+                              ?.items?.properties?.model?.helperText
                           }
                         >
                           <MenuItem value="" disabled>
