@@ -34,6 +34,7 @@ import (
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
+	userv1beta2 "github.com/meshery/schemas/models/v1beta2/user"
 	"github.com/meshery/schemas/models/v1beta3/environment"
 	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
@@ -122,10 +123,13 @@ type RemoteProvider struct {
 
 	MeshsyncDefaultDeploymentMode connections.MeshsyncDeploymentMode
 }
-type AnonymousFlowResponse struct {
-	AccessToken string    `json:"accessToken"`
-	Owner       core.Uuid `json:"owner,omitempty"`
-}
+
+// AnonymousFlowResponse is the remote provider's reply to the anonymous-user
+// mint. It is a CONSUMED contract - the provider produces it, Meshery Server
+// only decodes it - so it is the schemas construct itself, never a local
+// re-declaration. A local copy is how the field silently became `owner` while
+// the provider kept sending `userId`.
+type AnonymousFlowResponse = userv1beta2.AnonymousFlowResponse
 
 type userSession struct {
 	token   string
@@ -569,9 +573,20 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 
 	l.SetJWTCookie(res, flowResponse.AccessToken)
 
-	err = l.WriteCapabilitiesForUser(flowResponse.Owner.String(), &providerProperties)
+	// A nil user id means the provider's reply carried none. Writing
+	// capabilities under the zero UUID would collapse every anonymous session
+	// onto a single row rather than fail, so refuse it outright.
+	if flowResponse.UserID.IsNil() {
+		err = ErrAnonymousUserIDMissing()
+		l.Log.Error(err)
+		http.Redirect(res, req, errorUI, http.StatusFound)
+
+		return
+	}
+
+	err = l.WriteCapabilitiesForUser(flowResponse.UserID.String(), &providerProperties)
 	if err != nil {
-		err = ErrDBPut(fmt.Errorf("failed to write capabilities for the user %s: %w", flowResponse.Owner.String(), err))
+		err = ErrDBPut(fmt.Errorf("failed to write capabilities for the user %s: %w", flowResponse.UserID.String(), err))
 		l.Log.Error(err)
 		http.Redirect(res, req, errorUI, http.StatusFound)
 
