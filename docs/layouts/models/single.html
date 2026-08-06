@@ -1,21 +1,5 @@
 {{ define "main" }}
 <article>
-    {{/* -------- Intra-page TOC -------- */}}
-    <nav id="model-toc" class="model-toc" aria-label="On this page">
-        <h2 class="model-toc-title">On this page</h2>
-        <ul>
-            {{ if and .Params.components (gt (len .Params.components) 0) }}
-            <li><a href="#components">Components</a></li>
-            {{ end }}
-            <li id="toc-related-designs">
-                <a href="#related-designs-header">Related Designs</a>
-            </li>
-            <li id="toc-related-tutorials">
-                <a href="#related-tutorials-header">Related Tutorials</a>
-            </li>
-        </ul>
-    </nav>
-    {{/* --------------------------------- */}}
     {{ with .Params.subtitle }}<p>{{ . }}</p>{{ end }}
     {{ .Content }}
     <!-- components -->
@@ -144,11 +128,12 @@
 </article>
 
 <script>
-    function handleImageError(image) {
-        image.onerror = null;
-        image.src = '{{ strings.TrimPrefix "/" .Params.image | relURL }}';
-    }
+function handleImageError(image) {
+    image.onerror = null;
+    image.src = '{{ strings.TrimPrefix "/" .Params.image | relURL }}';
+}
 
+    document.addEventListener('DOMContentLoaded', function () {
     const designLinks = document.querySelectorAll('.design-link');
     if (designLinks.length === 0) {
         document.getElementById('related-designs-header').closest('section').hidden = true;
@@ -169,5 +154,6 @@
         });
         if (visibleItems.length === 0) modelToc.style.display = 'none';
     }
+});
 </script>
 {{ end }}

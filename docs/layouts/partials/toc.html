@@ -1,0 +1,48 @@
+{{/*
+  Always render the td-toc element. ScrollSpy is counting on it to exist,
+  even if it's empty.
+
+  cSpell:ignore notoc
+*/ -}}
+
+<div class="td-toc" data-proofer-ignore>
+{{ if not .Params.notoc -}}
+
+  {{ if eq .Type "models" -}}
+    {{/*
+      Model pages are built entirely from front matter, not markdown
+      headings, so .TableOfContents is always empty here. Same nav
+      Meshery already builds below, just rendered in the shared
+      sidebar slot instead of inline in the page body. See #20339.
+    */ -}}
+    <div class="td-toc-title">
+      <span class="td-toc-title__text">{{ i18n "toc_on_this_page" }}</span>
+      <a class="td-toc-title__link" title="{{ i18n "toc_top_of_page" }}" href="#"></a>
+    </div>
+    <nav id="model-toc" class="model-toc" aria-label="{{ i18n "toc_on_this_page" }}">
+      <ul>
+        {{ if and .Params.components (gt (len .Params.components) 0) -}}
+        <li><a href="#components">Components</a></li>
+        {{ end -}}
+        <li id="toc-related-designs">
+          <a href="#related-designs-header">Related Designs</a>
+        </li>
+        <li id="toc-related-tutorials">
+          <a href="#related-tutorials-header">Related Tutorials</a>
+        </li>
+      </ul>
+    </nav>
+
+  {{ else -}}
+    {{ $toc := .TableOfContents -}}
+    {{ if and $toc (ne $toc `<nav id="TableOfContents"></nav>`) -}}
+      <div class="td-toc-title">
+        <span class="td-toc-title__text">{{ i18n "toc_on_this_page" }}</span>
+        <a class="td-toc-title__link" title="{{ i18n "toc_top_of_page" }}" href="#"></a>
+      </div>
+      {{ $toc | safeHTML }}
+    {{ end -}}
+  {{ end -}}
+
+{{ end -}}
+</div>
