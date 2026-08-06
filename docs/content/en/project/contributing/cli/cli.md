@@ -185,10 +185,10 @@ If the diff shows the command is wrong, fix the command and regenerate; never
 let `-update` settle a disagreement between the test and the code.
 {{% /alert %}}
 
-Remember which directory a file belongs in: **fixtures** hold the mock input
-(for example, a stubbed API response), while **testdata** holds the expected
-command output that `-update` regenerates. When a wire contract changes, the
-fixture is usually the file that has gone stale - updating only the expectation
+**Fixtures** and **testdata** are not interchangeable (see "Key Test Writing
+Principles" above): `-update` regenerates only the expected output under
+`testdata/`. When a wire contract changes, the fixture holding the mocked
+response is usually the file that has gone stale - updating only the expectation
 bakes the broken behavior into the test.
 
 #### End-to-end Tests

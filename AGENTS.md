@@ -281,19 +281,17 @@ make helm-docs      # Generate Helm chart docs
 - Integration run: `make server-integration-tests-meshsync-run`
 - Target ≥70% coverage on business logic.
 
-Golden-file workflow (`-args -update`, and the rule that a regenerated golden must
-still encode *intended* behavior) is documented in
-`docs/content/en/project/contributing/cli/cli.md`. `mesheryctl` splits them:
-`fixtures/` is mock input, `testdata/` is expected output.
+Golden-file workflow (`-args -update`, the `fixtures/` vs `testdata/` split, and
+the rule that a regenerated golden must still encode *intended* behavior) is
+documented in `docs/content/en/project/contributing/cli/cli.md`.
 
 **A rename in `meshery/schemas` propagates further than the Go field name.** The
 `db:` tag drives the AutoMigrate column, so renaming a field renames the column -
-and any hand-written SQL naming the old one breaks. `PerformanceProfile.UserID` ->
-`Owner` left `performance_profile_persister.go` selecting `user_id`, which no
-longer existed; the query errored on every read and the dropped gorm error turned
-that into a silently empty profile list. After bumping schemas, grep the raw
-`Select(...)` column lists and the `mesheryctl` fixtures for the old spelling, and
-propagate gorm errors so the next such rename fails loudly.
+and any hand-written SQL naming the old one breaks, silently if the gorm error is
+dropped. After bumping schemas, grep the raw `Select(...)` column lists and the
+`mesheryctl` fixtures for the old spelling, and propagate gorm errors so the next
+such rename fails loudly. Regression test:
+`server/models/performance_profile_persister_test.go`.
 
 ### UI
 
