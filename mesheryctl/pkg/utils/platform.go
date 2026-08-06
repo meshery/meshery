@@ -249,11 +249,22 @@ func GetDeploymentVersion(filePath string) (string, error) {
 		return "", fmt.Errorf("unable to unmarshal config %s | %s", MesheryDeployment, err)
 	}
 
+	if len(compose.Spec.Template.Spec.Containers) == 0 {
+		return "", fmt.Errorf("unable to determine deployment version: no containers found in %s", filePath)
+	}
+
 	image := compose.Spec.Template.Spec.Containers[0].Image
 	spliter := strings.Split(image, ":")
-	version := strings.Split(spliter[1], "-")[1]
+	if len(spliter) < 2 {
+		return "", fmt.Errorf("unable to determine deployment version: image %q has no tag", image)
+	}
 
-	return version, nil
+	tagParts := strings.Split(spliter[1], "-")
+	if len(tagParts) < 2 {
+		return "", fmt.Errorf("unable to determine deployment version: image tag %q does not match the expected version-build format", spliter[1])
+	}
+
+	return tagParts[1], nil
 }
 
 // CanUseCachedOperatorManifests returns an error if it is not possible to use cached operator manifests
