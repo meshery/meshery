@@ -400,15 +400,17 @@ export const {
 export const useCreateWorkspaceMutation = () => {
   const [trigger, result] = workspacesApi.endpoints.createWorkspace.useMutation();
 
-  const wrappedTrigger = (queryArg) =>
-    trigger({
+  const wrappedTrigger = (queryArg: any) => {
+    const payload = queryArg?.workspacePayload || queryArg?.body || queryArg;
+    return trigger({
       body: {
-        name: queryArg.workspacePayload?.name,
-        description: queryArg.workspacePayload?.description,
+        name: payload?.name,
+        description: payload?.description,
         organizationId:
-          queryArg.workspacePayload?.organizationId || queryArg.workspacePayload?.organization_id,
+          payload?.organizationId || payload?.organization_id || payload?.OrganizationID,
       },
     });
+  };
 
   return [wrappedTrigger, result] as const;
 };
@@ -416,16 +418,18 @@ export const useCreateWorkspaceMutation = () => {
 export const useUpdateWorkspaceMutation = () => {
   const [trigger, result] = workspacesApi.endpoints.updateWorkspace.useMutation();
 
-  const wrappedTrigger = (queryArg) =>
-    trigger({
-      workspaceId: queryArg.workspaceId,
+  const wrappedTrigger = (queryArg: any) => {
+    const payload = queryArg?.workspacePayload || queryArg?.body || queryArg;
+    return trigger({
+      workspaceId: queryArg?.workspaceId || queryArg?.id,
       body: {
-        name: queryArg.workspacePayload?.name,
-        description: queryArg.workspacePayload?.description,
+        name: payload?.name,
+        description: payload?.description,
         organizationId:
-          queryArg.workspacePayload?.organizationId || queryArg.workspacePayload?.organization_id,
+          payload?.organizationId || payload?.organization_id || payload?.OrganizationID,
       },
     });
+  };
 
   return [wrappedTrigger, result] as const;
 };
