@@ -213,7 +213,7 @@ The `ErrorMetadataFormatter` is used for formatting error-related notifications 
 />
 ```
 
-<a href="images/error-formatter.png"><img alt="Error Formatter" style="width:500px;height:auto;" src="images/error-formatter.png" /></a>
+<a href="../images/error-formatter.png"><img alt="Error Formatter" style="width:500px;height:auto;" src="../images/error-formatter.png" /></a>
 
 **When to Use:**
 
@@ -240,7 +240,7 @@ The `Model Registration Formatter` formats and displays model registration detai
 
    - `modelDetails` (object) – Contains model import data.
 
-<a href="images/model-register-formatter.png"><img alt="Model Register Formatter" style="width:500px;height:auto;" src="images/model-register-formatter.png" /></a>
+<a href="../images/model-register-formatter.png"><img alt="Model Register Formatter" style="width:500px;height:auto;" src="../images/model-register-formatter.png" /></a>
 
 ### Relationship Evaluation Formatter
 
@@ -265,7 +265,7 @@ The **Relationship Evaluation Formatter** is responsible for rendering notificat
     - `relationshipsUpdated` (Array)
     - `relationshipsRemoved` (Array)
 
-<a href="images/relationship-evaluation-formatter.png"><img alt="Relationship Evaluation Formatter" style="width:500px;height:auto;" src="images/relationship-evaluation-formatter.png" /></a>
+<a href="../images/relationship-evaluation-formatter.png"><img alt="Relationship Evaluation Formatter" style="width:500px;height:auto;" src="../images/relationship-evaluation-formatter.png" /></a>
 
 #### When to Use
 
@@ -330,7 +330,7 @@ The **Dry Run Formatter** is responsible for rendering notifications related to 
 - **validationMachine** (object): The state machine handling the dry run validation process.
 - **currentComponentName** (string): The name of the component currently being validated.
 
-<a href="images/dry-run-formatter.png"><img alt="Dry Run Formatter" style="width:500px;height:auto;" src="images/dry-run-formatter.png" /></a>
+<a href="../images/dry-run-formatter.png"><img alt="Dry Run Formatter" style="width:500px;height:auto;" src="../images/dry-run-formatter.png" /></a>
 
 #### When to Use
 
