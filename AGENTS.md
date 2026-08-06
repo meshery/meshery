@@ -435,11 +435,15 @@ Per-tool discovery, so no skill is ever copied per tool:
 | Claude Code | Reads `.claude/skills`, which is a relative symlink to `../.agents/skills` |
 
 `.claude/skills` is that symlink and nothing else. Never replace it with real directories or copies -
-that reintroduces the drift this layout removes. It is also a runtime dependency, not just a
-discovery path: `.agents/skills/iterate-pr/SKILL.md` invokes its scripts through
-`.claude/skills/iterate-pr/scripts/<script>.py` in 13 places (12 `python3`, one `uv run`), which
-resolve only through it. Deleting the symlink later - say on learning Claude Code reads
-`.agents/skills` natively - breaks iterate-pr with no other signal.
+that reintroduces the drift this layout removes.
+
+Skill content must address its own files by their canonical `.agents/skills/...` path, never
+through `.claude/`. `iterate-pr` used to invoke its scripts as
+`.claude/skills/iterate-pr/scripts/<script>.py`, which resolved only through the symlink and so
+broke wherever the symlink was absent; it was corrected to `.agents/` in iterate-pr 2.4.0. The
+symlink is therefore a *discovery* path for Claude Code, not a runtime dependency - but it is
+still load-bearing for discovery, and the installer-collision hazard below is a further reason
+not to touch it.
 
 The four skills tracked in `skills-lock.json` - `chrome-devtools-axi`, `gh-axi`, `lavish`,
 `quota-axi` - are installed by the AXI installer, and its layout is skill content at
@@ -458,9 +462,9 @@ root, just an unnecessary one here; `.codex/skills` is not a path Codex scans at
 
 Windows caveat: on a checkout with `core.symlinks=false` - the default outside developer mode - git
 materialises `.claude/skills` as a regular text file containing the literal string
-`../.agents/skills`. Claude Code then discovers no project skills, and the iterate-pr script paths
-above fail with "No such file or directory". Enable Windows developer mode or set
-`git config core.symlinks true`, then re-checkout.
+`../.agents/skills`. Claude Code then discovers no project skills. Enable Windows developer mode
+or set `git config core.symlinks true`, then re-checkout. (Skill *scripts* still resolve there,
+because skill content addresses them via `.agents/` - only discovery breaks.)
 
 ## Automation Hooks
 
