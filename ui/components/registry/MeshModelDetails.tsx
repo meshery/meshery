@@ -579,10 +579,13 @@ const MeshModelDetails = ({
       }).unwrap();
       const deletedCount = res?.count;
       notify({
-        message:
-          res?.message ||
-          `Deleted ${deletedCount !== undefined ? deletedCount : 0} models for registrant "${deleteModalState.registrantName}"`,
-        event_type: EVENT_TYPES.ERROR,
+        message: (
+          <span style={{ color: '#ff4d4f', fontWeight: 600 }}>
+            {res?.message ||
+              `Deleted ${deletedCount !== undefined ? deletedCount : 0} models for registrant "${deleteModalState.registrantName}"`}
+          </span>
+        ) as any,
+        event_type: EVENT_TYPES.DELETED,
       });
       setDeleteModalState((prev) => ({ ...prev, open: false }));
       if (refetch) {
