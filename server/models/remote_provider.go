@@ -46,6 +46,23 @@ const (
 	SKIP_DOWNLOAD_EXTENSIONS_ENV       = "SKIP_DOWNLOAD_EXTENSIONS"
 )
 
+// statusOf reports the HTTP status carried by resp, or 0 when there is no
+// response to read one from.
+//
+// DoRequest returns (nil, err) for every transport-level failure and for a
+// failed token refresh, so the `if err != nil` branch of each call site holds a
+// nil response. Reading resp.StatusCode there - which ten call sites did -
+// panics precisely when the remote provider is unreachable, i.e. exactly when
+// the error path is meant to report a clean failure. 0 is the honest value:
+// the request never produced a status, and httputil.WithProviderStatus ignores
+// anything outside 400-599, so no fabricated status is propagated either.
+func statusOf(resp *http.Response) int {
+	if resp == nil {
+		return 0
+	}
+	return resp.StatusCode
+}
+
 func shouldPropagateProviderVersion(version string) bool {
 	normalized := strings.TrimSpace(version)
 	if normalized == "" {
@@ -1804,7 +1821,7 @@ func (l *RemoteProvider) GetEventTypes(token string, userID core.Uuid, sysID cor
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
-		return eventTypes, ErrFetch(err, "Events", resp.StatusCode)
+		return eventTypes, ErrFetch(err, "Events", statusOf(resp))
 	}
 
 	defer func() {
@@ -4552,7 +4569,7 @@ func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, 
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		return nil, ErrFetch(err, "Connections Page", resp.StatusCode)
+		return nil, ErrFetch(err, "Connections Page", statusOf(resp))
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
@@ -4687,7 +4704,7 @@ func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *connect
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		return nil, ErrFetch(err, "Update Connection", resp.StatusCode)
+		return nil, ErrFetch(err, "Update Connection", statusOf(resp))
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
@@ -4795,7 +4812,7 @@ func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID core.U
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		err = ErrDelete(err, "Connection: "+connectionID.String(), resp.StatusCode)
+		err = ErrDelete(err, "Connection: "+connectionID.String(), statusOf(resp))
 		l.Log.Error(err)
 		return nil, err
 	}
@@ -5095,7 +5112,7 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, p
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		return nil, ErrFetch(err, "Credentials Page", resp.StatusCode)
+		return nil, ErrFetch(err, "Credentials Page", statusOf(resp))
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
@@ -5131,7 +5148,7 @@ func (l *RemoteProvider) GetCredentialByID(token string, credentialID core.Uuid)
 		if resp != nil {
 			statusCode = resp.StatusCode
 		}
-		return nil, statusCode, ErrFetch(err, "Credentials Page", resp.StatusCode)
+		return nil, statusCode, ErrFetch(err, "Credentials Page", statusOf(resp))
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
@@ -5221,7 +5238,7 @@ func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID co
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		err = ErrDelete(err, "Credential: "+credentialID.String(), resp.StatusCode)
+		err = ErrDelete(err, "Credential: "+credentialID.String(), statusOf(resp))
 		l.Log.Error(err)
 		return nil, err
 	}
@@ -6086,7 +6103,7 @@ func (l *RemoteProvider) GetEnvironmentsOfWorkspace(req *http.Request, workspace
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
-		return nil, ErrFetch(err, "Workspace", resp.StatusCode)
+		return nil, ErrFetch(err, "Workspace", statusOf(resp))
 	}
 
 	defer func() {
@@ -6121,7 +6138,7 @@ func (l *RemoteProvider) AddDesignToWorkspace(req *http.Request, workspaceID str
 	}
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
-		return nil, ErrFetch(err, "Workspace", resp.StatusCode)
+		return nil, ErrFetch(err, "Workspace", statusOf(resp))
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -6178,7 +6195,7 @@ func (l *RemoteProvider) GetDesignsOfWorkspace(req *http.Request, workspaceID, p
 	}
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
-		return nil, ErrFetch(err, "Workspace", resp.StatusCode)
+		return nil, ErrFetch(err, "Workspace", statusOf(resp))
 	}
 	defer func() {
 		_ = resp.Body.Close()

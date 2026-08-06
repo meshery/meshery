@@ -28,7 +28,7 @@ export const REMOTE_PROVIDERS = [
         url: "https://cloud.layer5.io",
     },
     {
-        name: "TATA Labs",
+        name: "TCS Labs",
         url: "https://platform.tata-consulting.co.uk",
     },
     {

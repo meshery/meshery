@@ -8,6 +8,7 @@ import {
   Divider,
   FormControlLabel,
   Grid2,
+  InfoTooltip,
   MenuItem,
   TextField,
   Typography,
@@ -135,11 +136,12 @@ export default function ControllersConfigForm({
     );
   };
 
-  const fieldLabel = (text: string, path: FieldPath) => (
-    <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '0.25rem' }}>
+  const fieldLabel = (text: string, path: FieldPath, helper?: string) => (
+    <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '0.25rem', gap: '0.25rem' }}>
       <Typography variant="body2" sx={{ fontWeight: 500 }}>
         {text}
       </Typography>
+      {helper ? <InfoTooltip helpText={helper} placement="top" /> : null}
       {sourceChip(path)}
     </Box>
   );
@@ -149,7 +151,7 @@ export default function ControllersConfigForm({
     const inherited = inheritedValue(path) as boolean | undefined;
     return (
       <Grid2 size={{ xs: 12, md: 4 }}>
-        {fieldLabel(label, path)}
+        {fieldLabel(label, path, helper)}
         <TextField
           select
           fullWidth
@@ -160,7 +162,6 @@ export default function ControllersConfigForm({
             const v = e.target.value;
             onChange(setPath(value, path, v === INHERIT ? undefined : v === 'true'));
           }}
-          helperText={helper}
         >
           <MenuItem value={INHERIT}>
             Inherit ({inherited === undefined ? 'unset' : inherited ? 'Enabled' : 'Disabled'})
@@ -182,7 +183,7 @@ export default function ControllersConfigForm({
     const inherited = inheritedValue(path);
     return (
       <Grid2 size={{ xs: 12, md: opts?.mdSize ?? 4 }}>
-        {fieldLabel(label, path)}
+        {fieldLabel(label, path, helper)}
         <TextField
           fullWidth
           size="small"
@@ -199,7 +200,6 @@ export default function ControllersConfigForm({
             }
             onChange(setPath(value, path, opts?.number ? Number(raw) : raw));
           }}
-          helperText={helper}
         />
       </Grid2>
     );
@@ -210,7 +210,7 @@ export default function ControllersConfigForm({
     const inherited = inheritedValue(path) as string[] | undefined;
     return (
       <Grid2 size={{ xs: 12, md: 6 }}>
-        {fieldLabel(label, path)}
+        {fieldLabel(label, path, helper)}
         <TextField
           fullWidth
           size="small"
@@ -238,7 +238,6 @@ export default function ControllersConfigForm({
               ),
             );
           }}
-          helperText={helper}
         />
       </Grid2>
     );
@@ -258,7 +257,7 @@ export default function ControllersConfigForm({
     const inherited = inheritedValue(path) as string | undefined;
     return (
       <Grid2 size={{ xs: 12, md: 4 }}>
-        {fieldLabel(label, path)}
+        {fieldLabel(label, path, helper)}
         <TextField
           select
           fullWidth
@@ -274,7 +273,6 @@ export default function ControllersConfigForm({
             }
             onChange(next);
           }}
-          helperText={helper}
         >
           <MenuItem value={INHERIT}>Inherit ({inherited ?? 'unset'})</MenuItem>
           {options.map((option) => (
@@ -431,16 +429,11 @@ export default function ControllersConfigForm({
       )}
 
       <Box sx={{ marginTop: '1.5rem' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '0.25rem' }}>
-          <Typography variant="body2" sx={{ fontWeight: 500 }}>
-            Watched resources (discovery scope)
-          </Typography>
-          {sourceChip(['meshsync', 'watchList'])}
-        </Box>
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
-          At most one of whitelist or blacklist. Applying a watch-scope change restarts MeshSync
-          pods automatically.
-        </Typography>
+        {fieldLabel(
+          'Watched resources (discovery scope)',
+          ['meshsync', 'watchList'],
+          'At most one of whitelist or blacklist. Applying a watch-scope change restarts MeshSync pods automatically. In blacklist mode, enter one resource key per line in "<plural>.<version>.<group>" form.',
+        )}
         <TextField
           select
           size="small"
@@ -534,7 +527,6 @@ export default function ControllersConfigForm({
             sx={{ marginTop: '1rem' }}
             value={blacklist.join('\n')}
             placeholder={'secrets.v1.\nevents.v1.'}
-            helperText='One resource key per line, in "<plural>.<version>.<group>" form.'
             onChange={(e) =>
               setBlacklist(
                 e.target.value
@@ -593,7 +585,11 @@ export default function ControllersConfigForm({
             'Comma-separated CIDRs allowed to reach the broker.',
           )}
         <Grid2 size={{ xs: 12, md: 6 }}>
-          {fieldLabel('Service annotations', ['broker', 'service', 'annotations'])}
+          {fieldLabel(
+            'Service annotations',
+            ['broker', 'service', 'annotations'],
+            'One key=value per line. Merged onto the broker client Service.',
+          )}
           <TextField
             fullWidth
             multiline
@@ -602,7 +598,6 @@ export default function ControllersConfigForm({
             disabled={disabled}
             value={annotationsText}
             placeholder={'key=value\nservice.beta.kubernetes.io/aws-load-balancer-internal=true'}
-            helperText="One key=value per line. Merged onto the broker client Service."
             onChange={(e) => setAnnotationsFromText(e.target.value)}
           />
         </Grid2>
