@@ -121,7 +121,13 @@ guarantees.&lt;/p&gt;</description></item><item><title>Prometheus Metrics</title
 &lt;h2 id="explore-metrics-and-build-a-query"&gt;
 	Explore metrics and build a query
 &lt;/h2&gt;
-&lt;p&gt;Open the &lt;strong&gt;metric explorer&lt;/strong&gt; to compose a query:&lt;/p&gt;</description></item><item><title>High Availability &amp; Resiliency</title><link>/installation/production/high-availability-and-resiliency/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/production/high-availability-and-resiliency/</guid><description>&lt;p&gt;Resiliency for Meshery has two layers: the platform-level self-healing that
+&lt;p&gt;Open the &lt;strong&gt;metric explorer&lt;/strong&gt; to compose a query:&lt;/p&gt;</description></item><item><title>Contributing to Operator, MeshSync &amp; Broker Settings</title><link>/project/contributing/contributing-controllers-config/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-controllers-config/</guid><description>&lt;p&gt;Meshery Operator, MeshSync and Meshery Broker are configured through a layered
+document, &lt;code&gt;MesheryControllersConfig&lt;/code&gt;, defined in
+&lt;a href="https://github.com/meshery/schemas"&gt;meshery/schemas&lt;/a&gt; as the &lt;code&gt;controllers_config&lt;/code&gt;
+construct (&lt;code&gt;v1alpha1&lt;/code&gt;). This page is the authoritative map of that surface for
+contributors: every setting, its storage, its reader, and its observable effect.&lt;/p&gt;
+&lt;p&gt;Keep it current. A setting added without a row here is a setting nobody can
+find, and a row without an end-to-end test is a setting nobody can trust.&lt;/p&gt;</description></item><item><title>High Availability &amp; Resiliency</title><link>/installation/production/high-availability-and-resiliency/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/installation/production/high-availability-and-resiliency/</guid><description>&lt;p&gt;Resiliency for Meshery has two layers: the platform-level self-healing that
 Kubernetes provides, and the application-level recovery behavior built into
 Meshery&amp;rsquo;s components. This page explains how Meshery behaves under failure, how
 to configure it for high availability, and—critically—where durable state lives
