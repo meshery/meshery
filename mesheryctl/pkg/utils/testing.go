@@ -79,15 +79,19 @@ func InitTestEnvironment(t *testing.T) *TestHelper {
 }
 
 // Equals fails the test unless exp and act are deeply equal, reporting the
-// difference through the testing log.
+// difference through tb.
 //
-// It used to print with fmt.Printf and %#v. Both were fatal to readability:
-// fmt.Printf writes to stdout rather than the test log, so under `go test
-// -json` - which CI runs - the message was not attached to the failing test and
-// was effectively invisible; and %#v renders a multi-line golden file as one
-// escaped Go-syntax blob, unreadable even when it did surface. A golden failure
-// in this suite therefore told you only that something differed, never what.
-// That is unactionable for everyone who hits it, not just the author.
+// Never report through os.Stdout. The golden-file helpers below swap os.Stdout
+// for a pipe to capture command output and close the write end before
+// comparing, so anything printed to os.Stdout from here goes to a closed pipe
+// and is lost. `fmt.Printf` also detaches the message from the failing test
+// under `go test -json`, which is what CI runs. Either one alone made every
+// golden failure undiagnosable - a bare FAIL with no expected/got.
+//
+// Formatting matters as much as the destination: `%#v` renders a multi-line
+// golden as a single escaped Go-syntax blob, so even a message that surfaced
+// said only that something differed, never what. Strings are therefore diffed
+// rather than dumped; see stringDiff.
 func Equals(tb testing.TB, exp, act interface{}) {
 	tb.Helper()
 	if reflect.DeepEqual(exp, act) {

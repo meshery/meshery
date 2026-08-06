@@ -4061,6 +4061,15 @@
         "short_description": "",
         "probable_cause": "The connection definition for this kind may disagree with the connections table schema",
         "suggested_remediation": ""
+      },
+      "1464": {
+        "name": "ErrFetchProfilesCode",
+        "code": "1464",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to fetch performance profiles",
+        "probable_cause": "The performance profiles could not be read from the database\nThe performance_profiles table is out of sync with the performance profile model",
+        "suggested_remediation": "Inspect the underlying database error reported above\nMake sure the Meshery database schema is up to date with the running Meshery Server"
       }
     }
   }
