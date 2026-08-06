@@ -55,8 +55,19 @@ const workspacesApi = api
       // The four workspace assign/unassign mutations are the schemas-generated
       // endpoints - the requests are NOT re-declared here. They were, byte for
       // byte (same path, same method, same args), which forked the contract for
-      // no gain. `appendInvalidatesTags` adds the local tags this module's
-      // remaining list queries provide on top of the tags schemas declares.
+      // no gain. `appendInvalidatesTags` adds the local tags below on top of the
+      // tags schemas declares, and cannot drop them.
+      //
+      // Neither local tag has a live provider today, so both currently
+      // invalidate nothing: `workspaces_designs` is provided only by the
+      // shadowed `getDesignsOfWorkspace` in the dead block below, and
+      // `workspaces_environments` is provided by nothing at all since its only
+      // provider was the equally shadowed local `getEnvironmentsOfWorkspace`.
+      // Refetching still happens - the schemas definitions invalidate
+      // `Workspace_workspaces`, which is what the effective queries provide.
+      // The entries stay registered because they become load-bearing the moment
+      // meshery/meshery#21175 restores the shadowed list queries; removing them
+      // would just reintroduce the stale-list bug they guard against.
       assignDesignToWorkspace: appendInvalidatesTags('assignDesignToWorkspace', {
         type: TAGS.DESIGNS,
       }),
