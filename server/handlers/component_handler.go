@@ -19,6 +19,7 @@ import (
 	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/httputil"
 
 	// "github.com/meshery/meshkit/errors"
 	// "github.com/meshery/meshkit/errors"
@@ -1199,7 +1200,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 	case "urlImport":
 		downloadFile := func(url string) ([]byte, error) {
-			resp, err := http.Get(url)
+			resp, err := httputil.DefaultHTTPClient.Get(url)
 			if err != nil {
 				return nil, fmt.Errorf("error downloading file from URL: %v", err)
 			}

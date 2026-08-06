@@ -25,9 +25,35 @@ package httputil
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	meshkiterrors "github.com/meshery/meshkit/errors"
 )
+
+// DefaultHTTPTimeout is the default timeout for outbound HTTP clients across Meshery Server.
+const DefaultHTTPTimeout = 30 * time.Second
+
+// DefaultHTTPClient is the shared, thread-safe HTTP client configured with DefaultHTTPTimeout (30s)
+// and connection pooling. Callers performing simple outbound HTTP requests should reuse this client.
+var DefaultHTTPClient = &http.Client{
+	Timeout: DefaultHTTPTimeout,
+}
+
+// NewHTTPClient returns a new *http.Client configured with DefaultHTTPTimeout (30s).
+// Use this when callers need to customize client properties (e.g., custom transport).
+func NewHTTPClient() *http.Client {
+	return &http.Client{
+		Timeout: DefaultHTTPTimeout,
+	}
+}
+
+// NewHTTPClientWithTimeout returns a new *http.Client with a specified custom timeout.
+func NewHTTPClientWithTimeout(timeout time.Duration) *http.Client {
+	return &http.Client{
+		Timeout: timeout,
+	}
+}
+
 
 // WriteJSONError writes a JSON-encoded {"error": message} body with the given
 // HTTP status. Using JSON (instead of http.Error's plain text) keeps client

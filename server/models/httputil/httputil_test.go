@@ -10,6 +10,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	meshkiterrors "github.com/meshery/meshkit/errors"
 )
@@ -549,3 +550,23 @@ func TestEncodeIntoResponseWriter_DemonstratesLatentBug(t *testing.T) {
 	}
 	t.Errorf("expected truncation or concatenation as proof of corruption; got a single clean object %+v with body=%q. The standard library may have changed — re-validate buffer-encode regression tests.", first, string(bodyBytes))
 }
+
+func TestHTTPClient_TimeoutsAndConstructors(t *testing.T) {
+	if DefaultHTTPClient == nil {
+		t.Fatal("expected DefaultHTTPClient to be initialized")
+	}
+	if DefaultHTTPClient.Timeout != 30*time.Second {
+		t.Errorf("expected DefaultHTTPClient timeout to be 30s, got %v", DefaultHTTPClient.Timeout)
+	}
+
+	cli := NewHTTPClient()
+	if cli == nil || cli.Timeout != 30*time.Second {
+		t.Errorf("expected NewHTTPClient timeout to be 30s, got %v", cli.Timeout)
+	}
+
+	customCli := NewHTTPClientWithTimeout(5 * time.Second)
+	if customCli == nil || customCli.Timeout != 5*time.Second {
+		t.Errorf("expected NewHTTPClientWithTimeout to set 5s timeout, got %v", customCli.Timeout)
+	}
+}
+
