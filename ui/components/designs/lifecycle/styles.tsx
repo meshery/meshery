@@ -63,6 +63,7 @@ export const ValidationResultsListWrapper = styled(List)({
 
 export const ValidationSubHeader = styled(ListSubheader)({
   marginTop: '1rem',
+  marginBottom: '1rem',
   display: 'flex',
   padding: 0,
   justifyContent: 'space-between',
@@ -73,7 +74,7 @@ export const DryRunRootListStyled = styled(List)({
   width: '100%',
   position: 'relative',
   marginBottom: '0.5rem',
-  maxHeight: '80vh',
+  maxHeight: 'clamp(250px, 60vh, 550px)',
   overflowY: 'auto',
 });
 
