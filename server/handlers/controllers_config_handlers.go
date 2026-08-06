@@ -283,6 +283,13 @@ func (h *Handler) fetchKubernetesConnection(w http.ResponseWriter, req *http.Req
 
 // buildConnectionControllersConfig assembles the layered view (override,
 // server default, effective) for a connection.
+//
+// The effective document reports the deployment mode the connection actually
+// runs, not just the one the two editable layers set: clients decide from it
+// which settings can reach anything on this cluster (Meshery Operator manages
+// MeshSync and Meshery Broker, so in embedded mode most of the document is
+// inert), and that decision has to be made against the mode the apply path
+// resolves.
 func (h *Handler) buildConnectionControllersConfig(connection *connections.Connection) (*controllersconfig.ConnectionControllersConfig, error) {
 	override, err := connections.ControllersConfigFromMetadata(connection.Metadata)
 	if err != nil {
@@ -292,7 +299,9 @@ func (h *Handler) buildConnectionControllersConfig(connection *connections.Conne
 	if err != nil {
 		return nil, err
 	}
-	_, effective := connections.ResolveControllersConfig(override, serverDefaults)
+	_, effective, _ := connections.ResolveConnectionControllersConfig(
+		override, serverDefaults, connection.Metadata, h.MeshsyncDefaultDeploymentMode,
+	)
 	return &controllersconfig.ConnectionControllersConfig{
 		Override:  override,
 		Default:   serverDefaults,

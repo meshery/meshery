@@ -93,6 +93,42 @@ func ResolveDeploymentMode(
 	return ResolvedDeploymentMode{Mode: MeshsyncDeploymentModeDefault, Layer: DeploymentModeLayerBuiltIn}
 }
 
+// ResolveConnectionControllersConfig layers a connection's controllers
+// configuration the way the apply path does, and returns the same two documents
+// as ResolveControllersConfig plus the resolved deployment mode.
+//
+// The difference from calling ResolveControllersConfig directly is that the
+// effective document's `operator.deploymentMode` reports the mode the
+// connection actually runs - the one ResolveDeploymentMode picks, including the
+// materialized cache and MESHSYNC_DEFAULT_DEPLOYMENT_MODE floors - rather than
+// only what the two editable layers happen to set. Without this, a connection
+// whose mode came from either floor is described to clients as running the
+// built-in `embedded` mode, and any client that decides what a setting can
+// reach from that value decides it wrong.
+//
+// merged is deliberately left untouched: it is the document that propagates to
+// the cluster, and it must keep carrying only explicitly-set fields so that a
+// field cleared at every layer is withdrawn on the next apply.
+func ResolveConnectionControllersConfig(
+	override, serverDefault *controllersconfig.MesheryControllersConfig,
+	metadata core.Map,
+	serverEnvDefault MeshsyncDeploymentMode,
+) (merged, effective *controllersconfig.MesheryControllersConfig, resolvedMode ResolvedDeploymentMode) {
+	merged, effective = ResolveControllersConfig(override, serverDefault)
+	resolvedMode = ResolveDeploymentMode(merged, metadata, serverEnvDefault)
+
+	if effective == nil {
+		effective = &controllersconfig.MesheryControllersConfig{SchemaVersion: ControllersConfigSchemaVersion}
+	}
+	if effective.Operator == nil {
+		effective.Operator = &controllersconfig.MesheryOperatorConfig{}
+	}
+	mode := controllersconfig.MesheryOperatorConfigDeploymentMode(resolvedMode.Mode)
+	effective.Operator.DeploymentMode = &mode
+
+	return merged, effective, resolvedMode
+}
+
 // SetDeploymentModeOverride records an explicit per-connection deployment-mode
 // choice in the one place that stores it: the connection's layered
 // controllers-configuration override. Every entry point that lets a user pick a

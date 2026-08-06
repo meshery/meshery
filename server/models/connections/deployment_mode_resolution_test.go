@@ -200,3 +200,73 @@ func TestB4WizardAndEditorShareOneDeploymentModeStore(t *testing.T) {
 		})
 	})
 }
+
+// TestB1EffectiveConfigReportsTheModeTheConnectionRuns pins the fact the
+// controllers editor decides field applicability from. Meshery Operator manages
+// MeshSync and Meshery Broker, so in embedded mode most of the document reaches
+// nothing; a client that renders those fields as live (or as inert) is right
+// only if the effective document names the mode the apply path actually
+// resolves - including the materialized cache and the server env default, which
+// plain layer merging never sees.
+func TestB1EffectiveConfigReportsTheModeTheConnectionRuns(t *testing.T) {
+	effectiveMode := func(cfg *controllersconfig.MesheryControllersConfig) MeshsyncDeploymentMode {
+		require.NotNil(t, cfg)
+		require.NotNil(t, cfg.Operator)
+		require.NotNil(t, cfg.Operator.DeploymentMode)
+		return MeshsyncDeploymentModeFromString(string(*cfg.Operator.DeploymentMode))
+	}
+
+	t.Run("mode carried only by the materialized cache is reported, not the built-in default", func(t *testing.T) {
+		metadata := core.Map{MeshsyncDeploymentModeMetadataKey: string(MeshsyncDeploymentModeOperator)}
+
+		_, effective, resolved := ResolveConnectionControllersConfig(nil, nil, metadata, MeshsyncDeploymentModeUndefined)
+
+		assert.Equal(t, MeshsyncDeploymentModeOperator, effectiveMode(effective))
+		assert.Equal(t, DeploymentModeLayerLegacyMetadata, resolved.Layer)
+	})
+
+	t.Run("mode carried only by the server env default is reported", func(t *testing.T) {
+		_, effective, resolved := ResolveConnectionControllersConfig(nil, nil, core.Map{}, MeshsyncDeploymentModeOperator)
+
+		assert.Equal(t, MeshsyncDeploymentModeOperator, effectiveMode(effective))
+		assert.Equal(t, DeploymentModeLayerServerEnvDefault, resolved.Layer)
+	})
+
+	t.Run("a per-connection override still wins", func(t *testing.T) {
+		metadata := core.Map{MeshsyncDeploymentModeMetadataKey: string(MeshsyncDeploymentModeOperator)}
+
+		_, effective, resolved := ResolveConnectionControllersConfig(
+			modeDoc(MeshsyncDeploymentModeEmbedded), modeDoc(MeshsyncDeploymentModeOperator),
+			metadata, MeshsyncDeploymentModeOperator,
+		)
+
+		assert.Equal(t, MeshsyncDeploymentModeEmbedded, effectiveMode(effective))
+		assert.Equal(t, DeploymentModeLayerLayeredConfig, resolved.Layer)
+	})
+
+	t.Run("the merged document is left carrying only explicitly-set fields", func(t *testing.T) {
+		// merged is what propagates to the cluster: stamping the resolved mode
+		// onto it would turn an inherited mode into an explicit one and defeat
+		// the withdrawal semantics of every other field.
+		metadata := core.Map{MeshsyncDeploymentModeMetadataKey: string(MeshsyncDeploymentModeOperator)}
+
+		merged, _, _ := ResolveConnectionControllersConfig(nil, nil, metadata, MeshsyncDeploymentModeOperator)
+
+		assert.Equal(t, MeshsyncDeploymentModeUndefined, DeploymentModeFromControllersConfig(merged))
+	})
+
+	t.Run("everything else still resolves through the layer chain", func(t *testing.T) {
+		version := "v0.8.1"
+		override := &controllersconfig.MesheryControllersConfig{
+			Operator: &controllersconfig.MesheryOperatorConfig{Version: &version},
+		}
+
+		_, effective, _ := ResolveConnectionControllersConfig(override, nil, core.Map{}, MeshsyncDeploymentModeEmbedded)
+
+		require.NotNil(t, effective.Operator.Version)
+		assert.Equal(t, version, *effective.Operator.Version)
+		require.NotNil(t, effective.Meshsync)
+		require.NotNil(t, effective.Meshsync.Replicas)
+		assert.Equal(t, 1, *effective.Meshsync.Replicas, "built-in defaults still fill the rest of the document")
+	})
+}
