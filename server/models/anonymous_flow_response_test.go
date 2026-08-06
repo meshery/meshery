@@ -68,6 +68,9 @@ func TestAnonymousFlowResponseRejectsLegacyOwnerKey(t *testing.T) {
 // a structurally-similar local copy that can drift from it again.
 func TestAnonymousFlowResponseIsTheSchemasType(t *testing.T) {
 	var fromSchemas userv1beta2.AnonymousFlowResponse
-	var local AnonymousFlowResponse = fromSchemas
+	// The explicit type is the assertion: only an alias assigns here. Letting
+	// staticcheck's ST1023 infer it from the right-hand side would leave
+	// nothing for this test to check.
+	var local AnonymousFlowResponse = fromSchemas //nolint:staticcheck
 	_ = local
 }
