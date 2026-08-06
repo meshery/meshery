@@ -4070,15 +4070,6 @@
         "short_description": "Error failed to fetch performance profiles",
         "probable_cause": "The performance profiles could not be read from the database\nThe performance_profiles table is out of sync with the performance profile model",
         "suggested_remediation": "Inspect the underlying database error reported above\nMake sure the Meshery database schema is up to date with the running Meshery Server"
-      },
-      "1465": {
-        "name": "ErrAnonymousUserIDMissingCode",
-        "code": "1465",
-        "severity": "Alert",
-        "long_description": "The remote provider's anonymous user flow response contained no userId.",
-        "short_description": "Anonymous user session could not be established",
-        "probable_cause": "The remote provider does not implement the schemas v1beta2 AnonymousFlowResponse contract, or it returned an empty user id.",
-        "suggested_remediation": "Confirm the configured remote provider is reachable and up to date, then retry signing in."
       }
     }
   }
