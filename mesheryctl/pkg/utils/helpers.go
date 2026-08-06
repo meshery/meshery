@@ -15,6 +15,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -51,15 +52,15 @@ const (
 	MeshsyncURL   = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
 
 	// Documentation URLs
-	docsBaseURL                    = "https://docs.meshery.io/"
-	rootUsageURL                   = docsBaseURL + "reference/references/mesheryctl"
-	perfUsageURL                   = docsBaseURL + "reference/references/mesheryctl/perf"
-	systemUsageURL                 = docsBaseURL + "reference/references/mesheryctl/system"
-	systemStopURL                  = docsBaseURL + "reference/references/mesheryctl/system/stop"
-	systemUpdateURL                = docsBaseURL + "reference/references/mesheryctl/system/update"
-	systemResetURL                 = docsBaseURL + "reference/references/mesheryctl/system/reset"
-	systemStatusURL                = docsBaseURL + "reference/references/mesheryctl/system/status"
-	systemRestartURL               = docsBaseURL + "reference/references/mesheryctl/system/restart"
+	docsBaseURL      = "https://docs.meshery.io/"
+	rootUsageURL     = docsBaseURL + "reference/references/mesheryctl"
+	perfUsageURL     = docsBaseURL + "reference/references/mesheryctl/perf"
+	systemUsageURL   = docsBaseURL + "reference/references/mesheryctl/system"
+	systemStopURL    = docsBaseURL + "reference/references/mesheryctl/system/stop"
+	systemUpdateURL  = docsBaseURL + "reference/references/mesheryctl/system/update"
+	systemResetURL   = docsBaseURL + "reference/references/mesheryctl/system/reset"
+	systemStatusURL  = docsBaseURL + "reference/references/mesheryctl/system/status"
+	systemRestartURL = docsBaseURL + "reference/references/mesheryctl/system/restart"
 	// No dedicated page exists for `mesheryctl mesh`; point at the command
 	// reference index rather than a 404.
 	meshUsageURL                   = docsBaseURL + "reference/references/mesheryctl"
@@ -517,6 +518,24 @@ func IsValidSubcommand(available []*cobra.Command, sub string) bool {
 		}
 	}
 	return false
+}
+
+// SubcommandNames renders the names of available subcommands for use in an
+// "invalid subcommand" message, e.g. "generate, list, search, view".
+//
+// Callers pass the same slice they hand IsValidSubcommand, so the set a command
+// advertises cannot drift from the set it accepts. Hand-listing the names in the
+// message string is how `mesheryctl relationship` came to offer only "[view]"
+// while accepting four subcommands.
+func SubcommandNames(available []*cobra.Command) string {
+	names := make([]string, 0, len(available))
+	for _, s := range available {
+		if name := s.Name(); name != "" {
+			names = append(names, name)
+		}
+	}
+	sort.Strings(names)
+	return strings.Join(names, ", ")
 }
 
 // ContentTypeIsHTML Checks if the response is an HTML resposnse

@@ -106,6 +106,31 @@ across `meshery/meshery` and `meshery-cloud`.
 - MUST NOT change wire casing/field names only in this repo — change the schema
   and regenerate (see the naming conventions above).
 
+### Attaching local cache tags to a generated endpoint
+
+`ui/rtk-query/index.ts` re-exports the schemas client itself (`mesheryApi as api`),
+so every `ui/rtk-query/*` module injects into that same API instance - generated
+hooks are therefore already available from those local modules and need no
+re-declaration. To give a generated endpoint a local cache tag, use the **callback
+form** of `enhanceEndpoints` via `appendInvalidatesTags` from `ui/rtk-query/utils`,
+then re-export the generated hook - see the `importDesign` enhancement in
+`ui/rtk-query/design.ts`. Do **not** use the object form
+(`{ <operationId>: { invalidatesTags: [...] } }`): `enhanceEndpoints` applies an
+object partial with `Object.assign(getEndpointDefinition(...) || {}, partial)`, so
+it REPLACES `invalidatesTags` wholesale and every schemas-side tag has to be
+hand-relisted - drift the moment schemas adds one. The callback form is handed the
+live definition by reference, so the local tag is appended to the generated ones
+and cannot drop them; that same lookup has no fallback, so `appendInvalidatesTags`
+fails loudly and by name when the operationId is gone from schemas rather than
+enhancing a throwaway object. Re-declaring the endpoint with `builder.mutation` to
+get a tag is the forbidden path above - it forks the wire contract silently.
+
+On the Go side, schemas ships **models only, no generated HTTP client**, so
+`mesheryctl` builds request bodies from the generated structs (and, for `oneOf`
+bodies, the `From<Variant>Payload` union builders) rather than a
+`map[string]interface{}` — see `mesheryctl/internal/cli/root/design/import.go`.
+A hand-written map is how camelCase `fileName` regressed to `file_name`.
+
 ## Build & Development Commands
 
 - Use the `gh-axi` CLI tool to interact with GitHub. Prefer `gh-axi` over `gh`.
@@ -124,6 +149,15 @@ make server-skip-compgen       # Run without Kubernetes components
 make server-without-operator   # Run without operator deployment
 make error                     # Generate error codes
 ```
+
+A build that fails with `compile: version "goX.Y.Z" does not match go tool version`
+on dozens of dependencies is an environment mismatch, not a code problem: a stale
+`GOROOT` points at one Go installation while the `go` on `PATH` is a different
+one. Any toolchain at or above `go.mod`'s version works - `go 1.26.4` there does
+not mean 1.26.5 is wrong - so the fix is to make the two agree rather than to
+pin an exact patch release. Drop the stale `GOROOT` and use one installation's
+own binary, e.g.
+`env -u GOROOT PATH="$HOME/.gvm/gos/go1.26.4/bin:$PATH" go test ...`.
 
 ### UI (Next.js/React)
 
@@ -249,6 +283,21 @@ make helm-docs      # Generate Helm chart docs
 - Integration setup: `make server-integration-tests-meshsync-setup` (requires Docker, kind, kubectl, helm)
 - Integration run: `make server-integration-tests-meshsync-run`
 - Target ≥70% coverage on business logic.
+
+Golden-file workflow (`-args -update`, the `fixtures/` vs `testdata/` split, and
+the rule that a regenerated golden must still encode *intended* behavior) is
+documented in `docs/content/en/project/contributing/cli/cli.md`.
+
+**A rename in `meshery/schemas` propagates further than the Go field name.** gorm
+derives the AutoMigrate column from the *field name* via its naming strategy
+(snake_case), not from the `db:` tag - only a `gorm:"column:..."` tag overrides
+it. So renaming `UserID` to `Owner` renames the column `user_id` to `owner`
+whatever the `db:` tag says, and any hand-written SQL naming the old one breaks -
+silently, if the gorm error is dropped. After bumping schemas, grep every raw
+column reference for the old spelling (`Select`, `Where`, `Order`, `Joins`,
+`Scan`, and migrations - not just `Select`) along with the `mesheryctl` fixtures,
+and propagate gorm errors so the next such rename fails loudly. Regression test:
+`server/models/performance_profile_persister_test.go`.
 
 ### UI
 
@@ -386,11 +435,15 @@ Per-tool discovery, so no skill is ever copied per tool:
 | Claude Code | Reads `.claude/skills`, which is a relative symlink to `../.agents/skills` |
 
 `.claude/skills` is that symlink and nothing else. Never replace it with real directories or copies -
-that reintroduces the drift this layout removes. It is also a runtime dependency, not just a
-discovery path: `.agents/skills/iterate-pr/SKILL.md` invokes its scripts through
-`.claude/skills/iterate-pr/scripts/<script>.py` in 13 places (12 `python3`, one `uv run`), which
-resolve only through it. Deleting the symlink later - say on learning Claude Code reads
-`.agents/skills` natively - breaks iterate-pr with no other signal.
+that reintroduces the drift this layout removes.
+
+Skill content must address its own files by their canonical `.agents/skills/...` path, never
+through `.claude/`. `iterate-pr` used to invoke its scripts as
+`.claude/skills/iterate-pr/scripts/<script>.py`, which resolved only through the symlink and so
+broke wherever the symlink was absent; it was corrected to `.agents/` in iterate-pr 2.4.0. The
+symlink is therefore a *discovery* path for Claude Code, not a runtime dependency - but it is
+still load-bearing for discovery, and the installer-collision hazard below is a further reason
+not to touch it.
 
 The four skills tracked in `skills-lock.json` - `chrome-devtools-axi`, `gh-axi`, `lavish`,
 `quota-axi` - are installed by the AXI installer, and its layout is skill content at
@@ -409,9 +462,9 @@ root, just an unnecessary one here; `.codex/skills` is not a path Codex scans at
 
 Windows caveat: on a checkout with `core.symlinks=false` - the default outside developer mode - git
 materialises `.claude/skills` as a regular text file containing the literal string
-`../.agents/skills`. Claude Code then discovers no project skills, and the iterate-pr script paths
-above fail with "No such file or directory". Enable Windows developer mode or set
-`git config core.symlinks true`, then re-checkout.
+`../.agents/skills`. Claude Code then discovers no project skills. Enable Windows developer mode
+or set `git config core.symlinks true`, then re-checkout. (Skill *scripts* still resolve there,
+because skill content addresses them via `.agents/` - only discovery breaks.)
 
 ## Automation Hooks
 

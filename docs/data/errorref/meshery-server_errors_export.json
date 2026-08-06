@@ -3690,8 +3690,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Invalid design import request",
-        "probable_cause": "The request body did not match exactly one variant of the import oneOf — the File variant requires `file` and `file_name`, the URL variant requires `url`.\nBoth variants were provided, or neither was.",
-        "suggested_remediation": "Send a request body with exactly one variant set: either {\\\"file\\\": <bytes>, \\\"file_name\\\": \\\"design.yml\\\"} or {\\\"url\\\": \\\"https://...\\\"}."
+        "probable_cause": "The request body did not match exactly one variant of the import oneOf — the File variant requires `file` and `fileName`, the URL variant requires `url`.\nBoth variants were provided, or neither was.",
+        "suggested_remediation": "Send a request body with exactly one variant set: either {\\\"file\\\": <bytes>, \\\"fileName\\\": \\\"design.yml\\\"} or {\\\"url\\\": \\\"https://...\\\"}."
       },
       "1423": {
         "name": "ErrConvertToDesignCode",
@@ -4061,6 +4061,15 @@
         "short_description": "",
         "probable_cause": "The connection definition for this kind may disagree with the connections table schema",
         "suggested_remediation": ""
+      },
+      "1464": {
+        "name": "ErrFetchProfilesCode",
+        "code": "1464",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to fetch performance profiles",
+        "probable_cause": "The performance profiles could not be read from the database\nThe performance_profiles table is out of sync with the performance profile model",
+        "suggested_remediation": "Inspect the underlying database error reported above\nMake sure the Meshery database schema is up to date with the running Meshery Server"
       }
     }
   }
