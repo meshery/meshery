@@ -76,7 +76,7 @@ vi.mock('../meshery-mesh-interface/PatternService/RJSF_wrapper', () => ({
 }));
 
 vi.mock('@meshery/schemas', () => ({
-  ModelDefinitionV1Beta1OpenApiSchema: {
+  ModelDefinitionV1Beta2OpenApiSchema: {
     components: {
       schemas: {
         ModelDefinition: {

@@ -33,7 +33,7 @@ vi.mock('@meshery/schemas', () => ({
       },
     },
   },
-  ModelDefinitionV1Beta1OpenApiSchema: {
+  ModelDefinitionV1Beta2OpenApiSchema: {
     components: {
       schemas: {
         ModelDefinition: {

@@ -19,11 +19,11 @@ import RJSFWrapper from '../meshery-mesh-interface/PatternService/RJSF_wrapper';
 import cloneDeep from 'lodash/cloneDeep';
 import { useMeshModelComponents } from '@/utils/hooks/useMeshModelComponents';
 import omit from 'lodash/omit';
-import { ModelDefinitionV1Beta1OpenApiSchema } from '@meshery/schemas';
+import { ModelDefinitionV1Beta2OpenApiSchema } from '@meshery/schemas';
 
 const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
   const ModelDefinitionSchema =
-    ModelDefinitionV1Beta1OpenApiSchema.components.schemas.ModelDefinition;
+    ModelDefinitionV1Beta2OpenApiSchema.components.schemas.ModelDefinition;
 
   const [tabValue, setTabValue] = React.useState(0);
   const [selectorsData, setSelectorsData] = React.useState(
@@ -264,7 +264,7 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
                           fullWidth
                           variant="outlined"
                           helperText={
-                            selectorsSchema?.items?.properties?.allow?.properties?.from?.items
+                            selectorsSchema?.items?.properties?.[type]?.properties?.[direction]?.items
                               ?.properties?.model?.helperText
                           }
                         >
