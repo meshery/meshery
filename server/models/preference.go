@@ -64,18 +64,30 @@ type Preference struct {
 // preferences already persisted under the legacy key - in the local provider's
 // database, and in any remote provider not yet on the canonical spelling -
 // readable after the rename.
+//
+// Which key wins is decided on payload key *presence*, not on whether the
+// destination is already populated: UserPrefsHandler decodes the request body
+// onto the Preference the session middleware already read from the persister,
+// so the destination is normally non-empty before this runs. Both keys are
+// therefore decoded through pointers - the shallower fields shadow the
+// embedded struct's own `selectedOrganizationId` - and the destination is left
+// untouched when the payload carries neither.
 func (p *Preference) UnmarshalJSON(data []byte) error {
 	type preferenceAlias Preference
 	aliased := struct {
 		*preferenceAlias
-		LegacySelectedOrganizationID string `json:"selectedOrganizationID,omitempty"`
+		SelectedOrganizationID       *string `json:"selectedOrganizationId,omitempty"`
+		LegacySelectedOrganizationID *string `json:"selectedOrganizationID,omitempty"`
 	}{preferenceAlias: (*preferenceAlias)(p)}
 
 	if err := json.Unmarshal(data, &aliased); err != nil {
 		return err
 	}
-	if p.SelectedOrganizationID == "" {
-		p.SelectedOrganizationID = aliased.LegacySelectedOrganizationID
+	switch {
+	case aliased.SelectedOrganizationID != nil:
+		p.SelectedOrganizationID = *aliased.SelectedOrganizationID
+	case aliased.LegacySelectedOrganizationID != nil:
+		p.SelectedOrganizationID = *aliased.LegacySelectedOrganizationID
 	}
 	return nil
 }

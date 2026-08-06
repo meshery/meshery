@@ -159,7 +159,7 @@ const (
 	ErrInvalidUUIDValueCode               = "meshery-server-1432"
 	ErrSystemSettingsCode                 = "meshery-server-1439"
 	ErrApplyControllersConfigCode         = "meshery-server-1440"
-	ErrAnonymousUserIDMissingCode         = "meshery-server-1464"
+	ErrAnonymousUserIDMissingCode         = "meshery-server-1465"
 )
 
 var (
@@ -758,9 +758,6 @@ func ErrSystemSettings(err error) error {
 	return errors.New(ErrSystemSettingsCode, errors.Alert, []string{"Error accessing server-wide system settings"}, []string{err.Error()}, []string{"The system_settings store could not be read or written, or the stored value is not valid JSON."}, []string{"Verify Meshery Server's database is reachable and writable, then retry the operation."})
 }
 
-// ErrApplyControllersConfig wraps failures propagating a resolved
-// controllers configuration (Meshery Operator / MeshSync / Broker) to a
-// managed cluster.
 // ErrAnonymousUserIDMissing reports that the remote provider's anonymous user
 // flow response carried no `userId`. The response is the schemas
 // v1beta2 user.AnonymousFlowResponse construct; a missing id means the
@@ -777,6 +774,9 @@ func ErrAnonymousUserIDMissing() error {
 	)
 }
 
+// ErrApplyControllersConfig wraps failures propagating a resolved
+// controllers configuration (Meshery Operator / MeshSync / Broker) to a
+// managed cluster.
 func ErrApplyControllersConfig(err error) error {
 	return errors.New(ErrApplyControllersConfigCode, errors.Alert, []string{"Error applying controllers configuration to the cluster"}, []string{err.Error()}, []string{"The MeshSync or Broker custom resource could not be patched, or the MeshSync deployment overlay could not be applied.", "The Meshery Operator may not be deployed on the target cluster yet."}, []string{"Confirm the cluster is reachable and the Meshery Operator is deployed (operator deployment mode).", "Retry the change; configuration is re-applied whenever the connection reconnects."})
 }

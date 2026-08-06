@@ -71,6 +71,63 @@ func TestPreferenceCanonicalKeyWinsOverLegacy(t *testing.T) {
 	}
 }
 
+// TestPreferenceLegacyKeyUpdatesAlreadySelectedOrganization pins the decision on
+// payload key presence rather than on the destination being empty.
+//
+// UserPrefsHandler decodes the request body onto the *models.Preference the
+// session middleware already populated from the persister, so a user who has an
+// organization selected reaches UnmarshalJSON with the field non-empty. Gating
+// the legacy fallback on that field being empty silently discarded the update
+// for exactly the out-of-repo clients (Meshery UI extensions, Kanvas) the
+// fallback exists to serve - the handler still answered 200 and re-persisted the
+// old value.
+func TestPreferenceLegacyKeyUpdatesAlreadySelectedOrganization(t *testing.T) {
+	const previouslySelectedOrgID = "0195b0ab-1f4d-7a3c-9c1e-000000000001"
+
+	p := &Preference{SelectedOrganizationID: previouslySelectedOrgID}
+	body := `{"selectedOrganizationID":"` + testSelectedOrgID + `"}`
+
+	if err := json.Unmarshal([]byte(body), p); err != nil {
+		t.Fatalf("unmarshal Preference: %v", err)
+	}
+	if p.SelectedOrganizationID != testSelectedOrgID {
+		t.Errorf("SelectedOrganizationID = %q, want the legacy-keyed update %q", p.SelectedOrganizationID, testSelectedOrgID)
+	}
+}
+
+// TestPreferenceCanonicalKeyWinsOverLegacyOnMerge pins that presence-based
+// precedence still lets the canonical key win when both are sent onto an
+// already-populated Preference.
+func TestPreferenceCanonicalKeyWinsOverLegacyOnMerge(t *testing.T) {
+	p := &Preference{SelectedOrganizationID: "0195b0ab-1f4d-7a3c-9c1e-000000000001"}
+	body := `{"selectedOrganizationId":"` + testSelectedOrgID + `","selectedOrganizationID":"stale"}`
+
+	if err := json.Unmarshal([]byte(body), p); err != nil {
+		t.Fatalf("unmarshal Preference: %v", err)
+	}
+	if p.SelectedOrganizationID != testSelectedOrgID {
+		t.Errorf("SelectedOrganizationID = %q, want the canonical %q", p.SelectedOrganizationID, testSelectedOrgID)
+	}
+}
+
+// TestPreferenceOmittedOrganizationKeyPreservesSelection pins that a body
+// carrying neither spelling leaves the persisted selection alone - the merge
+// path decodes partial bodies (an anonymous-stats toggle, say) onto the full
+// persisted preference.
+func TestPreferenceOmittedOrganizationKeyPreservesSelection(t *testing.T) {
+	p := &Preference{SelectedOrganizationID: testSelectedOrgID}
+
+	if err := json.Unmarshal([]byte(`{"anonymousUsageStats":true}`), p); err != nil {
+		t.Fatalf("unmarshal Preference: %v", err)
+	}
+	if p.SelectedOrganizationID != testSelectedOrgID {
+		t.Errorf("SelectedOrganizationID = %q, want the persisted %q preserved", p.SelectedOrganizationID, testSelectedOrgID)
+	}
+	if !p.AnonymousUsageStats {
+		t.Error("AnonymousUsageStats was not applied from the partial body")
+	}
+}
+
 // TestPreferenceRoundTripsEveryField guards the custom UnmarshalJSON: aliasing
 // the struct to avoid infinite recursion is easy to get subtly wrong, and a
 // dropped field would be invisible to the focused tests above.

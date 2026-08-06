@@ -571,11 +571,11 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 		return
 	}
 
-	l.SetJWTCookie(res, flowResponse.AccessToken)
-
 	// A nil user id means the provider's reply carried none. Writing
 	// capabilities under the zero UUID would collapse every anonymous session
-	// onto a single row rather than fail, so refuse it outright.
+	// onto a single row rather than fail, so refuse it outright - before the
+	// JWT cookie is set, so a refused session leaves no half-authenticated
+	// browser state behind.
 	if flowResponse.UserID.IsNil() {
 		err = ErrAnonymousUserIDMissing()
 		l.Log.Error(err)
@@ -583,6 +583,8 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 
 		return
 	}
+
+	l.SetJWTCookie(res, flowResponse.AccessToken)
 
 	err = l.WriteCapabilitiesForUser(flowResponse.UserID.String(), &providerProperties)
 	if err != nil {
@@ -2188,7 +2190,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 		q.Set("type", typ)
 	}
 	if oamType != "" {
-		q.Set("oam_type", oamType)
+		q.Set("oamType", oamType)
 	}
 
 	remoteProviderURL.RawQuery = q.Encode()
@@ -5242,7 +5244,7 @@ func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID co
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
 	q := remoteProviderURL.Query()
-	q.Add("credential_id", credentialID.String())
+	q.Add("credentialId", credentialID.String())
 	remoteProviderURL.RawQuery = q.Encode()
 	l.Log.Debug("constructed credential url: ", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
