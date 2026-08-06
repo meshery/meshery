@@ -753,19 +753,28 @@ func (mch *MesheryControllersHelper) ReconcileOperatorChartVersion(k8sctx K8sCon
 		return desired, false, nil
 	}
 
-	// Re-attach so the operator handler carries the new chart version.
+	// Re-attaching records the desired version as attached, which the guard
+	// above then treats as "already reconciled". If anything below fails, that
+	// leaves a failed upgrade permanently ineligible for retry - the next call
+	// would short-circuit and never try again. Restore the previous value on
+	// every failure path so a transient Helm error is retried rather than
+	// silently becoming the resting state.
+	previousChartVersion := mch.attachedOperatorChartVersion
 	mch.AddCtxControllerHandlers(k8sctx)
 	if setupErr := mch.GetOperatorError(); setupErr != nil {
+		mch.attachedOperatorChartVersion = previousChartVersion
 		return desired, false, ErrReconcileOperatorChartVersion(setupErr)
 	}
 	operatorHandler, ok := mch.ctxControllerHandlers[MesheryOperator]
 	if !ok || operatorHandler == nil {
+		mch.attachedOperatorChartVersion = previousChartVersion
 		return desired, false, ErrOperatorHandlerNotAttached(k8sctx.ID)
 	}
 	// Deploy(false) is a no-op against an operator this handler undeployed and a
 	// Helm upgrade against one that is installed, so an operator the user turned
 	// off is not resurrected by a chart-version change.
 	if deployErr := operatorHandler.Deploy(false); deployErr != nil {
+		mch.attachedOperatorChartVersion = previousChartVersion
 		mch.setOperatorError(deployErr)
 		return desired, false, ErrReconcileOperatorChartVersion(deployErr)
 	}
