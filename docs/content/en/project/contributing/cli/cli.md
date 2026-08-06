@@ -165,9 +165,31 @@ In the above code sample, the test is marked with **“Integration”** in the t
 
 {{< code code=`go test -run Integration ./... -race -coverprofile=coverage.txt -covermode=atomic` >}}
 
-To update golden files with the test output use the `--update` flag:
+#### Updating golden files
+
+Test packages that compare against golden files declare an `update` flag:
 
 {{< code code=`var update = flag.Bool("update", false, "update golden files")` >}}
+
+Pass it after `-args` so `go test` hands it to the test binary rather than
+interpreting it itself. Regenerate only the package you are changing:
+
+{{< code code=`go test --short ./internal/cli/root/relationships/ -args -update` >}}
+
+{{% alert color="warning" title="A golden file must encode intended behavior" %}}
+`-update` rewrites the expectation to whatever the command currently prints, so
+it will just as happily record a regression. After regenerating, read the diff
+and confirm each change is output you actually want users to see - correct
+message text, a documentation URL that resolves, the right set of subcommands.
+If the diff shows the command is wrong, fix the command and regenerate; never
+let `-update` settle a disagreement between the test and the code.
+{{% /alert %}}
+
+Remember which directory a file belongs in: **fixtures** hold the mock input
+(for example, a stubbed API response), while **testdata** holds the expected
+command output that `-update` regenerates. When a wire contract changes, the
+fixture is usually the file that has gone stale - updating only the expectation
+bakes the broken behavior into the test.
 
 #### End-to-end Tests
 

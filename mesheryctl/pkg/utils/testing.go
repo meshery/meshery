@@ -79,11 +79,17 @@ func InitTestEnvironment(t *testing.T) *TestHelper {
 }
 
 // equals fails the test if exp is not equal to act.
+//
+// The mismatch is reported through tb, never through os.Stdout: the golden-file
+// helpers below swap os.Stdout for a pipe to capture command output and close
+// the write end before comparing, so anything printed to os.Stdout from here is
+// written to a closed pipe and lost. Every golden-file failure was therefore
+// undiagnosable - a bare "FAIL" with no expected/got.
 func Equals(tb testing.TB, exp, act interface{}) {
+	tb.Helper()
 	if !reflect.DeepEqual(exp, act) {
 		_, file, line, _ := runtime.Caller(1)
-		fmt.Printf("\033[31m%s:%d:\n\n\texp: %#v\n\n\tgot: %#v\033[39m\n\n", filepath.Base(file), line, exp, act)
-		tb.FailNow()
+		tb.Fatalf("%s:%d:\n\n\texp: %#v\n\n\tgot: %#v\n", filepath.Base(file), line, exp, act)
 	}
 }
 
