@@ -80,26 +80,40 @@ describe('workspace mutation wrappers', () => {
     vi.restoreAllMocks();
   });
 
-  it('useCreateWorkspaceMutation sends the payload as the request body', async () => {
-    fetchMock.mockResolvedValue(okResponse({ id: 'new' }));
-    const { workspaceMod, wrapper } = await setup();
+  // `workspacePayload` is a caller-side view-model, not a wire object, and the
+  // wrapper normalizes either spelling of its org key to the canonical
+  // `organizationId` the generated endpoint sends. Both inputs are covered
+  // deliberately: `organization_id` is what the live caller passes today
+  // (ui/components/workspaces/index.tsx), so dropping it would delete coverage
+  // of the production path; `organizationId` covers callers already on the
+  // canonical spelling. What goes over the wire is camelCase either way, which
+  // is what the assertions pin.
+  it.each([
+    ['legacy organization_id (what the live caller sends)', { organization_id: 'org-1' }],
+    ['canonical organizationId', { organizationId: 'org-1' }],
+  ])(
+    'useCreateWorkspaceMutation sends the payload as the request body - %s',
+    async (_name, org) => {
+      fetchMock.mockResolvedValue(okResponse({ id: 'new' }));
+      const { workspaceMod, wrapper } = await setup();
 
-    const { result } = renderHook(() => workspaceMod.useCreateWorkspaceMutation(), { wrapper });
-    await act(async () => {
-      await result.current[0]({
-        workspacePayload: { name: 'w-name', description: 'desc', organization_id: 'org-1' },
+      const { result } = renderHook(() => workspaceMod.useCreateWorkspaceMutation(), { wrapper });
+      await act(async () => {
+        await result.current[0]({
+          workspacePayload: { name: 'w-name', description: 'desc', ...org },
+        });
       });
-    });
 
-    const req = fetchMock.mock.calls[0][0] as Request;
-    expect(req.method).toBe('POST');
-    expect(req.url).toContain('/api/workspaces');
-    expect(await req.clone().json()).toEqual({
-      name: 'w-name',
-      description: 'desc',
-      organizationId: 'org-1',
-    });
-  });
+      const req = fetchMock.mock.calls[0][0] as Request;
+      expect(req.method).toBe('POST');
+      expect(req.url).toContain('/api/workspaces');
+      expect(await req.clone().json()).toEqual({
+        name: 'w-name',
+        description: 'desc',
+        organizationId: 'org-1',
+      });
+    },
+  );
 
   it('useUpdateWorkspaceMutation addresses the workspace by id and sends a body', async () => {
     fetchMock.mockResolvedValue(okResponse({}));
