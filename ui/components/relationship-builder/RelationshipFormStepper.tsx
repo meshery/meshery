@@ -17,7 +17,7 @@ import { GlobalStyles } from '@/theme';
 import { styled, DescriptionIcon, CodeIcon } from '@sistent/sistent';
 import {
   RelationshipDefinitionV1Beta2OpenApiSchema,
-  ModelDefinitionV1Beta2OpenApiSchema,
+  ModelDefinitionV1Beta1OpenApiSchema,
 } from '@meshery/schemas';
 import {
   Link as LinkIcon,
@@ -46,7 +46,7 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
   const RelationshipDefinitionSchema =
     RelationshipDefinitionV1Beta2OpenApiSchema.components.schemas.RelationshipDefinition;
   const ModelDefinitionSchema =
-    ModelDefinitionV1Beta2OpenApiSchema.components.schemas.ModelDefinition;
+    ModelDefinitionV1Beta1OpenApiSchema.components.schemas.ModelDefinition;
 
   const filteredSchema = omit(RelationshipDefinitionSchema, [
     'properties.capabilities',
