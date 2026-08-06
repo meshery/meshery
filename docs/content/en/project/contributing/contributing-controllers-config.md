@@ -288,9 +288,6 @@ Unit coverage that exists today:
 - `ui/components/configuration/__tests__/deploymentMode.test.ts` - which
   settings each deployment mode can apply, and how the mode governing each
   editor is resolved and attributed to a layer.
-
-Still missing, and required before this surface can be called covered:
-
 - `ui/components/configuration/__tests__/ControllersConfigForm.test.tsx` - the
   rendered editor: tri-state inherit/override, the conditional LoadBalancer-only
   fields, and the deployment-mode gating (inert-and-explained on a connection,
