@@ -51,7 +51,7 @@ type importVariant struct {
 // feedback on meshery/meshery#18845 called out. 60s is generous for
 // a single-file fetch (Kubernetes manifests, Helm charts, Meshery
 // designs) while still bounding damage from dead endpoints.
-var designImportHTTPClient = httputil.DefaultHTTPClient
+var designImportHTTPClient = httputil.NewHTTPClientWithTimeout(60 * time.Second)
 
 // resolveImportVariant decodes the request body against the two oneOf
 // variants published in the schema, enforces the "exactly one of"
