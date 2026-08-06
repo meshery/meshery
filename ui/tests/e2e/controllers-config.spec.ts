@@ -122,10 +122,19 @@ test.describe.serial('Operator, MeshSync & Broker Settings', () => {
     expect(page).toBeTruthy();
   });
 
-  test.afterAll(async ({ request }) => {
+  // `test.afterAll` receives only worker-scoped fixtures, so the test-scoped
+  // `request` context is not available here - taking it would make this hook
+  // throw and silently leave the server-wide defaults set for whatever runs
+  // next. Build a request context explicitly instead.
+  test.afterAll(async ({ playwright, baseURL }) => {
     // Leave the server as the run found it: the defaults are server-wide state
     // that outlives this spec and fans out to every tracked connection.
-    await clearServerDefaults(request);
+    const cleanup = await playwright.request.newContext({ baseURL });
+    try {
+      await clearServerDefaults(cleanup);
+    } finally {
+      await cleanup.dispose();
+    }
   });
 
   // Covers: the entry point itself - Settings -> "Operator, MeshSync & Broker".

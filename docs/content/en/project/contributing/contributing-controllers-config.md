@@ -291,17 +291,32 @@ Unit coverage that exists today:
 
 Still missing, and required before this surface can be called covered:
 
-- The form's tri-state inherit/override semantics and its conditional field
-  visibility are covered only through the pure helpers above; the rendered
-  component has no test.
-- Cluster propagation of `ApplyControllersConfigToCluster` (patch, withdrawal,
-  restart-only-on-watch-list-change) has no test. `server/models/controllers_config_apply.go`
-  is asserted only indirectly, through the handlers that call it.
-- There is no end-to-end spec. When one is added it belongs at
-  `ui/tests/e2e/controllers-config.spec.ts`, keyed to the **Operator, MeshSync &
-  Broker Settings** Test Plan Test Group via the Allure `testGroup` label - the
-  same mechanism the Connection Lifecycle report uses (see
-  [Contributing to Meshery's CLI tests]({{< relref "cli/tests.md" >}})).
+- `ui/components/configuration/__tests__/ControllersConfigForm.test.tsx` - the
+  rendered editor: tri-state inherit/override, the conditional LoadBalancer-only
+  fields, and the deployment-mode gating (inert-and-explained on a connection,
+  annotated-but-live on the server-wide defaults).
+- `server/models/controllers_config_apply_test.go` - cluster propagation with
+  fake clients: per-setting custom-resource and Deployment patch contents,
+  withdrawal when a field is cleared at every layer,
+  restart-only-on-watch-list-change, and the `Skipped[]` reporting.
+- `server/handlers/controllers_config_handlers_test.go` - the four endpoints:
+  validation rejection, the layered response shape, clearing an override, and
+  that an unreadable override is skipped rather than reconciled.
+
+End-to-end coverage lives in `ui/tests/e2e/controllers-config.spec.ts`, keyed to
+the **Operator, MeshSync & Broker Settings** Test Plan Test Group via the Allure
+`testGroup` label - the same mechanism the Connection Lifecycle report uses (see
+[Contributing to Meshery's CLI tests]({{< relref "cli/tests.md" >}})). It covers
+every wire path in the tables above plus the precedence chain, the inherit
+round-trip, validation rejection, and the mode gating.
+
+What remains uncovered:
+
+- Cluster propagation end to end. The spec's watch-scope and broker-service case
+  self-skips when no Kubernetes cluster is reachable, so on an infra-less run it
+  reports "skipped" rather than passing vacuously. The propagation logic itself
+  is covered by the unit test above; what is untested is the real round trip
+  against a live operator.
 
 Before adding a setting, add its row above, its propagation assertion, and its
 end-to-end case. A setting whose effect a user cannot observe is a defect; so is
