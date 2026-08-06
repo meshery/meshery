@@ -446,11 +446,20 @@ func (h *Handler) reconcileInheritedDeploymentMode(
 
 	override, err := connections.ControllersConfigFromMetadata(metadata)
 	if err != nil {
-		// A malformed override invalidates only that layer; the server-wide
-		// default still applies. Surfaced to the user by the per-connection
-		// GET endpoint.
+		// An unreadable override is unknown intent, not absent intent. Treating
+		// it as absent used to resolve the connection to the server-wide
+		// default, find that it differed from the materialized mode, and
+		// reconcile - tearing down and redeploying MeshSync into a mode the
+		// user never chose, on the strength of corrupt data. Skip this
+		// connection instead and leave it exactly as it is; the per-connection
+		// GET surfaces the parse failure so it can be corrected deliberately.
 		h.log.Error(err)
-		override = nil
+		h.emitControllersConfigApplyEvent(
+			eventBuilder, provider, token, userID, events.Error,
+			"Skipped reconciling this connection's MeshSync deployment mode: its stored controllers configuration could not be parsed.",
+			map[string]interface{}{"error": err, "connectionId": connection.ID},
+		)
+		return
 	}
 	merged, _ := connections.ResolveControllersConfig(override, serverDefaults)
 	desired := connections.ResolveDeploymentMode(merged, metadata, h.MeshsyncDefaultDeploymentMode)
