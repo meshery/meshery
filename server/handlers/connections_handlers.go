@@ -726,11 +726,25 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 				RemoveCtxControllerHandler(ctx, contextID)
 			ctrlHelper.RemoveMeshSyncDataHandler(ctx, contextID)
 		}
-		// connect
+		// connect. The controllers configuration is refreshed and stashed
+		// before AddCtxControllerHandlers, which constructs the operator
+		// controller handler with the Helm chart version that document
+		// resolves to (operator.version) and captures it there. Resolving from
+		// the incoming payload's metadata rather than the helper's stale copy
+		// is what lets one save change the mode and the chart version at once.
 		{
+			merged, _, resolveErr := ctrlHelper.ResolveControllersConfigForConnection(newConnection.MetaData)
+			if resolveErr != nil {
+				// The defaults store failed; the intended configuration is
+				// unknown. Reattach with whatever was last resolved rather
+				// than leaving the connection with no controllers at all.
+				h.log.Error(resolveErr)
+			} else {
+				ctrlHelper.SetControllersConfig(merged)
+			}
 			ctrlHelper.
-				AddCtxControllerHandlers(machineCtx.K8sContext).
 				SetMeshsyncDeploymentMode(newMeshSyncMode).
+				AddCtxControllerHandlers(machineCtx.K8sContext).
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
 				DeployUndeployedOperators(machineCtx.OperatorTracker).
 				AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, mesheryInstanceID, provider)

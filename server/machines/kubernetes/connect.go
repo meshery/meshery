@@ -94,10 +94,13 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 	).Mode
 
 	go func() {
+		// SetControllersConfig first: AddCtxControllerHandlers constructs the
+		// operator controller handler with the Helm chart version this document
+		// resolves to (operator.version), and captures it there.
 		ctrlHelper := machinectx.MesheryCtrlsHelper.
-			AddCtxControllerHandlers(machinectx.K8sContext).
-			SetMeshsyncDeploymentMode(meshsyncDeploymentMode).
 			SetControllersConfig(mergedControllersConfig).
+			SetMeshsyncDeploymentMode(meshsyncDeploymentMode).
+			AddCtxControllerHandlers(machinectx.K8sContext).
 			UpdateOperatorsStatusMap(machinectx.OperatorTracker).
 			DeployUndeployedOperators(machinectx.OperatorTracker)
 		ctrlHelper.AddMeshsyncDataHandlers(ctx, machinectx.K8sContext, userUUID, *sysID, provider)

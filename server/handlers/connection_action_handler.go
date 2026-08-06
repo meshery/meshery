@@ -15,6 +15,7 @@ import (
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/core"
+	controllersconfig "github.com/meshery/schemas/models/v1alpha1/controllers_config"
 	schemasConnection "github.com/meshery/schemas/models/v1beta3/connection"
 )
 
@@ -185,7 +186,7 @@ func (h *Handler) setMeshsyncDeploymentModeAction(
 	// Detach from the request lifecycle but keep context values (token, etc.).
 	detachedCtx := context.WithoutCancel(req.Context())
 	go func() {
-		if rerr := h.reconcileMeshsyncDeploymentMode(detachedCtx, connectionID, newMode, userID, provider); rerr != nil {
+		if rerr := h.reconcileMeshsyncDeploymentMode(detachedCtx, connectionID, newMode, merged, userID, provider); rerr != nil {
 			h.log.Error(rerr)
 			event := eventBuilder.WithSeverity(events.Error).
 				WithDescription(fmt.Sprintf("MeshSync mode saved as '%s' but redeploy failed for connection %s", newMode, updated.Name)).
@@ -290,7 +291,13 @@ func (h *Handler) flushMeshsyncAction(
 // the previous MeshSync setup and (re)deploy it for newMode. It reads the live
 // machine context, so it must run after the connection's FSM exists (i.e. the
 // connection is connected). Safe to run in a detached goroutine.
-func (h *Handler) reconcileMeshsyncDeploymentMode(ctx context.Context, connectionID core.Uuid, newMode connections.MeshsyncDeploymentMode, userID core.Uuid, provider models.Provider) error {
+//
+// merged is the connection's resolved (layered) controllers configuration. It
+// is stashed on the helper before the handlers are re-attached because the
+// operator controller handler is constructed with the Helm chart version that
+// document resolves to (`operator.version`). Pass nil only when the intended
+// configuration is genuinely unknown.
+func (h *Handler) reconcileMeshsyncDeploymentMode(ctx context.Context, connectionID core.Uuid, newMode connections.MeshsyncDeploymentMode, merged *controllersconfig.MesheryControllersConfig, userID core.Uuid, provider models.Provider) error {
 	if h.SystemID == nil {
 		return ErrMeshsyncReconcile("system id is not configured")
 	}
@@ -322,10 +329,15 @@ func (h *Handler) reconcileMeshsyncDeploymentMode(ctx context.Context, connectio
 		RemoveCtxControllerHandler(ctx, contextID)
 	ctrlHelper.RemoveMeshSyncDataHandler(ctx, contextID)
 
-	// Deploy MeshSync for the new mode.
+	// Deploy MeshSync for the new mode. The resolved configuration is stashed
+	// first: AddCtxControllerHandlers constructs the operator controller handler
+	// with the Helm chart version it resolves to (operator.version).
+	if merged != nil {
+		ctrlHelper.SetControllersConfig(merged)
+	}
 	ctrlHelper.
-		AddCtxControllerHandlers(machineCtx.K8sContext).
 		SetMeshsyncDeploymentMode(newMode).
+		AddCtxControllerHandlers(machineCtx.K8sContext).
 		UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
 		DeployUndeployedOperators(machineCtx.OperatorTracker).
 		AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, mesheryInstanceID, provider)

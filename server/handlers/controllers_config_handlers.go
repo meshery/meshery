@@ -283,13 +283,6 @@ func (h *Handler) fetchKubernetesConnection(w http.ResponseWriter, req *http.Req
 
 // buildConnectionControllersConfig assembles the layered view (override,
 // server default, effective) for a connection.
-//
-// The effective document reports the deployment mode the connection actually
-// runs, not just the one the two editable layers set: clients decide from it
-// which settings can reach anything on this cluster (Meshery Operator manages
-// MeshSync and Meshery Broker, so in embedded mode most of the document is
-// inert), and that decision has to be made against the mode the apply path
-// resolves.
 func (h *Handler) buildConnectionControllersConfig(connection *connections.Connection) (*controllersconfig.ConnectionControllersConfig, error) {
 	override, err := connections.ControllersConfigFromMetadata(connection.Metadata)
 	if err != nil {
@@ -299,9 +292,7 @@ func (h *Handler) buildConnectionControllersConfig(connection *connections.Conne
 	if err != nil {
 		return nil, err
 	}
-	_, effective, _ := connections.ResolveConnectionControllersConfig(
-		override, serverDefaults, connection.Metadata, h.MeshsyncDefaultDeploymentMode,
-	)
+	_, effective := connections.ResolveControllersConfig(override, serverDefaults)
 	return &controllersconfig.ConnectionControllersConfig{
 		Override:  override,
 		Default:   serverDefaults,
@@ -446,20 +437,11 @@ func (h *Handler) reconcileInheritedDeploymentMode(
 
 	override, err := connections.ControllersConfigFromMetadata(metadata)
 	if err != nil {
-		// An unreadable override is unknown intent, not absent intent. Treating
-		// it as absent used to resolve the connection to the server-wide
-		// default, find that it differed from the materialized mode, and
-		// reconcile - tearing down and redeploying MeshSync into a mode the
-		// user never chose, on the strength of corrupt data. Skip this
-		// connection instead and leave it exactly as it is; the per-connection
-		// GET surfaces the parse failure so it can be corrected deliberately.
+		// A malformed override invalidates only that layer; the server-wide
+		// default still applies. Surfaced to the user by the per-connection
+		// GET endpoint.
 		h.log.Error(err)
-		h.emitControllersConfigApplyEvent(
-			eventBuilder, provider, token, userID, events.Error,
-			"Skipped reconciling this connection's MeshSync deployment mode: its stored controllers configuration could not be parsed.",
-			map[string]interface{}{"error": err, "connectionId": connection.ID},
-		)
-		return
+		override = nil
 	}
 	merged, _ := connections.ResolveControllersConfig(override, serverDefaults)
 	desired := connections.ResolveDeploymentMode(merged, metadata, h.MeshsyncDefaultDeploymentMode)

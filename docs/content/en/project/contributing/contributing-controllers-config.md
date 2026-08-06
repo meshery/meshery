@@ -108,18 +108,9 @@ before the field was wired up.
 
 `watchList` accepts **at most one** of `whitelist` or `blacklist`; both set is
 rejected. MeshSync reads its watch-list at startup only, so a watch-list change
-also stamps `meshery.io/restarted-at` on the MeshSync Deployment pod template,
-which rolls the pods.
-
-Be precise about what that guarantee covers. Every setting in this section that
-propagates to the Deployment - the three env vars and the two output-filter args
-- lives in the **pod template**, so changing any of them triggers an ordinary
-rolling update by definition; that is Kubernetes, not something Meshery chooses.
-What the annotation handling guarantees is narrower: `meshery.io/restarted-at`
-is refreshed *only* when the watch-list changes, and the previously-applied
-value is otherwise carried forward unchanged, so an apply that changes nothing
-in the pod template does not roll pods gratuitously. A watch-list change is the
-only thing that forces a restart when the template is otherwise identical.
+also stamps `meshery.io/restarted-at` on the MeshSync Deployment pod template to
+roll the pods. Any other change must *not* roll pods, so the previously-applied
+annotation value is carried forward unchanged when the watch-list is untouched.
 
 Version, replicas and watch-list are operator-mode only: they live on the
 MeshSync custom resource, which embedded-mode clusters never install.
@@ -140,47 +131,6 @@ MeshSync custom resource, which embedded-mode clusters never install.
 `service.type` is `LoadBalancer`; the server rejects them otherwise, and the
 form clears them when the effective type changes away from `LoadBalancer`.
 Service changes reconcile in place and must not restart broker pods.
-
-## What each deployment mode can apply
-
-Meshery Operator manages MeshSync and Meshery Broker, so the deployment mode is
-not one setting among many - it decides which of the others can reach anything.
-In `embedded` mode Meshery Server runs MeshSync in-process and installs nothing
-into the cluster: no operator release, no MeshSync Deployment, no Broker, no
-`meshery.io` custom resources.
-
-| Setting | `operator` | `embedded` |
-| --- | --- | --- |
-| `operator.deploymentMode` | applies | applies |
-| `operator.version` | applies | inert - no operator release is installed |
-| `meshsync.outputNamespaces`, `meshsync.outputResources` | applies | applies - passed to the in-process `libmeshsync` run |
-| `meshsync.version`, `meshsync.replicas`, `meshsync.watchList` | applies | inert - MeshSync CR absent |
-| `meshsync.redactSecrets`, `meshsync.brokerContentDedup`, `meshsync.debugLogging` | applies | inert - these are env on the MeshSync Deployment; embedded MeshSync takes them from the Meshery Server process environment |
-| every `broker.*` | applies | inert - no Broker on the cluster |
-
-The server states this at apply time through
-`ControllersConfigApplyResult.Skipped`. The UI states it *before* the save:
-`ui/components/configuration/deploymentMode.ts` is the single client-side
-statement of the same structure (`takesEffectIn`), and the editors are governed
-by it - the per-connection editor renders a setting the effective mode cannot
-apply as inert, marks it **Not applied**, and says why in the form body rather
-than in a tooltip. Values already stored for such a setting are kept and shown
-as dormant with a control to clear them; they become live again if the
-connection moves to `operator` mode.
-
-The server-wide defaults editor annotates instead of disabling: its mode is only
-what *inheriting* connections get, and a connection that overrides the mode to
-`operator` uses every value stored there.
-
-That decision needs the mode the connection actually runs, which is why
-`GET /api/integrations/connections/{connectionId}/controllers/config` resolves
-`effective.operator.deploymentMode` through
-`connections.ResolveConnectionControllersConfig` rather than by merging the two
-editable layers: a connection whose mode comes from the materialized cache or
-from `MESHSYNC_DEFAULT_DEPLOYMENT_MODE` would otherwise be described as running
-the built-in `embedded` mode, and every applicability decision made from that
-value would be wrong. `merged` is deliberately left untouched - it is what
-propagates to the cluster and must keep carrying only explicitly-set fields.
 
 ## Server-side apply and withdrawal
 
@@ -230,15 +180,6 @@ of two separate defects. The two are now separated
   read by the consumers that predate the layered document (the connection state
   machine, the header status chips, the kubeconfig flows).
 
-  Two spellings are accepted on **read**: the server always writes the
-  snake_case `meshsync_deployment_mode`, but several UI readers accept
-  `metadata.meshsyncDeploymentMode ?? metadata.meshsync_deployment_mode` - see
-  `ui/components/connections/wizard/kubernetesDeploymentMode.tsx`,
-  `ui/components/connections/metadata.tsx` and `ui/utils/multi-ctx.ts`. These
-  are **one materialized value, not two settings**: the camelCase spelling is a
-  read-side tolerance for connections whose metadata was produced elsewhere, and
-  nothing writes it. Do not add a writer for it.
-
 `connections.ResolveDeploymentMode` is the single decision point, and it reports
 the layer it resolved from:
 
@@ -283,7 +224,16 @@ error, because the configuration re-applies on the next connect.
 
 Tracked here so they are not rediscovered. Each is a defect, not a design.
 
-1. **The apply result is invisible.** `ApplyControllersConfigToCluster` returns
+1. **The form ignores the dependency structure.** Meshery Operator manages
+   MeshSync and Broker, so in `embedded` mode there is no in-cluster MeshSync,
+   no Broker and no `meshery.io` custom resources: `meshsync.version`,
+   `meshsync.replicas`, `meshsync.watchList` and every `broker.*` field are
+   inert and the server reports them in
+   `ControllersConfigApplyResult.Skipped`. The form still renders all three
+   sections as equally-live groups, so a user in embedded mode can set Broker
+   replicas, save, and see a success toast for a change that reached nothing.
+
+2. **The apply result is invisible.** `ApplyControllersConfigToCluster` returns
    which custom resources it patched, whether MeshSync was restarted, and a
    `Skipped[]` list with human-readable reasons. That result only reaches event
    metadata; both editors report "saved" either way, so a save that changed
@@ -297,52 +247,19 @@ Unit coverage that exists today:
   collection merge, metadata round-trip, validation, and the single reader of
   `operator.version`.
 - `server/models/connections/deployment_mode_resolution_test.go` - deployment
-  mode precedence (a server-wide default reaching an inheriting connection),
-  the wizard/editor convergence on one store, and the effective document
-  reporting the mode a connection actually runs.
+  mode precedence (a server-wide default reaching an inheriting connection) and
+  the wizard/editor convergence on one store.
 - `server/models/operator_chart_version_test.go` - `operator.version` selecting
   the operator Helm chart version, the layering it resolves through, and the
   cases where a chart-version reconcile must not touch the cluster.
-- `server/models/controllers_config_apply_test.go` - cluster propagation: what
-  each setting writes into the MeshSync and Broker custom resources and into
-  the MeshSync Deployment overlay, withdrawal of fields cleared at every layer,
-  a restart only when the watch-list changes, and absent controllers reported
-  in `Skipped`. It drives the real typed and dynamic clients against a stand-in
-  API server, because meshkit's `kubernetes.Client` holds a concrete
-  `*kubernetes.Clientset` that a fake clientset cannot be substituted into;
-  the assertions are therefore on the wire content of each server-side apply.
-- `server/handlers/controllers_config_handlers_test.go` - the four endpoints at
-  the wire: every guardrail rejected with `400` on both write endpoints and
-  nothing persisted, the layered `GET` exposing `override`, `default` and
-  `effective` separately, precedence across all three layers, the inherit
-  round-trip (a field returned to Inherit leaves the stored document and the
-  lower layer applies again), and an empty document clearing the layer at both
-  the server-wide and per-connection scope. The state-machine tracker is
-  deliberately nil, so the apply is a no-op and every assertion holds with no
-  cluster in reach.
-- `ui/components/configuration/__tests__/deploymentMode.test.ts` - which
-  settings each deployment mode can apply, and how the mode governing each
-  editor is resolved and attributed to a layer.
-- `ui/components/configuration/__tests__/ControllersConfigForm.test.tsx` - the
-  rendered editor, driven through the real Sistent controls rather than stubs:
-  every control round-tripping through Inherit (and the document losing the
-  field, and any section left empty, when it does), the layer each field
-  reports resolving from, the LoadBalancer-only service fields appearing only
-  while the effective service type is `LoadBalancer` and clearing when it is
-  not, and the mode gating - inert controls, the "Not applied" markers, the
-  reason stated in the form body, dormant values kept and clearable, and the
-  server-wide layer annotating rather than disabling.
-
-  Note for anyone editing the free-text collection controls (output
-  filters, blacklist, service annotations): they re-derive their displayed text
-  from the parsed value on every keystroke, so a separator character is removed
-  from the DOM as it is typed and none of them can be used to enter more than
-  one value from the keyboard. Pasting works. The tests drive them with a
-  single paste for that reason; fixing the controls means holding the raw text
-  in component state and parsing out of it.
 
 Still missing, and required before this surface can be called covered:
 
+- Cluster propagation of `ApplyControllersConfigToCluster` (patch, withdrawal,
+  restart-only-on-watch-list-change) has no test. `server/models/controllers_config_apply.go`
+  is asserted only indirectly, through the handlers that call it.
+- The form has no unit test for its tri-state inherit/override semantics or its
+  conditional field visibility.
 - There is no end-to-end spec. When one is added it belongs at
   `ui/tests/e2e/controllers-config.spec.ts`, keyed to the **Operator, MeshSync &
   Broker Settings** Test Plan Test Group via the Allure `testGroup` label - the
