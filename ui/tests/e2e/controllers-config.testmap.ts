@@ -266,8 +266,13 @@ export async function saveDefaults(page: Page): Promise<ConfigDoc> {
     response.status(),
     `save PUT returned ${response.status()} ${response.statusText()} - body: ${await response.text()}`,
   ).toBe(200);
+  // A test that saves more than once accumulates success toasts, and the
+  // previous one need not have dismissed before the next arrives. An unscoped
+  // getByText then matches both and fails on strict mode - not because the save
+  // did not succeed, but because it succeeded twice. Assert the first match:
+  // the presence of the confirmation is the signal, not its cardinality.
   await expect(
-    page.getByText('Server-wide controllers configuration defaults saved'),
+    page.getByText('Server-wide controllers configuration defaults saved').first(),
   ).toBeVisible();
   await resettled;
   return response.json();
