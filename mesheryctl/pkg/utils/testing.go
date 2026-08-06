@@ -78,7 +78,7 @@ func InitTestEnvironment(t *testing.T) *TestHelper {
 	return testContext
 }
 
-// equals fails the test if exp is not equal to act.
+// Equals fails the test if exp is not equal to act.
 //
 // The mismatch is reported through tb, never through os.Stdout: the golden-file
 // helpers below swap os.Stdout for a pipe to capture command output and close

@@ -71,7 +71,7 @@ New
 
 {{< code code=`bd, err := json.Marshal(providers)
   if err != nil {
-          marshalErr := ErrMarshal(err, "provider")
+          marshalErr := ErrMarshal(err, "providers")
           h.log.Error(marshalErr)
           writeMeshkitError(w, marshalErr, http.StatusInternalServerError)
           return

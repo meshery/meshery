@@ -174,7 +174,7 @@ Test packages that compare against golden files declare an `update` flag:
 Pass it after `-args` so `go test` hands it to the test binary rather than
 interpreting it itself. Regenerate only the package you are changing:
 
-{{< code code=`go test --short ./internal/cli/root/relationships/ -args -update` >}}
+{{< code code=`cd mesheryctl && go test --short ./internal/cli/root/relationships/ -args -update` >}}
 
 {{% alert color="warning" title="A golden file must encode intended behavior" %}}
 `-update` rewrites the expectation to whatever the command currently prints, so
