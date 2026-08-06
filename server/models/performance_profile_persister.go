@@ -76,7 +76,7 @@ func (ppp *PerformanceProfilePersister) GetPerformanceProfiles(_, search, order 
 		Profiles:   profiles,
 	}
 
-	return marshalPerformanceProfilePage(performanceProfilePage)
+	return json.Marshal(performanceProfilePage)
 }
 
 // DeletePerformanceProfile takes in a profile id and delete it if it already exists
@@ -86,7 +86,7 @@ func (ppp *PerformanceProfilePersister) DeletePerformanceProfile(id core.Uuid) (
 		return nil, err
 	}
 
-	return marshalPerformanceProfile(&profile)
+	return json.Marshal(&profile)
 }
 
 func (ppp *PerformanceProfilePersister) SavePerformanceProfile(_ core.Uuid, profile *PerformanceProfile) error {
@@ -110,12 +110,4 @@ func (ppp *PerformanceProfilePersister) GetPerformanceProfile(id core.Uuid) (*Pe
 		Where("id = ?", id).
 		First(&performanceProfile).Error
 	return &performanceProfile, err
-}
-
-func marshalPerformanceProfilePage(ppp *PerformanceProfilePage) ([]byte, error) {
-	return json.Marshal(ppp)
-}
-
-func marshalPerformanceProfile(pp *PerformanceProfile) ([]byte, error) {
-	return json.Marshal(pp)
 }
