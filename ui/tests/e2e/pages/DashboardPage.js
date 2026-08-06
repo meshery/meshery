@@ -84,7 +84,14 @@ export class DashboardPage {
     // file location, so the failure said nothing at all. Short per-attempt
     // timeouts make each retry cheap and let this fail legibly at ~60s.
     await expect(async () => {
-      await this.navigateToMenu(parentItem, { timeout: 5_000 });
+      // Only click the parent when the submenu is not already open. The parent
+      // both navigates and toggles, so an unconditional click on a retry can
+      // CLOSE a submenu a previous attempt had just opened - the retry would
+      // then fight itself, which is a plausible mechanism for this staying
+      // flaky after the click was made retryable at all.
+      if (!(await submenuItem.isVisible())) {
+        await this.navigateToMenu(parentItem, { timeout: 5_000 });
+      }
       await expect(submenuItem).toBeVisible({ timeout: 5_000 });
     }).toPass({ timeout: 60_000 });
     await submenuItem.click();
