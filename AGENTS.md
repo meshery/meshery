@@ -134,29 +134,17 @@ A hand-written map is how camelCase `fileName` regressed to `file_name`.
 ### A local endpoint that shadows a schemas operationId is DEAD CODE
 
 `injectEndpoints` without `overrideExisting: true` **silently discards** any
-endpoint whose name `@meshery/schemas` already defines (dev-only console
-warning) and serves every call from the schemas definition. Nothing in the build,
-the typecheck or a name-only test reports it, so a local declaration can sit there
-looking authoritative while a different request goes over the wire.
+endpoint whose name `@meshery/schemas` already defines (dev-only console warning)
+and serves every call from the schemas definition, so a local declaration can sit
+there looking authoritative while a different request goes over the wire - which
+is how notification delete shipped as `DELETE /api/events/undefined`. Before
+adding a `builder.query`/`builder.mutation`, check the name against the generated
+client (`grep '<name>:t\.' ui/node_modules/@meshery/schemas/dist/mesheryApi.js`);
+if it is there, consume the generated hook - that is the rule above anyway.
 
-This has shipped real breakage more than once: workspace create/update/delete sent
-`body: undefined` and addressed `/api/workspaces/undefined`, and notification
-delete issued `DELETE /api/events/undefined`, because in each case the caller was
-shaped for the dead local definition while the schemas one ran.
-
-So:
-
-- Before adding a `builder.query`/`builder.mutation`, check the name against the
-  generated client (`grep '<name>:t\.' ui/node_modules/@meshery/schemas/dist/mesheryApi.js`).
-  If it is there, consume the generated hook - that is the rule above anyway.
-- The narrow legitimate override is a schemas operation that is **wrong for
-  Meshery today** (schemas landing a path ahead of the server). Set
-  `overrideExisting: true` explicitly, say why in a comment, and link the schemas
-  issue - see `ui/rtk-query/notificationCenter.ts` and meshery/schemas#1134.
-- **Assert the effective endpoint, not the declared one.** A test that reads the
-  module's source shape, or that calls `fetch` itself and asserts its own mock,
-  proves nothing. Dispatch through a real store and assert the URL, method and
-  body - see `ui/rtk-query/__tests__/{workspace-mutation-wrappers,notificationCenter-effective-endpoints}.test.ts*`.
+The deliberate-override exception and the rule that tests must assert the
+*effective* endpoint rather than the declared one are in
+`docs/content/en/project/contributing/ui/schemas.md` (Integration Points in UI, A).
 
 ### Consumed contracts are the schemas type, not a copy of it
 

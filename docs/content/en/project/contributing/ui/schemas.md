@@ -226,11 +226,17 @@ grep '<operationId>:t\.' ui/node_modules/@meshery/schemas/dist/mesheryApi.js
 Override deliberately only when the generated operation is genuinely wrong for
 Meshery today - for example when schemas has landed a path the server has not
 adopted yet. Set `overrideExisting: true` explicitly, explain why in a comment, and
-link the `meshery/schemas` issue tracking the divergence.
+link the `meshery/schemas` issue tracking the divergence - see
+`ui/rtk-query/notificationCenter.ts` and
+[meshery/schemas#1134](https://github.com/meshery/schemas/issues/1134).
 
 Test the **effective** endpoint, not the declared one: dispatch through a real store
-and assert the URL, method and body. A test that calls `fetch` itself and then
-asserts its own mock proves nothing.
+and assert the URL, method and body. A test that reads the module's source shape, or
+that calls `fetch` itself and then asserts its own mock, proves nothing. The guard
+tests to copy are
+`ui/rtk-query/__tests__/{workspace-mutation-wrappers,notificationCenter-effective-endpoints}.test.ts*`;
+where a local hook only adapts an argument shape, drive that hook with `renderHook`
+so the adaptation itself is exercised rather than bypassed.
 
 ---
 
