@@ -142,8 +142,26 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	q := req.URL.Query()
 
-	credentialID := uuid.FromStringOrNil(q.Get("credential_id"))
-	_, err := provider.DeleteUserCredential(req, credentialID)
+	// The canonical query param is camelCase `credentialId` (schemas
+	// deleteUserCredential, and the identifier-naming contract). `credential_id`
+	// is the legacy spelling this handler used to read exclusively, kept as a
+	// fallback so older clients keep working.
+	raw := q.Get("credentialId")
+	if raw == "" {
+		raw = q.Get("credential_id")
+	}
+
+	// FromStringOrNil turns a missing or malformed id into the zero UUID, which
+	// would reach the provider as a real delete for the nil id and report
+	// success having removed nothing. Reject it here instead.
+	credentialID, err := uuid.FromString(raw)
+	if err != nil || credentialID.IsNil() {
+		h.log.Error(ErrInvalidRequestObject("credentialId must be a valid UUID"))
+		writeMeshkitError(w, ErrInvalidRequestObject("credentialId must be a valid UUID"), http.StatusBadRequest)
+		return
+	}
+
+	_, err = provider.DeleteUserCredential(req, credentialID)
 	if err != nil {
 		h.log.Error(ErrDeleteUserCredential(err))
 		writeMeshkitError(w, ErrDeleteUserCredential(err), http.StatusInternalServerError)

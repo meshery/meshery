@@ -131,6 +131,47 @@ bodies, the `From<Variant>Payload` union builders) rather than a
 `map[string]interface{}` — see `mesheryctl/internal/cli/root/design/import.go`.
 A hand-written map is how camelCase `fileName` regressed to `file_name`.
 
+### A local endpoint that shadows a schemas operationId is DEAD CODE
+
+`injectEndpoints` without `overrideExisting: true` **silently discards** any
+endpoint whose name `@meshery/schemas` already defines (dev-only console
+warning) and serves every call from the schemas definition. Nothing in the build,
+the typecheck or a name-only test reports it, so a local declaration can sit there
+looking authoritative while a different request goes over the wire.
+
+This has shipped real breakage more than once: workspace create/update/delete sent
+`body: undefined` and addressed `/api/workspaces/undefined`, and notification
+delete issued `DELETE /api/events/undefined`, because in each case the caller was
+shaped for the dead local definition while the schemas one ran.
+
+So:
+
+- Before adding a `builder.query`/`builder.mutation`, check the name against the
+  generated client (`grep '<name>:t\.' ui/node_modules/@meshery/schemas/dist/mesheryApi.js`).
+  If it is there, consume the generated hook - that is the rule above anyway.
+- The narrow legitimate override is a schemas operation that is **wrong for
+  Meshery today** (schemas landing a path ahead of the server). Set
+  `overrideExisting: true` explicitly, say why in a comment, and link the schemas
+  issue - see `ui/rtk-query/notificationCenter.ts` and meshery/schemas#1134.
+- **Assert the effective endpoint, not the declared one.** A test that reads the
+  module's source shape, or that calls `fetch` itself and asserts its own mock,
+  proves nothing. Dispatch through a real store and assert the URL, method and
+  body - see `ui/rtk-query/__tests__/{workspace-mutation-wrappers,notificationCenter-effective-endpoints}.test.ts*`.
+
+### Consumed contracts are the schemas type, not a copy of it
+
+A struct Meshery only *decodes* from a remote provider (or only *encodes* to one)
+carries no local freedom: it is the schemas construct, aliased. A local copy is
+how `AnonymousFlowResponse` came to read `owner` while meshery-cloud kept sending
+`userId`, so every anonymous sign-in wrote its capabilities under the nil UUID.
+The same rename hit `PatternResource` and `Preference.selectedOrganizationId`.
+
+When the Go type must stay local because it doubles as a GORM model (the schemas
+models carry `db:` tags GORM does not read), keep the **JSON tags** identical to
+the schemas construct and pin the column explicitly with `gorm:"column:..."` -
+see `server/models/pattern_resource.go`. Guard it with a test that compares the
+emitted JSON keys against the schemas type rather than restating them by hand.
+
 ## Build & Development Commands
 
 - Use the `gh-axi` CLI tool to interact with GitHub. Prefer `gh-axi` over `gh`.
