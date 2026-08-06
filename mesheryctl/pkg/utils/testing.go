@@ -113,16 +113,21 @@ func stringDiff(exp, act string) string {
 	expLines := strings.Split(exp, "\n")
 	actLines := strings.Split(act, "\n")
 
+	// Compare presence as well as content. For "a" versus "a\n", Split yields
+	// ["a"] and ["a", ""], so comparing only the (defaulted) empty strings at
+	// index 1 finds no difference and the diagnostic silently omits the very
+	// thing that differs - a missing or extra final newline.
 	firstDiff := -1
 	for i := 0; i < len(expLines) || i < len(actLines); i++ {
+		haveE, haveA := i < len(expLines), i < len(actLines)
 		var e, a string
-		if i < len(expLines) {
+		if haveE {
 			e = expLines[i]
 		}
-		if i < len(actLines) {
+		if haveA {
 			a = actLines[i]
 		}
-		if e != a {
+		if haveE != haveA || e != a {
 			firstDiff = i
 			break
 		}
