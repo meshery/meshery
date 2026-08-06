@@ -71,13 +71,13 @@ mesheryctl registry delete [connection-id]
 
 		if resp.StatusCode == http.StatusOK {
 			var successResp DeleteModelsResponse
-			if err := json.NewDecoder(resp.Body).Decode(&successResp); err == nil {
-				utils.Log.Infof("Deleted %d models for registrant %s.", successResp.Count, successResp.ConnectionName)
+			if err := json.NewDecoder(resp.Body).Decode(&successResp); err == nil && successResp.Message != "" {
+				utils.Log.Info(successResp.Message)
 				return nil
 			}
 		}
 
-		utils.Log.Infof("Successfully deleted all models associated with registrant connection ID %q", connectionID)
+		utils.Log.Infof("Deleted all models associated with registrant connection ID %q", connectionID)
 		return nil
 	},
 }

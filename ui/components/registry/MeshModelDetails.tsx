@@ -580,10 +580,9 @@ const MeshModelDetails = ({
       const deletedCount = res?.count;
       notify({
         message:
-          deletedCount !== undefined
-            ? `Successfully deleted ${deletedCount} models for registrant "${deleteModalState.registrantName}"`
-            : `Successfully deleted all models for registrant "${deleteModalState.registrantName}"`,
-        event_type: EVENT_TYPES.SUCCESS,
+          res?.message ||
+          `Deleted ${deletedCount !== undefined ? deletedCount : 0} models for registrant "${deleteModalState.registrantName}"`,
+        event_type: EVENT_TYPES.ERROR,
       });
       setDeleteModalState((prev) => ({ ...prev, open: false }));
       if (refetch) {

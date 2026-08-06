@@ -1658,10 +1658,15 @@ func (h *Handler) DeleteModelsByRegistrant(rw http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	msg := fmt.Sprintf("Deleted %d models for registrant %q", count, conn.Name)
+	if count == 1 {
+		msg = fmt.Sprintf("Deleted 1 model for registrant %q", conn.Name)
+	}
+
 	rw.Header().Set("Content-Type", "application/json")
 	rw.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(rw).Encode(DeleteModelsResponse{
-		Message:        fmt.Sprintf("Successfully deleted %d models for registrant %s", count, conn.Name),
+		Message:        msg,
 		Count:          count,
 		ConnectionName: conn.Name,
 	})
