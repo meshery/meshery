@@ -64,10 +64,23 @@ export class DashboardPage {
     await menuItem.click();
   }
 
+  // Expanding a left-nav section and clicking one of its children is not a
+  // single settled interaction: the parent is a link that both navigates and
+  // toggles the section, and a click that lands before the navigator has
+  // hydrated is swallowed with no error. The submenu then never opens, so
+  // waiting on the child is waiting on an element that will never appear -
+  // which is why this timed out after resolving the child ~90 times as
+  // "hidden" rather than failing fast (5 of the 20 CI runs to 2026-08-05).
+  //
+  // Retrying the parent click until the child is actually visible fixes the
+  // race at its cause. A longer timeout cannot, because no amount of waiting
+  // re-sends the swallowed click.
   async navigateToSubMenuItem(parentItem, childItem) {
-    await this.navigateToMenu(parentItem);
     const submenuItem = this.page.getByTestId(childItem);
-    await expect(submenuItem).toBeVisible();
+    await expect(async () => {
+      await this.navigateToMenu(parentItem);
+      await expect(submenuItem).toBeVisible({ timeout: 5_000 });
+    }).toPass({ timeout: 60_000 });
     await submenuItem.click();
   }
 

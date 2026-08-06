@@ -387,6 +387,7 @@ func (l *RemoteProvider) revokeToken(tokenString string) error {
 		l.Log.Error(err)
 		return err
 	}
+	defer SafeClose(r.Body, l.Log)
 
 	if r.StatusCode != http.StatusOK {
 		return ErrTokenRevoke(fmt.Errorf("failed to revoke token: status %d", r.StatusCode))
@@ -420,6 +421,7 @@ func (l *RemoteProvider) introspectToken(tokenString string) error {
 		l.Log.Error(err)
 		return err
 	}
+	defer SafeClose(r.Body, l.Log)
 
 	if r.StatusCode == http.StatusUnauthorized {
 		return ErrTokenIntrospect(fmt.Errorf("unauthorized access: status %d", r.StatusCode))
