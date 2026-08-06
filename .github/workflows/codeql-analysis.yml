@@ -25,9 +25,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - language: actions
+            build-mode: none
           - language: javascript
             build-mode: none
-    
           - language: go
             build-mode: manual
 
