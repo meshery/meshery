@@ -348,9 +348,13 @@ const workspacesApi = api
           url: mesheryApiPath(`workspaces`),
           method: 'POST',
           body: {
-            name: queryArg.name,
-            description: queryArg.description,
-            organizationId: queryArg.organizationId || queryArg.organization_id,
+            name: queryArg.name || queryArg.body?.name,
+            description: queryArg.description || queryArg.body?.description,
+            organizationId:
+              queryArg.organizationId ||
+              queryArg.organization_id ||
+              queryArg.body?.organizationId ||
+              queryArg.body?.organization_id,
           },
         }),
         invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
@@ -358,12 +362,16 @@ const workspacesApi = api
 
       updateWorkspace: builder.mutation({
         query: (queryArg) => ({
-          url: mesheryApiPath(`workspaces/${queryArg.id}`),
+          url: mesheryApiPath(`workspaces/${queryArg.workspaceId || queryArg.id}`),
           method: 'PUT',
           body: {
-            name: queryArg.name,
-            description: queryArg.description,
-            organizationId: queryArg.organizationId || queryArg.organization_id,
+            name: queryArg.name || queryArg.body?.name,
+            description: queryArg.description || queryArg.body?.description,
+            organizationId:
+              queryArg.organizationId ||
+              queryArg.organization_id ||
+              queryArg.body?.organizationId ||
+              queryArg.body?.organization_id,
           },
         }),
         invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
@@ -371,7 +379,7 @@ const workspacesApi = api
 
       deleteWorkspace: builder.mutation({
         query: (queryArg) => ({
-          url: mesheryApiPath(`workspaces/${queryArg.id}`),
+          url: mesheryApiPath(`workspaces/${queryArg.workspaceId || queryArg.id}`),
           method: 'DELETE',
         }),
         invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
@@ -403,12 +411,9 @@ export const useCreateWorkspaceMutation = () => {
   const wrappedTrigger = (queryArg: any) => {
     const payload = queryArg?.workspacePayload || queryArg?.body || queryArg;
     return trigger({
-      body: {
-        name: payload?.name,
-        description: payload?.description,
-        organizationId:
-          payload?.organizationId || payload?.organization_id || payload?.OrganizationID,
-      },
+      name: payload?.name,
+      description: payload?.description,
+      organizationId: payload?.organizationId || payload?.organization_id,
     });
   };
 
@@ -420,14 +425,13 @@ export const useUpdateWorkspaceMutation = () => {
 
   const wrappedTrigger = (queryArg: any) => {
     const payload = queryArg?.workspacePayload || queryArg?.body || queryArg;
+    const wsId = queryArg?.workspaceId || queryArg?.id;
     return trigger({
-      workspaceId: queryArg?.workspaceId || queryArg?.id,
-      body: {
-        name: payload?.name,
-        description: payload?.description,
-        organizationId:
-          payload?.organizationId || payload?.organization_id || payload?.OrganizationID,
-      },
+      workspaceId: wsId,
+      id: wsId,
+      name: payload?.name,
+      description: payload?.description,
+      organizationId: payload?.organizationId || payload?.organization_id,
     });
   };
 
