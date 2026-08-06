@@ -3690,8 +3690,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Invalid design import request",
-        "probable_cause": "The request body did not match exactly one variant of the import oneOf — the File variant requires `file` and `file_name`, the URL variant requires `url`.\nBoth variants were provided, or neither was.",
-        "suggested_remediation": "Send a request body with exactly one variant set: either {\\\"file\\\": <bytes>, \\\"file_name\\\": \\\"design.yml\\\"} or {\\\"url\\\": \\\"https://...\\\"}."
+        "probable_cause": "The request body did not match exactly one variant of the import oneOf — the File variant requires `file` and `fileName`, the URL variant requires `url`.\nBoth variants were provided, or neither was.",
+        "suggested_remediation": "Send a request body with exactly one variant set: either {\\\"file\\\": <bytes>, \\\"fileName\\\": \\\"design.yml\\\"} or {\\\"url\\\": \\\"https://...\\\"}."
       },
       "1423": {
         "name": "ErrConvertToDesignCode",
