@@ -108,9 +108,18 @@ before the field was wired up.
 
 `watchList` accepts **at most one** of `whitelist` or `blacklist`; both set is
 rejected. MeshSync reads its watch-list at startup only, so a watch-list change
-also stamps `meshery.io/restarted-at` on the MeshSync Deployment pod template to
-roll the pods. Any other change must *not* roll pods, so the previously-applied
-annotation value is carried forward unchanged when the watch-list is untouched.
+also stamps `meshery.io/restarted-at` on the MeshSync Deployment pod template,
+which rolls the pods.
+
+Be precise about what that guarantee covers. Every setting in this section that
+propagates to the Deployment - the three env vars and the two output-filter args
+- lives in the **pod template**, so changing any of them triggers an ordinary
+rolling update by definition; that is Kubernetes, not something Meshery chooses.
+What the annotation handling guarantees is narrower: `meshery.io/restarted-at`
+is refreshed *only* when the watch-list changes, and the previously-applied
+value is otherwise carried forward unchanged, so an apply that changes nothing
+in the pod template does not roll pods gratuitously. A watch-list change is the
+only thing that forces a restart when the template is otherwise identical.
 
 Version, replicas and watch-list are operator-mode only: they live on the
 MeshSync custom resource, which embedded-mode clusters never install.
