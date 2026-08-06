@@ -101,7 +101,6 @@ vi.mock('../shared/Modal/Modal', () => ({
 
 vi.mock('../general/PromptComponent', () => ({ default: React.forwardRef(() => null) }));
 vi.mock('@/components/lifecycle/general', () => ({ EmptyState: () => <div>empty</div> }));
-vi.mock('@/components/general/ViewSwitch', () => ({ default: () => null }));
 vi.mock('./WorkspaceGridView', () => ({ default: () => null }));
 vi.mock('./WorkspaceDataTable', () => ({ default: () => null }));
 vi.mock('./styles', () => ({ CreateButtonWrapper: ({ children }: any) => <div>{children}</div> }));

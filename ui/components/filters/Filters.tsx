@@ -496,9 +496,7 @@ function MesheryFilters() {
                     />
                   )}
 
-                  {!selectedFilter.show && (
-                    <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
-                  )}
+                  {!selectedFilter.show && <ViewSwitch view={viewType} changeView={setViewType} />}
                 </div>
               </ToolWrapper>
               {!selectedFilter.show && viewType === 'table' && (
