@@ -13,24 +13,31 @@ func TestStringDiffReportsTrailingNewlineDifferences(t *testing.T) {
 		name     string
 		exp, act string
 		wantLine string
+		// wantDetail pins WHICH side lacks the line. Asserting only the line
+		// number would pass even if the diagnostic never said that, which is
+		// the whole point of reporting a trailing-newline difference.
+		wantDetail string
 	}{
 		{
-			name:     "actual is missing the final newline",
-			exp:      "a\n",
-			act:      "a",
-			wantLine: "first difference at line 2",
+			name:       "actual is missing the final newline",
+			exp:        "a\n",
+			act:        "a",
+			wantLine:   "first difference at line 2",
+			wantDetail: "actual:   <no line 2; actual ends at line 1>",
 		},
 		{
-			name:     "actual has an extra final newline",
-			exp:      "a",
-			act:      "a\n",
-			wantLine: "first difference at line 2",
+			name:       "actual has an extra final newline",
+			exp:        "a",
+			act:        "a\n",
+			wantLine:   "first difference at line 2",
+			wantDetail: "expected: <no line 2; expected ends at line 1>",
 		},
 		{
-			name:     "actual has two trailing newlines where one is expected",
-			exp:      "a\n",
-			act:      "a\n\n",
-			wantLine: "first difference at line 3",
+			name:       "actual has two trailing newlines where one is expected",
+			exp:        "a\n",
+			act:        "a\n\n",
+			wantLine:   "first difference at line 3",
+			wantDetail: "expected: <no line 3; expected ends at line 2>",
 		},
 	}
 
@@ -42,6 +49,9 @@ func TestStringDiffReportsTrailingNewlineDifferences(t *testing.T) {
 			}
 			if !strings.Contains(got, "differ only in leading/trailing whitespace") {
 				t.Fatalf("diff must say the difference is whitespace-only; got:\n%s", got)
+			}
+			if !strings.Contains(got, tc.wantDetail) {
+				t.Fatalf("diff must say which side lacks the line (%q); got:\n%s", tc.wantDetail, got)
 			}
 			if !strings.Contains(got, "byte counts:") {
 				t.Fatalf("diff must report byte counts; got:\n%s", got)
