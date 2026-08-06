@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useNotification } from '@/utils/hooks/useNotification';
 import type { ControllersConfigDoc, VersionedControllersConfigDoc } from './ControllersConfigForm';
@@ -68,11 +68,23 @@ export const useControllersConfigDraft = ({
   const [draft, setDraft] = useState<ControllersConfigDoc>({});
   const [dirty, setDirty] = useState(false);
 
+  // Seed the draft from the persisted document when that document arrives or
+  // changes - never merely because `dirty` went false.
+  //
+  // Depending on `dirty` re-seeded the draft the moment a save completed, while
+  // the query cache could still be holding the pre-save response until its
+  // invalidation and refetch landed. The editor visibly snapped back to stale
+  // values for that window, immediately after telling the user the save had
+  // succeeded. Keying on the source reference alone means a save updates the
+  // draft only when the refreshed document actually arrives.
+  const seededFrom = useRef<VersionedControllersConfigDoc | null | undefined>(undefined);
   useEffect(() => {
-    if (isLoaded && !dirty) {
-      setDraft(stripSchemaVersion(source));
-    }
-  }, [isLoaded, source, dirty]);
+    if (!isLoaded) return;
+    if (seededFrom.current === source) return;
+    seededFrom.current = source;
+    setDraft(stripSchemaVersion(source));
+    setDirty(false);
+  }, [isLoaded, source]);
 
   // Notify once per load failure rather than on every render.
   useEffect(() => {
