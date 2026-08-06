@@ -673,6 +673,7 @@ contributors who intend to maintain it. A proposal:
 - Confirms that it will adopt this governance, the
   [Code of Conduct](./CODE_OF_CONDUCT.md), the project's security practices, and the
   relevant integration guidelines.
+- Repository is added to [manifest.yaml](https://github.com/meshery-extensions/.github/blob/master/support-labels/manifest.yaml), identifying its level of support.
 
 Core subprojects are admitted by a **2/3 vote** of the core maintainers. Extensions
 in `github.com/meshery-extensions` are admitted by **confirmation from the core
