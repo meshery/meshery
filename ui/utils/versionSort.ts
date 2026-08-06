@@ -44,6 +44,11 @@ export function versionSortComparatorFn(versionA, versionB) {
     return;
   }
 
+  if (typeof versionA !== 'string' || typeof versionB !== 'string') {
+    // non-string versions (e.g. arrays) are sorted as equal rather than crashing
+    return 0;
+  }
+
   if (versionA === WILDCARD_V || versionB === WILDCARD_V) {
     // wildcard support
     return -1;

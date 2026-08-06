@@ -4,10 +4,11 @@ export class DesignConfiguratorPage {
 
     this.appBar = page.getByTestId('design-configurator-app-bar');
     this.codeEditor = page.getByTestId('design-configurator-code-editor');
-    this.categorySelector = page.getByTestId('category-selector');
+    this.categoryModelSelector = page.getByTestId('category-model-selector');
     this.databaseCategory = page.getByTestId('Database');
-    this.modelSelector = page.getByTestId('model-selector');
-    this.modelAzure = page.getByTestId('azure-db-for-mysql');
+    this.backToCategories = page.getByTestId('back-to-categories');
+    this.clearSelector = page.getByTestId('clear-category-model-selector');
+    this.modelAzure = page.getByTestId('Database-azure-db-for-mysql');
     this.modelContainer = page.getByTestId('model-component-list');
     this.saveButton = page.getByTestId('design-configurator-save-design-btn');
     this.updateButton = page.getByTestId('design-configurator-update-design-btn');
