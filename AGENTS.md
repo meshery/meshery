@@ -150,6 +150,15 @@ make server-without-operator   # Run without operator deployment
 make error                     # Generate error codes
 ```
 
+A build that fails with `compile: version "goX.Y.Z" does not match go tool version`
+on dozens of dependencies is an environment mismatch, not a code problem: a stale
+`GOROOT` points at one Go installation while the `go` on `PATH` is a different
+one. Any toolchain at or above `go.mod`'s version works - `go 1.26.4` there does
+not mean 1.26.5 is wrong - so the fix is to make the two agree rather than to
+pin an exact patch release. Drop the stale `GOROOT` and use one installation's
+own binary, e.g.
+`env -u GOROOT PATH="$HOME/.gvm/gos/go1.26.4/bin:$PATH" go test ...`.
+
 ### UI (Next.js/React)
 
 ```bash
@@ -274,6 +283,21 @@ make helm-docs      # Generate Helm chart docs
 - Integration setup: `make server-integration-tests-meshsync-setup` (requires Docker, kind, kubectl, helm)
 - Integration run: `make server-integration-tests-meshsync-run`
 - Target ≥70% coverage on business logic.
+
+Golden-file workflow (`-args -update`, the `fixtures/` vs `testdata/` split, and
+the rule that a regenerated golden must still encode *intended* behavior) is
+documented in `docs/content/en/project/contributing/cli/cli.md`.
+
+**A rename in `meshery/schemas` propagates further than the Go field name.** gorm
+derives the AutoMigrate column from the *field name* via its naming strategy
+(snake_case), not from the `db:` tag - only a `gorm:"column:..."` tag overrides
+it. So renaming `UserID` to `Owner` renames the column `user_id` to `owner`
+whatever the `db:` tag says, and any hand-written SQL naming the old one breaks -
+silently, if the gorm error is dropped. After bumping schemas, grep every raw
+column reference for the old spelling (`Select`, `Where`, `Order`, `Joins`,
+`Scan`, and migrations - not just `Select`) along with the `mesheryctl` fixtures,
+and propagate gorm errors so the next such rename fails loudly. Regression test:
+`server/models/performance_profile_persister_test.go`.
 
 ### UI
 
