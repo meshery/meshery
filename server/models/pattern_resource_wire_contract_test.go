@@ -88,3 +88,64 @@ func TestPatternResourceOwnerColumnIsPinned(t *testing.T) {
 		t.Errorf(`UserID gorm tag = %q, want "column:owner"`, got)
 	}
 }
+
+// TestPatternResourceRoundTripsOwnerThroughMigratedDB is the runtime half of the
+// column guard: the tag assertion above proves the annotation is present, not
+// that AutoMigrate and the persister agree on it.
+//
+// The failure this catches is the one documented for PerformanceProfile - gorm
+// derives a column from the *field name* via its naming strategy, so renaming
+// Owner to UserID renames `owner` to `user_id` unless the explicit column tag
+// holds. The persister discards gorm's errors (see GetPatternResources), so a
+// drifted column reads back as an empty list with nothing logged.
+func TestPatternResourceRoundTripsOwnerThroughMigratedDB(t *testing.T) {
+	db := newMigratedDB(t)
+
+	cols, err := db.Migrator().ColumnTypes(&PatternResource{})
+	if err != nil {
+		t.Fatalf("read migrated columns: %v", err)
+	}
+	names := map[string]bool{}
+	for _, c := range cols {
+		names[c.Name()] = true
+	}
+	if !names["owner"] {
+		t.Errorf("migrated pattern_resources has no `owner` column; columns: %v", names)
+	}
+	if names["user_id"] {
+		t.Errorf("migrated pattern_resources gained a `user_id` column; the gorm column tag is not holding: %v", names)
+	}
+
+	owner := mustUUID(t)
+	persister := &PatternResourcePersister{DB: db}
+
+	saved, err := persister.SavePatternResource(&PatternResource{
+		UserID:    &owner,
+		Name:      "demo-resource",
+		Namespace: "default",
+		Type:      "Deployment",
+		OAMType:   "workload",
+	})
+	if err != nil {
+		t.Fatalf("SavePatternResource: %v", err)
+	}
+
+	byID, err := persister.GetPatternResource(*saved.ID)
+	if err != nil {
+		t.Fatalf("GetPatternResource: %v", err)
+	}
+	if byID.UserID == nil || *byID.UserID != owner {
+		t.Errorf("owner did not survive the round trip: got %v, want %v", byID.UserID, owner)
+	}
+
+	page, err := persister.GetPatternResources("", "", "demo-resource", "default", "Deployment", "workload", 0, 10)
+	if err != nil {
+		t.Fatalf("GetPatternResources: %v", err)
+	}
+	if page.TotalCount != 1 || len(page.Resources) != 1 {
+		t.Fatalf("listing returned %d resources (totalCount=%d); a drifted column reads back empty", len(page.Resources), page.TotalCount)
+	}
+	if got := page.Resources[0].UserID; got == nil || *got != owner {
+		t.Errorf("listed owner = %v, want %v", got, owner)
+	}
+}
