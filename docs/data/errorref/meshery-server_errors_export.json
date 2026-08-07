@@ -4151,6 +4151,15 @@
         "short_description": "Unable to read the Helm chart repository index.",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "1474": {
+        "name": "ErrOperatorControllersHelperCode",
+        "code": "1474",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to reach Meshery Operator lifecycle for this Kubernetes connection",
+        "probable_cause": "The connection is not connected yet, or its state machine has not finished initializing.",
+        "suggested_remediation": ""
       }
     }
   }

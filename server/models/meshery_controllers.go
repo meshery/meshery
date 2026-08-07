@@ -58,7 +58,17 @@ const (
 var MesheryControllers = []MesheryController{MesheryBroker, Meshsync, MesheryOperator}
 
 type MesheryControllersHelper struct {
-	// context that is being manged by a particular controllerHelper instance
+	// contextID is the Kubernetes context this helper serves.
+	//
+	// KNOWN BUG - nothing ever assigns it, so it is permanently "". The one
+	// reader is UpdateOperatorsStatusMap, whose ot.IsUndeployed(mch.contextID)
+	// therefore always probes the empty-string key and never matches a real
+	// context: an operator explicitly undeployed for a context is not reported
+	// as Undeployed there, and its live status is read from the handler instead.
+	// Assigning it would silently change that operator-undeploy behavior, so it
+	// is deliberately left alone here and tracked as a follow-up. Code that
+	// needs a context identifier takes one from its caller (the K8sContext is
+	// available at every call site) rather than reading this field.
 	contextID string
 	//  controller handlers for a particular context
 	// this will be used as the source of truth
@@ -136,6 +146,23 @@ type MesheryControllersHelper struct {
 func (mch *MesheryControllersHelper) setOperatorError(err error) {
 	mch.opErrMu.Lock()
 	mch.lastOperatorError = err
+	mch.opErrMu.Unlock()
+}
+
+// setOperatorErrorIfUnset records err only when no operator failure is already
+// recorded for this context.
+//
+// It exists for the one diagnostic that is strictly less informative than
+// anything it could replace: "no operator handler is attached" is the
+// *consequence* of an unreadable kubeconfig or a failed Kubernetes client, both
+// of which AddCtxControllerHandlers has already recorded by name. Letting the
+// consequence overwrite the cause meant tearing down such a connection replaced
+// the actionable diagnostic with a generic one.
+func (mch *MesheryControllersHelper) setOperatorErrorIfUnset(err error) {
+	mch.opErrMu.Lock()
+	if mch.lastOperatorError == nil {
+		mch.lastOperatorError = err
+	}
 	mch.opErrMu.Unlock()
 }
 
@@ -1003,10 +1030,9 @@ func (ot *OperatorTracker) IsUndeployed(ctxID string) bool {
 // attachedOperatorHandler returns the Meshery Operator controller handler for
 // this context, or nil when none is attached.
 //
-// A nil handler is never a no-op the caller may pass over in silence: it means
+// A nil handler is never a no-op a caller may pass over in silence: it means
 // AddCtxControllerHandlers could not read the kubeconfig or build a Kubernetes
-// client, so nothing was done to the cluster. Callers report it via
-// reportMissingOperatorHandler rather than returning as though they had acted.
+// client, so nothing was done to the cluster.
 func (mch *MesheryControllersHelper) attachedOperatorHandler() controllers.IMesheryController {
 	if mch.ctxControllerHandlers == nil {
 		return nil
@@ -1014,22 +1040,96 @@ func (mch *MesheryControllersHelper) attachedOperatorHandler() controllers.IMesh
 	return mch.ctxControllerHandlers[MesheryOperator]
 }
 
+// operatorInstallTarget returns the handler to install the Meshery Operator
+// through, or a structured error naming why installation may not proceed.
+// attached reports whether a handler was present at all, which is the one
+// condition callers report differently (see setOperatorErrorIfUnset).
+//
+// This is the single guard every install path goes through - the FSM's
+// DeployUndeployedOperators and the user-initiated SetOperatorDeployment - so
+// the two cannot drift into one refusing an unpublishable chart version while
+// the other hands it to Helm.
+//
+// Installing is the one operator action that needs a chart version. The handler
+// is attached for observation even when none could be resolved, so refusing
+// here keeps the structured resolution failure in front of the user instead of
+// the opaque chart-not-found error Helm would raise from an unpublished version.
+func (mch *MesheryControllersHelper) operatorInstallTarget(contextID string) (handler controllers.IMesheryController, attached bool, err error) {
+	operatorHandler := mch.attachedOperatorHandler()
+	if operatorHandler == nil {
+		return nil, false, ErrOperatorHandlerNotAttached(contextID)
+	}
+	if chartErr := mch.GetOperatorChartError(); chartErr != nil {
+		return nil, true, chartErr
+	}
+	return operatorHandler, true, nil
+}
+
 // reportMissingOperatorHandler records and surfaces the absence of an operator
 // handler for an action that needed one, so a lifecycle request that did
 // nothing does not read to the user as one that succeeded.
-func (mch *MesheryControllersHelper) reportMissingOperatorHandler(action string) {
-	err := ErrOperatorHandlerNotAttached(mch.contextID)
-	mch.setOperatorError(err)
+func (mch *MesheryControllersHelper) reportMissingOperatorHandler(action, contextID string) {
+	err := ErrOperatorHandlerNotAttached(contextID)
+	mch.setOperatorErrorIfUnset(err)
 	mch.log.Error(err)
 	mch.emitErrorEvent(action, err, map[string]any{
+		"k8sContextID":           contextID,
 		"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
 		"operatorStatus":         mch.ctxOperatorStatus,
 	}, uuid.Nil)
 }
 
+// operatorStatusObserved reports whether Meshery has ever actually read this
+// context's operator status, as opposed to still carrying the Unknown that
+// NewMesheryControllersHelper seeds. It distinguishes "we saw an operator and
+// can no longer act on it" from "we never reached this cluster at all".
+func (mch *MesheryControllersHelper) operatorStatusObserved() bool {
+	return mch.ctxOperatorStatus != controllers.Unknown
+}
+
+// SetOperatorDeployment applies a user-initiated Meshery Operator lifecycle
+// request for contextID: deploy=true installs or upgrades it, deploy=false
+// removes it. It is the counterpart to the FSM's DeployUndeployedOperators and
+// UndeployDeployedOperators for callers that must be told the outcome - the
+// GraphQL changeOperatorStatus mutation - and shares their guard rather than
+// restating it.
+//
+// The error is returned rather than emitted: the caller owns how a request it
+// initiated is surfaced. A failure is still recorded for the diagnostics API.
+func (mch *MesheryControllersHelper) SetOperatorDeployment(contextID string, deploy bool) error {
+	if !deploy {
+		operatorHandler := mch.attachedOperatorHandler()
+		if operatorHandler == nil {
+			err := ErrOperatorHandlerNotAttached(contextID)
+			mch.setOperatorErrorIfUnset(err)
+			return err
+		}
+		if err := operatorHandler.Undeploy(); err != nil {
+			mch.setOperatorError(err)
+			return err
+		}
+		return nil
+	}
+
+	operatorHandler, attached, err := mch.operatorInstallTarget(contextID)
+	if err != nil {
+		if attached {
+			mch.setOperatorError(err)
+		} else {
+			mch.setOperatorErrorIfUnset(err)
+		}
+		return err
+	}
+	if err := operatorHandler.Deploy(true); err != nil {
+		mch.setOperatorError(err)
+		return err
+	}
+	return nil
+}
+
 // looks at the status of Meshery Operator for each cluster and takes necessary action.
 // it will deploy the operator only when it is in NotDeployed state
-func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTracker) *MesheryControllersHelper {
+func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTracker, contextID string) *MesheryControllersHelper {
 	if ot.DisableOperator { //Return true everytime so that operators stay in undeployed state across all contexts
 		return mch
 	}
@@ -1040,21 +1140,17 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 		return mch
 	}
 
-	operatorHandler := mch.attachedOperatorHandler()
-	if operatorHandler == nil {
-		mch.reportMissingOperatorHandler("Failed to deploy Meshery Operator")
-		return mch
-	}
-
-	// Installing is the one operator action that needs a chart version, and the
-	// handler is attached for observation even when none could be resolved.
-	// Refuse here with the structured resolution failure rather than handing
-	// Helm a version the repository does not publish, which would surface as an
-	// opaque chart-not-found error instead. AddCtxControllerHandlers already
-	// emitted this, so it is recorded and logged rather than emitted again.
-	if chartErr := mch.GetOperatorChartError(); chartErr != nil {
-		mch.setOperatorError(chartErr)
-		mch.log.Error(chartErr)
+	operatorHandler, attached, err := mch.operatorInstallTarget(contextID)
+	if err != nil {
+		if !attached {
+			mch.reportMissingOperatorHandler("Failed to deploy Meshery Operator", contextID)
+			return mch
+		}
+		// The chart-resolution failure is the same one AddCtxControllerHandlers
+		// already emitted for this connection, so it is recorded and logged
+		// rather than emitted a second time on every reconcile.
+		mch.setOperatorError(err)
+		mch.log.Error(err)
 		return mch
 	}
 
@@ -1062,6 +1158,7 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 		mch.setOperatorError(err)
 		mch.log.Error(err)
 		mch.emitErrorEvent("Failed to deploy Meshery Operator", err, map[string]any{
+			"k8sContextID":           contextID,
 			"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
 			"operatorStatus":         mch.ctxOperatorStatus,
 		}, uuid.Nil)
@@ -1070,18 +1167,32 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 	return mch
 }
 
-func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTracker) *MesheryControllersHelper {
+func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTracker, contextID string) *MesheryControllersHelper {
 	if mch.ctxOperatorStatus == controllers.Undeployed {
 		return mch
 	}
 
 	// Unlike deploy, this is not gated on GetOperatorChartError. Removal is the
-	// direction that must always be attempted: refusing it would leave the
-	// operator running on a cluster the user asked to have it taken off, which
-	// is a worse outcome than a Helm uninstall that fails and says so.
+	// direction to attempt rather than refuse: refusing would leave the operator
+	// running on a cluster the user asked to have it taken off.
+	//
+	// Attempted is all it is, though. meshkit's ApplyHelmChart downloads and
+	// loads the chart archive before dispatching UNINSTALL just as it does for
+	// INSTALL, from the same repository whose index could not be read - so in the
+	// very case that motivates not refusing, Undeploy fails at chart download,
+	// the operator stays on the cluster, and the user gets a Helm error. A
+	// removal path that does not need the archive would have to come from
+	// meshkit; until then this surfaces the failure rather than hiding it.
 	operatorHandler := mch.attachedOperatorHandler()
 	if operatorHandler == nil {
-		mch.reportMissingOperatorHandler("Failed to undeploy Meshery Operator")
+		// A connection whose cluster was never reached has no operator to
+		// remove and never had one, so reporting a failed removal on its
+		// teardown would be a second alert for a non-event - and would bury the
+		// kubeconfig or Kubernetes-client diagnostic that explains it. Report
+		// only when an operator was actually observed here at some point.
+		if mch.operatorStatusObserved() {
+			mch.reportMissingOperatorHandler("Failed to undeploy Meshery Operator", contextID)
+		}
 		return mch
 	}
 
@@ -1089,6 +1200,7 @@ func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTrack
 		mch.setOperatorError(err)
 		mch.log.Error(err)
 		mch.emitErrorEvent("Failed to undeploy Meshery Operator", err, map[string]any{
+			"k8sContextID":           contextID,
 			"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
 			"operatorStatus":         mch.ctxOperatorStatus,
 		}, uuid.Nil)

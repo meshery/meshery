@@ -367,6 +367,12 @@ func TestChartResolutionFailureIsClearedByALaterSuccess(t *testing.T) {
 	}
 }
 
+// testContextID is the Kubernetes context identifier the lifecycle call sites
+// are given. It is non-empty on purpose: ErrOperatorHandlerNotAttached renders
+// it into the cause the user reads, and an operator triaging several
+// connections needs to be told which one lost its handler.
+const testContextID = "ctx-1"
+
 // stubController is an IMesheryController that records what it was asked to do,
 // so the deploy/undeploy call sites can be tested without a cluster.
 type stubController struct {
@@ -399,7 +405,7 @@ func TestDeployIsRefusedWhileNoChartVersionResolves(t *testing.T) {
 	chartErr := ErrNoOperatorChartPublished(OperatorChartName, testChartRepo)
 	mch.setOperatorChartError(chartErr)
 
-	mch.DeployUndeployedOperators(NewOperatorTracker(false))
+	mch.DeployUndeployedOperators(NewOperatorTracker(false), testContextID)
 
 	if stub.deploys != 0 {
 		t.Fatalf("Deploy was called %d times with no installable chart version", stub.deploys)
@@ -410,26 +416,103 @@ func TestDeployIsRefusedWhileNoChartVersionResolves(t *testing.T) {
 
 	// Cleared, the same handler installs.
 	mch.setOperatorChartError(nil)
-	mch.DeployUndeployedOperators(NewOperatorTracker(false))
+	mch.DeployUndeployedOperators(NewOperatorTracker(false), testContextID)
 	if stub.deploys != 1 {
 		t.Fatalf("Deploy was called %d times once a chart version resolved, want 1", stub.deploys)
 	}
 }
 
-// TestUndeployIsNotBlockedByAnUnresolvableChartVersion: removal is the
-// direction that must always be attempted. Refusing it would leave the operator
-// running on a cluster the user asked to have it taken off.
-func TestUndeployIsNotBlockedByAnUnresolvableChartVersion(t *testing.T) {
+// TestUserInitiatedDeployIsRefusedWhileNoChartVersionResolves closes the second
+// way in. The GraphQL changeOperatorStatus mutation used to reach around the
+// helper for a raw meshkit handler, so the guard the connect-time path applies
+// did not exist on the path a user actually clicks. Both now share
+// operatorInstallTarget and must refuse identically.
+func TestUserInitiatedDeployIsRefusedWhileNoChartVersionResolves(t *testing.T) {
 	mch := newTestControllersHelper(t)
-	stub := &stubController{status: controllers.Deployed}
+	stub := &stubController{status: controllers.NotDeployed}
 	mch.ctxControllerHandlers = map[MesheryController]controllers.IMesheryController{MesheryOperator: stub}
-	mch.ctxOperatorStatus = controllers.Deployed
-	mch.setOperatorChartError(ErrNoOperatorChartPublished(OperatorChartName, testChartRepo))
 
-	mch.UndeployDeployedOperators(NewOperatorTracker(false))
+	chartErr := ErrNoOperatorChartPublished(OperatorChartName, testChartRepo)
+	mch.setOperatorChartError(chartErr)
 
-	if stub.undeploys != 1 {
-		t.Fatalf("Undeploy was called %d times, want 1: an unresolvable chart version must not strand the operator", stub.undeploys)
+	err := mch.SetOperatorDeployment(testContextID, true)
+	if !errors.Is(err, chartErr) {
+		t.Fatalf("err = %v, want the structured chart resolution failure returned to the caller", err)
+	}
+	if stub.deploys != 0 {
+		t.Fatalf("Deploy was called %d times with no installable chart version", stub.deploys)
+	}
+	if !errors.Is(mch.GetOperatorError(), chartErr) {
+		t.Fatalf("operator error = %v, want the chart resolution failure recorded", mch.GetOperatorError())
+	}
+
+	mch.setOperatorChartError(nil)
+	if err := mch.SetOperatorDeployment(testContextID, true); err != nil {
+		t.Fatalf("unexpected error once a chart version resolved: %v", err)
+	}
+	if stub.deploys != 1 {
+		t.Fatalf("Deploy was called %d times once a chart version resolved, want 1", stub.deploys)
+	}
+}
+
+// TestUserInitiatedUndeployIsNeverSilent: a user who switches the operator off
+// must be told when nothing could be done, whether or not Meshery ever observed
+// an operator here. This is the case the teardown gate below deliberately does
+// not cover.
+func TestUserInitiatedUndeployIsNeverSilent(t *testing.T) {
+	mch := newTestControllersHelper(t)
+	mch.ctxControllerHandlers = nil
+
+	err := mch.SetOperatorDeployment(testContextID, false)
+	if err == nil {
+		t.Fatal("a user-initiated undeploy with no handler must not report success")
+	}
+	if code := meshkiterrors.GetCode(err); code != ErrOperatorHandlerNotAttachedCode {
+		t.Fatalf("error code = %q, want %q (from %v)", code, ErrOperatorHandlerNotAttachedCode, err)
+	}
+	if !strings.Contains(err.Error(), testContextID) {
+		t.Fatalf("the error must name the context it is about, got %v", err)
+	}
+}
+
+// TestUndeployIsNotBlockedByAnUnresolvableChartVersion: removal is the
+// direction to attempt rather than refuse. Refusing would leave the operator
+// running on a cluster the user asked to have it taken off - even though the
+// attempt itself may still fail in meshkit, which downloads the chart archive
+// for UNINSTALL from the very repository that could not be read.
+func TestUndeployIsNotBlockedByAnUnresolvableChartVersion(t *testing.T) {
+	for _, tt := range []struct {
+		name string
+		act  func(*MesheryControllersHelper)
+	}{
+		{
+			name: "reconcile",
+			act: func(mch *MesheryControllersHelper) {
+				mch.UndeployDeployedOperators(NewOperatorTracker(false), testContextID)
+			},
+		},
+		{
+			name: "user initiated",
+			act: func(mch *MesheryControllersHelper) {
+				if err := mch.SetOperatorDeployment(testContextID, false); err != nil {
+					t.Fatalf("unexpected error: %v", err)
+				}
+			},
+		},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			mch := newTestControllersHelper(t)
+			stub := &stubController{status: controllers.Deployed}
+			mch.ctxControllerHandlers = map[MesheryController]controllers.IMesheryController{MesheryOperator: stub}
+			mch.ctxOperatorStatus = controllers.Deployed
+			mch.setOperatorChartError(ErrNoOperatorChartPublished(OperatorChartName, testChartRepo))
+
+			tt.act(mch)
+
+			if stub.undeploys != 1 {
+				t.Fatalf("Undeploy was called %d times, want 1: an unresolvable chart version must not strand the operator", stub.undeploys)
+			}
+		})
 	}
 }
 
@@ -447,14 +530,14 @@ func TestMissingOperatorHandlerIsNeverASilentNoOp(t *testing.T) {
 			name:   "deploy",
 			status: controllers.NotDeployed,
 			act: func(mch *MesheryControllersHelper) {
-				mch.DeployUndeployedOperators(NewOperatorTracker(false))
+				mch.DeployUndeployedOperators(NewOperatorTracker(false), testContextID)
 			},
 		},
 		{
 			name:   "undeploy",
 			status: controllers.Deployed,
 			act: func(mch *MesheryControllersHelper) {
-				mch.UndeployDeployedOperators(NewOperatorTracker(false))
+				mch.UndeployDeployedOperators(NewOperatorTracker(false), testContextID)
 			},
 		},
 	}
@@ -479,8 +562,54 @@ func TestMissingOperatorHandlerIsNeverASilentNoOp(t *testing.T) {
 				if code := meshkiterrors.GetCode(err); code != ErrOperatorHandlerNotAttachedCode {
 					t.Fatalf("error code = %q, want %q (from %v)", code, ErrOperatorHandlerNotAttachedCode, err)
 				}
+				if !strings.Contains(err.Error(), testContextID) {
+					t.Fatalf("%s: the error must name the context it is about, got %v", tt.name, err)
+				}
 			}
 		})
+	}
+}
+
+// TestTeardownOfANeverConnectedConnectionIsQuiet: disconnect and delete run
+// UndeployDeployedOperators unconditionally, and a connection whose cluster was
+// never reachable has no handler *and never had an operator*. Alerting that its
+// removal failed would be a second alert for a non-event, on top of the
+// Kubernetes-client failure the connect attempt already reported.
+//
+// The discriminator is whether the operator status was ever genuinely observed,
+// which is exactly what distinguishes "we saw one and can no longer act on it"
+// from "we never reached this cluster".
+func TestTeardownOfANeverConnectedConnectionIsQuiet(t *testing.T) {
+	mch := newTestControllersHelper(t)
+	mch.ctxControllerHandlers = nil
+	if mch.ctxOperatorStatus != controllers.Unknown {
+		t.Fatalf("seeded operator status = %v, want the unobserved Unknown this test is about", mch.ctxOperatorStatus)
+	}
+
+	mch.UndeployDeployedOperators(NewOperatorTracker(false), testContextID)
+
+	if err := mch.GetOperatorError(); err != nil {
+		t.Fatalf("tearing down a never-connected connection reported %v; it has no operator to fail to remove", err)
+	}
+}
+
+// TestMissingHandlerNeverClobbersTheSpecificDiagnostic: "no operator handler is
+// attached" is the *consequence* of the kubeconfig or Kubernetes-client failure
+// that AddCtxControllerHandlers already recorded by name. Letting the
+// consequence overwrite the cause meant tearing a connection down degraded the
+// very diagnostic this work exists to provide.
+func TestMissingHandlerNeverClobbersTheSpecificDiagnostic(t *testing.T) {
+	mch := newTestControllersHelper(t)
+	clientErr := errors.New("failed to create Kubernetes client: no such host")
+	mch.setOperatorError(clientErr)
+	mch.ctxControllerHandlers = nil
+	// Observed, so the teardown gate above does not apply and the report runs.
+	mch.ctxOperatorStatus = controllers.Deployed
+
+	mch.UndeployDeployedOperators(NewOperatorTracker(false), testContextID)
+
+	if !errors.Is(mch.GetOperatorError(), clientErr) {
+		t.Fatalf("operator error = %v, want the actionable client failure to survive the teardown", mch.GetOperatorError())
 	}
 }
 

@@ -172,18 +172,55 @@ or `GetVersion` - so all three handlers still attach and the operator card keeps
 reporting a healthy operator's status and image tag, which is exactly the value
 [the troubleshooting guide](/guides/troubleshooting/meshery-operator-meshsync)
 tells users to read. The failure is recorded on `operatorChartError`
-(`GetOperatorChartError`) as well as `setOperatorError`, and
-`DeployUndeployedOperators` refuses on it rather than handing Helm a version the
-repository does not publish, which would surface as an opaque chart-not-found
-error instead. `UndeployDeployedOperators` is deliberately **not** gated on it:
-removal must always be attempted, since refusing it would leave the operator
-running on a cluster the user asked to have it taken off.
+(`GetOperatorChartError`) as well as `setOperatorError`, and every install path
+refuses on it rather than handing Helm a version the repository does not
+publish, which would surface as an opaque chart-not-found error instead.
 
-A missing `MesheryOperator` handler - which now means only that the kubeconfig
-or the Kubernetes client failed - is never a silent no-op either. Both
-`DeployUndeployedOperators` and `UndeployDeployedOperators` report it through
-`ErrOperatorHandlerNotAttached` (recorded, logged, and emitted), so a lifecycle
-request that did nothing does not read to the user as one that succeeded.
+**Every install path** means exactly that, and it is enforced by a single
+function rather than by convention. `operatorInstallTarget` is the one guard;
+the FSM's `DeployUndeployedOperators` and the user-initiated
+`SetOperatorDeployment` both go through it, so they cannot drift into one
+refusing an unpublishable version while the other installs it. The GraphQL
+`changeOperatorStatus` mutation is the second entry point and calls
+`SetOperatorDeployment` through the connection's helper (resolved via the state
+machine, the same route resync and controller-status take). It previously read
+a `MesheryControllerHandlersKey` context value that nothing ever populated -
+that key is now retired; do not reintroduce it.
+
+`UndeployDeployedOperators` is deliberately **not** gated on the chart error:
+removal is the direction to attempt rather than refuse, since refusing would
+leave the operator running on a cluster the user asked to have it taken off.
+Attempted is all it is, though - meshkit's `ApplyHelmChart` downloads and loads
+the chart archive before dispatching `UNINSTALL` exactly as it does for
+`INSTALL`, from the same repository whose index could not be read, so in the very
+case that motivates not refusing, `Undeploy` fails at chart download, the
+operator stays on the cluster, and the user gets a Helm error. A removal path
+that does not need the archive would have to come from meshkit.
+
+A missing `MesheryOperator` handler - which means only that the kubeconfig or
+the Kubernetes client failed - is reported through `ErrOperatorHandlerNotAttached`
+rather than passed over in silence, so a lifecycle request that did nothing does
+not read to the user as one that succeeded. Two things bound that report:
+
+- The context identifier is threaded in from the call site (every one has the
+  `K8sContext`) rather than read from `MesheryControllersHelper.contextID`, which
+  nothing assigns. That field's emptiness is a separate latent bug - it makes
+  `UpdateOperatorsStatusMap`'s `ot.IsUndeployed(mch.contextID)` probe the
+  empty-string key forever - and is documented at its declaration rather than
+  fixed here, because assigning it would silently change operator-undeploy
+  behavior.
+- Teardown of a connection whose cluster was never reached stays quiet.
+  `UndeployDeployedOperators` reports a missing handler only when the operator
+  status was ever genuinely observed (not the `controllers.Unknown` the
+  constructor seeds), so deleting a connection that never had an operator does
+  not alert about failing to remove one. User-initiated deploy and undeploy are
+  not gated this way - those always report.
+
+Relatedly, the missing-handler error never overwrites a more specific one:
+`setOperatorErrorIfUnset` records it only when nothing is already recorded. "No
+handler is attached" is the *consequence* of the unreadable kubeconfig or failed
+Kubernetes client that `AddCtxControllerHandlers` already recorded by name, and
+letting the consequence replace the cause degraded the diagnostic on teardown.
 
 The controller-status snapshot is built from `models.MesheryControllers`, not
 from the attached-handler map, so a connection with a ready FSM context always
@@ -415,8 +452,11 @@ Unit coverage that exists today:
   excluded from every automatic selection but honored when named, the
   pinned-against-pinned reconcile comparison, and the split between withholding
   installation and withholding observation (all three handlers still attach when
-  no chart version resolves; deploy refuses, undeploy does not, and a missing
-  handler is reported rather than passed over).
+  no chart version resolves; deploy refuses through the shared guard on both the
+  reconcile and the user-initiated `SetOperatorDeployment` path, undeploy does
+  not refuse, a missing handler is reported by name with its context id rather
+  than passed over, teardown of a never-connected connection stays quiet, and the
+  kubeconfig/client diagnostic survives that teardown).
 - `server/helpers/utils/helm_chart_repo_test.go` - the `index.yaml` read: chart
   version extraction, structured failures, TTL reuse, stale-while-revalidate on
   expiry (including through a failing refresh), that only a cold cache blocks,
