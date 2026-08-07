@@ -29,13 +29,19 @@ func reachableK8sContext() K8sContext {
 	}
 }
 
-// publishedCharts is the catalogue these tests resolve against: the two current
-// charts, the first one that works (MinimumOperatorChartVersion), and two that
-// predate it. It deliberately stops below the newest *server* releases, which
-// is the real-world condition that broke operator deployment - chart publishing
-// trails Meshery Server releases, so a current server routinely asks the
-// repository for a chart that does not exist yet.
-var publishedCharts = []string{"v1.0.64", "v1.0.63", "v1.0.62", "v1.0.40", "v0.7.9"}
+// publishedCharts is the catalogue every test in package models resolves
+// against: three current charts, the oldest one verified to deploy
+// (MinimumOperatorChartVersion), and two that predate it. It deliberately stops
+// below the newest *server* releases, which is the real-world condition that
+// broke operator deployment - chart publishing trails Meshery Server releases,
+// so a current server routinely asks the repository for a chart that does not
+// exist yet.
+//
+// It is one variable rather than one per test file on purpose: the helper that
+// builds a MesheryControllersHelper resolves against it too, so two catalogues
+// drifting apart would make a reconcile test assert against a chart set its own
+// helper never saw.
+var publishedCharts = []string{"v1.0.64", "v1.0.63", "v1.0.62", "v1.0.51", "v1.0.40", "v0.7.9"}
 
 // testChartRepo stands in for the repository the catalogue was read from. It is
 // deliberately not ChartRepo: resolution must report the repository it actually
@@ -81,22 +87,48 @@ func TestDerivedChartVersionSubstitutionIsNeverSilent(t *testing.T) {
 // TestDerivedChartVersionIsFlooredToTheOldestWorkingChart pins the fix for the
 // reported failure: a server old enough to predate MinimumOperatorChartVersion
 // requests a chart that *is* published but cannot run (retired kube-rbac-proxy
-// image, no webhook certificate). It must be raised to the oldest working
-// chart - not to the newest, which would be a larger change than the defect
-// requires.
+// image, no webhook certificate). It must be raised to the oldest *published*
+// chart at or above the floor - not to the newest, which would be a larger
+// change than the defect requires, and not to the floor constant itself, which
+// the repository is not obliged to publish.
 func TestDerivedChartVersionIsFlooredToTheOldestWorkingChart(t *testing.T) {
-	version, reason := mustResolve(t, publishedCharts, "v1.0.40", OperatorChartVersionDerived)
+	t.Run("the floor itself is published", func(t *testing.T) {
+		version, reason := mustResolve(t, publishedCharts, "v1.0.40", OperatorChartVersionDerived)
 
-	if version != MinimumOperatorChartVersion {
-		t.Fatalf("chart version = %q, want the floor %q", version, MinimumOperatorChartVersion)
-	}
-	if reason == "" {
-		t.Fatal("expected the floor to be explained to the user")
-	}
+		if version != MinimumOperatorChartVersion {
+			t.Fatalf("chart version = %q, want the floor %q", version, MinimumOperatorChartVersion)
+		}
+		if reason == "" {
+			t.Fatal("expected the floor to be explained to the user")
+		}
+	})
+
+	t.Run("the floor itself is not published", func(t *testing.T) {
+		// The floor is a policy boundary, not a promise that the repository
+		// carries that exact release. Handing MinimumOperatorChartVersion to
+		// Helm here would ask for an archive this repository does not publish,
+		// and jumping to the newest would upgrade further than the defect
+		// requires.
+		version, reason := mustResolve(t, []string{"v1.0.64", "v1.0.62", "v1.0.40"}, "v1.0.40", OperatorChartVersionDerived)
+
+		if version != "v1.0.62" {
+			t.Fatalf("chart version = %q, want the oldest published chart at or above the floor, v1.0.62", version)
+		}
+		if reason == "" {
+			t.Fatal("expected the floor to be explained to the user")
+		}
+	})
 }
 
+// TestDerivedChartVersionAtOrAboveTheFloorIsUsedVerbatim guards the floor from
+// being raised past a chart that works. Each version listed here was rendered
+// from its published archive and confirmed to carry no kube-rbac-proxy sidecar
+// and ENABLE_WEBHOOKS="false", so substituting any of them would tell a user
+// their working chart cannot deploy. They are spelled out as literals rather
+// than derived from MinimumOperatorChartVersion precisely so that raising the
+// constant fails here instead of silently redefining what the test asserts.
 func TestDerivedChartVersionAtOrAboveTheFloorIsUsedVerbatim(t *testing.T) {
-	for _, requested := range []string{MinimumOperatorChartVersion, "v1.0.64"} {
+	for _, requested := range []string{"v1.0.51", "v1.0.62", "v1.0.63", "v1.0.64"} {
 		version, reason := mustResolve(t, publishedCharts, requested, OperatorChartVersionDerived)
 		if version != requested {
 			t.Fatalf("chart version = %q, want %q used verbatim", version, requested)
@@ -438,7 +470,9 @@ func TestCompareChartVersionsOrdersBySemverNotLexically(t *testing.T) {
 	if compareChartVersions("v1.0.64", "v1.0.9") <= 0 {
 		t.Fatal("v1.0.64 must compare greater than v1.0.9")
 	}
-	if compareChartVersions("v1.0.63", MinimumOperatorChartVersion) != 0 {
+	// Helm treats "1.0.64" and "v1.0.64" as one release, so they must compare
+	// equal rather than by their differing spellings.
+	if compareChartVersions("v1.0.64", "1.0.64") != 0 {
 		t.Fatal("equal versions must compare equal")
 	}
 	if compareChartVersions("stable-latest", "v0.0.1") >= 0 {

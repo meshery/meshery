@@ -14,22 +14,33 @@ const (
 	OperatorChartName = "meshery-operator"
 
 	// MinimumOperatorChartVersion is the oldest published meshery-operator
-	// chart that still deploys successfully onto a current cluster.
+	// chart verified to deploy successfully onto a current cluster.
 	//
-	// Every chart below it is broken in two independent ways, and both are
-	// permanent because they are baked into the published archive:
+	// The floor means exactly one thing: below it, the chart cannot deploy at
+	// all. It is not a "newest is better" preference - raising a server past a
+	// chart that works is what a server upgrade is for, not what this floor is
+	// for - so it must sit at the oldest version that actually renders clean.
 	//
-	//  1. It ships a `gcr.io/kubebuilder/kube-rbac-proxy` sidecar. That
-	//     registry has been retired, so the sidecar lands in ImagePullBackOff
-	//     and the operator Pod never becomes Ready.
-	//  2. It sets no ENABLE_WEBHOOKS on the manager and mounts no serving
-	//     certificate. An unset ENABLE_WEBHOOKS means *enabled* in current
-	//     operator images, so the manager crash-loops on
+	// What was verified, by rendering the published archives with `helm
+	// template`:
+	//
+	//   - v1.0.51 renders with no `kube-rbac-proxy` container and pins
+	//     ENABLE_WEBHOOKS="false" on the manager. So does every chart above it.
+	//   - Every published chart checked below it - v1.0.40, and the contiguous
+	//     run v1.0.41 through v1.0.50 (v1.0.47 was never published) - ships a
+	//     `gcr.io/kubebuilder/kube-rbac-proxy` sidecar and sets no
+	//     ENABLE_WEBHOOKS. That registry has been retired, so the sidecar lands
+	//     in ImagePullBackOff; and an unset ENABLE_WEBHOOKS means *enabled* in
+	//     current operator images, so the manager crash-loops on
 	//     `open /tmp/k8s-webhook-server/serving-certs/tls.crt: no such file or
-	//     directory`.
+	//     directory`. Both defects are permanent, being baked into an immutable
+	//     published archive.
 	//
-	// v1.0.63 is the first chart that drops the sidecar and pins
-	// ENABLE_WEBHOOKS=false with the webhook opt-in default-off.
+	// Charts older than v1.0.40 were not rendered, so nothing here claims a
+	// cause for them - only that they are below the oldest chart verified to
+	// work. v1.0.51 carries operator image 1.0.1 rather than the current 1.0.4;
+	// that image is functional, and pinning the floor higher to reach a newer
+	// operator image would substitute charts that provably deploy.
 	//
 	// The floor matters because the chart version a server asks for is derived
 	// from the *server's own release* (see NewOperatorDeploymentConfig): a
@@ -38,7 +49,7 @@ const (
 	// for the rest of its life. The floor therefore applies only to that
 	// derived default - an `operator.version` someone set deliberately is still
 	// honored, so pinning an older chart on purpose remains possible.
-	MinimumOperatorChartVersion = "v1.0.63"
+	MinimumOperatorChartVersion = "v1.0.51"
 )
 
 // OperatorChartVersionSource records who asked for a chart version, which is
@@ -180,17 +191,20 @@ func ResolveOperatorChartVersion(repo string, published []string, requested stri
 	if compareChartVersions(match, MinimumOperatorChartVersion) < 0 {
 		floored := oldestPublishedAtLeast(pinned, MinimumOperatorChartVersion)
 		if floored == "" {
-			// Nothing published reaches the floor, so newest carries the same
-			// defects as the requested chart. Saying it is "the oldest working
-			// chart" would send the user looking for a fix that has already
-			// been applied; the actionable fact is that no working chart is
-			// published yet.
-			return newest, "Meshery Operator chart " + requested + " cannot deploy successfully - its kube-rbac-proxy sidecar image no longer exists and its manager has no webhook certificate - and " +
-				repo + " publishes no chart at or above " + MinimumOperatorChartVersion + " yet, so the newest published chart, " + newest +
-				", was deployed instead. It carries the same defects; Meshery Operator will not become ready until a chart at or above " + MinimumOperatorChartVersion + " is published.", nil
+			// Nothing published reaches the floor, so newest is no more likely
+			// to deploy than the requested chart. Saying it is "the oldest
+			// working chart" would send the user looking for a fix that has
+			// already been applied; the actionable fact is that no chart
+			// verified to deploy is published yet.
+			return newest, "Meshery Operator chart " + requested + " is older than " + MinimumOperatorChartVersion +
+				", the oldest chart verified to deploy successfully, and " + repo + " publishes no chart at or above " +
+				MinimumOperatorChartVersion + " yet, so the newest published chart, " + newest +
+				", was deployed instead. It is older too; Meshery Operator may not become ready until a chart at or above " +
+				MinimumOperatorChartVersion + " is published.", nil
 		}
-		return floored, "Meshery Operator chart " + requested + " cannot deploy successfully - its kube-rbac-proxy sidecar image no longer exists and its manager has no webhook certificate - so the oldest working chart, " +
-			floored + ", was deployed instead. Set operator.version on the connection to override.", nil
+		return floored, "Meshery Operator chart " + requested + " is older than " + MinimumOperatorChartVersion +
+			", the oldest chart verified to deploy successfully, so " + floored +
+			" was deployed instead. Set operator.version on the connection to override.", nil
 	}
 
 	return match, "", nil

@@ -102,10 +102,18 @@ guarantees such a chart exists, and two everyday cases guarantee it does not:
   a current server routinely names a chart version the repository has not
   published. Helm then fails with a chart-not-found error and the operator never
   deploys.
-- Charts below `models.MinimumOperatorChartVersion` are published but cannot run
-  (retired `kube-rbac-proxy` image, no webhook certificate). Because the derived
+- Charts below `models.MinimumOperatorChartVersion` are published but are not
+  known to run: every one that was rendered from its published archive ships the
+  retired `kube-rbac-proxy` image and no webhook certificate. Because the derived
   version tracks the server's own release, an old server would install one of
   those on every cluster it is ever pointed at, forever.
+
+  The floor means only "below this, the chart cannot deploy at all" - it is not a
+  preference for newer charts. Setting it above a chart that provably works would
+  substitute a working release and tell the user, falsely, that theirs cannot
+  deploy. Its doc comment in `server/models/operator_chart_version.go` records
+  exactly which archives were rendered to establish the boundary; raise the
+  constant only with the same evidence.
 
 `MesheryControllersHelper.pinnedOperatorDeploymentConfig` is therefore the only
 deployment config allowed to reach Helm. It lists what the repository publishes

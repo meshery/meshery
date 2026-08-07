@@ -100,16 +100,16 @@ kubectl -n meshery logs deploy/meshery-operator -c manager
 # open /tmp/k8s-webhook-server/serving-certs/tls.crt: no such file or directory
 ```
 
-**Cause.** Both symptoms come from one thing: an **old `meshery-operator` Helm chart**, from before `v1.0.63`.
+**Cause.** Both symptoms come from one thing: an **old `meshery-operator` Helm chart**, from before `v1.0.51`.
 
 - Those charts ship a `gcr.io/kubebuilder/kube-rbac-proxy` sidecar. That registry has been retired, so the image can no longer be pulled and the Pod never becomes ready.
 - They also set no `ENABLE_WEBHOOKS` on the manager and mount no serving certificate. Current operator images treat an unset `ENABLE_WEBHOOKS` as *enabled*, so the manager looks for a certificate that the old chart never created and crash-loops.
 
-Charts `v1.0.63` and later drop the sidecar and ship `ENABLE_WEBHOOKS=false` with the conversion webhook opt-in and off by default.
+`v1.0.51` is the oldest published chart confirmed to render without the sidecar and with `ENABLE_WEBHOOKS=false` - the conversion webhook opt-in, off by default - and every chart above it does the same. Both symptoms were reproduced from the published archives of `v1.0.40` and of the contiguous run `v1.0.41` through `v1.0.50` (`v1.0.47` was never published); charts older than `v1.0.40` were not checked, so treat "older than `v1.0.51`" as the boundary rather than a claim about any specific ancient release.
 
-**Remedy.** Get a chart at or above `v1.0.63` into the cluster.
+**Remedy.** Get a chart at or above `v1.0.51` into the cluster.
 
-If Meshery Server deployed the operator for you (the usual case: you added a kubeconfig and Meshery installed the operator), simply **upgrade Meshery Server**. Meshery Server will not install a chart below `v1.0.63`: it resolves the chart version against what the repository actually publishes and raises anything older to the oldest working chart, telling you it did so in the events feed. Then reconnect the cluster.
+If Meshery Server deployed the operator for you (the usual case: you added a kubeconfig and Meshery installed the operator), simply **upgrade Meshery Server**. Meshery Server will not install a chart below `v1.0.51`: it resolves the chart version against what the repository actually publishes and raises anything older to the oldest published chart at or above that boundary, telling you it did so in the events feed. Then reconnect the cluster.
 
 If you installed the operator chart yourself with Helm:
 
@@ -141,7 +141,7 @@ kubectl -n meshery get deploy meshery-operator \
 helm -n meshery list --filter meshery-operator
 ```
 
-A `kube-rbac-proxy` container in the output of the following command means the chart predates `v1.0.63`, whatever version it claims:
+A `kube-rbac-proxy` container in the output of the following command means the chart predates `v1.0.51`, whatever version it claims:
 
 ```bash
 kubectl -n meshery get deploy meshery-operator \
