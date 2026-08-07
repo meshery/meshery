@@ -1,4 +1,7 @@
 {{ define "main" }}
+{{ if and (not .Content) (eq .Params.display_title false) }}
+  <h2 class="section-index-title">{{ .Title }}</h2>
+{{ end }}
 {{ .Content }}
 {{ partial "section-index.html" . }}
 {{ end }}
