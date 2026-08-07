@@ -66,7 +66,7 @@ func TestDeleteCmdRunE_MockServer(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	utils.SetupBaseURL(ts.URL)
+	utils.MesheryEndpoint = ts.URL
 
 	err := deleteCmd.RunE(deleteCmd, []string{"50bef83c-dad7-9977-952c-099321286a6a"})
 	if err != nil {
