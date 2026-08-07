@@ -32,6 +32,15 @@ const (
 // itself runs without the lock held and is single-flighted per repository, so
 // an unreachable repository costs all concurrent callers one chartIndexTimeout
 // between them rather than one each, serially.
+//
+// Expiry is stale-while-revalidate, not a miss. This index is read on the
+// cluster-connect request path, and index.yaml is several megabytes: treating
+// an expired entry as absent puts a full chartIndexTimeout in front of a
+// connect every time the TTL happens to lapse against a slow or unreachable
+// repository. Published charts are append-mostly, so the worst a stale
+// catalogue costs is not yet knowing about the newest chart - a case the
+// version resolver already handles - which is strictly better than stalling the
+// request. Only a cold cache, with no catalogue to serve at all, blocks.
 type chartIndexCache struct {
 	mu      sync.Mutex
 	entries map[string]chartIndexCacheEntry
@@ -93,28 +102,46 @@ func (c *chartIndexCache) list(repo, chart string) ([]string, error) {
 	return slices.Clone(versions[chart]), nil
 }
 
-// index returns repo's chart catalogue, fetching it when the cache holds no
-// unexpired copy. The lock is held only around the cache and the in-flight
-// bookkeeping, never across the fetch.
+// index returns repo's chart catalogue. A fresh entry is served as-is, an
+// expired one is served while a refresh runs behind the caller, and only a
+// caller that finds no entry at all waits for a fetch. The lock is held around
+// the cache and the in-flight bookkeeping, never across the fetch.
 func (c *chartIndexCache) index(repo string) (map[string][]string, error) {
 	c.mu.Lock()
-	if entry, ok := c.entries[repo]; ok && c.now().Sub(entry.fetchedAt) <= chartIndexTTL {
+	entry, cached := c.entries[repo]
+	if cached && c.now().Sub(entry.fetchedAt) <= chartIndexTTL {
 		c.mu.Unlock()
 		return entry.versions, nil
 	}
+	pending := c.startFetchLocked(repo)
+	c.mu.Unlock()
+
+	if cached {
+		return entry.versions, nil
+	}
+	<-pending.done
+	return pending.versions, pending.err
+}
+
+// startFetchLocked returns the fetch in progress for repo, starting one when
+// none is. c.mu must be held.
+//
+// The fetch runs on its own goroutine whether or not anyone waits for it, which
+// is what lets an expired entry be refreshed without a caller paying for it,
+// and keeps every caller - waiting or not - behind the same single flight.
+func (c *chartIndexCache) startFetchLocked(repo string) *chartIndexFetch {
 	if pending, ok := c.inflight[repo]; ok {
-		c.mu.Unlock()
-		<-pending.done
-		return pending.versions, pending.err
+		return pending
 	}
 	pending := &chartIndexFetch{done: make(chan struct{})}
 	if c.inflight == nil {
 		c.inflight = map[string]*chartIndexFetch{}
 	}
 	c.inflight[repo] = pending
-	c.mu.Unlock()
-
-	return c.runFetch(repo, pending)
+	go func() {
+		_, _ = c.runFetch(repo, pending)
+	}()
+	return pending
 }
 
 // runFetch performs the one fetch that waiters on pending are blocked behind,
@@ -124,10 +151,12 @@ func (c *chartIndexCache) index(repo string) (map[string][]string, error) {
 // they must happen on every exit path. A panic that skipped them would wedge
 // this repository permanently: the slot would still be occupied, so every later
 // caller would block forever on a done channel nobody can close, leaking a
-// goroutine each until the server is restarted. A panic is therefore converted
-// into a structured failure, which the normal error path already handles
-// (operator lifecycle is withheld, the cause is recorded for diagnostics, and
-// the next call retries because failures are not cached).
+// goroutine each until the server is restarted. It would also take the process
+// with it: this runs on its own goroutine, where an unrecovered panic is fatal
+// with no handler above it to absorb it. A panic is therefore converted into a
+// structured failure, which the normal error path already handles (installation
+// is withheld, the cause is recorded for diagnostics, and the next call retries
+// because failures are not cached).
 func (c *chartIndexCache) runFetch(repo string, pending *chartIndexFetch) (versions map[string][]string, err error) {
 	defer func() {
 		if r := recover(); r != nil {

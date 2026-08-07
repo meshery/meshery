@@ -796,10 +796,12 @@ func ErrReconcileOperatorChartVersion(err error) error {
 }
 
 // ErrNoOperatorChartPublished reports that the Helm repository was read but
-// advertises no usable version of the Meshery Operator chart, so there is no
-// version that could be deployed.
+// advertises no version of the Meshery Operator chart that Meshery may choose
+// on the user's behalf, so there is no version to deploy. Release candidates do
+// not count: Meshery never selects a prerelease chart by itself, though an
+// explicit operator.version naming one is honored.
 func ErrNoOperatorChartPublished(chart, repo string) error {
-	return errors.New(ErrNoOperatorChartPublishedCode, errors.Alert, []string{"No Meshery Operator Helm chart is published"}, []string{"The chart repository " + repo + " advertises no released version of the " + chart + " chart."}, []string{"The chart repository index was served from an unexpected location, or its published charts were removed."}, []string{"Confirm " + repo + "/index.yaml lists the " + chart + " chart, then reconnect the Kubernetes connection."})
+	return errors.New(ErrNoOperatorChartPublishedCode, errors.Alert, []string{"No Meshery Operator Helm chart is published"}, []string{"The chart repository " + repo + " advertises no released (non-prerelease) version of the " + chart + " chart."}, []string{"The chart repository index was served from an unexpected location, its published charts were removed, or it currently carries only prerelease charts, which Meshery never selects on its own."}, []string{"Confirm " + repo + "/index.yaml lists a released version of the " + chart + " chart, then reconnect the Kubernetes connection.", "To deploy a prerelease chart deliberately, set operator.version on the Kubernetes connection to that exact version."})
 }
 
 // ErrOperatorChartNotPinned reports that an explicitly configured

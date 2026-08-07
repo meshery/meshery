@@ -7,6 +7,7 @@ import (
 
 	"github.com/meshery/meshery/server/models/connections"
 	meshkiterrors "github.com/meshery/meshkit/errors"
+	"github.com/meshery/meshkit/models/controllers"
 	"github.com/spf13/viper"
 )
 
@@ -305,32 +306,181 @@ func TestPinnedDeploymentConfigSurfacesAnUnreadableIndex(t *testing.T) {
 	}
 }
 
-// TestUnreadableIndexStillAttachesBrokerAndMeshSync asserts the blast radius of
-// an unreachable chart repository is confined to operator lifecycle. The Broker
-// and MeshSync handlers only observe what is already in the cluster, so
-// withholding them too would turn a momentary repository blip into lost
-// discovery on a cluster whose operator is already installed and healthy.
-func TestUnreadableIndexStillAttachesBrokerAndMeshSync(t *testing.T) {
+// TestUnreadableIndexWithholdsInstallationNotObservation draws the line the
+// chart version actually sits on. meshkit's operator handler reads its
+// deployment config in Deploy and Undeploy only - GetStatus and GetVersion
+// never touch it - so a version is what it takes to *install* the operator, not
+// to *watch* one. Withholding the handler when the repository could not be read
+// therefore cost a healthy, already-installed operator its status and its image
+// tag, which is the exact value the troubleshooting guide tells users to read.
+//
+// All three handlers attach; only installation is withheld, and why is recorded
+// for the diagnostics API.
+func TestUnreadableIndexWithholdsInstallationNotObservation(t *testing.T) {
 	mch := newTestControllersHelper(t)
-	mch.chartVersions = func(string, string) ([]string, error) { return nil, errors.New("repository unreachable") }
+	indexErr := errors.New("repository unreachable")
+	mch.chartVersions = func(string, string) ([]string, error) { return nil, indexErr }
 	mch.attachedOperatorChartVersion = "v1.0.64"
 
 	mch.AddCtxControllerHandlers(reachableK8sContext())
 
 	handlers := mch.GetControllerHandlersForEachContext()
-	if _, ok := handlers[MesheryOperator]; ok {
-		t.Fatal("no chart version is safe to install, so no operator handler may be attached")
-	}
-	for controller, name := range map[MesheryController]string{MesheryBroker: "broker", Meshsync: "meshsync"} {
+	for controller, name := range map[MesheryController]string{
+		MesheryBroker:   "broker",
+		Meshsync:        "meshsync",
+		MesheryOperator: "operator",
+	} {
 		if h, ok := handlers[controller]; !ok || h == nil {
-			t.Fatalf("the %s handler needs no chart version and must still be attached", name)
+			t.Fatalf("the %s handler observes the cluster and must be attached", name)
 		}
 	}
+	if chartErr := mch.GetOperatorChartError(); !errors.Is(chartErr, indexErr) {
+		t.Fatalf("operator chart error = %v, want the index failure that withholds installation", chartErr)
+	}
 	if mch.GetOperatorError() == nil {
-		t.Fatal("the reason operator lifecycle is withheld must be recorded for diagnostics")
+		t.Fatal("the reason installation is withheld must be recorded for diagnostics")
 	}
 	if mch.attachedOperatorChartVersion != "" {
 		t.Fatalf("attached chart version = %q, want it cleared so the next reconcile retries", mch.attachedOperatorChartVersion)
+	}
+}
+
+// TestChartResolutionFailureIsClearedByALaterSuccess: the refusal is a live
+// condition, not a latch. A repository that comes back must not leave
+// installation withheld until the server restarts.
+func TestChartResolutionFailureIsClearedByALaterSuccess(t *testing.T) {
+	mch := newTestControllersHelper(t)
+	mch.chartVersions = func(string, string) ([]string, error) { return nil, errors.New("repository unreachable") }
+	mch.AddCtxControllerHandlers(reachableK8sContext())
+	if mch.GetOperatorChartError() == nil {
+		t.Fatal("expected the unreadable index to withhold installation")
+	}
+
+	mch.chartVersions = func(string, string) ([]string, error) { return publishedCharts, nil }
+	mch.AddCtxControllerHandlers(reachableK8sContext())
+
+	if err := mch.GetOperatorChartError(); err != nil {
+		t.Fatalf("operator chart error = %v, want it cleared once a version resolved", err)
+	}
+	if mch.attachedOperatorChartVersion != bootChartVersion {
+		t.Fatalf("attached chart version = %q, want %q", mch.attachedOperatorChartVersion, bootChartVersion)
+	}
+}
+
+// stubController is an IMesheryController that records what it was asked to do,
+// so the deploy/undeploy call sites can be tested without a cluster.
+type stubController struct {
+	status    controllers.MesheryControllerStatus
+	deploys   int
+	undeploys int
+	deployErr error
+}
+
+func (s *stubController) GetName() string                                { return "stub" }
+func (s *stubController) GetStatus() controllers.MesheryControllerStatus { return s.status }
+func (s *stubController) Deploy(bool) error                              { s.deploys++; return s.deployErr }
+func (s *stubController) Undeploy() error                                { s.undeploys++; return nil }
+func (s *stubController) GetPublicEndpoint() (string, error)             { return "", nil }
+func (s *stubController) GetVersion() (string, error)                    { return "1.0.5", nil }
+func (s *stubController) GetEndpointForPort(string) (string, error)      { return "", nil }
+
+// TestDeployIsRefusedWhileNoChartVersionResolves is the other half of attaching
+// the handler unconditionally: the handler exists for observation, so the
+// refusal has to live at the point of installation. Handing Helm a version the
+// repository does not publish would surface as an opaque chart-not-found error
+// instead of this connection's recorded resolution failure.
+func TestDeployIsRefusedWhileNoChartVersionResolves(t *testing.T) {
+	mch := newTestControllersHelper(t)
+	mch.SetMeshsyncDeploymentMode(connections.MeshsyncDeploymentModeOperator)
+	stub := &stubController{status: controllers.NotDeployed}
+	mch.ctxControllerHandlers = map[MesheryController]controllers.IMesheryController{MesheryOperator: stub}
+	mch.ctxOperatorStatus = controllers.NotDeployed
+
+	chartErr := ErrNoOperatorChartPublished(OperatorChartName, testChartRepo)
+	mch.setOperatorChartError(chartErr)
+
+	mch.DeployUndeployedOperators(NewOperatorTracker(false))
+
+	if stub.deploys != 0 {
+		t.Fatalf("Deploy was called %d times with no installable chart version", stub.deploys)
+	}
+	if !errors.Is(mch.GetOperatorError(), chartErr) {
+		t.Fatalf("operator error = %v, want the chart resolution failure", mch.GetOperatorError())
+	}
+
+	// Cleared, the same handler installs.
+	mch.setOperatorChartError(nil)
+	mch.DeployUndeployedOperators(NewOperatorTracker(false))
+	if stub.deploys != 1 {
+		t.Fatalf("Deploy was called %d times once a chart version resolved, want 1", stub.deploys)
+	}
+}
+
+// TestUndeployIsNotBlockedByAnUnresolvableChartVersion: removal is the
+// direction that must always be attempted. Refusing it would leave the operator
+// running on a cluster the user asked to have it taken off.
+func TestUndeployIsNotBlockedByAnUnresolvableChartVersion(t *testing.T) {
+	mch := newTestControllersHelper(t)
+	stub := &stubController{status: controllers.Deployed}
+	mch.ctxControllerHandlers = map[MesheryController]controllers.IMesheryController{MesheryOperator: stub}
+	mch.ctxOperatorStatus = controllers.Deployed
+	mch.setOperatorChartError(ErrNoOperatorChartPublished(OperatorChartName, testChartRepo))
+
+	mch.UndeployDeployedOperators(NewOperatorTracker(false))
+
+	if stub.undeploys != 1 {
+		t.Fatalf("Undeploy was called %d times, want 1: an unresolvable chart version must not strand the operator", stub.undeploys)
+	}
+}
+
+// TestMissingOperatorHandlerIsNeverASilentNoOp pins the condition that used to
+// be unreachable and is now routine: with no operator handler attached, deploy
+// and undeploy did nothing and said nothing, so a user who switched the
+// operator off saw success while it kept running on the cluster.
+func TestMissingOperatorHandlerIsNeverASilentNoOp(t *testing.T) {
+	tests := []struct {
+		name   string
+		status controllers.MesheryControllerStatus
+		act    func(*MesheryControllersHelper)
+	}{
+		{
+			name:   "deploy",
+			status: controllers.NotDeployed,
+			act: func(mch *MesheryControllersHelper) {
+				mch.DeployUndeployedOperators(NewOperatorTracker(false))
+			},
+		},
+		{
+			name:   "undeploy",
+			status: controllers.Deployed,
+			act: func(mch *MesheryControllersHelper) {
+				mch.UndeployDeployedOperators(NewOperatorTracker(false))
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			for _, handlers := range []map[MesheryController]controllers.IMesheryController{
+				nil,
+				{MesheryBroker: &stubController{}},
+			} {
+				mch := newTestControllersHelper(t)
+				mch.SetMeshsyncDeploymentMode(connections.MeshsyncDeploymentModeOperator)
+				mch.ctxControllerHandlers = handlers
+				mch.ctxOperatorStatus = tt.status
+
+				tt.act(mch)
+
+				err := mch.GetOperatorError()
+				if err == nil {
+					t.Fatalf("%s with no operator handler reported nothing; it must not read as success", tt.name)
+				}
+				if code := meshkiterrors.GetCode(err); code != ErrOperatorHandlerNotAttachedCode {
+					t.Fatalf("error code = %q, want %q (from %v)", code, ErrOperatorHandlerNotAttachedCode, err)
+				}
+			}
+		})
 	}
 }
 
@@ -392,14 +542,18 @@ func TestReconcileComparesPinnedVersionsNotRequestedOnes(t *testing.T) {
 	}
 }
 
-// TestReconcileLeavesTheAttachedVersionClearedWhenNoHandlerAttaches guards the
-// retry path. When re-attaching cannot resolve a chart version it attaches no
-// operator handler and clears attachedOperatorChartVersion *deliberately*, so
-// the next reconcile tries again instead of reading a stale value as "already
-// at the desired version". Restoring the pre-reconcile value over that clearing
-// stranded operator lifecycle: reverting operator.version would then match the
-// stale attached version, short-circuit, and never re-attach a handler.
-func TestReconcileLeavesTheAttachedVersionClearedWhenNoHandlerAttaches(t *testing.T) {
+// TestReconcileLeavesTheAttachedVersionClearedWhenResolutionFails guards the
+// retry path. When re-attaching cannot resolve a chart version it clears
+// attachedOperatorChartVersion *deliberately*, so the next reconcile tries
+// again instead of reading a stale value as "already at the desired version".
+// Restoring the pre-reconcile value over that clearing stranded operator
+// lifecycle: reverting operator.version would then match the stale attached
+// version, short-circuit, and never resolve again.
+//
+// The handler itself stays attached - it is what keeps reporting the operator's
+// status and image tag - so the restore must key on the cleared version, not on
+// whether a handler is present.
+func TestReconcileLeavesTheAttachedVersionClearedWhenResolutionFails(t *testing.T) {
 	mch := newTestControllersHelper(t)
 	mch.SetMeshsyncDeploymentMode(connections.MeshsyncDeploymentModeOperator)
 	mch.SetControllersConfig(operatorVersionConfig("v1.0.63", connections.MeshsyncDeploymentModeOperator))
@@ -419,18 +573,114 @@ func TestReconcileLeavesTheAttachedVersionClearedWhenNoHandlerAttaches(t *testin
 
 	_, redeployed, err := mch.ReconcileOperatorChartVersion(reachableK8sContext(), NewOperatorTracker(false))
 	if redeployed {
-		t.Fatal("no operator handler attached, so nothing can have been redeployed")
+		t.Fatal("no chart version resolved, so nothing can have been redeployed")
 	}
 	if err == nil {
 		t.Fatal("expected the failed re-attach to be reported")
 	}
-	if _, ok := mch.GetControllerHandlersForEachContext()[MesheryOperator]; ok {
-		t.Fatal("no chart version resolved, so no operator handler may be attached")
+	if h := mch.GetControllerHandlersForEachContext()[MesheryOperator]; h == nil {
+		t.Fatal("the operator handler observes the cluster and must stay attached")
+	}
+	if mch.GetOperatorChartError() == nil {
+		t.Fatal("installation must stay withheld until a chart version resolves")
 	}
 	if mch.attachedOperatorChartVersion != "" {
 		t.Fatalf("attached chart version = %q, want it left cleared so the next reconcile retries",
 			mch.attachedOperatorChartVersion)
 	}
+}
+
+// TestPrereleaseChartsAreNeverSelectedAutomatically covers the whole automatic
+// path. meshery.io has carried prerelease operator charts (v0.6.0-rc.6,
+// v0.6.0-rc.5l, v0.5.0-rc-5g), and by semver a release candidate outranks every
+// stable chart below it - so an rc published ahead of its release would
+// otherwise be what every server whose own chart is not yet published installs
+// onto a production cluster.
+func TestPrereleaseChartsAreNeverSelectedAutomatically(t *testing.T) {
+	t.Run("the newest-published fallback skips a prerelease", func(t *testing.T) {
+		published := []string{"v1.0.66-rc.1", "v1.0.65", "v1.0.51"}
+		version, reason := mustResolve(t, published, "v1.0.70", OperatorChartVersionDerived)
+		if version != "v1.0.65" {
+			t.Fatalf("chart version = %q, want the newest *stable* chart v1.0.65", version)
+		}
+		if reason == "" {
+			t.Fatal("expected the fallback to be explained")
+		}
+	})
+
+	t.Run("an unpinned server release skips a prerelease", func(t *testing.T) {
+		published := []string{"v1.0.66-rc.1", "v1.0.65", "v1.0.51"}
+		version, _ := mustResolve(t, published, "", OperatorChartVersionDerived)
+		if version != "v1.0.65" {
+			t.Fatalf("chart version = %q, want the newest *stable* chart v1.0.65", version)
+		}
+	})
+
+	t.Run("the floor raise skips a prerelease sitting at the boundary", func(t *testing.T) {
+		// v1.0.52-rc.1 is the oldest published chart at or above the floor, and
+		// selecting it would land a release candidate on a cluster whose only
+		// fault was running an old server.
+		published := []string{"v1.0.53", "v1.0.52-rc.1", "v1.0.40"}
+		version, reason := mustResolve(t, published, "v1.0.40", OperatorChartVersionDerived)
+		if version != "v1.0.53" {
+			t.Fatalf("chart version = %q, want the oldest *stable* chart at or above the floor, v1.0.53", version)
+		}
+		if reason == "" {
+			t.Fatal("expected the floor raise to be explained")
+		}
+	})
+
+	t.Run("a repository publishing only prereleases fails rather than selecting one", func(t *testing.T) {
+		_, _, err := ResolveOperatorChartVersion(testChartRepo, []string{"v1.0.66-rc.1", "v1.0.65-rc.2"}, "v1.0.70", OperatorChartVersionDerived)
+		if err == nil {
+			t.Fatal("expected resolution to fail rather than select a release candidate nobody asked for")
+		}
+		if code := meshkiterrors.GetCode(err); code != ErrNoOperatorChartPublishedCode {
+			t.Fatalf("error code = %q, want %q (from %v)", code, ErrNoOperatorChartPublishedCode, err)
+		}
+	})
+}
+
+// TestPrereleaseChartsRemainReachableWhenNamed is the other side of the rule:
+// exclusion applies to what Meshery *chooses*, never to what it is *told*. A
+// prerelease pinned by name is honored exactly, and a prerelease server release
+// that matches a published prerelease chart is not a choice either - it names
+// one release, and it is the one the server was built alongside.
+func TestPrereleaseChartsRemainReachableWhenNamed(t *testing.T) {
+	published := []string{"v1.0.66-rc.1", "v1.0.65", "v1.0.51"}
+
+	t.Run("an explicit prerelease pin is honored", func(t *testing.T) {
+		version, reason := mustResolve(t, published, "v1.0.66-rc.1", OperatorChartVersionRequested)
+		if version != "v1.0.66-rc.1" {
+			t.Fatalf("chart version = %q, want the explicitly requested v1.0.66-rc.1", version)
+		}
+		if reason != "" {
+			t.Fatalf("an honored explicit request is not a substitution, got reason %q", reason)
+		}
+	})
+
+	t.Run("a prerelease server release matching a published chart is used verbatim", func(t *testing.T) {
+		version, reason := mustResolve(t, published, "v1.0.66-rc.1", OperatorChartVersionDerived)
+		if version != "v1.0.66-rc.1" {
+			t.Fatalf("chart version = %q, want the matching published chart v1.0.66-rc.1", version)
+		}
+		if reason != "" {
+			t.Fatalf("naming a published release exactly is not a substitution, got reason %q", reason)
+		}
+	})
+
+	t.Run("an unusable explicit pin is pointed at a stable version", func(t *testing.T) {
+		_, _, err := ResolveOperatorChartVersion(testChartRepo, published, "v9.9.9", OperatorChartVersionRequested)
+		if err == nil {
+			t.Fatal("expected an unpublished explicit pin to fail")
+		}
+		if !strings.Contains(err.Error(), "v1.0.65") {
+			t.Fatalf("the remedy must name a stable chart, got %v", err)
+		}
+		if strings.Contains(err.Error(), "v1.0.66-rc.1") {
+			t.Fatalf("the remedy must not recommend a release candidate, got %v", err)
+		}
+	})
 }
 
 // TestNewOperatorDeploymentConfigNeverStampsAMovingVersion asserts the boot-time

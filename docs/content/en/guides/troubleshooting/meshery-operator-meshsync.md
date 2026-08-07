@@ -154,6 +154,10 @@ Meshery Server normally deploys the operator chart that matches its own release,
 
 The value must be a chart version that the repository publishes, for example `v1.0.64` (the leading `v` is optional - `1.0.64` names the same chart). A moving tag such as `stable-latest`, or a version that is not published, is rejected with a visible error rather than being silently replaced. Clear the field to go back to tracking the Meshery Server release.
 
+Release candidates are the one thing Meshery will never pick for you: when it falls back to the newest published chart, or raises an old one to the oldest chart known to deploy, it skips any version carrying a prerelease suffix such as `v1.0.66-rc.1`. Naming a prerelease in `operator.version` deploys it exactly as asked.
+
+If the chart repository cannot be reached, Meshery still reports the operator's status and image version for an operator that is already installed - only installing or upgrading it is withheld, and the reason appears in the connection's diagnostics and in the events feed.
+
 ## Operating Meshery without Meshery Operator
 
 Meshery Operator, MeshSync, and Broker are crucial components in a Meshery deployment. Meshery can function without them, but some functions of Meshery will be disable / unusable. Whether Meshery Operator is initially deployed via `mesheryctl` command or via Meshery Server, you can monitor the health of the Meshery Operator deployment using either the CLI or UI clients.

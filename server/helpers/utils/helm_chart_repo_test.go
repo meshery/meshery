@@ -102,13 +102,18 @@ func TestFetchChartIndexVersionsReportsStructuredFailures(t *testing.T) {
 // wire on the hot path: it is fetched on every cluster connection, and the
 // Meshery index is several megabytes.
 func TestChartIndexCacheServesFromCacheUntilTheTTLExpires(t *testing.T) {
+	var mu sync.Mutex
 	now := time.Unix(0, 0)
-	fetches := 0
+	var fetches atomic.Int32
 	cache := &chartIndexCache{
 		entries: map[string]chartIndexCacheEntry{},
-		now:     func() time.Time { return now },
+		now: func() time.Time {
+			mu.Lock()
+			defer mu.Unlock()
+			return now
+		},
 		fetch: func(string) (map[string][]string, error) {
-			fetches++
+			fetches.Add(1)
 			return map[string][]string{"meshery-operator": {"v1.0.64"}}, nil
 		},
 	}
@@ -118,16 +123,151 @@ func TestChartIndexCacheServesFromCacheUntilTheTTLExpires(t *testing.T) {
 			t.Fatalf("unexpected error: %v", err)
 		}
 	}
-	if fetches != 1 {
-		t.Fatalf("fetched %d times within the TTL, want 1", fetches)
+	if got := fetches.Load(); got != 1 {
+		t.Fatalf("fetched %d times within the TTL, want 1", got)
 	}
 
+	mu.Lock()
 	now = now.Add(chartIndexTTL + time.Second)
+	mu.Unlock()
 	if _, err := cache.list("repo", "meshery-operator"); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if fetches != 2 {
-		t.Fatalf("fetched %d times after the TTL expired, want 2", fetches)
+	waitFor(t, "the expired entry to be refreshed", func() bool { return fetches.Load() == 2 })
+}
+
+// TestChartIndexCacheServesStaleWhileRefreshing is the reason expiry is not a
+// miss. This index is read inside the cluster-connect request handler; blocking
+// that request on a multi-megabyte fetch bounded only by chartIndexTimeout
+// turned a slow or unreachable repository into a 30-second connect (and every
+// concurrent connect joined the same wait) every time the TTL happened to
+// lapse. Published charts are append-mostly, so a stale catalogue costs at most
+// not knowing about the newest chart, which the resolver already handles.
+func TestChartIndexCacheServesStaleWhileRefreshing(t *testing.T) {
+	var mu sync.Mutex
+	now := time.Unix(0, 0)
+	release := make(chan struct{})
+	var fetches atomic.Int32
+
+	cache := &chartIndexCache{
+		entries: map[string]chartIndexCacheEntry{},
+		now: func() time.Time {
+			mu.Lock()
+			defer mu.Unlock()
+			return now
+		},
+		fetch: func(string) (map[string][]string, error) {
+			if fetches.Add(1) > 1 {
+				<-release
+				return map[string][]string{"meshery-operator": {"v1.0.65", "v1.0.64"}}, nil
+			}
+			return map[string][]string{"meshery-operator": {"v1.0.64"}}, nil
+		},
+	}
+
+	// Warm the cache, then expire it. The refresh that the next call kicks off
+	// is blocked for the rest of the test.
+	if _, err := cache.list("repo", "meshery-operator"); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	mu.Lock()
+	now = now.Add(chartIndexTTL + time.Second)
+	mu.Unlock()
+
+	served := make(chan []string, 1)
+	go func() {
+		versions, err := cache.list("repo", "meshery-operator")
+		if err != nil {
+			t.Errorf("serving a stale catalogue must not fail: %v", err)
+		}
+		served <- versions
+	}()
+
+	select {
+	case versions := <-served:
+		if len(versions) != 1 || versions[0] != "v1.0.64" {
+			t.Fatalf("versions = %v, want the stale catalogue served while the refresh runs", versions)
+		}
+	case <-time.After(5 * time.Second):
+		close(release)
+		t.Fatal("an expired entry blocked the caller on a refetch instead of being served stale")
+	}
+
+	// The refresh really was started, and its result replaces the stale entry.
+	waitFor(t, "the background refresh to start", func() bool { return fetches.Load() == 2 })
+	close(release)
+	waitFor(t, "the refreshed catalogue to be installed", func() bool {
+		versions, err := cache.list("repo", "meshery-operator")
+		return err == nil && len(versions) == 2
+	})
+}
+
+// TestChartIndexCacheBlocksOnlyOnAColdCache: with no catalogue to serve there
+// is nothing to be stale about, so a first caller does wait - and gets the
+// failure rather than an empty slice that would read as "no chart published".
+func TestChartIndexCacheBlocksOnlyOnAColdCache(t *testing.T) {
+	outage := errors.New("repository unreachable")
+	cache := &chartIndexCache{
+		entries: map[string]chartIndexCacheEntry{},
+		now:     time.Now,
+		fetch:   func(string) (map[string][]string, error) { return nil, outage },
+	}
+
+	versions, err := cache.list("repo", "meshery-operator")
+	if !errors.Is(err, outage) {
+		t.Fatalf("err = %v, want the fetch failure reported to the first caller", err)
+	}
+	if versions != nil {
+		t.Fatalf("versions = %v, want none: an unreadable index is not an empty catalogue", versions)
+	}
+}
+
+// TestChartIndexCacheServesStaleThroughAnOutage: failures are not cached, so a
+// refresh that keeps failing must neither poison the stale entry nor start
+// blocking callers again.
+func TestChartIndexCacheServesStaleThroughAnOutage(t *testing.T) {
+	var mu sync.Mutex
+	now := time.Unix(0, 0)
+	var fetches atomic.Int32
+
+	cache := &chartIndexCache{
+		entries: map[string]chartIndexCacheEntry{},
+		now: func() time.Time {
+			mu.Lock()
+			defer mu.Unlock()
+			return now
+		},
+		fetch: func(string) (map[string][]string, error) {
+			if fetches.Add(1) > 1 {
+				return nil, errors.New("repository unreachable")
+			}
+			return map[string][]string{"meshery-operator": {"v1.0.64"}}, nil
+		},
+	}
+
+	if _, err := cache.list("repo", "meshery-operator"); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	mu.Lock()
+	now = now.Add(chartIndexTTL + time.Second)
+	mu.Unlock()
+
+	for range 3 {
+		versions, err := cache.list("repo", "meshery-operator")
+		if err != nil {
+			t.Fatalf("a failing refresh must not fail the caller that could be served stale: %v", err)
+		}
+		if len(versions) != 1 || versions[0] != "v1.0.64" {
+			t.Fatalf("versions = %v, want the stale catalogue", versions)
+		}
+		waitFor(t, "the failing refresh to finish", func() bool {
+			cache.mu.Lock()
+			defer cache.mu.Unlock()
+			return len(cache.inflight) == 0
+		})
+	}
+	if got := fetches.Load(); got < 2 {
+		t.Fatalf("fetched %d times, want the refresh retried rather than a failure cached", got)
 	}
 }
 

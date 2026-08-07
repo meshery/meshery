@@ -4104,7 +4104,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "No Meshery Operator Helm chart is published",
-        "probable_cause": "The chart repository index was served from an unexpected location, or its published charts were removed.",
+        "probable_cause": "The chart repository index was served from an unexpected location, its published charts were removed, or it currently carries only prerelease charts, which Meshery never selects on its own.",
         "suggested_remediation": ""
       },
       "1469": {

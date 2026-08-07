@@ -117,9 +117,8 @@ guarantees such a chart exists, and two everyday cases guarantee it does not:
 
 `MesheryControllersHelper.pinnedOperatorDeploymentConfig` is therefore the only
 deployment config allowed to reach Helm. It lists what the repository publishes
-(`helpers/utils.PublishedChartVersions`, a TTL-cached `index.yaml` read) and
-hands that to `models.ResolveOperatorChartVersion`, which distinguishes two
-sources:
+(`helpers/utils.PublishedChartVersions`) and hands that to
+`models.ResolveOperatorChartVersion`, which distinguishes two sources:
 
 - **Derived** (`OperatorChartVersionDerived`) - the boot-time server release.
   Nobody chose it, so it may be corrected: unpinned or unpublished falls back to
@@ -133,6 +132,18 @@ sources:
   events feed surface to the user. The floor does not apply, so deliberately
   pinning an old chart still works.
 
+Both corrections above - the newest-published fallback and the floor raise -
+draw only from **stable** releases. The repository publishes prerelease charts
+(`v0.6.0-rc.6`, `v0.5.0-rc-5g` are real entries), and by semver a release
+candidate outranks every stable chart below it, so an rc published ahead of its
+release would otherwise become what every server whose own chart is not yet
+published installs onto production clusters. A prerelease is still fully
+reachable by name: an explicit `operator.version` naming one is honored exactly,
+as is a derived version that already matches a published prerelease - a
+prerelease server asking for its own prerelease chart chose nothing. A
+repository that publishes *only* prereleases fails resolution
+(`ErrNoOperatorChartPublished`) rather than having one selected for it.
+
 Membership in the published set is decided by semver comparison, not by string
 equality, because Helm treats `1.0.64` and `v1.0.64` as the same version.
 Resolution always returns the repository's own spelling of the matched release -
@@ -140,10 +151,39 @@ that is the string handed to Helm and the string
 `attachedOperatorChartVersion` is compared against - and a spelling difference
 is not a substitution, so it produces no reason.
 
+`PublishedChartVersions` reads `index.yaml` through a per-repository cache in
+`server/helpers/utils/helm_chart_repo.go`. That read happens inside the
+cluster-connect request handler and the Meshery index is several megabytes, so
+expiry is **stale-while-revalidate, not a miss**: an expired catalogue is served
+immediately while a single-flighted refresh runs behind the caller, and only a
+cold cache with nothing to serve blocks. Published charts are append-mostly, so
+the worst a stale list costs is not yet knowing about the newest chart - which
+the resolver already handles - whereas blocking would put a full
+`chartIndexTimeout` in front of every connect whenever the TTL lapsed against a
+slow repository. Failures are never cached as successes, so a repository outage
+is retried on the next call rather than pinned in for a TTL.
+
 An unreadable repository index fails rather than guessing: without the index
-there is no way to know which versions exist. Operator lifecycle is then
-withheld for that connection (no `MesheryOperator` handler is attached) while
-the Broker and MeshSync handlers, which need no chart version, still attach.
+there is no way to know which versions exist. What that failure costs is
+deliberately narrow. A chart version is what it takes to **install** the
+operator, not to **observe** one - meshkit's `mesheryOperator` reads its
+`OperatorDeploymentConfig` in `Deploy` and `Undeploy` only, never in `GetStatus`
+or `GetVersion` - so all three handlers still attach and the operator card keeps
+reporting a healthy operator's status and image tag, which is exactly the value
+[the troubleshooting guide](/guides/troubleshooting/meshery-operator-meshsync)
+tells users to read. The failure is recorded on `operatorChartError`
+(`GetOperatorChartError`) as well as `setOperatorError`, and
+`DeployUndeployedOperators` refuses on it rather than handing Helm a version the
+repository does not publish, which would surface as an opaque chart-not-found
+error instead. `UndeployDeployedOperators` is deliberately **not** gated on it:
+removal must always be attempted, since refusing it would leave the operator
+running on a cluster the user asked to have it taken off.
+
+A missing `MesheryOperator` handler - which now means only that the kubeconfig
+or the Kubernetes client failed - is never a silent no-op either. Both
+`DeployUndeployedOperators` and `UndeployDeployedOperators` report it through
+`ErrOperatorHandlerNotAttached` (recorded, logged, and emitted), so a lifecycle
+request that did nothing does not read to the user as one that succeeded.
 
 The controller-status snapshot is built from `models.MesheryControllers`, not
 from the attached-handler map, so a connection with a ready FSM context always
@@ -151,11 +191,10 @@ reports exactly one row per controller. A controller with no handler behind it
 reports `UNKOWN` and no version - Meshery made no observation of the cluster, so
 any other value would assert something it did not check. Without that the card
 disappears from the UI, because the client replaces its controller state with
-each snapshot wholesale: withheld operator lifecycle would drop the Operator
-card, and an unreadable kubeconfig or a failed Kubernetes client (a pre-existing
-gap, since no handlers attach at all in those paths) would drop all three. The
-reason a row is unknown belongs to the connection diagnostics -
-`operator_deploy_failed` reads `GetOperatorError` - not to the status payload.
+each snapshot wholesale: an unreadable kubeconfig or a failed Kubernetes client,
+where no handlers attach at all, would drop all three cards. The reason a row is
+unknown belongs to the connection diagnostics - `operator_deploy_failed` reads
+`GetOperatorError` - not to the status payload.
 
 `NewOperatorDeploymentConfig` consequently leaves the chart version empty for an
 unstamped build instead of asking the GitHub releases API for the newest server
@@ -372,13 +411,18 @@ Unit coverage that exists today:
   cases where a chart-version reconcile must not touch the cluster.
 - `server/models/operator_chart_pinning_test.go` - pinning the resolved version
   to one the repository publishes: the floor, the unpublished-release fallback,
-  moving tags never reaching Helm, explicit requests failing loudly, and the
-  pinned-against-pinned reconcile comparison.
+  moving tags never reaching Helm, explicit requests failing loudly, prereleases
+  excluded from every automatic selection but honored when named, the
+  pinned-against-pinned reconcile comparison, and the split between withholding
+  installation and withholding observation (all three handlers still attach when
+  no chart version resolves; deploy refuses, undeploy does not, and a missing
+  handler is reported rather than passed over).
 - `server/helpers/utils/helm_chart_repo_test.go` - the `index.yaml` read: chart
-  version extraction, structured failures, TTL reuse, that failures are not
-  cached, that the lock is not held across the fetch, that concurrent misses
-  single-flight, that a panicking fetch leaves the cache usable, and that the
-  cached catalogue is never handed out by reference.
+  version extraction, structured failures, TTL reuse, stale-while-revalidate on
+  expiry (including through a failing refresh), that only a cold cache blocks,
+  that failures are not cached, that the lock is not held across the fetch, that
+  concurrent misses single-flight, that a panicking fetch leaves the cache
+  usable, and that the cached catalogue is never handed out by reference.
 - `server/handlers/controllers_status_handler_test.go` - that the status
   snapshot carries one row per controller, sorted, even when no handlers are
   attached at all.
