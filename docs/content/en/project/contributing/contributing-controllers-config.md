@@ -503,7 +503,22 @@ Unit coverage that exists today:
   downloads the chart archive before it touches the cluster - so a test that
   reaches an install performs live Helm I/O, and really installs the operator
   wherever `127.0.0.1:6443` answers (Docker Desktop Kubernetes, k3s). Assert
-  through `operatorInstallTarget`, or swap a `stubController` in first.
+  through `operatorInstallTarget`, or swap a `stubController` in first. The two
+  context helpers are a matched pair and say so at their declarations:
+  `reachableK8sContext` enables real handlers, `unresolvableK8sContext` reliably
+  prevents them - and because the latter depends on meshkit rejecting the
+  kubeconfig rather than falling back to the ambient one, every test built on it
+  calls `requireUnresolvableK8sContext` so a meshkit change surfaces as a
+  failure rather than as a real install.
+
+  `reattachControllerHandlers` is injected on the helper for the same reason
+  `chartVersions` is. `AddCtxControllerHandlers` clears the chart refusal exactly
+  where it resolves, so it can never return having both succeeded and left one
+  standing - which makes the guard's refusal branch unreachable, and would leave
+  an install site that stopped consulting the guard entirely unobserved. The
+  seam lets `TestReconcileInstallGoesThroughTheSharedGuard` produce that state
+  with a stub handler attached, so dropping the guard call fails the test by
+  construction instead of silently.
 - `server/helpers/utils/helm_chart_repo_test.go` - the `index.yaml` read: chart
   version extraction, structured failures, TTL reuse, stale-while-revalidate on
   expiry (including through a failing refresh), that only a cold cache blocks,

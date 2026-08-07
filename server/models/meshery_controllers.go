@@ -116,6 +116,19 @@ type MesheryControllersHelper struct {
 	// catalogue instead of the network. Never nil once constructed.
 	chartVersions func(repo, chart string) ([]string, error)
 
+	// reattachControllerHandlers re-runs handler attachment ahead of an install,
+	// which is what re-resolves the chart version. It is AddCtxControllerHandlers
+	// and is injected for the same reason chartVersions is: the state it produces
+	// is otherwise unreachable from a test.
+	//
+	// Specifically, AddCtxControllerHandlers clears operatorChartError exactly
+	// where it resolves a version, so it can never return having both succeeded
+	// and left a refusal standing. That is the state operatorInstallTarget guards
+	// the install sites against, and without this seam the guard is unreachable -
+	// so nothing would notice an install site that stopped consulting it, which is
+	// how this gap survived once already. Never nil once constructed.
+	reattachControllerHandlers func(K8sContext)
+
 	// event broadcasting dependencies
 	eventBroadcaster *Broadcast
 	provider         Provider
@@ -210,7 +223,7 @@ func NewMesheryControllersHelper(
 	provider Provider,
 	systemID *core.Uuid,
 ) *MesheryControllersHelper {
-	return &MesheryControllersHelper{
+	mch := &MesheryControllersHelper{
 		ctxControllerHandlers: make(map[MesheryController]controllers.IMesheryController),
 		log:                   log,
 		oprDepConfig:          operatorDepConfig,
@@ -226,6 +239,17 @@ func NewMesheryControllersHelper(
 		provider:               provider,
 		systemID:               systemID,
 	}
+	mch.reattachControllerHandlers = func(ctx K8sContext) { mch.AddCtxControllerHandlers(ctx) }
+	return mch
+}
+
+// reattach re-runs handler attachment for ctx. See reattachControllerHandlers.
+func (mch *MesheryControllersHelper) reattach(ctx K8sContext) {
+	if mch.reattachControllerHandlers == nil {
+		mch.AddCtxControllerHandlers(ctx)
+		return
+	}
+	mch.reattachControllerHandlers(ctx)
 }
 
 func (mch *MesheryControllersHelper) SetMeshsyncDeploymentMode(value connections.MeshsyncDeploymentMode) *MesheryControllersHelper {
@@ -949,7 +973,7 @@ func (mch *MesheryControllersHelper) ReconcileOperatorChartVersion(k8sctx K8sCon
 	// cleared the value *for the same reason*, and putting the stale one back
 	// would withhold operator lifecycle until the connection is rebuilt.
 	previousChartVersion := mch.attachedOperatorChartVersion
-	mch.AddCtxControllerHandlers(k8sctx)
+	mch.reattach(k8sctx)
 	if setupErr := mch.GetOperatorError(); setupErr != nil {
 		if mch.attachedOperatorChartVersion != "" {
 			mch.attachedOperatorChartVersion = previousChartVersion
@@ -1144,7 +1168,7 @@ func (mch *MesheryControllersHelper) SetOperatorDeployment(k8sctx K8sContext, de
 	}
 
 	if mch.GetOperatorChartError() != nil {
-		mch.AddCtxControllerHandlers(k8sctx)
+		mch.reattach(k8sctx)
 	}
 
 	operatorHandler, attached, err := mch.operatorInstallTarget(k8sctx.ID)
