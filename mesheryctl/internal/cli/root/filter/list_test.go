@@ -93,4 +93,6 @@ func TestListCmdKeepsFilterNamesOutsideTheExtension(t *testing.T) {
 	assert.NoError(t, execErr)
 	assert.Contains(t, string(output), "mesh-filter")
 	assert.Contains(t, string(output), "sample")
+	// Without this the assertions above also hold for a listing that never trimmed.
+	assert.NotContains(t, string(output), ".wasm")
 }
