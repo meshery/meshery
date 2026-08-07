@@ -270,3 +270,55 @@ func TestB1EffectiveConfigReportsTheModeTheConnectionRuns(t *testing.T) {
 		assert.Equal(t, 1, *effective.Meshsync.Replicas, "built-in defaults still fill the rest of the document")
 	})
 }
+
+// TestShouldRecordDeploymentModeOverride pins the rule that keeps a server-wide
+// default reachable. The Connection Wizard's mode picker is pre-selected rather
+// than empty, so registration receives a mode on every import and cannot tell a
+// deliberate choice from an untouched default. Recording both as an override
+// pinned every new connection, and a pinned connection ignores the server-wide
+// default - which silently defeated
+// TestB3ServerWideDeploymentModeReachesInheritingConnection for every connection
+// created through the UI.
+func TestShouldRecordDeploymentModeOverride(t *testing.T) {
+	t.Run("a mode matching the inherited one is not an override", func(t *testing.T) {
+		assert.False(t, ShouldRecordDeploymentModeOverride(
+			MeshsyncDeploymentModeEmbedded, MeshsyncDeploymentModeEmbedded),
+			"the wizard's pre-selected default must leave the connection inheriting")
+	})
+
+	t.Run("a mode diverging from the inherited one is an override", func(t *testing.T) {
+		assert.True(t, ShouldRecordDeploymentModeOverride(
+			MeshsyncDeploymentModeOperator, MeshsyncDeploymentModeEmbedded),
+			"a deliberate divergence must be pinned")
+	})
+
+	t.Run("no requested mode is never an override", func(t *testing.T) {
+		assert.False(t, ShouldRecordDeploymentModeOverride(
+			MeshsyncDeploymentModeUndefined, MeshsyncDeploymentModeEmbedded))
+	})
+
+	// The end-to-end consequence: a connection registered with the inherited
+	// mode must still follow a later change to the server-wide default.
+	t.Run("a connection registered with the inherited mode follows a later default change", func(t *testing.T) {
+		metadata := core.Map{}
+		inherited := MeshsyncDeploymentModeEmbedded
+
+		// Registration with the wizard's pre-selected default.
+		if ShouldRecordDeploymentModeOverride(MeshsyncDeploymentModeEmbedded, inherited) {
+			require.NoError(t, SetDeploymentModeOverride(metadata, MeshsyncDeploymentModeEmbedded))
+		}
+		MaterializeMeshsyncDeploymentMode(metadata, MeshsyncDeploymentModeEmbedded)
+
+		override, err := ControllersConfigFromMetadata(metadata)
+		require.NoError(t, err)
+		assert.Equal(t, MeshsyncDeploymentModeUndefined, DeploymentModeFromControllersConfig(override),
+			"registration must not pin an override for the inherited mode")
+
+		// The admin later sets the server-wide default to operator.
+		merged, _ := ResolveControllersConfig(override, modeDoc(MeshsyncDeploymentModeOperator))
+		resolved := ResolveDeploymentMode(merged, metadata, MeshsyncDeploymentModeEmbedded)
+		assert.Equal(t, MeshsyncDeploymentModeOperator, resolved.Mode,
+			"the connection must follow the new server-wide default")
+		assert.Equal(t, DeploymentModeLayerLayeredConfig, resolved.Layer)
+	})
+}

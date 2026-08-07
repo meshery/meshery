@@ -129,6 +129,31 @@ func ResolveConnectionControllersConfig(
 	return merged, effective, resolvedMode
 }
 
+// ShouldRecordDeploymentModeOverride reports whether a requested mode has to be
+// pinned as a per-connection override, given the mode the connection would
+// otherwise inherit.
+//
+// Registration receives a mode on every kubeconfig import, because the wizard's
+// picker is pre-selected rather than empty - so the server cannot tell "the user
+// chose embedded" from "the user left the default alone". Recording both as an
+// explicit override pinned every newly registered connection, and a pinned
+// connection does not follow the server-wide default. That silently defeats the
+// inheritance ResolveDeploymentMode exists to provide: a default changed in
+// Settings would reach almost nothing, because almost every connection would
+// carry an override it never meant to set.
+//
+// A request that matches what the connection would inherit anyway is therefore
+// not a divergence and is left un-overridden. The connection still runs the mode
+// the user saw in the wizard, and still follows a later change to the
+// server-wide default. Pinning remains available through the controllers editor,
+// where choosing a mode is an unambiguous act rather than a pre-filled field.
+func ShouldRecordDeploymentModeOverride(requested, inherited MeshsyncDeploymentMode) bool {
+	if requested == MeshsyncDeploymentModeUndefined {
+		return false
+	}
+	return requested != inherited
+}
+
 // SetDeploymentModeOverride records an explicit per-connection deployment-mode
 // choice in the one place that stores it: the connection's layered
 // controllers-configuration override. Every entry point that lets a user pick a
