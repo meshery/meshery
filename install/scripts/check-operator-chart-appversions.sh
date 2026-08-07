@@ -138,7 +138,7 @@ compare_chart_tree() {
 # self_test asserts read_app_version against every spelling a Chart.yaml may
 # legitimately use, so the strip ordering above cannot silently regress.
 self_test() {
-  local dir failures=0 case_line expected got
+  local dir failures=0 case_line expected got tree_status
   dir="$(mktemp -d)"
 
   # Each case is "<expected>|<appVersion line>".
@@ -179,33 +179,38 @@ self_test() {
     failures=$((failures + 1))
   fi
 
-  # An unreadable tree must report 2, not 1. read_app_version runs inside a
-  # command substitution, so returning instead of exiting is the only way that
-  # status reaches here; when it regressed to exit, the caller compared an empty
-  # string and this tree was reported as ordinary drift.
+  # An unreadable tree must report 2, not 1. What this pins is that
+  # compare_chart_tree CHECKS the status of every read: drop either guard and an
+  # unreadable chart is silently downgraded to ordinary drift (status 1), which
+  # is what shipped before and what made the read-failure branch unreachable.
+  # It does not distinguish read_app_version returning from exiting - with the
+  # caller's guard in place both propagate - so do not read it as pinning that.
+  # These two cases expect a NON-ZERO status, so each call must be written in a
+  # form errexit tolerates. A bare `compare_chart_tree ...` followed by `case $?`
+  # aborts the whole script under `set -e` before the status is ever inspected -
+  # the assertion never runs and the self-test exits 2 instead of reporting.
   printf 'appVersion: "1.0.5"\n' > "${dir}/tree/charts/meshery-meshsync/Chart.yaml"
   printf 'name: no-appversion-here\n' > "${dir}/tree/Chart.yaml"
-  compare_chart_tree "${dir}/tree" > /dev/null 2>&1
-  case $? in
-    2) : ;;
-    *) echo "check-operator-chart-appversions: self-test failed: a parent with no appVersion must report 2 (unreadable), not drift" >&2
-       failures=$((failures + 1)) ;;
-  esac
+  tree_status=0
+  compare_chart_tree "${dir}/tree" > /dev/null 2>&1 || tree_status=$?
+  if [ "$tree_status" -ne 2 ]; then
+    echo "check-operator-chart-appversions: self-test failed: a parent with no appVersion must report 2 (unreadable), got ${tree_status}" >&2
+    failures=$((failures + 1))
+  fi
   printf 'appVersion: "1.0.5"\n' > "${dir}/tree/Chart.yaml"
-  rm -f "${dir}/tree/charts/meshery-broker/Chart.yaml"
   printf 'name: broken\n' > "${dir}/tree/charts/meshery-broker/Chart.yaml"
-  compare_chart_tree "${dir}/tree" > /dev/null 2>&1
-  case $? in
-    2) : ;;
-    *) echo "check-operator-chart-appversions: self-test failed: a subchart with no appVersion must report 2 (unreadable), not drift" >&2
-       failures=$((failures + 1)) ;;
-  esac
+  tree_status=0
+  compare_chart_tree "${dir}/tree" > /dev/null 2>&1 || tree_status=$?
+  if [ "$tree_status" -ne 2 ]; then
+    echo "check-operator-chart-appversions: self-test failed: a subchart with no appVersion must report 2 (unreadable), got ${tree_status}" >&2
+    failures=$((failures + 1))
+  fi
 
   rm -rf "$dir"
   if [ "$failures" -ne 0 ]; then
     exit 1
   fi
-  echo "check-operator-chart-appversions: self-test passed (${#cases[@]} parse cases, 2 tree cases)"
+  echo "check-operator-chart-appversions: self-test passed (${#cases[@]} parse cases, 4 tree cases)"
 }
 
 # check_bundled_chart inspects the vendored packaged operator chart. It never
