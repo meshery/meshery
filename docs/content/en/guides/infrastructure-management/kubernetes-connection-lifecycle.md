@@ -154,7 +154,7 @@ kubectl port-forward -n meshery svc/meshery-nats 4222:4222
 Click a Kubernetes connection's row in the Connections table to open its detail
 view. Alongside the Operator / MeshSync / Broker status chips, a **Diagnostics**
 section reports actionable problems and remediation, computed from the live
-controller status and Meshery's actual Broker connection. Common diagnostics:
+controller status and Meshery's actual Broker connection. The codes it reports:
 
 | Code | Meaning | What to do |
 |---|---|---|
@@ -162,6 +162,7 @@ controller status and Meshery's actual Broker connection. Common diagnostics:
 | `operator_deploy_failed` | Meshery tried to deploy the Operator and could not; the underlying cause is carried in the diagnostic. | Read the cause. An unreadable kubeconfig or missing permissions in the `meshery` namespace need fixing first; an unresolvable chart version means the requested `operator.version` is not published, or the chart repository was unreachable. Redeploying the Operator re-resolves the version, so a transient repository outage clears on retry. |
 | `operator_not_deployed` | The Operator isn't deployed (operator mode). | Reconnect the cluster, or switch MeshSync mode; ensure Meshery can create resources in the `meshery` namespace. |
 | `broker_unreachable` | The Broker is up but Meshery can't reach/authenticate to it. | Make the Broker reachable (the managed port-forward normally handles this; otherwise port-forward it, expose it via NodePort/LoadBalancer, or run Meshery in-cluster). |
+| `broker_networking` | Informational: how Meshery reaches the Broker - managed port-forward, in-cluster ClusterIP, or a direct endpoint - and the address in use. | Nothing to fix; it reports the transport behind a Broker that Meshery can see. |
 
 The same diagnostics are available programmatically at
 `GET /api/system/controllers/diagnostics?connectionId=<id>`.

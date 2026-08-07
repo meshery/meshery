@@ -214,13 +214,7 @@ Based on discussed scenarios, the UI exposes tools to perform the following acti
 
 ### Diagnostics in the connection detail view
 
-Click a Kubernetes connection's row in the Connections table to open its detail view. Below the Operator / MeshSync / Broker status chips, a **Diagnostics** section lists actionable problems and remediation, derived from the live controller status and Meshery's actual Broker connection:
-
-| Code | Meaning | Remediation |
-|---|---|---|
-| `connection_inactive` | No active session for the connection yet. | Connect the cluster. |
-| `operator_not_deployed` | The Operator is not deployed (operator mode). | Reconnect the cluster, or switch MeshSync mode; ensure Meshery can create resources in the `meshery` namespace. |
-| `broker_unreachable` | The Broker is up but Meshery cannot reach/authenticate to it. | The managed port-forward normally handles reachability out-of-cluster; otherwise port-forward the Broker, expose it via NodePort/LoadBalancer, or run Meshery in-cluster. |
+Click a Kubernetes connection's row in the Connections table to open its detail view. Below the Operator / MeshSync / Broker status chips, a **Diagnostics** section lists actionable problems and remediation, derived from the live controller status and Meshery's actual Broker connection. Every code it reports, and the remedy for each, is listed in [Diagnostics]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#diagnostics" >}}).
 
 The same data is available at `GET /api/system/controllers/diagnostics?connectionId=<id>`.
 
