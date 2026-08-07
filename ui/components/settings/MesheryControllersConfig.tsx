@@ -8,6 +8,7 @@ import ControllersConfigForm, {
   BUILT_IN_CONTROLLERS_CONFIG,
 } from '@/components/configuration/ControllersConfigForm';
 import { useControllersConfigDraft } from '@/components/configuration/useControllersConfigDraft';
+import { serverDefaultDeploymentMode } from '@/components/configuration/deploymentMode';
 
 /**
  * Settings tab: server-wide defaults for the Meshery Operator, MeshSync, and
@@ -47,6 +48,7 @@ export default function MesheryControllersConfig() {
         onChange={onChange}
         inheritedLayers={[BUILT_IN_CONTROLLERS_CONFIG]}
         inheritLabel="Built-in default"
+        deploymentMode={serverDefaultDeploymentMode(draft)}
         disabled={isLoading || isSaving}
       />
 

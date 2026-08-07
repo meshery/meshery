@@ -59,12 +59,39 @@ server writes; "Observable as" names what the user can actually see change.
 | Setting | Wire path | Propagates to | Observable as |
 | --- | --- | --- | --- |
 | Deployment mode | `operator.deploymentMode` | Deploy/undeploy of the operator; MeshSync data pipeline teardown and reattach | Connection detail "MeshSync Deployment Mode"; operator/MeshSync/broker status chips in the header |
-| Operator version | `operator.version` | Not propagated - see [Known gaps](#known-gaps) | Nothing |
+| Operator version | `operator.version` | `meshery-operator` Helm release chart version | Operator version in the header status chip; `meshery-operator` pod image |
 
 `deploymentMode` is one of `operator` (Meshery Operator installs MeshSync and
 Broker into the cluster) or `embedded` (MeshSync runs in-process inside Meshery
 Server; nothing is installed into the cluster). The built-in default is
 `embedded`.
+
+### Where `operator.version` is read
+
+`connections.OperatorChartVersionFromControllersConfig` is the single reader.
+It feeds `MesheryControllersHelper.operatorDeploymentConfig`, which overlays the
+resolved value onto the `controllers.OperatorDeploymentConfig` assembled once at
+boot by `models.NewOperatorDeploymentConfig`. That struct is what the meshkit
+operator controller handler is constructed with, and its `MesheryReleaseVersion`
+is the chart version passed to the `meshery-operator` Helm release.
+
+Two consequences shape the code around it:
+
+- The handler captures the chart version **at construction**, so
+  `SetControllersConfig` must run before `AddCtxControllerHandlers`. Every call
+  site orders them that way.
+- A version changed on a live connection therefore cannot take effect by
+  re-applying the document. `MesheryControllersHelper.ReconcileOperatorChartVersion`
+  re-attaches the handlers and re-runs the Helm release (installed with
+  `UpgradeIfInstalled`, so this is an in-place upgrade). It is a no-op in
+  embedded mode, when the operator is disabled server-wide or explicitly
+  undeployed for the context, and when the resolved version already matches the
+  attached handler's - so a chart-version change never resurrects an operator
+  the user turned off.
+
+Leaving the field unset at every layer resolves to `""`, and the boot-time chart
+version applies unchanged: a connection on Inherit behaves exactly as it did
+before the field was wired up.
 
 ### MeshSync
 
@@ -114,6 +141,47 @@ MeshSync custom resource, which embedded-mode clusters never install.
 form clears them when the effective type changes away from `LoadBalancer`.
 Service changes reconcile in place and must not restart broker pods.
 
+## What each deployment mode can apply
+
+Meshery Operator manages MeshSync and Meshery Broker, so the deployment mode is
+not one setting among many - it decides which of the others can reach anything.
+In `embedded` mode Meshery Server runs MeshSync in-process and installs nothing
+into the cluster: no operator release, no MeshSync Deployment, no Broker, no
+`meshery.io` custom resources.
+
+| Setting | `operator` | `embedded` |
+| --- | --- | --- |
+| `operator.deploymentMode` | applies | applies |
+| `operator.version` | applies | inert - no operator release is installed |
+| `meshsync.outputNamespaces`, `meshsync.outputResources` | applies | applies - passed to the in-process `libmeshsync` run |
+| `meshsync.version`, `meshsync.replicas`, `meshsync.watchList` | applies | inert - MeshSync CR absent |
+| `meshsync.redactSecrets`, `meshsync.brokerContentDedup`, `meshsync.debugLogging` | applies | inert - these are env on the MeshSync Deployment; embedded MeshSync takes them from the Meshery Server process environment |
+| every `broker.*` | applies | inert - no Broker on the cluster |
+
+The server states this at apply time through
+`ControllersConfigApplyResult.Skipped`. The UI states it *before* the save:
+`ui/components/configuration/deploymentMode.ts` is the single client-side
+statement of the same structure (`takesEffectIn`), and the editors are governed
+by it - the per-connection editor renders a setting the effective mode cannot
+apply as inert, marks it **Not applied**, and says why in the form body rather
+than in a tooltip. Values already stored for such a setting are kept and shown
+as dormant with a control to clear them; they become live again if the
+connection moves to `operator` mode.
+
+The server-wide defaults editor annotates instead of disabling: its mode is only
+what *inheriting* connections get, and a connection that overrides the mode to
+`operator` uses every value stored there.
+
+That decision needs the mode the connection actually runs, which is why
+`GET /api/integrations/connections/{connectionId}/controllers/config` resolves
+`effective.operator.deploymentMode` through
+`connections.ResolveConnectionControllersConfig` rather than by merging the two
+editable layers: a connection whose mode comes from the materialized cache or
+from `MESHSYNC_DEFAULT_DEPLOYMENT_MODE` would otherwise be described as running
+the built-in `embedded` mode, and every applicability decision made from that
+value would be wrong. `merged` is deliberately left untouched - it is what
+propagates to the cluster and must keep carrying only explicitly-set fields.
+
 ## Server-side apply and withdrawal
 
 Every cluster write uses server-side apply under the `meshery-server` field
@@ -139,16 +207,50 @@ Contributors changing controller behavior must account for them.
 
 | Setting | Where | Storage | Notes |
 | --- | --- | --- | --- |
-| `MESHSYNC_DEFAULT_DEPLOYMENT_MODE` | Server env / `viper` | Process config | Last-resort fallback when no layer sets a deployment mode. Logged at boot. |
-| MeshSync deployment mode (wizard) | Connection Wizard -> **MeshSync Mode** step | `connection.metadata.meshsync_deployment_mode` | Registration-time and reconfigure-time picker. Writes the legacy key directly via `PUT /api/integrations/connections/{id}/meshsync-mode`. |
-| MeshSync deployment mode (per-context, at import) | Connection Wizard -> kubeconfig context review | Same key, per context | Set on every Kubernetes connection at registration. |
+| `MESHSYNC_DEFAULT_DEPLOYMENT_MODE` | Server env / `viper` | Process config | Fallback when no layer and no materialization sets a deployment mode. Logged at boot. |
+| MeshSync deployment mode (wizard) | Connection Wizard -> **MeshSync Mode** step | `controllers_config.operator.deploymentMode` | Reconfigure-time picker. Writes the override through `connections.SetDeploymentModeOverride` via `POST /api/integrations/connections/{id}/actions` (`setMeshsyncMode`). |
+| MeshSync deployment mode (per-context, at import) | Connection Wizard -> kubeconfig context review | Same field, per context | Written only when the user actually picks one; otherwise the connection inherits. |
 | Operator status | GraphQL `changeOperatorStatus` | Cluster state | Deploys/undeploys the operator directly, bypassing the layered document. |
 
-`meshsync_deployment_mode` is the **legacy materialization** of
-`operator.deploymentMode`. Every consumer that predates the layered document -
-the connection state machine, the header status chips, the kubeconfig flows -
-reads that key, so `UpdateConnectionControllersConfig` rewrites it on every
-update using the full precedence chain.
+### One store for the deployment mode
+
+`connection.metadata.meshsync_deployment_mode` used to carry two different
+facts under one key - the user's explicit per-connection choice *and* a
+materialized cache of the resolved mode - and that ambiguity was the root cause
+of two separate defects. The two are now separated
+(`server/models/connections/deployment_mode_resolution.go`):
+
+- **`controllers_config.operator.deploymentMode`** is the only store of the
+  explicit choice. Every entry point - the wizard's MeshSync Mode step, the
+  kubeconfig import picker, the controllers editor - writes it through
+  `connections.SetDeploymentModeOverride`, so no two controls can disagree
+  about what a connection is set to.
+- **`meshsync_deployment_mode`** is only the materialization of the *resolved*
+  mode, written through `connections.MaterializeMeshsyncDeploymentMode` and
+  read by the consumers that predate the layered document (the connection state
+  machine, the header status chips, the kubeconfig flows).
+
+`connections.ResolveDeploymentMode` is the single decision point, and it reports
+the layer it resolved from:
+
+| Precedence | Layer | Reported as |
+| --- | --- | --- |
+| 1 (highest) | Layered document (per-connection override over server-wide default) | `layeredConfig` |
+| 2 | Materialized `meshsync_deployment_mode` | `legacyConnectionMetadata` |
+| 3 | `MESHSYNC_DEFAULT_DEPLOYMENT_MODE` | `serverEnvDefault` |
+| 4 (lowest) | Compiled-in default (`embedded`) | `builtIn` |
+
+Ranking the materialization *below* the layered document is what lets a
+server-wide default reach an existing connection: every Kubernetes connection
+has that key written at registration, so while it sat on top no fan-out could
+ever change a mode. It survives as a compatibility floor for connections
+registered before the layered document existed - their recorded mode is kept
+when, and only when, no layer sets one.
+
+A server-wide default change is not just a document to re-apply.
+`reconcileInheritedDeploymentMode` persists the refreshed materialization and
+drives the same undeploy/redeploy path the wizard uses, so an inheriting
+connection actually switches modes on the cluster.
 
 ## API
 
@@ -172,40 +274,55 @@ error, because the configuration re-applies on the next connect.
 
 Tracked here so they are not rediscovered. Each is a defect, not a design.
 
-1. **`operator.version` is accepted but never propagated.** The form offers it
-   and the server stores and validates it, but `ApplyControllersConfigToCluster`
-   writes only the MeshSync and Broker custom resources and the MeshSync
-   Deployment. Nothing reads `operator.version`. A user who sets it sees no
-   effect and no error.
-
-2. **A server-wide `operator.deploymentMode` change cannot reach an existing
-   connection.** `applyControllersConfigToConnection` resolves the mode as
-   `metadata.meshsync_deployment_mode` first, falling back to the resolved
-   document only when that key is undefined. Every Kubernetes connection has
-   that key written at registration, so the fallback is unreachable and the
-   fanned-out re-apply silently keeps the old mode.
-
-3. **The wizard's mode picker and the layered override diverge.** The wizard
-   writes `metadata.meshsync_deployment_mode` alone, leaving any
-   `controllers_config.operator.deploymentMode` untouched. The controllers
-   editor then reports an "Override" chip for a mode the connection is not
-   running.
+1. **The apply result is invisible.** `ApplyControllersConfigToCluster` returns
+   which custom resources it patched, whether MeshSync was restarted, and a
+   `Skipped[]` list with human-readable reasons. That result only reaches event
+   metadata; both editors report "saved" either way, so a save that changed
+   nothing on the cluster looks identical to one that changed everything.
 
 ## Test coverage
 
-End-to-end coverage lives in `ui/tests/e2e/controllers-config.spec.ts` and is
-keyed to the **Operator, MeshSync & Broker Settings** Test Plan Test Group via
-the Allure `testGroup` label, the same mechanism the Connection Lifecycle report
-uses (see [Contributing to Meshery's CLI tests]({{< relref "cli/tests.md" >}})).
-
-Unit coverage:
+Unit coverage that exists today:
 
 - `server/models/connections/controllers_config_test.go` - precedence, atomic
-  collection merge, metadata round-trip, validation.
-- `server/models/controllers_config_apply_test.go` - cluster propagation,
-  withdrawal, restart-only-on-watch-list-change.
-- `ui/components/configuration/__tests__/ControllersConfigForm.test.tsx` -
-  tri-state inherit/override semantics and conditional field visibility.
+  collection merge, metadata round-trip, validation, and the single reader of
+  `operator.version`.
+- `server/models/connections/deployment_mode_resolution_test.go` - deployment
+  mode precedence (a server-wide default reaching an inheriting connection),
+  the wizard/editor convergence on one store, and the effective document
+  reporting the mode a connection actually runs.
+- `server/models/operator_chart_version_test.go` - `operator.version` selecting
+  the operator Helm chart version, the layering it resolves through, and the
+  cases where a chart-version reconcile must not touch the cluster.
+- `ui/components/configuration/__tests__/deploymentMode.test.ts` - which
+  settings each deployment mode can apply, and how the mode governing each
+  editor is resolved and attributed to a layer.
+- `ui/components/configuration/__tests__/ControllersConfigForm.test.tsx` - the
+  rendered editor: tri-state inherit/override, the conditional LoadBalancer-only
+  fields, and the deployment-mode gating (inert-and-explained on a connection,
+  annotated-but-live on the server-wide defaults).
+- `server/models/controllers_config_apply_test.go` - cluster propagation with
+  fake clients: per-setting custom-resource and Deployment patch contents,
+  withdrawal when a field is cleared at every layer,
+  restart-only-on-watch-list-change, and the `Skipped[]` reporting.
+- `server/handlers/controllers_config_handlers_test.go` - the four endpoints:
+  validation rejection, the layered response shape, clearing an override, and
+  that an unreadable override is skipped rather than reconciled.
+
+End-to-end coverage lives in `ui/tests/e2e/controllers-config.spec.ts`, keyed to
+the **Operator, MeshSync & Broker Settings** Test Plan Test Group via the Allure
+`testGroup` label - the same mechanism the Connection Lifecycle report uses (see
+[Contributing to Meshery's CLI tests]({{< relref "cli/tests.md" >}})). It covers
+every wire path in the tables above plus the precedence chain, the inherit
+round-trip, validation rejection, and the mode gating.
+
+What remains uncovered:
+
+- Cluster propagation end to end. The spec's watch-scope and broker-service case
+  self-skips when no Kubernetes cluster is reachable, so on an infra-less run it
+  reports "skipped" rather than passing vacuously. The propagation logic itself
+  is covered by the unit test above; what is untested is the real round trip
+  against a live operator.
 
 Before adding a setting, add its row above, its propagation assertion, and its
 end-to-end case. A setting whose effect a user cannot observe is a defect; so is
