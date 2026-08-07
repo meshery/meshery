@@ -2,6 +2,7 @@
 title: Contributing to Meshery Docs
 description: How to contribute to Meshery Docs.
 categories: [contributing]
+aliases: [/project/contributing/contributing-docs]
 ---
 
 {{% alert color="info" title="Important" %}}
