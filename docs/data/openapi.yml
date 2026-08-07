@@ -77840,7 +77840,7 @@ paths:
             text/plain:
               schema:
                 type: string
-  /events/{eventId}:
+  /api/events/{eventId}:
     delete:
       x-internal:
         - cloud
@@ -77884,69 +77884,7 @@ paths:
             text/plain:
               schema:
                 type: string
-  /events:
-    post:
-      x-internal:
-        - cloud
-        - meshery
-      tags:
-        - Events_events
-      operationId: createEvent
-      summary: Create a new event
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              description: Payload for creating a new event.
-              additionalProperties: true
-              properties:
-                owner:
-                  type: string
-                  format: uuid
-                  description: UUID of the user associated with the event.
-                  x-go-type: uuid.UUID
-                  x-go-type-import:
-                    path: github.com/gofrs/uuid
-                  x-go-name: Owner
-                  x-oapi-codegen-extra-tags:
-                    db: owner
-                    json: owner,omitempty
-                category:
-                  type: string
-                  description: The category of the event.
-                  maxLength: 500
-                action:
-                  type: string
-                  description: The action of the event.
-                  maxLength: 500
-                description:
-                  type: string
-                  description: Description of the event.
-                  maxLength: 5000
-      responses:
-        '201':
-          description: Event created
-        '400':
-          description: Invalid request body or request param
-          content:
-            text/plain:
-              schema:
-                type: string
-        '401':
-          description: Expired JWT token used or insufficient privilege
-          content:
-            text/plain:
-              schema:
-                type: string
-        '500':
-          description: Internal server error
-          content:
-            text/plain:
-              schema:
-                type: string
-  /events/delete:
+  /api/events/delete:
     post:
       x-internal:
         - cloud
@@ -78010,7 +77948,7 @@ paths:
             text/plain:
               schema:
                 type: string
-  /events/status:
+  /api/events/status:
     put:
       x-internal:
         - cloud
@@ -78080,7 +78018,7 @@ paths:
             text/plain:
               schema:
                 type: string
-  /events/{eventId}/status:
+  /api/events/{eventId}/status:
     put:
       x-internal:
         - cloud
@@ -78149,6 +78087,68 @@ paths:
                 type: string
         '404':
           description: Result not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /api/events:
+    post:
+      x-internal:
+        - cloud
+        - meshery
+      tags:
+        - Events_events
+      operationId: createEvent
+      summary: Create a new event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Payload for creating a new event.
+              additionalProperties: true
+              properties:
+                owner:
+                  type: string
+                  format: uuid
+                  description: UUID of the user associated with the event.
+                  x-go-type: uuid.UUID
+                  x-go-type-import:
+                    path: github.com/gofrs/uuid
+                  x-go-name: Owner
+                  x-oapi-codegen-extra-tags:
+                    db: owner
+                    json: owner,omitempty
+                category:
+                  type: string
+                  description: The category of the event.
+                  maxLength: 500
+                action:
+                  type: string
+                  description: The action of the event.
+                  maxLength: 500
+                description:
+                  type: string
+                  description: Description of the event.
+                  maxLength: 5000
+      responses:
+        '201':
+          description: Event created
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Expired JWT token used or insufficient privilege
           content:
             text/plain:
               schema:

@@ -342,4 +342,32 @@ describe('RJSFModalWrapper', () => {
 
     expect(screen.getByTestId('primary-button')).toHaveTextContent('Save Now');
   });
+
+  it('disables the submit button when isSubmitting is true', () => {
+    render(
+      <RJSFModalWrapper
+        title="Wrapper"
+        schema={{ type: 'object' }}
+        handleClose={vi.fn()}
+        handleSubmit={vi.fn()}
+        isSubmitting={true}
+      />,
+    );
+
+    expect(screen.getByTestId('primary-button')).toBeDisabled();
+  });
+
+  it('keeps the submit button enabled when isSubmitting is false', () => {
+    render(
+      <RJSFModalWrapper
+        title="Wrapper"
+        schema={{ type: 'object' }}
+        handleClose={vi.fn()}
+        handleSubmit={vi.fn()}
+        isSubmitting={false}
+      />,
+    );
+
+    expect(screen.getByTestId('primary-button')).not.toBeDisabled();
+  });
 });

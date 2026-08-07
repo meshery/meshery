@@ -35,7 +35,7 @@ function PerformanceCard({
   requestSizeRestore,
 }) {
   const theme = useTheme();
-  const { owner, hasCloudProfile } = useResourceOwner(profile.userId);
+  const { owner, hasCloudProfile } = useResourceOwner(profile.owner);
   const dataTestIDs = useTestIDsGenerator('performanceProfileCard');
 
   const {
@@ -181,7 +181,7 @@ function PerformanceCard({
           <BottomPart>
             {hasCloudProfile ? (
               <Link
-                href={`${MESHERY_CLOUD_PROD}/user/${profile.userId}`}
+                href={`${MESHERY_CLOUD_PROD}/user/${profile.owner}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
