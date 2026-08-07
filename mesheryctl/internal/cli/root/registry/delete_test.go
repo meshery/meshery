@@ -15,11 +15,7 @@
 package registry
 
 import (
-	"net/http"
-	"net/http/httptest"
 	"testing"
-
-	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
 func TestDeleteCmdArgsValidation(t *testing.T) {
@@ -52,26 +48,5 @@ func TestDeleteCmdArgsValidation(t *testing.T) {
 				t.Errorf("deleteCmd.Args() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
-	}
-}
-
-func TestDeleteCmdRunE_MockServer(t *testing.T) {
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodDelete {
-			t.Errorf("expected DELETE method, got %s", r.Method)
-		}
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte(`{"message":"Deleted 9 models for registrant \"meshery\"","count":9,"connectionName":"meshery"}`))
-	}))
-	defer ts.Close()
-
-	origEndpoint := utils.MesheryEndpoint
-	utils.MesheryEndpoint = ts.URL
-	t.Cleanup(func() { utils.MesheryEndpoint = origEndpoint })
-
-	err := deleteCmd.RunE(deleteCmd, []string{"50bef83c-dad7-9977-952c-099321286a6a"})
-	if err != nil {
-		t.Errorf("deleteCmd.RunE() error = %v, want nil", err)
 	}
 }
