@@ -65,10 +65,10 @@ Meshery Operator itself has little to configure by design: it is a controller wh
 | Setting | Mechanism | Default | Behavioral impact |
 | --- | --- | --- | --- |
 | Deploy or do not deploy | Per-connection deployment mode; Settings page Operator switch; `DISABLE_OPERATOR=true` on the server | Deployed for operator-mode connections | Without the Operator, no Broker or MeshSync runs in-cluster; embedded mode (or no discovery) applies |
-| Operator version | Tracks the Meshery Server release via the `meshery-operator` Helm chart | Matches your server version | Upgrading Meshery Server upgrades the Operator; manual operator upgrades on server-managed clusters are reverted by the server's reconciliation |
+| Operator version | Tracks the Meshery Server release via the `meshery-operator` Helm chart, or `operator.version` on the connection | The published chart for your server release | Upgrading Meshery Server upgrades the Operator; manual operator upgrades on server-managed clusters are reverted by the server's reconciliation |
 | Namespace | Fixed | `meshery` | Operator, Broker, and MeshSync objects live in the `meshery` namespace |
 
-Meshery Server installs the Operator from the `meshery-operator` Helm chart at [meshery.io/charts](https://meshery.io/charts), pinned to the chart version matching the server release. To upgrade the Operator, upgrade Meshery Server; see [How Meshery Server manages Meshery Operator]({{< ref "installation/upgrades/index.md#how-meshery-server-manages-meshery-operator" >}}).
+Meshery Server installs the Operator from the `meshery-operator` Helm chart at [meshery.io/charts](https://meshery.io/charts), always at a version the repository publishes. To upgrade the Operator, upgrade Meshery Server; for how the version is chosen, when it is substituted, and how to pin one yourself, see [How Meshery Server manages Meshery Operator]({{< ref "installation/upgrades/index.md#how-meshery-server-manages-meshery-operator" >}}).
 
 You can also toggle the Operator per cluster without disconnecting the cluster: the Meshery Operator section of **Settings** in Meshery UI provides an on/off switch, and `kubectl` shows you what the Operator has deployed:
 
@@ -89,7 +89,7 @@ MeshSync's configuration spans three mechanisms: fields on the `MeshSync` custom
 | Secret value redaction | `MESHSYNC_REDACT_SECRETS` env var | Off | Rollout (env change restarts pods) |
 | Broker content deduplication | `MESHSYNC_BROKER_CONTENT_DEDUP` env var | Off | Rollout (env change restarts pods) |
 | Log verbosity | `DEBUG` env var | Info level | Rollout (env change restarts pods) |
-| Image version | `MeshSync` CR `spec.version` | `stable-latest` | Operator rolls the Deployment |
+| Image version | `MeshSync` CR `spec.version` | `1.0.3` - the pinned MeshSync release the Operator ships with | Operator rolls the Deployment |
 | Replica count | `MeshSync` CR `spec.size` (1-10) | `1` | Operator scales the Deployment |
 | Broker to publish to | `MeshSync` CR `spec.broker.native` or `spec.broker.custom.url` | The cluster's `meshery-broker` | Operator re-reconciles `BROKER_URL` |
 
@@ -215,7 +215,7 @@ metadata:
   name: meshery-meshsync
   namespace: meshery
 spec:
-  version: stable-latest   # image tag for meshery/meshsync
+  version: 1.0.3           # image tag for meshery/meshsync; omit to take the Operator's pinned default
   size: 1                  # replicas, 1-10
   broker:
     native:
@@ -223,7 +223,7 @@ spec:
       namespace: meshery
 ```
 
-- **`spec.version`** maps to the container image `meshery/meshsync:<version>`. The default is `stable-latest`. Tags ending in `-latest` are pulled on every pod start (`imagePullPolicy: Always`); pinned tags are pulled only if not present. Pin a specific version in production if you need to control exactly when MeshSync behavior changes.
+- **`spec.version`** maps to the container image `meshery/meshsync:<version>`. Leaving it unset takes the Operator's own pinned default, `1.0.3` - never a moving channel tag. A leading `v` is dropped when the rest of the value parses as a semantic version, so `v1.0.3` and `1.0.3` both resolve to `meshery/meshsync:1.0.3`, while a non-semver value is passed through unchanged. The pull policy follows the tag's mutability, not the field: a moving tag (`latest`, or anything ending in `-latest`) is pulled on every pod start (`imagePullPolicy: Always`) so it tracks its channel, while a pinned tag is pulled only if not already present. Because the default is already pinned, set `spec.version` explicitly when you want a *different* MeshSync version - not to escape a moving tag.
 - **`spec.size`** sets Deployment replicas, validated to the range 1-10, defaulting to 1. MeshSync replicas do not coordinate: there is no leader election or work sharding, so every replica watches the entire cluster and publishes its own copy of every event, multiplying API server watch load, Broker traffic, and Meshery Server's ingest and database write load without adding discovery capacity. Keep `size: 1` for normal operation; the [work-queue design](#what-is-coming) is the roadmap direction for scaling discovery throughput.
 - **`spec.broker`** selects where MeshSync publishes: `native` points at a `Broker` resource by name and namespace (the Operator resolves its endpoint and injects `BROKER_URL`), while `custom.url` points MeshSync at an externally managed NATS verbatim.
 

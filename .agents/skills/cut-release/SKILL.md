@@ -21,7 +21,7 @@ by GitHub Actions.
 ## How releasing works in this repo
 
 - `.github/workflows/release-drafter.yaml` runs on **every push to `master`**. As PRs
-  merge, it maintains a single **draft** GitHub Release, titled `Layer5 Cloud v$NEXT_PATCH_VERSION`
+  merge, it maintains a single **draft** GitHub Release, titled `Meshery v$NEXT_PATCH_VERSION`
   with tag `v$NEXT_PATCH_VERSION` (the patch version auto-increments). There is always
   exactly one draft waiting to be published.
 - Publishing that draft (the release `released` event) triggers
