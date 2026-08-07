@@ -171,7 +171,9 @@ func TestPreferenceRoundTripsEveryField(t *testing.T) {
 	if got.RemoteProviderPreferences["k"] != "v" {
 		t.Errorf("RemoteProviderPreferences = %v", got.RemoteProviderPreferences)
 	}
-	if got.LoadTestPreferences == nil || got.LoadTestPreferences.ConcurrentRequests != 2 {
+	if got.LoadTestPreferences == nil ||
+		got.LoadTestPreferences.ConcurrentRequests != 2 ||
+		got.LoadTestPreferences.QueriesPerSecond != 10 {
 		t.Errorf("LoadTestPreferences = %+v", got.LoadTestPreferences)
 	}
 }

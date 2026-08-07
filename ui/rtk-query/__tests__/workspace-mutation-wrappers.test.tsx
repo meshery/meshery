@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, expect, it, vi, beforeAll, beforeEach, afterEach } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach, afterAll } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 
 // `../utils` (appendInvalidatesTags) imports the app store at module scope, so
@@ -17,8 +17,22 @@ vi.mock('@/utils/utils', () => ({
   },
 }));
 
-beforeAll(() => {
+// Hoisted before module imports because the schemas client reads its base URL at
+// module load. Restored afterwards: test files sharing a worker process share
+// `process.env`, so a divergent value left behind is a way for suite order to
+// start mattering.
+const { previousEndpointPrefix } = vi.hoisted(() => {
+  const previous = process.env.RTK_MESHERY_ENDPOINT_PREFIX;
   process.env.RTK_MESHERY_ENDPOINT_PREFIX = 'http://localhost';
+  return { previousEndpointPrefix: previous };
+});
+
+afterAll(() => {
+  if (previousEndpointPrefix === undefined) {
+    delete process.env.RTK_MESHERY_ENDPOINT_PREFIX;
+  } else {
+    process.env.RTK_MESHERY_ENDPOINT_PREFIX = previousEndpointPrefix;
+  }
 });
 
 // ---------------------------------------------------------------------------
@@ -72,8 +86,10 @@ describe('workspace mutation wrappers', () => {
   let fetchMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    fetchMock = vi.fn();
-    global.fetch = fetchMock as unknown as typeof fetch;
+    // spyOn (not direct assignment) so `vi.restoreAllMocks()` below actually
+    // reverts it - a raw `global.fetch = ...` would outlive this file and leak
+    // into every later suite in the same worker.
+    fetchMock = vi.spyOn(globalThis, 'fetch') as unknown as ReturnType<typeof vi.fn>;
   });
 
   afterEach(() => {

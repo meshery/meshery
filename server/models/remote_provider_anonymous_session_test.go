@@ -79,7 +79,10 @@ func TestInterceptAnonymousSession_RefusesReplyWithoutUserID(t *testing.T) {
 			if got := rec.Header().Get("Location"); got != "/error" {
 				t.Errorf("redirected to %q, want %q", got, "/error")
 			}
-			if ck := jwtCookie(rec); ck != nil && ck.Value != "" {
+			// Presence, not value: a refused session must emit no Set-Cookie for
+			// the token at all. Allowing an empty-valued cookie through would let
+			// the handler start writing one again without failing this test.
+			if ck := jwtCookie(rec); ck != nil {
 				t.Errorf("a JWT cookie was set for a refused session: %q", ck.Value)
 			}
 		})

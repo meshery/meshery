@@ -199,8 +199,9 @@ describe('deleteCredential effective endpoint', () => {
   let fetchMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    fetchMock = vi.fn();
-    global.fetch = fetchMock as unknown as typeof fetch;
+    // spyOn (not direct assignment) so `vi.restoreAllMocks()` below actually
+    // reverts it - a raw `global.fetch = ...` would outlive this file.
+    fetchMock = vi.spyOn(globalThis, 'fetch') as unknown as ReturnType<typeof vi.fn>;
   });
 
   afterEach(() => {

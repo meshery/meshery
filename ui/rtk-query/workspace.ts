@@ -37,8 +37,9 @@ const isResolvableOwnerId = (id?: string): id is string => Boolean(id) && id !==
 // KNOWN DEAD CODE - meshery/meshery#21175.
 //
 // The endpoints injected below whose names @meshery/schemas also defines
-// (getWorkspaces, getDesignsOfWorkspace, getViewsOfWorkspace, and the view and
-// team assign/unassign pairs) never take effect: `injectEndpoints` without
+// (getWorkspaces, getDesignsOfWorkspace, getViewsOfWorkspace,
+// getEnvironmentsOfWorkspace, and the view and team assign/unassign pairs)
+// never take effect: `injectEndpoints` without
 // `overrideExisting: true` silently discards a colliding name, so the schemas
 // definitions serve every call. The `expandInfo` counts, the `expandUser`
 // owner resolution and the infinite-scroll merge below therefore do not run.
