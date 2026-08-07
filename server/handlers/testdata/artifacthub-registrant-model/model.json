@@ -1,0 +1,31 @@
+{
+  "id": "b3f5c1e2-0000-4000-8000-000000000001",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "name": "meshery-test-artifacthub-registrant",
+  "displayName": "Meshery Test Artifact Hub Registrant",
+  "description": "Test-only fixture. A minimal model published under the Artifact Hub registrant, registered by server/handlers/connections_seeded_api_test.go so that an `artifacthub` registrant Connection exists without depending on the shipped model registry (models/), which the recommended sparse clone excludes. Only the `registrant` blob is significant; the seeded Connection's identity comes from meshery-core's ArtifactHubConnection definition.",
+  "status": "enabled",
+  "registrant": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Artifact Hub",
+    "type": "registry",
+    "sub_type": "",
+    "kind": "artifacthub",
+    "status": "discovered",
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "deleted_at": null,
+    "schemaVersion": ""
+  },
+  "category": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Uncategorized"
+  },
+  "model": {
+    "version": "1.0.0"
+  },
+  "metadata": {
+    "isAnnotation": false
+  }
+}

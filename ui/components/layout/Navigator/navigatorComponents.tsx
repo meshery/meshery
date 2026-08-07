@@ -177,6 +177,7 @@ export const getNavigatorComponents = (
         title: 'Charts',
         show: providerUiAccessControl.isNavigatorComponentEnabled([TELEMETRY, GRAFANA]),
         link: true,
+        permissionKey: Keys.MesherySystemViewMetrics,
       },
       {
         id: PROMETHEUS,
@@ -185,6 +186,7 @@ export const getNavigatorComponents = (
         title: 'Metrics',
         show: providerUiAccessControl.isNavigatorComponentEnabled([TELEMETRY, PROMETHEUS]),
         link: true,
+        permissionKey: Keys.MesherySystemViewMetrics,
       },
     ],
   },
