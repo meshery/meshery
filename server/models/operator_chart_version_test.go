@@ -10,7 +10,16 @@ import (
 	controllersconfig "github.com/meshery/schemas/models/v1alpha1/controllers_config"
 )
 
-const bootChartVersion = "v0.8.0"
+// bootChartVersion stands in for the Meshery Server release stamped into the
+// deployment config at boot. It is a published, at-or-above-floor version so
+// that pinning it against testChartCatalogue is the identity: these tests are
+// about how `operator.version` layers, not about chart-version pinning, which
+// operator_chart_pinning_test.go covers.
+const bootChartVersion = "v1.0.64"
+
+// testChartCatalogue is what the chart repository publishes as far as these
+// tests are concerned: two current charts, one at the floor, and two below it.
+var testChartCatalogue = []string{"v1.0.64", "v1.0.63", "v1.0.62", "v1.0.40", "v0.7.9"}
 
 func operatorVersionConfig(version string, mode connections.MeshsyncDeploymentMode) *controllersconfig.MesheryControllersConfig {
 	cfg := &controllersconfig.MesheryControllersConfig{
@@ -33,7 +42,7 @@ func newTestControllersHelper(t *testing.T) *MesheryControllersHelper {
 	if err != nil {
 		t.Fatalf("failed to build test logger: %v", err)
 	}
-	return NewMesheryControllersHelper(
+	mch := NewMesheryControllersHelper(
 		log,
 		controllers.OperatorDeploymentConfig{
 			MesheryReleaseVersion: bootChartVersion,
@@ -45,6 +54,10 @@ func newTestControllersHelper(t *testing.T) *MesheryControllersHelper {
 		nil,
 		nil,
 	)
+	// Resolve against a fixed catalogue: chart-version pinning must never make
+	// a unit test depend on the network or on what is published today.
+	mch.chartVersions = func(string, string) ([]string, error) { return testChartCatalogue, nil }
+	return mch
 }
 
 // TestB2OperatorVersionSelectsTheOperatorChartVersion covers defect B2: the

@@ -4097,6 +4097,60 @@
         "short_description": "Anonymous user session could not be established",
         "probable_cause": "The remote provider does not implement the schemas v1beta2 AnonymousFlowResponse contract, or it returned an empty user id.",
         "suggested_remediation": "Confirm the configured remote provider is reachable and up to date, then retry signing in."
+      },
+      "1468": {
+        "name": "ErrNoOperatorChartPublishedCode",
+        "code": "1468",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "No Meshery Operator Helm chart is published",
+        "probable_cause": "The chart repository index was served from an unexpected location, or its published charts were removed.",
+        "suggested_remediation": ""
+      },
+      "1469": {
+        "name": "ErrOperatorChartNotPinnedCode",
+        "code": "1469",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Meshery Operator chart version is not a released version",
+        "probable_cause": "A moving tag (for example stable-latest or edge-latest) or a non-version string was configured as the operator chart version.",
+        "suggested_remediation": ""
+      },
+      "1470": {
+        "name": "ErrOperatorChartNotPublishedCode",
+        "code": "1470",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Meshery Operator chart version is not published",
+        "probable_cause": "The configured chart version was mistyped, or it was never published to the Meshery Helm chart repository.",
+        "suggested_remediation": ""
+      },
+      "1471": {
+        "name": "ErrOperatorChartSubstitutedCode",
+        "code": "1471",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Meshery Operator was deployed at a different chart version than this server's release",
+        "probable_cause": "The chart version matching this Meshery Server release is either not published yet or is too old to deploy successfully.",
+        "suggested_remediation": "No action is required. To choose the chart version yourself, set operator.version on the Kubernetes connection."
+      },
+      "1472": {
+        "name": "ErrNoMesheryReleasesFoundCode",
+        "code": "1472",
+        "severity": "Alert",
+        "long_description": "The GitHub releases listing for meshery/meshery returned no tags.",
+        "short_description": "No Meshery releases were found",
+        "probable_cause": "GitHub returned an empty or filtered release listing, possibly because the request was rate-limited.",
+        "suggested_remediation": "Retry later. This only affects the reported latest-version comparison; Meshery continues to run."
+      },
+      "1473": {
+        "name": "ErrHelmChartIndexCode",
+        "code": "1473",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to read the Helm chart repository index.",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }

@@ -263,6 +263,15 @@ make helm-docs      # Generate Helm chart docs
   `mesheryctl/helpers/component_info.json` (`next_error_code`) and that value bumped in the
   same commit. `.github/workflows/error-codes-updater.yaml` re-runs errorutil and fails the
   PR if its analysis reports anything.
+  The server side has the same contract in `server/helpers/component_info.json`: errorutil
+  refuses to run at all ("next_error_code is lower than or equal to highest used code") until
+  `next_error_code` is bumped past every code you added, so bump it in the same commit.
+  Name each constant `<BuilderFuncName>Code` - errorutil keys the export off that pairing.
+  `server/helpers/errorutil_errors_export.json` is gitignored, but the reference data at
+  `docs/data/errorref/meshery-server_errors_export.json` is tracked: regenerate it with the
+  `jq --slurpfile` wrapper the workflow uses, or the docs reference silently omits the new
+  codes. Adding a constant longer than the block's current widest name makes gofmt realign
+  the entire `error.go` const block - prefer a shorter name over a 300-line whitespace diff.
 - Only `utils.Log.Error(err)` renders a MeshKit error's code, cause and remediation; cobra's
   default print shows just the message. In `mesheryctl` commands, log the structured error
   for the user *and* return it for the exit path.

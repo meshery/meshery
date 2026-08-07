@@ -4,7 +4,14 @@ description: Meshery Broker
 icon: https://meshery.io/images/logos/meshery-logo.png
 type: application
 version: 0.5.0
-appVersion: stable-latest
+# This chart ships only the Broker custom resource; the Meshery Operator that
+# reconciles it is what chooses the NATS image. appVersion therefore names the
+# operator release this subchart is published alongside, and must stay in step
+# with the parent chart's appVersion. It must never be a moving tag: the parent
+# is republished at every Meshery Server release, so a moving appVersion here
+# advertises a different application from one publish to the next while the
+# archive itself is immutable.
+appVersion: "1.0.4"
 
 maintainers:
   - name: Meshery Authors

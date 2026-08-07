@@ -15,6 +15,7 @@ import (
 	"maps"
 
 	"github.com/gofrs/uuid"
+	mesheryutils "github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/broker"
 	channelBroker "github.com/meshery/meshkit/broker/channel"
@@ -92,6 +93,11 @@ type MesheryControllersHelper struct {
 	// from before a redeploy is warranted. "" until handlers are attached.
 	attachedOperatorChartVersion string
 
+	// chartVersions lists the versions a Helm repository publishes for a chart.
+	// Injected rather than called directly so tests resolve against a fixed
+	// catalogue instead of the network. Never nil once constructed.
+	chartVersions func(repo, chart string) ([]string, error)
+
 	// event broadcasting dependencies
 	eventBroadcaster *Broadcast
 	provider         Provider
@@ -153,6 +159,7 @@ func NewMesheryControllersHelper(
 		// Resetting this value results in again subscribing to the Broker.
 		ctxMeshsyncDataHandler: nil,
 		dbHandler:              dbHandler,
+		chartVersions:          mesheryutils.PublishedChartVersions,
 		meshsyncDeploymentMode: connections.MeshsyncDeploymentModeOperator,
 		eventBroadcaster:       eventBroadcaster,
 		provider:               provider,
@@ -693,12 +700,53 @@ func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *M
 		return mch
 	}
 
-	depConfig := mch.operatorDeploymentConfig()
-	mch.ctxControllerHandlers = map[MesheryController]controllers.IMesheryController{
-		MesheryBroker:   controllers.NewMesheryBrokerHandler(client),
-		MesheryOperator: controllers.NewMesheryOperatorHandler(client, depConfig),
-		Meshsync:        controllers.NewMeshsyncHandler(client),
+	// Broker and MeshSync handlers only observe what is already in the cluster,
+	// so they need no chart version and are always attached.
+	ctxHandlers := map[MesheryController]controllers.IMesheryController{
+		MesheryBroker: controllers.NewMesheryBrokerHandler(client),
+		Meshsync:      controllers.NewMeshsyncHandler(client),
 	}
+
+	// The operator handler is different: it captures its chart version at
+	// construction and installs from it. Pin that version first - attaching a
+	// handler carrying a version the repository does not publish only defers the
+	// failure to the Helm install, where it surfaces as an opaque
+	// chart-not-found error rather than as this connection's operator error.
+	depConfig, substitution, err := mch.pinnedOperatorDeploymentConfig()
+	if err != nil {
+		// No version is safe to install, so no operator handler is attached and
+		// operator lifecycle is withheld for this connection. Broker and MeshSync
+		// handlers still attach: an operator installed by other means keeps
+		// reporting status and feeding the MeshSync pipeline, so a chart
+		// repository that is briefly unreachable does not also take out
+		// discovery. The recorded error surfaces as the connection's
+		// operator_deploy_failed diagnostic.
+		mch.setOperatorError(err)
+		mch.log.Error(err)
+		mch.emitErrorEvent("Failed to resolve the Meshery Operator chart version", err, map[string]any{
+			"k8sContextID":                  ctx.ID,
+			"k8sContextName":                ctx.Name,
+			"connectionID":                  ctx.ConnectionID,
+			"requestedOperatorChartVersion": mch.operatorDeploymentConfig().MesheryReleaseVersion,
+		}, uuid.Nil)
+		mch.ctxControllerHandlers = ctxHandlers
+		// Nothing is attached to compare against, so the next reconcile must not
+		// mistake a stale value for "already at the desired version".
+		mch.attachedOperatorChartVersion = ""
+		return mch
+	}
+	if substitution != "" {
+		mch.log.Warn(ErrOperatorChartSubstituted(substitution))
+		mch.emitWarningEvent("Meshery Operator chart version adjusted", ErrOperatorChartSubstituted(substitution), map[string]any{
+			"k8sContextID":         ctx.ID,
+			"k8sContextName":       ctx.Name,
+			"connectionID":         ctx.ConnectionID,
+			"operatorChartVersion": depConfig.MesheryReleaseVersion,
+		}, uuid.Nil)
+	}
+
+	ctxHandlers[MesheryOperator] = controllers.NewMesheryOperatorHandler(client, depConfig)
+	mch.ctxControllerHandlers = ctxHandlers
 	mch.attachedOperatorChartVersion = depConfig.MesheryReleaseVersion
 
 	// }(mch)
@@ -711,18 +759,63 @@ func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *M
 // Helm chart version replaced by this connection's resolved `operator.version`
 // when a layer sets one.
 //
+// The chart version this returns is the one that was *asked for*; it is not yet
+// known to exist. pinnedOperatorDeploymentConfig is what turns it into a
+// version the chart repository actually publishes, and every path that reaches
+// a cluster goes through that instead.
+//
 // Leaving `operator.version` unset at every layer yields the boot-time chart
-// version verbatim, which is exactly the behavior before the field was wired
-// up. The operator handler captures this configuration at construction, so the
-// resolved controllers configuration must be stashed (SetControllersConfig)
-// before AddCtxControllerHandlers runs - see ReconcileOperatorChartVersion for
-// the path that re-attaches when the version changes on a live connection.
+// version verbatim. The operator handler captures this configuration at
+// construction, so the resolved controllers configuration must be stashed
+// (SetControllersConfig) before AddCtxControllerHandlers runs - see
+// ReconcileOperatorChartVersion for the path that re-attaches when the version
+// changes on a live connection.
 func (mch *MesheryControllersHelper) operatorDeploymentConfig() controllers.OperatorDeploymentConfig {
 	depConfig := mch.oprDepConfig
 	if version := connections.OperatorChartVersionFromControllersConfig(mch.controllersConfig); version != "" {
 		depConfig.MesheryReleaseVersion = version
 	}
 	return depConfig
+}
+
+// pinnedOperatorDeploymentConfig is operatorDeploymentConfig with the chart
+// version pinned to one the chart repository actually publishes.
+//
+// This is the only deployment config that may reach Helm. The version
+// operatorDeploymentConfig returns is either an explicit `operator.version` or
+// the Meshery Server release stamped in at boot, and neither is guaranteed to
+// name a published chart: chart publishing trails server releases, so a current
+// server routinely asks for a chart that does not exist yet, and a server old
+// enough to predate MinimumOperatorChartVersion asks for one that exists but
+// cannot run. ResolveOperatorChartVersion settles both, failing loudly when the
+// version was explicitly requested and substituting - with a reason - when it
+// was merely derived.
+//
+// The returned reason is empty unless a substitution happened; callers log it
+// and emit it so no correction is silent.
+func (mch *MesheryControllersHelper) pinnedOperatorDeploymentConfig() (depConfig controllers.OperatorDeploymentConfig, reason string, err error) {
+	depConfig = mch.operatorDeploymentConfig()
+
+	source := OperatorChartVersionDerived
+	if connections.OperatorChartVersionFromControllersConfig(mch.controllersConfig) != "" {
+		source = OperatorChartVersionRequested
+	}
+
+	lister := mch.chartVersions
+	if lister == nil {
+		lister = mesheryutils.PublishedChartVersions
+	}
+	published, err := lister(depConfig.HelmChartRepo, OperatorChartName)
+	if err != nil {
+		return depConfig, "", err
+	}
+
+	version, reason, err := ResolveOperatorChartVersion(published, depConfig.MesheryReleaseVersion, source)
+	if err != nil {
+		return depConfig, "", err
+	}
+	depConfig.MesheryReleaseVersion = version
+	return depConfig, reason, nil
 }
 
 // ReconcileOperatorChartVersion brings the operator running on this connection's
@@ -742,15 +835,30 @@ func (mch *MesheryControllersHelper) operatorDeploymentConfig() controllers.Oper
 //     this context, or
 //   - the resolved chart version already matches the attached handler's.
 func (mch *MesheryControllersHelper) ReconcileOperatorChartVersion(k8sctx K8sContext, ot *OperatorTracker) (chartVersion string, redeployed bool, err error) {
-	desired := mch.operatorDeploymentConfig().MesheryReleaseVersion
+	requested := mch.operatorDeploymentConfig().MesheryReleaseVersion
 	if mch.meshsyncDeploymentMode != connections.MeshsyncDeploymentModeOperator {
-		return desired, false, nil
+		return requested, false, nil
 	}
 	if ot == nil || ot.DisableOperator || ot.IsUndeployed(k8sctx.ID) {
-		return desired, false, nil
+		return requested, false, nil
 	}
+
+	// Compare pinned against pinned. attachedOperatorChartVersion records what
+	// the handler was built with, which is always a published version, so
+	// comparing the raw request against it would redeploy on every call
+	// whenever the request is being substituted (an unpublished server release
+	// or a below-floor one) - an endless upgrade loop against the cluster.
+	pinned, substitution, err := mch.pinnedOperatorDeploymentConfig()
+	if err != nil {
+		mch.setOperatorError(err)
+		return requested, false, ErrReconcileOperatorChartVersion(err)
+	}
+	desired := pinned.MesheryReleaseVersion
 	if desired == mch.attachedOperatorChartVersion {
 		return desired, false, nil
+	}
+	if substitution != "" {
+		mch.log.Warn(ErrOperatorChartSubstituted(substitution))
 	}
 
 	// Re-attaching records the desired version as attached, which the guard
@@ -907,17 +1015,22 @@ func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTrack
 }
 
 func NewOperatorDeploymentConfig(adapterTracker AdaptersTrackerInterface) controllers.OperatorDeploymentConfig {
-	// get meshery release version
+	// The chart version is the Meshery Server release this binary was stamped
+	// with, which is a *request*, not a promise: it is pinned to a version the
+	// chart repository actually publishes by pinnedOperatorDeploymentConfig
+	// before it ever reaches Helm.
+	//
+	// An unstamped build (a source run, or an edge image) has no release to
+	// name, so it is left empty deliberately rather than resolved against the
+	// GitHub releases API. The newest *GitHub release* is not the newest
+	// *published chart* - charts are republished at server releases and trail
+	// them - so asking GitHub yields a version that frequently does not exist
+	// in the chart repository at all, on top of spending an unauthenticated,
+	// rate-limited API call at boot. An empty version resolves to the newest
+	// published chart, which is what was actually wanted.
 	mesheryReleaseVersion := viper.GetString("BUILD")
-	if mesheryReleaseVersion == "" || mesheryReleaseVersion == "Not Set" || mesheryReleaseVersion == "edge-latest" {
-		_, latestRelease, err := CheckLatestVersion(mesheryReleaseVersion)
-		// if unable to fetch latest release tag, meshkit helm functions handle
-		// this automatically fetch the latest one
-		if err != nil {
-			mesheryReleaseVersion = ""
-		} else {
-			mesheryReleaseVersion = latestRelease
-		}
+	if !isPinnedChartVersion(mesheryReleaseVersion) {
+		mesheryReleaseVersion = ""
 	}
 
 	return controllers.OperatorDeploymentConfig{
@@ -934,11 +1047,17 @@ func NewOperatorDeploymentConfig(adapterTracker AdaptersTrackerInterface) contro
 func CheckLatestVersion(serverVersion string) (*bool, string, error) {
 	// Inform user of the latest release version
 	versions, err := utils.GetLatestReleaseTagsSorted("meshery", "meshery")
-	latestVersion := versions[len(versions)-1]
-	isOutdated := false
 	if err != nil {
 		return nil, "", ErrCreateOperatorDeploymentConfig(err)
 	}
+	// Index only after the error check: a failed fetch returns a nil slice, and
+	// indexing it panicked - taking down whichever request or boot step called
+	// in - every time GitHub was unreachable or rate-limited.
+	if len(versions) == 0 {
+		return nil, "", ErrCreateOperatorDeploymentConfig(ErrNoMesheryReleasesFound())
+	}
+	latestVersion := versions[len(versions)-1]
+	isOutdated := false
 	// Compare current running Meshery server version to the latest available Meshery release on GitHub.
 	if latestVersion != serverVersion {
 		isOutdated = true

@@ -93,6 +93,53 @@ Leaving the field unset at every layer resolves to `""`, and the boot-time chart
 version applies unchanged: a connection on Inherit behaves exactly as it did
 before the field was wired up.
 
+### The chart version that reaches Helm is pinned, not assumed
+
+`operatorDeploymentConfig` returns the version that was *asked for*. Nothing yet
+guarantees such a chart exists, and two everyday cases guarantee it does not:
+
+- Chart publishing is decoupled from Meshery Server releases and trails them, so
+  a current server routinely names a chart version the repository has not
+  published. Helm then fails with a chart-not-found error and the operator never
+  deploys.
+- Charts below `models.MinimumOperatorChartVersion` are published but cannot run
+  (retired `kube-rbac-proxy` image, no webhook certificate). Because the derived
+  version tracks the server's own release, an old server would install one of
+  those on every cluster it is ever pointed at, forever.
+
+`MesheryControllersHelper.pinnedOperatorDeploymentConfig` is therefore the only
+deployment config allowed to reach Helm. It lists what the repository publishes
+(`helpers/utils.PublishedChartVersions`, a TTL-cached `index.yaml` read) and
+hands that to `models.ResolveOperatorChartVersion`, which distinguishes two
+sources:
+
+- **Derived** (`OperatorChartVersionDerived`) - the boot-time server release.
+  Nobody chose it, so it may be corrected: unpinned or unpublished falls back to
+  the newest published chart, and anything below the floor is raised to the
+  oldest published chart at or above the floor. Every correction returns a
+  one-sentence reason that is logged and emitted as a warning event, so no
+  substitution is silent.
+- **Requested** (`OperatorChartVersionRequested`) - an explicit
+  `operator.version`. Never substituted. A moving tag or an unpublished version
+  fails through `setOperatorError`, which the connection-diagnostics API and the
+  events feed surface to the user. The floor does not apply, so deliberately
+  pinning an old chart still works.
+
+An unreadable repository index fails rather than guessing: without the index
+there is no way to know which versions exist.
+
+`NewOperatorDeploymentConfig` consequently leaves the chart version empty for an
+unstamped build instead of asking the GitHub releases API for the newest server
+tag. The newest GitHub release is not the newest published chart, so that call
+spent a rate-limited request to produce a version that frequently does not exist
+in the chart repository; an empty version resolves to the newest published chart,
+which is what was wanted.
+
+`ReconcileOperatorChartVersion` compares **pinned against pinned**.
+`attachedOperatorChartVersion` always records a published version, so comparing
+the raw request against it would differ forever whenever the request is being
+substituted - re-running the Helm upgrade on every reconcile.
+
 ### MeshSync
 
 | Setting | Wire path | Propagates to | Observable as |
@@ -294,6 +341,13 @@ Unit coverage that exists today:
 - `server/models/operator_chart_version_test.go` - `operator.version` selecting
   the operator Helm chart version, the layering it resolves through, and the
   cases where a chart-version reconcile must not touch the cluster.
+- `server/models/operator_chart_pinning_test.go` - pinning the resolved version
+  to one the repository publishes: the floor, the unpublished-release fallback,
+  moving tags never reaching Helm, explicit requests failing loudly, and the
+  pinned-against-pinned reconcile comparison.
+- `server/helpers/utils/helm_chart_repo_test.go` - the `index.yaml` read: chart
+  version extraction, structured failures, TTL reuse, and that failures are not
+  cached.
 - `ui/components/configuration/__tests__/deploymentMode.test.ts` - which
   settings each deployment mode can apply, and how the mode governing each
   editor is resolved and attributed to a layer.
