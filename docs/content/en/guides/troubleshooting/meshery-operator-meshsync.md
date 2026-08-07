@@ -155,7 +155,7 @@ kubectl -n meshery get deploy meshery-operator \
   -o jsonpath='{range .spec.template.spec.containers[*]}{.name}{"\n"}{end}'
 ```
 
-### Choosing the chart version yourself
+## Choosing the chart version yourself
 
 Meshery Server normally deploys the operator chart that matches its own release, falling back to the newest published chart when that one is not published yet (chart publishing trails Meshery Server releases). To pin a specific chart version for one connection, set **`operator.version`** in the connection's controllers configuration.
 
@@ -165,7 +165,7 @@ Release candidates are the one thing Meshery will never pick for you: when it fa
 
 If the chart repository cannot be reached, Meshery still reports the operator's status and image version for an operator that is already installed - only installing or upgrading it is withheld, and the reason appears in the connection's diagnostics and in the events feed.
 
-### When the chart version cannot be resolved
+## When the chart version cannot be resolved
 
 A version that cannot be resolved - an `operator.version` naming something the repository does not publish, or a chart repository Meshery could not read at all - stops the install *before* Helm is called. Nothing partial is applied to the cluster.
 

@@ -80,8 +80,11 @@ independently. For Kubernetes production deployments:
   Provider and the local database is a cache, rolling back the deployment is
   low-risk for data—validate the rollback path anyway. On rollback, managed
   clusters converge back to the operator chart the older Server resolves,
-  automatically and still subject to the minimum deployable chart version, so a
-  rollback cannot reintroduce an operator chart that will not start.
+  automatically. The minimum deployable chart version guards that derived
+  default, but it is not a blanket guarantee: an explicit `operator.version` is
+  honored as written even when it names a chart below the minimum, and if the
+  repository publishes nothing at or above the minimum the newest published
+  chart is deployed with a warning that the Operator may not become ready.
 - **Edge caches need no purge.** If a CDN or caching reverse proxy fronts
   Meshery, its UI cache busts itself on upgrade—hashed asset URLs change and the
   HTML `ETag` follows the build/release version—so a manual cache purge is not

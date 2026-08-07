@@ -35,7 +35,7 @@ running in the cluster.
 
 ## The in-cluster components
 
-In the default **operator** mode, three components run inside the managed cluster
+In **operator** mode, three components run inside the managed cluster
 (namespace `meshery`):
 
 | Component | What it is | What it does |

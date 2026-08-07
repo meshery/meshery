@@ -240,7 +240,7 @@ Meshery Server typically needs outbound connectivity to:
 
 In restricted networks, allow-list the Remote Provider, the chart repository,
 and registry endpoints, or run behind an egress proxy. Verify that provider
-egress is not silently blocked—failed provider reachability shows up as
+egress is not silently blocked - failed provider reachability shows up as
 authentication problems.
 
 ## Network policies

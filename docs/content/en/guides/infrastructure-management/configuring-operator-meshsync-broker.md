@@ -70,18 +70,16 @@ Meshery Operator itself has little to configure by design: it is a controller wh
 
 Meshery Server installs the Operator from the `meshery-operator` Helm chart at [meshery.io/charts](https://meshery.io/charts), always at a version the repository publishes. To upgrade the Operator, upgrade Meshery Server; for how the version is chosen, when it is substituted, and how to pin one yourself, see [How Meshery Server manages Meshery Operator]({{< ref "installation/upgrades/index.md#how-meshery-server-manages-meshery-operator" >}}).
 
-`operator.version` is the one setting here that is refused rather than corrected. Meshery may substitute the version it derived from its own release - that value is a guess, and correcting it is better than failing the deployment - but a version *you* set is deployed exactly as written or not at all. Naming an unpublished version, or a moving tag such as `stable-latest`, fails the deployment with the reason on the Operator status card and in the connection's diagnostics, so a wrong pin is something you find out about rather than something that silently runs a different chart. Deliberately pinning an older chart still works: the minimum-version floor applies only to the derived default. Confirm what is actually running with:
+`operator.version` is the one setting here that is refused rather than corrected. Meshery may substitute the version it derived from its own release - that value is a guess, and correcting it is better than failing the deployment - but a version *you* set is deployed exactly as written or not at all. Naming an unpublished version, or a moving tag such as `stable-latest`, fails the deployment with the reason on the Operator status card and in the connection's diagnostics, so a wrong pin is something you find out about rather than something that silently runs a different chart. That deliberateness cuts both ways. The minimum-version floor applies only to the derived default, so a pin below `v1.0.51` is installed exactly as asked - and charts below `v1.0.51` render a `kube-rbac-proxy` sidecar and set no `ENABLE_WEBHOOKS`, so the Operator pod never becomes ready (see [Meshery Operator will not start]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md#meshery-operator-will-not-start-imagepullbackoff-and-a-missing-webhook-certificate" >}})). Meshery does not second-guess a pin you set on purpose, which makes choosing a deployable chart yours to get right.
 
-```bash
-kubectl -n meshery get deploy meshery-operator \
-  -o jsonpath='{.spec.template.spec.containers[0].image}{"\n"}'
-```
-
-You can also toggle the Operator per cluster without disconnecting the cluster: the Meshery Operator section of **Settings** in Meshery UI provides an on/off switch, and `kubectl` shows you what the Operator has deployed:
+You can also toggle the Operator per cluster without disconnecting the cluster: the Meshery Operator section of **Settings** in Meshery UI provides an on/off switch, and `kubectl` shows you what the Operator has deployed and which Operator image is actually running:
 
 ```bash
 kubectl -n meshery get deploy meshery-operator
 kubectl -n meshery get brokers,meshsyncs
+
+kubectl -n meshery get deploy meshery-operator \
+  -o jsonpath='{.spec.template.spec.containers[0].image}{"\n"}'
 ```
 
 ## Configuring MeshSync
