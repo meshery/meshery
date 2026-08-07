@@ -148,9 +148,10 @@ Remote Provider, and the local database is a rebuildable cache. Two notes:
 - The Operator follows the Server: after a rollback, the Server re-applies the
   operator chart it resolves for the rolled-back release. Rolling back far
   enough that the Server would name a chart older than the minimum deployable
-  version does not put a broken Operator on your clusters - the Server raises
-  that request to the oldest published chart at or above the minimum and says
-  so in the events feed.
+  version normally still lands a working Operator - the Server raises that
+  derived request to the oldest published chart at or above the minimum and
+  says so in the events feed. An explicit `operator.version` on a connection is
+  never raised, so a pin below the minimum survives the rollback unchanged.
 - CRD schemas are not rolled back by `helm rollback` directly. When the
   rolled-back Server reconnects to managed clusters, it re-applies the older
   operator chart as a Helm upgrade, and that chart's CRD update Job re-applies
