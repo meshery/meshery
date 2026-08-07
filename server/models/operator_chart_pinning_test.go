@@ -14,6 +14,16 @@ import (
 // reachableK8sContext is structurally complete enough to yield a Kubernetes
 // client without contacting the cluster, so a test reaches the chart-version
 // resolution that follows client creation.
+//
+// A context this complete makes AddCtxControllerHandlers attach REAL meshkit
+// handlers, so any test that goes on to reach Deploy or Undeploy performs live
+// Helm and cluster I/O: meshkit downloads the multi-megabyte index and the chart
+// archive from the configured repository before it touches the cluster at all,
+// and 127.0.0.1:6443 is a live cluster on any machine running Docker Desktop
+// Kubernetes or k3s - where a Deploy would really install the operator into it.
+// Never let a test in this package reach an install or a removal on a handler
+// this produced. Assert the guard through operatorInstallTarget, or swap a
+// stubController into ctxControllerHandlers first.
 func reachableK8sContext() K8sContext {
 	return K8sContext{
 		ID:   "ctx-1",
@@ -472,16 +482,23 @@ func TestUserInitiatedDeployIsRefusedWhileNoChartVersionResolves(t *testing.T) {
 // Clearing the latch alone would not have been enough either: the handler
 // attached on the failure path still carries the raw unresolved chart version,
 // so re-resolving and re-attaching have to happen together.
+// It is asserted through the two steps SetOperatorDeployment composes for a
+// latched deploy - AddCtxControllerHandlers then operatorInstallTarget - rather
+// than by calling SetOperatorDeployment itself, because a successful retry ends
+// in a Deploy on a real meshkit handler, which downloads the chart archive and
+// would install the operator for real on a machine where 127.0.0.1:6443 is a
+// live cluster. That SetOperatorDeployment performs this retry at all is pinned
+// by TestUserInitiatedDeployIsRefusedWhileNoChartVersionResolves, which only
+// passes because the refusal it gets back is the re-resolution's own failure
+// rather than the stale latch.
 func TestUserInitiatedDeployRetriesResolutionAfterTheRepositoryRecovers(t *testing.T) {
 	mch := newTestControllersHelper(t)
 	mch.setOperatorChartError(ErrNoOperatorChartPublished(OperatorChartName, testChartRepo))
 	mch.attachedOperatorChartVersion = ""
 
-	// The catalogue is readable again, so this call must re-resolve rather than
-	// serve the latched refusal. The Deploy it then attempts runs against a
-	// cluster that does not exist and is expected to fail; what matters is that
-	// the refusal is gone and the handler carries a resolved version.
-	err := mch.SetOperatorDeployment(reachableK8sContext(), true)
+	// The catalogue is readable again, so re-attaching must resolve rather than
+	// leave the refusal standing.
+	mch.AddCtxControllerHandlers(reachableK8sContext())
 
 	if chartErr := mch.GetOperatorChartError(); chartErr != nil {
 		t.Fatalf("operator chart error = %v, want the latch cleared by a resolution that succeeded", chartErr)
@@ -490,8 +507,13 @@ func TestUserInitiatedDeployRetriesResolutionAfterTheRepositoryRecovers(t *testi
 		t.Fatalf("attached chart version = %q, want %q re-attached by the retry",
 			mch.attachedOperatorChartVersion, bootChartVersion)
 	}
-	if err != nil && meshkiterrors.GetCode(err) == ErrNoOperatorChartPublishedCode {
-		t.Fatalf("the retry still refused on the stale latch: %v", err)
+
+	handler, attached, err := mch.operatorInstallTarget(testContextID)
+	if err != nil {
+		t.Fatalf("the install guard still refuses after a successful re-resolution: %v", err)
+	}
+	if !attached || handler == nil {
+		t.Fatal("a resolved re-attach must yield a handler to install through")
 	}
 }
 
@@ -759,35 +781,101 @@ func TestReconcileLeavesTheAttachedVersionClearedWhenResolutionFails(t *testing.
 	}
 }
 
-// TestReconcileInstallGoesThroughTheSharedGuard is the third install path.
-// operatorInstallTarget claims to be the one guard every install goes through,
-// and the reconcile used to read the handler straight out of the map and reach
-// Deploy without ever consulting the chart error - guarded only incidentally, by
-// lastOperatorError happening to be written in the same call that writes the
-// chart error.
+// TestInstallGuardRefusesOnALatchedChartError pins the guard itself, which all
+// three install sites - the FSM deploy, the user-initiated deploy, and the
+// chart-version reconcile - now route through. A handler is attached for
+// observation even when no version could be resolved, so "a handler exists" is
+// never on its own enough to install.
+func TestInstallGuardRefusesOnALatchedChartError(t *testing.T) {
+	mch := newTestControllersHelper(t)
+	stub := &stubController{status: controllers.NotDeployed}
+	mch.ctxControllerHandlers = map[MesheryController]controllers.IMesheryController{MesheryOperator: stub}
+
+	latched := ErrNoOperatorChartPublished(OperatorChartName, testChartRepo)
+	mch.setOperatorChartError(latched)
+
+	handler, attached, err := mch.operatorInstallTarget(testContextID)
+	if !errors.Is(err, latched) {
+		t.Fatalf("err = %v, want the latched chart failure", err)
+	}
+	if !attached {
+		t.Fatal("a handler was attached, so the refusal is about the chart version, not a missing handler")
+	}
+	if handler != nil {
+		t.Fatal("a refused install must yield nothing to install through")
+	}
+}
+
+// TestChartErrorLatchSurvivesAReattachThatNeverResolves is the sequence the
+// guard could not see. The refusal used to be cleared at the top of
+// AddCtxControllerHandlers, before the kubeconfig and Kubernetes-client steps
+// that return early - and those returns deliberately leave the previously
+// attached operator handler in place so observation survives. A connection that
+// first attached during a chart-repository outage, and whose credentials then
+// stopped working, therefore ended up with a handler still carrying the raw
+// unresolved chart version and no refusal against it, and the very next
+// DeployUndeployedOperators in the FSM chain would hand that version to Helm.
 //
-// Reaching that guard needs the two errors to disagree, which
-// AddCtxControllerHandlers never lets happen, so the divergence is injected
-// through the version lister: it succeeds - leaving lastOperatorError nil - and
-// latches a chart error on the re-attach's own resolution, which is exactly the
-// state a future writer of lastOperatorError could otherwise create.
-func TestReconcileInstallGoesThroughTheSharedGuard(t *testing.T) {
+// The refusal now lifts only where a resolution actually succeeded.
+func TestChartErrorLatchSurvivesAReattachThatNeverResolves(t *testing.T) {
+	mch := newTestControllersHelper(t)
+	mch.SetMeshsyncDeploymentMode(connections.MeshsyncDeploymentModeOperator)
+
+	indexErr := errors.New("repository unreachable")
+	mch.chartVersions = func(string, string) ([]string, error) { return nil, indexErr }
+	mch.AddCtxControllerHandlers(reachableK8sContext())
+	if mch.GetOperatorChartError() == nil {
+		t.Fatal("an unreadable index must withhold installation")
+	}
+	if mch.ctxControllerHandlers[MesheryOperator] == nil {
+		t.Fatal("the operator handler must stay attached for observation")
+	}
+
+	// The repository is readable again, but the stored kubeconfig no longer
+	// yields a Kubernetes client, so this run returns before it ever resolves a
+	// chart version - leaving the previous handler, and its unresolved version,
+	// in place.
+	mch.chartVersions = func(string, string) ([]string, error) { return publishedCharts, nil }
+	mch.AddCtxControllerHandlers(K8sContext{ID: testContextID, Name: "unparseable"})
+
+	if mch.GetOperatorChartError() == nil {
+		t.Fatal("a run that never reached resolution cleared the refusal, leaving a stale handler unguarded")
+	}
+	if mch.GetOperatorError() == nil {
+		t.Fatal("the Kubernetes client failure must still be recorded")
+	}
+
+	// Observed through a stub so that a regression refuses into a counter rather
+	// than into meshkit's Helm client.
+	stub := &stubController{status: controllers.NotDeployed}
+	mch.ctxControllerHandlers[MesheryOperator] = stub
+	mch.ctxOperatorStatus = controllers.NotDeployed
+
+	mch.DeployUndeployedOperators(NewOperatorTracker(false), testContextID)
+
+	if stub.deploys != 0 {
+		t.Fatalf("Deploy was called %d times with an unresolved chart version still attached", stub.deploys)
+	}
+}
+
+// TestReconcileInstallRefusesOnALatchedChartError covers the reconcile's own
+// install site. Its re-attach cannot clear a latch it never resolved past, so a
+// connection whose cluster became unreachable during a chart-repository outage
+// reports the failure instead of installing.
+func TestReconcileInstallRefusesOnALatchedChartError(t *testing.T) {
 	mch := newTestControllersHelper(t)
 	mch.SetMeshsyncDeploymentMode(connections.MeshsyncDeploymentModeOperator)
 	mch.SetControllersConfig(operatorVersionConfig("", connections.MeshsyncDeploymentModeOperator))
 	mch.attachedOperatorChartVersion = "v1.0.51"
 
-	latched := ErrNoOperatorChartPublished(OperatorChartName, testChartRepo)
-	reads := 0
-	mch.chartVersions = func(string, string) ([]string, error) {
-		reads++
-		if reads >= 2 {
-			mch.setOperatorChartError(latched)
-		}
-		return publishedCharts, nil
-	}
+	stub := &stubController{status: controllers.NotDeployed}
+	mch.ctxControllerHandlers = map[MesheryController]controllers.IMesheryController{MesheryOperator: stub}
+	mch.setOperatorChartError(ErrNoOperatorChartPublished(OperatorChartName, testChartRepo))
 
-	_, redeployed, err := mch.ReconcileOperatorChartVersion(reachableK8sContext(), NewOperatorTracker(false))
+	_, redeployed, err := mch.ReconcileOperatorChartVersion(
+		K8sContext{ID: testContextID, Name: "unparseable"},
+		NewOperatorTracker(false),
+	)
 	if redeployed {
 		t.Fatal("installation was refused, so nothing can have been redeployed")
 	}
@@ -797,8 +885,11 @@ func TestReconcileInstallGoesThroughTheSharedGuard(t *testing.T) {
 	if code := meshkiterrors.GetCode(err); code != ErrReconcileOperatorChartVersionCode {
 		t.Fatalf("error code = %q, want %q (from %v)", code, ErrReconcileOperatorChartVersionCode, err)
 	}
-	if !strings.Contains(err.Error(), "advertises no released") {
-		t.Fatalf("the reconcile reached Helm instead of refusing on the latched chart error: %v", err)
+	if stub.deploys != 0 {
+		t.Fatalf("Deploy was called %d times while a chart error was latched", stub.deploys)
+	}
+	if mch.GetOperatorChartError() == nil {
+		t.Fatal("a reconcile that never resolved must leave the refusal standing")
 	}
 	if mch.attachedOperatorChartVersion != "v1.0.51" {
 		t.Fatalf("attached chart version = %q, want the pre-reconcile value restored so the refusal is retried",

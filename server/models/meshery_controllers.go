@@ -734,8 +734,16 @@ func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *M
 	// Fresh setup attempt: clear any error from a previous attempt. It is re-set
 	// below (and in DeployUndeployedOperators) if this attempt fails, so the
 	// diagnostics API always reflects the latest operator setup outcome.
+	//
+	// operatorChartError is deliberately NOT cleared here. It is the refusal that
+	// keeps an unresolved chart version away from Helm, and the two paths below
+	// return without reaching resolution while leaving the previously attached
+	// operator handler - which still carries that unresolved version - in place.
+	// Clearing it up here therefore produced the one state the install guard
+	// cannot see: a stale handler with no refusal against it. It is cleared on
+	// the success path instead, so it lifts only when a resolution actually
+	// succeeded.
 	mch.setOperatorError(nil)
-	mch.setOperatorChartError(nil)
 
 	cfg, err := ctx.GenerateKubeConfig()
 	if err != nil {
@@ -815,6 +823,7 @@ func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *M
 	ctxHandlers[MesheryOperator] = controllers.NewMesheryOperatorHandler(client, depConfig)
 	mch.ctxControllerHandlers = ctxHandlers
 	mch.attachedOperatorChartVersion = depConfig.MesheryReleaseVersion
+	mch.setOperatorChartError(nil)
 
 	// }(mch)
 	return mch

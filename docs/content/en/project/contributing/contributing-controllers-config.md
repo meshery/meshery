@@ -211,6 +211,19 @@ instead of falling through to a `Deploy`. The FSM paths need no equivalent
 because they always run straight after a fresh `AddCtxControllerHandlers`, and
 `ReconcileOperatorChartVersion` re-resolves before it installs.
 
+"Only as a consequence of a resolution that succeeded" is where the clear
+physically sits, and it has to stay there. `AddCtxControllerHandlers` clears
+`lastOperatorError` at the top but clears `operatorChartError` on the success
+path, beside the handler built from the resolved config. Both of its early
+returns - an unreadable kubeconfig and a failed Kubernetes client - leave the
+*previously attached* operator handler in place so the operator card keeps
+reporting status, and that handler still carries whatever chart version it was
+built with. Clearing the refusal at the top therefore produced the one state the
+install guard cannot see: a stale handler holding an unresolved version with
+`GetOperatorChartError()` reading nil, which the very next
+`DeployUndeployedOperators` in an FSM chain would hand to Helm. Do not move that
+clear back up.
+
 `UndeployDeployedOperators` is deliberately **not** gated on the chart error:
 removal is the direction to attempt rather than refuse, since refusing would
 leave the operator running on a cluster the user asked to have it taken off.
@@ -479,10 +492,18 @@ Unit coverage that exists today:
   no chart version resolves; all three install paths - the FSM reconcile, the
   chart-version reconcile, and the user-initiated `SetOperatorDeployment` -
   refuse through the shared guard; a latched chart error is re-resolved on a
-  user-initiated retry and only clears when resolution actually succeeds;
-  undeploy does not refuse, a missing handler is reported by name with its
-  context id rather than passed over, teardown of a never-connected connection
-  stays quiet, and the kubeconfig/client diagnostic survives that teardown).
+  user-initiated retry, survives a re-attach that never reached resolution, and
+  clears only when resolution actually succeeds; undeploy does not refuse, a
+  missing handler is reported by name with its context id rather than passed
+  over, teardown of a never-connected connection stays quiet, and the
+  kubeconfig/client diagnostic survives that teardown).
+
+  These are unit tests and none of them may reach a meshkit `Deploy` or
+  `Undeploy`. `reachableK8sContext` yields real meshkit handlers, and meshkit
+  downloads the chart archive before it touches the cluster - so a test that
+  reaches an install performs live Helm I/O, and really installs the operator
+  wherever `127.0.0.1:6443` answers (Docker Desktop Kubernetes, k3s). Assert
+  through `operatorInstallTarget`, or swap a `stubController` in first.
 - `server/helpers/utils/helm_chart_repo_test.go` - the `index.yaml` read: chart
   version extraction, structured failures, TTL reuse, stale-while-revalidate on
   expiry (including through a failing refresh), that only a cold cache blocks,
