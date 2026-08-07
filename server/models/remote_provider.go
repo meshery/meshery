@@ -34,6 +34,7 @@ import (
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
+	userv1beta2 "github.com/meshery/schemas/models/v1beta2/user"
 	"github.com/meshery/schemas/models/v1beta3/environment"
 	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
@@ -122,10 +123,13 @@ type RemoteProvider struct {
 
 	MeshsyncDefaultDeploymentMode connections.MeshsyncDeploymentMode
 }
-type AnonymousFlowResponse struct {
-	AccessToken string    `json:"accessToken"`
-	Owner       core.Uuid `json:"owner,omitempty"`
-}
+
+// AnonymousFlowResponse is the remote provider's reply to the anonymous-user
+// mint. It is a CONSUMED contract - the provider produces it, Meshery Server
+// only decodes it - so it is the schemas construct itself, never a local
+// re-declaration. A local copy is how the field silently became `owner` while
+// the provider kept sending `userId`.
+type AnonymousFlowResponse = userv1beta2.AnonymousFlowResponse
 
 type userSession struct {
 	token   string
@@ -567,11 +571,24 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 		return
 	}
 
+	// A nil user id means the provider's reply carried none. Writing
+	// capabilities under the zero UUID would collapse every anonymous session
+	// onto a single row rather than fail, so refuse it outright - before the
+	// JWT cookie is set, so a refused session leaves no half-authenticated
+	// browser state behind.
+	if flowResponse.UserID.IsNil() {
+		err = ErrAnonymousUserIDMissing()
+		l.Log.Error(err)
+		http.Redirect(res, req, errorUI, http.StatusFound)
+
+		return
+	}
+
 	l.SetJWTCookie(res, flowResponse.AccessToken)
 
-	err = l.WriteCapabilitiesForUser(flowResponse.Owner.String(), &providerProperties)
+	err = l.WriteCapabilitiesForUser(flowResponse.UserID.String(), &providerProperties)
 	if err != nil {
-		err = ErrDBPut(fmt.Errorf("failed to write capabilities for the user %s: %w", flowResponse.Owner.String(), err))
+		err = ErrDBPut(fmt.Errorf("failed to write capabilities for the user %s: %w", flowResponse.UserID.String(), err))
 		l.Log.Error(err)
 		http.Redirect(res, req, errorUI, http.StatusFound)
 
@@ -1097,7 +1114,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 
 	// if undefined -> set to default
 	if connections.MeshsyncDeploymentModeFromMetadata(metadata) == connections.MeshsyncDeploymentModeUndefined {
-		connections.SetMeshsyncDeploymentModeToMetadata(
+		connections.MaterializeMeshsyncDeploymentMode(
 			metadata,
 			l.MeshsyncDefaultDeploymentMode,
 		)
@@ -2173,7 +2190,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 		q.Set("type", typ)
 	}
 	if oamType != "" {
-		q.Set("oam_type", oamType)
+		q.Set("oamType", oamType)
 	}
 
 	remoteProviderURL.RawQuery = q.Encode()
@@ -5227,7 +5244,7 @@ func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID co
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
 	q := remoteProviderURL.Query()
-	q.Add("credential_id", credentialID.String())
+	q.Add("credentialId", credentialID.String())
 	remoteProviderURL.RawQuery = q.Encode()
 	l.Log.Debug("constructed credential url: ", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)

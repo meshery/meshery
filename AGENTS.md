@@ -131,6 +131,35 @@ bodies, the `From<Variant>Payload` union builders) rather than a
 `map[string]interface{}` — see `mesheryctl/internal/cli/root/design/import.go`.
 A hand-written map is how camelCase `fileName` regressed to `file_name`.
 
+### A local endpoint that shadows a schemas operationId is DEAD CODE
+
+`injectEndpoints` without `overrideExisting: true` **silently discards** any
+endpoint whose name `@meshery/schemas` already defines (dev-only console warning)
+and serves every call from the schemas definition, so a local declaration can sit
+there looking authoritative while a different request goes over the wire - which
+is how notification delete shipped as `DELETE /api/events/undefined`. Before
+adding a `builder.query`/`builder.mutation`, check the name against the generated
+client (`grep '<name>:t\.' ui/node_modules/@meshery/schemas/dist/mesheryApi.js`);
+if it is there, consume the generated hook - that is the rule above anyway.
+
+The deliberate-override exception and the rule that tests must assert the
+*effective* endpoint rather than the declared one are in
+`docs/content/en/project/contributing/ui/schemas.md` (Integration Points in UI, A).
+
+### Consumed contracts are the schemas type, not a copy of it
+
+A struct Meshery only *decodes* from a remote provider (or only *encodes* to one)
+carries no local freedom: it is the schemas construct, aliased. A local copy is
+how `AnonymousFlowResponse` came to read `owner` while meshery-cloud kept sending
+`userId`, so every anonymous sign-in wrote its capabilities under the nil UUID.
+The same rename hit `PatternResource` and `Preference.selectedOrganizationId`.
+
+When the Go type must stay local because it doubles as a GORM model (the schemas
+models carry `db:` tags GORM does not read), keep the **JSON tags** identical to
+the schemas construct and pin the column explicitly with `gorm:"column:..."` -
+see `server/models/pattern_resource.go`. Guard it with a test that compares the
+emitted JSON keys against the schemas type rather than restating them by hand.
+
 ## Build & Development Commands
 
 - Use the `gh-axi` CLI tool to interact with GitHub. Prefer `gh-axi` over `gh`.
@@ -234,6 +263,15 @@ make helm-docs      # Generate Helm chart docs
   `mesheryctl/helpers/component_info.json` (`next_error_code`) and that value bumped in the
   same commit. `.github/workflows/error-codes-updater.yaml` re-runs errorutil and fails the
   PR if its analysis reports anything.
+  The server side has the same contract in `server/helpers/component_info.json`: errorutil
+  refuses to run at all ("next_error_code is lower than or equal to highest used code") until
+  `next_error_code` is bumped past every code you added, so bump it in the same commit.
+  Name each constant `<BuilderFuncName>Code` - errorutil keys the export off that pairing.
+  `server/helpers/errorutil_errors_export.json` is gitignored, but the reference data at
+  `docs/data/errorref/meshery-server_errors_export.json` is tracked: regenerate it with the
+  `jq --slurpfile` wrapper the workflow uses, or the docs reference silently omits the new
+  codes. Adding a constant longer than the block's current widest name makes gofmt realign
+  the entire `error.go` const block - prefer a shorter name over a 300-line whitespace diff.
 - Only `utils.Log.Error(err)` renders a MeshKit error's code, cause and remediation; cobra's
   default print shows just the message. In `mesheryctl` commands, log the structured error
   for the user *and* return it for the exit path.

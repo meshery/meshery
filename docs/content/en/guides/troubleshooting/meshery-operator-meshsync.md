@@ -40,6 +40,10 @@ Each Meshery Operator controller offers a health status that you can use to unde
 - **UNDEPLOYED:** Custom Resource not deployed.
 - **CONNECTED:** Deployed, sending data to Meshery Server.
 
+### When a controller reports UNKOWN
+
+Any of the three can instead report **UNKOWN** (spelled that way on the wire). It is not a health state: it means Meshery made no observation of that controller on this cluster, so it is asserting nothing about it. All three report it at once when the connection's kubeconfig could not be read or its Kubernetes client could not be created, since nothing about the cluster was observable. The cards stay visible on purpose - the reason is in the connection's [Diagnostics](#diagnostics-in-the-connection-detail-view) and in the events feed, not in the status itself.
+
 ## Meshery Operator Deployment Scenarios
 
 Because Meshery is versatile in its deployment models, there are different scenarios in which you may need to troubleshoot the health of Meshery Operator. Identify the deployment model fitting your environment and follow the guidance under the respective scenario to troubleshoot accordingly.
@@ -81,6 +85,85 @@ Some common failure situations that Meshery users might face are described below
    5. **Broker unreachable / not authenticated (out-of-cluster Meshery):** the Broker is `ClusterIP`-only and unreachable, or Meshery is not presenting the NATS token. See [Out-of-Cluster Deployment](#out-of-cluster-deployment); the connection's [Diagnostics](#diagnostics-in-the-connection-detail-view) will report `broker_unreachable` with remediation.
 1. **Situation:** The `meshery-nats` (Broker) pod is in `CrashLoopBackOff` and never becomes ready.
    1. **Probable cause:** Some Meshery Operator versions inject the NATS token into `nats.conf` **unquoted** (`token: $NATS_TOKEN`). When the generated token happens to look like a number, the NATS config parser rejects it and the pod crash-loops. Confirm with `kubectl logs -n meshery meshery-nats-0 -c nats` (look for a `variable reference for 'NATS_TOKEN' ... could not be parsed` error). The fix belongs in the Operator (quote it: `token: "$NATS_TOKEN"`); redeploying often generates a token that parses.
+1. **Situation:** The `meshery-operator` pod never becomes ready after connecting a cluster. Its `kube-rbac-proxy` container is in `ImagePullBackOff`, and/or its `manager` container crash-loops with `open /tmp/k8s-webhook-server/serving-certs/tls.crt: no such file or directory`.
+   1. **Probable cause:** An old Meshery Operator Helm chart was installed. See [Meshery Operator will not start: ImagePullBackOff and a missing webhook certificate](#meshery-operator-will-not-start-imagepullbackoff-and-a-missing-webhook-certificate).
+
+## Meshery Operator will not start: ImagePullBackOff and a missing webhook certificate
+
+**Signature.** After adding a Kubernetes connection, the operator never reaches **DEPLOYED**. Both of these appear together:
+
+```bash
+kubectl -n meshery get pods
+# meshery-operator-...   1/2   ImagePullBackOff   (kube-rbac-proxy)
+#                              CrashLoopBackOff   (manager)
+
+kubectl -n meshery describe pod -l app=meshery-operator | grep -A2 kube-rbac-proxy
+# Failed to pull image "registry.k8s.io/kubebuilder/kube-rbac-proxy:v0.16.0"
+# ...older charts name the same sidecar under the other registry:
+# Failed to pull image "gcr.io/kubebuilder/kube-rbac-proxy:v0.16.0"
+
+kubectl -n meshery logs deploy/meshery-operator -c manager
+# open /tmp/k8s-webhook-server/serving-certs/tls.crt: no such file or directory
+```
+
+**Cause.** Both symptoms come from one thing: an **old `meshery-operator` Helm chart**, from before `v1.0.51`.
+
+- Those charts ship a `kube-rbac-proxy` sidecar next to the manager. Charts around `v0.8.214` and above - including the chart a helm-installed Meshery Server asks for, which is the usual case - name it `registry.k8s.io/kubebuilder/kube-rbac-proxy:v0.16.0`; older charts such as `v0.8.180` name the same image as `gcr.io/kubebuilder/kube-rbac-proxy:v0.16.0`. Match on either. When that image does not pull, the container sits in `ImagePullBackOff` and the Pod never becomes ready.
+  - Why the pull fails is not the same story for both registries, and only one of them is settled: the `gcr.io` copy of `v0.16.0` is gone (the repository's tag list is empty and the tag returns `404`), while the `registry.k8s.io` copy still resolves from an unrestricted network. So if your cluster reports the pull failing on `registry.k8s.io`, treat it as something about that cluster's access to the registry rather than as the image having been withdrawn. The remedy below does not depend on which it is.
+- They also set no `ENABLE_WEBHOOKS` on the manager and mount no serving certificate. Current operator images treat an unset `ENABLE_WEBHOOKS` as *enabled*, so the manager looks for a certificate that the old chart never created and crash-loops.
+
+`v1.0.51` is the oldest published chart confirmed to render without the sidecar and with `ENABLE_WEBHOOKS=false` - the conversion webhook opt-in, off by default - and every chart above it does the same. Both conditions behind the symptoms - the sidecar, and the absent `ENABLE_WEBHOOKS` - were confirmed by rendering the published archives of `v1.0.40` and of the contiguous run `v1.0.41` through `v1.0.50` (`v1.0.47` was never published); charts older than `v1.0.40` were not rendered, so treat "older than `v1.0.51`" as the boundary rather than a claim about any specific ancient release.
+
+**Remedy.** Get a chart at or above `v1.0.51` into the cluster.
+
+If Meshery Server deployed the operator for you (the usual case: you added a kubeconfig and Meshery installed the operator), simply **upgrade Meshery Server**. Meshery Server will not install a chart below `v1.0.51`: it resolves the chart version against what the repository actually publishes and raises anything older to the oldest published chart at or above that boundary, telling you it did so in the events feed. Then reconnect the cluster.
+
+If you installed the operator chart yourself with Helm:
+
+```bash
+helm repo add meshery https://meshery.github.io/meshery.io/charts
+helm repo update
+helm upgrade --install meshery-operator meshery/meshery-operator \
+  --namespace meshery --create-namespace
+```
+
+`helm repo update` matters on its own: a stale local repository cache will happily reinstall the same broken chart.
+
+If the operator Pod is still wedged after the upgrade, delete it so the new spec takes effect immediately:
+
+```bash
+kubectl -n meshery rollout restart deploy/meshery-operator
+```
+
+### Confirming which Meshery Operator version is deployed
+
+The chart version and the operator image tag are different numbers; the image tag is what tells you which operator is actually running:
+
+```bash
+# The operator image actually running in the cluster
+kubectl -n meshery get deploy meshery-operator \
+  -o jsonpath='{.spec.template.spec.containers[0].image}{"\n"}'
+
+# The Helm chart release that installed it (chart version and app version)
+helm -n meshery list --filter meshery-operator
+```
+
+A `kube-rbac-proxy` container in the output of the following command means the chart predates `v1.0.51`, whatever version it claims:
+
+```bash
+kubectl -n meshery get deploy meshery-operator \
+  -o jsonpath='{range .spec.template.spec.containers[*]}{.name}{"\n"}{end}'
+```
+
+### Choosing the chart version yourself
+
+Meshery Server normally deploys the operator chart that matches its own release, falling back to the newest published chart when that one is not published yet (chart publishing trails Meshery Server releases). To pin a specific chart version for one connection, set **`operator.version`** in the connection's controllers configuration.
+
+The value must be a chart version that the repository publishes, for example `v1.0.64` (the leading `v` is optional - `1.0.64` names the same chart). A moving tag such as `stable-latest`, or a version that is not published, is rejected with a visible error rather than being silently replaced. Clear the field to go back to tracking the Meshery Server release.
+
+Release candidates are the one thing Meshery will never pick for you: when it falls back to the newest published chart, or raises an old one to the oldest chart known to deploy, it skips any version carrying a prerelease suffix such as `v1.0.66-rc.1`. Naming a prerelease in `operator.version` deploys it exactly as asked.
+
+If the chart repository cannot be reached, Meshery still reports the operator's status and image version for an operator that is already installed - only installing or upgrading it is withheld, and the reason appears in the connection's diagnostics and in the events feed.
 
 ## Operating Meshery without Meshery Operator
 

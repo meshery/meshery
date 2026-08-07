@@ -10,6 +10,7 @@ import ControllersConfigForm, {
   BUILT_IN_CONTROLLERS_CONFIG,
 } from '@/components/configuration/ControllersConfigForm';
 import { useControllersConfigDraft } from '@/components/configuration/useControllersConfigDraft';
+import { connectionDeploymentMode } from '@/components/configuration/deploymentMode';
 
 type ConnectionControllersConfigModalProps = {
   isOpen: boolean;
@@ -46,6 +47,18 @@ export default function ConnectionControllersConfigModal({
       saveSuccess: `Controllers configuration applied to ${connectionName || 'connection'}.`,
     },
     onSaved: onClose,
+  });
+
+  // Meshery Operator manages MeshSync and Meshery Broker, so the mode this
+  // connection resolves to decides which settings can reach the cluster at all.
+  // It follows the draft, not just the persisted state: switching the mode
+  // select brings the dependent sections to life (or puts them to sleep)
+  // before the save rather than after it.
+  const deploymentMode = connectionDeploymentMode({
+    draft,
+    persistedOverride: data?.override,
+    serverDefault: data?.default,
+    serverEffective: data?.effective,
   });
 
   return (
@@ -86,6 +99,7 @@ export default function ConnectionControllersConfigModal({
         inheritedLayers={[data?.default, BUILT_IN_CONTROLLERS_CONFIG]}
         inheritLabel="Server default"
         showSourceIndicators
+        deploymentMode={deploymentMode}
         disabled={isLoading || isSaving}
       />
     </Modal>

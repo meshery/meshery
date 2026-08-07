@@ -33,7 +33,8 @@ It is recommended to deploy one Meshery Operator per cluster.
 Meshery Server installs the `meshery-operator` Helm chart from
 [meshery.io/charts](https://meshery.io/charts) into the `meshery` namespace of
 each managed cluster, requesting the chart version that **matches the Meshery
-Server release**. Upgrading Meshery Server is therefore what upgrades the
+Server release** and resolving it against the versions the repository actually
+publishes. Upgrading Meshery Server is therefore what upgrades the
 Operator: the Server re-applies the newer chart, the chart's CRD update Job
 refreshes the CRD schemas, and the Operator Deployment rolls to the operator
 version pinned in that chart. Manual operator upgrades on Server-managed

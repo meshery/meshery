@@ -532,7 +532,7 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 	maps.Copy(metadata, additionalMetadata)
 
 	if connections.MeshsyncDeploymentModeFromMetadata(metadata) == connections.MeshsyncDeploymentModeUndefined {
-		connections.SetMeshsyncDeploymentModeToMetadata(
+		connections.MaterializeMeshsyncDeploymentMode(
 			metadata,
 			l.MeshsyncDefaultDeploymentMode,
 		)
