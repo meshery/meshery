@@ -79,6 +79,8 @@ If your config has not been autodetected, you can manually upload your kubeconfi
 
 Run connectivity tests and verify the health of your Meshery system. Verify Meshery's connection to your Kubernetes clusters by clicking on the connection chip. A quick connectivity test will run and inform you of Meshery's ability to reach and authenticate to your Kubernetes control plane(s). You will be notified of your connection status. You can also verify any other connection between Meshery and either its components (like [Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}})) or other managed infrastructure by clicking on any of the connection chips. When clicked, a chip will perform an ad hoc connectivity test.
 
+If the Meshery Operator does not reach a healthy status, its status card and the connection's Diagnostics carry the reason - deploying the Operator needs outbound access to the Meshery chart repository, and Meshery retries resolution on each deploy, so a transient outage clears by redeploying. See [Meshery Operator and MeshSync troubleshooting]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md" >}}).
+
 <a href="./images/k8s-context-switcher.png" alt="Meshery Kubernetes Context Switcher">
   <img class="center" style="width:min(100%,350px);" src="./images/k8s-context-switcher.png" />
 </a>

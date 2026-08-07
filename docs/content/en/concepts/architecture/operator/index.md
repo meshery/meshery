@@ -41,6 +41,26 @@ version pinned in that chart. Manual operator upgrades on Server-managed
 clusters are reverted by the Server's reconciliation — see
 [How Meshery Server manages Meshery Operator]({{< ref "installation/upgrades/index.md#how-meshery-server-manages-meshery-operator" >}}).
 
+Resolution is what keeps that request honest. Because charts are published
+independently of Server releases, the version matching a Server release may not
+exist yet; it resolves to the newest published chart instead. A version below
+the oldest chart verified to deploy is raised to the oldest published chart at
+or above that boundary, and release candidates are never selected
+automatically. A per-connection `operator.version` overrides the derived
+version and is honored exactly - or refused with a visible error, never
+silently replaced. When no version can be resolved, installation is withheld
+and the error appears on the Operator's status card and in the connection's
+diagnostics; an already-installed Operator keeps reporting status and version
+throughout. What the Operator itself deploys is pinned in turn: MeshSync and
+the Broker run specific released versions, not moving channel tags.
+
+To see which Operator is actually running on a cluster:
+
+```bash
+kubectl -n meshery get deploy meshery-operator \
+  -o jsonpath='{.spec.template.spec.containers[0].image}{"\n"}'
+```
+
 ## Custom resources
 
 The Operator owns two CRDs, each reconciled into concrete workloads:

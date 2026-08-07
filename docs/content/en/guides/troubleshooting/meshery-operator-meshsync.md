@@ -165,6 +165,16 @@ Release candidates are the one thing Meshery will never pick for you: when it fa
 
 If the chart repository cannot be reached, Meshery still reports the operator's status and image version for an operator that is already installed - only installing or upgrading it is withheld, and the reason appears in the connection's diagnostics and in the events feed.
 
+### When the chart version cannot be resolved
+
+A version that cannot be resolved - an `operator.version` naming something the repository does not publish, or a chart repository Meshery could not read at all - stops the install *before* Helm is called. Nothing partial is applied to the cluster.
+
+**The failure is visible, not silent.** The Operator's status card carries the error, and the connection's [Diagnostics](#diagnostics-in-the-connection-detail-view) report `operator_deploy_failed` with the underlying cause; the same cause appears in the events feed. The card does not vanish and the operator does not sit at a blank status while Meshery quietly gives up.
+
+**Retrying is the remedy for a transient outage.** Meshery re-resolves the version on a user-initiated deploy, so a chart repository that was briefly unreachable needs no reconnect and no restart: redeploy the Operator from the connection's actions and it self-heals. Check first that Meshery Server has outbound access to `https://meshery.github.io/meshery.io/charts` ([egress requirements]({{< ref "installation/production/networking-and-connectivity.md#egress-requirements" >}})).
+
+If the error names your own pin, the pin is the problem - correct `operator.version` to a published version or clear it to go back to tracking the Meshery Server release. An explicit pin is never quietly swapped for a working one.
+
 ## Operating Meshery without Meshery Operator
 
 Meshery Operator, MeshSync, and Broker are crucial components in a Meshery deployment. Meshery can function without them, but some functions of Meshery will be disable / unusable. Whether Meshery Operator is initially deployed via `mesheryctl` command or via Meshery Server, you can monitor the health of the Meshery Operator deployment using either the CLI or UI clients.
