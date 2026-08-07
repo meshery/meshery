@@ -159,6 +159,8 @@ const (
 	ErrInvalidUUIDValueCode               = "meshery-server-1432"
 	ErrSystemSettingsCode                 = "meshery-server-1439"
 	ErrApplyControllersConfigCode         = "meshery-server-1440"
+	ErrReconcileOperatorChartVersionCode  = "meshery-server-1466"
+	ErrOperatorHandlerNotAttachedCode     = "meshery-server-1465"
 )
 
 var (
@@ -762,4 +764,18 @@ func ErrSystemSettings(err error) error {
 // managed cluster.
 func ErrApplyControllersConfig(err error) error {
 	return errors.New(ErrApplyControllersConfigCode, errors.Alert, []string{"Error applying controllers configuration to the cluster"}, []string{err.Error()}, []string{"The MeshSync or Broker custom resource could not be patched, or the MeshSync deployment overlay could not be applied.", "The Meshery Operator may not be deployed on the target cluster yet."}, []string{"Confirm the cluster is reachable and the Meshery Operator is deployed (operator deployment mode).", "Retry the change; configuration is re-applied whenever the connection reconnects."})
+}
+
+// ErrReconcileOperatorChartVersion wraps failures redeploying Meshery Operator
+// at the Helm chart version a connection's resolved controllers configuration
+// asks for (`operator.version`).
+func ErrReconcileOperatorChartVersion(err error) error {
+	return errors.New(ErrReconcileOperatorChartVersionCode, errors.Alert, []string{"Error deploying Meshery Operator at the configured chart version"}, []string{err.Error()}, []string{"The requested Meshery Operator Helm chart version does not exist in the chart repository, or the cluster rejected the Helm release."}, []string{"Confirm the chart version exists in the Meshery Operator Helm repository, or clear operator.version to track the Meshery Server release.", "Confirm the cluster is reachable and the Meshery namespace is writable."})
+}
+
+// ErrOperatorHandlerNotAttached reports that no Meshery Operator controller
+// handler is attached to a Kubernetes context, so operator-level actions
+// (deploy, undeploy, chart-version reconcile) have nothing to act through.
+func ErrOperatorHandlerNotAttached(contextID string) error {
+	return errors.New(ErrOperatorHandlerNotAttachedCode, errors.Alert, []string{"No Meshery Operator controller handler is attached"}, []string{"Controller handlers are attached when a Kubernetes connection connects; for context " + contextID + " attaching them failed or has not happened yet."}, []string{"The connection's kubeconfig could not be generated, or the Kubernetes client could not be created."}, []string{"Reconnect the Kubernetes connection and retry; the configuration is re-applied on connect."})
 }

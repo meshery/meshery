@@ -289,6 +289,8 @@ describe('workspace endpoints', () => {
     const req = fetchMock.mock.calls[0][0] as Request;
     expect(req.method).toBe('POST');
     expect(req.url).toContain('/api/workspaces');
+    const body = await req.json();
+    expect(body).toEqual({ name: 'w-name', description: 'desc', organizationId: 'org-1' });
   });
 
   it('updateWorkspace PUTs against /api/workspaces/:workspaceId', async () => {
@@ -303,6 +305,8 @@ describe('workspace endpoints', () => {
     const req = fetchMock.mock.calls[0][0] as Request;
     expect(req.method).toBe('PUT');
     expect(req.url).toContain('/api/workspaces/w-1');
+    const body = await req.json();
+    expect(body).toEqual({ name: 'updated' });
   });
 
   it('deleteWorkspace DELETEs /api/workspaces/:workspaceId', async () => {
