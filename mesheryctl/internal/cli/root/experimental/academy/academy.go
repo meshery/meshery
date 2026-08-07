@@ -16,6 +16,13 @@ var AcademyCmd = &cobra.Command{
 	Use:   "academy",
 	Short: "Layer5 Academy related commands",
 	Long:  `Manage scaffolding and creation of Layer5 Academy content.`,
+	Example: `
+// Scaffold a full learning path tree
+mesheryctl exp academy create --type learning-path --title "My Path" --level beginner
+
+// Scaffold a single course into an existing tree
+mesheryctl exp academy create --type course --title "New Course" --into ./my-path
+`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Help()

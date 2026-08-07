@@ -7,7 +7,6 @@ import (
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 type cmdAcademyCreateFlags struct {
@@ -61,13 +60,13 @@ mesheryctl exp academy create --type course --title "New Course" --into ./my-pat
 		}
 
 		orgID := createAcademyFlags.OrgID
-		if orgID == "" {
-			orgID = viper.GetString("org") // fallback to meshconfig org if any
-		}
 
 		if cType == LearningPath || cType == Certification {
 			if orgID == "" {
 				return errMissingOrgID()
+			}
+			if err := validatePathSegment(orgID); err != nil {
+				return err
 			}
 			targetDir = filepath.Join(targetDir, "content", contentDirSegment(cType), orgID)
 		}
@@ -81,33 +80,24 @@ mesheryctl exp academy create --type course --title "New Course" --into ./my-pat
 			}
 		}
 
-		if cType == LearningPath || cType == Course || cType == Module || cType == Certification {
-			return scaffoldTree(
-				cType,
-				createAcademyFlags.Title,
-				createAcademyFlags.Description,
-				createAcademyFlags.Level,
-				orgID,
-				createAcademyFlags.Category,
-				tagsList,
-				targetDir,
-				createAcademyFlags.Force,
-				createAcademyFlags.ID,
-			)
+		opts := ScaffoldOptions{
+			Type:        cType,
+			Title:       createAcademyFlags.Title,
+			Description: createAcademyFlags.Description,
+			Level:       createAcademyFlags.Level,
+			OrgID:       orgID,
+			Category:    createAcademyFlags.Category,
+			Tags:        tagsList,
+			TargetDir:   targetDir,
+			Force:       createAcademyFlags.Force,
+			ID:          createAcademyFlags.ID,
 		}
 
-		return scaffoldNode(
-			cType,
-			createAcademyFlags.Title,
-			createAcademyFlags.Description,
-			createAcademyFlags.Level,
-			orgID,
-			createAcademyFlags.Category,
-			tagsList,
-			targetDir,
-			createAcademyFlags.Force,
-			createAcademyFlags.ID,
-		)
+		if cType == LearningPath || cType == Course || cType == Module || cType == Certification {
+			return scaffoldTree(opts)
+		}
+
+		return scaffoldNode(opts)
 	},
 }
 

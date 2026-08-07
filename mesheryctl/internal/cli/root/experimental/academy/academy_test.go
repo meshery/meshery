@@ -8,26 +8,35 @@ import (
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshkit/errors"
 )
 
 func TestAcademyCreate(t *testing.T) {
-	tempDir, err := os.MkdirTemp("", "academy-test")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(tempDir)
-
-	cwd, _ := os.Getwd()
-	defer os.Chdir(cwd)
-	_ = os.Chdir(tempDir)
+	tempDir := t.TempDir()
+	t.Chdir(tempDir)
 
 	utils.Log = utils.SetupMeshkitLogger("mesheryctl", false, os.Stdout)
 	mesheryctlflags.InitValidators(AcademyCmd)
 
+	resetFlags := func(t *testing.T) {
+		t.Helper()
+		defaults := map[string]string{
+			"type": "", "title": "", "description": "", "into": "",
+			"org": "", "level": "", "category": "", "tags": "",
+			"id": "", "force": "false",
+		}
+		for name, value := range defaults {
+			if err := createCmd.Flags().Set(name, value); err != nil {
+				t.Fatalf("failed to reset flag %q: %v", name, err)
+			}
+		}
+	}
+
 	tests := []struct {
-		name      string
-		args      []string
-		expectErr bool
+		name         string
+		args         []string
+		expectErr    bool
+		expectedCode string
 	}{
 		{
 			name:      "missing type flag",
@@ -56,7 +65,7 @@ func TestAcademyCreate(t *testing.T) {
 		},
 		{
 			name:      "fresh scaffold learning path into explicit dir",
-			args:      []string{"create", "--type", "learning-path", "--title", "My Explicit Path", "--description", "Desc", "--into", tempDir, "--category", "cloud", "--tags", "kubernetes, infra", "--org", "explicit-org"},
+			args:      []string{"create", "--type", "learning-path", "--title", "My Explicit Path", "--description", "Desc", "--into", tempDir, "--category", "cloud", "--tags", "kubernetes, infra", "--org", "explicit-org", "--level", "advanced"},
 			expectErr: false,
 		},
 		{
@@ -75,10 +84,12 @@ func TestAcademyCreate(t *testing.T) {
 			expectErr: false,
 		},
 		{
-			name:      "invalid nesting error",
-			args:      []string{"create", "--type", "module", "--title", "Bad Module", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path")},
-			expectErr: true,
+			name:         "invalid nesting error",
+			args:         []string{"create", "--type", "module", "--title", "Bad Module", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path")},
+			expectErr:    true,
+			expectedCode: ErrInvalidNestingCode,
 		},
+
 		{
 			name:      "scaffold single node (course) with correct nesting",
 			args:      []string{"create", "--type", "course", "--title", "New Course", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path")},
@@ -129,25 +140,54 @@ func TestAcademyCreate(t *testing.T) {
 			args:      []string{"create", "--type", "exam", "--title", "Final Exam", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "certifications", "cert-org", "cert-1")},
 			expectErr: false,
 		},
+		{
+			name:      "reject orgID with path traversal",
+			args:      []string{"create", "--type", "learning-path", "--title", "My Path", "--description", "Desc", "--org", "../invalid-org"},
+			expectErr: true,
+		},
+		{
+			name:         "scaffold page under lab should fail",
+			args:         []string{"create", "--type", "page", "--title", "Bad Page", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path", "course-1", "module-1", "lab-1")},
+			expectErr:    true,
+			expectedCode: ErrInvalidNestingCode,
+		},
+		{
+			name:         "scaffold test under test should fail",
+			args:         []string{"create", "--type", "test", "--title", "Bad Test", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "certifications", "cert-org", "cert-1", "test-1")},
+			expectErr:    true,
+			expectedCode: ErrInvalidNestingCode,
+		},
+		{
+			name:      "inherit level from parent",
+			args:      []string{"create", "--type", "page", "--title", "Inherited Level Page", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "explicit-org", "my-explicit-path", "course-1", "module-1")},
+			expectErr: false,
+		},
+		{
+			name:      "reject invalid title slug",
+			args:      []string{"create", "--type", "course", "--title", "../../", "--description", "Desc", "--into", filepath.Join(tempDir, "content")},
+			expectErr: true,
+		},
+		{
+			name:      "escape special characters in title and ID",
+			args:      []string{"create", "--type", "learning-path", "--title", `Title with "quotes" and \backslashes`, "--description", `Desc`, "--id", `"my-id"`, "--org", "escape-org", "--into", tempDir},
+			expectErr: false,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			createCmd.Flags().Set("type", "")
-			createCmd.Flags().Set("title", "")
-			createCmd.Flags().Set("description", "")
-			createCmd.Flags().Set("into", "")
-			createCmd.Flags().Set("org", "")
-			createCmd.Flags().Set("level", "")
-			createCmd.Flags().Set("category", "")
-			createCmd.Flags().Set("tags", "")
-			createCmd.Flags().Set("id", "")
-			createCmd.Flags().Set("force", "false")
+			resetFlags(t)
 
 			AcademyCmd.SetArgs(tt.args)
 			err := AcademyCmd.Execute()
 			if (err != nil) != tt.expectErr {
 				t.Fatalf("expected error: %v, got: %v", tt.expectErr, err)
+			}
+			if tt.expectErr && tt.expectedCode != "" && err != nil {
+				code := errors.GetCode(err)
+				if code != tt.expectedCode {
+					t.Fatalf("expected error code %q, got %q", tt.expectedCode, code)
+				}
 			}
 		})
 	}
@@ -179,8 +219,8 @@ func TestAcademyCreate(t *testing.T) {
 	if !strings.Contains(contentStr2, "categories: \"cloud\"") {
 		t.Errorf("learning-path explicit should contain singular category")
 	}
-	if !strings.Contains(contentStr2, "- kubernetes") || !strings.Contains(contentStr2, "- infra") {
-		t.Errorf("learning-path explicit should contain tags as list")
+	if !strings.Contains(contentStr2, `- "kubernetes"`) || !strings.Contains(contentStr2, `- "infra"`) {
+		t.Errorf("learning-path explicit should contain tags as list with quotes, got: %v", contentStr2)
 	}
 
 	// 3. Check course (no ID placeholder)
@@ -249,5 +289,30 @@ func TestAcademyCreate(t *testing.T) {
 	_, err = os.Stat(examPath)
 	if err != nil {
 		t.Fatalf("Failed to verify exam under certification: %v", err)
+	}
+
+	// 9. Check escaping of special characters
+	escapedPath := filepath.Join(tempDir, "content", "learning-paths", "escape-org", "title-with-quotes-and-backslashes", "_index.md")
+	escapedContent, err := os.ReadFile(escapedPath)
+	if err != nil {
+		t.Fatalf("Failed to read scaffolded escaped learning-path _index.md: %v", err)
+	}
+	escapedStr := string(escapedContent)
+
+	if !strings.Contains(escapedStr, `title: "Title with \"quotes\" and \\backslashes"`) {
+		t.Errorf("title was not properly escaped: %v", escapedStr)
+	}
+	if !strings.Contains(escapedStr, `id: "\"my-id\""`) {
+		t.Errorf("id was not properly escaped: %v", escapedStr)
+	}
+
+	// 10. Check level inheritance
+	inheritedPagePath := filepath.Join(tempDir, "content", "learning-paths", "explicit-org", "my-explicit-path", "course-1", "module-1", "inherited-level-page", "_index.md")
+	inheritedContent, err := os.ReadFile(inheritedPagePath)
+	if err != nil {
+		t.Fatalf("Failed to read scaffolded inherited level page _index.md: %v", err)
+	}
+	if !strings.Contains(string(inheritedContent), `level: "advanced"`) {
+		t.Errorf("expected inherited level 'advanced' in page frontmatter, got: %v", string(inheritedContent))
 	}
 }

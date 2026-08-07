@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
+	"strconv"
 	"text/template"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/experimental/academy/templates"
@@ -126,134 +126,212 @@ func checkNesting(cType ContentType, parentDir string) (ParentFrontmatter, error
 	return pf, nil
 }
 
-func scaffoldNode(cType ContentType, title, description, level, orgId, category string, tags []string, targetDir string, force bool, id string) error {
-	tmplStr := getTemplateString(cType)
+type ScaffoldOptions struct {
+	Type        ContentType
+	Title       string
+	Description string
+	Level       string
+	OrgID       string
+	Category    string
+	Tags        []string
+	TargetDir   string
+	Force       bool
+	ID          string
+}
+
+func scaffoldNode(opts ScaffoldOptions) error {
+	tmplStr := getTemplateString(opts.Type)
 	if tmplStr == "" {
-		return errTaxonomyType(string(cType))
+		return errTaxonomyType(string(opts.Type))
 	}
 
-	pf, err := checkNesting(cType, targetDir)
+	pf, err := checkNesting(opts.Type, opts.TargetDir)
 	if err != nil {
 		return err
 	}
 	parentType := pf.Type
 
-	if level == "" && pf.Level != "" {
-		level = pf.Level
+	if opts.Level == "" && pf.Level != "" {
+		opts.Level = pf.Level
 	}
-	if category == "" && pf.Category != "" {
-		category = pf.Category
+	if opts.Category == "" && pf.Category != "" {
+		opts.Category = pf.Category
 	}
-	if len(tags) == 0 && len(pf.Tags) > 0 {
-		tags = pf.Tags
+	if len(opts.Tags) == 0 && len(pf.Tags) > 0 {
+		opts.Tags = pf.Tags
 	}
 
-	if id == "" && (cType == LearningPath || cType == Certification) {
-		id = "REPLACE_WITH_INSTRUCTOR_CONSOLE_ID"
+	if opts.ID == "" && (opts.Type == LearningPath || opts.Type == Certification) {
+		opts.ID = "REPLACE_WITH_INSTRUCTOR_CONSOLE_ID"
 	}
 
 	var indexPath string
-	folderName := strings.ToLower(strings.ReplaceAll(title, " ", "-"))
+	folderName, err := makeSlug(opts.Title)
+	if err != nil {
+		return err
+	}
 
-	if cType == Test && (parentType == Course || parentType == Module) {
-		indexPath = filepath.Join(targetDir, "test.md")
-	} else if cType == Exam && parentType == Course {
-		indexPath = filepath.Join(targetDir, "course-exam.md")
+	if opts.Type == Test && (parentType == Course || parentType == Module) {
+		indexPath = filepath.Join(opts.TargetDir, "test.md")
+	} else if opts.Type == Exam && parentType == Course {
+		indexPath = filepath.Join(opts.TargetDir, "course-exam.md")
 	} else {
-		if cType == Test && parentType == Certification {
-			testNum := 1
-			for {
+		if opts.Type == Test && parentType == Certification {
+			const maxTests = 1000
+			found := false
+			for testNum := 1; testNum <= maxTests; testNum++ {
 				testFolderName := fmt.Sprintf("test-%d", testNum)
-				if _, err := os.Stat(filepath.Join(targetDir, testFolderName)); os.IsNotExist(err) {
-					folderName = testFolderName
-					break
+				_, statErr := os.Stat(filepath.Join(opts.TargetDir, testFolderName))
+				if statErr == nil {
+					continue
 				}
-				testNum++
+				if !os.IsNotExist(statErr) {
+					return statErr
+				}
+				folderName = testFolderName
+				found = true
+				break
+			}
+			if !found {
+				return errScaffoldExists(filepath.Join(opts.TargetDir, "test-*"))
 			}
 		}
 
-		nodeDir := filepath.Join(targetDir, folderName)
+		nodeDir := filepath.Join(opts.TargetDir, folderName)
 		if err := os.MkdirAll(nodeDir, 0755); err != nil {
 			return err
 		}
 		indexPath = filepath.Join(nodeDir, "_index.md")
 	}
-	if _, err := os.Stat(indexPath); err == nil && !force {
+	if _, err := os.Stat(indexPath); err == nil && !opts.Force {
 		return errScaffoldExists(indexPath)
 	}
 
-	weight := inferWeight(targetDir, folderName)
+	weight := inferWeight(opts.TargetDir, folderName)
 
-	tmpl, err := template.New(string(cType)).Parse(tmplStr)
+	tmpl, err := template.New(string(opts.Type)).Funcs(template.FuncMap{
+		"yamlQuote": strconv.Quote,
+	}).Parse(tmplStr)
 	if err != nil {
 		return err
 	}
 
 	data := TemplateData{
-		Title:       title,
-		Description: description,
-		Level:       level,
+		Title:       opts.Title,
+		Description: opts.Description,
+		Level:       opts.Level,
 		Weight:      weight,
-		OrgID:       orgId,
-		Category:    category,
-		Tags:        tags,
-		ID:          id,
+		OrgID:       opts.OrgID,
+		Category:    opts.Category,
+		Tags:        opts.Tags,
+		ID:          opts.ID,
 	}
 
 	f, err := os.Create(indexPath)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() {
+		if cerr := f.Close(); cerr != nil {
+			utils.Log.Errorf("failed to close file %s: %v", indexPath, cerr)
+		}
+	}()
 
 	if err := tmpl.Execute(f, data); err != nil {
 		return err
 	}
 
-	utils.Log.Infof("Scaffolded %s '%s' at %s", cType, title, indexPath)
+	utils.Log.Infof("Scaffolded %s '%s' at %s", opts.Type, opts.Title, indexPath)
 	return nil
 }
 
-func scaffoldTree(cType ContentType, title, description, level, orgId, category string, tags []string, targetDir string, force bool, id string) error {
-	folderName := strings.ToLower(strings.ReplaceAll(title, " ", "-"))
-	baseDir := filepath.Join(targetDir, folderName)
+func scaffoldTree(opts ScaffoldOptions) error {
+	folderName, err := makeSlug(opts.Title)
+	if err != nil {
+		return err
+	}
+	baseDir := filepath.Join(opts.TargetDir, folderName)
 
-	err := scaffoldNode(cType, title, description, level, orgId, category, tags, targetDir, force, id)
+	err = scaffoldNode(opts)
 	if err != nil {
 		return err
 	}
 
 	currentDir := baseDir
 
-	if cType == LearningPath {
+	if opts.Type == LearningPath {
 		courseTitle := "Course 1"
-		err = scaffoldNode(Course, courseTitle, "", "", orgId, "", nil, currentDir, force, "")
+		courseOpts := opts
+		courseOpts.Type = Course
+		courseOpts.Title = courseTitle
+		courseOpts.Description = ""
+		courseOpts.Level = ""
+		courseOpts.Category = ""
+		courseOpts.Tags = nil
+		courseOpts.ID = ""
+		courseOpts.TargetDir = currentDir
+		err = scaffoldNode(courseOpts)
 		if err != nil {
 			return err
 		}
-		currentDir = filepath.Join(currentDir, strings.ToLower(strings.ReplaceAll(courseTitle, " ", "-")))
+		slug, err := makeSlug(courseTitle)
+		if err != nil {
+			return err
+		}
+		currentDir = filepath.Join(currentDir, slug)
 	}
 
-	if cType == LearningPath || cType == Course {
+	if opts.Type == LearningPath || opts.Type == Course {
 		moduleTitle := "Module 1"
-		err = scaffoldNode(Module, moduleTitle, "", "", orgId, "", nil, currentDir, force, "")
+		moduleOpts := opts
+		moduleOpts.Type = Module
+		moduleOpts.Title = moduleTitle
+		moduleOpts.Description = ""
+		moduleOpts.Level = ""
+		moduleOpts.Category = ""
+		moduleOpts.Tags = nil
+		moduleOpts.ID = ""
+		moduleOpts.TargetDir = currentDir
+		err = scaffoldNode(moduleOpts)
 		if err != nil {
 			return err
 		}
-		currentDir = filepath.Join(currentDir, strings.ToLower(strings.ReplaceAll(moduleTitle, " ", "-")))
+		slug, err := makeSlug(moduleTitle)
+		if err != nil {
+			return err
+		}
+		currentDir = filepath.Join(currentDir, slug)
 	}
 
-	if cType == LearningPath || cType == Course || cType == Module {
+	if opts.Type == LearningPath || opts.Type == Course || opts.Type == Module {
 		pageTitle := "Page 1"
-		err = scaffoldNode(Page, pageTitle, "", "", orgId, "", nil, currentDir, force, "")
+		pageOpts := opts
+		pageOpts.Type = Page
+		pageOpts.Title = pageTitle
+		pageOpts.Description = ""
+		pageOpts.Level = ""
+		pageOpts.Category = ""
+		pageOpts.Tags = nil
+		pageOpts.ID = ""
+		pageOpts.TargetDir = currentDir
+		err = scaffoldNode(pageOpts)
 		if err != nil {
 			return err
 		}
 	}
 
-	if cType == Certification {
+	if opts.Type == Certification {
 		examTitle := "Exam 1"
-		err = scaffoldNode(Exam, examTitle, "", "", orgId, "", nil, currentDir, force, "")
+		examOpts := opts
+		examOpts.Type = Exam
+		examOpts.Title = examTitle
+		examOpts.Description = ""
+		examOpts.Level = ""
+		examOpts.Category = ""
+		examOpts.Tags = nil
+		examOpts.ID = ""
+		examOpts.TargetDir = currentDir
+		err = scaffoldNode(examOpts)
 		if err != nil {
 			return err
 		}
