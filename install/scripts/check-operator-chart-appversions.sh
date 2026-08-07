@@ -71,14 +71,18 @@ BUNDLED_CHART_GLOB="${BUNDLED_CHART_GLOB:-install/kubernetes/helm/meshery/charts
 # comparison and the check fails against a subchart that reads identically.
 # --self-test pins that ordering.
 #
-# A malformed or missing chart exits 2 rather than 1, so a caller can tell "this
-# tree could not be read" from "this tree disagrees with itself" and report the
-# one that actually happened.
+# A malformed or missing chart RETURNS 2 rather than 1, so a caller can tell
+# "this tree could not be read" from "this tree disagrees with itself" and report
+# the one that actually happened. It must be return, not exit: every call site
+# is a command substitution, so an exit would end only that nested subshell and
+# leave the caller comparing an empty string - which reports drift, the wrong
+# answer, and makes the read-failure branch unreachable. Callers must therefore
+# check the status of each read rather than only its output.
 read_app_version() {
   local file="$1" value
   if [ ! -f "$file" ]; then
     echo "check-operator-chart-appversions: $file does not exist" >&2
-    exit 2
+    return 2
   fi
   value="$(sed -n 's/^appVersion:[[:space:]]*//p' "$file" | head -n 1)"
   # YAML requires whitespace before an inline comment, so anchoring on that
@@ -90,7 +94,7 @@ read_app_version() {
   value="${value#\'}"
   if [ -z "$value" ]; then
     echo "check-operator-chart-appversions: $file declares no appVersion" >&2
-    exit 2
+    return 2
   fi
   printf '%s' "$value"
 }
@@ -106,14 +110,18 @@ compare_chart_tree() {
   local chart_dir="$1"
   local parent subchart_dir subchart_yaml subchart_version drift=0 found=0
 
-  parent="$(read_app_version "${chart_dir}/Chart.yaml")"
+  if ! parent="$(read_app_version "${chart_dir}/Chart.yaml")"; then
+    return 2
+  fi
   printf '  %s: %s\n' "${chart_dir}/Chart.yaml" "$parent"
 
   for subchart_dir in "${chart_dir}"/charts/*/; do
     subchart_yaml="${subchart_dir}Chart.yaml"
     [ -f "$subchart_yaml" ] || continue
     found=1
-    subchart_version="$(read_app_version "$subchart_yaml")"
+    if ! subchart_version="$(read_app_version "$subchart_yaml")"; then
+      return 2
+    fi
     printf '  %s: %s\n' "$subchart_yaml" "$subchart_version"
     if [ "$subchart_version" != "$parent" ]; then
       drift=1
@@ -170,6 +178,28 @@ self_test() {
     echo "check-operator-chart-appversions: self-test failed: a subchart on stable-latest reported as agreement" >&2
     failures=$((failures + 1))
   fi
+
+  # An unreadable tree must report 2, not 1. read_app_version runs inside a
+  # command substitution, so returning instead of exiting is the only way that
+  # status reaches here; when it regressed to exit, the caller compared an empty
+  # string and this tree was reported as ordinary drift.
+  printf 'appVersion: "1.0.5"\n' > "${dir}/tree/charts/meshery-meshsync/Chart.yaml"
+  printf 'name: no-appversion-here\n' > "${dir}/tree/Chart.yaml"
+  compare_chart_tree "${dir}/tree" > /dev/null 2>&1
+  case $? in
+    2) : ;;
+    *) echo "check-operator-chart-appversions: self-test failed: a parent with no appVersion must report 2 (unreadable), not drift" >&2
+       failures=$((failures + 1)) ;;
+  esac
+  printf 'appVersion: "1.0.5"\n' > "${dir}/tree/Chart.yaml"
+  rm -f "${dir}/tree/charts/meshery-broker/Chart.yaml"
+  printf 'name: broken\n' > "${dir}/tree/charts/meshery-broker/Chart.yaml"
+  compare_chart_tree "${dir}/tree" > /dev/null 2>&1
+  case $? in
+    2) : ;;
+    *) echo "check-operator-chart-appversions: self-test failed: a subchart with no appVersion must report 2 (unreadable), not drift" >&2
+       failures=$((failures + 1)) ;;
+  esac
 
   rm -rf "$dir"
   if [ "$failures" -ne 0 ]; then

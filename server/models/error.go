@@ -810,7 +810,10 @@ func ErrNoOperatorChartPublished(chart, repo string) error {
 // deployed from one cannot be reproduced or reasoned about; Meshery deploys
 // only versions it can name.
 func ErrOperatorChartNotPinned(requested, newest string) error {
-	return errors.New(ErrOperatorChartNotPinnedCode, errors.Alert, []string{"Meshery Operator chart version is not a released version"}, []string{"operator.version is set to " + requested + ", which is not a released chart version."}, []string{"A moving tag (for example stable-latest or edge-latest) or a non-version string was configured as the operator chart version."}, []string{"Set operator.version to a released chart version such as " + newest + ", or clear it to track this Meshery Server release."})
+	// Probable cause and remediation are static literals so errorutil can export
+	// them into the published error reference; the version-specific detail lives
+	// in the cause, which is runtime-only.
+	return errors.New(ErrOperatorChartNotPinnedCode, errors.Alert, []string{"Meshery Operator chart version is not a released version"}, []string{"operator.version is set to " + requested + ", which is not a released chart version. The newest released chart version is " + newest + "."}, []string{"A moving tag (for example stable-latest or edge-latest) or a non-version string was configured as the operator chart version."}, []string{"Set operator.version to a released chart version, or clear it to track this Meshery Server release. This error's cause names the newest released version."})
 }
 
 // ErrOperatorChartNotPublished reports that an explicitly configured
@@ -818,7 +821,9 @@ func ErrOperatorChartNotPinned(requested, newest string) error {
 // This is never substituted silently: deploying a different version than the
 // one asked for would hide the mistake.
 func ErrOperatorChartNotPublished(requested, newest string) error {
-	return errors.New(ErrOperatorChartNotPublishedCode, errors.Alert, []string{"Meshery Operator chart version is not published"}, []string{"operator.version is set to " + requested + ", which the Meshery chart repository does not publish. The newest published version is " + newest + "."}, []string{"The configured chart version was mistyped, or it was never published to the Meshery Helm chart repository."}, []string{"Set operator.version to a published chart version such as " + newest + ", or clear it to track this Meshery Server release."})
+	// Static probable cause and remediation, as above: the concrete versions are
+	// carried by the cause so the exported reference is not blank.
+	return errors.New(ErrOperatorChartNotPublishedCode, errors.Alert, []string{"Meshery Operator chart version is not published"}, []string{"operator.version is set to " + requested + ", which the Meshery chart repository does not publish. The newest published version is " + newest + "."}, []string{"The configured chart version was mistyped, or it was never published to the Meshery Helm chart repository."}, []string{"Set operator.version to a published chart version, or clear it to track this Meshery Server release. This error's cause names the newest published version."})
 }
 
 // ErrNoMesheryReleasesFound reports that the GitHub releases listing for

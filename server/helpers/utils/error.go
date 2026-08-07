@@ -16,8 +16,12 @@ func ErrHelmChartIndex(url, cause string) error {
 		ErrHelmChartIndexCode,
 		errors.Alert,
 		[]string{"Unable to read the Helm chart repository index."},
-		[]string{cause},
-		[]string{"The Helm repository at " + url + " is unreachable, returned an error, or served an index that is not valid YAML. Meshery Server may have no outbound network access, or the repository may be temporarily unavailable."},
-		[]string{"Confirm that " + url + " is reachable from the Meshery Server pod or container, then retry. If Meshery runs behind a proxy, confirm the proxy environment variables are set on the server."},
+		[]string{cause + " (chart repository: " + url + ")"},
+		// Probable cause and remediation must be static literals: errorutil cannot
+		// statically extract a concatenated string, and a code whose exported
+		// entry is blank is a code the published error reference cannot explain.
+		// The repository URL travels in the cause instead.
+		[]string{"The Helm chart repository is unreachable, returned an error, or served an index that is not valid YAML. Meshery Server may have no outbound network access, or the repository may be temporarily unavailable."},
+		[]string{"Confirm that the chart repository named in this error's cause is reachable from the Meshery Server pod or container, then retry. If Meshery runs behind a proxy, confirm the proxy environment variables are set on the server."},
 	)
 }

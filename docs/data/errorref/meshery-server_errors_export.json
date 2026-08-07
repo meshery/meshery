@@ -4105,7 +4105,7 @@
         "long_description": "",
         "short_description": "No Meshery Operator Helm chart is published",
         "probable_cause": "The chart repository index was served from an unexpected location, its published charts were removed, or it currently carries only prerelease charts, which Meshery never selects on its own.",
-        "suggested_remediation": ""
+        "suggested_remediation": "To deploy a prerelease chart deliberately, set operator.version on the Kubernetes connection to that exact version."
       },
       "1469": {
         "name": "ErrOperatorChartNotPinnedCode",
@@ -4114,7 +4114,7 @@
         "long_description": "",
         "short_description": "Meshery Operator chart version is not a released version",
         "probable_cause": "A moving tag (for example stable-latest or edge-latest) or a non-version string was configured as the operator chart version.",
-        "suggested_remediation": ""
+        "suggested_remediation": "Set operator.version to a released chart version, or clear it to track this Meshery Server release. This error's cause names the newest released version."
       },
       "1470": {
         "name": "ErrOperatorChartNotPublishedCode",
@@ -4123,7 +4123,7 @@
         "long_description": "",
         "short_description": "Meshery Operator chart version is not published",
         "probable_cause": "The configured chart version was mistyped, or it was never published to the Meshery Helm chart repository.",
-        "suggested_remediation": ""
+        "suggested_remediation": "Set operator.version to a published chart version, or clear it to track this Meshery Server release. This error's cause names the newest published version."
       },
       "1471": {
         "name": "ErrOperatorChartSubstitutedCode",
@@ -4149,8 +4149,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unable to read the Helm chart repository index.",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "The Helm chart repository is unreachable, returned an error, or served an index that is not valid YAML. Meshery Server may have no outbound network access, or the repository may be temporarily unavailable.",
+        "suggested_remediation": "Confirm that the chart repository named in this error's cause is reachable from the Meshery Server pod or container, then retry. If Meshery runs behind a proxy, confirm the proxy environment variables are set on the server."
       },
       "1474": {
         "name": "ErrOperatorControllersHelperCode",
@@ -4159,7 +4159,7 @@
         "long_description": "",
         "short_description": "Unable to reach Meshery Operator lifecycle for this Kubernetes connection",
         "probable_cause": "The connection is not connected yet, or its state machine has not finished initializing.",
-        "suggested_remediation": ""
+        "suggested_remediation": "Wait for the Kubernetes connection to reach the connected state, then retry.\nIf it stays disconnected, check the connection's diagnostics for why its Kubernetes client could not be created."
       }
     }
   }
