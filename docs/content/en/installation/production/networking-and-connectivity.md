@@ -28,7 +28,7 @@ current releases.
 
 In addition, optional [Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}}) listen
 on their own ports (for example `10000/tcp` and up), and the Meshery Operator's
-`kube-rbac-proxy` listens on `8443/tcp` in-cluster. Inside the pod, Meshery
+authn/authz-filtered metrics endpoint listens on `8443/tcp` in-cluster. Inside the pod, Meshery
 Server listens on `8080/tcp`, which the Kubernetes Service exposes as
 `9081/tcp`.
 

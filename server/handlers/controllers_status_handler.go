@@ -188,10 +188,11 @@ func deriveControllerStatus(controller models.MesheryController, status system.C
 // that set rather than from the handler map, which is missing entries precisely
 // when something went wrong: AddCtxControllerHandlers attaches no handlers at
 // all when the kubeconfig is unreadable or the Kubernetes client cannot be
-// built, and no operator handler when no publishable Meshery Operator chart
-// version can be resolved. Since the client replaces its controller state with
-// each snapshot wholesale, dropping a row makes that controller's card vanish
-// from the UI at exactly the moment it has something to report.
+// built. (An unresolvable chart version is not one of those cases - the
+// operator handler is still attached and still observes, only installation is
+// withheld.) Since the client replaces its controller state with each snapshot
+// wholesale, dropping a row makes that controller's card vanish from the UI at
+// exactly the moment it has something to report.
 //
 // A row with no handler behind it carries controllersStatusUnknown - Meshery
 // made no observation of the cluster, so any other value would assert something

@@ -65,10 +65,10 @@ Meshery Operator itself has little to configure by design: it is a controller wh
 | Setting | Mechanism | Default | Behavioral impact |
 | --- | --- | --- | --- |
 | Deploy or do not deploy | Per-connection deployment mode; Settings page Operator switch; `DISABLE_OPERATOR=true` on the server | Deployed for operator-mode connections | Without the Operator, no Broker or MeshSync runs in-cluster; embedded mode (or no discovery) applies |
-| Operator version | Tracks the Meshery Server release via the `meshery-operator` Helm chart | Matches your server version | Upgrading Meshery Server upgrades the Operator; manual operator upgrades on server-managed clusters are reverted by the server's reconciliation |
+| Operator version | Tracks the Meshery Server release via the `meshery-operator` Helm chart, or `operator.version` on the connection | The published chart for your server release | Upgrading Meshery Server upgrades the Operator; manual operator upgrades on server-managed clusters are reverted by the server's reconciliation |
 | Namespace | Fixed | `meshery` | Operator, Broker, and MeshSync objects live in the `meshery` namespace |
 
-Meshery Server installs the Operator from the `meshery-operator` Helm chart at [meshery.io/charts](https://meshery.io/charts), pinned to the chart version matching the server release. To upgrade the Operator, upgrade Meshery Server; see [How Meshery Server manages Meshery Operator]({{< ref "installation/upgrades/index.md#how-meshery-server-manages-meshery-operator" >}}).
+Meshery Server installs the Operator from the `meshery-operator` Helm chart at [meshery.io/charts](https://meshery.io/charts), always at a version the repository publishes. To upgrade the Operator, upgrade Meshery Server; for how the version is chosen, when it is substituted, and how to pin one yourself, see [How Meshery Server manages Meshery Operator]({{< ref "installation/upgrades/index.md#how-meshery-server-manages-meshery-operator" >}}).
 
 You can also toggle the Operator per cluster without disconnecting the cluster: the Meshery Operator section of **Settings** in Meshery UI provides an on/off switch, and `kubectl` shows you what the Operator has deployed:
 
