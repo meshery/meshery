@@ -4070,6 +4070,33 @@
         "short_description": "Error failed to fetch performance profiles",
         "probable_cause": "The performance profiles could not be read from the database\nThe performance_profiles table is out of sync with the performance profile model",
         "suggested_remediation": "Inspect the underlying database error reported above\nMake sure the Meshery database schema is up to date with the running Meshery Server"
+      },
+      "1465": {
+        "name": "ErrOperatorHandlerNotAttachedCode",
+        "code": "1465",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "No Meshery Operator controller handler is attached",
+        "probable_cause": "The connection's kubeconfig could not be generated, or the Kubernetes client could not be created.",
+        "suggested_remediation": "Reconnect the Kubernetes connection and retry; the configuration is re-applied on connect."
+      },
+      "1466": {
+        "name": "ErrReconcileOperatorChartVersionCode",
+        "code": "1466",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error deploying Meshery Operator at the configured chart version",
+        "probable_cause": "The requested Meshery Operator Helm chart version does not exist in the chart repository, or the cluster rejected the Helm release.",
+        "suggested_remediation": "Confirm the chart version exists in the Meshery Operator Helm repository, or clear operator.version to track the Meshery Server release.\nConfirm the cluster is reachable and the Meshery namespace is writable."
+      },
+      "1467": {
+        "name": "ErrAnonymousUserIDMissingCode",
+        "code": "1467",
+        "severity": "Alert",
+        "long_description": "The remote provider's anonymous user flow response contained no userId.",
+        "short_description": "Anonymous user session could not be established",
+        "probable_cause": "The remote provider does not implement the schemas v1beta2 AnonymousFlowResponse contract, or it returned an empty user id.",
+        "suggested_remediation": "Confirm the configured remote provider is reachable and up to date, then retry signing in."
       }
     }
   }

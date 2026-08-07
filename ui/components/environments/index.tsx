@@ -114,9 +114,9 @@ const Environments = () => {
     },
   );
 
-  const [createEnvironment] = useCreateEnvironmentMutation();
+  const [createEnvironment, createResult] = useCreateEnvironmentMutation();
 
-  const [updateEnvironment] = useUpdateEnvironmentMutation();
+  const [updateEnvironment, updateResult] = useUpdateEnvironmentMutation();
 
   const [deleteEnvironment] = useDeleteEnvironmentMutation();
 
@@ -582,6 +582,7 @@ const Environments = () => {
                 submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
                 initialData={initialData}
                 handleClose={handleEnvironmentModalClose}
+                isSubmitting={createResult.isLoading || updateResult.isLoading}
               />
             </SisitentModal>
           )}
