@@ -15,6 +15,7 @@
 package adapter
 
 import (
+	"context"
 	"errors"
 	"io"
 	"net/http"
@@ -239,27 +240,41 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 		return "", ErrCreatingDeployResponseStream(err)
 	}
 
-	timer := time.NewTimer(time.Duration(1200) * time.Second)
-	eventChan := make(chan string)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(1200)*time.Second)
+	defer cancel()
+
+	eventChan := make(chan string, 1)
+	reported := false
 
 	// Run a goroutine to wait for the response
 	go func() {
 		for i := range event {
+			if reported {
+				continue
+			}
 			if strings.Contains(i.Data.Details, query) {
-				eventChan <- "successful"
+				reported = true
 				utils.Log.Infof("%s\n%s\n", i.Data.Summary, i.Data.Details)
+				select {
+				case eventChan <- "successful":
+				case <-ctx.Done():
+				}
 			} else if strings.Contains(i.Data.Details, "Error") {
-				eventChan <- "error"
+				reported = true
 				utils.Log.Infof("%s\n", i.Data.Summary)
+				select {
+				case eventChan <- "error":
+				case <-ctx.Done():
+				}
 			}
 		}
 	}()
 
 	select {
-	case <-timer.C:
+	case <-ctx.Done():
 		return "", ErrTimeoutWaitingForDeployResponse
-	case event := <-eventChan:
-		if event != "successful" {
+	case result := <-eventChan:
+		if result != "successful" {
 			return "", ErrFailedDeployingMesh
 		}
 	}
@@ -281,33 +296,48 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	if err != nil {
 		return "", ErrCreatingValidateRequest(err)
 	}
+	defer func() { _ = res.Body.Close() }()
 
 	event, err := utils.ConvertRespToSSE(res)
 	if err != nil {
 		return "", ErrCreatingValidateResponseStream(err)
 	}
 
-	timer := time.NewTimer(time.Duration(1200) * time.Second)
-	eventChan := make(chan string)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(1200)*time.Second)
+	defer cancel()
+
+	eventChan := make(chan string, 1)
+	reported := false
 
 	// Run a goroutine to wait for the response
 	go func() {
 		for i := range event {
+			if reported {
+				continue
+			}
 			if strings.Contains(i.Data.Summary, query) {
-				eventChan <- "successful"
+				reported = true
 				utils.Log.Infof("%s\n%s", i.Data.Summary, i.Data.Details)
+				select {
+				case eventChan <- "successful":
+				case <-ctx.Done():
+				}
 			} else if strings.Contains(i.Data.Details, "error") {
-				eventChan <- "error"
+				reported = true
 				utils.Log.Infof("%s", i.Data.Summary)
+				select {
+				case eventChan <- "error":
+				case <-ctx.Done():
+				}
 			}
 		}
 	}()
 
 	select {
-	case <-timer.C:
+	case <-ctx.Done():
 		return "", ErrTimeoutWaitingForValidateResponse
-	case event := <-eventChan:
-		if event != "successful" {
+	case result := <-eventChan:
+		if result != "successful" {
 			return "", ErrSMIConformanceTestsFailed
 		}
 	}
