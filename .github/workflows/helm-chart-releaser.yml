@@ -41,6 +41,11 @@ jobs:
       id: install
     - name: validate meshery
       run: helm lint install/kubernetes/helm/meshery --with-subcharts
+    # helm lint does not compare a parent chart's appVersion with its subcharts',
+    # so a subchart left behind at an older operator release passes lint while
+    # advertising an application it was not published alongside.
+    - name: validate meshery-operator subchart appVersions
+      run: ./install/scripts/check-operator-chart-appversions.sh install/kubernetes/helm/meshery-operator
     - name: validate meshery-operator
       run: helm lint install/kubernetes/helm/meshery-operator --with-subcharts
   release-chart:

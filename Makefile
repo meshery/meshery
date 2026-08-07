@@ -412,7 +412,7 @@ check-go:
 #-----------------------------------------------------------------------------
 # Meshery Helm Charts
 #-----------------------------------------------------------------------------
-.PHONY: helm-docs helm-operator-docs helm-meshery-docs helm-operator-lint helm-lint
+.PHONY: helm-docs helm-operator-docs helm-meshery-docs helm-operator-lint helm-operator-appversion-check helm-lint
 ## Generate all Meshery Helm Chart documentation in markdown format.
 helm-docs: helm-operator-docs helm-meshery-docs
 
@@ -430,8 +430,12 @@ helm-meshery-docs: dep-check
 helm-lint: helm-operator-lint helm-meshery-lint
 
 ## Lint Meshery Operator Helm Chart
-helm-operator-lint:
+helm-operator-lint: helm-operator-appversion-check
 	helm lint install/kubernetes/helm/meshery-operator --with-subcharts
+
+## Assert the Meshery Operator chart and its subcharts advertise the same appVersion
+helm-operator-appversion-check:
+	./install/scripts/check-operator-chart-appversions.sh install/kubernetes/helm/meshery-operator
 ## Lint Meshery Server and Adapter Helm Charts
 helm-meshery-lint:
 	helm lint install/kubernetes/helm/meshery --with-subcharts

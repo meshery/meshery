@@ -4,6 +4,8 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -157,6 +159,149 @@ func TestChartIndexCacheDoesNotCacheFailures(t *testing.T) {
 	}
 	if len(versions) != 1 {
 		t.Fatalf("versions = %v, want the successfully fetched catalogue", versions)
+	}
+}
+
+// waitFor spins until cond holds, failing the test if it has not within a
+// generous deadline. Used instead of a fixed sleep so the tests below do not
+// encode a timing guess.
+func waitFor(t *testing.T, what string, cond func() bool) {
+	t.Helper()
+	deadline := time.Now().Add(5 * time.Second)
+	for !cond() {
+		if time.Now().After(deadline) {
+			t.Fatalf("timed out waiting for %s", what)
+		}
+		time.Sleep(time.Millisecond)
+	}
+}
+
+// TestChartIndexCacheDoesNotHoldTheLockAcrossAFetch is the reason the fetch
+// moved out from under the mutex. The fetch is an HTTP GET bounded only by
+// chartIndexTimeout, so holding the lock across it stalled every other caller -
+// including callers for an entirely different repository - for the full
+// timeout, one after another. On an egress-blocked server that turned several
+// simultaneous cluster connections into minutes of blocked request handlers.
+func TestChartIndexCacheDoesNotHoldTheLockAcrossAFetch(t *testing.T) {
+	inFlight := make(chan struct{})
+	release := make(chan struct{})
+
+	cache := &chartIndexCache{
+		entries: map[string]chartIndexCacheEntry{},
+		now:     time.Now,
+		fetch: func(repo string) (map[string][]string, error) {
+			if repo == "slow" {
+				close(inFlight)
+				<-release
+			}
+			return map[string][]string{"meshery-operator": {"v1.0.64"}}, nil
+		},
+	}
+
+	slowDone := make(chan struct{})
+	go func() {
+		defer close(slowDone)
+		if _, err := cache.list("slow", "meshery-operator"); err != nil {
+			t.Errorf("slow repository: unexpected error: %v", err)
+		}
+	}()
+	<-inFlight
+
+	fastDone := make(chan struct{})
+	go func() {
+		defer close(fastDone)
+		if _, err := cache.list("fast", "meshery-operator"); err != nil {
+			t.Errorf("fast repository: unexpected error: %v", err)
+		}
+	}()
+
+	select {
+	case <-fastDone:
+	case <-time.After(5 * time.Second):
+		close(release)
+		t.Fatal("a lookup for another repository blocked behind an in-flight fetch: the cache lock is held across the fetch")
+	}
+
+	close(release)
+	<-slowDone
+}
+
+// TestChartIndexCacheSingleFlightsConcurrentMisses asserts concurrent callers
+// that miss the cache share one fetch instead of each issuing their own.
+//
+// The fetch here fails, which is the case that matters: failures are
+// deliberately not cached, so without single-flight every caller pays its own
+// full chartIndexTimeout - N cluster connections against an unreachable
+// repository cost N timeouts rather than one.
+func TestChartIndexCacheSingleFlightsConcurrentMisses(t *testing.T) {
+	const callers = 8
+
+	release := make(chan struct{})
+	var fetches atomic.Int32
+	outage := errors.New("repository unreachable")
+
+	cache := &chartIndexCache{
+		entries: map[string]chartIndexCacheEntry{},
+		now:     time.Now,
+		fetch: func(string) (map[string][]string, error) {
+			fetches.Add(1)
+			<-release
+			return nil, outage
+		},
+	}
+
+	var wg sync.WaitGroup
+	errs := make([]error, callers)
+	for i := range callers {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			_, errs[i] = cache.list("repo", "meshery-operator")
+		}()
+	}
+
+	// The first caller is now inside the blocked fetch; the rest are joining it.
+	waitFor(t, "the first fetch to start", func() bool { return fetches.Load() >= 1 })
+	time.Sleep(200 * time.Millisecond)
+	close(release)
+	wg.Wait()
+
+	// Serializing on the mutex instead of sharing the result costs exactly one
+	// fetch per caller.
+	if got := fetches.Load(); got >= callers {
+		t.Fatalf("fetched %d times for %d concurrent callers: each caller paid its own timeout", got, callers)
+	}
+	for i := range callers {
+		if !errors.Is(errs[i], outage) {
+			t.Fatalf("caller %d: err = %v, want the shared fetch failure", i, errs[i])
+		}
+	}
+}
+
+// TestChartIndexCacheReturnsACopyOfTheCatalogue: the cached catalogue is shared
+// across goroutines for a full TTL. Handing out its own slice lets any caller
+// that sorts or appends corrupt it for everyone else, with no lock held.
+func TestChartIndexCacheReturnsACopyOfTheCatalogue(t *testing.T) {
+	cache := &chartIndexCache{
+		entries: map[string]chartIndexCacheEntry{},
+		now:     time.Now,
+		fetch: func(string) (map[string][]string, error) {
+			return map[string][]string{"meshery-operator": {"v1.0.64", "v1.0.63"}}, nil
+		},
+	}
+
+	first, err := cache.list("repo", "meshery-operator")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	first[0] = "tampered"
+
+	second, err := cache.list("repo", "meshery-operator")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if second[0] != "v1.0.64" {
+		t.Fatalf("versions = %v, want the cached catalogue to be unaffected by a caller mutating its result", second)
 	}
 }
 

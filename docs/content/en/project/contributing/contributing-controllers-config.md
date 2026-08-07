@@ -125,8 +125,22 @@ sources:
   events feed surface to the user. The floor does not apply, so deliberately
   pinning an old chart still works.
 
+Membership in the published set is decided by semver comparison, not by string
+equality, because Helm treats `1.0.64` and `v1.0.64` as the same version.
+Resolution always returns the repository's own spelling of the matched release -
+that is the string handed to Helm and the string
+`attachedOperatorChartVersion` is compared against - and a spelling difference
+is not a substitution, so it produces no reason.
+
 An unreadable repository index fails rather than guessing: without the index
-there is no way to know which versions exist.
+there is no way to know which versions exist. Operator lifecycle is then
+withheld for that connection (no `MesheryOperator` handler is attached) while
+the Broker and MeshSync handlers, which need no chart version, still attach.
+`collectControllersStatus` synthesizes an `OPERATOR` row carrying `UNKOWN`
+whenever no operator handler is attached, so the Operator card stays visible
+rather than disappearing from a snapshot the client applies wholesale; the
+reason is carried by the `operator_deploy_failed` diagnostic, which reads
+`GetOperatorError`.
 
 `NewOperatorDeploymentConfig` consequently leaves the chart version empty for an
 unstamped build instead of asking the GitHub releases API for the newest server
@@ -346,8 +360,13 @@ Unit coverage that exists today:
   moving tags never reaching Helm, explicit requests failing loudly, and the
   pinned-against-pinned reconcile comparison.
 - `server/helpers/utils/helm_chart_repo_test.go` - the `index.yaml` read: chart
-  version extraction, structured failures, TTL reuse, and that failures are not
-  cached.
+  version extraction, structured failures, TTL reuse, that failures are not
+  cached, that the lock is not held across the fetch, that concurrent misses
+  single-flight, and that the cached catalogue is never handed out by
+  reference.
+- `server/handlers/controllers_status_handler_test.go` - that the `OPERATOR`
+  row is present in the status snapshot even when no operator handler is
+  attached.
 - `ui/components/configuration/__tests__/deploymentMode.test.ts` - which
   settings each deployment mode can apply, and how the mode governing each
   editor is resolved and attributed to a layer.

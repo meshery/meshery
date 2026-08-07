@@ -13,6 +13,7 @@ import (
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/core"
+	system "github.com/meshery/schemas/models/v1beta1/system"
 )
 
 // trackerWith builds an instance tracker holding a single connection->machine
@@ -113,6 +114,61 @@ func TestMachineCtxForConnection(t *testing.T) {
 				t.Fatalf("expected the tracked machine context to be returned, got %#v", ctx)
 			}
 		})
+	}
+}
+
+// TestCollectControllersStatus_OperatorRowSurvivesAMissingHandler: the SSE
+// snapshot is the complete controller list and the client replaces its state
+// with it wholesale, so a controller that is missing from the snapshot is a
+// card that disappears from the UI rather than one that reports a problem.
+//
+// No operator handler is attached whenever Meshery could not build one - the
+// Kubernetes client failed, or no publishable Meshery Operator chart version
+// could be resolved - which is exactly when the Operator card has something to
+// say. The row must be present and carry an existing status value; the reason
+// belongs to the operator_deploy_failed diagnostic, not to this payload.
+func TestCollectControllersStatus_OperatorRowSurvivesAMissingHandler(t *testing.T) {
+	connID := uuid.Must(uuid.NewV4())
+	// A controllers helper with no attached handlers at all: the widest case,
+	// covering both client-creation failure and withheld operator lifecycle.
+	mctx := &kubernetes.MachineCtx{MesheryCtrlsHelper: &models.MesheryControllersHelper{}}
+
+	h := &Handler{
+		config:                                  &models.HandlerConfig{},
+		log:                                     newTestLogger(t),
+		ConnectionToStateMachineInstanceTracker: trackerWith(connID, &machines.StateMachine{ID: connID, Context: mctx}),
+	}
+
+	items := h.collectControllersStatus([]string{connID.String()})
+
+	var operator *system.ControllerStatus
+	for i := range items {
+		if items[i].Controller == system.ControllerStatusControllerOPERATOR {
+			operator = &items[i]
+		}
+	}
+	if operator == nil {
+		t.Fatalf("no OPERATOR row in the snapshot %+v: the Operator card vanishes from the UI", items)
+	}
+	if operator.ConnectionId != connID {
+		t.Fatalf("connectionId = %s, want %s", operator.ConnectionId, connID)
+	}
+	if operator.Status != controllersStatusUnknown {
+		t.Fatalf("status = %q, want %q - Meshery did not probe the cluster, so it does not know", operator.Status, controllersStatusUnknown)
+	}
+	if operator.Version != "" {
+		t.Fatalf("version = %q, want it empty for a synthesized row", operator.Version)
+	}
+}
+
+// A connection with no ready FSM instance still reports nothing: there is no
+// context to read, and inventing rows for it would report on connections
+// Meshery is not tracking.
+func TestCollectControllersStatus_UnresolvedConnectionReportsNothing(t *testing.T) {
+	h := newControllersStatusTestHandler(t)
+
+	if items := h.collectControllersStatus([]string{uuid.Must(uuid.NewV4()).String()}); len(items) != 0 {
+		t.Fatalf("snapshot = %+v, want it empty for a connection with no ready instance", items)
 	}
 }
 

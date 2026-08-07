@@ -182,6 +182,17 @@ func deriveControllerStatus(controller models.MesheryController, status system.C
 // collectControllersStatus builds the full status list for the requested
 // connections. The result is sorted (connectionId, controller) so callers can
 // compare successive snapshots byte-for-byte to detect changes.
+//
+// Every connection with a ready FSM context reports an operator row, whether or
+// not an operator controller handler is attached. A handler is absent whenever
+// Meshery could not build one - the Kubernetes client failed, or no publishable
+// Meshery Operator chart version could be resolved - and the client replaces
+// its controller state with each snapshot wholesale, so omitting the row makes
+// the Operator card vanish from the UI at exactly the moment it has something
+// to report. The synthesized row carries controllersStatusUnknown (Meshery did
+// not probe the cluster, so it does not know whether an operator is installed)
+// and no version; why the handler is missing is carried by the
+// operator_deploy_failed diagnostic, which is fed from GetOperatorError.
 func (h *Handler) collectControllersStatus(connectionIDs []string) []system.ControllerStatus {
 	items := make([]system.ControllerStatus, 0)
 	for _, connectionID := range connectionIDs {
@@ -192,6 +203,9 @@ func (h *Handler) collectControllersStatus(connectionIDs []string) []system.Cont
 		ctrlHandlers := machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
 		brokerConnected := h.mesheryHoldsLiveBrokerConnection(machinectx)
 		for controller, ctrlHandler := range ctrlHandlers {
+			if ctrlHandler == nil {
+				continue
+			}
 			version, err := ctrlHandler.GetVersion()
 			if err != nil {
 				h.log.Debugf("controllers status: version for %s on %s: %v", internalControllerName(controller), connectionID, err)
@@ -204,6 +218,13 @@ func (h *Handler) collectControllersStatus(connectionIDs []string) []system.Cont
 				Controller:   internalControllerName(controller),
 				Status:       status,
 				Version:      version,
+			})
+		}
+		if ctrlHandlers[models.MesheryOperator] == nil {
+			items = append(items, system.ControllerStatus{
+				ConnectionId: uuid.FromStringOrNil(connectionID),
+				Controller:   internalControllerName(models.MesheryOperator),
+				Status:       controllersStatusUnknown,
 			})
 		}
 	}

@@ -810,7 +810,7 @@ func (mch *MesheryControllersHelper) pinnedOperatorDeploymentConfig() (depConfig
 		return depConfig, "", err
 	}
 
-	version, reason, err := ResolveOperatorChartVersion(published, depConfig.MesheryReleaseVersion, source)
+	version, reason, err := ResolveOperatorChartVersion(depConfig.HelmChartRepo, published, depConfig.MesheryReleaseVersion, source)
 	if err != nil {
 		return depConfig, "", err
 	}
@@ -848,7 +848,7 @@ func (mch *MesheryControllersHelper) ReconcileOperatorChartVersion(k8sctx K8sCon
 	// comparing the raw request against it would redeploy on every call
 	// whenever the request is being substituted (an unpublished server release
 	// or a below-floor one) - an endless upgrade loop against the cluster.
-	pinned, substitution, err := mch.pinnedOperatorDeploymentConfig()
+	pinned, _, err := mch.pinnedOperatorDeploymentConfig()
 	if err != nil {
 		mch.setOperatorError(err)
 		return requested, false, ErrReconcileOperatorChartVersion(err)
@@ -857,9 +857,9 @@ func (mch *MesheryControllersHelper) ReconcileOperatorChartVersion(k8sctx K8sCon
 	if desired == mch.attachedOperatorChartVersion {
 		return desired, false, nil
 	}
-	if substitution != "" {
-		mch.log.Warn(ErrOperatorChartSubstituted(substitution))
-	}
+	// Any substitution is logged and emitted by AddCtxControllerHandlers below,
+	// which resolves against the same catalogue; reporting it here too would
+	// duplicate every warning.
 
 	// Re-attaching records the desired version as attached, which the guard
 	// above then treats as "already reconciled". If anything below fails, that
@@ -867,15 +867,22 @@ func (mch *MesheryControllersHelper) ReconcileOperatorChartVersion(k8sctx K8sCon
 	// would short-circuit and never try again. Restore the previous value on
 	// every failure path so a transient Helm error is retried rather than
 	// silently becoming the resting state.
+	//
+	// Restoring is conditional on a handler actually being attached: when
+	// AddCtxControllerHandlers attaches none it has already cleared the
+	// attached version *for the same reason*, and putting the stale one back
+	// would withhold operator lifecycle until the connection is rebuilt.
 	previousChartVersion := mch.attachedOperatorChartVersion
 	mch.AddCtxControllerHandlers(k8sctx)
+	operatorHandler, attached := mch.ctxControllerHandlers[MesheryOperator]
+	attached = attached && operatorHandler != nil
 	if setupErr := mch.GetOperatorError(); setupErr != nil {
-		mch.attachedOperatorChartVersion = previousChartVersion
+		if attached {
+			mch.attachedOperatorChartVersion = previousChartVersion
+		}
 		return desired, false, ErrReconcileOperatorChartVersion(setupErr)
 	}
-	operatorHandler, ok := mch.ctxControllerHandlers[MesheryOperator]
-	if !ok || operatorHandler == nil {
-		mch.attachedOperatorChartVersion = previousChartVersion
+	if !attached {
 		return desired, false, ErrOperatorHandlerNotAttached(k8sctx.ID)
 	}
 	// Deploy(false) is a no-op against an operator this handler undeployed and a

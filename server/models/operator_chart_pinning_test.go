@@ -2,12 +2,32 @@ package models
 
 import (
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/meshery/meshery/server/models/connections"
 	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/spf13/viper"
 )
+
+// reachableK8sContext is structurally complete enough to yield a Kubernetes
+// client without contacting the cluster, so a test reaches the chart-version
+// resolution that follows client creation.
+func reachableK8sContext() K8sContext {
+	return K8sContext{
+		ID:   "ctx-1",
+		Name: "test-cluster",
+		Cluster: map[string]interface{}{
+			"name":    "test-cluster",
+			"cluster": map[string]interface{}{"server": "https://127.0.0.1:6443"},
+		},
+		Auth: map[string]interface{}{
+			"name": "test-user",
+			"user": map[string]interface{}{"token": "test-token"},
+		},
+		Server: "https://127.0.0.1:6443",
+	}
+}
 
 // publishedCharts is the catalogue these tests resolve against: the two current
 // charts, the first one that works (MinimumOperatorChartVersion), and two that
@@ -17,9 +37,15 @@ import (
 // repository for a chart that does not exist yet.
 var publishedCharts = []string{"v1.0.64", "v1.0.63", "v1.0.62", "v1.0.40", "v0.7.9"}
 
+// testChartRepo stands in for the repository the catalogue was read from. It is
+// deliberately not ChartRepo: resolution must report the repository it actually
+// resolved against, so a mirror or an in-cluster repository is never described
+// to the user as the default one.
+const testChartRepo = "https://example.invalid/charts"
+
 func mustResolve(t *testing.T, published []string, requested string, source OperatorChartVersionSource) (string, string) {
 	t.Helper()
-	version, reason, err := ResolveOperatorChartVersion(published, requested, source)
+	version, reason, err := ResolveOperatorChartVersion(testChartRepo, published, requested, source)
 	if err != nil {
 		t.Fatalf("ResolveOperatorChartVersion(%q) returned an unexpected error: %v", requested, err)
 	}
@@ -125,7 +151,7 @@ func TestExplicitChartVersionFailsLoudlyWhenUnusable(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			version, reason, err := ResolveOperatorChartVersion(publishedCharts, tt.requested, OperatorChartVersionRequested)
+			version, reason, err := ResolveOperatorChartVersion(testChartRepo, publishedCharts, tt.requested, OperatorChartVersionRequested)
 			if err == nil {
 				t.Fatalf("expected %q to fail, got version %q", tt.requested, version)
 			}
@@ -154,7 +180,7 @@ func TestExplicitChartVersionBelowTheFloorIsHonored(t *testing.T) {
 
 func TestResolutionFailsWhenNothingUsableIsPublished(t *testing.T) {
 	for _, published := range [][]string{nil, {}, {"stable-latest", "edge-latest"}} {
-		_, _, err := ResolveOperatorChartVersion(published, "v1.0.64", OperatorChartVersionDerived)
+		_, _, err := ResolveOperatorChartVersion(testChartRepo, published, "v1.0.64", OperatorChartVersionDerived)
 		if err == nil {
 			t.Fatalf("expected a failure when the repository publishes %v", published)
 		}
@@ -168,6 +194,10 @@ func TestResolutionFailsWhenNothingUsableIsPublished(t *testing.T) {
 // where the repository has not yet published anything at or above the floor:
 // the newest published chart is still better than a version known to be broken,
 // and it must not resolve to "".
+//
+// It must also not be described as working. Calling a below-floor chart "the
+// oldest working chart" sends the user looking for a fix that has already been
+// applied, when the actionable fact is that no working chart is published yet.
 func TestFloorFallsBackToNewestWhenNothingReachesIt(t *testing.T) {
 	version, reason := mustResolve(t, []string{"v1.0.40", "v0.7.9"}, "v0.7.9", OperatorChartVersionDerived)
 	if version != "v1.0.40" {
@@ -175,6 +205,54 @@ func TestFloorFallsBackToNewestWhenNothingReachesIt(t *testing.T) {
 	}
 	if reason == "" {
 		t.Fatal("expected the substitution to be explained")
+	}
+	if strings.Contains(reason, "working chart") {
+		t.Fatalf("a below-floor chart must not be described as working: %q", reason)
+	}
+	if !strings.Contains(reason, MinimumOperatorChartVersion) {
+		t.Fatalf("the reason must name the minimum that nothing published reaches: %q", reason)
+	}
+}
+
+// TestChartVersionSpellingIsSemverNotStringEquality: Helm treats "1.0.64" and
+// "v1.0.64" as the same version. Matching on raw string equality rejected an
+// explicit pin that the repository does in fact publish, and reported a
+// substitution on the derived path for a version that needed none. The version
+// handed back is always the repository's own spelling, because that is what
+// reaches Helm and what the attached-version comparison is made against.
+func TestChartVersionSpellingIsSemverNotStringEquality(t *testing.T) {
+	for _, source := range []OperatorChartVersionSource{OperatorChartVersionRequested, OperatorChartVersionDerived} {
+		version, reason := mustResolve(t, publishedCharts, "1.0.64", source)
+		if version != "v1.0.64" {
+			t.Fatalf("chart version = %q, want the repository's own spelling v1.0.64", version)
+		}
+		if reason != "" {
+			t.Fatalf("the same release in another spelling is not a substitution, got reason %q", reason)
+		}
+	}
+}
+
+// TestUnpublishedVersionsNameTheRepositoryThatWasRead: the catalogue comes from
+// the deployment config's chart repository, which need not be the default one.
+// Telling the user to check a repository Meshery did not read sends them to the
+// wrong index.
+func TestUnpublishedVersionsNameTheRepositoryThatWasRead(t *testing.T) {
+	const mirror = "https://mirror.invalid/charts"
+
+	_, _, err := ResolveOperatorChartVersion(mirror, nil, "v1.0.64", OperatorChartVersionDerived)
+	if err == nil || !strings.Contains(err.Error(), mirror) {
+		t.Fatalf("an empty catalogue must name the repository it was read from, got %v", err)
+	}
+
+	_, reason, err := ResolveOperatorChartVersion(mirror, publishedCharts, "v1.0.66", OperatorChartVersionDerived)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !strings.Contains(reason, mirror) {
+		t.Fatalf("the substitution reason must name the repository that was read, got %q", reason)
+	}
+	if strings.Contains(reason, ChartRepo) {
+		t.Fatalf("the substitution reason must not name a repository that was not read, got %q", reason)
 	}
 }
 
@@ -205,21 +283,7 @@ func TestUnreadableIndexStillAttachesBrokerAndMeshSync(t *testing.T) {
 	mch.chartVersions = func(string, string) ([]string, error) { return nil, errors.New("repository unreachable") }
 	mch.attachedOperatorChartVersion = "v1.0.64"
 
-	// A structurally complete context yields a Kubernetes client without
-	// contacting the cluster, so this reaches the chart-version resolution.
-	mch.AddCtxControllerHandlers(K8sContext{
-		ID:   "ctx-1",
-		Name: "test-cluster",
-		Cluster: map[string]interface{}{
-			"name":    "test-cluster",
-			"cluster": map[string]interface{}{"server": "https://127.0.0.1:6443"},
-		},
-		Auth: map[string]interface{}{
-			"name": "test-user",
-			"user": map[string]interface{}{"token": "test-token"},
-		},
-		Server: "https://127.0.0.1:6443",
-	})
+	mch.AddCtxControllerHandlers(reachableK8sContext())
 
 	handlers := mch.GetControllerHandlersForEachContext()
 	if _, ok := handlers[MesheryOperator]; ok {
@@ -293,6 +357,47 @@ func TestReconcileComparesPinnedVersionsNotRequestedOnes(t *testing.T) {
 	}
 	if chartVersion != "v1.0.64" {
 		t.Fatalf("chart version = %q, want the pinned v1.0.64", chartVersion)
+	}
+}
+
+// TestReconcileLeavesTheAttachedVersionClearedWhenNoHandlerAttaches guards the
+// retry path. When re-attaching cannot resolve a chart version it attaches no
+// operator handler and clears attachedOperatorChartVersion *deliberately*, so
+// the next reconcile tries again instead of reading a stale value as "already
+// at the desired version". Restoring the pre-reconcile value over that clearing
+// stranded operator lifecycle: reverting operator.version would then match the
+// stale attached version, short-circuit, and never re-attach a handler.
+func TestReconcileLeavesTheAttachedVersionClearedWhenNoHandlerAttaches(t *testing.T) {
+	mch := newTestControllersHelper(t)
+	mch.SetMeshsyncDeploymentMode(connections.MeshsyncDeploymentModeOperator)
+	mch.SetControllersConfig(operatorVersionConfig("v1.0.63", connections.MeshsyncDeploymentModeOperator))
+	mch.attachedOperatorChartVersion = "v1.0.64"
+
+	// The index is readable when the reconcile computes the desired version and
+	// unreadable by the time re-attaching resolves it again - a TTL expiry, or a
+	// blip, between the two reads.
+	reads := 0
+	mch.chartVersions = func(string, string) ([]string, error) {
+		reads++
+		if reads == 1 {
+			return publishedCharts, nil
+		}
+		return nil, errors.New("repository unreachable")
+	}
+
+	_, redeployed, err := mch.ReconcileOperatorChartVersion(reachableK8sContext(), NewOperatorTracker(false))
+	if redeployed {
+		t.Fatal("no operator handler attached, so nothing can have been redeployed")
+	}
+	if err == nil {
+		t.Fatal("expected the failed re-attach to be reported")
+	}
+	if _, ok := mch.GetControllerHandlersForEachContext()[MesheryOperator]; ok {
+		t.Fatal("no chart version resolved, so no operator handler may be attached")
+	}
+	if mch.attachedOperatorChartVersion != "" {
+		t.Fatalf("attached chart version = %q, want it left cleared so the next reconcile retries",
+			mch.attachedOperatorChartVersion)
 	}
 }
 

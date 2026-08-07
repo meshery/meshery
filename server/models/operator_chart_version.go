@@ -96,12 +96,18 @@ func compareChartVersions(a, b string) int {
 
 // ResolveOperatorChartVersion pins requested to a Meshery Operator chart
 // version that actually exists in published, which is the set of versions the
-// chart repository advertises (any order; unparseable entries are ignored).
+// chart repository at repo advertises (any order; unparseable entries are
+// ignored). repo is used only to name the repository that was actually read in
+// the error and reason text, so a mirror or an in-cluster repository is
+// reported as itself rather than as the default.
 //
-// It returns the version to deploy and, when that differs from what was asked
-// for, a one-sentence reason to log and surface to the user. A substitution is
-// never silent: reason is empty if and only if the returned version is exactly
-// the requested one.
+// It returns the version to deploy and, when that names a different release
+// than the one asked for, a one-sentence reason to log and surface to the user.
+// A substitution is never silent: reason is empty if and only if the returned
+// version is the requested one. The returned version is always the
+// repository's own spelling of that release, which is what Helm is handed - a
+// request for "1.0.64" against a repository publishing "v1.0.64" is the same
+// release, not a substitution, and resolves without a reason.
 //
 // The rules, in order:
 //
@@ -118,7 +124,7 @@ func compareChartVersions(a, b string) int {
 //     newest published chart, because chart publishing trails server releases
 //     and the newest chart is the closest thing to "the chart for this
 //     server".
-func ResolveOperatorChartVersion(published []string, requested string, source OperatorChartVersionSource) (version, reason string, err error) {
+func ResolveOperatorChartVersion(repo string, published []string, requested string, source OperatorChartVersionSource) (version, reason string, err error) {
 	requested = strings.TrimSpace(requested)
 
 	pinned := make([]string, 0, len(published))
@@ -128,49 +134,66 @@ func ResolveOperatorChartVersion(published []string, requested string, source Op
 		}
 	}
 	if len(pinned) == 0 {
-		return "", "", ErrNoOperatorChartPublished(OperatorChartName, ChartRepo)
+		return "", "", ErrNoOperatorChartPublished(OperatorChartName, repo)
 	}
 	sort.SliceStable(pinned, func(i, j int) bool { return compareChartVersions(pinned[i], pinned[j]) > 0 })
 	newest := pinned[0]
 
-	isPublished := func(v string) bool {
+	// publishedSpelling returns the repository's own spelling of the release v
+	// names, or "" when the repository publishes no such release. Membership is
+	// decided by semver, not by string equality, because Helm treats "1.0.64"
+	// and "v1.0.64" as the same version and rejecting one spelling would refuse
+	// a chart that exists.
+	publishedSpelling := func(v string) string {
+		if !isPinnedChartVersion(v) {
+			return ""
+		}
 		for _, p := range pinned {
-			if p == v {
-				return true
+			if compareChartVersions(p, v) == 0 {
+				return p
 			}
 		}
-		return false
+		return ""
 	}
 
 	if source == OperatorChartVersionRequested {
 		if !isPinnedChartVersion(requested) {
 			return "", "", ErrOperatorChartNotPinned(requested, newest)
 		}
-		if !isPublished(requested) {
+		match := publishedSpelling(requested)
+		if match == "" {
 			return "", "", ErrOperatorChartNotPublished(requested, newest)
 		}
-		return requested, "", nil
+		return match, "", nil
 	}
 
 	if !isPinnedChartVersion(requested) {
 		return newest, "This Meshery Server carries no pinned release version, so Meshery Operator was deployed from the newest published chart, " + newest + ".", nil
 	}
 
-	if !isPublished(requested) {
-		return newest, "Meshery Operator chart " + requested + " is not published in " + ChartRepo +
+	match := publishedSpelling(requested)
+	if match == "" {
+		return newest, "Meshery Operator chart " + requested + " is not published in " + repo +
 			" (chart publishing trails Meshery Server releases), so the newest published chart, " + newest + ", was deployed instead.", nil
 	}
 
-	if compareChartVersions(requested, MinimumOperatorChartVersion) < 0 {
+	if compareChartVersions(match, MinimumOperatorChartVersion) < 0 {
 		floored := oldestPublishedAtLeast(pinned, MinimumOperatorChartVersion)
 		if floored == "" {
-			floored = newest
+			// Nothing published reaches the floor, so newest carries the same
+			// defects as the requested chart. Saying it is "the oldest working
+			// chart" would send the user looking for a fix that has already
+			// been applied; the actionable fact is that no working chart is
+			// published yet.
+			return newest, "Meshery Operator chart " + requested + " cannot deploy successfully - its kube-rbac-proxy sidecar image no longer exists and its manager has no webhook certificate - and " +
+				repo + " publishes no chart at or above " + MinimumOperatorChartVersion + " yet, so the newest published chart, " + newest +
+				", was deployed instead. It carries the same defects; Meshery Operator will not become ready until a chart at or above " + MinimumOperatorChartVersion + " is published.", nil
 		}
 		return floored, "Meshery Operator chart " + requested + " cannot deploy successfully - its kube-rbac-proxy sidecar image no longer exists and its manager has no webhook certificate - so the oldest working chart, " +
 			floored + ", was deployed instead. Set operator.version on the connection to override.", nil
 	}
 
-	return requested, "", nil
+	return match, "", nil
 }
 
 // oldestPublishedAtLeast returns the smallest version in pinned that is at or
