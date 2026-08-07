@@ -113,7 +113,7 @@ mesheryctl design view [design-name | ID]
 		if err != nil {
 			return err
 		}
-		outputFormatter.WithOutput(cmd.OutOrStdout())
+		outputFormatter = outputFormatter.WithOutput(cmd.OutOrStdout())
 
 		return outputFormatter.Display()
 	},
