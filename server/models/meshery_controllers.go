@@ -941,16 +941,24 @@ func (mch *MesheryControllersHelper) ReconcileOperatorChartVersion(k8sctx K8sCon
 	// would withhold operator lifecycle until the connection is rebuilt.
 	previousChartVersion := mch.attachedOperatorChartVersion
 	mch.AddCtxControllerHandlers(k8sctx)
-	operatorHandler, attached := mch.ctxControllerHandlers[MesheryOperator]
-	attached = attached && operatorHandler != nil
 	if setupErr := mch.GetOperatorError(); setupErr != nil {
 		if mch.attachedOperatorChartVersion != "" {
 			mch.attachedOperatorChartVersion = previousChartVersion
 		}
 		return desired, false, ErrReconcileOperatorChartVersion(setupErr)
 	}
-	if !attached {
-		return desired, false, ErrOperatorHandlerNotAttached(k8sctx.ID)
+	// Through the same guard as every other install, rather than reading the
+	// handler out of the map directly. Reaching Deploy here was gated only by
+	// GetOperatorError being nil after the re-attach above, which holds solely
+	// because AddCtxControllerHandlers writes both errors together - a coupling
+	// nothing enforces, and one that five other setOperatorError writers could
+	// break into an unresolved version reaching Helm.
+	operatorHandler, _, targetErr := mch.operatorInstallTarget(k8sctx.ID)
+	if targetErr != nil {
+		if mch.attachedOperatorChartVersion != "" {
+			mch.attachedOperatorChartVersion = previousChartVersion
+		}
+		return desired, false, ErrReconcileOperatorChartVersion(targetErr)
 	}
 	// Deploy(false) is a no-op against an operator this handler undeployed and a
 	// Helm upgrade against one that is installed, so an operator the user turned
@@ -1045,10 +1053,12 @@ func (mch *MesheryControllersHelper) attachedOperatorHandler() controllers.IMesh
 // attached reports whether a handler was present at all, which is the one
 // condition callers report differently (see setOperatorErrorIfUnset).
 //
-// This is the single guard every install path goes through - the FSM's
-// DeployUndeployedOperators and the user-initiated SetOperatorDeployment - so
-// the two cannot drift into one refusing an unpublishable chart version while
-// the other hands it to Helm.
+// This is the single guard every install path goes through. There are exactly
+// three, and all three call this: the FSM's DeployUndeployedOperators, the
+// user-initiated SetOperatorDeployment, and ReconcileOperatorChartVersion. They
+// are the only callers of Deploy on an operator handler in this repository, so
+// none of them can drift into handing Helm an unpublishable chart version while
+// the others refuse it.
 //
 // Installing is the one operator action that needs a chart version. The handler
 // is attached for observation even when none could be resolved, so refusing
@@ -1088,19 +1098,32 @@ func (mch *MesheryControllersHelper) operatorStatusObserved() bool {
 }
 
 // SetOperatorDeployment applies a user-initiated Meshery Operator lifecycle
-// request for contextID: deploy=true installs or upgrades it, deploy=false
-// removes it. It is the counterpart to the FSM's DeployUndeployedOperators and
+// request for k8sctx: deploy=true installs or upgrades it, deploy=false removes
+// it. It is the counterpart to the FSM's DeployUndeployedOperators and
 // UndeployDeployedOperators for callers that must be told the outcome - the
 // GraphQL changeOperatorStatus mutation - and shares their guard rather than
 // restating it.
 //
+// A latched chart-resolution failure is retried here rather than being final.
+// operatorChartError is written only when handlers are attached, so a connect
+// that landed during a chart-repository outage would otherwise refuse every
+// later install for the life of that connection, no matter how long ago the
+// repository came back - and the user is told, correctly, to confirm the
+// repository is reachable and retry. Re-attaching is what makes that
+// instruction true: clearing the latch alone would not, because the handler the
+// failure path attached still carries the raw unresolved chart version, so the
+// version and the latch have to be corrected together. AddCtxControllerHandlers
+// does exactly that, and only a resolution that actually succeeds clears the
+// latch; one that fails again replaces it with the fresh error, which the guard
+// below then refuses on instead of falling through to a Deploy.
+//
 // The error is returned rather than emitted: the caller owns how a request it
 // initiated is surfaced. A failure is still recorded for the diagnostics API.
-func (mch *MesheryControllersHelper) SetOperatorDeployment(contextID string, deploy bool) error {
+func (mch *MesheryControllersHelper) SetOperatorDeployment(k8sctx K8sContext, deploy bool) error {
 	if !deploy {
 		operatorHandler := mch.attachedOperatorHandler()
 		if operatorHandler == nil {
-			err := ErrOperatorHandlerNotAttached(contextID)
+			err := ErrOperatorHandlerNotAttached(k8sctx.ID)
 			mch.setOperatorErrorIfUnset(err)
 			return err
 		}
@@ -1111,7 +1134,11 @@ func (mch *MesheryControllersHelper) SetOperatorDeployment(contextID string, dep
 		return nil
 	}
 
-	operatorHandler, attached, err := mch.operatorInstallTarget(contextID)
+	if mch.GetOperatorChartError() != nil {
+		mch.AddCtxControllerHandlers(k8sctx)
+	}
+
+	operatorHandler, attached, err := mch.operatorInstallTarget(k8sctx.ID)
 	if err != nil {
 		if attached {
 			mch.setOperatorError(err)

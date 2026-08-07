@@ -177,15 +177,39 @@ refuses on it rather than handing Helm a version the repository does not
 publish, which would surface as an opaque chart-not-found error instead.
 
 **Every install path** means exactly that, and it is enforced by a single
-function rather than by convention. `operatorInstallTarget` is the one guard;
-the FSM's `DeployUndeployedOperators` and the user-initiated
-`SetOperatorDeployment` both go through it, so they cannot drift into one
-refusing an unpublishable version while the other installs it. The GraphQL
-`changeOperatorStatus` mutation is the second entry point and calls
+function rather than by convention. `operatorInstallTarget` is the one guard, and
+there are exactly three callers of `Deploy` on an operator handler in the whole
+server - the FSM's `DeployUndeployedOperators`, the user-initiated
+`SetOperatorDeployment`, and `ReconcileOperatorChartVersion` - all three of which
+go through it. None can drift into installing an unpublishable version while the
+others refuse it. `ReconcileOperatorChartVersion` was the last one to reach
+`Deploy` by reading the handler out of the map directly; it was guarded only
+incidentally, because `AddCtxControllerHandlers` happens to write
+`lastOperatorError` and `operatorChartError` together, and five other writers of
+`lastOperatorError` could have broken that coupling. If you add a fourth caller,
+route it through the guard or this paragraph becomes false.
+
+The GraphQL `changeOperatorStatus` mutation is the second entry point and calls
 `SetOperatorDeployment` through the connection's helper (resolved via the state
 machine, the same route resync and controller-status take). It previously read
 a `MesheryControllerHandlersKey` context value that nothing ever populated -
 that key is now retired; do not reintroduce it.
+
+A latched `operatorChartError` is not permanent. It is written only where
+handlers are attached, so a connect that landed during a chart-repository outage
+would otherwise refuse every later install for the life of that connection, long
+after the repository came back - while `ErrHelmChartIndex` tells the user to
+confirm the repository is reachable and *retry*. `SetOperatorDeployment`
+therefore re-runs `AddCtxControllerHandlers` when a chart error is latched, which
+makes that instruction true: clicking deploy again genuinely re-resolves.
+Clearing the latch on its own would not be enough - the handler the failure path
+attached still carries the raw unresolved chart version, so the latch and the
+handler have to be corrected together, which is exactly what re-attaching does.
+The latch clears only as a consequence of a resolution that succeeded; one that
+fails again replaces it with the fresh error and the guard refuses on that
+instead of falling through to a `Deploy`. The FSM paths need no equivalent
+because they always run straight after a fresh `AddCtxControllerHandlers`, and
+`ReconcileOperatorChartVersion` re-resolves before it installs.
 
 `UndeployDeployedOperators` is deliberately **not** gated on the chart error:
 removal is the direction to attempt rather than refuse, since refusing would
@@ -452,11 +476,13 @@ Unit coverage that exists today:
   excluded from every automatic selection but honored when named, the
   pinned-against-pinned reconcile comparison, and the split between withholding
   installation and withholding observation (all three handlers still attach when
-  no chart version resolves; deploy refuses through the shared guard on both the
-  reconcile and the user-initiated `SetOperatorDeployment` path, undeploy does
-  not refuse, a missing handler is reported by name with its context id rather
-  than passed over, teardown of a never-connected connection stays quiet, and the
-  kubeconfig/client diagnostic survives that teardown).
+  no chart version resolves; all three install paths - the FSM reconcile, the
+  chart-version reconcile, and the user-initiated `SetOperatorDeployment` -
+  refuse through the shared guard; a latched chart error is re-resolved on a
+  user-initiated retry and only clears when resolution actually succeeds;
+  undeploy does not refuse, a missing handler is reported by name with its
+  context id rather than passed over, teardown of a never-connected connection
+  stays quiet, and the kubeconfig/client diagnostic survives that teardown).
 - `server/helpers/utils/helm_chart_repo_test.go` - the `index.yaml` read: chart
   version extraction, structured failures, TTL reuse, stale-while-revalidate on
   expiry (including through a failing refresh), that only a cold cache blocks,

@@ -158,8 +158,10 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 
 		// SetOperatorDeployment carries the same guard the connect-time path
 		// uses, so an unresolvable chart version is refused identically here
-		// rather than being handed to Helm as an opaque chart-not-found.
-		err := ctrlHelper.SetOperatorDeployment(k8scontext.ID, !del)
+		// rather than being handed to Helm as an opaque chart-not-found. It also
+		// re-resolves that version first, so clicking deploy again after the
+		// chart repository recovers is a retry that can actually succeed.
+		err := ctrlHelper.SetOperatorDeployment(k8scontext, !del)
 		if err != nil {
 			r.Log.Error(err)
 			r.Broadcast.Submit(broadcast.BroadcastMessage{
