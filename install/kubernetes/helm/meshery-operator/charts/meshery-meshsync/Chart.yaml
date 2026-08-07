@@ -11,7 +11,7 @@ version: 0.5.0
 # parent is republished at every Meshery Server release, so a moving appVersion
 # here advertises a different application from one publish to the next while
 # the archive itself is immutable.
-appVersion: "1.0.4"
+appVersion: "1.0.5"
 
 maintainers:
   - name: Meshery Authors
