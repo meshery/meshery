@@ -1,4 +1,73 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Mon, 03 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.64</title><link>/project/releases/v1.0.64/</link><pubDate>Mon, 03 Aug 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.64/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Fri, 07 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.65</title><link>/project/releases/v1.0.65/</link><pubDate>Fri, 07 Aug 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.65/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Docs] Update governance document for repository support process @yi-nuo426 (#21192)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Fix broken doc links in organization commands @KushagraB424 (#21186)&lt;/li&gt;
+&lt;li&gt;[skills] iterate-pr 2.4.0: never report an unfetched PR as a clean one @arjunmehta-git (#21176)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[CLI] Make golden test failures readable, and fix the two defects that were hiding behind them @CodeAhmedJamil (#21168)&lt;/li&gt;
+&lt;li&gt;[Server][CLI][UI] Fix master&amp;rsquo;s red Go tests and the silent schemas-rename bug behind them @hamza-mohd (#21170)&lt;/li&gt;
+&lt;li&gt;[UI][CLI][Server] Complete the design-import canonical-sourcing audit @hamza-mohd (#21166)&lt;/li&gt;
+&lt;li&gt;[CLI] Fix 63 mesheryctl documentation links that 404 @CodeAhmedJamil (#21147)&lt;/li&gt;
+&lt;li&gt;[Server][CLI][CI] Fix Connection Lifecycle e2e failures: unknown-id delete, non-interactive listing, broker name drift, provider auth @hamza-mohd (#21120)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Server] Separate the explicit MeshSync deployment mode from its cache @CodeAhmedJamil (#21146)&lt;/li&gt;
+&lt;li&gt;Prevent duplicate environment &amp;amp; workspace creation and fix payload unmarshaling @rishiraj38 (#21184)&lt;/li&gt;
+&lt;li&gt;[UI] Drop the hand-rolled controllers-config RTK layer @CodeAhmedJamil (#21145)&lt;/li&gt;
+&lt;li&gt;[Docs] Map the Operator, MeshSync and Broker settings surface @CodeAhmedJamil (#21144)&lt;/li&gt;
+&lt;li&gt;[Docs] Add rendered shortcode examples to Contributing docs @smishraa30 (#20498)&lt;/li&gt;
+&lt;li&gt;[Server][CLI][UI] Fix master&amp;rsquo;s red Go tests and the silent schemas-rename bug behind them @hamza-mohd (#21170)&lt;/li&gt;
+&lt;li&gt;[UI][CLI][Server] Complete the design-import canonical-sourcing audit @hamza-mohd (#21166)&lt;/li&gt;
+&lt;li&gt;[CI] Make the E2E job able to fail, and fix what was hiding behind it @CodeAhmedJamil (#21140)&lt;/li&gt;
+&lt;li&gt;[Chore]: Update to Sistent v0.21.45 @l5io (#21121)&lt;/li&gt;
+&lt;li&gt;[UI] Source design-import request body shape from @meshery/schemas (follow-up to #21105) @hamza-mohd (#21114)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Server] Separate the explicit MeshSync deployment mode from its cache @CodeAhmedJamil (#21146)&lt;/li&gt;
+&lt;li&gt;Fix: Update Notification Center docs with correct TSX references and&amp;hellip;. @Sohamsig (#18943)&lt;/li&gt;
+&lt;li&gt;[CI] Fix Slack good-first-issue notification failing on issue titles with double quotes @[copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;) (#21193)&lt;/li&gt;
+&lt;li&gt;[Docs] Map the Operator, MeshSync and Broker settings surface @CodeAhmedJamil (#21144)&lt;/li&gt;
+&lt;li&gt;[Docs] Add rendered shortcode examples to Contributing docs @smishraa30 (#20498)&lt;/li&gt;
+&lt;li&gt;chore: add language matrix for actions in codeql analysis workflow @ianrwhitney (#21174)&lt;/li&gt;
+&lt;li&gt;chore: update CodeQL analysis workflow to include build modes for lan… @ianrwhitney (#21152)&lt;/li&gt;
+&lt;li&gt;[CI] Make the E2E job able to fail, and fix what was hiding behind it @CodeAhmedJamil (#21140)&lt;/li&gt;
+&lt;li&gt;[Server][CLI][CI] Fix Connection Lifecycle e2e failures: unknown-id delete, non-interactive listing, broker name drift, provider auth @hamza-mohd (#21120)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[Server] Separate the explicit MeshSync deployment mode from its cache @CodeAhmedJamil (#21146)&lt;/li&gt;
+&lt;li&gt;Fix: Update Notification Center docs with correct TSX references and&amp;hellip;. @Sohamsig (#18943)&lt;/li&gt;
+&lt;li&gt;Create index.md @YASHMAHAKAL (#21183)&lt;/li&gt;
+&lt;li&gt;[Docs] Map the Operator, MeshSync and Broker settings surface @CodeAhmedJamil (#21144)&lt;/li&gt;
+&lt;li&gt;[Docs] Add rendered shortcode examples to Contributing docs @smishraa30 (#20498)&lt;/li&gt;
+&lt;li&gt;[Docs] Fix broken image references in notification-center.md and models @kanishksingh23 (#21177)&lt;/li&gt;
+&lt;li&gt;[Server][CLI][UI] Fix master&amp;rsquo;s red Go tests and the silent schemas-rename bug behind them @hamza-mohd (#21170)&lt;/li&gt;
+&lt;li&gt;[Server][CLI][CI] Fix Connection Lifecycle e2e failures: unknown-id delete, non-interactive listing, broker name drift, provider auth @hamza-mohd (#21120)&lt;/li&gt;
+&lt;li&gt;Partly Fix inconsistent &amp;lsquo;Related&amp;rsquo; section heading in docs @RaIyAn90 (#21100)&lt;/li&gt;
+&lt;li&gt;[Docs] Remove unused empty space above documentation content on mobil… @debkarma (#21050)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@CodeAhmedJamil, @Copilot, @KushagraB424, @RaIyAn90, @Sohamsig, @YASHMAHAKAL, @alexquincy, @arjunmehta-git, @banana-three-join, @chellej, @debkarma, @fitzergerald, @hamza-mohd, @hortison, @ianrwhitney, @jijillery, @kanishksingh23, @l5io, @leecalcote, @marblom007, @meshery-ci, @pontusringblom, @rishiraj38, @simihablo, @smishraa30, @winkletinkle, @yi-nuo426, Ahmed Jamil and [copilot-swe-agent[bot]](&lt;a href="https://github.com/apps/copilot-swe-agent"&gt;https://github.com/apps/copilot-swe-agent&lt;/a&gt;)&lt;/p&gt;</description></item><item><title>v1.0.64</title><link>/project/releases/v1.0.64/</link><pubDate>Mon, 03 Aug 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.64/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -34716,7 +34785,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.64&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.65&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
