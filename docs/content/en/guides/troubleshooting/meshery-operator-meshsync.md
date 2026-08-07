@@ -116,7 +116,12 @@ kubectl -n meshery logs deploy/meshery-operator -c manager
 
 **Remedy.** Get a chart at or above `v1.0.51` into the cluster.
 
-If Meshery Server deployed the operator for you (the usual case: you added a kubeconfig and Meshery installed the operator), simply **upgrade Meshery Server**. Meshery Server will not install a chart below `v1.0.51`: it resolves the chart version against what the repository actually publishes and raises anything older to the oldest published chart at or above that boundary, telling you it did so in the events feed. Then reconnect the cluster.
+If Meshery Server deployed the operator for you (the usual case: you added a kubeconfig and Meshery installed the operator), simply **upgrade Meshery Server**. The version a Server derives from its own release is floored: the Server resolves it against what the repository actually publishes and raises anything older than `v1.0.51` to the oldest published chart at or above that boundary, telling you it did so in the events feed. Then reconnect the cluster.
+
+The floor covers that derived version and nothing else, so two cases still leave an old chart in place:
+
+- **You pinned one.** An `operator.version` you set is honored as written and is never raised, so a connection pinned below `v1.0.51` keeps reinstalling that chart until you change or clear the pin. See [Choosing the chart version yourself](#choosing-the-chart-version-yourself).
+- **Nothing published reaches the floor.** If the repository carries no chart at or above `v1.0.51`, the newest published chart is deployed anyway, and the events feed says so and warns that the Operator may not become ready.
 
 If you installed the operator chart yourself with Helm:
 
@@ -155,15 +160,27 @@ kubectl -n meshery get deploy meshery-operator \
   -o jsonpath='{range .spec.template.spec.containers[*]}{.name}{"\n"}{end}'
 ```
 
-### Choosing the chart version yourself
+## Choosing the chart version yourself
 
 Meshery Server normally deploys the operator chart that matches its own release, falling back to the newest published chart when that one is not published yet (chart publishing trails Meshery Server releases). To pin a specific chart version for one connection, set **`operator.version`** in the connection's controllers configuration.
 
 The value must be a chart version that the repository publishes, for example `v1.0.64` (the leading `v` is optional - `1.0.64` names the same chart). A moving tag such as `stable-latest`, or a version that is not published, is rejected with a visible error rather than being silently replaced. Clear the field to go back to tracking the Meshery Server release.
 
+A pin is deliberate, so it also escapes the minimum-version floor that guards the derived version: `operator.version` below `v1.0.51` is installed as written rather than raised. Every published chart checked below that boundary leaves the Operator Pod unable to become ready (see [Meshery Operator will not start](#meshery-operator-will-not-start-imagepullbackoff-and-a-missing-webhook-certificate)), so choosing a chart that deploys is yours to get right.
+
 Release candidates are the one thing Meshery will never pick for you: when it falls back to the newest published chart, or raises an old one to the oldest chart known to deploy, it skips any version carrying a prerelease suffix such as `v1.0.66-rc.1`. Naming a prerelease in `operator.version` deploys it exactly as asked.
 
 If the chart repository cannot be reached, Meshery still reports the operator's status and image version for an operator that is already installed - only installing or upgrading it is withheld, and the reason appears in the connection's diagnostics and in the events feed.
+
+## When the chart version cannot be resolved
+
+A version that cannot be resolved - an `operator.version` naming something the repository does not publish, or a chart repository Meshery could not read at all - stops the install *before* Helm is called. Nothing partial is applied to the cluster.
+
+**The failure is visible, not silent.** The Operator's status card carries the error, and the connection's [Diagnostics](#diagnostics-in-the-connection-detail-view) report `operator_deploy_failed` with the underlying cause; the same cause appears in the events feed. The card does not vanish and the operator does not sit at a blank status while Meshery quietly gives up.
+
+**Retrying is the remedy for a transient outage.** Meshery re-resolves the version on a user-initiated deploy, so a chart repository that was briefly unreachable needs no reconnect and no restart: redeploy the Operator from the connection's actions and it self-heals. Check first that Meshery Server has outbound access to `https://meshery.github.io/meshery.io/charts` ([egress requirements]({{< ref "installation/production/networking-and-connectivity.md#egress-requirements" >}})).
+
+If the error names your own pin, the pin is the problem - correct `operator.version` to a published version or clear it to go back to tracking the Meshery Server release. An explicit pin is never quietly swapped for a working one.
 
 ## Operating Meshery without Meshery Operator
 
@@ -197,13 +214,7 @@ Based on discussed scenarios, the UI exposes tools to perform the following acti
 
 ### Diagnostics in the connection detail view
 
-Click a Kubernetes connection's row in the Connections table to open its detail view. Below the Operator / MeshSync / Broker status chips, a **Diagnostics** section lists actionable problems and remediation, derived from the live controller status and Meshery's actual Broker connection:
-
-| Code | Meaning | Remediation |
-|---|---|---|
-| `connection_inactive` | No active session for the connection yet. | Connect the cluster. |
-| `operator_not_deployed` | The Operator is not deployed (operator mode). | Reconnect the cluster, or switch MeshSync mode; ensure Meshery can create resources in the `meshery` namespace. |
-| `broker_unreachable` | The Broker is up but Meshery cannot reach/authenticate to it. | The managed port-forward normally handles reachability out-of-cluster; otherwise port-forward the Broker, expose it via NodePort/LoadBalancer, or run Meshery in-cluster. |
+Click a Kubernetes connection's row in the Connections table to open its detail view. Below the Operator / MeshSync / Broker status chips, a **Diagnostics** section lists actionable problems and remediation, derived from the live controller status and Meshery's actual Broker connection. Every code it reports, and the remedy for each, is listed in [Diagnostics]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#diagnostics" >}}).
 
 The same data is available at `GET /api/system/controllers/diagnostics?connectionId=<id>`.
 
