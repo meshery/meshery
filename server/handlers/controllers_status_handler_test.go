@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"sort"
 	"strings"
 	"testing"
 	"time"
@@ -117,20 +118,22 @@ func TestMachineCtxForConnection(t *testing.T) {
 	}
 }
 
-// TestCollectControllersStatus_OperatorRowSurvivesAMissingHandler: the SSE
-// snapshot is the complete controller list and the client replaces its state
-// with it wholesale, so a controller that is missing from the snapshot is a
-// card that disappears from the UI rather than one that reports a problem.
+// TestCollectControllersStatus_EveryControllerRowSurvivesMissingHandlers: the
+// SSE snapshot is the complete controller list and the client replaces its
+// state with it wholesale, so a controller missing from the snapshot is a card
+// that disappears from the UI rather than one that reports a problem.
 //
-// No operator handler is attached whenever Meshery could not build one - the
-// Kubernetes client failed, or no publishable Meshery Operator chart version
-// could be resolved - which is exactly when the Operator card has something to
-// say. The row must be present and carry an existing status value; the reason
-// belongs to the operator_deploy_failed diagnostic, not to this payload.
-func TestCollectControllersStatus_OperatorRowSurvivesAMissingHandler(t *testing.T) {
+// No handler is attached whenever Meshery could not build one - an unreadable
+// kubeconfig or a failed Kubernetes client take out all three, and an
+// unresolvable Meshery Operator chart version takes out the operator - which is
+// exactly when those cards have something to say. Every controller must get a
+// row carrying an existing status value; the reason belongs to the connection
+// diagnostics, not to this payload.
+func TestCollectControllersStatus_EveryControllerRowSurvivesMissingHandlers(t *testing.T) {
 	connID := uuid.Must(uuid.NewV4())
 	// A controllers helper with no attached handlers at all: the widest case,
-	// covering both client-creation failure and withheld operator lifecycle.
+	// covering kubeconfig failure, client-creation failure, and withheld
+	// operator lifecycle alike.
 	mctx := &kubernetes.MachineCtx{MesheryCtrlsHelper: &models.MesheryControllersHelper{}}
 
 	h := &Handler{
@@ -141,23 +144,43 @@ func TestCollectControllersStatus_OperatorRowSurvivesAMissingHandler(t *testing.
 
 	items := h.collectControllersStatus([]string{connID.String()})
 
-	var operator *system.ControllerStatus
-	for i := range items {
-		if items[i].Controller == system.ControllerStatusControllerOPERATOR {
-			operator = &items[i]
+	if len(items) != len(models.MesheryControllers) {
+		t.Fatalf("snapshot has %d rows, want one per controller (%d): %+v",
+			len(items), len(models.MesheryControllers), items)
+	}
+	seen := map[system.ControllerStatusController]bool{}
+	for _, item := range items {
+		if item.ConnectionId != connID {
+			t.Fatalf("connectionId = %s, want %s", item.ConnectionId, connID)
+		}
+		if item.Status != controllersStatusUnknown {
+			t.Fatalf("%s status = %q, want %q - Meshery did not probe the cluster, so it does not know",
+				item.Controller, item.Status, controllersStatusUnknown)
+		}
+		if item.Version != "" {
+			t.Fatalf("%s version = %q, want it empty for a synthesized row", item.Controller, item.Version)
+		}
+		if seen[item.Controller] {
+			t.Fatalf("%s reported twice: duplicate rows break the snapshot's sort key", item.Controller)
+		}
+		seen[item.Controller] = true
+	}
+	for _, want := range []system.ControllerStatusController{
+		system.ControllerStatusControllerBROKER,
+		system.ControllerStatusControllerMESHSYNC,
+		system.ControllerStatusControllerOPERATOR,
+	} {
+		if !seen[want] {
+			t.Fatalf("no %s row in the snapshot %+v: that card vanishes from the UI", want, items)
 		}
 	}
-	if operator == nil {
-		t.Fatalf("no OPERATOR row in the snapshot %+v: the Operator card vanishes from the UI", items)
-	}
-	if operator.ConnectionId != connID {
-		t.Fatalf("connectionId = %s, want %s", operator.ConnectionId, connID)
-	}
-	if operator.Status != controllersStatusUnknown {
-		t.Fatalf("status = %q, want %q - Meshery did not probe the cluster, so it does not know", operator.Status, controllersStatusUnknown)
-	}
-	if operator.Version != "" {
-		t.Fatalf("version = %q, want it empty for a synthesized row", operator.Version)
+	if !sort.SliceIsSorted(items, func(i, j int) bool {
+		if items[i].ConnectionId != items[j].ConnectionId {
+			return items[i].ConnectionId.String() < items[j].ConnectionId.String()
+		}
+		return items[i].Controller < items[j].Controller
+	}) {
+		t.Fatalf("snapshot is not sorted by (connectionId, controller); SSE change detection compares it byte-for-byte: %+v", items)
 	}
 }
 

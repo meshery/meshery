@@ -49,6 +49,14 @@ const (
 	MesheryOperator
 )
 
+// MesheryControllers is every controller Meshery manages on a Kubernetes
+// connection, in enum order. It is the authoritative set: AddCtxControllerHandlers
+// attaches a handler for each of these, so a caller that must account for every
+// controller - whether or not a handler could be attached - iterates this rather
+// than the handler map, which is missing entries precisely when something went
+// wrong.
+var MesheryControllers = []MesheryController{MesheryBroker, Meshsync, MesheryOperator}
+
 type MesheryControllersHelper struct {
 	// context that is being manged by a particular controllerHelper instance
 	contextID string

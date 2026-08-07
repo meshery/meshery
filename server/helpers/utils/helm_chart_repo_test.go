@@ -278,6 +278,56 @@ func TestChartIndexCacheSingleFlightsConcurrentMisses(t *testing.T) {
 	}
 }
 
+// TestChartIndexCacheSurvivesAPanickingFetch: the in-flight slot must be
+// released on every exit path. Leaving it behind after a panic wedges the
+// repository permanently - the done channel nobody can close blocks every
+// later caller forever, leaking a goroutine each - and net/http recovers the
+// panic in the handler goroutine, so the process stays up to keep hanging.
+func TestChartIndexCacheSurvivesAPanickingFetch(t *testing.T) {
+	calls := 0
+	cache := &chartIndexCache{
+		entries: map[string]chartIndexCacheEntry{},
+		now:     time.Now,
+		fetch: func(string) (map[string][]string, error) {
+			calls++
+			if calls == 1 {
+				panic("index decode blew up")
+			}
+			return map[string][]string{"meshery-operator": {"v1.0.64"}}, nil
+		},
+	}
+
+	// The panicking flight reports a structured failure rather than escaping as
+	// a panic or handing back a nil catalogue with a nil error.
+	versions, err := cache.list("repo", "meshery-operator")
+	if err == nil {
+		t.Fatalf("a panicking fetch must be reported as a failure, got versions %v", versions)
+	}
+	if code := meshkiterrors.GetCode(err); code != ErrHelmChartIndexCode {
+		t.Fatalf("error code = %q, want %q (from %v)", code, ErrHelmChartIndexCode, err)
+	}
+
+	// And the cache is still usable: no slot left occupied, so this neither
+	// blocks nor is served from a cached failure.
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		versions, err := cache.list("repo", "meshery-operator")
+		if err != nil {
+			t.Errorf("the cache is wedged after a panicking fetch: %v", err)
+			return
+		}
+		if len(versions) != 1 || versions[0] != "v1.0.64" {
+			t.Errorf("versions = %v, want the successfully fetched catalogue", versions)
+		}
+	}()
+	select {
+	case <-done:
+	case <-time.After(5 * time.Second):
+		t.Fatal("a lookup after a panicking fetch blocked forever: the in-flight slot was never released")
+	}
+}
+
 // TestChartIndexCacheReturnsACopyOfTheCatalogue: the cached catalogue is shared
 // across goroutines for a full TTL. Handing out its own slice lets any caller
 // that sorts or appends corrupt it for everyone else, with no lock held.

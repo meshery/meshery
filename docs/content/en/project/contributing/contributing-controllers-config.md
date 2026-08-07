@@ -136,11 +136,18 @@ An unreadable repository index fails rather than guessing: without the index
 there is no way to know which versions exist. Operator lifecycle is then
 withheld for that connection (no `MesheryOperator` handler is attached) while
 the Broker and MeshSync handlers, which need no chart version, still attach.
-`collectControllersStatus` synthesizes an `OPERATOR` row carrying `UNKOWN`
-whenever no operator handler is attached, so the Operator card stays visible
-rather than disappearing from a snapshot the client applies wholesale; the
-reason is carried by the `operator_deploy_failed` diagnostic, which reads
-`GetOperatorError`.
+
+The controller-status snapshot is built from `models.MesheryControllers`, not
+from the attached-handler map, so a connection with a ready FSM context always
+reports exactly one row per controller. A controller with no handler behind it
+reports `UNKOWN` and no version - Meshery made no observation of the cluster, so
+any other value would assert something it did not check. Without that the card
+disappears from the UI, because the client replaces its controller state with
+each snapshot wholesale: withheld operator lifecycle would drop the Operator
+card, and an unreadable kubeconfig or a failed Kubernetes client (a pre-existing
+gap, since no handlers attach at all in those paths) would drop all three. The
+reason a row is unknown belongs to the connection diagnostics -
+`operator_deploy_failed` reads `GetOperatorError` - not to the status payload.
 
 `NewOperatorDeploymentConfig` consequently leaves the chart version empty for an
 unstamped build instead of asking the GitHub releases API for the newest server
@@ -362,11 +369,11 @@ Unit coverage that exists today:
 - `server/helpers/utils/helm_chart_repo_test.go` - the `index.yaml` read: chart
   version extraction, structured failures, TTL reuse, that failures are not
   cached, that the lock is not held across the fetch, that concurrent misses
-  single-flight, and that the cached catalogue is never handed out by
-  reference.
-- `server/handlers/controllers_status_handler_test.go` - that the `OPERATOR`
-  row is present in the status snapshot even when no operator handler is
-  attached.
+  single-flight, that a panicking fetch leaves the cache usable, and that the
+  cached catalogue is never handed out by reference.
+- `server/handlers/controllers_status_handler_test.go` - that the status
+  snapshot carries one row per controller, sorted, even when no handlers are
+  attached at all.
 - `ui/components/configuration/__tests__/deploymentMode.test.ts` - which
   settings each deployment mode can apply, and how the mode governing each
   editor is resolved and attributed to a layer.

@@ -435,6 +435,7 @@ helm-operator-lint: helm-operator-appversion-check
 
 ## Assert the Meshery Operator chart and its subcharts advertise the same appVersion
 helm-operator-appversion-check:
+	./install/scripts/check-operator-chart-appversions.sh --self-test
 	./install/scripts/check-operator-chart-appversions.sh install/kubernetes/helm/meshery-operator
 ## Lint Meshery Server and Adapter Helm Charts
 helm-meshery-lint:

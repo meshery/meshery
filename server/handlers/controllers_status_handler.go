@@ -183,16 +183,21 @@ func deriveControllerStatus(controller models.MesheryController, status system.C
 // connections. The result is sorted (connectionId, controller) so callers can
 // compare successive snapshots byte-for-byte to detect changes.
 //
-// Every connection with a ready FSM context reports an operator row, whether or
-// not an operator controller handler is attached. A handler is absent whenever
-// Meshery could not build one - the Kubernetes client failed, or no publishable
-// Meshery Operator chart version could be resolved - and the client replaces
-// its controller state with each snapshot wholesale, so omitting the row makes
-// the Operator card vanish from the UI at exactly the moment it has something
-// to report. The synthesized row carries controllersStatusUnknown (Meshery did
-// not probe the cluster, so it does not know whether an operator is installed)
-// and no version; why the handler is missing is carried by the
-// operator_deploy_failed diagnostic, which is fed from GetOperatorError.
+// A connection with a ready FSM context reports exactly one row per controller
+// in models.MesheryControllers - never a partial list. The rows are built from
+// that set rather than from the handler map, which is missing entries precisely
+// when something went wrong: AddCtxControllerHandlers attaches no handlers at
+// all when the kubeconfig is unreadable or the Kubernetes client cannot be
+// built, and no operator handler when no publishable Meshery Operator chart
+// version can be resolved. Since the client replaces its controller state with
+// each snapshot wholesale, dropping a row makes that controller's card vanish
+// from the UI at exactly the moment it has something to report.
+//
+// A row with no handler behind it carries controllersStatusUnknown - Meshery
+// made no observation of the cluster, so any other value would assert something
+// it did not check - and no version. Why the handler is missing has its own
+// home: the connection diagnostics, including operator_deploy_failed, which is
+// fed from GetOperatorError.
 func (h *Handler) collectControllersStatus(connectionIDs []string) []system.ControllerStatus {
 	items := make([]system.ControllerStatus, 0)
 	for _, connectionID := range connectionIDs {
@@ -202,30 +207,23 @@ func (h *Handler) collectControllersStatus(connectionIDs []string) []system.Cont
 		}
 		ctrlHandlers := machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
 		brokerConnected := h.mesheryHoldsLiveBrokerConnection(machinectx)
-		for controller, ctrlHandler := range ctrlHandlers {
-			if ctrlHandler == nil {
-				continue
-			}
-			version, err := ctrlHandler.GetVersion()
-			if err != nil {
-				h.log.Debugf("controllers status: version for %s on %s: %v", internalControllerName(controller), connectionID, err)
-			}
-			status := deriveControllerStatus(controller, internalControllerStatus(ctrlHandler.GetStatus()), brokerConnected)
-			items = append(items, system.ControllerStatus{
+		for _, controller := range models.MesheryControllers {
+			item := system.ControllerStatus{
 				// machineCtxForConnection only resolves valid UUIDs, so the parse
 				// cannot yield the zero UUID here.
 				ConnectionId: uuid.FromStringOrNil(connectionID),
 				Controller:   internalControllerName(controller),
-				Status:       status,
-				Version:      version,
-			})
-		}
-		if ctrlHandlers[models.MesheryOperator] == nil {
-			items = append(items, system.ControllerStatus{
-				ConnectionId: uuid.FromStringOrNil(connectionID),
-				Controller:   internalControllerName(models.MesheryOperator),
 				Status:       controllersStatusUnknown,
-			})
+			}
+			if ctrlHandler := ctrlHandlers[controller]; ctrlHandler != nil {
+				version, err := ctrlHandler.GetVersion()
+				if err != nil {
+					h.log.Debugf("controllers status: version for %s on %s: %v", internalControllerName(controller), connectionID, err)
+				}
+				item.Status = deriveControllerStatus(controller, internalControllerStatus(ctrlHandler.GetStatus()), brokerConnected)
+				item.Version = version
+			}
+			items = append(items, item)
 		}
 	}
 	sort.Slice(items, func(i, j int) bool {

@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"net/http"
 	"slices"
 	"strconv"
@@ -113,28 +114,53 @@ func (c *chartIndexCache) index(repo string) (map[string][]string, error) {
 	c.inflight[repo] = pending
 	c.mu.Unlock()
 
-	versions, err := c.fetch(repo)
+	return c.runFetch(repo, pending)
+}
 
-	c.mu.Lock()
-	pending.versions, pending.err = versions, err
-	delete(c.inflight, repo)
-	if err == nil {
-		if c.entries == nil {
-			c.entries = map[string]chartIndexCacheEntry{}
+// runFetch performs the one fetch that waiters on pending are blocked behind,
+// and publishes its outcome.
+//
+// Releasing the in-flight slot and closing pending.done are deferred because
+// they must happen on every exit path. A panic that skipped them would wedge
+// this repository permanently: the slot would still be occupied, so every later
+// caller would block forever on a done channel nobody can close, leaking a
+// goroutine each until the server is restarted. A panic is therefore converted
+// into a structured failure, which the normal error path already handles
+// (operator lifecycle is withheld, the cause is recorded for diagnostics, and
+// the next call retries because failures are not cached).
+func (c *chartIndexCache) runFetch(repo string, pending *chartIndexFetch) (versions map[string][]string, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			versions = nil
+			err = ErrHelmChartIndex(chartIndexURL(repo), fmt.Sprintf("reading the repository index panicked: %v", r))
 		}
-		c.entries[repo] = chartIndexCacheEntry{versions: versions, fetchedAt: c.now()}
-	}
-	c.mu.Unlock()
-	close(pending.done)
 
-	return versions, err
+		c.mu.Lock()
+		pending.versions, pending.err = versions, err
+		delete(c.inflight, repo)
+		if err == nil {
+			if c.entries == nil {
+				c.entries = map[string]chartIndexCacheEntry{}
+			}
+			c.entries[repo] = chartIndexCacheEntry{versions: versions, fetchedAt: c.now()}
+		}
+		c.mu.Unlock()
+		close(pending.done)
+	}()
+
+	return c.fetch(repo)
+}
+
+// chartIndexURL is where a Helm repository serves its index.
+func chartIndexURL(repo string) string {
+	return strings.TrimSuffix(repo, "/") + "/index.yaml"
 }
 
 // fetchChartIndexVersions downloads repo's index.yaml and reduces it to
 // chart name -> published versions. It decodes into MeshKit's HelmIndex rather
 // than a local copy of the same shape, so the index contract keeps one owner.
 func fetchChartIndexVersions(repo string) (map[string][]string, error) {
-	url := strings.TrimSuffix(repo, "/") + "/index.yaml"
+	url := chartIndexURL(repo)
 
 	// The repository URL is server configuration, never user input. #nosec G107
 	client := &http.Client{Timeout: chartIndexTimeout}

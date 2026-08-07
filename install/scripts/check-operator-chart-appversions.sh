@@ -16,14 +16,14 @@
 
 set -euo pipefail
 
-CHART_DIR="${1:-install/kubernetes/helm/meshery-operator}"
-
-PARENT_CHART="${CHART_DIR}/Chart.yaml"
-BROKER_CHART="${CHART_DIR}/charts/meshery-broker/Chart.yaml"
-MESHSYNC_CHART="${CHART_DIR}/charts/meshery-meshsync/Chart.yaml"
-
-# read_app_version prints the top-level appVersion of a Chart.yaml, with any
-# surrounding quotes stripped.
+# read_app_version prints the top-level appVersion of a Chart.yaml as a bare
+# version string.
+#
+# The trailing comment goes first, then trailing whitespace, then the quotes.
+# Any other order defeats itself: stripping quotes from `"1.0.5" # stamped`
+# finds no quote at the end of the line, so the closing one survives into the
+# comparison and the check fails against a subchart that reads identically.
+# --self-test pins that ordering.
 read_app_version() {
   local file="$1" value
   if [ ! -f "$file" ]; then
@@ -31,19 +31,64 @@ read_app_version() {
     exit 1
   fi
   value="$(sed -n 's/^appVersion:[[:space:]]*//p' "$file" | head -n 1)"
+  # YAML requires whitespace before an inline comment, so anchoring on that
+  # leaves a '#' inside the value alone.
+  value="$(printf '%s' "$value" | sed -e 's/[[:space:]]#.*$//' -e 's/[[:space:]]*$//')"
   value="${value%\"}"
   value="${value#\"}"
   value="${value%\'}"
   value="${value#\'}"
-  # Trim a trailing comment and any trailing whitespace.
-  value="${value%%#*}"
-  value="$(printf '%s' "$value" | sed 's/[[:space:]]*$//')"
   if [ -z "$value" ]; then
     echo "check-operator-chart-appversions: $file declares no appVersion" >&2
     exit 1
   fi
   printf '%s' "$value"
 }
+
+# self_test asserts read_app_version against every spelling a Chart.yaml may
+# legitimately use, so the strip ordering above cannot silently regress.
+self_test() {
+  local dir failures=0 case_line expected got
+  dir="$(mktemp -d)"
+
+  # Each case is "<expected>|<appVersion line>".
+  local cases=(
+    '1.0.4|appVersion: 1.0.4'
+    '1.0.4|appVersion: "1.0.4"'
+    "1.0.4|appVersion: '1.0.4'"
+    '1.0.4|appVersion: "1.0.4" # stamped by sync-downstream'
+    '1.0.4|appVersion: 1.0.4 # stamped by sync-downstream'
+    "1.0.4|appVersion: '1.0.4'   "
+    '1.0.4|appVersion:    1.0.4'
+  )
+
+  for case_line in "${cases[@]}"; do
+    expected="${case_line%%|*}"
+    printf '%s\n' "${case_line#*|}" > "${dir}/Chart.yaml"
+    got="$(read_app_version "${dir}/Chart.yaml")"
+    if [ "$got" != "$expected" ]; then
+      echo "check-operator-chart-appversions: self-test failed for '${case_line#*|}': parsed '${got}', want '${expected}'" >&2
+      failures=$((failures + 1))
+    fi
+  done
+
+  rm -rf "$dir"
+  if [ "$failures" -ne 0 ]; then
+    exit 1
+  fi
+  echo "check-operator-chart-appversions: self-test passed (${#cases[@]} cases)"
+}
+
+if [ "${1:-}" = "--self-test" ]; then
+  self_test
+  exit 0
+fi
+
+CHART_DIR="${1:-install/kubernetes/helm/meshery-operator}"
+
+PARENT_CHART="${CHART_DIR}/Chart.yaml"
+BROKER_CHART="${CHART_DIR}/charts/meshery-broker/Chart.yaml"
+MESHSYNC_CHART="${CHART_DIR}/charts/meshery-meshsync/Chart.yaml"
 
 parent="$(read_app_version "$PARENT_CHART")"
 broker="$(read_app_version "$BROKER_CHART")"
