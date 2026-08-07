@@ -132,8 +132,9 @@ func TestDerivedChartVersionSubstitutionIsNeverSilent(t *testing.T) {
 
 // TestDerivedChartVersionIsFlooredToTheOldestWorkingChart pins the fix for the
 // reported failure: a server old enough to predate MinimumOperatorChartVersion
-// requests a chart that *is* published but cannot run (retired kube-rbac-proxy
-// image, no webhook certificate). It must be raised to the oldest *published*
+// requests a chart that *is* published but cannot run (a kube-rbac-proxy
+// sidecar that affected clusters cannot pull, no webhook certificate). It must
+// be raised to the oldest *published*
 // chart at or above the floor - not to the newest, which would be a larger
 // change than the defect requires, and not to the floor constant itself, which
 // the repository is not obliged to publish.

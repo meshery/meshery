@@ -103,8 +103,9 @@ guarantees such a chart exists, and two everyday cases guarantee it does not:
   published. Helm then fails with a chart-not-found error and the operator never
   deploys.
 - Charts below `models.MinimumOperatorChartVersion` are published but are not
-  known to run: every one that was rendered from its published archive ships the
-  retired `kube-rbac-proxy` image and no webhook certificate. Because the derived
+  known to run: every one that was rendered from its published archive ships a
+  `kube-rbac-proxy` sidecar that affected clusters report as `ImagePullBackOff`,
+  and no webhook certificate. Because the derived
   version tracks the server's own release, an old server would install one of
   those on every cluster it is ever pointed at, forever.
 

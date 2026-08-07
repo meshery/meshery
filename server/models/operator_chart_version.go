@@ -27,14 +27,21 @@ const (
 	//   - v1.0.51 renders with no `kube-rbac-proxy` container and pins
 	//     ENABLE_WEBHOOKS="false" on the manager. So does every chart above it.
 	//   - Every published chart checked below it - v1.0.40, and the contiguous
-	//     run v1.0.41 through v1.0.50 (v1.0.47 was never published) - ships a
-	//     `gcr.io/kubebuilder/kube-rbac-proxy` sidecar and sets no
-	//     ENABLE_WEBHOOKS. That registry has been retired, so the sidecar lands
-	//     in ImagePullBackOff; and an unset ENABLE_WEBHOOKS means *enabled* in
+	//     run v1.0.41 through v1.0.50 (v1.0.47 was never published) - renders a
+	//     `registry.k8s.io/kubebuilder/kube-rbac-proxy:v0.16.0` sidecar and sets
+	//     no ENABLE_WEBHOOKS. (Much older charts, v0.8.180 among them, name that
+	//     same sidecar under gcr.io instead; both spellings appear in user
+	//     reports.) Affected clusters report the sidecar stuck in
+	//     ImagePullBackOff so the Pod never becomes Ready. Why the pull fails is
+	//     deliberately not claimed here: the gcr.io copy of v0.16.0 is gone (404,
+	//     empty tag list) but the registry.k8s.io copy still resolves, so that
+	//     half is an environment fact, not a chart fact. The chart facts are
+	//     enough on their own - an unset ENABLE_WEBHOOKS means *enabled* in
 	//     current operator images, so the manager crash-loops on
 	//     `open /tmp/k8s-webhook-server/serving-certs/tls.crt: no such file or
-	//     directory`. Both defects are permanent, being baked into an immutable
-	//     published archive.
+	//     directory` regardless of the sidecar - and both the sidecar reference
+	//     and the missing ENABLE_WEBHOOKS are permanent, being baked into an
+	//     immutable published archive.
 	//
 	// Charts older than v1.0.40 were not rendered, so nothing here claims a
 	// cause for them - only that they are below the oldest chart verified to

@@ -94,6 +94,8 @@ kubectl -n meshery get pods
 #                              CrashLoopBackOff   (manager)
 
 kubectl -n meshery describe pod -l app=meshery-operator | grep -A2 kube-rbac-proxy
+# Failed to pull image "registry.k8s.io/kubebuilder/kube-rbac-proxy:v0.16.0"
+# ...older charts name the same sidecar under the other registry:
 # Failed to pull image "gcr.io/kubebuilder/kube-rbac-proxy:v0.16.0"
 
 kubectl -n meshery logs deploy/meshery-operator -c manager
@@ -102,10 +104,11 @@ kubectl -n meshery logs deploy/meshery-operator -c manager
 
 **Cause.** Both symptoms come from one thing: an **old `meshery-operator` Helm chart**, from before `v1.0.51`.
 
-- Those charts ship a `gcr.io/kubebuilder/kube-rbac-proxy` sidecar. That registry has been retired, so the image can no longer be pulled and the Pod never becomes ready.
+- Those charts ship a `kube-rbac-proxy` sidecar next to the manager. Charts around `v0.8.214` and above - including the chart a helm-installed Meshery Server asks for, which is the usual case - name it `registry.k8s.io/kubebuilder/kube-rbac-proxy:v0.16.0`; older charts such as `v0.8.180` name the same image as `gcr.io/kubebuilder/kube-rbac-proxy:v0.16.0`. Match on either. When that image does not pull, the container sits in `ImagePullBackOff` and the Pod never becomes ready.
+  - Why the pull fails is not the same story for both registries, and only one of them is settled: the `gcr.io` copy of `v0.16.0` is gone (the repository's tag list is empty and the tag returns `404`), while the `registry.k8s.io` copy still resolves from an unrestricted network. So if your cluster reports the pull failing on `registry.k8s.io`, treat it as something about that cluster's access to the registry rather than as the image having been withdrawn. The remedy below does not depend on which it is.
 - They also set no `ENABLE_WEBHOOKS` on the manager and mount no serving certificate. Current operator images treat an unset `ENABLE_WEBHOOKS` as *enabled*, so the manager looks for a certificate that the old chart never created and crash-loops.
 
-`v1.0.51` is the oldest published chart confirmed to render without the sidecar and with `ENABLE_WEBHOOKS=false` - the conversion webhook opt-in, off by default - and every chart above it does the same. Both symptoms were reproduced from the published archives of `v1.0.40` and of the contiguous run `v1.0.41` through `v1.0.50` (`v1.0.47` was never published); charts older than `v1.0.40` were not checked, so treat "older than `v1.0.51`" as the boundary rather than a claim about any specific ancient release.
+`v1.0.51` is the oldest published chart confirmed to render without the sidecar and with `ENABLE_WEBHOOKS=false` - the conversion webhook opt-in, off by default - and every chart above it does the same. Both conditions behind the symptoms - the sidecar, and the absent `ENABLE_WEBHOOKS` - were confirmed by rendering the published archives of `v1.0.40` and of the contiguous run `v1.0.41` through `v1.0.50` (`v1.0.47` was never published); charts older than `v1.0.40` were not rendered, so treat "older than `v1.0.51`" as the boundary rather than a claim about any specific ancient release.
 
 **Remedy.** Get a chart at or above `v1.0.51` into the cluster.
 
