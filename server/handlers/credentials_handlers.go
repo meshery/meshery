@@ -156,15 +156,20 @@ func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request,
 	// success having removed nothing. Reject it here instead.
 	credentialID, err := uuid.FromString(raw)
 	if err != nil || credentialID.IsNil() {
-		h.log.Error(ErrInvalidRequestObject("credentialId must be a valid UUID"))
-		writeMeshkitError(w, ErrInvalidRequestObject("credentialId must be a valid UUID"), http.StatusBadRequest)
+		// Built once and reused: constructing the error separately for the log
+		// and the response duplicates the message, which is how the two drift
+		// apart when only one is later edited.
+		invalidID := ErrInvalidRequestObject("credentialId must be a valid UUID")
+		h.log.Error(invalidID)
+		writeMeshkitError(w, invalidID, http.StatusBadRequest)
 		return
 	}
 
 	_, err = provider.DeleteUserCredential(req, credentialID)
 	if err != nil {
-		h.log.Error(ErrDeleteUserCredential(err))
-		writeMeshkitError(w, ErrDeleteUserCredential(err), http.StatusInternalServerError)
+		deleteErr := ErrDeleteUserCredential(err)
+		h.log.Error(deleteErr)
+		writeMeshkitError(w, deleteErr, http.StatusInternalServerError)
 		return
 	}
 

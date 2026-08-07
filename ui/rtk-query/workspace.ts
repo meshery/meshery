@@ -62,8 +62,10 @@ const workspacesApi = api
       // Neither local tag has a live provider today, so both currently
       // invalidate nothing: `workspaces_designs` is provided only by the
       // shadowed `getDesignsOfWorkspace` in the dead block below, and
-      // `workspaces_environments` is provided by nothing at all since its only
-      // provider was the equally shadowed local `getEnvironmentsOfWorkspace`.
+      // `workspaces_environments` is provided by nothing at all - this module
+      // no longer declares a `getEnvironmentsOfWorkspace` at all, having
+      // dropped the shadowed local one and re-exported the generated query,
+      // which provides the schemas-side tags instead.
       // Refetching still happens - the schemas definitions invalidate
       // `Workspace_workspaces`, which is what the effective queries provide.
       // The entries stay registered because they become load-bearing the moment
