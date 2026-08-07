@@ -131,6 +131,35 @@ bodies, the `From<Variant>Payload` union builders) rather than a
 `map[string]interface{}` — see `mesheryctl/internal/cli/root/design/import.go`.
 A hand-written map is how camelCase `fileName` regressed to `file_name`.
 
+### A local endpoint that shadows a schemas operationId is DEAD CODE
+
+`injectEndpoints` without `overrideExisting: true` **silently discards** any
+endpoint whose name `@meshery/schemas` already defines (dev-only console warning)
+and serves every call from the schemas definition, so a local declaration can sit
+there looking authoritative while a different request goes over the wire - which
+is how notification delete shipped as `DELETE /api/events/undefined`. Before
+adding a `builder.query`/`builder.mutation`, check the name against the generated
+client (`grep '<name>:t\.' ui/node_modules/@meshery/schemas/dist/mesheryApi.js`);
+if it is there, consume the generated hook - that is the rule above anyway.
+
+The deliberate-override exception and the rule that tests must assert the
+*effective* endpoint rather than the declared one are in
+`docs/content/en/project/contributing/ui/schemas.md` (Integration Points in UI, A).
+
+### Consumed contracts are the schemas type, not a copy of it
+
+A struct Meshery only *decodes* from a remote provider (or only *encodes* to one)
+carries no local freedom: it is the schemas construct, aliased. A local copy is
+how `AnonymousFlowResponse` came to read `owner` while meshery-cloud kept sending
+`userId`, so every anonymous sign-in wrote its capabilities under the nil UUID.
+The same rename hit `PatternResource` and `Preference.selectedOrganizationId`.
+
+When the Go type must stay local because it doubles as a GORM model (the schemas
+models carry `db:` tags GORM does not read), keep the **JSON tags** identical to
+the schemas construct and pin the column explicitly with `gorm:"column:..."` -
+see `server/models/pattern_resource.go`. Guard it with a test that compares the
+emitted JSON keys against the schemas type rather than restating them by hand.
+
 ## Build & Development Commands
 
 - Use the `gh-axi` CLI tool to interact with GitHub. Prefer `gh-axi` over `gh`.

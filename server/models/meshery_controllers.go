@@ -85,6 +85,13 @@ type MesheryControllersHelper struct {
 	// configuration changes; consumed by the embedded meshsync run options.
 	controllersConfig *controllersconfig.MesheryControllersConfig
 
+	// attachedOperatorChartVersion is the Meshery Operator Helm chart version the
+	// currently attached operator controller handler was constructed with. The
+	// meshkit handler captures its deployment config at construction, so this is
+	// the only record of what a later `operator.version` change has to differ
+	// from before a redeploy is warranted. "" until handlers are attached.
+	attachedOperatorChartVersion string
+
 	// event broadcasting dependencies
 	eventBroadcaster *Broadcast
 	provider         Provider
@@ -174,6 +181,12 @@ func (mch *MesheryControllersHelper) GetBrokerPortForwardAddr() string {
 
 // SetControllersConfig stashes the resolved controllers configuration for the
 // context this helper serves. Chainable, mirroring SetMeshsyncDeploymentMode.
+//
+// Call it BEFORE AddCtxControllerHandlers: the operator controller handler is
+// constructed with the Helm chart version this document resolves to
+// (`operator.version`), and the meshkit handler captures that at construction.
+// On an already-attached helper, ReconcileOperatorChartVersion is what turns a
+// changed version into a redeploy.
 func (mch *MesheryControllersHelper) SetControllersConfig(value *controllersconfig.MesheryControllersConfig) *MesheryControllersHelper {
 	mch.controllersConfig = value
 	return mch
@@ -680,14 +693,92 @@ func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *M
 		return mch
 	}
 
+	depConfig := mch.operatorDeploymentConfig()
 	mch.ctxControllerHandlers = map[MesheryController]controllers.IMesheryController{
 		MesheryBroker:   controllers.NewMesheryBrokerHandler(client),
-		MesheryOperator: controllers.NewMesheryOperatorHandler(client, mch.oprDepConfig),
+		MesheryOperator: controllers.NewMesheryOperatorHandler(client, depConfig),
 		Meshsync:        controllers.NewMeshsyncHandler(client),
 	}
+	mch.attachedOperatorChartVersion = depConfig.MesheryReleaseVersion
 
 	// }(mch)
 	return mch
+}
+
+// operatorDeploymentConfig resolves the Meshery Operator deployment
+// configuration to attach a controller handler with: the server-wide
+// configuration assembled once at boot (NewOperatorDeploymentConfig), with the
+// Helm chart version replaced by this connection's resolved `operator.version`
+// when a layer sets one.
+//
+// Leaving `operator.version` unset at every layer yields the boot-time chart
+// version verbatim, which is exactly the behavior before the field was wired
+// up. The operator handler captures this configuration at construction, so the
+// resolved controllers configuration must be stashed (SetControllersConfig)
+// before AddCtxControllerHandlers runs - see ReconcileOperatorChartVersion for
+// the path that re-attaches when the version changes on a live connection.
+func (mch *MesheryControllersHelper) operatorDeploymentConfig() controllers.OperatorDeploymentConfig {
+	depConfig := mch.oprDepConfig
+	if version := connections.OperatorChartVersionFromControllersConfig(mch.controllersConfig); version != "" {
+		depConfig.MesheryReleaseVersion = version
+	}
+	return depConfig
+}
+
+// ReconcileOperatorChartVersion brings the operator running on this connection's
+// cluster into line with the chart version its resolved controllers
+// configuration asks for.
+//
+// The operator handler captures its chart version at construction, so a changed
+// `operator.version` means re-attaching the handlers and re-running the Helm
+// release. That release is applied with UpgradeIfInstalled, so an operator
+// already present is upgraded in place rather than reinstalled.
+//
+// It reports the chart version now in force and whether a redeploy was
+// performed. It no-ops - reporting redeployed=false - when:
+//   - the connection is not in operator deployment mode (nothing is installed
+//     into the cluster at all, so the field is inert and the UI says so),
+//   - the operator is disabled server-wide or was explicitly undeployed for
+//     this context, or
+//   - the resolved chart version already matches the attached handler's.
+func (mch *MesheryControllersHelper) ReconcileOperatorChartVersion(k8sctx K8sContext, ot *OperatorTracker) (chartVersion string, redeployed bool, err error) {
+	desired := mch.operatorDeploymentConfig().MesheryReleaseVersion
+	if mch.meshsyncDeploymentMode != connections.MeshsyncDeploymentModeOperator {
+		return desired, false, nil
+	}
+	if ot == nil || ot.DisableOperator || ot.IsUndeployed(k8sctx.ID) {
+		return desired, false, nil
+	}
+	if desired == mch.attachedOperatorChartVersion {
+		return desired, false, nil
+	}
+
+	// Re-attaching records the desired version as attached, which the guard
+	// above then treats as "already reconciled". If anything below fails, that
+	// leaves a failed upgrade permanently ineligible for retry - the next call
+	// would short-circuit and never try again. Restore the previous value on
+	// every failure path so a transient Helm error is retried rather than
+	// silently becoming the resting state.
+	previousChartVersion := mch.attachedOperatorChartVersion
+	mch.AddCtxControllerHandlers(k8sctx)
+	if setupErr := mch.GetOperatorError(); setupErr != nil {
+		mch.attachedOperatorChartVersion = previousChartVersion
+		return desired, false, ErrReconcileOperatorChartVersion(setupErr)
+	}
+	operatorHandler, ok := mch.ctxControllerHandlers[MesheryOperator]
+	if !ok || operatorHandler == nil {
+		mch.attachedOperatorChartVersion = previousChartVersion
+		return desired, false, ErrOperatorHandlerNotAttached(k8sctx.ID)
+	}
+	// Deploy(false) is a no-op against an operator this handler undeployed and a
+	// Helm upgrade against one that is installed, so an operator the user turned
+	// off is not resurrected by a chart-version change.
+	if deployErr := operatorHandler.Deploy(false); deployErr != nil {
+		mch.attachedOperatorChartVersion = previousChartVersion
+		mch.setOperatorError(deployErr)
+		return desired, false, ErrReconcileOperatorChartVersion(deployErr)
+	}
+	return desired, true, nil
 }
 
 func (mch *MesheryControllersHelper) RemoveCtxControllerHandler(ctx context.Context, contextID string) {

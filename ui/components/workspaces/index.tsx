@@ -196,9 +196,9 @@ const Workspaces = ({ onSelectWorkspace }) => {
     },
   );
 
-  const [createWorkspace] = useCreateWorkspaceMutation();
+  const [createWorkspace, createResult] = useCreateWorkspaceMutation();
 
-  const [updateWorkspace] = useUpdateWorkspaceMutation();
+  const [updateWorkspace, updateResult] = useUpdateWorkspaceMutation();
 
   const [deleteWorkspace] = useDeleteWorkspaceMutation();
 
@@ -542,6 +542,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
                 submitBtnText={actionType === WORKSPACE_ACTION_TYPES.CREATE ? 'Save' : 'Update'}
                 initialData={initialData}
                 handleClose={handleWorkspaceModalClose}
+                isSubmitting={createResult.isLoading || updateResult.isLoading}
               />
             </Modal>
           )}
