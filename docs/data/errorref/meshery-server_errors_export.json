@@ -4088,6 +4088,15 @@
         "short_description": "Error deploying Meshery Operator at the configured chart version",
         "probable_cause": "The requested Meshery Operator Helm chart version does not exist in the chart repository, or the cluster rejected the Helm release.",
         "suggested_remediation": "Confirm the chart version exists in the Meshery Operator Helm repository, or clear operator.version to track the Meshery Server release.\nConfirm the cluster is reachable and the Meshery namespace is writable."
+      },
+      "1467": {
+        "name": "ErrAnonymousUserIDMissingCode",
+        "code": "1467",
+        "severity": "Alert",
+        "long_description": "The remote provider's anonymous user flow response contained no userId.",
+        "short_description": "Anonymous user session could not be established",
+        "probable_cause": "The remote provider does not implement the schemas v1beta2 AnonymousFlowResponse contract, or it returned an empty user id.",
+        "suggested_remediation": "Confirm the configured remote provider is reachable and up to date, then retry signing in."
       }
     }
   }
