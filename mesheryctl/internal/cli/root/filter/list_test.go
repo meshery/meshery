@@ -68,15 +68,22 @@ func TestListCmdKeepsFilterNamesOutsideTheExtension(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to create pipe: %v", err)
 	}
+	// The table is printed to os.Stdout directly by utils.PrintToTable, not to
+	// the command's own writer, so it can only be captured by swapping stdout.
 	os.Stdout = w
-	defer func() { os.Stdout = originalStdout }()
+	t.Cleanup(func() {
+		os.Stdout = originalStdout
+		_ = r.Close()
+	})
 
 	// --page skips the interactive pagination prompt and prints the table once.
 	FilterCmd.SetArgs([]string{"list", "--page", "1"})
 	execErr := FilterCmd.Execute()
 
-	_ = w.Close()
-	os.Stdout = originalStdout
+	// io.ReadAll below returns only once the write end is closed.
+	if err := w.Close(); err != nil {
+		t.Fatalf("failed to close pipe: %v", err)
+	}
 
 	output, err := io.ReadAll(r)
 	if err != nil {
