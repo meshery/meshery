@@ -230,6 +230,17 @@ Actions runner home). After regenerating, `git diff --stat` the docs dir, `git c
 every file whose only change is that path, and manually fix the path back to
 `/home/runner/...` in the pages you actually intended to change.
 
+### Releasing
+
+Meshery has **no automatic release cadence**. Release Drafter keeps exactly one draft
+release current on every push to `master`; publishing that draft creates the `v*` tag,
+which is what fires `build-and-release-stable.yml` and its fan-out. Follow
+`.agents/skills/cut-release/SKILL.md` - never hand-author a tag or notes.
+
+`gh release edit --draft=false` can exit 0 and leave the release a draft (seen cutting
+v1.0.65). Publication is proven only by re-reading the release for `draft: false` plus a
+non-null `published_at`, and by the release-triggered runs actually appearing.
+
 ### Docker
 
 ```bash
