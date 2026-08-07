@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { useGetSystemVersionQuery } from '@/rtk-query/user';
 
 vi.mock('@sistent/sistent', () => ({
   Box: ({ children, ...props }: any) => <div {...props}>{children}</div>,
@@ -32,9 +33,19 @@ vi.mock('@mui/icons-material/WarningAmber', () => ({
   default: () => <svg data-testid="warning-icon" />,
 }));
 
+vi.mock('@/rtk-query/user', () => ({
+  useGetSystemVersionQuery: vi.fn(),
+}));
+
 import MesheryVersionCompatibilityNotice from './MesheryVersionCompatibilityNotice';
 
+const mockedUseGetSystemVersionQuery = vi.mocked(useGetSystemVersionQuery);
+
 describe('MesheryVersionCompatibilityNotice', () => {
+  beforeEach(() => {
+    mockedUseGetSystemVersionQuery.mockReset();
+    mockedUseGetSystemVersionQuery.mockReturnValue({ data: undefined } as never);
+  });
   it('renders title and default version details', () => {
     render(<MesheryVersionCompatibilityNotice />);
 
@@ -42,6 +53,14 @@ describe('MesheryVersionCompatibilityNotice', () => {
     expect(screen.getByText(/Current: v0.7.0/i)).toBeInTheDocument();
     expect(screen.getByText(/Required: v0.7.1\+/i)).toBeInTheDocument();
     expect(screen.getByText(/mesheryctl system update/i)).toBeInTheDocument();
+  });
+
+  it('uses the runtime Meshery version when available', () => {
+    mockedUseGetSystemVersionQuery.mockReturnValue({ data: { build: 'v1.2.3' } } as never);
+
+    render(<MesheryVersionCompatibilityNotice />);
+
+    expect(screen.getByText(/Current: v1.2.3/i)).toBeInTheDocument();
   });
 
   it('renders custom prop values correctly', () => {

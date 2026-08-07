@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Typography,
   Button,
@@ -11,6 +11,7 @@ import {
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CheckIcon from '@mui/icons-material/Check';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import { useGetSystemVersionQuery } from '@/rtk-query/user';
 
 export interface MesheryVersionCompatibilityNoticeProps {
   currentVersion?: string;
@@ -33,6 +34,15 @@ const MesheryVersionCompatibilityNotice: React.FC<MesheryVersionCompatibilityNot
 }) => {
   const theme = useTheme();
   const [copied, setCopied] = useState(false);
+  const { data: systemVersionData } = useGetSystemVersionQuery();
+
+  const resolvedCurrentVersion = useMemo(() => {
+    if (systemVersionData?.build) {
+      return systemVersionData.build;
+    }
+
+    return currentVersion;
+  }, [currentVersion, systemVersionData?.build]);
 
   const handleCopy = () => {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
@@ -96,7 +106,7 @@ const MesheryVersionCompatibilityNotice: React.FC<MesheryVersionCompatibilityNot
         }}
       >
         <Chip
-          label={`Current: ${currentVersion}`}
+          label={`Current: ${resolvedCurrentVersion}`}
           color="warning"
           variant="outlined"
           size="medium"
