@@ -1,13 +1,11 @@
 package relationships
 
 import (
-	"encoding/csv"
 	"fmt"
-	"os"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
-	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkitRegistry "github.com/meshery/meshkit/registry"
 	meshkit "github.com/meshery/meshkit/utils"
 	"github.com/spf13/cobra"
 	"google.golang.org/api/sheets/v4"
@@ -38,23 +36,7 @@ var fetchSheetValues = func(id, cred string) (*sheets.ValueRange, error) {
 
 var relationshipsOutputPath = "../docs/data/RelationshipsData.json"
 
-type CustomValueRange struct {
-	Model                string `json:"Model"`
-	Version              string `json:"Version"`
-	Kind                 string `json:"kind"`
-	Type                 string `json:"type"`
-	SubType              string `json:"subType"`
-	MetadataDescription  string `json:"metadataDescription"`
-	Docs                 string `json:"docs"`
-	MetadataStyles       string `json:"metadataStyles"`
-	EvalPolicy           string `json:"evalPolicy"`
-	SelectorsDenyFrom    string `json:"selectorsDenyFrom"`
-	SelectorsDenyTo      string `json:"selectorsDenyTo"`
-	SelectorsAllowFrom   string `json:"selectorsAllowFrom"`
-	SelectorsAllowTo     string `json:"selectorsAllowTo"`
-	CompleteDefinition   string `json:"CompleteDefinition"`
-	VisualizationExample string `json:"VisualizationExample"`
-}
+type CustomValueRange = meshkitRegistry.RelationshipCSV
 
 var generateCmd = &cobra.Command{
 	Use:   "generate",
@@ -112,54 +94,22 @@ func init() {
 }
 
 func generateRelationshipsFromCSV(filePath string) ([]CustomValueRange, error) {
-	f, err := os.Open(filePath)
+	helper, err := meshkitRegistry.NewRelationshipCSVHelper("", "", 0, filePath)
 	if err != nil {
-		return nil, utils.ErrFileRead(err)
-	}
-	defer func() {
-		_ = f.Close()
-	}()
-
-	reader := csv.NewReader(f)
-	reader.FieldsPerRecord = -1
-	records, err := reader.ReadAll()
-	if err != nil {
-		return nil, utils.ErrFileRead(err)
+		return nil, err
 	}
 
-	// First two rows are headers, data starts at row 3
-	if len(records) <= 2 {
-		return nil, ErrEmptyCSVData(fmt.Errorf("no relationship data found in CSV file: %s. CSV must contain two header rows followed by at least one data row with a minimum of 15 columns", filePath))
+	if err := helper.ParseRelationshipsSheet(""); err != nil {
+		return nil, err
 	}
 
-	var customResp []CustomValueRange
-	for _, row := range records[2:] {
-		if len(row) >= minRelationshipCSVColumns && row[0] != "" {
-			customResp = append(customResp, CustomValueRange{
-				Model:                row[0],
-				Version:              row[1],
-				Kind:                 row[2],
-				Type:                 row[3],
-				SubType:              row[4],
-				MetadataDescription:  row[5],
-				Docs:                 row[6],
-				MetadataStyles:       row[7],
-				EvalPolicy:           row[8],
-				SelectorsDenyFrom:    row[9],
-				SelectorsDenyTo:      row[10],
-				SelectorsAllowFrom:   row[11],
-				SelectorsAllowTo:     row[12],
-				CompleteDefinition:   row[13],
-				VisualizationExample: row[14],
-			})
-		}
+	if len(helper.Relationships) == 0 {
+		return nil, ErrEmptyCSVData(
+			fmt.Errorf("no valid relationship rows found in CSV file: %s", filePath),
+		)
 	}
 
-	if len(customResp) == 0 {
-		return nil, ErrEmptyCSVData(fmt.Errorf("no valid relationship rows found in CSV file: %s", filePath))
-	}
-
-	return customResp, nil
+	return helper.Relationships, nil
 }
 
 func processSheetData(resp *sheets.ValueRange, jsonFilePath string) error {
@@ -168,21 +118,14 @@ func processSheetData(resp *sheets.ValueRange, jsonFilePath string) error {
 	for _, row := range resp.Values[2:] {
 		if len(row) >= minRelationshipCSVColumns && row[0] != "" {
 			customResp = append(customResp, CustomValueRange{
-				Model:                row[0].(string),
-				Version:              row[1].(string),
-				Kind:                 row[2].(string),
-				Type:                 row[3].(string),
-				SubType:              row[4].(string),
-				MetadataDescription:  row[5].(string),
-				Docs:                 row[6].(string),
-				MetadataStyles:       row[7].(string),
-				EvalPolicy:           row[8].(string),
-				SelectorsDenyFrom:    row[9].(string),
-				SelectorsDenyTo:      row[10].(string),
-				SelectorsAllowFrom:   row[11].(string),
-				SelectorsAllowTo:     row[12].(string),
-				CompleteDefinition:   row[13].(string),
-				VisualizationExample: row[14].(string),
+				Model:       row[0].(string),
+				Version:     row[1].(string),
+				KIND:        row[2].(string),
+				Type:        row[3].(string),
+				SubType:     row[4].(string),
+				Description: row[5].(string),
+				Styles:      row[7].(string),
+				EvalPolicy:  row[8].(string),
 			})
 		}
 	}
