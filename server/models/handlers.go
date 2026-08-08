@@ -297,9 +297,8 @@ type HandlerConfig struct {
 
 	EventBroadcaster *Broadcast
 
-	K8scontextChannel *K8scontextChan
-	EventsBuffer      *events.EventStreamer
-	OperatorTracker   *OperatorTracker
+	EventsBuffer    *events.EventStreamer
+	OperatorTracker *OperatorTracker
 }
 
 type AuthenticationMechanism int

@@ -172,7 +172,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	// TODO:
 	// when new api with param "contexts" will be addopted,
 	// only take into account contexts from that param
-	importedCount := 0
+
 	// Tracks whether any selected context was unreachable. Such contexts still
 	// register (as DISCOVERED) but the connection attempt did not succeed, so the
 	// receipt event below must be raised to Error severity (issue #20725).
@@ -243,7 +243,6 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			}
 		}
 
-		importedCount++
 		connection, err := provider.SaveK8sContext(token, *ctx, k8sContextsMetadata)
 		if err != nil {
 			saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, *ctx)
@@ -271,7 +270,6 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 				K8sCompRegHelper:   h.K8sCompRegHelper,
 				OperatorTracker:    h.config.OperatorTracker,
-				K8scontextChannel:  h.config.K8scontextChannel,
 				EventBroadcaster:   h.config.EventBroadcaster,
 				RegistryManager:    h.registryManager,
 			}
@@ -338,10 +336,6 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		}
 
 		eventMetadata[ctx.Name] = metadata
-	}
-
-	if importedCount > 0 {
-		h.config.K8scontextChannel.PublishContext()
 	}
 
 	// The receipt event below is the durable record of this import that the

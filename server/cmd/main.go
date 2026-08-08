@@ -292,8 +292,7 @@ func main() {
 
 		EventBroadcaster: models.NewBroadcaster("Events"),
 
-		K8scontextChannel: models.NewContextHelper(),
-		OperatorTracker:   models.NewOperatorTracker(viper.GetBool("DISABLE_OPERATOR")),
+		OperatorTracker: models.NewOperatorTracker(viper.GetBool("DISABLE_OPERATOR")),
 	}
 	krh, err := models.NewKeysRegistrationHelper(dbHandler, log)
 	if err != nil {
