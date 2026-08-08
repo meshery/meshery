@@ -1,0 +1,95 @@
+{
+    "schemaVersion": "connections.meshery.io/v1beta3",
+    "name": "Ollama",
+    "description": "Connect Meshery to a self-hosted Ollama instance to generate Kubernetes Designs from natural language prompts using locally-run models. No cloud API key is required by default; Ollama instances that sit behind an authenticating proxy can optionally supply a bearer token as a Credential.",
+    "kind": "ollama",
+    "type": "model-provider",
+    "subType": "inference",
+    "status": "registered",
+    "transitionMap": {
+        "registered": [
+            {
+                "nextState": "connected",
+                "description": "Confirms the configured Ollama instance is reachable and has at least one model available, and marks this provider ready for Design generation."
+            },
+            {
+                "nextState": "ignored",
+                "description": "Keeps the connection registered but excludes it from the provider list shown during Design generation."
+            }
+        ],
+        "connected": [
+            {
+                "nextState": "disconnected",
+                "description": "Stops using this provider for Design generation. The connection (and credential, if one was supplied) is kept, so it can be reconnected without re-entering configuration."
+            },
+            {
+                "nextState": "deleted",
+                "description": "Removes this connection and any associated credential from Meshery."
+            }
+        ],
+        "disconnected": [
+            {
+                "nextState": "connected",
+                "description": "Re-checks reachability of the configured Ollama instance and resumes using this provider for Design generation."
+            },
+            {
+                "nextState": "deleted",
+                "description": "Removes this connection and any associated credential from Meshery."
+            }
+        ],
+        "ignored": [
+            {
+                "nextState": "connected",
+                "description": "Re-checks reachability of the configured Ollama instance and resumes using this provider for Design generation."
+            },
+            {
+                "nextState": "deleted",
+                "description": "Removes this connection and any associated credential from Meshery."
+            }
+        ]
+    },
+    "connectionSchema": {
+        "type": "object",
+        "title": "Ollama Connection",
+        "required": [
+            "baseUrl"
+        ],
+        "properties": {
+            "baseUrl": {
+                "type": "string",
+                "format": "uri",
+                "title": "Ollama Base URL",
+                "default": "http://localhost:11434",
+                "description": "Base URL of the Ollama instance Meshery should talk to. Can point at a local, in-cluster, or LAN address. See PR description for the SSRF-trap blocklist applied to this field server-side."
+            },
+            "defaultModel": {
+                "type": "string",
+                "title": "Default Model",
+                "default": "llama3.1",
+                "description": "Model tag used for Design generation requests unless overridden per-request. Must already be pulled on the target Ollama instance."
+            },
+            "name": {
+                "type": "string",
+                "title": "Connection Name",
+                "description": "Optional friendly name for this connection."
+            }
+        }
+    },
+    "credentialSchema": {
+        "type": "object",
+        "title": "Ollama Access Token (optional)",
+        "required": [],
+        "properties": {
+            "apiKey": {
+                "type": "string",
+                "format": "password",
+                "title": "Bearer Token",
+                "description": "Optional. Only needed if this Ollama instance sits behind an authenticating reverse proxy. Left blank for a typical local/LAN Ollama install. Never written to Connection metadata, generated Designs, logs, or events."
+            }
+        }
+    },
+    "styles": {
+        "svgColor": "<!-- TODO: use Ollama's official logo SVG here -->",
+        "svgWhite": "<!-- TODO: use Ollama's official logo SVG (white variant) here -->"
+    }
+}

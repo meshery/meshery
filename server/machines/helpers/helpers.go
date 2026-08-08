@@ -6,6 +6,7 @@ import (
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/machines/grafana"
 	"github.com/meshery/meshery/server/machines/kubernetes"
+	"github.com/meshery/meshery/server/machines/ollama"
 	"github.com/meshery/meshery/server/machines/prometheus"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
@@ -82,6 +83,8 @@ func registerActionForKind(mtype string) machines.Action {
 	switch mtype {
 	case "grafana":
 		return &grafana.RegisterAction{}
+	case "ollama":
+		return &ollama.RegisterAction{}
 	case "prometheus":
 		return &prometheus.RegisterAction{}
 	}
