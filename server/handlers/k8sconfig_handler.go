@@ -170,7 +170,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 	// TODO:
-	// when new api with param "contexts" will be addopted,
+	// when new api with param "contexts" will be adopted,
 	// only take into account contexts from that param
 
 	// Tracks whether any selected context was unreachable. Such contexts still
