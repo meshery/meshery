@@ -36,6 +36,16 @@
         "nextState": "deleted",
         "description": "Removes the Anthropic Claude connection and its record from Meshery's database."
       }
+    ],
+    "ignored": [
+      {
+        "nextState": "registered",
+        "description": "Re-registers the ignored connection so Meshery can attempt to connect it again."
+      },
+      {
+        "nextState": "deleted",
+        "description": "Removes the ignored connection's record from Meshery's database."
+      }
     ]
   },
   "connectionSchema": {
