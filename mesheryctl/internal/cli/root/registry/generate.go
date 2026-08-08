@@ -58,11 +58,15 @@ var (
 )
 
 // checkSpreadsheetFetch validates the result of a spreadsheet fetch and
-// returns an explicit, non-nil error for network failures or non-200
-// HTTP responses, so callers never mistake a failed fetch for success.
+// returns an explicit, non-nil error for network failures, a nil response,
+// or non-200 HTTP responses, so callers never mistake a failed fetch for
+// success or dereference a nil response.
 func checkSpreadsheetFetch(resp *sheets.Spreadsheet, err error, location string) error {
 	if err != nil {
 		return ErrUpdateRegistry(err, location)
+	}
+	if resp == nil {
+		return ErrUpdateRegistry(fmt.Errorf("received nil response fetching spreadsheet"), location)
 	}
 	if resp.HTTPStatusCode != 200 {
 		return ErrUpdateRegistry(fmt.Errorf("unexpected HTTP status %d fetching spreadsheet", resp.HTTPStatusCode), location)
