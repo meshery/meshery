@@ -241,6 +241,28 @@ export async function openControllersSettings(page: Page): Promise<void> {
   // The mode banner is the first thing the form renders, so its presence means
   // the editor is mounted with a resolved governing mode rather than mid-hydration.
   await expect(page.getByTestId('controllers-config-mode-banner')).toBeVisible();
+  // Built-in / default mode is Embedded, which keeps Operator-only MeshSync and
+  // Broker blocks collapsed; expand them so tests can reach those fields without
+  // switching the mode under test.
+  await expandOperatorOnlySections(page);
+}
+
+/**
+ * Expand Operator-only MeshSync / Broker accordions when Embedded keeps them
+ * collapsed so Playwright can fill those fields without switching mode.
+ */
+export async function expandOperatorOnlySections(page: Page): Promise<void> {
+  for (const testId of [
+    'controllers-config-accordion-meshsync',
+    'controllers-config-accordion-broker',
+  ] as const) {
+    const accordion = page.getByTestId(testId);
+    const summary = accordion.locator('[aria-expanded]').first();
+    if ((await summary.getAttribute('aria-expanded')) === 'false') {
+      await summary.click();
+      await expect(summary).toHaveAttribute('aria-expanded', 'true');
+    }
+  }
 }
 
 /**

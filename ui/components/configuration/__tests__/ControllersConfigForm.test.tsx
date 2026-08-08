@@ -86,18 +86,43 @@ const brokerGrid = () => sectionGrid('Broker version');
 const field = (label: string, scope?: HTMLElement): HTMLElement =>
   gridItemOf(scope ? within(scope).getByText(label) : screen.getByText(label));
 
-const textbox = (label: string, scope?: HTMLElement) =>
-  within(field(label, scope)).getByRole('textbox');
+// Operator-only MeshSync/Broker fields live in accordions that collapse in
+// Embedded mode. Testing Library treats collapsed content as inaccessible;
+// include hidden nodes so field contracts still assert against the controls.
+const a11y = { hidden: true } as const;
+
+const textbox = (label: string, scope?: HTMLElement) => {
+  const inputs = within(field(label, scope)).getAllByRole('textbox', a11y);
+  // Multiline TextField mounts a mirror textarea with aria-hidden for sizing.
+  return (
+    inputs.find((el) => el.getAttribute('aria-hidden') !== 'true') ?? inputs[0]
+  );
+};
 const spinbutton = (label: string, scope?: HTMLElement) =>
-  within(field(label, scope)).getByRole('spinbutton');
+  within(field(label, scope)).getByRole('spinbutton', a11y);
 const combobox = (label: string, scope?: HTMLElement) =>
-  within(field(label, scope)).getByRole('combobox');
+  within(field(label, scope)).getByRole('combobox', a11y);
+
+/** Expand Operator-only accordions so interactive tests can reach their controls. */
+const expandOperatorOnly = async () => {
+  for (const testId of [
+    'controllers-config-accordion-meshsync',
+    'controllers-config-accordion-broker',
+  ] as const) {
+    const summary = screen
+      .getByTestId(testId)
+      .querySelector('[aria-expanded="false"]') as HTMLElement | null;
+    if (summary) {
+      await user.click(summary);
+    }
+  }
+};
 
 /** The control of a field whatever its kind - text, number or select. */
 const control = (label: string, scope?: HTMLElement): HTMLElement => {
   const item = field(label, scope);
   return (item.querySelector('input:not([type="hidden"]), textarea, [role="combobox"]') ??
-    within(item).getByRole('combobox')) as HTMLElement;
+    within(item).getByRole('combobox', a11y)) as HTMLElement;
 };
 
 /**
@@ -182,6 +207,34 @@ describe('tri-state inherit / override', () => {
     );
   });
 
+  it('expands Operator-only blocks in Operator mode and collapses them in Embedded', async () => {
+    renderForm({ deploymentMode: governance('embedded') });
+    const meshsyncSummary = screen
+      .getByTestId('controllers-config-accordion-meshsync')
+      .querySelector('[aria-expanded]');
+    const brokerSummary = screen
+      .getByTestId('controllers-config-accordion-broker')
+      .querySelector('[aria-expanded]');
+    expect(meshsyncSummary).toHaveAttribute('aria-expanded', 'false');
+    expect(brokerSummary).toHaveAttribute('aria-expanded', 'false');
+
+    await user.click(screen.getByTestId('controllers-config-mode-operator'));
+    expect(
+      screen.getByTestId('controllers-config-accordion-meshsync').querySelector('[aria-expanded]'),
+    ).toHaveAttribute('aria-expanded', 'true');
+    expect(
+      screen.getByTestId('controllers-config-accordion-broker').querySelector('[aria-expanded]'),
+    ).toHaveAttribute('aria-expanded', 'true');
+
+    await user.click(screen.getByTestId('controllers-config-mode-embedded'));
+    expect(
+      screen.getByTestId('controllers-config-accordion-meshsync').querySelector('[aria-expanded]'),
+    ).toHaveAttribute('aria-expanded', 'false');
+    expect(
+      screen.getByTestId('controllers-config-accordion-broker').querySelector('[aria-expanded]'),
+    ).toHaveAttribute('aria-expanded', 'false');
+  });
+
   it('names the inherited value it would fall back to', () => {
     renderForm({
       inheritedLayers: [{ meshsync: { version: 'v0.8.0', outputNamespaces: ['kube-system'] } }],
@@ -257,6 +310,7 @@ describe('tri-state inherit / override', () => {
 
   it('round-trips broker service annotations', async () => {
     const holder = renderForm();
+    await expandOperatorOnly();
     await replaceText(
       textbox('Service annotations'),
       'service.beta.kubernetes.io/aws-load-balancer-internal=true\nteam=platform',
@@ -278,6 +332,7 @@ describe('tri-state inherit / override', () => {
 
   it('round-trips the watch list through both of its mutually exclusive modes', async () => {
     const holder = renderForm();
+    await expandOperatorOnly();
     const watchMode = () => combobox('Watched resources (discovery scope)');
 
     await choose(watchMode(), 'Whitelist (watch only these)');

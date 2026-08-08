@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Accordion,
   AccordionDetails,
@@ -26,6 +26,7 @@ import {
   dormantPathsIn,
   isInertIn,
   type ConfigSection,
+  type DeploymentMode,
   type DeploymentModeGovernance,
 } from './deploymentMode';
 import { DeploymentModeBanner, SectionHeading, SectionNotice } from './DeploymentModeNotices';
@@ -153,11 +154,23 @@ export default function ControllersConfigForm({
   deploymentMode,
   disabled = false,
 }: ControllersConfigFormProps) {
-  // Operator-only blocks stay expanded by default so layered defaults remain
-  // editable without an extra click; users can collapse them once they know
-  // the page. Grouping + chips do the scanability work.
-  const [meshsyncDeployOpen, setMeshsyncDeployOpen] = useState(true);
-  const [brokerOpen, setBrokerOpen] = useState(true);
+  // Operator-only MeshSync / Broker blocks follow the mode: expanded when
+  // Operator applies, collapsed when Embedded does not use them. The draft mode
+  // wins so cards react before save; otherwise the governing banner mode.
+  // Users can still expand manually while Embedded (e.g. to pre-set Operator
+  // defaults on the server-wide layer).
+  const modeForDisclosure: DeploymentMode =
+    (getPath(value, ['operator', 'deploymentMode']) as DeploymentMode | undefined) ??
+    deploymentMode?.mode ??
+    'embedded';
+  const operatorModeApplies = modeForDisclosure === 'operator';
+  const [meshsyncDeployOpen, setMeshsyncDeployOpen] = useState(operatorModeApplies);
+  const [brokerOpen, setBrokerOpen] = useState(operatorModeApplies);
+
+  useEffect(() => {
+    setMeshsyncDeployOpen(operatorModeApplies);
+    setBrokerOpen(operatorModeApplies);
+  }, [operatorModeApplies]);
 
   const inheritedValue = (path: FieldPath): unknown => {
     for (const layer of inheritedLayers) {
