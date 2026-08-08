@@ -31,7 +31,7 @@ var importModelCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import models",
 	Long: `Import models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name
-Find more information at: https://docs.meshery.io/reference/mesheryctl/model/import`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/model/import`,
 	Example: `
 // Import model
 mesheryctl model import --file [URI]
@@ -154,7 +154,7 @@ func hasCSVs(path string) bool {
 }
 
 func registerModel(data []byte, componentData []byte, relationshipData []byte, filename string, dataType string, sourceURI string, register bool) error {
-	urlPath := "api/meshmodels/register"
+	urlPath := "api/registry/register"
 	var importRequest schemav1beta1.ImportRequest
 	importRequest.UploadType = dataType
 	switch dataType {

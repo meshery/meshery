@@ -22,7 +22,7 @@ The difficulty with Minikube and Kind clusters is that they typically don't supp
 
 1. Use the MetalLB Minikube add-on that provides load balancing. `minikube addons enable metallb`
 
-   MetalLB setup: [link](https://kubebyexample.com/learning-paths/metallb/install)
+   MetalLB setup: [link](https://metallb.io/installation/)
 
 2. Use Minikube tunnel to expose services. `minikube tunnel`.
 

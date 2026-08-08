@@ -741,7 +741,7 @@ const NavigatorContent = () => {
                         <div>
                           <CustomTooltip title={title} placement="right" TransitionComponent={Zoom}>
                             <ListItemIcon style={{ marginLeft: '20%', marginBottom: '0.4rem' }}>
-                              {hovericon}
+                              {hovericon ?? icon}
                             </ListItemIcon>
                           </CustomTooltip>
                         </div>

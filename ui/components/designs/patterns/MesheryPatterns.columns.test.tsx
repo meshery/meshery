@@ -102,6 +102,19 @@ const makeHandlers = () => ({
   userCanEdit: (_: any) => true,
 });
 
+const makePermissions = () => ({
+  editDesign: true,
+  cloneDesign: true,
+  validateDesign: true,
+  evaluateRelationships: true,
+  undeployDesign: true,
+  deployDesign: true,
+  downloadDesign: true,
+  detailsOfDesign: true,
+  publishDesign: true,
+  unpublishDesign: true,
+});
+
 describe('PATTERN_COL_VIEWS', () => {
   it('declares the responsive column view config', () => {
     expect(PATTERN_COL_VIEWS).toEqual([
@@ -123,6 +136,7 @@ describe('buildPatternActions', () => {
       patterns: [{ id: 'p1' }],
       tableMeta: { rowIndex: 0 },
       handlers,
+      permissions: makePermissions(),
     });
     const labels = actions.map((a: any) => a.label);
     expect(labels).toContain('Edit');
@@ -139,6 +153,7 @@ describe('buildPatternActions', () => {
       patterns: [{ id: 'p1' }],
       tableMeta: { rowIndex: 0 },
       handlers: makeHandlers(),
+      permissions: makePermissions(),
     });
     expect(actions.map((a: any) => a.label)).toContain('Unpublish');
   });
@@ -151,6 +166,7 @@ describe('buildPatternActions', () => {
       patterns: [{ id: 'p1' }],
       tableMeta: { rowIndex: 0 },
       handlers,
+      permissions: makePermissions(),
     });
     const edit = actions.find((a: any) => a.label === 'Edit');
     expect(edit).toBeDefined();
@@ -162,7 +178,11 @@ describe('buildPatternActions', () => {
 describe('buildPatternColumns', () => {
   it('returns columns and renders an ActionPopover for the actions column', () => {
     const patterns = [{ id: 'p1', name: 'p', visibility: 'private', patternFile: '' }];
-    const columns = buildPatternColumns({ patterns, handlers: makeHandlers() });
+    const columns = buildPatternColumns({
+      patterns,
+      handlers: makeHandlers(),
+      permissions: makePermissions(),
+    });
 
     expect(columns.map((c: any) => c.name)).toEqual([
       'name',
@@ -179,7 +199,11 @@ describe('buildPatternColumns', () => {
 
   it('renders a Moment-formatted cell for created_at and updated_at', () => {
     const patterns = [{ id: 'p1', name: 'p', visibility: 'private', patternFile: '' }];
-    const columns = buildPatternColumns({ patterns, handlers: makeHandlers() });
+    const columns = buildPatternColumns({
+      patterns,
+      handlers: makeHandlers(),
+      permissions: makePermissions(),
+    });
     const createdAt = columns.find((c: any) => c.name === 'created_at');
     render(createdAt!.options.customBodyRender('2024-01-02'));
     expect(screen.getByTestId('moment')).toHaveTextContent('2024-01-02');

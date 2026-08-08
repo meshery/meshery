@@ -31,6 +31,7 @@ vi.mock('react-redux', () => ({
   useSelector: (sel: (s: unknown) => unknown) => hoisted.useSelectorMock(sel),
 }));
 
+import { MESHERY_EXTENSION_EVENT } from '@sistent/sistent';
 import {
   ConditionalTooltip,
   ResizableCell,
@@ -574,7 +575,7 @@ describe('event-bus router helpers', () => {
     setLocation('http://localhost:9081/extension/meshmap');
     openViewScopedToDesignInOperator('My Design', 'd-1', { push: vi.fn() });
     expect(eventBus.publish).toHaveBeenCalledWith({
-      type: 'OPEN_VIEW_SCOPED_TO_DESIGN',
+      type: MESHERY_EXTENSION_EVENT.OpenViewScopedToDesign,
       data: { designId: 'd-1', designName: 'My Design' },
     });
   });
@@ -592,7 +593,7 @@ describe('event-bus router helpers', () => {
   it('publishes MERGE_DESIGN unconditionally', () => {
     mergeDesignWithCurrent('d-1', 'D1');
     expect(eventBus.publish).toHaveBeenCalledWith({
-      type: 'MERGE_DESIGN',
+      type: MESHERY_EXTENSION_EVENT.MergeDesign,
       data: { id: 'd-1', name: 'D1' },
     });
   });
@@ -600,7 +601,13 @@ describe('event-bus router helpers', () => {
   it('openDesignInExtension publishes inside extension and routes outside', () => {
     setLocation('http://localhost:9081/extension/meshmap');
     openDesignInExtension('d-1', 'D1', { push: vi.fn() });
-    expect(eventBus.publish).toHaveBeenCalled();
+    // Asserting the exact event, not just that something was published: the
+    // published literal is the half of the contract the extension matches on,
+    // and a rename of it is invisible to a bare `toHaveBeenCalled`.
+    expect(eventBus.publish).toHaveBeenCalledWith({
+      type: MESHERY_EXTENSION_EVENT.OpenDesignInExtension,
+      data: { designId: 'd-1', designName: 'D1' },
+    });
     eventBus.publish.mockClear();
     setLocation('http://localhost:9081/dashboard');
     const router = { push: vi.fn() };
@@ -611,7 +618,10 @@ describe('event-bus router helpers', () => {
   it('openViewInExtension publishes inside extension and routes outside', () => {
     setLocation('http://localhost:9081/extension/meshmap');
     openViewInExtension('v-1', 'V1', { push: vi.fn() });
-    expect(eventBus.publish).toHaveBeenCalled();
+    expect(eventBus.publish).toHaveBeenCalledWith({
+      type: MESHERY_EXTENSION_EVENT.OpenViewInExtension,
+      data: { viewId: 'v-1', viewName: 'V1' },
+    });
     eventBus.publish.mockClear();
     setLocation('http://localhost:9081/dashboard');
     const router = { push: vi.fn() };

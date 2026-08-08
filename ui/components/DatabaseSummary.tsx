@@ -12,7 +12,7 @@ import debounce from '../utils/debounce';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { useGetDatabaseSummaryQuery } from '@/rtk-query/system';
-import CAN from '@/utils/can';
+
 import { Keys } from '@meshery/schemas/permissions';
 import { PROMPT_VARIANTS } from '@sistent/sistent';
 import { updateProgress } from '@/store/slices/mesheryUi';
@@ -149,9 +149,7 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
               backgroundColor: theme.palette.error.dark,
             }}
             size="medium"
-            disabled={
-              !CAN(Keys.MesherySystemResetDatabase.id, Keys.MesherySystemResetDatabase.function)
-            }
+            permissionKey={Keys.MesherySystemResetDatabase}
             onClick={handleResetDatabase()}
             data-cy="btnResetDatabase"
           >

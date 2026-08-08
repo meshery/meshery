@@ -10,73 +10,73 @@
     "discovered": [
       {
         "nextState": "registered",
-        "description": "Are you sure you want to transition from DISCOVERED to REGISTERED? This will register the discovered cluster with Meshery so it can be managed."
+        "description": "Registers the discovered cluster with Meshery so it can be managed. Meshery takes no action on the cluster until you connect it."
       },
       {
         "nextState": "not found",
-        "description": "Are you sure you want to transition from DISCOVERED to NOT FOUND? Meshery can no longer reach the cluster's API server."
+        "description": "Marks the cluster as not found: Meshery can no longer reach the cluster's API server. You can delete the connection or re-register it later."
       },
       {
         "nextState": "deleted",
-        "description": "Are you sure you want to transition from DISCOVERED to DELETED? This will discard the discovered cluster without registering it."
+        "description": "Discards the discovered cluster without registering it and purges the connection record from Meshery's database. The Kubernetes cluster itself is not deleted or modified."
       }
     ],
     "registered": [
       {
         "nextState": "connected",
-        "description": "Are you sure you want to transition from REGISTERED to CONNECTED? This will connect to the cluster and deploy the operator to begin managing it."
+        "description": "Connects to the cluster and begins actively managing it. Depending on MeshSync deployment mode, Meshery Operator, MeshSync, and Meshery Broker are deployed to stream live cluster state."
       },
       {
         "nextState": "ignored",
-        "description": "Are you sure you want to transition from REGISTERED to IGNORED? This will keep the registration but not connect to the cluster."
+        "description": "Keeps the registration but stops Meshery from connecting to or acting on the cluster. You can register it again whenever you choose."
       }
     ],
     "connected": [
       {
         "nextState": "disconnected",
-        "description": "Are you sure you want to transition from CONNECTED to DISCONNECTED? This will perform planned maintenance by removing the operator but keeping the cluster registered."
+        "description": "Stops managing the cluster and tears down communication with the cluster's controllers. MeshSync data already collected is kept. You can connect the cluster again later without re-registering."
       },
       {
         "nextState": "ignored",
-        "description": "Are you sure you want to transition from CONNECTED to IGNORED? This will mark the connection as ignored due to unplanned maintenance, without deleting the registration."
+        "description": "Stops managing the cluster and takes no further action on it. The registration and previously collected data are kept."
       },
       {
         "nextState": "not found",
-        "description": "Are you sure you want to transition from CONNECTED to NOT FOUND? Meshery could not connect to the cluster or it is currently unavailable. You can either delete the connection or try re-registering."
+        "description": "Marks the cluster as not found: Meshery could not reach the cluster or it is currently unavailable. You can delete the connection or try re-registering it."
       },
       {
         "nextState": "deleted",
-        "description": "Are you sure you want to transition from CONNECTED to DELETED? This will undeploy the operator and unregister the cluster completely."
+        "description": "Removes the connection and its associated credential from Meshery, undeploys Meshery Operator, MeshSync, and Meshery Broker from the cluster (when present), and purges cluster data collected through MeshSync from Meshery's database. The Kubernetes cluster itself is not deleted. Presenting the same kubeconfig context again may auto-reconnect; prefer Disconnect to keep the record and avoid reconnection."
       }
     ],
     "disconnected": [
       {
         "nextState": "connected",
-        "description": "Are you sure you want to transition from DISCONNECTED to CONNECTED? This will reconnect the cluster and redeploy the operator after maintenance."
+        "description": "Reconnects the cluster and resumes active management. Depending on MeshSync deployment mode, Meshery Operator, MeshSync, and Meshery Broker are redeployed."
       },
       {
         "nextState": "deleted",
-        "description": "Are you sure you want to transition from DISCONNECTED to DELETED? This will remove the cluster completely by undeploying the operator and unregistering."
+        "description": "Removes the connection and its associated credential from Meshery and purges cluster data collected through MeshSync from Meshery's database. The Kubernetes cluster itself is not deleted. Presenting the same kubeconfig context again may auto-reconnect."
       }
     ],
     "ignored": [
       {
         "nextState": "registered",
-        "description": "Are you sure you want to transition from IGNORED to REGISTERED? This will reinitiate the registration process for the ignored connection and attempt to connect it again."
+        "description": "Reinitiates registration for the ignored cluster so Meshery can attempt to connect it again."
       },
       {
         "nextState": "deleted",
-        "description": "Are you sure you want to transition from IGNORED to DELETED? This will completely remove the ignored cluster by undeploying the operator and unregistering."
+        "description": "Removes the ignored cluster's connection record and associated credential from Meshery's database, undeploying in-cluster components when present. The Kubernetes cluster itself is not deleted."
       }
     ],
     "not found": [
       {
         "nextState": "discovered",
-        "description": "Are you sure you want to transition from NOT FOUND to DISCOVERED? You are trying to re-register the cluster. Meshery will attempt to reconnect to the cluster."
+        "description": "Attempts to re-discover the cluster: Meshery will try to reconnect to the cluster's API server."
       },
       {
         "nextState": "deleted",
-        "description": "Are you sure you want to transition from NOT FOUND to DELETED? This will remove the unreachable connection completely by unregistering it."
+        "description": "Removes the unreachable connection by unregistering it and purging its record from Meshery's database. The Kubernetes cluster itself is not deleted."
       }
     ]
   },

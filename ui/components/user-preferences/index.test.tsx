@@ -96,7 +96,7 @@ vi.mock('../ExtensionSandbox', () => ({
   default: () => <div data-testid="extension-sandbox" />,
 }));
 
-vi.mock('../RemoteComponent', () => ({
+vi.mock('../general/RemoteComponent', () => ({
   default: () => <div data-testid="remote-component" />,
 }));
 
@@ -131,7 +131,7 @@ vi.mock('@/rtk-query/user', () => ({
   useUpdateUserPrefWithContextMutation: () => [updateUserPrefWithContext],
 }));
 
-vi.mock('@/themes/hooks', () => ({
+vi.mock('@/theme/hooks', () => ({
   ThemeTogglerCore: ({ Component }: any) => (
     <div data-testid="theme-toggler">
       <Component mode="light" toggleTheme={() => {}} />

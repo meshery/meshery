@@ -820,7 +820,7 @@ The restructure is "done" when all of these are true:
 - \[ \] `grep -r '@mui/' ui/ --include='*.tsx' --include='*.ts'` returns **0**
 - \[ \] `grep -r '@rjsf/mui' ui/components ui/pages` returns **0**
 - \[ \] `grep -rE '#[0-9a-fA-F]{6}' ui/components ui/pages ui/utils --include='*.tsx' --include='*.ts'` returns **0**
-- \[ \] `ui/themes/app.ts`, `ui/themes/index.ts`, `ui/constants/colors.ts`, `ui/utils/lightenOrDarkenColor.ts` deleted
+- \[x\] `ui/themes/app.ts`, `ui/themes/index.ts`, `ui/constants/colors.ts`, `ui/utils/lightenOrDarkenColor.ts` deleted
 - \[ \] `ui/theme/index.ts` exists and is the sole export point for theme utilities
 - \[ \] Every file under `ui/components/` is ≤ 600 lines (≤ 1000 hard cap enforced in CI)
 - \[ \] `ui/components/` has ≤ 16 top‑level folders with consistent casing

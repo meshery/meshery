@@ -40,7 +40,7 @@ var viewEnvironmentCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View registered environmnents",
 	Long: `View details of an environment registered in Meshery Server for a specific organization
-Find more information at: https://docs.meshery.io/reference/mesheryctl/environment/view`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/environment/view`,
 	Example: `
 // View details of a specific environment
 mesheryctl environment view --orgId [orgId]

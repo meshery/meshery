@@ -5,7 +5,11 @@ import {
   PermissionProvider,
   WarningIcon as Warning,
 } from '@sistent/sistent';
-import { Footer, KubernetesSubscription, NavigationBar } from '../components/AppComponents';
+import {
+  Footer,
+  KubernetesSubscription,
+  NavigationBar,
+} from '../components/layout/AppShell/AppComponents';
 import { AdapterMoment, LocalizationProvider } from '@/components/shared/DatePicker';
 import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
@@ -17,7 +21,7 @@ import React, { useEffect, useMemo, useCallback, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { startSessionTimer } from '../lib/sessionTimer';
 import Header from '../components/layout/Header/Header';
-import MesheryProgressBar from '../components/MesheryProgressBar';
+import MesheryProgressBar from '../components/general/MesheryProgressBar';
 import getPageContext from '../components/PageContext';
 import { subscribeToControllersStatus } from 'lib/controllersStatusSubscription';
 import { useLazyGetSystemSyncQuery, useLazyGetKubernetesContextsQuery } from '../rtk-query/system';
@@ -69,15 +73,14 @@ import './styles/charts.css';
 import uiConfig from '../ui.config';
 import { NotificationCenterProvider } from '../components/layout/NotificationCenter';
 import { getConnectionDefinitions, getMeshModelComponentByName } from '../api/meshmodel';
-import { CONNECTION_KINDS, CONNECTION_KINDS_DEF } from '../utils/Enum';
 import { ability } from '../utils/can';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
 import { formatToTitleCase } from '@/utils/utils';
-import { useThemePreference } from '@/themes/hooks';
+import { useThemePreference } from '@/theme/hooks';
 import { CssBaseline, NoSsr, SistentThemeProvider } from '@/theme';
 import { ErrorBoundary } from '@sistent/sistent';
 import { LoadSessionGuard } from '@/rtk-query/ability';
-import { useGetLoggedInUserQuery, useGetSelectedOrganization } from '@/rtk-query/user';
+import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import CustomErrorFallback from '@/components/shared/ErrorBoundary/ErrorBoundary';
 import { normalizeLoadTestPrefs } from '../lib/load-test-prefs';
 import {
@@ -85,8 +88,8 @@ import {
   StyledMainContent,
   StyledContentWrapper,
   StyledRoot,
-  ThemeResponsiveSnackbar,
-} from '../themes/App.styles';
+} from '../components/layout/AppShell/App.styles';
+import { ThemeResponsiveSnackbar } from '@/theme/snackbar';
 import {
   setConnectionMetadata,
   setControllerState,
@@ -101,6 +104,9 @@ import { updateAdaptersInfo } from '@/store/slices/adapter';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import WorkspaceModalContextProvider from '@/utils/context/WorkspaceModalContextProvider';
 import RegistryModalContextProvider from '@/utils/context/RegistryModalContextProvider';
+import ConnectionWizardContextProvider, {
+  ConnectionWizardHost,
+} from '@/utils/context/ConnectionWizardContextProvider';
 import { DynamicFullScreenLoader } from '@/components/shared/LoadingState/DynamicFullscreenLoader';
 
 export const mesheryExtensionRoute = '/extension/meshmap';
@@ -150,23 +156,27 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     (key) => ability.can(key.id, _.lowerCase(key.function)),
     // `ability` is a module-level singleton; the reference never changes.
     // Re-creating this callback is intentionally avoided.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     [],
   );
 
   const { data: loggedInUser } = useGetLoggedInUserQuery({});
-  const { selectedOrganization } = useGetSelectedOrganization();
 
   const permissionUserContext = useMemo(() => {
     const firstName = loggedInUser?.firstName || loggedInUser?.first_name || '';
     const lastName = loggedInUser?.lastName || loggedInUser?.last_name || '';
     const userName = `${firstName} ${lastName}`.trim() || loggedInUser?.name || loggedInUser?.email;
+
+    // Show the provider/registration org (e.g. "Meshery Cloud", "Exoscale")
+    // identity regardless of which org they've switched to.
+    const orgName = providerCapabilities?.providerName || '';
+
     return {
       userName,
-      orgName: selectedOrganization?.name,
+      orgName,
       roleNames: loggedInUser?.roleNames || [],
     };
-  }, [loggedInUser, selectedOrganization]);
+  }, [loggedInUser, providerCapabilities?.providerName]);
 
   // Holds the live controller-status SSE subscription ({ dispose }) so
   // initSubscriptions can tear down the previous stream and the bootstrap
@@ -203,6 +213,9 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
       (res?.connectionDefinitions || []).forEach((definition) => {
         if (definition?.kind) {
           connectionDef[definition.kind] = {
+            // The definition's authored display name ("Artifact Hub", "GitHub"),
+            // which title-casing the kind slug cannot reproduce.
+            name: definition.name,
             transitionMap: definition.transitionMap,
             icon: definition.styles?.svgColor,
           };
@@ -212,16 +225,17 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
       console.error('Error fetching connection definitions:', error);
     }
 
-    // Fall back to the legacy `<Kind>Connection` component for kinds without a
-    // first-class connection definition yet (e.g. meshery, github), and to
-    // backfill the flat `transitions` list / icon the definition did not provide.
-    const promises = CONNECTION_KINDS_DEF.map(async (kind) => {
+    // Backfill each discovered kind from its legacy `<Kind>Connection` mesh-model
+    // component to supply the flat `transitions` list / icon the definition did
+    // not provide. The kind set is driven by the fetched definitions above (no
+    // hardcoded list); a kind without a matching legacy component simply returns
+    // nothing and is skipped.
+    const promises = Object.keys(connectionDef).map(async (kind) => {
       try {
         const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
         if (res?.components?.length) {
-          const kindKey = CONNECTION_KINDS[kind];
-          const existing = connectionDef[kindKey] || {};
-          connectionDef[kindKey] = {
+          const existing = connectionDef[kind] || {};
+          connectionDef[kind] = {
             ...existing,
             transitions: existing.transitions ?? res.components[0].metadata?.transitions,
             icon: existing.icon || res.components[0].styles?.svgColor,
@@ -521,89 +535,93 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
                   <LoadSessionGuard>
                     <WorkspaceModalContextProvider>
                       <RegistryModalContextProvider>
-                        <StyledRoot>
-                          <CssBaseline />
-                          <NavigationBar
-                            isDrawerCollapsed={isDrawerCollapsed}
-                            mobileOpen={state.mobileOpen}
-                            handleDrawerToggle={handleDrawerToggle}
-                            updateExtensionType={updateCurrentExtensionType}
-                            canShowNav={canShowNav}
-                          />
-                          <StyledAppContent
-                            canShowNav={canShowNav}
-                            isDrawerCollapsed={isDrawerCollapsed}
-                          >
-                            <SnackbarProvider
-                              anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'right',
-                              }}
-                              iconVariant={{
-                                success: <CheckCircle style={{ marginRight: '0.5rem' }} />,
-                                error: <Error style={{ marginRight: '0.5rem' }} />,
-                                warning: <Warning style={{ marginRight: '0.5rem' }} />,
-                                info: <Info style={{ marginRight: '0.5rem' }} />,
-                              }}
-                              Components={{
-                                info: ThemeResponsiveSnackbar,
-                                success: ThemeResponsiveSnackbar,
-                                error: ThemeResponsiveSnackbar,
-                                warning: ThemeResponsiveSnackbar,
-                                loading: ThemeResponsiveSnackbar,
-                              }}
-                              maxSnack={10}
+                        <ConnectionWizardContextProvider>
+                          <StyledRoot>
+                            <CssBaseline />
+                            <NavigationBar
+                              isDrawerCollapsed={isDrawerCollapsed}
+                              mobileOpen={state.mobileOpen}
+                              handleDrawerToggle={handleDrawerToggle}
+                              updateExtensionType={updateCurrentExtensionType}
+                              canShowNav={canShowNav}
+                            />
+                            <StyledAppContent
+                              canShowNav={canShowNav}
+                              isDrawerCollapsed={isDrawerCollapsed}
                             >
-                              <NotificationCenterProvider>
-                                <MesheryProgressBar />
-                                <KubernetesSubscription setAppState={setAppState} />
-                                {!state.isFullScreenMode && (
-                                  <Header
-                                    onDrawerToggle={handleDrawerToggle}
-                                    onDrawerCollapse={isDrawerCollapsed}
-                                    contexts={state.k8sContexts}
-                                    activeContexts={state.activeK8sContexts}
-                                    setActiveContexts={setActiveContexts}
-                                    searchContexts={searchContexts}
-                                    updateExtensionType={updateCurrentExtensionType}
-                                    abilityUpdated={state.abilityUpdated}
-                                  />
-                                )}
-                                <StyledContentWrapper>
-                                  <StyledMainContent
-                                    id="meshery-main"
-                                    style={{
-                                      padding: extensionType === 'navigator' && '0px',
-                                    }}
-                                  >
-                                    <LocalizationProvider dateAdapter={AdapterMoment}>
-                                      <ErrorBoundary customFallback={CustomErrorFallback}>
-                                        <Component
-                                          pageContext={pageContext}
-                                          contexts={state.k8sContexts}
-                                          activeContexts={state.activeK8sContexts}
-                                          setActiveContexts={setActiveContexts}
-                                          searchContexts={searchContexts}
-                                          {...pageProps}
-                                        />
-                                      </ErrorBoundary>
-                                    </LocalizationProvider>
-                                  </StyledMainContent>
-                                  <Footer
-                                    handleMesheryCommunityClick={handleMesheryCommunityClick}
-                                    providerCapabilities={providerCapabilities}
-                                  />
-                                </StyledContentWrapper>
-                              </NotificationCenterProvider>
-                            </SnackbarProvider>
-                          </StyledAppContent>
-                        </StyledRoot>
-                        <PlaygroundMeshDeploy
-                          closeForm={() =>
-                            setState((prevState) => ({ ...prevState, isOpen: false }))
-                          }
-                          isOpen={state.isOpen}
-                        />
+                              <SnackbarProvider
+                                anchorOrigin={{
+                                  vertical: 'bottom',
+                                  horizontal: 'right',
+                                }}
+                                iconVariant={{
+                                  success: <CheckCircle style={{ marginRight: '0.5rem' }} />,
+                                  error: <Error style={{ marginRight: '0.5rem' }} />,
+                                  warning: <Warning style={{ marginRight: '0.5rem' }} />,
+                                  info: <Info style={{ marginRight: '0.5rem' }} />,
+                                }}
+                                Components={{
+                                  info: ThemeResponsiveSnackbar,
+                                  success: ThemeResponsiveSnackbar,
+                                  error: ThemeResponsiveSnackbar,
+                                  warning: ThemeResponsiveSnackbar,
+                                  loading: ThemeResponsiveSnackbar,
+                                }}
+                                maxSnack={10}
+                              >
+                                <NotificationCenterProvider>
+                                  <MesheryProgressBar />
+                                  <KubernetesSubscription setAppState={setAppState} />
+                                  {!state.isFullScreenMode && (
+                                    <Header
+                                      onDrawerToggle={handleDrawerToggle}
+                                      onDrawerCollapse={isDrawerCollapsed}
+                                      contexts={state.k8sContexts}
+                                      activeContexts={state.activeK8sContexts}
+                                      setActiveContexts={setActiveContexts}
+                                      searchContexts={searchContexts}
+                                      updateExtensionType={updateCurrentExtensionType}
+                                      abilityUpdated={state.abilityUpdated}
+                                    />
+                                  )}
+                                  <StyledContentWrapper>
+                                    <StyledMainContent
+                                      id="meshery-main"
+                                      style={{
+                                        padding: extensionType === 'navigator' && '0px',
+                                      }}
+                                    >
+                                      <LocalizationProvider dateAdapter={AdapterMoment}>
+                                        <ErrorBoundary customFallback={CustomErrorFallback}>
+                                          <Component
+                                            pageContext={pageContext}
+                                            contexts={state.k8sContexts}
+                                            activeContexts={state.activeK8sContexts}
+                                            setActiveContexts={setActiveContexts}
+                                            searchContexts={searchContexts}
+                                            {...pageProps}
+                                          />
+                                        </ErrorBoundary>
+                                      </LocalizationProvider>
+                                    </StyledMainContent>
+                                    <Footer
+                                      handleMesheryCommunityClick={handleMesheryCommunityClick}
+                                      providerCapabilities={providerCapabilities}
+                                    />
+                                  </StyledContentWrapper>
+                                  {/* App-level Create Connection wizard (context switcher, telemetry, deep links). */}
+                                  <ConnectionWizardHost />
+                                </NotificationCenterProvider>
+                              </SnackbarProvider>
+                            </StyledAppContent>
+                          </StyledRoot>
+                          <PlaygroundMeshDeploy
+                            closeForm={() =>
+                              setState((prevState) => ({ ...prevState, isOpen: false }))
+                            }
+                            isOpen={state.isOpen}
+                          />
+                        </ConnectionWizardContextProvider>
                       </RegistryModalContextProvider>
                     </WorkspaceModalContextProvider>
                   </LoadSessionGuard>

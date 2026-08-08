@@ -11,6 +11,14 @@ module.exports = function override(config, env) {
         buffer: require.resolve('buffer'),
         stream: require.resolve('stream-browserify'),
     };
+    // Webpack 5 resolves requests from ESM-flagged origins as "fully specified",
+    // so the extensionless `process/browser` request emitted by the ProvidePlugin
+    // below (and by dependencies such as @react-dnd/invariant) fails to resolve.
+    // Pin it to the concrete file.
+    config.resolve.alias = {
+        ...config.resolve.alias,
+        'process/browser': require.resolve('process/browser.js'),
+    };
     config.plugins.push(
         new webpack.ProvidePlugin({
             process: 'process/browser',

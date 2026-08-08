@@ -12,7 +12,6 @@
       "@/assets/*": ["assets/*"],
       "@/theme": ["theme/index"],
       "@/theme/*": ["theme/*"],
-      "@/themes/*": ["themes/*"],
       "@/store/*": ["store/*"],
       "lib/*": ["lib/*"],
       "machines/*": ["machines/*"],

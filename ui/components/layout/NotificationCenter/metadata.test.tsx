@@ -11,17 +11,11 @@ vi.mock('@sistent/sistent', () => ({
   DownloadIcon: () => <svg data-testid="download-icon" />,
   InfoIcon: () => <svg data-testid="info-icon" />,
   createTheme: () => ({ breakpoints: { up: () => '', down: () => '' } }),
-}));
-
-// Prevent transitive load of the real themes module (which calls createTheme
-// at import time and depends on a full MUI theme).
-vi.mock('../../../themes', () => ({
-  NOTIFICATIONCOLORS: {
-    INFO: '#info',
-    ERROR: '#error',
-    ERROR_DARK: '#error_dark',
-    WARNING: '#warning',
-    SUCCESS: '#success',
+  notificationColors: {
+    info: { main: '#info' },
+    error: { main: '#error', dark: '#error_dark' },
+    warning: { main: '#warning', light: '#warning_light' },
+    success: { main: '#success' },
   },
 }));
 
