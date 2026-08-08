@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/meshery/meshery/server/machines"
+	"github.com/meshery/meshery/server/machines/anthropicclaude"
 	"github.com/meshery/meshery/server/machines/grafana"
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/machines/prometheus"
@@ -80,6 +81,8 @@ func getMachine(initialState machines.StateType, mtype, id string, userID core.U
 // REGISTERED state, or nil when the kind has no verification step.
 func registerActionForKind(mtype string) machines.Action {
 	switch mtype {
+	case "anthropic-claude":
+		return &anthropicclaude.RegisterAction{}
 	case "grafana":
 		return &grafana.RegisterAction{}
 	case "prometheus":
