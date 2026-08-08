@@ -26,7 +26,7 @@
             {{ range $compatibility }}
               {{ $slug := . }}
               {{ $existing := default slice (index $index $slug) }}
-              {{ $index = set $index $slug ($existing | append $entry) }}
+              {{ $index = set $index $slug (append $existing $entry) }}
             {{ end }}
           {{ end }}
         {{ end }}
