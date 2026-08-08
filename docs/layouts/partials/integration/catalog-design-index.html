@@ -1,0 +1,37 @@
+{{/*
+  One-time, whole-build index: model slug -> catalog designs compatible with it.
+
+  The docs/catalog directory (all markdown files, nested under a type folder)
+  sits outside contentDir (see hugo.toml), so it is only reachable via
+  readDir/readFile, not .Site.RegularPages. Called with
+  partialCached and a constant, page-independent cache key (see
+  layouts/models/single.html), this walk runs exactly once for the whole
+  build instead of once per model page.
+*/}}
+{{ $catalogRoot := "catalog" }}
+{{ $index := dict }}
+{{ range readDir $catalogRoot }}
+  {{ if .IsDir }}
+    {{ $catalogType := .Name }}
+    {{ $catalogTypePath := printf "%s/%s" $catalogRoot $catalogType }}
+    {{ range readDir $catalogTypePath }}
+      {{ if and (not .IsDir) (strings.HasSuffix .Name ".md") }}
+        {{ $filePath := printf "%s/%s" $catalogTypePath .Name }}
+        {{ $parts := split (readFile $filePath) "---" }}
+        {{ if ge (len $parts) 3 }}
+          {{ $meta := transform.Unmarshal (index $parts 1) }}
+          {{ $compatibility := index $meta "compatibility" }}
+          {{ if $compatibility }}
+            {{ $entry := dict "name" (index $meta "name") "patternId" (index $meta "patternId") "catalogType" $catalogType }}
+            {{ range $compatibility }}
+              {{ $slug := . }}
+              {{ $existing := default slice (index $index $slug) }}
+              {{ $index = merge $index (dict $slug ($existing | append $entry)) }}
+            {{ end }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+{{ return $index }}
