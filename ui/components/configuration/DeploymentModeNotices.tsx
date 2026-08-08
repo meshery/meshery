@@ -8,7 +8,7 @@
 // structure - it is not a second opinion about it.
 
 import React from 'react';
-import { Alert, AlertTitle, Box, Button, Chip, Typography } from '@sistent/sistent';
+import { Alert, AlertTitle, Box, Button, Chip, InfoTooltip, Typography } from '@sistent/sistent';
 import type { ControllersConfigDoc } from './ControllersConfigForm';
 import {
   DEPLOYMENT_MODE_LABEL,
@@ -20,6 +20,23 @@ import {
   type ConfigSection,
   type DeploymentModeGovernance,
 } from './deploymentMode';
+
+/** Product icons already used on Connections controller chips. */
+export const CONTROLLER_SECTION_ICONS: Record<ConfigSection, string> = {
+  operator: '/static/img/integrations/meshery-operator.svg',
+  meshsync: '/static/img/extensions/meshsync.svg',
+  broker: '/static/img/integrations/nats-icon-color.svg',
+};
+
+/** Section help copy — shown via InfoTooltip next to the title, not as body text. */
+export const CONTROLLER_SECTION_PURPOSE: Record<ConfigSection, string> = {
+  operator:
+    'Meshery Operator manages in-cluster MeshSync and Broker. This section covers the operator Helm chart when deployment mode is Operator (in-cluster).',
+  meshsync:
+    'MeshSync discovers Kubernetes resources and publishes inventory into Meshery. Output filters apply in both modes; version, replicas, watch scope, and pod env settings apply in Operator mode only.',
+  broker:
+    'Meshery Broker is the NATS bus MeshSync uses in Operator mode. These settings apply only when deployment mode is Operator (in-cluster).',
+};
 
 /**
  * What mode governs this editor and which layer it came from. The user has to
@@ -61,24 +78,47 @@ export const DeploymentModeBanner: React.FC<{ governance?: DeploymentModeGoverna
 };
 
 /**
- * A section heading, carrying the mode marker when every setting in the section
- * is inert. Each such setting is chipped individually too; the heading chip is
- * what makes it legible while scanning.
+ * A section heading with the product icon and purpose in an InfoTooltip
+ * (same pattern as field labels elsewhere). Marks fully inert sections.
  */
 export const SectionHeading: React.FC<{
   title: string;
   section: ConfigSection;
   governance?: DeploymentModeGovernance;
-}> = ({ title, section, governance }) => {
+  /** Optional id for in-page section navigation. */
+  id?: string;
+}> = ({ title, section, governance, id }) => {
   const fullyInert = SECTION_PATHS[section].every((path) => isInertIn(governance, path));
   return (
     <Box
-      sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}
+      id={id}
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.75rem',
+        marginBottom: '0.75rem',
+        scrollMarginTop: '1rem',
+        flexWrap: 'wrap',
+      }}
       data-testid={`controllers-config-section-${section}`}
     >
+      <Box
+        component="img"
+        src={CONTROLLER_SECTION_ICONS[section]}
+        alt=""
+        aria-hidden
+        sx={{
+          width: 28,
+          height: 28,
+          flexShrink: 0,
+          objectFit: 'contain',
+        }}
+        data-testid={`controllers-config-section-icon-${section}`}
+      />
       <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
         {title}
       </Typography>
+      <InfoTooltip helpText={CONTROLLER_SECTION_PURPOSE[section]} placement="top" />
       {fullyInert ? (
         <Chip size="small" label="Not applied in Embedded mode" variant="outlined" />
       ) : null}

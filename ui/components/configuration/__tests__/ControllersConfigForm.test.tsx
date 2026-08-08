@@ -147,12 +147,39 @@ describe('tri-state inherit / override', () => {
 
   it('starts every control on Inherit with an empty document', () => {
     renderForm();
-    expect(combobox('Deployment mode')).toHaveTextContent('Inherit (embedded)');
+    expect(screen.getByTestId('controllers-config-mode-inherit')).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
+    expect(screen.getByTestId('controllers-config-mode-inherit')).toHaveTextContent(
+      'Inherit (Embedded)',
+    );
     expect(textbox('Operator version')).toHaveValue('');
     expect(spinbutton('Replicas', meshsyncGrid())).toHaveValue(null);
     expect(combobox('Secret redaction')).toHaveTextContent('Inherit (Disabled)');
     expect(combobox('Service type')).toHaveTextContent('Inherit (ClusterIP)');
     expect(combobox('Watched resources (discovery scope)')).toHaveTextContent('Inherit');
+  });
+
+  it('renders section icons and mode-first picker for scanability', () => {
+    renderForm();
+    expect(screen.getByTestId('controllers-config-mode-picker')).toBeInTheDocument();
+    expect(screen.getByTestId('controllers-config-section-icon-operator')).toBeInTheDocument();
+    expect(screen.getByTestId('controllers-config-section-icon-meshsync')).toBeInTheDocument();
+    expect(screen.getByTestId('controllers-config-section-icon-broker')).toBeInTheDocument();
+    expect(screen.getByTestId('controllers-config-meshsync-filters')).toHaveTextContent(
+      'Applies in both modes',
+    );
+  });
+
+  it('selects deployment mode from the mode cards', async () => {
+    const holder = renderForm();
+    await user.click(screen.getByTestId('controllers-config-mode-operator'));
+    expect(holder.doc()).toEqual({ operator: { deploymentMode: 'operator' } });
+    expect(screen.getByTestId('controllers-config-mode-operator')).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
   });
 
   it('names the inherited value it would fall back to', () => {
@@ -437,7 +464,10 @@ describe('deployment mode gating (per-connection editor)', () => {
   it('keeps the settings embedded mode can still apply live', () => {
     renderForm({ deploymentMode: governance('embedded') });
 
-    expect(disabledState(combobox('Deployment mode'))).toBe(false);
+    expect(screen.getByTestId('controllers-config-mode-operator')).not.toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
     expect(field('Deployment mode')).not.toHaveTextContent('Not applied');
     for (const label of ['Output namespaces', 'Output resources']) {
       expect(disabledState(textbox(label)), `${label} should stay live`).toBe(false);

@@ -1,19 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Alert,
   Box,
   Button,
   Checkbox,
   Chip,
   Divider,
+  ExpandMoreIcon,
   FormControlLabel,
   Grid2,
   InfoTooltip,
   MenuItem,
+  Radio,
   TextField,
   Typography,
+  CustomTooltip,
 } from '@sistent/sistent';
 import type { UpdateControllersDefaultConfigApiArg } from '@meshery/schemas/mesheryApi';
+import { alpha, styled } from '@/theme';
 import { getPath, setPath, type FieldPath } from './fieldPath';
 import {
   dormantPathsIn,
@@ -70,10 +77,66 @@ export type ControllersConfigFormProps = {
   disabled?: boolean;
 };
 
+const brandColor = (theme: { palette: { background?: { brand?: { default?: string } }; primary?: { main?: string } } }) =>
+  theme.palette.background?.brand?.default || theme.palette.primary?.main || '#00B39F';
+
+const ModeCard = styled(Box, {
+  shouldForwardProp: (prop) => prop !== 'selected' && prop !== 'disabled',
+})<{ selected?: boolean; disabled?: boolean }>(({ theme, selected, disabled }) => {
+  const brand = brandColor(theme);
+  return {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: theme.spacing(1.25),
+    padding: theme.spacing(1.5),
+    borderRadius: theme.spacing(1),
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    opacity: disabled ? 0.6 : 1,
+    border: `1px solid ${selected ? brand : theme.palette.divider}`,
+    background: selected ? alpha(brand, 0.08) : theme.palette.background.card,
+    transition: 'border-color 0.15s ease, background 0.15s ease',
+    '&:hover': disabled
+      ? undefined
+      : {
+          borderColor: brand,
+        },
+  };
+});
+
+const SubsectionTitle = ({
+  title,
+  helpText,
+  chip,
+}: {
+  title: string;
+  helpText?: string;
+  chip?: string;
+}) => (
+  <Box
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.5rem',
+      flexWrap: 'wrap',
+      marginBottom: '0.75rem',
+    }}
+  >
+    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+      {title}
+    </Typography>
+    {helpText ? <InfoTooltip helpText={helpText} placement="top" /> : null}
+    {chip ? <Chip size="small" label={chip} variant="outlined" /> : null}
+  </Box>
+);
+
 /**
  * Layered editor for the Meshery Operator, MeshSync, and Broker
  * configuration. Every control is tri-state: leaving a field on "Inherit"
  * (or empty) keeps it absent from the document so the next layer applies.
+ *
+ * Layout is mode-first: deployment mode is the primary decision, then each
+ * component section uses the product icon and groups fields by whether they
+ * apply in both modes or only when Operator deploys in-cluster controllers.
  *
  * The form is governed by the effective deployment mode: on a connection
  * running MeshSync embedded in Meshery Server, the settings that configure
@@ -90,6 +153,12 @@ export default function ControllersConfigForm({
   deploymentMode,
   disabled = false,
 }: ControllersConfigFormProps) {
+  // Operator-only blocks stay expanded by default so layered defaults remain
+  // editable without an extra click; users can collapse them once they know
+  // the page. Grouping + chips do the scanability work.
+  const [meshsyncDeployOpen, setMeshsyncDeployOpen] = useState(true);
+  const [brokerOpen, setBrokerOpen] = useState(true);
+
   const inheritedValue = (path: FieldPath): unknown => {
     for (const layer of inheritedLayers) {
       const v = getPath(layer ?? undefined, path);
@@ -381,23 +450,242 @@ export default function ControllersConfigForm({
     inheritedValue(['broker', 'service', 'type'])) as string | undefined;
   const isLoadBalancer = serviceType === 'LoadBalancer';
 
+  // Deployment mode — mode-first cards only (no duplicate select).
+  const modePath: FieldPath = ['operator', 'deploymentMode'];
+  const modeCurrent = getPath(value, modePath) as string | undefined;
+  const modeInherited = inheritedValue(modePath) as string | undefined;
+  const modeSelectValue = modeCurrent ?? INHERIT;
+  const setMode = (selected: string | undefined) => {
+    onChange(setPath(value, modePath, selected));
+  };
+
+  const inheritModeLabel =
+    modeInherited === 'operator'
+      ? 'Operator'
+      : modeInherited === 'embedded'
+        ? 'Embedded'
+        : (modeInherited ?? 'embedded');
+
+  const modeOptions: {
+    value: string;
+    label: string;
+    description: string;
+    testId: string;
+  }[] = [
+    {
+      value: INHERIT,
+      label: `Inherit (${inheritModeLabel})`,
+      description:
+        'Use the next layer (server default or built-in). Built-in default is Embedded. Changing the mode redeploys controllers.',
+      testId: 'controllers-config-mode-inherit',
+    },
+    {
+      value: 'operator',
+      label: 'Operator (in-cluster)',
+      description:
+        'Installs Meshery Operator, MeshSync, and Broker into the cluster. Full controller settings apply. Changing the mode redeploys controllers.',
+      testId: 'controllers-config-mode-operator',
+    },
+    {
+      value: 'embedded',
+      label: 'Embedded (in Meshery Server)',
+      description:
+        'Runs MeshSync inside Meshery Server. Nothing is installed on the cluster; only output filters apply from this form. Changing the mode redeploys controllers.',
+      testId: 'controllers-config-mode-embedded',
+    },
+  ];
+
+  const watchListEditor = (
+    <Box sx={{ marginTop: '1rem' }} data-testid="controllers-config-watch-list">
+      {fieldLabel(
+        'Watched resources (discovery scope)',
+        ['meshsync', 'watchList'],
+        'At most one of whitelist or blacklist. Applying a watch-scope change restarts MeshSync pods automatically. In blacklist mode, enter one resource key per line in "<plural>.<version>.<group>" form.',
+      )}
+      <TextField
+        select
+        size="small"
+        disabled={isDisabled(['meshsync', 'watchList'])}
+        value={watchMode}
+        onChange={(e) => setWatchMode(e.target.value)}
+        sx={{ minWidth: '260px' }}
+      >
+        <MenuItem value={INHERIT}>Inherit</MenuItem>
+        <MenuItem value="whitelist">Whitelist (watch only these)</MenuItem>
+        <MenuItem value="blacklist">Blacklist (default scope minus these)</MenuItem>
+      </TextField>
+
+      {watchMode === 'whitelist' && (
+        <Box sx={{ marginTop: '1rem' }}>
+          {whitelist.map((row, index) => (
+            <Box
+              key={index}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                marginBottom: '0.5rem',
+              }}
+            >
+              <TextField
+                size="small"
+                disabled={isDisabled(['meshsync', 'watchList'])}
+                value={row.resource}
+                placeholder="pods.v1. or deployments.v1.apps"
+                sx={{ minWidth: '280px' }}
+                onChange={(e) => {
+                  const rows = [...whitelist];
+                  rows[index] = { ...rows[index], resource: e.target.value };
+                  setWhitelist(rows);
+                }}
+              />
+              {WATCH_EVENTS.map((eventType) => (
+                <FormControlLabel
+                  key={eventType}
+                  control={
+                    <Checkbox
+                      size="small"
+                      disabled={isDisabled(['meshsync', 'watchList'])}
+                      checked={(row.events ?? []).includes(eventType)}
+                      onChange={(e) => {
+                        const rows = [...whitelist];
+                        const events = new Set(rows[index].events ?? []);
+                        if (e.target.checked) {
+                          events.add(eventType);
+                        } else {
+                          events.delete(eventType);
+                        }
+                        rows[index] = { ...rows[index], events: Array.from(events) };
+                        setWhitelist(rows);
+                      }}
+                    />
+                  }
+                  label={eventType}
+                />
+              ))}
+              <Button
+                size="small"
+                disabled={isDisabled(['meshsync', 'watchList'])}
+                onClick={() => setWhitelist(whitelist.filter((_, i) => i !== index))}
+              >
+                Remove
+              </Button>
+            </Box>
+          ))}
+          <Button
+            size="small"
+            variant="outlined"
+            disabled={isDisabled(['meshsync', 'watchList'])}
+            onClick={() =>
+              setWhitelist([...whitelist, { resource: '', events: [...WATCH_EVENTS] }])
+            }
+          >
+            Add resource
+          </Button>
+        </Box>
+      )}
+
+      {watchMode === 'blacklist' && (
+        <TextField
+          fullWidth
+          multiline
+          minRows={3}
+          size="small"
+          disabled={isDisabled(['meshsync', 'watchList'])}
+          sx={{ marginTop: '1rem' }}
+          value={blacklist.join('\n')}
+          placeholder={'secrets.v1.\nevents.v1.'}
+          onChange={(e) =>
+            setBlacklist(
+              e.target.value
+                .split('\n')
+                .map((s) => s.trim())
+                .filter(Boolean),
+            )
+          }
+        />
+      )}
+    </Box>
+  );
+
   return (
     <Box>
       <DeploymentModeBanner governance={deploymentMode} />
 
-      {/* Meshery Operator */}
-      <SectionHeading title="Meshery Operator" section="operator" governance={deploymentMode} />
-      {notice('operator')}
-      <Grid2 container spacing={2}>
-        {enumSelect(
+      {/* Mode-first decision ------------------------------------------------ */}
+      <Box
+        id="controllers-config-mode"
+        sx={{ marginBottom: '1.5rem', scrollMarginTop: '1rem' }}
+        data-testid="controllers-config-mode-picker"
+      >
+        {fieldLabel(
           'Deployment mode',
-          ['operator', 'deploymentMode'],
-          [
-            { value: 'operator', label: 'Operator (in-cluster)' },
-            { value: 'embedded', label: 'Embedded (in Meshery Server)' },
-          ],
-          'Operator installs MeshSync and Broker into the cluster; Embedded runs MeshSync inside Meshery Server. Changing the mode redeploys controllers.',
+          modePath,
+          'How Meshery discovers the cluster. Operator installs MeshSync and Broker in-cluster; Embedded runs MeshSync inside Meshery Server. Hover a card for details. Changing the mode redeploys controllers.',
         )}
+
+        <Box
+          sx={{
+            display: 'grid',
+            gap: 1.25,
+            gridTemplateColumns: { xs: '1fr', md: '1fr 1fr 1fr' },
+          }}
+          role="radiogroup"
+          aria-label="Deployment mode"
+        >
+          {modeOptions.map((option) => {
+            const selected = modeSelectValue === option.value;
+            return (
+              <CustomTooltip key={option.value} title={option.description} placement="top">
+                <ModeCard
+                  selected={selected}
+                  disabled={disabled || isInert(modePath)}
+                  role="radio"
+                  aria-checked={selected}
+                  aria-label={option.label}
+                  tabIndex={disabled || isInert(modePath) ? -1 : 0}
+                  data-testid={option.testId}
+                  onClick={() => {
+                    if (disabled || isInert(modePath)) return;
+                    setMode(option.value === INHERIT ? undefined : option.value);
+                  }}
+                  onKeyDown={(event) => {
+                    if (disabled || isInert(modePath)) return;
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      setMode(option.value === INHERIT ? undefined : option.value);
+                    }
+                  }}
+                >
+                  <Radio
+                    checked={selected}
+                    tabIndex={-1}
+                    disabled={disabled || isInert(modePath)}
+                    onChange={() => setMode(option.value === INHERIT ? undefined : option.value)}
+                    sx={{ p: 0, mt: 0.25 }}
+                  />
+                  <Typography variant="body2" sx={{ fontWeight: 600, minWidth: 0 }}>
+                    {option.label}
+                  </Typography>
+                </ModeCard>
+              </CustomTooltip>
+            );
+          })}
+        </Box>
+      </Box>
+
+      <Divider sx={{ margin: '1.5rem 0' }} />
+
+      {/* Meshery Operator --------------------------------------------------- */}
+      <SectionHeading
+        title="Meshery Operator"
+        section="operator"
+        governance={deploymentMode}
+        id="controllers-config-operator"
+      />
+      {notice('operator')}
+
+      <Grid2 container spacing={2}>
         {textInput(
           'Operator version',
           ['operator', 'version'],
@@ -407,226 +695,212 @@ export default function ControllersConfigForm({
 
       <Divider sx={{ margin: '1.5rem 0' }} />
 
-      {/* MeshSync */}
-      <SectionHeading title="MeshSync" section="meshsync" governance={deploymentMode} />
+      {/* MeshSync ----------------------------------------------------------- */}
+      <SectionHeading
+        title="MeshSync"
+        section="meshsync"
+        governance={deploymentMode}
+        id="controllers-config-meshsync"
+      />
       {notice('meshsync')}
-      <Grid2 container spacing={2}>
-        {textInput(
-          'MeshSync version',
-          ['meshsync', 'version'],
-          'Image tag (operator mode). Applying rolls MeshSync pods.',
-        )}
-        {textInput('Replicas', ['meshsync', 'replicas'], '1-10 (operator mode).', {
-          number: true,
-          min: 1,
-          max: 10,
-        })}
-        {triStateBoolean(
-          'Secret redaction',
-          ['meshsync', 'redactSecrets'],
-          'Redacts Secret values before publishing. Requires MeshSync v1.0.2+.',
-        )}
-        {triStateBoolean(
-          'Broker content dedup',
-          ['meshsync', 'brokerContentDedup'],
-          'Suppresses byte-identical republishes. Requires MeshSync v1.0.2+.',
-        )}
-        {triStateBoolean('Debug logging', ['meshsync', 'debugLogging'], 'DEBUG env on MeshSync.')}
-        {listInput(
-          'Output namespaces',
-          ['meshsync', 'outputNamespaces'],
-          'Comma-separated. Only these namespaces are published; empty publishes all.',
-        )}
-        {listInput(
-          'Output resources',
-          ['meshsync', 'outputResources'],
-          'Comma-separated lowercase kinds (e.g. pod, deployment); empty publishes all.',
-        )}
-      </Grid2>
 
-      {/* In embedded mode this setting is not what decides redaction - the
-          Meshery Server process environment is - so the warning would name the
-          wrong control. The section notice states that instead. */}
-      {redactSecrets !== true && !isInert(['meshsync', 'redactSecrets']) && (
-        <Alert severity="warning" sx={{ marginTop: '1rem' }}>
-          Secret redaction is disabled: Kubernetes Secret values within the watch scope are
-          published un-redacted. Enable secret redaction or exclude Secrets from the watch scope.
-        </Alert>
-      )}
-
-      <Box sx={{ marginTop: '1.5rem' }}>
-        {fieldLabel(
-          'Watched resources (discovery scope)',
-          ['meshsync', 'watchList'],
-          'At most one of whitelist or blacklist. Applying a watch-scope change restarts MeshSync pods automatically. In blacklist mode, enter one resource key per line in "<plural>.<version>.<group>" form.',
-        )}
-        <TextField
-          select
-          size="small"
-          disabled={isDisabled(['meshsync', 'watchList'])}
-          value={watchMode}
-          onChange={(e) => setWatchMode(e.target.value)}
-          sx={{ minWidth: '260px' }}
-        >
-          <MenuItem value={INHERIT}>Inherit</MenuItem>
-          <MenuItem value="whitelist">Whitelist (watch only these)</MenuItem>
-          <MenuItem value="blacklist">Blacklist (default scope minus these)</MenuItem>
-        </TextField>
-
-        {watchMode === 'whitelist' && (
-          <Box sx={{ marginTop: '1rem' }}>
-            {whitelist.map((row, index) => (
-              <Box
-                key={index}
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  marginBottom: '0.5rem',
-                }}
-              >
-                <TextField
-                  size="small"
-                  disabled={isDisabled(['meshsync', 'watchList'])}
-                  value={row.resource}
-                  placeholder="pods.v1. or deployments.v1.apps"
-                  sx={{ minWidth: '280px' }}
-                  onChange={(e) => {
-                    const rows = [...whitelist];
-                    rows[index] = { ...rows[index], resource: e.target.value };
-                    setWhitelist(rows);
-                  }}
-                />
-                {WATCH_EVENTS.map((eventType) => (
-                  <FormControlLabel
-                    key={eventType}
-                    control={
-                      <Checkbox
-                        size="small"
-                        disabled={isDisabled(['meshsync', 'watchList'])}
-                        checked={(row.events ?? []).includes(eventType)}
-                        onChange={(e) => {
-                          const rows = [...whitelist];
-                          const events = new Set(rows[index].events ?? []);
-                          if (e.target.checked) {
-                            events.add(eventType);
-                          } else {
-                            events.delete(eventType);
-                          }
-                          rows[index] = { ...rows[index], events: Array.from(events) };
-                          setWhitelist(rows);
-                        }}
-                      />
-                    }
-                    label={eventType}
-                  />
-                ))}
-                <Button
-                  size="small"
-                  disabled={isDisabled(['meshsync', 'watchList'])}
-                  onClick={() => setWhitelist(whitelist.filter((_, i) => i !== index))}
-                >
-                  Remove
-                </Button>
-              </Box>
-            ))}
-            <Button
-              size="small"
-              variant="outlined"
-              disabled={isDisabled(['meshsync', 'watchList'])}
-              onClick={() =>
-                setWhitelist([...whitelist, { resource: '', events: [...WATCH_EVENTS] }])
-              }
-            >
-              Add resource
-            </Button>
-          </Box>
-        )}
-
-        {watchMode === 'blacklist' && (
-          <TextField
-            fullWidth
-            multiline
-            minRows={3}
-            size="small"
-            disabled={isDisabled(['meshsync', 'watchList'])}
-            sx={{ marginTop: '1rem' }}
-            value={blacklist.join('\n')}
-            placeholder={'secrets.v1.\nevents.v1.'}
-            onChange={(e) =>
-              setBlacklist(
-                e.target.value
-                  .split('\n')
-                  .map((s) => s.trim())
-                  .filter(Boolean),
-              )
-            }
-          />
-        )}
+      <Box
+        sx={{
+          padding: '1rem',
+          border: (theme) => `1px solid ${theme.palette.divider}`,
+          borderRadius: 1,
+          marginBottom: '1rem',
+          background: (theme) =>
+            alpha(
+              theme.palette.background?.brand?.default ||
+                theme.palette.primary?.main ||
+                '#00B39F',
+              0.03,
+            ),
+        }}
+        data-testid="controllers-config-meshsync-filters"
+      >
+        <SubsectionTitle
+          title="Discovery filters"
+          chip="Applies in both modes"
+          helpText="Limits what MeshSync publishes into Meshery after discovery. Available for Embedded and Operator modes."
+        />
+        <Grid2 container spacing={2}>
+          {listInput(
+            'Output namespaces',
+            ['meshsync', 'outputNamespaces'],
+            'Comma-separated. Only these namespaces are published; empty publishes all.',
+          )}
+          {listInput(
+            'Output resources',
+            ['meshsync', 'outputResources'],
+            'Comma-separated lowercase kinds (e.g. pod, deployment); empty publishes all.',
+          )}
+        </Grid2>
       </Box>
+
+      <Accordion
+        expanded={meshsyncDeployOpen}
+        onChange={(_, open) => setMeshsyncDeployOpen(open)}
+        disableGutters
+        elevation={0}
+        sx={{
+          border: (theme) => `1px solid ${theme.palette.divider}`,
+          borderRadius: 1,
+          '&:before': { display: 'none' },
+        }}
+        data-testid="controllers-config-accordion-meshsync"
+      >
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+              In-cluster MeshSync deployment
+            </Typography>
+            <InfoTooltip
+              helpText="Version, replicas, security toggles, and watch scope for the MeshSync Deployment. Applies in Operator mode only."
+              placement="top"
+            />
+            <Chip size="small" label="Operator mode only" variant="outlined" />
+          </Box>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Grid2 container spacing={2}>
+            {textInput(
+              'MeshSync version',
+              ['meshsync', 'version'],
+              'Image tag (operator mode). Applying rolls MeshSync pods.',
+            )}
+            {textInput('Replicas', ['meshsync', 'replicas'], '1-10 (operator mode).', {
+              number: true,
+              min: 1,
+              max: 10,
+            })}
+            {triStateBoolean(
+              'Secret redaction',
+              ['meshsync', 'redactSecrets'],
+              'Redacts Secret values before publishing. Requires MeshSync v1.0.2+.',
+            )}
+            {triStateBoolean(
+              'Broker content dedup',
+              ['meshsync', 'brokerContentDedup'],
+              'Suppresses byte-identical republishes. Requires MeshSync v1.0.2+.',
+            )}
+            {triStateBoolean(
+              'Debug logging',
+              ['meshsync', 'debugLogging'],
+              'DEBUG env on MeshSync.',
+            )}
+          </Grid2>
+
+          {redactSecrets !== true && !isInert(['meshsync', 'redactSecrets']) && (
+            <Alert severity="warning" sx={{ marginTop: '1rem' }}>
+              Secret redaction is disabled: Kubernetes Secret values within the watch scope are
+              published un-redacted. Enable secret redaction or exclude Secrets from the watch
+              scope.
+            </Alert>
+          )}
+
+          {watchListEditor}
+        </AccordionDetails>
+      </Accordion>
 
       <Divider sx={{ margin: '1.5rem 0' }} />
 
-      {/* Meshery Broker */}
-      <SectionHeading title="Meshery Broker" section="broker" governance={deploymentMode} />
+      {/* Meshery Broker ----------------------------------------------------- */}
+      <SectionHeading
+        title="Meshery Broker"
+        section="broker"
+        governance={deploymentMode}
+        id="controllers-config-broker"
+      />
       {notice('broker')}
-      <Grid2 container spacing={2}>
-        {textInput(
-          'Broker version',
-          ['broker', 'version'],
-          'NATS image tag (operator mode). Applying rolls broker pods.',
-        )}
-        {textInput('Replicas', ['broker', 'replicas'], '1-10 (operator mode).', {
-          number: true,
-          min: 1,
-          max: 10,
-        })}
-        {enumSelect(
-          'Service type',
-          ['broker', 'service', 'type'],
-          [
-            { value: 'ClusterIP', label: 'ClusterIP (cluster-internal)' },
-            { value: 'NodePort', label: 'NodePort' },
-            { value: 'LoadBalancer', label: 'LoadBalancer' },
-          ],
-          'How the broker is exposed. Reconciles in place without restarting broker pods.',
-          clearLoadBalancerFieldsUnlessLB,
-        )}
-        {textInput(
-          'External endpoint override',
-          ['broker', 'service', 'externalEndpointOverride'],
-          'host:port; pins the advertised endpoint (ingress, NAT, air-gapped).',
-        )}
-        {isLoadBalancer &&
-          textInput(
-            'Load balancer class',
-            ['broker', 'service', 'loadBalancerClass'],
-            'LoadBalancer type only.',
-          )}
-        {isLoadBalancer &&
-          listInput(
-            'Load balancer source ranges',
-            ['broker', 'service', 'loadBalancerSourceRanges'],
-            'Comma-separated CIDRs allowed to reach the broker.',
-          )}
-        <Grid2 size={{ xs: 12, md: 6 }}>
-          {fieldLabel(
-            'Service annotations',
-            ['broker', 'service', 'annotations'],
-            'One key=value per line. Merged onto the broker client Service.',
-          )}
-          <TextField
-            fullWidth
-            multiline
-            minRows={2}
-            size="small"
-            disabled={isDisabled(['broker', 'service', 'annotations'])}
-            value={annotationsText}
-            placeholder={'key=value\nservice.beta.kubernetes.io/aws-load-balancer-internal=true'}
-            onChange={(e) => setAnnotationsFromText(e.target.value)}
-          />
-        </Grid2>
-      </Grid2>
+
+      <Accordion
+        expanded={brokerOpen}
+        onChange={(_, open) => setBrokerOpen(open)}
+        disableGutters
+        elevation={0}
+        sx={{
+          border: (theme) => `1px solid ${theme.palette.divider}`,
+          borderRadius: 1,
+          '&:before': { display: 'none' },
+        }}
+        data-testid="controllers-config-accordion-broker"
+      >
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+              Broker deployment &amp; exposure
+            </Typography>
+            <InfoTooltip
+              helpText="NATS image, replicas, and how the broker Service is reached. Applies in Operator mode only."
+              placement="top"
+            />
+            <Chip size="small" label="Operator mode only" variant="outlined" />
+          </Box>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Grid2 container spacing={2}>
+            {textInput(
+              'Broker version',
+              ['broker', 'version'],
+              'NATS image tag (operator mode). Applying rolls broker pods.',
+            )}
+            {textInput('Replicas', ['broker', 'replicas'], '1-10 (operator mode).', {
+              number: true,
+              min: 1,
+              max: 10,
+            })}
+            {enumSelect(
+              'Service type',
+              ['broker', 'service', 'type'],
+              [
+                { value: 'ClusterIP', label: 'ClusterIP (cluster-internal)' },
+                { value: 'NodePort', label: 'NodePort' },
+                { value: 'LoadBalancer', label: 'LoadBalancer' },
+              ],
+              'How the broker is exposed. Reconciles in place without restarting broker pods.',
+              clearLoadBalancerFieldsUnlessLB,
+            )}
+            {textInput(
+              'External endpoint override',
+              ['broker', 'service', 'externalEndpointOverride'],
+              'host:port; pins the advertised endpoint (ingress, NAT, air-gapped).',
+            )}
+            {isLoadBalancer &&
+              textInput(
+                'Load balancer class',
+                ['broker', 'service', 'loadBalancerClass'],
+                'LoadBalancer type only.',
+              )}
+            {isLoadBalancer &&
+              listInput(
+                'Load balancer source ranges',
+                ['broker', 'service', 'loadBalancerSourceRanges'],
+                'Comma-separated CIDRs allowed to reach the broker.',
+              )}
+            <Grid2 size={{ xs: 12, md: 6 }}>
+              {fieldLabel(
+                'Service annotations',
+                ['broker', 'service', 'annotations'],
+                'One key=value per line. Merged onto the broker client Service.',
+              )}
+              <TextField
+                fullWidth
+                multiline
+                minRows={2}
+                size="small"
+                disabled={isDisabled(['broker', 'service', 'annotations'])}
+                value={annotationsText}
+                placeholder={
+                  'key=value\nservice.beta.kubernetes.io/aws-load-balancer-internal=true'
+                }
+                onChange={(e) => setAnnotationsFromText(e.target.value)}
+              />
+            </Grid2>
+          </Grid2>
+        </AccordionDetails>
+      </Accordion>
     </Box>
   );
 }

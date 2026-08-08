@@ -204,6 +204,12 @@ test.describe.serial('Operator, MeshSync & Broker Settings', () => {
         // The watch-scope control lives outside the MeshSync grid (it renders a
         // mode select plus either a whitelist table or a blacklist textarea), so
         // it is located by its unique label rather than within a section.
+        // Deployment mode is a card radio group at the top of the form, not a
+        // field inside the Operator grid.
+        if (row.path === 'operator.deploymentMode') {
+          await expect(page.getByTestId('controllers-config-mode-picker')).toBeVisible();
+          continue;
+        }
         const field =
           row.path === 'meshsync.watchList'
             ? fieldByLabel(page, row.label)
@@ -402,11 +408,7 @@ test.describe.serial('Operator, MeshSync & Broker Settings', () => {
 
       // Choosing embedded explicitly says the same thing, now attributed to the
       // server-wide default rather than to the built-in one.
-      await chooseOption(
-        page,
-        fieldByLabel(page, 'Deployment mode').getByRole('combobox'),
-        'Embedded (in Meshery Server)',
-      );
+      await page.getByTestId('controllers-config-mode-embedded').click();
       await expect(banner).toContainText('Default deployment mode: Embedded (in Meshery Server)');
       await expect(banner).toContainText('Set by this server-wide default.');
       await expect(
@@ -437,11 +439,7 @@ test.describe.serial('Operator, MeshSync & Broker Settings', () => {
 
       await openControllersSettings(page);
 
-      await chooseOption(
-        page,
-        fieldByLabel(page, 'Deployment mode').getByRole('combobox'),
-        'Operator (in-cluster)',
-      );
+      await page.getByTestId('controllers-config-mode-operator').click();
 
       const banner = page.getByTestId('controllers-config-mode-banner');
       await expect(banner).toContainText('Default deployment mode: Operator (in-cluster)');
