@@ -18,6 +18,19 @@ import { describe, expect, it } from 'vitest';
 
 const user = (id: string) => ({ id, email: `${id}@example.com` });
 
+const collectKeys = (value: unknown): string[] => {
+  if (Array.isArray(value)) {
+    return value.flatMap(collectKeys);
+  }
+  if (value !== null && typeof value === 'object') {
+    return Object.entries(value as Record<string, unknown>).flatMap(([key, nested]) => [
+      key,
+      ...collectKeys(nested),
+    ]);
+  }
+  return [];
+};
+
 describe('resource share payload wire contract', () => {
   it('emits camelCase top-level keys for a grant', () => {
     const payload = buildGrantAccessPayload([user('alice')]);
@@ -39,14 +52,31 @@ describe('resource share payload wire contract', () => {
     expect(buildRevokeAccessPayload([user('bob')]).grantAccess).toHaveLength(0);
   });
 
-  it('never emits a snake_case key', () => {
+  it('emits camelCase actor keys for a granted user', () => {
+    const payload = buildGrantAccessPayload([user('alice')]);
+
+    expect(payload.grantAccess).toHaveLength(1);
+    expect(Object.keys(payload.grantAccess[0]).sort()).toEqual(['actorId', 'actorType']);
+  });
+
+  it('emits camelCase actor keys for a revoked user', () => {
+    const payload = buildRevokeAccessPayload([user('bob')]);
+
+    expect(payload.revokeAccess).toHaveLength(1);
+    expect(Object.keys(payload.revokeAccess[0]).sort()).toEqual(['actorId', 'actorType']);
+  });
+
+  it('never emits a snake_case key at any nesting depth', () => {
     const payloads = [
       buildGrantAccessPayload([user('alice')]),
       buildRevokeAccessPayload([user('bob')]),
     ];
 
     for (const payload of payloads) {
-      for (const key of Object.keys(payload)) {
+      const keys = collectKeys(payload);
+
+      expect(keys.length).toBeGreaterThan(Object.keys(payload).length);
+      for (const key of keys) {
         expect(key).not.toMatch(/_/);
       }
     }
