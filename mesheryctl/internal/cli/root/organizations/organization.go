@@ -21,7 +21,7 @@ var OrgCmd = &cobra.Command{
 	Use:   "organization",
 	Short: "Interact with registered organizations",
 	Long: `Interact with registered organizations to display detailed information
-Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/organization`,
 	Example: `
 // Number of  registered orgs
 mesheryctl organization --count
