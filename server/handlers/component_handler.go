@@ -186,8 +186,9 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 
 	entities, count, _, err := h.registryManager.GetEntities(filter)
 	if err != nil {
-		h.log.Error(ErrGetMeshModels(err))
-		writeMeshkitError(rw, ErrGetMeshModels(err), http.StatusInternalServerError)
+		wrappedErr := ErrGetMeshModels(err)
+		h.log.Error(wrappedErr)
+		writeMeshkitError(rw, wrappedErr, http.StatusInternalServerError)
 		return
 	}
 	var modelDefs []_model.ModelDefinition
@@ -597,8 +598,9 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	}
 	entities, count, _, err := h.registryManager.GetEntities(filter)
 	if err != nil {
-		h.log.Error(ErrGetMeshModels(err))
-		writeMeshkitError(rw, ErrGetMeshModels(err), http.StatusInternalServerError)
+		wrappedErr := ErrGetMeshModels(err)
+		h.log.Error(wrappedErr)
+		writeMeshkitError(rw, wrappedErr, http.StatusInternalServerError)
 		return
 	}
 	comps := processComponentDefinitions(entities)
@@ -750,8 +752,9 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	}
 	entities, count, _, err := h.registryManager.GetEntities(filter)
 	if err != nil {
-		h.log.Error(ErrGetMeshModels(err))
-		writeMeshkitError(rw, ErrGetMeshModels(err), http.StatusInternalServerError)
+		wrappedErr := ErrGetMeshModels(err)
+		h.log.Error(wrappedErr)
+		writeMeshkitError(rw, wrappedErr, http.StatusInternalServerError)
 		return
 	}
 	comps := processComponentDefinitions(entities)

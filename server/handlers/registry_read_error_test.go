@@ -12,12 +12,13 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
-	"github.com/stretchr/testify/require"
 )
 
 func TestRegistryReadHandlers_DatastoreErrorReturns500(t *testing.T) {
 	rm, db := newTestRegistryManager(t)
-	require.NoError(t, db.DBClose())
+	if err := db.DBClose(); err != nil {
+		t.Fatalf("close registry database: %v", err)
+	}
 	h := &Handler{registryManager: rm, log: newTestLogger(t)}
 
 	cases := []struct {
@@ -30,6 +31,9 @@ func TestRegistryReadHandlers_DatastoreErrorReturns500(t *testing.T) {
 		{"components", "/api/registry/components", nil, h.GetAllMeshmodelComponents},
 		{"components by model", "/api/registry/models/kubernetes/components", map[string]string{"model": "kubernetes"}, h.GetMeshmodelComponentByModel},
 		{"relationships", "/api/registry/relationships", nil, h.GetAllMeshmodelRelationships},
+		// GetAllMeshmodelRelationships also serves the model-scoped route, so
+		// exercise that entry point too.
+		{"relationships by model", "/api/registry/models/kubernetes/relationships", map[string]string{"model": "kubernetes"}, h.GetAllMeshmodelRelationships},
 	}
 
 	for _, tc := range cases {
@@ -42,8 +46,9 @@ func TestRegistryReadHandlers_DatastoreErrorReturns500(t *testing.T) {
 
 			tc.fn(rec, req)
 
-			require.Equal(t, http.StatusInternalServerError, rec.Code,
-				"a datastore failure must be reported as 500, not masked as an empty 200; body: %s", rec.Body.String())
+			if rec.Code != http.StatusInternalServerError {
+				t.Errorf("a datastore failure must be reported as 500, not masked as an empty 200; got %d, body: %s", rec.Code, rec.Body.String())
+			}
 		})
 	}
 }

@@ -77,8 +77,9 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		RelationshipType: r.URL.Query().Get("type"),
 	})
 	if err != nil {
-		h.log.Error(ErrGetMeshModels(err))
-		writeMeshkitError(rw, ErrGetMeshModels(err), http.StatusInternalServerError)
+		wrappedErr := ErrGetMeshModels(err)
+		h.log.Error(wrappedErr)
+		writeMeshkitError(rw, wrappedErr, http.StatusInternalServerError)
 		return
 	}
 
