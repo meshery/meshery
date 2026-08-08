@@ -102,11 +102,7 @@
 &lt;h2 id="unit-testing-with-vitest"&gt;
 	Unit Testing with Vitest
 &lt;/h2&gt;
-&lt;p&gt;Meshery UI uses Vitest for unit and component testing. Unlike the end-to-end tests, Vitest tests run without a running Meshery server, provider, or browser.&lt;/p&gt;
-&lt;h3 id="running-unit-tests"&gt;
-	Running unit tests
-&lt;/h3&gt;
-&lt;p&gt;From the &lt;code&gt;ui&lt;/code&gt; directory:&lt;/p&gt;</description></item><item><title>Schema-Driven UI Development in Meshery</title><link>/pr-preview/pr-21247/project/contributing/ui/schemas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-21247/project/contributing/ui/schemas/</guid><description>&lt;p&gt;Meshery aims to decouple the UI logic from hardcoded structures and become fully schema-driven. This allows the UI to dynamically adapt based on changes in the underlying schema without requiring constant manual updates. This document explains how to integrate schema definitions from the &lt;a href="https://github.com/meshery/schemas"&gt;&lt;code&gt;meshery/schemas&lt;/code&gt;&lt;/a&gt; repository into the Meshery UI using a code-generation approach.&lt;/p&gt;
+&lt;p&gt;Meshery UI uses Vitest for unit and component testing. Unlike the end-to-end tests, Vitest tests do not require a running Meshery server, &lt;code&gt;make ui-provider-build&lt;/code&gt;, provider selection, or a browser.&lt;/p&gt;</description></item><item><title>Schema-Driven UI Development in Meshery</title><link>/pr-preview/pr-21247/project/contributing/ui/schemas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-21247/project/contributing/ui/schemas/</guid><description>&lt;p&gt;Meshery aims to decouple the UI logic from hardcoded structures and become fully schema-driven. This allows the UI to dynamically adapt based on changes in the underlying schema without requiring constant manual updates. This document explains how to integrate schema definitions from the &lt;a href="https://github.com/meshery/schemas"&gt;&lt;code&gt;meshery/schemas&lt;/code&gt;&lt;/a&gt; repository into the Meshery UI using a code-generation approach.&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id="overview"&gt;
 	Overview

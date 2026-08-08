@@ -35459,11 +35459,7 @@ and integration-test targets.&lt;/p&gt;</description></item><item><title>Contrib
 &lt;h2 id="unit-testing-with-vitest"&gt;
 	Unit Testing with Vitest
 &lt;/h2&gt;
-&lt;p&gt;Meshery UI uses Vitest for unit and component testing. Unlike the end-to-end tests, Vitest tests run without a running Meshery server, provider, or browser.&lt;/p&gt;
-&lt;h3 id="running-unit-tests"&gt;
-	Running unit tests
-&lt;/h3&gt;
-&lt;p&gt;From the &lt;code&gt;ui&lt;/code&gt; directory:&lt;/p&gt;</description></item><item><title>Contributing to Meshery using git</title><link>/pr-preview/pr-21247/project/contributing/contributing-gitflow/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-21247/project/contributing/contributing-gitflow/</guid><description>&lt;h1 id="working-by-forking"&gt;
+&lt;p&gt;Meshery UI uses Vitest for unit and component testing. Unlike the end-to-end tests, Vitest tests do not require a running Meshery server, &lt;code&gt;make ui-provider-build&lt;/code&gt;, provider selection, or a browser.&lt;/p&gt;</description></item><item><title>Contributing to Meshery using git</title><link>/pr-preview/pr-21247/project/contributing/contributing-gitflow/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-21247/project/contributing/contributing-gitflow/</guid><description>&lt;h1 id="working-by-forking"&gt;
 	Working by Forking
 &lt;/h1&gt;
 &lt;p&gt;Just head over to the GitHub page and click the &amp;ldquo;Fork&amp;rdquo; button. It&amp;rsquo;s just that simple. Once you&amp;rsquo;ve done that, you can use your favorite git client to clone your repo or just head straight to the command line:&lt;/p&gt;
