@@ -14,7 +14,7 @@ links:
 readme: "Ensure networking is setup properly and correct annotation are applied to each resource for custom Intel configuration \n ##h4 Caveats and Consideration \n"
 install: mesheryctl design import -f
 provider:
-    name: c0228da7-2415-4626-9ea5-19f97147767b
+    name: c38bdfd2-6078-4e8d-8637-5eb874f7d178
 screenshots:
     - title: Meshery Project
       url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

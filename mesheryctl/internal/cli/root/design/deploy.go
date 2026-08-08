@@ -139,7 +139,7 @@ mesheryctl design deploy -f [filepath] -s [source type]
 				return err
 			}
 			patternImportURL := fmt.Sprintf("%s/%s/import", mctlCfg.GetBaseMesheryURL(), patternURLPath)
-			pattern, err := importPattern(designDeployFlags.SourceType, designDeployFlags.File, patternImportURL, !designDeployFlags.SkipSave)
+			pattern, err := importPattern(designDeployFlags.SourceType, designDeployFlags.File, patternImportURL)
 			if err != nil {
 				return err
 			}

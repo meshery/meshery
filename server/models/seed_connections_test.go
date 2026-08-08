@@ -1,6 +1,8 @@
 package models
 
 import (
+	"path/filepath"
+	"sort"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -16,23 +18,45 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// mesheryCoreModelDir carries the shipped connection definitions.
-const mesheryCoreModelDir = "../../models/meshery-core/0.7.2/v1.0.0"
+// resolveModelDir returns a shipped model's registration directory
+// (models/<name>/<version>/v1.0.0) without pinning a specific version, so the
+// test keeps working as the model registry is re-synced. meshery-core and
+// kubernetes are both retained by the recommended sparse checkout, so this keeps
+// the default `go test ./...` passing against a sparse clone.
+func resolveModelDir(t *testing.T, name string) string {
+	t.Helper()
+	matches, err := filepath.Glob(filepath.Join("..", "..", "models", name, "*", "v1.0.0", "model.json"))
+	if err != nil {
+		t.Fatalf("glob model dir for %q: %v", name, err)
+	}
+	if len(matches) == 0 {
+		t.Fatalf("no shipped model directory found under ../../models/%s/*/v1.0.0 - is it excluded by a sparse checkout?", name)
+	}
+	sort.Strings(matches)
+	return filepath.Dir(matches[len(matches)-1])
+}
 
-// Representative models whose model.json registrant is `artifacthub` and
-// `github` respectively. Registering them is what creates the registrant
-// Connections that seeding is scoped to.
-//
-// The shipped `registrant` blobs are not uniform: some carry `user_id`, some
-// omit it. Since the registrant id is an md5 over the whole connection, the two
-// spellings hash to different rows, so a kind can hold more than one registrant
-// (meshery/meshery#20950). artifactHubOwnedRegistrantModelDir is the `user_id`
-// variant of the same kind as artifactHubRegistrantModelDir, which is what makes
-// the canonical-pick test exercise real data rather than a synthetic fixture.
+// mesheryCoreModelDir resolves the meshery-core model, which carries the shipped
+// connection definitions and registers under the `meshery` registrant.
+func mesheryCoreModelDir(t *testing.T) string { return resolveModelDir(t, "meshery-core") }
+
+// gitHubRegistrantModelDir resolves the kubernetes model, which registers under
+// the `github` registrant - the registrant that makes the GitHub connection
+// definition seedable.
+func gitHubRegistrantModelDir(t *testing.T) string { return resolveModelDir(t, "kubernetes") }
+
+// The Artifact Hub registrant models are committed fixtures, not shipped models:
+// every Artifact Hub model lives under models/, which the recommended sparse
+// checkout excludes, so depending on one would break `go test ./...` on a sparse
+// clone. The registrant blobs are deliberately not uniform -
+// artifactHubOwnedRegistrantModelDir carries a `user_id`, so it hashes to a
+// different registrant row than artifactHubRegistrantModelDir. That is the
+// two-spellings case a kind legitimately holds (meshery/meshery#20950), which
+// lets the canonical-pick test exercise real duplication rather than a synthetic
+// fixture.
 const (
-	artifactHubRegistrantModelDir      = "../../models/kubevault/2026.1.8-rc.0/v1.0.0"
-	artifactHubOwnedRegistrantModelDir = "../../models/couchbase-operator/2.81.0/v1.0.0"
-	gitHubRegistrantModelDir           = "../../models/azure-operational-insights/azureserviceoperator_customresourcedefinitions_v2.13.0.yaml/v1.0.0"
+	artifactHubRegistrantModelDir      = "testdata/artifacthub-registrant-model"
+	artifactHubOwnedRegistrantModelDir = "testdata/artifacthub-registrant-model-owned"
 )
 
 func newSeedTestLogger(t *testing.T) logger.Handler {
@@ -165,7 +189,7 @@ func linkRegistryEntry(t *testing.T, db *database.Handler, registrantID core.Uui
 // the identity their connection definitions declare, not the stale identity the
 // model.json registrant blobs carry.
 func TestSeedConnectionsMaterializesDefinitionBackedConnections(t *testing.T) {
-	db, regm := seedTestRegistry(t, mesheryCoreModelDir, artifactHubRegistrantModelDir, gitHubRegistrantModelDir)
+	db, regm := seedTestRegistry(t, mesheryCoreModelDir(t), artifactHubRegistrantModelDir, gitHubRegistrantModelDir(t))
 
 	// Registration alone leaves the registrant rows disagreeing with the
 	// definitions; assert that starting point so the test proves seeding did
@@ -222,7 +246,7 @@ func TestSeedConnectionsMaterializesDefinitionBackedConnections(t *testing.T) {
 // TestSeedConnectionsIsIdempotentAcrossRestarts proves the restart behavior the
 // issue calls for: no new rows, and no write at all on a second boot.
 func TestSeedConnectionsIsIdempotentAcrossRestarts(t *testing.T) {
-	db, regm := seedTestRegistry(t, mesheryCoreModelDir, artifactHubRegistrantModelDir, gitHubRegistrantModelDir)
+	db, regm := seedTestRegistry(t, mesheryCoreModelDir(t), artifactHubRegistrantModelDir, gitHubRegistrantModelDir(t))
 	log := newSeedTestLogger(t)
 
 	SeedConnections(log, db, regm)
@@ -231,7 +255,7 @@ func TestSeedConnectionsIsIdempotentAcrossRestarts(t *testing.T) {
 	// A restart re-runs registration before seeding, exactly as SeedComponents
 	// does, so exercise both.
 	regHelper := registration.NewRegistrationHelper(t.TempDir(), regm, NewRegistrationFailureLogHandler())
-	for _, dir := range []string{mesheryCoreModelDir, artifactHubRegistrantModelDir, gitHubRegistrantModelDir} {
+	for _, dir := range []string{mesheryCoreModelDir(t), artifactHubRegistrantModelDir, gitHubRegistrantModelDir(t)} {
 		regHelper.Register(registration.NewDir(dir))
 	}
 	SeedConnections(log, db, regm)
@@ -316,7 +340,7 @@ func assertSteadyStateWritesNothing(t *testing.T, db *database.Handler, regm *me
 // registration wrote it, rather than turning both rows into indistinguishable
 // copies of the definition.
 func TestSeedConnectionsStampsOneCanonicalRegistrantPerKind(t *testing.T) {
-	db, regm := seedTestRegistry(t, mesheryCoreModelDir, artifactHubRegistrantModelDir, artifactHubOwnedRegistrantModelDir)
+	db, regm := seedTestRegistry(t, mesheryCoreModelDir(t), artifactHubRegistrantModelDir, artifactHubOwnedRegistrantModelDir)
 
 	before := connectionsByKind(t, db)
 	if got := len(before["artifacthub"]); got != 2 {
@@ -378,7 +402,7 @@ func TestSeedConnectionsStampsOneCanonicalRegistrantPerKind(t *testing.T) {
 // the definition identity forever, producing the duplicate-identity outcome the
 // single-canonical rule exists to prevent, with no self-healing on later boots.
 func TestSeedConnectionsCanonicalPickSurvivesRegistrantGrowth(t *testing.T) {
-	db, regm := seedTestRegistry(t, mesheryCoreModelDir, artifactHubRegistrantModelDir)
+	db, regm := seedTestRegistry(t, mesheryCoreModelDir(t), artifactHubRegistrantModelDir)
 	log := newSeedTestLogger(t)
 
 	SeedConnections(log, db, regm)
@@ -421,12 +445,12 @@ func TestSeedConnectionsCanonicalPickSurvivesRegistrantGrowth(t *testing.T) {
 // same canonical row is rewritten once per copy in a single pass and the seeded
 // count reports copies rather than rows.
 func TestSeedConnectionsWritesOncePerKindWithDuplicateDefinitions(t *testing.T) {
-	db, regm := seedTestRegistry(t, mesheryCoreModelDir, artifactHubRegistrantModelDir, gitHubRegistrantModelDir)
+	db, regm := seedTestRegistry(t, mesheryCoreModelDir(t), artifactHubRegistrantModelDir, gitHubRegistrantModelDir(t))
 
 	// Re-registering the definitions is what a restart does, and what leaves a
 	// second copy of every definition behind.
 	regHelper := registration.NewRegistrationHelper(t.TempDir(), regm, NewRegistrationFailureLogHandler())
-	regHelper.Register(registration.NewDir(mesheryCoreModelDir))
+	regHelper.Register(registration.NewDir(mesheryCoreModelDir(t)))
 
 	var copies int64
 	if err := db.Table("connection_definition_dbs").Count(&copies).Error; err != nil {
@@ -460,7 +484,7 @@ func TestSeedConnectionsWritesOncePerKindWithDuplicateDefinitions(t *testing.T) 
 // GitHub's token are optional and raise the rate limit - so attaching one is a
 // legitimate user action that a restart must not silently revoke.
 func TestSeedConnectionsPreservesUserAttachedCredential(t *testing.T) {
-	db, regm := seedTestRegistry(t, mesheryCoreModelDir, artifactHubRegistrantModelDir, gitHubRegistrantModelDir)
+	db, regm := seedTestRegistry(t, mesheryCoreModelDir(t), artifactHubRegistrantModelDir, gitHubRegistrantModelDir(t))
 	log := newSeedTestLogger(t)
 
 	SeedConnections(log, db, regm)
@@ -486,7 +510,7 @@ func TestSeedConnectionsPreservesUserAttachedCredential(t *testing.T) {
 // kind that ships a definition but that Meshery does not itself source content
 // through must not be materialized as an empty, endpoint-less row.
 func TestSeedConnectionsSkipsKindsWithoutRegistrants(t *testing.T) {
-	db, regm := seedTestRegistry(t, mesheryCoreModelDir, artifactHubRegistrantModelDir, gitHubRegistrantModelDir)
+	db, regm := seedTestRegistry(t, mesheryCoreModelDir(t), artifactHubRegistrantModelDir, gitHubRegistrantModelDir(t))
 
 	SeedConnections(newSeedTestLogger(t), db, regm)
 
@@ -516,7 +540,7 @@ func TestSeedConnectionsSkipsKindsWithoutRegistrants(t *testing.T) {
 // never be seeded, and its registrant must be left exactly as registration
 // wrote it.
 func TestSeedConnectionsSkipsKubernetesRegistrant(t *testing.T) {
-	db, regm := seedTestRegistry(t, mesheryCoreModelDir, artifactHubRegistrantModelDir)
+	db, regm := seedTestRegistry(t, mesheryCoreModelDir(t), artifactHubRegistrantModelDir)
 
 	registerRegistrant(t, db, "kubernetes", entity.Model)
 
@@ -549,7 +573,7 @@ func TestSeedConnectionsSkipsKubernetesRegistrant(t *testing.T) {
 // no credential, so the registrant rule is the only thing standing between a
 // request body and a system-owned, endpoint-less Grafana connection.
 func TestSeedConnectionsIgnoresConnectionDefinitionOnlyRegistrant(t *testing.T) {
-	db, regm := seedTestRegistry(t, mesheryCoreModelDir, artifactHubRegistrantModelDir)
+	db, regm := seedTestRegistry(t, mesheryCoreModelDir(t), artifactHubRegistrantModelDir)
 
 	registerRegistrant(t, db, "grafana", entity.ConnectionDefinition)
 
@@ -786,7 +810,7 @@ func TestSeedConnectionsToleratesMissingDependencies(t *testing.T) {
 	log := newSeedTestLogger(t)
 	SeedConnections(log, nil, nil)
 
-	db, regm := seedTestRegistry(t, mesheryCoreModelDir)
+	db, regm := seedTestRegistry(t, mesheryCoreModelDir(t))
 	SeedConnections(log, db, nil)
 	SeedConnections(log, nil, regm)
 }
