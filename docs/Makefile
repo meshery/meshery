@@ -12,7 +12,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Changes to any main recipe in this Makefile, require a corresponding change in all other repositories subscribed to the 'meshery-academy' topic.
+# ---------------------------------------------------------------------------
+# SHARED TEMPLATE — PROPAGATE CHANGES
+#
+# This Makefile is a shared template. Any change to a main recipe below must be
+# mirrored in the corresponding Makefile of each repository listed here:
+#
+#   - https://github.com/layer5io/docs
+#   - https://github.com/meshery/meshery/tree/master/docs
+#   - https://github.com/topics/meshery-academy
+#
+# Target names, prerequisites, and the npm scripts they call form the shared
+# contract; keep them identical across repositories. The Docker section,
+# theme-update, the check-go implementation, and any extra check-deps guards are
+# per-repository adaptations and are expected to differ.
+#
+# MAIN TARGETS
+#
+#   setup              Install site dependencies (npm install).
+#   build              Build locally with draft, future, and expired content.
+#   build-preview      Build for a deploy preview (uses DEPLOY_PRIME_URL).
+#   build-production   Build for production. Pass BASE_URL=... to set the base URL.
+#   site               Serve locally with live reload.
+#   serve              Serve locally once, file watcher off (no live reload).
+#   clean              Empty the build cache, reinstall dependencies, run 'site'.
+#   lint / lint-fix    Check or auto-fix Markdown linting issues.
+#   check-links        Check internal links in the built site.
+#   check-deps         Verify required commands and local dependencies.
+#   check-go           Verify Go is installed (required by Hugo Modules).
+#
+# ---------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------
 # MAINTENANCE: Show help for available targets
