@@ -9,7 +9,7 @@ To automate functional integration and end-to-end testing Meshery uses [Playwri
 
 ## Unit Testing with Vitest
 
-Meshery UI uses Vitest for unit and component testing. Unlike the end-to-end tests, Vitest tests run without a running Meshery server, provider, or browser.
+Meshery UI uses Vitest for unit and component testing. Unlike the end-to-end tests, Vitest tests do not require a running Meshery server, `make ui-provider-build`, provider selection, or a browser.
 
 ### Running unit tests
 
@@ -29,7 +29,7 @@ To generate test coverage:
 
 ### Writing unit tests
 
-Unit tests are located in `__tests__` directories throughout the `ui` directory, alongside the code they test. Test files use the `.test.ts` or `.test.tsx` naming convention.
+Unit tests are commonly organized in `__tests__` directories alongside the code they test. Test files use the `.test.ts` or `.test.tsx` naming convention.
 
 For example:
 
@@ -38,6 +38,7 @@ components/
 ├── MyComponent.tsx
 └── __tests__/
     └── MyComponent.test.tsx
+```
 
 ### Mocking `@sistent/sistent`
 
@@ -50,6 +51,7 @@ vi.mock('@sistent/sistent', () => ({
   Box: ({ children }: any) => <div>{children}</div>,
   Typography: ({ children }: any) => <span>{children}</span>,
 }));
+```
 
 If the code under test starts using another Sistent export, such as `Button`, but `Button` is not included in the mock, the test can fail even though `Button` exists in the real `@sistent/sistent` package.
 
