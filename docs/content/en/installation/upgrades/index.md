@@ -121,7 +121,11 @@ a visible error rather than attempted at an unverified version, while an
 already-installed Operator keeps reporting its status and version as usual.
 
 To choose the chart version yourself instead of tracking the Server release,
-set `operator.version` on the connection - see
+set `operator.version` on the connection. A version you set is deployed exactly
+as written, or refused with a visible error if it names a version the repository
+does not publish or a moving tag such as `stable-latest` - it is never
+substituted, and the minimum above does not apply to it, so a pin below
+`v1.0.51` is installed as asked. See
 [Choosing the chart version yourself]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md#choosing-the-chart-version-yourself" >}}).
 
 **Upgrades.** Upgrading Meshery Server is what upgrades the Operator: on
