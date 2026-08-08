@@ -32,3 +32,24 @@ func TestListCmd(t *testing.T) {
 	// Run tests
 	utils.InvokeMesheryctlTestCommand(t, update, FilterCmd, tests, currDir, "filter")
 }
+
+func TestListCmdCount(t *testing.T) {
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+
+	tests := []utils.MesheryListCommandTest{
+		{
+			Name:             "Fetch Filter Count",
+			Args:             []string{"list", "--count"},
+			ExpectedResponse: "list.filter.count.output.golden",
+			Fixture:          "filter.list.api.response.golden",
+			URL:              "/api/filter",
+			ExpectError:      false,
+		},
+	}
+
+	utils.InvokeMesheryctlTestListCommand(t, update, FilterCmd, tests, currDir, "filter")
+}

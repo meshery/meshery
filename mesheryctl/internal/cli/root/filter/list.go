@@ -22,7 +22,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/fatih/color"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
@@ -35,8 +34,6 @@ var (
 	pageSize   = 25
 	pageNumber int
 	verbose    bool
-	// Color for the whiteboard printer
-	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 )
 
 var listCmd = &cobra.Command{
@@ -144,7 +141,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 		countFlag := cmd.Flag("count")
 		if countFlag != nil && countFlag.Value.String() == "true" {
-			_, _ = whiteBoardPrinter.Println("Total number of filter: ", len(data))
+			utils.DisplayCount("filter", int64(response.TotalCount))
 			return nil
 		}
 
@@ -202,4 +199,5 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 func init() {
 	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display full length user and filter file identifiers")
 	listCmd.Flags().IntVarP(&pageNumber, "page", "p", 1, "(optional) List next set of filters with --page (default = 1)")
+	listCmd.Flags().BoolP("count", "c", false, "(optional) Display count only")
 }
