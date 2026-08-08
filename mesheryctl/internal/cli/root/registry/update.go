@@ -139,7 +139,7 @@ func InvokeCompUpdate() error {
 	if err != nil {
 		err = ErrUpdateRegistry(err, modelLocation)
 		utils.Log.Error(err)
-		return nil
+		return err
 	}
 
 	utils.Log.Info("Total Registrants: ", len(componentCSVHelper.Components))
