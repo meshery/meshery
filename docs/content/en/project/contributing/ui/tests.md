@@ -1,11 +1,63 @@
 ---
-title: Contributing to Meshery UI End-to-End Tests
-description: How to contribute to end-to-end testing in Meshery UI using Playwright.
+title: Contributing to Meshery UI Tests
+description: How to contribute to unit and end-to-end testing in Meshery UI.
 categories: [contributing]
 aliases: [/project/contributing/contributing-ui-tests]
 ---
 
 To automate functional integration and end-to-end testing Meshery uses [Playwright](https://playwright.dev/) as one of the tools to automate browser testing. End-to-end tests run with each pull request to ensure that the changes do not break the existing functionality.
+
+## Unit Testing with Vitest
+
+Meshery UI uses Vitest for unit and component testing. Unlike the end-to-end tests, Vitest tests run without a running Meshery server, provider, or browser.
+
+### Running unit tests
+
+From the `ui` directory:
+
+{{< code code=`npm run test` >}}
+
+Run the test suite once.
+
+For watch mode during development:
+
+{{< code code=`npm run test:watch` >}}
+
+To generate test coverage:
+
+{{< code code=`npm run test:coverage` >}}
+
+### Writing unit tests
+
+Unit tests are located in `__tests__` directories throughout the `ui` directory, alongside the code they test. Test files use the `.test.ts` or `.test.tsx` naming convention.
+
+For example:
+
+```text
+components/
+├── MyComponent.tsx
+└── __tests__/
+    └── MyComponent.test.tsx
+
+### Mocking `@sistent/sistent`
+
+Many UI unit tests mock `@sistent/sistent` with an explicit list of the exports used by the test. If you add or change an import from `@sistent/sistent`, check the corresponding `vi.mock('@sistent/sistent', ...)` block and add the required export to the mock when necessary.
+
+For example:
+
+```tsx
+vi.mock('@sistent/sistent', () => ({
+  Box: ({ children }: any) => <div>{children}</div>,
+  Typography: ({ children }: any) => <span>{children}</span>,
+}));
+
+If the code under test starts using another Sistent export, such as `Button`, but `Button` is not included in the mock, the test can fail even though `Button` exists in the real `@sistent/sistent` package.
+
+### Choosing between Vitest and Playwright
+
+Use Vitest when testing individual functions, components, hooks, or other isolated UI behavior.
+
+Use Playwright when testing complete user workflows that require the running Meshery UI and browser interaction.
 
 ## Prerequisites:
 
