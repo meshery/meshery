@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
+	"net/url"
 	"time"
 
 	"github.com/meshery/meshery/server/machines"
@@ -48,7 +48,7 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 	})
 	if err != nil {
 		logrus.Error(err)
-		os.Exit(1)
+		return machines.NoOp, nil, err
 	}
 
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
@@ -82,6 +82,14 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 	}
 
 	if !connPayload.SkipCredentialVerification {
+		parsedURL, err := url.Parse(anthropicConn.BaseURL)
+		if err != nil || parsedURL.Scheme != "https" || parsedURL.Host != "api.anthropic.com" {
+			err = fmt.Errorf("invalid Anthropic Base URL: must be an https URL for api.anthropic.com")
+			err = models.ErrAnthropicConnectivity(err)
+			log.Error(err)
+			return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": err}).Build(), err
+		}
+
 		log.Debug("executing ping test for Anthropic Claude connection")
 		client := &http.Client{Timeout: 10 * time.Second}
 
