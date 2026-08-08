@@ -22,11 +22,16 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/schemas/models/core"
+	// The registry types seeded below are only available as v1beta1 here: the
+	// v1beta3 ComponentDefinition's Model field is a *v1beta1 ModelDefinition,
+	// the v1beta3 category and model packages are not generated, and
+	// registry.RegistrantHostToV1beta3 takes a v1beta1 Connection. So these
+	// stay v1beta1 by necessity, matching the existing registry-backed tests in
+	// policy_relationship_handler_test.go.
 	"github.com/meshery/schemas/models/v1beta1/category"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	v1beta3comp "github.com/meshery/schemas/models/v1beta3/component"
-	"github.com/stretchr/testify/require"
 )
 
 // seedComponentInModel registers one component belonging to modelName into rm
@@ -70,10 +75,13 @@ func seedComponentInModel(t *testing.T, rm *registry.RegistryManager, modelName,
 		},
 	}
 	id, err := comp.GenerateID()
-	require.NoError(t, err)
+	if err != nil {
+		t.Fatalf("seedComponentInModel(%s/%s): generate id: %v", modelName, kind, err)
+	}
 	comp.ID = id
-	_, _, err = rm.RegisterEntity(registry.RegistrantHostToV1beta3(conn), &comp)
-	require.NoError(t, err, "seedComponentInModel(%s/%s): RegisterEntity failed", modelName, kind)
+	if _, _, err := rm.RegisterEntity(registry.RegistrantHostToV1beta3(conn), &comp); err != nil {
+		t.Fatalf("seedComponentInModel(%s/%s): RegisterEntity: %v", modelName, kind, err)
+	}
 }
 
 // apiComponentsPage decodes the fields of the components response envelope that
@@ -91,9 +99,11 @@ type apiComponentsPage struct {
 }
 
 // callComponents issues a request straight to handlerFn (the same func the
-// route is bound to), sets any mux path vars, and returns the status and the
-// decoded response together with the raw body for diagnostics.
-func callComponents(t *testing.T, rawURL string, vars map[string]string, handlerFn http.HandlerFunc) (int, apiComponentsPage, string) {
+// route is bound to), sets any mux path vars, and returns the status, the
+// decoded response, the raw top-level keys, and the raw body for diagnostics.
+// The body is decoded unconditionally so an empty or non-JSON response fails the
+// test rather than passing as zero-valued fields.
+func callComponents(t *testing.T, rawURL string, vars map[string]string, handlerFn http.HandlerFunc) (int, apiComponentsPage, map[string]json.RawMessage, string) {
 	t.Helper()
 	req := httptest.NewRequest(http.MethodGet, rawURL, nil)
 	if vars != nil {
@@ -102,13 +112,27 @@ func callComponents(t *testing.T, rawURL string, vars map[string]string, handler
 	rec := httptest.NewRecorder()
 	handlerFn(rec, req)
 
+	body := rec.Body.Bytes()
 	var page apiComponentsPage
-	if rec.Body.Len() > 0 {
-		if err := json.Unmarshal(rec.Body.Bytes(), &page); err != nil {
-			t.Fatalf("decode response for %s: %v; body: %s", rawURL, err, rec.Body.String())
+	if err := json.Unmarshal(body, &page); err != nil {
+		t.Fatalf("decode response for %s: %v; body: %q", rawURL, err, string(body))
+	}
+	var keys map[string]json.RawMessage
+	if err := json.Unmarshal(body, &keys); err != nil {
+		t.Fatalf("decode response envelope for %s: %v; body: %q", rawURL, err, string(body))
+	}
+	return rec.Code, page, keys, string(body)
+}
+
+// assertEnvelopeKeys checks the response carries every top-level envelope key,
+// so an omitted field is caught rather than passing as a zero value.
+func assertEnvelopeKeys(t *testing.T, keys map[string]json.RawMessage, body string) {
+	t.Helper()
+	for _, k := range []string{"page", "pageSize", "totalCount", "components"} {
+		if _, ok := keys[k]; !ok {
+			t.Errorf("response envelope is missing the %q key; body: %s", k, body)
 		}
 	}
-	return rec.Code, page, rec.Body.String()
 }
 
 func newComponentsTestHandler(t *testing.T) (*Handler, *registry.RegistryManager) {
@@ -124,14 +148,25 @@ func TestGetAllMeshmodelComponents_ResponseEnvelope(t *testing.T) {
 	h, rm := newComponentsTestHandler(t)
 	seedComponentInModel(t, rm, "kubernetes", "Orchestration", "Job", "batch/v1", "Job")
 
-	code, page, raw := callComponents(t, "/api/registry/components", nil, h.GetAllMeshmodelComponents)
+	code, page, keys, body := callComponents(t, "/api/registry/components", nil, h.GetAllMeshmodelComponents)
 
-	require.Equal(t, http.StatusOK, code, "body: %s", raw)
-	require.Equal(t, int64(1), page.TotalCount)
-	require.Len(t, page.Components, 1)
-	require.Equal(t, 0, page.Page)
+	if code != http.StatusOK {
+		t.Fatalf("status = %d, want 200; body: %s", code, body)
+	}
+	assertEnvelopeKeys(t, keys, body)
+	if page.TotalCount != 1 {
+		t.Errorf("totalCount = %d, want 1", page.TotalCount)
+	}
+	if len(page.Components) != 1 {
+		t.Errorf("components length = %d, want 1", len(page.Components))
+	}
+	if page.Page != 0 {
+		t.Errorf("page = %d, want 0", page.Page)
+	}
 	// No page size requested, so the handler reports the default (utils.go).
-	require.Equal(t, defaultPageSize, page.PageSize)
+	if page.PageSize != defaultPageSize {
+		t.Errorf("pageSize = %d, want default %d", page.PageSize, defaultPageSize)
+	}
 }
 
 // TestGetAllMeshmodelComponents_PageSizeSpellings covers the camelCase pageSize
@@ -146,11 +181,20 @@ func TestGetAllMeshmodelComponents_PageSizeSpellings(t *testing.T) {
 
 	for _, param := range []string{"pageSize=2", "pagesize=2"} {
 		t.Run(param, func(t *testing.T) {
-			code, page, raw := callComponents(t, "/api/registry/components?"+param, nil, h.GetAllMeshmodelComponents)
-			require.Equal(t, http.StatusOK, code, "body: %s", raw)
-			require.Equal(t, int64(3), page.TotalCount, "totalCount must count all matches, not just the page")
-			require.Equal(t, 2, page.PageSize)
-			require.Len(t, page.Components, 2, "results must be limited to the page size")
+			code, page, keys, body := callComponents(t, "/api/registry/components?"+param, nil, h.GetAllMeshmodelComponents)
+			if code != http.StatusOK {
+				t.Fatalf("status = %d, want 200; body: %s", code, body)
+			}
+			assertEnvelopeKeys(t, keys, body)
+			if page.TotalCount != 3 {
+				t.Errorf("totalCount = %d, want 3 (all matches, not just the page)", page.TotalCount)
+			}
+			if page.PageSize != 2 {
+				t.Errorf("pageSize = %d, want 2", page.PageSize)
+			}
+			if len(page.Components) != 2 {
+				t.Errorf("components length = %d, want 2 (limited to the page size)", len(page.Components))
+			}
 		})
 	}
 }
@@ -165,11 +209,20 @@ func TestGetAllMeshmodelComponents_PageSizeAll(t *testing.T) {
 
 	for _, param := range []string{"pagesize=all", "pageSize=all"} {
 		t.Run(param, func(t *testing.T) {
-			code, page, raw := callComponents(t, "/api/registry/components?"+param, nil, h.GetAllMeshmodelComponents)
-			require.Equal(t, http.StatusOK, code, "body: %s", raw)
-			require.Equal(t, int64(3), page.TotalCount)
-			require.Len(t, page.Components, 3, "all results must be returned")
-			require.Equal(t, int(page.TotalCount), page.PageSize, "pageSize=all reports pageSize as totalCount")
+			code, page, keys, body := callComponents(t, "/api/registry/components?"+param, nil, h.GetAllMeshmodelComponents)
+			if code != http.StatusOK {
+				t.Fatalf("status = %d, want 200; body: %s", code, body)
+			}
+			assertEnvelopeKeys(t, keys, body)
+			if page.TotalCount != 3 {
+				t.Errorf("totalCount = %d, want 3", page.TotalCount)
+			}
+			if len(page.Components) != 3 {
+				t.Errorf("components length = %d, want 3 (all results)", len(page.Components))
+			}
+			if page.PageSize != int(page.TotalCount) {
+				t.Errorf("pageSize = %d, want %d (pageSize=all reports pageSize as totalCount)", page.PageSize, page.TotalCount)
+			}
 		})
 	}
 }
@@ -183,41 +236,76 @@ func TestGetMeshmodelComponentByModel_ScopesToRequestedModel(t *testing.T) {
 	seedComponentInModel(t, rm, "aws", "Cloud", "Bucket", "s3/v1", "Bucket")
 
 	t.Run("returns only the requested model's components", func(t *testing.T) {
-		code, page, raw := callComponents(t, "/api/registry/models/kubernetes/components",
+		code, page, keys, body := callComponents(t, "/api/registry/models/kubernetes/components",
 			map[string]string{"model": "kubernetes"}, h.GetMeshmodelComponentByModel)
-		require.Equal(t, http.StatusOK, code, "body: %s", raw)
-		require.Equal(t, int64(1), page.TotalCount)
-		require.Len(t, page.Components, 1)
-		require.Equal(t, "Job", page.Components[0].DisplayName)
-		require.Equal(t, "kubernetes", page.Components[0].Model.Name)
+		if code != http.StatusOK {
+			t.Fatalf("status = %d, want 200; body: %s", code, body)
+		}
+		assertEnvelopeKeys(t, keys, body)
+		if page.TotalCount != 1 {
+			t.Errorf("totalCount = %d, want 1", page.TotalCount)
+		}
+		if len(page.Components) != 1 {
+			t.Fatalf("components length = %d, want 1", len(page.Components))
+		}
+		if page.Components[0].DisplayName != "Job" {
+			t.Errorf("component displayName = %q, want %q", page.Components[0].DisplayName, "Job")
+		}
+		if page.Components[0].Model.Name != "kubernetes" {
+			t.Errorf("component model = %q, want %q", page.Components[0].Model.Name, "kubernetes")
+		}
 	})
 
 	t.Run("a different model returns only its own components", func(t *testing.T) {
-		code, page, raw := callComponents(t, "/api/registry/models/aws/components",
+		code, page, keys, body := callComponents(t, "/api/registry/models/aws/components",
 			map[string]string{"model": "aws"}, h.GetMeshmodelComponentByModel)
-		require.Equal(t, http.StatusOK, code, "body: %s", raw)
-		require.Equal(t, int64(1), page.TotalCount)
-		require.Len(t, page.Components, 1)
-		require.Equal(t, "Bucket", page.Components[0].DisplayName)
+		if code != http.StatusOK {
+			t.Fatalf("status = %d, want 200; body: %s", code, body)
+		}
+		assertEnvelopeKeys(t, keys, body)
+		if page.TotalCount != 1 {
+			t.Errorf("totalCount = %d, want 1", page.TotalCount)
+		}
+		if len(page.Components) != 1 {
+			t.Fatalf("components length = %d, want 1", len(page.Components))
+		}
+		if page.Components[0].DisplayName != "Bucket" {
+			t.Errorf("component displayName = %q, want %q", page.Components[0].DisplayName, "Bucket")
+		}
 	})
 
 	t.Run("an unknown model returns an empty list", func(t *testing.T) {
-		code, page, raw := callComponents(t, "/api/registry/models/nonexistent/components",
+		code, page, keys, body := callComponents(t, "/api/registry/models/nonexistent/components",
 			map[string]string{"model": "nonexistent"}, h.GetMeshmodelComponentByModel)
-		require.Equal(t, http.StatusOK, code, "body: %s", raw)
-		require.Equal(t, int64(0), page.TotalCount)
-		require.Empty(t, page.Components)
+		if code != http.StatusOK {
+			t.Fatalf("status = %d, want 200; body: %s", code, body)
+		}
+		assertEnvelopeKeys(t, keys, body)
+		if page.TotalCount != 0 {
+			t.Errorf("totalCount = %d, want 0", page.TotalCount)
+		}
+		if len(page.Components) != 0 {
+			t.Errorf("components length = %d, want 0", len(page.Components))
+		}
 	})
 }
 
 // TestGetAllMeshmodelComponents_EmptyResult pins that no matches is a valid,
-// well-formed 200 with an empty list, not an error or a broken envelope.
+// well-formed 200 whose envelope still carries every key, not an error or a
+// blank body.
 func TestGetAllMeshmodelComponents_EmptyResult(t *testing.T) {
 	h, _ := newComponentsTestHandler(t)
 
-	code, page, raw := callComponents(t, "/api/registry/components", nil, h.GetAllMeshmodelComponents)
+	code, page, keys, body := callComponents(t, "/api/registry/components", nil, h.GetAllMeshmodelComponents)
 
-	require.Equal(t, http.StatusOK, code, "body: %s", raw)
-	require.Equal(t, int64(0), page.TotalCount)
-	require.Empty(t, page.Components)
+	if code != http.StatusOK {
+		t.Fatalf("status = %d, want 200; body: %s", code, body)
+	}
+	assertEnvelopeKeys(t, keys, body)
+	if page.TotalCount != 0 {
+		t.Errorf("totalCount = %d, want 0", page.TotalCount)
+	}
+	if len(page.Components) != 0 {
+		t.Errorf("components length = %d, want 0", len(page.Components))
+	}
 }
