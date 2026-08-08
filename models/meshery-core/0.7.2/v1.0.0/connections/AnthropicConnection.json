@@ -1,0 +1,87 @@
+{
+    "schemaVersion": "connections.meshery.io/v1beta3",
+    "name": "Anthropic Claude",
+    "description": "Connect Meshery to Anthropic's Claude API to generate Kubernetes Designs from natural language prompts. Your API key is stored as a Credential and is never included in generated Designs, logs, or events.",
+    "kind": "anthropic",
+    "type": "model-provider",
+    "subType": "inference",
+    "status": "registered",
+    "transitionMap": {
+        "registered": [
+            {
+                "nextState": "connected",
+                "description": "Validates the stored API key against Anthropic's API and marks this provider ready for Design generation."
+            },
+            {
+                "nextState": "ignored",
+                "description": "Keeps the connection registered but excludes it from the provider list shown during Design generation."
+            }
+        ],
+        "connected": [
+            {
+                "nextState": "disconnected",
+                "description": "Stops using this provider for Design generation. The connection and credential are kept, so it can be reconnected without re-entering the API key."
+            },
+            {
+                "nextState": "deleted",
+                "description": "Removes this connection and its associated credential from Meshery."
+            }
+        ],
+        "disconnected": [
+            {
+                "nextState": "connected",
+                "description": "Re-validates the stored API key and resumes using this provider for Design generation."
+            },
+            {
+                "nextState": "deleted",
+                "description": "Removes this connection and its associated credential from Meshery."
+            }
+        ]
+    },
+    "connectionSchema": {
+        "type": "object",
+        "title": "Anthropic Claude Connection",
+        "required": [
+            "baseUrl"
+        ],
+        "properties": {
+            "baseUrl": {
+                "type": "string",
+                "format": "uri",
+                "title": "API Base URL",
+                "default": "https://api.anthropic.com/v1",
+                "description": "Base URL for Anthropic's API. Change only if routing through a proxy."
+            },
+            "defaultModel": {
+                "type": "string",
+                "title": "Default Model",
+                "default": "claude-sonnet-4-6",
+                "description": "Model used for Design generation requests unless overridden per-request."
+            },
+            "name": {
+                "type": "string",
+                "title": "Connection Name",
+                "description": "Optional friendly name for this connection."
+            }
+        }
+    },
+    "credentialSchema": {
+        "type": "object",
+        "title": "Anthropic API Key",
+        "required": [
+            "apiKey"
+        ],
+        "properties": {
+            "apiKey": {
+                "type": "string",
+                "format": "password",
+                "title": "API Key",
+                "description": "Your Anthropic API key. Stored as a Credential, never written to Connection metadata, generated Designs, logs, or events."
+            }
+        }
+    },
+    "styles": {
+        "svgColor": "<!-- placeholder: use Anthropic's official logo SVG here -->",
+        "svgWhite": "<!-- placeholder: use Anthropic's official logo SVG (white variant) here -->"
+    }
+}
