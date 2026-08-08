@@ -12,50 +12,81 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Changes to any main recipe in this Makefile, require a corresponding change in all other repositories subscribed to the 'meshery-academy' topic.
+
+# ---------------------------------------------------------------------------
+# MAINTENANCE: Show help for available targets
+# ---------------------------------------------------------------------------
+
+## Verify required commands and local dependencies are present.
+check-deps:
+	@echo "Checking if 'npm', local 'sass', and local 'hugo' binary are present..."
+	@command -v npm > /dev/null || { echo "Error: 'npm' not found. Please install Node.js and npm."; exit 1; }
+	@command -v sass > /dev/null || { echo "Error: Dart Sass not found. See https://gohugo.io/functions/css/sass/#dart-sass"; exit 1; }
+	@test -x node_modules/.bin/hugo || { echo "Error: Hugo binary not found in node_modules. Please run 'make setup' first."; exit 1; }
+	@echo "Dependencies check passed."
+
+## Validate Go is installed by delegating to the root Makefile check.
+check-go:
+	@$(MAKE) -C .. check-go
+
+## Check internal links in the built site.
+check-links: check-go check-deps
+	npm run check:links
+
+## Check Markdown for linting issues.
+lint: check-deps
+	npm run lint
+
+## Fix Markdown linting issues.
+lint-fix: check-deps
+	npm run lint:fix
+
+# ---------------------------------------------------------------------------
+# LOCAL BUILDS: Show help for available targets
+# ---------------------------------------------------------------------------
 
 ## Install docs.meshery.io dependencies on your local machine.
 ## See https://gohugo.io/categories/installation
 setup:
 	npm install
 
-## Verify required commands and local dependencies are present.
-check-deps:
-	@echo "Checking if 'npm' and local 'hugo' binary are present..."
-	@command -v npm > /dev/null || { echo "Error: 'npm' not found. Please install Node.js and npm."; exit 1; }
-	@test -x node_modules/.bin/hugo || { echo "Error: Hugo binary not found in node_modules. Please run 'make setup' first."; exit 1; }
-	@echo "Dependencies check passed."
-
-## Run docs.meshery.io on your local machine with draft and future content enabled.
-site: check-deps check-go
-	npm run dev:site
-
-## Run docs.meshery.io on your local machine in serve mode (without file watching).
-serve: check-deps check-go
-	npm run dev:serve
-
 ## Build docs.meshery.io on your local machine.
-build: check-deps check-go
-	npm run dev:build
+build: check-go check-deps
+	npm run build
+
+## Build docs.meshery.io for a deploy preview.
+build-preview: check-go check-deps
+	npm run build:preview
 
 ## Build docs.meshery.io for production with optional base URL.
-build-production: check-deps
+build-production: check-go check-deps
 	set -e; \
 	if [ -n "$(BASE_URL)" ]; then \
 		base_url="$(BASE_URL)"; \
 		base_url="$${base_url%/}/"; \
-		npm run build:production -- --gc --baseURL "$$base_url"; \
+		npm run build:production -- --baseURL "$$base_url"; \
 	else \
-		npm run build:production -- --gc; \
+		npm run build:production; \
 	fi
 
-## Empty build cache and run docs.meshery.io on your local machine.
-clean: check-deps
-	npm run dev:clean
+## Build and run docs.meshery.io on your local machine (draft and future content enabled).
+site: check-go check-deps
+	npm run site
+
+## Build and serve docs.meshery.io on your local machine (without file watching).
+serve: check-go check-deps
+	npm run serve
+
+## Empty the build cache, reinstall dependencies, and run docs.meshery.io locally.
+clean:
+	npm run clean
+	$(MAKE) setup
 	$(MAKE) site
 
-## Validate Go is installed by delegating to the root Makefile check.
-check-go:
-	@$(MAKE) -C .. check-go
+# ---------------------------------------------------------------------------
+# DOCKER: Show help for available targets
+# ---------------------------------------------------------------------------
 
 ## Install base OS dependencies needed in Docker-based docs builds.
 docker-install-base-deps:
@@ -132,12 +163,16 @@ docker:
 
 .PHONY: \
 	setup \
-	check-deps \
 	build \
+	build-preview \
 	build-production \
 	site \
 	serve \
 	clean \
+	check-links \
+	lint \
+	lint-fix \
+	check-deps \
 	check-go \
 	docker \
 	docker-install-base-deps \
