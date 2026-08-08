@@ -419,7 +419,12 @@ the sheet↔code map `ui/tests/e2e/connections.testmap.ts`). Contract docs:
 
 ### Do Not Modify
 
-`LICENSE`, `CODE_OF_CONDUCT.md`, `GOVERNANCE.md`, `MAINTAINERS.md`, `.github/copilot-instructions.md`, `.github/agents/`, `go.sum`, `ui/package-lock.json`, `provider-ui/package-lock.json`
+`LICENSE`, `CODE_OF_CONDUCT.md`, `GOVERNANCE.md`, `MAINTAINERS.md`, `.github/copilot-instructions.md`, `.github/agents/`
+
+Never hand-edit a generated lock file (`go.sum`, or any of the several `package-lock.json`
+files). Regenerate it with the package manager - a dependency bump legitimately rewrites
+every lock file it touches. `.agents/hooks/block-lockfiles.sh` enforces this by basename,
+so it covers lock files this list does not enumerate.
 
 ### Require Human Review
 
