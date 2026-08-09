@@ -363,6 +363,10 @@ func scaffoldChallenge(opts ScaffoldOptions) error {
 
 	labOpts := opts
 	labOpts.Type = string(Lab)
+	labOpts.Title = "Lab"
+	labOpts.Description = ""
+	labOpts.Category = ""
+	labOpts.Tags = nil
 	labOpts.TargetDir = currentDir
 	labOpts.ID = ""
 	err = scaffoldNode(labOpts, "lab")
@@ -372,6 +376,10 @@ func scaffoldChallenge(opts ScaffoldOptions) error {
 
 	examOpts := opts
 	examOpts.Type = string(Exam)
+	examOpts.Title = "Exam"
+	examOpts.Description = ""
+	examOpts.Category = ""
+	examOpts.Tags = nil
 	examOpts.TargetDir = currentDir
 	examOpts.ID = ""
 	err = scaffoldNode(examOpts, "exam")
@@ -390,9 +398,12 @@ func scaffoldChallenge(opts ScaffoldOptions) error {
 	for _, dir := range contentDirs {
 		pageOpts := opts
 		pageOpts.Type = string(Page)
+		pageOpts.Title = dir.name // makeSlug will handle generating the right folder name
+		pageOpts.Description = ""
+		pageOpts.Category = ""
+		pageOpts.Tags = nil
 		pageOpts.TargetDir = filepath.Join(currentDir, "content")
 		pageOpts.ID = ""
-		pageOpts.Title = dir.name // makeSlug will handle generating the right folder name, but explicitFolderName is better
 		err = scaffoldNode(pageOpts, dir.name)
 		if err != nil {
 			return err

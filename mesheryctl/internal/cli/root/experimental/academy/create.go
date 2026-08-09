@@ -119,6 +119,7 @@ func executeCreate() error {
 		ID:          createAcademyFlags.ID,
 	}
 
+	// course/module routes through scaffoldTree, which auto-generates a module-1/page-1 stub tree beneath them
 	if cType == string(academyModel.LearningPath) || cType == string(Course) || cType == string(Module) || cType == string(academyModel.Certification) {
 		return scaffoldTree(opts)
 	} else if cType == string(academyModel.Challenge) {
