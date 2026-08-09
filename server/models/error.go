@@ -167,7 +167,7 @@ const (
 	ErrOperatorChartNotPublishedCode      = "meshery-server-1470"
 	ErrOperatorChartSubstitutedCode       = "meshery-server-1471"
 	ErrNoMesheryReleasesFoundCode         = "meshery-server-1472"
-	ErrOllamaConnectivityCode             = "meshery-server-1473"
+	ErrOllamaConnectivityCode             = "meshery-server-1475"
 )
 
 var (

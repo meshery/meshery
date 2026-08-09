@@ -140,7 +140,9 @@ func checkOllamaReachable(ctx context.Context, baseURL, apiKey string) error {
 	if err != nil {
 		return fmt.Errorf("reaching %s: %w", baseURL, err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("ollama returned status %d from %s", resp.StatusCode, tagsURL)
