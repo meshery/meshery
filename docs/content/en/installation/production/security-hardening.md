@@ -166,6 +166,19 @@ the cluster so the Server can reach it. Treat that exposure deliberately:
   scan images as part of your pipeline. Meshery's published
   [security vulnerabilities]({{< ref "project/security-vulnerabilities.md" >}}) and release notes
   help you track fixes.
+- **In-cluster components ship pinned, and stay pinnable.** Meshery Server
+  installs the `meshery-operator` chart only at a version the chart repository
+  publishes - validated against the published index before Helm is called,
+  never a moving tag, and never a release candidate chosen automatically - and
+  the Operator in turn deploys MeshSync and the Broker at pinned releases with
+  pull policies to match, rather than off a `stable-latest` channel. All three
+  versions remain yours to choose. For the Operator chart, set
+  `operator.version` on the connection; an explicit pin is honored exactly and
+  refused loudly if it names an unpublished or moving version (see
+  [How Meshery Server manages Meshery Operator]({{< ref "installation/upgrades/index.md#how-meshery-server-manages-meshery-operator" >}})).
+  For MeshSync and the Broker, set `spec.version` on the cluster's `MeshSync`
+  and `Broker` custom resources - the Operator honors each with a rollout (see
+  [Configuring Meshery Operator, MeshSync, and Broker]({{< ref "guides/infrastructure-management/configuring-operator-meshsync-broker.md" >}})).
 - **Verify the chart source.** Install from the official
   [Meshery Helm chart]({{< ref "installation/kubernetes/helm.md" >}}) and review values you
   override.
