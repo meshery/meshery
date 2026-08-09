@@ -112,6 +112,13 @@ type RemoteProvider struct {
 	// provider and token cookie expiry bound
 	CookieDuration time.Duration
 
+	// syncMu guards the preference-sync worker's lifecycle: the two channels
+	// below and the flag recording whether the worker is running. Activation
+	// is no longer a boot-time-only event (capabilities can load at any time,
+	// see SyncPreferences), so the request path and the capability-load path
+	// can race to start it.
+	syncMu       sync.Mutex
+	syncActive   bool
 	syncStopChan chan struct{}
 	syncChan     chan *userSession
 
@@ -194,9 +201,16 @@ func (l *RemoteProvider) VerifyAvailability(ctx context.Context) (ProviderProper
 
 func (l *RemoteProvider) SetProviderProperties(providerProperties ProviderProperties) {
 	l.propertiesMu.Lock()
-	defer l.propertiesMu.Unlock()
 	l.ProviderProperties = providerProperties
 	l.ProviderURL = providerProperties.ProviderURL
+	l.propertiesMu.Unlock()
+
+	// This is the single funnel through which a capability set reaches the
+	// provider, and preference sync cannot start until one has. Activating
+	// here is what lets a remote that was unreachable at boot recover: the
+	// lock is already released, and SyncPreferences is idempotent, so an
+	// already-running worker is left alone.
+	l.SyncPreferences()
 }
 
 func (l *RemoteProvider) loadCapabilitiesFromLocalFile(filePath string) (ProviderProperties, error) {
@@ -417,24 +431,89 @@ func (l *RemoteProvider) GetProviderProperties() ProviderProperties {
 	return l.ProviderProperties
 }
 
-// SyncPreferences - used to sync preferences with the remote provider
+// supportsSyncPrefs reports whether the currently cached capability set
+// advertises preference sync. Capabilities are replaced wholesale by
+// SetProviderProperties from the tracker's probe goroutines, so the read is
+// taken under propertiesMu rather than off the embedded struct directly.
+func (l *RemoteProvider) supportsSyncPrefs() bool {
+	l.propertiesMu.RLock()
+	defer l.propertiesMu.RUnlock()
+	return l.Capabilities.IsSupported(SyncPrefs)
+}
+
+// SyncPreferences starts the worker that pushes preference writes to the
+// remote provider. It is idempotent and safe to call from any goroutine.
+//
+// Activation is capability-gated, and capabilities are not known at boot: the
+// concurrent-availability refactor made Initialize cheap and moved the
+// /capabilities fetch into an asynchronous probe. So this is called both from
+// main.go once the boot probe settles and from SetProviderProperties every
+// time a capability set lands, whichever happens first. Before that, a remote
+// that was unreachable at boot left the worker permanently unstarted and
+// RecordPreferences sent on a nil channel, hanging the request forever.
 func (l *RemoteProvider) SyncPreferences() {
-	if !l.Capabilities.IsSupported(SyncPrefs) {
+	if !l.supportsSyncPrefs() {
 		return
 	}
 
-	l.syncStopChan = make(chan struct{})
-	l.syncChan = make(chan *userSession, 100)
-	go func() {
-		for {
-			select {
-			case uSess := <-l.syncChan:
-				l.executePrefSync(uSess.token, uSess.session)
-			case <-l.syncStopChan:
-				return
-			}
+	l.syncMu.Lock()
+	defer l.syncMu.Unlock()
+
+	if l.syncActive {
+		return
+	}
+
+	// The worker is handed the channels as arguments rather than reading the
+	// fields, so it never touches state that a later Stop/restart mutates.
+	syncChan := make(chan *userSession, 100)
+	stopChan := make(chan struct{})
+	l.syncChan = syncChan
+	l.syncStopChan = stopChan
+	l.syncActive = true
+
+	go l.runPrefSync(syncChan, stopChan)
+}
+
+// runPrefSync drains queued preference writes until stopChan is closed.
+func (l *RemoteProvider) runPrefSync(syncChan <-chan *userSession, stopChan <-chan struct{}) {
+	for {
+		select {
+		case uSess := <-syncChan:
+			l.executePrefSync(uSess.token, uSess.session)
+		case <-stopChan:
+			return
 		}
-	}()
+	}
+}
+
+// enqueuePrefSync hands a preference write to the sync worker.
+//
+// It never blocks. A send on a nil channel blocks forever and a send into a
+// full buffer blocks until the worker drains it; either one would park the
+// goroutine serving the request, so both are turned into a return instead.
+//
+// The two outcomes are deliberately different. No worker means the write
+// cannot be synced at all, which the caller reports. A full buffer means the
+// worker is merely behind: the preference is already persisted locally by
+// then, and failing the user's request over a saturated best-effort queue
+// would be worse than logging it, so that case is logged and accepted.
+func (l *RemoteProvider) enqueuePrefSync(token string, sess *Preference) error {
+	l.syncMu.Lock()
+	syncChan := l.syncChan
+	active := l.syncActive
+	l.syncMu.Unlock()
+
+	if !active || syncChan == nil {
+		return ErrOperationNotAvailable
+	}
+
+	select {
+	case syncChan <- &userSession{token: token, session: sess}:
+		return nil
+	default:
+		l.Log.Warnf("preference sync queue for provider %q is full; dropping this update. The preference is saved locally but the remote provider will not see it until the next write.", l.Name())
+		return nil
+	}
 }
 
 // GetProviderCapabilities returns all of the provider properties
@@ -468,23 +547,29 @@ func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, req *htt
 	}
 }
 
-// StopSyncPreferences - used to stop sync preferences
+// StopSyncPreferences stops the preference-sync worker.
 //
-// Safe to call even when SyncPreferences was never activated: with the
-// concurrent-availability refactor, capabilities may load after the boot
-// loop has already returned, so the post-probe SyncPreferences activation
-// runs asynchronously. The nil-channel guard prevents a shutdown defer
-// from blocking forever sending to an uninitialized syncStopChan in
-// the race where SyncPrefs became supported but SyncPreferences never
-// ran (e.g. shutdown raced with VerifyAll).
+// Safe to call when the worker was never started, and safe to call twice:
+// main.go defers it for every remote regardless of whether activation ever
+// happened. Stopping closes the channel rather than sending on it so a second
+// call cannot block on a worker that has already returned.
+//
+// The capability gate is deliberately absent. Capabilities are refreshed by
+// the tracker's probe, so a remote that goes offline before shutdown would
+// otherwise report SyncPrefs as unsupported and leak the running worker.
+// Whether the worker exists is tracked directly instead.
 func (l *RemoteProvider) StopSyncPreferences() {
-	if !l.Capabilities.IsSupported(SyncPrefs) {
+	l.syncMu.Lock()
+	defer l.syncMu.Unlock()
+
+	if !l.syncActive {
 		return
 	}
-	if l.syncStopChan == nil {
-		return
-	}
-	l.syncStopChan <- struct{}{}
+
+	close(l.syncStopChan)
+	l.syncActive = false
+	l.syncStopChan = nil
+	l.syncChan = nil
 }
 
 func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
@@ -4089,7 +4174,7 @@ func (l *RemoteProvider) DeleteSchedule(req *http.Request, scheduleID string) ([
 
 // RecordPreferences - records the user preference
 func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, data *Preference) error {
-	if !l.Capabilities.IsSupported(SyncPrefs) {
+	if !l.supportsSyncPrefs() {
 		l.Log.Error(ErrOperationNotAvailable)
 		return ErrInvalidCapability("SyncPrefs", l.ProviderName)
 	}
@@ -4097,11 +4182,7 @@ func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, dat
 		return err
 	}
 	tokenVal, _ := l.GetToken(req)
-	l.syncChan <- &userSession{
-		token:   tokenVal,
-		session: data,
-	}
-	return nil
+	return l.enqueuePrefSync(tokenVal, data)
 }
 
 // TokenHandler - specific to remote auth
@@ -4134,7 +4215,16 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 		return
 	}
 
-	l.ProviderProperties = providerProperties
+	// Route through SetProviderProperties rather than assigning the embedded
+	// struct: the write has to be taken under propertiesMu to stay off
+	// GetProviderProperties' readers, and login is the path that first loads
+	// capabilities for a deployment with a preselected PROVIDER, where the
+	// chooser's /api/providers/stream refresh never runs. ProviderURL is
+	// re-stamped first because a remote may return its own providerUrl in
+	// /capabilities, and the configured URL is what the rest of the server
+	// routes against (same reason GetProviderCapabilities re-stamps it).
+	providerProperties.ProviderURL = l.RemoteProviderURL
+	l.SetProviderProperties(providerProperties)
 
 	// Download the package for the user only if they have extension capability
 	if len(l.GetProviderProperties().Extensions.Navigator) > 0 {
