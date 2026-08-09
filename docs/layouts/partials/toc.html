@@ -8,7 +8,7 @@
 <div class="td-toc" data-proofer-ignore>
 {{ if not .Params.notoc -}}
 
-  {{ if eq .Type "models" -}}
+  {{ if and (eq .Type "models") (eq .Kind "page") -}}
     {{/*
       Model pages are built entirely from front matter, not markdown
       headings, so .TableOfContents is always empty here. Same nav
@@ -22,13 +22,13 @@
     <nav id="model-toc" class="model-toc" aria-label="{{ i18n "toc_on_this_page" }}">
       <ul>
         {{ if and .Params.components (gt (len .Params.components) 0) -}}
-        <li><a href="#components">Components</a></li>
+        <li><a href="#components">{{ i18n "toc_components" }}</a></li>
         {{ end -}}
         <li id="toc-related-designs">
-          <a href="#related-designs-header">Related Designs</a>
+          <a href="#related-designs-header">{{ i18n "toc_related_designs" }}</a>
         </li>
         <li id="toc-related-tutorials">
-          <a href="#related-tutorials-header">Related Tutorials</a>
+          <a href="#related-tutorials-header">{{ i18n "toc_related_tutorials" }}</a>
         </li>
       </ul>
     </nav>
