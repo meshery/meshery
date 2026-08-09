@@ -21,8 +21,10 @@
         {{ if ge (len $parts) 3 }}
           {{ $meta := transform.Unmarshal (index $parts 1) }}
           {{ $compatibility := index $meta "compatibility" }}
-          {{ if $compatibility }}
-            {{ $entry := dict "name" (index $meta "name") "patternId" (index $meta "patternId") "catalogType" $catalogType }}
+          {{ $name := index $meta "name" }}
+          {{ $patternId := index $meta "patternId" }}
+          {{ if and $compatibility $name $patternId }}
+            {{ $entry := dict "name" $name "patternId" $patternId "catalogType" $catalogType }}
             {{ range $compatibility }}
               {{ $slug := . }}
               {{ $existing := default slice (index $index $slug) }}
