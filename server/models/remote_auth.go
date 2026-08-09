@@ -179,6 +179,9 @@ func (l *RemoteProvider) doRequestHelper(req *http.Request, token string) (*http
 	safeClient := helperutils.NewSafeHTTPClient(30 * time.Second)
 	safeClient.Transport = tracing.NewTransport(safeClient.Transport)
 	c := safeClient
+	if err := helperutils.URLValidator(req.URL.String()); err != nil {
+		return nil, ErrTokenClientCheck(err)
+	}
 	req.Header.Set("Authorization", fmt.Sprintf("bearer %s", token))
 	if token == GlobalTokenForAnonymousResults {
 		req.Header.Set("X-API-Key", token)
