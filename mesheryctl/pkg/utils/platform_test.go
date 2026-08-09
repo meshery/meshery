@@ -107,4 +107,84 @@ spec:
 			t.Fatal("expected an error for an empty containers list, got nil")
 		}
 	})
+	t.Run("registry host with a port is not mistaken for the tag", func(t *testing.T) {
+		content := `
+spec:
+  template:
+    spec:
+      containers:
+        - image: "registry.example.com:5000/meshery/meshery:stable-v0.7.0"
+`
+		path := writeDeploymentFile(t, content)
+		got, err := GetDeploymentVersion(path)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if got != "v0.7.0" {
+			t.Errorf("got %q, want %q", got, "v0.7.0")
+		}
+	})
+
+	t.Run("tag with multiple hyphens keeps the full build component", func(t *testing.T) {
+		content := `
+spec:
+  template:
+    spec:
+      containers:
+        - image: "meshery/meshery:stable-v0.7.0-rc1"
+`
+		path := writeDeploymentFile(t, content)
+		got, err := GetDeploymentVersion(path)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if got != "v0.7.0-rc1" {
+			t.Errorf("got %q, want %q", got, "v0.7.0-rc1")
+		}
+	})
+
+	t.Run("tag with an empty build component returns an error", func(t *testing.T) {
+		content := `
+spec:
+  template:
+    spec:
+      containers:
+        - image: "meshery/meshery:stable-"
+`
+		path := writeDeploymentFile(t, content)
+		_, err := GetDeploymentVersion(path)
+		if err == nil {
+			t.Fatal("expected an error for empty build component, got nil")
+		}
+	})
+
+	t.Run("tag with an empty version component returns an error", func(t *testing.T) {
+		content := `
+spec:
+  template:
+    spec:
+      containers:
+        - image: "meshery/meshery:-v0.7.0"
+`
+		path := writeDeploymentFile(t, content)
+		_, err := GetDeploymentVersion(path)
+		if err == nil {
+			t.Fatal("expected an error for empty version component, got nil")
+		}
+	})
+
+	t.Run("digest reference returns an error instead of panicking", func(t *testing.T) {
+		content := `
+spec:
+  template:
+    spec:
+      containers:
+        - image: "meshery/meshery@sha256:abc123"
+`
+		path := writeDeploymentFile(t, content)
+		_, err := GetDeploymentVersion(path)
+		if err == nil {
+			t.Fatal("expected an error for digest reference, got nil")
+		}
+	})
 }

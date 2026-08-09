@@ -254,14 +254,24 @@ func GetDeploymentVersion(filePath string) (string, error) {
 	}
 
 	image := compose.Spec.Template.Spec.Containers[0].Image
-	spliter := strings.Split(image, ":")
-	if len(spliter) < 2 {
+	if strings.Contains(image, "@") {
+		return "", fmt.Errorf("unable to determine deployment version: image %q is a digest reference, expected a tag", image)
+	}
+
+	lastSlash := strings.LastIndex(image, "/")
+	lastColon := strings.LastIndex(image, ":")
+	if lastColon == -1 || lastColon < lastSlash {
 		return "", fmt.Errorf("unable to determine deployment version: image %q has no tag", image)
 	}
 
-	tagParts := strings.Split(spliter[1], "-")
-	if len(tagParts) < 2 {
-		return "", fmt.Errorf("unable to determine deployment version: image tag %q does not match the expected version-build format", spliter[1])
+	tag := image[lastColon+1:]
+	if tag == "" {
+		return "", fmt.Errorf("unable to determine deployment version: image %q has an empty tag", image)
+	}
+
+	tagParts := strings.SplitN(tag, "-", 2)
+	if len(tagParts) < 2 || tagParts[0] == "" || tagParts[1] == "" {
+		return "", fmt.Errorf("unable to determine deployment version: image tag %q does not match the expected version-build format", tag)
 	}
 
 	return tagParts[1], nil
