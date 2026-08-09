@@ -7,12 +7,13 @@ import (
 )
 
 var (
-	ErrInvalidNestingCode = "mesheryctl-1254"
-	ErrTaxonomyTypeCode   = "mesheryctl-1255"
-	ErrScaffoldExistsCode = "mesheryctl-1256"
-	ErrMissingOrgIDCode   = "mesheryctl-1257"
-	ErrMissingIntoCode    = "mesheryctl-1258"
-	ErrInvalidLevelCode   = "mesheryctl-1259"
+	ErrInvalidNestingCode        = "mesheryctl-1254"
+	ErrTaxonomyTypeCode          = "mesheryctl-1255"
+	ErrScaffoldExistsCode        = "mesheryctl-1256"
+	ErrMissingOrgIDCode          = "mesheryctl-1257"
+	ErrMissingIntoCode           = "mesheryctl-1258"
+	ErrInvalidLevelCode          = "mesheryctl-1259"
+	ErrInvalidParentMetadataCode = "mesheryctl-1260"
 )
 
 func errInvalidNesting(parent, child string) error {
@@ -66,5 +67,14 @@ func errInvalidLevel(invalidLevel string) error {
 		[]string{"The provided level '" + invalidLevel + "' is not supported."},
 		[]string{"You are attempting to set an unsupported level. Valid levels are: beginner, intermediate, advanced."},
 		[]string{"Provide a valid --level argument (beginner, intermediate, or advanced)."},
+	)
+}
+
+func errInvalidParentMetadata(indexPath, cType, reason string) error {
+	return errors.New(ErrInvalidParentMetadataCode, errors.Alert,
+		[]string{"Cannot validate nesting for ", cType, " at ", indexPath, ": ", reason},
+		[]string{"The parent _index.md is missing, unreadable, or has invalid frontmatter."},
+		[]string{"A prior scaffold may have been interrupted, or the target directory wasn't created by this tool."},
+		[]string{"Ensure --into points at a directory scaffolded by academy create, or provide a valid parent _index.md."},
 	)
 }

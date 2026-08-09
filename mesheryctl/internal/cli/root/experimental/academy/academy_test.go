@@ -200,6 +200,11 @@ func TestAcademyCreate(t *testing.T) {
 			expectErr:    true,
 			expectedCode: ErrInvalidLevelCode,
 		},
+		{
+			name:      "structural node into empty dir (no parent _index.md) should fail",
+			args:      []string{"create", "course", "Orphan Course", "--description", "Desc", "--into", tempDir},
+			expectErr: true,
+		},
 	}
 
 	for _, tt := range tests {

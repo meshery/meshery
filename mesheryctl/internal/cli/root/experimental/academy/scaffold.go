@@ -103,30 +103,53 @@ type ParentFrontmatter struct {
 	Tags     []string `yaml:"tags"`
 }
 
+func isRootType(cType string) bool {
+	return cType == string(academyModel.LearningPath) || cType == string(academyModel.Certification) || cType == string(academyModel.Challenge)
+}
+
 func checkNesting(cType string, parentDir string) (ParentFrontmatter, error) {
 	var pf ParentFrontmatter
 	indexPath := filepath.Join(parentDir, "_index.md")
 	content, err := os.ReadFile(indexPath)
 	if err != nil {
-		return pf, nil
+		if isRootType(cType) {
+			return pf, nil
+		}
+		return pf, errInvalidParentMetadata(indexPath, cType, "no parent _index.md found")
 	}
 
 	parts := bytes.SplitN(content, []byte("---"), 3)
-	if len(parts) >= 3 {
-		if err := yaml.Unmarshal(parts[1], &pf); err == nil {
-			allowed, exists := AllowedChildren[pf.Type]
-			if exists {
-				for _, child := range allowed {
-					if child == cType {
-						return pf, nil
-					}
-				}
-				return pf, errInvalidNesting(pf.Type, cType)
-			}
+	if len(parts) < 3 {
+		if isRootType(cType) {
+			return pf, nil
+		}
+		return pf, errInvalidParentMetadata(indexPath, cType, "malformed frontmatter")
+	}
+
+	if err := yaml.Unmarshal(parts[1], &pf); err != nil {
+		if isRootType(cType) {
+			return pf, nil
+		}
+		return pf, errInvalidParentMetadata(indexPath, cType, fmt.Sprintf("invalid YAML: %v", err))
+	}
+
+	if pf.Type == "" {
+		if isRootType(cType) {
+			return pf, nil
+		}
+		return pf, errInvalidParentMetadata(indexPath, cType, "has no type field")
+	}
+
+	allowed, exists := AllowedChildren[pf.Type]
+	if !exists {
+		return pf, errInvalidNesting(pf.Type, cType)
+	}
+	for _, child := range allowed {
+		if child == cType {
 			return pf, nil
 		}
 	}
-	return pf, nil
+	return pf, errInvalidNesting(pf.Type, cType)
 }
 
 type ScaffoldOptions struct {
@@ -140,6 +163,7 @@ type ScaffoldOptions struct {
 	TargetDir   string
 	Force       bool
 	ID          string
+	SkipNesting bool
 }
 
 func scaffoldNode(opts ScaffoldOptions, explicitFolderName string) error {
@@ -148,9 +172,13 @@ func scaffoldNode(opts ScaffoldOptions, explicitFolderName string) error {
 		return errTaxonomyType(string(opts.Type))
 	}
 
-	pf, err := checkNesting(opts.Type, opts.TargetDir)
-	if err != nil {
-		return err
+	var pf ParentFrontmatter
+	if !opts.SkipNesting {
+		var err error
+		pf, err = checkNesting(opts.Type, opts.TargetDir)
+		if err != nil {
+			return err
+		}
 	}
 	parentType := pf.Type
 
@@ -398,12 +426,13 @@ func scaffoldChallenge(opts ScaffoldOptions) error {
 	for _, dir := range contentDirs {
 		pageOpts := opts
 		pageOpts.Type = string(Page)
-		pageOpts.Title = dir.name // makeSlug will handle generating the right folder name
+		pageOpts.Title = dir.name
 		pageOpts.Description = ""
 		pageOpts.Category = ""
 		pageOpts.Tags = nil
 		pageOpts.TargetDir = filepath.Join(currentDir, "content")
 		pageOpts.ID = ""
+		pageOpts.SkipNesting = true
 		err = scaffoldNode(pageOpts, dir.name)
 		if err != nil {
 			return err
