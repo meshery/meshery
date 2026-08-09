@@ -62,8 +62,8 @@ func TestSearchComponent(t *testing.T) {
 			Name:             "given valid name and model flag when component search then filter by model",
 			Args:             []string{"search", "Test", "--model", "kubernetes"},
 			URL:              fmt.Sprintf("/%s?model=kubernetes&search=Test&page=0&pagesize=10", componentApiPath),
-			Fixture:          "components.api.response.golden",
-			ExpectedResponse: "components.search.success.output.golden",
+			Fixture:          "components.api.response.model.golden",
+            ExpectedResponse: "components.search.model.output.golden",
 			ExpectError:      false,
 		},
 	}
