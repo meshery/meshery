@@ -12,9 +12,10 @@ var (
 	ErrScaffoldExistsCode = "mesheryctl-exp-1003"
 	ErrMissingOrgIDCode   = "mesheryctl-exp-1004"
 	ErrMissingIntoCode    = "mesheryctl-exp-1005"
+	ErrInvalidLevelCode   = "mesheryctl-exp-1006"
 )
 
-func errInvalidNesting(parent, child ContentType) error {
+func errInvalidNesting(parent, child string) error {
 	return errors.New(ErrInvalidNestingCode, errors.Alert,
 		[]string{fmt.Sprintf("Invalid nesting: cannot nest %s under %s", child, parent)},
 		[]string{"The academy taxonomy rules forbid this hierarchy."},
@@ -27,8 +28,8 @@ func errTaxonomyType(invalidType string) error {
 	return errors.New(ErrTaxonomyTypeCode, errors.Alert,
 		[]string{"Invalid taxonomy type"},
 		[]string{"The provided content type '" + invalidType + "' is not supported."},
-		[]string{"You are attempting to scaffold an unsupported taxonomy type. Valid types are: learning-path, course, module, page, lab, test, exam, certification."},
-		[]string{"Provide a valid --type argument (e.g. learning-path, course, module, page, lab, test, exam, certification)."},
+		[]string{"You are attempting to scaffold an unsupported taxonomy type. Valid root types are: learning-path, certification, challenge. Structural types (course, module, etc) must be created via their subcommands."},
+		[]string{"Provide a valid root type (e.g. learning-path, certification, challenge) or use the appropriate subcommand."},
 	)
 }
 
@@ -56,5 +57,14 @@ func errMissingInto() error {
 		[]string{"The --into flag is required for non-top-level content types."},
 		[]string{"You are attempting to scaffold a node that is not a learning-path or certification without specifying where it belongs."},
 		[]string{"Provide the --into flag with the path to the parent directory."},
+	)
+}
+
+func errInvalidLevel(invalidLevel string) error {
+	return errors.New(ErrInvalidLevelCode, errors.Alert,
+		[]string{"Invalid level"},
+		[]string{"The provided level '" + invalidLevel + "' is not supported."},
+		[]string{"You are attempting to set an unsupported level. Valid levels are: beginner, intermediate, advanced."},
+		[]string{"Provide a valid --level argument (beginner, intermediate, or advanced)."},
 	)
 }

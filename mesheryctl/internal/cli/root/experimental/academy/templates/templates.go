@@ -161,3 +161,24 @@ categories: {{ .Category | yamlQuote }}
 weight: {{ .Weight }}
 ---
 `
+
+const ChallengeTemplate = `---
+title: {{ .Title | yamlQuote }}
+description: {{ .Description | yamlQuote }}
+type: "challenge"
+level: {{ .Level | yamlQuote }}
+{{- if .Tags }}
+tags:
+{{- range .Tags }}
+  - {{ . | yamlQuote }}
+{{- end }}
+{{- else }}
+tags: []
+{{- end }}
+{{- if .Category }}
+categories: {{ .Category | yamlQuote }}
+{{- end }}
+id: {{ .ID | yamlQuote }}
+weight: {{ .Weight }}
+---
+`

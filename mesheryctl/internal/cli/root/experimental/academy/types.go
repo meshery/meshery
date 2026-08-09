@@ -3,41 +3,51 @@ package academy
 import (
 	"fmt"
 	"strings"
+
+	academyModel "github.com/meshery/schemas/models/v1beta3/academy"
 )
 
-// ContentType represents the types of Layer5 Academy content.
-type ContentType string
+// NodeKind represents the structural types for Layer5 Academy content.
+type NodeKind string
 
 const (
-	LearningPath  ContentType = "learning-path"
-	Course        ContentType = "course"
-	Module        ContentType = "module"
-	Page          ContentType = "page"
-	Certification ContentType = "certification"
-	Lab           ContentType = "lab"
-	Test          ContentType = "test"
-	Exam          ContentType = "exam"
+	Course NodeKind = "course"
+	Module NodeKind = "module"
+	Page   NodeKind = "page"
+	Lab    NodeKind = "lab"
+	Test   NodeKind = "test"
+	Exam   NodeKind = "exam"
 )
 
 // AllowedChildren maps a content type to the types of children it can contain.
-var AllowedChildren = map[ContentType][]ContentType{
-	LearningPath:  {Course},
-	Course:        {Module, Test, Exam},
-	Module:        {Page, Test, Lab},
-	Page:          {},
-	Certification: {Test, Exam},
-	Exam:          {},
-	Lab:           {},
-	Test:          {},
+var AllowedChildren = map[string][]string{
+	string(academyModel.LearningPath):  {string(Course)},
+	string(Course):                     {string(Module), string(Test), string(Exam)},
+	string(Module):                     {string(Page), string(Test), string(Lab)},
+	string(Page):                       {},
+	string(academyModel.Certification): {string(Test), string(Exam)},
+	string(Exam):                       {},
+	string(Lab):                        {},
+	string(Test):                       {},
+	string(academyModel.Challenge):     {string(Lab), string(Exam)},
 }
 
-// IsValid checks if the provided string is a valid ContentType.
-func (c ContentType) IsValid() bool {
+// IsValidNodeType checks if the provided string is a valid content type or node kind.
+func IsValidNodeType(c string) bool {
 	switch c {
-	case LearningPath, Course, Module, Page, Certification, Lab, Test, Exam:
+	case string(academyModel.LearningPath), string(Course), string(Module), string(Page), string(academyModel.Certification), string(Lab), string(Test), string(Exam), string(academyModel.Challenge):
 		return true
 	}
 	return false
+}
+
+// validateLevel checks if the provided level is valid according to the schema enum.
+func validateLevel(level string) error {
+	switch level {
+	case string(academyModel.Beginner), string(academyModel.Intermediate), string(academyModel.Advanced):
+		return nil
+	}
+	return errInvalidLevel(level)
 }
 
 func validatePathSegment(segment string) error {

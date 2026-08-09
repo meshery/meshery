@@ -85,39 +85,39 @@ func TestAcademyCreate(t *testing.T) {
 		},
 		{
 			name:         "invalid nesting error",
-			args:         []string{"create", "--type", "module", "--title", "Bad Module", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path")},
+			args:         []string{"create", "module", "Bad Module", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path")},
 			expectErr:    true,
 			expectedCode: ErrInvalidNestingCode,
 		},
 
 		{
 			name:      "scaffold single node (course) with correct nesting",
-			args:      []string{"create", "--type", "course", "--title", "New Course", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path")},
+			args:      []string{"create", "course", "New Course", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path")},
 			expectErr: false,
 		},
 		{
 			name:      "scaffold single node (course) without into should fail",
-			args:      []string{"create", "--type", "course", "--title", "Missing Into", "--description", "Desc"},
+			args:      []string{"create", "course", "Missing Into", "--description", "Desc"},
 			expectErr: true,
 		},
 		{
 			name:      "scaffold flat test under course",
-			args:      []string{"create", "--type", "test", "--title", "Course Test", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path", "new-course")},
+			args:      []string{"create", "test", "Course Test", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path", "new-course")},
 			expectErr: false,
 		},
 		{
 			name:      "scaffold exam under course (no collision with test)",
-			args:      []string{"create", "--type", "exam", "--title", "Course Exam", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path", "new-course")},
+			args:      []string{"create", "exam", "Course Exam", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path", "new-course")},
 			expectErr: false,
 		},
 		{
 			name:      "scaffold lab under module",
-			args:      []string{"create", "--type", "lab", "--title", "Lab 1", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path", "course-1", "module-1")},
+			args:      []string{"create", "lab", "Lab 1", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path", "course-1", "module-1")},
 			expectErr: false,
 		},
 		{
 			name:      "scaffold flat test under module",
-			args:      []string{"create", "--type", "test", "--title", "Module Test", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path", "course-1", "module-1")},
+			args:      []string{"create", "test", "Module Test", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path", "course-1", "module-1")},
 			expectErr: false,
 		},
 		{
@@ -127,17 +127,39 @@ func TestAcademyCreate(t *testing.T) {
 		},
 		{
 			name:      "scaffold flat test under certification 1",
-			args:      []string{"create", "--type", "test", "--title", "Cert Test 1", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "certifications", "cert-org", "cert-1")},
+			args:      []string{"create", "test", "Cert Test 1", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "certifications", "cert-org", "cert-1")},
 			expectErr: false,
 		},
 		{
 			name:      "scaffold flat test under certification 2",
-			args:      []string{"create", "--type", "test", "--title", "Cert Test 2", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "certifications", "cert-org", "cert-1")},
+			args:      []string{"create", "test", "Cert Test 2", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "certifications", "cert-org", "cert-1")},
 			expectErr: false,
 		},
 		{
 			name:      "scaffold exam under certification",
-			args:      []string{"create", "--type", "exam", "--title", "Final Exam", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "certifications", "cert-org", "cert-1")},
+			args:      []string{"create", "exam", "Final Exam", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "certifications", "cert-org", "cert-1")},
+			expectErr: false,
+		},
+		{
+			name:         "fresh scaffold challenge without org",
+			args:         []string{"create", "--type", "challenge", "--title", "My Challenge", "--description", "Desc"},
+			expectErr:    true,
+			expectedCode: ErrMissingOrgIDCode,
+		},
+		{
+			name:      "fresh scaffold challenge with org",
+			args:      []string{"create", "--type", "challenge", "--title", "My Challenge", "--description", "Desc", "--org", "test-org-uuid"},
+			expectErr: false,
+		},
+		{
+			name:         "re-run challenge scaffold without force",
+			args:         []string{"create", "--type", "challenge", "--title", "My Challenge", "--description", "Desc", "--org", "test-org-uuid"},
+			expectErr:    true,
+			expectedCode: ErrScaffoldExistsCode,
+		},
+		{
+			name:      "re-run challenge scaffold with force",
+			args:      []string{"create", "--type", "challenge", "--title", "My Challenge", "--description", "Desc", "--org", "test-org-uuid", "--force"},
 			expectErr: false,
 		},
 		{
@@ -147,30 +169,36 @@ func TestAcademyCreate(t *testing.T) {
 		},
 		{
 			name:         "scaffold page under lab should fail",
-			args:         []string{"create", "--type", "page", "--title", "Bad Page", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path", "course-1", "module-1", "lab-1")},
+			args:         []string{"create", "page", "Bad Page", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path", "course-1", "module-1", "lab-1")},
 			expectErr:    true,
 			expectedCode: ErrInvalidNestingCode,
 		},
 		{
 			name:         "scaffold test under test should fail",
-			args:         []string{"create", "--type", "test", "--title", "Bad Test", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "certifications", "cert-org", "cert-1", "test-1")},
+			args:         []string{"create", "test", "Bad Test", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "certifications", "cert-org", "cert-1", "test-1")},
 			expectErr:    true,
 			expectedCode: ErrInvalidNestingCode,
 		},
 		{
 			name:      "inherit level from parent",
-			args:      []string{"create", "--type", "page", "--title", "Inherited Level Page", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "explicit-org", "my-explicit-path", "course-1", "module-1")},
+			args:      []string{"create", "page", "Inherited Level Page", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "explicit-org", "my-explicit-path", "course-1", "module-1")},
 			expectErr: false,
 		},
 		{
 			name:      "reject invalid title slug",
-			args:      []string{"create", "--type", "course", "--title", "../../", "--description", "Desc", "--into", filepath.Join(tempDir, "content")},
+			args:      []string{"create", "course", "../../", "--description", "Desc", "--into", filepath.Join(tempDir, "content")},
 			expectErr: true,
 		},
 		{
 			name:      "escape special characters in title and ID",
-			args:      []string{"create", "--type", "learning-path", "--title", `Title with "quotes" and \backslashes`, "--description", `Desc`, "--id", `"my-id"`, "--org", "escape-org", "--into", tempDir},
+			args:      []string{"create", "--type", "learning-path", "--title", `Title with "quotes" and \backslashes`, "--description", `Desc`, "--id", `"my-id"`, "--org", "escape-org", "--into", tempDir, "--level", "beginner"},
 			expectErr: false,
+		},
+		{
+			name:         "reject invalid level",
+			args:         []string{"create", "--type", "learning-path", "--title", "Invalid Level", "--description", "Desc", "--org", "level-org", "--level", "invalid-level"},
+			expectErr:    true,
+			expectedCode: ErrInvalidLevelCode,
 		},
 	}
 
@@ -206,6 +234,9 @@ func TestAcademyCreate(t *testing.T) {
 	}
 	if !strings.Contains(contentStr, "type: \"learning-path\"") { // singular type
 		t.Errorf("learning-path should have singular type")
+	}
+	if !strings.Contains(contentStr, "level: \"beginner\"") {
+		t.Errorf("learning-path should default to beginner level")
 	}
 
 	// 2. Check path construction for --into explicit scaffold
@@ -314,5 +345,48 @@ func TestAcademyCreate(t *testing.T) {
 	}
 	if !strings.Contains(string(inheritedContent), `level: "advanced"`) {
 		t.Errorf("expected inherited level 'advanced' in page frontmatter, got: %v", string(inheritedContent))
+	}
+
+	// 11. Check challenge structure
+	challengePath := filepath.Join(tempDir, "content", "challenges", "test-org-uuid", "my-challenge", "_index.md")
+	challengeContent, err := os.ReadFile(challengePath)
+	if err != nil {
+		t.Fatalf("Failed to read scaffolded challenge _index.md: %v", err)
+	}
+	challengeStr := string(challengeContent)
+	if !strings.Contains(challengeStr, `type: "challenge"`) {
+		t.Errorf("challenge should have type: 'challenge'")
+	}
+	if !strings.Contains(challengeStr, `id: "REPLACE_WITH_INSTRUCTOR_CONSOLE_ID"`) {
+		t.Errorf("challenge should contain id placeholder")
+	}
+
+	challengeLabPath := filepath.Join(tempDir, "content", "challenges", "test-org-uuid", "my-challenge", "lab", "_index.md")
+	challengeLabContent, err := os.ReadFile(challengeLabPath)
+	if err != nil {
+		t.Fatalf("Failed to read challenge lab _index.md: %v", err)
+	}
+	if !strings.Contains(string(challengeLabContent), `type: "lab"`) {
+		t.Errorf("challenge lab should have type: 'lab'")
+	}
+
+	challengeExamPath := filepath.Join(tempDir, "content", "challenges", "test-org-uuid", "my-challenge", "exam", "_index.md")
+	challengeExamContent, err := os.ReadFile(challengeExamPath)
+	if err != nil {
+		t.Fatalf("Failed to read challenge exam _index.md: %v", err)
+	}
+	if !strings.Contains(string(challengeExamContent), `type: "exam"`) {
+		t.Errorf("challenge exam should have type: 'exam'")
+	}
+
+	expectedDirs := []string{
+		filepath.Join(tempDir, "content", "challenges", "test-org-uuid", "my-challenge", "content", "description"),
+		filepath.Join(tempDir, "content", "challenges", "test-org-uuid", "my-challenge", "content", "getting-started"),
+		filepath.Join(tempDir, "content", "challenges", "test-org-uuid", "my-challenge", "content", "faq"),
+	}
+	for _, dir := range expectedDirs {
+		if stat, err := os.Stat(dir); err != nil || !stat.IsDir() {
+			t.Errorf("expected directory %s to exist", dir)
+		}
 	}
 }

@@ -10,6 +10,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/experimental/academy/templates"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	academyModel "github.com/meshery/schemas/models/v1beta3/academy"
 	"gopkg.in/yaml.v3"
 )
 
@@ -66,41 +67,43 @@ func inferWeight(parentDir, excludeDir string) int {
 	return maxWeight + 1
 }
 
-func getTemplateString(contentType ContentType) string {
-	switch contentType {
-	case LearningPath:
+func getTemplateString(cType string) string {
+	switch cType {
+	case string(academyModel.LearningPath):
 		return templates.LearningPathTemplate
-	case Course:
+	case string(Course):
 		return templates.CourseTemplate
-	case Module:
+	case string(Module):
 		return templates.ModuleTemplate
-	case Page:
+	case string(Page):
 		return templates.PageTemplate
-	case Certification:
+	case string(academyModel.Certification):
 		return templates.CertificationTemplate
-	case Exam:
+	case string(Exam):
 		return templates.ExamTemplate
-	case Lab:
+	case string(Lab):
 		return templates.LabTemplate
-	case Test:
+	case string(Test):
 		return templates.TestTemplate
+	case string(academyModel.Challenge):
+		return templates.ChallengeTemplate
 	default:
 		return ""
 	}
 }
 
-func contentDirSegment(cType ContentType) string {
-	return string(cType) + "s"
+func contentDirSegment(cType string) string {
+	return cType + "s"
 }
 
 type ParentFrontmatter struct {
-	Type     ContentType `yaml:"type"`
-	Level    string      `yaml:"level"`
-	Category string      `yaml:"categories"`
-	Tags     []string    `yaml:"tags"`
+	Type     string   `yaml:"type"`
+	Level    string   `yaml:"level"`
+	Category string   `yaml:"categories"`
+	Tags     []string `yaml:"tags"`
 }
 
-func checkNesting(cType ContentType, parentDir string) (ParentFrontmatter, error) {
+func checkNesting(cType string, parentDir string) (ParentFrontmatter, error) {
 	var pf ParentFrontmatter
 	indexPath := filepath.Join(parentDir, "_index.md")
 	content, err := os.ReadFile(indexPath)
@@ -127,7 +130,7 @@ func checkNesting(cType ContentType, parentDir string) (ParentFrontmatter, error
 }
 
 type ScaffoldOptions struct {
-	Type        ContentType
+	Type        string
 	Title       string
 	Description string
 	Level       string
@@ -139,7 +142,7 @@ type ScaffoldOptions struct {
 	ID          string
 }
 
-func scaffoldNode(opts ScaffoldOptions) error {
+func scaffoldNode(opts ScaffoldOptions, explicitFolderName string) error {
 	tmplStr := getTemplateString(opts.Type)
 	if tmplStr == "" {
 		return errTaxonomyType(string(opts.Type))
@@ -161,22 +164,26 @@ func scaffoldNode(opts ScaffoldOptions) error {
 		opts.Tags = pf.Tags
 	}
 
-	if opts.ID == "" && (opts.Type == LearningPath || opts.Type == Certification) {
+	if opts.ID == "" && (opts.Type == string(academyModel.LearningPath) || opts.Type == string(academyModel.Certification) || opts.Type == string(academyModel.Challenge)) {
 		opts.ID = "REPLACE_WITH_INSTRUCTOR_CONSOLE_ID"
 	}
 
 	var indexPath string
-	folderName, err := makeSlug(opts.Title)
-	if err != nil {
-		return err
+	folderName := explicitFolderName
+	if folderName == "" {
+		var err error
+		folderName, err = makeSlug(opts.Title)
+		if err != nil {
+			return err
+		}
 	}
 
-	if opts.Type == Test && (parentType == Course || parentType == Module) {
+	if opts.Type == string(Test) && (parentType == string(Course) || parentType == string(Module)) {
 		indexPath = filepath.Join(opts.TargetDir, "test.md")
-	} else if opts.Type == Exam && parentType == Course {
+	} else if opts.Type == string(Exam) && parentType == string(Course) {
 		indexPath = filepath.Join(opts.TargetDir, "course-exam.md")
 	} else {
-		if opts.Type == Test && parentType == Certification {
+		if opts.Type == string(Test) && parentType == string(academyModel.Certification) {
 			const maxTests = 1000
 			found := false
 			for testNum := 1; testNum <= maxTests; testNum++ {
@@ -252,17 +259,17 @@ func scaffoldTree(opts ScaffoldOptions) error {
 	}
 	baseDir := filepath.Join(opts.TargetDir, folderName)
 
-	err = scaffoldNode(opts)
+	err = scaffoldNode(opts, folderName)
 	if err != nil {
 		return err
 	}
 
 	currentDir := baseDir
 
-	if opts.Type == LearningPath {
+	if opts.Type == string(academyModel.LearningPath) {
 		courseTitle := "Course 1"
 		courseOpts := opts
-		courseOpts.Type = Course
+		courseOpts.Type = string(Course)
 		courseOpts.Title = courseTitle
 		courseOpts.Description = ""
 		courseOpts.Level = ""
@@ -270,7 +277,7 @@ func scaffoldTree(opts ScaffoldOptions) error {
 		courseOpts.Tags = nil
 		courseOpts.ID = ""
 		courseOpts.TargetDir = currentDir
-		err = scaffoldNode(courseOpts)
+		err = scaffoldNode(courseOpts, "")
 		if err != nil {
 			return err
 		}
@@ -281,10 +288,10 @@ func scaffoldTree(opts ScaffoldOptions) error {
 		currentDir = filepath.Join(currentDir, slug)
 	}
 
-	if opts.Type == LearningPath || opts.Type == Course {
+	if opts.Type == string(academyModel.LearningPath) || opts.Type == string(Course) {
 		moduleTitle := "Module 1"
 		moduleOpts := opts
-		moduleOpts.Type = Module
+		moduleOpts.Type = string(Module)
 		moduleOpts.Title = moduleTitle
 		moduleOpts.Description = ""
 		moduleOpts.Level = ""
@@ -292,7 +299,7 @@ func scaffoldTree(opts ScaffoldOptions) error {
 		moduleOpts.Tags = nil
 		moduleOpts.ID = ""
 		moduleOpts.TargetDir = currentDir
-		err = scaffoldNode(moduleOpts)
+		err = scaffoldNode(moduleOpts, "")
 		if err != nil {
 			return err
 		}
@@ -303,10 +310,10 @@ func scaffoldTree(opts ScaffoldOptions) error {
 		currentDir = filepath.Join(currentDir, slug)
 	}
 
-	if opts.Type == LearningPath || opts.Type == Course || opts.Type == Module {
+	if opts.Type == string(academyModel.LearningPath) || opts.Type == string(Course) || opts.Type == string(Module) {
 		pageTitle := "Page 1"
 		pageOpts := opts
-		pageOpts.Type = Page
+		pageOpts.Type = string(Page)
 		pageOpts.Title = pageTitle
 		pageOpts.Description = ""
 		pageOpts.Level = ""
@@ -314,16 +321,16 @@ func scaffoldTree(opts ScaffoldOptions) error {
 		pageOpts.Tags = nil
 		pageOpts.ID = ""
 		pageOpts.TargetDir = currentDir
-		err = scaffoldNode(pageOpts)
+		err = scaffoldNode(pageOpts, "")
 		if err != nil {
 			return err
 		}
 	}
 
-	if opts.Type == Certification {
+	if opts.Type == string(academyModel.Certification) {
 		examTitle := "Exam 1"
 		examOpts := opts
-		examOpts.Type = Exam
+		examOpts.Type = string(Exam)
 		examOpts.Title = examTitle
 		examOpts.Description = ""
 		examOpts.Level = ""
@@ -331,7 +338,62 @@ func scaffoldTree(opts ScaffoldOptions) error {
 		examOpts.Tags = nil
 		examOpts.ID = ""
 		examOpts.TargetDir = currentDir
-		err = scaffoldNode(examOpts)
+		err = scaffoldNode(examOpts, "")
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func scaffoldChallenge(opts ScaffoldOptions) error {
+	folderName, err := makeSlug(opts.Title)
+	if err != nil {
+		return err
+	}
+	baseDir := filepath.Join(opts.TargetDir, folderName)
+
+	err = scaffoldNode(opts, folderName)
+	if err != nil {
+		return err
+	}
+
+	currentDir := baseDir
+
+	labOpts := opts
+	labOpts.Type = string(Lab)
+	labOpts.TargetDir = currentDir
+	labOpts.ID = ""
+	err = scaffoldNode(labOpts, "lab")
+	if err != nil {
+		return err
+	}
+
+	examOpts := opts
+	examOpts.Type = string(Exam)
+	examOpts.TargetDir = currentDir
+	examOpts.ID = ""
+	err = scaffoldNode(examOpts, "exam")
+	if err != nil {
+		return err
+	}
+
+	contentDirs := []struct {
+		name string
+	}{
+		{"description"},
+		{"getting-started"},
+		{"faq"},
+	}
+
+	for _, dir := range contentDirs {
+		pageOpts := opts
+		pageOpts.Type = string(Page)
+		pageOpts.TargetDir = filepath.Join(currentDir, "content")
+		pageOpts.ID = ""
+		pageOpts.Title = dir.name // makeSlug will handle generating the right folder name, but explicitFolderName is better
+		err = scaffoldNode(pageOpts, dir.name)
 		if err != nil {
 			return err
 		}
