@@ -252,6 +252,8 @@ The charts lint check, charts build, and charts release workflows are all trigge
 
 Every PR which includes changes to the files under `install/kubernetes/` directory in the `meshery/meshery` will trigger a Github Action to check for any mistakes in Helm charts using the `helm lint` command.
 
+The same job additionally runs `install/scripts/check-operator-chart-appversions.sh`, which fails the PR when the `meshery-operator` chart and its `meshery-broker` and `meshery-meshsync` subcharts advertise different `appVersion` values. `helm lint` does not compare a parent chart's `appVersion` with its subcharts', so a subchart left behind on an older operator release passes lint while advertising an application it was never published alongside. Run the same check locally with `make helm-operator-lint`; the script's header explains what it accepts and why.
+
 ### Release Helm Charts to Github and Artifact Hub
 
 New Meshery Helm charts are published upon trigger of a release event in the `meshery/meshery` repo. New versions of Meshery's Helm charts are published to [Meshery's Helm charts release page](https://github.com/meshery/meshery.io/tree/master/charts). [Artifact Hub] (https://artifacthub.io/packages/helm/meshery/meshery) syncs with these updated Meshery Helm charts.
