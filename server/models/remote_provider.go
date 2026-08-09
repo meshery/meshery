@@ -511,7 +511,7 @@ func (l *RemoteProvider) enqueuePrefSync(token string, sess *Preference) error {
 	case syncChan <- &userSession{token: token, session: sess}:
 		return nil
 	default:
-		l.Log.Warnf("preference sync queue for provider %q is full; dropping this update. The preference is saved locally but the remote provider will not see it until the next write.", l.Name())
+		l.Log.Warnf("preference sync queue for provider %q is full; dropping this update. The preference is saved locally but the remote provider will not see it until the next write.", l.GetProviderProperties().ProviderName)
 		return nil
 	}
 }
@@ -4174,9 +4174,14 @@ func (l *RemoteProvider) DeleteSchedule(req *http.Request, scheduleID string) ([
 
 // RecordPreferences - records the user preference
 func (l *RemoteProvider) RecordPreferences(req *http.Request, userID string, data *Preference) error {
-	if !l.supportsSyncPrefs() {
-		l.Log.Error(ErrOperationNotAvailable)
-		return ErrInvalidCapability("SyncPrefs", l.ProviderName)
+	// One snapshot for both the capability check and the provider name, so the
+	// error cannot name a provider whose capabilities were read from a
+	// different revision of the struct.
+	props := l.GetProviderProperties()
+	if !props.Capabilities.IsSupported(SyncPrefs) {
+		err := ErrInvalidCapability("SyncPrefs", props.ProviderName)
+		l.Log.Error(err)
+		return err
 	}
 	if err := l.WriteToPersister(userID, data); err != nil {
 		return err
