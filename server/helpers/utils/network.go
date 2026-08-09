@@ -13,9 +13,9 @@ import (
 )
 
 const (
-	ErrInvalidURLCode    = "meshery-server-1446"
-	ErrBlockedIPCode     = "meshery-server-1447"
-	ErrURLResolutionCode = "meshery-server-1448"
+	ErrInvalidURLCode    = "meshery-server-1475"
+	ErrBlockedIPCode     = "meshery-server-1476"
+	ErrURLResolutionCode = "meshery-server-1477"
 )
 
 func ErrInvalidURL(err error) error {
