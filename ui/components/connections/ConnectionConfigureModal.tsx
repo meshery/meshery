@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 import {
   Box,
   CheckIcon,
+  DescriptionIcon,
   ModalBody,
   ModalButtonPrimary,
   ModalButtonSecondary,
@@ -90,11 +91,11 @@ const ConnectionConfigureModal = ({
     }
   }, [isOpen]);
 
-  const steps = wizard.steps.map((step, index) => ({
-    label: step.label,
-    icon: index === wizard.steps.length - 1 ? CheckIcon : step.icon,
-    component: <></>,
-  }));
+const steps = wizard.steps.map((step, index) => ({
+  label: step.label,
+  icon: index === wizard.steps.length - 1 ? CheckIcon : step.icon || DescriptionIcon,
+  component: <></>,
+}));
 
   const ActiveBody = wizard.activeStep?.Component;
 
