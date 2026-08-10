@@ -40,6 +40,45 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
+func TestRemoteProviderDoRequest_RejectsUnsafeURL(t *testing.T) {
+	originalValidator := helperutils.URLValidator
+	defer func() {
+		helperutils.URLValidator = originalValidator
+	}()
+
+	helperutils.URLValidator = helperutils.ValidateURLForOutboundRequest
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		t.Fatal("unsafe URL should be rejected before reaching the server")
+	}))
+	defer server.Close()
+
+	provider := newTestRemoteProvider(t, server.URL)
+
+	token := encodeTestToken(t, oauth2.Token{
+		AccessToken:  "access-token",
+		RefreshToken: "refresh-token",
+		TokenType:    "Bearer",
+	})
+
+	req, err := http.NewRequest(http.MethodGet, server.URL+"/resource", nil)
+	if err != nil {
+		t.Fatalf("failed to create request: %v", err)
+	}
+
+	resp, err := provider.DoRequest(req, token)
+	if resp != nil {
+		t.Fatal("expected unsafe URL to be rejected before receiving a response")
+	}
+	if err == nil {
+		t.Fatal("expected unsafe URL to return an error")
+	}
+
+	if !strings.Contains(strings.ToLower(err.Error()), "unsafe") {
+		t.Fatalf("expected error to mention unsafe address, got: %v", err)
+	}
+}
+
 func newTestRemoteProvider(t *testing.T, remoteProviderURL string) *RemoteProvider {
 	t.Helper()
 

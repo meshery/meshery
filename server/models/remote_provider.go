@@ -305,6 +305,10 @@ func (l *RemoteProvider) fetchCapabilities(ctx context.Context, token string, ve
 		return providerProperties, err
 	}
 
+	if err := helperutils.URLValidator(remoteProviderURL.String()); err != nil {
+		return providerProperties, err
+	}
+
 	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, remoteProviderURL.String(), nil)
 
 	var resp *http.Response
