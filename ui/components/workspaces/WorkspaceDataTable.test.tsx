@@ -1,110 +1,171 @@
+import React from 'react';
 import '@testing-library/jest-dom';
 import { configureStore } from '@reduxjs/toolkit';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { ThemeProvider, createTheme } from '@sistent/sistent';
+import { SistentThemeProvider } from '@sistent/sistent';
 import WorkspaceDataTable from './WorkspaceDataTable';
-import { describe, it, expect, vi } from 'vitest';
-
-const store = configureStore({ reducer: {} });
+import WorkspaceActionList from './WorkspaceActionList';
+import { describe, it, expect, vi, type Mock } from 'vitest';
 import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { useGetSelectedOrganization } from '@/rtk-query/user';
 
+const store = configureStore({
+  reducer: { ui: (state = { organization: { id: 'org-1' } }) => state },
+});
+
+// Mock RTK Query hooks
 vi.mock('@/rtk-query/workspace', () => ({
-  ...vi.importActual('@/rtk-query/workspace'),
   useGetWorkspacesQuery: vi.fn(),
+  useGetEnvironmentsOfWorkspaceQuery: vi.fn(() => ({
+    data: { environments: [] },
+    isLoading: false,
+  })),
+  useAssignEnvironmentToWorkspaceMutation: vi.fn(() => [vi.fn()]),
+  useUnassignEnvironmentFromWorkspaceMutation: vi.fn(() => [vi.fn()]),
 }));
 
 vi.mock('@/rtk-query/user', () => ({
-  ...vi.importActual('@/rtk-query/user'),
   useGetSelectedOrganization: vi.fn(),
 }));
 
-vi.mock('@sistent/sistent', () => {
-  const actual = vi.importActual('@sistent/sistent');
+// =========================================================================
+// VITE STATIC ANALYSIS MOCKS
+// =========================================================================
+// The following mocks are genuinely required because Vite statically crawls
+// the entire import graph of WorkspaceDataTable before executing vi.mock.
+// WorkspaceDataTable imports WorkSpaceContentDataTable, which imports a deep
+// tree of Next.js components (OrgSwitcher, etc.). Vite crashes on Next.js
+// absolute imports (utils/*, assets/*) and JSX inside .js files (drawer-icons).
+vi.mock('core-js-pure/actual/disposable-stack', () => ({}));
+vi.mock('@mui/x-tree-view', () => ({ TreeItem: () => null, TreeView: () => null }));
+vi.mock('@mui/x-date-pickers', () => ({}));
+vi.mock('@mui/x-data-grid', () => ({ DataGrid: () => null }));
+vi.mock('assets/icons/OrgIcon', () => ({ default: () => null }));
+vi.mock('rtk-query/organization', () => ({ useGetOrgsQuery: () => ({}) }));
+vi.mock('lib/event-types', () => ({ EVENT_TYPES: {} }));
+vi.mock('@/utils/hooks/useNotification', () => ({
+  useNotificationHandlers: () => ({
+    notifyApiError: vi.fn(),
+    handleSuccess: vi.fn(),
+    handleError: vi.fn(),
+  }),
+  useNotification: () => ({ notify: vi.fn() }),
+}));
+vi.mock('utils/hooks/useNotification', () => ({
+  useNotificationHandlers: () => ({
+    notifyApiError: vi.fn(),
+    handleSuccess: vi.fn(),
+    handleError: vi.fn(),
+  }),
+  useNotification: () => ({ notify: vi.fn() }),
+}));
+vi.mock('@/components/lifecycle', () => ({ WorkspacesComponent: () => null }));
+vi.mock('../../pages/_app', () => ({ mesheryExtensionRoute: '/' }));
+vi.mock('../../public/static/img/drawer-icons/application_svg.js', () => ({ default: () => null }));
+vi.mock('../../public/static/img/drawer-icons/configuration_hover_svg.js', () => ({
+  default: () => null,
+}));
+vi.mock('../../public/static/img/drawer-icons/conformance_svg.js', () => ({ default: () => null }));
+vi.mock('../../public/static/img/drawer-icons/discuss_forum_svg.js', () => ({
+  default: () => null,
+}));
+vi.mock('../../public/static/img/drawer-icons/extensions_svg.js', () => ({ default: () => null }));
+vi.mock('../../public/static/img/drawer-icons/filter_svg.js', () => ({ default: () => null }));
+vi.mock('../../public/static/img/drawer-icons/lifecycle_hover_svg.js', () => ({
+  default: () => null,
+}));
+vi.mock('../../public/static/img/drawer-icons/lifecycle_mgmt_svg.js', () => ({
+  default: () => null,
+}));
+vi.mock('../../public/static/img/drawer-icons/pattern_svg.js', () => ({ default: () => null }));
+vi.mock('../../public/static/img/drawer-icons/performance-icon_svg.js', () => ({
+  default: () => null,
+}));
+vi.mock('../../public/static/img/drawer-icons/performance_hover_svg.js', () => ({
+  default: () => null,
+}));
+vi.mock('../../public/static/img/drawer-icons/performance_svg.js', () => ({ default: () => null }));
+vi.mock('../../public/static/img/drawer-icons/servicemeshinterface-icon-white_svg.js', () => ({
+  default: () => null,
+}));
+vi.mock('../../public/static/img/drawer-icons/smp-white-text_svg.js', () => ({
+  default: () => null,
+}));
+// =========================================================================
+
+// Stop the deep dependency chain at runtime to keep rendering fast
+vi.mock('./WorkSpaceContentDataTable', () => ({ default: () => null }));
+vi.mock('./WorkspaceActionList', () => ({ default: vi.fn(() => null) }));
+
+// Intercept ResponsiveDataTable to test customBodyRender directly
+vi.mock('@sistent/sistent', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@sistent/sistent')>();
   return {
     ...actual,
     useHasPermission: () => true,
     useWindowDimensions: () => ({ width: 1024, height: 768 }),
+    ResponsiveDataTable: vi.fn((props) => {
+      let renderedActions = null;
+      const actionsCol = props.columns.find((c: any) => c.name === 'actions');
+      if (actionsCol && actionsCol.options.customBodyRender) {
+        // Render it with a simulated row index and row data
+        renderedActions = actionsCol.options.customBodyRender(null, {
+          rowIndex: 0,
+          rowData: ['1', 'Alpha', 'a@b.com', 'desc', 0, 0, 0, 0, 'a', null, null, null, null],
+        });
+      }
+      return <div data-testid="mock-responsive-data-table">{renderedActions}</div>;
+    }),
   };
 });
-// Mock performance SVG icon to avoid transform errors
-vi.mock('../../public/static/img/drawer-icons/performance_svg', () => ({
-  __esModule: true,
-  default: () => null,
-}));
-// Mock WorkspaceActionList to expose props for verification
-vi.mock('./WorkspaceActionList', () => (props) => {
-  const { workspaceId, workspaceName, selectedWorkspace } = props;
-  return (
-    <div
-      data-testid="workspace-action-list"
-      data-workspace-id={workspaceId}
-      data-workspace-name={workspaceName}
-    >
-      {JSON.stringify(selectedWorkspace)}
-    </div>
-  );
-});
 
-describe('WorkspaceDataTable crash evidence', () => {
-  it('should demonstrate the rowIndex bug', async () => {
+describe('WorkspaceDataTable customBodyRender', () => {
+  it('resolves the correct workspace by ID rather than visual row index', () => {
     const mockWorkspaces = [
-      { id: '3', name: 'Gamma', owner_id: 'c', description: 'desc 3', updated_at: '2023-01-03' },
-      { id: '1', name: 'Alpha', owner_id: 'a', description: 'desc 1', updated_at: '2023-01-01' },
-      { id: '2', name: 'Beta', owner_id: 'b', description: 'desc 2', updated_at: '2023-01-02' },
+      { id: '2', name: 'Beta', ownerId: 'b' }, // index 0 visually
+      { id: '1', name: 'Alpha', ownerId: 'a' }, // index 1 visually
     ];
 
-    (useGetSelectedOrganization as jest.Mock).mockReturnValue({
+    (useGetSelectedOrganization as Mock).mockReturnValue({
       selectedOrganization: { id: 'org-1' },
     });
 
-    (useGetWorkspacesQuery as jest.Mock).mockReturnValue({
-      data: { workspaces: mockWorkspaces, totalCount: 3 },
+    (useGetWorkspacesQuery as Mock).mockReturnValue({
+      data: { workspaces: mockWorkspaces, totalCount: 2 },
       isLoading: false,
     });
 
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
     render(
       <Provider store={store}>
-        <ThemeProvider theme={createTheme()}>
+        <SistentThemeProvider initialMode="light">
           <WorkspaceDataTable
-            handleWorkspaceModalOpen={jest.fn()}
-            handleTeamsModalOpen={jest.fn()}
-            handleActivityModalOpen={jest.fn()}
-            handleDeleteWorkspaceConfirm={jest.fn()}
+            handleWorkspaceModalOpen={vi.fn()}
+            handleTeamsModalOpen={vi.fn()}
+            handleActivityModalOpen={vi.fn()}
+            handleDeleteWorkspaceConfirm={vi.fn()}
             columnVisibility={{ actions: true }}
             selectedWorkspace={{ id: '', name: '' }}
-            handleRowClick={jest.fn()}
-            setColumnVisibility={jest.fn()}
+            handleRowClick={vi.fn()}
+            setColumnVisibility={vi.fn()}
             search=""
             viewType="table"
           />
-        </ThemeProvider>
+        </SistentThemeProvider>
       </Provider>,
     );
 
-    await waitFor(() => {
-      expect(screen.getByText('Alpha')).toBeInTheDocument();
-    });
-
-    // In a default render, MUIDataTable renders the original array, so rowIndex matches dataIndex.
-    // Let's sort the table visually by clicking "Name" header
-    const nameHeader = screen.getByText('Name');
-    fireEvent.click(nameHeader);
-
-    // MUIDataTable will sort the visible page.
-    await new Promise((r) => setTimeout(r, 100)); // wait for sort to apply
-
-    // Verify that each rendered WorkspaceActionList receives the correct workspace via ID
-    const actionLists = screen.getAllByTestId('workspace-action-list');
-    expect(actionLists).toHaveLength(3);
-    // After sorting by name ascending, rows should be Alpha, Beta, Gamma
-    expect(actionLists[1]).toHaveAttribute('data-workspace-id', '2');
-    const selectedWorkspace = JSON.parse(actionLists[1].textContent);
-    expect(selectedWorkspace.id).toBe('2');
-
-    consoleSpy.mockRestore();
+    // Asserts that customBodyRender properly used the ID from rowData ('1' Alpha)
+    // rather than the visual rowIndex (0 which corresponds to '2' Beta in the data array)
+    expect(WorkspaceActionList).toHaveBeenCalledWith(
+      expect.objectContaining({
+        workspaceId: '1',
+        selectedWorkspace: expect.objectContaining({
+          id: '1',
+          name: 'Alpha',
+        }),
+      }),
+      undefined,
+    );
   });
 });
