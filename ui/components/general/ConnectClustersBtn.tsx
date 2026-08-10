@@ -1,6 +1,7 @@
 import React from 'react';
 import { iconMedium } from '../../css/icons.styles';
 import { AddCircleIcon as AddIcon, Button, useTheme } from '@sistent/sistent';
+import { Keys } from '@meshery/schemas/permissions';
 import { CoreConnectionKinds } from '@/utils/Enum';
 import { useConnectionWizardModal } from '@/utils/context/ConnectionWizardContextProvider';
 
@@ -29,6 +30,7 @@ function ConnectClustersBtn() {
       color="primary"
       size="large"
       onClick={handleClick}
+      permissionKey={Keys.LifecycleManagementAddCluster}
       style={{ margin: '0.5rem 0.5rem', whiteSpace: 'nowrap' }}
     >
       <AddIcon

@@ -6,19 +6,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/controllers"
-	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
-	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
-)
-
-// to be moved elsewhere
-const (
-	chartRepo = "https://meshery.github.io/meshery.io/charts"
 )
 
 var (
@@ -50,55 +41,6 @@ var (
 		MeshTypeCiliumServiceMesh: {"cilium"},
 	}
 )
-
-// installs operator
-// To be depricated
-func installUsingHelm(client *mesherykube.Client, delete bool, _ models.AdaptersTrackerInterface) error {
-	// retrieving meshery's version to apply the appropriate chart
-	mesheryReleaseVersion := viper.GetString("BUILD")
-	if mesheryReleaseVersion == "" || mesheryReleaseVersion == "Not Set" || mesheryReleaseVersion == "edge-latest" {
-		_, latestRelease, err := handlers.CheckLatestVersion(mesheryReleaseVersion)
-		// if unable to fetch latest release tag, meshkit helm functions handle
-		// this automatically fetch the latest one
-		if err != nil {
-			logrus.Errorf("Couldn't check release tag: %s. Will use latest version", err)
-			mesheryReleaseVersion = ""
-		} else {
-			mesheryReleaseVersion = latestRelease
-		}
-	}
-	var (
-		act   = mesherykube.INSTALL
-		chart = "meshery-operator"
-	)
-	if delete {
-		act = mesherykube.UNINSTALL
-	}
-	// a basic check to see if meshery is installed in cluster
-	// this helps decide what chart should be used for installing operator
-	if viper.GetString("KUBERNETES_SERVICE_HOST") != "" {
-		// act = mesherykube.UPGRADE
-		chart = "meshery"
-	}
-
-	err := client.ApplyHelmChart(mesherykube.ApplyHelmChartConfig{
-		Namespace:   "meshery",
-		ReleaseName: "meshery-operator",
-		ChartLocation: mesherykube.HelmChartLocation{
-			Repository: chartRepo,
-			Chart:      chart,
-			Version:    mesheryReleaseVersion,
-		},
-		// CreateNamespace doesn't have any effect when the action is UNINSTALL
-		CreateNamespace: true,
-		Action:          act,
-	})
-	if err != nil {
-		return ErrApplyHelmChart(err)
-	}
-
-	return nil
-}
 
 // SetOverrideValues detects the currently insalled adapters and sets appropriate
 // overrides so as to not uninstall them. It also sets override values for
