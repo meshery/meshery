@@ -863,15 +863,22 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 	}
 	entityType := mux.Vars(r)["entityType"]
 	var updateData struct {
-		ID          string `json:"id"`
-		Status      string `json:"status"`
-		DisplayName string `json:"displayname"`
+		ID     string `json:"id"`
+		Status string `json:"status"`
+		// displayName is the canonical wire key (EntityStatusPayload in the
+		// schemas registry construct); displayname is the legacy spelling
+		// still sent by pre-/api/registry clients.
+		DisplayName       string `json:"displayName"`
+		DisplayNameLegacy string `json:"displayname"`
 	}
 	err = dec.Decode(&updateData)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
+	}
+	if updateData.DisplayName == "" {
+		updateData.DisplayName = updateData.DisplayNameLegacy
 	}
 
 	eventBuilder := events.NewEvent().ActedUpon(userID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory(entityType).WithAction("update")
@@ -1272,8 +1279,17 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	modelId := r.URL.Query().Get("id")
 	name := r.URL.Query().Get("name")
 	version := r.URL.Query().Get("version")
-	outputFormat := r.URL.Query().Get("output_format")
-	fileTypes := r.URL.Query().Get("file_type")
+	// outputFormat/fileType are the canonical camelCase wire params (schemas
+	// registry construct); the snake_case spellings are the legacy forms
+	// still sent by pre-/api/registry clients.
+	outputFormat := r.URL.Query().Get("outputFormat")
+	if outputFormat == "" {
+		outputFormat = r.URL.Query().Get("output_format")
+	}
+	fileTypes := r.URL.Query().Get("fileType")
+	if fileTypes == "" {
+		fileTypes = r.URL.Query().Get("file_type")
+	}
 	if fileTypes == "" {
 		fileTypes = "oci"
 	}

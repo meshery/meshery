@@ -30,25 +30,33 @@ as JSON before surfacing errors to users.
 
 ```json
 {
-  "error": "Human-readable short description",
-  "code": "meshery-server-1033",
-  "severity": "ERROR",
-  "probable_cause": ["Connection to the remote provider timed out."],
-  "suggested_remediation": ["Verify that Meshery Cloud is reachable."],
-  "long_description": ["Full technical details suitable for logs."]
+  "error": "Unable to create the environment",
+  "code": "meshery-server-1448",
+  "severity": "ALERT",
+  "probableCause": [
+    "Your account does not have permission to create environments in this organization.",
+    "An environment with the same name already exists in this organization."
+  ],
+  "suggestedRemediation": ["Confirm your role in the selected organization."],
+  "longDescription": ["Full technical details suitable for logs."]
 }
 ```
+
+Field names are camelCase, matching the repo-wide wire convention (see
+`AGENTS.md`, "Identifier Naming Conventions"). The three detail fields are
+arrays with **one entry per distinct cause or step** - do not concatenate them
+into a single string; the UI renders each entry as its own bullet.
 
 ### Fields
 
 | Field | Required | Notes |
 |-------|----------|-------|
 | `error` | yes | User-facing message. For MeshKit errors, this is the ShortDescription. |
-| `code` | when available | MeshKit error code (e.g. `meshery-server-1033`). Stable across releases. Use for telemetry, i18n lookup, and programmatic handling. |
+| `code` | when available | MeshKit error code (e.g. `meshery-server-1448`). Stable across releases. Use for telemetry, i18n lookup, and programmatic handling. |
 | `severity` | when available | One of `EMERGENCY`, `ALERT`, `CRITICAL`, `FATAL`, `ERROR`. |
-| `probable_cause` | optional | Array of strings. |
-| `suggested_remediation` | optional | Array of strings. Surface to users when present. |
-| `long_description` | optional | Array of strings. Suitable for developer logs; may contain stack-style detail. |
+| `probableCause` | optional | Array of strings, one per cause. |
+| `suggestedRemediation` | optional | Array of strings, one per step. Surface to users when present. |
+| `longDescription` | optional | Array of strings. Suitable for developer logs; may contain stack-style detail. |
 
 Fields marked "when available" are omitted (via `omitempty`) for errors that
 originated outside the MeshKit error catalog.
@@ -57,7 +65,7 @@ originated outside the MeshKit error catalog.
 
 - Do not rely on plain-text error bodies — they are always JSON.
 - When `code` is present, prefer it over string matching on `error`.
-- When `suggested_remediation` is non-empty, surface it alongside `error`.
+- When `suggestedRemediation` is non-empty, surface every entry alongside `error`.
 - When the body is not valid JSON, treat the response as a bug and report
   the offending endpoint; do not attempt a text fallback.
 
@@ -66,16 +74,52 @@ originated outside the MeshKit error catalog.
 Use `writeMeshkitError(w, err, status)` in `server/handlers/utils.go`:
 
 ```go
+resp, err := provider.SaveEnvironment(req, &environment, "", false)
 if err != nil {
-    h.log.Error(ErrGetResult(err))
-    writeMeshkitError(w, ErrGetResult(err), http.StatusNotFound)
+    handlerErr := ErrSaveEnvironment(err)
+    h.log.Error(handlerErr)
+    writeMeshkitError(w, handlerErr, providerStatus(err))
     return
 }
 ```
 
 For bare-string errors without a MeshKit code, use `writeJSONError(w, msg, status)`.
-Every bare-string error is a candidate for promotion to a MeshKit error —
+Every bare-string error is a candidate for promotion to a MeshKit error -
 prefer adding a code when fixing an adjacent bug.
+
+### Two rules that are easy to get wrong
+
+**Use an error code that belongs to the operation.** Reusing an unrelated
+component's code defeats the point of having codes at all. The environment and
+workspace handlers spent a long time reporting every failure as
+`ErrGetResult` / `meshery-server-1033` - a *performance-results* code whose
+probable cause reads "Result Identifier provided is not valid. Result did not
+persist in the database". A real production log for a failed environment save
+read `Status Code: 403 .failed to save the environment | ... unable to get
+result | Probable Cause: Result Identifier provided is not valid...`, sending
+maintainers into the wrong subsystem. Add a code for your operation; see
+[Contributing to Meshery Error Codes](/project/contributing/contributing-error).
+
+**Never hardcode the HTTP status of a provider failure.** Those same handlers
+answered every failure with `http.StatusNotFound`, so a remote-provider 403
+reached the browser as a 404 - a response the UI did not recognise as a failure
+at all, which is how a rejected "Create Environment" produced a success toast.
+
+`models.ErrFetch` and `models.ErrPost` tag the error with the status the
+provider actually returned (`httputil.WithProviderStatus`). Handlers read it
+back with the `providerStatus` helper:
+
+```go
+// server/handlers/utils.go
+func providerStatus(err error) int {
+    return httputil.StatusForProviderError(err, http.StatusBadGateway)
+}
+```
+
+The fallback is `502 Bad Gateway`, not `404`: when the provider produced no
+status of its own the failure is still an upstream one, and "not found" is a
+claim about the resource for which there is no evidence. Choose a different
+fallback only when the handler genuinely knows better.
 
 Do not use `http.Error` in handlers or provider code. It writes
 `Content-Type: text/plain` and strips MeshKit metadata, which crashes

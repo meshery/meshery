@@ -106,10 +106,10 @@ func init() {
 
 // buildSearchUrl constructs the API URL for the relationship search endpoint.
 func buildSearchUrl() string {
-	base := "api/meshmodels/relationships"
+	base := "api/registry/relationships"
 
 	if searchRelationshipFlagsProvided.Model != "" {
-		base = fmt.Sprintf("api/meshmodels/models/%s/relationships",
+		base = fmt.Sprintf("api/registry/models/%s/relationships",
 			url.PathEscape(searchRelationshipFlagsProvided.Model))
 	}
 

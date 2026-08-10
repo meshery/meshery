@@ -37,7 +37,7 @@ var listWorkspaceCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered workspaces",
 	Long: `List name of all registered workspaces
-Find more information at: https://docs.meshery.io/reference/mesheryctl/workspace/list`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/workspace/list`,
 	Example: `
 // List of workspace under a specific organization
 mesheryctl workspace list --orgId [orgId]

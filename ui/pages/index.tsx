@@ -1,6 +1,6 @@
 import React from 'react';
 import Dashboard from '@/components/dashboard';
-import { MesheryPage } from '../components/MesheryPage';
+import { MesheryPage } from '../components/general/MesheryPage';
 
 function Index() {
   return (
