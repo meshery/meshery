@@ -22,7 +22,7 @@ var ConnectionsCmd = &cobra.Command{
 	Use:   "connection",
 	Short: "Manage Meshery connections",
 	Long: `View and manage your Meshery connection.
-Find more information at: https://docs.meshery.io/reference/mesheryctl/connection`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/connection`,
 	Example: `
 // Display total count of all available connections
 mesheryctl connection --count

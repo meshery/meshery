@@ -1,0 +1,163 @@
+{{- if .Values.crds.updateJob.enabled }}
+{{- $fullname := include "meshery-operator.fullname" . }}
+{{/*
+Helm applies the crds/ directory only on `helm install` — never on upgrade.
+This pre-install,pre-upgrade hook Job server-side-applies files/crds.yaml
+(the same bundle, kept in lockstep with meshery-operator releases by its
+sync-downstream workflow) so CRD schema changes actually reach live clusters.
+When the conversion webhook is enabled, the Job also patches the CRDs'
+spec.conversion from the ConfigMap rendered in webhook.yaml.
+*/}}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ $fullname }}-crd-update
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ $fullname }}-crd-update
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+rules:
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - get
+  - list
+  - create
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ $fullname }}-crd-update
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-4"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ $fullname }}-crd-update
+subjects:
+- kind: ServiceAccount
+  name: {{ $fullname }}-crd-update
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $fullname }}-crds
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-3"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+data:
+  crds.yaml: |
+{{ .Files.Get "files/crds.yaml" | indent 4 }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $fullname }}-crd-update
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "meshery-operator.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 3
+  # Fail fast (image pull failure, RBAC misconfiguration) rather than
+  # blocking `helm upgrade` until the Job controller gives up.
+  activeDeadlineSeconds: 300
+  template:
+    metadata:
+      labels:
+        {{- include "meshery-operator.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ $fullname }}-crd-update
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: crd-update
+          image: "{{ .Values.crds.updateJob.image.repository }}:{{ .Values.crds.updateJob.image.tag }}"
+          imagePullPolicy: {{ .Values.crds.updateJob.image.pullPolicy }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          env:
+            # kubectl writes discovery/schema caches under $HOME; point it at
+            # the writable emptyDir so the read-only rootfs stays warning-free.
+            - name: HOME
+              value: /tmp
+          command:
+            - /bin/sh
+            - -ec
+            - |
+              kubectl apply --server-side --force-conflicts -f /crds/crds.yaml
+              {{- if .Values.webhook.enabled }}
+              for crd in brokers.meshery.io meshsyncs.meshery.io; do
+                kubectl patch crd "$crd" --type merge --patch-file /patch/conversion-patch.yaml
+              done
+              {{- else }}
+              # The server-side apply above does not own spec.conversion, so a
+              # previously enabled webhook would linger and break CR access
+              # once its Service is gone. Reset conversion explicitly.
+              for crd in brokers.meshery.io meshsyncs.meshery.io; do
+                kubectl patch crd "$crd" --type merge \
+                  -p '{"spec":{"conversion":{"strategy":"None","webhook":null}}}'
+                kubectl annotate crd "$crd" cert-manager.io/inject-ca-from- --overwrite >/dev/null 2>&1 || true
+              done
+              {{- end }}
+          volumeMounts:
+            - name: crds
+              mountPath: /crds
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+            {{- if .Values.webhook.enabled }}
+            - name: conversion-patch
+              mountPath: /patch
+              readOnly: true
+            {{- end }}
+      volumes:
+        - name: crds
+          configMap:
+            name: {{ $fullname }}-crds
+        - name: tmp
+          emptyDir: {}
+        {{- if .Values.webhook.enabled }}
+        - name: conversion-patch
+          configMap:
+            name: {{ $fullname }}-conversion-patch
+        {{- end }}
+{{- end }}

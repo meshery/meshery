@@ -27,12 +27,11 @@ import (
 	"github.com/meshery/meshkit/utils"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/meshkit/utils/walker"
-	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta2/organization"
 	pattern "github.com/meshery/schemas/models/v1beta3/design"
+	"github.com/meshery/schemas/models/v1beta3/environment"
 	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
-	"github.com/oapi-codegen/runtime/types"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
@@ -372,15 +371,7 @@ func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Requ
 }
 
 func (l *DefaultLocalProvider) fetchUserDetails() *User {
-	avatarUrl := ""
-	localEmail := types.Email("meshery@meshery.local")
-	return &User{
-		UserId:    "meshery",
-		FirstName: "Meshery",
-		LastName:  "Meshery",
-		Email:     localEmail,
-		AvatarUrl: &avatarUrl,
-	}
+	return LocalProviderUser()
 }
 
 // GetUserDetails - returns the user details
@@ -388,8 +379,22 @@ func (l *DefaultLocalProvider) GetUserDetails(_ *http.Request) (*User, error) {
 	return l.fetchUserDetails(), nil
 }
 
-func (l *DefaultLocalProvider) GetUserByID(_ *http.Request, _ string) ([]byte, error) {
-	return nil, nil
+// GetUserByID resolves a user profile by id. The built-in provider is
+// single-user, so the only id that resolves is its own system user's; every
+// other id has no record here and is reported as not found by the handler.
+// Resolving it is what lets an owner id stamped onto a locally persisted
+// resource render as a real name instead of an unresolvable lookup.
+func (l *DefaultLocalProvider) GetUserByID(_ *http.Request, userID string) ([]byte, error) {
+	if userID != LocalProviderUserID.String() {
+		return nil, nil
+	}
+
+	body, err := json.Marshal(l.fetchUserDetails())
+	if err != nil {
+		return nil, ErrMarshal(err, "user profile")
+	}
+
+	return body, nil
 }
 
 func (l *DefaultLocalProvider) GetUsers(_, _, _, _, _, _ string) ([]byte, error) {
@@ -411,7 +416,7 @@ func (l *DefaultLocalProvider) DeleteEnvironment(_ *http.Request, environmentID 
 }
 
 func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
-	orgId := core.Uuid(environmentPayload.OrgId)
+	orgId := core.Uuid(environmentPayload.OrgID)
 	environment := &environment.Environment{
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
@@ -428,7 +433,7 @@ func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPay
 	if err != nil {
 		return nil, ErrInvalidUUID(err)
 	}
-	orgId := core.Uuid(environmentPayload.OrgId)
+	orgId := core.Uuid(environmentPayload.OrgID)
 	environment := &environment.Environment{
 		ID:             id,
 		CreatedAt:      time.Now(),
@@ -527,7 +532,7 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 	maps.Copy(metadata, additionalMetadata)
 
 	if connections.MeshsyncDeploymentModeFromMetadata(metadata) == connections.MeshsyncDeploymentModeUndefined {
-		connections.SetMeshsyncDeploymentModeToMetadata(
+		connections.MaterializeMeshsyncDeploymentMode(
 			metadata,
 			l.MeshsyncDefaultDeploymentMode,
 		)
@@ -677,7 +682,7 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 		return "", ErrMarshal(err, "meshery result for shipping")
 	}
 	user, _ := l.GetUserDetails(req)
-	pref, _ := l.ReadFromPersister(user.UserId)
+	pref, _ := l.ReadFromPersister(user.ID.String())
 	if !pref.AnonymousPerfResults {
 		return "", nil
 	}
@@ -1397,9 +1402,31 @@ func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connecti
 	return updatedConnection, http.StatusOK, nil
 }
 
-func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connections.ConnectionPayload, _ string) (*connections.Connection, error) {
+func (l *DefaultLocalProvider) UpdateConnectionById(token string, conn *connections.ConnectionPayload, connId string) (*connections.Connection, error) {
+	// Always persist against the connection identified by the URL id. A payload
+	// that omits `id` (e.g. an RTK mutation that only forwards status+metadata)
+	// would otherwise carry a nil id, and GORM's Save() with a zero primary key
+	// INSERTs a new row — silently creating a duplicate connection instead of
+	// updating the intended one. Fail fast on an unparseable connId rather than
+	// falling back to a nil id and INSERTing that duplicate.
+	id := conn.ID
+	if id == uuid.Nil {
+		parsedID, err := uuid.FromString(connId)
+		if err != nil {
+			return nil, err
+		}
+		id = parsedID
+	}
+	conn.ID = id
+	// A partial payload (e.g. the UI's connect action sending only {status}, or an
+	// FSM status transition sending only {kind, metadata, status}) must not
+	// clobber the columns it omits — UpdateConnection persists via GORM's Save(),
+	// which writes every column. Backfill omitted fields from the persisted row.
+	if existing, gerr := l.ConnectionPersister.GetConnection(id, ""); gerr == nil && existing != nil {
+		connections.MergePayloadOntoExisting(conn, existing)
+	}
 	connection := connections.Connection{
-		ID:             conn.ID,
+		ID:             id,
 		Name:           conn.Name,
 		ConnectionType: conn.Type,
 		SubType:        conn.SubType,
@@ -1446,7 +1473,6 @@ func (l *DefaultLocalProvider) GetKubeClient() *mesherykube.Client {
 
 func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	seedContents := []string{"Pattern"}
-	nilOwner := ""
 
 	// Use the relative directory for patterns
 	catalogDir := filepath.Join("..", "..", "docs", "data", "catalog")
@@ -1481,7 +1507,6 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 					PatternFile: file.Content,
 					Name:        patternName,
 					ID:          &id,
-					Owner:       &nilOwner,
 					Visibility:  Published,
 					Location: map[string]interface{}{
 						"host":   "",
@@ -1579,6 +1604,7 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 		result = result.Where("(lower(name) like ?)", like)
 	}
 
+	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	result = result.Order(order)
 
 	var count int64
@@ -1946,11 +1972,11 @@ func genericHTTPPatternFile(fileURL string, log logger.Handler) ([]MesheryPatter
 	if err != nil {
 		return nil, err
 	}
+	defer SafeClose(resp.Body, log)
+
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("file not found")
 	}
-
-	defer SafeClose(resp.Body, log)
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -1983,11 +2009,11 @@ func genericHTTPFilterFile(fileURL string, log logger.Handler) ([]MesheryFilter,
 	if err != nil {
 		return nil, err
 	}
+	defer SafeClose(resp.Body, log)
+
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("file not found")
 	}
-
-	defer SafeClose(resp.Body, log)
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

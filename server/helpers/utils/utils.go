@@ -148,18 +148,6 @@ func ToMapStringInterface(mp interface{}) map[string]interface{} {
 	return res
 }
 
-func IsClosed[K any](ch chan K) bool {
-	if ch == nil {
-		return true
-	}
-	select {
-	case <-ch:
-		return true
-	default:
-	}
-	return false
-}
-
 const UI = "../../ui/public/static/img/meshmodels" //Relative to cmd/main.go
 var UISVGPaths = make([]string, 1)
 

@@ -1,0 +1,48 @@
+---
+title: v1.0.56
+date: 2026-07-13
+tag: v1.0.56
+prerelease: false
+---
+
+## What's New
+## 🔤 General
+- \[Model\] Add F5 BIG-IP Controller for Kubernetes model @YASHMAHAKAL (#20570)
+
+## ⌨️ Meshery CLI
+
+- \[Connections\] Migrate Kubernetes connection & controller subscriptions from GraphQL to SSE/REST @aabidsofi19 (#20456)
+
+## 🖥 Meshery UI
+
+- fix Category and Subcategory dropdown menus in Create Model wizard @Ayush-kr-giga (#20581)
+- \[Server\]\[UI\] Retire all GraphQL subscriptions in favour of REST/SSE @aabidsofi19 (#20587)
+- \[Connections\] Migrate Kubernetes connection & controller subscriptions from GraphQL to SSE/REST @aabidsofi19 (#20456)
+- \[UI\] Unify the design "can edit" gate across card and table views @leecalcote (#20533)
+- Resolve permission constants dynamically from schemas @rishiraj38 (#20354)
+- \[UI\] Fix local-provider sort/search regression from v1beta3 user consolidation @leecalcote (#20528)
+- fix: navbar @KhushamBansal (#20525)
+
+## 🧰 Maintenance
+
+- \[Connections\] Migrate Kubernetes connection & controller subscriptions from GraphQL to SSE/REST @aabidsofi19 (#20456)
+
+## 📖 Documentation
+
+- docs: remove duplicate heading from HTTP Error Response Contract page @Ayush-kr-giga (#20543)
+- Create a short intro of umar @MuhammadUmar7195 (#20599)
+- Add introduction for Khushal Malhotra @khushal-winner (#20598)
+- Create Aryan-Burnwal-attendance.md @A9RYA6N (#20597)
+- Add Yash Mahakal's introduction to meeting notes @YASHMAHAKAL (#20596)
+- Create Sulagna @suzy-g38 (#20595)
+- docs: Mark attendance for Piyush Tripathi (week-of-07-09-2026) @piyushtripathi9424 (#20594)
+- Add Debjit's attendance and introduction details @D-source1602 (#20593)
+- \[Connections\] Migrate Kubernetes connection & controller subscriptions from GraphQL to SSE/REST @aabidsofi19 (#20456)
+- Add attendance instructions to meeting notes @YASHMAHAKAL (#20571)
+- Docs add permission key guide @rishiraj38 (#19620)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@A9RYA6N, @Ayush-kr-giga, @D-source1602, @KhushamBansal, @MuhammadUmar7195, @YASHMAHAKAL, @aabidsofi19, @alexquincy, @fitzergerald, @hortison, @khushal-winner, @leecalcote, @meshery-ci, @piyushtripathi9424, @rishiraj38, @suzy-g38, @winkletinkle and @yi-nuo426
+

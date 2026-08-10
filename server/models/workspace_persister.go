@@ -12,7 +12,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshkit/database"
-	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta3/environment"
 	// NOTE: workspace_persister uses v1beta3/workspace for the canonical
 	// camelCase wire form (Phase 5 identifier-naming flip). Designs nested
 	// inside workspace pages still ride on v1beta1/pattern because both
@@ -41,11 +41,7 @@ func uuidPtr(u core.Uuid) *core.Uuid {
 }
 
 func (wp *WorkspacePersister) fetchUserDetails() *User {
-	return &User{
-		UserId:    "meshery",
-		FirstName: "Meshery",
-		LastName:  "Meshery",
-	}
+	return LocalProviderUser()
 }
 
 // GetWorkspaces returns all of the workspaces
@@ -112,8 +108,8 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 			Description:    ws.Description,
 			ID:             ws.ID,
 			Name:           ws.Name,
-			OrganizationId: uuidPtr(ws.OrganizationID),
-			OwnerId:        ws.Owner,
+			OrganizationID: uuidPtr(ws.OrganizationID),
+			OwnerID:        ws.Owner,
 			UpdatedAt:      ws.UpdatedAt,
 		}
 		availableWorkspaces = append(availableWorkspaces, aw)
@@ -166,7 +162,7 @@ func (wp *WorkspacePersister) DeleteWorkspace(workspace *workspace.Workspace) ([
 	}
 	err = wp.DB.Delete(workspace).Error
 	if err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().ID.String())
 	}
 
 	// Marshal the workspace to JSON
@@ -383,7 +379,7 @@ func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, enviro
 
 	// Delete the environment mapping
 	if err := wp.DB.Delete(&wsEnvMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().ID.String())
 	}
 
 	wsJSON, err := json.Marshal(wsEnvMapping)
@@ -442,7 +438,7 @@ func (wp *WorkspacePersister) DeleteDesignFromWorkspace(workspaceID, designID co
 
 	// Delete the design mapping
 	if err := wp.DB.Delete(&wsDesignMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().ID.String())
 	}
 
 	wsJSON, err := json.Marshal(wsDesignMapping)
@@ -521,6 +517,10 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID core.Uuid, search,
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&designsFetched)
 	}
 
+	for _, d := range designsFetched {
+		stampLocalProviderOwner(d)
+	}
+
 	schemaDesigns, err := schemaMesheryPatterns(designsFetched)
 	if err != nil {
 		return nil, err
@@ -550,6 +550,18 @@ func schemaMesheryPatterns(patterns []*MesheryPattern) ([]patternv1beta1.Meshery
 	decoded := []patternv1beta1.MesheryPattern{}
 	if err := json.Unmarshal(encoded, &decoded); err != nil {
 		return nil, err
+	}
+
+	// The two contracts spell the owner differently - MesheryPattern emits
+	// "userId" (schemas v1beta3 design.MesheryPattern) while the v1beta1
+	// workspace design page declares "user_id" - so the round-trip above cannot
+	// carry it. Copy it across the version boundary explicitly, otherwise every
+	// workspace design listing reports the nil UUID as its owner.
+	for i := range decoded {
+		if i >= len(patterns) || patterns[i] == nil || patterns[i].UserID == nil {
+			continue
+		}
+		decoded[i].UserId = *patterns[i].UserID
 	}
 
 	return decoded, nil
@@ -592,7 +604,7 @@ func (wp *WorkspacePersister) DeleteViewFromWorkspace(workspaceID, viewID core.U
 	}
 
 	if err := wp.DB.Delete(&wsViewMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().ID.String())
 	}
 
 	wsJSON, err := json.Marshal(wsViewMapping)
@@ -720,7 +732,7 @@ func (wp *WorkspacePersister) DeleteTeamFromWorkspace(workspaceID, teamID core.U
 	}
 
 	if err := wp.DB.Delete(&wsTeamMapping).Error; err != nil {
-		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserId)
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().ID.String())
 	}
 
 	wsJSON, err := json.Marshal(wsTeamMapping)

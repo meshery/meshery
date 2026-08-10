@@ -147,7 +147,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	}
 
 	prefObj.MeshAdapters = meshAdapters
-	err = provider.RecordPreferences(req, user.UserId, prefObj)
+	err = provider.RecordPreferences(req, user.ID.String(), prefObj)
 	if err != nil {
 		h.log.Error(ErrRecordPreferences(err))
 		writeMeshkitError(w, ErrRecordPreferences(err), http.StatusInternalServerError)
@@ -339,7 +339,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	_, err = mClient.MClient.ApplyOperation(req.Context(), &meshes.ApplyRuleRequest{
 		OperationId: operationID.String(),
 		OpName:      opName,
-		Username:    user.UserId,
+		Username:    user.ID.String(),
 		Namespace:   namespace,
 		CustomBody:  customBody,
 		DeleteOp:    (deleteOp != ""),

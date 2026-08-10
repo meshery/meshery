@@ -59,7 +59,7 @@ jobs:
           commit_options: "--no-verify"
 
       - name: Setup Regal
-        uses: StyraInc/setup-regal@v1
+        uses: open-policy-agent/setup-regal@v1
         with:
           version: 0.25.0
 
@@ -67,7 +67,7 @@ jobs:
         id: lint
         run: |
           set +e
-          regal lint --config-file ./policies/wasm/policies/.regal/config.yaml --format github ./models 2>&1 | tee lint-results.txt
+          regal lint --config-file ./server/policies/.regal/config.yaml --format github ./models/meshery-core/0.7.2/v1.0.0/policies 2>&1 | tee lint-results.txt
           LINT_EXIT_CODE=${PIPESTATUS[0]}
           echo "lint-exit-code=$LINT_EXIT_CODE" >> $GITHUB_OUTPUT
           if [ $LINT_EXIT_CODE -ne 0 ]; then

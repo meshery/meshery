@@ -1,6 +1,7 @@
 ---
 title: "Extensibility: Schemas"
 description: Meshery schemas support x-* vendor extensions as an intentional extensibility mechanism for remote providers to attach provider-specific metadata.
+categories: [extensibility]
 aliases:
   - /extensibility/schemas
 ---

@@ -1,6 +1,7 @@
 ---
 title: Ensuring Extension Compatibility
 description: A guide for Meshery extension developers on maintaining compatibility with the Meshery platform, covering shared frameworks, dependencies, and build tooling.
+categories: [extensibility]
 aliases:
 - /extensibility/verify-compatibility
 ---

@@ -1,4 +1,3 @@
-import { ArrowDropDownIcon } from '@sistent/sistent';
 import PerformanceIcon from './performance_svg';
 
 const drawerIconsStyle = {
@@ -9,10 +8,7 @@ const drawerIconsStyle = {
 };
 
 const PerformanceHover = () => (
-  <>
-    <PerformanceIcon style={drawerIconsStyle} />
-    <ArrowDropDownIcon />
-  </>
+  <PerformanceIcon style={drawerIconsStyle} />
 );
 
 export default PerformanceHover;

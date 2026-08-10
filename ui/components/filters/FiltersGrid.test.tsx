@@ -9,12 +9,6 @@ vi.mock('@/utils/can', () => ({
   default: (...args: unknown[]) => can(...args),
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    IMPORT_FILTER: { action: 'import', subject: 'filter' },
-  },
-}));
-
 vi.mock('@sistent/sistent', () => ({
   Grid2: ({ children }: any) => <div data-testid="grid">{children}</div>,
   Button: ({ children, onClick, disabled }: any) => (

@@ -1,4 +1,5 @@
 import type React from 'react';
+import type { Key } from '@meshery/schemas/permissions';
 
 export type TypeView = 'grid' | 'table';
 
@@ -8,6 +9,8 @@ export type TooltipIconProps = {
   title: string;
   disabled?: boolean;
   placement?: string;
+  permissionKey?: Key;
+  permissionAction?: 'showShield' | 'hide';
 };
 
 export type FilterSubmitPayload = {

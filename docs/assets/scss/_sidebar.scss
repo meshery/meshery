@@ -82,7 +82,7 @@
 
 .sidebar-container {
 /* Symmetric, breathable padding replacing the skewed viewport units */
-  padding: 1.25rem 1rem;
+  padding: 0;
   overscroll-behavior: contain;
   overflow-y: auto; /* Swapped scroll for auto to hide inactive scrollbars */
   scrollbar-gutter: stable;
@@ -93,19 +93,19 @@
   max-width: var(--sidebar-width);
   min-width: var(--sidebar-width);
 
-  /* Refined, modern scrollbar */
+  /* Sidebar scrollbar aligned with global docs design */
   &::-webkit-scrollbar {
-    width: 4px;
+    width: 0.5rem;
   }
   &::-webkit-scrollbar-track {
-    background: transparent;
+    background: var(--background-light);
   }
   &::-webkit-scrollbar-thumb {
-    background: rgba(134, 142, 150, 0.3);
-    border-radius: 10px;
+    background: var(--scrollbar-color);
+    border-radius: 0.3rem;
     
     &:hover {
-      background: rgba(134, 142, 150, 0.6);
+      background: #555;
     }
   }
 
@@ -117,11 +117,10 @@
     width: 100%;
     z-index: 9;
     transition: 0.5s ease-in-out;
-    padding: 1rem 2rem;
   }
 
   @media (max-width: 37.5em) {
-    padding: 1rem 1.5rem;
+    width: 100%;
   }
 
   & .td-sidebar__inner {
@@ -130,6 +129,15 @@
     height: 100%;
     position: static;
     top: auto;
+    padding: 1.25rem 1rem;
+
+    @media (max-width: 75em) {
+      padding: 1rem 2rem;
+    }
+
+    @media (max-width: 37.5em) {
+      padding: 1rem 1.5rem;
+    }
   }
 
   & .td-sidebar__search {
@@ -198,7 +206,7 @@
   & .td-sidebar-nav .ul-1>li {
     border-bottom: 1px solid rgba(134, 142, 150, 0.15); /* Softer divider */        
     margin-bottom: 0.9rem;
-    padding-bottom: 0.9rem;
+    // padding-bottom: 0.9rem;
 
     &:last-child {
       border-bottom: none;
@@ -226,7 +234,7 @@
     justify-content: center;
     background: none;
     border: none;
-    color: var(--color-secondary-medium);
+    color: var(--sidebar-text-color);
     cursor: pointer;
     font-size: 1rem;
     padding: 0 0.4rem 0 0;
@@ -240,6 +248,7 @@
     // rule below) to convey expanded vs. collapsed state.
     .caret-icon {
       display: block;
+      font-size: 1.45rem;
       width: 0.85em;
       height: 0.85em;
       transform: rotate(0deg);
@@ -267,6 +276,7 @@
     color: var(--brand-color); /* Highlight caret on active path */
 
     .caret-icon {
+      font-size: 1.35rem;
       transform: rotate(90deg);
       transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1); /* Smoother rotation */
     }
@@ -284,7 +294,7 @@
 
   & .td-sidebar-nav .ul-1 ul>li>a.td-sidebar-link::before {
     content: "•";
-    color: var(--color-secondary-medium);
+    color: var(--sidebar-text-color);
     font-size: 1.25rem;
     font-weight: 900;
     display: inline-flex;
@@ -304,12 +314,12 @@
   }
 
   & .td-sidebar-nav__section-title {
-    color: var(--color-secondary-medium);
+    color: var(--sidebar-text-color);
     font-weight: 400;
   }
 
   & .td-sidebar-link {
-    color: var(--color-secondary-medium);
+    color: var(--sidebar-text-color);
     letter-spacing: 0;
     padding-bottom: 0.15rem;
     text-decoration: none;
@@ -323,24 +333,34 @@
     width: fit-content;
 
     &>span {
-      color: var(--color-secondary-medium);
+      color: var(--sidebar-text-color);
     }
   }
+  // Breathing room between lists
+  & .td-sidebar-nav ul > li > ul:first-of-type {
+    padding-top: 1rem;
+    // background-color: purple;
+  }
 
+  // The last item in each list should have some breathing room at the bottom.
+   & .td-sidebar-nav ul:has(.with-child) > li:last-of-type {
+    padding-bottom: 1rem;
+    // background-color: orange;
+
+  }
+  // Root level sections
   & .td-sidebar-nav .ul-1>li>a.td-sidebar-link,
   & .td-sidebar-nav .ul-1>li>.sidebar-section-flex-wrapper>a.td-sidebar-link {
     font-weight: 600;
+    font-size: 1.30rem;
+    // background-color: red;
+
   }
 
-  & .td-sidebar-nav ul:not(.ul-1) .td-sidebar-link,
-  & .td-sidebar-nav ul:not(.ul-1) .td-sidebar-link.td-sidebar-link__section {
+  // Leaf pages
+  & .td-sidebar-nav ul:not(.with-child) > li > a.td-sidebar-link {
     font-weight: 400;
-    font-size: 1rem;
-  }
-
-  & .td-sidebar-link.td-sidebar-link__page {
-    font-weight: 400;
-    font-size: 1rem;
+    // background-color: green;
   }
 
   // Sections that contain child pages are emphasised over leaf pages so the
@@ -348,10 +368,12 @@
   & .td-sidebar-nav__section.with-child > a.td-sidebar-link,
   & .td-sidebar-nav__section.with-child > .sidebar-section-flex-wrapper > a.td-sidebar-link {
     font-weight: 800;
+    font-size: 1.2rem;
   }
 
   & .td-sidebar-nav__section.without-child > a.td-sidebar-link {
     font-weight: 400;
+    
   }
 
   & .td-sidebar-link:hover,
@@ -375,11 +397,11 @@
   }
 
   & .td-sidebar-nav__section-title.active-path>.td-sidebar-link {
-    color: var(--color-secondary-medium);
+    color: var(--sidebar-active-text-color);
     text-decoration: none;
 
     &>span {
-      color: var(--color-secondary-medium);
+      color: var(--sidebar-active-text-color);
     }
   }
 
@@ -436,7 +458,7 @@
   & .td-sidebar-nav__section-title.active-path>.td-sidebar-link,
   & .td-sidebar-nav__section-title.active-path>.td-sidebar-link span {
     scroll-margin-bottom: 8rem;
-    color: var(--color-secondary-medium);
+    color: var(--sidebar-active-text-color);
   }
 }
 .dark-mode .sidebar-container {
@@ -486,4 +508,9 @@
     -webkit-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
   }
+}
+
+/* Sidebar toggle button arrows - white color */
+#td-sidebar-menu .sidebar-section-toggle .caret-icon path {
+  stroke: var(--sidebar-text-color);
 }

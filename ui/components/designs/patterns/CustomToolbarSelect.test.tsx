@@ -16,12 +16,6 @@ vi.mock('@/utils/can', () => ({
   default: () => true,
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    DELETE_A_DESIGN: { action: 'delete', subject: 'design' },
-  },
-}));
-
 import CustomToolbarSelect from './CustomToolbarSelect';
 
 describe('CustomToolbarSelect', () => {

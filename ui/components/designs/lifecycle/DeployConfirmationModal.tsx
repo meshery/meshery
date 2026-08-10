@@ -27,6 +27,7 @@ import {
   Tabs,
   TextField,
   Typography,
+  useHasPermission,
 } from '@sistent/sistent';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTheme } from '@/theme';
@@ -42,8 +43,8 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { K8sEmptyState } from '../../shared/EmptyState/K8sContextEmptyState';
 import { ACTIONS } from '../../../utils/Enum';
-import CAN from '../../../utils/can';
-import { keys } from '@/utils/permission_constants';
+
+import { Keys } from '@meshery/schemas/permissions';
 import { TooltipWrappedConnectionChip } from '../../connections/ConnectionChip';
 import { setK8sContexts, updateProgress } from '@/store/slices/mesheryUi';
 import {
@@ -71,6 +72,9 @@ interface ConfirmationMsgProps {
 }
 
 const ConfirmationMsg: FC<ConfirmationMsgProps> = (props) => {
+  const canValidateDesign = useHasPermission(Keys.CatalogManagementValidateDesign);
+  const canUndeployDesign = useHasPermission(Keys.CatalogManagementUndeployDesign);
+  const canDeployDesign = useHasPermission(Keys.CatalogManagementDeployDesign);
   const {
     open,
     handleClose,
@@ -248,14 +252,11 @@ const ConfirmationMsg: FC<ConfirmationMsgProps> = (props) => {
                 )}
               </div>
             }
-            disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject)}
+            disabled={!canValidateDesign}
           />
         )}
         <Tab
-          disabled={
-            !CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) ||
-            (CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) && isDisabled)
-          }
+          disabled={!canUndeployDesign || isDisabled}
           data-cy="Undeploy-btn-modal"
           onClick={(event) => handleTabValChange(event, ACTIONS.UNDEPLOY)}
           label={
@@ -274,10 +275,7 @@ const ConfirmationMsg: FC<ConfirmationMsgProps> = (props) => {
           }
         />
         <Tab
-          disabled={
-            !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) ||
-            (CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) && isDisabled)
-          }
+          disabled={!canDeployDesign || isDisabled}
           data-cy="deploy-btn-modal"
           onClick={(event) => handleTabValChange(event, ACTIONS.DEPLOY)}
           label={

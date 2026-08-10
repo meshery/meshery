@@ -63,6 +63,7 @@ vi.mock('@sistent/sistent', () => ({
         brand: { default: '#brand-default' },
       },
       common: { white: '#fff' },
+      navigation: { secondary: '#nav-secondary', active: '#nav-active', hover: '#nav-hover' },
     },
   }),
   SlackIcon: () => <svg data-testid="slack-icon" />,
@@ -299,5 +300,16 @@ describe('Navigator', () => {
     render(<Navigator />);
     expect(screen.getByTestId('sidebar-footer')).toBeInTheDocument();
     expect(screen.getByTestId('chevron-wrapper')).toBeInTheDocument();
+  });
+
+  it('renders an expand/collapse caret only for nav items that have children', async () => {
+    render(<Navigator />);
+    // The list populates once provider capabilities resolve; wait for the parent row.
+    await screen.findByTestId('config-icon');
+    // The mocked navigator list has one leaf item (DASHBOARD, no children) and one
+    // parent item (CONFIGURATION, with children). The caret is gated on children, so
+    // leaf items must not render one - this keeps the caret button out of leaf anchors.
+    expect(screen.getByTestId('dash-icon')).toBeInTheDocument();
+    expect(screen.queryAllByTestId('expand-more')).toHaveLength(1);
   });
 });

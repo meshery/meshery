@@ -9,7 +9,7 @@ let profile: {
 } = {
   data: { preferences: { remoteProviderPreferences: { getstarted: ['step-1'] } } },
 };
-let currentOrg: { id?: string } = { id: 'org-1' };
+let currentOrg: { id?: string } | null = { id: 'org-1' };
 
 const actionCardSpy = vi.fn();
 const modalSpy = vi.fn();
@@ -36,10 +36,6 @@ vi.mock('@/utils/hooks/useNotification', () => ({
 
 vi.mock('@/utils/can', () => ({ default: () => true }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: { ASSIGN_USER_ROLES: { action: 'assign', subject: 'roles' } },
-}));
-
 vi.mock('react-redux', () => ({
   useSelector: (selector: (state: unknown) => unknown) =>
     selector({ ui: { organization: currentOrg } }),
@@ -53,6 +49,7 @@ vi.mock('@sistent/sistent', () => ({
   ),
   useTheme: () => ({ palette: { icon: { default: '#000' } } }),
   GetStartedIcon: () => <svg data-testid="get-started-icon" />,
+  useHasPermission: () => true,
   ActionButtonCard: (props: {
     title: string;
     description: string;
@@ -139,5 +136,13 @@ describe('GetStarted', () => {
     render(<GetStarted />);
     const props = actionCardSpy.mock.calls[0][0];
     expect(props.completedSteps).toEqual([]);
+  });
+
+  it('does not crash and passes an undefined currentOrgId when the organization is null', () => {
+    currentOrg = null;
+    render(<GetStarted />);
+    expect(screen.getByTestId('action-card')).toBeInTheDocument();
+    const modalProps = modalSpy.mock.calls[0][0];
+    expect(modalProps.currentOrgId).toBeUndefined();
   });
 });

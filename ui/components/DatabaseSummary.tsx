@@ -7,8 +7,8 @@ import { EVENT_TYPES } from '../lib/event-types';
 import SearchBar from '../utils/custom-search';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useGetDatabaseSummaryQuery } from '@/rtk-query/system';
-import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+
+import { Keys } from '@meshery/schemas/permissions';
 import { PROMPT_VARIANTS } from '@sistent/sistent';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
@@ -143,7 +143,7 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
               backgroundColor: theme.palette.error.dark,
             }}
             size="medium"
-            disabled={!CAN(keys.RESET_DATABASE.action, keys.RESET_DATABASE.subject)}
+            permissionKey={Keys.MesherySystemResetDatabase}
             onClick={handleResetDatabase()}
             data-cy="btnResetDatabase"
           >

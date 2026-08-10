@@ -12,6 +12,7 @@ import { useLazyGetResultsQuery } from '@/rtk-query/meshResult';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { updateResultsSelection } from '@/store/slices/prefTest';
+import { isLocalProvider } from '@/utils/provider';
 
 const DEFAULT_PAGE_SIZE = 10;
 const ROWS_PER_PAGE_OPTIONS = [10, 20, 25];
@@ -26,7 +27,7 @@ const MesheryResults = () => {
   const [results, setResults] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [searchTimeout, setSearchTimeout] = useState(null);
-  const { user } = useSelector((state) => state.ui);
+  const { providerCapabilities } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
   const { results_selection } = useSelector((state) => state.prefTest);
   // RTK Query hook for fetching results
@@ -314,8 +315,8 @@ const MesheryResults = () => {
   const options = useMemo(
     () => ({
       filter: false,
-      sort: !(user && user.userId === 'meshery'),
-      search: !(user && user.userId === 'meshery'),
+      sort: !isLocalProvider(providerCapabilities),
+      search: !isLocalProvider(providerCapabilities),
       filterType: 'textField',
       responsive: 'standard',
       resizableColumns: true,
@@ -357,7 +358,7 @@ const MesheryResults = () => {
       },
     }),
     [
-      user,
+      providerCapabilities,
       count,
       pageSize,
       page,

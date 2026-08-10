@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const can = vi.fn(() => true);
 const handleSuccess = vi.fn();
 const handleError = vi.fn();
+const notifyApiError = vi.fn();
 const deleteWorkspaceMutator = vi.fn();
 
 vi.mock('@/rtk-query/workspace', () => ({
@@ -16,14 +17,8 @@ vi.mock('@/utils/can', () => ({
   default: (...args: unknown[]) => can(...args),
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    DELETE_WORKSPACE: { action: 'delete', subject: 'workspace' },
-  },
-}));
-
 vi.mock('@/utils/hooks/useNotification', () => ({
-  useNotificationHandlers: () => ({ handleSuccess, handleError }),
+  useNotificationHandlers: () => ({ handleSuccess, handleError, notifyApiError }),
 }));
 
 vi.mock('@sistent/sistent', () => ({
@@ -73,6 +68,7 @@ vi.mock('@sistent/sistent', () => ({
     },
   }),
   ErrorBoundary: ({ children }: any) => <>{children}</>,
+  useHasPermission: (key: any) => can(key?.id, key?.function),
 }));
 
 vi.mock('./styles', () => ({
@@ -110,6 +106,7 @@ describe('WorkspaceGridView', () => {
     deleteWorkspaceMutator.mockReset();
     handleSuccess.mockReset();
     handleError.mockReset();
+    notifyApiError.mockReset();
     can.mockReset();
     can.mockReturnValue(true);
     deleteWorkspaceMutator.mockReturnValue({ unwrap: () => Promise.resolve() });
@@ -181,7 +178,7 @@ describe('WorkspaceGridView', () => {
     expect(deleteWorkspaceMutator).not.toHaveBeenCalled();
   });
 
-  it('hides the delete modal entirely when the user lacks DELETE_WORKSPACE permission', () => {
+  it('hides the delete modal entirely when the user lacks WorkspaceManagementDeleteWorkspace permission', () => {
     can.mockReturnValue(false);
     renderComponent();
     // Modal is rendered conditionally on CAN(...) - so when no permission, modal element is absent

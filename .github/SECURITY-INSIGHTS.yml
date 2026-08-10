@@ -76,10 +76,11 @@ repository:
     - name: Lee Calcote
       affiliation: Layer5
       social: https://layer5.io/community/members/lee-calcote/
-      primary: true
+      primary: false
     - name: Sangram Rath
       affiliation: OD10
       social: https://layer5.io/community/members/sangram-rath/
+      primary: true
   license:
     url: https://github.com/meshery/meshery/blob/master/LICENSE
     expression: Apache-2.0

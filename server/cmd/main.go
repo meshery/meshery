@@ -27,20 +27,14 @@ import (
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
-	mesherymeshmodel "github.com/meshery/meshery/server/models/meshmodel"
 	"github.com/meshery/meshery/server/router"
 	"github.com/meshery/meshkit/broker/nats"
 	"github.com/meshery/meshkit/logger"
-	_events "github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/models/meshmodel/core/policies"
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/tracing"
 	"github.com/meshery/meshkit/utils/broadcast"
 	"github.com/meshery/meshkit/utils/events"
-	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
-	"github.com/meshery/schemas/models/v1beta1/environment"
-	"github.com/meshery/schemas/models/v1beta1/workspace"
-	schemasOrganization "github.com/meshery/schemas/models/v1beta2/organization"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -238,36 +232,11 @@ func main() {
 	meshsyncCh := make(chan struct{}, 10)
 	brokerConn := nats.NewEmptyConnection
 
-	err = dbHandler.AutoMigrate(
-		&meshsyncmodel.KubernetesKeyValue{},
-		&meshsyncmodel.KubernetesResource{},
-		&meshsyncmodel.KubernetesResourceSpec{},
-		&meshsyncmodel.KubernetesResourceStatus{},
-		&meshsyncmodel.KubernetesResourceObjectMeta{},
-		&models.PerformanceProfile{},
-		&models.MesheryResult{},
-		&models.MesheryPattern{},
-		&models.MesheryFilter{},
-		&models.PatternResource{},
-		&models.MesheryApplication{},
-		&models.UserPreference{},
-		&models.UserCapabilities{},
-		&models.PerformanceTestConfig{},
-		&models.SmiResultWithID{},
-		models.K8sContext{},
-		schemasOrganization.Organization{},
-		models.Key{},
-		&models.Credential{},
-		connections.Connection{},
-		environment.Environment{},
-		environment.EnvironmentConnectionMapping{},
-		workspace.Workspace{},
-		workspace.WorkspacesEnvironmentsMapping{},
-		workspace.WorkspacesDesignsMapping{},
-		workspace.WorkspacesTeamsMapping{},
-		workspace.WorkspacesViewsMapping{},
-		_events.Event{},
-	)
+	// All three system-database migration sites (server boot here, the database
+	// reset handler, and the GraphQL hard reset) share one authoritative model
+	// list so no path can drop every table and re-migrate only a subset. See
+	// models.SystemDatabaseModels.
+	err = models.AutoMigrateSystemTables(dbHandler)
 	if err != nil {
 		log.Error(ErrDatabaseAutoMigration(err))
 		os.Exit(1)
@@ -321,11 +290,7 @@ func main() {
 
 		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
 
-		PatternChannel:            models.NewBroadcaster("Patterns"),
-		FilterChannel:             models.NewBroadcaster("Filters"),
-		EventBroadcaster:          models.NewBroadcaster("Events"),
-		DashboardK8sResourcesChan: models.NewDashboardK8sResourcesHelper(),
-		MeshModelSummaryChannel:   mesherymeshmodel.NewSummaryHelper(),
+		EventBroadcaster: models.NewBroadcaster("Events"),
 
 		K8scontextChannel: models.NewContextHelper(),
 		OperatorTracker:   models.NewOperatorTracker(viper.GetBool("DISABLE_OPERATOR")),
@@ -340,7 +305,7 @@ func main() {
 
 	go func() {
 		// This is where models are seeded from meshmodel directory to registry
-		models.SeedComponents(log, hc, regManager)
+		models.SeedComponents(log, hc, regManager, dbHandler)
 		// Rego is intialized for passing of policy if the policies are made to be per model base this needs to be removed.
 		r, err := policies.NewRegoInstance(models.PoliciesPath, regManager)
 		if err != nil {
@@ -349,7 +314,6 @@ func main() {
 			rego = *r
 		}
 		krh.SeedKeys(viper.GetString("KEYS_PATH"))
-		hc.MeshModelSummaryChannel.Publish()
 	}()
 
 	lProv.SeedContent(log)

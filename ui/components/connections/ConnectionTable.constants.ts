@@ -45,8 +45,8 @@ export const ACTION_TYPES = {
     name: 'FETCH_ENVIRONMENT',
     error_msg: 'Failed to fetch environment',
   },
-  CREATE_ENVIRONMENT: {
-    name: 'CREATE_ENVIRONMENT',
+  WorkspaceManagementCreateEnvironment: {
+    name: 'WorkspaceManagementCreateEnvironment',
     error_msg: 'Failed to create environment',
   },
 };
@@ -70,20 +70,66 @@ export const getNextStates = (
   currentStatus: string,
 ): string[] => (transitionMap?.[currentStatus] ?? []).map((transition) => transition.nextState);
 
-// The human-readable description for a specific transition, falling back to a
-// generic prompt when the definition does not describe it.
-export const getStatusTransition = (
+// The definition-authored description for a specific transition, or undefined
+// when the definition does not describe it. Connection definitions
+// (models/.../connections/*.json) are the source of truth for this copy; the
+// transition modal supplies its own generic fallback, so no prompt is
+// synthesized here.
+export const getTransitionDescription = (
   transitionMap: ConnectionTransitionMap | undefined,
-  connectionState: string,
-  transitionState: string,
-) => {
-  const transition = transitionMap?.[connectionState]?.find((t) => t.nextState === transitionState);
-
-  return (
-    transition?.description ||
-    `Are you sure you want to transition from ${connectionState.toUpperCase()} to ${transitionState.toUpperCase()}?`
-  );
+  currentStatus: string | undefined,
+  targetStatus: string,
+): string | undefined => {
+  if (!currentStatus) {
+    return undefined;
+  }
+  return transitionMap?.[currentStatus.toLowerCase()]?.find(
+    (transition) => transition.nextState === targetStatus.toLowerCase(),
+  )?.description;
 };
 
 export const CONNECTION_DOCS_URL = `https://docs.meshery.io/concepts/logical/connections#states-and-the-lifecycle-of-connections`;
 export const ENVIRONMENT_DOCS_URL = `https://docs.meshery.io/concepts/logical/environments`;
+
+// The table's column names follow the v1beta3 camelCase wire shape
+// (createdAt, updatedAt), but the server's `order` query param addresses DB
+// columns (created_at, updated_at - see SanitizeOrderInput in
+// server/models/connection_persister.go). Translate a UI sort order like
+// "createdAt desc" into its server form; unknown fields pass through
+// unchanged, which also keeps older bookmarked URLs with snake_case sort
+// params working.
+const UI_TO_SERVER_SORT_COLUMN: Record<string, string> = {
+  createdAt: 'created_at',
+  updatedAt: 'updated_at',
+};
+
+const SERVER_TO_UI_SORT_COLUMN: Record<string, string> = Object.fromEntries(
+  Object.entries(UI_TO_SERVER_SORT_COLUMN).map(([uiColumn, serverColumn]) => [
+    serverColumn,
+    uiColumn,
+  ]),
+);
+
+export const toServerSortOrder = (sortOrder: string): string => {
+  const trimmed = sortOrder.trim();
+  // Guard against empty / whitespace-only input so we never emit " desc".
+  if (!trimmed) return 'created_at desc';
+  const [field, direction] = trimmed.split(/\s+/);
+  const serverField = UI_TO_SERVER_SORT_COLUMN[field] ?? field;
+  // SanitizeOrderInput accepts exactly "<column> <asc|desc>"; a bare column
+  // would be silently dropped server-side, so default the direction.
+  return `${serverField} ${direction || 'desc'}`;
+};
+
+// The inverse of toServerSortOrder, for the table's active-sort indicator:
+// mui-datatables matches `options.sortOrder.name` against a column name, so a
+// bookmarked snake_case param (created_at desc) has to be mapped back to the
+// camelCase column before it reaches the table, or the indicator matches
+// nothing and silently disappears.
+export const toUiSortOrder = (sortOrder: string): string => {
+  const trimmed = sortOrder.trim();
+  if (!trimmed) return 'createdAt desc';
+  const [field, direction] = trimmed.split(/\s+/);
+  const uiField = SERVER_TO_UI_SORT_COLUMN[field] ?? field;
+  return `${uiField} ${direction || 'desc'}`;
+};

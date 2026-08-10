@@ -12,6 +12,7 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { useSupportWebHookMutation } from '@/rtk-query/webhook';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useGetLoggedInUserQuery, useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import { isRemoteProvider } from '@/utils/provider';
 
 import {
   EditButton,
@@ -35,7 +36,7 @@ const CustomErrorFallback = (props) => {
   const [triggerWebhook] = useSupportWebHookMutation();
   const { data: userData } = useGetLoggedInUserQuery();
   const { data: providerData } = useGetProviderCapabilitiesQuery();
-  const showSupportBasedOnProvider = providerData?.providerType === 'remote';
+  const showSupportBasedOnProvider = isRemoteProvider(providerData);
 
   const handleOpenSupportModal = () => {
     setOpenSupportModal(true);

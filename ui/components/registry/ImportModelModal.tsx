@@ -118,14 +118,10 @@ const CustomRadioWidget = (props: CustomRadioWidgetProps) => {
 
   return (
     <FormControl component="fieldset">
-      <RadioGroup
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        sx={{ marginTop: '-1.7rem', marginLeft: '-1rem' }}
-      >
-        <Typography fontWeight={'bold'} fontSize={'1rem'}>
-          {label}
-        </Typography>
+      <Typography fontWeight={'bold'} fontSize={'1rem'} sx={{ marginBottom: '0.5rem' }}>
+        {label}
+      </Typography>
+      <RadioGroup value={value} onChange={(e) => onChange(e.target.value)} aria-label={label}>
         {enumOptions.map((option, index) => (
           <FormControlLabel
             key={option.value}
@@ -273,23 +269,23 @@ const ImportModelModal = memo<ImportModelModalProps>(
         }
       }
 
-      // Fire the request first; only advance to the Finish step on success so
-      // a failed import doesn't strand the user on a perpetual loading screen
-      // (the Finish step subscribes to the operations-center event bus and
-      // only ever stops loading on a SUCCESS event).
       updateProgress({ showProgress: true });
-      try {
-        await importModelReq({ importBody: requestBody }).unwrap();
-        setActiveStep(1);
-      } catch (err) {
-        console.error('Failed to import model:', err);
-        notify({
-          message: 'Model import failed. Please verify the file or URL and try again.',
-          event_type: EVENT_TYPES.ERROR,
-        });
-      } finally {
-        updateProgress({ showProgress: false });
-      }
+      setActiveStep(1);
+
+      (async () => {
+        try {
+          await importModelReq({ importBody: requestBody }).unwrap();
+        } catch (err) {
+          console.error('Failed to import model:', err);
+          notify({
+            message: 'Model import failed. Please verify the file or URL and try again.',
+            event_type: EVENT_TYPES.ERROR,
+          });
+          setActiveStep(0); // Move back on failure
+        } finally {
+          updateProgress({ showProgress: false });
+        }
+      })();
     };
 
     const helpText = (

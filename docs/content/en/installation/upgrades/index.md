@@ -8,6 +8,12 @@ weight: 30
 
 # Upgrade Guide
 
+{{% alert title="Looking for the step-by-step procedure?" color="info" %}}
+This page explains how Meshery's components version and upgrade in relation to
+one another. For the hands-on procedure, follow the
+[Upgrading Meshery guide]({{< ref "guides/upgrading-meshery/index.md" >}}).
+{{% /alert %}}
+
 ## Upgrading Meshery Server, Adapters, and UI
 
 Various components of Meshery will need to be upgraded as new releases become available. Meshery is comprised of a number of components including a server, adapters, UI, and CLI. As an application, Meshery is a composition of different functional components.
@@ -81,6 +87,83 @@ Docker Deployment: Watchtower updates this component in accordance with the user
 
 Sub-components deploy as a unit; however, they do not share the same version number.
 
+## How Meshery Server manages Meshery Operator
+
+Meshery Server owns the lifecycle of Meshery Operator on every managed
+cluster. Understanding this relationship explains what upgrades automatically
+and what you should — and should not — touch by hand.
+
+**Installation.** When Meshery Server connects to a Kubernetes cluster (in
+operator deployment mode), it installs the `meshery-operator` Helm chart from
+[meshery.io/charts](https://meshery.io/charts) into the `meshery` namespace.
+The chart version it asks for **matches the Meshery Server release version** -
+each Server release snapshots the operator chart (and the operator version
+pinned inside it) as of that release.
+
+**What actually gets deployed is always a published chart.** The Server reads
+the repository's index before installing and never hands Helm a version the
+repository does not carry, so two everyday cases are corrected rather than
+failed:
+
+- **Not published yet.** Chart publishing trails Server releases, so a current
+  Server routinely names a chart that does not exist yet. The newest published
+  release is deployed instead.
+- **Too old to run.** A Server old enough to name a chart below `v1.0.51`, the
+  oldest chart verified to deploy successfully, gets the oldest published chart
+  at or above that boundary. Every chart checked below it leaves the Operator
+  Pod unable to become ready; the symptoms and the reasoning are in
+  [Meshery Operator will not start]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md#meshery-operator-will-not-start-imagepullbackoff-and-a-missing-webhook-certificate" >}}).
+
+Neither substitution is silent: it is reported in the events feed, naming the
+version that was deployed and why. Release candidates are never chosen for you.
+If the chart repository cannot be reached at all, installation is withheld with
+a visible error rather than attempted at an unverified version, while an
+already-installed Operator keeps reporting its status and version as usual.
+
+To choose the chart version yourself instead of tracking the Server release,
+set `operator.version` on the connection. A version you set is deployed exactly
+as written, or refused with a visible error if it names a version the repository
+does not publish or a moving tag such as `stable-latest` - it is never
+substituted, and the minimum above does not apply to it, so a pin below
+`v1.0.51` is installed as asked. See
+[Choosing the chart version yourself]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md#choosing-the-chart-version-yourself" >}}).
+
+**Upgrades.** Upgrading Meshery Server is what upgrades the Operator: on
+(re)connection, the Server re-applies the operator chart at its own (new)
+version. That `helm upgrade` triggers the chart's CRD update Job — a
+pre-upgrade hook that server-side-applies the current `Broker` and `MeshSync`
+CRD schemas (Helm alone never updates CRDs on upgrade) — and rolls the
+Operator Deployment to the operator image pinned in the chart. The Operator
+then reconciles MeshSync and the Broker.
+
+**Reconciliation.** The Server periodically re-applies the operator chart if
+the Operator is missing or unhealthy. Two practical consequences:
+
+- **Manual operator changes are temporary.** A hand-run
+  `helm upgrade meshery-operator --version <x>` or an edited image tag on a
+  Server-managed cluster will be reverted to the chart version the Server
+  resolves (above) by the next reconciliation. `operator.version` on the
+  connection is the durable way to choose a version on a managed cluster;
+  standalone/manual operator installs are only durable on clusters that Meshery
+  Server does not manage.
+- **Operator versions are pinned, not floating.** The operator image is a
+  fixed version per chart release (no `stable-latest` drift): an Operator pod
+  restart never silently changes the operator version. Upgrades happen only
+  when the chart content changes — that is, when you upgrade Meshery Server.
+
+**CRDs persist.** The `brokers.meshery.io` and `meshsyncs.meshery.io` CRDs
+(and your `Broker`/`MeshSync` objects) deliberately survive operator
+uninstalls and Helm release deletion. Removing them — and with them every
+custom resource of those types — is an explicit, manual step:
+`kubectl delete crd brokers.meshery.io meshsyncs.meshery.io`.
+
+You can toggle operator deployment per cluster in Meshery UI under
+**Settings**, or avoid deploying the operator entirely by choosing MeshSync's
+[embedded mode]({{< ref "concepts/architecture/meshsync.md#meshsync-deployment-mode" >}})
+for the connection. See
+[Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}}) for
+the architecture.
+
 ### Meshery Docker Deployments
 
 In order to pull the latest images for Meshery Server, Adapters, and UI, execute the following command:
@@ -97,7 +180,17 @@ If you wish to update a running Meshery deployment with the images you just pull
 
 ### Meshery Kubernetes Deployments
 
-Use `kubectl apply` or `helm` to upgrade the Meshery application manifests in your Kubernetes cluster.
+Upgrade with Helm, pinning an explicit chart version and using the
+upgrade-friendly probe values:
+
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">helm upgrade meshery meshery/meshery --namespace meshery --version &lt;target-version&gt; -f values-upgrade.yaml --wait</div></div>
+ </pre>
+
+The [Upgrading Meshery guide]({{< ref "guides/upgrading-meshery/index.md" >}})
+covers the full procedure, verification steps, and rollback; the
+[Operational Readiness Checklist]({{< ref "installation/production/operational-readiness-checklist.md" >}})
+covers production upgrade strategy.
 
 ## Upgrading Meshery CLI
 

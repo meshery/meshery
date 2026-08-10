@@ -1,9 +1,36 @@
 import { describe, expect, it } from 'vitest';
 import {
   normalizeKubernetesContextsResponse,
+  normalizeLoggedInUser,
   normalizePaginatedCollectionResponse,
   normalizeProviderCapabilities,
 } from '../transforms';
+
+describe('normalizeLoggedInUser', () => {
+  it('backfills userId from id when the v1beta3 response omits userId', () => {
+    expect(normalizeLoggedInUser({ id: 'uuid-1', email: 'owner@meshery.io' })).toEqual({
+      id: 'uuid-1',
+      email: 'owner@meshery.io',
+      userId: 'uuid-1',
+    });
+  });
+
+  it('preserves an existing userId (does not overwrite it with id)', () => {
+    expect(
+      normalizeLoggedInUser({ id: 'uuid-1', userId: 'legacy-user', status: 'active' }),
+    ).toEqual({
+      id: 'uuid-1',
+      userId: 'legacy-user',
+      status: 'active',
+    });
+  });
+
+  it('returns undefined for null / non-object responses', () => {
+    expect(normalizeLoggedInUser(undefined)).toBeUndefined();
+    expect(normalizeLoggedInUser(null as unknown as undefined)).toBeUndefined();
+    expect(normalizeLoggedInUser('not-an-object' as unknown as undefined)).toBeUndefined();
+  });
+});
 
 describe('normalizeProviderCapabilities', () => {
   it('normalizes snake_case provider fields to camelCase', () => {

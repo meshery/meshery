@@ -160,9 +160,11 @@ type DesignPostPayload struct {
 	ID         *core.Uuid         `json:"id,omitempty"`
 	Name       string             `json:"name,omitempty"`
 	DesignFile design.PatternFile `json:"designFile"`
-	// Meshery doesn't have the owner field
-	// but the remote provider is allowed to provide one
-	Owner       *string              `json:"owner"`
+	// UserID is the id of the design's owner, emitted as "userId" per the
+	// schemas v1beta3 design.MesheryPatternPayload contract. The remote
+	// provider (meshery-cloud) supplies it; Meshery's built-in provider is
+	// single-user and stamps the owner on read.
+	UserID      *core.Uuid           `json:"userId,omitempty"`
 	Visibility  string               `json:"visibility"`
 	CatalogData v1alpha1.CatalogData `json:"catalogData,omitempty"`
 }
@@ -383,7 +385,7 @@ func (h *Handler) handlePatternPOST(
 	mesheryPatternRecord := models.MesheryPattern{
 		ID:          requestPayload.ID,
 		PatternFile: designFile,
-		Owner:       requestPayload.Owner,
+		UserID:      requestPayload.UserID,
 		Name:        requestPayload.Name,
 		Visibility:  requestPayload.Visibility,
 		CatalogData: requestPayload.CatalogData,
@@ -797,7 +799,6 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Pattern %s deleted.", mesheryPattern.Name)).Build()
 	_ = provider.PersistEvent(*event, token)
 	go h.config.EventBroadcaster.Publish(userID, event)
-	go h.config.PatternChannel.Publish(user.ID, struct{}{})
 
 	rw.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
@@ -1358,7 +1359,6 @@ func (h *Handler) CloneMesheryPatternHandler(
 		return
 	}
 
-	go h.config.PatternChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
 		h.log.Error(err)
@@ -1440,7 +1440,6 @@ func (h *Handler) PublishCatalogPatternHandler(
 	_ = provider.PersistEvent(*e, token)
 	go h.config.EventBroadcaster.Publish(userID, e)
 
-	go h.config.PatternChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	rw.WriteHeader(http.StatusAccepted)
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
@@ -1523,7 +1522,6 @@ func (h *Handler) UnPublishCatalogPatternHandler(
 	_ = provider.PersistEvent(*e, token)
 	go h.config.EventBroadcaster.Publish(userID, e)
 
-	go h.config.PatternChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
 		h.log.Error(err)
@@ -1556,7 +1554,6 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 		writeMeshkitError(rw, ErrDeletePattern(err), http.StatusInternalServerError)
 		return
 	}
-	go h.config.PatternChannel.Publish(user.ID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(rw, string(resp)); err != nil {
 		h.log.Error(err)
@@ -1837,7 +1834,6 @@ func (h *Handler) handlePatternUpdate(
 		writeMeshkitError(rw, errPatternSave, http.StatusInternalServerError)
 		return
 	}
-	go h.config.PatternChannel.Publish(userID, struct{}{})
 
 	eventBuilder = eventBuilder.WithSeverity(events.Informational).ActedUpon(*mesheryPattern.ID)
 

@@ -190,7 +190,7 @@ const ModelContents = ({ modelDef }: { modelDef: any }) => {
   };
   const handleExport = () => {
     const a = document.createElement('a');
-    a.href = '/api/meshmodels/export?id=' + modelDef.id;
+    a.href = '/api/registry/export?id=' + modelDef.id;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -482,6 +482,9 @@ const StatusChip = ({ entityData, entityType }: { entityData: any; entityType: s
           value={data?.status || REGISTRY_ITEM_STATES.IGNORED}
           defaultValue={data?.status || REGISTRY_ITEM_STATES.IGNORED}
           onChange={(e) => handleStatusChange(e)}
+          SelectDisplayProps={{
+            'aria-label': 'Model status',
+          }}
           sx={{
             textTransform: 'capitalize',
           }}

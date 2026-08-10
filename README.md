@@ -232,21 +232,21 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 | &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/docker/images/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker - Docker App](https://docs.meshery.io/installation/docker)                           |      ✔️      |
 | &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/docker/images/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker - Docker Extension](https://docs.meshery.io/installation/docker/docker-extension) |      ✔️      |
 | <img src="https://docs.meshery.io/installation/kubernetes/images/kubernetes.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes](https://docs.meshery.io/installation/kubernetes)                                               |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/kubernetes/images/aks.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - AKS](https://docs.meshery.io/installation/kubernetes/aks)                         |      ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/kubernetes/aks/images/aks.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - AKS](https://docs.meshery.io/installation/kubernetes/aks)                         |      ✔️      |
 | &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/docker/images/docker.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Docker Desktop](https://docs.meshery.io/installation#mac-or-linux)             |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/kubernetes/images/eks.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - EKS](https://docs.meshery.io/installation/kubernetes/eks)                         |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/kubernetes/images/gke.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - GKE](https://docs.meshery.io/installation/kubernetes/gke)                         |      ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/kubernetes/eks/images/eks.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - EKS](https://docs.meshery.io/installation/kubernetes/eks)                         |      ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/kubernetes/gke/images/gke.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - GKE](https://docs.meshery.io/installation/kubernetes/gke)                         |      ✔️      |
 | &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/kubernetes/images/helm.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Helm](https://docs.meshery.io/installation/kubernetes/helm)                      |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/kubernetes/images/kind.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - kind](https://docs.meshery.io/installation/kubernetes/kind)                      |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/kubernetes/images/minikube.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - Minikube](https://docs.meshery.io/installation/kubernetes/minikube)          |      ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/kubernetes/kind/images/kind.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - kind](https://docs.meshery.io/installation/kubernetes/kind)                      |      ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/kubernetes/minikube/images/minikube.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - Minikube](https://docs.meshery.io/installation/kubernetes/minikube)          |      ✔️      |
 | &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/kubernetes/images/openshift.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - OpenShift](https://docs.meshery.io/installation/kubernetes)                      |      ✔️      |
 | &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/kubernetes/images/kubernetes.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Rancher](https://docs.meshery.io/installation/kubernetes)                      |      ✔️      |
-| <img src="https://docs.meshery.io/installation/linux-mac/images/linux.svg" width="20" height="20" vertical-align="middle" /> [Linux](https://docs.meshery.io/installation#mac-or-linux)                                                       |      ✔️      |
-| <img src="https://docs.meshery.io/installation/linux-mac/images/apple.svg" width="20" height="20" vertical-align="middle" /> [Mac](https://docs.meshery.io/installation#mac-or-linux)                                                         |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/linux-mac/images/homebrew.png" width="20" height="20" vertical-align="middle" /> [Mac - Homebrew](https://docs.meshery.io/installation#mac-or-linux)                        |      ✔️      |
-| <img src="https://docs.meshery.io/installation/windows/images/wsl2.png" width="20" height="20" vertical-align="middle" /> [Windows](https://docs.meshery.io/installation#windows)                                                           |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/windows/images/wsl2.png" width="20" height="20" vertical-align="middle" /> [Scoop](https://docs.meshery.io/installation#windows)                                                                                                                                                             |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/windows/images/wsl2.png" width="20" height="20" vertical-align="middle" /> [WSL2](https://docs.meshery.io/installation/platforms/windows#wsl2)                            |      ✔️      |
+| <img src="https://docs.meshery.io/installation/mesheryctl/linux-mac/images/linux.svg" width="20" height="20" vertical-align="middle" /> [Linux](https://docs.meshery.io/installation#mac-or-linux)                                                       |      ✔️      |
+| <img src="https://docs.meshery.io/installation/mesheryctl/linux-mac/images/apple.svg" width="20" height="20" vertical-align="middle" /> [Mac](https://docs.meshery.io/installation#mac-or-linux)                                                         |      ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/mesheryctl/linux-mac/images/homebrew.png" width="20" height="20" vertical-align="middle" /> [Mac - Homebrew](https://docs.meshery.io/installation#mac-or-linux)                        |      ✔️      |
+| <img src="https://docs.meshery.io/installation/mesheryctl/windows/images/wsl2.png" width="20" height="20" vertical-align="middle" /> [Windows](https://docs.meshery.io/installation#windows)                                                           |      ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/mesheryctl/windows/images/wsl2.png" width="20" height="20" vertical-align="middle" /> [Scoop](https://docs.meshery.io/installation#windows)                                                                                                                                                             |      ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/mesheryctl/windows/images/wsl2.png" width="20" height="20" vertical-align="middle" /> [WSL2](https://docs.meshery.io/installation/platforms/windows#wsl2)                            |      ✔️      |
 | <img src="https://docs.meshery.io/installation/kubernetes/images/raspberry-pi.png" width="20" height="20" vertical-align="middle" /> Raspberry Pi                                                                                              | In Progress |
 
 [Meshery documentation](https://docs.meshery.io/installation) offers thorough installation guides for your platform of choice.
@@ -307,6 +307,23 @@ Learn more about the <a href="https://meshery.io/community#meshmates">MeshMates<
 Please do! We're a warm and welcoming community of open source contributors. Please join. All types of contributions are welcome. Be sure to read the [Contributor Guides](https://docs.meshery.io/project/contributing) for a tour of resources available to you and how to get started.
 
 **Naming conventions.** This repository adheres to the canonical camelCase-wire identifier-naming contract shared across the Meshery ecosystem. See the [identifier-naming contributor guide](https://github.com/meshery/schemas/blob/master/docs/identifier-naming-contributor-guide.md) in `meshery/schemas` for the full reader-friendly directory (26-row naming table with before/after and do/don't examples). Repo-specific mandates live in [`AGENTS.md § Identifier Naming Conventions`](./AGENTS.md).
+
+### Cloning this repository (sparse clone recommended)
+
+This repository is large - a full clone is tens of gigabytes and grows over time, mostly from the generated model registry (`models/`, 400+ models) and archived documentation snapshots (`docs/static/v*/`). Unless you specifically need those, **clone sparsely** to get a working tree a fraction of the size while keeping the full commit history:
+
+```bash
+# Blobless partial clone, then check out everything EXCEPT the bulky generated dirs
+git clone --no-checkout --filter=blob:none https://github.com/meshery/meshery.git
+cd meshery
+git sparse-checkout set --no-cone \
+  '/*' \
+  '!/models/*' '/models/meshery-core/' '/models/kubernetes/' \
+  '!/docs/static/v0.8/'
+git checkout master
+```
+
+This keeps only the `meshery-core` and `kubernetes` models and the latest docs snapshot (`docs/static/v0.9`). Git fetches any excluded file on demand, so nothing is permanently lost. See the [Contributing guide](https://docs.meshery.io/project/contributing/#cloning-the-repository) for how to re-include a directory later.
 
 <!-- <a href="https://youtu.be/MXQV-i-Hkf8"><img alt="Deploying Linkerd with Meshery" src="https://docs.meshery.io/assets/img/readme/deploying-linkerd-with-meshery.png" width="100%" align="center" /></a> -->
 
