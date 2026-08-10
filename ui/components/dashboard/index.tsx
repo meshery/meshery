@@ -21,6 +21,8 @@ import {
   OutlinedValidateIcon,
   OutlinedResetIcon,
   useTheme,
+  ActionButton,
+  useMediaQuery,
   ErrorBoundary,
 } from '@sistent/sistent';
 import { WrapperPaper } from './style';
@@ -119,7 +121,7 @@ const Dashboard = () => {
   };
 
   const [currentBreakPoint, setCurrentBreakpoint] = useState('lg');
-  const { selectedK8sContexts, k8sConfig } = useSelector((state) => state.ui);
+  const { selectedK8sContexts, k8sConfig, isDrawerCollapsed } = useSelector((state) => state.ui);
   const [isEditMode, setIsEditMode] = useState(false);
 
   useEffect(() => {
@@ -134,6 +136,16 @@ const Dashboard = () => {
       primaryFill: theme.palette.icon.default,
       secondaryFill: theme.palette.icon.secondary,
       width: '40',
+    }),
+    [theme.palette.icon.default, theme.palette.icon.secondary],
+  );
+  const smallIconsProps = useMemo(
+    () => ({
+      fill: theme.palette.icon.default,
+      primaryFill: theme.palette.icon.default,
+      secondaryFill: theme.palette.icon.secondary,
+      width: '30',
+      height: '30',
     }),
     [theme.palette.icon.default, theme.palette.icon.secondary],
   );
@@ -338,6 +350,8 @@ const Dashboard = () => {
     () => applyMinSizeConstraints(dashboardLayout, defaultLayout, cols, widgetSizing),
     [dashboardLayout, defaultLayout, widgetSizing],
   );
+  const isSmallDevice = useMediaQuery('(max-width:720px)');
+  const isMobile = useMediaQuery('(max-width:599px)');
 
   return (
     <>
@@ -396,9 +410,41 @@ const Dashboard = () => {
                 justifyContent="end"
                 flexWrap={'wrap-reverse'}
               >
-                {topBarActions.map(({ key, ...layoutAction }) => (
-                  <LayoutActionButton {...layoutAction} key={key} />
-                ))}
+                {(isSmallDevice && !isDrawerCollapsed) || isMobile ? (
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      paddingTop: '0.25rem',
+                      width: '100%',
+                    }}
+                  >
+                    <LayoutActionButton {...topBarActions[0]} />
+                    {isEditMode && (
+                      <ActionButton
+                        defaultActionClick={LayoutActions.SAVE_AND_CLOSE.action}
+                        defaultActionDisabled={false}
+                        options={[
+                          {
+                            icon: <LayoutActions.SAVE_LAYOUT.Icon {...smallIconsProps} />,
+                            label: LayoutActions.SAVE_LAYOUT.label,
+                            onClick: LayoutActions.SAVE_LAYOUT.action,
+                          },
+                          {
+                            icon: <LayoutActions.RESET_LAYOUT.Icon {...smallIconsProps} />,
+                            label: LayoutActions.RESET_LAYOUT.label,
+                            onClick: LayoutActions.RESET_LAYOUT.action,
+                          },
+                        ]}
+                        label={LayoutActions.SAVE_AND_CLOSE.label}
+                      />
+                    )}
+                  </div>
+                ) : (
+                  topBarActions.map(({ key, ...layoutAction }) => (
+                    <LayoutActionButton {...layoutAction} key={key} />
+                  ))
+                )}
               </Stack>
 
               <ResponsiveReactGridLayout
