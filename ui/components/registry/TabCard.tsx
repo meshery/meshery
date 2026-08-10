@@ -19,7 +19,18 @@ const TabCard = ({
   onClick: () => void;
 }) => {
   return (
-    <CardStyle isSelected={active} elevation={3} onClick={onClick}>
+    <CardStyle
+      component="button"
+      type="button"
+      isSelected={active}
+      onClick={onClick}
+      aria-pressed={active}
+      sx={{
+        border: 'none',
+        font: 'inherit',
+        letterSpacing: 'inherit',
+      }}
+    >
       <CountSpan>{`(${count?.toLocaleString() || 0})`}</CountSpan>
       {label}
     </CardStyle>
