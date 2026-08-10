@@ -23,7 +23,7 @@ export const CustomDiv = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  gap: theme.spacing(3),
+  gap: theme.spacing(3)
 }));
 
 export const CustomTypography = styled(Typography)(({ theme }) => ({

@@ -1,8 +1,8 @@
 import { promisifiedDataFetch } from '../lib/data-fetch';
-import { MESHMODEL_COMPONENT_ENDPOINT, MESHMODEL_ENDPOINT } from '../constants/endpoints';
+import { REGISTRY_ENDPOINT, REGISTRY_MODELS_ENDPOINT } from '../constants/endpoints';
 
-const COMPONENTS_ENDPOINT = '/api/meshmodels/components';
-const CATEGORIES_ENDPOINT = '/api/meshmodels/categories';
+const COMPONENTS_ENDPOINT = '/api/registry/components';
+const CATEGORIES_ENDPOINT = '/api/registry/categories';
 
 /**
  * @typedef {{
@@ -24,7 +24,7 @@ const defaultOptions = {
 
 export async function getMeshModels(page = 1, pageSize = 'all', options = defaultOptions) {
   return await promisifiedDataFetch(
-    `${MESHMODEL_ENDPOINT}?page=${page}&pagesize=${pageSize}&${optionToQueryConvertor({
+    `${REGISTRY_MODELS_ENDPOINT}?page=${page}&pagesize=${pageSize}&${optionToQueryConvertor({
       ...defaultOptions,
       ...options,
     })}`,
@@ -33,12 +33,12 @@ export async function getMeshModels(page = 1, pageSize = 'all', options = defaul
 
 export async function getComponentFromModelApi(model, pageSize = 'all', trim = true) {
   return await promisifiedDataFetch(
-    `${MESHMODEL_ENDPOINT}/${model}/components?pagesize=${pageSize}&trim=${trim}`,
+    `${REGISTRY_MODELS_ENDPOINT}/${model}/components?pagesize=${pageSize}&trim=${trim}`,
   );
 }
 
 export async function getDuplicateModels(model, version) {
-  return await promisifiedDataFetch(`${MESHMODEL_ENDPOINT}/${model}?version=${version}      `);
+  return await promisifiedDataFetch(`${REGISTRY_MODELS_ENDPOINT}/${model}?version=${version}`);
 }
 
 export async function getDuplicateComponents(componentKind, apiVersion, modelName) {
@@ -47,9 +47,7 @@ export async function getDuplicateComponents(componentKind, apiVersion, modelNam
 }
 
 export async function getMeshModelRegistrants(page = 1, pageSize = 'all') {
-  return await promisifiedDataFetch(
-    `/api/meshmodels/registrants?page=${page}&pageSize=${pageSize}`,
-  );
+  return await promisifiedDataFetch(`/api/registry/registrants?page=${page}&pageSize=${pageSize}`);
 }
 
 export async function getVersionedComponentFromModel(
@@ -59,16 +57,16 @@ export async function getVersionedComponentFromModel(
   trim = true,
 ) {
   return await promisifiedDataFetch(
-    `${MESHMODEL_ENDPOINT}/${model}/components?version=${version}&pagesize=${pageSize}&trim=${trim}`,
+    `${REGISTRY_MODELS_ENDPOINT}/${model}/components?version=${version}&pagesize=${pageSize}&trim=${trim}`,
   );
 }
 
 export async function getComponentsDetail(page) {
-  return await promisifiedDataFetch(`/api/meshmodels/components?page=${page}`);
+  return await promisifiedDataFetch(`/api/registry/components?page=${page}`);
 }
 
 export async function getRelationshipsDetail(page) {
-  return await promisifiedDataFetch(`/api/meshmodels/relationships?page=${page}`);
+  return await promisifiedDataFetch(`/api/registry/relationships?page=${page}`);
 }
 
 export async function getMeshModelComponent(model, component, version, apiVersion) {
@@ -80,16 +78,16 @@ export async function getMeshModelComponent(model, component, version, apiVersio
       : `&apiVersion=${apiVersion}`;
 
   return promisifiedDataFetch(
-    `${MESHMODEL_ENDPOINT}/${model}/components/${component}${versionQueryString}${apiVersionQueryString}`,
+    `${REGISTRY_MODELS_ENDPOINT}/${model}/components/${component}${versionQueryString}${apiVersionQueryString}`,
   );
 }
 
 export async function getMeshModelComponentByName(component) {
-  return promisifiedDataFetch(`${MESHMODEL_COMPONENT_ENDPOINT}/components/${component}`);
+  return promisifiedDataFetch(`${REGISTRY_ENDPOINT}/components/${component}`);
 }
 
 export async function getConnectionDefinitions() {
-  return promisifiedDataFetch(`/api/meshmodels/connections?pagesize=all`);
+  return promisifiedDataFetch(`/api/registry/connections?pagesize=all`);
 }
 
 export async function fetchCategories() {
@@ -102,7 +100,7 @@ export async function getModelFromCategoryApi(category) {
 
 export async function getModelByName(modelName, options = defaultOptions) {
   return promisifiedDataFetch(
-    `${MESHMODEL_ENDPOINT}/${modelName}?${optionToQueryConvertor(options)}`,
+    `${REGISTRY_MODELS_ENDPOINT}/${modelName}?${optionToQueryConvertor(options)}`,
   );
 }
 

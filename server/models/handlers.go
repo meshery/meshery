@@ -5,7 +5,6 @@ import (
 
 	"time"
 
-	"github.com/meshery/meshery/server/models/meshmodel"
 	"github.com/meshery/meshkit/utils/events"
 )
 
@@ -219,6 +218,7 @@ type HandlerInterface interface {
 	PerformConnectionAction(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	ProcessConnectionRegistration(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	CancelConnectionRegister(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	GetControllersDefaultConfig(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UpdateControllersDefaultConfig(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -295,14 +295,7 @@ type HandlerConfig struct {
 	// to be removed
 	BrokerEndpointURL *string
 
-	PerformanceChannel       chan struct{}
-	PerformanceResultChannel chan struct{}
-
-	PatternChannel            *Broadcast
-	FilterChannel             *Broadcast
-	EventBroadcaster          *Broadcast
-	DashboardK8sResourcesChan *DashboardK8sResourcesChan
-	MeshModelSummaryChannel   *meshmodel.SummaryChannel
+	EventBroadcaster *Broadcast
 
 	K8scontextChannel *K8scontextChan
 	EventsBuffer      *events.EventStreamer

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box } from '@sistent/sistent';
 import TelemetryMetrics from '@/components/telemetry/metrics';
-import { MesheryPage, PageContainer } from '../../components/MesheryPage';
+import { MesheryPage, PageContainer } from '../../components/general/MesheryPage';
 
 const TelemetryMetricsPage = () => {
   return (

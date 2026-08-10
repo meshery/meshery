@@ -4,10 +4,18 @@ import PerformanceCalendar from './PerformanceCalendar';
 import MesheryPerformanceComponent from './index';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
-import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '@/components/general/error-404/index';
-import { Modal, Button, Grid2, Paper, Typography, useTheme, styled } from '@sistent/sistent';
+import {
+  Modal,
+  Button,
+  Grid2,
+  Paper,
+  Typography,
+  useTheme,
+  styled,
+  useHasPermission,
+} from '@sistent/sistent';
 import { updateProgressAction } from '@/store/slices/mesheryUi';
 import { useDispatch } from 'react-redux';
 import { useGetPerformanceProfilesQuery } from '@/rtk-query/performance-profile';
@@ -56,6 +64,7 @@ const Separator = styled('div')(({ theme, vertical }) => ({
 }));
 
 function Dashboard() {
+  const hasViewPermission = useHasPermission(Keys.PerformanceManagementViewPerformanceProfiles);
   const [profiles, setProfiles] = useState({ count: 0, profiles: [] });
   const [tests, setTests] = useState({ count: 0, tests: [] });
   const [runTest, setRunTest] = useState(false);
@@ -131,10 +140,7 @@ function Dashboard() {
 
   return (
     <>
-      {CAN(
-        Keys.PerformanceManagementViewPerformanceProfiles.id,
-        Keys.PerformanceManagementViewPerformanceProfiles.function,
-      ) ? (
+      {hasViewPermission ? (
         <>
           <Grid2
             container
@@ -175,12 +181,7 @@ function Dashboard() {
                       <div style={{ margin: '2rem 0 0 auto', width: 'fit-content' }}>
                         <StyledButton
                           onClick={() => setRunTest(true)}
-                          disabled={
-                            !CAN(
-                              Keys.PerformanceManagementRunTest.id,
-                              Keys.PerformanceManagementRunTest.function,
-                            )
-                          }
+                          permissionKey={Keys.PerformanceManagementRunTest}
                           variant="contained"
                         >
                           Run Test

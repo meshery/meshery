@@ -15,17 +15,40 @@ vi.mock('@/utils/can', () => ({
   default: (...args: unknown[]) => can(...args),
 }));
 
-vi.mock('@sistent/sistent', () => ({
-  DeleteIcon: () => <svg data-testid="delete-icon" />,
-  EditIcon: () => <svg data-testid="edit-icon" />,
-  Grid2: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  SyncAltIcon: () => <svg data-testid="sync-icon" />,
-  useTheme: () => ({
-    palette: {
-      background: { neutral: { default: 'neutral' } },
-    },
-  }),
-}));
+vi.mock('@sistent/sistent', () => {
+  const styled = (Component: any) => () => {
+    const StyledComponent = ({ children, ...props }: any) => (
+      <Component {...props}>{children}</Component>
+    );
+    StyledComponent.displayName = 'StyledSistentMock';
+    return StyledComponent;
+  };
+
+  return {
+    DeleteIcon: () => <svg data-testid="delete-icon" />,
+    EditIcon: () => <svg data-testid="edit-icon" />,
+    Grid2: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    SyncAltIcon: () => <svg data-testid="sync-icon" />,
+    IconButton: ({ children, onClick, disabled, ...props }: any) => (
+      <button data-testid="sistent-icon-button" onClick={onClick} disabled={disabled} {...props}>
+        {children}
+      </button>
+    ),
+    CustomTooltip: ({ children, title }: any) => (
+      <div data-testid="custom-tooltip" title={title}>
+        {children}
+      </div>
+    ),
+    Typography: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    useTheme: () => ({
+      palette: {
+        background: { neutral: { default: 'neutral' } },
+        icon: { secondary: 'secondary' },
+      },
+    }),
+    styled,
+  };
+});
 
 vi.mock('../lifecycle/general', () => ({
   FlipCard: ({ frontComponents, backComponents, disableFlip }: any) => (
@@ -61,11 +84,15 @@ vi.mock('./styles', () => ({
   ),
   TabCount: ({ children }: any) => <span data-testid="tab-count">{children}</span>,
   TabTitle: ({ children }: any) => <span data-testid="tab-title">{children}</span>,
-  PopupButton: ({ children, onClick, disabled }: any) => (
-    <button data-testid="popup-button" onClick={onClick} disabled={disabled}>
-      {children}
-    </button>
-  ),
+  PopupButton: ({ children, onClick, disabled, permissionKey }: any) => {
+    const isDisabled =
+      disabled || (permissionKey && !can(permissionKey.id, permissionKey.function));
+    return (
+      <button data-testid="popup-button" onClick={onClick} disabled={isDisabled}>
+        {children}
+      </button>
+    );
+  },
   AllocationButton: ({ children, onClick }: any) => <div onClick={onClick}>{children}</div>,
   BulkSelectCheckbox: ({ onChange, onClick, disabled }: any) => (
     <input
@@ -97,7 +124,7 @@ describe('TransferButton', () => {
   it('renders the title, count and triggers onAssign when clicked', async () => {
     const user = userEvent.setup();
     const onAssign = vi.fn();
-    render(<TransferButton title="Connections" count={4} onAssign={onAssign} disabled={false} />);
+    render(<TransferButton title="Connections" count={4} onAssign={onAssign} />);
 
     expect(screen.getByTestId('tab-count')).toHaveTextContent('4');
     expect(screen.getByTestId('tab-title')).toHaveTextContent('Connections');
@@ -105,14 +132,19 @@ describe('TransferButton', () => {
     expect(onAssign).toHaveBeenCalledTimes(1);
   });
 
-  it('respects the disabled prop', async () => {
+  it('respects the permissionKey prop when user lacks permission', async () => {
+    can.mockReturnValue(false);
     const user = userEvent.setup();
     const onAssign = vi.fn();
-    render(<TransferButton title="Connections" count={1} onAssign={onAssign} disabled={true} />);
+    const mockKey = { id: 'view-connections', function: 'ViewConnections' };
+    render(
+      <TransferButton title="Connections" count={1} onAssign={onAssign} permissionKey={mockKey} />,
+    );
     const btn = screen.getByTestId('popup-button');
     expect(btn).toBeDisabled();
     await user.click(btn);
     expect(onAssign).not.toHaveBeenCalled();
+    can.mockReturnValue(true);
   });
 });
 

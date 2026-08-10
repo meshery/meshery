@@ -38,7 +38,7 @@ var exportModelCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export registered models",
 	Long: `Export the registered model to the specified output type
-Find more information at: https://docs.meshery.io/reference/mesheryctl/model/export`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/model/export`,
 	Example: `
 // Export a model by name 
 mesheryctl model export [model-name] -o [oci|tar]  (default is oci)
@@ -77,8 +77,8 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 		modelName := args[0]
 		queryParams := url.Values{}
 		queryParams.Set("name", modelName)
-		queryParams.Set("output_format", exportModelFlagsProvided.OutputFormat)
-		queryParams.Set("file_type", exportModelFlagsProvided.OutputType)
+		queryParams.Set("outputFormat", exportModelFlagsProvided.OutputFormat)
+		queryParams.Set("fileType", exportModelFlagsProvided.OutputType)
 		queryParams.Set("components", fmt.Sprintf("%t", !exportModelFlagsProvided.DiscardComponents))
 		queryParams.Set("relationships", fmt.Sprintf("%t", !exportModelFlagsProvided.DiscardRelationships))
 		queryParams.Set("page", fmt.Sprintf("%d", exportModelFlagsProvided.Page))
@@ -86,7 +86,7 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 			queryParams.Set("version", exportModelFlagsProvided.Version)
 		}
 
-		urlPath := fmt.Sprintf("api/meshmodels/export?%s", queryParams.Encode())
+		urlPath := fmt.Sprintf("api/registry/export?%s", queryParams.Encode())
 
 		output := &outputDetail{
 			Format: exportModelFlagsProvided.OutputFormat,

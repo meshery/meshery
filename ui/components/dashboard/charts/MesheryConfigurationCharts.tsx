@@ -1,19 +1,18 @@
 import React, { useMemo } from 'react';
 import { donut } from 'billboard.js';
-import BBChart from '../../BBChart';
+import BBChart from '../../general/BBChart';
 import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';
 import { iconSmall } from '../../../css/icons.styles';
 import { CustomTextTooltip } from '@/components/meshery-mesh-interface/PatternService/CustomTextTooltip';
 import { useGetPatternsQuery } from '@/rtk-query/design';
 import { useGetFiltersQuery } from '@/rtk-query/filter';
-import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
 import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
 
-import { Box, InfoOutlinedIcon, Typography, useTheme } from '@sistent/sistent';
+import { Box, InfoOutlinedIcon, Typography, useHasPermission, useTheme } from '@sistent/sistent';
 
 type ChartColumn = [string, number];
 
@@ -84,17 +83,14 @@ export default function MesheryConfigurationChart() {
     [chartData, router, theme],
   );
 
+  const canViewDesigns = useHasPermission(Keys.CatalogManagementViewDesigns);
+
   return (
     <Link
       href="/configuration/designs"
       style={{
         textDecoration: 'none',
-        pointerEvents: !CAN(
-          Keys.CatalogManagementViewDesigns.id,
-          Keys.CatalogManagementViewDesigns.function,
-        )
-          ? 'none'
-          : 'auto',
+        pointerEvents: !canViewDesigns ? 'none' : 'auto',
       }}
     >
       <DashboardSection>

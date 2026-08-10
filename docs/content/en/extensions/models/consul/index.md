@@ -145,7 +145,15 @@ components:
   colorIcon: extensions/models/consul/components/route-tlssds-filter/icons/color/route-tlssds-filter-color.svg
   whiteIcon: extensions/models/consul/components/route-tlssds-filter/icons/white/route-tlssds-filter-white.svg
   description: 
-components-count: 34
+- name: route-ext-proc
+  colorIcon: extensions/models/consul/components/route-ext-proc/icons/color/route-ext-proc-color.svg
+  whiteIcon: extensions/models/consul/components/route-ext-proc/icons/white/route-ext-proc-white.svg
+  description: 
+- name: route-ext-proc
+  colorIcon: extensions/models/consul/components/route-ext-proc/icons/color/route-ext-proc-color.svg
+  whiteIcon: extensions/models/consul/components/route-ext-proc/icons/white/route-ext-proc-white.svg
+  description: 
+components-count: 36
 relationships: 
 relationship-count: 0
 featureList: [

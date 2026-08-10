@@ -7,7 +7,7 @@ import { Title } from '../../view';
 import { TooltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
-import { CONNECTION_KINDS } from '../../../../utils/Enum';
+import { CoreConnectionKinds } from '../../../../utils/Enum';
 import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
 import { FormatId } from '@/components/data-formatter';
 
@@ -101,7 +101,7 @@ export const useNamespaceTableConfig = (
                 title={context.name}
                 iconSrc={
                   connectionMetadataState
-                    ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                    ? connectionMetadataState[CoreConnectionKinds.kubernetes]?.icon
                     : ''
                 }
                 handlePing={() => ping(context.name, context.server, context.connectionId)}

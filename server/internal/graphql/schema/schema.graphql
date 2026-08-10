@@ -115,17 +115,9 @@ type Error {
 
 # ================ DASHBOARD ================
 
-type Resource {
-  # Name of resource
-  kind: String!,
-  # Number of resouce
-  count: Int!
-}
-
-# Details about discovered workloads
-type ClusterResources {
-  resources: [Resource!]!,
-}
+# NOTE: the Resource / ClusterResources types were removed along with
+# subscribeClusterResources. Cluster resource counts are served over REST by
+# GET /api/system/meshsync/resources/summary.
 
 # =================== ADDONS =====================
 
@@ -295,32 +287,10 @@ type K8sContextsPage {
 
 # ================= Configuration ===================
 
-type ConfigurationPage {
-  applications: ApplicationPage
-  patterns: PatternPageResult
-  filters: FilterPage
-}
-
-# ================= Applications ====================
-
-type ApplicationPage {
-  page: Int!
-  page_size: Int!
-  total_count: Int!
-  applications: [ApplicationResult]
-}
-
-type ApplicationResult {
-  id: ID!
-  name: String!
-  application_file: String!
-  type: NullString!
-  owner: String!
-  location: Location!
-  visibility: String!
-  created_at: String
-  updated_at: String
-}
+# NOTE: ConfigurationPage / ApplicationPage / ApplicationResult / FilterPage /
+# FilterResult were removed along with subscribeConfiguration. Patterns and
+# filters are served over REST (GET /api/pattern, GET /api/filter) and the UI
+# refetches via RTK cache invalidation.
 
 type NullString {
   String: String!
@@ -328,26 +298,6 @@ type NullString {
 }
 
 # ================= Filters =======================
-
-type FilterPage {
-  page: Int!
-  page_size: Int!
-  total_count: Int!
-  filters: [FilterResult]
-}
-
-type FilterResult {
-  id: ID!
-  name: String!
-  filter_file: String!
-  filter_resource: String!
-  owner: String!
-  location: Location!
-  visibility: String!
-  catalog_data: Map
-  created_at: String
-  updated_at: String
-}
 
 type CatalogFilter {
   id: ID!
@@ -617,36 +567,20 @@ type Mutation {
   changeAdapterStatus(input: AdapterStatusInput): Status! @KubernetesMiddleware
 }
 
-type Subscription {
-  # Listen to changes in Performance Profiles
-  subscribePerfProfiles(selector: PageFilter!): PerfPageProfiles!
-
-  # Listen to all results for profile ID
-  subscribePerfResults(selector: PageFilter!, profileID: String!): PerfPageResult!
-
-  # NOTE: subscribeMesheryControllersStatus was migrated to Server-Sent Events.
-  # See GET /api/system/controllers/status/subscribe (SubscribeMesheryControllersStatusHandler).
-
-  # Listen to the events that MeshSync is sending through Meshery Broker.
-  # Note: It does not listen to the changes in meshery database, but to meshsync events
-  # subscribeMeshSyncEvents(
-  #  connectionIDs: [String!]
-  #  eventTypes: [MeshSyncEventType!]
-  #) : MeshSyncEvent! @KubernetesMiddleware
-
-  subscribeConfiguration( patternSelector: PageFilter!, filterSelector: PageFilter!) : ConfigurationPage!
-
-  subscribeClusterResources(
-    k8scontextIDs: [String!],
-    namespace: String!
-  ): ClusterResources!
-
-  # NOTE: subscribeK8sContext was removed. The k8s context / connection list is
-  # now driven by the connections REST API (kind=kubernetes) with RTK cache
-  # invalidation — everything is connection-driven.
-
-  subscribeMeshModelSummary(selector: MeshModelSummarySelector!) : MeshModelSummary!
-}
+# NOTE: there is no `type Subscription` any more — GraphQL subscriptions have
+# been fully retired from Meshery Server, and with them the graphql-ws WebSocket
+# transport. Real-time surfaces use Server-Sent Events; everything else is REST.
+#
+#   subscribeEvents                  -> GET /api/system/events/subscribe (SSE)
+#   subscribeMesheryControllersStatus-> GET /api/system/controllers/status/subscribe (SSE)
+#   subscribeK8sContext              -> GET /api/integrations/connections?kind=kubernetes
+#   subscribePerfProfiles/Results    -> GET /api/user/performance/profiles[/{id}/results]
+#   subscribeClusterResources        -> GET /api/system/meshsync/resources[/summary]
+#   subscribeMeshModelSummary        -> GET /api/meshmodels/{components,relationships}
+#   subscribeConfiguration           -> GET /api/pattern, GET /api/filter
+#
+# The last four were pure refetch-on-signal loops over an equivalent Query, and
+# the UI now refetches via RTK cache invalidation instead.
 
 type KctlDescribeDetails {
   describe: String

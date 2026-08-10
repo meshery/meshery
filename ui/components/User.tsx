@@ -33,9 +33,13 @@ const User = (props) => {
   const goToProfile = () => {
     const profileUrl = getProfileUrl();
     if (profileUrl) {
-      window.location = profileUrl;
+      window.open(profileUrl, '_blank', 'noopener,noreferrer');
       return;
     }
+    notify({
+      message: 'Please log in to access this profile',
+      event_type: EVENT_TYPES.WARNING,
+    });
   };
 
   useEffect(() => {

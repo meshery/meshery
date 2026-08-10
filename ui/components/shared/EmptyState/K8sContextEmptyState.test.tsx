@@ -1,9 +1,24 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { K8sEmptyState } from './K8sContextEmptyState';
+import { Keys } from '@meshery/schemas/permissions';
+
+const h = vi.hoisted(() => ({
+  openCreateConnectionMock: vi.fn(),
+}));
 
 let mockMode: 'light' | 'dark' = 'light';
+
+vi.mock('@/utils/context/ConnectionWizardContextProvider', () => ({
+  useConnectionWizardModal: () => ({
+    openCreateConnection: h.openCreateConnectionMock,
+    closeCreateConnection: vi.fn(),
+    open: false,
+    presetKind: null,
+    skipKindSelection: false,
+  }),
+}));
 
 vi.mock('@sistent/sistent', () => {
   const styled = (Component: any) => () => {
@@ -14,21 +29,18 @@ vi.mock('@sistent/sistent', () => {
 
   return {
     AddIcon: (props: any) => <svg data-testid="add-icon" {...props} />,
-    Button: ({ children, type, variant, color, sx, ...rest }: any) => (
+    Button: ({ children, type, variant, color, sx, onClick, permissionKey, ...rest }: any) => (
       <button
         type={type}
         data-variant={variant}
         data-color={color}
         data-sx={JSON.stringify(sx || {})}
+        onClick={onClick}
+        data-permission-key={permissionKey?.id ?? ''}
         {...rest}
       >
         {children}
       </button>
-    ),
-    Link: ({ href, children }: any) => (
-      <a href={href} data-testid="link">
-        {children}
-      </a>
     ),
     Typography: ({ children, variant }: any) => (
       <p data-variant={variant} data-testid="typography">
@@ -49,6 +61,10 @@ vi.mock('../../../assets/img/Operator', () => ({
 }));
 
 describe('K8sEmptyState', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('renders the default empty state in light mode', () => {
     mockMode = 'light';
 
@@ -57,8 +73,19 @@ describe('K8sEmptyState', () => {
     expect(screen.getByTestId('operator')).toBeInTheDocument();
     expect(screen.queryByTestId('operator-light')).not.toBeInTheDocument();
     expect(screen.getByTestId('typography')).toHaveTextContent('No cluster connected yet');
-    expect(screen.getByTestId('link')).toHaveAttribute('href', '/management/connections');
     expect(screen.getByRole('button')).toHaveTextContent('Connect Clusters');
+  });
+
+  it('opens the Create Connection wizard in place with Kubernetes pre-selected', () => {
+    mockMode = 'light';
+    render(<K8sEmptyState message={undefined} />);
+
+    fireEvent.click(screen.getByRole('button', { name: /Connect Clusters/i }));
+
+    expect(h.openCreateConnectionMock).toHaveBeenCalledWith({
+      kind: 'kubernetes',
+      skipKindSelection: true,
+    });
   });
 
   it('renders the Operator dark variant in dark mode', () => {
@@ -75,5 +102,12 @@ describe('K8sEmptyState', () => {
     render(<K8sEmptyState message="No active cluster found" />);
 
     expect(screen.getByTestId('typography')).toHaveTextContent('No active cluster found');
+  });
+
+  it('passes the LifecycleManagementAddCluster permission key to the Button', () => {
+    mockMode = 'light';
+    render(<K8sEmptyState message={undefined} />);
+    const button = screen.getByRole('button', { name: /Connect Clusters/i });
+    expect(button).toHaveAttribute('data-permission-key', Keys.LifecycleManagementAddCluster.id);
   });
 });
