@@ -31,7 +31,7 @@ setup() {
 }
 
 @test "given all requirements are met, when running mesheryctl system check --preflight then required sections and prerequisites result are displayed" {
-   run $MESHERYCTL_BIN system check --pre
+   run $MESHERYCTL_BIN system check --preflight
    assert_success
 
    assert_output --partial "$CHECK_DOCKER_HEADER"
@@ -40,7 +40,7 @@ setup() {
    assert_output --partial "$CHECK_PREREQUISISTE_RESULT"
 }
 
-@test "given all requirements are met, when running mesheryctl system check --operator then operators are shown in running state" {
+@test "[TC-1034][cut=Kubernetes Connection][tg=Connection Lifecycle] given all requirements are met, when running mesheryctl system check --operator then operators are shown in running state" {
    run $MESHERYCTL_BIN system check --operator
    assert_success
 
