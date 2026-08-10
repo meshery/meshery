@@ -124,7 +124,7 @@ ol {
     flex: 0 0 100%;
   }
   @media (max-width: 600px) {
-    padding: calc(var(--navbar-height) - 2.5rem) 1.5rem 1.5rem 2.5rem;
+    padding: 1.5rem 1.5rem 1.5rem 2.5rem
   }
   & .breadcrumb {
     list-style: none;
