@@ -115,7 +115,7 @@ const (
 	ErrPersistConnectionCode              = "meshery-server-1309"
 	ErrPrometheusScanCode                 = "meshery-server-1310"
 	ErrGrafanaScanCode                    = "meshery-server-1311"
-	ErrCodexConnectivityCode              = "meshery-server-1473"
+	ErrCodexConnectivityCode              = "meshery-server-1500"
 	ErrDBCreateCode                       = "meshery-server-1312"
 	ErrDoRequestCode                      = "meshery-server-1321"
 	ErrMarshalYAMLCode                    = "meshery-server-1322"
