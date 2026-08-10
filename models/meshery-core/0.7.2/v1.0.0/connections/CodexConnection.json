@@ -1,4 +1,4 @@
-﻿{
+{
   "schemaVersion": "connections.meshery.io/v1beta3",
   "name": "Codex",
   "description": "An OpenAI Codex model-provider connection that lets Meshery interact with Codex for AI inference.",
@@ -8,7 +8,7 @@
   "status": "registered",
   "transitionMap": {
     "discovered": [
-      { "nextState": "registered", "description": "Registers the discovered Codex connection with Meshery so it can be managed. Meshery does not query it until you connect it." },
+      { "nextState": "registered", "description": "Registers the discovered Codex connection with Meshery and verifies connectivity to the configured endpoint." },
       { "nextState": "ignored", "description": "Ignores the discovered Codex connection: Meshery takes no further action on it. You can register it again whenever you choose." }
     ],
     "registered": [

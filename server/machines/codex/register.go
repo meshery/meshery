@@ -1,10 +1,10 @@
-﻿package codex
+package codex
 
 import (
 	"context"
 	"fmt"
 	"net/http"
-	"os"
+	"net/url"
 	"time"
 
 	"github.com/meshery/meshery/server/machines"
@@ -34,8 +34,7 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 		LogLevel: logLevel,
 	})
 	if err != nil {
-		logrus.Error(err)
-		os.Exit(1)
+		return machines.NoOp, nil, err
 	}
 
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
@@ -71,6 +70,12 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 	if !connPayload.SkipCredentialVerification {
 		log.Debug("executing connectivity check for Codex connection")
 		client := &http.Client{Timeout: 10 * time.Second}
+
+		parsedURL, parseErr := url.Parse(codexConn.BaseURL)
+		if parseErr != nil || parsedURL.Scheme != "https" || parsedURL.User != nil {
+			validationErr := fmt.Errorf("baseUrl must be a valid https URL without embedded credentials")
+			return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": models.ErrCodexConnectivity(validationErr)}).Build(), models.ErrCodexConnectivity(validationErr)
+		}
 
 		req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("%s/models", codexConn.BaseURL), nil)
 		if err != nil {
