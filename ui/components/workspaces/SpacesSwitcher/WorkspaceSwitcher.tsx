@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   FormControl,
   FormControlLabel,
@@ -72,6 +72,12 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
   const [updateSelectedWorkspace, { isLoading: isUpdatingSelectedWorkspace }] =
     useUpdateSelectedWorkspaceMutation();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) {
+      setMenuOpen(false);
+    }
+  }, [open]);
 
   // useEffect(() => {
   //   if (selectedWorkspace?.id) {
