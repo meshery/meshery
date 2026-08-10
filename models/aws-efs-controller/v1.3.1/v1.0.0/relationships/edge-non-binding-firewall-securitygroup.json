@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1beta1",
+  "kind": "edge",
+  "type": "non-binding",
+  "subType": "firewall",
+  "metadata": {
+    "description": "MountTarget referencing a SecurityGroup",
+    "capabilities": {
+      "designer": {
+        "edit": true
+      }
+    }
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "MountTarget",
+            "model": "aws-efs-controller",
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "securityGroupRefs",
+                  "_",
+                  "from",
+                  "name"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "SecurityGroup",
+            "model": "aws-ec2-controller",
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "metadata",
+                  "name"
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
