@@ -1,9 +1,8 @@
 import React from 'react';
 import { CustomColumnVisibilityControl, SearchBar, UniversalFilter } from '@sistent/sistent';
 import { Publish as PublishIcon } from '@/assets/icons';
-import ViewSwitch from '../../ViewSwitch';
-import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+import ViewSwitch from '../../general/ViewSwitch';
+import { Keys } from '@meshery/schemas/permissions';
 import TooltipButton from '@/utils/TooltipButton';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import {
@@ -34,10 +33,6 @@ function MesheryPatternsToolbar({
   router,
   handleUploadImport,
   setSearch,
-  initPatternsSubscription,
-  page,
-  pageSize,
-  sortOrder,
   filter,
   selectedFilters,
   setSelectedFilters,
@@ -54,38 +49,42 @@ function MesheryPatternsToolbar({
             <div>
               {disableCreateImportDesignButton ? null : (
                 <div style={{ display: 'flex', order: '1' }}>
-                  <TooltipButton
-                    title="Create Design"
-                    data-testid="meshery-patterns-create-design-btn"
-                    aria-label="Add Pattern"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    // @ts-ignore
-                    onClick={() => router.push('designs/configurator')}
-                    style={{ display: 'flex', marginRight: '2rem' }}
-                    disabled={!CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)}
-                  >
-                    <AddIconStyled />
-                    <BtnText> Create Design </BtnText>
-                  </TooltipButton>
-                  <TooltipButton
-                    title="Import Design"
-                    data-testid="meshery-patterns-import-design-btn"
-                    aria-label="Add Pattern"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    // @ts-ignore
-                    onClick={handleUploadImport}
-                    style={{ display: 'flex', marginRight: '2rem', marginLeft: '-0.6rem' }}
-                    disabled={!CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject)}
-                  >
-                    <AddIconStyled>
-                      <PublishIcon />
-                    </AddIconStyled>
-                    <BtnText> Import Design </BtnText>
-                  </TooltipButton>
+                  <div style={{ display: 'flex', marginRight: '2rem' }}>
+                    <TooltipButton
+                      title="Create Design"
+                      data-testid="meshery-patterns-create-design-btn"
+                      aria-label="Add Pattern"
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      // @ts-ignore
+                      onClick={() => router.push('designs/configurator')}
+                      style={{ display: 'flex' }}
+                      permissionKey={Keys.CatalogManagementCreateNewDesign}
+                    >
+                      <AddIconStyled />
+                      <BtnText> Create Design </BtnText>
+                    </TooltipButton>
+                  </div>
+                  <div style={{ display: 'flex', marginRight: '2rem', marginLeft: '-0.6rem' }}>
+                    <TooltipButton
+                      title="Import Design"
+                      data-testid="meshery-patterns-import-design-btn"
+                      aria-label="Add Pattern"
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      // @ts-ignore
+                      onClick={handleUploadImport}
+                      style={{ display: 'flex' }}
+                      permissionKey={Keys.CatalogManagementImportDesign}
+                    >
+                      <AddIconStyled>
+                        <PublishIcon />
+                      </AddIconStyled>
+                      <BtnText> Import Design </BtnText>
+                    </TooltipButton>
+                  </div>
                 </div>
               )}
             </div>
@@ -108,7 +107,6 @@ function MesheryPatternsToolbar({
           <SearchBar
             onSearch={(value) => {
               setSearch(value);
-              initPatternsSubscription(page.toString(), pageSize.toString(), value, sortOrder);
             }}
             expanded={isSearchExpanded}
             setExpanded={setIsSearchExpanded}

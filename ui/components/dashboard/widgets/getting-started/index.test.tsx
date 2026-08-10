@@ -36,10 +36,6 @@ vi.mock('@/utils/hooks/useNotification', () => ({
 
 vi.mock('@/utils/can', () => ({ default: () => true }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: { ASSIGN_USER_ROLES: { action: 'assign', subject: 'roles' } },
-}));
-
 vi.mock('react-redux', () => ({
   useSelector: (selector: (state: unknown) => unknown) =>
     selector({ ui: { organization: currentOrg } }),
@@ -53,6 +49,7 @@ vi.mock('@sistent/sistent', () => ({
   ),
   useTheme: () => ({ palette: { icon: { default: '#000' } } }),
   GetStartedIcon: () => <svg data-testid="get-started-icon" />,
+  useHasPermission: () => true,
   ActionButtonCard: (props: {
     title: string;
     description: string;

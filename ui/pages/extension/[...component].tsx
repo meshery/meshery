@@ -6,7 +6,7 @@ import ExtensionSandbox, {
 import { CircularProgress, NoSsr } from '@sistent/sistent';
 import Head from 'next/head';
 import React, { useEffect, useMemo } from 'react';
-import RemoteComponent from '../../components/RemoteComponent';
+import RemoteComponent from '../../components/general/RemoteComponent';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
 import { useRouter } from 'next/router';
 import { DynamicFullScreenLoader } from '@/components/shared/LoadingState/DynamicFullscreenLoader';

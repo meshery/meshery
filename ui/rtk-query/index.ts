@@ -29,9 +29,5 @@ export const mesheryApiPath = (path = '') => {
     return path;
   }
 
-  if (path.startsWith('/evaluate')) {
-    return path;
-  }
-
   return `${MESHERY_API_PREFIX}/${path.replace(/^\/+/, '')}`;
 };

@@ -14,6 +14,7 @@ import { CardContainer, FrontSideDescription } from 'css/icons.styles';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '@/utils/hooks';
 import { formatApiError } from '@/utils/helpers/meshkitError';
+import { isLocalProvider } from '@/utils/provider';
 
 type ChildrenProps = {
   children: React.ReactNode;
@@ -177,7 +178,7 @@ const InstallableExtension: React.FC<InstallableExtensionProps> = ({ extension }
   useEffect(() => setInstalled(installedFromProvider), [installedFromProvider]);
 
   const [isRemoving, setIsRemoving] = useState<boolean>(false);
-  const isLocalProvider = providerCaps?.providerType === 'local';
+  const isLocal = isLocalProvider(providerCaps);
   const isMutating = isInstalling || isRemoving || isRemovingFromProvider;
   const installReady = Boolean(extension.packagePath);
 
@@ -257,19 +258,19 @@ const InstallableExtension: React.FC<InstallableExtensionProps> = ({ extension }
         </UnifiedDescription>
 
         <UnifiedButtonContainer>
-          {!installed && isLocalProvider ? (
+          {!installed && isLocal ? (
             <Button
-              variant={isLocalProvider ? 'contained' : 'outlined'}
+              variant={isLocal ? 'contained' : 'outlined'}
               color="primary"
               onClick={handleInstall}
               data-testid="install-btn"
-              disabled={!isLocalProvider || !installReady || isMutating}
+              disabled={!isLocal || !installReady || isMutating}
             >
               {isInstalling ? 'Installing...' : installReady ? 'Install' : 'Preparing...'}
             </Button>
           ) : (
             <>
-              {isLocalProvider ? (
+              {isLocal ? (
                 <Button
                   variant="outlined"
                   color="secondary"

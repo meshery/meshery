@@ -38,20 +38,21 @@ import {
   FormGroupWrapper,
 } from './style';
 import ExtensionSandbox from '../ExtensionSandbox';
-import RemoteComponent from '../RemoteComponent';
+import RemoteComponent from '../general/RemoteComponent';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
 import MesherySettingsPerformanceComponent from '../settings/MesherySettingsPerformanceComponent';
 import { iconMedium } from '../../css/icons.styles';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { useWindowDimensions } from '@/utils/dimension';
+import { isLocalProvider } from '@/utils/provider';
 import {
   useGetProviderCapabilitiesQuery,
   useGetUserPrefQuery,
   useUpdateUserPrefMutation,
   useUpdateUserPrefWithContextMutation,
 } from '@/rtk-query/user';
-import { ThemeTogglerCore } from '@/themes/hooks';
+import { ThemeTogglerCore } from '@/theme/hooks';
 import { SecondaryTab, SecondaryTabs } from '../dashboard/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleCatalogContent, updateProgress } from '@/store/slices/mesheryUi';
@@ -128,7 +129,6 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   const [perfResultStats, setPerfResultStats] = useState(props.perfResultStats);
   const [tabVal, setTabVal] = useState(0);
   const [userPrefs, setUserPrefs] = useState(ExtensionPointSchemaValidator('userPrefs')());
-  const [providerType, setProviderType] = useState('');
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
@@ -236,7 +236,6 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
       setUserPrefs(
         ExtensionPointSchemaValidator('userPrefs')(providerCapabilities?.extensions?.userPrefs),
       );
-      setProviderType(providerCapabilities?.providerType);
     }
   }, [providerCapabilities]);
 
@@ -556,7 +555,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
               />
             </CustomTooltip>
             {/* NOTE: This tab's appearance is logical hence it must be put at last here! Otherwise added logic will need to be added for tab numbers!*/}
-            {userPrefs && providerType != 'local' && (
+            {userPrefs && !isLocalProvider(providerCapabilities) && (
               <CustomTooltip title="Remote Provider preferences" placement="top">
                 <Tab
                   icon={<SettingsRemoteIcon style={iconMedium} />}
@@ -637,7 +636,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
             </>
           )}
           {tabVal === 1 && <MesherySettingsPerformanceComponent />}
-          {tabVal === 2 && userPrefs && providerType !== 'local' && (
+          {tabVal === 2 && userPrefs && !isLocalProvider(providerCapabilities) && (
             <>
               <SecondaryTabs
                 value={value}

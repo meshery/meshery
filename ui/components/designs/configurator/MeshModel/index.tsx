@@ -27,8 +27,8 @@ import CodeEditor from '../CodeEditor';
 import LazyComponentForm from './LazyComponentForm';
 import useDesignLifecycle from './hooks/useDesignLifecycle';
 import { useRouter } from 'next/router';
-import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+
+import { Keys } from '@meshery/schemas/permissions';
 
 const ScrollContainer = styled('div')({
   overflowY: 'auto',
@@ -193,7 +193,7 @@ export default function DesignConfigurator() {
                 aria-label="Save"
                 data-testid="design-configurator-save-design-btn"
                 onClick={designSave}
-                disabled={!CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)}
+                permissionKey={Keys.CatalogManagementCreateNewDesign}
               >
                 <SaveAsIcon style={iconMedium} />
               </IconButton>
@@ -207,7 +207,7 @@ export default function DesignConfigurator() {
                     aria-label="Update"
                     data-testid="design-configurator-update-design-btn"
                     onClick={designUpdate}
-                    disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
+                    permissionKey={Keys.CatalogManagementEditDesign}
                   >
                     <SaveIcon style={iconMedium} />
                   </IconButton>
@@ -219,7 +219,7 @@ export default function DesignConfigurator() {
                     aria-label="Delete"
                     data-testid="design-configurator-delete-design-btn"
                     onClick={designDelete}
-                    disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
+                    permissionKey={Keys.CatalogManagementDeleteADesign}
                   >
                     <DeleteIcon style={iconMedium} />
                   </IconButton>

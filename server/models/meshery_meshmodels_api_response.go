@@ -10,7 +10,8 @@ import (
 )
 
 // MeshmodelsAPIResponse is the Meshery-local response envelope for
-// `GET /api/meshmodels/models`. Canonical wire form is camelCase per the
+// `GET /api/registry/models` (and its deprecated `/api/meshmodels/models`
+// alias). Canonical wire form is camelCase per the
 // identifier-naming migration; legacy snake_case keys (`page_size`,
 // `total_count`) are emitted alongside for the deprecation window so
 // external consumers still reading the old spellings keep working.
@@ -20,7 +21,10 @@ import (
 // Once every known consumer has migrated off the snake_case keys, drop
 // MarshalJSON/UnmarshalJSON and keep only the camelCase struct tags.
 //
-// TODO: Move to schemas
+// TODO: Replace these local envelopes with Go models generated from the
+// schemas registry construct (schemas/constructs/v1beta1/registry/api.yml)
+// once the legacy keys drop; the construct is excluded from Go generation
+// until then.
 type MeshmodelsAPIResponse struct {
 	Page       int                     `json:"page"`
 	PageSize   int                     `json:"pageSize"`

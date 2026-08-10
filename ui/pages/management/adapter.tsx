@@ -1,6 +1,6 @@
 import React from 'react';
 import MesheryPlayComponent from '../../components/MesheryPlayComponent';
-import { MesheryPage } from '../../components/MesheryPage';
+import { MesheryPage } from '../../components/general/MesheryPage';
 
 const Manage = () => (
   <MesheryPage title="Adapter">

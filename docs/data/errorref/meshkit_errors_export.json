@@ -1748,15 +1748,6 @@
         "short_description": "Unable to decode validated document",
         "probable_cause": "The document is valid against the schema but could not be decoded into the requested Go type",
         "suggested_remediation": "Ensure the destination Go type matches the target schema model"
-      },
-      "11327": {
-        "name": "ErrUnmarshalSchemaAssetCode",
-        "code": "11327",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to unmarshal embedded schema asset",
-        "probable_cause": "The embedded schema asset is not valid JSON or YAML",
-        "suggested_remediation": "Ensure the embedded schema asset is valid JSON or YAML"
       }
     }
   }

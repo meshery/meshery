@@ -235,6 +235,8 @@ func RegistryError(msg string, cmd string) string {
 		return formatError(msg, cmdRegistryGenerate)
 	case "update":
 		return formatError(msg, cmdRegistryUpdate)
+	case "purge":
+		return formatError(msg, cmdRegistryPurge)
 	default:
 		return formatError(msg, cmdRegistry)
 	}
@@ -342,6 +344,7 @@ var cmdUsageURLs = map[cmdType]string{
 	cmdRegistryPublish:          registryPublishURL,
 	cmdRegistryGenerate:         registryGenerateURL,
 	cmdRegistryUpdate:           registryUpdateURL,
+	cmdRegistryPurge:            registryPurgeURL,
 	cmdEnvironment:              environmentUsageURL,
 	cmdEnvironmentCreate:        environmentCreateURL,
 	cmdEnvironmentDelete:        environmentDeleteURL,

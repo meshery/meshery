@@ -2,6 +2,15 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+let canMockReturn = true;
+// Per-key overrides let a test deny one capability while leaving the rest
+// granted, so assertions pin *which* key each gate reads rather than treating
+// all permissions as one boolean.
+const permissionOverrides = new Map<string, boolean>();
+const canSpy = vi.fn(
+  (key?: { id?: string }) => permissionOverrides.get(key?.id ?? '') ?? canMockReturn,
+);
+
 const routerState = {
   query: {} as Record<string, any>,
   pathname: '/settings',
@@ -47,6 +56,7 @@ vi.mock('@sistent/sistent', () => ({
   DatabaseIcon: () => <svg />,
   MendeleyIcon: () => <svg />,
   FileIcon: () => <svg />,
+  SettingsIcon: () => <svg />,
   useTheme: () => ({
     palette: {
       icon: { default: 'icon' },
@@ -61,6 +71,7 @@ vi.mock('@sistent/sistent', () => ({
         : React.createElement(Component, rest, children);
     return StyledComponent;
   },
+  useHasPermission: (key: { id?: string }) => canSpy(key),
 }));
 
 vi.mock('../dashboard/charts/DashboardMeshModelGraph', () => ({
@@ -71,7 +82,7 @@ vi.mock('../MeshAdapterConfigComponent', () => ({
   default: () => <div data-testid="adapter-config" />,
 }));
 
-vi.mock('../PromptComponent', () => ({
+vi.mock('../general/PromptComponent', () => ({
   default: () => <div data-testid="prompt-component" />,
 }));
 
@@ -90,21 +101,6 @@ vi.mock('../../api/meshmodel', () => ({
   getMeshModelRegistrants: vi.fn().mockResolvedValue({ totalCount: 0 }),
 }));
 
-let canMockReturn = true;
-vi.mock('@/utils/can', () => ({
-  default: () => canMockReturn,
-}));
-
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    VIEW_SETTINGS: { action: 'a', subject: 's' },
-    VIEW_CLOUD_NATIVE_INFRASTRUCTURE: { action: 'a', subject: 's' },
-    VIEW_METRICS: { action: 'a', subject: 's' },
-    VIEW_REGISTRY: { action: 'a', subject: 's' },
-    VIEW_OVERVIEW: { action: 'a', subject: 's' },
-  },
-}));
-
 vi.mock('@/constants/navigator', () => ({
   METRICS: 'Metrics',
   ADAPTERS: 'Adapters',
@@ -113,6 +109,7 @@ vi.mock('@/constants/navigator', () => ({
   PROMETHEUS: 'Prometheus',
   OVERVIEW: 'Overview',
   REGISTRY: 'Registry',
+  CONTROLLERS: 'Controllers',
 }));
 
 vi.mock('../registry/helper', () => ({
@@ -121,6 +118,10 @@ vi.mock('../registry/helper', () => ({
 
 vi.mock('../registry/MeshModelComponent', () => ({
   default: () => <div data-testid="mesh-model-component" />,
+}));
+
+vi.mock('./MesheryControllersConfig', () => ({
+  default: () => <div data-testid="controllers-config" />,
 }));
 
 vi.mock('../general/error-404', () => ({
@@ -156,11 +157,14 @@ vi.mock('@/rtk-query/user', () => ({
   }),
 }));
 
+import { Keys } from '@meshery/schemas/permissions';
 import MesherySettings from './MesherySettings';
 
 describe('MesherySettings', () => {
   beforeEach(() => {
     canMockReturn = true;
+    permissionOverrides.clear();
+    canSpy.mockClear();
     routerState.query = {};
     routerState.push.mockReset();
     selectorReturn = {
@@ -170,14 +174,21 @@ describe('MesherySettings', () => {
     };
   });
 
-  it('renders the main settings tab bar with the 4 settings categories', () => {
+  it('renders the main settings tab bar with the 5 settings categories', () => {
     render(<MesherySettings />);
 
     expect(screen.getByTestId('tab-Overview')).toBeInTheDocument();
     expect(screen.getByTestId('tab-Adapters')).toBeInTheDocument();
     expect(screen.getByTestId('tab-Registry')).toBeInTheDocument();
+    expect(screen.getByTestId('tab-Controllers')).toBeInTheDocument();
     expect(screen.getByTestId('tab-Reset')).toBeInTheDocument();
     expect(screen.queryByTestId('tab-Metrics')).not.toBeInTheDocument();
+  });
+
+  it('renders the controllers configuration tab when selected', () => {
+    routerState.query = { settingsCategory: 'Controllers' };
+    render(<MesherySettings />);
+    expect(screen.getByTestId('controllers-config')).toBeInTheDocument();
   });
 
   it('renders the Overview tab content (dashboard graph) by default', () => {
@@ -187,9 +198,28 @@ describe('MesherySettings', () => {
     expect(screen.getByTestId('connection-charts')).toBeInTheDocument();
   });
 
-  it('returns null when VIEW_SETTINGS permission is denied', () => {
-    canMockReturn = false;
-    const { container } = render(<MesherySettings />);
-    expect(container.textContent).toBe('');
+  it('renders the 404 fallback when only MesherySystemViewSettings is denied', () => {
+    permissionOverrides.set(Keys.MesherySystemViewSettings.id, false);
+    render(<MesherySettings />);
+    expect(screen.getByTestId('error-404')).toBeInTheDocument();
+    expect(screen.queryByTestId('tabs')).not.toBeInTheDocument();
+  });
+
+  it('disables the Registry tab and its content when MesherySystemViewRegistry is denied', () => {
+    permissionOverrides.set(Keys.MesherySystemViewRegistry.id, false);
+    routerState.query = { settingsCategory: 'Registry' };
+    render(<MesherySettings />);
+    // Both the control and the content are gated, so a direct
+    // `?settingsCategory=Registry` URL cannot render the registry.
+    expect(screen.getByTestId('tab-Registry')).toBeDisabled();
+    expect(screen.queryByTestId('mesh-model-component')).not.toBeInTheDocument();
+  });
+
+  it('disables the Adapters tab and its content when the infrastructure permission is denied', () => {
+    permissionOverrides.set(Keys.InfrastructureManagementViewCloudNativeInfrastructure.id, false);
+    routerState.query = { settingsCategory: 'Adapters' };
+    render(<MesherySettings />);
+    expect(screen.getByTestId('tab-Adapters')).toBeDisabled();
+    expect(screen.queryByTestId('adapter-config')).not.toBeInTheDocument();
   });
 });

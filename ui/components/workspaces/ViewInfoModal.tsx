@@ -26,7 +26,7 @@ import { useGetViewQuery, useUpdateViewVisibilityMutation } from '@/rtk-query/vi
 import { useGetLoggedInUserQuery, useGetUserProfileSummaryByIdQuery } from '@/rtk-query/user';
 import { iconLarge } from 'css/icons.styles';
 import RJSFWrapper from '../meshery-mesh-interface/PatternService/RJSF_wrapper';
-import { MDEditor } from '../Markdown';
+import { MDEditor } from '../general/Markdown';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import { handleUpdateViewVisibility, viewPath } from './SpacesSwitcher/hooks';

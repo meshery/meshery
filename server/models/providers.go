@@ -15,7 +15,7 @@ import (
 	"github.com/meshery/meshkit/models/events"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/schemas/models/core"
-	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta3/environment"
 	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 )
@@ -339,8 +339,14 @@ const (
 	KubeClustersKey   ContextKey = "kubeclusters"
 	AllKubeClusterKey ContextKey = "allkubeclusters"
 
-	MesheryControllerHandlersKey ContextKey = "mesherycontrollerhandlerskey"
-	MeshSyncDataHandlersKey      ContextKey = "meshsyncdatahandlerskey"
+	// MesheryControllerHandlersKey is retired. Nothing ever populated it, so the
+	// one reader - the changeOperatorStatus resolver - always read a nil map and
+	// called Deploy/Undeploy on a nil controller interface. Operator lifecycle
+	// now goes through the connection's MesheryControllersHelper, which is what
+	// holds the resolved Helm chart version; a context key that looks like a
+	// handler source but is never filled is how that was missed. Do not
+	// reintroduce it.
+	MeshSyncDataHandlersKey ContextKey = "meshsyncdatahandlerskey"
 
 	RegistryManagerKey ContextKey = "registrymanagerkey"
 

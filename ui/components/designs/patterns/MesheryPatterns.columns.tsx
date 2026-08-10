@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, crimson, InfoOutlinedIcon, AccountTreeIcon, EditIcon } from '@sistent/sistent';
+import { Keys } from '@meshery/schemas/permissions';
 import Moment from 'react-moment';
 import { GetApp as GetAppIcon } from '@/assets/icons';
 import { DoneAll as DoneAllIcon, Public as PublicIcon } from '@/assets/icons';
@@ -7,8 +8,6 @@ import UndeployIcon from '../../../public/static/img/UndeployIcon';
 import CloneIcon from '../../../public/static/img/CloneIcon';
 
 import { DefaultTableCell, SortableTableCell } from '../../connections/common';
-import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
 import CheckIcon from '@/assets/icons/CheckIcon';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import PatternConfigureIcon from '@/assets/icons/PatternConfigure';
@@ -24,7 +23,14 @@ import { genericClickHandler } from './MesheryPatterns.constants';
  * the same set of actions are returned in the same order, and each item's
  * onClick / disabled / condition values are wired to the same handlers.
  */
-export function buildPatternActions({ rowData, visibility, patterns, tableMeta, handlers }) {
+export function buildPatternActions({
+  rowData,
+  visibility,
+  patterns,
+  tableMeta,
+  handlers,
+  permissions,
+}) {
   const {
     handleOpenInConfigurator,
     handleClone,
@@ -47,7 +53,8 @@ export function buildPatternActions({ rowData, visibility, patterns, tableMeta, 
         e.stopPropagation();
         handleOpenInConfigurator(rowData.id);
       },
-      disabled: !CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject),
+      disabled: !permissions.editDesign,
+      permissionKey: Keys.CatalogManagementEditDesign,
       condition: userCanEdit(rowData),
     },
     {
@@ -57,7 +64,8 @@ export function buildPatternActions({ rowData, visibility, patterns, tableMeta, 
         e.stopPropagation();
         handleClone(rowData.id, rowData.name);
       },
-      disabled: !CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject),
+      disabled: !permissions.cloneDesign,
+      permissionKey: Keys.CatalogManagementCloneDesign,
       condition: visibility === VISIBILITY.PUBLISHED,
     },
     {
@@ -67,7 +75,8 @@ export function buildPatternActions({ rowData, visibility, patterns, tableMeta, 
         e.stopPropagation();
         handleOpenInConfigurator(patterns[tableMeta.rowIndex].id);
       },
-      disabled: !CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject),
+      disabled: !permissions.editDesign,
+      permissionKey: Keys.CatalogManagementEditDesign,
       condition: visibility !== VISIBILITY.PUBLISHED,
     },
     {
@@ -76,7 +85,8 @@ export function buildPatternActions({ rowData, visibility, patterns, tableMeta, 
       onClick: (e) => {
         openValidateModal(e, rowData.patternFile, rowData.name, rowData.id);
       },
-      disabled: !CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject),
+      disabled: !permissions.validateDesign,
+      permissionKey: Keys.CatalogManagementValidateDesign,
     },
     {
       label: 'Dry Run',
@@ -84,7 +94,8 @@ export function buildPatternActions({ rowData, visibility, patterns, tableMeta, 
       onClick: (e) => {
         openDryRunModal(e, rowData.patternFile, rowData.name, rowData.id);
       },
-      disabled: !CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject),
+      disabled: !permissions.validateDesign,
+      permissionKey: Keys.CatalogManagementValidateDesign,
     },
     {
       label: 'Evaluate',
@@ -93,7 +104,8 @@ export function buildPatternActions({ rowData, visibility, patterns, tableMeta, 
         e.stopPropagation();
         handleEvaluateRelationship(rowData);
       },
-      disabled: !CAN(keys.EVALUATE_RELATIONSHIPS.action, keys.EVALUATE_RELATIONSHIPS.subject),
+      disabled: !permissions.evaluateRelationships,
+      permissionKey: Keys.CatalogManagementEvaluateRelationships,
     },
     {
       label: 'Undeploy',
@@ -101,7 +113,8 @@ export function buildPatternActions({ rowData, visibility, patterns, tableMeta, 
       onClick: (e) => {
         openUndeployModal(e, rowData.patternFile, rowData.name, rowData.id);
       },
-      disabled: !CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject),
+      disabled: !permissions.undeployDesign,
+      permissionKey: Keys.CatalogManagementUndeployDesign,
     },
     {
       label: 'Deploy',
@@ -109,7 +122,8 @@ export function buildPatternActions({ rowData, visibility, patterns, tableMeta, 
       onClick: (e) => {
         openDeployModal(e, rowData.patternFile, rowData.name, rowData.id);
       },
-      disabled: !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject),
+      disabled: !permissions.deployDesign,
+      permissionKey: Keys.CatalogManagementDeployDesign,
     },
     {
       label: 'Download',
@@ -117,7 +131,8 @@ export function buildPatternActions({ rowData, visibility, patterns, tableMeta, 
       onClick: (e) => {
         handleDesignDownloadModal(e, rowData);
       },
-      disabled: !CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject),
+      disabled: !permissions.downloadDesign,
+      permissionKey: Keys.CatalogManagementDownloadADesign,
     },
     {
       label: 'Design Information',
@@ -125,7 +140,8 @@ export function buildPatternActions({ rowData, visibility, patterns, tableMeta, 
       onClick: (e) => {
         genericClickHandler(e, () => handleInfoModal(rowData));
       },
-      disabled: !CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject),
+      disabled: !permissions.detailsOfDesign,
+      permissionKey: Keys.CatalogManagementDetailsOfDesign,
     },
 
     /* Publish action can be done through Info modal so we might not need separate publish action */
@@ -133,7 +149,7 @@ export function buildPatternActions({ rowData, visibility, patterns, tableMeta, 
       label="Publish",
       icon: <PublicIcon fill="#F91313" data-cy="publish-button" />,
       onClick: (e) => handlePublishModal(e, rowData)(),
-      disabled: !CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject),
+      disabled: !permissions.publishDesign,
       condition: canPublishPattern && visibility !== VISIBILITY.PUBLISHED,
     },*/
 
@@ -143,7 +159,8 @@ export function buildPatternActions({ rowData, visibility, patterns, tableMeta, 
       onClick: (e) => {
         handleUnpublishModal(e, rowData)();
       },
-      disabled: !CAN(keys.UNPUBLISH_DESIGN.action, keys.UNPUBLISH_DESIGN.subject),
+      disabled: !permissions.unpublishDesign,
+      permissionKey: Keys.CatalogManagementUnpublishDesign,
       condition: visibility === VISIBILITY.PUBLISHED,
     },
   ].filter((action) => action.condition === undefined || action.condition);
@@ -169,7 +186,7 @@ export const PATTERN_COL_VIEWS = [
  * we therefore rebuild the columns inside the parent component on each
  * render (matching the original behavior).
  */
-export function buildPatternColumns({ patterns, handlers }) {
+export function buildPatternColumns({ patterns, handlers, permissions }) {
   return [
     {
       name: 'name',
@@ -265,6 +282,7 @@ export function buildPatternColumns({ patterns, handlers }) {
             patterns,
             tableMeta,
             handlers,
+            permissions,
           });
 
           return (
@@ -294,7 +312,7 @@ export function buildPatternsTableOptions({
   page,
   search,
   sortOrder,
-  user,
+  isLocalProvider,
   searchTimeout,
   setPage,
   setPageSize,
@@ -303,7 +321,6 @@ export function buildPatternsTableOptions({
   setSelectedRowData,
   deletePatterns,
   showModal,
-  initPatternsSubscription,
 }) {
   return {
     customToolbarSelect: (selectedRows, displayData, setSelectedRows) => (
@@ -319,7 +336,7 @@ export function buildPatternsTableOptions({
     filter: false,
     search: false,
     viewColumns: false,
-    sort: !(user && user.userId === 'meshery'),
+    sort: !isLocalProvider,
     filterType: 'textField',
     responsive: 'standard',
     resizableColumns: true,
@@ -368,16 +385,9 @@ export function buildPatternsTableOptions({
 
       switch (action) {
         case 'changePage':
-          initPatternsSubscription(tableState.page.toString(), pageSize.toString(), search, order);
           setPage(tableState.page);
           break;
         case 'changeRowsPerPage':
-          initPatternsSubscription(
-            page.toString(),
-            tableState.rowsPerPage.toString(),
-            search,
-            order,
-          );
           setPageSize(tableState.rowsPerPage);
           break;
         case 'search':
@@ -399,7 +409,6 @@ export function buildPatternsTableOptions({
             }
           }
           if (order !== sortOrder) {
-            initPatternsSubscription(page.toString(), pageSize.toString(), search, order);
             setSortOrder(order);
           }
           break;
