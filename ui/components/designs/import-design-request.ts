@@ -8,8 +8,6 @@ export type ImportDesignFormData = {
   file?: string;
 };
 
-export type ImportDesignRequestResult = { requestBody: string } | { errorMessage: string };
-
 /**
  * Wire contract for `POST /api/pattern/import`, sourced from the schemas
  * generated client (`ImportDesignApiArg`, produced from
@@ -23,14 +21,15 @@ type ImportDesignFileVariant = Extract<ImportDesignRequestBody, { fileName: stri
 type ImportDesignUrlVariant = Extract<ImportDesignRequestBody, { url: string }>;
 
 /**
- * File-Upload variant as this client emits it. The fields are pinned to the
- * contract via `ImportDesignFileVariant`; only `file` is widened: the openapi
- * contract types it as a base64 string (`format: byte`), while the browser
- * sends the decoded byte array produced after reading the upload. The server's
- * Go `[]byte` decoder accepts either representation, so the byte array is a
- * conformant alternative and is preserved here unchanged.
+ * Result union of the builder. `requestBody` is the generated wire body itself
+ * - not a pre-serialized string - so it can be handed straight to the
+ * schemas-generated `importDesign` mutation, which serializes it. `errorMessage`
+ * is UI copy for the notification shown when the form data cannot produce a
+ * valid body.
  */
-type ImportDesignFileWireBody = Omit<ImportDesignFileVariant, 'file'> & { file: number[] };
+export type ImportDesignRequestResult =
+  | { requestBody: ImportDesignRequestBody }
+  | { errorMessage: string };
 
 export const buildImportDesignRequestBody = async (
   data: ImportDesignFormData,
@@ -45,12 +44,19 @@ export const buildImportDesignRequestBody = async (
           return { errorMessage: 'Please choose a design file before continuing.' };
         }
 
-        const requestBody: ImportDesignFileWireBody = {
+        const requestBody: ImportDesignFileVariant = {
           name,
           fileName: importedFile.fileName,
-          file: importedFile.fileData,
+          // The contract types `file` as a base64 string (`format: byte`);
+          // this client sends the decoded byte array produced after reading
+          // the upload. The server's Go `[]byte` decoder accepts either
+          // representation and yields identical bytes, so the byte array is a
+          // conformant alternative and is preserved here unchanged. The cast is
+          // confined to this single property so every other field stays pinned
+          // to the generated contract.
+          file: importedFile.fileData as unknown as ImportDesignFileVariant['file'],
         };
-        return { requestBody: JSON.stringify(requestBody) };
+        return { requestBody };
       } catch (error) {
         console.error('Error resolving design import file:', error);
         return { errorMessage: 'Unable to read the selected design file. Please try again.' };
@@ -66,7 +72,7 @@ export const buildImportDesignRequestBody = async (
       }
 
       const requestBody: ImportDesignUrlVariant = { url, name };
-      return { requestBody: JSON.stringify(requestBody) };
+      return { requestBody };
     }
     default:
       return { errorMessage: 'Please choose a valid design import source before continuing.' };

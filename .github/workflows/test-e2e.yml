@@ -98,13 +98,27 @@ jobs:
           else
             make ui-test-e2e-local
           fi
+        # Deliberately tolerated here so the artifact upload below still runs on
+        # a failing suite; the verdict is enforced by the gate at the end of the
+        # job, which is the step that decides the job's conclusion.
         continue-on-error: true
-    
+
       - name: Upload Test Artifacts
         uses: ./.github/actions/upload-test-artifacts
         with:
           include-pr-metadata: ${{ github.event_name == 'pull_request' }}
 
-      # - name: Fail job when Playwright reports test failures
-      #   if: ${{ steps.playwright-tests.outcome == 'failure' }}
-      #   run: exit 1
+      # The gate. Without it this job reported success no matter what Playwright
+      # said: across the 20 "Meshery Build And Test" runs to 2026-08-05 the E2E
+      # job concluded success 19 times out of 19, including 8 runs that had real
+      # test failures, and it failed the build 0 times. Every test in this suite
+      # was decorative for as long as that was true.
+      #
+      # `outcome` is the step's result before continue-on-error is applied;
+      # `conclusion` is after, and is always success here. Gating on conclusion
+      # is the mistake that makes this look enforced while it is not.
+      - name: Fail job when Playwright reports test failures
+        if: ${{ steps.playwright-tests.outcome == 'failure' }}
+        run: |
+          echo "::error::Playwright reported test failures. See the E2E Test Report artifact and the Allure report."
+          exit 1

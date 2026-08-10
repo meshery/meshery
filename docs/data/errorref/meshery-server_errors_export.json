@@ -3690,8 +3690,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Invalid design import request",
-        "probable_cause": "The request body did not match exactly one variant of the import oneOf — the File variant requires `file` and `file_name`, the URL variant requires `url`.\nBoth variants were provided, or neither was.",
-        "suggested_remediation": "Send a request body with exactly one variant set: either {\\\"file\\\": <bytes>, \\\"file_name\\\": \\\"design.yml\\\"} or {\\\"url\\\": \\\"https://...\\\"}."
+        "probable_cause": "The request body did not match exactly one variant of the import oneOf — the File variant requires `file` and `fileName`, the URL variant requires `url`.\nBoth variants were provided, or neither was.",
+        "suggested_remediation": "Send a request body with exactly one variant set: either {\\\"file\\\": <bytes>, \\\"fileName\\\": \\\"design.yml\\\"} or {\\\"url\\\": \\\"https://...\\\"}."
       },
       "1423": {
         "name": "ErrConvertToDesignCode",
@@ -4061,6 +4061,105 @@
         "short_description": "",
         "probable_cause": "The connection definition for this kind may disagree with the connections table schema",
         "suggested_remediation": ""
+      },
+      "1464": {
+        "name": "ErrFetchProfilesCode",
+        "code": "1464",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to fetch performance profiles",
+        "probable_cause": "The performance profiles could not be read from the database\nThe performance_profiles table is out of sync with the performance profile model",
+        "suggested_remediation": "Inspect the underlying database error reported above\nMake sure the Meshery database schema is up to date with the running Meshery Server"
+      },
+      "1465": {
+        "name": "ErrOperatorHandlerNotAttachedCode",
+        "code": "1465",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "No Meshery Operator controller handler is attached",
+        "probable_cause": "The connection's kubeconfig could not be generated, or the Kubernetes client could not be created.",
+        "suggested_remediation": "Reconnect the Kubernetes connection and retry; the configuration is re-applied on connect."
+      },
+      "1466": {
+        "name": "ErrReconcileOperatorChartVersionCode",
+        "code": "1466",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error deploying Meshery Operator at the configured chart version",
+        "probable_cause": "The requested Meshery Operator Helm chart version does not exist in the chart repository, or the cluster rejected the Helm release.",
+        "suggested_remediation": "Confirm the chart version exists in the Meshery Operator Helm repository, or clear operator.version to track the Meshery Server release.\nConfirm the cluster is reachable and the Meshery namespace is writable."
+      },
+      "1467": {
+        "name": "ErrAnonymousUserIDMissingCode",
+        "code": "1467",
+        "severity": "Alert",
+        "long_description": "The remote provider's anonymous user flow response contained no userId.",
+        "short_description": "Anonymous user session could not be established",
+        "probable_cause": "The remote provider does not implement the schemas v1beta2 AnonymousFlowResponse contract, or it returned an empty user id.",
+        "suggested_remediation": "Confirm the configured remote provider is reachable and up to date, then retry signing in."
+      },
+      "1468": {
+        "name": "ErrNoOperatorChartPublishedCode",
+        "code": "1468",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "No Meshery Operator Helm chart is published",
+        "probable_cause": "The chart repository index was served from an unexpected location, its published charts were removed, or it currently carries only prerelease charts, which Meshery never selects on its own.",
+        "suggested_remediation": "To deploy a prerelease chart deliberately, set operator.version on the Kubernetes connection to that exact version."
+      },
+      "1469": {
+        "name": "ErrOperatorChartNotPinnedCode",
+        "code": "1469",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Meshery Operator chart version is not a released version",
+        "probable_cause": "A moving tag (for example stable-latest or edge-latest) or a non-version string was configured as the operator chart version.",
+        "suggested_remediation": "Set operator.version to a released chart version, or clear it to track this Meshery Server release. This error's cause names the newest released version."
+      },
+      "1470": {
+        "name": "ErrOperatorChartNotPublishedCode",
+        "code": "1470",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Meshery Operator chart version is not published",
+        "probable_cause": "The configured chart version was mistyped, or it was never published to the Meshery Helm chart repository.",
+        "suggested_remediation": "Set operator.version to a published chart version, or clear it to track this Meshery Server release. This error's cause names the newest published version."
+      },
+      "1471": {
+        "name": "ErrOperatorChartSubstitutedCode",
+        "code": "1471",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Meshery Operator was deployed at a different chart version than this server's release",
+        "probable_cause": "The chart version matching this Meshery Server release is either not published yet or is too old to deploy successfully.",
+        "suggested_remediation": "No action is required. To choose the chart version yourself, set operator.version on the Kubernetes connection."
+      },
+      "1472": {
+        "name": "ErrNoMesheryReleasesFoundCode",
+        "code": "1472",
+        "severity": "Alert",
+        "long_description": "The GitHub releases listing for meshery/meshery returned no tags.",
+        "short_description": "No Meshery releases were found",
+        "probable_cause": "GitHub returned an empty or filtered release listing, possibly because the request was rate-limited.",
+        "suggested_remediation": "Retry later. This only affects the reported latest-version comparison; Meshery continues to run."
+      },
+      "1473": {
+        "name": "ErrHelmChartIndexCode",
+        "code": "1473",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to read the Helm chart repository index.",
+        "probable_cause": "The Helm chart repository is unreachable, returned an error, or served an index that is not valid YAML. Meshery Server may have no outbound network access, or the repository may be temporarily unavailable.",
+        "suggested_remediation": "Confirm that the chart repository named in this error's cause is reachable from the Meshery Server pod or container, then retry. If Meshery runs behind a proxy, confirm the proxy environment variables are set on the server."
+      },
+      "1474": {
+        "name": "ErrOperatorControllersHelperCode",
+        "code": "1474",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to reach Meshery Operator lifecycle for this Kubernetes connection",
+        "probable_cause": "The connection is not connected yet, or its state machine has not finished initializing.",
+        "suggested_remediation": "Wait for the Kubernetes connection to reach the connected state, then retry.\nIf it stays disconnected, check the connection's diagnostics for why its Kubernetes client could not be created."
       }
     }
   }
