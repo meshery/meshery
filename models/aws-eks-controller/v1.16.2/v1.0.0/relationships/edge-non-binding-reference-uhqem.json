@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "Addon",
+            "kind": "Cluster",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -48,9 +48,7 @@
             "patch": {
               "mutatorRef": [
                 [
-                  "configuration",
-                  "spec",
-                  "clusterName"
+                  "displayName"
                 ]
               ],
               "patchStrategy": "replace"
@@ -60,7 +58,7 @@
         "to": [
           {
             "id": null,
-            "kind": "Cluster",
+            "kind": "Addon",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -78,7 +76,11 @@
             "patch": {
               "mutatedRef": [
                 [
-                  "displayName"
+                  "configuration",
+                  "spec",
+                  "clusterRef",
+                  "from",
+                  "name"
                 ]
               ],
               "patchStrategy": "replace"

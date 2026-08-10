@@ -86,19 +86,50 @@ func ShouldConnectionBeManaged(c Connection) bool {
 
 type ConnectionPage = schemasConnection.ConnectionPage
 
-type ConnectionStatusInfo struct {
-	Status string `json:"status" db:"status"`
-	Count  int    `json:"count" db:"count"`
+// MergePayloadOntoExisting backfills fields the caller left empty in payload
+// with the values from the persisted connection. UpdateConnectionById persists
+// via a full-row write (GORM Save() locally, a full PUT remotely), so a partial
+// payload — e.g. the UI's connect action sending only {status}, or an FSM status
+// transition sending only {kind, metadata, status} — would otherwise zero every
+// field it omits. Wiping a kubernetes connection's kind to "" in particular
+// later trips the FSM's "connection is not of kind kubernetes" guard on connect.
+// It never overwrites a field the caller explicitly set, so intentional changes
+// still apply.
+func MergePayloadOntoExisting(payload *ConnectionPayload, existing *Connection) {
+	if payload == nil || existing == nil {
+		return
+	}
+	if payload.Kind == "" {
+		payload.Kind = existing.Kind
+	}
+	if payload.Name == "" {
+		payload.Name = existing.Name
+	}
+	if payload.Type == "" {
+		payload.Type = existing.ConnectionType
+	}
+	if payload.SubType == "" {
+		payload.SubType = existing.SubType
+	}
+	if payload.Status == "" {
+		payload.Status = existing.Status
+	}
+	if payload.MetaData == nil {
+		payload.MetaData = existing.Metadata
+	}
+	if payload.CredentialID == nil {
+		payload.CredentialID = existing.CredentialID
+	}
 }
 
-// ConnectionsStatusPage is a Meshery-local swagger stub for the status-per-kind
-// response wrapper surfaced on a few integrations endpoints. The canonical
-// v1beta3 schema publishes camelCase on the wire, so the JSON tag here matches
-// `connectionsStatus`. No runtime handler emits this struct today — it is a
-// doc-only placeholder referenced from server/handlers/doc.go.
-type ConnectionsStatusPage struct {
-	ConnectionsStatus []*ConnectionStatusInfo `json:"connectionsStatus"`
-}
+// The status-per-kind response wrapper surfaced on a few integrations
+// endpoints, and its element type. Both are the canonical v1beta3 connection
+// constructs rather than local stubs: the local copy of the page had dropped
+// `page`, `pageSize` and `totalCount`, so the swagger definition generated from
+// it (server/handlers/doc.go) under-described the response it documents.
+type ConnectionStatusInfo = schemasConnection.ConnectionStatusInfo
+
+type ConnectionsStatusPage = schemasConnection.ConnectionsStatusPage
 
 type ConnectionPayload struct {
 	ID                         core.Uuid              `json:"id,omitempty"`

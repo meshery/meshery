@@ -27,7 +27,7 @@ import CodeEditor from '../CodeEditor';
 import LazyComponentForm from './LazyComponentForm';
 import useDesignLifecycle from './hooks/useDesignLifecycle';
 import { useRouter } from 'next/router';
-import CAN from '@/utils/can';
+
 import { Keys } from '@meshery/schemas/permissions';
 
 const ScrollContainer = styled('div')({
@@ -193,12 +193,7 @@ export default function DesignConfigurator() {
                 aria-label="Save"
                 data-testid="design-configurator-save-design-btn"
                 onClick={designSave}
-                disabled={
-                  !CAN(
-                    Keys.CatalogManagementCreateNewDesign.id,
-                    Keys.CatalogManagementCreateNewDesign.function,
-                  )
-                }
+                permissionKey={Keys.CatalogManagementCreateNewDesign}
               >
                 <SaveAsIcon style={iconMedium} />
               </IconButton>
@@ -212,12 +207,7 @@ export default function DesignConfigurator() {
                     aria-label="Update"
                     data-testid="design-configurator-update-design-btn"
                     onClick={designUpdate}
-                    disabled={
-                      !CAN(
-                        Keys.CatalogManagementEditDesign.id,
-                        Keys.CatalogManagementEditDesign.function,
-                      )
-                    }
+                    permissionKey={Keys.CatalogManagementEditDesign}
                   >
                     <SaveIcon style={iconMedium} />
                   </IconButton>
@@ -229,12 +219,7 @@ export default function DesignConfigurator() {
                     aria-label="Delete"
                     data-testid="design-configurator-delete-design-btn"
                     onClick={designDelete}
-                    disabled={
-                      !CAN(
-                        Keys.CatalogManagementDeleteADesign.id,
-                        Keys.CatalogManagementDeleteADesign.function,
-                      )
-                    }
+                    permissionKey={Keys.CatalogManagementDeleteADesign}
                   >
                     <DeleteIcon style={iconMedium} />
                   </IconButton>

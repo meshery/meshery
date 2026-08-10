@@ -72,7 +72,7 @@ vi.mock('../data-formatter', () => ({
       <span>{Value}</span>
     </div>
   ),
-  Link: ({ title }) => <span>{title}</span>,
+  Link: ({ href, title }) => <a href={href}>{title}</a>,
   createColumnUiSchema: ({ metadata }) => ({ fields: Object.keys(metadata || {}) }),
 }));
 
@@ -82,6 +82,16 @@ vi.mock('@/utils/hooks/useKubernetesHook', () => ({
   useMesheryOperator: () => ({ ping: pingMesheryOperator }),
   useMeshsSyncController: () => ({ ping: pingMeshSync }),
   useNatsController: () => ({ ping: pingNats }),
+}));
+
+// ControllerDiagnosticsSection calls this RTK Query hook, which needs a Redux
+// <Provider>. Stub it so the metadata component renders without a store.
+vi.mock('@/rtk-query/connection', () => ({
+  useGetControllerDiagnosticsQuery: () => ({
+    data: { diagnostics: [] },
+    isFetching: false,
+    refetch: vi.fn(),
+  }),
 }));
 
 vi.mock('./ConnectionChip', () => ({
@@ -148,7 +158,59 @@ describe('FormatConnectionMetadata', () => {
     expect(pingNats).toHaveBeenCalledWith({ connectionID: 'connection-1' });
   });
 
-  it('renders structured metadata for meshery connections', () => {
+  it('renders the well-known meshery server fields as labeled key-values', () => {
+    render(
+      <FormatConnectionMetadata
+        connection={{
+          kind: 'meshery',
+          createdAt: '2026-05-08T10:00:00Z',
+          updatedAt: '2026-05-09T10:00:00Z',
+          metadata: {
+            serverId: 'server-uuid-1',
+            serverVersion: 'v0.9.0',
+            serverBuildSha: 'abc1234',
+            serverLocation: 'https://meshery.local:9081',
+          },
+        }}
+      />,
+    );
+
+    expect(screen.getByText('Server ID')).toBeInTheDocument();
+    expect(screen.getByText('server-uuid-1')).toBeInTheDocument();
+    expect(screen.getByText('Server Version')).toBeInTheDocument();
+    expect(screen.getByText('v0.9.0')).toBeInTheDocument();
+    expect(screen.getByText('Server Build SHA')).toBeInTheDocument();
+    expect(screen.getByText('abc1234')).toBeInTheDocument();
+    expect(screen.getByText('Server Location')).toBeInTheDocument();
+    // The location renders as a real, navigable link.
+    expect(screen.getByRole('link', { name: 'https://meshery.local:9081' })).toHaveAttribute(
+      'href',
+      'https://meshery.local:9081',
+    );
+    expect(screen.getByText('Discovered At')).toBeInTheDocument();
+    expect(screen.getByText('Updated At')).toBeInTheDocument();
+    // Only well-known fields are present, so the generic fallback is omitted.
+    expect(screen.queryByTestId('structured-data')).not.toBeInTheDocument();
+  });
+
+  it('tolerates snake_case metadata from older meshery connection records', () => {
+    render(
+      <FormatConnectionMetadata
+        connection={{
+          kind: 'meshery',
+          metadata: {
+            server_id: 'server-uuid-2',
+            server_version: 'v0.8.0',
+          },
+        }}
+      />,
+    );
+
+    expect(screen.getByText('server-uuid-2')).toBeInTheDocument();
+    expect(screen.getByText('v0.8.0')).toBeInTheDocument();
+  });
+
+  it('still renders unrecognized meshery metadata through the structured formatter', () => {
     render(
       <FormatConnectionMetadata
         connection={{
@@ -159,6 +221,27 @@ describe('FormatConnectionMetadata', () => {
     );
 
     expect(screen.getByTestId('structured-data')).toHaveTextContent('meshery.local');
+  });
+
+  it('shows a dash when kubernetes metadata.server is missing', () => {
+    render(
+      <FormatConnectionMetadata
+        meshsyncControllerState={{}}
+        connection={{
+          id: 'connection-2',
+          kind: 'kubernetes',
+          status: 'connected',
+          metadata: {
+            name: 'cluster-b',
+            // no server field
+          },
+        }}
+      />,
+    );
+
+    // The Server row should render a plain dash, not an invalid link.
+    expect(screen.queryByRole('link')).toBeNull();
+    expect(screen.getByText('-')).toBeInTheDocument();
   });
 
   it('falls back to the generic structured formatter for other connection kinds', () => {

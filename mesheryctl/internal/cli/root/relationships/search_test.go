@@ -79,7 +79,7 @@ func TestSearch_WithFlags(t *testing.T) {
 		{
 			Name:             "Search registered relationships matching result(s) found",
 			Args:             []string{"search", "--model", "kubernetes"},
-			URL:              "/api/meshmodels/models/kubernetes/relationships",
+			URL:              "/api/registry/models/kubernetes/relationships",
 			Fixture:          "search.relationship.api.response.matching.result.golden",
 			ExpectedResponse: "search.relationship.output.matching.result.golden",
 			ExpectError:      false,
@@ -88,7 +88,7 @@ func TestSearch_WithFlags(t *testing.T) {
 		{
 			Name:             "Search registered relationships no matching result(s) found",
 			Args:             []string{"search", "--model", "kubernetes"},
-			URL:              "/api/meshmodels/models/kubernetes/relationships",
+			URL:              "/api/registry/models/kubernetes/relationships",
 			Fixture:          "search.relationship.api.response.no.matching.result.golden",
 			ExpectedResponse: "search.relationship.output.no.matching.result.golden",
 			ExpectError:      false,
