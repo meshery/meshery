@@ -68,7 +68,7 @@ func (a *AdaptersTracker) GetAdapters(_ context.Context) []models.Adapter {
 	return ad
 }
 
-// AddAdapter is used to add new adapters to the collection
+// DeployAdapter is used to deploy adapters to the specified platform
 func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adapter) (err error) {
 	platform := utils.GetPlatform()
 
@@ -124,8 +124,12 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 			}
 			for _, net := range nets {
 				if net.Name == netName {
-					// Create and start the container
-					portNum := strings.Split(adapter.Location, ":")[1] // eg: for location=meshery-istio:10000, portNum=10000
+					// Safely parse port from location
+					_, portNum, err := ParseAdapterLocation(adapter.Location)
+					if err != nil {
+						return ErrDeployingAdapterInDocker(err)
+					}
+
 					port := nat.Port(portNum + "/tcp")
 					adapterContainerCreatedBody, err := cli.ContainerCreate(ctx, &container.Config{
 						Image: adapterImage,
@@ -221,7 +225,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 	return nil
 }
 
-// RemoveAdapter is used to remove existing adapters from the collection
+// UndeployAdapter is used to remove existing adapters from the collection
 func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Adapter) (err error) {
 	platform := utils.GetPlatform()
 
@@ -242,17 +246,23 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 		if err != nil {
 			return ErrUnDeployingAdapterInDocker(err)
 		}
+
+		_, portNum, err := ParseAdapterLocation(adapter.Location)
+		if err != nil {
+			return ErrUnDeployingAdapterInDocker(err)
+		}
+
 		var containerID string
 		for _, container := range containers {
 			for _, p := range container.Ports {
-				if strconv.Itoa(int(p.PublicPort)) == strings.Split(adapter.Location, ":")[1] {
+				if strconv.Itoa(int(p.PublicPort)) == portNum {
 					containerID = container.ID
 					break
 				}
 			}
 		}
 		if containerID == "" {
-			return ErrUnDeployingAdapterInDocker(fmt.Errorf("no container found for port %s", strings.Split(adapter.Location, ":")[1]))
+			return ErrUnDeployingAdapterInDocker(fmt.Errorf("no container found for port %s", portNum))
 		}
 
 		// Stop and remove the container
