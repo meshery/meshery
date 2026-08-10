@@ -26,15 +26,15 @@ describe('buildImportDesignRequestBody', () => {
         file: 'data:text/plain;base64,QQ==',
       }),
     ).resolves.toEqual({
-      requestBody: JSON.stringify({
+      requestBody: {
         name: 'Imported design',
         fileName: 'imported-design.yaml',
         file: [1, 2, 3],
-      }),
+      },
     });
   });
 
-  it('builds the URL import request body with contract-ordered fields', async () => {
+  it('builds the URL import request body from the contract fields', async () => {
     await expect(
       buildImportDesignRequestBody({
         uploadType: 'URL Import',
@@ -42,10 +42,10 @@ describe('buildImportDesignRequestBody', () => {
         url: 'https://example.com/design.yaml',
       }),
     ).resolves.toEqual({
-      requestBody: JSON.stringify({
+      requestBody: {
         url: 'https://example.com/design.yaml',
         name: 'Imported design',
-      }),
+      },
     });
 
     expect(resolveImportedDesignFile).not.toHaveBeenCalled();

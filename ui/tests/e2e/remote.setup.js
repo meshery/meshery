@@ -16,6 +16,22 @@ setup('authenticate with Remote Provider', async ({ page }) => {
   const password = ENV.REMOTE_PROVIDER_USER.password;
   const loginPage = new LoginPage(page);
 
+  // No credentials is an environment fact, not a defect: forks and PRs from
+  // forks cannot read REMOTE_PROVIDER_TOKEN, and a contributor running the
+  // suite locally has neither. Failing here made every remote-provider run
+  // report a hard failure that said "Email is required for login", which reads
+  // as a broken test rather than an unconfigured environment - and once the
+  // E2E job can fail the build, it would fail every fork PR for a reason the
+  // contributor cannot fix. Skip cleanly instead, so the whole
+  // chromium-meshery-provider project reports "skipped".
+  if (!token && !(email && password)) {
+    setup.skip(
+      true,
+      'No remote-provider credentials: set PROVIDER_TOKEN, or REMOTE_PROVIDER_USER_EMAIL and REMOTE_PROVIDER_USER_PASSWORD, to run the Meshery-provider project.',
+    );
+    return;
+  }
+
   if (token) {
     console.log('Using token-based authentication');
     await loginPage.loginWithToken(token, baseURL);

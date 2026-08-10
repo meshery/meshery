@@ -320,7 +320,7 @@ ui-setup: dep-check-node
 
 ## Clean Install dependencies for building Meshery UI.
 ui-setup-ci: dep-check-node
-	cd ui; npm ci; cd ..
+	cd ui && npm ci
 
 ## Run Meshery UI on your local machine. Listen for changes.
 ui: dep-check-node
@@ -412,11 +412,15 @@ check-go:
 #-----------------------------------------------------------------------------
 # Meshery Helm Charts
 #-----------------------------------------------------------------------------
-.PHONY: helm-docs helm-operator-docs helm-meshery-docs helm-operator-lint helm-lint
+.PHONY: helm-docs helm-operator-docs helm-meshery-docs helm-operator-lint helm-operator-appversion-check helm-lint
 ## Generate all Meshery Helm Chart documentation in markdown format.
 helm-docs: helm-operator-docs helm-meshery-docs
 
-## Generate Meshery Operator Helm Chart documentation in markdown format.
+# WARNING: this overwrites install/kubernetes/helm/meshery-operator/README.md, which is
+# hand-maintained. values.yaml has no `# --` comments and there is no README.md.gotmpl,
+# so helm-docs would delete that README's "CRD lifecycle" section and every per-value
+# description. Read the note at the top of that file before running this.
+## Generate Meshery Operator Helm Chart docs. WARNING: overwrites the hand-maintained meshery-operator README - read the note at its top first.
 helm-operator-docs: dep-check
 	GO111MODULE=on go get github.com/norwoodj/helm-docs/cmd/helm-docs
 	$(GOPATH)/bin/helm-docs -c install/kubernetes/helm/meshery-operator
@@ -430,8 +434,13 @@ helm-meshery-docs: dep-check
 helm-lint: helm-operator-lint helm-meshery-lint
 
 ## Lint Meshery Operator Helm Chart
-helm-operator-lint:
+helm-operator-lint: helm-operator-appversion-check
 	helm lint install/kubernetes/helm/meshery-operator --with-subcharts
+
+## Assert the Meshery Operator chart and its subcharts advertise the same appVersion
+helm-operator-appversion-check:
+	./install/scripts/check-operator-chart-appversions.sh --self-test
+	./install/scripts/check-operator-chart-appversions.sh install/kubernetes/helm/meshery-operator
 ## Lint Meshery Server and Adapter Helm Charts
 helm-meshery-lint:
 	helm lint install/kubernetes/helm/meshery --with-subcharts
@@ -558,7 +567,7 @@ server-integration-tests-meshsync: docker-build server-integration-tests-meshsyn
 .PHONY: ui-test-setup ui-test ui-test-e2e-full ui-test-e2e-local
 ## Install Playwright dependencies for UI tests
 ui-test-setup: dep-check-node
-	cd ui; npx playwright install chromium --with-deps; cd ..
+	cd ui && npx playwright install chromium --with-deps
 
 ## Run Meshery UI End-to-End Tests
 ui-test: dep-check-node
@@ -568,12 +577,12 @@ ui-test: dep-check-node
 ## Run Meshery UI End-to-End Tests in CI environment (Local and Remote Providers)
 ui-test-e2e-full: dep-check-node
 	 touch .env
-	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci:full ; cd ..
+	 @set -a; source .env; set +a; cd ui && npm run test:e2e:ci:full
 
 ## Run Meshery UI End-to-End Tests in CI environment (Local Provider)
 ui-test-e2e-local: dep-check-node
 	 touch .env
-	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci:local ; cd ..
+	 @set -a; source .env; set +a; cd ui && npm run test:e2e:ci:local
 
 #-----------------------------------------------------------------------------
 # Testing - Meshery CLI

@@ -237,6 +237,7 @@ const (
 	ErrGetUsersCode              = "meshery-server-1459"
 	ErrGetUserCode               = "meshery-server-1460"
 	ErrGetUsersKeysCode          = "meshery-server-1461"
+	ErrFetchProfilesCode         = "meshery-server-1464"
 )
 
 var (
@@ -643,6 +644,10 @@ func ErrFetchProfile(err error) error {
 	return errors.New(ErrFetchProfileCode, errors.Alert, []string{"Error failed to fetch profile"}, []string{err.Error()}, []string{"Invalid profile ID"}, []string{"Check if the profile ID is correct"})
 }
 
+func ErrFetchProfiles(err error) error {
+	return errors.New(ErrFetchProfilesCode, errors.Alert, []string{"Error failed to fetch performance profiles"}, []string{err.Error()}, []string{"The performance profiles could not be read from the database", "The performance_profiles table is out of sync with the performance profile model"}, []string{"Inspect the underlying database error reported above", "Make sure the Meshery database schema is up to date with the running Meshery Server"})
+}
+
 func ErrImportPattern(err error) error {
 	return errors.New(ErrImportPatternCode, errors.Alert, []string{"Error failed to import design"}, []string{err.Error()}, []string{"Cannot save the design due to wrong path or URL"}, []string{"Check if the provided path or URL of the design is correct. If you are providing a URL, it should be a direct URL to a downloadable file. For example, if the file is stored on GitHub, the URL should be 'https://raw.githubusercontent.com/path-to-file'."})
 }
@@ -1045,7 +1050,7 @@ func ErrInvalidBase64Data(err error) error {
 // set, or neither. Emitted with HTTP 400 because the caller needs to
 // correct the request shape, not the server to recover.
 func ErrInvalidImportRequest(err error) error {
-	return errors.New(ErrInvalidImportRequestCode, errors.Alert, []string{"Invalid design import request"}, []string{err.Error()}, []string{"The request body did not match exactly one variant of the import oneOf — the File variant requires `file` and `file_name`, the URL variant requires `url`.", "Both variants were provided, or neither was."}, []string{"Send a request body with exactly one variant set: either {\"file\": <bytes>, \"file_name\": \"design.yml\"} or {\"url\": \"https://...\"}."})
+	return errors.New(ErrInvalidImportRequestCode, errors.Alert, []string{"Invalid design import request"}, []string{err.Error()}, []string{"The request body did not match exactly one variant of the import oneOf — the File variant requires `file` and `fileName`, the URL variant requires `url`.", "Both variants were provided, or neither was."}, []string{"Send a request body with exactly one variant set: either {\"file\": <bytes>, \"fileName\": \"design.yml\"} or {\"url\": \"https://...\"}."})
 }
 
 // ErrConvertToDesign wraps failures in the conversion pipeline that
