@@ -2,21 +2,27 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Hoisted state we can swap between tests.
-const remoteState: { loading: boolean; err: any; remoteProps: any | null } = {
+// Hoisted state we can swap between tests. `component` models what
+// `useRemoteComponent` resolved the bundle to, including `undefined` -- which
+// is what a bundle without a CommonJS default export yields, with no error.
+const RemoteComponentStub = ({ injectProps }: any) => {
+  remoteState.remoteProps = injectProps;
+  return <div data-testid="remote-component">remote</div>;
+};
+
+const remoteState: { loading: boolean; err: any; remoteProps: any | null; component: unknown } = {
   loading: false,
   err: null,
   remoteProps: null,
+  component: RemoteComponentStub,
 };
 
 vi.mock('@paciolan/remote-component', () => ({
-  createUseRemoteComponent: () => (_url: string) => {
-    const RemoteComponent = ({ injectProps }: any) => {
-      remoteState.remoteProps = injectProps;
-      return <div data-testid="remote-component">remote</div>;
-    };
-    return [remoteState.loading, remoteState.err, RemoteComponent];
-  },
+  createUseRemoteComponent: () => (_url: string) => [
+    remoteState.loading,
+    remoteState.err,
+    remoteState.component,
+  ],
   getDependencies: () => ({}),
   createRequires: () => () => ({}),
 }));
@@ -123,9 +129,11 @@ vi.mock('../../meshery-mesh-interface/PatternService/RJSF', () => ({
 }));
 
 vi.mock('../../shared/LoadingState/DynamicFullscreenLoader', () => ({
+  // The real loader withholds its children entirely while loading; the stub has
+  // to do the same or tests see a tree the app never renders.
   DynamicFullScreenLoader: ({ children, isLoading }: any) => (
     <div data-testid="dynamic-loader" data-loading={String(Boolean(isLoading))}>
-      {children}
+      {isLoading ? null : children}
     </div>
   ),
 }));
@@ -164,13 +172,21 @@ vi.mock('@/utils/hooks/useRegistryModal', () => ({
   useRegistryModal: () => ({ openModal: vi.fn() }),
 }));
 
-import NavigatorExtension from './NavigatorExtension';
+import {
+  MESHERY_EXTENSION_CONTRACT_VERSION,
+  describeInjectedCapabilityReport,
+  isInjectedCapabilityReportSatisfied,
+  reportInjectedCapabilities,
+} from '@sistent/sistent';
+
+import NavigatorExtension, { buildExtensionInjectProps } from './NavigatorExtension';
 
 describe('NavigatorExtension', () => {
   beforeEach(() => {
     remoteState.loading = false;
     remoteState.err = null;
     remoteState.remoteProps = null;
+    remoteState.component = RemoteComponentStub;
   });
 
   it('renders the remote component wrapped in a fullscreen loader', () => {
@@ -208,5 +224,75 @@ describe('NavigatorExtension', () => {
     expect(remoteState.remoteProps.CapabilitiesRegistryClass).toBe(
       remoteState.remoteProps.ProviderUiAccessControlClass,
     );
+    // Extensions read this to detect that they were built against a different
+    // contract revision than the host that loaded them.
+    expect(remoteState.remoteProps.contractVersion).toBe(MESHERY_EXTENSION_CONTRACT_VERSION);
+  });
+
+  it('surfaces the real cause when the bundle exposes no default export', () => {
+    // `useRemoteComponent` yields `undefined` with no error in this case, so
+    // without an explicit guard React fails with an opaque "Element type is
+    // invalid" far from the actual problem.
+    remoteState.component = undefined;
+    render(<NavigatorExtension url="https://remote.example/component.js" />);
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(screen.getByText(/no CommonJS default export/i)).toBeInTheDocument();
+    // This is the bundler-config case, so the commonjs2 remedy is the right one.
+    expect(screen.getByText(/commonjs2/i)).toBeInTheDocument();
+    expect(screen.getByText(/https:\/\/remote\.example\/component\.js/)).toBeInTheDocument();
+  });
+
+  it('waits for loading to finish before reporting a missing default export', () => {
+    remoteState.loading = true;
+    remoteState.component = undefined;
+    render(<NavigatorExtension url="https://remote.example/component.js" />);
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ['memo', () => React.memo(RemoteComponentStub)],
+    ['forwardRef', () => React.forwardRef((props: any) => <RemoteComponentStub {...props} />)],
+  ])('renders a %s-wrapped default export', (_label, makeComponent) => {
+    remoteState.component = makeComponent();
+    render(<NavigatorExtension url="https://remote.example/component.js" />);
+    expect(screen.getByTestId('remote-component')).toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  it('rejects a default export that is an element rather than a component', () => {
+    // A bundle that exports `<Foo />` instead of `Foo` still carries a
+    // `$$typeof` tag, so a bare "has $$typeof" check would wave it through and
+    // React would then fail with the opaque "Element type is invalid" this
+    // guard exists to replace. Only forwardRef/memo/lazy tags are components.
+    remoteState.component = <RemoteComponentStub />;
+    render(<NavigatorExtension url="https://remote.example/component.js" />);
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(screen.getByText(/is not a React component/i)).toBeInTheDocument();
+    // The remedies differ: this bundle exported *something*, so pointing the
+    // author at the commonjs2 bundler setting would send them after the wrong fix.
+    expect(screen.queryByText(/commonjs2/i)).not.toBeInTheDocument();
+  });
+});
+
+describe('buildExtensionInjectProps', () => {
+  it('satisfies every capability the extension contract declares', () => {
+    // The host <-> extension boundary has no compile-time link: extensions read
+    // these keys off an untyped bag, so a rename here is invisible until the
+    // feature that reads it is dead in production. This assertion is the gate.
+    const report = reportInjectedCapabilities(
+      buildExtensionInjectProps({
+        providerCapabilities: {},
+        selectedK8sContexts: [],
+        currentOrganization: { id: 'org-1' },
+        openWorkspaceModal: vi.fn(),
+        openRegistryModal: vi.fn(),
+        setCurrentLoadedResourceInOrgWorkspaceSession: vi.fn(),
+      }),
+    );
+
+    expect(
+      isInjectedCapabilityReportSatisfied(report),
+      String(describeInjectedCapabilityReport(report)),
+    ).toBe(true);
   });
 });

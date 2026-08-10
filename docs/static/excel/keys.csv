@@ -85,7 +85,7 @@ Environments,Create Environment,Create a new environment,,,,,X,,X,X,Organization
 Environments,Delete Environment,Dissolve environment and all connection memberships. Leave associated resources intact.,,,,,X,,X,X,Organization Management,70747966-dfad-4523-93ce-bd7421258955,X,TRUE
 Environments,Edit Environment,Edit environment and it connection membership,,,,,X,,X,X,Organization Management,145ab6ed-b4b6-4e34-ada5-78dada250f89,X,TRUE
 Environments,Assign connections to environment,Add new connections to environments,,,,,X,,X,X,Organization Management,52cbe0b8-9aa7-4605-8eed-aa37e595adbb,X,TRUE
-Environments,Remove connections from environments,"Remove connections from environment, ",,,,,X,,X,X,Organization Management,65648682-e47f-43d7-a5ad-dc042803f951,X,TRUE
+Environments,Remove connections from environment,"Remove connections from environment, ",,,,,X,,X,X,Organization Management,65648682-e47f-43d7-a5ad-dc042803f951,X,TRUE
 Catalog,View Catalog,View all items in catalog,X,X,,,X,,X,X,User View,0cd05106-36b6-4393-a08e-4222fc10c8de,X,FALSE
 Workspace,View Workspace,See all workspaces within an organization,X,X,,,X,,X,X,Workspace Management,bc9379e8-dc18-4655-b53c-c641271c4ba3,X,TRUE
 Workspace,Delete Workspace,Dissolve workspace and all team and environment memberships. Leave associated resources intact,,,,,X,,X,X,Workspace Management,09eb0507-2f14-4bc4-92c5-9e26a4efbd5e,X,TRUE
@@ -98,7 +98,7 @@ Workspace,Remove environment from workspace,Remove environment from workspace,,,
 Workspace,Assign Designs to Workspaces,Assign designs to workspaces,,,,,X,,X,X,Workspace Management,64a1bad5-30f1-431a-aea0-8073d14a0262,X,TRUE
 Workspace,Remove Designs from Workspaces,Remove designs from workspaces,,,,,X,,X,X,Workspace Management,076515f1-f696-4211-ae27-58d5463a229e,X,TRUE
 Settings,Reset Database,Reset Meshery database,,,,,,,X,X,Settings Management,84fc402c-f33e-4a21-a0e3-e14f9e20b125,X,TRUE
-Administration,Access the Academy console,View and assess the performance of learners and of your organization's academy content.,,,,,,,,,Academy Management,045fad17-d2cc-46e8-bb10-f9ee026c799f,,FALSE
+Administration,View Academy Metrics,View and assess the performance of learners and of your organization's academy content.,,,,,,,,,Academy Management,045fad17-d2cc-46e8-bb10-f9ee026c799f,,FALSE
 Operator,View Views,See all views within a workspace,X,X,,,X,,X,X,View Management,4b3117e6-176c-4d9b-8e09-4278d2f48280,X,FALSE
 Operator,Delete View,Dissolve environment and all connection memberships. Leave associated resources intact.,X*,X*,,,X,,X,X,View Management,48076416-bc07-456b-bbea-49bdca239d0f,X,FALSE
 Operator,Assign Views to Workspace,Add new views to workspace,,,,,X,,X,X,Workspace Management,fb6c987b-e54c-4016-b3f3-0488228ee998,X,FALSE

@@ -36,7 +36,7 @@ export const ActionListItem = styled(Box)(({ theme }) => ({
   display: 'flex',
   gridGap: '0.5rem',
   alignItems: 'center',
-  justifyContent: 'space-around',
+  justifyContent: 'flex-start',
   width: '100%',
   backgroundColor: theme.palette.background.card,
   padding: '10px',
@@ -92,8 +92,13 @@ export const ChipWrapper = styled(Chip)(({ theme }) => ({
   width: '13rem',
   textAlign: 'left',
   cursor: 'pointer',
+  fontSize: theme.typography.body2.fontSize,
+  fontWeight: theme.typography.body2.fontWeight,
+  lineHeight: theme.typography.body2.lineHeight,
   '& .MuiChip-label': {
     flexGrow: 1,
+    fontWeight: 'inherit',
+    lineHeight: 'inherit',
   },
   overflow: 'hidden',
   whiteSpace: 'nowrap',
@@ -110,6 +115,7 @@ const baseChipStyles = (theme: Theme) => ({
   justifyContent: 'flex-start !important',
   borderRadius: '3px !important',
   padding: '6px 8px',
+  fontSize: theme.typography.body2.fontSize,
   '& .MuiChip-label': {
     paddingTop: '3px',
     fontWeight: '400',
@@ -191,13 +197,13 @@ export const DisconnectedChip = styled(Chip)(({ theme }) => ({
 
 export const NotFoundChip = styled(Chip)(({ theme }) => ({
   ...baseChipStyles(theme),
-  // Keep not-found readable on both light and dark surfaces — disabled-only
+  // Keep not-found readable on both light and dark surfaces -- disabled-only
   // tokens made the chip (and custom SVG avatars that use currentColor) hard to
   // see on the wizard receipt step.
   '& .MuiChip-label': {
     color: theme.palette.text.secondary,
   },
-  background: `${theme.palette.text.secondary}22 !important`,
+  background: `${alpha(theme.palette.text.secondary, 0.13)} !important`,
   border: `1px solid ${alpha(theme.palette.text.secondary, 0.35)}`,
   '& .MuiSvgIcon-root, & svg': {
     color: `${theme.palette.text.secondary} !important`,

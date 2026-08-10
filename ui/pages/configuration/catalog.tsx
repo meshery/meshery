@@ -1,16 +1,16 @@
 import React from 'react';
 import { VISIBILITY } from '../../utils/Enum';
-import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
+import { useHasPermission } from '@sistent/sistent';
 import DefaultError from '@/components/general/error-404/index';
 import MesheryPatterns from '@/components/designs/patterns/MesheryPatterns';
 import { MesheryPage } from '@/components/general/MesheryPage';
 
 function CatalogPage() {
+  const hasPermission = useHasPermission(Keys.CatalogManagementViewCatalog);
   return (
     <MesheryPage title="Catalog">
-      {CAN(Keys.CatalogManagementViewCatalog.id, Keys.CatalogManagementViewCatalog.function) ||
-      false ? (
+      {hasPermission ? (
         <MesheryPatterns
           disableCreateImportDesignButton={true}
           disableUniversalFilter={true}

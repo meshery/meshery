@@ -34,7 +34,7 @@ var viewWorkspaceCmd = &cobra.Command{
 	Use:   "view [workspace-name|workspace-id]",
 	Short: "View a workspace",
 	Long: `View a workspace by its ID or name.
-Find more information at: https://docs.meshery.io/reference/mesheryctl/workspace/view`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/workspace/view`,
 	Example: `
 // View details of a specific workspace by ID
 mesheryctl workspace view [workspace-id] --orgId [orgId]
