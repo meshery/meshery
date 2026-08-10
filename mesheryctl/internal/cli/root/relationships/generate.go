@@ -5,10 +5,12 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+	registrycmd "github.com/meshery/meshery/mesheryctl/internal/cli/root/registry"
+
 	meshkitRegistry "github.com/meshery/meshkit/registry"
 	meshkit "github.com/meshery/meshkit/utils"
+
 	"github.com/spf13/cobra"
-	"google.golang.org/api/sheets/v4"
 )
 
 type cmdRelationshipGenerateFlag struct {
@@ -22,17 +24,26 @@ type cmdRelationshipGenerateFlag struct {
 // to be considered a valid relationship entry.
 // Refer to the Meshery relationship CSV template:
 // https://github.com/meshery/meshery/blob/master/mesheryctl/templates/template-csvs/Relationships.csv
-const minRelationshipCSVColumns = 15
+
+const googleSpreadsheetURL = "https://docs.google.com/spreadsheets/d/"
 
 var relationshipGenerateFlag cmdRelationshipGenerateFlag
 
-var fetchSheetValues = func(id, cred string) (*sheets.ValueRange, error) {
+var getRelationshipSheetID = func(cred, spreadsheetID string) (int64, error) {
 	srv, err := meshkit.NewSheetSRV(cred)
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
-	return srv.Spreadsheets.Values.Get(id, "Relationships").Do()
+
+	spreadsheet, err := srv.Spreadsheets.Get(spreadsheetID).Fields().Do()
+	if err != nil {
+		return 0, err
+	}
+
+	return registrycmd.GetSheetIDFromTitle(spreadsheet, "Relationships"), nil
 }
+
+var newRelationshipCSVHelper = meshkitRegistry.NewRelationshipCSVHelper
 
 var relationshipsOutputPath = "../docs/data/RelationshipsData.json"
 
@@ -69,16 +80,37 @@ mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet
 			return saveRelationshipsJSON(data, outputPath)
 		}
 
-		resp, err := fetchSheetValues(relationshipGenerateFlag.SpreadsheetID, relationshipGenerateFlag.SpreadsheetCred)
+		relationshipSheetID, err := getRelationshipSheetID(
+			relationshipGenerateFlag.SpreadsheetCred,
+			relationshipGenerateFlag.SpreadsheetID,
+		)
 		if err != nil {
 			return err
 		}
 
-		if len(resp.Values) <= 2 {
+		if relationshipSheetID == -1 {
+			return ErrEmptySheetData(fmt.Errorf("relationships sheet not found"))
+		}
+
+		helper, err := newRelationshipCSVHelper(
+			googleSpreadsheetURL+relationshipGenerateFlag.SpreadsheetID,
+			"Relationships",
+			relationshipSheetID,
+			"",
+		)
+		if err != nil {
+			return err
+		}
+
+		if err := helper.ParseRelationshipsSheet(""); err != nil {
+			return err
+		}
+
+		if len(helper.Relationships) == 0 {
 			return ErrEmptySheetData(fmt.Errorf("no relationship data found in sheet"))
 		}
 
-		return processSheetData(resp, outputPath)
+		return saveRelationshipsJSON(helper.Relationships, outputPath)
 	},
 }
 
@@ -110,27 +142,6 @@ func generateRelationshipsFromCSV(filePath string) ([]CustomValueRange, error) {
 	}
 
 	return helper.Relationships, nil
-}
-
-func processSheetData(resp *sheets.ValueRange, jsonFilePath string) error {
-	var customResp []CustomValueRange
-
-	for _, row := range resp.Values[2:] {
-		if len(row) >= minRelationshipCSVColumns && row[0] != "" {
-			customResp = append(customResp, CustomValueRange{
-				Model:       row[0].(string),
-				Version:     row[1].(string),
-				KIND:        row[2].(string),
-				Type:        row[3].(string),
-				SubType:     row[4].(string),
-				Description: row[5].(string),
-				Styles:      row[7].(string),
-				EvalPolicy:  row[8].(string),
-			})
-		}
-	}
-
-	return saveRelationshipsJSON(customResp, jsonFilePath)
 }
 
 func saveRelationshipsJSON(data []CustomValueRange, jsonFilePath string) error {
