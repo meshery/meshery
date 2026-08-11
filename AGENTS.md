@@ -160,6 +160,24 @@ the schemas construct and pin the column explicitly with `gorm:"column:..."` -
 see `server/models/pattern_resource.go`. Guard it with a test that compares the
 emitted JSON keys against the schemas type rather than restating them by hand.
 
+### A credential's persisted `secret` has four shapes, and readers must tolerate all of them
+
+Canonical (what `meshery/schemas`
+`constructs/v1beta1/credential/forms/*.json` declares, and what Layer5 Cloud is
+moving to) is a top-level `name` plus a `secret` object that **is** the payload.
+Stored data also holds the Kubernetes `{auth, cluster}` shape, the legacy
+double-nested `{credentialName, secret:{...}}` shape Meshery's credential form
+still writes, and a legacy `{secret: "<token>"}` string. Legacy rows are never
+rewritten, so tolerance - not migration - is what keeps them working.
+
+`server/models/credential_secret.go` and its mirror `ui/utils/credentialSecret.ts`
+own that decision for both languages; every read site delegates to them rather
+than indexing the map. Reaching into `secret["secret"]` directly is how a
+canonical credential's API key silently became an empty `Authorization` header.
+The two files must stay in step - the shape catalogue and the resolution rules
+are documented once in
+`docs/content/en/project/contributing/models/connections.md`.
+
 ## Build & Development Commands
 
 - Use the `gh-axi` CLI tool to interact with GitHub. Prefer `gh-axi` over `gh`.

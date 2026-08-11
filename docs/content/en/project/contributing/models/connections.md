@@ -115,6 +115,30 @@ Both are [JSON Schemas](https://json-schema.org/). The Connection Wizard renders
 
 Because these schemas live on the definition, the wizard needs no per-kind UI code to render them. Adding a property to the schema adds a field to the form.
 
+#### How a credential's `secret` is persisted - and read
+
+The canonical form, declared in [`meshery/schemas`](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/credential/forms), is a top-level `name` plus a `secret` object holding the kind-specific fields. **The persisted `secret` object *is* the payload.**
+
+Three other shapes exist in stored data, written before that form settled, and Meshery reads all of them:
+
+| Shape | Stored `secret` | Where the payload is |
+| --- | --- | --- |
+| Canonical | `{"grafanaURL": "...", "grafanaAPIKey": "..."}` | the object itself |
+| Kubernetes | `{"auth": {...}, "cluster": {...}}` | the object itself |
+| Legacy double-nested | `{"credentialName": "x", "secret": {...}}` | one level down |
+| Legacy string | `{"secret": "<token>"}` | a bare string |
+
+Legacy rows are never rewritten - tolerance is what keeps them working. Two mirrored helpers own the whole decision, and every read site goes through them rather than reaching into the map:
+
+- **Go** - `models.CredentialPayload` (the object carrying the credential's fields) and `models.CredentialAuthSecret` (the string auth material) in `server/models/credential_secret.go`.
+- **TypeScript** - `resolveCredentialPayload` and `resolveCredentialAuthSecret` in `ui/utils/credentialSecret.ts`.
+
+Ambiguity resolves toward the canonical shape: an object is only unwrapped when it consists of nothing but the legacy wrapper keys (`credentialName`, `name`, `secret`), so a canonical payload that happens to carry its own `secret` field is left alone. If you add a credential kind whose canonical form holds string auth material under a new property, add that property to `canonicalAuthSecretKeys` / `CANONICAL_AUTH_SECRET_KEYS` in both files - they must stay in step.
+
+{{% alert color="warning" title="The registration payload's `secret` is a string" %}}
+The server rehydrates `credentialSecret.secret` into `PromCred`/`GrafanaCred`, whose `secret` field is a plain string. Handing it an object fails the `register` (verify) step outright, which is why the wizard sends `resolveCredentialAuthSecret(...)` rather than the payload object.
+{{% /alert %}}
+
 ### Visual identity: `styles`
 
 `styles` carries inline SVG markup for the kind's icon: `svgColor` (for light backgrounds), `svgWhite` (for dark backgrounds), and optionally `svgComplete`. Follow the same icon conventions as [Components]({{< ref "project/contributing/models/components" >}}).
