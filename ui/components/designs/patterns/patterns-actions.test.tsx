@@ -63,7 +63,7 @@ const baseDeps = () => {
     unpublishCatalog: vi.fn(),
     deletePattern: vi.fn(),
     deletePatternFile: vi.fn(),
-    importPattern: vi.fn(),
+    importDesign: vi.fn(),
     updatePattern: vi.fn(),
     uploadPatternFile: vi.fn(),
     deployPatternMutation: vi.fn().mockResolvedValue({}),
@@ -222,13 +222,13 @@ describe('createPatternsActions', () => {
 
   it('handleImportDesign uploads file imports using the resolved file metadata', async () => {
     const deps = baseDeps();
-    deps.importPattern.mockReturnValue({ unwrap: () => Promise.resolve({}) });
+    deps.importDesign.mockReturnValue({ unwrap: () => Promise.resolve({}) });
     buildImportDesignRequestBody.mockResolvedValue({
-      requestBody: JSON.stringify({
+      requestBody: {
         name: 'Imported design',
-        file_name: 'imported-design.yaml',
+        fileName: 'imported-design.yaml',
         file: [1, 2, 3],
-      }),
+      },
     });
 
     const actions = createPatternsActions(deps);
@@ -243,12 +243,12 @@ describe('createPatternsActions', () => {
       name: 'Imported design',
       file: 'data:text/plain;base64,QQ==',
     });
-    expect(deps.importPattern).toHaveBeenCalledWith({
-      importBody: JSON.stringify({
+    expect(deps.importDesign).toHaveBeenCalledWith({
+      body: {
         name: 'Imported design',
-        file_name: 'imported-design.yaml',
+        fileName: 'imported-design.yaml',
         file: [1, 2, 3],
-      }),
+      },
     });
   });
 
@@ -265,7 +265,7 @@ describe('createPatternsActions', () => {
       file: undefined,
     });
 
-    expect(deps.importPattern).not.toHaveBeenCalled();
+    expect(deps.importDesign).not.toHaveBeenCalled();
     expect(deps.notify).toHaveBeenCalledWith({
       message: 'Please choose a design file before continuing.',
       event_type: 'error',

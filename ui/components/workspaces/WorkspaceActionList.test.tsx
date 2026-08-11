@@ -25,15 +25,25 @@ vi.mock('@sistent/sistent', () => ({
   DeleteIcon: () => <svg data-testid="delete-icon" />,
   EditIcon: () => <svg data-testid="edit-icon" />,
   GroupAddIcon: () => <svg data-testid="group-add-icon" />,
-  IconButton: ({ children, onClick, disabled, ...props }: any) => (
-    <button onClick={onClick} disabled={disabled} {...props}>
+  IconButton: ({ children, onClick, disabled, permissionKey, ...props }: any) => (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      data-permission-key={permissionKey?.id ?? ''}
+      {...props}
+    >
       {children}
     </button>
   ),
   ListItemIcon: ({ children }: any) => <span>{children}</span>,
   Menu: ({ children, open }: any) => (open ? <div data-testid="menu">{children}</div> : null),
-  MenuItem: ({ children, onClick, disabled }: any) => (
-    <button onClick={onClick} disabled={disabled} data-testid="menu-item">
+  MenuItem: ({ children, onClick, disabled, permissionKey }: any) => (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      data-permission-key={permissionKey?.id ?? ''}
+      data-testid="menu-item"
+    >
       {children}
     </button>
   ),
@@ -129,14 +139,16 @@ describe('WorkspaceActionList', () => {
     expect(handleDeleteWorkspaceConfirm).toHaveBeenCalledWith(expect.anything(), workspace);
   });
 
-  it('disables edit/delete when permission CAN returns false', () => {
-    mockCan.mockImplementation((action: string) => {
-      if (action === 'edit' || action === 'delete') return false;
-      return true;
-    });
+  it('passes the correct permission keys to edit/delete actions', () => {
     renderComponent();
-    expect(screen.getByRole('button', { name: /edit-workspace/i })).toBeDisabled();
-    expect(screen.getByRole('button', { name: /delete-workspace/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /edit-workspace/i })).toHaveAttribute(
+      'data-permission-key',
+      'edit',
+    );
+    expect(screen.getByRole('button', { name: /delete-workspace/i })).toHaveAttribute(
+      'data-permission-key',
+      'delete',
+    );
   });
 
   it('switches to a mobile menu when the viewport is narrow', async () => {

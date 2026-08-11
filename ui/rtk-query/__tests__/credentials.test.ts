@@ -1,5 +1,15 @@
+import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { renderHook, act } from '@testing-library/react';
 import { mesheryApiPath } from '../index';
+
+// The schemas client reads its baseUrl from the environment once, at module
+// evaluation - which the static import above triggers. Hoisting the assignment
+// above the imports is what makes it absolute; vitest's `Request` rejects the
+// relative URL an empty prefix produces.
+vi.hoisted(() => {
+  process.env.RTK_MESHERY_ENDPOINT_PREFIX = 'http://localhost';
+});
 
 const {
   schemasGetUserCredentials,
@@ -137,17 +147,81 @@ describe('credentials hooks delegate to schemas', () => {
   });
 });
 
-describe('deleteCredential stays local', () => {
-  it('uses the snake_case credential_id the server actually reads', async () => {
-    const mod = await import('../credentials');
-    expect(typeof mod.useDeleteCredentialMutation).toBe('function');
+// ---------------------------------------------------------------------------
+// Nothing about `deleteCredential` is local any more. `useDeleteCredentialMutation`
+// wraps the schemas-generated `useDeleteUserCredentialMutation` and only adapts a
+// bare id to the `{ credentialId }` that endpoint takes.
+//
+// It used to be re-declared here because the generated request sends
+// `?credentialId=` while DeleteUserCredential in
+// server/handlers/credentials_handlers.go read only `credential_id`. That was
+// fixed on the server, not by forking the request: the handler now reads the
+// canonical camelCase param and keeps `credential_id` only as a legacy fallback.
+//
+// The bare-id -> `{ credentialId }` mapping is the part that can regress
+// silently, so this drives the exported hook through a real store and asserts the
+// request that ACTUALLY goes over the wire. Dispatching the generated endpoint
+// directly would assert the schemas contract and never touch the wrapper.
+// ---------------------------------------------------------------------------
 
-    // Regression guard: schemas' generated deleteUserCredential sends
-    // `?credentialId=`, but DeleteUserCredential in
-    // server/handlers/credentials_handlers.go reads `credential_id`. Migrating
-    // this endpoint would resolve a nil UUID and delete nothing.
-    expect(mesheryApiPath('integrations/credentials?credential_id=abc-123')).toBe(
-      '/api/integrations/credentials?credential_id=abc-123',
-    );
+const okResponse = (body: unknown = {}) => ({
+  ok: true,
+  status: 200,
+  redirected: false,
+  headers: new Headers({ 'content-type': 'application/json' }),
+  url: '',
+  text: () => Promise.resolve(JSON.stringify(body)),
+  json: () => Promise.resolve(body),
+  clone() {
+    return this;
+  },
+});
+
+const setupDeleteStore = async () => {
+  vi.resetModules();
+  const apiMod = await import('../index');
+  const credentialsMod = await import('../credentials');
+  const { configureStore } = await import('@reduxjs/toolkit');
+  const { Provider } = await import('react-redux');
+
+  const store = configureStore({
+    reducer: { [apiMod.api.reducerPath]: apiMod.api.reducer },
+    middleware: (g) => g().concat(apiMod.api.middleware),
+  });
+
+  const wrapper = ({ children }: { children: React.ReactNode }) =>
+    React.createElement(Provider, { store }, children);
+
+  return { credentialsMod, wrapper };
+};
+
+describe('deleteCredential effective endpoint', () => {
+  let fetchMock: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    // spyOn (not direct assignment) so `vi.restoreAllMocks()` below actually
+    // reverts it - a raw `global.fetch = ...` would outlive this file.
+    fetchMock = vi.spyOn(globalThis, 'fetch') as unknown as ReturnType<typeof vi.fn>;
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('DELETEs /api/integrations/credentials with the id as ?credentialId=', async () => {
+    fetchMock.mockResolvedValue(okResponse({}));
+    const { credentialsMod, wrapper } = await setupDeleteStore();
+
+    const { result } = renderHook(() => credentialsMod.useDeleteCredentialMutation(), { wrapper });
+    await act(async () => {
+      await result.current[0]('abc-123');
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const req = fetchMock.mock.calls[0][0] as Request;
+    expect(req.method).toBe('DELETE');
+    expect(req.url).toContain('/api/integrations/credentials');
+    expect(new URL(req.url).searchParams.get('credentialId')).toBe('abc-123');
+    expect(req.url).not.toContain('undefined');
   });
 });
