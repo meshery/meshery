@@ -32,7 +32,7 @@
             "id": null,
             "kind": "ReplicationGroup",
             "match": {},
-            "match_strategy_matrix": null,
+            "matchStrategyMatrix": null,
             "model": {
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
@@ -60,7 +60,7 @@
             "id": null,
             "kind": "CacheCluster",
             "match": {},
-            "match_strategy_matrix": null,
+            "matchStrategyMatrix": null,
             "model": {
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
@@ -100,7 +100,7 @@
             "id": null,
             "kind": "ReplicationGroup",
             "match": {},
-            "match_strategy_matrix": null,
+            "matchStrategyMatrix": null,
             "model": {
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
@@ -128,7 +128,7 @@
             "id": null,
             "kind": "Snapshot",
             "match": {},
-            "match_strategy_matrix": null,
+            "matchStrategyMatrix": null,
             "model": {
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
