@@ -52,8 +52,8 @@ vi.mock('../../utils/hooks/useNotification', () => ({
 }));
 
 vi.mock('../../rtk-query/workspace', () => ({
-  useCreateWorkspaceMutation: () => [createWorkspace],
-  useUpdateWorkspaceMutation: () => [updateWorkspace],
+  useCreateWorkspaceMutation: () => [createWorkspace, { isLoading: false }],
+  useUpdateWorkspaceMutation: () => [updateWorkspace, { isLoading: false }],
   useDeleteWorkspaceMutation: () => [deleteWorkspace],
   useGetWorkspacesQuery: () => WORKSPACES_QUERY_RESULT,
   useGetTeamsOfWorkspaceQuery: () => EMPTY_QUERY_RESULT,
@@ -87,9 +87,10 @@ vi.mock('@/utils/context/WorkspaceModalContextProvider', () => ({
 }));
 
 vi.mock('../shared/Modal/Modal', () => ({
-  RJSFModalWrapper: ({ handleSubmit }: any) => (
+  RJSFModalWrapper: ({ handleSubmit, isSubmitting }: any) => (
     <button
       data-testid="submit-workspace"
+      disabled={isSubmitting}
       onClick={() =>
         handleSubmit({ organizationId: 'org-1', name: 'team-space', description: 'shared' })
       }
