@@ -133,10 +133,15 @@ const ConnectionWizardModal = ({
           <ModalButtonSecondary
             onClick={wizard.canGoBack ? wizard.back : handleClose}
             disabled={wizard.isBusy}
+            data-testid="connection-wizard-back"
           >
             {wizard.canGoBack ? 'Back' : 'Cancel'}
           </ModalButtonSecondary>
-          <ModalButtonPrimary onClick={wizard.next} disabled={!wizard.canProceed || wizard.isBusy}>
+          <ModalButtonPrimary
+            onClick={wizard.next}
+            disabled={!wizard.canProceed || wizard.isBusy}
+            data-testid="connection-wizard-next"
+          >
             {wizard.isBusy ? 'Working...' : wizard.nextLabel}
           </ModalButtonPrimary>
         </Box>
