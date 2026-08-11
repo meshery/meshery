@@ -30,6 +30,7 @@ const {
   EMPTY_QUERY_RESULT,
   NOOP_MUTATION,
   UI_STATE,
+  SUBMITTED_ORG_ID,
 } = vi.hoisted(() => ({
   notify: vi.fn(),
   createWorkspace: vi.fn(),
@@ -39,6 +40,9 @@ const {
   EMPTY_QUERY_RESULT: { data: undefined, isLoading: false },
   NOOP_MUTATION: [vi.fn()],
   UI_STATE: { ui: { organization: { id: 'org-1' } } },
+  // Boxed so tests can override the id the mocked form "submits" without
+  // reassigning the hoisted binding itself (vi.hoisted values are const).
+  SUBMITTED_ORG_ID: { current: 'org-1' },
 }));
 
 vi.mock('../../utils/hooks/useNotification', () => ({
@@ -92,7 +96,11 @@ vi.mock('../shared/Modal/Modal', () => ({
       data-testid="submit-workspace"
       disabled={isSubmitting}
       onClick={() =>
-        handleSubmit({ organizationId: 'org-1', name: 'team-space', description: 'shared' })
+        handleSubmit({
+          organizationId: SUBMITTED_ORG_ID.current,
+          name: 'team-space',
+          description: 'shared',
+        })
       }
     >
       Save
@@ -252,5 +260,56 @@ describe('Workspaces create flow notifications', () => {
     createWorkspace.mockReturnValue({ unwrap: () => Promise.resolve({ id: 'ws-1' }) });
     await userEvent.setup().click(screen.getByTestId('submit-workspace'));
     await waitFor(() => expect(screen.queryByTestId('submit-workspace')).not.toBeInTheDocument());
+  });
+});
+
+/**
+ * Regression coverage for meshery/meshery#21263.
+ *
+ * organizationId is a hidden field in the create-workspace form, seeded from
+ * `organization?.id` when the modal opens. If the org context hasn't
+ * hydrated yet, the user has no way to see or fix it, and the request used to
+ * reach the server with a missing/empty organizationId - which only surfaced
+ * as an opaque "Unable to unmarshal the : workspace" error. Both guards below
+ * must reject locally, with a clear notification, before any request goes out.
+ */
+describe('Workspaces create flow — organization guard', () => {
+  beforeEach(() => {
+    notify.mockReset();
+    createWorkspace.mockReset();
+  });
+
+  afterEach(() => {
+    UI_STATE.ui.organization = { id: 'org-1' };
+    SUBMITTED_ORG_ID.current = 'org-1';
+  });
+
+  it('blocks opening the create modal while the organization has not loaded yet', async () => {
+    UI_STATE.ui.organization = null;
+    const user = userEvent.setup();
+    render(<Workspaces onSelectWorkspace={undefined} />);
+
+    await user.click(screen.getByText('Create'));
+
+    expect(screen.queryByTestId('submit-workspace')).not.toBeInTheDocument();
+    expect(createWorkspace).not.toHaveBeenCalled();
+    await waitFor(() => expect(notify).toHaveBeenCalled());
+    const types = notifiedEventTypes();
+    expect(types).toContain('error');
+    expect(types).not.toContain('success');
+    expect(notify.mock.calls[0][0].message).toMatch(/organization/i);
+  });
+
+  it('refuses to submit a create with no organizationId even if the modal is already open', async () => {
+    SUBMITTED_ORG_ID.current = undefined;
+
+    await openCreateModalAndSubmit();
+
+    expect(createWorkspace).not.toHaveBeenCalled();
+    await waitFor(() => expect(notify).toHaveBeenCalled());
+    const types = notifiedEventTypes();
+    expect(types).toContain('error');
+    expect(types).not.toContain('success');
+    expect(notify.mock.calls[0][0].message).toMatch(/organization/i);
   });
 });

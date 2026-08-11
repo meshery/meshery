@@ -204,6 +204,18 @@ const Workspaces = ({ onSelectWorkspace }) => {
 
   const workspaces = workspacesData?.workspaces ? workspacesData.workspaces : [];
   const handleCreateWorkspace = ({ organizationId, name, description }) => {
+    // Defense-in-depth: the modal only opens once organization?.id is present
+    // (see handleWorkspaceModalOpen), but organizationId is a hidden form
+    // field that nothing re-validates at submit time. Without this, a
+    // missing/invalid id reaches the server and surfaces only as an opaque
+    // unmarshal error (meshery/meshery#21263).
+    if (!organizationId) {
+      notify({
+        message: 'Unable to create workspace: organization is not available.',
+        event_type: EVENT_TYPES.ERROR,
+      });
+      return;
+    }
     createWorkspace({
       workspacePayload: {
         name: name,
@@ -316,11 +328,24 @@ const Workspaces = ({ onSelectWorkspace }) => {
       });
       setEditWorkspaceId(workspaceObject.id);
     } else {
+      // organizationId is hidden in the create form (see fetchSchema) and seeded
+      // solely from `organization` here, so the user has no way to see or
+      // correct it. If the org context hasn't hydrated yet, block opening the
+      // modal rather than let a workspace get created under an empty/invalid
+      // organizationId - the server only reports that as an opaque unmarshal
+      // error (meshery/meshery#21263).
+      if (!organization?.id) {
+        notify({
+          message: 'Organization is still loading. Please try again in a moment.',
+          event_type: EVENT_TYPES.ERROR,
+        });
+        return;
+      }
       setActionType(WORKSPACE_ACTION_TYPES.CREATE);
       setInitialData({
         name: undefined,
         description: '',
-        organizationId: organization?.id,
+        organizationId: organization.id,
       });
       setEditWorkspaceId('');
     }
