@@ -11,6 +11,7 @@ import {
   Tooltip,
   useTheme,
 } from '@sistent/sistent';
+import { Keys } from '@meshery/schemas/permissions';
 import Modal from './shared/Modal/Modal';
 import { CON_OPS, CoreConnectionKinds } from '../utils/Enum';
 import Moment from 'react-moment';
@@ -303,6 +304,7 @@ const MesheryCredentialComponent: React.FC = () => {
                     handleSubmit({ type: CON_OPS.DELETE, id: rowData?.id || undefined })
                   }
                   size="large"
+                  permissionKey={Keys.SecurityManagementDeleteCredential}
                 >
                   <DeleteIcon fill={theme?.palette?.icon?.default} />
                 </IconButton>
