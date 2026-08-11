@@ -2,6 +2,7 @@ package academy
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	academyModel "github.com/meshery/schemas/models/v1beta3/academy"
@@ -68,37 +69,12 @@ var windowsReservedNames = map[string]bool{
 	"lpt6": true, "lpt7": true, "lpt8": true, "lpt9": true,
 }
 
+var nonAlphaNumRegex = regexp.MustCompile(`[^a-z0-9]+`)
+
 func makeSlug(input string) (string, error) {
-	// First convert to lower case and replace spaces with hyphens
-	slug := strings.ToLower(strings.ReplaceAll(input, " ", "-"))
-
-	// Replace non-allowed characters with -
-	var b strings.Builder
-	for _, ch := range slug {
-		if (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9') || ch == '-' || ch == '_' {
-			b.WriteRune(ch)
-		} else {
-			b.WriteRune('-')
-		}
-	}
-
-	// Collapse repeated hyphens
-	var collapsed strings.Builder
-	lastDash := false
-	for _, ch := range b.String() {
-		if ch == '-' {
-			if !lastDash {
-				collapsed.WriteRune(ch)
-				lastDash = true
-			}
-		} else {
-			collapsed.WriteRune(ch)
-			lastDash = false
-		}
-	}
-
-	// Trim leading and trailing hyphens
-	result := strings.Trim(collapsed.String(), "-")
+	slug := strings.ToLower(input)
+	result := nonAlphaNumRegex.ReplaceAllString(slug, "-")
+	result = strings.Trim(result, "-")
 
 	if result == "" || result == "." || result == ".." {
 		return "", fmt.Errorf("invalid or unsafe path segment generated from title: %q", input)
