@@ -16,12 +16,26 @@ package models
 // writes. Readers must not care which they are handed, so they go through
 // CredentialPayload / CredentialAuthSecret rather than reaching into the map.
 //
-// ui/utils/credentialSecret.ts is the TypeScript mirror of this file; the two
-// must stay in step.
+// ui/utils/credentialSecret.ts is the TypeScript mirror of this file. What must
+// stay in step is the *resolution rules* - which shapes are recognized, which
+// keys make up the wrapper, and that ambiguity resolves toward canonical - not
+// the return types. The two deliberately differ on the legacy string shape:
+// CredentialPayload returns nil because it is typed to a map, and Go callers
+// reach for CredentialAuthSecret instead, while the TypeScript
+// resolveCredentialPayload returns the bare string. Port behaviour across, not
+// signatures.
 
 // legacyWrapperKeys are the only keys the legacy double-nested wrapper carries.
 // An outer map made up of nothing but these, with an object or string under
 // `secret`, is a wrapper rather than a payload.
+//
+// "name" is here because the registration path persists the wrapper as
+// {name, secret} (server/machines/actions.go), not just as
+// {credentialName, secret}. The cost is that a canonical payload whose only
+// fields were "name" and "secret" would be unwrapped as a wrapper. No canonical
+// form has that shape - prometheus, grafana and kubernetes carry neither field -
+// so if you add a credential kind, keep its payload from being exactly
+// {name, secret}.
 var legacyWrapperKeys = map[string]struct{}{
 	"credentialName": {},
 	"name":           {},
@@ -29,9 +43,12 @@ var legacyWrapperKeys = map[string]struct{}{
 }
 
 // canonicalAuthSecretKeys names the canonical credential fields that hold string
-// auth material, per meshery/schemas .../credential/forms/*.json. Prometheus and
-// Kubernetes have none: a canonical Prometheus credential is anonymous, and a
-// Kubernetes credential's auth is a structured object read via CredentialPayload.
+// auth material, per meshery/schemas .../credential/forms/*.json. Currently
+// grafana only. Prometheus and Kubernetes have none: a canonical Prometheus
+// credential is anonymous, and a Kubernetes credential's auth is a structured
+// object read via CredentialPayload. Adding a kind whose canonical form carries
+// string auth under a new property means adding it here *and* to
+// CANONICAL_AUTH_SECRET_KEYS in the TypeScript mirror.
 var canonicalAuthSecretKeys = []string{"grafanaAPIKey"}
 
 // isLegacyWrapper reports whether secret is the legacy double-nested wrapper

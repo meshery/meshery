@@ -119,7 +119,7 @@ Because these schemas live on the definition, the wizard needs no per-kind UI co
 
 The canonical form, declared in [`meshery/schemas`](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/credential/forms), is a top-level `name` plus a `secret` object holding the kind-specific fields. **The persisted `secret` object *is* the payload.**
 
-Three other shapes exist in stored data and Meshery reads all of them. Two of the three are still written today: Meshery writes the Kubernetes shape when it imports a kubeconfig, and its credential form writes the double-nested wrapper.
+Four shapes exist in stored data in total - the canonical one plus three others - and Meshery reads all of them. Two of the three non-canonical shapes are still written today: Meshery writes the Kubernetes shape when it imports a kubeconfig, and its credential form writes the double-nested wrapper.
 
 | Shape | Stored `secret` | Where the payload is |
 | --- | --- | --- |
@@ -133,7 +133,9 @@ Legacy rows are never rewritten - tolerance is what keeps them working. Two mirr
 - **Go** - `models.CredentialPayload` (the object carrying the credential's fields) and `models.CredentialAuthSecret` (the string auth material) in `server/models/credential_secret.go`.
 - **TypeScript** - `resolveCredentialPayload` and `resolveCredentialAuthSecret` in `ui/utils/credentialSecret.ts`.
 
-Ambiguity resolves toward the canonical shape: an object is only unwrapped when it consists of nothing but the legacy wrapper keys (`credentialName`, `name`, `secret`), so a canonical payload that happens to carry its own `secret` field is left alone. If you add a credential kind whose canonical form holds string auth material under a new property, add that property to `canonicalAuthSecretKeys` / `CANONICAL_AUTH_SECRET_KEYS` in both files - they must stay in step.
+Ambiguity resolves toward the canonical shape: an object is only unwrapped when it consists of nothing but the legacy wrapper keys (`credentialName`, `name`, `secret`), so a canonical payload that happens to carry its own `secret` field is left alone. The one shape this cannot distinguish is a payload whose *only* fields are `name` and `secret` - no canonical form has that shape, so keep a new credential kind's payload away from it.
+
+What must stay in step between the two files is the **resolution rules**, not the return types: the helpers deliberately differ on the legacy string shape, where the TypeScript `resolveCredentialPayload` returns the bare string and the Go `CredentialPayload` returns nil because it is typed to a map (Go callers use `CredentialAuthSecret`). The auth-key list is currently grafana only; a credential kind whose canonical form holds string auth material under a new property must be added to `canonicalAuthSecretKeys` **and** `CANONICAL_AUTH_SECRET_KEYS`.
 
 The helpers resolve the wrapper, not the field names inside it. A Kubernetes credential created through the credential form describes its cluster with `clusterName`/`clusterServerURL` rather than the kubeconfig-style `cluster` block `K8sContextFromConnection` reads, so it yields an auth block but no cluster; which side moves is tracked in [meshery/meshery#21336](https://github.com/meshery/meshery/issues/21336).
 

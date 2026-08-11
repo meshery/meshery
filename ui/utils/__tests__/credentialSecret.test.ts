@@ -46,6 +46,18 @@ describe('resolveCredentialPayload', () => {
     expect(resolveCredentialPayload(secret)).toEqual(secret);
   });
 
+  it('ignores an inherited secret property when classifying the wrapper', () => {
+    // Every own key is a wrapper key, so the own-key check alone cannot decide
+    // this: only the `secret` probe can. With `'secret' in obj` the object would
+    // be treated as a wrapper and unwrapped to the *prototype's* value, even
+    // though it owns no `secret` at all.
+    const payload = Object.create({ secret: { grafanaAPIKey: 'inherited' } });
+    payload.name = 'grafana-cred';
+
+    expect(resolveCredentialPayload(payload)).toBe(payload);
+    expect(resolveCredentialAuthSecret(payload)).toBeUndefined();
+  });
+
   it('passes through values that are not objects', () => {
     expect(resolveCredentialPayload(undefined)).toBeUndefined();
     expect(resolveCredentialPayload(null)).toBeNull();

@@ -174,8 +174,9 @@ rewritten, so tolerance - not migration - is what keeps them working.
 own that decision for both languages; every read site delegates to them rather
 than indexing the map. Reaching into `secret["secret"]` directly is how a
 canonical credential's API key silently became an empty `Authorization` header.
-The two files must stay in step - the shape catalogue and the resolution rules
-are documented once in
+The two files must keep the same *resolution rules* - their return types
+deliberately differ on the legacy string shape. The shape catalogue and the
+rules are documented once in
 `docs/content/en/project/contributing/models/connections.md`.
 
 ## Build & Development Commands
