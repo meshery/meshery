@@ -235,15 +235,15 @@ const EnvironmentCard = ({
                       ev.stopPropagation();
                       onEdit(ev);
                     }}
-                    sx={{ color: 'white' }}
+                    sx={{ color: (theme) => theme.palette.common.white }}
                     disabled={
                       selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
                     }
                     permissionKey={Keys.WorkspaceManagementEditEnvironment}
                   >
                     <EditIcon
-                      style={{ ...iconMedium, margin: '0 2px' }}
-                      fill={theme?.palette?.icon?.default}
+                      style={{ ...iconMedium, margin: '0 2px', fill: 'currentColor' }}
+                      fill="currentColor"
                     />
                   </IconButton>
                 </CustomTooltip>
@@ -253,15 +253,15 @@ const EnvironmentCard = ({
                       ev.stopPropagation();
                       onDelete(ev);
                     }}
-                    sx={{ color: 'white' }}
+                    sx={{ color: (theme) => theme.palette.common.white }}
                     disabled={
                       selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
                     }
                     permissionKey={Keys.WorkspaceManagementDeleteEnvironment}
                   >
                     <DeleteIcon
-                      style={{ ...iconMedium, margin: '0 2px' }}
-                      fill={theme?.palette?.icon?.default}
+                      style={{ ...iconMedium, margin: '0 2px', fill: 'currentColor' }}
+                      fill="currentColor"
                     />
                   </IconButton>
                 </CustomTooltip>

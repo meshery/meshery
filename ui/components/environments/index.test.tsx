@@ -104,13 +104,6 @@ vi.mock('../shared/Modal/Modal', () => ({
 }));
 
 vi.mock('./environment-card', () => ({ default: () => null }));
-vi.mock('./styles', () => ({
-  CreateButtonWrapper: ({ children }: any) => <div>{children}</div>,
-  BulkActionWrapper: ({ children }: any) => <div>{children}</div>,
-}));
-vi.mock('@/assets/styles/general/tool.styles', () => ({
-  ToolWrapper: ({ children }: any) => <div>{children}</div>,
-}));
 vi.mock('../general/PromptComponent', () => ({
   default: React.forwardRef(() => null),
 }));
@@ -124,6 +117,13 @@ vi.mock('@sistent/sistent', () => ({
   // This suite exercises the create flow, not authorization: grant every
   // capability so the permission gates never mask the behaviour under test.
   useHasPermission: () => true,
+  DataTableToolbar: ({ primaryActions, search, bulkOperations, ...rest }: any) => (
+    <div data-testid="data-table-toolbar" {...rest}>
+      {primaryActions}
+      {search}
+      {bulkOperations}
+    </div>
+  ),
   Button: ({ children, onClick, ...rest }: any) => (
     <button onClick={onClick} {...rest}>
       {children}

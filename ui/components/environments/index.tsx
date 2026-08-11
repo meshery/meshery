@@ -1,18 +1,30 @@
 import { useEffect, useRef, useState } from 'react';
 import {
+  Button,
   ChevronLeftIcon,
   ChevronRightIcon,
+  createAndEditEnvironmentSchema,
+  createAndEditEnvironmentUiSchema,
+  DataTableToolbar,
   DeleteIcon,
+  ErrorBoundary,
+  Grid2,
+  Modal as SisitentModal,
+  ModalBody,
+  ModalFooter,
   NoSsr,
   Pagination,
   PaginationItem,
+  PrimaryActionButtons,
+  PROMPT_VARIANTS,
+  SearchBar,
+  TransferList,
+  Typography,
   useHasPermission,
   useTheme,
 } from '@sistent/sistent';
 import { withRouter } from 'next/router';
 import { debounce } from 'lodash';
-import { CreateButtonWrapper, BulkActionWrapper } from './styles';
-import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import AddIconCircleBorder from '../../assets/icons/AddIconCircleBorder';
 import EnvironmentCard from './environment-card';
 import EnvironmentIcon from '../../assets/icons/Environment';
@@ -22,21 +34,6 @@ import { formatApiError } from '../../utils/helpers/meshkitError';
 import { RJSFModalWrapper } from '../shared/Modal/Modal';
 import _PromptComponent from '../general/PromptComponent';
 import { EmptyState } from '../lifecycle/general';
-import {
-  Modal as SisitentModal,
-  ModalBody,
-  TransferList,
-  ModalFooter,
-  PrimaryActionButtons,
-  createAndEditEnvironmentSchema,
-  createAndEditEnvironmentUiSchema,
-  ErrorBoundary,
-  Button,
-  Grid2,
-  Typography,
-  SearchBar,
-  PROMPT_VARIANTS,
-} from '@sistent/sistent';
 import ConnectionIcon from '../../assets/icons/Connection';
 import { TRANSFER_COMPONENT } from '../../utils/Enum';
 import {
@@ -462,8 +459,8 @@ const Environments = () => {
     <NoSsr>
       {canViewEnv ? (
         <>
-          <ToolWrapper>
-            <CreateButtonWrapper style={{ marginRight: '2rem' }}>
+          <DataTableToolbar
+            primaryActions={
               <Button
                 type="submit"
                 variant="contained"
@@ -475,7 +472,7 @@ const Environments = () => {
                   borderRadius: '5px',
                 }}
                 permissionKey={Keys.WorkspaceManagementCreateEnvironment}
-                data-cy="btnResetDatabase"
+                data-cy="btn-create-environment"
               >
                 <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
                 <Typography
@@ -487,31 +484,35 @@ const Environments = () => {
                   Create
                 </Typography>
               </Button>
-            </CreateButtonWrapper>
-            <SearchBar
-              onSearch={(value) => {
-                setSearch(value);
-              }}
-              placeholder="Search Environments..."
-              expanded={isSearchExpanded}
-              setExpanded={setIsSearchExpanded}
-            />
-          </ToolWrapper>
-          {selectedEnvironments.length > 0 && (
-            <BulkActionWrapper>
-              <Typography>
-                {selectedEnvironments.length > 1
-                  ? `${selectedEnvironments.length} environments selected`
-                  : `${selectedEnvironments.length} environment selected`}
-              </Typography>
-              <Button
-                onClick={handleBulkDeleteEnvironmentConfirm}
-                permissionKey={Keys.WorkspaceManagementDeleteEnvironment}
-              >
-                <DeleteIcon fill="red" style={{ margin: '0 2px' }} />
-              </Button>
-            </BulkActionWrapper>
-          )}
+            }
+            search={
+              <SearchBar
+                onSearch={(value) => {
+                  setSearch(value);
+                }}
+                placeholder="Search by name"
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
+              />
+            }
+            bulkOperations={
+              selectedEnvironments.length > 0 ? (
+                <>
+                  <Typography>
+                    {selectedEnvironments.length > 1
+                      ? `${selectedEnvironments.length} environments selected`
+                      : `${selectedEnvironments.length} environment selected`}
+                  </Typography>
+                  <Button
+                    onClick={handleBulkDeleteEnvironmentConfirm}
+                    permissionKey={Keys.WorkspaceManagementDeleteEnvironment}
+                  >
+                    <DeleteIcon fill="red" style={{ margin: '0 2px' }} />
+                  </Button>
+                </>
+              ) : null
+            }
+          />
           {environments.length > 0 ? (
             <>
               <Grid2 container spacing={2} sx={{ marginTop: '10px' }} size="grow">
