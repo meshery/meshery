@@ -28,7 +28,7 @@ current releases.
 
 In addition, optional [Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}}) listen
 on their own ports (for example `10000/tcp` and up), and the Meshery Operator's
-`kube-rbac-proxy` listens on `8443/tcp` in-cluster. Inside the pod, Meshery
+authn/authz-filtered metrics endpoint listens on `8443/tcp` in-cluster. Inside the pod, Meshery
 Server listens on `8080/tcp`, which the Kubernetes Service exposes as
 `9081/tcp`.
 
@@ -43,6 +43,7 @@ initiated, not just the ports.
 | Meshery Server | Managed cluster Kubernetes API | 443/tcp (typically) | Discovery, deploy/undeploy, Operator lifecycle | Uses kubeconfig context (out-of-cluster) or ServiceAccount (in-cluster). |
 | Meshery Server | Meshery Broker | 4222/tcp | Event/data streaming from each cluster | Reaches ClusterIP in-cluster; reaches an exposed endpoint out-of-cluster. |
 | Meshery Server | Remote Provider | 443/tcp (egress) | Authentication, capabilities, durable state | Must be allowed through egress firewalls/proxies. |
+| Meshery Server | Meshery Helm chart repository (`meshery.github.io`) | 443/tcp (egress) | Resolving and downloading the `meshery-operator` chart | Operator mode only; see [Egress requirements](#egress-requirements). |
 | Meshery Server | Meshery Adapters | adapter ports (e.g. 10000+/tcp) | Capability operations | Only when adapters are deployed. |
 | Operations/monitoring | Meshery Broker | 8222/tcp | Broker HTTP monitoring endpoint | Optional; for observability. |
 
@@ -226,10 +227,21 @@ Meshery Server typically needs outbound connectivity to:
   during install/upgrade. You can reduce or disable some content downloads with
   `SKIP_DOWNLOAD_CONTENT` and `SKIP_DOWNLOAD_EXTENSIONS` in tightly egress-
   restricted environments.
+- **The Meshery Helm chart repository**
+  (`https://meshery.github.io/meshery.io/charts`) over `443/tcp`, when managing
+  clusters in operator mode. Meshery Server reads the repository index to
+  resolve the `meshery-operator` chart version before installing it, and
+  downloads the chart archive itself. Clusters whose Operator is already
+  installed keep reporting status and version without it - only installing or
+  upgrading the Operator is withheld, with the reason shown on the connection's
+  Operator status card and in its
+  [Diagnostics]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#diagnostics" >}}).
+  A blip is not sticky: redeploying the Operator re-resolves the version.
 
-In restricted networks, allow-list the Remote Provider and registry endpoints,
-or run behind an egress proxy. Verify that provider egress is not silently
-blocked—failed provider reachability shows up as authentication problems.
+In restricted networks, allow-list the Remote Provider, the chart repository,
+and registry endpoints, or run behind an egress proxy. Verify that provider
+egress is not silently blocked - failed provider reachability shows up as
+authentication problems.
 
 ## Network policies
 

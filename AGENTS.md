@@ -212,6 +212,19 @@ so matching versions are not evidence that the installed contents are the publis
 A version *mismatch* against `ui/package.json` is a useful tell that this has happened, but
 a match proves nothing.
 
+**Three package.json files consume `@sistent/sistent` - `ui/`, `provider-ui/` and
+`install/docker-extension/ui/` - and a bump must cover all three.** Sistent's peers
+(`@mui/x-date-pickers`, `date-fns`, the `@rjsf/*` set, `xstate`/`@xstate/react`) are not
+optional: a consumer that omits one still installs cleanly and fails only at bundle time with
+`Module not found` pointing *inside* `@sistent/sistent/dist`, which reads as a sistent bug
+rather than a missing peer. `install/docker-extension/ui` installs with `--legacy-peer-deps`
+(`@docker/docker-mui-theme` pins MUI <=6 against sistent's MUI 9) - see its Dockerfile.
+
+`@meshery/schemas` deliberately keeps its `latest` dist-tag *below* its highest semver (1.4.0
+is stale). That is safe because npm prefers the `latest`-tagged version whenever it satisfies
+the range, so the `^1.3.x` carets do not jump to 1.4.0 - but verify the resolved version in
+every regenerated lockfile rather than assuming it.
+
 ### CLI (mesheryctl)
 
 ```bash
@@ -229,6 +242,17 @@ though only one command changed. CI/committed docs use `/home/runner/...` (the G
 Actions runner home). After regenerating, `git diff --stat` the docs dir, `git checkout --`
 every file whose only change is that path, and manually fix the path back to
 `/home/runner/...` in the pages you actually intended to change.
+
+### Releasing
+
+Meshery has **no automatic release cadence**. Release Drafter keeps exactly one draft
+release current on every push to `master`; publishing that draft creates the `v*` tag,
+which is what fires `build-and-release-stable.yml` and its fan-out. Follow
+`.agents/skills/cut-release/SKILL.md` - never hand-author a tag or notes.
+
+`gh release edit --draft=false` can exit 0 and leave the release a draft (seen cutting
+v1.0.65). Publication is proven only by re-reading the release for `draft: false` plus a
+non-null `published_at`, and by the release-triggered runs actually appearing.
 
 ### Docker
 
@@ -263,6 +287,15 @@ make helm-docs      # Generate Helm chart docs
   `mesheryctl/helpers/component_info.json` (`next_error_code`) and that value bumped in the
   same commit. `.github/workflows/error-codes-updater.yaml` re-runs errorutil and fails the
   PR if its analysis reports anything.
+  The server side has the same contract in `server/helpers/component_info.json`: errorutil
+  refuses to run at all ("next_error_code is lower than or equal to highest used code") until
+  `next_error_code` is bumped past every code you added, so bump it in the same commit.
+  Name each constant `<BuilderFuncName>Code` - errorutil keys the export off that pairing.
+  `server/helpers/errorutil_errors_export.json` is gitignored, but the reference data at
+  `docs/data/errorref/meshery-server_errors_export.json` is tracked: regenerate it with the
+  `jq --slurpfile` wrapper the workflow uses, or the docs reference silently omits the new
+  codes. Adding a constant longer than the block's current widest name makes gofmt realign
+  the entire `error.go` const block - prefer a shorter name over a 300-line whitespace diff.
 - Only `utils.Log.Error(err)` renders a MeshKit error's code, cause and remediation; cobra's
   default print shows just the message. In `mesheryctl` commands, log the structured error
   for the user *and* return it for the exit path.
@@ -386,7 +419,12 @@ the sheet↔code map `ui/tests/e2e/connections.testmap.ts`). Contract docs:
 
 ### Do Not Modify
 
-`LICENSE`, `CODE_OF_CONDUCT.md`, `GOVERNANCE.md`, `MAINTAINERS.md`, `.github/copilot-instructions.md`, `.github/agents/`, `go.sum`, `ui/package-lock.json`, `provider-ui/package-lock.json`
+`LICENSE`, `CODE_OF_CONDUCT.md`, `GOVERNANCE.md`, `MAINTAINERS.md`, `.github/copilot-instructions.md`, `.github/agents/`
+
+Never hand-edit a generated lock file (`go.sum`, or any of the several `package-lock.json`
+files). Regenerate it with the package manager - a dependency bump legitimately rewrites
+every lock file it touches. `.agents/hooks/block-lockfiles.sh` enforces this by basename,
+so it covers lock files this list does not enumerate.
 
 ### Require Human Review
 
