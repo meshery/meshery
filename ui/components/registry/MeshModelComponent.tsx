@@ -176,7 +176,14 @@ const MeshModelComponent_ = ({
   const relationshipsData = relationshipsRes.data;
   const connectionsData = connectionsRes.data;
 
-  const hasMoreModels = modelsData?.totalCount > modelsData?.pageSize * modelsData?.page;
+  const hasMoreModels =
+    // Once the full-set backfill (below) has loaded every model, there's
+    // nothing left to page in — without this check, a `pagesize: 'all'`
+    // response that still reports `page: 0` leaves this true, and the
+    // infinite-scroll observer keeps re-requesting paginated pages on top of
+    // data that's already fully loaded.
+    !hasFetchedAllModelsRef.current &&
+    modelsData?.totalCount > modelsData?.pageSize * modelsData?.page;
   const hasMoreRegistrants =
     registrantsData?.totalCount > registrantsData?.pageSize * registrantsData?.page;
   const hasMoreComponents =
