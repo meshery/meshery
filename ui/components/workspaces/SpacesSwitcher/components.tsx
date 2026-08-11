@@ -409,6 +409,11 @@ export const AssignDesignViewButton = ({ type, handleAssign, disabled }) => {
         padding: '0.85rem',
       }}
       startIcon={<SettingsIcon />}
+      permissionKey={
+        type === RESOURCE_TYPE.DESIGN
+          ? Keys.WorkspaceManagementAssignDesignsToWorkspaces
+          : Keys.KanvasAssignViewsToWorkspace
+      }
     >
       {type === RESOURCE_TYPE.DESIGN ? 'Manage Designs' : 'Manage Views'}
     </Button>
