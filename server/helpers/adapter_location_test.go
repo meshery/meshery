@@ -49,6 +49,26 @@ func TestAdapterPort(t *testing.T) {
 			location: "http://",
 			wantErr:  true,
 		},
+		{
+			name:     "hostless port",
+			location: ":10000",
+			wantErr:  true,
+		},
+		{
+			name:     "non numeric port",
+			location: "adapter:not-a-port",
+			wantErr:  true,
+		},
+		{
+			name:     "port out of range",
+			location: "adapter:65536",
+			wantErr:  true,
+		},
+		{
+			name:     "zero port",
+			location: "adapter:0",
+			wantErr:  true,
+		},
 	}
 
 	for _, tt := range tests {
