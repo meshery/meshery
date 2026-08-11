@@ -36,7 +36,7 @@ export const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => pro
       zIndex: theme.zIndex.drawer,
     },
     [theme.breakpoints.down('md')]: {
-      zIndex: theme.zIndex.modal,
+      zIndex: theme.zIndex.drawer,
     },
     ...(open && {
       width: DRAWER_WIDTH,

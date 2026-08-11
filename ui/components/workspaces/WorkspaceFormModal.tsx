@@ -22,7 +22,7 @@ const BodyShell = styled(Box)({
 
 // Match RegistryModal: fixed viewport footprint on desktop, full-screen sheet on mobile.
 const StyledWorkspaceModal = styled(Modal)(({ theme }) => ({
-  zIndex: 1500,
+  zIndex: theme.zIndex.modal,
   '& .MuiDialog-paperFullScreen': {
     margin: 0,
   },
