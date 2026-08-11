@@ -312,7 +312,7 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
   };
 
   useEffect(() => {
-    if (selectedCredential !== null || (formState !== null && (formState['secret'] !== undefined))) {
+    if (selectedCredential !== null || (formState !== null && formState['secret'] !== undefined)) {
       setDisableVerify(false);
     } else {
       setDisableVerify(true);
