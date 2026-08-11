@@ -12,6 +12,7 @@
   --details-link-color: #3c494f;
   --brand-color-secondary-50: #3c494f;
   --color-white: #fff;
+  --color-white-alpha: rgba(255, 255, 255, 0.85);
   // #EBC017;
   // ////////////////////////////////////////////
   --brand-color: #00b39f;
@@ -93,12 +94,12 @@
 }
 
 .dark-mode {
+  --brand-color: #00d3a9;
   --brand-color-primary: #00d3a9;
   --brand-color-secondary: #00b39f;
   --brand-color-secondary-hover: #00d3a9;
   --brand-color-secondary-dark: #008274;
   --details-link-color: #00d3a9;
-  --brand-color: #00d3a9;
   --brand-color-tertiary: #3C494F;
   --color-primary-light: #212529;
   --color-primary-medium: #343a40;
