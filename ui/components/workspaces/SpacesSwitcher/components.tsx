@@ -221,7 +221,10 @@ export const TableListHeader = ({
         width: '100%',
         paddingInline: '1rem',
         alignItems: 'center',
-        flexWrap: 'nowrap',
+        flexWrap: 'wrap',
+        [theme.breakpoints.up('md')]: {
+          flexWrap: 'nowrap',
+        },
       }}
     >
       {isMultiSelectMode && (
