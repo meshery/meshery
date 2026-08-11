@@ -218,6 +218,7 @@ type HandlerInterface interface {
 	PerformConnectionAction(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	ProcessConnectionRegistration(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	CancelConnectionRegister(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	GetControllersDefaultConfig(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UpdateControllersDefaultConfig(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)

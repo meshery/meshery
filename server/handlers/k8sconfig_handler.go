@@ -19,6 +19,7 @@ import (
 	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/core"
+	systemv1beta1 "github.com/meshery/schemas/models/v1beta1/system"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 
 	"github.com/meshery/meshkit/models/events"
@@ -42,7 +43,13 @@ type ContextOptions struct {
 	Name string `json:"name,omitempty"`
 }
 
-// SaveK8sContextResponse - struct used as (json marshaled) response to requests for saving k8s contexts
+// SaveK8sContextResponse - struct used as (json marshaled) response to requests
+// for saving k8s contexts. Wire-equivalent to the schemas
+// AddKubernetesConfigResponse (v1beta1/system); it still carries
+// models.K8sContext elements because the schemas K8sContext uses non-pointer
+// timestamps that would emit zero-value createdAt/updatedAt for
+// freshly-discovered contexts. Swap to the schemas type once its timestamps
+// are nullable (tracked follow-up in meshery/schemas).
 type SaveK8sContextResponse struct {
 	RegisteredContexts []models.K8sContext `json:"registeredContexts"`
 	ConnectedContexts  []models.K8sContext `json:"connectedContexts"`
@@ -152,11 +159,24 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		}
 	}()
 
+	// Read the server-wide defaults once for the whole import: every context
+	// resolves its inherited mode against the same layer, and a failure here
+	// must not silently become "no default", which would make every context
+	// look like it diverges and pin an override on all of them.
+	registrationServerDefaults, serverDefaultsErr := models.GetControllersConfigDefaults(h.dbHandler)
+	if serverDefaultsErr != nil {
+		h.log.Error(serverDefaultsErr)
+	}
+
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 	// TODO:
 	// when new api with param "contexts" will be addopted,
 	// only take into account contexts from that param
 	importedCount := 0
+	// Tracks whether any selected context was unreachable. Such contexts still
+	// register (as DISCOVERED) but the connection attempt did not succeed, so the
+	// receipt event below must be raised to Error severity (issue #20725).
+	hasUnreachableContext := false
 	for _, ctx := range contexts {
 		// Honor an explicit selection: skip contexts the caller did not pick.
 		// Matched against the discovered context ID, before any rename below.
@@ -173,12 +193,45 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		// Create context-specific metadata with appropriate meshsync deployment
 		// mode. Resolve the mode before any rename so the lookup still keys off
 		// the discovered context ID.
-		k8sContextsMetadata := make(map[string]any, 1)
-		meshsyncMode := getMeshsyncModeForContext(ctx)
-		connections.SetMeshsyncDeploymentModeToMetadata(
-			k8sContextsMetadata,
-			connections.MeshsyncDeploymentModeFromString(meshsyncMode),
-		)
+		//
+		// A mode that DIVERGES from what this connection would inherit is an
+		// explicit per-context choice, so it is stored where every explicit
+		// choice is stored - the layered controllers-configuration override -
+		// and materialized into meshsync_deployment_mode for the consumers that
+		// read that cache.
+		//
+		// A mode that MATCHES the inherited one is not recorded as an override.
+		// The wizard's picker is pre-selected rather than empty, so a mode
+		// arrives on every import and the server cannot tell a deliberate choice
+		// from an untouched default. Pinning both meant every newly registered
+		// connection carried an override, and an override does not follow the
+		// server-wide default - which would have made a default set in Settings
+		// reach almost nothing. See ShouldRecordDeploymentModeOverride.
+		k8sContextsMetadata := make(map[string]any, 2)
+		meshsyncMode := connections.MeshsyncDeploymentModeFromString(getMeshsyncModeForContext(ctx))
+		inheritedMode := connections.ResolveDeploymentMode(registrationServerDefaults, nil, h.MeshsyncDefaultDeploymentMode).Mode
+		if connections.ShouldRecordDeploymentModeOverride(meshsyncMode, inheritedMode) {
+			if modeErr := connections.SetDeploymentModeOverride(k8sContextsMetadata, meshsyncMode); modeErr != nil {
+				// Recording the choice in only one of the two stores is exactly
+				// the divergence this write-through exists to prevent, so the
+				// context is reported as errored rather than imported with a
+				// mode the controllers editor would contradict.
+				h.log.Error(modeErr)
+				saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, *ctx)
+				metadata["description"] = fmt.Sprintf("Unable to record the MeshSync deployment mode for context \"%s\" at %s", ctx.Name, ctx.Server)
+				metadata["error"] = modeErr
+				event := eventBuilder.WithSeverity(events.Error).WithDescription(metadata["description"].(string)).WithMetadata(metadata).Build()
+				_ = provider.PersistEvent(*event, token)
+				go h.config.EventBroadcaster.Publish(userID, event)
+				continue
+			}
+		}
+		// The cache reflects what the connection runs, override or not, so the
+		// pre-layered consumers (state machine, header chips, kubeconfig flows)
+		// see the truth either way.
+		if meshsyncMode != connections.MeshsyncDeploymentModeUndefined {
+			connections.MaterializeMeshsyncDeploymentMode(k8sContextsMetadata, meshsyncMode)
+		}
 
 		// Apply an optional name override. The identity is derived from the name,
 		// so regenerate the context ID to keep the struct's ID in sync with the
@@ -237,6 +290,21 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				metadata["description"] = fmt.Sprintf("Connection registered with kubernetes context \"%s\" at %s.", ctx.Name, ctx.Server)
 			}
 
+			// A context flagged unreachable during discovery still registers as a
+			// DISCOVERED connection, but the connection attempt itself did not
+			// succeed. Override the per-status description set above and raise a
+			// dedicated flag so the receipt event below is raised to Error
+			// severity and stays findable under the notification center's Error
+			// filter, instead of being reported as a successful registration
+			// (issue #20725). A dedicated flag is used rather than
+			// metadata["error"] because unreachability is not an error returned by
+			// SaveK8sContext, so k8sEventMetadataHasError would not otherwise catch
+			// it.
+			if !ctx.Reachable {
+				hasUnreachableContext = true
+				metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s: the Kubernetes API server was unreachable.", ctx.Name, ctx.Server)
+			}
+
 			inst, err := mhelpers.InitializeMachineWithContext(
 				machineCtx,
 				req.Context(),
@@ -254,9 +322,11 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			}
 
 			// An unreachable context cannot build a client set, so the state
-			// machine fails to initialize and inst is nil. The connection has
-			// still been persisted in the discovered state; just skip the event.
-			if inst != nil {
+			// machine fails to initialize - either returning a nil instance, or,
+			// on a cache hit, one whose Context was never assigned. The connection
+			// has still been persisted in the discovered state; just skip the
+			// event. See mhelpers.HasMachineContext.
+			if mhelpers.HasMachineContext(inst) {
 				go func(inst *machines.StateMachine) {
 					event, err := inst.SendEvent(req.Context(), machines.EventType(mhelpers.StatusToEvent(status)), nil)
 					if err != nil {
@@ -274,8 +344,29 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		h.config.K8scontextChannel.PublishContext()
 	}
 
+	// The receipt event below is the durable record of this import that the
+	// notification center persists and later filters on. When one or more
+	// contexts failed to connect it MUST be raised to Error severity: only
+	// Error-severity events are retrievable under the notification center's
+	// Error filter, and a receipt kept Informational left failed Kubernetes
+	// connections flashing in transiently and then unfindable (issue #20725).
+	// The three conditions cover disjoint failure modes: a failed SaveK8sContext
+	// (ErroredContexts), a context unreachable at discovery (hasUnreachableContext,
+	// which does not set metadata["error"]), and a context whose client could not
+	// be built (an "error" recorded in its per-context metadata during discovery).
+	if len(saveK8sContextResponse.ErroredContexts) > 0 || hasUnreachableContext || k8sEventMetadataHasError(eventMetadata) {
+		eventBuilder.WithSeverity(events.Error).
+			WithDescription("Failed to establish one or more Kubernetes connections.")
+	}
+
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
-	_ = provider.PersistEvent(*event, token)
+	// This receipt is the durable, filterable record of the import, so log a
+	// persistence failure rather than dropping it silently — a missing
+	// notification would otherwise be untraceable. The live event is still
+	// broadcast below regardless.
+	if perr := provider.PersistEvent(*event, token); perr != nil {
+		h.log.Error(models.ErrPersistEvent(perr))
+	}
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	if err := json.NewEncoder(w).Encode(saveK8sContextResponse); err != nil {
@@ -285,6 +376,27 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		h.log.Error(models.ErrMarshal(err, "kubeconfig"))
 		return
 	}
+}
+
+// k8sEventMetadataHasError reports whether any per-context entry in a Kubernetes
+// connection receipt's metadata recorded a failure. Each context's outcome is
+// keyed by its name and carries an "error" entry only when that context failed
+// (an unreachable API server, an unbuildable client, or a failed save), so the
+// presence of any such entry means the receipt describes at least one failed
+// connection and the receipt event must be raised to Error severity so it stays
+// findable under the notification center's Error filter (issue #20725).
+func k8sEventMetadataHasError(eventMetadata map[string]interface{}) bool {
+	for _, meta := range eventMetadata {
+		if metaMap, ok := meta.(map[string]interface{}); ok {
+			// Require a non-nil value: a present-but-nil "error" entry (an
+			// explicit nil error or a JSON null) does not indicate a failure and
+			// must not raise the receipt to Error severity.
+			if errVal, hasErr := metaMap["error"]; hasErr && errVal != nil {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func (h *Handler) deleteK8SConfig(_ *models.User, _ *models.Preference, w http.ResponseWriter, _ *http.Request, _ models.Provider) {
@@ -389,8 +501,10 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 			writeMeshkitError(w, ErrKubeVersion(err), http.StatusInternalServerError)
 			return
 		}
-		if err = json.NewEncoder(w).Encode(map[string]string{
-			"server_version": version.String(),
+		// The schemas KubernetesPingResponse preserves this endpoint's published
+		// snake_case `server_version` wire field.
+		if err = json.NewEncoder(w).Encode(systemv1beta1.KubernetesPingResponse{
+			ServerVersion: version.String(),
 		}); err != nil {
 			// Response body has already started streaming via json.Encoder —
 			// a partial JSON envelope is on the wire and a fresh error

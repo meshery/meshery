@@ -4,13 +4,196 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"sort"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/machines"
+	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/schemas/models/core"
+	system "github.com/meshery/schemas/models/v1beta1/system"
 )
+
+// trackerWith builds an instance tracker holding a single connection->machine
+// mapping, for exercising machineCtxForConnection without standing up real FSMs.
+func trackerWith(id core.Uuid, inst *machines.StateMachine) *machines.ConnectionToStateMachineInstanceTracker {
+	return &machines.ConnectionToStateMachineInstanceTracker{
+		ConnectToInstanceMap: map[core.Uuid]*machines.StateMachine{id: inst},
+	}
+}
+
+// machineCtxForConnection must treat an unassigned Context on a tracked machine
+// - a non-kubernetes connection, or a kubernetes one whose cluster was
+// unreachable when the machine was created - as an expected "not ready" state
+// (nil,false) and, crucially, must NOT type-assert that nil Context, which
+// previously logged meshkit-11180 on every controller-status poll. Missing,
+// nil, typed-nil, wrongly-typed and half-built contexts are all not-ready;
+// only a fully-initialized kubernetes machine (a *kubernetes.MachineCtx
+// carrying a controllers helper) resolves as ready.
+func TestMachineCtxForConnection(t *testing.T) {
+	connID := uuid.Must(uuid.NewV4())
+	mctx := &kubernetes.MachineCtx{MesheryCtrlsHelper: &models.MesheryControllersHelper{}}
+
+	tests := []struct {
+		name     string
+		tracker  *machines.ConnectionToStateMachineInstanceTracker
+		lookupID uuid.UUID
+		wantOK   bool
+		wantCtx  *kubernetes.MachineCtx
+	}{
+		{
+			name:     "nil Context is not-ready",
+			tracker:  trackerWith(connID, &machines.StateMachine{ID: connID, Context: nil}),
+			lookupID: connID,
+			wantOK:   false,
+		},
+		{
+			name:     "untracked connection is not-ready",
+			tracker:  trackerWith(uuid.Must(uuid.NewV4()), &machines.StateMachine{Context: nil}),
+			lookupID: uuid.Must(uuid.NewV4()),
+			wantOK:   false,
+		},
+		{
+			name:     "nil tracked instance is not-ready",
+			tracker:  trackerWith(connID, nil),
+			lookupID: connID,
+			wantOK:   false,
+		},
+		{
+			// A boxed typed-nil *MachineCtx is non-nil as an interface, so a bare
+			// `Context == nil` check would let it through and the cast would hand
+			// back a nil pointer with a nil error - dereferenced one line later.
+			name:     "typed-nil Context is not-ready",
+			tracker:  trackerWith(connID, &machines.StateMachine{ID: connID, Context: (*kubernetes.MachineCtx)(nil)}),
+			lookupID: connID,
+			wantOK:   false,
+		},
+		{
+			// A non-kubernetes Context is a genuine type error, distinct from
+			// "not ready": it takes the cast's err != nil branch and is logged.
+			name:     "wrong Context type is not-ready",
+			tracker:  trackerWith(connID, &machines.StateMachine{ID: connID, Context: &struct{ notAMachineCtx bool }{}}),
+			lookupID: connID,
+			wantOK:   false,
+		},
+		{
+			// A kubernetes machine that initialized but has no controllers helper
+			// cannot answer a status query either.
+			name:     "missing controllers helper is not-ready",
+			tracker:  trackerWith(connID, &machines.StateMachine{ID: connID, Context: &kubernetes.MachineCtx{}}),
+			lookupID: connID,
+			wantOK:   false,
+		},
+		{
+			name:     "valid Context is ready",
+			tracker:  trackerWith(connID, &machines.StateMachine{ID: connID, Context: mctx}),
+			lookupID: connID,
+			wantOK:   true,
+			wantCtx:  mctx,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := &Handler{
+				config:                                  &models.HandlerConfig{},
+				log:                                     newTestLogger(t),
+				ConnectionToStateMachineInstanceTracker: tt.tracker,
+			}
+
+			ctx, ok := h.machineCtxForConnection(tt.lookupID.String())
+			if ok != tt.wantOK {
+				t.Fatalf("ok = %v, want %v", ok, tt.wantOK)
+			}
+			if tt.wantCtx == nil && ctx != nil {
+				t.Fatalf("expected nil machine context, got %#v", ctx)
+			}
+			if tt.wantCtx != nil && ctx != tt.wantCtx {
+				t.Fatalf("expected the tracked machine context to be returned, got %#v", ctx)
+			}
+		})
+	}
+}
+
+// TestCollectControllersStatus_EveryControllerRowSurvivesMissingHandlers: the
+// SSE snapshot is the complete controller list and the client replaces its
+// state with it wholesale, so a controller missing from the snapshot is a card
+// that disappears from the UI rather than one that reports a problem.
+//
+// No handler is attached whenever Meshery could not build one - an unreadable
+// kubeconfig or a failed Kubernetes client take out all three, and an
+// unresolvable Meshery Operator chart version takes out the operator - which is
+// exactly when those cards have something to say. Every controller must get a
+// row carrying an existing status value; the reason belongs to the connection
+// diagnostics, not to this payload.
+func TestCollectControllersStatus_EveryControllerRowSurvivesMissingHandlers(t *testing.T) {
+	connID := uuid.Must(uuid.NewV4())
+	// A controllers helper with no attached handlers at all: the widest case,
+	// covering kubeconfig failure, client-creation failure, and withheld
+	// operator lifecycle alike.
+	mctx := &kubernetes.MachineCtx{MesheryCtrlsHelper: &models.MesheryControllersHelper{}}
+
+	h := &Handler{
+		config:                                  &models.HandlerConfig{},
+		log:                                     newTestLogger(t),
+		ConnectionToStateMachineInstanceTracker: trackerWith(connID, &machines.StateMachine{ID: connID, Context: mctx}),
+	}
+
+	items := h.collectControllersStatus([]string{connID.String()})
+
+	if len(items) != len(models.MesheryControllers) {
+		t.Fatalf("snapshot has %d rows, want one per controller (%d): %+v",
+			len(items), len(models.MesheryControllers), items)
+	}
+	seen := map[system.ControllerStatusController]bool{}
+	for _, item := range items {
+		if item.ConnectionId != connID {
+			t.Fatalf("connectionId = %s, want %s", item.ConnectionId, connID)
+		}
+		if item.Status != controllersStatusUnknown {
+			t.Fatalf("%s status = %q, want %q - Meshery did not probe the cluster, so it does not know",
+				item.Controller, item.Status, controllersStatusUnknown)
+		}
+		if item.Version != "" {
+			t.Fatalf("%s version = %q, want it empty for a synthesized row", item.Controller, item.Version)
+		}
+		if seen[item.Controller] {
+			t.Fatalf("%s reported twice: duplicate rows break the snapshot's sort key", item.Controller)
+		}
+		seen[item.Controller] = true
+	}
+	for _, want := range []system.ControllerStatusController{
+		system.ControllerStatusControllerBROKER,
+		system.ControllerStatusControllerMESHSYNC,
+		system.ControllerStatusControllerOPERATOR,
+	} {
+		if !seen[want] {
+			t.Fatalf("no %s row in the snapshot %+v: that card vanishes from the UI", want, items)
+		}
+	}
+	if !sort.SliceIsSorted(items, func(i, j int) bool {
+		if items[i].ConnectionId != items[j].ConnectionId {
+			return items[i].ConnectionId.String() < items[j].ConnectionId.String()
+		}
+		return items[i].Controller < items[j].Controller
+	}) {
+		t.Fatalf("snapshot is not sorted by (connectionId, controller); SSE change detection compares it byte-for-byte: %+v", items)
+	}
+}
+
+// A connection with no ready FSM instance still reports nothing: there is no
+// context to read, and inventing rows for it would report on connections
+// Meshery is not tracking.
+func TestCollectControllersStatus_UnresolvedConnectionReportsNothing(t *testing.T) {
+	h := newControllersStatusTestHandler(t)
+
+	if items := h.collectControllersStatus([]string{uuid.Must(uuid.NewV4()).String()}); len(items) != 0 {
+		t.Fatalf("snapshot = %+v, want it empty for a connection with no ready instance", items)
+	}
+}
 
 func newControllersStatusTestHandler(t *testing.T) *Handler {
 	t.Helper()
@@ -108,10 +291,40 @@ func TestOperatorStatusHandler_UnknownForUnresolvedConnection(t *testing.T) {
 		t.Fatalf("status = %d, want 200", rec.Code)
 	}
 	body := rec.Body.String()
-	if !strings.Contains(body, `"controller":"OPERATOR"`) || !strings.Contains(body, `"status":"`+controllersStatusUnknown+`"`) {
+	if !strings.Contains(body, `"controller":"OPERATOR"`) || !strings.Contains(body, `"status":"`+string(controllersStatusUnknown)+`"`) {
 		t.Fatalf("expected unknown operator status payload, got: %q", body)
 	}
 	if !strings.Contains(body, `"connectionId":`) {
 		t.Fatalf("expected canonical connectionId key, got: %q", body)
+	}
+}
+
+// A malformed connectionId must be rejected with 400 rather than falling back
+// to uuid.Nil and echoing a zero UUID. Covers all three one-shot status
+// handlers, which share the same validation.
+func TestControllerStatusHandlers_RejectInvalidConnectionID(t *testing.T) {
+	h := newControllersStatusTestHandler(t)
+
+	handlers := map[string]func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider){
+		"operator": h.OperatorStatusHandler,
+		"meshsync": h.MeshsyncStatusHandler,
+		"broker":   h.BrokerStatusHandler,
+	}
+
+	for name, handler := range handlers {
+		t.Run(name, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodGet,
+				"/api/system/controllers/"+name+"/status?connectionId=not-a-uuid", nil)
+			rec := httptest.NewRecorder()
+
+			handler(rec, req, nil, nil, nil)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("status = %d, want 400 for a malformed connectionId", rec.Code)
+			}
+			if strings.Contains(rec.Body.String(), uuid.Nil.String()) {
+				t.Fatalf("response must not echo the zero UUID, got: %q", rec.Body.String())
+			}
+		})
 	}
 }
