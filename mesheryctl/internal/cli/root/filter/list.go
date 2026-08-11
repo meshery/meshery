@@ -22,6 +22,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
@@ -30,10 +32,15 @@ import (
 	"github.com/spf13/viper"
 )
 
+type filterListFlags struct {
+	Count   bool `json:"count" validate:"boolean"`
+	Page    int  `json:"page" validate:"omitempty,gte=1"`
+	Verbose bool `json:"verbose" validate:"boolean"`
+}
+
 var (
-	pageSize   = 25
-	pageNumber int
-	verbose    bool
+	pageSize                = 25
+	filterListFlagsProvided filterListFlags
 )
 
 var listCmd = &cobra.Command{
@@ -50,6 +57,9 @@ mesheryctl filter list Test (maximum 25 filters)
 // Search for filter with space
 mesheryctl filter list 'Test Filter' (maximum 25 filters)
 	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &filterListFlagsProvided)
+	},
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -61,9 +71,14 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 			searchString = strings.ReplaceAll(args[0], " ", "%20")
 		}
 
-		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
+		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, filterListFlagsProvided.Page-1)
 		if err != nil {
 			return ErrFetchFilter(err)
+		}
+
+		if filterListFlagsProvided.Count {
+			utils.DisplayCount("filter", int64(response.TotalCount))
+			return nil
 		}
 
 		if len(args) > 0 && len(response.Filters) == 0 {
@@ -83,7 +98,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 		var header []string
 		var footer []string
 
-		if verbose {
+		if filterListFlagsProvided.Verbose {
 			if utils.IsLocalProvider(provider) {
 				for _, v := range response.Filters {
 					FilterID := v.ID.String()
@@ -139,12 +154,6 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 			footer = []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""}
 		}
 
-		countFlag := cmd.Flag("count")
-		if countFlag != nil && countFlag.Value.String() == "true" {
-			utils.DisplayCount("filter", int64(response.TotalCount))
-			return nil
-		}
-
 		if cmd.Flags().Changed("page") {
 			utils.PrintToTable(header, data, footer)
 			return nil
@@ -197,7 +206,7 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 }
 
 func init() {
-	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display full length user and filter file identifiers")
-	listCmd.Flags().IntVarP(&pageNumber, "page", "p", 1, "(optional) List next set of filters with --page (default = 1)")
-	listCmd.Flags().BoolP("count", "c", false, "(optional) Display count only")
+	listCmd.Flags().BoolVarP(&filterListFlagsProvided.Count, "count", "c", false, "(optional) Display count only")
+	listCmd.Flags().IntVarP(&filterListFlagsProvided.Page, "page", "p", 1, "(optional) List next set of filters with --page (default = 1)")
+	listCmd.Flags().BoolVarP(&filterListFlagsProvided.Verbose, "verbose", "v", false, "Display full length user and filter file identifiers")
 }

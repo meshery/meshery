@@ -5,6 +5,7 @@ import (
 	"runtime"
 	"testing"
 
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
@@ -29,6 +30,7 @@ func TestListCmd(t *testing.T) {
 			HttpStatusCode:   200,
 		},
 	}
+	mesheryctlflags.InitValidators(FilterCmd)
 	// Run tests
 	utils.InvokeMesheryctlTestCommand(t, update, FilterCmd, tests, currDir, "filter")
 }
@@ -49,7 +51,16 @@ func TestListCmdCount(t *testing.T) {
 			URL:              "/api/filter",
 			ExpectError:      false,
 		},
+		{
+			Name:             "Fetch Filter Count with no matching filters",
+			Args:             []string{"list", "nonexistent", "--count"},
+			ExpectedResponse: "list.filter.count.empty.output.golden",
+			Fixture:          "filter.list.empty.api.response.golden",
+			URL:              "/api/filter",
+			ExpectError:      false,
+		},
 	}
 
+	mesheryctlflags.InitValidators(FilterCmd)
 	utils.InvokeMesheryctlTestListCommand(t, update, FilterCmd, tests, currDir, "filter")
 }
