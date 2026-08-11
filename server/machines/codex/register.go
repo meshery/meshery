@@ -89,7 +89,11 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 		if err != nil {
 			return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": models.ErrCodexConnectivity(err)}).Build(), models.ErrCodexConnectivity(err)
 		}
-		defer resp.Body.Close()
+		defer func() {
+			if closeErr := resp.Body.Close(); closeErr != nil {
+				log.Error(closeErr)
+			}
+		}()
 
 		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 			err := fmt.Errorf("codex API unreachable, status %d", resp.StatusCode)
