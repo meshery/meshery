@@ -47,10 +47,12 @@ mesheryctl filter [subcommands]
 		if filterFlagsProvided.Count {
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
+				utils.Log.Error(err)
 				return err
 			}
 			response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), "", filterListFlagsProvided.PageSize, 0)
 			if err != nil {
+				utils.Log.Error(err)
 				return ErrFetchFilter(err)
 			}
 			utils.DisplayCount("filter", int64(response.TotalCount))

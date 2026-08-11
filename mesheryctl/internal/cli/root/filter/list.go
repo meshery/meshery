@@ -34,8 +34,8 @@ import (
 
 type filterListFlags struct {
 	Count    bool `json:"count" validate:"boolean"`
-	Page     int  `json:"page" validate:"omitempty,gte=1"`
-	PageSize int  `json:"pagesize" validate:"omitempty,gte=1"`
+	Page     int  `json:"page" validate:"gte=1"`
+	PageSize int  `json:"pageSize" validate:"gte=1"`
 	Verbose  bool `json:"verbose" validate:"boolean"`
 }
 
@@ -71,6 +71,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, filterListFlagsProvided.PageSize, filterListFlagsProvided.Page-1)
 		if err != nil {
+			utils.Log.Error(err)
 			return ErrFetchFilter(err)
 		}
 

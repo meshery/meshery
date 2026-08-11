@@ -1,6 +1,7 @@
 package filter
 
 import (
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -34,10 +35,26 @@ func TestListCmd(t *testing.T) {
 			Args:             []string{"list", "--page", "1", "--pagesize", "10"},
 			ExpectedResponse: "list.filter.output.golden",
 			Fixture:          "list.filter.api.response.golden",
-			URL:              "/api/filter",
+			URL:              "/api/filter?pagesize=10&page=0",
 			ExpectError:      false,
 			HttpMethod:       "GET",
 			HttpStatusCode:   200,
+		},
+		{
+			Name:             "List filters with invalid page number",
+			Args:             []string{"list", "--page", "0"},
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '0'")),
+		},
+		{
+			Name:             "List filters with invalid page size",
+			Args:             []string{"list", "--pagesize", "0"},
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --pageSize '0'")),
 		},
 	}
 	mesheryctlflags.InitValidators(FilterCmd)
