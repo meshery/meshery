@@ -1,5 +1,5 @@
 /* eslint-disable max-lines -- MeshModelComponent is currently large; prefer refactor/splitting when feasible. */
-import React, { useState, useEffect, useLayoutEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useCallback, useMemo, useRef } from 'react';
 import {
   MODELS,
   COMPONENTS,
@@ -32,7 +32,6 @@ import {
   useGetRegistrantsQuery,
 } from '@/rtk-query/meshModel';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
-import _ from 'lodash';
 import {
   Button,
   NoSsr,
@@ -48,6 +47,39 @@ import ImportModelModal from './ImportModelModal';
 import CreateModelModal from './CreateModelModal';
 import CreateRelationshipModal from './CreateRelationshipModal';
 import MeshModelMobileDetails from './MeshModelMobileDetails';
+
+/**
+ * Stable per-row identity used when merging fetched pages into `resourcesDetail`.
+ * Prefers the row's own `id` — present on models, components, relationships, and
+ * most registrants/connections, and already how MesheryTreeView looks rows up —
+ * over a full deep-equality scan. Deep equality is O(n²) on large lists and, for
+ * Models specifically, is the wrong notion of "duplicate": two rows can
+ * legitimately share every visible field except id (same name+version, different
+ * registrant), which is exactly what the Duplicates toggle surfaces, so we must
+ * not collapse them. Rows that genuinely lack an id (some connection
+ * definitions — see ConnectionDefinitionTree's `connection.id || index`
+ * fallback) fall back to a content key so exact repeats across overlapping
+ * pages still collapse to one row.
+ */
+const getRowIdentity = (item: any): string => {
+  if (item?.id !== undefined && item?.id !== null) {
+    return `id:${item.id}`;
+  }
+  return `json:${JSON.stringify(item)}`;
+};
+
+const dedupeRows = (items: any[]): any[] => {
+  const seen = new Set<string>();
+  const result: any[] = [];
+  for (const item of items) {
+    const key = getRowIdentity(item);
+    if (!seen.has(key)) {
+      seen.add(key);
+      result.push(item);
+    }
+  }
+  return result;
+};
 
 type MeshModelComponentProps = {
   settingsRouter?: (_router: any) => { handleChangeSelectedTab?: (_tab: string) => void };
@@ -98,6 +130,15 @@ const MeshModelComponent_ = ({
   const [componentsFilters, setComponentsFilters] = useState<{ page: number }>({ page: 0 });
   const [relationshipsFilters, setRelationshipsFilters] = useState<{ page: number }>({ page: 0 });
   const [connectionsFilters, setConnectionsFilters] = useState<{ page: number }>({ page: 0 });
+
+  // Monotonically increasing id used by fetchData to detect and discard a
+  // response that resolves after a newer fetchData call has already started
+  // (see fetchData below).
+  const fetchRequestIdRef = useRef(0);
+  // Tracks whether the one-shot "fetch every model" backfill (triggered when
+  // the Duplicates toggle turns on) has already run for the current Models
+  // view, so we don't repeat it on every render (see the effect below).
+  const hasFetchedAllModelsRef = useRef(false);
 
   /**
    * RTK Lazy Queries
@@ -254,6 +295,14 @@ const MeshModelComponent_ = ({
   }, [getRegistrantsData, getRegistrantModelsData, searchText, registrantFilters.page]);
 
   const fetchData = useCallback(async () => {
+    // Captured before any await: if a newer fetchData call starts (e.g. view,
+    // search, or a page change) before this one's response comes back, that
+    // newer call bumps the ref and this stale response is dropped below
+    // instead of being committed over the correct, more recent one. This also
+    // covers the case where the search-reset useLayoutEffect and the fetchData
+    // useEffect land on the same render: a fetch kicked off with a stale page
+    // value doesn't need the effects to run in a particular order to be safe.
+    const requestId = ++fetchRequestIdRef.current;
     try {
       let response;
       switch (view) {
@@ -320,6 +369,12 @@ const MeshModelComponent_ = ({
         default:
           break;
       }
+      if (requestId !== fetchRequestIdRef.current) {
+        // A newer fetchData call has started since this one began; this
+        // response is stale, so don't let it overwrite more recent state.
+        return;
+      }
+
       if (response?.data && response.data[view.toLowerCase()]) {
         // Use functional state update to avoid depending on resourcesDetail in the
         // useCallback dependency array (which caused a stale-closure re-fetch loop).
@@ -337,7 +392,9 @@ const MeshModelComponent_ = ({
             (view === CONNECTIONS && connectionsFilters.page === 0);
           const shouldReplace = searchText || isFirstPage || view === RELATIONSHIPS;
           const newData = shouldReplace ? [...fresh] : [...prev, ...fresh];
-          return _.uniqWith(newData, _.isEqual);
+          // id-based, O(n) dedupe — see getRowIdentity for why this replaces
+          // the deep-equality _.uniqWith scan.
+          return dedupeRows(newData);
         });
 
         // Deeplink may contain higher rowsPerPage val for first time fetch
@@ -348,6 +405,11 @@ const MeshModelComponent_ = ({
         }
       }
     } catch (error) {
+      if (requestId !== fetchRequestIdRef.current) {
+        // A newer fetchData call has already superseded this one; don't clobber
+        // its (possibly successful) result with this stale failure.
+        return;
+      }
       console.error(`Failed to fetch ${view.toLowerCase()}:`, error);
       setResourcesDetail([]); // Set empty array on error
     }
@@ -367,10 +429,56 @@ const MeshModelComponent_ = ({
     searchText,
   ]);
 
-  // NOTE: The "Duplicates" toggle is a pure client-side display filter over
-  // whatever has already been loaded into `resourcesDetail` — it should not
-  // clear state or trigger network refetches when toggled.
-  // Avoid adding effects that refetch solely due to `checked` changes.
+  // NOTE: The "Duplicates" toggle is a client-side display filter over
+  // `resourcesDetail` — toggling it must not clear state or re-trigger the
+  // paginated fetchData flow above (that's exactly the infinite re-fetch loop
+  // this PR fixes). The one deliberate exception is the backfill effect
+  // immediately below: modifyData's duplicate count can only be correct once
+  // every model page is loaded, so the first time the toggle turns on we do a
+  // single one-shot full-set fetch, independent of fetchData's pagination.
+
+  // Server-side `duplicates` is page-scoped, and modifyData's own recomputation
+  // below only sees whatever has been scrolled into `resourcesDetail` so far —
+  // so a model's duplicate copy on a not-yet-loaded page is silently missed.
+  // Search already asks fetchData for `pagesize: 'all'`, so it's unaffected;
+  // this only backfills the plain paginated case.
+  useEffect(() => {
+    if (view !== MODELS || searchText) {
+      hasFetchedAllModelsRef.current = false;
+      return;
+    }
+    if (!checked || hasFetchedAllModelsRef.current) {
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const response = await getMeshModelsData(
+          {
+            params: {
+              page: 0,
+              pagesize: 'all',
+              components: false,
+              relationships: false,
+              search: '',
+            },
+          },
+          true,
+        );
+        if (cancelled) return;
+        const fullSet = response?.data?.models;
+        if (fullSet) {
+          hasFetchedAllModelsRef.current = true;
+          setResourcesDetail(dedupeRows(fullSet));
+        }
+      } catch (error) {
+        console.error('Failed to fetch full model set for duplicate detection:', error);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [checked, view, searchText, getMeshModelsData]);
 
   const handleTabClick = (selectedView) => {
     // -> use settingsRouter when not in modal mode (Settings page)
