@@ -37,7 +37,6 @@ import { ConditionalTooltip } from '@/utils/utils';
 
 import { Keys } from '@meshery/schemas/permissions';
 import { isLocalProvider } from '@/utils/provider';
-import CAN from '@/utils/can';
 import { ButtonTextWrapper, ProfileContainer } from './style';
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
 import { useDispatch, useSelector } from 'react-redux';
@@ -443,12 +442,7 @@ function PerformanceProfile({ handleDelete }) {
                 color="primary"
                 size="large"
                 onClick={() => setProfileForModal({})}
-                disabled={
-                  !CAN(
-                    Keys.PerformanceManagementAddPerformaceProfile.id,
-                    Keys.PerformanceManagementAddPerformaceProfile.function,
-                  )
-                }
+                permissionKey={Keys.PerformanceManagementAddPerformaceProfile}
               >
                 <AddIcon style={{ paddingRight: '0.5rem', ...iconMedium }} />
                 <ButtonTextWrapper> Add Performance Profile </ButtonTextWrapper>
