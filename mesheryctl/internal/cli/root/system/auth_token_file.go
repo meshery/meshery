@@ -22,12 +22,16 @@ import "os"
 // Mode is hardened with File.Chmod before truncating/writing so a pre-existing
 // world/group-readable auth.json cannot briefly expose the new token contents
 // if the process exits mid-write (see #21239 review).
-func writeAuthTokenFile(path string, data []byte) error {
+func writeAuthTokenFile(path string, data []byte) (err error) {
 	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0o600)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() {
+		if cerr := f.Close(); err == nil && cerr != nil {
+			err = cerr
+		}
+	}()
 
 	if err := f.Chmod(0o600); err != nil {
 		return err
