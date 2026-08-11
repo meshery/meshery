@@ -227,7 +227,7 @@ jobs:
         shell: bash
         
       - name: Checkout QA
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         if: ${{ !cancelled() && github.event_name == 'push' && matrix.publish_to_qa == true }}
         with:
           repository: meshery/qa
@@ -337,19 +337,7 @@ jobs:
         shell: bash
         working-directory: ${{ github.workspace }}/mesheryctl
 
-      - name: Deploy Service Mesh
-        run: |
-          echo | mesheryctl adapter deploy meshery-istio --namespace istio-system -t "$RUNNER_TEMP/auth.json" ISTIO
-          sleep 50
-        shell: '/bin/bash {0}'
 
-      - name: Apply Pattern
-        uses: layer5io/meshery-service-mesh-patterns-action@master
-        with:
-          provider_token: ${{ secrets.PROVIDER_TOKEN }}
-          platform: ${{ matrix.platform }}
-          pattern_url: ${{ github.event.inputs.pattern_url }}
-          pattern_file: ${{ github.event.inputs.pattern_file }}
 
   scheduled-test:
     name: Scheduled e2e Test
@@ -432,24 +420,3 @@ jobs:
           echo | mesheryctl adapter deploy meshery-istio --namespace istio-system -t "$RUNNER_TEMP/auth.json" ISTIO
           sleep 50
         shell: '/bin/bash {0}'
-
-      # - name: Apply BookInfo Pattern
-      #   uses: meshery-extensions/mesheryctl-service-mesh-patterns-action@master
-      #   with:
-      #     provider_token: ${{ secrets.PROVIDER_TOKEN }}
-      #     platform: ${{ matrix.platform }}
-      #     pattern_url: https://raw.githubusercontent.com/service-mesh-patterns/service-mesh-patterns/master/samples/bookInfoPattern.yaml
-
-      - name: Apply Kubernetes Metrics Service Pattern
-        uses: meshery-extensions/mesheryctl-service-mesh-patterns-action@master
-        with:
-          provider_token: ${{ secrets.PROVIDER_TOKEN }}
-          platform: ${{ matrix.platform }}
-          pattern_url: https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/57f7230d-015b-4892-9042-cd1ea97fcb30.yaml
-
-      - name: Load "Serve An LLM With Multiple GPUs In GKE" design
-        uses: meshery-extensions/mesheryctl-service-mesh-patterns-action@master
-        with:
-          provider_token: ${{ secrets.PROVIDER_TOKEN }}
-          platform: ${{ matrix.platform }}
-          pattern_url: https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/9d3b33bf-eaf6-4d06-9dd6-64aa725ab383.yaml
