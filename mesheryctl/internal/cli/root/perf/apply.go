@@ -222,7 +222,10 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 				userResponse = true
 			} else {
 				// ask user for confirmation
-				userResponse = utils.AskForConfirmation("Profile with name '" + profileName + "' does not exist. Do you want to create a new one")
+				userResponse, err = utils.AskForConfirmation("Profile with name '" + profileName + "' does not exist. Do you want to create a new one")
+				if err != nil {
+					return err
+				}
 			}
 
 			if userResponse {

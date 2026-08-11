@@ -91,7 +91,10 @@ mesheryctl system update --skip-reset
 			if utils.SilentFlag {
 				userResponse = true
 			} else {
-				userResponse = utils.AskForConfirmation("Updating Meshery container images/manifest files will supersede the version to latest. Are you sure you want to continue")
+				userResponse, err = utils.AskForConfirmation("Updating Meshery container images/manifest files will supersede the version to latest. Are you sure you want to continue")
+				if err != nil {
+					return err
+				}
 			}
 
 			if !userResponse {

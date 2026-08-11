@@ -712,7 +712,11 @@ func Startdockerdaemon(subcommand string) error {
 	if SilentFlag {
 		userResponse = true
 	} else {
-		userResponse = AskForConfirmation("Start Docker now")
+		var confErr error
+		userResponse, confErr = AskForConfirmation("Start Docker now")
+		if confErr != nil {
+			return confErr
+		}
 	}
 	if !userResponse {
 		return errors.Errorf("Please start Docker, then run the command `mesheryctl system %s`", subcommand)
