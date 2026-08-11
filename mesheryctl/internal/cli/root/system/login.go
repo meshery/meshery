@@ -15,8 +15,6 @@
 package system
 
 import (
-	"os"
-
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -94,7 +92,7 @@ mesheryctl system login -p Meshery
 			}
 		}
 
-		if err := os.WriteFile(token.GetLocation(), tokenData, 0o666); err != nil {
+		if err := writeAuthTokenFile(token.GetLocation(), tokenData); err != nil {
 			return utils.ErrCreateFile(token.GetLocation(), err)
 		}
 
