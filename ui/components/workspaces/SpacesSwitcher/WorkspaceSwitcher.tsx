@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   FormControl,
   FormControlLabel,
@@ -71,6 +71,13 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
 
   const [updateSelectedWorkspace, { isLoading: isUpdatingSelectedWorkspace }] =
     useUpdateSelectedWorkspaceMutation();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) {
+      setMenuOpen(false);
+    }
+  }, [open]);
 
   // useEffect(() => {
   //   if (selectedWorkspace?.id) {
@@ -79,6 +86,7 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
   // }, [selectedWorkspace, setSelectedWorkspace]);
 
   const handleChangeWorkspace = (e) => {
+    setMenuOpen(false);
     const newId = e.target.value;
     setSelectedWorkspace(allWorkspaces.find((w) => w.id === newId));
     updateSelectedWorkspace(selectedOrganization.id, newId);
@@ -117,6 +125,9 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
                     <Grid2 size={{ xs: 12 }} data-cy="mesh-adapter-url">
                       <StyledSelect
                         size="small"
+                        open={menuOpen}
+                        onOpen={() => setMenuOpen(true)}
+                        onClose={() => setMenuOpen(false)}
                         value={selectedWorkspace?.id || ''}
                         onChange={(e) => {
                           if (e.target.value !== selectedWorkspace?.id) {
@@ -153,6 +164,7 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
                             horizontal: 'left',
                           },
                           getContentAnchorEl: null,
+                          style: { zIndex: theme.zIndex.modal + 200 },
                         }}
                       >
                         {allWorkspaces?.map((works) => (
@@ -177,6 +189,7 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
                             variant="contained"
                             onClick={(e) => {
                               e.stopPropagation();
+                              setMenuOpen(false);
                               openWorkspaceModal(true);
                             }}
                             permissionKey={Keys.WorkspaceManagementViewWorkspace}
@@ -187,6 +200,7 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
                             variant="outlined"
                             onClick={(e) => {
                               e.stopPropagation();
+                              setMenuOpen(false);
                               setSelectedWorkspace({
                                 id: 'All Workspaces',
                                 name: 'All Workspaces',
