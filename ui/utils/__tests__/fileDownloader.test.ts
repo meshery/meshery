@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import downloadContent, { downloadFileFromUrl, downloadFileFromContent } from '../fileDownloader';
-import { FILTER, PATTERN } from '../Enum';
+import { FILTER, PATTERN } from '@/constants/navigator';
 
 describe('downloadFileFromUrl', () => {
   let createElementSpy: ReturnType<typeof vi.spyOn>;

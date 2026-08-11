@@ -140,10 +140,23 @@ export const ExpandMore = ({ isExpanded, hasChildren, theme, isDrawerCollapsed, 
     aria-expanded={!!isExpanded}
     aria-label={isExpanded ? 'Collapse' : 'Expand'}
     style={{
-      padding: 0,
-      display: hasChildren ? 'inline-block' : 'none',
+      padding: isDrawerCollapsed ? '2px' : '6px',
+      display: hasChildren ? 'inline-flex' : 'none',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minWidth: 'auto',
+      minHeight: 'auto',
+      borderRadius: '50%',
+      marginLeft: 'auto',
       position: isDrawerCollapsed ? 'absolute' : 'relative',
-      right: isDrawerCollapsed ? '5px' : 'auto',
+      right: isDrawerCollapsed ? '2px' : 'auto',
+      // Remove background when collapsed
+      ...(isDrawerCollapsed && {
+        backgroundColor: 'transparent',
+        '&:hover': {
+          backgroundColor: 'transparent',
+        },
+      }),
     }}
     {...props}
   >

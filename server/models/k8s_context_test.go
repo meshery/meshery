@@ -2,12 +2,16 @@ package models
 
 import (
 	"context"
+	"fmt"
+	"sort"
 	"testing"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
 	mkerrors "github.com/meshery/meshkit/errors"
+	"github.com/meshery/meshkit/logger"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
+	"github.com/meshery/schemas/models/core"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -209,4 +213,61 @@ func TestFlushMeshSyncResourcesForClusterRollsBackOnError(t *testing.T) {
 	assertCount(&meshsyncmodel.KubernetesResourceSpec{}, "id = ?", id, 1, "spec (rolled back)")
 	assertCount(&meshsyncmodel.KubernetesResourceStatus{}, "id = ?", id, 1, "status (rolled back)")
 	assertCount(&meshsyncmodel.KubernetesKeyValue{}, "id = ?", id, 1, "key value (rolled back)")
+}
+
+// multiContextKubeconfig builds a kubeconfig with n contexts (ctx-0..ctx-n-1),
+// current-context set to the first, each pointing at a distinct unreachable
+// loopback server with token auth (no cert files, so the kube handler builds and
+// only the API-server lookup fails). Contexts are surfaced as unreachable.
+func multiContextKubeconfig(n int) []byte {
+	var clusters, contexts, users string
+	for i := 0; i < n; i++ {
+		clusters += fmt.Sprintf("- cluster:\n    server: https://127.0.0.1:%d\n  name: cluster-%d\n", 59900+i, i)
+		contexts += fmt.Sprintf("- context:\n    cluster: cluster-%d\n    user: user-%d\n  name: ctx-%d\n", i, i, i)
+		users += fmt.Sprintf("- name: user-%d\n  user:\n    token: token-%d\n", i, i)
+	}
+	return []byte(fmt.Sprintf(
+		"apiVersion: v1\nkind: Config\ncurrent-context: ctx-0\nclusters:\n%scontexts:\n%susers:\n%s",
+		clusters, contexts, users,
+	))
+}
+
+// TestK8sContextsFromKubeconfigDiscoversAllContexts guards against the regression
+// where discovery enumerated contexts via kubernetes.ProcessConfig, whose
+// clientcmd MinifyConfig pass prunes every context except current-context. That
+// made importing a multi-context kubeconfig surface only the current context.
+// Enumerating from the un-minified config must return every context.
+func TestK8sContextsFromKubeconfigDiscoversAllContexts(t *testing.T) {
+	log, err := logger.New("test", logger.Options{Format: logger.JsonLogFormat})
+	if err != nil {
+		t.Fatalf("failed to build logger: %v", err)
+	}
+	instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+
+	const wantContexts = 3
+	kubeconfig := multiContextKubeconfig(wantContexts)
+	eventMetadata := map[string]interface{}{}
+
+	// includeUnreachable=true mirrors the import wizard: unreachable contexts are
+	// still returned (flagged Reachable=false) so the user can register them.
+	got := K8sContextsFromKubeconfigWithOptions(nil, uuid.Must(uuid.NewV4()).String(), nil, kubeconfig, &instanceID, eventMetadata, log, true)
+
+	if len(got) != wantContexts {
+		var names []string
+		for _, kc := range got {
+			names = append(names, kc.Name)
+		}
+		t.Fatalf("discovered %d contexts %v, want %d (all contexts in the kubeconfig, not just current-context)", len(got), names, wantContexts)
+	}
+
+	var names []string
+	for _, kc := range got {
+		names = append(names, kc.Name)
+	}
+	sort.Strings(names)
+	for i, name := range names {
+		if want := fmt.Sprintf("ctx-%d", i); name != want {
+			t.Errorf("context[%d] = %q, want %q", i, name, want)
+		}
+	}
 }

@@ -199,19 +199,27 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, broadcast *Broa
 func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *Broadcast, kubeconfig []byte, instanceID *core.Uuid, eventMetadata map[string]interface{}, log logger.Handler, includeUnreachable bool) []*K8sContext {
 	kcs := []*K8sContext{}
 
-	parsed, _, err := kubernetes.ProcessConfig(kubeconfig, "")
-	if err != nil {
-		return kcs
-	}
-
 	userUUID := uuid.FromStringOrNil(userID)
 
+	// Enumerate contexts from the raw kubeconfig rather than via
+	// kubernetes.ProcessConfig: ProcessConfig runs clientcmd MinifyConfig, which
+	// prunes every context except current-context. Driving the loop from its
+	// output therefore discovered only the current context and dropped the rest.
+	// The import wizard needs *every* context in the file, so enumerate them from
+	// the un-minified config here; each context is still validated individually
+	// below when its kube handler is built (unreachable ones are surfaced or
+	// skipped per includeUnreachable).
 	kcfg := InternalKubeConfig{}
 	if err := yaml.Unmarshal(kubeconfig, &kcfg); err != nil {
 		return kcs
 	}
 
-	for name := range parsed.Contexts {
+	for _, ctxEntry := range kcfg.Contexts {
+		ctxEntry = utils.RecursiveCastMapStringInterfaceToMapStringInterface(ctxEntry)
+		name, _ := ctxEntry["name"].(string)
+		if name == "" {
+			continue
+		}
 		metadata := map[string]interface{}{}
 		kc, _ := kcfg.K8sContext(name, instanceID, log)
 		eventBuilder := events.NewEvent().ActedUpon(uuid.FromStringOrNil(kc.ConnectionID)).WithCategory("connection").WithAction("register").FromSystem(*instanceID).FromOwner(userUUID)
@@ -472,6 +480,67 @@ func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
 
 	kc.KubernetesServerID = &ksUUID
 
+	return nil
+}
+
+// ReconcileK8sContextServerID keeps an already-persisted kubernetes connection's
+// metadata.kubernetesServerId in step with the server ID freshly resolved from
+// the reachable cluster (its kube-system namespace UID, as assigned by
+// AssignServerID). It self-heals a connection whose persisted server ID is empty
+// or stale - one registered while its cluster was unreachable, or migrated from a
+// Meshery build that predated storing it - which matters because the dashboard
+// filters MeshSync resources by that persisted ID against each row's cluster_id.
+// A mismatch there leaves a live stream invisible.
+//
+// The persisted record it reads is the schemas connection model
+// (connections.Connection = github.com/meshery/schemas/.../v1beta1/connection.Connection).
+// The write goes through the token-string provider API UpdateConnectionById - the
+// same path the connection state machine's own status update uses - which takes
+// the server's ConnectionPayload; there is no token-string, schemas-native
+// connection writer (UpdateConnection is request-scoped, and an FSM action has no
+// *http.Request).
+//
+// It is a no-op when the persisted value already matches, so the FSM re-running
+// discovery on every request corrects a broken connection exactly once and adds
+// no write on the steady state.
+func ReconcileK8sContextServerID(provider Provider, token string, k8sContext K8sContext) error {
+	if k8sContext.KubernetesServerID == nil || *k8sContext.KubernetesServerID == uuid.Nil {
+		return nil
+	}
+	serverID := k8sContext.KubernetesServerID.String()
+
+	connectionID := uuid.FromStringOrNil(k8sContext.ConnectionID)
+	if connectionID == uuid.Nil {
+		return nil
+	}
+
+	connection, _, err := provider.GetConnectionByID(token, connectionID)
+	if err != nil {
+		return ErrReconcileServerID(err)
+	}
+	if connection == nil {
+		return nil
+	}
+
+	metadata := connection.Metadata
+	if metadata == nil {
+		metadata = map[string]interface{}{}
+	}
+	if persisted, _ := metadata["kubernetesServerId"].(string); persisted == serverID {
+		// Already correct - nothing to write.
+		return nil
+	}
+	metadata["kubernetesServerId"] = serverID
+
+	payload := &connections.ConnectionPayload{
+		ID:       connectionID,
+		Kind:     connection.Kind,
+		MetaData: metadata,
+		Status:   connection.Status,
+	}
+	if _, err := provider.UpdateConnectionById(token, payload, connectionID.String()); err != nil {
+		return ErrReconcileServerID(err)
+	}
 	return nil
 }
 

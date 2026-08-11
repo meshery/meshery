@@ -22,10 +22,7 @@ import RJSFWrapper from '../../../meshery-mesh-interface/PatternService/RJSF_wra
 import { selectCompSchema } from '@/components/shared/FormFields/rjsf-utils/common';
 import { JsonParse, randomPatternNameGenerator } from '../../../../utils/utils';
 import Notification from './Notification';
-import {
-  useConnectToConnectionMutation,
-  useVerifyAndRegisterConnectionMutation,
-} from '@/rtk-query/connection';
+import { useProcessConnectionRegistrationMutation } from '@/rtk-query/connection';
 import { useGetCredentialsQuery } from '@/rtk-query/credentials';
 
 const CONNECTION_TYPES = ['Prometheus Connection', 'Grafana Connection'];
@@ -38,22 +35,27 @@ const schema = selectCompSchema(
 );
 export const SelectConnection = ({ setSharedData, handleNext }) => {
   const formRef = useRef();
-  const [registerConnection] = useVerifyAndRegisterConnectionMutation();
+  const [processConnectionRegistration] = useProcessConnectionRegistrationMutation();
 
-  const handleRegisterConnection = async (componentName) => {
+  const handleRegisterConnection = async (componentName: string) => {
     try {
-      const payload = {
+      // `initialize` returns the registration bootstrap: the kind's connection
+      // (and credential) registry component definitions plus the tracker id.
+      const result = await processConnectionRegistration({
         body: {
           kind: componentName,
           status: 'initialize',
         },
-      };
+      }).unwrap();
 
-      const result = await registerConnection(payload).unwrap();
-
+      // Component definitions carry their RJSF form schema as a JSON-encoded
+      // string under `schema`; the generated response types them as plain
+      // objects.
+      const connectionComponent = result?.connection as { schema?: string } | undefined;
+      const credentialComponent = result?.credential as { schema?: string } | undefined;
       let schemaObj = {
-        connection: JsonParse(result?.connection?.schema),
-        credential: JsonParse(result?.credential?.schema),
+        connection: JsonParse(connectionComponent?.schema),
+        credential: JsonParse(credentialComponent?.schema),
       };
 
       setSharedData((prevState) => ({
@@ -215,8 +217,7 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
 
 export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationComplete }) => {
   const { data: credentialsData } = useGetCredentialsQuery();
-  const [verifyAndRegisterConnection] = useVerifyAndRegisterConnectionMutation();
-  const [connectToConnection] = useConnectToConnectionMutation();
+  const [processConnectionRegistration] = useProcessConnectionRegistrationMutation();
   const [selectedCredential, setSelectedCredential] = useState(null);
   const [prevSelectedCredential, setPrevSelectedCredential] = useState(null);
   const [formState, setFormState] = useState(null);
@@ -229,41 +230,40 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
     CredentialDetailContent.title = `Credential for ${sharedData?.kind}`;
   }, [sharedData.kind]);
 
-  const verifyConnection = async () => {
-    let credential = {};
+  const buildCredentialSecret = () => {
     if (selectedCredential === null) {
-      credential = formState;
-    } else {
-      credential = {
-        secret: selectedCredential?.secret?.secret,
-        name: selectedCredential?.name,
-      };
-      credential.id = selectedCredential?.id;
+      return formState;
     }
+    return {
+      id: selectedCredential?.id,
+      name: selectedCredential?.name,
+      secret: selectedCredential?.secret?.secret,
+    };
+  };
 
+  // Field names follow the schemas ConnectionRegistrationEvent wire contract
+  // (camelCase). The snake_case keys this stepper used to send
+  // (credential_secret, skip_credential_verification, sub_type) were silently
+  // dropped by the server, so credentials never reached verification.
+  const buildRegistrationEvent = (status: 'register' | 'connect') => ({
+    skipCredentialVerification,
+    kind: sharedData?.kind,
+    name: sharedData?.componentForm?.name,
+    type: sharedData?.connection?.type?.toLowerCase(),
+    subType: sharedData?.connection?.subType?.toLowerCase(),
+    metadata: sharedData?.componentForm,
+    credentialSecret: buildCredentialSecret(),
+    id: sharedData?.connection?.id,
+    status,
+  });
+
+  const verifyConnection = async () => {
     try {
-      const payload = {
-        body: {
-          skip_credential_verification: skipCredentialVerification,
-          kind: sharedData?.kind,
-          name: sharedData?.componentForm?.name,
-          type: sharedData?.connection?.type?.toLowerCase(),
-          sub_type: sharedData?.connection?.subType?.toLowerCase(),
-          metadata: sharedData?.componentForm,
-          credential_secret: credential,
-          id: sharedData?.connection?.id,
-          status: 'register',
-        },
-      };
-
-      const result = await verifyAndRegisterConnection(payload).unwrap();
-
-      if (result === '') {
-        setIsSuccess(true);
-        handleConnectToConnection();
-      } else {
-        setIsSuccess(false);
-      }
+      // A 2xx (empty body) is the success signal for non-initialize events;
+      // failures reject through unwrap().
+      await processConnectionRegistration({ body: buildRegistrationEvent('register') }).unwrap();
+      setIsSuccess(true);
+      handleConnectToConnection();
     } catch (error) {
       console.error('Error verifying connection:', error);
       setIsSuccess(false);
@@ -271,38 +271,9 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
   };
 
   const handleConnectToConnection = async () => {
-    let credential = {};
-    if (selectedCredential === null) {
-      credential = formState;
-    } else {
-      credential = {
-        name: selectedCredential?.name,
-        secret: selectedCredential?.secret?.secret,
-      };
-      credential.id = selectedCredential?.id;
-    }
-
     try {
-      const payload = {
-        body: {
-          kind: sharedData?.kind,
-          name: sharedData?.componentForm?.name,
-          type: sharedData?.connection?.type?.toLowerCase(),
-          sub_type: sharedData?.connection?.subType?.toLowerCase(),
-          metadata: sharedData?.componentForm,
-          credential_secret: credential,
-          id: sharedData?.connection?.id,
-          status: 'connect',
-        },
-      };
-
-      const result = await connectToConnection(payload).unwrap();
-
-      if (result !== undefined && result !== null && result === '') {
-        setIsSuccess(true);
-      } else {
-        setIsSuccess(false);
-      }
+      await processConnectionRegistration({ body: buildRegistrationEvent('connect') }).unwrap();
+      setIsSuccess(true);
     } catch (error) {
       console.error('Error connecting to connection:', error);
       setIsSuccess(false);
