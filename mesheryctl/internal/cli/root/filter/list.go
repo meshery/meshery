@@ -33,15 +33,13 @@ import (
 )
 
 type filterListFlags struct {
-	Count   bool `json:"count" validate:"boolean"`
-	Page    int  `json:"page" validate:"omitempty,gte=1"`
-	Verbose bool `json:"verbose" validate:"boolean"`
+	Count    bool `json:"count" validate:"boolean"`
+	Page     int  `json:"page" validate:"omitempty,gte=1"`
+	PageSize int  `json:"pagesize" validate:"omitempty,gte=1"`
+	Verbose  bool `json:"verbose" validate:"boolean"`
 }
 
-var (
-	pageSize                = 25
-	filterListFlagsProvided filterListFlags
-)
+var filterListFlagsProvided filterListFlags
 
 var listCmd = &cobra.Command{
 	Use:   "list",
@@ -71,7 +69,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 			searchString = strings.ReplaceAll(args[0], " ", "%20")
 		}
 
-		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, filterListFlagsProvided.Page-1)
+		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, filterListFlagsProvided.PageSize, filterListFlagsProvided.Page-1)
 		if err != nil {
 			return ErrFetchFilter(err)
 		}
@@ -158,7 +156,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 			utils.PrintToTable(header, data, footer)
 			return nil
 		}
-		err = utils.HandlePagination(pageSize, "filter files", data, header, footer)
+		err = utils.HandlePagination(filterListFlagsProvided.PageSize, "filter files", data, header, footer)
 		if err != nil {
 			return utils.ErrHandlePagination(err)
 		}
@@ -208,5 +206,6 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 func init() {
 	listCmd.Flags().BoolVarP(&filterListFlagsProvided.Count, "count", "c", false, "(optional) Display count only")
 	listCmd.Flags().IntVarP(&filterListFlagsProvided.Page, "page", "p", 1, "(optional) List next set of filters with --page (default = 1)")
+	listCmd.Flags().IntVarP(&filterListFlagsProvided.PageSize, "pagesize", "s", 25, "(optional) List next set of filters with --pagesize (default = 25)")
 	listCmd.Flags().BoolVarP(&filterListFlagsProvided.Verbose, "verbose", "v", false, "Display full length user and filter file identifiers")
 }

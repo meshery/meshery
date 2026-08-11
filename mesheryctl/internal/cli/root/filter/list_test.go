@@ -29,6 +29,16 @@ func TestListCmd(t *testing.T) {
 			HttpMethod:       "GET",
 			HttpStatusCode:   200,
 		},
+		{
+			Name:             "Fetch Filter List with pagesize",
+			Args:             []string{"list", "--page", "1", "--pagesize", "10"},
+			ExpectedResponse: "list.filter.output.golden",
+			Fixture:          "list.filter.api.response.golden",
+			URL:              "/api/filter",
+			ExpectError:      false,
+			HttpMethod:       "GET",
+			HttpStatusCode:   200,
+		},
 	}
 	mesheryctlflags.InitValidators(FilterCmd)
 	// Run tests

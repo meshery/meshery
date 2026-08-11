@@ -49,7 +49,7 @@ mesheryctl filter [subcommands]
 			if err != nil {
 				return err
 			}
-			response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), "", pageSize, 0)
+			response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), "", filterListFlagsProvided.PageSize, 0)
 			if err != nil {
 				return ErrFetchFilter(err)
 			}
