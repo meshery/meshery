@@ -54,3 +54,30 @@ svg.css-19bqh2r:hover {
 ::-webkit-scrollbar-thumb:horizontal:active {
   background: #a8a8a8;
 }
+
+/* Kanvas UI Toolbar Adjustments */
+#kanvas-bottom-dock {
+  transform: scale(0.8) translate(-32px, -24px);
+  transform-origin: bottom center;
+}
+
+#kanvas-bottom-dock > div {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.MuiSpeedDial-root:has(> button[aria-label='CANVAS_CONTROLS']) {
+  transform-origin: bottom center;
+}
+
+.MuiSpeedDial-root:has(> button[aria-label='CANVAS_CONTROLS']):first-of-type {
+  transform: scale(0.9) translate(-10px, -10px);
+}
+
+.MuiSpeedDial-root:has(> button[aria-label='CANVAS_CONTROLS']):last-of-type {
+  transform: scale(0.9) translate(10px, -10px);
+}
+
+.MuiSpeedDial-root:has(> button[aria-label='CANVAS_CONTROLS']) .MuiSpeedDial-fab {
+  z-index: 10;
+}

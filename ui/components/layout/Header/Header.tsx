@@ -27,7 +27,6 @@ import {
   IconButton,
   Slide,
   Grid2,
-  Hidden,
   NoSsr,
   useTheme,
   useMediaQuery,
@@ -419,34 +418,35 @@ const Header = ({
       <>
         <HeaderAppBar id="top-navigation-bar" color="primary" position="sticky">
           <StyledToolbar disableGutters isDrawerCollapsed={onDrawerCollapse}>
-            <Grid2 container size="grow" sx={{ alignItems: 'center' }}>
-              <Hidden smUp>
-                <Grid2 style={{ display: 'none' }}>
-                  <MenuIconButton aria-label="Open drawer" onClick={onDrawerToggle}>
-                    <HeaderIcons style={iconMedium} />
-                  </MenuIconButton>
-                </Grid2>
-              </Hidden>
-              <Grid2
-                container
-                component={PageTitleWrapper}
-                size="grow"
-                sx={{ alignItems: 'center' }}
-              >
-                {/* Extension Point for   Logo */}
-                <div
-                  id="nav-header-logo"
-                  style={{
-                    height: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    width: 'fit-content',
-                    justifyContent: 'center',
-                    position: 'relative',
-                  }}
-                ></div>
-                <OrganizationAndWorkSpaceSwitcher />
+            <Grid2 container size="grow" sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
+              <Grid2 sx={{ display: { xs: 'block', sm: 'none' } }}>
+                <MenuIconButton aria-label="Open drawer" onClick={onDrawerToggle}>
+                  <HeaderIcons style={iconMedium} />
+                </MenuIconButton>
               </Grid2>
+              {/* Extension Point for Logo */}
+              <Box
+                id="nav-header-logo"
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  width: 'fit-content',
+                  position: 'relative',
+                  order: { xs: 1, md: 1 },
+                }}
+              ></Box>
+              {/* Title Section (Drops to row 2 on mobile) */}
+              <Box
+                component={PageTitleWrapper}
+                sx={{
+                  order: { xs: 3, md: 2 },
+                  width: { xs: '100%', md: 'auto' },
+                  mt: { xs: 1, md: 0 },
+                }}
+              >
+                <OrganizationAndWorkSpaceSwitcher />
+              </Box>
+              {/* Right Side Icons */}
               <Box
                 component={UserContainer}
                 style={{
@@ -454,6 +454,10 @@ const Header = ({
                   display: 'flex',
                   gap: '1rem 0.5rem',
                   width: 'fit-content',
+                }}
+                sx={{
+                  order: { xs: 2, md: 3 },
+                  marginLeft: 'auto',
                 }}
               >
                 {/* According to the capabilities load the component */}
