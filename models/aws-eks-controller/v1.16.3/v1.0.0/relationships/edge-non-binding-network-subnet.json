@@ -83,11 +83,6 @@
               "mutatorRef": [
                 [
                   "displayName"
-                ],
-                [
-                  "configuration",
-                  "metadata",
-                  "name"
                 ]
               ]
             }
@@ -157,11 +152,6 @@
               "mutatorRef": [
                 [
                   "displayName"
-                ],
-                [
-                  "configuration",
-                  "metadata",
-                  "name"
                 ]
               ]
             }
