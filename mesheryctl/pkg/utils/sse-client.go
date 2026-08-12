@@ -3,10 +3,12 @@ package utils
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
+	"sync"
 )
 
 // Event represents a Server-Sent Event
@@ -23,26 +25,54 @@ type EventData struct {
 }
 
 // ConvertRespToSSE converts a connection to a stream of server sent events
-func ConvertRespToSSE(resp *http.Response) (chan Event, error) {
+func ConvertRespToSSE(ctx context.Context, resp *http.Response) (<-chan Event, error) {
 	events := make(chan Event)
 	reader := bufio.NewReader(resp.Body)
 
-	go loop(reader, events)
+	go loop(ctx, resp, reader, events)
 
 	return events, nil
 }
 
-func loop(reader *bufio.Reader, events chan Event) {
+func loop(ctx context.Context, resp *http.Response, reader *bufio.Reader, events chan<- Event) {
+	var once sync.Once
+	closeEvents := func() {
+		once.Do(func() {
+			close(events)
+		})
+	}
+	defer closeEvents()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	stopCtxMonitor := make(chan struct{})
+	defer close(stopCtxMonitor)
+
+	go func() {
+		select {
+		case <-ctx.Done():
+			_ = resp.Body.Close()
+		case <-stopCtxMonitor:
+		}
+	}()
+
 	ev := Event{}
 
 	var buf bytes.Buffer
 
 	for {
+		select {
+		case <-ctx.Done():
+			return
+		default:
+		}
+
 		line, err := reader.ReadBytes('\n')
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "error during resp.Body read:%s\n", err)
-
-			close(events)
+			if ctx.Err() == nil {
+				fmt.Fprintf(os.Stderr, "error during resp.Body read:%s\n", err)
+			}
 			return
 		}
 
@@ -82,13 +112,16 @@ func loop(reader *bufio.Reader, events chan Event) {
 				if err == nil {
 					ev.Data = data
 					buf.Reset()
-					events <- ev
+					select {
+					case events <- ev:
+					case <-ctx.Done():
+						return
+					}
 					ev = Event{}
 				}
 			}
 
 		default:
-			close(events)
 			return
 		}
 	}

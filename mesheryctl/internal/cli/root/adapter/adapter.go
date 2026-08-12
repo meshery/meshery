@@ -15,7 +15,9 @@
 package adapter
 
 import (
+	"context"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -232,24 +234,40 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	if err != nil {
 		return "", ErrCreatingDeployResponseRequest(err)
 	}
-	defer func() { _ = res.Body.Close() }()
+	defer func() {
+		if err := res.Body.Close(); err != nil {
+			utils.Log.Warn(fmt.Errorf("error closing validate response body: %w", err))
+		}
+	}()
 
-	event, err := utils.ConvertRespToSSE(res)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	event, err := utils.ConvertRespToSSE(ctx, res)
 	if err != nil {
 		return "", ErrCreatingDeployResponseStream(err)
 	}
 
 	timer := time.NewTimer(time.Duration(1200) * time.Second)
-	eventChan := make(chan string)
+	defer timer.Stop()
+	eventChan := make(chan string, 1)
 
 	// Run a goroutine to wait for the response
 	go func() {
 		for i := range event {
 			if strings.Contains(i.Data.Details, query) {
-				eventChan <- "successful"
+				select {
+				case eventChan <- "successful":
+				case <-ctx.Done():
+					return
+				}
 				utils.Log.Infof("%s\n%s\n", i.Data.Summary, i.Data.Details)
 			} else if strings.Contains(i.Data.Details, "Error") {
-				eventChan <- "error"
+				select {
+				case eventChan <- "error":
+				case <-ctx.Done():
+					return
+				}
 				utils.Log.Infof("%s\n", i.Data.Summary)
 			}
 		}
@@ -272,32 +290,49 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	method := "GET"
 	client := &http.Client{}
 	req, err := utils.NewRequest(method, path, nil)
-	req.Header.Add("Accept", "text/event-stream")
-	if err != nil {
-		return "", ErrCreatingDeployResponseRequest(err)
-	}
-
-	res, err := client.Do(req)
 	if err != nil {
 		return "", ErrCreatingValidateRequest(err)
 	}
+	req.Header.Add("Accept", "text/event-stream")
 
-	event, err := utils.ConvertRespToSSE(res)
+	res, err := client.Do(req)
+	if err != nil {
+		return "", ErrCreatingValidateResponseRequest(err)
+	}
+	defer func() {
+		if err := res.Body.Close(); err != nil {
+			utils.Log.Warn(fmt.Errorf("error closing validate response body: %w", err))
+		}
+	}()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	event, err := utils.ConvertRespToSSE(ctx, res)
 	if err != nil {
 		return "", ErrCreatingValidateResponseStream(err)
 	}
 
 	timer := time.NewTimer(time.Duration(1200) * time.Second)
-	eventChan := make(chan string)
+	defer timer.Stop()
+	eventChan := make(chan string, 1)
 
 	// Run a goroutine to wait for the response
 	go func() {
 		for i := range event {
 			if strings.Contains(i.Data.Summary, query) {
-				eventChan <- "successful"
+				select {
+				case eventChan <- "successful":
+				case <-ctx.Done():
+					return
+				}
 				utils.Log.Infof("%s\n%s", i.Data.Summary, i.Data.Details)
 			} else if strings.Contains(i.Data.Details, "error") {
-				eventChan <- "error"
+				select {
+				case eventChan <- "error":
+				case <-ctx.Done():
+					return
+				}
 				utils.Log.Infof("%s", i.Data.Summary)
 			}
 		}
