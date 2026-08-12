@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/meshery/meshkit/encoding"
+	"github.com/sirupsen/logrus"
 )
 
 // RecursiveCastMapStringInterfaceToMapStringInterface will convert a
@@ -16,7 +17,7 @@ func RecursiveCastMapStringInterfaceToMapStringInterface(in map[string]interface
 	res := ConvertMapInterfaceMapString(in)
 	out, ok := res.(map[string]interface{})
 	if !ok {
-		fmt.Println("failed to cast")
+		logrus.Warn("failed to cast map interface to map string")
 	}
 
 	return out

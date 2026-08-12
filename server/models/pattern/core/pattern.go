@@ -10,6 +10,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models/pattern/utils"
+	"github.com/sirupsen/logrus"
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/logger"
 	registry "github.com/meshery/meshkit/models/meshmodel/registry"
@@ -43,7 +44,7 @@ func (p prettifier) DePrettify(m map[string]interface{}, isSchema bool) map[stri
 	res := ConvertMapInterfaceMapString(m, false, isSchema)
 	out, ok := res.(map[string]interface{})
 	if !ok {
-		fmt.Println("failed to cast")
+		logrus.Warn("failed to cast map interface to map string")
 	}
 	return out
 

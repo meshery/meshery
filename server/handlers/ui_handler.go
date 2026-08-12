@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -117,11 +116,11 @@ func (h *Handler) ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, b
 	if reqURL == "/" || reqURL == "" {
 		filePath.WriteString("index.html")
 	} else if isDynamicUIEndpoint(reqURL) {
-		fmt.Println("serving dynamic ui endpoint: ", r.URL.Path, reqURL)
+		h.log.Debugf("serving dynamic ui endpoint: %s %s", r.URL.Path, reqURL)
 		filePath.Reset()
 		filePath.WriteString(getDynamicUIEndpoint(reqURL))
 
-		fmt.Println("Generated path: ", filePath.String())
+		h.log.Debugf("generated path: %s", filePath.String())
 	} else if filepath.Ext(reqURL) == "" {
 		filePath.WriteString(".html")
 	}

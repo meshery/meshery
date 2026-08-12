@@ -1,9 +1,9 @@
 package stages
 
 import (
-	"fmt"
-
 	"github.com/meshery/meshery/server/models/pattern/core"
+
+	"github.com/sirupsen/logrus"
 )
 
 // Format - Format stage performs de-prettification of the pattern file
@@ -13,7 +13,7 @@ func Format() ChainStageFunction {
 			next(data, err)
 			return
 		}
-		fmt.Println("Deprettifying the pattern file")
+		logrus.Debug("de-prettifying the pattern file")
 		for _, component := range data.Pattern.Components {
 			component.Configuration = core.Format.DePrettify(component.Configuration, false)
 		}

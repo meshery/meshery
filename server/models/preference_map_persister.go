@@ -2,7 +2,6 @@ package models
 
 import (
 	"fmt"
-	"os"
 	"sync"
 	"time"
 
@@ -35,8 +34,8 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 		LogLevel: logLevel,
 	})
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		logrus.Error(err)
+		return NewDefaultPreference(), err
 	}
 	data := NewDefaultPreference()
 
