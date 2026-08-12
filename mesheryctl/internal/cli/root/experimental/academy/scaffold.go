@@ -17,6 +17,7 @@ import (
 type TemplateData struct {
 	Title       string
 	Description string
+	Type        string
 	Level       string
 	Weight      int
 	OrgID       string
@@ -68,28 +69,10 @@ func inferWeight(parentDir, excludeDir string) int {
 }
 
 func getTemplateString(cType string) string {
-	switch cType {
-	case string(academyModel.LearningPath):
-		return templates.LearningPathTemplate
-	case string(Course):
-		return templates.CourseTemplate
-	case string(Module):
-		return templates.ModuleTemplate
-	case string(Page):
-		return templates.PageTemplate
-	case string(academyModel.Certification):
-		return templates.CertificationTemplate
-	case string(Exam):
-		return templates.ExamTemplate
-	case string(Lab):
-		return templates.LabTemplate
-	case string(Test):
-		return templates.TestTemplate
-	case string(academyModel.Challenge):
-		return templates.ChallengeTemplate
-	default:
-		return ""
+	if IsValidNodeType(cType) {
+		return templates.NodeTemplate
 	}
+	return ""
 }
 
 func contentDirSegment(cType string) string {
@@ -254,6 +237,7 @@ func scaffoldNode(opts ScaffoldOptions, explicitFolderName string) error {
 	data := TemplateData{
 		Title:       opts.Title,
 		Description: opts.Description,
+		Type:        opts.Type,
 		Level:       opts.Level,
 		Weight:      weight,
 		OrgID:       opts.OrgID,
@@ -280,6 +264,29 @@ func scaffoldNode(opts ScaffoldOptions, explicitFolderName string) error {
 	return nil
 }
 
+func scaffoldChild(opts ScaffoldOptions, cType, title, into string) (string, error) {
+	child := opts
+	child.Type = cType
+	child.Title = title
+	child.Description = ""
+	child.Level = ""
+	child.Category = ""
+	child.Tags = nil
+	child.ID = ""
+	child.TargetDir = into
+
+	if err := scaffoldNode(child, ""); err != nil {
+		return "", err
+	}
+
+	slug, err := makeSlug(title)
+	if err != nil {
+		return "", err
+	}
+
+	return filepath.Join(into, slug), nil
+}
+
 func scaffoldTree(opts ScaffoldOptions) error {
 	folderName, err := makeSlug(opts.Title)
 	if err != nil {
@@ -295,78 +302,28 @@ func scaffoldTree(opts ScaffoldOptions) error {
 	currentDir := baseDir
 
 	if opts.Type == string(academyModel.LearningPath) {
-		courseTitle := "Course 1"
-		courseOpts := opts
-		courseOpts.Type = string(Course)
-		courseOpts.Title = courseTitle
-		courseOpts.Description = ""
-		courseOpts.Level = ""
-		courseOpts.Category = ""
-		courseOpts.Tags = nil
-		courseOpts.ID = ""
-		courseOpts.TargetDir = currentDir
-		err = scaffoldNode(courseOpts, "")
+		currentDir, err = scaffoldChild(opts, string(Course), "Course 1", currentDir)
 		if err != nil {
 			return err
 		}
-		slug, err := makeSlug(courseTitle)
-		if err != nil {
-			return err
-		}
-		currentDir = filepath.Join(currentDir, slug)
 	}
 
 	if opts.Type == string(academyModel.LearningPath) || opts.Type == string(Course) {
-		moduleTitle := "Module 1"
-		moduleOpts := opts
-		moduleOpts.Type = string(Module)
-		moduleOpts.Title = moduleTitle
-		moduleOpts.Description = ""
-		moduleOpts.Level = ""
-		moduleOpts.Category = ""
-		moduleOpts.Tags = nil
-		moduleOpts.ID = ""
-		moduleOpts.TargetDir = currentDir
-		err = scaffoldNode(moduleOpts, "")
+		currentDir, err = scaffoldChild(opts, string(Module), "Module 1", currentDir)
 		if err != nil {
 			return err
 		}
-		slug, err := makeSlug(moduleTitle)
-		if err != nil {
-			return err
-		}
-		currentDir = filepath.Join(currentDir, slug)
 	}
 
 	if opts.Type == string(academyModel.LearningPath) || opts.Type == string(Course) || opts.Type == string(Module) {
-		pageTitle := "Page 1"
-		pageOpts := opts
-		pageOpts.Type = string(Page)
-		pageOpts.Title = pageTitle
-		pageOpts.Description = ""
-		pageOpts.Level = ""
-		pageOpts.Category = ""
-		pageOpts.Tags = nil
-		pageOpts.ID = ""
-		pageOpts.TargetDir = currentDir
-		err = scaffoldNode(pageOpts, "")
+		_, err = scaffoldChild(opts, string(Page), "Page 1", currentDir)
 		if err != nil {
 			return err
 		}
 	}
 
 	if opts.Type == string(academyModel.Certification) {
-		examTitle := "Exam 1"
-		examOpts := opts
-		examOpts.Type = string(Exam)
-		examOpts.Title = examTitle
-		examOpts.Description = ""
-		examOpts.Level = ""
-		examOpts.Category = ""
-		examOpts.Tags = nil
-		examOpts.ID = ""
-		examOpts.TargetDir = currentDir
-		err = scaffoldNode(examOpts, "")
+		_, err = scaffoldChild(opts, string(Exam), "Exam 1", currentDir)
 		if err != nil {
 			return err
 		}
@@ -389,28 +346,12 @@ func scaffoldChallenge(opts ScaffoldOptions) error {
 
 	currentDir := baseDir
 
-	labOpts := opts
-	labOpts.Type = string(Lab)
-	labOpts.Title = "Lab"
-	labOpts.Description = ""
-	labOpts.Category = ""
-	labOpts.Tags = nil
-	labOpts.TargetDir = currentDir
-	labOpts.ID = ""
-	err = scaffoldNode(labOpts, "lab")
+	_, err = scaffoldChild(opts, string(Lab), "Lab", currentDir)
 	if err != nil {
 		return err
 	}
 
-	examOpts := opts
-	examOpts.Type = string(Exam)
-	examOpts.Title = "Exam"
-	examOpts.Description = ""
-	examOpts.Category = ""
-	examOpts.Tags = nil
-	examOpts.TargetDir = currentDir
-	examOpts.ID = ""
-	err = scaffoldNode(examOpts, "exam")
+	_, err = scaffoldChild(opts, string(Exam), "Exam", currentDir)
 	if err != nil {
 		return err
 	}

@@ -49,7 +49,7 @@ mesheryctl exp academy create --type challenge --title "My Challenge" --descript
 			return errTaxonomyType("")
 		}
 		cType := createAcademyFlags.Type
-		if cType != string(academyModel.LearningPath) && cType != string(academyModel.Certification) && cType != string(academyModel.Challenge) {
+		if !isRootType(cType) {
 			return errTaxonomyType(cType)
 		}
 		return executeCreate()
@@ -65,7 +65,7 @@ func executeCreate() error {
 	targetDir := createAcademyFlags.Into
 
 	if targetDir == "" {
-		if cType != string(academyModel.LearningPath) && cType != string(academyModel.Certification) && cType != string(academyModel.Challenge) {
+		if !isRootType(cType) {
 			return errMissingInto()
 		}
 		var err error
@@ -77,7 +77,7 @@ func executeCreate() error {
 
 	orgID := createAcademyFlags.OrgID
 
-	if cType == string(academyModel.LearningPath) || cType == string(academyModel.Certification) || cType == string(academyModel.Challenge) {
+	if isRootType(cType) {
 		if orgID == "" {
 			return errMissingOrgID()
 		}
@@ -97,7 +97,7 @@ func executeCreate() error {
 	}
 
 	if createAcademyFlags.Level == "" {
-		if cType == string(academyModel.LearningPath) || cType == string(academyModel.Certification) || cType == string(academyModel.Challenge) {
+		if isRootType(cType) {
 			createAcademyFlags.Level = string(academyModel.Beginner)
 		}
 	} else {
@@ -120,7 +120,7 @@ func executeCreate() error {
 	}
 
 	// course/module routes through scaffoldTree, which auto-generates a module-1/page-1 stub tree beneath them
-	if cType == string(academyModel.LearningPath) || cType == string(Course) || cType == string(Module) || cType == string(academyModel.Certification) {
+	if isRootType(cType) {
 		return scaffoldTree(opts)
 	} else if cType == string(academyModel.Challenge) {
 		return scaffoldChallenge(opts)
