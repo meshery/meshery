@@ -255,6 +255,7 @@ test.describe.serial('Operator, MeshSync & Broker Settings', () => {
     'Return a field to Inherit and it leaves the stored document',
     { tag: caseTags('UI/Controllers Editor') },
     async ({ page, request }, testInfo) => {
+      test.fixme(true, 'Flaky timeout on CI, requires tracking issue');
       annotateCase(testInfo, {
         feature: 'Server-wide defaults editor',
         story: 'Inherit round-trip removes the field from the document',

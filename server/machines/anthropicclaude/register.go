@@ -125,7 +125,11 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 			log.Error(err)
 			return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": err}).Build(), err
 		}
-		defer resp.Body.Close()
+		defer func() {
+			if err := resp.Body.Close(); err != nil {
+				log.Error(fmt.Errorf("error closing response body: %w", err))
+			}
+		}()
 
 		if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 			err := fmt.Errorf("anthropic API unreachable, status %d", resp.StatusCode)
