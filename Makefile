@@ -412,11 +412,15 @@ check-go:
 #-----------------------------------------------------------------------------
 # Meshery Helm Charts
 #-----------------------------------------------------------------------------
-.PHONY: helm-docs helm-operator-docs helm-meshery-docs helm-operator-lint helm-lint
+.PHONY: helm-docs helm-operator-docs helm-meshery-docs helm-operator-lint helm-operator-appversion-check helm-lint
 ## Generate all Meshery Helm Chart documentation in markdown format.
 helm-docs: helm-operator-docs helm-meshery-docs
 
-## Generate Meshery Operator Helm Chart documentation in markdown format.
+# WARNING: this overwrites install/kubernetes/helm/meshery-operator/README.md, which is
+# hand-maintained. values.yaml has no `# --` comments and there is no README.md.gotmpl,
+# so helm-docs would delete that README's "CRD lifecycle" section and every per-value
+# description. Read the note at the top of that file before running this.
+## Generate Meshery Operator Helm Chart docs. WARNING: overwrites the hand-maintained meshery-operator README - read the note at its top first.
 helm-operator-docs: dep-check
 	GO111MODULE=on go get github.com/norwoodj/helm-docs/cmd/helm-docs
 	$(GOPATH)/bin/helm-docs -c install/kubernetes/helm/meshery-operator
@@ -430,8 +434,13 @@ helm-meshery-docs: dep-check
 helm-lint: helm-operator-lint helm-meshery-lint
 
 ## Lint Meshery Operator Helm Chart
-helm-operator-lint:
+helm-operator-lint: helm-operator-appversion-check
 	helm lint install/kubernetes/helm/meshery-operator --with-subcharts
+
+## Assert the Meshery Operator chart and its subcharts advertise the same appVersion
+helm-operator-appversion-check:
+	./install/scripts/check-operator-chart-appversions.sh --self-test
+	./install/scripts/check-operator-chart-appversions.sh install/kubernetes/helm/meshery-operator
 ## Lint Meshery Server and Adapter Helm Charts
 helm-meshery-lint:
 	helm lint install/kubernetes/helm/meshery --with-subcharts
