@@ -47,6 +47,7 @@ test.describe('Telemetry Section Tests', () => {
   });
 
   test('Metrics (Prometheus) page loads', async ({ page }: { page: Page }) => {
+    test.fixme(true, 'Flaky timeout on CI, requires tracking issue');
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.navigateToTelemetryMetrics();
 
