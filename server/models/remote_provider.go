@@ -4713,9 +4713,9 @@ func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *connect
 	bf := bytes.NewBuffer(_creds)
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connection.Kind))
 	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
-	tokenString, _ := l.GetToken(req)
+	tokenString, err := l.GetToken(req)
 	if err != nil {
-		l.Log.Error(ErrGetToken(err))
+		l.Log.Error(err)
 		return nil, err
 	}
 
@@ -5199,9 +5199,9 @@ func (l *RemoteProvider) UpdateUserCredential(req *http.Request, credential *Cre
 	bf := bytes.NewBuffer(_creds)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
-	tokenString, _ := l.GetToken(req)
+	tokenString, err := l.GetToken(req)
 	if err != nil {
-		l.Log.Error(ErrGetToken(err))
+		l.Log.Error(err)
 		return nil, err
 	}
 
