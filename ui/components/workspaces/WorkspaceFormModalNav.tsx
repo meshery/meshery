@@ -43,6 +43,8 @@ const Layout = styled(Box)({
   display: 'flex',
   position: 'relative',
   height: '100%',
+  minHeight: 0,
+  overflow: 'hidden',
 });
 
 export type HeaderInfo = {
