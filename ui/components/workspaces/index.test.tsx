@@ -39,10 +39,10 @@ const {
   WORKSPACES_QUERY_RESULT: { data: { workspaces: [], totalCount: 0 } },
   EMPTY_QUERY_RESULT: { data: undefined, isLoading: false },
   NOOP_MUTATION: [vi.fn()],
-  UI_STATE: { ui: { organization: { id: 'org-1' } } },
+  UI_STATE: { ui: { organization: { id: 'org-1' } as { id: string } | null } },
   // Boxed so tests can override the id the mocked form "submits" without
   // reassigning the hoisted binding itself (vi.hoisted values are const).
-  submittedOrgId: { current: 'org-1' },
+  submittedOrgId: { current: 'org-1' as string | undefined },
 }));
 
 vi.mock('../../utils/hooks/useNotification', () => ({
