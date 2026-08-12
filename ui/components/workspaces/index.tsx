@@ -8,6 +8,7 @@ import {
 import {
   Box,
   CustomColumnVisibilityControl,
+  CustomTooltip,
   TeamsIcon,
   WorkspaceIcon,
   Modal,
@@ -460,33 +461,46 @@ const Workspaces = ({ onSelectWorkspace }) => {
         {!selectedWorkspace.id && (
           <ToolWrapper>
             <CreateButtonWrapper style={{ marginRight: '2rem' }}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={(e) =>
-                  handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE, selectedWorkspace)
-                }
-                sx={{
-                  backgroundColor: '#607d8b',
-                  padding: '8px',
-                  borderRadius: '5px',
-                }}
-                permissionKey={Keys.WorkspaceManagementCreateWorkspace}
-                data-cy="btnResetDatabase"
+              {/* organization?.id gates both the click handler (handleWorkspaceModalOpen)
+                  and the request payload (handleCreateWorkspace) - see meshery/meshery#21263.
+                  Disabling the button while it's falsy keeps the user from clicking into a
+                  doomed action instead of just toasting an error after the fact. MUI drops
+                  hover events on a disabled button, so the tooltip needs the wrapping span. */}
+              <CustomTooltip
+                title={!organization?.id ? 'Organization is still loading…' : ''}
+                disableHoverListener={Boolean(organization?.id)}
               >
-                <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
-                <Typography
-                  sx={{
-                    paddingLeft: '4px',
-                    marginRight: '4px',
-                    textTransform: 'none',
-                  }}
-                >
-                  Create
-                </Typography>
-              </Button>
+                <span>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={(e) =>
+                      handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE, selectedWorkspace)
+                    }
+                    disabled={!organization?.id}
+                    sx={{
+                      backgroundColor: '#607d8b',
+                      padding: '8px',
+                      borderRadius: '5px',
+                    }}
+                    permissionKey={Keys.WorkspaceManagementCreateWorkspace}
+                    data-cy="btnResetDatabase"
+                  >
+                    <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
+                    <Typography
+                      sx={{
+                        paddingLeft: '4px',
+                        marginRight: '4px',
+                        textTransform: 'none',
+                      }}
+                    >
+                      Create
+                    </Typography>
+                  </Button>
+                </span>
+              </CustomTooltip>
             </CreateButtonWrapper>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               {!selectedWorkspace?.id && (
