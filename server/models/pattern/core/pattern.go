@@ -23,6 +23,7 @@ import (
 	pattern "github.com/meshery/schemas/models/v1beta3/design"
 	cytoscapejs "gonum.org/v1/gonum/graph/formats/cytoscapejs"
 	"gopkg.in/yaml.v2"
+	yamlv3 "gopkg.in/yaml.v3"
 )
 
 type prettifier bool
@@ -147,7 +148,7 @@ type DryRunFailureCause struct {
 
 // NewPatternFile takes in raw yaml and encodes it into a construct
 func NewPatternFile(yml []byte) (patternFile pattern.PatternFile, err error) {
-	err = encoding.Unmarshal(yml, &patternFile)
+	err = encoding.Unmarshal(normalizeToJSON(yml), &patternFile)
 	if err != nil {
 		return patternFile, err
 	}
@@ -166,6 +167,33 @@ func NewPatternFile(yml []byte) (patternFile pattern.PatternFile, err error) {
 	}
 
 	return
+}
+
+// normalizeToJSON converts YAML input to JSON before unmarshaling. The schema
+// types only capture unknown metadata keys (such as a component's
+// "dependsOn") through their custom JSON unmarshalers; the YAML path drops
+// them because AdditionalProperties is tagged `yaml:"-"`. Converting keeps
+// both wire formats carrying the same fields. Input that is already JSON, or
+// that fails conversion, is returned unchanged so error behavior stays with
+// the regular unmarshal path.
+func normalizeToJSON(data []byte) []byte {
+	if json.Valid(data) {
+		return data
+	}
+
+	var doc interface{}
+	if err := yamlv3.Unmarshal(data, &doc); err != nil || doc == nil {
+		// Empty / comment-only YAML unmarshals to nil; leave the input alone
+		// so the regular unmarshal path keeps its existing error behavior.
+		return data
+	}
+
+	converted, err := json.Marshal(doc)
+	if err != nil {
+		return data
+	}
+
+	return converted
 }
 
 // ToCytoscapeJS converts pattern file into cytoscape object

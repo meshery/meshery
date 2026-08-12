@@ -2,6 +2,8 @@ package core
 
 import (
 	"testing"
+
+	"github.com/meshery/meshery/server/models/pattern/planner"
 )
 
 func TestDesignNameFromFileName(t *testing.T) {
@@ -90,4 +92,67 @@ func TestDesignNameFromFileName(t *testing.T) {
 			}
 		})
 	}
+}
+
+// The UI serializes designs to YAML for deploy/undeploy/validate, and the
+// schema types only capture unknown metadata keys (such as a component's
+// "dependsOn") through their custom JSON unmarshalers. Without normalizing
+// YAML input to JSON, those keys were silently dropped and the provision
+// planner saw no ordering edges.
+func TestNewPatternFileKeepsDependsOnFromYAML(t *testing.T) {
+	yml := []byte(`
+name: dependson-design
+components:
+  - id: 22222222-2222-2222-2222-222222222222
+    displayName: guestbook
+    metadata:
+      isNamespaced: true
+  - id: 11111111-1111-1111-1111-111111111111
+    displayName: frontend
+    metadata:
+      isNamespaced: true
+      dependsOn:
+        - guestbook
+`)
+
+	pf, err := NewPatternFile(yml)
+	if err != nil {
+		t.Fatalf("NewPatternFile returned an error: %v", err)
+	}
+	if len(pf.Components) != 2 {
+		t.Fatalf("expected 2 components, got %d", len(pf.Components))
+	}
+
+	var frontendDeps interface{}
+	var found bool
+	for _, comp := range pf.Components {
+		if comp.DisplayName == "frontend" {
+			frontendDeps, found = comp.Metadata.AdditionalProperties["dependsOn"]
+			if !comp.Metadata.IsNamespaced {
+				t.Fatal("typed metadata (isNamespaced) was lost while parsing the YAML design")
+			}
+		}
+	}
+	if !found {
+		t.Fatalf("dependsOn was dropped while parsing the YAML design: %v", frontendDeps)
+	}
+
+	// The planner must be able to consume the wire-decoded shape
+	// ([]interface{}) and produce an ordering edge from it.
+	plan, err := planner.CreatePlan(pf, false)
+	if err != nil {
+		t.Fatalf("CreatePlan rejected the parsed design: %v", err)
+	}
+	if len(plan.Edges) == 0 {
+		t.Fatal("expected the design's dependsOn to produce at least one ordering edge")
+	}
+
+	// Traversal dereferences edge endpoints; make sure a YAML-parsed
+	// dependsOn does not panic when the plan is evaluated.
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("Plan.IsFeasible panicked on YAML-parsed dependsOn: %v", r)
+		}
+	}()
+	_ = plan.IsFeasible()
 }
