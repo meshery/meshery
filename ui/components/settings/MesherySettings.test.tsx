@@ -223,10 +223,12 @@ describe('MesherySettings', () => {
     expect(screen.queryByTestId('adapter-config')).not.toBeInTheDocument();
   });
 
-  it('disables the Reset tab when the reset-database permission is denied', () => {
+  it('disables the Reset tab and its content when the reset-database permission is denied', () => {
     permissionOverrides.set(Keys.MesherySystemResetDatabase.id, false);
+    routerState.query = { settingsCategory: 'Reset' };
     render(<MesherySettings />);
 
     expect(screen.getByTestId('tab-Reset')).toBeDisabled();
+    expect(screen.queryByTestId('database-summary')).not.toBeInTheDocument();
   });
 });

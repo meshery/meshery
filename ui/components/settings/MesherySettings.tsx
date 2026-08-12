@@ -348,7 +348,7 @@ const MesherySettings = () => {
               </TabContainer>
             )}
 
-            {tabVal === RESET && (
+            {tabVal === RESET && canResetDatabase && (
               <TabContainer>
                 <DatabaseSummary promptRef={systemResetPromptRef} />
               </TabContainer>
