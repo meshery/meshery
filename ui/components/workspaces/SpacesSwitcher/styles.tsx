@@ -180,10 +180,13 @@ export const StyledListItemText = styled(ListItemText, {
   },
 }));
 
-export const StyledListIcon = styled(ListItemIcon)({
+export const StyledListIcon = styled(ListItemIcon, {
+  shouldForwardProp: (prop) => prop !== 'withCheckbox',
+})(({ theme, withCheckbox }) => ({
   minWidth: '0px',
   paddingRight: '1rem',
-});
+  paddingLeft: withCheckbox ? theme.spacing(1) : undefined,
+}));
 
 export const StyledUpdatedText = styled('p')({
   margin: '0',
