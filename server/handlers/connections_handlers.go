@@ -557,25 +557,25 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 			return *eventBuilder.Build(), nil
 		}
 
-		// detach from the http request lifecycle so that the goroutine isn't cancelled when
+		// detach from the http request lifecycle so that the side-effects aren't cancelled when
 		// the handler returns, while preserving context values (e.g. TokenCtxKey) that downstream calls depend on.
 		detachedCtx := context.WithoutCancel(ctx)
-		go func(inst *machines.StateMachine, status connections.ConnectionStatus) {
-			event, err := inst.SendEvent(detachedCtx, machines.EventType(helpers.StatusToEvent(status)), nil)
-			if err != nil {
-				h.log.Error(err)
-				_ = provider.PersistEvent(*event, token)
-				h.config.EventBroadcaster.Publish(userID, event)
-				return
-			}
-
-			if status == connections.DELETED {
-				smInstanceTracker.Remove(inst.ID)
-			}
-
+		event, err := inst.SendEvent(detachedCtx, machines.EventType(helpers.StatusToEvent(connection.Status)), nil)
+		if err != nil {
+			h.log.Error(err)
 			_ = provider.PersistEvent(*event, token)
 			h.config.EventBroadcaster.Publish(userID, event)
-		}(inst, connection.Status)
+			return *event, err
+		}
+
+		if connection.Status == connections.DELETED {
+			smInstanceTracker.Remove(inst.ID)
+		}
+
+		_ = provider.PersistEvent(*event, token)
+		h.config.EventBroadcaster.Publish(userID, event)
+
+		return *event, nil
 	}
 
 	return *eventBuilder.Build(), nil

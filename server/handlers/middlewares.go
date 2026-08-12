@@ -438,7 +438,7 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 			h.log.Error(err)
 			continue
 		}
-		mdh := kubernesMachineCtx.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext()
+		mdh := kubernesMachineCtx.MesheryCtrlsHelper.GetMeshsyncDataHandler()
 		if mdh != nil {
 			if k8sContext.KubernetesServerID == nil {
 				continue

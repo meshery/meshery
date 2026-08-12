@@ -94,6 +94,14 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 	).Mode
 
 	go func() {
+		machinectx.ActionMutex.Lock()
+		defer machinectx.ActionMutex.Unlock()
+
+		if ctx.Err() != nil {
+			machinectx.log.Info("Connect side-effects aborted due to lifecycle cancellation")
+			return
+		}
+
 		// SetControllersConfig first: AddCtxControllerHandlers constructs the
 		// operator controller handler with the Helm chart version this document
 		// resolves to (operator.version), and captures it there.
@@ -121,7 +129,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 			// Detached context: the connect request's context ends with the
 			// HTTP request, while this apply runs alongside the async
 			// operator deployment.
-			applyCtx, cancelApply := context.WithTimeout(context.Background(), 2*time.Minute)
+			applyCtx, cancelApply := context.WithTimeout(ctx, 2*time.Minute)
 			defer cancelApply()
 			if _, errApply := models.ApplyControllersConfigToCluster(applyCtx, machinectx.log, kubeClient, mergedControllersConfig); errApply != nil {
 				machinectx.log.Error(errApply)

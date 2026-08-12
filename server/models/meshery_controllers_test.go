@@ -1,6 +1,7 @@
 package models
 
 import (
+	"sync"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -78,7 +79,7 @@ func TestAddCtxControllerHandlersReturnsEarlyOnInvalidConfig(t *testing.T) {
 		nil,
 		nil,
 	)
-	
+
 	// A successful execution of this function without panicking indicates the fix is working.
 	// We wrap in a defer-recover just to explicitly fail the test if a panic occurs.
 	defer func() {
@@ -93,4 +94,28 @@ func TestAddCtxControllerHandlersReturnsEarlyOnInvalidConfig(t *testing.T) {
 	if len(mch.ctxControllerHandlers) != 0 {
 		t.Fatalf("expected ctxControllerHandlers to be empty, got %d", len(mch.ctxControllerHandlers))
 	}
+}
+
+// TestMesheryControllersHelperConcurrency verifies safe R/W to map under RWMutex.
+// Added as part of #21265 lifecycle serialization.
+func TestMesheryControllersHelperConcurrency(t *testing.T) {
+	mch := &MesheryControllersHelper{
+		ctxControllerHandlers: make(map[MesheryController]controllers.IMesheryController),
+	}
+	var wg sync.WaitGroup
+	for i := 0; i < 100; i++ {
+		wg.Add(2)
+		go func() {
+			defer wg.Done()
+			mch.GetControllerHandlersForEachContext()
+			mch.GetMeshsyncDataHandler()
+		}()
+		go func() {
+			defer wg.Done()
+			mch.mu.Lock()
+			mch.ctxControllerHandlers = make(map[MesheryController]controllers.IMesheryController)
+			mch.mu.Unlock()
+		}()
+	}
+	wg.Wait()
 }
