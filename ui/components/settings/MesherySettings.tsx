@@ -118,6 +118,7 @@ const MesherySettings = () => {
   const canViewSettings = useHasPermission(Keys.MesherySystemViewSettings);
   const canViewInfra = useHasPermission(Keys.InfrastructureManagementViewCloudNativeInfrastructure);
   const canViewRegistry = useHasPermission(Keys.MesherySystemViewRegistry);
+  const canResetDatabase = useHasPermission(Keys.MesherySystemResetDatabase);
   const router = useRouter();
   const { selectedSettingsCategory } = settingsRouter(router);
   const theme = useTheme();
@@ -276,7 +277,7 @@ const MesherySettings = () => {
                     data-testid="settings-tab-reset"
                     // tab="systemReset"
                     value={RESET}
-                    // disabled={!CAN(Keys.VIEW_SYSTEM_RESET.id, Keys.VIEW_SYSTEM_RESET.function)} TODO: uncomment when key get seeded
+                    disabled={!canResetDatabase}
                   />
                 </CustomTooltip>
               </Tabs>
