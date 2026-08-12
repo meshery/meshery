@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "An IngressLink selects pods of a Kubernetes Deployment (typically an NGINX Ingress Controller) via label selectors to proxy ingress traffic through F5 BIG-IP.",
+    "description": "",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -31,7 +31,6 @@
           {
             "id": null,
             "kind": "Deployment",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "displayName": "",
@@ -62,8 +61,7 @@
         "to": [
           {
             "id": null,
-            "kind": "IngressLink",
-            "match": {},
+            "kind": "VirtualServer",
             "match_strategy_matrix": null,
             "model": {
               "displayName": "",
@@ -82,8 +80,7 @@
                 [
                   "configuration",
                   "spec",
-                  "selector",
-                  "matchLabels"
+                  "tlsProfileName"
                 ]
               ],
               "patchStrategy": "replace"

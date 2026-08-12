@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "A TLSProfile is referenced by a VirtualServer to configure SSL/TLS termination behavior, enabling secure HTTPS ingress traffic through F5 BIG-IP.",
+    "description": "",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -31,7 +31,6 @@
           {
             "id": null,
             "kind": "TLSProfile",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "displayName": "",
@@ -59,7 +58,6 @@
           {
             "id": null,
             "kind": "VirtualServer",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "displayName": "",
@@ -78,7 +76,9 @@
                 [
                   "configuration",
                   "spec",
-                  "tlsProfileName"
+                  "pools",
+                  "0",
+                  "service"
                 ]
               ],
               "patchStrategy": "replace"

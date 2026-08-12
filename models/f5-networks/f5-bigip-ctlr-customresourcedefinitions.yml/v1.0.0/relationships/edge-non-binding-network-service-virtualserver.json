@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "A Kubernetes Service is referenced as a backend pool member in an F5 VirtualServer, enabling L7 HTTP/HTTPS traffic routing to the service's pods via F5 BIG-IP.",
+    "description": "",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -31,7 +31,6 @@
           {
             "id": null,
             "kind": "Service",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "displayName": "",
@@ -58,8 +57,7 @@
         "to": [
           {
             "id": null,
-            "kind": "VirtualServer",
-            "match": {},
+            "kind": "ExternalDNS",
             "match_strategy_matrix": null,
             "model": {
               "displayName": "",
@@ -78,9 +76,7 @@
                 [
                   "configuration",
                   "spec",
-                  "pools",
-                  "0",
-                  "service"
+                  "domainName"
                 ]
               ],
               "patchStrategy": "replace"

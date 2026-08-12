@@ -6,12 +6,11 @@ import Link from 'next/link';
 import { iconSmall } from '../../../css/icons.styles';
 import { CustomTextTooltip } from '@/components/meshery-mesh-interface/PatternService/CustomTextTooltip';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
-import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
 import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
-import { Box, InfoOutlinedIcon, Typography, useTheme } from '@sistent/sistent';
+import { Box, InfoOutlinedIcon, Typography, useHasPermission, useTheme } from '@sistent/sistent';
 
 export default function ConnectionStatsChart() {
   const { data: connectionsData } = useGetConnectionsQuery({
@@ -69,10 +68,7 @@ export default function ConnectionStatsChart() {
     [chartData, router, theme],
   );
 
-  const canViewConnections = CAN(
-    Keys.WorkspaceManagementViewConnections.id,
-    Keys.WorkspaceManagementViewConnections.function,
-  );
+  const canViewConnections = useHasPermission(Keys.WorkspaceManagementViewConnections);
 
   return (
     <Link

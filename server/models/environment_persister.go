@@ -23,12 +23,7 @@ type EnvironmentPersister struct {
 }
 
 func (ep *EnvironmentPersister) fetchUserDetails() *User {
-
-	return &User{
-		ID:        LocalProviderUserID,
-		FirstName: "Meshery",
-		LastName:  "Meshery",
-	}
+	return LocalProviderUser()
 }
 
 // GetEnvironments returns all of the environments

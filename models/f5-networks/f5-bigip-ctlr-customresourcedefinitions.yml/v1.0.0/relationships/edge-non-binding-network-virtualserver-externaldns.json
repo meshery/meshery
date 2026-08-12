@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "ExternalDNS monitors the hostname of an F5 VirtualServer to automatically create and manage external DNS records for the virtual server's public IP.",
+    "description": "",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -31,7 +31,6 @@
           {
             "id": null,
             "kind": "VirtualServer",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "displayName": "",
@@ -60,8 +59,7 @@
         "to": [
           {
             "id": null,
-            "kind": "ExternalDNS",
-            "match": {},
+            "kind": "IngressLink",
             "match_strategy_matrix": null,
             "model": {
               "displayName": "",
@@ -80,7 +78,8 @@
                 [
                   "configuration",
                   "spec",
-                  "domainName"
+                  "selector",
+                  "matchLabels"
                 ]
               ],
               "patchStrategy": "replace"

@@ -9,15 +9,18 @@ import {
   TableCell,
   TableSortLabel,
   Tooltip,
+  useTheme,
 } from '@sistent/sistent';
+import { Keys } from '@meshery/schemas/permissions';
 import Modal from './shared/Modal/Modal';
-import { CONNECTION_KINDS, CON_OPS } from '../utils/Enum';
+import { CON_OPS, CoreConnectionKinds } from '../utils/Enum';
 import Moment from 'react-moment';
 import LoadingScreen from './shared/LoadingState/LoadingComponent';
 import { useNotification, useNotificationHandlers } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
+import { normalizeStaticImagePath } from '../utils/fallback';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import {
   useCreateCredentialMutation,
@@ -95,6 +98,7 @@ const MesheryCredentialComponent: React.FC = () => {
   const { notify } = useNotification();
   const { notifyApiError } = useNotificationHandlers();
   const { width } = useWindowDimensions();
+  const theme = useTheme();
 
   const schemaChangeHandler = (type: CredentialType): void => {
     setCredentialType(type);
@@ -141,10 +145,12 @@ const MesheryCredentialComponent: React.FC = () => {
         return (
           <CredentialIcon
             src={
-              connectionMetadataState
-                ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
-                : ''
+              normalizeStaticImagePath(
+                connectionMetadataState?.[CoreConnectionKinds.kubernetes]?.icon,
+              ) || undefined
             }
+            alt=""
+            aria-hidden="true"
           />
         );
       default:
@@ -298,8 +304,9 @@ const MesheryCredentialComponent: React.FC = () => {
                     handleSubmit({ type: CON_OPS.DELETE, id: rowData?.id || undefined })
                   }
                   size="large"
+                  permissionKey={Keys.SecurityManagementDeleteCredential}
                 >
-                  <DeleteIcon />
+                  <DeleteIcon fill={theme?.palette?.icon?.default} />
                 </IconButton>
               </Tooltip>
             </ActionContainer>

@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "A Kubernetes Service is referenced as a backend pool in an F5 TransportServer, enabling L4 TCP/UDP traffic routing to the service's pods via F5 BIG-IP.",
+    "description": "",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -31,7 +31,6 @@
           {
             "id": null,
             "kind": "Service",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "displayName": "",
@@ -59,7 +58,6 @@
           {
             "id": null,
             "kind": "TransportServer",
-            "match": {},
             "match_strategy_matrix": null,
             "model": {
               "displayName": "",

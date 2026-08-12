@@ -68,9 +68,9 @@ function YAMLEditor({ filter, onClose, onSubmit }: YAMLEditorProps) {
             onClick={toggleFullScreen}
           >
             {fullScreen ? (
-              <FullScreenExitIcon style={iconMedium} />
+              <FullScreenExitIcon fill="currentColor" style={iconMedium} />
             ) : (
-              <FullScreenIcon style={iconMedium} />
+              <FullScreenIcon fill="currentColor" style={iconMedium} />
             )}
           </TooltipIcon>
           <TooltipIcon title="Exit" onClick={onClose}>

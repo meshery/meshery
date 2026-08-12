@@ -162,6 +162,11 @@ e2e: build e2e-libs
 	rm -rf $(TEMP_DATA_DIR) \
 	echo "\n\n#### MESHERYCTL END-TO-END TESTING - DONE ####\n\n"
 
+## Unit-test the TAP-to-Allure converter (skip handling + traceability labels).
+.PHONY: test-converter
+test-converter:
+	node --test bats-to-allure.test.js
+
 ## Build mesheryctl and run end-to-end tests.
 e2e-ci: e2e
 	ALLURE_LABELS="epic=MesheryCtl,type=e2e,env=ci" node bats-to-allure.js tests/e2e/bats.tap

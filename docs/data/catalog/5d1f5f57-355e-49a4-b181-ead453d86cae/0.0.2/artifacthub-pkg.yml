@@ -2,7 +2,7 @@ version: 0.0.2
 name: hierarchical-parent-wallet-relationship
 displayName: Hierarchical Parent Wallet Relationship
 createdAt: "2025-10-25T12:02:00Z"
-description: Hierarchical Parent Wallet Relationship
+description: This design helps in understanding the Hierarchical Parent Wallet relationship
 logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
 license: Apache-2.0
 homeURL: https://docs.meshery.io/concepts/logical/designs
@@ -11,7 +11,7 @@ links:
       url: ../../catalog/5d1f5f57-355e-49a4-b181-ead453d86cae/0.0.2/design.yml
     - name: Meshery Catalog
       url: https://meshery.io/catalog
-readme: " \n ##h4 Caveats and Consideration \n"
+readme: "Educational \n ##h4 Caveats and Consideration \n"
 install: mesheryctl design import -f
 provider:
     name: 9a6288fd-2281-4097-bceb-3167770bfa34
