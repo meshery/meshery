@@ -162,14 +162,20 @@
         if (toggle) toggle.click();
       }
     });
+  });
 
+  $(function() {
     // Preserve sidebar scroll position across page loads
     try {
       const sidebarContainer = document.querySelector('.sidebar-container');
       if (sidebarContainer) {
+        const getStorageKey = function() {
+          return 'sidebar-scroll:' + window.location.pathname + window.location.search + window.location.hash;
+        };
+
         const restoreScroll = function() {
           try {
-            const savedScroll = sessionStorage.getItem('sidebar-scroll');
+            const savedScroll = sessionStorage.getItem(getStorageKey());
             if (savedScroll !== null) {
               sidebarContainer.scrollTop = parseInt(savedScroll, 10);
             }
@@ -184,32 +190,38 @@
         // Restore again after layout changes/transitions have completed
         requestAnimationFrame(restoreScroll);
 
-        // Save scroll position on click or scroll
-        sidebarContainer.addEventListener('click', function(event) {
-          if (event.target.closest('a')) {
-            try {
-              sessionStorage.setItem('sidebar-scroll', sidebarContainer.scrollTop);
-            } catch (e) {
-              console.warn('Could not save sidebar scroll on click:', e);
-            }
-          }
-        });
-
         let scrollTimeout;
+        const saveScrollPosition = function() {
+          if (scrollTimeout) {
+            clearTimeout(scrollTimeout);
+          }
+          try {
+            sessionStorage.setItem(getStorageKey(), sidebarContainer.scrollTop);
+          } catch (e) {
+            console.warn('Could not save sidebar scroll:', e);
+          }
+        };
+
+        // Save scroll position on click (capturing phase) to capture before layout changes
+        sidebarContainer.addEventListener('click', function(event) {
+          if (event.target.closest('a') || event.target.closest('button') || event.target.closest('.sidebar-section-toggle')) {
+            saveScrollPosition();
+          }
+        }, true);
+
+        // Debounced save on scroll
         sidebarContainer.addEventListener('scroll', function() {
           clearTimeout(scrollTimeout);
-          scrollTimeout = setTimeout(function() {
-            try {
-              sessionStorage.setItem('sidebar-scroll', sidebarContainer.scrollTop);
-            } catch (e) {
-              console.warn('Could not save sidebar scroll on scroll:', e);
-            }
-          }, 150);
+          scrollTimeout = setTimeout(saveScrollPosition, 150);
         }, { passive: true });
+
+        // Save immediately when navigating away or reloading
+        window.addEventListener('pagehide', saveScrollPosition);
       }
     } catch (err) {
       console.warn('Preserve sidebar scroll initialization failed:', err);
     }
   });
 </script>
+
 
