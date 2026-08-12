@@ -6,5 +6,7 @@ github.com/google/docsy/dependencies v0.7.2 h1:+t5ufoADQAj4XneFphz4A+UU0ICAxmNaR
 github.com/google/docsy/dependencies v0.7.2/go.mod h1:gihhs5gmgeO+wuoay4FwOzob+jYJVyQbNaQOh788lD4=
 github.com/layer5io/docs v0.0.0-20260620183303-bd72d2d7b253 h1:wbTxRD2QN/JT5WTwk1i292bCKfdYM7Cm+rhOQaXh4tI=
 github.com/layer5io/docs v0.0.0-20260620183303-bd72d2d7b253/go.mod h1:Vdgupmkoa/kP4Kwk4cKs7a+MiJMwM6aFoGvnICVm6pE=
+github.com/layer5io/docs v0.0.0-20260630204143-ea71e5db59a3 h1:/GPXkNJ2jcgk0zZ4m9fJj2IxfPuiq9/TU7vB2vnvkvo=
+github.com/layer5io/docs v0.0.0-20260630204143-ea71e5db59a3/go.mod h1:Vdgupmkoa/kP4Kwk4cKs7a+MiJMwM6aFoGvnICVm6pE=
 github.com/twbs/bootstrap v5.2.3+incompatible/go.mod h1:fZTSrkpSf0/HkL0IIJzvVspTt1r9zuf7XlZau8kpcY0=
 github.com/twbs/bootstrap v5.3.8+incompatible/go.mod h1:fZTSrkpSf0/HkL0IIJzvVspTt1r9zuf7XlZau8kpcY0=

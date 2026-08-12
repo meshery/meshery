@@ -1,0 +1,34 @@
+<script>
+    /*
+      Mirrors the wrapper's resized width up to a :root variable so ancestor layers can react to it.
+
+      Currently, the upstream module doesn't expose the CSS variables responsible for the change in width, so consumers are unable to subscribe to them to listen for width changes.
+      While this is intentional — the parent should be the one responsible for the change in width — there's a caveat for cases in which there are multiple layers styled at different positions outside the width of the "main" container
+      (such as the left-container, which has three different layers: one for the content, one which serves as a wrapper for the content and provides the background,
+      and a last one which encapsulates all of the components within the left-container, acting as the real parent of all of them). For those cases, this Observer is useful, so that any change in width caused by the parent can have a more appropriate styling ramification for its subscribers.
+    */
+
+    const root = document.documentElement;
+    try {
+      const saved = parseFloat(localStorage.getItem('resizable:sidebar')); //Can only subscribe to the left sidebar but if there's a need to subscribe to TOC as well then adding it to the parent module would be a better proposition
+      if (!isNaN(saved)) root.style.setProperty('--resizable-w-sidebar', saved + 'px');
+    } catch (e) {}
+
+    // Defer the live mirror until the wrapper below this script has been parsed.
+    const startMirror = function () {
+      const wrapper = document.querySelector('[data-resizable-key="sidebar"]');
+      if (!wrapper) return;
+      const sync = function () {
+        const w = getComputedStyle(wrapper).getPropertyValue('--resizable-w').trim();
+        if (w) root.style.setProperty('--resizable-w-sidebar', w);
+      };
+      sync();
+      new MutationObserver(sync).observe(wrapper, { attributes: true, attributeFilter: ['style'] });
+    };
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", startMirror);
+    } else {
+      startMirror();
+    }
+</script>
