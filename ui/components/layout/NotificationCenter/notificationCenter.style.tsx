@@ -60,6 +60,13 @@ export const StyledNotificationDrawer = styled(Drawer)(({ theme, isNotificationC
     position: 'absolute',
     right: isNotificationCenterOpen ? 0 : '-42.8rem', // Dynamically handle full and peek views
     transition: 'right 0.3s ease-in-out',
+    [theme.breakpoints.down('sm')]: {
+      position: 'fixed',
+      width: 'calc(100vw - 70px)',
+      maxWidth: 'calc(100vw - 70px)',
+      right: isNotificationCenterOpen ? 0 : 'calc(70px - 100vw)',
+      zIndex: 1400,
+    },
   },
 }));
 
@@ -215,8 +222,9 @@ export const Message = styled(Typography)(() => ({
 
 export const GridItem = styled(Grid)(() => ({
   display: 'flex',
-  alignItems: 'center',
+  alignItems: 'start',
   justifyContent: 'start',
+  paddingTop: '0.2rem',
 }));
 export const MenuPaper = styled(Box)(({ theme }) => ({
   color: theme.palette.icon.secondary,
@@ -267,5 +275,5 @@ export const Summary = styled(Grid)(({ notificationcolor }) => ({
   paddingBlock: '0.5rem',
   cursor: 'pointer',
   backgroundColor: alpha(notificationcolor, 0.2),
-  alignItems: 'center',
+  alignItems: 'start',
 }));
