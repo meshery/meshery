@@ -14,14 +14,9 @@ import { EVENT_TYPES } from 'lib/event-types';
 import { useGetLoggedInUserQuery, useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { isRemoteProvider } from '@/utils/provider';
 
-import {
-  EditButton,
-  FallbackWrapper,
-  TextButton,
-  ToolBarButtonContainer,
-  TryAgainButton,
-} from '../../general/style';
+import { EditButton, TryAgainButton } from '../../general/style';
 import { StickyFeedbackButton } from '../../general/feedback';
+import { ErrorPageActions, ErrorPageButtonLabel, FallbackWrapper } from './style';
 
 /**
  * CustomErrorFallback component can be use to show error message to users
@@ -83,29 +78,23 @@ const CustomErrorFallback = (props) => {
   return (
     <FallbackWrapper>
       <Fallback showPackageInfo={true} {...props}>
-        <>
+        <ErrorPageActions>
           {showSupportBasedOnProvider ? (
-            <ToolBarButtonContainer style={{ marginTop: '0.7rem' }}>
-              <EditButton
-                variant="contained"
-                style={{ marginRight: '0.7rem' }}
-                onClick={handleOpenSupportModal}
-              >
-                <TextButton>Get Help</TextButton>
-              </EditButton>
-            </ToolBarButtonContainer>
+            <EditButton variant="contained" onClick={handleOpenSupportModal}>
+              <ErrorPageButtonLabel>Get Help</ErrorPageButtonLabel>
+            </EditButton>
           ) : null}
-        </>
 
-        <TryAgainButton color="primary" onClick={props.resetErrorBoundary}>
-          <TextButton
-            style={{
-              color: theme.palette.text.default,
-            }}
-          >
-            Try Again
-          </TextButton>
-        </TryAgainButton>
+          <TryAgainButton color="primary" onClick={props.resetErrorBoundary}>
+            <ErrorPageButtonLabel
+              style={{
+                color: theme.palette.text.default,
+              }}
+            >
+              Try Again
+            </ErrorPageButtonLabel>
+          </TryAgainButton>
+        </ErrorPageActions>
 
         <Modal
           open={openSupportModal}
