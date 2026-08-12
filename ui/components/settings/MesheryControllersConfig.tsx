@@ -43,8 +43,8 @@ export default function MesheryControllersConfig() {
         built-in defaults. Per-cluster overrides:{' '}
         <Link component={NextLink} href="/management/connections" underline="hover">
           Connections
-        </Link>{' '}
-        → row menu → <strong>Configure Controllers</strong>.
+        </Link>
+        , Actions, <strong>Configure Controllers</strong>.
       </Typography>
 
       <ControllersConfigForm

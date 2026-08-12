@@ -94,9 +94,7 @@ const a11y = { hidden: true } as const;
 const textbox = (label: string, scope?: HTMLElement) => {
   const inputs = within(field(label, scope)).getAllByRole('textbox', a11y);
   // Multiline TextField mounts a mirror textarea with aria-hidden for sizing.
-  return (
-    inputs.find((el) => el.getAttribute('aria-hidden') !== 'true') ?? inputs[0]
-  );
+  return inputs.find((el) => el.getAttribute('aria-hidden') !== 'true') ?? inputs[0];
 };
 const spinbutton = (label: string, scope?: HTMLElement) =>
   within(field(label, scope)).getByRole('spinbutton', a11y);
