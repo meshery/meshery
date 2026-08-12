@@ -116,7 +116,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 			}
 		} else if utils.IsLocalProvider(provider) {
 			for _, v := range response.Filters {
-				FilterName := strings.Trim(v.Name, filepath.Ext(v.Name))
+				FilterName := strings.TrimSuffix(v.Name, filepath.Ext(v.Name))
 				FilterID := utils.TruncateID(v.ID.String())
 				CreatedAt := fmt.Sprintf("%d-%d-%d", int(v.CreatedAt.Month()), v.CreatedAt.Day(), v.CreatedAt.Year())
 				UpdatedAt := fmt.Sprintf("%d-%d-%d", int(v.UpdatedAt.Month()), v.UpdatedAt.Day(), v.UpdatedAt.Year())
