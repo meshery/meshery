@@ -378,6 +378,10 @@ func (mch *MesheryControllersHelper) AddMeshsyncDataHandlers(ctx context.Context
 			return mch
 		}
 		token, _ := ctx.Value(TokenCtxKey).(string)
+		if mch.dbHandler == nil {
+			mch.log.Warnf("MesheryControllersHelper::AddMeshsyncDataHandlers dbHandler is nil")
+			return mch
+		}
 		msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log, provider, userID, uuid.FromStringOrNil(k8scontext.ConnectionID), mesheryInstanceID, token, stopFunc)
 		err := msDataHandler.Run()
 		if err != nil {
@@ -391,8 +395,8 @@ func (mch *MesheryControllersHelper) AddMeshsyncDataHandlers(ctx context.Context
 			return mch
 		}
 		mch.mu.Lock()
-	mch.ctxMeshsyncDataHandler = msDataHandler
-	mch.mu.Unlock()
+		mch.ctxMeshsyncDataHandler = msDataHandler
+		mch.mu.Unlock()
 		mch.log.Info(fmt.Sprintf("MeshSync connected for Kubernetes context (%s)", ctxID))
 	}
 

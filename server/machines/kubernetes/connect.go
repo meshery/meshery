@@ -111,6 +111,20 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 			AddCtxControllerHandlers(machinectx.K8sContext).
 			UpdateOperatorsStatusMap(machinectx.OperatorTracker).
 			DeployUndeployedOperators(machinectx.OperatorTracker, machinectx.K8sContext.ID)
+
+		// MeshKit's Deploy() does not accept a context.Context and therefore
+		// cannot be cancelled mid-flight. If a newer Disconnect/Delete
+		// transition was accepted while Deploy was running, LifecycleCtx will
+		// now be cancelled. Re-check before proceeding to MeshSync setup so
+		// that a stale Connect worker does not transiently publish a data
+		// handler that the subsequent Disconnect goroutine must remove.
+		// ActionMutex still guarantees that the Disconnect cleanup runs after
+		// this goroutine exits, so correctness is preserved either way — this
+		// re-check merely avoids the unnecessary transient work.
+		if ctx.Err() != nil {
+			machinectx.log.Info("Connect side-effects partially aborted: lifecycle cancelled during operator deploy")
+			return
+		}
 		ctrlHelper.AddMeshsyncDataHandlers(ctx, machinectx.K8sContext, userUUID, *sysID, provider)
 
 		// Operator mode: best-effort apply of the explicitly-set

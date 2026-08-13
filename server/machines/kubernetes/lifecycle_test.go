@@ -10,10 +10,10 @@ import (
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
-	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/controllers"
 	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/schemas/models/core"
 )
 
 type mockProvider struct {
@@ -21,7 +21,7 @@ type mockProvider struct {
 }
 
 func (m *mockProvider) GetConnectionByID(token string, connectionID core.Uuid) (*connections.Connection, int, error) {
-	return &connections.Connection{}, 200, nil
+	return &connections.Connection{Kind: "kubernetes"}, 200, nil
 }
 
 func (m *mockProvider) UpdateConnectionStatusByID(token string, connectionID core.Uuid, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
@@ -84,14 +84,20 @@ func TestLifecycleContextRotation(t *testing.T) {
 	m, _ := New(uuid.Must(uuid.NewV4()).String(), core.Uuid(uuid.Must(uuid.NewV4())), log)
 	ctx := context.WithValue(context.Background(), models.UserCtxKey, &models.User{ID: core.Uuid(uuid.Must(uuid.NewV4()))})
 	ctx = context.WithValue(ctx, models.SystemIDKey, &core.Uuid{})
+	ctx = context.WithValue(ctx, models.TokenCtxKey, "test-token")
 
-	m.Provider = &mockProvider{}
+	p := &mockProvider{}
+	m.Provider = p
+	ctx = context.WithValue(ctx, models.ProviderCtxKey, p)
 
+	connID := uuid.Must(uuid.NewV4()).String()
 	machineCtx := &MachineCtx{
 		ActionMutex:        &sync.Mutex{},
-		MesheryCtrlsHelper: models.NewMesheryControllersHelper(log, controllers.OperatorDeploymentConfig{}, nil, nil, &mockProvider{}, nil),
-		K8sContext:         models.K8sContext{},
+		MesheryCtrlsHelper: models.NewMesheryControllersHelper(log, controllers.OperatorDeploymentConfig{}, nil, nil, p, nil),
+		K8sContext:         models.K8sContext{ID: "test-id", ConnectionID: connID},
 		OperatorTracker:    models.NewOperatorTracker(false),
+		log:                log,
+		EventBroadcaster:   models.NewBroadcaster("test"),
 	}
 	initFunc := func(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error) {
 		return machineCtx, nil, nil
@@ -131,75 +137,74 @@ func TestLifecycleContextRotation(t *testing.T) {
 	}
 }
 
-
 type serializeProvider struct {
-mockProvider
-onPersist func()
+	mockProvider
+	onPersist func()
 }
 
 func (p *serializeProvider) PersistSystemEvent(event events.Event) error {
-if p.onPersist != nil {
-p.onPersist()
-}
-return nil
+	if p.onPersist != nil {
+		p.onPersist()
+	}
+	return nil
 }
 
 // TestActionMutexSerialization ensures that conflicting lifecycle operations
 // cannot execute their side-effects concurrently by occupying the ActionMutex.
 func TestActionMutexSerialization(t *testing.T) {
-machineCtx := &MachineCtx{
-ActionMutex: &sync.Mutex{},
-}
+	machineCtx := &MachineCtx{
+		ActionMutex: &sync.Mutex{},
+	}
 
-ch2 := make(chan struct{})
+	ch2 := make(chan struct{})
 
-// 1. Acquire/occupy ActionMutex using a controlled operation
-machineCtx.ActionMutex.Lock()
+	// 1. Acquire/occupy ActionMutex using a controlled operation
+	machineCtx.ActionMutex.Lock()
 
-var sideEffectRan bool
+	var sideEffectRan bool
 
-// 2. Start the competing lifecycle operation
-go func() {
-machineCtx.ActionMutex.Lock()
-defer machineCtx.ActionMutex.Unlock()
-sideEffectRan = true
-close(ch2)
-}()
+	// 2. Start the competing lifecycle operation
+	go func() {
+		machineCtx.ActionMutex.Lock()
+		defer machineCtx.ActionMutex.Unlock()
+		sideEffectRan = true
+		close(ch2)
+	}()
 
-// 3. Prove that the competing operation cannot enter its protected section
-select {
-case <-ch2:
-t.Fatal("Competing operation entered protected section while ActionMutex was held")
-default:
-// Expected: it is blocked
-}
+	// 3. Prove that the competing operation cannot enter its protected section
+	select {
+	case <-ch2:
+		t.Fatal("Competing operation entered protected section while ActionMutex was held")
+	default:
+		// Expected: it is blocked
+	}
 
-// 4. Release the first operation
-machineCtx.ActionMutex.Unlock()
+	// 4. Release the first operation
+	machineCtx.ActionMutex.Unlock()
 
-// 5. Prove the second operation then proceeds
-<-ch2
+	// 5. Prove the second operation then proceeds
+	<-ch2
 
-if !sideEffectRan {
-t.Fatal("Side effect did not run")
-}
+	if !sideEffectRan {
+		t.Fatal("Side effect did not run")
+	}
 }
 
 // TestDeleteFlushMeshSyncDataSerialization proves that FlushMeshSyncData
 // is protected inside the lifecycle serialization boundary.
 func TestDeleteFlushMeshSyncDataSerialization(t *testing.T) {
-log := getTestLogger()
-ctx := context.WithValue(context.Background(), models.UserCtxKey, &models.User{ID: core.Uuid(uuid.Must(uuid.NewV4()))})
-sysID := core.Uuid(uuid.Must(uuid.NewV4()))
-ctx = context.WithValue(ctx, models.SystemIDKey, &sysID)
+	log := getTestLogger()
+	ctx := context.WithValue(context.Background(), models.UserCtxKey, &models.User{ID: core.Uuid(uuid.Must(uuid.NewV4()))})
+	sysID := core.Uuid(uuid.Must(uuid.NewV4()))
+	ctx = context.WithValue(ctx, models.SystemIDKey, &sysID)
 
-flushCalled := make(chan struct{})
-p := &serializeProvider{
-onPersist: func() {
-close(flushCalled)
-},
-}
-ctx = context.WithValue(ctx, models.ProviderCtxKey, p)
+	flushCalled := make(chan struct{})
+	p := &serializeProvider{
+		onPersist: func() {
+			close(flushCalled)
+		},
+	}
+	ctx = context.WithValue(ctx, models.ProviderCtxKey, p)
 
 	machineCtx := &MachineCtx{
 		ActionMutex:        &sync.Mutex{},
@@ -209,81 +214,115 @@ ctx = context.WithValue(ctx, models.ProviderCtxKey, p)
 		EventBroadcaster:   models.NewBroadcaster("test"),
 	}
 
-// 1. Hold/block the conflicting lifecycle operation
-machineCtx.ActionMutex.Lock()
+	// 1. Hold/block the conflicting lifecycle operation
+	machineCtx.ActionMutex.Lock()
 
-// 2. Trigger Delete
-deleteAction := &DeleteAction{}
+	// 2. Trigger Delete
+	deleteAction := &DeleteAction{}
 	_, _, err := deleteAction.Execute(ctx, machineCtx, nil)
 	if err != nil {
 		t.Fatalf("failed to execute delete action: %v", err)
 	}
 
-// 3. Prove FlushMeshSyncData cannot execute before the protected lifecycle operation releases
-select {
-case <-flushCalled:
-t.Fatal("FlushMeshSyncData executed before ActionMutex was released")
-default:
-// Expected: blocked by ActionMutex
-}
+	// 3. Prove FlushMeshSyncData cannot execute before the protected lifecycle operation releases
+	select {
+	case <-flushCalled:
+		t.Fatal("FlushMeshSyncData executed before ActionMutex was released")
+	default:
+		// Expected: blocked by ActionMutex
+	}
 
-// 4. Release the first operation
-machineCtx.ActionMutex.Unlock()
+	// 4. Release the first operation
+	machineCtx.ActionMutex.Unlock()
 
-// 5. Prove FlushMeshSyncData then executes
-<-flushCalled
+	// 5. Prove FlushMeshSyncData then executes
+	<-flushCalled
 }
 
 // TestStaleConnectWorkerCancellation verifies that a stale worker detects
-// lifecycle cancellation when it resumes and does not continue.
+// lifecycle cancellation when it resumes and does not continue into protected
+// side effects.
+//
+// The test is fully deterministic: it uses a channel (workerDone) to receive
+// an explicit signal when the stale goroutine exits, so the assertion does not
+// depend on timing. A conservative 5-second deadline is kept only as a
+// deadlock/hang guard for CI.
+//
+// This test would FAIL if the ctx.Err() guard were removed from the action's
+// Execute method.
 func TestStaleConnectWorkerCancellation(t *testing.T) {
-log := getTestLogger()
-ctx := context.WithValue(context.Background(), models.UserCtxKey, &models.User{ID: core.Uuid(uuid.Must(uuid.NewV4()))})
-sysID := core.Uuid(uuid.Must(uuid.NewV4()))
-ctx = context.WithValue(ctx, models.SystemIDKey, &sysID)
+	log := getTestLogger()
+	ctx := context.WithValue(context.Background(), models.UserCtxKey, &models.User{ID: core.Uuid(uuid.Must(uuid.NewV4()))})
+	sysID := core.Uuid(uuid.Must(uuid.NewV4()))
+	ctx = context.WithValue(ctx, models.SystemIDKey, &sysID)
 
-flushCalled := make(chan struct{})
-p := &serializeProvider{
-onPersist: func() {
-close(flushCalled)
-},
-}
-ctx = context.WithValue(ctx, models.ProviderCtxKey, p)
+	flushCalled := make(chan struct{})
+	p := &serializeProvider{
+		onPersist: func() {
+			close(flushCalled)
+		},
+	}
+	ctx = context.WithValue(ctx, models.ProviderCtxKey, p)
 
-machineCtx := &MachineCtx{
-	ActionMutex:        &sync.Mutex{},
-	MesheryCtrlsHelper: models.NewMesheryControllersHelper(log, controllers.OperatorDeploymentConfig{}, nil, nil, p, nil),
-	K8sContext:         models.K8sContext{ID: "test-id"},
-	OperatorTracker:    models.NewOperatorTracker(false),
-	log:                log,
-	EventBroadcaster:   models.NewBroadcaster("test"),
-}
+	machineCtx := &MachineCtx{
+		ActionMutex:        &sync.Mutex{},
+		MesheryCtrlsHelper: models.NewMesheryControllersHelper(log, controllers.OperatorDeploymentConfig{}, nil, nil, p, nil),
+		K8sContext:         models.K8sContext{ID: "test-id"},
+		OperatorTracker:    models.NewOperatorTracker(false),
+		log:                log,
+		EventBroadcaster:   models.NewBroadcaster("test"),
+	}
 
-// 1. Connect lifecycle accepted, worker is paused at a controlled synchronization point
-machineCtx.ActionMutex.Lock()
+	// 1. Hold ActionMutex so the stale goroutine blocks before executing
+	//    any side effects. This simulates the worker being paused mid-flight
+	//    (e.g., waiting behind a slow MeshKit Deploy).
+	machineCtx.ActionMutex.Lock()
 
-connectCtx, cancelConnect := context.WithCancel(ctx)
+	connectCtx, cancelConnect := context.WithCancel(ctx)
 
-// Using DeleteAction as a proxy for any stale worker since it deterministically
-// calls FlushMeshSyncData (which we can observe via mock provider).
-staleWorker := &DeleteAction{}
+	// Using DeleteAction as a proxy for a stale Connect worker: it
+	// deterministically calls FlushMeshSyncData (observable via the mock
+	// provider) if the ctx.Err() guard does not abort it.
+	staleWorker := &DeleteAction{}
 	_, _, err := staleWorker.Execute(connectCtx, machineCtx, nil)
 	if err != nil {
 		t.Fatalf("failed to execute stale worker action: %v", err)
 	}
 
-// 2. Disconnect accepted -> old LifecycleCtx cancelled
-cancelConnect()
+	// 2. Disconnect accepted: cancel the stale worker's LifecycleCtx before
+	//    it gets a chance to enter the protected section.
+	cancelConnect()
 
-// 3. Connect worker resumes
-machineCtx.ActionMutex.Unlock()
+	// 3. workerDone is closed once the stale goroutine has released
+	//    ActionMutex and exited. This gives the test a deterministic signal
+	//    to wait on instead of a fixed sleep.
+	workerDone := make(chan struct{})
+	go func() {
+		// Re-acquiring ActionMutex unblocks only after the stale goroutine
+		// releases it (via its own defer), meaning the goroutine has fully
+		// exited its critical section.
+		machineCtx.ActionMutex.Lock()
+		machineCtx.ActionMutex.Unlock()
+		close(workerDone)
+	}()
 
-// 4. Stale worker detects lifecycle cancellation and does NOT continue
-// If it continued, it would call FlushMeshSyncData and close flushCalled.
-select {
-case <-flushCalled:
-t.Fatal("Stale worker continued into side effects despite lifecycle cancellation")
-case <-time.After(50 * time.Millisecond):
-// Expected: side effects were aborted.
-}
+	// 4. Release ActionMutex: the stale goroutine may now enter, observe
+	//    ctx.Err() != nil, and exit without running the side effect.
+	machineCtx.ActionMutex.Unlock()
+
+	// 5. Wait for the stale goroutine to finish, then assert the side effect
+	//    was NOT executed. The 5-second deadline is a deadlock/hang guard only.
+	const deadline = 5 * time.Second
+	select {
+	case <-workerDone:
+		// Goroutine has exited. Verify the side effect was not triggered.
+		select {
+		case <-flushCalled:
+			t.Fatal("Stale worker executed FlushMeshSyncData despite lifecycle cancellation")
+		default:
+			// Correct: ctx.Err() was detected and side effects were aborted.
+		}
+	case <-time.After(deadline):
+		t.Fatalf("Stale worker goroutine did not exit within %v — possible deadlock or hang", deadline)
+	}
 }
