@@ -472,10 +472,7 @@ const Header = ({
                 <UserInfoContainer>
                   <UserSpan
                     sx={{
-                      display: {
-                        xs: 'none',
-                        sm: 'inline-flex',
-                      },
+                      display: 'inline-flex',
                     }}
                     style={{ position: 'relative' }}
                   >
