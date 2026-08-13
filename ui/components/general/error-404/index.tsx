@@ -90,7 +90,7 @@ const DefaultError = (props) => {
                 justifyContent: 'center',
               }}
             >
-              <OrgSwitcher />
+              <OrgSwitcher permissionKey={permissionKey} />
               {/*<Divider />
                 <RequestForm />*/}
             </ErrorSectionContent>
