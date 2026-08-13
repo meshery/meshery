@@ -1,5 +1,5 @@
 {{- $tag := .Get "tag" | default "meshery" -}}
-{{- $data := index .Site.Data.discuss $tag -}}
+{{- $data := index hugo.Data.discuss $tag -}}
 
 <div class="related-discussions">
   <h3>Recent Discussions with "{{ $tag }}" Tag</h3>
