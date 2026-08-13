@@ -19,10 +19,10 @@ Before diving into Meshery's testing environment, certain prerequisites are nece
 
 ## Setting up environment variable
 
-To run the tests successfully, three environment variables must be configured:  
-• `REMOTE_PROVIDER_USER_EMAIL` (Required): The email associated with your account within your provider.  
-• `REMOTE_PROVIDER_USER_PASSWORD` (Required): The password associated with your account within your provider.  
-• `PROVIDER_TOKEN` (Optional): Your provider token, can be generated from an account registered within your provider  
+To run the tests successfully, one of two credential sets must be configured - a token on its own, or an email and password pair:  
+• `PROVIDER_TOKEN` (Required unless the email and password below are both set): Your provider token, can be generated from an account registered within your provider  
+• `REMOTE_PROVIDER_USER_EMAIL` (Required unless `PROVIDER_TOKEN` is set): The email associated with your account within your provider.  
+• `REMOTE_PROVIDER_USER_PASSWORD` (Required unless `PROVIDER_TOKEN` is set): The password associated with your account within your provider.  
 
 {{% alert color="info" title="Accessing Remote Providers" %}}
 In the case you are using Meshery Cloud as a remote provider, you can <a href="https://cloud.meshery.io/security/tokens">generate a token from your user account</a> to use while writing and executing tests.
