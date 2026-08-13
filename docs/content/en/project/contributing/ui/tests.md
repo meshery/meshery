@@ -28,6 +28,10 @@ To run the tests successfully, three environment variables must be configured:
 In the case you are using Meshery Cloud as a remote provider, you can <a href="https://cloud.meshery.io/security/tokens">generate a token from your user account</a> to use while writing and executing tests.
 {{% /alert %}}
 
+Either `PROVIDER_TOKEN` on its own, or both `REMOTE_PROVIDER_USER_EMAIL` and `REMOTE_PROVIDER_USER_PASSWORD`, is enough to authenticate. Without one of those pairs the `remote-setup` project fails, and Playwright reports every `chromium-meshery-provider` test as "did not run" - one honest failure naming the missing variable, rather than a run that appears to have tested the remote provider. Do not convert that failure into a skip: Playwright only collapses a dependent project when its setup **fails**, so a skipped setup leaves all of those tests scheduled and they die individually on the storage state file that was never written.
+
+In CI these come from the `REMOTE_PROVIDER_TEST_USER_TOKEN` organization secret, which holds a maintained token for a purpose-built remote-provider test user - the same secret `mesheryctl-e2e.yaml` uses. The older `PROVIDER_TOKEN` organization secret is a static token that expired and must not be used. Only push builds run the remote-provider project (`npm run test:e2e:ci:full`); pull request builds run `npm run test:e2e:ci:local`, which covers the Local provider only, so pull requests from forks - which cannot read secrets - are unaffected.
+
 During the setup phase, Playwright utilizes these environment variables to log in and store credentials securely in the `playwright/.auth` directory. To protect sensitive data, the `.gitignore` file is configured to exclude the `.env` file and any JSON files within the `/playwright/.auth` directory from the GitHub repository.
 
 There are several tools to help you to working with environment variables locally for each project such as [direnv](https://github.com/direnv/direnv), it can work across multiple shell such as Bash, Powershell, Oh my zsh, Fish, etc

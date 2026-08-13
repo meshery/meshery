@@ -395,6 +395,28 @@ suite spent its history reporting `success` 19 times out of 19 across the 20
 the build - which made every test in it decorative. Never re-disarm it to get a red build
 green; fix or `test.fixme` the test, with the tracking issue in the annotation.
 
+**The remote-provider project needs a credential CI can actually resolve, and a missing
+one must fail rather than skip.** `chromium-meshery-provider` authenticates through
+`ui/tests/e2e/remote.setup.js`, which reads `PROVIDER_TOKEN` (or the
+`REMOTE_PROVIDER_USER_EMAIL`/`_PASSWORD` pair) from `ui/tests/e2e/env.js`. In CI that value
+comes from the `REMOTE_PROVIDER_TEST_USER_TOKEN` org secret - the same one
+`mesheryctl-e2e.yaml` uses; the older `PROVIDER_TOKEN` org secret is a static token that
+expired. A missing secret expands to the empty string rather than erroring, so
+`.github/workflows/test-e2e.yml` refers to that secret by its real name end to end and
+asserts it is non-empty before doing any other work. An alias between the caller and the
+reusable workflow is exactly what hid a reference to a `REMOTE_PROVIDER_TOKEN` secret that
+existed in neither the repo nor the org, from 2026-05-18 until the gate above made it
+visible on 2026-08-05.
+
+Do not answer a missing credential with `setup.skip()`. Playwright collapses a dependent
+project only when its setup **fails**; a skipped setup leaves the dependents scheduled and
+each one dies on the storage state file the setup never wrote. Both shapes are on record
+for this same defect - run `31039121068` (failing setup) reported 1 failure and ran 0
+`chromium-meshery-provider` tests, run `31701664917` (skipping setup) reported 62 failures
+and 23 skips, every one of them a `user-meshery-provider.json` ENOENT that says nothing
+about authentication. Only push builds select this project (`test:e2e:ci:full`); PR builds
+run `test:e2e:ci:local`, so fork PRs never reach it and need no skip.
+
 To run the suite locally you need three things, and the failure when one is missing does
 not name it:
 
