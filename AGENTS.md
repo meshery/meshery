@@ -106,6 +106,79 @@ across `meshery/meshery` and `meshery-cloud`.
 - MUST NOT change wire casing/field names only in this repo — change the schema
   and regenerate (see the naming conventions above).
 
+### Attaching local cache tags to a generated endpoint
+
+`ui/rtk-query/index.ts` re-exports the schemas client itself (`mesheryApi as api`),
+so every `ui/rtk-query/*` module injects into that same API instance - generated
+hooks are therefore already available from those local modules and need no
+re-declaration. To give a generated endpoint a local cache tag, use the **callback
+form** of `enhanceEndpoints` via `appendInvalidatesTags` from `ui/rtk-query/utils`,
+then re-export the generated hook - see the `importDesign` enhancement in
+`ui/rtk-query/design.ts`. Do **not** use the object form
+(`{ <operationId>: { invalidatesTags: [...] } }`): `enhanceEndpoints` applies an
+object partial with `Object.assign(getEndpointDefinition(...) || {}, partial)`, so
+it REPLACES `invalidatesTags` wholesale and every schemas-side tag has to be
+hand-relisted - drift the moment schemas adds one. The callback form is handed the
+live definition by reference, so the local tag is appended to the generated ones
+and cannot drop them; that same lookup has no fallback, so `appendInvalidatesTags`
+fails loudly and by name when the operationId is gone from schemas rather than
+enhancing a throwaway object. Re-declaring the endpoint with `builder.mutation` to
+get a tag is the forbidden path above - it forks the wire contract silently.
+
+On the Go side, schemas ships **models only, no generated HTTP client**, so
+`mesheryctl` builds request bodies from the generated structs (and, for `oneOf`
+bodies, the `From<Variant>Payload` union builders) rather than a
+`map[string]interface{}` — see `mesheryctl/internal/cli/root/design/import.go`.
+A hand-written map is how camelCase `fileName` regressed to `file_name`.
+
+### A local endpoint that shadows a schemas operationId is DEAD CODE
+
+`injectEndpoints` without `overrideExisting: true` **silently discards** any
+endpoint whose name `@meshery/schemas` already defines (dev-only console warning)
+and serves every call from the schemas definition, so a local declaration can sit
+there looking authoritative while a different request goes over the wire - which
+is how notification delete shipped as `DELETE /api/events/undefined`. Before
+adding a `builder.query`/`builder.mutation`, check the name against the generated
+client (`grep '<name>:t\.' ui/node_modules/@meshery/schemas/dist/mesheryApi.js`);
+if it is there, consume the generated hook - that is the rule above anyway.
+
+The deliberate-override exception and the rule that tests must assert the
+*effective* endpoint rather than the declared one are in
+`docs/content/en/project/contributing/ui/schemas.md` (Integration Points in UI, A).
+
+### Consumed contracts are the schemas type, not a copy of it
+
+A struct Meshery only *decodes* from a remote provider (or only *encodes* to one)
+carries no local freedom: it is the schemas construct, aliased. A local copy is
+how `AnonymousFlowResponse` came to read `owner` while meshery-cloud kept sending
+`userId`, so every anonymous sign-in wrote its capabilities under the nil UUID.
+The same rename hit `PatternResource` and `Preference.selectedOrganizationId`.
+
+When the Go type must stay local because it doubles as a GORM model (the schemas
+models carry `db:` tags GORM does not read), keep the **JSON tags** identical to
+the schemas construct and pin the column explicitly with `gorm:"column:..."` -
+see `server/models/pattern_resource.go`. Guard it with a test that compares the
+emitted JSON keys against the schemas type rather than restating them by hand.
+
+### A credential's persisted `secret` has four shapes, and readers must tolerate all of them
+
+Canonical (what `meshery/schemas`
+`constructs/v1beta1/credential/forms/*.json` declares, and what Layer5 Cloud is
+moving to) is a top-level `name` plus a `secret` object that **is** the payload.
+Stored data also holds the Kubernetes `{auth, cluster}` shape, the legacy
+double-nested `{credentialName, secret:{...}}` shape Meshery's credential form
+still writes, and a legacy `{secret: "<token>"}` string. Legacy rows are never
+rewritten, so tolerance - not migration - is what keeps them working.
+
+`server/models/credential_secret.go` and its mirror `ui/utils/credentialSecret.ts`
+own that decision for both languages; every read site delegates to them rather
+than indexing the map. Reaching into `secret["secret"]` directly is how a
+canonical credential's API key silently became an empty `Authorization` header.
+The two files must keep the same *resolution rules* - their return types
+deliberately differ on the legacy string shape. The shape catalogue and the
+rules are documented once in
+`docs/content/en/project/contributing/models/connections.md`.
+
 ## Build & Development Commands
 
 - Use the `gh-axi` CLI tool to interact with GitHub. Prefer `gh-axi` over `gh`.
@@ -124,6 +197,15 @@ make server-skip-compgen       # Run without Kubernetes components
 make server-without-operator   # Run without operator deployment
 make error                     # Generate error codes
 ```
+
+A build that fails with `compile: version "goX.Y.Z" does not match go tool version`
+on dozens of dependencies is an environment mismatch, not a code problem: a stale
+`GOROOT` points at one Go installation while the `go` on `PATH` is a different
+one. Any toolchain at or above `go.mod`'s version works - `go 1.26.4` there does
+not mean 1.26.5 is wrong - so the fix is to make the two agree rather than to
+pin an exact patch release. Drop the stale `GOROOT` and use one installation's
+own binary, e.g.
+`env -u GOROOT PATH="$HOME/.gvm/gos/go1.26.4/bin:$PATH" go test ...`.
 
 ### UI (Next.js/React)
 
@@ -149,6 +231,19 @@ so matching versions are not evidence that the installed contents are the publis
 A version *mismatch* against `ui/package.json` is a useful tell that this has happened, but
 a match proves nothing.
 
+**Three package.json files consume `@sistent/sistent` - `ui/`, `provider-ui/` and
+`install/docker-extension/ui/` - and a bump must cover all three.** Sistent's peers
+(`@mui/x-date-pickers`, `date-fns`, the `@rjsf/*` set, `xstate`/`@xstate/react`) are not
+optional: a consumer that omits one still installs cleanly and fails only at bundle time with
+`Module not found` pointing *inside* `@sistent/sistent/dist`, which reads as a sistent bug
+rather than a missing peer. `install/docker-extension/ui` installs with `--legacy-peer-deps`
+(`@docker/docker-mui-theme` pins MUI <=6 against sistent's MUI 9) - see its Dockerfile.
+
+`@meshery/schemas` deliberately keeps its `latest` dist-tag *below* its highest semver (1.4.0
+is stale). That is safe because npm prefers the `latest`-tagged version whenever it satisfies
+the range, so the `^1.3.x` carets do not jump to 1.4.0 - but verify the resolved version in
+every regenerated lockfile rather than assuming it.
+
 ### CLI (mesheryctl)
 
 ```bash
@@ -166,6 +261,17 @@ though only one command changed. CI/committed docs use `/home/runner/...` (the G
 Actions runner home). After regenerating, `git diff --stat` the docs dir, `git checkout --`
 every file whose only change is that path, and manually fix the path back to
 `/home/runner/...` in the pages you actually intended to change.
+
+### Releasing
+
+Meshery has **no automatic release cadence**. Release Drafter keeps exactly one draft
+release current on every push to `master`; publishing that draft creates the `v*` tag,
+which is what fires `build-and-release-stable.yml` and its fan-out. Follow
+`.agents/skills/cut-release/SKILL.md` - never hand-author a tag or notes.
+
+`gh release edit --draft=false` can exit 0 and leave the release a draft (seen cutting
+v1.0.65). Publication is proven only by re-reading the release for `draft: false` plus a
+non-null `published_at`, and by the release-triggered runs actually appearing.
 
 ### Docker
 
@@ -200,6 +306,15 @@ make helm-docs      # Generate Helm chart docs
   `mesheryctl/helpers/component_info.json` (`next_error_code`) and that value bumped in the
   same commit. `.github/workflows/error-codes-updater.yaml` re-runs errorutil and fails the
   PR if its analysis reports anything.
+  The server side has the same contract in `server/helpers/component_info.json`: errorutil
+  refuses to run at all ("next_error_code is lower than or equal to highest used code") until
+  `next_error_code` is bumped past every code you added, so bump it in the same commit.
+  Name each constant `<BuilderFuncName>Code` - errorutil keys the export off that pairing.
+  `server/helpers/errorutil_errors_export.json` is gitignored, but the reference data at
+  `docs/data/errorref/meshery-server_errors_export.json` is tracked: regenerate it with the
+  `jq --slurpfile` wrapper the workflow uses, or the docs reference silently omits the new
+  codes. Adding a constant longer than the block's current widest name makes gofmt realign
+  the entire `error.go` const block - prefer a shorter name over a 300-line whitespace diff.
 - Only `utils.Log.Error(err)` renders a MeshKit error's code, cause and remediation; cobra's
   default print shows just the message. In `mesheryctl` commands, log the structured error
   for the user *and* return it for the exit path.
@@ -250,10 +365,47 @@ make helm-docs      # Generate Helm chart docs
 - Integration run: `make server-integration-tests-meshsync-run`
 - Target ≥70% coverage on business logic.
 
+Golden-file workflow (`-args -update`, the `fixtures/` vs `testdata/` split, and
+the rule that a regenerated golden must still encode *intended* behavior) is
+documented in `docs/content/en/project/contributing/cli/cli.md`.
+
+**A rename in `meshery/schemas` propagates further than the Go field name.** gorm
+derives the AutoMigrate column from the *field name* via its naming strategy
+(snake_case), not from the `db:` tag - only a `gorm:"column:..."` tag overrides
+it. So renaming `UserID` to `Owner` renames the column `user_id` to `owner`
+whatever the `db:` tag says, and any hand-written SQL naming the old one breaks -
+silently, if the gorm error is dropped. After bumping schemas, grep every raw
+column reference for the old spelling (`Select`, `Where`, `Order`, `Joins`,
+`Scan`, and migrations - not just `Select`) along with the `mesheryctl` fixtures,
+and propagate gorm errors so the next such rename fails loudly. Regression test:
+`server/models/performance_profile_persister_test.go`.
+
 ### UI
 
 - E2E (Playwright): `make ui-integration-tests` or `npm run test:e2e` in `ui/`
 - Setup: `make test-setup-ui`
+
+**The E2E job is gated on the Playwright verdict - keep it that way.** The gate is the
+final step of `.github/workflows/test-e2e.yml` and keys on
+`steps.playwright-tests.outcome`, *not* `.conclusion`: the run step keeps
+`continue-on-error: true` so artifacts upload on failure, which makes its `conclusion`
+permanently `success`. Gating on `conclusion` silently disarms the gate. That is how the
+suite spent its history reporting `success` 19 times out of 19 across the 20
+`Meshery Build And Test` runs to 2026-08-05 - 8 of them with real test failures, 0 failing
+the build - which made every test in it decorative. Never re-disarm it to get a red build
+green; fix or `test.fixme` the test, with the tracking issue in the annotation.
+
+To run the suite locally you need three things, and the failure when one is missing does
+not name it:
+
+1. `make ui-provider-build` first. A source checkout has no `provider-ui/out`, so the
+   server 404s `/provider`; every project's auth setup then dies on a provider-dropdown
+   click timeout that looks like a UI bug.
+2. A server on `:9081` (`make server`, then pick the Local provider) and `make ui` on
+   `:3000`.
+3. `MESHERY_SERVER_URL=http://localhost:3000` on the Playwright run - the dev server
+   proxies `/api`, `/provider` and the auth routes to `:9081`, and the built UI that
+   `:9081` would otherwise serve does not exist in a source checkout.
 
 ### Local Validation
 
@@ -261,6 +413,18 @@ make helm-docs      # Generate Helm chart docs
 make golangci    # before Go commits
 make ui-lint     # before UI commits
 ```
+
+### QA Allure traceability (Test-Group-keyed reports)
+
+Test results feed the [meshery/qa](https://github.com/meshery/qa) Allure dashboard
+(qa.meshery.io), where each report is a filtered view over one shared result pool
+**keyed on the Test Plan Test Group** (Latest tab, col B) via the `testGroup`
+label. Emit it from both lanes: CLI via the `[tg=<Test Group>]` `@test` title
+token (parser + full token→label mapping in `mesheryctl/bats-to-allure.js`), UI
+via `allure.label('testGroup', …)` (see `ui/tests/e2e/connections.spec.ts` and
+the sheet↔code map `ui/tests/e2e/connections.testmap.ts`). Contract docs:
+`docs/content/en/project/contributing/{cli/tests.md,build-and-release.md}`.
+"Connection Lifecycle" is the first such report.
 
 ## Security & Compliance
 
@@ -274,7 +438,12 @@ make ui-lint     # before UI commits
 
 ### Do Not Modify
 
-`LICENSE`, `CODE_OF_CONDUCT.md`, `GOVERNANCE.md`, `MAINTAINERS.md`, `.github/copilot-instructions.md`, `.github/agents/`, `go.sum`, `ui/package-lock.json`, `provider-ui/package-lock.json`
+`LICENSE`, `CODE_OF_CONDUCT.md`, `GOVERNANCE.md`, `MAINTAINERS.md`, `.github/copilot-instructions.md`, `.github/agents/`
+
+Never hand-edit a generated lock file (`go.sum`, or any of the several `package-lock.json`
+files). Regenerate it with the package manager - a dependency bump legitimately rewrites
+every lock file it touches. `.agents/hooks/block-lockfiles.sh` enforces this by basename,
+so it covers lock files this list does not enumerate.
 
 ### Require Human Review
 
@@ -339,13 +508,49 @@ Agent definitions in `.agents/` (LLM-agnostic):
 
 ## Skills
 
-Packaged workflows in `.agents/skills/`:
+`.agents/skills/` is the single source of truth for every packaged workflow in this repo - one
+directory per skill, each with a `SKILL.md`. Do not enumerate them here; list the directory. Add a
+new skill only there.
 
-| Skill | Directory | Purpose |
-|-------|-----------|---------|
-| gen-test | `.agents/skills/gen-test/` | Generate idiomatic Go tests |
-| api-doc | `.agents/skills/api-doc/` | Document REST/GraphQL endpoints |
-| gen-relationship | `.agents/skills/gen-relationship/` | Generate schema-backed relationships |
+Per-tool discovery, so no skill is ever copied per tool:
+
+| Tool | How it finds these skills |
+|---|---|
+| Codex | Natively scans `$REPO_ROOT/.agents/skills` - nothing to configure ([docs](https://learn.chatgpt.com/docs/build-skills)) |
+| OpenCode | Natively scans `.agents/skills`, one of six roots it searches alongside `.opencode/skills` and `.claude/skills` ([docs](https://opencode.ai/docs/skills/)) |
+| Claude Code | Reads `.claude/skills`, which is a relative symlink to `../.agents/skills` |
+
+`.claude/skills` is that symlink and nothing else. Never replace it with real directories or copies -
+that reintroduces the drift this layout removes.
+
+Skill content must address its own files by their canonical `.agents/skills/...` path, never
+through `.claude/`. `iterate-pr` used to invoke its scripts as
+`.claude/skills/iterate-pr/scripts/<script>.py`, which resolved only through the symlink and so
+broke wherever the symlink was absent; it was corrected to `.agents/` in iterate-pr 2.4.0. The
+symlink is therefore a *discovery* path for Claude Code, not a runtime dependency - but it is
+still load-bearing for discovery, and the installer-collision hazard below is a further reason
+not to touch it.
+
+The four skills tracked in `skills-lock.json` - `chrome-devtools-axi`, `gh-axi`, `lavish`,
+`quota-axi` - are installed by the AXI installer, and its layout is skill content at
+`.agents/skills/<name>/` *plus* a per-skill symlink at `.claude/skills/<name>`. Those per-skill
+symlinks were installer-owned, not hand-made, and this layout removed them as redundant. The next
+installer run recreates them, and `.claude/skills/<name>` now resolves *through* the directory
+symlink onto `.agents/skills/<name>` - an existing real directory holding the canonical content.
+Best case the installer fails with `EEXIST`. Worst case a force-replacing installer destroys that
+canonical directory and leaves a self-referential symlink loop. Which of the two occurs is not
+established, and must not be determined by running the installer against a real checkout: the
+failure mode under test is destruction of the canonical skill content.
+
+Neither `.codex/skills` nor `.opencode/skills` is created: both tools already read `.agents/skills`
+natively, so a second copy or link would be redundant. `.opencode/skills` is a real OpenCode search
+root, just an unnecessary one here; `.codex/skills` is not a path Codex scans at all.
+
+Windows caveat: on a checkout with `core.symlinks=false` - the default outside developer mode - git
+materialises `.claude/skills` as a regular text file containing the literal string
+`../.agents/skills`. Claude Code then discovers no project skills. Enable Windows developer mode
+or set `git config core.symlinks true`, then re-checkout. (Skill *scripts* still resolve there,
+because skill content addresses them via `.agents/` - only discovery breaks.)
 
 ## Automation Hooks
 

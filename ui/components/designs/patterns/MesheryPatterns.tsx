@@ -36,7 +36,7 @@ import {
   useDeletePatternMutation,
   useDeployPatternMutation,
   useGetPatternsQuery,
-  useImportPatternMutation,
+  useImportDesignMutation,
   usePublishPatternMutation,
   useUndeployPatternMutation,
   useUnpublishPatternMutation,
@@ -145,7 +145,7 @@ function MesheryPatterns({
   const [publishCatalog] = usePublishPatternMutation();
   const [unpublishCatalog] = useUnpublishPatternMutation();
   const [deletePattern] = useDeletePatternMutation();
-  const [importPattern] = useImportPatternMutation();
+  const [importDesign] = useImportDesignMutation();
   const [updatePattern] = useUpdatePatternFileMutation();
   const [uploadPatternFile] = useUploadPatternFileMutation();
   const [deletePatternFile] = useDeletePatternFileMutation();
@@ -230,7 +230,7 @@ function MesheryPatterns({
     unpublishCatalog,
     deletePattern,
     deletePatternFile,
-    importPattern,
+    importDesign,
     updatePattern,
     uploadPatternFile,
     deployPatternMutation,
@@ -590,7 +590,13 @@ function MesheryPatterns({
             <_PromptComponent ref={modalRef} />
           </>
         ) : (
-          <DefaultError />
+          <DefaultError
+            permissionKey={
+              pageTitle === 'Catalog'
+                ? Keys.CatalogManagementViewCatalog
+                : Keys.CatalogManagementViewDesigns
+            }
+          />
         )}
       </NoSsr>
     </>

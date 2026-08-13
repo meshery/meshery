@@ -663,6 +663,8 @@ const ConnectionTable = ({
 
   return (
     <>
+      {tabs}
+
       <ConnectionTableToolbar
         isSearchExpanded={isSearchExpanded}
         setIsSearchExpanded={setIsSearchExpanded}
@@ -674,7 +676,6 @@ const ConnectionTable = ({
         columns={columns}
         columnVisibility={columnVisibility}
         setColumnVisibility={setColumnVisibilityByUser}
-        tabs={tabs}
       />
 
       <ResponsiveDataTable

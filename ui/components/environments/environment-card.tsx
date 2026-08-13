@@ -80,6 +80,7 @@ const EnvironmentCard = ({
   onSelect,
   onAssignConnection,
 }) => {
+  const theme = useTheme();
   const { data: environmentConnections } = useGetEnvironmentConnectionsQuery(
     {
       environmentId: environmentDetails.id,
@@ -240,7 +241,10 @@ const EnvironmentCard = ({
                     }
                     permissionKey={Keys.WorkspaceManagementEditEnvironment}
                   >
-                    <EditIcon style={{ ...iconMedium, margin: '0 2px' }} />
+                    <EditIcon
+                      style={{ ...iconMedium, margin: '0 2px' }}
+                      fill={theme?.palette?.icon?.default}
+                    />
                   </IconButton>
                 </CustomTooltip>
                 <CustomTooltip title="Delete">
@@ -255,7 +259,10 @@ const EnvironmentCard = ({
                     }
                     permissionKey={Keys.WorkspaceManagementDeleteEnvironment}
                   >
-                    <DeleteIcon style={{ ...iconMedium, margin: '0 2px' }} />
+                    <DeleteIcon
+                      style={{ ...iconMedium, margin: '0 2px' }}
+                      fill={theme?.palette?.icon?.default}
+                    />
                   </IconButton>
                 </CustomTooltip>
               </Grid2>
