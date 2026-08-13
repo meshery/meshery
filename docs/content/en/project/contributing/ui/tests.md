@@ -32,7 +32,9 @@ Either `PROVIDER_TOKEN` on its own, or both `REMOTE_PROVIDER_USER_EMAIL` and `RE
 
 In CI these come from the `REMOTE_PROVIDER_TEST_USER_TOKEN` organization secret, which holds a maintained token for a purpose-built remote-provider test user - the same secret `mesheryctl-e2e.yaml` uses. The older `PROVIDER_TOKEN` organization secret is a static token that expired and must not be used. Only push builds run the remote-provider project (`npm run test:e2e:ci:full`); pull request builds run `npm run test:e2e:ci:local`, which covers the Local provider only, so pull requests from forks - which cannot read secrets - are unaffected.
 
-During the setup phase, Playwright utilizes these environment variables to log in and store credentials securely in the `playwright/.auth` directory. To protect sensitive data, the `.gitignore` file is configured to exclude the `.env` file and any JSON files within the `/playwright/.auth` directory from the GitHub repository.
+During the setup phase, Playwright utilizes these environment variables to log in and store credentials securely in the `playwright/.auth` directory. To protect sensitive data, the `.gitignore` file is configured to exclude `.env` files and any JSON files within the `/playwright/.auth` directory from the GitHub repository.
+
+Locally, the dotenv file these variables are read from is **`ui/.env`** - `ui/tests/e2e/env.js` loads it, so it applies however Playwright is invoked. The repository-root `.env` also works when you go through the make targets (`make ui-test`, `make ui-test-e2e-full`, `make ui-test-e2e-local`), because each of those sources it into the environment before running Playwright. A real environment variable always wins over a value in `ui/.env`. Note that `ui/tests/e2e/.env` is read by nothing despite having its own `.gitignore` entry - credentials placed there are silently ignored.
 
 There are several tools to help you to working with environment variables locally for each project such as [direnv](https://github.com/direnv/direnv), it can work across multiple shell such as Bash, Powershell, Oh my zsh, Fish, etc
 

@@ -27,15 +27,20 @@ on:
       # looked deliberate and read as correct in review. One name end to end
       # means the next reader can grep it against the real secret list.
       #
-      # `required: true` governs whether the CALLER passes the secret, not
-      # whether the value it passes is non-empty, so a caller that drops the
-      # line fails at workflow level instead of silently handing this job an
-      # empty string. Fork and Dependabot runs are unaffected: the caller still
-      # passes it, the value simply resolves to the empty string there, which
-      # the pre-flight step below classifies as expected.
+      # `required: true` was considered - it would reject a caller that drops
+      # the secret from its `secrets:` block - and deliberately rejected. The
+      # documentation for `on.workflow_call.secrets.<secret_id>.required` says
+      # only that the secret must be supplied and does not say how an empty
+      # value is treated. Every fork and Dependabot run resolves this secret to
+      # the empty string, so if that counts as "not supplied" the whole job
+      # aborts at workflow-call time for outside contributors - including the
+      # Local provider tests, which need no credential - and nothing before a
+      # merge can tell us which way it goes. The pre-flight step below already
+      # reports the missing-value case with a message naming all three ways it
+      # can happen.
       REMOTE_PROVIDER_TEST_USER_TOKEN:
         description: 'Session token for the dedicated remote-provider CI test user (org secret REMOTE_PROVIDER_TEST_USER_TOKEN)'
-        required: true
+        required: false
 
 permissions:
   contents: read

@@ -31,14 +31,13 @@ if (!PROVIDER_TOKEN) {
         'chromium-meshery-provider project fails its setup; the Local provider project is unaffected.',
     );
   } else if (!USER_EMAIL || !USER_PASSWORD) {
-    const message =
-      'Incomplete remote-provider credentials: REMOTE_PROVIDER_USER_EMAIL and ' +
-      'REMOTE_PROVIDER_USER_PASSWORD must both be set, or set PROVIDER_TOKEN instead.';
-    if (process.env.CI) {
-      console.error(message);
-      process.exit(1);
-    }
-    throw new Error(message);
+    console.warn(
+      `Incomplete remote-provider credentials: ${
+        USER_EMAIL ? 'REMOTE_PROVIDER_USER_PASSWORD' : 'REMOTE_PROVIDER_USER_EMAIL'
+      } is not set. ` +
+        'Set both, or set PROVIDER_TOKEN instead. The chromium-meshery-provider project fails ' +
+        'its setup without them; the Local provider project is unaffected.',
+    );
   }
 }
 
