@@ -69,12 +69,15 @@ jobs:
       # because a PR that changes this wiring has no other way to show that the
       # secret name resolves: the project it feeds does not run until the change
       # is already on master. That reporting is only worth anything if it
-      # distinguishes the two non-push cases. A fork PR reads no secrets at all,
-      # so an empty value there says nothing. A same-repository PR (including
-      # Dependabot) does read them, so an empty value there means the secret
+      # distinguishes the cases. A fork PR reads no secrets at all, and a
+      # Dependabot run reads a *separate* Dependabot secrets store rather than
+      # this repository's Actions secrets - so an empty value in either case
+      # says nothing about whether the secret resolves. Every other same-
+      # repository PR does read them, so an empty value there means the secret
       # itself stopped resolving - the exact silent-empty-string failure this
-      # step exists to surface. Calling both "expected" would hide the second
-      # behind the first until the next push to master.
+      # step exists to surface. Calling them all "expected" would hide that
+      # behind the benign cases until the next push to master; calling them all
+      # a misconfiguration would cry wolf on every fork and Dependabot PR.
       - name: Verify remote-provider credentials are available
         env:
           PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
@@ -82,6 +85,7 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
           HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
           BASE_REPO: ${{ github.repository }}
+          ACTOR: ${{ github.actor }}
         run: |
           if [ -n "$PROVIDER_TOKEN" ]; then
             echo "Remote-provider credentials present (REMOTE_PROVIDER_TEST_USER_TOKEN resolved)."
@@ -93,6 +97,10 @@ jobs:
           fi
           if [ -n "$HEAD_REPO" ] && [ "$HEAD_REPO" != "$BASE_REPO" ]; then
             echo "::notice::REMOTE_PROVIDER_TEST_USER_TOKEN is empty. Expected on a pull request from the fork ${HEAD_REPO}, which cannot read secrets. This build runs the Local provider only, so nothing here needs it."
+            exit 0
+          fi
+          if [ "$ACTOR" = "dependabot[bot]" ]; then
+            echo "::notice::REMOTE_PROVIDER_TEST_USER_TOKEN is empty. Expected on a Dependabot run, which reads the separate Dependabot secrets store rather than this repository's Actions secrets. This build runs the Local provider only, so nothing here needs it."
             exit 0
           fi
           echo "::warning::REMOTE_PROVIDER_TEST_USER_TOKEN did not resolve on a ${EVENT_NAME} build of ${BASE_REPO}, which can read this repository's secrets. This is not expected: the org secret has most likely been renamed, deleted, or dropped from this repository's exposure. The next push to master will fail this job at this step, and chromium-meshery-provider will not authenticate until the secret is restored. Not blocking here, because this build runs the Local provider only."

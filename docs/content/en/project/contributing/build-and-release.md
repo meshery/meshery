@@ -49,11 +49,11 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 - `METAL_AUTH_TOKEN`: Authentication token for metal provider
 - `METAL_SERVER1`: Configuration for metal server 1
 - `PLAYGROUND_CONFIG`: Configuration for playground environments
-- `PROVIDER_TOKEN`: General provider authentication token
-- `RELEASEDRAFTER_PAT`: Personal access token for Release Drafter
-- `RELEASEDRAFTER_PAT`: Personal access token for release notes generation
+- `PROVIDER_TOKEN`: Legacy static remote-provider token, last refreshed 2024-03-08 and expired. Do not use it to authenticate against a remote provider - use `REMOTE_PROVIDER_TEST_USER_TOKEN`. Still referenced by the adapter workflows (`e2etest.yaml`, `mesheryctl-e2e.yaml`).
+- `RELEASEDRAFTER_PAT`: Personal access token for Release Drafter, used for release notes generation
+- `REMOTE_PROVIDER_TEST_USER_TOKEN`: Maintained session token for the purpose-built remote-provider CI test user. This is the token the E2E workflow (`test-e2e.yml`, as `PROVIDER_TOKEN`) and the mesheryctl BATS suite (`mesheryctl-e2e.yaml`, as `MESHERY_PROVIDER_TOKEN`) authenticate with.
 - `REMOTE_PROVIDER_USER_EMAIL`: Email used for authentication in Playwright tests
-- `REMOTE_PROVIDER_USER_PASS`: Password used for authentication in Playwright tests
+- `REMOTE_PROVIDER_USER_PASS`: Password used for authentication in Playwright tests. Note that `ui/tests/e2e/env.js` reads `REMOTE_PROVIDER_USER_PASSWORD`, so this secret's name does not match the variable it would have to fill; the email/password path is consequently not wired into CI, which authenticates by token instead.
 
 The Docker Hub user, `mesheryci`, belongs to the "ciusers" team in Docker Hub and acts as the service account under which these automated builds are being pushed. Every time a new Docker Hub repository is created we have to grant “Admin” (in order to update the README in the Docker Hub repository) permissions to the ciusers team.
 
