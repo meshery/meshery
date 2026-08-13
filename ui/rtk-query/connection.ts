@@ -25,6 +25,7 @@ const TAGS = {
 // addKubernetesConfig, discoverKubernetesContexts, pingKubernetes). Only the
 // {kind}-scoped connection routes below remain hand-rolled — they are not yet
 // defined in meshery/schemas.
+// schema-rtk-exempt: {kind}-scoped connection routes not yet defined in meshery/schemas
 const connectionsApi = api.injectEndpoints({
   overrideExisting: true,
   endpoints: (builder) => ({

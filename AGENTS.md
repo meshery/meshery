@@ -554,12 +554,19 @@ because skill content addresses them via `.agents/` - only discovery breaks.)
 
 ## Automation Hooks
 
-Scripts in `.agents/hooks/`:
+Scripts in `.agents/hooks/` (tool-agnostic, takes file path as `$1`):
 
 | Hook | Script | Trigger | Purpose |
-|------|--------|---------|---------|
+|------|--------|---------|---------| 
 | Format Frontend | `.agents/hooks/format-frontend.sh` | Post-edit | Auto-format JS/TS with Prettier |
 | Block Lock Files | `.agents/hooks/block-lockfiles.sh` | Pre-edit | Prevent direct edits to lock files |
+| Validate Schema Principles | `.agents/hooks/validate-schema-principles.sh` | Post-edit | Block hand-rolled payloads, manual RTK hooks, snake_case wire fields, and deprecated v1beta1 imports |
+
+Scripts in `.claude/hooks/` (Claude Code PreToolUse/PostToolUse, reads JSON on stdin):
+
+| Hook | Script | Trigger | Purpose |
+|------|--------|---------|---------| 
+| Validate Schema Principles | `.claude/hooks/validate-schema-principles.sh` | PreToolUse | Block NET-NEW hand-rolled payloads, manual RTK hooks, snake_case json tags, and deprecated v1beta1 imports |
 
 ## Further Reading
 
