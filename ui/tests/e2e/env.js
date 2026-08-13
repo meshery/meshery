@@ -1,3 +1,15 @@
+import path from 'path';
+import dotenv from 'dotenv';
+
+// ui/.env has to be loaded before the captures below, and this module is
+// imported directly by the setup projects and the specs as well as by
+// playwright.config.js, so it owns the load. The path is resolved against this
+// file rather than the working directory, a missing .env is normal, and real
+// environment variables win - dotenv does not override them by default.
+if (!process.env.CI) {
+  dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+}
+
 const MESHERY_SERVER_URL = process.env.MESHERY_SERVER_URL || 'http://localhost:9081';
 const REMOTE_PROVIDER_URL = process.env.REMOTE_PROVIDER_URL || 'https://cloud.meshery.io'; // AUTO-GENERATED from install/providers.env - run `make providers-propagate`
 

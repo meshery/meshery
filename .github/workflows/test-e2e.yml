@@ -26,9 +26,16 @@ on:
       # survive: a missing secret expands to the empty string, so the wiring
       # looked deliberate and read as correct in review. One name end to end
       # means the next reader can grep it against the real secret list.
+      #
+      # `required: true` governs whether the CALLER passes the secret, not
+      # whether the value it passes is non-empty, so a caller that drops the
+      # line fails at workflow level instead of silently handing this job an
+      # empty string. Fork and Dependabot runs are unaffected: the caller still
+      # passes it, the value simply resolves to the empty string there, which
+      # the pre-flight step below classifies as expected.
       REMOTE_PROVIDER_TEST_USER_TOKEN:
         description: 'Session token for the dedicated remote-provider CI test user (org secret REMOTE_PROVIDER_TEST_USER_TOKEN)'
-        required: false
+        required: true
 
 permissions:
   contents: read
@@ -92,7 +99,7 @@ jobs:
             exit 0
           fi
           if [ "$EVENT_NAME" = "push" ]; then
-            echo "::error::REMOTE_PROVIDER_TEST_USER_TOKEN is empty. The chromium-meshery-provider project cannot authenticate against ${REMOTE_PROVIDER_URL}, and every test in it would then fail on a missing storage state. Check that the org secret exists and is exposed to this repository."
+            echo "::error::REMOTE_PROVIDER_TEST_USER_TOKEN is empty. The chromium-meshery-provider project cannot authenticate against ${REMOTE_PROVIDER_URL}, and every test in it would then fail on a missing storage state. Three things can leave it empty: the org secret does not exist, the org secret is not exposed to this repository, or the calling workflow does not pass it in its 'secrets:' block (.github/workflows/build-and-test.yml) - the last is what broke this before."
             exit 1
           fi
           if [ -n "$HEAD_REPO" ] && [ "$HEAD_REPO" != "$BASE_REPO" ]; then
