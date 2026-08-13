@@ -188,7 +188,7 @@ describe('createPatternsActions', () => {
     expect(deps.setSelectedRowData).toHaveBeenCalledWith(null);
   });
 
-  it('handleDownload triggers download and notifies', () => {
+  it('handleDownload notifies for legacy source-type downloads', () => {
     const deps = baseDeps();
     const actions = createPatternsActions(deps);
     const stop = vi.fn();
@@ -208,6 +208,31 @@ describe('createPatternsActions', () => {
       params: { param: 'v' },
     });
     expect(deps.notify).toHaveBeenCalled();
+  });
+
+  it('handleDownload does not notify for canonical downloads', () => {
+    const deps = baseDeps();
+    const actions = createPatternsActions(deps);
+    const stop = vi.fn();
+
+    actions.handleDownload(
+      { stopPropagation: stop } as any,
+      { id: 'd1', name: 'Design 1' },
+      undefined,
+      'export=Kubernetes%20Manifest',
+    );
+
+    expect(stop).toHaveBeenCalled();
+
+    expect(downloadContent).toHaveBeenCalledWith({
+      id: 'd1',
+      name: 'Design 1',
+      type: 'pattern',
+      source_type: undefined,
+      params: 'export=Kubernetes%20Manifest',
+    });
+
+    expect(deps.notify).not.toHaveBeenCalled();
   });
 
   it('handleError surfaces the failure as a notification', () => {
