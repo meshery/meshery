@@ -447,22 +447,6 @@ const NavigatorContent = () => {
     );
   };
 
-  const handleExtensionIconMouseEnter = (event: React.MouseEvent<HTMLImageElement>) => {
-    const image = event.currentTarget;
-
-    image.style.transform = 'translate(-20%, -25%)';
-    image.style.top = '0';
-    image.style.right = '0';
-  };
-
-  const handleExtensionIconMouseLeave = (event: React.MouseEvent<HTMLImageElement>) => {
-    const image = event.currentTarget;
-
-    image.style.transform = 'translate(0, 0)';
-    image.style.top = 'auto';
-    image.style.right = 'auto';
-  };
-
   const renderNavigatorExtensions = (children, depth) => {
     if (!children || children.length === 0) {
       return null;
@@ -523,12 +507,11 @@ const NavigatorContent = () => {
             <MainListIcon>
               <img
                 src={icon}
+                alt={`${name} icon`}
                 style={{
                   width: '20px',
                   filter: currentPath === href ? activeIconFilter : '',
                 }}
-                onMouseOver={handleExtensionIconMouseEnter}
-                onMouseOut={handleExtensionIconMouseLeave}
               />
             </MainListIcon>
           </CustomTooltip>
