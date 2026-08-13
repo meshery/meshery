@@ -717,22 +717,40 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("machine context does not contain reference to MesheryCtrlsHelper for connection %s", connectionID)
 		}
 
+		// Resolve BEFORE tearing anything down. A resolution failure means the
+		// intended configuration is unknown, and undeploying the operators only
+		// to rebuild them from the last-known-good document is a partial
+		// reconciliation performed on unreadable input - the same fault as
+		// reconciling a connection whose override will not parse. Fail with the
+		// connection left exactly as it is instead.
+		merged, _, resolveErr := ctrlHelper.ResolveControllersConfigForConnection(newConnection.MetaData)
+		if resolveErr != nil {
+			h.log.Error(resolveErr)
+			return existingMeshSyncMode, newMeshSyncMode, false, resolveErr
+		}
+
 		// disconnect
 		{
 			contextID := machineCtx.K8sContext.ID
 			ctrlHelper.
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-				UndeployDeployedOperators(machineCtx.OperatorTracker).
+				UndeployDeployedOperators(machineCtx.OperatorTracker, contextID).
 				RemoveCtxControllerHandler(ctx, contextID)
 			ctrlHelper.RemoveMeshSyncDataHandler(ctx, contextID)
 		}
-		// connect
+		// connect. The controllers configuration is refreshed and stashed
+		// before AddCtxControllerHandlers, which constructs the operator
+		// controller handler with the Helm chart version that document
+		// resolves to (operator.version) and captures it there. Resolving from
+		// the incoming payload's metadata rather than the helper's stale copy
+		// is what lets one save change the mode and the chart version at once.
 		{
+			ctrlHelper.SetControllersConfig(merged)
 			ctrlHelper.
-				AddCtxControllerHandlers(machineCtx.K8sContext).
 				SetMeshsyncDeploymentMode(newMeshSyncMode).
+				AddCtxControllerHandlers(machineCtx.K8sContext).
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-				DeployUndeployedOperators(machineCtx.OperatorTracker).
+				DeployUndeployedOperators(machineCtx.OperatorTracker, machineCtx.K8sContext.ID).
 				AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, mesheryInstanceID, provider)
 		}
 
