@@ -37,6 +37,16 @@ export const ConnectionTableToolbar = ({
 }: ConnectionTableToolbarProps) => {
   return (
     <DataTableToolbar
+      sx={(theme) => ({
+        [theme.breakpoints.down('sm')]: {
+          flexWrap: 'nowrap !important',
+          padding: '8px !important',
+          gap: '4px !important',
+          '& > div': {
+            gap: '4px !important',
+          },
+        },
+      })}
       primaryActions={
         <CreateButton>
           <ConnectionWizardLauncher />
