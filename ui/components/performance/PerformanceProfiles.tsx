@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Moment from 'react-moment';
-import {
+import { 
   AddCircleIcon as AddIcon,
   Button,
   CustomColumnVisibilityControl,
