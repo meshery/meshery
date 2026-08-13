@@ -80,14 +80,14 @@ jobs:
       # a misconfiguration would cry wolf on every fork and Dependabot PR.
       - name: Verify remote-provider credentials are available
         env:
-          PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
+          REMOTE_PROVIDER_TEST_USER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
           REMOTE_PROVIDER_URL: "https://cloud.meshery.io"
           EVENT_NAME: ${{ github.event_name }}
           HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
           BASE_REPO: ${{ github.repository }}
           ACTOR: ${{ github.actor }}
         run: |
-          if [ -n "$PROVIDER_TOKEN" ]; then
+          if [ -n "$REMOTE_PROVIDER_TEST_USER_TOKEN" ]; then
             echo "Remote-provider credentials present (REMOTE_PROVIDER_TEST_USER_TOKEN resolved)."
             exit 0
           fi
