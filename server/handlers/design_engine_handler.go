@@ -161,7 +161,7 @@ func (h *Handler) PatternFileHandler(
 		EventBroadcaster:       h.config.EventBroadcaster,
 		Log:                    h.log,
 	}
-	response, err := _processPattern(opts)
+	response, err := executePattern(h.patternExecutor, opts)
 
 	eventBuilder := events.NewEvent().ActedUpon(patternID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(action)
 
