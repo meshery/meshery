@@ -11,18 +11,22 @@ const REMOTE_PROVIDER_USER = {
 const PROVIDER_SELECTION_URL = `${MESHERY_SERVER_URL}/provider`;
 const PROVIDER_TOKEN = process.env.PROVIDER_TOKEN;
 
-if (process.env.CI) {
+if (!PROVIDER_TOKEN) {
   if (!USER_EMAIL && !USER_PASSWORD) {
-    console.warn('Using default email and password on auth');
+    console.warn(
+      'No remote-provider credentials configured. Set PROVIDER_TOKEN, or both ' +
+        'REMOTE_PROVIDER_USER_EMAIL and REMOTE_PROVIDER_USER_PASSWORD. Without one of those the ' +
+        'chromium-meshery-provider project fails its setup; the Local provider project is unaffected.',
+    );
   } else if (!USER_EMAIL || !USER_PASSWORD) {
-    console.error('Either your email or password is empty');
-    process.exit(1);
-  }
-} else {
-  if (!USER_EMAIL && !USER_PASSWORD) {
-    console.warn('Using default email and password on auth');
-  } else if (!USER_EMAIL || !USER_PASSWORD) {
-    throw new Error('You are email or password is empty');
+    const message =
+      'Incomplete remote-provider credentials: REMOTE_PROVIDER_USER_EMAIL and ' +
+      'REMOTE_PROVIDER_USER_PASSWORD must both be set, or set PROVIDER_TOKEN instead.';
+    if (process.env.CI) {
+      console.error(message);
+      process.exit(1);
+    }
+    throw new Error(message);
   }
 }
 
