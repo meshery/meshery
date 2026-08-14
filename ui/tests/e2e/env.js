@@ -6,6 +6,12 @@ import dotenv from 'dotenv';
 // playwright.config.js, so it owns the load. The path is resolved against this
 // file rather than the working directory, a missing .env is normal, and real
 // environment variables win - dotenv does not override them by default.
+//
+// `__dirname`, not `import.meta.url`: ui/package.json declares no "type", so
+// Playwright transpiles this file to CommonJS and requires it from the CJS
+// playwright.config.js, and the CJS wrapper supplies `__dirname`. `import.meta`
+// is a SyntaxError under that loader and takes the whole suite down at config
+// load, not just this module.
 if (!process.env.CI) {
   dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 }
@@ -27,16 +33,17 @@ if (!PROVIDER_TOKEN) {
   if (!USER_EMAIL && !USER_PASSWORD) {
     console.warn(
       'No remote-provider credentials configured. Set PROVIDER_TOKEN, or both ' +
-        'REMOTE_PROVIDER_USER_EMAIL and REMOTE_PROVIDER_USER_PASSWORD. Without one of those the ' +
-        'chromium-meshery-provider project fails its setup; the Local provider project is unaffected.',
+        'REMOTE_PROVIDER_USER_EMAIL and REMOTE_PROVIDER_USER_PASSWORD. If you run the ' +
+        'chromium-meshery-provider project, its setup will fail without one of those; the Local ' +
+        'provider project needs no credentials.',
     );
   } else if (!USER_EMAIL || !USER_PASSWORD) {
     console.warn(
       `Incomplete remote-provider credentials: ${
         USER_EMAIL ? 'REMOTE_PROVIDER_USER_PASSWORD' : 'REMOTE_PROVIDER_USER_EMAIL'
       } is not set. ` +
-        'Set both, or set PROVIDER_TOKEN instead. The chromium-meshery-provider project fails ' +
-        'its setup without them; the Local provider project is unaffected.',
+        'Set both, or set PROVIDER_TOKEN instead. If you run the chromium-meshery-provider ' +
+        'project, its setup will fail without them; the Local provider project needs no credentials.',
     );
   }
 }

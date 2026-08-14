@@ -385,49 +385,25 @@ and propagate gorm errors so the next such rename fails loudly. Regression test:
 - E2E (Playwright): `make ui-integration-tests` or `npm run test:e2e` in `ui/`
 - Setup: `make test-setup-ui`
 
-**The E2E job is gated on the Playwright verdict - keep it that way.** The gate is the
-final step of `.github/workflows/test-e2e.yml` and keys on
-`steps.playwright-tests.outcome`, *not* `.conclusion`: the run step keeps
-`continue-on-error: true` so artifacts upload on failure, which makes its `conclusion`
-permanently `success`. Gating on `conclusion` silently disarms the gate. That is how the
-suite spent its history reporting `success` 19 times out of 19 across the 20
-`Meshery Build And Test` runs to 2026-08-05 - 8 of them with real test failures, 0 failing
-the build - which made every test in it decorative. Never re-disarm it to get a red build
-green; fix or `test.fixme` the test, with the tracking issue in the annotation.
+Four E2E invariants. Each one's reasoning, evidence, run IDs and history live in
+`docs/content/en/project/contributing/ui/tests.md` - read it before changing the workflow
+or the setup projects.
 
-**The remote-provider project needs a credential CI can actually resolve, and a missing
-one must fail rather than skip.** `chromium-meshery-provider` authenticates through
-`ui/tests/e2e/remote.setup.js`, which reads `PROVIDER_TOKEN` (or the
-`REMOTE_PROVIDER_USER_EMAIL`/`_PASSWORD` pair) from `ui/tests/e2e/env.js`. In CI that value
-comes from the `REMOTE_PROVIDER_TEST_USER_TOKEN` org secret - the same one
-`mesheryctl-e2e.yaml` uses; the older `PROVIDER_TOKEN` org secret is a static token that
-expired. A missing secret expands to the empty string rather than erroring, so
-`.github/workflows/test-e2e.yml` refers to that secret by its real name end to end and
-asserts it is non-empty before doing any other work. An alias between the caller and the
-reusable workflow is exactly what hid a reference to a `REMOTE_PROVIDER_TOKEN` secret that
-existed in neither the repo nor the org, from 2026-05-18 until the gate above made it
-visible on 2026-08-05.
-
-Do not answer a missing credential with `setup.skip()`. Playwright collapses a dependent
-project only when its setup **fails**; a skipped setup leaves the dependents scheduled and
-each one dies on the storage state file the setup never wrote. Both shapes are on record
-for this same defect - run `31039121068` (failing setup) reported 1 failure and ran 0
-`chromium-meshery-provider` tests, run `31701664917` (skipping setup) reported 62 failures
-and 23 skips, every one of them a `user-meshery-provider.json` ENOENT that says nothing
-about authentication. Only push builds select this project (`test:e2e:ci:full`); PR builds
-run `test:e2e:ci:local`, so fork PRs never reach it and need no skip.
-
-To run the suite locally you need three things, and the failure when one is missing does
-not name it:
-
-1. `make ui-provider-build` first. A source checkout has no `provider-ui/out`, so the
-   server 404s `/provider`; every project's auth setup then dies on a provider-dropdown
-   click timeout that looks like a UI bug.
-2. A server on `:9081` (`make server`, then pick the Local provider) and `make ui` on
-   `:3000`.
-3. `MESHERY_SERVER_URL=http://localhost:3000` on the Playwright run - the dev server
-   proxies `/api`, `/provider` and the auth routes to `:9081`, and the built UI that
-   `:9081` would otherwise serve does not exist in a source checkout.
+- **The job gates on the Playwright verdict.** The final step of
+  `.github/workflows/test-e2e.yml` keys on `steps.playwright-tests.outcome`, never
+  `.conclusion` (`continue-on-error` pins `conclusion` to `success`). Never re-disarm it to
+  turn a red build green; fix the test or `test.fixme` it with the tracking issue in the
+  annotation.
+- **The remote-provider credential is the `REMOTE_PROVIDER_TEST_USER_TOKEN` org secret**,
+  spelled identically in caller and reusable workflow and asserted non-empty before any
+  other work. Never alias it between the two - that is what hid a secret which existed
+  nowhere for three months.
+- **A missing credential must fail, never `setup.skip()`.** Playwright collapses a
+  dependent project only when its setup *fails*; a skip leaves every dependent scheduled to
+  die on a storage state file that was never written.
+- **A local run needs three things** - `make ui-provider-build`, a server on `:9081` plus
+  `make ui` on `:3000`, and `MESHERY_SERVER_URL=http://localhost:3000` on the Playwright
+  run - and the failure when one is missing never names it.
 
 ### Local Validation
 
