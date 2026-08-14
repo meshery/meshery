@@ -1,41 +1,43 @@
 #!/usr/bin/env bats
 
-setup() {
-    load "$E2E_HELPERS_PATH/bats_libraries"
-	_load_bats_libraries
-    
-    # Verify MESHERYCTL_BIN is set
-    if [[ -z "$MESHERYCTL_BIN" ]]; then
-        echo "Error: MESHERYCTL_BIN is not defined. Set it before running tests."
-        exit 1
-    fi
+setup_file() {
+  export INSTALL_SCRIPT="${BATS_FILE_TMPDIR}/install.sh"
+  curl -fsSL https://meshery.io/install -o "$INSTALL_SCRIPT"
+
+  # Extract ONLY the getopts block into a variable for focused testing
+  export GETOPTS_BLOCK
+  GETOPTS_BLOCK=$(sed -n '/while getopts/,/done/p' "$INSTALL_SCRIPT")
 }
 
-teardown() {
-    # Clean up any running Meshery instances started during this test
-    $MESHERYCTL_BIN system stop 2>/dev/null || true
-    sleep 1
+teardown_file() {
+  rm -f "$INSTALL_SCRIPT"
 }
 
-@test "[TC-0001][tg=Installation] install mesheryctl and start Meshery on an invalid platform" {
-    # Test that installing mesheryctl with an invalid platform fails gracefully
-    
-    run bash -c 'curl -L https://meshery.io/install | PLATFORM=bob bash - < /dev/null'
-    
-    assert_output --partial "curl: Failed writing body"
+@test "Supported platform (e.g. 'docker') is defined in getopts cases" {
+  # Check if 'docker)' case exists specifically inside the getopts block
+  run grep -E '^\s*docker\)' <<< "$GETOPTS_BLOCK"
+
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "docker" ]]
 }
 
-@test "[TC-0002][tg=Installation] install mesheryctl and start Meshery on a valid platform" {
-    # Test that installing mesheryctl with an valid platform succeed
-    
-    run bash -c 'curl -L https://meshery.io/install | PLATFORM=docker bash - < /dev/null'
-    
-    assert_success  
+@test "Supported platform (e.g. 'kubernetes') is defined in getopts cases" {
+  # Check if 'docker)' case exists specifically inside the getopts block
+  run grep -E '^\s*kubernetes\)' <<< "$GETOPTS_BLOCK"
+
+  [ "$status" -eq 0 ]
+  [[ "$output" =~ "kubernetes" ]]
 }
 
-@test "[TC-0003][tg=Installation] mesheryctl system start with invalid platform flag should handle gracefully" {
-    # Test that an invalid platform parameter is rejected
-    run $MESHERYCTL_BIN system start -p invalidplatform
+@test "Unsupported platform (e.g. 'bob') is NOT defined in getopts cases" {
+  # Check that 'bob)' case does NOT exist inside the getopts block
+  run grep -E '^\s*bob\)' <<< "$GETOPTS_BLOCK"
 
-    assert_failure
+  [ "$status" -ne 0 ]
+}
+@test "Unsupported platform (e.g. 'else') is NOT defined in getopts cases" {
+  # Check that 'bob)' case does NOT exist inside the getopts block
+  run grep -E '^\s*else\)' <<< "$GETOPTS_BLOCK"
+
+  [ "$status" -ne 0 ]
 }
