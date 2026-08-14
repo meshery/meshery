@@ -504,3 +504,16 @@ Note: This biweekly meeting series is currently on hiatus. We'll share an update
     title="Training Video" frameborder="0" allowfullscreen>
   </iframe>
 </div>
+
+## Cutting a release
+
+Meshery has **no automatic release cadence**. Release Drafter keeps exactly one draft release current on every push to `master`. Publishing that draft creates the `v*` tag, and that tag is what fires `build-and-release-stable.yml` and its fan-out.
+
+Follow `.agents/skills/cut-release/SKILL.md`. Never hand-author a tag or release notes - the version tag is already set by Release Drafter and auto-increments after each release.
+
+### Publication is not proven by a zero exit code
+
+`gh release edit --draft=false` can exit 0 and leave the release a draft; this was observed while cutting v1.0.65. Publication is proven only by:
+
+1. Re-reading the release and seeing `draft: false` **and** a non-null `published_at`.
+2. The release-triggered workflow runs actually appearing.
