@@ -49,14 +49,16 @@ func TestAcademyCreate(t *testing.T) {
 			expectErr: true,
 		},
 		{
-			name:      "invalid type flag",
-			args:      []string{"create", "--type", "invalid-type", "--title", "Test", "--description", "Desc", "--into", tempDir},
-			expectErr: true,
+			name:         "invalid type flag",
+			args:         []string{"create", "--type", "invalid-type", "--title", "Test", "--description", "Desc", "--into", tempDir},
+			expectErr:    true,
+			expectedCode: ErrTaxonomyTypeCode,
 		},
 		{
-			name:      "fresh scaffold learning path without org",
-			args:      []string{"create", "--type", "learning-path", "--title", "My Path", "--description", "Desc"},
-			expectErr: true,
+			name:         "fresh scaffold learning path without org",
+			args:         []string{"create", "--type", "learning-path", "--title", "My Path", "--description", "Desc"},
+			expectErr:    true,
+			expectedCode: ErrMissingOrgIDCode,
 		},
 		{
 			name:      "fresh scaffold learning path with org",
@@ -74,9 +76,10 @@ func TestAcademyCreate(t *testing.T) {
 			expectErr: false,
 		},
 		{
-			name:      "existing file collision without force",
-			args:      []string{"create", "--type", "learning-path", "--title", "Collision Path", "--description", "Desc", "--into", tempDir, "--org", "collision-org"},
-			expectErr: true,
+			name:         "existing file collision without force",
+			args:         []string{"create", "--type", "learning-path", "--title", "Collision Path", "--description", "Desc", "--into", tempDir, "--org", "collision-org"},
+			expectErr:    true,
+			expectedCode: ErrScaffoldExistsCode,
 		},
 		{
 			name:      "existing file collision with force",
@@ -96,9 +99,15 @@ func TestAcademyCreate(t *testing.T) {
 			expectErr: false,
 		},
 		{
-			name:      "scaffold single node (course) without into should fail",
-			args:      []string{"create", "course", "Missing Into", "--description", "Desc"},
-			expectErr: true,
+			name:      "scaffold single node (module) with correct nesting",
+			args:      []string{"create", "module", "New Module", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path", "new-course")},
+			expectErr: false,
+		},
+		{
+			name:         "scaffold single node (course) without into should fail",
+			args:         []string{"create", "course", "Missing Into", "--description", "Desc"},
+			expectErr:    true,
+			expectedCode: ErrMissingIntoCode,
 		},
 		{
 			name:      "scaffold flat test under course",
@@ -186,7 +195,12 @@ func TestAcademyCreate(t *testing.T) {
 		},
 		{
 			name:      "reject invalid title slug",
-			args:      []string{"create", "course", "../../", "--description", "Desc", "--into", filepath.Join(tempDir, "content")},
+			args:      []string{"create", "course", "../../", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path")},
+			expectErr: true,
+		},
+		{
+			name:      "reject reserved Windows device name title",
+			args:      []string{"create", "course", "CON", "--description", "Desc", "--into", filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path")},
 			expectErr: true,
 		},
 		{
@@ -201,9 +215,10 @@ func TestAcademyCreate(t *testing.T) {
 			expectedCode: ErrInvalidLevelCode,
 		},
 		{
-			name:      "structural node into empty dir (no parent _index.md) should fail",
-			args:      []string{"create", "course", "Orphan Course", "--description", "Desc", "--into", tempDir},
-			expectErr: true,
+			name:         "structural node into empty dir (no parent _index.md) should fail",
+			args:         []string{"create", "course", "Orphan Course", "--description", "Desc", "--into", tempDir},
+			expectErr:    true,
+			expectedCode: ErrInvalidParentMetadataCode,
 		},
 	}
 
@@ -278,6 +293,20 @@ func TestAcademyCreate(t *testing.T) {
 	}
 	if strings.Contains(contentStr3, "orgId:") {
 		t.Errorf("course should NOT contain orgId")
+	}
+	// Course/module scaffolded via --into must be single nodes
+	for _, stub := range []string{"module-1", "page-1"} {
+		if _, err := os.Stat(filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path", "new-course", stub)); !os.IsNotExist(err) {
+			t.Errorf("course scaffolded via --into should not auto-generate a %s stub beneath it", stub)
+		}
+	}
+
+	standaloneModulePath := filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path", "new-course", "new-module", "_index.md")
+	if _, err := os.Stat(standaloneModulePath); err != nil {
+		t.Fatalf("Failed to verify module scaffolded via --into: %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path", "new-course", "new-module", "page-1")); !os.IsNotExist(err) {
+		t.Errorf("module scaffolded via --into should not auto-generate a page-1 stub beneath it")
 	}
 
 	// 4. Check flat test and exam under course
