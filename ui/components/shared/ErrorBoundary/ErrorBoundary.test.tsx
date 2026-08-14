@@ -29,7 +29,6 @@ vi.mock('@sistent/sistent', () => ({
     ) : null,
   helpAndSupportModalSchema: { type: 'object' },
   helpAndSupportModalUiSchema: {},
-  useTheme: () => ({ palette: { text: { default: '#000' } } }),
   Box: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
   styled: (component: any) => () => component,
 }));
@@ -79,7 +78,6 @@ vi.mock('../../general/style', () => ({
 vi.mock('./style', () => ({
   FallbackWrapper: ({ children }: any) => <div data-testid="fallback-wrapper">{children}</div>,
   ErrorPageActions: ({ children }: any) => <div data-testid="error-page-actions">{children}</div>,
-  ErrorPageButtonLabel: ({ children, ...rest }: any) => <span {...rest}>{children}</span>,
 }));
 
 vi.mock('../../general/feedback', () => ({
@@ -110,11 +108,11 @@ describe('CustomErrorFallback', () => {
     expect(screen.getByTestId('try-again-btn')).toHaveTextContent('Try Again');
   });
 
-  it('renders Get Help and Try Again button labels', () => {
+  it('renders Get Help and Try Again as plain button text content', () => {
     render(<CustomErrorFallback error={{ message: 'Boom!' }} resetErrorBoundary={vi.fn()} />);
 
-    expect(screen.getByText('Get Help')).toBeInTheDocument();
-    expect(screen.getByText('Try Again')).toBeInTheDocument();
+    expect(screen.getByTestId('edit-btn')).toHaveTextContent('Get Help');
+    expect(screen.getByTestId('try-again-btn')).toHaveTextContent('Try Again');
   });
 
   it('calls resetErrorBoundary when Try Again is clicked', async () => {

@@ -3,7 +3,6 @@ import {
   Modal,
   helpAndSupportModalSchema,
   helpAndSupportModalUiSchema,
-  useTheme,
 } from '@sistent/sistent';
 import { useState } from 'react';
 import { RJSFModalWrapper } from '../Modal/Modal';
@@ -16,7 +15,7 @@ import { isRemoteProvider } from '@/utils/provider';
 
 import { EditButton, TryAgainButton } from '../../general/style';
 import { StickyFeedbackButton } from '../../general/feedback';
-import { ErrorPageActions, ErrorPageButtonLabel, FallbackWrapper } from './style';
+import { ErrorPageActions, FallbackWrapper } from './style';
 
 /**
  * CustomErrorFallback component can be use to show error message to users
@@ -26,7 +25,6 @@ const CustomErrorFallback = (props) => {
   const [openSupportModal, setOpenSupportModal] = useState(false);
 
   const { error } = props;
-  const theme = useTheme();
   const { notify } = useNotification();
   const [triggerWebhook] = useSupportWebHookMutation();
   const { data: userData } = useGetLoggedInUserQuery();
@@ -81,18 +79,12 @@ const CustomErrorFallback = (props) => {
         <ErrorPageActions>
           {showSupportBasedOnProvider ? (
             <EditButton variant="contained" onClick={handleOpenSupportModal}>
-              <ErrorPageButtonLabel>Get Help</ErrorPageButtonLabel>
+              Get Help
             </EditButton>
           ) : null}
 
           <TryAgainButton color="primary" onClick={props.resetErrorBoundary}>
-            <ErrorPageButtonLabel
-              style={{
-                color: theme.palette.text.default,
-              }}
-            >
-              Try Again
-            </ErrorPageButtonLabel>
+            Try Again
           </TryAgainButton>
         </ErrorPageActions>
 

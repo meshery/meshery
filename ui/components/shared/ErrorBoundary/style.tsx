@@ -8,12 +8,6 @@ export const FallbackWrapper = styled(Box)(({ theme }) => ({
   },
 }));
 
-/** Always-visible button label for the error page (no mobile display:none). */
-export const ErrorPageButtonLabel = styled('span')({
-  marginLeft: '0.5rem',
-  display: 'block',
-});
-
 export const ErrorPageActions = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
