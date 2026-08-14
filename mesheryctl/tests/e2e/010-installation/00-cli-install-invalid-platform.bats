@@ -2,7 +2,7 @@
 
 setup_file() {
   export INSTALL_SCRIPT="${BATS_FILE_TMPDIR}/install.sh"
-  curl -fsSL https://meshery.io/install -o "$INSTALL_SCRIPT"
+  curl -fsSL --connect-timeout 10 --max-time 60 https://meshery.io/install -o "$INSTALL_SCRIPT"
 
   # Extract ONLY the getopts block into a variable for focused testing
   export GETOPTS_BLOCK
