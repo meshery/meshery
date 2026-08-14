@@ -136,10 +136,10 @@ func checkNesting(cType string, parentDir string) (ParentFrontmatter, error) {
 }
 
 type ScaffoldOptions struct {
-	Type        string
+	Type        academyModel.ContentType
 	Title       string
 	Description string
-	Level       string
+	Level       academyModel.Level
 	OrgID       string
 	Category    string
 	Tags        []string
@@ -150,7 +150,7 @@ type ScaffoldOptions struct {
 }
 
 func scaffoldNode(opts ScaffoldOptions, explicitFolderName string) error {
-	tmplStr := getTemplateString(opts.Type)
+	tmplStr := getTemplateString(string(opts.Type))
 	if tmplStr == "" {
 		return errTaxonomyType(string(opts.Type))
 	}
@@ -158,7 +158,7 @@ func scaffoldNode(opts ScaffoldOptions, explicitFolderName string) error {
 	var pf ParentFrontmatter
 	if !opts.SkipNesting {
 		var err error
-		pf, err = checkNesting(opts.Type, opts.TargetDir)
+		pf, err = checkNesting(string(opts.Type), opts.TargetDir)
 		if err != nil {
 			return err
 		}
@@ -166,7 +166,7 @@ func scaffoldNode(opts ScaffoldOptions, explicitFolderName string) error {
 	parentType := pf.Type
 
 	if opts.Level == "" && pf.Level != "" {
-		opts.Level = pf.Level
+		opts.Level = academyModel.Level(pf.Level)
 	}
 	if opts.Category == "" && pf.Category != "" {
 		opts.Category = pf.Category
@@ -175,7 +175,7 @@ func scaffoldNode(opts ScaffoldOptions, explicitFolderName string) error {
 		opts.Tags = pf.Tags
 	}
 
-	if opts.ID == "" && (opts.Type == string(academyModel.LearningPath) || opts.Type == string(academyModel.Certification) || opts.Type == string(academyModel.Challenge)) {
+	if opts.ID == "" && isRootType(string(opts.Type)) {
 		opts.ID = "REPLACE_WITH_INSTRUCTOR_CONSOLE_ID"
 	}
 
@@ -189,12 +189,12 @@ func scaffoldNode(opts ScaffoldOptions, explicitFolderName string) error {
 		}
 	}
 
-	if opts.Type == string(Test) && (parentType == string(Course) || parentType == string(Module)) {
+	if opts.Type == Test && (parentType == string(Course) || parentType == string(Module)) {
 		indexPath = filepath.Join(opts.TargetDir, "test.md")
-	} else if opts.Type == string(Exam) && parentType == string(Course) {
+	} else if opts.Type == Exam && parentType == string(Course) {
 		indexPath = filepath.Join(opts.TargetDir, "course-exam.md")
 	} else {
-		if opts.Type == string(Test) && parentType == string(academyModel.Certification) {
+		if opts.Type == Test && parentType == string(academyModel.Certification) {
 			const maxTests = 1000
 			found := false
 			for testNum := 1; testNum <= maxTests; testNum++ {
@@ -237,8 +237,8 @@ func scaffoldNode(opts ScaffoldOptions, explicitFolderName string) error {
 	data := TemplateData{
 		Title:       opts.Title,
 		Description: opts.Description,
-		Type:        opts.Type,
-		Level:       opts.Level,
+		Type:        string(opts.Type),
+		Level:       string(opts.Level),
 		Weight:      weight,
 		OrgID:       opts.OrgID,
 		Category:    opts.Category,
@@ -264,7 +264,7 @@ func scaffoldNode(opts ScaffoldOptions, explicitFolderName string) error {
 	return nil
 }
 
-func scaffoldChild(opts ScaffoldOptions, cType, title, into string) (string, error) {
+func scaffoldChild(opts ScaffoldOptions, cType academyModel.ContentType, title, into string) (string, error) {
 	child := opts
 	child.Type = cType
 	child.Title = title
@@ -301,29 +301,25 @@ func scaffoldTree(opts ScaffoldOptions) error {
 
 	currentDir := baseDir
 
-	if opts.Type == string(academyModel.LearningPath) {
-		currentDir, err = scaffoldChild(opts, string(Course), "Course 1", currentDir)
+	// Only root types reach scaffoldTree: learning-path builds a course/module/page
+	// starter tree; certification builds an exam.
+	if opts.Type == academyModel.LearningPath {
+		currentDir, err = scaffoldChild(opts, Course, "Course 1", currentDir)
+		if err != nil {
+			return err
+		}
+		currentDir, err = scaffoldChild(opts, Module, "Module 1", currentDir)
+		if err != nil {
+			return err
+		}
+		_, err = scaffoldChild(opts, Page, "Page 1", currentDir)
 		if err != nil {
 			return err
 		}
 	}
 
-	if opts.Type == string(academyModel.LearningPath) || opts.Type == string(Course) {
-		currentDir, err = scaffoldChild(opts, string(Module), "Module 1", currentDir)
-		if err != nil {
-			return err
-		}
-	}
-
-	if opts.Type == string(academyModel.LearningPath) || opts.Type == string(Course) || opts.Type == string(Module) {
-		_, err = scaffoldChild(opts, string(Page), "Page 1", currentDir)
-		if err != nil {
-			return err
-		}
-	}
-
-	if opts.Type == string(academyModel.Certification) {
-		_, err = scaffoldChild(opts, string(Exam), "Exam 1", currentDir)
+	if opts.Type == academyModel.Certification {
+		_, err = scaffoldChild(opts, Exam, "Exam 1", currentDir)
 		if err != nil {
 			return err
 		}
@@ -346,12 +342,12 @@ func scaffoldChallenge(opts ScaffoldOptions) error {
 
 	currentDir := baseDir
 
-	_, err = scaffoldChild(opts, string(Lab), "Lab", currentDir)
+	_, err = scaffoldChild(opts, Lab, "Lab", currentDir)
 	if err != nil {
 		return err
 	}
 
-	_, err = scaffoldChild(opts, string(Exam), "Exam", currentDir)
+	_, err = scaffoldChild(opts, Exam, "Exam", currentDir)
 	if err != nil {
 		return err
 	}
@@ -366,7 +362,7 @@ func scaffoldChallenge(opts ScaffoldOptions) error {
 
 	for _, dir := range contentDirs {
 		pageOpts := opts
-		pageOpts.Type = string(Page)
+		pageOpts.Type = Page
 		pageOpts.Title = dir.name
 		pageOpts.Description = ""
 		pageOpts.Category = ""

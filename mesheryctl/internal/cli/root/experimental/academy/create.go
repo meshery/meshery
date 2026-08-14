@@ -45,27 +45,24 @@ mesheryctl exp academy create --type challenge --title "My Challenge" --descript
 		return mesheryctlflags.ValidateCmdFlags(cmd, &createAcademyFlags)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if createAcademyFlags.Type == "" {
-			return errTaxonomyType("")
-		}
-		cType := createAcademyFlags.Type
-		if !isRootType(cType) {
-			return errTaxonomyType(cType)
+		cType := academyModel.ContentType(createAcademyFlags.Type)
+		if !isRootType(string(cType)) {
+			return errTaxonomyType(createAcademyFlags.Type)
 		}
 		return executeCreate()
 	},
 }
 
 func executeCreate() error {
-	cType := createAcademyFlags.Type
-	if !IsValidNodeType(cType) {
+	cType := academyModel.ContentType(createAcademyFlags.Type)
+	if !IsValidNodeType(string(cType)) {
 		return errTaxonomyType(createAcademyFlags.Type)
 	}
 
 	targetDir := createAcademyFlags.Into
 
 	if targetDir == "" {
-		if !isRootType(cType) {
+		if !isRootType(string(cType)) {
 			return errMissingInto()
 		}
 		var err error
@@ -77,14 +74,14 @@ func executeCreate() error {
 
 	orgID := createAcademyFlags.OrgID
 
-	if isRootType(cType) {
+	if isRootType(string(cType)) {
 		if orgID == "" {
 			return errMissingOrgID()
 		}
 		if err := validatePathSegment(orgID); err != nil {
 			return err
 		}
-		targetDir = filepath.Join(targetDir, "content", contentDirSegment(cType), orgID)
+		targetDir = filepath.Join(targetDir, "content", contentDirSegment(string(cType)), orgID)
 	}
 
 	var tagsList []string
@@ -97,7 +94,7 @@ func executeCreate() error {
 	}
 
 	if createAcademyFlags.Level == "" {
-		if isRootType(cType) {
+		if isRootType(string(cType)) {
 			createAcademyFlags.Level = string(academyModel.Beginner)
 		}
 	} else {
@@ -110,7 +107,7 @@ func executeCreate() error {
 		Type:        cType,
 		Title:       createAcademyFlags.Title,
 		Description: createAcademyFlags.Description,
-		Level:       createAcademyFlags.Level,
+		Level:       academyModel.Level(createAcademyFlags.Level),
 		OrgID:       orgID,
 		Category:    createAcademyFlags.Category,
 		Tags:        tagsList,
@@ -119,11 +116,14 @@ func executeCreate() error {
 		ID:          createAcademyFlags.ID,
 	}
 
-	// course/module routes through scaffoldTree, which auto-generates a module-1/page-1 stub tree beneath them
-	if isRootType(cType) {
-		return scaffoldTree(opts)
-	} else if cType == string(academyModel.Challenge) {
+	// Root types (learning-path, certification) scaffold a full starter tree; challenge
+	// has its own lab/exam/content shape. Structural nodes (course, module, page, etc.)
+	// add a single node into the existing tree at --into.
+	if cType == academyModel.Challenge {
 		return scaffoldChallenge(opts)
+	}
+	if isRootType(string(cType)) {
+		return scaffoldTree(opts)
 	}
 
 	return scaffoldNode(opts, "")

@@ -8,16 +8,14 @@ import (
 	academyModel "github.com/meshery/schemas/models/v1beta3/academy"
 )
 
-// NodeKind represents the structural types for Layer5 Academy content.
-type NodeKind string
-
+// Structural content types for Layer5 Academy content.
 const (
-	Course NodeKind = "course"
-	Module NodeKind = "module"
-	Page   NodeKind = "page"
-	Lab    NodeKind = "lab"
-	Test   NodeKind = "test"
-	Exam   NodeKind = "exam"
+	Course academyModel.ContentType = "course"
+	Module academyModel.ContentType = "module"
+	Page   academyModel.ContentType = "page"
+	Lab    academyModel.ContentType = "lab"
+	Test   academyModel.ContentType = "test"
+	Exam   academyModel.ContentType = "exam"
 )
 
 // AllowedChildren maps a content type to the types of children it can contain.
