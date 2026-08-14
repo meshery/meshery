@@ -357,7 +357,7 @@ const MesherySettings = () => {
           </div>
         </>
       ) : (
-        <DefaultError />
+        <DefaultError permissionKey={Keys.MesherySystemViewSettings} />
       )}
     </>
   );
