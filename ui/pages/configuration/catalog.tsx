@@ -20,7 +20,7 @@ function CatalogPage() {
           arePatternsReadOnly={true}
         />
       ) : (
-        <DefaultError />
+        <DefaultError permissionKey={Keys.CatalogManagementViewCatalog} />
       )}
     </MesheryPage>
   );
