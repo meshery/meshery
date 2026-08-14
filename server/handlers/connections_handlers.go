@@ -471,8 +471,13 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	eventBuilder = eventBuilder.WithDescription(description)
 
 	if connection.Status != "" {
-		event, _ := h.NotifySmOfConnectionStatusChange(req.Context(), userID, provider, token, connection)
-		_ = provider.PersistEvent(event, token)
+		_, err := h.NotifySmOfConnectionStatusChange(req.Context(), userID, provider, token, connection)
+		if err != nil {
+			wrappedErr := ErrSendMachineEvent(err)
+			h.log.Error(wrappedErr)
+			writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
+			return
+		}
 	}
 
 	event := eventBuilder.WithSeverity(events.Informational).Build()
@@ -563,19 +568,25 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 		event, err := inst.SendEvent(detachedCtx, machines.EventType(helpers.StatusToEvent(connection.Status)), nil)
 		if err != nil {
 			h.log.Error(err)
-			_ = provider.PersistEvent(*event, token)
-			h.config.EventBroadcaster.Publish(userID, event)
-			return *event, err
+			if event != nil {
+				_ = provider.PersistEvent(*event, token)
+				h.config.EventBroadcaster.Publish(userID, event)
+				return *event, err
+			}
+			return events.Event{}, err
 		}
 
 		if connection.Status == connections.DELETED {
 			smInstanceTracker.Remove(inst.ID)
 		}
 
-		_ = provider.PersistEvent(*event, token)
-		h.config.EventBroadcaster.Publish(userID, event)
+		if event != nil {
+			_ = provider.PersistEvent(*event, token)
+			h.config.EventBroadcaster.Publish(userID, event)
+			return *event, nil
+		}
 
-		return *event, nil
+		return events.Event{}, nil
 	}
 
 	return *eventBuilder.Build(), nil

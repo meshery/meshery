@@ -87,9 +87,10 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 	k8scontext, err := provider.GetK8sContext(token, contextID)
 	if err != nil {
-		eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to delete connection for %s", k8scontext.Name)).WithMetadata(map[string]interface{}{
-			"error": err,
-		})
+		wrappedErr := ErrGetK8sContexts(err)
+		h.log.Error(wrappedErr)
+		writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
+		return
 	}
 
 	description := fmt.Sprintf("Delete request received for kubernetes context \"%s\"", k8scontext.Name)
@@ -121,6 +122,20 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		"kubernetes",
 		kubernetes.AssignInitialCtx,
 	)
+	if err != nil {
+		wrappedErr := ErrInitializeMachine(err)
+		initErrEvent := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to initialize connection %s for deletion", contextID)).WithMetadata(map[string]interface{}{
+			"error": wrappedErr,
+		}).Build()
+		if initErrEvent != nil {
+			_ = provider.PersistEvent(*initErrEvent, token)
+			go h.config.EventBroadcaster.Publish(userID, initErrEvent)
+		}
+		h.log.Error(wrappedErr)
+		writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
+		return
+	}
+
 	// A machine that never initialized has no FSM state to unwind and no
 	// cluster-side resources to clean up: DeleteAction's work (undeploying
 	// operators, flushing MeshSync data) all runs off a MachineCtx that was
@@ -130,28 +145,28 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	// entry directly instead. See mhelpers.HasMachineContext.
 	if !mhelpers.HasMachineContext(inst) {
 		smInstanceTracker.Remove(connectionUUID)
-	} else {
-		// Detach from the HTTP request lifecycle so that side-effects aren't cancelled when the handler returns
-		detachedCtx := context.WithoutCancel(req.Context())
-		event, err := inst.SendEvent(detachedCtx, machines.Delete, nil)
-		if err != nil {
-			h.log.Error(err)
-			h.log.Debug(event)
-		} else {
-			smInstanceTracker.Remove(connectionUUID)
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	// Detach from the HTTP request lifecycle so that side-effects aren't cancelled when the handler returns
+	detachedCtx := context.WithoutCancel(req.Context())
+	deleteEvent, sendErr := inst.SendEvent(detachedCtx, machines.Delete, nil)
+	if sendErr != nil {
+		wrappedErr := ErrSendMachineEvent(sendErr)
+		h.log.Error(wrappedErr)
+		writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
+		if deleteEvent != nil {
+			_ = provider.PersistEvent(*deleteEvent, token)
+			go h.config.EventBroadcaster.Publish(userID, deleteEvent)
 		}
+		return
 	}
 
-	if err != nil {
-		h.log.Error(err)
-		eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", contextID)).WithMetadata(map[string]interface{}{
-			"error": err,
-		})
-		event := eventBuilder.Build()
-		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
+	smInstanceTracker.Remove(connectionUUID)
+	if deleteEvent != nil {
+		_ = provider.PersistEvent(*deleteEvent, token)
+		go h.config.EventBroadcaster.Publish(userID, deleteEvent)
 	}
-	// go h.config.EventBroadcaster.Publish(userID, event)
-
-	// h.config.K8scontextChannel.PublishContext()
+	w.WriteHeader(http.StatusOK)
 }

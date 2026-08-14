@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/controllers"
 )
@@ -114,6 +115,44 @@ func TestMesheryControllersHelperConcurrency(t *testing.T) {
 			defer wg.Done()
 			mch.mu.Lock()
 			mch.ctxControllerHandlers = make(map[MesheryController]controllers.IMesheryController)
+			mch.mu.Unlock()
+		}()
+	}
+	wg.Wait()
+}
+
+// TestMesheryControllersHelperOperatorStatusConcurrency verifies concurrent calls to
+// UpdateOperatorsStatusMap, GetOperatorsStatusMap, and operatorStatusObserved
+// are safe under the race detector.
+func TestMesheryControllersHelperOperatorStatusConcurrency(t *testing.T) {
+	stub := &stubController{status: controllers.Deployed}
+	mch := &MesheryControllersHelper{
+		ctxControllerHandlers: map[MesheryController]controllers.IMesheryController{
+			MesheryOperator: stub,
+		},
+		meshsyncDeploymentMode: connections.MeshsyncDeploymentModeOperator,
+	}
+	ot := NewOperatorTracker(false)
+
+	var wg sync.WaitGroup
+	for i := 0; i < 100; i++ {
+		wg.Add(4)
+		go func() {
+			defer wg.Done()
+			mch.UpdateOperatorsStatusMap(ot)
+		}()
+		go func() {
+			defer wg.Done()
+			_ = mch.GetOperatorsStatusMap()
+		}()
+		go func() {
+			defer wg.Done()
+			_ = mch.operatorStatusObserved()
+		}()
+		go func() {
+			defer wg.Done()
+			mch.mu.Lock()
+			mch.ctxOperatorStatus = controllers.Undeployed
 			mch.mu.Unlock()
 		}()
 	}

@@ -70,7 +70,7 @@ type MesheryControllersHelper struct {
 	// needs a context identifier takes one from its caller (the K8sContext is
 	// available at every call site) rather than reading this field.
 	contextID string
-	// mu protects ctxControllerHandlers and ctxMeshsyncDataHandler from concurrent reads and writes
+	// mu protects ctxControllerHandlers, ctxOperatorStatus, and ctxMeshsyncDataHandler from concurrent reads and writes
 	// across the connection lifecycle side-effects and background polling HTTP handlers.
 	mu sync.RWMutex
 
@@ -220,6 +220,8 @@ func (mch *MesheryControllersHelper) GetMeshsyncDataHandler() *MeshsyncDataHandl
 }
 
 func (mch *MesheryControllersHelper) GetOperatorsStatusMap() controllers.MesheryControllerStatus {
+	mch.mu.RLock()
+	defer mch.mu.RUnlock()
 	return mch.ctxOperatorStatus
 }
 
@@ -1053,16 +1055,23 @@ func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracke
 
 	if ot.IsUndeployed(mch.contextID) {
 		// this code is probably never reached as mch.contextID is never set
+		mch.mu.Lock()
 		mch.ctxOperatorStatus = controllers.Undeployed
+		mch.mu.Unlock()
 	} else {
 		mch.mu.RLock()
+		var operatorHandler controllers.IMesheryController
 		if mch.ctxControllerHandlers != nil {
-			operatorHandler, ok := mch.ctxControllerHandlers[MesheryOperator]
-			if ok {
-				mch.ctxOperatorStatus = operatorHandler.GetStatus()
-			}
+			operatorHandler = mch.ctxControllerHandlers[MesheryOperator]
 		}
 		mch.mu.RUnlock()
+
+		if operatorHandler != nil {
+			status := operatorHandler.GetStatus()
+			mch.mu.Lock()
+			mch.ctxOperatorStatus = status
+			mch.mu.Unlock()
+		}
 	}
 
 	// }(mch)
@@ -1156,7 +1165,7 @@ func (mch *MesheryControllersHelper) reportMissingOperatorHandler(action, contex
 	mch.emitErrorEvent(action, err, map[string]any{
 		"k8sContextID":           contextID,
 		"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
-		"operatorStatus":         mch.ctxOperatorStatus,
+		"operatorStatus":         mch.GetOperatorsStatusMap(),
 	}, uuid.Nil)
 }
 
@@ -1165,7 +1174,7 @@ func (mch *MesheryControllersHelper) reportMissingOperatorHandler(action, contex
 // NewMesheryControllersHelper seeds. It distinguishes "we saw an operator and
 // can no longer act on it" from "we never reached this cluster at all".
 func (mch *MesheryControllersHelper) operatorStatusObserved() bool {
-	return mch.ctxOperatorStatus != controllers.Unknown
+	return mch.GetOperatorsStatusMap() != controllers.Unknown
 }
 
 // SetOperatorDeployment applies a user-initiated Meshery Operator lifecycle
@@ -1234,7 +1243,7 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 	if mch.meshsyncDeploymentMode != connections.MeshsyncDeploymentModeOperator {
 		return mch
 	}
-	if mch.ctxOperatorStatus != controllers.NotDeployed {
+	if mch.GetOperatorsStatusMap() != controllers.NotDeployed {
 		return mch
 	}
 
@@ -1258,7 +1267,7 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 		mch.emitErrorEvent("Failed to deploy Meshery Operator", err, map[string]any{
 			"k8sContextID":           contextID,
 			"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
-			"operatorStatus":         mch.ctxOperatorStatus,
+			"operatorStatus":         mch.GetOperatorsStatusMap(),
 		}, uuid.Nil)
 	}
 
@@ -1266,7 +1275,7 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 }
 
 func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTracker, contextID string) *MesheryControllersHelper {
-	if mch.ctxOperatorStatus == controllers.Undeployed {
+	if mch.GetOperatorsStatusMap() == controllers.Undeployed {
 		return mch
 	}
 
@@ -1300,7 +1309,7 @@ func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTrack
 		mch.emitErrorEvent("Failed to undeploy Meshery Operator", err, map[string]any{
 			"k8sContextID":           contextID,
 			"meshsyncDeploymentMode": mch.meshsyncDeploymentMode,
-			"operatorStatus":         mch.ctxOperatorStatus,
+			"operatorStatus":         mch.GetOperatorsStatusMap(),
 		}, uuid.Nil)
 	}
 
