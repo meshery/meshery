@@ -12,15 +12,9 @@ vi.mock('@sistent/sistent', () => ({
   Box: ({ children }: any) => <div>{children}</div>,
   Divider: () => <hr />,
   ErrorBoundary: ({ children }: any) => <>{children}</>,
-  IconButton: ({ children, onClick }: any) => (
-    <button type="button" onClick={onClick}>
-      {children}
-    </button>
-  ),
+  LeftArrowIcon: () => <svg data-testid="sidebar-collapse-toggle" />,
   List: ({ children }: any) => <ul>{children}</ul>,
   AccessTimeFilledIcon: () => <svg />,
-  ChevronLeftIcon: () => <svg />,
-  ChevronRightIcon: () => <svg />,
   DesignIcon: () => <svg />,
   PeopleIcon: () => <svg />,
   ViewIcon: () => <svg />,
@@ -35,11 +29,19 @@ vi.mock('@/theme', () => ({
   useTheme: () => ({
     palette: { icon: { default: '#000', neutral: { default: '#000' } } },
     breakpoints: { down: () => '' },
+    spacing: (value: number) => `${value * 8}px`,
   }),
 }));
 
+vi.mock('@/components/general/style', () => ({
+  ChevronButtonWrapper: ({ children, onClick }: any) => (
+    <button type="button" data-testid="sidebar-collapse-button" onClick={onClick}>
+      {children}
+    </button>
+  ),
+}));
+
 vi.mock('./SpacesSwitcher/styles', () => ({
-  DrawerHeader: ({ children }: any) => <div>{children}</div>,
   StyledDrawer: ({ children }: any) => <aside>{children}</aside>,
   StyledMainContent: ({ children }: any) => <main>{children}</main>,
 }));
