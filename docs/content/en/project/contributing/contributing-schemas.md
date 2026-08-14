@@ -29,7 +29,8 @@ This comprehensive guide covers everything you need to know to contribute to the
 17. [Testing Your Changes](#testing-your-changes)
 18. [Common Mistakes to Avoid](#common-mistakes-to-avoid)
 19. [Checklist for Schema Changes](#checklist-for-schema-changes)
-20. [Getting Help](#getting-help)
+20. [Consuming schemas from meshery/meshery](#consuming-schemas-from-mesherymeshery)
+21. [Getting Help](#getting-help)
 
 ---
 
