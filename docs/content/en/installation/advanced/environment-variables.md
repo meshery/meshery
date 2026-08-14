@@ -35,7 +35,7 @@ It intentionally excludes test-only variables such as `RUN_INTEGRATION_TESTS` an
 | Variable | Default | Description | Example |
 | --- | --- | --- | --- |
 | `PROVIDER` | unset | Enforces a single provider and bypasses the provider selection UI. Accepts `Local` (legacy alias `None`) or a registered remote provider name such as `Meshery`. | `PROVIDER=Meshery` |
-| `PROVIDER_BASE_URLS` | Canonical remote-provider list from `install/providers.env` | Comma-separated list of remote provider base URLs that Meshery registers at startup. | `PROVIDER_BASE_URLS=https://cloud.meshery.io,https://cloud.layer5.io` |
+| `PROVIDER_BASE_URLS` | Canonical remote-provider list from `install/providers.env` | Comma-separated list of remote provider base URLs that Meshery registers at startup. | `PROVIDER_BASE_URLS=https://cloud.meshery.io,https://cloud.meshery.io` |
 | `MESHERY_SERVER_CALLBACK_URL` | `http://<request-host>/api/user/token` | Overrides the OAuth callback URL used when Meshery is behind an ingress, reverse proxy, or load balancer. | `MESHERY_SERVER_CALLBACK_URL=https://playground.meshery.io/api/user/token` |
 | `PROVIDER_CAPABILITIES_FILEPATH` | unset | Loads provider capabilities from a local JSON file instead of from the remote provider's `/capabilities` endpoint. Useful for offline development and deterministic testing. | `PROVIDER_CAPABILITIES_FILEPATH=/path/to/capabilities.json` |
 | `SKIP_DOWNLOAD_EXTENSIONS` | `false` | Skips downloading or refreshing remote provider extension packages. Existing local packages can still be used. | `SKIP_DOWNLOAD_EXTENSIONS=true make server` |
@@ -44,7 +44,7 @@ It intentionally excludes test-only variables such as `RUN_INTEGRATION_TESTS` an
 The current built-in `PROVIDER_BASE_URLS` default is:
 
 ```text
-https://cloud.meshery.io,https://perf.smp-spec.io,https://cloud.layer5.io,https://platform.tata-consulting.co.uk,https://collab.eti.cisco.com,https://kickstart.metabit.com,https://provider.od10.in
+https://cloud.meshery.io,https://perf.smp-spec.io,https://platform.tata-consulting.co.uk,https://collab.eti.cisco.com,https://kickstart.metabit.com,https://provider.od10.in
 ```
 
 ## Feature flags and runtime behavior

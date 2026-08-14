@@ -44,6 +44,47 @@ const TAP_SKIP_DIRECTIVE_RE = /\s*#\s*skip\b\s*(.*)$/i;
 const CONNECTION_COMPONENTS = new Set(["kubernetes connection"]);
 const CONNECTION_EPIC = "Kubernetes Connections";
 
+// ---------------------------------------------------------------------------
+// Test Plan deep-link (traceability contract, part A) -----------------------
+//
+// Each connection result carries an Allure `tms` link back to its exact row in
+// the Meshery Test Plan Google Sheet "Latest" tab, so a reviewer can click
+// straight from a report test to its source case. The row is derived from the
+// Test # (col A, i.e. the TC-<n> id): for the connection block,
+//   ROW = TestNum - CONN_ROW_OFFSET
+//
+// !!!  CURRENT-LAYOUT-DEPENDENT - REGENERATE IF THE SHEET IS RE-SORTED  !!!
+// The offset below encodes the CURRENT "Latest" tab layout, in which the
+// connection cases Test# 1012..1089 occupy the contiguous rows 234..311
+// (1012 - 778 = 234 ... 1089 - 778 = 311, verified against the live sheet).
+// If the Latest tab is re-sorted, or rows are inserted above the connection
+// block, both the offset AND the [CONN_TEST_MIN, CONN_TEST_MAX] range MUST be
+// recomputed - otherwise the deep-link silently points at the wrong row. The
+// range guard is deliberate: results outside the connection block get NO link
+// rather than a wrong one (the offset is only known-good for that block).
+const CONN_TEST_MIN = 1012;
+const CONN_TEST_MAX = 1089;
+const CONN_ROW_OFFSET = 778; // ROW = TestNum - 778 (Test# 1012 -> row 234).
+const TEST_PLAN_SHEET_ID = "13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs";
+const TEST_PLAN_GID = "838298230";
+
+// testPlanLink builds the Allure `tms` link back to the Test Plan row for a
+// connection Test # (`TC-<n>`), or returns null when the id is malformed or
+// falls outside the connection block the offset is valid for. See the caveat
+// above: the offset is layout-specific, so a non-connection id must never be
+// turned into a (wrong) deep-link.
+function testPlanLink(testId) {
+  const m = /^TC-(\d+)$/i.exec((testId || "").trim());
+  if (!m) return null;
+  const testNum = Number(m[1]);
+  if (testNum < CONN_TEST_MIN || testNum > CONN_TEST_MAX) return null;
+  const row = testNum - CONN_ROW_OFFSET;
+  const url =
+    `https://docs.google.com/spreadsheets/d/${TEST_PLAN_SHEET_ID}` +
+    `/edit?gid=${TEST_PLAN_GID}#gid=${TEST_PLAN_GID}&range=A${row}`;
+  return { name: `Test Plan ${testId}`, url, type: "tms" };
+}
+
 // Parse suite-wide labels from env: ALLURE_LABELS="key=value,key=value".
 function parseExtraLabels() {
   const raw = process.env.ALLURE_LABELS;
@@ -80,6 +121,7 @@ function tapStatusToAllure(status) {
 // duplicate.
 function parseTitleTokens(rawName, extraLabels = []) {
   const labels = [];
+  const links = [];
   let name = rawName;
   let cut = null;
   let epic = null;
@@ -92,10 +134,14 @@ function parseTitleTokens(rawName, extraLabels = []) {
     name = name.slice(match[0].length);
 
     if (/^TC-/i.test(token)) {
-      // [TC-<n>] — the Test Plan Test #. Emit both testId and a tag.
+      // [TC-<n>] — the Test Plan Test #. Emit both testId and a tag, plus the
+      // deep-link back to the Test Plan row (connection block only; see
+      // testPlanLink).
       const testId = token;
       labels.push({ name: "testId", value: testId });
       labels.push({ name: "tag", value: testId });
+      const link = testPlanLink(testId);
+      if (link) links.push(link);
       continue;
     }
 
@@ -141,7 +187,7 @@ function parseTitleTokens(rawName, extraLabels = []) {
     labels.push({ name: "epic", value: CONNECTION_EPIC });
   }
 
-  return { name: name.trim(), labels };
+  return { name: name.trim(), labels, links };
 }
 
 // parseTestLine turns a single TAP "ok/not ok" line into a normalized record:
@@ -161,8 +207,8 @@ function parseTestLine(rawStatus, rawName, extraLabels = []) {
     name = name.slice(0, skipMatch.index);
   }
 
-  const { name: cleanName, labels } = parseTitleTokens(name, extraLabels);
-  return { status, name: cleanName, skipReason, labels };
+  const { name: cleanName, labels, links } = parseTitleTokens(name, extraLabels);
+  return { status, name: cleanName, skipReason, labels, links };
 }
 
 function baseLabels(extraLabels) {
@@ -203,8 +249,8 @@ function dedupeLabels(labels) {
   return out;
 }
 
-function createAllureResult({ name, status, start, stop, details, labels }) {
-  return {
+function createAllureResult({ name, status, start, stop, details, labels, links }) {
+  const result = {
     uuid: uuid(),
     name,
     status,
@@ -212,8 +258,47 @@ function createAllureResult({ name, status, start, stop, details, labels }) {
     start,
     stop,
     statusDetails: details ? { message: details } : {},
-    labels
+    labels,
+    // _diag accumulates the TAP `#` diagnostic lines that follow this test (its
+    // captured command transcript on failure). It is a scratch field consumed
+    // by finalizeDiagnostics() and deleted before the result JSON is written.
+    _diag: []
   };
+  if (links && links.length) result.links = links;
+  return result;
+}
+
+// summarizeDiagnostics picks a one-line headline for statusDetails.message from
+// the captured diagnostic lines: prefer the assertion "...' failed" line (the
+// most informative), falling back to the first non-empty line.
+function summarizeDiagnostics(diagLines) {
+  const failLine = diagLines.find(l => /\bfailed\b/.test(l));
+  return (failLine || diagLines.find(l => l.trim()) || "").trim();
+}
+
+// finalizeDiagnostics turns a failed result's captured BATS output (part B) into
+// debuggable Allure detail: a concise headline (message), the full transcript
+// (trace), AND a text attachment holding the same transcript (the command +
+// captured $output/$stderr surfaced by `bats --print-output-on-failure`). It
+// writes the attachment file into ALLURE_RESULTS_DIR and strips the scratch
+// `_diag` field. Skipped results keep their skip-reason message untouched;
+// passed results carry no diagnostics.
+function finalizeDiagnostics(result) {
+  const diag = result._diag || [];
+  delete result._diag;
+
+  if (result.status !== "failed" || diag.length === 0) return;
+
+  const transcript = diag.join("\n");
+  result.statusDetails.message =
+    summarizeDiagnostics(diag) || result.statusDetails.message || "test failed";
+  result.statusDetails.trace = transcript;
+
+  const attachmentFile = `${result.uuid}-attachment.txt`;
+  fs.writeFileSync(path.join(ALLURE_RESULTS_DIR, attachmentFile), transcript);
+  result.attachments = [
+    { name: "CLI output (bats)", source: attachmentFile, type: "text/plain" }
+  ];
 }
 
 function convertTapToAllure(tapFile) {
@@ -244,7 +329,8 @@ function convertTapToAllure(tapFile) {
         start,
         stop: start + 1,
         details: parsed.skipReason || null,
-        labels: dedupeLabels([...baseLabels(extraLabels), ...parsed.labels])
+        labels: dedupeLabels([...baseLabels(extraLabels), ...parsed.labels]),
+        links: parsed.links
       });
 
       results.push(result);
@@ -252,18 +338,18 @@ function convertTapToAllure(tapFile) {
       continue;
     }
 
-    // Diagnostic lines describe the test that PRECEDES them (e.g. a failing
-    // test's stack in BATS TAP), so attach them to the current result.
+    // Diagnostic lines describe the test that PRECEDES them (a failing test's
+    // stack + captured output in BATS TAP), so accumulate them on the current
+    // result. finalizeDiagnostics() later turns them into message/trace/an
+    // attachment for failed tests.
     const diagMatch = trimmed.match(TAP_DIAGNOSTIC_RE);
     if (diagMatch && current) {
-      const existing = current.statusDetails.message;
-      current.statusDetails.message = existing
-        ? `${existing}\n${diagMatch[1]}`
-        : diagMatch[1];
+      current._diag.push(diagMatch[1]);
     }
   }
 
   for (const result of results) {
+    finalizeDiagnostics(result);
     const outputPath = path.join(ALLURE_RESULTS_DIR, `${result.uuid}-result.json`);
     fs.writeFileSync(outputPath, JSON.stringify(result, null, 2));
   }
@@ -277,6 +363,8 @@ module.exports = {
   parseTestLine,
   dedupeLabels,
   convertTapToAllure,
+  testPlanLink,
+  summarizeDiagnostics,
   CONNECTION_EPIC
 };
 

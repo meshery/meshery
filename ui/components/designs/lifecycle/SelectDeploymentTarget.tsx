@@ -103,6 +103,7 @@ const EnvironmentConnections = ({ environment, connections, onAddConnection }) =
             color="primary"
             onClick={onAddConnection}
             startIcon={<AddCircleIcon />}
+            permissionKey={Keys.WorkspaceManagementEditEnvironment}
           >
             Add a connection
           </InlineButton>{' '}
@@ -227,6 +228,7 @@ export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
               <IconButton
                 onClick={() => setIsEnvrionmentModalOpen(true)}
                 aria-label="edit-environments"
+                permissionKey={Keys.WorkspaceManagementEditEnvironment}
               >
                 <Edit fill={theme.palette.icon.default} />
               </IconButton>
