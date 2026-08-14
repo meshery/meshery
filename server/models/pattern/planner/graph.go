@@ -137,7 +137,12 @@ func (g *Graph) Order() int {
 func (g *Graph) Visit(fn VisitFn) {
 	for node := range g.Nodes {
 		for _, edgeNode := range g.Edges[node] {
-			fn(edgeNode, g.Nodes[edgeNode].Data)
+			n, ok := g.Nodes[edgeNode]
+			if !ok || n == nil {
+				continue
+			}
+
+			fn(edgeNode, n.Data)
 		}
 	}
 }

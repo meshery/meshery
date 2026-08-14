@@ -35,6 +35,15 @@ func CreatePlan(pattern pattern.PatternFile, invert bool) (*Plan, error) {
 		g.AddNode(component.ID.String(), *component)
 	}
 
+	// "dependsOn" entries reference sibling components by display name while
+	// graph nodes are keyed by component ID; resolve the names so that edges
+	// land on real nodes.
+	idsByDisplayName := make(map[string][]string, len(pattern.Components))
+	for _, component := range pattern.Components {
+		name := string(component.DisplayName)
+		idsByDisplayName[name] = append(idsByDisplayName[name], component.ID.String())
+	}
+
 	for _, component := range pattern.Components {
 		_dependsOn, ok := component.Metadata.AdditionalProperties["dependsOn"]
 		if !ok {
@@ -47,12 +56,25 @@ func CreatePlan(pattern pattern.PatternFile, invert bool) (*Plan, error) {
 			return nil, err
 		}
 		for _, dep := range dependsOn {
-			from := dep
-			to := component.DisplayName
+			var depID string
+			switch ids := idsByDisplayName[dep]; len(ids) {
+			case 1:
+				depID = ids[0]
+			case 0:
+				if _, isID := g.Nodes[dep]; !isID {
+					return nil, errors.Errorf("component %s dependsOn %q, which does not match any component in the design", component.DisplayName, dep)
+				}
+				// The entry already carries a component ID.
+				depID = dep
+			default:
+				return nil, errors.Errorf("component %s dependsOn %q, which matches %d components in the design; give them distinct display names or reference the component ID", component.DisplayName, dep, len(ids))
+			}
+
+			from := depID
+			to := component.ID.String()
 
 			if invert {
-				from = component.DisplayName
-				to = dep
+				from, to = to, from
 			}
 
 			g.AddEdge(from, to)
