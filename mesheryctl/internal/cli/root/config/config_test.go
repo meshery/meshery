@@ -35,7 +35,8 @@ func TestGetBuild(t *testing.T) {
 
 func TestGetLocation(t *testing.T) {
 	token := Token{}
-	const mesheryFolder = ".meshery"
+	mesheryFolder := ".meshery"
+	
 	for _, test := range tests {
 		token.SetLocation(test)
 		got := token.GetLocation()
