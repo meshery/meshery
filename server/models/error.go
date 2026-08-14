@@ -611,7 +611,7 @@ func ErrGrafanaScan(err error) error {
 }
 
 func ErrCodexConnectivity(err error) error {
-	return errors.New(ErrCodexConnectivityCode, errors.Alert, []string{"Unable to connect to Codex"}, []string{err.Error()}, []string{"API key might not be correct", "Codex endpoint might not be reachable from Meshery"}, []string{"Check if your API key is correct", "Verify your network allows egress to api.openai.com"})
+	return errors.New(ErrCodexConnectivityCode, errors.Alert, []string{"Unable to connect to Codex"}, []string{err.Error()}, []string{"API key might not be correct", "Codex endpoint might not be reachable from Meshery"}, []string{"Check if your API key is correct", "Verify your network allows egress to the configured Codex baseUrl"})
 }
 
 func ErrPrometheusScan(err error) error {

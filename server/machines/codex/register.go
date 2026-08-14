@@ -3,6 +3,7 @@ package codex
 import (
 	"context"
 	"fmt"
+	"net"
 	"net/http"
 	"net/url"
 	"time"
@@ -25,6 +26,42 @@ func (ra *RegisterAction) ExecuteOnEntry(ctx context.Context, machineCtx interfa
 }
 
 func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
+	return machines.Exit, nil, nil
+}
+
+func (ra *RegisterAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
+	return machines.NoOp, nil, nil
+}
+
+type ConnectAction struct{}
+
+func (ca *ConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
+	return machines.NoOp, nil, nil
+}
+
+func isPrivateOrLocalIP(ip net.IP) bool {
+	return ip.IsLoopback() || ip.IsPrivate() || ip.IsLinkLocalUnicast() ||
+		ip.IsLinkLocalMulticast() || ip.IsUnspecified()
+}
+
+func validateBaseURLHost(ctx context.Context, parsedURL *url.URL) error {
+	host := parsedURL.Hostname()
+	ips, err := net.DefaultResolver.LookupIPAddr(ctx, host)
+	if err != nil {
+		return fmt.Errorf("failed to resolve baseUrl host %q: %w", host, err)
+	}
+	if len(ips) == 0 {
+		return fmt.Errorf("baseUrl host %q did not resolve to any address", host)
+	}
+	for _, ipAddr := range ips {
+		if isPrivateOrLocalIP(ipAddr.IP) {
+			return fmt.Errorf("baseUrl resolves to a disallowed private/loopback/link-local address")
+		}
+	}
+	return nil
+}
+
+func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	logLevel := viper.GetInt("LOG_LEVEL")
 	if viper.GetBool("DEBUG") {
 		logLevel = int(logrus.DebugLevel)
@@ -69,12 +106,22 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 
 	if !connPayload.SkipCredentialVerification {
 		log.Debug("executing connectivity check for Codex connection")
-		client := &http.Client{Timeout: 10 * time.Second}
 
 		parsedURL, parseErr := url.Parse(codexConn.BaseURL)
 		if parseErr != nil || parsedURL.Scheme != "https" || parsedURL.User != nil {
 			validationErr := fmt.Errorf("baseUrl must be a valid https URL without embedded credentials")
 			return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": models.ErrCodexConnectivity(validationErr)}).Build(), models.ErrCodexConnectivity(validationErr)
+		}
+
+		if hostErr := validateBaseURLHost(ctx, parsedURL); hostErr != nil {
+			return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": models.ErrCodexConnectivity(hostErr)}).Build(), models.ErrCodexConnectivity(hostErr)
+		}
+
+		client := &http.Client{
+			Timeout: 10 * time.Second,
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return fmt.Errorf("redirects are not allowed for Codex connectivity checks")
+			},
 		}
 
 		req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("%s/models", codexConn.BaseURL), nil)
@@ -104,6 +151,6 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 	return machines.Exit, nil, nil
 }
 
-func (ra *RegisterAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
+func (ca *ConnectAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	return machines.NoOp, nil, nil
 }

@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/meshery/meshery/server/machines"
-	"github.com/meshery/meshery/server/machines/grafana"
 	"github.com/meshery/meshery/server/machines/codex"
+	"github.com/meshery/meshery/server/machines/grafana"
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/machines/prometheus"
 	"github.com/meshery/meshery/server/models"
@@ -72,7 +72,11 @@ func getMachine(initialState machines.StateType, mtype, id string, userID core.U
 	}
 
 	connect := mch.States[machines.CONNECTED]
-	mch.States[machines.CONNECTED] = *connect.RegisterAction(&machines.DefaultConnectAction{})
+	if action := connectActionForKind(mtype); action != nil {
+		mch.States[machines.CONNECTED] = *connect.RegisterAction(action)
+	} else {
+		mch.States[machines.CONNECTED] = *connect.RegisterAction(&machines.DefaultConnectAction{})
+	}
 
 	return mch, nil
 }
@@ -87,6 +91,16 @@ func registerActionForKind(mtype string) machines.Action {
 		return &codex.RegisterAction{}
 	case "prometheus":
 		return &prometheus.RegisterAction{}
+	}
+	return nil
+}
+
+// connectActionForKind returns the kind-specific action run on entry to the
+// CONNECTED state, or nil to fall back to the default connect behavior.
+func connectActionForKind(mtype string) machines.Action {
+	switch mtype {
+	case "codex":
+		return &codex.ConnectAction{}
 	}
 	return nil
 }
