@@ -8,7 +8,22 @@ on:
       - "docs/**"
       - "mesheryctl/**"
       - "*.md"
-      - ".github/**"
+      # Inert .github paths only. This used to exclude ".github/**" wholesale,
+      # which meant a PR changing this workflow - or test-e2e.yml, or the
+      # composite actions they call - ran no build and no E2E at all. Changes to
+      # CI were exactly the changes CI never tested, so a workflow repair shipped
+      # completely unverified. Anything under .github/workflows, .github/actions
+      # or .github/scripts now builds and tests; templates, meetings, assets and
+      # the top-level config files still do not.
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/meetings/**"
+      - ".github/assets/**"
+      - ".github/agents/**"
+      - ".github/samples/**"
+      - ".github/aw/**"
+      - ".github/*.md"
+      - ".github/*.yml"
+      - ".github/*.yaml"
       - "Makefile"
   push:
     branches:
@@ -17,7 +32,16 @@ on:
       - "docs/**"
       - "mesheryctl/**"
       - "*.md"
-      - ".github/**"
+      # Same narrowing as the pull_request trigger above.
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/meetings/**"
+      - ".github/assets/**"
+      - ".github/agents/**"
+      - ".github/samples/**"
+      - ".github/aw/**"
+      - ".github/*.md"
+      - ".github/*.yml"
+      - ".github/*.yaml"
 
 permissions:
   contents: read
@@ -31,7 +55,7 @@ jobs:
     with:
       meshery-image: ${{ needs.build-meshery.outputs.meshery-image }}
     secrets:
-      REMOTE_PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TOKEN }}
+      REMOTE_PROVIDER_TEST_USER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
   publish-allure-report:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}    
     needs: [build-meshery, tests-e2e]
