@@ -12,6 +12,7 @@ import {
   Tooltip,
   useTheme,
 } from '@sistent/sistent';
+import { Keys } from '@meshery/schemas/permissions';
 import Modal from './shared/Modal/Modal';
 import _PromptComponent, { PromptRef } from './general/PromptComponent';
 import { CON_OPS, CoreConnectionKinds } from '../utils/Enum';
@@ -306,6 +307,7 @@ const MesheryCredentialComponent: React.FC = () => {
                   aria-label="delete"
                   onClick={(e) => handleDeleteCredentialConfirm(e, rowData)}
                   size="large"
+                  permissionKey={Keys.SecurityManagementDeleteCredential}
                 >
                   <DeleteIcon fill={theme?.palette?.icon?.default} />
                 </IconButton>
