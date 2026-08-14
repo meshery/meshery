@@ -72,7 +72,7 @@ func errInvalidLevel(invalidLevel string) error {
 
 func errInvalidParentMetadata(indexPath, cType, reason string) error {
 	return errors.New(ErrInvalidParentMetadataCode, errors.Alert,
-		[]string{"Cannot validate nesting for ", cType, " at ", indexPath, ": ", reason},
+		[]string{fmt.Sprintf("Cannot validate nesting for %s at %s: %s", cType, indexPath, reason)},
 		[]string{"The parent _index.md is missing, unreadable, or has invalid frontmatter."},
 		[]string{"A prior scaffold may have been interrupted, or the target directory wasn't created by this tool."},
 		[]string{"Ensure --into points at a directory scaffolded by academy create, or provide a valid parent _index.md."},

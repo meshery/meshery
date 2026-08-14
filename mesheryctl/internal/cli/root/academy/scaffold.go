@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"text/template"
 
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/experimental/academy/templates"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/academy/templates"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	academyModel "github.com/meshery/schemas/models/v1beta3/academy"
 	"gopkg.in/yaml.v3"

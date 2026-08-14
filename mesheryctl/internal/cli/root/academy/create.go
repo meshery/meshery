@@ -33,13 +33,13 @@ For 'learning-path', it creates a full starter tree.
 For others, it adds a single node into an existing tree at the path specified by '--into'.`,
 	Example: `
 // Scaffold a full learning path tree (root type via --type flag)
-mesheryctl exp academy create --type learning-path --title "My Path" --description "Desc" --level beginner --org my-org
+mesheryctl academy create --type learning-path --title "My Path" --description "Desc" --level beginner --org my-org
 
 // Scaffold a single course into an existing tree (structural node via subcommand)
-mesheryctl exp academy create course "New Course" --description "Desc" --into ./my-path
+mesheryctl academy create course "New Course" --description "Desc" --into ./my-path
 
 // Scaffold a challenge
-mesheryctl exp academy create --type challenge --title "My Challenge" --description "Desc" --org my-org
+mesheryctl academy create --type challenge --title "My Challenge" --description "Desc" --org my-org
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &createAcademyFlags)
