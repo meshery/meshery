@@ -50,10 +50,19 @@ const WorkspaceModalContextProvider = ({ children }) => {
 
   const onLoadResource = async ({ id, workspaceId, orgId }) => {
     if (!workspaceId && !orgId) {
-      setCurrentLoadedResource({ id, workspace: { id: '' }, org: { id: '' } });
+      setCurrentLoadedResource({
+        id,
+        workspace: {
+          id: '',
+          name: '',
+        },
+        org: {
+          id: '',
+          name: '',
+        },
+      });
       return;
     }
-
     try {
       const resource = {
         id,
@@ -77,7 +86,7 @@ const WorkspaceModalContextProvider = ({ children }) => {
       console.log('onloadResource', workspaceId, orgId, resource);
       setCurrentLoadedResource(resource);
     } catch (e) {
-      console.log('[onLoadResource] failed set orgWorkspace context', e);
+      console.error('[onLoadResource] failed set orgWorkspace context', e);
     }
   };
 
