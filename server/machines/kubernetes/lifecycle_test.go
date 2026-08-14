@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"context"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -239,19 +240,30 @@ func TestDeleteFlushMeshSyncDataSerialization(t *testing.T) {
 	<-flushCalled
 }
 
+type spyLogger struct {
+	logger.Handler
+	onInfo func(args ...interface{})
+}
+
+func (s *spyLogger) Info(args ...interface{}) {
+	if s.onInfo != nil {
+		s.onInfo(args...)
+	}
+	s.Handler.Info(args...)
+}
+
 // TestStaleConnectWorkerCancellation verifies that a stale worker detects
 // lifecycle cancellation when it resumes and does not continue into protected
 // side effects.
 //
-// The test is fully deterministic: it uses a channel (workerDone) to receive
-// an explicit signal when the stale goroutine exits, so the assertion does not
-// depend on timing. A conservative 5-second deadline is kept only as a
+// The test is fully deterministic: it uses spyLogger to receive an explicit
+// completion signal (workerAborted) when the stale worker logs its cancellation
+// abort message and exits. A conservative 5-second deadline is kept only as a
 // deadlock/hang guard for CI.
 //
 // This test would FAIL if the ctx.Err() guard were removed from the action's
 // Execute method.
 func TestStaleConnectWorkerCancellation(t *testing.T) {
-	log := getTestLogger()
 	ctx := context.WithValue(context.Background(), models.UserCtxKey, &models.User{ID: core.Uuid(uuid.Must(uuid.NewV4()))})
 	sysID := core.Uuid(uuid.Must(uuid.NewV4()))
 	ctx = context.WithValue(ctx, models.SystemIDKey, &sysID)
@@ -264,12 +276,28 @@ func TestStaleConnectWorkerCancellation(t *testing.T) {
 	}
 	ctx = context.WithValue(ctx, models.ProviderCtxKey, p)
 
+	workerAborted := make(chan struct{})
+	spyLog := &spyLogger{
+		Handler: getTestLogger(),
+		onInfo: func(args ...interface{}) {
+			for _, arg := range args {
+				if str, ok := arg.(string); ok && strings.Contains(str, "aborted due to lifecycle cancellation") {
+					select {
+					case <-workerAborted:
+					default:
+						close(workerAborted)
+					}
+				}
+			}
+		},
+	}
+
 	machineCtx := &MachineCtx{
 		ActionMutex:        &sync.Mutex{},
-		MesheryCtrlsHelper: models.NewMesheryControllersHelper(log, controllers.OperatorDeploymentConfig{}, nil, nil, p, nil),
+		MesheryCtrlsHelper: models.NewMesheryControllersHelper(spyLog, controllers.OperatorDeploymentConfig{}, nil, nil, p, nil),
 		K8sContext:         models.K8sContext{ID: "test-id"},
 		OperatorTracker:    models.NewOperatorTracker(false),
-		log:                log,
+		log:                spyLog,
 		EventBroadcaster:   models.NewBroadcaster("test"),
 	}
 
@@ -293,36 +321,26 @@ func TestStaleConnectWorkerCancellation(t *testing.T) {
 	//    it gets a chance to enter the protected section.
 	cancelConnect()
 
-	// 3. workerDone is closed once the stale goroutine has released
-	//    ActionMutex and exited. This gives the test a deterministic signal
-	//    to wait on instead of a fixed sleep.
-	workerDone := make(chan struct{})
-	go func() {
-		// Re-acquiring ActionMutex unblocks only after the stale goroutine
-		// releases it (via its own defer), meaning the goroutine has fully
-		// exited its critical section.
-		machineCtx.ActionMutex.Lock()
-		machineCtx.ActionMutex.Unlock()
-		close(workerDone)
-	}()
-
-	// 4. Release ActionMutex: the stale goroutine may now enter, observe
+	// 3. Release ActionMutex: the stale goroutine may now enter, observe
 	//    ctx.Err() != nil, and exit without running the side effect.
 	machineCtx.ActionMutex.Unlock()
 
-	// 5. Wait for the stale goroutine to finish, then assert the side effect
+	// 4. Wait for the stale goroutine to abort, then assert the side effect
 	//    was NOT executed. The 5-second deadline is a deadlock/hang guard only.
 	const deadline = 5 * time.Second
 	select {
-	case <-workerDone:
-		// Goroutine has exited. Verify the side effect was not triggered.
+	case <-workerAborted:
+		// Stale worker detected cancellation and aborted. Verify the side
+		// effect was not triggered.
 		select {
 		case <-flushCalled:
 			t.Fatal("Stale worker executed FlushMeshSyncData despite lifecycle cancellation")
 		default:
 			// Correct: ctx.Err() was detected and side effects were aborted.
 		}
+	case <-flushCalled:
+		t.Fatal("Stale worker executed FlushMeshSyncData instead of aborting on cancelled lifecycle context")
 	case <-time.After(deadline):
-		t.Fatalf("Stale worker goroutine did not exit within %v — possible deadlock or hang", deadline)
+		t.Fatalf("Stale worker goroutine did not complete within %v — possible deadlock or hang", deadline)
 	}
 }
