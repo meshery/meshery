@@ -1,1 +1,1 @@
-Hi guys, I am Abiola a software developer looking to solidify my experience through team work and open source contribtion, looking forward to this project.
+Hi everyone, I am Abiola, a software developer looking to solidify my experience through teamwork and open-source contributions. I look forward to contributing to this project.
