@@ -117,7 +117,6 @@ const StyledMainContent = styled(Box)(() => ({
 // viewport in normal mode and collapses to a full-width sheet on smaller
 // screens. Mirrors the legacy `StyledModal` behaviour.
 const StyledRegistryModal = styled(Modal)(({ theme }) => ({
-  zIndex: 1500,
   '& .MuiDialog-paperFullScreen': {
     margin: 0,
   },
