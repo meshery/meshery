@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/constants"
@@ -29,10 +30,14 @@ import (
 	"github.com/spf13/viper"
 )
 
-var (
-	// Mesheryctl config - holds config handler
+// VersionCmdHandler encapsulates command dependencies and state
+type VersionCmdHandler struct {
 	mctlCfg *config.MesheryCtlConfig
-)
+}
+
+func newVersionCmdHandler() *VersionCmdHandler {
+	return &VersionCmdHandler{}
+}
 
 var linkDoc = map[string]string{
 	"link":    "![version-usage](../../images/version.png)",
@@ -40,124 +45,138 @@ var linkDoc = map[string]string{
 }
 
 // versionCmd represents the version command
-var versionCmd = &cobra.Command{
-	Use:   "version",
-	Short: "Show Meshery CLI and Server versions",
-	Long:  `Version of Meshery command line client - mesheryctl.`,
-	Example: `
+var versionCmd = func() *cobra.Command {
+	handler := newVersionCmdHandler()
+
+	cmd := &cobra.Command{
+		Use:   "version",
+		Short: "Show Meshery CLI and Server versions",
+		Long:  `Version of Meshery command line client - mesheryctl.`,
+		Example: `
 // To view the current version and SHA of release binary of mesheryctl client 
 mesheryctl version
-	`,
-	Annotations: linkDoc,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		var err error
-		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			// get the currCtx
-			utils.Log.Error(ErrProcessingConfig(err))
-			userResponse := false
-			userResponse = utils.AskForConfirmation("Looks like you are using an outdated config file. Do you want to generate a new config file?")
-			if userResponse {
-				utils.BackupConfigFile(utils.DefaultConfigPath)
-				// Create config file if not present in meshery folder
-				err = utils.CreateConfigFile()
-				if err != nil {
-					utils.Log.Error(ErrCreatingConfigFile)
-				}
+`,
+		Annotations: linkDoc,
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			var err error
+			handler.mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
+			if err != nil {
+				utils.Log.Error(ErrProcessingConfig(err))
+				userResponse := utils.AskForConfirmation("Looks like you are using an outdated config file. Do you want to generate a new config file?")
+				if userResponse {
+					utils.BackupConfigFile(utils.DefaultConfigPath)
+					// Create config file if not present in meshery folder
+					err = utils.CreateConfigFile()
+					if err != nil {
+						utils.Log.Error(ErrCreatingConfigFile)
+					}
 
-				// Add Token to context file
-				err = config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
-				if err != nil {
-					utils.Log.Error(ErrAddingTokenToConfig)
-				}
+					// Add Token to context file
+					err = config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
+					if err != nil {
+						utils.Log.Error(ErrAddingTokenToConfig)
+					}
 
-				// Add Context to context file
-				err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true, false)
-				if err != nil {
-					utils.Log.Error(ErrAddingContextToConfig)
-				}
+					// Add Context to context file
+					err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true, false)
+					if err != nil {
+						utils.Log.Error(ErrAddingContextToConfig)
+					}
 
-				utils.Log.Info(
-					fmt.Sprintf("Default config file created at %s",
-						utils.DefaultConfigPath,
-					))
+					utils.Log.Info(
+						fmt.Sprintf("Default config file created at %s",
+							utils.DefaultConfigPath,
+						))
 
-				mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
-				if err != nil {
-					utils.Log.Error(ErrUnmarshallingConfigFile)
+					handler.mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
+					if err != nil {
+						utils.Log.Error(ErrUnmarshallingConfigFile)
+					}
+					currCtx, err := handler.mctlCfg.GetCurrentContext()
+					if err != nil {
+						return err
+					}
+					err = currCtx.ValidateVersion()
+					if err != nil {
+						return err
+					}
+					return nil
 				}
-				currCtx, err := mctlCfg.GetCurrentContext()
-				if err != nil {
-					return err
-				}
-				err = currCtx.ValidateVersion()
-				if err != nil {
-					return err
-				}
-				return nil
+				return models.ErrUnmarshal(errors.New("invalid config file, encountered error processing json"), "meshconfig")
 			}
-			return models.ErrUnmarshal(errors.New("invalid config file, encountered error processing json"), "meshconfig")
-		}
-		currCtx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return err
-		}
-		err = currCtx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
-	Run: func(cmd *cobra.Command, args []string) {
+			currCtx, err := handler.mctlCfg.GetCurrentContext()
+			if err != nil {
+				return err
+			}
+			err = currCtx.ValidateVersion()
+			if err != nil {
+				return err
+			}
+			return nil
+		},
+		Run: func(cmd *cobra.Command, args []string) {
+			handler.runVersionCmd()
+		},
+	}
 
-		url := mctlCfg.GetBaseMesheryURL()
-		build := constants.GetMesheryctlVersion()
-		commitsha := constants.GetMesheryctlCommitsha()
+	return cmd
+}()
 
-		version := config.Version{
-			Build:          "unavailable",
-			CommitSHA:      "unavailable",
-			ReleaseChannel: "unavailable",
-		}
+func (h *VersionCmdHandler) runVersionCmd() {
+	url := h.mctlCfg.GetBaseMesheryURL()
+	build := constants.GetMesheryctlVersion()
+	commitsha := constants.GetMesheryctlCommitsha()
 
-		header := []string{"", "Version", "GitSHA"}
-		rows := [][]string{{"Client", build, commitsha}, {"Server", version.GetBuild(), version.GetCommitSHA()}}
+	version := config.Version{
+		Build:          "unavailable",
+		CommitSHA:      "unavailable",
+		ReleaseChannel: "unavailable",
+	}
 
-		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/version", url), nil)
-		if err != nil {
-			utils.PrintToTable(header, rows, nil)
-			utils.Log.Error(ErrGettingRequestContext(err))
-			return
-		}
+	header := []string{"", "Version", "GitSHA"}
+	rows := [][]string{{"Client", build, commitsha}, {"Server", version.GetBuild(), version.GetCommitSHA()}}
 
-		defer utils.CheckMesheryctlClientVersion(build)
-		client := &http.Client{}
-		resp, err := client.Do(req)
-
-		if err != nil {
-			utils.PrintToTable(header, rows, nil)
-			utils.Log.Warn(ErrConnectingToServer(err))
-			return
-		}
-
-		// needs multiple defer as Body.Close needs a valid response
-		defer func() { _ = resp.Body.Close() }()
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
-			utils.PrintToTable(header, rows, nil)
-			utils.Log.Error(utils.ErrInvalidAPIResponse(err))
-			return
-		}
-
-		err = json.Unmarshal(data, &version)
-		if err != nil {
-			utils.PrintToTable(header, rows, nil)
-			utils.Log.Error(ErrUnmarshallingAPIData(err))
-			return
-		}
-
-		rows[1][1] = version.GetBuild()
-		rows[1][2] = version.GetCommitSHA()
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/version", url), nil)
+	if err != nil {
 		utils.PrintToTable(header, rows, nil)
-	},
+		utils.Log.Error(ErrGettingRequestContext(err))
+		return
+	}
+
+	defer utils.CheckMesheryctlClientVersion(build)
+
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		utils.PrintToTable(header, rows, nil)
+		utils.Log.Warn(ErrConnectingToServer(err))
+		return
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	if resp.StatusCode != http.StatusOK {
+		utils.PrintToTable(header, rows, nil)
+		utils.Log.Warn(fmt.Errorf("server returned non-200 status code: %d", resp.StatusCode))
+		return
+	}
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		utils.PrintToTable(header, rows, nil)
+		utils.Log.Error(utils.ErrInvalidAPIResponse(err))
+		return
+	}
+
+	err = json.Unmarshal(data, &version)
+	if err != nil {
+		utils.PrintToTable(header, rows, nil)
+		utils.Log.Error(ErrUnmarshallingAPIData(err))
+		return
+	}
+
+	rows[1][1] = version.GetBuild()
+	rows[1][2] = version.GetCommitSHA()
+	utils.PrintToTable(header, rows, nil)
 }

@@ -23,6 +23,7 @@ import (
 	"runtime"
 	"slices"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -42,10 +43,6 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-)
-
-var (
-	failure int
 )
 
 type cmdSystemCheckFlags struct {
@@ -85,6 +82,9 @@ type HealthChecker struct {
 	// Things that being used while running these checks
 	context *config.Context
 	mctlCfg *config.MesheryCtlConfig
+
+	// FailureCount tracks healthcheck failures per runner instance
+	FailureCount int
 }
 
 func NewHealthChecker(options *HealthCheckOptions) (*HealthChecker, error) {
@@ -173,7 +173,7 @@ mesheryctl system check --operator
 			prefix := "✓✓"
 			suffix := "met"
 			output := "\n--------------\n--------------\n%s Meshery prerequisites %s"
-			if failure > 0 {
+			if hc.FailureCount > 0 {
 				prefix = "!!"
 				suffix = "not met"
 			}
@@ -330,7 +330,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 			return ErrDockerUnknown(err)
 		}
 		if hc.context.Platform == platformDocker {
-			failure++
+			hc.FailureCount++
 		}
 	} else {
 		// Try to ping the Docker daemon to verify it's actually running
@@ -354,7 +354,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 				return ErrDockerUnknown(err)
 			}
 			if hc.context.Platform == platformDocker {
-				failure++
+				hc.FailureCount++
 			}
 		} else { // if not error we check if we are supposed to print logs
 			// logging if we're supposed to
@@ -381,7 +381,7 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 	client, err := meshkitkube.New([]byte(""))
 	if err != nil {
 		if hc.context.Platform == platformKubernetes { // increase failure count
-			failure++
+			hc.FailureCount++
 		}
 		if hc.Options.PrintLogs { // print logs if we're supposed to
 			utils.Log.Warn(fmt.Errorf("!! cannot initialize Kubernetes client"))
@@ -403,7 +403,7 @@ func (hc *HealthChecker) runKubernetesAPIHealthCheck() error {
 	_, err = podInterface.List(context.TODO(), v1.ListOptions{})
 	if err != nil {
 		if hc.context.Platform == platformKubernetes { // increase failure count
-			failure++
+			hc.FailureCount++
 		}
 		if hc.Options.PrintLogs { // log incase we're supposed to
 			utils.Log.Warn(fmt.Errorf("!! cannot query the Kubernetes API"))
@@ -429,7 +429,7 @@ func (hc *HealthChecker) runKubernetesVersionHealthCheck() error {
 	kubeVersion, err := utils.GetK8sVersionInfo()
 	if err != nil {
 		if hc.context.Platform == platformKubernetes { // increase failure count
-			failure++
+			hc.FailureCount++
 		}
 		// probably kubernetes isn't running
 		if hc.Options.PrintLogs { // log if we're supposed to
@@ -442,7 +442,7 @@ func (hc *HealthChecker) runKubernetesVersionHealthCheck() error {
 		err = utils.CheckK8sVersion(kubeVersion)
 		if err != nil {
 			if hc.context.Platform == platformKubernetes { // increase failure count
-				failure++
+				hc.FailureCount++
 			}
 			if hc.Options.PrintLogs { // log if we're supposed to
 				utils.Log.Warnf("!! %s", err)
@@ -459,7 +459,7 @@ func (hc *HealthChecker) runKubernetesVersionHealthCheck() error {
 	err = utils.CheckKubectlVersion()
 	if err != nil {
 		if hc.context.Platform == platformKubernetes { // increase failure count
-			failure++
+			hc.FailureCount++
 		}
 		if hc.Options.PrintLogs { // log if we're supposed to
 			utils.Log.Warnf("!! %s", err)
@@ -482,7 +482,7 @@ func (hc *HealthChecker) runKubernetesHealthChecks() error {
 		return err
 	}
 	// Run k8s plus kubectl minimum version healthchecks
-	err = hc.runKubernetesVersionHealthCheck()
+	err := hc.runKubernetesVersionHealthCheck()
 	return err
 }
 
@@ -501,7 +501,9 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 		return err
 	}
 
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
 	resp, err := client.Do(req)
 	// failed to fetch response for server version
 	if err != nil || resp.StatusCode != 200 {
@@ -582,16 +584,6 @@ func (hc *HealthChecker) runComponentsHealthChecks() error {
 }
 
 // brokerPodNames are the cleaned pod names the Meshery Broker runs under.
-//
-// Meshery Operator >= 1.0.0 renders the broker from the official NATS chart, so
-// the workload is meshery-nats (pod meshery-nats-0); before that it was
-// meshery-broker. Both are accepted because a given cluster's operator version
-// is not ours to assume - matching only the old name reported a healthy broker
-// as "!! Meshery Broker is not running" on every current cluster.
-//
-// Only the *workload* was renamed. The Broker custom resource is still named
-// meshery-broker (see the CR lookup below, and system/stop.go), so those must
-// not be changed to match.
 var brokerPodNames = []string{"meshery-nats", "meshery-broker"}
 
 // isBrokerPodName reports whether a cleaned pod name (see utils.GetCleanPodName)
@@ -621,7 +613,6 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 	meshsyncCheck := false
 
 	// Traverse the list of pods and check if the operator, broker and meshsync are running
-	// This loop is made because if the clusterIP is not public, then it can't be accessed from outside the cluster
 	for _, pod := range podList.Items {
 		name := utils.GetCleanPodName(pod.GetName())
 
@@ -712,7 +703,9 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 // If no adapter is specified all the adapters are checked
 func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 	url := hc.mctlCfg.GetBaseMesheryURL()
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
 	var adapters []*models.Adapter
 	prefs, err := utils.GetSessionData(hc.mctlCfg)
 	if err != nil {
@@ -734,25 +727,22 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 		return nil
 	}
 	for _, adapter := range adapters {
-		name := adapter.Location
-		skipAdapter := false
-		req, err := utils.NewRequest("GET", fmt.Sprintf("%s/api/system/adapters?adapter=%s", url, name), nil)
-		if err != nil {
-			return err
-		}
-		resp, err := client.Do(req)
-		if err != nil {
-			if hc.Options.PrintLogs { // incase we're printing logs
-				utils.Log.Infof("!! failed to connect to Meshery Adapter for %s ", name)
-				skipAdapter = true
-			} else { // or we're supposed to grab the errors
+		err := func(adapter *models.Adapter) error {
+			name := adapter.Location
+			req, err := utils.NewRequest("GET", fmt.Sprintf("%s/api/system/adapters?adapter=%s", url, name), nil)
+			if err != nil {
+				return err
+			}
+			resp, err := client.Do(req)
+			if err != nil {
+				if hc.Options.PrintLogs { // incase we're printing logs
+					utils.Log.Infof("!! failed to connect to Meshery Adapter for %s ", name)
+					return nil
+				}
 				return utils.ErrFailedToConnectAdapter(name, err)
 			}
-			continue
-		}
-		if !skipAdapter {
-			// needs multiple defer as Body.Close needs a valid response
 			defer func() { _ = resp.Body.Close() }()
+
 			if resp.StatusCode != 200 {
 				if hc.Options.PrintLogs { // incase we're printing logs
 					utils.Log.Infof("!! Meshery Adapter for %s is running but not reachable", name)
@@ -764,6 +754,11 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 					utils.Log.Infof("✓ %s adapter is running and reachable", name)
 				}
 			}
+			return nil
+		}(adapter)
+
+		if err != nil {
+			return err
 		}
 	}
 	return nil
