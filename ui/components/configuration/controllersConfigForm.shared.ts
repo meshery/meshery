@@ -14,6 +14,14 @@ export type WatchList = NonNullable<
 
 const longestLine = (value: string) => Math.max(1, ...value.split('\n').map((line) => line.length));
 
-// Longest displayed line + field chrome, never wider than the container.
+const chars = (...parts: Array<string | number | undefined | null>) =>
+  Math.max(1, ...parts.map((part) => longestLine(String(part ?? ''))));
+
+// Definite width (no %): a percentage inside a wrap row makes every field
+// share the line equally and leaves a hole between the compact inputs.
 export const fitWidth = (...parts: Array<string | number | undefined | null>) =>
-  `min(calc(${Math.max(1, ...parts.map((part) => longestLine(String(part ?? ''))))}ch + 2.75em), 100%)`;
+  `calc(${chars(...parts)}ch + 2.75em)`;
+
+// Number inputs keep stepper buttons; those eat the default chrome and wrap "Inherit".
+export const fitNumberWidth = (...parts: Array<string | number | undefined | null>) =>
+  `calc(${chars(...parts)}ch + 4.75em)`;

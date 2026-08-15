@@ -267,6 +267,18 @@ describe('tri-state inherit / override', () => {
     expect(holder.doc()).toEqual({});
   });
 
+  it('clamps replica counts to the schema range 1-10', async () => {
+    const holder = renderForm();
+    const replicas = spinbutton('Replicas', meshsyncGrid());
+
+    await user.type(replicas, '11');
+    expect(holder.doc()).toEqual({ meshsync: { replicas: 10 } });
+
+    await user.clear(replicas);
+    await user.type(replicas, '0');
+    expect(holder.doc()).toEqual({ meshsync: { replicas: 1 } });
+  });
+
   it('round-trips a tri-state boolean, distinguishing Inherit from Disabled', async () => {
     const holder = renderForm();
     await choose(combobox('Secret redaction'), 'Enabled');

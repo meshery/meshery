@@ -2,14 +2,11 @@ import type { ReactNode } from 'react';
 import { Box, CustomTooltip } from '@sistent/sistent';
 import ChoiceCard from '@/components/shared/ChoiceCard';
 import { INHERIT } from './controllersConfigForm.shared';
-import { modeConsequence, type DeploymentMode } from './deploymentMode';
 
 type ControllersConfigModePickerProps = {
   label: ReactNode;
   selected: string;
   inheritModeLabel: string;
-  inheritedMode: DeploymentMode;
-  scope: 'connection' | 'serverDefault';
   disabled: boolean;
   onChange: (selected: string | undefined) => void;
 };
@@ -18,8 +15,6 @@ export default function ControllersConfigModePicker({
   label,
   selected,
   inheritModeLabel,
-  inheritedMode,
-  scope,
   disabled,
   onChange,
 }: ControllersConfigModePickerProps) {
@@ -27,19 +22,22 @@ export default function ControllersConfigModePicker({
     {
       value: INHERIT,
       label: `Inherit (${inheritModeLabel})`,
-      description: `Use the next layer (server default or built-in). ${modeConsequence(inheritedMode, scope)}`,
+      description:
+        'Use the next layer (server default or built-in). Built-in default is Embedded. Changing the mode redeploys controllers.',
       testId: 'controllers-config-mode-inherit',
     },
     {
       value: 'operator',
       label: 'Operator (in-cluster)',
-      description: modeConsequence('operator', scope),
+      description:
+        'Installs Meshery Operator, MeshSync, and Broker into the cluster. Full controller settings apply. Changing the mode redeploys controllers.',
       testId: 'controllers-config-mode-operator',
     },
     {
       value: 'embedded',
       label: 'Embedded (in Meshery Server)',
-      description: modeConsequence('embedded', scope),
+      description:
+        'Runs MeshSync inside Meshery Server. Nothing is installed on the cluster; only output filters apply from this form. Changing the mode redeploys controllers.',
       testId: 'controllers-config-mode-embedded',
     },
   ];

@@ -49,7 +49,15 @@ export default function OperatorVersionField({
         onChange(next.trim() === '' ? undefined : next);
       }}
       renderInput={(params) => <TextField {...params} size="small" placeholder={placeholder} />}
-      sx={{ width: fitWidth(value, placeholder) }}
+      sx={{
+        width: fitWidth(value, placeholder, 'Inherit (server release)'),
+        maxWidth: '100%',
+        '& input::placeholder': {
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        },
+      }}
     />
   );
 }

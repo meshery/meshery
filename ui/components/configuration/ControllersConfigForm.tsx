@@ -27,7 +27,7 @@ import { DeploymentModeBanner, SectionHeading, SectionNotice } from './Deploymen
 import ControllersConfigModePicker from './ControllersConfigModePicker';
 import ControllersConfigWatchList from './ControllersConfigWatchList';
 import OperatorVersionField from './OperatorVersionField';
-import { INHERIT, fitWidth, type WatchList } from './controllersConfigForm.shared';
+import { INHERIT, fitNumberWidth, fitWidth, type WatchList } from './controllersConfigForm.shared';
 
 /**
  * The editable controllers configuration document: the generated PUT request
@@ -87,8 +87,31 @@ const SubsectionTitle = ({
 );
 
 const FieldRow = ({ children }: { children: React.ReactNode }) => (
-  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'flex-start' }}>{children}</Box>
+  <Box
+    sx={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: 2,
+      alignItems: 'flex-start',
+      '& > *': { flex: '0 1 auto', maxWidth: '100%' },
+    }}
+  >
+    {children}
+  </Box>
 );
+
+const controlSx = (nowrapPlaceholder = true) => ({
+  width: '100%',
+  ...(nowrapPlaceholder
+    ? {
+        '& input::placeholder, & textarea::placeholder': {
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        },
+      }
+    : {}),
+});
 
 /**
  * Layered editor for the Meshery Operator, MeshSync, and Broker configuration.
@@ -206,14 +229,14 @@ export default function ControllersConfigForm({
     const inherited = inheritedValue(path) as boolean | undefined;
     const inheritOption = `Inherit (${inherited === undefined ? 'unset' : inherited ? 'Enabled' : 'Disabled'})`;
     return (
-      <Box>
+      <Box sx={{ width: fitWidth(label, inheritOption, 'Enabled', 'Disabled'), maxWidth: '100%' }}>
         {fieldLabel(label, path, helper)}
         <TextField
           select
           size="small"
           disabled={isDisabled(path)}
           value={current === undefined ? INHERIT : current ? 'true' : 'false'}
-          sx={{ width: fitWidth(inheritOption, 'Enabled', 'Disabled') }}
+          sx={controlSx(false)}
           onChange={(e) => {
             const v = e.target.value;
             onChange(setPath(value, path, v === INHERIT ? undefined : v === 'true'));
@@ -236,8 +259,11 @@ export default function ControllersConfigForm({
     const current = getPath(value, path) as string | number | undefined;
     const inherited = inheritedValue(path);
     const placeholder = inherited !== undefined ? `Inherit (${inherited})` : 'Inherit';
+    const width = opts?.number
+      ? fitNumberWidth(label, current, placeholder, 'Inherit')
+      : fitWidth(label, current, placeholder, 'Inherit');
     return (
-      <Box>
+      <Box sx={{ width, maxWidth: '100%' }}>
         {fieldLabel(label, path, helper)}
         <TextField
           size="small"
@@ -245,15 +271,35 @@ export default function ControllersConfigForm({
           disabled={isDisabled(path)}
           value={current ?? ''}
           placeholder={placeholder}
-          sx={{ width: fitWidth(current, placeholder) }}
-          slotProps={opts?.number ? { htmlInput: { min: opts.min, max: opts.max } } : undefined}
+          sx={controlSx()}
+          slotProps={
+            opts?.number ? { htmlInput: { min: opts.min, max: opts.max, step: 1 } } : undefined
+          }
+          onKeyDown={
+            opts?.number
+              ? (event) => {
+                  if (['e', 'E', '+', '-', '.'].includes(event.key)) event.preventDefault();
+                }
+              : undefined
+          }
           onChange={(e) => {
             const raw = e.target.value;
             if (raw === '') {
               onChange(setPath(value, path, undefined));
               return;
             }
-            onChange(setPath(value, path, opts?.number ? Number(raw) : raw));
+            if (!opts?.number) {
+              onChange(setPath(value, path, raw));
+              return;
+            }
+            // Same integer parse as Settings → Performance; clamp to the schema
+            // bounds (html min/max only constrain the stepper).
+            const parsed = parseInt(raw, 10);
+            if (Number.isNaN(parsed)) return;
+            let next = parsed;
+            if (opts.min !== undefined) next = Math.max(opts.min, next);
+            if (opts.max !== undefined) next = Math.min(opts.max, next);
+            onChange(setPath(value, path, next));
           }}
         />
       </Box>
@@ -266,15 +312,16 @@ export default function ControllersConfigForm({
     const joined = current?.join(', ') ?? '';
     const placeholder =
       inherited && inherited.length > 0 ? `Inherit (${inherited.join(', ')})` : 'Inherit (all)';
+    const width = fitWidth(label, joined, placeholder, 'Inherit (all)');
     return (
-      <Box>
+      <Box sx={{ width, maxWidth: '100%' }}>
         {fieldLabel(label, path, helper)}
         <TextField
           size="small"
           disabled={isDisabled(path)}
           value={joined}
           placeholder={placeholder}
-          sx={{ width: fitWidth(joined, placeholder) }}
+          sx={controlSx()}
           onChange={(e) => {
             const raw = e.target.value;
             if (raw.trim() === '') {
@@ -310,15 +357,16 @@ export default function ControllersConfigForm({
     const current = getPath(value, path) as string | undefined;
     const inherited = inheritedValue(path) as string | undefined;
     const inheritOption = `Inherit (${inherited ?? 'unset'})`;
+    const width = fitWidth(label, inheritOption, ...options.map((option) => option.label));
     return (
-      <Box>
+      <Box sx={{ width, maxWidth: '100%' }}>
         {fieldLabel(label, path, helper)}
         <TextField
           select
           size="small"
           disabled={isDisabled(path)}
           value={current ?? INHERIT}
-          sx={{ width: fitWidth(inheritOption, ...options.map((option) => option.label)) }}
+          sx={controlSx(false)}
           onChange={(e) => {
             const selected = e.target.value === INHERIT ? undefined : e.target.value;
             let next = setPath(value, path, selected);
@@ -407,8 +455,6 @@ export default function ControllersConfigForm({
         )}
         selected={(getPath(value, modePath) as string | undefined) ?? INHERIT}
         inheritModeLabel={inheritModeLabel}
-        inheritedMode={modeInherited === 'operator' ? 'operator' : 'embedded'}
-        scope={deploymentMode?.scope ?? 'serverDefault'}
         disabled={disabled || isInert(modePath)}
         onChange={(selected) => onChange(setPath(value, modePath, selected))}
       />
@@ -618,7 +664,15 @@ export default function ControllersConfigForm({
                 ['broker', 'service', 'loadBalancerSourceRanges'],
                 'Comma-separated CIDRs allowed to reach the broker.',
               )}
-            <Box>
+            <Box
+              sx={{
+                width: fitWidth(
+                  annotationsText,
+                  'service.beta.kubernetes.io/aws-load-balancer-internal=true',
+                ),
+                maxWidth: '100%',
+              }}
+            >
               {fieldLabel(
                 'Service annotations',
                 ['broker', 'service', 'annotations'],
@@ -633,12 +687,7 @@ export default function ControllersConfigForm({
                 placeholder={
                   'key=value\nservice.beta.kubernetes.io/aws-load-balancer-internal=true'
                 }
-                sx={{
-                  width: fitWidth(
-                    annotationsText,
-                    'service.beta.kubernetes.io/aws-load-balancer-internal=true',
-                  ),
-                }}
+                sx={controlSx(false)}
                 onChange={(e) => setAnnotationsFromText(e.target.value)}
               />
             </Box>

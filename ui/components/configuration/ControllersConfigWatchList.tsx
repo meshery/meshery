@@ -44,7 +44,10 @@ export default function ControllersConfigWatchList({
           else if (mode === 'whitelist') onChange({ whitelist: [] });
           else onChange({ blacklist: [] });
         }}
-        sx={{ width: fitWidth(...WATCH_MODE_OPTIONS.map((option) => option.label)) }}
+        sx={{
+          width: fitWidth(...WATCH_MODE_OPTIONS.map((option) => option.label)),
+          maxWidth: '100%',
+        }}
       >
         {WATCH_MODE_OPTIONS.map((option) => (
           <MenuItem key={option.value} value={option.value}>
@@ -72,7 +75,10 @@ export default function ControllersConfigWatchList({
                 placeholder="pods.v1. or deployments.v1.apps"
                 aria-label={`Resource ${index + 1}`}
                 slotProps={{ htmlInput: { 'aria-label': `Resource ${index + 1}` } }}
-                sx={{ width: fitWidth(row.resource, 'pods.v1. or deployments.v1.apps') }}
+                sx={{
+                  width: fitWidth(row.resource, 'pods.v1. or deployments.v1.apps'),
+                  maxWidth: '100%',
+                }}
                 onChange={(e) => {
                   const rows = [...whitelist];
                   rows[index] = { ...rows[index], resource: e.target.value };
@@ -102,6 +108,7 @@ export default function ControllersConfigWatchList({
               ))}
               <Button
                 size="small"
+                color="error"
                 disabled={disabled}
                 onClick={() => onChange({ whitelist: whitelist.filter((_, i) => i !== index) })}
               >
@@ -112,6 +119,7 @@ export default function ControllersConfigWatchList({
           <Button
             size="small"
             variant="outlined"
+            color="primary"
             disabled={disabled}
             onClick={() =>
               onChange({ whitelist: [...whitelist, { resource: '', events: [...WATCH_EVENTS] }] })
