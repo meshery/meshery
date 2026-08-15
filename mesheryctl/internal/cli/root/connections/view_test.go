@@ -73,13 +73,8 @@ func TestConnectionViewCmd(t *testing.T) {
 }
 
 // TestConnectionViewSaveCreatesFile verifies that "connection view --save"
-// writes a file whose name includes the connection name and the format
-// extension (e.g. connection_minikube.yaml).
-//
-// This is a regression guard for the bug where os.UserHomeDir() was called
-// unconditionally — moving it inside the --save block means the non-save
-// path (exercised by TestConnectionViewCmd above) cannot be broken by a
-// missing HOME directory.
+// writes a file whose name includes the connection name and format extension.
+// Uses a temp dir as HOME so the real ~/.meshery is never touched.
 func TestConnectionViewSaveCreatesFile(t *testing.T) {
 	testContext := utils.InitTestEnvironment(t)
 	defer utils.StopMockery(t)
@@ -99,17 +94,16 @@ func TestConnectionViewSaveCreatesFile(t *testing.T) {
 		testContext.BaseURL+"/api/integrations/connections/"+connectionId,
 		httpmock.NewStringResponder(200, apiResponse))
 
-	// Determine the save path that the command will use: ~/.meshery/connection_minikube.yaml
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		t.Skipf("skipping: cannot resolve home directory: %v", err)
-	}
-	mesheryDir := filepath.Join(homeDir, ".meshery")
-	if mkErr := os.MkdirAll(mesheryDir, 0755); mkErr != nil {
-		t.Fatalf("cannot create %s: %v", mesheryDir, mkErr)
+	// Override HOME and USERPROFILE (Windows) so os.UserHomeDir() resolves to temp dir
+	tmpHome := t.TempDir()
+	t.Setenv("HOME", tmpHome)
+	t.Setenv("USERPROFILE", tmpHome)
+
+	mesheryDir := filepath.Join(tmpHome, ".meshery")
+	if err := os.MkdirAll(mesheryDir, 0755); err != nil {
+		t.Fatalf("cannot create %s: %v", mesheryDir, err)
 	}
 	expectedFile := filepath.Join(mesheryDir, "connection_minikube.yaml")
-	t.Cleanup(func() { _ = os.Remove(expectedFile) })
 
 	origStdout := os.Stdout
 	_, w, _ := os.Pipe()
@@ -129,6 +123,11 @@ func TestConnectionViewSaveCreatesFile(t *testing.T) {
 	os.Stdout = origStdout
 
 	if _, statErr := os.Stat(expectedFile); os.IsNotExist(statErr) {
-		t.Errorf("--save flag: expected file %q to exist after 'connection view --save', but it was not created", expectedFile)
+		entries, _ := os.ReadDir(mesheryDir)
+		names := make([]string, 0, len(entries))
+		for _, e := range entries {
+			names = append(names, e.Name())
+		}
+		t.Errorf("--save: expected file %q to exist, got: %v", expectedFile, names)
 	}
 }
