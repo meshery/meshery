@@ -3,10 +3,12 @@ package relationships
 import (
 	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
@@ -14,14 +16,12 @@ import (
 func TestView(t *testing.T) {
 	mesheryctlflags.InitValidators(RelationshipCmd)
 
-	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
 
-	// test scenarios for fetching data
 	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "given no model name provided when running relationship view then throw error",
@@ -53,6 +53,61 @@ func TestView(t *testing.T) {
 		},
 	}
 
-	// Run tests
 	utils.InvokeMesheryctlTestListCommand(t, update, RelationshipCmd, tests, currDir, "relationships")
+}
+
+func TestRelationshipViewSaveCreatesFileWithExtension(t *testing.T) {
+	mesheryctlflags.InitValidators(RelationshipCmd)
+
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	defer utils.ResetCommandFlags(RelationshipCmd, t)
+
+	utils.TokenFlag = utils.GetToken(t)
+
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("cannot determine current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	fixturesDir := filepath.Join(currDir, "fixtures")
+
+	apiResponse := utils.NewGoldenFile(t, "view.relationship.save.api.response.golden", fixturesDir).Load()
+
+	httpmock.RegisterResponder("GET",
+		testContext.BaseURL+"/api/registry/models/kubernetes/relationships",
+		httpmock.NewStringResponder(200, apiResponse))
+
+	tmpDir := t.TempDir()
+	origMesheryFolder := utils.MesheryFolder
+	utils.MesheryFolder = tmpDir
+	t.Cleanup(func() { utils.MesheryFolder = origMesheryFolder })
+
+	expectedFile := filepath.Join(tmpDir, "relationship_kubernetes_aaaabbbb.json")
+
+	origStdout := os.Stdout
+	_, w, _ := os.Pipe()
+	os.Stdout = w
+	defer func() {
+		_ = w.Close()
+		os.Stdout = origStdout
+	}()
+
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	RelationshipCmd.SetArgs([]string{"view", "kubernetes", "--output-format", "json", "--save"})
+	if err := RelationshipCmd.Execute(); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	_ = w.Close()
+	os.Stdout = origStdout
+
+	if _, err := os.Stat(expectedFile); os.IsNotExist(err) {
+		entries, _ := os.ReadDir(tmpDir)
+		names := make([]string, 0, len(entries))
+		for _, e := range entries {
+			names = append(names, e.Name())
+		}
+		t.Errorf("--save: expected file %q to exist, got: %v", expectedFile, names)
+	}
 }
