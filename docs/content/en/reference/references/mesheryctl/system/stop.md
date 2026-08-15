@@ -12,6 +12,7 @@ Stop Meshery
 ## Synopsis
 
 Stop all Meshery containers / remove all Meshery resources.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system stop [flags]
