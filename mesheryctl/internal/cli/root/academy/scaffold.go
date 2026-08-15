@@ -14,16 +14,38 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// TemplateData carries the data rendered into the frontmatter template.
+// The local ID field intentionally shadows ChildNode.ID, which is a typed uuid,
+// because the scaffolded frontmatter exposes a replaceable placeholder (e.g."REPLACE_WITH_INSTRUCTOR_CONSOLE_ID")
+// rather than a uuid.
 type TemplateData struct {
-	Title       string
-	Description string
-	Type        string
-	Level       string
-	Weight      int
-	OrgID       string
-	Category    string
-	Tags        []string
-	ID          string
+	academyModel.ChildNode
+	Level    academyModel.Level
+	OrgID    string
+	Category string
+	Tags     []string
+	ID       string
+}
+
+// TypeString returns the content type for the frontmatter template.
+func (t TemplateData) TypeString() string {
+	if t.Type != nil {
+		return string(*t.Type)
+	}
+	return ""
+}
+
+// LevelString returns the level for the frontmatter template.
+func (t TemplateData) LevelString() string {
+	return string(t.Level)
+}
+
+// WeightInt returns the weight for the frontmatter template.
+func (t TemplateData) WeightInt() int {
+	if t.Weight != nil {
+		return int(*t.Weight)
+	}
+	return 0
 }
 
 // Frontmatter representation to extract weight
@@ -79,11 +101,14 @@ func contentDirSegment(cType string) string {
 	return cType + "s"
 }
 
+// ParentFrontmatter is the slice of a parent _index.md frontmatter needed for
+// nesting validation and metadata inheritance. Categories and tags have no schema
+// equivalent and stay as plain values.
 type ParentFrontmatter struct {
-	Type     string   `yaml:"type"`
-	Level    string   `yaml:"level"`
-	Category string   `yaml:"categories"`
-	Tags     []string `yaml:"tags"`
+	Type     academyModel.ContentType `yaml:"type"`
+	Level    academyModel.Level       `yaml:"level"`
+	Category string                   `yaml:"categories"`
+	Tags     []string                 `yaml:"tags"`
 }
 
 func isRootType(cType string) bool {
@@ -123,16 +148,16 @@ func checkNesting(cType string, parentDir string) (ParentFrontmatter, error) {
 		return pf, errInvalidParentMetadata(indexPath, cType, "has no type field")
 	}
 
-	allowed, exists := AllowedChildren[pf.Type]
+	allowed, exists := AllowedChildren[string(pf.Type)]
 	if !exists {
-		return pf, errInvalidNesting(pf.Type, cType)
+		return pf, errInvalidNesting(string(pf.Type), cType)
 	}
 	for _, child := range allowed {
 		if child == cType {
 			return pf, nil
 		}
 	}
-	return pf, errInvalidNesting(pf.Type, cType)
+	return pf, errInvalidNesting(string(pf.Type), cType)
 }
 
 type ScaffoldOptions struct {
@@ -166,7 +191,7 @@ func scaffoldNode(opts ScaffoldOptions, explicitFolderName string) error {
 	parentType := pf.Type
 
 	if opts.Level == "" && pf.Level != "" {
-		opts.Level = academyModel.Level(pf.Level)
+		opts.Level = pf.Level
 	}
 	if opts.Category == "" && pf.Category != "" {
 		opts.Category = pf.Category
@@ -189,12 +214,12 @@ func scaffoldNode(opts ScaffoldOptions, explicitFolderName string) error {
 		}
 	}
 
-	if opts.Type == Test && (parentType == string(Course) || parentType == string(Module)) {
+	if opts.Type == Test && (parentType == Course || parentType == Module) {
 		indexPath = filepath.Join(opts.TargetDir, "test.md")
-	} else if opts.Type == Exam && parentType == string(Course) {
+	} else if opts.Type == Exam && parentType == Course {
 		indexPath = filepath.Join(opts.TargetDir, "course-exam.md")
 	} else {
-		if opts.Type == Test && parentType == string(academyModel.Certification) {
+		if opts.Type == Test && parentType == academyModel.Certification {
 			const maxTests = 1000
 			found := false
 			for testNum := 1; testNum <= maxTests; testNum++ {
@@ -234,16 +259,19 @@ func scaffoldNode(opts ScaffoldOptions, explicitFolderName string) error {
 		return err
 	}
 
+	weightF := float32(weight)
 	data := TemplateData{
-		Title:       opts.Title,
-		Description: opts.Description,
-		Type:        string(opts.Type),
-		Level:       string(opts.Level),
-		Weight:      weight,
-		OrgID:       opts.OrgID,
-		Category:    opts.Category,
-		Tags:        opts.Tags,
-		ID:          opts.ID,
+		ChildNode: academyModel.ChildNode{
+			Title:       opts.Title,
+			Description: opts.Description,
+			Type:        &opts.Type,
+			Weight:      &weightF,
+		},
+		Level:    opts.Level,
+		OrgID:    opts.OrgID,
+		Category: opts.Category,
+		Tags:     opts.Tags,
+		ID:       opts.ID,
 	}
 
 	f, err := os.Create(indexPath)
