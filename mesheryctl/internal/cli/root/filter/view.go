@@ -142,7 +142,7 @@ mesheryctl filter view "filter name"
 
 		filePath := ""
 		if filterViewFlagsProvided.Save {
-			filePath = getFilterViewFilePath(selectedFilter, filterViewFlagsProvided.ViewAllFlag)
+			filePath = fmt.Sprintf("%s.%s", getFilterViewFilePath(selectedFilter, filterViewFlagsProvided.ViewAllFlag), strings.ToLower(filterViewFlagsProvided.OutputFormat))
 		}
 
 		return display.FormatAndSaveOutput(data, filterViewFlagsProvided.OutputFormat, nil, filterViewFlagsProvided.Save, filePath)

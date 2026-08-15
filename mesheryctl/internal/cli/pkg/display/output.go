@@ -15,6 +15,8 @@ import (
 )
 
 func FormatAndSaveOutput[T any](data T, format string, out io.Writer, save bool, filePath string) error {
+	format = strings.ToLower(format)
+
 	outputFormatterFactory := OutputFormatterFactory[T]{}
 	outputFormatter, err := outputFormatterFactory.New(format, data)
 	if err != nil {

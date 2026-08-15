@@ -1,10 +1,13 @@
 package filter
 
 import (
+	"io"
+	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
@@ -57,4 +60,50 @@ func TestViewCmd(t *testing.T) {
 
 	// Run tests that capture logger output
 	utils.InvokeMesheryctlTestCommand(t, update, FilterCmd, loggerTests, currDir, "filter")
+}
+
+func TestGetFilterViewFilePath_AppendsExtension(t *testing.T) {
+	originalMesheryFolder := utils.MesheryFolder
+	originalDefaultConfigPath := utils.DefaultConfigPath
+	t.Cleanup(func() {
+		utils.MesheryFolder = originalMesheryFolder
+		utils.DefaultConfigPath = originalDefaultConfigPath
+		utils.ResetCommandFlags(FilterCmd, t)
+	})
+
+	utils.MesheryFolder = t.TempDir()
+	utils.DefaultConfigPath = filepath.Join(utils.MesheryFolder, "config.yaml")
+
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+
+	testContext := utils.InitTestEnvironment(t)
+	t.Cleanup(func() {
+		utils.StopMockery(t)
+	})
+
+	fixturesDir := filepath.Join(currDir, "fixtures")
+	apiResponse := utils.NewGoldenFile(t, "view.filter.api.response.golden", fixturesDir).Load()
+	httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/filter", httpmock.NewStringResponder(200, apiResponse))
+	utils.TokenFlag = utils.GetToken(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+	mesheryctlflags.InitValidators(FilterCmd)
+	FilterCmd.SetArgs([]string{"view", "KumaTest", "--output-format", "json", "--save"})
+	FilterCmd.SetOut(io.Discard)
+	if err := FilterCmd.Execute(); err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+
+	expectedBase := filepath.Join(utils.MesheryFolder, "filter_KumaTest_957fbc9b")
+	jsonPath := expectedBase + ".json"
+	if _, err := os.Stat(jsonPath); err != nil {
+		t.Fatalf("expected saved file %q to exist, got %v", jsonPath, err)
+	}
+	if _, err := os.Stat(expectedBase); !os.IsNotExist(err) {
+		t.Fatalf("expected unsuffixed save path %q to not exist, got %v", expectedBase, err)
+	}
 }
