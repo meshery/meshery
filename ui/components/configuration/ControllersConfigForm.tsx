@@ -109,6 +109,13 @@ export default function ControllersConfigForm({
     deploymentMode?.mode ??
     'embedded';
   const operatorModeApplies = modeForDisclosure === 'operator';
+  const liveGovernance = deploymentMode
+    ? {
+        ...deploymentMode,
+        mode: modeForDisclosure,
+        unsaved: modeForDisclosure !== deploymentMode.mode || deploymentMode.unsaved,
+      }
+    : undefined;
   const [meshsyncDeployOpen, setMeshsyncDeployOpen] = useState(operatorModeApplies);
   const [brokerOpen, setBrokerOpen] = useState(operatorModeApplies);
 
@@ -146,12 +153,12 @@ export default function ControllersConfigForm({
     );
   };
 
-  const isInert = (path: FieldPath): boolean => isInertIn(deploymentMode, path);
+  const isInert = (path: FieldPath): boolean => isInertIn(liveGovernance, path);
   const isDisabled = (path: FieldPath): boolean => disabled || isInert(path);
 
   const clearDormant = (section: ConfigSection) => {
     onChange(
-      dormantPathsIn(deploymentMode, value, section).reduce(
+      dormantPathsIn(liveGovernance, value, section).reduce(
         (doc, path) => setPath(doc, path, undefined),
         value,
       ),
@@ -187,7 +194,7 @@ export default function ControllersConfigForm({
   const notice = (section: ConfigSection) => (
     <SectionNotice
       section={section}
-      governance={deploymentMode}
+      governance={liveGovernance}
       value={value}
       onClearDormant={clearDormant}
       disabled={disabled}
@@ -383,12 +390,12 @@ export default function ControllersConfigForm({
 
   return (
     <Box>
-      <DeploymentModeBanner governance={deploymentMode} />
+      <DeploymentModeBanner governance={liveGovernance} />
 
       <SectionHeading
         title="Meshery Operator"
         section="operator"
-        governance={deploymentMode}
+        governance={liveGovernance}
         id="controllers-config-operator"
       />
       {notice('operator')}
@@ -428,7 +435,7 @@ export default function ControllersConfigForm({
       <SectionHeading
         title="MeshSync"
         section="meshsync"
-        governance={deploymentMode}
+        governance={liveGovernance}
         id="controllers-config-meshsync"
       />
       {notice('meshsync')}
@@ -542,7 +549,7 @@ export default function ControllersConfigForm({
       <SectionHeading
         title="Meshery Broker"
         section="broker"
-        governance={deploymentMode}
+        governance={liveGovernance}
         id="controllers-config-broker"
       />
       {notice('broker')}

@@ -202,6 +202,7 @@ describe('tri-state inherit / override', () => {
     const holder = renderForm();
     await user.click(screen.getByTestId('controllers-config-mode-operator'));
     expect(holder.doc()).toEqual({ operator: { deploymentMode: 'operator' } });
+    expect(holder.changes()).toBe(1);
     expect(screen.getByTestId('controllers-config-mode-operator')).toHaveAttribute(
       'aria-checked',
       'true',
@@ -363,6 +364,24 @@ describe('tri-state inherit / override', () => {
     expect(holder.doc()).toEqual({});
   });
 
+  it('names watch-list controls for assistive tech', async () => {
+    renderForm();
+    await expandOperatorOnly();
+    expect(screen.getByRole('combobox', { name: 'Watch mode', ...a11y })).toBeInTheDocument();
+
+    await choose(combobox('Watched resources (discovery scope)'), 'Whitelist (watch only these)');
+    await user.click(screen.getByRole('button', { name: 'Add resource' }));
+    expect(screen.getByRole('textbox', { name: 'Resource 1', ...a11y })).toBeInTheDocument();
+
+    await choose(
+      combobox('Watched resources (discovery scope)'),
+      'Blacklist (default scope minus these)',
+    );
+    expect(
+      screen.getByRole('textbox', { name: 'Blacklist resources', ...a11y }),
+    ).toBeInTheDocument();
+  });
+
   it('releases one field without disturbing its siblings', async () => {
     const holder = renderForm({
       initial: { meshsync: { version: 'v0.8.42', replicas: 3 } },
@@ -489,6 +508,14 @@ describe('deployment mode gating (per-connection editor)', () => {
     renderForm();
     expect(screen.queryByTestId('controllers-config-mode-banner')).toBeNull();
     expect(screen.queryByText('Not applied')).toBeNull();
+    expect(disabledState(textbox('Broker version'))).toBe(false);
+  });
+
+  it('enables Operator-only controls when the draft mode becomes Operator', async () => {
+    renderForm({ deploymentMode: governance('embedded') });
+    expect(disabledState(textbox('Broker version'))).toBe(true);
+
+    await user.click(screen.getByTestId('controllers-config-mode-operator'));
     expect(disabledState(textbox('Broker version'))).toBe(false);
   });
 

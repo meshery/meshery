@@ -56,7 +56,12 @@ const ChoiceCard = forwardRef<HTMLDivElement, ChoiceCardProps>(function ChoiceCa
         };
       }}
     >
-      <Radio checked={selected} disabled={disabled} tabIndex={-1} onChange={select} sx={{ p: 0 }} />
+      <Radio
+        checked={selected}
+        disabled={disabled}
+        tabIndex={-1}
+        sx={{ p: 0, pointerEvents: 'none' }}
+      />
       <Typography variant="body2" sx={{ fontWeight: 600, minWidth: 0 }}>
         {label}
       </Typography>

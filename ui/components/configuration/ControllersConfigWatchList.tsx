@@ -36,6 +36,8 @@ export default function ControllersConfigWatchList({
         size="small"
         disabled={disabled}
         value={watchMode}
+        aria-label="Watch mode"
+        slotProps={{ htmlInput: { 'aria-label': 'Watch mode' } }}
         onChange={(e) => {
           const mode = e.target.value;
           if (mode === INHERIT) onChange(undefined);
@@ -68,6 +70,8 @@ export default function ControllersConfigWatchList({
                 disabled={disabled}
                 value={row.resource}
                 placeholder="pods.v1. or deployments.v1.apps"
+                aria-label={`Resource ${index + 1}`}
+                slotProps={{ htmlInput: { 'aria-label': `Resource ${index + 1}` } }}
                 sx={{ width: fitWidth(row.resource, 'pods.v1. or deployments.v1.apps') }}
                 onChange={(e) => {
                   const rows = [...whitelist];
@@ -125,6 +129,8 @@ export default function ControllersConfigWatchList({
           size="small"
           disabled={disabled}
           sx={{ marginTop: '1rem', width: '100%' }}
+          aria-label="Blacklist resources"
+          slotProps={{ htmlInput: { 'aria-label': 'Blacklist resources' } }}
           value={blacklist.join('\n')}
           placeholder={'secrets.v1.\nevents.v1.'}
           onChange={(e) =>
