@@ -10,7 +10,6 @@ export const FallbackWrapper = styled(Box)(({ theme }) => ({
 
 export const ErrorPageActions = styled(Box)(({ theme }) => ({
   display: 'flex',
-  flexDirection: 'row',
   flexWrap: 'wrap',
   alignItems: 'center',
   gap: theme.spacing(1.5),
@@ -18,7 +17,6 @@ export const ErrorPageActions = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     flexDirection: 'column',
     alignItems: 'stretch',
-    width: '100%',
     '& > *': {
       width: '100%',
       margin: 0,
