@@ -25,6 +25,7 @@ type TemplateData struct {
 	Category string
 	Tags     []string
 	ID       string
+	Draft    bool
 }
 
 // TypeString returns the content type for the frontmatter template.
@@ -38,6 +39,14 @@ func (t TemplateData) TypeString() string {
 // LevelString returns the level for the frontmatter template.
 func (t TemplateData) LevelString() string {
 	return string(t.Level)
+}
+
+// BannerString returns the banner filename for the frontmatter template.
+func (t TemplateData) BannerString() string {
+	if t.Banner != nil {
+		return *t.Banner
+	}
+	return ""
 }
 
 // WeightInt returns the weight for the frontmatter template.
@@ -171,6 +180,8 @@ type ScaffoldOptions struct {
 	TargetDir   string
 	Force       bool
 	ID          string
+	Banner      string
+	Draft       bool
 	SkipNesting bool
 }
 
@@ -260,18 +271,24 @@ func scaffoldNode(opts ScaffoldOptions, explicitFolderName string) error {
 	}
 
 	weightF := float32(weight)
+	var banner *string
+	if opts.Banner != "" {
+		banner = &opts.Banner
+	}
 	data := TemplateData{
 		ChildNode: academyModel.ChildNode{
 			Title:       opts.Title,
 			Description: opts.Description,
 			Type:        &opts.Type,
 			Weight:      &weightF,
+			Banner:      banner,
 		},
 		Level:    opts.Level,
 		OrgID:    opts.OrgID,
 		Category: opts.Category,
 		Tags:     opts.Tags,
 		ID:       opts.ID,
+		Draft:    opts.Draft,
 	}
 
 	f, err := os.Create(indexPath)
@@ -301,6 +318,7 @@ func scaffoldChild(opts ScaffoldOptions, cType academyModel.ContentType, title, 
 	child.Category = ""
 	child.Tags = nil
 	child.ID = ""
+	child.Banner = ""
 	child.TargetDir = into
 
 	if err := scaffoldNode(child, ""); err != nil {
@@ -395,6 +413,7 @@ func scaffoldChallenge(opts ScaffoldOptions) error {
 		pageOpts.Description = ""
 		pageOpts.Category = ""
 		pageOpts.Tags = nil
+		pageOpts.Banner = ""
 		pageOpts.TargetDir = filepath.Join(currentDir, "content")
 		pageOpts.ID = ""
 		pageOpts.SkipNesting = true

@@ -3,8 +3,11 @@ package templates
 const NodeTemplate = `---
 title: {{ .Title | yamlQuote }}
 description: {{ .Description | yamlQuote }}
-type: {{ .Type | yamlQuote }}
-level: {{ .Level | yamlQuote }}
+{{- if .BannerString }}
+banner: {{ .BannerString | yamlQuote }}
+{{- end }}
+type: {{ .TypeString | yamlQuote }}
+level: {{ .LevelString | yamlQuote }}
 {{- if .Tags }}
 tags:
 {{- range .Tags }}
@@ -19,6 +22,9 @@ categories: {{ .Category | yamlQuote }}
 {{- if .ID }}
 id: {{ .ID | yamlQuote }}
 {{- end }}
-weight: {{ .Weight }}
+weight: {{ .WeightInt }}
+{{- if .Draft }}
+draft: true
+{{- end }}
 ---
 `

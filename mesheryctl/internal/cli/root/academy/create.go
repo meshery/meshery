@@ -21,6 +21,8 @@ type cmdAcademyCreateFlags struct {
 	Tags        string `json:"tags"`
 	Force       bool   `json:"force"`
 	ID          string `json:"id"`
+	Banner      string `json:"banner"`
+	Draft       bool   `json:"draft"`
 }
 
 var createAcademyFlags cmdAcademyCreateFlags
@@ -114,6 +116,8 @@ func executeCreate() error {
 		TargetDir:   targetDir,
 		Force:       createAcademyFlags.Force,
 		ID:          createAcademyFlags.ID,
+		Banner:      createAcademyFlags.Banner,
+		Draft:       createAcademyFlags.Draft,
 	}
 
 	// Root types (learning-path, certification) scaffold a full starter tree; challenge
@@ -156,6 +160,8 @@ func init() {
 	createCmd.Flags().StringVar(&createAcademyFlags.Category, "category", "", "Category of the content")
 	createCmd.Flags().StringVar(&createAcademyFlags.Tags, "tags", "", "Comma-separated list of tags")
 	createCmd.Flags().StringVar(&createAcademyFlags.ID, "id", "", "Content ID for Instructor Console")
+	createCmd.Flags().StringVar(&createAcademyFlags.Banner, "banner", "", "Banner image filename placed in the same directory")
+	createCmd.Flags().BoolVar(&createAcademyFlags.Draft, "draft", false, "Mark the content as draft (not published)")
 	createCmd.Flags().BoolVarP(&createAcademyFlags.Force, "force", "f", false, "Overwrite existing files")
 
 	subcommands := []string{string(Course), string(Module), string(Page), string(Lab), string(Test), string(Exam)}
@@ -166,6 +172,8 @@ func init() {
 		subCmd.Flags().StringVar(&createAcademyFlags.Level, "level", "", "Content level (e.g., beginner, intermediate, advanced)")
 		subCmd.Flags().StringVar(&createAcademyFlags.Category, "category", "", "Category of the content")
 		subCmd.Flags().StringVar(&createAcademyFlags.Tags, "tags", "", "Comma-separated list of tags")
+		subCmd.Flags().StringVar(&createAcademyFlags.Banner, "banner", "", "Banner image filename placed in the same directory")
+		subCmd.Flags().BoolVar(&createAcademyFlags.Draft, "draft", false, "Mark the content as draft (not published)")
 		subCmd.Flags().BoolVarP(&createAcademyFlags.Force, "force", "f", false, "Overwrite existing files")
 		createCmd.AddCommand(subCmd)
 	}
