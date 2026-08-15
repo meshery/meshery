@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 	"os"
 	"os/exec"
 	"os/user"
@@ -16,6 +15,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
+	"github.com/meshery/meshery/server/models/httputil"
 
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -108,7 +108,7 @@ type Manifest struct {
 // GetManifestTreeURL returns the manifest tree url based on version
 func GetManifestTreeURL(version string) (string, error) {
 	url := "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + version + "?recursive=1"
-	resp, err := http.Get(url)
+	resp, err := httputil.DefaultHTTPClient.Get(url)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to make GET request to %s", url)
 	}
@@ -135,7 +135,7 @@ func GetManifestTreeURL(version string) (string, error) {
 
 // ListManifests lists the manifest files stored in GitHub
 func ListManifests(url string) ([]Manifest, error) {
-	resp, err := http.Get(url)
+	resp, err := httputil.DefaultHTTPClient.Get(url)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to make GET request to %s", url)
 	}
@@ -756,7 +756,7 @@ func InstallprereqDocker() error {
 
 	dockerComposeBinaryURL := dockerComposeBinaryURL
 	//checks for the latest docker-compose
-	resp, err := http.Get(dockerComposeWebURL)
+	resp, err := httputil.DefaultHTTPClient.Get(dockerComposeWebURL)
 	if err != nil {
 		dockerComposeBinaryURL = dockerComposeBinaryURL + defaultDockerComposeVersion
 	} else {

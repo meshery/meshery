@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/meshery/meshery/server/models/httputil"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"gopkg.in/yaml.v2"
 )
@@ -192,7 +193,7 @@ func fetchChartIndexVersions(repo string) (map[string][]string, error) {
 	url := chartIndexURL(repo)
 
 	// The repository URL is server configuration, never user input. #nosec G107
-	client := &http.Client{Timeout: chartIndexTimeout}
+	client := httputil.NewHTTPClientWithTimeout(chartIndexTimeout)
 	resp, err := client.Get(url)
 	if err != nil {
 		return nil, ErrHelmChartIndex(url, err.Error())

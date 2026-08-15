@@ -26,6 +26,7 @@ import (
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models/httputil"
 	meshkitutils "github.com/meshery/meshkit/utils"
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/spf13/cobra"
@@ -240,7 +241,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 
 // keepConnectionAlive to stop being timed out with port forwarding
 func keepConnectionAlive(url string) {
-	_, err := http.Get(url)
+	_, err := httputil.DefaultHTTPClient.Get(url)
 	if err != nil {
 		utils.Log.Debugf("connection request failed %v", err)
 	}

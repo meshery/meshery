@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/meshery/meshery/server/models/httputil"
 )
 
 func GetLatestVersionForMesheryctl() (string, error) {
@@ -15,7 +17,7 @@ func GetLatestVersionForMesheryctl() (string, error) {
 		return "", err
 	}
 
-	client := &http.Client{Timeout: 10 * time.Second}
+	client := httputil.NewHTTPClientWithTimeout(10 * time.Second)
 
 	resp, err := client.Do(req)
 	if err != nil {

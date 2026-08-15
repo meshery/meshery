@@ -23,6 +23,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/meshery/meshery/server/models/httputil"
+
 	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -199,7 +201,7 @@ func sendOperationRequest(mctlCfg *config.MesheryCtlConfig, query string, delete
 
 	payload := strings.NewReader(data.Encode())
 
-	client := &http.Client{}
+	client := httputil.DefaultHTTPClient
 	req, err := utils.NewRequest(method, path, payload)
 	if err != nil {
 		return "", ErrCreatingValidateRequest(err)

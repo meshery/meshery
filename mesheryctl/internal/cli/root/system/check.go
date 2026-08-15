@@ -34,6 +34,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/httputil"
 	meshkitutils "github.com/meshery/meshkit/utils"
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -501,7 +502,7 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 		return err
 	}
 
-	client := &http.Client{}
+	client := httputil.DefaultHTTPClient
 	resp, err := client.Do(req)
 	// failed to fetch response for server version
 	if err != nil || resp.StatusCode != 200 {
@@ -712,7 +713,7 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 // If no adapter is specified all the adapters are checked
 func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 	url := hc.mctlCfg.GetBaseMesheryURL()
-	client := &http.Client{}
+	client := httputil.DefaultHTTPClient
 	var adapters []*models.Adapter
 	prefs, err := utils.GetSessionData(hc.mctlCfg)
 	if err != nil {

@@ -13,6 +13,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/logger"
 )
 
@@ -40,7 +41,7 @@ func New(baseURL, secret string, log logger.Handler) *Client {
 	return &Client{
 		baseURL:    strings.TrimRight(strings.TrimSpace(baseURL), "/"),
 		authHeader: authHeader(secret),
-		httpClient: &http.Client{Timeout: defaultTimeout},
+		httpClient: httputil.NewHTTPClientWithTimeout(defaultTimeout),
 		log:        log,
 	}
 }
