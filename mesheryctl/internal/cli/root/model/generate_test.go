@@ -68,6 +68,20 @@ func TestModelGenerate(t *testing.T) {
 			ExpectedResponse: "generate.dir.skipped.output.golden",
 			HttpCode:         200,
 		},
+		{
+			Name: "model generate: specific model from CSV directory",
+			Args: []string{
+				"generate",
+				"--file",
+				filepath.Join(fixturesDir, "templates", "template-csvs"),
+				"--model",
+				"couchbase",
+			},
+			ExpectedResponse: "generate.dir.model.output.golden",
+			URL:              apiURL,
+			Fixture:          "generate.api.ok.response.golden",
+			HttpCode:         200,
+		},
 	}
 
 	var resetFlags func(*cobra.Command, *testing.T)
