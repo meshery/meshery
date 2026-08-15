@@ -22,7 +22,6 @@ import (
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/academy"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/adapter"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/components"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -123,7 +122,6 @@ func init() {
 		system.SystemCmd,
 		design.DesignCmd,
 		perf.PerfCmd,
-		academy.AcademyCmd,
 		adapter.AdapterCmd,
 		experimental.ExpCmd,
 		filter.FilterCmd,
