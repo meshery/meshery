@@ -13,10 +13,6 @@
         "description": "Registers the discovered cluster with Meshery so it can be managed. Meshery takes no action on the cluster until you connect it."
       },
       {
-        "nextState": "not found",
-        "description": "Marks the cluster as not found: Meshery can no longer reach the cluster's API server. You can delete the connection or re-register it later."
-      },
-      {
         "nextState": "deleted",
         "description": "Discards the discovered cluster without registering it and purges the connection record from Meshery's database. The Kubernetes cluster itself is not deleted or modified."
       }
@@ -39,10 +35,6 @@
       {
         "nextState": "ignored",
         "description": "Stops managing the cluster and takes no further action on it. The registration and previously collected data are kept."
-      },
-      {
-        "nextState": "not found",
-        "description": "Marks the cluster as not found: Meshery could not reach the cluster or it is currently unavailable. You can delete the connection or try re-registering it."
       },
       {
         "nextState": "deleted",
