@@ -96,7 +96,7 @@ vi.mock('../ExtensionSandbox', () => ({
   default: () => <div data-testid="extension-sandbox" />,
 }));
 
-vi.mock('../RemoteComponent', () => ({
+vi.mock('../general/RemoteComponent', () => ({
   default: () => <div data-testid="remote-component" />,
 }));
 

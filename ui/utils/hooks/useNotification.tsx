@@ -213,9 +213,9 @@ export const useNotificationHandlers = () => {
 
   /**
    * Surface an RTK Query error in a toast, automatically consuming the
-   * structured `meshkit` envelope set by `@meshery/schemas` v1.2.2's
-   * `transformErrorResponse` wrapper. When MeshKit metadata is present the
-   * toast renders:
+   * structured `meshkit` envelope set by `@meshery/schemas`'s
+   * `withMeshkitErrorTransform` baseQuery wrapper. When MeshKit metadata is
+   * present the toast renders:
    *   - `meshkit.message` as a bold title,
    *   - `meshkit.suggestedRemediation` as a bullet list (one entry per line),
    *   - `meshkit.code` as a muted reference for support tickets.

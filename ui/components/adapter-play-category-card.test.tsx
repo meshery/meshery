@@ -24,15 +24,26 @@ vi.mock('@sistent/sistent', () => ({
     </div>
   ),
   DeleteIcon: () => <svg data-testid="delete-icon" />,
-  IconButton: ({ children, onClick, disabled, 'aria-label': ariaLabel, ref }: any) => (
-    <button
-      data-testid={ariaLabel ? `icon-button-${ariaLabel}` : 'icon-button'}
-      onClick={onClick}
-      disabled={disabled}
-    >
-      {children}
-    </button>
-  ),
+  IconButton: ({
+    children,
+    onClick,
+    disabled,
+    'aria-label': ariaLabel,
+    permissionKey,
+    ref,
+  }: any) => {
+    const isDisabled =
+      disabled || (permissionKey && !CAN_mock(permissionKey.id, permissionKey.function));
+    return (
+      <button
+        data-testid={ariaLabel ? `icon-button-${ariaLabel}` : 'icon-button'}
+        onClick={onClick}
+        disabled={isDisabled}
+      >
+        {children}
+      </button>
+    );
+  },
   Menu: ({ children, open, onClose }: any) =>
     open ? (
       <div data-testid="menu">

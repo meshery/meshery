@@ -56,6 +56,18 @@ describe('getK8sClusterIdsFromCtxId', () => {
   it('skips contexts not found in the config', () => {
     expect(getK8sClusterIdsFromCtxId(['ctx-1', 'missing'], sampleConfig)).toEqual(['srv-1']);
   });
+
+  it('omits configs without a resolved kubernetesServerId under "all"', () => {
+    // A connection registered while its cluster was unreachable has no server id
+    // yet; it must not contribute a junk cluster id to the query.
+    const configWithUnresolved = [
+      { id: 'ctx-1', name: 'minikube', kubernetesServerId: 'srv-1', connectionId: 'conn-1' },
+      { id: 'ctx-2', name: 'pending', kubernetesServerId: undefined, connectionId: 'conn-2' },
+      { id: 'ctx-3', name: 'empty', kubernetesServerId: '', connectionId: 'conn-3' },
+      { id: 'ctx-4', name: 'gke-prod', kubernetesServerId: 'srv-4', connectionId: 'conn-4' },
+    ];
+    expect(getK8sClusterIdsFromCtxId(['all'], configWithUnresolved)).toEqual(['srv-1', 'srv-4']);
+  });
 });
 
 describe('getFirstCtxIdFromSelectedCtxIds', () => {

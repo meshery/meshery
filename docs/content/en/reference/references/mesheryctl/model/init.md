@@ -49,7 +49,7 @@ mesheryctl model init [model-name] --path [path-to-location] (default is current
 generate a folder structure in json format
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is json)
+mesheryctl model init [model-name] --output-format [json|yaml] (default is json)
 
 </div>
 </pre> 

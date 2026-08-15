@@ -209,6 +209,47 @@ This involves parsing a flag for the binary to be built whether it exists or not
   bash run_tests_local.sh -b
 ```
 
+## Run End-to-End (in CI)
+
+The same suite runs in GitHub Actions as the `Meshery End-to-End Tests with mesheryctl`
+workflow (`.github/workflows/mesheryctl-e2e.yaml`) - on every push to `master` touching
+`mesheryctl/**`, on a schedule, and on demand via `workflow_dispatch` with `bats_test=true`.
+It is worth knowing the four ways that run differs from your local one, because most CI-only
+failures come from one of them.
+
+**The server is the released image, not your branch.** The job builds `mesheryctl` from the
+checkout and then runs `mesheryctl system start`, which deploys the released Meshery Server.
+A server-side change in the same pull request is therefore *not* exercised by this workflow -
+it is exercised once a release carrying it is out. Cover server changes with Go tests as well.
+
+**Authentication is a remote-provider session.** `setup_suite.bash` sets the context provider
+to `Meshery`, so the connection and perf suites round-trip through Meshery Cloud. The job
+authenticates with the `REMOTE_PROVIDER_TEST_USER_TOKEN` organisation secret and pins
+`PROVIDER_BASE_URLS=https://cloud.meshery.io` on the deployment so the token is presented to
+the backend it is valid for. A stale token surfaces as `meshery-server-1032` on reads rather
+than as an obvious auth error; the job's *Remote-provider auth diagnostics* step prints the
+registered provider and the `auth.json` shape (token length only) to tell the two apart.
+
+**MeshSync runs in operator mode, and the broker is waited for.** The job sets
+`MESHSYNC_DEFAULT_DEPLOYMENT_MODE=operator` and `MESHERY_MANAGED_BROKER_PORTFORWARD=false` so
+the `009-diagnostics` suite has a real in-cluster broker and a deterministic unreachable
+baseline, then waits for the broker statefulset. The broker arrives indirectly - Meshery
+installs the Meshery Operator, the operator reconciles the Broker custom resource - so it
+trails the `meshery` deployment rollout, and the wait step prints pod, statefulset,
+custom-resource and operator-log state when it does not arrive.
+
+Mind the name. Meshery Operator >= 1.0.0 renders the broker from the official NATS chart, so
+the workload is `meshery-nats` (pod `meshery-nats-0`, service `meshery-nats`); earlier
+operators used `meshery-broker`. Only the *workload* was renamed - the Broker custom resource
+is still `meshery-broker`. Anything matching on the workload name should accept both, since
+the operator version belongs to the cluster under test. Assuming the old name is why a healthy,
+Running broker was reported for a long time as `!! Meshery Broker is not running`.
+
+**Nothing is attached to a terminal.** Commands that page interactively stop after the first
+page and say so rather than prompting; commands that would resolve an ambiguous name by
+prompting fail with `mesheryctl-1253` instead. Write assertions against a unique ID, or pass
+`--page`/`--pagesize`, rather than relying on a full listing.
+
 ### Find Tests here
 Refer to [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?usp=sharing) for test scenarios.
 
@@ -216,7 +257,7 @@ To filter and view only CLI-related test cases using the Sheet Views feature:
 1. In the top menu bar, click Data → Change view
 2. Choose the pre-defined view labeled "CLI"
 
-![Meshery Test Plan Screenshot](../images/meshery-test-plan-v0.8.0-ui.png)
+![Meshery Test Plan Screenshot](../../images/meshery-test-plan-v0.8.0-ui.png)
 
 ## Development
 
@@ -259,6 +300,32 @@ It must follow this naming convention
   ... test implementation ...
 }
 ```
+
+##### Traceability Tokens (optional)
+
+A test that maps to a row in the [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?usp=sharing) may prefix its `@test` title with bracketed tokens so the TAP-to-Allure converter emits traceability labels on the report:
+
+The Test Plan "Latest" tab columns are: column A = Test #, column B = Test Group, column C = Client, column D = Component Under Test.
+
+- `[TC-<n>]` - the Test Plan "Test #" (column A), emitted as the `testId` label and a matching filter tag.
+- `[tg=<Test Group>]` - the Test Group (column B), emitted as the `testGroup` label, e.g. `[tg=Connection Lifecycle]`. This is the general report key: any Test Group can drive its own filtered [meshery/qa](https://github.com/meshery/qa) report by keying on this label.
+- `[cut=<component>]` - the Component-Under-Test (column D), e.g. `[cut=Kubernetes Connection]`.
+
+The tokens are stripped from the displayed test name, so the naming convention above still applies to the remainder:
+
+```bash
+@test "[TC-1013][cut=Kubernetes Connection][tg=Connection Lifecycle] mesheryctl connection create --type minikube creates a new connection" {
+  ... test implementation ...
+}
+```
+
+The full token-to-label mapping (including how the report `epic` is derived from the component) is documented in the header comment of [`mesheryctl/bats-to-allure.js`](https://github.com/meshery/meshery/blob/master/mesheryctl/bats-to-allure.js), the single injection point for this contract. Do not restate the mapping here; keep it in sync there.
+
+From a `[TC-<n>]` token in the connection block, the converter also emits an Allure `tms` **link** ("Test Plan TC-\<n\>") that deep-links straight to that test's row on the Test Plan "Latest" tab, so a reviewer can click from a report test to its source case. The row is derived from the Test # by a fixed offset (`ROW = TestNum - 778`) that encodes the *current* Latest-tab layout - if the tab is re-sorted, the offset must be regenerated (see the prominent caveat in [`mesheryctl/bats-to-allure.js`](https://github.com/meshery/meshery/blob/master/mesheryctl/bats-to-allure.js) and its UI-lane twin `ui/tests/e2e/connections.testmap.ts`).
+
+##### Failure output in the report
+
+The BATS suite runs with `--print-output-on-failure`, so a failing test's captured `mesheryctl` output (`$output`/`$stderr`) is emitted as TAP diagnostics. The converter turns that into debuggable Allure detail on the failed result: a concise headline (`statusDetails.message`), the full transcript (`statusDetails.trace`), and the same transcript as a **text attachment** ("CLI output (bats)"). Passing and skipped tests carry no such attachment. No test needs to opt in - this is automatic for every failure.
 
 #### Test Data
 

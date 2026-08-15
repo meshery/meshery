@@ -9,16 +9,17 @@ import {
   CustomTooltip,
   getRelativeTime,
   getFullFormattedTime,
+  useHasPermission,
 } from '@sistent/sistent';
 import { FormatId } from '../data-formatter';
 import { iconMedium } from '../../css/icons.styles';
-import { CONNECTION_KINDS } from '../../utils/Enum';
+import { CoreConnectionKinds } from '../../utils/Enum';
 import { TooltipWrappedConnectionChip } from './ConnectionChip';
 import { ConnectionStatusSelect } from './ConnectionStatusSelect';
 import { DefaultTableCell, SortableTableCell } from './common';
 import { getColumnValue } from '../../utils/utils';
-import MultiSelectWrapper from '../multi-select-wrapper';
-import CAN from '@/utils/can';
+import MultiSelectWrapper from '../general/multi-select-wrapper';
+
 import { Keys } from '@meshery/schemas/permissions';
 import { CustomTextTooltip } from '../meshery-mesh-interface/PatternService/CustomTextTooltip';
 import { getFallbackImageBasedOnKind, normalizeStaticImagePath } from '@/utils/fallback';
@@ -116,6 +117,11 @@ export const useConnectionColumns = ({
   pingPrometheus,
   transitionMapByKind,
 }: UseConnectionColumnsArgs) => {
+  const canAssignConnectionsToEnv = useHasPermission(
+    Keys.WorkspaceManagementAssignConnectionsToEnvironment,
+  );
+  const canChangeConnectionState = useHasPermission(Keys.LifecycleManagementChangeConnectionState);
+
   return useMemo(() => {
     const nextColumns = [
       {
@@ -184,17 +190,17 @@ export const useConnectionColumns = ({
             // always-defined no-op handler still makes the chip swallow row
             // clicks (stopPropagation) even when it cannot ping.
             let handlePing: (() => void) | undefined;
-            if (kind === CONNECTION_KINDS.KUBERNETES) {
+            if (kind === CoreConnectionKinds.kubernetes) {
               handlePing = () =>
                 ping(
                   getColumnValue(tableMeta.rowData, 'metadata.name', nextColumns),
                   getColumnValue(tableMeta.rowData, 'metadata.server', nextColumns),
                   connectionId,
                 );
-            } else if (kind === CONNECTION_KINDS.GRAFANA) {
+            } else if (kind === CoreConnectionKinds.grafana) {
               handlePing = () =>
                 pingGrafana(connectionId, getColumnValue(tableMeta.rowData, 'name', nextColumns));
-            } else if (kind === CONNECTION_KINDS.PROMETHEUS) {
+            } else if (kind === CoreConnectionKinds.prometheus) {
               handlePing = () =>
                 pingPrometheus(
                   connectionId,
@@ -206,7 +212,7 @@ export const useConnectionColumns = ({
               <>
                 <TooltipWrappedConnectionChip
                   tooltip={server ? `Server: ${server}` : ''}
-                  title={kind === CONNECTION_KINDS.KUBERNETES ? name : value || name || kind}
+                  title={kind === CoreConnectionKinds.kubernetes ? name : value || name || kind}
                   status={getColumnValue(tableMeta.rowData, 'status', nextColumns)}
                   onDelete={() => handleDeleteConnection(connectionId)}
                   handlePing={handlePing}
@@ -276,15 +282,13 @@ export const useConnectionColumns = ({
                         }
                         options={environmentOptions}
                         value={cleanedEnvs}
-                        placeholder={`Assigned Environments`}
+                        placeholder={`Select or create an environment`}
+                        noOptionsMessage={() =>
+                          'No matching environments. Type to create a new one.'
+                        }
                         isSelectAll={true}
                         menuPlacement={'bottom'}
-                        disabled={
-                          !CAN(
-                            Keys.WorkspaceManagementAssignConnectionsToEnvironment.id,
-                            Keys.WorkspaceManagementAssignConnectionsToEnvironment.function,
-                          )
-                        }
+                        disabled={!canAssignConnectionsToEnv}
                       />
                     </Grid2>
                   </Grid2>
@@ -447,13 +451,7 @@ export const useConnectionColumns = ({
           },
           customBodyRender: function CustomBody(value, tableMeta) {
             const kind = getColumnValue(tableMeta.rowData, 'kind', nextColumns);
-            const disabled =
-              value === 'deleted'
-                ? true
-                : !CAN(
-                    Keys.LifecycleManagementChangeConnectionState.id,
-                    Keys.LifecycleManagementChangeConnectionState.function,
-                  );
+            const disabled = value === 'deleted' ? true : !canChangeConnectionState;
 
             return (
               <ConnectionStatusSelect
@@ -491,7 +489,7 @@ export const useConnectionColumns = ({
             return (
               <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
                 {getColumnValue(tableMeta.rowData, 'kind', nextColumns) ===
-                CONNECTION_KINDS.KUBERNETES ? (
+                CoreConnectionKinds.kubernetes ? (
                   <IconButton
                     aria-label="more"
                     id="long-button"
@@ -533,6 +531,8 @@ export const useConnectionColumns = ({
 
     return nextColumns;
   }, [
+    canAssignConnectionsToEnv,
+    canChangeConnectionState,
     envUrl,
     environmentOptions,
     handleActionMenuOpen,

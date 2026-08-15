@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Button, Grid2, Table, TableCell, TableRow, DeleteIcon, useTheme } from '@sistent/sistent';
 import { ContentContainer, InnerTableContainer } from './styles';
 import { iconMedium } from '../../css/icons.styles';
-import CAN from '@/utils/can';
+
 import { Keys } from '@meshery/schemas/permissions';
 import FormatConnectionMetadata from './metadata';
 import type { ConnectionRow, ExpansionFlags, SelectedRows } from './ConnectionTable.types';
@@ -76,12 +76,7 @@ export const useConnectionTableOptions = ({
           size="large"
           onClick={() => handleDeleteConnections(selected)}
           sx={{ backgroundColor: `${theme.palette.error.dark} !important`, marginRight: '10px' }}
-          disabled={
-            !CAN(
-              Keys.LifecycleManagementDeleteAConnection.id,
-              Keys.LifecycleManagementDeleteAConnection.function,
-            )
-          }
+          permissionKey={Keys.LifecycleManagementDeleteAConnection}
           data-testid="Button-delete-connections"
         >
           <DeleteIcon style={iconMedium} fill={theme.palette.common.white} />

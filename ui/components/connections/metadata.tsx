@@ -28,11 +28,11 @@ import useKubernetesHook, {
 import { TooltipWrappedConnectionChip } from './ConnectionChip';
 import { CONTROLLER_STATES, MESHSYNC_DEPLOYMENT_TYPE } from '../../utils/Enum';
 import { formatToTitleCase } from '../../utils/utils';
+import { KUBERNETES } from '@/constants/common';
 
 import { ColumnWrapper, ContentContainer, OperationButton, FormatterWrapper } from './styles';
 
 const DISABLED = 'DISABLED';
-const KUBERNETES = 'kubernetes';
 const MESHERY = 'meshery';
 
 const customIdFormatter = (title, id) => (

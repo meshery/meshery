@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { MESHERY_EXTENSION_EVENT } from '@sistent/sistent';
 import { getK8sClusterIdsFromCtxId, persistSelectedK8sContexts } from '@/utils/multi-ctx';
 import { mesheryEventBus } from '@/utils/eventBus';
 import { store } from '..';
@@ -123,7 +124,7 @@ export const setK8sContexts = (payload) => (dispatch) => {
   persistSelectedK8sContexts(payload.selectedK8sContexts);
 
   mesheryEventBus.publish({
-    type: 'K8S_CONTEXTS_UPDATED',
+    type: MESHERY_EXTENSION_EVENT.K8sContextsUpdated,
     data: {
       selectedK8sContexts: payload.selectedK8sContexts,
     },

@@ -11,7 +11,8 @@ Search registered relationship(s)
 
 ## Synopsis
 
-Search registered relationship(s) used by different models
+Search registered relationship(s) used by different models.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl relationship search [flags]

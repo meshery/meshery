@@ -73,7 +73,12 @@ export const getK8sClusterIdsFromCtxId = (selectedContexts, k8sconfig) => {
   }
 
   if (selectedContexts.includes('all')) {
-    return k8sconfig.map((cfg) => cfg?.kubernetesServerId);
+    // Drop configs without a resolved kubernetesServerId (e.g. a connection
+    // registered while its cluster was unreachable, so no server ID was assigned
+    // yet). Sending an undefined/empty cluster id contributes a junk `clusterId`
+    // query param that matches no MeshSync rows, and matches the truthy filter the
+    // explicit-selection branch below already applies.
+    return k8sconfig.map((cfg) => cfg?.kubernetesServerId).filter(Boolean);
   }
   const clusterIds = [];
   selectedContexts.forEach((context) => {
