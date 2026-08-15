@@ -132,7 +132,6 @@ mesheryctl filter view "filter name"
 			}
 		}
 
-		outputFormatterFactory := display.OutputFormatterFactory[any]{}
 		var data any
 
 		if filterViewFlagsProvided.ViewAllFlag {
@@ -141,37 +140,16 @@ mesheryctl filter view "filter name"
 			data = selectedFilter
 		}
 
-		outputFormatter, err := outputFormatterFactory.New(filterViewFlagsProvided.OutputFormat, data)
-		if err != nil {
-			return err
-		}
-
-		err = outputFormatter.Display()
-		if err != nil {
-			return err
-		}
-
+		filePath := ""
 		if filterViewFlagsProvided.Save {
-			err := saveToFile(
-				filterViewFlagsProvided.OutputFormat,
-				outputFormatter,
-				selectedFilter,
-				filterViewFlagsProvided.ViewAllFlag,
-			)
-			if err != nil {
-				return err
-			}
+			filePath = getFilterViewFilePath(selectedFilter, filterViewFlagsProvided.ViewAllFlag)
 		}
-		return nil
+
+		return display.FormatAndSaveOutput(data, filterViewFlagsProvided.OutputFormat, nil, filterViewFlagsProvided.Save, filePath)
 	},
 }
 
-func saveToFile(
-	outputFormat string,
-	outputFormatter display.OutputFormatter[any],
-	selectedFilter *models.MesheryFilter,
-	isAll bool,
-) error {
+func getFilterViewFilePath(selectedFilter *models.MesheryFilter, isAll bool) string {
 	var fileName string
 
 	if isAll {
@@ -183,15 +161,7 @@ func saveToFile(
 		fileName = fmt.Sprintf("filter_%s_%s", sanitizedName, shortID)
 	}
 
-	file := filepath.Join(utils.MesheryFolder, fileName)
-
-	outputFormatterSaverFactory := display.OutputFormatterSaverFactory[any]{}
-	outputFormatterSaver, err := outputFormatterSaverFactory.New(outputFormat, outputFormatter)
-	if err != nil {
-		return err
-	}
-	outputFormatterSaver = outputFormatterSaver.WithFilePath(file)
-	return outputFormatterSaver.Save()
+	return filepath.Join(utils.MesheryFolder, fileName)
 }
 
 func init() {

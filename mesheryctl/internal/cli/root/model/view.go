@@ -69,35 +69,15 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 			return nil
 		}
 
-		outputFormatterFactory := display.OutputFormatterFactory[*model.ModelDefinition]{}
-		outputFormatter, err := outputFormatterFactory.New(strings.ToLower(modelViewFlags.OutputFormat), selectedModel)
-		if err != nil {
-			return err
-		}
+		outputFormat := strings.ToLower(modelViewFlags.OutputFormat)
 
-		err = outputFormatter.WithOutput(cmd.OutOrStdout()).Display()
-		if err != nil {
-			return err
-		}
-
+		fileName := ""
 		if modelViewFlags.Save {
-			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[*model.ModelDefinition]{}
-			outputFormatterSaver, err := outputFormatterSaverFactory.New(modelViewFlags.OutputFormat, outputFormatter)
-			if err != nil {
-				return err
-			}
-
 			modelString := strings.ReplaceAll(fmt.Sprintf("%v", selectedModel.DisplayName), " ", "_")
-			fileName := filepath.Join(utils.MesheryFolder, fmt.Sprintf("model_%s.%s", modelString, modelViewFlags.OutputFormat))
-
-			outputFormatterSaver = outputFormatterSaver.WithFilePath(fileName)
-			err = outputFormatterSaver.Save()
-			if err != nil {
-				return err
-			}
+			fileName = filepath.Join(utils.MesheryFolder, fmt.Sprintf("model_%s.%s", modelString, outputFormat))
 		}
 
-		return nil
+		return display.FormatAndSaveOutput(selectedModel, outputFormat, cmd.OutOrStdout(), modelViewFlags.Save, fileName)
 	},
 }
 
