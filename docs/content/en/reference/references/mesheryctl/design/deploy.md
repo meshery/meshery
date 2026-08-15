@@ -11,7 +11,8 @@ Deploy design
 
 ## Synopsis
 
-Command will trigger deploy of design
+Command will trigger deploy of design.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design deploy [flags]
