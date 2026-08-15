@@ -95,17 +95,7 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 			return utils.ErrRetrieveHomeDir(errors.Wrap(err, "failed to determine user home directory"))
 		}
 
-		outputFormatterFactory := display.OutputFormatterFactory[connection.Connection]{}
-		outputFormatter, err := outputFormatterFactory.New(connectionViewFlagsProvided.outputFormat, *selectedConnection)
-		if err != nil {
-			return err
-		}
-
-		err = outputFormatter.Display()
-		if err != nil {
-			return err
-		}
-
+		fileName := ""
 		if connectionViewFlagsProvided.save {
 			// Prepare the connection string for file naming since connection from local provider
 			// can be created without a name.
@@ -116,21 +106,11 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 				return strings.ReplaceAll(fmt.Sprintf("%v", c.Name), " ", "_")
 			}(*selectedConnection)
 
-			fileName := fmt.Sprintf("connection_%s.%s", connectionString, strings.ToLower(connectionViewFlagsProvided.outputFormat))
-			file := filepath.Join(homeDir, ".meshery", fileName)
-			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[connection.Connection]{}
-			outputFormatterSaver, err := outputFormatterSaverFactory.New(connectionViewFlagsProvided.outputFormat, outputFormatter)
-			if err != nil {
-				return err
-			}
-			outputFormatterSaver = outputFormatterSaver.WithFilePath(file)
-			err = outputFormatterSaver.Save()
-			if err != nil {
-				return err
-			}
+			fileName = fmt.Sprintf("connection_%s.%s", connectionString, strings.ToLower(connectionViewFlagsProvided.outputFormat))
+			fileName = filepath.Join(homeDir, ".meshery", fileName)
 		}
 
-		return nil
+		return display.FormatAndSaveOutput(*selectedConnection, connectionViewFlagsProvided.outputFormat, nil, connectionViewFlagsProvided.save, fileName)
 	},
 }
 

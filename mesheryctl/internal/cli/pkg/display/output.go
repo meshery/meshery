@@ -14,6 +14,36 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+func FormatAndSaveOutput[T any](data T, format string, out io.Writer, save bool, filePath string) error {
+	outputFormatterFactory := OutputFormatterFactory[T]{}
+	outputFormatter, err := outputFormatterFactory.New(format, data)
+	if err != nil {
+		return err
+	}
+
+	if out != nil {
+		outputFormatter = outputFormatter.WithOutput(out)
+	}
+
+	err = outputFormatter.Display()
+	if err != nil {
+		return err
+	}
+
+	if !save {
+		return nil
+	}
+
+	outputFormatterSaverFactory := OutputFormatterSaverFactory[T]{}
+	outputFormatterSaver, err := outputFormatterSaverFactory.New(format, outputFormatter)
+	if err != nil {
+		return err
+	}
+
+	outputFormatterSaver = outputFormatterSaver.WithFilePath(filePath)
+	return outputFormatterSaver.Save()
+}
+
 type OutputFormatter[T any] interface {
 	Display() error
 	WithOutput(io.Writer) OutputFormatter[T]
