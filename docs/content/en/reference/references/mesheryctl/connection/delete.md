@@ -11,7 +11,8 @@ Delete a connection
 
 ## Synopsis
 
-Delete a connection
+Delete a connection.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl connection delete [flags]
