@@ -17,6 +17,8 @@ Meshery is not just an application. It is a set of microservices where the centr
 
 _Figure: Extension points available throughout Meshery_
 
+Extension points in Meshery come in different shapes with the contracts of their boundaries ranging in their expression and depth of behavioral augmentation allowed; ranging from loosely-defined to strictly validated and enforced. 
+
 ## List of Extensions
 
 A browsable collection of various Meshery extensions is available at [https://meshery.io/extensions](https://meshery.io/extensions).
@@ -28,14 +30,15 @@ The following points of extension are currently incorporated into Meshery.
 | Extension point | What it extends | When it is applied |
 | :--- | :--- | :--- |
 | **[Adapters]({{< ref "extensions/adapters/_index.md" >}})** | Per-technology lifecycle, configuration, and performance operations, reached from Meshery Server over gRPC. | Runtime, opt-in |
-| **[Providers]({{< ref "reference/extensibility/providers/index.md" >}})** | Identity, authorization, durable persistence, and the extension package Meshery loads. | Runtime |
-| **[Models and Integrations]({{< ref "extensions/models/_index.md" >}})** | The registry of components and relationships Meshery designs and operates. | Runtime |
-| **[UI extension points]({{< ref "reference/extensibility/ui.md" >}})** | Meshery UI: navigator, account, user preferences, collaborator, and RJSF forms. | Runtime |
 | **[Authorization keys]({{< ref "reference/extensibility/authorization/index.md" >}})** | The keys, keychains, and roles that gate features in Meshery UI. | Runtime |
+| **[Build-time extensibility]({{< ref "reference/extensibility/build-time.md" >}})** | Configuration, data, and packages baked into a custom Meshery container image. | Image build |
 | **[Load generators]({{< ref "reference/extensibility/load-generators.md" >}})** | The engines behind Meshery's performance management. | Runtime |
+| **[Models and Integrations]({{< ref "extensions/models/_index.md" >}})** | The registry of components and relationships Meshery designs and operates. | Runtime |
+forms. | Runtime |
+| **[Providers]({{< ref "reference/extensibility/providers/index.md" >}})** | Identity, authorization, durable persistence, and the extension package Meshery loads. | Runtime |
 | **[REST and GraphQL APIs]({{< ref "reference/extensibility/api.md" >}})** | Programmatic access for external systems and automation. | Runtime |
 | **[Schema annotations]({{< ref "reference/extensibility/schemas.md" >}})** | Model and component behavior expressed through `x-annotations`. | Design time |
-| **[Build-time extensibility]({{< ref "reference/extensibility/build-time.md" >}})** | Configuration, data, and packages baked into a custom Meshery container image. | Image build |
+| **[UI extension points]({{< ref "reference/extensibility/ui.md" >}})** | Meshery UI: navigator, account, user preferences, collaborator, and RJSF 
 
 When you extend Meshery, also see
 [Ensuring Extension Compatibility]({{< ref "reference/extensibility/verify-compatibility.md" >}})
