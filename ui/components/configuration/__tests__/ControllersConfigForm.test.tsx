@@ -92,7 +92,10 @@ const field = (label: string, scope?: HTMLElement): HTMLElement =>
 const a11y = { hidden: true } as const;
 
 const textbox = (label: string, scope?: HTMLElement) => {
-  const inputs = within(field(label, scope)).getAllByRole('textbox', a11y);
+  const item = field(label, scope);
+  const combo = within(item).queryByRole('combobox', a11y);
+  if (combo) return combo;
+  const inputs = within(item).getAllByRole('textbox', a11y);
   // Multiline TextField mounts a mirror textarea with aria-hidden for sizing.
   return inputs.find((el) => el.getAttribute('aria-hidden') !== 'true') ?? inputs[0];
 };

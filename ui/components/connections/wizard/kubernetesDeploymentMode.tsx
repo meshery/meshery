@@ -1,7 +1,7 @@
-import { Alert, Box, CustomTooltip, Radio, Typography, SettingsIcon } from '@sistent/sistent';
-import { alpha, styled } from '@/theme';
+import { Alert, Box, CustomTooltip, RadioGroup, Typography, SettingsIcon } from '@sistent/sistent';
 import { EVENT_TYPES } from 'lib/event-types';
 import { MESHSYNC_DEPLOYMENT_TYPE } from '@/utils/Enum';
+import ChoiceCard from '@/components/shared/ChoiceCard';
 import { formatWizardError } from './errors';
 import { StepHeader } from '../ConnectionWizardStepContent';
 import type { GenericRecord, WizardContext, WizardStep } from './types';
@@ -18,25 +18,6 @@ export const MESHSYNC_OPERATOR_MODE_DOCS_URL =
   'https://docs.meshery.io/concepts/architecture/meshsync#operator-mode';
 export const MESHSYNC_EMBEDDED_MODE_DOCS_URL =
   'https://docs.meshery.io/concepts/architecture/meshsync#embedded-mode-default';
-
-const ModeCard = styled(Box, {
-  shouldForwardProp: (prop) => prop !== 'selected',
-})<{ selected?: boolean }>(({ theme, selected }) => ({
-  display: 'flex',
-  alignItems: 'flex-start',
-  gap: theme.spacing(1.5),
-  padding: theme.spacing(2),
-  borderRadius: theme.spacing(1),
-  cursor: 'pointer',
-  border: `1px solid ${selected ? theme.palette.background.brand?.default : theme.palette.divider}`,
-  background: selected
-    ? alpha(theme.palette.background.brand?.default, 0.08)
-    : theme.palette.background.card,
-  transition: 'border-color 0.15s ease, background 0.15s ease',
-  '&:hover': {
-    borderColor: theme.palette.background.brand?.default,
-  },
-}));
 
 export const MESHSYNC_DEPLOYMENT_MODE_OPTIONS = [
   {
@@ -72,37 +53,25 @@ export const MeshsyncDeploymentModePicker = ({
   currentValue?: string;
   onChange: (mode: string) => void;
 }) => (
-  <Box sx={{ display: 'grid', gap: 1.5 }}>
-    {MESHSYNC_DEPLOYMENT_MODE_OPTIONS.map((option) => {
-      const selected = value === option.value;
-      return (
-        <CustomTooltip
-          key={option.value}
-          interactive
-          title={getMeshsyncModeTooltip(option)}
-          placement="right"
-        >
-          <ModeCard
-            selected={selected}
-            role="radio"
-            aria-checked={selected}
-            tabIndex={0}
-            onClick={() => onChange(option.value)}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                onChange(option.value);
-              }
-            }}
-          >
-            <Radio
-              checked={selected}
-              tabIndex={-1}
-              onChange={() => onChange(option.value)}
-              sx={{ p: 0, mt: 0.25 }}
-            />
-            <Box sx={{ display: 'grid', gap: 0.25, minWidth: 0 }}>
-              <Typography variant="body1" sx={{ fontWeight: 600 }}>
+  <RadioGroup
+    value={value}
+    onChange={(_, mode) => onChange(mode)}
+    aria-label="MeshSync deployment mode"
+    sx={{ display: 'grid', gap: 1.5 }}
+  >
+    {MESHSYNC_DEPLOYMENT_MODE_OPTIONS.map((option) => (
+      <CustomTooltip
+        key={option.value}
+        interactive
+        title={getMeshsyncModeTooltip(option)}
+        placement="right"
+      >
+        <Box>
+          <ChoiceCard
+            selected={value === option.value}
+            ariaLabel={option.label}
+            label={
+              <>
                 {option.label}
                 {option.value === currentValue && (
                   <Typography
@@ -114,13 +83,14 @@ export const MeshsyncDeploymentModePicker = ({
                     Current
                   </Typography>
                 )}
-              </Typography>
-            </Box>
-          </ModeCard>
-        </CustomTooltip>
-      );
-    })}
-  </Box>
+              </>
+            }
+            onSelect={() => onChange(option.value)}
+          />
+        </Box>
+      </CustomTooltip>
+    ))}
+  </RadioGroup>
 );
 
 export const getConfiguredConnection = (ctx: WizardContext): GenericRecord =>

@@ -8,7 +8,6 @@ import {
   Chip,
   Divider,
   ExpandMoreIcon,
-  Grid2,
   InfoTooltip,
   MenuItem,
   TextField,
@@ -27,6 +26,7 @@ import {
 import { DeploymentModeBanner, SectionHeading, SectionNotice } from './DeploymentModeNotices';
 import ControllersConfigModePicker from './ControllersConfigModePicker';
 import ControllersConfigWatchList from './ControllersConfigWatchList';
+import OperatorVersionField from './OperatorVersionField';
 import { INHERIT, fitWidth, type WatchList } from './controllersConfigForm.shared';
 
 /**
@@ -84,6 +84,10 @@ const SubsectionTitle = ({
     {helpText ? <InfoTooltip helpText={helpText} placement="top" /> : null}
     {chip ? <Chip size="small" label={chip} variant="outlined" /> : null}
   </Box>
+);
+
+const FieldRow = ({ children }: { children: React.ReactNode }) => (
+  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'flex-start' }}>{children}</Box>
 );
 
 /**
@@ -195,7 +199,7 @@ export default function ControllersConfigForm({
     const inherited = inheritedValue(path) as boolean | undefined;
     const inheritOption = `Inherit (${inherited === undefined ? 'unset' : inherited ? 'Enabled' : 'Disabled'})`;
     return (
-      <Grid2 size="auto">
+      <Box>
         {fieldLabel(label, path, helper)}
         <TextField
           select
@@ -212,7 +216,7 @@ export default function ControllersConfigForm({
           <MenuItem value="true">Enabled</MenuItem>
           <MenuItem value="false">Disabled</MenuItem>
         </TextField>
-      </Grid2>
+      </Box>
     );
   };
 
@@ -226,7 +230,7 @@ export default function ControllersConfigForm({
     const inherited = inheritedValue(path);
     const placeholder = inherited !== undefined ? `Inherit (${inherited})` : 'Inherit';
     return (
-      <Grid2 size="auto">
+      <Box>
         {fieldLabel(label, path, helper)}
         <TextField
           size="small"
@@ -245,7 +249,7 @@ export default function ControllersConfigForm({
             onChange(setPath(value, path, opts?.number ? Number(raw) : raw));
           }}
         />
-      </Grid2>
+      </Box>
     );
   };
 
@@ -256,7 +260,7 @@ export default function ControllersConfigForm({
     const placeholder =
       inherited && inherited.length > 0 ? `Inherit (${inherited.join(', ')})` : 'Inherit (all)';
     return (
-      <Grid2 size="auto">
+      <Box>
         {fieldLabel(label, path, helper)}
         <TextField
           size="small"
@@ -282,7 +286,7 @@ export default function ControllersConfigForm({
             );
           }}
         />
-      </Grid2>
+      </Box>
     );
   };
 
@@ -300,7 +304,7 @@ export default function ControllersConfigForm({
     const inherited = inheritedValue(path) as string | undefined;
     const inheritOption = `Inherit (${inherited ?? 'unset'})`;
     return (
-      <Grid2 size="auto">
+      <Box>
         {fieldLabel(label, path, helper)}
         <TextField
           select
@@ -322,7 +326,7 @@ export default function ControllersConfigForm({
             </MenuItem>
           ))}
         </TextField>
-      </Grid2>
+      </Box>
     );
   };
 
@@ -381,6 +385,13 @@ export default function ControllersConfigForm({
     <Box>
       <DeploymentModeBanner governance={deploymentMode} />
 
+      <SectionHeading
+        title="Meshery Operator"
+        section="operator"
+        governance={deploymentMode}
+        id="controllers-config-operator"
+      />
+      {notice('operator')}
       <ControllersConfigModePicker
         label={fieldLabel(
           'Deployment mode',
@@ -389,26 +400,28 @@ export default function ControllersConfigForm({
         )}
         selected={(getPath(value, modePath) as string | undefined) ?? INHERIT}
         inheritModeLabel={inheritModeLabel}
+        inheritedMode={modeInherited === 'operator' ? 'operator' : 'embedded'}
+        scope={deploymentMode?.scope ?? 'serverDefault'}
         disabled={disabled || isInert(modePath)}
         onChange={(selected) => onChange(setPath(value, modePath, selected))}
       />
-
-      <Divider sx={{ margin: '1.5rem 0' }} />
-
-      <SectionHeading
-        title="Meshery Operator"
-        section="operator"
-        governance={deploymentMode}
-        id="controllers-config-operator"
-      />
-      {notice('operator')}
-      <Grid2 container spacing={2}>
-        {textInput(
+      <Box>
+        {fieldLabel(
           'Operator version',
           ['operator', 'version'],
           'Helm chart version (operator mode). Applying upgrades the Meshery Operator release. Inherit tracks the Meshery Server release.',
         )}
-      </Grid2>
+        <OperatorVersionField
+          value={getPath(value, ['operator', 'version']) as string | undefined}
+          placeholder={
+            inheritedValue(['operator', 'version']) !== undefined
+              ? `Inherit (${inheritedValue(['operator', 'version'])})`
+              : 'Inherit (server release)'
+          }
+          disabled={isDisabled(['operator', 'version'])}
+          onChange={(next) => onChange(setPath(value, ['operator', 'version'], next))}
+        />
+      </Box>
 
       <Divider sx={{ margin: '1.5rem 0' }} />
 
@@ -436,7 +449,7 @@ export default function ControllersConfigForm({
           chip="Applies in both modes"
           helpText="Limits what MeshSync publishes into Meshery after discovery. Available for Embedded and Operator modes."
         />
-        <Grid2 container spacing={2}>
+        <FieldRow>
           {listInput(
             'Output namespaces',
             ['meshsync', 'outputNamespaces'],
@@ -447,7 +460,7 @@ export default function ControllersConfigForm({
             ['meshsync', 'outputResources'],
             'Comma-separated lowercase kinds (e.g. pod, deployment); empty publishes all.',
           )}
-        </Grid2>
+        </FieldRow>
       </Box>
 
       <Accordion
@@ -475,7 +488,7 @@ export default function ControllersConfigForm({
           </Box>
         </AccordionSummary>
         <AccordionDetails>
-          <Grid2 container spacing={2}>
+          <FieldRow>
             {textInput(
               'MeshSync version',
               ['meshsync', 'version'],
@@ -501,7 +514,7 @@ export default function ControllersConfigForm({
               ['meshsync', 'debugLogging'],
               'DEBUG env on MeshSync.',
             )}
-          </Grid2>
+          </FieldRow>
 
           {redactSecrets !== true && !isInert(['meshsync', 'redactSecrets']) && (
             <Alert severity="warning" sx={{ marginTop: '1rem' }}>
@@ -559,7 +572,7 @@ export default function ControllersConfigForm({
           </Box>
         </AccordionSummary>
         <AccordionDetails>
-          <Grid2 container spacing={2}>
+          <FieldRow>
             {textInput(
               'Broker version',
               ['broker', 'version'],
@@ -598,7 +611,7 @@ export default function ControllersConfigForm({
                 ['broker', 'service', 'loadBalancerSourceRanges'],
                 'Comma-separated CIDRs allowed to reach the broker.',
               )}
-            <Grid2 size="auto">
+            <Box>
               {fieldLabel(
                 'Service annotations',
                 ['broker', 'service', 'annotations'],
@@ -621,8 +634,8 @@ export default function ControllersConfigForm({
                 }}
                 onChange={(e) => setAnnotationsFromText(e.target.value)}
               />
-            </Grid2>
-          </Grid2>
+            </Box>
+          </FieldRow>
         </AccordionDetails>
       </Accordion>
     </Box>

@@ -17,6 +17,7 @@ import {
   SERVER_DEFAULT_SCOPE_NOTE,
   dormantPathsIn,
   isInertIn,
+  modeConsequence,
   type ConfigSection,
   type DeploymentModeGovernance,
 } from './deploymentMode';
@@ -49,14 +50,7 @@ export const DeploymentModeBanner: React.FC<{ governance?: DeploymentModeGoverna
   if (!governance) return null;
   const { mode, sourceLabel, scope, unsaved } = governance;
   const isConnection = scope === 'connection';
-
-  const consequence = isConnection
-    ? mode === 'embedded'
-      ? 'MeshSync runs inside Meshery Server for this connection and nothing is installed into the cluster, so the settings marked "Not applied" below cannot take effect until this connection uses Operator mode.'
-      : 'Meshery Operator manages MeshSync and Meshery Broker on this cluster, so every setting below applies.'
-    : mode === 'embedded'
-      ? 'Connections that do not override the mode run MeshSync inside Meshery Server, where the in-cluster MeshSync and Meshery Broker settings below do not apply. They still reach connections that override the mode to Operator.'
-      : 'Connections that do not override the mode run Meshery Operator, which applies every setting below.';
+  const consequence = modeConsequence(mode, scope);
 
   return (
     <Alert
