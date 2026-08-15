@@ -38,13 +38,21 @@ export default function MesheryControllersConfig() {
       <Typography variant="h6" sx={{ fontWeight: 600 }}>
         Meshery Operator, MeshSync &amp; Broker
       </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ marginBottom: '1rem' }}>
+      <Typography variant="body2" color="text.secondary">
         Server-wide defaults for every managed Kubernetes cluster. Fields left on Inherit use
-        built-in defaults. Per-cluster overrides:{' '}
-        <Link component={NextLink} href="/management/connections" underline="hover">
-          Connections
+        built-in defaults.
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ marginBottom: '1rem' }}>
+        For per-cluster overrides, go to{' '}
+        <Link
+          className="keppel"
+          component={NextLink}
+          href="/management/connections"
+          underline="hover"
+        >
+          Connection
         </Link>
-        , Actions, <strong>Configure Controllers</strong>.
+        {' → Actions → Configure Controllers.'}
       </Typography>
 
       <ControllersConfigForm

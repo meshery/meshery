@@ -1,15 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, type ReactNode } from 'react';
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
   Alert,
   Box,
+  Button,
+  Checkbox,
   Chip,
   Divider,
   ExpandMoreIcon,
+  FormControlLabel,
+  FormGroup,
   InfoTooltip,
   MenuItem,
+  Stack,
   TextField,
   Typography,
 } from '@sistent/sistent';
@@ -17,17 +22,163 @@ import type { UpdateControllersDefaultConfigApiArg } from '@meshery/schemas/mesh
 import { alpha } from '@/theme';
 import { getPath, setPath, type FieldPath } from './fieldPath';
 import {
+  INHERIT,
+  WATCH_EVENTS,
+  WATCH_MODE_OPTIONS,
   dormantPathsIn,
-  isInertIn,
+  fitWidth,
   type ConfigSection,
   type DeploymentMode,
   type DeploymentModeGovernance,
+  type WatchList,
 } from './deploymentMode';
 import { DeploymentModeBanner, SectionHeading, SectionNotice } from './DeploymentModeNotices';
-import ControllersConfigModePicker from './ControllersConfigModePicker';
-import ControllersConfigWatchList from './ControllersConfigWatchList';
-import OperatorVersionField from './OperatorVersionField';
-import { INHERIT, fitNumberWidth, fitWidth, type WatchList } from './controllersConfigForm.shared';
+import {
+  ControllersConfigModePicker,
+  OperatorVersionField,
+  controlSx,
+  createControllersConfigFields,
+  fieldRowSx,
+} from './ControllersConfigFields';
+
+function ControllersConfigWatchList({
+  label,
+  value,
+  disabled,
+  onChange,
+}: {
+  label: ReactNode;
+  value: WatchList | undefined;
+  disabled: boolean;
+  onChange: (next: WatchList | undefined) => void;
+}) {
+  const watchMode = !value ? INHERIT : value.whitelist ? 'whitelist' : 'blacklist';
+  const whitelist = value?.whitelist ?? [];
+  const blacklist = value?.blacklist ?? [];
+
+  return (
+    <Box
+      sx={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}
+      data-testid="controllers-config-watch-list"
+    >
+      {label}
+      <TextField
+        select
+        size="small"
+        disabled={disabled}
+        value={watchMode}
+        aria-label="Watch mode"
+        slotProps={{ htmlInput: { 'aria-label': 'Watch mode' } }}
+        onChange={(e) => {
+          const mode = e.target.value;
+          if (mode === INHERIT) onChange(undefined);
+          else if (mode === 'whitelist') onChange({ whitelist: [] });
+          else onChange({ blacklist: [] });
+        }}
+        sx={{
+          width: fitWidth(...WATCH_MODE_OPTIONS.map((option) => option.label)),
+          maxWidth: '100%',
+        }}
+      >
+        {WATCH_MODE_OPTIONS.map((option) => (
+          <MenuItem key={option.value} value={option.value}>
+            {option.label}
+          </MenuItem>
+        ))}
+      </TextField>
+
+      {watchMode === 'whitelist' && (
+        <Box sx={{ marginTop: '1rem', width: '100%' }}>
+          {whitelist.map((row, index) => (
+            <Stack key={index} direction="row" spacing={1.5} sx={{ alignItems: 'center', mb: 0.5 }}>
+              <TextField
+                size="small"
+                disabled={disabled}
+                value={row.resource}
+                placeholder="pods.v1. or deployments.v1.apps"
+                aria-label={`Resource ${index + 1}`}
+                slotProps={{ htmlInput: { 'aria-label': `Resource ${index + 1}` } }}
+                sx={{
+                  width: fitWidth(row.resource, 'pods.v1. or deployments.v1.apps'),
+                  maxWidth: '100%',
+                }}
+                onChange={(e) => {
+                  const rows = [...whitelist];
+                  rows[index] = { ...rows[index], resource: e.target.value };
+                  onChange({ whitelist: rows });
+                }}
+              />
+              <FormGroup row>
+                {WATCH_EVENTS.map((eventType) => (
+                  <FormControlLabel
+                    key={eventType}
+                    control={
+                      <Checkbox
+                        size="small"
+                        disabled={disabled}
+                        checked={(row.events ?? []).includes(eventType)}
+                        onChange={(e) => {
+                          const rows = [...whitelist];
+                          const events = new Set(rows[index].events ?? []);
+                          if (e.target.checked) events.add(eventType);
+                          else events.delete(eventType);
+                          rows[index] = { ...rows[index], events: Array.from(events) };
+                          onChange({ whitelist: rows });
+                        }}
+                      />
+                    }
+                    label={eventType}
+                  />
+                ))}
+              </FormGroup>
+              <Button
+                size="small"
+                color="error"
+                disabled={disabled}
+                onClick={() => onChange({ whitelist: whitelist.filter((_, i) => i !== index) })}
+              >
+                Remove
+              </Button>
+            </Stack>
+          ))}
+          <Button
+            size="small"
+            variant="outlined"
+            color="primary"
+            disabled={disabled}
+            onClick={() =>
+              onChange({ whitelist: [...whitelist, { resource: '', events: [...WATCH_EVENTS] }] })
+            }
+          >
+            Add resource
+          </Button>
+        </Box>
+      )}
+
+      {watchMode === 'blacklist' && (
+        <TextField
+          multiline
+          minRows={3}
+          size="small"
+          disabled={disabled}
+          sx={{ marginTop: '1rem', width: '100%' }}
+          aria-label="Blacklist resources"
+          slotProps={{ htmlInput: { 'aria-label': 'Blacklist resources' } }}
+          value={blacklist.join('\n')}
+          placeholder={'secrets.v1.\nevents.v1.'}
+          onChange={(e) =>
+            onChange({
+              blacklist: e.target.value
+                .split('\n')
+                .map((s) => s.trim())
+                .filter(Boolean),
+            })
+          }
+        />
+      )}
+    </Box>
+  );
+}
 
 /**
  * The editable controllers configuration document: the generated PUT request
@@ -48,8 +199,6 @@ export const BUILT_IN_CONTROLLERS_CONFIG: ControllersConfigDoc = {
   broker: { replicas: 1, service: { type: 'ClusterIP' } },
 };
 
-type SourceInfo = { label: string; overridden: boolean };
-
 export type ControllersConfigFormProps = {
   value: ControllersConfigDoc;
   onChange: (next: ControllersConfigDoc) => void;
@@ -59,59 +208,6 @@ export type ControllersConfigFormProps = {
   deploymentMode?: DeploymentModeGovernance;
   disabled?: boolean;
 };
-
-const SubsectionTitle = ({
-  title,
-  helpText,
-  chip,
-}: {
-  title: string;
-  helpText?: string;
-  chip?: string;
-}) => (
-  <Box
-    sx={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: '0.5rem',
-      flexWrap: 'wrap',
-      marginBottom: '0.75rem',
-    }}
-  >
-    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-      {title}
-    </Typography>
-    {helpText ? <InfoTooltip helpText={helpText} placement="top" /> : null}
-    {chip ? <Chip size="small" label={chip} variant="outlined" /> : null}
-  </Box>
-);
-
-const FieldRow = ({ children }: { children: React.ReactNode }) => (
-  <Box
-    sx={{
-      display: 'flex',
-      flexWrap: 'wrap',
-      gap: 2,
-      alignItems: 'flex-start',
-      '& > *': { flex: '0 1 auto', maxWidth: '100%' },
-    }}
-  >
-    {children}
-  </Box>
-);
-
-const controlSx = (nowrapPlaceholder = true) => ({
-  width: '100%',
-  ...(nowrapPlaceholder
-    ? {
-        '& input::placeholder, & textarea::placeholder': {
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-        },
-      }
-    : {}),
-});
 
 /**
  * Layered editor for the Meshery Operator, MeshSync, and Broker configuration.
@@ -147,37 +243,24 @@ export default function ControllersConfigForm({
     setBrokerOpen(operatorModeApplies);
   }, [operatorModeApplies]);
 
-  const inheritedValue = (path: FieldPath): unknown => {
-    for (const layer of inheritedLayers) {
-      const v = getPath(layer ?? undefined, path);
-      if (v !== undefined) return v;
-    }
-    return undefined;
-  };
-
-  const sourceOf = (path: FieldPath): SourceInfo => {
-    if (getPath(value, path) !== undefined) return { label: 'Override', overridden: true };
-    if (getPath(inheritedLayers[0] ?? undefined, path) !== undefined)
-      return { label: inheritLabel, overridden: false };
-    return { label: 'Built-in default', overridden: false };
-  };
-
-  const sourceChip = (path: FieldPath) => {
-    if (!showSourceIndicators) return null;
-    const source = sourceOf(path);
-    return (
-      <Chip
-        size="small"
-        label={source.label}
-        color={source.overridden ? 'primary' : 'default'}
-        variant={source.overridden ? 'filled' : 'outlined'}
-        sx={{ marginLeft: '0.5rem', height: '20px' }}
-      />
-    );
-  };
-
-  const isInert = (path: FieldPath): boolean => isInertIn(liveGovernance, path);
-  const isDisabled = (path: FieldPath): boolean => disabled || isInert(path);
+  const {
+    inheritedValue,
+    isInert,
+    isDisabled,
+    fieldLabel,
+    triStateBoolean,
+    textInput,
+    listInput,
+    enumSelect,
+  } = createControllersConfigFields({
+    value,
+    onChange,
+    inheritedLayers,
+    inheritLabel,
+    showSourceIndicators,
+    disabled,
+    liveGovernance,
+  });
 
   const clearDormant = (section: ConfigSection) => {
     onChange(
@@ -188,32 +271,6 @@ export default function ControllersConfigForm({
     );
   };
 
-  const fieldLabel = (text: string, path: FieldPath, helper?: string) => (
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        marginBottom: '0.25rem',
-        gap: '0.25rem',
-        flexWrap: 'wrap',
-      }}
-    >
-      <Typography variant="body2" sx={{ fontWeight: 500 }}>
-        {text}
-      </Typography>
-      {helper ? <InfoTooltip helpText={helper} placement="top" /> : null}
-      {sourceChip(path)}
-      {isInert(path) ? (
-        <Chip
-          size="small"
-          label="Not applied"
-          variant="outlined"
-          sx={{ marginLeft: '0.25rem', height: '20px' }}
-        />
-      ) : null}
-    </Box>
-  );
-
   const notice = (section: ConfigSection) => (
     <SectionNotice
       section={section}
@@ -223,167 +280,6 @@ export default function ControllersConfigForm({
       disabled={disabled}
     />
   );
-
-  const triStateBoolean = (label: string, path: FieldPath, helper?: string) => {
-    const current = getPath(value, path) as boolean | undefined;
-    const inherited = inheritedValue(path) as boolean | undefined;
-    const inheritOption = `Inherit (${inherited === undefined ? 'unset' : inherited ? 'Enabled' : 'Disabled'})`;
-    return (
-      <Box sx={{ width: fitWidth(label, inheritOption, 'Enabled', 'Disabled'), maxWidth: '100%' }}>
-        {fieldLabel(label, path, helper)}
-        <TextField
-          select
-          size="small"
-          disabled={isDisabled(path)}
-          value={current === undefined ? INHERIT : current ? 'true' : 'false'}
-          sx={controlSx(false)}
-          onChange={(e) => {
-            const v = e.target.value;
-            onChange(setPath(value, path, v === INHERIT ? undefined : v === 'true'));
-          }}
-        >
-          <MenuItem value={INHERIT}>{inheritOption}</MenuItem>
-          <MenuItem value="true">Enabled</MenuItem>
-          <MenuItem value="false">Disabled</MenuItem>
-        </TextField>
-      </Box>
-    );
-  };
-
-  const textInput = (
-    label: string,
-    path: FieldPath,
-    helper?: string,
-    opts?: { number?: boolean; min?: number; max?: number },
-  ) => {
-    const current = getPath(value, path) as string | number | undefined;
-    const inherited = inheritedValue(path);
-    const placeholder = inherited !== undefined ? `Inherit (${inherited})` : 'Inherit';
-    const width = opts?.number
-      ? fitNumberWidth(label, current, placeholder, 'Inherit')
-      : fitWidth(label, current, placeholder, 'Inherit');
-    return (
-      <Box sx={{ width, maxWidth: '100%' }}>
-        {fieldLabel(label, path, helper)}
-        <TextField
-          size="small"
-          type={opts?.number ? 'number' : 'text'}
-          disabled={isDisabled(path)}
-          value={current ?? ''}
-          placeholder={placeholder}
-          sx={controlSx()}
-          slotProps={
-            opts?.number ? { htmlInput: { min: opts.min, max: opts.max, step: 1 } } : undefined
-          }
-          onKeyDown={
-            opts?.number
-              ? (event) => {
-                  if (['e', 'E', '+', '-', '.'].includes(event.key)) event.preventDefault();
-                }
-              : undefined
-          }
-          onChange={(e) => {
-            const raw = e.target.value;
-            if (raw === '') {
-              onChange(setPath(value, path, undefined));
-              return;
-            }
-            if (!opts?.number) {
-              onChange(setPath(value, path, raw));
-              return;
-            }
-            // Same integer parse as Settings → Performance; clamp to the schema
-            // bounds (html min/max only constrain the stepper).
-            const parsed = parseInt(raw, 10);
-            if (Number.isNaN(parsed)) return;
-            let next = parsed;
-            if (opts.min !== undefined) next = Math.max(opts.min, next);
-            if (opts.max !== undefined) next = Math.min(opts.max, next);
-            onChange(setPath(value, path, next));
-          }}
-        />
-      </Box>
-    );
-  };
-
-  const listInput = (label: string, path: FieldPath, helper: string) => {
-    const current = getPath(value, path) as string[] | undefined;
-    const inherited = inheritedValue(path) as string[] | undefined;
-    const joined = current?.join(', ') ?? '';
-    const placeholder =
-      inherited && inherited.length > 0 ? `Inherit (${inherited.join(', ')})` : 'Inherit (all)';
-    const width = fitWidth(label, joined, placeholder, 'Inherit (all)');
-    return (
-      <Box sx={{ width, maxWidth: '100%' }}>
-        {fieldLabel(label, path, helper)}
-        <TextField
-          size="small"
-          disabled={isDisabled(path)}
-          value={joined}
-          placeholder={placeholder}
-          sx={controlSx()}
-          onChange={(e) => {
-            const raw = e.target.value;
-            if (raw.trim() === '') {
-              onChange(setPath(value, path, undefined));
-              return;
-            }
-            onChange(
-              setPath(
-                value,
-                path,
-                raw
-                  .split(',')
-                  .map((s) => s.trim())
-                  .filter(Boolean),
-              ),
-            );
-          }}
-        />
-      </Box>
-    );
-  };
-
-  const enumSelect = (
-    label: string,
-    path: FieldPath,
-    options: { value: string; label: string }[],
-    helper?: string,
-    postProcess?: (
-      next: ControllersConfigDoc,
-      selected: string | undefined,
-    ) => ControllersConfigDoc,
-  ) => {
-    const current = getPath(value, path) as string | undefined;
-    const inherited = inheritedValue(path) as string | undefined;
-    const inheritOption = `Inherit (${inherited ?? 'unset'})`;
-    const width = fitWidth(label, inheritOption, ...options.map((option) => option.label));
-    return (
-      <Box sx={{ width, maxWidth: '100%' }}>
-        {fieldLabel(label, path, helper)}
-        <TextField
-          select
-          size="small"
-          disabled={isDisabled(path)}
-          value={current ?? INHERIT}
-          sx={controlSx(false)}
-          onChange={(e) => {
-            const selected = e.target.value === INHERIT ? undefined : e.target.value;
-            let next = setPath(value, path, selected);
-            if (postProcess) next = postProcess(next, selected);
-            onChange(next);
-          }}
-        >
-          <MenuItem value={INHERIT}>{inheritOption}</MenuItem>
-          {options.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </TextField>
-      </Box>
-    );
-  };
 
   const clearLoadBalancerFieldsUnlessLB = (
     next: ControllersConfigDoc,
@@ -497,12 +393,21 @@ export default function ControllersConfigForm({
         }}
         data-testid="controllers-config-meshsync-filters"
       >
-        <SubsectionTitle
-          title="Discovery filters"
-          chip="Applies in both modes"
-          helpText="Limits what MeshSync publishes into Meshery after discovery. Available for Embedded and Operator modes."
-        />
-        <FieldRow>
+        <Stack
+          direction="row"
+          spacing={0.5}
+          sx={{ alignItems: 'center', flexWrap: 'wrap', mb: 1.5 }}
+        >
+          <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+            Discovery filters
+          </Typography>
+          <InfoTooltip
+            helpText="Limits what MeshSync publishes into Meshery after discovery. Available for Embedded and Operator modes."
+            placement="top"
+          />
+          <Chip size="small" label="Applies in both modes" variant="outlined" />
+        </Stack>
+        <Stack direction="row" spacing={2} useFlexGap sx={fieldRowSx}>
           {listInput(
             'Output namespaces',
             ['meshsync', 'outputNamespaces'],
@@ -513,7 +418,7 @@ export default function ControllersConfigForm({
             ['meshsync', 'outputResources'],
             'Comma-separated lowercase kinds (e.g. pod, deployment); empty publishes all.',
           )}
-        </FieldRow>
+        </Stack>
       </Box>
 
       <Accordion
@@ -541,7 +446,7 @@ export default function ControllersConfigForm({
           </Box>
         </AccordionSummary>
         <AccordionDetails>
-          <FieldRow>
+          <Stack direction="row" spacing={2} useFlexGap sx={fieldRowSx}>
             {textInput(
               'MeshSync version',
               ['meshsync', 'version'],
@@ -567,7 +472,7 @@ export default function ControllersConfigForm({
               ['meshsync', 'debugLogging'],
               'DEBUG env on MeshSync.',
             )}
-          </FieldRow>
+          </Stack>
 
           {redactSecrets !== true && !isInert(['meshsync', 'redactSecrets']) && (
             <Alert severity="warning" sx={{ marginTop: '1rem' }}>
@@ -625,7 +530,7 @@ export default function ControllersConfigForm({
           </Box>
         </AccordionSummary>
         <AccordionDetails>
-          <FieldRow>
+          <Stack direction="row" spacing={2} useFlexGap sx={fieldRowSx}>
             {textInput(
               'Broker version',
               ['broker', 'version'],
@@ -691,7 +596,7 @@ export default function ControllersConfigForm({
                 onChange={(e) => setAnnotationsFromText(e.target.value)}
               />
             </Box>
-          </FieldRow>
+          </Stack>
         </AccordionDetails>
       </Accordion>
     </Box>

@@ -103,6 +103,8 @@ const spinbutton = (label: string, scope?: HTMLElement) =>
   within(field(label, scope)).getByRole('spinbutton', a11y);
 const combobox = (label: string, scope?: HTMLElement) =>
   within(field(label, scope)).getByRole('combobox', a11y);
+const modeOption = (testId: string) => screen.getByTestId(testId);
+const modeRadio = (testId: string) => within(modeOption(testId)).getByRole('radio', a11y);
 
 /** Expand Operator-only accordions so interactive tests can reach their controls. */
 const expandOperatorOnly = async () => {
@@ -173,14 +175,10 @@ describe('tri-state inherit / override', () => {
 
   it('starts every control on Inherit with an empty document', () => {
     renderForm();
-    expect(screen.getByTestId('controllers-config-mode-inherit')).toHaveAttribute(
-      'aria-checked',
-      'true',
-    );
-    expect(screen.getByTestId('controllers-config-mode-inherit')).toHaveTextContent(
-      'Inherit (Embedded)',
-    );
+    expect(modeRadio('controllers-config-mode-inherit')).toBeChecked();
+    expect(modeOption('controllers-config-mode-inherit')).toHaveTextContent('Inherit (Embedded)');
     expect(textbox('Operator version')).toHaveValue('');
+    expect(textbox('Operator version')).toHaveAccessibleName('Operator version');
     expect(spinbutton('Replicas', meshsyncGrid())).toHaveValue(null);
     expect(combobox('Secret redaction')).toHaveTextContent('Inherit (Disabled)');
     expect(combobox('Service type')).toHaveTextContent('Inherit (ClusterIP)');
@@ -200,13 +198,10 @@ describe('tri-state inherit / override', () => {
 
   it('selects deployment mode from the mode cards', async () => {
     const holder = renderForm();
-    await user.click(screen.getByTestId('controllers-config-mode-operator'));
+    await user.click(modeOption('controllers-config-mode-operator'));
     expect(holder.doc()).toEqual({ operator: { deploymentMode: 'operator' } });
     expect(holder.changes()).toBe(1);
-    expect(screen.getByTestId('controllers-config-mode-operator')).toHaveAttribute(
-      'aria-checked',
-      'true',
-    );
+    expect(modeRadio('controllers-config-mode-operator')).toBeChecked();
   });
 
   it('expands Operator-only blocks in Operator mode and collapses them in Embedded', async () => {
@@ -220,7 +215,7 @@ describe('tri-state inherit / override', () => {
     expect(meshsyncSummary).toHaveAttribute('aria-expanded', 'false');
     expect(brokerSummary).toHaveAttribute('aria-expanded', 'false');
 
-    await user.click(screen.getByTestId('controllers-config-mode-operator'));
+    await user.click(modeOption('controllers-config-mode-operator'));
     expect(
       screen.getByTestId('controllers-config-accordion-meshsync').querySelector('[aria-expanded]'),
     ).toHaveAttribute('aria-expanded', 'true');
@@ -228,7 +223,7 @@ describe('tri-state inherit / override', () => {
       screen.getByTestId('controllers-config-accordion-broker').querySelector('[aria-expanded]'),
     ).toHaveAttribute('aria-expanded', 'true');
 
-    await user.click(screen.getByTestId('controllers-config-mode-embedded'));
+    await user.click(modeOption('controllers-config-mode-embedded'));
     expect(
       screen.getByTestId('controllers-config-accordion-meshsync').querySelector('[aria-expanded]'),
     ).toHaveAttribute('aria-expanded', 'false');
@@ -527,7 +522,7 @@ describe('deployment mode gating (per-connection editor)', () => {
     renderForm({ deploymentMode: governance('embedded') });
     expect(disabledState(textbox('Broker version'))).toBe(true);
 
-    await user.click(screen.getByTestId('controllers-config-mode-operator'));
+    await user.click(modeOption('controllers-config-mode-operator'));
     expect(disabledState(textbox('Broker version'))).toBe(false);
   });
 
@@ -559,10 +554,7 @@ describe('deployment mode gating (per-connection editor)', () => {
   it('keeps the settings embedded mode can still apply live', () => {
     renderForm({ deploymentMode: governance('embedded') });
 
-    expect(screen.getByTestId('controllers-config-mode-operator')).not.toHaveAttribute(
-      'aria-disabled',
-      'true',
-    );
+    expect(modeRadio('controllers-config-mode-operator')).not.toBeDisabled();
     expect(field('Deployment mode')).not.toHaveTextContent('Not applied');
     for (const label of ['Output namespaces', 'Output resources']) {
       expect(disabledState(textbox(label)), `${label} should stay live`).toBe(false);

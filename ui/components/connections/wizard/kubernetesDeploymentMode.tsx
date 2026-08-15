@@ -1,7 +1,7 @@
 import { Alert, Box, CustomTooltip, RadioGroup, Typography, SettingsIcon } from '@sistent/sistent';
 import { EVENT_TYPES } from 'lib/event-types';
 import { MESHSYNC_DEPLOYMENT_TYPE } from '@/utils/Enum';
-import ChoiceCard from '@/components/shared/ChoiceCard';
+import { ChoiceCard } from '@/components/configuration/ControllersConfigFields';
 import { formatWizardError } from './errors';
 import { StepHeader } from '../ConnectionWizardStepContent';
 import type { GenericRecord, WizardContext, WizardStep } from './types';
@@ -68,8 +68,8 @@ export const MeshsyncDeploymentModePicker = ({
       >
         <Box>
           <ChoiceCard
+            value={option.value}
             selected={value === option.value}
-            ariaLabel={option.label}
             label={
               <>
                 {option.label}
@@ -85,7 +85,6 @@ export const MeshsyncDeploymentModePicker = ({
                 )}
               </>
             }
-            onSelect={() => onChange(option.value)}
           />
         </Box>
       </CustomTooltip>
