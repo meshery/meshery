@@ -11,7 +11,8 @@ List performance profiles
 
 ## Synopsis
 
-List all the available performance profiles
+List all the available performance profiles.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf profile [profile-name] [flags]

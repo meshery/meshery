@@ -42,8 +42,9 @@ var linkDocPatternView = map[string]string{
 var viewCmd = &cobra.Command{
 	Use:   "view design name",
 	Short: "Display a design content",
-	Long:  `Display the content of a specific design based on name or id`,
-	Args:  cobra.MaximumNArgs(1),
+	Long: `Display the content of a specific design based on name or id.
+	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/design/view`,
+	Args: cobra.MaximumNArgs(1),
 	Example: `
 // view a design
 mesheryctl design view [design-name | ID]
@@ -110,10 +111,10 @@ mesheryctl design view [design-name | ID]
 
 		outputFormatFactory := display.OutputFormatterFactory[interface{}]{}
 		outputFormatter, err := outputFormatFactory.New(designViewFlagsProvided.OutputFormat, designData)
-		outputFormatter.WithOutput(cmd.OutOrStdout())
 		if err != nil {
 			return err
 		}
+		outputFormatter = outputFormatter.WithOutput(cmd.OutOrStdout())
 
 		return outputFormatter.Display()
 	},

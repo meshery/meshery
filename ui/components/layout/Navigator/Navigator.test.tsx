@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const dispatchMock = vi.fn();
@@ -78,7 +78,9 @@ vi.mock('../../meshery-mesh-interface/PatternService/CustomTextTooltip', () => (
 }));
 
 vi.mock('../../../utils/ExtensionPointSchemaValidator', () => ({
-  default: () => () => [],
+  default: () => {
+    return (extensions: any[] = []) => extensions;
+  },
 }));
 
 vi.mock('../../../css/disableComponent.styles', () => ({
@@ -181,7 +183,24 @@ vi.mock('../../general/style', () => {
 // fake user RTK-style helpers
 vi.mock('@/rtk-query/user', () => ({
   getProviderCapabilities: vi.fn(() =>
-    Promise.resolve({ data: { providerUrl: '', extensions: {} }, isSuccess: true, isError: false }),
+    Promise.resolve({
+      data: {
+        providerUrl: '',
+        extensions: {
+          navigator: [
+            {
+              id: 'kanvas',
+              title: 'Kanvas',
+              icon: '/provider/navigator/img/kanvas-icon.svg',
+              href: '/meshmap',
+              show: true,
+            },
+          ],
+        },
+      },
+      isSuccess: true,
+      isError: false,
+    }),
   ),
   getSystemVersion: vi.fn(() =>
     Promise.resolve({
@@ -311,5 +330,18 @@ describe('Navigator', () => {
     // leaf items must not render one - this keeps the caret button out of leaf anchors.
     expect(screen.getByTestId('dash-icon')).toBeInTheDocument();
     expect(screen.queryAllByTestId('expand-more')).toHaveLength(1);
+  });
+
+  it('keeps extension icons aligned when hovered', async () => {
+    render(<Navigator />);
+    const kanvasIcon = await screen.findByRole('img', { name: 'Kanvas icon' });
+    const styleBeforeHover = kanvasIcon.getAttribute('style');
+
+    fireEvent.mouseOver(kanvasIcon);
+
+    expect(kanvasIcon).toHaveAttribute('style', styleBeforeHover);
+    expect(kanvasIcon.style.transform).toBe('');
+    expect(kanvasIcon.style.top).toBe('');
+    expect(kanvasIcon.style.right).toBe('');
   });
 });
