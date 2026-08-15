@@ -108,13 +108,6 @@ describe('CustomErrorFallback', () => {
     expect(screen.getByTestId('try-again-btn')).toHaveTextContent('Try Again');
   });
 
-  it('renders Get Help and Try Again as plain button text content', () => {
-    render(<CustomErrorFallback error={{ message: 'Boom!' }} resetErrorBoundary={vi.fn()} />);
-
-    expect(screen.getByTestId('edit-btn')).toHaveTextContent('Get Help');
-    expect(screen.getByTestId('try-again-btn')).toHaveTextContent('Try Again');
-  });
-
   it('calls resetErrorBoundary when Try Again is clicked', async () => {
     const user = userEvent.setup();
     const resetErrorBoundary = vi.fn();
