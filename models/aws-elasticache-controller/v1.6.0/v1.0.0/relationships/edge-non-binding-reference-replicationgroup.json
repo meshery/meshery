@@ -32,7 +32,7 @@
             "id": null,
             "kind": "CacheCluster",
             "match": {},
-            "matchStrategyMatrix": null,
+            "match_strategy_matrix": null,
             "model": {
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
@@ -46,7 +46,7 @@
               "version": ""
             },
             "patch": {
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "spec",
@@ -62,7 +62,7 @@
             "id": null,
             "kind": "Snapshot",
             "match": {},
-            "matchStrategyMatrix": null,
+            "match_strategy_matrix": null,
             "model": {
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
@@ -76,7 +76,7 @@
               "version": ""
             },
             "patch": {
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "spec",
@@ -94,7 +94,7 @@
             "id": null,
             "kind": "ReplicationGroup",
             "match": {},
-            "matchStrategyMatrix": null,
+            "match_strategy_matrix": null,
             "model": {
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
@@ -108,7 +108,7 @@
               "version": ""
             },
             "patch": {
-              "mutatedRef": [
+              "mutatorRef": [
                 [
                   "displayName"
                 ]
