@@ -63,39 +63,12 @@ models, TypeScript types, and the RTK Query client (`@meshery/schemas/{mesheryAp
 consumed here. Hand-rolling any of these silently diverges the wire contract
 across `meshery/meshery` and `meshery-cloud`.
 
-### Workflow (adding/updating an endpoint)
-
-1. **Define** the path + schemas in the matching construct's `api.yml`
-   (e.g. `../schemas/schemas/constructs/v1beta1/system/api.yml` for `/api/system/*`,
-   `.../connection/api.yml` for `/api/integrations/connections*`). Follow the
-   schemas conventions: `operationId` = lower-camel `verbNoun`, camelCase wire
-   params/properties, `x-internal: ["meshery"]` for Meshery-only endpoints,
-   `additionalProperties: false`, `maxLength` on strings.
-2. **Regenerate** in `../schemas`: `make bundle-openapi generate-rtk generate-golang`
-   (or `make build` for the full dist). Verify the new `useXQuery` /
-   `mesheryApi.endpoints.X` hooks appear.
-3. **Validate**: `cd ../schemas && make validate-schemas && make consumer-audit`.
-4. **Consume** the generated hook in the UI (import from `@meshery/schemas/mesheryApi`;
-   wrap in `ui/rtk-query/*` only for thin ergonomics like bare-id args or cache
-   tags — never to re-declare the request). Use the generated Go models on the
-   server where applicable.
-5. **Release coupling**: schemas releases are automated ("do not manually create
-   releases"). Until a new `@meshery/schemas` is published and this repo's
-   dependency is bumped, a **local link** is used for development
-   (`ui/package.json` → `"@meshery/schemas": "file:../schemas"` and the
-   `replace github.com/meshery/schemas => ../schemas` directive in `go.mod`).
-   Both the version bump and reverting the local link happen as part of the
-   normal release/upgrade flow — do not commit the local link as the permanent
-   dependency.
-
-### Narrow exceptions (still prefer schemas)
-
-- **Server-Sent Events / streaming**: RTK codegen can't produce a useful hook
-  for `text/event-stream`. Still **document** the endpoint in `api.yml`, but
-  consume it with a native `EventSource` client under `ui/lib/*`
-  (e.g. `ui/lib/controllersStatusSubscription.ts`).
-- Truly Meshery-internal endpoints with no cross-repo consumer may skip schemas,
-  but must be justified in the PR description.
+Workflow: define the path in the construct's `api.yml` → regenerate in `../schemas`
+(`make bundle-openapi generate-rtk generate-golang`) → validate
+(`make validate-schemas && make consumer-audit`) → consume the generated hook.
+The full steps, the SSE/streaming exception, the Go models-only rule, and the
+release/local-link coupling are in
+[Consuming schemas from meshery/meshery](./docs/content/en/project/contributing/contributing-schemas.md).
 
 ### Forbidden
 
@@ -105,79 +78,29 @@ across `meshery/meshery` and `meshery-cloud`.
   duplicate a schemas-generated type.
 - MUST NOT change wire casing/field names only in this repo — change the schema
   and regenerate (see the naming conventions above).
+- MUST NOT re-declare a generated endpoint to attach a cache tag — use the
+  callback form of `enhanceEndpoints` (`appendInvalidatesTags` from
+  `ui/rtk-query/utils`). The object form replaces schemas-side tags wholesale.
+- MUST NOT add a local endpoint whose name a generated one already defines — it
+  is silently discarded dead code and a different request goes over the wire.
+  Check first:
+  `grep '<name>:t\.' ui/node_modules/@meshery/schemas/dist/mesheryApi.js`.
+- MUST NOT keep a local copy of a contract Meshery only decodes from (or encodes
+  to) a remote provider — it is the schemas construct, aliased. Where a Go type
+  must stay local because it doubles as a GORM model, keep the JSON tags
+  identical and pin the column with `gorm:"column:..."`.
+- MUST NOT index a credential's persisted `secret` map directly — it has four
+  shapes and legacy rows are never rewritten. Delegate to
+  `server/models/credential_secret.go` or `ui/utils/credentialSecret.ts`, which
+  must keep the same resolution rules.
 
-### Attaching local cache tags to a generated endpoint
-
-`ui/rtk-query/index.ts` re-exports the schemas client itself (`mesheryApi as api`),
-so every `ui/rtk-query/*` module injects into that same API instance - generated
-hooks are therefore already available from those local modules and need no
-re-declaration. To give a generated endpoint a local cache tag, use the **callback
-form** of `enhanceEndpoints` via `appendInvalidatesTags` from `ui/rtk-query/utils`,
-then re-export the generated hook - see the `importDesign` enhancement in
-`ui/rtk-query/design.ts`. Do **not** use the object form
-(`{ <operationId>: { invalidatesTags: [...] } }`): `enhanceEndpoints` applies an
-object partial with `Object.assign(getEndpointDefinition(...) || {}, partial)`, so
-it REPLACES `invalidatesTags` wholesale and every schemas-side tag has to be
-hand-relisted - drift the moment schemas adds one. The callback form is handed the
-live definition by reference, so the local tag is appended to the generated ones
-and cannot drop them; that same lookup has no fallback, so `appendInvalidatesTags`
-fails loudly and by name when the operationId is gone from schemas rather than
-enhancing a throwaway object. Re-declaring the endpoint with `builder.mutation` to
-get a tag is the forbidden path above - it forks the wire contract silently.
-
-On the Go side, schemas ships **models only, no generated HTTP client**, so
-`mesheryctl` builds request bodies from the generated structs (and, for `oneOf`
-bodies, the `From<Variant>Payload` union builders) rather than a
-`map[string]interface{}` — see `mesheryctl/internal/cli/root/design/import.go`.
-A hand-written map is how camelCase `fileName` regressed to `file_name`.
-
-### A local endpoint that shadows a schemas operationId is DEAD CODE
-
-`injectEndpoints` without `overrideExisting: true` **silently discards** any
-endpoint whose name `@meshery/schemas` already defines (dev-only console warning)
-and serves every call from the schemas definition, so a local declaration can sit
-there looking authoritative while a different request goes over the wire - which
-is how notification delete shipped as `DELETE /api/events/undefined`. Before
-adding a `builder.query`/`builder.mutation`, check the name against the generated
-client (`grep '<name>:t\.' ui/node_modules/@meshery/schemas/dist/mesheryApi.js`);
-if it is there, consume the generated hook - that is the rule above anyway.
-
-The deliberate-override exception and the rule that tests must assert the
-*effective* endpoint rather than the declared one are in
-`docs/content/en/project/contributing/ui/schemas.md` (Integration Points in UI, A).
-
-### Consumed contracts are the schemas type, not a copy of it
-
-A struct Meshery only *decodes* from a remote provider (or only *encodes* to one)
-carries no local freedom: it is the schemas construct, aliased. A local copy is
-how `AnonymousFlowResponse` came to read `owner` while meshery-cloud kept sending
-`userId`, so every anonymous sign-in wrote its capabilities under the nil UUID.
-The same rename hit `PatternResource` and `Preference.selectedOrganizationId`.
-
-When the Go type must stay local because it doubles as a GORM model (the schemas
-models carry `db:` tags GORM does not read), keep the **JSON tags** identical to
-the schemas construct and pin the column explicitly with `gorm:"column:..."` -
-see `server/models/pattern_resource.go`. Guard it with a test that compares the
-emitted JSON keys against the schemas type rather than restating them by hand.
-
-### A credential's persisted `secret` has four shapes, and readers must tolerate all of them
-
-Canonical (what `meshery/schemas`
-`constructs/v1beta1/credential/forms/*.json` declares, and what Layer5 Cloud is
-moving to) is a top-level `name` plus a `secret` object that **is** the payload.
-Stored data also holds the Kubernetes `{auth, cluster}` shape, the legacy
-double-nested `{credentialName, secret:{...}}` shape Meshery's credential form
-still writes, and a legacy `{secret: "<token>"}` string. Legacy rows are never
-rewritten, so tolerance - not migration - is what keeps them working.
-
-`server/models/credential_secret.go` and its mirror `ui/utils/credentialSecret.ts`
-own that decision for both languages; every read site delegates to them rather
-than indexing the map. Reaching into `secret["secret"]` directly is how a
-canonical credential's API key silently became an empty `Authorization` header.
-The two files must keep the same *resolution rules* - their return types
-deliberately differ on the legacy string shape. The shape catalogue and the
-rules are documented once in
-`docs/content/en/project/contributing/models/connections.md`.
+Detail behind these rules:
+[RTK Query integration](./docs/content/en/project/contributing/ui/schemas.md)
+(cache tags, the deliberate-override exception, testing the *effective*
+endpoint), [consuming schemas](./docs/content/en/project/contributing/contributing-schemas.md)
+(consumed contracts, the Go side, rename propagation), and
+[connections](./docs/content/en/project/contributing/models/connections.md)
+(the credential shape catalogue).
 
 ## Build & Development Commands
 
@@ -198,14 +121,9 @@ make server-without-operator   # Run without operator deployment
 make error                     # Generate error codes
 ```
 
-A build that fails with `compile: version "goX.Y.Z" does not match go tool version`
-on dozens of dependencies is an environment mismatch, not a code problem: a stale
-`GOROOT` points at one Go installation while the `go` on `PATH` is a different
-one. Any toolchain at or above `go.mod`'s version works - `go 1.26.4` there does
-not mean 1.26.5 is wrong - so the fix is to make the two agree rather than to
-pin an exact patch release. Drop the stale `GOROOT` and use one installation's
-own binary, e.g.
-`env -u GOROOT PATH="$HOME/.gvm/gos/go1.26.4/bin:$PATH" go test ...`.
+A build failing `compile: version "goX.Y.Z" does not match go tool version` across many
+dependencies is a stale `GOROOT`, not a code problem — see
+[build environment gotchas](./docs/content/en/project/contributing/contributing-build-environment.md).
 
 ### UI (Next.js/React)
 
@@ -217,32 +135,13 @@ make ui-lint               # Lint UI code
 make ui-integration-tests  # Run E2E tests
 ```
 
-`ui/tsconfig.tsbuildinfo` is a tracked build artifact that is not gitignored, so any local
-`tsc --noEmit` leaves it modified and it has repeatedly been committed by accident. Stage
-explicit paths rather than `git add -A`, and `git checkout -- ui/tsconfig.tsbuildinfo`
-before committing.
-
-When a change depends on an unreleased `@sistent/sistent` (or any sibling-repo package),
-`ui/node_modules/@sistent/sistent` is often overwritten in place with a locally-built dist.
-A local test run is then green against code that is not published, and CI fails on the same
-commit. Re-verify with `npm ci` after any local sibling build before trusting a green run or
-declaring a dependency bump done - a local build usually keeps the published version string,
-so matching versions are not evidence that the installed contents are the published ones.
-A version *mismatch* against `ui/package.json` is a useful tell that this has happened, but
-a match proves nothing.
-
-**Three package.json files consume `@sistent/sistent` - `ui/`, `provider-ui/` and
-`install/docker-extension/ui/` - and a bump must cover all three.** Sistent's peers
-(`@mui/x-date-pickers`, `date-fns`, the `@rjsf/*` set, `xstate`/`@xstate/react`) are not
-optional: a consumer that omits one still installs cleanly and fails only at bundle time with
-`Module not found` pointing *inside* `@sistent/sistent/dist`, which reads as a sistent bug
-rather than a missing peer. `install/docker-extension/ui` installs with `--legacy-peer-deps`
-(`@docker/docker-mui-theme` pins MUI <=6 against sistent's MUI 9) - see its Dockerfile.
-
-`@meshery/schemas` deliberately keeps its `latest` dist-tag *below* its highest semver (1.4.0
-is stale). That is safe because npm prefers the `latest`-tagged version whenever it satisfies
-the range, so the `^1.3.x` carets do not jump to 1.4.0 - but verify the resolved version in
-every regenerated lockfile rather than assuming it.
+- Never commit `ui/tsconfig.tsbuildinfo` — it is tracked and not gitignored, so any
+  local `tsc --noEmit` dirties it. Stage explicit paths, never `git add -A`.
+- A `@sistent/sistent` bump must cover all three consuming manifests (`ui/`,
+  `provider-ui/`, `install/docker-extension/ui/`) and sistent's peers.
+- After any local sibling-package build, re-verify with `npm ci` before trusting a
+  green run — matching version strings do not prove the installed contents are the
+  published ones.
 
 ### CLI (mesheryctl)
 
@@ -253,25 +152,18 @@ cd mesheryctl && go test -run Integration ./...  # Integration tests
 make docs-mesheryctl                        # Generate CLI docs
 ```
 
-`make docs-mesheryctl` (i.e. `cd mesheryctl/doc && go run doc.go`) bakes the machine's
-`$HOME` into every generated page's "Options inherited from parent commands" block (the
-`--config` default path). Running it locally rewrites all ~100 pages under
-`docs/content/en/reference/references/mesheryctl/` with your local home directory even
-though only one command changed. CI/committed docs use `/home/runner/...` (the GitHub
-Actions runner home). After regenerating, `git diff --stat` the docs dir, `git checkout --`
-every file whose only change is that path, and manually fix the path back to
-`/home/runner/...` in the pages you actually intended to change.
+`make docs-mesheryctl` rewrites ~100 pages with your local `$HOME` baked in — revert
+every page whose only change is that path. See
+[build environment gotchas](./docs/content/en/project/contributing/contributing-build-environment.md).
 
 ### Releasing
 
-Meshery has **no automatic release cadence**. Release Drafter keeps exactly one draft
-release current on every push to `master`; publishing that draft creates the `v*` tag,
-which is what fires `build-and-release-stable.yml` and its fan-out. Follow
-`.agents/skills/cut-release/SKILL.md` - never hand-author a tag or notes.
-
-`gh release edit --draft=false` can exit 0 and leave the release a draft (seen cutting
-v1.0.65). Publication is proven only by re-reading the release for `draft: false` plus a
-non-null `published_at`, and by the release-triggered runs actually appearing.
+Meshery has **no automatic release cadence**. Release Drafter keeps one draft release
+current on every push to `master`; publishing it creates the `v*` tag that fires the
+stable build fan-out. Follow `.agents/skills/cut-release/SKILL.md` — never hand-author
+a tag or notes, and never trust `gh release edit --draft=false`'s exit code as proof of
+publication. See
+[cutting a release](./docs/content/en/project/contributing/build-and-release.md).
 
 ### Docker
 
@@ -302,19 +194,10 @@ make helm-docs      # Generate Helm chart docs
 
 - Format with `gofmt`/`goimports`; lint with `make golangci` (config: `.golangci.yml`).
 - Use MeshKit error utilities (`github.com/meshery/meshkit/errors`); run `make error` for codes.
-  `make error` skips `mesheryctl` - a new `mesheryctl` code is taken from
-  `mesheryctl/helpers/component_info.json` (`next_error_code`) and that value bumped in the
-  same commit. `.github/workflows/error-codes-updater.yaml` re-runs errorutil and fails the
-  PR if its analysis reports anything.
-  The server side has the same contract in `server/helpers/component_info.json`: errorutil
-  refuses to run at all ("next_error_code is lower than or equal to highest used code") until
-  `next_error_code` is bumped past every code you added, so bump it in the same commit.
-  Name each constant `<BuilderFuncName>Code` - errorutil keys the export off that pairing.
-  `server/helpers/errorutil_errors_export.json` is gitignored, but the reference data at
-  `docs/data/errorref/meshery-server_errors_export.json` is tracked: regenerate it with the
-  `jq --slurpfile` wrapper the workflow uses, or the docs reference silently omits the new
-  codes. Adding a constant longer than the block's current widest name makes gofmt realign
-  the entire `error.go` const block - prefer a shorter name over a 300-line whitespace diff.
+  `make error` skips `mesheryctl`. Both components require bumping `next_error_code` in their
+  own `helpers/component_info.json` **in the same commit**, and the tracked docs reference at
+  `docs/data/errorref/` must be regenerated or the new codes are silently omitted. Full
+  contract: [writing MeshKit errors](./docs/content/en/project/contributing/contributing-error.md).
 - Only `utils.Log.Error(err)` renders a MeshKit error's code, cause and remediation; cobra's
   default print shows just the message. In `mesheryctl` commands, log the structured error
   for the user *and* return it for the exit path.
@@ -369,43 +252,37 @@ Golden-file workflow (`-args -update`, the `fixtures/` vs `testdata/` split, and
 the rule that a regenerated golden must still encode *intended* behavior) is
 documented in `docs/content/en/project/contributing/cli/cli.md`.
 
-**A rename in `meshery/schemas` propagates further than the Go field name.** gorm
-derives the AutoMigrate column from the *field name* via its naming strategy
-(snake_case), not from the `db:` tag - only a `gorm:"column:..."` tag overrides
-it. So renaming `UserID` to `Owner` renames the column `user_id` to `owner`
-whatever the `db:` tag says, and any hand-written SQL naming the old one breaks -
-silently, if the gorm error is dropped. After bumping schemas, grep every raw
-column reference for the old spelling (`Select`, `Where`, `Order`, `Joins`,
-`Scan`, and migrations - not just `Select`) along with the `mesheryctl` fixtures,
-and propagate gorm errors so the next such rename fails loudly. Regression test:
-`server/models/performance_profile_persister_test.go`.
+**A rename in `meshery/schemas` renames the gorm column too**, because gorm derives
+it from the Go *field name*, not the `db:` tag. After bumping schemas, grep every raw
+column reference (`Select`, `Where`, `Order`, `Joins`, `Scan`, migrations) and the
+`mesheryctl` fixtures for the old spelling, and propagate gorm errors so the next such
+rename fails loudly. Detail and regression test:
+[consuming schemas](./docs/content/en/project/contributing/contributing-schemas.md).
 
 ### UI
 
 - E2E (Playwright): `make ui-integration-tests` or `npm run test:e2e` in `ui/`
 - Setup: `make test-setup-ui`
 
-**The E2E job is gated on the Playwright verdict - keep it that way.** The gate is the
-final step of `.github/workflows/test-e2e.yml` and keys on
-`steps.playwright-tests.outcome`, *not* `.conclusion`: the run step keeps
-`continue-on-error: true` so artifacts upload on failure, which makes its `conclusion`
-permanently `success`. Gating on `conclusion` silently disarms the gate. That is how the
-suite spent its history reporting `success` 19 times out of 19 across the 20
-`Meshery Build And Test` runs to 2026-08-05 - 8 of them with real test failures, 0 failing
-the build - which made every test in it decorative. Never re-disarm it to get a red build
-green; fix or `test.fixme` the test, with the tracking issue in the annotation.
+Four E2E invariants. Each one's reasoning, evidence, run IDs and history live in
+`docs/content/en/project/contributing/ui/tests.md` - read it before changing the workflow
+or the setup projects.
 
-To run the suite locally you need three things, and the failure when one is missing does
-not name it:
-
-1. `make ui-provider-build` first. A source checkout has no `provider-ui/out`, so the
-   server 404s `/provider`; every project's auth setup then dies on a provider-dropdown
-   click timeout that looks like a UI bug.
-2. A server on `:9081` (`make server`, then pick the Local provider) and `make ui` on
-   `:3000`.
-3. `MESHERY_SERVER_URL=http://localhost:3000` on the Playwright run - the dev server
-   proxies `/api`, `/provider` and the auth routes to `:9081`, and the built UI that
-   `:9081` would otherwise serve does not exist in a source checkout.
+- **The job gates on the Playwright verdict.** The final step of
+  `.github/workflows/test-e2e.yml` keys on `steps.playwright-tests.outcome`, never
+  `.conclusion` (`continue-on-error` pins `conclusion` to `success`). Never re-disarm it to
+  turn a red build green; fix the test or `test.fixme` it with the tracking issue in the
+  annotation.
+- **The remote-provider credential is the `REMOTE_PROVIDER_TEST_USER_TOKEN` org secret**,
+  spelled identically in caller and reusable workflow and asserted non-empty before any
+  other work. Never alias it between the two - that is what hid a secret which existed
+  nowhere for three months.
+- **A missing credential must fail, never `setup.skip()`.** Playwright collapses a
+  dependent project only when its setup *fails*; a skip leaves every dependent scheduled to
+  die on a storage state file that was never written.
+- **A local run needs three things** - `make ui-provider-build`, a server on `:9081` plus
+  `make ui` on `:3000`, and `MESHERY_SERVER_URL=http://localhost:3000` on the Playwright
+  run - and the failure when one is missing never names it.
 
 ### Local Validation
 
@@ -472,9 +349,17 @@ Protocol: `server/meshes/meshops.proto` — adapters self-register on startup. E
 
 ### UI Extensions
 
-Remote Components loaded via `@paciolan/remote-component`. Bundle **must** expose `module.exports = { default: Component, __esModule: true }`; a bundle built without `output.library.type = "commonjs2"` resolves to `undefined` with no loader error, so `NavigatorExtension` guards for it explicitly and reports the export shape as the cause. See `ui/components/layout/Navigator/NavigatorExtension.tsx`.
+Remote Components loaded via `@paciolan/remote-component`. Two rules:
 
-The host <-> extension contract (injected capability keys, event-bus event literals, contract version) is declared once in `@sistent/sistent`'s `mesheryExtensionContract` module and shared by both sides. Derive every event literal from `MESHERY_EXTENSION_EVENT` and every injected key from that module rather than typing strings: hand-duplicated literals are why `OPEN_DESIGN_IN_KANVAS` -> `OPEN_DESIGN_IN_EXTENSION` and `capabilitiesRegistry` -> `providerCapabilities` both shipped as silent runtime no-ops. `ui/utils/eventBus.ts` must stay typed as `EventBus<MesheryExtensionEvent>`; a bare `new EventBus()` widens `T` to its constraint and disables publish-site checking entirely. The `NavigatorExtension` unit test asserts the built `injectProps` bag against the contract, which is the gate that catches a capability rename before merge.
+- A bundle **must** expose `module.exports = { default: Component, __esModule: true }`;
+  built without `output.library.type = "commonjs2"` it resolves to `undefined` with no
+  loader error.
+- Derive every event literal and injected capability key from `@sistent/sistent`'s
+  `mesheryExtensionContract` module rather than typing strings, and keep
+  `ui/utils/eventBus.ts` typed as `EventBus<MesheryExtensionEvent>` — a bare
+  `new EventBus()` disables publish-site checking entirely.
+
+Detail: [UI Extensions](./docs/content/en/project/contributing/ui/ui.md).
 
 ### GraphQL
 
@@ -493,89 +378,60 @@ NATS topics: `meshsync.request`, `meshery.broker`. MeshSync publishes cluster st
 - Pre-commit: Husky hooks in `ui/.husky/`
 - Build: extend `Makefile` or `install/Makefile.core.mk`
 
-## Coding Agents
+## Agent Tooling
 
-Agent definitions in `.agents/` (LLM-agnostic):
+`.agents/` is the LLM-agnostic home for agent definitions, packaged skills and
+automation hooks. The agent table, per-tool skill discovery, and the reasoning behind
+the rules below are in [.agents/README.md](./.agents/README.md) — read it before
+touching any of them.
 
-| Agent | File | Purpose |
-|-------|------|---------|
-| Code Reviewer | `.agents/code-reviewer.md` | Parallel review across Go + frontend |
-| Security Reviewer | `.agents/security-reviewer.md` | Security audit |
-| Meshery Code Contributor | `.agents/meshery-code-contributor.md` | Full-stack contributions |
-| Meshery Docs Contributor | `.agents/meshery-docs-contributor.md` | Hugo docs contributions |
-| GitHub Actions Engineer | `.agents/github-actions-engineer.md` | CI/CD design and debugging |
-| Relationship Fixture Agent | `.agents/relationship-fixture-agent.md` | Relationship test fixtures |
-
-## Skills
-
-`.agents/skills/` is the single source of truth for every packaged workflow in this repo - one
-directory per skill, each with a `SKILL.md`. Do not enumerate them here; list the directory. Add a
-new skill only there.
-
-Per-tool discovery, so no skill is ever copied per tool:
-
-| Tool | How it finds these skills |
-|---|---|
-| Codex | Natively scans `$REPO_ROOT/.agents/skills` - nothing to configure ([docs](https://learn.chatgpt.com/docs/build-skills)) |
-| OpenCode | Natively scans `.agents/skills`, one of six roots it searches alongside `.opencode/skills` and `.claude/skills` ([docs](https://opencode.ai/docs/skills/)) |
-| Claude Code | Reads `.claude/skills`, which is a relative symlink to `../.agents/skills` |
-
-`.claude/skills` is that symlink and nothing else. Never replace it with real directories or copies -
-that reintroduces the drift this layout removes.
-
-Skill content must address its own files by their canonical `.agents/skills/...` path, never
-through `.claude/`. `iterate-pr` used to invoke its scripts as
-`.claude/skills/iterate-pr/scripts/<script>.py`, which resolved only through the symlink and so
-broke wherever the symlink was absent; it was corrected to `.agents/` in iterate-pr 2.4.0. The
-symlink is therefore a *discovery* path for Claude Code, not a runtime dependency - but it is
-still load-bearing for discovery, and the installer-collision hazard below is a further reason
-not to touch it.
-
-The four skills tracked in `skills-lock.json` - `chrome-devtools-axi`, `gh-axi`, `lavish`,
-`quota-axi` - are installed by the AXI installer, and its layout is skill content at
-`.agents/skills/<name>/` *plus* a per-skill symlink at `.claude/skills/<name>`. Those per-skill
-symlinks were installer-owned, not hand-made, and this layout removed them as redundant. The next
-installer run recreates them, and `.claude/skills/<name>` now resolves *through* the directory
-symlink onto `.agents/skills/<name>` - an existing real directory holding the canonical content.
-Best case the installer fails with `EEXIST`. Worst case a force-replacing installer destroys that
-canonical directory and leaves a self-referential symlink loop. Which of the two occurs is not
-established, and must not be determined by running the installer against a real checkout: the
-failure mode under test is destruction of the canonical skill content.
-
-Neither `.codex/skills` nor `.opencode/skills` is created: both tools already read `.agents/skills`
-natively, so a second copy or link would be redundant. `.opencode/skills` is a real OpenCode search
-root, just an unnecessary one here; `.codex/skills` is not a path Codex scans at all.
-
-Windows caveat: on a checkout with `core.symlinks=false` - the default outside developer mode - git
-materialises `.claude/skills` as a regular text file containing the literal string
-`../.agents/skills`. Claude Code then discovers no project skills. Enable Windows developer mode
-or set `git config core.symlinks true`, then re-checkout. (Skill *scripts* still resolve there,
-because skill content addresses them via `.agents/` - only discovery breaks.)
-
-## Automation Hooks
-
-Scripts in `.agents/hooks/`:
-
-| Hook | Script | Trigger | Purpose |
-|------|--------|---------|---------|
-| Format Frontend | `.agents/hooks/format-frontend.sh` | Post-edit | Auto-format JS/TS with Prettier |
-| Block Lock Files | `.agents/hooks/block-lockfiles.sh` | Pre-edit | Prevent direct edits to lock files |
+- **`.agents/skills/` is the single source of truth for skills**, one directory per
+  skill. Add a new skill only there; never enumerate them in this file, list the
+  directory.
+- **`.claude/skills` is a symlink to `../.agents/skills` and nothing else.** Never
+  replace it with real directories or copies, and never run the AXI installer against
+  a real checkout to see what happens — the failure mode under test destroys the
+  canonical skill content.
+- **Skill content addresses its own files as `.agents/skills/...`**, never through
+  `.claude/`, which resolves only where the symlink exists.
+- Hooks in `.agents/hooks/`: `format-frontend.sh` (post-edit Prettier) and
+  `block-lockfiles.sh` (pre-edit lock-file guard).
 
 ## Further Reading
 
-- [Contributing Guide](./CONTRIBUTING.md)
-- [Meshery Documentation](https://docs.meshery.io)
-- [Architecture Overview](https://docs.meshery.io/concepts/architecture)
-- [API Documentation](https://docs.meshery.io/extensibility/api)
-- [CLI Guide](https://docs.meshery.io/guides/mesheryctl)
-- [Extensibility](https://docs.meshery.io/extensibility)
-- [Community Handbook](https://meshery.io/community#handbook)
-- [Security Policy](./SECURITY.md)
-- [Governance](./GOVERNANCE.md)
+The rules above are complete on their own. These files hold the reasoning, evidence and
+worked detail behind them — open the one that matches what you are working on.
+
+| Working on | Read |
+|---|---|
+| A schema, an API contract, or a consumer of one | [Contributing to Meshery Schemas](./docs/content/en/project/contributing/contributing-schemas.md) |
+| RTK Query, generated hooks, cache tags | [Schema-Driven UI Development](./docs/content/en/project/contributing/ui/schemas.md) |
+| Playwright E2E, the E2E CI job, its credentials | [UI End-to-End Tests](./docs/content/en/project/contributing/ui/tests.md) |
+| A build that fails for an unrelated-looking reason | [Build Environment Gotchas](./docs/content/en/project/contributing/contributing-build-environment.md) |
+| MeshKit error codes | [How to write MeshKit compatible errors](./docs/content/en/project/contributing/contributing-error.md) |
+| Releases, CI secrets, the QA dashboard | [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md) |
+| Connections and credential secrets | [Connections](./docs/content/en/project/contributing/models/connections.md) |
+| UI extensions, Remote Components | [Contributing to Meshery UI](./docs/content/en/project/contributing/ui/ui.md) |
+| `mesheryctl`, golden files | [Contributing to Meshery CLI](./docs/content/en/project/contributing/cli/cli.md) |
+| Agent definitions, skills, hooks | [.agents/README.md](./.agents/README.md) |
+
+External: [Meshery Documentation](https://docs.meshery.io) ·
+[Architecture](https://docs.meshery.io/concepts/architecture) ·
+[Extensibility](https://docs.meshery.io/extensibility) ·
+[Community Handbook](https://meshery.io/community#handbook) ·
+[Contributing Guide](./CONTRIBUTING.md) · [Security Policy](./SECURITY.md) ·
+[Governance](./GOVERNANCE.md)
 
 ## Maintaining this file
 
 Keep this file for knowledge useful to almost every future agent session in this project.
-Do not repeat what the codebase already shows; point to the authoritative file or command instead.
-Prefer rewriting or pruning existing entries over appending new ones.
-When updating this file, preserve this bar for all agents and keep entries concise.
+
+**This file states rules; the files in Further Reading hold the detail.** A session must
+be able to learn that a constraint exists without opening anything else, so every
+MANDATORY rule and prohibition stays here, short and flat. Worked examples, causal
+history, run IDs, dates, evidence and per-endpoint walkthroughs belong in the linked
+file that owns the subject, with a pointer from here.
+
+Do not repeat what the codebase already shows; point to the authoritative file or command
+instead. Relocate rather than delete, and prefer updating an existing doc over creating a
+new one. When you add a pointer, add it to the Further Reading table too.
