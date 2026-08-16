@@ -9,9 +9,11 @@ import {
   TableCell,
   TableSortLabel,
   Tooltip,
+  useHasPermission,
   useTheme,
 } from '@sistent/sistent';
 import { Keys } from '@meshery/schemas/permissions';
+import DefaultError from './general/error-404/index';
 import Modal from './shared/Modal/Modal';
 import { CON_OPS, CoreConnectionKinds } from '../utils/Enum';
 import Moment from 'react-moment';
@@ -78,7 +80,10 @@ interface ColumnMeta {
 }
 
 const MesheryCredentialComponent: React.FC = () => {
-  const { data: credentialsData, isLoading } = useGetCredentialsQuery();
+  const canViewCredentials = useHasPermission(Keys.SecurityManagementViewCredentials);
+  const { data: credentialsData, isLoading } = useGetCredentialsQuery(undefined, {
+    skip: !canViewCredentials,
+  });
   const [createCredential] = useCreateCredentialMutation();
   const [updateCredential] = useUpdateCredentialMutation();
   const [deleteCredential] = useDeleteCredentialMutation();
@@ -402,6 +407,10 @@ const MesheryCredentialComponent: React.FC = () => {
     marginBottom: '0.5rem',
     marginTop: '1rem',
   };
+
+  if (!canViewCredentials) {
+    return <DefaultError permissionKey={Keys.SecurityManagementViewCredentials} />;
+  }
 
   if (isLoading) {
     return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Credentials" />;
