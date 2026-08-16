@@ -17,6 +17,7 @@ var (
 	ErrAttachAuthTokenCode            = "mesheryctl-1093"
 	ErrUnmarshalCode                  = "mesheryctl-1094"
 	ErrFileReadCode                   = "mesheryctl-1095"
+	ErrWriteAuthTokenFileCode         = "mesheryctl-1116"
 	ErrCreatingRequestCode            = "mesheryctl-1096"
 	ErrMarshalCode                    = "mesheryctl-1097"
 	ErrReadResponseBodyCode           = "mesheryctl-1098"
@@ -419,6 +420,17 @@ func ErrFileRead(err error) error {
 		[]string{err.Error()},
 		[]string{"The provided file is not present or has an invalid path."},
 		[]string{"To proceed, provide a valid file path with a valid file."})
+}
+
+func ErrWriteAuthTokenFile(err error) error {
+	return errors.New(
+		ErrWriteAuthTokenFileCode,
+		errors.Alert,
+		[]string{"Failed to write auth token file"},
+		[]string{err.Error()},
+		[]string{"The auth token file could not be written or secured with 0600 permissions."},
+		[]string{"Ensure you have write access to ~/.meshery and retry mesheryctl system login."},
+	)
 }
 
 func ErrCreatingRequest(err error) error {

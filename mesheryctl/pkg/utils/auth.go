@@ -250,7 +250,7 @@ func UpdateAuthDetails(filepath string) error {
 		return errors.New("invalid body")
 	}
 
-	return os.WriteFile(filepath, data, os.ModePerm)
+	return WriteAuthTokenFile(filepath, data)
 }
 
 // ReadToken returns a map of the token passed in

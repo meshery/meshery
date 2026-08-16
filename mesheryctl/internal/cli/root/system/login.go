@@ -92,7 +92,7 @@ mesheryctl system login -p Meshery
 			}
 		}
 
-		if err := writeAuthTokenFile(token.GetLocation(), tokenData); err != nil {
+		if err := utils.WriteAuthTokenFile(token.GetLocation(), tokenData); err != nil {
 			return utils.ErrCreateFile(token.GetLocation(), err)
 		}
 
