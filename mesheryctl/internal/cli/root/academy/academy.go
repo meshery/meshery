@@ -18,7 +18,7 @@ var AcademyCmd = &cobra.Command{
 	Long:  `Manage scaffolding and creation of Layer5 Academy content.`,
 	Example: `
 // Scaffold a full learning path tree
-mesheryctl academy create --type learning-path --title "My Path" --description "Desc" --level beginner --org my-org
+mesheryctl academy create --type learning-path --title "My Path" --description "Desc" --level beginner --org 123e4567-e89b-12d3-a456-426614174000
 
 // Scaffold a single course into an existing tree
 mesheryctl academy create course "New Course" --description "Desc" --into ./my-path

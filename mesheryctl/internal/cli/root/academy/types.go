@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/gofrs/uuid"
 	academyModel "github.com/meshery/schemas/models/v1beta3/academy"
 )
 
@@ -55,6 +56,15 @@ func validatePathSegment(segment string) error {
 	}
 	if strings.ContainsAny(segment, "/\\") {
 		return fmt.Errorf("path segment contains directory separators: %q", segment)
+	}
+	return nil
+}
+
+// validateOrgID checks that the provided org ID is a valid UUID, matching the
+// schema's core.Uuid type for academy content ownership.
+func validateOrgID(orgID string) error {
+	if _, err := uuid.FromString(orgID); err != nil {
+		return errInvalidOrgID(orgID)
 	}
 	return nil
 }
