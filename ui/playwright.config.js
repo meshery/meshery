@@ -1,17 +1,8 @@
 // @ts-check
 const { defineConfig, devices } = require('@playwright/test');
 const { BASE_TIMEOUT } = require('./tests/e2e/delays');
+// Requiring this also loads ui/.env off CI - see tests/e2e/env.js.
 const { ENV } = require('./tests/e2e/env');
-const dotenv = require('dotenv');
-const path = require('path');
-
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-if (!process.env.CI) {
-  dotenv.config({ path: path.resolve(__dirname, '.env') });
-}
 
 /**
  * @see https://playwright.dev/docs/test-configuration

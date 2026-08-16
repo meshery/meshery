@@ -1,4 +1,5 @@
 import { CoreConnectionKinds } from '@/utils/Enum';
+import { resolveCredentialAuthSecret } from '@/utils/credentialSecret';
 import { EVENT_TYPES } from 'lib/event-types';
 
 /*
@@ -264,11 +265,13 @@ export const normalizeCredentialPayload = (formData?: GenericRecord | null): Gen
 /**
  * Builds the `credentialSecret` payload the registration state machine expects.
  *
- * For an existing credential we must forward the stored secret (nested under
- * `secret.secret`) alongside the id and name, otherwise the backend `register`
- * (verify) step rehydrates an empty `PromCred`/`GrafanaCred` and verification
- * fails for any auth-protected endpoint. For a new credential we pass the
- * normalized form payload, which the backend persists verbatim.
+ * For an existing credential we must forward the stored auth material alongside
+ * the id and name, otherwise the backend `register` (verify) step rehydrates an
+ * empty `PromCred`/`GrafanaCred` and verification fails for any auth-protected
+ * endpoint. Which persisted shape holds that material is not this function's
+ * business - `resolveCredentialAuthSecret` tolerates all of them. For a new
+ * credential we pass the normalized form payload, which the backend persists
+ * verbatim.
  */
 export const buildCredentialSecret = (
   selectedCredential?: CredentialRecord | null,
@@ -278,7 +281,7 @@ export const buildCredentialSecret = (
     return {
       id: selectedCredential.id,
       name: selectedCredential.name,
-      secret: selectedCredential.secret?.secret,
+      secret: resolveCredentialAuthSecret(selectedCredential.secret),
     };
   }
 
