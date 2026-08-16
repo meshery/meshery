@@ -203,7 +203,11 @@ export const fieldIn = (grid: Locator, label: string): Locator =>
   grid.locator(`xpath=.//p[normalize-space(text())=${xpathLiteral(label)}]/../..`);
 
 export const operatorGrid = (page: Page) => sectionGrid(page, 'Operator version');
+/** In-cluster MeshSync accordion (version, replicas, toggles, watch list). */
 export const meshsyncGrid = (page: Page) => sectionGrid(page, 'MeshSync version');
+/** Discovery filters block (output namespaces / resources); separate from the accordion. */
+export const meshsyncFilters = (page: Page) =>
+  page.getByTestId('controllers-config-meshsync-filters');
 export const brokerGrid = (page: Page) => sectionGrid(page, 'Broker version');
 
 /** Pick an option from a Sistent/MUI select by its exact visible text. */

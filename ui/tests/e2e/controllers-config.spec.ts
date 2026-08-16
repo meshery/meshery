@@ -18,6 +18,7 @@ import {
   getConnectionConfig,
   getServerDefaults,
   kubernetesConnections,
+  meshsyncFilters,
   meshsyncGrid,
   openControllersSettings,
   operatorGrid,
@@ -210,10 +211,14 @@ test.describe.serial('Operator, MeshSync & Broker Settings', () => {
           await expect(page.getByTestId('controllers-config-mode-picker')).toBeVisible();
           continue;
         }
+        // Discovery filters and the watch list sit outside the MeshSync accordion
+        // grid that meshsyncGrid anchors on MeshSync version.
         const field =
           row.path === 'meshsync.watchList'
             ? fieldByLabel(page, row.label)
-            : fieldIn(grids[row.section], row.label);
+            : row.path === 'meshsync.outputNamespaces' || row.path === 'meshsync.outputResources'
+              ? fieldIn(meshsyncFilters(page), row.label)
+              : fieldIn(grids[row.section], row.label);
         await expect(field, `no control rendered for ${row.path} ("${row.label}")`).toHaveCount(1);
       }
     },

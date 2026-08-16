@@ -1,4 +1,4 @@
-import React, { useEffect, useState, type ReactNode } from 'react';
+import React, { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   Accordion,
   AccordionDetails,
@@ -55,6 +55,19 @@ function ControllersConfigWatchList({
   const watchMode = !value ? INHERIT : value.whitelist ? 'whitelist' : 'blacklist';
   const whitelist = value?.whitelist ?? [];
   const blacklist = value?.blacklist ?? [];
+  // Client-only row keys so React does not reuse the wrong row when one is
+  // removed from the middle. Never written to the config document.
+  const whitelistKeysRef = useRef<string[]>([]);
+  if (whitelist.length === 0) {
+    whitelistKeysRef.current = [];
+  } else if (whitelistKeysRef.current.length < whitelist.length) {
+    whitelistKeysRef.current = [
+      ...whitelistKeysRef.current,
+      ...Array.from({ length: whitelist.length - whitelistKeysRef.current.length }, () =>
+        crypto.randomUUID(),
+      ),
+    ];
+  }
 
   return (
     <Box
@@ -71,6 +84,7 @@ function ControllersConfigWatchList({
         slotProps={{ htmlInput: { 'aria-label': 'Watch mode' } }}
         onChange={(e) => {
           const mode = e.target.value;
+          whitelistKeysRef.current = [];
           if (mode === INHERIT) onChange(undefined);
           else if (mode === 'whitelist') onChange({ whitelist: [] });
           else onChange({ blacklist: [] });
@@ -90,7 +104,12 @@ function ControllersConfigWatchList({
       {watchMode === 'whitelist' && (
         <Box sx={{ marginTop: '1rem', width: '100%' }}>
           {whitelist.map((row, index) => (
-            <Stack key={index} direction="row" spacing={1.5} sx={{ alignItems: 'center', mb: 0.5 }}>
+            <Stack
+              key={whitelistKeysRef.current[index]}
+              direction="row"
+              spacing={1.5}
+              sx={{ alignItems: 'center', mb: 0.5 }}
+            >
               <TextField
                 size="small"
                 disabled={disabled}
@@ -135,7 +154,10 @@ function ControllersConfigWatchList({
                 size="small"
                 color="error"
                 disabled={disabled}
-                onClick={() => onChange({ whitelist: whitelist.filter((_, i) => i !== index) })}
+                onClick={() => {
+                  whitelistKeysRef.current = whitelistKeysRef.current.filter((_, i) => i !== index);
+                  onChange({ whitelist: whitelist.filter((_, i) => i !== index) });
+                }}
               >
                 Remove
               </Button>
@@ -146,9 +168,12 @@ function ControllersConfigWatchList({
             variant="outlined"
             color="primary"
             disabled={disabled}
-            onClick={() =>
-              onChange({ whitelist: [...whitelist, { resource: '', events: [...WATCH_EVENTS] }] })
-            }
+            onClick={() => {
+              whitelistKeysRef.current = [...whitelistKeysRef.current, crypto.randomUUID()];
+              onChange({
+                whitelist: [...whitelist, { resource: '', events: [...WATCH_EVENTS] }],
+              });
+            }}
           >
             Add resource
           </Button>
