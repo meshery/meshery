@@ -1,0 +1,154 @@
+name: Welcome First-Time Contributors
+
+# This workflow automatically welcomes new contributors when they open their first
+# issue or pull request. It uses the actions/first-interaction action to detect
+# first-time interactions and posts a friendly, informative comment that:
+#   - Welcomes the contributor to the Meshery community
+#   - Invites them to the weekly development meeting (https://meet.meshery.io)
+#   - Encourages them to join the community Slack workspace (https://slack.meshery.io)
+#   - Optionally invites them to fill in the newcomer form (https://meshery.io/newcomer)
+
+on:
+  # Trigger on any new issue or pull request opened in this repository.
+  # The first-interaction action will check if the actor is a first-time contributor.
+  issues:
+    types: [opened]
+  pull_request_target:
+    types: [opened]
+
+  # Allow manual triggering for debugging; note that `actions/first-interaction` still only
+  # posts messages for true first-time contributors in this repository.
+  workflow_dispatch:
+    inputs:
+      debug_mode:
+        description: 'Enable debug logging'
+        required: false
+        default: 'false'
+        type: boolean
+
+# Least-privilege permissions: we only need to read repo content and write
+# issue/PR comments. No other scopes are granted.
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  welcome:
+    name: Welcome First-Time Contributor
+    runs-on: ubuntu-latest
+
+    steps:
+      # -----------------------------------------------------------------------
+      # Step 1 – Introspect inputs and context for observability / debugging.
+      # Secrets are never printed; only non-sensitive context variables are logged.
+      # -----------------------------------------------------------------------
+      - name: 🔍 Introspect Inputs & Context
+        run: |
+          echo "::group::Workflow Context"
+          echo "Debug Mode  : ${{ inputs.debug_mode }}"
+          echo "Actor       : ${{ github.actor }}"
+          echo "Event Name  : ${{ github.event_name }}"
+          echo "Repository  : ${{ github.repository }}"
+          echo "Ref         : ${{ github.ref }}"
+          echo "::endgroup::"
+
+      # -----------------------------------------------------------------------
+      # Step 2 – Post a welcome comment for first-time issue authors.
+      #
+      # The `actions/first-interaction` action only posts the comment when the
+      # triggering user has NEVER opened an issue or PR in this repository before.
+      # -----------------------------------------------------------------------
+      - name: 🎉 Welcome First-Time Issue Author
+        if: github.event_name == 'issues'
+        uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          # The issue-message is only sent to contributors opening their very
+          # first issue in this repository.
+          issue-message: |
+            👋 **Welcome to Meshery, @${{ github.actor }}!**
+
+            Thank you for opening your first issue — we're glad you're here! 🚀
+
+            Meshery is a CNCF project and a vibrant open-source community. Here are a few ways to get connected and make the most of your contribution journey:
+
+            ---
+
+            📅 **Join our Weekly Community Meeting**
+            We hold a public development meeting every week where anyone can join, ask questions, share ideas, and pair with maintainers. New contributors are especially welcome!
+            👉 **[Add to calendar & join at meet.meshery.io](https://meet.meshery.io)**
+
+            💬 **Join the Meshery Community Slack**
+            The fastest way to get help, share ideas, or just say hi is through our Slack workspace. Jump in — we'd love to meet you!
+            👉 **[Join Slack at slack.meshery.io](https://slack.meshery.io)**
+
+            🌟 **Become a Community Member**
+            Fill in our newcomer form to introduce yourself, unlock additional resources, and get added to our community directory.
+            👉 **[Newcomer form at meshery.io/newcomer](https://meshery.io/newcomer)**
+
+            ---
+
+            A maintainer will review your issue shortly. In the meantime, feel free to explore our [contributing guide](https://docs.meshery.io/project/contributing) and [documentation](https://docs.meshery.io).
+
+            We're happy to have you! 🎊
+
+      # -----------------------------------------------------------------------
+      # Step 3 – Post a welcome comment for first-time PR authors.
+      #
+      # A separate message is sent for pull requests so that it can be tailored
+      # to the code-contribution context (e.g., mentioning the DCO sign-off
+      # requirement and the PR review process).
+      # -----------------------------------------------------------------------
+      - name: 🎉 Welcome First-Time PR Author
+        if: github.event_name == 'pull_request'
+        uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          # The pr-message is only sent to contributors opening their very
+          # first pull request in this repository.
+          pr-message: |
+            👋 **Welcome to Meshery, @${{ github.actor }}!**
+
+            Thank you for opening your first pull request — this is a big moment and we're excited to review your contribution! 🚀
+
+            Here are a few things that will help your PR get merged smoothly:
+
+            - ✅ **DCO sign-off** — make sure every commit is signed off (`git commit -s`) as required by our [Developer Certificate of Origin](https://docs.meshery.io/project/contributing/contributing-github#signing-off-on-commits-developer-certificate-of-origin).
+            - 🧪 **Tests** — if your change affects functionality, please include or update tests.
+            - 📝 **Description** — a clear PR description helps reviewers understand your intent quickly.
+
+            ---
+
+            📅 **Join our Weekly Community Meeting**
+            We hold a public development meeting every week. It's a great place to walk through your PR with a maintainer or ask any questions you have.
+            👉 **[Add to calendar & join at meet.meshery.io](https://meet.meshery.io)**
+
+            💬 **Join the Meshery Community Slack**
+            Connect with other contributors and get real-time help from the community.
+            👉 **[Join Slack at slack.meshery.io](https://slack.meshery.io)**
+
+            🌟 **Become a Community Member**
+            Fill in our newcomer form to introduce yourself and unlock additional community resources.
+            👉 **[Newcomer form at meshery.io/newcomer](https://meshery.io/newcomer)**
+
+            ---
+
+            A maintainer will review your PR shortly. Thank you for contributing to Meshery! 🎊
+
+      # -----------------------------------------------------------------------
+      # Step 4 – Notify on failure via Slack (if the Slack bot token is available).
+      #
+      # This step runs only when a previous step has failed, ensuring the team
+      # is alerted to any automation breakage promptly.
+      # -----------------------------------------------------------------------
+      - name: 🚨 Alert on Failure
+        if: failure() && secrets.SLACK_BOT_TOKEN != ''
+        uses: slackapi/slack-github-action@v2.1.1
+        # Only run if the Slack bot token secret is configured; skip gracefully otherwise.
+        continue-on-error: true
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: CLDRKJZ0T
+            text: ":warning: *Welcome Workflow Failed*\n\nThe `welcome-first-time-contributors` workflow failed for actor `${{ github.actor }}` on event `${{ github.event_name }}`.\n\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View run logs>"
