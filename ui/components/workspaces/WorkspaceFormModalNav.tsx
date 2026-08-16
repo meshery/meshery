@@ -268,6 +268,7 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
         </StyledDrawer>
       </ErrorBoundary>
       <ChevronButtonWrapper
+        type="button"
         isCollapsed={!open}
         onClick={handleDrawerToggle}
         aria-label="Toggle workspace navigation"

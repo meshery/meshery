@@ -326,6 +326,7 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
         />
       </StyledMainContent>
       <ChevronButtonWrapper
+        type="button"
         isCollapsed={!open}
         onClick={handleDrawerToggle}
         sx={{

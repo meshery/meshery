@@ -870,6 +870,7 @@ const NavigatorContent = () => {
 
   const Chevron = (
     <ChevronButtonWrapper
+      type="button"
       isCollapsed={isDrawerCollapsed}
       style={
         providerUiAccessControl?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : cursorNotAllowed
