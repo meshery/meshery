@@ -16,8 +16,8 @@ on:
   pull_request_target:
     types: [opened]
 
-  # Allow manual triggering for testing the workflow without requiring a real
-  # first-time contributor event.
+  # Allow manual triggering for debugging; note that `actions/first-interaction` still only
+  # posts messages for true first-time contributors in this repository.
   workflow_dispatch:
     inputs:
       debug_mode:
