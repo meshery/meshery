@@ -259,8 +259,8 @@ const MultiSelectWrapper = (props) => {
       border: 'none',
       borderRadius: 0,
       // body2 matches Connections chips / Sistent table density; stock multiValue is smaller.
-      fontSize: theme.typography.body2.fontSize,
-      lineHeight: theme.typography.body2.lineHeight,
+      fontSize: theme.typography?.body2?.fontSize,
+      lineHeight: theme.typography?.body2?.lineHeight,
       paddingTop: '4px',
       paddingBottom: '4px',
       paddingLeft: '8px',
@@ -309,10 +309,12 @@ const MultiSelectWrapper = (props) => {
     control: (base, state) => {
       const restingBorder = theme.palette.border?.strong ?? theme.palette.divider;
       const activeBorder = theme.palette.primary.main;
+      // state is optional: style helpers/tests may call control(base) without it.
+      const isActive = Boolean(state?.isFocused || state?.menuIsOpen);
       return {
         ...base,
         backgroundColor: controlBackground,
-        borderColor: state.isFocused || state.menuIsOpen ? activeBorder : restingBorder,
+        borderColor: isActive ? activeBorder : restingBorder,
         color: optionTextColor,
         boxShadow: 'none',
         minHeight: 40,
@@ -362,14 +364,14 @@ const MultiSelectWrapper = (props) => {
     placeholder: (base, state) => ({
       ...base,
       color: theme.palette.text.disabled,
-      fontSize: theme.typography.body2.fontSize,
+      fontSize: theme.typography?.body2?.fontSize,
       // Hide once focused or while typing so the caret never overlaps ghost text.
-      display: state.isFocused || state.selectProps.inputValue ? 'none' : base.display,
+      display: state?.isFocused || state?.selectProps?.inputValue ? 'none' : base.display,
     }),
     input: (base) => ({
       ...base,
       color: optionTextColor,
-      fontSize: theme.typography.body2.fontSize,
+      fontSize: theme.typography?.body2?.fontSize,
     }),
   };
 

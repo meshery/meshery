@@ -262,9 +262,7 @@ export const useConnectionColumns = ({
             // truncated UUID pills and empty/black multiValue remnants (no label).
             const cleanedEnvs =
               value
-                ?.filter(
-                  (environment) => environment?.id && String(environment?.name ?? '').trim(),
-                )
+                ?.filter((environment) => environment?.id && String(environment?.name ?? '').trim())
                 .map((environment) => ({
                   label: String(environment.name).trim(),
                   value: environment.id,

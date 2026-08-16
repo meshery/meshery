@@ -30,11 +30,21 @@ vi.mock('@sistent/sistent', async (importOriginal) => {
           text: {
             default: isDark ? darkModePalette.text.default : lightModePalette.text.default,
             primary: isDark ? darkModePalette.text.default : lightModePalette.text.default,
+            secondary: isDark ? darkModePalette.text.secondary : lightModePalette.text.secondary,
             disabled: '#999',
           },
           error: { main: '#B32700' },
-          action: { selected: 'rgba(0,0,0,0.08)', hover: 'rgba(0,0,0,0.04)' },
+          // Resting multi-select outline uses Sistent border.strong when present.
+          border: { strong: isDark ? '#666' : '#BDBDBD' },
+          action: {
+            selected: 'rgba(0,0,0,0.08)',
+            hover: 'rgba(0,0,0,0.04)',
+            active: 'rgba(0,0,0,0.54)',
+          },
           getContrastText: (bg: string) => actual.createTheme({}).palette.getContrastText(bg),
+        },
+        typography: {
+          body2: { fontSize: '0.875rem', lineHeight: 1.43 },
         },
       };
     },
