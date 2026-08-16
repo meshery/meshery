@@ -84,7 +84,9 @@ mesheryctl model generate -f [path-to-csv-directory] -m [model-name]
 			if modelGenerateFlags.Template == "" {
 				return ErrTemplateFileNotPresent()
 			}
-
+			if strings.TrimSpace(modelGenerateFlags.Model) != "" {
+				return utils.ErrInvalidArgument(fmt.Errorf("--model is supported only for CSV directory input"))
+			}
 			urlModelGenerator := &UrlModelGenerator{
 				TemplateFile: modelGenerateFlags.Template,
 				Url:          path,
@@ -172,6 +174,9 @@ func (c *CsvModelGenerator) Generate() error {
 
 	err = registerModel(modelData, componentData, relationshipData, "model.csv", "csv", "", c.ModelName, !c.SkipRegister)
 	if err != nil {
+		if c.ModelName != "" && strings.Contains(err.Error(), "not found in CSV input") {
+			return ErrModelNotFoundInCSV(c.ModelName)
+		}
 		return err
 	}
 

@@ -1,7 +1,9 @@
 package model
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"path/filepath"
 	"runtime"
@@ -13,6 +15,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestModelGenerate(t *testing.T) {
@@ -41,6 +44,7 @@ func TestModelGenerate(t *testing.T) {
 		ExpectErr        bool
 		RaisedError      error
 		HttpCode         int
+		AssertRequest    func(t *testing.T, body []byte)
 	}
 
 	tests := []tc{
@@ -69,18 +73,29 @@ func TestModelGenerate(t *testing.T) {
 			HttpCode:         200,
 		},
 		{
-			Name: "model generate: specific model from CSV directory",
-			Args: []string{
-				"generate",
-				"--file",
-				filepath.Join(fixturesDir, "templates", "template-csvs"),
-				"--model",
-				"couchbase",
-			},
-			ExpectedResponse: "generate.dir.model.output.golden",
+			Name:             "model generate: from CSV directory with selected model",
+			Args:             []string{"generate", "--file", filepath.Join(fixturesDir, "templates", "template-csvs"), "--model", "couchbase"},
+			ExpectedResponse: "generate.dir.skip-register.output.golden",
 			URL:              apiURL,
 			Fixture:          "generate.api.ok.response.golden",
 			HttpCode:         200,
+			AssertRequest: func(t *testing.T, body []byte) {
+				t.Helper()
+				var payload struct {
+					UploadType string `json:"uploadType"`
+					ImportBody struct {
+						Model struct {
+							Model string `json:"model"`
+						} `json:"model"`
+					} `json:"importBody"`
+				}
+				err := json.Unmarshal(body, &payload)
+				if err != nil {
+					t.Fatalf("failed to unmarshal request body: %v", err)
+				}
+				assert.Equal(t, "csv", payload.UploadType)
+				assert.Equal(t, "couchbase", payload.ImportBody.Model.Model)
+			},
 		},
 	}
 
@@ -105,6 +120,13 @@ func TestModelGenerate(t *testing.T) {
 				apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).LoadByte()
 
 				httpmock.RegisterResponder("POST", testContext.BaseURL+tt.URL, func(req *http.Request) (*http.Response, error) {
+					if tt.AssertRequest != nil {
+						reqBody, err := io.ReadAll(req.Body)
+						if err != nil {
+							t.Fatalf("failed to read request body: %v", err)
+						}
+						tt.AssertRequest(t, reqBody)
+					}
 
 					return httpmock.NewBytesResponse(tt.HttpCode, apiResponse), nil
 				})
