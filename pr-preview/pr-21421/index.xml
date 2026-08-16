@@ -35345,7 +35345,7 @@ mesheryctl completion bash &gt; $(brew --prefix)/etc/bash_completion.d/mesheryct
  &lt;li&gt;&lt;a href="https://github.com/meshery/meshery/labels/component%2Fmesheryctl"&gt;mesheryctl open issues and pull requests&lt;/a&gt;: Matching the "component/mesheryctl" label.&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;
 &lt;div class="alert alert-dark" role="alert"&gt;
  &lt;h4 class="alert-heading"&gt;Resource Access&lt;/h4&gt;
- Fill-in a &lt;a href="https://meshery.io/newcomers"&gt;community member form&lt;/a&gt; to gain access to community resources.
+ Fill in a &lt;a href="https://meshery.io/newcomers"&gt;community member form&lt;/a&gt; to gain access to community resources.
 &lt;/div&gt;
 
 &lt;h3 id="designing-commands"&gt;
