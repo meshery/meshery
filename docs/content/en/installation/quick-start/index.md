@@ -55,9 +55,7 @@ Meshery's command line interface is a client of Meshery Server's REST API (just 
 
 Select from the list of [Providers]({{< ref "reference/extensibility/providers/index.md" >}}) in order to log in to Meshery. Authenticate with your chosen Provider.
 
-<a href="./images/meshery-server-page.png">
-  <img class="center" style="width:min(100%,650px)" src="./images/meshery-server-page.png" />
-</a>
+![Meshery server page](./images/meshery-server-page.png)
 
 ## 4. Configure Connections to your Kubernetes Clusters
 
@@ -69,9 +67,7 @@ If you have deployed Meshery in-cluster, Meshery Server will automatically conne
 
 Visit <i class="fas fa-cog"></i> Settings:
 
-<a href="./images/meshery-settings.png">
-  <img class="center" style="width:min(100%,650px);" src="./images/meshery-settings.png" />
-</a>
+![Meshery settings](./images/meshery-settings.png)
 
 If your config has not been autodetected, you can manually upload your kubeconfig file (or any number of kubeconfig files). Meshery will attempt to connect to each reachable context contained in the imported kubeconfig files, using the default embedded mode unless that context's connection is set to operator mode. See [Managing Kubernetes Clusters]({{< ref "installation/kubernetes/_index.md" >}}) for more information.
 
@@ -81,17 +77,13 @@ Run connectivity tests and verify the health of your Meshery system. Verify Mesh
 
 If the Meshery Operator does not reach a healthy status, its status card and the connection's Diagnostics carry the reason - deploying the Operator needs outbound access to the Meshery chart repository, and Meshery retries resolution on each deploy, so a transient outage clears by redeploying. See [Meshery Operator and MeshSync troubleshooting]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md" >}}).
 
-<a href="./images/k8s-context-switcher.png" alt="Meshery Kubernetes Context Switcher">
-  <img class="center" style="width:min(100%,350px);" src="./images/k8s-context-switcher.png" />
-</a>
+![Meshery Kubernetes Context Switcher](./images/k8s-context-switcher.png)
 
 ## 6. Design and operate Kubernetes clusters and their workloads
 
 You may now proceed to manage any cloud native infrastructure supported by Meshery. See all [integrations]({{< ref "extensions/models/_index.md" >}}) for a complete list of supported infrastructure.
 
-<a href="./images/meshery-designs.png">
-  <img class="center" style="width:min(100%,650px);" src="./images/meshery-designs.png" />
-</a>
+![Meshery designs](./images/meshery-designs.png)
 
 ## Explore Tutorials
 

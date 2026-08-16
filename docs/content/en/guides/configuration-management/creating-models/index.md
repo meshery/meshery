@@ -23,9 +23,7 @@ Meshery UI | fa fa-desktop
 <h4>Step 1: Open the Model Generation Interface</h4>
 <p>Go to the <a href="https://playground.meshery.io/settings?settingsCategory=Registry&tab=Models">Registry</a> section in the Meshery UI. Click the <strong>create</strong> button to start creating a new model.</p>
 
-<a href="./images/create-ui-where.gif">
-    <img src="./images/create-ui-where.gif" alt="registry generate model" style="width: 50%; max-width: 400px;">
-  </a>
+![Registry generate model](./images/create-ui-where.gif)
 
 <h4>Step 2: Set Up Your Model Name</h4>
 <p>Enter the following names for your model:</p>
@@ -34,16 +32,12 @@ Meshery UI | fa fa-desktop
   <li><strong>Display Name:</strong> This is the friendly name displayed in the UI. It can include spaces and uppercase letters. <br>Example: <code>Cert Manager</code></li>
 </ul>
 
-<a href="./images/create-ui-name.png">
-    <img src="./images/create-ui-name.png" alt="registry generate model name" style="width: 50%; max-width: 400px;">
-  </a>
+![Registry generate model name](./images/create-ui-name.png)
 
 <h4>Step 3: Set Model Categorization</h4>
 <p>Select the appropriate <strong>Category</strong> and <strong>Subcategory</strong> from the dropdowns. If your model doesn't match any available category, choose Uncategorized to ensure it can be easily located later.</p>
 
-<a href="./images/create-ui-category.png">
-    <img src="./images/create-ui-category.png" alt="registry generate model categorization" style="width: 50%; max-width: 400px;">
-  </a>
+![Registry generate model categorization](./images/create-ui-category.png)
 
 <h4>Step 4: Configure Model Styling</h4>
 <p>Customize your model's appearance:</p>
@@ -54,9 +48,7 @@ Meshery UI | fa fa-desktop
 </ul>
 <p>Note: If you don't provide custom styling, Meshery's default values will be used.</p>
 
-<a href="./images/create-ui-styling.png">
-    <img src="./images/create-ui-styling.png" alt="registry generate model styling" style="width: 50%; max-width: 400px;">
-  </a>
+![Registry generate model styling](./images/create-ui-styling.png)
 
 <h4>Step 5: Provide the Source Location</h4>
 <p>Specify the source for your model by entering one of the following URL types:</p>
@@ -79,9 +71,7 @@ Meshery UI | fa fa-desktop
 Check the<code>sourceURL</code>column in the <a href='https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw' target='_blank' rel='noopener'>Meshery Integration Sheet</a> and try one of the listed sources.
 {{% /alert %}}
 
-<a href="./images/create-ui-source.png">
-    <img src="./images/create-ui-source.png" alt="registry generate model source selection" style="width: 50%; max-width: 400px;">
-  </a>
+![Registry generate model source selection](./images/create-ui-source.png)
 
 <h4>Step 6: Additional Settings</h4>
 <ul>
@@ -89,9 +79,7 @@ Check the<code>sourceURL</code>column in the <a href='https://docs.google.com/sp
 <li><strong>Visual Annotation Only:</strong> Mark this option if your model is intended solely for visual diagramming rather than infrastructure management.</li>
 </ul>
 
-<a href="./images/create-ui-details.png">
-    <img src="./images/create-ui-details.png" alt="registry generate model additional settings" style="width: 50%; max-width: 400px;">
-  </a>
+![Registry generate model additional settings](./images/create-ui-details.png)
 
 {{% alert color="light" title="Visual Annotation Models" %}}
 When a model is marked for visual annotation only, it means the model will be used purely for visualization and diagramming purposes within Meshery's interface, rather than for actual infrastructure management.
@@ -102,9 +90,7 @@ When a model is marked for visual annotation only, it means the model will be us
 <p>Meshery will process the provided source URL, extract the necessary information, and create the model based on the specified details.</p>
 <p>If you want to make any changes before generation, you can go back to the previous steps using the navigation buttons and edit the details as needed.</p>
 
-<a href="./images/create-ui-finalize.png">
-    <img src="./images/create-ui-finalize.png" alt="registry generate model generate" style="width: 50%; max-width: 400px;">
-  </a>
+![Registry generate model finalize](./images/create-ui-finalize.png)
 
 <h4>Step 8: Check Model Generation Status</h4>
 <p>Once the model is successfully generated, a confirmation message will appear. You'll be able to view the model along with its components and relationships directly in the Registry page.</p>

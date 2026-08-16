@@ -38,8 +38,7 @@ Some examples include:
   - Examples: Local event storage in database
   - Examples: Remote event synchronization (Remote providers only)
 
-<a href="./images/providers.png">
-<img src="./images/providers.png" width="50%" /></a>
+![Selecting a provider in Meshery](./images/providers.png)
 
   <figcaption>Figure: Selecting a provider in Meshery</figcaption>
 

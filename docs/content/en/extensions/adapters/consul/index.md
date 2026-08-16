@@ -43,7 +43,7 @@ The Meshery Adapter for Consul will connect to Meshery Adapter for Consul's Prom
 
 ### Architecture
 
-[![Consul Service Mesh Architecture](images/service-mesh-architecture-consul.png)](images/service-mesh-architecture-consul.png)
+![Consul Service Mesh Architecture](images/service-mesh-architecture-consul.png)
 
 ### Suggested Topics
 

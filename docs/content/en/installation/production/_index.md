@@ -46,8 +46,7 @@ reference. The
 page in this set translates that architecture into production topology
 decisions.
 
-<a href="{{< static "images/meshery-architecture.webp" >}}" class="lightbox-image">
-<img src="{{< static "images/meshery-architecture.webp" >}}" width="55%" /></a>
+![Meshery architecture]({{< static "images/meshery-architecture.webp" >}})
 
 _Figure: Meshery deploys inside or outside of a Kubernetes cluster and manages one or more clusters._
 

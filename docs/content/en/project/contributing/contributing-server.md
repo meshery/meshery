@@ -27,9 +27,7 @@ After running Meshery server, you will need to select your **Cloud Provider** by
 
 **Please note**: If you get error while starting the server as **"Meshery Development Incompatible"** then follow the below guideline 👇
 
-<a href="../images/meshery-development-incompatible-error.png">
-  <img style= "max-width: 450px;" src="../images/meshery-development-incompatible-error.png" />
-</a>
+![Meshery development incompatible error](../images/meshery-development-incompatible-error.png)
 
 Potential Solution:
 

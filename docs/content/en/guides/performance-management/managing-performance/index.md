@@ -62,9 +62,7 @@ Meshery provides performance test results alongside environment metrics, includi
 
 Connect Meshery to your existing Grafana instance. Meshery will auto-import the boards of your choosing:
 
-<a href="images/meshery-and-grafana.png">
-    <img src="images/meshery-and-grafana.png" style="width: 52%" />
-</a>
+![Meshery and Grafana](images/meshery-and-grafana.png)
 
 ### Connecting to Grafana
 
