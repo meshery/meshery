@@ -13,7 +13,7 @@ components-count: 0
 relationships: 
 relationship-count: 0
 featureList: [
-  "Designed to quickly and efficently handle large volumes of events.",
+  "Designed to quickly and efficiently handle large volumes of events.",
   "Offers full management of user and service account authorization/authentication.",
   "Enables high event throughput via its backing message queue."
 ]
