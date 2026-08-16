@@ -23,7 +23,7 @@ func TestAcademyCreate(t *testing.T) {
 		defaults := map[string]string{
 			"type": "", "title": "", "description": "", "into": "",
 			"org": "", "level": "", "category": "", "tags": "",
-			"id": "", "force": "false",
+			"id": "", "force": "false", "banner": "", "draft": "false",
 		}
 		for name, value := range defaults {
 			if err := createCmd.Flags().Set(name, value); err != nil {
@@ -209,6 +209,11 @@ func TestAcademyCreate(t *testing.T) {
 			expectErr: false,
 		},
 		{
+			name:      "scaffold learning path with banner and draft",
+			args:      []string{"create", "--type", "learning-path", "--title", "Banner Path", "--description", "Desc", "--org", "banner-org", "--into", tempDir, "--banner", "hero.svg", "--draft"},
+			expectErr: false,
+		},
+		{
 			name:         "reject invalid level",
 			args:         []string{"create", "--type", "learning-path", "--title", "Invalid Level", "--description", "Desc", "--org", "level-org", "--level", "invalid-level"},
 			expectErr:    true,
@@ -274,7 +279,7 @@ func TestAcademyCreate(t *testing.T) {
 		t.Errorf("learning-path explicit should contain tags as list with quotes, got: %v", contentStr2)
 	}
 
-	// 3. Check course (no ID placeholder)
+	// 3. Check course
 	coursePath := filepath.Join(tempDir, "content", "learning-paths", "collision-org", "collision-path", "new-course", "_index.md")
 	content3, err := os.ReadFile(coursePath)
 	if err != nil {
@@ -379,6 +384,23 @@ func TestAcademyCreate(t *testing.T) {
 	}
 	if !strings.Contains(string(inheritedContent), `level: "advanced"`) {
 		t.Errorf("expected inherited level 'advanced' in page frontmatter, got: %v", string(inheritedContent))
+	}
+
+	// 10b. Check banner and draft frontmatter
+	bannerPath := filepath.Join(tempDir, "content", "learning-paths", "banner-org", "banner-path", "_index.md")
+	bannerContent, err := os.ReadFile(bannerPath)
+	if err != nil {
+		t.Fatalf("Failed to read scaffolded banner learning-path _index.md: %v", err)
+	}
+	bannerStr := string(bannerContent)
+	if !strings.Contains(bannerStr, `banner: "hero.svg"`) {
+		t.Errorf("learning-path should contain banner frontmatter, got: %v", bannerStr)
+	}
+	if !strings.Contains(bannerStr, "draft: true") {
+		t.Errorf("learning-path should contain draft: true, got: %v", bannerStr)
+	}
+	if !strings.Contains(bannerStr, `id: "REPLACE_WITH_INSTRUCTOR_CONSOLE_ID"`) {
+		t.Errorf("learning-path (root type) should contain id placeholder, got: %v", bannerStr)
 	}
 
 	// 11. Check challenge structure
