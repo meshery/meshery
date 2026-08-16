@@ -218,7 +218,7 @@ describe('createPatternsActions', () => {
     actions.handleDownload(
       { stopPropagation: stop } as any,
       { id: 'd1', name: 'Design 1' },
-      undefined,
+      null,
       'export=Kubernetes%20Manifest',
     );
 
@@ -228,7 +228,7 @@ describe('createPatternsActions', () => {
       id: 'd1',
       name: 'Design 1',
       type: 'pattern',
-      source_type: undefined,
+      source_type: null,
       params: 'export=Kubernetes%20Manifest',
     });
 
