@@ -46,12 +46,21 @@ mesheryctl model generate --file [URL] --template [path-to-template.json] --skip
 </div>
 </pre> 
 
+Generate a specific model from a CSV directory
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model generate -f [path-to-csv-directory] -m [model-name]
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -f, --file string         Specify path to the file or directory
   -h, --help                help for generate
+  -m, --model string        Generate only the specified model from CSV input
       --skip-registration   Skip registration of the model (default is false)
   -t, --template string     Specify path to the template JSON file
 
@@ -62,7 +71,7 @@ mesheryctl model generate --file [URL] --template [path-to-template.json] --skip
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/omkar/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
