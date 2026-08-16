@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import {
   Box,
   IconButton,
-  Grid2,
   TableCell,
   InfoOutlinedIcon,
   MoreVertIcon,
@@ -258,8 +257,7 @@ export const useConnectionColumns = ({
             );
           },
           customBodyRender: (value, tableMeta) => {
-            // Only named environments become chips. Falling back to id produced
-            // truncated UUID pills and empty/black multiValue remnants (no label).
+            // Skip nameless envs — id-as-label painted UUID/black chips.
             const cleanedEnvs =
               value
                 ?.filter((environment) => environment?.id && String(environment?.name ?? '').trim())
@@ -270,36 +268,42 @@ export const useConnectionColumns = ({
 
             return (
               isEnvironmentsSuccess && (
-                <div onClick={(event) => event.stopPropagation()}>
-                  {/* Keep PR footprint; let MultiSelectWrapper grow with chips (no forced scroll). */}
-                  <Grid2 size={{ xs: 12 }} style={{ minHeight: '5rem', width: '15rem' }}>
-                    <Grid2 size={{ xs: 12 }} style={{ marginTop: '2rem', cursor: 'pointer' }}>
-                      <MultiSelectWrapper
-                        updating={updatingConnection.current}
-                        disabled={!canAssignConnectionsToEnv}
-                        onChange={(selected, unselected) =>
-                          handleEnvironmentSelect(
-                            getColumnValue(tableMeta.rowData, 'id', nextColumns),
-                            getColumnValue(tableMeta.rowData, 'name', nextColumns),
-                            cleanedEnvs,
-                            selected,
-                            unselected,
-                          )
-                        }
-                        options={environmentOptions}
-                        value={cleanedEnvs}
-                        placeholder="Select or create..."
-                        noOptionsMessage={({ inputValue }) =>
-                          inputValue?.trim()
-                            ? 'No matching environments. Type to create a new one.'
-                            : null
-                        }
-                        isSelectAll={true}
-                        menuPlacement={'bottom'}
-                      />
-                    </Grid2>
-                  </Grid2>
-                </div>
+                <Box
+                  onClick={(event) => event.stopPropagation()}
+                  sx={{
+                    width: '15rem',
+                    minHeight: '5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Box sx={{ width: '100%' }}>
+                    <MultiSelectWrapper
+                      updating={updatingConnection.current}
+                      disabled={!canAssignConnectionsToEnv}
+                      onChange={(selected, unselected) =>
+                        handleEnvironmentSelect(
+                          getColumnValue(tableMeta.rowData, 'id', nextColumns),
+                          getColumnValue(tableMeta.rowData, 'name', nextColumns),
+                          cleanedEnvs,
+                          selected,
+                          unselected,
+                        )
+                      }
+                      options={environmentOptions}
+                      value={cleanedEnvs}
+                      placeholder="Select or create..."
+                      noOptionsMessage={({ inputValue }) =>
+                        inputValue?.trim()
+                          ? 'No matching environments. Type to create a new one.'
+                          : null
+                      }
+                      isSelectAll={true}
+                      menuPlacement={'bottom'}
+                    />
+                  </Box>
+                </Box>
               )
             );
           },

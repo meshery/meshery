@@ -10,7 +10,6 @@ let capturedMultiSelectProps: any[] = [];
 vi.mock('@sistent/sistent', () => ({
   useHasPermission: (key: { id?: string }) => !deniedPermissionIds.has(key?.id ?? ''),
   Box: ({ children }: any) => <div>{children}</div>,
-  Grid2: ({ children }: any) => <div>{children}</div>,
   IconButton: ({ children }: any) => <button type="button">{children}</button>,
   TableCell: ({ children }: any) => <td>{children}</td>,
   InfoOutlinedIcon: () => <svg />,
@@ -146,23 +145,16 @@ describe('useConnectionColumns Environments multi-select UX', () => {
     capturedMultiSelectProps = [];
   });
 
-  const renderEnvironmentsCell = () => {
+  it('uses the shortened placeholder and gates empty-state on trim', () => {
     const columns = renderColumns();
     const column = columns.find((col) => col.name === 'environments');
     render(<>{column.options.customBodyRender([], { rowData: [] })}</>);
-    return capturedMultiSelectProps.at(-1);
-  };
+    const props = capturedMultiSelectProps.at(-1);
 
-  it('uses the shortened placeholder copy', () => {
-    expect(renderEnvironmentsCell().placeholder).toBe('Select or create...');
-  });
-
-  it('gates the empty-state message on non-empty input', () => {
-    const { noOptionsMessage } = renderEnvironmentsCell();
-
-    expect(noOptionsMessage({ inputValue: '' })).toBeNull();
-    expect(noOptionsMessage({ inputValue: '   ' })).toBeNull();
-    expect(noOptionsMessage({ inputValue: 'zzz' })).toBe(
+    expect(props.placeholder).toBe('Select or create...');
+    expect(props.noOptionsMessage({ inputValue: '' })).toBeNull();
+    expect(props.noOptionsMessage({ inputValue: '   ' })).toBeNull();
+    expect(props.noOptionsMessage({ inputValue: 'zzz' })).toBe(
       'No matching environments. Type to create a new one.',
     );
   });
