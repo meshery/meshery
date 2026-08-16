@@ -258,19 +258,27 @@ export const useConnectionColumns = ({
             );
           },
           customBodyRender: (value, tableMeta) => {
+            // Only named environments become chips. Falling back to id produced
+            // truncated UUID pills and empty/black multiValue remnants (no label).
             const cleanedEnvs =
-              value?.map((environment) => ({
-                label: environment.name,
-                value: environment.id,
-              })) || [];
+              value
+                ?.filter(
+                  (environment) => environment?.id && String(environment?.name ?? '').trim(),
+                )
+                .map((environment) => ({
+                  label: String(environment.name).trim(),
+                  value: environment.id,
+                })) || [];
 
             return (
               isEnvironmentsSuccess && (
                 <div onClick={(event) => event.stopPropagation()}>
-                  <Grid2 size={{ xs: 12 }} style={{ height: '5rem', width: '15rem' }}>
+                  {/* Keep PR footprint; let MultiSelectWrapper grow with chips (no forced scroll). */}
+                  <Grid2 size={{ xs: 12 }} style={{ minHeight: '5rem', width: '15rem' }}>
                     <Grid2 size={{ xs: 12 }} style={{ marginTop: '2rem', cursor: 'pointer' }}>
                       <MultiSelectWrapper
                         updating={updatingConnection.current}
+                        disabled={!canAssignConnectionsToEnv}
                         onChange={(selected, unselected) =>
                           handleEnvironmentSelect(
                             getColumnValue(tableMeta.rowData, 'id', nextColumns),
@@ -290,7 +298,6 @@ export const useConnectionColumns = ({
                         }
                         isSelectAll={true}
                         menuPlacement={'bottom'}
-                        disabled={!canAssignConnectionsToEnv}
                       />
                     </Grid2>
                   </Grid2>
