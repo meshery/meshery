@@ -504,20 +504,27 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 
 	client := httputil.DefaultHTTPClient
 	resp, err := client.Do(req)
-	// failed to fetch response for server version
-	if err != nil || resp.StatusCode != 200 {
-		if hc.Options.PrintLogs { // log if we're supposed to
+	if err != nil {
+		if hc.Options.PrintLogs {
 			utils.Log.Info("!! failed to check Meshery Server version. try starting Meshery with `mesheryctl system start`")
 			skipServerLogs = true
 		} else {
 			return err
 		}
+	} else if resp != nil {
+		defer func() { _ = resp.Body.Close() }()
+		if resp.StatusCode != 200 {
+			if hc.Options.PrintLogs {
+				utils.Log.Info("!! failed to check Meshery Server version. try starting Meshery with `mesheryctl system start`")
+				skipServerLogs = true
+			} else {
+				return fmt.Errorf("received status code %d from server version endpoint", resp.StatusCode)
+			}
+		}
 	}
 
 	// skip this part as we failed to get a response from the api
-	if !skipServerLogs {
-		// needs multiple defer as Body.Close needs a valid response
-		defer func() { _ = resp.Body.Close() }()
+	if !skipServerLogs && resp != nil {
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return errors.Errorf("\n  Invalid response: %v", err)
@@ -751,13 +758,12 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 			}
 			continue
 		}
-		if !skipAdapter {
-			// needs multiple defer as Body.Close needs a valid response
-			defer func() { _ = resp.Body.Close() }()
+		if !skipAdapter && resp != nil {
 			if resp.StatusCode != 200 {
 				if hc.Options.PrintLogs { // incase we're printing logs
 					utils.Log.Infof("!! Meshery Adapter for %s is running but not reachable", name)
 				} else { // or we're supposed to grab the errors
+					_ = resp.Body.Close()
 					return utils.ErrAdapterNotReachable(name)
 				}
 			} else { // if status == 200 we check if we are supposed to print logs
@@ -765,6 +771,7 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 					utils.Log.Infof("✓ %s adapter is running and reachable", name)
 				}
 			}
+			_ = resp.Body.Close()
 		}
 	}
 	return nil

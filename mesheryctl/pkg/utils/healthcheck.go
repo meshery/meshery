@@ -151,10 +151,11 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 		Log.Infof("Meshery endpoint from current context is not reachable using the URL: %s\n", urlTest)
 		Log.Debugf("Error while reaching Meshery endpoint: %v\n", err)
 		Log.Infof("Checking if Meshery is running using the platform: %s\n", currPlatform)
-	}
-
-	if resp != nil && resp.StatusCode == 200 {
-		return true, nil
+	} else if resp != nil {
+		defer SafeClose(resp.Body)
+		if resp.StatusCode == 200 {
+			return true, nil
+		}
 	}
 
 	// If not, use the platforms to check if Meshery is running or not
