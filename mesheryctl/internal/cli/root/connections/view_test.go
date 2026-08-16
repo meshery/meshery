@@ -131,3 +131,46 @@ func TestConnectionViewSaveCreatesFile(t *testing.T) {
 		t.Errorf("--save: expected file %q to exist, got: %v", expectedFile, names)
 	}
 }
+// TestConnectionViewNoSaveWithBrokenHome verifies that "connection view" without
+// --save succeeds even when HOME is unset, proving os.UserHomeDir() is not called
+// on the non-save path.
+func TestConnectionViewNoSaveWithBrokenHome(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	defer utils.ResetCommandFlags(ConnectionsCmd, t)
+
+	utils.TokenFlag = utils.GetToken(t)
+
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("cannot determine current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	fixturesDir := filepath.Join(currDir, "fixtures")
+
+	apiResponse := utils.NewGoldenFile(t, "view.connection.api.response.golden", fixturesDir).Load()
+	httpmock.RegisterResponder("GET",
+		testContext.BaseURL+"/api/integrations/connections/"+connectionId,
+		httpmock.NewStringResponder(200, apiResponse))
+
+	// Unset HOME and USERPROFILE to simulate an environment where home dir is unavailable
+	t.Setenv("HOME", "")
+	t.Setenv("USERPROFILE", "")
+
+	origStdout := os.Stdout
+	_, w, _ := os.Pipe()
+	os.Stdout = w
+	defer func() {
+		_ = w.Close()
+		os.Stdout = origStdout
+	}()
+
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	ConnectionsCmd.SetArgs([]string{"view", connectionId})
+	if execErr := ConnectionsCmd.Execute(); execErr != nil {
+		t.Fatalf("view without --save should succeed even with no HOME: %v", execErr)
+	}
+
+	_ = w.Close()
+	os.Stdout = origStdout
+}
