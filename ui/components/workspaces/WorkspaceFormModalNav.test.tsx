@@ -34,8 +34,19 @@ vi.mock('@/theme', () => ({
 }));
 
 vi.mock('@/components/general/style', () => ({
-  ChevronButtonWrapper: ({ children, onClick }: any) => (
-    <button type="button" data-testid="sidebar-collapse-button" onClick={onClick}>
+  ChevronButtonWrapper: ({
+    children,
+    onClick,
+    'aria-label': ariaLabel,
+    'aria-expanded': ariaExpanded,
+  }: any) => (
+    <button
+      type="button"
+      data-testid="sidebar-collapse-button"
+      onClick={onClick}
+      aria-label={ariaLabel}
+      aria-expanded={ariaExpanded}
+    >
       {children}
     </button>
   ),
