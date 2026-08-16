@@ -33,8 +33,9 @@ func Discovered() machines.State {
 func Registered() machines.State {
 	return machines.State{
 		Events: machines.Events{
-			machines.Connect: machines.CONNECTED,
-			machines.Ignore:  machines.IGNORED,
+			machines.Connect:  machines.CONNECTED,
+			machines.NotFound: machines.NOTFOUND,
+			machines.Ignore:   machines.IGNORED,
 		},
 		Action: &RegisterAction{},
 	}

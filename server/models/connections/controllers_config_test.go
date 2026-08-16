@@ -248,3 +248,31 @@ func TestDeploymentModeFromControllersConfig(t *testing.T) {
 		t.Fatalf("expected operator mode, got %s", got)
 	}
 }
+
+// TestB2OperatorChartVersionFromControllersConfig pins the single reader of
+// operator.version. "" means "no layer asked for a chart version", which the
+// operator deployment config resolves to the version tracking this Meshery
+// Server release.
+func TestB2OperatorChartVersionFromControllersConfig(t *testing.T) {
+	versionPtr := func(v string) *string { return &v }
+
+	cases := []struct {
+		name string
+		cfg  *controllersconfig.MesheryControllersConfig
+		want string
+	}{
+		{"nil config", nil, ""},
+		{"no operator section", &controllersconfig.MesheryControllersConfig{}, ""},
+		{"operator section without a version", &controllersconfig.MesheryControllersConfig{Operator: &controllersconfig.MesheryOperatorConfig{}}, ""},
+		{"blank version is not an override", &controllersconfig.MesheryControllersConfig{Operator: &controllersconfig.MesheryOperatorConfig{Version: versionPtr("  ")}}, ""},
+		{"explicit version", &controllersconfig.MesheryControllersConfig{Operator: &controllersconfig.MesheryOperatorConfig{Version: versionPtr("v0.7.9")}}, "v0.7.9"},
+		{"surrounding whitespace trimmed", &controllersconfig.MesheryControllersConfig{Operator: &controllersconfig.MesheryOperatorConfig{Version: versionPtr(" v0.7.9\n")}}, "v0.7.9"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := OperatorChartVersionFromControllersConfig(tc.cfg); got != tc.want {
+				t.Fatalf("OperatorChartVersionFromControllersConfig = %q, want %q", got, tc.want)
+			}
+		})
+	}
+}

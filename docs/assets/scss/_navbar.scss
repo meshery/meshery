@@ -19,6 +19,10 @@ header {
 html {
   scroll-padding-top: var(--navbar-height);
   scroll-behavior: smooth;
+
+  @media (max-width: 600px) {
+    scroll-padding-top: calc(var(--navbar-height) - 2.5rem);
+  }
 }
 
 // Navbar styles
@@ -257,6 +261,10 @@ html {
 // Ensure content is properly spaced
 .main-container {
   padding-top: var(--navbar-height);
+
+  @media (max-width: 600px) {
+    padding-top: calc(var(--navbar-height) - 2.5rem);
+  }
 }
 
 // Breadcrumb styles
@@ -264,5 +272,5 @@ html {
   font-size: 1.05rem;
   line-height: 0.925rem;
   padding: 0;
-  margin-top: var(--navbar-height);
+  margin-top: 0.5rem;
 }

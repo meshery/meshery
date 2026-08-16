@@ -11,7 +11,8 @@ Generate relationships documents
 
 ## Synopsis
 
-Generate relationships documents from a CSV file or Google Spreadsheet
+Generate relationships documents from a CSV file or Google Spreadsheet.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl relationship generate [flags]

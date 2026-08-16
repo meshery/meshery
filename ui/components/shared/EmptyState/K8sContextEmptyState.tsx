@@ -1,4 +1,5 @@
 import { AddIcon, Button, styled, Typography, useTheme } from '@sistent/sistent';
+import { Keys } from '@meshery/schemas/permissions';
 import OperatorLight from '../../../assets/img/OperatorLight';
 import Operator from '../../../assets/img/Operator';
 import { CoreConnectionKinds } from '@/utils/Enum';
@@ -44,6 +45,7 @@ export const K8sEmptyState = ({ message }) => {
         variant="contained"
         color="primary"
         onClick={handleClick}
+        permissionKey={Keys.LifecycleManagementAddCluster}
         sx={{ margin: '0.6rem 0.6rem', whiteSpace: 'nowrap' }}
       >
         <StyledAddIcon />

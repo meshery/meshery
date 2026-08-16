@@ -146,7 +146,7 @@ When testing permission keys locally, the main client-side caches are stored und
 | Location | Key / object | Contents |
 |----------|--------------|----------|
 | **`Cookies`** | `token` | The session authorization token. Sent automatically with requests to authenticate the user and authorize access to org-specific permission keys. |
-| **`Cookies`** | `meshery-provider` | The active provider (e.g., `Local` or `Layer5`). |
+| **`Cookies`** | `meshery-provider` | The active provider (e.g., `Local` or `Meshery`). |
 | **`sessionStorage`** | `keys` | JSON array of key objects from the provider (`id`, `function`, `category`, …). Written by [`setKeys`](https://github.com/meshery/meshery/blob/master/ui/store/slices/mesheryUi.ts) and read on startup by [`loadAbility`](https://github.com/meshery/meshery/blob/master/ui/pages/_app.tsx). |
 | **`sessionStorage`** | `currentOrg` | Selected organization. Keys are fetched per org via `GET /api/identity/orgs/{orgId}/users/keys`. |
 | **In-memory (CASL)** | `ability` in [`ui/utils/can.ts`](https://github.com/meshery/meshery/blob/master/ui/utils/can.ts) | Runtime rules: `{ action: key.id, subject: lowerCase(key.function) }`. Updated by [`ability.update(...)`](https://github.com/meshery/meshery/blob/master/ui/rtk-query/ability.tsx). |
@@ -197,7 +197,7 @@ Keys come from roles assigned in the Remote Provider admin UI. An empty API resp
 Verify that the `token` cookie is set and not expired:
 *   Open DevTools **Application** -> **Storage** -> **Cookies** and select the Meshery site URL.
 *   Confirm that the `token` cookie is present. If it is missing or has expired, you will be redirected to the login page or receive a `401 Unauthorized` response when fetching keys.
-*   Check that the `meshery-provider` cookie matches the intended provider (e.g., `Local` or `Layer5`).
+*   Check that the `meshery-provider` cookie matches the intended provider (e.g., `Local` or `Meshery`).
 
 ##### Common symptoms
 

@@ -69,6 +69,62 @@ a commit you have already written:
 </ul>
 </details>
 
+## Cloning the Repository
+
+The `meshery/meshery` repository is large - a full clone is on the order of tens of gigabytes and keeps growing. Two directories account for most of that weight, and neither is needed for the vast majority of contributions:
+
+- **`models/`** - the generated [Meshery Model]({{< ref "concepts/logical/models/index.md" >}}) registry (400+ models). A typical build of the server, UI, or CLI only needs the `meshery-core` and `kubernetes` models.
+- **`docs/static/v*/`** - archived snapshots of previously released documentation. Only the latest snapshot is needed to build and preview the current docs.
+
+Unless you are specifically working on the model registry or on an archived documentation version, **clone sparsely**. You still get the full commit history and everything required to build the server, UI, CLI, and current docs, while skipping gigabytes of generated content.
+
+### Recommended: sparse clone
+
+```bash
+# 1. Blobless partial clone - fetches history metadata, not every file's contents
+git clone --no-checkout --filter=blob:none https://github.com/meshery/meshery.git
+cd meshery
+
+# 2. Check out everything EXCEPT the bulky generated directories:
+#      - every model except meshery-core and kubernetes
+#      - archived docs snapshots (keep only the latest, docs/static/v0.9)
+git sparse-checkout set --no-cone \
+  '/*' \
+  '!/models/*' \
+  '/models/meshery-core/' \
+  '/models/kubernetes/' \
+  '!/docs/static/v0.8/'
+
+# 3. Populate the working tree
+git checkout master
+```
+
+This yields a working tree a fraction of the size of a full clone. `--filter=blob:none` makes it a [partial clone](https://git-scm.com/docs/partial-clone), so Git transparently fetches any excluded file on demand if you ever check one out - nothing is permanently lost, and `git log`/`git blame` keep working across the full history.
+
+The `!/models/*` pattern excludes the *contents* of `models/` (not the directory itself), which is what lets the two following lines re-include only the `meshery-core` and `kubernetes` models. For the docs, exclude the older archived snapshots under `docs/static/` and keep the newest (currently `docs/static/v0.9`); add another `!` line for each older version as new snapshots are archived.
+
+### Re-including an excluded directory
+
+Working on the model registry, or on an older archived docs version? Re-include just what you need at any time:
+
+```bash
+# Bring back the full model registry
+git sparse-checkout add '/models/'
+
+# ...or a single archived docs version
+git sparse-checkout add '/docs/static/v0.8/'
+```
+
+Or restore the full working tree entirely:
+
+```bash
+git sparse-checkout disable
+```
+
+{{% alert color="info" title="Requires a recent Git" %}}
+`git sparse-checkout` requires Git 2.25+, and partial clone (`--filter=blob:none`) works best with Git 2.27+. Check with `git --version`.
+{{% /alert %}}
+
 ## Not sure where to start?
 
 <details>
