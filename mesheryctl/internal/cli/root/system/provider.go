@@ -39,7 +39,8 @@ func PrintProviderToStdout(ctx config.Context, contextName string) string {
 var viewProviderCmd = &cobra.Command{
 	Use:   "view",
 	Short: "view provider",
-	Long:  "View provider of context in focus",
+	Long: `View provider of context in focus.
+	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/provider/view`,
 	Example: `
 // View current provider
 mesheryctl system provider view

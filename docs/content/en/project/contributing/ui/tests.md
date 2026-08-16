@@ -19,16 +19,24 @@ Before diving into Meshery's testing environment, certain prerequisites are nece
 
 ## Setting up environment variable
 
-To run the tests successfully, three environment variables must be configured:  
-• `REMOTE_PROVIDER_USER_EMAIL` (Required): The email associated with your account within your provider.  
-• `REMOTE_PROVIDER_USER_PASSWORD` (Required): The password associated with your account within your provider.  
-• `PROVIDER_TOKEN` (Optional): Your provider token, can be generated from an account registered within your provider  
+Credentials are needed only by the `chromium-meshery-provider` project, which authenticates against a remote provider. The `chromium-local-provider` project needs none, so a contributor running only the Local provider suite can skip this section. To run `chromium-meshery-provider`, configure one of two credential sets - a token on its own, or an email and password pair:  
+• `PROVIDER_TOKEN` (Required unless the email and password below are both set): Your provider token, can be generated from an account registered within your provider  
+• `REMOTE_PROVIDER_USER_EMAIL` (Required unless `PROVIDER_TOKEN` is set): The email associated with your account within your provider.  
+• `REMOTE_PROVIDER_USER_PASSWORD` (Required unless `PROVIDER_TOKEN` is set): The password associated with your account within your provider.  
 
 {{% alert color="info" title="Accessing Remote Providers" %}}
 In the case you are using Meshery Cloud as a remote provider, you can <a href="https://cloud.meshery.io/security/tokens">generate a token from your user account</a> to use while writing and executing tests.
 {{% /alert %}}
 
-During the setup phase, Playwright utilizes these environment variables to log in and store credentials securely in the `playwright/.auth` directory. To protect sensitive data, the `.gitignore` file is configured to exclude the `.env` file and any JSON files within the `/playwright/.auth` directory from the GitHub repository.
+Either `PROVIDER_TOKEN` on its own, or both `REMOTE_PROVIDER_USER_EMAIL` and `REMOTE_PROVIDER_USER_PASSWORD`, is enough to authenticate. Without one of those pairs the `remote-setup` project fails, and Playwright reports every `chromium-meshery-provider` test as "did not run" - one honest failure naming the missing variable, rather than a run that appears to have tested the remote provider. Do not convert that failure into a skip: Playwright only collapses a dependent project when its setup **fails**, so a skipped setup leaves all of those tests scheduled and they die individually on the storage state file that was never written. Both shapes are on record for this same defect - run `31039121068` (failing setup) reported 1 failure and ran 0 `chromium-meshery-provider` tests, while run `31701664917` (skipping setup) reported 62 failures and 23 skips, every one of them a `user-meshery-provider.json` ENOENT that says nothing about authentication. One honest failure is the goal; 62 derived ones are noise that overstates the problem.
+
+In CI these come from the `REMOTE_PROVIDER_TEST_USER_TOKEN` organization secret, which holds a maintained token for a purpose-built remote-provider test user - the same secret `mesheryctl-e2e.yaml` uses. The older `PROVIDER_TOKEN` organization secret is a static token that expired and must not be used. Only push builds run the remote-provider project (`npm run test:e2e:ci:full`); pull request builds run `npm run test:e2e:ci:local`, which covers the Local provider only, so pull requests from forks - which cannot read secrets - are unaffected.
+
+That secret must be referred to by the same name in the caller (`.github/workflows/build-and-test.yml`) and in the reusable workflow (`.github/workflows/test-e2e.yml`), and `test-e2e.yml` asserts it is non-empty in a pre-flight step before checkout, Kind, Docker or the browser download, so a misconfiguration fails in seconds rather than after the roughly three minutes of Kubernetes-in-Docker bring-up that precede the first test. Do not reintroduce an alias between the two: a missing secret expands to the empty string rather than erroring, and an alias is exactly what let `test-e2e.yml` read a `REMOTE_PROVIDER_TOKEN` secret that existed in neither the repository nor the organization - from 2026-05-18 until the verdict gate below made it visible on 2026-08-05 - while the wrong name still looked deliberate in review.
+
+During the setup phase, Playwright utilizes these environment variables to log in and store credentials securely in the `playwright/.auth` directory. To protect sensitive data, the `.gitignore` file is configured to exclude `.env` files and any JSON files within the `/playwright/.auth` directory from the GitHub repository.
+
+Locally, the dotenv file these variables are read from is **`ui/.env`** - `ui/tests/e2e/env.js` loads it, so it applies however Playwright is invoked. The repository-root `.env` also works when you go through the make targets (`make ui-test`, `make ui-test-e2e-full`, `make ui-test-e2e-local`), because each of those sources it into the environment before running Playwright. A real environment variable always wins over a value in `ui/.env`. `ui/tests/e2e/.env.example` is the template to copy there (`cd ui && cp tests/e2e/.env.example .env`); note that `ui/tests/e2e/.env` itself is read by nothing despite having its own `.gitignore` entry - credentials placed there are silently ignored.
 
 There are several tools to help you to working with environment variables locally for each project such as [direnv](https://github.com/direnv/direnv), it can work across multiple shell such as Bash, Powershell, Oh my zsh, Fish, etc
 
@@ -115,6 +123,12 @@ In the last step go to ui folder,
 
 ## Run the test cases with Playwright CLI
 
+A local run needs three things, and the failure you get when one of them is missing does not name the thing that is missing:
+
+1. **Build the provider UI first** with `make ui-provider-build`. A fresh source checkout has no `provider-ui/out`, so the server returns 404 for `/provider`; every project's auth setup then dies on a provider-dropdown click timeout that reads like a UI bug.
+2. **A server on `:9081`** (`make server`, then choose the Local provider) and the UI dev server on `:3000` (`make ui`).
+3. **`MESHERY_SERVER_URL=http://localhost:3000`** on the Playwright run. The dev server proxies `/api`, `/provider` and the auth routes through to `:9081`, and the built UI that `:9081` would otherwise serve does not exist in a source checkout.
+
 There are several options we can use to run the test cases, in CLI:
 
 To run playwright UI mode using the browser, you can add `--ui` in the cli, for example:
@@ -164,6 +178,14 @@ test('Random test',  { tag: '@unstable' }, async ({ provider }) => {
   // Test cases here
   // ...
 });` >}}
+
+## How the CI job decides pass or fail
+
+The E2E job is gated on the Playwright verdict, and it must stay that way. The final step of `.github/workflows/test-e2e.yml` keys on `steps.playwright-tests.outcome`, **not** `.conclusion`. The distinction matters: the step that runs Playwright sets `continue-on-error: true` so that reports and traces still upload when tests fail, and `continue-on-error` rewrites the step's `conclusion` to `success` permanently. `outcome` is the result *before* that rewrite, so it is the only field that still carries the real verdict.
+
+Gating on `conclusion` silently disarms the gate - the job goes green whatever the tests did. That is not hypothetical: across the 20 `Meshery Build And Test` runs up to 2026-08-05 the suite reported `success` 19 times out of 19 completed runs, 8 of them with real test failures and none of them failing the build, which made every test in the suite decorative.
+
+If a test is failing, fix it or mark it `test.fixme` with the tracking issue in the annotation. Never re-disarm the gate to turn a red build green.
 
 ## Debugging Test on Github Actions
 

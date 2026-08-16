@@ -272,15 +272,16 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	method := "GET"
 	client := &http.Client{}
 	req, err := utils.NewRequest(method, path, nil)
-	req.Header.Add("Accept", "text/event-stream")
 	if err != nil {
-		return "", ErrCreatingDeployResponseRequest(err)
+		return "", ErrCreatingValidateResponseRequest(err)
 	}
+	req.Header.Add("Accept", "text/event-stream")
 
 	res, err := client.Do(req)
 	if err != nil {
 		return "", ErrCreatingValidateRequest(err)
 	}
+	defer func() { _ = res.Body.Close() }()
 
 	event, err := utils.ConvertRespToSSE(res)
 	if err != nil {

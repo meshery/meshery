@@ -11,7 +11,8 @@ Apply design file
 
 ## Synopsis
 
-Apply design will trigger deploy of the design file
+Apply design will trigger deploy of the design file.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design apply [flags]

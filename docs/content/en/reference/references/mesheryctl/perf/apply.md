@@ -11,7 +11,8 @@ Run a Performance test
 
 ## Synopsis
 
-Run Performance test using existing profiles or using flags
+Run Performance test using existing profiles or using flags.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply [profile-name] [flags]

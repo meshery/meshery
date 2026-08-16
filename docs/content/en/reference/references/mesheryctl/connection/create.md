@@ -11,7 +11,8 @@ Create a new connection
 
 ## Synopsis
 
-Create a new connection to a Kubernetes cluster or other supported platform
+Create a new connection to a Kubernetes cluster or other supported platform.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl connection create [flags]

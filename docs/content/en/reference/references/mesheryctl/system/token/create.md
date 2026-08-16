@@ -12,6 +12,7 @@ Create a token in your meshconfig
 ## Synopsis
 
 Create the token with provided token name (optionally token path) to your meshconfig tokens.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system token create [flags]

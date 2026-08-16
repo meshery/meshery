@@ -12,6 +12,7 @@ Delete Meshery containers
 ## Synopsis
 
 Delete Meshery containers. This command removes all Meshery containers created by docker-compose.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system delete [flags]

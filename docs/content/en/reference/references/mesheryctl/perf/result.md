@@ -11,7 +11,8 @@ List performance test results
 
 ## Synopsis
 
-List all the available test results of a performance profile
+List all the available test results of a performance profile.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf result [profile-name] [flags]

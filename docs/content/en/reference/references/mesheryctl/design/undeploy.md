@@ -11,7 +11,8 @@ Undeploy design
 
 ## Synopsis
 
-Undeploy design will trigger undeploy of design
+Undeploy design will trigger undeploy of design.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design undeploy [flags]
