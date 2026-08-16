@@ -11,7 +11,8 @@ Delete design file
 
 ## Synopsis
 
-delete design file will trigger deletion of the design file
+delete design file will trigger deletion of the design file.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design delete [flags]
