@@ -76,7 +76,16 @@ For production deployments, consider the following security best practices regar
 - **Enforce a specific provider** using the `PROVIDER` environment variable only when you have a clear operational requirement to do so, such as locking a deployment to a particular identity provider.
 - **Use `mesheryctl system provider set`** to explicitly configure a provider for a given context when needed.
 - **Use `mesheryctl system provider reset`** to clear an enforced provider and return to the provider selection UI.
+- **Vet the provider before you allow it.** A Remote Provider's capabilities document names the extension package Meshery downloads and loads, so selecting a provider decides whose code runs in Meshery UI's browser context and, where the package carries a server-side plugin, in-process inside Meshery Server. Prefer first-party and maintained providers, and pin what you have reviewed with [`SKIP_DOWNLOAD_EXTENSIONS`](#skip_download_extensions) and [`PROVIDER_CAPABILITIES_FILEPATH`](#provider_capabilities_filepath). See [Trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}}) for the full production guidance.
 
+{{% alert color="warning" title="Provider selection is a code-trust decision" %}}
+Beyond identity and persistence, the provider you select supplies loadable extension code.
+Treat adding an unfamiliar Remote Provider the way you would treat adding an unfamiliar
+binary to a production host. See
+[Trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}})
+and
+[Authentication, Authorization & Identity]({{< ref "installation/production/authentication-and-identity.md" >}}).
+{{% /alert %}}
 
 #### AI Provider Usage in Production
 
@@ -229,6 +238,13 @@ Example: `SKIP_DOWNLOAD_EXTENSIONS=true`
 - Release channel updates
 
 When `SKIP_DOWNLOAD_EXTENSIONS` is enabled, existing extension packages will still be loaded if present, but no new versions will be retrieved.
+
+**Security use:** because existing packages continue to load, this variable doubles as a
+pin. Setting it to `true` holds a production deployment on an extension package you have
+already reviewed instead of accepting whatever the provider publishes next. Pair it with
+[`PROVIDER_CAPABILITIES_FILEPATH`](#provider_capabilities_filepath) when the capability set
+itself should not drift, and see
+[Trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}}).
 
 ## Design Principles: Meshery Remote Provider Framework
 
