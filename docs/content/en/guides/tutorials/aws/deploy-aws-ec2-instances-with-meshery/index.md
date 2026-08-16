@@ -113,7 +113,7 @@ To get the filtered view shown above, click the filter icon and adjust the follo
 
 - For `view Selector` select `single namespace`
 - For `Kinds` select `Deployment, Pod, secret`
-- For `namspace` select `ack-system`
+- For `namespace` select `ack-system`
 
 ### 3. Deploy the VPC Workflow
 
