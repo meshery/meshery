@@ -1,6 +1,7 @@
 package connections
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -131,6 +132,7 @@ func TestConnectionViewSaveCreatesFile(t *testing.T) {
 		t.Errorf("--save: expected file %q to exist, got: %v", expectedFile, names)
 	}
 }
+
 // TestConnectionViewNoSaveWithBrokenHome verifies that "connection view" without
 // --save succeeds even when HOME is unset, proving os.UserHomeDir() is not called
 // on the non-save path.
@@ -157,13 +159,9 @@ func TestConnectionViewNoSaveWithBrokenHome(t *testing.T) {
 	t.Setenv("HOME", "")
 	t.Setenv("USERPROFILE", "")
 
-	origStdout := os.Stdout
-	_, w, _ := os.Pipe()
-	os.Stdout = w
-	defer func() {
-		_ = w.Close()
-		os.Stdout = origStdout
-	}()
+	buf := &bytes.Buffer{}
+	ConnectionsCmd.SetOut(buf)
+	ConnectionsCmd.SetErr(buf)
 
 	_ = utils.SetupMeshkitLoggerTesting(t, false)
 	ConnectionsCmd.SetArgs([]string{"view", connectionId})
@@ -171,6 +169,4 @@ func TestConnectionViewNoSaveWithBrokenHome(t *testing.T) {
 		t.Fatalf("view without --save should succeed even with no HOME: %v", execErr)
 	}
 
-	_ = w.Close()
-	os.Stdout = origStdout
 }
