@@ -794,8 +794,9 @@ func ValidName(mesheryServerUrl, args string, configuration string) (string, str
 func AskForInput(prompt string, allowed []string) (string, error) {
 	reader := bufio.NewReader(os.Stdin)
 
+	allowedPrompt := strings.Join(allowed, "/")
 	for {
-		fmt.Printf("%s %s: ", prompt, allowed)
+		fmt.Printf("%s [%s]: ", prompt, allowedPrompt)
 
 		response, err := reader.ReadString('\n')
 		if err != nil {
@@ -807,7 +808,7 @@ func AskForInput(prompt string, allowed []string) (string, error) {
 		if StringInSlice(response, allowed) {
 			return response, nil
 		}
-		Log.Infof("Invalid response %s. Allowed responses %s", response, allowed)
+		Log.Infof("Invalid response %q. Allowed responses: %s", response, allowedPrompt)
 	}
 }
 
