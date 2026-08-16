@@ -63,14 +63,8 @@
   },
   "include": [
     "next-env.d.ts",
-    "constants/**/*.ts",
-    "constants/**/*.tsx",
-    "types/**/*.ts",
-    "types/**/*.tsx",
-    "css/**/*.ts",
-    "css/**/*.tsx",
-    "scripts/**/*.ts",
-    "scripts/**/*.tsx"
+    "**/*.ts",
+    "**/*.tsx"
   ],
   "exclude": ["node_modules"]
 }
