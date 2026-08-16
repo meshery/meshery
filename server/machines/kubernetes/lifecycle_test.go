@@ -237,7 +237,11 @@ func TestDeleteFlushMeshSyncDataSerialization(t *testing.T) {
 	machineCtx.ActionMutex.Unlock()
 
 	// 5. Prove FlushMeshSyncData then executes
-	<-flushCalled
+	select {
+	case <-flushCalled:
+	case <-time.After(5 * time.Second):
+		t.Fatal("FlushMeshSyncData did not execute within timeout")
+	}
 }
 
 type spyLogger struct {

@@ -1,12 +1,15 @@
 package helpers
 
 import (
+	"context"
+	"fmt"
 	"testing"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/core"
 )
 
@@ -118,5 +121,48 @@ func TestGetMachineCoversEveryDefinitionKind(t *testing.T) {
 				t.Fatalf("getMachine(%q) has no CONNECTED action; the connection would never be persisted", tt.kind)
 			}
 		})
+	}
+}
+
+// TestInitializeMachineWithContext_FailedStartLeavesNoTrackerEntry verifies that
+// if inst.Start fails, InitializeMachineWithContext returns an error and does NOT
+// leave a failed machine registered in smInstanceTracker.
+func TestInitializeMachineWithContext_FailedStartLeavesNoTrackerEntry(t *testing.T) {
+	connID := core.Uuid(uuid.Must(uuid.NewV4()))
+	userID := core.Uuid(uuid.Must(uuid.NewV4()))
+	tracker := &machines.ConnectionToStateMachineInstanceTracker{
+		ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine),
+	}
+	log, err := logger.New("test", logger.Options{Format: logger.JsonLogFormat})
+	if err != nil {
+		t.Fatalf("logger.New() error = %v", err)
+	}
+
+	failingInitFunc := func(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error) {
+		return nil, nil, fmt.Errorf("simulated init failure")
+	}
+
+	inst, err := InitializeMachineWithContext(
+		&kubernetes.MachineCtx{},
+		context.Background(),
+		connID,
+		userID,
+		tracker,
+		log,
+		nil,
+		machines.InitialState,
+		"kubernetes",
+		failingInitFunc,
+	)
+
+	if err == nil {
+		t.Fatal("expected InitializeMachineWithContext to fail with simulated init failure, got nil")
+	}
+	if inst != nil {
+		t.Fatalf("expected returned machine instance to be nil, got: %v", inst)
+	}
+
+	if _, ok := tracker.Get(connID); ok {
+		t.Fatal("expected machine to NOT be registered in smInstanceTracker after failed Start, but tracker entry was present")
 	}
 }

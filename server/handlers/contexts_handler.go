@@ -155,11 +155,11 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	if sendErr != nil {
 		wrappedErr := ErrSendMachineEvent(sendErr)
 		h.log.Error(wrappedErr)
-		writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
 		if deleteEvent != nil {
 			_ = provider.PersistEvent(*deleteEvent, token)
 			go h.config.EventBroadcaster.Publish(userID, deleteEvent)
 		}
+		writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
 		return
 	}
 

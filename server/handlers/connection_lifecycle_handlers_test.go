@@ -94,7 +94,7 @@ func newLifecycleTestHandler(t *testing.T, provider *lifecycleTestMockProvider) 
 }
 
 // TestUpdateConnectionById_FailsOnLifecycleError verifies that when NotifySmOfConnectionStatusChange fails,
-// UpdateConnectionById propagates the error as HTTP 500 and does not emit a success response/event.
+// UpdateConnectionById propagates the error as HTTP 500 and persists/publishes the failure event.
 func TestUpdateConnectionById_FailsOnLifecycleError(t *testing.T) {
 	connID := uuid.Must(uuid.NewV4())
 	provider := &lifecycleTestMockProvider{
@@ -105,6 +105,9 @@ func TestUpdateConnectionById_FailsOnLifecycleError(t *testing.T) {
 	body := strings.NewReader(`{"status":"connected"}`)
 	req := httptest.NewRequest(http.MethodPut, "/api/integrations/connections/"+connID.String(), body)
 	req = mux.SetURLVars(req, map[string]string{"connectionId": connID.String()})
+	reqCtx := req.Context()
+	reqCtx = context.WithValue(reqCtx, models.TokenCtxKey, "test-token")
+	req = req.WithContext(reqCtx)
 	rec := httptest.NewRecorder()
 
 	user := &models.User{ID: uuid.Must(uuid.NewV4())}
@@ -112,6 +115,80 @@ func TestUpdateConnectionById_FailsOnLifecycleError(t *testing.T) {
 
 	if rec.Code != http.StatusInternalServerError {
 		t.Fatalf("expected status 500 on lifecycle transition error, got: %d (body: %s)", rec.Code, rec.Body.String())
+	}
+
+	provider.mu.Lock()
+	defer provider.mu.Unlock()
+	var errorEventFound bool
+	for _, ev := range provider.events {
+		if ev.Severity == events.Error {
+			errorEventFound = true
+			if ev.ActedUpon != core.Uuid(connID) {
+				t.Fatalf("expected error event ActedUpon %s, got %s", connID, ev.ActedUpon)
+			}
+		}
+	}
+	if !errorEventFound {
+		t.Fatal("expected failure event to be persisted on lifecycle transition error, but none was recorded")
+	}
+}
+
+// TestUpdateConnectionById_StatusOnlyUsesURLConnectionID verifies that status-only PUT requests
+// (with no ID in request body) populate connection.ID from the URL route parameter.
+func TestUpdateConnectionById_StatusOnlyUsesURLConnectionID(t *testing.T) {
+	connID := uuid.Must(uuid.NewV4())
+	log := newTestLogger(t)
+	provider := &lifecycleTestMockProvider{
+		k8sContext: models.K8sContext{
+			ID:           connID.String(),
+			Name:         "test-k8s",
+			ConnectionID: connID.String(),
+		},
+	}
+	h, tracker := newLifecycleTestHandler(t, provider)
+
+	sm, err := kubernetes.New(connID.String(), core.Uuid(connID), log)
+	if err != nil {
+		t.Fatalf("failed to create machine: %v", err)
+	}
+	sm.Provider = provider
+	state := sm.States[machines.CONNECTED]
+	sm.States[machines.CONNECTED] = *state.RegisterAction(&successfulLifecycleAction{})
+	sm.CurrentState = machines.REGISTERED
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	sysID := core.Uuid(uuid.Must(uuid.NewV4()))
+	ctx := context.WithValue(context.Background(), models.UserCtxKey, user)
+	ctx = context.WithValue(ctx, models.SystemIDKey, &sysID)
+	ctx = context.WithValue(ctx, models.TokenCtxKey, "test-token")
+
+	machineCtx := &kubernetes.MachineCtx{
+		K8sContext:  provider.k8sContext,
+		ActionMutex: &sync.Mutex{},
+	}
+	_, err = sm.Start(ctx, machineCtx, log, func(c context.Context, mc interface{}, l logger.Handler) (interface{}, *events.Event, error) {
+		return mc, nil, nil
+	})
+	if err != nil {
+		t.Fatalf("start machine: %v", err)
+	}
+
+	tracker.Add(core.Uuid(connID), sm)
+
+	body := strings.NewReader(`{"status":"connected"}`)
+	req := httptest.NewRequest(http.MethodPut, "/api/integrations/connections/"+connID.String(), body)
+	req = mux.SetURLVars(req, map[string]string{"connectionId": connID.String()})
+	reqCtx := req.Context()
+	reqCtx = context.WithValue(reqCtx, models.TokenCtxKey, "test-token")
+	reqCtx = context.WithValue(reqCtx, models.UserCtxKey, user)
+	reqCtx = context.WithValue(reqCtx, models.SystemIDKey, &sysID)
+	req = req.WithContext(reqCtx)
+	rec := httptest.NewRecorder()
+
+	h.UpdateConnectionById(rec, req, nil, user, provider)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status 200 for status-only PUT with valid URL connection ID, got: %d (body: %s)", rec.Code, rec.Body.String())
 	}
 }
 
@@ -157,6 +234,8 @@ func TestDeleteContext_FailsOnSendEventError(t *testing.T) {
 		t.Fatalf("start machine: %v", err)
 	}
 
+	tracker.Add(core.Uuid(connID), sm)
+
 	user := &models.User{ID: uuid.Must(uuid.NewV4())}
 	req := httptest.NewRequest(http.MethodDelete, "/api/system/kubernetes/contexts/"+connID.String(), nil)
 	req = mux.SetURLVars(req, map[string]string{"id": connID.String()})
@@ -171,6 +250,19 @@ func TestDeleteContext_FailsOnSendEventError(t *testing.T) {
 
 	if rec.Code != http.StatusInternalServerError {
 		t.Fatalf("expected status 500 on SendEvent error, got: %d (body: %s)", rec.Code, rec.Body.String())
+	}
+
+	// Verify failure event was persisted
+	provider.mu.Lock()
+	var deleteErrorFound bool
+	for _, ev := range provider.events {
+		if ev.Severity == events.Error {
+			deleteErrorFound = true
+		}
+	}
+	provider.mu.Unlock()
+	if !deleteErrorFound {
+		t.Fatal("expected failure event to be persisted on DeleteContext SendEvent failure, but none was found")
 	}
 
 	// Verify machine was NOT removed from tracker

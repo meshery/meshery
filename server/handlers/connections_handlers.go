@@ -429,6 +429,10 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
+	if connection.ID == uuid.Nil {
+		connection.ID = connectionID
+	}
+
 	// MeshSync deployment-mode changes are handled by the dedicated
 	// POST /api/integrations/connections/{connectionId}/actions endpoint
 	// (PerformConnectionAction), which owns the metadata merge and cluster-side
@@ -471,10 +475,14 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	eventBuilder = eventBuilder.WithDescription(description)
 
 	if connection.Status != "" {
-		_, err := h.NotifySmOfConnectionStatusChange(req.Context(), userID, provider, token, connection)
+		smEvent, err := h.NotifySmOfConnectionStatusChange(req.Context(), userID, provider, token, connection)
 		if err != nil {
 			wrappedErr := ErrSendMachineEvent(err)
 			h.log.Error(wrappedErr)
+			if smEvent.Description != "" {
+				_ = provider.PersistEvent(smEvent, token)
+				go h.config.EventBroadcaster.Publish(userID, &smEvent)
+			}
 			writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
 			return
 		}
@@ -569,8 +577,6 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 		if err != nil {
 			h.log.Error(err)
 			if event != nil {
-				_ = provider.PersistEvent(*event, token)
-				h.config.EventBroadcaster.Publish(userID, event)
 				return *event, err
 			}
 			return events.Event{}, err

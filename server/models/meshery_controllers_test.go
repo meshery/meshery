@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"sync"
 	"testing"
 
@@ -8,6 +9,7 @@ import (
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/controllers"
+	"github.com/meshery/schemas/models/core"
 )
 
 func TestControllerEventActedUponPrefersConnectionID(t *testing.T) {
@@ -154,6 +156,45 @@ func TestMesheryControllersHelperOperatorStatusConcurrency(t *testing.T) {
 			mch.mu.Lock()
 			mch.ctxOperatorStatus = controllers.Undeployed
 			mch.mu.Unlock()
+		}()
+	}
+	wg.Wait()
+}
+
+// TestMesheryControllersHelper_ConcurrentMeshsyncInitialization verifies that
+// concurrent calls to AddMeshsyncDataHandlers and RemoveMeshSyncDataHandler
+// are properly serialized by meshsyncInitMu without race conditions or multiple handlers.
+func TestMesheryControllersHelper_ConcurrentMeshsyncInitialization(t *testing.T) {
+	log, _ := logger.New("test", logger.Options{})
+	mch := &MesheryControllersHelper{
+		ctxControllerHandlers:  make(map[MesheryController]controllers.IMesheryController),
+		meshsyncDeploymentMode: connections.MeshsyncDeploymentMode("unknown-mode"),
+		log:                    log,
+	}
+
+	ctx := context.Background()
+	k8sCtx := K8sContext{ID: "test-ctx", ConnectionID: uuid.Must(uuid.NewV4()).String()}
+	userID := core.Uuid(uuid.Must(uuid.NewV4()))
+	sysID := core.Uuid(uuid.Must(uuid.NewV4()))
+
+	var wg sync.WaitGroup
+	for i := 0; i < 50; i++ {
+		wg.Add(4)
+		go func() {
+			defer wg.Done()
+			mch.AddMeshsyncDataHandlers(ctx, k8sCtx, userID, sysID, nil)
+		}()
+		go func() {
+			defer wg.Done()
+			mch.RemoveMeshSyncDataHandler(ctx, k8sCtx.ID)
+		}()
+		go func() {
+			defer wg.Done()
+			_ = mch.GetMeshsyncDataHandler()
+		}()
+		go func() {
+			defer wg.Done()
+			_ = mch.ResyncMeshsync(ctx)
 		}()
 	}
 	wg.Wait()
