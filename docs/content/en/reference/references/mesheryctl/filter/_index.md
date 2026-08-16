@@ -34,6 +34,7 @@ mesheryctl filter [subcommands]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+      --count          (optional) Get the number of filters in total
   -h, --help           help for filter
   -t, --token string   Path to token file default from current context
 
