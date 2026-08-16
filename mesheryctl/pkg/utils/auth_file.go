@@ -14,15 +14,17 @@ func WriteAuthTokenFile(path string, data []byte) error {
 	}
 
 	tmpPath := tmp.Name()
-	defer os.Remove(tmpPath)
+	defer func() {
+		_ = os.Remove(tmpPath)
+	}()
 
 	if err := tmp.Chmod(0o600); err != nil {
-		tmp.Close()
+		_ = tmp.Close()
 		return ErrWriteAuthTokenFile(err)
 	}
 
 	if _, err := tmp.Write(data); err != nil {
-		tmp.Close()
+		_ = tmp.Close()
 		return ErrWriteAuthTokenFile(err)
 	}
 
