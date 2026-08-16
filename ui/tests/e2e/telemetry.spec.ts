@@ -46,17 +46,7 @@ test.describe('Telemetry Section Tests', () => {
     ).toBeVisible();
   });
 
-  // Quarantined, not deleted - see meshery/meshery#21172.
-  //
-  // navigateToTelemetryMetrics() drives the same navigateToSubMenuItem() helper
-  // as the Charts case above, and hit the identical failure mode in CI: died on
-  // the 180s test-level timeout with no locator, no snippet and no file
-  // location, rather than on an assertion. Same root cause, same tracking
-  // issue - it just took longer to draw the unlucky nav race since the Charts
-  // test isn't exercising (and contending for) that path anymore.
-  //
-  // Remove this `fixme` in the PR that fixes the underlying cost.
-  test.fixme('Metrics (Prometheus) page loads', async ({ page }: { page: Page }) => {
+  test('Metrics (Prometheus) page loads', async ({ page }: { page: Page }) => {
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.navigateToTelemetryMetrics();
 
