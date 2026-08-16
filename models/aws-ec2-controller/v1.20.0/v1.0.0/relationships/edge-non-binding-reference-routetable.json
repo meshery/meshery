@@ -15,7 +15,7 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
-      "version": "v1.19.1"
+      "version": "v1.20.0"
     },
     "name": "aws-ec2-controller",
     "registrant": {
@@ -51,7 +51,7 @@
                   "configuration",
                   "spec",
                   "routeTableRefs",
-                  "0",
+                  "_",
                   "from",
                   "name"
                 ]
@@ -120,7 +120,7 @@
                   "configuration",
                   "spec",
                   "routeTableRefs",
-                  "0",
+                  "_",
                   "from",
                   "name"
                 ]
@@ -189,7 +189,7 @@
                   "configuration",
                   "spec",
                   "routeTableRefs",
-                  "0",
+                  "_",
                   "from",
                   "name"
                 ]
