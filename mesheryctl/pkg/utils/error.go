@@ -429,7 +429,7 @@ func ErrWriteAuthTokenFile(err error) error {
 		[]string{"Failed to write auth token file"},
 		[]string{err.Error()},
 		[]string{"The auth token file could not be written or secured with 0600 permissions."},
-		[]string{"Ensure you have write access to ~/.meshery and retry mesheryctl system login."},
+		[]string{"Ensure you have write access to ~/.meshery and retry the command."},
 	)
 }
 

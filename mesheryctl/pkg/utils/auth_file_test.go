@@ -4,55 +4,79 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestWriteAuthTokenFile(t *testing.T) {
 	t.Run("creates auth file with 0600 permissions", func(t *testing.T) {
 		path := filepath.Join(t.TempDir(), "auth.json")
 
-		err := WriteAuthTokenFile(path, []byte(`{"token":"test-token"}`))
-		require.NoError(t, err)
+		if err := WriteAuthTokenFile(path, []byte(`{"token":"test-token"}`)); err != nil {
+			t.Fatalf("WriteAuthTokenFile() error = %v", err)
+		}
 
 		info, err := os.Stat(path)
-		require.NoError(t, err)
+		if err != nil {
+			t.Fatalf("os.Stat() error = %v", err)
+		}
 
-		assert.Equal(t, os.FileMode(0o600), info.Mode().Perm())
+		if got := info.Mode().Perm(); got != 0o600 {
+			t.Errorf("file permissions = %o, want %o", got, 0o600)
+		}
 	})
 
 	t.Run("corrects existing insecure permissions to 0600", func(t *testing.T) {
 		path := filepath.Join(t.TempDir(), "auth.json")
 
-		err := os.WriteFile(path, []byte(`{"token":"test-token"}`), 0o644)
-		require.NoError(t, err)
+		if err := os.WriteFile(path, []byte(`{"token":"test-token"}`), 0o644); err != nil {
+			t.Fatalf("os.WriteFile() error = %v", err)
+		}
 
-		err = os.Chmod(path, 0o644)
-		require.NoError(t, err)
+		if err := os.Chmod(path, 0o644); err != nil {
+			t.Fatalf("os.Chmod() error = %v", err)
+		}
 
-		err = WriteAuthTokenFile(path, []byte(`{"token":"updated-token"}`))
-		assert.NoError(t, err)
+		if err := WriteAuthTokenFile(path, []byte(`{"token":"updated-token"}`)); err != nil {
+			t.Fatalf("WriteAuthTokenFile() error = %v", err)
+		}
 
 		info, err := os.Stat(path)
-		require.NoError(t, err)
+		if err != nil {
+			t.Fatalf("os.Stat() error = %v", err)
+		}
 
-		assert.Equal(t, os.FileMode(0o600), info.Mode().Perm())
+		if got := info.Mode().Perm(); got != 0o600 {
+			t.Errorf("file permissions = %o, want %o", got, 0o600)
+		}
 
 		content, err := os.ReadFile(path)
-		require.NoError(t, err)
-		assert.Contains(t, string(content), "updated-token")
+		if err != nil {
+			t.Fatalf("os.ReadFile() error = %v", err)
+		}
+
+		if got := string(content); got != `{"token":"updated-token"}` {
+			t.Errorf("file content = %q, want %q", got, `{"token":"updated-token"}`)
+		}
 	})
+
 	t.Run("leaves no temp file behind on success", func(t *testing.T) {
 		dir := t.TempDir()
 		path := filepath.Join(dir, "auth.json")
 
-		require.NoError(t, WriteAuthTokenFile(path, []byte(`{"token":"x"}`)))
+		if err := WriteAuthTokenFile(path, []byte(`{"token":"x"}`)); err != nil {
+			t.Fatalf("WriteAuthTokenFile() error = %v", err)
+		}
 
 		entries, err := os.ReadDir(dir)
-		require.NoError(t, err)
+		if err != nil {
+			t.Fatalf("os.ReadDir() error = %v", err)
+		}
 
-		assert.Len(t, entries, 1)
-		assert.Equal(t, "auth.json", entries[0].Name())
+		if len(entries) != 1 {
+			t.Errorf("directory contains %d entries, want 1", len(entries))
+		}
+
+		if entries[0].Name() != "auth.json" {
+			t.Errorf("file name = %q, want %q", entries[0].Name(), "auth.json")
+		}
 	})
 }
