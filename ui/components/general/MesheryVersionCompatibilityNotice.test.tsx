@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useGetSystemVersionQuery } from '@/rtk-query/user';
 
@@ -10,27 +10,22 @@ vi.mock('@sistent/sistent', () => ({
   Chip: ({ label, ...props }: any) => <span {...props}>{label}</span>,
   IconButton: ({ children, ...props }: any) => <button {...props}>{children}</button>,
   CustomTooltip: ({ children }: any) => <div>{children}</div>,
+  CheckIcon: (props: any) => <svg data-testid="check-icon" {...props} />,
+  ContentCopyIcon: (props: any) => <svg data-testid="copy-icon" {...props} />,
+  WarningIcon: (props: any) => <svg data-testid="warning-icon" {...props} />,
+  alpha: (color: string) => color,
   useTheme: () => ({
     spacing: (val: number) => `${val * 8}px`,
     palette: {
       mode: 'light',
+      common: { white: '#fff', black: '#000' },
       warning: { main: '#ed6c02' },
       success: { main: '#2e7d32' },
       text: { primary: '#000' },
+      divider: '#e0e0e0',
+      grey: { 100: '#f5f5f5', 900: '#1e1e1e' },
     },
   }),
-}));
-
-vi.mock('@mui/icons-material/ContentCopy', () => ({
-  default: () => <svg data-testid="copy-icon" />,
-}));
-
-vi.mock('@mui/icons-material/Check', () => ({
-  default: () => <svg data-testid="check-icon" />,
-}));
-
-vi.mock('@mui/icons-material/WarningAmber', () => ({
-  default: () => <svg data-testid="warning-icon" />,
 }));
 
 vi.mock('@/rtk-query/user', () => ({
@@ -80,7 +75,7 @@ describe('MesheryVersionCompatibilityNotice', () => {
   });
 
   it('copies upgrade command when copy button is clicked', () => {
-    const writeTextMock = vi.fn();
+    const writeTextMock = vi.fn().mockResolvedValue(undefined);
     Object.assign(navigator, {
       clipboard: {
         writeText: writeTextMock,
@@ -92,6 +87,30 @@ describe('MesheryVersionCompatibilityNotice', () => {
     const copyBtn = screen.getByRole('button', { name: /copy upgrade command/i });
     fireEvent.click(copyBtn);
 
-    expect(writeTextMock).toHaveBeenCalledWith('mesheryctl system update');
+    return waitFor(() => {
+      expect(writeTextMock).toHaveBeenCalledWith('mesheryctl system update');
+    });
+  });
+
+  it('does not show copied state when clipboard write fails', async () => {
+    const writeTextMock = vi.fn().mockRejectedValue(new Error('denied'));
+    Object.assign(navigator, {
+      clipboard: {
+        writeText: writeTextMock,
+      },
+    });
+
+    render(<MesheryVersionCompatibilityNotice upgradeCommand="mesheryctl system update" />);
+
+    const copyBtn = screen.getByRole('button', { name: /copy upgrade command/i });
+    fireEvent.click(copyBtn);
+
+    await waitFor(() => {
+      expect(writeTextMock).toHaveBeenCalledWith('mesheryctl system update');
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByText(/Copied!/i)).not.toBeInTheDocument();
+    });
   });
 });

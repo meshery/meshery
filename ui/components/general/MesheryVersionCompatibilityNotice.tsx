@@ -7,10 +7,11 @@ import {
   Chip,
   IconButton,
   CustomTooltip,
+  CheckIcon,
+  ContentCopyIcon,
+  WarningIcon,
+  alpha,
 } from '@sistent/sistent';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import CheckIcon from '@mui/icons-material/Check';
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { useGetSystemVersionQuery } from '@/rtk-query/user';
 
 export interface MesheryVersionCompatibilityNoticeProps {
@@ -44,12 +45,18 @@ const MesheryVersionCompatibilityNotice: React.FC<MesheryVersionCompatibilityNot
     return currentVersion;
   }, [currentVersion, systemVersionData?.build]);
 
-  const handleCopy = () => {
-    if (typeof navigator !== 'undefined' && navigator.clipboard) {
-      navigator.clipboard.writeText(upgradeCommand);
+  const handleCopy = async () => {
+    if (typeof navigator === 'undefined' || !navigator.clipboard) {
+      return;
     }
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+
+    try {
+      await navigator.clipboard.writeText(upgradeCommand);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
   };
 
   return (
@@ -61,11 +68,11 @@ const MesheryVersionCompatibilityNotice: React.FC<MesheryVersionCompatibilityNot
         justifyContent: 'center',
         padding: theme.spacing(3),
         borderRadius: '12px',
-        backgroundColor:
-          theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
-        border: `1px solid ${
-          theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)'
-        }`,
+        backgroundColor: alpha(
+          theme.palette.common.white,
+          theme.palette.mode === 'dark' ? 0.05 : 0.02,
+        ),
+        border: `1px solid ${alpha(theme.palette.common.black, theme.palette.mode === 'dark' ? 0.1 : 0.08)}`,
         maxWidth: '560px',
         margin: '1.5rem auto',
         textAlign: 'center',
@@ -79,9 +86,9 @@ const MesheryVersionCompatibilityNotice: React.FC<MesheryVersionCompatibilityNot
           marginBottom: theme.spacing(1.5),
         }}
       >
-        <WarningAmberIcon
+        <WarningIcon
           sx={{
-            color: theme.palette.warning?.main || '#ed6c02',
+            color: theme.palette.warning?.main,
             fontSize: '2rem',
           }}
         />
@@ -122,7 +129,8 @@ const MesheryVersionCompatibilityNotice: React.FC<MesheryVersionCompatibilityNot
       <Box
         sx={{
           width: '100%',
-          backgroundColor: theme.palette.mode === 'dark' ? '#1e1e1e' : '#f5f5f5',
+          backgroundColor:
+            theme.palette.mode === 'dark' ? theme.palette.grey[900] : theme.palette.grey[100],
           borderRadius: '8px',
           padding: '8px 14px',
           display: 'flex',
@@ -130,7 +138,7 @@ const MesheryVersionCompatibilityNotice: React.FC<MesheryVersionCompatibilityNot
           justifyContent: 'space-between',
           marginBottom: theme.spacing(2.5),
           fontFamily: 'monospace',
-          border: `1px solid ${theme.palette.mode === 'dark' ? '#333' : '#e0e0e0'}`,
+          border: `1px solid ${theme.palette.divider}`,
         }}
       >
         <Typography
