@@ -145,7 +145,7 @@ mesheryctl filter view "filter name"
 			filePath = fmt.Sprintf("%s.%s", getFilterViewFilePath(selectedFilter, filterViewFlagsProvided.ViewAllFlag), strings.ToLower(filterViewFlagsProvided.OutputFormat))
 		}
 
-		return display.FormatAndSaveOutput(data, filterViewFlagsProvided.OutputFormat, nil, filterViewFlagsProvided.Save, filePath)
+		return display.FormatAndSaveOutput(data, filterViewFlagsProvided.OutputFormat, cmd.OutOrStdout(), filterViewFlagsProvided.Save, filePath)
 	},
 }
 

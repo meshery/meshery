@@ -99,7 +99,7 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 			fileName = filepath.Join(utils.MesheryFolder, fmt.Sprintf("component_%s.%s", componentString, cmdComponentViewFlags.OutputFormat))
 		}
 
-		return display.FormatAndSaveOutput(*selectedComponent, cmdComponentViewFlags.OutputFormat, nil, cmdComponentViewFlags.Save, fileName)
+		return display.FormatAndSaveOutput(*selectedComponent, cmdComponentViewFlags.OutputFormat, cmd.OutOrStdout(), cmdComponentViewFlags.Save, fileName)
 	},
 }
 

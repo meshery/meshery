@@ -65,9 +65,15 @@ func TestViewCmd(t *testing.T) {
 func TestGetFilterViewFilePath_AppendsExtension(t *testing.T) {
 	originalMesheryFolder := utils.MesheryFolder
 	originalDefaultConfigPath := utils.DefaultConfigPath
+	originalTokenFlag := utils.TokenFlag
+	originalArgs := append([]string(nil), FilterCmd.Flags().Args()...)
+	originalOut := FilterCmd.OutOrStdout()
 	t.Cleanup(func() {
 		utils.MesheryFolder = originalMesheryFolder
 		utils.DefaultConfigPath = originalDefaultConfigPath
+		utils.TokenFlag = originalTokenFlag
+		FilterCmd.SetArgs(originalArgs)
+		FilterCmd.SetOut(originalOut)
 		utils.ResetCommandFlags(FilterCmd, t)
 	})
 

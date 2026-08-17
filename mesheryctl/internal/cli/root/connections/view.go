@@ -110,7 +110,7 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 			fileName = filepath.Join(homeDir, ".meshery", fileName)
 		}
 
-		return display.FormatAndSaveOutput(*selectedConnection, connectionViewFlagsProvided.outputFormat, nil, connectionViewFlagsProvided.save, fileName)
+		return display.FormatAndSaveOutput(*selectedConnection, connectionViewFlagsProvided.outputFormat, cmd.OutOrStdout(), connectionViewFlagsProvided.save, fileName)
 	},
 }
 
