@@ -42,7 +42,7 @@ mesheryctl completion bash &gt; $(brew --prefix)/etc/bash_completion.d/mesheryct
  &lt;pre class="codeblock-pre"&gt;&lt;div class="codeblock"&gt;
  &lt;div class="clipboardjs"&gt;source &lt;(mesheryctl completion zsh)&lt;/div&gt;&lt;/div&gt;
  &lt;/pre&gt;&lt;br&gt;
-&lt;p&gt;If shell completion is not already enabled in your environment you will need to enable it. You can execute the following once:&lt;/p&gt;</description></item><item><title>Mesheryctl system commands</title><link>/guides/mesheryctl/system-commands/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/system-commands/</guid><description>&lt;p&gt;Let&amp;rsquo;s get familiar with mesheryctl system commands. The syntax of the mesheryctl commands goes as follws : &lt;code&gt;mesheryctl &amp;lt;Main_command&amp;gt; &amp;lt;Argument&amp;gt; &amp;lt;Flags&amp;gt;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;If shell completion is not already enabled in your environment you will need to enable it. You can execute the following once:&lt;/p&gt;</description></item><item><title>Mesheryctl system commands</title><link>/guides/mesheryctl/system-commands/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/system-commands/</guid><description>&lt;p&gt;Let&amp;rsquo;s get familiar with mesheryctl system commands. The syntax of the mesheryctl commands goes as follows : &lt;code&gt;mesheryctl &amp;lt;Main_command&amp;gt; &amp;lt;Argument&amp;gt; &amp;lt;Flags&amp;gt;&lt;/code&gt;&lt;/p&gt;
 &lt;h2 id="main_command--system"&gt;
 	Main_command : system
 &lt;/h2&gt;
@@ -67,7 +67,7 @@ mesheryctl system check [flags]&lt;/p&gt;
 -h, &amp;ndash;help help for check
 &amp;ndash;operator Check status of Meshery operators
 &amp;ndash;pre Verify environment readiness to deploy Meshery
-&amp;ndash;preflight Verify environment readiness to deploy Meshery&lt;/p&gt;</description></item><item><title>Using Meshery CLI</title><link>/guides/mesheryctl/working-with-mesheryctl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/working-with-mesheryctl/</guid><description>&lt;p&gt;Meshery&amp;rsquo;s command line interface is &lt;code&gt;mesheryctl&lt;/code&gt;. Use &lt;code&gt;mesheryctl&lt;/code&gt; to both manage the lifecyle of Meshery itself and to access and invoke any of Meshery&amp;rsquo;s application and cloud native management functions. &lt;code&gt;mesheryctl&lt;/code&gt; commands can be categorized as follows:&lt;/p&gt;
+&amp;ndash;preflight Verify environment readiness to deploy Meshery&lt;/p&gt;</description></item><item><title>Using Meshery CLI</title><link>/guides/mesheryctl/working-with-mesheryctl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/working-with-mesheryctl/</guid><description>&lt;p&gt;Meshery&amp;rsquo;s command line interface is &lt;code&gt;mesheryctl&lt;/code&gt;. Use &lt;code&gt;mesheryctl&lt;/code&gt; to both manage the lifecycle of Meshery itself and to access and invoke any of Meshery&amp;rsquo;s application and cloud native management functions. &lt;code&gt;mesheryctl&lt;/code&gt; commands can be categorized as follows:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;mesheryctl&lt;/code&gt; - Global overrides and flags&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;mesheryctl app&lt;/code&gt; - Cloud Native Application Management&lt;/li&gt;

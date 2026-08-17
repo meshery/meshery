@@ -24,26 +24,12 @@
 	x-annotations as an Extension Point
 &lt;/h2&gt;
 &lt;p&gt;Meshery already uses several &lt;code&gt;x-*&lt;/code&gt; vendor extensions internally to guide code generation, such as &lt;code&gt;x-go-type&lt;/code&gt;, &lt;code&gt;x-oapi-codegen-extra-tags&lt;/code&gt;, and &lt;code&gt;x-internal&lt;/code&gt;. These are consumed by Meshery&amp;rsquo;s own build pipeline.&lt;/p&gt;</description></item><item><title>Extensibility: UI</title><link>/reference/extensibility/ui/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/extensibility/ui/</guid><description>&lt;p&gt;Meshery UI has a number of extension points that allow you to greatly customize both its functional behavior and visual appearance. These extension points come in different types, and this document describes each type, its example use, best practices to consider, and caveats of which to be aware.&lt;/p&gt;
-&lt;h3 id="extensibility-customizing-text-based-forms-using-rjsf-custom-component"&gt;
-	Extensibility: Customizing Text-based Forms using RJSF Custom Component
-&lt;/h3&gt;
-&lt;p&gt;RJSFWrapperComponent provides customizations for RJSF forms, overriding the default behavior of meshery-ui rjsf forms. The &lt;a href="https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L66"&gt;Rjsf forms are wrapped&lt;/a&gt; in this component to receive custom props from a Meshery extension.
-
-
-&lt;pre class="codeblock-pre"&gt;
-	&lt;div class="codeblock"&gt;
-		&lt;code class="clipboardjs"&gt;&amp;lt;RJSFWrapperComponent {...props}&amp;gt;
- &amp;lt;RJSFForm
- isLoading={isLoading}
- schema={schema}
- data={data}
- onChange={(e) =&amp;gt; {
- setData(e.formData)
- }}
- jsonSchema={jsonSchema}
- /&amp;gt;
-&amp;lt;/RJSFWrapperComponent&amp;gt;&lt;/code&gt;
-	&lt;/div&gt;
-&lt;/pre&gt;
-
-See this &lt;a href="https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L91"&gt;RJSF Component&lt;/a&gt; as an example of how these properties are received.&lt;/p&gt;</description></item></channel></rss>
+&lt;div class="alert alert-warning" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;UI extensions share Meshery UI's origin and session&lt;/div&gt;
+&lt;p&gt;Extension components are loaded into Meshery UI&amp;rsquo;s own browser origin and JavaScript
+context. They share the DOM, the session cookie, and the ability to call any API the
+signed-in user can call. There is no iframe or sandbox boundary between an extension
+component and the rest of the UI, so an enabled UI extension is trusted code. Operators
+should read
+&lt;a href="/installation/production/security-hardening/#trusting-an-extension"&gt;Trusting an extension&lt;/a&gt;;
+authors should read
+&lt;a href="/reference/extensibility/verify-compatibility/"&gt;Ensuring Extension Compatibility&lt;/a&gt;.&lt;/p&gt;</description></item></channel></rss>

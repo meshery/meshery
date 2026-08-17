@@ -198,7 +198,7 @@ mesheryctl system provider switch [provider]
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;View provider of context in focus&lt;/p&gt;
+&lt;p&gt;View provider of context in focus.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl system provider view [flags]

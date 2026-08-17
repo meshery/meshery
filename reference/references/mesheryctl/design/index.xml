@@ -5,7 +5,7 @@
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;Apply design will trigger deploy of the design file&lt;/p&gt;
+&lt;p&gt;Apply design will trigger deploy of the design file.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl design apply [flags]
@@ -62,7 +62,7 @@ mesheryctl design apply [design-name]
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;delete design file will trigger deletion of the design file&lt;/p&gt;
+&lt;p&gt;delete design file will trigger deletion of the design file.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl design delete [flags]
@@ -110,7 +110,7 @@ mesheryctl design delete [file | URL]
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;Command will trigger deploy of design&lt;/p&gt;
+&lt;p&gt;Command will trigger deploy of design.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl design deploy [flags]
@@ -260,7 +260,7 @@ mesheryctl design list --page [pange-number]
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;Undeploy design will trigger undeploy of design&lt;/p&gt;
+&lt;p&gt;Undeploy design will trigger undeploy of design.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl design undeploy [flags]
@@ -308,7 +308,7 @@ mesheryctl design undeploy -f [filepath]
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;Display the content of a specific design based on name or id&lt;/p&gt;
+&lt;p&gt;Display the content of a specific design based on name or id.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl design view design name [flags]

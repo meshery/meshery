@@ -1,4 +1,69 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Fri, 07 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.65</title><link>/project/releases/v1.0.65/</link><pubDate>Fri, 07 Aug 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.65/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Thu, 13 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.66</title><link>/project/releases/v1.0.66/</link><pubDate>Thu, 13 Aug 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.66/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[skills] cut-release: correct it for meshery/meshery and verify the publish @CodeAhmedJamil (#21197)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix: handle formatter error before use in design view @Vanshikadahaliya (#21222)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[UI] Pass permissionKey to DefaultError across protected views @rishiraj38 (#21226)&lt;/li&gt;
+&lt;li&gt;UI: Improve responsiveness of workspace modal and switcher @KhushamBansal (#21329)&lt;/li&gt;
+&lt;li&gt;[Chore]: Update to Sistent v0.22.1 @l5io (#21342)&lt;/li&gt;
+&lt;li&gt;Fixes the column visibility resets after page navigation @dhruveshmishra (#20868)&lt;/li&gt;
+&lt;li&gt;fix: tolerate every persisted credential secret shape on read @yi-nuo426 (#21339)&lt;/li&gt;
+&lt;li&gt;[UI] Add missing permission keys to Install/Uninstall extension buttons and Manage Designs/Views button @Maanvi212006 (#21136)&lt;/li&gt;
+&lt;li&gt;fix(ui): Fix workspace switcher dropdown z-index and behavior @KhushamBansal (#21264)&lt;/li&gt;
+&lt;li&gt;Fix Kanvas icon hover alignment @DS123-ally (#21313)&lt;/li&gt;
+&lt;li&gt;[UI] Fix Dashboard widget layout overlapping issue @KhushamBansal (#20954)&lt;/li&gt;
+&lt;li&gt;[UI] Bump @sistent/sistent to 0.22.0 to restore resource sharing @hortison (#21233)&lt;/li&gt;
+&lt;li&gt;[Server][UI] Repoint schemas-owned contracts at @meshery/schemas @hamza-mohd (#21191)&lt;/li&gt;
+&lt;li&gt;[Chore]: Update to Sistent v0.21.46 @l5io (#21196)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Fixes the column visibility resets after page navigation @dhruveshmishra (#20868)&lt;/li&gt;
+&lt;li&gt;[Server] Pin operator deployment to a published Meshery Operator chart @simihablo (#21206)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix: tolerate every persisted credential secret shape on read @yi-nuo426 (#21339)&lt;/li&gt;
+&lt;li&gt;Fix historical compatibility matrix redirects @emphor11 (#20822)&lt;/li&gt;
+&lt;li&gt;chore: refine shared build targets and npm scripts across docs and academy repos @banana-three-join (#21251)&lt;/li&gt;
+&lt;li&gt;fix: make connection status not found automatic-only @chaitanyamedidar (#21154)&lt;/li&gt;
+&lt;li&gt;Create DhritirajNath.md @Dhritiraj-Nath (#21246)&lt;/li&gt;
+&lt;li&gt;[Docs] Align connect-time docs with operator chart-version resolution @jijillery (#21229)&lt;/li&gt;
+&lt;li&gt;Added Intro - Krutik&amp;rsquo;s profile @Krutik2710 (#21215)&lt;/li&gt;
+&lt;li&gt;Add introduction of Hiya Chhawchharia @hiyach28 (#21214)&lt;/li&gt;
+&lt;li&gt;docs: Weekly Newcomers Attendence added @LeeFred3042U (#21213)&lt;/li&gt;
+&lt;li&gt;Update introduction in Anurag Pandey&amp;rsquo;s markdown @anurag-p6 (#21212)&lt;/li&gt;
+&lt;li&gt;[Server] Pin operator deployment to a published Meshery Operator chart @simihablo (#21206)&lt;/li&gt;
+&lt;li&gt;Add attendance note for Dinesh Manideep Paluvadi @dineshmanideep (#21209)&lt;/li&gt;
+&lt;li&gt;Create attendance record for Faizan Javed @FaizanCyber007 (#21211)&lt;/li&gt;
+&lt;li&gt;Add introduction for Atharv Chavan @Atharv3221 (#21210)&lt;/li&gt;
+&lt;li&gt;Add Yash-Mahakal.md with introduction @YASHMAHAKAL (#21207)&lt;/li&gt;
+&lt;li&gt;Create introductory file @Atishyy27 (#21208)&lt;/li&gt;
+&lt;li&gt;[Server][UI] Repoint schemas-owned contracts at @meshery/schemas @hamza-mohd (#21191)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@Atharv3221, @Atishyy27, @CodeAhmedJamil, @DS123-ally, @Dhritiraj-Nath, @FaizanCyber007, @KhushamBansal, @Krutik2710, @LeeFred3042U, @Maanvi212006, @Vanshikadahaliya, @YASHMAHAKAL, @alexquincy, @anurag-p6, @banana-three-join, @chaitanyamedidar, @dhruveshmishra, @dineshmanideep, @emphor11, @fitzergerald, @hamza-mohd, @hiyach28, @hortison, @jijillery, @l5io, @leecalcote, @lekaf974, @meshery-ci, @rishiraj38, @simihablo, @yi-nuo426 and Ahmed Jamil&lt;/p&gt;</description></item><item><title>v1.0.65</title><link>/project/releases/v1.0.65/</link><pubDate>Fri, 07 Aug 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.65/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -34785,7 +34850,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.65&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.66&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;

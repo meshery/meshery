@@ -5,7 +5,7 @@
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;Create a new connection to a Kubernetes cluster or other supported platform&lt;/p&gt;
+&lt;p&gt;Create a new connection to a Kubernetes cluster or other supported platform.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl connection create [flags]
@@ -78,7 +78,7 @@ mesheryctl connection create --type gke --token auth.json
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;Delete a connection&lt;/p&gt;
+&lt;p&gt;Delete a connection.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl connection delete [flags]

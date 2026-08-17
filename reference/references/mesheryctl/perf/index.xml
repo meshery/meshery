@@ -5,7 +5,7 @@
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;Run Performance test using existing profiles or using flags&lt;/p&gt;
+&lt;p&gt;Run Performance test using existing profiles or using flags.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl perf apply [profile-name] [flags]
@@ -36,7 +36,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com"
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;List all the available performance profiles&lt;/p&gt;
+&lt;p&gt;List all the available performance profiles.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl perf profile [profile-name] [flags]
@@ -101,7 +101,7 @@ mesheryctl perf profile test --view
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;List all the available test results of a performance profile&lt;/p&gt;
+&lt;p&gt;List all the available test results of a performance profile.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl perf result [profile-name] [flags]

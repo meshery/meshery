@@ -5,7 +5,7 @@
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;Generate relationships documents from a CSV file or Google Spreadsheet&lt;/p&gt;
+&lt;p&gt;Generate relationships documents from a CSV file or Google Spreadsheet.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl relationship generate [flags]
@@ -69,7 +69,7 @@ mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;List all relationships registered in Meshery Server&lt;/p&gt;
+&lt;p&gt;List all relationships registered in Meshery Server.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl relationship list [flags]
@@ -139,7 +139,7 @@ mesheryctl relationship list --count
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;Search registered relationship(s) used by different models&lt;/p&gt;
+&lt;p&gt;Search registered relationship(s) used by different models.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl relationship search [flags]
@@ -197,7 +197,7 @@ mesheryctl relationship search [--kind &lt;kind&gt;] [--page &lt;int&gt;]
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;view a relationship queried by the model name&lt;/p&gt;
+&lt;p&gt;view a relationship queried by the model name.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 mesheryctl relationship view [flags]

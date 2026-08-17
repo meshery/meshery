@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Extensions on Documentation</title><link>/extensions/extensions/</link><description>Recent content in Extensions on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/extensions/extensions/index.xml" rel="self" type="application/rss+xml"/><item><title>Helm Snapshot</title><link>/extensions/extensions/helm-snapshot/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/extensions/helm-snapshot/</guid><description>&lt;h1 id="helm-snapshot"&gt;
-	&lt;img style="height: 4rem; width: 4rem; vertical-align: middle;" src="images/helm-chart-color.svg" alt="" /&gt; Helm Snapshot
+	&lt;img style="height: 4rem; width: 4rem; vertical-align: middle;" src="images/helm-chart-color.svg" data-logo-for-dark="images/helm-chart-white.svg" data-logo-for-light="images/helm-chart-color.svg" class="logo-dark-light" alt="" /&gt; Helm Snapshot
 &lt;/h1&gt;
 &lt;h2 id="extension-overview"&gt;
 	Extension Overview
