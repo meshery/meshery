@@ -47,7 +47,8 @@ var linkDocPatternApply = map[string]string{
 var applyCmd = &cobra.Command{
 	Use:   "apply",
 	Short: "Apply design file",
-	Long:  `Apply design will trigger deploy of the design file`,
+	Long: `Apply design will trigger deploy of the design file.
+	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/design/apply`,
 	Example: `
 // apply a design file
 mesheryctl design apply -f [file | URL]

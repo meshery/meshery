@@ -503,6 +503,7 @@ const NavigatorContent = () => {
             placement="right"
             disableFocusListener={!drawerCollapsed}
             disableTouchListener={!drawerCollapsed}
+            disableHoverListener={!drawerCollapsed}
           >
             <MainListIcon>
               <img
