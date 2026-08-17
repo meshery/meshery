@@ -25,6 +25,8 @@ Meshery Server allows users to generate traffic load tests using fortio.
 
 Like every Meshery component, Meshery Adapters use MeshKit.
 
+When an Adapter registers its models with Meshery Server, it also tells the server where to reach it. That is what makes an Adapter more than a source of definitions: at deployment time, any component belonging to a model an Adapter registered is provisioned *by that Adapter*, over gRPC, rather than by Meshery Server. See [Deployment Engine]({{< ref "concepts/architecture/deployment-engine/index.md" >}}) for how Meshery chooses between the two.
+
 ### Adapter FAQs
 
 #### Is each Meshery adapter made equal?

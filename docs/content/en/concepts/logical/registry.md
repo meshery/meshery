@@ -63,6 +63,8 @@ Once registered in the Meshery Registry, Models and their entities are available
 
 Meshery [Adapters]({{< ref "concepts/architecture/adapters.md" >}}) are one example of a Registrant. Registrants are responsible for the registration of entities in the Meshery Registry. Adapters are responsible for the sourcing and registration of entities and the packaging of these enties into one or more models.
 
+A model's registrant is not only a record of provenance. At deployment time, the registrant of a component's model determines who fulfills that component: Meshery Server itself, or an Adapter reached over the network. See [Deployment Engine]({{< ref "concepts/architecture/deployment-engine/index.md" >}}).
+
 #### Using Meshery CLI to Register a Model
 
 ```bash

@@ -180,6 +180,15 @@ make docs        # Run docs site (port 1313)
 make docs-build  # Build docs site
 ```
 
+The build needs a real **Dart Sass** first on `PATH` - `make -C docs check-deps` only checks that
+*a* `sass` exists, so a Ruby `sass` gem passes it and then fails every page with a
+`TOCSS-DART ... unexpected EOF` error that blames permissions. See
+[build environment gotchas](./docs/content/en/project/contributing/contributing-build-environment.md).
+
+A docs page that carries an image belongs in a leaf bundle (`<page>/index.md` plus
+`<page>/images/`), like `concepts/architecture/operator/`. A regular `<page>.md` alongside a
+shared `images/` directory publishes at `<page>/`, so its relative image paths 404.
+
 ### API & Helm
 
 ```bash
