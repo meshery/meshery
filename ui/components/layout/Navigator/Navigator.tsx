@@ -779,6 +779,7 @@ const NavigatorContent = () => {
     <>
       <NavigatorHelpIcons
         isCollapsed={isDrawerCollapsed}
+        isHelperOpen={showHelperButton}
         size="large"
         orientation={isDrawerCollapsed ? 'vertical' : 'horizontal'}
       >
@@ -813,7 +814,7 @@ const NavigatorContent = () => {
             </HelpListItem>
           );
         })}
-        <ListItem key="help-button" style={{ display: isDrawerCollapsed ? 'inherit' : 'none' }}>
+        <HelpListItem key="help-button" style={{ display: isDrawerCollapsed ? 'flex' : 'none' }}>
           <CustomTextTooltip title="Help" placement={isDrawerCollapsed ? 'right' : 'top'}>
             <HelpButton isCollapsed={isDrawerCollapsed} onClick={toggleSpacing}>
               <HelpOutlinedIcon
@@ -835,7 +836,7 @@ const NavigatorContent = () => {
               />
             </HelpButton>
           </CustomTextTooltip>
-        </ListItem>
+        </HelpListItem>
       </NavigatorHelpIcons>
     </>
   );
