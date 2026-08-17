@@ -79,13 +79,13 @@
   // --section-button-hover:linear-gradient(to left bottom, #007a6c, #00b09d, #00ae9b, #00ab99, #00a997, #00ac98, #00ae99, #00b19a, #00b99e, #00c2a2, #00caa6, #00d3a9);
 
   // Sidebar
-  --sidebar-background-start: #121212;
-  --sidebar-background-end: #3C494F;
   --sidenav-hover: #009c89;
+  --sidebar-wrapper-background: linear-gradient(to right top, #dee2e6, #d2d7dc, #c5cbd1, #b9c0c7, #adb5bd);
+  --sidebar-wrapper-background-mobile: linear-gradient(to right top, #dee2e6, #d2d7dc, #c5cbd1, #b9c0c7, #adb5bd);
 
   
   --code:#952a1e;
-  --sidebar-text-color: var(--color-white);
+  --sidebar-text-color: var(--color-secondary-medium);
   --sidebar-active-text-color: var(--color-grey-light);
 }
 
@@ -182,6 +182,8 @@
   --sidebar-background-start: #477E96; //RGB(71, 126, 150)
   --sidebar-background-end: #3C494F; // rgb(60, 73, 79)
   --sidenav-hover: #00d3a9;
+  --sidebar-wrapper-background: linear-gradient(37deg, rgba(71, 126, 150, 0.95) 0%, rgba(0, 0, 0, 0.6) 12%, rgba(60, 73, 79, 1) 100%);
+  --sidebar-wrapper-background-mobile: linear-gradient(37deg, rgba(71, 126, 150, 1) 0%, rgba(0, 0, 0, 1) 12%, rgba(60, 73, 79, 1) 100%);
   
   
     --code:#bf3526;

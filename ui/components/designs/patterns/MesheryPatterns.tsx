@@ -590,7 +590,13 @@ function MesheryPatterns({
             <_PromptComponent ref={modalRef} />
           </>
         ) : (
-          <DefaultError />
+          <DefaultError
+            permissionKey={
+              pageTitle === 'Catalog'
+                ? Keys.CatalogManagementViewCatalog
+                : Keys.CatalogManagementViewDesigns
+            }
+          />
         )}
       </NoSsr>
     </>

@@ -40,9 +40,9 @@ Each Meshery Operator controller offers a health status that you can use to unde
 - **UNDEPLOYED:** Custom Resource not deployed.
 - **CONNECTED:** Deployed, sending data to Meshery Server.
 
-### When a controller reports UNKOWN
+### When a controller reports UNKNOWN
 
-Any of the three can instead report **UNKOWN** (spelled that way on the wire). It is not a health state: it means Meshery made no observation of that controller on this cluster, so it is asserting nothing about it. All three report it at once when the connection's kubeconfig could not be read or its Kubernetes client could not be created, since nothing about the cluster was observable. The cards stay visible on purpose - the reason is in the connection's [Diagnostics](#diagnostics-in-the-connection-detail-view) and in the events feed, not in the status itself.
+Any of the three can instead report **UNKNOWN** (spelled that way on the wire). It is not a health state: it means Meshery made no observation of that controller on this cluster, so it is asserting nothing about it. All three report it at once when the connection's kubeconfig could not be read or its Kubernetes client could not be created, since nothing about the cluster was observable. The cards stay visible on purpose - the reason is in the connection's [Diagnostics](#diagnostics-in-the-connection-detail-view) and in the events feed, not in the status itself.
 
 ## Meshery Operator Deployment Scenarios
 
@@ -87,6 +87,40 @@ Some common failure situations that Meshery users might face are described below
    1. **Probable cause:** Some Meshery Operator versions inject the NATS token into `nats.conf` **unquoted** (`token: $NATS_TOKEN`). When the generated token happens to look like a number, the NATS config parser rejects it and the pod crash-loops. Confirm with `kubectl logs -n meshery meshery-nats-0 -c nats` (look for a `variable reference for 'NATS_TOKEN' ... could not be parsed` error). The fix belongs in the Operator (quote it: `token: "$NATS_TOKEN"`); redeploying often generates a token that parses.
 1. **Situation:** The `meshery-operator` pod never becomes ready after connecting a cluster. Its `kube-rbac-proxy` container is in `ImagePullBackOff`, and/or its `manager` container crash-loops with `open /tmp/k8s-webhook-server/serving-certs/tls.crt: no such file or directory`.
    1. **Probable cause:** An old Meshery Operator Helm chart was installed. See [Meshery Operator will not start: ImagePullBackOff and a missing webhook certificate](#meshery-operator-will-not-start-imagepullbackoff-and-a-missing-webhook-certificate).
+1. **Situation:** Terminating stuck resources during Meshery Operator upgrade.
+   1. **Probable cause:** During upgrade, the Meshery Operator may fail to upgrade smoothly if the previous version's MeshSync or Broker resources are stuck in a terminating state (typically due to finalizers).
+   2. **Remediation:** Follow these steps to clean up stuck resources and safely apply the upgrade:
+      1. Upgrade the `mesheryctl` CLI binary first if it is outdated, as `mesheryctl system update` only updates Meshery container images and manifests (see the [Upgrading mesheryctl]({{< ref "installation/upgrades/index.md#upgrading-meshery-cli" >}}) guide).
+      2. Check if the `MeshSync` and `Broker` custom resources are in a terminating state by inspecting their deletion timestamps:
+         ```bash
+         kubectl get meshsync meshery-meshsync -n meshery -o jsonpath='{.metadata.deletionTimestamp}'
+         kubectl get broker meshery-broker -n meshery -o jsonpath='{.metadata.deletionTimestamp}'
+         ```
+      3. For any resource confirmed to be terminating (having a `deletionTimestamp`), patch only that specific resource to clear its finalizers. **Do not** patch healthy resources, as this disrupts the Operator's normal cleanup path:
+         ```bash
+         # Run only if meshery-meshsync is stuck in Terminating
+         kubectl patch meshsync meshery-meshsync -n meshery -p '{"metadata":{"finalizers":null}}' --type=merge
+
+         # Run only if meshery-broker is stuck in Terminating
+         kubectl patch broker meshery-broker -n meshery -p '{"metadata":{"finalizers":null}}' --type=merge
+         ```
+      4. Pull the latest Meshery container images and apply the Helm manifests upgrade:
+         ```bash
+         mesheryctl system update
+         ```
+      5. Restart the Meshery components:
+         ```bash
+         mesheryctl system restart
+         ```
+      6. Verify the operator components initialize successfully:
+         * Run the system check:
+           ```bash
+           mesheryctl system check --operator
+           ```
+         * Confirm that the Broker workload pod (`meshery-nats-*` or `meshery-broker-*` depending on the Operator version) and other operator pods are running and ready:
+           ```bash
+           kubectl get pods -n meshery
+           ```
 
 ## Meshery Operator will not start: ImagePullBackOff and a missing webhook certificate
 
