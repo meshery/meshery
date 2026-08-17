@@ -767,12 +767,16 @@ func (mch *MesheryControllersHelper) meshsyncDataHandlersStartLibMeshsyncRun(
 func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Context, contextID string) {
 	mch.meshsyncInitMu.Lock()
 	mch.mu.Lock()
+	var handler *MeshsyncDataHandler
 	if mch.ctxMeshsyncDataHandler != nil {
 		mch.log.Infof("MesheryControllersHelper::RemoveMeshSyncDataHandler for contextID = %s", contextID)
-		mch.ctxMeshsyncDataHandler.Stop()
+		handler = mch.ctxMeshsyncDataHandler
 		mch.ctxMeshsyncDataHandler = nil
 	}
 	mch.mu.Unlock()
+	if handler != nil {
+		handler.Stop()
+	}
 	mch.meshsyncInitMu.Unlock()
 	// Allow a fresh "MeshSync connected" event when a new handler is attached.
 	mch.meshsyncConnectedEventEmitted.Store(false)

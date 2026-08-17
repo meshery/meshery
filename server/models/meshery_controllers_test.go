@@ -177,25 +177,85 @@ func TestMesheryControllersHelper_ConcurrentMeshsyncInitialization(t *testing.T)
 	userID := core.Uuid(uuid.Must(uuid.NewV4()))
 	sysID := core.Uuid(uuid.Must(uuid.NewV4()))
 
+	startGate := make(chan struct{})
 	var wg sync.WaitGroup
 	for i := 0; i < 50; i++ {
 		wg.Add(4)
 		go func() {
 			defer wg.Done()
+			<-startGate
 			mch.AddMeshsyncDataHandlers(ctx, k8sCtx, userID, sysID, nil)
 		}()
 		go func() {
 			defer wg.Done()
+			<-startGate
 			mch.RemoveMeshSyncDataHandler(ctx, k8sCtx.ID)
 		}()
 		go func() {
 			defer wg.Done()
+			<-startGate
 			_ = mch.GetMeshsyncDataHandler()
 		}()
 		go func() {
 			defer wg.Done()
+			<-startGate
 			_ = mch.ResyncMeshsync(ctx)
 		}()
 	}
+	close(startGate)
 	wg.Wait()
+}
+
+// TestMesheryControllersHelper_TeardownReleasesSharedLockBeforeStop verifies that
+// RemoveMeshSyncDataHandler releases mch.mu before calling handler.Stop(), while
+// still holding meshsyncInitMu to serialize against concurrent initialization.
+func TestMesheryControllersHelper_TeardownReleasesSharedLockBeforeStop(t *testing.T) {
+	log, _ := logger.New("test", logger.Options{})
+	mch := &MesheryControllersHelper{
+		ctxControllerHandlers: make(map[MesheryController]controllers.IMesheryController),
+		log:                   log,
+	}
+
+	stopCalled := make(chan struct{})
+	stopUnblock := make(chan struct{})
+
+	handler := &MeshsyncDataHandler{
+		StopFunc: func() {
+			close(stopCalled)
+			<-stopUnblock
+		},
+	}
+	mch.ctxMeshsyncDataHandler = handler
+
+	ctx := context.Background()
+	done := make(chan struct{})
+	go func() {
+		mch.RemoveMeshSyncDataHandler(ctx, "test-ctx")
+		close(done)
+	}()
+
+	// Wait until handler.Stop() is executing
+	<-stopCalled
+
+	// 1. Verify mch.mu is NOT held: GetMeshsyncDataHandler can acquire RLock and returns nil immediately.
+	got := mch.GetMeshsyncDataHandler()
+	if got != nil {
+		t.Fatalf("expected ctxMeshsyncDataHandler to be nil while Stop() runs, got: %v", got)
+	}
+
+	// 2. Verify meshsyncInitMu IS held during Stop(): TryLock must fail.
+	if mch.meshsyncInitMu.TryLock() {
+		mch.meshsyncInitMu.Unlock()
+		t.Fatal("expected meshsyncInitMu to remain locked while Stop() is executing")
+	}
+
+	// Unblock Stop() and wait for RemoveMeshSyncDataHandler to finish.
+	close(stopUnblock)
+	<-done
+
+	// Verify meshsyncInitMu is released after teardown.
+	if !mch.meshsyncInitMu.TryLock() {
+		t.Fatal("expected meshsyncInitMu to be unlocked after RemoveMeshSyncDataHandler returns")
+	}
+	mch.meshsyncInitMu.Unlock()
 }
