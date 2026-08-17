@@ -15,7 +15,7 @@
     "displayName": "",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
-      "version": "v1.6.0"
+      "version": "v1.7.1"
     },
     "name": "aws-elasticache-controller",
     "registrant": {
@@ -28,6 +28,34 @@
     {
       "allow": {
         "from": [
+          {
+            "id": null,
+            "kind": "ReplicationGroup",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-elasticache-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "displayName"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
           {
             "id": null,
             "kind": "CacheCluster",
@@ -83,34 +111,6 @@
                   "replicationGroupRef",
                   "from",
                   "name"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "ReplicationGroup",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "model": {
-                "version": ""
-              },
-              "name": "aws-elasticache-controller",
-              "registrant": {
-                "kind": "github"
-              },
-              "version": ""
-            },
-            "patch": {
-              "mutatorRef": [
-                [
-                  "displayName"
                 ]
               ],
               "patchStrategy": "replace"
