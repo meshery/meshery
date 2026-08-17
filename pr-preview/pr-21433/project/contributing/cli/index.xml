@@ -4,6 +4,11 @@
  &lt;li&gt;&lt;a href="https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#"&gt;Meshery CLI Commands and Documentation&lt;/a&gt;: Detailed documentation of the `mesheryctl` commands.&lt;/li&gt;
  &lt;li&gt;&lt;a href="https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?gid=1907616946#gid=1907616946"&gt;Meshery Test Plan&lt;/a&gt;: Test cases for end-to-end testing of Meshery functionality.&lt;/li&gt;
  &lt;li&gt;&lt;a href="https://github.com/meshery/meshery/labels/component%2Fmesheryctl"&gt;mesheryctl open issues and pull requests&lt;/a&gt;: Matching the "component/mesheryctl" label.&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;
+&lt;div class="alert alert-dark" role="alert"&gt;
+ &lt;h4 class="alert-heading"&gt;Resource Access&lt;/h4&gt;
+ Fill in a &lt;a href="https://meshery.io/newcomers"&gt;community member form&lt;/a&gt; to gain access to community resources.
+&lt;/div&gt;
+
 &lt;h3 id="designing-commands"&gt;
 	Designing Commands
 &lt;/h3&gt;
