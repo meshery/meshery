@@ -61,7 +61,7 @@ On demand, the Meshery Adapter for Istio will parse all of Istio's configuration
 
 Meshery allows you to apply configuration to your infrastructure deployment. You can paste (or type in) any Kubernetes manifest that you would like to have applied to your infrastructure, in fact, you can apply any configuration that you would like to your Kubernetes cluster. This configuration may be VirtualServices, DestinationRules or any other custom Istio resource.
 
-![](images/istio-adapter-custom-configuration.png)
+![Istio adapter custom configuration](images/istio-adapter-custom-configuration.png)
 
 Add-on resources can be applied **or** deleted using this custom configuration operation.
 
