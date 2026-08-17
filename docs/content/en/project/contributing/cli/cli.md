@@ -108,7 +108,7 @@ Annotations: linkDocPatternApply,
 
 ### Linting
 
-`mesheryctl` uses [golangci-lint](https://github.com/golangci/golangci-lint). See the .github/workflow/ci.yaml for syntax used during Meshery's build process.
+`mesheryctl` uses [golangci-lint](https://github.com/golangci/golangci-lint) with the repo-wide configuration at `.github/.golangci.yml`, run by the `golangci-lint-cli` job in [`.github/workflows/go-testing-ci.yml`](https://github.com/meshery/meshery/blob/master/.github/workflows/go-testing-ci.yml). Meshery's repo-specific Go rules - notably the one that fails the build when a `gorm` `ORDER BY` clause is built from an unsanitized value - cover `mesheryctl` too: they analyze the whole root module from the `golangci-lint-server` job. What each rule protects and what to do when one fires is in [Go Lint Rules]({{< ref "project/contributing/contributing-lint.md" >}}).
 
 ### Testing
 

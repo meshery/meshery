@@ -67,13 +67,19 @@ still lands on the same raw sink.
 
 ### What to do when it fires
 
-The diagnostic reads:
+The diagnostic opens with:
 
 ```
 ORDER BY built from an unsanitized value: pass the argument through
 models.SanitizeOrderInput(order, []string{...}) with this query's allow-list of
 columns, or use a constant.
 ```
+
+An argument whose static type is an interface produces a variant of that
+message - "this argument's static type is an interface, so the pass cannot
+prove it does not hold a string" - which asks for a concretely-typed value
+rather than a sanitizer call. See *What the rule does not cover* below for that
+case.
 
 There are three correct fixes, in order of preference:
 
