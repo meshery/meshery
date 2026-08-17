@@ -389,7 +389,25 @@ func main() {
 		provs[key] = cp
 	}
 
-	// All providers are registered. Build the tracker now and kick off
+	// Resolve PROVIDER before the tracker is built so an enforced remote
+	// can drop Local (and any other remotes) from the registration map.
+	// The tracker holds a reference to this map and snapshots statuses at
+	// construction; callers must finish populating it first.
+	resolveStart := time.Now()
+	resolvedProviderKey, providerResolved := models.ResolveProviderKeyWithProbe(ctx, providerEnvVar, provs)
+	if probeElapsed := time.Since(resolveStart); providerEnvVar != "" && probeElapsed > time.Second {
+		log.Infof("resolving configured PROVIDER %q required a remote capability probe that took %s", providerEnvVar, probeElapsed.Round(time.Millisecond))
+	}
+	if providerResolved {
+		providerEnvVar = resolvedProviderKey
+		log.Infof("PROVIDER is pinned to %q; unregistering every other provider (including Local)", providerEnvVar)
+		models.RestrictToEnforcedProvider(provs, providerEnvVar)
+	} else if strings.TrimSpace(providerEnvVar) != "" {
+		log.Error(fmt.Errorf("configured PROVIDER %q could not be resolved to any registered provider; refusing to start with the provider chooser (which would include the unauthenticated Local Provider). Set PROVIDER to a registered name, or unset it to keep the chooser", providerEnvVar))
+		os.Exit(1)
+	}
+
+	// Remaining providers are registered. Build the tracker now and kick off
 	// the boot-time availability probe + post-probe SyncPreferences
 	// activation in a background goroutine, so a slow remote cannot
 	// delay server startup. The probe publishes status events as each
@@ -424,32 +442,6 @@ func main() {
 			continue
 		}
 		defer rp.StopSyncPreferences()
-	}
-
-	// Resolve the configured PROVIDER to Meshery's internal registration key.
-	// Remote providers are registered under a stable key (typically URL host)
-	// before their async /capabilities probe reveals the canonical
-	// providerName, so a pre-selected remote such as PROVIDER=Meshery may need
-	// one bounded probe here to avoid falling back to the chooser.
-	resolveStart := time.Now()
-	resolvedProviderKey, providerResolved := models.ResolveProviderKeyWithProbe(ctx, providerEnvVar, provs)
-	if probeElapsed := time.Since(resolveStart); providerEnvVar != "" && probeElapsed > time.Second {
-		// Surface the boot-time remote /capabilities probe so operators can
-		// see why startup paused (each parallel probe waits up to 15s on an
-		// unreachable configured remote before timing out).
-		log.Infof("resolving configured PROVIDER %q required a remote capability probe that took %s", providerEnvVar, probeElapsed.Round(time.Millisecond))
-	}
-	if providerResolved {
-		providerEnvVar = resolvedProviderKey
-	} else {
-		if providerEnvVar != "" {
-			// Informational, not an error: a configured PROVIDER that
-			// matches no registered provider is a valid fallback to the
-			// chooser, but operators should be able to see why auto-select
-			// did not engage.
-			log.Infof("configured PROVIDER %q could not be resolved to any registered provider; falling back to the provider chooser", providerEnvVar)
-		}
-		providerEnvVar = ""
 	}
 
 	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)

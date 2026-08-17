@@ -47,13 +47,8 @@ Two environment variables control provider behavior. Set them via the Helm chart
 (`env.*`) or your deployment's environment. See the
 [environment variables reference]({{< ref "installation/advanced/environment-variables.md" >}}).
 
-- **`PROVIDER`** — enforces a single provider and **bypasses the provider
-  selection screen**. Set it to your Remote Provider's registered name (for
-  example `Meshery`). Setting `PROVIDER=Local` (or the legacy alias `None`)
-  pins the Local Provider—avoid that in production.
-- **`PROVIDER_BASE_URLS`** — the comma-separated list of Remote Provider base
-  URLs Meshery registers at startup. Restrict this to the provider(s) you
-  intend to allow rather than the full default list.
+- **`PROVIDER`** — hard-enforces a single provider at **server boot**. Set it to your Remote Provider's registered name (for example `Meshery`). When it is set to a remote, the Local Provider is not registered and cannot be selected via the chooser, cookie, header, or `?provider=`. Setting `PROVIDER=Local` (or the legacy alias `None`) pins the Local Provider; avoid that in production. If `PROVIDER` is set but does not match a registered provider, Meshery **refuses to start** rather than falling back to the chooser.
+- **`PROVIDER_BASE_URLS`** — the comma-separated list of Remote Provider base URLs Meshery registers at startup. Restrict this to the provider you intend to pin rather than the full default list. This setting is read at process start; change it and restart (or `helm upgrade` / `mesheryctl system provider switch`) to re-point an existing deployment. Provider-bound data does not migrate.
 
 ```bash
 helm install meshery meshery/meshery --namespace meshery --create-namespace \
@@ -62,8 +57,7 @@ helm install meshery meshery/meshery --namespace meshery --create-namespace \
 ```
 
 Pinning both `PROVIDER` and a single `PROVIDER_BASE_URLS` entry means users are
-taken straight into the chosen Remote Provider's authentication flow, with no
-opportunity to select the Local Provider.
+taken straight into the chosen Remote Provider's authentication flow. The Local Provider is not registered on that server, and cookies or query parameters cannot switch to it.
 
 `mesheryctl` users can also view and set the provider for CLI-driven workflows
 via `mesheryctl system provider` (see the
