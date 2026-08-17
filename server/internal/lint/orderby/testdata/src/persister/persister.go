@@ -65,6 +65,33 @@ func clauseValue(db *gorm.DB, order string) *gorm.DB {
 	return db.Order(clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true})
 }
 
+// clauseVariable pins the same skip when the clause value reaches Order through
+// a variable: what takes it out of scope is the boxed type being concrete and
+// not a string, not the argument being a composite literal in the call.
+func clauseVariable(db *gorm.DB, order string) *gorm.DB {
+	order = models.SanitizeOrderInput(order, validColumns)
+	column := clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true}
+	return db.Order(column)
+}
+
+// boxedSanitized is the other half of that contract: the boxed type is visible
+// and it *is* a string, so the value's definitions still have to be safe.
+func boxedSanitized(db *gorm.DB, order string) *gorm.DB {
+	var value any = models.SanitizeOrderInput(order, validColumns)
+	return db.Order(value)
+}
+
+// orderer is the shape a persister would reach Order through if it abstracted
+// the handler behind an interface. *gorm.DB satisfies it, so the call lands on
+// the same sink and the argument is checked the same way.
+type orderer interface {
+	Order(value any) *gorm.DB
+}
+
+func throughInterfaceSanitized(o orderer, order string) *gorm.DB {
+	return o.Order(models.SanitizeOrderInput(order, validColumns))
+}
+
 // promotedThroughEmbedding mirrors meshkit's database.Handler, which embeds
 // *gorm.DB so persisters call Order on the handler.
 type handler struct {
@@ -158,6 +185,49 @@ func structField(db *gorm.DB, f filter) *gorm.DB {
 
 func mapValue(db *gorm.DB, params map[string]string) *gorm.DB {
 	return db.Order(params["order"]) // want "ORDER BY built from an unsanitized value"
+}
+
+//
+// Rejected: the argument's static type is an interface, so the pass cannot see
+// what it holds. gorm's Order type-switches at runtime and its `case string:`
+// branch builds a clause.Column{Raw: true} - the verbatim interpolation - so
+// assuming these are clause values would be a silent false negative.
+//
+
+// anyMapValue is the reachable shape: the `filter` query parameter decodes into
+// a map[string]any, and the order is read straight back out of it.
+func anyMapValue(db *gorm.DB, filters map[string]any) *gorm.DB {
+	return db.Order(filters["order"]) // want "ORDER BY built from an unsanitized value"
+}
+
+// anyParameter is the shared-helper shape: one function forwarding both strings
+// and clause values keeps the string case invisible to every caller.
+func anyParameter(db *gorm.DB, order any) *gorm.DB {
+	return db.Order(order) // want "ORDER BY built from an unsanitized value"
+}
+
+type anyFilter struct {
+	SortOn any
+}
+
+func anyStructField(db *gorm.DB, f anyFilter) *gorm.DB {
+	return db.Order(f.SortOn) // want "ORDER BY built from an unsanitized value"
+}
+
+// namedInterface widens one interface into another rather than boxing a
+// concrete value, and a named string type can satisfy it.
+type orderStringer interface {
+	String() string
+}
+
+func namedInterface(db *gorm.DB, order orderStringer) *gorm.DB {
+	return db.Order(order) // want "ORDER BY built from an unsanitized value"
+}
+
+// throughInterfaceUnsanitized pins that abstracting the handler behind an
+// interface is not a way out of the rule.
+func throughInterfaceUnsanitized(o orderer, order string) *gorm.DB {
+	return o.Order(order) // want "ORDER BY built from an unsanitized value"
 }
 
 // unsanitizedInLoop exercises the same phi cycle as sanitizedInLoop, with an

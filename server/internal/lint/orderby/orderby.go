@@ -39,12 +39,23 @@
 //
 // # What it deliberately does not cover
 //
-// Non-string arguments - the clause.OrderByColumn and clause.OrderBy values
-// gorm also accepts - are out of scope. gorm renders those through its clause
-// builder, which quotes the identifier rather than interpolating it, so they
-// are not the string-interpolation sink this rule guards. clause.Expr and
-// clause.Column{Raw: true} are escape hatches within that builder and are not
-// checked here; neither is used in this repository.
+// An argument the pass can see is boxed from a concrete non-string type - the
+// clause.OrderByColumn and clause.OrderBy values gorm also accepts - is out of
+// scope. gorm renders those through its clause builder, which quotes the
+// identifier rather than interpolating it, so they are not the
+// string-interpolation sink this rule guards.
+//
+// That skip is narrow on purpose: it holds only where the boxed type is
+// statically visible and not string-underlying. gorm's Order takes `any` and
+// type-switches on it at runtime, and its `case string:` branch builds a
+// clause.Column{Raw: true} - the verbatim interpolation again. An argument
+// whose static type is already an interface (an `any` parameter, a
+// map[string]any read, an `any` struct field) is therefore reported rather than
+// skipped: the pass cannot prove what such a value holds, and assuming a clause
+// value would be the silent false negative that is the CVE.
+//
+// clause.Expr and clause.Column{Raw: true} are escape hatches within gorm's own
+// clause builder and are not checked here; neither is used in this repository.
 //
 // # Captured variables
 //
@@ -111,6 +122,16 @@ const diagnosticMsg = "ORDER BY built from an unsanitized value: pass the argume
 	"or use a constant. gorm's Order() interpolates a string into the SQL verbatim - this is the " +
 	"sink behind every Meshery CVE. See docs/content/en/project/contributing/contributing-lint.md."
 
+// opaqueArgMsg covers the argument whose static type is an interface. The
+// remedy differs from diagnosticMsg's: the value has to be given a concrete
+// type before it can be proven either way.
+const opaqueArgMsg = "ORDER BY built from an unsanitized value: this argument's static type is an " +
+	"interface, so the pass cannot prove it does not hold a string. gorm's Order() type-switches " +
+	"at runtime and interpolates a string into the SQL verbatim - this is the sink behind every " +
+	"Meshery CVE. Pass a string sanitized with models.SanitizeOrderInput(order, []string{...}), " +
+	"or a concretely-typed clause value. " +
+	"See docs/content/en/project/contributing/contributing-lint.md."
+
 // Analyzer reports gorm ORDER BY clauses built from values that are neither
 // constant nor sanitized.
 var Analyzer = &analysis.Analyzer{
@@ -143,14 +164,19 @@ func run(pass *analysis.Pass) (any, error) {
 				if !isGormOrderCall(common) {
 					continue
 				}
-				arg := stringOrderArg(common)
-				if arg == nil {
-					// A clause.OrderByColumn / clause.OrderBy value; gorm
-					// quotes those rather than interpolating them.
+				arg, kind := classifyOrderArg(common)
+				if kind == argClause {
+					// A clause.OrderByColumn / clause.OrderBy value, boxed from
+					// a concrete non-string type; gorm quotes those rather than
+					// interpolating them.
 					continue
 				}
-				if isSafeOrderValue(arg, map[ssa.Value]bool{}) {
+				if kind == argString && isSafeOrderValue(arg, map[ssa.Value]bool{}) {
 					continue
+				}
+				msg := diagnosticMsg
+				if kind == argOpaque {
+					msg = opaqueArgMsg
 				}
 
 				pos := common.Pos()
@@ -163,7 +189,7 @@ func run(pass *analysis.Pass) (any, error) {
 						continue
 					}
 				}
-				pass.Reportf(pos, "%s", diagnosticMsg)
+				pass.Reportf(pos, "%s", msg)
 			}
 		}
 	}
@@ -171,24 +197,35 @@ func run(pass *analysis.Pass) (any, error) {
 	return nil, nil
 }
 
-// isGormOrderCall reports whether common is a static call to
-// (*gorm.io/gorm.DB).Order. gorm's *DB is a concrete type, so an interface
-// dispatch can never land there and is rejected outright.
+// isGormOrderCall reports whether common calls (*gorm.io/gorm.DB).Order.
 //
 // The callee is matched on its signature - `Order(any) *gorm.DB` - rather than
 // on its receiver type, so a call that reaches Order through an embedding
 // wrapper is caught too. meshkit's database.Handler embeds *gorm.DB and every
 // persister in this repository orders through it.
+//
+// A dynamic dispatch through an interface declaring that method is matched on
+// the same signature: *gorm.DB satisfies such an interface, so the call lands on
+// the same raw sink, and waving it through would leave "wrap the handler in an
+// interface" as a way to opt out of the rule.
 func isGormOrderCall(common *ssa.CallCommon) bool {
-	if common == nil || common.IsInvoke() {
+	if common == nil {
 		return false
 	}
-	callee := common.StaticCallee()
-	if callee == nil || callee.Name() != orderMethod {
-		return false
+	var sig *types.Signature
+	if common.IsInvoke() {
+		if common.Method == nil || common.Method.Name() != orderMethod {
+			return false
+		}
+		sig, _ = common.Method.Type().(*types.Signature)
+	} else {
+		callee := common.StaticCallee()
+		if callee == nil || callee.Name() != orderMethod {
+			return false
+		}
+		sig = callee.Signature
 	}
-	sig := callee.Signature
-	if sig.Recv() == nil || sig.Params().Len() != 1 || sig.Results().Len() != 1 {
+	if sig == nil || sig.Recv() == nil || sig.Params().Len() != 1 || sig.Results().Len() != 1 {
 		return false
 	}
 	named := namedOf(sig.Results().At(0).Type())
@@ -202,26 +239,72 @@ func isGormOrderCall(common *ssa.CallCommon) bool {
 		obj.Pkg().Path() == gormPkgPath
 }
 
-// stringOrderArg returns the string-typed value passed to Order, unwrapping the
-// interface boxing gorm's `value any` parameter forces. It returns nil when the
-// argument is not string-typed.
-func stringOrderArg(common *ssa.CallCommon) ssa.Value {
-	// Args[0] is the receiver of the static method call.
-	if len(common.Args) != 2 {
-		return nil
+// orderArgKind says what the pass can prove about the value handed to gorm's
+// `Order(value any)` parameter. Skipping a call is only sound when the dynamic
+// type is provably not a string, so the unknown case is a diagnostic rather
+// than a third silent exit.
+type orderArgKind int
+
+const (
+	// argClause: the argument is boxed from a concrete non-string type, so
+	// gorm's runtime type switch cannot reach its raw `case string:` branch.
+	argClause orderArgKind = iota
+	// argString: a string, the one value gorm interpolates verbatim. Its
+	// definitions decide whether the call is reported.
+	argString
+	// argOpaque: the argument is already interface-typed, so what it holds at
+	// runtime is not visible here - and a string is one of the things it can
+	// hold.
+	argOpaque
+)
+
+// classifyOrderArg returns the value passed to Order together with what the pass
+// can prove about it, unwrapping the interface boxing gorm's `value any`
+// parameter forces on a concrete argument.
+func classifyOrderArg(common *ssa.CallCommon) (ssa.Value, orderArgKind) {
+	args := common.Args
+	if !common.IsInvoke() {
+		// Args[0] is the receiver of the static method call; an invoke keeps
+		// its receiver in common.Value instead.
+		if len(args) == 0 {
+			return nil, argClause
+		}
+		args = args[1:]
 	}
-	v := common.Args[1]
+	if len(args) != 1 || args[0] == nil {
+		return nil, argClause
+	}
+
+	v := args[0]
+	// A concrete argument arrives boxed, and the boxed type is the dynamic type
+	// gorm switches on - visible right here.
 	if mi, ok := v.(*ssa.MakeInterface); ok {
-		v = mi.X
+		if mi.X == nil {
+			return nil, argClause
+		}
+		if isStringUnderlying(mi.X.Type()) {
+			return mi.X, argString
+		}
+		return nil, argClause
 	}
-	if v == nil {
-		return nil
+	if isStringUnderlying(v.Type()) {
+		return v, argString
 	}
-	basic, ok := v.Type().Underlying().(*types.Basic)
-	if !ok || basic.Info()&types.IsString == 0 {
-		return nil
+	if _, ok := v.Type().Underlying().(*types.Interface); ok {
+		// An `any` parameter, a map[string]any read, an `any` struct field, a
+		// widened interface. Nothing here rules out a string.
+		return v, argOpaque
 	}
-	return v
+	return nil, argClause
+}
+
+// isStringUnderlying reports whether t is a string or a named type over one.
+// gorm's type switch matches the unnamed `string` exactly; keeping the named
+// form in scope costs a false positive at worst, and which spelling that switch
+// happens to match is an implementation detail to stay clear of.
+func isStringUnderlying(t types.Type) bool {
+	basic, ok := t.Underlying().(*types.Basic)
+	return ok && basic.Info()&types.IsString != 0
 }
 
 // isSafeOrderValue reports whether every definition reaching v is a constant or

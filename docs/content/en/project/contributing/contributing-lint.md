@@ -60,7 +60,10 @@ afterwards is *not* accepted - which is the point, and is why the rule is not a
 grep for `SanitizeOrderInput` somewhere in the function.
 
 Calls that reach `Order` through an embedding wrapper are covered too: meshkit's
-`database.Handler` embeds `*gorm.DB`, and every persister orders through it.
+`database.Handler` embeds `*gorm.DB`, and every persister orders through it. So
+are calls dispatched through an interface that declares
+`Order(any) *gorm.DB` - `*gorm.DB` satisfies such an interface, so the call
+still lands on the same raw sink.
 
 ### What to do when it fires
 
@@ -85,7 +88,8 @@ There are three correct fixes, in order of preference:
    in `server/models/vars.go` already covers `updated_at desc`.
 3. **Use a `clause` value** - `clause.OrderByColumn{Column: clause.Column{Name: col}}` -
    if you need gorm to build the clause. gorm renders those through its quoting
-   clause builder rather than interpolating them.
+   clause builder rather than interpolating them. Keep the value concretely
+   typed: an `any` holding a clause value is reported, for the reason below.
 
 What is *not* a fix: sanitizing after the `Order` call, moving the
 interpolation into a `fmt.Sprintf`, or silencing the rule.
@@ -121,9 +125,29 @@ same reason. No call site in the repository is affected today.
 
 ### What the rule does not cover
 
-Non-string arguments are out of scope, for the reason in fix 3 above. That
-leaves two escape hatches inside gorm's own clause builder - `clause.Expr`, and
-`clause.Column{Raw: true}` - which are raw SQL again. Neither is used in this
+An argument boxed from a **concrete** non-string type is out of scope, for the
+reason in fix 3 above.
+
+That exemption stops where the analyzer stops being able to see the type.
+`Order` takes `any` and type-switches on it at runtime, and its `case string:`
+branch builds a `clause.Column{Raw: true}` - the verbatim interpolation again.
+So an argument whose static type is already an interface is **reported**, not
+skipped:
+
+```go
+func applyOrder(db *gorm.DB, order any) *gorm.DB {
+    return db.Order(order) // reported: this may be a string
+}
+
+query.Order(filters["order"]) // reported: map[string]any read
+```
+
+The pass cannot prove such a value is not a string, and assuming it is a clause
+value would be a silent false negative - the CVE. Give the value a concrete
+type: a `string` you have sanitized, or a `clause.OrderByColumn`.
+
+That leaves two escape hatches inside gorm's own clause builder - `clause.Expr`,
+and `clause.Column{Raw: true}` - which are raw SQL again. Neither is used in this
 repository; if you reach for one, you are back to owning the sanitization
 yourself.
 
