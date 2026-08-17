@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Typography,
   Button,
@@ -28,7 +28,7 @@ export interface MesheryVersionCompatibilityNoticeProps {
  * issue occurs between Meshery components (Server, UI, CLI, Adapters).
  */
 const MesheryVersionCompatibilityNotice: React.FC<MesheryVersionCompatibilityNoticeProps> = ({
-  currentVersion = 'v0.7.0',
+  currentVersion,
   requiredVersion = 'v0.7.1+',
   componentName = 'Meshery Server',
   upgradeCommand = 'mesheryctl system update',
@@ -37,13 +37,25 @@ const MesheryVersionCompatibilityNotice: React.FC<MesheryVersionCompatibilityNot
   const [copied, setCopied] = useState(false);
   const { data: systemVersionData } = useGetSystemVersionQuery();
 
+  // Prefer the explicitly-passed prop; fall back to live system version only
+  // when the caller has not supplied one.
   const resolvedCurrentVersion = useMemo(() => {
-    if (systemVersionData?.build) {
-      return systemVersionData.build;
+    if (currentVersion !== undefined) {
+      return currentVersion;
     }
-
-    return currentVersion;
+    return systemVersionData?.build ?? 'v0.7.0';
   }, [currentVersion, systemVersionData?.build]);
+
+  const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clear dangling timer on unmount to prevent state updates after unmount.
+  useEffect(() => {
+    return () => {
+      if (copyTimeoutRef.current !== null) {
+        clearTimeout(copyTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleCopy = async () => {
     if (typeof navigator === 'undefined' || !navigator.clipboard) {
@@ -53,7 +65,13 @@ const MesheryVersionCompatibilityNotice: React.FC<MesheryVersionCompatibilityNot
     try {
       await navigator.clipboard.writeText(upgradeCommand);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      if (copyTimeoutRef.current !== null) {
+        clearTimeout(copyTimeoutRef.current);
+      }
+      copyTimeoutRef.current = setTimeout(() => {
+        setCopied(false);
+        copyTimeoutRef.current = null;
+      }, 2000);
     } catch {
       setCopied(false);
     }

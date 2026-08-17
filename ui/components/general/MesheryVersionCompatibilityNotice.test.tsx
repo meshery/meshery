@@ -41,21 +41,33 @@ describe('MesheryVersionCompatibilityNotice', () => {
     mockedUseGetSystemVersionQuery.mockReset();
     mockedUseGetSystemVersionQuery.mockReturnValue({ data: undefined } as never);
   });
-  it('renders title and default version details', () => {
+  it('renders fallback version when no prop and no system data are present', () => {
     render(<MesheryVersionCompatibilityNotice />);
 
     expect(screen.getByText(/Version Compatibility Notice/i)).toBeInTheDocument();
+    // Neither currentVersion prop nor system data -> hardcoded fallback
     expect(screen.getByText(/Current: v0.7.0/i)).toBeInTheDocument();
     expect(screen.getByText(/Required: v0.7.1\+/i)).toBeInTheDocument();
     expect(screen.getByText(/mesheryctl system update/i)).toBeInTheDocument();
   });
 
-  it('uses the runtime Meshery version when available', () => {
+  it('uses the runtime Meshery version when no prop is passed but system data is available', () => {
     mockedUseGetSystemVersionQuery.mockReturnValue({ data: { build: 'v1.2.3' } } as never);
 
     render(<MesheryVersionCompatibilityNotice />);
 
+    // No explicit prop -> falls back to system data
     expect(screen.getByText(/Current: v1.2.3/i)).toBeInTheDocument();
+  });
+
+  it('prefers explicit currentVersion prop over system data', () => {
+    mockedUseGetSystemVersionQuery.mockReturnValue({ data: { build: 'v9.9.9' } } as never);
+
+    render(<MesheryVersionCompatibilityNotice currentVersion="v0.6.9" />);
+
+    // Explicit prop wins; system version should NOT appear
+    expect(screen.getByText(/Current: v0.6.9/i)).toBeInTheDocument();
+    expect(screen.queryByText(/v9.9.9/)).not.toBeInTheDocument();
   });
 
   it('renders custom prop values correctly', () => {
