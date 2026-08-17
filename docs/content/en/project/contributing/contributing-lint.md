@@ -18,6 +18,13 @@ from:
 make golangci
 ```
 
+`mesheryctl` is part of the same root Go module and is covered by the same rules.
+Its own target runs the identical pair scoped to the CLI:
+
+```bash
+cd mesheryctl && make lint
+```
+
 ## ORDER BY must be sanitized
 
 `gorm`'s `(*gorm.DB).Order` interpolates a string argument into the generated SQL
