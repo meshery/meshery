@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "Subnet",
+            "kind": "RouteTable",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -48,12 +48,7 @@
             "patch": {
               "mutatorRef": [
                 [
-                  "configuration",
-                  "spec",
-                  "routeTableRefs",
-                  "_",
-                  "from",
-                  "name"
+                  "displayName"
                 ]
               ],
               "patchStrategy": "replace"
@@ -61,6 +56,47 @@
           }
         ],
         "to": [
+          {
+            "id": null,
+            "kind": "Subnet",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-ec2-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "routeTableRefs",
+                  "0",
+                  "from",
+                  "name"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    },
+    {
+      "allow": {
+        "from": [
           {
             "id": null,
             "kind": "RouteTable",
@@ -79,7 +115,7 @@
               "version": ""
             },
             "patch": {
-              "mutatedRef": [
+              "mutatorRef": [
                 [
                   "displayName"
                 ]
@@ -87,16 +123,8 @@
               "patchStrategy": "replace"
             }
           }
-        ]
-      },
-      "deny": {
-        "from": [],
-        "to": []
-      }
-    },
-    {
-      "allow": {
-        "from": [
+        ],
+        "to": [
           {
             "id": null,
             "kind": "VPCEndpoint",
@@ -115,12 +143,12 @@
               "version": ""
             },
             "patch": {
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "spec",
                   "routeTableRefs",
-                  "_",
+                  "0",
                   "from",
                   "name"
                 ]
@@ -128,8 +156,16 @@
               "patchStrategy": "replace"
             }
           }
-        ],
-        "to": [
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    },
+    {
+      "allow": {
+        "from": [
           {
             "id": null,
             "kind": "RouteTable",
@@ -148,7 +184,7 @@
               "version": ""
             },
             "patch": {
-              "mutatedRef": [
+              "mutatorRef": [
                 [
                   "displayName"
                 ]
@@ -156,16 +192,8 @@
               "patchStrategy": "replace"
             }
           }
-        ]
-      },
-      "deny": {
-        "from": [],
-        "to": []
-      }
-    },
-    {
-      "allow": {
-        "from": [
+        ],
+        "to": [
           {
             "id": null,
             "kind": "InternetGateway",
@@ -184,42 +212,14 @@
               "version": ""
             },
             "patch": {
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "spec",
                   "routeTableRefs",
-                  "_",
+                  "0",
                   "from",
                   "name"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "RouteTable",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "model": {
-                "version": ""
-              },
-              "name": "aws-ec2-controller",
-              "registrant": {
-                "kind": "github"
-              },
-              "version": ""
-            },
-            "patch": {
-              "mutatedRef": [
-                [
-                  "displayName"
                 ]
               ],
               "patchStrategy": "replace"
