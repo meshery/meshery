@@ -362,6 +362,7 @@ function PerformanceProfile({ handleDelete }) {
     count,
     rowsPerPage: pageSize,
     fixedHeader: true,
+    fixedSelectColumn: false,
     page,
     print: false,
     download: false,
