@@ -169,9 +169,7 @@ Launch Git Bash, PowerShell or VS Code Terminal and run the following commands t
 </pre>
 
 If any of these result in command not found error, check if the PATH in environment variables has been set properly. To launch the environment variables window Here's an example:
-<a href="images/win-environment-variables.png">
-  <img style= "max-width: 450px;" src="images/win-environment-variables.png" />
-</a>
+![Windows environment variables example](images/win-environment-variables.png)
 
 You are now ready to [contribute]({{< ref "project/contributing/_index.md" >}}) to Meshery.
 

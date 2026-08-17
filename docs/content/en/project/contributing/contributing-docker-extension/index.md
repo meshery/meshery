@@ -16,15 +16,11 @@ The Docker Extension for Meshery extends Docker Desktop’s position as the clou
 
 2) From the Dashboard, select Add Extensions in the menu bar or open the Extensions Marketplace from the menu options.
 
-<a href="images/docker-extension-browse.png">
-  <img style="width:350px;" src="images/docker-extension-browse.png">
-</a>
+![Docker extension browse](images/docker-extension-browse.png)
 
 3) Navigate to Meshery in the Marketplace and press install.
 
-<a href="images/docker-extension.png">
-  <img style="width:90%" src="images/docker-extension.png">
-</a>
+![Docker extension](images/docker-extension.png)
 
 OR
 

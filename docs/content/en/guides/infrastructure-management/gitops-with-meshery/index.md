@@ -88,7 +88,7 @@ duration: "30m"
 
 See this sample GitHub workflow (<a href="https://github.com/meshery-extensions/meshery-performance-action/blob/master/action.yml">action.yml</a>) for more configuration details.
 
-<a href="./images/service-mesh-performance-profile-test-results.png"><img src="./images/service-mesh-performance-profile-test-results.png" className="image-center" alt="performance management dashboard" /></a>
+![Service mesh performance profile test results](./images/service-mesh-performance-profile-test-results.png)
 
 The results from the tests are updated on the Performance Management dashboard in Meshery. To learn more about interpreting the test results, check out <a href="{{< ref "guides/performance-management/interpreting-performance-test-results/index.md" >}}">this guide</a>. You can always checkout the <a href="{{< ref "guides/_index.md" >}}">Meshery User Guides</a> to dive deep into these features.
 

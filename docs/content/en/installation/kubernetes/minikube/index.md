@@ -95,7 +95,7 @@ By default, Meshery auto-detects your Minikube cluster and establishes a connect
 
 The `mesheryctl system config minikube` command properly configures and uploads your kubeconfig file to the Meshery UI.
 
-<a href="images/minikube-upload.png"><img alt="Minikube KubeConfig Upload" style="width:500px;height:auto;" src="images/minikube-upload.png" /></a>
+![Minikube KubeConfig Upload](images/minikube-upload.png)
 
 ## Installation: Using Helm
 

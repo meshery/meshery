@@ -36,15 +36,15 @@ If `mesheryctl` is running in a system that does not have a browser, you can dow
 1. Navigate to [https://cloud.meshery.io/security/tokens](https://cloud.meshery.io/security/tokens) and sign-in.
 Ensure you are in the right organization and click **Create**.
 
-<a href="images/create-token.png"><img alt="Create Token" src="images/create-token.png" /></a>
+![Create Token](images/create-token.png)
 
 2. Provide a token name and purpose. Click **Create** to generate.
 
-    <a href="images/generate-token.png"><img alt="Generate Token" src="images/generate-token.png" /></a>
+    ![Generate Token](images/generate-token.png)
 
 3. Click the **Download** icon to download the `auth.json` file.
 
-    <a href="images/download-token.png"><img alt="Download Token" src="images/download-token.png" /></a>
+    ![Download Token](images/download-token.png)
 
 Then run `mesheryctl system check` to ensure you do not see an authentication error.   
 

@@ -19,9 +19,8 @@ one another. For the hands-on procedure, follow the
 Various components of Meshery will need to be upgraded as new releases become available. Meshery is comprised of a number of components including a server, adapters, UI, and CLI. As an application, Meshery is a composition of different functional components.
 
 <p style="text-align:center">
-<a href="./images/upgrading-meshery.svg">
-    <img src="./images/upgrading-meshery.svg" style="margin: 1rem;" />
-</a><br /><i><small>Figure: Meshery components</small></i>
+![Meshery components](./images/upgrading-meshery.svg)
+<br /><i><small>Figure: Meshery components</small></i>
 </p>
 
 Some of the components must be upgraded simultaneously, while others may be upgraded independently. The following table depicts components, their versions, and deployment units (deployment groups).

@@ -49,7 +49,7 @@ Using the Meshery dashboard, you can get a copy of your authentication token by 
 
 2. Navigate to your user's avatar in the upper righthand corner and select "Get Token" from the dropdown of profile section:
 
-<a href="images/MesheryTokenUI.png"><img alt="Meshery Dashboard" src="images/MesheryTokenUI.png" width="680" height="400"/></a>
+![Meshery Dashboard](images/MesheryTokenUI.png)
 <br/>
 
 </details>

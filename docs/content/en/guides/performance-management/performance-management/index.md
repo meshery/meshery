@@ -15,7 +15,7 @@ Install and login to Meshery to start running performance benchmarks. See [Insta
 
 _Meshery dashboard_
 
-<a href="images/smi-dashboard.png"><img alt="Meshery Dashboard" src="images/smi-dashboard.png" /></a>
+![Meshery Dashboard](images/smi-dashboard.png)
 
 If you are looking to run performance benchmarks on cloud native infrastructur, you can use Meshery's cloud native infrastructurelifecycle management capabilities to deploy all kinds of cloud native infrastructure on Kubernetes. With Meshery's performance benchmarking feature, you can also deploy you application off the mesh and compare the performance and determine the overhead when the app runs on the mesh.
 
@@ -29,29 +29,29 @@ On the navigation menu, click on performance.
 
 This will open the performance management dashboard as shown below.
 
-<a href="images/performance-management-dashboard.png"><img alt="Performance Management Dashboard" src="images/performance-management-dashboard.png" /></a>
+![Performance Management Dashboard](images/performance-management-dashboard.png)
 
 _Performance Management Dashboard_
 
 To create a performance profile, click on "Manage Profiles" and then select "+ Add Performance Profile".
 
-<a href="images/performance-profiles.png"><img alt="Performance Profiles" src="images/performance-profiles.png" /></a>
+![Performance Profiles](images/performance-profiles.png)
 
 _Performance Profiles_
 
 This will open up a popup window where you can fill out the test configuration for running your benchmarks.
 
-<a href="images/running-tests.png"><img alt="Performance Test Configuration" src="images/running-tests.png" /></a>
+![Performance Test Configuration](images/running-tests.png)
 
 _Configuring a Performance Test_
 
 You can now save the profile and run the test. The test will continue to run in the background even if you close the popup.
 
-<a href="images/running-tests-spinner.png"><img alt="Running a performance test" src="images/running-tests-spinner.png" /></a>
+![Running a performance test](images/running-tests-spinner.png)
 
 Once the test is done, you would be able to see the results of the test below.
 
-<a href="images/result-chart.png"><img alt="Running a performance test" src="images/result-chart.png" /></a>
+![Running a performance test](images/result-chart.png)
 
 _Performance Test Results_
 
@@ -59,11 +59,11 @@ You can then go back to your performance profile and get these results anytime.
 
 You can also compare different test results in Meshery and draw insights. For example, you can run this test with your application running on different cloud native infrastructure and check which performs better.
 
-<a href="images/comparison-table.png"><img alt="Comparing Test Results" src="images/comparison-table.png" /></a>
+![Comparing Test Results](images/comparison-table.png)
 
 _Selecting multiple test results_
 
-<a href="images/comparison.png"><img alt="Comparing Test Results" src="images/comparison.png" /></a>
+![Comparing Test Results](images/comparison.png)
 
 _Comparing multiple test results_
 
@@ -127,7 +127,7 @@ Download the token from the Meshery Dashboard by clicking on the profile icon on
 
 _Downloading the token_
 
-<a href="images/download-token.png"><img alt="SMI Conformance Test Results" src="images/download-token.png" /></a>
+![Downloading the token](images/download-token.png)
 
 You can use this token to authenticate the instance of Meshery running in your CI/CD workflow.
 

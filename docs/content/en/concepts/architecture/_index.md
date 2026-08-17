@@ -32,8 +32,7 @@ Meshery deploys as a set of containers. Meshery's containers can be deployed to 
 
 In Meshery v0.6.0, Adapters will register with Meshery Server over HTTP POST. If Meshery Server is not available, Meshery Adapters will backoff and retry to connect to Meshery Server perpetually.
 
-<a href="{{< static "images/meshery-architecture.webp" >}}" class="lightbox-image">
-<img src="{{< static "images/meshery-architecture.webp" >}}" width="50%" /></a>
+![Meshery architecture]({{< static "images/meshery-architecture.webp" >}})
 
 _Figure: Meshery deploys inside or outside of a Kubernetes cluster_
 
@@ -41,8 +40,7 @@ _Figure: Meshery deploys inside or outside of a Kubernetes cluster_
 
 Each Meshery Adapter delivers its own unique specific functionality. As such, at time of deployment, the Meshery Adapter will register its cloud native infrastructure-specific capabilities (its operations) with Meshery Server's capability registry.
 
-<a href="images/meshery-adapter-operation-registration.svg" class="lightbox-image">
-<img src="images/meshery-adapter-operation-registration.svg" width="50%" /></a>
+![Meshery Adapter Operation Registration](images/meshery-adapter-operation-registration.svg)
 
 _Figure: Meshery Adapter Operation Registration_
 
@@ -50,8 +48,7 @@ _Figure: Meshery Adapter Operation Registration_
 
 Meshery's REST API may be consumed by any number of clients. Clients need to present valid JWT token.
 
-<a href="images/Meshery-client-architecture.webp" class="lightbox-image">
-<img src="images/Meshery-client-architecture.webp" width="50%" /></a>
+![Meshery client architecture](images/Meshery-client-architecture.webp)
 
 _Figure: Clients use Meshery's [REST API]({{< ref "reference/extensibility/api.md#rest" >}}), [GraphQL API]({{< ref "reference/extensibility/api.md#graphql" >}}), or a combination of both._
 
@@ -59,8 +56,7 @@ _Figure: Clients use Meshery's [REST API]({{< ref "reference/extensibility/api.m
 
 As a point of extensibility, Meshery supports two types of [providers]({{< ref "reference/extensibility/providers/index.md" >}}): _Local_ and _Remote_.
 
-<a href="images/Meshery-provider-architecture.webp" class="lightbox-image">
-<img src="images/Meshery-provider-architecture.webp" width="50%" /></a>
+![Meshery Provider architecture](images/Meshery-provider-architecture.webp)
 <figure>
   <figcaption>Figure: Meshery Provider architecture</figcaption>
 </figure>
@@ -69,8 +65,7 @@ As a point of extensibility, Meshery supports two types of [providers]({{< ref "
 
 This diagram outlines logical constructs within Meshery and their relationships.
 
-<a href="images/meshery_extension_points.svg" class="lightbox-image">
-<img src="images/meshery_extension_points.svg" width="50%" /></a>
+![Meshery Object Model](images/meshery_extension_points.svg)
 <figure>
   <figcaption>Figure: Meshery Object Model</figcaption>
 </figure>
@@ -79,8 +74,7 @@ This diagram outlines logical constructs within Meshery and their relationships.
 
 Meshery Operator is the multi-cluster Kubernetes operator that manages MeshSync and Meshery Broker.
 
-<a href="images/meshery-operator-and-meshsync.svg" class="lightbox-image">
-<img src="images/meshery-operator-and-meshsync.svg" width="50%" /></a>
+![Meshery Operator and MeshSync](images/meshery-operator-and-meshsync.svg)
 <figure>
   <figcaption>Figure: Meshery Operator and MeshSync</figcaption>
 </figure>
@@ -91,8 +85,7 @@ See the [**Operator**]({{< ref "concepts/architecture/operator/index.md" >}}) se
 
 Meshery Server's database is responsible for collecting and centralizing the state of all elements under management, including infrastructure, application, and Meshery's own components. Meshery's database, while persisted to file, is treated as a cache.
 
-<a href="images/meshery-database.webp" class="lightbox-image">
-<img src="images/meshery-database.webp" width="50%" /></a>
+![Meshery database](images/meshery-database.webp)
 <figure>
   <figcaption>Figure: Meshery Docker Extension</figcaption>
 </figure>
@@ -103,8 +96,7 @@ _See the [**Database**]({{< ref "concepts/architecture/database/index.md" >}}) s
 
 Meshery's Docker extension provides a simple and flexible way to design and operate cloud native infrastructure on top of Kubernetes using Docker containers. The architecture of this extension is designed to be modular and extensible, with each component serving a specific purpose within the overall deployment process.
 
-<a href="images/meshery-docker-extension.svg" class="lightbox-image">
-<img src="images/meshery-docker-extension.svg" width="50%" /></a>
+![Meshery Docker Extension](images/meshery-docker-extension.svg)
 <figure>
   <figcaption>Figure: Meshery Docker Extension</figcaption>
 </figure>
