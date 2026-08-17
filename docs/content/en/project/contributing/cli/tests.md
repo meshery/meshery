@@ -56,7 +56,7 @@ cd bats-core
 ./install.sh $HOME
 ```
 
-Some tests could use bats libraires as helpers to create the tests suite.
+Some tests could use bats libraries as helpers to create the tests suite.
 
 #### Setup Dependencies
 
@@ -155,11 +155,11 @@ Make sure you are in `meshery/mesheryctl` directory
 # run tests building mesheryctl binary
 make e2e
 
-# run tests without buiding mesheryctl binary
+# run tests without building mesheryctl binary
 make e2e-no-build
 ```
 
-**Run a specific commmand tests suite**
+**Run a specific command tests suite**
 
 
 ```bash
@@ -175,7 +175,7 @@ make e2e-no-build BATS_FOLDER_PATTERN=002-model
 ```bash
 make e2e-no-build BATS_FOLDER_PATTERN=<test folder name> BATS_FILE_PATTERN=<test command name>
 
-# Example to run mesheryctl model genereate tests
+# Example to run mesheryctl model generate tests
 make e2e-no-build BATS_FOLDER_PATTERN=002-model BATS_FILE_PATTERN=06-model-generate
 ```
 
@@ -329,7 +329,7 @@ The BATS suite runs with `--print-output-on-failure`, so a failing test's captur
 
 #### Test Data
 
-If a command requries a specific id, name or any predefined value ensure that the data is created by your test or another test beforehand. Do not rely on external or uncontrolled data as it will lead to unexpected results.
+If a command requires a specific id, name or any predefined value ensure that the data is created by your test or another test beforehand. Do not rely on external or uncontrolled data as it will lead to unexpected results.
 
 **Example:**
 

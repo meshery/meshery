@@ -263,7 +263,7 @@ letting the consequence replace the cause degraded the diagnostic on teardown.
 The controller-status snapshot is built from `models.MesheryControllers`, not
 from the attached-handler map, so a connection with a ready FSM context always
 reports exactly one row per controller. A controller with no handler behind it
-reports `UNKOWN` and no version - Meshery made no observation of the cluster, so
+reports `UNKNOWN` and no version - Meshery made no observation of the cluster, so
 any other value would assert something it did not check. Without that the card
 disappears from the UI, because the client replaces its controller state with
 each snapshot wholesale: an unreadable kubeconfig or a failed Kubernetes client,

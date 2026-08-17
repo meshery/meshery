@@ -39,7 +39,7 @@ _Figure: Model Entity Classification_
 
 ## Meshery Entities and their Lifecycle
 
-This section aids in your understanding of the vernacular of Meshery's internal object model and discusses the difference beteween schemas, definitions, declarations, and instances. The lifecycle of Meshery entities (components, relationships, policies) is represented by the following terms, which are used to describe the various stages of their lifecycle.
+This section aids in your understanding of the vernacular of Meshery's internal object model and discusses the difference between schemas, definitions, declarations, and instances. The lifecycle of Meshery entities (components, relationships, policies) is represented by the following terms, which are used to describe the various stages of their lifecycle.
 
 ### Schema
 
@@ -148,7 +148,7 @@ To simplify the assignment of these capabilities, Meshery organizes these capabi
 <details><summary>Capabilities schema excerpt</summary><pre> {
 "$id": "https://schemas.meshery.io/capability.json",
 "$schema": "http://json-schema.org/draft-07/schema#",
-"description": "Meshery manages entities in accordance with their specific capabilities. This field explicitly identifies those capabilities largely by what actions a given component supports; e.g. metric-scrape, sub-interface, and so on. This field is extensible. Entities may define a broad array of capabilities, which are in-turn dynamically interpretted by Meshery for full lifecycle management.",
+"description": "Meshery manages entities in accordance with their specific capabilities. This field explicitly identifies those capabilities largely by what actions a given component supports; e.g. metric-scrape, sub-interface, and so on. This field is extensible. Entities may define a broad array of capabilities, which are in-turn dynamically interpreted by Meshery for full lifecycle management.",
 "additionalProperties": false,
 "type": "object",
 "required":
