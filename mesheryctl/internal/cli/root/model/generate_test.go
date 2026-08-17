@@ -15,7 +15,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestModelGenerate(t *testing.T) {
@@ -93,8 +92,12 @@ func TestModelGenerate(t *testing.T) {
 				if err != nil {
 					t.Fatalf("failed to unmarshal request body: %v", err)
 				}
-				assert.Equal(t, "csv", payload.UploadType)
-				assert.Equal(t, "couchbase", payload.ImportBody.Model.Model)
+				if payload.UploadType != "csv" {
+					t.Errorf("expected uploadType %q, got %q", "csv", payload.UploadType)
+				}
+				if payload.ImportBody.Model.Model != "couchbase" {
+					t.Errorf("expected model %q, got %q", "couchbase", payload.ImportBody.Model.Model)
+				}
 			},
 		},
 	}
