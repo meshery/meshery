@@ -127,7 +127,7 @@ Download the token from the Meshery Dashboard by clicking on the profile icon on
 
 _Downloading the token_
 
-![SMI Conformance Test Results](images/download-token.png)
+![Downloading the token](images/download-token.png)
 
 You can use this token to authenticate the instance of Meshery running in your CI/CD workflow.
 
