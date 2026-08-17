@@ -546,7 +546,7 @@ const MesheryPerformanceComponent_ = (props) => {
           </React.Fragment>
         </>
       ) : (
-        <DefaultError />
+        <DefaultError permissionKey={Keys.PerformanceManagementViewPerformanceProfiles} />
       )}
     </NoSsr>
   );

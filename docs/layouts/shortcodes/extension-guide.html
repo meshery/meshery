@@ -6,7 +6,7 @@
       gap: 20px;
       justify-content: space-between;
       margin-top: 2rem;
-  
+
     }
     .extension-guide-card {
        display: flex;
@@ -50,7 +50,7 @@
       }
      }
   </style>
-  
+
 
 {{ $dataFile := .Get "data_file" }}
 {{ $guideTitle := .Get "guide_title" }}
@@ -59,8 +59,8 @@
 {{ $guideAssetsFolder := .Get "guide_assests_folder" }}
 
 <div class="extension-guides-container">
-  {{ $data := index .Site.Data $dataFile }}
-  
+  {{ $data := index hugo.Data $dataFile }}
+
   {{ range $data }}
     <div class="extension-guide-card">
       <div class="extension-guide-svg-container">

@@ -49,11 +49,11 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 - `METAL_AUTH_TOKEN`: Authentication token for metal provider
 - `METAL_SERVER1`: Configuration for metal server 1
 - `PLAYGROUND_CONFIG`: Configuration for playground environments
-- `PROVIDER_TOKEN`: General provider authentication token
-- `RELEASEDRAFTER_PAT`: Personal access token for Release Drafter
-- `RELEASEDRAFTER_PAT`: Personal access token for release notes generation
+- `PROVIDER_TOKEN`: Legacy static remote-provider token, last refreshed 2024-03-08 and expired. Do not use it to authenticate against a remote provider - use `REMOTE_PROVIDER_TEST_USER_TOKEN`. Still referenced by the adapter workflows (`e2etest.yaml`, `mesheryctl-e2e.yaml`).
+- `RELEASEDRAFTER_PAT`: Personal access token for Release Drafter, used for release notes generation
+- `REMOTE_PROVIDER_TEST_USER_TOKEN`: Maintained session token for the purpose-built remote-provider CI test user. This is the token the E2E workflow (`test-e2e.yml`, as `PROVIDER_TOKEN`) and the mesheryctl BATS suite (`mesheryctl-e2e.yaml`, as `MESHERY_PROVIDER_TOKEN`) authenticate with.
 - `REMOTE_PROVIDER_USER_EMAIL`: Email used for authentication in Playwright tests
-- `REMOTE_PROVIDER_USER_PASS`: Password used for authentication in Playwright tests
+- `REMOTE_PROVIDER_USER_PASS`: Password used for authentication in Playwright tests. Note that `ui/tests/e2e/env.js` reads `REMOTE_PROVIDER_USER_PASSWORD`, so this secret's name does not match the variable it would have to fill; the email/password path is consequently not wired into CI, which authenticates by token instead.
 
 The Docker Hub user, `mesheryci`, belongs to the "ciusers" team in Docker Hub and acts as the service account under which these automated builds are being pushed. Every time a new Docker Hub repository is created we have to grant “Admin” (in order to update the README in the Docker Hub repository) permissions to the ciusers team.
 
@@ -504,3 +504,16 @@ Note: This biweekly meeting series is currently on hiatus. We'll share an update
     title="Training Video" frameborder="0" allowfullscreen>
   </iframe>
 </div>
+
+## Cutting a release
+
+Meshery has **no automatic release cadence**. Release Drafter keeps exactly one draft release current on every push to `master`. Publishing that draft creates the `v*` tag, and that tag is what fires `build-and-release-stable.yml` and its fan-out.
+
+Follow `.agents/skills/cut-release/SKILL.md`. Never hand-author a tag or release notes - the version tag is already set by Release Drafter and auto-increments after each release.
+
+### Publication is not proven by a zero exit code
+
+`gh release edit --draft=false` can exit 0 and leave the release a draft; this was observed while cutting v1.0.65. Publication is proven only by:
+
+1. Re-reading the release and seeing `draft: false` **and** a non-null `published_at`.
+2. The release-triggered workflow runs actually appearing.

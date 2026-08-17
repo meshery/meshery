@@ -36,6 +36,7 @@ The following tools are required to build and run the Meshery documentation site
 
 - [Node.js](https://nodejs.org/) (LTS recommended)
 - [Go](https://go.dev/dl/) (required for Hugo modules)
+- [Dart Sass](https://gohugo.io/functions/css/sass/#dart-sass) (required to transpile the site's stylesheets)
 
 {{% alert color="light" title="Note" %}}
 In case of any installation issues, use the [discussion forum](https://discuss.meshery.io/).
@@ -75,7 +76,7 @@ In case of any installation issues, use the [discussion forum](https://discuss.m
   </code>
   </div></pre>
 
-  This runs `hugo server -D -F`, which serves the site with draft and future content enabled. The site will be available at `http://localhost:1313`.
+  This runs `hugo -e dev -DFE --minify server`, which serves the site with draft and future content enabled. The site will be available at `http://localhost:1313`.
 
 - To build the site without serving:
 
