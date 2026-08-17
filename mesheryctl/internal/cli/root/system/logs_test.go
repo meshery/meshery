@@ -14,7 +14,41 @@
 
 package system
 
-import "testing"
+import (
+	"io"
+	"testing"
+	"time"
+
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+)
+
+// eofOnceReader returns one chunk of data, then (0, io.EOF) on every call after,
+// the same way a k8s pod log stream reports its end.
+type eofOnceReader struct{ sent bool }
+
+func (r *eofOnceReader) Read(p []byte) (int, error) {
+	if !r.sent {
+		r.sent = true
+		return copy(p, []byte("last line\n")), nil
+	}
+	return 0, io.EOF
+}
+
+func TestFollowLogsReturnsOnEOF(t *testing.T) {
+	utils.SetupMeshkitLoggerTesting(t, false)
+
+	done := make(chan struct{})
+	go func() {
+		followLogs(&eofOnceReader{}, "test-pod")
+		close(done)
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(2 * time.Second):
+		t.Fatal("followLogs did not return within 2s of the stream reporting io.EOF")
+	}
+}
 
 func TestIsPodRequired(t *testing.T) {
 	type args struct {
