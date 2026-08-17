@@ -44,6 +44,15 @@ jobs:
           args: --config=../.github/.golangci.yml --timeout=10m
           only-new-issues: ${{ github.event_name == 'pull_request' }}
           working-directory: ./server
+      # gorm's Order() interpolates a string into the SQL verbatim - the sink
+      # behind every Meshery CVE. models.SanitizeOrderInput closes it, and this
+      # analyzer is what keeps a new call site from skipping it. It covers the
+      # whole root module (server and mesheryctl), so it runs once here rather
+      # than in both lint jobs. golangci-lint cannot host it without a custom
+      # binary built from its module plugin system; see
+      # docs/content/en/project/contributing/contributing-lint.md.
+      - name: ORDER BY sanitization lint
+        run: go run ./server/internal/lint/orderby/cmd/orderbylint ./...
   unit-tests-server:
     name: server Unit tests
     runs-on: ubuntu-24.04
