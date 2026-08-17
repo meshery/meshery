@@ -45,6 +45,11 @@ vi.mock('./styles', () => ({
   ErrorLink: ({ children, href }: any) => <a href={href}>{children}</a>,
 }));
 
+vi.mock('../MesheryVersionCompatibilityNotice', () => ({
+  default: () => <div data-testid="version-compatibility-notice" />,
+  MesheryVersionCompatibilityNotice: () => <div data-testid="version-compatibility-notice" />,
+}));
+
 import DefaultError from './index';
 
 describe('DefaultError', () => {
