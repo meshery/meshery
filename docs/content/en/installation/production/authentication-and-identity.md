@@ -125,6 +125,14 @@ authorization is expressed through the provider model. Production notes:
 - `SKIP_DOWNLOAD_EXTENSIONS` controls whether provider extension packages are
   downloaded/refreshed; existing local packages can still be used.
 
+{{% alert title="Choosing a provider is also an extension-trust decision" color="warning" %}}
+The capabilities document does more than enable features: it names the **extension
+package** Meshery downloads and loads, whose UI components run in Meshery UI's own browser
+context and whose server-side plugin, if present, runs in-process inside Meshery Server.
+Selecting a Remote Provider therefore decides whose code runs inside your deployment. See
+[Trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}}).
+{{% /alert %}}
+
 ## Keys and permissions
 
 Meshery seeds a set of keys/permissions used by its role-based access controls.
