@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -186,12 +187,7 @@ func (h *Handler) PatternFileHandler(
 
 	serverURL, _ := r.Context().Value(models.MesheryServerURL).(string)
 
-	// NOTE: design_id (snake_case) in this URL is the meshmap extension's URL
-	// query-param contract; flipping it requires a coordinated meshmap-side
-	// change. The metadata map keys below are flipped to canonical camelCase
-	// (event_trackers.metadata wire) but the URL is left as-is until the
-	// extension contract is migrated.
-	viewLink := fmt.Sprintf("%s/extension/meshmap?mode=operator&type=view&design_id=%s", serverURL, patternID)
+	viewLink := fmt.Sprintf("%s/extension/meshmap?mode=operator&type=view&designId=%s", serverURL, url.QueryEscape(patternID.String()))
 	description = fmt.Sprintf("%s.", description)
 	metadata["viewLink"] = viewLink
 	metadata["designName"] = patternFile.Name

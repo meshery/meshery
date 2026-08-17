@@ -56,15 +56,18 @@ export default function DesignConfigurator() {
   const formReference = useRef();
 
   const router = useRouter();
-  const { design_id } = router.query;
+  const { designId: queryDesignId, design_id: legacyDesignId } = router.query;
+  const selectedDesignId =
+    (Array.isArray(queryDesignId) ? queryDesignId[0] : queryDesignId) ||
+    (Array.isArray(legacyDesignId) ? legacyDesignId[0] : legacyDesignId);
 
   useEffect(
     function loadDesignOnMount() {
-      if (design_id) {
-        loadDesign(design_id);
+      if (selectedDesignId) {
+        loadDesign(selectedDesignId);
       }
     },
-    [design_id],
+    [selectedDesignId],
   );
 
   function handleCategoryChange(event) {

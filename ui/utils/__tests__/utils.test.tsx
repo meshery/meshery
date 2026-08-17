@@ -583,10 +583,10 @@ describe('event-bus router helpers', () => {
   it('pushes to the operator route outside extension', () => {
     setLocation('http://localhost:9081/dashboard');
     const router = { push: vi.fn() };
-    openViewScopedToDesignInOperator('My Design', 'd-1', router);
+    openViewScopedToDesignInOperator('My Design', 'd 1/2', router);
     expect(eventBus.publish).not.toHaveBeenCalled();
     expect(router.push).toHaveBeenCalledWith(
-      '/extension/meshmap?mode=operator&type=view&design_id=d-1',
+      '/extension/meshmap?mode=operator&type=view&designId=d%201%2F2',
     );
   });
 

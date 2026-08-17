@@ -362,7 +362,7 @@ function MesheryPatterns({
   const userCanEdit = (pattern) => canEditDesign(user, pattern, canEditDesignPermission);
 
   const handleOpenInConfigurator = (id) => {
-    router.push('/configuration/designs/configurator?design_id=' + id);
+    router.push('/configuration/designs/configurator?designId=' + encodeURIComponent(id));
   };
 
   const columns = buildPatternColumns({

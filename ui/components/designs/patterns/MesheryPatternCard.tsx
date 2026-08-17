@@ -100,7 +100,7 @@ function MesheryPatternCard_({
   const theme = useTheme();
 
   const editInConfigurator = () => {
-    router.push('/configuration/designs/configurator?design_id=' + id);
+    router.push('/configuration/designs/configurator?designId=' + encodeURIComponent(id));
   };
   const hasEditPermission = useHasPermission(Keys.CatalogManagementEditDesign);
   const userCanEdit = canEditDesign(user, pattern, hasEditPermission);

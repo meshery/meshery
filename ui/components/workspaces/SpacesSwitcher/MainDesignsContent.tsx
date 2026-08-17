@@ -173,7 +173,7 @@ const MainDesignsContent = ({
       workspaceSwitcherContext.closeModal();
     }
     if (!isDesignerAvailable) {
-      router.push(`/configuration/designs/configurator?design_id=${designId}`);
+      router.push(`/configuration/designs/configurator?designId=${encodeURIComponent(designId)}`);
       return;
     }
 
