@@ -9,8 +9,6 @@ import (
 
 // ParallelProcessGraph provides methods for parallel processing of the graph
 type ParallelProcessGraph struct {
-	Edges map[string][]string
-
 	ParallelProcessGraphNodeMap map[string]*ParallelProcessGraphNode
 
 	// dependents maps a node to the nodes that declared a dependency on it,
@@ -39,7 +37,6 @@ type ParallelProcessGraphNode struct {
 func NewParallelProcessGraph(g *Graph) (*ParallelProcessGraph, error) {
 	// Create a new parallel process graph
 	pg := &ParallelProcessGraph{
-		Edges:                       make(map[string][]string),
 		ParallelProcessGraphNodeMap: make(map[string]*ParallelProcessGraphNode),
 		dependents:                  make(map[string][]*ParallelProcessGraphNode),
 	}
@@ -60,8 +57,6 @@ func NewParallelProcessGraph(g *Graph) (*ParallelProcessGraph, error) {
 		if _, known := pg.ParallelProcessGraphNodeMap[node]; !known {
 			return nil, ErrUnknownPlanNode(node, "the execution plan's dependency list")
 		}
-
-		pg.Edges[node] = adjacentNodes
 
 		for _, aNode := range adjacentNodes {
 			dependent, known := pg.ParallelProcessGraphNodeMap[aNode]

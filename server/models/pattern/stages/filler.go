@@ -41,25 +41,20 @@ func fill(p *pattern.PatternFile, flattenedComponent map[string]interface{}) err
 	var errs []error
 	for _, component := range p.Components {
 		if err := fillDependsOn(p.Name, component, flattenedComponent); err != nil {
-			err = ErrResolveReference(err)
-			errs = append(errs, err)
+			errs = append(errs, resolveReferenceError(err))
 		}
 		if err := fillNamespace(component, flattenedComponent); err != nil {
-			err = ErrResolveReference(err)
-			errs = append(errs, err)
+			errs = append(errs, resolveReferenceError(err))
 		}
 		if err := fillVersion(component, flattenedComponent); err != nil {
-			err = ErrResolveReference(err)
-			errs = append(errs, err)
+			errs = append(errs, resolveReferenceError(err))
 		}
 		if err := fillConfiguration(component, flattenedComponent); err != nil {
-			err = ErrResolveReference(err)
-			errs = append(errs, err)
+			errs = append(errs, resolveReferenceError(err))
 		}
 
 		if err := fillType(component, flattenedComponent); err != nil {
-			err = ErrResolveReference(err)
-			errs = append(errs, err)
+			errs = append(errs, resolveReferenceError(err))
 		}
 	}
 

@@ -105,6 +105,15 @@ func chainComponent(displayName string, dependsOn ...string) map[string]interfac
 	}
 }
 
+// chainComponentWithRawDependsOn describes a component whose "dependsOn" is
+// written in some shape other than a list of names.
+func chainComponentWithRawDependsOn(displayName string, dependsOn interface{}) map[string]interface{} {
+	comp := chainComponent(displayName)
+	comp["metadata"] = map[string]interface{}{"dependsOn": dependsOn}
+
+	return comp
+}
+
 // decodeDesign encodes a design and decodes it back into a PatternFile, so that
 // the chain is handed a design in the representation it really arrives in.
 func decodeDesign(t *testing.T, components ...map[string]interface{}) *pattern.PatternFile {
@@ -311,6 +320,43 @@ func TestChainWithholdsDependentsOfAFailedComponent(t *testing.T) {
 
 	if !succeeded(reported["gamma"]) {
 		t.Error("\"gamma\" was not reported as successful, want it unaffected by \"alpha\"")
+	}
+}
+
+// A "dependsOn" written in a shape Meshery cannot read is reported as exactly
+// that, carrying its own code all the way to where the chain terminates.
+//
+// The failure is not a reference that could not be resolved, and reporting it
+// as one sends the user looking for a reference that was never there.
+func TestChainReportsAMalformedDependsOnAsItsOwnError(t *testing.T) {
+	act := newChainActionProvider(t)
+
+	runChain(t, act,
+		chainComponent("alpha"),
+		chainComponentWithRawDependsOn("beta", "alpha"),
+	)
+
+	if order := act.order(); len(order) != 0 {
+		t.Errorf("dispatched %v, want nothing deployed when the design cannot be read", order)
+	}
+
+	if got := errors.GetCode(act.terminated); got != planner.ErrInvalidDependencyCode {
+		t.Errorf("the chain terminated with error code %s, want the malformed-dependency code %s", got, planner.ErrInvalidDependencyCode)
+	}
+}
+
+// Every entry of a "dependsOn" list has to be a component name; a list holding
+// something else is reported the same way.
+func TestChainReportsANonStringDependsOnEntryAsItsOwnError(t *testing.T) {
+	act := newChainActionProvider(t)
+
+	runChain(t, act,
+		chainComponent("alpha"),
+		chainComponentWithRawDependsOn("beta", []interface{}{"alpha", 7}),
+	)
+
+	if got := errors.GetCode(act.terminated); got != planner.ErrInvalidDependencyCode {
+		t.Errorf("the chain terminated with error code %s, want the malformed-dependency code %s", got, planner.ErrInvalidDependencyCode)
 	}
 }
 

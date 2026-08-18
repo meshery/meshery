@@ -34,8 +34,9 @@ func (s *stubInfoProvider) IsDelete() bool { return s.isDelete }
 type stubActionProvider struct {
 	registry *registry.RegistryManager
 
-	applyFailures    map[string]bool
-	dispatchFailures map[string]bool
+	applyFailures        map[string]bool
+	dispatchFailures     map[string]bool
+	prerequisiteFailures map[string]bool
 
 	mx         sync.Mutex
 	dispatched []string
@@ -70,16 +71,32 @@ func (s *stubActionProvider) Provision(ccp CompConfigPair) ([]patterns.Deploymen
 		return nil, errors.New("meshery-server-test", errors.Alert, []string{"dispatch failed"}, []string{"dispatch failed"}, []string{}, []string{})
 	}
 
+	summary := []patterns.DeploymentMessagePerComp{}
+
+	// patterns.Process reports a component's prerequisites on their own entry,
+	// appended to the same Summary as the component's own apply entry and ahead
+	// of it. Installing them is fail-forward, so the component is applied either
+	// way and both entries are reported for it.
+	if s.prerequisiteFailures[name] {
+		summary = append(summary, patterns.DeploymentMessagePerComp{
+			CompName:       name,
+			Success:        false,
+			IsPrerequisite: true,
+			Message:        fmt.Sprintf("could not install what %s needs", name),
+			Error:          errors.New("meshery-server-test", errors.Alert, []string{"prerequisite failed"}, []string{"prerequisite failed"}, []string{}, []string{}),
+		})
+	}
+
+	summary = append(summary, patterns.DeploymentMessagePerComp{
+		CompName: name,
+		Success:  !s.applyFailures[name],
+		Message:  fmt.Sprintf("deployed %s", name),
+	})
+
 	return []patterns.DeploymentMessagePerContext{
 		{
 			SystemName: "test-cluster",
-			Summary: []patterns.DeploymentMessagePerComp{
-				{
-					CompName: name,
-					Success:  !s.applyFailures[name],
-					Message:  fmt.Sprintf("deployed %s", name),
-				},
-			},
+			Summary:    summary,
 		},
 	}, nil
 }
@@ -109,9 +126,10 @@ func newStubActionProvider(t *testing.T) *stubActionProvider {
 	}
 
 	return &stubActionProvider{
-		registry:         reg,
-		applyFailures:    map[string]bool{},
-		dispatchFailures: map[string]bool{},
+		registry:             reg,
+		applyFailures:        map[string]bool{},
+		dispatchFailures:     map[string]bool{},
+		prerequisiteFailures: map[string]bool{},
 	}
 }
 
@@ -249,6 +267,72 @@ func TestProvisionWithholdsDependentsOfAComponentThatFailedToApply(t *testing.T)
 
 	if !succeeded(reported["c"]) {
 		t.Error("\"c\" was not reported as successful, want it deployed regardless of \"a\" failing")
+	}
+}
+
+// Installing what a component needs is deliberately fail-forward - what it
+// needs may already be present in the cluster - and the component is applied
+// afterwards regardless. A component that goes on to apply successfully has
+// therefore deployed, and must not withhold anything that depends on it.
+func TestProvisionDeploysDependentsWhenOnlyAPrerequisiteFailed(t *testing.T) {
+	act := newStubActionProvider(t)
+	act.prerequisiteFailures["a"] = true
+
+	reported := runProvision(t, act,
+		newDesignComponent("a"),
+		newDesignComponent("b", "a"),
+	)
+
+	if order := act.order(); !dispatched(order, "b") {
+		t.Errorf("dispatched %v, want \"b\" deployed: \"a\" itself applied successfully", order)
+	}
+
+	summary, ok := reported["a"]
+	if !ok {
+		t.Fatal("\"a\" produced no deployment message, want the prerequisite failure reported against it")
+	}
+
+	var warned, applied bool
+	for _, msg := range summary {
+		for _, entry := range msg.Summary {
+			if entry.IsPrerequisite && !entry.Success && entry.Error != nil {
+				warned = true
+			}
+
+			if !entry.IsPrerequisite && entry.Success {
+				applied = true
+			}
+		}
+	}
+
+	if !warned {
+		t.Error("\"a\" did not carry the prerequisite failure, want it reported as a warning against the component")
+	}
+
+	if !applied {
+		t.Error("\"a\" did not report its own successful apply")
+	}
+}
+
+// A component that could not be handed to a fulfillment path at all still
+// withholds its dependents, and is still named in the summary rather than
+// vanishing from it.
+func TestProvisionReportsAComponentThatCouldNotBeDispatched(t *testing.T) {
+	act := newStubActionProvider(t)
+	act.dispatchFailures["a"] = true
+
+	reported := runProvision(t, act,
+		newDesignComponent("a"),
+		newDesignComponent("b", "a"),
+	)
+
+	summary, ok := reported["a"]
+	if !ok {
+		t.Fatal("\"a\" produced no deployment message, want the dispatch failure reported against it")
+	}
+
+	if succeeded(summary) {
+		t.Error("\"a\" was reported as successful, want it reported as failed")
 	}
 }
 
