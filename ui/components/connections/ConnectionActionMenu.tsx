@@ -1,5 +1,8 @@
 import {
   BottomSheet,
+  ListItemIcon,
+  MenuItem,
+  MenuList,
   Popover,
   Typography,
   SettingsIcon,
@@ -20,63 +23,6 @@ type ConnectionActionMenuProps = {
   onCopyLink?: () => void;
 };
 
-const renderMenuItems = ({
-  onConfigure,
-  onConfigureControllers,
-  onCopyLink,
-  onClose,
-}: Omit<ConnectionActionMenuProps, 'anchorEl' | 'open'>) => (
-  <>
-    {onConfigure && (
-      <ActionListItem>
-        <ActionButton
-          type="button"
-          onClick={onConfigure}
-          data-cy="btnConfigureConnection"
-          permissionKey={Keys.LifecycleManagementEditConnection}
-        >
-          <SettingsIcon {...iconMedium} />
-          <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
-            Configure
-          </Typography>
-        </ActionButton>
-      </ActionListItem>
-    )}
-    {onConfigureControllers && (
-      <ActionListItem>
-        <ActionButton
-          type="button"
-          onClick={onConfigureControllers}
-          data-cy="btnConfigureConnectionControllers"
-          permissionKey={Keys.LifecycleManagementEditConnection}
-        >
-          <SettingsIcon {...iconMedium} />
-          <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
-            Configure Controllers
-          </Typography>
-        </ActionButton>
-      </ActionListItem>
-    )}
-    {onCopyLink && (
-      <ActionListItem>
-        <ActionButton
-          type="button"
-          onClick={() => {
-            onCopyLink();
-            onClose();
-          }}
-          data-cy="btnCopyConnectionLink"
-        >
-          <CopyLinkIcon {...iconMedium} />
-          <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
-            Copy link
-          </Typography>
-        </ActionButton>
-      </ActionListItem>
-    )}
-  </>
-);
-
 export const ConnectionActionMenu = ({
   anchorEl,
   open,
@@ -87,17 +33,47 @@ export const ConnectionActionMenu = ({
 }: ConnectionActionMenuProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const menuItems = renderMenuItems({
-    onConfigure,
-    onConfigureControllers,
-    onCopyLink,
-    onClose,
-  });
+
+  const actions = [
+    {
+      show: !!onConfigure,
+      label: 'Configure',
+      icon: <SettingsIcon {...iconMedium} />,
+      onClick: onConfigure,
+      testId: 'btnConfigureConnection',
+      permissionKey: Keys.LifecycleManagementEditConnection,
+    },
+    {
+      show: !!onConfigureControllers,
+      label: 'Configure Controllers',
+      icon: <SettingsIcon {...iconMedium} />,
+      onClick: onConfigureControllers,
+      testId: 'btnConfigureConnectionControllers',
+      permissionKey: Keys.LifecycleManagementEditConnection,
+    },
+    {
+      show: !!onCopyLink,
+      label: 'Copy link',
+      icon: <CopyLinkIcon {...iconMedium} />,
+      onClick: () => {
+        onCopyLink?.();
+        onClose();
+      },
+      testId: 'btnCopyConnectionLink',
+    },
+  ].filter((a) => a.show);
 
   if (isMobile) {
     return (
       <BottomSheet open={open} onClose={onClose} title="Connection Actions">
-        {menuItems}
+        <MenuList disablePadding>
+          {actions.map(({ label, icon, onClick, testId, permissionKey }) => (
+            <MenuItem key={label} onClick={onClick} data-cy={testId} permissionKey={permissionKey}>
+              <ListItemIcon>{icon}</ListItemIcon>
+              {label}
+            </MenuItem>
+          ))}
+        </MenuList>
       </BottomSheet>
     );
   }
@@ -107,12 +83,23 @@ export const ConnectionActionMenu = ({
       open={open}
       anchorEl={anchorEl}
       onClose={onClose}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'left',
-      }}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
     >
-      {menuItems}
+      {actions.map(({ label, icon, onClick, testId, permissionKey }) => (
+        <ActionListItem key={label}>
+          <ActionButton
+            type="button"
+            onClick={onClick}
+            data-cy={testId}
+            permissionKey={permissionKey}
+          >
+            {icon}
+            <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
+              {label}
+            </Typography>
+          </ActionButton>
+        </ActionListItem>
+      ))}
     </Popover>
   );
 };
