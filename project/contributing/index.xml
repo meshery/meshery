@@ -102,7 +102,14 @@ resource changes over the &lt;a href="/concepts/architecture/broker/"&gt;Meshery
 (NATS). It is written in Go.&lt;/p&gt;
 &lt;p&gt;Development follows the usual fork-and-pull-request workflow. Every commit must be signed
 off; see the &lt;a href="/project/contributing/"&gt;Contributing Overview&lt;/a&gt; and the
-&lt;a href="/project/contributing/contributing-gitflow/"&gt;Git workflow guide&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>How to write MeshKit compatible errors</title><link>/project/contributing/contributing-error/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-error/</guid><description>&lt;p&gt;Meshery pervasively uses MeshKit as a golang and infrastructure management-specific library in all of its components. MeshKit helps populate error messages with a uniform and useful set of informative attributes.&lt;/p&gt;
+&lt;a href="/project/contributing/contributing-gitflow/"&gt;Git workflow guide&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Go Lint Rules</title><link>/project/contributing/contributing-lint/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-lint/</guid><description>&lt;p&gt;Beyond the stock linters, Meshery enforces a small number of repo-specific Go
+rules. Each one exists because a convention was being relied on to hold a
+security or contract boundary, and a convention is not a control: it holds until
+the first contributor who has not read the doc adds a call site.&lt;/p&gt;
+&lt;p&gt;All of them run in the &lt;code&gt;golangci-lint-server&lt;/code&gt; job of
+&lt;a href="https://github.com/meshery/meshery/blob/master/.github/workflows/go-testing-ci.yml"&gt;&lt;code&gt;.github/workflows/go-testing-ci.yml&lt;/code&gt;&lt;/a&gt;,
+which gates the unit-test and build jobs downstream, and all of them run locally
+from:&lt;/p&gt;</description></item><item><title>How to write MeshKit compatible errors</title><link>/project/contributing/contributing-error/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-error/</guid><description>&lt;p&gt;Meshery pervasively uses MeshKit as a golang and infrastructure management-specific library in all of its components. MeshKit helps populate error messages with a uniform and useful set of informative attributes.&lt;/p&gt;
 &lt;p&gt;To help with creating error codes, MeshKit contains a tool that analyzes, verifies and updates error codes in Meshery source code trees. It extracts error details into a file that can be used for publishing all error code references on the Meshery &lt;a href="/reference/references/error-codes/"&gt;error codes reference page&lt;/a&gt;. The objective to create this was to avoid centralized handling of error codes and automating everything&lt;/p&gt;</description></item><item><title>HTTP Error Response Contract</title><link>/project/contributing/error-contract/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/error-contract/</guid><description>&lt;p&gt;Every non-2xx HTTP response from Meshery Server carries a JSON body with
 &lt;code&gt;Content-Type: application/json; charset=utf-8&lt;/code&gt;. Clients should parse the body
 as JSON before surfacing errors to users.&lt;/p&gt;
@@ -122,7 +129,9 @@ in &lt;code&gt;.github/.golangci.yml&lt;/code&gt; for the Kubernetes healthz pro
 &lt;code&gt;load_test_handler.go&lt;/code&gt;) that don&amp;rsquo;t call &lt;code&gt;http.Error&lt;/code&gt; at all (they emit
 error events through the active SSE writer instead); and binary/tar/YAML
 downloads and HTTP redirects, which use &lt;code&gt;w.Write&lt;/code&gt; or &lt;code&gt;http.Redirect&lt;/code&gt;
-rather than &lt;code&gt;http.Error&lt;/code&gt; and so are not governed by the lint rule.&lt;/p&gt;</description></item><item><title>Meshery Documentation Structure and Organization</title><link>/project/contributing/contributing-docs-structure/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-docs-structure/</guid><description>&lt;p&gt;Providing well-structured, easy-to-navigate documentation tailored for a diverse audience—from beginners to experts.&lt;/p&gt;
+rather than &lt;code&gt;http.Error&lt;/code&gt; and so are not governed by the lint rule.
+This rule and the other repo-specific Go lint gates are listed in
+&lt;a href="/project/contributing/contributing-lint/"&gt;Go Lint Rules&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Meshery Documentation Structure and Organization</title><link>/project/contributing/contributing-docs-structure/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/contributing-docs-structure/</guid><description>&lt;p&gt;Providing well-structured, easy-to-navigate documentation tailored for a diverse audience—from beginners to experts.&lt;/p&gt;
 &lt;h2 id="target-audience"&gt;
 	Target Audience
 &lt;/h2&gt;
