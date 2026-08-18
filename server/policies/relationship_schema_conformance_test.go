@@ -83,6 +83,9 @@ func modelVersionDirs(root, modelName string) ([]string, error) {
 // item is resolved against its own model version directory when it references
 // the model the relationship belongs to, and against the newest version
 // directory of the referenced model otherwise.
+//
+// Decoded Kubernetes OpenAPI is large, so the schema cache holds only the
+// directory currently being scanned; the caller evicts it between directories.
 type componentSchemaLoader struct {
 	root       string
 	cache      map[string]map[string]any
@@ -95,6 +98,12 @@ func newComponentSchemaLoader(root string) *componentSchemaLoader {
 		cache:      map[string]map[string]any{},
 		newestDirs: map[string]string{},
 	}
+}
+
+// evictSchemas drops every decoded schema, keeping the small version-directory
+// index. Called between scanned model version directories to bound peak heap.
+func (l *componentSchemaLoader) evictSchemas() {
+	l.cache = map[string]map[string]any{}
 }
 
 // newestVersionDir returns the newest version directory of a model, or "" when
@@ -173,12 +182,25 @@ func schemaAlternatives(node map[string]any) []map[string]any {
 	return alternatives
 }
 
+// openSchema stands in for a schema that permits any value (`additionalProperties:
+// true`). Every segment below it resolves, because the schema constrains nothing.
+var openSchema = map[string]any{"additionalProperties": true}
+
+// isOpenSchema reports whether a node permits any value at all.
+func isOpenSchema(node map[string]any) bool {
+	permissive, isBool := node["additionalProperties"].(bool)
+	return isBool && permissive
+}
+
 // descendSchema resolves one mutation path segment. A numeric segment or the
 // wildcard `_` descends into an array's item schema; anything else is a property
 // name, falling back to additionalProperties for open maps.
 func descendSchema(node map[string]any, segment string) (map[string]any, bool) {
 	descendsIntoItem := segment == "_" || arrayIndexSegment.MatchString(segment)
 	for _, alternative := range schemaAlternatives(node) {
+		if isOpenSchema(alternative) {
+			return openSchema, true
+		}
 		if descendsIntoItem {
 			if items, isObject := alternative["items"].(map[string]any); isObject {
 				return items, true
@@ -190,13 +212,8 @@ func descendSchema(node map[string]any, segment string) (map[string]any, bool) {
 				return next, true
 			}
 		}
-		switch additional := alternative["additionalProperties"].(type) {
-		case map[string]any:
+		if additional, isObject := alternative["additionalProperties"].(map[string]any); isObject {
 			return additional, true
-		case bool:
-			if additional {
-				return map[string]any{}, true
-			}
 		}
 	}
 	return nil, false
@@ -256,19 +273,31 @@ func selectorItems(definition *relationship.RelationshipDefinition) []relationsh
 	return items
 }
 
-// mutationPaths returns every mutatorRef and mutatedRef path of a selector item.
-func mutationPaths(item relationship.SelectorItem) [][]string {
+// mutatorPaths returns the selector item's mutatorRef paths - the values the
+// engine reads from.
+func mutatorPaths(item relationship.SelectorItem) [][]string {
 	patch := item.RelationshipDefinitionSelectorsPatch
-	if patch == nil {
+	if patch == nil || patch.MutatorRef == nil {
 		return nil
 	}
+	return *patch.MutatorRef
+}
+
+// mutatedPaths returns the selector item's mutatedRef paths - the fields the
+// engine writes to.
+func mutatedPaths(item relationship.SelectorItem) [][]string {
+	patch := item.RelationshipDefinitionSelectorsPatch
+	if patch == nil || patch.MutatedRef == nil {
+		return nil
+	}
+	return *patch.MutatedRef
+}
+
+// mutationPaths returns every mutatorRef and mutatedRef path of a selector item.
+func mutationPaths(item relationship.SelectorItem) [][]string {
 	paths := [][]string{}
-	if patch.MutatorRef != nil {
-		paths = append(paths, *patch.MutatorRef...)
-	}
-	if patch.MutatedRef != nil {
-		paths = append(paths, *patch.MutatedRef...)
-	}
+	paths = append(paths, mutatorPaths(item)...)
+	paths = append(paths, mutatedPaths(item)...)
 	return paths
 }
 
@@ -290,6 +319,8 @@ func TestRelationshipMutationPathsResolveAgainstComponentSchemas(t *testing.T) {
 		}
 
 		for _, modelDir := range versionDirs {
+			loader.evictSchemas()
+
 			files, err := filepath.Glob(filepath.Join(modelDir, "relationships", "*.json"))
 			if err != nil {
 				t.Fatalf("globbing relationships in %s: %v", modelDir, err)
@@ -373,9 +404,11 @@ func TestRelationshipMutationPathsResolveAgainstComponentSchemas(t *testing.T) {
 // TestIngressToServiceEdgeUsesNetworkingV1BackendShape pins meshery/meshery#21482
 // in the artifact the fix changed: the Ingress -> Service edge must mutate the
 // networking.k8s.io/v1 backend shape, in every kubernetes version directory the
-// definition is fanned out to. patchMutatorsAction pairs mutatorRefs[i] with
-// mutatedRefs[i], so both sides are pinned in order - reordering either one alone
-// would write the Service port into backend.service.name.
+// definition is fanned out to. Both roles are pinned separately and in order,
+// because patchMutatorsAction pairs mutatorRefs[i] with mutatedRefs[i] and
+// resolveMutatorMutatedRefs decides edge direction from which side declares
+// which ref - reordering one side, or swapping the two roles, silently inverts
+// what the engine writes where.
 func TestIngressToServiceEdgeUsesNetworkingV1BackendShape(t *testing.T) {
 	root := repoRoot(t)
 
@@ -409,25 +442,76 @@ func TestIngressToServiceEdgeUsesNetworkingV1BackendShape(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		gotMutated := [][]string{}
-		gotMutator := [][]string{}
+		ingressMutated := [][]string{}
+		ingressMutator := [][]string{}
+		serviceMutator := [][]string{}
+		serviceMutated := [][]string{}
 		for _, item := range selectorItems(definition) {
 			switch {
 			case item.Kind == nil:
 			case *item.Kind == "Ingress":
-				gotMutated = append(gotMutated, mutationPaths(item)...)
+				ingressMutated = append(ingressMutated, mutatedPaths(item)...)
+				ingressMutator = append(ingressMutator, mutatorPaths(item)...)
 			case *item.Kind == "Service":
-				gotMutator = append(gotMutator, mutationPaths(item)...)
+				serviceMutator = append(serviceMutator, mutatorPaths(item)...)
+				serviceMutated = append(serviceMutated, mutatedPaths(item)...)
 			}
 		}
 
 		version := filepath.Base(filepath.Dir(modelDir))
-		assertPathsInOrder(t, version, "Ingress mutated", gotMutated, wantMutated)
-		assertPathsInOrder(t, version, "Service mutator", gotMutator, wantMutator)
+		assertPathsInOrder(t, version, "Ingress mutatedRef", ingressMutated, wantMutated)
+		assertPathsInOrder(t, version, "Service mutatorRef", serviceMutator, wantMutator)
+		assertPathsInOrder(t, version, "Ingress mutatorRef", ingressMutator, nil)
+		assertPathsInOrder(t, version, "Service mutatedRef", serviceMutated, nil)
 	}
 
 	if covered == 0 {
 		t.Fatal("edge-non-binding-network-jccsr.json is absent from every kubernetes version directory")
+	}
+}
+
+// TestResolveSchemaPath covers the resolver semantics the corpus does not
+// currently exercise, so the gate cannot start rejecting valid paths.
+func TestResolveSchemaPath(t *testing.T) {
+	openMap := map[string]any{
+		"properties": map[string]any{
+			"spec": map[string]any{
+				"allOf": []any{
+					map[string]any{
+						"properties": map[string]any{
+							"config":  map[string]any{"additionalProperties": true},
+							"labels":  map[string]any{"additionalProperties": map[string]any{"type": "string"}},
+							"entries": map[string]any{"items": map[string]any{"properties": map[string]any{"name": map[string]any{"type": "string"}}}},
+							"closed":  map[string]any{"type": "object"},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	tests := []struct {
+		name     string
+		segments []string
+		want     bool
+	}{
+		{"through allOf wrapper", []string{"spec", "entries", "_", "name"}, true},
+		{"numeric array index", []string{"spec", "entries", "0", "name"}, true},
+		{"typed additionalProperties map", []string{"spec", "labels", "anything"}, true},
+		{"open schema one level", []string{"spec", "config", "anything"}, true},
+		{"open schema many levels", []string{"spec", "config", "a", "b", "c"}, true},
+		{"open schema array descent", []string{"spec", "config", "a", "0", "b"}, true},
+		{"undefined property", []string{"spec", "missing"}, false},
+		{"below a closed object", []string{"spec", "closed", "anything"}, false},
+		{"array descent on a non-array", []string{"spec", "closed", "0"}, false},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			if got := resolveSchemaPath(openMap, test.segments); got != test.want {
+				t.Errorf("resolveSchemaPath(%q) = %v, want %v", strings.Join(test.segments, "."), got, test.want)
+			}
+		})
 	}
 }
 

@@ -358,6 +358,14 @@ Each policy has a set of evaluation rules defined and the `evaluationQuery` attr
 1. In the event of an overlapping set of complementary Relationship Definitions, Union.
 1. In the event of an overlapping set of conflicting Relationship Definitions, no relationship type (Kind) is inherently more important than the next one, so will not be any case of conflict.
 
+#### Schema Conformance
+
+Every `mutatorRef`/`mutatedRef` path rooted at `configuration.` must resolve against the JSON schema of the component it addresses, as shipped in the **same** model version directory (`models/<model>/<version>/v1.0.0/components/<Kind>.json`). A path that names a field the component schema does not define is written by the evaluation engine but never reaches the rendered resource - the defect behind [#21482](https://github.com/meshery/meshery/issues/21482), where an Ingress relationship patched the pre-1.22 `backend.serviceName` shape into a `networking.k8s.io/v1` component.
+
+- **Exemptions.** The `configuration.metadata` subtree and paths rooted at `displayName` or `component` are not checked: component schemas describe the resource's `spec`, not its ObjectMeta or the Meshery component envelope.
+- **Where it runs.** `server/policies/relationship_schema_conformance_test.go`, executed by the policies test workflow on every change under `models/**`.
+- **When it fails, fix the path.** The `knownUnresolvedMutationPaths` allowlist exists only for known pre-existing defects, and is annotated with the issue tracking their repair. An allowlisted entry must keep failing, so repairing one of those definitions means deleting its line in the same pull request.
+
 <a class="anchorjs-link" id="relationship-contribution"></a>
 
 ### 6. Contribute your relationship to the Meshery project
