@@ -6,7 +6,7 @@
   "type": "matchlabels",
   "subType": "tagsets",
   "status": "enabled",
-  "evaluationQuery": "sibling_matchlabels_tagsets_relationship",
+  "evaluationQuery": "",
   "metadata": {
     "description": "SCHEMA-NATIVE encoding of tagsets using kind=sibling (the v1beta3 kind enum). Do not mix this with the in-tree hierarchical/sibling/matchlabels encoding in the same model.",
     "isAnnotation": false

@@ -100,7 +100,7 @@ The combination of `kind`, `type`, and `subType` uniquely determines the visual 
 | `hierarchical` | `parent` | `alias` | Child is a nested object inside the parent (Container → Pod) |
 | `hierarchical` | `sibling` | `matchlabels` | In-tree tagsets encoding (shared labels). Schema also allows `kind: sibling`. |
 
-The schema lives in [meshery/schemas](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta3/relationship) (`relationships.meshery.io/v1beta3`). See [Contributing to Relationships]({{< ref "project/contributing/models/relationships" >}}) for how to author definitions, including `mutatorRef` and `mutatedRef`.
+The schema lives in [meshery/schemas](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta3/relationship) (`relationships.meshery.io/v1beta3`). In-tree definitions under `models/**/relationships/` are still mostly `v1beta2`; the versions are shape-compatible, and Meshery Server bridges registered definitions to the `v1beta2` shape for its policy engine, so definitions authored as `v1beta3` are consumed the same way. See [Contributing to Relationships]({{< ref "project/contributing/models/relationships" >}}) for how to author definitions, including `mutatorRef` and `mutatedRef`.
 
 ### 1. Edge - Network
 
@@ -250,7 +250,7 @@ When a relationship is semantic, matching components can copy values from one to
 - `mutatorRef` is the **source**: a nested array of path segments from which the value is read.
 - `mutatedRef` is the **sink**: a nested array of path segments (JSONPath) to patch.
 - The two sequences must be the same length. Index `i` of `mutatorRef` is copied onto index `i` of `mutatedRef`.
-- `patchStrategy` controls how the copy is applied (`merge`, `strategic`, `add`, `remove`, `copy`, `move`, `test`).
+- `patchStrategy` controls how the copy is applied (`merge`, `strategic`, `add`, `remove`, `replace`, `copy`, `move`, `test`). The in-tree corpus uses `replace` exclusively.
 
 For hierarchical relationships, `from` is the child and `to` is the parent. Inventory patches parent identity onto the child. Alias and wallet patch child configuration into the parent.
 

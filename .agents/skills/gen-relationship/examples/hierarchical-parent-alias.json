@@ -6,7 +6,7 @@
   "type": "parent",
   "subType": "alias",
   "status": "enabled",
-  "evaluationQuery": "hierarchical_parent_alias_relationship",
+  "evaluationQuery": "",
   "metadata": {
     "description": "A Container is an alias for a nested object inside a Pod. The child configuration is patched into the parent containers array. from is the child; to is the parent.",
     "isAnnotation": false

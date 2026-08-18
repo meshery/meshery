@@ -21,11 +21,11 @@ This skill covers **creating new definitions** and **refining existing ones**. I
 | Human docs | [Concepts: Relationships](https://docs.meshery.io/concepts/logical/relationships), [Contributing to Relationships](https://docs.meshery.io/project/contributing/contributing-relationships) |
 | In-tree corpus | `models/<model>/<model-version>/<definition-version>/relationships/` |
 
-New and rewritten definitions use `schemaVersion: "relationships.meshery.io/v1beta3"`. In-tree model files are still mostly `v1beta2` (shape-compatible). When **refining** an existing file, keep its `schemaVersion` unless you are deliberately migrating it.
+New and rewritten definitions use `schemaVersion: "relationships.meshery.io/v1beta3"`. In-tree model files are still mostly `v1beta2` (a few `v1alpha3`). The versions are shape-compatible: Meshery Server reads definitions into its registry and bridges them to the `v1beta2` shape for the policy engine (`server/models/pattern/utils/relationship_version_bridge.go`), so v1beta3-authored files are consumed the same way. When **refining** an existing file, keep its `schemaVersion` unless you are deliberately migrating it.
 
-`kind` is a schema enum: `hierarchical` | `edge` | `sibling`. `type` and `subType` are open strings. The combinations below are the ones Meshery currently visualizes and evaluates. A new `subType` needs a visual paradigm (whiteboard a proposal in Kanvas) and usually an OPA `evaluationQuery`.
+`kind` is a schema enum: `hierarchical` | `edge` | `sibling`. `type` and `subType` are open strings. The combinations below are the ones Meshery currently visualizes and evaluates. A new `subType` needs a visual paradigm (whiteboard a proposal in Kanvas) and an evaluation policy that understands it.
 
-Required object fields (v1beta3): `schemaVersion`, `version`, `model`, `kind`, `type`, `subType`, `id`.
+Required object fields (v1beta3): `schemaVersion`, `version`, `model`, `kind`, `type`, `subType`, `id`. In practice every useful definition also carries `status`, `metadata` (with `description`), `selectors`, and an empty `evaluationQuery` — start from the registry template or an [example](examples/), not the bare minimum.
 
 ## When to use which combo
 
@@ -97,7 +97,7 @@ Defined in `api.yml` as **nested arrays of string path segments** (`string[][]`)
 |---|---|
 | `mutatorRef` | **Source.** JSON path of the value to read. |
 | `mutatedRef` | **Sink.** JSONPath of the field to patch. |
-| `patchStrategy` | How to apply. Schema enum: `merge`, `strategic`, `add`, `remove`, `copy`, `move`, `test`. In-tree kubernetes often uses `replace` (accepted by evaluation even though it is not on the v1beta3 enum). Prefer a schema enum value for new v1beta3 files. |
+| `patchStrategy` | How to apply. Schema enum: `merge`, `strategic`, `add`, `remove`, `replace`, `copy`, `move`, `test`. The in-tree corpus and the evaluation engine use `replace` exclusively; default to `replace` unless you need different semantics. (`replace` joined the v1beta3 enum in [meshery/schemas#1166](https://github.com/meshery/schemas/pull/1166).) |
 
 Paths are relative to the **component document** as Meshery stores it (`configuration`, `displayName`, `component.kind`, …), not the raw Kubernetes YAML root.
 
@@ -126,15 +126,9 @@ Wrong names you will see in stale docs: `selector` (singular), `core.meshery.io/
 
 ## `evaluationQuery`
 
-Optional. Names the OPA rule that evaluates the relationship. Convention:
+Deprecated (the schema says so). Set it to `""`, as every one of the ~3,860 in-tree definitions does. The evaluation engine enters through the fixed policy package `data.relationship_evaluation_policy` and dispatches on `kind`/`type`/`subType`; it never reads this field.
 
-```
-{kind}_{type}_{subType}_relationship
-```
-
-Example: `kind: edge`, `type: non-binding`, `subType: network` → `edge_non-binding_network_relationship`.
-
-Reuse an existing policy. Propose a new `.rego` only when no policy can evaluate the combo. Empty string is common in in-tree files and means "use the default for this kind/type/subType".
+If legacy tooling forces you to name a rule, the historical default is `{kind}_{subType}_relationship` (lowercase, from `GetDefaultEvaluationQuery()` in meshery/schemas) — note there is no `{type}` segment, and a Rego rule name allows only letters, digits, and underscores, so a hyphenated type such as `non-binding` can never appear in one.
 
 ## Create a new definition
 
@@ -143,7 +137,7 @@ Reuse an existing policy. Propose a new `.rego` only when no policy can evaluate
 3. Pick `kind` / `type` / `subType` from the table. If none fit, stop and propose a visualization; do not invent a combo.
 4. Set `from` / `to` (hierarchical: child in `from`, parent in `to`).
 5. If values should flow, add paired `mutatorRef` / `mutatedRef` after reading the component JSON schemas. If they should only match, use `match.refs` or omit patch.
-6. Set `evaluationQuery` from the naming convention, `status: enabled`, `schemaVersion: relationships.meshery.io/v1beta3`.
+6. Set `evaluationQuery: ""`, `status: enabled`, `schemaVersion: relationships.meshery.io/v1beta3`.
 7. Write one JSON file per relationship (or a small cohesive set) under `models/<model>/<model-version>/<def-version>/relationships/`. Filename convention: `{kind}-{type}-{subType}-<suffix>.json`.
 8. Compare against the matching file in [examples/](examples/) and against a kubernetes in-tree neighbour of the same combo.
 

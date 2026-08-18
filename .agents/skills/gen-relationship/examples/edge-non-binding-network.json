@@ -6,7 +6,7 @@
   "type": "non-binding",
   "subType": "network",
   "status": "enabled",
-  "evaluationQuery": "edge_non-binding_network_relationship",
+  "evaluationQuery": "",
   "metadata": {
     "description": "A Service selects Pods of a Deployment. The Service selector is the mutator; the Deployment pod-template labels are the mutated sink.",
     "isAnnotation": false

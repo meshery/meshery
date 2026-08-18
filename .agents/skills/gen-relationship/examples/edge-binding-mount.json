@@ -6,7 +6,7 @@
   "type": "binding",
   "subType": "mount",
   "status": "enabled",
-  "evaluationQuery": "edge_binding_mount_relationship",
+  "evaluationQuery": "",
   "metadata": {
     "description": "A PersistentVolumeClaim is mounted into a Pod. The claim name is the mutator; the Pod volume claimName is the mutated sink.",
     "isAnnotation": false

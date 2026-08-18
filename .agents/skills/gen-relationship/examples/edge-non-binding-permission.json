@@ -6,7 +6,7 @@
   "type": "non-binding",
   "subType": "permission",
   "status": "enabled",
-  "evaluationQuery": "edge_non-binding_permission_relationship",
+  "evaluationQuery": "",
   "metadata": {
     "description": "A non-enforcing permission link: a policy document refers to a role by name without assigning subjects. Contrast with edge/binding/permission.",
     "isAnnotation": false

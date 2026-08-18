@@ -6,9 +6,9 @@
   "type": "parent",
   "subType": "wallet",
   "status": "enabled",
-  "evaluationQuery": "hierarchical_parent_wallet_relationship",
+  "evaluationQuery": "",
   "metadata": {
-    "description": "A child carries configuration that is patched into its parent (the parent holds the child). Classic: WASMFilter binary+config into EnvoyFilter.",
+    "description": "A child carries configuration that is patched into its parent (the parent holds the child). Classic: WASMFilter (meshery-core) config into an Istio EnvoyFilter configPatch.",
     "isAnnotation": false
   },
   "model": {
@@ -25,10 +25,10 @@
         "from": [
           {
             "kind": "WASMFilter",
-            "model": { "name": "istio-base", "registrant": { "kind": "github" }, "model": { "version": "" } },
+            "model": { "name": "meshery-core", "registrant": { "kind": "github" }, "model": { "version": "" } },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [["configuration", "spec", "config"], ["configuration", "spec", "wasmFilter"]]
+              "mutatorRef": [["configuration", "config"]]
             }
           }
         ],
@@ -38,7 +38,7 @@
             "model": { "name": "istio-base", "registrant": { "kind": "github" }, "model": { "version": "" } },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [["configuration", "spec", "configPatches", "_", "patch", "value"], ["configuration", "metadata", "name"]]
+              "mutatedRef": [["configuration", "spec", "configPatches", "_", "patch", "value"]]
             }
           }
         ]

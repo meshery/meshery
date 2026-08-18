@@ -6,6 +6,8 @@ These are teaching fixtures, not drop-in replacements for in-tree `models/**/rel
 
 See `SKILL.md` for when to pick each combo and how `mutatorRef` / `mutatedRef` pair.
 
+A `model` object inside a selector item is a model *reference* (the schema's `ModelReference`): its outer `version` is the model-definition version, while the nested `model.version` object carries the upstream model version (for example, the Kubernetes release). The `"model": { ... "model": { "version": "" } }` nesting is intentional, not a copy-paste error.
+
 | File | kind | type | subType |
 |---|---|---|---|
 | `edge-non-binding-reference.json` | edge | non-binding | reference |

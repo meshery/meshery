@@ -6,7 +6,7 @@
   "type": "non-binding",
   "subType": "annotation",
   "status": "enabled",
-  "evaluationQuery": "edge_non-binding_annotation_relationship",
+  "evaluationQuery": "",
   "metadata": {
     "description": "A designer-drawn connection with no lifecycle effect. metadata.isAnnotation is true; omit patch. Meshery does not mutate either component.",
     "isAnnotation": true

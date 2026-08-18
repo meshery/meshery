@@ -6,7 +6,7 @@
   "type": "parent",
   "subType": "inventory",
   "status": "enabled",
-  "evaluationQuery": "hierarchical_parent_inventory_relationship",
+  "evaluationQuery": "",
   "metadata": {
     "description": "Namespace containment. Hierarchical convention: from is the child, to is the parent. The Namespace displayName (mutator) is written into each child metadata.namespace (mutated).",
     "isAnnotation": false

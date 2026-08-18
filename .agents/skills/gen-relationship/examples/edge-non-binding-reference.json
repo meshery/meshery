@@ -6,7 +6,7 @@
   "type": "non-binding",
   "subType": "reference",
   "status": "enabled",
-  "evaluationQuery": "edge_non-binding_reference_relationship",
+  "evaluationQuery": "",
   "metadata": {
     "description": "A Deployment references a ConfigMap by name (envFrom). The ConfigMap provides its identity; the Deployment envFrom.configMapRef.name is patched.",
     "isAnnotation": false

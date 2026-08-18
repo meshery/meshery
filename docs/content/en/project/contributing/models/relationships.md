@@ -6,7 +6,7 @@ aliases: [/project/contributing/contributing-relationships]
 weight: 20
 ---
 
-**Relationships follow a schema-defined structure.** The [Relationship schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta3/relationship) (`relationships.meshery.io/v1beta3`) is the single source of truth for how relationships between components are expressed. Refer to the schema when defining new relationship types or selectors. See [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas.md" >}}) for details.
+**Relationships follow a schema-defined structure.** The [Relationship schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta3/relationship) (`relationships.meshery.io/v1beta3`) is the single source of truth for how relationships between components are expressed. Author new definitions against `v1beta3`; the in-tree corpus under `models/**/relationships/` is still mostly `v1beta2`. The versions are shape-compatible — Meshery Server bridges registered definitions to the `v1beta2` shape for its policy engine, so both are consumed the same way. Refer to the schema when defining new relationship types or selectors. See [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas.md" >}}) for details.
 
 Coding agents: use the `gen-relationship` skill in `.agents/skills/gen-relationship/` (one example of every canonical `kind` / `type` / `subType`).
 
@@ -43,13 +43,24 @@ For example, a Kubernetes `Service` can have a network relationship with a Kuber
 <summary>Relationship Example</summary>
 <pre><code class="language-json highlighter-rouge">
 {
+  "id": "00000000-0000-0000-0000-000000000000",
   "schemaVersion": "relationships.meshery.io/v1beta3",
   "version": "v1.0.0",
   "kind": "edge",
   "type": "non-binding",
   "subType": "network",
+  "status": "enabled",
+  "evaluationQuery": "",
   "metadata": {
     "description": "A Service selects Pods of a Deployment."
+  },
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "kubernetes",
+    "version": "v1.0.0",
+    "displayName": "kubernetes",
+    "registrant": { "kind": "github" },
+    "model": { "version": "" }
   },
   "selectors": [
     {
@@ -136,7 +147,7 @@ Include:
 - `type`: The augmentative category (`parent`, `binding`, `non-binding`, `sibling`, …).
 - `subType`: The specific visual paradigm (`inventory`, `mount`, `network`, `wallet`, `reference`, `matchlabels`, …).
 - `selectors`: The scope of the relationship. One selector-set item is an OR. Inside an item, `from` × `to` is 1:many (AND).
-- `evaluationQuery`: Name of the OPA policy to invoke. Convention: `{kind}_{type}_{subType}_relationship`. Reuse an existing policy. Propose a new `.rego` only when none fits. *(rarely necessary)*
+- `evaluationQuery`: Deprecated. Set it to `""` as every in-tree definition does; the evaluation engine enters through the fixed `data.relationship_evaluation_policy` package and dispatches on `kind`/`type`/`subType`.
 - `metadata.description`: A characterization of the relationship, its purpose, and constraints.
 
 {{% alert title="Use Existing Relationships as Examples" color="info" %}}
@@ -182,7 +193,7 @@ Patches copy values from one component to another when the selector matches. Bot
 |---|---|
 | `mutatorRef` | **Source.** JSON path of the value to read. |
 | `mutatedRef` | **Sink.** JSONPath of the field to patch. |
-| `patchStrategy` | How to apply. Schema enum: `merge`, `strategic`, `add`, `remove`, `copy`, `move`, `test`. In-tree kubernetes files often use `replace`; prefer a schema enum value for new v1beta3 definitions. |
+| `patchStrategy` | How to apply. Schema enum: `merge`, `strategic`, `add`, `remove`, `replace`, `copy`, `move`, `test`. The in-tree corpus and the evaluation engine use `replace` exclusively; default to `replace` unless you need different semantics. |
 
 Paths are relative to the Meshery component document (`configuration`, `displayName`, `component.kind`, …), not the raw Kubernetes YAML root. `_` may mark only the first array position in a path; later arrays need an explicit index. Omit `patch` when the relationship only matches (tagsets, annotation).
 
@@ -196,12 +207,11 @@ Paths are relative to the Meshery component document (`configuration`, `displayN
       "from": [
         {
           "kind": "WASMFilter",
-          "model": { "name": "istio-base" },
+          "model": { "name": "meshery-core" },
           "patch": {
             "patchStrategy": "replace",
             "mutatorRef": [
-              ["configuration", "spec", "config"],
-              ["configuration", "spec", "wasmFilter"]
+              ["configuration", "config"]
             ]
           }
         }
@@ -268,17 +278,11 @@ The WASMFilter example is hierarchical parent **wallet** (child config patched i
 
 #### Understanding Relationship Policies and their Evaluation
 
-The `evaluationQuery` property names the policy Meshery's evaluation engine (Open Policy Agent) uses.
+Meshery evaluates designs with Open Policy Agent. The engine enters through the fixed policy package `data.relationship_evaluation_policy` and dispatches on each definition's `kind`, `type`, and `subType`. The policies live under `models/meshery-core/<version>/<definition-version>/policies/`.
 
-**How should you determine the value for `evaluationQuery`**
+**What value should `evaluationQuery` carry?**
 
-Relationship evaluation depends on `kind`, `type`, and `subType`. `evaluationQuery` follows:
-
-`{kind}_{type}_{subType}_relationship`
-
-For `kind: edge`, `type: non-binding`, `subType: network`, use `edge_non-binding_network_relationship`.
-
-Each policy has a main rule; `evaluationQuery` corresponds to that rule. Results are collected from it during evaluation.
+An empty string. The property is deprecated (see the schema's deprecation notice) and the current engine ignores it; every in-tree definition sets `""`. The historical per-relationship rule name was `{kind}_{subType}_relationship` — no `{type}` segment — and any value you do set must be a valid Rego identifier (letters, digits, underscores), so a hyphenated type such as `non-binding` can never appear in one.
 
 ## Postwork
 
@@ -308,7 +312,7 @@ Each policy has a main rule; `evaluationQuery` corresponds to that rule. Results
 #### Matching
 
 1. Targets of a Relationship can be specific Components or entire Models.
-2. The `evaluationQuery` property determines the OPA policy to invoke; specify the correct rego query.
+2. Leave `evaluationQuery` empty (`""`); evaluation dispatches on `kind`, `type`, and `subType`.
 3. `metadata.isAnnotation: true` means Meshery must not evaluate or patch the relationship.
 
 #### Conflicts

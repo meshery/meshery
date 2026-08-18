@@ -6,7 +6,7 @@
   "type": "non-binding",
   "subType": "alias",
   "status": "enabled",
-  "evaluationQuery": "edge_non-binding_alias_relationship",
+  "evaluationQuery": "",
   "metadata": {
     "description": "An edge alias: one component is a named stand-in for another without nesting or ownership.",
     "isAnnotation": false

@@ -6,7 +6,7 @@
   "type": "binding",
   "subType": "network",
   "status": "enabled",
-  "evaluationQuery": "edge_binding_network_relationship",
+  "evaluationQuery": "",
   "metadata": {
     "description": "A binding network edge: connecting the components provisions or rewrites network identity, not just documents a selector match. Rare in-tree; most Service-to-workload links are edge/non-binding/network.",
     "isAnnotation": false

@@ -6,7 +6,7 @@
   "type": "non-binding",
   "subType": "firewall",
   "status": "enabled",
-  "evaluationQuery": "edge_non-binding_firewall_relationship",
+  "evaluationQuery": "",
   "metadata": {
     "description": "A NetworkPolicy constrains ingress/egress of matching Pods. The policy podSelector is the mutator; the Pod labels are the mutated sink.",
     "isAnnotation": false

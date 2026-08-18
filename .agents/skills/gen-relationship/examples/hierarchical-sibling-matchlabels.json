@@ -6,7 +6,7 @@
   "type": "sibling",
   "subType": "matchlabels",
   "status": "enabled",
-  "evaluationQuery": "hierarchical_sibling_matchlabels_relationship",
+  "evaluationQuery": "",
   "metadata": {
     "description": "IN-TREE ENCODING of tagsets. Schema kind enum includes sibling, but kubernetes models encode Match-Labels as kind=hierarchical, type=sibling, subType=matchlabels. Match on labels; no patch.",
     "isAnnotation": false

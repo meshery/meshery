@@ -6,7 +6,7 @@
   "type": "non-binding",
   "subType": "inventory",
   "status": "enabled",
-  "evaluationQuery": "edge_non-binding_inventory_relationship",
+  "evaluationQuery": "",
   "metadata": {
     "description": "A rare edge form of inventory: one component lists or indexes another without parent-child nesting. Prefer hierarchical/parent/inventory for namespace-style containment.",
     "isAnnotation": false

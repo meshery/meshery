@@ -6,7 +6,7 @@
   "type": "binding",
   "subType": "permission",
   "status": "enabled",
-  "evaluationQuery": "edge_binding_permission_relationship",
+  "evaluationQuery": "",
   "metadata": {
     "description": "A Role is bound to a ServiceAccount. Binding edges assign identities.",
     "isAnnotation": false
