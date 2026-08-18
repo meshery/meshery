@@ -130,6 +130,15 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 		}
 
 		for _, table := range tables {
+			// The GraphQL hard reset (resolver/meshsync.go) skips this table
+			// deliberately; this path did not, so the same reset produced
+			// different results depending on which entry point was used. Nothing
+			// re-seeds events, so dropping it here is unrecoverable data loss.
+			// Re-migrating it below is idempotent.
+			if table == "events" {
+				continue
+			}
+
 			err = dbHandler.Migrator().DropTable(table)
 			if err != nil {
 				writeMeshkitError(w, ErrDropDatabaseTable(err), http.StatusInternalServerError)
@@ -172,8 +181,8 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 		}
 
 		go func() {
-			models.SeedComponents(h.log, h.config, h.registryManager, dbHandler)
 			krh.SeedKeys(viper.GetString("KEYS_PATH"))
+			models.SeedComponents(h.log, h.config, h.registryManager, dbHandler)
 		}()
 		writeJSONMessage(w, system.SystemMessageResponse{Message: "Database reset successful"}, http.StatusOK)
 	}

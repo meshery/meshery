@@ -304,6 +304,8 @@ func main() {
 	rego := policies.Rego{}
 
 	go func() {
+		krh.SeedKeys(viper.GetString("KEYS_PATH"))
+
 		// This is where models are seeded from meshmodel directory to registry
 		models.SeedComponents(log, hc, regManager, dbHandler)
 		// Rego is intialized for passing of policy if the policies are made to be per model base this needs to be removed.
@@ -313,7 +315,6 @@ func main() {
 		} else {
 			rego = *r
 		}
-		krh.SeedKeys(viper.GetString("KEYS_PATH"))
 	}()
 
 	lProv.SeedContent(log)
