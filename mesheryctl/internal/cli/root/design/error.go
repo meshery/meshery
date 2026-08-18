@@ -40,6 +40,7 @@ const (
 	ErrDesignInvalidApiResponseCode   = "mesheryctl-1199"
 	ErrEvaluateDesignCode             = "mesheryctl-1247"
 	ErrEvaluateDesignResponseCode     = "mesheryctl-1248"
+	ErrDesignPartialFailureCode       = "mesheryctl-1254"
 )
 
 const (
@@ -104,7 +105,7 @@ func ErrDeployDesign() error {
 }
 
 func ErrDesignPartialFailure(verb string, failedComponents []string) error {
-	return errors.New(ErrDeployDesignCode, errors.Alert,
+	return errors.New(ErrDesignPartialFailureCode, errors.Alert,
 		[]string{fmt.Sprintf("design %s with failures in component(s): %s", verb, strings.Join(failedComponents, ", "))},
 		[]string{fmt.Sprintf("The server returned HTTP 200 but one or more components were not %s successfully", verb)},
 		[]string{"A component's apply or delete failed even though the overall request succeeded", "A prerequisite install (e.g. a Helm chart carrying a model's CRDs and operators) may have failed"},

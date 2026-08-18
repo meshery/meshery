@@ -21,10 +21,8 @@ import "encoding/json"
 // field names match Go field names as the server marshals without json tags.
 type deploymentMessagePerComp struct {
 	Kind     string
-	Model    string
 	CompName string
 	Success  bool
-	Message  string
 }
 
 type deploymentMessagePerContext struct {
