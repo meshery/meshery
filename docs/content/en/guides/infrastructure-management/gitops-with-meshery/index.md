@@ -57,7 +57,7 @@ jobs:
           driver: docker
 
       - name: Run Performance Test
-        uses: meshery-extensions/meshery-performance-action@master
+        uses: layer5io/meshery-performance-action@master
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: docker

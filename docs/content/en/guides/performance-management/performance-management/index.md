@@ -164,13 +164,13 @@ jobs:
           driver: docker
 
       - name: Run Performance Test
-        uses: meshery-extensions/meshery-performance-action@master
+        uses: layer5io/meshery-performance-action@master
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: docker
           profile_name: soak-test
 ```
 
-More configuration details of the action can be found [here](https://github.com/meshery-extensions/meshery-performance-action/blob/master/action.yml).
+More configuration details of the action can be found [here](https://github.com/layer5io/meshery-performance-action/blob/master/action.yml).
 
 See [sample configurations](https://github.com/layer5io/meshery-performance-action#sample-configuration) for more workflow examples using this action.
