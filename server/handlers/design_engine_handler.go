@@ -268,6 +268,7 @@ func _processPattern(opts *patterncore.ProcessPatternOptions) (map[string]interf
 			Add(stages.Format()).
 			// Add(stages.ServiceIdentifierAndMutator(sip, sap)).
 			Add(stages.Filler(opts.SkipPrintLogs)).
+			Add(stages.FilterAnnotations()).
 			// Calling this stage `The Validation stage` is a bit deceiving considering
 			// that the validation stage also formats the `data` (chain function parameter) that the
 			// subsequent stages depend on.
