@@ -14,6 +14,8 @@ const {
   parseTestLine,
   dedupeLabels,
   convertTapToAllure,
+  testPlanLink,
+  summarizeDiagnostics,
   CONNECTION_EPIC
 } = require("./bats-to-allure.js");
 
@@ -209,6 +211,148 @@ test("convertTapToAllure end-to-end writes results with base + per-test labels",
     // Results are written to allure-results/.
     const files = fs.readdirSync(path.join(tmp, "allure-results"));
     assert.equal(files.filter(f => f.endsWith("-result.json")).length, 3);
+  } finally {
+    process.chdir(cwd);
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+// --- Part A: Test Plan deep-link -------------------------------------------
+
+test("testPlanLink maps a connection Test # to its Latest-tab row (ROW = n - 778)", () => {
+  const link = testPlanLink("TC-1012");
+  assert.equal(link.type, "tms");
+  assert.equal(link.name, "Test Plan TC-1012");
+  // Test# 1012 -> row 234; the deep-link targets A234 on the Latest tab.
+  assert.match(link.url, /range=A234$/);
+  assert.match(link.url, /13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/);
+  assert.match(link.url, /gid=838298230/);
+});
+
+test("testPlanLink covers both ends of the connection block", () => {
+  assert.match(testPlanLink("TC-1012").url, /range=A234$/); // first
+  assert.match(testPlanLink("TC-1089").url, /range=A311$/); // last (1089 - 778)
+});
+
+test("testPlanLink returns null outside the connection block or for malformed ids", () => {
+  assert.equal(testPlanLink("TC-1011"), null); // below the block
+  assert.equal(testPlanLink("TC-1090"), null); // above the block
+  assert.equal(testPlanLink("TC-500"), null); // unrelated case
+  assert.equal(testPlanLink("nonsense"), null);
+  assert.equal(testPlanLink(""), null);
+  assert.equal(testPlanLink(undefined), null);
+});
+
+test("parseTitleTokens emits a Test Plan tms link for a connection TC", () => {
+  const { links } = parseTitleTokens("[TC-1042][cut=Kubernetes Connection] view works");
+  assert.equal(links.length, 1);
+  assert.equal(links[0].type, "tms");
+  assert.equal(links[0].name, "Test Plan TC-1042");
+  assert.match(links[0].url, /range=A264$/); // 1042 - 778
+});
+
+test("parseTitleTokens emits no link for a non-connection Test #", () => {
+  const { links } = parseTitleTokens("[TC-2001][cut=Model] import works");
+  assert.equal(links.length, 0);
+});
+
+test("convertTapToAllure attaches the Test Plan link to the result", () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "b2a-"));
+  const cwd = process.cwd();
+  try {
+    process.chdir(tmp);
+    fs.writeFileSync(
+      path.join(tmp, "s.tap"),
+      "1..1\nok 1 [TC-1013][cut=Kubernetes Connection][tg=Connection Lifecycle] create\n"
+    );
+    const [r] = convertTapToAllure(path.join(tmp, "s.tap"));
+    assert.equal(r.links.length, 1);
+    assert.equal(r.links[0].name, "Test Plan TC-1013");
+    assert.match(r.links[0].url, /range=A235$/); // 1013 - 778
+  } finally {
+    process.chdir(cwd);
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+// --- Part B: failure output capture ----------------------------------------
+
+test("summarizeDiagnostics prefers the assertion '...failed' line", () => {
+  const diag = [
+    "(in test file 007-connection/02-connection-list.bats, line 25)",
+    "  `assert_success' failed",
+    "-- command failed --",
+    "status : 1"
+  ];
+  assert.equal(summarizeDiagnostics(diag), "`assert_success' failed");
+});
+
+test("summarizeDiagnostics falls back to the first non-empty line", () => {
+  assert.equal(summarizeDiagnostics(["", "   ", "boom happened"]), "boom happened");
+  assert.equal(summarizeDiagnostics([]), "");
+});
+
+test("failed tests get a trace + text attachment holding the captured output", () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "b2a-"));
+  const cwd = process.cwd();
+  try {
+    process.chdir(tmp);
+    const tap = [
+      "1..2",
+      "ok 1 [TC-1041][cut=Kubernetes Connection] list works",
+      "not ok 2 [TC-1043][cut=Kubernetes Connection] create fails",
+      "# (in test file 007-connection/01-connection-create.bats, line 55)",
+      "#   `assert_success' failed",
+      "# -- command failed --",
+      "# status : 1",
+      "# output : Error: unable to get: .connections"
+    ].join("\n");
+    fs.writeFileSync(path.join(tmp, "sample.tap"), tap);
+
+    const results = convertTapToAllure(path.join(tmp, "sample.tap"));
+    const passed = results.find(r => r.status === "passed");
+    const failed = results.find(r => r.status === "failed");
+
+    // Headline message is the concise assertion line.
+    assert.equal(failed.statusDetails.message, "`assert_success' failed");
+    // Full transcript is in the trace...
+    assert.match(failed.statusDetails.trace, /unable to get: \.connections/);
+    assert.match(failed.statusDetails.trace, /command failed/);
+    // ...and duplicated as a text attachment file on disk.
+    assert.equal(failed.attachments.length, 1);
+    assert.equal(failed.attachments[0].type, "text/plain");
+    assert.equal(failed.attachments[0].source, `${failed.uuid}-attachment.txt`);
+    const attachmentBody = fs.readFileSync(
+      path.join(tmp, "allure-results", failed.attachments[0].source),
+      "utf-8"
+    );
+    assert.match(attachmentBody, /unable to get: \.connections/);
+
+    // A passing test carries no trace/attachment and no leaked scratch field.
+    assert.equal(passed.statusDetails.trace, undefined);
+    assert.equal(passed.attachments, undefined);
+    assert.equal(passed._diag, undefined);
+    assert.equal(failed._diag, undefined);
+  } finally {
+    process.chdir(cwd);
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("skipped tests keep their skip-reason message and get no attachment", () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "b2a-"));
+  const cwd = process.cwd();
+  try {
+    process.chdir(tmp);
+    fs.writeFileSync(
+      path.join(tmp, "s.tap"),
+      "1..1\nok 1 [TC-1013][cut=Kubernetes Connection] create # skip minikube not installed\n"
+    );
+    const [r] = convertTapToAllure(path.join(tmp, "s.tap"));
+    assert.equal(r.status, "skipped");
+    assert.equal(r.statusDetails.message, "minikube not installed");
+    assert.equal(r.statusDetails.trace, undefined);
+    assert.equal(r.attachments, undefined);
   } finally {
     process.chdir(cwd);
     fs.rmSync(tmp, { recursive: true, force: true });

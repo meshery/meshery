@@ -21,6 +21,7 @@ import (
 	"io"
 	"net/http"
 	"runtime"
+	"slices"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -580,6 +581,25 @@ func (hc *HealthChecker) runComponentsHealthChecks() error {
 	return hc.runAdapterHealthChecks("")
 }
 
+// brokerPodNames are the cleaned pod names the Meshery Broker runs under.
+//
+// Meshery Operator >= 1.0.0 renders the broker from the official NATS chart, so
+// the workload is meshery-nats (pod meshery-nats-0); before that it was
+// meshery-broker. Both are accepted because a given cluster's operator version
+// is not ours to assume - matching only the old name reported a healthy broker
+// as "!! Meshery Broker is not running" on every current cluster.
+//
+// Only the *workload* was renamed. The Broker custom resource is still named
+// meshery-broker (see the CR lookup below, and system/stop.go), so those must
+// not be changed to match.
+var brokerPodNames = []string{"meshery-nats", "meshery-broker"}
+
+// isBrokerPodName reports whether a cleaned pod name (see utils.GetCleanPodName)
+// belongs to the Meshery Broker.
+func isBrokerPodName(cleanedName string) bool {
+	return slices.Contains(brokerPodNames, cleanedName)
+}
+
 // runOperatorHealthChecks executes health-checks for Operators
 func (hc *HealthChecker) runOperatorHealthChecks() error {
 	if hc.Options.PrintLogs {
@@ -609,7 +629,7 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 			operatorCheck = true
 		}
 
-		if name == "meshery-broker" {
+		if isBrokerPodName(name) {
 			brokerCheck = true
 		}
 

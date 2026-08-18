@@ -49,11 +49,11 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 - `METAL_AUTH_TOKEN`: Authentication token for metal provider
 - `METAL_SERVER1`: Configuration for metal server 1
 - `PLAYGROUND_CONFIG`: Configuration for playground environments
-- `PROVIDER_TOKEN`: General provider authentication token
-- `RELEASEDRAFTER_PAT`: Personal access token for Release Drafter
-- `RELEASEDRAFTER_PAT`: Personal access token for release notes generation
+- `PROVIDER_TOKEN`: Legacy static remote-provider token, last refreshed 2024-03-08 and expired. Do not use it to authenticate against a remote provider - use `REMOTE_PROVIDER_TEST_USER_TOKEN`. Still referenced by the adapter workflows (`e2etest.yaml`, `mesheryctl-e2e.yaml`).
+- `RELEASEDRAFTER_PAT`: Personal access token for Release Drafter, used for release notes generation
+- `REMOTE_PROVIDER_TEST_USER_TOKEN`: Maintained session token for the purpose-built remote-provider CI test user. This is the token the E2E workflow (`test-e2e.yml`, as `PROVIDER_TOKEN`) and the mesheryctl BATS suite (`mesheryctl-e2e.yaml`, as `MESHERY_PROVIDER_TOKEN`) authenticate with.
 - `REMOTE_PROVIDER_USER_EMAIL`: Email used for authentication in Playwright tests
-- `REMOTE_PROVIDER_USER_PASS`: Password used for authentication in Playwright tests
+- `REMOTE_PROVIDER_USER_PASS`: Password used for authentication in Playwright tests. Note that `ui/tests/e2e/env.js` reads `REMOTE_PROVIDER_USER_PASSWORD`, so this secret's name does not match the variable it would have to fill; the email/password path is consequently not wired into CI, which authenticates by token instead.
 
 The Docker Hub user, `mesheryci`, belongs to the "ciusers" team in Docker Hub and acts as the service account under which these automated builds are being pushed. Every time a new Docker Hub repository is created we have to grant “Admin” (in order to update the README in the Docker Hub repository) permissions to the ciusers team.
 
@@ -98,6 +98,10 @@ The "Latest" tab columns are: **A = Test #, B = Test Group, C = Client, D = Comp
 | `epic` | - | `Kubernetes Connections` (constant) | Legacy/transitional filter key (see below) |
 
 The report keys on `testGroup`, so tagged tests still appear in their `project` report (Meshery or Mesheryctl); the Connection Lifecycle report is an additional lens, not a relocation. **Transitional:** results carrying no `testGroup` label are still matched via the legacy `epic` (with a `componentUnderTest` fallback) selector, so results predating the `testGroup` label remain visible; this fallback drops once every connection result carries `testGroup`. The full token-to-label mapping lives in the [`mesheryctl/bats-to-allure.js`](https://github.com/meshery/meshery/blob/master/mesheryctl/bats-to-allure.js) header (CLI `[tg=...]`/`[cut=...]` tokens) and `ui/tests/e2e/connections.testmap.ts` (UI).
+
+**Row deep-link.** Each connection result also carries an Allure `tms` **link** ("Test Plan TC-\<n\>") that opens that test's exact row on the "Latest" tab, so a reviewer can click from a report test back to its source case. Both lanes derive the row from the Test # by the same fixed offset (`ROW = TestNum - 778`) encoding the *current* tab layout; the offset lives - with a prominent regenerate-if-re-sorted caveat - in `mesheryctl/bats-to-allure.js` (CLI) and `ui/tests/e2e/connections.testmap.ts` (UI), and the two MUST stay in lockstep.
+
+**Failure evidence.** A failed test carries its captured run output in the report, not just the assertion line. The CLI lane runs BATS with `--print-output-on-failure` and the converter attaches the captured `mesheryctl` transcript (`statusDetails` message + trace, plus a "CLI output (bats)" text attachment); the UI lane runs Playwright with `trace`, `screenshot`, and `video` all `retain-on-failure`, which the `allure-playwright` reporter attaches to each failed result alongside the error and stack.
 
 > The `mesheryctl` BATS e2e results and Go unit results are committed to separate directories (`mesheryctl-bats-results/` and `mesheryctl-unit-results/`) in `meshery/qa` and merged at report-build time, so the two feeders no longer overwrite each other.
 
@@ -247,6 +251,8 @@ The charts lint check, charts build, and charts release workflows are all trigge
 ### Check Helm Charts
 
 Every PR which includes changes to the files under `install/kubernetes/` directory in the `meshery/meshery` will trigger a Github Action to check for any mistakes in Helm charts using the `helm lint` command.
+
+The same job additionally runs `install/scripts/check-operator-chart-appversions.sh`, which fails the PR when the `meshery-operator` chart and its `meshery-broker` and `meshery-meshsync` subcharts advertise different `appVersion` values. `helm lint` does not compare a parent chart's `appVersion` with its subcharts', so a subchart left behind on an older operator release passes lint while advertising an application it was never published alongside. Run the same check locally with `make helm-operator-lint`; the script's header explains what it accepts and why.
 
 ### Release Helm Charts to Github and Artifact Hub
 
@@ -498,3 +504,16 @@ Note: This biweekly meeting series is currently on hiatus. We'll share an update
     title="Training Video" frameborder="0" allowfullscreen>
   </iframe>
 </div>
+
+## Cutting a release
+
+Meshery has **no automatic release cadence**. Release Drafter keeps exactly one draft release current on every push to `master`. Publishing that draft creates the `v*` tag, and that tag is what fires `build-and-release-stable.yml` and its fan-out.
+
+Follow `.agents/skills/cut-release/SKILL.md`. Never hand-author a tag or release notes - the version tag is already set by Release Drafter and auto-increments after each release.
+
+### Publication is not proven by a zero exit code
+
+`gh release edit --draft=false` can exit 0 and leave the release a draft; this was observed while cutting v1.0.65. Publication is proven only by:
+
+1. Re-reading the release and seeing `draft: false` **and** a non-null `published_at`.
+2. The release-triggered workflow runs actually appearing.

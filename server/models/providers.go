@@ -339,8 +339,14 @@ const (
 	KubeClustersKey   ContextKey = "kubeclusters"
 	AllKubeClusterKey ContextKey = "allkubeclusters"
 
-	MesheryControllerHandlersKey ContextKey = "mesherycontrollerhandlerskey"
-	MeshSyncDataHandlersKey      ContextKey = "meshsyncdatahandlerskey"
+	// MesheryControllerHandlersKey is retired. Nothing ever populated it, so the
+	// one reader - the changeOperatorStatus resolver - always read a nil map and
+	// called Deploy/Undeploy on a nil controller interface. Operator lifecycle
+	// now goes through the connection's MesheryControllersHelper, which is what
+	// holds the resolved Helm chart version; a context key that looks like a
+	// handler source but is never filled is how that was missed. Do not
+	// reintroduce it.
+	MeshSyncDataHandlersKey ContextKey = "meshsyncdatahandlerskey"
 
 	RegistryManagerKey ContextKey = "registrymanagerkey"
 

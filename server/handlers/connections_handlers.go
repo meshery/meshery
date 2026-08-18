@@ -584,6 +584,7 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	userID := user.ID
+
 	token, err := provider.GetProviderToken(req)
 	if err != nil {
 		h.log.Error(ErrRetrieveUserToken(err))
@@ -594,8 +595,27 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 
 	deletedConnection, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {
-		obj := "connection"
-		_err := ErrFailToSave(err, obj)
+		// Deleting an id the provider never issued is "not found", not a
+		// failure to write. The local provider says so with ErrResultNotFound;
+		// the remote provider says so with its own 404, which ErrDelete now
+		// carries (models.ErrDelete -> httputil.WithProviderStatus). Answer 404
+		// for either, and answer it *before* the failure event: a delete
+		// addressed to a stale id is a client mistake, not an incident worth a
+		// persisted error notification.
+		//
+		// Previously every failure - including a plain 404 - was wrapped in
+		// ErrFailToSave and answered 500, so `mesheryctl connection delete
+		// <unknown-uuid>` reported "Failed to Save: .connection"
+		// (meshery-server-1051), "Provider Database could be down or not
+		// reachable". That is the wrong verb, the wrong code and the wrong
+		// diagnosis for a connection that simply is not there.
+		if errors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound {
+			h.log.Warnf("No connection with ID %q found to delete", connectionID)
+			writeMeshkitError(w, err, http.StatusNotFound)
+			return
+		}
+
+		_err := ErrFailToDelete(err, "connection")
 		metadata := map[string]interface{}{
 			"error": _err,
 		}
@@ -603,17 +623,22 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
-		if errors.GetCode(err) == models.ErrResultNotFoundCode {
-			h.log.Warnf("No connection with ID %q found to delete", connectionID)
-			writeMeshkitError(w, _err, http.StatusNotFound)
-			return
-		}
 		h.log.Error(_err)
-		writeMeshkitError(w, _err, http.StatusInternalServerError)
+		// Surface the status the provider actually returned (403, 409, 5xx ...)
+		// rather than reporting every upstream refusal as a fault inside
+		// Meshery Server. The fallback stays 500 because this path is also the
+		// local provider's, where an untagged failure really is ours.
+		writeMeshkitError(w, _err, providerStatusOrInternal(err))
 		return
 	}
 
-	description := fmt.Sprintf("Connection %s deleted.", deletedConnection.Name)
+	// A provider is free to answer a successful delete without echoing the
+	// deleted row back; dereferencing it unconditionally panicked the request.
+	deletedName := connectionID.String()
+	if deletedConnection != nil && deletedConnection.Name != "" {
+		deletedName = deletedConnection.Name
+	}
+	description := fmt.Sprintf("Connection %s deleted.", deletedName)
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
 
 	_ = provider.PersistEvent(*event, token)
@@ -692,22 +717,40 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("machine context does not contain reference to MesheryCtrlsHelper for connection %s", connectionID)
 		}
 
+		// Resolve BEFORE tearing anything down. A resolution failure means the
+		// intended configuration is unknown, and undeploying the operators only
+		// to rebuild them from the last-known-good document is a partial
+		// reconciliation performed on unreadable input - the same fault as
+		// reconciling a connection whose override will not parse. Fail with the
+		// connection left exactly as it is instead.
+		merged, _, resolveErr := ctrlHelper.ResolveControllersConfigForConnection(newConnection.MetaData)
+		if resolveErr != nil {
+			h.log.Error(resolveErr)
+			return existingMeshSyncMode, newMeshSyncMode, false, resolveErr
+		}
+
 		// disconnect
 		{
 			contextID := machineCtx.K8sContext.ID
 			ctrlHelper.
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-				UndeployDeployedOperators(machineCtx.OperatorTracker).
+				UndeployDeployedOperators(machineCtx.OperatorTracker, contextID).
 				RemoveCtxControllerHandler(ctx, contextID)
 			ctrlHelper.RemoveMeshSyncDataHandler(ctx, contextID)
 		}
-		// connect
+		// connect. The controllers configuration is refreshed and stashed
+		// before AddCtxControllerHandlers, which constructs the operator
+		// controller handler with the Helm chart version that document
+		// resolves to (operator.version) and captures it there. Resolving from
+		// the incoming payload's metadata rather than the helper's stale copy
+		// is what lets one save change the mode and the chart version at once.
 		{
+			ctrlHelper.SetControllersConfig(merged)
 			ctrlHelper.
-				AddCtxControllerHandlers(machineCtx.K8sContext).
 				SetMeshsyncDeploymentMode(newMeshSyncMode).
+				AddCtxControllerHandlers(machineCtx.K8sContext).
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-				DeployUndeployedOperators(machineCtx.OperatorTracker).
+				DeployUndeployedOperators(machineCtx.OperatorTracker, machineCtx.K8sContext.ID).
 				AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, mesheryInstanceID, provider)
 		}
 

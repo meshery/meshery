@@ -113,6 +113,11 @@ vi.mock('./styles', () => ({
   CreateButton: ({ children }) => <div>{children}</div>,
   InnerTableContainer: ({ children }) => <div>{children}</div>,
   ActionListItem: ({ children }) => <div>{children}</div>,
+  ActionButton: ({ children, ...props }) => (
+    <button type="button" {...props}>
+      {children}
+    </button>
+  ),
   ConnectionStyledSelect: ({ children }) => <div>{children}</div>,
 }));
 

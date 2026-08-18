@@ -137,7 +137,15 @@ jobs:
         with:
           node-version: 22
       - name: Run mesheryctl coverage
-        run: go test -json --short ./mesheryctl/... -race -coverprofile=mesheryctl-coverage.txt -covermode=atomic | tee mesheryctl-test-output.json
+        # `| tee` makes the pipeline exit with tee's status, which is always 0.
+        # These steps run under GitHub's default shell, `bash -e {0}`, which does
+        # NOT set pipefail - so a failing `go test` here was invisible and this
+        # job could not fail on a mesheryctl test failure. The server step above
+        # is unaffected because it redirects with `>` rather than piping.
+        # Same pattern as ui/'s vitest step in eslint-gh.yml.
+        run: |
+          go test -json --short ./mesheryctl/... -race -coverprofile=mesheryctl-coverage.txt -covermode=atomic | tee mesheryctl-test-output.json
+          exit "${PIPESTATUS[0]}"
       - name: Convert Go test results to Allure
         if: ${{ !cancelled() && github.event_name == 'push' }}
         run: |

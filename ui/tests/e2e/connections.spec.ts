@@ -144,7 +144,7 @@ test.describe.serial('Connection Management Tests', () => {
     'Discover multiple kubeconfig contexts in the wizard',
     { tag: connTags('wizardDiscoverContexts') },
     async ({ page }, testInfo) => {
-      annotateConnCase(testInfo, 'wizardDiscoverContexts');
+      await annotateConnCase(testInfo, 'wizardDiscoverContexts');
       test.slow();
 
       if (!fs.existsSync(MULTI_CONTEXT_KUBECONFIG)) {
@@ -194,7 +194,7 @@ test.describe.serial('Connection Management Tests', () => {
     'Register and connect a Kubernetes cluster via kubeconfig upload',
     { tag: connTags('kubeconfigConnect') },
     async ({ page }, testInfo) => {
-      annotateConnCase(testInfo, 'kubeconfigConnect');
+      await annotateConnCase(testInfo, 'kubeconfigConnect');
       test.slow();
 
       if (!fs.existsSync(HOST_KUBECONFIG)) {
@@ -257,7 +257,7 @@ test.describe.serial('Connection Management Tests', () => {
     'Transition a Kubernetes connection between lifecycle states',
     { tag: connTags('stateTransition') },
     async ({ page, clusterMetaData }, testInfo) => {
-      annotateConnCase(testInfo, 'stateTransition');
+      await annotateConnCase(testInfo, 'stateTransition');
       test.slow();
 
       // Narrow to the connected data row for the cluster under test.
@@ -319,7 +319,7 @@ test.describe.serial('Connection Management Tests', () => {
     'Delete Kubernetes cluster connections',
     { tag: connTags('delete') },
     async ({ page, clusterMetaData }, testInfo) => {
-      annotateConnCase(testInfo, 'delete');
+      await annotateConnCase(testInfo, 'delete');
       // The full search -> delete -> confirm -> snackbar flow can be slow in CI.
       test.slow();
 
