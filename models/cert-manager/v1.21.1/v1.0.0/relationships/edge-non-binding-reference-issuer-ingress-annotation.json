@@ -3,7 +3,7 @@
   "id": "00000000-0000-0000-0000-000000000000",
   "kind": "edge",
   "metadata": {
-    "description": "ingress-shim provisions a certificate for an Ingress from the issuer named in its cert-manager annotation: a ClusterIssuer name is written into metadata.annotations['cert-manager.io/cluster-issuer'], an Issuer name into metadata.annotations['cert-manager.io/issuer'].",
+    "description": "ingress-shim provisions a certificate for an Ingress from the issuer named in its cert-manager annotation: a ClusterIssuer name is written into metadata.annotations['cert-manager.io/cluster-issuer'], an Issuer name into metadata.annotations['cert-manager.io/issuer']. Both annotation keys are declared as a single literal path segment, which is what relationship identification matches on; applying the resulting patch additionally requires the meshkit dot-escaping fix, because an engine that joins path segments with an unescaped '.' mis-nests the annotation under metadata.annotations instead of setting the literal key.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
