@@ -62,7 +62,23 @@ func TestModelGenerate(t *testing.T) {
 		},
 		{
 			Name:             "model generate: from URL with template",
-			Args:             []string{"generate", "--file", "https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.crds.yaml", "--template", filepath.Join(fixturesDir, "templates", "template.json"), "--skip-registration=true"},
+			Args:             []string{"generate", "--file", "https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.crds.yaml", "--template", filepath.Join(fixturesDir, "templates", "template.json"), "--skip-registration"},
+			URL:              apiURL,
+			Fixture:          "generate.api.ok.response.golden",
+			ExpectedResponse: "generate.dir.skipped.output.golden",
+			HttpCode:         200,
+		},
+		{
+			Name:             "model generate: from URL with real nested model init template",
+			Args:             []string{"generate", "--file", "https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.crds.yaml", "--template", filepath.Join(fixturesDir, "templates", "model_template.json"), "--skip-registration"},
+			URL:              apiURL,
+			Fixture:          "generate.api.ok.response.golden",
+			ExpectedResponse: "generate.dir.skipped.output.golden",
+			HttpCode:         200,
+		},
+		{
+			Name:             "model generate: from URL with default registration",
+			Args:             []string{"generate", "--file", "https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.crds.yaml", "--template", filepath.Join(fixturesDir, "templates", "template.json")},
 			URL:              apiURL,
 			Fixture:          "generate.api.ok.response.golden",
 			ExpectedResponse: "generate.dir.skipped.output.golden",
@@ -95,6 +111,11 @@ func TestModelGenerate(t *testing.T) {
 					return httpmock.NewBytesResponse(tt.HttpCode, apiResponse), nil
 				})
 			}
+
+			// Mock GitHub URL for templates
+			httpmock.RegisterResponder("GET", "https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.crds.yaml", func(req *http.Request) (*http.Response, error) {
+				return httpmock.NewStringResponse(200, "dummy-content"), nil
+			})
 
 			utils.TokenFlag = utils.GetToken(t)
 
