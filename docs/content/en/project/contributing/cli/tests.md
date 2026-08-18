@@ -56,7 +56,7 @@ cd bats-core
 ./install.sh $HOME
 ```
 
-Some tests could use bats libraries as helpers to create the tests suite.
+Some tests could use bats libraries as helpers to create the test suite.
 
 #### Setup Dependencies
 
@@ -159,7 +159,7 @@ make e2e
 make e2e-no-build
 ```
 
-**Run a specific command tests suite**
+**Run a specific command test suite**
 
 
 ```bash

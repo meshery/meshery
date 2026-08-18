@@ -973,7 +973,7 @@ Status of Meshery Operator and its controllers.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| <a id="resourcecount"></a>`count` | [`Int!`](#int) | Number of resource. |
+| <a id="resourcecount"></a>`count` | [`Int!`](#int) | Number of resources. |
 | <a id="resourcekind"></a>`kind` | [`String!`](#string) | Name of resource. |
 
 ### `TelemetryComp`
