@@ -23,6 +23,14 @@ on:
         required: true
         default: "warning"
 
+# Least-privilege baseline for the default GITHUB_TOKEN, which actions/checkout
+# persists into the runner's git config. Nothing here writes with it: the only
+# writes in this workflow push Allure results to the meshery/qa repository and
+# authenticate with the GH_ACCESS_TOKEN PAT, and actions/upload-artifact uses
+# the Actions runtime token rather than this one. Matches build-and-test.yml.
+permissions:
+  contents: read
+
 jobs:
   golangci-server:
     strategy:

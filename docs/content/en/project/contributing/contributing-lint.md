@@ -76,7 +76,7 @@ still lands on the same raw sink.
 
 The diagnostic opens with:
 
-```
+```text
 ORDER BY built from an unsanitized value: pass the argument through
 models.SanitizeOrderInput(order, []string{...}) with this query's allow-list of
 columns, or use a constant.
@@ -159,6 +159,23 @@ The pass cannot prove such a value is not a string, and assuming it is a clause
 value would be a silent false negative - the CVE. Give the value a concrete
 type: a `string` you have sanitized, or a `clause.OrderByColumn`.
 
+A **type parameter** is treated the same way, for the same reason:
+
+```go
+func orderBy[T ~string](db *gorm.DB, order T) *gorm.DB {
+    return db.Order(order) // reported: instantiated at string, this is the sink
+}
+```
+
+SSA builds a generic body once with the parameter intact, so what reaches `Order`
+is a type parameter rather than a concrete type. Instantiated at `string` it
+lands on gorm's `case string:` branch like any other string.
+
+In all of these cases the pass still accepts the value if it can trace where it
+came from - `db.Order(T(models.SanitizeOrderInput(order, cols)))` passes, because
+every definition reaching it is a sanitizer result. Being unable to see a value's
+*type* is only fatal when its *origin* is also invisible.
+
 That leaves two escape hatches inside gorm's own clause builder - `clause.Expr`,
 and `clause.Column{Raw: true}` - which are raw SQL again. Neither is used in this
 repository; if you reach for one, you are back to owning the sanitization
@@ -171,11 +188,17 @@ The rule also covers only `Order`. Other gorm methods that take raw SQL
 
 A diagnostic can be suppressed with `//nolint:orderby` trailing the offending
 line, or standing alone on the line above it. Every use must carry an inline
-justification:
+justification, and that requirement is **enforced, not just documented**:
 
 ```go
 //nolint:orderby // <why this value cannot reach user input>
 ```
+
+A directive with no reason after it does not suppress anything. Instead the call
+site reports a different diagnostic naming the missing justification, because a
+bare directive reads as "handled" to the next reviewer - which is how a security
+lint gets switched off one call site at a time. Both spellings golangci-lint
+accepts work: `//nolint:orderby // reason` and `//nolint:orderby//reason`.
 
 The name must appear in the directive's own list - a bare `//nolint` does not
 silence this rule, and a *trailing* directive covers only its own line, never

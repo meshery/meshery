@@ -17,6 +17,8 @@ import (
 	"github.com/meshery/meshery/server/internal/lint/orderby"
 )
 
+// main runs the analyzer over the packages named on the command line, exiting
+// non-zero when any of them reports.
 func main() {
 	singlechecker.Main(orderby.Analyzer)
 }

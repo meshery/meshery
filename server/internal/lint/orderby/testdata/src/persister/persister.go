@@ -116,6 +116,34 @@ func suppressedAlongsideAnotherLinter(db *gorm.DB, order string) *gorm.DB {
 	return db.Order(order) //nolint:gocritic,orderby // fixture: not the first name in the list.
 }
 
+// suppressedNoSpaceBeforeReason pins the spelling golangci-lint also tolerates:
+// the explanation separator is the next `//`, not a space-prefixed one.
+func suppressedNoSpaceBeforeReason(db *gorm.DB, order string) *gorm.DB {
+	return db.Order(order) //nolint:orderby//fixture: no space before the reason.
+}
+
+//
+// Rejected: the directive names this analyzer but carries no justification.
+// The docs have always required a reason; a bare directive reads as "handled"
+// to the next reviewer, so it has to fail loudly rather than silently work.
+//
+
+// These use the standalone directive form because a trailing `//nolint:orderby`
+// cannot be tested here: analysistest keys its expectation annotation to the
+// diagnostic's own line, and that annotation would itself be read as the
+// justification. The analyzer takes the same path either way - what it reads is
+// the text after the linter list, wherever the comment sits.
+
+func unjustifiedStandalone(db *gorm.DB, order string) *gorm.DB {
+	//nolint:orderby
+	return db.Order(order) // want "without a justification does not suppress"
+}
+
+func unjustifiedWithOtherLinter(db *gorm.DB, order string) *gorm.DB {
+	//nolint:gocritic,orderby
+	return db.Order(order) // want "without a justification does not suppress"
+}
+
 //
 // Rejected: the directive does not actually name this analyzer.
 //
@@ -307,6 +335,39 @@ func addressEscapes(db *gorm.DB, order string) *gorm.DB {
 }
 
 func overwrite(order *string) { *order = "anything" }
+
+//
+// Rejected: the argument is a type parameter. SSA builds a generic body once
+// with the parameter intact, so the boxed type is a *types.TypeParam rather
+// than a concrete one. Instantiated at string it reaches gorm's `case string:`
+// branch like any other string, so skipping it as a clause value would be a
+// silent false negative.
+//
+
+// genericOrder is the reachable shape: a helper written once over ~string and
+// called with a request value.
+func genericOrder[T ~string](db *gorm.DB, order T) *gorm.DB {
+	return db.Order(order) // want "ORDER BY built from an unsanitized value"
+}
+
+// genericOrderAny is the same hole through an unconstrained parameter.
+func genericOrderAny[T any](db *gorm.DB, order T) *gorm.DB {
+	return db.Order(order) // want "ORDER BY built from an unsanitized value"
+}
+
+// instantiateGenericOrder pins that the generic helpers above are instantiated
+// at string by a real caller, so the diagnostic is about a reachable path and
+// not an abstract one.
+func instantiateGenericOrder(db *gorm.DB, order string) *gorm.DB {
+	db = genericOrder(db, order)
+	return genericOrderAny(db, order)
+}
+
+// genericSanitized still has to satisfy the rule the ordinary way - the type
+// parameter does not exempt it, and a sanitized value passes.
+func genericSanitized[T ~string](db *gorm.DB, order string) *gorm.DB {
+	return db.Order(T(models.SanitizeOrderInput(order, validColumns)))
+}
 
 // lookalike is not gorm's Order: the rule keys on the `Order(any) *gorm.DB`
 // signature, so an unrelated method of the same name is left alone.

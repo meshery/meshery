@@ -54,6 +54,16 @@
 // skipped: the pass cannot prove what such a value holds, and assuming a clause
 // value would be the silent false negative that is the CVE.
 //
+// A type parameter is treated the same way and for the same reason: SSA builds a
+// generic body once with the parameter intact, so `db.Order(order)` inside
+// `func f[T ~string]` boxes a type parameter rather than a concrete type, and
+// instantiating it at string reaches that same `case string:` branch.
+//
+// In every one of those cases the pass still accepts the value when it can
+// trace the value's definitions to a constant or the sanitizer, whatever the
+// static type says. Not seeing a value's type only decides the outcome when its
+// origin is invisible too.
+//
 // clause.Expr and clause.Column{Raw: true} are escape hatches within gorm's own
 // clause builder and are not checked here; neither is used in this repository.
 //
@@ -76,9 +86,15 @@
 //
 // A diagnostic can be suppressed with a `//nolint:orderby` comment trailing the
 // offending line, or standing alone on the line above it, matching the spelling
-// contributors already use for golangci-lint. Each one must carry an inline
-// justification. A growing suppression list means the rule is mis-specified -
-// narrow the rule instead of muting the call site.
+// contributors already use for golangci-lint. Both spellings golangci-lint
+// accepts work: `//nolint:orderby // reason` and `//nolint:orderby//reason`.
+//
+// Each one must carry an inline justification, and that is enforced rather than
+// merely documented: a directive with no reason after it suppresses nothing and
+// instead reports the missing justification. A bare directive reads as
+// "handled" to the next reviewer, which is how a security lint gets switched
+// off one call site at a time. A growing suppression list means the rule is
+// mis-specified - narrow the rule instead of muting the call site.
 package orderby
 
 import (
@@ -132,6 +148,16 @@ const opaqueArgMsg = "ORDER BY built from an unsanitized value: this argument's 
 	"or a concretely-typed clause value. " +
 	"See docs/content/en/project/contributing/contributing-lint.md."
 
+// unjustifiedNolintMsg replaces the diagnostic when the call site carries a
+// `//nolint:orderby` with no reason after it. Reporting the missing
+// justification rather than the original problem is what makes the requirement
+// enforceable: a bare directive reads as "handled" to the next reviewer, so it
+// has to fail loudly and say what is missing.
+const unjustifiedNolintMsg = "//nolint:orderby without a justification does not suppress this rule. " +
+	"Write `//nolint:orderby // <why this value cannot reach user input>`, or fix the call site by " +
+	"passing the argument through models.SanitizeOrderInput(order, []string{...}). " +
+	"See docs/content/en/project/contributing/contributing-lint.md."
+
 // Analyzer reports gorm ORDER BY clauses built from values that are neither
 // constant nor sanitized.
 var Analyzer = &analysis.Analyzer{
@@ -142,13 +168,15 @@ var Analyzer = &analysis.Analyzer{
 	Run:      run,
 }
 
+// run walks every gorm Order call in the package and reports the ones whose
+// argument the pass cannot show is safe.
 func run(pass *analysis.Pass) (any, error) {
 	ssaResult, ok := pass.ResultOf[buildssa.Analyzer].(*buildssa.SSA)
 	if !ok || ssaResult == nil {
 		return nil, nil
 	}
 
-	suppressed := suppressedLines(pass)
+	suppressed, unjustified := suppressedLines(pass)
 
 	for _, fn := range ssaResult.SrcFuncs {
 		if fn == nil {
@@ -171,7 +199,15 @@ func run(pass *analysis.Pass) (any, error) {
 					// interpolating them.
 					continue
 				}
-				if kind == argString && isSafeOrderValue(arg, map[ssa.Value]bool{}) {
+				// A value whose definitions are all constants or sanitizer
+				// results is safe whatever its static type says: if the pass
+				// can see where it came from, it does not need to see what it
+				// is. That matters for a type parameter, where the sanitized
+				// form is `T(models.SanitizeOrderInput(...))` and the static
+				// type is opaque by construction. A genuinely opaque value -
+				// an `any` parameter, a map[string]any read - has no traceable
+				// definition and still reports.
+				if isSafeOrderValue(arg, map[ssa.Value]bool{}) {
 					continue
 				}
 				msg := diagnosticMsg
@@ -187,6 +223,9 @@ func run(pass *analysis.Pass) (any, error) {
 					at := pass.Fset.Position(pos)
 					if isSanitizerFile(pass, at) || suppressed[sourceLine{at.Filename, at.Line}] {
 						continue
+					}
+					if unjustified[sourceLine{at.Filename, at.Line}] {
+						msg = unjustifiedNolintMsg
 					}
 				}
 				pass.Reportf(pos, "%s", msg)
@@ -277,25 +316,48 @@ func classifyOrderArg(common *ssa.CallCommon) (ssa.Value, orderArgKind) {
 
 	v := args[0]
 	// A concrete argument arrives boxed, and the boxed type is the dynamic type
-	// gorm switches on - visible right here.
+	// gorm switches on - visible right here. Both the boxed and the unboxed
+	// form run through the same classifier: keeping two copies of it is what
+	// let the boxed one fall behind and miss type parameters.
 	if mi, ok := v.(*ssa.MakeInterface); ok {
 		if mi.X == nil {
 			return nil, argClause
 		}
-		if isStringUnderlying(mi.X.Type()) {
-			return mi.X, argString
-		}
+		v = mi.X
+	}
+
+	kind := classifyOrderArgType(v.Type())
+	if kind == argClause {
 		return nil, argClause
 	}
-	if isStringUnderlying(v.Type()) {
-		return v, argString
+	return v, kind
+}
+
+// classifyOrderArgType reports what the pass can prove about a value of type t
+// reaching Order.
+func classifyOrderArgType(t types.Type) orderArgKind {
+	if t == nil {
+		return argClause
 	}
-	if _, ok := v.Type().Underlying().(*types.Interface); ok {
+	if isStringUnderlying(t) {
+		return argString
+	}
+	// A type parameter is not a concrete type: SSA builds a generic body once,
+	// with the parameter intact, so `db.Order(order)` in `func f[T ~string]`
+	// boxes a *types.TypeParam. Instantiating that at string reaches gorm's
+	// `case string:` branch like any other string, so it cannot be skipped as
+	// though it were a clause value. Its Underlying is the constraint
+	// interface, which the check below already treats as opaque - naming the
+	// case explicitly keeps it from being "simplified" away again.
+	if _, ok := types.Unalias(t).(*types.TypeParam); ok {
+		return argOpaque
+	}
+	if _, ok := t.Underlying().(*types.Interface); ok {
 		// An `any` parameter, a map[string]any read, an `any` struct field, a
 		// widened interface. Nothing here rules out a string.
-		return v, argOpaque
+		return argOpaque
 	}
-	return nil, argClause
+	return argClause
 }
 
 // isStringUnderlying reports whether t is a string or a named type over one.
@@ -382,24 +444,35 @@ func isSanitizerFile(pass *analysis.Pass, at token.Position) bool {
 // comment stands alone on its line. That second restriction matters - without
 // it a trailing directive would silently cover the statement underneath it,
 // which is a false negative in a rule whose whole job is to have none.
-func suppressedLines(pass *analysis.Pass) map[sourceLine]bool {
-	lines := map[sourceLine]bool{}
+func suppressedLines(pass *analysis.Pass) (suppressed, unjustified map[sourceLine]bool) {
+	suppressed = map[sourceLine]bool{}
+	unjustified = map[sourceLine]bool{}
 	sources := map[string][]byte{}
 	for _, file := range pass.Files {
 		for _, group := range file.Comments {
 			for _, comment := range group.List {
-				if !hasNolintDirective(comment) {
+				names, justified := hasNolintDirective(comment)
+				if !names {
 					continue
 				}
+				// An unjustified directive does not suppress. The docs have
+				// always required a reason; letting the bare form work anyway
+				// is how a security lint gets quietly switched off one call
+				// site at a time, so the requirement is enforced here rather
+				// than merely documented.
+				target := suppressed
+				if !justified {
+					target = unjustified
+				}
 				pos := pass.Fset.Position(comment.Slash)
-				lines[sourceLine{pos.Filename, pos.Line}] = true
+				target[sourceLine{pos.Filename, pos.Line}] = true
 				if startsItsLine(pass, sources, pos) {
-					lines[sourceLine{pos.Filename, pos.Line + 1}] = true
+					target[sourceLine{pos.Filename, pos.Line + 1}] = true
 				}
 			}
 		}
 	}
-	return lines
+	return suppressed, unjustified
 }
 
 // startsItsLine reports whether only whitespace precedes pos on its line. It
@@ -430,20 +503,30 @@ func startsItsLine(pass *analysis.Pass, sources map[string][]byte, pos token.Pos
 // `//nolint` is deliberately not honoured, and neither is the space-separated
 // `// nolint` spelling golangci-lint also rejects: silencing this rule must be
 // explicit about what is being silenced.
-func hasNolintDirective(comment *ast.Comment) bool {
+func hasNolintDirective(comment *ast.Comment) (names, justified bool) {
 	text := strings.TrimSpace(comment.Text)
 	if !strings.HasPrefix(text, nolintPrefix) {
-		return false
+		return false, false
 	}
-	// Drop the trailing ` // explanation`, then match the linter list exactly so
-	// `//nolint:gocritic,orderby` counts and `//nolint:orderbyish` does not.
-	names, _, _ := strings.Cut(text[len(nolintPrefix):], " //")
-	for name := range strings.SplitSeq(names, ",") {
+
+	// Split the linter list from the explanation. golangci-lint accepts both
+	// `//nolint:orderby // reason` and `//nolint:orderby//reason`, so the
+	// separator is the next `//` rather than a space-prefixed one - a linter
+	// name can never contain a slash.
+	rest := text[len(nolintPrefix):]
+	list, explanation := rest, ""
+	if i := strings.Index(rest, "//"); i >= 0 {
+		list, explanation = rest[:i], strings.TrimSpace(rest[i+2:])
+	}
+
+	// Match the linter list exactly so `//nolint:gocritic,orderby` counts and
+	// `//nolint:orderbyish` does not.
+	for name := range strings.SplitSeq(list, ",") {
 		if strings.TrimSpace(name) == analyzerName {
-			return true
+			return true, explanation != ""
 		}
 	}
-	return false
+	return false, false
 }
 
 // namedOf unwraps a pointer to the named type underneath, seeing through any
