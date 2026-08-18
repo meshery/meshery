@@ -398,6 +398,12 @@ NATS topics: `meshsync.request`, `meshery.broker`. MeshSync publishes cluster st
   commits git routes through it: a checkout without `make ui-setup`, and any harness
   that repoints `core.hooksPath` at its own hooks directory, bypass it silently. Always
   `git commit -s`; never rely on the hook to catch the omission.
+- Repairing a pushed commit that lacks the trailer: DCO wants a sign-off naming that
+  commit's **author**, so derive it per commit
+  (`git rebase <base> --exec 'git commit --amend --no-edit --trailer
+  "Signed-off-by=$(git log -1 --pretty="%an <%ae>")"'`). Plain `git rebase --signoff`
+  stamps whoever runs it, which leaves DCO red on a branch carrying more than one
+  author's commits and costs a second force-push.
 - Build: extend `Makefile` or `install/Makefile.core.mk`
 
 ## Agent Tooling
