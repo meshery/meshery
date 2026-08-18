@@ -13,10 +13,11 @@ import {
   ModalButtonSecondary,
   useTheme,
   ErrorBoundary,
+  useHasPermission,
 } from '@sistent/sistent';
 import { useDeleteWorkspaceMutation } from '@/rtk-query/workspace';
 import { Keys } from '@meshery/schemas/permissions';
-import CAN from '@/utils/can';
+
 import { useNotificationHandlers } from '@/utils/hooks/useNotification';
 import { UserCommonBox } from './styles';
 import MesheryWorkspaceCard from './MesheryWorkspaceCard';
@@ -33,6 +34,7 @@ const WorkspaceGridView = ({
   const [deleteWorkspacesModal, setDeleteWorkspacesModal] = useState(false);
   const [selectedWorkspaces, setSelectedWorkspaces] = useState([]);
   const [deleteWorkspace] = useDeleteWorkspaceMutation();
+  const isDeleteAllowed = useHasPermission(Keys.WorkspaceManagementDeleteWorkspace);
 
   const handleDeleteWorkspacesModalClose = () => {
     setDeleteWorkspacesModal(false);
@@ -94,14 +96,7 @@ const WorkspaceGridView = ({
 
             <L5DeleteIcon
               onClick={handleDeleteWorkspacesModalOpen}
-              disabled={
-                selectedWorkspaces.length > 0
-                  ? !CAN(
-                      Keys.WorkspaceManagementDeleteWorkspace.id,
-                      Keys.WorkspaceManagementDeleteWorkspace.function,
-                    )
-                  : true
-              }
+              disabled={selectedWorkspaces.length > 0 ? !isDeleteAllowed : true}
             />
           </UserCommonBox>
         )}
@@ -140,10 +135,7 @@ const WorkspaceGridView = ({
           )}
         />
       </Grid2>
-      {CAN(
-        Keys.WorkspaceManagementDeleteWorkspace.id,
-        Keys.WorkspaceManagementDeleteWorkspace.function,
-      ) && (
+      {isDeleteAllowed && (
         <Modal
           open={deleteWorkspacesModal}
           closeModal={handleDeleteWorkspacesModalClose}

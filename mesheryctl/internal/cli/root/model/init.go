@@ -30,7 +30,7 @@ var initModelCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Generates scaffolding for convenient model creation",
 	Long: `Generates a folder structure and guides user on model creation
-Find more information at: https://docs.meshery.io/reference/mesheryctl/model/init`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/model/init`,
 	Example: `
 // generates a folder structure
 mesheryctl model init [model-name]
@@ -276,7 +276,7 @@ $ mesheryctl model import {modelFolder}
 To export this model as OCI image:
 $ mesheryctl model build {modelName}/{modelVersion} --path {path}
 
-Detailed guide: https://docs.meshery.io/guides/configuration-management/creating-models`
+Detailed guide: https://docs.meshery.io/reference/references/mesheryctl/model/init/`
 
 // TODO
 // initModelData fits well for json and yaml format

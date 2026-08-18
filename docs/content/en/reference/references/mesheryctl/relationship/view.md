@@ -11,7 +11,8 @@ view relationships of a model by its name
 
 ## Synopsis
 
-view a relationship queried by the model name
+view a relationship queried by the model name.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl relationship view [flags]

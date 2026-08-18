@@ -2,7 +2,13 @@ version: 0.0.6
 name: hello_wasm_config
 displayName: Hello_Wasm_config
 createdAt: "2026-07-20T07:49:21Z"
-description: Hello_Wasm_config
+description: |
+    Hello Wasm — a Dapr sample that serves HTTP responses directly from the Dapr
+    sidecar using WebAssembly (WASM) middleware, with no separate application
+    required. The design contains two Dapr resources: a Configuration (appconfig)
+    that enables a WASM handler in the HTTP pipeline, and a Component (wasm) of type
+    middleware.http.wasm that loads the WASM binary. Useful as a starting point for
+    building custom, embedded HTTP middleware in Dapr.
 logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
 license: Apache-2.0
 homeURL: https://docs.meshery.io/concepts/logical/designs
@@ -11,7 +17,7 @@ links:
       url: ../../catalog/109bc209-677b-461b-a580-e049bb83ce65/0.0.6/design.yml
     - name: Meshery Catalog
       url: https://meshery.io/catalog
-readme: " \n ##h4 Caveats and Consideration \n"
+readme: "- Targets Dapr runtime v1.10; the WASM binary must be http-wasm compatible.\n- The Component references the binary via a local path (file://wasm/main.wasm),\n  so the .wasm file must be available to the sidecar at that location.\n- The original sample runs in self-hosted (local) Dapr; deploying to Kubernetes\n  requires adjusting the binary source and resource paths.\n- This design does not include the compiled main.wasm binary itself.\n \n ##h4 Caveats and Consideration \n"
 install: mesheryctl design import -f
 provider:
     name: 37add44e-ee00-4095-bc47-59ee3506728f

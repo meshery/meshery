@@ -4,9 +4,8 @@ import BBChart from '../../general/BBChart';
 import { dataToColors, isValidColumnName } from '../../../utils/charts';
 import ConnectClustersBtn from '../../general/ConnectClustersBtn';
 import Link from 'next/link';
-import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
-import { Box, MenuItem, Select, Typography } from '@sistent/sistent';
+import { Box, MenuItem, Select, Typography, useHasPermission } from '@sistent/sistent';
 import { useTheme } from '@/theme';
 
 type WorkloadResource = { kind?: string; count?: number };
@@ -69,10 +68,7 @@ export default function WorkloadChart({
     }),
     [chartData, theme],
   );
-  const canViewConnections = CAN(
-    Keys.WorkspaceManagementViewConnections.id,
-    Keys.WorkspaceManagementViewConnections.function,
-  );
+  const canViewConnections = useHasPermission(Keys.WorkspaceManagementViewConnections);
 
   return (
     <div

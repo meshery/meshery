@@ -52,8 +52,8 @@ vi.mock('../../utils/hooks/useNotification', () => ({
 }));
 
 vi.mock('../../rtk-query/workspace', () => ({
-  useCreateWorkspaceMutation: () => [createWorkspace],
-  useUpdateWorkspaceMutation: () => [updateWorkspace],
+  useCreateWorkspaceMutation: () => [createWorkspace, { isLoading: false }],
+  useUpdateWorkspaceMutation: () => [updateWorkspace, { isLoading: false }],
   useDeleteWorkspaceMutation: () => [deleteWorkspace],
   useGetWorkspacesQuery: () => WORKSPACES_QUERY_RESULT,
   useGetTeamsOfWorkspaceQuery: () => EMPTY_QUERY_RESULT,
@@ -87,9 +87,10 @@ vi.mock('@/utils/context/WorkspaceModalContextProvider', () => ({
 }));
 
 vi.mock('../shared/Modal/Modal', () => ({
-  RJSFModalWrapper: ({ handleSubmit }: any) => (
+  RJSFModalWrapper: ({ handleSubmit, isSubmitting }: any) => (
     <button
       data-testid="submit-workspace"
+      disabled={isSubmitting}
       onClick={() =>
         handleSubmit({ organizationId: 'org-1', name: 'team-space', description: 'shared' })
       }
@@ -113,6 +114,9 @@ vi.mock('@/assets/icons/RightArrowIcon', () => ({ default: () => null }));
 vi.mock('css/icons.styles', () => ({ iconMedium: {} }));
 
 vi.mock('@sistent/sistent', () => ({
+  // This suite exercises the create flow, not authorization: grant every
+  // capability so the permission gates never mask the behaviour under test.
+  useHasPermission: () => true,
   Box: ({ children }: any) => <div>{children}</div>,
   Breadcrumbs: ({ children }: any) => <nav>{children}</nav>,
   Button: ({ children, onClick, ...rest }: any) => (
@@ -126,6 +130,7 @@ vi.mock('@sistent/sistent', () => ({
   ModalFooter: ({ children }: any) => <div>{children}</div>,
   NoSsr: ({ children }: any) => <>{children}</>,
   PROMPT_VARIANTS: { DANGER: 'danger' },
+  Select: ({ children, ...rest }: any) => <select {...rest}>{children}</select>,
   SearchBar: () => null,
   TeamsIcon: () => null,
   Typography: ({ children }: any) => <span>{children}</span>,
@@ -143,6 +148,22 @@ vi.mock('@sistent/sistent', () => ({
       background: { brand: { default: '#000' }, constant: { table: '#fff' } },
     },
   }),
+  // `DefaultError` (rendered by the new permission guard) imports `styled`
+  // from error-404/styles.tsx to build its `ErrorMain` wrapper. Emulate the
+  // real styled-components-style API closely enough that a tag-name call
+  // (`styled('main')`) or component call (`styled(SomeComponent)`) both
+  // return a renderable element, ignoring the style function/object passed
+  // to the second call.
+  styled: (Component: any) => () => {
+    if (typeof Component === 'string') {
+      return ({ children, ...rest }: any) => <Component {...rest}>{children}</Component>;
+    }
+    return Component;
+  },
+}));
+
+vi.mock('../general/error-404/index', () => ({
+  default: ({ permissionKey }: any) => <div data-testid="default-error">{permissionKey}</div>,
 }));
 
 import Workspaces from './index';
@@ -168,9 +189,11 @@ describe('Workspaces create flow notifications', () => {
   it('surfaces the failure when the provider rejects the create', async () => {
     // `data` is the verbatim server envelope (camelCase, per
     // server/models/httputil/httputil.go); `meshkit` is what the
-    // @meshery/schemas baseQuery wrapper actually attaches - message/code/
-    // severity only, because it reads snake_case spellings the server does not
-    // emit (meshery/schemas#1081). The real transform is pinned in
+    // @meshery/schemas baseQuery wrapper attaches - since v1.3.37
+    // (meshery/schemas#1081) it carries the full envelope, reading the
+    // server's camelCase detail arrays with a snake_case fallback, so the
+    // probable cause and remediation list arrive populated. The real
+    // transform is pinned in
     // `utils/helpers/__tests__/meshkitErrorChain.test.ts`.
     createWorkspace.mockReturnValue({
       unwrap: () =>
@@ -187,6 +210,8 @@ describe('Workspaces create flow notifications', () => {
             message: 'Unable to create the workspace',
             code: 'meshery-server-1454',
             severity: 'ALERT',
+            probableCause: ['Your account does not have permission to create workspaces.'],
+            suggestedRemediation: ['Ask an organization owner to grant the Workspace role.'],
           },
         }),
     });

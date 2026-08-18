@@ -13,14 +13,8 @@ See [Meshery Designs]({{< ref "concepts/logical/designs.md" >}}) for a full desc
 
 ## Ways to Create a Design
 
-You can create a Meshery Design in two ways:
-
-| Method | When to use |
-|---|---|
-| **Meshery UI — Design Configurator** | Visual, form-driven authoring with live component discovery |
-| **mesheryctl** | Scripted or file-based workflows |
-
----
+{{< tabs id="creating-a-meshery-design-tabs" >}}
+Meshery UI | fa fa-desktop
 
 ## Using the Design Configurator in Meshery UI
 
@@ -60,8 +54,6 @@ Click **Save** (floppy disk icon) to save your design. Meshery stores the design
 
 Your saved design appears on the **Designs** page, where you can deploy, export, share, or further edit it.
 
----
-
 ## Using the Design Configurator to Edit YAML Directly
 
 The Design Configurator also exposes a **code editor** panel alongside the form view. If you prefer to write or paste YAML directly:
@@ -73,7 +65,16 @@ The Design Configurator also exposes a **code editor** panel alongside the form 
 
 Changes made in the code editor are reflected immediately in the form view, and vice versa.
 
----
+## Seed Designs
+
+When you start Meshery for the first time, a set of seed designs is available. These cover common Kubernetes patterns and serve as a starting point for exploration.
+
+You can also import community designs from the [Meshery Catalog](https://meshery.io/catalog) or from a Git repository.
+
+<img src="../images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" />
+
+<!-- tab -->
+mesheryctl | fa fa-terminal
 
 ## Using mesheryctl
 
@@ -104,19 +105,7 @@ mesheryctl design list
 ```
 
 See the [`mesheryctl design` reference]({{< ref "reference/references/mesheryctl/design/_index.md" >}}) for the full subcommand reference.
-
----
-
-## Seed Designs
-
-When you start Meshery for the first time, a set of seed designs is available. These cover common Kubernetes patterns and serve as a starting point for exploration.
-
- 
-You can also import community designs from the [Meshery Catalog](https://meshery.io/catalog) or from a Git repository.
-
-<img src="../images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" />
-
----
+{{< /tabs >}}
 
 ## Related
 

@@ -62,8 +62,8 @@ vi.mock('../../utils/hooks/useNotification', () => ({
 }));
 
 vi.mock('../../rtk-query/environments', () => ({
-  useCreateEnvironmentMutation: () => [createEnvironment],
-  useUpdateEnvironmentMutation: () => [updateEnvironment],
+  useCreateEnvironmentMutation: () => [createEnvironment, { isLoading: false }],
+  useUpdateEnvironmentMutation: () => [updateEnvironment, { isLoading: false }],
   useDeleteEnvironmentMutation: () => [deleteEnvironment],
   useGetEnvironmentsQuery: () => ENVIRONMENTS_QUERY_RESULT,
   useGetEnvironmentConnectionsQuery: () => CONNECTIONS_QUERY_RESULT,
@@ -90,9 +90,10 @@ vi.mock('@meshery/schemas/permissions', () => ({
 // The RJSF form is not under test; expose a button that submits the payload the
 // real form would produce.
 vi.mock('../shared/Modal/Modal', () => ({
-  RJSFModalWrapper: ({ handleSubmit }: any) => (
+  RJSFModalWrapper: ({ handleSubmit, isSubmitting }: any) => (
     <button
       data-testid="submit-environment"
+      disabled={isSubmitting}
       onClick={() =>
         handleSubmit({ organizationId: 'org-1', name: 'prod', description: 'production' })
       }
@@ -120,6 +121,9 @@ vi.mock('../../assets/icons/Environment', () => ({ default: () => null }));
 vi.mock('../../assets/icons/Connection', () => ({ default: () => null }));
 
 vi.mock('@sistent/sistent', () => ({
+  // This suite exercises the create flow, not authorization: grant every
+  // capability so the permission gates never mask the behaviour under test.
+  useHasPermission: () => true,
   Button: ({ children, onClick, ...rest }: any) => (
     <button onClick={onClick} {...rest}>
       {children}
@@ -159,9 +163,10 @@ const EVENT_SUCCESS = 'success';
 
 // Shape the real chain produces for a provider-rejected create: `data` is the
 // verbatim server envelope (camelCase, per server/models/httputil/httputil.go)
-// and `meshkit` is what the @meshery/schemas baseQuery wrapper attaches - which
-// today is message/code/severity only, because that wrapper reads the
-// snake_case spellings the server does not emit (meshery/schemas#1081).
+// and `meshkit` is what the @meshery/schemas baseQuery wrapper attaches -
+// since v1.3.37 (meshery/schemas#1081) it carries the full envelope, reading
+// the server's camelCase detail arrays with a snake_case fallback, so the
+// probable cause and remediation list arrive populated.
 // `utils/helpers/__tests__/meshkitErrorChain.test.ts` pins that transform
 // against the real client; this fixture mirrors its output.
 const REJECTED_CREATE = {
@@ -177,6 +182,8 @@ const REJECTED_CREATE = {
     message: 'Unable to create the environment',
     code: 'meshery-server-1448',
     severity: 'ALERT',
+    probableCause: ['Your account does not have permission.'],
+    suggestedRemediation: ['Ask an organization owner to grant the Environment role.'],
   },
 };
 

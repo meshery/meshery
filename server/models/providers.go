@@ -339,8 +339,14 @@ const (
 	KubeClustersKey   ContextKey = "kubeclusters"
 	AllKubeClusterKey ContextKey = "allkubeclusters"
 
-	MesheryControllerHandlersKey ContextKey = "mesherycontrollerhandlerskey"
-	MeshSyncDataHandlersKey      ContextKey = "meshsyncdatahandlerskey"
+	// MesheryControllerHandlersKey is retired. Nothing ever populated it, so the
+	// one reader - the changeOperatorStatus resolver - always read a nil map and
+	// called Deploy/Undeploy on a nil controller interface. Operator lifecycle
+	// now goes through the connection's MesheryControllersHelper, which is what
+	// holds the resolved Helm chart version; a context key that looks like a
+	// handler source but is never filled is how that was missed. Do not
+	// reintroduce it.
+	MeshSyncDataHandlersKey ContextKey = "meshsyncdatahandlerskey"
 
 	RegistryManagerKey ContextKey = "registrymanagerkey"
 
@@ -415,6 +421,24 @@ func matchesProviderAddress(candidate string, addresses ...string) bool {
 		}
 	}
 	return false
+}
+
+// RestrictToEnforcedProvider drops every registration except the given map
+// key. Used at boot when PROVIDER is set so the Local Provider and any other
+// remotes are not addressable. No-op when enforcedKey is empty or is not in
+// the map (the caller is expected to fail closed in that case).
+func RestrictToEnforcedProvider(provs map[string]Provider, enforcedKey string) {
+	if enforcedKey == "" {
+		return
+	}
+	if _, ok := provs[enforcedKey]; !ok {
+		return
+	}
+	for key := range provs {
+		if key != enforcedKey {
+			delete(provs, key)
+		}
+	}
 }
 
 // ResolveProviderKey maps a caller-facing provider identifier to the

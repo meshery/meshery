@@ -31,6 +31,7 @@ const (
 	ErrAdapterInsufficientInformationCode   = "meshery-server-1210"
 	ErrGormDatabaseCode                     = "meshery-server-1213"
 	ErrResyncClusterCode                    = "meshery-server-1369"
+	ErrOperatorControllersHelperCode        = "meshery-server-1474"
 
 	// Retired with the removal of every GraphQL subscription (subscribeConfiguration,
 	// subscribeClusterResources, subscribeMeshModelSummary, subscribePerfProfiles,
@@ -138,4 +139,11 @@ func ErrAdapterInsufficientInformation(err error) error {
 
 func ErrResyncCluster(err error) error {
 	return errors.New(ErrResyncClusterCode, errors.Alert, []string{"Unable to process resync cluster request"}, []string{err.Error()}, []string{}, []string{})
+}
+
+// ErrOperatorControllersHelper reports that the controllers helper that owns
+// Meshery Operator lifecycle for a Kubernetes connection could not be reached,
+// so an operator install or removal cannot be performed through it.
+func ErrOperatorControllersHelper(cause string) error {
+	return errors.New(ErrOperatorControllersHelperCode, errors.Alert, []string{"Unable to reach Meshery Operator lifecycle for this Kubernetes connection"}, []string{cause}, []string{"The connection is not connected yet, or its state machine has not finished initializing."}, []string{"Wait for the Kubernetes connection to reach the connected state, then retry.", "If it stays disconnected, check the connection's diagnostics for why its Kubernetes client could not be created."})
 }

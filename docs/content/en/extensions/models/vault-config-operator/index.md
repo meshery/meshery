@@ -209,7 +209,11 @@ components:
   colorIcon: extensions/models/vault-config-operator/components/identity-token-role/icons/color/identity-token-role-color.svg
   whiteIcon: extensions/models/vault-config-operator/components/identity-token-role/icons/white/identity-token-role-white.svg
   description: 
-components-count: 50
+- name: namespace
+  colorIcon: extensions/models/vault-config-operator/components/namespace/icons/color/namespace-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/namespace/icons/white/namespace-white.svg
+  description: 
+components-count: 51
 relationships: 
 relationship-count: 0
 featureList: [

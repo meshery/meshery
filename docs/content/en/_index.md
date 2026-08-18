@@ -153,6 +153,7 @@ linkTitle: Documentation
         </p>
       </summary>
       <ul class="section-title">
+        {{< model-categories >}}
         <li>See all <a href="{{< ref "extensions/models/_index.md" >}}">{{< model-count >}} models</a></li>
       </ul>
     </details>

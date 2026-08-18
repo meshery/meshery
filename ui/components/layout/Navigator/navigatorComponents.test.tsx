@@ -198,4 +198,24 @@ describe('navigatorComponents', () => {
     // Just sanity-check that a React element was provided as an icon
     expect(React.isValidElement(catalog?.icon)).toBe(true);
   });
+
+  it('attaches ViewMetrics permission to Charts child', () => {
+    const items = getNavigatorComponents(
+      fakeProviderUiAccessControl({ TELEMETRY: true, GRAFANA: true }),
+      theme,
+    );
+    const telemetry = items.find((i: any) => i.id === 'TELEMETRY');
+    const charts = telemetry?.children?.find((c: any) => c.id === 'GRAFANA');
+    expect(charts?.permissionKey).toEqual(Keys.MesherySystemViewMetrics);
+  });
+
+  it('attaches ViewMetrics permission to Metrics child', () => {
+    const items = getNavigatorComponents(
+      fakeProviderUiAccessControl({ TELEMETRY: true, PROMETHEUS: true }),
+      theme,
+    );
+    const telemetry = items.find((i: any) => i.id === 'TELEMETRY');
+    const metrics = telemetry?.children?.find((c: any) => c.id === 'PROMETHEUS');
+    expect(metrics?.permissionKey).toEqual(Keys.MesherySystemViewMetrics);
+  });
 });

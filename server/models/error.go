@@ -144,6 +144,8 @@ const (
 	ErrUpdateResourceCode                 = "meshery-server-1355"
 	ErrEmptySessionCode                   = "meshery-server-1356"
 	ErrSeedingComponentsCode              = "meshery-server-1358"
+	ErrSeedingConnectionsCode             = "meshery-server-1462"
+	ErrSeedingConnectionKindCode          = "meshery-server-1463"
 	ErrImportFailureCode                  = "meshery-server-1359"
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
@@ -157,6 +159,14 @@ const (
 	ErrInvalidUUIDValueCode               = "meshery-server-1432"
 	ErrSystemSettingsCode                 = "meshery-server-1439"
 	ErrApplyControllersConfigCode         = "meshery-server-1440"
+	ErrReconcileOperatorChartVersionCode  = "meshery-server-1466"
+	ErrOperatorHandlerNotAttachedCode     = "meshery-server-1465"
+	ErrAnonymousUserIDMissingCode         = "meshery-server-1467"
+	ErrNoOperatorChartPublishedCode       = "meshery-server-1468"
+	ErrOperatorChartNotPinnedCode         = "meshery-server-1469"
+	ErrOperatorChartNotPublishedCode      = "meshery-server-1470"
+	ErrOperatorChartSubstitutedCode       = "meshery-server-1471"
+	ErrNoMesheryReleasesFoundCode         = "meshery-server-1472"
 )
 
 var (
@@ -345,8 +355,17 @@ func ErrRemoteProviderAuthExhausted(err error) error {
 	)
 }
 
+// ErrDelete reports a delete that the remote provider refused. Like ErrFetch
+// and ErrPost it tags the error with the provider's own HTTP status, so a
+// handler can answer with the status the provider actually returned instead of
+// fabricating one. Without the tag a DELETE of an id the provider had never
+// issued reached the client as a 500 "Failed to Save: .connection", which
+// reads as "the provider database is down" for what is only a missing record.
 func ErrDelete(err error, obj string, statusCode int) error {
-	return errors.New(ErrDeleteCode, errors.Alert, []string{"Unable to de-register Meshery Server from Remote Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{"Network connectivity to Remote Provider may not be available. Session might have expired; token could be invalid."}, []string{"Verify that the Remote Provider is available. Ensure that you have an active session / valid token."})
+	return httputil.WithProviderStatus(
+		errors.New(ErrDeleteCode, errors.Alert, []string{"Unable to de-register Meshery Server from Remote Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{"Network connectivity to Remote Provider may not be available. Session might have expired; token could be invalid."}, []string{"Verify that the Remote Provider is available. Ensure that you have an active session / valid token."}),
+		statusCode,
+	)
 }
 
 func ErrDecodeBase64(err error, obj string) error {
@@ -666,6 +685,28 @@ func ErrSeedingComponents(err error) error {
 	)
 }
 
+func ErrSeedingConnections(err error) error {
+	return errors.New(
+		ErrSeedingConnectionsCode,
+		errors.Alert,
+		[]string{"Failed to seed Meshery's system-owned connections"},
+		[]string{err.Error()},
+		[]string{"The registry could not be read for registered connection definitions", "Meshery's database is unreachable or its connections table could not be queried"},
+		[]string{"Confirm Meshery's database is reachable and that model registration completed; the connections are seeded again on the next restart"},
+	)
+}
+
+func ErrSeedingConnectionKind(err error, kind string) error {
+	return errors.New(
+		ErrSeedingConnectionKindCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("Failed to seed the system-owned \"%s\" connection", kind)},
+		[]string{err.Error()},
+		[]string{fmt.Sprintf("The %s connection could not be written to Meshery's database", kind), "The connection definition for this kind may disagree with the connections table schema"},
+		[]string{fmt.Sprintf("Confirm the %s connection definition is valid; other connection kinds are unaffected and this one is seeded again on the next restart", kind)},
+	)
+}
+
 func ErrImportFailure(hostname string, failedMsg string) error {
 	return errors.New(
 		ErrImportFailureCode,
@@ -724,9 +765,87 @@ func ErrSystemSettings(err error) error {
 	return errors.New(ErrSystemSettingsCode, errors.Alert, []string{"Error accessing server-wide system settings"}, []string{err.Error()}, []string{"The system_settings store could not be read or written, or the stored value is not valid JSON."}, []string{"Verify Meshery Server's database is reachable and writable, then retry the operation."})
 }
 
+// ErrAnonymousUserIDMissing reports that the remote provider's anonymous user
+// flow response carried no `userId`. The response is the schemas
+// v1beta2 user.AnonymousFlowResponse construct; a missing id means the
+// provider is on an incompatible contract, and proceeding would key the
+// session's capabilities on the nil UUID instead of a real user.
+func ErrAnonymousUserIDMissing() error {
+	return errors.New(
+		ErrAnonymousUserIDMissingCode,
+		errors.Alert,
+		[]string{"Anonymous user session could not be established"},
+		[]string{"The remote provider's anonymous user flow response contained no userId."},
+		[]string{"The remote provider does not implement the schemas v1beta2 AnonymousFlowResponse contract, or it returned an empty user id."},
+		[]string{"Confirm the configured remote provider is reachable and up to date, then retry signing in."},
+	)
+}
+
 // ErrApplyControllersConfig wraps failures propagating a resolved
 // controllers configuration (Meshery Operator / MeshSync / Broker) to a
 // managed cluster.
 func ErrApplyControllersConfig(err error) error {
 	return errors.New(ErrApplyControllersConfigCode, errors.Alert, []string{"Error applying controllers configuration to the cluster"}, []string{err.Error()}, []string{"The MeshSync or Broker custom resource could not be patched, or the MeshSync deployment overlay could not be applied.", "The Meshery Operator may not be deployed on the target cluster yet."}, []string{"Confirm the cluster is reachable and the Meshery Operator is deployed (operator deployment mode).", "Retry the change; configuration is re-applied whenever the connection reconnects."})
+}
+
+// ErrReconcileOperatorChartVersion wraps failures redeploying Meshery Operator
+// at the Helm chart version a connection's resolved controllers configuration
+// asks for (`operator.version`).
+func ErrReconcileOperatorChartVersion(err error) error {
+	return errors.New(ErrReconcileOperatorChartVersionCode, errors.Alert, []string{"Error deploying Meshery Operator at the configured chart version"}, []string{err.Error()}, []string{"The requested Meshery Operator Helm chart version does not exist in the chart repository, or the cluster rejected the Helm release."}, []string{"Confirm the chart version exists in the Meshery Operator Helm repository, or clear operator.version to track the Meshery Server release.", "Confirm the cluster is reachable and the Meshery namespace is writable."})
+}
+
+// ErrNoOperatorChartPublished reports that the Helm repository was read but
+// advertises no version of the Meshery Operator chart that Meshery may choose
+// on the user's behalf, so there is no version to deploy. Release candidates do
+// not count: Meshery never selects a prerelease chart by itself, though an
+// explicit operator.version naming one is honored.
+func ErrNoOperatorChartPublished(chart, repo string) error {
+	return errors.New(ErrNoOperatorChartPublishedCode, errors.Alert, []string{"No Meshery Operator Helm chart is published"}, []string{"The chart repository " + repo + " advertises no released (non-prerelease) version of the " + chart + " chart."}, []string{"The chart repository index was served from an unexpected location, its published charts were removed, or it currently carries only prerelease charts, which Meshery never selects on its own."}, []string{"Confirm " + repo + "/index.yaml lists a released version of the " + chart + " chart, then reconnect the Kubernetes connection.", "To deploy a prerelease chart deliberately, set operator.version on the Kubernetes connection to that exact version."})
+}
+
+// ErrOperatorChartNotPinned reports that an explicitly configured
+// `operator.version` is not a specific chart release. Moving tags such as
+// stable-latest name whatever was published most recently, so a cluster
+// deployed from one cannot be reproduced or reasoned about; Meshery deploys
+// only versions it can name.
+func ErrOperatorChartNotPinned(requested, newest string) error {
+	// Probable cause and remediation are static literals so errorutil can export
+	// them into the published error reference; the version-specific detail lives
+	// in the cause, which is runtime-only.
+	return errors.New(ErrOperatorChartNotPinnedCode, errors.Alert, []string{"Meshery Operator chart version is not a released version"}, []string{"operator.version is set to " + requested + ", which is not a released chart version. The newest released chart version is " + newest + "."}, []string{"A moving tag (for example stable-latest or edge-latest) or a non-version string was configured as the operator chart version."}, []string{"Set operator.version to a released chart version, or clear it to track this Meshery Server release. This error's cause names the newest released version."})
+}
+
+// ErrOperatorChartNotPublished reports that an explicitly configured
+// `operator.version` names a chart version the repository does not publish.
+// This is never substituted silently: deploying a different version than the
+// one asked for would hide the mistake.
+func ErrOperatorChartNotPublished(requested, newest string) error {
+	// Static probable cause and remediation, as above: the concrete versions are
+	// carried by the cause so the exported reference is not blank.
+	return errors.New(ErrOperatorChartNotPublishedCode, errors.Alert, []string{"Meshery Operator chart version is not published"}, []string{"operator.version is set to " + requested + ", which the Meshery chart repository does not publish. The newest published version is " + newest + "."}, []string{"The configured chart version was mistyped, or it was never published to the Meshery Helm chart repository."}, []string{"Set operator.version to a published chart version, or clear it to track this Meshery Server release. This error's cause names the newest published version."})
+}
+
+// ErrNoMesheryReleasesFound reports that the GitHub releases listing for
+// Meshery was fetched successfully but was empty, so there is no latest version
+// to compare against.
+func ErrNoMesheryReleasesFound() error {
+	return errors.New(ErrNoMesheryReleasesFoundCode, errors.Alert, []string{"No Meshery releases were found"}, []string{"The GitHub releases listing for meshery/meshery returned no tags."}, []string{"GitHub returned an empty or filtered release listing, possibly because the request was rate-limited."}, []string{"Retry later. This only affects the reported latest-version comparison; Meshery continues to run."})
+}
+
+// ErrOperatorChartSubstituted reports that the Meshery Operator chart
+// version derived from this Meshery Server's release was replaced by one the
+// chart repository publishes and that can actually run. It is a warning, not a
+// failure: the operator was deployed. It exists so the substitution is visible
+// in the events feed and the logs rather than being inferred from a version
+// number that does not match the server's.
+func ErrOperatorChartSubstituted(reason string) error {
+	return errors.New(ErrOperatorChartSubstitutedCode, errors.Alert, []string{"Meshery Operator was deployed at a different chart version than this server's release"}, []string{reason}, []string{"The chart version matching this Meshery Server release is either not published yet or is too old to deploy successfully."}, []string{"No action is required. To choose the chart version yourself, set operator.version on the Kubernetes connection."})
+}
+
+// ErrOperatorHandlerNotAttached reports that no Meshery Operator controller
+// handler is attached to a Kubernetes context, so operator-level actions
+// (deploy, undeploy, chart-version reconcile) have nothing to act through.
+func ErrOperatorHandlerNotAttached(contextID string) error {
+	return errors.New(ErrOperatorHandlerNotAttachedCode, errors.Alert, []string{"No Meshery Operator controller handler is attached"}, []string{"Controller handlers are attached when a Kubernetes connection connects; for context " + contextID + " attaching them failed or has not happened yet."}, []string{"The connection's kubeconfig could not be generated, or the Kubernetes client could not be created."}, []string{"Reconnect the Kubernetes connection and retry; the configuration is re-applied on connect."})
 }

@@ -34,18 +34,25 @@ It intentionally excludes test-only variables such as `RUN_INTEGRATION_TESTS` an
 
 | Variable | Default | Description | Example |
 | --- | --- | --- | --- |
-| `PROVIDER` | unset | Enforces a single provider and bypasses the provider selection UI. Accepts `Local` (legacy alias `None`) or a registered remote provider name such as `Meshery`. | `PROVIDER=Meshery` |
-| `PROVIDER_BASE_URLS` | Canonical remote-provider list from `install/providers.env` | Comma-separated list of remote provider base URLs that Meshery registers at startup. | `PROVIDER_BASE_URLS=https://cloud.meshery.io,https://cloud.layer5.io` |
+| `PROVIDER` | unset | Hard-enforces a single provider at server boot. When set to a remote name, Local is not registered and cannot be selected. If the value does not resolve, the server refuses to start. Accepts `Local` (legacy alias `None`) or a registered remote name such as `Meshery`. | `PROVIDER=Meshery` |
+| `PROVIDER_BASE_URLS` | Canonical remote-provider list from `install/providers.env` | Comma-separated list of remote provider base URLs that Meshery registers at startup. | `PROVIDER_BASE_URLS=https://cloud.meshery.io` |
 | `MESHERY_SERVER_CALLBACK_URL` | `http://<request-host>/api/user/token` | Overrides the OAuth callback URL used when Meshery is behind an ingress, reverse proxy, or load balancer. | `MESHERY_SERVER_CALLBACK_URL=https://playground.meshery.io/api/user/token` |
 | `PROVIDER_CAPABILITIES_FILEPATH` | unset | Loads provider capabilities from a local JSON file instead of from the remote provider's `/capabilities` endpoint. Useful for offline development and deterministic testing. | `PROVIDER_CAPABILITIES_FILEPATH=/path/to/capabilities.json` |
 | `SKIP_DOWNLOAD_EXTENSIONS` | `false` | Skips downloading or refreshing remote provider extension packages. Existing local packages can still be used. | `SKIP_DOWNLOAD_EXTENSIONS=true make server` |
 | `PLAYGROUND` | `false` | Enables playground-specific behavior, including provider preselection flows and playground-oriented post-login redirects. | `PLAYGROUND=true PROVIDER=Meshery make server-local` |
 
-The current built-in `PROVIDER_BASE_URLS` default is:
+The current built-in `PROVIDER_BASE_URLS` default is the list of **active**
+providers in [`install/providers.env`](https://github.com/meshery/meshery/blob/master/install/providers.env),
+which is the single source of truth propagated to every install artifact by
+`make providers-propagate`:
 
 ```text
 https://cloud.meshery.io,https://perf.smp-spec.io,https://cloud.layer5.io,https://platform.tata-consulting.co.uk,https://collab.eti.cisco.com,https://kickstart.metabit.com,https://provider.od10.in
 ```
+
+The Helm chart and the Docker Compose file ship this same list. If you pin
+`PROVIDER`, its provider's base URL must be present here or the server will not
+be able to resolve it at startup.
 
 ## Feature flags and runtime behavior
 
@@ -56,7 +63,7 @@ https://cloud.meshery.io,https://perf.smp-spec.io,https://cloud.layer5.io,https:
 | `SKIP_DOWNLOAD_CONTENT` | `false` | Skips downloading bundled seed content such as patterns and filters before loading local content. | `SKIP_DOWNLOAD_CONTENT=true make server` |
 | `SKIP_COMP_GEN` | `false` | Skips background Kubernetes component generation during startup. Explicit API-triggered registration can still run. | `SKIP_COMP_GEN=true make server` |
 | `POLICY_EVAL_TIMEOUT` | `3m` | Maximum duration for a single relationship-policy evaluation. Uses Go duration syntax. | `POLICY_EVAL_TIMEOUT=5m make server` |
-| `USE_GO_POLICY_ENGINE` | `false` | Uses the Go relationship-policy engine instead of the default Rego/OPA path. The local `make server` target commonly sets this to `true`. | `USE_GO_POLICY_ENGINE=true make server` |
+| `USE_GO_POLICY_ENGINE` | `true` | Uses the Go relationship-policy engine instead of the default Rego/OPA path. The local `make server` target commonly sets this to `true`. | `USE_GO_POLICY_ENGINE=true make server` |
 
 ## Build and runtime metadata
 

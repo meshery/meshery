@@ -2,6 +2,15 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+let canMockReturn = true;
+// Per-key overrides let a test deny one capability while leaving the rest
+// granted, so assertions pin *which* key each gate reads rather than treating
+// all permissions as one boolean.
+const permissionOverrides = new Map<string, boolean>();
+const canSpy = vi.fn(
+  (key?: { id?: string }) => permissionOverrides.get(key?.id ?? '') ?? canMockReturn,
+);
+
 const routerState = {
   query: {} as Record<string, any>,
   pathname: '/settings',
@@ -62,6 +71,7 @@ vi.mock('@sistent/sistent', () => ({
         : React.createElement(Component, rest, children);
     return StyledComponent;
   },
+  useHasPermission: (key: { id?: string }) => canSpy(key),
 }));
 
 vi.mock('../dashboard/charts/DashboardMeshModelGraph', () => ({
@@ -89,11 +99,6 @@ vi.mock('../../api/meshmodel', () => ({
   getMeshModels: vi.fn().mockResolvedValue({ models: [] }),
   getRelationshipsDetail: vi.fn().mockResolvedValue({ totalCount: 0 }),
   getMeshModelRegistrants: vi.fn().mockResolvedValue({ totalCount: 0 }),
-}));
-
-let canMockReturn = true;
-vi.mock('@/utils/can', () => ({
-  default: () => canMockReturn,
 }));
 
 vi.mock('@/constants/navigator', () => ({
@@ -152,11 +157,14 @@ vi.mock('@/rtk-query/user', () => ({
   }),
 }));
 
+import { Keys } from '@meshery/schemas/permissions';
 import MesherySettings from './MesherySettings';
 
 describe('MesherySettings', () => {
   beforeEach(() => {
     canMockReturn = true;
+    permissionOverrides.clear();
+    canSpy.mockClear();
     routerState.query = {};
     routerState.push.mockReset();
     selectorReturn = {
@@ -190,9 +198,28 @@ describe('MesherySettings', () => {
     expect(screen.getByTestId('connection-charts')).toBeInTheDocument();
   });
 
-  it('returns null when MesherySystemViewSettings permission is denied', () => {
-    canMockReturn = false;
-    const { container } = render(<MesherySettings />);
-    expect(container.textContent).toBe('');
+  it('renders the 404 fallback when only MesherySystemViewSettings is denied', () => {
+    permissionOverrides.set(Keys.MesherySystemViewSettings.id, false);
+    render(<MesherySettings />);
+    expect(screen.getByTestId('error-404')).toBeInTheDocument();
+    expect(screen.queryByTestId('tabs')).not.toBeInTheDocument();
+  });
+
+  it('disables the Registry tab and its content when MesherySystemViewRegistry is denied', () => {
+    permissionOverrides.set(Keys.MesherySystemViewRegistry.id, false);
+    routerState.query = { settingsCategory: 'Registry' };
+    render(<MesherySettings />);
+    // Both the control and the content are gated, so a direct
+    // `?settingsCategory=Registry` URL cannot render the registry.
+    expect(screen.getByTestId('tab-Registry')).toBeDisabled();
+    expect(screen.queryByTestId('mesh-model-component')).not.toBeInTheDocument();
+  });
+
+  it('disables the Adapters tab and its content when the infrastructure permission is denied', () => {
+    permissionOverrides.set(Keys.InfrastructureManagementViewCloudNativeInfrastructure.id, false);
+    routerState.query = { settingsCategory: 'Adapters' };
+    render(<MesherySettings />);
+    expect(screen.getByTestId('tab-Adapters')).toBeDisabled();
+    expect(screen.queryByTestId('adapter-config')).not.toBeInTheDocument();
   });
 });
