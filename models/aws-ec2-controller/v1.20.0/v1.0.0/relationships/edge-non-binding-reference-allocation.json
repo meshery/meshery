@@ -32,7 +32,7 @@
             "id": null,
             "kind": "Allocation",
             "match": {},
-            "match_strategy_matrix": null,
+            "matchStrategyMatrix": null,
             "model": {
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
@@ -60,7 +60,7 @@
             "id": null,
             "kind": "NATGateway",
             "match": {},
-            "match_strategy_matrix": null,
+            "matchStrategyMatrix": null,
             "model": {
               "displayName": "",
               "id": "00000000-0000-0000-0000-000000000000",
