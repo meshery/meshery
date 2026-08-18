@@ -56,7 +56,7 @@ https://cloud.meshery.io,https://perf.smp-spec.io,https://platform.tata-consulti
 | `SKIP_DOWNLOAD_CONTENT` | `false` | Skips downloading bundled seed content such as patterns and filters before loading local content. | `SKIP_DOWNLOAD_CONTENT=true make server` |
 | `SKIP_COMP_GEN` | `false` | Skips background Kubernetes component generation during startup. Explicit API-triggered registration can still run. | `SKIP_COMP_GEN=true make server` |
 | `POLICY_EVAL_TIMEOUT` | `3m` | Maximum duration for a single relationship-policy evaluation. Uses Go duration syntax. | `POLICY_EVAL_TIMEOUT=5m make server` |
-| `USE_GO_POLICY_ENGINE` | `false` | Uses the Go relationship-policy engine instead of the default Rego/OPA path. The local `make server` target commonly sets this to `true`. | `USE_GO_POLICY_ENGINE=true make server` |
+| `USE_GO_POLICY_ENGINE` | `true` | Uses the Go relationship-policy engine instead of the default Rego/OPA path. The local `make server` target commonly sets this to `true`. | `USE_GO_POLICY_ENGINE=true make server` |
 
 ## Build and runtime metadata
 
