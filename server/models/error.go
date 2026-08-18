@@ -115,6 +115,7 @@ const (
 	ErrPersistConnectionCode              = "meshery-server-1309"
 	ErrPrometheusScanCode                 = "meshery-server-1310"
 	ErrGrafanaScanCode                    = "meshery-server-1311"
+	ErrCodexConnectivityCode              = "meshery-server-1475"
 	ErrDBCreateCode                       = "meshery-server-1312"
 	ErrDoRequestCode                      = "meshery-server-1321"
 	ErrMarshalYAMLCode                    = "meshery-server-1322"
@@ -607,6 +608,10 @@ func ErrSaveConnection(err error) error {
 }
 func ErrGrafanaScan(err error) error {
 	return errors.New(ErrGrafanaScanCode, errors.Alert, []string{"Unable to connect to grafana"}, []string{err.Error()}, []string{"Grafana endpoint might not be reachable from Meshery", "Grafana endpoint is incorrect"}, []string{"Check if your Grafana Endpoint is correct", "Connect to Grafana from the settings page in the UI"})
+}
+
+func ErrCodexConnectivity(err error) error {
+	return errors.New(ErrCodexConnectivityCode, errors.Alert, []string{"Unable to connect to Codex"}, []string{err.Error()}, []string{"API key might not be correct", "Codex endpoint might not be reachable from Meshery"}, []string{"Check if your API key is correct", "Verify your network allows egress to the configured Codex baseUrl"})
 }
 
 func ErrPrometheusScan(err error) error {

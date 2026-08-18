@@ -64,6 +64,16 @@ type GrafanaCred struct {
 	APIKeyOrBasicAuth string `json:"secret,omitempty"`
 }
 
+type CodexConn struct {
+	BaseURL      string `json:"baseUrl,omitempty"`
+	DefaultModel string `json:"defaultModel,omitempty"`
+	Name         string `json:"name,omitempty"`
+}
+type CodexCred struct {
+	Name   string `json:"name,omitempty"`
+	APIKey string `json:"apiKey,omitempty"`
+}
+
 type Connection = schemasConnection.Connection
 
 var validConnectionStatusToManage = []ConnectionStatus{
