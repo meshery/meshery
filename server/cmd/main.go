@@ -319,7 +319,13 @@ func main() {
 	lProv.SeedContent(log)
 	provs[lProv.Name()] = lProv
 
-	providerEnvVar := viper.GetString(constants.ProviderENV)
+	// Trim once here so a whitespace-only PROVIDER behaves exactly like unset
+	// everywhere downstream. NormalizeProviderName does not trim, so an
+	// untrimmed "  " would satisfy the enforced-provider short-circuits in
+	// resolveProviderName and ProviderHandler while resolving to no registered
+	// provider - an enforced deployment pinned to nothing, which redirects in a
+	// loop rather than failing closed.
+	providerEnvVar := strings.TrimSpace(viper.GetString(constants.ProviderENV))
 	RemoteProviderURLs := utils.SplitAndTrim(viper.GetString("PROVIDER_BASE_URLS"), ", \t\n\r")
 	for _, providerurl := range RemoteProviderURLs {
 		parsedURL, err := url.Parse(providerurl)
@@ -402,7 +408,7 @@ func main() {
 		providerEnvVar = resolvedProviderKey
 		log.Infof("PROVIDER is pinned to %q; unregistering every other provider (including Local)", providerEnvVar)
 		models.RestrictToEnforcedProvider(provs, providerEnvVar)
-	} else if strings.TrimSpace(providerEnvVar) != "" {
+	} else if providerEnvVar != "" {
 		log.Error(fmt.Errorf("configured PROVIDER %q could not be resolved to any registered provider; refusing to start with the provider chooser (which would include the unauthenticated Local Provider). Set PROVIDER to a registered name, or unset it to keep the chooser", providerEnvVar))
 		os.Exit(1)
 	}

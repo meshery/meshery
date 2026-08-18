@@ -158,6 +158,10 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
 				if ok {
 					gotKey, gotOK := models.ResolveProviderKey(provider.Name(), h.config.Providers)
 					if !gotOK || gotKey != enforcedKey {
+						// Log the mismatch: without it this 401 is indistinguishable
+						// from an ordinary auth failure, and the enforced-provider
+						// case is exactly the one an operator needs to recognise.
+						h.log.Infof("[AUTH_FLOW] step=AuthMiddleware action=provider_mismatch path=%s enforced=%q got=%q", req.URL.Path, enforcedKey, provider.Name())
 						w.WriteHeader(http.StatusUnauthorized)
 						return
 					}
@@ -244,14 +248,14 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			// match without reading PR #18919.
 			//
 			// Behavioral consequence: on a transient provider error we must NOT
-			// destroy the user's session by logging them out â that would cause
+			// destroy the user's session by logging them out — that would cause
 			// a redirect loop when Cloud recovers. A missing/invalid token
 			// cookie still falls through to the genuine auth-failure path below.
 			if isTransientProviderError(err) {
 				writeMeshkitError(w, ErrTransientProvider(err), http.StatusServiceUnavailable)
 				return
 			}
-			// Genuine auth failure â logout and redirect to login
+			// Genuine auth failure — logout and redirect to login
 			err1 := provider.Logout(w, req)
 			if err1 != nil {
 				h.log.Error(models.ErrLogout(err1))

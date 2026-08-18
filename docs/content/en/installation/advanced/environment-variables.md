@@ -41,11 +41,18 @@ It intentionally excludes test-only variables such as `RUN_INTEGRATION_TESTS` an
 | `SKIP_DOWNLOAD_EXTENSIONS` | `false` | Skips downloading or refreshing remote provider extension packages. Existing local packages can still be used. | `SKIP_DOWNLOAD_EXTENSIONS=true make server` |
 | `PLAYGROUND` | `false` | Enables playground-specific behavior, including provider preselection flows and playground-oriented post-login redirects. | `PLAYGROUND=true PROVIDER=Meshery make server-local` |
 
-The current built-in `PROVIDER_BASE_URLS` default is:
+The current built-in `PROVIDER_BASE_URLS` default is the list of **active**
+providers in [`install/providers.env`](https://github.com/meshery/meshery/blob/master/install/providers.env),
+which is the single source of truth propagated to every install artifact by
+`make providers-propagate`:
 
 ```text
-https://cloud.meshery.io,https://perf.smp-spec.io,https://platform.tata-consulting.co.uk,https://collab.eti.cisco.com,https://kickstart.metabit.com,https://provider.od10.in
+https://cloud.meshery.io,https://perf.smp-spec.io,https://cloud.layer5.io,https://platform.tata-consulting.co.uk,https://collab.eti.cisco.com,https://kickstart.metabit.com,https://provider.od10.in
 ```
+
+The Helm chart and the Docker Compose file ship this same list. If you pin
+`PROVIDER`, its provider's base URL must be present here or the server will not
+be able to resolve it at startup.
 
 ## Feature flags and runtime behavior
 

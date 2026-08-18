@@ -83,6 +83,12 @@ func (h *Handler) ProvidersHandler(w http.ResponseWriter, _ *http.Request) {
 			providers[key] = p.GetProviderProperties()
 		}
 	}
+	// Intentionally defensive. RestrictToEnforcedProvider already trimmed the
+	// registration map at boot, so on the real startup path this is a no-op.
+	// It is kept because this handler also serves wiring that builds
+	// h.config.Providers directly (tests, embedders) and never runs that boot
+	// step - and because the enforced provider must never be a listing away
+	// from being reintroduced if that map is ever repopulated.
 	if enforcedKey, ok := models.ResolveProviderKey(h.Provider, h.config.Providers); ok {
 		if props, exists := providers[enforcedKey]; exists {
 			providers = map[string]models.ProviderProperties{enforcedKey: props}

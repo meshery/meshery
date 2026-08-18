@@ -64,6 +64,20 @@ via `mesheryctl system provider` (see the
 [reference]({{< ref "reference/references/mesheryctl/system/provider/set.md" >}})), but the server-side
 `PROVIDER` setting is what governs the deployment as a whole.
 
+`mesheryctl system provider switch` sets the provider on the CLI's current
+context and restarts the deployment, which is how that value reaches the server
+as `PROVIDER`. It does **not** add anything to `PROVIDER_BASE_URLS` - that list
+is read separately at server start - so the target provider's base URL must
+already be present there. Two consequences follow on a deployment that is
+already pinned:
+
+- `mesheryctl system provider set` validates against the running server's
+  `/api/providers`, which reports only the pinned provider, so selecting a
+  different one requires `--force`.
+- If the value you force is not resolvable when the server restarts, the server
+  refuses to start rather than falling back to the chooser. Add the provider's
+  URL to `PROVIDER_BASE_URLS` first.
+
 ## Configuring the OAuth callback URL
 
 Remote Provider authentication uses an OAuth flow that redirects the user's
