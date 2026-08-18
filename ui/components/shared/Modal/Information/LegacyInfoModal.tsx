@@ -483,6 +483,7 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
                   }}
                 >
                   <RJSFWrapper
+                    key={selectedResource?.id}
                     formData={formData}
                     jsonSchema={{
                       ...publishSchema.rjsfSchema,
