@@ -384,7 +384,9 @@ NATS topics: `meshsync.request`, `meshery.broker`. MeshSync publishes cluster st
 
 ### Hooks & Scripts
 
-- Pre-commit: Husky hooks in `ui/.husky/`
+- Git hooks: Husky hooks in `ui/.husky/`, installed by `make ui-setup`. `commit-msg`
+  rejects a commit that is not signed off, because once an unsigned commit is pushed
+  the DCO check can only be satisfied by rewriting the branch.
 - Build: extend `Makefile` or `install/Makefile.core.mk`
 
 ## Agent Tooling
