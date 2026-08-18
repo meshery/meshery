@@ -35,7 +35,7 @@ var relationshipConformanceModels = []string{"kubernetes", "cert-manager"}
 // `<model>/<file>|<kind>|<path>` because the model generator fans every row out
 // to all of a model's version directories. They are pinned rather than ignored:
 // each entry must still fail to resolve, so fixing one forces its removal here.
-// Tracked for repair as a follow-up to #21482.
+// Repair of every entry below is tracked in meshery/meshery#21490.
 var knownUnresolvedMutationPaths = map[string]bool{
 	"kubernetes/edge-non-binding-reference-aatvf.json|ServiceAccount|configuration.spec.signerName":                                  true,
 	"kubernetes/edge-non-binding-reference-amdty.json|WatchEvent|configuration.object.kind":                                          true,
@@ -335,6 +335,11 @@ func TestRelationshipMutationPathsResolveAgainstComponentSchemas(t *testing.T) {
 
 				for _, item := range selectorItems(definition) {
 					if item.Kind == nil || *item.Kind == "" || *item.Kind == "*" || item.Model == nil {
+						continue
+					}
+					// A wildcard model has no single version directory to
+					// resolve against, so the selector is not checkable.
+					if item.Model.Name == "" || item.Model.Name == "*" {
 						continue
 					}
 					kind := *item.Kind

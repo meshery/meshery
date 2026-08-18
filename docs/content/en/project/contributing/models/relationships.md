@@ -364,7 +364,7 @@ Every `mutatorRef`/`mutatedRef` path rooted at `configuration.` must resolve aga
 
 - **Exemptions.** The `configuration.metadata` subtree and paths rooted at `displayName` or `component` are not checked: component schemas describe the resource's `spec`, not its ObjectMeta or the Meshery component envelope.
 - **Where it runs.** `server/policies/relationship_schema_conformance_test.go`, executed by the policies test workflow on every change under `models/**`.
-- **When it fails, fix the path.** The `knownUnresolvedMutationPaths` allowlist exists only for known pre-existing defects, and is annotated with the issue tracking their repair. An allowlisted entry must keep failing, so repairing one of those definitions means deleting its line in the same pull request.
+- **When it fails, fix the path.** The `knownUnresolvedMutationPaths` allowlist exists only for known pre-existing defects, and cites the open follow-up issue tracking their repair ([#21490](https://github.com/meshery/meshery/issues/21490)). An allowlisted entry must keep failing, so repairing one of those definitions means deleting its line in the same pull request.
 
 <a class="anchorjs-link" id="relationship-contribution"></a>
 
