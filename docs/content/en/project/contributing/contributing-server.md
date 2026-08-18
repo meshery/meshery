@@ -55,6 +55,16 @@ Every Golang-based component within the Meshery ecosystem incorporates a utility
 
 For more details, <a href="{{< ref "project/contributing/contributing-error.md" >}}">Error Utility</a>
 
+#### Lint the server
+
+{{< code code=`make golangci` >}}
+
+This runs `golangci-lint` plus Meshery's repo-specific Go rules - notably the
+one that fails the build when a `gorm` `ORDER BY` clause is built from a value
+that is neither a constant nor a result of `models.SanitizeOrderInput`. The same rules run in
+CI's `golangci-lint-server` job. For what each rule protects and what to do when
+one fires, see <a href="{{< ref "project/contributing/contributing-lint.md" >}}">Go Lint Rules</a>.
+
 ### Configuring Log levels at Runtime
 
 The server log levels can be configured at runtime by changing the env variable `LOG_LEVEL` defined in file [`server-config.env`](https://github.com/meshery/meshery/blob/master/server/cmd/server-config.env). The configuration library (`viper`) watches for the env file, any change in the file content results in the `file_system` event to be emitted and the log level is updated accordingly.
