@@ -1,6 +1,6 @@
 ---
 name: gen-relationship
-description: Create and refine schema-backed Meshery relationship definitions. Use when adding, editing, classifying, or reviewing how model components relate, including kind/type/subType taxonomy and mutatorRef/mutatedRef patches.
+description: Create and refine schema-backed Meshery relationship definitions (models/**/relationships/*.json). Use for "add a relationship", "fix this relationship JSON", classifying kind/type/subType, or reviewing selectors and mutatorRef/mutatedRef patches between model components.
 ---
 
 # Create and refine Meshery relationship definitions
@@ -21,7 +21,7 @@ This skill covers **creating new definitions** and **refining existing ones**. I
 | Human docs | [Concepts: Relationships](https://docs.meshery.io/concepts/logical/relationships), [Contributing to Relationships](https://docs.meshery.io/project/contributing/contributing-relationships) |
 | In-tree corpus | `models/<model>/<model-version>/<definition-version>/relationships/` |
 
-New and rewritten definitions use `schemaVersion: "relationships.meshery.io/v1beta3"`. In-tree model files are still mostly `v1beta2` (a few `v1alpha3`). The versions are shape-compatible: Meshery Server reads definitions into its registry and bridges them to the `v1beta2` shape for the policy engine (`server/models/pattern/utils/relationship_version_bridge.go`), so v1beta3-authored files are consumed the same way. When **refining** an existing file, keep its `schemaVersion` unless you are deliberately migrating it.
+`v1beta3` is the authoring target; in-tree model files are still mostly `v1beta2` (a few `v1alpha3`). The version shapes are compatible - Meshery Server bridges registered definitions to the `v1beta2` shape for the policy engine (`server/models/pattern/utils/relationship_version_bridge.go`) - **but the registration gate accepts only `v1beta2`/`v1alpha3` documents until [meshkit#1096](https://github.com/meshery/meshkit/pull/1096) ships in the server's meshkit**. A definition that must register on current servers (in-tree seeding, `mesheryctl model import`) declares `v1beta2`; flip to `v1beta3` once the gate accepts it. When **refining** an existing file, keep its `schemaVersion` unless you are deliberately migrating it.
 
 `kind` is a schema enum: `hierarchical` | `edge` | `sibling`. `type` and `subType` are open strings. The combinations below are the ones Meshery currently visualizes and evaluates. A new `subType` needs a visual paradigm (whiteboard a proposal in Kanvas) and an evaluation policy that understands it.
 
@@ -29,7 +29,7 @@ Required object fields (v1beta3): `schemaVersion`, `version`, `model`, `kind`, `
 
 ## When to use which combo
 
-`kind` + `type` + `subType` together pick the visual paradigm and the evaluation policy. Copy an existing combo; do not remix.
+`kind` + `type` + `subType` together pick the visual paradigm and the evaluation policy. Copy an existing combo; do not remix. Open only the example file for the combo you picked - the others add nothing for your case.
 
 | kind | type | subType | Meaning | Example | File |
 |---|---|---|---|---|---|
@@ -137,7 +137,7 @@ If legacy tooling forces you to name a rule, the historical default is `{kind}_{
 3. Pick `kind` / `type` / `subType` from the table. If none fit, stop and propose a visualization; do not invent a combo.
 4. Set `from` / `to` (hierarchical: child in `from`, parent in `to`).
 5. If values should flow, add paired `mutatorRef` / `mutatedRef` after reading the component JSON schemas. If they should only match, use `match.refs` or omit patch.
-6. Set `evaluationQuery: ""`, `status: enabled`, `schemaVersion: relationships.meshery.io/v1beta3`.
+6. Set `evaluationQuery: ""`, `status: enabled`, and the `schemaVersion` the registration gate accepts (`v1beta2` today; `v1beta3` once meshkit#1096 ships - see Source of truth).
 7. Write one JSON file per relationship (or a small cohesive set) under `models/<model>/<model-version>/<def-version>/relationships/`. Filename convention: `{kind}-{type}-{subType}-<suffix>.json`.
 8. Compare against the matching file in [examples/](examples/) and against a kubernetes in-tree neighbour of the same combo.
 

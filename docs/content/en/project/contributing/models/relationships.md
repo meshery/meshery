@@ -6,7 +6,7 @@ aliases: [/project/contributing/contributing-relationships]
 weight: 20
 ---
 
-**Relationships follow a schema-defined structure.** The [Relationship schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta3/relationship) (`relationships.meshery.io/v1beta3`) is the single source of truth for how relationships between components are expressed. Author new definitions against `v1beta3`; the in-tree corpus under `models/**/relationships/` is still mostly `v1beta2`. The versions are shape-compatible — Meshery Server bridges registered definitions to the `v1beta2` shape for its policy engine, so both are consumed the same way. Refer to the schema when defining new relationship types or selectors. See [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas.md" >}}) for details.
+**Relationships follow a schema-defined structure.** The [Relationship schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta3/relationship) (`relationships.meshery.io/v1beta3`) is the single source of truth for how relationships between components are expressed. The in-tree corpus under `models/**/relationships/` is still mostly `v1beta2`. The version shapes are compatible - Meshery Server bridges registered definitions to the `v1beta2` shape for its policy engine - but registration on current releases accepts only `v1beta2`/`v1alpha3` documents ([meshkit#1096](https://github.com/meshery/meshkit/pull/1096) adds `v1beta3`), so a definition that must register today declares `v1beta2`. Refer to the schema when defining new relationship types or selectors. See [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas.md" >}}) for details.
 
 Coding agents: use the `gen-relationship` skill in `.agents/skills/gen-relationship/` (one example of every canonical `kind` / `type` / `subType`).
 
@@ -142,7 +142,7 @@ Create a relationship definition as a JSON file, placing this new definition fil
 
 Include:
 
-- `schemaVersion`: `relationships.meshery.io/v1beta3` for new definitions. Keep `v1beta2` when refining an existing in-tree file unless you are deliberately migrating it.
+- `schemaVersion`: `relationships.meshery.io/v1beta3` is the authoring target, but declare `v1beta2` for definitions that must register on current servers (see the note at the top of this page). Keep `v1beta2` when refining an existing in-tree file unless you are deliberately migrating it.
 - `kind`: The genre of relationship (`hierarchical`, `edge`, `sibling`).
 - `type`: The augmentative category (`parent`, `binding`, `non-binding`, `sibling`, …).
 - `subType`: The specific visual paradigm (`inventory`, `mount`, `network`, `wallet`, `reference`, `matchlabels`, …).
@@ -294,7 +294,7 @@ An empty string. The property is deprecated (see the schema's deprecation notice
 #### General
 
 1. Use camelCase on the wire (`subType`, `mutatorRef`, `schemaVersion`).
-2. New definitions use `schemaVersion: relationships.meshery.io/v1beta3`. Do not use `core.meshery.io/v1alpha2` or `v1beta1`.
+2. Author against `relationships.meshery.io/v1beta3` (declare `v1beta2` while current servers require it - see the top of this page). Do not use `core.meshery.io/v1alpha2` or `v1beta1`.
 
 #### Scoping
 

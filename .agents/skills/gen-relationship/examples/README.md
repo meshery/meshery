@@ -2,7 +2,7 @@
 
 One compact, pedagogical example per canonical `kind` / `type` / `subType` combination found in Meshery models, plus the schema-native sibling encoding.
 
-These are teaching fixtures, not drop-in replacements for in-tree `models/**/relationships/*.json`. In-tree files are mostly `relationships.meshery.io/v1beta2` and carry full model/registrant envelopes. New definitions should use `relationships.meshery.io/v1beta3` as in these examples.
+These are teaching fixtures, not drop-in replacements for in-tree `models/**/relationships/*.json`. In-tree files are mostly `relationships.meshery.io/v1beta2` and carry full model/registrant envelopes. These examples declare `relationships.meshery.io/v1beta3` (the authoring target); a definition that must register on current servers declares `v1beta2` until meshkit#1096 ships in the server - the rest of the document is identical.
 
 See `SKILL.md` for when to pick each combo and how `mutatorRef` / `mutatedRef` pair.
 
