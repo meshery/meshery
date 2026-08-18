@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "connections.meshery.io/v1beta3",
+  "name": "Anthropic Claude",
+  "description": "An Anthropic Claude model provider connection that allows Meshery to interact with Claude for AI inference.",
+  "kind": "anthropic-claude",
+  "type": "model-provider",
+  "subType": "inference",
+  "status": "registered",
+  "transitionMap": {
+    "registered": [
+      {
+        "nextState": "connected",
+        "description": "Connects to Anthropic Claude and makes its models available in Meshery."
+      },
+      {
+        "nextState": "ignored",
+        "description": "Keeps the Anthropic Claude registration but stops Meshery from connecting to or acting on it. You can connect it again whenever you choose."
+      }
+    ],
+    "connected": [
+      {
+        "nextState": "disconnected",
+        "description": "Disconnects Anthropic Claude: its models stop being available in Meshery. The registration is kept, so you can connect it again later."
+      },
+      {
+        "nextState": "deleted",
+        "description": "Removes the Anthropic Claude connection and its record from Meshery's database."
+      }
+    ],
+    "disconnected": [
+      {
+        "nextState": "connected",
+        "description": "Reconnects Anthropic Claude and makes its models available in Meshery again."
+      },
+      {
+        "nextState": "deleted",
+        "description": "Removes the Anthropic Claude connection and its record from Meshery's database."
+      }
+    ],
+    "ignored": [
+      {
+        "nextState": "registered",
+        "description": "Re-registers the ignored connection so Meshery can attempt to connect it again."
+      },
+      {
+        "nextState": "deleted",
+        "description": "Removes the ignored connection's record from Meshery's database."
+      }
+    ]
+  },
+  "connectionSchema": {
+    "type": "object",
+    "title": "Anthropic Claude Connection",
+    "required": [
+      "baseUrl",
+      "defaultModel"
+    ],
+    "properties": {
+      "baseUrl": {
+        "type": "string",
+        "format": "uri",
+        "default": "https://api.anthropic.com/v1",
+        "title": "Base URL",
+        "description": "Base URL of the Anthropic API."
+      },
+      "defaultModel": {
+        "type": "string",
+        "title": "Default Model",
+        "description": "The default model to use for inference (e.g. claude-sonnet-4-6)."
+      }
+    }
+  },
+  "credentialSchema": {
+    "type": "object",
+    "title": "Anthropic Claude Credential",
+    "required": [
+      "apiKey"
+    ],
+    "properties": {
+      "apiKey": {
+        "type": "string",
+        "title": "API Key",
+        "description": "API key used to authenticate with Anthropic Claude.",
+        "writeOnly": true,
+        "format": "password"
+      }
+    }
+  },
+  "styles": {
+    "svgColor": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"10\" fill=\"#000000\"/><text x=\"12\" y=\"16\" font-size=\"10\" text-anchor=\"middle\" fill=\"#ffffff\">AI</text></svg>",
+    "svgWhite": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"10\" fill=\"#ffffff\"/><text x=\"12\" y=\"16\" font-size=\"10\" text-anchor=\"middle\" fill=\"#000000\">AI</text></svg>",
+    "_comment": "TODO: Sourcing a proper Anthropic Claude icon is required before merge"
+  }
+}

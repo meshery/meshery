@@ -114,6 +114,7 @@ const (
 	ErrPersistCredentialCode              = "meshery-server-1308"
 	ErrPersistConnectionCode              = "meshery-server-1309"
 	ErrPrometheusScanCode                 = "meshery-server-1310"
+	ErrAnthropicConnectivityCode          = "meshery-server-1475"
 	ErrGrafanaScanCode                    = "meshery-server-1311"
 	ErrDBCreateCode                       = "meshery-server-1312"
 	ErrDoRequestCode                      = "meshery-server-1321"
@@ -611,6 +612,10 @@ func ErrGrafanaScan(err error) error {
 
 func ErrPrometheusScan(err error) error {
 	return errors.New(ErrPrometheusScanCode, errors.Alert, []string{"Unable to connect to prometheus"}, []string{err.Error()}, []string{"Prometheus endpoint might not be reachable from Meshery", "Prometheus endpoint is incorrect"}, []string{"Check if your Prometheus endpoint are correct", "Connect to Prometheus from the settings page in the UI"})
+}
+
+func ErrAnthropicConnectivity(err error) error {
+	return errors.New(ErrAnthropicConnectivityCode, errors.Alert, []string{"Unable to connect to Anthropic Claude"}, []string{err.Error()}, []string{"Anthropic API might not be reachable", "API key might be incorrect"}, []string{"Check if your API key is correct", "Verify your network allows egress to api.anthropic.com"})
 }
 
 func ErrDBCreate(err error) error {
