@@ -84,7 +84,7 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 				provider = h.config.Providers[providerKey]
 			}
 			if provider == nil && h.Provider != "" && providerName == models.NormalizeProviderName(h.Provider) {
-				h.log.Errorf("enforced provider %q is not registered in h.config.Providers; ProviderUIHandler will degrade to serving the provider-selection UI instead of auto-login. Register %q in PROVIDERS or unset PROVIDER on this deployment.", h.Provider, h.Provider)
+				h.log.Errorf("enforced provider %q is not registered in h.config.Providers; ProviderUIHandler will degrade to serving the provider-selection UI instead of auto-login. Configure its base URL in PROVIDER_BASE_URLS or unset PROVIDER on this deployment.", h.Provider)
 			}
 		}
 		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider) // nolint
