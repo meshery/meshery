@@ -101,9 +101,14 @@ error-util:
 # Quality
 #-----------------------------------------------------------------------------
 .PHONY: lint coverage
-## Lint mesheryctl using golangci-lint.
+## Lint mesheryctl using golangci-lint and Meshery's repo-specific Go analyzers.
+# Mirrors the golangci-lint-cli job's config and timeout, plus the ORDER BY
+# sanitization analyzer the golangci-lint-server job runs over the whole root
+# module. Without both, a CLI contributor's local lint is weaker than the jobs
+# that gate their PR.
 lint:
-	golangci-lint run --timeout 5m
+	golangci-lint run --config=../.github/.golangci.yml --timeout=10m
+	go run ../server/internal/lint/orderby/cmd/orderbylint ./...
 
 ## Run tests with coverage and generate HTML report.
 coverage:
