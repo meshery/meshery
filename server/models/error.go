@@ -167,6 +167,7 @@ const (
 	ErrOperatorChartNotPublishedCode      = "meshery-server-1470"
 	ErrOperatorChartSubstitutedCode       = "meshery-server-1471"
 	ErrNoMesheryReleasesFoundCode         = "meshery-server-1472"
+	ErrOllamaConnectivityCode             = "meshery-server-1475"
 )
 
 var (
@@ -611,6 +612,10 @@ func ErrGrafanaScan(err error) error {
 
 func ErrPrometheusScan(err error) error {
 	return errors.New(ErrPrometheusScanCode, errors.Alert, []string{"Unable to connect to prometheus"}, []string{err.Error()}, []string{"Prometheus endpoint might not be reachable from Meshery", "Prometheus endpoint is incorrect"}, []string{"Check if your Prometheus endpoint are correct", "Connect to Prometheus from the settings page in the UI"})
+}
+
+func ErrOllamaConnectivity(err error) error {
+	return errors.New(ErrOllamaConnectivityCode, errors.Alert, []string{"Unable to connect to Ollama"}, []string{err.Error()}, []string{"Ollama endpoint might not be reachable from Meshery", "Ollama endpoint (baseUrl) is incorrect", "Ollama instance requires an access token that wasn't supplied"}, []string{"Check that your Ollama endpoint is correct and reachable from the Meshery server", "Verify the Ollama instance is running and has at least one model available", "If this Ollama instance sits behind an authenticating proxy, supply an access token when connecting"})
 }
 
 func ErrDBCreate(err error) error {
