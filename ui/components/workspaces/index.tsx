@@ -7,6 +7,7 @@ import {
 } from '@sistent/sistent';
 import {
   Box,
+  CircularProgress,
   CustomColumnVisibilityControl,
   CustomTooltip,
   TeamsIcon,
@@ -186,7 +187,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
   const bulkDeleteRef = useRef(null);
   const { notify } = useNotification();
 
-  const { data: workspacesData } = useGetWorkspacesQuery(
+  const { data: workspacesData, isLoading: isWorkspacesLoading } = useGetWorkspacesQuery(
     {
       page: page,
       pagesize: pageSize,
@@ -206,6 +207,12 @@ const Workspaces = ({ onSelectWorkspace }) => {
   const [deleteWorkspace] = useDeleteWorkspaceMutation();
 
   const workspaces = workspacesData?.workspaces ? workspacesData.workspaces : [];
+  // The query above is skipped until organization?.id hydrates, and a skipped
+  // RTK Query hook never reports isLoading - so without this, `workspaces`
+  // reads as [] before the org has loaded and EmptyState's "Click Create"
+  // prompt flashes up at the exact moment the Create button is disabled for
+  // "Organization is still loading…" (flagged in review on meshery/meshery#21335).
+  const isResolvingWorkspaces = !organization?.id || isWorkspacesLoading;
   const handleCreateWorkspace = ({ organizationId, name, description }) => {
     // Defense-in-depth: the modal only opens once organization?.id is present
     // (see handleWorkspaceModalOpen), but organizationId is a hidden form
@@ -536,7 +543,11 @@ const Workspaces = ({ onSelectWorkspace }) => {
           </ToolWrapper>
         )}
         <>
-          {workspaces.length === 0 ? (
+          {isResolvingWorkspaces ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
+              <CircularProgress data-testid="workspaces-loading" />
+            </Box>
+          ) : workspaces.length === 0 ? (
             <EmptyState
               icon={<WorkspaceIcon height="6rem" width="6rem" fill="#808080" />}
               message="No workspace available"

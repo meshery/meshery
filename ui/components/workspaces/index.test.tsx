@@ -36,7 +36,7 @@ const {
   createWorkspace: vi.fn(),
   updateWorkspace: vi.fn(),
   deleteWorkspace: vi.fn(),
-  WORKSPACES_QUERY_RESULT: { data: { workspaces: [], totalCount: 0 } },
+  WORKSPACES_QUERY_RESULT: { data: { workspaces: [], totalCount: 0 }, isLoading: false },
   EMPTY_QUERY_RESULT: { data: undefined, isLoading: false },
   NOOP_MUTATION: [vi.fn()],
   UI_STATE: { ui: { organization: { id: 'org-1' } as { id: string } | null } },
@@ -132,6 +132,7 @@ vi.mock('@sistent/sistent', () => ({
       {children}
     </button>
   ),
+  CircularProgress: (props: any) => <div {...props} />,
   CustomColumnVisibilityControl: () => null,
   CustomTooltip: ({ children, title }: any) => (
     <div data-testid={`tooltip-${title}`}>{children}</div>
@@ -324,7 +325,7 @@ describe('Workspaces create flow — organization guard', () => {
     expect(notify).not.toHaveBeenCalled();
   });
 
-  it('refuses to submit a create with no organizationId even if the modal is already open', async () => {
+  it('submit-time guard rejects creation when organizationId is missing, even with the modal already open', async () => {
     submittedOrgId.current = undefined;
 
     await openCreateModalAndSubmit();
@@ -335,5 +336,46 @@ describe('Workspaces create flow — organization guard', () => {
     expect(types).toContain('error');
     expect(types).not.toContain('success');
     expect(notify.mock.calls[0][0].message).toMatch(/organization/i);
+  });
+});
+
+/**
+ * Flagged in review on meshery/meshery#21335: the workspaces query is
+ * skipped until organization?.id hydrates, and a skipped RTK Query hook
+ * never reports isLoading - so `workspacesData` stayed undefined and
+ * `workspaces` defaulted to [], rendering EmptyState's "Click Create" prompt
+ * at the exact moment the Create button was disabled for "Organization is
+ * still loading…". Neither EmptyState nor the data views should render
+ * before organization and the workspaces query have both resolved.
+ */
+describe('Workspaces list — loading state', () => {
+  afterEach(() => {
+    UI_STATE.ui.organization = { id: 'org-1' };
+    WORKSPACES_QUERY_RESULT.data = { workspaces: [], totalCount: 0 };
+    WORKSPACES_QUERY_RESULT.isLoading = false;
+  });
+
+  it('shows a loading indicator instead of the empty state while the organization has not loaded yet', () => {
+    UI_STATE.ui.organization = null;
+    render(<Workspaces onSelectWorkspace={undefined} />);
+
+    expect(screen.getByTestId('workspaces-loading')).toBeInTheDocument();
+    expect(screen.queryByText('empty')).not.toBeInTheDocument();
+  });
+
+  it('shows a loading indicator instead of the empty state while the workspaces query is still in flight', () => {
+    WORKSPACES_QUERY_RESULT.data = undefined;
+    WORKSPACES_QUERY_RESULT.isLoading = true;
+    render(<Workspaces onSelectWorkspace={undefined} />);
+
+    expect(screen.getByTestId('workspaces-loading')).toBeInTheDocument();
+    expect(screen.queryByText('empty')).not.toBeInTheDocument();
+  });
+
+  it('shows the empty state once organization and workspace data have both resolved with zero workspaces', () => {
+    render(<Workspaces onSelectWorkspace={undefined} />);
+
+    expect(screen.queryByTestId('workspaces-loading')).not.toBeInTheDocument();
+    expect(screen.getByText('empty')).toBeInTheDocument();
   });
 });
