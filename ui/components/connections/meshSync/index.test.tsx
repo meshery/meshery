@@ -59,6 +59,50 @@ vi.mock('@sistent/sistent', () => ({
       >
         Apply kind All
       </button>
+      <button
+        type="button"
+        data-testid="apply-model-core"
+        onClick={() => {
+          const next = { ...selectedFilters, model: 'core' };
+          setSelectedFilters(next);
+          handleApplyFilter(next);
+        }}
+      >
+        Apply model core
+      </button>
+      <button
+        type="button"
+        data-testid="apply-model-all"
+        onClick={() => {
+          const next = { ...selectedFilters, model: 'All' };
+          setSelectedFilters(next);
+          handleApplyFilter(next);
+        }}
+      >
+        Apply model All
+      </button>
+      <button
+        type="button"
+        data-testid="apply-namespace-default"
+        onClick={() => {
+          const next = { ...selectedFilters, namespace: 'default' };
+          setSelectedFilters(next);
+          handleApplyFilter(next);
+        }}
+      >
+        Apply namespace default
+      </button>
+      <button
+        type="button"
+        data-testid="apply-namespace-all"
+        onClick={() => {
+          const next = { ...selectedFilters, namespace: 'All' };
+          setSelectedFilters(next);
+          handleApplyFilter(next);
+        }}
+      >
+        Apply namespace All
+      </button>
     </div>
   ),
   TableCell: ({ children }) => <div>{children}</div>,
@@ -223,6 +267,52 @@ describe('MeshSyncTable', () => {
     await waitFor(() => {
       expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
         expect.objectContaining({ kind: null }),
+      );
+    });
+  });
+
+  it('clears model from the MeshSync query when model is reset to All', async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(<MeshSyncTable />);
+
+    await user.click(screen.getByTestId('apply-model-core'));
+    rerender(<MeshSyncTable />);
+
+    await waitFor(() => {
+      expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+        expect.objectContaining({ model: 'core' }),
+      );
+    });
+
+    await user.click(screen.getByTestId('apply-model-all'));
+    rerender(<MeshSyncTable />);
+
+    await waitFor(() => {
+      expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+        expect.objectContaining({ model: null }),
+      );
+    });
+  });
+
+  it('clears namespace from the MeshSync query when namespace is reset to All', async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(<MeshSyncTable />);
+
+    await user.click(screen.getByTestId('apply-namespace-default'));
+    rerender(<MeshSyncTable />);
+
+    await waitFor(() => {
+      expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+        expect.objectContaining({ namespace: 'default' }),
+      );
+    });
+
+    await user.click(screen.getByTestId('apply-namespace-all'));
+    rerender(<MeshSyncTable />);
+
+    await waitFor(() => {
+      expect(useGetMeshSyncResourcesQuery).toHaveBeenLastCalledWith(
+        expect.objectContaining({ namespace: null }),
       );
     });
   });
