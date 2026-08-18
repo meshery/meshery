@@ -62,7 +62,7 @@ func TestViewCmd(t *testing.T) {
 	utils.InvokeMesheryctlTestCommand(t, update, FilterCmd, loggerTests, currDir, "filter")
 }
 
-func TestGetFilterViewFilePath_AppendsExtension(t *testing.T) {
+func TestViewCmd_SaveAddsJSONExtension(t *testing.T) {
 	originalMesheryFolder := utils.MesheryFolder
 	originalDefaultConfigPath := utils.DefaultConfigPath
 	originalTokenFlag := utils.TokenFlag

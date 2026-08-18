@@ -52,6 +52,7 @@ mesheryctl component view [component-name | component-id] -o [json|yaml]
 mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		cmdComponentViewFlags.OutputFormat = strings.ToLower(cmdComponentViewFlags.OutputFormat)
 		return mesheryctlflags.ValidateCmdFlags(cmd, &cmdComponentViewFlags)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
@@ -96,7 +97,7 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 		fileName := ""
 		if cmdComponentViewFlags.Save {
 			componentString := strings.ReplaceAll(fmt.Sprintf("%v", selectedComponent.DisplayName), " ", "_")
-			fileName = filepath.Join(utils.MesheryFolder, fmt.Sprintf("component_%s.%s", componentString, cmdComponentViewFlags.OutputFormat))
+			fileName = filepath.Join(utils.MesheryFolder, fmt.Sprintf("component_%s", componentString))
 		}
 
 		return display.FormatAndSaveOutput(*selectedComponent, cmdComponentViewFlags.OutputFormat, cmd.OutOrStdout(), cmdComponentViewFlags.Save, fileName)

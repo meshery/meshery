@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 
@@ -34,6 +35,15 @@ func FormatAndSaveOutput[T any](data T, format string, out io.Writer, save bool,
 
 	if !save {
 		return nil
+	}
+
+	if filePath != "" {
+		fileExtension := filepath.Ext(filePath)
+		baseFilePath := filePath
+		if strings.EqualFold(fileExtension, ".json") || strings.EqualFold(fileExtension, ".yaml") {
+			baseFilePath = strings.TrimSuffix(filePath, fileExtension)
+		}
+		filePath = fmt.Sprintf("%s.%s", baseFilePath, format)
 	}
 
 	outputFormatterSaverFactory := OutputFormatterSaverFactory[T]{}

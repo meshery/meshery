@@ -77,6 +77,7 @@ mesheryctl filter view "filter name"
 		return nil
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		filterViewFlagsProvided.OutputFormat = strings.ToLower(filterViewFlagsProvided.OutputFormat)
 		return mesheryctlflags.ValidateCmdFlags(cmd, &filterViewFlagsProvided)
 	},
 
@@ -142,7 +143,7 @@ mesheryctl filter view "filter name"
 
 		filePath := ""
 		if filterViewFlagsProvided.Save {
-			filePath = fmt.Sprintf("%s.%s", getFilterViewFilePath(selectedFilter, filterViewFlagsProvided.ViewAllFlag), strings.ToLower(filterViewFlagsProvided.OutputFormat))
+			filePath = getFilterViewFilePath(selectedFilter, filterViewFlagsProvided.ViewAllFlag)
 		}
 
 		return display.FormatAndSaveOutput(data, filterViewFlagsProvided.OutputFormat, cmd.OutOrStdout(), filterViewFlagsProvided.Save, filePath)

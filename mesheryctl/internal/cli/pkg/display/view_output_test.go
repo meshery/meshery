@@ -71,12 +71,59 @@ func TestFormatAndSaveOutput_WhenFormatIsInvalid_ThenReturnsUnsupportedFormatErr
 	utils.AssertMeshkitErrorsEqual(t, err, ErrUnsupportedFormat("invalid"))
 }
 
+func TestFormatAndSaveOutput_NormalizesJSONFormatVariants(t *testing.T) {
+	formats := []string{"json", "JSON", "Json"}
+
+	for _, format := range formats {
+		t.Run(format, func(t *testing.T) {
+			buf := &bytes.Buffer{}
+			err := FormatAndSaveOutput(viewOutputTestStruct{Name: "meshery"}, format, buf, false, "")
+			if err != nil {
+				t.Fatalf("expected no error for format %q, got %v", format, err)
+			}
+
+			if !bytes.Contains(buf.Bytes(), []byte("\"name\": \"meshery\"")) {
+				t.Fatalf("expected output to contain JSON payload for format %q, got %q", format, buf.String())
+			}
+		})
+	}
+}
+
 func TestFormatAndSaveOutput_AcceptsMixedCaseFormat(t *testing.T) {
 	tmpDir := t.TempDir()
 	tmpFile := filepath.Join(tmpDir, "mixed-case.yaml")
+	buf := &bytes.Buffer{}
 
-	err := FormatAndSaveOutput(viewOutputTestStruct{Name: "meshery"}, "YAML", nil, true, tmpFile)
+	err := FormatAndSaveOutput(viewOutputTestStruct{Name: "meshery"}, "YAML", buf, true, tmpFile)
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
+	}
+
+	if !bytes.Contains(buf.Bytes(), []byte("name: meshery")) {
+		t.Fatalf("expected output to contain %q, got %q", "name: meshery", buf.String())
+	}
+
+	if _, err := os.Stat(tmpFile); err != nil {
+		t.Fatalf("expected saved file %q to exist, got %v", tmpFile, err)
+	}
+}
+
+func TestFormatAndSaveOutput_NormalizesSaveExtensionToLowercase(t *testing.T) {
+	tmpDir := t.TempDir()
+	buf := &bytes.Buffer{}
+
+	inputPath := filepath.Join(tmpDir, "normalized-ext.JSON")
+	err := FormatAndSaveOutput(viewOutputTestStruct{Name: "meshery"}, "JSON", buf, true, inputPath)
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+
+	normalizedPath := filepath.Join(tmpDir, "normalized-ext.json")
+	if _, err := os.Stat(normalizedPath); err != nil {
+		t.Fatalf("expected normalized saved file %q to exist, got %v", normalizedPath, err)
+	}
+
+	if _, err := os.Stat(inputPath); !os.IsNotExist(err) {
+		t.Fatalf("expected original mixed-case path %q to not exist, got %v", inputPath, err)
 	}
 }

@@ -49,6 +49,7 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json
 mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --save
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		workspaceViewFlagsProvided.OutputFormat = strings.ToLower(workspaceViewFlagsProvided.OutputFormat)
 		return mesheryctlflags.ValidateCmdFlags(cmd, &workspaceViewFlagsProvided)
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
@@ -117,7 +118,7 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 			if workspaceString == "" {
 				workspaceString = selectedWorkspace.ID.String()
 			}
-			fileName = filepath.Join(utils.MesheryFolder, fmt.Sprintf("workspace_%s.%s", workspaceString, workspaceViewFlagsProvided.OutputFormat))
+			fileName = filepath.Join(utils.MesheryFolder, fmt.Sprintf("workspace_%s", workspaceString))
 		}
 
 		return display.FormatAndSaveOutput(selectedWorkspace, workspaceViewFlagsProvided.OutputFormat, cmd.OutOrStdout(), workspaceViewFlagsProvided.Save, fileName)

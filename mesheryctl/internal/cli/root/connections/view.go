@@ -106,7 +106,7 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 				return strings.ReplaceAll(fmt.Sprintf("%v", c.Name), " ", "_")
 			}(*selectedConnection)
 
-			fileName = fmt.Sprintf("connection_%s.%s", connectionString, strings.ToLower(connectionViewFlagsProvided.outputFormat))
+			fileName = fmt.Sprintf("connection_%s", connectionString)
 			fileName = filepath.Join(homeDir, ".meshery", fileName)
 		}
 
