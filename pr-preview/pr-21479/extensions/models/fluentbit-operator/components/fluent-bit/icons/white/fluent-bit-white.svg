@@ -1,0 +1,224 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="-4.20 32.80 439.40 364.90" width='439.4' height='364.9'>
+    <style>
+        svg {
+            enable-background: new 0 0 432 432
+        }
+    </style>
+    <g transform="translate(-657.1 -27.496)">
+        <circle cx="1024" cy="192.2" r="8.8" fill="#fff" />
+        <linearGradient id="a" x1="1431.47" x2="1990.244" y1="-937.473" y2="-937.473"
+            gradientTransform="matrix(.8 0 0 .8 -500.932 920.276)" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff" stop-opacity=".75" />
+            <stop offset=".32" stop-color="#fff" stop-opacity=".57" />
+            <stop offset=".68" stop-color="#fff" stop-opacity=".55" />
+            <stop offset=".9" stop-color="#fff" stop-opacity=".45" />
+        </linearGradient>
+        <path fill="url(#a)"
+            d="M814 138.5c-14.1-10.8-28.5-22-42.6-32.1-3.3-2.3-6.6-4.6-9.5-6.9-38-26.2-73.4-42.6-93-19.6-15.1 17.7-6.9 58.6 23.9 108.1l1 1.6c16 25.2 62.9 84.5 174 81.9 7.2-7.9 18.4-22.6 32.8-38.6-23.3-38-58.4-71.1-86.6-94.4z" />
+        <linearGradient id="b" x1="1452.846" x2="1985.002" y1="-835.108" y2="-835.108"
+            gradientTransform="matrix(.8 0 0 .8 -500.932 920.276)" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff" stop-opacity=".4" />
+            <stop offset=".67" stop-color="#fff" stop-opacity=".5" />
+        </linearGradient>
+        <path fill="url(#b)"
+            d="M900.5 232.9c-14.4 16-25.6 30.8-32.8 38.6 16.7-.3 33.4-1.6 49.8-4.2-1.6-4.9-3.6-9.5-5.9-14.1-3.2-6.9-7.1-13.8-11.1-20.3z" />
+        <linearGradient id="c" x1="1643.595" x2="1988.033" y1="-918.023" y2="-918.023"
+            gradientTransform="matrix(.8 0 0 .8 -500.932 920.276)" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff" stop-opacity=".38" />
+            <stop offset=".97" stop-color="#fff" stop-opacity=".5" />
+        </linearGradient>
+        <path fill="url(#c)"
+            d="M983.7 172c-30.1 9.2-60 24.6-98.3 12.4-19.3-5.9-44.6-24.9-71.8-45.5 28.5 22.9 63.6 56 86.8 94 21.4-23.9 49.9-50.1 83.3-60.9z" />
+        <linearGradient id="d" x1="1841.087" x2="1841.087" y1="-1002.015" y2="-623.67"
+            gradientTransform="matrix(.8 0 0 .8 -500.932 920.276)" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#4faac4" />
+            <stop offset="0" stop-color="#fff" stop-opacity=".35" />
+            <stop offset=".964" stop-color="#fff" stop-opacity=".38" />
+            <stop offset="1" stop-color="#fff" stop-opacity=".26" />
+        </linearGradient>
+        <path fill="url(#d)"
+            d="M917.5 267.3c1.3 3.6 2.6 7.2 3.6 10.8 2.3 8.8 3.9 17.7 4.6 26.9.3 3.9.3 7.9.3 11.8-.6 25.2-12.1 39.6-15.1 42.2 40.9-38.3 59.3-84.5 99.3-119.5 6.9-5.9 14.4-10.8 22.6-14.4-26.1 11.1-54.7 33-115.3 42.2z" />
+        <linearGradient id="e" x1="1395.419" x2="1787.213" y1="-865.285" y2="-865.285"
+            gradientTransform="matrix(.8 0 0 -.8 -500.932 -395.46)" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff" stop-opacity=".6" />
+            <stop offset=".93" stop-color="#fff" stop-opacity=".47" />
+        </linearGradient>
+        <path fill="url(#e)"
+            d="M693.8 190c30.5 47.8 78 85.8 68.8 138.9-11.8 68.5-101.2 74.7-101.2 74.7h2c8.8 0 48.5-3 108.4-43.6 51.4-35 82.6-74 96-88.4-12.4.3-23.9-.3-34.7-1.3-86.2-8.9-124.9-58.1-139.3-80.3z" />
+        <linearGradient id="f" x1="1452.857" x2="1985.013" y1="-722.681" y2="-722.681"
+            gradientTransform="matrix(.8 0 0 .8 -500.932 920.276)" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff" stop-opacity=".38" />
+            <stop offset=".98" stop-color="#fff" stop-opacity=".5" />
+        </linearGradient>
+        <path fill="url(#f)"
+            d="M925.7 316.8c.3-16.7-2.6-33.8-8.5-49.5-2.6.3-4.9.6-7.5 1-14.1 1.6-28.2 3-42.2 3-13.8 14.4-44.6 53.4-96 88.4-68.2 46.8-110.1 43.9-110.1 43.9s100.2 31.1 181.5-1.6c25.2-9.8 48.5-24.6 68.2-42.9 2.8-3.1 14.3-17.1 14.6-42.3z" />
+        <linearGradient id="g" x1="1866.472" x2="1866.472" y1="-888.514" y2="-698.203"
+            gradientTransform="matrix(.8 0 0 -.8 -500.932 -395.46)" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff" stop-opacity=".3" />
+            <stop offset="1" stop-color="#fff" stop-opacity=".35" />
+        </linearGradient>
+        <path fill="url(#g)"
+            d="M1076.1 207.6c-4.6-2.3-8.8-5.2-12.4-8.5-3.6-3.6-7.5-13.1-9.2-15.7-4.9-8.2-12.1-14.8-27.2-16.7-15.1-2-29.2 1-43.2 5.2-33.8 10.8-62.2 37-83.5 60.9 4.2 6.6 7.9 13.4 11.1 20.3 2.3 4.6 4.2 9.5 5.9 14.1 60.6-9.2 89.1-31.1 115.3-42.2 13.1-5.6 27.2-8.2 41.3-7.9h7.5c5.5.4 0-6.2-5.6-9.5z" />
+        <linearGradient id="h" x1="1431.47" x2="1990.244" y1="-937.473" y2="-937.473"
+            gradientTransform="matrix(.8 0 0 .8 -500.932 920.276)" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff" stop-opacity=".75" />
+            <stop offset=".32" stop-color="#fff" stop-opacity=".57" />
+            <stop offset=".68" stop-color="#fff" stop-opacity=".55" />
+            <stop offset=".9" stop-color="#fff" stop-opacity=".45" />
+        </linearGradient>
+        <path fill="url(#h)"
+            d="M814 138.5c-14.1-10.8-28.5-22-42.6-32.1-3.3-2.3-6.6-4.6-9.5-6.9-38-26.2-73.4-42.6-93-19.6-15.1 17.7-6.9 58.6 23.9 108.1l1 1.6c16 25.2 62.9 84.5 174 81.9 7.2-7.9 18.4-22.6 32.8-38.6-23.3-38-58.4-71.1-86.6-94.4z" />
+        <linearGradient id="i" x1="1452.846" x2="1985.002" y1="-835.108" y2="-835.108"
+            gradientTransform="matrix(.8 0 0 .8 -500.932 920.276)" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff" stop-opacity=".4" />
+            <stop offset=".67" stop-color="#fff" stop-opacity=".5" />
+        </linearGradient>
+        <path fill="url(#i)"
+            d="M900.5 232.9c-14.4 16-25.6 30.8-32.8 38.6 16.7-.3 33.4-1.6 49.8-4.2-1.6-4.9-3.6-9.5-5.9-14.1-3.2-6.9-7.1-13.8-11.1-20.3z" />
+        <linearGradient id="j" x1="1643.595" x2="1988.033" y1="-918.023" y2="-918.023"
+            gradientTransform="matrix(.8 0 0 .8 -500.932 920.276)" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff" stop-opacity=".38" />
+            <stop offset=".97" stop-color="#fff" stop-opacity=".5" />
+        </linearGradient>
+        <path fill="url(#j)"
+            d="M983.7 172c-30.1 9.2-60 24.6-98.3 12.4-19.3-5.9-44.6-24.9-71.8-45.5 28.5 22.9 63.6 56 86.8 94 21.4-23.9 49.9-50.1 83.3-60.9z" />
+        <linearGradient id="k" x1="1841.087" x2="1841.087" y1="-1002.015" y2="-623.67"
+            gradientTransform="matrix(.8 0 0 .8 -500.932 920.276)" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#4faac4" />
+            <stop offset="0" stop-color="#fff" stop-opacity=".35" />
+            <stop offset=".964" stop-color="#fff" stop-opacity=".38" />
+            <stop offset="1" stop-color="#fff" stop-opacity=".26" />
+        </linearGradient>
+        <path fill="url(#k)"
+            d="M917.5 267.3c1.3 3.6 2.6 7.2 3.6 10.8 2.3 8.8 3.9 17.7 4.6 26.9.3 3.9.3 7.9.3 11.8-.6 25.2-12.1 39.6-15.1 42.2 40.9-38.3 59.3-84.5 99.3-119.5 6.9-5.9 14.4-10.8 22.6-14.4-26.1 11.1-54.7 33-115.3 42.2z" />
+        <linearGradient id="l" x1="1395.419" x2="1787.213" y1="-865.285" y2="-865.285"
+            gradientTransform="matrix(.8 0 0 -.8 -500.932 -395.46)" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff" stop-opacity=".6" />
+            <stop offset=".93" stop-color="#fff" stop-opacity=".47" />
+        </linearGradient>
+        <path fill="url(#l)"
+            d="M693.8 190c30.5 47.8 78 85.8 68.8 138.9-11.8 68.5-101.2 74.7-101.2 74.7h2c8.8 0 48.5-3 108.4-43.6 51.4-35 82.6-74 96-88.4-12.4.3-23.9-.3-34.7-1.3-86.2-8.9-124.9-58.1-139.3-80.3z" />
+        <linearGradient id="m" x1="1452.857" x2="1985.013" y1="-722.681" y2="-722.681"
+            gradientTransform="matrix(.8 0 0 .8 -500.932 920.276)" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff" stop-opacity=".38" />
+            <stop offset=".98" stop-color="#fff" stop-opacity=".5" />
+        </linearGradient>
+        <path fill="url(#m)"
+            d="M925.7 316.8c.3-16.7-2.6-33.8-8.5-49.5-2.6.3-4.9.6-7.5 1-14.1 1.6-28.2 3-42.2 3-13.8 14.4-44.6 53.4-96 88.4-68.2 46.8-110.1 43.9-110.1 43.9s100.2 31.1 181.5-1.6c25.2-9.8 48.5-24.6 68.2-42.9 2.8-3.1 14.3-17.1 14.6-42.3z" />
+        <linearGradient id="n" x1="1866.472" x2="1866.472" y1="-888.514" y2="-698.203"
+            gradientTransform="matrix(.8 0 0 -.8 -500.932 -395.46)" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff" stop-opacity=".3" />
+            <stop offset="1" stop-color="#fff" stop-opacity=".35" />
+        </linearGradient>
+        <path fill="url(#n)"
+            d="M1076.1 207.6c-4.6-2.3-8.8-5.2-12.4-8.5-3.6-3.6-7.5-13.1-9.2-15.7-4.9-8.2-12.1-14.8-27.2-16.7-15.1-2-29.2 1-43.2 5.2-33.8 10.8-62.2 37-83.5 60.9 4.2 6.6 7.9 13.4 11.1 20.3 2.3 4.6 4.2 9.5 5.9 14.1 60.6-9.2 89.1-31.1 115.3-42.2 13.1-5.6 27.2-8.2 41.3-7.9h7.5c5.5.4 0-6.2-5.6-9.5z" />
+        <linearGradient id="o" x1="1431.47" x2="1990.244" y1="-937.473" y2="-937.473"
+            gradientTransform="matrix(.8 0 0 .8 -500.932 920.276)" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff" stop-opacity=".75" />
+            <stop offset=".32" stop-color="#fff" stop-opacity=".57" />
+            <stop offset=".68" stop-color="#fff" stop-opacity=".55" />
+            <stop offset=".9" stop-color="#fff" stop-opacity=".45" />
+        </linearGradient>
+        <path fill="url(#o)"
+            d="M814 138.5c-14.1-10.8-28.5-22-42.6-32.1-3.3-2.3-6.6-4.6-9.5-6.9-38-26.2-73.4-42.6-93-19.6-15.1 17.7-6.9 58.6 23.9 108.1l1 1.6c16 25.2 62.9 84.5 174 81.9 7.2-7.9 18.4-22.6 32.8-38.6-23.3-38-58.4-71.1-86.6-94.4z" />
+        <linearGradient id="p" x1="1452.846" x2="1985.002" y1="-835.108" y2="-835.108"
+            gradientTransform="matrix(.8 0 0 .8 -500.932 920.276)" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff" stop-opacity=".4" />
+            <stop offset=".67" stop-color="#fff" stop-opacity=".5" />
+        </linearGradient>
+        <path fill="url(#p)"
+            d="M900.5 232.9c-14.4 16-25.6 30.8-32.8 38.6 16.7-.3 33.4-1.6 49.8-4.2-1.6-4.9-3.6-9.5-5.9-14.1-3.2-6.9-7.1-13.8-11.1-20.3z" />
+        <linearGradient id="q" x1="1643.595" x2="1988.033" y1="-918.023" y2="-918.023"
+            gradientTransform="matrix(.8 0 0 .8 -500.932 920.276)" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff" stop-opacity=".38" />
+            <stop offset=".97" stop-color="#fff" stop-opacity=".5" />
+        </linearGradient>
+        <path fill="url(#q)"
+            d="M983.7 172c-30.1 9.2-60 24.6-98.3 12.4-19.3-5.9-44.6-24.9-71.8-45.5 28.5 22.9 63.6 56 86.8 94 21.4-23.9 49.9-50.1 83.3-60.9z" />
+        <linearGradient id="r" x1="1841.087" x2="1841.087" y1="-1002.015" y2="-623.67"
+            gradientTransform="matrix(.8 0 0 .8 -500.932 920.276)" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#4faac4" />
+            <stop offset="0" stop-color="#fff" stop-opacity=".35" />
+            <stop offset=".964" stop-color="#fff" stop-opacity=".38" />
+            <stop offset="1" stop-color="#fff" stop-opacity=".26" />
+        </linearGradient>
+        <path fill="url(#r)"
+            d="M917.5 267.3c1.3 3.6 2.6 7.2 3.6 10.8 2.3 8.8 3.9 17.7 4.6 26.9.3 3.9.3 7.9.3 11.8-.6 25.2-12.1 39.6-15.1 42.2 40.9-38.3 59.3-84.5 99.3-119.5 6.9-5.9 14.4-10.8 22.6-14.4-26.1 11.1-54.7 33-115.3 42.2z" />
+        <linearGradient id="s" x1="1395.419" x2="1787.213" y1="-865.285" y2="-865.285"
+            gradientTransform="matrix(.8 0 0 -.8 -500.932 -395.46)" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff" stop-opacity=".6" />
+            <stop offset=".93" stop-color="#fff" stop-opacity=".47" />
+        </linearGradient>
+        <path fill="url(#s)"
+            d="M693.8 190c30.5 47.8 78 85.8 68.8 138.9-11.8 68.5-101.2 74.7-101.2 74.7h2c8.8 0 48.5-3 108.4-43.6 51.4-35 82.6-74 96-88.4-12.4.3-23.9-.3-34.7-1.3-86.2-8.9-124.9-58.1-139.3-80.3z" />
+        <linearGradient id="t" x1="1452.857" x2="1985.013" y1="-722.681" y2="-722.681"
+            gradientTransform="matrix(.8 0 0 .8 -500.932 920.276)" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff" stop-opacity=".38" />
+            <stop offset=".98" stop-color="#fff" stop-opacity=".5" />
+        </linearGradient>
+        <path fill="url(#t)"
+            d="M925.7 316.8c.3-16.7-2.6-33.8-8.5-49.5-2.6.3-4.9.6-7.5 1-14.1 1.6-28.2 3-42.2 3-13.8 14.4-44.6 53.4-96 88.4-68.2 46.8-110.1 43.9-110.1 43.9s100.2 31.1 181.5-1.6c25.2-9.8 48.5-24.6 68.2-42.9 2.8-3.1 14.3-17.1 14.6-42.3z" />
+        <linearGradient id="u" x1="1866.472" x2="1866.472" y1="-888.514" y2="-698.203"
+            gradientTransform="matrix(.8 0 0 -.8 -500.932 -395.46)" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff" stop-opacity=".3" />
+            <stop offset="1" stop-color="#fff" stop-opacity=".35" />
+        </linearGradient>
+        <path fill="url(#u)"
+            d="M1076.1 207.6c-4.6-2.3-8.8-5.2-12.4-8.5-3.6-3.6-7.5-13.1-9.2-15.7-4.9-8.2-12.1-14.8-27.2-16.7-15.1-2-29.2 1-43.2 5.2-33.8 10.8-62.2 37-83.5 60.9 4.2 6.6 7.9 13.4 11.1 20.3 2.3 4.6 4.2 9.5 5.9 14.1 60.6-9.2 89.1-31.1 115.3-42.2 13.1-5.6 27.2-8.2 41.3-7.9h7.5c5.5.4 0-6.2-5.6-9.5z" />
+        <g>
+            <linearGradient id="v" x1="1431.47" x2="1990.244" y1="-937.473" y2="-937.473"
+                gradientTransform="matrix(.8 0 0 .8 -500.932 920.276)" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#fff" stop-opacity=".75" />
+                <stop offset=".32" stop-color="#fff" stop-opacity=".57" />
+                <stop offset=".68" stop-color="#fff" stop-opacity=".55" />
+                <stop offset=".9" stop-color="#fff" stop-opacity=".45" />
+            </linearGradient>
+            <path fill="url(#v)"
+                d="M814 138.5c-14.1-10.8-28.5-22-42.6-32.1-3.3-2.3-6.6-4.6-9.5-6.9-38-26.2-73.4-42.6-93-19.6-15.1 17.7-6.9 58.6 23.9 108.1l1 1.6c16 25.2 62.9 84.5 174 81.9 7.2-7.9 18.4-22.6 32.8-38.6-23.3-38-58.4-71.1-86.6-94.4z" />
+            <linearGradient id="w" x1="1452.846" x2="1985.002" y1="-835.108" y2="-835.108"
+                gradientTransform="matrix(.8 0 0 .8 -500.932 920.276)" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#fff" stop-opacity=".4" />
+                <stop offset=".67" stop-color="#fff" stop-opacity=".5" />
+            </linearGradient>
+            <path fill="url(#w)"
+                d="M900.5 232.9c-14.4 16-25.6 30.8-32.8 38.6 16.7-.3 33.4-1.6 49.8-4.2-1.6-4.9-3.6-9.5-5.9-14.1-3.2-6.9-7.1-13.8-11.1-20.3z" />
+            <linearGradient id="x" x1="1643.595" x2="1988.033" y1="-918.023" y2="-918.023"
+                gradientTransform="matrix(.8 0 0 .8 -500.932 920.276)" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#fff" stop-opacity=".38" />
+                <stop offset=".97" stop-color="#fff" stop-opacity=".5" />
+            </linearGradient>
+            <path fill="url(#x)"
+                d="M983.7 172c-30.1 9.2-60 24.6-98.3 12.4-19.3-5.9-44.6-24.9-71.8-45.5 28.5 22.9 63.6 56 86.8 94 21.4-23.9 49.9-50.1 83.3-60.9z" />
+            <linearGradient id="y" x1="1841.087" x2="1841.087" y1="-1002.015" y2="-623.67"
+                gradientTransform="matrix(.8 0 0 .8 -500.932 920.276)" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#4faac4" />
+                <stop offset="0" stop-color="#fff" stop-opacity=".35" />
+                <stop offset=".964" stop-color="#fff" stop-opacity=".38" />
+                <stop offset="1" stop-color="#fff" stop-opacity=".26" />
+            </linearGradient>
+            <path fill="url(#y)"
+                d="M917.5 267.3c1.3 3.6 2.6 7.2 3.6 10.8 2.3 8.8 3.9 17.7 4.6 26.9.3 3.9.3 7.9.3 11.8-.6 25.2-12.1 39.6-15.1 42.2 40.9-38.3 59.3-84.5 99.3-119.5 6.9-5.9 14.4-10.8 22.6-14.4-26.1 11.1-54.7 33-115.3 42.2z" />
+            <linearGradient id="z" x1="1395.419" x2="1787.213" y1="-865.285" y2="-865.285"
+                gradientTransform="matrix(.8 0 0 -.8 -500.932 -395.46)" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#fff" stop-opacity=".6" />
+                <stop offset=".93" stop-color="#fff" stop-opacity=".47" />
+            </linearGradient>
+            <path fill="url(#z)"
+                d="M693.8 190c30.5 47.8 78 85.8 68.8 138.9-11.8 68.5-101.2 74.7-101.2 74.7h2c8.8 0 48.5-3 108.4-43.6 51.4-35 82.6-74 96-88.4-12.4.3-23.9-.3-34.7-1.3-86.2-8.9-124.9-58.1-139.3-80.3z" />
+            <linearGradient id="A" x1="1452.857" x2="1985.013" y1="-722.681" y2="-722.681"
+                gradientTransform="matrix(.8 0 0 .8 -500.932 920.276)" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#fff" stop-opacity=".38" />
+                <stop offset=".98" stop-color="#fff" stop-opacity=".5" />
+            </linearGradient>
+            <path fill="url(#A)"
+                d="M925.7 316.8c.3-16.7-2.6-33.8-8.5-49.5-2.6.3-4.9.6-7.5 1-14.1 1.6-28.2 3-42.2 3-13.8 14.4-44.6 53.4-96 88.4-68.2 46.8-110.1 43.9-110.1 43.9s100.2 31.1 181.5-1.6c25.2-9.8 48.5-24.6 68.2-42.9 2.8-3.1 14.3-17.1 14.6-42.3z" />
+            <linearGradient id="B" x1="1866.472" x2="1866.472" y1="-888.514" y2="-698.203"
+                gradientTransform="matrix(.8 0 0 -.8 -500.932 -395.46)" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#fff" stop-opacity=".3" />
+                <stop offset="1" stop-color="#fff" stop-opacity=".35" />
+            </linearGradient>
+            <path fill="url(#B)"
+                d="M1076.1 207.6c-4.6-2.3-8.8-5.2-12.4-8.5-3.6-3.6-7.5-13.1-9.2-15.7-4.9-8.2-12.1-14.8-27.2-16.7-15.1-2-29.2 1-43.2 5.2-33.8 10.8-62.2 37-83.5 60.9 4.2 6.6 7.9 13.4 11.1 20.3 2.3 4.6 4.2 9.5 5.9 14.1 60.6-9.2 89.1-31.1 115.3-42.2 13.1-5.6 27.2-8.2 41.3-7.9h7.5c5.5.4 0-6.2-5.6-9.5z" />
+        </g>
+    </g>
+</svg>
