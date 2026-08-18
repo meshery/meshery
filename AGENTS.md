@@ -194,8 +194,8 @@ make helm-docs      # Generate Helm chart docs
 
 - Format with `gofmt`/`goimports`; lint with `make golangci` (config: `.github/.golangci.yml`,
   plus the repo-specific analyzers under `server/internal/lint/`).
-- **MUST NOT pass a non-constant value to gorm's `.Order(...)`.** It interpolates a string
-  into the SQL verbatim - the sink behind every Meshery CVE. Route it through
+- **MUST NOT pass an unsanitized dynamic string to gorm's `.Order(...)`.** It interpolates a
+  string into the SQL verbatim - the sink behind every Meshery CVE. Route it through
   `models.SanitizeOrderInput(order, []string{...})` with that query's own allow-list of
   snake_case columns, or use a constant. Enforced at CI time by the `orderby` analyzer
   (`server/internal/lint/orderby`), which is flow-sensitive - sanitizing *after* the
