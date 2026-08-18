@@ -5,11 +5,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // Key-aware so a test can deny one capability at a time. A blanket boolean
 // cannot tell a dropped gate from a cross-wired one.
 const deniedPermissionIds = new Set<string>();
+let capturedMultiSelectProps: any[] = [];
 
 vi.mock('@sistent/sistent', () => ({
   useHasPermission: (key: { id?: string }) => !deniedPermissionIds.has(key?.id ?? ''),
   Box: ({ children }: any) => <div>{children}</div>,
-  Grid2: ({ children }: any) => <div>{children}</div>,
   IconButton: ({ children }: any) => <button type="button">{children}</button>,
   TableCell: ({ children }: any) => <td>{children}</td>,
   InfoOutlinedIcon: () => <svg />,
@@ -29,10 +29,14 @@ vi.mock('../../css/icons.styles', () => ({
 }));
 
 vi.mock('../general/multi-select-wrapper', () => ({
-  // Surface `disabled` so permission-denied rendering is assertable.
-  default: ({ disabled }: any) => (
-    <div data-testid="multi-select-wrapper" data-disabled={String(Boolean(disabled))} />
-  ),
+  // Surface props so permission-denied rendering and Environments UX
+  // (placeholder / empty-state gating) are assertable.
+  default: (props: any) => {
+    capturedMultiSelectProps.push(props);
+    return (
+      <div data-testid="multi-select-wrapper" data-disabled={String(Boolean(props.disabled))} />
+    );
+  },
 }));
 
 vi.mock('./ConnectionStatusSelect', () => ({
@@ -105,6 +109,7 @@ const rowControlStates = () => {
 describe('useConnectionColumns permission gating', () => {
   beforeEach(() => {
     deniedPermissionIds.clear();
+    capturedMultiSelectProps = [];
   });
 
   // The environment select and the status select are the table's only mutating
@@ -130,6 +135,27 @@ describe('useConnectionColumns permission gating', () => {
     const columns = renderColumns();
     expect(cellDisabledState(columns, 'status', 'deleted', 'connection-status-select')).toBe(
       'true',
+    );
+  });
+});
+
+describe('useConnectionColumns Environments multi-select UX', () => {
+  beforeEach(() => {
+    deniedPermissionIds.clear();
+    capturedMultiSelectProps = [];
+  });
+
+  it('uses the shortened placeholder and gates empty-state on trim', () => {
+    const columns = renderColumns();
+    const column = columns.find((col) => col.name === 'environments');
+    render(<>{column.options.customBodyRender([], { rowData: [] })}</>);
+    const props = capturedMultiSelectProps.at(-1);
+
+    expect(props.placeholder).toBe('Select or create...');
+    expect(props.noOptionsMessage({ inputValue: '' })).toBeNull();
+    expect(props.noOptionsMessage({ inputValue: '   ' })).toBeNull();
+    expect(props.noOptionsMessage({ inputValue: 'zzz' })).toBe(
+      'No matching environments. Type to create a new one.',
     );
   });
 });

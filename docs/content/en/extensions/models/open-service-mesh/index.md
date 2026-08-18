@@ -21,7 +21,7 @@ components:
   whiteIcon: /extensions/models/open-service-mesh/components/mesh-federation/icons/white/mesh-federation-white.svg
   description: 
 featureList: [
-  "Configuration an simplier understanding of your Open Service Mesh deployments and microservices",
+  "Configuration and simpler understanding of your Open Service Mesh deployments and microservices",
   "Configure and chain Envoy WASM filters",
   "Conformance to Service Mesh Interface specifications"
 ]

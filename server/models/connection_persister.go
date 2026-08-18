@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -213,9 +214,14 @@ func (cp *ConnectionPersister) DeleteConnectionById(connectionID core.Uuid) (*co
 	connection := connections.Connection{}
 	err := cp.DB.Where("id = ?", connectionID).First(&connection).Error
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, ErrResultNotFound(err)
 		}
+		// Any other read failure left `connection` zero-valued and fell through
+		// to Delete, which then issued an unscoped DELETE against a struct with
+		// no primary key. Report the read failure instead of acting on a row we
+		// never loaded.
+		return nil, ErrDBRead(err)
 	}
 	err = cp.DB.Delete(connection).Error
 	if err != nil {

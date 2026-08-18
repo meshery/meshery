@@ -25,7 +25,11 @@ Chart.min.js
 fortio_chart.js
 
 # UI
-**/node_modules/
+# No trailing slash: a git worktree has no ui/node_modules of its own and the
+# documented workaround (AGENTS.md) is to symlink it from the primary checkout.
+# A "node_modules/" pattern matches only directories, so the symlink shows up as
+# untracked and lands in the next `git add -A`.
+**/node_modules
 **/out/
 
 **/ui/playground/
