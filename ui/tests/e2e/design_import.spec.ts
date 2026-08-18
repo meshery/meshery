@@ -1,4 +1,4 @@
-import { expect, Page, Request } from '@playwright/test';
+import { expect, Page } from '@playwright/test';
 import * as allure from 'allure-js-commons';
 import path from 'path';
 import { test } from './fixtures/project';
@@ -32,10 +32,8 @@ import {
 // file upload), verify the wire contract at the network layer, and assert the
 // duplicate-submission guard is active.
 //
-// Tests that need a live Meshery server (the import POST itself) self-skip when
-// the server is unreachable so an infra-less run degrades to "skipped" rather
-// than a false failure.  The modal-open and button-state tests are deterministic
-// — they only need the UI to be running.
+// All POST /api/pattern/import requests are stubbed via page.route() so the
+// tests are self-contained and fail loudly if the UI never fires the request.
 // ────────────────────────────────────────────────────────────────────────────
 
 // Raw YAML for the URL-import fixture.  Served from the public GitHub raw URL
@@ -167,22 +165,15 @@ test.describe('Design Import Tests', () => {
       // Fill in design name and URL.
       const nameInput = dialog.getByLabel(/Design file name/i);
       await nameInput.fill('GuestBook App');
-      await dialog.getByLabel(/URL/i).fill(DESIGN_FIXTURE_URL);
+      await dialog.getByRole('textbox', { name: 'URL' }).fill(DESIGN_FIXTURE_URL);
 
       // Capture the outgoing request BEFORE clicking Import.
       const importReqPromise = waitForImportRequest(page);
 
       await dialog.getByRole('button', { name: 'Import' }).click();
 
-      // Collect the request — if it never fires the test fails with a clear
-      // timeout message rather than silently passing on a stub.
-      let importReq: Request;
-      try {
-        importReq = await importReqPromise;
-      } catch {
-        test.skip(true, 'Import endpoint did not receive a request; skipping wire assertions.');
-        return;
-      }
+      // Collect the request — if it never fires the test fails with a clear timeout message.
+      const importReq = await importReqPromise;
 
       // ── Wire contract assertions ──────────────────────────────────────────
       const body = importReq.postDataJSON() as Record<string, unknown>;
@@ -193,6 +184,7 @@ test.describe('Design Import Tests', () => {
 
       // Must have `name` key.
       expect(body, 'request body should contain `name`').toHaveProperty('name');
+      expect(body.name, '`name` should equal the submitted design name').toBe('GuestBook App');
 
       // Must NOT use snake_case `file_name` — that is the regression fixed in #21105.
       expect(body, 'request body must not contain snake_case `file_name`').not.toHaveProperty(
@@ -246,13 +238,8 @@ test.describe('Design Import Tests', () => {
 
       await dialog.getByRole('button', { name: 'Import' }).click();
 
-      let importReq: Request;
-      try {
-        importReq = await importReqPromise;
-      } catch {
-        test.skip(true, 'Import endpoint did not receive a request; skipping wire assertions.');
-        return;
-      }
+      // Collect the request — if it never fires the test fails with a clear timeout message.
+      const importReq = await importReqPromise;
 
       // ── Wire contract: fileName must be camelCase ─────────────────────────
       // The request is sent as multipart/form-data or JSON depending on the
@@ -307,12 +294,12 @@ test.describe('Design Import Tests', () => {
       // Choose URL Import and fill required fields.
       await dialog.getByRole('radio', { name: 'URL Import' }).click();
       await dialog.getByLabel(/Design file name/i).fill('GuestBook App');
-      await dialog.getByLabel(/URL/i).fill(DESIGN_FIXTURE_URL);
+      await dialog.getByRole('textbox', { name: 'URL' }).fill(DESIGN_FIXTURE_URL);
 
       const importBtn = dialog.getByRole('button', { name: /Import|Importing/i });
 
-      // First click — starts the in-flight request.
-      await importBtn.click();
+      // Rapid double click to verify duplicate prevention guard.
+      await importBtn.dblclick();
 
       // The button must transition to disabled with "Importing…" text while the
       // stub is still holding (within the 300 ms window).

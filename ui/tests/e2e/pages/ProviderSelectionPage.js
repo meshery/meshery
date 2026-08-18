@@ -5,7 +5,7 @@ export class ProviderSelectionPage {
   }
 
   getProviderMenuItem(providerName) {
-    return this.page.getByRole('menuitem', { name: providerName });
+    return this.page.getByRole('menuitem', { name: `${providerName} More` });
   }
 
   async navigateToProviderSelection() {
