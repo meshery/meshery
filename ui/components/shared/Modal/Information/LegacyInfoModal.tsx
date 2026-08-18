@@ -288,21 +288,25 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
           compatibility: filteredCompatibilityArray,
         };
         const filtered = filterEmptyFields(modifiedData);
-        formStateRef.current = filtered;
-        // Snapshot initial processed (display-name) form data for onChange comparisons.
-        initialFormDataRef.current = filtered;
-        // Drive a re-render so the RJSF form picks up the resolved displayNames.
-        // Without this, writing only to the ref leaves the form stale when
-        // meshModels arrives asynchronously after the initial render.
-        setFormData(filtered);
-        setIsCatalogDataEqual(true);
+        if (!_.isEqual(filtered, initialFormDataRef.current)) {
+          formStateRef.current = filtered;
+          // Snapshot initial processed (display-name) form data for onChange comparisons.
+          initialFormDataRef.current = filtered;
+          // Drive a re-render so the RJSF form picks up the resolved displayNames.
+          // Without this, writing only to the ref leaves the form stale when
+          // meshModels arrives asynchronously after the initial render.
+          setFormData(filtered);
+          setIsCatalogDataEqual(true);
+        }
       }
     } else {
       const filtered = filterEmptyFields(selectedResource?.catalogData);
-      formStateRef.current = filtered;
-      initialFormDataRef.current = filtered;
-      setFormData(filtered);
-      setIsCatalogDataEqual(true);
+      if (!_.isEqual(filtered, initialFormDataRef.current)) {
+        formStateRef.current = filtered;
+        initialFormDataRef.current = filtered;
+        setFormData(filtered);
+        setIsCatalogDataEqual(true);
+      }
     }
   }, [selectedResource?.catalogData, meshModels]);
 

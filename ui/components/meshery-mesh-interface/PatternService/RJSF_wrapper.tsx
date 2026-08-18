@@ -50,6 +50,7 @@ function RJSFWrapper(props) {
       // only if the current value is empty/absent (i.e. was never filled in due
       // to the async race), so we don't clobber fields the user has already edited.
       const merged = { ...prev };
+      let changed = false;
       Object.keys(formData).forEach((key) => {
         const current = prev[key];
         const isEmpty =
@@ -59,9 +60,10 @@ function RJSFWrapper(props) {
           (Array.isArray(current) && current.length === 0);
         if (isEmpty) {
           merged[key] = formData[key];
+          changed = true;
         }
       });
-      return merged;
+      return changed ? merged : prev;
     });
   }, [formData]);
 
