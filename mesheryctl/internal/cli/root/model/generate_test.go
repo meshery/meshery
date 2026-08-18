@@ -112,11 +112,6 @@ func TestModelGenerate(t *testing.T) {
 				})
 			}
 
-			// Mock GitHub URL for templates
-			httpmock.RegisterResponder("GET", "https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.crds.yaml", func(req *http.Request) (*http.Response, error) {
-				return httpmock.NewStringResponse(200, "dummy-content"), nil
-			})
-
 			utils.TokenFlag = utils.GetToken(t)
 
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
