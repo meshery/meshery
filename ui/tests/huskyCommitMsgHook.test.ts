@@ -114,6 +114,23 @@ describe.skipIf(!posix)('ui/.husky/commit-msg', () => {
     );
   });
 
+  // The DCO check accepts any spacing after the colon, so the hook has to as
+  // well: rejecting a trailer CI accepts sends the author rewriting a commit
+  // that was never wrong.
+  it('accepts a sign-off written with more than one space after the colon', () => {
+    const repo = initRepo();
+    stageChange(repo, 'a.txt');
+
+    const committed = git(repo, [
+      'commit',
+      '-m',
+      '[Docs] spaced trailer\n\nSigned-off-by:  Jane Smith <jane@example.com>',
+    ]);
+
+    expect(committed.status).toBe(0);
+    expect(commitCount(repo)).toBe(1);
+  });
+
   it('accepts a sign-off naming the committer when the author differs', () => {
     const repo = initRepo();
     stageChange(repo, 'a.txt');

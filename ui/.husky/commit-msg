@@ -26,7 +26,15 @@ message=$(sed -e '/^#[[:space:]]*-\{2,\}[[:space:]]*>8[[:space:]]*-\{2,\}/,$d' -
 # husky runs this hook as `sh -e`, so every substitution that is allowed to come
 # up empty has to end on a zero status of its own - otherwise the shell exits
 # before the guidance below is ever printed.
-signoffs=$(printf '%s\n' "$message" | grep -i '^Signed-off-by:[[:space:]]*..*<..*>' || true)
+#
+# The trailers are collected with whatever spelling and spacing they were
+# written in and normalized to one canonical prefix, because the identity below
+# is matched as a fixed string: "Signed-off-by:  Jane <jane@example.com>" is a
+# trailer the DCO check accepts, and without this it would match no identity
+# here and be rejected as if it named nobody.
+signoffs=$(printf '%s\n' "$message" \
+  | grep -i '^Signed-off-by:[[:space:]]*..*<..*>' \
+  | sed -e 's/^[^:]*:[[:space:]]*/Signed-off-by: /' || true)
 
 # `git var` renders an identity as "Name <email> 1700000000 +0000"; drop the
 # timestamp and the timezone to leave the "Name <email>" a trailer must carry.
