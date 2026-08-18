@@ -386,7 +386,10 @@ NATS topics: `meshsync.request`, `meshery.broker`. MeshSync publishes cluster st
 
 - Git hooks: Husky hooks in `ui/.husky/`, installed by `make ui-setup`. `commit-msg`
   rejects a commit that is not signed off, because once an unsigned commit is pushed
-  the DCO check can only be satisfied by rewriting the branch.
+  the DCO check can only be satisfied by rewriting the branch. It reaches only the
+  commits git routes through it: a checkout without `make ui-setup`, and any harness
+  that repoints `core.hooksPath` at its own hooks directory, bypass it silently. Always
+  `git commit -s`; never rely on the hook to catch the omission.
 - Build: extend `Makefile` or `install/Makefile.core.mk`
 
 ## Agent Tooling
