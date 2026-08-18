@@ -1522,22 +1522,29 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 			}
 		}
 	}
-	// Seed default organization before the UI requests organizations.
-	id := uuid.Must(uuid.NewV4())
+
+	l.SeedDefaultOrganization(log)
+}
+
+// SeedDefaultOrganization creates the built-in "My Org" organization when none
+// exists. The count guard makes it idempotent, so it is safe to call from any
+// path that may run against an already-populated database.
+func (l *DefaultLocalProvider) SeedDefaultOrganization(log logger.Handler) {
+	count, _ := l.OrganizationPersister.GetOrganizationsCount()
+	if count != 0 {
+		return
+	}
+
 	org := &organization.Organization{
-		ID:          id,
+		ID:          uuid.Must(uuid.NewV4()),
 		Name:        "My Org",
 		Country:     "",
 		Region:      "",
 		Description: "This is default organization",
 		Owner:       uuid.Nil,
 	}
-	count, _ := l.OrganizationPersister.GetOrganizationsCount()
-	if count == 0 {
-		_, err := l.OrganizationPersister.SaveOrganization(org)
-		if err != nil {
-			log.Error(ErrGettingSeededComponents(err, "organization"))
-		}
+	if _, err := l.OrganizationPersister.SaveOrganization(org); err != nil {
+		log.Error(ErrGettingSeededComponents(err, "organization"))
 	}
 }
 
