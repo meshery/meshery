@@ -4165,7 +4165,7 @@
         "name": "ErrInvalidDependencyCode",
         "code": "1475",
         "severity": "Alert",
-        "long_description": "\\\"dependsOn\\\" has to be a list of the names of other components in the same design",
+        "long_description": "",
         "short_description": "A component declares its dependencies in a form Meshery cannot read",
         "probable_cause": "The design was written by a tool that spells \\\"dependsOn\\\" differently, or was hand-edited outside of Meshery",
         "suggested_remediation": "Edit the design so that \\\"dependsOn\\\" on that component is a list of the names of other components in the same design"
@@ -4174,7 +4174,7 @@
         "name": "ErrUnresolvedDependencyCode",
         "code": "1476",
         "severity": "Alert",
-        "long_description": "Dependencies name other components of the same design by their name, and no component of the design carries the name that was declared",
+        "long_description": "",
         "short_description": "A component depends on something that is not a component of the design",
         "probable_cause": "The component that was depended upon has been renamed or removed while the dependency on it was left in place",
         "suggested_remediation": "Open the design in Meshery and either restore a component with the name that was depended upon, or remove that dependency"
@@ -4183,7 +4183,7 @@
         "name": "ErrAmbiguousDependencyCode",
         "code": "1477",
         "severity": "Alert",
-        "long_description": "Dependencies name other components of the same design by their name, so a name shared by several components does not identify which one to wait for",
+        "long_description": "",
         "short_description": "A component depends on a name that more than one component of the design carries",
         "probable_cause": "Component names are not required to be unique within a design, and more than one component was given the same name",
         "suggested_remediation": "Open the design in Meshery and rename those components so that the one being depended upon is uniquely named"
@@ -4192,7 +4192,7 @@
         "name": "ErrUnknownPlanNodeCode",
         "code": "1478",
         "severity": "Alert",
-        "long_description": "A dependency in the plan points at a component that is not being acted on",
+        "long_description": "",
         "short_description": "The execution plan refers to a component that is not part of it",
         "probable_cause": "The design is internally inconsistent: it declares a dependency on a component that it does not contain",
         "suggested_remediation": "Open the design in Meshery, remove or repoint the dangling dependency, and try again"
@@ -4201,7 +4201,7 @@
         "name": "ErrCyclicDependencyCode",
         "code": "1479",
         "severity": "Alert",
-        "long_description": "A loop of dependencies leaves no order in which the components of the design can be acted on",
+        "long_description": "",
         "short_description": "The components of a design depend on each other in a loop",
         "probable_cause": "Two or more components of the design declare a dependency on each other, either directly or through a chain of other components",
         "suggested_remediation": "Open the design in Meshery and remove one of the dependencies that closes the loop, then try again"
@@ -4210,10 +4210,10 @@
         "name": "ErrDependencyNotSatisfiedCode",
         "code": "1480",
         "severity": "Alert",
-        "long_description": "Meshery acts on a component only once the components it depends on have been dealt with, so this component was withheld",
+        "long_description": "",
         "short_description": "A component was withheld because a component it depends on did not succeed",
-        "probable_cause": "A component this one depends on did not succeed",
-        "suggested_remediation": "Resolve the failure reported for the dependency, then try the design again"
+        "probable_cause": "A component that this one's order depends on did not succeed",
+        "suggested_remediation": "Resolve the failure reported for that component, then try the design again"
       }
     }
   }

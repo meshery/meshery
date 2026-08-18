@@ -251,8 +251,10 @@ func generateHosts(cd component.ComponentDefinition, reg *meshmodel.RegistryMana
 // mergeErrors combines the errors collected over a stage into one.
 //
 // It joins rather than reformats, so that a structured MeshKit error keeps its
-// code and stays recognizable to errors.GetCode at the API boundary instead of
-// being flattened into an opaque message.
+// code and stays recognizable to errors.GetCode as it leaves the chain, rather
+// than being flattened into an opaque message. Whether that code survives any
+// further is up to whoever handles the terminated chain: the deploy handler
+// re-wraps what it is given, so the code it reports is its own.
 func mergeErrors(errs []error) error {
 	return stderrors.Join(errs...)
 }
