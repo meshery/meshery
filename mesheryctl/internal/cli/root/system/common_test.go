@@ -2,7 +2,6 @@ package system
 
 import (
 	"bytes"
-	"os"
 	"testing"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
@@ -34,14 +33,15 @@ type CmdTestInput struct {
 	Token            string
 }
 
+// setupContextTestEnv points viper at a private copy of the shared meshconfig
+// fixture rather than the fixture itself, because commands exercised from this
+// package persist the active meshconfig through viper.WriteConfig. See
+// utils.CopyMeshconfigFixture for what writing the shared file does to the
+// mesheryctl packages running alongside this one.
 func setupContextTestEnv(t *testing.T) {
-	path, err := os.Getwd()
-	if err != nil {
-		t.Error("unable to locate meshery directory")
-	}
 	viper.Reset()
-	viper.SetConfigFile(path + "/../../../../pkg/utils/TestConfig.yaml")
-	err = viper.ReadInConfig()
+	viper.SetConfigFile(utils.CopyMeshconfigFixture(t, utils.SharedTestConfigPath(t)))
+	err := viper.ReadInConfig()
 	if err != nil {
 		t.Errorf("unable to read configuration from %v, %v", viper.ConfigFileUsed(), err.Error())
 	}

@@ -261,6 +261,14 @@ Golden-file workflow (`-args -update`, the `fixtures/` vs `testdata/` split, and
 the rule that a regenerated golden must still encode *intended* behavior) is
 documented in `docs/content/en/project/contributing/cli/cli.md`.
 
+**Never point viper at `mesheryctl/pkg/utils/TestConfig.yaml` in a test.** Every
+mesheryctl package reads that fixture and `go test ./mesheryctl/...` runs them
+concurrently, so one `viper.WriteConfig` truncate kills a sibling package's test
+binary outright via `GetBaseMesheryURL`'s `Log.Fatal` - a package-level `FAIL`
+naming no test. Take a private copy with `utils.CopyMeshconfigFixture`, or use
+`utils.SetupCustomContextEnv` with your own testdata file. Detail:
+[Contributing to Meshery CLI](./docs/content/en/project/contributing/cli/cli.md).
+
 **A rename in `meshery/schemas` renames the gorm column too**, because gorm derives
 it from the Go *field name*, not the `db:` tag. After bumping schemas, grep every raw
 column reference (`Select`, `Where`, `Order`, `Joins`, `Scan`, migrations) and the

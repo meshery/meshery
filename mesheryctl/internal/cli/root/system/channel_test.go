@@ -1,11 +1,15 @@
 package system
 
 import (
+	"bytes"
+	"os"
 	"slices"
 	"strings"
 	"testing"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -63,6 +67,66 @@ func TestViewCmd(t *testing.T) {
 			BreakupFunc()
 		})
 	}
+}
+
+// TestSetCmdWritesToTheActiveConfigNotTheSharedFixture pins the invariant that
+// keeps `go test ./mesheryctl/...` deterministic: pkg/utils/TestConfig.yaml is
+// read by every mesheryctl test package, those packages run as concurrent
+// processes, and viper.WriteConfig truncates before it rewrites. A sibling
+// package reading the fixture inside that truncate window parsed an empty
+// document without error and exited its whole test binary from
+// GetBaseMesheryURL's Log.Fatal, which surfaced as a bare package-level FAIL
+// naming no test.
+//
+// `channel set edge` is used rather than `stable` precisely because it differs
+// from the fixture, so a write that reaches the shared file changes its bytes
+// instead of rewriting them identically.
+func TestSetCmdWritesToTheActiveConfigNotTheSharedFixture(t *testing.T) {
+	fixture := utils.SharedTestConfigPath(t)
+	before, err := os.ReadFile(fixture)
+	if err != nil {
+		t.Fatalf("unable to read shared meshconfig fixture: %v", err)
+	}
+	t.Cleanup(func() {
+		// A regression here corrupts the fixture for every other package, so
+		// put it back rather than letting one failure cascade.
+		if after, err := os.ReadFile(fixture); err == nil && !bytes.Equal(before, after) {
+			if err := os.WriteFile(fixture, before, 0o600); err != nil {
+				t.Errorf("unable to restore shared meshconfig fixture: %v", err)
+			}
+		}
+	})
+
+	setupContextTestEnv(t)
+	t.Cleanup(BreakupFunc)
+	active := viper.ConfigFileUsed()
+
+	buf := setupSystemOutCmdTest(t)
+	SystemCmd.SetArgs([]string{"channel", "set", "edge", "-c", "local"})
+	if err := SystemCmd.Execute(); err != nil {
+		t.Fatalf("channel set: %v", err)
+	}
+	assert.Equal(t, "Channel set to edge-latest\n", buf.String())
+
+	after, err := os.ReadFile(fixture)
+	if err != nil {
+		t.Fatalf("unable to re-read shared meshconfig fixture: %v", err)
+	}
+	assert.Equal(t, string(before), string(after),
+		"`channel set` wrote through to the shared meshconfig fixture %s; every mesheryctl test package reads that file concurrently", fixture)
+
+	// The write still has to land somewhere, or this passes for the wrong reason.
+	assert.NotEqual(t, fixture, active)
+	written := viper.New()
+	written.SetConfigFile(active)
+	if err := written.ReadInConfig(); err != nil {
+		t.Fatalf("unable to read the active meshconfig %v: %v", active, err)
+	}
+	persisted, err := config.GetMesheryCtl(written)
+	if err != nil {
+		t.Fatalf("unable to decode the active meshconfig: %v", err)
+	}
+	assert.Equal(t, "edge", persisted.Contexts["local"].Channel)
 }
 
 func TestSetCmd(t *testing.T) {

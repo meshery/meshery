@@ -296,16 +296,47 @@ func (tf *GoldenFile) WriteInByte(content []byte) {
 	}
 }
 
-// use default context /pkg/utils/TestConfig.yaml
-func SetupContextEnv(t *testing.T) {
+// SharedTestConfigPath resolves pkg/utils/TestConfig.yaml from the working
+// directory of a test package four levels below the mesheryctl module root,
+// which is where every caller of SetupContextEnv lives.
+func SharedTestConfigPath(t *testing.T) string {
+	t.Helper()
 	path, err := os.Getwd()
 	if err != nil {
-		t.Error("unable to locate meshery directory")
+		t.Fatalf("unable to locate meshery directory: %v", err)
 	}
+	return filepath.Join(path, "..", "..", "..", "..", "pkg", "utils", "TestConfig.yaml")
+}
+
+// CopyMeshconfigFixture copies a meshconfig fixture into a directory private to
+// t and returns the copy's path.
+//
+// pkg/utils/TestConfig.yaml is loaded by every mesheryctl test package, and
+// `go test ./mesheryctl/...` runs those packages as concurrent processes. It
+// therefore has to stay read-only on disk: a command under test persists the
+// active meshconfig through viper.WriteConfig, which truncates the file before
+// it rewrites it, and a sibling package reading inside that window parses an
+// empty document with no error at all. The resulting config has an empty
+// current-context, and the first request made with it reaches
+// MesheryCtlConfig.GetBaseMesheryURL, which calls Log.Fatal and exits the whole
+// test binary - a package-level FAIL with no failing test named. Pointing each
+// test at its own copy keeps writes off the shared fixture.
+func CopyMeshconfigFixture(t *testing.T, src string) string {
+	t.Helper()
+	dst := filepath.Join(t.TempDir(), "config.yaml")
+	if err := Populate(src, dst); err != nil {
+		t.Fatalf("unable to copy meshconfig fixture %v: %v", src, err)
+	}
+	return dst
+}
+
+// use default context /pkg/utils/TestConfig.yaml
+func SetupContextEnv(t *testing.T) {
+	configPath := CopyMeshconfigFixture(t, SharedTestConfigPath(t))
 	viper.Reset()
-	viper.SetConfigFile(path + "/../../../../pkg/utils/TestConfig.yaml")
-	DefaultConfigPath = path + "/../../../../pkg/utils/TestConfig.yaml"
-	err = viper.ReadInConfig()
+	viper.SetConfigFile(configPath)
+	DefaultConfigPath = configPath
+	err := viper.ReadInConfig()
 	if err != nil {
 		t.Errorf("unable to read configuration from %v, %v", viper.ConfigFileUsed(), err.Error())
 	}

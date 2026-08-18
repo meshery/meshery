@@ -193,6 +193,35 @@ Principles" above): `-update` regenerates only the expected output under
 response is usually the file that has gone stale - updating only the expectation
 bakes the broken behavior into the test.
 
+#### The shared meshconfig fixture is read-only
+
+`utils.SetupContextEnv` loads `mesheryctl/pkg/utils/TestConfig.yaml`, and almost
+every command package reaches it through `utils.InitTestEnvironment`. Because
+`go test ./mesheryctl/...` runs each package as its own process and several of
+them at once, that one file is mutable state shared across concurrent
+processes.
+
+Any command that persists configuration - `system channel set`, `system context
+create`, `system token create` - calls `viper.WriteConfig`, which truncates the
+active config file before rewriting it. Point viper at the shared fixture and a
+sibling package reading it inside that window parses an empty document and gets
+no error for it, leaving an empty `current-context`. The next request made with
+that config reaches `MesheryCtlConfig.GetBaseMesheryURL`, which calls
+`Log.Fatal` and exits the whole test binary, so the run reports a bare
+package-level `FAIL` that names no test and points at no assertion.
+
+`SetupContextEnv` therefore hands each test a private copy of the fixture
+through `utils.CopyMeshconfigFixture`. A test that needs a writable meshconfig
+must use that helper, or `utils.SetupCustomContextEnv` with a testdata file of
+its own. Never point viper at `pkg/utils/TestConfig.yaml` directly.
+
+{{% alert color="warning" title="A fixture write can look harmless" %}}
+`system channel set stable` rewrote the shared fixture with byte-identical
+content, so it left the working tree clean and nothing in review suggested a
+test was writing to it. The truncate is what breaks sibling packages, not the
+content, and only the file's modification time recorded that it happened.
+{{% /alert %}}
+
 #### End-to-end Tests
 
 End-to-end testing of mesheryctl uses the Bash Automated Testing System (BATS) framework to define and execute CLI tests. See [Contributing to Meshery CLI End-to-End Tests]({{< ref "project/contributing/cli/tests.md" >}})
