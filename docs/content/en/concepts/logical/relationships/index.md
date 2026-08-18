@@ -346,7 +346,7 @@ Designs are evaluated by the [Policy Engine]({{< ref "concepts/logical/policies/
 <!-- Explain how and what configs get patched when relationships are created -->
 <!-- Explain real time evaluation of relationships on -->
 <!-- 1. Import -->
-<!-- 2. When compoennt config is update and it satisfied the condition for the relationship -->
+<!-- 2. When component config is update and it satisfied the condition for the relationship -->
 
 ### Patch Strategies
 

@@ -192,7 +192,15 @@ make helm-docs      # Generate Helm chart docs
 
 ### Go
 
-- Format with `gofmt`/`goimports`; lint with `make golangci` (config: `.golangci.yml`).
+- Format with `gofmt`/`goimports`; lint with `make golangci` (config: `.github/.golangci.yml`,
+  plus the repo-specific analyzers under `server/internal/lint/`).
+- **MUST NOT pass an unsanitized dynamic string to gorm's `.Order(...)`.** It interpolates a
+  string into the SQL verbatim - the sink behind every Meshery CVE. Route it through
+  `models.SanitizeOrderInput(order, []string{...})` with that query's own allow-list of
+  snake_case columns, or use a constant. Enforced at CI time by the `orderby` analyzer
+  (`server/internal/lint/orderby`), which is flow-sensitive - sanitizing *after* the
+  `.Order()` call does not satisfy it. Fixes, the `//nolint:orderby` escape hatch and what
+  the rule does not cover: [Go lint rules](./docs/content/en/project/contributing/contributing-lint.md).
 - Use MeshKit error utilities (`github.com/meshery/meshkit/errors`); run `make error` for codes.
   `make error` skips `mesheryctl`. Both components require bumping `next_error_code` in their
   own `helpers/component_info.json` **in the same commit**, and the tracked docs reference at
@@ -264,7 +272,7 @@ rename fails loudly. Detail and regression test:
 - E2E (Playwright): `make ui-integration-tests` or `npm run test:e2e` in `ui/`
 - Setup: `make test-setup-ui`
 
-Four E2E invariants. Each one's reasoning, evidence, run IDs and history live in
+Five E2E invariants. Each one's reasoning, evidence, run IDs and history live in
 `docs/content/en/project/contributing/ui/tests.md` - read it before changing the workflow
 or the setup projects.
 
@@ -283,6 +291,10 @@ or the setup projects.
 - **A local run needs three things** - `make ui-provider-build`, a server on `:9081` plus
   `make ui` on `:3000`, and `MESHERY_SERVER_URL=http://localhost:3000` on the Playwright
   run - and the failure when one is missing never names it.
+- **The CI run is serial** (`workers: process.env.CI ? 1 : 4`). One runner hosts Kind, the
+  server container and Playwright; extra workers starve it, and a starved runner fails as
+  blown `describe` timeouts or as "the hosted runner lost communication", never as a named
+  test defect. `ui/tests/playwrightWorkers.test.ts` pins the resolved value.
 
 ### Local Validation
 
@@ -332,7 +344,8 @@ so it covers lock files this list does not enumerate.
 
 ### Quality Gates
 
-- Go: `make golangci` must pass
+- Go: `make golangci` must pass - it runs `golangci-lint` *and* the repo-specific
+  analyzers in `server/internal/lint/`, the same pair CI's `golangci-lint-server` job runs
 - JS: `make ui-lint` must pass
 - New features need docs; breaking changes need deprecation notices
 - Keep PRs under 500 lines; don't merge on CI failure
@@ -409,6 +422,7 @@ worked detail behind them — open the one that matches what you are working on.
 | Playwright E2E, the E2E CI job, its credentials | [UI End-to-End Tests](./docs/content/en/project/contributing/ui/tests.md) |
 | A build that fails for an unrelated-looking reason | [Build Environment Gotchas](./docs/content/en/project/contributing/contributing-build-environment.md) |
 | MeshKit error codes | [How to write MeshKit compatible errors](./docs/content/en/project/contributing/contributing-error.md) |
+| A Go lint rule firing, or adding one | [Go Lint Rules](./docs/content/en/project/contributing/contributing-lint.md) |
 | Releases, CI secrets, the QA dashboard | [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md) |
 | Connections and credential secrets | [Connections](./docs/content/en/project/contributing/models/connections.md) |
 | UI extensions, Remote Components | [Contributing to Meshery UI](./docs/content/en/project/contributing/ui/ui.md) |
