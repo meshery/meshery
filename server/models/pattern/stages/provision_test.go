@@ -15,6 +15,7 @@ import (
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta2/component"
+	componentv1beta3 "github.com/meshery/schemas/models/v1beta3/component"
 	pattern "github.com/meshery/schemas/models/v1beta3/design"
 )
 
@@ -311,6 +312,49 @@ func TestProvisionDeploysDependentsWhenOnlyAPrerequisiteFailed(t *testing.T) {
 
 	if !applied {
 		t.Error("\"a\" did not report its own successful apply")
+	}
+}
+
+// A component that fails before it can be handed to a fulfillment path is still
+// reported in its own right.
+//
+// Withholding names the dependency that caused it, so a component that fails
+// and is never recorded still appears in the summary - but only inside its
+// dependents' messages, as the thing that held them back, with no outcome of
+// its own anywhere.
+func TestProvisionReportsAComponentThatCouldNotBeEnriched(t *testing.T) {
+	act := newStubActionProvider(t)
+
+	original := enrichComponent
+	t.Cleanup(func() { enrichComponent = original })
+	enrichComponent = func(comp *componentv1beta3.ComponentDefinition, designID, designVersion string) error {
+		if comp.DisplayName == "a" {
+			return errors.New("meshery-server-test", errors.Alert, []string{"enrichment failed"}, []string{"enrichment failed"}, []string{}, []string{})
+		}
+
+		return original(comp, designID, designVersion)
+	}
+
+	reported := runProvision(t, act,
+		newDesignComponent("a"),
+		newDesignComponent("b", "a"),
+	)
+
+	if order := act.order(); dispatched(order, "a") {
+		t.Errorf("dispatched %v, want \"a\" never dispatched: it could not be enriched", order)
+	}
+
+	summary, ok := reported["a"]
+	if !ok {
+		t.Fatal("\"a\" produced no deployment message of its own, want the failure reported against it")
+	}
+
+	if succeeded(summary) {
+		t.Error("\"a\" was reported as successful, want it reported as failed")
+	}
+
+	if _, ok := reported["b"]; !ok {
+		t.Error("\"b\" produced no deployment message, want it reported as withheld")
 	}
 }
 

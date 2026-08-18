@@ -23,6 +23,12 @@ type CompConfigPair struct {
 
 const ProvisionSuffixKey = ".isProvisioned"
 
+// enrichComponent stamps a component with the design it came from. It is a
+// variable so that a test can make it fail: the outcome of every component has
+// to reach the summary whichever way it turns out, and that is not something
+// the deployment paths can be asked to demonstrate on their own.
+var enrichComponent = orchestration.EnrichComponentWithMesheryMetadata
+
 func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.Handler) ChainStageFunction {
 	return func(data *Data, err error, next ChainStageNextFunction) {
 		if err != nil {
@@ -69,12 +75,13 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 			// then copy mutations back onto the v1beta2 value held by the
 			// pattern so the plan sees the enriched Configuration/Metadata.
 			v1beta3Comp := patternutils.ComponentV1beta2ToV1beta3(&component)
-			err := orchestration.EnrichComponentWithMesheryMetadata(v1beta3Comp, data.Pattern.ID.String(), string(data.Pattern.Version))
+			err := enrichComponent(v1beta3Comp, data.Pattern.ID.String(), string(data.Pattern.Version))
 			patternutils.ApplyV1beta3MetadataChanges(v1beta3Comp, &component)
 
 			if err != nil {
 				fmt.Println("Err while assigning labels", err)
 				data.Lock.Lock()
+				data.Other[fmt.Sprintf("%s%s", name, ProvisionSuffixKey)] = dispatchFailureMessage(component, err, data.Pattern.Name, prov.IsDelete())
 				errs = append(errs, err)
 				data.Lock.Unlock()
 				return false

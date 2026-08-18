@@ -52,8 +52,8 @@ func ErrInvalidDependency(design, component, reason string) error {
 		errors.Alert,
 		[]string{"A component declares its dependencies in a form Meshery cannot read"},
 		[]string{fmt.Sprintf("Component %q of design %q declares its dependencies in a form Meshery cannot read: %q has to be a list of component names, but %s", component, design, "dependsOn", reason)},
-		[]string{"The design was written by a tool that spells \"dependsOn\" differently, or was hand-edited outside of Meshery"},
-		[]string{"Edit the design so that \"dependsOn\" on that component is a list of the names of other components in the same design"},
+		[]string{"The design was written by a tool that spells the dependsOn entry differently, or was hand-edited outside of Meshery"},
+		[]string{"Edit the design so that the dependsOn entry on that component is a list of the names of other components in the same design"},
 	)
 }
 
