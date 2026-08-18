@@ -1477,6 +1477,23 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	// Use the relative directory for patterns
 	catalogDir := filepath.Join("..", "..", "docs", "data", "catalog")
 
+	// Every pass mints a fresh uuid.NewV4() per catalog file and
+	// SaveMesheryPattern has no dedupe, so seeding into a table that already
+	// holds designs duplicates the whole catalog. Cleanup() drops
+	// meshery_patterns on a clean shutdown, which normally hides this - but not
+	// after an unclean exit, and not on the reset path, which re-migrates the
+	// table while the process keeps running.
+	//
+	// Published designs are exactly the seeded catalog on the built-in provider:
+	// PublishCatalogPattern returns ErrLocalProviderSupport, so a local user
+	// cannot create one. Private, user-authored designs are never touched.
+	if err := l.MesheryPatternPersister.DB.
+		Where("visibility = ?", Published).
+		Delete(&MesheryPattern{}).Error; err != nil {
+		log.Error(ErrGettingSeededComponents(err, "Patterns"))
+		return
+	}
+
 	for _, seedContent := range seedContents {
 		switch seedContent {
 		case "Pattern":
