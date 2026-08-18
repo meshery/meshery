@@ -1,8 +1,20 @@
-import { DARK_BLUE_GRAY, IconButton, MoreVertIcon as MoreVert } from '@sistent/sistent';
-import { CustomTooltip, styled, Menu, MenuItem } from '@sistent/sistent';
-import { useMediaQuery, useTheme } from '@sistent/sistent';
+import {
+  BottomSheet,
+  CustomTooltip,
+  DARK_BLUE_GRAY,
+  IconButton,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+  MenuList,
+  MoreVertIcon as MoreVert,
+  Typography,
+  styled,
+  useMediaQuery,
+  useTheme,
+} from '@sistent/sistent';
 import { iconMedium } from 'css/icons.styles';
-import React from 'react';
+import { useState } from 'react';
 
 const StyledMenuItem = styled(MenuItem)({
   paddingLeft: '.5rem',
@@ -26,20 +38,26 @@ const StyledMenuDiv = styled('div')(({ theme }) => ({
 }));
 
 export const MenuComponent = ({ options = [] }) => {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('xl'));
+  const isCollapsed = useMediaQuery(theme.breakpoints.down('xl'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleClick = (event) => {
     event.stopPropagation();
+    if (isSmallScreen) {
+      setSheetOpen(true);
+      return;
+    }
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = (event) => {
-    event.stopPropagation();
-    event.preventDefault();
+  const handleClose = (event?) => {
+    event?.stopPropagation?.();
+    event?.preventDefault?.();
     setAnchorEl(null);
+    setSheetOpen(false);
   };
 
   const renderDirectIcons = () => {
@@ -66,7 +84,7 @@ export const MenuComponent = ({ options = [] }) => {
     );
   };
 
-  if (!isMobile) {
+  if (!isCollapsed) {
     return renderDirectIcons();
   }
 
@@ -83,50 +101,71 @@ export const MenuComponent = ({ options = [] }) => {
           />
         </CustomTooltip>
       </div>
-      <Menu
-        id="long-menu"
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-        MenuListProps={{
-          style: {
-            padding: 0,
-            display: 'flex',
-          },
-        }}
-        transformOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        open={open}
-        onClose={handleClose}
-        style={{
-          borderRadius: '3px',
-          zIndex: 9999999999,
-        }}
-      >
-        {options.map((option) => (
-          <StyledMenuDiv key={option.key || option.title}>
-            <StyledMenuDiv>
-              <CustomTooltip key={option.title} title={option.title}>
-                <StyledMenuItem
-                  disabled={option.disabled}
-                  key={option.title}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    option.handler(event);
-                    handleClose(event);
-                  }}
-                >
-                  {option.icon}
-                </StyledMenuItem>
-              </CustomTooltip>
+      {isSmallScreen ? (
+        <BottomSheet open={sheetOpen} onClose={handleClose} title="Actions">
+          <MenuList disablePadding>
+            {options.map((option) => (
+              <MenuItem
+                disabled={option.disabled}
+                key={option.title}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  option.handler(event);
+                  handleClose();
+                }}
+              >
+                <ListItemIcon>{option.icon}</ListItemIcon>
+                <Typography variant="body1">{option.title}</Typography>
+              </MenuItem>
+            ))}
+          </MenuList>
+        </BottomSheet>
+      ) : (
+        <Menu
+          id="long-menu"
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+          MenuListProps={{
+            style: {
+              padding: 0,
+              display: 'flex',
+            },
+          }}
+          transformOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+          style={{
+            borderRadius: '3px',
+            zIndex: 9999999999,
+          }}
+        >
+          {options.map((option) => (
+            <StyledMenuDiv key={option.key || option.title}>
+              <StyledMenuDiv>
+                <CustomTooltip key={option.title} title={option.title}>
+                  <StyledMenuItem
+                    disabled={option.disabled}
+                    key={option.title}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      option.handler(event);
+                      handleClose(event);
+                    }}
+                  >
+                    {option.icon}
+                  </StyledMenuItem>
+                </CustomTooltip>
+              </StyledMenuDiv>
             </StyledMenuDiv>
-          </StyledMenuDiv>
-        ))}
-      </Menu>
+          ))}
+        </Menu>
+      )}
     </div>
   );
 };

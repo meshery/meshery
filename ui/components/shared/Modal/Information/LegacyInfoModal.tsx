@@ -342,14 +342,17 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
           '& .MuiDialog-container': {
             '& .MuiPaper-root': {
               width: '100%',
-              maxWidth: '800px',
+              maxWidth: { xs: '100%', sm: '800px' },
+              margin: { xs: 0, sm: undefined },
+              maxHeight: { xs: '100dvh', sm: undefined },
+              borderRadius: { xs: 0, sm: undefined },
             },
           },
         }}
       >
         <ModalBody>
           <Grid container spacing={2}>
-            <Grid>
+            <Grid size={{ xs: 12, sm: 'auto' }}>
               <Button
                 variant="outlined"
                 disabled
@@ -406,7 +409,7 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
                 </Grid>
               )}
             </Grid>
-            <Grid size={{ xs: 8, lg: 'grow' }}>
+            <Grid size={{ xs: 12, sm: 8, lg: 'grow' }}>
               <Grid container spacing={2}>
                 <Grid size={6}>
                   <Typography gutterBottom variant="subtitle1">
@@ -451,10 +454,11 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
                 </Grid>
 
                 <Grid
-                  style={{
-                    marginLeft: '-1rem',
+                  size={{ xs: 12 }}
+                  sx={{
+                    marginLeft: { xs: 0, sm: '-1rem' },
                     marginTop: '-1rem',
-                    maxWidth: '39rem',
+                    maxWidth: { xs: '100%', sm: '39rem' },
                   }}
                 >
                   <RJSFWrapper
@@ -492,14 +496,20 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
           }
           variant="filled"
         >
-          <ActionContainer>
+          <ActionContainer
+            sx={{
+              flexDirection: { xs: 'column', sm: 'row' },
+              gap: { xs: '0.5rem', sm: '1rem' },
+            }}
+          >
             <TooltipButton title={'Copy Design Link'} onClick={handleCopy}>
-              <CopyLinkButton>Copy Link</CopyLinkButton>
+              <CopyLinkButton sx={{ width: { xs: '100%', sm: 'auto' } }}>Copy Link</CopyLinkButton>
             </TooltipButton>
 
             <ModalButtonSecondary
               data-testid="publish-button"
               variant="outlined"
+              sx={{ width: { xs: '100%', sm: 'auto' } }}
               onClick={handlePublishController}
               disabled={
                 isPublished || !(canPublishDesign && currentUser?.id === selectedResource?.userId)
@@ -510,6 +520,7 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
             <ModalButtonPrimary
               variant="contained"
               color="primary"
+              sx={{ width: { xs: '100%', sm: 'auto' } }}
               onClick={handleSubmit}
               disabled={
                 (isCatalogDataEqual && !dataIsUpdated) ||
