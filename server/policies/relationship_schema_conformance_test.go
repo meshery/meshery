@@ -193,8 +193,9 @@ func isOpenSchema(node map[string]any) bool {
 }
 
 // descendSchema resolves one mutation path segment. A numeric segment or the
-// wildcard `_` descends into an array's item schema; anything else is a property
-// name, falling back to additionalProperties for open maps.
+// wildcard `_` descends into an array's item schema first, then falls back to a
+// property name, because a numeric segment is also a legal map key. Any segment
+// falls back to additionalProperties for maps.
 func descendSchema(node map[string]any, segment string) (map[string]any, bool) {
 	descendsIntoItem := segment == "_" || arrayIndexSegment.MatchString(segment)
 	for _, alternative := range schemaAlternatives(node) {
@@ -205,7 +206,6 @@ func descendSchema(node map[string]any, segment string) (map[string]any, bool) {
 			if items, isObject := alternative["items"].(map[string]any); isObject {
 				return items, true
 			}
-			continue
 		}
 		if properties, isObject := alternative["properties"].(map[string]any); isObject {
 			if next, isObject := properties[segment].(map[string]any); isObject {
@@ -487,6 +487,7 @@ func TestResolveSchemaPath(t *testing.T) {
 							"config":  map[string]any{"additionalProperties": true},
 							"labels":  map[string]any{"additionalProperties": map[string]any{"type": "string"}},
 							"entries": map[string]any{"items": map[string]any{"properties": map[string]any{"name": map[string]any{"type": "string"}}}},
+							"data":    map[string]any{"additionalProperties": map[string]any{"type": "string"}},
 							"closed":  map[string]any{"type": "object"},
 						},
 					},
@@ -503,6 +504,8 @@ func TestResolveSchemaPath(t *testing.T) {
 		{"through allOf wrapper", []string{"spec", "entries", "_", "name"}, true},
 		{"numeric array index", []string{"spec", "entries", "0", "name"}, true},
 		{"typed additionalProperties map", []string{"spec", "labels", "anything"}, true},
+		{"numeric map key on a non-array", []string{"spec", "data", "0"}, true},
+		{"wildcard map key on a non-array", []string{"spec", "data", "_"}, true},
 		{"open schema one level", []string{"spec", "config", "anything"}, true},
 		{"open schema many levels", []string{"spec", "config", "a", "b", "c"}, true},
 		{"open schema array descent", []string{"spec", "config", "a", "0", "b"}, true},
