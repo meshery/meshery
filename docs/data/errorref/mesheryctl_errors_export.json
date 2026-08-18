@@ -2099,15 +2099,6 @@
         "short_description": "Ambiguous match, and no terminal to resolve it on",
         "probable_cause": "The command is running in a script, pipeline or CI job where stdin or stdout is redirected",
         "suggested_remediation": "Identify the item by its unique ID instead of its name\nNarrow the search so exactly one item matches"
-      },
-      "1254": {
-        "name": "ErrDesignPartialFailureCode",
-        "code": "1254",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "A component's apply or delete failed even though the overall request succeeded\nA prerequisite install (e.g. a Helm chart carrying a model's CRDs and operators) may have failed",
-        "suggested_remediation": "Inspect the per-component summary printed above\nResolve the failing component(s) and re-run the command\nFor Helm-based designs, deploy with upgrade enabled so existing releases can be reused"
       }
     }
   }

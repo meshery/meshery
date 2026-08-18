@@ -147,14 +147,6 @@ mesheryctl design undeploy -f [filepath]
 			return utils.ErrReadFromBody(err)
 		}
 
-		failedComponents, isSummary := parseDeploymentSummary(body)
-		if isSummary && len(failedComponents) > 0 {
-			utils.Log.Info(string(body))
-			err := ErrDesignPartialFailure("undeployed", failedComponents)
-			utils.Log.Error(err)
-			return err
-		}
-
 		if res.StatusCode == 200 {
 			utils.Log.Info("design undeployed")
 		}

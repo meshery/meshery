@@ -40,7 +40,6 @@ const (
 	ErrDesignInvalidApiResponseCode   = "mesheryctl-1199"
 	ErrEvaluateDesignCode             = "mesheryctl-1247"
 	ErrEvaluateDesignResponseCode     = "mesheryctl-1248"
-	ErrDesignPartialFailureCode       = "mesheryctl-1254"
 )
 
 const (
@@ -102,14 +101,6 @@ func ErrDeployDesign() error {
 		[]string{"File path or design name not provided. ", "Meshery server failed to interact with the Kubernetes cluster. ",
 			"There was an error connecting to the selected target platform (i.e. Kubernetes cluster(s))..This connection might not be assigned to the selected environment."},
 		[]string{"Provide a valid file path/design name. ", "Ensure the Meshery server can interact with the Kubernetes cluster. ", "Check if the selected target platform is assigned to the current environment.\n"})
-}
-
-func ErrDesignPartialFailure(verb string, failedComponents []string) error {
-	return errors.New(ErrDesignPartialFailureCode, errors.Alert,
-		[]string{fmt.Sprintf("design %s with failures in component(s): %s", verb, strings.Join(failedComponents, ", "))},
-		[]string{fmt.Sprintf("The server returned HTTP 200 but one or more components were not %s successfully", verb)},
-		[]string{"A component's apply or delete failed even though the overall request succeeded", "A prerequisite install (e.g. a Helm chart carrying a model's CRDs and operators) may have failed"},
-		[]string{"Inspect the per-component summary printed above", "Resolve the failing component(s) and re-run the command", "For Helm-based designs, deploy with upgrade enabled so existing releases can be reused"})
 }
 
 func ErrDesignSourceType() error {

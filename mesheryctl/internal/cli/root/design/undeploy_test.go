@@ -44,28 +44,6 @@ func TestUndeployCmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:             "given design with a failed component when design undeploy then partial failure error is returned",
-			Args:             []string{"undeploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
-			ExpectedResponse: "",
-			URLs: []utils.MockURL{
-				{
-					Method:       "POST",
-					URL:          "/api/pattern",
-					Response:     "apply.designSave.response.golden",
-					ResponseCode: 200,
-				},
-				{
-					Method:       "DELETE",
-					URL:          "/api/pattern/deploy",
-					Response:     "undeploy.undeploypartial.response.golden",
-					ResponseCode: 200,
-				},
-			},
-			ExpectError:    true,
-			IsOutputGolden: false,
-			ExpectedError:  ErrDesignPartialFailure("undeployed", []string{"myapp"}),
-		},
-		{
 			Name:             "given invalid file path when design undeploy then error is thrown",
 			Args:             []string{"undeploy", "-f", invalidFilePath},
 			ExpectedResponse: "",
