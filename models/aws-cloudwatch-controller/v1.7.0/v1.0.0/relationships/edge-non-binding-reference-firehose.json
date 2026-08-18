@@ -30,38 +30,6 @@
         "from": [
           {
             "id": null,
-            "kind": "MetricStream",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "model": {
-                "version": "v1.7.0"
-              },
-              "name": "aws-cloudwatch-controller",
-              "registrant": {
-                "kind": "github"
-              },
-              "version": ""
-            },
-            "patch": {
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "firehoseRef",
-                  "from",
-                  "name"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
-          }
-        ],
-        "to": [
-          {
-            "id": null,
             "kind": "DeliveryStream",
             "match": {},
             "match_strategy_matrix": null,
@@ -78,9 +46,41 @@
               "version": ""
             },
             "patch": {
-              "mutatedRef": [
+              "mutatorRef": [
                 [
                   "displayName"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "MetricStream",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": "v1.7.0"
+              },
+              "name": "aws-cloudwatch-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "firehoseRef",
+                  "from",
+                  "name"
                 ]
               ],
               "patchStrategy": "replace"
