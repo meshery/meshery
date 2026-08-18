@@ -76,7 +76,12 @@ func TestGraph_DetectCycle(t *testing.T) {
 				}
 			}
 
-			if got := g.DetectCycle(); got != tt.want {
+			got, err := g.DetectCycle()
+			if err != nil {
+				t.Fatalf("Graph.DetectCycle() returned an unexpected error: %v", err)
+			}
+
+			if got != tt.want {
 				t.Errorf("Graph.DetectCycle() = %v, want %v", got, tt.want)
 			}
 		})

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/meshery/meshery/server/models/pattern/patterns"
 	"github.com/meshery/meshery/server/models/pattern/planner"
 	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
 	"github.com/meshery/meshkit/logger"
@@ -29,25 +30,38 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 			return
 		}
 
-		processAnnotations(data.Pattern)
+		annotations := processAnnotations(data.Pattern)
 
 		// Create provision plan
-		plan, err := planner.CreatePlan(*data.Pattern, prov.IsDelete())
+		plan, err := planner.CreatePlan(*data.Pattern, annotations, prov.IsDelete())
 		if err != nil {
 			act.Terminate(err)
 			return
 		}
 
 		// Check feasibility of the generated plan
-		if !plan.IsFeasible() {
-			act.Terminate(fmt.Errorf("infeasible execution: detected cycle in the plan"))
+		feasible, err := plan.IsFeasible()
+		if err != nil {
+			act.Terminate(err)
+			return
+		}
+
+		if !feasible {
+			act.Terminate(planner.ErrCyclicDependency(data.Pattern.Name))
 			return
 		}
 
 		errs := []error{}
 
+		// The plan is keyed by component id; carry the display names so that a
+		// component withheld by a failed dependency can name that dependency.
+		displayNames := map[string]string{}
+		for _, component := range data.Pattern.Components {
+			displayNames[component.ID.String()] = component.DisplayName
+		}
+
 		// Execute the plan
-		_ = plan.Execute(func(name string, component component.ComponentDefinition) bool {
+		err = plan.Execute(func(name string, component component.ComponentDefinition) bool {
 			ccp := CompConfigPair{}
 
 			// meshkit's orchestration.EnrichComponentWithMesheryMetadata operates
@@ -60,7 +74,9 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 
 			if err != nil {
 				fmt.Println("Err while assigning labels", err)
+				data.Lock.Lock()
 				errs = append(errs, err)
+				data.Lock.Unlock()
 				return false
 			}
 
@@ -74,16 +90,26 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 
 			msg, err := act.Provision(ccp)
 			if err != nil {
+				data.Lock.Lock()
 				errs = append(errs, err)
+				data.Lock.Unlock()
 				return false
 			}
 			data.Lock.Lock()
-			// Store that this service was provisioned successfully
+			// Store the outcome reported for this service
 			data.Other[fmt.Sprintf("%s%s", name, ProvisionSuffixKey)] = msg
 			data.Lock.Unlock()
 
-			return true
+			return provisionSucceeded(msg)
+		}, func(name string, component component.ComponentDefinition, failedDependency string) {
+			data.Lock.Lock()
+			data.Other[fmt.Sprintf("%s%s", name, ProvisionSuffixKey)] = withheldMessage(component, displayNames[failedDependency], data.Pattern.Name)
+			data.Lock.Unlock()
 		}, log)
+		if err != nil {
+			act.Terminate(err)
+			return
+		}
 
 		if next != nil {
 			next(data, mergeErrors(errs))
@@ -91,14 +117,73 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 	}
 }
 
-func processAnnotations(pattern *pattern.PatternFile) {
-	components := []*component.ComponentDefinition{}
-	for _, component := range pattern.Components {
-		if !component.Metadata.IsAnnotation {
-			components = append(components, component)
+// provisionSucceeded reports whether every context that acted on a component
+// reported success.
+//
+// Neither fulfillment path returns an error when the component itself fails to
+// apply: the failure is carried on the per-component message. The messages are
+// therefore what decides whether the components that depend on this one may
+// proceed.
+func provisionSucceeded(msgs []patterns.DeploymentMessagePerContext) bool {
+	for _, msg := range msgs {
+		for _, summary := range msg.Summary {
+			if !summary.Success {
+				return false
+			}
 		}
 	}
+
+	return true
+}
+
+// withheldMessage reports a component that was never dispatched because a
+// component it declared a dependency on did not succeed.
+func withheldMessage(comp component.ComponentDefinition, failedDependency, designName string) []patterns.DeploymentMessagePerContext {
+	dependency := failedDependency
+	if dependency == "" {
+		dependency = "a component it depends on"
+	}
+
+	model := ""
+	if comp.Model != nil {
+		model = comp.Model.Name
+	}
+
+	return []patterns.DeploymentMessagePerContext{
+		{
+			Summary: []patterns.DeploymentMessagePerComp{
+				{
+					Kind:       comp.Component.Kind,
+					Model:      model,
+					CompName:   comp.DisplayName,
+					DesignName: designName,
+					Success:    false,
+					Message:    fmt.Sprintf("Withheld %s: %s did not deploy successfully", comp.DisplayName, dependency),
+					Error:      ErrDependencyNotSatisfied(comp.DisplayName, dependency),
+				},
+			},
+		},
+	}
+}
+
+// processAnnotations sets the non-semantic components of a design aside so that
+// they are never deployed, and returns them.
+func processAnnotations(pattern *pattern.PatternFile) []*component.ComponentDefinition {
+	components := []*component.ComponentDefinition{}
+	annotations := []*component.ComponentDefinition{}
+
+	for _, component := range pattern.Components {
+		if component.Metadata.IsAnnotation {
+			annotations = append(annotations, component)
+			continue
+		}
+
+		components = append(components, component)
+	}
+
 	pattern.Components = components
+
+	return annotations
 }
 
 func generateHosts(cd component.ComponentDefinition, reg *meshmodel.RegistryManager) []connection.Connection {

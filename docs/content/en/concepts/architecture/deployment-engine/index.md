@@ -71,13 +71,13 @@ This also means a component's fulfiller has to still be there. A model registere
 
 ## What this means when you deploy
 
-**Deployment order still holds across paths.** Components that declare a dependency on another component wait for it; everything else is deployed concurrently. Meshery does not treat a dependency differently because the two components are fulfilled by different paths. A cycle among dependencies is rejected before anything is deployed.
+**Deployment order still holds across paths.** A component that declares a dependency on another component is deployed only once that component has been deployed; everything else is deployed concurrently. A dependency names another component of the same design by its name, and Meshery does not treat it differently because the two components are fulfilled by different paths. Before anything is deployed, Meshery rejects a design whose dependencies name a component the design does not contain, name a component whose name is shared by more than one component, or form a cycle.
 
-**Failure is scoped to a dependency chain, not to a path.** If a component fails, the components that declared a dependency on it are abandoned. Components with no such dependency continue, whichever path fulfills them.
+**Failure is scoped to a dependency chain, not to a path.** A component whose declared dependency failed to deploy is not dispatched to either path, and is reported as withheld, naming the dependency that failed. Withholding propagates along the chain: whatever depended on the withheld component is withheld in turn. Components that declared no dependency on the failed component are deployed as usual, whichever path fulfills them.
 
 **Dependencies such as CRDs and operators are a separate, registrant-specific behavior.** The optional **Include Dependencies** setting asks Meshery to install what a component needs before applying it - and what Meshery is able to install depends on the registrant, because only some sources carry that information. Artifact Hub-sourced models carry a Helm chart Meshery can install; plain Kubernetes YAML carries nothing of the sort, so nothing is installed on your behalf. See [Auto-Deployment of CRDs and Operators]({{< ref "guides/infrastructure-management/overview.md#auto-deployment-of-crds-and-operators" >}}).
 
-**Results are reported per component.** A deployment summary names the component, its model, and where it was fulfilled - the cluster, for Path A, or the adapter's address, for Path B. When one component of a design fails, the summary tells you which path it was on.
+**Results are reported per component.** A deployment summary names the component, its model, and where it was fulfilled - the cluster, for Path A, or the adapter's address, for Path B. When one component of a design fails, the summary tells you which path it was on. A component that was withheld appears in the summary too, naming the dependency that kept it from being deployed.
 
 **Undeploy uses exactly the same routing, in reverse.** Each component is resolved to its registrant the same way and returned to the same fulfiller, with the dependency order inverted so that dependents are removed before what they depend on.
 

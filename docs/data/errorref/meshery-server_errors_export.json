@@ -4160,6 +4160,60 @@
         "short_description": "Unable to reach Meshery Operator lifecycle for this Kubernetes connection",
         "probable_cause": "The connection is not connected yet, or its state machine has not finished initializing.",
         "suggested_remediation": "Wait for the Kubernetes connection to reach the connected state, then retry.\nIf it stays disconnected, check the connection's diagnostics for why its Kubernetes client could not be created."
+      },
+      "1475": {
+        "name": "ErrInvalidDependencyCode",
+        "code": "1475",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The design was written by a tool that spells \\\"dependsOn\\\" differently, or was hand-edited outside of Meshery",
+        "suggested_remediation": ""
+      },
+      "1476": {
+        "name": "ErrUnresolvedDependencyCode",
+        "code": "1476",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The component that was depended upon has been renamed or removed while the dependency on it was left in place",
+        "suggested_remediation": ""
+      },
+      "1477": {
+        "name": "ErrAmbiguousDependencyCode",
+        "code": "1477",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Component names are not required to be unique within a design, and more than one component was given the same name",
+        "suggested_remediation": ""
+      },
+      "1478": {
+        "name": "ErrUnknownPlanNodeCode",
+        "code": "1478",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The design is internally inconsistent: it declares a dependency on a component that it does not contain",
+        "suggested_remediation": "Open the design in Meshery, remove or repoint the dangling dependency, and deploy again"
+      },
+      "1479": {
+        "name": "ErrCyclicDependencyCode",
+        "code": "1479",
+        "severity": "Alert",
+        "long_description": "Meshery deploys a component only once every component it depends on has been deployed. A loop of dependencies leaves no component that can be deployed first, so there is no order in which the design can be deployed.",
+        "short_description": "",
+        "probable_cause": "Two or more components of the design declare a dependency on each other, either directly or through a chain of other components",
+        "suggested_remediation": ""
+      },
+      "1480": {
+        "name": "ErrDependencyNotSatisfiedCode",
+        "code": "1480",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The component that was depended upon failed to deploy",
+        "suggested_remediation": ""
       }
     }
   }
