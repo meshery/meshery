@@ -373,13 +373,19 @@ func TestRelationshipMutationPathsResolveAgainstComponentSchemas(t *testing.T) {
 // TestIngressToServiceEdgeUsesNetworkingV1BackendShape pins meshery/meshery#21482
 // in the artifact the fix changed: the Ingress -> Service edge must mutate the
 // networking.k8s.io/v1 backend shape, in every kubernetes version directory the
-// definition is fanned out to.
+// definition is fanned out to. patchMutatorsAction pairs mutatorRefs[i] with
+// mutatedRefs[i], so both sides are pinned in order - reordering either one alone
+// would write the Service port into backend.service.name.
 func TestIngressToServiceEdgeUsesNetworkingV1BackendShape(t *testing.T) {
 	root := repoRoot(t)
 
-	want := [][]string{
+	wantMutated := [][]string{
 		{"configuration", "spec", "rules", "0", "http", "paths", "0", "backend", "service", "name"},
 		{"configuration", "spec", "rules", "0", "http", "paths", "0", "backend", "service", "port", "number"},
+	}
+	wantMutator := [][]string{
+		{"displayName"},
+		{"configuration", "spec", "ports", "0", "port"},
 	}
 
 	versionDirs, err := modelVersionDirs(root, "kubernetes")
@@ -403,28 +409,40 @@ func TestIngressToServiceEdgeUsesNetworkingV1BackendShape(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		got := [][]string{}
+		gotMutated := [][]string{}
+		gotMutator := [][]string{}
 		for _, item := range selectorItems(definition) {
-			if item.Kind == nil || *item.Kind != "Ingress" {
-				continue
+			switch {
+			case item.Kind == nil:
+			case *item.Kind == "Ingress":
+				gotMutated = append(gotMutated, mutationPaths(item)...)
+			case *item.Kind == "Service":
+				gotMutator = append(gotMutator, mutationPaths(item)...)
 			}
-			got = append(got, mutationPaths(item)...)
 		}
 
 		version := filepath.Base(filepath.Dir(modelDir))
-		if len(got) != len(want) {
-			t.Errorf("kubernetes %s: Ingress selector declares %d mutation paths, want %d (%v)", version, len(got), len(want), got)
-			continue
-		}
-		for i, path := range want {
-			if strings.Join(got[i], ".") != strings.Join(path, ".") {
-				t.Errorf("kubernetes %s: Ingress mutation path %d is %q, want the networking.k8s.io/v1 shape %q",
-					version, i, strings.Join(got[i], "."), strings.Join(path, "."))
-			}
-		}
+		assertPathsInOrder(t, version, "Ingress mutated", gotMutated, wantMutated)
+		assertPathsInOrder(t, version, "Service mutator", gotMutator, wantMutator)
 	}
 
 	if covered == 0 {
 		t.Fatal("edge-non-binding-network-jccsr.json is absent from every kubernetes version directory")
+	}
+}
+
+// assertPathsInOrder compares a selector's declared mutation paths against the
+// expected list positionally, because the engine pairs the two sides by index.
+func assertPathsInOrder(t *testing.T, version, side string, got, want [][]string) {
+	t.Helper()
+	if len(got) != len(want) {
+		t.Errorf("kubernetes %s: %s selector declares %d mutation paths, want %d (%v)", version, side, len(got), len(want), got)
+		return
+	}
+	for i, path := range want {
+		if strings.Join(got[i], ".") != strings.Join(path, ".") {
+			t.Errorf("kubernetes %s: %s path %d is %q, want %q",
+				version, side, i, strings.Join(got[i], "."), strings.Join(path, "."))
+		}
 	}
 }
