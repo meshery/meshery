@@ -171,6 +171,6 @@ jobs:
           profile_name: soak-test
 ```
 
-More configuration details of the action can be found [here](https://github.com/layer5io/meshery-performance-action/blob/master/action.yml).
+More configuration details of the action can be found in [action.yml](https://github.com/layer5io/meshery-performance-action/blob/master/action.yml).
 
 See [sample configurations](https://github.com/layer5io/meshery-performance-action#sample-configuration) for more workflow examples using this action.
