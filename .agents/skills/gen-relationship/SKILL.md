@@ -163,6 +163,18 @@ If legacy tooling forces you to name a rule, the historical default is `{kind}_{
 - Copying v1beta2 boilerplate blindly into a v1beta3 file (or the reverse) without checking required fields.
 - Mixing `kind: sibling` with in-tree `kind: hierarchical, type: sibling` in the same model.
 
+## Validate and register
+
+Machine-check every definition before shipping it; do not stop at eyeballing.
+
+1. `python3 -m json.tool <file>` — parses.
+2. Package it: `mesheryctl model init <model> --version <ver>` scaffolds `<model>/<ver>/{model.json,components/,relationships/}`; drop your files in `relationships/` (copy the in-tree `model.json`), then `mesheryctl model build <model>/<ver> --path .` produces an OCI tar and fails on malformed documents.
+3. Register it: `mesheryctl model import -f <model>-<ver>.tar` against a running server.
+4. **Verify registration yourself — never trust the import summary.** Query `/api/meshmodels/models/<model>/relationships` (or `mesheryctl relationship view <model>`) and confirm your definitions appear. Until [meshery/schemas#1169](https://github.com/meshery/schemas/pull/1169) ships, importing relationships into a model the server already knows silently orphans them (`model_id` = nil UUID) while the summary reports success.
+5. Prove behavior with an evaluation: POST a design whose component configurations already satisfy the relationship (matching names/paths) to `/api/meshmodels/relationships/evaluate` and confirm your definition appears in the response with `status: approved`.
+
+The strict document validator (meshkit `schema.Validate`) currently rejects corpus-conventional files for reasons unrelated to your authoring (see [meshery/schemas#1167](https://github.com/meshery/schemas/issues/1167)); `model build` + `import` + evaluation are the gates that matter today.
+
 ## Output
 
 Return the full relationship JSON (or a unified diff against the existing file). State the `kind` / `type` / `subType` you chose and why, name the mutator and mutated paths, and cite the schema files you used. If the combo is new, stop and say so.
