@@ -272,7 +272,7 @@ rename fails loudly. Detail and regression test:
 - E2E (Playwright): `make ui-integration-tests` or `npm run test:e2e` in `ui/`
 - Setup: `make test-setup-ui`
 
-Four E2E invariants. Each one's reasoning, evidence, run IDs and history live in
+Five E2E invariants. Each one's reasoning, evidence, run IDs and history live in
 `docs/content/en/project/contributing/ui/tests.md` - read it before changing the workflow
 or the setup projects.
 
@@ -291,6 +291,10 @@ or the setup projects.
 - **A local run needs three things** - `make ui-provider-build`, a server on `:9081` plus
   `make ui` on `:3000`, and `MESHERY_SERVER_URL=http://localhost:3000` on the Playwright
   run - and the failure when one is missing never names it.
+- **The CI run is serial** (`workers: process.env.CI ? 1 : 4`). One runner hosts Kind, the
+  server container and Playwright; extra workers starve it, and a starved runner fails as
+  blown `describe` timeouts or as "the hosted runner lost communication", never as a named
+  test defect. `ui/tests/playwrightWorkers.test.ts` pins the resolved value.
 
 ### Local Validation
 
