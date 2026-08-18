@@ -217,6 +217,15 @@ go run ./server/internal/lint/orderby/cmd/orderbylint ./...
 go test ./server/internal/lint/orderby/...
 ```
 
+`go run` recompiles the analyzer on every invocation, which is fine in CI (the
+build cache is warm) but noticeable locally after a clean cache. For iterative
+local use, build it once:
+
+```bash
+go build -o /tmp/orderbylint ./server/internal/lint/orderby/cmd/orderbylint
+/tmp/orderbylint ./...
+```
+
 The analyzer is pinned by an `analysistest` fixture at
 `server/internal/lint/orderby/testdata/`, which asserts both directions: every
 rejected shape reports, and every accepted shape stays silent. The second half
