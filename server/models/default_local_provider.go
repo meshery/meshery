@@ -1503,24 +1503,25 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 				return
 			}
 
+			seeded := make([]*MesheryPattern, 0, len(files))
 			for _, file := range files {
 				if file.Name != "design.yml" && file.Name != "design.yaml" {
 					continue
 				}
 
-				id, err := uuid.NewV4()
-				if err != nil {
-					log.Error(err)
-					continue
-				}
-
 				patternName, err := GetPatternName(file.Content)
 				if err != nil {
-					log.Error(err)
-					continue
+					log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
+					return
 				}
 
-				pattern := &MesheryPattern{
+				id, err := uuid.NewV4()
+				if err != nil {
+					log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
+					return
+				}
+
+				seeded = append(seeded, &MesheryPattern{
 					PatternFile: file.Content,
 					Name:        patternName,
 					ID:          &id,
@@ -1531,25 +1532,36 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 						"type":   "local",
 						"branch": "",
 					},
-				}
+				})
+			}
 
-				if _, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern); err != nil {
-					log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
-				}
+			if len(seeded) == 0 {
+				log.Error(ErrGettingSeededComponents(
+					fmt.Errorf("no catalog designs found under %s", catalogDir), seedContent+"s"))
+				return
+			}
+
+			if err := l.MesheryPatternPersister.ReplaceSeededPatterns(seeded); err != nil {
+				log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
 			}
 		}
 	}
 
-	l.SeedDefaultOrganization(log)
+	if err := l.SeedDefaultOrganization(); err != nil {
+		log.Error(err)
+	}
 }
 
 // SeedDefaultOrganization creates the built-in "My Org" organization when none
 // exists. The count guard makes it idempotent, so it is safe to call from any
 // path that may run against an already-populated database.
-func (l *DefaultLocalProvider) SeedDefaultOrganization(log logger.Handler) {
-	count, _ := l.OrganizationPersister.GetOrganizationsCount()
+func (l *DefaultLocalProvider) SeedDefaultOrganization() error {
+	count, err := l.OrganizationPersister.GetOrganizationsCount()
+	if err != nil {
+		return ErrGettingSeededComponents(err, "organization")
+	}
 	if count != 0 {
-		return
+		return nil
 	}
 
 	org := &organization.Organization{
@@ -1561,8 +1573,9 @@ func (l *DefaultLocalProvider) SeedDefaultOrganization(log logger.Handler) {
 		Owner:       uuid.Nil,
 	}
 	if _, err := l.OrganizationPersister.SaveOrganization(org); err != nil {
-		log.Error(ErrGettingSeededComponents(err, "organization"))
+		return ErrSavingSeededComponents(err, "organization")
 	}
+	return nil
 }
 
 func (l *DefaultLocalProvider) Cleanup() error {

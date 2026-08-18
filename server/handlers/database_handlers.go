@@ -120,6 +120,23 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 		writeMeshkitError(w, ErrObtainDatabaseHandler(), http.StatusInternalServerError)
 		return
 	} else {
+		// Held for the whole workflow, including the seeding goroutine below.
+		// dbHandler's own lock is released when this function returns, which
+		// leaves the goroutine unprotected: a second reset could acquire it and
+		// drop tables mid-seed. Released by whichever goroutine finishes the
+		// work, not on handler return - hence the seedingStarted flag, which
+		// makes sure every early return below still releases.
+		if !models.TryAcquireResetLock() {
+			writeMeshkitError(w, ErrResetInProgress(), http.StatusConflict)
+			return
+		}
+		seedingStarted := false
+		defer func() {
+			if !seedingStarted {
+				models.ReleaseResetLock()
+			}
+		}()
+
 		dbHandler.Lock()
 		defer dbHandler.Unlock()
 
@@ -132,13 +149,12 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 		for _, table := range tables {
 			// The GraphQL hard reset (resolver/meshsync.go) skips this table
 			// deliberately; this path did not, so the same reset produced
-			// different results depending on which entry point was used. Nothing
-			// re-seeds events, so dropping it here is unrecoverable data loss.
+			// different results depending on the entry point. Nothing re-seeds
+			// events, so dropping it here is unrecoverable data loss.
 			// Re-migrating it below is idempotent.
 			if table == "events" {
 				continue
 			}
-
 			err = dbHandler.Migrator().DropTable(table)
 			if err != nil {
 				writeMeshkitError(w, ErrDropDatabaseTable(err), http.StatusInternalServerError)
@@ -172,15 +188,20 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 			return
 		}
 
-		// The reset drops and re-migrates organizations, but only boot used to
-		// seed it - leaving the UI with no org to scope its keys query to, and
-		// therefore no permissions, until a restart. Seeded synchronously so the
-		// org exists before the success response reaches the client.
+		// Seeded synchronously, before the success response: organizations is
+		// dropped and re-migrated above but was only ever seeded at boot, and
+		// the UI skips its keys query without an org - resolving to no
+		// permissions until a restart.
 		if lp, ok := provider.(*models.DefaultLocalProvider); ok {
-			lp.SeedDefaultOrganization(h.log)
+			if err := lp.SeedDefaultOrganization(); err != nil {
+				writeMeshkitError(w, err, http.StatusInternalServerError)
+				return
+			}
 		}
 
+		seedingStarted = true
 		go func() {
+			defer models.ReleaseResetLock()
 			krh.SeedKeys(viper.GetString("KEYS_PATH"))
 			if lp, ok := provider.(*models.DefaultLocalProvider); ok {
 				lp.SeedContent(h.log)
