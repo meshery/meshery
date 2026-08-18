@@ -447,22 +447,6 @@ const NavigatorContent = () => {
     );
   };
 
-  const handleExtensionIconMouseEnter = (event: React.MouseEvent<HTMLImageElement>) => {
-    const image = event.currentTarget;
-
-    image.style.transform = 'translate(-20%, -25%)';
-    image.style.top = '0';
-    image.style.right = '0';
-  };
-
-  const handleExtensionIconMouseLeave = (event: React.MouseEvent<HTMLImageElement>) => {
-    const image = event.currentTarget;
-
-    image.style.transform = 'translate(0, 0)';
-    image.style.top = 'auto';
-    image.style.right = 'auto';
-  };
-
   const renderNavigatorExtensions = (children, depth) => {
     if (!children || children.length === 0) {
       return null;
@@ -519,16 +503,16 @@ const NavigatorContent = () => {
             placement="right"
             disableFocusListener={!drawerCollapsed}
             disableTouchListener={!drawerCollapsed}
+            disableHoverListener={!drawerCollapsed}
           >
             <MainListIcon>
               <img
                 src={icon}
+                alt={`${name} icon`}
                 style={{
                   width: '20px',
                   filter: currentPath === href ? activeIconFilter : '',
                 }}
-                onMouseOver={handleExtensionIconMouseEnter}
-                onMouseOut={handleExtensionIconMouseLeave}
               />
             </MainListIcon>
           </CustomTooltip>
@@ -741,7 +725,7 @@ const NavigatorContent = () => {
                         <div>
                           <CustomTooltip title={title} placement="right" TransitionComponent={Zoom}>
                             <ListItemIcon style={{ marginLeft: '20%', marginBottom: '0.4rem' }}>
-                              {hovericon}
+                              {hovericon ?? icon}
                             </ListItemIcon>
                           </CustomTooltip>
                         </div>

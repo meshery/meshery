@@ -17,6 +17,7 @@ import {
   Button,
   Typography,
   SearchBar,
+  useHasPermission,
   useTheme,
   PROMPT_VARIANTS,
   ModalFooter,
@@ -35,13 +36,14 @@ import {
   useUpdateWorkspaceMutation,
 } from '../../rtk-query/workspace';
 import { useNotification, useNotificationHandlers } from '../../utils/hooks/useNotification';
+import { formatApiError } from '../../utils/helpers/meshkitError';
 import { RJSFModalWrapper } from '../shared/Modal/Modal';
-import _PromptComponent from '../PromptComponent';
+import _PromptComponent from '../general/PromptComponent';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { Keys } from '@meshery/schemas/permissions';
-import CAN from '@/utils/can';
+import DefaultError from '../general/error-404/index';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
-import ViewSwitch from '@/components/ViewSwitch';
+import ViewSwitch from '@/components/general/ViewSwitch';
 import { CreateButtonWrapper } from './styles';
 import WorkspaceGridView from './WorkspaceGridView';
 import RightArrowIcon from '@/assets/icons/RightArrowIcon';
@@ -124,6 +126,16 @@ const columnList = [
 
 const Workspaces = ({ onSelectWorkspace }) => {
   const theme = useTheme();
+  const canCreateWorkspace = useHasPermission(Keys.WorkspaceManagementCreateWorkspace);
+  const canEditWorkspace = useHasPermission(Keys.WorkspaceManagementEditWorkspace);
+  const canAssignTeam = useHasPermission(Keys.WorkspaceManagementAssignTeamToWorkspace);
+  const canDeleteTeam = useHasPermission(Keys.IdentityAccessManagementDeleteTeam);
+  const canEditTeam = useHasPermission(Keys.IdentityAccessManagementEditTeam);
+  const canLeaveTeam = useHasPermission(Keys.IdentityAccessManagementLeaveTeam);
+  const canViewWorkspace = useHasPermission(Keys.WorkspaceManagementViewWorkspace);
+  const canRemoveTeamFromWorkspace = useHasPermission(
+    Keys.WorkspaceManagementRemoveTeamFromWorkspace,
+  );
   const [workspaceModal, setWorkspaceModal] = useState({
     open: false,
     schema: {},
@@ -182,29 +194,34 @@ const Workspaces = ({ onSelectWorkspace }) => {
       orgId: organization?.id,
     },
     {
-      skip: !organization?.id ? true : false,
+      skip: !organization?.id || !canViewWorkspace,
     },
   );
 
-  const [createWorkspace] = useCreateWorkspaceMutation();
+  const [createWorkspace, createResult] = useCreateWorkspaceMutation();
 
-  const [updateWorkspace] = useUpdateWorkspaceMutation();
+  const [updateWorkspace, updateResult] = useUpdateWorkspaceMutation();
 
   const [deleteWorkspace] = useDeleteWorkspaceMutation();
 
   const workspaces = workspacesData?.workspaces ? workspacesData.workspaces : [];
-  const handleCreateWorkspace = ({ organization, name, description }) => {
+  const handleCreateWorkspace = ({ organizationId, name, description }) => {
     createWorkspace({
       workspacePayload: {
         name: name,
         description: description,
-        organization_id: organization,
+        organization_id: organizationId,
       },
     })
       .unwrap()
-      .then(() => handleSuccess(`Workspace "${name}" created `))
-      .catch((error) => handleError(`Workspace Create Error: ${error?.data}`));
-    handleWorkspaceModalClose();
+      // Close the modal only after a successful create - closing it
+      // unconditionally here discarded the user's typed input on failure, the
+      // same silent-failure class this change exists to remove.
+      .then(() => {
+        handleSuccess(`Workspace "${name}" created`);
+        handleWorkspaceModalClose();
+      })
+      .catch((error) => handleError(`Unable to create workspace "${name}"`, error));
   };
 
   useEffect(() => {
@@ -215,19 +232,21 @@ const Workspaces = ({ onSelectWorkspace }) => {
     }
   }, [workspaceModalContext.createNewWorkspaceModalOpen]);
 
-  const handleEditWorkspace = ({ organization, name, description }) => {
+  const handleEditWorkspace = ({ organizationId, name, description }) => {
     updateWorkspace({
       workspaceId: editWorkspaceId,
       workspacePayload: {
         name: name,
         description: description,
-        organization_id: organization,
+        organization_id: organizationId,
       },
     })
       .unwrap()
-      .then(() => handleSuccess(`Workspace "${name}" updated`))
-      .catch((error) => handleError(`Workspace Update Error: ${error?.data}`));
-    handleWorkspaceModalClose();
+      .then(() => {
+        handleSuccess(`Workspace "${name}" updated`);
+        handleWorkspaceModalClose();
+      })
+      .catch((error) => handleError(`Unable to update workspace "${name}"`, error));
   };
 
   const handleDeleteWorkspace = (id, name) => {
@@ -236,49 +255,47 @@ const Workspaces = ({ onSelectWorkspace }) => {
     })
       .unwrap()
       .then(() => handleSuccess(`Workspace "${name}" deleted`))
-      .catch((error) => handleError(`Workspace Delete Error: ${error?.data}`));
+      .catch((error) => handleError(`Unable to delete workspace "${name}"`, error));
   };
 
   const fetchSchema = (workspaceActionType) => {
+    // Organization is derived from the user's active session and hidden by the
+    // canonical form UI schema (organizationId -> "ui:widget": "hidden" in
+    // meshery/schemas workspace/forms/createOrEdit.ui.json). Its value is
+    // seeded into the form via initialData, so no per-render schema patching is
+    // required here.
     const baseSchema =
       workspaceActionType === WORKSPACE_ACTION_TYPES.EDIT
         ? editWorkspaceSchema
         : createAndEditWorkspaceSchema;
-    const updatedSchema = {
-      schema: baseSchema,
-      uiSchema: createAndEditWorkspaceUiSchema,
-    };
-    updatedSchema.schema?.properties?.organization &&
-      ((updatedSchema.schema = {
-        ...updatedSchema.schema,
-        properties: {
-          ...updatedSchema.schema.properties,
-          organization: {
-            ...updatedSchema.schema.properties.organization,
-            enum: [organization?.id],
-            enumNames: [organization?.name],
-          },
-        },
-      }),
-      (updatedSchema.uiSchema = {
-        ...updatedSchema.uiSchema,
-        organization: {
-          ...updatedSchema.uiSchema.organization,
-          ['ui:widget']: 'hidden',
-        },
-      }));
     setWorkspaceModal({
       open: true,
-      schema: updatedSchema,
+      schema: {
+        schema: baseSchema,
+        uiSchema: createAndEditWorkspaceUiSchema,
+      },
     });
   };
 
-  const handleError = (action) => (error) => {
+  /**
+   * Surface a failed workspace operation.
+   *
+   * This was a curried `handleError(action) => (error) => ...` that every call
+   * site invoked as `handleError('some message')`, producing a function that
+   * was immediately discarded - so no workspace failure ever reached the user.
+   * It also read `action.error_msg` off a plain string, which is always
+   * undefined. A plain two-argument function makes that misuse impossible.
+   *
+   * `formatApiError` consumes the MeshKit envelope the server now sends
+   * (code and suggested remediation) and renders it as the markdown that
+   * `notify` displays through BasicMarkdown.
+   */
+  const handleError = (action, error) => {
     updateProgress({ showProgress: false });
+    const { message } = formatApiError(error, action);
     notify({
-      message: `${action.error_msg}: ${error}`,
+      message,
       event_type: EVENT_TYPES.ERROR,
-      details: error.toString(),
     });
   };
 
@@ -297,7 +314,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
       setInitialData({
         name: workspaceObject.name,
         description: workspaceObject.description,
-        organization: workspaceObject.organizationId,
+        organizationId: workspaceObject.organizationId,
       });
       setEditWorkspaceId(workspaceObject.id);
     } else {
@@ -305,7 +322,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
       setInitialData({
         name: undefined,
         description: '',
-        organization: organization?.id,
+        organizationId: organization?.id,
       });
       setEditWorkspaceId('');
     }
@@ -388,6 +405,10 @@ const Workspaces = ({ onSelectWorkspace }) => {
 
   const [columnVisibility, setColumnVisibility] = useState({});
 
+  if (!canViewWorkspace) {
+    return <DefaultError permissionKey={Keys.WorkspaceManagementViewWorkspace} />;
+  }
+
   return (
     <NoSsr>
       <ErrorBoundary>
@@ -419,7 +440,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
         </div>
         {!selectedWorkspace.id && (
           <ToolWrapper>
-            <CreateButtonWrapper>
+            <CreateButtonWrapper style={{ marginRight: '2rem' }}>
               <Button
                 type="submit"
                 variant="contained"
@@ -432,14 +453,8 @@ const Workspaces = ({ onSelectWorkspace }) => {
                   backgroundColor: '#607d8b',
                   padding: '8px',
                   borderRadius: '5px',
-                  marginRight: '2rem',
                 }}
-                disabled={
-                  !CAN(
-                    Keys.WorkspaceManagementCreateWorkspace.id,
-                    Keys.WorkspaceManagementCreateWorkspace.function,
-                  )
-                }
+                permissionKey={Keys.WorkspaceManagementCreateWorkspace}
                 data-cy="btnResetDatabase"
               >
                 <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
@@ -513,15 +528,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
             />
           )}
         </>
-        {(actionType === WORKSPACE_ACTION_TYPES.CREATE
-          ? CAN(
-              Keys.WorkspaceManagementCreateWorkspace.id,
-              Keys.WorkspaceManagementCreateWorkspace.function,
-            )
-          : CAN(
-              Keys.WorkspaceManagementEditWorkspace.id,
-              Keys.WorkspaceManagementEditWorkspace.function,
-            )) &&
+        {(actionType === WORKSPACE_ACTION_TYPES.CREATE ? canCreateWorkspace : canEditWorkspace) &&
           workspaceModal.open && (
             <Modal
               open={workspaceModal.open}
@@ -541,6 +548,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
                 submitBtnText={actionType === WORKSPACE_ACTION_TYPES.CREATE ? 'Save' : 'Update'}
                 initialData={initialData}
                 handleClose={handleWorkspaceModalClose}
+                isSubmitting={createResult.isLoading || updateResult.isLoading}
               />
             </Modal>
           )}
@@ -553,22 +561,10 @@ const Workspaces = ({ onSelectWorkspace }) => {
         >
           <WorkspaceTeamsTable
             workspaceId={teamsModal.workspaceId}
-            isAssignTeamAllowed={CAN(
-              Keys.WorkspaceManagementAssignTeamToWorkspace.id,
-              Keys.WorkspaceManagementAssignTeamToWorkspace.function,
-            )}
-            isDeleteTeamAllowed={CAN(
-              Keys.IdentityAccessManagementDeleteTeam.id,
-              Keys.IdentityAccessManagementDeleteTeam.function,
-            )}
-            isEditTeamAllowed={CAN(
-              Keys.IdentityAccessManagementEditTeam.id,
-              Keys.IdentityAccessManagementEditTeam.function,
-            )}
-            isLeaveTeamAllowed={CAN(
-              Keys.IdentityAccessManagementLeaveTeam.id,
-              Keys.IdentityAccessManagementLeaveTeam.function,
-            )}
+            isAssignTeamAllowed={canAssignTeam}
+            isDeleteTeamAllowed={canDeleteTeam}
+            isEditTeamAllowed={canEditTeam}
+            isLeaveTeamAllowed={canLeaveTeam}
             useAssignTeamToWorkspaceMutation={useAssignTeamToWorkspaceMutation}
             useGetTeamsOfWorkspaceQuery={useGetTeamsOfWorkspaceQuery}
             useUnassignTeamFromWorkspaceMutation={useUnassignTeamFromWorkspaceMutation}
@@ -578,10 +574,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
             useGetUsersForOrgQuery={useGetUsersForOrgQuery}
             useNotificationHandlers={useNotificationHandlers}
             useRemoveUserFromTeamMutation={useRemoveUserFromTeamMutation}
-            isRemoveTeamFromWorkspaceAllowed={CAN(
-              Keys.WorkspaceManagementRemoveTeamFromWorkspace.id,
-              Keys.WorkspaceManagementRemoveTeamFromWorkspace.function,
-            )}
+            isRemoveTeamFromWorkspaceAllowed={canRemoveTeamFromWorkspace}
           />
           <ModalFooter variant="filled"></ModalFooter>
         </Modal>

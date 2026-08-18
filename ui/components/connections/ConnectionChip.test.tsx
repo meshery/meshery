@@ -62,7 +62,7 @@ vi.mock('@/utils/fallback', () => ({
   normalizeStaticImagePath: (...args) => normalizeStaticImagePath(...args),
 }));
 
-vi.mock('../CustomAvatar', () => ({
+vi.mock('../general/CustomAvatar', () => ({
   default: ({ children, color }) => (
     <div data-testid="badge-avatar" data-color={color}>
       {children}

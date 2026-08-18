@@ -18,6 +18,7 @@ import (
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/meshkit/models/meshmodel/entity"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas/models/v1beta3/component"
@@ -166,12 +167,22 @@ func (arh *AutoRegistrationHelper) getConnectionDefinitions(connType string) []c
 	}
 
 	connectionEntities, _, _, _ := connectionCompFilter.Get(arh.dbHandler)
-	connectionDefs := make([]component.ComponentDefinition, len(connectionEntities))
+	return toConnectionDefinitions(connectionEntities)
+}
+
+// toConnectionDefinitions returns the entities that are usable as connection definitions.
+// Entities that are not ComponentDefinitions, and definitions without a Model, are skipped:
+// getConnectionPayload dereferences Model, so a definition without one cannot yield a connection.
+// The asserted pointer is checked for nil because a typed nil pointer in an entity.Entity passes
+// the type assertion with ok == true.
+func toConnectionDefinitions(connectionEntities []entity.Entity) []component.ComponentDefinition {
+	connectionDefs := make([]component.ComponentDefinition, 0, len(connectionEntities))
 	for _, connectionEntity := range connectionEntities {
 		def, ok := connectionEntity.(*component.ComponentDefinition)
-		if ok {
-			connectionDefs = append(connectionDefs, *def)
+		if !ok || def == nil || def.Model == nil {
+			continue
 		}
+		connectionDefs = append(connectionDefs, *def)
 	}
 	return connectionDefs
 }

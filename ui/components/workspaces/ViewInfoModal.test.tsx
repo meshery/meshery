@@ -71,7 +71,7 @@ vi.mock('@/assets/icons', () => ({
 
 vi.mock('rehype-sanitize', () => ({ default: () => null }));
 
-vi.mock('../Markdown', () => ({
+vi.mock('../general/Markdown', () => ({
   MDEditor: ({ value, onChange }: any) => (
     <textarea data-testid="md-editor" value={value} onChange={(e) => onChange?.(e.target.value)} />
   ),

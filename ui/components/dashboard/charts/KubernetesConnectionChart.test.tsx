@@ -20,7 +20,7 @@ vi.mock('billboard.js', () => ({
   donut: () => 'donut',
 }));
 
-vi.mock('../../BBChart', () => ({
+vi.mock('../../general/BBChart', () => ({
   default: (props: { options: unknown }) => {
     bbChartSpy(props.options);
     return <div data-testid="bb-chart" />;
@@ -46,14 +46,6 @@ vi.mock('next/link', () => ({
       {children}
     </a>
   ),
-}));
-
-vi.mock('../../../css/icons.styles', () => ({
-  iconSmall: {},
-}));
-
-vi.mock('@/components/meshery-mesh-interface/PatternService/CustomTextTooltip', () => ({
-  CustomTextTooltip: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/rtk-query/connection', () => ({
@@ -94,12 +86,13 @@ vi.mock('../style', () => ({
 vi.mock('@sistent/sistent', () => ({
   Box: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
   CircularProgress: () => <div data-testid="circular-progress" />,
-  InfoOutlinedIcon: () => <svg data-testid="info-icon" />,
+  InfoTooltip: () => <svg data-testid="info-icon" />,
   KubernetesIcon: () => <svg data-testid="k8s-icon" />,
   Typography: ({ children }: { children?: React.ReactNode }) => <p>{children}</p>,
   useTheme: () => ({
     palette: { mode: 'light', icon: { default: '#000', disabled: '#777' } },
   }),
+  useHasPermission: () => canSpy(),
 }));
 
 import KubernetesConnectionStatsChart from './KubernetesConnectionChart';

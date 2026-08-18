@@ -16,7 +16,7 @@ import {
   // and read as a destructive delete action on "not found" chips.
   Warning as WarningIcon,
 } from '@/assets/icons';
-import BadgeAvatars from '../CustomAvatar';
+import BadgeAvatars from '../general/CustomAvatar';
 import DisconnectIcon from '../../assets/icons/disconnect';
 import {
   CONNECTION_STATE_TO_TRANSITION_MAP,

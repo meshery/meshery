@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
@@ -107,11 +108,24 @@ func (h *Handler) machineCtxForConnection(connectionID string) (*kubernetes.Mach
 		return nil, false
 	}
 	inst, ok := h.ConnectionToStateMachineInstanceTracker.Get(connUUID)
-	if !ok || inst == nil {
+	if !ok {
+		return nil, false
+	}
+	// An unassigned Context is an expected "not ready" state, not an error: a
+	// non-kubernetes connection carries no MachineCtx, and a kubernetes one whose
+	// cluster was unreachable when its machine was created never got its context
+	// assigned. Type-casting that nil on every controller-status poll (the ~5s SSE
+	// loop) would otherwise spam the log with meshkit-11180 ("nil interface cannot
+	// be type casted"). Treat it as not-ready and let the caller degrade to an
+	// unknown status; only a genuinely wrong Context type below is a real error
+	// worth logging. The Debug line keeps a breadcrumb for an operator debugging a
+	// connection stuck at UNKNOWN, without reintroducing Error-severity spam.
+	if !mhelpers.HasMachineContext(inst) {
+		h.log.Debug(fmt.Sprintf("machine instance for connection %s has no context assigned, treating as not-ready", connectionID))
 		return nil, false
 	}
 	machinectx, err := utils.Cast[*kubernetes.MachineCtx](inst.Context)
-	if err != nil || machinectx == nil || machinectx.MesheryCtrlsHelper == nil {
+	if err != nil || machinectx.MesheryCtrlsHelper == nil {
 		if err != nil {
 			h.log.Error(err)
 		}
@@ -168,6 +182,23 @@ func deriveControllerStatus(controller models.MesheryController, status system.C
 // collectControllersStatus builds the full status list for the requested
 // connections. The result is sorted (connectionId, controller) so callers can
 // compare successive snapshots byte-for-byte to detect changes.
+//
+// A connection with a ready FSM context reports exactly one row per controller
+// in models.MesheryControllers - never a partial list. The rows are built from
+// that set rather than from the handler map, which is missing entries precisely
+// when something went wrong: AddCtxControllerHandlers attaches no handlers at
+// all when the kubeconfig is unreadable or the Kubernetes client cannot be
+// built. (An unresolvable chart version is not one of those cases - the
+// operator handler is still attached and still observes, only installation is
+// withheld.) Since the client replaces its controller state with each snapshot
+// wholesale, dropping a row makes that controller's card vanish from the UI at
+// exactly the moment it has something to report.
+//
+// A row with no handler behind it carries controllersStatusUnknown - Meshery
+// made no observation of the cluster, so any other value would assert something
+// it did not check - and no version. Why the handler is missing has its own
+// home: the connection diagnostics, including operator_deploy_failed, which is
+// fed from GetOperatorError.
 func (h *Handler) collectControllersStatus(connectionIDs []string) []system.ControllerStatus {
 	items := make([]system.ControllerStatus, 0)
 	for _, connectionID := range connectionIDs {
@@ -177,20 +208,23 @@ func (h *Handler) collectControllersStatus(connectionIDs []string) []system.Cont
 		}
 		ctrlHandlers := machinectx.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
 		brokerConnected := h.mesheryHoldsLiveBrokerConnection(machinectx)
-		for controller, ctrlHandler := range ctrlHandlers {
-			version, err := ctrlHandler.GetVersion()
-			if err != nil {
-				h.log.Debugf("controllers status: version for %s on %s: %v", internalControllerName(controller), connectionID, err)
-			}
-			status := deriveControllerStatus(controller, internalControllerStatus(ctrlHandler.GetStatus()), brokerConnected)
-			items = append(items, system.ControllerStatus{
+		for _, controller := range models.MesheryControllers {
+			item := system.ControllerStatus{
 				// machineCtxForConnection only resolves valid UUIDs, so the parse
 				// cannot yield the zero UUID here.
 				ConnectionId: uuid.FromStringOrNil(connectionID),
 				Controller:   internalControllerName(controller),
-				Status:       status,
-				Version:      version,
-			})
+				Status:       controllersStatusUnknown,
+			}
+			if ctrlHandler := ctrlHandlers[controller]; ctrlHandler != nil {
+				version, err := ctrlHandler.GetVersion()
+				if err != nil {
+					h.log.Debugf("controllers status: version for %s on %s: %v", internalControllerName(controller), connectionID, err)
+				}
+				item.Status = deriveControllerStatus(controller, internalControllerStatus(ctrlHandler.GetStatus()), brokerConnected)
+				item.Version = version
+			}
+			items = append(items, item)
 		}
 	}
 	sort.Slice(items, func(i, j int) bool {

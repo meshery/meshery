@@ -118,14 +118,10 @@ const CustomRadioWidget = (props: CustomRadioWidgetProps) => {
 
   return (
     <FormControl component="fieldset">
-      <RadioGroup
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        sx={{ marginTop: '-1.7rem', marginLeft: '-1rem' }}
-      >
-        <Typography fontWeight={'bold'} fontSize={'1rem'}>
-          {label}
-        </Typography>
+      <Typography fontWeight={'bold'} fontSize={'1rem'} sx={{ marginBottom: '0.5rem' }}>
+        {label}
+      </Typography>
+      <RadioGroup value={value} onChange={(e) => onChange(e.target.value)} aria-label={label}>
         {enumOptions.map((option, index) => (
           <FormControlLabel
             key={option.value}

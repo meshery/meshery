@@ -40,6 +40,8 @@ Now to publish your model to catalog:
 - 📚 [Models](https://docs.meshery.io/concepts/logical/models)
 - 📚 [Creating models](https://docs.meshery.io/guides/configuration-management/creating-models#create-models)
 - 📚 [Components](https://docs.meshery.io/concepts/logical/components)
+- 📚 [Connections](https://docs.meshery.io/concepts/logical/connections)
+- 📚 [Credentials](https://docs.meshery.io/concepts/logical/credentials)
 - 📚 [Relationships](https://docs.meshery.io/concepts/logical/relationships)
 - 👨‍💻 [Models Repository](https://github.com/meshery/meshery/tree/master/models)
 - 📺 [Self-paced Contributor Trainings](https://meshery.io/talks-and-trainings#trainings)

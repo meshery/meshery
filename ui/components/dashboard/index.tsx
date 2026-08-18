@@ -301,9 +301,6 @@ const Dashboard = () => {
     .map(([key, layoutAction]) => ({ key, ...layoutAction }));
 
   const onBreakpointChange = (breakpoint) => {
-    if (!isEditMode) {
-      return;
-    }
     setCurrentBreakpoint(breakpoint);
   };
   useEffect(() => {

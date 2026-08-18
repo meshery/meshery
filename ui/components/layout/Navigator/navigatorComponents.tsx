@@ -162,10 +162,8 @@ export const getNavigatorComponents = (
   },
   {
     id: TELEMETRY,
-    icon: <InsertChartIcon style={{ ...drawerIconsStyle }} fill={theme.palette.icon.default} />,
-    hovericon: (
-      <InsertChartIcon style={{ ...drawerIconsStyle }} fill={theme.palette.icon.default} />
-    ),
+    icon: <InsertChartIcon style={drawerIconsStyle} />,
+    hovericon: <InsertChartIcon style={drawerIconsStyle} />,
     href: '/telemetry',
     title: 'Telemetry',
     show: providerUiAccessControl.isNavigatorComponentEnabled([TELEMETRY]),
@@ -174,19 +172,21 @@ export const getNavigatorComponents = (
     children: [
       {
         id: GRAFANA,
-        icon: <InsertChartIcon style={{ ...drawerIconsStyle }} fill={theme.palette.icon.default} />,
+        icon: <InsertChartIcon style={drawerIconsStyle} />,
         href: '/telemetry/charts',
         title: 'Charts',
         show: providerUiAccessControl.isNavigatorComponentEnabled([TELEMETRY, GRAFANA]),
         link: true,
+        permissionKey: Keys.MesherySystemViewMetrics,
       },
       {
         id: PROMETHEUS,
-        icon: <TachographDigitalIcon fill={theme.palette.icon.default} style={drawerIconsStyle} />,
+        icon: <TachographDigitalIcon style={drawerIconsStyle} />,
         href: '/telemetry/metrics',
         title: 'Metrics',
         show: providerUiAccessControl.isNavigatorComponentEnabled([TELEMETRY, PROMETHEUS]),
         link: true,
+        permissionKey: Keys.MesherySystemViewMetrics,
       },
     ],
   },

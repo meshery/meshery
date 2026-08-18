@@ -87,6 +87,41 @@ describe('formatApiError', () => {
     expect(result.message).toContain('`meshery-server-1014`');
   });
 
+  // Since @meshery/schemas v1.3.37 (meshery/schemas#1081) the baseQuery wrapper
+  // populates the MeshKit detail arrays on `error.meshkit` directly - camelCase,
+  // with a snake_case fallback - so `formatApiError` reads them straight off the
+  // envelope. The real transform is exercised end-to-end in
+  // `meshkitErrorChain.test.ts`; these pin the rendering in isolation.
+  it('surfaces every detail array carried on the envelope', () => {
+    const result = formatApiError({
+      status: 403,
+      data: { error: 'Unable to create the environment' },
+      meshkit: {
+        message: 'Unable to create the environment',
+        code: 'meshery-server-1448',
+        probableCause: ['Missing permission.'],
+        suggestedRemediation: ['Ask an owner for the Environment role.'],
+        longDescription: ['The provider rejected the request.'],
+      },
+    });
+
+    expect(result.message).toContain('*Try:*');
+    expect(result.message).toContain('- Ask an owner for the Environment role.');
+    expect(result.meshkit?.probableCause).toEqual(['Missing permission.']);
+    expect(result.meshkit?.longDescription).toEqual(['The provider rejected the request.']);
+  });
+
+  it('renders no Try: section when the envelope carries no remediations', () => {
+    const result = formatApiError({
+      status: 500,
+      data: { error: 'boom' },
+      meshkit: { message: 'boom' },
+    });
+
+    expect(result.message).toBe('**boom**');
+    expect(result.meshkit?.suggestedRemediation).toBeUndefined();
+  });
+
   it('falls back to FetchBaseQueryError.data string', () => {
     const result = formatApiError(
       { status: 500, data: 'internal server error' },

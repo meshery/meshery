@@ -15,7 +15,7 @@ const bbChartSpy = vi.fn();
 
 vi.mock('billboard.js', () => ({ donut: () => 'donut' }));
 
-vi.mock('../../BBChart', () => ({
+vi.mock('../../general/BBChart', () => ({
   default: (props: { options: unknown }) => {
     bbChartSpy(props.options);
     return <div data-testid="bb-chart" />;
@@ -73,6 +73,7 @@ vi.mock('@sistent/sistent', () => ({
   InfoOutlinedIcon: () => <svg data-testid="info-icon" />,
   Typography: ({ children }: { children?: React.ReactNode }) => <p>{children}</p>,
   useTheme: () => ({ palette: { icon: { default: '#000' } } }),
+  useHasPermission: () => true,
 }));
 
 import MesheryConfigurationChart from './MesheryConfigurationCharts';

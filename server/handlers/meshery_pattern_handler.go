@@ -160,9 +160,11 @@ type DesignPostPayload struct {
 	ID         *core.Uuid         `json:"id,omitempty"`
 	Name       string             `json:"name,omitempty"`
 	DesignFile design.PatternFile `json:"designFile"`
-	// Meshery doesn't have the owner field
-	// but the remote provider is allowed to provide one
-	Owner       *string              `json:"owner"`
+	// UserID is the id of the design's owner, emitted as "userId" per the
+	// schemas v1beta3 design.MesheryPatternPayload contract. The remote
+	// provider (meshery-cloud) supplies it; Meshery's built-in provider is
+	// single-user and stamps the owner on read.
+	UserID      *core.Uuid           `json:"userId,omitempty"`
 	Visibility  string               `json:"visibility"`
 	CatalogData v1alpha1.CatalogData `json:"catalogData,omitempty"`
 }
@@ -383,7 +385,7 @@ func (h *Handler) handlePatternPOST(
 	mesheryPatternRecord := models.MesheryPattern{
 		ID:          requestPayload.ID,
 		PatternFile: designFile,
-		Owner:       requestPayload.Owner,
+		UserID:      requestPayload.UserID,
 		Name:        requestPayload.Name,
 		Visibility:  requestPayload.Visibility,
 		CatalogData: requestPayload.CatalogData,

@@ -1,4 +1,3 @@
-import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
 import {
   Box,
@@ -10,6 +9,7 @@ import {
   Select,
   useTheme,
   WorkspaceContentMoveModal,
+  useHasPermission,
 } from '@sistent/sistent';
 import React, { useCallback, useRef, useState } from 'react';
 import { StyledSearchBar } from '@sistent/sistent';
@@ -38,7 +38,13 @@ import { useSelector } from 'react-redux';
 import { useNotification } from '@/utils/hooks/useNotification';
 
 const WorkspaceContent = ({ workspace }) => {
-  const isViewVisible = CAN(Keys.KanvasViewViews.id, Keys.KanvasViewViews.function);
+  const isViewVisible = useHasPermission(Keys.KanvasViewViews);
+  const isAssignDesignsAllowed = useHasPermission(
+    Keys.WorkspaceManagementAssignDesignsToWorkspaces,
+  );
+  const isCreateWorkspaceAllowed = useHasPermission(Keys.WorkspaceManagementCreateWorkspace);
+  const isMoveViewAllowed = useHasPermission(Keys.KanvasAssignViewsToWorkspace);
+
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
 
   const [filters, setFilters] = useState({
@@ -245,12 +251,7 @@ const WorkspaceContent = ({ workspace }) => {
               <ImportButton
                 refetch={refetch}
                 workspaceId={workspace?.id}
-                disabled={
-                  !CAN(
-                    Keys.WorkspaceManagementAssignDesignsToWorkspaces.id,
-                    Keys.WorkspaceManagementAssignDesignsToWorkspaces.function,
-                  )
-                }
+                permissionKey={Keys.WorkspaceManagementAssignDesignsToWorkspaces}
               />
             )}
           </Grid2>
@@ -275,18 +276,9 @@ const WorkspaceContent = ({ workspace }) => {
             WorkspaceModalContext={WorkspaceModalContext}
             assignDesignToWorkspace={assignDesignToWorkspace}
             assignViewToWorkspace={assignViewToWorkspace}
-            isCreateWorkspaceAllowed={CAN(
-              Keys.WorkspaceManagementCreateWorkspace.id,
-              Keys.WorkspaceManagementCreateWorkspace.function,
-            )}
-            isMoveDesignAllowed={CAN(
-              Keys.WorkspaceManagementAssignDesignsToWorkspaces.id,
-              Keys.WorkspaceManagementAssignDesignsToWorkspaces.function,
-            )}
-            isMoveViewAllowed={CAN(
-              Keys.KanvasAssignViewsToWorkspace.id,
-              Keys.KanvasAssignViewsToWorkspace.function,
-            )}
+            isCreateWorkspaceAllowed={isCreateWorkspaceAllowed}
+            isMoveDesignAllowed={isAssignDesignsAllowed}
+            isMoveViewAllowed={isMoveViewAllowed}
             currentOrgId={currentOrganization?.id}
             notify={notify}
             router={router}

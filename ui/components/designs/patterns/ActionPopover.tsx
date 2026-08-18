@@ -54,6 +54,7 @@ const ActionPopover = ({ actions = [] }) => {
               {actions.map((action, index) => (
                 <MenuItem
                   disabled={action.disabled}
+                  permissionKey={action.permissionKey}
                   key={index}
                   onClick={(event) => {
                     event.stopPropagation();

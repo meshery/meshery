@@ -589,7 +589,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 			KubeConfigs:  kconfigs,
 			Declarations: []string{compStr},
 		})
-		sucess := err == nil
+		success := err == nil
 		msgs = append(msgs, patterns.DeploymentMessagePerContext{
 			SystemName: hostName,
 			Location:   fmt.Sprintf("%s:%s", hostName, strconv.Itoa(hostPort)),
@@ -599,7 +599,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 					Model:      ccp.Component.Model.Name,
 					CompName:   ccp.Component.DisplayName,
 					DesignName: sap.patternName,
-					Success:    sucess,
+					Success:    success,
 					Message:    resp.GetMessage(),
 					Error:      err,
 				},

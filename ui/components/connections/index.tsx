@@ -1,12 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { NoSsr } from '@sistent/sistent';
-import { ErrorBoundary, AppBar } from '@sistent/sistent';
+import {
+  NoSsr,
+  ErrorBoundary,
+  AppBar,
+  InfoTooltip,
+  useHasPermission,
+  useTheme,
+} from '@sistent/sistent';
 import Modal from '../shared/Modal/Modal';
 import { ConnectionIconText, ConnectionTab, ConnectionTabs } from './styles';
 import MeshSyncTable from './meshSync';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
-import CAN from '@/utils/can';
+
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '../general/error-404/index';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
@@ -67,6 +73,8 @@ function ConnectionManagementPage(props) {
   );
 }
 function Connections() {
+  const hasViewConnections = useHasPermission(Keys.WorkspaceManagementViewConnections);
+  const theme = useTheme();
   const router = useRouter();
   const { query, pathname, push, isReady, replace } = router;
   const { openCreateConnection } = useConnectionWizardModal();
@@ -170,10 +178,10 @@ function Connections() {
   );
 
   // Rendered by whichever table is active (ConnectionTable or MeshSyncTable) so
-  // the tab switcher stays visible - and functional - on both tabs, between
-  // that table's own toolbar and its data grid. Memoized so the unstable JSX
-  // identity doesn't cascade into the tables' props on every render (this page
-  // has previously hit React error #185 from exactly this kind of churn).
+  // the tab switcher stays visible - and functional - on both tabs, above
+  // that table's own toolbar. Memoized so the unstable JSX identity doesn't
+  // cascade into the tables' props on every render (this page has previously
+  // hit React error #185 from exactly this kind of churn).
   const tabs = useMemo(
     () => (
       <AppBar position="static" color="default" style={{ marginBottom: '3rem' }}>
@@ -200,35 +208,45 @@ function Connections() {
               <ConnectionIconText>
                 <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
                 <MeshsyncIcon width="20" height="20" />
+                <span
+                  onClick={(e) => e.stopPropagation()}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  style={{
+                    display: 'inline-flex',
+                    marginLeft: '5px',
+                    // Info icon uses currentColor; keep it stable when the Tab
+                    // is selected (selected tabs set color to primary.main).
+                    color: theme.palette.icon.default,
+                  }}
+                >
+                  <InfoTooltip
+                    helpText={`MeshSync discovers and keeps Meshery in sync with your Kubernetes clusters. [Learn more](https://docs.meshery.io/concepts/architecture/meshsync/)`}
+                    placement="top"
+                    interactive
+                  />
+                </span>
               </ConnectionIconText>
             }
           />
         </ConnectionTabs>
       </AppBar>
     ),
-    [tab, handleTabChange],
+    [tab, handleTabChange, theme.palette.icon.default],
   );
 
   if (!isReady) return null;
 
   return (
     <NoSsr>
-      {CAN(
-        Keys.WorkspaceManagementViewConnections.id,
-        Keys.WorkspaceManagementViewConnections.function,
-      ) ? (
+      {hasViewConnections ? (
         <>
-          {tab === 0 &&
-            CAN(
-              Keys.WorkspaceManagementViewConnections.id,
-              Keys.WorkspaceManagementViewConnections.function,
-            ) && (
-              <ConnectionTable
-                selectedConnectionId={connectionId}
-                updateUrlWithConnectionId={updateUrlWithConnectionId}
-                tabs={tabs}
-              />
-            )}
+          {tab === 0 && (
+            <ConnectionTable
+              selectedConnectionId={connectionId}
+              updateUrlWithConnectionId={updateUrlWithConnectionId}
+              tabs={tabs}
+            />
+          )}
           {tab === 1 && (
             <MeshSyncTable
               selectedResourceId={connectionId}
@@ -238,7 +256,7 @@ function Connections() {
           )}
         </>
       ) : (
-        <DefaultError />
+        <DefaultError permissionKey={Keys.WorkspaceManagementViewConnections} />
       )}
     </NoSsr>
   );

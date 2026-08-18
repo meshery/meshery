@@ -11,7 +11,8 @@ List registered relationships
 
 ## Synopsis
 
-List all relationships registered in Meshery Server
+List all relationships registered in Meshery Server.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl relationship list [flags]

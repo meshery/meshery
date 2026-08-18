@@ -51,6 +51,21 @@ const contentStyle = {
   width: '100%',
 };
 
+// `BasicMarkdown` emits sibling block elements (<p>, <ul>, ...) with no wrapper
+// of its own. Dropped straight into the row above, those blocks become sibling
+// flex items and lay out horizontally, so a multi-block MeshKit error renders
+// as "Unable to create the environmentmeshery-server-1448". Its own column
+// keeps them stacked. `flexBasis: auto` preserves the intrinsic width a
+// single-line toast has today, and `minWidth: 0` lets a long unbreakable string
+// wrap instead of overflowing the toast.
+const messageStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  flex: '1 1 auto',
+  minWidth: 0,
+  overflowWrap: 'anywhere',
+};
+
 export const ThemeResponsiveSnackbar = forwardRef((props, forwardedRef) => {
   // notistack v3 custom content props: the snackbar identifier arrives as
   // `id` (React strips `key`, so it must never be read from props). `action`
@@ -79,7 +94,9 @@ export const ThemeResponsiveSnackbar = forwardRef((props, forwardedRef) => {
     <StyledSnackbarContent ref={forwardedRef} variant={variant}>
       <div data-testid={`SnackbarContent-${variant}`} style={contentStyle}>
         {getIcon()}
-        <BasicMarkdown content={message} />
+        <div data-testid="SnackbarContent-message" style={messageStyle}>
+          <BasicMarkdown content={message} />
+        </div>
         <Box marginLeft={'auto'} paddingLeft={'0.5rem'}>
           {action && action(id)}
         </Box>

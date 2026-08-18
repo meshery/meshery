@@ -2,8 +2,7 @@ import { Button, Typography } from '@sistent/sistent';
 import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
 import { Keys } from '@meshery/schemas/permissions';
 import useTestIDsGenerator from '@/utils/hooks/useTestIDs';
-import CAN from '@/utils/can';
-import { CONNECTION_KINDS } from '@/utils/Enum';
+import { CoreConnectionKinds } from '@/utils/Enum';
 import { useConnectionWizardModal } from '@/utils/context/ConnectionWizardContextProvider';
 
 type MesherySettingsEnvButtonsProps = {
@@ -24,7 +23,7 @@ const MesherySettingsEnvButtons = ({ onOpened }: MesherySettingsEnvButtonsProps)
 
   const handleClick = () => {
     openCreateConnection({
-      kind: CONNECTION_KINDS.KUBERNETES,
+      kind: CoreConnectionKinds.kubernetes,
       skipKindSelection: true,
     });
     onOpened?.();
@@ -41,9 +40,7 @@ const MesherySettingsEnvButtons = ({ onOpened }: MesherySettingsEnvButtonsProps)
           borderRadius: 5,
           padding: '8px',
         }}
-        disabled={
-          !CAN(Keys.LifecycleManagementAddCluster.id, Keys.LifecycleManagementAddCluster.function)
-        }
+        permissionKey={Keys.LifecycleManagementAddCluster}
         data-cy="btnAddCluster"
       >
         <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
