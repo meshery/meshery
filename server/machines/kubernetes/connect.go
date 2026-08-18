@@ -75,7 +75,9 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 		// inside the resolver and still yields the Settings defaults):
 		// connect with layer-free defaults and skip the cluster apply
 		// below, since the intended configuration is unknown.
-		machinectx.log.Error(errResolve)
+		if machinectx.log != nil {
+			machinectx.log.Error(errResolve)
+		}
 		mergedControllersConfig = nil
 	}
 

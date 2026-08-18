@@ -49,8 +49,8 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 
 	contextID := machinectx.K8sContext.ID
 
+	machinectx.ActionMutex.Lock()
 	go func() {
-		machinectx.ActionMutex.Lock()
 		defer machinectx.ActionMutex.Unlock()
 
 		if ctx.Err() != nil {

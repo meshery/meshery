@@ -138,26 +138,21 @@ func InitializeMachineWithContext(
 	mtype string,
 	initFunc connections.InitFunc,
 ) (*machines.StateMachine, error) {
-	inst, ok := smInstanceTracker.Get(ID)
-	if ok {
+	return smInstanceTracker.GetOrInitialize(ID, func() (*machines.StateMachine, error) {
+		var dbHandler *database.Handler
+		if provider != nil {
+			dbHandler = provider.GetGenericPersister()
+		}
+		inst, err := getMachine(initialState, mtype, ID.String(), userID, log, dbHandler)
+		if err != nil {
+			log.Error(err)
+			return nil, err
+		}
+		inst.Provider = provider
+		_, err = inst.Start(ctx, machineCtx, log, initFunc)
+		if err != nil {
+			return nil, err
+		}
 		return inst, nil
-	}
-
-	var dbHandler *database.Handler
-	if provider != nil {
-		dbHandler = provider.GetGenericPersister()
-	}
-	inst, err := getMachine(initialState, mtype, ID.String(), userID, log, dbHandler)
-	if err != nil {
-		log.Error(err)
-		return nil, err
-	}
-	inst.Provider = provider
-	_, err = inst.Start(ctx, machineCtx, log, initFunc)
-	if err != nil {
-		return nil, err
-	}
-	smInstanceTracker.Add(ID, inst)
-
-	return inst, nil
+	})
 }

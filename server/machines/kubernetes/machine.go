@@ -86,7 +86,10 @@ func NotFound() machines.State {
 
 func Delete() machines.State {
 	return machines.State{
-		Events: machines.Events{},
+		Events: machines.Events{
+			machines.Register: machines.REGISTERED,
+			machines.Connect:  machines.CONNECTED,
+		},
 		Action: &DeleteAction{},
 	}
 }

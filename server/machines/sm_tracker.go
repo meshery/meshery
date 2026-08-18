@@ -8,7 +8,58 @@ import (
 
 type ConnectionToStateMachineInstanceTracker struct {
 	ConnectToInstanceMap map[core.Uuid]*StateMachine
+	inFlight             map[core.Uuid]chan struct{}
 	mx                   sync.RWMutex
+}
+
+func (smt *ConnectionToStateMachineInstanceTracker) GetOrInitialize(id core.Uuid, initFn func() (*StateMachine, error)) (*StateMachine, error) {
+	smt.mx.Lock()
+	if inst, ok := smt.ConnectToInstanceMap[id]; ok {
+		smt.mx.Unlock()
+		return inst, nil
+	}
+
+	if smt.inFlight == nil {
+		smt.inFlight = make(map[core.Uuid]chan struct{})
+	}
+
+	ch, inFlight := smt.inFlight[id]
+	if !inFlight {
+		ch = make(chan struct{})
+		smt.inFlight[id] = ch
+	}
+	smt.mx.Unlock()
+
+	if inFlight {
+		<-ch
+		// The other goroutine finished initialization. We can now just get it from the map.
+		smt.mx.Lock()
+		inst, ok := smt.ConnectToInstanceMap[id]
+		smt.mx.Unlock()
+		if ok {
+			return inst, nil
+		}
+		// If it's not in the map, the initialization failed, so we should try again.
+		return smt.GetOrInitialize(id, initFn)
+	}
+
+	// We are the one initializing
+	inst, err := initFn()
+
+	smt.mx.Lock()
+	defer smt.mx.Unlock()
+
+	if err == nil && inst != nil {
+		if smt.ConnectToInstanceMap == nil {
+			smt.ConnectToInstanceMap = make(map[core.Uuid]*StateMachine)
+		}
+		smt.ConnectToInstanceMap[id] = inst
+	}
+
+	delete(smt.inFlight, id)
+	close(ch) // wake up waiters
+
+	return inst, err
 }
 
 func (smt *ConnectionToStateMachineInstanceTracker) Get(id core.Uuid) (*StateMachine, bool) {

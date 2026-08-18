@@ -163,7 +163,26 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		return
 	}
 
-	smInstanceTracker.Remove(connectionUUID)
+	// Retain the StateMachine in the tracker while the background Delete cleanup runs.
+	// We launch a goroutine to wait for the exact ActionMutex used by this StateMachine's
+	// Delete transition. If a RECONNECT occurs during cleanup, it will reuse this
+	// StateMachine and block on the same ActionMutex, preserving the lifecycle owner.
+	go func() {
+		if mCtx, ok := inst.Context.(*kubernetes.MachineCtx); ok && mCtx.ActionMutex != nil {
+			// Because SendEvent is synchronous and the Delete transition already launched its
+			// cleanup goroutine which acquired ActionMutex, this Lock() will block until the
+			// older cleanup finishes.
+			mCtx.ActionMutex.Lock()
+			mCtx.ActionMutex.Unlock()
+		}
+
+		// Cleanup is finished. Only remove the StateMachine from the tracker if a
+		// RECONNECT did NOT happen (i.e. the state is still Deleted).
+		if inst.CurrentState == machines.DELETED {
+			smInstanceTracker.Remove(connectionUUID)
+		}
+	}()
+
 	if deleteEvent != nil {
 		_ = provider.PersistEvent(*deleteEvent, token)
 		go h.config.EventBroadcaster.Publish(userID, deleteEvent)

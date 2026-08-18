@@ -8,6 +8,7 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -40,6 +41,16 @@ func (m *lifecycleTestMockProvider) UpdateConnectionById(token string, conn *con
 	if m.updateConnErr != nil {
 		return nil, m.updateConnErr
 	}
+	m.mu.Lock()
+	if conn != nil {
+		m.connection = &connections.Connection{
+			ID:     conn.ID,
+			Name:   conn.Name,
+			Status: conn.Status,
+		}
+	}
+	m.mu.Unlock()
+
 	name := "test-connection"
 	if m.connection != nil && m.connection.Name != "" {
 		name = m.connection.Name
@@ -330,6 +341,9 @@ func TestDeleteContext_SuccessRemovesTracker(t *testing.T) {
 		t.Fatalf("expected status 200 on successful delete, got: %d (body: %s)", rec.Code, rec.Body.String())
 	}
 
+	// Wait for async tracker removal
+	time.Sleep(50 * time.Millisecond)
+
 	// Verify machine was removed from tracker
 	if _, ok := tracker.Get(core.Uuid(connID)); ok {
 		t.Fatal("expected machine to be removed from tracker after successful Delete, but it is still present")
@@ -361,5 +375,237 @@ func (a *successfulLifecycleAction) ExecuteOnEntry(ctx context.Context, machineC
 }
 
 func (a *successfulLifecycleAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
+	return machines.NoOp, nil, nil
+}
+
+func TestUpdateConnectionById_RouteIDAuthority(t *testing.T) {
+	routeID := uuid.Must(uuid.NewV4())
+	bodyID := uuid.Must(uuid.NewV4())
+	sysID := core.Uuid(uuid.Must(uuid.NewV4()))
+
+	cases := []struct {
+		name       string
+		body       string
+		expectedID string
+	}{
+		{
+			name:       "body ID nil",
+			body:       `{"status":"connected"}`,
+			expectedID: routeID.String(),
+		},
+		{
+			name:       "body ID equal to route ID",
+			body:       fmt.Sprintf(`{"id":%q,"status":"connected"}`, routeID.String()),
+			expectedID: routeID.String(),
+		},
+		{
+			name:       "body ID different from route ID",
+			body:       fmt.Sprintf(`{"id":%q,"status":"connected"}`, bodyID.String()),
+			expectedID: routeID.String(),
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			provider := &lifecycleTestMockProvider{
+				k8sContext: models.K8sContext{
+					ID:           routeID.String(),
+					Name:         "test-k8s",
+					ConnectionID: routeID.String(),
+				},
+			}
+			h, tracker := newLifecycleTestHandler(t, provider)
+
+			sm, err := kubernetes.New(routeID.String(), core.Uuid(routeID), h.log)
+			if err != nil {
+				t.Fatalf("failed to create machine: %v", err)
+			}
+			sm.Provider = provider
+			state := sm.States[machines.CONNECTED]
+			sm.States[machines.CONNECTED] = *state.RegisterAction(&successfulLifecycleAction{})
+			sm.CurrentState = machines.REGISTERED
+
+			user := &models.User{ID: uuid.Must(uuid.NewV4())}
+			ctx := context.WithValue(context.Background(), models.UserCtxKey, user)
+			ctx = context.WithValue(ctx, models.SystemIDKey, &sysID)
+			ctx = context.WithValue(ctx, models.TokenCtxKey, "test-token")
+
+			machineCtx := &kubernetes.MachineCtx{
+				K8sContext:  provider.k8sContext,
+				ActionMutex: &sync.Mutex{},
+			}
+			_, err = sm.Start(ctx, machineCtx, h.log, func(c context.Context, mc interface{}, l logger.Handler) (interface{}, *events.Event, error) {
+				return mc, nil, nil
+			})
+			if err != nil {
+				t.Fatalf("start machine: %v", err)
+			}
+
+			tracker.Add(core.Uuid(routeID), sm)
+
+			req := httptest.NewRequest(http.MethodPut, "/api/integrations/connections/"+routeID.String(), strings.NewReader(tc.body))
+			req = mux.SetURLVars(req, map[string]string{"connectionId": routeID.String()})
+			reqCtx := req.Context()
+			reqCtx = context.WithValue(reqCtx, models.TokenCtxKey, "test-token")
+			reqCtx = context.WithValue(reqCtx, models.UserCtxKey, user)
+			reqCtx = context.WithValue(reqCtx, models.SystemIDKey, &sysID)
+			req = req.WithContext(reqCtx)
+			rec := httptest.NewRecorder()
+
+			h.UpdateConnectionById(rec, req, nil, user, provider)
+
+			if rec.Code != http.StatusOK {
+				t.Fatalf("expected status 200, got: %d", rec.Code)
+			}
+
+			provider.mu.Lock()
+			defer provider.mu.Unlock()
+			if provider.connection == nil {
+				t.Fatalf("expected provider to receive a connection payload")
+			}
+			if provider.connection.ID.String() != tc.expectedID {
+				t.Fatalf("expected payload ID %q, got %q", tc.expectedID, provider.connection.ID.String())
+			}
+		})
+	}
+}
+
+func TestDeleteReconnectRace(t *testing.T) {
+	connID := uuid.Must(uuid.NewV4())
+	sysID := core.Uuid(uuid.Must(uuid.NewV4()))
+
+	provider := &lifecycleTestMockProvider{
+		k8sContext: models.K8sContext{
+			ID:           connID.String(),
+			Name:         "test-k8s",
+			ConnectionID: connID.String(),
+		},
+	}
+	h, tracker := newLifecycleTestHandler(t, provider)
+
+	sm, err := kubernetes.New(connID.String(), core.Uuid(connID), h.log)
+	if err != nil {
+		t.Fatalf("failed to create machine: %v", err)
+	}
+	sm.Provider = provider
+	
+	// Create a blocking Delete action
+	deleteActionWg := &sync.WaitGroup{}
+	deleteActionWg.Add(1)
+	
+	cleanupFinished := make(chan struct{})
+	
+	sm.States[machines.DELETED] = machines.State{
+		Events: machines.Events{
+			machines.Register: machines.REGISTERED,
+			machines.Connect:  machines.CONNECTED,
+		},
+		Action: &blockingLifecycleAction{wg: deleteActionWg, finished: cleanupFinished},
+	}
+	sm.CurrentState = machines.DISCOVERED
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	ctx := context.WithValue(context.Background(), models.UserCtxKey, user)
+	ctx = context.WithValue(ctx, models.SystemIDKey, &sysID)
+	ctx = context.WithValue(ctx, models.TokenCtxKey, "test-token")
+
+	machineCtx := &kubernetes.MachineCtx{
+		K8sContext:  provider.k8sContext,
+		ActionMutex: &sync.Mutex{},
+		MesheryCtrlsHelper: models.NewMesheryControllersHelper(h.log, controllers.OperatorDeploymentConfig{}, nil, nil, provider, &sysID),
+		OperatorTracker:    models.NewOperatorTracker(false),
+		EventBroadcaster:   h.config.EventBroadcaster,
+	}
+	_, err = sm.Start(ctx, machineCtx, h.log, func(c context.Context, mc interface{}, l logger.Handler) (interface{}, *events.Event, error) {
+		return mc, nil, nil
+	})
+	if err != nil {
+		t.Fatalf("start machine: %v", err)
+	}
+
+	tracker.Add(core.Uuid(connID), sm)
+
+	// 1. DELETE
+	reqDel := httptest.NewRequest(http.MethodDelete, "/api/system/kubernetes/contexts/"+connID.String(), nil)
+	reqDel = mux.SetURLVars(reqDel, map[string]string{"id": connID.String()})
+	reqDelCtx := context.WithValue(reqDel.Context(), models.TokenCtxKey, "test-token")
+	reqDelCtx = context.WithValue(reqDelCtx, models.UserCtxKey, user)
+	reqDelCtx = context.WithValue(reqDelCtx, models.SystemIDKey, &sysID)
+	reqDel = reqDel.WithContext(reqDelCtx)
+	recDel := httptest.NewRecorder()
+
+	// Run DeleteContext synchronously (it returns immediately because DeleteAction is async)
+	h.DeleteContext(recDel, reqDel, nil, user, provider)
+
+	if recDel.Code != http.StatusOK {
+		t.Fatalf("expected status 200 on successful delete, got: %d", recDel.Code)
+	}
+
+	// At this point, DeleteAction is blocked waiting for deleteActionWg, and holds the ActionMutex.
+	// 2. RECONNECT
+	reqRec := httptest.NewRequest(http.MethodPut, "/api/integrations/connections/"+connID.String(), strings.NewReader(`{"status":"connected"}`))
+	reqRec = mux.SetURLVars(reqRec, map[string]string{"connectionId": connID.String()})
+	reqRecCtx := context.WithValue(reqRec.Context(), models.TokenCtxKey, "test-token")
+	reqRecCtx = context.WithValue(reqRecCtx, models.UserCtxKey, user)
+	reqRecCtx = context.WithValue(reqRecCtx, models.SystemIDKey, &sysID)
+	reqRec = reqRec.WithContext(reqRecCtx)
+	recRec := httptest.NewRecorder()
+
+	reconnectFinished := make(chan struct{})
+	go func() {
+		h.UpdateConnectionById(recRec, reqRec, nil, user, provider)
+		close(reconnectFinished)
+	}()
+
+	// Wait a bit to ensure UpdateConnectionById has started and is blocking on ActionMutex
+	time.Sleep(100 * time.Millisecond)
+
+	// Verify the tracker still has the StateMachine
+	if sm2, ok := tracker.Get(core.Uuid(connID)); !ok {
+		t.Fatalf("tracker removed the StateMachine before Delete completed!")
+	} else if sm2 != sm {
+		t.Fatalf("tracker has a DIFFERENT StateMachine instance!")
+	}
+
+	// 3. Unblock Delete cleanup
+	deleteActionWg.Done()
+
+	// Wait for cleanup to finish
+	<-cleanupFinished
+	
+	// Wait for reconnect to finish
+	<-reconnectFinished
+
+	if recRec.Code != http.StatusOK {
+		t.Fatalf("expected status 200 on reconnect, got: %d, body: %s", recRec.Code, recRec.Body.String())
+	}
+
+	// Verify the tracker STILL has the StateMachine, because Reconnect happened!
+	if _, ok := tracker.Get(core.Uuid(connID)); !ok {
+		t.Fatalf("tracker removed the StateMachine after Delete completed, even though a Reconnect happened!")
+	}
+}
+
+type blockingLifecycleAction struct {
+	wg *sync.WaitGroup
+	finished chan struct{}
+}
+
+func (a *blockingLifecycleAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
+	mCtx := machineCtx.(*kubernetes.MachineCtx)
+	mCtx.ActionMutex.Lock()
+	go func() {
+		defer mCtx.ActionMutex.Unlock()
+		a.wg.Wait()
+		close(a.finished)
+	}()
+	return machines.NoOp, nil, nil
+}
+
+func (a *blockingLifecycleAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
+	return machines.NoOp, nil, nil
+}
+
+func (a *blockingLifecycleAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	return machines.NoOp, nil, nil
 }

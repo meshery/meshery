@@ -429,9 +429,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	if connection.ID == uuid.Nil {
-		connection.ID = connectionID
-	}
+	connection.ID = connectionID
 
 	// MeshSync deployment-mode changes are handled by the dedicated
 	// POST /api/integrations/connections/{connectionId}/actions endpoint
