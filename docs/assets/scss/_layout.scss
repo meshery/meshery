@@ -114,7 +114,7 @@ ol {
 
 
 .main-container {
-  padding: 3.5rem 4.4rem;
+  padding: var(--navbar-height) 4.4rem 3.5rem;
   overflow-x: auto;
   width: 100%;
   min-height: calc(100vh - var(--footer-height));
@@ -124,7 +124,7 @@ ol {
     flex: 0 0 100%;
   }
   @media (max-width: 600px) {
-    padding: 1.5rem 1.5rem 1.5rem 2.5rem;
+    padding: 1.5rem 1.5rem 1.5rem 2.5rem
   }
   & .breadcrumb {
     list-style: none;
