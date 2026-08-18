@@ -103,6 +103,14 @@ func ErrDeployDesign() error {
 		[]string{"Provide a valid file path/design name. ", "Ensure the Meshery server can interact with the Kubernetes cluster. ", "Check if the selected target platform is assigned to the current environment.\n"})
 }
 
+func ErrDesignPartialFailure(verb string, failedComponents []string) error {
+	return errors.New(ErrDeployDesignCode, errors.Alert,
+		[]string{fmt.Sprintf("design %s with failures in component(s): %s", verb, strings.Join(failedComponents, ", "))},
+		[]string{fmt.Sprintf("The server returned HTTP 200 but one or more components were not %s successfully", verb)},
+		[]string{"A component's apply or delete failed even though the overall request succeeded", "A prerequisite install (e.g. a Helm chart carrying a model's CRDs and operators) may have failed"},
+		[]string{"Inspect the per-component summary printed above", "Resolve the failing component(s) and re-run the command", "For Helm-based designs, deploy with upgrade enabled so existing releases can be reused"})
+}
+
 func ErrDesignSourceType() error {
 	return errors.New(ErrPatternSourceTypeCode, errors.Alert,
 		[]string{"Source type for the design to import not specified"},

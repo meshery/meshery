@@ -1,0 +1,20 @@
+{
+  "myapp": [
+    {
+      "Summary": [
+        {
+          "Kind": "Application",
+          "Model": "kubernetes",
+          "CompName": "myapp",
+          "Success": false,
+          "DesignName": "SampleApp",
+          "Message": "cannot re-use a name that is still in use",
+          "Metadata": null,
+          "Error": {}
+        }
+      ],
+      "SystemName": "kubernetes",
+      "Location": "https://localhost:6443"
+    }
+  ]
+}
