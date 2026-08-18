@@ -12,7 +12,7 @@ Meshery and its components are written using the following languages and technol
 | Components                                                           | Languages and Technologies                                                        |
 | :------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
 | Meshery Server                                                       | Golang, gRPC, GraphQL, [SMP](https://smp-spec.io)                                 |
-|   [Meshery Database]({{< ref "concepts/architecture/database/index.md" >}})                | Golang, SQLlite                                                                   |
+|   [Meshery Database]({{< ref "concepts/architecture/database/index.md" >}})                | Golang, SQLite                                                                   |
 | Meshery UI                                                           | ReactJS, NextJS, BillboardJS                                                      |
 | Meshery Provider UI                                                  | ReactJS, NextJS                                                                   |
 | [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}})                  | Golang                                                                            |
