@@ -43,38 +43,38 @@ func TestResolveProviderName(t *testing.T) {
 			want:             "Enforced",
 		},
 		{
-			name: "cookie wins over enforced default",
+			name: "enforced default wins over cookie",
 			setup: func(r *http.Request) {
 				r.AddCookie(&http.Cookie{Name: cookieName, Value: "Meshery"})
 			},
 			enforcedProvider: "Enforced",
-			want:             "Meshery",
+			want:             "Enforced",
 		},
 		{
-			name: "empty cookie falls through to header",
+			name: "enforced default wins over header when cookie empty",
 			setup: func(r *http.Request) {
 				r.AddCookie(&http.Cookie{Name: cookieName, Value: ""})
 				r.Header.Set(cookieName, "Meshery")
 			},
 			enforcedProvider: "Enforced",
-			want:             "Meshery",
+			want:             "Enforced",
 		},
 		{
-			name: "header wins over query and enforced",
+			name: "enforced default wins over header and query",
 			setup: func(r *http.Request) {
 				r.Header.Set(cookieName, "Meshery")
 				r.URL.RawQuery = "provider=None"
 			},
 			enforcedProvider: "Enforced",
-			want:             "Meshery",
+			want:             "Enforced",
 		},
 		{
-			name: "query wins over enforced when no cookie/header (None alias normalized to Local)",
+			name: "enforced default wins over query (None alias does not select Local)",
 			setup: func(r *http.Request) {
 				r.URL.RawQuery = "provider=None"
 			},
 			enforcedProvider: "Enforced",
-			want:             "Local",
+			want:             "Enforced",
 		},
 		{
 			name: "cookie with whitespace value is honored verbatim",

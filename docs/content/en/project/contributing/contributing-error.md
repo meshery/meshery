@@ -191,3 +191,24 @@ func ErrOpeningFile(err error) error {
 		[]string{"pass a non-empty string as filename ", "create file before opening it"})
 }` >}}
 
+
+## Generating error codes in meshery/meshery
+
+`make error` regenerates codes for the server but **skips `mesheryctl`**. The two components keep the same contract in different files.
+
+- **`mesheryctl`**: take the next code from `mesheryctl/helpers/component_info.json` (`next_error_code`) and bump that value in the same commit.
+- **Server**: the same contract lives in `server/helpers/component_info.json`. `errorutil` refuses to run at all - "next_error_code is lower than or equal to highest used code" - until `next_error_code` is bumped past every code you added, so bump it in the same commit.
+
+`.github/workflows/error-codes-updater.yaml` re-runs `errorutil` on every pull request and fails it if the analysis reports anything.
+
+### Naming and formatting
+
+Name each constant `<BuilderFuncName>Code` - `errorutil` keys the export off that pairing. Adding a constant longer than the block's current widest name makes `gofmt` realign the entire `error.go` const block, so prefer a shorter name over a 300-line whitespace diff.
+
+### Regenerating the docs reference
+
+`server/helpers/errorutil_errors_export.json` is gitignored, but the reference data at `docs/data/errorref/meshery-server_errors_export.json` is tracked. Regenerate it with the `jq --slurpfile` wrapper the workflow uses, or the published error reference silently omits the new codes.
+
+### Rendering errors to the user
+
+Only `utils.Log.Error(err)` renders a MeshKit error's code, cause and remediation; cobra's default print shows just the message. In `mesheryctl` commands, log the structured error for the user *and* return it for the exit path.
