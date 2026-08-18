@@ -42,9 +42,9 @@ See [Importing Designs]({{< ref "guides/configuration-management/import-export-d
 <p>Components in the design are validated against the schema, ensuring consistency, similar to Kubernetes object validation but tailored for Designs.</p>
 
 <h4>4. Dependency Detection and Resolution</h4>
-<p>Meshery identifies and resolves dependencies among components using a dynamic mechanism based on each component’s origin (also known as its <code>host</code> or <code>registrant</code>). Provisioning order is critical—circular dependencies will result in termination of the deployment.</p>
+<p>Deployment order comes from what the design declares. A component's <code>dependsOn</code> entries name other components of the same design, and each entry becomes an edge of the graph provisioning walks. Before anything is deployed, Meshery rejects a design whose dependencies name a component the design does not contain, name a component whose name is shared by more than one component, or form a cycle. The registrant plays no part in this: it decides who fulfills a component and what can be installed on the component's behalf, not what a component depends on.</p>
 
-<p>Dependency handling by source:</p>
+<p>Installing what a component needs before applying it - its Operators and CRDs - is that separate, registrant-specific behavior, and what Meshery is able to install depends on the source of the model:</p>
 
 <ul>
   <li><b>Artifact Hub:</b> Uses Helm Go client for Kubernetes Operator and CRD deployment via <code>ApplyHelmChart()</code>.</li>
