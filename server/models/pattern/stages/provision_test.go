@@ -32,10 +32,16 @@ func (s *stubInfoProvider) IsDelete() bool { return s.isDelete }
 // fulfillment paths use for a component that could not be applied), and
 // components named in dispatchFailures come back as an error (the shape used
 // when Meshery could not dispatch the component at all).
+//
+// A component is acted on once per cluster, so an outcome is reported for each
+// of clusters. clusterFailures names the single cluster a component fails on,
+// which is how a deployment to several clusters at once partly fails.
 type stubActionProvider struct {
 	registry *registry.RegistryManager
 
+	clusters             []string
 	applyFailures        map[string]bool
+	clusterFailures      map[string]string
 	dispatchFailures     map[string]bool
 	prerequisiteFailures map[string]bool
 
@@ -72,34 +78,45 @@ func (s *stubActionProvider) Provision(ccp CompConfigPair) ([]patterns.Deploymen
 		return nil, errors.New("meshery-server-test", errors.Alert, []string{"dispatch failed"}, []string{"dispatch failed"}, []string{}, []string{})
 	}
 
-	summary := []patterns.DeploymentMessagePerComp{}
+	clusters := s.clusters
+	if len(clusters) == 0 {
+		clusters = []string{"test-cluster"}
+	}
 
-	// patterns.Process reports a component's prerequisites on their own entry,
-	// appended to the same Summary as the component's own apply entry and ahead
-	// of it. Installing them is fail-forward, so the component is applied either
-	// way and both entries are reported for it.
-	if s.prerequisiteFailures[name] {
+	msgs := []patterns.DeploymentMessagePerContext{}
+
+	for _, cluster := range clusters {
+		summary := []patterns.DeploymentMessagePerComp{}
+
+		// patterns.Process reports a component's prerequisites on their own entry,
+		// appended to the same Summary as the component's own apply entry and ahead
+		// of it. Installing them is fail-forward, so the component is applied either
+		// way and both entries are reported for it.
+		if s.prerequisiteFailures[name] {
+			summary = append(summary, patterns.DeploymentMessagePerComp{
+				CompName:       name,
+				Success:        false,
+				IsPrerequisite: true,
+				Message:        fmt.Sprintf("could not install what %s needs", name),
+				Error:          errors.New("meshery-server-test", errors.Alert, []string{"prerequisite failed"}, []string{"prerequisite failed"}, []string{}, []string{}),
+			})
+		}
+
+		applied := !s.applyFailures[name] && s.clusterFailures[name] != cluster
+
 		summary = append(summary, patterns.DeploymentMessagePerComp{
-			CompName:       name,
-			Success:        false,
-			IsPrerequisite: true,
-			Message:        fmt.Sprintf("could not install what %s needs", name),
-			Error:          errors.New("meshery-server-test", errors.Alert, []string{"prerequisite failed"}, []string{"prerequisite failed"}, []string{}, []string{}),
+			CompName: name,
+			Success:  applied,
+			Message:  fmt.Sprintf("deployed %s on %s", name, cluster),
+		})
+
+		msgs = append(msgs, patterns.DeploymentMessagePerContext{
+			SystemName: cluster,
+			Summary:    summary,
 		})
 	}
 
-	summary = append(summary, patterns.DeploymentMessagePerComp{
-		CompName: name,
-		Success:  !s.applyFailures[name],
-		Message:  fmt.Sprintf("deployed %s", name),
-	})
-
-	return []patterns.DeploymentMessagePerContext{
-		{
-			SystemName: "test-cluster",
-			Summary:    summary,
-		},
-	}, nil
+	return msgs, nil
 }
 
 func (s *stubActionProvider) order() []string {
@@ -129,6 +146,7 @@ func newStubActionProvider(t *testing.T) *stubActionProvider {
 	return &stubActionProvider{
 		registry:             reg,
 		applyFailures:        map[string]bool{},
+		clusterFailures:      map[string]string{},
 		dispatchFailures:     map[string]bool{},
 		prerequisiteFailures: map[string]bool{},
 	}
@@ -268,6 +286,53 @@ func TestProvisionWithholdsDependentsOfAComponentThatFailedToApply(t *testing.T)
 
 	if !succeeded(reported["c"]) {
 		t.Error("\"c\" was not reported as successful, want it deployed regardless of \"a\" failing")
+	}
+}
+
+// A component deployed to several clusters at once that fails on one of them is
+// treated as failed outright, so its dependents are withheld everywhere rather
+// than only on the cluster where it failed.
+//
+// This is the conservative choice the deployment-engine documentation describes:
+// a dependent is held back on the clusters where its dependency did come up, in
+// exchange for never applying it against a cluster where its dependency is
+// absent.
+func TestProvisionWithholdsDependentsWhenAComponentFailedOnOneOfSeveralClusters(t *testing.T) {
+	act := newStubActionProvider(t)
+	act.clusters = []string{"cluster-a", "cluster-b"}
+	act.clusterFailures["a"] = "cluster-b"
+
+	reported := runProvision(t, act,
+		newDesignComponent("a"),
+		newDesignComponent("b", "a"),
+	)
+
+	if order := act.order(); dispatched(order, "b") {
+		t.Errorf("dispatched %v, want \"b\" withheld on every cluster: \"a\" failed on one of them", order)
+	}
+
+	if _, ok := reported["b"]; !ok {
+		t.Error("\"b\" produced no deployment message, want it reported as withheld")
+	}
+
+	var succeededOn, failedOn []string
+	for _, msg := range reported["a"] {
+		for _, entry := range msg.Summary {
+			if entry.Success {
+				succeededOn = append(succeededOn, msg.SystemName)
+				continue
+			}
+
+			failedOn = append(failedOn, msg.SystemName)
+		}
+	}
+
+	if len(succeededOn) != 1 || succeededOn[0] != "cluster-a" {
+		t.Errorf("\"a\" succeeded on %v, want it reported as deployed on cluster-a", succeededOn)
+	}
+
+	if len(failedOn) != 1 || failedOn[0] != "cluster-b" {
+		t.Errorf("\"a\" failed on %v, want it reported as failed on cluster-b", failedOn)
 	}
 }
 

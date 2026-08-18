@@ -186,8 +186,8 @@ The build needs a real **Dart Sass** first on `PATH` - `make -C docs check-deps`
 [build environment gotchas](./docs/content/en/project/contributing/contributing-build-environment.md).
 
 A docs page that carries an image belongs in a leaf bundle (`<page>/index.md` plus
-`<page>/images/`), like `concepts/architecture/operator/`. A regular `<page>.md` alongside a
-shared `images/` directory publishes at `<page>/`, so its relative image paths 404.
+`<page>/images/`) - a plain `<page>.md` publishes one level down, so its relative image paths
+404. See [contributing to Meshery Docs](./docs/content/en/project/contributing/contributing-docs/docs.md).
 
 ### API & Helm
 
@@ -422,6 +422,7 @@ worked detail behind them — open the one that matches what you are working on.
 | Connections and credential secrets | [Connections](./docs/content/en/project/contributing/models/connections.md) |
 | UI extensions, Remote Components | [Contributing to Meshery UI](./docs/content/en/project/contributing/ui/ui.md) |
 | `mesheryctl`, golden files | [Contributing to Meshery CLI](./docs/content/en/project/contributing/cli/cli.md) |
+| A docs page, its assets or shortcodes | [Contributing to Meshery Docs](./docs/content/en/project/contributing/contributing-docs/docs.md) |
 | Agent definitions, skills, hooks | [.agents/README.md](./.agents/README.md) |
 
 External: [Meshery Documentation](https://docs.meshery.io) ·
