@@ -1,10 +1,10 @@
 package handlers
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/meshery/meshery/server/models/pattern/patterns"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestDeploymentFailedComponents(t *testing.T) {
@@ -13,7 +13,9 @@ func TestDeploymentFailedComponents(t *testing.T) {
 	}
 
 	t.Run("empty response", func(t *testing.T) {
-		assert.Empty(t, deploymentFailedComponents(map[string]interface{}{}))
+		if got := deploymentFailedComponents(map[string]interface{}{}); len(got) != 0 {
+			t.Fatalf("got %v, want empty", got)
+		}
 	})
 
 	t.Run("all components succeed", func(t *testing.T) {
@@ -23,7 +25,9 @@ func TestDeploymentFailedComponents(t *testing.T) {
 				patterns.DeploymentMessagePerComp{CompName: "gateway", Success: true},
 			),
 		}
-		assert.Empty(t, deploymentFailedComponents(resp))
+		if got := deploymentFailedComponents(resp); len(got) != 0 {
+			t.Fatalf("got %v, want empty", got)
+		}
 	})
 
 	t.Run("single failed component", func(t *testing.T) {
@@ -33,7 +37,10 @@ func TestDeploymentFailedComponents(t *testing.T) {
 				patterns.DeploymentMessagePerComp{CompName: "gateway", Success: true},
 			),
 		}
-		assert.Equal(t, []string{"nginx"}, deploymentFailedComponents(resp))
+		want := []string{"nginx"}
+		if got := deploymentFailedComponents(resp); !reflect.DeepEqual(got, want) {
+			t.Fatalf("got %v, want %v", got, want)
+		}
 	})
 
 	t.Run("fall back to kind when comp name is empty", func(t *testing.T) {
@@ -42,7 +49,10 @@ func TestDeploymentFailedComponents(t *testing.T) {
 				patterns.DeploymentMessagePerComp{Kind: "Deployment", Success: false},
 			),
 		}
-		assert.Equal(t, []string{"Deployment"}, deploymentFailedComponents(resp))
+		want := []string{"Deployment"}
+		if got := deploymentFailedComponents(resp); !reflect.DeepEqual(got, want) {
+			t.Fatalf("got %v, want %v", got, want)
+		}
 	})
 
 	t.Run("dedupe and sort across contexts", func(t *testing.T) {
@@ -56,7 +66,10 @@ func TestDeploymentFailedComponents(t *testing.T) {
 				patterns.DeploymentMessagePerComp{CompName: "bookinfo", Success: true},
 			),
 		}
-		assert.Equal(t, []string{"gateway", "nginx"}, deploymentFailedComponents(resp))
+		want := []string{"gateway", "nginx"}
+		if got := deploymentFailedComponents(resp); !reflect.DeepEqual(got, want) {
+			t.Fatalf("got %v, want %v", got, want)
+		}
 	})
 
 	t.Run("non-summary values are skipped", func(t *testing.T) {
@@ -64,7 +77,9 @@ func TestDeploymentFailedComponents(t *testing.T) {
 			"dryRun": map[string]interface{}{"success": true},
 			"nginx":  "unexpected",
 		}
-		assert.Empty(t, deploymentFailedComponents(resp))
+		if got := deploymentFailedComponents(resp); len(got) != 0 {
+			t.Fatalf("got %v, want empty", got)
+		}
 	})
 
 	t.Run("empty names are skipped", func(t *testing.T) {
@@ -73,6 +88,8 @@ func TestDeploymentFailedComponents(t *testing.T) {
 				patterns.DeploymentMessagePerComp{Success: false},
 			),
 		}
-		assert.Empty(t, deploymentFailedComponents(resp))
+		if got := deploymentFailedComponents(resp); len(got) != 0 {
+			t.Fatalf("got %v, want empty", got)
+		}
 	})
 }
