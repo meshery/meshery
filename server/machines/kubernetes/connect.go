@@ -124,7 +124,9 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 		// this goroutine exits, so correctness is preserved either way — this
 		// re-check merely avoids the unnecessary transient work.
 		if ctx.Err() != nil {
-			machinectx.log.Info("Connect side-effects partially aborted: lifecycle cancelled during operator deploy")
+			if machinectx.log != nil {
+				machinectx.log.Info("Connect side-effects partially aborted: lifecycle cancelled during operator deploy")
+			}
 			return
 		}
 		ctrlHelper.AddMeshsyncDataHandlers(ctx, machinectx.K8sContext, userUUID, *sysID, provider)

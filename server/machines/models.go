@@ -91,6 +91,12 @@ func (sm *StateMachine) AssignProvider(provider models.Provider) *StateMachine {
 	return sm
 }
 
+func (sm *StateMachine) GetCurrentState() StateType {
+	sm.mx.RLock()
+	defer sm.mx.RUnlock()
+	return sm.CurrentState
+}
+
 func (sm *StateMachine) Start(ctx context.Context, machinectx interface{}, log logger.Handler, init connections.InitFunc) (*events.Event, error) {
 	var mCtx interface{}
 	var event *events.Event

@@ -178,7 +178,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 
 		// Cleanup is finished. Only remove the StateMachine from the tracker if a
 		// RECONNECT did NOT happen (i.e. the state is still Deleted).
-		if inst.CurrentState == machines.DELETED {
+		if inst.GetCurrentState() == machines.DELETED {
 			smInstanceTracker.Remove(connectionUUID)
 		}
 	}()

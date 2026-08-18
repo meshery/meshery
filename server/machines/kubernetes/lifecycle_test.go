@@ -220,21 +220,26 @@ func TestDeleteFlushMeshSyncDataSerialization(t *testing.T) {
 
 	// 2. Trigger Delete
 	deleteAction := &DeleteAction{}
-	_, _, err := deleteAction.Execute(ctx, machineCtx, nil)
-	if err != nil {
-		t.Fatalf("failed to execute delete action: %v", err)
-	}
+	errChan := make(chan error, 1)
+	go func() {
+		_, _, err := deleteAction.Execute(ctx, machineCtx, nil)
+		errChan <- err
+	}()
 
 	// 3. Prove FlushMeshSyncData cannot execute before the protected lifecycle operation releases
 	select {
 	case <-flushCalled:
 		t.Fatal("FlushMeshSyncData executed before ActionMutex was released")
-	default:
+	case <-time.After(100 * time.Millisecond):
 		// Expected: blocked by ActionMutex
 	}
 
 	// 4. Release the first operation
 	machineCtx.ActionMutex.Unlock()
+
+	if err := <-errChan; err != nil {
+		t.Fatalf("failed to execute delete action: %v", err)
+	}
 
 	// 5. Prove FlushMeshSyncData then executes
 	select {
@@ -316,10 +321,14 @@ func TestStaleConnectWorkerCancellation(t *testing.T) {
 	// deterministically calls FlushMeshSyncData (observable via the mock
 	// provider) if the ctx.Err() guard does not abort it.
 	staleWorker := &DeleteAction{}
-	_, _, err := staleWorker.Execute(connectCtx, machineCtx, nil)
-	if err != nil {
-		t.Fatalf("failed to execute stale worker action: %v", err)
-	}
+	errChan := make(chan error, 1)
+	go func() {
+		_, _, err := staleWorker.Execute(connectCtx, machineCtx, nil)
+		errChan <- err
+	}()
+
+	// Wait briefly to ensure the goroutine starts and blocks on the lock
+	time.Sleep(100 * time.Millisecond)
 
 	// 2. Disconnect accepted: cancel the stale worker's LifecycleCtx before
 	//    it gets a chance to enter the protected section.
@@ -343,8 +352,12 @@ func TestStaleConnectWorkerCancellation(t *testing.T) {
 			// Correct: ctx.Err() was detected and side effects were aborted.
 		}
 	case <-flushCalled:
-		t.Fatal("Stale worker executed FlushMeshSyncData instead of aborting on cancelled lifecycle context")
+		t.Fatal("Stale worker executed FlushMeshSyncData before or during cancellation check")
 	case <-time.After(deadline):
-		t.Fatalf("Stale worker goroutine did not complete within %v — possible deadlock or hang", deadline)
+		t.Fatal("Deadlock: stale worker neither aborted nor executed within deadline")
+	}
+
+	if err := <-errChan; err != nil {
+		t.Fatalf("failed to execute stale worker action: %v", err)
 	}
 }
