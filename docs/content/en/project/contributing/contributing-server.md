@@ -61,7 +61,7 @@ For more details, <a href="{{< ref "project/contributing/contributing-error.md" 
 
 This runs `golangci-lint` plus Meshery's repo-specific Go rules - notably the
 one that fails the build when a `gorm` `ORDER BY` clause is built from a value
-that has not been through `models.SanitizeOrderInput`. The same rules run in
+that is neither a constant nor a result of `models.SanitizeOrderInput`. The same rules run in
 CI's `golangci-lint-server` job. For what each rule protects and what to do when
 one fires, see <a href="{{< ref "project/contributing/contributing-lint.md" >}}">Go Lint Rules</a>.
 
