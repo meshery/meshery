@@ -162,6 +162,15 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 			writeMeshkitError(w, ErrMigrateDatabaseTables(err), http.StatusInternalServerError)
 			return
 		}
+
+		// The reset drops and re-migrates organizations, but only boot used to
+		// seed it - leaving the UI with no org to scope its keys query to, and
+		// therefore no permissions, until a restart. Seeded synchronously so the
+		// org exists before the success response reaches the client.
+		if lp, ok := provider.(*models.DefaultLocalProvider); ok {
+			lp.SeedDefaultOrganization(h.log)
+		}
+
 		go func() {
 			models.SeedComponents(h.log, h.config, h.registryManager, dbHandler)
 			krh.SeedKeys(viper.GetString("KEYS_PATH"))

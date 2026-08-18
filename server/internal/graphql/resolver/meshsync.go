@@ -121,6 +121,10 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				return "", err
 			}
 
+			if lp, ok := provider.(*models.DefaultLocalProvider); ok {
+				lp.SeedDefaultOrganization(r.Log)
+			}
+
 			go func() {
 				models.SeedComponents(r.Log, r.Config, rm, dbHandler)
 				krh.SeedKeys(viper.GetString("KEYS_PATH"))
