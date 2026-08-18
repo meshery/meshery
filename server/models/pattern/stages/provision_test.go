@@ -33,6 +33,10 @@ func (s *stubInfoProvider) IsDelete() bool { return s.isDelete }
 // components named in dispatchFailures come back as an error (the shape used
 // when Meshery could not dispatch the component at all).
 //
+// Components named in noOutcomes come back as neither - no outcome and no
+// error. No fulfillment path does that today, which is precisely why the stage
+// has to be asked to demonstrate what it does with it.
+//
 // A component is acted on once per cluster, so an outcome is reported for each
 // of clusters. clusterFailures names the single cluster a component fails on,
 // which is how a deployment to several clusters at once partly fails.
@@ -43,6 +47,7 @@ type stubActionProvider struct {
 	applyFailures        map[string]bool
 	clusterFailures      map[string]string
 	dispatchFailures     map[string]bool
+	noOutcomes           map[string]bool
 	prerequisiteFailures map[string]bool
 
 	mx         sync.Mutex
@@ -76,6 +81,10 @@ func (s *stubActionProvider) Provision(ccp CompConfigPair) ([]patterns.Deploymen
 
 	if s.dispatchFailures[name] {
 		return nil, errors.New("meshery-server-test", errors.Alert, []string{"dispatch failed"}, []string{"dispatch failed"}, []string{}, []string{})
+	}
+
+	if s.noOutcomes[name] {
+		return nil, nil
 	}
 
 	clusters := s.clusters
@@ -148,6 +157,7 @@ func newStubActionProvider(t *testing.T) *stubActionProvider {
 		applyFailures:        map[string]bool{},
 		clusterFailures:      map[string]string{},
 		dispatchFailures:     map[string]bool{},
+		noOutcomes:           map[string]bool{},
 		prerequisiteFailures: map[string]bool{},
 	}
 }
@@ -456,6 +466,52 @@ func TestProvisionWithholdsDependentsOfAComponentThatCouldNotBeDispatched(t *tes
 
 	if order := act.order(); dispatched(order, "b") {
 		t.Errorf("dispatched %v, want \"b\" withheld because \"a\" could not be dispatched", order)
+	}
+
+	if _, ok := reported["b"]; !ok {
+		t.Error("\"b\" produced no deployment message, want it reported as withheld")
+	}
+}
+
+// A component a fulfillment path said nothing about is reported rather than
+// left out of the summary, and it is not taken for a success: an empty outcome
+// reads exactly like a successful one, so treating it as success would deploy
+// the components that depend on it on a success nothing ever reported.
+func TestProvisionReportsAComponentThatReportedNoOutcome(t *testing.T) {
+	act := newStubActionProvider(t)
+	act.noOutcomes["a"] = true
+
+	reported := runProvision(t, act,
+		newDesignComponent("a"),
+		newDesignComponent("b", "a"),
+	)
+
+	summary, ok := reported["a"]
+	if !ok {
+		t.Fatal("\"a\" produced no deployment message, want the missing outcome reported against it")
+	}
+
+	if succeeded(summary) {
+		t.Error("\"a\" was reported as successful, want it reported as failed: nothing was reported for it")
+	}
+
+	// succeeded() is false for an empty message too, so the summary is checked
+	// for naming the component rather than merely existing.
+	named := false
+	for _, msg := range summary {
+		for _, entry := range msg.Summary {
+			if entry.CompName == "a" {
+				named = true
+			}
+		}
+	}
+
+	if !named {
+		t.Error("\"a\" is not named in the outcome reported for it, want it named rather than missing from the summary")
+	}
+
+	if order := act.order(); dispatched(order, "b") {
+		t.Errorf("dispatched %v, want \"b\" withheld: nothing was reported for \"a\"", order)
 	}
 
 	if _, ok := reported["b"]; !ok {

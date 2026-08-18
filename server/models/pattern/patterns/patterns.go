@@ -29,9 +29,12 @@ type DeploymentMessagePerComp struct {
 	// component needs rather than for the component itself.
 	//
 	// Installing prerequisites is deliberately fail-forward - what a component
-	// needs may already be present in the cluster - and the component is still
-	// applied afterwards. So a failure here is a warning about the component,
-	// not a failure of it, and it must not be read as one.
+	// needs may already be present in the cluster - and the component is
+	// applied either way. A failed install therefore carries Success: false
+	// like any other entry, and this flag is the only thing telling the two
+	// apart: whatever decides whether the components that depend on this one
+	// may proceed has to skip the entries carrying it, or a component that did
+	// deploy ends up withholding its dependents.
 	IsPrerequisite bool
 }
 

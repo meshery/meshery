@@ -63,7 +63,7 @@ func DeclaredDependencies(design string, c *component.ComponentDefinition) ([]st
 		for _, dep := range dependsOn {
 			name, isName := dep.(string)
 			if !isName {
-				return nil, ErrInvalidDependency(design, c.DisplayName, fmt.Sprintf("every entry has to be a component name, found %T", dep))
+				return nil, ErrInvalidDependency(design, c.DisplayName, fmt.Sprintf("one of its entries is a %T", dep))
 			}
 
 			names = append(names, name)
@@ -71,7 +71,7 @@ func DeclaredDependencies(design string, c *component.ComponentDefinition) ([]st
 
 		return names, nil
 	default:
-		return nil, ErrInvalidDependency(design, c.DisplayName, fmt.Sprintf("expected a list of component names, found %T", raw))
+		return nil, ErrInvalidDependency(design, c.DisplayName, fmt.Sprintf("found a %T", raw))
 	}
 }
 

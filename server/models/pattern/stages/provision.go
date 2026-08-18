@@ -79,7 +79,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 			patternutils.ApplyV1beta3MetadataChanges(v1beta3Comp, &component)
 
 			if err != nil {
-				fmt.Println("Err while assigning labels", err)
+				log.Error(err)
 				data.Lock.Lock()
 				data.Other[fmt.Sprintf("%s%s", name, ProvisionSuffixKey)] = dispatchFailureMessage(component, err, data.Pattern.Name, prov.IsDelete())
 				errs = append(errs, err)
@@ -99,9 +99,19 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 
 			// The outcome is recorded before anything is decided from it, so
 			// that a component never disappears from the summary - not even
-			// when it could not be dispatched at all.
-			if err != nil && len(msg) == 0 {
-				msg = dispatchFailureMessage(component, err, data.Pattern.Name, prov.IsDelete())
+			// when it could not be dispatched at all, and not when a
+			// fulfillment path comes back with nothing to say about it.
+			//
+			// The second case is what keeps the decision below sound: an empty
+			// outcome is indistinguishable from a successful one, so it would
+			// let the components that depend on this one deploy on a success
+			// nothing ever reported.
+			if len(msg) == 0 {
+				if err != nil {
+					msg = dispatchFailureMessage(component, err, data.Pattern.Name, prov.IsDelete())
+				} else {
+					msg = noOutcomeMessage(component, data.Pattern.Name, prov.IsDelete())
+				}
 			}
 
 			data.Lock.Lock()
@@ -211,6 +221,31 @@ func dispatchFailureMessage(comp component.ComponentDefinition, err error, desig
 					Success:    false,
 					Message:    fmt.Sprintf("Could not %s %s", action(isDelete), comp.DisplayName),
 					Error:      err,
+				},
+			},
+		},
+	}
+}
+
+// noOutcomeMessage reports a component that a fulfillment path returned nothing
+// at all about - neither an outcome nor a reason there is none.
+//
+// No fulfillment path does that today, and the guard is here because the
+// alternative is silent rather than loud: whatever reads the summary cannot
+// tell an empty outcome from a successful one, so a path that ever stopped
+// reporting would deploy this component's dependents on a success no one
+// claimed.
+func noOutcomeMessage(comp component.ComponentDefinition, designName string, isDelete bool) []patterns.DeploymentMessagePerContext {
+	return []patterns.DeploymentMessagePerContext{
+		{
+			Summary: []patterns.DeploymentMessagePerComp{
+				{
+					Kind:       comp.Component.Kind,
+					Model:      modelName(comp),
+					CompName:   comp.DisplayName,
+					DesignName: designName,
+					Success:    false,
+					Message:    fmt.Sprintf("Could not confirm that %s was %sed: nothing was reported for it", comp.DisplayName, action(isDelete)),
 				},
 			},
 		},
