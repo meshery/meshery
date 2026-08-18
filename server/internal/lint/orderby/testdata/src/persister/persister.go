@@ -369,6 +369,36 @@ func genericSanitized[T ~string](db *gorm.DB, order string) *gorm.DB {
 	return db.Order(T(models.SanitizeOrderInput(order, validColumns)))
 }
 
+// multiTermConstraint pins the conversion SSA emits when a type parameter's
+// type set has more than one term: `T(s)` under `T ~string | ~[]byte` becomes a
+// MultiConvert rather than a ChangeType. It reshapes the value like any other
+// conversion, so a sanitized operand still has to be accepted.
+func multiTermConstraint[T ~string | ~[]byte](db *gorm.DB, order string) *gorm.DB {
+	return db.Order(T(models.SanitizeOrderInput(order, validColumns)))
+}
+
+func instantiateMultiTermConstraint(db *gorm.DB, order string) *gorm.DB {
+	return multiTermConstraint[string](db, order)
+}
+
+// sortKey is a named string type carrying a method, so a value of it can be
+// held in a narrower interface and then widened.
+type sortKey string
+
+func (s sortKey) String() string { return string(s) }
+
+type stringish interface{ String() string }
+
+// widenedInterface pins ChangeInterface: the sanitized value is boxed into
+// `stringish` and then widened to `any` on the way into Order. That widening is
+// value-preserving, so the sanitizer result still has to be traceable through
+// it.
+func widenedInterface(db *gorm.DB, order string) *gorm.DB {
+	var narrow stringish = sortKey(models.SanitizeOrderInput(order, validColumns))
+	var widened any = narrow
+	return db.Order(widened)
+}
+
 // lookalike is not gorm's Order: the rule keys on the `Order(any) *gorm.DB`
 // signature, so an unrelated method of the same name is left alone.
 type sorter struct{}

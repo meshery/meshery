@@ -398,6 +398,21 @@ func isSafeOrderValue(v ssa.Value, seen map[ssa.Value]bool) bool {
 		return isSafeOrderValue(value.X, seen)
 	case *ssa.ChangeType:
 		return isSafeOrderValue(value.X, seen)
+	case *ssa.MultiConvert:
+		// The conversion SSA emits when either side is a type parameter whose
+		// type set has more than one term - `T(s)` under `T ~string | ~[]byte`.
+		// Like Convert and ChangeType it only reshapes the value, so the
+		// obligation passes through to its operand.
+		return isSafeOrderValue(value.X, seen)
+	case *ssa.ChangeInterface:
+		// Widening one interface type to another, e.g. a Stringer assigned to
+		// an `any`. Also value-preserving.
+		return isSafeOrderValue(value.X, seen)
+	case *ssa.MakeInterface:
+		// Boxing a concrete value. classifyOrderArg unwraps this at the call
+		// itself; it reappears here when the boxing happened further back, as
+		// in a value boxed into one interface and then widened into another.
+		return isSafeOrderValue(value.X, seen)
 	}
 
 	// Parameters, field and map reads, string concatenation, fmt.Sprintf
