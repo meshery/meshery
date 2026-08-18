@@ -11,19 +11,19 @@
 &lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;
-&lt;p&gt;&lt;a href="/guides/infrastructure-management/sample-apps/#emojivoto"&gt;Emojivoto&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Emojivoto&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;&lt;a href="/guides/infrastructure-management/sample-apps/#bookinfo"&gt;Bookinfo&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Bookinfo&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;&lt;a href="/guides/infrastructure-management/sample-apps/#httpbin"&gt;Httpbin&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Httpbin&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Httpbin is a simple HTTP request and response service.&lt;/li&gt;
 &lt;/ul&gt;
@@ -52,17 +52,17 @@
 &lt;/h3&gt;
 &lt;p&gt;Meshery supports the deployment of a variety of sample applications on Meshery Adapter for Consul. Use Meshery to deploy any of these sample applications.&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href="/guides/infrastructure-management/sample-apps/#httpbin"&gt;httpbin&lt;/a&gt;
+&lt;li&gt;httpbin
 &lt;ul&gt;
 &lt;li&gt;Httpbin is a simple HTTP request and response service.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;&lt;a href="/guides/infrastructure-management/sample-apps/#bookinfo"&gt;Bookinfo&lt;/a&gt;
+&lt;li&gt;Bookinfo
 &lt;ul&gt;
 &lt;li&gt;The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;&lt;a href="/guides/infrastructure-management/sample-apps/#imagehub"&gt;Image Hub&lt;/a&gt;
+&lt;li&gt;Image Hub
 &lt;ul&gt;
 &lt;li&gt;Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.&lt;/li&gt;
 &lt;/ul&gt;
@@ -96,22 +96,22 @@
 &lt;/h3&gt;
 &lt;p&gt;The Meshery Adapter for Istio includes a handful of sample applications. Use Meshery to deploy any of these sample applications:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href="/guides/infrastructure-management/sample-apps/#bookinfo"&gt;Bookinfo&lt;/a&gt;
+&lt;li&gt;Bookinfo
 &lt;ul&gt;
 &lt;li&gt;The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;&lt;a href="/guides/infrastructure-management/sample-apps/#httpbin"&gt;Httpbin&lt;/a&gt;
+&lt;li&gt;Httpbin
 &lt;ul&gt;
 &lt;li&gt;Httpbin is a simple HTTP request and response service.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;&lt;a href="/guides/infrastructure-management/sample-apps/#online-boutique"&gt;Online Boutique&lt;/a&gt;
+&lt;li&gt;Online Boutique
 &lt;ul&gt;
 &lt;li&gt;Online Boutique Application is a web-based, e-commerce demo application from the Google Cloud Platform.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;&lt;a href="/guides/infrastructure-management/sample-apps/#imagehub"&gt;Image Hub&lt;/a&gt;
+&lt;li&gt;Image Hub
 &lt;ul&gt;
 &lt;li&gt;Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.&lt;/li&gt;
 &lt;/ul&gt;
@@ -125,7 +125,7 @@
 &lt;/h2&gt;
 &lt;p&gt;The following sample applications are available in this adapter.&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href="/guides/infrastructure-management/sample-apps/#bookinfo"&gt;Bookinfo&lt;/a&gt;
+&lt;li&gt;Bookinfo
 &lt;ul&gt;
 &lt;li&gt;The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.&lt;/li&gt;
 &lt;/ul&gt;
@@ -144,19 +144,19 @@
 &lt;p&gt;The Meshery Adapter for Linkerd includes the ability to deploy a variety of sample applications. Use Meshery to deploy any of these sample applications:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
-&lt;p&gt;&lt;a href="/guides/infrastructure-management/sample-apps/"&gt;Emojivoto&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Emojivoto&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;&lt;a href="/guides/infrastructure-management/sample-apps/"&gt;Bookinfo&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Bookinfo&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;&lt;a href="/guides/infrastructure-management/sample-apps/"&gt;Linkerd Books&lt;/a&gt;&lt;/p&gt;</description></item><item><title>Meshery Adapter for Network Service Mesh</title><link>/extensions/adapters/nsm/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/adapters/nsm/</guid><description>&lt;h2 id="sample-applications"&gt;
+&lt;p&gt;Linkerd Books&lt;/p&gt;</description></item><item><title>Meshery Adapter for Network Service Mesh</title><link>/extensions/adapters/nsm/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/adapters/nsm/</guid><description>&lt;h2 id="sample-applications"&gt;
 	Sample Applications
 &lt;/h2&gt;
 &lt;p&gt;The Meshery Adapter for Network Service Mesh includes a handful of sample applications. These applications represent different network services orchestrated by Network Service Mesh. Use Meshery to deploy any of these sample applications:&lt;/p&gt;
@@ -184,13 +184,13 @@
 &lt;p&gt;The Meshery Adapter for NGINX Service Mesh includes a handful of sample applications. Use Meshery to deploy any of these sample applications.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
-&lt;p&gt;&lt;a href="/guides/infrastructure-management/sample-apps/"&gt;Emojivoto&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Emojivoto&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;&lt;a href="/guides/infrastructure-management/sample-apps/"&gt;Bookinfo&lt;/a&gt;&lt;/p&gt;</description></item><item><title>Meshery Adapter for Tanzu Service Mesh</title><link>/extensions/adapters/tanzu-sm/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/adapters/tanzu-sm/</guid><description>&lt;h3 id="suggested-reading"&gt;
+&lt;p&gt;Bookinfo&lt;/p&gt;</description></item><item><title>Meshery Adapter for Tanzu Service Mesh</title><link>/extensions/adapters/tanzu-sm/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/adapters/tanzu-sm/</guid><description>&lt;h3 id="suggested-reading"&gt;
 	Suggested Reading
 &lt;/h3&gt;
 &lt;ul&gt;
@@ -201,12 +201,12 @@
 &lt;/h3&gt;
 &lt;p&gt;The Meshery Adapter for Traefik Mesh includes some sample applications operations. Meshery can be used to deploy any of these sample applications.&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href="/guides/infrastructure-management/sample-apps/"&gt;Bookinfo&lt;/a&gt;
+&lt;li&gt;Bookinfo
 &lt;ul&gt;
 &lt;li&gt;The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;&lt;a href="/guides/infrastructure-management/sample-apps/"&gt;Httpbin&lt;/a&gt;
+&lt;li&gt;Httpbin
 &lt;ul&gt;
 &lt;li&gt;Httpbin is a simple HTTP request and response service.&lt;/li&gt;
 &lt;/ul&gt;
