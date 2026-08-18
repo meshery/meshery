@@ -14,7 +14,10 @@
 
 package design
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"sort"
+)
 
 // deploymentMessagePerComp mirrors the server's per-component deployment
 // summary (server/models/pattern/patterns.DeploymentMessagePerComp); wire
@@ -61,5 +64,6 @@ func parseDeploymentSummary(body []byte) (failedComponents []string, ok bool) {
 			}
 		}
 	}
+	sort.Strings(failedComponents)
 	return failedComponents, true
 }
