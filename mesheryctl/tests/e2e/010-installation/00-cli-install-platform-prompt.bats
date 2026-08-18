@@ -4,9 +4,13 @@ setup() {
     INSTALLER="$BATS_TEST_TMPDIR/meshery-install.sh"
     HARNESS="$BATS_TEST_TMPDIR/platform-prompt.sh"
 
-    curl -fsSL https://meshery.io/install -o "$INSTALLER"
+    curl -fsSL --connect-timeout 10 --max-time 60 https://meshery.io/install -o "$INSTALLER"
 
-    awk '/^####### COMMON FUNCTIONS/{exit} {print}' "$INSTALLER" > "$HARNESS"
+    awk '
+    /^####### COMMON FUNCTIONS/ { found = 1; exit }
+    { print }
+    END { exit !found }
+' "$INSTALLER" > "$HARNESS" || return 1
 
     cat >> "$HARNESS" <<'EOF'
 printf 'SELECTED_PLATFORM=%s\n' "$PLATFORM"
