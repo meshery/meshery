@@ -3,7 +3,7 @@
   "id": "00000000-0000-0000-0000-000000000000",
   "kind": "edge",
   "metadata": {
-    "description": "ingress-shim provisions a certificate for an Ingress from the issuer named in its cert-manager annotation: a ClusterIssuer name is written into metadata.annotations['cert-manager.io/cluster-issuer'], an Issuer name into metadata.annotations['cert-manager.io/issuer']. Both annotation keys are declared as a single literal path segment, which is what relationship identification matches on; applying the resulting patch additionally requires the meshkit dot-escaping fix, because an engine that joins path segments with an unescaped '.' mis-nests the annotation under metadata.annotations instead of setting the literal key.",
+    "description": "Documents which Issuer or ClusterIssuer provisions an Ingress's certificate through the cert-manager ingress-shim annotations: a ClusterIssuer is named by metadata.annotations['cert-manager.io/cluster-issuer'], an Issuer by metadata.annotations['cert-manager.io/issuer']. The annotation value is set manually today, because the current patch engine mis-splits dotted annotation keys when writing (meshery/meshkit#1097, fix meshery/meshkit#1098). Automatic patching returns once that fix ships in a meshkit release consumed by Meshery.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -42,14 +42,7 @@
               },
               "version": ""
             },
-            "patch": {
-              "mutatorRef": [
-                [
-                  "displayName"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
+            "patch": null
           }
         ],
         "to": [
@@ -67,17 +60,7 @@
               },
               "version": ""
             },
-            "patch": {
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "metadata",
-                  "annotations",
-                  "cert-manager.io/cluster-issuer"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
+            "patch": null
           }
         ]
       },
@@ -103,14 +86,7 @@
               },
               "version": ""
             },
-            "patch": {
-              "mutatorRef": [
-                [
-                  "displayName"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
+            "patch": null
           }
         ],
         "to": [
@@ -128,17 +104,7 @@
               },
               "version": ""
             },
-            "patch": {
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "metadata",
-                  "annotations",
-                  "cert-manager.io/issuer"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
+            "patch": null
           }
         ]
       },
