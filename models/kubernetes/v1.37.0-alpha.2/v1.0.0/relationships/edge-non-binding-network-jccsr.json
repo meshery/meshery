@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "",
+    "description": "An Ingress routes HTTP(S) traffic to a Service: the Service name and port are written into the first rule's first path backend (networking.k8s.io/v1 shape: backend.service.name / backend.service.port.number). The wiring is identical for every pathType (Exact, Prefix, ImplementationSpecific). Additional rules and paths are user-managed; the catch-all backend is covered by the Ingress defaultBackend relationship.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -55,7 +55,8 @@
                   "paths",
                   "0",
                   "backend",
-                  "serviceName"
+                  "service",
+                  "name"
                 ],
                 [
                   "configuration",
@@ -66,7 +67,9 @@
                   "paths",
                   "0",
                   "backend",
-                  "servicePort"
+                  "service",
+                  "port",
+                  "number"
                 ]
               ],
               "patchStrategy": "replace"

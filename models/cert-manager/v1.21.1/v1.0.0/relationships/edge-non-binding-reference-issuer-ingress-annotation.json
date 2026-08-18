@@ -1,0 +1,155 @@
+{
+  "evaluationQuery": "",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "edge",
+  "metadata": {
+    "description": "ingress-shim provisions a certificate for an Ingress from the issuer named in its cert-manager annotation: a ClusterIssuer name is written into metadata.annotations['cert-manager.io/cluster-issuer'], an Issuer name into metadata.annotations['cert-manager.io/issuer'].",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "displayName": "cert-manager",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.21.1"
+    },
+    "name": "cert-manager",
+    "registrant": {
+      "kind": "github"
+    },
+    "version": "v1.0.0"
+  },
+  "schemaVersion": "relationships.meshery.io/v1beta2",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "ClusterIssuer",
+            "model": {
+              "displayName": "cert-manager",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "cert-manager",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "displayName"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Ingress",
+            "model": {
+              "displayName": "Kubernetes",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "metadata",
+                  "annotations",
+                  "cert-manager.io/cluster-issuer"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Issuer",
+            "model": {
+              "displayName": "cert-manager",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "cert-manager",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "displayName"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Ingress",
+            "model": {
+              "displayName": "Kubernetes",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "metadata",
+                  "annotations",
+                  "cert-manager.io/issuer"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "status": "enabled",
+  "subType": "reference",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}

@@ -1,9 +1,9 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
   "evaluationQuery": "",
+  "id": "00000000-0000-0000-0000-000000000000",
   "kind": "edge",
   "metadata": {
-    "description": "An Ingress routes HTTP(S) traffic to a Service: the Service name and port are written into the first rule's first path backend (networking.k8s.io/v1 shape: backend.service.name / backend.service.port.number). The wiring is identical for every pathType (Exact, Prefix, ImplementationSpecific). Additional rules and paths are user-managed; the catch-all backend is covered by the Ingress defaultBackend relationship.",
+    "description": "A cert-manager Certificate issues its certificate into the Secret named by spec.secretName; an Ingress terminates TLS with that same Secret. The Certificate's secretName is written into the Ingress's first TLS entry (spec.tls.0.secretName) so the two stay in sync.",
     "isAnnotation": false,
     "styles": {
       "primaryColor": "",
@@ -12,16 +12,16 @@
     }
   },
   "model": {
-    "displayName": "",
+    "displayName": "cert-manager",
     "id": "00000000-0000-0000-0000-000000000000",
     "model": {
-      "version": "v1.35.0-rc.0"
+      "version": "v1.21.1"
     },
-    "name": "kubernetes",
+    "name": "cert-manager",
     "registrant": {
-      "kind": ""
+      "kind": "github"
     },
-    "version": ""
+    "version": "v1.0.0"
   },
   "schemaVersion": "relationships.meshery.io/v1beta2",
   "selectors": [
@@ -29,11 +29,36 @@
       "allow": {
         "from": [
           {
-            "id": null,
-            "kind": "Ingress",
-            "match_strategy_matrix": null,
+            "kind": "Certificate",
             "model": {
-              "displayName": "",
+              "displayName": "cert-manager",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "cert-manager",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "secretName"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Ingress",
+            "model": {
+              "displayName": "Kubernetes",
               "id": "00000000-0000-0000-0000-000000000000",
               "model": {
                 "version": ""
@@ -49,61 +74,9 @@
                 [
                   "configuration",
                   "spec",
-                  "rules",
+                  "tls",
                   "0",
-                  "http",
-                  "paths",
-                  "0",
-                  "backend",
-                  "service",
-                  "name"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "rules",
-                  "0",
-                  "http",
-                  "paths",
-                  "0",
-                  "backend",
-                  "service",
-                  "port",
-                  "number"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "Service",
-            "match_strategy_matrix": null,
-            "model": {
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "model": {
-                "version": ""
-              },
-              "name": "kubernetes",
-              "registrant": {
-                "kind": "github"
-              },
-              "version": ""
-            },
-            "patch": {
-              "mutatorRef": [
-                [
-                  "displayName"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "ports",
-                  "0",
-                  "port"
+                  "secretName"
                 ]
               ],
               "patchStrategy": "replace"
@@ -117,8 +90,8 @@
       }
     }
   ],
-  "subType": "network",
   "status": "enabled",
+  "subType": "reference",
   "type": "non-binding",
   "version": "v1.0.0"
 }
