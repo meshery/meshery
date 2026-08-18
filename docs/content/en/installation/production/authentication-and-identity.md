@@ -48,7 +48,7 @@ Two environment variables control provider behavior. Set them via the Helm chart
 [environment variables reference]({{< ref "installation/advanced/environment-variables.md" >}}).
 
 - **`PROVIDER`** — hard-enforces a single provider at **server boot**. Set it to your Remote Provider's registered name (for example `Meshery`). When it is set to a remote, the Local Provider is not registered and cannot be selected via the chooser, cookie, header, or `?provider=`. Setting `PROVIDER=Local` (or the legacy alias `None`) pins the Local Provider; avoid that in production. If `PROVIDER` is set but does not match a registered provider, Meshery **refuses to start** rather than falling back to the chooser.
-- **`PROVIDER_BASE_URLS`** — the comma-separated list of Remote Provider base URLs Meshery registers at startup. Restrict this to the provider you intend to pin rather than the full default list. This setting is read at process start; change it and restart (or `helm upgrade` / `mesheryctl system provider switch`) to re-point an existing deployment. Provider-bound data does not migrate.
+- **`PROVIDER_BASE_URLS`** — the comma-separated list of Remote Provider base URLs Meshery registers at startup. Restrict this to the provider you intend to pin rather than the full default list. This setting is read at process start; change it and restart (for example with `helm upgrade`) to re-point an existing deployment. Provider-bound data does not migrate. `mesheryctl system provider switch` changes `PROVIDER` only, never this list — see [below](#preselecting-the-provider).
 
 ```bash
 helm install meshery meshery/meshery --namespace meshery --create-namespace \
