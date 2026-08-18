@@ -6,9 +6,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { waitForSnackBar } from './utils/waitForSnackBar';
 import {
   annotateDesignImportCase,
-  annotateDesignImportCaseUntracked,
   designImportTags,
-  designImportTagsUntracked,
   DESIGN_IMPORT_TEST_GROUP,
 } from './design_import.testmap';
 
@@ -77,8 +75,9 @@ async function openImportModal(page: Page): Promise<void> {
 }
 
 /**
- * Wait for a POST to /api/pattern/import. Returns the matched Request or null
- * if the endpoint is not reachable (self-skip guard for infra-less runs).
+ * Wait for a POST to /api/pattern/import.
+ * The promise rejects/times-out if no request fires within 30 s,
+ * which fails the test loudly instead of silently skipping.
  */
 function waitForImportRequest(page: Page): Promise<Request> {
   return page.waitForRequest(
@@ -108,12 +107,9 @@ test.describe('Design Import Tests', () => {
   // endpoint required.
   test(
     'Open the Import Design modal from the Designs toolbar',
-    { tag: designImportTagsUntracked('UI/Design Import Modal') },
+    { tag: designImportTags('openImportModal') },
     async ({ page }, testInfo) => {
-      annotateDesignImportCaseUntracked(testInfo, {
-        feature: 'Design import modal',
-        story: 'Open the Import Design modal from the toolbar',
-      });
+      await annotateDesignImportCase(testInfo, 'openImportModal');
 
       await openImportModal(page);
 
