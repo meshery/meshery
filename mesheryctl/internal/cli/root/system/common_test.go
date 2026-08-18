@@ -40,7 +40,19 @@ type CmdTestInput struct {
 // mesheryctl packages running alongside this one.
 func setupContextTestEnv(t *testing.T) {
 	viper.Reset()
-	viper.SetConfigFile(utils.CopyMeshconfigFixture(t, utils.SharedTestConfigPath(t)))
+
+	configPath := utils.CopyMeshconfigFixture(t, utils.SharedTestConfigPath(t))
+	viper.SetConfigFile(configPath)
+
+	// `system login` and `system reset` persist the meshconfig through
+	// utils.DefaultConfigPath rather than through viper. Pointing only viper at
+	// the copy would leave those two writing wherever that variable was last
+	// set - the shared fixture among the possibilities, which is precisely what
+	// the copy exists to keep them away from.
+	defaultConfigPath := utils.DefaultConfigPath
+	utils.DefaultConfigPath = configPath
+	t.Cleanup(func() { utils.DefaultConfigPath = defaultConfigPath })
+
 	err := viper.ReadInConfig()
 	if err != nil {
 		t.Errorf("unable to read configuration from %v, %v", viper.ConfigFileUsed(), err.Error())

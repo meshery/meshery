@@ -3,6 +3,7 @@ package system
 import (
 	"bytes"
 	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 	"testing"
@@ -87,13 +88,47 @@ func TestSetCmdWritesToTheActiveConfigNotTheSharedFixture(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unable to read shared meshconfig fixture: %v", err)
 	}
+	info, err := os.Stat(fixture)
+	if err != nil {
+		t.Fatalf("unable to stat shared meshconfig fixture: %v", err)
+	}
 	t.Cleanup(func() {
 		// A regression here corrupts the fixture for every other package, so
 		// put it back rather than letting one failure cascade.
-		if after, err := os.ReadFile(fixture); err == nil && !bytes.Equal(before, after) {
-			if err := os.WriteFile(fixture, before, 0o600); err != nil {
-				t.Errorf("unable to restore shared meshconfig fixture: %v", err)
-			}
+		after, err := os.ReadFile(fixture)
+		if err != nil || bytes.Equal(before, after) {
+			return
+		}
+
+		// Put it back by rename rather than by writing it in place. Writing
+		// truncates first, and a sibling package reading the fixture inside
+		// that window is the very failure this test exists to prevent - the
+		// repair must not reproduce it.
+		restored, err := os.CreateTemp(filepath.Dir(fixture), ".TestConfig.yaml-restore-*")
+		if err != nil {
+			t.Errorf("unable to create the meshconfig fixture restore file: %v", err)
+			return
+		}
+		defer func() { _ = os.Remove(restored.Name()) }()
+
+		if _, err := restored.Write(before); err != nil {
+			_ = restored.Close()
+			t.Errorf("unable to write the meshconfig fixture restore file: %v", err)
+			return
+		}
+
+		if err := restored.Close(); err != nil {
+			t.Errorf("unable to close the meshconfig fixture restore file: %v", err)
+			return
+		}
+
+		if err := os.Chmod(restored.Name(), info.Mode().Perm()); err != nil {
+			t.Errorf("unable to set the mode of the meshconfig fixture restore file: %v", err)
+			return
+		}
+
+		if err := os.Rename(restored.Name(), fixture); err != nil {
+			t.Errorf("unable to restore shared meshconfig fixture: %v", err)
 		}
 	})
 
