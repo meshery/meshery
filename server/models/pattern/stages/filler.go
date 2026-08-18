@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/meshery/meshery/server/models/pattern/planner"
 	"github.com/meshery/meshery/server/models/pattern/utils"
 	mutils "github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas/models/v1beta2/component"
@@ -39,7 +40,7 @@ func Filler(skipPrintLogs bool) ChainStageFunction {
 func fill(p *pattern.PatternFile, flattenedComponent map[string]interface{}) error {
 	var errs []error
 	for _, component := range p.Components {
-		if err := fillDependsOn(component, flattenedComponent); err != nil {
+		if err := fillDependsOn(p.Name, component, flattenedComponent); err != nil {
 			err = ErrResolveReference(err)
 			errs = append(errs, err)
 		}
@@ -65,15 +66,22 @@ func fill(p *pattern.PatternFile, flattenedComponent map[string]interface{}) err
 	return mergeErrors(errs)
 }
 
-func fillDependsOn(component *component.ComponentDefinition, flattenedPattern map[string]interface{}) error {
-	_dependsOn, ok := component.Metadata.AdditionalProperties["dependsOn"]
-	if !ok || mutils.IsInterfaceNil(_dependsOn) {
-		return nil
-	}
-
-	dependsOn, err := mutils.Cast[[]string](_dependsOn)
+// fillDependsOn resolves the references a component's "dependsOn" entries carry
+// and leaves the resolved names behind as a []string.
+//
+// The design arrives here as it was decoded from JSON, where "dependsOn" is not
+// a first-class field and so survives as an untyped []interface{}. Normalizing
+// it back onto the component is what makes the resolution performed here
+// durable: every later reader - the execution plan above all - then sees one
+// shape carrying the resolved names rather than the references they started as.
+func fillDependsOn(designName string, component *component.ComponentDefinition, flattenedPattern map[string]interface{}) error {
+	dependsOn, err := planner.DeclaredDependencies(designName, component)
 	if err != nil {
 		return err
+	}
+
+	if dependsOn == nil {
+		return nil
 	}
 
 	for i, d := range dependsOn {
@@ -94,6 +102,8 @@ func fillDependsOn(component *component.ComponentDefinition, flattenedPattern ma
 
 		dependsOn[i] = cval
 	}
+
+	component.Metadata.AdditionalProperties["dependsOn"] = dependsOn
 
 	return nil
 }

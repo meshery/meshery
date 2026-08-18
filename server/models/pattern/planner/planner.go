@@ -40,12 +40,16 @@ func (p *Plan) Execute(cb VisitFn, withheld WithheldFn, log logger.Handler) erro
 	return nil
 }
 
-// declaredDependencies reads the names a component declares a dependency on.
+// DeclaredDependencies reads the names a component declares a dependency on.
 //
 // A design travels between Meshery Server and its clients as JSON, so the
 // entries arrive as []string while the design is held in memory and as
 // []interface{} once the design has been round-tripped over the wire.
-func declaredDependencies(design string, c *component.ComponentDefinition) ([]string, error) {
+//
+// Every reader of "dependsOn" resolves it through this one helper, so that a
+// declaration Meshery cannot read is reported the same way wherever it is met
+// rather than being read as one shape in one place and another elsewhere.
+func DeclaredDependencies(design string, c *component.ComponentDefinition) ([]string, error) {
 	raw, ok := c.Metadata.AdditionalProperties["dependsOn"]
 	if !ok || raw == nil {
 		return nil, nil
@@ -95,7 +99,7 @@ func CreatePlan(design pattern.PatternFile, annotations []*component.ComponentDe
 	}
 
 	for _, component := range design.Components {
-		dependsOn, err := declaredDependencies(design.Name, component)
+		dependsOn, err := DeclaredDependencies(design.Name, component)
 		if err != nil {
 			return nil, err
 		}

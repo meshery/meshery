@@ -86,7 +86,13 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 					deploymentMsg.Message = result
 					if err != nil {
 						deploymentMsg.Success = false
+
+						// errs is shared by every per-kubeconfig goroutine, so
+						// it is appended to under the same lock that guards msgs.
+						msgsMx.Lock()
 						errs = append(errs, err)
+						msgsMx.Unlock()
+
 						deploymentMsg.Error = err
 					}
 					msgsPerComp = append(msgsPerComp, deploymentMsg)
