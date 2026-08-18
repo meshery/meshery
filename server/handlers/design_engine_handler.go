@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -163,6 +164,13 @@ func (h *Handler) PatternFileHandler(
 	}
 	response, err := _processPattern(opts)
 
+	if err == nil && !isDryRun {
+		failedComponents := deploymentFailedComponents(response)
+		if len(failedComponents) > 0 {
+			err = fmt.Errorf("some components failed to %s: %s", action, strings.Join(failedComponents, ", "))
+		}
+	}
+
 	eventBuilder := events.NewEvent().ActedUpon(patternID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(action)
 
 	if err != nil {
@@ -212,6 +220,43 @@ func (h *Handler) PatternFileHandler(
 
 	ec := json.NewEncoder(rw)
 	_ = ec.Encode(response)
+}
+
+func deploymentFailedComponents(response map[string]interface{}) []string {
+	failed := make([]string, 0)
+	seen := make(map[string]struct{})
+
+	for _, contexts := range response {
+		summary, ok := contexts.([]patterns.DeploymentMessagePerContext)
+		if !ok {
+			continue
+		}
+
+		for _, ctx := range summary {
+			for _, comp := range ctx.Summary {
+				if comp.Success {
+					continue
+				}
+
+				name := comp.CompName
+				if name == "" {
+					name = comp.Kind
+				}
+				if name == "" {
+					continue
+				}
+				if _, ok := seen[name]; ok {
+					continue
+				}
+
+				seen[name] = struct{}{}
+				failed = append(failed, name)
+			}
+		}
+	}
+
+	sort.Strings(failed)
+	return failed
 }
 
 func _processPattern(opts *patterncore.ProcessPatternOptions) (map[string]interface{}, error) {
