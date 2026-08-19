@@ -218,28 +218,23 @@ func TestDeleteFlushMeshSyncDataSerialization(t *testing.T) {
 	// 1. Hold/block the conflicting lifecycle operation
 	machineCtx.ActionMutex.Lock()
 
-	// 2. Trigger Delete
+	// 2. Trigger Delete (must not block!)
 	deleteAction := &DeleteAction{}
-	errChan := make(chan error, 1)
-	go func() {
-		_, _, err := deleteAction.Execute(ctx, machineCtx, nil)
-		errChan <- err
-	}()
+	_, _, err := deleteAction.Execute(ctx, machineCtx, nil)
+	if err != nil {
+		t.Fatalf("failed to execute delete action: %v", err)
+	}
 
 	// 3. Prove FlushMeshSyncData cannot execute before the protected lifecycle operation releases
 	select {
 	case <-flushCalled:
 		t.Fatal("FlushMeshSyncData executed before ActionMutex was released")
 	case <-time.After(100 * time.Millisecond):
-		// Expected: blocked by ActionMutex
+		// Expected: blocked by ActionMutex in background worker
 	}
 
 	// 4. Release the first operation
 	machineCtx.ActionMutex.Unlock()
-
-	if err := <-errChan; err != nil {
-		t.Fatalf("failed to execute delete action: %v", err)
-	}
 
 	// 5. Prove FlushMeshSyncData then executes
 	select {
@@ -321,11 +316,10 @@ func TestStaleConnectWorkerCancellation(t *testing.T) {
 	// deterministically calls FlushMeshSyncData (observable via the mock
 	// provider) if the ctx.Err() guard does not abort it.
 	staleWorker := &DeleteAction{}
-	errChan := make(chan error, 1)
-	go func() {
-		_, _, err := staleWorker.Execute(connectCtx, machineCtx, nil)
-		errChan <- err
-	}()
+	_, _, err := staleWorker.Execute(connectCtx, machineCtx, nil)
+	if err != nil {
+		t.Fatalf("failed to execute stale worker action: %v", err)
+	}
 
 	// Wait briefly to ensure the goroutine starts and blocks on the lock
 	time.Sleep(100 * time.Millisecond)
@@ -355,9 +349,5 @@ func TestStaleConnectWorkerCancellation(t *testing.T) {
 		t.Fatal("Stale worker executed FlushMeshSyncData before or during cancellation check")
 	case <-time.After(deadline):
 		t.Fatal("Deadlock: stale worker neither aborted nor executed within deadline")
-	}
-
-	if err := <-errChan; err != nil {
-		t.Fatalf("failed to execute stale worker action: %v", err)
 	}
 }

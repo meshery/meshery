@@ -159,7 +159,13 @@ func (h *Handler) CancelConnectionRegister(w http.ResponseWriter, req *http.Requ
 		return
 	}
 
-	h.ConnectionToStateMachineInstanceTracker.Remove(registrationID)
+	if inst, ok := h.ConnectionToStateMachineInstanceTracker.Get(registrationID); ok {
+		currentState := inst.GetCurrentState()
+		// Only allow cancellation if it is genuinely in an unestablished registration state
+		if currentState == machines.DISCOVERED || currentState == machines.REGISTERED || currentState == machines.InitialState || currentState == "" {
+			h.ConnectionToStateMachineInstanceTracker.RemoveIfMatch(registrationID, inst)
+		}
+	}
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -596,9 +602,9 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 				// specific Delete operation that initiated this cleanup is still the active
 				// lifecycle generation. (i.e. no RECONNECT adopted the StateMachine).
 				if inst.GetLifecycleCtx() == deleteGenerationCtx {
-					smInstanceTracker.Remove(inst.ID)
+					smInstanceTracker.RemoveIfMatch(inst.ID, inst)
 				}
-				
+
 				if doneChan, ok := detachedCtx.Value(trackerCleanupDoneKey).(chan struct{}); ok && doneChan != nil {
 					close(doneChan)
 				}

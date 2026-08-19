@@ -16,6 +16,7 @@ import (
 )
 
 type trackerCleanupDoneKeyType string
+
 const trackerCleanupDoneKey trackerCleanupDoneKeyType = "trackerCleanupDone"
 
 // Deprecated: GetAllContexts (GET /api/system/kubernetes/contexts) is being
@@ -182,7 +183,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		// specific Delete operation that initiated this cleanup is still the active
 		// lifecycle generation. (i.e. no RECONNECT adopted the StateMachine).
 		if inst.GetLifecycleCtx() == deleteGenerationCtx {
-			smInstanceTracker.Remove(connectionUUID)
+			smInstanceTracker.RemoveIfMatch(connectionUUID, inst)
 		}
 
 		if ch, ok := req.Context().Value(trackerCleanupDoneKey).(chan struct{}); ok && ch != nil {
