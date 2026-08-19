@@ -75,7 +75,7 @@ After you initiate an import, Meshery executes a **dataflow sequence** to proper
 
 ## Export Methods & Formats
 
-Designs can be exported either via **Meshery UI** or **Meshery CLI (`mesheryctl`)**. Exporting allows you to backup designs, distribute them as artifacts across registries, publish them, or package them into standard tools like Helm.
+Designs can be exported either via **Meshery UI** or **Meshery CLI (`mesheryctl`)**. Exporting allows you to back up designs, distribute them as artifacts across registries, publish them, or package them into standard tools like Helm.
 
 ### Supported Export Formats
 
