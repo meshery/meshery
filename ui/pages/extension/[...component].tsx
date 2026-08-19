@@ -3,7 +3,7 @@ import ExtensionSandbox, {
   getComponentTitleFromPath,
   getComponentIsBetaFromPath,
 } from '../../components/ExtensionSandbox';
-import { CircularProgress, NoSsr } from '@sistent/sistent';
+import { CircularProgress, NoSsr, useHasPermission } from '@sistent/sistent';
 import Head from 'next/head';
 import React, { useEffect, useMemo } from 'react';
 import RemoteComponent from '../../components/general/RemoteComponent';
@@ -20,6 +20,8 @@ import {
 } from '@/store/slices/mesheryUi';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetStaticPaths, GetStaticProps } from 'next';
+import { Keys } from '@meshery/schemas/permissions';
+import DefaultError from '@/components/general/error-404';
 
 /**
  * Define static paths for the extension routes.
@@ -49,6 +51,7 @@ function RemoteExtension() {
   const dispatch = useDispatch();
   const { extensionType } = useSelector((state) => state.ui);
   const { data: providerCapabilities, isLoading } = useGetProviderCapabilitiesQuery();
+  const canViewExtensions = useHasPermission(Keys.ExtensibilityViewExtensions);
 
   // Resolve the active extension that matches the current path. Derived from
   // providerCapabilities rather than mirrored into local state to avoid
@@ -96,6 +99,10 @@ function RemoteExtension() {
       dispatch(updateExtensionType({ extensionType: null }));
     };
   }, [dispatch, matchedExtension]);
+
+  if (!canViewExtensions) {
+    return <DefaultError permissionKey={Keys.ExtensibilityViewExtensions} />;
+  }
 
   return (
     <NoSsr>
