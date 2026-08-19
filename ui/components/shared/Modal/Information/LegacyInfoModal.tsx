@@ -1,6 +1,5 @@
 import ServiceMesheryIcon from '@/assets/icons/ServiceMesheryIcon';
 import { usePublishPatternMutation, useUpdatePatternFileMutation } from '@/rtk-query/design';
-import TooltipButton from '@/utils/TooltipButton';
 import { filterEmptyFields } from '@/utils/objects';
 import { Keys } from '@meshery/schemas/permissions';
 import {
@@ -343,9 +342,9 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
             '& .MuiPaper-root': {
               width: '100%',
               maxWidth: { xs: '100%', sm: '800px' },
-              margin: { xs: 0, sm: undefined },
-              maxHeight: { xs: '100dvh', sm: undefined },
-              borderRadius: { xs: 0, sm: undefined },
+              margin: { xs: 0, sm: '32px' },
+              maxHeight: { xs: '100dvh', sm: 'calc(100% - 64px)' },
+              borderRadius: { xs: 0, sm: 4 },
             },
           },
         }}
@@ -502,9 +501,11 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
               gap: { xs: '0.5rem', sm: '1rem' },
             }}
           >
-            <TooltipButton title={'Copy Design Link'} onClick={handleCopy}>
-              <CopyLinkButton sx={{ width: { xs: '100%', sm: 'auto' } }}>Copy Link</CopyLinkButton>
-            </TooltipButton>
+            <CustomTooltip title="Copy Design Link">
+              <CopyLinkButton onClick={handleCopy} sx={{ width: { xs: '100%', sm: 'auto' } }}>
+                Copy Link
+              </CopyLinkButton>
+            </CustomTooltip>
 
             <ModalButtonSecondary
               data-testid="publish-button"

@@ -39,7 +39,10 @@ export const ConnectionActionMenu = ({
       show: !!onConfigure,
       label: 'Configure',
       icon: <SettingsIcon {...iconMedium} />,
-      onClick: onConfigure,
+      onClick: () => {
+        onConfigure?.();
+        onClose();
+      },
       testId: 'btnConfigureConnection',
       permissionKey: Keys.LifecycleManagementEditConnection,
     },
@@ -47,7 +50,10 @@ export const ConnectionActionMenu = ({
       show: !!onConfigureControllers,
       label: 'Configure Controllers',
       icon: <SettingsIcon {...iconMedium} />,
-      onClick: onConfigureControllers,
+      onClick: () => {
+        onConfigureControllers?.();
+        onClose();
+      },
       testId: 'btnConfigureConnectionControllers',
       permissionKey: Keys.LifecycleManagementEditConnection,
     },
