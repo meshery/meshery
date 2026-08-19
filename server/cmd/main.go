@@ -21,6 +21,7 @@ import (
 	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/helpers"
 	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/pkg/encryption"
 	"github.com/meshery/meshery/server/internal/graphql"
 	"github.com/meshery/meshery/server/internal/store"
 	"github.com/meshery/meshery/server/machines"
@@ -250,6 +251,15 @@ func main() {
 		meshsyncDefaultDeploymentMode = connections.MeshsyncDeploymentModeDefault
 	}
 
+	encSvc, err := encryption.NewFromEnv()
+	if err != nil {
+		log.Error(models.ErrEncryptionInit(err))
+		os.Exit(1)
+	}
+	if encSvc != nil {
+		log.Info("At-rest encryption for credentials and kubeconfigs is ENABLED")
+	}
+
 	lProv := &models.DefaultLocalProvider{
 		ProviderBaseURL:                 DefaultProviderURL,
 		MapPreferencePersister:          preferencePersister,
@@ -262,7 +272,7 @@ func main() {
 		MesheryFilterPersister:          &models.MesheryFilterPersister{DB: dbHandler},
 		MesheryApplicationPersister:     &models.MesheryApplicationPersister{DB: dbHandler},
 		MesheryPatternResourcePersister: &models.PatternResourcePersister{DB: dbHandler},
-		MesheryK8sContextPersister:      &models.MesheryK8sContextPersister{DB: dbHandler},
+		MesheryK8sContextPersister:      &models.MesheryK8sContextPersister{DB: dbHandler, EncSvc: encSvc},
 		OrganizationPersister:           &models.OrganizationPersister{DB: dbHandler},
 		ConnectionPersister:             &models.ConnectionPersister{DB: dbHandler},
 		EnvironmentPersister:            &models.EnvironmentPersister{DB: dbHandler},
@@ -272,6 +282,7 @@ func main() {
 		GenericPersister:                dbHandler,
 		Log:                             log,
 		MeshsyncDefaultDeploymentMode:   meshsyncDefaultDeploymentMode,
+		EncSvc:                          encSvc,
 	}
 
 	// Local remote provider is initalized here.

@@ -102,6 +102,15 @@ and providers.
 - **In-cluster credentials.** When Meshery runs in-cluster and manages its own
   cluster, it can use the in-cluster ServiceAccount rather than a kubeconfig
   file—one fewer long-lived secret to manage.
+- **At-rest encryption for credentials and kubeconfigs.** Meshery supports
+  optional application-layer AES-256-GCM encryption at rest for sensitive data
+  in its SQLite datastore (`credentials.secret`, `k8s_contexts.auth`, and
+  `k8s_contexts.cluster`). Enable it by passing `MESHERY_ENCRYPTION_KEY`
+  (64-character hex key) or mounting a secret file via
+  `MESHERY_ENCRYPTION_KEY_FILE`. Existing datastores can be migrated in-place:
+  **stop Meshery Server first**, then run
+  `mesheryctl system encrypt-datastore --key <key>`. Key material is never
+  persisted to the datastore.
 - **Provider and OAuth secrets.** Keep Remote Provider configuration and any
   client secrets in Kubernetes Secrets (or an external secrets manager), not in
   plaintext values files committed to source control.

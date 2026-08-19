@@ -4223,6 +4223,51 @@
         "short_description": "A database reset is already in progress",
         "probable_cause": "A reset was requested while an earlier one was still seeding keys, catalog designs, or components",
         "suggested_remediation": "Wait for the in-flight reset to finish, then retry"
+      },
+      "1482": {
+        "name": "ErrEncryptionInitCode",
+        "code": "1482",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to initialise at-rest encryption service",
+        "probable_cause": "The value of MESHERY_ENCRYPTION_KEY or MESHERY_ENCRYPTION_KEY_FILE is invalid",
+        "suggested_remediation": "Generate a valid 32-byte key: openssl rand -hex 32. Set MESHERY_ENCRYPTION_KEY=<64-char hex> or point MESHERY_ENCRYPTION_KEY_FILE to a file containing the key"
+      },
+      "1483": {
+        "name": "ErrEncryptSecretCode",
+        "code": "1483",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to encrypt credential secret before persisting",
+        "probable_cause": "Internal encryption error",
+        "suggested_remediation": "Ensure the encryption key is valid and has not been rotated mid-operation"
+      },
+      "1484": {
+        "name": "ErrDecryptSecretCode",
+        "code": "1484",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to decrypt stored credential secret",
+        "probable_cause": "The stored credential may have been encrypted with a different key. The credential row may be corrupted",
+        "suggested_remediation": "Verify that MESHERY_ENCRYPTION_KEY or MESHERY_ENCRYPTION_KEY_FILE matches the key used when the credential was saved. Restore the original encryption key to access encrypted credentials"
+      },
+      "1485": {
+        "name": "ErrEncryptK8sContextCode",
+        "code": "1485",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to encrypt Kubernetes context fields before persisting",
+        "probable_cause": "Internal encryption error for kubeconfig data",
+        "suggested_remediation": "Ensure the encryption key is valid and has not been rotated mid-operation"
+      },
+      "1486": {
+        "name": "ErrDecryptK8sContextCode",
+        "code": "1486",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to decrypt Kubernetes context fields after reading",
+        "probable_cause": "The stored kubeconfig data may have been encrypted with a different key. The k8s_contexts row may be corrupted",
+        "suggested_remediation": "Verify that MESHERY_ENCRYPTION_KEY or MESHERY_ENCRYPTION_KEY_FILE matches the key used when the context was saved. Restore the original encryption key to access encrypted Kubernetes contexts"
       }
     }
   }

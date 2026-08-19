@@ -19,6 +19,7 @@ import (
 	"k8s.io/client-go/util/homedir"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/pkg/encryption"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/meshery/meshkit/database"
@@ -72,6 +73,13 @@ type DefaultLocalProvider struct {
 	// downloadMu serializes provider package downloads so concurrent installs
 	// don't race on the shared on-disk package location.
 	downloadMu sync.Mutex
+
+	// EncSvc is the optional application-layer encryption service for
+	// credential secrets and kubeconfig fields stored in the database.
+	// When nil (the default), data is stored in plaintext and behaviour is
+	// identical to before this feature was introduced.
+	// Set MESHERY_ENCRYPTION_KEY or MESHERY_ENCRYPTION_KEY_FILE to enable.
+	EncSvc *encryption.Service
 }
 
 // LocalProviderName is the canonical name of the built-in local provider.
@@ -1612,6 +1620,18 @@ func (l *DefaultLocalProvider) SaveUserCredential(token string, credential *Cred
 		}
 		credential.ID = newID
 	}
+
+	// Encrypt the secret before persisting; restore plaintext for the caller.
+	if l.EncSvc != nil && credential.Secret != nil {
+		originalSecret := credential.Secret
+		encrypted, err := l.EncSvc.EncryptMap(credential.Secret)
+		if err != nil {
+			return nil, ErrEncryptSecret(err)
+		}
+		credential.Secret = encrypted
+		defer func() { credential.Secret = originalSecret }()
+	}
+
 	result := l.GetGenericPersister().Table("credentials").Create(&credential)
 	if result.Error != nil {
 		return nil, fmt.Errorf("error saving user credentials: %v", result.Error)
@@ -1628,6 +1648,15 @@ func (l *DefaultLocalProvider) GetCredentialByID(token string, credentialID core
 		}
 		return nil, http.StatusInternalServerError, fmt.Errorf("error retrieving credential with id %s: %v", credentialID, result.Error)
 	}
+
+	if l.EncSvc != nil && credential.Secret != nil {
+		decrypted, err := l.EncSvc.DecryptMap(credential.Secret)
+		if err != nil {
+			return nil, http.StatusInternalServerError, ErrDecryptSecret(err)
+		}
+		credential.Secret = decrypted
+	}
+
 	return credential, http.StatusOK, nil
 }
 
@@ -1658,6 +1687,18 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 		}
 	}
 
+	if l.EncSvc != nil {
+		for i := range credentialsList {
+			if credentialsList[i].Secret != nil {
+				decrypted, err := l.EncSvc.DecryptMap(credentialsList[i].Secret)
+				if err != nil {
+					return nil, ErrDecryptSecret(err)
+				}
+				credentialsList[i].Secret = decrypted
+			}
+		}
+	}
+
 	credentialsPage := &CredentialsPage{
 		Credentials: credentialsList,
 		Page:        page,
@@ -1673,6 +1714,17 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 
 func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential *Credential) (*Credential, error) {
 	updatedCredential := &Credential{}
+
+	if l.EncSvc != nil && credential.Secret != nil {
+		originalSecret := credential.Secret
+		encrypted, err := l.EncSvc.EncryptMap(credential.Secret)
+		if err != nil {
+			return nil, ErrEncryptSecret(err)
+		}
+		credential.Secret = encrypted
+		defer func() { credential.Secret = originalSecret }()
+	}
+
 	db := l.GetGenericPersister().Model(&Credential{}).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserId, credential.ID).Updates(credential)
 	if db.Error != nil {
 		return nil, fmt.Errorf("error updating user credential: %v", db.Error)
@@ -1681,6 +1733,15 @@ func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential 
 	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.UserId, credential.ID).First(updatedCredential).Error; err != nil {
 		return nil, fmt.Errorf("error getting updated user credential: %v", err)
 	}
+
+	if l.EncSvc != nil && updatedCredential.Secret != nil {
+		decrypted, err := l.EncSvc.DecryptMap(updatedCredential.Secret)
+		if err != nil {
+			return nil, ErrDecryptSecret(err)
+		}
+		updatedCredential.Secret = decrypted
+	}
+
 	return updatedCredential, nil
 }
 
@@ -1691,6 +1752,13 @@ func (l *DefaultLocalProvider) DeleteUserCredential(_ *http.Request, credentialI
 	}
 	if err := l.GetGenericPersister().Where("id = ?", credentialID).First(delCredential).Error; err != nil {
 		return nil, err
+	}
+	if l.EncSvc != nil && delCredential.Secret != nil {
+		decrypted, err := l.EncSvc.DecryptMap(delCredential.Secret)
+		if err != nil {
+			return nil, ErrDecryptSecret(err)
+		}
+		delCredential.Secret = decrypted
 	}
 	return delCredential, nil
 }
