@@ -44,7 +44,6 @@ export const ConnectionStatusSelect = ({
         MenuProps={{
           anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
           transformOrigin: { vertical: 'top', horizontal: 'left' },
-          getContentAnchorEl: null,
           // sx owns list padding; no disablePadding conflict.
           sx: { '& .MuiList-root': { padding: '4px' } },
           PaperProps: { square: true },
