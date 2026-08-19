@@ -347,7 +347,7 @@ const Dashboard = () => {
               spacing={{ xs: 1, sm: 2 }}
               justifyContent="flex-end"
               alignItems="center"
-              flexWrap="wrap-reverse"
+              flexWrap="wrap"
             >
               {topBarActions.map(({ key, ...layoutAction }) => (
                 <LayoutActionButton {...layoutAction} key={key} />
