@@ -227,6 +227,16 @@ make helm-docs      # Generate Helm chart docs
 - Use `@sistent/sistent` design system; fall back to MUI.
 - Redux Toolkit for global state; GraphQL via Relay; REST via Axios.
 - Playwright for E2E tests.
+- **Every content-bearing page needs an *access* gate, not just gated controls.**
+  `const canX = useHasPermission(Keys.X)` from `@sistent/sistent` plus an early
+  `return <DefaultError permissionKey={Keys.X} />`; pass `skip: !canX` to the page's
+  RTK Query hooks so a denied session issues no request. Gating only the buttons
+  leaves the page readable by a member holding zero keys. The Meshery UI dashboard
+  (`/`) is the **single deliberate exception** - it is the post-login landing page, so
+  denying it would strand a newly invited member on an error screen. Pin the **deny**
+  path in a test; an allow-only test passes against an ungated page too. Spellings,
+  the CASL wiring and the exception:
+  [Extensibility: Authorization](./docs/content/en/reference/extensibility/authorization/index.md).
 
 ### Commits
 
@@ -453,6 +463,7 @@ worked detail behind them — open the one that matches what you are working on.
 | A Go lint rule firing, or adding one | [Go Lint Rules](./docs/content/en/project/contributing/contributing-lint.md) |
 | Releases, CI secrets, the QA dashboard | [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md) |
 | Connections and credential secrets | [Connections](./docs/content/en/project/contributing/models/connections.md) |
+| A permission-gated page, control or key | [Extensibility: Authorization](./docs/content/en/reference/extensibility/authorization/index.md) |
 | UI extensions, Remote Components | [Contributing to Meshery UI](./docs/content/en/project/contributing/ui/ui.md) |
 | `mesheryctl`, golden files | [Contributing to Meshery CLI](./docs/content/en/project/contributing/cli/cli.md) |
 | A docs page, its assets or shortcodes | [Contributing to Meshery Docs](./docs/content/en/project/contributing/contributing-docs/docs.md) |
