@@ -17,6 +17,7 @@ import {
   SettingsRemoteIcon,
   useTheme,
   ErrorBoundary,
+  useHasPermission,
 } from '@sistent/sistent';
 import CopyIcon from '../../assets/icons/CopyIcon';
 import _ from 'lodash';
@@ -56,6 +57,8 @@ import { ThemeTogglerCore } from '@/theme/hooks';
 import { SecondaryTab, SecondaryTabs } from '../dashboard/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleCatalogContent, updateProgress } from '@/store/slices/mesheryUi';
+import { Keys } from '@meshery/schemas/permissions';
+import DefaultError from '../general/error-404/index';
 
 interface ThemeTogglerProps {
   handleUpdateUserPref: (_theme: string) => void;
@@ -138,15 +141,16 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const { providerCapabilities } = useSelector((state) => state.ui);
+  const canViewUserPreferences = useHasPermission(Keys.ExtensibilityViewMesheryUserPreferences);
   const {
     data: userData,
     isSuccess: isUserDataFetched,
     isError: isUserDataError,
     error: userDataError,
-  } = useGetUserPrefQuery();
+  } = useGetUserPrefQuery(undefined, { skip: !canViewUserPreferences });
 
   const { data: capabilitiesData, isSuccess: isCapabilitiesDataFetched } =
-    useGetProviderCapabilitiesQuery();
+    useGetProviderCapabilitiesQuery(undefined, { skip: !canViewUserPreferences });
 
   const [updateUserPref] = useUpdateUserPrefMutation();
   const [updateUserPrefWithContext] = useUpdateUserPrefWithContextMutation();
@@ -529,6 +533,11 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
     const updates = _.set(_.cloneDeep(userData), key, value);
     updateUserPrefWithContext(updates);
   };
+
+  if (!canViewUserPreferences) {
+    return <DefaultError permissionKey={Keys.ExtensibilityViewMesheryUserPreferences} />;
+  }
+
   return (
     <>
       <NoSsr>

@@ -21,7 +21,6 @@ type ConnectionTableToolbarProps = {
   columns: Array<{ name: string; label?: string; options?: { display?: boolean } }>;
   columnVisibility: Record<string, boolean | undefined>;
   setColumnVisibility: (visibility: Record<string, boolean | undefined>) => void;
-  tabs?: React.ReactNode;
 };
 
 export const ConnectionTableToolbar = ({
@@ -35,7 +34,6 @@ export const ConnectionTableToolbar = ({
   columns,
   columnVisibility,
   setColumnVisibility,
-  tabs,
 }: ConnectionTableToolbarProps) => {
   return (
     <DataTableToolbar
@@ -74,7 +72,6 @@ export const ConnectionTableToolbar = ({
           }}
         />
       }
-      tabs={tabs}
     />
   );
 };

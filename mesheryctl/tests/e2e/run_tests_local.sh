@@ -73,13 +73,16 @@ main() {
    # Uncomment the following line to enable junit format output
    # FORMATTER="--formatter tap"
 
+   # --print-output-on-failure surfaces each failing test's captured $output /
+   # $stderr (mirrors CI, and feeds the Allure failure attachment via
+   # bats-to-allure.js), so local failures are debuggable too.
    if [[ -z "$FILE" ]]; then
       echo "Running all E2E tests."
-      bats $FORMATTER *-*/*.bats
+      bats $FORMATTER --print-output-on-failure *-*/*.bats
    else
       if [[ "$FILE" == *.bats && -f "$FILE" ]]; then
          echo "Running E2E for specified file: $FILE"
-         bats $FORMATTER $FILE
+         bats $FORMATTER --print-output-on-failure $FILE
       else
          echo "X Invalid file format or file not found"
          exit 1

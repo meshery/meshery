@@ -23,7 +23,7 @@ See [Extension: Meshery Snapshot]({{< ref "extensions/extensions/kubectl-meshsyn
 - Baseline and analyze the performance of your services is key to efficient operation of any application
   - Meshery is the canonical implementation of the Cloud Native Performance specification
 - Define your performance profiles upfront. See statistical analysis with microservice latency and throughput quartiles
-- Meshery includes your choice of load generator, so that you can meausure your way
+- Meshery includes your choice of load generator, so that you can measure your way
 - Meshery packages all these features into an easy-to-use GitHub Action
 
 Measuring and managing the performance of your infrastructure is key to efficient operation. You can choose from multiple load generators and use a highly configurable set of load profiles with variable tunable facets to run a performance test. Meshery packages all these features into an easy-to-use GitHub Action.
@@ -57,7 +57,7 @@ jobs:
           driver: docker
 
       - name: Run Performance Test
-        uses: meshery-extensions/meshery-performance-action@master
+        uses: layer5io/meshery-performance-action@master
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: docker
@@ -86,7 +86,7 @@ clients:
 duration: "30m"
 ```
 
-See this sample GitHub workflow (<a href="https://github.com/meshery-extensions/meshery-performance-action/blob/master/action.yml">action.yml</a>) for more configuration details.
+See this sample GitHub workflow (<a href="https://github.com/layer5io/meshery-performance-action/blob/master/action.yml">action.yml</a>) for more configuration details.
 
 <a href="./images/service-mesh-performance-profile-test-results.png"><img src="./images/service-mesh-performance-profile-test-results.png" className="image-center" alt="performance management dashboard" /></a>
 
