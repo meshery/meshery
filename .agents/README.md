@@ -82,6 +82,32 @@ Scripts in `.agents/hooks/`:
 |------|--------|---------|---------|
 | Format Frontend | `.agents/hooks/format-frontend.sh` | Post-edit | Auto-format JS/TS with Prettier |
 | Block Lock Files | `.agents/hooks/block-lockfiles.sh` | Pre-edit | Prevent direct edits to lock files |
+| Require Sign-off | `.agents/hooks/require-signoff.sh` | Pre-command | Prevent a `git commit` with no `Signed-off-by` |
 
 `block-lockfiles.sh` enforces the no-hand-editing rule by basename, so it covers lock files
 that `AGENTS.md` does not enumerate.
+
+### Why the sign-off guard is duplicated
+
+`ui/.husky/commit-msg` already applies the DCO rule, and `require-signoff.sh` applies the same
+one. That is not redundancy: the two intercept different things, and only one of them survives
+the way this repo is actually worked on.
+
+Git reaches the husky hook **only** through `core.hooksPath`. It is therefore silently absent
+on a checkout where `make ui-setup` never ran, and under any coding agent that repoints
+`core.hooksPath` at its own hooks directory - which several do, at worktree scope, where it
+overrides the repo-local setting husky wrote. Nothing reports the hook as disabled, because an
+absent guard and a guard that passed are indistinguishable from the outside.
+
+`require-signoff.sh` reads the proposed command line instead of git's hook plumbing, so
+repointing `core.hooksPath` does not disarm it. It is deliberately conservative about what it
+lets through - an amend is judged by the message it will reuse, `-F` by the file it names, and a
+bundled `-ms` is read the way git reads it, as `-m s` with no sign-off at all.
+
+This matters more than an ordinary lint rule because the failure is not recoverable in place:
+the DCO check reads its configuration from the default branch only, so no change on a branch can
+relax it, and remediation commits are not enabled for this repository. By the time CI reports a
+missing trailer, the only remedy left is rewriting the branch and force-pushing it.
+
+`ui/tests/requireSignoff.test.ts` runs the guard against real repositories and asserts the
+verdict it returns for each of those shapes.
