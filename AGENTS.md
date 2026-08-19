@@ -94,8 +94,10 @@ release/local-link coupling are in
   `server/models/credential_secret.go` or `ui/utils/credentialSecret.ts`, which
   must keep the same resolution rules.
 - MUST NOT move credential encryption out of `DefaultLocalProvider`, decide
-  encrypted-vs-plaintext by attempting decryption, or drop the key identifier
-  from the envelope. Credential secrets are sealed at rest with a key derived
+  encrypted-vs-plaintext by attempting decryption, drop the key identifier from
+  the envelope, or accept a client-supplied `__mesheryEncryptedSecret` as proof a
+  secret is already sealed - that property is Meshery's to write, and an inbound
+  one is rejected, never stripped or trusted. Credential secrets are sealed at rest with a key derived
   from the build-time `$TOKEN`; the marker, the key id and the local-provider-only
   scope are each load-bearing, and a Remote Provider must still receive
   plaintext. See

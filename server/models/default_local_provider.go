@@ -1618,6 +1618,9 @@ func (l *DefaultLocalProvider) GetCredentialByID(token string, credentialID core
 	// letting it fail somewhere less legible.
 	decryptedSecret, err := DecryptCredentialSecret(credential.Secret)
 	if err != nil {
+		if l.Log != nil {
+			l.Log.Error(credentialDecryptionFailure(credentialID, err))
+		}
 		return nil, http.StatusInternalServerError, fmt.Errorf("error retrieving credential with id %s: %w", credentialID, err)
 	}
 	credential.Secret = decryptedSecret
@@ -1732,12 +1735,23 @@ func (l *DefaultLocalProvider) decryptCredentialSecretBestEffort(credential *Cre
 	decryptedSecret, err := DecryptCredentialSecret(credential.Secret)
 	if err != nil {
 		if l.Log != nil {
-			l.Log.Error(fmt.Errorf("credential %s could not be decrypted and is returned without its secret: %w", credential.ID, err))
+			l.Log.Error(fmt.Errorf("%w; it is returned without its secret", credentialDecryptionFailure(credential.ID, err)))
 		}
 		credential.Secret = nil
 		return
 	}
 	credential.Secret = decryptedSecret
+}
+
+// credentialDecryptionFailure renders a credential decryption failure for the
+// server log, naming the key identifier this build derives.
+//
+// That identifier stays out of the error returned to the caller: it is a
+// function of the build-time token, and the API error already names the key the
+// stored ciphertext was written under, which is the half an operator acts on.
+// Pairing the two is a diagnosis the operator does from the server log.
+func credentialDecryptionFailure(credentialID core.Uuid, err error) error {
+	return fmt.Errorf("credential %s could not be decrypted; this Meshery Server build derives credential key %s: %w", credentialID, activeCredentialKeyID(), err)
 }
 
 func (l *DefaultLocalProvider) DeleteUserCredential(_ *http.Request, credentialID core.Uuid) (*Credential, error) {

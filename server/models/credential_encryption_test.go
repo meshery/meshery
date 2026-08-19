@@ -1,6 +1,12 @@
 package models
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/hkdf"
+	"crypto/rand"
+	"crypto/sha256"
+	"encoding/base64"
 	"encoding/json"
 	"reflect"
 	"strings"
@@ -229,28 +235,113 @@ func TestDecryptCredentialSecretPassesPlaintextThrough(t *testing.T) {
 	})
 }
 
-// TestEncryptCredentialSecretIsIdempotent guards the double-encryption failure
-// mode: an already-encrypted secret that passes back through a write path must
-// not be sealed a second time, which would make it undecryptable in one pass.
-func TestEncryptCredentialSecretIsIdempotent(t *testing.T) {
-	once, err := EncryptCredentialSecret(map[string]interface{}{"grafanaAPIKey": "key"})
+// TestEncryptCredentialSecretRejectsTheReservedProperty pins the write path's
+// only defensible answer to a secret that already carries Meshery's ciphertext
+// marker. Every read path returns plaintext, so no internal caller can produce
+// that shape; the one thing that can is a request body. Passing it through -
+// treating the marker as proof the map is already sealed - would store whatever
+// else the map carries in the clear and leave the row unreadable forever.
+func TestEncryptCredentialSecretRejectsTheReservedProperty(t *testing.T) {
+	sealed, err := EncryptCredentialSecret(map[string]interface{}{"grafanaAPIKey": "key"})
 	if err != nil {
 		t.Fatalf("EncryptCredentialSecret: %v", err)
 	}
-	twice, err := EncryptCredentialSecret(once)
-	if err != nil {
-		t.Fatalf("EncryptCredentialSecret (second pass): %v", err)
+
+	for name, secret := range map[string]map[string]interface{}{
+		"a real envelope Meshery produced": sealed,
+		"a forged envelope beside a live secret": {
+			credentialCiphertextKey: credentialEnvelopePrefix + "aa:bb",
+			"apiKey":                "real-token",
+		},
+		"the marker holding a non-envelope": {
+			credentialCiphertextKey: 42,
+			"apiKey":                "real-token",
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			got, err := EncryptCredentialSecret(secret)
+			if err == nil {
+				t.Fatalf("a secret carrying the reserved property was accepted: %#v", got)
+			}
+			if got != nil {
+				t.Errorf("rejection returned a secret to persist: %#v", got)
+			}
+			if code := meshkiterrors.GetCode(err); code != ErrReservedCredentialPropertyCode {
+				t.Errorf("error code = %s, want %s", code, ErrReservedCredentialPropertyCode)
+			}
+		})
 	}
-	if !reflect.DeepEqual(once, twice) {
-		t.Fatalf("re-encrypting an envelope changed it:\n got %#v\nwant %#v", twice, once)
+}
+
+// TestSaveUserCredentialRejectsAReservedPropertyFromTheRequestBody is the same
+// guarantee at the layer that is actually reachable: the handler unmarshals a
+// request body straight into Credential.Secret, so a client controls that map
+// in full. Nothing may be persisted for such a request.
+func TestSaveUserCredentialRejectsAReservedPropertyFromTheRequestBody(t *testing.T) {
+	provider := newTestProviderWithCredentialDB(t)
+	userID := uuid.Must(uuid.NewV4())
+
+	// Byte-for-byte what handlers.SaveUserCredential does with a request body,
+	// including the empty-map initialisation it performs before unmarshalling.
+	body := []byte(`{"name":"hostile","type":"token","secret":{"__mesheryEncryptedSecret":"meshery.enc.v1:aa:bb","apiKey":"real-token"}}`)
+	credential := Credential{Secret: core.Map{}}
+	if err := json.Unmarshal(body, &credential); err != nil {
+		t.Fatalf("unmarshalling the request body: %v", err)
+	}
+	credential.UserId = userID
+
+	if _, err := provider.SaveUserCredential("tok", &credential); err == nil {
+		t.Fatal("a credential carrying the reserved property was saved")
+	} else if code := meshkiterrors.GetCode(err); code != ErrReservedCredentialPropertyCode {
+		t.Errorf("error code = %s, want %s", code, ErrReservedCredentialPropertyCode)
 	}
 
-	decrypted, err := DecryptCredentialSecret(twice)
-	if err != nil {
-		t.Fatalf("DecryptCredentialSecret: %v", err)
+	var rows int64
+	if err := provider.GetGenericPersister().Table("credentials").Where("user_id = ?", userID).Count(&rows).Error; err != nil {
+		t.Fatalf("counting credential rows: %v", err)
 	}
-	if got := decrypted["grafanaAPIKey"]; got != "key" {
-		t.Errorf("grafanaAPIKey = %v, want key", got)
+	if rows != 0 {
+		t.Errorf("%d credential rows were persisted, want 0 - the plaintext apiKey reached the datastore", rows)
+	}
+}
+
+// TestUpdateUserCredentialRejectsAReservedPropertyFromTheRequestBody covers the
+// other client-controlled write path, and proves the rejection does not damage
+// the credential that is already stored.
+func TestUpdateUserCredentialRejectsAReservedPropertyFromTheRequestBody(t *testing.T) {
+	provider := newTestProviderWithCredentialDB(t)
+	userID := uuid.Must(uuid.NewV4())
+
+	saved, err := provider.SaveUserCredential("tok", &Credential{
+		Name:   "original",
+		Type:   "token",
+		UserId: userID,
+		Secret: core.Map{"grafanaAPIKey": "keep-me"},
+	})
+	if err != nil {
+		t.Fatalf("SaveUserCredential: %v", err)
+	}
+
+	_, err = provider.UpdateUserCredential(nil, &Credential{
+		ID:     saved.ID,
+		UserId: userID,
+		Name:   "renamed",
+		Type:   "token",
+		Secret: core.Map{credentialCiphertextKey: credentialEnvelopePrefix + "aa:bb", "apiKey": "real-token"},
+	})
+	if err == nil {
+		t.Fatal("an update carrying the reserved property was accepted")
+	}
+	if code := meshkiterrors.GetCode(err); code != ErrReservedCredentialPropertyCode {
+		t.Errorf("error code = %s, want %s", code, ErrReservedCredentialPropertyCode)
+	}
+
+	fetched, _, err := provider.GetCredentialByID("tok", saved.ID)
+	if err != nil {
+		t.Fatalf("GetCredentialByID: %v", err)
+	}
+	if got := fetched.Secret["grafanaAPIKey"]; got != "keep-me" {
+		t.Errorf("stored secret after a rejected update = %#v, want the original", fetched.Secret)
 	}
 }
 
@@ -337,6 +428,15 @@ func TestDecryptCredentialSecretReportsKeyMismatch(t *testing.T) {
 	}
 	if !strings.Contains(err.Error(), "0123456789ab") {
 		t.Errorf("error %q does not name the key the ciphertext was written under", err)
+	}
+	// The error reaches the API caller through writeMeshkitError, and the
+	// identifier this build derives is a function of the build-time token.
+	// Only the stored key id - which the caller already holds, in the row -
+	// belongs in it.
+	if active := activeCredentialKeyID(); active == "" {
+		t.Fatal("the active keyring has no key identifier; the assertion below would be vacuous")
+	} else if strings.Contains(err.Error(), active) {
+		t.Errorf("error %q leaks the key identifier this build derives (%s)", err, active)
 	}
 }
 
@@ -652,5 +752,50 @@ func TestUpdateUserCredentialWithoutSecretKeepsTheStoredOne(t *testing.T) {
 	}
 	if got := fetched.Secret["grafanaAPIKey"]; got != "keep-me" {
 		t.Errorf("stored secret after a secretless update = %#v, want the original", fetched.Secret)
+	}
+}
+
+// TestDecryptCredentialEnvelopeReadsAHandRolledV1Envelope pins the on-disk
+// format across the constructor change underneath it. `meshery.enc.v1` is a
+// persisted contract: envelopes were first written by sealing with
+// cipher.NewGCM and prepending a hand-generated 96-bit nonce, and are now
+// written by cipher.NewGCMWithRandomNonce, which is the constructor
+// `GODEBUG=fips140=only` permits. The two layouts are byte-identical, and this
+// builds the old one explicitly so that a future change that breaks the
+// equivalence fails here rather than in an upgraded user's datastore.
+func TestDecryptCredentialEnvelopeReadsAHandRolledV1Envelope(t *testing.T) {
+	ring := activeCredentialKeyring()
+	if ring.err != nil {
+		t.Fatalf("activeCredentialKeyring: %v", ring.err)
+	}
+
+	ikm := sha256.Sum256([]byte(GlobalTokenForAnonymousResults))
+	key, err := hkdf.Key(sha256.New, ikm[:], []byte(credentialKDFSalt), credentialKeyInfo, credentialKeyLen)
+	if err != nil {
+		t.Fatalf("hkdf.Key: %v", err)
+	}
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		t.Fatalf("aes.NewCipher: %v", err)
+	}
+	legacyAEAD, err := cipher.NewGCM(block)
+	if err != nil {
+		t.Skipf("cipher.NewGCM is unavailable on this runtime (%v); the pre-change writer could not have run here either", err)
+	}
+
+	plaintext := []byte(`{"wrapped":false,"payload":{"grafanaAPIKey":"key"}}`)
+	nonce := make([]byte, legacyAEAD.NonceSize())
+	if _, err := rand.Read(nonce); err != nil {
+		t.Fatalf("rand.Read: %v", err)
+	}
+	sealed := legacyAEAD.Seal(nonce, nonce, plaintext, nil)
+	envelope := credentialEnvelopePrefix + ring.keyID + ":" + base64.StdEncoding.EncodeToString(sealed)
+
+	decrypted, err := DecryptCredentialSecret(map[string]interface{}{credentialCiphertextKey: envelope})
+	if err != nil {
+		t.Fatalf("an envelope written by the pre-change sealer no longer decrypts: %v", err)
+	}
+	if got := decrypted["grafanaAPIKey"]; got != "key" {
+		t.Errorf("grafanaAPIKey = %v, want key", got)
 	}
 }

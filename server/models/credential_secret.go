@@ -174,17 +174,25 @@ type credentialSecretEnvelope struct {
 // after saving), and turning that into ciphertext under them would be a
 // surprise. A fresh map is returned instead.
 //
-// Encryption is idempotent. A secret that is already an envelope is returned
-// unchanged, so a value that round-trips through an update path cannot be
-// double-encrypted.
+// A secret arriving here already carrying the reserved ciphertext property is
+// rejected, not passed through. Every read path hands its callers plaintext -
+// SaveUserCredential, UpdateUserCredential, GetCredentialByID,
+// GetUserCredentials and DeleteUserCredential all decrypt before returning - so
+// no internal caller can produce that shape, and the only thing that can is a
+// request body, which handlers unmarshal straight into Credential.Secret.
+// Treating it as proof the map is already sealed would let a client store the
+// rest of its secret in the clear and leave the row unreadable forever. The
+// marker exists to make encrypted and plaintext unambiguous; accepting a
+// caller-supplied one, silently or by stripping it, is exactly what it exists
+// to prevent.
 func EncryptCredentialSecret(secret map[string]interface{}) (map[string]interface{}, error) {
 	if len(secret) == 0 {
 		// nil and empty carry nothing to protect. Encrypting them would only
 		// put an envelope in the datastore that decrypts back to nothing.
 		return secret, nil
 	}
-	if IsEncryptedCredentialSecret(secret) {
-		return secret, nil
+	if _, reserved := secret[credentialCiphertextKey]; reserved {
+		return nil, ErrReservedCredentialProperty(credentialCiphertextKey)
 	}
 
 	envelope := credentialSecretEnvelope{Payload: secret}

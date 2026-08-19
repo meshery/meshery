@@ -38,7 +38,23 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 - `DOCKER_PASSWORD`: Password for the Docker Hub user
 - `IMAGE_NAME`: appropriate image name for each of the Docker container images. All are under the `meshery` org.
 - `SLACK_BOT_TOKEN`: Used for notification of new GitHub stars given to the Meshery repo.
-- `GLOBAL_TOKEN`: Used for securely transmitting performance test results for the None Provider.
+- `GLOBAL_TOKEN`: Two roles. It is used for securely transmitting performance test
+  results for the None Provider, **and** it is the input keying material for
+  [credential encryption at rest]({{< ref "concepts/logical/credentials.md#encryption-at-rest" >}}).
+  Both release workflows pass it as the `TOKEN` build argument, which is linked
+  into the server binary, and Meshery Server derives the key that seals every
+  persisted credential secret from it.
+
+  **Rotating it is not a routine secret rotation.** The key ships inside the
+  binary, so it protects a datastore separated from that binary - a stolen
+  database, a copied `~/.meshery`, a backup, a support bundle - and not someone
+  who holds the binary. Because the key is derived from this secret, a build
+  carrying a new value derives a different key: every credential any user
+  persisted under the old value becomes unreadable the moment they upgrade to an
+  image built with the new one. Each such credential fails with
+  `meshery-server-1484` on a direct fetch and is dropped from the credentials
+  list, and re-entering it is the only remedy. Rotate it only with a deliberate
+  plan for that, not as housekeeping.
 - `NPM_TOKEN`: npm authentication token, used to perform authentication against the npm registry in meshery deployment workflow.
 - `GH_ACCESS_TOKEN`: GitHub access token for various operations
 - `INTEGRATION_SPREADSHEET_CRED`: Credentials for integration spreadsheet access

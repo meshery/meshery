@@ -175,6 +175,7 @@ const (
 	ErrCredentialDecryptCode           = "meshery-server-1483"
 	ErrCredentialKeyMismatchCode       = "meshery-server-1484"
 	ErrMalformedCredentialEnvelopeCode = "meshery-server-1485"
+	ErrReservedCredentialPropertyCode  = "meshery-server-1486"
 )
 
 var (
@@ -862,7 +863,7 @@ func ErrOperatorHandlerNotAttached(contextID string) error {
 // key cannot be derived from this build's token. It is a startup-class defect
 // (an unusable crypto configuration), not a per-credential one.
 func ErrCredentialKeyDerivation(err error) error {
-	return errors.New(ErrCredentialKeyDerivationCode, errors.Alert, []string{"Unable to derive the credential encryption key"}, []string{err.Error()}, []string{"The Meshery Server build's token could not be stretched into an AES-256 key, or this Go runtime rejects the derivation (for example under GODEBUG=fips140=only)"}, []string{"Rebuild Meshery Server with a token supplied via the TOKEN build argument, and remove any FIPS-140-only GODEBUG setting that rejects the derivation"})
+	return errors.New(ErrCredentialKeyDerivationCode, errors.Alert, []string{"Unable to derive the credential encryption key"}, []string{err.Error()}, []string{"The Meshery Server build's token could not be stretched into an AES-256 key, or this Go runtime rejects AES-256-GCM"}, []string{"Rebuild Meshery Server with a token supplied via the TOKEN build argument; if this Go runtime provides no usable AES-256-GCM implementation, run a build whose runtime does"})
 }
 
 // ErrCredentialEncrypt is returned when a credential secret cannot be sealed
@@ -883,12 +884,26 @@ func ErrCredentialDecrypt(err error) error {
 // by a build carrying a different token than the running binary. It is separated
 // from ErrCredentialDecrypt because the cause is operational and actionable,
 // and a generic authentication failure would hide it.
-func ErrCredentialKeyMismatch(storedKeyID, activeKeyID string) error {
-	return errors.New(ErrCredentialKeyMismatchCode, errors.Alert, []string{"Stored credential was encrypted with a different key"}, []string{fmt.Sprintf("credential ciphertext names key %s; this Meshery Server build derives key %s", storedKeyID, activeKeyID)}, []string{"The datastore was written by a Meshery Server built with a different TOKEN build argument - commonly a locally built server writing to the same ~/.meshery as a released image, or a rotated GLOBAL_TOKEN"}, []string{"Run the Meshery Server build that wrote these credentials, or delete and re-enter the affected credentials under the current build"})
+//
+// It names only the key identifier the stored ciphertext already carries, which
+// is the part an operator acts on. The identifier this build derives is a
+// function of the build-time token and reaches the API caller if it goes in
+// here, so it is logged server-side instead - see decryptCredentialSecretBestEffort.
+func ErrCredentialKeyMismatch(storedKeyID string) error {
+	return errors.New(ErrCredentialKeyMismatchCode, errors.Alert, []string{"Stored credential was encrypted with a different key"}, []string{fmt.Sprintf("credential ciphertext names key %s, which this Meshery Server build does not derive", storedKeyID)}, []string{"The datastore was written by a Meshery Server built with a different TOKEN build argument - commonly a locally built server writing to the same ~/.meshery as a released image, or a rotated GLOBAL_TOKEN"}, []string{"Run the Meshery Server build that wrote these credentials, or delete and re-enter the affected credentials under the current build"})
 }
 
 // ErrMalformedCredentialEnvelope is returned when a stored credential secret
 // carries Meshery's ciphertext marker but is not a well-formed envelope.
 func ErrMalformedCredentialEnvelope(reason string) error {
 	return errors.New(ErrMalformedCredentialEnvelopeCode, errors.Alert, []string{"Stored credential secret is not a well-formed ciphertext envelope"}, []string{reason}, []string{"The credential row was written by something other than this version of Meshery Server, or has been edited in the datastore"}, []string{"Delete and re-enter the affected credential"})
+}
+
+// ErrReservedCredentialProperty is returned when a credential secret submitted
+// for storage carries a property reserved for Meshery's own at-rest envelope.
+// Only Meshery writes that property; a request that supplies one is rejected
+// rather than mistaken for an already-sealed secret, which would store the rest
+// of the secret in the clear.
+func ErrReservedCredentialProperty(property string) error {
+	return errors.New(ErrReservedCredentialPropertyCode, errors.Alert, []string{"Credential secret uses a property reserved by Meshery Server"}, []string{fmt.Sprintf("the credential secret carries %s, which is reserved for Meshery's own encryption envelope and may not be supplied by a client", property)}, []string{"The submitted credential secret contains a property in Meshery's reserved namespace"}, []string{"Remove the reserved property from the credential secret and submit it again"})
 }

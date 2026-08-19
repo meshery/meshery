@@ -4221,8 +4221,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unable to derive the credential encryption key",
-        "probable_cause": "The Meshery Server build's token could not be stretched into an AES-256 key, or this Go runtime rejects the derivation (for example under GODEBUG=fips140=only)",
-        "suggested_remediation": "Rebuild Meshery Server with a token supplied via the TOKEN build argument, and remove any FIPS-140-only GODEBUG setting that rejects the derivation"
+        "probable_cause": "The Meshery Server build's token could not be stretched into an AES-256 key, or this Go runtime rejects AES-256-GCM",
+        "suggested_remediation": "Rebuild Meshery Server with a token supplied via the TOKEN build argument; if this Go runtime provides no usable AES-256-GCM implementation, run a build whose runtime does"
       },
       "1482": {
         "name": "ErrCredentialEncryptCode",
@@ -4259,6 +4259,15 @@
         "short_description": "Stored credential secret is not a well-formed ciphertext envelope",
         "probable_cause": "The credential row was written by something other than this version of Meshery Server, or has been edited in the datastore",
         "suggested_remediation": "Delete and re-enter the affected credential"
+      },
+      "1486": {
+        "name": "ErrReservedCredentialPropertyCode",
+        "code": "1486",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Credential secret uses a property reserved by Meshery Server",
+        "probable_cause": "The submitted credential secret contains a property in Meshery's reserved namespace",
+        "suggested_remediation": "Remove the reserved property from the credential secret and submit it again"
       }
     }
   }

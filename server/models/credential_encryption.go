@@ -48,7 +48,6 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/hkdf"
-	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
@@ -122,10 +121,12 @@ func deriveCredentialKeyring(secret string) *credentialKeyring {
 	ring := &credentialKeyring{}
 
 	// Condense the secret to a fixed 32 bytes before HKDF. HKDF-Extract hashes
-	// its input anyway, so this changes nothing cryptographically, but it keeps
-	// the derivation working for a short token (the 9-byte "dev_token" default
-	// among them) under `GODEBUG=fips140=only`, which rejects input keying
-	// material below 112 bits.
+	// its input anyway, so this changes nothing cryptographically, but
+	// `GODEBUG=fips140=only` rejects input keying material below 112 bits and
+	// the 9-byte "dev_token" default is under it. Condensing is half of what
+	// makes that mode work; the other half is sealing through
+	// cipher.NewGCMWithRandomNonce below, which is the only GCM constructor
+	// that mode permits.
 	ikm := sha256.Sum256([]byte(secret))
 
 	key, err := hkdf.Key(sha256.New, ikm[:], []byte(credentialKDFSalt), credentialKeyInfo, credentialKeyLen)
@@ -145,7 +146,13 @@ func deriveCredentialKeyring(secret string) *credentialKeyring {
 		ring.err = ErrCredentialKeyDerivation(err)
 		return ring
 	}
-	aead, err := cipher.NewGCM(block)
+	// NewGCMWithRandomNonce rather than NewGCM: it generates the 96-bit nonce
+	// itself and prepends it to the ciphertext, which is byte-for-byte the
+	// nonce||ciphertext||tag layout this file has always written, and it is the
+	// only GCM constructor `GODEBUG=fips140=only` allows. NewGCM is rejected
+	// outright in that mode, which would leave every credential read and write
+	// failing on a server that used to work.
+	aead, err := cipher.NewGCMWithRandomNonce(block)
 	if err != nil {
 		ring.err = ErrCredentialKeyDerivation(err)
 		return ring
@@ -154,6 +161,15 @@ func deriveCredentialKeyring(secret string) *credentialKeyring {
 	ring.keyID = hex.EncodeToString(id)
 	ring.aead = aead
 	return ring
+}
+
+// activeCredentialKeyID returns the identifier of the key this binary derives,
+// or "" when the derivation failed. It is diagnostic information for the server
+// log only: it is a 48-bit HKDF output of the build-time token and must never
+// reach an API response, which is why ErrCredentialKeyMismatch names only the
+// key identifier the ciphertext itself already carries.
+func activeCredentialKeyID() string {
+	return activeCredentialKeyring().keyID
 }
 
 // IsEncryptedCredentialEnvelope reports whether value is a Meshery credential
@@ -169,21 +185,17 @@ func IsEncryptedCredentialEnvelope(value interface{}) bool {
 // encryptCredentialEnvelope seals plaintext under the active key and renders
 // the result as `meshery.enc.v1:<keyID>:<base64(nonce||ciphertext)>`.
 //
-// The nonce is random per call and stored with the ciphertext, so encrypting
-// the same credential twice yields different envelopes and no two credentials
-// share a nonce.
+// The nonce is random per call and prepended to the ciphertext by the AEAD, so
+// encrypting the same credential twice yields different envelopes and no two
+// credentials share a nonce. NonceSize() is 0 under this constructor and the
+// nonce argument must be empty; passing a non-empty one panics.
 func encryptCredentialEnvelope(plaintext []byte) (string, error) {
 	ring := activeCredentialKeyring()
 	if ring.err != nil {
 		return "", ring.err
 	}
 
-	nonce := make([]byte, ring.aead.NonceSize())
-	if _, err := rand.Read(nonce); err != nil {
-		return "", ErrCredentialEncrypt(err)
-	}
-
-	sealed := ring.aead.Seal(nonce, nonce, plaintext, nil)
+	sealed := ring.aead.Seal(nil, nil, plaintext, nil)
 
 	return credentialEnvelopePrefix + ring.keyID + ":" + base64.StdEncoding.EncodeToString(sealed), nil
 }
@@ -206,19 +218,18 @@ func decryptCredentialEnvelope(envelope string) ([]byte, error) {
 
 	keyID, payload := parts[1], parts[2]
 	if keyID != ring.keyID {
-		return nil, ErrCredentialKeyMismatch(keyID, ring.keyID)
+		return nil, ErrCredentialKeyMismatch(keyID)
 	}
 
 	sealed, err := base64.StdEncoding.DecodeString(payload)
 	if err != nil {
 		return nil, ErrMalformedCredentialEnvelope("envelope payload is not valid base64")
 	}
-	if len(sealed) < ring.aead.NonceSize() {
-		return nil, ErrMalformedCredentialEnvelope("envelope payload is shorter than the nonce it must carry")
-	}
 
-	nonce, ciphertext := sealed[:ring.aead.NonceSize()], sealed[ring.aead.NonceSize():]
-	plaintext, err := ring.aead.Open(nil, nonce, ciphertext, nil)
+	// The AEAD splits the leading nonce off itself and rejects a payload too
+	// short to carry one, so a truncated envelope is caught here rather than by
+	// a length pre-check. The nonce argument must be empty.
+	plaintext, err := ring.aead.Open(nil, nil, sealed, nil)
 	if err != nil {
 		return nil, ErrCredentialDecrypt(err)
 	}
