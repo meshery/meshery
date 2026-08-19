@@ -25,6 +25,8 @@ package models
 // resolveCredentialPayload returns the bare string. Port behaviour across, not
 // signatures.
 
+import "encoding/json"
+
 // legacyWrapperKeys are the only keys the legacy double-nested wrapper carries.
 // An outer map made up of nothing but these, with an object or string under
 // `secret`, is a wrapper rather than a payload.
@@ -123,4 +125,154 @@ func authSecretFromPayload(payload map[string]interface{}) string {
 	// tolerance is never narrower than the pre-existing behaviour.
 	value, _ := payload["secret"].(string)
 	return value
+}
+
+// credentialCiphertextKey is the reserved property that holds a credential's
+// ciphertext envelope. A persisted secret map carrying this key is encrypted;
+// one that does not is plaintext, whatever else it contains. No credential form
+// in meshery/schemas declares a property in this namespace, and none may: it is
+// reserved for Meshery's own at-rest envelope.
+//
+// The marker is what makes encrypted and plaintext unambiguous to tell apart.
+// Nothing in the read path infers the answer by trying to decrypt, so a
+// credential that genuinely fails to decrypt is reported as a failure rather
+// than mistaken for a plaintext row.
+const credentialCiphertextKey = "__mesheryEncryptedSecret"
+
+// credentialSecretEnvelope is the plaintext Meshery seals. It carries the
+// resolved payload plus the one bit that resolution discards: whether the
+// stored secret was the legacy double-nested wrapper.
+//
+// Recording that bit rather than inferring it on the way back is what makes the
+// round trip exactly lossless for all four shapes. Inference cannot separate the
+// wrapper {"secret": {...}} from a canonical payload that happens to be a map,
+// and would rewrite the pathological-but-legal {"secret": {"secret": "tok"}}
+// into something CredentialPayload resolves differently.
+type credentialSecretEnvelope struct {
+	// Wrapped records that the payload was found one level down, under the
+	// legacy wrapper's `secret` key.
+	Wrapped bool `json:"wrapped"`
+
+	// Payload is the resolved credential payload: an object for the canonical,
+	// Kubernetes and legacy nested shapes, a bare string for the legacy string
+	// shape.
+	Payload interface{} `json:"payload"`
+}
+
+// EncryptCredentialSecret converts a plaintext persisted credential secret into
+// its encrypted form, ready to be written to the datastore.
+//
+// The four shapes converge here: each one is resolved to its payload first, so
+// the payload is the only thing encryption ever sees and no shape is handled
+// separately. What survives in plaintext alongside the ciphertext is the legacy
+// wrapper's non-secret bookkeeping (`credentialName`/`name`), which is the
+// credential's display name and is already stored in the clear in the
+// credentials table's `name` column.
+//
+// The input map is never mutated: callers hand in a payload they go on to use
+// (server/machines/actions.go reuses the connection payload's credential secret
+// after saving), and turning that into ciphertext under them would be a
+// surprise. A fresh map is returned instead.
+//
+// Encryption is idempotent. A secret that is already an envelope is returned
+// unchanged, so a value that round-trips through an update path cannot be
+// double-encrypted.
+func EncryptCredentialSecret(secret map[string]interface{}) (map[string]interface{}, error) {
+	if len(secret) == 0 {
+		// nil and empty carry nothing to protect. Encrypting them would only
+		// put an envelope in the datastore that decrypts back to nothing.
+		return secret, nil
+	}
+	if IsEncryptedCredentialSecret(secret) {
+		return secret, nil
+	}
+
+	envelope := credentialSecretEnvelope{Payload: secret}
+	encrypted := make(map[string]interface{}, 2)
+
+	if isLegacyWrapper(secret) {
+		envelope.Wrapped = true
+		envelope.Payload = secret["secret"]
+		for key, value := range secret {
+			if key != "secret" {
+				encrypted[key] = value
+			}
+		}
+	}
+
+	plaintext, err := json.Marshal(envelope)
+	if err != nil {
+		return nil, ErrCredentialEncrypt(err)
+	}
+
+	ciphertext, err := encryptCredentialEnvelope(plaintext)
+	if err != nil {
+		return nil, err
+	}
+	encrypted[credentialCiphertextKey] = ciphertext
+
+	return encrypted, nil
+}
+
+// DecryptCredentialSecret converts a persisted credential secret back to the
+// plaintext shape callers expect, and is the inverse of
+// EncryptCredentialSecret.
+//
+// A secret that carries no ciphertext envelope is returned untouched. That is
+// the upgrade path and it is deliberate: every row written before credential
+// encryption shipped is plaintext, keeps reading with no migration, and
+// converts to ciphertext the next time it is written.
+func DecryptCredentialSecret(secret map[string]interface{}) (map[string]interface{}, error) {
+	if secret == nil {
+		return nil, nil
+	}
+
+	raw, ok := secret[credentialCiphertextKey]
+	if !ok {
+		return secret, nil
+	}
+	ciphertext, ok := raw.(string)
+	if !ok || !IsEncryptedCredentialEnvelope(ciphertext) {
+		// The reserved key is present but does not hold an envelope. Something
+		// wrote a shape Meshery does not produce; refuse it rather than hand
+		// the caller a "payload" that is really Meshery's own marker.
+		return nil, ErrMalformedCredentialEnvelope("reserved property " + credentialCiphertextKey + " does not hold a credential ciphertext envelope")
+	}
+
+	plaintext, err := decryptCredentialEnvelope(ciphertext)
+	if err != nil {
+		return nil, err
+	}
+
+	var envelope credentialSecretEnvelope
+	if err := json.Unmarshal(plaintext, &envelope); err != nil {
+		return nil, ErrCredentialDecrypt(err)
+	}
+
+	if !envelope.Wrapped {
+		payload, ok := envelope.Payload.(map[string]interface{})
+		if !ok {
+			return nil, ErrMalformedCredentialEnvelope("unwrapped credential payload decrypted to a non-object")
+		}
+		return payload, nil
+	}
+
+	decrypted := make(map[string]interface{}, len(secret))
+	for key, value := range secret {
+		if key != credentialCiphertextKey {
+			decrypted[key] = value
+		}
+	}
+	decrypted["secret"] = envelope.Payload
+
+	return decrypted, nil
+}
+
+// IsEncryptedCredentialSecret reports whether a persisted credential secret is
+// stored encrypted.
+func IsEncryptedCredentialSecret(secret map[string]interface{}) bool {
+	if secret == nil {
+		return false
+	}
+	return IsEncryptedCredentialEnvelope(secret[credentialCiphertextKey])
 }

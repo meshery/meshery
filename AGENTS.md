@@ -93,6 +93,13 @@ release/local-link coupling are in
   shapes and legacy rows are never rewritten. Delegate to
   `server/models/credential_secret.go` or `ui/utils/credentialSecret.ts`, which
   must keep the same resolution rules.
+- MUST NOT move credential encryption out of `DefaultLocalProvider`, decide
+  encrypted-vs-plaintext by attempting decryption, or drop the key identifier
+  from the envelope. Credential secrets are sealed at rest with a key derived
+  from the build-time `$TOKEN`; the marker, the key id and the local-provider-only
+  scope are each load-bearing, and a Remote Provider must still receive
+  plaintext. See
+  [connections](./docs/content/en/project/contributing/models/connections.md).
 
 Detail behind these rules:
 [RTK Query integration](./docs/content/en/project/contributing/ui/schemas.md)
@@ -100,7 +107,7 @@ Detail behind these rules:
 endpoint), [consuming schemas](./docs/content/en/project/contributing/contributing-schemas.md)
 (consumed contracts, the Go side, rename propagation), and
 [connections](./docs/content/en/project/contributing/models/connections.md)
-(the credential shape catalogue).
+(the credential shape catalogue and the at-rest encryption rules).
 
 ## Build & Development Commands
 

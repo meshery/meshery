@@ -4214,6 +4214,51 @@
         "short_description": "A component was withheld because a component it depends on did not succeed",
         "probable_cause": "A component that this one's order depends on did not succeed",
         "suggested_remediation": "Resolve the failure reported for that component, then try the design again"
+      },
+      "1481": {
+        "name": "ErrCredentialKeyDerivationCode",
+        "code": "1481",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to derive the credential encryption key",
+        "probable_cause": "The Meshery Server build's token could not be stretched into an AES-256 key, or this Go runtime rejects the derivation (for example under GODEBUG=fips140=only)",
+        "suggested_remediation": "Rebuild Meshery Server with a token supplied via the TOKEN build argument, and remove any FIPS-140-only GODEBUG setting that rejects the derivation"
+      },
+      "1482": {
+        "name": "ErrCredentialEncryptCode",
+        "code": "1482",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to encrypt the credential secret",
+        "probable_cause": "The credential secret could not be serialized, or the system random source is unavailable",
+        "suggested_remediation": "Retry the request; if it persists, check that the host's random source (/dev/urandom) is readable by Meshery Server"
+      },
+      "1483": {
+        "name": "ErrCredentialDecryptCode",
+        "code": "1483",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to decrypt the stored credential secret",
+        "probable_cause": "The stored ciphertext has been altered or truncated since it was written",
+        "suggested_remediation": "Restore the datastore from a known-good backup, or delete and re-enter the affected credential"
+      },
+      "1484": {
+        "name": "ErrCredentialKeyMismatchCode",
+        "code": "1484",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Stored credential was encrypted with a different key",
+        "probable_cause": "The datastore was written by a Meshery Server built with a different TOKEN build argument - commonly a locally built server writing to the same ~/.meshery as a released image, or a rotated GLOBAL_TOKEN",
+        "suggested_remediation": "Run the Meshery Server build that wrote these credentials, or delete and re-enter the affected credentials under the current build"
+      },
+      "1485": {
+        "name": "ErrMalformedCredentialEnvelopeCode",
+        "code": "1485",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Stored credential secret is not a well-formed ciphertext envelope",
+        "probable_cause": "The credential row was written by something other than this version of Meshery Server, or has been edited in the datastore",
+        "suggested_remediation": "Delete and re-enter the affected credential"
       }
     }
   }

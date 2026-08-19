@@ -5063,6 +5063,13 @@ func (l *RemoteProvider) GetKubeClient() *mesherykube.Client {
 }
 
 // SaveCredential - to save a creadential for an integration
+//
+// The secret is sent to the Remote Provider as plaintext, over TLS, and is
+// deliberately NOT put through EncryptCredentialSecret. At-rest encryption
+// belongs to whoever owns the datastore: here that is the Remote Provider, which
+// has no way to derive this binary's key and would be handed an envelope it
+// could never open. Only DefaultLocalProvider, which owns Meshery's own
+// datastore, encrypts. See credential_encryption.go.
 func (l *RemoteProvider) SaveUserCredential(token string, credential *Credential) (*Credential, error) {
 	var createdCredential Credential
 	if !l.Capabilities.IsSupported(PersistCredentials) {

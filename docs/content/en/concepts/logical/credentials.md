@@ -34,10 +34,51 @@ Credentials can be:
 
 Meshery takes several measures to protect your credentials:
 
-- Credentials are encrypted at rest
+- Credential secrets are [encrypted at rest](#encryption-at-rest) in Meshery's own datastore
 - Access is controlled through fine-grained permissions
-- Credentials are never exposed in logs or API responses
+- Credential secrets are not written to Meshery Server logs
 - Support for secret management integration
+
+#### Encryption at rest
+
+When Meshery Server persists a credential to its own datastore, the credential's
+secret is sealed with AES-256-GCM before it is written. The row holds a
+ciphertext envelope rather than the API key, token or service-account credential
+you entered. Decryption happens inside the server as it reads the credential, so
+this is invisible in the UI and in the API.
+
+The encryption key is derived, through HKDF-SHA256, from the secret that is built
+into the Meshery Server binary at release time. **The key therefore ships inside
+the binary.** Be precise about what that buys you:
+
+- **It protects a datastore separated from the binary that wrote it** - a stolen
+  or exfiltrated database file, a copied `~/.meshery` directory, a filesystem
+  backup or volume snapshot, a support bundle. In all of those the credentials
+  are ciphertext.
+- **It does not protect against someone who has the Meshery Server binary or
+  container image**, who can recover the key from it. This is not key-managed
+  encryption, and it is not a substitute for keeping your datastore, your
+  backups and your images access-controlled.
+
+Two consequences are worth knowing before you meet them:
+
+- **Upgrading needs no action.** Credentials written before this shipped are
+  plaintext and keep reading; each converts to ciphertext the next time it is
+  written. There is no migration to run.
+- **Credentials are readable only by a build carrying the same secret.** A
+  locally built Meshery Server (`make server`) links no release secret and falls
+  back to a development default, so credentials it wrote cannot be read by a
+  released image, and vice versa, even against the same `~/.meshery`. Every
+  ciphertext carries a short identifier of the key that sealed it, so Meshery
+  reports this as a key mismatch ([`meshery-server-1484`]({{< ref
+  "reference/references/error-codes.md" >}})) rather than as a corrupt
+  credential. The remedy is to run the build that wrote them, or to re-enter the
+  affected credentials.
+
+When Meshery is configured with a [Remote Provider]({{< ref
+"reference/extensibility/providers/index.md" >}}), that provider persists
+credentials in its own datastore and is responsible for protecting them there;
+Meshery sends them to it over TLS.
 
 ### Using Credentials with Connections
 

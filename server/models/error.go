@@ -167,6 +167,14 @@ const (
 	ErrOperatorChartNotPublishedCode      = "meshery-server-1470"
 	ErrOperatorChartSubstitutedCode       = "meshery-server-1471"
 	ErrNoMesheryReleasesFoundCode         = "meshery-server-1472"
+
+	// Credential secret encryption at rest. See credential_encryption.go for the
+	// threat model these cover and why a key-id mismatch is its own code.
+	ErrCredentialKeyDerivationCode     = "meshery-server-1481"
+	ErrCredentialEncryptCode           = "meshery-server-1482"
+	ErrCredentialDecryptCode           = "meshery-server-1483"
+	ErrCredentialKeyMismatchCode       = "meshery-server-1484"
+	ErrMalformedCredentialEnvelopeCode = "meshery-server-1485"
 )
 
 var (
@@ -848,4 +856,39 @@ func ErrOperatorChartSubstituted(reason string) error {
 // (deploy, undeploy, chart-version reconcile) have nothing to act through.
 func ErrOperatorHandlerNotAttached(contextID string) error {
 	return errors.New(ErrOperatorHandlerNotAttachedCode, errors.Alert, []string{"No Meshery Operator controller handler is attached"}, []string{"Controller handlers are attached when a Kubernetes connection connects; for context " + contextID + " attaching them failed or has not happened yet."}, []string{"The connection's kubeconfig could not be generated, or the Kubernetes client could not be created."}, []string{"Reconnect the Kubernetes connection and retry; the configuration is re-applied on connect."})
+}
+
+// ErrCredentialKeyDerivation is returned when the at-rest credential encryption
+// key cannot be derived from this build's token. It is a startup-class defect
+// (an unusable crypto configuration), not a per-credential one.
+func ErrCredentialKeyDerivation(err error) error {
+	return errors.New(ErrCredentialKeyDerivationCode, errors.Alert, []string{"Unable to derive the credential encryption key"}, []string{err.Error()}, []string{"The Meshery Server build's token could not be stretched into an AES-256 key, or this Go runtime rejects the derivation (for example under GODEBUG=fips140=only)"}, []string{"Rebuild Meshery Server with a token supplied via the TOKEN build argument, and remove any FIPS-140-only GODEBUG setting that rejects the derivation"})
+}
+
+// ErrCredentialEncrypt is returned when a credential secret cannot be sealed
+// for storage. Meshery fails the write rather than persisting the secret in the
+// clear.
+func ErrCredentialEncrypt(err error) error {
+	return errors.New(ErrCredentialEncryptCode, errors.Alert, []string{"Unable to encrypt the credential secret"}, []string{err.Error()}, []string{"The credential secret could not be serialized, or the system random source is unavailable"}, []string{"Retry the request; if it persists, check that the host's random source (/dev/urandom) is readable by Meshery Server"})
+}
+
+// ErrCredentialDecrypt is returned when a stored credential envelope is
+// authenticated by the right key identifier but still fails to open, which means
+// the stored bytes have been altered or truncated.
+func ErrCredentialDecrypt(err error) error {
+	return errors.New(ErrCredentialDecryptCode, errors.Alert, []string{"Unable to decrypt the stored credential secret"}, []string{err.Error()}, []string{"The stored ciphertext has been altered or truncated since it was written"}, []string{"Restore the datastore from a known-good backup, or delete and re-enter the affected credential"})
+}
+
+// ErrCredentialKeyMismatch is returned when a stored credential was encrypted
+// by a build carrying a different token than the running binary. It is separated
+// from ErrCredentialDecrypt because the cause is operational and actionable,
+// and a generic authentication failure would hide it.
+func ErrCredentialKeyMismatch(storedKeyID, activeKeyID string) error {
+	return errors.New(ErrCredentialKeyMismatchCode, errors.Alert, []string{"Stored credential was encrypted with a different key"}, []string{fmt.Sprintf("credential ciphertext names key %s; this Meshery Server build derives key %s", storedKeyID, activeKeyID)}, []string{"The datastore was written by a Meshery Server built with a different TOKEN build argument - commonly a locally built server writing to the same ~/.meshery as a released image, or a rotated GLOBAL_TOKEN"}, []string{"Run the Meshery Server build that wrote these credentials, or delete and re-enter the affected credentials under the current build"})
+}
+
+// ErrMalformedCredentialEnvelope is returned when a stored credential secret
+// carries Meshery's ciphertext marker but is not a well-formed envelope.
+func ErrMalformedCredentialEnvelope(reason string) error {
+	return errors.New(ErrMalformedCredentialEnvelopeCode, errors.Alert, []string{"Stored credential secret is not a well-formed ciphertext envelope"}, []string{reason}, []string{"The credential row was written by something other than this version of Meshery Server, or has been edited in the datastore"}, []string{"Delete and re-enter the affected credential"})
 }

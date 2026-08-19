@@ -143,6 +143,22 @@ The helpers resolve the wrapper, not the field names inside it. A Kubernetes cre
 The server rehydrates `credentialSecret.secret` into `PromCred`/`GrafanaCred`, whose `secret` field is a plain string. Handing it an object fails the `register` (verify) step outright, which is why the wizard sends `resolveCredentialAuthSecret(...)` rather than the payload object.
 {{% /alert %}}
 
+#### How a credential's `secret` is encrypted at rest
+
+The four shapes above are what a credential looks like *in memory*. On disk, in Meshery's own datastore, the secret is a ciphertext envelope. `server/models/credential_encryption.go` holds the primitives; `EncryptCredentialSecret`/`DecryptCredentialSecret` in `server/models/credential_secret.go` sit next to the resolution rules they depend on.
+
+The scheme is deliberately small. AES-256-GCM, with a random per-write nonce stored alongside the ciphertext, under a key derived through HKDF-SHA256 from `models.GlobalTokenForAnonymousResults` - the build-time secret linked in by `-X main.globalTokenForAnonymousResults=$TOKEN` (`install/docker/Dockerfile`), which release workflows fill from the `GLOBAL_TOKEN` repository secret. **The key ships inside the binary**, so this protects a datastore separated from the binary that wrote it and not an attacker holding the binary. Describe it that way in user-facing docs; see [Credentials]({{< ref "concepts/logical/credentials.md#encryption-at-rest" >}}).
+
+Five rules hold this together. Breaking any of them is a data-loss bug, not a style question.
+
+- **The four shapes converge before encryption, never after.** Each is resolved to its payload, and only the payload is sealed. The one bit resolution discards - whether the payload sat under the legacy wrapper - is recorded *inside* the sealed envelope rather than inferred on the way back, which is what makes the round trip exactly lossless rather than merely equivalent.
+- **Encrypted and plaintext are told apart by a marker, never by trying to decrypt.** A persisted secret carrying the reserved `__mesheryEncryptedSecret` property is ciphertext; one that does not is plaintext. Speculative decryption would make a genuine failure indistinguishable from a legacy row, which is how silent data loss starts.
+- **Plaintext rows keep reading, with no migration.** Every credential written before this shipped is plaintext and passes through the read path untouched; rows convert as they are rewritten. Do not add a bulk migration without a reason that survives the next point.
+- **Every ciphertext names the key that sealed it.** `$TOKEN` is stable in practice but not guaranteed - a maintainer can rotate `GLOBAL_TOKEN`, and a locally built server links none and falls back to the `dev_token` default. A row sealed under one key and read under another is reported as `meshery-server-1484` naming both key identifiers, not as corruption. A single-credential read fails on it; a list drops that one secret, logs the reason and returns the rest, because one unreadable row must not make the credentials page permanently unreadable.
+- **Only `DefaultLocalProvider` encrypts.** At-rest encryption belongs to whoever owns the datastore. A Remote Provider persists credentials in its own store and must receive plaintext over TLS; sealing them here would hand it an envelope keyed to this binary that it could never open. That is why the hook is in the local provider's persistence methods and not in `server/handlers/credentials_handlers.go`.
+
+The UI has no part in this. The provider read path decrypts before the handler serializes, so `ui/utils/credentialSecret.ts` only ever sees the four plaintext shapes - and must stay that way, since the key exists only server-side.
+
 ### Visual identity: `styles`
 
 `styles` carries inline SVG markup for the kind's icon: `svgColor` (for light backgrounds), `svgWhite` (for dark backgrounds), and optionally `svgComplete`. Follow the same icon conventions as [Components]({{< ref "project/contributing/models/components" >}}).
