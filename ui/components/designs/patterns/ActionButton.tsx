@@ -99,7 +99,19 @@ export default function ActionButton({
                     option.onClick(event, index);
                   }}
                 >
-                  <div style={{ marginRight: '0.5rem' }}>{option.icon}</div>
+                  <div
+                    style={{
+                      marginRight: '0.5rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 20,
+                      height: 20,
+                      flexShrink: 0,
+                    }}
+                  >
+                    {option.icon}
+                  </div>
                   {option.label}
                 </MenuItem>
               ))}
