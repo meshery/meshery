@@ -27,7 +27,7 @@ import (
 var (
 	removeCmd = &cobra.Command{
 		Use:   "remove",
-		Short: "remove cloud and cloud native infrastructure",
+		Short: "Remove cloud and cloud native infrastructure",
 		Long:  `remove cloud and cloud native infrastructure`,
 		Example: `
 // Remove Linkerd deployment
