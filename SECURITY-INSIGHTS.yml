@@ -88,7 +88,7 @@ repository:
   security:
     assessments:
       self:
-        evidence: https://github.com/meshery/meshery/blob/main/.github/security-self-assessment.md
+        evidence: https://github.com/meshery/meshery/blob/master/.github/security-self-assessment.md
         comment: |
           CNCF TAG Security based self-assessment.
   documentation:
