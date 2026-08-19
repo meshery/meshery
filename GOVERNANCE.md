@@ -14,25 +14,59 @@ project. Where this document does not address a matter, the project defers to th
 
 ## Contents
 
-- [Values](#values)
-- [Vendor Neutrality](#vendor-neutrality)
-- [Project Structure](#project-structure)
-- [Roles and the Contributor Ladder](#roles-and-the-contributor-ladder)
-- [The Maintainer Council](#the-maintainer-council)
-- [Decision-Making](#decision-making)
-- [Maintainer Lifecycle](#maintainer-lifecycle)
-- [Subproject Lifecycle](#subproject-lifecycle)
-- [Systems Access and Repository Permissions](#systems-access-and-repository-permissions)
-- [Communication Channels](#communication-channels)
-- [Meetings](#meetings)
-- [Code of Conduct](#code-of-conduct)
-- [Security Response](#security-response)
-- [Requesting CNCF Resources](#requesting-cncf-resources)
-- [How to Contribute](#how-to-contribute)
-- [Changes to This Governance](#changes-to-this-governance)
-- [Governance Lineage](#governance-lineage)
-- [Appendix A: Mapping to CNCF Incubation Governance Review Criteria](#appendix-a-mapping-to-cncf-incubation-governance-review-criteria)
-- [Appendix B: MAINTAINERS.md Structure](#appendix-b-maintainersmd-structure)
+- [Meshery Governance](#meshery-governance)
+  - [Contents](#contents)
+  - [Values](#values)
+  - [Vendor Neutrality](#vendor-neutrality)
+  - [Project Structure](#project-structure)
+    - [The Meshery ecosystem and its two GitHub organizations](#the-meshery-ecosystem-and-its-two-github-organizations)
+    - [Core platform (`github.com/meshery`)](#core-platform-githubcommeshery)
+    - [Extensions (`github.com/meshery-extensions`)](#extensions-githubcommeshery-extensions)
+    - [Subprojects and domains](#subprojects-and-domains)
+  - [Roles and the Contributor Ladder](#roles-and-the-contributor-ladder)
+    - [Community Participant](#community-participant)
+    - [Contributor](#contributor)
+    - [Organization Member](#organization-member)
+    - [Maintainer](#maintainer)
+      - [Core Maintainers](#core-maintainers)
+      - [Extensions Maintainers](#extensions-maintainers)
+    - [Subproject / Domain Lead](#subproject--domain-lead)
+    - [Community Managers](#community-managers)
+    - [MeshMates](#meshmates)
+    - [Recognition and Certification](#recognition-and-certification)
+      - [Certified Meshery Contributor (CMC)](#certified-meshery-contributor-cmc)
+  - [The Maintainer Council](#the-maintainer-council)
+  - [Decision-Making](#decision-making)
+    - [Lazy consensus](#lazy-consensus)
+    - [Voting](#voting)
+    - [How specific kinds of decisions are made](#how-specific-kinds-of-decisions-are-made)
+  - [Maintainer Lifecycle](#maintainer-lifecycle)
+    - [Becoming a Core Maintainer](#becoming-a-core-maintainer)
+    - [Onboarding and access](#onboarding-and-access)
+    - [Maintainer responsibilities](#maintainer-responsibilities)
+    - [Maintainer privileges](#maintainer-privileges)
+    - [Stepping down](#stepping-down)
+    - [Inactivity and removal](#inactivity-and-removal)
+    - [Emeritus Maintainers](#emeritus-maintainers)
+  - [Subproject Lifecycle](#subproject-lifecycle)
+    - [Adding a subproject or extension](#adding-a-subproject-or-extension)
+    - [Experimental subprojects](#experimental-subprojects)
+    - [Removing or archiving a subproject](#removing-or-archiving-a-subproject)
+  - [Systems Access and Repository Permissions](#systems-access-and-repository-permissions)
+    - [GitHub repository permissions by role](#github-repository-permissions-by-role)
+    - [GitHub teams and MAINTAINERS.md](#github-teams-and-maintainersmd)
+    - [Non-GitHub systems](#non-github-systems)
+  - [Communication Channels](#communication-channels)
+  - [Meetings](#meetings)
+  - [Code of Conduct](#code-of-conduct)
+  - [Security Response](#security-response)
+  - [Requesting CNCF Resources](#requesting-cncf-resources)
+  - [How to Contribute](#how-to-contribute)
+  - [Changes to This Governance](#changes-to-this-governance)
+  - [Governance Lineage](#governance-lineage)
+  - [Appendix A: Mapping to CNCF Incubation Governance Review Criteria](#appendix-a-mapping-to-cncf-incubation-governance-review-criteria)
+  - [Appendix B: MAINTAINERS.md Structure](#appendix-b-maintainersmd-structure)
+    - [MAINTAINERS.md](#maintainersmd)
 
 ## Values
 
@@ -639,6 +673,7 @@ contributors who intend to maintain it. A proposal:
 - Confirms that it will adopt this governance, the
   [Code of Conduct](./CODE_OF_CONDUCT.md), the project's security practices, and the
   relevant integration guidelines.
+- Repository is added to [manifest.yaml](https://github.com/meshery-extensions/.github/blob/master/support-labels/manifest.yaml), identifying its level of support.
 
 Core subprojects are admitted by a **2/3 vote** of the core maintainers. Extensions
 in `github.com/meshery-extensions` are admitted by **confirmation from the core
@@ -720,7 +755,7 @@ and revoked at offboarding:
 - **Documentation and website** publishing.
 - **Release and registry systems**, including container registries and package
   registries used to publish releases.
-- **Recognition and badges** system ([badges.layer5.io](https://badges.layer5.io)).
+- **Recognition and badges** system ([https://meshery.io/community/recognition/](https://meshery.io/community/recognition/)).
 
 When a person changes or leaves a role, the Maintainers and Community Managers
 responsible for each system update access accordingly.

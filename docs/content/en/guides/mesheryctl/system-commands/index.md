@@ -4,7 +4,7 @@ categories: [mesheryctl]
 description: Mesheryctl system commands for managing Meshery deployments.
 ---
 
-Let's get familiar with mesheryctl system commands. The syntax of the mesheryctl commands goes as follws : `mesheryctl <Main_command> <Argument> <Flags>`
+Let's get familiar with mesheryctl system commands. The syntax of the mesheryctl commands goes as follows : `mesheryctl <Main_command> <Argument> <Flags>`
 
 ## Main_command : system
 ### start 

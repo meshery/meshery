@@ -80,19 +80,24 @@ const View = ({ setView, resource, k8sConfig }: DashboardViewProps) => {
     [getResourceCleanData, resource, router],
   );
 
-  const { data: connections = [] } = useGetConnectionsQuery({
-    page: 0,
-    pagesize: 100,
-    search: '',
-    order: '',
-    status: '',
-    kind: JSON.stringify(['kubernetes']),
-  });
+  const { data: connectionsData } = useGetConnectionsQuery(
+    {
+      page: 0,
+      pagesize: 100,
+      search: '',
+      order: '',
+      status: '',
+      kind: JSON.stringify(['kubernetes']),
+    },
+    {},
+  );
 
   if (!resource) return null;
 
   const context = getK8sContextFromClusterId(resource.cluster_id, k8sConfig);
-  const connection = connections?.connections.find((conn) => conn.id === context?.connectionId);
+  const connection = connectionsData?.connections?.find(
+    (conn) => conn.id === context?.connectionId,
+  );
   const connectionStatus = connection?.status || CONNECTION_STATES.DISCONNECTED;
   const iconSrc = normalizeStaticImagePath(resource.component_metadata?.styles?.svgColor);
 

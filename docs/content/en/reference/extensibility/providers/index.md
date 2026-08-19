@@ -76,7 +76,16 @@ For production deployments, consider the following security best practices regar
 - **Enforce a specific provider** using the `PROVIDER` environment variable only when you have a clear operational requirement to do so, such as locking a deployment to a particular identity provider.
 - **Use `mesheryctl system provider set`** to explicitly configure a provider for a given context when needed.
 - **Use `mesheryctl system provider reset`** to clear an enforced provider and return to the provider selection UI.
+- **Vet the provider before you allow it.** A Remote Provider's capabilities document names the extension package Meshery downloads and loads, so selecting a provider decides whose code runs in Meshery UI's browser context and, where the package carries a server-side plugin, in-process inside Meshery Server. Prefer first-party and maintained providers, and pin what you have reviewed with [`SKIP_DOWNLOAD_EXTENSIONS`](#skip_download_extensions) and [`PROVIDER_CAPABILITIES_FILEPATH`](#provider_capabilities_filepath). See [Trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}}) for the full production guidance.
 
+{{% alert color="warning" title="Provider selection is a code-trust decision" %}}
+Beyond identity and persistence, the provider you select supplies loadable extension code.
+Treat adding an unfamiliar Remote Provider the way you would treat adding an unfamiliar
+binary to a production host. See
+[Trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}})
+and
+[Authentication, Authorization & Identity]({{< ref "installation/production/authentication-and-identity.md" >}}).
+{{% /alert %}}
 
 #### AI Provider Usage in Production
 
@@ -160,10 +169,12 @@ Understanding how provider selection leads to authentication and dashboard acces
 
 When the `PROVIDER` environment variable is set (e.g., `PROVIDER=Local` or `PROVIDER=Meshery`):
 
-1. Provider selection UI is bypassed
-2. The specified provider is automatically activated and cookie is set
-3. User is redirected directly to `/user/login`
-4. Login flow proceeds as described above based on provider type
+1. At **server boot**, only that provider is registered. If the value is a remote, the Local Provider is not registered at all.
+2. Provider selection UI is bypassed; cookie, header, and `?provider=` cannot select a different provider.
+3. User is redirected directly to `/user/login`.
+4. Login flow proceeds as described above based on provider type.
+5. If `PROVIDER` is set but cannot be resolved to a registered provider, Meshery refuses to start (it does not fall back to the chooser).
+6. Changing `PROVIDER` on an existing deployment requires a restart. It is not a build-time flag. Re-login is required; data does not migrate between providers.
 
 ### Deep-Link Preservation
 
@@ -188,7 +199,7 @@ For the full server-wide reference, including provider-independent settings such
 
 ### PROVIDER
 
-This environment variable enforces a specific provider, bypassing the provider selection UI. This is useful for:
+This environment variable hard-enforces a specific provider at server boot: only that provider is registered, the chooser is skipped, and client hints cannot override it. This is useful for:
 - Dedicated deployments where only one provider should be available
 - Automated environments and CI/CD pipelines
 - Simplified user experience when provider choice is predetermined
@@ -229,6 +240,13 @@ Example: `SKIP_DOWNLOAD_EXTENSIONS=true`
 - Release channel updates
 
 When `SKIP_DOWNLOAD_EXTENSIONS` is enabled, existing extension packages will still be loaded if present, but no new versions will be retrieved.
+
+**Security use:** because existing packages continue to load, this variable doubles as a
+pin. Setting it to `true` holds a production deployment on an extension package you have
+already reviewed instead of accepting whatever the provider publishes next. Pair it with
+[`PROVIDER_CAPABILITIES_FILEPATH`](#provider_capabilities_filepath) when the capability set
+itself should not drift, and see
+[Trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}}).
 
 ## Design Principles: Meshery Remote Provider Framework
 
