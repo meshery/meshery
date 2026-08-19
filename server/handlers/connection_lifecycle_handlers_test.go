@@ -596,6 +596,120 @@ func TestDeleteReconnectRace(t *testing.T) {
 	}
 }
 
+func TestUpdateConnectionStatus_DeleteReconnectRace(t *testing.T) {
+	connID := uuid.Must(uuid.NewV4())
+	sysID := core.Uuid(uuid.Must(uuid.NewV4()))
+
+	provider := &lifecycleTestMockProvider{
+		k8sContext: models.K8sContext{
+			ID:           connID.String(),
+			Name:         "test-k8s",
+			ConnectionID: connID.String(),
+		},
+	}
+	h, tracker := newLifecycleTestHandler(t, provider)
+
+	sm, err := kubernetes.New(connID.String(), core.Uuid(connID), h.log)
+	if err != nil {
+		t.Fatalf("failed to create machine: %v", err)
+	}
+	sm.Provider = provider
+	
+	deleteActionWg := &sync.WaitGroup{}
+	deleteActionWg.Add(1)
+	
+	cleanupFinished := make(chan struct{})
+	
+	sm.States[machines.DELETED] = machines.State{
+		Events: machines.Events{
+			machines.Register: machines.REGISTERED,
+			machines.Connect:  machines.CONNECTED,
+		},
+		Action: &blockingLifecycleAction{wg: deleteActionWg, finished: cleanupFinished},
+	}
+	sm.CurrentState = machines.DISCOVERED
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	ctx := context.WithValue(context.Background(), models.UserCtxKey, user)
+	ctx = context.WithValue(ctx, models.SystemIDKey, &sysID)
+	ctx = context.WithValue(ctx, models.TokenCtxKey, "test-token")
+
+	machineCtx := &kubernetes.MachineCtx{
+		K8sContext:  provider.k8sContext,
+		ActionMutex: &sync.Mutex{},
+		MesheryCtrlsHelper: models.NewMesheryControllersHelper(h.log, controllers.OperatorDeploymentConfig{}, nil, nil, provider, &sysID),
+		OperatorTracker:    models.NewOperatorTracker(false),
+		EventBroadcaster:   h.config.EventBroadcaster,
+	}
+	_, err = sm.Start(ctx, machineCtx, h.log, func(c context.Context, mc interface{}, l logger.Handler) (interface{}, *events.Event, error) {
+		return mc, nil, nil
+	})
+	if err != nil {
+		t.Fatalf("start machine: %v", err)
+	}
+
+	tracker.Add(core.Uuid(connID), sm)
+
+	// 1. DELETE via connections handler
+	reqDel := httptest.NewRequest(http.MethodPut, "/api/system/connections/"+connID.String(), strings.NewReader(`{"status":"deleted"}`))
+	reqDel = mux.SetURLVars(reqDel, map[string]string{"connectionId": connID.String()})
+	reqDelCtx := context.WithValue(reqDel.Context(), models.TokenCtxKey, "test-token")
+	reqDelCtx = context.WithValue(reqDelCtx, models.UserCtxKey, user)
+	reqDelCtx = context.WithValue(reqDelCtx, models.SystemIDKey, &sysID)
+	trackerCleanupDone := make(chan struct{})
+	reqDelCtx = context.WithValue(reqDelCtx, trackerCleanupDoneKey, trackerCleanupDone)
+	reqDel = reqDel.WithContext(reqDelCtx)
+	recDel := httptest.NewRecorder()
+
+	h.UpdateConnectionById(recDel, reqDel, nil, user, provider)
+
+	if recDel.Code != http.StatusOK {
+		t.Fatalf("expected status 200 on successful delete, got: %d", recDel.Code)
+	}
+
+	// 2. RECONNECT
+	reqRec := httptest.NewRequest(http.MethodPut, "/api/system/connections/"+connID.String(), strings.NewReader(`{"status":"connected"}`))
+	reqRec = mux.SetURLVars(reqRec, map[string]string{"connectionId": connID.String()})
+	reqRecCtx := context.WithValue(reqRec.Context(), models.TokenCtxKey, "test-token")
+	reqRecCtx = context.WithValue(reqRecCtx, models.UserCtxKey, user)
+	reqRecCtx = context.WithValue(reqRecCtx, models.SystemIDKey, &sysID)
+	reqRec = reqRec.WithContext(reqRecCtx)
+	recRec := httptest.NewRecorder()
+
+	reconnectFinished := make(chan struct{})
+	go func() {
+		h.UpdateConnectionById(recRec, reqRec, nil, user, provider)
+		close(reconnectFinished)
+	}()
+
+	<-reconnectFinished
+
+	if recRec.Code != http.StatusOK {
+		t.Fatalf("expected status 200 on reconnect, got: %d, body: %s", recRec.Code, recRec.Body.String())
+	}
+
+	if sm2, ok := tracker.Get(core.Uuid(connID)); !ok {
+		t.Fatalf("tracker removed the StateMachine before Delete completed!")
+	} else if sm2 != sm {
+		t.Fatalf("tracker has a DIFFERENT StateMachine instance!")
+	}
+
+	// 3. Unblock Delete cleanup
+	deleteActionWg.Done()
+
+	// Wait for cleanup to finish
+	<-cleanupFinished
+	
+	// Wait for tracker-removal goroutine to finish its logic.
+	<-trackerCleanupDone
+
+	if sm2, ok := tracker.Get(core.Uuid(connID)); !ok {
+		t.Fatalf("tracker removed the StateMachine erroneously!")
+	} else if sm2.GetCurrentState() != machines.CONNECTED {
+		t.Fatalf("expected state CONNECTED, got %v", sm2.GetCurrentState())
+	}
+}
+
 type blockingLifecycleAction struct {
 	wg *sync.WaitGroup
 	finished chan struct{}

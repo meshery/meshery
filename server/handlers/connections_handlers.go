@@ -571,7 +571,13 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 		// detach from the http request lifecycle so that the side-effects aren't cancelled when
 		// the handler returns, while preserving context values (e.g. TokenCtxKey) that downstream calls depend on.
 		detachedCtx := context.WithoutCancel(ctx)
-		event, err := inst.SendEvent(detachedCtx, machines.EventType(helpers.StatusToEvent(connection.Status)), nil)
+
+		var done chan struct{}
+		if connection.Status == connections.DELETED {
+			done = make(chan struct{})
+		}
+
+		event, err := inst.SendEvent(detachedCtx, machines.EventType(helpers.StatusToEvent(connection.Status)), done)
 		if err != nil {
 			h.log.Error(err)
 			if event != nil {
@@ -581,7 +587,22 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 		}
 
 		if connection.Status == connections.DELETED {
-			smInstanceTracker.Remove(inst.ID)
+			// Retain the StateMachine in the tracker while the background Delete cleanup runs.
+			deleteGenerationCtx := inst.GetLifecycleCtx()
+			go func() {
+				<-done
+
+				// Cleanup is finished. Only remove the StateMachine from the tracker if the
+				// specific Delete operation that initiated this cleanup is still the active
+				// lifecycle generation. (i.e. no RECONNECT adopted the StateMachine).
+				if inst.GetLifecycleCtx() == deleteGenerationCtx {
+					smInstanceTracker.Remove(inst.ID)
+				}
+				
+				if doneChan, ok := detachedCtx.Value(trackerCleanupDoneKey).(chan struct{}); ok && doneChan != nil {
+					close(doneChan)
+				}
+			}()
 		}
 
 		if event != nil {

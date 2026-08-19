@@ -174,14 +174,14 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	// We wait for the 'done' channel to be closed by the Delete transition's cleanup
 	// goroutine. If a RECONNECT occurs during cleanup, it will reuse this
 	// StateMachine and block on the ActionMutex, preserving the lifecycle owner.
-	deleteGenerationCtx := inst.LifecycleCtx
+	deleteGenerationCtx := inst.GetLifecycleCtx()
 	go func() {
 		<-done
 
 		// Cleanup is finished. Only remove the StateMachine from the tracker if the
 		// specific Delete operation that initiated this cleanup is still the active
 		// lifecycle generation. (i.e. no RECONNECT adopted the StateMachine).
-		if inst.LifecycleCtx == deleteGenerationCtx {
+		if inst.GetLifecycleCtx() == deleteGenerationCtx {
 			smInstanceTracker.Remove(connectionUUID)
 		}
 
