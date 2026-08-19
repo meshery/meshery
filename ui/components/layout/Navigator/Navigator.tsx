@@ -878,6 +878,7 @@ const NavigatorContent = () => {
       aria-label="Toggle sidebar navigation"
       aria-expanded={!isDrawerCollapsed}
       style={isTogglerEnabled ? {} : cursorNotAllowed}
+      disabled={!isTogglerEnabled}
     >
       <div style={isTogglerEnabled ? {} : disabledStyle}>
         <LeftArrowIcon

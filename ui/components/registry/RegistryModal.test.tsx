@@ -155,7 +155,7 @@ vi.mock('./helper', () => ({
 }));
 
 vi.mock('../general/style', () => ({
-  ChevronButtonWrapper: ({ children, onClick, isCollapsed, ...props }: any) => (
+  ChevronButtonWrapper: ({ children, onClick, isCollapsed, sx, ...props }: any) => (
     <button
       type="button"
       onClick={onClick}
