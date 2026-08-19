@@ -187,6 +187,19 @@ Gating on `conclusion` silently disarms the gate - the job goes green whatever t
 
 If a test is failing, fix it or mark it `test.fixme` with the tracking issue in the annotation. Never re-disarm the gate to turn a red build green.
 
+## How much of the suite runs at once
+
+**The CI run is serial: one Playwright worker.** `ui/playwright.config.js` sets `workers: process.env.CI ? 1 : 4`, and a local run keeps 4. Raising the CI number is how this job goes back to failing for reasons that have nothing to do with the change under test.
+
+The job runs the entire stack on a single 4-vCPU/16-GB hosted runner - a Kind cluster, the Meshery server container, and Playwright. Each worker adds a Chromium on top of that, and an over-subscribed runner does not fail like a broken test does. Two shapes to recognise, both from 2026-08-17, when the config carried `process.env.CI ? 4 : 4` under a comment that read "Opt out of parallel tests on CI":
+
+- A spec exhausts a whole `describe` timeout with no assertion error - `Test timeout of 180000ms exceeded` on "Metrics (Prometheus) page loads", run `32024269277`.
+- The runner dies mid-step: *"The hosted runner lost communication with the server. Anything in your workflow that terminates the runner process, starves it for CPU/Memory, or blocks its network access can cause this error."* Run `32084526223` burned 49 minutes that way and uploaded no logs, no report and no traces, so the only evidence it left was that annotation.
+
+The tell that it is load rather than a defect is that a *different*, unrelated test fails in each red run, spread across the specs that mutate server-wide state - preferences, telemetry, connections, models, the controllers editor. `fullyParallel: false` already serializes the tests inside one file, so a second worker only buys concurrent spec *files*, and those files share one Meshery server, one Local-provider session and one Kind cluster. Playwright isolates browser contexts; it cannot isolate the server they all talk to.
+
+`ui/tests/playwrightWorkers.test.ts` pins the resolved value in the `ui-unit-tests` job, because the previous setting was wrong in a way reading could not catch: `process.env.CI ? 4 : 4` is a ternary whose branches are the same number, and it survived under the comment describing the opposite behavior.
+
 ## Debugging Test on Github Actions
 
 End-to-end test results are stored as artifacts on every PR in Github Actions. In case you need to debug a failed test:
