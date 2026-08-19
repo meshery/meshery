@@ -348,6 +348,17 @@ func (h *Handler) applyControllersConfigToConnection(
 		h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Error, "Failed to resolve the connection's controllers configuration.", map[string]interface{}{"error": err, "connectionId": connectionID})
 		return
 	}
+
+	generationCtx := machine.GetLifecycleCtx()
+
+	machineCtx.ActionMutex.Lock()
+	defer machineCtx.ActionMutex.Unlock()
+
+	if generationCtx.Err() != nil {
+		h.log.Warnf("controllers config: aborted due to newer lifecycle transition for connection %s", connectionID)
+		return
+	}
+
 	ctrlHelper.SetControllersConfig(merged)
 
 	// The layered document outranks the materialized meshsync_deployment_mode

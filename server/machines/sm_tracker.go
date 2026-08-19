@@ -44,6 +44,13 @@ func (smt *ConnectionToStateMachineInstanceTracker) GetOrInitialize(id core.Uuid
 	}
 
 	// We are the one initializing
+	defer func() {
+		smt.mx.Lock()
+		delete(smt.inFlight, id)
+		close(ch) // wake up waiters
+		smt.mx.Unlock()
+	}()
+
 	inst, err := initFn()
 
 	smt.mx.Lock()
@@ -55,9 +62,6 @@ func (smt *ConnectionToStateMachineInstanceTracker) GetOrInitialize(id core.Uuid
 		}
 		smt.ConnectToInstanceMap[id] = inst
 	}
-
-	delete(smt.inFlight, id)
-	close(ch) // wake up waiters
 
 	return inst, err
 }
@@ -80,6 +84,20 @@ func (smt *ConnectionToStateMachineInstanceTracker) RemoveIfMatch(id core.Uuid, 
 	defer smt.mx.Unlock()
 	if inst, ok := smt.ConnectToInstanceMap[id]; ok && inst == expectedInst {
 		delete(smt.ConnectToInstanceMap, id)
+	}
+}
+
+func (smt *ConnectionToStateMachineInstanceTracker) RemoveIfMatchAndState(id core.Uuid, expectedInst *StateMachine, allowedStates ...StateType) {
+	smt.mx.Lock()
+	defer smt.mx.Unlock()
+	if inst, ok := smt.ConnectToInstanceMap[id]; ok && inst == expectedInst {
+		currentState := inst.GetCurrentState()
+		for _, s := range allowedStates {
+			if currentState == s {
+				delete(smt.ConnectToInstanceMap, id)
+				return
+			}
+		}
 	}
 }
 

@@ -142,7 +142,10 @@ func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Requ
 
 	id, ok := body["id"]
 	if ok {
-		smInstancetracker.Remove(uuid.FromStringOrNil(id))
+		connectionID := uuid.FromStringOrNil(id)
+		if inst, ok := smInstancetracker.Get(connectionID); ok {
+			smInstancetracker.RemoveIfMatchAndState(connectionID, inst, machines.DISCOVERED, machines.REGISTERED, machines.InitialState, machines.DefaultState)
+		}
 	}
 }
 
@@ -160,11 +163,8 @@ func (h *Handler) CancelConnectionRegister(w http.ResponseWriter, req *http.Requ
 	}
 
 	if inst, ok := h.ConnectionToStateMachineInstanceTracker.Get(registrationID); ok {
-		currentState := inst.GetCurrentState()
 		// Only allow cancellation if it is genuinely in an unestablished registration state
-		if currentState == machines.DISCOVERED || currentState == machines.REGISTERED || currentState == machines.InitialState || currentState == "" {
-			h.ConnectionToStateMachineInstanceTracker.RemoveIfMatch(registrationID, inst)
-		}
+		h.ConnectionToStateMachineInstanceTracker.RemoveIfMatchAndState(registrationID, inst, machines.DISCOVERED, machines.REGISTERED, machines.InitialState, machines.DefaultState)
 	}
 	w.WriteHeader(http.StatusNoContent)
 }
@@ -769,6 +769,15 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 		if resolveErr != nil {
 			h.log.Error(resolveErr)
 			return existingMeshSyncMode, newMeshSyncMode, false, resolveErr
+		}
+
+		generationCtx := machine.GetLifecycleCtx()
+
+		machineCtx.ActionMutex.Lock()
+		defer machineCtx.ActionMutex.Unlock()
+
+		if generationCtx.Err() != nil {
+			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("mode change aborted: superseded by a newer lifecycle transition")
 		}
 
 		// disconnect
