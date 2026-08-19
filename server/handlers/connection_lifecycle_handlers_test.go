@@ -367,6 +367,9 @@ func (a *failingLifecycleAction) ExecuteOnExit(ctx context.Context, machineCtx i
 type successfulLifecycleAction struct{}
 
 func (a *successfulLifecycleAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
+	if done, ok := data.(chan struct{}); ok && done != nil {
+		close(done)
+	}
 	return machines.NoOp, events.NewEvent().WithSeverity(events.Informational).WithDescription("deleted successfully").Build(), nil
 }
 
@@ -531,6 +534,8 @@ func TestDeleteReconnectRace(t *testing.T) {
 	reqDelCtx := context.WithValue(reqDel.Context(), models.TokenCtxKey, "test-token")
 	reqDelCtx = context.WithValue(reqDelCtx, models.UserCtxKey, user)
 	reqDelCtx = context.WithValue(reqDelCtx, models.SystemIDKey, &sysID)
+	trackerCleanupDone := make(chan struct{})
+	reqDelCtx = context.WithValue(reqDelCtx, trackerCleanupDoneKey, trackerCleanupDone)
 	reqDel = reqDel.WithContext(reqDelCtx)
 	recDel := httptest.NewRecorder()
 
@@ -577,29 +582,17 @@ func TestDeleteReconnectRace(t *testing.T) {
 	// Wait for cleanup to finish
 	<-cleanupFinished
 	
-	// 4. Synchronize with the tracker-removal goroutine and the Connect background goroutine.
-	// Since both are waiting on ActionMutex, we can queue a third synchronous operation
-	// (another Delete) which will only acquire the ActionMutex after both of them have finished.
-	reqSync := httptest.NewRequest(http.MethodDelete, "/api/system/kubernetes/contexts/"+connID.String(), nil)
-	reqSync = mux.SetURLVars(reqSync, map[string]string{"id": connID.String()})
-	reqSync = reqSync.WithContext(reqDelCtx)
-	recSync := httptest.NewRecorder()
-
-	syncFinished := make(chan struct{})
-	go func() {
-		// This will block inside DeleteAction.Execute until the previous ConnectAction finishes.
-		h.DeleteContext(recSync, reqSync, nil, user, provider)
-		close(syncFinished)
-	}()
-
-	<-syncFinished
+	// Wait for tracker-removal goroutine to finish its logic.
+	<-trackerCleanupDone
 
 	// Verify the tracker STILL has the StateMachine, because Reconnect happened!
-	// (The second Delete will have transitioned it to DELETED, and since its cleanup
-	// hasn't finished, the tracker shouldn't be removed yet, but the key is that
-	// the FIRST Delete's tracker-removal goroutine did not remove it!).
-	if _, ok := tracker.Get(core.Uuid(connID)); !ok {
+	// (The FIRST Delete's tracker-removal goroutine should NOT have removed it,
+	// because its generation check failed. And the Reconnect is a Connect transition,
+	// so it doesn't remove it either).
+	if sm2, ok := tracker.Get(core.Uuid(connID)); !ok {
 		t.Fatalf("tracker removed the StateMachine erroneously!")
+	} else if sm2.GetCurrentState() != machines.CONNECTED {
+		t.Fatalf("expected state CONNECTED, got %v", sm2.GetCurrentState())
 	}
 }
 
@@ -614,6 +607,9 @@ func (a *blockingLifecycleAction) Execute(ctx context.Context, machineCtx interf
 	mCtx.ActionMutex.Lock()
 	go func() {
 		defer mCtx.ActionMutex.Unlock()
+		if done, ok := data.(chan struct{}); ok && done != nil {
+			defer close(done)
+		}
 		a.wg.Wait()
 		a.once.Do(func() { close(a.finished) })
 	}()

@@ -15,6 +15,9 @@ import (
 	"github.com/meshery/meshkit/models/events"
 )
 
+type trackerCleanupDoneKeyType string
+const trackerCleanupDoneKey trackerCleanupDoneKeyType = "trackerCleanupDone"
+
 // Deprecated: GetAllContexts (GET /api/system/kubernetes/contexts) is being
 // retired in favor of the connections API (kind=kubernetes) — everything is now
 // connection-driven. The UI derives its k8s context list from connections; this
@@ -151,7 +154,11 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 
 	// Detach from the HTTP request lifecycle so that side-effects aren't cancelled when the handler returns
 	detachedCtx := context.WithoutCancel(req.Context())
-	deleteEvent, sendErr := inst.SendEvent(detachedCtx, machines.Delete, nil)
+
+	// Create a channel that will be closed exactly once when cleanup finishes
+	done := make(chan struct{})
+
+	deleteEvent, sendErr := inst.SendEvent(detachedCtx, machines.Delete, done)
 	if sendErr != nil {
 		wrappedErr := ErrSendMachineEvent(sendErr)
 		h.log.Error(wrappedErr)
@@ -164,22 +171,22 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	}
 
 	// Retain the StateMachine in the tracker while the background Delete cleanup runs.
-	// We launch a goroutine to wait for the exact ActionMutex used by this StateMachine's
-	// Delete transition. If a RECONNECT occurs during cleanup, it will reuse this
-	// StateMachine and block on the same ActionMutex, preserving the lifecycle owner.
+	// We wait for the 'done' channel to be closed by the Delete transition's cleanup
+	// goroutine. If a RECONNECT occurs during cleanup, it will reuse this
+	// StateMachine and block on the ActionMutex, preserving the lifecycle owner.
+	deleteGenerationCtx := inst.LifecycleCtx
 	go func() {
-		if mCtx, ok := inst.Context.(*kubernetes.MachineCtx); ok && mCtx.ActionMutex != nil {
-			// Because SendEvent is synchronous and the Delete transition already launched its
-			// cleanup goroutine which acquired ActionMutex, this Lock() will block until the
-			// older cleanup finishes.
-			mCtx.ActionMutex.Lock()
-			mCtx.ActionMutex.Unlock()
+		<-done
+
+		// Cleanup is finished. Only remove the StateMachine from the tracker if the
+		// specific Delete operation that initiated this cleanup is still the active
+		// lifecycle generation. (i.e. no RECONNECT adopted the StateMachine).
+		if inst.LifecycleCtx == deleteGenerationCtx {
+			smInstanceTracker.Remove(connectionUUID)
 		}
 
-		// Cleanup is finished. Only remove the StateMachine from the tracker if a
-		// RECONNECT did NOT happen (i.e. the state is still Deleted).
-		if inst.GetCurrentState() == machines.DELETED {
-			smInstanceTracker.Remove(connectionUUID)
+		if ch, ok := req.Context().Value(trackerCleanupDoneKey).(chan struct{}); ok && ch != nil {
+			close(ch)
 		}
 	}()
 

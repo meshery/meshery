@@ -52,6 +52,9 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 	machinectx.ActionMutex.Lock()
 	go func() {
 		defer machinectx.ActionMutex.Unlock()
+		if done, ok := data.(chan struct{}); ok && done != nil {
+			defer close(done)
+		}
 
 		if ctx.Err() != nil {
 			machinectx.log.Info("Delete side-effects aborted due to lifecycle cancellation")

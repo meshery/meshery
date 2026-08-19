@@ -97,6 +97,12 @@ func (sm *StateMachine) GetCurrentState() StateType {
 	return sm.CurrentState
 }
 
+func (sm *StateMachine) GetLifecycleCtx() context.Context {
+	sm.mx.RLock()
+	defer sm.mx.RUnlock()
+	return sm.LifecycleCtx
+}
+
 func (sm *StateMachine) Start(ctx context.Context, machinectx interface{}, log logger.Handler, init connections.InitFunc) (*events.Event, error) {
 	var mCtx interface{}
 	var event *events.Event

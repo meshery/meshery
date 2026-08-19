@@ -100,7 +100,9 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 		defer machinectx.ActionMutex.Unlock()
 
 		if ctx.Err() != nil {
-			machinectx.log.Info("Connect side-effects aborted due to lifecycle cancellation")
+			if machinectx.log != nil {
+				machinectx.log.Info("Connect side-effects aborted due to lifecycle cancellation")
+			}
 			return
 		}
 
