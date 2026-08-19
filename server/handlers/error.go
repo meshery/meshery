@@ -238,7 +238,7 @@ const (
 	ErrGetUserCode               = "meshery-server-1460"
 	ErrGetUsersKeysCode          = "meshery-server-1461"
 	ErrFetchProfilesCode         = "meshery-server-1464"
-	ErrResetInProgressCode       = "meshery-server-1475"
+	ErrResetInProgressCode       = "meshery-server-1481"
 )
 
 var (
