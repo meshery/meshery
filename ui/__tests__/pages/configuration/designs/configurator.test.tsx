@@ -41,7 +41,7 @@ vi.mock('@/components/general/error-404', () => ({
   ),
 }));
 
-import DesignConfiguratorPage from './configurator';
+import DesignConfiguratorPage from '../../../../pages/configuration/designs/configurator';
 
 describe('DesignConfiguratorPage access gate', () => {
   beforeEach(() => {
