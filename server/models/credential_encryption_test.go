@@ -1,6 +1,7 @@
 package models
 
 import (
+	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/hkdf"
@@ -16,6 +17,49 @@ import (
 	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/schemas/models/core"
 )
+
+// loggedError is the part of a JSON-formatted MeshKit log entry these tests
+// read: the rendered message, and the code the logger resolves out of the error
+// chain. Both are the logger's own serialized output, not implementation text.
+type loggedError struct {
+	Code    string `json:"code"`
+	Message string `json:"msg"`
+}
+
+// assertCredentialDecryptionLogged asserts the half of the degradation contract
+// that a dropped secret alone does not prove: an operator can tell which
+// credential failed and why. It asserts the contract rather than the phrasing -
+// the credential's id, the MeshKit code identifying the cause, and the key
+// identifier this build derives, which is deliberately kept out of the
+// client-facing error and so is obtainable nowhere but here.
+func assertCredentialDecryptionLogged(t *testing.T, serverLog *bytes.Buffer, credentialID core.Uuid) {
+	t.Helper()
+
+	active := activeCredentialKeyID()
+	if active == "" {
+		t.Fatal("the active keyring has no key identifier; the assertion below would be vacuous")
+	}
+
+	raw := serverLog.String()
+	for _, line := range strings.Split(strings.TrimSpace(raw), "\n") {
+		if line == "" {
+			continue
+		}
+		var entry loggedError
+		if err := json.Unmarshal([]byte(line), &entry); err != nil {
+			t.Fatalf("server log line is not JSON: %q: %v", line, err)
+		}
+		if entry.Code != ErrCredentialKeyMismatchCode || !strings.Contains(entry.Message, credentialID.String()) {
+			continue
+		}
+		if !strings.Contains(entry.Message, active) {
+			t.Errorf("the logged failure for credential %s does not name the key this build derives, so an operator cannot pair it with the stored key id: %s", credentialID, entry.Message)
+		}
+		return
+	}
+
+	t.Errorf("no log entry reports credential %s failing to decrypt with code %s - the secret was dropped with nothing left to diagnose it by. Log was:\n%s", credentialID, ErrCredentialKeyMismatchCode, raw)
+}
 
 // The four shapes below are the ones read-only production inspection found (see
 // credential_secret_test.go for the counts). Encryption converges them onto one
@@ -627,11 +671,13 @@ func TestUpdateUserCredentialRewritesPlaintextRowAsCiphertext(t *testing.T) {
 }
 
 // TestGetUserCredentialsDropsUndecryptableSecretsWithoutFailingThePage is the
-// degradation contract. One row written under a different build's token must not
-// make the whole credentials page unreadable; it is listed without its secret
-// and the reason is logged.
+// degradation contract, both halves of it. One row written under a different
+// build's token must not make the whole credentials page unreadable: it is
+// listed without its secret, and the reason is recorded against its id in the
+// server log, which is the only place an operator can learn why the secret
+// vanished from the page.
 func TestGetUserCredentialsDropsUndecryptableSecretsWithoutFailingThePage(t *testing.T) {
-	provider := newTestProviderWithCredentialDB(t)
+	provider, serverLog := newTestProviderWithCapturedErrorLog(t)
 	userID := uuid.Must(uuid.NewV4())
 
 	if _, err := provider.SaveUserCredential("tok", &Credential{
@@ -681,6 +727,8 @@ func TestGetUserCredentialsDropsUndecryptableSecretsWithoutFailingThePage(t *tes
 			}
 		}
 	}
+
+	assertCredentialDecryptionLogged(t, serverLog, foreignRow.ID)
 }
 
 // throughJSON puts a value through the same encode/decode the datastore does, so
@@ -807,7 +855,7 @@ func TestDecryptCredentialEnvelopeReadsAHandRolledV1Envelope(t *testing.T) {
 // handler discards it - so failing there turned a durable, already-committed
 // rename into a 500, with no way for the user to ever rename that credential.
 func TestUpdateUserCredentialSurvivesAnUndecryptableStoredSecret(t *testing.T) {
-	provider := newTestProviderWithCredentialDB(t)
+	provider, serverLog := newTestProviderWithCapturedErrorLog(t)
 	userID := uuid.Must(uuid.NewV4())
 
 	sealed, err := EncryptCredentialSecret(map[string]interface{}{"grafanaAPIKey": "sealed-under-another-build"})
@@ -860,4 +908,6 @@ func TestUpdateUserCredentialSurvivesAnUndecryptableStoredSecret(t *testing.T) {
 	if !strings.Contains(storedSecret, "0123456789ab") {
 		t.Errorf("stored secret = %s, want the original foreign envelope left untouched", storedSecret)
 	}
+
+	assertCredentialDecryptionLogged(t, serverLog, foreignRow.ID)
 }

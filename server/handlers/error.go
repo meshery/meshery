@@ -1118,10 +1118,15 @@ func ErrInitializeMachine(err error) error {
 
 // ErrSendMachineEvent wraps failures of *StateMachine.SendEvent, which
 // drives a connection through its registered transitions (e.g.
-// REGISTERED → DISCOVERED → CONNECTED). Emitted with HTTP 500 because
-// the event-driven transition failed inside the state machine, not in
-// caller input.
-// ErrSendMachineEvent reports a failed connection state-machine transition.
+// REGISTERED → DISCOVERED → CONNECTED).
+//
+// The HTTP status is not fixed: handlers pair this with
+// providerStatusOrInternal, so 500 is the fallback for a transition that
+// failed inside the state machine, and a status tagged onto the underlying
+// error by httputil.WithProviderStatus is honoured instead. A side-effect
+// action attached to a transition can reject caller input - registering a
+// connection whose credential secret carries Meshery's reserved ciphertext
+// marker answers 400 that way.
 //
 // The cause is joined rather than only stringified, for the same reason
 // models.ErrPersistCredential joins its own: a side-effect action's error can

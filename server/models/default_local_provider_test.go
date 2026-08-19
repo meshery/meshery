@@ -1,6 +1,7 @@
 package models
 
 import (
+	"bytes"
 	"strings"
 	"testing"
 
@@ -8,6 +9,7 @@ import (
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -28,6 +30,32 @@ func newTestProviderWithCredentialDB(t *testing.T) *DefaultLocalProvider {
 	return &DefaultLocalProvider{
 		GenericPersister: &database.Handler{DB: db},
 	}
+}
+
+// newTestProviderWithCapturedErrorLog is newTestProviderWithCredentialDB with a
+// logger whose Error output is captured, for tests that have to assert on what
+// an operator would find in the server log. It is a separate constructor rather
+// than a change to the shared one so tests that do not read the log keep the
+// output they have today.
+//
+// The level is explicit because logger.Options{}'s zero LogLevel is logrus
+// PanicLevel, at which Error writes nothing and every assertion over the buffer
+// would pass vacuously.
+func newTestProviderWithCapturedErrorLog(t *testing.T) (*DefaultLocalProvider, *bytes.Buffer) {
+	t.Helper()
+
+	provider := newTestProviderWithCredentialDB(t)
+
+	log, err := logger.New("test", logger.Options{Format: logger.JsonLogFormat, LogLevel: int(logrus.ErrorLevel)})
+	if err != nil {
+		t.Fatalf("failed to build logger: %v", err)
+	}
+
+	captured := &bytes.Buffer{}
+	log.UpdateErrorLogOutput(captured)
+	provider.Log = log
+
+	return provider, captured
 }
 
 // TestSaveUserCredentialReturnsPopulatedCredential verifies that SaveUserCredential
