@@ -108,20 +108,51 @@ reached the browser as a 404 - a response the UI did not recognise as a failure
 at all, which is how a rejected "Create Environment" produced a success toast.
 
 `models.ErrFetch` and `models.ErrPost` tag the error with the status the
-provider actually returned (`httputil.WithProviderStatus`). Handlers read it
-back with the `providerStatus` helper:
+provider returned (`httputil.WithProviderStatus`), and a locally raised error
+uses the same tag to name the status it deserves - `models.ErrReservedCredentialProperty`
+tags `400`, because a rejected request body is the caller's fault wherever it
+was detected. **The tag asserts a status, not an origin.** Handlers read it back
+with one of two helpers in `server/handlers/utils.go`, which differ only in the
+fallback used when nothing in the chain recorded a status:
 
 ```go
 // server/handlers/utils.go
 func providerStatus(err error) int {
     return httputil.StatusForProviderError(err, http.StatusBadGateway)
 }
+
+func providerStatusOrInternal(err error) int {
+    return httputil.StatusForProviderError(err, http.StatusInternalServerError)
+}
 ```
 
-The fallback is `502 Bad Gateway`, not `404`: when the provider produced no
-status of its own the failure is still an upstream one, and "not found" is a
-claim about the resource for which there is no evidence. Choose a different
-fallback only when the handler genuinely knows better.
+Use `providerStatus` on a path only the remote provider reaches. Its fallback is
+`502 Bad Gateway`, not `404`: when the provider produced no status of its own
+the failure is still an upstream one, and "not found" is a claim about the
+resource for which there is no evidence. Use `providerStatusOrInternal` where
+the *local* provider reaches the same code path - the failure there is Meshery
+Server's own database, and 502 would blame an upstream that was never involved.
+Choose a different fallback only when the handler genuinely knows better.
+
+**A tagged status only survives a constructor that joins its cause.** MeshKit's
+`*Error` has no `Unwrap`, so the customary `[]string{err.Error()}` cause
+flattens the chain into prose: `errors.As` finds nothing, and the tagged status
+(along with every code the cause carried) is lost. Where a wrapper must keep
+either, join the cause onto the MeshKit error with `errors.Join`, MeshKit error
+first so `GetCode` and the detail accessors still resolve to the wrapper's own
+code rather than the cause's:
+
+```go
+// server/models/error.go - `errors` is MeshKit's package here,
+// `stderrors` the standard library's.
+func ErrPersistCredential(err error) error {
+    return stderrors.Join(errors.New(ErrPersistCredentialCode, /* ... */), err)
+}
+```
+
+`models.ErrPersistCredential` and `handlers.ErrSendMachineEvent` do this, which
+is how a credential secret rejected deep inside a connection state machine's
+side-effect action still reaches the client as a 400 rather than a 500.
 
 Do not use `http.Error` in handlers or provider code. It writes
 `Content-Type: text/plain` and strips MeshKit metadata, which crashes
