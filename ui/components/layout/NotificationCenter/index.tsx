@@ -12,7 +12,6 @@ import {
   Checkbox,
   Collapse,
   IconButton,
-  Popover,
   useMediaQuery,
   ChevronRightIcon,
 } from '@sistent/sistent';
