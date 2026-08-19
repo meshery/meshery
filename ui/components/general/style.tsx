@@ -42,9 +42,6 @@ export const EditButton = styled(Button)(({ theme }) => ({
 export const TextButton = styled('span')(({ style }) => ({
   marginLeft: '0.5rem',
   display: 'block',
-  '@media (max-width: 853px)': {
-    display: 'none',
-  },
   ...style,
 }));
 
