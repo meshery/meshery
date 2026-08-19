@@ -9,6 +9,55 @@ Like a Google Doc, Designs are your primary tool for collaborative authorship of
 
 As the deployable unit in Meshery, a Design consists of [Components]({{< ref "concepts/logical/components.md" >}}) and [Relationships]({{< ref "concepts/logical/relationships/index.md" >}}). Designs are how you can describe your desired infrastructure state.
 
+## Types of Meshery Designs
+
+Meshery supports two primary classifications of designs to accommodate both architectural planning and infrastructure orchestration:
+
+```
+                      ┌─────────────────────────────────────────┐
+                      │             Meshery Design              │
+                      └────────────────────┬────────────────────┘
+                                           │
+                    ┌──────────────────────┴──────────────────────┐
+                    ▼                                             ▼
+      ┌───────────────────────────┐                 ┌───────────────────────────┐
+      │   Annotation-Only Design  │                 │     Deployable Design     │
+      ├───────────────────────────┤                 ├───────────────────────────┤
+      │ • Visual architecture     │                 │ • Functional workloads    │
+      │ • Boundaries & shapes     │                 │ • Kubernetes & Helm specs │
+      │ • Non-deployable nodes    │                 │ • Schema-validated props  │
+      │ • System documentation    │                 │ • Reconciled to clusters  │
+      └───────────────────────────┘                 └───────────────────────────┘
+```
+
+### 1. Annotation-Only Designs (Visual & Architecture Diagrams)
+
+**Annotation-only designs** are created for architectural diagramming, conceptual mapping, system topologies, and documentation. They allow platform engineers, architects, and DevOps teams to visualize multi-tier systems, cloud resources, and network boundaries without generating deployable workload manifests.
+
+- **Non-Deployable Components**: Components in an annotation-only design are visual shapes, annotations, note blocks, boundaries, and logical components flagged with `isAnnotation: true` in their metadata.
+- **Visual Relationships**: Define directional arrows, dependency annotations, or spatial containment without triggering operational provisioning actions in connected clusters.
+- **Catalog & Documentation**: Annotation-only designs can be published to the [Meshery Catalog]({{< ref "concepts/architecture/catalog/index.md" >}}), embedded into documentation, or shared across teams as reference architectures.
+
+### 2. Configurable and Deployable Designs
+
+**Configurable and Deployable designs** represent functional infrastructure and application workloads that can be provisioned, configured, validated, and managed across environments.
+
+- **Model-Backed Components**: Every component is backed by an active [Meshery Model]({{< ref "concepts/logical/models/index.md" >}}) (e.g., Kubernetes `Deployment`, `Service`, `StatefulSet`, Istio `VirtualService`, or Cloud Provider CRDs).
+- **Schema-Driven Configuration**: Each component contains a declarative specification that is validated against its model's JSON Schema.
+- **Orchestration & Lifecycle**: Deployable designs can be dry-run tested, deployed, updated, or undeployed to connected Kubernetes clusters and cloud providers via Meshery Server's deployment engine.
+
+### Comparison: Annotation-Only vs. Deployable Designs
+
+| Attribute | Annotation-Only Designs | Configurable & Deployable Designs |
+| :--- | :--- | :--- |
+| **Primary Purpose** | Visual diagrams, topology mapping, documentation | Infrastructure provisioning, GitOps, configuration management |
+| **Deployability** | Non-deployable (visual canvas elements) | Fully deployable to connected Kubernetes clusters & clouds |
+| **Component Backing** | Visual shapes, annotations (`isAnnotation: true`), sticky notes | Registered Meshery Models & JSON Schemas |
+| **Relationships** | Visual pointers, groupings, semantic connections | Structural, hierarchical, and network orchestration relationships |
+| **Export Formats** | YAML, OCI image, PNG/SVG image snapshot | YAML, OCI image, Helm chart package (`.tgz`) |
+| **Catalog Availability** | Yes (Published as Reference Architecture / Diagram) | Yes (Published as Deployable Pattern / Cloud Native Solution) |
+
+
 ### Constraints on Designs
 
 - Designs belong to only one Workspace at any given time. Designs can be transferred between Workspaces.
