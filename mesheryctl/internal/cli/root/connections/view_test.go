@@ -106,22 +106,16 @@ func TestConnectionViewSaveCreatesFile(t *testing.T) {
 	}
 	expectedFile := filepath.Join(mesheryDir, "connection_minikube.yaml")
 
-	origStdout := os.Stdout
-	_, w, _ := os.Pipe()
-	os.Stdout = w
-	defer func() {
-		_ = w.Close()
-		os.Stdout = origStdout
-	}()
+	// REPLACE WITH:
+	buf := &bytes.Buffer{}
+	ConnectionsCmd.SetOut(buf)
+	ConnectionsCmd.SetErr(buf)
 
 	_ = utils.SetupMeshkitLoggerTesting(t, false)
 	ConnectionsCmd.SetArgs([]string{"view", connectionId, "--save"})
 	if execErr := ConnectionsCmd.Execute(); execErr != nil {
 		t.Fatalf("unexpected error: %v", execErr)
 	}
-
-	_ = w.Close()
-	os.Stdout = origStdout
 
 	if _, statErr := os.Stat(expectedFile); os.IsNotExist(statErr) {
 		entries, _ := os.ReadDir(mesheryDir)
