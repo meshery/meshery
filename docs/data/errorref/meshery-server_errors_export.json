@@ -4230,8 +4230,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unable to encrypt the credential secret",
-        "probable_cause": "The credential secret could not be serialized, or the system random source is unavailable",
-        "suggested_remediation": "Retry the request; if it persists, check that the host's random source (/dev/urandom) is readable by Meshery Server"
+        "probable_cause": "The credential secret could not be serialized to JSON for sealing",
+        "suggested_remediation": "Check the credential secret for values that cannot be represented as JSON, then submit it again"
       },
       "1483": {
         "name": "ErrCredentialDecryptCode",

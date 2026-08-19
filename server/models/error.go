@@ -4,6 +4,7 @@ package models
 import (
 	stderrors "errors"
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/meshery/meshery/server/models/httputil"
@@ -604,8 +605,17 @@ func ErrResultNotFound(err error) error {
 	return errors.New(ErrResultNotFoundCode, errors.Alert, []string{err.Error()}, []string{"The record in the database does not exist."}, []string{"The record might have been deleted."}, []string{""})
 }
 
+// ErrPersistCredential reports a failure to persist a connection's credential.
+//
+// The cause is joined rather than only stringified into the MeshKit cause list,
+// so anything the underlying error carries - notably a provider status tagged
+// by httputil.WithProviderStatus - still reaches the handler. MeshKit's *Error
+// has no Unwrap, so a fmt.Errorf("%w") through the constructor would not carry
+// it; errors.Join is the mechanism ProviderStatusCode's errors.As traverses.
+// The MeshKit error is joined first, so GetCode and the detail accessors still
+// resolve to this code rather than to the cause's.
 func ErrPersistCredential(err error) error {
-	return errors.New(ErrPersistCredentialCode, errors.Alert, []string{"unable to persist credential details"}, []string{err.Error()}, []string{"The credential object is not valid"}, []string{"Ensure all the required fields are provided"})
+	return stderrors.Join(errors.New(ErrPersistCredentialCode, errors.Alert, []string{"unable to persist credential details"}, []string{err.Error()}, []string{"The credential object is not valid"}, []string{"Ensure all the required fields are provided"}), err)
 }
 
 func ErrPersistConnection(err error) error {
@@ -870,7 +880,7 @@ func ErrCredentialKeyDerivation(err error) error {
 // for storage. Meshery fails the write rather than persisting the secret in the
 // clear.
 func ErrCredentialEncrypt(err error) error {
-	return errors.New(ErrCredentialEncryptCode, errors.Alert, []string{"Unable to encrypt the credential secret"}, []string{err.Error()}, []string{"The credential secret could not be serialized, or the system random source is unavailable"}, []string{"Retry the request; if it persists, check that the host's random source (/dev/urandom) is readable by Meshery Server"})
+	return errors.New(ErrCredentialEncryptCode, errors.Alert, []string{"Unable to encrypt the credential secret"}, []string{err.Error()}, []string{"The credential secret could not be serialized to JSON for sealing"}, []string{"Check the credential secret for values that cannot be represented as JSON, then submit it again"})
 }
 
 // ErrCredentialDecrypt is returned when a stored credential envelope is
@@ -905,5 +915,5 @@ func ErrMalformedCredentialEnvelope(reason string) error {
 // rather than mistaken for an already-sealed secret, which would store the rest
 // of the secret in the clear.
 func ErrReservedCredentialProperty(property string) error {
-	return errors.New(ErrReservedCredentialPropertyCode, errors.Alert, []string{"Credential secret uses a property reserved by Meshery Server"}, []string{fmt.Sprintf("the credential secret carries %s, which is reserved for Meshery's own encryption envelope and may not be supplied by a client", property)}, []string{"The submitted credential secret contains a property in Meshery's reserved namespace"}, []string{"Remove the reserved property from the credential secret and submit it again"})
+	return httputil.WithProviderStatus(errors.New(ErrReservedCredentialPropertyCode, errors.Alert, []string{"Credential secret uses a property reserved by Meshery Server"}, []string{fmt.Sprintf("the credential secret carries %s, which is reserved for Meshery's own encryption envelope and may not be supplied by a client", property)}, []string{"The submitted credential secret contains a property in Meshery's reserved namespace"}, []string{"Remove the reserved property from the credential secret and submit it again"}), http.StatusBadRequest)
 }
