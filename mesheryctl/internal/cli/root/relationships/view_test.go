@@ -1,6 +1,7 @@
 package relationships
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"os"
@@ -85,22 +86,16 @@ func TestRelationshipViewSaveCreatesFileWithExtension(t *testing.T) {
 
 	expectedFile := filepath.Join(tmpDir, "relationship_kubernetes_aaaabbbb.json")
 
-	origStdout := os.Stdout
-	_, w, _ := os.Pipe()
-	os.Stdout = w
-	defer func() {
-		_ = w.Close()
-		os.Stdout = origStdout
-	}()
+	// REPLACE WITH:
+	buf := &bytes.Buffer{}
+	RelationshipCmd.SetOut(buf)
+	RelationshipCmd.SetErr(buf)
 
 	_ = utils.SetupMeshkitLoggerTesting(t, false)
 	RelationshipCmd.SetArgs([]string{"view", "kubernetes", "--output-format", "json", "--save"})
 	if err := RelationshipCmd.Execute(); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-
-	_ = w.Close()
-	os.Stdout = origStdout
 
 	if _, err := os.Stat(expectedFile); os.IsNotExist(err) {
 		entries, _ := os.ReadDir(tmpDir)
