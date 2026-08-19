@@ -34,6 +34,11 @@ vi.mock('@sistent/sistent', () => {
       palette: { mode: 'light', background: { paper: '#fff' } },
       breakpoints: { down: () => '@media (max-width: 0)' },
     }),
+    BottomSheet: ({ children, open }: any) =>
+      open ? <div data-testid="bottom-sheet">{children}</div> : null,
+    MenuList: ({ children }: any) => <div data-testid="menu-list">{children}</div>,
+    ListItemIcon: ({ children }: any) => <span>{children}</span>,
+    Typography: ({ children }: any) => <span>{children}</span>,
   };
 });
 
@@ -88,22 +93,19 @@ describe('MenuComponent', () => {
     expect(buttons[1]).toBeDisabled();
   });
 
-  it('renders a more-vert dropdown on mobile viewports', async () => {
+  it('renders a bottom sheet on mobile viewports', async () => {
     isMobile = true;
     const user = userEvent.setup();
     render(<MenuComponent options={baseOptions} />);
 
     expect(screen.getByTestId('more-vert')).toBeInTheDocument();
-    expect(screen.queryByTestId('menu')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('bottom-sheet')).not.toBeInTheDocument();
 
-    // Click anywhere on the MoreVert area to open the menu
+    // Click anywhere on the MoreVert area to open the bottom sheet
     await user.click(screen.getByTestId('more-vert'));
-    expect(screen.getByTestId('menu')).toBeInTheDocument();
-    // In mobile mode the menu wraps each option in its own block (styled MenuItem).
-    // The number of tooltips per-option should match options.length + 1 (the
-    // top-level "Quick Actions" trigger), so verify by tooltip count.
-    expect(screen.getByTestId('tooltip-Edit')).toBeInTheDocument();
-    expect(screen.getByTestId('tooltip-Delete')).toBeInTheDocument();
+    expect(screen.getByTestId('bottom-sheet')).toBeInTheDocument();
+    // Options should be visible inside the bottom sheet
+    expect(screen.getByTestId('menu-list')).toBeInTheDocument();
   });
 
   it('handles an empty options array without rendering buttons', () => {

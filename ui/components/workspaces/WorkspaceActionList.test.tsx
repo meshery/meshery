@@ -48,9 +48,16 @@ vi.mock('@sistent/sistent', () => ({
     </button>
   ),
   MoreVertIcon: () => <svg data-testid="more-vert-icon" />,
-  useTheme: () => ({ palette: { icon: { default: 'icon-default' } } }),
+  useTheme: () => ({
+    palette: { icon: { default: 'icon-default' } },
+    breakpoints: { down: () => '@media (max-width: 0)' },
+  }),
   useWindowDimensions: () => ({ width }),
   useHasPermission: (key: any) => mockCan(key?.id || key),
+  BottomSheet: ({ children, open }: any) =>
+    open ? <div data-testid="bottom-sheet">{children}</div> : null,
+  MenuList: ({ children }: any) => <div data-testid="menu-list">{children}</div>,
+  Typography: ({ children }: any) => <span>{children}</span>,
 }));
 
 vi.mock('./styles', () => ({
@@ -151,15 +158,15 @@ describe('WorkspaceActionList', () => {
     );
   });
 
-  it('switches to a mobile menu when the viewport is narrow', async () => {
+  it('switches to a mobile bottom sheet when the viewport is narrow', async () => {
     width = 800;
     const user = userEvent.setup();
     renderComponent();
 
-    expect(screen.queryByTestId('menu')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('bottom-sheet')).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /more/i }));
-    expect(screen.getByTestId('menu')).toBeInTheDocument();
-    // Each of the 4 actions should be rendered as a menu item
+    expect(screen.getByTestId('bottom-sheet')).toBeInTheDocument();
+    // Each of the 4 actions should be rendered as a menu item inside the menu list
     expect(screen.getAllByTestId('menu-item')).toHaveLength(4);
   });
 });
