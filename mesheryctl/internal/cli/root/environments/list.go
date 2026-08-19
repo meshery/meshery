@@ -64,6 +64,14 @@ mesheryctl environment list --orgId [orgId] --pagesize [pagesize]
 			return utils.ErrInvalidUUID(fmt.Errorf("invalid orgId: %s", environmentListFlagsProvided.orgId))
 		}
 
+		if cmd.Flags().Changed("page") && environmentListFlagsProvided.page < 1 {
+			return utils.ErrInvalidArgument(errors.New("page must be >= 1"))
+		}
+
+		if cmd.Flags().Changed("pagesize") && environmentListFlagsProvided.pagesize <= 0 {
+			return utils.ErrInvalidArgument(errors.New("pagesize must be > 0"))
+		}
+
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
