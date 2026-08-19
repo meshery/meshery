@@ -122,14 +122,22 @@ vi.mock('@sistent/sistent', () => ({
   ),
   NoSsr: ({ children }: any) => <>{children}</>,
   Typography: ({ children, ...props }: any) => <span {...props}>{children}</span>,
+  Popover: ({ open, children }: any) =>
+    open ? <div data-testid="popover">{children}</div> : null,
+  useMediaQuery: () => false,
   useTheme: () => ({
     palette: {
       mode: 'light',
       icon: { secondary: '#888' },
       text: { primary: '#000' },
     },
+    breakpoints: {
+      down: () => false,
+      up: () => true,
+    },
   }),
   DeleteIcon: () => <svg data-testid="delete-icon" />,
+  ChevronRightIcon: () => <svg data-testid="chevron-right-icon" />,
 }));
 
 vi.mock('./filter', () => ({
@@ -218,6 +226,11 @@ vi.mock('./notificationCenter.style', () => ({
     <div data-testid="drawer" data-open={String(Boolean(open))}>
       {children}
     </div>
+  ),
+  MobileDrawerCloseHandle: ({ children, onClick, ...props }: any) => (
+    <button type="button" onClick={onClick} data-testid="mobile-close-handle" {...props}>
+      {children}
+    </button>
   ),
   Title: ({ children, ...props }: any) => <div {...props}>{children}</div>,
   TitleBellIcon: ({ children, onClick }: any) => (

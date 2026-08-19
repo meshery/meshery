@@ -25,9 +25,22 @@ export const DarkBackdrop = styled('div')(({ open }) => ({
 export const SideList = styled('div')(({ theme }) => ({
   width: '45rem',
   maxWidth: '95vw',
+  height: '100%',
+  maxHeight: '100vh',
+  display: 'flex',
+  flexDirection: 'column',
+  overflowY: 'auto',
+  overflowX: 'hidden',
+  WebkitOverflowScrolling: 'touch',
 
   [theme.breakpoints.down('md')]: {
     width: '100%',
+    maxWidth: '100%',
+    height: '100vh',
+    maxHeight: '100vh',
+    overflowY: 'auto',
+    overflowX: 'hidden',
+    WebkitOverflowScrolling: 'touch',
   },
 }));
 export const StyledSubtitle = styled(Typography)(() => ({
@@ -58,14 +71,42 @@ export const StyledNotificationDrawer = styled(Drawer)(({ theme, isNotificationC
     boxShadow: theme.shadows[2],
     zIndex: 1205,
     position: 'absolute',
+    height: '100%',
+    maxHeight: '100vh',
     right: isNotificationCenterOpen ? 0 : '-42.8rem', // Dynamically handle full and peek views
     transition: 'right 0.3s ease-in-out',
     [theme.breakpoints.down('sm')]: {
       position: 'fixed',
       width: 'calc(100vw - 70px)',
       maxWidth: 'calc(100vw - 70px)',
+      height: '100vh',
+      maxHeight: '100vh',
       right: isNotificationCenterOpen ? 0 : 'calc(70px - 100vw)',
       zIndex: 1400,
+      overflow: 'visible',
+    },
+  },
+}));
+
+export const MobileDrawerCloseHandle = styled('div')(({ theme }) => ({
+  display: 'none',
+  [theme.breakpoints.down('sm')]: {
+    display: 'flex',
+    position: 'absolute',
+    left: '-26px',
+    top: '40%',
+    transform: 'translateY(-50%)',
+    width: '26px',
+    height: '48px',
+    backgroundColor: theme.palette.mode === 'dark' ? '#1E272C' : '#333333',
+    borderRadius: '8px 0 0 8px',
+    justifyContent: 'center',
+    alignItems: 'center',
+    cursor: 'pointer',
+    boxShadow: '-3px 2px 8px rgba(0, 0, 0, 0.3)',
+    zIndex: 1500,
+    '&:hover': {
+      backgroundColor: theme.palette.mode === 'dark' ? '#263238' : '#222222',
     },
   },
 }));
@@ -105,7 +146,10 @@ export const NotificationContainer = styled('div')(({ theme }) => ({
   background: theme.palette.background.card,
 
   [theme.breakpoints.down('md')]: {
+    minHeight: '4.8rem',
     height: 'auto',
+    flexWrap: 'nowrap',
+    padding: '1rem 1.25rem',
   },
 }));
 
