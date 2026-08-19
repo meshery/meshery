@@ -17,9 +17,9 @@ import {
 //
 //   1. Wire-format regression: the file-upload request body was serialising the
 //      file name as `file_name` (snake_case) instead of `fileName` (camelCase)
-//      as required by the server schema.  The fix anchors the body shape to the
-//      schemas-generated `ImportDesignApiArg` type so the field name cannot
-//      silently drift again.
+//      as required by the server schema.  The fix (introduced in PR #21114) anchors
+//      the body shape to the schemas-generated `ImportDesignApiArg` type so the
+//      field name cannot silently drift again.
 //
 //   2. Duplicate-submission: rapid clicks on the Import button could fire the
 //      POST twice.  The fix adds an `isSubmittingRef` guard in
@@ -262,7 +262,7 @@ test.describe('Design Import Tests', () => {
   //
   // After the user clicks Import, the button must immediately become disabled
   // and show "Importing…" so a rapid second click cannot fire a second POST.
-  // Uses a slow-responding stub (100 ms delay) to hold the in-flight window
+  // Uses a slow-responding stub (300 ms delay) to hold the in-flight window
   // open long enough to assert the disabled state.
   test(
     'Import button is disabled and shows Importing… while a submission is in flight',
