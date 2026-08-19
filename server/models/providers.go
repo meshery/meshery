@@ -423,6 +423,24 @@ func matchesProviderAddress(candidate string, addresses ...string) bool {
 	return false
 }
 
+// RestrictToEnforcedProvider drops every registration except the given map
+// key. Used at boot when PROVIDER is set so the Local Provider and any other
+// remotes are not addressable. No-op when enforcedKey is empty or is not in
+// the map (the caller is expected to fail closed in that case).
+func RestrictToEnforcedProvider(provs map[string]Provider, enforcedKey string) {
+	if enforcedKey == "" {
+		return
+	}
+	if _, ok := provs[enforcedKey]; !ok {
+		return
+	}
+	for key := range provs {
+		if key != enforcedKey {
+			delete(provs, key)
+		}
+	}
+}
+
 // ResolveProviderKey maps a caller-facing provider identifier to the
 // registration-map key Meshery uses internally for routing. It accepts the
 // canonical local name/legacy alias, an existing map key, a remote
