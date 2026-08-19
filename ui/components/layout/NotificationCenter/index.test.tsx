@@ -122,8 +122,7 @@ vi.mock('@sistent/sistent', () => ({
   ),
   NoSsr: ({ children }: any) => <>{children}</>,
   Typography: ({ children, ...props }: any) => <span {...props}>{children}</span>,
-  Popover: ({ open, children }: any) =>
-    open ? <div data-testid="popover">{children}</div> : null,
+  Popover: ({ open, children }: any) => (open ? <div data-testid="popover">{children}</div> : null),
   useMediaQuery: () => false,
   useTheme: () => ({
     palette: {

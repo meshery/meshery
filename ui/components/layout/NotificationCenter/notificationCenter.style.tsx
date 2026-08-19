@@ -88,8 +88,11 @@ export const StyledNotificationDrawer = styled(Drawer)(({ theme, isNotificationC
   },
 }));
 
-export const MobileDrawerCloseHandle = styled('div')(({ theme }) => ({
+export const MobileDrawerCloseHandle = styled('button')(({ theme }) => ({
   display: 'none',
+  border: 'none',
+  outline: 'none',
+  padding: 0,
   [theme.breakpoints.down('sm')]: {
     display: 'flex',
     position: 'absolute',

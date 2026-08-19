@@ -218,7 +218,7 @@ const Header = ({ handleFilter, handleClose }) => {
 
   const totalUnreadCount = (countBySeverityLevel || []).reduce(
     (acc, item) => acc + (item.count || 0),
-    0
+    0,
   );
 
   const onClickSeverity = (severity) => {
@@ -286,6 +286,9 @@ const Header = ({ handleFilter, handleClose }) => {
         <ClickAwayListener onClickAway={() => setIsMobileMenuOpen(false)}>
           <Box sx={{ position: 'relative' }}>
             <Button
+              aria-label="Filter notifications"
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-notification-filter-menu"
               onClick={() => setIsMobileMenuOpen((prev) => !prev)}
               style={{
                 backgroundColor: activeBg,
@@ -335,6 +338,7 @@ const Header = ({ handleFilter, handleClose }) => {
             </Button>
             {isMobileMenuOpen && (
               <Box
+                id="mobile-notification-filter-menu"
                 sx={{
                   position: 'absolute',
                   top: 'calc(100% + 8px)',
@@ -629,14 +633,24 @@ const NotificationCenterDrawer = () => {
           BackdropComponent={<DarkBackdrop open={isNotificationCenterOpen} />}
         >
           <MobileDrawerCloseHandle
+            type="button"
             data-testid="mobile-drawer-close-handle"
             onClick={handleClose}
             aria-label="Close notifications"
           >
             <ChevronRightIcon fill="#fff" height="22px" width="22px" />
           </MobileDrawerCloseHandle>
-          <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-            <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          <div
+            style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}
+          >
+            <div
+              style={{
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
+              }}
+            >
               <SideList>
                 <Header handleFilter={handleFilter} handleClose={handleClose}></Header>
                 <Divider light />
