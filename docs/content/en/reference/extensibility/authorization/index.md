@@ -129,9 +129,10 @@ This example shows how the **Evaluate Relationships** key is wired across each l
 {{< code code=`export const Keys = {
   CatalogManagementEvaluateRelationships: {
     id: "c7752be7-5c0f-465d-a8ba-5594acd08b93",
-    function: "Evaluate Relationships",
     category: "Catalog Management",
-    subcategory: "Designs"
+    subcategory: "Designs",
+    function: "Evaluate Relationships",
+    description: "Evaluate relationships inside a design"
   }
 }` >}}
 
