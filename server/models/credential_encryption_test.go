@@ -799,3 +799,65 @@ func TestDecryptCredentialEnvelopeReadsAHandRolledV1Envelope(t *testing.T) {
 		t.Errorf("grafanaAPIKey = %v, want key", got)
 	}
 }
+
+// TestUpdateUserCredentialSurvivesAnUndecryptableStoredSecret is a regression
+// test for a write that lands and then reports failure. The update path
+// re-reads the row it just wrote, and that row can hold an envelope sealed by a
+// build carrying a different token. Nothing authenticates with the value - the
+// handler discards it - so failing there turned a durable, already-committed
+// rename into a 500, with no way for the user to ever rename that credential.
+func TestUpdateUserCredentialSurvivesAnUndecryptableStoredSecret(t *testing.T) {
+	provider := newTestProviderWithCredentialDB(t)
+	userID := uuid.Must(uuid.NewV4())
+
+	sealed, err := EncryptCredentialSecret(map[string]interface{}{"grafanaAPIKey": "sealed-under-another-build"})
+	if err != nil {
+		t.Fatalf("EncryptCredentialSecret: %v", err)
+	}
+	envelope := sealed[credentialCiphertextKey].(string)
+	payload := strings.SplitN(strings.TrimPrefix(envelope, credentialEnvelopePrefix), ":", 2)[1]
+
+	foreignRow := Credential{
+		ID:     uuid.Must(uuid.NewV4()),
+		Name:   "original",
+		Type:   "token",
+		UserId: userID,
+		Secret: core.Map{credentialCiphertextKey: credentialEnvelopePrefix + "0123456789ab:" + payload},
+	}
+	if err := provider.GetGenericPersister().Table("credentials").Create(&foreignRow).Error; err != nil {
+		t.Fatalf("seeding a foreign-key row: %v", err)
+	}
+
+	updated, err := provider.UpdateUserCredential(nil, &Credential{
+		ID:     foreignRow.ID,
+		UserId: userID,
+		Name:   "renamed",
+		Type:   "token",
+		Secret: core.Map{}, // exactly what the handler produces for a rename-only body
+	})
+	if err != nil {
+		t.Fatalf("a rename over an undecryptable secret failed even though the write lands: %v", err)
+	}
+	if updated.Name != "renamed" {
+		t.Errorf("returned name = %q, want renamed", updated.Name)
+	}
+	if len(updated.Secret) != 0 {
+		t.Errorf("returned secret = %#v, want none - an unreadable secret must be dropped, never returned as ciphertext", updated.Secret)
+	}
+
+	var storedName string
+	if err := provider.GetGenericPersister().Raw("SELECT name FROM credentials WHERE id = ?", foreignRow.ID).Scan(&storedName).Error; err != nil {
+		t.Fatalf("re-reading the row: %v", err)
+	}
+	if storedName != "renamed" {
+		t.Errorf("stored name = %q, want renamed - the rename must be durable", storedName)
+	}
+
+	var storedSecret string
+	if err := provider.GetGenericPersister().Raw("SELECT secret FROM credentials WHERE id = ?", foreignRow.ID).Scan(&storedSecret).Error; err != nil {
+		t.Fatalf("re-reading the stored secret: %v", err)
+	}
+	if !strings.Contains(storedSecret, "0123456789ab") {
+		t.Errorf("stored secret = %s, want the original foreign envelope left untouched", storedSecret)
+	}
+}

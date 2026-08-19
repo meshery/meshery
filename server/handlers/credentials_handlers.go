@@ -10,7 +10,24 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 )
+
+// credentialWriteStatus maps a credential write failure to its HTTP status.
+//
+// A secret carrying Meshery's reserved ciphertext property is a malformed
+// submission the caller can fix, not a server fault, so it is the one failure
+// on these endpoints that is a 400. The provider wraps the MeshKit error with
+// %w and meshkiterrors.GetCode unwraps, so the code resolves through that
+// wrapper - which is why the raw provider error is inspected here rather than
+// the ErrSaveUserCredential/ErrUpdateUserCredential envelope, whose own code
+// would match first.
+func credentialWriteStatus(err error) int {
+	if meshkiterrors.GetCode(err) == models.ErrReservedCredentialPropertyCode {
+		return http.StatusBadRequest
+	}
+	return http.StatusInternalServerError
+}
 
 func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	bd, err := io.ReadAll(req.Body)
@@ -41,7 +58,7 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 	createdCredential, err := provider.SaveUserCredential(token, &credential)
 	if err != nil {
 		h.log.Error(ErrSaveUserCredential(err))
-		writeMeshkitError(w, ErrSaveUserCredential(err), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrSaveUserCredential(err), credentialWriteStatus(err))
 		return
 	}
 
@@ -131,7 +148,7 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 	_, err = provider.UpdateUserCredential(req, credential)
 	if err != nil {
 		h.log.Error(ErrUpdateUserCredential(err))
-		writeMeshkitError(w, ErrUpdateUserCredential(err), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrUpdateUserCredential(err), credentialWriteStatus(err))
 		return
 	}
 

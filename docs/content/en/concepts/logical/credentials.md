@@ -59,6 +59,9 @@ the binary.** Be precise about what that buys you:
   container image**, who can recover the key from it. This is not key-managed
   encryption, and it is not a substitute for keeping your datastore, your
   backups and your images access-controlled.
+- **The same secret is also the `X-API-Key` Meshery Server sends when submitting
+  anonymous performance results**, so it leaves the binary on the network too,
+  and anyone who captures it can derive the same key.
 
 Two consequences are worth knowing before you meet them:
 

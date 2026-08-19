@@ -1700,11 +1700,11 @@ func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential 
 		return nil, fmt.Errorf("error getting updated user credential: %v", err)
 	}
 
-	decryptedSecret, err := DecryptCredentialSecret(updatedCredential.Secret)
-	if err != nil {
-		return nil, fmt.Errorf("error getting updated user credential: %w", err)
-	}
-	updatedCredential.Secret = decryptedSecret
+	// The write is already committed at this point, and nothing authenticates
+	// with the value returned here - the handler discards it. An undecryptable
+	// secret must therefore not turn a durable update into a failed request:
+	// degrade the way the other non-authenticating paths do.
+	l.decryptCredentialSecretBestEffort(updatedCredential)
 
 	return updatedCredential, nil
 }
