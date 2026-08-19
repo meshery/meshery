@@ -228,14 +228,26 @@ make helm-docs      # Generate Helm chart docs
 - Redux Toolkit for global state; GraphQL via Relay; REST via Axios.
 - Playwright for E2E tests.
 - **Every content-bearing page needs an *access* gate, not just gated controls.**
-  `const canX = useHasPermission(Keys.X)` from `@sistent/sistent` plus an early
-  `return <DefaultError permissionKey={Keys.X} />`; pass `skip: !canX` to the page's
-  RTK Query hooks so a denied session issues no request. Gating only the buttons
-  leaves the page readable by a member holding zero keys. The Meshery UI dashboard
-  (`/`) is the **single deliberate exception** - it is the post-login landing page, so
-  denying it would strand a newly invited member on an error screen. Pin the **deny**
-  path in a test; an allow-only test passes against an ungated page too. Spellings,
-  the CASL wiring and the exception:
+  Read `canX` with `useHasPermission(Keys.X)` from `@sistent/sistent`, render
+  `<DefaultError permissionKey={Keys.X} />` when it is false, and pass `skip: !canX`
+  to the page's RTK Query hooks so a denied session issues no request. Gating only
+  the buttons leaves the page readable by a member holding zero keys. **Where the
+  `DefaultError` goes depends on which layer you are in:**
+  - In the page body **component** (`components/workspaces/index.tsx`,
+    `components/user-preferences/index.tsx`) an early `return <DefaultError …/>` is
+    correct - the page file already wraps it in `MesheryPage`, so the shell survives.
+  - In a **page** under `ui/pages/` (`configuration/designs/configurator.tsx`,
+    `configuration/catalog.tsx`) render it as the alternate branch *inside*
+    `MesheryPage`, never as an early return: returning early skips the shell and
+    loses both the browser tab title and the Redux page title `usePageTitle` sets.
+
+  Also keep tests out of `ui/pages/` - `next.config.js` sets no `pageExtensions`, so
+  anything `.tsx` there becomes a route and breaks `next build`; put them under
+  `ui/__tests__/`. The Meshery UI dashboard (`/`) is the **single deliberate
+  exception** to gating - it is the post-login landing page, so denying it would
+  strand a newly invited member on an error screen. Pin the **deny** path in a test;
+  an allow-only test passes against an ungated page too. Spellings, the CASL wiring
+  and the exception:
   [Extensibility: Authorization](./docs/content/en/reference/extensibility/authorization/index.md).
 
 ### Commits
