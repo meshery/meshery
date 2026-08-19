@@ -84,6 +84,9 @@ Scripts in `.agents/hooks/`:
 | Block Lock Files | `.agents/hooks/block-lockfiles.sh` | Pre-edit | Prevent direct edits to lock files |
 | Require Sign-off | `.agents/hooks/require-signoff.sh` | Pre-command | Prevent a `git commit` with no `Signed-off-by` |
 
+Claude Code reaches the sign-off guard through `.claude/adapters/require-signoff.sh`, wired in
+`.claude/settings.json`; see [Wiring it into a harness](#wiring-it-into-a-harness).
+
 `block-lockfiles.sh` enforces the no-hand-editing rule by basename, so it covers lock files
 that `AGENTS.md` does not enumerate.
 
@@ -109,5 +112,21 @@ the DCO check reads its configuration from the default branch only, so no change
 relax it, and remediation commits are not enabled for this repository. By the time CI reports a
 missing trailer, the only remedy left is rewriting the branch and force-pushing it.
 
+### Wiring it into a harness
+
+The guard is agnostic on purpose - a command line in, a verdict out as an exit status - so
+every harness needs a small adapter, and the adapter belongs in that harness's own directory.
+`.claude/adapters/require-signoff.sh` is the Claude Code one, declared as a `PreToolUse` hook
+on `Bash` in `.claude/settings.json`. It exists because the two protocols do not meet: Claude
+Code hands the tool call to a hook as JSON on stdin, not as an argument, and it reads a bare
+non-zero exit as a *non-blocking* error - surfaced, then the command runs anyway. A guard wired
+without that translation reads exactly like a guard that passed, which is the failure this one
+is here to prevent.
+
+It sits in `adapters/` rather than in `hooks/` because `.claude/hooks` is a symlink to
+`.agents/hooks`: a file written there would *be* the shared, harness-agnostic script, which is
+the one this adapter exists to translate.
+
 `ui/tests/requireSignoff.test.ts` runs the guard against real repositories and asserts the
-verdict it returns for each of those shapes.
+verdict it returns for each of those shapes, then runs it once more through the wiring declared
+in `.claude/settings.json` - shell expansion, stdin payload and decision included.

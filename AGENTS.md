@@ -442,9 +442,11 @@ NATS topics: `meshsync.request`, `meshery.broker`. MeshSync publishes cluster st
   commits git routes through it: a checkout without `make ui-setup`, and any harness
   that repoints `core.hooksPath` at its own hooks directory, bypass it silently.
   `.agents/hooks/require-signoff.sh` covers that bypass - it reads the proposed
-  command rather than git's hook plumbing, so `core.hooksPath` cannot disarm it - but
-  it only fires where a harness wires it in. Always `git commit -s`; never rely on
-  either guard to catch the omission.
+  command rather than git's hook plumbing, so `core.hooksPath` cannot disarm it - and
+  `.claude/settings.json` arms it for Claude Code through
+  `.claude/adapters/require-signoff.sh`, which is the adapter that makes it *block*
+  rather than merely run. Any other harness must wire the `.agents/` script itself.
+  Always `git commit -s`; never rely on either guard to catch the omission.
 - Repairing a pushed commit that lacks the trailer: DCO wants a sign-off naming that
   commit's **author**, so derive it per commit
   (`git rebase <base> --exec 'git commit --amend --no-edit --trailer
@@ -471,7 +473,13 @@ touching any of them.
   `.claude/`, which resolves only where the symlink exists.
 - Hooks in `.agents/hooks/`: `format-frontend.sh` (post-edit Prettier),
   `block-lockfiles.sh` (pre-edit lock-file guard) and `require-signoff.sh`
-  (pre-command DCO sign-off guard).
+  (pre-command DCO sign-off guard). They hold the rules and stay harness-agnostic -
+  a path or a command line in, a verdict out as an exit status. `.claude/hooks` is a
+  symlink to this directory, so a harness adapter cannot live under it - wiring
+  belongs beside it, in that harness's own directory:
+  `.claude/adapters/require-signoff.sh` translates the guard to Claude Code's
+  stdin-JSON-and-decision protocol, under which a bare non-zero exit is a
+  non-blocking error that would let the commit through.
 
 ## Further Reading
 

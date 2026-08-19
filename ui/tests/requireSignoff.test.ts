@@ -1,5 +1,5 @@
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -155,5 +155,113 @@ describe.skipIf(process.platform === 'win32')('git commit sign-off guard', () =>
 
   it('exempts a merge commit, as the DCO check does', () => {
     expect(guard(merging, 'git commit -m "Merge branch \'topic\'"').blocked).toBe(false);
+  });
+});
+
+/**
+ * The rules above are only worth as much as the wiring that runs them. The
+ * guard is harness-agnostic by design - a command line in, a verdict out as an
+ * exit status - and Claude Code speaks neither: it hands a tool call to a hook
+ * as JSON on stdin, and reads a plain non-zero exit as a *non-blocking* error,
+ * which lets the commit proceed. `.claude/adapters/require-signoff.sh` adapts
+ * between the two, and `.claude/settings.json` declares it.
+ *
+ * These drive that declared wiring the way the harness does: the command is
+ * read out of the settings file and run through a shell with
+ * `CLAUDE_PROJECT_DIR` set, so its quoting and expansion are exercised rather
+ * than reproduced here, and the decision is read back off stdout.
+ */
+type WiredHook = { type?: string; command?: string };
+type HookMatcher = { matcher?: string; hooks?: WiredHook[] };
+
+const bashPreToolUseHooks = (): string[] => {
+  const settings = JSON.parse(readFileSync(join(REPO_ROOT, '.claude', 'settings.json'), 'utf8'));
+  const matchers: HookMatcher[] = settings?.hooks?.PreToolUse ?? [];
+
+  return matchers
+    .filter(
+      ({ matcher }) => matcher === undefined || matcher === '*' || new RegExp(matcher).test('Bash'),
+    )
+    .flatMap(({ hooks }) => hooks ?? [])
+    .filter((hook): hook is Required<WiredHook> => hook.type === 'command' && !!hook.command)
+    .map(({ command }) => command);
+};
+
+const runWired = (cwd: string, payload: Record<string, unknown>) => {
+  const results = bashPreToolUseHooks().map((command) =>
+    spawnSync('/bin/sh', ['-c', command], {
+      cwd,
+      env: { ...GIT_ENV, CLAUDE_PROJECT_DIR: REPO_ROOT },
+      input: JSON.stringify(payload),
+      encoding: 'utf8',
+    }),
+  );
+
+  const denial = results
+    .map(({ status, stdout }) => ({
+      status,
+      output: stdout.trim() ? JSON.parse(stdout.trim()) : undefined,
+    }))
+    .find(({ output }) => output?.hookSpecificOutput?.permissionDecision === 'deny');
+
+  return {
+    decision: denial?.output.hookSpecificOutput.permissionDecision,
+    reason: denial?.output.hookSpecificOutput.permissionDecisionReason ?? '',
+    status: denial?.status,
+  };
+};
+
+const bashCall = (cwd: string, command: string) => ({
+  hook_event_name: 'PreToolUse',
+  tool_name: 'Bash',
+  cwd,
+  tool_input: { command },
+});
+
+describe.skipIf(process.platform === 'win32')('git commit sign-off guard, as wired', () => {
+  let repo: string;
+
+  beforeAll(() => {
+    repo = makeRepo();
+    git(repo, 'commit', '--quiet', '--allow-empty', '-m', 'unsigned base');
+  });
+
+  afterAll(() => rmSync(repo, { recursive: true, force: true }));
+
+  it('is armed for Bash tool calls', () => {
+    expect(bashPreToolUseHooks().length).toBeGreaterThan(0);
+  });
+
+  it('denies the unsigned commit, and names the remedy', () => {
+    const { decision, reason } = runWired(repo, bashCall(repo, 'git commit -m "no sign-off"'));
+
+    expect(decision).toBe('deny');
+    expect(reason).toContain('git commit -s');
+  });
+
+  it('reports the denial as a decision rather than as a hook failure', () => {
+    // A non-zero exit is a *non-blocking* error here: the harness surfaces it
+    // and runs the command anyway. Blocking has to come from the decision, so
+    // the hook that denied has to have succeeded at denying.
+    expect(runWired(repo, bashCall(repo, 'git commit -m "no sign-off"')).status).toBe(0);
+  });
+
+  it('lets a signed commit through', () => {
+    expect(runWired(repo, bashCall(repo, 'git commit -s -m "signed"')).decision).toBeUndefined();
+  });
+
+  it('leaves a command that creates no commit alone', () => {
+    expect(runWired(repo, bashCall(repo, 'git status')).decision).toBeUndefined();
+  });
+
+  it('leaves a tool call that is not Bash alone', () => {
+    const write = {
+      hook_event_name: 'PreToolUse',
+      tool_name: 'Write',
+      cwd: repo,
+      tool_input: { file_path: join(repo, 'notes.md'), content: 'git commit -m "no sign-off"' },
+    };
+
+    expect(runWired(repo, write).decision).toBeUndefined();
   });
 });
