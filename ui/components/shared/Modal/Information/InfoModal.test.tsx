@@ -131,10 +131,10 @@ vi.mock('notistack', () => ({
 
 vi.mock('./styles', () => ({
   ActionContainer: ({ children }: any) => <div data-testid="action-container">{children}</div>,
-  CopyLinkButton: ({ children, onClick, ...props }: any) => (
-    <span onClick={onClick} {...props}>
+  CopyLinkButton: ({ children, onClick, sx: _sx, ...props }: any) => (
+    <button type="button" onClick={onClick} {...props}>
       {children}
-    </span>
+    </button>
   ),
   CreatAtContainer: ({ children }: any) => <span>{children}</span>,
   ResourceName: ({ children }: any) => <span data-testid="resource-name">{children}</span>,
@@ -393,7 +393,7 @@ describe('InfoModal', () => {
       />,
     );
 
-    await user.click(screen.getByText('Copy Link'));
+    await user.click(screen.getByRole('button', { name: 'Copy Link' }));
     expect(writeText).toHaveBeenCalledWith('https://meshery.io/p1');
     expect(enqueueSnackbar).toHaveBeenCalled();
   });
