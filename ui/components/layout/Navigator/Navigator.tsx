@@ -868,22 +868,20 @@ const NavigatorContent = () => {
     </ListItem>
   );
 
+  const isTogglerEnabled = providerUiAccessControl?.isNavigatorComponentEnabled?.([TOGGLER]);
+
   const Chevron = (
     <ChevronButtonWrapper
       type="button"
       isCollapsed={isDrawerCollapsed}
-      style={
-        providerUiAccessControl?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : cursorNotAllowed
-      }
+      onClick={isTogglerEnabled ? toggleMiniDrawer : undefined}
+      aria-label="Toggle sidebar navigation"
+      aria-expanded={!isDrawerCollapsed}
+      style={isTogglerEnabled ? {} : cursorNotAllowed}
     >
-      <div
-        style={
-          providerUiAccessControl?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : disabledStyle
-        }
-        onClick={toggleMiniDrawer}
-      >
+      <div style={isTogglerEnabled ? {} : disabledStyle}>
         <LeftArrowIcon
-          alt="Sidebar collapse toggle"
+          aria-hidden="true"
           style={{
             cursor: 'pointer',
             verticalAlign: 'middle',

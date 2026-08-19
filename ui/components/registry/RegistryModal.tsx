@@ -329,6 +329,8 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
         type="button"
         isCollapsed={!open}
         onClick={handleDrawerToggle}
+        aria-label="Toggle registry navigation"
+        aria-expanded={open}
         sx={{
           position: 'absolute',
           bottom: '12%',
@@ -344,7 +346,7 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
         }}
       >
         <LeftArrowIcon
-          aria-label="Sidebar collapse toggle"
+          aria-hidden="true"
           style={{
             cursor: 'pointer',
             verticalAlign: 'middle',
