@@ -23,6 +23,9 @@ pre.codeblock-pre {
   color: #f8f9fa;
   margin: 0px;
   padding: 0px;
+  &:not(:has(.clipboardjs)) {
+    padding: 0.5rem 0.75rem;
+  }
 }
 .clipboardjs {
   width: 100%;
