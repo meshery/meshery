@@ -65,9 +65,22 @@ the binary.** Be precise about what that buys you:
 
 Two consequences are worth knowing before you meet them:
 
-- **Upgrading needs no action.** Credentials written before this shipped are
-  plaintext and keep reading; each converts to ciphertext the next time it is
-  written. There is no migration to run.
+- **Upgrading takes no action to keep working, but one action to finish the
+  job.** Credentials written before this shipped are plaintext and keep reading;
+  each becomes ciphertext the next time it is written, and there is no migration
+  to run. That conversion is not a scrub, though. SQLite does not zero a page
+  when it frees one, so on an install that predates this change the earlier
+  plaintext secret can remain recoverable from the raw datastore file even after
+  the credential has been rewritten as ciphertext - and rewriting more rows will
+  not clear it, which is why a bulk migration would not help either. Reclaim
+  those pages by compacting the datastore with Meshery Server stopped:
+
+  ```bash
+  sqlite3 ~/.meshery/config/mesherydb.sql 'VACUUM;'
+  ```
+
+  A fresh install is unaffected: every credential in it was sealed on its first
+  write, so there is no earlier plaintext to reclaim.
 - **Credentials are readable only by a build carrying the same secret.** A
   locally built Meshery Server (`make server`) links no release secret and falls
   back to a development default, so credentials it wrote cannot be read by a
