@@ -81,7 +81,7 @@ On startup, Meshery Server's [`SeedKeys`](https://github.com/meshery/meshery/blo
 #### Phase 3: Wire Key in the UI
 
 ##### Step 5: Direct Import from Schemas
-Because Meshery UI depends on `@meshery/schemas`, you gate new UI behavior by importing `Keys` directly from `@meshery/schemas/permissions`. There is no hand-maintained constant map to update: `ui/utils/permission_constants.ts` was removed once every call site had been migrated to the generated keys.
+Because Meshery UI depends on `@meshery/schemas`, you can gate new UI behavior by importing `Keys` directly from `@meshery/schemas/permissions`. There is no hand-maintained constant map to update: `ui/utils/permission_constants.ts` was removed once every call site had been migrated to the generated keys.
 
 Simply import the `Keys` object directly from `@meshery/schemas/permissions` in your component:
 {{< code code=`import { Keys } from '@meshery/schemas/permissions';` >}}
@@ -268,7 +268,7 @@ CASL gates Meshery UI at two levels, and they are not the same thing:
 *   **Access gating** replaces a page's whole content with the permission-denied page when your session lacks the key that page requires.
 *   **Control gating** renders the page, and hides or disables only the individual affordances within it - a button, a link, a menu item - that you lack the key for.
 
-Every content-bearing page in Meshery UI is access-gated. Where the page owns RTK Query hooks, pass `skip` on the same flag so a denied session issues no request at all.
+Every content-bearing page in Meshery UI except the landing page (`/`) is access-gated; that one exception is described below. Where the page owns RTK Query hooks, pass `skip` on the same flag so a denied session issues no request at all.
 
 {{% alert color="dark" title="Note: the Meshery UI dashboard is a deliberate exception" %}}
 The **Meshery UI dashboard** (`/`) is control-gated only. It renders for an organization member holding no keys at all, with the links they cannot follow disabled in place, rather than replacing itself with the permission-denied page.
