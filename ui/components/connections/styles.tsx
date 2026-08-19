@@ -208,7 +208,6 @@ export const NotFoundChip = styled(Chip)(({ theme }) => ({
     color: theme.palette.text.secondary,
   },
   background: `${alpha(theme.palette.text.secondary, 0.13)} !important`,
-  border: `1px solid ${alpha(theme.palette.text.secondary, 0.35)}`,
   '& .MuiSvgIcon-root, & svg': {
     color: `${theme.palette.text.secondary} !important`,
     fill: `${theme.palette.text.secondary} !important`,
