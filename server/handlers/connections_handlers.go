@@ -601,9 +601,7 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 				// Cleanup is finished. Only remove the StateMachine from the tracker if the
 				// specific Delete operation that initiated this cleanup is still the active
 				// lifecycle generation. (i.e. no RECONNECT adopted the StateMachine).
-				if inst.GetLifecycleCtx() == deleteGenerationCtx {
-					smInstanceTracker.RemoveIfMatch(inst.ID, inst)
-				}
+				smInstanceTracker.RemoveIfMatchAndGeneration(inst.ID, inst, deleteGenerationCtx)
 
 				if doneChan, ok := detachedCtx.Value(trackerCleanupDoneKey).(chan struct{}); ok && doneChan != nil {
 					close(doneChan)

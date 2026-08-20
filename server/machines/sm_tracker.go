@@ -1,6 +1,7 @@
 package machines
 
 import (
+	"context"
 	"sync"
 
 	"github.com/meshery/schemas/models/core"
@@ -97,6 +98,16 @@ func (smt *ConnectionToStateMachineInstanceTracker) RemoveIfMatchAndState(id cor
 				delete(smt.ConnectToInstanceMap, id)
 				return
 			}
+		}
+	}
+}
+
+func (smt *ConnectionToStateMachineInstanceTracker) RemoveIfMatchAndGeneration(id core.Uuid, expectedInst *StateMachine, expectedGeneration context.Context) {
+	smt.mx.Lock()
+	defer smt.mx.Unlock()
+	if inst, ok := smt.ConnectToInstanceMap[id]; ok && inst == expectedInst {
+		if inst.GetLifecycleCtx() == expectedGeneration {
+			delete(smt.ConnectToInstanceMap, id)
 		}
 	}
 }

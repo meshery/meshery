@@ -182,9 +182,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		// Cleanup is finished. Only remove the StateMachine from the tracker if the
 		// specific Delete operation that initiated this cleanup is still the active
 		// lifecycle generation. (i.e. no RECONNECT adopted the StateMachine).
-		if inst.GetLifecycleCtx() == deleteGenerationCtx {
-			smInstanceTracker.RemoveIfMatch(connectionUUID, inst)
-		}
+		smInstanceTracker.RemoveIfMatchAndGeneration(connectionUUID, inst, deleteGenerationCtx)
 
 		if ch, ok := req.Context().Value(trackerCleanupDoneKey).(chan struct{}); ok && ch != nil {
 			close(ch)

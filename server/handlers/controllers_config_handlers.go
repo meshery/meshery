@@ -392,7 +392,7 @@ func (h *Handler) applyControllersConfigToConnection(
 			h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Error, "Failed to reach the connection's cluster to apply the controllers configuration.", map[string]interface{}{"error": err, "connectionId": connectionID})
 			return
 		}
-		applyCtx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+		applyCtx, cancel := context.WithTimeout(generationCtx, 2*time.Minute)
 		defer cancel()
 		result, err := models.ApplyControllersConfigToCluster(applyCtx, h.log, kubeClient, merged)
 		if err != nil {
