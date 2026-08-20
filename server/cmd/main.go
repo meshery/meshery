@@ -303,10 +303,14 @@ func main() {
 	//seed the local meshmodel components
 	rego := policies.Rego{}
 
+	lProv.SeedContent(log)
+	provs[lProv.Name()] = lProv
+
 	go func() {
 		// This is where models are seeded from meshmodel directory to registry
 		models.SeedComponents(log, hc, regManager, dbHandler)
-		// Rego is intialized for passing of policy if the policies are made to be per model base this needs to be removed.
+
+		// Rego is initialized for passing of policy if the policies are made to be per model base this needs to be removed.
 		r, err := policies.NewRegoInstance(models.PoliciesPath, regManager)
 		if err != nil {
 			log.Warn(handlers.ErrCreatingOPAInstance(err))
@@ -315,9 +319,6 @@ func main() {
 		}
 		krh.SeedKeys(viper.GetString("KEYS_PATH"))
 	}()
-
-	lProv.SeedContent(log)
-	provs[lProv.Name()] = lProv
 
 	// Trim once here so a whitespace-only PROVIDER behaves exactly like unset
 	// everywhere downstream. NormalizeProviderName does not trim, so an
