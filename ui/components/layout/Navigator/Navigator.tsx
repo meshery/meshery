@@ -447,22 +447,6 @@ const NavigatorContent = () => {
     );
   };
 
-  const handleExtensionIconMouseEnter = (event: React.MouseEvent<HTMLImageElement>) => {
-    const image = event.currentTarget;
-
-    image.style.transform = 'translate(-20%, -25%)';
-    image.style.top = '0';
-    image.style.right = '0';
-  };
-
-  const handleExtensionIconMouseLeave = (event: React.MouseEvent<HTMLImageElement>) => {
-    const image = event.currentTarget;
-
-    image.style.transform = 'translate(0, 0)';
-    image.style.top = 'auto';
-    image.style.right = 'auto';
-  };
-
   const renderNavigatorExtensions = (children, depth) => {
     if (!children || children.length === 0) {
       return null;
@@ -519,16 +503,16 @@ const NavigatorContent = () => {
             placement="right"
             disableFocusListener={!drawerCollapsed}
             disableTouchListener={!drawerCollapsed}
+            disableHoverListener={!drawerCollapsed}
           >
             <MainListIcon>
               <img
                 src={icon}
+                alt={`${name} icon`}
                 style={{
                   width: '20px',
                   filter: currentPath === href ? activeIconFilter : '',
                 }}
-                onMouseOver={handleExtensionIconMouseEnter}
-                onMouseOut={handleExtensionIconMouseLeave}
               />
             </MainListIcon>
           </CustomTooltip>
@@ -795,6 +779,7 @@ const NavigatorContent = () => {
     <>
       <NavigatorHelpIcons
         isCollapsed={isDrawerCollapsed}
+        isHelperOpen={showHelperButton}
         size="large"
         orientation={isDrawerCollapsed ? 'vertical' : 'horizontal'}
       >
@@ -829,7 +814,7 @@ const NavigatorContent = () => {
             </HelpListItem>
           );
         })}
-        <ListItem key="help-button" style={{ display: isDrawerCollapsed ? 'inherit' : 'none' }}>
+        <HelpListItem key="help-button" style={{ display: isDrawerCollapsed ? 'flex' : 'none' }}>
           <CustomTextTooltip title="Help" placement={isDrawerCollapsed ? 'right' : 'top'}>
             <HelpButton isCollapsed={isDrawerCollapsed} onClick={toggleSpacing}>
               <HelpOutlinedIcon
@@ -851,7 +836,7 @@ const NavigatorContent = () => {
               />
             </HelpButton>
           </CustomTextTooltip>
-        </ListItem>
+        </HelpListItem>
       </NavigatorHelpIcons>
     </>
   );

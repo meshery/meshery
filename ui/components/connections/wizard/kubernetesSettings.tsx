@@ -22,6 +22,7 @@ import type { ConnectionStateTransitionModalRef } from '../ConnectionStateTransi
 import type { ConnectionTransitionMap } from '../ConnectionTable.constants';
 import {
   MeshsyncDeploymentModePicker,
+  applyMeshsyncModeResult,
   getConfiguredConnection,
   getCurrentDeploymentMode,
   getSelectedDeploymentMode,
@@ -314,12 +315,11 @@ export const kubernetesSettingsStep: WizardStep = {
       if (modeChanged) {
         // Dedicated action endpoint: the server owns the metadata merge and the
         // MeshSync (and operator stack) redeploy, keyed on the connection id.
-        await ctx.services.setMeshsyncMode(connectionId, selectedMode as 'operator' | 'embedded');
-        const metadata = {
-          ...((nextConnection.metadata as GenericRecord) || {}),
-          meshsync_deployment_mode: selectedMode,
-        };
-        nextConnection = { ...nextConnection, metadata };
+        const updated = await ctx.services.setMeshsyncMode(
+          connectionId,
+          selectedMode as 'operator' | 'embedded',
+        );
+        nextConnection = applyMeshsyncModeResult(nextConnection, updated, selectedMode);
       }
 
       ctx.patch({ registrationResult: nextConnection });
