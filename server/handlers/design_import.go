@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -24,6 +26,12 @@ import (
 	"github.com/meshery/schemas/models/core"
 	pattern "github.com/meshery/schemas/models/v1beta3/design"
 )
+
+// maxImportFetchSize bounds how much of a URL-import response
+// fetchFileFromURL will hold in memory. It matches the cap already used for
+// the sibling URL-import path in RegisterMeshmodels (component_handler.go),
+// so the two "import by URL" features share one limit rather than drifting.
+const maxImportFetchSize = 64 << 20 // 64MiB
 
 // FileToImport is the internal tuple of bytes + filename that the
 // import pipeline works with after the request-body variant has been
@@ -50,8 +58,70 @@ type importVariant struct {
 // feedback on meshery/meshery#18845 called out. 60s is generous for
 // a single-file fetch (Kubernetes manifests, Helm charts, Meshery
 // designs) while still bounding damage from dead endpoints.
+//
+// Its Transport is safeOutboundTransport(), so every dial this client
+// makes — including redirect hops, which http.Client follows through the
+// same Transport — is checked against the resolved IP before connecting.
+// /api/pattern/import's URL variant lets any authenticated user make the
+// server issue this request, so without that check it is a server-side
+// request forgery primitive: an attacker could point it at a cloud
+// metadata endpoint or an internal-only service and have Meshery fetch it
+// on their behalf.
 var designImportHTTPClient = &http.Client{
-	Timeout: 60 * time.Second,
+	Timeout:   60 * time.Second,
+	Transport: safeOutboundTransport(),
+}
+
+// safeOutboundTransport returns an http.Transport whose DialContext refuses
+// to connect to a loopback, private, link-local, or otherwise non-public
+// address. The check runs after DNS resolution, against the IP the
+// connection is actually about to use, for two reasons a pre-request check
+// on the URL string alone would miss: the name can resolve to a public
+// address at validation time and a private one moments later at connect
+// time (DNS rebinding), and http.Client transparently re-resolves and
+// redials for every redirect through this same Transport, so a same-origin
+// check run once up front would not see a 302 pointed at an internal
+// address.
+func safeOutboundTransport() *http.Transport {
+	dialer := &net.Dialer{Timeout: 10 * time.Second}
+	t := http.DefaultTransport.(*http.Transport).Clone()
+	t.DialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
+		host, port, err := net.SplitHostPort(addr)
+		if err != nil {
+			return nil, err
+		}
+		ips, err := net.DefaultResolver.LookupIP(ctx, "ip", host)
+		if err != nil {
+			return nil, err
+		}
+		for _, ip := range ips {
+			if !isPublicUnicastIP(ip) {
+				return nil, fmt.Errorf("refusing to dial non-public address %s (resolved from %s)", ip, host)
+			}
+		}
+		// Dial the IP that was just validated rather than handing addr's
+		// original hostname back to the dialer, which would perform its
+		// own, second resolution — an attacker-controlled resolver could
+		// answer that second lookup differently and reopen the rebinding
+		// window this function exists to close.
+		return dialer.DialContext(ctx, network, net.JoinHostPort(ips[0].String(), port))
+	}
+	return t
+}
+
+// isPublicUnicastIP reports whether ip is safe for Meshery to connect to on
+// a user's behalf: a globally routable unicast address. It rejects loopback
+// (127.0.0.0/8, ::1), RFC 1918 / IPv6 unique-local private ranges,
+// link-local addresses (169.254.0.0/16 — where the AWS/GCP/Azure instance
+// metadata service lives — and fe80::/10), the unspecified address, and
+// multicast.
+func isPublicUnicastIP(ip net.IP) bool {
+	return !ip.IsLoopback() &&
+		!ip.IsPrivate() &&
+		!ip.IsLinkLocalUnicast() &&
+		!ip.IsLinkLocalMulticast() &&
+		!ip.IsUnspecified() &&
+		!ip.IsMulticast()
 }
 
 // resolveImportVariant decodes the request body against the two oneOf
@@ -101,10 +171,15 @@ func resolveImportVariant(body pattern.MesheryPatternImportRequestBody) (importV
 // fetchFileFromURL performs the remote GET behind a URL-variant import
 // and derives a filename from either Content-Disposition or the path
 // segment of the URL. Uses designImportHTTPClient so every fetch is
-// bounded by a timeout, and rejects non-2xx responses explicitly so a
+// bounded by a timeout and confined to public addresses (see
+// safeOutboundTransport), and rejects non-2xx responses explicitly so a
 // 404 HTML body isn't handed to the design parser as if it were a
 // valid import file.
 func fetchFileFromURL(fileURL string) (FileToImport, error) {
+	if err := validateImportURLScheme(fileURL); err != nil {
+		return FileToImport{}, ErrInvalidImportRequest(err)
+	}
+
 	resp, err := designImportHTTPClient.Get(fileURL)
 	if err != nil {
 		return FileToImport{}, models.ErrDoRequest(err, "GET", fileURL)
@@ -119,11 +194,35 @@ func fetchFileFromURL(fileURL string) (FileToImport, error) {
 		// metadata, matching the http.Client.Get error path above.
 		return FileToImport{}, models.ErrDoRequest(fmt.Errorf("returned HTTP %d %s", resp.StatusCode, resp.Status), "GET", fileURL)
 	}
-	body, err := io.ReadAll(resp.Body)
+	// Reading one byte past the limit turns "exactly at the limit" and
+	// "over it" into distinguishable lengths below, so an oversized body is
+	// rejected outright instead of being silently truncated into a
+	// half-valid import.
+	body, err := io.ReadAll(io.LimitReader(resp.Body, maxImportFetchSize+1))
 	if err != nil {
 		return FileToImport{}, models.ErrDoRequest(err, "GET", fileURL)
 	}
+	if len(body) > maxImportFetchSize {
+		return FileToImport{}, models.ErrDoRequest(fmt.Errorf("response exceeds the %d byte import size limit", maxImportFetchSize), "GET", fileURL)
+	}
 	return FileToImport{Data: body, FileName: getFileNameFromResponse(resp, fileURL)}, nil
+}
+
+// validateImportURLScheme rejects anything but http/https up front, so a
+// mistyped or malicious scheme (file://, ftp://, ...) fails with a clear
+// 400 here rather than an opaque transport error out of designImportHTTPClient.
+func validateImportURLScheme(rawURL string) error {
+	u, err := url.Parse(rawURL)
+	if err != nil {
+		return fmt.Errorf("invalid import URL: %w", err)
+	}
+	if u.Scheme != "http" && u.Scheme != "https" {
+		return fmt.Errorf("unsupported import URL scheme %q: only http and https are allowed", u.Scheme)
+	}
+	if u.Hostname() == "" {
+		return errors.New("import URL must include a host")
+	}
+	return nil
 }
 
 func stringFromPtr(p *string) string {
