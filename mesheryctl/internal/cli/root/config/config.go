@@ -61,7 +61,7 @@ type Context struct {
 // low-level OS error instead of a clean, actionable message.
 func ValidateConfigPath(configPath string) error {
 	if strings.TrimSpace(configPath) == "" {
-		return errors.New("error: Meshery configuration context path cannot be empty")
+		return ErrEmptyConfigPath()
 	}
 	return nil
 }
