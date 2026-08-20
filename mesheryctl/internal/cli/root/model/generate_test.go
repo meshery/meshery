@@ -80,6 +80,38 @@ func TestModelGenerate(t *testing.T) {
 			Fixture:          "generate.api.ok.response.golden",
 			ExpectedResponse: "generate.dir.skipped.output.golden",
 			HttpCode:         200,
+			ValidateRequest: func(req *http.Request, t *testing.T) {
+				bodyBytes, err := io.ReadAll(req.Body)
+				if err != nil {
+					t.Fatalf("Failed to read request body: %v", err)
+				}
+				req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+
+				var importReq schemav1beta1.ImportRequest
+				err = json.Unmarshal(bodyBytes, &importReq)
+				if err != nil {
+					t.Fatalf("Failed to parse request body: %v", err)
+				}
+
+				if importReq.ImportBody.Model.Model != "untitled-model" {
+					t.Errorf("Expected model 'untitled-model', got '%s'", importReq.ImportBody.Model.Model)
+				}
+				if importReq.ImportBody.Model.ModelDisplayName != "Untitled Model" {
+					t.Errorf("Expected displayName 'Untitled Model', got '%s'", importReq.ImportBody.Model.ModelDisplayName)
+				}
+				if importReq.ImportBody.Model.Registrant != "artifacthub" {
+					t.Errorf("Expected registrant 'artifacthub', got '%s'", importReq.ImportBody.Model.Registrant)
+				}
+				if string(importReq.ImportBody.Model.Category) != "Uncategorized" {
+					t.Errorf("Expected category 'Uncategorized', got '%s'", importReq.ImportBody.Model.Category)
+				}
+				if string(importReq.ImportBody.Model.SubCategory) != "Uncategorized" {
+					t.Errorf("Expected subCategory 'Uncategorized', got '%s'", importReq.ImportBody.Model.SubCategory)
+				}
+				if importReq.Register {
+					t.Errorf("Expected Register to be false, got true")
+				}
+			},
 		},
 		{
 			Name:             "model generate: from URL with default registration",
@@ -88,6 +120,30 @@ func TestModelGenerate(t *testing.T) {
 			Fixture:          "generate.api.ok.response.golden",
 			ExpectedResponse: "generate.dir.skipped.output.golden",
 			HttpCode:         200,
+			ValidateRequest: func(req *http.Request, t *testing.T) {
+				bodyBytes, _ := io.ReadAll(req.Body)
+				req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+				var importReq schemav1beta1.ImportRequest
+				if err := json.Unmarshal(bodyBytes, &importReq); err != nil {
+					t.Fatalf("Failed to parse request body: %v", err)
+				}
+
+				if importReq.ImportBody.Model.Model != "cert-manager" {
+					t.Errorf("Expected model 'cert-manager', got '%s'", importReq.ImportBody.Model.Model)
+				}
+				if importReq.ImportBody.Model.Registrant != "github" {
+					t.Errorf("Expected registrant 'github', got '%s'", importReq.ImportBody.Model.Registrant)
+				}
+				if string(importReq.ImportBody.Model.Category) != "Security" {
+					t.Errorf("Expected category 'Security', got '%s'", importReq.ImportBody.Model.Category)
+				}
+				if string(importReq.ImportBody.Model.SubCategory) != "Certificates" {
+					t.Errorf("Expected subCategory 'Certificates', got '%s'", importReq.ImportBody.Model.SubCategory)
+				}
+				if !importReq.Register {
+					t.Errorf("Expected Register to be true, got %v", importReq.Register)
+				}
+			},
 		},
 		{
 			Name:             "model generate: from URL with minimal legacy template",
