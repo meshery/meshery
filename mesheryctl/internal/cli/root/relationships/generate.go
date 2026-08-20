@@ -5,7 +5,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
-	registrycmd "github.com/meshery/meshery/mesheryctl/internal/cli/root/registry"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 
 	meshkitRegistry "github.com/meshery/meshkit/registry"
 	meshkit "github.com/meshery/meshkit/utils"
@@ -40,7 +40,7 @@ var getRelationshipSheetID = func(cred, spreadsheetID string) (int64, error) {
 		return 0, err
 	}
 
-	return registrycmd.GetSheetIDFromTitle(spreadsheet, "Relationships"), nil
+	return utils.GetSheetIDFromTitle(spreadsheet, "Relationships"), nil
 }
 
 var newRelationshipCSVHelper = meshkitRegistry.NewRelationshipCSVHelper

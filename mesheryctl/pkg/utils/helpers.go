@@ -32,6 +32,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"google.golang.org/api/sheets/v4"
 	"gopkg.in/yaml.v2"
 
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
@@ -1350,4 +1351,13 @@ func GetCurrentK8sContext(client *meshkitkube.Client) (string, error) {
 		return "", err
 	}
 	return config.CurrentContext, nil
+}
+
+func GetSheetIDFromTitle(s *sheets.Spreadsheet, title string) int64 {
+	for _, sheet := range s.Sheets {
+		if sheet.Properties.Title == title {
+			return sheet.Properties.SheetId
+		}
+	}
+	return -1
 }
