@@ -35,7 +35,7 @@ func (h *Handler) GetMesheryFilterFileHandler(
 		writeMeshkitError(rw, invalidErr, http.StatusBadRequest)
 		return
 	}
-	resp, err := provider.GetMesheryFilterFile(r, filterID)
+	resp, err := provider.GetMesheryFilterFile(r, filterUUID.String())
 	if err != nil {
 		h.log.Error(ErrGetFilter(err))
 		writeMeshkitError(rw, ErrGetFilter(err), http.StatusNotFound)
@@ -303,7 +303,7 @@ func (h *Handler) DeleteMesheryFilterHandler(
 		writeMeshkitError(rw, invalidErr, http.StatusBadRequest)
 		return
 	}
-	resp, err := provider.DeleteMesheryFilter(r, filterID)
+	resp, err := provider.DeleteMesheryFilter(r, filterUUID.String())
 	if err != nil {
 		h.log.Error(ErrDeleteFilter(err))
 		writeMeshkitError(rw, ErrDeleteFilter(err), http.StatusInternalServerError)
@@ -339,7 +339,7 @@ func (h *Handler) CloneMesheryFilterHandler(
 		return
 	}
 
-	resp, err := provider.CloneMesheryFilter(r, filterID, parsedBody)
+	resp, err := provider.CloneMesheryFilter(r, filterUUID.String(), parsedBody)
 	if err != nil {
 		h.log.Error(ErrCloneFilter(err))
 		writeMeshkitError(rw, ErrCloneFilter(err), http.StatusInternalServerError)
@@ -520,7 +520,7 @@ func (h *Handler) GetMesheryFilterHandler(
 		writeMeshkitError(rw, invalidErr, http.StatusBadRequest)
 		return
 	}
-	resp, err := provider.GetMesheryFilter(r, filterID)
+	resp, err := provider.GetMesheryFilter(r, filterUUID.String())
 	if err != nil {
 		h.log.Error(ErrGetFilter(err))
 		writeMeshkitError(rw, ErrGetFilter(err), http.StatusNotFound)
