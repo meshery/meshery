@@ -9,6 +9,7 @@ setup() {
     # Create isolated temporary directory and pre-create bin dir to target isolated install
     TEST_TMP_DIR=$(mktemp -d)
     mkdir -p "$TEST_TMP_DIR/.meshery/bin"
+    INSTALL_SCRIPT="$TEST_TMP_DIR/install.sh"
 }
 
 teardown() {
@@ -18,8 +19,13 @@ teardown() {
 }
 
 @test "[TC-0004][cut=Installer][tg=Installation] given DEPLOY_MESHERY=false when running install script then mesheryctl is installed without deploying Meshery" {
+    # Download the installer script first to preserve curl exit status
+    run curl --proto '=https' --tlsv1.2 -sSfL --max-time 30 https://meshery.io/install -o "$INSTALL_SCRIPT"
+    assert_success
+    assert_file_exists "$INSTALL_SCRIPT"
+
     # Execute the installer script with DEPLOY_MESHERY=false targeting isolated HOME
-    run bash -c "HOME='$TEST_TMP_DIR' DEPLOY_MESHERY=false bash -c \"\$(curl --proto '=https' --tlsv1.2 -sSfL --max-time 30 https://meshery.io/install)\""
+    run env HOME="$TEST_TMP_DIR" DEPLOY_MESHERY=false bash "$INSTALL_SCRIPT"
     assert_success
 
     # Assert that the installer prints the expected instruction to start Meshery
@@ -28,8 +34,8 @@ teardown() {
     # Assert that mesheryctl binary was created in the isolated install directory
     assert_file_exists "$TEST_TMP_DIR/.meshery/bin/mesheryctl"
 
-    # Verify that the installed binary is executable and returns client version
-    run "$TEST_TMP_DIR/.meshery/bin/mesheryctl" version --client
+    # Verify that the installed binary is executable and returns client version using the isolated HOME
+    run env HOME="$TEST_TMP_DIR" "$TEST_TMP_DIR/.meshery/bin/mesheryctl" version --client
     assert_success
 
     # Assert that Meshery was not deployed or started (no running meshery containers)
