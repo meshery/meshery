@@ -5,12 +5,12 @@ export class ProviderSelectionPage {
   }
 
   getProviderMenuItem(providerName) {
-    // The MUI menu item renders as "${providerName}" in CI and as
-    // "${providerName} More" locally (the suffix comes from an additional icon
-    // button inside the menu item). Using a regex that matches either form
-    // avoids a Playwright strict-mode violation in both environments.
+    // The MUI menu item renders as "${providerName}" in some CI setups, and as
+    // "${providerName} More information about ${providerName}" when the info
+    // icon button is present. Using a regex that matches either form avoids a
+    // Playwright strict-mode violation.
     return this.page.getByRole('menuitem', {
-      name: new RegExp(`^${providerName}(?:\\s+More)?\\s*$`, 'i'),
+      name: new RegExp(`^${providerName}(?:\\s+More.*)?\\s*$`, 'i'),
     });
   }
 
