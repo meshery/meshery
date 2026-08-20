@@ -131,13 +131,11 @@ func InvokeCompUpdate() error {
 
 	componentCSVHelper, err := meshkitRegistryUtils.NewComponentCSVHelper(url, "Components", sheetGID, componentCSVFilePath)
 	if err != nil {
-		err = ErrUpdateRegistry(err, modelLocation)
 		return err
 	}
 
 	err = componentCSVHelper.ParseComponentsSheet(modelName)
 	if err != nil {
-		err = ErrUpdateRegistry(err, modelLocation)
 		return err
 	}
 

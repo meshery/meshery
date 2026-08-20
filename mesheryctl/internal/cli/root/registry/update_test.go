@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	meshkiterrors "github.com/meshery/meshkit/errors"
 )
 
 func TestInvokeCompUpdate_PropagatesComponentCSVReadError(t *testing.T) {
@@ -42,8 +41,5 @@ func TestInvokeCompUpdate_PropagatesComponentCSVReadError(t *testing.T) {
 	err = InvokeCompUpdate()
 	if err == nil {
 		t.Fatal("expected an error, got nil")
-	}
-	if meshkiterrors.GetCode(err) != ErrUpdateRegistryCode {
-		t.Errorf("expected error code %v, got %v", ErrUpdateRegistryCode, meshkiterrors.GetCode(err))
 	}
 }
