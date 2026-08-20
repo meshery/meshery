@@ -111,20 +111,28 @@ Use the `mesheryctl design export` command to export designs programmatically:
 
 ```bash
 # General syntax
-mesheryctl design export <design-name-or-id> --type <FORMAT> --output <DIRECTORY>
+mesheryctl design export <design-name-or-id> [--type <FORMAT>] [--output <DIRECTORY>]
 ```
+
+Supported `--type` values:
+
+| Value | Description |
+| :--- | :--- |
+| `current` | *(default)* Exports the active design version as a Meshery YAML manifest (`.yaml`). |
+| `oci` | Packages and exports the design as an OCI artifact archive. |
+| `original` | Exports the original imported source artifact (e.g., the original Helm chart or Kubernetes manifest, when available). |
 
 #### Examples:
 
 ```bash
-# Export design as a YAML manifest
-mesheryctl design export "MyDesign" --type yaml -o ./exports
+# Export design as a Meshery YAML manifest (default format)
+mesheryctl design export "MyDesign" --type current -o ./exports
 
 # Export design as an OCI artifact
 mesheryctl design export "MyDesign" --type oci -o ./exports
 
-# Export design as a Helm chart package (.tgz)
-mesheryctl design export "MyDesign" --type helm-chart -o ./exports
+# Export the original imported source (e.g., the original Helm chart or manifest)
+mesheryctl design export "MyDesign" --type original -o ./exports
 ```
 
 ---
@@ -132,5 +140,5 @@ mesheryctl design export "MyDesign" --type helm-chart -o ./exports
 ## Summary
 
 - **Import**: Meshery parses and validates your design, converts non-Meshery formats (e.g., Kubernetes Manifests, Helm Charts, Docker Compose) into Meshery Designs, and stores the design in your workspace.
-- **Export**: Meshery retrieves the design from storage, converts its format if needed, packages it in the selected format (`yaml`, `oci`, `helm-chart`), and delivers it via CLI or UI download for GitOps, container registries, or package managers.
+- **Export**: Meshery retrieves the design from storage, converts its format if needed, packages it in the selected format (`current` for YAML, `oci` for OCI artifact, or `original` for the original source artifact), and delivers it via CLI or UI download for GitOps, container registries, or package managers.
 

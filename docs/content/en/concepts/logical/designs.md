@@ -7,13 +7,13 @@ aliases:
 
 Like a Google Doc, Designs are your primary tool for collaborative authorship of your infrastructure and services. A Design describes all the resources and their properties that you want for a single deployment based on Meshery’s declarative syntax (see [Meshery Schemas repo](https://github.com/meshery/schemas)). By default, Designs are stored in your user account, but can be manually exported, programmatically snapshotted, or automatically synchronized to any OCI-compatible registry (e.g. Docker Hub, AWS ECR, and so on), or Git-based repositories (coming in v0.8). You can share designs and collaborate in real-time on their creation. Designs can be imported, exported, versioned, forked, merged, snapshotted, published, shared, embedded, templatized, and more.
 
-As the deployable unit in Meshery, a Design consists of [Components]({{< ref "concepts/logical/components.md" >}}) and [Relationships]({{< ref "concepts/logical/relationships/index.md" >}}). Designs are how you can describe your desired infrastructure state.
+As the primary management unit in Meshery, a Design consists of [Components]({{< ref "concepts/logical/components.md" >}}) and [Relationships]({{< ref "concepts/logical/relationships/index.md" >}}). Configurable and Deployable designs are the deployable unit — used to provision and manage live infrastructure. Annotation-only designs are non-deployable, serving as visual architecture diagrams and documentation. Designs are how you can describe your desired infrastructure state.
 
 ## Types of Meshery Designs
 
 Meshery supports two primary classifications of designs to accommodate both architectural planning and infrastructure orchestration:
 
-```
+```text
                       ┌─────────────────────────────────────────┐
                       │             Meshery Design              │
                       └────────────────────┬────────────────────┘

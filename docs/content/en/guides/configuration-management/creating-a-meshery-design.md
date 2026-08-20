@@ -31,7 +31,7 @@ Meshery UI (Visual Designer) | fa fa-desktop
 
 Annotation-only designs allow you to draft system architecture diagrams, document data flows, and illustrate cloud topologies.
 
-```
+```text
 ┌────────────────────────────────────────────────────────┐
 │ Visual Designer / Kanvas                               │
 │                                                        │
@@ -205,9 +205,9 @@ relationships:
     selectors:
       - allow:
           from:
-            id: api-gateway-node
+            - id: api-gateway-node
           to:
-            id: auth-service-node
+            - id: auth-service-node
 ```
 
 ---
@@ -265,9 +265,9 @@ relationships:
     selectors:
       - allow:
           from:
-            id: web-service
+            - id: web-service
           to:
-            id: web-deployment
+            - id: web-deployment
 ```
 
 ---

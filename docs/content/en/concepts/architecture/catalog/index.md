@@ -36,7 +36,7 @@ To publish designs to the Meshery Catalog, ensure:
 4. **Submit for Review**: Click **Publish to Catalog**. Your request is submitted to workspace administrators and maintainers for review.
 
 <a href="./images/publish-to-catalog-screenshot.png" class="lightbox-image">
-<img src="./images/publish-to-catalog-screenshot.png" width="70%" /></a>
+<img src="./images/publish-to-catalog-screenshot.png" alt="Meshery UI showing the Publish to Catalog workflow: design info panel with metadata fields and the Publish to Catalog submit button" width="70%" /></a>
 <figure>
   <figcaption>Figure: Workflow to publish a design in catalog</figcaption>
 </figure>
@@ -47,7 +47,7 @@ To publish designs to the Meshery Catalog, ensure:
 
 The catalog publishing pipeline follows a structured approval and distribution lifecycle:
 
-```
+```text
 ┌─────────────────┐       Submit        ┌─────────────────┐       Review        ┌─────────────────┐
 │ Design Author   ├────────────────────►│ Workspace Admin ├────────────────────►│ Schema Validation │
 │ (Meshery UI)    │   Publish Request   │ & Maintainers   │      Approve        │ & Compatibility │
