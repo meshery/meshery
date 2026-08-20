@@ -38,6 +38,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/workspaces"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	mesherrs "github.com/meshery/meshkit/errors"
 	logrus "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
@@ -92,11 +93,46 @@ mesheryctl -v [or] --verbose
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the RootCmd.
 func Execute() error {
-	//log formatter for improved UX
-	// Removing printing command usage on error
 	RootCmd.SilenceUsage = true
+	RootCmd.SilenceErrors = true
 	err := RootCmd.Execute()
+	if err != nil {
+		displayError(err, verbose)
+	}
 	return err
+}
+
+// displayError prints a human-readable error to stderr.
+// In normal mode only the short description is shown; --verbose reveals all diagnostic fields.
+func displayError(err error, verbose bool) {
+	if verbose {
+		short := mesherrs.GetSDescription(err)
+		long := mesherrs.GetLDescription(err)
+		cause := mesherrs.GetCause(err)
+		remedy := mesherrs.GetRemedy(err)
+
+		if short == "None" || short == "" {
+			fmt.Fprintln(os.Stderr, "Error:", err.Error())
+			return
+		}
+		fmt.Fprintln(os.Stderr, "Error:", short)
+		if long != "None" && long != "" {
+			fmt.Fprintln(os.Stderr, "Details:", long)
+		}
+		if cause != "None" && cause != "" {
+			fmt.Fprintln(os.Stderr, "Probable Cause:", cause)
+		}
+		if remedy != "None" && remedy != "" {
+			fmt.Fprintln(os.Stderr, "Suggested Remediation:", remedy)
+		}
+	} else {
+		msg := mesherrs.GetSDescription(err)
+		if msg == "None" || msg == "" {
+			msg = err.Error()
+		}
+		fmt.Fprintln(os.Stderr, "Error:", msg)
+		fmt.Fprintln(os.Stderr, "Run with --verbose (-v) for more details")
+	}
 }
 
 func init() {
