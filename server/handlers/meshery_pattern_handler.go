@@ -1282,7 +1282,7 @@ func (h *Handler) CloneMesheryPatternHandler(
 	}
 
 	var parsedBody *models.MesheryClonePatternRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil || patternID == "" {
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		h.log.Error(ErrRequestBody(err))
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
