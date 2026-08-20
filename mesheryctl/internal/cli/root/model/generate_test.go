@@ -14,10 +14,24 @@ import (
 	"github.com/jarcoal/httpmock"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
+
+// generateTestImportRequest represents only the wire-format fields
+// inspected by the model generate request validators.
+type generateTestImportRequest struct {
+	Register   bool `json:"register"`
+	ImportBody struct {
+		Model struct {
+			Model            string `json:"model"`
+			ModelDisplayName string `json:"modelDisplayName"`
+			Registrant       string `json:"registrant"`
+			Category         string `json:"category"`
+			SubCategory      string `json:"subCategory"`
+		} `json:"model"`
+	} `json:"importBody"`
+}
 
 func TestModelGenerate(t *testing.T) {
 	utils.SetupContextEnv(t)
@@ -87,7 +101,7 @@ func TestModelGenerate(t *testing.T) {
 				}
 				req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
-				var importReq schemav1beta1.ImportRequest
+				var importReq generateTestImportRequest
 				err = json.Unmarshal(bodyBytes, &importReq)
 				if err != nil {
 					t.Fatalf("Failed to parse request body: %v", err)
@@ -123,7 +137,7 @@ func TestModelGenerate(t *testing.T) {
 			ValidateRequest: func(req *http.Request, t *testing.T) {
 				bodyBytes, _ := io.ReadAll(req.Body)
 				req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
-				var importReq schemav1beta1.ImportRequest
+				var importReq generateTestImportRequest
 				if err := json.Unmarshal(bodyBytes, &importReq); err != nil {
 					t.Fatalf("Failed to parse request body: %v", err)
 				}
@@ -160,7 +174,7 @@ func TestModelGenerate(t *testing.T) {
 				// Restore the body so other readers (if any) can read it
 				req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
-				var importReq schemav1beta1.ImportRequest
+				var importReq generateTestImportRequest
 				err = json.Unmarshal(bodyBytes, &importReq)
 				if err != nil {
 					t.Fatalf("Failed to parse request body: %v", err)
