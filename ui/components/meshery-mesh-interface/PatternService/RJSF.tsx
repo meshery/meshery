@@ -17,7 +17,7 @@ import CustomTextAreaWidget from './RJSFCustomComponents/CustomTextAreaWidget';
 import CustomFileWidget from './RJSFCustomComponents/CustomFileWidget';
 import CustomURLWidget from './RJSFCustomComponents/CustomURLWidget';
 import CustomColorWidget from './RJSFCustomComponents/CustomColorWidget';
-import CustomPasswordWidget from './RJSFCustomComponents/CustomPasswordWidget';
+import CustomBaseInput from './RJSFCustomComponents/CustomBaseInput';
 import CustomRadioWidget from './RJSFCustomComponents/CustomRadioWidget';
 import { ErrorBoundary } from '@sistent/sistent';
 import CustomErrorFallback from '@/components/shared/ErrorBoundary/ErrorBoundary';
@@ -40,7 +40,7 @@ function RJSFForm_({
   children,
   ArrayFieldTemplate = MesheryArrayFieldTemplate,
   ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
-  BaseInputTemplate,
+  BaseInputTemplate = CustomBaseInput,
   WrapIfAdditionalTemplate = MesheryWrapIfAdditionalTemplate,
   SelectWidget = MesheryCustomSelectWidget,
   LoadingComponent,
@@ -125,7 +125,6 @@ function RJSFForm_({
             TextareaWidget: CustomTextAreaWidget,
             FileWidget: CustomFileWidget,
             URLWidget: CustomURLWidget,
-            PasswordWidget: CustomPasswordWidget,
             RadioWidget: CustomRadioWidget,
             ...widgets,
           }}
