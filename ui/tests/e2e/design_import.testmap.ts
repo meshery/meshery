@@ -1,5 +1,4 @@
 import type { TestInfo } from '@playwright/test';
-import * as allure from 'allure-js-commons';
 
 /**
  * Traceability map for the Design Import Playwright suite.
@@ -87,15 +86,6 @@ export function designImportTags(key: DesignImportCaseKey): string[] {
   return ['@design-import', `@${c.testId}`, '@cut:ui-design-import-modal', '@client:ui'];
 }
 
-/** Untracked tag (no sheet row yet). */
-export function designImportTagsUntracked(component: string): string[] {
-  return [
-    '@design-import',
-    `@cut:${component.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
-    '@client:ui',
-  ];
-}
-
 /** Emit the shared Allure annotation contract for a tracked case. */
 export async function annotateDesignImportCase(
   testInfo: TestInfo,
@@ -110,21 +100,5 @@ export async function annotateDesignImportCase(
     { type: 'feature', description: c.feature },
     { type: 'story', description: c.story },
   );
-  // No testPlanLink yet — placeholder IDs are not in the connection block.
-  void allure; // imported for parity; use allure.link() once TC-DI-* get real ids.
-}
-
-/** Emit annotations for an untracked case. */
-export function annotateDesignImportCaseUntracked(
-  testInfo: TestInfo,
-  { feature, story }: { feature: string; story?: string },
-): void {
-  testInfo.annotations.push(
-    { type: 'epic', description: DESIGN_IMPORT_EPIC },
-    { type: 'client', description: DESIGN_IMPORT_CLIENT },
-    { type: 'feature', description: feature },
-  );
-  if (story) {
-    testInfo.annotations.push({ type: 'story', description: story });
-  }
+  // No testPlanLink yet — add allure.link() in the spec once TC-DI-* get real QA sheet row ids.
 }

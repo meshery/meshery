@@ -1,4 +1,4 @@
-import { expect, Page } from '@playwright/test';
+import { expect, Page, Request } from '@playwright/test';
 import * as allure from 'allure-js-commons';
 import path from 'path';
 import { test } from './fixtures/project';
@@ -172,7 +172,13 @@ test.describe('Design Import Tests', () => {
       const importReq = await importReqPromise;
 
       // ── Wire contract assertions ──────────────────────────────────────────
-      const body = importReq.postDataJSON() as Record<string, unknown>;
+      // postDataJSON() returns null when the content-type is not JSON; fail
+      // fast with a clear message rather than letting assertions run on null.
+      const rawJson = importReq.postDataJSON();
+      if (rawJson === null) {
+        throw new Error('Import request body was not JSON — cannot inspect wire contract fields');
+      }
+      const body = rawJson as Record<string, unknown>;
 
       // Must have `url` key (URL Import path).
       expect(body, 'request body should contain `url`').toHaveProperty('url');
