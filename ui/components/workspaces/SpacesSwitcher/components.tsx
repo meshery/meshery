@@ -34,7 +34,7 @@ import { ImportDesignModal } from '@/components/designs/ImportDesignModal';
 import { buildImportDesignRequestBody } from '@/components/designs/import-design-request';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
-import { useImportPatternMutation } from '@/rtk-query/design';
+import { useImportDesignMutation } from '@/rtk-query/design';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 import { useAssignDesignToWorkspaceMutation } from '@/rtk-query/workspace';
@@ -123,14 +123,30 @@ export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
         <TextField
           {...params}
           label="Author"
+          InputLabelProps={{
+            ...params.InputLabelProps,
+            shrink: true,
+          }}
+          sx={{
+            '& .MuiOutlinedInput-root.MuiAutocomplete-inputRoot': {
+              minHeight: '56px',
+              alignItems: 'center',
+              paddingBlock: 0,
+              paddingInline: 0,
+            },
+            '& .MuiOutlinedInput-root.MuiAutocomplete-inputRoot .MuiAutocomplete-input': {
+              padding: '0.85rem 14px',
+            },
+          }}
           slotProps={{
+            ...params.slotProps,
             input: {
-              ...(params?.slotProps?.input || {}),
+              ...params.slotProps?.input,
               endAdornment: (
-                <>
+                <React.Fragment>
                   {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                  {params?.slotProps?.input?.endAdornment}
-                </>
+                  {params.slotProps?.input?.endAdornment}
+                </React.Fragment>
               ),
             },
           }}
@@ -221,7 +237,10 @@ export const TableListHeader = ({
         width: '100%',
         paddingInline: '1rem',
         alignItems: 'center',
-        flexWrap: 'nowrap',
+        flexWrap: 'wrap',
+        [theme.breakpoints.up('md')]: {
+          flexWrap: 'nowrap',
+        },
       }}
     >
       {isMultiSelectMode && (
@@ -324,7 +343,7 @@ export const ImportButton = ({ workspaceId, disabled = false, refetch, permissio
   const handleImportModalClose = () => {
     setImportModal(false);
   };
-  const [importPattern] = useImportPatternMutation();
+  const [importDesign] = useImportDesignMutation();
   const { notify } = useNotification();
   const theme = useTheme();
   async function handleImportDesign(data) {
@@ -341,8 +360,8 @@ export const ImportButton = ({ workspaceId, disabled = false, refetch, permissio
       return;
     }
 
-    return importPattern({
-      importBody: importRequest.requestBody,
+    return importDesign({
+      body: importRequest.requestBody,
     })
       .unwrap()
       .then((data) => {
@@ -409,6 +428,11 @@ export const AssignDesignViewButton = ({ type, handleAssign, disabled }) => {
         padding: '0.85rem',
       }}
       startIcon={<SettingsIcon />}
+      permissionKey={
+        type === RESOURCE_TYPE.DESIGN
+          ? Keys.WorkspaceManagementAssignDesignsToWorkspaces
+          : Keys.KanvasAssignViewsToWorkspace
+      }
     >
       {type === RESOURCE_TYPE.DESIGN ? 'Manage Designs' : 'Manage Views'}
     </Button>
