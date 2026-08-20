@@ -1,7 +1,10 @@
 package model
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"path/filepath"
 	"runtime"
@@ -11,6 +14,7 @@ import (
 	"github.com/jarcoal/httpmock"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -41,6 +45,7 @@ func TestModelGenerate(t *testing.T) {
 		ExpectErr        bool
 		RaisedError      error
 		HttpCode         int
+		ValidateRequest  func(req *http.Request, t *testing.T)
 	}
 
 	tests := []tc{
@@ -84,6 +89,35 @@ func TestModelGenerate(t *testing.T) {
 			ExpectedResponse: "generate.dir.skipped.output.golden",
 			HttpCode:         200,
 		},
+		{
+			Name:             "model generate: from URL with minimal legacy template",
+			Args:             []string{"generate", "--file", "https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.crds.yaml", "--template", filepath.Join(fixturesDir, "templates", "template_minimal.json"), "--skip-registration"},
+			URL:              apiURL,
+			Fixture:          "generate.api.ok.response.golden",
+			ExpectedResponse: "generate.dir.skipped.output.golden",
+			HttpCode:         200,
+			ValidateRequest: func(req *http.Request, t *testing.T) {
+				bodyBytes, err := io.ReadAll(req.Body)
+				if err != nil {
+					t.Fatalf("Failed to read request body: %v", err)
+				}
+				// Restore the body so other readers (if any) can read it
+				req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+
+				var importReq schemav1beta1.ImportRequest
+				err = json.Unmarshal(bodyBytes, &importReq)
+				if err != nil {
+					t.Fatalf("Failed to parse request body: %v", err)
+				}
+
+				if importReq.ImportBody.Model.Model != "minimal-model" {
+					t.Errorf("Expected model 'minimal-model', got '%s'", importReq.ImportBody.Model.Model)
+				}
+				if importReq.ImportBody.Model.ModelDisplayName != "Minimal Model" {
+					t.Errorf("Expected displayName 'Minimal Model', got '%s'", importReq.ImportBody.Model.ModelDisplayName)
+				}
+			},
+		},
 	}
 
 	var resetFlags func(*cobra.Command, *testing.T)
@@ -107,7 +141,9 @@ func TestModelGenerate(t *testing.T) {
 				apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).LoadByte()
 
 				httpmock.RegisterResponder("POST", testContext.BaseURL+tt.URL, func(req *http.Request) (*http.Response, error) {
-
+					if tt.ValidateRequest != nil {
+						tt.ValidateRequest(req, t)
+					}
 					return httpmock.NewBytesResponse(tt.HttpCode, apiResponse), nil
 				})
 			}
