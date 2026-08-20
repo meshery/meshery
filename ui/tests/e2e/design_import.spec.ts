@@ -172,11 +172,16 @@ test.describe('Design Import Tests', () => {
       const importReq = await importReqPromise;
 
       // ── Wire contract assertions ──────────────────────────────────────────
-      // postDataJSON() returns null when the content-type is not JSON; fail
-      // fast with a clear message rather than letting assertions run on null.
+      // postDataJSON() can return an object for x-www-form-urlencoded, so assert
+      // the request media type first.
+      const contentType = await importReq.headerValue('content-type');
+      expect(contentType || '', 'Import request must use JSON').toMatch(
+        /^application\/json(?:;|$)/,
+      );
+
       const rawJson = importReq.postDataJSON();
       if (rawJson === null) {
-        throw new Error('Import request body was not JSON — cannot inspect wire contract fields');
+        throw new Error('Import request body was empty — cannot inspect wire contract fields');
       }
       const body = rawJson as Record<string, unknown>;
 

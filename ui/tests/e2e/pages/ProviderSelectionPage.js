@@ -9,7 +9,9 @@ export class ProviderSelectionPage {
     // "${providerName} More" locally (the suffix comes from an additional icon
     // button inside the menu item). Using a regex that matches either form
     // avoids a Playwright strict-mode violation in both environments.
-    return this.page.getByRole('menuitem', { name: new RegExp(`^${providerName}(\\s+More)?$`) });
+    return this.page.getByRole('menuitem', {
+      name: new RegExp(`^${providerName}(?:\\s+More)?\\s*$`, 'i'),
+    });
   }
 
   async navigateToProviderSelection() {
