@@ -18,19 +18,53 @@ import (
 	"github.com/spf13/pflag"
 )
 
-// generateTestImportRequest represents only the wire-format fields
-// inspected by the model generate request validators.
-type generateTestImportRequest struct {
-	Register   bool `json:"register"`
-	ImportBody struct {
-		Model struct {
-			Model            string `json:"model"`
-			ModelDisplayName string `json:"modelDisplayName"`
-			Registrant       string `json:"registrant"`
-			Category         string `json:"category"`
-			SubCategory      string `json:"subCategory"`
-		} `json:"model"`
-	} `json:"importBody"`
+func extractRequestFields(t *testing.T, bodyBytes []byte) (model, displayName, registrant, category, subCategory string, register bool) {
+	var payload map[string]json.RawMessage
+	if err := json.Unmarshal(bodyBytes, &payload); err != nil {
+		t.Fatalf("Failed to parse request body: %v", err)
+	}
+
+	if registerRaw, ok := payload["register"]; ok {
+		if err := json.Unmarshal(registerRaw, &register); err != nil {
+			t.Fatalf("Failed to parse register field: %v", err)
+		}
+	}
+
+	importBodyRaw, ok := payload["importBody"]
+	if !ok {
+		t.Fatalf("missing required field: importBody")
+	}
+
+	var importBody map[string]json.RawMessage
+	if err := json.Unmarshal(importBodyRaw, &importBody); err != nil {
+		t.Fatalf("Failed to parse importBody: %v", err)
+	}
+
+	modelRaw, ok := importBody["model"]
+	if !ok {
+		t.Fatalf("missing required field: model")
+	}
+
+	var modelObj map[string]json.RawMessage
+	if err := json.Unmarshal(modelRaw, &modelObj); err != nil {
+		t.Fatalf("Failed to parse model: %v", err)
+	}
+
+	decodeString := func(field string, raw json.RawMessage, target *string) {
+		if raw != nil {
+			if err := json.Unmarshal(raw, target); err != nil {
+				t.Fatalf("Failed to parse string field %s: %v", field, err)
+			}
+		}
+	}
+
+	decodeString("model", modelObj["model"], &model)
+	decodeString("modelDisplayName", modelObj["modelDisplayName"], &displayName)
+	decodeString("registrant", modelObj["registrant"], &registrant)
+	decodeString("category", modelObj["category"], &category)
+	decodeString("subCategory", modelObj["subCategory"], &subCategory)
+
+	return
 }
 
 func TestModelGenerate(t *testing.T) {
@@ -101,28 +135,24 @@ func TestModelGenerate(t *testing.T) {
 				}
 				req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
-				var importReq generateTestImportRequest
-				err = json.Unmarshal(bodyBytes, &importReq)
-				if err != nil {
-					t.Fatalf("Failed to parse request body: %v", err)
-				}
+				model, displayName, registrant, category, subCategory, register := extractRequestFields(t, bodyBytes)
 
-				if importReq.ImportBody.Model.Model != "untitled-model" {
-					t.Errorf("Expected model 'untitled-model', got '%s'", importReq.ImportBody.Model.Model)
+				if model != "untitled-model" {
+					t.Errorf("Expected model 'untitled-model', got '%s'", model)
 				}
-				if importReq.ImportBody.Model.ModelDisplayName != "Untitled Model" {
-					t.Errorf("Expected displayName 'Untitled Model', got '%s'", importReq.ImportBody.Model.ModelDisplayName)
+				if displayName != "Untitled Model" {
+					t.Errorf("Expected displayName 'Untitled Model', got '%s'", displayName)
 				}
-				if importReq.ImportBody.Model.Registrant != "artifacthub" {
-					t.Errorf("Expected registrant 'artifacthub', got '%s'", importReq.ImportBody.Model.Registrant)
+				if registrant != "artifacthub" {
+					t.Errorf("Expected registrant 'artifacthub', got '%s'", registrant)
 				}
-				if string(importReq.ImportBody.Model.Category) != "Uncategorized" {
-					t.Errorf("Expected category 'Uncategorized', got '%s'", importReq.ImportBody.Model.Category)
+				if category != "Uncategorized" {
+					t.Errorf("Expected category 'Uncategorized', got '%s'", category)
 				}
-				if string(importReq.ImportBody.Model.SubCategory) != "Uncategorized" {
-					t.Errorf("Expected subCategory 'Uncategorized', got '%s'", importReq.ImportBody.Model.SubCategory)
+				if subCategory != "Uncategorized" {
+					t.Errorf("Expected subCategory 'Uncategorized', got '%s'", subCategory)
 				}
-				if importReq.Register {
+				if register {
 					t.Errorf("Expected Register to be false, got true")
 				}
 			},
@@ -137,25 +167,22 @@ func TestModelGenerate(t *testing.T) {
 			ValidateRequest: func(req *http.Request, t *testing.T) {
 				bodyBytes, _ := io.ReadAll(req.Body)
 				req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
-				var importReq generateTestImportRequest
-				if err := json.Unmarshal(bodyBytes, &importReq); err != nil {
-					t.Fatalf("Failed to parse request body: %v", err)
-				}
+				model, _, registrant, category, subCategory, register := extractRequestFields(t, bodyBytes)
 
-				if importReq.ImportBody.Model.Model != "cert-manager" {
-					t.Errorf("Expected model 'cert-manager', got '%s'", importReq.ImportBody.Model.Model)
+				if model != "cert-manager" {
+					t.Errorf("Expected model 'cert-manager', got '%s'", model)
 				}
-				if importReq.ImportBody.Model.Registrant != "github" {
-					t.Errorf("Expected registrant 'github', got '%s'", importReq.ImportBody.Model.Registrant)
+				if registrant != "github" {
+					t.Errorf("Expected registrant 'github', got '%s'", registrant)
 				}
-				if string(importReq.ImportBody.Model.Category) != "Security" {
-					t.Errorf("Expected category 'Security', got '%s'", importReq.ImportBody.Model.Category)
+				if category != "Security" {
+					t.Errorf("Expected category 'Security', got '%s'", category)
 				}
-				if string(importReq.ImportBody.Model.SubCategory) != "Certificates" {
-					t.Errorf("Expected subCategory 'Certificates', got '%s'", importReq.ImportBody.Model.SubCategory)
+				if subCategory != "Certificates" {
+					t.Errorf("Expected subCategory 'Certificates', got '%s'", subCategory)
 				}
-				if !importReq.Register {
-					t.Errorf("Expected Register to be true, got %v", importReq.Register)
+				if !register {
+					t.Errorf("Expected Register to be true, got %v", register)
 				}
 			},
 		},
@@ -174,17 +201,16 @@ func TestModelGenerate(t *testing.T) {
 				// Restore the body so other readers (if any) can read it
 				req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
-				var importReq generateTestImportRequest
-				err = json.Unmarshal(bodyBytes, &importReq)
-				if err != nil {
-					t.Fatalf("Failed to parse request body: %v", err)
-				}
+				model, displayName, _, _, _, register := extractRequestFields(t, bodyBytes)
 
-				if importReq.ImportBody.Model.Model != "minimal-model" {
-					t.Errorf("Expected model 'minimal-model', got '%s'", importReq.ImportBody.Model.Model)
+				if model != "minimal-model" {
+					t.Errorf("Expected model 'minimal-model', got '%s'", model)
 				}
-				if importReq.ImportBody.Model.ModelDisplayName != "Minimal Model" {
-					t.Errorf("Expected displayName 'Minimal Model', got '%s'", importReq.ImportBody.Model.ModelDisplayName)
+				if displayName != "Minimal Model" {
+					t.Errorf("Expected displayName 'Minimal Model', got '%s'", displayName)
+				}
+				if register {
+					t.Errorf("Expected Register to be false, got true")
 				}
 			},
 		},
