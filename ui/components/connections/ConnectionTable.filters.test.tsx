@@ -23,6 +23,7 @@ vi.mock('next/router', () => ({
 }));
 
 vi.mock('@sistent/sistent', () => ({
+  useHasPermission: () => true,
   CustomTooltip: ({ children }) => <div>{children}</div>,
   getRelativeTime: (date: string) => date,
   getFullFormattedTime: (date: string) => date,
@@ -132,6 +133,11 @@ vi.mock('./styles', () => ({
   CreateButton: ({ children }) => <div>{children}</div>,
   InnerTableContainer: ({ children }) => <div>{children}</div>,
   ActionListItem: ({ children }) => <div>{children}</div>,
+  ActionButton: ({ children, ...props }) => (
+    <button type="button" {...props}>
+      {children}
+    </button>
+  ),
   ConnectionStyledSelect: ({ children }) => <div>{children}</div>,
 }));
 
@@ -222,6 +228,10 @@ vi.mock('@/rtk-query/connection', () => ({
   useGetConnectionsQuery: (...args) => getConnectionsQuery(...args),
   useUpdateConnectionByIdMutation: () => [vi.fn()],
   usePerformConnectionActionMutation: () => [vi.fn(() => ({ unwrap: () => Promise.resolve({}) }))],
+}));
+
+vi.mock('@meshery/schemas/mesheryApi', () => ({
+  useListConnectionDefinitionsQuery: () => ({ data: { connectionDefinitions: [] } }),
 }));
 
 vi.mock('../../assets/icons/disconnect', () => ({
