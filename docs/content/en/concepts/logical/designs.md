@@ -69,7 +69,7 @@ Meshery supports two primary classifications of designs to accommodate both arch
 - Designs can be **cloned**. Cloning a Design creates a new Design that is a copy of the original Design. The new Design is owned by the user who cloned it.
 - Designs can be **merged**. Merging a Design combines two Designs into a single Design. 
   <!-- - Designs can be forked. Forking a Design creates a new Design that is a copy of the original Design. The new Design is owned by the user who forked it. -->
-- Designs can be exported as YAML files, OCI artifacts, or Helm charts.
+- Designs can be exported as YAML files or OCI artifacts (and as Helm chart packages for deployable designs).
 - [Designs can be listed in Artifact Hub](https://artifacthub.io/packages/search?kind=24&sort=relevance&page=1) repos.
 - Designs can be imported:
   - as Kubernetes Manifests, Docker Compose, Helm Charts, or Meshery Designs.
