@@ -58,9 +58,9 @@ export class DashboardPage {
     this.headerMenu = this.page.getByTestId('header-menu');
   }
 
-  async navigateToMenu(navItem) {
+  async navigateToMenu(navItem, options = {}) {
     const menuItem = this.page.getByTestId(navItem);
-    await expect(menuItem).toBeVisible();
+    await expect(menuItem).toBeVisible(options.timeout ? { timeout: options.timeout } : undefined);
     await menuItem.click();
   }
 
@@ -77,8 +77,21 @@ export class DashboardPage {
   // re-sends the swallowed click.
   async navigateToSubMenuItem(parentItem, childItem) {
     const submenuItem = this.page.getByTestId(childItem);
+    // Bound BOTH waits inside the retry. With the parent check left on the
+    // default 60s expect timeout, a single attempt could consume most of the
+    // test budget and the case died on the 180s test timeout instead of its own
+    // assertion - and a test-level timeout reports no locator, no snippet and no
+    // file location, so the failure said nothing at all. Short per-attempt
+    // timeouts make each retry cheap and let this fail legibly at ~60s.
     await expect(async () => {
-      await this.navigateToMenu(parentItem);
+      // Only click the parent when the submenu is not already open. The parent
+      // both navigates and toggles, so an unconditional click on a retry can
+      // CLOSE a submenu a previous attempt had just opened - the retry would
+      // then fight itself, which is a plausible mechanism for this staying
+      // flaky after the click was made retryable at all.
+      if (!(await submenuItem.isVisible())) {
+        await this.navigateToMenu(parentItem, { timeout: 5_000 });
+      }
       await expect(submenuItem).toBeVisible({ timeout: 5_000 });
     }).toPass({ timeout: 60_000 });
     await submenuItem.click();

@@ -46,7 +46,8 @@ var linkDocStatus = map[string]string{
 var statusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Check Meshery status",
-	Long:  `Check status of Meshery and Meshery components.`,
+	Long: `Check status of Meshery and Meshery components.
+	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/status`,
 	Example: `
 // Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
 mesheryctl system status
