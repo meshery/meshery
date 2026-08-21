@@ -18,6 +18,9 @@ env:
   PROVIDER: ""
   KEYS_PATH: "../../server/permissions/keys.csv"
   MESHERY_SERVER_CALLBACK_URL: ""
+  # OTEL_CONFIG: set a YAML block with service_name/endpoint to enable distributed tracing.
+  # Left empty by default so tracing stays disabled unless explicitly configured.
+  OTEL_CONFIG: ""
 
 probe:
   # Liveness probe checks if the Meshery server is alive and responsive
