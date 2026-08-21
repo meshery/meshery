@@ -12,12 +12,20 @@ jobs:
     steps:
     - name: Cluster cleanup by running the cleanup script inside VM
       uses: appleboy/ssh-action@master
+      env:
+          MANIFEST_REF: ${{ github.sha }}
       with:
-          host: ${{ secrets.METAL_SERVER6 }}
-          username: root
-          key: ${{ secrets.METAL_SSH_KEY }}
+          host: ${{ secrets.OCI_BASTION_HOST }}
+          username: ${{ secrets.OCI_BASTION_USERNAME }}
+          key: ${{ secrets.OCI_BASTION_KEY }}
+          envs: MANIFEST_REF
           script: |
-            cd meshery/install/playground; ./playground-cleanup.sh
+            SCRIPT_URL="https://raw.githubusercontent.com/meshery/meshery/${MANIFEST_REF}/install/playground/playground-cleanup.sh"
+            SCRIPT_FILE="$(mktemp)"
+            trap 'rm -f "$SCRIPT_FILE"' EXIT
+            curl -fsSL "$SCRIPT_URL" -o "$SCRIPT_FILE"
+            kubectl config use-context staging
+            bash "$SCRIPT_FILE"
 
 # reboot:
 #   name: Reboot Metal servers
