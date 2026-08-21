@@ -7,6 +7,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"encoding/pem"
+	"errors"
 	"fmt"
 	"io"
 	"math/big"
@@ -309,7 +310,10 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 	if err != nil {
 		return nil, ErrPraseUnverified(err)
 	}
-	kid := tokenUP.Header["kid"].(string)
+	kid, ok := tokenUP.Header["kid"].(string)
+	if !ok {
+		return nil, ErrPraseUnverified(errors.New("missing or invalid 'kid' in token header"))
+	}
 
 	var jtk map[string]interface{}
 	t, _ := base64.RawStdEncoding.DecodeString(x[1])
@@ -319,10 +323,12 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 
 	// TODO: Once hydra fixes https://github.com/ory/hydra/issues/1542
 	// we should rather configure hydra auth server to remove nbf field in the token
-	_, ok := jtk["exp"]
-	if ok {
-		exp := int64(jtk["exp"].(float64))
-		if time.Now().Unix() > exp {
+	if expVal, ok := jtk["exp"]; ok {
+		exp, ok := expVal.(float64)
+		if !ok {
+			return nil, ErrPraseUnverified(errors.New("invalid 'exp' claim in token"))
+		}
+		if time.Now().Unix() > int64(exp) {
 			return nil, ErrTokenExpired
 		}
 	}
