@@ -1,4 +1,14 @@
-import { Typography, Paper, styled, Tab, Tabs, gray, charcoal, Card } from '@sistent/sistent';
+import {
+  Typography,
+  Paper,
+  styled,
+  Tab,
+  Tabs,
+  gray,
+  charcoal,
+  Card,
+  Button,
+} from '@sistent/sistent';
 
 export const DashboardSection = styled(Card)(({ theme }) => ({
   backgroundColor:
@@ -117,6 +127,33 @@ export const ErrorContainer = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
   marginTop: '1rem',
   borderRadius: 4,
+}));
+
+export const ActionButton = styled(Button)(({ theme }) => ({
+  color: theme.palette.background.neutral.default,
+  textTransform: 'none',
+  fontSize: theme.typography.body1.fontSize,
+  fontWeight: 500,
+  padding: theme.spacing(0.5, 1),
+  minWidth: 'auto',
+  gap: theme.spacing(0.75),
+  '&:hover': {
+    backgroundColor: 'transparent',
+    opacity: 0.8,
+  },
+}));
+
+export const DashboardActionsContainer = styled('div')(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  alignItems: 'center',
+  width: '100%',
+  marginTop: theme.spacing(-3),
+  marginBottom: theme.spacing(1.5),
+  [theme.breakpoints.down('sm')]: {
+    marginTop: theme.spacing(-1.5),
+    marginBottom: theme.spacing(1),
+  },
 }));
 
 export const WrapperPaper = styled(Paper)({

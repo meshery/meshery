@@ -55,7 +55,7 @@ jobs:
     with:
       meshery-image: ${{ needs.build-meshery.outputs.meshery-image }}
     secrets:
-      REMOTE_PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TOKEN }}
+      REMOTE_PROVIDER_TEST_USER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
   publish-allure-report:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}    
     needs: [build-meshery, tests-e2e]
