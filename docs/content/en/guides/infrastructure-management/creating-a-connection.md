@@ -101,7 +101,7 @@ Creating a Connection records it (and its credential) and then tries to **connec
 
 ### Credentials
 
-Credentials entered in the wizard are persisted as first-class, named [Credentials]({{< ref "concepts/logical/credentials.md" >}}), encrypted at rest, and reusable across other Connections. Meshery never exposes them in logs or API responses. To learn how Meshery interprets a credential's secret (Basic auth vs. bearer token vs. anonymous), see [Credentials]({{< ref "concepts/logical/credentials.md" >}}) and the [Telemetry authentication note](https://docs.meshery.io/guides/telemetry/).
+Credentials entered in the wizard are persisted as first-class, named [Credentials]({{< ref "concepts/logical/credentials.md" >}}), encrypted at rest, and reusable across other Connections. Meshery never exposes them in logs or API responses. To learn how Meshery interprets a credential's secret (Basic auth vs. bearer token vs. anonymous), see [Credentials]({{< ref "concepts/logical/credentials.md" >}}) and the [Telemetry authentication note]({{< ref "guides/telemetry/_index.md" >}}).
 
 ## Importing a Kubernetes cluster
 
@@ -203,10 +203,10 @@ mesheryctl connection list
 
 ### Inspect a Connection
 
-View detailed information about a Connection.
+View detailed information about a Connection by name or ID.
 
 ```bash
-mesheryctl connection view <connection-name|connection-id>
+mesheryctl connection view <connection-name>
 ```
 
 ### Remove a Connection
@@ -225,16 +225,12 @@ For additional commands, flags, supported providers, and examples, see [`meshery
 Configuring a Connection is distinct from transitioning its **state** (for example Connected, Discovered, Disconnected, Not Found, or Deleted). State transitions - and the rules governing which are allowed - are driven by the connection definition and performed from the status control on the Connections table. See [States and the Lifecycle of Connections]({{< ref "concepts/logical/connections/index.md#states-and-the-lifecycle-of-connections" >}}).
 {{% /alert %}}
 
-<!-- The Telemetry pages (guides/telemetry/*) ship in meshery/meshery#20161. Until that
-     merges, these are absolute docs.meshery.io links so this page does not break the Hugo
-     build, since an unresolved ref shortcode fails the build. Convert them to ref-shortcode
-     links once the Telemetry pages exist on master. -->
 ## Using Connections for Telemetry
 
-Grafana and Prometheus Connections you create with the wizard power Meshery's [Telemetry](https://docs.meshery.io/guides/telemetry/) views. Once such a Connection reaches the **Connected** state (or is otherwise available for use), it becomes selectable in the Telemetry connection picker, where you can:
+Grafana and Prometheus Connections you create with the wizard power Meshery's [Telemetry]({{< ref "guides/telemetry/_index.md" >}}) views. Once such a Connection reaches the **Connected** state (or is otherwise available for use), it becomes selectable in the Telemetry connection picker, where you can:
 
-- Browse and render your existing dashboards - see [Grafana Dashboards](https://docs.meshery.io/guides/telemetry/grafana-dashboards).
-- Explore metrics and save PromQL panels - see [Prometheus Metrics](https://docs.meshery.io/guides/telemetry/prometheus-metrics).
+- Browse and render your existing dashboards - see [Grafana Dashboards]({{< ref "guides/telemetry/grafana-dashboards.md" >}}).
+- Explore metrics and save PromQL panels - see [Prometheus Metrics]({{< ref "guides/telemetry/prometheus-metrics.md" >}}).
 
 ## Related
 
