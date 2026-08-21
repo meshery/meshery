@@ -105,12 +105,34 @@ const StyledDrawer = styled(Drawer, { shouldForwardProp: (prop) => prop !== 'ope
   }),
 }));
 
-const StyledMainContent = styled(Box)(() => ({
+const StyledMainContent = styled(Box, { shouldForwardProp: (prop) => prop !== 'open' })<{
+  open?: boolean;
+}>(({ theme, open }) => ({
   flexGrow: 1,
   height: '100%',
   overflow: 'auto',
   display: 'flex',
   flexDirection: 'column',
+  ...(open && {
+    marginLeft: `calc(${theme.spacing(7)} + 1px - ${DRAWER_WIDTH}px)`,
+    [theme.breakpoints.up('sm')]: {
+      marginLeft: `calc(${theme.spacing(8)} + 1px - ${DRAWER_WIDTH}px)`,
+    },
+    [theme.breakpoints.up('md')]: {
+      marginLeft: 0,
+    },
+    transition: theme.transitions.create('margin-left', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  }),
+  ...(!open && {
+    marginLeft: 0,
+    transition: theme.transitions.create('margin-left', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+  }),
 }));
 
 // Override Sistent/MUI Dialog defaults so the modal occupies ~90%/80% of the
@@ -118,6 +140,10 @@ const StyledMainContent = styled(Box)(() => ({
 // screens. Mirrors the legacy `StyledModal` behaviour.
 const StyledRegistryModal = styled(Modal)(({ theme }) => ({
   zIndex: 1500,
+  '& .modal-header': {
+    position: 'relative',
+    zIndex: theme.zIndex.drawer + 1,
+  },
   '& .MuiDialog-paperFullScreen': {
     margin: 0,
   },
@@ -318,7 +344,7 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
           ))}
         </List>
       </StyledDrawer>
-      <StyledMainContent>
+      <StyledMainContent open={open}>
         <RegistryContentWrapper
           selectedView={selectedId}
           searchText={searchText}
@@ -326,8 +352,11 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
         />
       </StyledMainContent>
       <ChevronButtonWrapper
+        type="button"
         isCollapsed={!open}
         onClick={handleDrawerToggle}
+        aria-label="Toggle registry navigation"
+        aria-expanded={open}
         sx={{
           position: 'absolute',
           bottom: '12%',
@@ -343,7 +372,7 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
         }}
       >
         <LeftArrowIcon
-          aria-label="Sidebar collapse toggle"
+          aria-hidden="true"
           style={{
             cursor: 'pointer',
             verticalAlign: 'middle',

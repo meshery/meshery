@@ -41,7 +41,7 @@ const UnknownServerSideError = (props) => {
 };
 
 const DefaultError = (props) => {
-  const { errorTitle, errorContent, errorType } = props;
+  const { errorTitle, errorContent, errorType, permissionKey } = props;
   const theme = useTheme();
 
   return (
@@ -75,7 +75,7 @@ const DefaultError = (props) => {
             <Typography variant="h5" component="h5" align="center" fontWeight={600}>
               YOUR CURRENT SESSION
             </Typography>
-            <CurrentSessionInfo />
+            <CurrentSessionInfo permissionKey={permissionKey} />
           </ErrorSection>
           <StyledDivider orientation="vertical" flexItem />
           <ErrorSection>
@@ -90,7 +90,7 @@ const DefaultError = (props) => {
                 justifyContent: 'center',
               }}
             >
-              <OrgSwitcher />
+              <OrgSwitcher permissionKey={permissionKey} />
               {/*<Divider />
                 <RequestForm />*/}
             </ErrorSectionContent>
