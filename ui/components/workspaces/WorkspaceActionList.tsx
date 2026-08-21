@@ -10,8 +10,8 @@ import {
   MenuItem,
   MenuList,
   MoreVertIcon,
+  useMediaQuery,
   useTheme,
-  useWindowDimensions,
 } from '@sistent/sistent';
 import { useState } from 'react';
 import { TableIconsContainer, IconWrapper } from './styles';
@@ -28,9 +28,8 @@ const WorkspaceActionList = ({
   workspaceName,
   selectedWorkspace,
 }) => {
-  const { width } = useWindowDimensions();
-  const isMobile = width < 1024;
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [open, setOpen] = useState(false);
 

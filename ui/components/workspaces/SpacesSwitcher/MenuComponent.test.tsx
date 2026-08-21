@@ -3,6 +3,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+// Independent flags so tablet (overflow Menu) is not collapsed into mobile (BottomSheet).
+let isOverflow = false;
 let isMobile = false;
 
 vi.mock('@sistent/sistent', () => {
@@ -29,10 +31,14 @@ vi.mock('@sistent/sistent', () => {
         {children}
       </button>
     ),
-    useMediaQuery: () => isMobile,
+    useMediaQuery: (query: string) => {
+      if (query === '(max-width:xl)') return isOverflow;
+      if (query === '(max-width:sm)') return isMobile;
+      return false;
+    },
     useTheme: () => ({
       palette: { mode: 'light', background: { paper: '#fff' } },
-      breakpoints: { down: () => '@media (max-width: 0)' },
+      breakpoints: { down: (key: string) => `(max-width:${key})` },
     }),
     BottomSheet: ({ children, open }: any) =>
       open ? <div data-testid="bottom-sheet">{children}</div> : null,
@@ -48,6 +54,7 @@ import { MenuComponent } from './MenuComponent';
 
 describe('MenuComponent', () => {
   beforeEach(() => {
+    isOverflow = false;
     isMobile = false;
   });
 
@@ -93,7 +100,23 @@ describe('MenuComponent', () => {
     expect(buttons[1]).toBeDisabled();
   });
 
+  it('renders an overflow Menu on tablet viewports (collapsed, not mobile)', async () => {
+    isOverflow = true;
+    isMobile = false;
+    const user = userEvent.setup();
+    render(<MenuComponent options={baseOptions} />);
+
+    expect(screen.getByTestId('more-vert')).toBeInTheDocument();
+    expect(screen.queryByTestId('menu')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('bottom-sheet')).not.toBeInTheDocument();
+
+    await user.click(screen.getByTestId('more-vert'));
+    expect(screen.getByTestId('menu')).toBeInTheDocument();
+    expect(screen.queryByTestId('bottom-sheet')).not.toBeInTheDocument();
+  });
+
   it('renders a bottom sheet on mobile viewports', async () => {
+    isOverflow = true;
     isMobile = true;
     const user = userEvent.setup();
     render(<MenuComponent options={baseOptions} />);
@@ -101,10 +124,9 @@ describe('MenuComponent', () => {
     expect(screen.getByTestId('more-vert')).toBeInTheDocument();
     expect(screen.queryByTestId('bottom-sheet')).not.toBeInTheDocument();
 
-    // Click anywhere on the MoreVert area to open the bottom sheet
     await user.click(screen.getByTestId('more-vert'));
     expect(screen.getByTestId('bottom-sheet')).toBeInTheDocument();
-    // Options should be visible inside the bottom sheet
+    expect(screen.queryByTestId('menu')).not.toBeInTheDocument();
     expect(screen.getByTestId('menu-list')).toBeInTheDocument();
   });
 

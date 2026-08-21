@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockCan = vi.fn(() => true);
-let width = 1280;
+let isMobile = false;
 
 vi.mock('@/utils/can', () => ({
   default: (...args: unknown[]) => mockCan(...args),
@@ -50,9 +50,9 @@ vi.mock('@sistent/sistent', () => ({
   MoreVertIcon: () => <svg data-testid="more-vert-icon" />,
   useTheme: () => ({
     palette: { icon: { default: 'icon-default' } },
-    breakpoints: { down: () => '@media (max-width: 0)' },
+    breakpoints: { down: (key: string) => `(max-width:${key})` },
   }),
-  useWindowDimensions: () => ({ width }),
+  useMediaQuery: (query: string) => query === '(max-width:sm)' && isMobile,
   useHasPermission: (key: any) => mockCan(key?.id || key),
   BottomSheet: ({ children, open }: any) =>
     open ? <div data-testid="bottom-sheet">{children}</div> : null,
@@ -89,7 +89,7 @@ describe('WorkspaceActionList', () => {
     handleDeleteWorkspaceConfirm.mockReset();
     mockCan.mockReset();
     mockCan.mockReturnValue(true);
-    width = 1280;
+    isMobile = false;
   });
 
   const renderComponent = () =>
@@ -159,7 +159,7 @@ describe('WorkspaceActionList', () => {
   });
 
   it('switches to a mobile bottom sheet when the viewport is narrow', async () => {
-    width = 800;
+    isMobile = true;
     const user = userEvent.setup();
     renderComponent();
 
