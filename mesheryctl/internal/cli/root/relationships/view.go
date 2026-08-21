@@ -36,7 +36,8 @@ var relationshipViewFlagsProvided relationshipViewFlags
 var viewCmd = &cobra.Command{
 	Use:   "view",
 	Short: "view relationships of a model by its name",
-	Long:  "view a relationship queried by the model name",
+	Long: `view a relationship queried by the model name.
+	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/relationship/view`,
 	Example: `
 // View relationships of a model in default format yaml
 mesheryctl relationship view [model-name]

@@ -7,7 +7,6 @@ const Performance = ({ fill, className, ...rest }) => (
     className={className}
     {...rest}
   >
-    <title>meshery-button-2</title>
     <g id="Gauge-2" data-name="Gauge">
       <g style={{ opacity: 0.3 }}>
         <path d="M137.85,152.08a284,284,0,0,1,31.8-14.4l-2.7-13.3a324.4,324.4,0,0,0-33.5,19Z" />
