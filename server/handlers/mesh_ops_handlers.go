@@ -37,7 +37,7 @@ func (h *Handler) AvailableAdaptersHandler(w http.ResponseWriter, _ *http.Reques
 // AdaptersHandler is used to fetch all the adapters
 func (h *Handler) AdaptersHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method != http.MethodGet {
-		w.WriteHeader(http.StatusNotFound)
+		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
 
