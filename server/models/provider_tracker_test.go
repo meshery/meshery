@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -110,9 +111,7 @@ func TestProviderTracker_SubscriberReceivesSnapshotAndUpdates(t *testing.T) {
 	providers := map[string]Provider{LocalProviderName: lp}
 	tracker := NewProviderTracker(providers, lp.Log)
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	events, unsubscribe := tracker.Subscribe(ctx)
+	events, unsubscribe := tracker.Subscribe()
 	defer unsubscribe()
 
 	// First event: snapshot replay for the local provider.
@@ -148,6 +147,83 @@ func TestProviderTracker_SubscriberReceivesSnapshotAndUpdates(t *testing.T) {
 		}
 	case <-time.After(2 * time.Second):
 		t.Fatal("did not receive published event within 2s")
+	}
+}
+
+// TestProviderTracker_ConcurrentPublishUnsubscribeNoPanic drives publishers
+// concurrently with subscribers that immediately unsubscribe (closing their
+// channels), which is the exact interleaving that previously panicked with
+// "send on closed channel" and crashed the server. Publish now holds the
+// tracker mutex across the whole fan-out (the same lock unsubscribe closes
+// under), so no channel can be closed mid-send. Run with -race.
+func TestProviderTracker_ConcurrentPublishUnsubscribeNoPanic(t *testing.T) {
+	tracker := NewProviderTracker(map[string]Provider{}, newTestLogger(t))
+
+	stop := make(chan struct{})
+	start := make(chan struct{})
+	var wg sync.WaitGroup
+
+	// Publishers hammer Publish for the whole test.
+	for i := 0; i < 4; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			<-start
+			for {
+				select {
+				case <-stop:
+					return
+				default:
+					tracker.Publish(ProviderStatusEvent{Key: "remote", Status: ProviderStatusOnline})
+				}
+			}
+		}()
+	}
+
+	close(start)
+
+	// Subscribers churn: each subscribe is immediately torn down so the
+	// close(ch) in unsubscribe races the concurrent Publish fan-outs.
+	for i := 0; i < 500; i++ {
+		_, unsubscribe := tracker.Subscribe()
+		unsubscribe()
+	}
+
+	close(stop)
+	wg.Wait()
+}
+
+// TestProviderTracker_SnapshotPrecedesLiveUpdates asserts the documented
+// ordering contract: a subscriber always receives the current snapshot before
+// any live Publish, even when the live event is published before the
+// subscriber starts reading. The snapshot is seeded into the channel buffer
+// under the lock before the channel is registered, so FIFO ordering holds.
+func TestProviderTracker_SnapshotPrecedesLiveUpdates(t *testing.T) {
+	lp := newTestLocalProviderForTracker(t)
+	tracker := NewProviderTracker(map[string]Provider{LocalProviderName: lp}, lp.Log)
+
+	events, unsubscribe := tracker.Subscribe()
+	defer unsubscribe()
+
+	// Publish a live update immediately, before draining the snapshot.
+	tracker.Publish(ProviderStatusEvent{Key: "live", Status: ProviderStatusOffline})
+
+	select {
+	case first := <-events:
+		if first.Key != LocalProviderName {
+			t.Fatalf("first event Key = %q, want snapshot %q ahead of the live update", first.Key, LocalProviderName)
+		}
+	case <-time.After(2 * time.Second):
+		t.Fatal("did not receive snapshot event within 2s")
+	}
+
+	select {
+	case second := <-events:
+		if second.Key != "live" {
+			t.Fatalf("second event Key = %q, want live update %q", second.Key, "live")
+		}
+	case <-time.After(2 * time.Second):
+		t.Fatal("did not receive live event within 2s")
 	}
 }
 
