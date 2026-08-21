@@ -9,6 +9,10 @@ subcommand: dashboard
 
 Open Meshery UI in browser.
 
+## Synopsis
+
+Open Meshery UI in browser.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system dashboard [flags]
