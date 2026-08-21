@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"sync"
 
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
@@ -31,6 +32,9 @@ type PortForward struct {
 	emitLogs   bool
 	stopCh     chan struct{}
 	readyCh    chan struct{}
+	stopOnce   sync.Once
+	errMx      sync.Mutex
+	err        error
 	config     *rest.Config
 }
 
@@ -145,20 +149,38 @@ func (pf *PortForward) run() error {
 // Init creates and runs a port-forward connection.
 // This function blocks until the connection is established, in which case it returns nil.
 // It's the caller's responsibility to call Stop() to finish the connection.
+// If the tunnel drops on its own after this returns, the channel from GetStop() is
+// closed and Err() reports why.
 func (pf *PortForward) Init() error {
+	return pf.start(pf.run)
+}
+
+// start runs the forwarder in the background and waits for it to either become
+// ready or fail. The forwarder is a parameter so that tests can exercise the
+// lifecycle without a live cluster.
+func (pf *PortForward) start(run func() error) error {
 	log.Debugf("Starting port forward to %s %d:%d", pf.url, pf.localPort, pf.remotePort)
 
-	failure := make(chan error)
+	// Buffered so the goroutine can always hand off the error and exit, even once
+	// nobody is receiving here anymore (i.e. the tunnel dropped after we returned).
+	failure := make(chan error, 1)
 
 	go func() {
-		if err := pf.run(); err != nil {
+		if err := run(); err != nil {
+			pf.setErr(err)
 			failure <- err
 		}
+		// run() has returned, so the tunnel is gone either way. Closing stopCh
+		// releases everyone waiting on GetStop().
+		pf.Stop()
 	}()
 
-	// The `select` statement below depends on one of two outcomes from `pf.run()`:
+	// `pf.run()` has three possible outcomes:
 	// 1) Succeed and block, causing a receive on `<-pf.readyCh`
-	// 2) Return an err, causing a receive `<-failure`
+	// 2) Return an err before the tunnel is ready, causing a receive on `<-failure`
+	// 3) Succeed, then return an err once the tunnel drops. client-go closes
+	//    `Ready` before it starts waiting on the connection, so this lands after
+	//    we've already returned nil; the goroutine above records it and stops us.
 	select {
 	case <-pf.readyCh:
 		log.Debug("Port forward initialized")
@@ -171,9 +193,26 @@ func (pf *PortForward) Init() error {
 }
 
 // Stop terminates the port-forward connection.
-// It is the caller's responsibility to call Stop even in case of errors
+// It is the caller's responsibility to call Stop even in case of errors.
+// Stop is idempotent and safe to call concurrently.
 func (pf *PortForward) Stop() {
-	close(pf.stopCh)
+	pf.stopOnce.Do(func() {
+		close(pf.stopCh)
+	})
+}
+
+// Err returns the error that brought the port-forward connection down, or nil if
+// it was stopped cleanly. It is only meaningful once GetStop() has been closed.
+func (pf *PortForward) Err() error {
+	pf.errMx.Lock()
+	defer pf.errMx.Unlock()
+	return pf.err
+}
+
+func (pf *PortForward) setErr(err error) {
+	pf.errMx.Lock()
+	defer pf.errMx.Unlock()
+	pf.err = err
 }
 
 // GetStop returns the stopCh.

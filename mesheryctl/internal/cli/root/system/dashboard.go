@@ -162,11 +162,13 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 				// ticker for keeping connection alive with pod each 10 seconds
 				ticker := time.NewTicker(10 * time.Second)
 				go func() {
+					defer ticker.Stop()
 					for {
 						select {
 						case <-signals:
 							portforward.Stop()
-							ticker.Stop()
+							return
+						case <-portforward.GetStop():
 							return
 						case <-ticker.C:
 							keepConnectionAlive(mesheryURL)
@@ -182,6 +184,11 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 				}
 
 				<-portforward.GetStop()
+				if err := portforward.Err(); err != nil {
+					err = ErrRunPortForward(err)
+					utils.Log.Error(err)
+					return err
+				}
 				return nil
 			}
 
