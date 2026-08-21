@@ -33,7 +33,6 @@ Manage your Kubernetes clusters with Meshery. Deploy Meshery in Kubernetes [in-c
 - [Out-of-cluster Installation](#out-of-cluster-installation)
   - [Set up Ingress on Minikube with the NGINX Ingress Controller](#set-up-ingress-on-minikube-with-the-nginx-ingress-controller)
   - [Installing cert-manager with kubectl](#installing-cert-manager-with-kubectl)
-    - [See Also](#see-also)
 
 # In-cluster Installation
 
@@ -113,10 +112,7 @@ Install Meshery on Docker (out-of-cluster) and connect it to your Kubernetes clu
 
 ## Installing cert-manager with kubectl
 
-- Run the below command to install cert-manager for your cluster:
-
-{{< code code="kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.15.3/cert-manager.yaml" >}}
+- Install cert-manager for your cluster if it is not already present.
 
 {{< related-discussions tag="meshery" >}}
 
-### See Also 
