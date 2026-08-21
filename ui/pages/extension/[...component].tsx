@@ -3,7 +3,7 @@ import ExtensionSandbox, {
   getComponentTitleFromPath,
   getComponentIsBetaFromPath,
 } from '../../components/ExtensionSandbox';
-import { CircularProgress, NoSsr } from '@sistent/sistent';
+import { NoSsr } from '@sistent/sistent';
 import Head from 'next/head';
 import React, { useEffect, useMemo } from 'react';
 import RemoteComponent from '../../components/general/RemoteComponent';
@@ -58,10 +58,14 @@ function RemoteExtension() {
   const matchedExtension = useMemo(() => {
     if (typeof window === 'undefined') return null;
     if (!providerCapabilities?.extensions) return null;
+
     const path = getPath();
+
     for (const key of Object.keys(providerCapabilities.extensions)) {
       const value = providerCapabilities.extensions[key];
+
       if (!Array.isArray(value)) continue;
+
       for (const comp of value) {
         if (
           comp?.type === 'full_page' &&
@@ -69,6 +73,7 @@ function RemoteExtension() {
           matchComponentURI(comp.href.uri, path)
         ) {
           const extensions = ExtensionPointSchemaValidator(key)(value);
+
           return {
             name: key,
             title: getComponentTitleFromPath(extensions, path),
@@ -77,16 +82,19 @@ function RemoteExtension() {
         }
       }
     }
+
     return null;
   }, [providerCapabilities, router.query.component]);
 
   useEffect(() => {
     if (!providerCapabilities?.extensions) return;
+
     dispatch(updateProviderCapabilities({ providerCapabilities }));
   }, [dispatch, providerCapabilities]);
 
   useEffect(() => {
     if (!matchedExtension) return;
+
     dispatch(updateExtensionType({ extensionType: matchedExtension.name }));
     dispatch(updateTitle({ title: matchedExtension.title }));
     dispatch(updateBetaBadge({ isBeta: matchedExtension.isBeta }));
@@ -97,26 +105,27 @@ function RemoteExtension() {
     };
   }, [dispatch, matchedExtension]);
 
+  const isReady = !isLoading && !!matchedExtension;
+
   return (
     <NoSsr>
       <Head>
         <title>{`${matchedExtension?.title ?? ''} | Meshery`}</title>
       </Head>
-      <DynamicFullScreenLoader isLoading={isLoading}>
-        {providerCapabilities !== null && extensionType ? (
+
+      <DynamicFullScreenLoader isLoading={!isReady}>
+        {matchedExtension ? (
           <NoSsr>
-            {extensionType === 'navigator' ? (
-              <ExtensionSandbox type={extensionType} Extension={NavigatorExtension} />
+            {matchedExtension.name === 'navigator' ? (
+              <ExtensionSandbox type={matchedExtension.name} Extension={NavigatorExtension} />
             ) : (
               <ExtensionSandbox
-                type={extensionType}
+                type={matchedExtension.name}
                 Extension={(url) => RemoteComponent({ url })}
               />
             )}
           </NoSsr>
-        ) : !isLoading ? null : (
-          <CircularProgress />
-        )}
+        ) : null}
       </DynamicFullScreenLoader>
     </NoSsr>
   );
