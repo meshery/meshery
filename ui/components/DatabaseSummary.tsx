@@ -63,7 +63,11 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
             updateProgress({ showProgress: false });
             if (res.resetStatus === 'PROCESSING') {
               notify({ message: 'Database reset successful.', event_type: EVENT_TYPES.SUCCESS });
-              refetch();
+              try {
+                refetch();
+              } catch (err) {
+                console.error('Database summary refetch skipped:', err);
+              }
             }
           },
           error: handleError('Database is not reachable, try restarting server.'),

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -1517,6 +1518,56 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) er
 	return meshkitutils.ErrInvalidSchemaVersion
 }
 
+func (h *Handler) deleteModelByID(tx *gorm.DB, modelUUID uuid.UUID) error {
+	var modelDef _model.ModelDefinition
+	if err := tx.First(&modelDef, "id = ?", modelUUID).Error; err != nil {
+		return err
+	}
+
+	// Delete registry entries for components belonging to this model
+	if err := tx.Where("entity IN (?) AND type = ?",
+		tx.Model(&component.ComponentDefinition{}).Select("id").Where("model_id = ?", modelUUID),
+		entity.ComponentDefinition,
+	).Delete(&registry.Registry{}).Error; err != nil {
+		return err
+	}
+
+	// Delete registry entries for relationships belonging to this model
+	if err := tx.Where("entity IN (?) AND type = ?",
+		tx.Model(&relationship.RelationshipDefinition{}).Select("id").Where("model_id = ?", modelUUID),
+		entity.RelationshipDefinition,
+	).Delete(&registry.Registry{}).Error; err != nil {
+		return err
+	}
+
+	// Delete registry entries for policies belonging to this model
+	if err := tx.Where("entity IN (?) AND type = ?",
+		tx.Model(&_models.PolicyDefinition{}).Select("id").Where("modelID = ?", modelUUID),
+		entity.PolicyDefinition,
+	).Delete(&registry.Registry{}).Error; err != nil {
+		return err
+	}
+
+	// Delete the model's own registry entry
+	if err := tx.Where("entity = ? AND type = ?", modelUUID, entity.Model).Delete(&registry.Registry{}).Error; err != nil {
+		return err
+	}
+
+	// Delete components, relationships, and policies
+	if err := tx.Where("model_id = ?", modelUUID).Delete(&component.ComponentDefinition{}).Error; err != nil {
+		return err
+	}
+	if err := tx.Where("model_id = ?", modelUUID).Delete(&relationship.RelationshipDefinition{}).Error; err != nil {
+		return err
+	}
+	if err := tx.Where("modelID = ?", modelUUID).Delete(&_models.PolicyDefinition{}).Error; err != nil {
+		return err
+	}
+
+	// Delete the model itself
+	return tx.Where("id = ?", modelUUID).Delete(&_model.ModelDefinition{}).Error
+}
+
 func (h *Handler) DeleteModel(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	modelID := mux.Vars(r)["id"]
 	modelUUID, err := uuid.FromString(modelID)
@@ -1527,53 +1578,7 @@ func (h *Handler) DeleteModel(rw http.ResponseWriter, r *http.Request, _ *models
 	}
 
 	err = h.dbHandler.Transaction(func(tx *gorm.DB) error {
-		var modelDef _model.ModelDefinition
-		if err := tx.First(&modelDef, "id = ?", modelUUID).Error; err != nil {
-			return err
-		}
-
-		// Delete registry entries for components belonging to this model
-		if err := tx.Where("entity IN (?) AND type = ?",
-			tx.Model(&component.ComponentDefinition{}).Select("id").Where("model_id = ?", modelUUID),
-			entity.ComponentDefinition,
-		).Delete(&registry.Registry{}).Error; err != nil {
-			return err
-		}
-
-		// Delete registry entries for relationships belonging to this model
-		if err := tx.Where("entity IN (?) AND type = ?",
-			tx.Model(&relationship.RelationshipDefinition{}).Select("id").Where("model_id = ?", modelUUID),
-			entity.RelationshipDefinition,
-		).Delete(&registry.Registry{}).Error; err != nil {
-			return err
-		}
-
-		// Delete registry entries for policies belonging to this model
-		if err := tx.Where("entity IN (?) AND type = ?",
-			tx.Model(&_models.PolicyDefinition{}).Select("id").Where("modelID = ?", modelUUID),
-			entity.PolicyDefinition,
-		).Delete(&registry.Registry{}).Error; err != nil {
-			return err
-		}
-
-		// Delete the model's own registry entry
-		if err := tx.Where("entity = ? AND type = ?", modelUUID, entity.Model).Delete(&registry.Registry{}).Error; err != nil {
-			return err
-		}
-
-		// Delete components, relationships, and policies
-		if err := tx.Where("model_id = ?", modelUUID).Delete(&component.ComponentDefinition{}).Error; err != nil {
-			return err
-		}
-		if err := tx.Where("model_id = ?", modelUUID).Delete(&relationship.RelationshipDefinition{}).Error; err != nil {
-			return err
-		}
-		if err := tx.Where("modelID = ?", modelUUID).Delete(&_models.PolicyDefinition{}).Error; err != nil {
-			return err
-		}
-
-		// Delete the model itself
-		return tx.Where("id = ?", modelUUID).Delete(&_model.ModelDefinition{}).Error
+		return h.deleteModelByID(tx, modelUUID)
 	})
 
 	if err != nil {
@@ -1588,4 +1593,81 @@ func (h *Handler) DeleteModel(rw http.ResponseWriter, r *http.Request, _ *models
 	}
 
 	rw.WriteHeader(http.StatusNoContent)
+}
+
+// swagger:route DELETE /api/meshmodels/registrants/{connectionID}/models DeleteModelsByRegistrant
+//
+// Delete all models of a registrant.
+//
+// Delete all model definitions, components, relationships, and policies belonging to a specific registrant connection ID.
+func (h *Handler) DeleteModelsByRegistrant(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	connectionIDStr := mux.Vars(r)["connectionId"]
+	if connectionIDStr == "" {
+		writeJSONError(rw, "connection ID is required", http.StatusBadRequest)
+		return
+	}
+
+	connectionID, err := uuid.FromString(connectionIDStr)
+	if err != nil || connectionID == uuid.Nil {
+		writeJSONError(rw, "invalid connection ID", http.StatusBadRequest)
+		return
+	}
+
+	var conn struct {
+		ID   uuid.UUID
+		Name string
+	}
+	if err := h.dbHandler.Table("connections").Select("id, name").Where("id = ?", connectionID).First(&conn).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			writeJSONError(rw, fmt.Sprintf("connection with ID %s not found", connectionID), http.StatusNotFound)
+			return
+		}
+		h.log.Error(err)
+		writeJSONError(rw, "failed to fetch connection", http.StatusInternalServerError)
+		return
+	}
+
+	type DeleteModelsResponse struct {
+		Message        string `json:"message"`
+		Count          int    `json:"count"`
+		ConnectionName string `json:"connectionName"`
+	}
+
+	var count int
+	err = h.dbHandler.Transaction(func(tx *gorm.DB) error {
+		var modelIDs []uuid.UUID
+		if err := tx.Model(&_model.ModelDefinition{}).Where("connection_id = ?", connectionID).Pluck("id", &modelIDs).Error; err != nil {
+			return err
+		}
+		count = len(modelIDs)
+		if count == 0 {
+			return nil
+		}
+		for _, modelUUID := range modelIDs {
+			if err := h.deleteModelByID(tx, modelUUID); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+
+	if err != nil {
+		mesheryErr := models.ErrDBDelete(err, "")
+		h.log.Error(mesheryErr)
+		writeMeshkitError(rw, mesheryErr, http.StatusInternalServerError)
+		return
+	}
+
+	msg := fmt.Sprintf("Deleted %d models for registrant %q", count, conn.Name)
+	if count == 1 {
+		msg = fmt.Sprintf("Deleted 1 model for registrant %q", conn.Name)
+	}
+
+	rw.Header().Set("Content-Type", "application/json")
+	rw.WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(rw).Encode(DeleteModelsResponse{
+		Message:        msg,
+		Count:          count,
+		ConnectionName: conn.Name,
+	})
 }

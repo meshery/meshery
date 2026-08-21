@@ -2,7 +2,14 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const lazyMock = () => [vi.fn(), { data: undefined, isLoading: false, isFetching: false }];
+const lazyMock = () => [
+  vi.fn().mockImplementation(() => ({
+    unwrap: vi
+      .fn()
+      .mockResolvedValue({ registrants: [], models: [], components: [], relationships: [] }),
+  })),
+  { data: undefined, isLoading: false, isFetching: false },
+];
 
 vi.mock('next/router', () => ({
   useRouter: () => ({
@@ -13,18 +20,18 @@ vi.mock('next/router', () => ({
   }),
 }));
 
-vi.mock('@sistent/sistent', () => ({
-  Button: ({ children, onClick }: any) => (
-    <button onClick={onClick} data-testid={`btn-${String(children).trim()}`}>
-      {children}
-    </button>
-  ),
-  NoSsr: ({ children }: any) => <>{children}</>,
-  AddCircleIcon: () => <svg data-testid="add-icon" />,
-  ExternalLinkIcon: () => <svg data-testid="ext-icon" />,
-  FileUploadIcon: () => <svg data-testid="upload-icon" />,
-  useMediaQuery: () => false,
-}));
+vi.mock('@sistent/sistent', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@sistent/sistent')>();
+  return {
+    ...actual,
+    Button: ({ children, onClick }: any) => (
+      <button onClick={onClick} data-testid={`btn-${String(children).trim()}`}>
+        {children}
+      </button>
+    ),
+    useMediaQuery: () => false,
+  };
+});
 
 vi.mock('@/theme', () => ({
   useTheme: () => ({
