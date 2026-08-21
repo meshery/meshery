@@ -330,7 +330,7 @@ func CopyMeshconfigFixture(t *testing.T, src string) string {
 	return dst
 }
 
-// SetupContextEnv sets up the test context using the default /pkg/utils/TestConfig.yaml configuration
+// SetupContextEnv sets up the test context using the default pkg/utils/TestConfig.yaml configuration
 func SetupContextEnv(t *testing.T) {
 	configPath := CopyMeshconfigFixture(t, SharedTestConfigPath(t))
 	viper.Reset()
@@ -389,13 +389,13 @@ func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 	}
 }
 
-// StartMockery starts the mock HTTP client used to mock requests
+// StartMockery activates HTTP mocking so requests made during the test are intercepted
 func StartMockery(t *testing.T) {
 	// activate http mocking
 	httpmock.Activate()
 }
 
-// StopMockery stops the mock HTTP client and resets it
+// StopMockery deactivates HTTP mocking and resets it
 func StopMockery(_ *testing.T) {
 	httpmock.DeactivateAndReset()
 }
@@ -461,7 +461,7 @@ func StartMockMesheryServer(t *testing.T) error {
 }
 
 // CleanStringFromHandlePagination removes undesired characters and spaces added by the
-// HandlePagination function so that expected and actual results match in tests using http.MockURL
+// HandlePagination function so that expected and actual results match in tests using MockURL
 func CleanStringFromHandlePagination(data string) string {
 	cleaned := StripAnsiEscapeCodes(data)
 	cleaned = formatToTabs(cleaned)

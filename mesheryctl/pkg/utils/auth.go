@@ -85,8 +85,7 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 	return req, nil
 }
 
-// MakeRequest returns a new http response given a http request
-// It tests the response and returns any errors associated with it
+// MakeRequest sends an HTTP request, validates the response, and returns the response or an error.
 func MakeRequest(req *http.Request) (*http.Response, error) {
 	client := &http.Client{}
 

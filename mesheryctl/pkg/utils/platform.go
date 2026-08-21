@@ -672,7 +672,7 @@ func GetPodList(client *meshkitkube.Client, namespace string) (*v1core.PodList, 
 	return podList, nil
 }
 
-// GetRequiredPods checks if the pods specified by the user is valid returns a map of the required pods
+// GetRequiredPods checks whether the pods specified by the user are valid and returns a map of the required pods.
 func GetRequiredPods(specifiedPods []string, availablePods []v1core.Pod) (map[string]string, error) {
 	requiredPodsMap := make(map[string]string)
 	var availablePodsName []string
