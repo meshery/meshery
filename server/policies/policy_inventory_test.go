@@ -3,6 +3,7 @@ package policies
 import (
 	"context"
 	"encoding/json"
+	"math"
 	"os"
 	"strings"
 	"testing"
@@ -162,6 +163,70 @@ func TestIdentifyInventoryAdditions_SkipsWhenParentAlreadyPresent(t *testing.T) 
 
 	actions := identifyInventoryAdditions(design, []*relationship.RelationshipDefinition{kubernetesInventoryRelationship()})
 	assert.Empty(t, actions, "must not emit add_component when a matching parent already exists in the design")
+}
+
+// Two Pods that reference the SAME missing namespace must produce exactly
+// one add_component action, not one per referencing Pod. buildInventoryParentCandidate
+// assigns each candidate a fresh random component ID, so an ID-keyed dedup
+// (what this used to do) can never collapse two candidates that describe the
+// same logical addition; the rego engine avoids this because its candidate
+// id is derived from the candidate's own content instead of being random.
+func TestIdentifyInventoryAdditions_DedupesSharedMissingParent(t *testing.T) {
+	t.Parallel()
+	_, pod1 := makePodWithNamespace(t, "default")
+	_, pod2 := makePodWithNamespace(t, "default")
+	design := makePatternFile([]*component.ComponentDefinition{pod1, pod2}, nil)
+
+	actions := identifyInventoryAdditions(design, []*relationship.RelationshipDefinition{kubernetesInventoryRelationship()})
+
+	require.Len(t, actions, 1, "two Pods referencing the same missing namespace must produce exactly one add_component action")
+	assert.Equal(t, AddComponentOp, actions[0].Op)
+	require.NotNil(t, actions[0].Component)
+	assert.Equal(t, "Namespace", actions[0].Component.Component.Kind)
+	assert.Equal(t, "default", string(actions[0].Component.DisplayName))
+}
+
+// The inverse guard for the content dedup: two Pods referencing DIFFERENT
+// missing namespaces must still produce one add_component action each.
+func TestIdentifyInventoryAdditions_DistinctMissingParentsStayDistinct(t *testing.T) {
+	t.Parallel()
+	_, pod1 := makePodWithNamespace(t, "default")
+	_, pod2 := makePodWithNamespace(t, "production")
+	design := makePatternFile([]*component.ComponentDefinition{pod1, pod2}, nil)
+
+	actions := identifyInventoryAdditions(design, []*relationship.RelationshipDefinition{kubernetesInventoryRelationship()})
+
+	require.Len(t, actions, 2, "different missing namespaces must not be collapsed by the content dedup")
+	names := make([]string, 0, len(actions))
+	for _, a := range actions {
+		assert.Equal(t, AddComponentOp, a.Op)
+		require.NotNil(t, a.Component)
+		assert.Equal(t, "Namespace", a.Component.Component.Kind)
+		names = append(names, string(a.Component.DisplayName))
+	}
+	assert.ElementsMatch(t, []string{"default", "production"}, names)
+}
+
+// json.Marshal rejects NaN, forcing inventoryCandidateKey onto its textual
+// fallback. The fallback must stay deterministic (same candidate, same key)
+// while still keeping distinct candidates distinct.
+func TestInventoryCandidateKey_MarshalFailureFallback(t *testing.T) {
+	t.Parallel()
+	build := func(name string) *component.ComponentDefinition {
+		return &component.ComponentDefinition{
+			Component:      component.Component{Kind: "Namespace"},
+			ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+			DisplayName:    name,
+			Configuration: map[string]interface{}{
+				"limit": math.NaN(),
+			},
+		}
+	}
+
+	assert.Equal(t, inventoryCandidateKey(build("default")), inventoryCandidateKey(build("default")),
+		"fallback key must be deterministic for identical candidates")
+	assert.NotEqual(t, inventoryCandidateKey(build("default")), inventoryCandidateKey(build("production")),
+		"fallback key must not collapse distinct candidates")
 }
 
 // Cross-model regression: if the relationship has a different model on the
