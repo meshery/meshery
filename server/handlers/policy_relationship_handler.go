@@ -701,6 +701,7 @@ func runRelationshipEvaluation(
 	log logger.Handler,
 	tracker *evaluationTracker,
 	designKey string,
+	gen uint64,
 	eval func() (pattern.EvaluationResponse, error),
 	respCh chan<- pattern.EvaluationResponse,
 	errCh chan<- error,
@@ -716,7 +717,7 @@ func runRelationshipEvaluation(
 		// propagates to errCh / coalesced followers / the response body.
 		panicErr := fmt.Errorf("panic during relationship evaluation: %v", r)
 		log.Error(fmt.Errorf("%s\n%s", panicErr.Error(), debug.Stack()))
-		tracker.publish(designKey, evalResult{err: panicErr})
+		tracker.publish(designKey, gen, evalResult{err: panicErr})
 		// Non-blocking send: if the leader's select already returned
 		// via ctx.Done() the receiver is gone and a blocking send
 		// would leak this goroutine forever.
@@ -727,17 +728,17 @@ func runRelationshipEvaluation(
 	}()
 
 	if ctx.Err() != nil {
-		tracker.publish(designKey, evalResult{err: ctx.Err()})
+		tracker.publish(designKey, gen, evalResult{err: ctx.Err()})
 		return
 	}
 
 	resp, err := eval()
 	if err != nil {
-		tracker.publish(designKey, evalResult{err: err})
+		tracker.publish(designKey, gen, evalResult{err: err})
 		errCh <- err
 		return
 	}
-	tracker.publish(designKey, evalResult{resp: resp})
+	tracker.publish(designKey, gen, evalResult{resp: resp})
 	respCh <- resp
 }
 
@@ -783,7 +784,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	// Coalesce concurrent evaluations of the same design (rage-click guard).
 	designKey := patternUUID.String()
-	leader, waitCh := h.evalTracker.acquire(designKey)
+	leader, evalGen, waitCh := h.evalTracker.acquire(designKey)
 
 	if !leader {
 		h.log.Debug("coalescing relationship evaluation request for design ", designKey)
@@ -805,6 +806,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		h.log,
 		h.evalTracker,
 		designKey,
+		evalGen,
 		func() (pattern.EvaluationResponse, error) {
 			return h.EvaluateDesign(relationshipPolicyEvalPayload, MAX_RE_EVALUATION_DEPTH)
 		},
@@ -833,7 +835,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		h.writeEvaluationResult(rw, evalResult{resp: evaluationResponse})
 	case <-evalCtx.Done():
 		// Unblock any followers waiting on this designID.
-		h.evalTracker.publish(designKey, evalResult{err: errEvalTimeout})
+		h.evalTracker.publish(designKey, evalGen, evalResult{err: errEvalTimeout})
 		h.writeEvalCtxError(rw, evalCtx)
 		return
 	}
