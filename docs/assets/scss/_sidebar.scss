@@ -341,28 +341,17 @@
   // Breathing room between lists
   & .td-sidebar-nav ul > li > ul:first-of-type {
     padding-top: 1rem;
-    // background-color: purple;
   }
 
   // The last item in each list should have some breathing room at the bottom.
    & .td-sidebar-nav ul:has(.with-child) > li:last-of-type {
     padding-bottom: 1rem;
-    // background-color: orange;
-
   }
   // Root level sections
   & .td-sidebar-nav .ul-1>li>a.td-sidebar-link,
   & .td-sidebar-nav .ul-1>li>.sidebar-section-flex-wrapper>a.td-sidebar-link {
     font-weight: 600;
     font-size: 1.30rem;
-    // background-color: red;
-
-  }
-
-  // Leaf pages
-  & .td-sidebar-nav ul:not(.with-child) > li > a.td-sidebar-link {
-    font-weight: 400;
-    // background-color: green;
   }
 
   // Sections that contain child pages are emphasised over leaf pages so the
@@ -373,9 +362,10 @@
     font-size: 1.2rem;
   }
 
-  & .td-sidebar-nav__section.without-child > a.td-sidebar-link {
-    font-weight: 400;
-    
+  // Leaf pages
+  & .td-sidebar-nav__section.without-child a.td-sidebar-link {
+    font-family: "Qanelas Soft", "Open Sans", sans-serif, -apple-system, BlinkMacSystemFont, segoe ui, Roboto, apple color emoji, segoe ui emoji, segoe ui symbol;
+    font-weight: 300;
   }
 
   & .td-sidebar-link:hover,
