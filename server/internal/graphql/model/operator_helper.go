@@ -183,7 +183,11 @@ func SubscribeToBroker(_ models.Provider, mesheryKubeClient *mesherykube.Client,
 		Username:       "",
 		Password:       "",
 		ReconnectWait:  2 * time.Second,
-		MaxReconnect:   5,
+		// Keep retrying to reconnect indefinitely. This subscription is only set up
+		// once per operator subscribe (there is no re-subscribe loop), so a bounded
+		// cap here means a broker restart longer than ReconnectWait*MaxReconnect
+		// permanently severs MeshSync until the user intervenes. See #20465.
+		MaxReconnect: -1,
 	})
 	// Hack for minikube based clusters
 	if err != nil && conn == nil {
