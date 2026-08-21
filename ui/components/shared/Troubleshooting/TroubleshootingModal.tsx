@@ -132,15 +132,15 @@ const TroubleshootingModal: React.FC<TroubleshootingModalProps> = (props) => {
       actions={
         <FooterText variant="body2">
           Need help? Contact us via{' '}
-          <ContactHelpLink href="mailto:maintainers@meshery.io" target="_blank" rel="noreferrer">
-            email
-          </ContactHelpLink>{' '}
-          or{' '}
           <ContactHelpLink
-            href="https://discuss.meshery.io"
+            href="mailto:maintainers@meshery.io"
             target="_blank"
             rel="noreferrer"
           >
+            email
+          </ContactHelpLink>{' '}
+          or{' '}
+          <ContactHelpLink href="https://discuss.meshery.io" target="_blank" rel="noreferrer">
             community forum
           </ContactHelpLink>
           .
