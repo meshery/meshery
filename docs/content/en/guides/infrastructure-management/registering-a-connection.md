@@ -54,7 +54,7 @@ Creating a Connection performs two transitions in sequence: it **registers** the
 
 ### Credentials
 
-Credentials entered in the wizard are persisted as first-class, named [Credentials]({{< ref "concepts/logical/credentials.md" >}}), encrypted at rest, and reusable across other Connections. Meshery never exposes them in logs or API responses. To learn how Meshery interprets a credential's secret (Basic auth vs. bearer token vs. anonymous), see [Credentials]({{< ref "concepts/logical/credentials.md" >}}) and the [Telemetry authentication note](https://docs.meshery.io/guides/telemetry/).
+Credentials entered in the wizard are persisted as first-class, named [Credentials]({{< ref "concepts/logical/credentials.md" >}}) and are reusable across other Connections. Their secrets are [encrypted at rest]({{< ref "concepts/logical/credentials.md#encryption-at-rest" >}}) in Meshery's datastore and are not written to Meshery Server logs; the credentials API does return a credential's secret to callers authorized to read it, so treat that endpoint as sensitive. To learn how Meshery interprets a credential's secret (Basic auth vs. bearer token vs. anonymous), see [Credentials]({{< ref "concepts/logical/credentials.md" >}}) and the [Telemetry authentication note](https://docs.meshery.io/guides/telemetry/).
 
 ## Importing a Kubernetes cluster
 

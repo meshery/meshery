@@ -93,6 +93,15 @@ release/local-link coupling are in
   shapes and legacy rows are never rewritten. Delegate to
   `server/models/credential_secret.go` or `ui/utils/credentialSecret.ts`, which
   must keep the same resolution rules.
+- MUST NOT move credential encryption out of `DefaultLocalProvider`, decide
+  encrypted-vs-plaintext by attempting decryption, drop the key identifier from
+  the envelope, or accept a client-supplied `__mesheryEncryptedSecret` as proof a
+  secret is already sealed - that property is Meshery's to write, and an inbound
+  one is rejected, never stripped or trusted. Credential secrets are sealed at rest with a key derived
+  from the build-time `$TOKEN`; the marker, the key id and the local-provider-only
+  scope are each load-bearing, and a Remote Provider must still receive
+  plaintext. See
+  [connections](./docs/content/en/project/contributing/models/connections.md).
 
 Detail behind these rules:
 [RTK Query integration](./docs/content/en/project/contributing/ui/schemas.md)
@@ -100,7 +109,7 @@ Detail behind these rules:
 endpoint), [consuming schemas](./docs/content/en/project/contributing/contributing-schemas.md)
 (consumed contracts, the Go side, rename propagation), and
 [connections](./docs/content/en/project/contributing/models/connections.md)
-(the credential shape catalogue).
+(the credential shape catalogue and the at-rest encryption rules).
 
 ## Build & Development Commands
 
@@ -431,8 +440,13 @@ NATS topics: `meshsync.request`, `meshery.broker`. MeshSync publishes cluster st
   rejects a commit that is not signed off, because once an unsigned commit is pushed
   the DCO check can only be satisfied by rewriting the branch. It reaches only the
   commits git routes through it: a checkout without `make ui-setup`, and any harness
-  that repoints `core.hooksPath` at its own hooks directory, bypass it silently. Always
-  `git commit -s`; never rely on the hook to catch the omission.
+  that repoints `core.hooksPath` at its own hooks directory, bypass it silently.
+  `.agents/hooks/require-signoff.sh` covers that bypass - it reads the proposed
+  command rather than git's hook plumbing, so `core.hooksPath` cannot disarm it - and
+  `.claude/settings.json` arms it for Claude Code through
+  `.claude/adapters/require-signoff.sh`, which is the adapter that makes it *block*
+  rather than merely run. Any other harness must wire the `.agents/` script itself.
+  Always `git commit -s`; never rely on either guard to catch the omission.
 - Repairing a pushed commit that lacks the trailer: DCO wants a sign-off naming that
   commit's **author**, so derive it per commit
   (`git rebase <base> --exec 'git commit --amend --no-edit --trailer
@@ -457,8 +471,15 @@ touching any of them.
   canonical skill content.
 - **Skill content addresses its own files as `.agents/skills/...`**, never through
   `.claude/`, which resolves only where the symlink exists.
-- Hooks in `.agents/hooks/`: `format-frontend.sh` (post-edit Prettier) and
-  `block-lockfiles.sh` (pre-edit lock-file guard).
+- Hooks in `.agents/hooks/`: `format-frontend.sh` (post-edit Prettier),
+  `block-lockfiles.sh` (pre-edit lock-file guard) and `require-signoff.sh`
+  (pre-command DCO sign-off guard). They hold the rules and stay harness-agnostic -
+  a path or a command line in, a verdict out as an exit status. `.claude/hooks` is a
+  symlink to this directory, so a harness adapter cannot live under it - wiring
+  belongs beside it, in that harness's own directory:
+  `.claude/adapters/require-signoff.sh` translates the guard to Claude Code's
+  stdin-JSON-and-decision protocol, under which a bare non-zero exit is a
+  non-blocking error that would let the commit through.
 
 ## Further Reading
 

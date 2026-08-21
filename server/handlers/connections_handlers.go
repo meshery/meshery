@@ -94,7 +94,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 		if err != nil {
 			wrappedErr := ErrSendMachineEvent(err)
 			h.log.Error(wrappedErr)
-			writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
+			writeMeshkitError(w, wrappedErr, providerStatusOrInternal(err))
 			if event != nil {
 				_ = provider.PersistEvent(*event, token)
 				go h.config.EventBroadcaster.Publish(userUUID, event)

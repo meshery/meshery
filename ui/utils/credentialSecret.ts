@@ -25,6 +25,20 @@
  * `CredentialPayload` returns nil because it is typed to a map and Go callers
  * reach for `CredentialAuthSecret` instead. Port behaviour across, not
  * signatures.
+ *
+ * # At-rest encryption is not mirrored here, on purpose
+ *
+ * Meshery Server encrypts credential secrets at rest (see
+ * server/models/credential_encryption.go). The UI never sees that ciphertext:
+ * the provider read path decrypts before the handler serializes, so every
+ * credential that reaches this module is already one of the four shapes above.
+ *
+ * Do not add a branch here for the server's `__mesheryEncryptedSecret`
+ * envelope. The key is derived from the server's build-time token and exists
+ * only server-side; a browser has no way to open an envelope, so recognizing one
+ * could only ever produce a worse error than the server's own. If the UI ever
+ * does receive one, the defect is a server read path that skipped decryption -
+ * fix it there.
  */
 
 /** Loosely-typed persisted credential secret map. */

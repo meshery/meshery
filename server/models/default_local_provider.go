@@ -1575,10 +1575,30 @@ func (l *DefaultLocalProvider) SaveUserCredential(token string, credential *Cred
 		}
 		credential.ID = newID
 	}
-	result := l.GetGenericPersister().Table("credentials").Create(&credential)
+
+	// Persist the secret encrypted. EncryptCredentialSecret returns a fresh map,
+	// so the caller's in-memory credential (and the connection payload it was
+	// built from) keeps its plaintext secret, and only the row is ciphertext.
+	stored := *credential
+	encryptedSecret, err := EncryptCredentialSecret(credential.Secret)
+	if err != nil {
+		return nil, fmt.Errorf("error saving user credentials: %w", err)
+	}
+	stored.Secret = encryptedSecret
+
+	result := l.GetGenericPersister().Table("credentials").Create(&stored)
 	if result.Error != nil {
 		return nil, fmt.Errorf("error saving user credentials: %v", result.Error)
 	}
+
+	// GORM populates CreatedAt/UpdatedAt on the value it inserted, which is the
+	// copy. Carry those back onto the caller's credential so the return value is
+	// still the row that was written - with its secret in plaintext, because
+	// that is what the caller handed in and goes on to use.
+	plaintextSecret := credential.Secret
+	*credential = stored
+	credential.Secret = plaintextSecret
+
 	return credential, nil
 }
 
@@ -1591,6 +1611,20 @@ func (l *DefaultLocalProvider) GetCredentialByID(token string, credentialID core
 		}
 		return nil, http.StatusInternalServerError, fmt.Errorf("error retrieving credential with id %s: %v", credentialID, result.Error)
 	}
+
+	// A single credential is fetched because a caller is about to authenticate
+	// with it, so an undecryptable secret is fatal to the request: report the
+	// real cause rather than handing back a secret the caller cannot use and
+	// letting it fail somewhere less legible.
+	decryptedSecret, err := DecryptCredentialSecret(credential.Secret)
+	if err != nil {
+		if l.Log != nil {
+			l.Log.Error(credentialDecryptionFailure(credentialID, err))
+		}
+		return nil, http.StatusInternalServerError, fmt.Errorf("error retrieving credential with id %s: %w", credentialID, err)
+	}
+	credential.Secret = decryptedSecret
+
 	return credential, http.StatusOK, nil
 }
 
@@ -1621,6 +1655,8 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 		}
 	}
 
+	l.decryptCredentialList(credentialsList)
+
 	credentialsPage := &CredentialsPage{
 		Credentials: credentialsList,
 		Page:        page,
@@ -1635,16 +1671,87 @@ func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string
 }
 
 func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential *Credential) (*Credential, error) {
+	// Encrypt into a copy for the same reason SaveUserCredential does: the
+	// caller keeps the credential it handed in, and only the row is ciphertext.
+	stored := *credential
+	encryptedSecret, err := EncryptCredentialSecret(credential.Secret)
+	if err != nil {
+		return nil, fmt.Errorf("error updating user credential: %w", err)
+	}
+	stored.Secret = encryptedSecret
+
+	// This is a partial update, so a request that carries no secret must leave
+	// the stored one alone. GORM's Updates() skips zero-valued struct fields,
+	// but an *empty non-nil* map is not zero - and the HTTP handler initialises
+	// Secret to an empty map before unmarshalling, so a request body without a
+	// `secret` arrives here as {} and would overwrite the credential's secret
+	// with nothing. Normalise absent-or-empty to nil, which GORM does skip.
+	if len(stored.Secret) == 0 {
+		stored.Secret = nil
+	}
+
 	updatedCredential := &Credential{}
-	db := l.GetGenericPersister().Model(&Credential{}).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserId, credential.ID).Updates(credential)
+	db := l.GetGenericPersister().Model(&Credential{}).Where("user_id = ? AND id = ? AND deleted_at is NULL", stored.UserId, stored.ID).Updates(&stored)
 	if db.Error != nil {
 		return nil, fmt.Errorf("error updating user credential: %v", db.Error)
 	}
 
-	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.UserId, credential.ID).First(updatedCredential).Error; err != nil {
+	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", stored.UserId, stored.ID).First(updatedCredential).Error; err != nil {
 		return nil, fmt.Errorf("error getting updated user credential: %v", err)
 	}
+
+	// The write is already committed at this point, and nothing authenticates
+	// with the value returned here - the handler discards it. An undecryptable
+	// secret must therefore not turn a durable update into a failed request:
+	// degrade the way the other non-authenticating paths do.
+	l.decryptCredentialSecretBestEffort(updatedCredential)
+
 	return updatedCredential, nil
+}
+
+// decryptCredentialList decrypts a page of credentials in place.
+//
+// A list is answered for the whole page or not at all, so one credential that
+// cannot be decrypted must not take the other credentials with it - which is
+// what returning an error here would do, permanently, for anyone whose
+// datastore holds a row written under a different build's token. Such a row is
+// instead returned with its secret dropped, and the reason is logged against
+// the credential's id. The failure is loud in the server log and visible in the
+// API (the credential is listed with no secret), it just is not fatal to
+// credentials that are perfectly readable.
+//
+// GetCredentialByID takes the opposite line, and should: a caller fetching one
+// credential is about to use it.
+func (l *DefaultLocalProvider) decryptCredentialList(credentials []Credential) {
+	for i := range credentials {
+		l.decryptCredentialSecretBestEffort(&credentials[i])
+	}
+}
+
+// decryptCredentialSecretBestEffort decrypts one credential's secret in place,
+// dropping the secret and logging the reason rather than returning an error.
+// Use it only where the caller is not about to authenticate with the credential.
+func (l *DefaultLocalProvider) decryptCredentialSecretBestEffort(credential *Credential) {
+	decryptedSecret, err := DecryptCredentialSecret(credential.Secret)
+	if err != nil {
+		if l.Log != nil {
+			l.Log.Error(fmt.Errorf("%w; it is returned without its secret", credentialDecryptionFailure(credential.ID, err)))
+		}
+		credential.Secret = nil
+		return
+	}
+	credential.Secret = decryptedSecret
+}
+
+// credentialDecryptionFailure renders a credential decryption failure for the
+// server log, naming the key identifier this build derives.
+//
+// That identifier stays out of the error returned to the caller: it is a
+// function of the build-time token, and the API error already names the key the
+// stored ciphertext was written under, which is the half an operator acts on.
+// Pairing the two is a diagnosis the operator does from the server log.
+func credentialDecryptionFailure(credentialID core.Uuid, err error) error {
+	return fmt.Errorf("credential %s could not be decrypted; this Meshery Server build derives credential key %s: %w", credentialID, activeCredentialKeyID(), err)
 }
 
 func (l *DefaultLocalProvider) DeleteUserCredential(_ *http.Request, credentialID core.Uuid) (*Credential, error) {
@@ -1655,6 +1762,13 @@ func (l *DefaultLocalProvider) DeleteUserCredential(_ *http.Request, credentialI
 	if err := l.GetGenericPersister().Where("id = ?", credentialID).First(delCredential).Error; err != nil {
 		return nil, err
 	}
+
+	// The row is already soft-deleted, so a secret that cannot be decrypted must
+	// not turn a completed delete into a failed request. Decrypt best-effort for
+	// the same reason the list path does: no caller should ever be handed
+	// Meshery's own ciphertext envelope as if it were credential data.
+	l.decryptCredentialSecretBestEffort(delCredential)
+
 	return delCredential, nil
 }
 

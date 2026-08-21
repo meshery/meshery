@@ -6,8 +6,14 @@ import (
 	"net/http"
 )
 
-// ProviderStatus is the HTTP status a remote provider responded with, carried
-// as a first-class value inside the error chain.
+// ProviderStatus is the HTTP status a failure should surface as, carried as a
+// first-class value inside the error chain.
+//
+// It started as "the status the remote provider responded with" and that is
+// still its commonest source, but it is equally the mechanism by which a
+// locally raised error names the status it deserves - a rejected request body
+// is the caller's fault wherever it was detected. So the value asserts a
+// status, not an origin, and its message must not claim one.
 //
 // Why this exists: before it, the upstream status survived only as prose inside
 // the MeshKit cause ("Status Code: 403 ..."). Nothing could read it back, so
@@ -21,12 +27,13 @@ import (
 type ProviderStatus int
 
 func (s ProviderStatus) Error() string {
-	return fmt.Sprintf("remote provider responded with HTTP %d %s", int(s), http.StatusText(int(s)))
+	return fmt.Sprintf("failure carries HTTP status %d %s", int(s), http.StatusText(int(s)))
 }
 
-// WithProviderStatus tags err with the HTTP status the remote provider
-// returned, so a handler downstream can propagate the real status instead of
-// fabricating one.
+// WithProviderStatus tags err with the HTTP status it should surface as - the
+// one a remote provider returned, or the one a locally raised failure has
+// decided on - so a handler downstream propagates it instead of fabricating a
+// status of its own.
 //
 // errors.Join is used rather than a wrapper type so that errors.Is/errors.As
 // and every meshkiterrors.Get* accessor still reach the original error: the
@@ -43,11 +50,10 @@ func WithProviderStatus(err error, statusCode int) error {
 	return stderrors.Join(err, ProviderStatus(statusCode))
 }
 
-// ProviderStatusCode reports the HTTP status a remote provider returned for
-// err, if any link in the error chain recorded one. The boolean is false when
-// the failure never produced an upstream HTTP status - a marshalling error, an
-// unreachable provider, an unsupported capability - in which case the caller
-// must choose its own status.
+// ProviderStatusCode reports the HTTP status recorded for err, if any link in
+// the error chain recorded one. The boolean is false when nothing decided a
+// status - a marshalling error, an unreachable provider, an unsupported
+// capability - in which case the caller must choose its own.
 func ProviderStatusCode(err error) (int, bool) {
 	var status ProviderStatus
 	if stderrors.As(err, &status) && status != 0 {

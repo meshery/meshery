@@ -101,12 +101,21 @@ and providers.
   them.
 - **In-cluster credentials.** When Meshery runs in-cluster and manages its own
   cluster, it can use the in-cluster ServiceAccount rather than a kubeconfig
-  file—one fewer long-lived secret to manage.
+  file - one fewer long-lived secret to manage.
 - **Provider and OAuth secrets.** Keep Remote Provider configuration and any
   client secrets in Kubernetes Secrets (or an external secrets manager), not in
   plaintext values files committed to source control.
 - **`imagePullSecrets`.** If you mirror images to a private registry, supply
   pull secrets via the chart rather than node-level credentials.
+- **Credentials at rest.** Credential secrets Meshery persists to its own
+  datastore are encrypted with AES-256-GCM under a key derived from the secret
+  built into the Server binary. That protects a datastore separated from the
+  binary - an exfiltrated database, a copied `~/.meshery`, a backup, a support
+  bundle - and does **not** protect against anyone holding the Server binary or
+  image, who can recover the key from it. Treat the image and the datastore as
+  equally sensitive, and keep taking backups off the host under their own
+  encryption. See
+  [Credentials]({{< ref "concepts/logical/credentials.md#encryption-at-rest" >}}).
 
 {{% alert title="Don't commit secrets to values.yaml" color="warning" %}}
 Keep non-secret configuration in version-controlled Helm values, but source

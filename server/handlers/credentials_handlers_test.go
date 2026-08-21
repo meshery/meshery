@@ -21,6 +21,12 @@ type credentialSpyProvider struct {
 	observedSave   atomic.Pointer[models.Credential]
 	observedUpdate atomic.Pointer[models.Credential]
 	observedDelete atomic.Pointer[uuid.UUID]
+
+	// saveErr and updateErr let a test drive the failure paths. They are
+	// returned wrapped the way the local provider wraps them, so the handler
+	// sees the same error shape production hands it.
+	saveErr   error
+	updateErr error
 }
 
 func newCredentialSpyProvider() *credentialSpyProvider {
@@ -32,12 +38,18 @@ func newCredentialSpyProvider() *credentialSpyProvider {
 func (m *credentialSpyProvider) SaveUserCredential(_ string, c *models.Credential) (*models.Credential, error) {
 	cp := *c
 	m.observedSave.Store(&cp)
+	if m.saveErr != nil {
+		return nil, fmt.Errorf("error saving user credentials: %w", m.saveErr)
+	}
 	return c, nil
 }
 
 func (m *credentialSpyProvider) UpdateUserCredential(_ *http.Request, c *models.Credential) (*models.Credential, error) {
 	cp := *c
 	m.observedUpdate.Store(&cp)
+	if m.updateErr != nil {
+		return nil, fmt.Errorf("error updating user credential: %w", m.updateErr)
+	}
 	return c, nil
 }
 
@@ -183,5 +195,68 @@ func TestUpdateUserCredential_ClientSuppliedUserIdCannotOverride(t *testing.T) {
 	}
 	if updated.UserId == attacker {
 		t.Fatalf("credential.UserId matches attacker-supplied value %v — authorization bypass", attacker)
+	}
+}
+
+// TestCredentialWriteFailureStatusCodes pins which credential write failures are
+// the caller's fault. A request body carrying Meshery's reserved ciphertext
+// property is a malformed submission the client can fix, so it is a 400; every
+// other write failure stays a 500. The provider wraps its error with %w, so
+// this also proves the code is resolved through that wrapper rather than off
+// the handler's own error envelope, whose code would otherwise match first.
+func TestCredentialWriteFailureStatusCodes(t *testing.T) {
+	body := `{"name":"c","type":"token","secret":{"apiKey":"k"}}`
+
+	for _, tc := range []struct {
+		name        string
+		providerErr error
+		wantStatus  int
+	}{
+		{
+			name:        "reserved property is a client error",
+			providerErr: models.ErrReservedCredentialProperty("__mesheryEncryptedSecret"),
+			wantStatus:  http.StatusBadRequest,
+		},
+		{
+			name:        "an ordinary write failure is a server error",
+			providerErr: fmt.Errorf("datastore is unavailable"),
+			wantStatus:  http.StatusInternalServerError,
+		},
+		{
+			name:        "an unrelated credential error is still a server error",
+			providerErr: models.ErrCredentialEncrypt(fmt.Errorf("boom")),
+			wantStatus:  http.StatusInternalServerError,
+		},
+	} {
+		t.Run(tc.name+"/save", func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			p := newCredentialSpyProvider()
+			p.saveErr = tc.providerErr
+
+			req := httptest.NewRequest(http.MethodPost, "/api/integrations/credentials", bytes.NewBufferString(body))
+			req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "tok"))
+			rec := httptest.NewRecorder()
+
+			h.SaveUserCredential(rec, req, nil, &models.User{}, p)
+
+			if rec.Code != tc.wantStatus {
+				t.Errorf("status = %d, want %d (body=%q)", rec.Code, tc.wantStatus, rec.Body.String())
+			}
+		})
+
+		t.Run(tc.name+"/update", func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			p := newCredentialSpyProvider()
+			p.updateErr = tc.providerErr
+
+			req := httptest.NewRequest(http.MethodPut, "/api/integrations/credentials", bytes.NewBufferString(body))
+			rec := httptest.NewRecorder()
+
+			h.UpdateUserCredential(rec, req, nil, &models.User{}, p)
+
+			if rec.Code != tc.wantStatus {
+				t.Errorf("status = %d, want %d (body=%q)", rec.Code, tc.wantStatus, rec.Body.String())
+			}
+		})
 	}
 }

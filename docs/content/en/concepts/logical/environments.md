@@ -79,7 +79,7 @@ Environments can exist in different states:
 Meshery implements several security measures for environments:
 
 - Access control through workspace permissions
-- Credential encryption for sensitive data
+- [Credential secret encryption at rest]({{< ref "concepts/logical/credentials.md#encryption-at-rest" >}})
 - Audit logging of environment changes
 - Resource isolation between environments
 

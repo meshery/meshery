@@ -50,6 +50,10 @@ Confirm which one you have, and that it speaks the protocol:
 
 A working Dart Sass prints a JSON blob containing `protocolVersion`. If it prints anything else, put a real Dart Sass release first on `PATH` - the same one CI installs, downloaded from the [dart-sass releases](https://github.com/sass/dart-sass/releases) - rather than removing whatever else is there.
 
+If you would rather not install one system-wide, the `sass-embedded` npm package ships a native Dart Sass binary next to its JS shim. Install it anywhere and put the binary's *directory* on `PATH` - not `node_modules/.bin`, whose `sass` is the pure-JS shim that produces exactly the failure above:
+
+{{< code code=`npm install sass-embedded --no-save && PATH="$PWD/node_modules/sass-embedded-$(node -p "process.platform+'-'+process.arch")/dart-sass:$PATH" make docs-build` >}}
+
 ## `make docs-mesheryctl` rewrites ~100 pages with your home directory
 
 `make docs-mesheryctl` (that is, `cd mesheryctl/doc && go run doc.go`) bakes the machine's `$HOME` into every generated page's "Options inherited from parent commands" block, via the `--config` default path. Running it locally rewrites all ~100 pages under `docs/content/en/reference/references/mesheryctl/` with your local home directory, even when only one command changed.

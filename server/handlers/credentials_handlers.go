@@ -41,7 +41,7 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 	createdCredential, err := provider.SaveUserCredential(token, &credential)
 	if err != nil {
 		h.log.Error(ErrSaveUserCredential(err))
-		writeMeshkitError(w, ErrSaveUserCredential(err), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrSaveUserCredential(err), providerStatusOrInternal(err))
 		return
 	}
 
@@ -131,7 +131,7 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 	_, err = provider.UpdateUserCredential(req, credential)
 	if err != nil {
 		h.log.Error(ErrUpdateUserCredential(err))
-		writeMeshkitError(w, ErrUpdateUserCredential(err), http.StatusInternalServerError)
+		writeMeshkitError(w, ErrUpdateUserCredential(err), providerStatusOrInternal(err))
 		return
 	}
 

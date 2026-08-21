@@ -38,7 +38,34 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 - `DOCKER_PASSWORD`: Password for the Docker Hub user
 - `IMAGE_NAME`: appropriate image name for each of the Docker container images. All are under the `meshery` org.
 - `SLACK_BOT_TOKEN`: Used for notification of new GitHub stars given to the Meshery repo.
-- `GLOBAL_TOKEN`: Used for securely transmitting performance test results for the None Provider.
+- `GLOBAL_TOKEN`: Two roles, and they pull in opposite directions. Read this
+  bullet in full before rotating it.
+
+  It is the API key Meshery Server presents for anonymous results - the server
+  sends its value on the wire as the `X-API-Key` header when shipping
+  performance results (`shipResults`), publishing metrics (`PublishMetrics`) and
+  creating an anonymous user - **and** it is the input keying material for
+  [credential encryption at rest]({{< ref "concepts/logical/credentials.md#encryption-at-rest" >}}).
+  Both release workflows pass it as the `TOKEN` build argument, which is linked
+  into the server binary, and Meshery Server derives the key that seals every
+  persisted credential secret from it.
+
+  **The same string is both an embedded secret and a transmitted one, and those
+  are not the same risk.** The credential encryption key is HKDF-derived from
+  this value deterministically - fixed salt, fixed info, no per-install entropy -
+  so anyone who captures that `X-API-Key` header can derive the key that
+  protects every stored credential, without ever holding the binary. Weigh that
+  when deciding what exposure of this secret means.
+
+  **And rotating it is not a routine secret rotation.** Because the key is
+  derived from this value, a build carrying a new one derives a different key:
+  every credential any user persisted under the old value becomes unreadable the
+  moment they upgrade to an image built with the new one. Each such credential
+  fails with `meshery-server-1484` on a direct fetch and is dropped from the
+  credentials list, and re-entering it is the only remedy. So the rotation an
+  operator would reach for on suspected exposure of the API key is the same
+  action that destroys every user's stored credentials. Rotate it only with a
+  deliberate plan for both, not as housekeeping.
 - `NPM_TOKEN`: npm authentication token, used to perform authentication against the npm registry in meshery deployment workflow.
 - `GH_ACCESS_TOKEN`: GitHub access token for various operations
 - `INTEGRATION_SPREADSHEET_CRED`: Credentials for integration spreadsheet access

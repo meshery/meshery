@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	stderrors "errors"
 	"fmt"
 	"strings"
 
@@ -1117,11 +1118,23 @@ func ErrInitializeMachine(err error) error {
 
 // ErrSendMachineEvent wraps failures of *StateMachine.SendEvent, which
 // drives a connection through its registered transitions (e.g.
-// REGISTERED → DISCOVERED → CONNECTED). Emitted with HTTP 500 because
-// the event-driven transition failed inside the state machine, not in
-// caller input.
+// REGISTERED → DISCOVERED → CONNECTED).
+//
+// The HTTP status is not fixed: handlers pair this with
+// providerStatusOrInternal, so 500 is the fallback for a transition that
+// failed inside the state machine, and a status tagged onto the underlying
+// error by httputil.WithProviderStatus is honoured instead. A side-effect
+// action attached to a transition can reject caller input - registering a
+// connection whose credential secret carries Meshery's reserved ciphertext
+// marker answers 400 that way.
+//
+// The cause is joined rather than only stringified, for the same reason
+// models.ErrPersistCredential joins its own: a side-effect action's error can
+// carry a provider status, and MeshKit's *Error has no Unwrap to carry it
+// through. Joining the MeshKit error first keeps GetCode and the detail
+// accessors resolving to this code.
 func ErrSendMachineEvent(err error) error {
-	return errors.New(ErrSendMachineEventCode, errors.Alert, []string{"Failed to advance connection state machine"}, []string{err.Error()}, []string{"The requested event is not valid from the connection's current state.", "A side-effect action attached to the transition (e.g. provisioning, discovery) returned an error."}, []string{"Inspect the connection's current status before retrying. If the failure originates from a side-effect action, address the underlying cause (e.g. cluster reachability, credential validity) and retry."})
+	return stderrors.Join(errors.New(ErrSendMachineEventCode, errors.Alert, []string{"Failed to advance connection state machine"}, []string{err.Error()}, []string{"The requested event is not valid from the connection's current state.", "A side-effect action attached to the transition (e.g. provisioning, discovery) returned an error."}, []string{"Inspect the connection's current status before retrying. If the failure originates from a side-effect action, address the underlying cause (e.g. cluster reachability, credential validity) and retry."}), err)
 }
 
 // Environment, workspace, organization, user and API-key failures
