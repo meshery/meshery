@@ -284,7 +284,7 @@ const NavigatorContent = () => {
     },
     {
       id: 'forum',
-      href: 'https://meshery.io/community#community-forums',
+      href: 'https://discuss.meshery.io',
       title: 'Discussion Forum',
       icon: <DiscussForumIcon fill="currentColor" height="28px" width="28px" />,
       hovericon: <DiscussForumIcon height="28px" width="28px" />,
