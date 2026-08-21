@@ -20,6 +20,7 @@ jobs:
           key: ${{ secrets.OCI_BASTION_KEY }}
           envs: MANIFEST_REF
           script: |
+            set -euo pipefail
             SCRIPT_URL="https://raw.githubusercontent.com/meshery/meshery/${MANIFEST_REF}/install/playground/playground-cleanup.sh"
             SCRIPT_FILE="$(mktemp)"
             trap 'rm -f "$SCRIPT_FILE"' EXIT
