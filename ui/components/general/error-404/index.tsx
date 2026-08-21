@@ -107,7 +107,7 @@ const DefaultError = (props) => {
       </StyledButton>
       <Typography variant="textB1Regular" component="p" align="center">
         For more help, please inquire on the
-        <ErrorLink href="https://meshery.io/community#community-forums">
+        <ErrorLink href="https://discuss.meshery.io">
           {' '}
           discussion forum
         </ErrorLink>{' '}
