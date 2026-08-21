@@ -66,7 +66,10 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 
 	val, err := json.Marshal(databaseSummary)
 	if err != nil {
-		fmt.Println(err)
+		merr := models.ErrMarshal(err, "database summary")
+		h.log.Error(merr)
+		writeMeshkitError(w, merr, http.StatusInternalServerError)
+		return
 	}
 	if _, err := fmt.Fprint(w, string(val)); err != nil {
 		h.log.Error(err)
