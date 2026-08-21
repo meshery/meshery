@@ -34,6 +34,16 @@ If you are on a macOS or Linux system, you can download, install, and run both `
   <div class="clipboardjs">curl -L https://meshery.io/install | PLATFORM=kubernetes bash -</div>
   </div>
 </pre>
+<br/>
+
+If you are on Windows, you can install `mesheryctl` using <a href="https://scoop.sh">Scoop</a> and start Meshery by executing:
+
+<pre class="codeblock-pre">
+  <div class="codeblock">
+  <div class="clipboardjs">scoop install mesheryctl
+mesheryctl system start</div>
+  </div>
+</pre>
 
 {{% alert color="info" title="Meshery CLI" %}}
 Meshery's command line interface, <code>mesheryctl</code>, can be installed in <a href='{{< ref "installation/mesheryctl/_index.md" >}}'>various ways</a>. In addition to <a href='{{< ref "installation/mesheryctl/linux-mac/bash.md" >}}'>Bash</a>, you can also use <a href='{{< ref "installation/mesheryctl/linux-mac/brew.md" >}}'>Brew</a> or <a href='{{< ref "installation/mesheryctl/windows/scoop.md" >}}'>Scoop</a> to install <code>mesheryctl</code>. Alternatively, <code>mesheryctl</code> is also available via <a href='https://github.com/meshery/meshery/releases/latest'>direct download</a>.
