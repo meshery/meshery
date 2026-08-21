@@ -258,9 +258,6 @@ const (
 // This constant is not currently in use.
 // const initModelTemplatePathConnection = "schemas/constructs/v1beta1/connection/connection_template"
 
-// TODO
-// if csv output is not directory based
-// should it have different text for csv output format?
 const initModelNextStepsText = `Next steps:
 1. cd {modelVersionFolder}
 2. Edit model.{outputFormat} to customize your model configuration
@@ -278,9 +275,6 @@ $ mesheryctl model build {modelName}/{modelVersion} --path {path}
 
 Detailed guide: https://docs.meshery.io/reference/references/mesheryctl/model/init/`
 
-// TODO
-// initModelData fits well for json and yaml format
-// if csv output is different (non folder based), will initModelData fit it?
 var initModelData = []struct {
 	folderPath string
 	files      map[string]string
@@ -347,11 +341,6 @@ func getTemplateInOutputFormat(templatePath string, outputFormat string) ([]byte
 				".",
 			),
 		)
-	}
-
-	if outputFormat == "csv" {
-		// impossible to reach here, as outputFormat is validated in prerun
-		return nil, ErrModelUnsupportedOutputFormat("TODO implement csv")
 	}
 
 	// impossible to reach here, as outputFormat is validated in prerun

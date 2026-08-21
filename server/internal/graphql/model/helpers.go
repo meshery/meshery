@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/broker"
@@ -49,7 +50,9 @@ var (
 // to be depricated
 func SetOverrideValues(delete bool, adapterTracker models.AdaptersTrackerInterface) map[string]interface{} {
 	installedAdapters := make([]string, 0)
-	adapters := adapterTracker.GetAdapters(context.TODO())
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	adapters := adapterTracker.GetAdapters(ctx)
 
 	for _, adapter := range adapters {
 		if adapter.Name != "" {

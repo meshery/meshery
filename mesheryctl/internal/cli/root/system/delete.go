@@ -51,7 +51,7 @@ mesheryctl system delete -y
 		if err != nil {
 			return ErrHealthCheckFailed(err)
 		}
-		return hc.RunPreflightHealthChecks()
+		return hc.RunPreflightHealthChecks(cmd.Context())
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {

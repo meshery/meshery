@@ -94,7 +94,7 @@ mesheryctl system start --provider Meshery
 			return ErrHealthCheckFailed(err)
 		}
 		// execute healthchecks
-		err = hc.RunPreflightHealthChecks()
+		err = hc.RunPreflightHealthChecks(cmd.Context())
 		if err != nil {
 			cmd.SilenceUsage = true
 			return err
