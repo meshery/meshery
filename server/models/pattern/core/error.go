@@ -8,10 +8,11 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrGetK8sComponentsCode     = "meshery-server-1314"
-	ErrParseK8sManifestCode     = "meshery-server-1315"
-	ErrCreatePatternServiceCode = "meshery-server-1316"
-	ErrPatternFromCytoscapeCode = "meshery-server-1317"
+	ErrGetK8sComponentsCode       = "meshery-server-1314"
+	ErrParseK8sManifestCode       = "meshery-server-1315"
+	ErrCreatePatternServiceCode   = "meshery-server-1316"
+	ErrPatternFromCytoscapeCode   = "meshery-server-1317"
+	ErrNoResolvedComponentsCode   = "meshery-server-1430"
 )
 
 func ErrGetK8sComponents(err error) error {
@@ -20,6 +21,25 @@ func ErrGetK8sComponents(err error) error {
 
 func ErrParseK8sManifest(err error) error {
 	return errors.New(ErrParseK8sManifestCode, errors.Alert, []string{"Failed to parse manifest into JSON"}, []string{err.Error()}, []string{"Ensure manifests are valid and also use the restricted YAML features like using only \"strings\" in the field names"}, []string{"Ensure YAML is a valid Kubernetes Manifest"})
+}
+
+func ErrNoResolvedComponents(err error) error {
+	return errors.New(
+		ErrNoResolvedComponentsCode,
+		errors.Alert,
+		[]string{"Failed to resolve manifest resources to known components"},
+		[]string{err.Error()},
+		[]string{
+			"No Kubernetes cluster is connected or components have not been registered",
+			"Manifest contains resources not recognized by Meshery or with unsupported API versions",
+			"Component registry is empty or incomplete",
+		},
+		[]string{
+			"Connect a Kubernetes cluster to populate the component registry",
+			"Verify that the manifest uses supported Kubernetes resource kinds and API versions",
+			"Check that the registry is properly initialized",
+		},
+	)
 }
 
 func ErrCreatePatternService(err error) error {

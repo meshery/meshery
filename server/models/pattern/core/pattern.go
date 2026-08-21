@@ -351,7 +351,8 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 	}
 
 	decoder := yaml.NewDecoder(bytes.NewBufferString(data))
-	resourceCount := 0
+	totalDecoded := 0
+	resolvedCount := 0
 
 	for {
 		manifest := map[string]interface{}{}
@@ -382,35 +383,46 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 			if items, ok := manifest["items"].([]interface{}); ok {
 				for _, item := range items {
 					if itemMap, ok := item.(map[string]interface{}); ok {
-						resourceCount++
+						if len(itemMap) == 0 {
+							continue
+						}
+						totalDecoded++
 						declaration, err := createPatternDeclarationFromK8s(itemMap, reg, registryCache)
 						if err != nil {
 							if ignoreErrors {
 								continue
 							}
-							return pattern, ErrCreatePatternService(fmt.Errorf("failed to create design service from kubernetes component: %s", err))
+							return pattern, err
 						}
-						pattern.Components = append(pattern.Components, &declaration)
+						resolvedCount++
+						decl := declaration
+						pattern.Components = append(pattern.Components, &decl)
 					}
 				}
 			}
 			continue
 		}
 
-		resourceCount++
 		// Process single manifest
+		totalDecoded++
 		declaration, err := createPatternDeclarationFromK8s(manifest, reg, registryCache)
 		if err != nil {
 			if ignoreErrors {
 				continue
 			}
-			return pattern, ErrCreatePatternService(fmt.Errorf("failed to create design service from kubernetes component: %s", err))
+			return pattern, err
 		}
-		pattern.Components = append(pattern.Components, &declaration)
+		resolvedCount++
+		decl := declaration
+		pattern.Components = append(pattern.Components, &decl)
 	}
 
-	if resourceCount == 0 {
+	if totalDecoded == 0 {
 		return pattern, ErrParseK8sManifest(fmt.Errorf("kubernetes manifest is empty"))
+	}
+
+	if totalDecoded > 0 && resolvedCount == 0 {
+		return pattern, ErrNoResolvedComponents(fmt.Errorf("no components resolved from %d manifest resource(s)", totalDecoded))
 	}
 
 	return pattern, nil
@@ -453,7 +465,7 @@ func createPatternDeclarationFromK8s(manifest map[string]interface{}, regManager
 	componentList, _, _, _ := regManager.GetEntitiesMemoized(&componentFilter, registryCache)
 
 	if len(componentList) == 0 {
-		return component.ComponentDefinition{}, ErrCreatePatternService(fmt.Errorf("no resources found for APIVersion: %s Kind: %s", apiVersion, kind))
+		return component.ComponentDefinition{}, ErrNoResolvedComponents(fmt.Errorf("no resources found for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
 
 	// just needs the first entry to grab meshmodel-metadata and other model
