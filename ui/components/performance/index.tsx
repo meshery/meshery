@@ -78,6 +78,8 @@ const MesheryPerformanceComponent_ = (props) => {
   const [timerDialogOpenState, setTimerDialogOpen] = useState(false);
   const [blockRunTestState, setBlockRunTest] = useState(false);
   const [urlErrorState, setUrlError] = useState(false);
+  const [cErrorState, setCError] = useState(false);
+  const [qpsErrorState, setQpsError] = useState(false);
   const [tErrorState, setTError] = useState('');
   const [jsonErrorState, setJsonError] = useState(false);
   const [disableTestState, setDisableTest] = useState(
@@ -125,6 +127,8 @@ const MesheryPerformanceComponent_ = (props) => {
     setJsonError,
     setDisableTest,
     setUrlError,
+    setCError,
+    setQpsError,
   });
 
   const handleDurationChange = (event, newValue) => {
@@ -137,10 +141,34 @@ const MesheryPerformanceComponent_ = (props) => {
   const handleInputDurationChange = (event, newValue) => {
     setT(newValue);
   };
+  const validateForm = () => {
+    let valid = true;
 
-  const handleSubmit = () => {
-    if (urlState === '') {
+    if (urlState.trim() === '') {
       setUrlError(true);
+      valid = false;
+    } else {
+      setUrlError(false);
+    }
+
+    if (cState === '' || isNaN(Number(cState)) || +cState <= 0) {
+      setCError(true);
+      valid = false;
+    } else {
+      setCError(false);
+    }
+
+    if (qpsState === '' || isNaN(Number(qpsState)) || +qpsState < 0) {
+      setQpsError(true);
+      valid = false;
+    } else {
+      setQpsError(false);
+    }
+
+    return valid;
+  };
+  const handleSubmit = () => {
+    if (!validateForm()) {
       return;
     }
 
@@ -184,8 +212,8 @@ const MesheryPerformanceComponent_ = (props) => {
       additional_options: additionalOptionsState,
       endpoint: urlState,
       serviceMesh: meshNameState,
-      concurrentRequest: +cState || 1,
-      qps: +qpsState || 0,
+      concurrentRequest: +cState,
+      qps: +qpsState,
       duration: tState,
       requestHeaders: headersState,
       requestCookies: cookiesState,
@@ -500,7 +528,9 @@ const MesheryPerformanceComponent_ = (props) => {
                 url={urlState}
                 urlError={urlErrorState}
                 c={cState}
+                cError={cErrorState}
                 qps={qpsState}
+                qpsError={qpsErrorState}
                 t={tState}
                 tValue={tValueState}
                 tError={tErrorState}
@@ -527,7 +557,9 @@ const MesheryPerformanceComponent_ = (props) => {
                   hasTestResult={!!testResult}
                   onAbort={handleAbort}
                   onShowResults={() => setTestResultsOpen(true)}
-                  onSaveProfile={() => submitProfile()}
+                  onSaveProfile={() => {
+                    if (validateForm()) submitProfile();
+                  }}
                   onRunTest={handleSubmit}
                 />
               </React.Fragment>
