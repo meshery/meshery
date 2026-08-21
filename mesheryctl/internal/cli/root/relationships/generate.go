@@ -67,6 +67,9 @@ mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet
 		return mesheryctlflags.ValidateCmdFlags(cmd, &relationshipGenerateFlag)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := meshkitRegistry.SetLogger(false); err != nil {
+			return err
+		}
 		outputPath := relationshipGenerateFlag.Output
 		if outputPath == "" {
 			outputPath = relationshipsOutputPath
