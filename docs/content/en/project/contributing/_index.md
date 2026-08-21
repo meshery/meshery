@@ -5,7 +5,8 @@ categories: [contributing]
 display-suggested-reading: false
 description: How to contribute to the Meshery project and any of its components.
 ---
-# Contributing 
+
+# Contributing
 
 Please do! Thanks for your help! 🎈 Meshery is community-built and welcomes collaboration. Contributors are expected to adhere to the [CNCF's Code of Conduct](https://github.com/meshery/meshery/blob/master/CODE_OF_CONDUCT.md).
 
@@ -55,7 +56,7 @@ To ensure all your commits are signed, you may choose to add this alias to your 
 </code></pre>
 
 Or you may configure your IDE, for example, VSCode to automatically sign-off commits for you:
-<a href="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" ><img class="center mobile-full" src="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" width="50%"/></a>
+<a href="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" ><img class="center mobile-full" src="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" alt="VS Code setting for automatic commit sign-off" width="50%"/></a>
 
 </li>
 
@@ -92,6 +93,7 @@ $ git push --force-with-lease</code></pre>
 That rewrites the branch, so settle it first with anyone else working on it, and with any
 automation that is tracking the branch by commit hash - a force push moves the tip out from
 under both.
+
 </li>
 </ul>
 </details>
@@ -128,7 +130,7 @@ git checkout master
 
 This yields a working tree a fraction of the size of a full clone. `--filter=blob:none` makes it a [partial clone](https://git-scm.com/docs/partial-clone), so Git transparently fetches any excluded file on demand if you ever check one out - nothing is permanently lost, and `git log`/`git blame` keep working across the full history.
 
-The `!/models/*` pattern excludes the *contents* of `models/` (not the directory itself), which is what lets the two following lines re-include only the `meshery-core` and `kubernetes` models. For the docs, exclude the older archived snapshots under `docs/static/` and keep the newest (currently `docs/static/v0.9`); add another `!` line for each older version as new snapshots are archived.
+The `!/models/*` pattern excludes the _contents_ of `models/` (not the directory itself), which is what lets the two following lines re-include only the `meshery-core` and `kubernetes` models. For the docs, exclude the older archived snapshots under `docs/static/` and keep the newest (currently `docs/static/v0.9`); add another `!` line for each older version as new snapshots are archived.
 
 ### Re-including an excluded directory
 
