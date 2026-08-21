@@ -56,10 +56,7 @@ describe('CustomErrorMessage (ErrorPage)', () => {
   it('renders the discussion forum link', () => {
     render(<CustomErrorMessage />);
     const link = screen.getByTestId('link');
-    expect(link).toHaveAttribute(
-      'href',
-      'https://discuss.meshery.io/c/meshery/5',
-    );
+    expect(link).toHaveAttribute('href', 'https://discuss.meshery.io/c/meshery/5');
     expect(link).toHaveAttribute('target', '_blank');
     expect(link).toHaveTextContent('discussion forum');
   });
