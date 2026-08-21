@@ -23,7 +23,7 @@ address (sorry, no pseudonyms or anonymous contributions). An example of signing
   cm = commit -s -m
   commit = commit -s
 </code></pre><p>Or you may configure your IDE, for example, VSCode to automatically sign-off commits for you:
-<a href=https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png><img class="center mobile-full" src=https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png width=50%></a></p></li><li>Should an unsigned commit slip through anyway, the repository's <code>commit-msg</code> hook
+<a href=https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png><img class="center mobile-full" src=https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png alt="VS Code setting for automatic commit sign-off" width=50%></a></p></li><li>Should an unsigned commit slip through anyway, the repository's <code>commit-msg</code> hook
 (installed with the UI dependencies, see <code>ui/.husky/</code>) rejects it locally rather than
 letting the DCO check fail in CI. The hook applies the same rules the DCO check does, so a
 message it accepts is one CI accepts: merge commits are exempt, and at least one
