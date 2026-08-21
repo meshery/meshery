@@ -130,3 +130,54 @@ func TestGetMeshSyncInfo_NilMeshsync(t *testing.T) {
 	assert.Equal(t, model.StatusUnknown, statusResult.Status)
 	assert.Empty(t, statusResult.Name)
 }
+
+func TestParseOperatorImageVersion(t *testing.T) {
+	tests := []struct {
+		name     string
+		image    string
+		expected string
+	}{
+		{
+			name:     "standard tagged image",
+			image:    "layer5/meshery-operator:v0.7.0",
+			expected: "v0.7.0",
+		},
+		{
+			name:     "untagged image",
+			image:    "layer5/meshery-operator",
+			expected: "latest",
+		},
+		{
+			name:     "image with registry port",
+			image:    "registry.local:5000/layer5/meshery-operator",
+			expected: "latest",
+		},
+		{
+			name:     "image with registry port and tag",
+			image:    "registry.local:5000/layer5/meshery-operator:v0.7.1",
+			expected: "v0.7.1",
+		},
+		{
+			name:     "image with digest",
+			image:    "layer5/meshery-operator@sha256:abcd1234abcd1234",
+			expected: "latest",
+		},
+		{
+			name:     "image with tag and digest",
+			image:    "layer5/meshery-operator:v0.7.2@sha256:abcd1234abcd1234",
+			expected: "v0.7.2",
+		},
+		{
+			name:     "image with trailing colon and empty tag",
+			image:    "layer5/meshery-operator:",
+			expected: "latest",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			actual := model.ParseOperatorImageVersion(tc.image)
+			assert.Equal(t, tc.expected, actual)
+		})
+	}
+}

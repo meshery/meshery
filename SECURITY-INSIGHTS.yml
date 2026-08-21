@@ -1,7 +1,7 @@
 header:
   schema-version: 2.0.0
-  last-updated: '2026-03-03'
-  last-reviewed: '2026-03-03'
+  last-updated: '2026-07-04'
+  last-reviewed: '2026-07-04'
   url: https://github.com/meshery/meshery/blob/master/SECURITY-INSIGHTS.yml
   comment: |
     This file contains the security information for the Meshery project.
@@ -89,7 +89,10 @@ repository:
     assessments:
       self:
         comment: |
-          Self assessment has not yet been completed.
+          Meshery has performed a security self-assessment. The assessment
+          document is linked below as evidence.
+        evidence-url:
+          - https://docs.google.com/document/d/17BqoEibnFdgx1U97AwM4RRkEbwTin_T78_W_WzB-0Gg/edit?usp=sharing
   documentation:
     contributing-guide: https://docs.meshery.io/project/contributing
     governance: https://github.com/meshery/meshery/blob/master/GOVERNANCE.md

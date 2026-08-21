@@ -48,16 +48,46 @@ func GetOperator(kubeclient *mesherykube.Client) (string, string, error) {
 		return "", "", ErrMesheryClient(err)
 	}
 
+	if dep == nil {
+		return "", "", nil
+	}
+
 	version := ""
 	if err == nil {
 		for _, container := range dep.Spec.Template.Spec.Containers {
 			if container.Name == "manager" {
-				version = strings.Split(container.Image, ":")[1]
+				version = ParseOperatorImageVersion(container.Image)
 			}
 		}
 	}
 
 	return dep.Name, version, nil
+}
+
+// ParseOperatorImageVersion safely extracts the image tag or returns "latest" if not present.
+// It correctly handles registry ports (e.g. registry:5000/image) and digests (@sha256).
+func ParseOperatorImageVersion(image string) string {
+	// Strip digest if present
+	if idx := strings.Index(image, "@"); idx != -1 {
+		image = image[:idx]
+	}
+
+	idx := strings.LastIndex(image, ":")
+	if idx == -1 {
+		return "latest"
+	}
+
+	// Check if the last colon is part of a registry port (e.g. registry.com:5000/image)
+	if strings.Contains(image[idx:], "/") {
+		return "latest"
+	}
+
+	tag := image[idx+1:]
+	if tag == "" {
+		return "latest"
+	}
+
+	return tag
 }
 
 func GetBrokerInfo(broker controllers.IMesheryController, log logger.Handler) OperatorControllerStatus {

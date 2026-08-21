@@ -49,15 +49,12 @@ func GetControlPlaneState(ctx context.Context, selectors []MeshType, provider mo
 						imageOrgs[strings.Split(c.Image, "/")[1]] = true // Extracting image org from <domainname>/<imageorg>/<imagename>
 					}
 				}
-				version := "unknown"
 				//If image orgs are not passed on in from controlPlaneImageOrgs variable, then skip this filtering (for backward compatibility)
 				if len(controlPlaneImageOrgs[MeshType(selector)]) != 0 && !haveCommonElements(controlPlaneImageOrgs[MeshType(selector)], imageOrgs) {
 					continue
 				}
 
-				if len(strings.Split(objspec.Containers[0].Image, ":")) > 1 {
-					version = strings.Split(objspec.Containers[0].Image, ":")[1]
-				}
+				version := ParseOperatorImageVersion(objspec.Containers[0].Image)
 
 				members = append(members, &ControlPlaneMember{
 					Name:      obj.KubernetesResourceMeta.Name,
