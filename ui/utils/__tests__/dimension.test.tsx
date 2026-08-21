@@ -132,4 +132,19 @@ describe('useWindowDimensions', () => {
     expect(removeListenerSpy.mock.calls.some(([eventName]) => eventName === 'resize')).toBe(true);
     removeListenerSpy.mockRestore();
   });
+
+  it('clears the pending debounce timeout on unmount', () => {
+    const clearTimeoutSpy = vi.spyOn(window, 'clearTimeout');
+    const { unmount } = render(<Probe onRender={() => {}} />);
+
+    act(() => {
+      window.dispatchEvent(new Event('resize'));
+    });
+
+    clearTimeoutSpy.mockClear();
+    unmount();
+
+    expect(clearTimeoutSpy).toHaveBeenCalled();
+    clearTimeoutSpy.mockRestore();
+  });
 });
