@@ -24,6 +24,8 @@
 - [OD10 Ventures](https://od10.in/)
   - "I stumbled upon **Meshery** while looking for tools that can help visualize Kubernetes and its components. This helps me during PoCs and solution design demonstrations. What surprised me is that the visual design was not just a bunch of icons but could be deployed and managed collaboratively. And these are just a few of the many features of **Meshery**. It was just the product of my area of interest, so I decided to be a contributor, too." [Sangram Rath](https://linkedin.com/in/sangramrath)
 - [F5](https://www.f5.com/) Mario Arriaga
+- [Infor](https://www.infor.com/)
+  - "At Infor, we deliver industry-specific cloud enterprise software for manufacturing, distribution, healthcare, and more—built on a modern, AWS-native platform that powers complex, multi-tenant environments for tens of thousands of customers worldwide. Managing the underlying Kubernetes and cloud native infrastructure at this scale demands precision, visibility, and collaboration. Meshery has become an essential part of how we design, operate, and continuously improve that foundation. The open, welcoming community around the project only strengthens the value we get from it every day."
 ---
 
 If you're using Meshery and aren't on this list, please [submit a pull request](https://github.com/meshery/meshery/pulls)!

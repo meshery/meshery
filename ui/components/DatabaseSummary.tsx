@@ -106,7 +106,7 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
     fixedHeader: true,
     serverSide: true,
     rowsPerPage: rowsPerPage,
-    count: databaseSummary?.total_tables,
+    count: databaseSummary?.totalTables,
     page: page,
     onChangePage: debounce((p) => setPage(p), 200),
     onChangeRowsPerPage: debounce((p) => setRowsPerPage(p), 200),

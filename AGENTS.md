@@ -227,6 +227,28 @@ make helm-docs      # Generate Helm chart docs
 - Use `@sistent/sistent` design system; fall back to MUI.
 - Redux Toolkit for global state; GraphQL via Relay; REST via Axios.
 - Playwright for E2E tests.
+- **Every content-bearing page needs an *access* gate, not just gated controls.**
+  Read `canX` with `useHasPermission(Keys.X)` from `@sistent/sistent`, render
+  `<DefaultError permissionKey={Keys.X} />` when it is false, and pass `skip: !canX`
+  to the page's RTK Query hooks so a denied session issues no request. Gating only
+  the buttons leaves the page readable by a member holding zero keys. **Where the
+  `DefaultError` goes depends on which layer you are in:**
+  - In the page body **component** (`components/workspaces/index.tsx`,
+    `components/user-preferences/index.tsx`) an early `return <DefaultError …/>` is
+    correct - the page file already wraps it in `MesheryPage`, so the shell survives.
+  - In a **page** under `ui/pages/` (`configuration/designs/configurator.tsx`,
+    `configuration/catalog.tsx`) render it as the alternate branch *inside*
+    `MesheryPage`, never as an early return: returning early skips the shell and
+    loses both the browser tab title and the Redux page title `usePageTitle` sets.
+
+  Also keep tests out of `ui/pages/` - `next.config.js` sets no `pageExtensions`, so
+  anything `.tsx` there becomes a route and breaks `next build`; put them under
+  `ui/__tests__/`. The Meshery UI dashboard (`/`) is the **single deliberate
+  exception** to gating - it is the post-login landing page, so denying it would
+  strand a newly invited member on an error screen. Pin the **deny** path in a test;
+  an allow-only test passes against an ungated page too. Spellings, the CASL wiring
+  and the exception:
+  [Extensibility: Authorization](./docs/content/en/reference/extensibility/authorization/index.md).
 
 ### Commits
 
@@ -453,6 +475,7 @@ worked detail behind them — open the one that matches what you are working on.
 | A Go lint rule firing, or adding one | [Go Lint Rules](./docs/content/en/project/contributing/contributing-lint.md) |
 | Releases, CI secrets, the QA dashboard | [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md) |
 | Connections and credential secrets | [Connections](./docs/content/en/project/contributing/models/connections.md) |
+| A permission-gated page, control or key | [Extensibility: Authorization](./docs/content/en/reference/extensibility/authorization/index.md) |
 | UI extensions, Remote Components | [Contributing to Meshery UI](./docs/content/en/project/contributing/ui/ui.md) |
 | `mesheryctl`, golden files | [Contributing to Meshery CLI](./docs/content/en/project/contributing/cli/cli.md) |
 | A docs page, its assets or shortcodes | [Contributing to Meshery Docs](./docs/content/en/project/contributing/contributing-docs/docs.md) |
