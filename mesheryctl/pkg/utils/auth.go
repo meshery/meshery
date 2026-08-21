@@ -21,6 +21,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+const authHTTPTimeout = 30 * time.Second
+
 type Provider struct {
 	ProviderURL  string `json:"providerUrl,omitempty"`
 	ProviderName string `json:"providerName,omitempty"`
@@ -88,23 +90,24 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 // Function returns a new http response given a http request
 // Function will test the response and return any errors associated with it
 func MakeRequest(req *http.Request) (*http.Response, error) {
-	client := &http.Client{}
+	client := &http.Client{Timeout: authHTTPTimeout}
 
-	// check status code from request, checks for issues with auth token
 	resp, err := client.Do(req)
 
-	if err != nil && resp == nil {
+	if err != nil {
+		if resp != nil {
+			_ = resp.Body.Close()
+		}
 		return nil, ErrFailRequest(err)
 	}
 
-	// If statuscode = 302, then we either have an expired or invalid token
-	// We return the response and correct error message
-	if resp.StatusCode == 302 {
+	if resp.StatusCode == http.StatusFound {
+		_ = resp.Body.Close()
 		return nil, ErrInvalidToken()
 	}
 
-	// failsafe for not being authenticated
 	if ContentTypeIsHTML(resp) {
+		_ = resp.Body.Close()
 		return nil, ErrUnauthenticated()
 	}
 
@@ -224,30 +227,29 @@ func UpdateAuthDetails(filepath string) error {
 
 	req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/user/token", bytes.NewBuffer([]byte("")))
 	if err != nil {
-		err = errors.Wrap(err, "error Creating the request: ")
-		return err
+		return errors.Wrap(err, "error creating the request")
 	}
 	if err := AddAuthDetails(req, filepath); err != nil {
 		return err
 	}
 
-	client := &http.Client{}
+	client := &http.Client{Timeout: authHTTPTimeout}
 	resp, err := client.Do(req)
-	defer SafeClose(resp.Body)
-
 	if err != nil {
-		err = errors.Wrap(err, "error dispatching there request: ")
-		return err
+		if resp != nil {
+			SafeClose(resp.Body)
+		}
+		return errors.Wrap(err, "error dispatching the request")
 	}
+	defer SafeClose(resp.Body)
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		err = errors.Wrap(err, "error reading body: ")
-		return err
+		return errors.Wrap(err, "error reading body")
 	}
 
 	if ContentTypeIsHTML(resp) {
-		return errors.New("invalid body")
+		return fmt.Errorf("invalid body")
 	}
 
 	return os.WriteFile(filepath, data, os.ModePerm)
@@ -348,9 +350,15 @@ func InitiateLogin(mctlCfg *config.MesheryCtlConfig, option string) ([]byte, err
 func GetProviderInfo(mctCfg *config.MesheryCtlConfig) (map[string]Provider, error) {
 	res := map[string]Provider{}
 
-	resp, err := http.Get(mctCfg.GetBaseMesheryURL() + "/api/providers")
+	client := &http.Client{Timeout: authHTTPTimeout}
+	resp, err := client.Get(mctCfg.GetBaseMesheryURL() + "/api/providers")
 	if err != nil {
 		return nil, err
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status code %d", resp.StatusCode)
 	}
 
 	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
@@ -447,7 +455,7 @@ func chooseDirectProvider(provs map[string]Provider, option string) (Provider, e
 			return provArray[i], nil
 		}
 	}
-	return provArray[1], fmt.Errorf("the specified provider '%s' is not available. Please try giving correct provider name", option)
+	return Provider{}, fmt.Errorf("the specified provider '%s' is not available. Please try giving correct provider name", option)
 }
 
 func createProviderURI(provider Provider, host string, port int) (string, error) {
@@ -483,12 +491,14 @@ func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token
 		HttpOnly: true,
 	})
 
-	cli := &http.Client{}
+	cli := &http.Client{Timeout: authHTTPTimeout}
 	resp, err := cli.Do(req)
 	if err != nil {
+		if resp != nil {
+			_ = resp.Body.Close()
+		}
 		return nil, err
 	}
-
 	defer func() { _ = resp.Body.Close() }()
 
 	return io.ReadAll(resp.Body)
