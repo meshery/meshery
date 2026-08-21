@@ -136,11 +136,7 @@ const TroubleshootingModal: React.FC<TroubleshootingModalProps> = (props) => {
             email
           </ContactHelpLink>{' '}
           or{' '}
-          <ContactHelpLink
-            href="https://discuss.meshery.io"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <ContactHelpLink href="https://discuss.meshery.io" target="_blank" rel="noreferrer">
             community forum
           </ContactHelpLink>
           .
