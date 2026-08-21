@@ -198,11 +198,12 @@ const Header = ({ handleFilter, handleClose }) => {
   const { data } = useGetEventsSummaryQuery({
     status: STATUS.UNREAD,
   });
-  const { countBySeverityLevel, readCount } = data || {
+  const { countBySeverityLevel: severityLevels, readCount } = data || {
     countBySeverityLevel: [],
     totalCount: 0,
     readCount: 0,
   };
+  const countBySeverityLevel = severityLevels || [];
 
   const onClickSeverity = (severity) => {
     handleFilter({
