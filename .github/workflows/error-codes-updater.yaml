@@ -49,41 +49,24 @@ jobs:
           go build -o ~/errorutil github.com/meshery/meshkit/cmd/errorutil
 
       - name: Run Utility For Meshery Server
-        run: |
-          set -eo pipefail
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
-            ~/errorutil -d .baseline analyze -i .baseline/server/helpers -o .baseline/server/helpers --skip-dirs mesheryctl,docs
-            
-            ~/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl,docs,.baseline
-            ~/errorutil check .baseline/server/helpers/errorutil_analyze_errors.json ./server/helpers/errorutil_analyze_errors.json
-          fi
-
-          ~/errorutil update -d . -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl,docs,.baseline
-          output=$(~/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl,docs,.baseline | wc -c)
-          if [ "$output" -ne 0 ]; then
-            exit 1
-          fi
-          echo '{ "errors_export": "" }' | jq --slurpfile export ./server/helpers/errorutil_errors_export.json '.errors_export = $export[0]' > ./docs/data/errorref/meshery-server_errors_export.json
+        uses: ./.github/actions/errorutil-runner
+        with:
+          scan_dir: '.'
+          baseline_scan_dir: '.baseline'
+          helpers_dir: './server/helpers'
+          baseline_helpers_dir: '.baseline/server/helpers'
+          skip_dirs: 'mesheryctl,docs'
+          export_dest: './docs/data/errorref/meshery-server_errors_export.json'
 
       - name: Run Utility For Mesheryctl
-        run: |
-          set -eo pipefail
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
-            ~/errorutil -d .baseline/mesheryctl analyze -i .baseline/mesheryctl/helpers -o .baseline/mesheryctl/helpers
-            
-            cd ./mesheryctl
-            ~/errorutil -d . analyze -i ./helpers -o ./helpers
-            ~/errorutil check ../.baseline/mesheryctl/helpers/errorutil_analyze_errors.json ./helpers/errorutil_analyze_errors.json
-            cd ..
-          fi
-
-          cd ./mesheryctl
-          ~/errorutil update -d . -i ./helpers -o ./helpers
-          output=$(~/errorutil -d . analyze -i ./helpers -o ./helpers | wc -c)
-          if [ "$output" -ne 0 ]; then
-            exit 1
-          fi
-          echo '{ "errors_export": "" }' | jq --slurpfile export ../mesheryctl/helpers/errorutil_errors_export.json '.errors_export = $export[0]' > ../docs/data/errorref/mesheryctl_errors_export.json
+        uses: ./.github/actions/errorutil-runner
+        with:
+          scan_dir: './mesheryctl'
+          baseline_scan_dir: '.baseline/mesheryctl'
+          helpers_dir: './mesheryctl/helpers'
+          baseline_helpers_dir: '.baseline/mesheryctl/helpers'
+          skip_dirs: ''
+          export_dest: './docs/data/errorref/mesheryctl_errors_export.json'
 
       - name: Pull changes from remote
         if: ${{ github.event_name != 'pull_request' }}  # Skip for pull requests

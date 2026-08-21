@@ -1,0 +1,51 @@
+name: 'Error Codes Utility Runner'
+description: 'Runs errorutil update, analyze, and check for a specific component'
+inputs:
+  scan_dir:
+    description: 'Directory to scan (e.g. . or ./mesheryctl)'
+    required: true
+  baseline_scan_dir:
+    description: 'Baseline directory to scan (e.g. .baseline or .baseline/mesheryctl)'
+    required: true
+  helpers_dir:
+    description: 'Directory for helpers (e.g. ./server/helpers or ./helpers)'
+    required: true
+  baseline_helpers_dir:
+    description: 'Baseline directory for helpers (e.g. .baseline/server/helpers or .baseline/mesheryctl/helpers)'
+    required: true
+  skip_dirs:
+    description: 'Directories to skip'
+    required: true
+  export_dest:
+    description: 'Destination file for exported JSON (e.g. ./docs/data/errorref/meshery-server_errors_export.json)'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run Utility
+      shell: bash
+      run: |
+        set -eo pipefail
+        
+        # Navigate to the component directory if one is provided (mesheryctl)
+        # Note: we use relative paths for everything, so if we cd into mesheryctl, 
+        # we have to adjust our baseline and export paths if they were absolute from root.
+        # However, the easiest approach is to just run errorutil from the root directory for ALL components,
+        # providing the correct relative paths from root!
+        
+        if [ "${{ github.event_name }}" == "pull_request" ]; then
+          ~/errorutil -d "${{ inputs.baseline_scan_dir }}" analyze -i "${{ inputs.baseline_helpers_dir }}" -o "${{ inputs.baseline_helpers_dir }}" --skip-dirs "${{ inputs.skip_dirs }}"
+          
+          ~/errorutil -d "${{ inputs.scan_dir }}" analyze -i "${{ inputs.helpers_dir }}" -o "${{ inputs.helpers_dir }}" --skip-dirs "${{ inputs.skip_dirs }},.baseline"
+          ~/errorutil check "${{ inputs.baseline_helpers_dir }}/errorutil_analyze_errors.json" "${{ inputs.helpers_dir }}/errorutil_analyze_errors.json"
+        fi
+
+        ~/errorutil update -d "${{ inputs.scan_dir }}" -i "${{ inputs.helpers_dir }}" -o "${{ inputs.helpers_dir }}" --skip-dirs "${{ inputs.skip_dirs }},.baseline"
+        
+        output=$(~/errorutil -d "${{ inputs.scan_dir }}" analyze -i "${{ inputs.helpers_dir }}" -o "${{ inputs.helpers_dir }}" --skip-dirs "${{ inputs.skip_dirs }},.baseline" | wc -c)
+        if [ "$output" -ne 0 ]; then
+          exit 1
+        fi
+        
+        echo '{ "errors_export": "" }' | jq --slurpfile export "${{ inputs.helpers_dir }}/errorutil_errors_export.json" '.errors_export = $export[0]' > "${{ inputs.export_dest }}"
