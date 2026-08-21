@@ -137,7 +137,7 @@ const TroubleshootingModal: React.FC<TroubleshootingModalProps> = (props) => {
           </ContactHelpLink>{' '}
           or{' '}
           <ContactHelpLink
-            href="https://meshery.io/community#community-forums"
+            href="https://discuss.meshery.io"
             target="_blank"
             rel="noreferrer"
           >
@@ -237,7 +237,7 @@ const TroubleshootingModal: React.FC<TroubleshootingModalProps> = (props) => {
               <TroubleshootListitem>
                 {' '}
                 <TroubleshootHelpLink
-                  href="https://meshery.io/community#community-forums/t/what-are-some-troubleshooting-tips-for-meshmap"
+                  href="https://discuss.meshery.io/t/what-are-some-troubleshooting-tips-for-meshmap/"
                   target="_blank"
                   rel="noreferrer"
                 >
