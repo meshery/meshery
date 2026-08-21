@@ -85,8 +85,8 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 	return req, nil
 }
 
-// Function returns a new http response given a http request
-// Function will test the response and return any errors associated with it
+// MakeRequest returns a new http response given a http request
+// It tests the response and returns any errors associated with it
 func MakeRequest(req *http.Request) (*http.Response, error) {
 	client := &http.Client{}
 
@@ -144,7 +144,7 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 	return resp, nil
 }
 
-// Function checks the location of token and returns appropriate location of the token
+// GetTokenLocation checks the location of token and returns appropriate location of the token
 func GetTokenLocation(token config.Token) (string, error) {
 	// Find home directory.
 	home, err := os.UserHomeDir()

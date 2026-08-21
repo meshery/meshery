@@ -228,7 +228,7 @@ func visible(s string) string {
 	return out
 }
 
-// Path to the current file
+// GetBasePath returns the directory containing this file
 func GetBasePath(t *testing.T) string {
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -251,7 +251,7 @@ func (tf *GoldenFile) Load() string {
 	return normalizedContent
 }
 
-// Load a Golden file
+// LoadByte loads a golden file and returns its raw bytes
 func (tf *GoldenFile) LoadByte() []byte {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
@@ -263,7 +263,7 @@ func (tf *GoldenFile) LoadByte() []byte {
 	return content
 }
 
-// write a Golden file
+// Write writes content to the golden file, creating it if it does not already exist
 func (tf *GoldenFile) Write(content string) {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
@@ -286,7 +286,7 @@ func (tf *GoldenFile) Write(content string) {
 	}
 }
 
-// write a Golden file
+// WriteInByte writes raw bytes to the golden file
 func (tf *GoldenFile) WriteInByte(content []byte) {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
@@ -330,7 +330,7 @@ func CopyMeshconfigFixture(t *testing.T, src string) string {
 	return dst
 }
 
-// use default context /pkg/utils/TestConfig.yaml
+// SetupContextEnv sets up the test context using the default /pkg/utils/TestConfig.yaml configuration
 func SetupContextEnv(t *testing.T) {
 	configPath := CopyMeshconfigFixture(t, SharedTestConfigPath(t))
 	viper.Reset()
@@ -347,7 +347,7 @@ func SetupContextEnv(t *testing.T) {
 	}
 }
 
-// setup logrus formatter and return the buffer in which commands output is to be set.
+// SetupLogrusGrabTesting sets up the logrus formatter and returns the buffer that command output is written to.
 func SetupLogrusGrabTesting(_ *testing.T, _ bool) *bytes.Buffer {
 	b := bytes.NewBufferString("")
 	logrus.SetOutput(b)
@@ -355,7 +355,7 @@ func SetupLogrusGrabTesting(_ *testing.T, _ bool) *bytes.Buffer {
 	return b
 }
 
-// setup meshkit logger for testing and return the buffer in which commands output is to be set.
+// SetupMeshkitLoggerTesting sets up the Meshkit logger for testing and returns the buffer that command output is written to.
 func SetupMeshkitLoggerTesting(_ *testing.T, verbose bool) *bytes.Buffer {
 	b := bytes.NewBufferString("")
 	logLevel := logrus.InfoLevel
@@ -369,7 +369,7 @@ func SetupMeshkitLoggerTesting(_ *testing.T, verbose bool) *bytes.Buffer {
 	return b
 }
 
-// setup custom context with SetupCustomContextEnv
+// SetupCustomContextEnv sets up the test context using the configuration file at pathToContext
 func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 	viper.Reset()
 	ViperCompose = viper.New()
@@ -389,18 +389,18 @@ func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 	}
 }
 
-// Start mock HTTP client to mock requests
+// StartMockery starts the mock HTTP client used to mock requests
 func StartMockery(t *testing.T) {
 	// activate http mocking
 	httpmock.Activate()
 }
 
-// stop HTTP mock client
+// StopMockery stops the mock HTTP client and resets it
 func StopMockery(_ *testing.T) {
 	httpmock.DeactivateAndReset()
 }
 
-// Set file location for testing stuff
+// SetFileLocationTesting points MesheryFolder, DockerComposeFile, and AuthConfigFile at fixtures under dir, for use in tests
 func SetFileLocationTesting(dir string) {
 	MesheryFolder = filepath.Join(dir, "fixtures", MesheryFolder)
 	DockerComposeFile = filepath.Join(MesheryFolder, DockerComposeFile)
@@ -460,16 +460,15 @@ func StartMockMesheryServer(t *testing.T) error {
 	return nil
 }
 
-// The HandlePagination function add special characters that is not
-// handle properly in test. This function will remove undesired characters
-// and spaces to ensure excepted versus actual result match when using http.MockURL
+// CleanStringFromHandlePagination removes undesired characters and spaces added by the
+// HandlePagination function so that expected and actual results match in tests using http.MockURL
 func CleanStringFromHandlePagination(data string) string {
 	cleaned := StripAnsiEscapeCodes(data)
 	cleaned = formatToTabs(cleaned)
 	return cleaned
 }
 
-// removeANSICodes removes ANSI escape codes from a string.
+// StripAnsiEscapeCodes removes ANSI escape codes from a string.
 //
 // Parameters:
 //
