@@ -322,7 +322,7 @@ const ExtensionsComponent = () => {
       });
       if (!(type.includes(".yaml") || type.includes(".yml"))) {
         window.ddClient.desktopUI.toast.error(
-          "Some error occured while uploading the compose file. ",
+          "Some error occurred while uploading the compose file. ",
         );
         return;
       }
@@ -341,7 +341,7 @@ const ExtensionsComponent = () => {
         })
         .catch(() =>
           window.ddClient.desktopUI.toast.error(
-            "Some error occured while uploading the compose file.",
+            "Some error occurred while uploading the compose file.",
           ),
         );
     });
