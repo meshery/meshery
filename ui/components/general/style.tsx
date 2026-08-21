@@ -413,7 +413,7 @@ export const NavigatorFooter = styled('div')({
   marginBottom: '0.5rem',
 });
 
-export const ChevronButtonWrapper = styled('div', {
+export const ChevronButtonWrapper = styled('button', {
   shouldForwardProp: (prop) => prop !== 'isCollapsed',
 })(({ isCollapsed, theme }) => ({
   backgroundColor: theme.palette.background.tabs,
@@ -427,6 +427,8 @@ export const ChevronButtonWrapper = styled('div', {
   position: 'fixed',
   borderRadius: '0 5px 5px 0',
   cursor: 'pointer',
+  border: 'none',
+  padding: 0,
   bottom: '12%',
   left: isCollapsed ? '49px' : '257px',
   zIndex: '1400',
@@ -443,6 +445,10 @@ export const ChevronButtonWrapper = styled('div', {
   '&:focus': {
     opacity: 1,
     background: !isCollapsed ? theme.palette.background.card : undefined,
+  },
+  '&:focus-visible': {
+    outline: `2px solid ${theme.palette.primary.main}`,
+    outlineOffset: '2px',
   },
 }));
 
