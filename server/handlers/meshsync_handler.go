@@ -51,8 +51,8 @@ func MapToStruct(data map[string]interface{}, targetStruct interface{}) error {
 	return nil
 }
 
-// JsonParse safely parses a JSON string into an interface{} with a fallback default value.
-func JsonParse(input *string, allowEmpty bool, defaultValue interface{}) interface{} {
+// JSONParse safely parses a JSON string into an interface{} with a fallback default value.
+func JSONParse(input *string, allowEmpty bool, defaultValue interface{}) interface{} {
 	if input == nil {
 		return defaultValue
 	}
@@ -80,7 +80,7 @@ func KubernetesResourceToComponentDef(resource model.KubernetesResource, stripSc
 
 	var spec interface{}
 	if resource.Spec != nil {
-		spec = JsonParse(&resource.Spec.Attribute, true, map[string]interface{}{})
+		spec = JSONParse(&resource.Spec.Attribute, true, map[string]interface{}{})
 	}
 
 	labels := map[string]string{}
@@ -112,7 +112,7 @@ func KubernetesResourceToComponentDef(resource model.KubernetesResource, stripSc
 	componentDef.Configuration = map[string]interface{}{
 		"metadata": metadata,
 		"spec":     spec,
-		"data":     JsonParse(&resource.Data, true, map[string]interface{}{}),
+		"data":     JSONParse(&resource.Data, true, map[string]interface{}{}),
 	}
 
 	if componentDef.Metadata.AdditionalProperties == nil {
@@ -268,7 +268,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	if clusterIds != "" {
 		err := json.Unmarshal([]byte(clusterIds), &filter.ClusterIds)
 		if err != nil {
-			// Client-side payload parse — 400.
+			// Client-side payload parse â€” 400.
 			h.log.Error(ErrRequestBody(err))
 			writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 			return
@@ -374,7 +374,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	// evaluation engine carve-out). Bridge via a typed shallow copy just for
 	// the dehydrate call, then fold the dehydrated fields back onto the
 	// v1beta1 value so the response envelope keeps its existing wire shape.
-	// Log bridge/round-trip errors instead of silently swallowing them —
+	// Log bridge/round-trip errors instead of silently swallowing them â€”
 	// a failure here means the response goes out un-dehydrated (potentially
 	// carrying extra configuration payload) and that is worth observing.
 	if bridged, bridgeErr := patternutils.PatternV1beta1ToV1beta3(&design); bridgeErr == nil && bridged != nil {
@@ -382,10 +382,10 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 		if roundtripped, rtErr := patternutils.PatternV1beta3ToV1beta1(bridged); rtErr == nil && roundtripped != nil {
 			design = *roundtripped
 		} else if rtErr != nil {
-			h.log.Warn(fmt.Errorf("meshsync: v1beta3→v1beta1 dehydrate round-trip failed: %w; response will not be dehydrated", rtErr))
+			h.log.Warn(fmt.Errorf("meshsync: v1beta3â†’v1beta1 dehydrate round-trip failed: %w; response will not be dehydrated", rtErr))
 		}
 	} else if bridgeErr != nil {
-		h.log.Warn(fmt.Errorf("meshsync: v1beta1→v1beta3 dehydrate bridge failed: %w; response will not be dehydrated", bridgeErr))
+		h.log.Warn(fmt.Errorf("meshsync: v1beta1â†’v1beta3 dehydrate bridge failed: %w; response will not be dehydrated", bridgeErr))
 	}
 
 	response := &models.MeshSyncResourcesAPIResponse{
@@ -483,21 +483,21 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	kindsQuery = filterByNamespaces(kindsQuery, namespaceScope)
 	kindsQuery = filterByPatternIds(kindsQuery, patternIds)
 
-	err1 := kindsQuery.Scan(&kindCounts).Error
+	kindsErr := kindsQuery.Scan(&kindCounts).Error
 
-	if err1 != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err1))
+	if kindsErr != nil {
+		h.log.Error(ErrFetchMeshSyncResources(kindsErr))
 	}
 
-	err2 := provider.GetGenericPersister().
+	namespacesErr := provider.GetGenericPersister().
 		Model(&model.KubernetesResource{}).
 		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resources.id = kubernetes_resource_object_meta.id").
 		Select("distinct namespace").
 		Where("kubernetes_resources.cluster_id IN (?)", clusterIds).
 		Scan(&namespaces).Error
 
-	if err2 != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err2))
+	if namespacesErr != nil {
+		h.log.Error(ErrFetchMeshSyncResources(namespacesErr))
 	}
 
 	var labels []model.KubernetesKeyValue
@@ -507,15 +507,16 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	labelsQuery = filterByNamespaces(labelsQuery, namespaceScope)
 	labelsQuery = filterByPatternIds(labelsQuery, patternIds)
 
-	err := labelsQuery.Scan(&labels).Error
+	labelsErr := labelsQuery.Scan(&labels).Error
 
-	if err != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err))
+	if labelsErr != nil {
+		h.log.Error(ErrFetchMeshSyncResources(labelsErr))
 	}
 
-	// only return error if both queries failed
-	if err1 != nil && err2 != nil {
-		combinedErr := fmt.Errorf("error fetching meshsync resources summary: %v, %v", err1, err2)
+	// return error if any query failed
+	if kindsErr != nil || namespacesErr != nil || labelsErr != nil {
+		combinedErr := fmt.Errorf("error fetching meshsync resources summary: kinds_err=%v, namespaces_err=%v, labels_err=%v", kindsErr, namespacesErr, labelsErr)
+		h.log.Error(ErrFetchMeshSyncResources(combinedErr))
 		writeMeshkitError(rw, ErrFetchMeshSyncResources(combinedErr), http.StatusInternalServerError)
 		return
 	}
@@ -526,11 +527,11 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 		Labels:     labels,
 	}
 
-	if err := enc.Encode(response); err != nil {
-		if isClientDisconnect(err) {
-			h.log.Debug(ErrEncodeResponse(err))
+	if encErr := enc.Encode(response); encErr != nil {
+		if isClientDisconnect(encErr) {
+			h.log.Debug(ErrEncodeResponse(encErr))
 		} else {
-			h.log.Error(ErrEncodeResponse(err))
+			h.log.Error(ErrEncodeResponse(encErr))
 		}
 	}
 }
