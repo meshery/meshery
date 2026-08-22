@@ -58,6 +58,11 @@ func TestPublishCmdPreRunE_ArgValidation(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name:    "remote-provider: 5 args rejected (empty imgs-output-path)",
+			args:    []string{"remote-provider", "cred", "sheetID", "path/to/models", ""},
+			wantErr: true,
+		},
+		{
 			name:    "remote-provider: 4 args rejected (imgs-output-path mandatory)",
 			args:    []string{"remote-provider", "cred", "sheetID", "path/to/models"},
 			wantErr: true,
@@ -73,6 +78,11 @@ func TestPublishCmdPreRunE_ArgValidation(t *testing.T) {
 			name:    "website: 5 args accepted",
 			args:    []string{"website", "cred", "sheetID", "path/to/models", "path/to/imgs"},
 			wantErr: false,
+		},
+		{
+			name:    "website: 5 args rejected (empty imgs-output-path)",
+			args:    []string{"website", "cred", "sheetID", "path/to/models", ""},
+			wantErr: true,
 		},
 		{
 			name:    "website: 4 args rejected (imgs-output-path mandatory)",

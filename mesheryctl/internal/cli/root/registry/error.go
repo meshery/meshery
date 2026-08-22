@@ -82,5 +82,5 @@ func ErrPurgeRemove(err error, path string) error {
 }
 
 func ErrPublishInvalidArgs(msg string) error {
-	return errors.New(ErrPublishInvalidArgsCode, errors.Alert, []string{"invalid arguments for registry publish"}, []string{msg}, []string{"Incorrect number of arguments or missing mandatory arguments"}, []string{"Run 'mesheryctl registry publish --help' for usage instructions"})
+	return errors.New(ErrPublishInvalidArgsCode, errors.Alert, []string{"invalid arguments for registry publish"}, []string{msg}, []string{"Incorrect number of arguments or missing mandatory arguments"}, []string{"The first four arguments (system, google sheet credential, sheet-id, models output path) are required for all systems. The 5th argument (imgs-output-path) is optional for the 'meshery' system, but mandatory for 'remote-provider' and 'website'. Run 'mesheryctl registry publish --help' for usage instructions."})
 }
