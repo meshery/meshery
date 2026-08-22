@@ -136,8 +136,6 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 			go h.config.EventBroadcaster.Publish(userID, initErrEvent)
 		}
 		h.log.Error(wrappedErr)
-		writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
-		return
 	}
 
 	// A machine that never initialized has no FSM state to unwind and no
@@ -147,7 +145,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	// Crucially it would also fail *before* reaching the Remove below, leaking
 	// the tracker entry for a connection the user just deleted - so drop the
 	// entry directly instead. See mhelpers.HasMachineContext.
-	if !mhelpers.HasMachineContext(inst) {
+	if err != nil || !mhelpers.HasMachineContext(inst) {
 		smInstanceTracker.Remove(connectionUUID)
 		w.WriteHeader(http.StatusOK)
 		return
