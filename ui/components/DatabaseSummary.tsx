@@ -30,6 +30,14 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
   const [sortOrder, setSortOrder] = useState('');
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
+  const handleSearch = React.useCallback(
+    debounce((value) => {
+      setPage(0);
+      setSearchText(value != null ? value : '');
+    }, 500),
+    [],
+  );
+
   const handleError = (msg) => (error) => {
     updateProgress({ showProgress: false });
     notify({
@@ -109,7 +117,10 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
     count: databaseSummary?.totalTables,
     page: page,
     onChangePage: debounce((p) => setPage(p), 200),
-    onChangeRowsPerPage: debounce((p) => setRowsPerPage(p), 200),
+    onChangeRowsPerPage: debounce((p) => {
+      setRowsPerPage(p);
+      setPage(0);
+    }, 200),
     onSearchChange: debounce((searchText) => {
       if (searchText) setPage(0);
       setSearchText(searchText != null ? searchText : '');
@@ -141,7 +152,7 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
         sx={customInlineStyle}
         primaryActions={
           <Button
-            type="submit"
+            type="button"
             variant="contained"
             data-testid="database-reset-button"
             color="error"
@@ -161,9 +172,7 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
         }
         search={
           <SearchBar
-            onSearch={(value) => {
-              setSearchText(value);
-            }}
+            onSearch={handleSearch}
             expanded={isSearchExpanded}
             setExpanded={setIsSearchExpanded}
             placeholder="Search"
