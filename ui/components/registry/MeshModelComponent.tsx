@@ -41,6 +41,7 @@ import {
   FileUploadIcon as UploadIcon,
   useMediaQuery,
 } from '@sistent/sistent';
+import { Keys } from '@meshery/schemas/permissions';
 import { useTheme } from '@/theme';
 import { iconSmall } from 'css/icons.styles';
 import { useInfiniteScrollRef, useMeshModelComponentRouter } from './hooks';
@@ -597,7 +598,7 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
               color="primary"
               onClick={openCreateModal}
               style={{ display: 'flex' }}
-              disabled={false} //TODO: Need to make key for this component
+              permissionKey={Keys.MesherySystemCreateModel}
               startIcon={<AddIcon style={iconSmall} />}
               data-testid="TabBar-Button-CreateModel"
             >
@@ -609,7 +610,7 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
               color="primary"
               onClick={openImportModal}
               style={{ display: 'flex' }}
-              disabled={false} //TODO: Need to make key for this component
+              permissionKey={Keys.MesherySystemImportModel}
               startIcon={<UploadIcon />}
               data-testid="TabBar-Button-ImportModel"
             >
@@ -625,7 +626,7 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
             color="primary"
             onClick={openRelationshipModal}
             style={{ display: 'flex' }}
-            disabled={false}
+            permissionKey={Keys.MesherySystemCreateRelationship}
             startIcon={<LinkIcon />}
             data-testid="TabBar-Button-CreateRelationship"
           >

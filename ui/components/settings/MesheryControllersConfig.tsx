@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, Button, Paper, Typography } from '@sistent/sistent';
+import { Box, Button, Paper, Typography, useHasPermission } from '@sistent/sistent';
+import { Keys } from '@meshery/schemas/permissions';
 import {
   useGetControllersDefaultConfigQuery,
   useUpdateControllersDefaultConfigMutation,
@@ -9,6 +10,7 @@ import ControllersConfigForm, {
 } from '@/components/configuration/ControllersConfigForm';
 import { useControllersConfigDraft } from '@/components/configuration/useControllersConfigDraft';
 import { serverDefaultDeploymentMode } from '@/components/configuration/deploymentMode';
+import DefaultError from '@/components/general/error-404';
 
 /**
  * Settings tab: server-wide defaults for the Meshery Operator, MeshSync, and
@@ -32,6 +34,12 @@ export default function MesheryControllersConfig() {
     },
   });
 
+  const canViewControllersConfig = useHasPermission(Keys.MesherySystemViewControllersConfig);
+
+  if (!canViewControllersConfig) {
+    return <DefaultError permissionKey={Keys.MesherySystemViewControllersConfig} />;
+  }
+
   return (
     <Paper sx={{ padding: '1.5rem', marginTop: '1rem' }}>
       <Typography variant="h6" sx={{ fontWeight: 600 }}>
@@ -53,13 +61,19 @@ export default function MesheryControllersConfig() {
       />
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1.5rem' }}>
-        <Button variant="outlined" onClick={discard} disabled={!dirty || isSaving}>
+        <Button
+          variant="outlined"
+          onClick={discard}
+          disabled={!dirty || isSaving}
+          permissionKey={Keys.MesherySystemEditControllersConfig}
+        >
           Discard changes
         </Button>
         <Button
           variant="contained"
           onClick={save}
           disabled={!dirty || isSaving}
+          permissionKey={Keys.MesherySystemEditControllersConfig}
           data-testid="controllers-config-save"
         >
           Save defaults
