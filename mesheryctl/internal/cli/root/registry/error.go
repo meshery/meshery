@@ -22,6 +22,7 @@ var (
 	ErrPurgeReadModelsDirCode    = "mesheryctl-1250"
 	ErrPurgeRemoveCode           = "mesheryctl-1251"
 	ErrPurgeUnsafePathCode       = "mesheryctl-1252"
+	ErrPublishInvalidArgsCode    = "mesheryctl-1254"
 )
 
 func ErrUpdateRegistry(err error, path string) error {
@@ -78,4 +79,8 @@ func ErrPurgeUnsafePath(path, modelsDir string) error {
 
 func ErrPurgeRemove(err error, path string) error {
 	return errors.New(ErrPurgeRemoveCode, errors.Alert, []string{fmt.Sprintf("error removing model version directory: %s", path)}, []string{err.Error()}, []string{"Insufficient filesystem permissions", "The directory is in use by another process"}, []string{"Ensure sufficient permissions to delete the directory", "Retry the purge after closing any process using the directory"})
+}
+
+func ErrPublishInvalidArgs(msg string) error {
+	return errors.New(ErrPublishInvalidArgsCode, errors.Alert, []string{"invalid arguments for registry publish"}, []string{msg}, []string{"Incorrect number of arguments or missing mandatory arguments"}, []string{"Run 'mesheryctl registry publish --help' for usage instructions"})
 }
