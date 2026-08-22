@@ -152,6 +152,11 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 		Log.Debugf("Error while reaching Meshery endpoint: %v\n", err)
 		Log.Infof("Checking if Meshery is running using the platform: %s\n", currPlatform)
 	}
+	// resp is nil when the request itself failed, which is expected here: the
+	// caller falls through to the platform checks below.
+	if resp != nil {
+		defer SafeClose(resp.Body)
+	}
 
 	if resp != nil && resp.StatusCode == 200 {
 		return true, nil
