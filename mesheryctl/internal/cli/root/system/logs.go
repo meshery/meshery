@@ -228,10 +228,12 @@ mesheryctl system logs meshery-istio
 					if err != nil {
 						return err
 					}
-					defer func() { _ = logs.Close() }()
 					var logBuf []byte
 					if !systemLogsFlags.Follow {
 						logBuf, err = io.ReadAll(logs)
+						// ponytail: close this container's stream as soon as it is consumed,
+						// not when the whole pod loop returns — scoped defer.
+						_ = logs.Close()
 						if err != nil {
 							return utils.ErrReadResponseBody(err)
 						}
@@ -240,6 +242,7 @@ mesheryctl system logs meshery-istio
 						wg.Add(1)
 						go func() {
 							defer wg.Done()
+							defer func() { _ = logs.Close() }()
 							for {
 								buf := make([]byte, BYTE_SIZE)
 								numBytes, err := logs.Read(buf)
