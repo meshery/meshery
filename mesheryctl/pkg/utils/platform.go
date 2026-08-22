@@ -249,11 +249,32 @@ func GetDeploymentVersion(filePath string) (string, error) {
 		return "", fmt.Errorf("unable to unmarshal config %s | %s", MesheryDeployment, err)
 	}
 
-	image := compose.Spec.Template.Spec.Containers[0].Image
-	spliter := strings.Split(image, ":")
-	version := strings.Split(spliter[1], "-")[1]
+	if len(compose.Spec.Template.Spec.Containers) == 0 {
+		return "", fmt.Errorf("unable to determine deployment version: no containers found in %s", filePath)
+	}
 
-	return version, nil
+	image := compose.Spec.Template.Spec.Containers[0].Image
+	if strings.Contains(image, "@") {
+		return "", fmt.Errorf("unable to determine deployment version: image %q is a digest reference, expected a tag", image)
+	}
+
+	lastSlash := strings.LastIndex(image, "/")
+	lastColon := strings.LastIndex(image, ":")
+	if lastColon == -1 || lastColon < lastSlash {
+		return "", fmt.Errorf("unable to determine deployment version: image %q has no tag", image)
+	}
+
+	tag := image[lastColon+1:]
+	if tag == "" {
+		return "", fmt.Errorf("unable to determine deployment version: image %q has an empty tag", image)
+	}
+
+	tagParts := strings.SplitN(tag, "-", 2)
+	if len(tagParts) < 2 || tagParts[0] == "" || tagParts[1] == "" {
+		return "", fmt.Errorf("unable to determine deployment version: image tag %q does not match the expected version-build format", tag)
+	}
+
+	return tagParts[1], nil
 }
 
 // CanUseCachedOperatorManifests returns an error if it is not possible to use cached operator manifests
