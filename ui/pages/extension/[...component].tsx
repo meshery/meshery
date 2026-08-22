@@ -50,7 +50,7 @@ function RemoteExtension() {
   const router = useRouter();
   const dispatch = useDispatch();
   const { extensionType } = useSelector((state) => state.ui);
-  const { data: providerCapabilities, isLoading, isError } = useGetProviderCapabilitiesQuery();
+  const { data: providerCapabilities, isLoading } = useGetProviderCapabilitiesQuery();
   const canViewExtensions = useHasPermission(Keys.ExtensibilityViewExtensions);
 
   // Resolve the active extension that matches the current path. Derived from
@@ -108,7 +108,7 @@ function RemoteExtension() {
     };
   }, [dispatch, matchedExtension]);
 
-  const isReady = !isLoading && (!!matchedExtension || isError);
+  const isReady = !isLoading;
 
   if (!canViewExtensions) {
     return <DefaultError permissionKey={Keys.ExtensibilityViewExtensions} />;
@@ -132,9 +132,9 @@ function RemoteExtension() {
               />
             )}
           </NoSsr>
-        ) : isError ? (
+        ) : (
           <DefaultError permissionKey={Keys.ExtensibilityViewExtensions} />
-        ) : null}
+        )}
       </DynamicFullScreenLoader>
     </NoSsr>
   );
