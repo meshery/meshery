@@ -93,7 +93,9 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		googleSheetCredential = args[1]
 		sheetID = args[2]
 		modelsOutputPath = args[3]
-		imgsOutputPath = args[4]
+		if len(args) > 4 {
+			imgsOutputPath = args[4]
+		}
 
 		srv, err := meshkitUtils.NewSheetSRV(googleSheetCredential)
 		if err != nil {
@@ -192,6 +194,7 @@ func mesherySystem() error {
 // Create models definitions to remote provider path
 // and add models icons to image output path
 func remoteProviderSystem() error {
+	var err error
 	// Construct absolute path to store models
 	outputPath, _ := filepath.Abs(filepath.Join("../", modelsOutputPath))
 	modelDir := filepath.Join(outputPath)
@@ -203,10 +206,11 @@ func remoteProviderSystem() error {
 			comps = []meshkitRegistryUtils.ComponentCSV{}
 		}
 
-		err := utils.GenerateIcons(model, comps, imgsOutputPath)
-		if err != nil {
-			utils.Log.Debug(utils.ErrGeneratingIcons(err, imgsOutputPath))
-			utils.Log.Fatalf("Error generating icons for model %s: %v", model.Model, err.Error())
+		if imgsOutputPath != "" {
+			if err := utils.GenerateIcons(model, comps, imgsOutputPath); err != nil {
+				utils.Log.Debug(utils.ErrGeneratingIcons(err, imgsOutputPath))
+				utils.Log.Fatalf("Error generating icons for model %s: %v", model.Model, err.Error())
+			}
 		}
 
 		_, _, err = WriteModelDefToFileSystem(&model, "", modelDir)
