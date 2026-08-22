@@ -2,11 +2,15 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"sort"
+	"strings"
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/pkg/encryption"
+	"github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshkit/database"
 	mkerrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/logger"
@@ -271,3 +275,93 @@ func TestK8sContextsFromKubeconfigDiscoversAllContexts(t *testing.T) {
 		}
 	}
 }
+
+func TestMesheryK8sContextPersister_Encryption(t *testing.T) {
+	key := make([]byte, 32)
+	for i := range key {
+		key[i] = byte(i + 17)
+	}
+	encSvc, err := encryption.New(key)
+	if err != nil {
+		t.Fatalf("encryption.New: %v", err)
+	}
+
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("failed to open in-memory db: %v", err)
+	}
+	if err := db.AutoMigrate(&K8sContext{}); err != nil {
+		t.Fatalf("failed to auto migrate: %v", err)
+	}
+
+	persister := &MesheryK8sContextPersister{
+		DB:     &database.Handler{DB: db},
+		EncSvc: encSvc,
+	}
+
+	ctx := K8sContext{
+		ID:      "test-ctx-1",
+		Name:    "prod-cluster",
+		Auth:    sql.Map{"token": "cluster-admin-token"},
+		Cluster: sql.Map{"server": "https://api.k8s.example.com"},
+	}
+
+	// 1. Save with encryption
+	_, err = persister.SaveMesheryK8sContext(ctx)
+	if err != nil {
+		t.Fatalf("SaveMesheryK8sContext: %v", err)
+	}
+
+	// Verify directly in DB that columns are encrypted
+	var raw struct {
+		ID      string
+		Auth    string
+		Cluster string
+	}
+	if err := db.Table("k8s_contexts").Where("id = ?", "test-ctx-1").First(&raw).Error; err != nil {
+		t.Fatalf("reading raw k8s_contexts row: %v", err)
+	}
+	if !strings.Contains(raw.Auth, "__enc__") {
+		t.Errorf("expected DB auth to contain __enc__, got %s", raw.Auth)
+	}
+	if strings.Contains(raw.Auth, "cluster-admin-token") {
+		t.Error("auth was stored as plaintext in the DB")
+	}
+	if !strings.Contains(raw.Cluster, "__enc__") {
+		t.Errorf("expected DB cluster to contain __enc__, got %s", raw.Cluster)
+	}
+	if strings.Contains(raw.Cluster, "https://api.k8s.example.com") {
+		t.Error("cluster was stored as plaintext in the DB")
+	}
+
+	// 2. Read by ID (should decrypt)
+	fetched, err := persister.GetMesheryK8sContext("test-ctx-1")
+	if err != nil {
+		t.Fatalf("GetMesheryK8sContext: %v", err)
+	}
+	if fetched.Auth["token"] != "cluster-admin-token" {
+		t.Errorf("fetched Auth token = %v, want cluster-admin-token", fetched.Auth["token"])
+	}
+	if fetched.Cluster["server"] != "https://api.k8s.example.com" {
+		t.Errorf("fetched Cluster server = %v, want https://api.k8s.example.com", fetched.Cluster["server"])
+	}
+
+	// 3. List path (GetMesheryK8sContexts decrypts a slice of pointers)
+	listBytes, err := persister.GetMesheryK8sContexts("", "updated_at desc", 0, 10)
+	if err != nil {
+		t.Fatalf("GetMesheryK8sContexts: %v", err)
+	}
+	var listPage MesheryK8sContextPage
+	if err := json.Unmarshal(listBytes, &listPage); err != nil {
+		t.Fatalf("unmarshal GetMesheryK8sContexts response: %v", err)
+	}
+	if len(listPage.Contexts) != 1 {
+		t.Fatalf("expected 1 context in list, got %d", len(listPage.Contexts))
+	}
+	listedAuth := listPage.Contexts[0].Auth
+	if listedAuth["token"] != "cluster-admin-token" {
+		t.Errorf("listed Auth token = %v, want cluster-admin-token", listedAuth["token"])
+	}
+}
+
+

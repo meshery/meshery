@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"strings"
 
+	"github.com/meshery/meshery/server/pkg/encryption"
+	"github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
 	"gorm.io/gorm"
@@ -12,7 +14,8 @@ import (
 // MesheryK8sContextPersister is the persister for persisting
 // applications on the database
 type MesheryK8sContextPersister struct {
-	DB *database.Handler
+	DB     *database.Handler
+	EncSvc *encryption.Service
 }
 
 // MesheryK8sContextPage represents a page of contexts
@@ -45,6 +48,28 @@ func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContexts(search, order stri
 
 	Paginate(uint(page), uint(pageSize))(query).Find(&contexts)
 
+	if mkcp.EncSvc != nil {
+		for _, ctx := range contexts {
+			if ctx == nil {
+				continue
+			}
+			if ctx.Auth != nil {
+				decryptedAuth, err := mkcp.EncSvc.DecryptMap(ctx.Auth)
+				if err != nil {
+					return nil, ErrDecryptK8sContext(err)
+				}
+				ctx.Auth = sql.Map(decryptedAuth)
+			}
+			if ctx.Cluster != nil {
+				decryptedCluster, err := mkcp.EncSvc.DecryptMap(ctx.Cluster)
+				if err != nil {
+					return nil, ErrDecryptK8sContext(err)
+				}
+				ctx.Cluster = sql.Map(decryptedCluster)
+			}
+		}
+	}
+
 	mesheryK8sContextPage := MesheryK8sContextPage{
 		Page:       page,
 		PageSize:   pageSize,
@@ -67,6 +92,26 @@ func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (c
 		mkc.ID = id
 	}
 
+	// Encrypt only after K8sContextGenerateID has run. The ID is derived from
+	// Auth and Cluster, and each Seal uses a fresh nonce, so encrypting first
+	// would produce a different ID on every save and break identity deduplication.
+	if mkcp.EncSvc != nil {
+		if mkc.Auth != nil {
+			encryptedAuth, err := mkcp.EncSvc.EncryptMap(mkc.Auth)
+			if err != nil {
+				return conn, ErrEncryptK8sContext(err)
+			}
+			mkc.Auth = sql.Map(encryptedAuth)
+		}
+		if mkc.Cluster != nil {
+			encryptedCluster, err := mkcp.EncSvc.EncryptMap(mkc.Cluster)
+			if err != nil {
+				return conn, ErrEncryptK8sContext(err)
+			}
+			mkc.Cluster = sql.Map(encryptedCluster)
+		}
+	}
+
 	// Perform the operation in a transaction
 	err := mkcp.DB.Transaction(func(tx *gorm.DB) error {
 		var mesheryK8sContext K8sContext
@@ -86,5 +131,27 @@ func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContext(id string) (K8sCont
 	var mesheryK8sContext K8sContext
 
 	err := mkcp.DB.First(&mesheryK8sContext, "id = ?", id).Error
-	return mesheryK8sContext, err
+	if err != nil {
+		return mesheryK8sContext, err
+	}
+
+	if mkcp.EncSvc != nil {
+		if mesheryK8sContext.Auth != nil {
+			decryptedAuth, err := mkcp.EncSvc.DecryptMap(mesheryK8sContext.Auth)
+			if err != nil {
+				return mesheryK8sContext, ErrDecryptK8sContext(err)
+			}
+			mesheryK8sContext.Auth = sql.Map(decryptedAuth)
+		}
+		if mesheryK8sContext.Cluster != nil {
+			decryptedCluster, err := mkcp.EncSvc.DecryptMap(mesheryK8sContext.Cluster)
+			if err != nil {
+				return mesheryK8sContext, ErrDecryptK8sContext(err)
+			}
+			mesheryK8sContext.Cluster = sql.Map(decryptedCluster)
+		}
+	}
+
+	return mesheryK8sContext, nil
 }
+

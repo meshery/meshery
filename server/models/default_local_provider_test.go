@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/pkg/encryption"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
@@ -376,3 +377,97 @@ func TestDefaultLocalProviderInstallExtension_ReplacesMatchingNavigatorExtension
 		t.Fatalf("expected replacement component to be stored, got %q", provider.Extensions.Navigator[0].Component)
 	}
 }
+
+func TestDefaultLocalProvider_CredentialEncryption(t *testing.T) {
+	key := make([]byte, 32)
+	for i := range key {
+		key[i] = byte(i + 42)
+	}
+	encSvc, err := encryption.New(key)
+	if err != nil {
+		t.Fatalf("encryption.New: %v", err)
+	}
+
+	provider := newTestProviderWithCredentialDB(t)
+	provider.EncSvc = encSvc
+
+	userUUID, _ := uuid.NewV4()
+	secret := map[string]interface{}{
+		"token": "secret-auth-token",
+	}
+	cred := &Credential{
+		Name:   "k8s-cred",
+		UserId: userUUID,
+		Secret: secret,
+	}
+
+	// 1. Save with encryption
+	saved, err := provider.SaveUserCredential("tok", cred)
+	if err != nil {
+		t.Fatalf("SaveUserCredential: %v", err)
+	}
+	if saved.Secret["token"] != "secret-auth-token" {
+		t.Errorf("saved secret = %v, want secret-auth-token", saved.Secret["token"])
+	}
+
+	// Verify directly in DB that the column is encrypted
+	var raw struct {
+		ID     string
+		Secret string
+	}
+	if err := provider.GenericPersister.Table("credentials").Where("id = ?", saved.ID).First(&raw).Error; err != nil {
+		t.Fatalf("reading raw credential row: %v", err)
+	}
+	if !strings.Contains(raw.Secret, "__enc__") {
+		t.Errorf("expected DB secret to contain __enc__, got %s", raw.Secret)
+	}
+
+	// 2. Read by ID
+	fetched, status, err := provider.GetCredentialByID("tok", saved.ID)
+	if err != nil {
+		t.Fatalf("GetCredentialByID (%d): %v", status, err)
+	}
+	if fetched.Secret["token"] != "secret-auth-token" {
+		t.Errorf("fetched secret = %v, want secret-auth-token", fetched.Secret["token"])
+	}
+
+	// 3. List
+	page, err := provider.GetUserCredentials(nil, userUUID.String(), 0, 10, "", "")
+	if err != nil {
+		t.Fatalf("GetUserCredentials: %v", err)
+	}
+	if len(page.Credentials) != 1 {
+		t.Fatalf("expected 1 credential, got %d", len(page.Credentials))
+	}
+	if page.Credentials[0].Secret["token"] != "secret-auth-token" {
+		t.Errorf("listed secret = %v, want secret-auth-token", page.Credentials[0].Secret["token"])
+	}
+
+	// 4. Update
+	cred.Secret = map[string]interface{}{
+		"token": "updated-secret-auth-token",
+	}
+	updated, err := provider.UpdateUserCredential(nil, cred)
+	if err != nil {
+		t.Fatalf("UpdateUserCredential: %v", err)
+	}
+	if updated.Secret["token"] != "updated-secret-auth-token" {
+		t.Errorf("updated secret = %v, want updated-secret-auth-token", updated.Secret["token"])
+	}
+
+	// Verify that the updated row is encrypted in the DB
+	var rawAfterUpdate struct {
+		ID     string
+		Secret string
+	}
+	if err := provider.GenericPersister.Table("credentials").Where("id = ?", saved.ID).First(&rawAfterUpdate).Error; err != nil {
+		t.Fatalf("reading raw credential row after update: %v", err)
+	}
+	if !strings.Contains(rawAfterUpdate.Secret, "__enc__") {
+		t.Errorf("expected updated DB secret to contain __enc__, got %s", rawAfterUpdate.Secret)
+	}
+	if strings.Contains(rawAfterUpdate.Secret, "updated-secret-auth-token") {
+		t.Error("updated secret was stored as plaintext in the DB")
+	}
+}
+

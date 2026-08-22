@@ -167,6 +167,13 @@ const (
 	ErrOperatorChartNotPublishedCode      = "meshery-server-1470"
 	ErrOperatorChartSubstitutedCode       = "meshery-server-1471"
 	ErrNoMesheryReleasesFoundCode         = "meshery-server-1472"
+
+	// at-rest encryption error codes (1482–1486)
+	ErrEncryptionInitCode    = "meshery-server-1482"
+	ErrEncryptSecretCode     = "meshery-server-1483"
+	ErrDecryptSecretCode     = "meshery-server-1484"
+	ErrEncryptK8sContextCode = "meshery-server-1485"
+	ErrDecryptK8sContextCode = "meshery-server-1486"
 )
 
 var (
@@ -199,6 +206,69 @@ var (
 	ErrOperationNotAvailable   = errors.New(ErrOperationNotAvailableCode, errors.Alert, []string{"Operation not available"}, []string{}, []string{}, []string{})
 	ErrEmptySession            = errors.New(ErrEmptySessionCode, errors.Alert, []string{"No session found in the request"}, []string{"Unable to find \"token\" cookie in the request."}, []string{"User is not authenticated with the selected Provider.", "Browser might be restricting use of cookies."}, []string{"Choose a Provider and login to establish an active session (receive a new token and cookie). Optionally, try using a private/incognito browser window.", "Verify that your browser settings allow cookies."})
 )
+
+// ErrEncryptionInit is returned when the at-rest encryption service cannot be
+// initialised (e.g. invalid key format or unreadable key file).
+func ErrEncryptionInit(err error) error {
+	return errors.New(ErrEncryptionInitCode, errors.Alert,
+		[]string{"Failed to initialise at-rest encryption service"},
+		[]string{err.Error()},
+		[]string{"The value of MESHERY_ENCRYPTION_KEY or MESHERY_ENCRYPTION_KEY_FILE is invalid"},
+		[]string{
+			"Generate a valid 32-byte key: openssl rand -hex 32",
+			"Set MESHERY_ENCRYPTION_KEY=<64-char hex> or point MESHERY_ENCRYPTION_KEY_FILE to a file containing the key",
+		})
+}
+
+// ErrEncryptSecret is returned when encrypting a credential secret fails.
+func ErrEncryptSecret(err error) error {
+	return errors.New(ErrEncryptSecretCode, errors.Alert,
+		[]string{"Failed to encrypt credential secret before persisting"},
+		[]string{err.Error()},
+		[]string{"Internal encryption error"},
+		[]string{"Ensure the encryption key is valid and has not been rotated mid-operation"})
+}
+
+// ErrDecryptSecret is returned when decrypting a stored credential secret fails.
+func ErrDecryptSecret(err error) error {
+	return errors.New(ErrDecryptSecretCode, errors.Alert,
+		[]string{"Failed to decrypt stored credential secret"},
+		[]string{err.Error()},
+		[]string{
+			"The stored credential may have been encrypted with a different key",
+			"The credential row may be corrupted",
+		},
+		[]string{
+			"Verify that MESHERY_ENCRYPTION_KEY or MESHERY_ENCRYPTION_KEY_FILE matches the key used when the credential was saved",
+			"Restore the original encryption key to access encrypted credentials",
+		})
+}
+
+// ErrEncryptK8sContext is returned when encrypting a Kubernetes context's auth
+// or cluster fields fails.
+func ErrEncryptK8sContext(err error) error {
+	return errors.New(ErrEncryptK8sContextCode, errors.Alert,
+		[]string{"Failed to encrypt Kubernetes context fields before persisting"},
+		[]string{err.Error()},
+		[]string{"Internal encryption error for kubeconfig data"},
+		[]string{"Ensure the encryption key is valid and has not been rotated mid-operation"})
+}
+
+// ErrDecryptK8sContext is returned when decrypting a Kubernetes context's auth
+// or cluster fields fails.
+func ErrDecryptK8sContext(err error) error {
+	return errors.New(ErrDecryptK8sContextCode, errors.Alert,
+		[]string{"Failed to decrypt Kubernetes context fields after reading"},
+		[]string{err.Error()},
+		[]string{
+			"The stored kubeconfig data may have been encrypted with a different key",
+			"The k8s_contexts row may be corrupted",
+		},
+		[]string{
+			"Verify that MESHERY_ENCRYPTION_KEY or MESHERY_ENCRYPTION_KEY_FILE matches the key used when the context was saved",
+			"Restore the original encryption key to access encrypted Kubernetes contexts",
+		})
+}
 
 func ErrCloseIoReader(err error) error {
 	return errors.New(ErrCloseIoReaderCode, errors.Alert,
