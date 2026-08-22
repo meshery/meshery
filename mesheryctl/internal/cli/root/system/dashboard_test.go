@@ -36,7 +36,7 @@ func TestKeepConnectionAliveReusesTheConnection(t *testing.T) {
 	opened := 0
 
 	server := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		fmt.Fprint(w, "meshery")
+		_, _ = fmt.Fprint(w, "meshery")
 	}))
 	server.Config.ConnState = func(_ net.Conn, state http.ConnState) {
 		if state == http.StateNew {

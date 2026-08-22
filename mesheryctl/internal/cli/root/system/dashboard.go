@@ -249,7 +249,7 @@ func keepConnectionAlive(url string) {
 	// The body has to be drained and closed, otherwise the connection is never
 	// returned to the pool. This runs on a ticker for as long as the port
 	// forward is up, so leaking here accumulates for the life of the command.
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if _, err := io.Copy(io.Discard, resp.Body); err != nil {
 		utils.Log.Debugf("draining connection response failed %v", err)
 		return
