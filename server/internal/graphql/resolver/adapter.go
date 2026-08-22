@@ -57,12 +57,13 @@ func (r *Resolver) changeAdapterStatus(ctx context.Context, _ models.Provider, t
 		operation = "Deploy"
 		err = r.Config.AdapterTracker.DeployAdapter(ctx, adapter)
 	}
+
 	if err != nil {
 		r.Log.Info("Failed to " + operation + " adapter")
 		r.Log.Error(err)
-	} else {
-		r.Log.Info(operation + "ed adapter")
+		return model.StatusUnknown, err
 	}
 
+	r.Log.Info(operation + "ed adapter")
 	return model.StatusProcessing, nil
 }
