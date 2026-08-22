@@ -81,8 +81,8 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
-		if len(args) != 5 {
-			return errors.New(utils.RegistryError("[ system, google sheet credential, sheet-id, models output path, imgs output path] are required\n\nUsage: \nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]\nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]\nRun 'mesheryctl registry publish --help'", "publish"))
+		if len(args) < 4 || len(args) > 5 {
+			return errors.New(utils.RegistryError("[ system, google sheet credential, sheet-id, models output path, imgs output path (optional)] are required\n\nUsage: \nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]\nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]\nRun 'mesheryctl registry publish --help'", "publish"))
 		}
 
 		return nil
@@ -93,7 +93,9 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		googleSheetCredential = args[1]
 		sheetID = args[2]
 		modelsOutputPath = args[3]
-		imgsOutputPath = args[4]
+		if len(args) == 5 {
+			imgsOutputPath = args[4]
+		}
 
 		srv, err := meshkitUtils.NewSheetSRV(googleSheetCredential)
 		if err != nil {
