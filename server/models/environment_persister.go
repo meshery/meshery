@@ -64,19 +64,22 @@ func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, page
 		pageSize = "10"
 	}
 
-	pageUint, err := strconv.ParseUint(page, 10, 32)
+	pageUint, err := strconv.ParseUint(page, 10, strconv.IntSize)
 	if err != nil {
 		return nil, err
 	}
 	// Fetch all environments if pageSize is "all"
+	var resolvedPageSize int
 	if pageSize == "all" {
 		query.Find(&environmentsFetched)
+		resolvedPageSize = int(count)
 	} else {
 		// Convert page and pageSize from string to uint
-		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
+		pageSizeUint, err := strconv.ParseUint(pageSize, 10, strconv.IntSize)
 		if err != nil {
 			return nil, err
 		}
+		resolvedPageSize = int(pageSizeUint)
 
 		// Fetch environments with pagination
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&environmentsFetched)
@@ -85,7 +88,7 @@ func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, page
 	// Prepare the response
 	environmentsPage := &environment.EnvironmentPage{
 		Page:         int(pageUint),
-		PageSize:     len(environmentsFetched),
+		PageSize:     resolvedPageSize,
 		TotalCount:   int(count),
 		Environments: environmentsFetched,
 	}
@@ -281,26 +284,29 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uui
 	query.Count(&count)
 
 	var connectionsFetched []*connections.Connection
-	pageUint, err := strconv.ParseUint(page, 10, 32)
+	pageUint, err := strconv.ParseUint(page, 10, strconv.IntSize)
 	if err != nil {
 		return nil, err
 	}
+	var resolvedPageSize int
 	// Fetch all connections if pageSize is "all"
 	if pageSize == "all" {
 		query.Find(&connectionsFetched)
+		resolvedPageSize = int(count)
 	} else {
 		// Convert page and pageSize from string to uint
-		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
+		pageSizeUint, err := strconv.ParseUint(pageSize, 10, strconv.IntSize)
 		if err != nil {
 			return nil, err
 		}
+		resolvedPageSize = int(pageSizeUint)
 
 		// Fetch connections with pagination
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&connectionsFetched)
 	}
 	connectionsPage := &connections.ConnectionPage{
 		Page:        int(pageUint),
-		PageSize:    len(connectionsFetched),
+		PageSize:    resolvedPageSize,
 		TotalCount:  int(count),
 		Connections: connectionsFetched,
 	}
