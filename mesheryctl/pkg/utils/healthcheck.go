@@ -152,9 +152,11 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 		Log.Debugf("Error while reaching Meshery endpoint: %v\n", err)
 		Log.Infof("Checking if Meshery is running using the platform: %s\n", currPlatform)
 	}
-	// resp is nil when the request itself failed, which is expected here: the
-	// caller falls through to the platform checks below.
-	if resp != nil {
+	// A failed request is expected here and falls through to the platform
+	// checks below. Guard on err rather than resp: when CheckRedirect fails
+	// http.Get returns both a response and an error, and that body is already
+	// closed.
+	if err == nil {
 		defer SafeClose(resp.Body)
 	}
 
