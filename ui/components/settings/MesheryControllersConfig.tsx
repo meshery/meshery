@@ -17,9 +17,19 @@ import DefaultError from '@/components/general/error-404';
  * Meshery Broker deployed to every managed Kubernetes cluster. Fields left on
  * Inherit fall back to the controllers' built-in defaults; per-connection
  * overrides (Connections page) take precedence over everything set here.
+ *
+ * Permission contract:
+ * - View gate: Requires `Keys.MesherySystemViewControllersConfig`. When absent,
+ *   the data query is skipped and `<DefaultError>` is displayed.
+ * - Edit gate: Requires `Keys.MesherySystemEditControllersConfig`. When absent,
+ *   the "Save defaults" and "Discard changes" buttons are disabled via Sistent's
+ *   `permissionKey` prop.
  */
 export default function MesheryControllersConfig() {
-  const { data, isLoading, error } = useGetControllersDefaultConfigQuery();
+  const canViewControllersConfig = useHasPermission(Keys.MesherySystemViewControllersConfig);
+  const { data, isLoading, error } = useGetControllersDefaultConfigQuery(undefined, {
+    skip: !canViewControllersConfig,
+  });
   const [updateDefaults, { isLoading: isSaving }] = useUpdateControllersDefaultConfigMutation();
   const { draft, dirty, onChange, discard, save } = useControllersConfigDraft({
     isLoaded: Boolean(data),
@@ -33,8 +43,6 @@ export default function MesheryControllersConfig() {
         'Server-wide controllers configuration defaults saved. Re-applying to connected clusters.',
     },
   });
-
-  const canViewControllersConfig = useHasPermission(Keys.MesherySystemViewControllersConfig);
 
   if (!canViewControllersConfig) {
     return <DefaultError permissionKey={Keys.MesherySystemViewControllersConfig} />;

@@ -578,6 +578,17 @@ const MeshModelComponent_ = ({
   );
 };
 
+/**
+ * TabBar action toolbar.
+ *
+ * Permission contract:
+ * - Create Model: Requires `Keys.MesherySystemCreateModel` to author new models in the capabilities registry.
+ * - Import Model: Requires `Keys.MesherySystemImportModel` to import models into the capabilities registry.
+ * - Create Relationship: Requires `Keys.MesherySystemCreateRelationship` to define new relationship definitions.
+ *
+ * When permission is absent, Sistent's `Button` component automatically disables the button
+ * and renders a tooltip explaining the missing capability.
+ */
 const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal }) => {
   return (
     <MeshModelToolbar>
