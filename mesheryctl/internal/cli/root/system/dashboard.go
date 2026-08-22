@@ -17,6 +17,7 @@ package system
 import (
 	"context"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -240,9 +241,18 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 
 // keepConnectionAlive to stop being timed out with port forwarding
 func keepConnectionAlive(url string) {
-	_, err := http.Get(url)
+	resp, err := http.Get(url)
 	if err != nil {
 		utils.Log.Debugf("connection request failed %v", err)
+		return
+	}
+	// The body has to be drained and closed, otherwise the connection is never
+	// returned to the pool. This runs on a ticker for as long as the port
+	// forward is up, so leaking here accumulates for the life of the command.
+	defer resp.Body.Close()
+	if _, err := io.Copy(io.Discard, resp.Body); err != nil {
+		utils.Log.Debugf("draining connection response failed %v", err)
+		return
 	}
 	utils.Log.Debug("connection request success")
 }
