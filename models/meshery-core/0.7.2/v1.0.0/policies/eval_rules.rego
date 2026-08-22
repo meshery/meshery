@@ -40,28 +40,48 @@ cleanup_deleted_relationships_actions(relationships) := delete_actions if {
 	}
 }
 
+# mutatorRef usually lives on the from side of a selector, but many
+# relationship definitions declare it on the to side with mutatedRef on the
+# from side. Resolve which side carries the mutator instead of assuming the
+# from side, like the hierarchical and binding flows
+# (extract_mutator_config_from_patch, extract_mutator_from_match) already do.
+# When both sides declare a mutatorRef, the from side wins.
+mutator_mutated_orientation(from_clause, to_clause) := {"mutator": "from", "mutated": "to"} if {
+	from_clause.patch.mutatorRef
+	to_clause.patch.mutatedRef
+} else := {"mutator": "to", "mutated": "from"} if {
+	to_clause.patch.mutatorRef
+	from_clause.patch.mutatedRef
+}
+
 patch_mutators_action(relationship, design_file) := {action |
 	#      print("patch mutators action", relationship.kind)
 	some selector in relationship.selectors
-	from := selector.allow.from[0]
-	to := selector.allow.to[0]
-	some i in numbers.range(0, count(from.patch.mutatorRef) - 1)
+	clauses := {"from": selector.allow.from[0], "to": selector.allow.to[0]}
 
-	mutatorRef := from.patch.mutatorRef[i]
-	mutatedRef := to.patch.mutatedRef[i]
+	orientation := mutator_mutated_orientation(clauses.from, clauses.to)
+	mutator := clauses[orientation.mutator]
+	mutated := clauses[orientation.mutated]
 
-	from_component := core_utils.component_declaration_by_id(design_file, from.id)
-	to_component := core_utils.component_declaration_by_id(design_file, to.id)
+	# clamp to the shorter of the two ref lists, like the Go engine
+	pair_count := min([count(mutator.patch.mutatorRef), count(mutated.patch.mutatedRef)])
+	some i in numbers.range(0, pair_count - 1)
 
-	mutatorValue := core_utils.configuration_for_component_at_path(mutatorRef, from_component, design_file)
-	old_value := core_utils.configuration_for_component_at_path(mutatedRef, to_component, design_file)
+	mutatorRef := mutator.patch.mutatorRef[i]
+	mutatedRef := mutated.patch.mutatedRef[i]
+
+	mutator_component := core_utils.component_declaration_by_id(design_file, mutator.id)
+	mutated_component := core_utils.component_declaration_by_id(design_file, mutated.id)
+
+	mutatorValue := core_utils.configuration_for_component_at_path(mutatorRef, mutator_component, design_file)
+	old_value := core_utils.configuration_for_component_at_path(mutatedRef, mutated_component, design_file)
 
 	old_value != mutatorValue
 
 	action := {
 		"op": actions.get_component_update_op(mutatedRef),
 		"value": {
-			"id": to.id,
+			"id": mutated.id,
 			"path": mutatedRef,
 			"value": mutatorValue,
 		},
@@ -152,15 +172,29 @@ get_strategy_for_value_at(strategies, index) := strategy if {
 matching_mutators(component_from, component_to, from_clause, to_clause, design_file) := matching_selectors if {
 	match_strategy_matrix := get_match_strategy_for_selector(from_clause)
 
+	# mutatorRef may live on either side of the selector; resolve the
+	# orientation the same way patch_mutators_action does.
+	clauses := {"from": from_clause, "to": to_clause}
+	components := {"from": component_from, "to": component_to}
+
+	orientation := mutator_mutated_orientation(from_clause, to_clause)
+	mutator_clause := clauses[orientation.mutator]
+	mutated_clause := clauses[orientation.mutated]
+	mutator_component := components[orientation.mutator]
+	mutated_component := components[orientation.mutated]
+
 	# print("match_strategy",match_strategy_matrix)
-	mutatorCount := count(from_clause.patch.mutatorRef)
+	# clamp to the shorter of the two ref lists and require at least one
+	# pair, like the Go engine
+	mutatorCount := min([count(mutator_clause.patch.mutatorRef), count(mutated_clause.patch.mutatedRef)])
+	mutatorCount > 0
 
 	every i in numbers.range(0, mutatorCount - 1) {
-		mutatorPath := from_clause.patch.mutatorRef[i]
-		mutatedPath := to_clause.patch.mutatedRef[i]
+		mutatorPath := mutator_clause.patch.mutatorRef[i]
+		mutatedPath := mutated_clause.patch.mutatedRef[i]
 
-		mutatorValue := core_utils.configuration_for_component_at_path(mutatorPath, component_from, design_file)
-		mutatedValue := core_utils.configuration_for_component_at_path(mutatedPath, component_to, design_file)
+		mutatorValue := core_utils.configuration_for_component_at_path(mutatorPath, mutator_component, design_file)
+		mutatedValue := core_utils.configuration_for_component_at_path(mutatedPath, mutated_component, design_file)
 
 		strategies := get_strategy_for_value_at(match_strategy_matrix, i)
 
