@@ -24,7 +24,7 @@
 
 {{ $reading := $ctx.reading | default site.Pages }}
 
-<ul>
+<ul class="related-models-list">
 {{ range $reading }}
 
     {{ if ne .RelPermalink $ctx.url }}
