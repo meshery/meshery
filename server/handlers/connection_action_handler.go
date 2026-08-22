@@ -9,8 +9,8 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines"
+	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
@@ -328,8 +328,9 @@ func (h *Handler) reconcileMeshsyncDeploymentMode(ctx context.Context, connectio
 		return fmt.Errorf("mode reconciliation aborted: superseded by a newer lifecycle transition")
 	}
 
-	if machine.CurrentState != machines.CONNECTED {
-		h.log.Infof("Connection %s is not CONNECTED (current state: %s); skipping active deployment of new MeshSync mode", connectionID, machine.CurrentState)
+	currentState := machine.GetCurrentState()
+	if currentState != machines.CONNECTED {
+		h.log.Infof("Connection %s is not CONNECTED (current state: %s); skipping active deployment of new MeshSync mode", connectionID, currentState)
 		return nil
 	}
 

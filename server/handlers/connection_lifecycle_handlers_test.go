@@ -491,13 +491,13 @@ func TestDeleteReconnectRace(t *testing.T) {
 		t.Fatalf("failed to create machine: %v", err)
 	}
 	sm.Provider = provider
-	
+
 	// Create a blocking Delete action
 	deleteActionWg := &sync.WaitGroup{}
 	deleteActionWg.Add(1)
-	
+
 	cleanupFinished := make(chan struct{})
-	
+
 	sm.States[machines.DELETED] = machines.State{
 		Events: machines.Events{
 			machines.Register: machines.REGISTERED,
@@ -513,8 +513,8 @@ func TestDeleteReconnectRace(t *testing.T) {
 	ctx = context.WithValue(ctx, models.TokenCtxKey, "test-token")
 
 	machineCtx := &kubernetes.MachineCtx{
-		K8sContext:  provider.k8sContext,
-		ActionMutex: &sync.Mutex{},
+		K8sContext:         provider.k8sContext,
+		ActionMutex:        &sync.Mutex{},
 		MesheryCtrlsHelper: models.NewMesheryControllersHelper(h.log, controllers.OperatorDeploymentConfig{}, nil, nil, provider, &sysID),
 		OperatorTracker:    models.NewOperatorTracker(false),
 		EventBroadcaster:   h.config.EventBroadcaster,
@@ -581,7 +581,7 @@ func TestDeleteReconnectRace(t *testing.T) {
 
 	// Wait for cleanup to finish
 	<-cleanupFinished
-	
+
 	// Wait for tracker-removal goroutine to finish its logic.
 	<-trackerCleanupDone
 
@@ -614,12 +614,12 @@ func TestUpdateConnectionStatus_DeleteReconnectRace(t *testing.T) {
 		t.Fatalf("failed to create machine: %v", err)
 	}
 	sm.Provider = provider
-	
+
 	deleteActionWg := &sync.WaitGroup{}
 	deleteActionWg.Add(1)
-	
+
 	cleanupFinished := make(chan struct{})
-	
+
 	sm.States[machines.DELETED] = machines.State{
 		Events: machines.Events{
 			machines.Register: machines.REGISTERED,
@@ -635,8 +635,8 @@ func TestUpdateConnectionStatus_DeleteReconnectRace(t *testing.T) {
 	ctx = context.WithValue(ctx, models.TokenCtxKey, "test-token")
 
 	machineCtx := &kubernetes.MachineCtx{
-		K8sContext:  provider.k8sContext,
-		ActionMutex: &sync.Mutex{},
+		K8sContext:         provider.k8sContext,
+		ActionMutex:        &sync.Mutex{},
 		MesheryCtrlsHelper: models.NewMesheryControllersHelper(h.log, controllers.OperatorDeploymentConfig{}, nil, nil, provider, &sysID),
 		OperatorTracker:    models.NewOperatorTracker(false),
 		EventBroadcaster:   h.config.EventBroadcaster,
@@ -699,7 +699,7 @@ func TestUpdateConnectionStatus_DeleteReconnectRace(t *testing.T) {
 
 	// Wait for cleanup to finish
 	<-cleanupFinished
-	
+
 	// Wait for tracker-removal goroutine to finish its logic.
 	<-trackerCleanupDone
 
@@ -711,9 +711,9 @@ func TestUpdateConnectionStatus_DeleteReconnectRace(t *testing.T) {
 }
 
 type blockingLifecycleAction struct {
-	wg *sync.WaitGroup
+	wg       *sync.WaitGroup
 	finished chan struct{}
-	once sync.Once
+	once     sync.Once
 }
 
 func (a *blockingLifecycleAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
@@ -756,7 +756,7 @@ func TestDeleteCleanupCannotRemoveReconnectedStateMachine(t *testing.T) {
 		t.Fatalf("failed to create state machine: %v", err)
 	}
 	sm.Provider = provider
-	
+
 	machineCtx := &kubernetes.MachineCtx{
 		K8sContext: models.K8sContext{
 			ID:           "test-k8s-context",
@@ -764,7 +764,7 @@ func TestDeleteCleanupCannotRemoveReconnectedStateMachine(t *testing.T) {
 		},
 	}
 	sm.Context = machineCtx
-	
+
 	tracker.Add(core.Uuid(connectionID), sm)
 	inst := sm
 
@@ -787,7 +787,7 @@ func TestDeleteCleanupCannotRemoveReconnectedStateMachine(t *testing.T) {
 	detachedCtx = context.WithValue(detachedCtx, models.UserCtxKey, &models.User{ID: uuid.Must(uuid.NewV4())})
 	detachedCtx = context.WithValue(detachedCtx, models.SystemIDKey, &sysID)
 	detachedCtx = context.WithValue(detachedCtx, models.ProviderCtxKey, provider)
-	
+
 	// Create the done channel for the Delete event
 	done := make(chan struct{})
 
@@ -803,10 +803,10 @@ func TestDeleteCleanupCannotRemoveReconnectedStateMachine(t *testing.T) {
 	cleanupFinished := make(chan struct{})
 	go func() {
 		<-done // wait for Action's goroutine to finish
-		
+
 		// Wait for test to pause us right BEFORE RemoveIfMatch
 		<-pauseCleanup
-		
+
 		// New implementation:
 		tracker.RemoveIfMatchAndGeneration(connectionID, inst, deleteGenerationCtx)
 		close(cleanupFinished)
@@ -814,7 +814,7 @@ func TestDeleteCleanupCannotRemoveReconnectedStateMachine(t *testing.T) {
 
 	// Wait for the action to reach its pause point (it closed `done`)
 	// In testPausedDeleteAction, we close `done` then block on resumeCleanup.
-	
+
 	// Ensure the Delete transition has actually occurred
 	if inst.GetCurrentState() != machines.DELETED {
 		t.Fatalf("expected state DELETED, got %s", inst.GetCurrentState())
@@ -824,7 +824,7 @@ func TestDeleteCleanupCannotRemoveReconnectedStateMachine(t *testing.T) {
 	type key string
 	connectCtx := context.WithValue(detachedCtx, key("generation"), 2)
 	_ = context.WithValue(connectCtx, models.TokenCtxKey, "test-token")
-	
+
 	// 3. Override CONNECTED state action to avoid panics from complex dependencies
 	connState := inst.States[machines.CONNECTED]
 	connState.Action = &testPausedDeleteAction{}
@@ -836,7 +836,7 @@ func TestDeleteCleanupCannotRemoveReconnectedStateMachine(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to connect: %v", err)
 	}
-	
+
 	if inst.GetCurrentState() != machines.CONNECTED {
 		t.Fatalf("expected state CONNECTED, got %s", inst.GetCurrentState())
 	}
@@ -854,7 +854,7 @@ func TestDeleteCleanupCannotRemoveReconnectedStateMachine(t *testing.T) {
 
 	// Wait for cleanup to finish
 	<-cleanupFinished
-	
+
 	// 7. Assert tracker[id] STILL == M1
 	if trackedInst, ok := tracker.Get(connectionID); !ok || trackedInst != inst {
 		t.Fatalf("Tracker lost the active StateMachine due to TOCTOU bug")
@@ -883,4 +883,3 @@ func (a *testPausedDeleteAction) Execute(ctx context.Context, machineCtx interfa
 func (a *testPausedDeleteAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	return machines.NoOp, nil, nil
 }
-
