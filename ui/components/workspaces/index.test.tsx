@@ -102,7 +102,6 @@ vi.mock('../shared/Modal/Modal', () => ({
 
 vi.mock('../general/PromptComponent', () => ({ default: React.forwardRef(() => null) }));
 vi.mock('@/components/lifecycle/general', () => ({ EmptyState: () => <div>empty</div> }));
-vi.mock('@/components/general/ViewSwitch', () => ({ default: () => null }));
 vi.mock('./WorkspaceGridView', () => ({ default: () => null }));
 vi.mock('./WorkspaceDataTable', () => ({ default: () => null }));
 vi.mock('./styles', () => ({ CreateButtonWrapper: ({ children }: any) => <div>{children}</div> }));
@@ -148,6 +147,9 @@ vi.mock('@sistent/sistent', () => ({
       background: { brand: { default: '#000' }, constant: { table: '#fff' } },
     },
   }),
+  ViewSwitch: ({ view, changeView }: any) => (
+    <div data-testid="view-switch" data-view={view} onClick={() => changeView?.('grid')} />
+  ),
   // `DefaultError` (rendered by the new permission guard) imports `styled`
   // from error-404/styles.tsx to build its `ErrorMain` wrapper. Emulate the
   // real styled-components-style API closely enough that a tag-name call

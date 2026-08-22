@@ -5,7 +5,6 @@ import { NoSsr, useHasPermission } from '@sistent/sistent';
 import { Publish as PublishIcon } from '@/assets/icons';
 import _PromptComponent from '../general/PromptComponent';
 import { MesheryFiltersCatalog, VISIBILITY } from '../../utils/Enum';
-import ViewSwitch from '../general/ViewSwitch';
 import FiltersGrid from './FiltersGrid';
 import fetchCatalogFilter from '@/graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../../css/icons.styles';
@@ -23,6 +22,7 @@ import {
   publishCatalogItemUiSchema,
   Button,
   PROMPT_VARIANTS,
+  ViewSwitch,
 } from '@sistent/sistent';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
@@ -496,9 +496,7 @@ function MesheryFilters() {
                     />
                   )}
 
-                  {!selectedFilter.show && (
-                    <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
-                  )}
+                  {!selectedFilter.show && <ViewSwitch view={viewType} changeView={setViewType} />}
                 </div>
               </ToolWrapper>
               {!selectedFilter.show && viewType === 'table' && (

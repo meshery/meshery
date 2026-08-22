@@ -21,6 +21,7 @@ import {
   useTheme,
   PROMPT_VARIANTS,
   ModalFooter,
+  ViewSwitch,
 } from '@sistent/sistent';
 import { EmptyState } from '@/components/lifecycle/general';
 import AddIconCircleBorder from '@/assets/icons/AddIconCircleBorder';
@@ -43,7 +44,6 @@ import { EVENT_TYPES } from '../../lib/event-types';
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '../general/error-404/index';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
-import ViewSwitch from '@/components/general/ViewSwitch';
 import { CreateButtonWrapper } from './styles';
 import WorkspaceGridView from './WorkspaceGridView';
 import RightArrowIcon from '@/assets/icons/RightArrowIcon';
