@@ -383,7 +383,10 @@ const Dashboard = () => {
                       resource === 'Overview' ? (
                         <MesheryIcon style={iconLarge} />
                       ) : (
-                        <GetKubernetesNodeIcon kind={CATEGORY_ICON_KIND[resource] ?? resource} size={iconLarge} />
+                        <GetKubernetesNodeIcon
+                          kind={CATEGORY_ICON_KIND[resource] ?? resource}
+                          size={iconLarge}
+                        />
                       )
                     }
                     label={resource}
