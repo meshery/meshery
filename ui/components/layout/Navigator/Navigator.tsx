@@ -284,7 +284,7 @@ const NavigatorContent = () => {
     },
     {
       id: 'forum',
-      href: 'https://meshery.io/community#community-forums',
+      href: 'https://discuss.meshery.io',
       title: 'Discussion Forum',
       icon: <DiscussForumIcon fill="currentColor" height="28px" width="28px" />,
       hovericon: <DiscussForumIcon height="28px" width="28px" />,
@@ -779,6 +779,7 @@ const NavigatorContent = () => {
     <>
       <NavigatorHelpIcons
         isCollapsed={isDrawerCollapsed}
+        isHelperOpen={showHelperButton}
         size="large"
         orientation={isDrawerCollapsed ? 'vertical' : 'horizontal'}
       >
@@ -813,7 +814,7 @@ const NavigatorContent = () => {
             </HelpListItem>
           );
         })}
-        <ListItem key="help-button" style={{ display: isDrawerCollapsed ? 'inherit' : 'none' }}>
+        <HelpListItem key="help-button" style={{ display: isDrawerCollapsed ? 'flex' : 'none' }}>
           <CustomTextTooltip title="Help" placement={isDrawerCollapsed ? 'right' : 'top'}>
             <HelpButton isCollapsed={isDrawerCollapsed} onClick={toggleSpacing}>
               <HelpOutlinedIcon
@@ -835,7 +836,7 @@ const NavigatorContent = () => {
               />
             </HelpButton>
           </CustomTextTooltip>
-        </ListItem>
+        </HelpListItem>
       </NavigatorHelpIcons>
     </>
   );
@@ -868,21 +869,21 @@ const NavigatorContent = () => {
     </ListItem>
   );
 
+  const isTogglerEnabled = providerUiAccessControl?.isNavigatorComponentEnabled?.([TOGGLER]);
+
   const Chevron = (
     <ChevronButtonWrapper
+      type="button"
       isCollapsed={isDrawerCollapsed}
-      style={
-        providerUiAccessControl?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : cursorNotAllowed
-      }
+      onClick={isTogglerEnabled ? toggleMiniDrawer : undefined}
+      aria-label="Toggle sidebar navigation"
+      aria-expanded={!isDrawerCollapsed}
+      style={isTogglerEnabled ? {} : cursorNotAllowed}
+      disabled={!isTogglerEnabled}
     >
-      <div
-        style={
-          providerUiAccessControl?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : disabledStyle
-        }
-        onClick={toggleMiniDrawer}
-      >
+      <div style={isTogglerEnabled ? {} : disabledStyle}>
         <LeftArrowIcon
-          alt="Sidebar collapse toggle"
+          aria-hidden="true"
           style={{
             cursor: 'pointer',
             verticalAlign: 'middle',
