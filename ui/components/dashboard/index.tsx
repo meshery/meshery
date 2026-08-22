@@ -4,7 +4,6 @@ import { useNotificationHandlers } from '../../utils/hooks/useNotification';
 import { ResourcesConfig } from './resources/config';
 import ResourcesTable from './resources/resources-table';
 import ResourcesSubMenu, { CRDsResourcesSubMenu } from './resources/resources-sub-menu';
-import KubernetesIcon from '../../assets/icons/technology/kubernetes';
 import MesheryIcon from './images/meshery-icon';
 import GetKubernetesNodeIcon from './utils';
 import { TabPanel } from './tabpanel';
@@ -85,6 +84,17 @@ const useDashboardRouter = () => {
 };
 
 const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
+
+const CATEGORY_ICON_KIND: Record<string, string> = {
+  Node: 'Node',
+  Namespace: 'Namespace',
+  Workload: 'Deployment',
+  Configuration: 'ConfigMap',
+  Network: 'Service',
+  Security: 'ClusterRole',
+  Storage: 'PersistentVolume',
+  CRDS: 'CustomResourceDefinition',
+};
 
 const Dashboard = () => {
   const { data: userData, isLoading } = useGetUserPrefQuery();
@@ -373,7 +383,7 @@ const Dashboard = () => {
                       resource === 'Overview' ? (
                         <MesheryIcon style={iconLarge} />
                       ) : (
-                        <GetKubernetesNodeIcon kind={resource} size={iconLarge} />
+                        <GetKubernetesNodeIcon kind={CATEGORY_ICON_KIND[resource] ?? resource} size={iconLarge} />
                       )
                     }
                     label={resource}
