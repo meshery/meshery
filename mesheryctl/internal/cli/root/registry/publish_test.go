@@ -21,44 +21,75 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// TestPublishCmdPreRunE_ArgValidation verifies that the publish command's
-// argument validation accepts exactly 4 or 5 positional arguments and rejects
-// everything else. This prevents the regression where the official help-text
-// example (4 args for the "meshery" system) was rejected by a len(args)!=5
-// guard, and ensures that remote-provider / website callers still supply the
-// required imgs-output-path.
+// TestPublishCmdPreRunE_ArgValidation verifies system-specific argument
+// validation for the publish command's PreRunE:
+//   - meshery        → 4 or 5 args accepted (imgs-output-path is optional)
+//   - remote-provider → exactly 5 args required (imgs-output-path is mandatory)
+//   - website         → exactly 5 args required (imgs-output-path is mandatory)
 func TestPublishCmdPreRunE_ArgValidation(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    []string
 		wantErr bool
 	}{
+		// ── meshery system ──────────────────────────────────────────────────────
 		{
-			// Matches the official "Publish To Meshery" example in --help (4 args).
-			name:    "4 args accepted (meshery system without imgs-output-path)",
-			args:    []string{"meshery", "GoogleCredential", "GoogleSheetID", "path/to/models"},
+			name:    "meshery: 4 args accepted (imgs-output-path optional)",
+			args:    []string{"meshery", "cred", "sheetID", "path/to/models"},
 			wantErr: false,
 		},
 		{
-			// Full 5-arg form used by remote-provider and website targets.
-			name:    "5 args accepted (all targets with imgs-output-path)",
-			args:    []string{"remote-provider", "GoogleCredential", "GoogleSheetID", "path/to/models", "path/to/imgs"},
+			name:    "meshery: 5 args accepted",
+			args:    []string{"meshery", "cred", "sheetID", "path/to/models", "path/to/imgs"},
 			wantErr: false,
 		},
 		{
-			// Too few arguments – missing at least models-output-path.
-			name:    "3 args rejected",
-			args:    []string{"meshery", "GoogleCredential", "GoogleSheetID"},
+			name:    "meshery: 3 args rejected (too few)",
+			args:    []string{"meshery", "cred", "sheetID"},
 			wantErr: true,
 		},
 		{
-			// Too many arguments – no valid target needs more than 5 positional args.
-			name:    "6 args rejected",
-			args:    []string{"meshery", "GoogleCredential", "GoogleSheetID", "path/to/models", "path/to/imgs", "extra"},
+			name:    "meshery: 6 args rejected (too many)",
+			args:    []string{"meshery", "cred", "sheetID", "path/to/models", "path/to/imgs", "extra"},
+			wantErr: true,
+		},
+
+		// ── remote-provider system ──────────────────────────────────────────────
+		{
+			name:    "remote-provider: 5 args accepted",
+			args:    []string{"remote-provider", "cred", "sheetID", "path/to/models", "path/to/imgs"},
+			wantErr: false,
+		},
+		{
+			name:    "remote-provider: 4 args rejected (imgs-output-path mandatory)",
+			args:    []string{"remote-provider", "cred", "sheetID", "path/to/models"},
 			wantErr: true,
 		},
 		{
-			// No arguments at all.
+			name:    "remote-provider: 3 args rejected",
+			args:    []string{"remote-provider", "cred", "sheetID"},
+			wantErr: true,
+		},
+
+		// ── website system ──────────────────────────────────────────────────────
+		{
+			name:    "website: 5 args accepted",
+			args:    []string{"website", "cred", "sheetID", "path/to/models", "path/to/imgs"},
+			wantErr: false,
+		},
+		{
+			name:    "website: 4 args rejected (imgs-output-path mandatory)",
+			args:    []string{"website", "cred", "sheetID", "path/to/models"},
+			wantErr: true,
+		},
+		{
+			name:    "website: 3 args rejected",
+			args:    []string{"website", "cred", "sheetID"},
+			wantErr: true,
+		},
+
+		// ── global boundary ─────────────────────────────────────────────────────
+		{
 			name:    "0 args rejected",
 			args:    []string{},
 			wantErr: true,

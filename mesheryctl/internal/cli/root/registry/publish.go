@@ -81,8 +81,15 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
+		// All systems require at least: system, credential, sheet-id, models-output-path.
 		if len(args) < 4 || len(args) > 5 {
-			return errors.New(utils.RegistryError("[ system, google sheet credential, sheet-id, models output path, imgs output path (optional)] are required\n\nUsage: \nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]\nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]\nRun 'mesheryctl registry publish --help'", "publish"))
+			return errors.New(utils.RegistryError("[ system, google sheet credential, sheet-id, models output path, imgs output path] are required\n\nUsage: \nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]\nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]\nRun 'mesheryctl registry publish --help'", "publish"))
+		}
+
+		// remote-provider and website always write icons, so imgs-output-path is mandatory.
+		sys := args[0]
+		if (sys == "remote-provider" || sys == "website") && len(args) < 5 {
+			return errors.New(utils.RegistryError(fmt.Sprintf("imgs-output-path is required for the '%s' system\n\nUsage: \nmesheryctl registry publish %s [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]\nRun 'mesheryctl registry publish --help'", sys, sys), "publish"))
 		}
 
 		return nil
