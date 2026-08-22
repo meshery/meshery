@@ -16,9 +16,6 @@ package registry
 
 import (
 	"testing"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 // TestPublishCmdPreRunE_ArgValidation verifies system-specific argument
@@ -100,9 +97,13 @@ func TestPublishCmdPreRunE_ArgValidation(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			err := publishCmd.PreRunE(publishCmd, tt.args)
 			if tt.wantErr {
-				require.Error(t, err)
+				if err == nil {
+					t.Fatalf("expected an error, but got nil")
+				}
 			} else {
-				assert.NoError(t, err)
+				if err != nil {
+					t.Fatalf("did not expect an error, but got: %v", err)
+				}
 			}
 		})
 	}
