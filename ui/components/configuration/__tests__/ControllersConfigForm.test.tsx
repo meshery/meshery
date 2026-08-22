@@ -86,18 +86,46 @@ const brokerGrid = () => sectionGrid('Broker version');
 const field = (label: string, scope?: HTMLElement): HTMLElement =>
   gridItemOf(scope ? within(scope).getByText(label) : screen.getByText(label));
 
-const textbox = (label: string, scope?: HTMLElement) =>
-  within(field(label, scope)).getByRole('textbox');
+// Operator-only MeshSync/Broker fields live in accordions that collapse in
+// Embedded mode. Testing Library treats collapsed content as inaccessible;
+// include hidden nodes so field contracts still assert against the controls.
+const a11y = { hidden: true } as const;
+
+const textbox = (label: string, scope?: HTMLElement) => {
+  const item = field(label, scope);
+  const combo = within(item).queryByRole('combobox', a11y);
+  if (combo) return combo;
+  const inputs = within(item).getAllByRole('textbox', a11y);
+  // Multiline TextField mounts a mirror textarea with aria-hidden for sizing.
+  return inputs.find((el) => el.getAttribute('aria-hidden') !== 'true') ?? inputs[0];
+};
 const spinbutton = (label: string, scope?: HTMLElement) =>
-  within(field(label, scope)).getByRole('spinbutton');
+  within(field(label, scope)).getByRole('spinbutton', a11y);
 const combobox = (label: string, scope?: HTMLElement) =>
-  within(field(label, scope)).getByRole('combobox');
+  within(field(label, scope)).getByRole('combobox', a11y);
+const modeOption = (testId: string) => screen.getByTestId(testId);
+const modeRadio = (testId: string) => within(modeOption(testId)).getByRole('radio', a11y);
+
+/** Expand Operator-only accordions so interactive tests can reach their controls. */
+const expandOperatorOnly = async () => {
+  for (const testId of [
+    'controllers-config-accordion-meshsync',
+    'controllers-config-accordion-broker',
+  ] as const) {
+    const summary = screen
+      .getByTestId(testId)
+      .querySelector('[aria-expanded="false"]') as HTMLElement | null;
+    if (summary) {
+      await user.click(summary);
+    }
+  }
+};
 
 /** The control of a field whatever its kind - text, number or select. */
 const control = (label: string, scope?: HTMLElement): HTMLElement => {
   const item = field(label, scope);
   return (item.querySelector('input:not([type="hidden"]), textarea, [role="combobox"]') ??
-    within(item).getByRole('combobox')) as HTMLElement;
+    within(item).getByRole('combobox', a11y)) as HTMLElement;
 };
 
 /**
@@ -147,12 +175,61 @@ describe('tri-state inherit / override', () => {
 
   it('starts every control on Inherit with an empty document', () => {
     renderForm();
-    expect(combobox('Deployment mode')).toHaveTextContent('Inherit (embedded)');
+    expect(modeRadio('controllers-config-mode-inherit')).toBeChecked();
+    expect(modeOption('controllers-config-mode-inherit')).toHaveTextContent('Inherit (Embedded)');
     expect(textbox('Operator version')).toHaveValue('');
+    expect(textbox('Operator version')).toHaveAccessibleName('Operator version');
     expect(spinbutton('Replicas', meshsyncGrid())).toHaveValue(null);
     expect(combobox('Secret redaction')).toHaveTextContent('Inherit (Disabled)');
     expect(combobox('Service type')).toHaveTextContent('Inherit (ClusterIP)');
     expect(combobox('Watched resources (discovery scope)')).toHaveTextContent('Inherit');
+  });
+
+  it('renders section icons and mode-first picker for scanability', () => {
+    renderForm();
+    expect(screen.getByTestId('controllers-config-mode-picker')).toBeInTheDocument();
+    expect(screen.getByTestId('controllers-config-section-icon-operator')).toBeInTheDocument();
+    expect(screen.getByTestId('controllers-config-section-icon-meshsync')).toBeInTheDocument();
+    expect(screen.getByTestId('controllers-config-section-icon-broker')).toBeInTheDocument();
+    expect(screen.getByTestId('controllers-config-meshsync-filters')).toHaveTextContent(
+      'Applies in both modes',
+    );
+  });
+
+  it('selects deployment mode from the mode cards', async () => {
+    const holder = renderForm();
+    await user.click(modeOption('controllers-config-mode-operator'));
+    expect(holder.doc()).toEqual({ operator: { deploymentMode: 'operator' } });
+    expect(holder.changes()).toBe(1);
+    expect(modeRadio('controllers-config-mode-operator')).toBeChecked();
+  });
+
+  it('expands Operator-only blocks in Operator mode and collapses them in Embedded', async () => {
+    renderForm({ deploymentMode: governance('embedded') });
+    const meshsyncSummary = screen
+      .getByTestId('controllers-config-accordion-meshsync')
+      .querySelector('[aria-expanded]');
+    const brokerSummary = screen
+      .getByTestId('controllers-config-accordion-broker')
+      .querySelector('[aria-expanded]');
+    expect(meshsyncSummary).toHaveAttribute('aria-expanded', 'false');
+    expect(brokerSummary).toHaveAttribute('aria-expanded', 'false');
+
+    await user.click(modeOption('controllers-config-mode-operator'));
+    expect(
+      screen.getByTestId('controllers-config-accordion-meshsync').querySelector('[aria-expanded]'),
+    ).toHaveAttribute('aria-expanded', 'true');
+    expect(
+      screen.getByTestId('controllers-config-accordion-broker').querySelector('[aria-expanded]'),
+    ).toHaveAttribute('aria-expanded', 'true');
+
+    await user.click(modeOption('controllers-config-mode-embedded'));
+    expect(
+      screen.getByTestId('controllers-config-accordion-meshsync').querySelector('[aria-expanded]'),
+    ).toHaveAttribute('aria-expanded', 'false');
+    expect(
+      screen.getByTestId('controllers-config-accordion-broker').querySelector('[aria-expanded]'),
+    ).toHaveAttribute('aria-expanded', 'false');
   });
 
   it('names the inherited value it would fall back to', () => {
@@ -183,6 +260,18 @@ describe('tri-state inherit / override', () => {
 
     await user.clear(spinbutton('Replicas', meshsyncGrid()));
     expect(holder.doc()).toEqual({});
+  });
+
+  it('clamps replica counts to the schema range 1-10', async () => {
+    const holder = renderForm();
+    const replicas = spinbutton('Replicas', meshsyncGrid());
+
+    await user.type(replicas, '11');
+    expect(holder.doc()).toEqual({ meshsync: { replicas: 10 } });
+
+    await user.clear(replicas);
+    await user.type(replicas, '0');
+    expect(holder.doc()).toEqual({ meshsync: { replicas: 1 } });
   });
 
   it('round-trips a tri-state boolean, distinguishing Inherit from Disabled', async () => {
@@ -230,6 +319,7 @@ describe('tri-state inherit / override', () => {
 
   it('round-trips broker service annotations', async () => {
     const holder = renderForm();
+    await expandOperatorOnly();
     await replaceText(
       textbox('Service annotations'),
       'service.beta.kubernetes.io/aws-load-balancer-internal=true\nteam=platform',
@@ -251,6 +341,7 @@ describe('tri-state inherit / override', () => {
 
   it('round-trips the watch list through both of its mutually exclusive modes', async () => {
     const holder = renderForm();
+    await expandOperatorOnly();
     const watchMode = () => combobox('Watched resources (discovery scope)');
 
     await choose(watchMode(), 'Whitelist (watch only these)');
@@ -278,6 +369,24 @@ describe('tri-state inherit / override', () => {
 
     await choose(watchMode(), 'Inherit');
     expect(holder.doc()).toEqual({});
+  });
+
+  it('names watch-list controls for assistive tech', async () => {
+    renderForm();
+    await expandOperatorOnly();
+    expect(screen.getByRole('combobox', { name: 'Watch mode', ...a11y })).toBeInTheDocument();
+
+    await choose(combobox('Watched resources (discovery scope)'), 'Whitelist (watch only these)');
+    await user.click(screen.getByRole('button', { name: 'Add resource' }));
+    expect(screen.getByRole('textbox', { name: 'Resource 1', ...a11y })).toBeInTheDocument();
+
+    await choose(
+      combobox('Watched resources (discovery scope)'),
+      'Blacklist (default scope minus these)',
+    );
+    expect(
+      screen.getByRole('textbox', { name: 'Blacklist resources', ...a11y }),
+    ).toBeInTheDocument();
   });
 
   it('releases one field without disturbing its siblings', async () => {
@@ -409,6 +518,14 @@ describe('deployment mode gating (per-connection editor)', () => {
     expect(disabledState(textbox('Broker version'))).toBe(false);
   });
 
+  it('enables Operator-only controls when the draft mode becomes Operator', async () => {
+    renderForm({ deploymentMode: governance('embedded') });
+    expect(disabledState(textbox('Broker version'))).toBe(true);
+
+    await user.click(modeOption('controllers-config-mode-operator'));
+    expect(disabledState(textbox('Broker version'))).toBe(false);
+  });
+
   it('renders the in-cluster settings inert in Embedded mode', () => {
     renderForm({ deploymentMode: governance('embedded') });
 
@@ -437,7 +554,7 @@ describe('deployment mode gating (per-connection editor)', () => {
   it('keeps the settings embedded mode can still apply live', () => {
     renderForm({ deploymentMode: governance('embedded') });
 
-    expect(disabledState(combobox('Deployment mode'))).toBe(false);
+    expect(modeRadio('controllers-config-mode-operator')).not.toBeDisabled();
     expect(field('Deployment mode')).not.toHaveTextContent('Not applied');
     for (const label of ['Output namespaces', 'Output resources']) {
       expect(disabledState(textbox(label)), `${label} should stay live`).toBe(false);

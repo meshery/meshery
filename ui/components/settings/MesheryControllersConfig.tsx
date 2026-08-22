@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, Button, Paper, Typography } from '@sistent/sistent';
+import { Box, Button, Link, Paper, Typography } from '@sistent/sistent';
+import NextLink from 'next/link';
 import {
   useGetControllersDefaultConfigQuery,
   useUpdateControllersDefaultConfigMutation,
@@ -37,10 +38,21 @@ export default function MesheryControllersConfig() {
       <Typography variant="h6" sx={{ fontWeight: 600 }}>
         Meshery Operator, MeshSync &amp; Broker
       </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ marginBottom: '1.5rem' }}>
-        Server-wide defaults applied to every managed Kubernetes cluster. Individual connections can
-        override any of these on the Connections page; fields left on Inherit use the
-        controllers&apos; built-in defaults.
+      <Typography variant="body2" color="text.secondary">
+        Server-wide defaults for every managed Kubernetes cluster. Fields left on Inherit use
+        built-in defaults.
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ marginBottom: '1rem' }}>
+        For per-cluster overrides, go to{' '}
+        <Link
+          className="keppel"
+          component={NextLink}
+          href="/management/connections"
+          underline="hover"
+        >
+          Connection
+        </Link>
+        {' → Actions → Configure Controllers.'}
       </Typography>
 
       <ControllersConfigForm

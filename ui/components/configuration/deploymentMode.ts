@@ -21,6 +21,21 @@ export const DEPLOYMENT_MODE_LABEL: Record<DeploymentMode, string> = {
   embedded: 'Embedded (in Meshery Server)',
 };
 
+/** Same consequence the banner and mode-card hovers show. */
+export const modeConsequence = (
+  mode: DeploymentMode,
+  scope: 'connection' | 'serverDefault',
+): string => {
+  if (scope === 'connection') {
+    return mode === 'embedded'
+      ? 'MeshSync runs inside Meshery Server for this connection and nothing is installed into the cluster, so the settings marked "Not applied" below cannot take effect until this connection uses Operator mode.'
+      : 'Meshery Operator manages MeshSync and Meshery Broker on this cluster, so every setting below applies.';
+  }
+  return mode === 'embedded'
+    ? 'Connections that do not override the mode run MeshSync inside Meshery Server, where the in-cluster MeshSync and Meshery Broker settings below do not apply. They still reach connections that override the mode to Operator.'
+    : 'Connections that do not override the mode run Meshery Operator, which applies every setting below.';
+};
+
 /** The compiled-in default, mirrored from `connections.BuiltInControllersConfig()`. */
 export const BUILT_IN_DEPLOYMENT_MODE: DeploymentMode = 'embedded';
 
@@ -229,3 +244,23 @@ export const dormantPathsIn = (
   SECTION_PATHS[section].filter(
     (path) => isInertIn(governance, path) && getPath(doc, path) !== undefined,
   );
+
+export const INHERIT = '__inherit__';
+export const WATCH_EVENTS = ['ADDED', 'MODIFIED', 'DELETED'] as const;
+export const WATCH_MODE_OPTIONS = [
+  { value: INHERIT, label: 'Inherit' },
+  { value: 'whitelist', label: 'Whitelist (watch only these)' },
+  { value: 'blacklist', label: 'Blacklist (default scope minus these)' },
+] as const;
+
+export type WatchList = NonNullable<NonNullable<ControllersConfigDoc['meshsync']>['watchList']>;
+
+const longestLine = (value: string) => Math.max(1, ...value.split('\n').map((line) => line.length));
+const chars = (...parts: Array<string | number | undefined | null>) =>
+  Math.max(1, ...parts.map((part) => longestLine(String(part ?? ''))));
+
+export const fitWidth = (...parts: Array<string | number | undefined | null>) =>
+  `calc(${chars(...parts)}ch + 2.75em)`;
+
+export const fitNumberWidth = (...parts: Array<string | number | undefined | null>) =>
+  `calc(${chars(...parts)}ch + 4.75em)`;
