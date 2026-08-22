@@ -33,13 +33,15 @@ Now to publish your model to catalog:
 - Once your pull request is merged, your model will be available in the next Meshery release.
 
 ---
-- 🙋🏾🙋🏼 Questions: [Discussion Forum](https://meshery.io/community#community-forums) and [Community Slack](https://slack.meshery.io)
+- 🙋🏾🙋🏼 Questions: [Discussion Forum](https://discuss.meshery.io) and [Community Slack](https://slack.meshery.io)
 
 ### Additional resources
 
 - 📚 [Models](https://docs.meshery.io/concepts/logical/models)
 - 📚 [Creating models](https://docs.meshery.io/guides/configuration-management/creating-models#create-models)
 - 📚 [Components](https://docs.meshery.io/concepts/logical/components)
+- 📚 [Connections](https://docs.meshery.io/concepts/logical/connections)
+- 📚 [Credentials](https://docs.meshery.io/concepts/logical/credentials)
 - 📚 [Relationships](https://docs.meshery.io/concepts/logical/relationships)
 - 👨‍💻 [Models Repository](https://github.com/meshery/meshery/tree/master/models)
 - 📺 [Self-paced Contributor Trainings](https://meshery.io/talks-and-trainings#trainings)

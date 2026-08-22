@@ -23,7 +23,7 @@ import {
   useTheme,
   ErrorBoundary,
 } from '@sistent/sistent';
-import { WrapperPaper } from './style';
+import { DashboardActionsContainer, WrapperPaper } from './style';
 import _ from 'lodash';
 import { AddWidgetsToLayoutPanel, LayoutActionButton, LayoutWidget } from './components';
 import { Responsive } from 'react-grid-layout/legacy';
@@ -296,14 +296,11 @@ const Dashboard = () => {
     },
   };
 
-  const topBarActions = Object.entries(_.omit(LayoutActions, 'START_EDIT'))
+  const topBarActions = Object.entries(LayoutActions)
     .filter(([, action]) => action.isShown)
     .map(([key, layoutAction]) => ({ key, ...layoutAction }));
 
   const onBreakpointChange = (breakpoint) => {
-    if (!isEditMode) {
-      return;
-    }
     setCurrentBreakpoint(breakpoint);
   };
   useEffect(() => {
@@ -342,6 +339,23 @@ const Dashboard = () => {
   return (
     <>
       <>
+        {resourceCategory === 'Overview' && (
+          <DashboardActionsContainer>
+            <Stack
+              direction="row"
+              useFlexGap
+              spacing={{ xs: 1, sm: 2 }}
+              justifyContent="flex-end"
+              alignItems="center"
+              flexWrap="wrap"
+            >
+              {topBarActions.map(({ key, ...layoutAction }) => (
+                <LayoutActionButton {...layoutAction} key={key} />
+              ))}
+            </Stack>
+          </DashboardActionsContainer>
+        )}
+
         <WrapperPaper>
           <Tabs
             sx={{
@@ -389,18 +403,6 @@ const Dashboard = () => {
         <TabPanel value={resourceCategory} index={'Overview'}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <Box sx={{ padding: 0, width: '100%' }}>
-              <Stack
-                direction="row"
-                useFlexGap
-                gap="0rem 2rem"
-                justifyContent="end"
-                flexWrap={'wrap-reverse'}
-              >
-                {topBarActions.map(({ key, ...layoutAction }) => (
-                  <LayoutActionButton {...layoutAction} key={key} />
-                ))}
-              </Stack>
-
               <ResponsiveReactGridLayout
                 layouts={constrainedLayouts}
                 resizeHandles={availableHandles}
@@ -436,7 +438,6 @@ const Dashboard = () => {
                   );
                 })}
               </ResponsiveReactGridLayout>
-              <LayoutActionButton {...LayoutActions.START_EDIT} />
             </Box>
             <AddWidgetsToLayoutPanel
               editMode={isEditMode}

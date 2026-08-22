@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/router';
 import {
   AddIcon,
   Box,
@@ -9,6 +8,7 @@ import {
   InsertChartIcon,
   Typography,
   styled,
+  useHasPermission,
   useTheme,
 } from '@sistent/sistent';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
@@ -17,6 +17,10 @@ import {
   usePingGrafanaConnectionQuery,
   useUpdatePinnedBoardsMutation,
 } from '@/rtk-query/telemetryGrafana';
+import { CoreConnectionKinds } from '@/utils/Enum';
+import { Keys } from '@meshery/schemas/permissions';
+import DefaultError from '../../general/error-404/index';
+import { useConnectionWizardModal } from '@/utils/context/ConnectionWizardContextProvider';
 import ConnectionPicker, { TelemetryConnection } from '../common/ConnectionPicker';
 import PingStatus from '../common/PingStatus';
 import TimeRangePicker from '../common/TimeRangePicker';
@@ -74,12 +78,17 @@ const DrawerBody = styled(Box)(({ theme }) => ({
  */
 const TelemetryDashboards: React.FC = () => {
   const theme = useTheme();
-  const router = useRouter();
+  const { openCreateConnection } = useConnectionWizardModal();
 
-  const { data: connectionsData, isLoading: connectionsLoading } = useGetConnectionsQuery({
-    kind: JSON.stringify(['grafana']),
-    pagesize: 200,
-  });
+  const canViewMetrics = useHasPermission(Keys.MesherySystemViewMetrics);
+
+  const { data: connectionsData, isLoading: connectionsLoading } = useGetConnectionsQuery(
+    {
+      kind: JSON.stringify(['grafana']),
+      pagesize: 200,
+    },
+    { skip: !canViewMetrics },
+  );
 
   const connections: TelemetryConnection[] = useMemo(
     () =>
@@ -109,7 +118,10 @@ const TelemetryDashboards: React.FC = () => {
   const selectedConnection = connections.find((c) => c.id === connectionID);
   const baseURL = selectedConnection?.metadata?.url as string | undefined;
 
-  const { data: pinnedData } = useGetPinnedBoardsQuery({ connectionID }, { skip: !connectionID });
+  const { data: pinnedData } = useGetPinnedBoardsQuery(
+    { connectionID },
+    { skip: !canViewMetrics || !connectionID },
+  );
   const pinned = (pinnedData as PinnedBoard[] | undefined) ?? [];
   const [updatePinnedBoards] = useUpdatePinnedBoardsMutation();
 
@@ -132,6 +144,10 @@ const TelemetryDashboards: React.FC = () => {
     }
   };
 
+  if (!canViewMetrics) {
+    return <DefaultError permissionKey={Keys.MesherySystemViewMetrics} />;
+  }
+
   if (connectionsLoading) {
     return (
       <Centered>
@@ -149,14 +165,20 @@ const TelemetryDashboards: React.FC = () => {
             No Grafana connections yet
           </Typography>
           <Typography color="textSecondary" sx={{ maxWidth: 460 }}>
-            Add a Grafana connection to browse and render its dashboards here. Connections are
-            managed from the Connections page.
+            Add a Grafana connection to browse and render its dashboards here. You can manage all
+            connections anytime under Lifecycle → Connections.
           </Typography>
         </Box>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => router.push('/management/connections')}
+          onClick={() =>
+            openCreateConnection({
+              kind: CoreConnectionKinds.grafana,
+              skipKindSelection: true,
+            })
+          }
+          permissionKey={Keys.MesherySystemConnectMetrics}
         >
           Add a Grafana connection
         </Button>
