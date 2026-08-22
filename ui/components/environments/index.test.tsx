@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -142,7 +142,13 @@ vi.mock('@sistent/sistent', () => ({
   PaginationItem: () => null,
   PrimaryActionButtons: () => null,
   PROMPT_VARIANTS: { DANGER: 'danger' },
-  SearchBar: () => null,
+  SearchBar: ({ placeholder, onSearch }: any) => (
+    <input
+      placeholder={placeholder}
+      onChange={(e) => onSearch?.(e.target.value)}
+      data-testid="search-bar-input"
+    />
+  ),
   TransferList: () => null,
   Typography: ({ children }: any) => <span>{children}</span>,
   createAndEditEnvironmentSchema: {},
@@ -257,5 +263,20 @@ describe('Environments create flow notifications', () => {
     expect(createEnvironment).toHaveBeenCalledWith({
       environmentPayload: expect.objectContaining({ organizationId: 'org-1' }),
     });
+  });
+});
+
+describe('Environments toolbar', () => {
+  it('renders primaryActions and search scoped inside DataTableToolbar', () => {
+    render(<Environments />);
+
+    const toolbar = screen.getByTestId('data-table-toolbar');
+    expect(toolbar).toBeInTheDocument();
+
+    const createButton = within(toolbar).getByRole('button', { name: /create/i });
+    expect(createButton).toBeInTheDocument();
+
+    const searchInput = within(toolbar).getByPlaceholderText('Search by name');
+    expect(searchInput).toBeInTheDocument();
   });
 });
