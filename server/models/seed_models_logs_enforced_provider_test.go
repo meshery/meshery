@@ -1,7 +1,11 @@
 package models
 
 import (
+	"bytes"
+	"encoding/json"
+	"io"
 	"strings"
+	"sync"
 	"testing"
 
 	"github.com/meshery/meshkit/database"
@@ -58,6 +62,74 @@ func persistedSystemEvents(t *testing.T, db *database.Handler) []events.Event {
 func registryLogTestLogger(t *testing.T) logger.Handler {
 	t.Helper()
 	return newSeedTestLogger(t)
+}
+
+// loggedError is one record of the JSON stream logger.Handler writes to its
+// error output. That stream is the operator-facing diagnostic contract: Error
+// emits the MeshKit error's code alongside the message, and the code is what an
+// operator greps for and what docs/data/errorref is keyed on.
+type loggedError struct {
+	Code    string `json:"code"`
+	Message string `json:"msg"`
+}
+
+// errorLogSink captures that stream. logrus serializes its own writes; the
+// mutex covers reads, which happen on the test goroutine.
+type errorLogSink struct {
+	mu  sync.Mutex
+	buf bytes.Buffer
+}
+
+func (s *errorLogSink) Write(p []byte) (int, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.buf.Write(p)
+}
+
+// records decodes every error the logger emitted.
+func (s *errorLogSink) records(t *testing.T) []loggedError {
+	t.Helper()
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	var records []loggedError
+	dec := json.NewDecoder(bytes.NewReader(s.buf.Bytes()))
+	for {
+		var rec loggedError
+		err := dec.Decode(&rec)
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			t.Fatalf("decode captured error log stream: %v", err)
+		}
+		records = append(records, rec)
+	}
+	return records
+}
+
+// reports says whether the given MeshKit error code was emitted.
+func (s *errorLogSink) reports(t *testing.T, code string) bool {
+	t.Helper()
+
+	for _, rec := range s.records(t) {
+		if rec.Code == code {
+			return true
+		}
+	}
+	return false
+}
+
+// capturingTestLogger returns a logger.Handler whose error output is captured
+// rather than written to stderr, so a test can assert on what was reported.
+func capturingTestLogger(t *testing.T) (logger.Handler, *errorLogSink) {
+	t.Helper()
+
+	log := newSeedTestLogger(t)
+	sink := &errorLogSink{}
+	log.UpdateErrorLogOutput(sink)
+	return log, sink
 }
 
 // TestRegistryLogUnderEnforcedProviderSeedsWithoutPanicking is the regression
@@ -135,10 +207,14 @@ func TestRegistryLogWithoutASystemEventSinkStillLogs(t *testing.T) {
 	viper.Set("REGISTRY_LOG_FILE", t.TempDir()+"/registry-errors.log")
 	t.Cleanup(func() { viper.Set("REGISTRY_LOG_FILE", "") })
 
-	RegistryLog(registryLogTestLogger(t), hc, regm, NewRegistrationFailureLogHandler())
+	log, sink := capturingTestLogger(t)
+	RegistryLog(log, hc, regm, NewRegistrationFailureLogHandler())
 
 	if got := len(persistedSystemEvents(t, db)); got != 0 {
 		t.Fatalf("expected no persisted events without a sink, got %d", got)
+	}
+	if !sink.reports(t, ErrNoSystemEventSinkCode) {
+		t.Fatalf("dropping the events was not reported as %s, making it a silent skip; emitted: %+v", ErrNoSystemEventSinkCode, sink.records(t))
 	}
 }
 
@@ -148,14 +224,18 @@ func TestRegistryLogWithoutASystemEventSinkStillLogs(t *testing.T) {
 func TestRunSeedStageRecoversPanic(t *testing.T) {
 	ran := false
 
-	RunSeedStage(registryLogTestLogger(t), "models", func() {
+	log, sink := capturingTestLogger(t)
+	RunSeedStage(log, "models", func() {
 		panic("boom")
 	})
-	RunSeedStage(registryLogTestLogger(t), "policies", func() {
+	RunSeedStage(log, "policies", func() {
 		ran = true
 	})
 
 	if !ran {
 		t.Fatal("a stage that panicked prevented a later stage from running")
+	}
+	if !sink.reports(t, ErrSeedingStagePanicCode) {
+		t.Fatalf("the recovered fault was not reported as %s, so containing it swallowed it; emitted: %+v", ErrSeedingStagePanicCode, sink.records(t))
 	}
 }

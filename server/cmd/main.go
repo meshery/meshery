@@ -337,7 +337,9 @@ func main() {
 		})
 	}()
 
-	lProv.SeedContent(log)
+	models.RunSeedStage(log, "content", func() {
+		lProv.SeedContent(log)
+	})
 	provs[lProv.Name()] = lProv
 
 	// Trim once here so a whitespace-only PROVIDER behaves exactly like unset
