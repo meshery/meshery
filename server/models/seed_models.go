@@ -128,6 +128,12 @@ func getLatestModelDefDir(latestVersionDirPath string) (string, error) {
 //
 // Each stage is wrapped separately so one faulting stage does not skip the
 // others.
+//
+// The cover is bounded by what recover can reach: only panics on the wrapped
+// stage's own goroutine. A stage that itself spawns a goroutine - SeedKeys
+// does, in keys_helper.go - leaves that goroutine outside this recover, and a
+// panic there still terminates the process. Recovering it belongs where it is
+// spawned, not here.
 func RunSeedStage(log logger.Handler, stage string, fn func()) {
 	defer func() {
 		if r := recover(); r != nil {

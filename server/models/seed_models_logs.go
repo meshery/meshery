@@ -106,11 +106,16 @@ func failedMsgCompute(failedMsg string, hostName string, regLog *RegistrationFai
 // than a Provider because the failure event is raised outside any user request:
 // the caller may be boot-time seeding, which has no provider to route through
 // once PROVIDER enforcement has emptied the registration map.
+//
+// A failure to persist that event is returned, not swallowed, alongside the
+// failure summary: both return values are independent, so the caller must
+// report the error and still act on a non-empty summary.
 func FailedEventCompute(hostname string, mesheryInstanceID core.Uuid, persister SystemEventPersister, userID string, ec *Broadcast, regErrorStore *RegistrationFailureLog) (string, error) {
 	failedMsg, err := failedMsgCompute("", hostname, regErrorStore)
 	if err != nil {
 		return "", err
 	}
+	var persistErr error
 	if failedMsg != "" {
 		filePath := viper.GetString("REGISTRY_LOG_FILE")
 		errorEventBuilder := events.NewEvent().FromOwner(mesheryInstanceID).FromSystem(mesheryInstanceID).WithCategory("registration").WithAction("get_summary")
@@ -121,14 +126,14 @@ func FailedEventCompute(hostname string, mesheryInstanceID core.Uuid, persister 
 			"ViewLink":     filePath,
 			"error":        ErrImportFailure(hostname, failedMsg),
 		})
-		_ = persister.PersistSystemEvent(*errorEvent)
+		persistErr = persister.PersistSystemEvent(*errorEvent)
 		if userID != "" {
 			userUUID := gofrs.FromStringOrNil(userID)
 			ec.Publish(userUUID, errorEvent)
 
 		}
 	}
-	return failedMsg, nil
+	return failedMsg, persistErr
 }
 
 func writeLogsToFiles(regLog *RegistrationFailureLog) error {
@@ -269,7 +274,9 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 		})
 		eventBuilder.WithSeverity(events.Informational).WithDescription(successMessage)
 		successEvent := eventBuilder.Build()
-		_ = persister.PersistSystemEvent(*successEvent)
+		if err := persister.PersistSystemEvent(*successEvent); err != nil {
+			log.Error(err)
+		}
 
 		failLog, err := FailedEventCompute(kind, sysID, persister, "", handlerConfig.EventBroadcaster, regErrorStore)
 		if err != nil {
