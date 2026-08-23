@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 	"sort"
 	"time"
 
@@ -112,6 +113,28 @@ func getLatestModelDefDir(latestVersionDirPath string) (string, error) {
 	})
 
 	return modelDefs[0].dirPath, nil
+}
+
+// RunSeedStage runs one boot-time seeding stage, converting a panic inside it
+// into a logged, structured error.
+//
+// cmd/main.go runs the seeding stages in a bare goroutine, where Go gives a
+// panic no second chance: an unrecovered fault in any of them takes down the
+// whole process, HTTP listener included. That is not a proportionate response
+// to a seeding fault - a Meshery Server with an incomplete registry is still
+// useful, and the operator can read the error and restart, whereas a server
+// that exits at boot leaves them with a crash loop and no UI to read it in
+// (meshery/meshery#21584).
+//
+// Each stage is wrapped separately so one faulting stage does not skip the
+// others.
+func RunSeedStage(log logger.Handler, stage string, fn func()) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Error(ErrSeedingStagePanic(stage, r, debug.Stack()))
+		}
+	}()
+	fn()
 }
 
 // SeedComponents registers the latest versions of models
