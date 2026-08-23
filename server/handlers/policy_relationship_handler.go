@@ -263,7 +263,7 @@ func doesntNeedReeval(response pattern.EvaluationResponse) bool {
 	return true
 }
 
-// max number of time to keep revaluating the design till there are no reval triggering actions in the response
+// MAX_RE_EVALUATION_DEPTH is the max number of times to keep revaluating the design till there are no reval triggering actions in the response
 const MAX_RE_EVALUATION_DEPTH = 5
 
 // defaultPolicyEvalTimeout bounds a single evaluation. Override via POLICY_EVAL_TIMEOUT.
@@ -294,7 +294,7 @@ func policyEvalTimeout() time.Duration {
 	return defaultPolicyEvalTimeout
 }
 
-// Helper method to make design evaluation based on the relationship policies.
+// EvaluateDesign evaluates the design based on the relationship policies.
 // evalIterations is num of passes the evaluator needs to go through to do complete evaluation
 func (h *Handler) EvaluateDesign(
 	relationshipPolicyEvalPayload pattern.EvaluationRequest,

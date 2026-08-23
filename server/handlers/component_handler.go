@@ -44,6 +44,8 @@ import (
 )
 
 /**Meshmodel endpoints **/
+
+// DefaultPageSizeForMeshModelComponents is the default page size used when listing MeshModel components.
 const DefaultPageSizeForMeshModelComponents = 25
 
 func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http.Request) {
@@ -765,8 +767,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	}
 }
 
-// request body should be json
-// request body should be of ComponentCapability format
+// RegisterMeshmodelComponents expects the request body to be JSON, decoded into a registry.MeshModelRegistrantData
 func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
 	var cc registry.MeshModelRegistrantData
@@ -850,8 +851,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	}
 }
 
-// request body should be json
-// request body should be of struct containing ID and Status fields
+// UpdateEntityStatus expects the request body to be JSON, of a struct containing ID and Status fields
 func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	dec := json.NewDecoder(r.Body)
 	userID := user.ID
