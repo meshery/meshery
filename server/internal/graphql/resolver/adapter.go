@@ -20,10 +20,10 @@ func getAdapterInformationByName(adapterName string) *models.Adapter {
 	return adapter
 }
 
-func (r *Resolver) changeAdapterStatus(ctx context.Context, _ models.Provider, targetStatus model.Status, adapterName, targetPort string) (model.Status, error) {
-	// not able to perform any operation when the name is not there
-	if adapterName == "" && targetPort == "" {
-		return model.StatusUnknown, ErrAdapterInsufficientInformation(fmt.Errorf("adapter name or targetport or both are missing"))
+func PerformAdapterStatusChange(ctx context.Context, r *Resolver, targetStatus model.Status, adapterName, targetPort string) (model.Status, error) {
+	// adapterName is always required
+	if adapterName == "" {
+		return model.StatusUnknown, ErrAdapterInsufficientInformation(fmt.Errorf("adapter name is required"))
 	}
 
 	// in case of empty target, prefer the default ports
@@ -46,7 +46,8 @@ func (r *Resolver) changeAdapterStatus(ctx context.Context, _ models.Provider, t
 		r.Log.Info("Undeploying Adapter")
 	}
 
-	r.Log.Debug(fmt.Printf("changing adapter status for %s on port %s to %s \n", adapterName, targetPort, targetStatus))
+	r.Log.Debug(fmt.Sprintf("changing adapter status for %s on port %s to %s \n", adapterName, targetPort, targetStatus))
+
 	var err error
 	adapter := models.Adapter{Name: adapterName, Location: fmt.Sprintf("%s:%s", adapterName, targetPort)}
 	var operation string
@@ -66,4 +67,8 @@ func (r *Resolver) changeAdapterStatus(ctx context.Context, _ models.Provider, t
 
 	r.Log.Info(operation + "ed adapter")
 	return model.StatusProcessing, nil
+}
+
+func (r *Resolver) changeAdapterStatus(ctx context.Context, _ models.Provider, targetStatus model.Status, adapterName, targetPort string) (model.Status, error) {
+	return PerformAdapterStatusChange(ctx, r, targetStatus, adapterName, targetPort)
 }

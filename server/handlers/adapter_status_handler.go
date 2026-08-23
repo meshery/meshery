@@ -40,8 +40,8 @@ func (h *Handler) ChangeAdapterStatusHandler(w http.ResponseWriter, req *http.Re
 		return
 	}
 
-	// not able to perform any operation when the name is not there
-	if body.AdapterName == "" && body.TargetPort == "" {
+	// adapterName is always required
+	if body.AdapterName == "" {
 		h.log.Error(ErrValidAdapter)
 		writeMeshkitError(w, ErrValidAdapter, http.StatusBadRequest)
 		return
