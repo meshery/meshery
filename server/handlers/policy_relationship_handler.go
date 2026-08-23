@@ -263,7 +263,7 @@ func doesntNeedReeval(response pattern.EvaluationResponse) bool {
 	return true
 }
 
-// MAX_RE_EVALUATION_DEPTH is the max number of times to keep revaluating the design till there are no reval triggering actions in the response
+// MAX_RE_EVALUATION_DEPTH is the max number of times to keep reevaluating the design. Reevaluation also stops early once there are no more reevaluation-triggering actions in the response, but reaching this depth limit returns a partial result
 const MAX_RE_EVALUATION_DEPTH = 5
 
 // defaultPolicyEvalTimeout bounds a single evaluation. Override via POLICY_EVAL_TIMEOUT.

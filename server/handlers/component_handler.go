@@ -851,7 +851,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	}
 }
 
-// UpdateEntityStatus expects the request body to be JSON, of a struct containing ID and Status fields
+// UpdateEntityStatus expects the request body to be a JSON object with id, status, displayName (and legacy displayname) fields
 func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	dec := json.NewDecoder(r.Body)
 	userID := user.ID
