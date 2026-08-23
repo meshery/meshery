@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Tab,
   Tabs,
@@ -268,14 +268,18 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
 
   const RemoteProviderInfoTab = () => {
     const [copied, setCopied] = useState<string | null>(null);
-    const copyToClipboard = (text: string): void => {
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const copyToClipboard = (text: string, key: string): void => {
       navigator.clipboard
         .writeText(text)
         .then(() => {
-          setCopied(text);
-
-          setTimeout(() => {
+          if (timeoutRef.current !== null) {
+            clearTimeout(timeoutRef.current);
+          }
+          setCopied(key);
+          timeoutRef.current = setTimeout(() => {
             setCopied(null);
+            timeoutRef.current = null;
           }, 2000);
         })
         .catch((error) => {
@@ -357,9 +361,12 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                               {provider}
                             </Typography>
 
-                            <CustomTooltip title={copied === provider ? 'Copied!' : 'Copy'} placement="top">
+                            <CustomTooltip 
+                              title={copied === provider ? 'Copied!' : 'Copy'} 
+                              placement="top"
+                            >
                               <IconButton
-                                onClick={() => copyToClipboard(provider)}
+                                onClick={() => copyToClipboard(provider, providerName)}
                                 style={{ padding: '0.25rem', float: 'right' }}
                               >
                                 <CopyIcon />
