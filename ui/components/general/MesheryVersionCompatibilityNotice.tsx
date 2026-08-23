@@ -11,8 +11,9 @@ import {
   CopyIcon,
   WarningIcon,
   alpha,
+  styled,
 } from '@sistent/sistent';
-import { useGetSystemVersionQuery } from '@/rtk-query/user';
+import { useGetSystemVersionQuery } from '@meshery/schemas/mesheryApi';
 
 export interface MesheryVersionCompatibilityNoticeProps {
   currentVersion?: string;
@@ -20,6 +21,18 @@ export interface MesheryVersionCompatibilityNoticeProps {
   componentName?: string;
   upgradeCommand?: string;
 }
+
+const VisuallyHidden = styled('span')({
+  position: 'absolute',
+  width: 1,
+  height: 1,
+  padding: 0,
+  margin: -1,
+  overflow: 'hidden',
+  clip: 'rect(0, 0, 0, 0)',
+  whiteSpace: 'nowrap',
+  border: 0,
+});
 
 /**
  * MesheryVersionCompatibilityNotice Component
@@ -179,7 +192,11 @@ const MesheryVersionCompatibilityNotice: React.FC<MesheryVersionCompatibilityNot
           {upgradeCommand}
         </Typography>
         <CustomTooltip title={copied ? 'Copied!' : 'Copy command'}>
-          <IconButton size="small" onClick={handleCopy} aria-label="Copy upgrade command">
+          <IconButton
+            size="small"
+            onClick={handleCopy}
+            aria-label={copied ? 'Copied upgrade command' : 'Copy upgrade command'}
+          >
             {copied ? (
               <CheckIcon style={{ fontSize: 18, color: theme.palette.success.main }} />
             ) : (
@@ -187,6 +204,9 @@ const MesheryVersionCompatibilityNotice: React.FC<MesheryVersionCompatibilityNot
             )}
           </IconButton>
         </CustomTooltip>
+        <VisuallyHidden aria-live="polite" role="status">
+          {copied ? 'Upgrade command copied' : ''}
+        </VisuallyHidden>
       </Box>
 
       <Box sx={{ display: 'flex', gap: 2 }}>

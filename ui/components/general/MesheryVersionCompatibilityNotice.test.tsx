@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { useGetSystemVersionQuery } from '@/rtk-query/user';
+import { useGetSystemVersionQuery } from '@meshery/schemas/mesheryApi';
 
 vi.mock('@sistent/sistent', () => ({
   Box: ({ children, ...props }: any) => <div {...props}>{children}</div>,
@@ -14,6 +14,7 @@ vi.mock('@sistent/sistent', () => ({
   CopyIcon: (props: any) => <svg data-testid="copy-icon" {...props} />,
   WarningIcon: (props: any) => <svg data-testid="warning-icon" {...props} />,
   alpha: (color: string) => color,
+  styled: (Component: any) => () => (props: any) => <Component {...props} />,
   useTheme: () => ({
     spacing: (val: number) => `${val * 8}px`,
     palette: {
@@ -28,7 +29,7 @@ vi.mock('@sistent/sistent', () => ({
   }),
 }));
 
-vi.mock('@/rtk-query/user', () => ({
+vi.mock('@meshery/schemas/mesheryApi', () => ({
   useGetSystemVersionQuery: vi.fn(),
 }));
 
@@ -86,7 +87,7 @@ describe('MesheryVersionCompatibilityNotice', () => {
     expect(screen.getByText(/mesheryctl system restart/i)).toBeInTheDocument();
   });
 
-  it('copies upgrade command when copy button is clicked', () => {
+  it('copies upgrade command when copy button is clicked', async () => {
     const writeTextMock = vi.fn().mockResolvedValue(undefined);
     Object.assign(navigator, {
       clipboard: {
@@ -99,8 +100,13 @@ describe('MesheryVersionCompatibilityNotice', () => {
     const copyBtn = screen.getByRole('button', { name: /copy upgrade command/i });
     fireEvent.click(copyBtn);
 
-    return waitFor(() => {
+    await waitFor(() => {
       expect(writeTextMock).toHaveBeenCalledWith('mesheryctl system update');
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /copied upgrade command/i })).toBeInTheDocument();
+      expect(screen.getByText('Upgrade command copied')).toBeInTheDocument();
     });
   });
 

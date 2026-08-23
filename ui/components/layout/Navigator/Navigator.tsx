@@ -62,7 +62,7 @@ import {
   ExpandMore,
 } from '../../general/style';
 import { useMediaQuery } from '@sistent/sistent';
-import { getProviderCapabilities, getSystemVersion } from '@/rtk-query/user';
+import { getProviderCapabilities } from '@/rtk-query/user';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   toggleDrawer,
@@ -74,6 +74,7 @@ import {
 import { useRouter } from 'next/router';
 import { setAdapter } from '@/store/slices/adapter';
 import { getNavigatorComponents } from './navigatorComponents';
+import { useGetSystemVersionQuery } from '@meshery/schemas/mesheryApi';
 
 const externalLinkIconStyle = { width: '17.76px', fontSize: '1.11rem' };
 
@@ -314,13 +315,12 @@ const NavigatorContent = () => {
       console.error('Error fetching capabilities', error);
     }
   }
+  const { data: versionData, isSuccess: isVersionSuccess, isError: isVersionError, error: versionError } = useGetSystemVersionQuery();
 
-  async function fetchVersionDetails() {
-    const { data: result, isSuccess, isError, error } = await getSystemVersion();
-
-    if (isSuccess) {
+  useEffect(() => {
+    if (isVersionSuccess) {
       setVersionDetail(
-        result || {
+        versionData || {
           ...defaultVersionDetail,
           build: 'Unknown',
           latest: 'Unknown',
@@ -328,13 +328,13 @@ const NavigatorContent = () => {
         },
       );
     }
-    if (isError) {
-      console.error('Error fetching version details', error);
+    if (isVersionError) {
+      console.error('Error fetching version details', versionError);
     }
-  }
+  }, [versionData, isVersionSuccess, isVersionError, versionError]);
 
   useEffect(() => {
-    void Promise.all([fetchCapabilities(), fetchVersionDetails()]);
+    void fetchCapabilities();
   }, []);
 
   useEffect(() => {

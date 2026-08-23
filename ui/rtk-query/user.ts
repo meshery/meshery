@@ -194,10 +194,7 @@ export const userApi = api
         // Make sure we have proper tag
         providesTags: [Tags.PROVIDER_CAP],
       }),
-      getSystemVersion: builder.query({
-        query: () => '/api/system/version',
-        method: 'GET',
-      }),
+
       installProviderExtension: builder.mutation({
         query: (queryArg) => ({
           url: '/api/provider/extension/install',
@@ -301,7 +298,7 @@ export const {
   useHandleFeedbackFormSubmissionMutation,
   useGetAllUsersQuery,
   useRemoveUserFromTeamMutation,
-  useGetSystemVersionQuery,
+
   useInstallProviderExtensionMutation,
   useRemoveProviderExtensionMutation,
   useGetUserProfileSummaryByIdQuery,
@@ -379,10 +376,7 @@ export const getUserProfile = async () => {
   return userProfile;
 };
 
-export const getSystemVersion = async () => {
-  const res = await initiateQuery(userApi.endpoints.getSystemVersion);
-  return res;
-};
+
 
 export const getAllUsers = async ({ page, pagesize, search }) => {
   const users = await initiateQuery(

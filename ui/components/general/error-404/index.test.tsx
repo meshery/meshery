@@ -47,7 +47,6 @@ vi.mock('./styles', () => ({
 
 vi.mock('../MesheryVersionCompatibilityNotice', () => ({
   default: () => <div data-testid="version-compatibility-notice" />,
-  MesheryVersionCompatibilityNotice: () => <div data-testid="version-compatibility-notice" />,
 }));
 
 import DefaultError from './index';
