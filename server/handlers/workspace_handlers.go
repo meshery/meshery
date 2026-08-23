@@ -100,7 +100,7 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 		writeMeshkitError(w, missingInput, http.StatusBadRequest)
 		return
 	}
-	resp, err := provider.GetWorkspaces(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
+	resp, err := provider.GetWorkspaces(token, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
 	if err != nil {
 		handlerErr := ErrGetWorkspaces(err)
 		h.log.Error(handlerErr)
@@ -248,7 +248,7 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
 	q := req.URL.Query()
-	resp, err := provider.GetEnvironmentsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
+	resp, err := provider.GetEnvironmentsOfWorkspace(req, workspaceID, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "list the environments of")
 		h.log.Error(handlerErr)
@@ -265,7 +265,7 @@ func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *
 func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
 	q := req.URL.Query()
-	resp, err := provider.GetDesignsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), q["visibility"])
+	resp, err := provider.GetDesignsOfWorkspace(req, workspaceID, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"), q.Get("filter"), q["visibility"])
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "list the designs of")
 		h.log.Error(handlerErr)
@@ -346,7 +346,7 @@ func (h *Handler) RemoveDesignFromWorkspaceHandler(w http.ResponseWriter, req *h
 func (h *Handler) GetViewsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
 	q := req.URL.Query()
-	resp, err := provider.GetViewsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
+	resp, err := provider.GetViewsOfWorkspace(req, workspaceID, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "list the views of")
 		h.log.Error(handlerErr)
@@ -394,7 +394,7 @@ func (h *Handler) RemoveViewFromWorkspaceHandler(w http.ResponseWriter, req *htt
 func (h *Handler) GetTeamsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
 	q := req.URL.Query()
-	resp, err := provider.GetTeamsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
+	resp, err := provider.GetTeamsOfWorkspace(req, workspaceID, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "list the teams of")
 		h.log.Error(handlerErr)
