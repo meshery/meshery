@@ -124,6 +124,7 @@ vi.mock('@sistent/sistent', () => ({
       {bulkOperations}
     </div>
   ),
+  Box: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
   Button: ({ children, onClick, ...rest }: any) => (
     <button onClick={onClick} {...rest}>
       {children}

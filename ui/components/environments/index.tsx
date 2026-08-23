@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
+  Box,
   Button,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -479,6 +480,7 @@ const Environments = () => {
                   sx={{
                     paddingLeft: '4px',
                     marginRight: '4px',
+                    display: { xs: 'none', sm: 'inline' },
                   }}
                 >
                   Create
@@ -497,19 +499,44 @@ const Environments = () => {
             }
             bulkOperations={
               selectedEnvironments.length > 0 ? (
-                <>
-                  <Typography>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5,
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      display: { xs: 'none', sm: 'inline' },
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
                     {selectedEnvironments.length > 1
                       ? `${selectedEnvironments.length} environments selected`
                       : `${selectedEnvironments.length} environment selected`}
                   </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      display: { xs: 'inline', sm: 'none' },
+                      whiteSpace: 'nowrap',
+                      fontWeight: 600,
+                    }}
+                  >
+                    {selectedEnvironments.length} selected
+                  </Typography>
                   <Button
                     onClick={handleBulkDeleteEnvironmentConfirm}
                     permissionKey={Keys.WorkspaceManagementDeleteEnvironment}
+                    sx={{ minWidth: 'auto', p: 0.5 }}
                   >
                     <DeleteIcon fill="red" style={{ margin: '0 2px' }} />
                   </Button>
-                </>
+                </Box>
               ) : null
             }
           />
