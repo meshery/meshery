@@ -1,4 +1,4 @@
-import { styled, Box, accentGrey } from '@sistent/sistent';
+import { styled, Box } from '@sistent/sistent';
 
 export const ToolWrapper = styled(Box)(({ theme }) => ({
   marginBottom: '2rem',
@@ -77,11 +77,11 @@ export const CardStyle = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'isSelected',
 })(({ theme, isSelected }) => ({
   background: isSelected
-    ? accentGrey[30] // color when tab is selected
+    ? theme.palette.background.card
     : theme.palette.mode === 'dark'
-      ? accentGrey[10] // color for inactive tabs
-      : accentGrey[20],
-  color: isSelected ? theme.palette.text.default : theme.palette.background.constant.white,
+      ? theme.palette.background.default
+      : theme.palette.background.hover,
+  color: isSelected ? theme.palette.text.default : theme.palette.text.secondary,
   height: '3rem',
   width: '15rem',
   display: 'flex',
@@ -96,10 +96,10 @@ export const CardStyle = styled(Box, {
   transition: 'background-color 0.2s ease-in-out',
   '&:hover': {
     background: isSelected
-      ? accentGrey[30]
+      ? theme.palette.background.card
       : theme.palette.mode === 'dark'
         ? theme.palette.background.hover
-        : theme.palette.background.inverseHover,
+        : theme.palette.background.default,
   },
   [theme.breakpoints.down('md')]: {
     width: '8.5rem',
