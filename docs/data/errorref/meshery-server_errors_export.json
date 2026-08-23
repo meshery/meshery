@@ -4239,8 +4239,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Meshery Server recovered from a fault while seeding its registry",
-        "probable_cause": "An unexpected condition was hit while seeding at startup",
-        "suggested_remediation": "Meshery Server is still serving, but whatever the faulting stage contributes may be missing or incomplete. Report the stack trace above at https://github.com/meshery/meshery/issues/new/choose and restart Meshery Server to seed again"
+        "probable_cause": "An unexpected condition was hit while seeding, either at startup or while reseeding after a database reset",
+        "suggested_remediation": "Meshery Server is still serving, but whatever the faulting stage contributes may be missing or incomplete. Report the stack trace above at https://github.com/meshery/meshery/issues/new/choose, then seed again - restart Meshery Server, or re-run the reset that triggered the seeding"
       }
     }
   }

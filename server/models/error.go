@@ -731,8 +731,8 @@ func ErrSeedingStagePanic(stage string, cause interface{}, stack []byte) error {
 		errors.Alert,
 		[]string{"Meshery Server recovered from a fault while seeding its registry"},
 		[]string{fmt.Sprintf("faulting stage: %s", stage), fmt.Sprintf("%v\n%s", cause, stack)},
-		[]string{"An unexpected condition was hit while seeding at startup"},
-		[]string{"Meshery Server is still serving, but whatever the faulting stage contributes may be missing or incomplete. Report the stack trace above at https://github.com/meshery/meshery/issues/new/choose and restart Meshery Server to seed again"},
+		[]string{"An unexpected condition was hit while seeding, either at startup or while reseeding after a database reset"},
+		[]string{"Meshery Server is still serving, but whatever the faulting stage contributes may be missing or incomplete. Report the stack trace above at https://github.com/meshery/meshery/issues/new/choose, then seed again - restart Meshery Server, or re-run the reset that triggered the seeding"},
 	)
 }
 
