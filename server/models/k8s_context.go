@@ -480,7 +480,7 @@ func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
 	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
 	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), "kube-system", v1.GetOptions{})
 	if err != nil {
-		return ErrUnreachableKubeAPI(err, kc.Server)
+		return err
 	}
 	uid := ksns.GetUID()
 	ksUUID := uuid.FromStringOrNil(string(uid))

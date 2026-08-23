@@ -9,6 +9,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/core"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 )
 
 type DiscoverAction struct{}
@@ -37,6 +38,11 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
 
 	err = k8sContext.AssignServerID(handler)
 	if err != nil {
+		if k8serrors.IsForbidden(err) || k8serrors.IsUnauthorized(err) {
+			return machines.Disconnect, eventBuilder.WithDescription(fmt.Sprintf("Could not assign server id, disconnecting context %s", k8sContext.Name)).WithMetadata(map[string]interface{}{
+				"error": err,
+			}).Build(), err
+		}
 		return machines.NotFound, eventBuilder.WithDescription(fmt.Sprintf("Could not assign server id, skipping context %s", k8sContext.Name)).WithMetadata(map[string]interface{}{
 			"error": err,
 		}).Build(), err
