@@ -46,7 +46,7 @@ func PerformAdapterStatusChange(ctx context.Context, r *Resolver, targetStatus m
 		r.Log.Info("Undeploying Adapter")
 	}
 
-	r.Log.Debug(fmt.Sprintf("changing adapter status for %s on port %s to %s \n", adapterName, targetPort, targetStatus))
+	r.Log.Debugf("changing adapter status for %s on port %s to %s", adapterName, targetPort, targetStatus)
 
 	var err error
 	adapter := models.Adapter{Name: adapterName, Location: fmt.Sprintf("%s:%s", adapterName, targetPort)}

@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/meshery/meshery/server/models"
 )
@@ -59,6 +60,13 @@ func (h *Handler) ChangeAdapterStatusHandler(w http.ResponseWriter, req *http.Re
 			return
 		}
 		targetPort = selectedAdapter.Location
+	}
+
+	// reject malformed target ports before they reach the adapter tracker
+	if _, err := strconv.Atoi(targetPort); err != nil {
+		h.log.Error(ErrValidAdapter)
+		writeMeshkitError(w, ErrValidAdapter, http.StatusBadRequest)
+		return
 	}
 
 	// reject any targetStatus value that isn't exactly "enabled" or "disabled"
