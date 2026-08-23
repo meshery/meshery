@@ -62,8 +62,8 @@ func (h *Handler) ChangeAdapterStatusHandler(w http.ResponseWriter, req *http.Re
 		targetPort = selectedAdapter.Location
 	}
 
-	// reject malformed target ports before they reach the adapter tracker
-	if _, err := strconv.Atoi(targetPort); err != nil {
+	// reject malformed or out-of-range target ports before they reach the adapter tracker
+	if port, err := strconv.Atoi(targetPort); err != nil || port < 1 || port > 65535 {
 		h.log.Error(ErrValidAdapter)
 		writeMeshkitError(w, ErrValidAdapter, http.StatusBadRequest)
 		return
