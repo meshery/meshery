@@ -10,9 +10,9 @@ import (
 // changeAdapterStatusRequest is the REST request body for deploying or
 // undeploying an adapter.
 type changeAdapterStatusRequest struct {
-	AdapterName  string `json:"adapter_name"`
-	TargetPort   string `json:"target_port,omitempty"`
-	TargetStatus string `json:"target_status"` // "enabled" (deploy) or "disabled" (undeploy)
+	AdapterName  string `json:"adapterName"`
+	TargetPort   string `json:"targetPort,omitempty"`
+	TargetStatus string `json:"targetStatus"` // "enabled" (deploy) or "disabled" (undeploy)
 }
 
 // changeAdapterStatusResponse is the REST response body.
@@ -21,9 +21,12 @@ type changeAdapterStatusResponse struct {
 }
 
 // ChangeAdapterStatusHandler deploys or undeploys an adapter over REST.
-// This mirrors the behavior of the GraphQL changeAdapterStatus mutation,
-// including validation, default port resolution, and proper error
-// propagation (see #19221).
+// POST /api/system/adapter/status (auth required via ProviderMiddleware/AuthMiddleware).
+// Request body: {adapterName, targetPort?, targetStatus: "enabled"|"disabled"}.
+// Returns 400 for invalid or missing input, 401 if unauthenticated, 500 on
+// deploy/undeploy failure. This mirrors the behavior of the GraphQL
+// changeAdapterStatus mutation, including validation, default port
+// resolution, and proper error propagation (see #19221).
 func (h *Handler) ChangeAdapterStatusHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
 	if req.Method != http.MethodPost {
 		writeMeshkitError(w, ErrMethodNotAllowed(req.Method), http.StatusMethodNotAllowed)
@@ -58,7 +61,18 @@ func (h *Handler) ChangeAdapterStatusHandler(w http.ResponseWriter, req *http.Re
 		targetPort = selectedAdapter.Location
 	}
 
-	deploy := body.TargetStatus == "enabled"
+	// reject any targetStatus value that isn't exactly "enabled" or "disabled"
+	var deploy bool
+	switch body.TargetStatus {
+	case "enabled":
+		deploy = true
+	case "disabled":
+		deploy = false
+	default:
+		h.log.Error(ErrValidAdapter)
+		writeMeshkitError(w, ErrValidAdapter, http.StatusBadRequest)
+		return
+	}
 
 	var operation string
 	var err error
