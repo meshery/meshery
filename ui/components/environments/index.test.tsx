@@ -138,8 +138,17 @@ vi.mock('@sistent/sistent', () => ({
   ModalBody: ({ children }: any) => <div>{children}</div>,
   ModalFooter: ({ children }: any) => <div>{children}</div>,
   NoSsr: ({ children }: any) => <>{children}</>,
-  Pagination: () => null,
-  PaginationItem: () => null,
+  Pagination: ({ renderItem }: any) =>
+    renderItem ? (
+      <div data-testid="pagination">
+        {renderItem({ type: 'previous', page: 0, disabled: true })}
+      </div>
+    ) : null,
+  PaginationItem: ({ sx, type }: any) => (
+    <button data-testid={`pagination-item-${type}`} data-sx={JSON.stringify(sx)}>
+      {type}
+    </button>
+  ),
   PrimaryActionButtons: () => null,
   PROMPT_VARIANTS: { DANGER: 'danger' },
   SearchBar: () => null,
@@ -149,7 +158,7 @@ vi.mock('@sistent/sistent', () => ({
   createAndEditEnvironmentUiSchema: {},
   useTheme: () => ({
     palette: {
-      icon: { default: '#000', secondary: '#111' },
+      icon: { default: '#000', secondary: '#111', disabled: '#777' },
       background: { constant: { table: '#fff' } },
       text: { default: '#000' },
     },
@@ -203,6 +212,7 @@ describe('Environments create flow notifications', () => {
     createEnvironment.mockReset();
     updateEnvironment.mockReset();
     deleteEnvironment.mockReset();
+    ENVIRONMENTS_QUERY_RESULT.data = { environments: [], totalCount: 0 };
   });
 
   it('does not report success when the provider rejects the create', async () => {
@@ -257,5 +267,29 @@ describe('Environments create flow notifications', () => {
     expect(createEnvironment).toHaveBeenCalledWith({
       environmentPayload: expect.objectContaining({ organizationId: 'org-1' }),
     });
+  });
+
+  it('keeps the previous pagination icon visible in dark mode', () => {
+    ENVIRONMENTS_QUERY_RESULT.data = {
+      environments: [{ id: 'env-1', name: 'prod', description: 'production' }],
+      totalCount: 20,
+    };
+
+    render(<Environments />);
+
+    const previousButton = screen.getByTestId('pagination-item-previous');
+    expect(previousButton).toHaveAttribute(
+      'data-sx',
+      JSON.stringify({
+        color: '#000',
+        '& svg': {
+          fill: 'currentColor',
+        },
+        '&.Mui-disabled': {
+          color: '#777',
+          opacity: 1,
+        },
+      }),
+    );
   });
 });
