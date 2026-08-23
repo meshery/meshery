@@ -7,7 +7,7 @@ import (
 	"github.com/meshery/schemas/models/core"
 )
 
-// SMIResultsPersister assists with persisting session in store
+// SMIResultsPersister assists with persisting SMI results in store
 type SMIResultsPersister struct {
 	DB *database.Handler
 }
