@@ -315,7 +315,12 @@ const NavigatorContent = () => {
       console.error('Error fetching capabilities', error);
     }
   }
-  const { data: versionData, isSuccess: isVersionSuccess, isError: isVersionError, error: versionError } = useGetSystemVersionQuery();
+  const {
+    data: versionData,
+    isSuccess: isVersionSuccess,
+    isError: isVersionError,
+    error: versionError,
+  } = useGetSystemVersionQuery();
 
   useEffect(() => {
     if (isVersionSuccess) {

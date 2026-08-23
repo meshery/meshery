@@ -376,8 +376,6 @@ export const getUserProfile = async () => {
   return userProfile;
 };
 
-
-
 export const getAllUsers = async ({ page, pagesize, search }) => {
   const users = await initiateQuery(
     userApi.endpoints.getAllUsers,

@@ -365,8 +365,6 @@ describe('user endpoints', () => {
     expect(res.data).toEqual([]);
   });
 
-
-
   it('installProviderExtension POSTs /api/provider/extension/install with the extension payload', async () => {
     fetchMock.mockResolvedValue(okResponse({}));
     const { api, store } = await setupStore();
@@ -540,8 +538,6 @@ describe('user endpoints', () => {
     await userMod.getUserProfile();
     expect(utilsMod.initiateQuery).toHaveBeenCalledWith(userMod.userApi.endpoints.getLoggedInUser);
   });
-
-
 
   it('getAllUsers helper delegates to initiateQuery with skip when search is empty', async () => {
     const utilsMod = await import('../utils');
