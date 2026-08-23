@@ -267,15 +267,15 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   }
 
   const RemoteProviderInfoTab = () => {
-    const [copied, setCopied] = useState(false);
-    const copyToClipboard = (text) => {
+    const [copied, setCopied] = useState<string | null>(null);
+    const copyToClipboard = (text: string): void => {
       navigator.clipboard
         .writeText(text)
         .then(() => {
-          setCopied(true);
+          setCopied(text);
 
           setTimeout(() => {
-            setCopied(false);
+            setCopied(null);
           }, 2000);
         })
         .catch((error) => {
@@ -357,7 +357,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                               {provider}
                             </Typography>
 
-                            <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
+                            <CustomTooltip title={copied === provider ? 'Copied!' : 'Copy'} placement="top">
                               <IconButton
                                 onClick={() => copyToClipboard(provider)}
                                 style={{ padding: '0.25rem', float: 'right' }}
