@@ -30,9 +30,14 @@ jobs:
           make
 
       - name: Generate Models and Components
+        env:
+          CRED: ${{ secrets.INTEGRATION_SPREADSHEET_CRED }}
         run: |
           cd mesheryctl
-          ./mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "${{ secrets.INTEGRATION_SPREADSHEET_CRED }}"
+          ./mesheryctl registry generate \
+            --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" \
+            --spreadsheet-cred "$CRED" \
+            2>&1 | tee "$RUNNER_TEMP/generate.log"
 
       - name: Upload artifacts
         if: always()
@@ -67,21 +72,61 @@ jobs:
           commit_message: "Models generated and updated"
           branch: master
 
+      - name: Classify failure
+        if: failure()
+        id: classify-failure
+        run: |
+          LOG="$RUNNER_TEMP/generate.log"
+          [ -f "$LOG" ] || : > "$LOG"
+
+          DETAIL=$(sed 's/\x1b\[[0-9;]*m//g' "$LOG" \
+            | grep -a -m1 '^Error: ' \
+            | sed 's/^Error: //' \
+            | cut -c1-200 \
+            | tr -d '\r\n' || true)
+
+          if [ ! -s "$LOG" ]; then
+            REASON="Failed before model generation started"
+          elif grep -qa "Invalid JWT Token" "$LOG"; then
+            REASON="Spreadsheet credential rejected"
+          elif grep -qa "error parsing relationships" "$LOG"; then
+            REASON="Relationship data could not be parsed"
+          elif grep -qa "error parsing" "$LOG"; then
+            REASON="Spreadsheet tab could not be read"
+          elif grep -qa "error updating registry" "$LOG"; then
+            REASON="Spreadsheet could not be opened"
+          elif grep -qa "isn't specified" "$LOG" || grep -qa "is required" "$LOG"; then
+            REASON="Invalid command arguments"
+          else
+            REASON="Unrecognized failure"
+          fi
+
+          [ -n "$DETAIL" ] || DETAIL="No error message was captured."
+
+          echo "reason=$REASON" >> "$GITHUB_OUTPUT"
+          echo "detail=$DETAIL" >> "$GITHUB_OUTPUT"
+          echo "### $REASON" >> "$GITHUB_STEP_SUMMARY"
+          echo "$DETAIL" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Send Email on Workflow Failure
         if: failure()
+        continue-on-error: true
         uses: dawidd6/action-send-mail@v7
         with:
           server_address: smtp.gmail.com
           server_port: 465
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: GitHub Actions - Workflow Failure
+          subject: "${{ steps.classify-failure.outputs.reason }} (run #${{ github.run_number }})"
           from: |
             "Model Generator and Updater" <no-reply@meshery.io>
           to: developers@meshery.io
           body: |
-            The GitHub Actions workflow in ${{ github.repository }} has failed.
-            You can find more details in the GitHub Actions log ${{ github.workflow }}.
+            ${{ steps.classify-failure.outputs.detail }}
+
+            Trigger : ${{ github.event_name }}
+            Run     : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
+          attachments: ${{ runner.temp }}/generate.log
 
       - name: Send Email on Registry Generate Error
         if: env.registry-generate-error == 'false' #Turn it back to true when we are good with all the errors.
