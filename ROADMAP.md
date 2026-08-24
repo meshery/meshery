@@ -32,8 +32,12 @@ Milestones on Meshery's high-level roadmap:
 
 **Performance Management**
 
-- [Adapter] Distributed performance management
+**Performance Management**
+
+- [Adapter] Distributed Performance Testing
 - [Adapter] Adaptive load optimizers
+- [Server/UI] Multiple Telemetry Providers and Custom Boards ([spec](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_5_21))
+- [Server/UI] User-defined Dashboards and Metrics ([spec](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.gcb74201a11_0_119))
 
 **Extensibility / Extensions**
 
@@ -41,9 +45,47 @@ Milestones on Meshery's high-level roadmap:
 
 ### [v1.1.0](../../milestone/8)
 
-**UI**
 
-- [UI] [Restructure](https://groups.google.com/a/meshery.io/g/developers/c/-xRKOsrNdg0)
+**Infrastructure Knowledge & Registry**
+
+- \[Server/UI\] Registry governance: team-level model controls, Ignore action hardening  
+- \[Server\] Model sub-categories; Models in Catalog; Catalog tags and filters  
+- \[Catalog\] Intellectual property protections for user-produced content; performance and stability for payment processing
+
+**Governed Change & Lifecycle Orchestration**
+
+- \[Server\] OPA and Golang-based Policy Engines (complete rollout; Golang engine WASM build landed in v1.0.x)  
+- \[Server\] Remote provider: gitops  
+- \[CLI\] Helm Snapshot GA; Kubectl MeshSync Snapshot
+
+**Multi-Cluster & Fleet Operations**
+
+- \[CLI\] Meshconfig: multi-cluster (spec)  
+- \[Server\] Fine-grained Kubernetes RBAC integration; embedded MeshSync mode without CRD installation (spec)  
+- \[Server\] Realtime MeshSync APIs
+
+**Visual Infrastructure Operations**
+
+- \[UI\] [Restructure](https://groups.google.com/a/meshery.io/g/developers/c/-xRKOsrNdg0)  
+- \[UI/Server\] Interactive consoles: terminal and logs over WebSockets, dockable panel (\#20622)  
+- \[Server/UI\] User-defined dashboards and metrics; multiple telemetry providers (spec)
+
+**Agentic Infrastructure Management**
+
+- \[Extensions\] Meshery MCP Server: read-only access to Registry, designs, and cluster state (meshery-mcp-server)  
+- \[Server\] Semantic retrieval and context assembly over the Registry (\#19645, spec)
+
+**Performance & Reliability Intelligence**
+
+- \[Server\] Prometheus and Grafana connection management
+
+**Sustaining**
+
+- \[UI\] Sistent as sole theme provider; Material UI v5 completion  
+- \[CLI\] `system report` diagnostics; gRPC streaming of status and events; colorized output; coverage 50 percent  
+- \[Server\] API stability and deprecation policy for v1 schemas  
+- \[Docs/CI\] E2E coverage 50 percent; automated publication of e2e results
+- 
 
 **Configuration Management**
 
@@ -52,12 +94,6 @@ Milestones on Meshery's high-level roadmap:
 **Extensibility / Extensions**
 
 - [Server] Remote provider: gitops
-
-**Performance Management**
-
-- [Adapter] Distributed Performance Testing
-- [Server/UI] Multiple Telemetry Providers and Custom Boards ([spec](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_5_21))
-- [Server/UI] User-defined Dashboards and Metrics ([spec](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.gcb74201a11_0_119))
 
 **CLI**
 
@@ -80,7 +116,7 @@ Milestones on Meshery's high-level roadmap:
 - [MeshSync] Composite Fingerprints
 
 **General / Maintenance**
-
+- \[UI\] [Restructure](https://groups.google.com/a/meshery.io/g/developers/c/-xRKOsrNdg0)
 - [System] hardening, release process, integration tests, user acceptance testing
 - [System] Schema-driven development with meshery/schemas as canonical source of resource definition
 
