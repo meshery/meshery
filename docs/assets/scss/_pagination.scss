@@ -38,10 +38,13 @@
     color: var(--brand-color-secondary);
     font-size: 1rem;
   }
-  &:hover {
-    .fa-chevron-right::before, .fa-chevron-left::before {
-        color: var(--color-white);
-    }
+}
+
+.dark-mode .toc-title:hover {
+  color: var(--color-white);
+
+  .fa-chevron-right::before,
+  .fa-chevron-left::before {
     color: var(--color-white);
   }
 }
