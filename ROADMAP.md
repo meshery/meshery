@@ -64,7 +64,7 @@ Milestones on Meshery's high-level roadmap:
 
 **Visual Infrastructure Operations**
 
-- \[UI\] [Restructure](https://groups.google.com/a/meshery.io/g/developers/c/-xRKOsrNdg0)  
+- \[UI\] UI restructure is a cross-cutting effort tracked elsewhere on this roadmap; referenced here because it impacts visual infrastructure operations.  
 - \[UI/Server\] Interactive consoles: terminal and logs over WebSockets, dockable panel (\#20622)  
 - \[Server/UI\] User-defined dashboards and metrics; multiple telemetry providers (spec)
 
