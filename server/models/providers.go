@@ -31,7 +31,7 @@ type ExtensionInput struct {
 	BrokerConn      broker.Handler
 }
 
-// Router
+// Router describes the HTTP handler and path used to serve a plugin's endpoint.
 type Router struct {
 	HTTPHandler http.Handler
 	Path        string
@@ -123,10 +123,10 @@ type UserPrefsExtensions []UserPrefsExtension
 // GraphQLExtensions is a collection of GraphQLExtension endpoints
 type GraphQLExtensions []GraphQLExtension
 
-// NavigatorExtensions is a collection of AccountExtension
+// AccountExtensions is a collection of AccountExtension
 type AccountExtensions []AccountExtension
 
-// CollaboratorExtension describes the Collaborator extension point in the UI
+// CollaboratorExtensions is a collection of CollaboratorExtension
 type CollaboratorExtensions []CollaboratorExtension
 
 // GraphQLExtension describes the graphql server extension point in the backend
@@ -186,7 +186,7 @@ type UserPrefsExtension struct {
 	Type      string `json:"type,omitempty"`
 }
 
-// CollaboratorsExtension is the struct for collaborators extension
+// CollaboratorExtension is the struct for collaborators extension
 type CollaboratorExtension struct {
 	Component string `json:"component,omitempty"`
 	Type      string `json:"type,omitempty"`
@@ -207,7 +207,7 @@ type Capability struct {
 	Endpoint string  `json:"endpoint,omitempty"`
 }
 
-// K8sContextResponse - struct of response sent by provider when requested to persist k8s config
+// K8sContextPersistResponse - struct of response sent by provider when requested to persist k8s config
 type K8sContextPersistResponse struct {
 	K8sContext K8sContext `json:"k8sContext,omitempty"`
 	Inserted   bool       `json:"inserted,omitempty"`
