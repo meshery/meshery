@@ -83,7 +83,6 @@ Milestones on Meshery's high-level roadmap:
 - \[CLI\] `system report` diagnostics; gRPC streaming of status and events; colorized output; coverage 50 percent  
 - \[Server\] API stability and deprecation policy for v1 schemas  
 - \[Docs/CI\] E2E coverage 50 percent; automated publication of e2e results
-- 
 
 **Configuration Management**
 
