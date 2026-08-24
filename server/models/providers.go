@@ -552,6 +552,27 @@ func VerifyMesheryProvider(provider string, supportedProviders map[string]Provid
 	return ok
 }
 
+// SystemEventPersister persists a system-initiated event - one raised outside
+// any user request, such as the registrant summaries and registration failures
+// emitted while models are seeded at boot.
+//
+// It exists so that boot-time code does not have to reach into
+// HandlerConfig.Providers for a sink. Providers are a request-routing table:
+// which one a request is served by depends on the meshery-provider cookie, and
+// since PROVIDER enforcement (RestrictToEnforcedProvider) the table may hold a
+// single remote and no Local entry at all. System events are not
+// request-scoped, so binding them to that table was always a category error -
+// it is what made a pinned deployment panic while seeding models
+// (meshery/meshery#21584).
+//
+// Every Provider satisfies this interface, and so does *EventsPersister; all of
+// them write to the same local `events` table, so nothing about where these
+// events land changes with the provider a deployment is pinned to.
+type SystemEventPersister interface {
+	// PersistSystemEvent persists a system-initiated event to the local database.
+	PersistSystemEvent(event events.Event) error
+}
+
 // Provider - interface for providers
 type Provider interface {
 	PreferencePersister
