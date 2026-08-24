@@ -17,18 +17,16 @@ Milestones on Meshery's high-level roadmap:
 
 ### [v1.2.0](../../milestone/9)
 
-**CLI**
+**Infrastructure Knowledge & Registry**
+
+- [Server] Workflow Engine, policy (crud)
+- [UI] Operations Center (for Workflows)
 
 - [CLI] Meshconfig: Support for multi-cluster (spec)
 
-**UI**
+**Sustaining**
 
-- [UI] Operations Center (for Workflows)
-
-**Server**
-
-- [Server] Workflow Engine, policy (crud)
-- [Server] SQLite → Postgres (spec)
+- [Server] Scalability: SQLite → Postgres (spec)
 
 **Performance Management**
 
@@ -51,11 +49,10 @@ Milestones on Meshery's high-level roadmap:
 
 **Multi-Cluster & Fleet Operations**
 
-- [CLI] Meshconfig: multi-cluster (spec)  
 - [Server] Fine-grained Kubernetes RBAC integration; embedded MeshSync mode without CRD installation (spec)  
 - [Server] Realtime MeshSync APIs
 
-**Visual Infrastructure Operations**
+**Collaborative and Visual Infrastructure Operations**
 
 - \[UI\] UI restructure is a cross-cutting effort tracked elsewhere on this roadmap; referenced here because it impacts visual infrastructure operations.  
 - \[UI/Server\] Interactive consoles: terminal and logs over WebSockets, dockable panel (\#20622)  
