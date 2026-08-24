@@ -19,14 +19,14 @@ Milestones on Meshery's high-level roadmap:
 
 **Infrastructure Knowledge & Registry**
 
-- [Server] Workflow Engine, policy (crud)
+- [Server] Workflow Engine, policy (CRUD)
 - [UI] Operations Center (for Workflows)
 
 - [CLI] Meshconfig: Support for multi-cluster (spec)
 
 **Sustaining**
 
-- [Server] Scalability: SQLite → Postgres (spec)
+- [Server] Scalability: Postgres support/migration plan (spec)
 
 **Performance Management**
 
@@ -41,7 +41,7 @@ Milestones on Meshery's high-level roadmap:
 
 - [Server/UI] Registry governance: team-level model controls, Ignore action hardening  
 - [Server] Model sub-categories; Models in Catalog; Catalog tags and filters  
-- [Catalog] Intellectual property protections for user-produced content; performance and stability for payment processing
+- [Catalog] Payment-processing readiness (see v1.1.0 **Catalog** section below for details)
 
 **Governed Change & Lifecycle Orchestration**
 
@@ -54,22 +54,22 @@ Milestones on Meshery's high-level roadmap:
 
 **Collaborative and Visual Infrastructure Operations**
 
-- \[UI\] UI restructure is a cross-cutting effort tracked elsewhere on this roadmap; referenced here because it impacts visual infrastructure operations.  
-- \[UI/Server\] Interactive consoles: terminal and logs over WebSockets, dockable panel (\#20622)  
-- \[Server/UI\] User-defined dashboards and metrics; multiple telemetry providers (spec)
+- [UI] UI restructure is a cross-cutting effort tracked elsewhere on this roadmap; referenced here because it impacts visual infrastructure operations.  
+- [UI/Server] Interactive consoles: terminal and logs over WebSockets, dockable panel (\#20622)  
+- [Server/UI] User-defined dashboards and metrics; multiple telemetry providers (spec)
 
 **Agentic Infrastructure Management**
 
-- \[Extensions\] Meshery MCP Server: read-only access to Registry, designs, and cluster state (meshery-mcp-server)  
-- \[Server\] Semantic retrieval and context assembly over the Registry (\#19645, spec)
+- [Extensions] Meshery MCP Server: read-only access to Registry, designs, and cluster state (meshery-mcp-server)  
+- [Server] Semantic retrieval and context assembly over the Registry (\#19645, spec)
 
 **Performance & Reliability Intelligence**
 
-- \[Server\] Prometheus and Grafana connection management
+- [Server] Prometheus and Grafana connection management
 
 **Sustaining**
 
-- \[CLI\] `system report` diagnostics; gRPC streaming of status and events; colorized output; coverage 50 percent  
+- [CLI] `system report` diagnostics; gRPC streaming of status and events; colorized output; coverage 50 percent  
 - \[Server\] API stability and deprecation policy for v1 schemas  
 - \[Docs/CI\] E2E coverage 50 percent; automated publication of e2e results
 
