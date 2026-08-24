@@ -155,7 +155,7 @@ func (ep *EnvironmentPersister) UpdateEnvironmentByID(env *environment.Environme
 	return env, nil
 }
 
-// Get environment by ID
+// GetEnvironment returns an environment by ID
 func (ep *EnvironmentPersister) GetEnvironment(id core.Uuid) (*environment.Environment, error) {
 	environment := environment.Environment{}
 	query := ep.DB.Where("id = ?", id)
@@ -178,7 +178,7 @@ func (ep *EnvironmentPersister) GetEnvironmentByID(environmentID core.Uuid) ([]b
 	return envJSON, nil
 }
 
-// UpdateEnvironmentByID updates a single environment by ID
+// UpdateEnvironment updates an environment's fields from the given payload and persists the change
 func (ep *EnvironmentPersister) UpdateEnvironment(environmentID core.Uuid, payload *environment.EnvironmentPayload) (*environment.Environment, error) {
 	env, err := ep.GetEnvironment(environmentID)
 	if err != nil {
