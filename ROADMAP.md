@@ -100,6 +100,8 @@ Milestones on Meshery's high-level roadmap:
 
 - [CLI] kubectl Snapshot
 
+_See [(detailed v0.9.0 roadmap)](https://discuss.meshery.io/t/meshery-v0-9-roadmap/6296)_
+
 ### [v0.8.0](./docs/_releases/roadmap-v0.8.md)
 
 **Lifecycle Management**
@@ -130,8 +132,9 @@ Code coverage goal: 25%
 - [CLI] Deprecate: Full migration from Apps to Designs
 - [CLI] Mesheryctl Code coverage goal: 50%
 
-### [v0.7.0](./docs/_releases/roadmap-v0.7.md)
+_See [(detailed v0.8.0 roadmap)](https://discuss.meshery.io/t/meshery-v0-8-0-roadmap/4336)_
 
+### [v0.7.0](./docs/_releases/roadmap-v0.7.md)
 
 **Sustainability**
 
@@ -156,6 +159,8 @@ Code coverage goal: 25%
 **Extensibility**
 
 - [Provider] GitOps Snapshots
+
+_See [(detailed v0.7.0 roadmap)](https://discuss.meshery.io/t/meshery-v0-7-0-roadmap/232)_
 
 ### [v0.6.0](../../milestone/3)
 
@@ -205,6 +210,3 @@ Code coverage goal: 25%
 **Lifecycle Management**
 
 - [UI] Connection Wizard
-
-
-Refer to [Meshery Roadmap](https://docs.google.com/document/d/1kvcz8jdvFwXmYBBaY2-3fHHUUoy1GJLpZZXuoxZQoOk/edit#) document for detailed info.
