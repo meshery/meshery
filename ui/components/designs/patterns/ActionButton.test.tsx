@@ -132,5 +132,8 @@ describe('ActionButton', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Actions' }));
     expect(screen.getByTestId('popper')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Validate' })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Actions' }));
+    expect(screen.queryByTestId('popper')).not.toBeInTheDocument();
   });
 });
