@@ -113,57 +113,29 @@ vi.mock('../../assets/icons/AddIconCircleBorder', () => ({ default: () => null }
 vi.mock('../../assets/icons/Environment', () => ({ default: () => null }));
 vi.mock('../../assets/icons/Connection', () => ({ default: () => null }));
 
-vi.mock('@sistent/sistent', () => ({
-  // This suite exercises the create flow, not authorization: grant every
-  // capability so the permission gates never mask the behaviour under test.
-  useHasPermission: () => true,
-  DataTableToolbar: ({ primaryActions, search, bulkOperations, ...rest }: any) => (
-    <div data-testid="data-table-toolbar" {...rest}>
-      {primaryActions}
-      {search}
-      {bulkOperations}
-    </div>
-  ),
-  Box: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
-  Button: ({ children, onClick, ...rest }: any) => (
-    <button onClick={onClick} {...rest}>
-      {children}
-    </button>
-  ),
-  ChevronLeftIcon: () => null,
-  ChevronRightIcon: () => null,
-  DeleteIcon: () => null,
-  ErrorBoundary: ({ children }: any) => <>{children}</>,
-  Grid2: ({ children }: any) => <div>{children}</div>,
-  Modal: ({ children, open }: any) => (open ? <div>{children}</div> : null),
-  ModalBody: ({ children }: any) => <div>{children}</div>,
-  ModalFooter: ({ children }: any) => <div>{children}</div>,
-  NoSsr: ({ children }: any) => <>{children}</>,
-  Pagination: () => null,
-  PaginationItem: () => null,
-  PrimaryActionButtons: () => null,
-  PROMPT_VARIANTS: { DANGER: 'danger' },
-  SearchBar: ({ placeholder, onSearch }: any) => (
-    <input
-      placeholder={placeholder}
-      onChange={(e) => onSearch?.(e.target.value)}
-      data-testid="search-bar-input"
-    />
-  ),
-  TransferList: () => null,
-  Typography: ({ children }: any) => <span>{children}</span>,
-  createAndEditEnvironmentSchema: {},
-  createAndEditEnvironmentUiSchema: {},
-  useTheme: () => ({
-    palette: {
-      icon: { default: '#000', secondary: '#111' },
-      background: { constant: { table: '#fff' } },
-      text: { default: '#000' },
-    },
-  }),
-}));
+vi.mock('@sistent/sistent', async () => {
+  const actual = await vi.importActual<any>('@sistent/sistent');
+  return {
+    ...actual,
+    // This suite exercises the create flow, not authorization: grant every
+    // capability so the permission gates never mask the behaviour under test.
+    useHasPermission: () => true,
+    Modal: ({ children, open }: any) => (open ? <div>{children}</div> : null),
+    ModalBody: ({ children }: any) => <div>{children}</div>,
+    ModalFooter: ({ children }: any) => <div>{children}</div>,
+    TransferList: () => null,
+  };
+});
 
+import { SistentThemeProvider } from '@sistent/sistent';
 import Environments from './index';
+
+const renderEnvironments = () =>
+  render(
+    <SistentThemeProvider initialTheme="dark">
+      <Environments />
+    </SistentThemeProvider>,
+  );
 
 const EVENT_ERROR = 'error';
 const EVENT_SUCCESS = 'success';
@@ -196,7 +168,7 @@ const REJECTED_CREATE = {
 
 const openCreateModalAndSubmit = async () => {
   const user = userEvent.setup();
-  render(<Environments />);
+  renderEnvironments();
   await user.click(screen.getByText('Create'));
   await user.click(await screen.findByTestId('submit-environment'));
 };
@@ -269,7 +241,7 @@ describe('Environments create flow notifications', () => {
 
 describe('Environments toolbar', () => {
   it('renders primaryActions and search scoped inside DataTableToolbar', () => {
-    render(<Environments />);
+    renderEnvironments();
 
     const toolbar = screen.getByTestId('data-table-toolbar');
     expect(toolbar).toBeInTheDocument();
