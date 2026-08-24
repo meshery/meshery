@@ -1,6 +1,14 @@
 import React from 'react';
 import { ADDITIONAL_PROPERTY_FLAG } from '@rjsf/utils';
-import { DeleteIcon, FormControl, Grid2, IconButton, Input, InputLabel } from '@sistent/sistent';
+import {
+  DeleteIcon,
+  FormControl,
+  Grid2,
+  IconButton,
+  Input,
+  InputLabel,
+  useTheme,
+} from '@sistent/sistent';
 import { iconMedium } from '../../../../css/icons.styles';
 
 const WrapIfAdditionalTemplate = ({
@@ -15,6 +23,7 @@ const WrapIfAdditionalTemplate = ({
   required,
   schema,
 }) => {
+  const theme = useTheme();
   const value = label.startsWith('newKey') ? '' : label; // removing the default value i.e newKey.
   const keyLabel = `Key`;
   const additional = ADDITIONAL_PROPERTY_FLAG in schema;
@@ -57,7 +66,7 @@ const WrapIfAdditionalTemplate = ({
           disabled={disabled || readonly}
           onClick={onDropPropertyClick(label)}
         >
-          <DeleteIcon style={iconMedium} />
+          <DeleteIcon style={iconMedium} fill={theme?.palette?.icon?.default} />
         </IconButton>
       </Grid2>
     </Grid2>
