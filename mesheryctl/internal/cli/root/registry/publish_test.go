@@ -97,6 +97,11 @@ func TestPublishCmdPreRunE_ArgValidation(t *testing.T) {
 
 		// ── global boundary ─────────────────────────────────────────────────────
 		{
+			name:    "unknown system rejected",
+			args:    []string{"invalid-system", "cred", "sheetID", "path"},
+			wantErr: true,
+		},
+		{
 			name:    "0 args rejected",
 			args:    []string{},
 			wantErr: true,

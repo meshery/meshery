@@ -88,6 +88,10 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 
 		// remote-provider and website always write icons, so imgs-output-path is mandatory.
 		sys := args[0]
+		if sys != "meshery" && sys != "remote-provider" && sys != "website" {
+			return ErrPublishInvalidArgs(fmt.Sprintf("unknown system: '%s'. Supported systems are 'meshery', 'remote-provider', and 'website'\n\nRun 'mesheryctl registry publish --help' for usage instructions", sys))
+		}
+
 		if (sys == "remote-provider" || sys == "website") && (len(args) < 5 || args[4] == "") {
 			return ErrPublishInvalidArgs(fmt.Sprintf("imgs-output-path is required (and cannot be empty) for the '%s' system\n\nUsage: \nmesheryctl registry publish %s [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]\nRun 'mesheryctl registry publish --help'", sys, sys))
 		}
