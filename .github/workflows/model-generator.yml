@@ -11,28 +11,37 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
+        id: checkout
         uses: actions/checkout@v6
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           fetch-depth: 1
 
       - name: Setup Go
+        id: setup-go
         uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
 
       - name: Pull changes from remote
-        run: git pull origin master
+        id: pull-initial
+        run: |
+          set -o pipefail
+          git pull origin master 2>&1 | tee "$RUNNER_TEMP/pull-initial.log"
 
       - name: Build mesheryctl
+        id: build-mesheryctl
         run: |
+          set -o pipefail
           cd mesheryctl
-          make
+          make 2>&1 | tee "$RUNNER_TEMP/build.log"
 
       - name: Generate Models and Components
+        id: generate-models
         env:
           CRED: ${{ secrets.INTEGRATION_SPREADSHEET_CRED }}
         run: |
+          set -o pipefail
           cd mesheryctl
           ./mesheryctl registry generate \
             --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" \
@@ -40,6 +49,7 @@ jobs:
             2>&1 | tee "$RUNNER_TEMP/generate.log"
 
       - name: Upload artifacts
+        id: upload-artifacts
         if: always()
         uses: actions/upload-artifact@v6
         with:
@@ -49,21 +59,36 @@ jobs:
       - name: Check registry-generate-error file
         id: check-registry-generate-error
         run: |
-          if [ -s ~/.meshery/logs/registry/registry-errors.log ]; then
-            echo "registry-generate-error=true" >> $GITHUB_ENV
-          else
-            echo "registry-generate-error=false" >> $GITHUB_ENV
-          fi
+          set -o pipefail
+          {
+            if [ -s ~/.meshery/logs/registry/registry-errors.log ]; then
+              echo "registry-generate-error=true" >> $GITHUB_ENV
+            else
+              echo "registry-generate-error=false" >> $GITHUB_ENV
+            fi
+          } 2>&1 | tee "$RUNNER_TEMP/check-registry-generate-error.log"
 
       - name: Run Model Updater
+        id: update-models
+        env:
+          CRED: ${{ secrets.INTEGRATION_SPREADSHEET_CRED }}
         run: |
+          set -o pipefail
           cd mesheryctl
-          ./mesheryctl registry update -i ../models --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw"  --spreadsheet-cred "${{ secrets.INTEGRATION_SPREADSHEET_CRED }}"
+          ./mesheryctl registry update \
+            -i ../models \
+            --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" \
+            --spreadsheet-cred "$CRED" \
+            2>&1 | tee "$RUNNER_TEMP/update.log"
 
       - name: Pull changes from remote
-        run: git pull origin master
+        id: pull-pre-commit
+        run: |
+          set -o pipefail
+          git pull origin master 2>&1 | tee "$RUNNER_TEMP/pull-pre-commit.log"
 
       - name: Commit changes
+        id: commit-changes
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_user_name: l5io
@@ -72,41 +97,66 @@ jobs:
           commit_message: "Models generated and updated"
           branch: master
 
-      - name: Classify failure
+      - name: Prepare Failure Details
         if: failure()
-        id: classify-failure
+        id: failure-details
         run: |
-          LOG="$RUNNER_TEMP/generate.log"
-          [ -f "$LOG" ] || : > "$LOG"
+          FAILED_STAGE="Workflow failure"
+          LOG_FILE=""
 
-          DETAIL=$(sed 's/\x1b\[[0-9;]*m//g' "$LOG" \
-            | grep -a -m1 '^Error: ' \
-            | sed 's/^Error: //' \
-            | cut -c1-200 \
-            | tr -d '\r\n' || true)
-
-          if [ ! -s "$LOG" ]; then
-            REASON="Failed before model generation started"
-          elif grep -qa "Invalid JWT Token" "$LOG"; then
-            REASON="Spreadsheet credential rejected"
-          elif grep -qa "error parsing relationships" "$LOG"; then
-            REASON="Relationship data could not be parsed"
-          elif grep -qa "error parsing" "$LOG"; then
-            REASON="Spreadsheet tab could not be read"
-          elif grep -qa "error updating registry" "$LOG"; then
-            REASON="Spreadsheet could not be opened"
-          elif grep -qa "isn't specified" "$LOG" || grep -qa "is required" "$LOG"; then
-            REASON="Invalid command arguments"
-          else
-            REASON="Unrecognized failure"
+          if [ "${{ steps.checkout.outcome }}" = "failure" ]; then
+            FAILED_STAGE="Check out code"
+          elif [ "${{ steps.setup-go.outcome }}" = "failure" ]; then
+            FAILED_STAGE="Setup Go"
+          elif [ "${{ steps.pull-initial.outcome }}" = "failure" ]; then
+            FAILED_STAGE="Initial git pull"
+            LOG_FILE="$RUNNER_TEMP/pull-initial.log"
+          elif [ "${{ steps.build-mesheryctl.outcome }}" = "failure" ]; then
+            FAILED_STAGE="Build mesheryctl"
+            LOG_FILE="$RUNNER_TEMP/build.log"
+          elif [ "${{ steps.generate-models.outcome }}" = "failure" ]; then
+            FAILED_STAGE="Generate Models and Components"
+            LOG_FILE="$RUNNER_TEMP/generate.log"
+          elif [ "${{ steps.upload-artifacts.outcome }}" = "failure" ]; then
+            FAILED_STAGE="Upload artifacts"
+          elif [ "${{ steps.check-registry-generate-error.outcome }}" = "failure" ]; then
+            FAILED_STAGE="Check registry error file"
+            LOG_FILE="$RUNNER_TEMP/check-registry-generate-error.log"
+          elif [ "${{ steps.update-models.outcome }}" = "failure" ]; then
+            FAILED_STAGE="Run Model Updater"
+            LOG_FILE="$RUNNER_TEMP/update.log"
+          elif [ "${{ steps.pull-pre-commit.outcome }}" = "failure" ]; then
+            FAILED_STAGE="Pre-commit git pull"
+            LOG_FILE="$RUNNER_TEMP/pull-pre-commit.log"
+          elif [ "${{ steps.commit-changes.outcome }}" = "failure" ]; then
+            FAILED_STAGE="Commit changes"
           fi
 
-          [ -n "$DETAIL" ] || DETAIL="No error message was captured."
+          {
+            echo "The Model Component Generator and Updater workflow failed at stage: ${FAILED_STAGE}."
+            echo ""
+            echo "Failed Run : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
+            echo "Trigger    : ${{ github.event_name }}"
+            echo ""
+            if [ -n "$LOG_FILE" ] && [ -s "$LOG_FILE" ]; then
+              echo "Raw Error Output (last 50 lines):"
+              echo "--------------------------------------------------"
+              tail -n 50 "$LOG_FILE" | sed 's/\x1b\[[0-9;]*m//g'
+              echo "--------------------------------------------------"
+            else
+              echo "No local command output captured for this stage. Please refer to the run link above for full step logs."
+            fi
+          } > "$RUNNER_TEMP/failure-email.txt"
 
-          echo "reason=$REASON" >> "$GITHUB_OUTPUT"
-          echo "detail=$DETAIL" >> "$GITHUB_OUTPUT"
-          echo "### $REASON" >> "$GITHUB_STEP_SUMMARY"
-          echo "$DETAIL" >> "$GITHUB_STEP_SUMMARY"
+          cat "$RUNNER_TEMP/failure-email.txt" >> "$GITHUB_STEP_SUMMARY"
+
+          ATTACHMENT=""
+          if [ -n "$LOG_FILE" ] && [ -f "$LOG_FILE" ]; then
+            ATTACHMENT="$LOG_FILE"
+          fi
+
+          echo "stage=$FAILED_STAGE" >> "$GITHUB_OUTPUT"
+          echo "attachment=$ATTACHMENT" >> "$GITHUB_OUTPUT"
 
       - name: Send Email on Workflow Failure
         if: failure()
@@ -117,16 +167,12 @@ jobs:
           server_port: 465
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: "${{ steps.classify-failure.outputs.reason }} (run #${{ github.run_number }})"
+          subject: "${{ steps.failure-details.outputs.stage }} failed (run #${{ github.run_number }})"
           from: |
             "Model Generator and Updater" <no-reply@meshery.io>
           to: developers@meshery.io
-          body: |
-            ${{ steps.classify-failure.outputs.detail }}
-
-            Trigger : ${{ github.event_name }}
-            Run     : ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
-          attachments: ${{ runner.temp }}/generate.log
+          body: file://${{ runner.temp }}/failure-email.txt
+          attachments: ${{ steps.failure-details.outputs.attachment }}
 
       - name: Send Email on Registry Generate Error
         if: env.registry-generate-error == 'false' #Turn it back to true when we are good with all the errors.
