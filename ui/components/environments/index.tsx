@@ -461,6 +461,7 @@ const Environments = () => {
       {canViewEnv ? (
         <>
           <DataTableToolbar
+            compactTrailing
             primaryActions={
               <Button
                 type="submit"
