@@ -15,6 +15,8 @@ export default function ActionButton({
   options,
   permissionKey,
   permissionAction,
+  label = 'Action',
+  placement = 'bottom-start',
 }) {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
@@ -36,6 +38,14 @@ export default function ActionButton({
     setOpen(false);
   };
 
+  const handleMainClick = (event) => {
+    if (defaultActionClick) {
+      defaultActionClick(event);
+    } else {
+      handleToggle(event);
+    }
+  };
+
   return (
     <React.Fragment>
       <ButtonGroup
@@ -49,12 +59,12 @@ export default function ActionButton({
             padding: '6px 9px',
             borderRadius: '8px',
           }}
-          onClick={defaultActionClick}
+          onClick={handleMainClick}
           variant="outlined"
           permissionKey={permissionKey}
           permissionAction={permissionAction}
         >
-          Action
+          {label}
         </Button>
         <Button
           sx={{
@@ -75,14 +85,7 @@ export default function ActionButton({
         }}
         open={open}
         anchorEl={anchorRef.current}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
+        placement={placement}
       >
         <Paper>
           <ClickAwayListener onClickAway={handleClose}>
