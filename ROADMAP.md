@@ -37,12 +37,7 @@ Milestones on Meshery's high-level roadmap:
 - [Server/UI] Multiple Telemetry Providers and Custom Boards ([spec](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_5_21))
 - [Server/UI] User-defined Dashboards and Metrics ([spec](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.gcb74201a11_0_119))
 
-**Extensibility / Extensions**
-
-- [Adapter] Adaptive load optimizer plugin
-
 ### [v1.1.0](../../milestone/8)
-
 
 **Infrastructure Knowledge & Registry**
 
@@ -79,7 +74,6 @@ Milestones on Meshery's high-level roadmap:
 
 **Sustaining**
 
-- \[UI\] Sistent as sole theme provider; Material UI v5 completion  
 - \[CLI\] `system report` diagnostics; gRPC streaming of status and events; colorized output; coverage 50 percent  
 - \[Server\] API stability and deprecation policy for v1 schemas  
 - \[Docs/CI\] E2E coverage 50 percent; automated publication of e2e results
@@ -114,6 +108,7 @@ Milestones on Meshery's high-level roadmap:
 
 **General / Maintenance**
 - [UI] Restructure is tracked in the canonical UI roadmap entry; reference that section for status and updates.
+- [UI] Sistent as sole theme provider; Material UI v5 completion  
 - [System] hardening, release process, integration tests, user acceptance testing
 - [System] Schema-driven development with meshery/schemas as canonical source of resource definition
 
