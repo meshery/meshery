@@ -24,6 +24,5 @@ setup() {
 
     run "$brew_prefix/bin/mesheryctl" version
     assert_success
-    assert_output --partial "Client"
-    assert_output --partial "$brew_version"
+    assert_line --regexp "Client.*$brew_version"
 }
