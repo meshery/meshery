@@ -47,9 +47,7 @@ Milestones on Meshery's high-level roadmap:
 
 **Governed Change & Lifecycle Orchestration**
 
-- [Server] OPA and Golang-based Policy Engines (complete rollout; Golang engine WASM build landed in v1.0.x)  
-- [Server] Remote provider: gitops  
-- [CLI] Helm Snapshot GA; Kubectl MeshSync Snapshot
+- [Server] Enhanced GitHub connection with repo ingest; design import wizard  
 
 **Multi-Cluster & Fleet Operations**
 
