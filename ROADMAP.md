@@ -116,7 +116,7 @@ Milestones on Meshery's high-level roadmap:
 - [MeshSync] Composite Fingerprints
 
 **General / Maintenance**
-- \[UI\] [Restructure](https://groups.google.com/a/meshery.io/g/developers/c/-xRKOsrNdg0)
+- [UI] Restructure is tracked in the canonical UI roadmap entry; reference that section for status and updates.
 - [System] hardening, release process, integration tests, user acceptance testing
 - [System] Schema-driven development with meshery/schemas as canonical source of resource definition
 
