@@ -46,21 +46,21 @@ Milestones on Meshery's high-level roadmap:
 
 **Infrastructure Knowledge & Registry**
 
-- \[Server/UI\] Registry governance: team-level model controls, Ignore action hardening  
-- \[Server\] Model sub-categories; Models in Catalog; Catalog tags and filters  
-- \[Catalog\] Intellectual property protections for user-produced content; performance and stability for payment processing
+- [Server/UI] Registry governance: team-level model controls, Ignore action hardening  
+- [Server] Model sub-categories; Models in Catalog; Catalog tags and filters  
+- [Catalog] Intellectual property protections for user-produced content; performance and stability for payment processing
 
 **Governed Change & Lifecycle Orchestration**
 
-- \[Server\] OPA and Golang-based Policy Engines (complete rollout; Golang engine WASM build landed in v1.0.x)  
-- \[Server\] Remote provider: gitops  
-- \[CLI\] Helm Snapshot GA; Kubectl MeshSync Snapshot
+- [Server] OPA and Golang-based Policy Engines (complete rollout; Golang engine WASM build landed in v1.0.x)  
+- [Server] Remote provider: gitops  
+- [CLI] Helm Snapshot GA; Kubectl MeshSync Snapshot
 
 **Multi-Cluster & Fleet Operations**
 
-- \[CLI\] Meshconfig: multi-cluster (spec)  
-- \[Server\] Fine-grained Kubernetes RBAC integration; embedded MeshSync mode without CRD installation (spec)  
-- \[Server\] Realtime MeshSync APIs
+- [CLI] Meshconfig: multi-cluster (spec)  
+- [Server] Fine-grained Kubernetes RBAC integration; embedded MeshSync mode without CRD installation (spec)  
+- [Server] Realtime MeshSync APIs
 
 **Visual Infrastructure Operations**
 
