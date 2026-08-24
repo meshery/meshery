@@ -80,6 +80,22 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				return "", model.ErrEmptyHandler
 			}
 
+			// Held for the whole workflow, including the seeding goroutine below,
+			// and shared with the REST reset path so the two cannot overlap.
+			// dbHandler's own lock is released when this function returns, which
+			// leaves the goroutine unprotected: a second reset could acquire it
+			// and drop tables mid-seed. seedingStarted makes sure every early
+			// return below still releases.
+			if !models.TryAcquireResetLock() {
+				return "", handlers.ErrResetInProgress()
+			}
+			seedingStarted := false
+			defer func() {
+				if !seedingStarted {
+					models.ReleaseResetLock()
+				}
+			}()
+
 			dbHandler.Lock()
 			defer dbHandler.Unlock()
 
@@ -121,9 +137,21 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				return "", err
 			}
 
+			if lp, ok := provider.(*models.DefaultLocalProvider); ok {
+				if err := lp.SeedDefaultOrganization(); err != nil {
+					r.Log.Error(err)
+					return "", err
+				}
+			}
+
+			seedingStarted = true
 			go func() {
-				models.SeedComponents(r.Log, r.Config, rm, dbHandler)
+				defer models.ReleaseResetLock()
 				krh.SeedKeys(viper.GetString("KEYS_PATH"))
+				if lp, ok := provider.(*models.DefaultLocalProvider); ok {
+					lp.SeedContent(r.Log)
+				}
+				models.SeedComponents(r.Log, r.Config, rm, dbHandler)
 			}()
 			r.Log.Info("Hard reset complete.")
 		} else { //Delete meshsync objects coming from a particular cluster
