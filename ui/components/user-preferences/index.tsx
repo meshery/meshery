@@ -361,10 +361,10 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                               {provider}
                             </Typography>
 
-                            <CustomTooltip 
-                              title={copied === provider ? 'Copied!' : 'Copy'} 
+                            <CustomTooltip
+                              title={copied === providerName ? 'Copied!' : 'Copy'}
                               placement="top"
-                            >
+                              >
                               <IconButton
                                 onClick={() => copyToClipboard(provider, providerName)}
                                 style={{ padding: '0.25rem', float: 'right' }}
