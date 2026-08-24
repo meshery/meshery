@@ -753,7 +753,7 @@ func ErrUnsupportedEventStatus(err error, status string) error {
 	return errors.New(ErrUnsupportedEventStatusCode, errors.Alert, []string{fmt.Sprintf("Event status '%s' is not a supported status.", status)}, []string{err.Error()}, []string{"Unsupported event status for your current version of Meshery Server."}, []string{"Confirm that the status you are using is valid and a supported event status. Refer to Meshery Docs for a list of event statuses.", "Check for availability of a new version of Meshery Server. Try upgrading to the latest version."})
 }
 
-// ErrFetchMeshSyncResources
+// ErrFetchMeshSyncResources reports a failure to fetch MeshSync resources
 func ErrFetchMeshSyncResources(err error) error {
 	return errors.New(ErrFetchMeshSyncResourcesCode, errors.Alert, []string{"Error fetching MeshSync resources", "DB might be corrupted"}, []string{err.Error()}, []string{"MeshSync might not be reachable from Meshery"}, []string{"Make sure Meshery has connectivity to MeshSync", "Try restarting Meshery server"})
 }
