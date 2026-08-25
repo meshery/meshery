@@ -165,7 +165,10 @@ func TestModelGenerate(t *testing.T) {
 			ExpectedResponse: "generate.dir.skipped.output.golden",
 			HttpCode:         200,
 			ValidateRequest: func(req *http.Request, t *testing.T) {
-				bodyBytes, _ := io.ReadAll(req.Body)
+				bodyBytes, err := io.ReadAll(req.Body)
+				if err != nil {
+					t.Fatalf("Failed to read request body: %v", err)
+				}
 				req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 				model, _, registrant, category, subCategory, register := extractRequestFields(t, bodyBytes)
 
