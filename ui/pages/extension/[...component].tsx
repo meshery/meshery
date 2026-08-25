@@ -18,7 +18,7 @@ import {
   updateTitle,
   updateProviderCapabilities,
 } from '@/store/slices/mesheryUi';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '@/components/general/error-404';
@@ -49,7 +49,6 @@ function matchComponentURI(extensionURI: string, currentURI: string): boolean {
 function RemoteExtension() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { extensionType } = useSelector((state) => state.ui);
   const { data: providerCapabilities, isLoading } = useGetProviderCapabilitiesQuery();
   const canViewExtensions = useHasPermission(Keys.ExtensibilityViewExtensions);
 
@@ -108,8 +107,6 @@ function RemoteExtension() {
     };
   }, [dispatch, matchedExtension]);
 
-  const isReady = !isLoading;
-
   if (!canViewExtensions) {
     return <DefaultError permissionKey={Keys.ExtensibilityViewExtensions} />;
   }
@@ -120,7 +117,7 @@ function RemoteExtension() {
         <title>{`${matchedExtension?.title ?? ''} | Meshery`}</title>
       </Head>
 
-      <DynamicFullScreenLoader isLoading={!isReady}>
+      <DynamicFullScreenLoader isLoading={isLoading}>
         {matchedExtension ? (
           <NoSsr>
             {matchedExtension.name === 'navigator' ? (
