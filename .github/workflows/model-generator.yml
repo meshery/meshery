@@ -67,95 +67,21 @@ jobs:
           commit_message: "Models generated and updated"
           branch: master
 
-      - name: Gather Failure Details
-        id: gather-failure-details
+      - name: Capture Failure Log
         if: failure()
-        uses: actions/github-script@v8
-        with:
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          script: |
-            const fs = require('fs');
-            const outFile = '${{ runner.temp }}/failure-details.md';
-            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
-
-            let jobUrl = runUrl;
-            let failedStepName = null;
-            let logExcerpt = null;
-            let diagnosticNote = null;
-
-            try {
-              const { data: jobsResp } = await github.rest.actions.listJobsForWorkflowRun({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                run_id: context.runId,
-              });
-              // This workflow has a single job, so the run's latest job is always ours.
-              const job = jobsResp.jobs[0];
-
-              if (job) {
-                jobUrl = `${runUrl}/job/${job.id}`;
-                const failedStep = job.steps.find((s) => s.conclusion === 'failure');
-
-                if (failedStep) {
-                  failedStepName = failedStep.name;
-
-                  const { data: rawLog } = await github.rest.actions.downloadJobLogsForWorkflowRun({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    job_id: job.id,
-                  });
-
-                  const start = new Date(failedStep.started_at).getTime();
-                  const end = failedStep.completed_at ? new Date(failedStep.completed_at).getTime() : Date.now();
-                  const stepLines = [];
-                  for (const line of String(rawLog).split('\n')) {
-                    const m = line.match(/^(\d{4}-\d{2}-\d{2}T[\d:.]+Z)\s?(.*)$/);
-                    if (!m) continue;
-                    const ts = new Date(m[1]).getTime();
-                    if (ts >= start && ts <= end) stepLines.push(m[2]);
-                  }
-
-                  if (stepLines.length) {
-                    // GitHub's per-step log view numbers lines starting at 1 within that
-                    // step; anchoring on the ##[error] line (or the last line) jumps the
-                    // reader straight to where the failure was reported.
-                    let errorLine = stepLines.findIndex((l) => l.includes('##[error]'));
-                    if (errorLine === -1) errorLine = stepLines.length - 1;
-                    jobUrl += `#step:${failedStep.number}:${errorLine + 1}`;
-
-                    const MAX_LINES = 150;
-                    const MAX_CHARS = 8000;
-                    const full = stepLines.join('\n');
-                    let excerpt = stepLines.slice(-MAX_LINES).join('\n');
-                    if (excerpt.length > MAX_CHARS) excerpt = excerpt.slice(-MAX_CHARS);
-                    if (excerpt.length < full.length) excerpt = `... (truncated) ...\n${excerpt}`;
-                    logExcerpt = excerpt;
-                  }
-                }
-              }
-            } catch (err) {
-              diagnosticNote = `Could not fetch full diagnostics from the Actions API: ${err.message}`;
-            }
-
-            const lines = [
-              `The **${context.workflow}** workflow in \`${context.repo.owner}/${context.repo.repo}\` failed` +
-                (failedStepName ? ` at step **"${failedStepName}"**.` : '.'),
-              '',
-              `Failing step: ${jobUrl}`,
-              `Full run: ${runUrl}`,
-            ];
-
-            if (logExcerpt) {
-              lines.push('', '**Raw error output:**', '````', logExcerpt, '````');
-            } else {
-              lines.push('', '_Raw step output was not available._');
-            }
-
-            if (diagnosticNote) {
-              lines.push('', `_${diagnosticNote}_`);
-            }
-
-            fs.writeFileSync(outFile, lines.join('\n'));
+        env:
+          GH_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+        run: |
+          {
+            echo "The **${{ github.workflow }}** workflow failed."
+            echo ""
+            echo "Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            echo ""
+            echo "**Raw error output:**"
+            echo '```'
+            gh run view "${{ github.run_id }}" --log-failed | tail -n 300
+            echo '```'
+          } > "${{ runner.temp }}/failure-details.md"
 
       - name: Send Email on Workflow Failure
         if: failure()
