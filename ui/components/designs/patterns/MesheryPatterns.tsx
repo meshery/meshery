@@ -464,9 +464,10 @@ function MesheryPatterns({
     },
   };
 
-  const handleApplyFilter = () => {
+  const handleApplyFilter = (filters: Record<string, string>) => {
+    const visibility = filters.visibility ?? 'All';
     updateTableState({
-      filters: { vis: selectedFilters.visibility === 'All' ? '' : selectedFilters.visibility },
+      filters: { vis: visibility === 'All' ? '' : visibility },
       page: 0,
     });
   };
@@ -590,7 +591,13 @@ function MesheryPatterns({
             <_PromptComponent ref={modalRef} />
           </>
         ) : (
-          <DefaultError />
+          <DefaultError
+            permissionKey={
+              pageTitle === 'Catalog'
+                ? Keys.CatalogManagementViewCatalog
+                : Keys.CatalogManagementViewDesigns
+            }
+          />
         )}
       </NoSsr>
     </>
