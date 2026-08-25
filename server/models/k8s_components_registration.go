@@ -84,6 +84,13 @@ func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *Comp
 
 type K8sRegistrationFunction func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID core.Uuid, reg *meshmodel.RegistryManager, eb *Broadcast, log logger.Handler, ctxName string) error
 
+// maxConcurrentK8sRegistrations bounds how many contexts RegisterComponents will
+// register concurrently, independent of how many contexts a single request
+// supplies. Without this cap, a kubeconfig with a large number of contexts (which
+// need not point at real, reachable clusters) drives a goroutine, file descriptor,
+// and outbound-dial spike proportional to attacker-controlled input.
+const maxConcurrentK8sRegistrations = 10
+
 // RegisterComponents starts registration of components for the contexts
 func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc []K8sRegistrationFunction, reg *meshmodel.RegistryManager, eventsBrodcaster *Broadcast, provider Provider, userID string, skip bool) {
 	/* If flag "SKIP_COMP_GEN" is set but the registration is invoked in form of API request explicitly,
@@ -101,6 +108,10 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 		cg.log.Error(ErrInvalidUUID(fmt.Errorf("invalid user id %q: %w", userID, err)))
 		return
 	}
+
+	// Bound the number of concurrently in-flight registrations regardless of how
+	// many contexts this call was given; see maxConcurrentK8sRegistrations.
+	sem := make(chan struct{}, maxConcurrentK8sRegistrations)
 
 	for _, ctx := range ctxs {
 		ctxID := ctx.ID
@@ -129,7 +140,10 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 		}
 		eventsBrodcaster.Publish(userUUID, event)
 
+		sem <- struct{}{}
 		go func(ctx *K8sContext) {
+			defer func() { <-sem }()
+
 			// set the status to RegistrationComplete
 			defer func() {
 				cg.mx.Lock()
