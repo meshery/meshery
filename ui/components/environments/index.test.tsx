@@ -103,7 +103,16 @@ vi.mock('../shared/Modal/Modal', () => ({
   ),
 }));
 
-vi.mock('./environment-card', () => ({ default: () => null }));
+vi.mock('./environment-card', () => ({
+  default: ({ onSelect, environmentDetails }: any) => (
+    <input
+      type="checkbox"
+      data-testid={`select-${environmentDetails?.id}`}
+      aria-label={`Select ${environmentDetails?.name}`}
+      onChange={onSelect}
+    />
+  ),
+}));
 vi.mock('../general/PromptComponent', () => ({
   default: React.forwardRef(() => null),
 }));
@@ -240,6 +249,10 @@ describe('Environments create flow notifications', () => {
 });
 
 describe('Environments toolbar', () => {
+  beforeEach(() => {
+    ENVIRONMENTS_QUERY_RESULT.data = { environments: [], totalCount: 0 };
+  });
+
   it('renders primaryActions and search scoped inside DataTableToolbar', () => {
     renderEnvironments();
 
@@ -251,5 +264,36 @@ describe('Environments toolbar', () => {
 
     const searchInput = within(toolbar).getByPlaceholderText('Search by name');
     expect(searchInput).toBeInTheDocument();
+  });
+
+  it('renders bulk operations with selection count and delete button when an environment is selected', async () => {
+    const user = userEvent.setup();
+    ENVIRONMENTS_QUERY_RESULT.data = {
+      environments: [
+        { id: 'env-1', name: 'Development' },
+        { id: 'env-2', name: 'Production' },
+      ],
+      totalCount: 2,
+    };
+
+    renderEnvironments();
+
+    const toolbar = screen.getByTestId('data-table-toolbar');
+    expect(toolbar).toBeInTheDocument();
+
+    // Before selection, bulk operations slot is not rendered
+    expect(within(toolbar).queryByText(/selected/i)).not.toBeInTheDocument();
+
+    // Select an environment row
+    await user.click(screen.getByTestId('select-env-1'));
+
+    // Assert toolbar displays the selection count alongside existing controls
+    expect(within(toolbar).getByText(/1 environment selected/i)).toBeInTheDocument();
+    expect(within(toolbar).getByRole('button', { name: /create/i })).toBeInTheDocument();
+    expect(within(toolbar).getByPlaceholderText('Search by name')).toBeInTheDocument();
+
+    // Select second environment
+    await user.click(screen.getByTestId('select-env-2'));
+    expect(within(toolbar).getByText(/2 environments selected/i)).toBeInTheDocument();
   });
 });
