@@ -67,6 +67,22 @@ jobs:
           commit_message: "Models generated and updated"
           branch: master
 
+      - name: Capture Failure Log
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+        run: |
+          {
+            echo "The **${{ github.workflow }}** workflow failed."
+            echo ""
+            echo "Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            echo ""
+            echo "**Raw error output:**"
+            echo '```'
+            gh run view "${{ github.run_id }}" --log-failed | tail -n 300
+            echo '```'
+          } > "${{ runner.temp }}/failure-details.md"
+
       - name: Send Email on Workflow Failure
         if: failure()
         uses: dawidd6/action-send-mail@v7
@@ -75,13 +91,12 @@ jobs:
           server_port: 465
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: GitHub Actions - Workflow Failure
+          subject: GitHub Actions - Workflow Failure - ${{ github.repository }} (run #${{ github.run_number }})
           from: |
             "Model Generator and Updater" <no-reply@meshery.io>
           to: developers@meshery.io
-          body: |
-            The GitHub Actions workflow in ${{ github.repository }} has failed.
-            You can find more details in the GitHub Actions log ${{ github.workflow }}.
+          convert_markdown: true
+          body: file://${{ runner.temp }}/failure-details.md
 
       - name: Send Email on Registry Generate Error
         if: env.registry-generate-error == 'false' #Turn it back to true when we are good with all the errors.
