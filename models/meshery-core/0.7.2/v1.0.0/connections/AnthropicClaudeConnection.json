@@ -1,7 +1,7 @@
 {
   "schemaVersion": "connections.meshery.io/v1beta3",
   "name": "Anthropic Claude",
-  "description": "An Anthropic Claude model provider connection that allows Meshery to interact with Claude for AI inference.",
+  "description": "An Anthropic Claude model provider connection that allows Meshery to interact with Claude for AI inference. This connection requires a valid `apiKey` to authenticate with Anthropic services. The `defaultModel` specifies which Claude model (e.g., claude-3-5-sonnet-20240620) is utilized by default for inference requests. For security and compatibility, the `baseUrl` is strictly restricted to `https://api.anthropic.com` to prevent redirection of sensitive credentials to unauthorized or malicious endpoints. Before marking the connection as connected, the connectivity check verifies that the provided API key is valid by pinging the Anthropic API; only a successful HTTP 200 response will transition the connection to a connected state.",
   "kind": "anthropic-claude",
   "type": "model-provider",
   "subType": "inference",
