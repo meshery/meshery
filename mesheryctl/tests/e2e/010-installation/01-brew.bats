@@ -24,5 +24,7 @@ setup() {
 
     run "$brew_prefix/bin/mesheryctl" version
     assert_success
-    assert_line --regexp "Client.*$brew_version"
+    local client_version
+    client_version=$(echo "$output" | awk '/^Client/ {print $2}')
+    assert_equal "$client_version" "v$brew_version"
 }
