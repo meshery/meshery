@@ -1,5 +1,6 @@
 import { ctxUrl } from '../utils/multi-ctx';
 import { useGetUsersForOrgQuery as useSchemasGetUsersForOrgQuery } from '@meshery/schemas/mesheryApi';
+import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { api, mesheryApiPath } from './index';
 import { initiateQuery } from './utils';
 import { useGetOrgsQuery } from './organization';
@@ -151,8 +152,6 @@ export const userApi = api
           }
 
           try {
-            const ExtensionPointSchemaValidator =
-              require('../utils/ExtensionPointSchemaValidator').default;
             return ExtensionPointSchemaValidator(type)(response?.extensions[type]);
           } catch (error) {
             console.group('extension error');
