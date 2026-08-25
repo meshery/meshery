@@ -13,7 +13,6 @@ export default defineConfig({
     // "JavaScript heap out of memory" crash seen on GitHub Actions runners
     // when all 400+ test files are processed concurrently.
     maxWorkers: process.env.CI ? 2 : undefined,
-    minWorkers: process.env.CI ? 1 : undefined,
     include: ['**/__tests__/**/*.test.{ts,tsx}', '**/*.test.{ts,tsx}'],
     exclude: [
       'node_modules',

@@ -204,7 +204,8 @@ vi.mock('@/rtk-query/user', () => ({
   ),
 }));
 
-vi.mock('@meshery/schemas/mesheryApi', () => ({
+vi.mock('@meshery/schemas/mesheryApi', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@meshery/schemas/mesheryApi')>()),
   useGetSystemVersionQuery: vi.fn(() => ({
     data: {
       build: '1.0.0',
