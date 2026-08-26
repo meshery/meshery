@@ -760,7 +760,6 @@ func InstallprereqDocker() error {
 	if err != nil {
 		dockerComposeBinaryURL = dockerComposeBinaryURL + defaultDockerComposeVersion
 	} else {
-		defer SafeClose(resp.Body)
 		var dat map[string]interface{}
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {

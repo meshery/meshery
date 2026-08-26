@@ -240,12 +240,10 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 
 // keepConnectionAlive to stop being timed out with port forwarding
 func keepConnectionAlive(url string) {
-	resp, err := httputil.DefaultHTTPClient.Get(url)
+	_, err := httputil.DefaultHTTPClient.Get(url)
 	if err != nil {
 		utils.Log.Debugf("connection request failed %v", err)
-		return
 	}
-	defer utils.SafeClose(resp.Body)
 	utils.Log.Debug("connection request success")
 }
 
