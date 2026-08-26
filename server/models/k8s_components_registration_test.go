@@ -24,6 +24,39 @@ type registrationTestProvider struct {
 
 func (registrationTestProvider) PersistSystemEvent(events.Event) error { return nil }
 
+func newTestContexts(instanceID *core.Uuid, n int) []*K8sContext {
+	ctxs := make([]*K8sContext, 0, n)
+	for i := 0; i < n; i++ {
+		ctxs = append(ctxs, &K8sContext{
+			ID:                uuid.Must(uuid.NewV4()).String(),
+			Name:              "ctx",
+			MesheryInstanceID: instanceID,
+		})
+	}
+	return ctxs
+}
+
+// trackingRegFunc returns a K8sRegistrationFunction that records, via peak/current
+// counters, how many invocations are running concurrently, and calls wg.Done() on
+// completion.
+func trackingRegFunc(wg *sync.WaitGroup, current, peak *int64, mu *sync.Mutex, work time.Duration) K8sRegistrationFunction {
+	return func(_ *Provider, _ context.Context, _ []byte, _, _, _ string, _ core.Uuid, _ *meshmodel.RegistryManager, _ *Broadcast, _ logger.Handler, _ string) error {
+		defer wg.Done()
+
+		n := atomic.AddInt64(current, 1)
+		mu.Lock()
+		if n > *peak {
+			*peak = n
+		}
+		mu.Unlock()
+
+		time.Sleep(work)
+
+		atomic.AddInt64(current, -1)
+		return nil
+	}
+}
+
 // TestRegisterComponentsBoundsConcurrency verifies that RegisterComponents never
 // runs more than maxConcurrentK8sRegistrations goroutines at once, regardless of
 // how many contexts it is given. Before the fix, RegisterComponents spawned one
@@ -34,51 +67,119 @@ func TestRegisterComponentsBoundsConcurrency(t *testing.T) {
 	const numContexts = 50
 
 	instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+	ctxs := newTestContexts(&instanceID, numContexts)
 
-	ctxs := make([]*K8sContext, 0, numContexts)
-	for i := 0; i < numContexts; i++ {
-		ctxs = append(ctxs, &K8sContext{
-			ID:                uuid.Must(uuid.NewV4()).String(),
-			Name:              "ctx",
-			MesheryInstanceID: &instanceID,
-		})
-	}
-
-	log, err := logger.New("test", logger.Options{})
-	if err != nil {
-		t.Fatalf("failed to create logger: %v", err)
-	}
-	helper := NewComponentsRegistrationHelper(log)
+	helper := NewComponentsRegistrationHelper(newTestLogger(t))
 	helper.UpdateContexts(ctxs)
 
 	var (
-		current int64
-		peak    int64
-		mu      sync.Mutex
-		wg      sync.WaitGroup
+		current, peak int64
+		mu            sync.Mutex
+		wg            sync.WaitGroup
 	)
 	wg.Add(numContexts)
 
+	regFunc := trackingRegFunc(&wg, &current, &peak, &mu, 20*time.Millisecond)
+	provider := registrationTestProvider{}
+	broadcaster := NewBroadcaster("test")
+
+	helper.RegisterComponents(ctxs, []K8sRegistrationFunction{regFunc}, nil, broadcaster, provider, uuid.Must(uuid.NewV4()).String(), false)
+
+	waitOrFail(t, &wg, 10*time.Second)
+
+	if peak > maxConcurrentK8sRegistrations {
+		t.Fatalf("RegisterComponents ran %d contexts concurrently, want at most %d", peak, maxConcurrentK8sRegistrations)
+	}
+	if peak == 0 {
+		t.Fatal("no registrations observed running concurrently; test did not exercise RegisterComponents")
+	}
+}
+
+// TestRegisterComponentsBoundsConcurrencyAcrossCalls verifies that the concurrency
+// cap is shared across separate RegisterComponents calls on the same helper, not
+// reset per call. The production helper is a single long-lived instance reused
+// across concurrent HTTP requests (see handlers.K8sCompRegHelper); a per-call
+// semaphore would let each concurrent request get its own budget, multiplying the
+// effective concurrency by the number of in-flight requests.
+func TestRegisterComponentsBoundsConcurrencyAcrossCalls(t *testing.T) {
+	const contextsPerCall = 30
+
+	instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+	ctxsA := newTestContexts(&instanceID, contextsPerCall)
+	ctxsB := newTestContexts(&instanceID, contextsPerCall)
+
+	helper := NewComponentsRegistrationHelper(newTestLogger(t))
+	helper.UpdateContexts(ctxsA)
+	helper.UpdateContexts(ctxsB)
+
+	var (
+		current, peak int64
+		mu            sync.Mutex
+		wg            sync.WaitGroup
+	)
+	wg.Add(2 * contextsPerCall)
+
+	regFunc := trackingRegFunc(&wg, &current, &peak, &mu, 20*time.Millisecond)
+	provider := registrationTestProvider{}
+	broadcaster := NewBroadcaster("test")
+
+	// Simulate two concurrent HTTP requests both driving registration through the
+	// same shared helper.
+	go helper.RegisterComponents(ctxsA, []K8sRegistrationFunction{regFunc}, nil, broadcaster, provider, uuid.Must(uuid.NewV4()).String(), false)
+	go helper.RegisterComponents(ctxsB, []K8sRegistrationFunction{regFunc}, nil, broadcaster, provider, uuid.Must(uuid.NewV4()).String(), false)
+
+	waitOrFail(t, &wg, 10*time.Second)
+
+	if peak > maxConcurrentK8sRegistrations {
+		t.Fatalf("two concurrent RegisterComponents calls together ran %d contexts concurrently, want at most %d", peak, maxConcurrentK8sRegistrations)
+	}
+}
+
+// TestRegisterComponentsDoesNotBlockCaller verifies that RegisterComponents returns
+// promptly even when the shared semaphore is already saturated by a prior call.
+// RegisterComponents is invoked synchronously from the HTTP handler right before it
+// writes a 202 Accepted response; if acquiring the semaphore happened on the
+// caller's goroutine, a full semaphore would stall that response.
+func TestRegisterComponentsDoesNotBlockCaller(t *testing.T) {
+	const numContexts = maxConcurrentK8sRegistrations + 5
+
+	instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+	ctxs := newTestContexts(&instanceID, numContexts)
+
+	helper := NewComponentsRegistrationHelper(newTestLogger(t))
+	helper.UpdateContexts(ctxs)
+
+	var wg sync.WaitGroup
+	wg.Add(numContexts)
+
+	// Slow enough that, if RegisterComponents blocked the caller while the
+	// semaphore is full, the call below would still be blocked when we check.
 	regFunc := K8sRegistrationFunction(func(_ *Provider, _ context.Context, _ []byte, _, _, _ string, _ core.Uuid, _ *meshmodel.RegistryManager, _ *Broadcast, _ logger.Handler, _ string) error {
 		defer wg.Done()
-
-		n := atomic.AddInt64(&current, 1)
-		mu.Lock()
-		if n > peak {
-			peak = n
-		}
-		mu.Unlock()
-
-		time.Sleep(20 * time.Millisecond)
-
-		atomic.AddInt64(&current, -1)
+		time.Sleep(200 * time.Millisecond)
 		return nil
 	})
 
 	provider := registrationTestProvider{}
 	broadcaster := NewBroadcaster("test")
 
-	helper.RegisterComponents(ctxs, []K8sRegistrationFunction{regFunc}, nil, broadcaster, provider, uuid.Must(uuid.NewV4()).String(), false)
+	callReturned := make(chan struct{})
+	go func() {
+		helper.RegisterComponents(ctxs, []K8sRegistrationFunction{regFunc}, nil, broadcaster, provider, uuid.Must(uuid.NewV4()).String(), false)
+		close(callReturned)
+	}()
+
+	select {
+	case <-callReturned:
+	case <-time.After(100 * time.Millisecond):
+		t.Fatal("RegisterComponents did not return promptly; it appears to block the caller once the semaphore is saturated")
+	}
+
+	waitOrFail(t, &wg, 10*time.Second)
+}
+
+func waitOrFail(t *testing.T, wg *sync.WaitGroup, timeout time.Duration) {
+	t.Helper()
 
 	done := make(chan struct{})
 	go func() {
@@ -88,14 +189,7 @@ func TestRegisterComponentsBoundsConcurrency(t *testing.T) {
 
 	select {
 	case <-done:
-	case <-time.After(10 * time.Second):
+	case <-time.After(timeout):
 		t.Fatal("timed out waiting for registrations to complete")
-	}
-
-	if peak > maxConcurrentK8sRegistrations {
-		t.Fatalf("RegisterComponents ran %d contexts concurrently, want at most %d", peak, maxConcurrentK8sRegistrations)
-	}
-	if peak == 0 {
-		t.Fatal("no registrations observed running concurrently; test did not exercise RegisterComponents")
 	}
 }
