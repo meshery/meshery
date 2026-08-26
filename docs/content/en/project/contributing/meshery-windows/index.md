@@ -118,7 +118,7 @@ The Docker Desktop application for Windows includes a comprehensive set of tools
 This approach can be the most challenging to setup among all and is recommended for users that are very conversant with setting up development environments in Windows.
 make, gcc and the other prerequisites do not come pre-installed on Windows and hence these need to be installed manually. You will also need to set the **Path** in _Environment Variables_ for some of them like _make_ and _gcc_. 
 
-### Installing prerequsites:
+### Installing prerequisites:
 Here are some links and recommendations to install the prerequisites:
 
 #### - make 

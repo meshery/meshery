@@ -342,9 +342,9 @@ Each policy has a set of evaluation rules defined and the `evaluationQuery` attr
 #### Matching
 
 1. Targets of a Relationship can be specific Components or entire Models.
-1. Values for propoerties like `kind`, `version`, and `model` are case-sensitive.
-1. Absence of a property in the `selector` is interpretted as the wildcard `*`.
-   - For example, a selector with `kind: Pod`, `Model: Kubernetes`, and the absence of the `version` property would be interpretted as `version: *`, which
+1. Values for properties like `kind`, `version`, and `model` are case-sensitive.
+1. Absence of a property in the `selector` is interpreted as the wildcard `*`.
+   - For example, a selector with `kind: Pod`, `Model: Kubernetes`, and the absence of the `version` property would be interpreted as `version: *`, which
      means that all the versions of the Kubernetes Pod resource (k8s.io/v1/betav2) will match the selector.
 1. The `evaluationQuery` property determines the OPA policy to invoke for relationship evaluation, specify the correct rego query.
 

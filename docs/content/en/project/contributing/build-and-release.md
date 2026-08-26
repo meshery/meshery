@@ -212,7 +212,7 @@ The pods passed in “expected_pods” are running in the subsequent namespaces 
 
 ## Automated Builds
 
-All Meshery GitHub repositories are configured with GitHub Actions. Everytime a pull request is submitted against the master branch of any repository, that repository’s GitHub Actions will be invoked (whether the PR is merged or not). Workflows defined in Meshery repository will generally (but not always) perform the following actions:
+All Meshery GitHub repositories are configured with GitHub Actions. Every time a pull request is submitted against the master branch of any repository, that repository’s GitHub Actions will be invoked (whether the PR is merged or not). Workflows defined in Meshery repository will generally (but not always) perform the following actions:
 
 1. trigger a Docker build to build a Docker container image
 1. generate two Docker tags:
