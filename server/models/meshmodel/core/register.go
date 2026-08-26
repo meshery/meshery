@@ -132,7 +132,7 @@ type Entry struct {
 	URL string `json:"serverRelativeURL"`
 }
 
-func mergeAllAPIResults(ctxt context.Context, content []byte, cli *kubernetes.Client) [][]byte {
+func mergeAllAPIResults(ctxt context.Context, content []byte, cli *kubernetes.Client) ([][]byte, error) {
 	var res OpenAPIV3Response
 	_ = json.Unmarshal(content, &res)
 	m := make([][]byte, 0)
@@ -144,11 +144,11 @@ func mergeAllAPIResults(ctxt context.Context, content []byte, cli *kubernetes.Cl
 		res := req.Do(ctxt)
 		content, err := res.Raw()
 		if err != nil {
-			return nil
+			return nil, err
 		}
 		m = append(m, content)
 	}
-	return m
+	return m, nil
 }
 
 // move to meshmodel
@@ -181,7 +181,10 @@ func GetK8sMeshModelComponents(ctxt context.Context, kubeconfig []byte) ([]compo
 	if err != nil {
 		return nil, patterncore.ErrGetK8sComponents(err)
 	}
-	contents := mergeAllAPIResults(ctxt, content, cli)
+	contents, err := mergeAllAPIResults(ctxt, content, cli)
+	if err != nil {
+		return nil, patterncore.ErrGetK8sComponents(err)
+	}
 	apiResources, err := getAPIRes(cli)
 	if err != nil {
 		return nil, patterncore.ErrGetK8sComponents(err)
