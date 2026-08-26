@@ -429,6 +429,10 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
+	if connection.ID == uuid.Nil {
+		connection.ID = connectionID
+	}
+
 	// MeshSync deployment-mode changes are handled by the dedicated
 	// POST /api/integrations/connections/{connectionId}/actions endpoint
 	// (PerformConnectionAction), which owns the metadata merge and cluster-side
@@ -471,8 +475,17 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	eventBuilder = eventBuilder.WithDescription(description)
 
 	if connection.Status != "" {
-		event, _ := h.NotifySmOfConnectionStatusChange(req.Context(), userID, provider, token, connection)
-		_ = provider.PersistEvent(event, token)
+		smEvent, err := h.NotifySmOfConnectionStatusChange(req.Context(), userID, provider, token, connection)
+		if err != nil {
+			wrappedErr := ErrSendMachineEvent(err)
+			h.log.Error(wrappedErr)
+			if smEvent.Description != "" {
+				_ = provider.PersistEvent(smEvent, token)
+				go h.config.EventBroadcaster.Publish(userID, &smEvent)
+			}
+			writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
+			return
+		}
 	}
 
 	event := eventBuilder.WithSeverity(events.Informational).Build()
@@ -557,25 +570,29 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 			return *eventBuilder.Build(), nil
 		}
 
-		// detach from the http request lifecycle so that the goroutine isn't cancelled when
+		// detach from the http request lifecycle so that the side-effects aren't cancelled when
 		// the handler returns, while preserving context values (e.g. TokenCtxKey) that downstream calls depend on.
 		detachedCtx := context.WithoutCancel(ctx)
-		go func(inst *machines.StateMachine, status connections.ConnectionStatus) {
-			event, err := inst.SendEvent(detachedCtx, machines.EventType(helpers.StatusToEvent(status)), nil)
-			if err != nil {
-				h.log.Error(err)
-				_ = provider.PersistEvent(*event, token)
-				h.config.EventBroadcaster.Publish(userID, event)
-				return
+		event, err := inst.SendEvent(detachedCtx, machines.EventType(helpers.StatusToEvent(connection.Status)), nil)
+		if err != nil {
+			h.log.Error(err)
+			if event != nil {
+				return *event, err
 			}
+			return events.Event{}, err
+		}
 
-			if status == connections.DELETED {
-				smInstanceTracker.Remove(inst.ID)
-			}
+		if connection.Status == connections.DELETED {
+			smInstanceTracker.Remove(inst.ID)
+		}
 
+		if event != nil {
 			_ = provider.PersistEvent(*event, token)
 			h.config.EventBroadcaster.Publish(userID, event)
-		}(inst, connection.Status)
+			return *event, nil
+		}
+
+		return events.Event{}, nil
 	}
 
 	return *eventBuilder.Build(), nil
