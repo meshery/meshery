@@ -13,6 +13,7 @@ import (
 
 type DiscoverAction struct{}
 
+// ExecuteOnEntry is a no-op; DiscoverAction performs all of its work in Execute.
 // Execute On Entry and Exit should not return next eventtype i suppose, look again.
 func (da *DiscoverAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	return machines.NoOp, nil, nil
