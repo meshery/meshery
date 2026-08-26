@@ -1,11 +1,7 @@
 pre.codeblock-pre {
-  display: inline-flex;
-  justify-content: flex-start;
+  display: block;
   text-align: left;
-  align-items: center;
-  align-content: flex-start;
-  flex-wrap: nowrap;
-  flex-direction: row;
+  position: relative;
   overflow: hidden !important;
   margin: 0;
   font-size: .9rem;
@@ -17,22 +13,23 @@ pre.codeblock-pre {
 }
 .codeblock {
   width: 100%;
-  display: inline-flex;
+  display: block;
   overflow: auto;
-  justify-content: flex-start;
   color: #f8f9fa;
   margin: 0px;
   padding: 0px;
+  position: relative;
 }
 .codeblock:not(:has(.clipboardjs)) {
   padding: 0.5rem 0.75rem;
 }
 .clipboardjs {
   width: 100%;
-  overflow: auto;
+  display: block;
+  overflow-x: auto;
   font-size: .9rem;
   margin: 0px;
-  padding: 0.5rem 0.75rem;
+  padding: 0.6rem 2.5rem 0.6rem 0.8rem;
   color: #f8f9fa;
   align-items: center;
   white-space: pre;
@@ -58,19 +55,23 @@ pre.codeblock-pre {
   }
 }
 .btn-copy-wrap {
-  align-content: center;
-  z-index: auto;
-  position: relative;
-  text-align: right;
+  position: absolute;
+  top: 0.45rem;
+  right: 0.75rem;
+  z-index: 15;
   display: flex;
   align-items: center;
 }
 .clipbtn {
-  right: 0;
-  margin: 5px;
+  margin: 0;
+  padding: 4px 6px;
   border: 0px;
   background-color: transparent;
   font-size: 1.05rem;
+  line-height: 1;
+  color: #f1f3f5;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.1s ease;
   & i.fa-copy::before {
     color: #f1f3f5;
   }
@@ -80,9 +81,14 @@ pre.codeblock-pre {
 }
 .clipbtn:hover {
   color: #fff;
-  cursor: pointer;
+  opacity: 0.85;
 }
 .clipbtn:active {
-  background-color: #495057;
-  transform: scale(0.75);
+  transform: scale(0.85);
 }
+.clipbtn:focus-visible {
+  outline: 2px solid var(--brand-color-secondary);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
