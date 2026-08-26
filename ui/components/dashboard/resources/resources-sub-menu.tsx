@@ -81,57 +81,74 @@ const ResourcesSubMenu = ({
 
   return (
     <>
-      <WrapperPaper>
-        <SecondaryTabs
-          sx={{
-            [`& .${TABS_SCROLL_BUTTONS_CLASS}`]: {
-              '&.Mui-disabled': { display: 'none' },
-            },
-            '& .MuiTabs-scroller': {
-              flexGrow: '0',
-            },
-            justifyContent: 'center',
-          }}
-          value={selectedTabIndex}
-          onChange={(_e, value) => handleChangeSelectedResource(tabs[value])}
-          variant={'scrollable'}
-          allowScrollButtonsMobile
-          scrollButtons="auto"
-          centered
-        >
-          {tabs.map((key, index) => {
-            const title = isCRDS ? key : tableConfigResult[key].name;
-            return (
-              <SecondaryTab
-                key={index}
-                value={index}
-                label={
-                  <DashboardIconText>
-                    <GetKubernetesNodeIcon
-                      kind={key}
-                      model={crdsModelName[index]}
-                      size={iconMedium}
-                    />
-                    {title}
-                  </DashboardIconText>
-                }
-              />
-            );
-          })}
-        </SecondaryTabs>
-      </WrapperPaper>
-      {tabs.map((key, index) => (
-        <TabPanel value={selectedResource} index={key} key={`${key}-${index}`}>
+      {isCRDS && !CRDsKeys.length ? (
+        <></>
+      ) : (
+        <WrapperPaper>
+          <SecondaryTabs
+            sx={{
+              [`& .${TABS_SCROLL_BUTTONS_CLASS}`]: {
+                '&.Mui-disabled': { display: 'none' },
+              },
+              '& .MuiTabs-scroller': {
+                flexGrow: '0',
+              },
+              justifyContent: 'center',
+            }}
+            value={selectedTabIndex}
+            onChange={(_e, value) => handleChangeSelectedResource(tabs[value])}
+            variant={'scrollable'}
+            allowScrollButtonsMobile
+            scrollButtons="auto"
+            centered
+          >
+            {tabs.map((key, index) => {
+              const title = isCRDS ? key : tableConfigResult[key].name;
+              return (
+                <SecondaryTab
+                  key={index}
+                  value={index}
+                  label={
+                    <DashboardIconText>
+                      <GetKubernetesNodeIcon
+                        kind={key}
+                        model={crdsModelName[index]}
+                        size={iconMedium}
+                      />
+                      {title}
+                    </DashboardIconText>
+                  }
+                />
+              );
+            })}
+          </SecondaryTabs>
+        </WrapperPaper>
+      )}
+
+      {isCRDS && !CRDsKeys.length ? (
+        <TabPanel value={selectedResource || 'CRDS'} index={selectedResource || 'CRDS'}>
           <ResourcesTable
-            key={index}
-            workloadType={key}
+            workloadType="CRDS"
             k8sConfig={k8sConfig}
             useResourceConfig={resource.useTableConfig}
             submenu={resource.submenu}
             selectedK8sContexts={selectedK8sContexts}
           />
         </TabPanel>
-      ))}
+      ) : (
+        tabs.map((key, index) => (
+          <TabPanel value={selectedResource || ''} index={key} key={`${key}-${index}`}>
+            <ResourcesTable
+              key={index}
+              workloadType={key}
+              k8sConfig={k8sConfig}
+              useResourceConfig={resource.useTableConfig}
+              submenu={resource.submenu}
+              selectedK8sContexts={selectedK8sContexts}
+            />
+          </TabPanel>
+        ))
+      )}
     </>
   );
 };

@@ -48,6 +48,22 @@ const ResourcesTable = (props: ResourcesTableProps) => {
     return null;
   }
 
+  // if (!props.selectedK8sContexts?.length) {
+  //   return (
+  //     <ResponsiveDataTable
+  //       data={[]}
+  //       columns={[]}
+  //       options={{
+  //         textLabels: {
+  //           body: {
+  //             noMatch: 'No values found',
+  //           },
+  //         },
+  //       }}
+  //     />
+  //   );
+  // }
+
   return <ResourcesTableInner {...props} />;
 };
 
@@ -116,7 +132,11 @@ const ResourcesTableInner = (props: ResourcesTableProps) => {
     workloadType,
     selectedK8sContexts,
   );
-  const tableConfig = submenu ? resolvedConfig[workloadType] : resolvedConfig;
+  const tableConfig = (submenu ? resolvedConfig[workloadType] : resolvedConfig) ?? {
+    name: workloadType,
+    colViews: [],
+    columns: [],
+  };
 
   const encodedClusterIds = useMemo(() => JSON.stringify(clusterIds), [clusterIds]);
 
