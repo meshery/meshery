@@ -122,6 +122,11 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 		return
 	}
 
+	// admit filters ctxs down to the ones that transition NotRegistered ->
+	// Registering, persisting/publishing the started event for each. Doing this
+	// synchronously, before any goroutine is spawned, keeps the (typically small)
+	// list of ctxs from itself becoming an unbounded amount of caller-side work.
+	admitted := make([]*K8sContext, 0, len(ctxs))
 	for _, ctx := range ctxs {
 		ctxID := ctx.ID
 		connectionID := uuid.FromStringOrNil(ctx.ConnectionID)
@@ -149,43 +154,62 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 		}
 		eventsBrodcaster.Publish(userUUID, event)
 
-		// Acquire the shared semaphore inside the goroutine, not on this loop, so a
-		// full semaphore blocks only queued registrations and never the caller (the
-		// HTTP handler still returns its 202 Accepted immediately).
-		go func(ctx *K8sContext) {
+		admitted = append(admitted, ctx)
+	}
+	if len(admitted) == 0 {
+		return
+	}
+
+	// Dispatch from a single goroutine that acquires the shared semaphore before
+	// spawning each per-context worker. This bounds how many goroutines exist at
+	// once to maxConcurrentK8sRegistrations, not just how many run their
+	// registration work concurrently: acquiring the semaphore inside each worker
+	// (the previous approach) still spawned one goroutine per context up front,
+	// so a kubeconfig with a large number of contexts could still exhaust
+	// goroutine/memory/scheduler resources before registration started. The
+	// dispatcher itself runs off the caller's goroutine so the HTTP handler still
+	// returns its 202 Accepted immediately.
+	go func() {
+		for _, ctx := range admitted {
 			cg.regSem <- struct{}{}
-			defer func() { <-cg.regSem }()
 
-			// set the status to RegistrationComplete
-			defer func() {
-				cg.mx.Lock()
-				cg.ctxRegStatusMap[ctxID] = RegistrationComplete
-				cg.mx.Unlock()
+			go func(ctx *K8sContext) {
+				defer func() { <-cg.regSem }()
 
-				cg.log.Info("components registered for context ", ctxName, " ID:", ctxID)
-			}()
+				ctxID := ctx.ID
+				ctxName := ctx.Name
 
-			// start registration
-			cfg, err := ctx.GenerateKubeConfig()
-			if err != nil {
-				cg.log.Error(err)
-				return
-			}
+				// set the status to RegistrationComplete
+				defer func() {
+					cg.mx.Lock()
+					cg.ctxRegStatusMap[ctxID] = RegistrationComplete
+					cg.mx.Unlock()
 
-			// Bound how long this context can hold its semaphore slot; see
-			// k8sRegistrationTimeout.
-			regCtx, cancel := context.WithTimeout(context.Background(), k8sRegistrationTimeout)
-			defer cancel()
+					cg.log.Info("components registered for context ", ctxName, " ID:", ctxID)
+				}()
 
-			for _, f := range regFunc {
-				err = f(&provider, regCtx, cfg, ctxID, ctx.ConnectionID, userID, *ctx.MesheryInstanceID, reg, eventsBrodcaster, cg.log, ctxName)
+				// start registration
+				cfg, err := ctx.GenerateKubeConfig()
 				if err != nil {
-					cg.log.Error(ErrUnreachableKubeAPI(err, ctx.Server))
+					cg.log.Error(err)
 					return
 				}
-			}
-		}(ctx)
-	}
+
+				// Bound how long this context can hold its semaphore slot; see
+				// k8sRegistrationTimeout.
+				regCtx, cancel := context.WithTimeout(context.Background(), k8sRegistrationTimeout)
+				defer cancel()
+
+				for _, f := range regFunc {
+					err = f(&provider, regCtx, cfg, ctxID, ctx.ConnectionID, userID, *ctx.MesheryInstanceID, reg, eventsBrodcaster, cg.log, ctxName)
+					if err != nil {
+						cg.log.Error(ErrUnreachableKubeAPI(err, ctx.Server))
+						return
+					}
+				}
+			}(ctx)
+		}
+	}()
 }
 
 // Caches k8sMeshModel metadatas in memory to use at the time of dynamic k8s component generation

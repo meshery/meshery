@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"runtime"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -176,6 +177,63 @@ func TestRegisterComponentsDoesNotBlockCaller(t *testing.T) {
 	}
 
 	waitOrFail(t, &wg, 10*time.Second)
+}
+
+// TestRegisterComponentsDoesNotSpawnGoroutinePerContext verifies that
+// RegisterComponents does not create a goroutine for every admitted context up
+// front. Before this fix, the shared semaphore (cg.regSem) was acquired inside
+// each per-context goroutine, so a call with many contexts still spawned one
+// goroutine per context immediately -- all but maxConcurrentK8sRegistrations of
+// them just parked blocked on the semaphore acquire. A kubeconfig with a large
+// number of contexts (which need not point at real, reachable clusters) could
+// still drive an unbounded goroutine/memory/scheduler spike before any
+// registration work started. See PR #21611 review feedback.
+func TestRegisterComponentsDoesNotSpawnGoroutinePerContext(t *testing.T) {
+	const numContexts = 500
+
+	instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+	ctxs := newTestContexts(&instanceID, numContexts)
+
+	helper := NewComponentsRegistrationHelper(newTestLogger(t))
+	helper.UpdateContexts(ctxs)
+
+	var wg sync.WaitGroup
+	wg.Add(numContexts)
+
+	// Block every worker so admitted-but-not-yet-running goroutines stay alive
+	// long enough to be observed by runtime.NumGoroutine().
+	release := make(chan struct{})
+	regFunc := K8sRegistrationFunction(func(_ *Provider, _ context.Context, _ []byte, _, _, _ string, _ core.Uuid, _ *meshmodel.RegistryManager, _ *Broadcast, _ logger.Handler, _ string) error {
+		defer wg.Done()
+		<-release
+		return nil
+	})
+
+	provider := registrationTestProvider{}
+	broadcaster := NewBroadcaster("test")
+
+	before := runtime.NumGoroutine()
+
+	helper.RegisterComponents(ctxs, []K8sRegistrationFunction{regFunc}, nil, broadcaster, provider, uuid.Must(uuid.NewV4()).String(), false)
+
+	// Give any (incorrectly) eagerly-spawned goroutines time to start and park
+	// on the semaphore acquire.
+	time.Sleep(200 * time.Millisecond)
+
+	after := runtime.NumGoroutine()
+	spawned := after - before
+
+	close(release)
+	waitOrFail(t, &wg, 10*time.Second)
+
+	// Allow generous headroom above the concurrency cap for the dispatcher
+	// goroutine itself and any incidental runtime goroutines, but reject
+	// anything on the order of numContexts, which is what an eager per-context
+	// spawn would produce.
+	const maxAllowedGoroutines = maxConcurrentK8sRegistrations + 10
+	if spawned > maxAllowedGoroutines {
+		t.Fatalf("RegisterComponents spawned %d goroutines for %d contexts, want at most %d", spawned, numContexts, maxAllowedGoroutines)
+	}
 }
 
 func waitOrFail(t *testing.T, wg *sync.WaitGroup, timeout time.Duration) {
