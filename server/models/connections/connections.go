@@ -73,7 +73,7 @@ var validConnectionStatusToManage = []ConnectionStatus{
 }
 
 // ShouldConnectionBeManaged checks whether the Connection should be managed.
-// Connections with status as Discovered, Registered, Connected should only be managed.
+// Connections with status as Discovered, Registered, Connected, or NotFound should only be managed.
 // Eg: If the status is set as Maintenance or Ignore do not try to manage it, not even during greedy import of K8sConnection from KubeConfig.
 func ShouldConnectionBeManaged(c Connection) bool {
 	for _, validStatus := range validConnectionStatusToManage {
