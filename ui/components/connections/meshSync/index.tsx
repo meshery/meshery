@@ -653,10 +653,13 @@ export default function MeshSyncTable(props) {
     },
   };
 
-  const handleApplyFilter = () => {
-    const kindFilter = selectedFilters.kind === 'All' ? null : selectedFilters.kind;
-    const modelFilter = selectedFilters.model === 'All' ? null : selectedFilters.model;
-    const namespaceFilter = selectedFilters.namespace === 'All' ? null : selectedFilters.namespace;
+  // Use the filters argument — UniversalFilter Apply updates state in the same
+  // tick, so reading selectedFilters here would keep the previous filter.
+  const handleApplyFilter = (filters) => {
+    const next = filters ?? selectedFilters;
+    const kindFilter = !next.kind || next.kind === 'All' ? null : next.kind;
+    const modelFilter = !next.model || next.model === 'All' ? null : next.model;
+    const namespaceFilter = !next.namespace || next.namespace === 'All' ? null : next.namespace;
 
     setKindFilter(kindFilter);
     setModeFilter(modelFilter);
