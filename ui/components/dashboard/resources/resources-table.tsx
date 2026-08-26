@@ -48,22 +48,6 @@ const ResourcesTable = (props: ResourcesTableProps) => {
     return null;
   }
 
-  // if (!props.selectedK8sContexts?.length) {
-  //   return (
-  //     <ResponsiveDataTable
-  //       data={[]}
-  //       columns={[]}
-  //       options={{
-  //         textLabels: {
-  //           body: {
-  //             noMatch: 'No values found',
-  //           },
-  //         },
-  //       }}
-  //     />
-  //   );
-  // }
-
   return <ResourcesTableInner {...props} />;
 };
 
