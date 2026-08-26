@@ -12,6 +12,7 @@ Configure, deploy, and operate Meshery deployments
 ## Synopsis
 
 Manage the state and configuration of Meshery server, components, and client.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system [flags]

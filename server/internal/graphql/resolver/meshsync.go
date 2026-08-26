@@ -15,7 +15,6 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
-	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/spf13/viper"
 )
 
@@ -81,6 +80,22 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				return "", model.ErrEmptyHandler
 			}
 
+			// Held for the whole workflow, including the seeding goroutine below,
+			// and shared with the REST reset path so the two cannot overlap.
+			// dbHandler's own lock is released when this function returns, which
+			// leaves the goroutine unprotected: a second reset could acquire it
+			// and drop tables mid-seed. seedingStarted makes sure every early
+			// return below still releases.
+			if !models.TryAcquireResetLock() {
+				return "", handlers.ErrResetInProgress()
+			}
+			seedingStarted := false
+			defer func() {
+				if !seedingStarted {
+					models.ReleaseResetLock()
+				}
+			}()
+
 			dbHandler.Lock()
 			defer dbHandler.Unlock()
 
@@ -102,23 +117,11 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			}
 
 			r.Log.Info("Migrating Meshery Database")
-			err = dbHandler.AutoMigrate(
-				&meshsyncmodel.KubernetesKeyValue{},
-				&meshsyncmodel.KubernetesResource{},
-				&meshsyncmodel.KubernetesResourceSpec{},
-				&meshsyncmodel.KubernetesResourceStatus{},
-				&meshsyncmodel.KubernetesResourceObjectMeta{},
-				&models.PerformanceProfile{},
-				&models.MesheryResult{},
-				&models.MesheryPattern{},
-				&models.MesheryFilter{},
-				&models.PatternResource{},
-				&models.MesheryApplication{},
-				&models.UserPreference{},
-				&models.PerformanceTestConfig{},
-				&models.SmiResultWithID{},
-				&models.K8sContext{},
-			)
+			// The events table is intentionally left in place above; re-migrating
+			// it here is idempotent. Share models.SystemDatabaseModels with boot
+			// and the database reset handler so the hard reset can never
+			// re-create only a stale subset of tables.
+			err = models.AutoMigrateSystemTables(dbHandler)
 			if err != nil {
 				r.Log.Error(err)
 				return "", err
@@ -134,9 +137,27 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				return "", err
 			}
 
+			if lp, ok := provider.(*models.DefaultLocalProvider); ok {
+				if err := lp.SeedDefaultOrganization(); err != nil {
+					r.Log.Error(err)
+					return "", err
+				}
+			}
+
+			seedingStarted = true
 			go func() {
-				models.SeedComponents(r.Log, r.Config, rm)
-				krh.SeedKeys(viper.GetString("KEYS_PATH"))
+				defer models.ReleaseResetLock()
+				models.RunSeedStage(r.Log, "user keys", func() {
+					krh.SeedKeys(viper.GetString("KEYS_PATH"))
+				})
+				models.RunSeedStage(r.Log, "content", func() {
+					if lp, ok := provider.(*models.DefaultLocalProvider); ok {
+						lp.SeedContent(r.Log)
+					}
+				})
+				models.RunSeedStage(r.Log, "models", func() {
+					models.SeedComponents(r.Log, r.Config, rm, dbHandler)
+				})
 			}()
 			r.Log.Info("Hard reset complete.")
 		} else { //Delete meshsync objects coming from a particular cluster

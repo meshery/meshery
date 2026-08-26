@@ -13,14 +13,8 @@ See [Meshery Designs]({{< ref "concepts/logical/designs.md" >}}) for a full desc
 
 ## Ways to Create a Design
 
-You can create a Meshery Design in two ways:
-
-| Method | When to use |
-|---|---|
-| **Meshery UI — Design Configurator** | Visual, form-driven authoring with live component discovery |
-| **mesheryctl** | Scripted or file-based workflows |
-
----
+{{< tabs id="creating-a-meshery-design-tabs" >}}
+Meshery UI | fa fa-desktop
 
 ## Using the Design Configurator in Meshery UI
 
@@ -31,6 +25,8 @@ The Design Configurator is a built-in tool in Meshery UI. It lets you browse inf
 1. Log in to Meshery and go to the **Designs** page (left navigation).
 2. Click **+ New Design** (or open an existing design to edit it).  
    The Design Configurator opens with an empty canvas and a component panel on the left.
+
+Opening the configurator requires the **View Designs** permission, the same key the **Designs** page itself requires. Without it, the configurator shows the permission-denied page rather than the canvas. See [Extensibility: Authorization]({{< ref "reference/extensibility/authorization/index.md" >}}).
 
 ### Step 2 — Name Your Design
 
@@ -60,8 +56,6 @@ Click **Save** (floppy disk icon) to save your design. Meshery stores the design
 
 Your saved design appears on the **Designs** page, where you can deploy, export, share, or further edit it.
 
----
-
 ## Using the Design Configurator to Edit YAML Directly
 
 The Design Configurator also exposes a **code editor** panel alongside the form view. If you prefer to write or paste YAML directly:
@@ -73,7 +67,16 @@ The Design Configurator also exposes a **code editor** panel alongside the form 
 
 Changes made in the code editor are reflected immediately in the form view, and vice versa.
 
----
+## Seed Designs
+
+When you start Meshery for the first time, a set of seed designs is available. These cover common Kubernetes patterns and serve as a starting point for exploration.
+
+You can also import community designs from the [Meshery Catalog](https://meshery.io/catalog) or from a Git repository.
+
+<img src="../images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" />
+
+<!-- tab -->
+mesheryctl | fa fa-terminal
 
 ## Using mesheryctl
 
@@ -104,19 +107,7 @@ mesheryctl design list
 ```
 
 See the [`mesheryctl design` reference]({{< ref "reference/references/mesheryctl/design/_index.md" >}}) for the full subcommand reference.
-
----
-
-## Seed Designs
-
-When you start Meshery for the first time, a set of seed designs is available. These cover common Kubernetes patterns and serve as a starting point for exploration.
-
- 
-You can also import community designs from the [Meshery Catalog](https://meshery.io/catalog) or from a Git repository.
-
-<img src="../images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" />
-
----
+{{< /tabs >}}
 
 ## Related
 

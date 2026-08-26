@@ -173,7 +173,7 @@ func SystemProviderSubError(msg string, cmd string) string {
 	}
 }
 
-// SystemProviderSubError returns a formatted error message with a link to `provider` command usage page
+// SystemModelSubError returns a formatted error message with a link to `model` command usage page
 // in addition to the error message
 func SystemModelSubError(msg string, cmd string) string {
 	switch cmd {
@@ -235,6 +235,8 @@ func RegistryError(msg string, cmd string) string {
 		return formatError(msg, cmdRegistryGenerate)
 	case "update":
 		return formatError(msg, cmdRegistryUpdate)
+	case "purge":
+		return formatError(msg, cmdRegistryPurge)
 	default:
 		return formatError(msg, cmdRegistry)
 	}
@@ -342,6 +344,7 @@ var cmdUsageURLs = map[cmdType]string{
 	cmdRegistryPublish:          registryPublishURL,
 	cmdRegistryGenerate:         registryGenerateURL,
 	cmdRegistryUpdate:           registryUpdateURL,
+	cmdRegistryPurge:            registryPurgeURL,
 	cmdEnvironment:              environmentUsageURL,
 	cmdEnvironmentCreate:        environmentCreateURL,
 	cmdEnvironmentDelete:        environmentDeleteURL,

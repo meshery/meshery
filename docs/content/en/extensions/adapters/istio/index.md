@@ -28,12 +28,13 @@ aliases:
 
 The Meshery Adapter for Istio includes a handful of sample applications. Use Meshery to deploy any of these sample applications:
 
-- [Bookinfo]({{< ref "guides/infrastructure-management/sample-apps/index.md#bookinfo" >}})
-- [Httpbin]({{< ref "guides/infrastructure-management/sample-apps/index.md#httpbin" >}})
+- Bookinfo
+  - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
+- Httpbin
   - Httpbin is a simple HTTP request and response service.
-- [Online Boutique]({{< ref "guides/infrastructure-management/sample-apps/index.md#online-boutique" >}})
+- Online Boutique
   - Online Boutique Application is a web-based, e-commerce demo application from the Google Cloud Platform.
-- [Image Hub]({{< ref "guides/infrastructure-management/sample-apps/index.md#imagehub" >}})
+- Image Hub
   - Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.
 
 ## Using Cloud Native Standards

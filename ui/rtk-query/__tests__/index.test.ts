@@ -76,10 +76,10 @@ describe('mesheryApiPath – /api prefixed paths', () => {
   });
 });
 
-describe('mesheryApiPath – /api/meshmodels/relationships/evaluate', () => {
+describe('mesheryApiPath – /api/registry/relationships/evaluate', () => {
   it('passes the evaluate endpoint through unchanged as an /api/* path (meshery/schemas#916)', () => {
-    expect(mesheryApiPath('/api/meshmodels/relationships/evaluate')).toBe(
-      '/api/meshmodels/relationships/evaluate',
+    expect(mesheryApiPath('/api/registry/relationships/evaluate')).toBe(
+      '/api/registry/relationships/evaluate',
     );
   });
 });

@@ -1,8 +1,7 @@
 import RJSFProvider from '../../shared/FormFields/RJSFProvider';
 import customValidator from '../../../utils/rjsfValidator';
 import React, { useEffect, useMemo, useState } from 'react';
-import { rjsfTheme } from '../../../themes';
-import darkRjsfTheme from '../../../themes/rjsf';
+import { darkRjsfTheme, rjsfTheme } from '@/theme/rjsf';
 import { createTheme, useTheme, ThemeProvider } from '@sistent/sistent';
 import { CustomTextTooltip } from './CustomTextTooltip';
 import MesheryArrayFieldTemplate from './RJSFCustomComponents/ArrayFieldTemlate';
@@ -18,6 +17,7 @@ import CustomTextAreaWidget from './RJSFCustomComponents/CustomTextAreaWidget';
 import CustomFileWidget from './RJSFCustomComponents/CustomFileWidget';
 import CustomURLWidget from './RJSFCustomComponents/CustomURLWidget';
 import CustomColorWidget from './RJSFCustomComponents/CustomColorWidget';
+import CustomBaseInput from './RJSFCustomComponents/CustomBaseInput';
 import CustomRadioWidget from './RJSFCustomComponents/CustomRadioWidget';
 import { ErrorBoundary } from '@sistent/sistent';
 import CustomErrorFallback from '@/components/shared/ErrorBoundary/ErrorBoundary';
@@ -40,7 +40,7 @@ function RJSFForm_({
   children,
   ArrayFieldTemplate = MesheryArrayFieldTemplate,
   ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
-  BaseInputTemplate,
+  BaseInputTemplate = CustomBaseInput,
   WrapIfAdditionalTemplate = MesheryWrapIfAdditionalTemplate,
   SelectWidget = MesheryCustomSelectWidget,
   LoadingComponent,

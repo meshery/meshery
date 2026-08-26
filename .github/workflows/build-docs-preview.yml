@@ -1,0 +1,114 @@
+name: Build Docs Preview
+
+on:
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize, reopened, closed]
+    paths:
+      - 'docs/**'
+      - 'mesheryctl/doc/**'
+      - '.github/workflows/build-docs-preview.yml'
+      - '.github/workflows/deploy-docs-preview.yml'
+      - '.github/workflows/docs-preview-cleanup.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: preview-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build-docs-preview:
+    runs-on: ubuntu-24.04
+    if: github.event.action != 'closed'
+    env:
+      HUGO_VERSION: 0.157.0
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        with:
+          egress-policy: audit
+          
+      - name: Checkout PR
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+          # Sparse checkout keeps the preview build focused on the Hugo site input
+          # instead of cloning the full repository, which materially reduces IO for
+          # docs-only previews triggered from pull_request.
+          sparse-checkout: |
+            docs
+            pr-preview
+
+      - name: Install Hugo CLI
+        run: |
+          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
+          && sudo dpkg -i ${{ runner.temp }}/hugo.deb
+
+      - name: Install Dart Sass
+        # Direct download from the dart-sass GitHub release rather than
+        # `sudo snap install dart-sass` (snap.io's storeserver was flaky
+        # in GitHub-hosted runners and broke this workflow on unrelated
+        # PRs, see #19574). Hugo Extended ships embedded Dart Sass as of
+        # v0.114+ but having the standalone binary on PATH is the most
+        # reliable path through `resources.toCSS` with transpiler "dartsass".
+        env:
+          DART_SASS_VERSION: 1.79.5
+        run: |
+          set -eu
+          cd "${RUNNER_TEMP}"
+          curl -fsSL -o dart-sass.tar.gz "https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz"
+          sudo tar -xzf dart-sass.tar.gz -C /usr/local/lib
+          sudo ln -sf /usr/local/lib/dart-sass/sass /usr/local/bin/sass
+          sudo ln -sf /usr/local/lib/dart-sass/sass /usr/local/bin/dart-sass
+          dart-sass --version
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: docs/go.mod
+          cache: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: |
+          cd docs
+          [[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true
+
+      - name: Build PR preview
+        env:
+          HUGO_ENVIRONMENT: production
+          HUGO_ENV: production
+          HUGO_PREVIEW: "true"
+          PREVIEW_BASE_URL: "/pr-preview/pr-${{ github.event.pull_request.number }}/"
+        run: |
+          cd docs
+          npm run build:production -- --gc --baseURL "${PREVIEW_BASE_URL}"
+          find public -maxdepth 1 -type d -name 'v0.*' -exec rm -rf {} +
+          cat > public/robots.txt <<'ROBOTS'
+          User-agent: *
+          Disallow: /
+          ROBOTS
+
+      - name: Save PR Metadata
+        run: |
+            mkdir -p ./pr
+            echo "${{ github.event.number }}" > ./pr/number
+            echo "${{ github.event.pull_request.head.sha }}" > ./pr/sha
+            echo "${{ github.event.action }}" > ./pr/action
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-preview-build
+          path: |
+            ${{ github.event.action != 'closed' && 'docs/public' || '' }}
+            pr/
+          if-no-files-found: error
