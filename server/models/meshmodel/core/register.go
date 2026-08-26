@@ -51,11 +51,11 @@ type names struct {
 	Kind string `json:"kind"`
 }
 
-func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context, config []byte, ctxID string, connectionID string, userID string, mesheryInstanceID core.Uuid, reg *registry.RegistryManager, ec *models.Broadcast, log logger.Handler, ctxName string) (err error) {
+func RegisterK8sMeshModelComponents(provider *models.Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, mesheryInstanceID core.Uuid, reg *registry.RegistryManager, ec *models.Broadcast, log logger.Handler, ctxName string) (err error) {
 	connectionUUID := uuid.FromStringOrNil(connectionID)
 	userUUID := uuid.FromStringOrNil(userID)
 
-	man, err := GetK8sMeshModelComponents(config)
+	man, err := GetK8sMeshModelComponents(ctxt, config)
 	eventMetadata := make(map[string]interface{}, 0)
 	ctx := models.K8sContextsFromKubeconfig(*provider, userID, ec, config, &mesheryInstanceID, eventMetadata, log)
 	if err != nil {
@@ -132,7 +132,7 @@ type Entry struct {
 	URL string `json:"serverRelativeURL"`
 }
 
-func mergeAllAPIResults(content []byte, cli *kubernetes.Client) [][]byte {
+func mergeAllAPIResults(ctxt context.Context, content []byte, cli *kubernetes.Client) [][]byte {
 	var res OpenAPIV3Response
 	_ = json.Unmarshal(content, &res)
 	m := make([][]byte, 0)
@@ -141,7 +141,7 @@ func mergeAllAPIResults(content []byte, cli *kubernetes.Client) [][]byte {
 			continue
 		}
 		req := cli.KubeClient.RESTClient().Get().RequestURI(path.URL)
-		res := req.Do(context.Background())
+		res := req.Do(ctxt)
 		content, err := res.Raw()
 		if err != nil {
 			return nil
@@ -152,7 +152,7 @@ func mergeAllAPIResults(content []byte, cli *kubernetes.Client) [][]byte {
 }
 
 // move to meshmodel
-func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefinition, error) {
+func GetK8sMeshModelComponents(ctxt context.Context, kubeconfig []byte) ([]component.ComponentDefinition, error) {
 	cli, err := kubernetes.New(kubeconfig)
 	if err != nil {
 		return nil, patterncore.ErrGetK8sComponents(err)
@@ -163,7 +163,7 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefiniti
 		return nil, patterncore.ErrGetK8sComponents(err)
 	}
 	var customResources = make(map[string]bool)
-	crdresult, err := cli.KubeClient.RESTClient().Get().RequestURI("/apis/apiextensions.k8s.io/v1/customresourcedefinitions").Do(context.Background()).Raw()
+	crdresult, err := cli.KubeClient.RESTClient().Get().RequestURI("/apis/apiextensions.k8s.io/v1/customresourcedefinitions").Do(ctxt).Raw()
 	if err != nil {
 		return nil, patterncore.ErrGetK8sComponents(err)
 	}
@@ -176,12 +176,12 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefiniti
 	for _, item := range xcrd.Items {
 		customResources[item.Spec.Names.Kind] = true
 	}
-	res := req.Do(context.Background())
+	res := req.Do(ctxt)
 	content, err := res.Raw()
 	if err != nil {
 		return nil, patterncore.ErrGetK8sComponents(err)
 	}
-	contents := mergeAllAPIResults(content, cli)
+	contents := mergeAllAPIResults(ctxt, content, cli)
 	apiResources, err := getAPIRes(cli)
 	if err != nil {
 		return nil, patterncore.ErrGetK8sComponents(err)
