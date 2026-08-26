@@ -105,10 +105,7 @@ vi.mock('@/components/lifecycle/general', () => ({ EmptyState: () => <div>empty<
 vi.mock('@/components/general/ViewSwitch', () => ({ default: () => null }));
 vi.mock('./WorkspaceGridView', () => ({ default: () => null }));
 vi.mock('./WorkspaceDataTable', () => ({ default: () => null }));
-vi.mock('./styles', () => ({ CreateButtonWrapper: ({ children }: any) => <div>{children}</div> }));
-vi.mock('@/assets/styles/general/tool.styles', () => ({
-  ToolWrapper: ({ children }: any) => <div>{children}</div>,
-}));
+
 vi.mock('@/assets/icons/AddIconCircleBorder', () => ({ default: () => null }));
 vi.mock('@/assets/icons/RightArrowIcon', () => ({ default: () => null }));
 vi.mock('css/icons.styles', () => ({ iconMedium: {} }));
@@ -117,14 +114,19 @@ vi.mock('@sistent/sistent', () => ({
   // This suite exercises the create flow, not authorization: grant every
   // capability so the permission gates never mask the behaviour under test.
   useHasPermission: () => true,
-  Box: ({ children }: any) => <div>{children}</div>,
   Breadcrumbs: ({ children }: any) => <nav>{children}</nav>,
   Button: ({ children, onClick, ...rest }: any) => (
     <button onClick={onClick} {...rest}>
       {children}
     </button>
   ),
-  CustomColumnVisibilityControl: () => null,
+  DataTableToolbar: ({ primaryActions, search, viewSwitch }: any) => (
+    <div>
+      {primaryActions}
+      {search}
+      {viewSwitch}
+    </div>
+  ),
   ErrorBoundary: ({ children }: any) => <>{children}</>,
   Modal: ({ children, open }: any) => (open ? <div>{children}</div> : null),
   ModalFooter: ({ children }: any) => <div>{children}</div>,
