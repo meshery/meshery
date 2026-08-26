@@ -175,7 +175,7 @@ func (c *CsvModelGenerator) Generate() error {
 	err = registerModel(modelData, componentData, relationshipData, "model.csv", "csv", "", c.ModelName, !c.SkipRegister)
 	if err != nil {
 		if c.ModelName != "" && strings.Contains(err.Error(), "not found in CSV input") {
-			return ErrModelNotFoundInCSV(c.ModelName)
+			return ErrModelNotFound(c.ModelName)
 		}
 		return err
 	}

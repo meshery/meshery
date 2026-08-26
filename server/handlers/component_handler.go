@@ -1086,9 +1086,9 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			h.log.Error(models.ErrSeedingComponents(err))
 		}
 		if selectedModel != "" && len(modelDirPaths) == 0 {
-			notFoundErr := fmt.Errorf("model %q not found in CSV input", selectedModel)
-			writeMeshkitError(rw, notFoundErr, http.StatusBadRequest)
-			h.sendErrorEvent(userID, provider, notFoundErr.Error(), notFoundErr, token)
+			err := ErrModelNotFound(selectedModel)
+			writeMeshkitError(rw, err, http.StatusBadRequest)
+			h.sendErrorEvent(userID, provider, err.Error(), err, token)
 			return
 		}
 		h.sendEventForImport(userID, provider, 0, "", true, token)

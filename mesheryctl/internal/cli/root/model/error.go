@@ -16,7 +16,7 @@ const (
 	ErrModelUnsupportedVersionCode      = "mesheryctl-1149"
 	ErrModelBuildCode                   = "mesheryctl-1151"
 	ErrDeleteModelCode                  = "mesheryctl-1200"
-	ErrModelNotFoundInCSVCode           = "mesheryctl-1254"
+	ErrModelNotFoundCode                = "mesheryctl-1254"
 
 	// Error Constants
 	errBuildUsage                    = "Usage:\nmesheryctl model build [model-name]\nor\nmesheryctl model build [model-name]/[model-version]\n\nRun 'mesheryctl model build --help' to see detailed help message"
@@ -83,8 +83,8 @@ func ErrDeleteModel(err error, nameOrID string) error {
 		[]string{"Verify the model name or ID using 'mesheryctl model list' and try again"})
 }
 
-func ErrModelNotFoundInCSV(modelName string) error {
-	return errors.New(ErrModelNotFoundInCSVCode, errors.Alert,
+func ErrModelNotFound(modelName string) error {
+	return errors.New(ErrModelNotFoundCode, errors.Alert,
 		[]string{"Selected model not found"},
 		[]string{fmt.Sprintf("The model %q provided via --model was not found in the CSV input", modelName)},
 		[]string{"The model name does not match any entry in the CSV's \"model\" column, or contains a typo"},
