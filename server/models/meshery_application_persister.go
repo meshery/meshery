@@ -35,7 +35,11 @@ func (maap *MesheryApplicationPersister) GetMesheryApplications(search, order st
 	count := int64(0)
 	applications := []*MesheryApplication{}
 
-	query := maap.DB.Where("updated_at > ?", updatedAfter).Order(order)
+	query := maap.DB.Order(order)
+
+	if strings.TrimSpace(updatedAfter) != "" {
+		query = query.Where("updated_at > ?", strings.TrimSpace(updatedAfter))
+	}
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
