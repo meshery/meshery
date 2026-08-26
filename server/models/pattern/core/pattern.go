@@ -124,7 +124,7 @@ func isSpecialKey(k string) bool {
 	return false
 }
 
-// In case of any breaking change or bug caused by this, set this to false and the whitespace addition in schema generated/consumed would be removed(will go back to default behavior)
+// Format controls whitespace addition in schema generation/consumption. In case of any breaking change or bug caused by this, set this to false and the whitespace addition in schema generated/consumed would be removed(will go back to default behavior)
 const Format prettifier = true
 
 type DryRunResponseWrapper struct {
