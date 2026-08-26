@@ -12,12 +12,12 @@
     "subType": "",
     "kind": "artifacthub",
     "status": "discovered",
-    "created_at": "0001-01-01T00:00:00Z",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "deleted_at": null,
+    "createdAt": "0001-01-01T00:00:00Z",
+    "updatedAt": "0001-01-01T00:00:00Z",
+    "deletedAt": null,
     "schemaVersion": ""
   },
-  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "registrantId": "00000000-0000-0000-0000-000000000000",
   "category": {
     "id": "00000000-0000-0000-0000-000000000000",
     "name": "Uncategorized"
@@ -37,10 +37,10 @@
   "model": {
     "version": "1.7.2"
   },
-  "components_count": 0,
-  "relationships_count": 0,
-  "created_at": "0001-01-01T00:00:00Z",
-  "updated_at": "0001-01-01T00:00:00Z",
+  "componentsCount": 0,
+  "relationshipsCount": 0,
+  "createdAt": "0001-01-01T00:00:00Z",
+  "updatedAt": "0001-01-01T00:00:00Z",
   "components": null,
   "relationships": null
 }
