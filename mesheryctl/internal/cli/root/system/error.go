@@ -85,7 +85,7 @@ var (
 	contextDir            = "See that you have a correct context in your  meshconfig at `$HOME/.meshery/config.yaml`."
 )
 
-// FormatErrorReference returns a mesheryctl system docs URL for cmdType, or the general system docs URL if cmdType is not set.
+// FormatErrorReference returns a mesheryctl system docs URL for cmdType, or the general system docs URL if cmdType is unset or unrecognized.
 func FormatErrorReference() string {
 	baseURL := "https://docs.meshery.io/reference/references/mesheryctl/system"
 	switch cmdType {
