@@ -162,7 +162,7 @@ func TreePath() *cobra.Command {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	if err := config.ValidateConfigPath(cfgFile); err != nil {
+	if err := config.EnsureConfigPathNotEmpty(cfgFile); err != nil {
 		utils.Log.Fatal(err)
 		return
 	}
