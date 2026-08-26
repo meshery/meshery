@@ -14,7 +14,7 @@ import {
   useTheme,
 } from '@sistent/sistent';
 import { iconMedium } from 'css/icons.styles';
-import { useState } from 'react';
+import { useState, type SyntheticEvent } from 'react';
 
 const StyledMenuItem = styled(MenuItem)({
   paddingLeft: '.5rem',
@@ -53,9 +53,9 @@ export const MenuComponent = ({ options = [] }) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = (event?) => {
-    event?.stopPropagation?.();
-    event?.preventDefault?.();
+  const handleClose = (event?: SyntheticEvent) => {
+    event?.stopPropagation();
+    event?.preventDefault();
     setAnchorEl(null);
     setSheetOpen(false);
   };
