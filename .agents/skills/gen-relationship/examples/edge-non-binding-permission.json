@@ -8,7 +8,7 @@
   "status": "enabled",
   "evaluationQuery": "",
   "metadata": {
-    "description": "A non-enforcing permission link: a policy document refers to a role by name without assigning subjects. Contrast with edge/binding/permission.",
+    "description": "A non-binding permission link: an IAM Role supplies identifiers an Instance consumes without the relationship itself assigning subjects. Contrast with edge/binding/permission.",
     "isAnnotation": false
   },
   "model": {
@@ -24,21 +24,27 @@
       "allow": {
         "from": [
           {
-            "kind": "Policy",
+            "kind": "Role",
             "model": { "name": "aws-iam-controller", "registrant": { "kind": "github" }, "model": { "version": "" } },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [["configuration", "spec", "roleRef", "name"]]
+              "mutatorRef": [
+                ["configuration", "spec", "name"],
+                ["configuration", "status", "ackResourceMetadata", "arn"]
+              ]
             }
           }
         ],
         "to": [
           {
-            "kind": "Role",
-            "model": { "name": "aws-iam-controller", "registrant": { "kind": "github" }, "model": { "version": "" } },
+            "kind": "Instance",
+            "model": { "name": "ec2-controller", "registrant": { "kind": "github" }, "model": { "version": "" } },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [["configuration", "metadata", "name"]]
+              "mutatedRef": [
+                ["configuration", "spec", "iamInstanceProfile"],
+                ["configuration", "spec", "instanceID"]
+              ]
             }
           }
         ]

@@ -8,7 +8,7 @@
   "status": "enabled",
   "evaluationQuery": "",
   "metadata": {
-    "description": "A Role is bound to a ServiceAccount. Binding edges assign identities.",
+    "description": "A Role is bound to a ServiceAccount through a RoleBinding. Binding edges assign identities.",
     "isAnnotation": false
   },
   "model": {
@@ -26,9 +26,22 @@
           {
             "kind": "Role",
             "model": { "name": "kubernetes", "registrant": { "kind": "github" }, "model": { "version": "" } },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [["component", "kind"], ["displayName"]]
+            "match": {
+              "from": [
+                {
+                  "kind": "self",
+                  "mutatorRef": [["component", "kind"], ["displayName"]]
+                }
+              ],
+              "to": [
+                {
+                  "kind": "RoleBinding",
+                  "mutatedRef": [
+                    ["configuration", "spec", "roleRef", "kind"],
+                    ["configuration", "spec", "roleRef", "name"]
+                  ]
+                }
+              ]
             }
           }
         ],
@@ -36,9 +49,21 @@
           {
             "kind": "ServiceAccount",
             "model": { "name": "kubernetes", "registrant": { "kind": "github" }, "model": { "version": "" } },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatedRef": [["component", "kind"], ["displayName"]]
+            "match": {
+              "from": [
+                {
+                  "kind": "RoleBinding",
+                  "mutatedRef": [
+                    ["configuration", "spec", "subjects", "_", "name"]
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "kind": "self",
+                  "mutatorRef": [["displayName"]]
+                }
+              ]
             }
           }
         ]

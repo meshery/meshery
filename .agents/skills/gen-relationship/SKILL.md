@@ -36,11 +36,11 @@ Required object fields (v1beta3): `schemaVersion`, `version`, `model`, `kind`, `
 | `edge` | `non-binding` | `reference` | Logical name/id pointer; no traffic, mount, or RBAC | Deployment → ConfigMap | [examples/edge-non-binding-reference.json](examples/edge-non-binding-reference.json) |
 | `edge` | `non-binding` | `network` | Documented L3/L4/L7 selection, no provisioned attachment | Service → Deployment | [examples/edge-non-binding-network.json](examples/edge-non-binding-network.json) |
 | `edge` | `non-binding` | `firewall` | Policy that allows/denies traffic between peers | NetworkPolicy → Pod | [examples/edge-non-binding-firewall.json](examples/edge-non-binding-firewall.json) |
-| `edge` | `non-binding` | `permission` | Mentions an identity or role without binding it | IAM Policy → Role | [examples/edge-non-binding-permission.json](examples/edge-non-binding-permission.json) |
+| `edge` | `non-binding` | `permission` | Mentions an identity or role without binding it | IAM Role → Instance | [examples/edge-non-binding-permission.json](examples/edge-non-binding-permission.json) |
 | `edge` | `non-binding` | `alias` | Named stand-in, not nested ownership | Secret → Secret | [examples/edge-non-binding-alias.json](examples/edge-non-binding-alias.json) |
 | `edge` | `non-binding` | `annotation` | Designer-only line; `metadata.isAnnotation: true`; no patch | Shape → Shape | [examples/edge-non-binding-annotation.json](examples/edge-non-binding-annotation.json) |
-| `edge` | `non-binding` | `inventory` | Rare. Peer index/list, not parent-child containment | Cluster → Database | [examples/edge-non-binding-inventory.json](examples/edge-non-binding-inventory.json) |
-| `edge` | `binding` | `permission` | Assigns identities (Role/RoleBinding/ServiceAccount) | Role → ServiceAccount | [examples/edge-binding-permission.json](examples/edge-binding-permission.json) |
+| `edge` | `non-binding` | `inventory` | Rare. Peer index/list, not parent-child containment | Database → NamespacesEventHub | [examples/edge-non-binding-inventory.json](examples/edge-non-binding-inventory.json) |
+| `edge` | `binding` | `permission` | Assigns identities (Role/RoleBinding/ServiceAccount) | Role → ServiceAccount via RoleBinding | [examples/edge-binding-permission.json](examples/edge-binding-permission.json) |
 | `edge` | `binding` | `mount` | Storage or device is attached | PVC → Pod | [examples/edge-binding-mount.json](examples/edge-binding-mount.json) |
 | `edge` | `binding` | `network` | Rare. Connecting provisions/rewrites network identity | Listener → Domain | [examples/edge-binding-network.json](examples/edge-binding-network.json) |
 | `hierarchical` | `parent` | `inventory` | Parent scopes/contains children; parent identity patched onto child | `*` → Namespace | [examples/hierarchical-parent-inventory.json](examples/hierarchical-parent-inventory.json) |
