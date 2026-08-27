@@ -62,7 +62,7 @@ jobs:
         uses: actions/checkout@v6
       -
         name: Identify Release Values
-        if: inputs.release-ver != 'v'
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs['release-ver'] != 'v' }}
         run: |
           if [[ ${GITHUB_REF} = refs/tags* ]]
           then

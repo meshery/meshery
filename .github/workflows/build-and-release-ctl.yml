@@ -11,7 +11,7 @@ jobs:
 
   ctlrelease:
     name: Mesheryctl build & release
-    if: github.repository == 'meshery/meshery' && inputs.release-tag && !contains(github.ref, 'patch') && !contains(github.ref, 'alpha') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
+    if: github.repository == 'meshery/meshery' && inputs['release-tag'] && !contains(github.ref, 'patch') && !contains(github.ref, 'alpha') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
     runs-on: macos-latest
     permissions:
       contents: read
