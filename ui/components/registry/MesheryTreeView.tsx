@@ -109,7 +109,9 @@ const MesheryTreeView = React.memo(
 
     const handleChecked = useCallback(() => {
       setChecked((prevChecked) => !prevChecked);
-    }, [setChecked]);
+      setModelsFilters({ page: 0 });
+      setResourcesDetail([]);
+    }, [setChecked, setModelsFilters, setResourcesDetail]);
 
     // Expand first level tree
     const expandAll = () => {
@@ -272,8 +274,8 @@ const MesheryTreeView = React.memo(
                     control={
                       <Switch
                         checked={checked}
-                        onClick={handleChecked}
-                        disabled={!hasRecords}
+                        onChange={handleChecked}
+                        disabled={!hasRecords && !checked}
                         inputProps={{ 'aria-label': 'controlled' }}
                         size="small"
                       />
@@ -321,14 +323,16 @@ const MesheryTreeView = React.memo(
 
     const setSearchExpand = (isExpand) => {
       if (!isExpand) {
-        setSearchText(() => null);
-        setResourcesDetail(() => []);
-        setPage({
-          Models: 0,
-          Components: 0,
-          Relationships: 0,
-          Registrants: 0,
-        });
+        if (searchText) {
+          setSearchText(() => null);
+          setResourcesDetail(() => []);
+          setPage({
+            Models: 0,
+            Components: 0,
+            Relationships: 0,
+            Registrants: 0,
+          });
+        }
       }
       setIsSearchExpanded(isExpand);
     };
