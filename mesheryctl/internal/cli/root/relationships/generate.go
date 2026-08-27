@@ -1,16 +1,16 @@
 package relationships
 
 import (
-	"encoding/csv"
 	"fmt"
-	"os"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+
+	meshkitRegistry "github.com/meshery/meshkit/registry"
 	meshkit "github.com/meshery/meshkit/utils"
+
 	"github.com/spf13/cobra"
-	"google.golang.org/api/sheets/v4"
 )
 
 type cmdRelationshipGenerateFlag struct {
@@ -24,37 +24,30 @@ type cmdRelationshipGenerateFlag struct {
 // to be considered a valid relationship entry.
 // Refer to the Meshery relationship CSV template:
 // https://github.com/meshery/meshery/blob/master/mesheryctl/templates/template-csvs/Relationships.csv
-const minRelationshipCSVColumns = 15
+
+const googleSpreadsheetURL = "https://docs.google.com/spreadsheets/d/"
 
 var relationshipGenerateFlag cmdRelationshipGenerateFlag
 
-var fetchSheetValues = func(id, cred string) (*sheets.ValueRange, error) {
+var getRelationshipSheetID = func(cred, spreadsheetID string) (int64, error) {
 	srv, err := meshkit.NewSheetSRV(cred)
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
-	return srv.Spreadsheets.Values.Get(id, "Relationships").Do()
+
+	spreadsheet, err := srv.Spreadsheets.Get(spreadsheetID).Fields().Do()
+	if err != nil {
+		return 0, err
+	}
+
+	return utils.GetSheetIDFromTitle(spreadsheet, "Relationships"), nil
 }
+
+var newRelationshipCSVHelper = meshkitRegistry.NewRelationshipCSVHelper
 
 var relationshipsOutputPath = "../docs/data/RelationshipsData.json"
 
-type CustomValueRange struct {
-	Model                string `json:"Model"`
-	Version              string `json:"Version"`
-	Kind                 string `json:"kind"`
-	Type                 string `json:"type"`
-	SubType              string `json:"subType"`
-	MetadataDescription  string `json:"metadataDescription"`
-	Docs                 string `json:"docs"`
-	MetadataStyles       string `json:"metadataStyles"`
-	EvalPolicy           string `json:"evalPolicy"`
-	SelectorsDenyFrom    string `json:"selectorsDenyFrom"`
-	SelectorsDenyTo      string `json:"selectorsDenyTo"`
-	SelectorsAllowFrom   string `json:"selectorsAllowFrom"`
-	SelectorsAllowTo     string `json:"selectorsAllowTo"`
-	CompleteDefinition   string `json:"CompleteDefinition"`
-	VisualizationExample string `json:"VisualizationExample"`
-}
+type CustomValueRange = meshkitRegistry.RelationshipCSV
 
 var generateCmd = &cobra.Command{
 	Use:   "generate",
@@ -88,16 +81,37 @@ mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet
 			return saveRelationshipsJSON(data, outputPath)
 		}
 
-		resp, err := fetchSheetValues(relationshipGenerateFlag.SpreadsheetID, relationshipGenerateFlag.SpreadsheetCred)
+		relationshipSheetID, err := getRelationshipSheetID(
+			relationshipGenerateFlag.SpreadsheetCred,
+			relationshipGenerateFlag.SpreadsheetID,
+		)
 		if err != nil {
 			return err
 		}
 
-		if len(resp.Values) <= 2 {
+		if relationshipSheetID == -1 {
+			return ErrEmptySheetData(fmt.Errorf("relationships sheet not found"))
+		}
+
+		helper, err := newRelationshipCSVHelper(
+			googleSpreadsheetURL+relationshipGenerateFlag.SpreadsheetID,
+			"Relationships",
+			relationshipSheetID,
+			"",
+		)
+		if err != nil {
+			return err
+		}
+
+		if err := helper.ParseRelationshipsSheet(""); err != nil {
+			return err
+		}
+
+		if len(helper.Relationships) == 0 {
 			return ErrEmptySheetData(fmt.Errorf("no relationship data found in sheet"))
 		}
 
-		return processSheetData(resp, outputPath)
+		return saveRelationshipsJSON(helper.Relationships, outputPath)
 	},
 }
 
@@ -113,82 +127,22 @@ func init() {
 }
 
 func generateRelationshipsFromCSV(filePath string) ([]CustomValueRange, error) {
-	f, err := os.Open(filePath)
+	helper, err := meshkitRegistry.NewRelationshipCSVHelper("", "", 0, filePath)
 	if err != nil {
-		return nil, utils.ErrFileRead(err)
-	}
-	defer func() {
-		_ = f.Close()
-	}()
-
-	reader := csv.NewReader(f)
-	reader.FieldsPerRecord = -1
-	records, err := reader.ReadAll()
-	if err != nil {
-		return nil, utils.ErrFileRead(err)
+		return nil, err
 	}
 
-	// First two rows are headers, data starts at row 3
-	if len(records) <= 2 {
-		return nil, ErrEmptyCSVData(fmt.Errorf("no relationship data found in CSV file: %s. CSV must contain two header rows followed by at least one data row with a minimum of 15 columns", filePath))
+	if err := helper.ParseRelationshipsSheet(""); err != nil {
+		return nil, err
 	}
 
-	var customResp []CustomValueRange
-	for _, row := range records[2:] {
-		if len(row) >= minRelationshipCSVColumns && row[0] != "" {
-			customResp = append(customResp, CustomValueRange{
-				Model:                row[0],
-				Version:              row[1],
-				Kind:                 row[2],
-				Type:                 row[3],
-				SubType:              row[4],
-				MetadataDescription:  row[5],
-				Docs:                 row[6],
-				MetadataStyles:       row[7],
-				EvalPolicy:           row[8],
-				SelectorsDenyFrom:    row[9],
-				SelectorsDenyTo:      row[10],
-				SelectorsAllowFrom:   row[11],
-				SelectorsAllowTo:     row[12],
-				CompleteDefinition:   row[13],
-				VisualizationExample: row[14],
-			})
-		}
+	if len(helper.Relationships) == 0 {
+		return nil, ErrEmptyCSVData(
+			fmt.Errorf("no valid relationship rows found in CSV file: %s", filePath),
+		)
 	}
 
-	if len(customResp) == 0 {
-		return nil, ErrEmptyCSVData(fmt.Errorf("no valid relationship rows found in CSV file: %s", filePath))
-	}
-
-	return customResp, nil
-}
-
-func processSheetData(resp *sheets.ValueRange, jsonFilePath string) error {
-	var customResp []CustomValueRange
-
-	for _, row := range resp.Values[2:] {
-		if len(row) >= minRelationshipCSVColumns && row[0] != "" {
-			customResp = append(customResp, CustomValueRange{
-				Model:                row[0].(string),
-				Version:              row[1].(string),
-				Kind:                 row[2].(string),
-				Type:                 row[3].(string),
-				SubType:              row[4].(string),
-				MetadataDescription:  row[5].(string),
-				Docs:                 row[6].(string),
-				MetadataStyles:       row[7].(string),
-				EvalPolicy:           row[8].(string),
-				SelectorsDenyFrom:    row[9].(string),
-				SelectorsDenyTo:      row[10].(string),
-				SelectorsAllowFrom:   row[11].(string),
-				SelectorsAllowTo:     row[12].(string),
-				CompleteDefinition:   row[13].(string),
-				VisualizationExample: row[14].(string),
-			})
-		}
-	}
-
-	return saveRelationshipsJSON(customResp, jsonFilePath)
+	return helper.Relationships, nil
 }
 
 func saveRelationshipsJSON(data []CustomValueRange, jsonFilePath string) error {
