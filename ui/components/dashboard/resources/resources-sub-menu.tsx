@@ -51,10 +51,13 @@ const ResourcesSubMenu = ({
     () => (isCRDS ? CRDsKeys.map((key) => key.model) : []),
     [CRDsKeys, isCRDS],
   );
-  const crdsKind = useMemo(
-    () => (isCRDS ? CRDsKeys.map((key) => key.name) : []),
-    [CRDsKeys, isCRDS],
-  );
+  const crdsKind = useMemo(() => {
+    if (isCRDS) {
+      const kinds = CRDsKeys.map((key) => key.name);
+      return kinds.length ? kinds : [''];
+    }
+    return [];
+  }, [CRDsKeys, isCRDS]);
 
   // useTableConfig is a custom hook, so it is called unconditionally at the top
   // level to keep hook order stable across renders.
@@ -125,30 +128,18 @@ const ResourcesSubMenu = ({
         </WrapperPaper>
       )}
 
-      {isCRDS && !CRDsKeys.length ? (
-        <TabPanel value={selectedResource || 'CRDS'} index={selectedResource || 'CRDS'}>
+      {tabs.map((key, index) => (
+        <TabPanel value={selectedResource || ''} index={key} key={`${key}-${index}`}>
           <ResourcesTable
-            workloadType="CRDS"
+            key={index}
+            workloadType={key}
             k8sConfig={k8sConfig}
             useResourceConfig={resource.useTableConfig}
             submenu={resource.submenu}
             selectedK8sContexts={selectedK8sContexts}
           />
         </TabPanel>
-      ) : (
-        tabs.map((key, index) => (
-          <TabPanel value={selectedResource || ''} index={key} key={`${key}-${index}`}>
-            <ResourcesTable
-              key={index}
-              workloadType={key}
-              k8sConfig={k8sConfig}
-              useResourceConfig={resource.useTableConfig}
-              submenu={resource.submenu}
-              selectedK8sContexts={selectedK8sContexts}
-            />
-          </TabPanel>
-        ))
-      )}
+      ))}
     </>
   );
 };
