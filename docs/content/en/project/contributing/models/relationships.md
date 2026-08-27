@@ -192,7 +192,7 @@ Patches copy values from one component to another when the selector matches. Bot
 | Field | Role |
 |---|---|
 | `mutatorRef` | **Source.** JSON path of the value to read. |
-| `mutatedRef` | **Sink.** JSONPath of the field to patch. |
+| `mutatedRef` | **Sink.** Path segments of the field to patch. |
 | `patchStrategy` | How to apply. Schema enum: `merge`, `strategic`, `add`, `remove`, `replace`, `copy`, `move`, `test`. The in-tree corpus and the evaluation engine use `replace` exclusively; default to `replace` unless you need different semantics. |
 
 Paths are relative to the Meshery component document (`configuration`, `displayName`, `component.kind`, …), not the raw Kubernetes YAML root. `_` may mark only the first array position in a path; later arrays need an explicit index. Omit `patch` when the relationship only matches (tagsets, annotation).

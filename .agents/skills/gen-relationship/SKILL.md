@@ -96,7 +96,7 @@ Defined in `api.yml` as **nested arrays of string path segments** (`string[][]`)
 | Field | Role |
 |---|---|
 | `mutatorRef` | **Source.** JSON path of the value to read. |
-| `mutatedRef` | **Sink.** JSONPath of the field to patch. |
+| `mutatedRef` | **Sink.** Path segments of the field to patch. |
 | `patchStrategy` | How to apply. Schema enum: `merge`, `strategic`, `add`, `remove`, `replace`, `copy`, `move`, `test`. The in-tree corpus and the evaluation engine use `replace` exclusively; default to `replace` unless you need different semantics. (`replace` joined the v1beta3 enum in [meshery/schemas#1166](https://github.com/meshery/schemas/pull/1166).) |
 
 Paths are relative to the **component document** as Meshery stores it (`configuration`, `displayName`, `component.kind`, …), not the raw Kubernetes YAML root.

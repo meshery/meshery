@@ -248,7 +248,7 @@ This relationship depicts connections between components without conveying speci
 When a relationship is semantic, matching components can copy values from one to the other.
 
 - `mutatorRef` is the **source**: a nested array of path segments from which the value is read.
-- `mutatedRef` is the **sink**: a nested array of path segments (JSONPath) to patch.
+- `mutatedRef` is the **sink**: a nested array of path segments to patch.
 - The two sequences must be the same length. Index `i` of `mutatorRef` is copied onto index `i` of `mutatedRef`.
 - `patchStrategy` controls how the copy is applied (`merge`, `strategic`, `add`, `remove`, `replace`, `copy`, `move`, `test`). The in-tree corpus uses `replace` exclusively.
 
