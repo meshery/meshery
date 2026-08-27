@@ -4160,6 +4160,15 @@
         "short_description": "Unable to reach Meshery Operator lifecycle for this Kubernetes connection",
         "probable_cause": "The connection is not connected yet, or its state machine has not finished initializing.",
         "suggested_remediation": "Wait for the Kubernetes connection to reach the connected state, then retry.\nIf it stays disconnected, check the connection's diagnostics for why its Kubernetes client could not be created."
+      },
+      "1475": {
+        "name": "ErrInitLoggerCode",
+        "code": "1475",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to initialize logger",
+        "probable_cause": "Logger configuration might be invalid",
+        "suggested_remediation": "Check LOG_LEVEL and logger configuration settings"
       }
     }
   }
