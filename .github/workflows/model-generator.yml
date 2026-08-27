@@ -23,12 +23,6 @@ jobs:
         with:
           go-version-file: go.mod
 
-      - name: Pull changes from remote
-        id: pull-initial
-        run: |
-          set -o pipefail
-          git pull origin master 2>&1 | tee "$RUNNER_TEMP/pull-initial.log"
-
       - name: Build mesheryctl
         id: build-mesheryctl
         run: |
@@ -108,9 +102,6 @@ jobs:
             FAILED_STAGE="Check out code"
           elif [ "${{ steps.setup-go.outcome }}" = "failure" ]; then
             FAILED_STAGE="Setup Go"
-          elif [ "${{ steps.pull-initial.outcome }}" = "failure" ]; then
-            FAILED_STAGE="Initial git pull"
-            LOG_FILE="$RUNNER_TEMP/pull-initial.log"
           elif [ "${{ steps.build-mesheryctl.outcome }}" = "failure" ]; then
             FAILED_STAGE="Build mesheryctl"
             LOG_FILE="$RUNNER_TEMP/build.log"
