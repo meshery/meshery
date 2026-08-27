@@ -1,0 +1,135 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "edge",
+  "metadata": {
+    "description": "An edge reference relationship connecting BatchAccount keyVaultReference to Key Vault",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "azureserviceoperator_customresourcedefinitions_v2.14.0.yaml"
+    },
+    "name": "azure-batch",
+    "registrant": {
+      "kind": ""
+    },
+    "version": ""
+  },
+  "schemaVersion": "relationships.meshery.io/v1beta2",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "BatchAccount",
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "azure-batch",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "keyVaultReference",
+                  "reference",
+                  "group"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "keyVaultReference",
+                  "reference",
+                  "kind"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "keyVaultReference",
+                  "reference",
+                  "name"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "keyVaultReference",
+                  "url"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Vault",
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "azure-key-vault",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "group"
+                ],
+                [
+                  "configuration",
+                  "kind"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "name"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "properties",
+                  "vaultUri"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "subType": "reference",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}
