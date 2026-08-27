@@ -10,7 +10,6 @@ jobs:
     if: ${{ github.repository == 'meshery/meshery' }}
     permissions:
       contents: read
-      packages: write
       id-token: write
     env:
       RELEASE_CHANNEL: "stable"
