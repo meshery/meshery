@@ -8,6 +8,10 @@ jobs:
   build:
     name: Docker build and push
     if: ${{ github.repository == 'meshery/meshery' }}
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
     env:
       RELEASE_CHANNEL: "stable"
     runs-on: ubuntu-24.04
@@ -46,6 +50,17 @@ jobs:
           docker push ${{ secrets.IMAGE_NAME }}:playground-latest
           docker push ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}
           docker push ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_SHA::8}
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.5.0
+        with:
+          cosign-release: 'v2.2.4'
+
+      - name: Sign the published Docker image
+        run: |
+          for tag in ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//} ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::8} ${{ secrets.IMAGE_NAME }}:playground-latest ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//} ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_SHA::8}; do
+            cosign sign --yes "${tag}"
+          done
       # SKIP STEP: FAILS BECAUSE README FILE SIZE IS TOO LARGE FOR DOCKER HUB
       # - name: Docker Hub Description
       #   uses: peter-evans/dockerhub-description@v3

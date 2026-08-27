@@ -55,6 +55,10 @@ jobs:
 
   docker-extension:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
     steps:
       - name: Checkout 🛎️ repo
         uses: actions/checkout@v6
@@ -110,6 +114,17 @@ jobs:
             RELEASE_CHANNEL=${{env.RELEASE_CHANNEL}}
           tags: ${{ steps.meta.outputs.tags }}
           platforms: linux/amd64,linux/arm64
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.5.0
+        with:
+          cosign-release: 'v2.2.4'
+
+      - name: Sign the published Docker image
+        run: |
+          for tag in ${{ steps.meta.outputs.tags }}; do
+            cosign sign --yes "${tag}"
+          done
 
       # -
       #   name: Docker Hub Description
