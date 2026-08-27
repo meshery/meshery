@@ -187,4 +187,27 @@ describe('CRDsResourcesSubMenu', () => {
     // The hook is called with the cluster args needed to fetch CRD kinds.
     expect(crdsArgs[0]).toEqual([null, null, { id: 'cluster-1' }, null, 'CRDS', ['ctx-1']]);
   });
+
+  it('renders no CRDs tabs when the CRDs hook resolves no cluster-backed resource', () => {
+    const crdsArgs: unknown[][] = [];
+    const crdsResource = {
+      submenu: true,
+      useTableConfig: (...args: unknown[]) => {
+        crdsArgs.push(args);
+        return {};
+      },
+    };
+    render(
+      <CRDsResourcesSubMenu
+        k8sConfig={null}
+        resource={crdsResource}
+        selectedK8sContexts={[]}
+        selectedResource="Foo"
+        handleChangeSelectedResource={vi.fn()}
+      />,
+    );
+    expect(screen.queryByTestId('tab-0')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('pannel-Foo')).not.toBeInTheDocument();
+    expect(crdsArgs[0]).toEqual([null, null, null, null, 'CRDS', []]);
+  });
 });

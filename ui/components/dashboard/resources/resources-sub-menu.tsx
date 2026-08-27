@@ -129,7 +129,7 @@ const ResourcesSubMenu = ({
       )}
 
       {tabs.map((key, index) => (
-        <TabPanel value={selectedResource || ''} index={key} key={`${key}-${index}`}>
+        <TabPanel value={selectedResource} index={key} key={`${key}-${index}`}>
           <ResourcesTable
             key={index}
             workloadType={key}
