@@ -8,7 +8,7 @@
   "status": "enabled",
   "evaluationQuery": "",
   "metadata": {
-    "description": "A rare edge form of inventory: a Kusto Database indexes an Event Hub by reference without parent-child nesting. Prefer hierarchical/parent/inventory for containment.",
+    "description": "A rare edge form of inventory: one component lists or indexes another without parent-child nesting. The Database's name (mutator) is written into the Cluster's databaseRef (mutated); the indexed component is never modified.",
     "isAnnotation": false
   },
   "model": {
@@ -17,41 +17,40 @@
     "version": "v1.0.0",
     "displayName": "azure-kusto",
     "registrant": { "kind": "github" },
-    "model": { "version": "azureserviceoperator_customresourcedefinitions_v2.14.0.yaml" }
+    "model": { "version": "v1.0.0" }
   },
   "selectors": [
     {
       "allow": {
         "from": [
           {
-            "kind": "Database",
+            "kind": "Cluster",
             "model": { "name": "azure-kusto", "registrant": { "kind": "github" }, "model": { "version": "" } },
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                ["configuration", "spec", "eventHubResourceReference", "group"],
-                ["configuration", "spec", "eventHubResourceReference", "kind"],
-                ["configuration", "spec", "eventHubResourceReference", "name"]
+                ["configuration", "spec", "databaseRef"]
               ]
             }
           }
         ],
         "to": [
           {
-            "kind": "NamespacesEventHub",
-            "model": { "name": "azure-event-hubs", "registrant": { "kind": "github" }, "model": { "version": "" } },
+            "kind": "Database",
+            "model": { "name": "azure-kusto", "registrant": { "kind": "github" }, "model": { "version": "" } },
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                ["configuration", "group"],
-                ["configuration", "kind"],
-                ["configuration", "spec", "name"]
+                ["displayName"]
               ]
             }
           }
         ]
       },
-      "deny": { "from": [], "to": [] }
+      "deny": {
+        "from": [],
+        "to": []
+      }
     }
   ]
 }

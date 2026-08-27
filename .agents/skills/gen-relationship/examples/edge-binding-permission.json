@@ -8,7 +8,7 @@
   "status": "enabled",
   "evaluationQuery": "",
   "metadata": {
-    "description": "A Role is bound to a ServiceAccount through a RoleBinding. Binding edges assign identities.",
+    "description": "A Role is bound to a ServiceAccount through a mediating RoleBinding: the Role's kind and name land in the RoleBinding's roleRef, and the ServiceAccount's name lands in its subjects. Binding-permission edges use match blocks (kind: self plus the mediator) rather than a direct patch between the endpoints; note roleRef/subjects sit at the top level of the RoleBinding schema, not under spec.",
     "isAnnotation": false
   },
   "model": {
@@ -30,15 +30,18 @@
               "from": [
                 {
                   "kind": "self",
-                  "mutatorRef": [["component", "kind"], ["displayName"]]
+                  "mutatorRef": [
+                    ["component", "kind"],
+                    ["displayName"]
+                  ]
                 }
               ],
               "to": [
                 {
                   "kind": "RoleBinding",
                   "mutatedRef": [
-                    ["configuration", "spec", "roleRef", "kind"],
-                    ["configuration", "spec", "roleRef", "name"]
+                    ["configuration", "roleRef", "kind"],
+                    ["configuration", "roleRef", "name"]
                   ]
                 }
               ]
@@ -54,21 +57,26 @@
                 {
                   "kind": "RoleBinding",
                   "mutatedRef": [
-                    ["configuration", "spec", "subjects", "_", "name"]
+                    ["configuration", "subjects", "_", "name"]
                   ]
                 }
               ],
               "to": [
                 {
                   "kind": "self",
-                  "mutatorRef": [["displayName"]]
+                  "mutatorRef": [
+                    ["displayName"]
+                  ]
                 }
               ]
             }
           }
         ]
       },
-      "deny": { "from": [], "to": [] }
+      "deny": {
+        "from": [],
+        "to": []
+      }
     }
   ]
 }

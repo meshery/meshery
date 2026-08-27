@@ -95,7 +95,7 @@ The combination of `kind`, `type`, and `subType` uniquely determines the visual 
 | `edge` | `non-binding` | `annotation` | Designer-only connection (`metadata.isAnnotation: true`) |
 | `edge` | `non-binding` | `alias` | Named stand-in, not nested ownership |
 | `edge` | `non-binding` | `inventory` | Rare peer index; prefer hierarchical parent inventory for containment |
-| `hierarchical` | `parent` | `inventory` | Parent contains/scopes children (Namespace → namespaced resources) |
+| `hierarchical` | `parent` | `inventory` | Parent contains/scopes children; the parent's identity is patched onto each child (Namespace onto namespaced resources) |
 | `hierarchical` | `parent` | `wallet` | Child configuration is patched into the parent (WASMFilter → EnvoyFilter) |
 | `hierarchical` | `parent` | `alias` | Child is a nested object inside the parent (Container → Pod) |
 | `hierarchical` | `sibling` | `matchlabels` | In-tree tagsets encoding (shared labels). Schema also allows `kind: sibling`. |

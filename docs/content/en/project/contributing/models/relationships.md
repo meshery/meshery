@@ -98,7 +98,7 @@ Codify relationships using your domain expertise. The `kind`, `type`, and `subTy
 
 | kind | type | subType | Meaning |
 |---|---|---|---|
-| `hierarchical` | `parent` | `inventory` | Parent contains/scopes children. Parent identity is patched onto the child (Namespace → namespaced resources). |
+| `hierarchical` | `parent` | `inventory` | Parent contains/scopes children. Parent identity is patched onto the child: the Namespace's name lands in each namespaced resource's `metadata.namespace`. |
 | `hierarchical` | `parent` | `alias` | Child is a nested object inside the parent (Container inside Pod). |
 | `hierarchical` | `parent` | `wallet` | Child configuration is held/patched into the parent (WASMFilter → EnvoyFilter). |
 | `hierarchical` | `sibling` | `matchlabels` | **In-tree tagsets encoding.** Components that share labels. Schema also allows `kind: sibling`; do not mix encodings in one model. |
@@ -146,7 +146,7 @@ Include:
 - `kind`: The genre of relationship (`hierarchical`, `edge`, `sibling`).
 - `type`: The augmentative category (`parent`, `binding`, `non-binding`, `sibling`, …).
 - `subType`: The specific visual paradigm (`inventory`, `mount`, `network`, `wallet`, `reference`, `matchlabels`, …).
-- `selectors`: The scope of the relationship. One selector-set item is an OR. Inside an item, `from` × `to` is 1:many (AND).
+- `selectors`: The scope of the relationship. One selector-set item is an OR. Inside an item, every `from` entry relates to every `to` entry - a cross-product (AND).
 - `evaluationQuery`: Deprecated. Set it to `""` as every in-tree definition does; the evaluation engine enters through the fixed `data.relationship_evaluation_policy` package and dispatches on `kind`/`type`/`subType`.
 - `metadata.description`: A characterization of the relationship, its purpose, and constraints.
 
