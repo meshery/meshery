@@ -76,8 +76,9 @@ const ResourcesTableInner = (props: ResourcesTableProps) => {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const { width } = useWindowDimensions();
   const { connectionMetadataState } = useSelector((state) => state.ui);
-  const handleApplyFilter = () => {
-    const namespaceFilter = selectedFilters.namespace === 'All' ? null : selectedFilters.namespace;
+  const handleApplyFilter = (filters?: { namespace: string }) => {
+    const next = filters ?? selectedFilters;
+    const namespaceFilter = next.namespace === 'All' ? null : next.namespace;
     setNamespaceFilter(namespaceFilter);
   };
   const clusterIds = getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
