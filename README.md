@@ -1,4 +1,3 @@
-
 <p style="text-align:center;" align="center"><a href="https://meshery.io"><picture>
  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshery-logo-light-text-side.svg">
  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshery-logo-dark-text-side.svg">
@@ -13,8 +12,6 @@ alt="Meshery Logo" width="70%" /></picture></a><br /><br /></p>
   <img src="https://img.shields.io/github/license/meshery/meshery?color=brightgreen" /></a>
 <a href="https://artifacthub.io/packages/helm/meshery/meshery" alt="Artifact Hub Meshery">
   <img src="https://img.shields.io/endpoint?color=brightgreen&label=Helm%20Chart&style=plastic&url=https%3A%2F%2Fartifacthub.io%2Fbadge%2Frepository%2Fartifact-hub" /></a>  
-<a href="https://goreportcard.com/report/github.com/meshery/meshery" alt="Go Report Card">
-  <img src="https://goreportcard.com/badge/github.com/meshery/meshery" /></a>
 <a href="https://github.com/meshery/meshery/actions" alt="Build Status">
   <img src="https://img.shields.io/github/actions/workflow/status/meshery/meshery/release-drafter.yml" /></a>
 <a href="https://bestpractices.coreinfrastructure.org/projects/3564" alt="CLI Best Practices">
@@ -82,7 +79,6 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
   <br /><br /><br />
 </h3> -->
 
-
 <p style="clear:both;">&nbsp;</p>
 
 # Functionality
@@ -109,13 +105,14 @@ Meshery provides a single pane of glass to manage multiple Kubernetes clusters a
 <details><summary><h4>Dry-run your deployments</h4></summary>
 Meshery leverages Kubernetes' built-in dry-run capabilities to allow you to simulate deployments without actually applying the changes to your cluster. This enables you to:
 
-- Validate configurations: Ensure your deployment specifications (e.g., YAML manifests, Helm charts, Meshery Designs) are syntactically correct and will be accepted by the Kubernetes API server.   
+- Validate configurations: Ensure your deployment specifications (e.g., YAML manifests, Helm charts, Meshery Designs) are syntactically correct and will be accepted by the Kubernetes API server.  
 - Identify potential issues: Detect errors in your configurations, such as invalid resource definitions, missing fields, or API version mismatches, before they impact your live environment.
 - Preview changes: Understand the objects that Kubernetes would create or modify during a real deployment.
 - Integrate with CI/CD: Incorporate dry-run as a step in your continuous integration and continuous delivery pipelines to automate pre-deployment checks and prevent faulty deployments.
 
 By providing this dry-run functionality, Meshery helps you increase the reliability and stability of your Kubernetes deployments by catching potential problems early in the development and deployment process.
-<!-- 
+
+<!--
 Assess your cloud native infrastructure configuration against deployment and operational best practices with Meshery's configuration validator. Manage your workloads with confidence. Check your Kubernetes configuration for anti-patterns and avoid common pitfalls. -->
 
 </details>
@@ -148,6 +145,7 @@ Workspaces let you organize your work and serve as the central point of collabor
 <img src=".github/assets/images/readme/meshery-snapshot.png" width="50%" alt="Infrastructure snapshot preview in GitHub pull request" loading="lazy" align="center" />
 
 Get snapshots of your infrastructure directly in your PRs. Preview your deployment, view changes pull request-to-pull request and get infrastructure snapshots within your PRs by connecting Meshery to your GitHub repositories.
+
 </details>
 
 <!-- <h3>Operate with configuration best practices</h3>
@@ -199,14 +197,14 @@ Baseline and track your cloud native performance from release to release.
 <summary><h4>Load Generation and Microservice Performance Characterization</h4></summary>
 
 - **Load Generation:** Meshery uses the Fortio load generator to drive performance tests, with a pluggable load generator interface for extensibility.
-- **Configurable Performance Profiles:** Meshery provides a highly configurable set of load profiles with tunable facets, enabling users to generate TCP, gRPC, and HTTP load. You can customize parameters such as duration, concurrent threads, concurrent generators, and load generator type. 
+- **Configurable Performance Profiles:** Meshery provides a highly configurable set of load profiles with tunable facets, enabling users to generate TCP, gRPC, and HTTP load. You can customize parameters such as duration, concurrent threads, concurrent generators, and load generator type.
 - **Statistical Analysis:** Meshery performs statistical analysis on the results of performance tests, presenting data in the form of histograms with latency buckets. Understand the distribution of response times and identify potential bottlenecks.
 - **Comparison of Test Results:** Meshery enables you to compare the difference in request performance (latency and throughput) between independent performance tests. Save your load test configurations as Performance Profiles, making it easy to rerun tests with the same settings and track performance variations over time.
 - **Kubernetes Cluster and Workload Metrics:** Meshery connects to one or more Prometheus servers to gather both cluster and application metrics. Meshery also integrates with Grafana, allowing you to import your existing dashboards and visualize performance data.
 
 <p>In an effort to produce infrastructure agnostic tooling, Meshery uses the <a href="https://smp-spec.io" target="_blank" rel="noopener noreferrer">Cloud Native Performance</a> specification as a common format to capture and measure your infrastructure's performance against a universal cloud native performance index. Meshery participates in advancing cloud native infrastructure adoption through the standardization of APIs. Meshery enables you to measure the value provided by Docker, Kubernetes, or other cloud native infrastructure in the context of the overhead incurred.</p>
 
-<!-- 
+<!--
 
 SCREENSHOT / GIF NEEDED HERE
 
@@ -226,30 +224,31 @@ SCREENSHOT / GIF NEEDED HERE
 
 See the [getting started](https://meshery.io/#getting-started) section to quickly deploy Meshery on any of these supported platforms:
 
-| Platform                                                                                                                                                                                                                             | Supported?  |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :---------: |
-| <img src="https://docs.meshery.io/installation/docker/images/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker](https://docs.meshery.io/installation/docker)                                                           |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/docker/images/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker - Docker App](https://docs.meshery.io/installation/docker)                           |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/docker/images/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker - Docker Extension](https://docs.meshery.io/installation/docker/docker-extension) |      ✔️      |
-| <img src="https://docs.meshery.io/installation/kubernetes/images/kubernetes.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes](https://docs.meshery.io/installation/kubernetes)                                               |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/kubernetes/aks/images/aks.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - AKS](https://docs.meshery.io/installation/kubernetes/aks)                         |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/docker/images/docker.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Docker Desktop](https://docs.meshery.io/installation#mac-or-linux)             |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/kubernetes/eks/images/eks.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - EKS](https://docs.meshery.io/installation/kubernetes/eks)                         |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/kubernetes/gke/images/gke.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - GKE](https://docs.meshery.io/installation/kubernetes/gke)                         |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/kubernetes/images/helm.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Helm](https://docs.meshery.io/installation/kubernetes/helm)                      |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/kubernetes/kind/images/kind.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - kind](https://docs.meshery.io/installation/kubernetes/kind)                      |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/kubernetes/minikube/images/minikube.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - Minikube](https://docs.meshery.io/installation/kubernetes/minikube)          |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/kubernetes/images/openshift.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - OpenShift](https://docs.meshery.io/installation/kubernetes)                      |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/kubernetes/images/kubernetes.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Rancher](https://docs.meshery.io/installation/kubernetes)                      |      ✔️      |
-| <img src="https://docs.meshery.io/installation/mesheryctl/linux-mac/images/linux.svg" width="20" height="20" vertical-align="middle" /> [Linux](https://docs.meshery.io/installation#mac-or-linux)                                                       |      ✔️      |
-| <img src="https://docs.meshery.io/installation/mesheryctl/linux-mac/images/apple.svg" width="20" height="20" vertical-align="middle" /> [Mac](https://docs.meshery.io/installation#mac-or-linux)                                                         |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/mesheryctl/linux-mac/images/homebrew.png" width="20" height="20" vertical-align="middle" /> [Mac - Homebrew](https://docs.meshery.io/installation#mac-or-linux)                        |      ✔️      |
-| <img src="https://docs.meshery.io/installation/mesheryctl/windows/images/wsl2.png" width="20" height="20" vertical-align="middle" /> [Windows](https://docs.meshery.io/installation#windows)                                                           |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/mesheryctl/windows/images/wsl2.png" width="20" height="20" vertical-align="middle" /> [Scoop](https://docs.meshery.io/installation#windows)                                                                                                                                                             |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/installation/mesheryctl/windows/images/wsl2.png" width="20" height="20" vertical-align="middle" /> [WSL2](https://docs.meshery.io/installation/platforms/windows#wsl2)                            |      ✔️      |
-| <img src="https://docs.meshery.io/installation/kubernetes/images/raspberry-pi.png" width="20" height="20" vertical-align="middle" /> Raspberry Pi                                                                                              | In Progress |
+| Platform                                                                                                                                                                                                                                              | Supported?  |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------: |
+| <img alt="" src="https://docs.meshery.io/installation/docker/images/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker](https://docs.meshery.io/installation/docker)                                                               |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/docker/images/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker - Docker App](https://docs.meshery.io/installation/docker)                               |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/docker/images/docker.svg" width="20" height="20" vertical-align="middle" /> [Docker - Docker Extension](https://docs.meshery.io/installation/docker/docker-extension)        |     ✔️      |
+| <img alt="" src="https://docs.meshery.io/installation/kubernetes/images/kubernetes.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes](https://docs.meshery.io/installation/kubernetes)                                               |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/kubernetes/aks/images/aks.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - AKS](https://docs.meshery.io/installation/kubernetes/aks)                     |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/docker/images/docker.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Docker Desktop](https://docs.meshery.io/installation#mac-or-linux)                 |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/kubernetes/eks/images/eks.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - EKS](https://docs.meshery.io/installation/kubernetes/eks)                     |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/kubernetes/gke/images/gke.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - GKE](https://docs.meshery.io/installation/kubernetes/gke)                     |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/kubernetes/images/helm.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Helm](https://docs.meshery.io/installation/kubernetes/helm)                      |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/kubernetes/kind/images/kind.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - kind](https://docs.meshery.io/installation/kubernetes/kind)                 |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/kubernetes/minikube/images/minikube.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - Minikube](https://docs.meshery.io/installation/kubernetes/minikube) |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/kubernetes/images/openshift.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - OpenShift](https://docs.meshery.io/installation/kubernetes)                 |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/kubernetes/images/kubernetes.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Rancher](https://docs.meshery.io/installation/kubernetes)                  |     ✔️      |
+| <img alt="" src="https://docs.meshery.io/installation/mesheryctl/linux-mac/images/linux.svg" width="20" height="20" vertical-align="middle" /> [Linux](https://docs.meshery.io/installation#mac-or-linux)                                             |     ✔️      |
+| <img alt="" src="https://docs.meshery.io/installation/mesheryctl/linux-mac/images/apple.svg" width="20" height="20" vertical-align="middle" /> [Mac](https://docs.meshery.io/installation#mac-or-linux)                                               |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/mesheryctl/linux-mac/images/homebrew.png" width="20" height="20" vertical-align="middle" /> [Mac - Homebrew](https://docs.meshery.io/installation#mac-or-linux)              |     ✔️      |
+| <img alt="" src="https://docs.meshery.io/installation/mesheryctl/windows/images/wsl2.png" width="20" height="20" vertical-align="middle" /> [Windows](https://docs.meshery.io/installation#windows)                                                   |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/mesheryctl/windows/images/wsl2.png" width="20" height="20" vertical-align="middle" /> [Scoop](https://docs.meshery.io/installation#windows)                                  |     ✔️      |
+| &nbsp;&nbsp;&nbsp; <img alt="" src="https://docs.meshery.io/installation/mesheryctl/windows/images/wsl2.png" width="20" height="20" vertical-align="middle" /> [WSL2](https://docs.meshery.io/installation/platforms/windows#wsl2)                    |     ✔️      |
+| <img alt="" src="https://docs.meshery.io/installation/kubernetes/images/raspberry-pi.png" width="20" height="20" vertical-align="middle" /> Raspberry Pi                                                                                              | In Progress |
 
 [Meshery documentation](https://docs.meshery.io/installation) offers thorough installation guides for your platform of choice.
+
  </details>
 
 <p style="clear:both;">&nbsp;</p>
@@ -345,4 +344,3 @@ This repository and site are available as open-source under the terms of the [Ap
 #### Software Bill of Materials (SBOM)
 
 Meshery's [Software Bill of Materials](https://github.com/meshery/meshery/actions/workflows/bom.yaml) (SBOM) is available as a build artifact.
-

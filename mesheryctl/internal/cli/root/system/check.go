@@ -538,7 +538,7 @@ func (hc *HealthChecker) runMesheryVersionHealthChecks() error {
 				utils.Log.Info("!! Meshery Server is not up-to-date")
 			}
 		} else { // else we grab the error
-			if !*isOutdated {
+			if *isOutdated {
 				return errors.New("!! Meshery Server is not up-to-date")
 			}
 		}
