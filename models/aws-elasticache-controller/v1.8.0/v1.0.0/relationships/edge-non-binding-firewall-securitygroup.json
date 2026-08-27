@@ -79,7 +79,7 @@
                   "configuration",
                   "spec",
                   "securityGroupRefs",
-                  "0",
+                  "-",
                   "from",
                   "name"
                 ]
@@ -148,7 +148,7 @@
                   "configuration",
                   "spec",
                   "securityGroupRefs",
-                  "0",
+                  "-",
                   "from",
                   "name"
                 ]
@@ -217,7 +217,7 @@
                   "configuration",
                   "spec",
                   "securityGroupRefs",
-                  "0",
+                  "-",
                   "from",
                   "name"
                 ]
@@ -233,7 +233,7 @@
       }
     }
   ],
-  "subType": "reference",
+  "subType": "firewall",
   "status": "enabled",
   "type": "non-binding",
   "version": "v1.0.0"
