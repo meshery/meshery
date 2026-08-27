@@ -7,6 +7,7 @@ import { TooltipWrappedConnectionChip } from '../../../connections/ConnectionChi
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CoreConnectionKinds } from '../../../../utils/Enum';
 import { FormatId } from '@/components/data-formatter';
+import { safeJsonParse } from '../../../../utils/json-parse';
 
 export const buildReplicationControllerColumns = ({
   switchView,
@@ -85,8 +86,8 @@ export const buildReplicationControllerColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
-          let replicas = attribute?.replicas;
+          const attribute = safeJsonParse<{ replicas?: number }>(val);
+          const replicas = attribute?.replicas;
           return <>{replicas}</>;
         },
       },
@@ -100,8 +101,8 @@ export const buildReplicationControllerColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
-          let replicas = attribute?.replicas;
+          const attribute = safeJsonParse<{ replicas?: number }>(val);
+          const replicas = attribute?.replicas;
           return <>{replicas}</>;
         },
       },

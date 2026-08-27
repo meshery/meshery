@@ -7,6 +7,7 @@ import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CoreConnectionKinds } from '../../../../utils/Enum';
 import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
 import { FormatId } from '@/components/data-formatter';
+import { safeJsonParse } from '../../../../utils/json-parse';
 
 export const buildPodDisruptionBudgetColumns = ({
   switchView,
@@ -84,7 +85,12 @@ export const buildPodDisruptionBudgetColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
+          const attribute = safeJsonParse<{
+            minAvailable?: number;
+            maxAvailable?: number;
+            currentHealthy?: number;
+            desiredHealthy?: number;
+          }>(val);
           let minAvailable = attribute?.minAvailable;
           return <>{minAvailable}</>;
         },
@@ -99,7 +105,12 @@ export const buildPodDisruptionBudgetColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
+          const attribute = safeJsonParse<{
+            minAvailable?: number;
+            maxAvailable?: number;
+            currentHealthy?: number;
+            desiredHealthy?: number;
+          }>(val);
           let maxAvailable = attribute?.maxAvailable;
           return <>{maxAvailable}</>;
         },
@@ -114,7 +125,12 @@ export const buildPodDisruptionBudgetColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
+          const attribute = safeJsonParse<{
+            minAvailable?: number;
+            maxAvailable?: number;
+            currentHealthy?: number;
+            desiredHealthy?: number;
+          }>(val);
           let currentHealthy = attribute?.currentHealthy;
           return <>{currentHealthy}</>;
         },
@@ -129,7 +145,12 @@ export const buildPodDisruptionBudgetColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
+          const attribute = safeJsonParse<{
+            minAvailable?: number;
+            maxAvailable?: number;
+            currentHealthy?: number;
+            desiredHealthy?: number;
+          }>(val);
           let desiredHealthy = attribute?.desiredHealthy;
           return <>{desiredHealthy}</>;
         },

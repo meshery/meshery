@@ -7,6 +7,7 @@ import { TooltipWrappedConnectionChip } from '../../../connections/ConnectionChi
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CoreConnectionKinds } from '../../../../utils/Enum';
 import { FormatId } from '@/components/data-formatter';
+import { safeJsonParse } from '../../../../utils/json-parse';
 
 export const buildCronJobColumns = ({
   switchView,
@@ -85,8 +86,8 @@ export const buildCronJobColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
-          let schedule = attribute?.schedule;
+          const attribute = safeJsonParse<{ schedule?: string; suspend?: boolean }>(val);
+          const schedule = attribute?.schedule;
           return <>{schedule}</>;
         },
       },
@@ -100,8 +101,8 @@ export const buildCronJobColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
-          let suspend = attribute?.suspend;
+          const attribute = safeJsonParse<{ schedule?: string; suspend?: boolean }>(val);
+          const suspend = attribute?.suspend;
           return <>{suspend}</>;
         },
       },
