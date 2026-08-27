@@ -15,8 +15,7 @@ Delete a connection.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection delete [flags]
-
+<code class='clipboardjs'>mesheryctl connection delete [flags]</code>
 </div>
 </pre> 
 
@@ -25,8 +24,7 @@ mesheryctl connection delete [flags]
 Delete a connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection delete [connection_id]
-
+<code class='clipboardjs'>mesheryctl connection delete [connection_id]</code>
 </div>
 </pre> 
 

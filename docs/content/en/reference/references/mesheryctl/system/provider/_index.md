@@ -14,8 +14,7 @@ Switch between providers
 Enforce a provider. Choose between available Meshery providers
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system provider [flags]
-
+<code class='clipboardjs'>mesheryctl system provider [flags]</code>
 </div>
 </pre> 
 
@@ -24,40 +23,35 @@ mesheryctl system provider [flags]
 To view provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system provider view
-
+<code class='clipboardjs'>mesheryctl system provider view</code>
 </div>
 </pre> 
 
 To list all available providers
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system provider list
-
+<code class='clipboardjs'>mesheryctl system provider list</code>
 </div>
 </pre> 
 
 To set a provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system provider set [provider]
-
+<code class='clipboardjs'>mesheryctl system provider set [provider]</code>
 </div>
 </pre> 
 
 To switch provider and redeploy Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system provider switch [provider]
-
+<code class='clipboardjs'>mesheryctl system provider switch [provider]</code>
 </div>
 </pre> 
 
 To clear the configured provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system provider reset
-
+<code class='clipboardjs'>mesheryctl system provider reset</code>
 </div>
 </pre> 
 

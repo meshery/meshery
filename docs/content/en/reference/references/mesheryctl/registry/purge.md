@@ -19,8 +19,7 @@ The "kubernetes" and "meshery-core" models are always excluded from purging, reg
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry purge [flags]
-
+<code class='clipboardjs'>mesheryctl registry purge [flags]</code>
 </div>
 </pre> 
 
@@ -29,40 +28,35 @@ mesheryctl registry purge [flags]
 Retain only the latest version of every model (default).
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry purge
-
+<code class='clipboardjs'>mesheryctl registry purge</code>
 </div>
 </pre> 
 
 Retain the 3 most recent versions of every model.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry purge --retain 3
-
+<code class='clipboardjs'>mesheryctl registry purge --retain 3</code>
 </div>
 </pre> 
 
 Preview what would be removed without deleting anything.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry purge --dry-run
-
+<code class='clipboardjs'>mesheryctl registry purge --dry-run</code>
 </div>
 </pre> 
 
 Additionally skip specific models.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry purge --exclude aws-ec2-controller,cilium
-
+<code class='clipboardjs'>mesheryctl registry purge --exclude aws-ec2-controller,cilium</code>
 </div>
 </pre> 
 
 Skip the confirmation prompt.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry purge --retain 2 -y
-
+<code class='clipboardjs'>mesheryctl registry purge --retain 2 -y</code>
 </div>
 </pre> 
 

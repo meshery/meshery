@@ -15,8 +15,7 @@ List detailed information of all registered environments
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment list [flags]
-
+<code class='clipboardjs'>mesheryctl environment list [flags]</code>
 </div>
 </pre> 
 
@@ -25,32 +24,28 @@ mesheryctl environment list [flags]
 List all registered environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment list --orgId [orgId]
-
+<code class='clipboardjs'>mesheryctl environment list --orgId [orgId]</code>
 </div>
 </pre> 
 
 List count of all registered environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment list --orgId [orgId] --count
-
+<code class='clipboardjs'>mesheryctl environment list --orgId [orgId] --count</code>
 </div>
 </pre> 
 
 List all registered environment at a specific page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment list --orgId [orgId] --page [page]
-
+<code class='clipboardjs'>mesheryctl environment list --orgId [orgId] --page [page]</code>
 </div>
 </pre> 
 
 List all registered environment with a specific page size
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment list --orgId [orgId] --pagesize [pagesize]
-
+<code class='clipboardjs'>mesheryctl environment list --orgId [orgId] --pagesize [pagesize]</code>
 </div>
 </pre> 
 

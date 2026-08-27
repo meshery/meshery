@@ -15,8 +15,7 @@ Delete a model by ID or Name
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model delete [model-id | model-name] [flags]
-
+<code class='clipboardjs'>mesheryctl model delete [model-id | model-name] [flags]</code>
 </div>
 </pre> 
 
@@ -25,16 +24,14 @@ mesheryctl model delete [model-id | model-name] [flags]
 Delete a model by ID
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model delete [model-id]
-
+<code class='clipboardjs'>mesheryctl model delete [model-id]</code>
 </div>
 </pre> 
 
 Delete a model by name
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model delete [model-name]
-
+<code class='clipboardjs'>mesheryctl model delete [model-name]</code>
 </div>
 </pre> 
 

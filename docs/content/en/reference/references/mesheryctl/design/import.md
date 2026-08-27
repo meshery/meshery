@@ -22,8 +22,7 @@ Import a Meshery design
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design import [flags]
-
+<code class='clipboardjs'>mesheryctl design import [flags]</code>
 </div>
 </pre> 
 
@@ -32,29 +31,25 @@ mesheryctl design import [flags]
 Import design manifest
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design import -f [file/URL] -s [source-type] -n [name]
-
+<code class='clipboardjs'>mesheryctl design import -f [file/URL] -s [source-type] -n [name]</code>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design import -f design.tar
-
+<code class='clipboardjs'>mesheryctl design import -f design.tar</code>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design import -f design.yml -n design-name
-
+<code class='clipboardjs'>mesheryctl design import -f design.yml -n design-name</code>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
-
+<code class='clipboardjs'>mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name</code>
 </div>
 </pre> 
 

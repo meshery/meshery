@@ -15,8 +15,7 @@ Create a new connection to a Kubernetes cluster or other supported platform.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection create [flags]
-
+<code class='clipboardjs'>mesheryctl connection create [flags]</code>
 </div>
 </pre> 
 
@@ -25,37 +24,32 @@ mesheryctl connection create [flags]
 Create a new Kubernetes connection using a specific type
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection create --type aks
-
+<code class='clipboardjs'>mesheryctl connection create --type aks</code>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection create --type eks
-
+<code class='clipboardjs'>mesheryctl connection create --type eks</code>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection create --type gke
-
+<code class='clipboardjs'>mesheryctl connection create --type gke</code>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection create --type minikube
-
+<code class='clipboardjs'>mesheryctl connection create --type minikube</code>
 </div>
 </pre> 
 
 Create a connection with a token
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection create --type gke --token auth.json
-
+<code class='clipboardjs'>mesheryctl connection create --type gke --token auth.json</code>
 </div>
 </pre> 
 

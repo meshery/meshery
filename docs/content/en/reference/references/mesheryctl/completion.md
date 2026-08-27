@@ -14,8 +14,7 @@ Generate shell completion scripts
 Output shell completion code
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl completion [bash|zsh|fish]
-
+<code class='clipboardjs'>mesheryctl completion [bash|zsh|fish]</code>
 </div>
 </pre> 
 
@@ -24,8 +23,7 @@ mesheryctl completion [bash|zsh|fish]
 ### bash <= 3.2
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-source /dev/stdin <<< "$(mesheryctl completion bash)"
-
+<code class='clipboardjs'>source /dev/stdin &lt;&lt;&lt; "$(mesheryctl completion bash)"</code>
 </div>
 </pre> 
 
@@ -33,38 +31,33 @@ bash <= 3.2 on osx
 ensure you have bash-completion 1.3+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-brew install bash-completion 
-
+<code class='clipboardjs'>brew install bash-completion </code>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
-
+<code class='clipboardjs'>mesheryctl completion bash &gt; $(brew --prefix)/etc/bash_completion.d/mesheryctl</code>
 </div>
 </pre> 
 
 ### bash >= 4.0
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-source <(mesheryctl completion bash)
-
+<code class='clipboardjs'>source &lt;(mesheryctl completion bash)</code>
 </div>
 </pre> 
 
 bash >= 4.0 on osx
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-brew install bash-completion@2
-
+<code class='clipboardjs'>brew install bash-completion@2</code>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
-
+<code class='clipboardjs'>mesheryctl completion bash &gt; $(brew --prefix)/etc/bash_completion.d/mesheryctl</code>
 </div>
 </pre> 
 
@@ -74,39 +67,34 @@ to enable it.  You can execute the following once:
 Might need to start a new shell for this setup to take effect.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-$ echo "autoload -U compinit; compinit" >> ~/.zshrc
-
+<code class='clipboardjs'>$ echo "autoload -U compinit; compinit" &gt;&gt; ~/.zshrc</code>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-source <(mesheryctl completion zsh)
-
+<code class='clipboardjs'>source &lt;(mesheryctl completion zsh)</code>
 </div>
 </pre> 
 
 zsh on osx / oh-my-zsh
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-COMPLETION_DIR=$(echo $fpath | grep -o '[^ ]*completions' | grep -v cache) && mkdir -p $COMPLETION_DIR && mesheryctl completion zsh > "${COMPLETION_DIR}/_mesheryctl"
-
+<code class='clipboardjs'>COMPLETION_DIR=$(echo $fpath | grep -o '[^ ]*completions' | grep -v cache) &amp;&amp; mkdir -p $COMPLETION_DIR &amp;&amp; mesheryctl completion zsh &gt; "${COMPLETION_DIR}/_mesheryctl"</code>
 </div>
 </pre> 
 
 ### fish:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl completion fish | source
-
+<code class='clipboardjs'>mesheryctl completion fish | source</code>
 </div>
 </pre> 
 
 To load fish shell completions for each session, execute once:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl completion fish > ~/.config/fish/completions/mesheryctl.fish
-
+<code class='clipboardjs'>mesheryctl completion fish &gt; ~/.config/fish/completions/mesheryctl.fish</code>
 </div>
 </pre> 
 

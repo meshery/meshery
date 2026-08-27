@@ -15,8 +15,7 @@ Command will trigger deploy of design.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design deploy [flags]
-
+<code class='clipboardjs'>mesheryctl design deploy [flags]</code>
 </div>
 </pre> 
 
@@ -25,8 +24,7 @@ mesheryctl design deploy [flags]
 Deploy design by providing file path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design deploy -f [filepath] -s [source type]
-
+<code class='clipboardjs'>mesheryctl design deploy -f [filepath] -s [source type]</code>
 </div>
 </pre> 
 

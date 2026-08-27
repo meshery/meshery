@@ -15,8 +15,7 @@ Undeploy design will trigger undeploy of design.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design undeploy [flags]
-
+<code class='clipboardjs'>mesheryctl design undeploy [flags]</code>
 </div>
 </pre> 
 
@@ -25,8 +24,7 @@ mesheryctl design undeploy [flags]
 Undeploy design by providing file path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design undeploy -f [filepath]
-
+<code class='clipboardjs'>mesheryctl design undeploy -f [filepath]</code>
 </div>
 </pre> 
 

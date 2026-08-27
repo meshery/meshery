@@ -15,8 +15,7 @@ View a connection by its ID or name.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection view [flags]
-
+<code class='clipboardjs'>mesheryctl connection view [flags]</code>
 </div>
 </pre> 
 
@@ -25,24 +24,21 @@ mesheryctl connection view [flags]
 View details of a specific connection in default format (yaml)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection view [connection-name|connection-id]
-
+<code class='clipboardjs'>mesheryctl connection view [connection-name|connection-id]</code>
 </div>
 </pre> 
 
 View details of a specific connection in JSON format
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection view [connection-name|connection-id] --output-format json
-
+<code class='clipboardjs'>mesheryctl connection view [connection-name|connection-id] --output-format json</code>
 </div>
 </pre> 
 
 View details of a specific connection in json format and save it to a file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection view [connection-name|connection-id] --output-format json --save
-
+<code class='clipboardjs'>mesheryctl connection view [connection-name|connection-id] --output-format json --save</code>
 </div>
 </pre> 
 

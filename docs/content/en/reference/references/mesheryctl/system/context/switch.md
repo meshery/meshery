@@ -15,8 +15,7 @@ Configure mesheryctl to actively use one one context vs. another context.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system context switch context-name [flags]
-
+<code class='clipboardjs'>mesheryctl system context switch context-name [flags]</code>
 </div>
 </pre> 
 
@@ -25,8 +24,7 @@ mesheryctl system context switch context-name [flags]
 Switch to context named "sample"
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system context switch sample
-
+<code class='clipboardjs'>mesheryctl system context switch sample</code>
 </div>
 </pre> 
 

@@ -15,8 +15,7 @@ View release channel and version of context in focus
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system channel view [flags]
-
+<code class='clipboardjs'>mesheryctl system channel view [flags]</code>
 </div>
 </pre> 
 
@@ -25,16 +24,14 @@ mesheryctl system channel view [flags]
 View current release channel
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system channel view edge
-
+<code class='clipboardjs'>mesheryctl system channel view edge</code>
 </div>
 </pre> 
 
 View release channel for all contexts
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system channel view --all
-
+<code class='clipboardjs'>mesheryctl system channel view --all</code>
 </div>
 </pre> 
 

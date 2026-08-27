@@ -15,8 +15,7 @@ Check status of Meshery and Meshery components.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system status [flags]
-
+<code class='clipboardjs'>mesheryctl system status [flags]</code>
 </div>
 </pre> 
 
@@ -25,16 +24,14 @@ mesheryctl system status [flags]
 Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system status
-
+<code class='clipboardjs'>mesheryctl system status</code>
 </div>
 </pre> 
 
 (optional) Extra data in status table
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system status --verbose
-
+<code class='clipboardjs'>mesheryctl system status --verbose</code>
 </div>
 </pre> 
 

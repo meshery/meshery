@@ -15,8 +15,7 @@ List all registered models by pagination (10 models per page)
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model list [flags]
-
+<code class='clipboardjs'>mesheryctl model list [flags]</code>
 </div>
 </pre> 
 
@@ -25,31 +24,21 @@ mesheryctl model list [flags]
 List of models
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model list
-
+<code class='clipboardjs'>mesheryctl model list</code>
 </div>
 </pre> 
 
 List of models for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model list --page [page-number] --pagesize [pagesize]
-
+<code class='clipboardjs'>mesheryctl model list --page [page-number] --pagesize [pagesize]</code>
 </div>
 </pre> 
 
 Display number of available models in Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model list --count
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-    
-
+<code class='clipboardjs'>mesheryctl model list --count</code>
 </div>
 </pre> 
 

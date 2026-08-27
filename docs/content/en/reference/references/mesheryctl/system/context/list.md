@@ -15,8 +15,7 @@ List current context and available contexts.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system context list [flags]
-
+<code class='clipboardjs'>mesheryctl system context list [flags]</code>
 </div>
 </pre> 
 
@@ -25,8 +24,7 @@ mesheryctl system context list [flags]
 List all contexts present
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system context list
-
+<code class='clipboardjs'>mesheryctl system context list</code>
 </div>
 </pre> 
 

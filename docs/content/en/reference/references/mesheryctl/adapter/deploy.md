@@ -14,8 +14,7 @@ Deploy infrastructure to the Kubernetes cluster
 Deploy infrastructure to the connected Kubernetes cluster
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl adapter deploy [flags]
-
+<code class='clipboardjs'>mesheryctl adapter deploy [flags]</code>
 </div>
 </pre> 
 
@@ -24,39 +23,28 @@ mesheryctl adapter deploy [flags]
 Deploy a infrastructure from an interactive on the default namespace
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl adapter deploy
-
+<code class='clipboardjs'>mesheryctl adapter deploy</code>
 </div>
 </pre> 
 
 Deploy infrastructure
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl adapter deploy linkerd
-
+<code class='clipboardjs'>mesheryctl adapter deploy linkerd</code>
 </div>
 </pre> 
 
 Deploy Linkerd mesh on a specific namespace
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl adapter deploy linkerd --namespace linkerd-ns
-
+<code class='clipboardjs'>mesheryctl adapter deploy linkerd --namespace linkerd-ns</code>
 </div>
 </pre> 
 
 Deploy Linkerd mesh and wait for it to be deployed
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl adapter deploy linkerd --watch
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-		
-
+<code class='clipboardjs'>mesheryctl adapter deploy linkerd --watch</code>
 </div>
 </pre> 
 

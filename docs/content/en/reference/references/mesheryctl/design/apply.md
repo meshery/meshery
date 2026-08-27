@@ -15,8 +15,7 @@ Apply design will trigger deploy of the design file.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design apply [flags]
-
+<code class='clipboardjs'>mesheryctl design apply [flags]</code>
 </div>
 </pre> 
 
@@ -25,16 +24,14 @@ mesheryctl design apply [flags]
 apply a design file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design apply -f [file | URL]
-
+<code class='clipboardjs'>mesheryctl design apply -f [file | URL]</code>
 </div>
 </pre> 
 
 deploy a saved design
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design apply [design-name]
-
+<code class='clipboardjs'>mesheryctl design apply [design-name]</code>
 </div>
 </pre> 
 

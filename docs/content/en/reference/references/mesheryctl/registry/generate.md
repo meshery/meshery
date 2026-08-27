@@ -15,8 +15,7 @@ Prerequisite: Execute this command from the root of a meshery/meshery repo fork.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry generate [flags]
-
+<code class='clipboardjs'>mesheryctl registry generate [flags]</code>
 </div>
 </pre> 
 
@@ -25,56 +24,49 @@ mesheryctl registry generate [flags]
 Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "$CRED"
-
+<code class='clipboardjs'>mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "$CRED"</code>
 </div>
 </pre> 
 
 Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
-
+<code class='clipboardjs'>mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]</code>
 </div>
 </pre> 
 
 Generate a specific Model from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred --model "[model-name]"
-
+<code class='clipboardjs'>mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred --model "[model-name]"</code>
 </div>
 </pre> 
 
 Generate Meshery Models and Component from csv files in a local directory.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry generate --directory [DIRECTORY_PATH]
-
+<code class='clipboardjs'>mesheryctl registry generate --directory [DIRECTORY_PATH]</code>
 </div>
 </pre> 
 
 Generate Meshery Models from individual CSV files.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry generate --model-csv [path/to/models.csv] --component-csv [path/to/components.csv] --relationship-csv [path/to/relationships.csv]
-
+<code class='clipboardjs'>mesheryctl registry generate --model-csv [path/to/models.csv] --component-csv [path/to/components.csv] --relationship-csv [path/to/relationships.csv]</code>
 </div>
 </pre> 
 
 Generate models with a custom per-model timeout (e.g., 10 minutes per model).
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "$CRED" --timeout 10m
-
+<code class='clipboardjs'>mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "$CRED" --timeout 10m</code>
 </div>
 </pre> 
 
 Generate only the latest version of each model.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "$CRED" --latest-only
-
+<code class='clipboardjs'>mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "$CRED" --latest-only</code>
 </div>
 </pre> 
 

@@ -15,8 +15,7 @@ View a model queried by its name or ID
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model view [flags]
-
+<code class='clipboardjs'>mesheryctl model view [flags]</code>
 </div>
 </pre> 
 
@@ -25,24 +24,21 @@ mesheryctl model view [flags]
 View a specific model from current provider by using [model-name] or [model-id] in default format yaml
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model view [model-name]
-
+<code class='clipboardjs'>mesheryctl model view [model-name]</code>
 </div>
 </pre> 
 
 View a specific model in specified format
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model view [model-name] --output-format [json|yaml]
-
+<code class='clipboardjs'>mesheryctl model view [model-name] --output-format [json|yaml]</code>
 </div>
 </pre> 
 
 View a specific model in specified format and save it as a file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model view [model-name] --output-format [json|yaml] --save
-
+<code class='clipboardjs'>mesheryctl model view [model-name] --output-format [json|yaml] --save</code>
 </div>
 </pre> 
 

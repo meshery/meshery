@@ -15,8 +15,7 @@ Manage Meshery user tokens
 	Manipulate user tokens and their context assignments in your meshconfig
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system token [flags]
-
+<code class='clipboardjs'>mesheryctl system token [flags]</code>
 </div>
 </pre> 
 

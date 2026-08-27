@@ -15,8 +15,7 @@ Add a new context to Meshery config.yaml file.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system context create context-name [flags]
-
+<code class='clipboardjs'>mesheryctl system context create context-name [flags]</code>
 </div>
 </pre> 
 
@@ -25,16 +24,14 @@ mesheryctl system context create context-name [flags]
 Create new context
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system context create [context-name]
-
+<code class='clipboardjs'>mesheryctl system context create [context-name]</code>
 </div>
 </pre> 
 
 Create new context and provide list of components, platform & URL and set it as current context
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system context create [context-name] --components [meshery-nsm] --platform [docker|kubernetes] --url [server-url] --set --yes
-
+<code class='clipboardjs'>mesheryctl system context create [context-name] --components [meshery-nsm] --platform [docker|kubernetes] --url [server-url] --set --yes</code>
 </div>
 </pre> 
 

@@ -15,8 +15,7 @@ Import models by specifying the directory, file, or URL. You can also provide a 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model import [flags]
-
+<code class='clipboardjs'>mesheryctl model import [flags]</code>
 </div>
 </pre> 
 
@@ -25,48 +24,42 @@ mesheryctl model import [flags]
 Import model
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model import --file [URI]
-
+<code class='clipboardjs'>mesheryctl model import --file [URI]</code>
 </div>
 </pre> 
 
 Import model from a URL to a meshery model
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model import --file [URL]
-
+<code class='clipboardjs'>mesheryctl model import --file [URL]</code>
 </div>
 </pre> 
 
 Import model from an OCI artifact
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model import --file [OCI]
-
+<code class='clipboardjs'>mesheryctl model import --file [OCI]</code>
 </div>
 </pre> 
 
 Import model from a tar.gz file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model import --file [path-to-model.tar.gz]
-
+<code class='clipboardjs'>mesheryctl model import --file [path-to-model.tar.gz]</code>
 </div>
 </pre> 
 
 Import model from a path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model import --file [path-to-model]
-
+<code class='clipboardjs'>mesheryctl model import --file [path-to-model]</code>
 </div>
 </pre> 
 
 Import model using CSV files
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model import --file [path-to-csv-directory]
-
+<code class='clipboardjs'>mesheryctl model import --file [path-to-csv-directory]</code>
 </div>
 </pre> 
 

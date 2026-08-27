@@ -14,8 +14,7 @@ list available providers
 List current provider and available providers
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system provider list [flags]
-
+<code class='clipboardjs'>mesheryctl system provider list [flags]</code>
 </div>
 </pre> 
 
@@ -24,8 +23,7 @@ mesheryctl system provider list [flags]
 List all available providers
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system provider list
-
+<code class='clipboardjs'>mesheryctl system provider list</code>
 </div>
 </pre> 
 

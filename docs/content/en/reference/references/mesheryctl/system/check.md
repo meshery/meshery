@@ -15,8 +15,7 @@ Verify environment pre/post-deployment of Meshery.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system check [flags]
-
+<code class='clipboardjs'>mesheryctl system check [flags]</code>
 </div>
 </pre> 
 
@@ -25,55 +24,48 @@ mesheryctl system check [flags]
 Run all system checks for both pre and post-deployment scenarios
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system check
-
+<code class='clipboardjs'>mesheryctl system check</code>
 </div>
 </pre> 
 
 Run pre-deployment checks (Docker and Kubernetes)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system check --preflight
-
+<code class='clipboardjs'>mesheryctl system check --preflight</code>
 </div>
 </pre> 
 
 Run pre-deployment checks (Docker and Kubernetes)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system check --pre
-
+<code class='clipboardjs'>mesheryctl system check --pre</code>
 </div>
 </pre> 
 
 Run checks for all Meshery adapters
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system check --adapters
-
+<code class='clipboardjs'>mesheryctl system check --adapters</code>
 </div>
 </pre> 
 
 Run checks on a specific Meshery adapter
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system check --adapter meshery-istio:10000
-
+<code class='clipboardjs'>mesheryctl system check --adapter meshery-istio:10000</code>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system check --adapter meshery-istio
-
+<code class='clipboardjs'>mesheryctl system check --adapter meshery-istio</code>
 </div>
 </pre> 
 
 Verify the health of Meshery Operator's deployment with MeshSync and Broker
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system check --operator
-
+<code class='clipboardjs'>mesheryctl system check --operator</code>
 </div>
 </pre> 
 

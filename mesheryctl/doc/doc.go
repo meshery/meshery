@@ -130,6 +130,23 @@ func doc() {
 	fmt.Println("Documentation generated at " + markDownPath)
 }
 
+// codeEscaper escapes the characters that would otherwise be parsed as markup once a
+// command sits inside <code>. Placeholders such as <kind> are swallowed by the HTML
+// parser without this, so the page renders "--kind " and the copy button copies that
+// same truncated text. Quotes need no escaping in element content and are left alone
+// to keep the generated pages readable.
+var codeEscaper = strings.NewReplacer("&", "&amp;", "<", "&lt;", ">", "&gt;")
+
+// writeCommandBlock writes a copyable command block into buf.
+//
+// The <code class='clipboardjs'> wrapper is the element docs/static/js/main.js
+// keys on to attach the copy-to-clipboard button, and mirrors the markup that
+// layouts/shortcodes/code.html emits for hand-written pages. Without it the
+// block still renders, but no copy button is ever attached to it.
+func writeCommandBlock(buf *bytes.Buffer, code string) {
+	fmt.Fprintf(buf, "<pre class='codeblock-pre'>\n<div class='codeblock'>\n<code class='clipboardjs'>%s</code>\n</div>\n</pre> \n\n", codeEscaper.Replace(code))
+}
+
 // printOptions prints the options for a command
 func printOptions(buf *bytes.Buffer, cmd *cobra.Command) error {
 	flags := cmd.NonInheritedFlags()
@@ -178,7 +195,7 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, manuallyAddedContent map
 
 	// check if the command is runnable
 	if cmd.Runnable() {
-		fmt.Fprintf(buf, "<pre class='codeblock-pre'>\n<div class='codeblock'>\n%s\n\n</div>\n</pre> \n\n", cmd.UseLine())
+		writeCommandBlock(buf, cmd.UseLine())
 	}
 
 	// check cmd has annotations link and caption
@@ -196,14 +213,14 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, manuallyAddedContent map
 		buf.WriteString("## Examples\n\n")
 		var examples = strings.Split(cmd.Example, "\n")
 		for i := 0; i < len(examples); i++ {
-			if examples[i] != "" && examples[i] != " " && examples[i] != "	" {
+			if strings.TrimSpace(examples[i]) != "" {
 				if strings.HasPrefix(examples[i], "//") {
 					// Description Line
 					buf.WriteString(strings.ReplaceAll(examples[i], "// ", "") + "\n")
 				} else {
 					// Code Block Line
 
-					fmt.Fprintf(buf, "<pre class='codeblock-pre'>\n<div class='codeblock'>\n%s\n\n</div>\n</pre> \n\n", examples[i])
+					writeCommandBlock(buf, examples[i])
 				}
 			}
 		}

@@ -16,8 +16,7 @@ The evaluated design is saved to the specified output file while an overview
 of evaluation actions is printed to the terminal.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design evaluate [ID] [flags]
-
+<code class='clipboardjs'>mesheryctl design evaluate [ID] [flags]</code>
 </div>
 </pre> 
 
@@ -26,24 +25,21 @@ mesheryctl design evaluate [ID] [flags]
 Evaluate a design from a file and save the result
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design evaluate -f design.yaml -o evaluated-design.yaml
-
+<code class='clipboardjs'>mesheryctl design evaluate -f design.yaml -o evaluated-design.yaml</code>
 </div>
 </pre> 
 
 Evaluate a design by ID
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design evaluate 12345678-abcd-efgh-ijkl-123456789012 -o result.yaml
-
+<code class='clipboardjs'>mesheryctl design evaluate 12345678-abcd-efgh-ijkl-123456789012 -o result.yaml</code>
 </div>
 </pre> 
 
 Evaluate and save as JSON
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design evaluate -f design.yaml --output-format json -o evaluated-design.json
-
+<code class='clipboardjs'>mesheryctl design evaluate -f design.yaml --output-format json -o evaluated-design.json</code>
 </div>
 </pre> 
 

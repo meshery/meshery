@@ -17,8 +17,7 @@ Remove authentication for Meshery Server
 This command removes the authentication token from the user's filesystem
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system logout [flags]
-
+<code class='clipboardjs'>mesheryctl system logout [flags]</code>
 </div>
 </pre> 
 
@@ -27,8 +26,7 @@ mesheryctl system logout [flags]
 Logout current session with your Meshery Provider.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system logout
-
+<code class='clipboardjs'>mesheryctl system logout</code>
 </div>
 </pre> 
 

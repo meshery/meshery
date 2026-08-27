@@ -15,8 +15,7 @@ Display the content of a specific design based on name or id.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design view design name [flags]
-
+<code class='clipboardjs'>mesheryctl design view design name [flags]</code>
 </div>
 </pre> 
 
@@ -25,8 +24,7 @@ mesheryctl design view design name [flags]
 view a design
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design view [design-name | ID]
-
+<code class='clipboardjs'>mesheryctl design view [design-name | ID]</code>
 </div>
 </pre> 
 

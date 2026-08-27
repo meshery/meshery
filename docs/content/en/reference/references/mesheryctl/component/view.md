@@ -15,8 +15,7 @@ View a component registered in Meshery Server
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component view [flags]
-
+<code class='clipboardjs'>mesheryctl component view [flags]</code>
 </div>
 </pre> 
 
@@ -25,24 +24,21 @@ mesheryctl component view [flags]
 View details of a specific component
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component view [component-name | component-id]
-
+<code class='clipboardjs'>mesheryctl component view [component-name | component-id]</code>
 </div>
 </pre> 
 
 View details of a specific component in specified format
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component view [component-name | component-id] -o [json|yaml]
-
+<code class='clipboardjs'>mesheryctl component view [component-name | component-id] -o [json|yaml]</code>
 </div>
 </pre> 
 
 View details of a specific component in specified format and save it as a file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component view [component-name | component-id] -o [json|yaml] --save
-
+<code class='clipboardjs'>mesheryctl component view [component-name | component-id] -o [json|yaml] --save</code>
 </div>
 </pre> 
 

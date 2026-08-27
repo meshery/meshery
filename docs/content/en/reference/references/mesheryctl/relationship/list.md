@@ -15,8 +15,7 @@ List all relationships registered in Meshery Server.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship list [flags]
-
+<code class='clipboardjs'>mesheryctl relationship list [flags]</code>
 </div>
 </pre> 
 
@@ -25,32 +24,28 @@ mesheryctl relationship list [flags]
 List all relationships
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship list
-
+<code class='clipboardjs'>mesheryctl relationship list</code>
 </div>
 </pre> 
 
 List relationships for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship list --page [page-number]
-
+<code class='clipboardjs'>mesheryctl relationship list --page [page-number]</code>
 </div>
 </pre> 
 
 List relationships with a custom page size
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship list --pagesize [page-size]
-
+<code class='clipboardjs'>mesheryctl relationship list --pagesize [page-size]</code>
 </div>
 </pre> 
 
 Display the total number of available relationships in Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship list --count
-
+<code class='clipboardjs'>mesheryctl relationship list --count</code>
 </div>
 </pre> 
 

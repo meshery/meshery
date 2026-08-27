@@ -15,8 +15,7 @@ List all the available performance profiles.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf profile [profile-name] [flags]
-
+<code class='clipboardjs'>mesheryctl perf profile [profile-name] [flags]</code>
 </div>
 </pre> 
 
@@ -25,24 +24,21 @@ mesheryctl perf profile [profile-name] [flags]
 List performance profiles (maximum 25 profiles)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf profile
-
+<code class='clipboardjs'>mesheryctl perf profile</code>
 </div>
 </pre> 
 
 List performance profiles with search (maximum 25 profiles)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf profile test 2
-
+<code class='clipboardjs'>mesheryctl perf profile test 2</code>
 </div>
 </pre> 
 
 View single performance profile with detailed information
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf profile test --view
-
+<code class='clipboardjs'>mesheryctl perf profile test --view</code>
 </div>
 </pre> 
 

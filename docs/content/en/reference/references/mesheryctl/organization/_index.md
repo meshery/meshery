@@ -15,8 +15,7 @@ Interact with registered organizations to display detailed information
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl organization [flags]
-
+<code class='clipboardjs'>mesheryctl organization [flags]</code>
 </div>
 </pre> 
 
@@ -25,16 +24,14 @@ mesheryctl organization [flags]
 Number of  registered orgs
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl organization --count
-
+<code class='clipboardjs'>mesheryctl organization --count</code>
 </div>
 </pre> 
 
 List registerd orgs
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl organization list
-
+<code class='clipboardjs'>mesheryctl organization list</code>
 </div>
 </pre> 
 

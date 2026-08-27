@@ -15,8 +15,7 @@ Publishes metadata about Meshery Models to Websites, Remote Provider, or Meshery
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] [flags]
-
+<code class='clipboardjs'>mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] [flags]</code>
 </div>
 </pre> 
 
@@ -25,63 +24,55 @@ mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [model
 Publish To System
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]
-
+<code class='clipboardjs'>mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]</code>
 </div>
 </pre> 
 
 Publish To Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry publish meshery GoogleCredential GoogleSheetID [repo]/models
-
+<code class='clipboardjs'>mesheryctl registry publish meshery GoogleCredential GoogleSheetID [repo]/models</code>
 </div>
 </pre> 
 
 Publish To Remote Provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry publish remote-provider GoogleCredential GoogleSheetID [repo]/meshmodels/models [repo]/ui/public/img/meshmodels
-
+<code class='clipboardjs'>mesheryctl registry publish remote-provider GoogleCredential GoogleSheetID [repo]/meshmodels/models [repo]/ui/public/img/meshmodels</code>
 </div>
 </pre> 
 
 Publish To Website
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry publish website GoogleCredential GoogleSheetID [repo]/integrations [repo]/ui/public/img/meshmodels
-
+<code class='clipboardjs'>mesheryctl registry publish website GoogleCredential GoogleSheetID [repo]/integrations [repo]/ui/public/img/meshmodels</code>
 </div>
 </pre> 
 
 Publishing to meshery docs
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-cd docs;
-
+<code class='clipboardjs'>cd docs;</code>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/pages/integrations docs/assets/img/integrations -o md
-
+<code class='clipboardjs'>mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/pages/integrations docs/assets/img/integrations -o md</code>
 </div>
 </pre> 
 
 Publishing to mesheryio site
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
-
+<code class='clipboardjs'>mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js</code>
 </div>
 </pre> 
 
 Publishing to any website
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw path/to/models path/to/icons -o mdx
-
+<code class='clipboardjs'>mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw path/to/models path/to/icons -o mdx</code>
 </div>
 </pre> 
 

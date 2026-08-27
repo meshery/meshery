@@ -15,8 +15,7 @@ Delete Meshery containers. This command removes all Meshery containers created b
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system delete [flags]
-
+<code class='clipboardjs'>mesheryctl system delete [flags]</code>
 </div>
 </pre> 
 
@@ -25,16 +24,14 @@ mesheryctl system delete [flags]
 Delete Meshery containers
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system delete
-
+<code class='clipboardjs'>mesheryctl system delete</code>
 </div>
 </pre> 
 
 Delete Meshery containers without confirmation
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system delete -y
-
+<code class='clipboardjs'>mesheryctl system delete -y</code>
 </div>
 </pre> 
 

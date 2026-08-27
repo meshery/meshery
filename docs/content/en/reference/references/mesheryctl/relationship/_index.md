@@ -16,8 +16,7 @@ Meshery uses relationships to define how interconnected components interact.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship [flags]
-
+<code class='clipboardjs'>mesheryctl relationship [flags]</code>
 </div>
 </pre> 
 
@@ -26,40 +25,35 @@ mesheryctl relationship [flags]
 Display number of available relationships in Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship --count
-
+<code class='clipboardjs'>mesheryctl relationship --count</code>
 </div>
 </pre> 
 
 Generate a relationship documentation 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship generate [flags]
-
+<code class='clipboardjs'>mesheryctl relationship generate [flags]</code>
 </div>
 </pre> 
 
 List available relationship(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship list [flags]
-
+<code class='clipboardjs'>mesheryctl relationship list [flags]</code>
 </div>
 </pre> 
 
 Search for a specific relationship
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
-
+<code class='clipboardjs'>mesheryctl relationship search [--kind &lt;kind&gt;] [--type &lt;type&gt;] [--subtype &lt;subtype&gt;] [--model &lt;model&gt;]</code>
 </div>
 </pre> 
 
 View a specific relationship
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship view [model-name]
-
+<code class='clipboardjs'>mesheryctl relationship view [model-name]</code>
 </div>
 </pre> 
 

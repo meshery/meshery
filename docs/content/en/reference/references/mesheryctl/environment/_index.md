@@ -15,8 +15,7 @@ Create, delete, list of view details of environment(s) of a specific organizatio
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment [flags]
-
+<code class='clipboardjs'>mesheryctl environment [flags]</code>
 </div>
 </pre> 
 
@@ -25,32 +24,28 @@ mesheryctl environment [flags]
 Create an environment in an organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment create --orgId [orgId] --name [name] --description [description]
-
+<code class='clipboardjs'>mesheryctl environment create --orgId [orgId] --name [name] --description [description]</code>
 </div>
 </pre> 
 
 Delete an environment in an organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment delete environment-id
-
+<code class='clipboardjs'>mesheryctl environment delete environment-id</code>
 </div>
 </pre> 
 
 List of registered environments in an organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment list --orgId [orgId]
-
+<code class='clipboardjs'>mesheryctl environment list --orgId [orgId]</code>
 </div>
 </pre> 
 
 View a particular environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment view --orgId [orgId]
-
+<code class='clipboardjs'>mesheryctl environment view --orgId [orgId]</code>
 </div>
 </pre> 
 

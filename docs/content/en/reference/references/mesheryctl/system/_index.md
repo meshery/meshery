@@ -15,8 +15,7 @@ Manage the state and configuration of Meshery server, components, and client.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system [flags]
-
+<code class='clipboardjs'>mesheryctl system [flags]</code>
 </div>
 </pre> 
 
