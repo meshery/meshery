@@ -733,6 +733,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		OrderOn:     order,
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
+		ModelName: queryParams.Get("model"),
 	}
 	if search != "" {
 		filter.Greedy = true
