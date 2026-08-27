@@ -114,18 +114,20 @@ $footer-white: #fff;
     }
 
     &.footer-heading {
-      margin-bottom: 12px;
-      color: $footer-grey;
+      margin-bottom: 14px;
+      color: $footer-white;
       font-size: 1em;
-      font-weight: bold;
+      font-weight: 700;
+      letter-spacing: 0.02em;
 
       a {
-        color: $footer-grey;
+        color: $footer-white;
         font-size: 1em;
-        font-weight: bold;
+        font-weight: 700;
 
         &:hover {
           color: $footer-white;
+          opacity: 0.8;
         }
       }
     }
@@ -222,6 +224,7 @@ footer {
     .footer-columns {
       flex-direction: column;
       padding: 0 50px;
+      gap: 32px;
     }
   }
 }
