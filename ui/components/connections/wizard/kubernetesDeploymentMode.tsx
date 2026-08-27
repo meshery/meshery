@@ -80,7 +80,7 @@ export const MeshsyncDeploymentModePicker = ({
           key={option.value}
           interactive
           title={getMeshsyncModeTooltip(option)}
-          placement="right"
+          placement="top"
         >
           <ModeCard
             selected={selected}

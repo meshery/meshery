@@ -146,6 +146,8 @@ const (
 	ErrSeedingComponentsCode              = "meshery-server-1358"
 	ErrSeedingConnectionsCode             = "meshery-server-1462"
 	ErrSeedingConnectionKindCode          = "meshery-server-1463"
+	ErrNoSystemEventSinkCode              = "meshery-server-1482"
+	ErrSeedingStagePanicCode              = "meshery-server-1483"
 	ErrImportFailureCode                  = "meshery-server-1359"
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
@@ -704,6 +706,33 @@ func ErrSeedingConnectionKind(err error, kind string) error {
 		[]string{err.Error()},
 		[]string{fmt.Sprintf("The %s connection could not be written to Meshery's database", kind), "The connection definition for this kind may disagree with the connections table schema"},
 		[]string{fmt.Sprintf("Confirm the %s connection definition is valid; other connection kinds are unaffected and this one is seeded again on the next restart", kind)},
+	)
+}
+
+func ErrNoSystemEventSink() error {
+	return errors.New(
+		ErrNoSystemEventSinkCode,
+		errors.Alert,
+		[]string{"No sink is configured for Meshery's system events"},
+		[]string{"HandlerConfig.SystemEventPersister is nil, so events raised outside a user request - registry seeding summaries and registration failures - cannot be persisted"},
+		[]string{"Meshery Server was built with a HandlerConfig that does not wire SystemEventPersister"},
+		[]string{"Set HandlerConfig.SystemEventPersister when constructing the handler configuration; on a released build this indicates a defect, so please report it at https://github.com/meshery/meshery/issues/new/choose"},
+	)
+}
+
+// ErrSeedingStagePanic reports a fault that RunSeedStage recovered from. The
+// short description, probable cause and remediation are deliberately literal
+// rather than composed with the stage name: errorutil can only lift static
+// strings into docs/data/errorref, so an interpolated one publishes as an empty
+// entry (see ErrImportFailure). The stage and stack trace carry in the details.
+func ErrSeedingStagePanic(stage string, cause interface{}, stack []byte) error {
+	return errors.New(
+		ErrSeedingStagePanicCode,
+		errors.Alert,
+		[]string{"Meshery Server recovered from a fault while seeding its registry"},
+		[]string{fmt.Sprintf("faulting stage: %s", stage), fmt.Sprintf("%v\n%s", cause, stack)},
+		[]string{"An unexpected condition was hit while seeding, either at startup or while reseeding after a database reset"},
+		[]string{"Meshery Server is still serving, but whatever the faulting stage contributes may be missing or incomplete. Report the stack trace above at https://github.com/meshery/meshery/issues/new/choose, then seed again - restart Meshery Server, or re-run the reset that triggered the seeding"},
 	)
 }
 
