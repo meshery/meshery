@@ -8,8 +8,10 @@
 &lt;p&gt;Delete a filter file using the name or ID of a filter.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl filter delete [filter-name | ID] [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -19,8 +21,10 @@ mesheryctl filter delete [filter-name | ID] [flags]
 A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be deleted.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl filter delete [filter-name | ID]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -56,8 +60,10 @@ mesheryctl filter delete [filter-name | ID]
 &lt;p&gt;Import a WASM filter from a URI (http/s) or local filesystem path.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl filter import [URI] [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -66,15 +72,19 @@ mesheryctl filter import [URI] [flags]
 &lt;p&gt;Import a filter file from local filesystem&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl filter import /path/to/filter.wasm
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;Import a filter file from a remote URI&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl filter import https://example.com/myfilter.wasm
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;Add WASM configuration
@@ -89,8 +99,10 @@ Use quotes if the string contains spaces&lt;/p&gt;</description></item><item><ti
 &lt;p&gt;Display list of all available filter files.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl filter list [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -99,22 +111,28 @@ mesheryctl filter list [flags]
 &lt;p&gt;List all WASM filter files present&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl filter list	(maximum 25 filters)
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;Search for filter&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl filter list Test (maximum 25 filters)
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;Search for filter with space&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -153,8 +171,10 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 &lt;p&gt;Displays the contents of a specific filter based on name or id.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl filter view [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -164,15 +184,19 @@ mesheryctl filter view [flags]
 A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be returned.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl filter view "[filter-name | ID]"
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;View all filter files&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl filter view --all
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;View all filter files in json&lt;/p&gt;</description></item></channel></rss>

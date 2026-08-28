@@ -8,8 +8,10 @@
 &lt;p&gt;List current provider and available providers&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system provider list [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -18,8 +20,10 @@ mesheryctl system provider list [flags]
 &lt;p&gt;List all available providers&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system provider list
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -56,8 +60,10 @@ mesheryctl system provider list
 &lt;p&gt;Clear the configured provider for the current context. This allows users to select a provider on the next Meshery start. This clears the enforced provider so that users are presented with the provider selection UI on next start.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system provider reset [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -66,8 +72,10 @@ mesheryctl system provider reset [flags]
 &lt;p&gt;Clear the configured provider&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system provider reset
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -104,8 +112,10 @@ mesheryctl system provider reset
 &lt;p&gt;Set provider of context in focus. Run &lt;code&gt;mesheryctl system provider list&lt;/code&gt; to see the available providers.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system provider set [provider] [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -114,8 +124,10 @@ mesheryctl system provider set [provider] [flags]
 &lt;p&gt;Set provider&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system provider set [provider]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -153,8 +165,10 @@ mesheryctl system provider set [provider]
 &lt;p&gt;Switch provider of context in focus and redeploy Meshery. Run &lt;code&gt;mesheryctl system provider list&lt;/code&gt; to see the available providers.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system provider switch [provider] [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -163,8 +177,10 @@ mesheryctl system provider switch [provider] [flags]
 &lt;p&gt;Switch provider and redeploy Meshery&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system provider switch [provider]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -201,8 +217,10 @@ mesheryctl system provider switch [provider]
 &lt;p&gt;View provider of context in focus.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system provider view [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -211,8 +229,10 @@ mesheryctl system provider view [flags]
 &lt;p&gt;View current provider&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system provider view
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;

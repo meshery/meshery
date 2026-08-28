@@ -8,8 +8,10 @@
 &lt;p&gt;Create the token with provided token name (optionally token path) to your meshconfig tokens.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system token create [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -17,20 +19,26 @@ mesheryctl system token create [flags]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system token create [token-name] -f [token-path]
 
 &lt;/div&gt;
-&lt;/pre&gt; 
-&lt;pre class='codeblock-pre'&gt;
-&lt;div class='codeblock'&gt;
-mesheryctl system token create [token-name] (default path is auth.json)
-
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
+mesheryctl system token create [token-name] (default path is auth.json)
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system token create [token-name] -f [token-path] --set
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -69,8 +77,10 @@ mesheryctl system token create [token-name] -f [token-path] --set
 &lt;p&gt;Delete the token with provided token name from your meshconfig tokens.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system token delete [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -78,8 +88,10 @@ mesheryctl system token delete [flags]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system token delete [token-name]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -116,8 +128,10 @@ mesheryctl system token delete [token-name]
 &lt;p&gt;List all the tokens in your meshconfig&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system token list [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -125,8 +139,10 @@ mesheryctl system token list [flags]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system token list
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -163,8 +179,10 @@ mesheryctl system token list
 &lt;p&gt;Set token for current context or context specified with &amp;ndash;context flag.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system token set [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -172,8 +190,10 @@ mesheryctl system token set [flags]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system token set [token-name] 
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -210,8 +230,10 @@ mesheryctl system token set [token-name]
 &lt;p&gt;View a specific token in meshery config&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system token view [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -219,14 +241,18 @@ mesheryctl system token view [flags]
 &lt;/h2&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system token view [token-name]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system token view (show token of current context)
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;

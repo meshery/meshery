@@ -8,8 +8,10 @@
 &lt;p&gt;Add a new context to Meshery config.yaml file.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system context create context-name [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -18,15 +20,19 @@ mesheryctl system context create context-name [flags]
 &lt;p&gt;Create new context&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system context create [context-name]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;Create new context and provide list of components, platform &amp;amp; URL and set it as current context&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system context create [context-name] --components [meshery-nsm] --platform [docker|kubernetes] --url [server-url] --set --yes
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -69,8 +75,10 @@ mesheryctl system context create [context-name] --components [meshery-nsm] --pla
 &lt;p&gt;Delete an existing context (a named Meshery deployment) from Meshery config file.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system context delete [context-name] [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -81,8 +89,10 @@ mesheryctl system context delete [context-name] [flags]
 &lt;/h3&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system context delete [context name]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -120,8 +130,10 @@ mesheryctl system context delete [context name]
 &lt;p&gt;List current context and available contexts.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system context list [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -130,8 +142,10 @@ mesheryctl system context list [flags]
 &lt;p&gt;List all contexts present&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system context list
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -168,8 +182,10 @@ mesheryctl system context list
 &lt;p&gt;Configure mesheryctl to actively use one one context vs. another context.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system context switch context-name [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -178,8 +194,10 @@ mesheryctl system context switch context-name [flags]
 &lt;p&gt;Switch to context named &amp;ldquo;sample&amp;rdquo;&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system context switch sample
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -219,8 +237,10 @@ This command shows which Kubernetes cluster, platform, and provider Meshery is c
 Use this to verify or debug your current CLI settings.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system context view [context-name | --context context-name | --all] --flags [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -229,8 +249,10 @@ mesheryctl system context view [context-name | --context context-name | --all] -
 &lt;p&gt;View the default context&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system context view
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;View a specified context&lt;/p&gt;</description></item></channel></rss>

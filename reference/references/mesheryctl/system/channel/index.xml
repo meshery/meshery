@@ -8,8 +8,10 @@
 &lt;p&gt;Set release channel and version of context in focus&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system channel set [stable|stable-version|edge|edge-version] [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -18,8 +20,10 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version] [flags]
 &lt;p&gt;Subscribe to release channel or version&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -56,8 +60,10 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 &lt;p&gt;Switch release channel and version of context in focus&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system channel switch [stable|stable-version|edge|edge-version] [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -66,8 +72,10 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version] [flag
 &lt;p&gt;Switch between release channels&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -104,8 +112,10 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 &lt;p&gt;View release channel and version of context in focus&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system channel view [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -114,15 +124,19 @@ mesheryctl system channel view [flags]
 &lt;p&gt;View current release channel&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system channel view edge
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;View release channel for all contexts&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl system channel view --all
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;

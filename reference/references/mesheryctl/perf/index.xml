@@ -8,8 +8,10 @@
 &lt;p&gt;Run Performance test using existing profiles or using flags.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl perf apply [profile-name] [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -18,15 +20,19 @@ mesheryctl perf apply [profile-name] [flags]
 &lt;p&gt;Execute a Performance test with the specified performance profile&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl perf apply meshery-profile [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;Execute a Performance test with creating a new performance profile&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl perf apply meshery-profile-new --url "https://google.com"
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;Execute a Performance test creating a new performance profile and pass certificate to be used&lt;/p&gt;</description></item><item><title>mesheryctl-perf-profile</title><link>/reference/references/mesheryctl/perf/profile/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/perf/profile/</guid><description>&lt;h1 id="mesheryctl-perf-profile"&gt;
@@ -39,8 +45,10 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com"
 &lt;p&gt;List all the available performance profiles.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl perf profile [profile-name] [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -49,22 +57,28 @@ mesheryctl perf profile [profile-name] [flags]
 &lt;p&gt;List performance profiles (maximum 25 profiles)&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl perf profile
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;List performance profiles with search (maximum 25 profiles)&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl perf profile test 2
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;View single performance profile with detailed information&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl perf profile test --view
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -104,8 +118,10 @@ mesheryctl perf profile test --view
 &lt;p&gt;List all the available test results of a performance profile.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl perf result [profile-name] [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -114,22 +130,28 @@ mesheryctl perf result [profile-name] [flags]
 &lt;p&gt;List Test results (maximum 25 results)&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl perf result saturday-profile
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;View other set of performance results with &amp;ndash;page (maximum 25 results)&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl perf result saturday-profile --page 2
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;View single performance result with detailed information&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl perf result saturday-profile --view
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;

@@ -10,8 +10,10 @@ Model files are taken from [path]/[model-name]/[model-version] folder.
 Expects input to be in the format scaffolded by the model init command.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model build [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -20,20 +22,18 @@ mesheryctl model build [flags]
 &lt;p&gt;Create an OCI-compliant package from the model files&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model build [model-name]
 
 &lt;/div&gt;
-&lt;/pre&gt; 
-&lt;pre class='codeblock-pre'&gt;
-&lt;div class='codeblock'&gt;
-mesheryctl model build [model-name]/[model-version]
-
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
- 
+&lt;div class='clipboardjs'&gt;
+mesheryctl model build [model-name]/[model-version]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -69,8 +69,10 @@ mesheryctl model build [model-name]/[model-version]
 &lt;p&gt;Delete a model by ID or Name&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model delete [model-id | model-name] [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -79,15 +81,19 @@ mesheryctl model delete [model-id | model-name] [flags]
 &lt;p&gt;Delete a model by ID&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model delete [model-id]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;Delete a model by name&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model delete [model-name]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -122,8 +128,10 @@ mesheryctl model delete [model-name]
 &lt;p&gt;Export the registered model to the specified output type&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model export [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -132,15 +140,19 @@ mesheryctl model export [flags]
 &lt;p&gt;Export a model by name&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model export [model-name] -o [oci|tar] (default is oci)
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;Export a model by name in JSON type&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model export [model-name] -t [yaml|json] (default is YAML)
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;Export a model by name in YAML type in a specific location&lt;/p&gt;</description></item><item><title>mesheryctl-model-generate</title><link>/reference/references/mesheryctl/model/generate/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/model/generate/</guid><description>&lt;h1 id="mesheryctl-model-generate"&gt;
@@ -153,8 +165,10 @@ mesheryctl model export [model-name] -t [yaml|json] (default is YAML)
 &lt;p&gt;Generate models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model generate [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -163,15 +177,19 @@ mesheryctl model generate [flags]
 &lt;p&gt;Generate a model from a CSV directory&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model generate -f [path-to-csv-directory]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;Generate a model from a URL based on a JSON template&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model generate -f [URL] -t [path-to-template.json]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;Generate a model from a URL based on a JSON template skipping registration&lt;/p&gt;</description></item><item><title>mesheryctl-model-import</title><link>/reference/references/mesheryctl/model/import/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/model/import/</guid><description>&lt;h1 id="mesheryctl-model-import"&gt;
@@ -184,8 +202,10 @@ mesheryctl model generate -f [URL] -t [path-to-template.json]
 &lt;p&gt;Import models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model import [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -194,22 +214,28 @@ mesheryctl model import [flags]
 &lt;p&gt;Import model&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model import --file [URI]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;Import model from a URL to a meshery model&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model import --file [URL]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;Import model from an OCI artifact&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model import --file [OCI]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;Import model from a tar.gz file&lt;/p&gt;</description></item><item><title>mesheryctl-model-init</title><link>/reference/references/mesheryctl/model/init/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/model/init/</guid><description>&lt;h1 id="mesheryctl-model-init"&gt;
@@ -222,8 +248,10 @@ mesheryctl model import --file [OCI]
 &lt;p&gt;Generates a folder structure and guides user on model creation&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model init [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -232,22 +260,28 @@ mesheryctl model init [flags]
 &lt;p&gt;generates a folder structure&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model init [model-name]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;generates a folder structure and sets up model version&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model init [model-name] --version [version] (default is v0.1.0)
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;generates a folder structure under specified path&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model init [model-name] --path [path-to-location] (default is current folder)
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;generate a folder structure in json format&lt;/p&gt;</description></item><item><title>mesheryctl-model-list</title><link>/reference/references/mesheryctl/model/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/model/list/</guid><description>&lt;h1 id="mesheryctl-model-list"&gt;
@@ -260,8 +294,10 @@ mesheryctl model init [model-name] --path [path-to-location] (default is current
 &lt;p&gt;List all registered models by pagination (10 models per page)&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model list [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -270,28 +306,28 @@ mesheryctl model list [flags]
 &lt;p&gt;List of models&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model list
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;List of models for a specified page&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model list --page [page-number] --pagesize [pagesize]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;Display number of available models in Meshery&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model list --count
 
 &lt;/div&gt;
-&lt;/pre&gt; 
-&lt;pre class='codeblock-pre'&gt;
-&lt;div class='codeblock'&gt;
- 
-
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -329,8 +365,10 @@ mesheryctl model list --count
 &lt;p&gt;Search model(s) by search string&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model search [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -339,22 +377,28 @@ mesheryctl model search [flags]
 &lt;p&gt;Search model from current provider&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model search [query-text]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;Search list of models for a specified page&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model search [query-text] --page [page-number]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;Search list of models for a specified pagesize&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model search [query-text] --pagesize [pagesize-number]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -391,8 +435,10 @@ mesheryctl model search [query-text] --pagesize [pagesize-number]
 &lt;p&gt;View a model queried by its name or ID&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model view [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -401,15 +447,19 @@ mesheryctl model view [flags]
 &lt;p&gt;View a specific model from current provider by using [model-name] or [model-id] in default format yaml&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model view [model-name]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;View a specific model in specified format&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl model view [model-name] --output-format [json|yaml]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;View a specific model in specified format and save it as a file&lt;/p&gt;</description></item></channel></rss>

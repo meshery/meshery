@@ -8,8 +8,10 @@
 &lt;p&gt;Output shell completion code&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl completion [bash|zsh|fish]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -20,22 +22,28 @@ mesheryctl completion [bash|zsh|fish]
 &lt;/h3&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
-source /dev/stdin &lt;&lt;&lt; "$(mesheryctl completion bash)"
+&lt;div class='clipboardjs'&gt;
+source /dev/stdin &amp;lt;&amp;lt;&amp;lt; "$(mesheryctl completion bash)"
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;bash &amp;lt;= 3.2 on osx
 ensure you have bash-completion 1.3+&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 brew install bash-completion 
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
-mesheryctl completion bash &gt; $(brew --prefix)/etc/bash_completion.d/mesheryctl
+&lt;div class='clipboardjs'&gt;
+mesheryctl completion bash &amp;gt; $(brew --prefix)/etc/bash_completion.d/mesheryctl
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h3 id="bash--40"&gt;
@@ -43,21 +51,27 @@ mesheryctl completion bash &gt; $(brew --prefix)/etc/bash_completion.d/mesheryct
 &lt;/h3&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
-source &lt;(mesheryctl completion bash)
+&lt;div class='clipboardjs'&gt;
+source &amp;lt;(mesheryctl completion bash)
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;bash &amp;gt;= 4.0 on osx&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 brew install bash-completion@2
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
-mesheryctl completion bash &gt; $(brew --prefix)/etc/bash_completion.d/mesheryctl
+&lt;div class='clipboardjs'&gt;
+mesheryctl completion bash &amp;gt; $(brew --prefix)/etc/bash_completion.d/mesheryctl
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h3 id="zsh"&gt;
@@ -75,8 +89,10 @@ Might need to start a new shell for this setup to take effect.&lt;/p&gt;</descri
 &lt;p&gt;Commands under the Experimental group are for testing and evaluation prior to promotion to general availability. Experimental commands are subject to change.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl exp [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -111,8 +127,10 @@ mesheryctl exp [flags]
 &lt;p&gt;Version of Meshery command line client - mesheryctl.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl version [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -121,8 +139,10 @@ mesheryctl version [flags]
 &lt;p&gt;To view the current version and SHA of release binary of mesheryctl client&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl version
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;

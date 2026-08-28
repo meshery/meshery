@@ -8,8 +8,10 @@
 &lt;p&gt;Create a new connection to a Kubernetes cluster or other supported platform.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl connection create [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -18,33 +20,43 @@ mesheryctl connection create [flags]
 &lt;p&gt;Create a new Kubernetes connection using a specific type&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl connection create --type aks
 
 &lt;/div&gt;
+&lt;/div&gt;
 &lt;/pre&gt; 
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl connection create --type eks
 
 &lt;/div&gt;
-&lt;/pre&gt; 
-&lt;pre class='codeblock-pre'&gt;
-&lt;div class='codeblock'&gt;
-mesheryctl connection create --type gke
-
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
+mesheryctl connection create --type gke
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/pre&gt; 
+&lt;pre class='codeblock-pre'&gt;
+&lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl connection create --type minikube
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;Create a connection with a token&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl connection create --type gke --token auth.json
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -81,8 +93,10 @@ mesheryctl connection create --type gke --token auth.json
 &lt;p&gt;Delete a connection.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl connection delete [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -91,8 +105,10 @@ mesheryctl connection delete [flags]
 &lt;p&gt;Delete a connection&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl connection delete [connection_id]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="options"&gt;
@@ -127,8 +143,10 @@ mesheryctl connection delete [connection_id]
 &lt;p&gt;List all available connections.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl connection list [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -137,22 +155,28 @@ mesheryctl connection list [flags]
 &lt;p&gt;List all the connections&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl connection list
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;List all the connections with page number&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl connection list --page [page-number]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;List all the connections matching a specific kind and status&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl connection list --kind [kind] --status [status]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;List all the connections matching a set of kinds and statuses&lt;/p&gt;</description></item><item><title>mesheryctl-connection-view</title><link>/reference/references/mesheryctl/connection/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/connection/view/</guid><description>&lt;h1 id="mesheryctl-connection-view"&gt;
@@ -165,8 +189,10 @@ mesheryctl connection list --kind [kind] --status [status]
 &lt;p&gt;View a connection by its ID or name.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl connection view [flags]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;h2 id="examples"&gt;
@@ -175,15 +201,19 @@ mesheryctl connection view [flags]
 &lt;p&gt;View details of a specific connection in default format (yaml)&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl connection view [connection-name|connection-id]
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;View details of a specific connection in JSON format&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
+&lt;div class='clipboardjs'&gt;
 mesheryctl connection view [connection-name|connection-id] --output-format json
 
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/pre&gt; 
 &lt;p&gt;View details of a specific connection in json format and save it to a file&lt;/p&gt;</description></item></channel></rss>
