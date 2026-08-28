@@ -54,7 +54,9 @@ To ensure all your commits are signed, you may choose to add this alias to your 
   commit = commit -s
 </code></pre>
 
-Or you may configure your IDE, for example, VSCode to automatically sign-off commits for you:<a href="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" ><img src="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" width="50%"/></a>
+Or you may configure your IDE, for example, VSCode to automatically sign-off commits for you:
+
+<div style="text-align: center;"><a href="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" ><img src="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" width="50%"/></a></div>
 
 </li>
 
