@@ -350,6 +350,9 @@ func (h *Handler) applyControllersConfigToConnection(
 	}
 
 	generationCtx := machine.GetLifecycleCtx()
+	if generationCtx == nil {
+		generationCtx = context.Background()
+	}
 
 	machineCtx.ActionMutex.Lock()
 	defer machineCtx.ActionMutex.Unlock()

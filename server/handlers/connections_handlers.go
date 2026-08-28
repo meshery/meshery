@@ -774,7 +774,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 		machineCtx.ActionMutex.Lock()
 		defer machineCtx.ActionMutex.Unlock()
 
-		if generationCtx.Err() != nil {
+		if generationCtx != nil && generationCtx.Err() != nil {
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("mode change aborted: superseded by a newer lifecycle transition")
 		}
 

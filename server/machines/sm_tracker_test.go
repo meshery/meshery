@@ -81,3 +81,72 @@ func TestGetOrInitializeThunderingHerd(t *testing.T) {
 		t.Fatalf("expected subsequent initialization to be attempted exactly 1 time, got %d", initAttempts)
 	}
 }
+
+// TestGetOrInitializePanicYieldsErrorToAllWaiters verifies that if an
+// initialization function panics, the panic is safely recovered and converted
+// into an error, ensuring that no waiter receives a raw (nil, nil) result and
+// that the tracker cleans up in-flight state so subsequent attempts can succeed.
+func TestGetOrInitializePanicYieldsErrorToAllWaiters(t *testing.T) {
+	tracker := &ConnectionToStateMachineInstanceTracker{}
+	connID, _ := uuid.NewV4()
+
+	initAttempts := 0
+
+	barrier := make(chan struct{})
+	initFn := func() (*StateMachine, error) {
+		initAttempts++
+		<-barrier
+		panic("simulated fatal panic during initialization")
+	}
+
+	var wg sync.WaitGroup
+	numWaiters := 5
+	results := make([]error, numWaiters)
+
+	for i := 0; i < numWaiters; i++ {
+		wg.Add(1)
+		go func(idx int) {
+			defer wg.Done()
+			inst, err := tracker.GetOrInitialize(core.Uuid(connID), initFn)
+			if inst == nil && err == nil {
+				t.Errorf("waiter %d received (nil, nil) after initialization panic", idx)
+			}
+			results[idx] = err
+		}(i)
+	}
+
+	time.Sleep(100 * time.Millisecond)
+	close(barrier)
+	wg.Wait()
+
+	if initAttempts != 1 {
+		t.Fatalf("expected initialization to be attempted exactly 1 time, got %d", initAttempts)
+	}
+
+	for i, err := range results {
+		if err == nil {
+			t.Errorf("caller %d expected an error due to panic, got nil", i)
+		}
+	}
+
+	// Verify that a SUBSEQUENT call triggers a NEW initialization attempt
+	initAttempts = 0
+	barrier2 := make(chan struct{})
+	close(barrier2) // unblock immediately
+	initFnSuccess := func() (*StateMachine, error) {
+		initAttempts++
+		<-barrier2
+		return &StateMachine{}, nil
+	}
+
+	inst, err := tracker.GetOrInitialize(core.Uuid(connID), initFnSuccess)
+	if err != nil {
+		t.Fatalf("expected subsequent initialization to succeed, got error: %v", err)
+	}
+	if inst == nil {
+		t.Fatalf("expected non-nil StateMachine instance")
+	}
+	if initAttempts != 1 {
+		t.Fatalf("expected subsequent initialization to be attempted exactly 1 time, got %d", initAttempts)
+	}
+}

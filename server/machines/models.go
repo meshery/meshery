@@ -269,10 +269,15 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			}
 		}
 
-		if sm.CancelLifecycle != nil {
-			sm.CancelLifecycle()
-		}
+		prevLifecycleCtx, prevCancelLifecycle := sm.LifecycleCtx, sm.CancelLifecycle
 		sm.LifecycleCtx, sm.CancelLifecycle = context.WithCancel(context.WithoutCancel(ctx))
+		transitionCancel := sm.CancelLifecycle
+
+		abandonTransitionGeneration := func() {
+			transitionCancel()
+			sm.LifecycleCtx = prevLifecycleCtx
+			sm.CancelLifecycle = prevCancelLifecycle
+		}
 
 		if state.Action != nil {
 			// Execute entry actions for the state entered.
@@ -288,6 +293,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 				}
 				if eventType == NoOp {
 					haltedWithoutTransition = true
+					abandonTransitionGeneration()
 					break
 				}
 			} else {
@@ -303,11 +309,16 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 					}
 					if eventType == NoOp {
 						haltedWithoutTransition = true
+						abandonTransitionGeneration()
 						break
 					}
 
 				}
 			}
+		}
+
+		if prevCancelLifecycle != nil {
+			prevCancelLifecycle()
 		}
 
 		sm.PreviousState = sm.CurrentState

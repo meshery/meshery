@@ -138,15 +138,15 @@ func TestLifecycleCtxRemainsValidAfterHaltedTransition(t *testing.T) {
 	haltErr := errors.New("action failed")
 
 	tests := []struct {
-		name             string
+		name               string
 		disconnectedAction Action
 	}{
 		{
-			name:             "entry action halts",
+			name:               "entry action halts",
 			disconnectedAction: &haltingEntryAction{err: haltErr},
 		},
 		{
-			name:             "execute action halts",
+			name:               "execute action halts",
 			disconnectedAction: &haltingExecAction{err: haltErr},
 		},
 	}
@@ -166,22 +166,17 @@ func TestLifecycleCtxRemainsValidAfterHaltedTransition(t *testing.T) {
 				t.Errorf("CurrentState = %q; want CONNECTED: a halted transition must not advance state", sm.CurrentState)
 			}
 
-			// The previous generation must be cancelled — SendEvent cancels it
-			// before invoking entry/execute actions, regardless of whether
-			// those actions succeed.
-			if prev.Err() == nil {
-				t.Error("previous lifecycle generation was not cancelled when the new transition began")
+			// The previous generation must NOT be cancelled (it is restored).
+			if prev.Err() != nil {
+				t.Errorf("previous lifecycle generation was unexpectedly cancelled: %v", prev.Err())
 			}
 
-			// The current generation must be a distinct, non-cancelled context.
-			// These are two separate facts: the old one being dead does not
-			// imply the new one is alive, and vice versa.
 			curr := sm.LifecycleCtx
 			if curr == nil {
 				t.Fatal("LifecycleCtx is nil after SendEvent")
 			}
-			if curr == prev {
-				t.Fatal("LifecycleCtx was not rotated: still holds the previous generation")
+			if curr != prev {
+				t.Fatal("LifecycleCtx was rotated despite halted transition: attempted generation was left active")
 			}
 			if curr.Err() != nil {
 				t.Errorf("current lifecycle generation is cancelled after a halted transition: %v", curr.Err())
@@ -239,6 +234,66 @@ func TestMachineUsableAfterHaltedTransition(t *testing.T) {
 	}
 	if curr == afterHalt {
 		t.Error("LifecycleCtx was not rotated by the successful transition")
+	}
+	if curr.Err() != nil {
+		t.Errorf("current lifecycle generation is cancelled after a successful transition: %v", curr.Err())
+	}
+}
+
+// TestCommittedTransitionCancelsPreviousGeneration verifies that a successful
+// transition advances CurrentState, cancels the previous generation, and
+// leaves a valid (non-cancelled) generation in its place.
+func TestCommittedTransitionCancelsPreviousGeneration(t *testing.T) {
+	ctx := lcSendCtx(t)
+	sm := lcNewMachine(t, &succeedingAction{}, &succeedingAction{})
+	prev := installGeneration(sm)
+
+	_, err := sm.SendEvent(ctx, Disconnect, nil)
+	if err != nil {
+		t.Fatalf("SendEvent failed: %v", err)
+	}
+
+	if sm.CurrentState != DISCONNECTED {
+		t.Errorf("CurrentState = %q; want DISCONNECTED after a successful transition", sm.CurrentState)
+	}
+
+	if prev.Err() == nil {
+		t.Error("previous lifecycle generation was not cancelled after a successful transition")
+	}
+
+	curr := sm.LifecycleCtx
+	if curr == nil {
+		t.Fatal("LifecycleCtx is nil after a successful transition")
+	}
+	if curr == prev {
+		t.Error("LifecycleCtx was not rotated by the successful transition")
+	}
+	if curr.Err() != nil {
+		t.Errorf("current lifecycle generation is cancelled after a successful transition: %v", curr.Err())
+	}
+}
+
+// TestLifecycleCtxAbsentBeforeFirstTransition verifies that a StateMachine
+// can have a nil LifecycleCtx before its first transition, and that an accepted
+// transition successfully installs a live generation.
+func TestLifecycleCtxAbsentBeforeFirstTransition(t *testing.T) {
+	ctx := lcSendCtx(t)
+	sm := lcNewMachine(t, &succeedingAction{}, &succeedingAction{})
+	sm.LifecycleCtx = nil
+	sm.CancelLifecycle = nil
+
+	_, err := sm.SendEvent(ctx, Disconnect, nil)
+	if err != nil {
+		t.Fatalf("SendEvent failed: %v", err)
+	}
+
+	if sm.CurrentState != DISCONNECTED {
+		t.Errorf("CurrentState = %q; want DISCONNECTED after a successful transition", sm.CurrentState)
+	}
+
+	curr := sm.LifecycleCtx
+	if curr == nil {
+		t.Fatal("LifecycleCtx is nil after a successful transition")
 	}
 	if curr.Err() != nil {
 		t.Errorf("current lifecycle generation is cancelled after a successful transition: %v", curr.Err())

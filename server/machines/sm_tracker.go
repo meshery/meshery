@@ -2,6 +2,7 @@ package machines
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	"github.com/meshery/schemas/models/core"
@@ -56,7 +57,18 @@ func (smt *ConnectionToStateMachineInstanceTracker) GetOrInitialize(id core.Uuid
 		smt.mx.Unlock()
 	}()
 
-	inst, err := initFn()
+	inst, err := func() (i *StateMachine, e error) {
+		defer func() {
+			if r := recover(); r != nil {
+				i = nil
+				e = fmt.Errorf(
+					"panic while initializing state machine for connection %s: %v",
+					id, r,
+				)
+			}
+		}()
+		return initFn()
+	}()
 
 	smt.mx.Lock()
 	defer smt.mx.Unlock()
