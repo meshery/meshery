@@ -14,8 +14,10 @@ Validate conformance to predefined standards
 Validate predefined conformance to different standard specifications
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl adapter validate [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,16 +26,20 @@ mesheryctl adapter validate [flags]
 Validate conformance to predefined standards
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl adapter validate [mesh name] --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
 
+</div>
 </div>
 </pre> 
 
 Validate Istio to predefined standards
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 
+</div>
 </div>
 </pre> 
 
