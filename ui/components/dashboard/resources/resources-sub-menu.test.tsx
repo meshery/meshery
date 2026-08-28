@@ -188,26 +188,28 @@ describe('CRDsResourcesSubMenu', () => {
     expect(crdsArgs[0]).toEqual([null, null, { id: 'cluster-1' }, null, 'CRDS', ['ctx-1']]);
   });
 
-  it('renders no CRDs tabs when the CRDs hook resolves no cluster-backed resource', () => {
-    const crdsArgs: unknown[][] = [];
+  it('renders the fallback ResourcesTable when no CRDs are available or when no cluster is connected', () => {
     const crdsResource = {
       submenu: true,
       useTableConfig: (...args: unknown[]) => {
-        crdsArgs.push(args);
         return {};
       },
     };
     render(
       <CRDsResourcesSubMenu
-        k8sConfig={null}
+        k8sConfig={''}
         resource={crdsResource}
         selectedK8sContexts={[]}
-        selectedResource="Foo"
+        selectedResource=""
         handleChangeSelectedResource={vi.fn()}
       />,
     );
+
     expect(screen.queryByTestId('tab-0')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('pannel-Foo')).not.toBeInTheDocument();
-    expect(crdsArgs[0]).toEqual([null, null, null, null, 'CRDS', []]);
+
+    // This is a fallback component that will automatically display either
+    // "No data available" or "Sorry, no matching records found".
+    // However, in this test file, the ResourcesTable component is mocked.
+    expect(screen.queryByTestId('resources-table')).toBeInTheDocument();
   });
 });
