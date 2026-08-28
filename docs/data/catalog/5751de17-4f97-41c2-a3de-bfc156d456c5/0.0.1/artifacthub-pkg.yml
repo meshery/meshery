@@ -14,7 +14,7 @@ links:
 readme: "Ensure sufficient resources are available in the cluster \n ##h4 Caveats and Consideration \n"
 install: mesheryctl design import -f
 provider:
-    name: c4431ab5-eec8-4d21-947f-7fd9321c649b
+    name: 551dcb82-7643-4709-8500-9a60e60030b9
 screenshots:
     - title: Meshery Project
       url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

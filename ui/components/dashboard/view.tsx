@@ -82,7 +82,7 @@ const View = ({ setView, resource, k8sConfig }: DashboardViewProps) => {
 
   // data is a ConnectionPage ({ connections: [...] }), not an array.
   // kind is a plain repeated query param (?kind=kubernetes) — not JSON-encoded.
-  const { data: connectionData } = useGetConnectionsQuery({
+  const { data: connectionsData } = useGetConnectionsQuery({
     page: 0,
     pageSize: 100,
     search: '',
@@ -94,8 +94,9 @@ const View = ({ setView, resource, k8sConfig }: DashboardViewProps) => {
   if (!resource) return null;
 
   const context = getK8sContextFromClusterId(resource.cluster_id, k8sConfig);
-  const connections = connectionData?.connections || [];
-  const connection = connections.find((conn) => conn.id === context?.connectionId);
+  const connection = connectionsData?.connections?.find(
+    (conn) => conn.id === context?.connectionId,
+  );
   const connectionStatus = connection?.status || CONNECTION_STATES.DISCONNECTED;
   const iconSrc = normalizeStaticImagePath(resource.component_metadata?.styles?.svgColor);
 
