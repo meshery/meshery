@@ -288,7 +288,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
           console.error('error copying to clipboard:', error);
         });
     };
-    
+
     useEffect(() => {
       return () => {
         if (timeoutRef.current !== null) {
@@ -296,7 +296,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
         }
       };
     }, []);
-    
+
     return (
       <NoSsr>
         <ErrorBoundary>
@@ -374,7 +374,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                             <CustomTooltip
                               title={copied === providerName ? 'Copied!' : 'Copy'}
                               placement="top"
-                              >
+                            >
                               <IconButton
                                 onClick={() => copyToClipboard(provider, providerName)}
                                 style={{ padding: '0.25rem', float: 'right' }}
