@@ -6,6 +6,7 @@ import {
   Button,
   CustomColumnVisibilityControl,
   CustomTooltip,
+  DeleteIcon,
   EditIcon,
   IconButton,
   Modal,
@@ -366,14 +367,42 @@ function PerformanceProfile({ handleDelete }) {
       },
     },
 
-    onRowsDelete: async function handleDeleteRow(row) {
-      let response = await showModal(Object.keys(row.lookup).length);
-      if (response === 'DELETE') {
-        const pids = Object.keys(row.lookup).map((idx) => testProfiles[idx]?.id);
-        pids.forEach((pid) => handleDelete(pid));
-      } else {
-        refetchProfiles();
-      }
+    customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
+      const handleBulkDelete = async () => {
+        const pids = selectedRows.data.map(({ index }) => testProfiles[index]?.id).filter(Boolean);
+
+        if (pids.length === 0) return;
+
+        let response = await showModal(pids.length);
+        if (response === 'DELETE') {
+          dispatch(updateProgressAction({ showProgress: true }));
+          Promise.all(pids.map((pid) => deletePerformanceProfile({ id: pid }).unwrap()))
+            .then(() => {
+              dispatch(updateProgressAction({ showProgress: false }));
+              notify({
+                message: `Performance Profile${pids.length > 1 ? 's' : ''} Deleted!`,
+                event_type: EVENT_TYPES.SUCCESS,
+              });
+            })
+            .catch((error) => handleError('Failed To Delete Profile(s)')(error))
+            .finally(() => {
+              setSelectedRows([]);
+              refetchProfiles();
+            });
+        }
+      };
+
+      return (
+        <div style={{ marginRight: '24px' }}>
+          <CustomTooltip title={'Delete'}>
+            <div>
+              <IconButton onClick={handleBulkDelete}>
+                <DeleteIcon />
+              </IconButton>
+            </div>
+          </CustomTooltip>
+        </div>
+      );
     },
 
     onTableChange: (action, tableState) => {
