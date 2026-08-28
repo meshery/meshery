@@ -1,7 +1,10 @@
 package model
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"path/filepath"
 	"runtime"
@@ -14,6 +17,55 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
+
+func extractRequestFields(t *testing.T, bodyBytes []byte) (model, displayName, registrant, category, subCategory string, register bool) {
+	var payload map[string]json.RawMessage
+	if err := json.Unmarshal(bodyBytes, &payload); err != nil {
+		t.Fatalf("Failed to parse request body: %v", err)
+	}
+
+	if registerRaw, ok := payload["register"]; ok {
+		if err := json.Unmarshal(registerRaw, &register); err != nil {
+			t.Fatalf("Failed to parse register field: %v", err)
+		}
+	}
+
+	importBodyRaw, ok := payload["importBody"]
+	if !ok {
+		t.Fatalf("missing required field: importBody")
+	}
+
+	var importBody map[string]json.RawMessage
+	if err := json.Unmarshal(importBodyRaw, &importBody); err != nil {
+		t.Fatalf("Failed to parse importBody: %v", err)
+	}
+
+	modelRaw, ok := importBody["model"]
+	if !ok {
+		t.Fatalf("missing required field: model")
+	}
+
+	var modelObj map[string]json.RawMessage
+	if err := json.Unmarshal(modelRaw, &modelObj); err != nil {
+		t.Fatalf("Failed to parse model: %v", err)
+	}
+
+	decodeString := func(field string, raw json.RawMessage, target *string) {
+		if raw != nil {
+			if err := json.Unmarshal(raw, target); err != nil {
+				t.Fatalf("Failed to parse string field %s: %v", field, err)
+			}
+		}
+	}
+
+	decodeString("model", modelObj["model"], &model)
+	decodeString("modelDisplayName", modelObj["modelDisplayName"], &displayName)
+	decodeString("registrant", modelObj["registrant"], &registrant)
+	decodeString("category", modelObj["category"], &category)
+	decodeString("subCategory", modelObj["subCategory"], &subCategory)
+
+	return
+}
 
 func TestModelGenerate(t *testing.T) {
 	utils.SetupContextEnv(t)
@@ -41,6 +93,7 @@ func TestModelGenerate(t *testing.T) {
 		ExpectErr        bool
 		RaisedError      error
 		HttpCode         int
+		ValidateRequest  func(req *http.Request, t *testing.T)
 	}
 
 	tests := []tc{
@@ -62,11 +115,107 @@ func TestModelGenerate(t *testing.T) {
 		},
 		{
 			Name:             "model generate: from URL with template",
-			Args:             []string{"generate", "--file", "https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.crds.yaml", "--template", filepath.Join(fixturesDir, "templates", "template.json"), "--skip-registration=true"},
+			Args:             []string{"generate", "--file", "https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.crds.yaml", "--template", filepath.Join(fixturesDir, "templates", "template.json"), "--skip-registration"},
 			URL:              apiURL,
 			Fixture:          "generate.api.ok.response.golden",
 			ExpectedResponse: "generate.dir.skipped.output.golden",
 			HttpCode:         200,
+		},
+		{
+			Name:             "model generate: from URL with real nested model init template",
+			Args:             []string{"generate", "--file", "https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.crds.yaml", "--template", filepath.Join(fixturesDir, "templates", "model_template.json"), "--skip-registration"},
+			URL:              apiURL,
+			Fixture:          "generate.api.ok.response.golden",
+			ExpectedResponse: "generate.dir.skipped.output.golden",
+			HttpCode:         200,
+			ValidateRequest: func(req *http.Request, t *testing.T) {
+				bodyBytes, err := io.ReadAll(req.Body)
+				if err != nil {
+					t.Fatalf("Failed to read request body: %v", err)
+				}
+				req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+
+				model, displayName, registrant, category, subCategory, register := extractRequestFields(t, bodyBytes)
+
+				if model != "untitled-model" {
+					t.Errorf("Expected model 'untitled-model', got '%s'", model)
+				}
+				if displayName != "Untitled Model" {
+					t.Errorf("Expected displayName 'Untitled Model', got '%s'", displayName)
+				}
+				if registrant != "artifacthub" {
+					t.Errorf("Expected registrant 'artifacthub', got '%s'", registrant)
+				}
+				if category != "Uncategorized" {
+					t.Errorf("Expected category 'Uncategorized', got '%s'", category)
+				}
+				if subCategory != "Uncategorized" {
+					t.Errorf("Expected subCategory 'Uncategorized', got '%s'", subCategory)
+				}
+				if register {
+					t.Errorf("Expected Register to be false, got true")
+				}
+			},
+		},
+		{
+			Name:             "model generate: from URL with default registration",
+			Args:             []string{"generate", "--file", "https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.crds.yaml", "--template", filepath.Join(fixturesDir, "templates", "template.json")},
+			URL:              apiURL,
+			Fixture:          "generate.api.ok.response.golden",
+			ExpectedResponse: "generate.dir.skipped.output.golden",
+			HttpCode:         200,
+			ValidateRequest: func(req *http.Request, t *testing.T) {
+				bodyBytes, err := io.ReadAll(req.Body)
+				if err != nil {
+					t.Fatalf("Failed to read request body: %v", err)
+				}
+				req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+				model, _, registrant, category, subCategory, register := extractRequestFields(t, bodyBytes)
+
+				if model != "cert-manager" {
+					t.Errorf("Expected model 'cert-manager', got '%s'", model)
+				}
+				if registrant != "github" {
+					t.Errorf("Expected registrant 'github', got '%s'", registrant)
+				}
+				if category != "Security" {
+					t.Errorf("Expected category 'Security', got '%s'", category)
+				}
+				if subCategory != "Certificates" {
+					t.Errorf("Expected subCategory 'Certificates', got '%s'", subCategory)
+				}
+				if !register {
+					t.Errorf("Expected Register to be true, got %v", register)
+				}
+			},
+		},
+		{
+			Name:             "model generate: from URL with minimal legacy template",
+			Args:             []string{"generate", "--file", "https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.crds.yaml", "--template", filepath.Join(fixturesDir, "templates", "template_minimal.json"), "--skip-registration"},
+			URL:              apiURL,
+			Fixture:          "generate.api.ok.response.golden",
+			ExpectedResponse: "generate.dir.skipped.output.golden",
+			HttpCode:         200,
+			ValidateRequest: func(req *http.Request, t *testing.T) {
+				bodyBytes, err := io.ReadAll(req.Body)
+				if err != nil {
+					t.Fatalf("Failed to read request body: %v", err)
+				}
+				// Restore the body so other readers (if any) can read it
+				req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+
+				model, displayName, _, _, _, register := extractRequestFields(t, bodyBytes)
+
+				if model != "minimal-model" {
+					t.Errorf("Expected model 'minimal-model', got '%s'", model)
+				}
+				if displayName != "Minimal Model" {
+					t.Errorf("Expected displayName 'Minimal Model', got '%s'", displayName)
+				}
+				if register {
+					t.Errorf("Expected Register to be false, got true")
+				}
+			},
 		},
 	}
 
@@ -91,7 +240,9 @@ func TestModelGenerate(t *testing.T) {
 				apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).LoadByte()
 
 				httpmock.RegisterResponder("POST", testContext.BaseURL+tt.URL, func(req *http.Request) (*http.Response, error) {
-
+					if tt.ValidateRequest != nil {
+						tt.ValidateRequest(req, t)
+					}
 					return httpmock.NewBytesResponse(tt.HttpCode, apiResponse), nil
 				})
 			}
