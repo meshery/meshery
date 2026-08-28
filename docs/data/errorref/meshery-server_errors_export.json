@@ -4214,6 +4214,33 @@
         "short_description": "A component was withheld because a component it depends on did not succeed",
         "probable_cause": "A component that this one's order depends on did not succeed",
         "suggested_remediation": "Resolve the failure reported for that component, then try the design again"
+      },
+      "1481": {
+        "name": "ErrResetInProgressCode",
+        "code": "1481",
+        "severity": "Alert",
+        "long_description": "Seeding from a previous reset has not finished; starting another would drop tables mid-seed",
+        "short_description": "A database reset is already in progress",
+        "probable_cause": "A reset was requested while an earlier one was still seeding keys, catalog designs, or components",
+        "suggested_remediation": "Wait for the in-flight reset to finish, then retry"
+      },
+      "1482": {
+        "name": "ErrNoSystemEventSinkCode",
+        "code": "1482",
+        "severity": "Alert",
+        "long_description": "HandlerConfig.SystemEventPersister is nil, so events raised outside a user request - registry seeding summaries and registration failures - cannot be persisted",
+        "short_description": "No sink is configured for Meshery's system events",
+        "probable_cause": "Meshery Server was built with a HandlerConfig that does not wire SystemEventPersister",
+        "suggested_remediation": "Set HandlerConfig.SystemEventPersister when constructing the handler configuration; on a released build this indicates a defect, so please report it at https://github.com/meshery/meshery/issues/new/choose"
+      },
+      "1483": {
+        "name": "ErrSeedingStagePanicCode",
+        "code": "1483",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Meshery Server recovered from a fault while seeding its registry",
+        "probable_cause": "An unexpected condition was hit while seeding, either at startup or while reseeding after a database reset",
+        "suggested_remediation": "Meshery Server is still serving, but whatever the faulting stage contributes may be missing or incomplete. Report the stack trace above at https://github.com/meshery/meshery/issues/new/choose, then seed again - restart Meshery Server, or re-run the reset that triggered the seeding"
       }
     }
   }
