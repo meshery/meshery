@@ -35,9 +35,6 @@ const actionIconProps = (theme: Theme) => ({
   ...iconMedium,
 });
 
-// Widget is the internal shape of a dashboard widget as used by LayoutWidget.
-// Consumers should rely on WidgetItem from @sistent/sistent for the picker API.
-
 type StyledCardProps = {
   title?: React.ReactNode;
   icon?: React.ReactNode;

@@ -199,7 +199,6 @@ const Dashboard = () => {
     confirmNavigation();
   };
 
-  // Hooks must all be called before derived values and JSX.
   const { handleError, handleSuccess } = useNotificationHandlers();
 
   const widgetsToAdd = useMemo(
@@ -213,10 +212,6 @@ const Dashboard = () => {
     backgroundColor: theme.palette?.background?.tabs,
   };
 
-  // Note: DashboardLayout switches between mobile/desktop at MUI's md breakpoint
-  // (~900px), while ResponsiveReactGridLayout's own "md" breakpoint starts at 996px.
-  // Between 900–996px viewports, the sidebar renders in sticky-desktop mode while
-  // the grid is in its "sm" layout. This is a known Sistent DashboardLayout constraint.
   const onAddWidget = useCallback(
     (
       widget: Omit<WidgetItem, 'key'> & { defaultSizing?: { w?: number; h?: number } },
@@ -444,7 +439,6 @@ const Dashboard = () => {
             isSidebarOpen={isEditMode}
             sidebarContent={sidebarContent}
             sidebarTitle="Widget Picker"
-            sidebarWidth={{ xs: '100%', md: '350px' }}
             sidebarTopOffset="64px"
           >
             <ResponsiveReactGridLayout
@@ -454,7 +448,7 @@ const Dashboard = () => {
               isDraggable={isEditMode}
               cols={cols}
               draggableHandle=".react-grid-dragHandleExample"
-              breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+              breakpoints={{ lg: 1200, md: 900, sm: 768, xs: 480, xxs: 0 }}
               onBreakpointChange={onBreakpointChange}
               onLayoutChange={onLayoutChange}
               measureBeforeMount={false}
