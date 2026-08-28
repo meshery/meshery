@@ -137,6 +137,10 @@ describe('View', () => {
     expect(img).toHaveAttribute('src', '/icon.svg');
     expect(screen.getByText('pod-1')).toBeInTheDocument();
     expect(screen.getByTestId('connection-chip')).toHaveTextContent('ctx-cluster-1');
+    // #20617: plain ?kind=kubernetes, not JSON.stringify(['kubernetes'])
+    expect(useGetConnectionsQuery).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: 'kubernetes', pageSize: 100 }),
+    );
   });
 
   it('navigates back and switches view when the back button is clicked', async () => {
