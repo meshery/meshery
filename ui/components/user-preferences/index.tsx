@@ -269,7 +269,9 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   const RemoteProviderInfoTab = () => {
     const [copied, setCopied] = useState<string | null>(null);
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const requestIdRef = useRef<number>(0);
     const copyToClipboard = (text: string, key: string): void => {
+      const requestId = ++requestIdRef.current;
       navigator.clipboard
         .writeText(text)
         .then(() => {
@@ -286,7 +288,15 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
           console.error('error copying to clipboard:', error);
         });
     };
-
+    
+    useEffect(() => {
+      return () => {
+        if (timeoutRef.current !== null) {
+          clearTimeout(timeoutRef.current);
+        }
+      };
+    }, []);
+    
     return (
       <NoSsr>
         <ErrorBoundary>
