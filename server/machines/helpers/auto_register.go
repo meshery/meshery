@@ -105,8 +105,9 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 
 						machineInst, err := InitializeMachineWithContext(connectionPayload, ctx, id, data.MeshsyncDataHandler.UserID, arh.smInstanceTracker, arh.log, data.MeshsyncDataHandler.Provider, machines.DISCOVERED, connType, nil)
 
-						if err != nil {
+						if err != nil || machineInst == nil {
 							arh.log.Error(ErrAutoRegister(err, connType))
+							continue
 						}
 
 						_, err = machineInst.SendEvent(ctx, machines.Register, connectionPayload)
