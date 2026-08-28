@@ -15,8 +15,7 @@ Switch release channel and version of context in focus
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system channel switch [stable|stable-version|edge|edge-version] [flags]
-
+<code class='clipboardjs'>mesheryctl system channel switch [stable|stable-version|edge|edge-version] [flags]</code>
 </div>
 </pre> 
 
@@ -25,8 +24,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version] [flag
 Switch between release channels
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system channel switch [stable|stable-version|edge|edge-version]
-
+<code class='clipboardjs'>mesheryctl system channel switch [stable|stable-version|edge|edge-version]</code>
 </div>
 </pre> 
 

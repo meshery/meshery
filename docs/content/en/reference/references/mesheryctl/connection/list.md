@@ -15,8 +15,7 @@ List all available connections.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection list [flags]
-
+<code class='clipboardjs'>mesheryctl connection list [flags]</code>
 </div>
 </pre> 
 
@@ -25,40 +24,35 @@ mesheryctl connection list [flags]
 List all the connections
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection list
-
+<code class='clipboardjs'>mesheryctl connection list</code>
 </div>
 </pre> 
 
 List all the connections with page number
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection list --page [page-number]
-
+<code class='clipboardjs'>mesheryctl connection list --page [page-number]</code>
 </div>
 </pre> 
 
 List all the connections matching a specific kind and status
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection list --kind [kind] --status [status]
-
+<code class='clipboardjs'>mesheryctl connection list --kind [kind] --status [status]</code>
 </div>
 </pre> 
 
 List all the connections matching a set of kinds and statuses
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection list --kind [kind] --kind [kind] --status [status] --status [status]
-
+<code class='clipboardjs'>mesheryctl connection list --kind [kind] --kind [kind] --status [status] --status [status]</code>
 </div>
 </pre> 
 
 Display total count of all available connections
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection list --count
-
+<code class='clipboardjs'>mesheryctl connection list --count</code>
 </div>
 </pre> 
 

@@ -15,8 +15,7 @@ view a relationship queried by the model name.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship view [flags]
-
+<code class='clipboardjs'>mesheryctl relationship view [flags]</code>
 </div>
 </pre> 
 
@@ -25,24 +24,21 @@ mesheryctl relationship view [flags]
 View relationships of a model in default format yaml
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship view [model-name]
-
+<code class='clipboardjs'>mesheryctl relationship view [model-name]</code>
 </div>
 </pre> 
 
 View relationships of a model in JSON format
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship view [model-name] --output-format json
-
+<code class='clipboardjs'>mesheryctl relationship view [model-name] --output-format json</code>
 </div>
 </pre> 
 
 View relationships of a model in json format and save it to a file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship view [model-name] --output-format json --save
-
+<code class='clipboardjs'>mesheryctl relationship view [model-name] --output-format json --save</code>
 </div>
 </pre> 
 

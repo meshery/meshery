@@ -15,8 +15,7 @@ Create the token with provided token name (optionally token path) to your meshco
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system token create [flags]
-
+<code class='clipboardjs'>mesheryctl system token create [flags]</code>
 </div>
 </pre> 
 
@@ -24,22 +23,19 @@ mesheryctl system token create [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system token create [token-name] -f [token-path]
-
+<code class='clipboardjs'>mesheryctl system token create [token-name] -f [token-path]</code>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system token create [token-name] (default path is auth.json)
-
+<code class='clipboardjs'>mesheryctl system token create [token-name] (default path is auth.json)</code>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system token create [token-name] -f [token-path] --set
-
+<code class='clipboardjs'>mesheryctl system token create [token-name] -f [token-path] --set</code>
 </div>
 </pre> 
 

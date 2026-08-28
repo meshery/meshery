@@ -15,8 +15,7 @@ Displays the contents of a specific filter based on name or id.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl filter view [flags]
-
+<code class='clipboardjs'>mesheryctl filter view [flags]</code>
 </div>
 </pre> 
 
@@ -26,47 +25,35 @@ View the specified WASM filter
 A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be returned.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl filter view "[filter-name | ID]"
-
+<code class='clipboardjs'>mesheryctl filter view "[filter-name | ID]"</code>
 </div>
 </pre> 
 
 View all filter files
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl filter view --all
-
+<code class='clipboardjs'>mesheryctl filter view --all</code>
 </div>
 </pre> 
 
 View all filter files in json
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl filter view --all --output-format json
-
+<code class='clipboardjs'>mesheryctl filter view --all --output-format json</code>
 </div>
 </pre> 
 
 View all filter files in json and save it to a file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl filter view --all --output-format json -s
-
+<code class='clipboardjs'>mesheryctl filter view --all --output-format json -s</code>
 </div>
 </pre> 
 
 //View multi-word named filter files. Multi-word filter names should be enclosed in quotes
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl filter view "filter name"
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-        
-
+<code class='clipboardjs'>mesheryctl filter view "filter name"</code>
 </div>
 </pre> 
 

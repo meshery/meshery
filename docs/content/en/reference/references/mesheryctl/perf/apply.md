@@ -15,8 +15,7 @@ Run Performance test using existing profiles or using flags.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf apply [profile-name] [flags]
-
+<code class='clipboardjs'>mesheryctl perf apply [profile-name] [flags]</code>
 </div>
 </pre> 
 
@@ -25,32 +24,28 @@ mesheryctl perf apply [profile-name] [flags]
 Execute a Performance test with the specified performance profile
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf apply meshery-profile [flags]
-
+<code class='clipboardjs'>mesheryctl perf apply meshery-profile [flags]</code>
 </div>
 </pre> 
 
 Execute a Performance test with creating a new performance profile
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf apply meshery-profile-new --url "https://google.com"
-
+<code class='clipboardjs'>mesheryctl perf apply meshery-profile-new --url "https://google.com"</code>
 </div>
 </pre> 
 
 Execute a Performance test creating a new performance profile and pass certificate to be used
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf apply meshery-profile-new --url "https://google.com" --cert-path path/to/cert.pem
-
+<code class='clipboardjs'>mesheryctl perf apply meshery-profile-new --url "https://google.com" --cert-path path/to/cert.pem</code>
 </div>
 </pre> 
 
 Execute a performance profile without using the certificate present in the profile
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf apply meshery-profile --url "https://google.com" --disable-cert
-
+<code class='clipboardjs'>mesheryctl perf apply meshery-profile --url "https://google.com" --disable-cert</code>
 </div>
 </pre> 
 
@@ -58,32 +53,28 @@ Run Performance test using SMP compatible test configuration
 If the profile already exists, the test will be run overriding the values with the ones provided in the configuration file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf apply meshery-profile -f path/to/perf-config.yaml
-
+<code class='clipboardjs'>mesheryctl perf apply meshery-profile -f path/to/perf-config.yaml</code>
 </div>
 </pre> 
 
 Run performance test using SMP compatible test configuration and override values with flags
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf apply meshery-profile -f path/to/perf-config.yaml [flags]
-
+<code class='clipboardjs'>mesheryctl perf apply meshery-profile -f path/to/perf-config.yaml [flags]</code>
 </div>
 </pre> 
 
 Execute a Performance test with specified queries per second
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --qps 30
-
+<code class='clipboardjs'>mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --qps 30</code>
 </div>
 </pre> 
 
 Execute a Performance test with specified infrastructure
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --mesh istio
-
+<code class='clipboardjs'>mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --mesh istio</code>
 </div>
 </pre> 
 
@@ -92,22 +83,19 @@ If any options are already present in the profile or passed through flags, the -
 Options for fortio - https://github.com/fortio/fortio/blob/v1.57.0/fhttp/httprunner.go#L77-L84
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf apply meshery-profile-new --url "https://google.com" --options [filepath|json-string]
-
+<code class='clipboardjs'>mesheryctl perf apply meshery-profile-new --url "https://google.com" --options [filepath|json-string]</code>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf apply meshery-profile-new --url "https://google.com" --options path/to/options.json
-
+<code class='clipboardjs'>mesheryctl perf apply meshery-profile-new --url "https://google.com" --options path/to/options.json</code>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator fortio --options '{"MethodOverride": "POST"}'
-
+<code class='clipboardjs'>mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator fortio --options '{"MethodOverride": "POST"}'</code>
 </div>
 </pre> 
 

@@ -15,8 +15,7 @@ View provider of context in focus.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system provider view [flags]
-
+<code class='clipboardjs'>mesheryctl system provider view [flags]</code>
 </div>
 </pre> 
 
@@ -25,8 +24,7 @@ mesheryctl system provider view [flags]
 View current provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system provider view
-
+<code class='clipboardjs'>mesheryctl system provider view</code>
 </div>
 </pre> 
 

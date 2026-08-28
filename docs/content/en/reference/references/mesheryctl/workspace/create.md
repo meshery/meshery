@@ -15,8 +15,7 @@ Create a new workspace by providing the name, description, and organization ID
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl workspace create [flags]
-
+<code class='clipboardjs'>mesheryctl workspace create [flags]</code>
 </div>
 </pre> 
 
@@ -25,8 +24,7 @@ mesheryctl workspace create [flags]
 Create a new workspace in an organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
-
+<code class='clipboardjs'>mesheryctl workspace create --orgId [orgId] --name [name] --description [description]</code>
 </div>
 </pre> 
 

@@ -15,8 +15,7 @@ Load generation and performance characterization
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf [flags]
-
+<code class='clipboardjs'>mesheryctl perf [flags]</code>
 </div>
 </pre> 
 
@@ -25,39 +24,34 @@ mesheryctl perf [flags]
 Run performance test:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf apply test-3 --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s
-
+<code class='clipboardjs'>mesheryctl perf apply test-3 --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s</code>
 </div>
 </pre> 
 
 List performance profiles:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf profile sam-test
-
+<code class='clipboardjs'>mesheryctl perf profile sam-test</code>
 </div>
 </pre> 
 
 List performance results:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf result sam-test
-
+<code class='clipboardjs'>mesheryctl perf result sam-test</code>
 </div>
 </pre> 
 
 Display Perf profile in JSON or YAML:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf result -o json
-
+<code class='clipboardjs'>mesheryctl perf result -o json</code>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf result -o yaml
-
+<code class='clipboardjs'>mesheryctl perf result -o yaml</code>
 </div>
 </pre> 
 

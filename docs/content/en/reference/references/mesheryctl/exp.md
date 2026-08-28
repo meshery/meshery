@@ -14,8 +14,7 @@ Preview experimental commands
 Commands under the Experimental group are for testing and evaluation prior to promotion to general availability. Experimental commands are subject to change.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp [flags]
-
+<code class='clipboardjs'>mesheryctl exp [flags]</code>
 </div>
 </pre> 
 

@@ -15,8 +15,7 @@ Search model(s) by search string
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model search [flags]
-
+<code class='clipboardjs'>mesheryctl model search [flags]</code>
 </div>
 </pre> 
 
@@ -25,24 +24,21 @@ mesheryctl model search [flags]
 Search model from current provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model search [query-text]
-
+<code class='clipboardjs'>mesheryctl model search [query-text]</code>
 </div>
 </pre> 
 
 Search list of models for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model search [query-text] --page [page-number]
-
+<code class='clipboardjs'>mesheryctl model search [query-text] --page [page-number]</code>
 </div>
 </pre> 
 
 Search list of models for a specified pagesize
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model search [query-text] --pagesize [pagesize-number]
-
+<code class='clipboardjs'>mesheryctl model search [query-text] --pagesize [pagesize-number]</code>
 </div>
 </pre> 
 

@@ -15,8 +15,7 @@ delete design file will trigger deletion of the design file.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design delete [flags]
-
+<code class='clipboardjs'>mesheryctl design delete [flags]</code>
 </div>
 </pre> 
 
@@ -25,8 +24,7 @@ mesheryctl design delete [flags]
 delete a design file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design delete [file | URL]
-
+<code class='clipboardjs'>mesheryctl design delete [file | URL]</code>
 </div>
 </pre> 
 

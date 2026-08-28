@@ -17,6 +17,7 @@ package main
 import (
 	"bytes"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/spf13/cobra"
@@ -160,6 +161,8 @@ func TestDoc(t *testing.T) {
 		output := buf.String()
 		assert.Contains(t, output, "test_link")
 		assert.Contains(t, output, "codeblock-pre")
+		// The copy-to-clipboard button in docs/static/js/main.js binds to '.clipboardjs'.
+		assert.Contains(t, output, "<code class='clipboardjs'>")
 		assert.Contains(t, output, "test_caption")
 		assert.Contains(t, output, "test_example")
 		assert.Contains(t, output, "See Also")
@@ -206,5 +209,68 @@ func TestDoc(t *testing.T) {
 		output = buf.String()
 		assert.Contains(t, output, "## Options inherited from parent commands")
 		assert.Contains(t, output, "--parentFlag")
+	})
+}
+
+func TestWriteCommandBlock(t *testing.T) {
+	t.Run("emits the clipboardjs hook the docs copy button binds to", func(t *testing.T) {
+		buf := &bytes.Buffer{}
+		writeCommandBlock(buf, "mesheryctl system start")
+
+		expected := "<pre class='codeblock-pre'>\n" +
+			"<div class='codeblock'>\n" +
+			"<code class='clipboardjs'>mesheryctl system start</code>\n" +
+			"</div>\n</pre> \n\n"
+		assert.Equal(t, expected, buf.String())
+	})
+
+	t.Run("escapes markup so placeholders survive the HTML parser", func(t *testing.T) {
+		buf := &bytes.Buffer{}
+		writeCommandBlock(buf, "mesheryctl relationship search [--kind <kind>] & more")
+
+		out := buf.String()
+		// <kind> would otherwise be parsed as a tag and vanish from the rendered page.
+		assert.Contains(t, out, "[--kind &lt;kind&gt;] &amp; more")
+		assert.NotContains(t, out, "<kind>")
+	})
+
+	t.Run("does not double-escape an ampersand it just inserted", func(t *testing.T) {
+		buf := &bytes.Buffer{}
+		writeCommandBlock(buf, "a < b")
+
+		assert.Contains(t, buf.String(), "a &lt; b")
+		assert.NotContains(t, buf.String(), "&amp;lt;")
+	})
+}
+
+func TestGenMarkdownCustomExamples(t *testing.T) {
+	t.Run("every example command block is copyable", func(t *testing.T) {
+		cmd := &cobra.Command{Use: "start", Short: "short"}
+		cmd.Run = func(cmd *cobra.Command, args []string) {}
+		cmd.Example = "// Start Meshery\nmesheryctl system start\n// Start in debug mode\nmesheryctl system start --debug"
+
+		buf := &bytes.Buffer{}
+		err := GenMarkdownCustom(cmd, buf, map[int]string{})
+		assert.NoError(t, err)
+		output := buf.String()
+
+		// Two examples plus the synopsis usage line are all copyable.
+		assert.Equal(t, 3, strings.Count(output, "<code class='clipboardjs'>"))
+		assert.Contains(t, output, "<code class='clipboardjs'>mesheryctl system start</code>")
+		assert.Contains(t, output, "<code class='clipboardjs'>mesheryctl system start --debug</code>")
+		// Description lines stay prose, not code blocks.
+		assert.Contains(t, output, "Start Meshery\n")
+	})
+
+	t.Run("whitespace-only example lines produce no empty block", func(t *testing.T) {
+		cmd := &cobra.Command{Use: "start", Short: "short"}
+		cmd.Example = "mesheryctl system start\n\t\t\n   \n\t"
+
+		buf := &bytes.Buffer{}
+		err := GenMarkdownCustom(cmd, buf, map[int]string{})
+		assert.NoError(t, err)
+
+		// Only the single real example is emitted; the blank lines are dropped.
+		assert.Equal(t, 1, strings.Count(buf.String(), "<code class='clipboardjs'>"))
 	})
 }

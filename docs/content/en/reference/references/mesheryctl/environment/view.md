@@ -15,8 +15,7 @@ View details of an environment registered in Meshery Server for a specific organ
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment view [flags]
-
+<code class='clipboardjs'>mesheryctl environment view [flags]</code>
 </div>
 </pre> 
 
@@ -25,8 +24,7 @@ mesheryctl environment view [flags]
 View details of a specific environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment view --orgId [orgId]
-
+<code class='clipboardjs'>mesheryctl environment view --orgId [orgId]</code>
 </div>
 </pre> 
 

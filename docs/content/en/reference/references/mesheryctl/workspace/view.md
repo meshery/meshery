@@ -15,8 +15,7 @@ View a workspace by its ID or name.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl workspace view [workspace-name|workspace-id] [flags]
-
+<code class='clipboardjs'>mesheryctl workspace view [workspace-name|workspace-id] [flags]</code>
 </div>
 </pre> 
 
@@ -25,32 +24,28 @@ mesheryctl workspace view [workspace-name|workspace-id] [flags]
 View details of a specific workspace by ID
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl workspace view [workspace-id] --orgId [orgId]
-
+<code class='clipboardjs'>mesheryctl workspace view [workspace-id] --orgId [orgId]</code>
 </div>
 </pre> 
 
 View details of a specific workspace by name
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl workspace view [workspace-name] --orgId [orgId]
-
+<code class='clipboardjs'>mesheryctl workspace view [workspace-name] --orgId [orgId]</code>
 </div>
 </pre> 
 
 View details of a specific workspace in JSON format
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json
-
+<code class='clipboardjs'>mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json</code>
 </div>
 </pre> 
 
 View details of a specific workspace and save it to a file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --save
-
+<code class='clipboardjs'>mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --save</code>
 </div>
 </pre> 
 

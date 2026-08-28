@@ -15,8 +15,7 @@ View and manage your Meshery connection.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection [flags]
-
+<code class='clipboardjs'>mesheryctl connection [flags]</code>
 </div>
 </pre> 
 
@@ -25,60 +24,52 @@ mesheryctl connection [flags]
 Display total count of all available connections
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection --count
-
+<code class='clipboardjs'>mesheryctl connection --count</code>
 </div>
 </pre> 
 
 Create a new Kubernetes connection using a specific type
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection create --type aks
-
+<code class='clipboardjs'>mesheryctl connection create --type aks</code>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection create --type eks
-
+<code class='clipboardjs'>mesheryctl connection create --type eks</code>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection create --type gke
-
+<code class='clipboardjs'>mesheryctl connection create --type gke</code>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection create --type minikube
-
+<code class='clipboardjs'>mesheryctl connection create --type minikube</code>
 </div>
 </pre> 
 
 List all the connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection list
-
+<code class='clipboardjs'>mesheryctl connection list</code>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection list --count
-
+<code class='clipboardjs'>mesheryctl connection list --count</code>
 </div>
 </pre> 
 
 Delete a connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl connection delete [connection_id]
-
+<code class='clipboardjs'>mesheryctl connection delete [connection_id]</code>
 </div>
 </pre> 
 

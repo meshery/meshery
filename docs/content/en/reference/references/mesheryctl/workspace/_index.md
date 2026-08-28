@@ -15,8 +15,7 @@ Create, list of workspaces under an organization
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl workspace [flags]
-
+<code class='clipboardjs'>mesheryctl workspace [flags]</code>
 </div>
 </pre> 
 
@@ -25,16 +24,14 @@ mesheryctl workspace [flags]
 To view a list workspaces
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl workspace list --orgId [orgId]
-
+<code class='clipboardjs'>mesheryctl workspace list --orgId [orgId]</code>
 </div>
 </pre> 
 
 To create a workspace
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
-
+<code class='clipboardjs'>mesheryctl workspace create --orgId [orgId] --name [name] --description [description]</code>
 </div>
 </pre> 
 

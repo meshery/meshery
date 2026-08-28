@@ -15,8 +15,7 @@ Export the registered model to the specified output type
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model export [flags]
-
+<code class='clipboardjs'>mesheryctl model export [flags]</code>
 </div>
 </pre> 
 
@@ -25,40 +24,35 @@ mesheryctl model export [flags]
 Export a model by name 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model export [model-name] -o [oci|tar]  (default is oci)
-
+<code class='clipboardjs'>mesheryctl model export [model-name] -o [oci|tar]  (default is oci)</code>
 </div>
 </pre> 
 
 Export a model by name in JSON type
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model export [model-name] -t [yaml|json] (default is YAML)
-
+<code class='clipboardjs'>mesheryctl model export [model-name] -t [yaml|json] (default is YAML)</code>
 </div>
 </pre> 
 
 Export a model by name in YAML type in a specific location
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model export [model-name] -l [path-to-location]
-
+<code class='clipboardjs'>mesheryctl model export [model-name] -l [path-to-location]</code>
 </div>
 </pre> 
 
 Export a model by name in YAML type discarding components and relationships
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model export [model-name] --discard-components --discard-relationships
-
+<code class='clipboardjs'>mesheryctl model export [model-name] --discard-components --discard-relationships</code>
 </div>
 </pre> 
 
 Export a model version by name in YAML type
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
-
+<code class='clipboardjs'>mesheryctl model export [model-name] --version [version (ex: v0.7.3)]</code>
 </div>
 </pre> 
 

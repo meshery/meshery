@@ -14,8 +14,7 @@ List tokens
 List all the tokens in your meshconfig
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system token list [flags]
-
+<code class='clipboardjs'>mesheryctl system token list [flags]</code>
 </div>
 </pre> 
 
@@ -23,8 +22,7 @@ mesheryctl system token list [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system token list
-
+<code class='clipboardjs'>mesheryctl system token list</code>
 </div>
 </pre> 
 

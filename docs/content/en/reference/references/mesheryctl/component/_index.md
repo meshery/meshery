@@ -15,8 +15,7 @@ List, search and view component(s) and detailed informations
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component [flags]
-
+<code class='clipboardjs'>mesheryctl component [flags]</code>
 </div>
 </pre> 
 
@@ -25,32 +24,28 @@ mesheryctl component [flags]
 Display number of available components in Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component --count
-
+<code class='clipboardjs'>mesheryctl component --count</code>
 </div>
 </pre> 
 
 List available component(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component list
-
+<code class='clipboardjs'>mesheryctl component list</code>
 </div>
 </pre> 
 
 Search for component(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component search [component-name]
-
+<code class='clipboardjs'>mesheryctl component search [component-name]</code>
 </div>
 </pre> 
 
 View a specific component
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component view [component-name | component-id]
-
+<code class='clipboardjs'>mesheryctl component view [component-name | component-id]</code>
 </div>
 </pre> 
 
