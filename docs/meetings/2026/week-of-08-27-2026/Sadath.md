@@ -1,2 +1,3 @@
 Hey folks. 
-I am Sadath, been for a few days now, still figuring my way around
+I am Sadath, working as a tech support engineer. Been for a few days now, i am still figuring my way around.
+Excited to contribute to open source.
