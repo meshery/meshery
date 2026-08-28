@@ -21,9 +21,7 @@ import { describe, expect, it } from 'vitest';
 // not export them, so the whole suite is skipped until the sistent bump lands.
 // Remove this guard once sistent ≥ 0.22.0 is pinned in package.json.
 const hasSistentPayloadBuilders =
-  typeof buildGrantAccessPayload === 'function' &&
-  typeof buildRevokeAccessPayload === 'function';
-
+  typeof buildGrantAccessPayload === 'function' && typeof buildRevokeAccessPayload === 'function';
 
 const user = (id: string) => ({ id, email: `${id}@example.com` });
 
@@ -43,55 +41,54 @@ const collectKeys = (value: unknown): string[] => {
 describe.skipIf(!hasSistentPayloadBuilders)(
   'resource share payload wire contract (requires @sistent/sistent ≥ 0.22.0)',
   () => {
-  it('emits camelCase top-level keys for a grant', () => {
-    const payload = buildGrantAccessPayload([user('alice')]);
+    it('emits camelCase top-level keys for a grant', () => {
+      const payload = buildGrantAccessPayload([user('alice')]);
 
-    expect(Object.keys(payload).sort()).toEqual(['grantAccess', 'notifyUsers', 'revokeAccess']);
-  });
+      expect(Object.keys(payload).sort()).toEqual(['grantAccess', 'notifyUsers', 'revokeAccess']);
+    });
 
-  it('emits camelCase top-level keys for a revoke', () => {
-    const payload = buildRevokeAccessPayload([user('bob')]);
+    it('emits camelCase top-level keys for a revoke', () => {
+      const payload = buildRevokeAccessPayload([user('bob')]);
 
-    expect(Object.keys(payload).sort()).toEqual(['grantAccess', 'notifyUsers', 'revokeAccess']);
-  });
+      expect(Object.keys(payload).sort()).toEqual(['grantAccess', 'notifyUsers', 'revokeAccess']);
+    });
 
-  it('places granted users under grantAccess and revoked users under revokeAccess', () => {
-    expect(buildGrantAccessPayload([user('alice')]).grantAccess).toHaveLength(1);
-    expect(buildGrantAccessPayload([user('alice')]).revokeAccess).toHaveLength(0);
+    it('places granted users under grantAccess and revoked users under revokeAccess', () => {
+      expect(buildGrantAccessPayload([user('alice')]).grantAccess).toHaveLength(1);
+      expect(buildGrantAccessPayload([user('alice')]).revokeAccess).toHaveLength(0);
 
-    expect(buildRevokeAccessPayload([user('bob')]).revokeAccess).toHaveLength(1);
-    expect(buildRevokeAccessPayload([user('bob')]).grantAccess).toHaveLength(0);
-  });
+      expect(buildRevokeAccessPayload([user('bob')]).revokeAccess).toHaveLength(1);
+      expect(buildRevokeAccessPayload([user('bob')]).grantAccess).toHaveLength(0);
+    });
 
-  it('emits camelCase actor keys for a granted user', () => {
-    const payload = buildGrantAccessPayload([user('alice')]);
+    it('emits camelCase actor keys for a granted user', () => {
+      const payload = buildGrantAccessPayload([user('alice')]);
 
-    expect(payload.grantAccess).toHaveLength(1);
-    expect(Object.keys(payload.grantAccess[0]).sort()).toEqual(['actorId', 'actorType']);
-  });
+      expect(payload.grantAccess).toHaveLength(1);
+      expect(Object.keys(payload.grantAccess[0]).sort()).toEqual(['actorId', 'actorType']);
+    });
 
-  it('emits camelCase actor keys for a revoked user', () => {
-    const payload = buildRevokeAccessPayload([user('bob')]);
+    it('emits camelCase actor keys for a revoked user', () => {
+      const payload = buildRevokeAccessPayload([user('bob')]);
 
-    expect(payload.revokeAccess).toHaveLength(1);
-    expect(Object.keys(payload.revokeAccess[0]).sort()).toEqual(['actorId', 'actorType']);
-  });
+      expect(payload.revokeAccess).toHaveLength(1);
+      expect(Object.keys(payload.revokeAccess[0]).sort()).toEqual(['actorId', 'actorType']);
+    });
 
-  it('never emits a snake_case key at any nesting depth', () => {
-    const payloads = [
-      buildGrantAccessPayload([user('alice')]),
-      buildRevokeAccessPayload([user('bob')]),
-    ];
+    it('never emits a snake_case key at any nesting depth', () => {
+      const payloads = [
+        buildGrantAccessPayload([user('alice')]),
+        buildRevokeAccessPayload([user('bob')]),
+      ];
 
-    for (const payload of payloads) {
-      const keys = collectKeys(payload);
+      for (const payload of payloads) {
+        const keys = collectKeys(payload);
 
-      expect(keys.length).toBeGreaterThan(Object.keys(payload).length);
-      for (const key of keys) {
-        expect(key).not.toMatch(/_/);
+        expect(keys.length).toBeGreaterThan(Object.keys(payload).length);
+        for (const key of keys) {
+          expect(key).not.toMatch(/_/);
+        }
       }
-    }
-  });
-},
+    });
+  },
 );
-
