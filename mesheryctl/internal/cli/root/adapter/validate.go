@@ -20,6 +20,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -66,13 +67,11 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 		if err != nil {
 			return ErrGettingSessionData(err)
 		}
-		//resolve adapterUrl to adapter Location
-		for _, adapter := range prefs.MeshAdapters {
-			adapterName := strings.Split(adapter.Location, ":")
-			if adapterName[0] == adapterURL {
-				adapterURL = adapter.Location
-				meshName = adapter.Location
-			}
+		//resolve adapterUrl to adapter Location, pulling both Location and
+		//Name off the same matched adapter so they can never disagree
+		if adapter, ok := findAdapter(prefs.MeshAdapters, adapterURL); ok {
+			adapterURL = adapter.Location
+			meshName = adapter.Name
 		}
 		//sync with available adapters
 		if err = validateAdapter(mctlCfg, meshName); err != nil {
@@ -107,6 +106,20 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 
 		return nil
 	},
+}
+
+// findAdapter looks up the registered mesh adapter whose Location's host
+// (the part before an optional ":port") matches adapterURL, and returns
+// that adapter so the caller can read Name and Location off the same match
+// instead of mixing fields from two different resolution passes.
+func findAdapter(adapters []*models.Adapter, adapterURL string) (*models.Adapter, bool) {
+	for _, adapter := range adapters {
+		host := strings.Split(adapter.Location, ":")[0]
+		if host == adapterURL {
+			return adapter, true
+		}
+	}
+	return nil, false
 }
 
 func init() {
