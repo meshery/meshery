@@ -15,8 +15,10 @@ Set release channel and version of context in focus
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system channel set [stable|stable-version|edge|edge-version] [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +27,10 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version] [flags]
 Subscribe to release channel or version
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
+</div>
 </div>
 </pre> 
 
