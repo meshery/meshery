@@ -13,6 +13,11 @@ linkTitle: Documentation
   <h3 style="font-size:1.6rem">As a self-service engineering platform, Meshery enables collaborative design and operation of cloud and cloud native infrastructure.</h3>
 </div>
 
+<div style="text-align:center; margin: 1rem 0;">
+<pre class="codeblock-pre"><div class="codeblock"><div class="clipboardjs">curl -L https://meshery.io/install | bash</div></div></pre>
+<a href="https://docs.meshery.io/installation/quick-start">Quick Start Guide →</a>
+</div>
+
 <div class="flex container">
   <!-- OVERVIEW -->
   <div class="section">

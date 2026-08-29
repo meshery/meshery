@@ -31,7 +31,7 @@ If you are on a macOS or Linux system, you can download, install, and run both `
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-  <div class="clipboardjs">curl -L https://meshery.io/install | PLATFORM=kubernetes bash -</div>
+  <div class="clipboardjs">curl -L https://meshery.io/install | bash</div>
   </div>
 </pre>
 <br/>
