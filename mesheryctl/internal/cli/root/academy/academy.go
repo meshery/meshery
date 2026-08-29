@@ -23,12 +23,18 @@ mesheryctl academy create --type learning-path --title "My Path" --description "
 // Scaffold a single course into an existing tree
 mesheryctl academy create course "New Course" --description "Desc" --into ./my-path
 `,
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return cmd.Help()
+			if err := cmd.Help(); err != nil {
+				return err
+			}
+			return utils.ErrInvalidArgument(errors.New("Please provide a subcommand with the command"))
 		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.RootError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl academy --help' to display usage guide.\n", args[0])))
+			return utils.ErrInvalidArgument(errors.New(utils.RootError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl academy --help' to display usage guide.\n", args[0]))))
 		}
 		return nil
 	},

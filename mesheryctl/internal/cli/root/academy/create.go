@@ -15,7 +15,7 @@ type cmdAcademyCreateFlags struct {
 	Title       string `json:"title" validate:"required"`
 	Description string `json:"description" validate:"required"`
 	Into        string `json:"into"`
-	OrgID       string `json:"org"`
+	OrgID       string `json:"org" validate:"omitempty,uuid"`
 	Level       string `json:"level"`
 	Category    string `json:"category"`
 	Tags        string `json:"tags"`
@@ -81,9 +81,6 @@ func executeCreate() error {
 			return errMissingOrgID()
 		}
 		if err := validatePathSegment(orgID); err != nil {
-			return err
-		}
-		if err := validateOrgID(orgID); err != nil {
 			return err
 		}
 		targetDir = filepath.Join(targetDir, "content", contentDirSegment(string(cType)), orgID)

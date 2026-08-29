@@ -180,7 +180,6 @@ func TestAcademyCreate(t *testing.T) {
 			name:         "reject non-UUID orgID",
 			args:         []string{"create", "--type", "learning-path", "--title", "My Path", "--description", "Desc", "--org", "my-org"},
 			expectErr:    true,
-			expectedCode: ErrInvalidOrgIDCode,
 		},
 		{
 			name:         "scaffold page under lab should fail",
