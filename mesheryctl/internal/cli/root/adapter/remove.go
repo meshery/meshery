@@ -28,7 +28,7 @@ var (
 	removeCmd = &cobra.Command{
 		Use:   "remove",
 		Short: "Remove cloud and cloud native infrastructure",
-		Long:  `remove cloud and cloud native infrastructure`,
+		Long:  `Remove cloud and cloud native infrastructure`,
 		Example: `
 // Remove Linkerd deployment
 mesheryctl adapter remove linkerd
