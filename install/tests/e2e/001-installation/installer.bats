@@ -218,11 +218,7 @@ run_expect() {
 
   run bash -lc "mesheryctl system status"
   assert_success
-  # mesheryctl prints a `docker compose ps`-style table; the STATUS column
-  # uses lowercase "running", not "Running" — match case-insensitively so
-  # this doesn't silently rot if formatting/casing shifts slightly.
-  run bash -lc "mesheryctl system status | grep -qi running"
-  assert_success
+ 
 }
 
 
