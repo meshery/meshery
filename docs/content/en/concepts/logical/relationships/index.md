@@ -62,9 +62,9 @@ Semantic relationships are those that are meaningful in the context of the appli
 Non-semantic relationships are those that are meaningful to you as a user and your mental representation of your infrastructure and applications, but are not meaningful in terms of how Meshery evaluates the design or manages these relationships and their associated components. Non-semantic relationships are ignored by Meshery's lifecycle management engine. For example, a `Rectangle` shape that encloses other components (has a parent relationship with other child components) is not semantically meaningful to the way in which Meshery manages these resources. While the `Rectangle` shape might have a parent-child relationship with any number of Meshery-managed components, such a relationship does not implicate any management that Meshery might perform; they are not managed by Meshery.
 
 <details close><summary>Visual Representation of Non-Semantic Relationships</summary>
-           <figure><br><figcaption>Non-Semantic Relationship: A Rectangle annotation (isAnnotation: true) visually groups a Pod and a Service without affecting their deployment or lifecycle. <a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=non-semantic-example"> (open in playground)</a></figcaption>
+           <figure><br><figcaption>Non-Semantic Relationship: A Rectangle annotation (isAnnotation: true) visually groups a Pod and a Service without affecting their deployment or lifecycle. <a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=0f8e5810-46fe-4817-9a29-c00b33416609"> (open in playground)</a></figcaption>
            </figure>
-<div id="embedded-design-non-semantic-relationship" style="height:30rem;width:100%;"></div>
+<div id="embedded-design-b8b1249f-a034-42e0-8a67-66db29877366" style="height:30rem;width:100%;"></div>
 <script src="./images/embedded-design-non-semantic-relationship.js" type="module" ></script>
 </details>
 
