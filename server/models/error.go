@@ -617,7 +617,7 @@ func ErrPrometheusScan(err error) error {
 }
 
 func ErrInitLogger(err error) error {
-	return errors.New(ErrInitLoggerCode, errors.Alert, []string{"Unable to initialize logger"}, []string{err.Error()}, []string{"Logger configuration might be invalid"}, []string{"Check LOG_LEVEL and logger configuration settings"})
+	return errors.New(ErrInitLoggerCode, errors.Alert, []string{"Unable to initialize logger"}, []string{err.Error()}, []string{"LOG_LEVEL is set to an unsupported value", "Logger configuration options are malformed"}, []string{"Set LOG_LEVEL to a supported value", "Check your logger configuration settings"})
 }
 
 func ErrDBCreate(err error) error {
