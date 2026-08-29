@@ -58,12 +58,24 @@ remove_all() {
 
   # Remove locally installed mesheryctl, if this test installed it.
   if [ -f "$HOME/.meshery" ]; then
-    rm -f "$HOME/.meshery"
+    rm -rf "$HOME/.meshery"
   fi
   # Remove meshery.tar.gz if it exists in the test directory.
   if [ -f "$BATS_TEST_DIRNAME/meshery.tar.gz" ]; then
     rm -f "$BATS_TEST_DIRNAME/meshery.tar.gz"
   fi
+  # Remove Homebrew-installed mesheryctl.
+  if brew list mesheryctl >/dev/null 2>&1; then
+    brew uninstall mesheryctl >/dev/null 2>&1 || true
+  fi
+
+  # Remove mesheryctl installed outside Homebrew.
+  if [ -f "/usr/local/bin/mesheryctl" ]; then
+    rm -f "/usr/local/bin/mesheryctl"
+  fi
+
+  # Remove Homebrew installation of mesheryctl.
+  brew uninstall mesheryctl 2>/dev/null || true
 
 }
 
@@ -135,4 +147,31 @@ teardown() {
 
   assert_success
   assert_output --partial "Meshery deployed on Kubernetes."
+}
+
+@test "Given DEPLOY_MESHERY=false when installing, Only install mesheryctl binary" {
+  run expect -c "
+    set timeout 120
+
+    spawn bash -c {curl -L https://meshery.io/install | DEPLOY_MESHERY=false bash -}
+
+    expect eof
+  "
+
+  assert_success
+  assert_output --partial "mesheryctl installed."
+  assert_output --partial "Run \"mesheryctl system start\" to start Meshery."
+}
+
+@test "Given Homebrew when installing Meshery CLI then mesheryctl is installed" {
+  run brew install mesheryctl
+
+  assert_success
+  assert_output --partial "mesheryctl"
+
+  run mesheryctl version
+
+  assert_success
+  assert_output --partial "Client"
+  assert_output --partial "Server"
 }
