@@ -139,8 +139,6 @@ setup() {
   export BATS_LIB_PATH=${BATS_LIB_PATH:-"/usr/lib"}
   bats_load_library bats-support
   bats_load_library bats-assert
-  bats_load_library bats-file
-  bats_load_library bats-detik/detik.bash
 }
 
 teardown() {
@@ -220,7 +218,11 @@ run_expect() {
 
   run bash -lc "mesheryctl system status"
   assert_success
-  assert_output --partial "Running"
+  # mesheryctl prints a `docker compose ps`-style table; the STATUS column
+  # uses lowercase "running", not "Running" — match case-insensitively so
+  # this doesn't silently rot if formatting/casing shifts slightly.
+  run bash -lc "mesheryctl system status | grep -qi running"
+  assert_success
 }
 
 
@@ -238,7 +240,14 @@ run_expect() {
 
   # Functional check: verify the Meshery pods actually exist and reach
   # Ready state, rather than trusting only the printed success message.
-  run bash -lc "kubectl wait --for=condition=Ready pod -l app.kubernetes.io/part-of=meshery -n meshery --timeout=120s"
+  # Wait on all pods in the namespace rather than a specific label selector
+  # — the chart's actual labels aren't guaranteed to match a guessed
+  # app.kubernetes.io/part-of value, and --all avoids depending on that.
+  run bash -lc "kubectl get pods -n meshery --no-headers"
+  assert_success
+  refute_output ""
+
+  run bash -lc "kubectl wait --for=condition=Ready pod --all -n meshery --timeout=120s"
   assert_success
 
   run bash -lc "kubectl get pods -n meshery --no-headers"
