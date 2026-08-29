@@ -1,0 +1,104 @@
+name: Meshery Installer E2E Tests
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "install/**"
+      - ".github/workflows/meshery-installer-e2e-test.yml"
+
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "install/**"
+      - ".github/workflows/meshery-installer-e2e-test.yml"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: meshery-installer-e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  installer-e2e:
+    name: Installer E2E
+    runs-on: ubuntu-24.04
+    # Hard ceiling on the whole job: five e2e tests, each doing a real
+    # install/uninstall cycle, should comfortably finish well under this.
+    # Without a limit, a single hung `expect` or stuck namespace deletion
+    # would otherwise run until the default 6-hour GitHub Actions timeout.
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Setup BATS
+        uses: bats-core/bats-action@4.0.0
+
+      - name: Setup Kubernetes
+        uses: manusa/actions-setup-minikube@v2.14.0
+        with:
+          minikube version: "v1.37.0"
+          kubernetes version: "v1.34.0"
+          driver: docker
+
+      # NOTE: Homebrew/actions/setup-homebrew has no tagged releases, so the
+      # documented usage pins to @main. If this repo requires SHA-pinned
+      # third-party actions for supply-chain reasons, replace @main with a
+      # specific commit SHA and update it deliberately (e.g. via Dependabot).
+      - name: Setup Homebrew
+        uses: Homebrew/actions/setup-homebrew@main
+
+      - name: Verify dependencies
+        run: |
+          set -e
+
+          echo "Bash: $(bash --version | head -n 1)"
+          echo "BATS: $(bats --version)"
+          echo "Expect: $(expect -v 2>&1 | head -n 1)"
+          echo "Curl: $(curl --version | head -n 1)"
+          echo "Docker: $(docker --version)"
+          echo "Helm: $(helm version --short)"
+          echo "Kubectl: $(kubectl version --client)"
+          echo "Minikube: $(minikube version --short)"
+          echo "Homebrew: $(brew --version | head -n 1)"
+
+          command -v bash
+          command -v bats
+          command -v expect
+          command -v curl
+          command -v docker
+          command -v helm
+          command -v kubectl
+          command -v minikube
+          command -v brew
+
+      - name: Run installer E2E tests
+        working-directory: ./install/tests/e2e/001-installation
+        timeout-minutes: 35
+        run: bats --print-output-on-failure --timing installer.bats
+
+      - name: Collect diagnostics on failure
+        if: failure()
+        run: |
+          echo "::group::kubectl get all -n meshery"
+          kubectl get all -n meshery 2>&1 || true
+          echo "::endgroup::"
+
+          echo "::group::kubectl describe namespace meshery"
+          kubectl describe namespace meshery 2>&1 || true
+          echo "::endgroup::"
+
+          echo "::group::docker ps -a"
+          docker ps -a 2>&1 || true
+          echo "::endgroup::"
+
+          echo "::group::helm list -A"
+          helm list -A 2>&1 || true
+          echo "::endgroup::"
