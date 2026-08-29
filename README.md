@@ -225,6 +225,7 @@ SCREENSHOT / GIF NEEDED HERE
 <!-- <img alt="Control Kubernetes and your workloads with mesheryctl" src=".github/assets/images/readme/mesheryctl.png"  style="margin-left:10px; margin-bottom:10px;" width="50%" align="right" /> -->
 <h3>Using `mesheryctl`</h3>
 <p>Meshery runs as a set of containers inside or outside of your Kubernetes clusters.</p>
+
 ```bash
 curl -L https://meshery.io/install | bash
 ```
