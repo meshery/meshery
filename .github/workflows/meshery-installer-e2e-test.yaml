@@ -38,7 +38,8 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v6
 
-      - name: Setup BATS
+      - name: Setup Bats and bats libs
+        id: setup-bats
         uses: bats-core/bats-action@4.0.0
 
       - name: Setup Kubernetes
@@ -90,6 +91,9 @@ jobs:
       - name: Run installer E2E tests
         working-directory: ./install/tests/e2e/001-installation
         timeout-minutes: 35
+        env:
+          BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
+          TERM: xterm
         run: bats --print-output-on-failure --timing installer.bats
 
       - name: Collect diagnostics on failure

@@ -130,8 +130,17 @@ setup() {
   # persist into each test's subshell). This is intentionally cheap —
   # the expensive environment cleanup lives in setup_file()/teardown(),
   # not here.
-  load '../test_helper/bats-support/load'
-  load '../test_helper/bats-assert/load'
+  #
+  # bats_load_library resolves against $BATS_LIB_PATH. The CI workflow sets
+  # this from the Setup Bats step's `lib-path` output; the fallback to
+  # "/usr/lib" here covers running this suite somewhere that doesn't wire
+  # that env var through (e.g. a local machine with bats-support/bats-assert
+  # installed via a system package manager at the conventional location).
+  export BATS_LIB_PATH=${BATS_LIB_PATH:-"/usr/lib"}
+  bats_load_library bats-support
+  bats_load_library bats-assert
+  bats_load_library bats-file
+  bats_load_library bats-detik/detik.bash
 }
 
 teardown() {
