@@ -17,6 +17,19 @@
     href="{{ "index.xml" | relURL }}"
   />
 
+  {{/* Markdown rendition of this page, for agents that would otherwise have to
+       scrape the rendered HTML. Empty unless the site was built with
+       config-llms.toml layered in. Supplied by baseof.html: this partial is
+       called with a dict, so the Page's own OutputFormats are not reachable
+       from here. */}}
+  {{- with .MarkdownURL }}
+  <link
+    rel="alternate"
+    type="text/markdown"
+    href="{{ . }}"
+  />
+  {{- end }}
+
   <link
     rel="shortcut icon"
     href="{{ "favicons/favicon.ico" | relURL }}"

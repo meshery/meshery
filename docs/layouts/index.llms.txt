@@ -1,0 +1,104 @@
+{{- /*
+  /llms.txt — an index of this site for LLM agents, per https://llmstxt.org
+
+  Structure mandated by the specification:
+    - an H1 with the name of the site (the only required element)
+    - a blockquote with a short summary
+    - zero or more H2 sections holding "file lists" of links
+    - an "Optional" section, by convention, for links an agent can skip
+
+  Links point at each page's raw-Markdown rendition (index.md) rather than its
+  HTML, so an agent that follows one gets prose instead of a Docsy page frame.
+
+  Derived from the llms-txt Hugo module by GetHugoThemes (MIT licensed):
+  https://github.com/gethugothemes/hugo-modules/tree/master/llms-txt
+
+  Output is assembled as a slice of lines and joined once at the end. Plain-text
+  templates make whitespace significant, and joining is far easier to keep
+  correct than balancing dash-trim markers across nested ranges.
+*/ -}}
+{{- $llms := site.Params.llms | default dict -}}
+{{- if ne ($llms.enable_llms_txt | default true) false -}}
+{{- $out := slice -}}
+
+{{- /* Header: H1 and summary blockquote. */ -}}
+{{- $summary := trim (site.Params.description | default site.Title | plainify | replaceRE "\\s+" " ") " " -}}
+{{- $out = $out | append (printf "# %s" ($llms.title | default site.Title)) -}}
+{{- $out = $out | append "" -}}
+{{- $out = $out | append (printf "> %s" $summary) -}}
+
+{{- /* Every content page, ordered by URL so a parent always precedes its
+       children. RegularPagesRecursive is deliberately not used: it skips
+       branch bundles, which would drop landing pages such as
+       /installation/kubernetes/ from the output even though they carry a
+       description and are what an agent should read first. */ -}}
+{{- $all := sort (where site.Pages "Kind" "in" (slice "page" "section")) "RelPermalink" -}}
+
+{{- /* The home page, plus any page living at the root of the site. */ -}}
+{{- $out = $out | append "" -}}
+{{- $out = $out | append "## Docs" -}}
+{{- $out = $out | append "" -}}
+{{- $out = $out | append (partial "llms-txt/entry.html" (dict "page" site.Home "note" ($llms.home_note | default $summary))) -}}
+{{- range site.Home.RegularPages -}}
+  {{- if partial "llms-txt/is-included.html" (dict "url" .RelPermalink "llms" $llms) -}}
+    {{- $out = $out | append (partial "llms-txt/entry.html" (dict "page" .)) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* One H2 per top-level section, in sidebar order, listing every page
+       beneath it that survives the include/exclude and bulk filters. */ -}}
+{{- range site.Home.Sections.ByWeight -}}
+  {{- $section := . -}}
+  {{- $prefix := $section.RelPermalink -}}
+  {{- if partial "llms-txt/is-included.html" (dict "url" $prefix "llms" $llms) -}}
+    {{- $entries := slice -}}
+    {{- /* This rescans $all per section, which reads as O(sections x pages) --
+           but the hasPrefix guard below runs before the partial, and a page
+           lives under exactly one top-level section, so is-included fires once
+           per page, not once per section-page pair. Measured on the full site
+           (5,684 pages, --templateMetrics): is-included ran 5,616 times across
+           both llms templates -- ~2,808 each, i.e. once per page -- for 80ms
+           total, 0.004% of the build. Bucketing pages by section first would
+           trade that for map-building and a second place to get the baseURL
+           prefix handling right. Not worth it; left flat on purpose. */ -}}
+    {{- range $all -}}
+      {{- if and (hasPrefix .RelPermalink $prefix) (ne .RelPermalink $prefix) -}}
+        {{- if partial "llms-txt/is-included.html" (dict "url" .RelPermalink "llms" $llms) -}}
+          {{- $entries = $entries | append (partial "llms-txt/entry.html" (dict "page" .)) -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+    {{- $out = $out | append "" -}}
+    {{- $out = $out | append (printf "## %s" $section.Title) -}}
+    {{- $out = $out | append "" -}}
+    {{- $out = $out | append (partial "llms-txt/entry.html" (dict "page" $section)) -}}
+    {{- range $entries -}}
+      {{- $out = $out | append . -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Machine-generated sets are linked at section level only. Enumerating
+       them would bury the hand-written docs, and their pages carry no prose
+       for an agent to read. Per-page index.md output still exists for each,
+       so anything here remains reachable by an agent that needs it. */ -}}
+{{- $optional := slice -}}
+{{- range $llms.bulk | default slice -}}
+  {{- $note := .note -}}
+  {{- with site.GetPage (strings.TrimSuffix "/" .path) -}}
+    {{- $optional = $optional | append (partial "llms-txt/entry.html" (dict "page" . "note" $note)) -}}
+  {{- end -}}
+{{- end -}}
+{{- if $optional -}}
+  {{- $out = $out | append "" -}}
+  {{- $out = $out | append "## Optional" -}}
+  {{- $out = $out | append "" -}}
+  {{- range $optional -}}
+    {{- $out = $out | append . -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* A trailing empty element makes the join end the file with a newline. */ -}}
+{{- $out = $out | append "" -}}
+{{- delimit $out "\n" -}}
+{{- end -}}

@@ -1,0 +1,66 @@
+{{- /*
+  /llms-full.txt — the full text of the documentation in one file, for agents
+  that ingest a whole corpus rather than following links.
+
+  Note that llmstxt.org specifies llms.txt only; llms-full.txt is a widely used
+  convention with no formal spec, so the layout here is chosen for legibility:
+  the same header as llms.txt, then one rule-delimited stanza per page.
+
+  Traversal deliberately mirrors index.llms.txt, including the bulk and exclude
+  filters, so the two files never disagree about what the corpus contains.
+*/ -}}
+{{- $llms := site.Params.llms | default dict -}}
+{{- if ne ($llms.enable_llms_full_txt | default true) false -}}
+{{- $out := slice -}}
+
+{{- $summary := trim (site.Params.description | default site.Title | plainify | replaceRE "\\s+" " ") " " -}}
+{{- $out = $out | append (printf "# %s" ($llms.title | default site.Title)) -}}
+{{- $out = $out | append "" -}}
+{{- $out = $out | append (printf "> %s" $summary) -}}
+
+{{- /* Every content page, ordered by URL so a parent always precedes its
+       children. RegularPagesRecursive is deliberately not used: it skips
+       branch bundles, which would drop landing pages such as
+       /installation/kubernetes/ from the output even though they carry a
+       description and are what an agent should read first. */ -}}
+{{- $all := sort (where site.Pages "Kind" "in" (slice "page" "section")) "RelPermalink" -}}
+
+{{- /* Home page, then any page at the root of the site. */ -}}
+{{- with partial "llms-txt/full-entry.html" site.Home -}}
+  {{- $out = $out | append "" -}}
+  {{- $out = $out | append . -}}
+{{- end -}}
+{{- range site.Home.RegularPages -}}
+  {{- if partial "llms-txt/is-included.html" (dict "url" .RelPermalink "llms" $llms) -}}
+    {{- with partial "llms-txt/full-entry.html" . -}}
+      {{- $out = $out | append "" -}}
+      {{- $out = $out | append . -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Every top-level section, in sidebar order, then its pages. */ -}}
+{{- range site.Home.Sections.ByWeight -}}
+  {{- $section := . -}}
+  {{- $prefix := $section.RelPermalink -}}
+  {{- if partial "llms-txt/is-included.html" (dict "url" $prefix "llms" $llms) -}}
+    {{- with partial "llms-txt/full-entry.html" $section -}}
+      {{- $out = $out | append "" -}}
+      {{- $out = $out | append . -}}
+    {{- end -}}
+    {{- range $all -}}
+      {{- if and (hasPrefix .RelPermalink $prefix) (ne .RelPermalink $prefix) -}}
+        {{- if partial "llms-txt/is-included.html" (dict "url" .RelPermalink "llms" $llms) -}}
+          {{- with partial "llms-txt/full-entry.html" . -}}
+            {{- $out = $out | append "" -}}
+            {{- $out = $out | append . -}}
+          {{- end -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $out = $out | append "" -}}
+{{- delimit $out "\n" -}}
+{{- end -}}

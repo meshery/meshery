@@ -1,0 +1,17 @@
+# Enables the LLM-facing outputs. Layered on top of hugo.toml:
+#
+#     hugo --config hugo.toml,config-llms.toml
+#
+# which the `build-llms` and `build-production-llms` make targets do for you.
+# Kept out of hugo.toml so that the standard contributor build (`make build`,
+# `make site`) does not pay for 2,810 extra index.md files, and so that a
+# contributor editing one page sees exactly the output they saw before.
+#
+# Each key here replaces its counterpart in hugo.toml wholesale, so the
+# pre-existing formats are restated rather than appended to.
+[outputs]
+  home = ["HTML", "RSS", "SITEMAP", "llms", "llmsfull", "md"]
+  page = ["HTML", "md"]
+  section = ["HTML", "RSS", "md"]
+  taxonomy = []
+  term = []

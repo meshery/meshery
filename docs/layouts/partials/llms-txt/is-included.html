@@ -1,0 +1,61 @@
+{{- /*
+  Reports whether a page belongs in llms.txt and llms-full.txt.
+
+  Derived from the llms-txt Hugo module by GetHugoThemes (MIT licensed):
+  https://github.com/gethugothemes/hugo-modules/tree/master/llms-txt
+
+  Call with:
+    url   .RelPermalink of the page under test
+    llms  site.Params.llms
+
+  Pattern syntax accepted in llms.exclude:
+    /path/     exact match
+    /path/*    direct children of /path/
+    /path/**   /path/ and everything beneath it
+
+  Pages beneath an llms.bulk path are always excluded here. Those sets are
+  machine-generated and would otherwise dominate the index, so llms.txt links
+  them once at section level from its "Optional" section instead.
+*/ -}}
+{{- $url := .url -}}
+{{- $llms := .llms -}}
+{{- $included := true -}}
+
+{{- /* Patterns are written relative to the site root, but .RelPermalink carries
+       whatever path the baseURL has. A deploy under a subpath -- the PR preview
+       at /pr-preview/pr-NNNN/, or a versioned doc set -- would otherwise match
+       nothing at all and silently include every excluded page. Strip the site
+       root first so the patterns mean the same thing wherever the site is
+       served from. */ -}}
+{{- $root := site.Home.RelPermalink -}}
+{{- if and (ne $root "/") (hasPrefix $url $root) -}}
+  {{- $url = printf "/%s" (strings.TrimPrefix $root $url) -}}
+{{- end -}}
+
+{{- range $llms.bulk | default slice -}}
+  {{- if and .path (hasPrefix $url .path) -}}
+    {{- $included = false -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if $included -}}
+  {{- range $llms.exclude | default slice -}}
+    {{- if hasSuffix . "/**" -}}
+      {{- if hasPrefix $url (strings.TrimSuffix "**" .) -}}
+        {{- $included = false -}}
+      {{- end -}}
+    {{- else if hasSuffix . "/*" -}}
+      {{- $dir := strings.TrimSuffix "*" . -}}
+      {{- $rest := strings.TrimSuffix "/" (strings.TrimPrefix $dir $url) -}}
+      {{- if and (hasPrefix $url $dir) (ne $url $dir) (not (strings.Contains $rest "/")) -}}
+        {{- $included = false -}}
+      {{- end -}}
+    {{- else -}}
+      {{- if eq $url . -}}
+        {{- $included = false -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- return $included -}}
