@@ -55,6 +55,14 @@ jobs:
       - name: Setup Homebrew
         uses: Homebrew/actions/setup-homebrew@main
 
+      # ubuntu-24.04 runners do not ship with `expect` preinstalled, and none
+      # of the setup actions above (BATS, minikube, Homebrew) provide it —
+      # the installer.bats tests rely on it directly for interactive prompts.
+      - name: Install expect
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y expect
+
       - name: Verify dependencies
         run: |
           set -e
