@@ -275,11 +275,18 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
       navigator.clipboard
         .writeText(text)
         .then(() => {
+          if (requestId !== requestIdRef.current) {
+            return;
+          }
+
           if (timeoutRef.current !== null) {
             clearTimeout(timeoutRef.current);
           }
           setCopied(key);
           timeoutRef.current = setTimeout(() => {
+            if (requestId !== requestIdRef.current) {
+              return;
+            }
             setCopied(null);
             timeoutRef.current = null;
           }, 2000);
@@ -294,6 +301,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
         if (timeoutRef.current !== null) {
           clearTimeout(timeoutRef.current);
         }
+        requestIdRef.current++;
       };
     }, []);
 
