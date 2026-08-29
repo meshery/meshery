@@ -1,0 +1,35 @@
+# Meshery Adapter for Linkerd
+
+Source: /pr-preview/pr-21670/extensions/adapters/linkerd/
+
+### Features
+
+1. Lifecycle management of Linkerd
+1. Lifecycle management of sample applications
+1. Performance testing
+
+### Sample Applications
+
+The Meshery Adapter for Linkerd includes the ability to deploy a variety of sample applications. Use Meshery to deploy any of these sample applications:
+
+- Emojivoto
+
+  - A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.
+
+- Bookinfo
+
+  - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
+
+- Linkerd Books
+
+  - A sample application built for demonstrating manage your bookshelf.
+
+- HTTPbin
+  - A simple HTTP Request & Response Service.
+
+Identify overhead involved in running Linkerd, various Linkerd configurations while running different workloads and on different infrastructure. The adapter facilitates data plane and control plane performance testing.
+
+1. Prometheus integration
+1. Grafana integration
+
+The [Meshery Adapter for Linkerd](https://github.com/meshery/meshery-linkerd) will connect to Linkerd's Prometheus and Grafana instances running in the control plane.

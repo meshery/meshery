@@ -1,0 +1,23 @@
+# v0.5.47
+
+Source: /pr-preview/pr-21670/project/releases/v0.5.47/
+
+## What's New
+## 🔤 General
+- Add more eslint rules to enforce strict formatting  @sudo-NithishKarthik (#3845)
+- RJSF Styling changes for Meshery extenstions @sudo-NithishKarthik (#3879)
+- [UI] Updates RJSF Styling for Extension Point @Jashpatel1 (#3784)
+
+## 🧰 Maintenance
+
+- Add SMI Conformance Docs @navendu-pottekkat (#3865)
+
+## 📖 Documentation
+
+- [ImgBot] Optimize images @imgbot (#3878)
+- Add SMI Conformance Docs @navendu-pottekkat (#3865)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@ImgBotApp, @Jashpatel1, @imgbot, @leecalcote, @navendu-pottekkat and @sudo-NithishKarthik

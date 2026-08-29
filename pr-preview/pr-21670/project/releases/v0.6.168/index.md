@@ -1,0 +1,31 @@
+# v0.6.168
+
+Source: /pr-preview/pr-21670/project/releases/v0.6.168/
+
+## What's New
+## 🔤 General
+- Added permaLink to the data.js json @aboobakersiddiqr63 (#9252)
+- [chore] Upgrade MeshKit 0.6.79 @theBeginner86 (#9250)
+- fix typos in governance.md @404Nikhil (#9241)
+
+## 🖥 Meshery UI
+
+- [content] Migrate Apps -> Designs @theBeginner86 (#9185)
+- [UI] Dark mode issue in connections table @senali-d (#9249)
+
+## 🧰 Maintenance
+
+- Added the go command to generate docs @aboobakersiddiqr63 (#9247)
+- Temporary WF for Integration Docs Generator @aboobakersiddiqr63 (#9242)
+
+## 📖 Documentation
+
+- [content] Migrate Apps -> Designs @theBeginner86 (#9185)
+- [Docs] TOC: Add section describing the use of children and grandchildren @coder12git (#9172)
+- [Docs] Page for all integrations @leecalcote (#9248)
+- One time Docs generation @aboobakersiddiqr63 (#9244)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@404Nikhil, @Aisuko, @MUzairS15, @aabidsofi19, @aboobakersiddiqr63, @coder12git, @leecalcote, @senali-d and @theBeginner86

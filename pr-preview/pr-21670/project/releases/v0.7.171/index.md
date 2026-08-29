@@ -1,0 +1,24 @@
+# v0.7.171
+
+Source: /pr-preview/pr-21670/project/releases/v0.7.171/
+
+## What's New
+## 🔤 General
+- remove asset deduplication for component/model svgs @aabidsofi19 (#12912)
+
+## 🖥 Meshery UI
+
+- updated locators within indexui.spec.js file @moiz2405 (#12365)
+- make performance tests compatible with use in extensions @aabidsofi19 (#12911)
+- \[Chore\]: Bump Sistent v0.14.131 @l5io (#12907)
+
+## 📖 Documentation
+
+- docs: improve contributing to playwright e2e test @jerensl (#12866)
+- Accordion view for test results @SAHU-01 (#12908)
+- Adding a table to display relationship test Results @SAHU-01 (#12853)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@Jougan-0, @SAHU-01, @aabidsofi19, @amitamrutiya, @jerensl, @l5io, @leecalcote, @moiz2405, @sudhanshutech, @vishalvivekm and MUzairS15

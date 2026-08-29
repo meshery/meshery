@@ -1,0 +1,92 @@
+# mesheryctl-adapter-deploy
+
+Source: /pr-preview/pr-21670/reference/references/mesheryctl/adapter/deploy/
+
+# mesheryctl adapter deploy
+
+Deploy infrastructure to the Kubernetes cluster
+
+## Synopsis
+
+Deploy infrastructure to the connected Kubernetes cluster
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl adapter deploy [flags]
+
+</div>
+</div>
+</pre> 
+
+## Examples
+
+Deploy a infrastructure from an interactive on the default namespace
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl adapter deploy
+
+</div>
+</div>
+</pre> 
+
+Deploy infrastructure
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl adapter deploy linkerd
+
+</div>
+</div>
+</pre> 
+
+Deploy Linkerd mesh on a specific namespace
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl adapter deploy linkerd --namespace linkerd-ns
+
+</div>
+</div>
+</pre> 
+
+Deploy Linkerd mesh and wait for it to be deployed
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl adapter deploy linkerd --watch
+
+</div>
+</div>
+</pre> 
+
+## Options
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+  -h, --help               help for deploy
+  -n, --namespace string   Kubernetes namespace to be used for deploying the validation tests and sample workload (default "default")
+  -t, --token string       Path to token for authenticating to Meshery API
+  -w, --watch              Watch for events and verify operation (in beta testing)
+
+</div>
+</pre>
+
+## Options inherited from parent commands
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+  -v, --verbose         verbose output
+
+</div>
+</pre>
+
+## Screenshots
+
+Usage of mesheryctl adapter deploy
+![mesh-deploy-usage](../../../images/deploy-mesh.png)
+
+## See Also
+
+Go back to [command reference index](/pr-preview/pr-21670/reference/references/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/pr-preview/pr-21670/project/contributing/cli/cli/#preserving-manually-added-documentation) for guidance.

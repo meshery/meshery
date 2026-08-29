@@ -1,0 +1,17 @@
+# v0.5.25
+
+Source: /pr-preview/pr-21670/project/releases/v0.5.25/
+
+## What's New
+## 🔤 General
+- fixes for nighthawk @kumarabd (#3241)
+
+## 🧰 Maintenance
+
+- [Docs] Release Notes for Meshery v0.5.25 @l5io (#3067)
+
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@kumarabd, @l5io and @leecalcote

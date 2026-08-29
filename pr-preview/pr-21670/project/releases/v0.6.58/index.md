@@ -1,0 +1,30 @@
+# v0.6.58
+
+Source: /pr-preview/pr-21670/project/releases/v0.6.58/
+
+## What's New
+## 🔤 General
+## ⌨️ Meshery CLI
+
+- Fix version bug in mesheryctl @Revolyssup (#7211)
+
+## 🖥 Meshery UI
+
+- urgent fix: meshery crash due to formdata in RJSF @Abhishek-kumar09 (#7219)
+- Feat/graphql ws @acald-creator (#7206)
+- [bug] Fix Broken Dashboard @theBeginner86 (#7210)
+- Meshmodel summary dark mode bug fixed @deepakdinesh1123 (#7073)
+- [chore] Update relay-compiler to v14.1.0 @theBeginner86 (#7058)
+
+## 🐛 Bug Fixes
+
+- [bug] Fix Broken Dashboard @theBeginner86 (#7210)
+
+## 🧰 Maintenance
+
+- [chore] Update relay-compiler to v14.1.0 @theBeginner86 (#7058)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@Abhishek-kumar09, @Revolyssup, @acald-creator, @deepakdinesh1123, @leecalcote, @theBeginner86 and l5io

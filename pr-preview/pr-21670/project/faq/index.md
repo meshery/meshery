@@ -1,0 +1,181 @@
+# Frequently Asked Questions
+
+> General commonly asked questions and answers about Meshery.
+
+Source: /pr-preview/pr-21670/project/faq/
+
+## General FAQs
+
+<details>
+    <summary>
+    <h6>Question: What is Meshery?</h6>
+</summary>
+
+<p><strong>Answer:</strong> Meshery is a self-service engineering platform that enables collaborative design and operation of cloud and cloud native infrastructure.</p>
+</details>
+
+<details>
+    <summary>
+    <h6>Question: Why was Meshery created?</h6>
+</summary>
+
+<p><strong>Answer:</strong> As an open source, vendor-neutral project, Meshery was created out of the necessity to enable platform engineers, site reliability engineers, and DevSecOps teams to collaborate in the management of their infrastructure and workloads. Meshery was created as an extensible platform to serve a broad set of modern application management needs.</p>
+</details>
+
+<details>
+    <summary>
+    <h6>Question: What does Meshery do?</h6>
+</summary>
+
+<p><strong>Answer:</strong> Collaborative infrastructure management. Meshery enables you to design and operate cloud native infrastructure visually, collaboratively, with confidence, and in partnership with your teammates.</p>
+</details>
+
+<!-- - _offers a catalog of operational best practices._
+- _offersompare apples-to-apples performance across different infrastructure configurations._
+- _Understand behavioral differences between service deployments._
+- _Track your application performance from version to version._ -->
+
+<details>
+    <summary>
+    <h6>Question: Is Meshery an open source project?</h6>
+</summary>
+<p><strong>Answer:</strong> Yes, Meshery is a Cloud Native Computing Foundation (CNCF) project and is licensed under Apache v2. As an internal developer platform, Meshery is <a href="/pr-preview/pr-21670/reference/extensibility/">highly extensible</a>, offering multiple forms of extension points within which users and partners can customize and extend Meshery's functionality.</p>
+</details>
+
+<details>
+    <summary>
+<h6>Question: Why should I use Meshery?</h6>
+</summary>
+<p><strong>Answer:</strong> Meshery is a powerful tool for managing Kubernetes infrastructure. It seamlessly integrates with hundreds of tools and offers extensibility through many different <a href="/pr-preview/pr-21670/reference/extensibility/#extension-points">extension points</a>. With Meshery, you can easily discover your environment, collaboratively manage multiple Kubernetes clusters, connect your Git and Helm repos, and analyze app and infra performance.</p>
+</details>
+
+
+## User FAQs
+
+<details>
+    <summary>
+    <h6>Question: What is mesheryctl?</h6>
+</summary>
+<strong>Answer:</strong> A command-line interface to manage Meshery. `mesheryctl` can manage any number of Meshery deployments.
+</details>
+
+<details>
+<summary>
+<h6>Question: How do I install Meshery?</h6>
+</summary>
+<p><strong>Answer:</strong> Meshery runs on a <a href="/pr-preview/pr-21670/installation/">number of platforms</a>. You are encouraged to use <code>mesheryctl</code> to configure and control Meshery deployments. Install `mesheryctl` using any of these options:</p>
+
+<ul>
+<li><a href="/pr-preview/pr-21670/installation/mesheryctl/linux-mac/bash/">Bash user</a></li>
+<li><a href="/pr-preview/pr-21670/installation/mesheryctl/linux-mac/brew/">Brew user</a></li>
+<li><a href="/pr-preview/pr-21670/installation/mesheryctl/windows/scoop/">Scoop user</a></li>
+<li><a href="https://github.com/meshery/meshery/releases/latest">Direct download</a></li>
+</ul>
+</details>
+
+<details>
+    <summary>
+    <h6>Question: Does Meshery require Kubernetes to manage infrastructure?</h6>
+</summary>
+<p><strong>Answer:</strong> While Meshery's configuration and lifecycle management features require Kubernetes to operate, you don't need to run your infrastructure on Kubernetes. Meshery can:</p>
+<ul>
+<li>Perform load generation and performance analysis independent of Kubernetes</li>
+<li>Configure and manage non-Kubernetes infrastructure (like AWS and GCP services)</li>
+<li>Use Kubernetes operators to manage Cloud services outside of Kubernetes (e.g. AWS EC2)</li>
+</ul>
+<p>See <a href="/pr-preview/pr-21670/reference/extensibility/api/">supported cloud integrations</a> for more details.</p>
+</details>
+
+<details>
+<summary><h6>Question: What architecture does Meshery have?</h6></summary>
+<p><strong>Answer:</strong> An extensible architecture. There are several components and languages, and they have different purposes. See Meshery's <a href="/pr-preview/pr-21670/concepts/architecture/">Architecture</a>.</p>
+</details>
+
+<details>
+<summary>
+<h6>Question: What is the difference between <code>make server</code> and <code>mesheryctl system start</code>? Do they both run Meshery on my local machine?</h6>
+</summary>
+<strong>Answer:</strong> Yes, both of them do run Meshery on your local machine. `make server` builds Meshery from source and runs it on your local OS, while `mesheryctl system start` runs Meshery as a set of containers in Docker or in Kubernetes on your local machine.
+</details>
+
+<details>
+<summary>
+<h6>Question: What systems can I deploy Meshery onto?</h6>
+</summary>
+<strong>Answer:</strong> Many. See Meshery's <a href="/pr-preview/pr-21670/project/compatibility-matrix/compatibility-matrix/">Compatibility Matrix</a>.
+</details>
+
+<details>
+<summary><h6>Question: What systems does Meshery manage?</h6></summary>
+<p><strong>Answer:</strong> Many. See Meshery's <a href="https://meshery.io/integrations">Integrations</a></p>
+</details>
+
+<details>
+<summary><h6>Question: Why is Meshery Server only receiving MeshSync updates from one of my Kubernetes Clusters?</h6></summary>
+<p><strong>Answer:</strong> In order to receive MeshSync updates, Meshery Server subscribes to updates from Meshery Broker. In other words, Meshery Server connects to the Meshery Broker service (<code>meshery-nats</code>) in order to subscribe to streaming MeshSync updates. When Meshery Server runs outside of a managed cluster, that cluster's Broker must be exposed to it: the Broker Service is cluster-internal (<code>ClusterIP</code>) by default, and you expose it by setting <code>spec.service.type</code> to <code>NodePort</code> or <code>LoadBalancer</code> on the <code>Broker</code> custom resource (or by pinning <code>spec.service.externalEndpointOverride</code> when the Broker sits behind an ingress, gateway, or NAT). See <a href="/pr-preview/pr-21670/guides/infrastructure-management/configuring-operator-meshsync-broker/#broker-service-networking">Broker service networking</a>.</p>
+<p>If you're running Kubernetes in Docker Desktop with <code>LoadBalancer</code> exposure, an external IP address of <code>localhost</code> is assigned. If you're running Minikube and execute <code>minikube tunnel</code> to gain access to Meshery Broker's service, you will find that both Meshery Broker service endpoints (from two different clusters) share the same <code>localhost:4222</code> address and port number. This port sharing causes a conflict, and Meshery Server is only able to connect to one of the Meshery Brokers.</p>
+
+<p>A few ways to solve this problem:</p>
+
+<ul>
+<li>Use an external cloud provider that provides you with a LoadBalancer with an external IP address other than localhost.</li>
+<li>Use <a href="https://kind.sigs.k8s.io">Kind</a> cluster with <a href="https://metallb.universe.tf">MetalLB</a> configuration</li>
+<li>Give each Broker a distinct advertised address with <code>spec.service.externalEndpointOverride</code> on its <code>Broker</code> resource.</li>
+</ul>
+</details>
+
+<details><summary>
+<h6>Question: Why does the dashboard not show the infrastructure provisioned or discovered by Meshery?</h6></summary>
+<strong>Answer:</strong> <p>This issue is typically caused by either a lack of connectivity between Meshery Server and Meshery Broker or by database corruption. Use the following troubleshooting steps to resolve this issue:</p>
+
+<p><strong>Lack of Connectivity</strong></p>
+
+<ol>
+<li>Confirm that the Meshery Broker service is exposed from your cluster using <code>kubectl get svc -n meshery</code> and that a hostname or IP address is displayed in the External Address column. Meshery Server should be able to reach this address.</li>
+<li>It is possible that MeshSync is not healthy or not sending cluster updates; check MeshSync status by navigating to Settings in Meshery UI and clicking on the MeshSync connection.</li>
+<li>If MeshSync is healthy, check the status of Meshery Broker by clicking on the NATS connection.</li>
+</ol>
+
+<p>If either is the case, Meshery Operator will make sure MeshSync and Meshery Broker deployments are healthy again. Wait for some time; otherwise, try redeploying Meshery Operator.</p>
+
+<p><strong>Database Corruption</strong></p>
+
+<p>If MeshSync, Meshery Broker, and Meshery Operator are healthy, then perhaps there is corruption in the Meshery Database. Use the following troubleshooting steps to resolve this issue:</p>
+<ul>
+<li>Try clearing the database by clicking on the `Flush MeshSync` button associated with the corresponding cluster.</li>
+<li>If you don't see the specific entities in Meshery UI, you may choose to reset Meshery's database. This option is in the <code>Reset System</code> Tab in <code>Settings</code> page.</li>
+</ul>
+
+<p>Note: You can also verify the health of your system using <a href="/pr-preview/pr-21670/reference/references/mesheryctl/system/check/">mesheryctl system check</a></p>
+
+</details>
+
+<details><summary>
+<h6>Question: Which version of Meshery Operator does Meshery install, and can I choose it?</h6></summary>
+<strong>Answer:</strong> <p>When Meshery Server connects to a Kubernetes cluster in operator mode, it installs the <code>meshery-operator</code> Helm chart at a version that tracks its own release - but it validates that version against the chart repository's published index first, so what lands on your cluster is always a chart that exists. A version not yet published (chart publishing trails Meshery Server releases) resolves to the newest published chart; a version too old to deploy is raised to the oldest published chart that does; release candidates are never chosen for you. Every substitution is reported in the events feed.</p>
+
+<p>To choose the version yourself, set <code>operator.version</code> on the connection. An explicit pin is honored exactly as written, and is refused with a visible error - not silently replaced - if it names an unpublished version or a moving tag such as <code>stable-latest</code>. See <a href="/pr-preview/pr-21670/guides/troubleshooting/meshery-operator-meshsync/#choosing-the-chart-version-yourself">Choosing the chart version yourself</a>.</p>
+
+<p>To confirm what is deployed:</p>
+
+<pre><code>kubectl -n meshery get deploy meshery-operator -o jsonpath='{.spec.template.spec.containers[0].image}'</code></pre>
+
+<p>If the Operator never becomes ready after connecting a cluster - a <code>kube-rbac-proxy</code> container stuck in <code>ImagePullBackOff</code>, or the manager crash-looping on a missing <code>tls.crt</code> - an old chart is installed. See <a href="/pr-preview/pr-21670/guides/troubleshooting/meshery-operator-meshsync/#meshery-operator-will-not-start-imagepullbackoff-and-a-missing-webhook-certificate">Meshery Operator will not start</a>; the remedy is to upgrade Meshery Server.</p>
+
+</details>
+
+## Contributing FAQs
+
+<details>
+<summary>
+<strong>Question: Getting an error while running <code>make server</code> on Windows?</strong>
+</summary><strong>Answer:</strong> <p>On Windows, set up the project on Ubuntu WSL2 and you will be able to run the Meshery UI and the server. For more information please visit <a href="/pr-preview/pr-21670/project/contributing/meshery-windows/">Setting up Meshery Development Environment on Windows</a>.</p>
+</details>
+
+<div class="alert alert-dark" role="alert">
+  <h4 class="alert-heading">Discussion Forum</h4>
+  <p>Don't find an answer to your question here? Ask on the <a href="https://discuss.meshery.io/">Discussion Forum</a>.</p>
+</div>
+
+
+<!--Add other questions-->

@@ -1,0 +1,58 @@
+# mesheryctl-environment-view
+
+Source: /pr-preview/pr-21670/reference/references/mesheryctl/environment/view/
+
+# mesheryctl environment view
+
+View registered environmnents
+
+## Synopsis
+
+View details of an environment registered in Meshery Server for a specific organization
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl environment view [flags]
+
+</div>
+</div>
+</pre> 
+
+## Examples
+
+View details of a specific environment
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl environment view --orgId [orgId]
+
+</div>
+</div>
+</pre> 
+
+## Options
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+  -h, --help                   help for view
+      --orgId string           Organization ID
+  -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
+  -s, --save                   (optional) save output as a JSON/YAML file
+
+</div>
+</pre>
+
+## Options inherited from parent commands
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+  -v, --verbose         verbose output
+
+</div>
+</pre>
+
+## See Also
+
+Go back to [command reference index](/pr-preview/pr-21670/reference/references/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/pr-preview/pr-21670/project/contributing/cli/cli/#preserving-manually-added-documentation) for guidance.

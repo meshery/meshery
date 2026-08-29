@@ -1,0 +1,24 @@
+# v0.7.72
+
+Source: /pr-preview/pr-21670/project/releases/v0.7.72/
+
+## What's New
+## 🔤 General
+- [Server] Format deployment events @MUzairS15 (#11102)
+
+## 🖥 Meshery UI
+
+- fix connections page break @sudhanshutech (#11138)
+- Deployment lifecycle enhancement @codeSafari10 (#11094)
+- added sistentprovider to components @captain-Akshay (#11136)
+- [Chore] UI: Upgrade to 0.14.48 Sistent @leecalcote (#11134)
+
+## 📖 Documentation
+
+- chore(docs): Add model reference documentation @lekaf974 (#11132)
+- Leecalcote/docs/mesheryctl-model @leecalcote (#11128)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@MUzairS15, @aabidsofi19, @captain-Akshay, @codeSafari10, @leecalcote, @lekaf974 and @sudhanshutech

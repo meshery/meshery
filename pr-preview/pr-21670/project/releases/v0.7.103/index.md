@@ -1,0 +1,23 @@
+# v0.7.103
+
+Source: /pr-preview/pr-21670/project/releases/v0.7.103/
+
+## What's New
+## 🔤 General
+- add debug log w/signoff @Jougan-0 (#12033)
+
+## 🖥 Meshery UI
+
+- [chore/UI] Fix lint error @theBeginner86 (#12042)
+
+## 📖 Documentation
+
+- create karan-palan.md @Karan-Palan (#12002)
+- Create dorine_tipo.md @MissTipo (#11995)
+- [Docs] Create Newcomer's meeting attendance folder for the week of 10/07/2024 @Asterisk-z (#12019)
+- [Docs] Create Newcomer's Meeting Attendance Folder for Week of 09/09/2024 @102vansh (#12037)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@102vansh, @Asterisk-z, @Jougan-0, @Karan-Palan, @MUzairS15, @MissTipo, @jerensl, @leecalcote, @sudhanshutech and @theBeginner86

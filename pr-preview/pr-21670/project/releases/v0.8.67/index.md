@@ -1,0 +1,24 @@
+# v0.8.67
+
+Source: /pr-preview/pr-21670/project/releases/v0.8.67/
+
+## What's New
+## 🔤 General
+- \[Relationship evaluation\] add support for advanced matching strategies @aabidsofi19 (#14574)
+
+## 🖥 Meshery UI
+
+- Bump autoprefixer from 10.4.20 to 10.4.21 in /ui @dependabot (#14601)
+- Bump start-server-and-test from 2.0.10 to 2.0.11 in /provider-ui @dependabot (#14595)
+- Bump @mui/x-date-pickers from 7.26.0 to 8.2.0 in /ui @dependabot (#14603)
+
+## 🧰 Maintenance
+
+- Bump autoprefixer from 10.4.20 to 10.4.21 in /ui @dependabot (#14601)
+- Bump start-server-and-test from 2.0.10 to 2.0.11 in /provider-ui @dependabot (#14595)
+- Bump @mui/x-date-pickers from 7.26.0 to 8.2.0 in /ui @dependabot (#14603)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@Jougan-0, @aabidsofi19, @dependabot, @dependabot\[bot\], @l5io, @leecalcote, @miacycle, @ritzorama and MUzairS15

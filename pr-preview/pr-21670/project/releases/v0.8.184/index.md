@@ -1,0 +1,23 @@
+# v0.8.184
+
+Source: /pr-preview/pr-21670/project/releases/v0.8.184/
+
+## What's New
+## 🔤 General
+- Fix system error on docker extension @aabidsofi19 (#16711)
+
+## 🧰 Maintenance
+
+- fix: update fsevents dependency to v0.1.1 in go.mod @jamieplu (#16705)
+
+## 📖 Documentation
+
+-  Arpit Baghel attendance for week of 12-18-2025 @Renegade2345 (#16710)
+- Yorisoft/newcomer @Yorisoft (#16709)
+- Adding attendance for Kavitha Karunakaran in Newcomer orientation meeting on Dec 18, 2025 @matrixkavi (#16708)
+- Add Sekar's attendance details @Sekar-C-Mca (#16707)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@Renegade2345, @Sekar-C-Mca, @Yorisoft, @aabidsofi19, @alexquincy, @jamieplu, @leecalcote and @matrixkavi

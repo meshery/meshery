@@ -1,0 +1,104 @@
+# mesheryctl-design-list
+
+Source: /pr-preview/pr-21670/reference/references/mesheryctl/design/list/
+
+# mesheryctl design list
+
+List designs
+
+## Synopsis
+
+Display list of all available designs.
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl design list [flags]
+
+</div>
+</div>
+</pre> 
+
+## Examples
+
+Display a list of all available designs
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl design list
+
+</div>
+</div>
+</pre> 
+
+Display a list of all available designs with verbose output
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl design list --verbose
+
+</div>
+</div>
+</pre> 
+
+Display a list of all available designs with specified page number (10 designs per page by default)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl design list --page [pange-number]
+
+</div>
+</div>
+</pre> 
+
+Display a list of all available designs with custom page size (10 designs per page by default)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl design list --pagesize [page-size]
+
+</div>
+</div>
+</pre> 
+
+Display only the count of all available designs
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl design list --count
+
+</div>
+</div>
+</pre> 
+
+## Options
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+  -c, --count          (optional) Display count only
+  -h, --help           help for list
+  -p, --page int       (optional) List next set of designs with --page (default 1)
+      --pagesize int   (optional) Number of designs to be displayed per page (default 10)
+  -v, --verbose        (optional) Display full length owner identifiers and detailed timestamps
+
+</div>
+</pre>
+
+## Options inherited from parent commands
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+  -t, --token string    Path to token file default from current context
+
+</div>
+</pre>
+
+## Screenshots
+
+Usage of mesheryctl design list
+![pattern-list-usage](../../../images/patternList.png)
+
+## See Also
+
+Go back to [command reference index](/pr-preview/pr-21670/reference/references/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/pr-preview/pr-21670/project/contributing/cli/cli/#preserving-manually-added-documentation) for guidance.

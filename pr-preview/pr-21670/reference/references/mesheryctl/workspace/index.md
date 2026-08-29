@@ -1,0 +1,66 @@
+# mesheryctl-workspace
+
+Source: /pr-preview/pr-21670/reference/references/mesheryctl/workspace/
+
+# mesheryctl workspace
+
+Manage workspaces under an organization
+
+## Synopsis
+
+Create, list of workspaces under an organization
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl workspace [flags]
+
+</div>
+</div>
+</pre> 
+
+## Examples
+
+To view a list workspaces
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl workspace list --orgId [orgId]
+
+</div>
+</div>
+</pre> 
+
+To create a workspace
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
+
+</div>
+</div>
+</pre> 
+
+## Options
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --count   total number of registered workspaces
+  -h, --help    help for workspace
+
+</div>
+</pre>
+
+## Options inherited from parent commands
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+  -v, --verbose         verbose output
+
+</div>
+</pre>
+
+## See Also
+
+Go back to [command reference index](/pr-preview/pr-21670/reference/references/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/pr-preview/pr-21670/project/contributing/cli/cli/#preserving-manually-added-documentation) for guidance.

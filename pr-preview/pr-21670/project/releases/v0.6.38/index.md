@@ -1,0 +1,19 @@
+# v0.6.38
+
+Source: /pr-preview/pr-21670/project/releases/v0.6.38/
+
+## What's New
+## 🔤 General
+- Convert 2 API calls to 1 for Applications  @Revolyssup (#6752)
+- Send notification of deployment failure @Revolyssup (#6772)
+- Updated Guide for setting up meshery in Windows (special instruction for the compiler) @UtkarshMishra12 (#6764)
+
+## 🖥 Meshery UI
+
+- Solved Issue 6754 for Designs Page @hs05june (#6758)
+- FlushMeshSync button in actions column of environment settings centered @deepakdinesh1123 (#6675)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@Chadha93, @Revolyssup, @UtkarshMishra12, @deepakdinesh1123, @hs05june, @leecalcote and l5io

@@ -1,0 +1,26 @@
+# v1.0.13
+
+Source: /pr-preview/pr-21670/project/releases/v1.0.13/
+
+## What's New
+## 🔤 General
+- \[Server\] Restore mutated fields when relationship is deleted @guan404ming (#18885)
+- docs(agents): record post-migration server-side conformance audit (no code changes) @leecalcote (#18920)
+- docs: cross-reference the identifier-naming contributor guide @leecalcote (#18918)
+
+## ⌨️ Meshery CLI
+
+- \[Server\] Fix SSE event streamer disconnect handling @\[copilot-swe-agent\[bot\]\](https://github.com/apps/copilot-swe-agent) (#18895)
+
+## 🖥 Meshery UI
+
+- fix: stop N+1 user-profile lookups and plain-text errors on Open Recents @miacycle (#18916)
+
+## 📖 Documentation
+
+- \[Server\] Fix SSE event streamer disconnect handling @\[copilot-swe-agent\[bot\]\](https://github.com/apps/copilot-swe-agent) (#18895)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@Copilot, @fitzergerald, @guan404ming, @hamza-mohd, @l5io, @leecalcote, @meshery-ci, @miacycle, @ritzorama, @yi-nuo426 and \[copilot-swe-agent\[bot\]\](https://github.com/apps/copilot-swe-agent)

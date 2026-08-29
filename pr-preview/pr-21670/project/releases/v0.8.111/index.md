@@ -1,0 +1,26 @@
+# v0.8.111
+
+Source: /pr-preview/pr-21670/project/releases/v0.8.111/
+
+## What's New
+## 🔤 General
+## 🖥 Meshery UI
+
+- 🚨 build: update @meshery/schemas to latest stable release @FaheemOnHub (#15179)
+
+## 🧰 Maintenance
+
+- Container image scanning using trivy @chilkaditya (#14814)
+
+## 📖 Documentation
+
+- docs: add k8s request flow tutorial @kirti763 (#15146)
+
+## 🔒 Security
+
+- Container image scanning using trivy @chilkaditya (#14814)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@FaheemOnHub, @aabidsofi19, @chilkaditya, @fitzergerald, @kirti763, @l5io, @leecalcote, @meshery-ci, @sangramrath, @vishalvivekm and @zihanKuang

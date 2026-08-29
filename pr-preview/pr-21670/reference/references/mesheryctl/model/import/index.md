@@ -1,0 +1,106 @@
+# mesheryctl-model-import
+
+Source: /pr-preview/pr-21670/reference/references/mesheryctl/model/import/
+
+# mesheryctl model import
+
+Import models
+
+## Synopsis
+
+Import models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl model import [flags]
+
+</div>
+</div>
+</pre> 
+
+## Examples
+
+Import model
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl model import --file [URI]
+
+</div>
+</div>
+</pre> 
+
+Import model from a URL to a meshery model
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl model import --file [URL]
+
+</div>
+</div>
+</pre> 
+
+Import model from an OCI artifact
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl model import --file [OCI]
+
+</div>
+</div>
+</pre> 
+
+Import model from a tar.gz file
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl model import --file [path-to-model.tar.gz]
+
+</div>
+</div>
+</pre> 
+
+Import model from a path
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl model import --file [path-to-model]
+
+</div>
+</div>
+</pre> 
+
+Import model using CSV files
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl model import --file [path-to-csv-directory]
+
+</div>
+</div>
+</pre> 
+
+## Options
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+  -f, --file string   Specify path to the file or directory
+  -h, --help          help for import
+
+</div>
+</pre>
+
+## Options inherited from parent commands
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+  -v, --verbose         verbose output
+
+</div>
+</pre>
+
+## See Also
+
+Go back to [command reference index](/pr-preview/pr-21670/reference/references/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/pr-preview/pr-21670/project/contributing/cli/cli/#preserving-manually-added-documentation) for guidance.

@@ -1,0 +1,262 @@
+# Upgrading
+
+> How to upgrade Meshery and each of its components
+
+Source: /pr-preview/pr-21670/installation/upgrades/
+
+# Upgrade Guide
+
+<div class="alert alert-info" role="alert"><div class="h4 alert-heading" role="heading">Looking for the step-by-step procedure?</div>
+
+
+This page explains how Meshery's components version and upgrade in relation to
+one another. For the hands-on procedure, follow the
+[Upgrading Meshery guide](/pr-preview/pr-21670/guides/upgrading-meshery/).
+</div>
+
+
+## Upgrading Meshery Server, Adapters, and UI
+
+Various components of Meshery will need to be upgraded as new releases become available. Meshery is comprised of a number of components including a server, adapters, UI, and CLI. As an application, Meshery is a composition of different functional components.
+
+<p style="text-align:center">
+<a href="./images/upgrading-meshery.svg">
+    <img src="./images/upgrading-meshery.svg" style="margin: 1rem;" />
+</a><br /><i><small>Figure: Meshery components</small></i>
+</p>
+
+Some of the components must be upgraded simultaneously, while others may be upgraded independently. The following table depicts components, their versions, and deployment units (deployment groups).
+
+### Versioning of Meshery Components
+
+<table class="mesherycomponents">
+    <tr>
+        <th>Components</th>
+        <th>Sub-component</th>
+        <th>Considering or Updating</th>
+    </tr>
+    <tr>
+        <td class="childcomponent">Meshery Adapters</td>
+        <td>Any and All Adapters</td>
+        <td>Docker Deployment: Watchtower updates this component in accordance with the user’s release channel subscription.</td>
+    </tr>
+    <tr>
+        <td rowspan="3" class="childcomponent">Meshery Server</td>
+        <td>Meshery UI</td>
+        <td rowspan="3">Manages lifecycle of Meshery Operator; Adapters, UI, Load Generators, Database.<br /><br />
+Docker Deployment: Watchtower updates this component in accordance with the user’s release channel subscription.</td>
+    </tr>
+    <tr>
+        <td>Load Generators</td>
+    </tr>
+    <tr>
+        <td>Database</td>
+    </tr>
+    <tr>
+        <td rowspan="2" class="childcomponent">Meshery Operator</td>
+        <td>MeshSync</td>
+        <td>Meshery Operator manages the lifecycle of this component and its sub-components.</td>
+    </tr>
+    <tr>
+        <td>Meshery Broker</td>
+        <td>Meshery Operator manages the lifecycle of this event bus component.</td>
+    </tr>
+    <tr>
+        <td class="childcomponent">`mesheryctl`</td>
+        <td></td>
+        <td><code>mesheryctl</code> manages the lifecycle of Meshery Server. <br /><br />
+        <ul> 
+            <li><code>system start</code> calls system update by default, which updates the server and existing adapters, but doesn’t update <code>meshery.yaml</code>. Unless the <code>skipUpdate</code> flag is used, operators are also updated here.</li>
+            <li><code>system reset</code> retrieves <code>docker-compose.yaml</code> from GitHub (use a Git tag to reset to the right Meshery version).</li>
+            <li><code>system restart</code> also updates operators, unless the <code>skipUpdate</code> flag is used.</li>
+            <li><code>system update</code> updates operators in case of both Docker and Kubernetes deployments.</li>
+            <li><code>system context</code> manages <code>config.yaml</code>, which manages <code>meshery.yaml</code>.</li>
+            <li><code>mesheryctl</code> should generally check for the latest release and inform the user.</li>
+        </ul>
+        </td>
+    </tr>
+    <tr>
+        <td rowspan="2" class="childcomponent"><a style="color:white;" href="/pr-preview/pr-21670/reference/extensibility/providers/">Remote Providers</a></td>
+        <td>Meshery Cloud</td>
+        <td>Process Extension: Integrators manage the lifecycle of their Remote Providers. The process is unique per provider.</td>
+    </tr>
+    <tr>
+        <td>Meshery Extensions</td>
+        <td>Static Extension: Integrators manage the lifecycle of their Meshery Extensions. The process is unique per provider.</td>
+    </tr>
+</table>
+
+Sub-components deploy as a unit; however, they do not share the same version number.
+
+## How Meshery Server manages Meshery Operator
+
+Meshery Server owns the lifecycle of Meshery Operator on every managed
+cluster. Understanding this relationship explains what upgrades automatically
+and what you should — and should not — touch by hand.
+
+**Installation.** When Meshery Server connects to a Kubernetes cluster (in
+operator deployment mode), it installs the `meshery-operator` Helm chart from
+[meshery.io/charts](https://meshery.io/charts) into the `meshery` namespace.
+The chart version it asks for **matches the Meshery Server release version** -
+each Server release snapshots the operator chart (and the operator version
+pinned inside it) as of that release.
+
+**What actually gets deployed is always a published chart.** The Server reads
+the repository's index before installing and never hands Helm a version the
+repository does not carry, so two everyday cases are corrected rather than
+failed:
+
+- **Not published yet.** Chart publishing trails Server releases, so a current
+  Server routinely names a chart that does not exist yet. The newest published
+  release is deployed instead.
+- **Too old to run.** A Server old enough to name a chart below `v1.0.51`, the
+  oldest chart verified to deploy successfully, gets the oldest published chart
+  at or above that boundary. Every chart checked below it leaves the Operator
+  Pod unable to become ready; the symptoms and the reasoning are in
+  [Meshery Operator will not start](/pr-preview/pr-21670/guides/troubleshooting/meshery-operator-meshsync/#meshery-operator-will-not-start-imagepullbackoff-and-a-missing-webhook-certificate).
+
+Neither substitution is silent: it is reported in the events feed, naming the
+version that was deployed and why. Release candidates are never chosen for you.
+If the chart repository cannot be reached at all, installation is withheld with
+a visible error rather than attempted at an unverified version, while an
+already-installed Operator keeps reporting its status and version as usual.
+
+To choose the chart version yourself instead of tracking the Server release,
+set `operator.version` on the connection. A version you set is deployed exactly
+as written, or refused with a visible error if it names a version the repository
+does not publish or a moving tag such as `stable-latest` - it is never
+substituted, and the minimum above does not apply to it, so a pin below
+`v1.0.51` is installed as asked. See
+[Choosing the chart version yourself](/pr-preview/pr-21670/guides/troubleshooting/meshery-operator-meshsync/#choosing-the-chart-version-yourself).
+
+**Upgrades.** Upgrading Meshery Server is what upgrades the Operator: on
+(re)connection, the Server re-applies the operator chart at its own (new)
+version. That `helm upgrade` triggers the chart's CRD update Job — a
+pre-upgrade hook that server-side-applies the current `Broker` and `MeshSync`
+CRD schemas (Helm alone never updates CRDs on upgrade) — and rolls the
+Operator Deployment to the operator image pinned in the chart. The Operator
+then reconciles MeshSync and the Broker.
+
+**Reconciliation.** The Server periodically re-applies the operator chart if
+the Operator is missing or unhealthy. Two practical consequences:
+
+- **Manual operator changes are temporary.** A hand-run
+  `helm upgrade meshery-operator --version <x>` or an edited image tag on a
+  Server-managed cluster will be reverted to the chart version the Server
+  resolves (above) by the next reconciliation. `operator.version` on the
+  connection is the durable way to choose a version on a managed cluster;
+  standalone/manual operator installs are only durable on clusters that Meshery
+  Server does not manage.
+- **Operator versions are pinned, not floating.** The operator image is a
+  fixed version per chart release (no `stable-latest` drift): an Operator pod
+  restart never silently changes the operator version. Upgrades happen only
+  when the chart content changes — that is, when you upgrade Meshery Server.
+
+**CRDs persist.** The `brokers.meshery.io` and `meshsyncs.meshery.io` CRDs
+(and your `Broker`/`MeshSync` objects) deliberately survive operator
+uninstalls and Helm release deletion. Removing them — and with them every
+custom resource of those types — is an explicit, manual step:
+`kubectl delete crd brokers.meshery.io meshsyncs.meshery.io`.
+
+You can toggle operator deployment per cluster in Meshery UI under
+**Settings**, or avoid deploying the operator entirely by choosing MeshSync's
+[embedded mode](/pr-preview/pr-21670/concepts/architecture/meshsync/#meshsync-deployment-mode)
+for the connection. See
+[Meshery Operator](/pr-preview/pr-21670/concepts/architecture/operator/) for
+the architecture.
+
+### Meshery Docker Deployments
+
+In order to pull the latest images for Meshery Server, Adapters, and UI, execute the following command:
+
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">mesheryctl system update</div></div>
+ </pre>
+
+If you wish to update a running Meshery deployment with the images you just pulled, you'll also have to execute:
+
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">mesheryctl system restart</div></div>
+ </pre>
+
+### Meshery Kubernetes Deployments
+
+Upgrade with Helm, pinning an explicit chart version and using the
+upgrade-friendly probe values:
+
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">helm upgrade meshery meshery/meshery --namespace meshery --version &lt;target-version&gt; -f values-upgrade.yaml --wait</div></div>
+ </pre>
+
+The [Upgrading Meshery guide](/pr-preview/pr-21670/guides/upgrading-meshery/)
+covers the full procedure, verification steps, and rollback; the
+[Operational Readiness Checklist](/pr-preview/pr-21670/installation/production/operational-readiness-checklist/)
+covers production upgrade strategy.
+
+## Upgrading Meshery CLI
+
+The Meshery command-line client, `mesheryctl`, is available in different package managers. Use the instructions relevant to your environment.
+
+### Upgrading `mesheryctl` using Homebrew
+
+<p>To upgrade `mesheryctl`, execute the following command:</p>
+
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">brew upgrade mesheryctl</div></div>
+ </pre>
+
+### Upgrading `mesheryctl` using Bash
+
+Upgrade `mesheryctl` and run Meshery on Mac or Linux with this script:
+
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">curl -L https://meshery.io/install | DEPLOY_MESHERY=false bash -</div></div>
+ </pre>
+
+### Upgrading `mesheryctl` using Scoop
+
+To upgrade `mesheryctl`, execute the following command:
+
+ <pre class="codeblock-pre">
+ <div class="codeblock"><div class="clipboardjs">scoop update mesheryctl</div></div>
+ </pre>
+
+<div class="related-discussions">
+  <h3>Recent Discussions with "meshery" Tag</h3><ul><li>
+          <a href="https://discuss.meshery.io/t/design-meshery-mcp-server-architecture-and-registration-interface/7954" target="_blank" rel="noopener noreferrer">
+            Design: Meshery MCP Server architecture and registration interface
+          </a>
+        </li><li>
+          <a href="https://discuss.meshery.io/t/the-meshery-mcp-server-foundation-is-up-lets-agree-on-what-to-build-next/7952" target="_blank" rel="noopener noreferrer">
+            The Meshery MCP Server foundation is up, let&#39;s agree on what to build next
+          </a>
+        </li><li>
+          <a href="https://discuss.meshery.io/t/new-intro-topic/7975" target="_blank" rel="noopener noreferrer">
+            New intro topic
+          </a>
+        </li><li>
+          <a href="https://discuss.meshery.io/t/meshery-mcp-server-poc-an-ai-agent-managing-kubernetes-through-mcp/7974" target="_blank" rel="noopener noreferrer">
+            Meshery MCP Server POC: an AI agent managing Kubernetes through MCP
+          </a>
+        </li><li>
+          <a href="https://discuss.meshery.io/t/approach-for-context-window-aware-retrieval-in-the-ai-adapter-issue-20994/7963" target="_blank" rel="noopener noreferrer">
+            Approach for context-window-aware retrieval in the AI Adapter (Issue #20994)
+          </a>
+        </li><li>
+          <a href="https://discuss.meshery.io/t/there-is-some-error-in-running-the-localhost-of-layer5-in-my-server/7818" target="_blank" rel="noopener noreferrer">
+            There is some error in running the localhost of layer5 in my server
+          </a>
+        </li><li>
+          <a href="https://discuss.meshery.io/t/rfc-aligning-the-foundation-for-the-meshery-mcp-server/7913" target="_blank" rel="noopener noreferrer">
+            RFC: Aligning the Foundation for the Meshery MCP Server
+          </a>
+        </li><li>
+          <a href="https://discuss.meshery.io/t/meshery-development-meeting-august-12th-2026/7948" target="_blank" rel="noopener noreferrer">
+            Meshery Development Meeting | August 12th, 2026
+          </a>
+        </li></ul><p>
+    <a href="https://discuss.meshery.io/tag/meshery" target="_blank" rel="noopener noreferrer">
+      View all discussions tagged with <code>meshery</code>
+    </a>
+  </p>
+</div>

@@ -1,0 +1,22 @@
+# v0.7.158
+
+Source: /pr-preview/pr-21670/project/releases/v0.7.158/
+
+## What's New
+## 🔤 General
+- add keys value to values.yaml  @Jougan-0 (#12714)
+
+## 🖥 Meshery UI
+
+- \[Chore\]: Bump graphql-ws v5.16.0 @l5io (#12713)
+- fix: info modal not open in a case of null data @amitamrutiya (#12712)
+- \[Chore\]: Bump Sistent v0.14.120 @l5io (#12709)
+
+## 🧰 Maintenance
+
+- restore any local changes made before pulling to prevent merge confilcts @aabidsofi19 (#12647)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@Jougan-0, @aabidsofi19, @amitamrutiya, @jerensl, @l5io, @leecalcote and MUzairS15

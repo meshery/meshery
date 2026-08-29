@@ -1,0 +1,78 @@
+# mesheryctl-model-list
+
+Source: /pr-preview/pr-21670/reference/references/mesheryctl/model/list/
+
+# mesheryctl model list
+
+List registered models
+
+## Synopsis
+
+List all registered models by pagination (10 models per page)
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl model list [flags]
+
+</div>
+</div>
+</pre> 
+
+## Examples
+
+List of models
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl model list
+
+</div>
+</div>
+</pre> 
+
+List of models for a specified page
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl model list --page [page-number] --pagesize [pagesize]
+
+</div>
+</div>
+</pre> 
+
+Display number of available models in Meshery
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl model list --count
+
+</div>
+</div>
+</pre> 
+
+## Options
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+  -c, --count          (optional) Get the number of models in total
+  -h, --help           help for list
+  -p, --page int       (optional) List next set of models with --page (default = 1) (default 1)
+  -s, --pagesize int   (optional) List next set of models with --pagesize (default = 10) (default 10)
+
+</div>
+</pre>
+
+## Options inherited from parent commands
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+  -v, --verbose         verbose output
+
+</div>
+</pre>
+
+## See Also
+
+Go back to [command reference index](/pr-preview/pr-21670/reference/references/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/pr-preview/pr-21670/project/contributing/cli/cli/#preserving-manually-added-documentation) for guidance.

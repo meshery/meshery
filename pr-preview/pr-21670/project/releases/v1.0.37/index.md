@@ -1,0 +1,24 @@
+# v1.0.37
+
+Source: /pr-preview/pr-21670/project/releases/v1.0.37/
+
+## What's New
+## 🔤 General
+- chore/upgrade/meshery schemas @CodeAhmedJamil (#19912)
+
+## ⌨️ Meshery CLI
+
+- \[Performance\] Recreate schema-native performance refactor @PragalvaXFREZ (#19909)
+
+## 🖥 Meshery UI
+
+- \[UI\] Add Evaluate button for design relationship evaluation @rishiraj38 (#19798)
+- \[chore\] schemas: upgrade to v1.3.7 @CodeAhmedJamil (#19911)
+- \[UI\] Remove leftover console.log from CurrentSession @ManojLamani (#19910)
+- \[UI\] Use filter name in delete confirmation modal @ishwar170695 (#19872)
+- \[Performance\] Recreate schema-native performance refactor @PragalvaXFREZ (#19909)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@CodeAhmedJamil, @ManojLamani, @PragalvaXFREZ, @hamza-mohd, @ishwar170695, @marblom007, @rishiraj38 and @winkletinkle

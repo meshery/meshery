@@ -1,0 +1,100 @@
+# mesheryctl-connection-list
+
+Source: /pr-preview/pr-21670/reference/references/mesheryctl/connection/list/
+
+# mesheryctl connection list
+
+List all the connections
+
+## Synopsis
+
+List all available connections.
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl connection list [flags]
+
+</div>
+</div>
+</pre> 
+
+## Examples
+
+List all the connections
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl connection list
+
+</div>
+</div>
+</pre> 
+
+List all the connections with page number
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl connection list --page [page-number]
+
+</div>
+</div>
+</pre> 
+
+List all the connections matching a specific kind and status
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl connection list --kind [kind] --status [status]
+
+</div>
+</div>
+</pre> 
+
+List all the connections matching a set of kinds and statuses
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl connection list --kind [kind] --kind [kind] --status [status] --status [status]
+
+</div>
+</div>
+</pre> 
+
+Display total count of all available connections
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl connection list --count
+
+</div>
+</div>
+</pre> 
+
+## Options
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+  -c, --count            Display the count of total available connections
+  -h, --help             help for list
+  -k, --kind strings     Filter connections by kind
+  -p, --page int         Page number (default 1)
+      --pagesize int     Number of connections per page (default 10)
+  -s, --status strings   Filter connections by status
+
+</div>
+</pre>
+
+## Options inherited from parent commands
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+  -v, --verbose         verbose output
+
+</div>
+</pre>
+
+## See Also
+
+Go back to [command reference index](/pr-preview/pr-21670/reference/references/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/pr-preview/pr-21670/project/contributing/cli/cli/#preserving-manually-added-documentation) for guidance.
