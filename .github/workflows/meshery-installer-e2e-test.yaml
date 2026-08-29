@@ -6,14 +6,14 @@ on:
       - master
     paths:
       - "install/**"
-      - ".github/workflows/meshery-installer-e2e-test.yml"
+      - ".github/workflows/meshery-installer-e2e-test.yaml"
 
   pull_request:
     branches:
       - master
     paths:
       - "install/**"
-      - ".github/workflows/meshery-installer-e2e-test.yml"
+      - ".github/workflows/meshery-installer-e2e-test.yaml"
 
   workflow_dispatch:
 
@@ -54,7 +54,7 @@ jobs:
       # third-party actions for supply-chain reasons, replace @main with a
       # specific commit SHA and update it deliberately (e.g. via Dependabot).
       - name: Setup Homebrew
-        uses: Homebrew/actions/setup-homebrew@main
+        uses: Homebrew/actions/setup-homebrew@8f3d1ec8a696b3b9d9a6c3696b6c73033cab69e4 # 2026.08.14.1
 
       # ubuntu-24.04 runners do not ship with `expect` preinstalled, and none
       # of the setup actions above (BATS, minikube, Homebrew) provide it —

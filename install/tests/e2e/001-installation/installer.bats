@@ -270,6 +270,10 @@ run_expect() {
   # that no meshery namespace/resources were created as a side effect.
   run bash -lc "kubectl get namespace meshery"
   assert_failure
+
+  # Assert that no Meshery Docker container exists after installation.
+  run bash -lc 'test -z "$(docker ps -aq --filter name=meshery)"'
++ assert_success
 }
 
 
