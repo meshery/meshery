@@ -17,8 +17,10 @@ Use this to verify or debug your current CLI settings.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context view [context-name | --context context-name | --all] --flags [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -27,39 +29,40 @@ mesheryctl system context view [context-name | --context context-name | --all] -
 View the default context
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context view
 
+</div>
 </div>
 </pre> 
 
 View a specified context
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context view context-name
 
+</div>
 </div>
 </pre> 
 
 View a specified context using the --context flag
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context view --context context-name
 
+</div>
 </div>
 </pre> 
 
 View configuration of all contexts
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context view --all
 
 </div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-    
-
 </div>
 </pre> 
 
