@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "relationships.meshery.io/v1beta3",
+  "version": "v1.0.0",
+  "kind": "edge",
+  "type": "non-binding",
+  "subType": "alias",
+  "status": "enabled",
+  "evaluationQuery": "",
+  "metadata": {
+    "description": "An edge alias: one component is a named stand-in for another without nesting or ownership.",
+    "isAnnotation": false
+  },
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "aws-secretsmanager-controller",
+    "version": "v1.0.0",
+    "displayName": "aws-secretsmanager-controller",
+    "registrant": { "kind": "github" },
+    "model": { "version": "v1.4.1" }
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Secret",
+            "model": { "name": "aws-secretsmanager-controller", "registrant": { "kind": "github" }, "model": { "version": "" } },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["configuration", "spec", "name"]]
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Secret",
+            "model": { "name": "aws-secretsmanager-controller", "registrant": { "kind": "github" }, "model": { "version": "" } },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["configuration", "metadata", "name"]]
+            }
+          }
+        ]
+      },
+      "deny": { "from": [], "to": [] }
+    }
+  ]
+}
