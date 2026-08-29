@@ -273,7 +273,7 @@ run_expect() {
 
   # Assert that no Meshery Docker container exists after installation.
   run bash -lc 'test -z "$(docker ps -aq --filter name=meshery)"'
-+ assert_success
+  assert_success
 }
 
 
