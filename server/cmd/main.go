@@ -301,8 +301,7 @@ func main() {
 		// way.
 		SystemEventPersister: &models.EventsPersister{DB: dbHandler},
 
-		K8scontextChannel: models.NewContextHelper(),
-		OperatorTracker:   models.NewOperatorTracker(viper.GetBool("DISABLE_OPERATOR")),
+		OperatorTracker: models.NewOperatorTracker(viper.GetBool("DISABLE_OPERATOR")),
 	}
 	krh, err := models.NewKeysRegistrationHelper(dbHandler, log)
 	if err != nil {
