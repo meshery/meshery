@@ -81,6 +81,14 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
 
 <p style="clear:both;">&nbsp;</p>
 
+## Quick Install
+
+```bash
+curl -L https://meshery.io/install | bash
+```
+
+> See the [quick start guide](https://docs.meshery.io/installation/quick-start) for platform-specific options.
+
 # Functionality
 
 ## Infrastructure Lifecycle Management
