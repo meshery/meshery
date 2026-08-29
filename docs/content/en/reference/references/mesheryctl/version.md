@@ -14,8 +14,10 @@ Show Meshery CLI and Server versions
 Version of Meshery command line client - mesheryctl.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl version [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,8 +26,10 @@ mesheryctl version [flags]
 To view the current version and SHA of release binary of mesheryctl client 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl version
 
+</div>
 </div>
 </pre> 
 

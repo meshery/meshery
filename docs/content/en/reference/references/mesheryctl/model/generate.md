@@ -15,8 +15,10 @@ Generate models by specifying the directory, file, or URL. You can also provide 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model generate [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,24 +27,30 @@ mesheryctl model generate [flags]
 Generate a model from a CSV directory
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model generate -f [path-to-csv-directory]
 
+</div>
 </div>
 </pre> 
 
 Generate a model from a URL based on a JSON template
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model generate -f [URL] -t [path-to-template.json]
 
+</div>
 </div>
 </pre> 
 
 Generate a model from a URL based on a JSON template skipping registration
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model generate --file [URL] --template [path-to-template.json] --skip-registration
 
+</div>
 </div>
 </pre> 
 

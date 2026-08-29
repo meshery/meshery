@@ -15,8 +15,10 @@ Delete an existing context (a named Meshery deployment) from Meshery config file
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context delete [context-name] [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +27,10 @@ mesheryctl system context delete [context-name] [flags]
 ### Delete context
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context delete [context name]
 
+</div>
 </div>
 </pre> 
 

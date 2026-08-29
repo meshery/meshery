@@ -17,8 +17,10 @@ Authenticate to the Local or a Remote Provider of a Meshery Server
 The authentication mode is web-based browser flow
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system login [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -27,16 +29,20 @@ mesheryctl system login [flags]
 Login with the Meshery Provider of your choice: the Local Provider or a Remote Provider.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system login
 
+</div>
 </div>
 </pre> 
 
 Login with the Meshery Provider by specifying it via -p or --provider flag.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system login -p Meshery
 
+</div>
 </div>
 </pre> 
 
