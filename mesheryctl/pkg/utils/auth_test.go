@@ -16,7 +16,9 @@ package utils
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -24,10 +26,15 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/spf13/viper"
 )
+
+type roundTripFunc func(req *http.Request) (*http.Response, error)
+
+func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
+	return f(req)
+}
 
 // testcases for auth.go
 func TestAuth(t *testing.T) {
@@ -105,6 +112,12 @@ func TestProviderUnmarshalJSON(t *testing.T) {
 }
 
 func TestUpdateAuthDetails(t *testing.T) {
+	origDefaultConfigPath := DefaultConfigPath
+	t.Cleanup(func() {
+		viper.Reset()
+		DefaultConfigPath = origDefaultConfigPath
+	})
+
 	configPath := CopyMeshconfigFixture(t, "TestConfig.yaml")
 	viper.Reset()
 	viper.SetConfigFile(configPath)
@@ -113,14 +126,15 @@ func TestUpdateAuthDetails(t *testing.T) {
 		t.Fatalf("unable to read configuration from %v: %v", viper.ConfigFileUsed(), err)
 	}
 
-	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	_, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		t.Fatalf("failed to get mesheryctl config: %v", err)
 	}
-	baseURL := mctlCfg.GetBaseMesheryURL()
 
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
+	origTransport := http.DefaultTransport
+	t.Cleanup(func() {
+		http.DefaultTransport = origTransport
+	})
 
 	tempDir := t.TempDir()
 	tokenFile := filepath.Join(tempDir, "token.json")
@@ -130,24 +144,28 @@ func TestUpdateAuthDetails(t *testing.T) {
 	}
 
 	t.Run("Given client.Do returns nil response and error, When UpdateAuthDetails is called, Then it returns error without panic", func(t *testing.T) {
-		httpmock.Reset()
-		httpmock.RegisterResponder("GET", baseURL+"/api/user/token",
-			httpmock.NewErrorResponder(fmt.Errorf("connection refused")))
+		http.DefaultTransport = roundTripFunc(func(req *http.Request) (*http.Response, error) {
+			return nil, errors.New("connection refused")
+		})
 
 		err := UpdateAuthDetails(tokenFile)
 		if err == nil {
 			t.Fatalf("expected error from UpdateAuthDetails, got nil")
 		}
-		if !strings.Contains(err.Error(), "error dispatching there request") {
-			t.Fatalf("expected error containing 'error dispatching there request', got %q", err.Error())
+		if !strings.Contains(err.Error(), "error dispatching the request") {
+			t.Fatalf("expected error containing 'error dispatching the request', got %q", err.Error())
 		}
 	})
 
 	t.Run("Given client.Do returns success response, When UpdateAuthDetails is called, Then token is updated successfully", func(t *testing.T) {
-		httpmock.Reset()
 		updatedToken := `{"token": "refreshed-token", "meshery-provider": "Local"}`
-		httpmock.RegisterResponder("GET", baseURL+"/api/user/token",
-			httpmock.NewStringResponder(200, updatedToken))
+		http.DefaultTransport = roundTripFunc(func(req *http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: http.StatusOK,
+				Body:       io.NopCloser(strings.NewReader(updatedToken)),
+				Header:     make(http.Header),
+			}, nil
+		})
 
 		err := UpdateAuthDetails(tokenFile)
 		if err != nil {
@@ -164,11 +182,15 @@ func TestUpdateAuthDetails(t *testing.T) {
 	})
 
 	t.Run("Given client.Do returns HTML response, When UpdateAuthDetails is called, Then it returns invalid body error", func(t *testing.T) {
-		httpmock.Reset()
-		resp := httpmock.NewStringResponse(200, "<html><body>Login</body></html>")
-		resp.Header.Set("Content-Type", "text/html")
-		httpmock.RegisterResponder("GET", baseURL+"/api/user/token",
-			httpmock.ResponderFromResponse(resp))
+		http.DefaultTransport = roundTripFunc(func(req *http.Request) (*http.Response, error) {
+			header := make(http.Header)
+			header.Set("Content-Type", "text/html")
+			return &http.Response{
+				StatusCode: http.StatusOK,
+				Body:       io.NopCloser(strings.NewReader("<html><body>Login</body></html>")),
+				Header:     header,
+			}, nil
+		})
 
 		err := UpdateAuthDetails(tokenFile)
 		if err == nil {
@@ -180,7 +202,6 @@ func TestUpdateAuthDetails(t *testing.T) {
 	})
 
 	t.Run("Given non-existent token file, When UpdateAuthDetails is called, Then it returns error reading token", func(t *testing.T) {
-		httpmock.Reset()
 		err := UpdateAuthDetails(filepath.Join(tempDir, "non_existent.json"))
 		if err == nil {
 			t.Fatalf("expected error for non-existent token file, got nil")

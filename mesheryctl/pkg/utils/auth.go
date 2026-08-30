@@ -233,7 +233,7 @@ func UpdateAuthDetails(filepath string) error {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		err = errors.Wrap(err, "error dispatching there request: ")
+		err = errors.Wrap(err, "error dispatching the request: ")
 		return err
 	}
 	defer SafeClose(resp.Body)
