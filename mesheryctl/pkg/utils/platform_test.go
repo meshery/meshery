@@ -41,6 +41,9 @@ func TestGetManifestTreeURL(t *testing.T) {
 		if !strings.Contains(err.Error(), "403") {
 			t.Errorf("expected error message to contain '403', got: %v", err)
 		}
+		if !strings.Contains(err.Error(), "API rate limit exceeded") {
+			t.Errorf("expected error to contain rate limit message, got: %v", err)
+		}
 		if strings.Contains(err.Error(), "could not find path") {
 			t.Errorf("expected error not to be misleading 'could not find path', got: %v", err)
 		}
@@ -93,6 +96,9 @@ func TestListManifests(t *testing.T) {
 
 		if !strings.Contains(err.Error(), "403") {
 			t.Errorf("expected error message to contain '403', got: %v", err)
+		}
+		if !strings.Contains(err.Error(), "API rate limit exceeded") {
+			t.Errorf("expected error to contain rate limit message, got: %v", err)
 		}
 	})
 
