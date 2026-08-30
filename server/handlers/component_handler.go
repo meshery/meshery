@@ -1087,7 +1087,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 		if selectedModel != "" && len(modelDirPaths) == 0 {
 			err := ErrModelNotFound(selectedModel)
-			writeMeshkitError(rw, err, http.StatusBadRequest)
+			writeMeshkitError(rw, err, http.StatusNotFound)
 			h.sendErrorEvent(userID, provider, err.Error(), err, token)
 			return
 		}
