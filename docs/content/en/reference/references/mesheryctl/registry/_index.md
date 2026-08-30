@@ -15,8 +15,10 @@ Manage the state and contents of Meshery’s internal registry of capabilities.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,8 +26,10 @@ mesheryctl registry [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry [subcommand]
 
+</div>
 </div>
 </pre> 
 

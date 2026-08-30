@@ -15,8 +15,10 @@ Cloud Native Filter Management
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl filter [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +27,10 @@ mesheryctl filter [flags]
 Base command for WASM filters:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl filter [subcommands]
 
+</div>
 </div>
 </pre> 
 
@@ -34,6 +38,7 @@ mesheryctl filter [subcommands]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+      --count          (optional) Get the number of filters in total
   -h, --help           help for filter
   -t, --token string   Path to token file default from current context
 

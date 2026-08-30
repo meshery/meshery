@@ -8,6 +8,7 @@ import {
   InsertChartIcon,
   Typography,
   styled,
+  useHasPermission,
   useTheme,
 } from '@sistent/sistent';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
@@ -17,6 +18,8 @@ import {
   useUpdatePrometheusPanelsMutation,
 } from '@/rtk-query/telemetryPrometheus';
 import { CoreConnectionKinds } from '@/utils/Enum';
+import { Keys } from '@meshery/schemas/permissions';
+import DefaultError from '../../general/error-404/index';
 import { useConnectionWizardModal } from '@/utils/context/ConnectionWizardContextProvider';
 import ConnectionPicker, { TelemetryConnection } from '../common/ConnectionPicker';
 import PingStatus from '../common/PingStatus';
@@ -87,11 +90,15 @@ const newId = () =>
 const TelemetryMetrics: React.FC = () => {
   const theme = useTheme();
   const { openCreateConnection } = useConnectionWizardModal();
+  const canViewMetrics = useHasPermission(Keys.MesherySystemViewMetrics);
 
-  const { data: connectionsData, isLoading: connectionsLoading } = useGetConnectionsQuery({
-    kind: JSON.stringify(['prometheus']),
-    pagesize: 200,
-  });
+  const { data: connectionsData, isLoading: connectionsLoading } = useGetConnectionsQuery(
+    {
+      kind: JSON.stringify(['prometheus']),
+      pagesize: 200,
+    },
+    { skip: !canViewMetrics },
+  );
 
   const connections: TelemetryConnection[] = useMemo(
     () =>
@@ -121,7 +128,7 @@ const TelemetryMetrics: React.FC = () => {
 
   const { data: panelsData } = useGetPrometheusPanelsQuery(
     { connectionID },
-    { skip: !connectionID },
+    { skip: !canViewMetrics || !connectionID },
   );
   const panels = (panelsData as MetricPanel[] | undefined) ?? [];
   const [updatePanels] = useUpdatePrometheusPanelsMutation();
@@ -144,6 +151,10 @@ const TelemetryMetrics: React.FC = () => {
   };
 
   const handleRemove = (panel: MetricPanel) => persist(panels.filter((p) => p.id !== panel.id));
+
+  if (!canViewMetrics) {
+    return <DefaultError permissionKey={Keys.MesherySystemViewMetrics} />;
+  }
 
   if (connectionsLoading) {
     return (
@@ -175,6 +186,7 @@ const TelemetryMetrics: React.FC = () => {
               skipKindSelection: true,
             })
           }
+          permissionKey={Keys.MesherySystemConnectMetrics}
         >
           Add a Prometheus connection
         </Button>

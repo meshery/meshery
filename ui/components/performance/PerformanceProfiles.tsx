@@ -19,6 +19,7 @@ import {
   TableRow,
   Typography,
   useTheme,
+  useHasPermission,
 } from '@sistent/sistent';
 import MesheryPerformanceComponent from './index';
 import PerformanceProfileGrid from './PerformanceProfileGrid';
@@ -37,6 +38,7 @@ import { useWindowDimensions } from '@/utils/dimension';
 import { ConditionalTooltip } from '@/utils/utils';
 
 import { Keys } from '@meshery/schemas/permissions';
+import DefaultError from '../general/error-404';
 import { isLocalProvider } from '@/utils/provider';
 import { ButtonTextWrapper, ProfileContainer, ViewSwitchBUtton } from './style';
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
@@ -75,6 +77,9 @@ function PerformanceProfile() {
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const { providerCapabilities } = useSelector((state) => state.ui);
+  const canViewPerformanceProfiles = useHasPermission(
+    Keys.PerformanceManagementViewPerformanceProfiles,
+  );
   const dispatch = useDispatch();
 
   const [deletePerformanceProfile] = useDeletePerformanceProfileMutation();
@@ -84,13 +89,17 @@ function PerformanceProfile() {
     isError: isProfileFetchError,
     error: profileFetchError,
     refetch: refetchProfiles,
-  } = useGetPerformanceProfilesQuery({
-    page,
-    pagesize: pageSize,
-    search,
-    order: sortOrder,
-  });
-
+  } = useGetPerformanceProfilesQuery(
+    {
+      page,
+      pagesize: pageSize,
+      search,
+      order: sortOrder,
+    },
+    {
+      skip: !canViewPerformanceProfiles,
+    },
+  );
   useEffect(() => {
     dispatch(updateProgressAction({ showProgress: isFetchingProfiles }));
   }, [dispatch, isFetchingProfiles]);
@@ -478,6 +487,10 @@ function PerformanceProfile() {
       );
     },
   };
+
+  if (!canViewPerformanceProfiles) {
+    return <DefaultError permissionKey={Keys.PerformanceManagementViewPerformanceProfiles} />;
+  }
 
   return (
     <>

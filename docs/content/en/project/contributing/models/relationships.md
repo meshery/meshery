@@ -6,9 +6,11 @@ aliases: [/project/contributing/contributing-relationships]
 weight: 20
 ---
 
-**Relationships follow a schema-defined structure.** The [Relationship schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1alpha3/relationship) specifies how relationships between components are expressed. Refer to the schema when defining new relationship types or selectors. See [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas.md" >}}) for details.
+**Relationships follow a schema-defined structure.** The [Relationship schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta3/relationship) (`relationships.meshery.io/v1beta3`) is the single source of truth for how relationships between components are expressed. The in-tree corpus under `models/**/relationships/` is still mostly `v1beta2`. The version shapes are compatible - Meshery Server bridges registered definitions to the `v1beta2` shape for its policy engine - but registration on current releases accepts only `v1beta2`/`v1alpha3` documents ([meshkit#1096](https://github.com/meshery/meshkit/pull/1096) adds `v1beta3`), so a definition that must register today declares `v1beta2`. Refer to the schema when defining new relationship types or selectors. See [Contributing to Schemas]({{< ref "project/contributing/contributing-schemas.md" >}}) for details.
 
-[Relationships]({{< ref "concepts/logical/relationships/index.md" >}}) within [Models]({{< ref "concepts/logical/models/index.md" >}}) play a crucial role in establishing concrete visualisations of efficient data flow between different components of Meshery. These are used to classify the nature of interaction between one or more interconnected [Components]({{< ref "concepts/logical/components.md" >}}).
+Coding agents: use the `gen-relationship` skill in `.agents/skills/gen-relationship/` (one example of every canonical `kind` / `type` / `subType`).
+
+[Relationships]({{< ref "concepts/logical/relationships/index.md" >}}) within [Models]({{< ref "concepts/logical/models/index.md" >}}) classify how [Components]({{< ref "concepts/logical/components.md" >}}) relate and whether they affect each other.
 
 ## Overview of Steps to Create Relationships
 
@@ -18,11 +20,13 @@ weight: 20
 2. [Relationship Classification](#relationship-visualizations)
 
 **Development:**
+
 3. [Relationship Definition](#relationship-definitions)
 4. [Relationship Scopes](#relationship-scopes)
 
 **Postwork:**
-5. [Relationship Testing](#relationship-testing)
+
+5. [Relationship Authoring Best Practices and Considerations](#relationship-authoring-best-practices-and-considerations)
 6. [Relationship Contribution](#relationship-contribution)
 
 ## Prework
@@ -31,100 +35,92 @@ weight: 20
 
 ### 1. Characterize the relationship and any specific constraints
 
-Using your domain expertise, define the qualities of this new relationship. Identify and qualify any specific constraints to be enforced between one or more specific components within the same or different models. Let's take an example to understand this better.
+Using your domain expertise, define the qualities of this new relationship. Identify and qualify any specific constraints to be enforced between one or more specific components within the same or different models.
 
-For example, you might know that a Kubernetes `Service` can have a network-based relatinship with a Kubernetes `Pod`. To codify this relationship, you would define the relationship as a `kind: edge` relationship with a `type: network`.
+For example, a Kubernetes `Service` can have a network relationship with a Kubernetes `Deployment`. That is `kind: edge`, `type: non-binding`, `subType: network`.
 
 <details close>
 <summary>Relationship Example</summary>
-<pre><code class="language-yaml highlighter-rouge">
+<pre><code class="language-json highlighter-rouge">
 {
-  "schemaVersion": "core.meshery.io/v1alpha2",
-  "kind": "edge",
-  "type": "network",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "relationships.meshery.io/v1beta3",
   "version": "v1.0.0",
-  "metadata": {"description": "A relationship that defines network edges between components."}
-  selector: [{
+  "kind": "edge",
+  "type": "non-binding",
+  "subType": "network",
+  "status": "enabled",
+  "evaluationQuery": "",
+  "metadata": {
+    "description": "A Service selects Pods of a Deployment."
+  },
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "kubernetes",
+    "version": "v1.0.0",
+    "displayName": "kubernetes",
+    "registrant": { "kind": "github" },
+    "model": { "version": "" }
+  },
+  "selectors": [
+    {
       "allow": {
-         "from": [
-            {
-               "kind": "Service",
-               "model": "kubernetes"
-            }
-         ],
-         "to": [
-            {
-               "kind": "Pod",
-               "model": "kubernetes"
-            }
-         ]
-      },
-      "deny": {}
-   }]
-
-</code></pre>
-</details>
-
-You might *also* know that this relationship is constrained by the presence of a Kubernetes `Deployment` as the parent of the Kubernetes `Pod`. This constraint would be codified in the relationship definition by including the <code>deny</code> function in your selector.
-
-<details close>
-<summary>Example Relationship with Constraints</summary>
-<pre><code class="language-yaml highlighter-rouge">
-selector: [
-   {
-      "allow": {
-         "from": [
-            {
-               "kind": "Service",
-               "model": "kubernetes"
-            }
-         ],
-         "to": [
-            {
-               "kind": "Pod",
-               "model": "kubernetes"
-            }
-         ]
+        "from": [
+          {
+            "kind": "Service",
+            "model": { "name": "kubernetes" }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Deployment",
+            "model": { "name": "kubernetes" }
+          }
+        ]
       },
       "deny": {
-         "from": [
-            {
-               "kind": "Service",
-               "model": "kubernetes"
-            }
-         ],
-         "to": [
-            {
-               "kind": "Pod",
-               "model": "kubernetes",
-               "parent": "Deployment"
-            }
-         ]
+        "from": [],
+        "to": []
       }
-   }
-]
+    }
+  ]
+}
 </code></pre>
 </details>
 
-Codify relationships leveraging your domain expertise. In this example, the relationship between the `Service` and `Pod` components in the Kubernetes model is defined with appropriate consideration of surrounding constraints (e.g. presence of a `Deployment`).
+You might *also* know that this relationship should not form when the destination is not a workload the Service can select. Encode that with `deny` in the same selector-set item.
 
-#### Understand Relationship Classifications
+Codify relationships using your domain expertise. The `kind`, `type`, and `subType` together pick both the visual paradigm and the evaluation policy.
 
-Relationships can be classified into three main categories:
+#### Kind, type, and subType
 
-1. **Hierarchical** relationships involve either an ancestral connection of the components i.e. the creation/ deletion of a Component higher up affects the existence of the Components below in the lineage or a connection that involves the inheritance of features from one Component to the other.
+`kind` is a schema enum: `hierarchical`, `edge`, or `sibling`. `type` and `subType` are open strings. Use an established combination rather than inventing one.
 
-   1. **Parent**: A parent-child relationship implies the requirement of the parent component before the child component can be created. For example, a `Namespace` in Kubernetes can be a parent of `Pods` within that namespace. The namespace must exist before creating pods within it.
-   2. **Inventory**: A hierarchical inventory relationship implies the configuration of a(parent) component is patched with the configuration of other (child) component. For example, Wasm filters can inherit features and functionalities from Envoy filters. This can be used to build on existing functionalities provided by Envoy filters and further extend them using Wasm filters. It enables a modular and scalable approach to customize the behavior of the proxy while maintaining a clear hierarchy of features.
+| kind | type | subType | Meaning |
+|---|---|---|---|
+| `hierarchical` | `parent` | `inventory` | Parent contains/scopes children. Parent identity is patched onto the child: the Namespace's name lands in each namespaced resource's `metadata.namespace`. |
+| `hierarchical` | `parent` | `alias` | Child is a nested object inside the parent (Container inside Pod). |
+| `hierarchical` | `parent` | `wallet` | Child configuration is held/patched into the parent (WASMFilter → EnvoyFilter). |
+| `hierarchical` | `sibling` | `matchlabels` | **In-tree tagsets encoding.** Components that share labels. Schema also allows `kind: sibling`; do not mix encodings in one model. |
+| `edge` | `non-binding` | `reference` | Logical name/id pointer (Deployment → ConfigMap). |
+| `edge` | `non-binding` | `network` | Documented network selection without provisioning an attachment (Service → Deployment). |
+| `edge` | `binding` | `network` | Connecting provisions or rewrites network identity. Rare. |
+| `edge` | `non-binding` | `firewall` | Policy that allows or denies traffic (NetworkPolicy → Pod). |
+| `edge` | `binding` | `permission` | Assigns identities (Role → ServiceAccount). |
+| `edge` | `non-binding` | `permission` | Mentions a role or identity without binding it. |
+| `edge` | `binding` | `mount` | Storage or device is attached (PVC → Pod). |
+| `edge` | `non-binding` | `annotation` | Designer-only line. Set `metadata.isAnnotation: true`. No patch. |
+| `edge` | `non-binding` | `alias` | Named stand-in, not nested ownership. |
+| `edge` | `non-binding` | `inventory` | Rare peer index/list. Prefer hierarchical parent inventory for containment. |
 
-2. **Edge** relationships indicate the possibility of traffic flow between two components. They enable communication and interaction between different Components within the system.
+`badge` is a visual paradigm only; there is no in-tree encoding. Propose a visualization before introducing `subType: badge`.
 
-   1. **Mount**: This subtype addresses the storage and access possibility between involved components. For example, a `PersistentVolume` can be mounted to a `Pod` to provide persistent storage for the pod's data.
-   2. **Network**: This deals with IP addresses and DNS names and provides stable endpoints for communication. For example, a `Service` provides a stable endpoint for accessing multiple replicas of a `Deployment`.
-   3. **Firewall**: This acts as an intermediary for communications which include standard networking protocols like TCP and UDP. It can enforce network policies to control traffic between components. For example, a `NetworkPolicy` can be used to manage the traffic flow between different `Pods` in the cluster.
-   4. **Permission**: This defines the permissions for components if they can have a possible relationship with other Components. It ensures that only authorized Components can interact with each other. For example, a `Role` can define permissions for Components to access specific resources.
+**Hierarchical `from` / `to`:** `from` is the child, `to` is the parent.
 
-3. **Sibling** relationships represent connections between components that are at the same hierarchical level or share a common parent. Siblings can have the same or similar functionalities or may interact with each other in specific ways. These relationships facilitate communication and cooperation between components that are in the same group or category. For example, a Service and a Pod in Kubernetes are siblings as they share a common parent and are at the same hierarchical level.
+- Inventory: parent **mutates** the child.
+- Alias and wallet: child **mutates** the parent.
+
+**Binding vs non-binding:** `binding` means forming the relationship assigns, mounts, or entitles. `non-binding` means the link is real (selector, name, policy match) but does not itself provision the attachment.
 
 <a id="relationship-visualizations"></a>
 
@@ -134,7 +130,7 @@ Browse and pick the most appropriate visualization for this relationship by usin
 
 {{< relationships >}}
 
-Once selected, note the relationship's `kind`, `type`, and `subtype` of your selected visualization. Alternatively, if an existing visualization does not seem appropriate for the relationship, please propose a new visualization at-will. Simply use the whiteboard feature of Meshery's extensions to sketch out the relationship and propose it as a new visualization.
+Once selected, note the relationship's `kind`, `type`, and `subType`. If an existing visualization does not seem appropriate, propose a new one. Use the whiteboard feature of Meshery's extensions to sketch the relationship.
 
 ## Development
 
@@ -142,229 +138,208 @@ Once selected, note the relationship's `kind`, `type`, and `subtype` of your sel
 
 ### 3. Create a Relationship Definition as a JSON file
 
-Create a relationship definition as a YAML file, placing this new definition file into its respective model folder (see [Contributing to Models]({{<ref "project/contributing/models" >}})). Relationship definition files are commonly named relationships.yaml as a convention, however, this name is not required. A model may include any number of relationship definitions. Include the following attributes in your relationship definition:
+Create a relationship definition as a JSON file, placing this new definition file into its respective model folder (see [Contributing to Models]({{<ref "project/contributing/models" >}})). A model may include any number of relationship definitions. Filename convention: `{kind}-{type}-{subType}-<suffix>.json`.
 
-- `kind`: The genre of relationship (e.g., hierarchical, edge, sibling).
-- `type`: The augmentative category of the relationship (e.g., binding, non-binding, inventory).
-- `subType`: The specific representative visual paradigm (e.g., parent, mount, network, wallet, badge).
-- `selectors`: The scope of the relationship, including the components involved and any constraints. Selector specify to which component(s) the relationship applies or does not apply (think of in terms of the `AND` operators in a query). Selector Sets are used to combine multiple selectors for more granular control over the logic used when matchmaking (establishing a relationship) between components (think of in terms of the `OR` operators in a query).
-- `evaluationQuery`: Name of the policy or policies (Open Policy Agent rego file(s)) to invoke for relationship evaluation. Identify an existing OPA policy as the `evaluationQuery` suitable to the relationship. If no policy exists, propose a new policy (rego). *(rarely necessary)* Create a new policy for the evaluation of your relationship using Rego. *This step is only necessary and can typically be skipped. Contact a maintainer if the relationship requires a new policy to evaluate the relationship.*
-- `description`: A characterization of the relationship, its purpose, and any constraints or considerations of its application.
+Include:
+
+- `schemaVersion`: `relationships.meshery.io/v1beta3` is the authoring target, but declare `v1beta2` for definitions that must register on current servers (see the note at the top of this page). Keep `v1beta2` when refining an existing in-tree file unless you are deliberately migrating it.
+- `kind`: The genre of relationship (`hierarchical`, `edge`, `sibling`).
+- `type`: The augmentative category (`parent`, `binding`, `non-binding`, `sibling`, …).
+- `subType`: The specific visual paradigm (`inventory`, `mount`, `network`, `wallet`, `reference`, `matchlabels`, …).
+- `selectors`: The scope of the relationship. One selector-set item is an OR. Inside an item, every `from` entry relates to every `to` entry - a cross-product (AND).
+- `evaluationQuery`: Deprecated. Set it to `""` as every in-tree definition does; the evaluation engine enters through the fixed `data.relationship_evaluation_policy` package and dispatches on `kind`/`type`/`subType`.
+- `metadata.description`: A characterization of the relationship, its purpose, and constraints.
 
 {{% alert title="Use Existing Relationships as Examples" color="info" %}}
-Browse the <a href='https://github.com/meshery/meshery/tree/master/models'>existing relationships in the Meshery repository</a> to find examples of existing relationships, using them as a template. Alternatively, you can review a prior pull request as an example as well, for example <a href='https://github.com/meshery/meshery/pull/9880/files'>PR #9880</a>.
+Browse the <a href='https://github.com/meshery/meshery/tree/master/models'>existing relationships in the Meshery repository</a> and the pedagogical examples in <code>.agents/skills/gen-relationship/examples/</code>. For a prior pull request as a template, see <a href='https://github.com/meshery/meshery/pull/9880/files'>PR #9880</a>.
 {{% /alert %}}
 
-<a class="anchorjs-link" id="relationship-scopes"></a>
+<a id="relationship-scopes"></a>
 
 ### 4. Configuring the Scope of Relationships
 
-The extent to which a relationship affects components within a model or beyond a model is defined and controlled using scopes. Scopes exist at two levels in Meshery relationships. 
+The extent to which a relationship affects components within a model or beyond a model is defined and controlled using scopes.
 
 #### Global Scope
 
-Global scope is defined using the `model` and `version` attributes in the relationship definition.
+Global scope is defined using the `model` attribute in the relationship definition.
 
-Relationships can be confined to a specific model, a specific model version, or can be allowed to affect all models. The relationship schema has a `model` and `version` attribute which facilitates this control. For example, if the model is specified as `aws-ec2-controller`, the relationship will work for those components that belong to the `aws-ec2-controller` model.
+Relationships can be confined to a specific model or allowed to affect all models. For example, if the model is specified as `aws-ec2-controller`, the relationship will work for those components that belong to the `aws-ec2-controller` model.
 
 #### Local Scope
 
-Local scope is defined and controlled via `selectors` attributes in the relationship definition.
+Local scope is defined and controlled via `selectors` in the relationship definition.
 
-Relationship selectors refine the scope of applicability the relationship. It is the details included within the Selector that determines whether there is a match and relationship to be formed. These details include which models and components are involved in the relationship and any constraints in its formation. Selector specify to which component(s) the relationship applies or does not apply (think of in terms of the `AND` operators in a query). Selector Sets are used to combine multiple selectors for more granular control over the logic used when matchmaking (establishing a relationship) between components (think of in terms of the `OR` operators in a query).
+Relationship selectors refine applicability. Selector details determine whether there is a match: which models and components are involved, and any constraints. Selector items combine with AND. Selector **sets** (the `selectors` array) combine with OR.
 
-<!-- @leecalcote: The following needs rewritten using Selector Sets, @MUzairS15 -->
+Selectors are an array. Each entry has `allow` and optional `deny`, each with `from` and `to`. Only components inside the same selector-set item relate to each other: each object in `from` relates to each object in `to`.
 
-Selectors are structured as an array wherein each entry comprises a `from` (self) property and a `to` (others) property. The `from` and `to` combined with the `allow` and `deny` properties delineate between components involved in a particular relationship. These entries define the constraints necessary for the existence of a relationship, thus scoping a relationship. Each item in the selector uniquely defines a relation between the components listed. i.e. `from` and `to` fields are evaluated within the context of the selector.
+When many `from`/`to` combinations would otherwise force a complicated `deny`, split them into additional selector-set items.
 
-Only the components within the same selector relate to each other via 1:many kind of relation between components listed inside the `from` and `to` field. i.e. Each object inside the `from` relates to each item inside the `two` field within a particular selector.
+*Note: When defining Hierarchical relationships, the `from` field represents the child component, while the `to` field represents the parent component.*
 
-When defining relationships that involve a large number of combinations between `from` and `to`, selectors sets provide a mechanism to organize and manage these relationships. This prevents the need for crafting complex deny attributes and facilitates easier maintenance. Use of selector sets enhances flexibility and reusability in the definition and configuration of relationships among components.
+#### Actions: mutatorRef and mutatedRef
 
-*Note: When defining Hierarchical relationships, remember that the `from` field represents the child component, while the `to` field represents the parent component.*
+Patches copy values from one component to another when the selector matches. Both fields are nested arrays of string path segments (`string[][]`). Sequence length must match: index `i` of `mutatorRef` is copied onto index `i` of `mutatedRef`.
+
+```json
+"mutatorRef": [["config", "url"], ["config", "name"]],
+"mutatedRef": [["configPatch", "value"], ["name"]]
+```
+
+`[config, url]` is patched onto `[configPatch, value]`; `[config, name]` onto `[name]`.
+
+| Field | Role |
+|---|---|
+| `mutatorRef` | **Source.** JSON path of the value to read. |
+| `mutatedRef` | **Sink.** Path segments of the field to patch. |
+| `patchStrategy` | How to apply. Schema enum: `merge`, `strategic`, `add`, `remove`, `replace`, `copy`, `move`, `test`. The in-tree corpus and the evaluation engine use `replace` exclusively; default to `replace` unless you need different semantics. |
+
+Paths are relative to the Meshery component document (`configuration`, `displayName`, `component.kind`, …), not the raw Kubernetes YAML root. `_` may mark only the first array position in a path; later arrays need an explicit index. Omit `patch` when the relationship only matches (tagsets, annotation).
 
 <details close>
 <summary>Relationship Selector Example</summary>
 
-<pre><code class="language-yaml highlighter-rouge">
-selector: [
-   {
-      "allow": {
-         "from": [
-            {
-               "kind": "WASMFilter",
-               "model": "istio-base",
-               "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                     [
-                        "settings",
-                        "config"
-                     ],
-                     [
-                        "settings",
-                        "wasm-filter"
-                     ]
-                  ],
-                  "description": "WASM filter configuration to be applied to Envoy Filter."
-               }
-            },
-            {
-               "kind": "EBPFFilter",
-   .....
-            }
-         ],
-         "to": [
-            {
-               "kind": "EnvoyFilter",
-               "model": "istio-base",
-               "patch": {
-                  "patchStrategy": "replace",
-                  "mutatedRef": [
-                     [
-                        "settings",
-                        "configPatches",
-                        "_",
-                        "patch",
-                        "value"
-                     ]
-                  ],
-                  "description": "Receive the WASM filter configuration."
-               }
-            },
-            {
-               "kind": "WASMPlugin",
-   ....
-            }
-   ...
-         ]
-      },
-      "deny": {
-   ...
-      }
-   },
-   {
-      "allow": {
-         "from": [
-            {
-               "kind": "ConfigMap",
-               "model": "kubernetes",
-               "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                     [
-                        "name"
-                     ]
-                  ],
-                  "description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
-               }
-            }
-         ],
-         "to": [
-            {
-               "kind": "Deployment",
-               "model": "kubernetes",
-               "patch": {
-                  "patchStrategy": "replace",
-                  "mutatedRef": [
-                     [
-                        "spec",
-                        "containers",
-                        "_",
-                        "envFrom",
-                        "configMapRef",
-                        "name"
-                     ]
-                  ],
-                  "description": "Deployments can reference ConfigMaps to inject configuration data into the Pods they manage. This is useful for maintaining consistent configuration across replica sets.\n\nThe keys from the ConfigMap will be exposed as environment variables to the containers within the pods managed by the Deployment."
-               }
-            },
-            {
-               "kind": "StatefulSets",
-               "model": "kubernetes",
-               "patch": {
-   ....
-               }
-            }
-   ...
-         ]
-      },
-      "deny": {
-   ...
-      }
-   }
+<pre><code class="language-json highlighter-rouge">
+"selectors": [
+  {
+    "allow": {
+      "from": [
+        {
+          "kind": "WASMFilter",
+          "model": { "name": "meshery-core" },
+          "patch": {
+            "patchStrategy": "replace",
+            "mutatorRef": [
+              ["configuration", "config"]
+            ]
+          }
+        }
+      ],
+      "to": [
+        {
+          "kind": "EnvoyFilter",
+          "model": { "name": "istio-base" },
+          "patch": {
+            "patchStrategy": "replace",
+            "mutatedRef": [
+              ["configuration", "spec", "configPatches", "_", "patch", "value"]
+            ]
+          }
+        }
+      ]
+    },
+    "deny": {
+      "from": [],
+      "to": []
+    }
+  },
+  {
+    "allow": {
+      "from": [
+        {
+          "kind": "ConfigMap",
+          "model": { "name": "kubernetes" },
+          "patch": {
+            "patchStrategy": "replace",
+            "mutatorRef": [
+              ["configuration", "metadata", "name"]
+            ]
+          }
+        }
+      ],
+      "to": [
+        {
+          "kind": "Deployment",
+          "model": { "name": "kubernetes" },
+          "patch": {
+            "patchStrategy": "replace",
+            "mutatedRef": [
+              ["configuration", "spec", "template", "spec", "containers", "_", "envFrom", "0", "configMapRef", "name"]
+            ]
+          }
+        }
+      ]
+    },
+    "deny": {
+      "from": [],
+      "to": []
+    }
+  }
 ]
 </code></pre>
 <br/>
 
-The `selector` defined for the relationship between `WasmFilter` and `EnvoyFilter` components (the first item in the array) is entirely independent of the `selector` identified for the relationship between `ConfigMap` and `Deployment` components. This ensures independence in how these components relate to each other while still permitting similar types of relationships.
-
-This example relationship demonstrates how the `WASMFilter` and `EBPFFilter` components identified in `from` relate to other `EnvoyFilter` `WASMPlugin` components identified in `to` selector. Similarly, `ConfigMap` component identified in the `from` selector corresponds to each `Deployment`, `StatefulSet`, and so on component identified in the `to` selector.
+The first selector-set item (WASMFilter → EnvoyFilter) is independent of the second (ConfigMap → Deployment). Use separate items when the pairs should not cross-match.
 
 </details>
 
+The WASMFilter example is hierarchical parent **wallet** (child config patched into the parent). The ConfigMap example is edge **reference** (a name pointer), not hierarchical inventory.
+
 #### Understanding Relationship Policies and their Evaluation
 
-The `evaluationQuery` property in your relationship definition is used to identity the name of the policy to be used by Meshery's evaluation engine. Meshery embeds Open Policy Agent as it's policy engine
+Meshery evaluates designs with Open Policy Agent. The engine enters through the fixed policy package `data.relationship_evaluation_policy` and dispatches on each definition's `kind`, `type`, and `subType`. The policies live under `models/meshery-core/<version>/<definition-version>/policies/`.
 
-**How should you determine the value for `evaluationQuery`**
+**What value should `evaluationQuery` carry?**
 
-All relationship definitions are backed by OPA policies and each relationship depends on their `kind`, `type`, and `subType` in order to be properly evaluated. Which evaluation policy or set of policies used during the evaluation moment is defined by the `evaluationQuery` property, which follows the naming convention of combining each of their  `kind`, `type`, and `subType`  properties with an underscore and the word "_relationship", like so: `kind_type_subtype_relationship`.
-
-So, for example, if you are defining or updating a relationship definition with `kind: edge` and `type: network`, the value for the attribute `evaluationQuery` should be `edge_network_relationship`.
-
-Each policy has a set of evaluation rules defined and the `evaluationQuery` attribute corresponds to the main rule defined inside the policy, during the policy eval the results are collected from this rule.
+An empty string. The property is deprecated (see the schema's deprecation notice) and the current engine ignores it; every in-tree definition sets `""`. The historical per-relationship rule name was `{kind}_{subType}_relationship` — no `{type}` segment — and any value you do set must be a valid Rego identifier (letters, digits, underscores), so a hyphenated type such as `non-binding` can never appear in one.
 
 ## Postwork
 
+<a id="relationship-authoring-best-practices-and-considerations"></a>
 <a id="relationship-testing"></a>
 
-#### Relationship Authoring Best Practices and Considerations
+### 5. Relationship Authoring Best Practices and Considerations
 
-##### General
+#### General
 
-1. Use camelCasing as the formatting convention.
+1. Use camelCase on the wire (`subType`, `mutatorRef`, `schemaVersion`).
+2. Author against `relationships.meshery.io/v1beta3` (declare `v1beta2` while current servers require it - see the top of this page). Do not use `core.meshery.io/v1alpha2` or `v1beta1`.
 
-##### Scoping
+#### Scoping
 
-1. To configure a relationship to be applied across models, ensure the `model` property for those relationships is set to `*`, to limit the relationships to a specific model, specify the correct `model`(case sensitive).
-1. To configure a relationship to be applied across all versions of a particular model, ensure the `version` property for those relationships is set to `*`, to limit the relationships to a specific version of a model, specify the correct model version.
-1. Specify `version` property as a regex to ensure relationships are applied to a subset of versions of a model.
+1. To apply a relationship across models, set the selector `model.name` to `*`. To limit it to one model, specify that model name (case sensitive).
+2. Absence of a selector property is interpreted as the wildcard `*`.
+3. Values for `kind`, `version`, and `model` are case-sensitive.
 
-##### Actions
+#### Actions
 
-1. If a path `mutatedRef/mutatorRef` contains more than one array path then only the first array position can be specified as `\_` for others explicitly mention them as 0
-1. Currently `mutatedRef` doesn’t support having an array.
+1. If a `mutatedRef` / `mutatorRef` path contains more than one array, only the first array position may be `_`; later arrays must be an explicit index (`0`, `1`, …).
+2. `mutatedRef` currently does not support patching an array value itself.
+3. Pair every mutator path with a mutated path. Do not swap source and sink.
+4. Verify each path against the component schema in `models/<model>/.../components/<Kind>.json`.
 
-##### Matching
+#### Matching
 
 1. Targets of a Relationship can be specific Components or entire Models.
-1. Values for propoerties like `kind`, `version`, and `model` are case-sensitive.
-1. Absence of a property in the `selector` is interpretted as the wildcard `*`.
-   - For example, a selector with `kind: Pod`, `Model: Kubernetes`, and the absence of the `version` property would be interpretted as `version: *`, which
-     means that all the versions of the Kubernetes Pod resource (k8s.io/v1/betav2) will match the selector.
-1. The `evaluationQuery` property determines the OPA policy to invoke for relationship evaluation, specify the correct rego query.
+2. Leave `evaluationQuery` empty (`""`); evaluation dispatches on `kind`, `type`, and `subType`.
+3. `metadata.isAnnotation: true` means Meshery must not evaluate or patch the relationship.
 
-##### Conflicts
+#### Conflicts
 
-1. Ensure that the `deny` selectors and `allow` selectors do not conflict with each other i.e. relations are not getting overlapped for `allow` and `deny` selectors.
-1. In the event of conflicting Relationship Definitions, the union between them is taken.
-   - If we have two Relationships, one from (Component A) to (Component B and Component F), and another
-     from (Component A) to (Component B and Component C), then it is similar to having a Relationship
-     from Component A to Component B, C and F
-1. In the event of an overlapping set of complementary Relationship Definitions, Union.
-1. In the event of an overlapping set of conflicting Relationship Definitions, no relationship type (Kind) is inherently more important than the next one, so will not be any case of conflict.
+1. Ensure `deny` selectors and `allow` selectors do not overlap for the same pair.
+2. In the event of conflicting Relationship Definitions, the union between them is taken.
+   - If we have two Relationships, one from (Component A) to (Component B and Component F), and another from (Component A) to (Component B and Component C), then it is similar to having a Relationship from Component A to Component B, C and F.
+3. No relationship kind is inherently more important than another.
 
-<a class="anchorjs-link" id="relationship-contribution"></a>
+#### Schema Conformance
 
-#### 4. Contribute your relationship to the Meshery project
+Every `mutatorRef`/`mutatedRef` path rooted at `configuration.` must resolve against the JSON schema of the component it addresses (`models/<model>/<version>/v1.0.0/components/<Kind>.json`). For a selector item belonging to the relationship's own model, that is the schema shipped in the **same** model version directory as the definition; for a selector item that references a **different** model - as a cross-model edge does - it is the schema in that model's **newest** version directory. A path that names a field the component schema does not define is written by the evaluation engine but never reaches the rendered resource - the defect behind [#21482](https://github.com/meshery/meshery/issues/21482), where an Ingress relationship patched the pre-1.22 `backend.serviceName` shape into a `networking.k8s.io/v1` component.
+
+- **Exemptions.** The `configuration.metadata` subtree and paths rooted at `displayName` or `component` are not checked: component schemas describe the resource's `spec`, not its ObjectMeta or the Meshery component envelope.
+- **Where it runs.** `server/policies/relationship_schema_conformance_test.go`, executed by the policies test workflow on every change under `models/**`.
+- **When it fails, fix the path.** The `knownUnresolvedMutationPaths` allowlist exists only for known pre-existing defects, and cites the open follow-up issue tracking their repair ([#21490](https://github.com/meshery/meshery/issues/21490)). An allowlisted entry must keep failing, so repairing one of those definitions means deleting its line in the same pull request.
+
+<a id="relationship-contribution"></a>
+
+### 6. Contribute your relationship to the Meshery project
 
 Submit a pull request to the Meshery repository with your new relationship definition, so that all users can benefit from the relationship(s) you have defined.
 
 Keeping your relationship definition in a separate file allows for easier management and review of the relationship(s) you have defined.
 
 {{% alert title="Keeping your custom Relationships private" color="info" %}}
-Alternatively, if you would like to keep the relatioship definition private, you can bundle your relatinship(s) in a custom model, import the custom model into your Meshery deployment. Your private relationship definition(s) will be registered in your Meshery Server's <a href='{{< ref "concepts/logical/registry.md" >}}'>registry</a> and available for use within your Meshery deployment.
+Alternatively, if you would like to keep the relationship definition private, you can bundle your relationship(s) in a custom model and import the custom model into your Meshery deployment. Your private relationship definition(s) will be registered in your Meshery Server's <a href='{{< ref "concepts/logical/registry.md" >}}'>registry</a> and available for use within your Meshery deployment.
 {{% /alert %}}
 
 For more information refer - [Model - Construct Models in Meshery](https://docs.google.com/document/d/16z5hA8qVfSq885of9LXFUVvfom-hQXr-6oTD_GgoFmk/edit)
