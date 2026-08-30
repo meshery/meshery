@@ -38,7 +38,11 @@ runs:
           ~/errorutil -d "${{ inputs.baseline_scan_dir }}" analyze -i "${{ inputs.baseline_helpers_dir }}" -o "${{ inputs.baseline_helpers_dir }}" --skip-dirs "${{ inputs.skip_dirs }}"
           
           ~/errorutil -d "${{ inputs.scan_dir }}" analyze -i "${{ inputs.helpers_dir }}" -o "${{ inputs.helpers_dir }}" --skip-dirs "${{ inputs.skip_dirs }},.baseline"
-          ~/errorutil check "${{ inputs.baseline_helpers_dir }}/errorutil_analyze_errors.json" "${{ inputs.helpers_dir }}/errorutil_analyze_errors.json"
+          ~/errorutil check \
+            "${{ inputs.baseline_helpers_dir }}/errorutil_analyze_errors.json" \
+            "${{ inputs.helpers_dir }}/errorutil_analyze_errors.json" \
+            --baseline-summary "${{ inputs.baseline_helpers_dir }}/errorutil_analyze_summary.json" \
+            --current-summary "${{ inputs.helpers_dir }}/errorutil_analyze_summary.json"
         fi
 
         ~/errorutil update -d "${{ inputs.scan_dir }}" -i "${{ inputs.helpers_dir }}" -o "${{ inputs.helpers_dir }}" --skip-dirs "${{ inputs.skip_dirs }},.baseline"
