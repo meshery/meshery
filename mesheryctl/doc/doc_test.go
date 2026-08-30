@@ -17,6 +17,7 @@ package main
 import (
 	"bytes"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/spf13/cobra"
@@ -206,5 +207,67 @@ func TestDoc(t *testing.T) {
 		output = buf.String()
 		assert.Contains(t, output, "## Options inherited from parent commands")
 		assert.Contains(t, output, "--parentFlag")
+	})
+}
+
+// TestCodeBlockCopyButton checks that command blocks are copyable and options blocks are not
+func TestCodeBlockCopyButton(t *testing.T) {
+
+	newCmd := func(example string) *cobra.Command {
+		cmd := &cobra.Command{
+			Use:               "test",
+			Long:              "test_long",
+			Example:           example,
+			Run:               func(cmd *cobra.Command, args []string) {},
+			DisableAutoGenTag: true,
+		}
+		cmd.Flags().String("flag1", "default1", "description1")
+		return cmd
+	}
+
+	render := func(t *testing.T, cmd *cobra.Command) string {
+		t.Helper()
+		buf := &bytes.Buffer{}
+		assert.NoError(t, GenMarkdownCustom(cmd, buf, nil))
+		return buf.String()
+	}
+
+	t.Run("Command blocks are copyable", func(t *testing.T) {
+		output := render(t, newCmd("mesheryctl test --flag1 value"))
+
+		assert.Equal(t, 3, strings.Count(output, "codeblock-pre"))
+		assert.Equal(t, 2, strings.Count(output, "<div class='clipboardjs'>"))
+	})
+
+	t.Run("Options blocks are not copyable", func(t *testing.T) {
+		output := render(t, newCmd("mesheryctl test"))
+
+		index := strings.Index(output, "## Options")
+		assert.NotEqual(t, -1, index, "the command under test must emit an Options section")
+
+		assert.NotContains(t, output[index:], "clipboardjs")
+		assert.Contains(t, output[index:], "--flag1")
+	})
+
+	t.Run("Placeholders survive as text", func(t *testing.T) {
+		output := render(t, newCmd("mesheryctl test --file <path-to-file>"))
+
+		assert.Contains(t, output, "--file &lt;path-to-file&gt;")
+		assert.NotContains(t, output, "<path-to-file>")
+	})
+
+	t.Run("Ampersands are escaped before the angle brackets", func(t *testing.T) {
+		output := render(t, newCmd("mesheryctl test a && b"))
+
+		assert.Contains(t, output, "a &amp;&amp; b")
+		assert.NotContains(t, output, "&amp;lt;")
+	})
+
+	t.Run("A whitespace only example writes no block", func(t *testing.T) {
+		output := render(t, newCmd("mesheryctl test\n\t\t"))
+
+		assert.Equal(t, 3, strings.Count(output, "codeblock-pre"))
+		assert.Equal(t, 2, strings.Count(output, "<div class='clipboardjs'>"))
+		assert.NotContains(t, output, "<div class='clipboardjs'>\n\n\n")
 	})
 }
