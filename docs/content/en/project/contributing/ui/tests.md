@@ -217,7 +217,7 @@ End-to-end test results are stored as artifacts on every PR in Github Actions. I
 
 Watch the training session on Playwright testing and trace debugging.
 
-{{< youtube id="x-W60mvDYuo" class="iframe-container" >}}
+{{< youtube id="x-W60mvDYuo" start="1524" class="iframe-container" >}}
 
 ### Find Tests here
 Refer to [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?usp=sharing) for test scenarios.
