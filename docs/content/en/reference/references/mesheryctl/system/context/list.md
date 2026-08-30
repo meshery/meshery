@@ -7,7 +7,7 @@ subcommand: context
 
 # mesheryctl system context list
 
-list contexts
+List contexts
 
 ## Synopsis
 

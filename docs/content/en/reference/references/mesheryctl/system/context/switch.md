@@ -7,7 +7,7 @@ subcommand: context
 
 # mesheryctl system context switch
 
-switch context
+Switch context
 
 ## Synopsis
 
