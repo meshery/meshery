@@ -19,9 +19,14 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/spf13/viper"
 )
 
 // testcases for auth.go
@@ -95,6 +100,93 @@ func TestProviderUnmarshalJSON(t *testing.T) {
 		}
 		if provider.ProviderURL != "https://cloud.meshery.io" {
 			t.Fatalf("expected provider URL https://cloud.meshery.io, got %q", provider.ProviderURL)
+		}
+	})
+}
+
+func TestUpdateAuthDetails(t *testing.T) {
+	configPath := CopyMeshconfigFixture(t, "TestConfig.yaml")
+	viper.Reset()
+	viper.SetConfigFile(configPath)
+	DefaultConfigPath = configPath
+	if err := viper.ReadInConfig(); err != nil {
+		t.Fatalf("unable to read configuration from %v: %v", viper.ConfigFileUsed(), err)
+	}
+
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		t.Fatalf("failed to get mesheryctl config: %v", err)
+	}
+	baseURL := mctlCfg.GetBaseMesheryURL()
+
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	tempDir := t.TempDir()
+	tokenFile := filepath.Join(tempDir, "token.json")
+	tokenContent := `{"token": "test-token", "meshery-provider": "Local"}`
+	if err := os.WriteFile(tokenFile, []byte(tokenContent), 0600); err != nil {
+		t.Fatalf("failed to create dummy token file: %v", err)
+	}
+
+	t.Run("Given client.Do returns nil response and error, When UpdateAuthDetails is called, Then it returns error without panic", func(t *testing.T) {
+		httpmock.Reset()
+		httpmock.RegisterResponder("GET", baseURL+"/api/user/token",
+			httpmock.NewErrorResponder(fmt.Errorf("connection refused")))
+
+		err := UpdateAuthDetails(tokenFile)
+		if err == nil {
+			t.Fatalf("expected error from UpdateAuthDetails, got nil")
+		}
+		if !strings.Contains(err.Error(), "error dispatching there request") {
+			t.Fatalf("expected error containing 'error dispatching there request', got %q", err.Error())
+		}
+	})
+
+	t.Run("Given client.Do returns success response, When UpdateAuthDetails is called, Then token is updated successfully", func(t *testing.T) {
+		httpmock.Reset()
+		updatedToken := `{"token": "refreshed-token", "meshery-provider": "Local"}`
+		httpmock.RegisterResponder("GET", baseURL+"/api/user/token",
+			httpmock.NewStringResponder(200, updatedToken))
+
+		err := UpdateAuthDetails(tokenFile)
+		if err != nil {
+			t.Fatalf("expected no error from UpdateAuthDetails, got %v", err)
+		}
+
+		data, err := os.ReadFile(tokenFile)
+		if err != nil {
+			t.Fatalf("failed to read updated token file: %v", err)
+		}
+		if string(data) != updatedToken {
+			t.Fatalf("expected updated token %q, got %q", updatedToken, string(data))
+		}
+	})
+
+	t.Run("Given client.Do returns HTML response, When UpdateAuthDetails is called, Then it returns invalid body error", func(t *testing.T) {
+		httpmock.Reset()
+		resp := httpmock.NewStringResponse(200, "<html><body>Login</body></html>")
+		resp.Header.Set("Content-Type", "text/html")
+		httpmock.RegisterResponder("GET", baseURL+"/api/user/token",
+			httpmock.ResponderFromResponse(resp))
+
+		err := UpdateAuthDetails(tokenFile)
+		if err == nil {
+			t.Fatalf("expected error from UpdateAuthDetails for HTML body, got nil")
+		}
+		if err.Error() != "invalid body" {
+			t.Fatalf("expected 'invalid body' error, got %q", err.Error())
+		}
+	})
+
+	t.Run("Given non-existent token file, When UpdateAuthDetails is called, Then it returns error reading token", func(t *testing.T) {
+		httpmock.Reset()
+		err := UpdateAuthDetails(filepath.Join(tempDir, "non_existent.json"))
+		if err == nil {
+			t.Fatalf("expected error for non-existent token file, got nil")
+		}
+		if !strings.Contains(err.Error(), "could not read token") {
+			t.Fatalf("expected error containing 'could not read token', got %q", err.Error())
 		}
 	})
 }
