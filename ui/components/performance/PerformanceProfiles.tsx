@@ -58,7 +58,7 @@ import type { GetPerformanceProfilesApiResponse } from '@meshery/schemas/meshery
 type PerformanceProfileItem = GetPerformanceProfilesApiResponse['profiles'][number];
 type SelectablePerformanceProfile = PerformanceProfileItem & { runTest?: boolean };
 
-function PerformanceProfile({ handleDelete }) {
+function PerformanceProfile() {
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     'grid',
@@ -376,16 +376,34 @@ function PerformanceProfile({ handleDelete }) {
         let response = await showModal(pids.length);
         if (response === 'DELETE') {
           dispatch(updateProgressAction({ showProgress: true }));
-          Promise.all(pids.map((pid) => deletePerformanceProfile({ id: pid }).unwrap()))
-            .then(() => {
-              dispatch(updateProgressAction({ showProgress: false }));
-              notify({
-                message: `Performance Profile${pids.length > 1 ? 's' : ''} Deleted!`,
-                event_type: EVENT_TYPES.SUCCESS,
+          Promise.allSettled(pids.map((pid) => deletePerformanceProfile({ id: pid }).unwrap()))
+            .then((results) => {
+              let successCount = 0;
+              let failureCount = 0;
+
+              results.forEach((result) => {
+                if (result.status === 'fulfilled') {
+                  successCount++;
+                } else {
+                  failureCount++;
+                }
               });
+
+              if (successCount > 0) {
+                notify({
+                  message: `${successCount} Performance Profile${successCount > 1 ? 's' : ''} Deleted!`,
+                  event_type: EVENT_TYPES.SUCCESS,
+                });
+              }
+              if (failureCount > 0) {
+                notify({
+                  message: `Failed to delete ${failureCount} Profile${failureCount > 1 ? 's' : ''}`,
+                  event_type: EVENT_TYPES.ERROR,
+                });
+              }
             })
-            .catch((error) => handleError('Failed To Delete Profile(s)')(error))
             .finally(() => {
+              dispatch(updateProgressAction({ showProgress: false }));
               setSelectedRows([]);
               refetchProfiles();
             });
@@ -396,7 +414,10 @@ function PerformanceProfile({ handleDelete }) {
         <div style={{ marginRight: '24px' }}>
           <CustomTooltip title={'Delete'}>
             <div>
-              <IconButton onClick={handleBulkDelete}>
+              <IconButton
+                onClick={handleBulkDelete}
+                permissionKey={Keys.PerformanceManagementDeletePerformanceTest}
+              >
                 <DeleteIcon />
               </IconButton>
             </div>
