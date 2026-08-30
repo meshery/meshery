@@ -47,11 +47,11 @@ mesheryctl adapter deploy linkerd --namespace linkerd-ns
 &lt;p&gt;Deploy Linkerd mesh and wait for it to be deployed&lt;/p&gt;</description></item><item><title>mesheryctl-adapter-remove</title><link>/reference/references/mesheryctl/adapter/remove/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/adapter/remove/</guid><description>&lt;h1 id="mesheryctl-adapter-remove"&gt;
 	mesheryctl adapter remove
 &lt;/h1&gt;
-&lt;p&gt;remove cloud and cloud native infrastructure&lt;/p&gt;
+&lt;p&gt;Remove cloud and cloud native infrastructure&lt;/p&gt;
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;remove cloud and cloud native infrastructure&lt;/p&gt;
+&lt;p&gt;Remove cloud and cloud native infrastructure&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;

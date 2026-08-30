@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>mesheryctl-system-channel on Documentation</title><link>/reference/references/mesheryctl/system/channel/</link><description>Recent content in mesheryctl-system-channel on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/reference/references/mesheryctl/system/channel/index.xml" rel="self" type="application/rss+xml"/><item><title>mesheryctl-system-channel-set</title><link>/reference/references/mesheryctl/system/channel/set/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/channel/set/</guid><description>&lt;h1 id="mesheryctl-system-channel-set"&gt;
 	mesheryctl system channel set
 &lt;/h1&gt;
-&lt;p&gt;set release channel and version&lt;/p&gt;
+&lt;p&gt;Set release channel and version&lt;/p&gt;
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
@@ -53,7 +53,7 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 &lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-channel-switch</title><link>/reference/references/mesheryctl/system/channel/switch/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/channel/switch/</guid><description>&lt;h1 id="mesheryctl-system-channel-switch"&gt;
 	mesheryctl system channel switch
 &lt;/h1&gt;
-&lt;p&gt;switch release channel and version&lt;/p&gt;
+&lt;p&gt;Switch release channel and version&lt;/p&gt;
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
@@ -105,7 +105,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 &lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-channel-view</title><link>/reference/references/mesheryctl/system/channel/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/channel/view/</guid><description>&lt;h1 id="mesheryctl-system-channel-view"&gt;
 	mesheryctl system channel view
 &lt;/h1&gt;
-&lt;p&gt;view release channel and version&lt;/p&gt;
+&lt;p&gt;View release channel and version&lt;/p&gt;
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;

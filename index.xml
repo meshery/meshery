@@ -30989,7 +30989,7 @@ emove border radius from all of the buttons\ @amitamrutiya (#13874)&lt;/li&gt;
 &lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;[RJSF] Add title and some styling changes to rjsf components @Abhishek-kumar09 (#4840)&lt;/li&gt;
-&lt;li&gt;fix : Update update handler function to change the order of arguements @sudo-NithishKarthik (#4832)&lt;/li&gt;
+&lt;li&gt;fix : Update update handler function to change the order of arguments @sudo-NithishKarthik (#4832)&lt;/li&gt;
 &lt;li&gt;[ Visualizer ] restructuring to visualizer terminal | CU-1wn5nzk | CU-1c5dt1 @manav1403 (#4829)&lt;/li&gt;
 &lt;li&gt;added Meshsync status to tooltip @warunicorn19 (#4827)&lt;/li&gt;
 &lt;li&gt;Add meshsync status logo in header @Prakhar-Agarwal-byte (#4785)&lt;/li&gt;
@@ -36522,11 +36522,11 @@ mesheryctl adapter deploy linkerd --namespace linkerd-ns
 &lt;p&gt;Deploy Linkerd mesh and wait for it to be deployed&lt;/p&gt;</description></item><item><title>mesheryctl-adapter-remove</title><link>/reference/references/mesheryctl/adapter/remove/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/adapter/remove/</guid><description>&lt;h1 id="mesheryctl-adapter-remove"&gt;
 	mesheryctl adapter remove
 &lt;/h1&gt;
-&lt;p&gt;remove cloud and cloud native infrastructure&lt;/p&gt;
+&lt;p&gt;Remove cloud and cloud native infrastructure&lt;/p&gt;
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;remove cloud and cloud native infrastructure&lt;/p&gt;
+&lt;p&gt;Remove cloud and cloud native infrastructure&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
@@ -38990,11 +38990,11 @@ mesheryctl relationship search [--kind &amp;lt;kind&amp;gt;] [--page &amp;lt;int
 &lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-relationship-view</title><link>/reference/references/mesheryctl/relationship/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/relationship/view/</guid><description>&lt;h1 id="mesheryctl-relationship-view"&gt;
 	mesheryctl relationship view
 &lt;/h1&gt;
-&lt;p&gt;view relationships of a model by its name&lt;/p&gt;
+&lt;p&gt;View relationships of a model by its name&lt;/p&gt;
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
-&lt;p&gt;view a relationship queried by the model name.&lt;/p&gt;
+&lt;p&gt;View a relationship queried by the model name.&lt;/p&gt;
 &lt;pre class='codeblock-pre'&gt;
 &lt;div class='codeblock'&gt;
 &lt;div class='clipboardjs'&gt;
@@ -39027,7 +39027,7 @@ mesheryctl relationship view [model-name] --output-format json
 &lt;p&gt;View relationships of a model in json format and save it to a file&lt;/p&gt;</description></item><item><title>mesheryctl-system-channel-set</title><link>/reference/references/mesheryctl/system/channel/set/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/channel/set/</guid><description>&lt;h1 id="mesheryctl-system-channel-set"&gt;
 	mesheryctl system channel set
 &lt;/h1&gt;
-&lt;p&gt;set release channel and version&lt;/p&gt;
+&lt;p&gt;Set release channel and version&lt;/p&gt;
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
@@ -39079,7 +39079,7 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 &lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-channel-switch</title><link>/reference/references/mesheryctl/system/channel/switch/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/channel/switch/</guid><description>&lt;h1 id="mesheryctl-system-channel-switch"&gt;
 	mesheryctl system channel switch
 &lt;/h1&gt;
-&lt;p&gt;switch release channel and version&lt;/p&gt;
+&lt;p&gt;Switch release channel and version&lt;/p&gt;
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
@@ -39131,7 +39131,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 &lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-channel-view</title><link>/reference/references/mesheryctl/system/channel/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/channel/view/</guid><description>&lt;h1 id="mesheryctl-system-channel-view"&gt;
 	mesheryctl system channel view
 &lt;/h1&gt;
-&lt;p&gt;view release channel and version&lt;/p&gt;
+&lt;p&gt;View release channel and version&lt;/p&gt;
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
@@ -39370,7 +39370,7 @@ mesheryctl system context delete [context name]
 &lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-context-list</title><link>/reference/references/mesheryctl/system/context/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/context/list/</guid><description>&lt;h1 id="mesheryctl-system-context-list"&gt;
 	mesheryctl system context list
 &lt;/h1&gt;
-&lt;p&gt;list contexts&lt;/p&gt;
+&lt;p&gt;List contexts&lt;/p&gt;
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
@@ -39422,7 +39422,7 @@ mesheryctl system context list
 &lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-context-switch</title><link>/reference/references/mesheryctl/system/context/switch/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/context/switch/</guid><description>&lt;h1 id="mesheryctl-system-context-switch"&gt;
 	mesheryctl system context switch
 &lt;/h1&gt;
-&lt;p&gt;switch context&lt;/p&gt;
+&lt;p&gt;Switch context&lt;/p&gt;
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
@@ -39756,7 +39756,7 @@ mesheryctl system logs meshery-istio
 &lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-provider-list</title><link>/reference/references/mesheryctl/system/provider/list/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/provider/list/</guid><description>&lt;h1 id="mesheryctl-system-provider-list"&gt;
 	mesheryctl system provider list
 &lt;/h1&gt;
-&lt;p&gt;list available providers&lt;/p&gt;
+&lt;p&gt;List available providers&lt;/p&gt;
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
@@ -39860,7 +39860,7 @@ mesheryctl system provider reset
 &lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-provider-set</title><link>/reference/references/mesheryctl/system/provider/set/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/provider/set/</guid><description>&lt;h1 id="mesheryctl-system-provider-set"&gt;
 	mesheryctl system provider set
 &lt;/h1&gt;
-&lt;p&gt;set provider&lt;/p&gt;
+&lt;p&gt;Set provider&lt;/p&gt;
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
@@ -39913,7 +39913,7 @@ mesheryctl system provider set [provider]
 &lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-provider-switch</title><link>/reference/references/mesheryctl/system/provider/switch/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/provider/switch/</guid><description>&lt;h1 id="mesheryctl-system-provider-switch"&gt;
 	mesheryctl system provider switch
 &lt;/h1&gt;
-&lt;p&gt;switch provider and redeploy&lt;/p&gt;
+&lt;p&gt;Switch provider and redeploy&lt;/p&gt;
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
@@ -39965,7 +39965,7 @@ mesheryctl system provider switch [provider]
 &lt;p&gt;Go back to &lt;a href="/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-provider-view</title><link>/reference/references/mesheryctl/system/provider/view/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/system/provider/view/</guid><description>&lt;h1 id="mesheryctl-system-provider-view"&gt;
 	mesheryctl system provider view
 &lt;/h1&gt;
-&lt;p&gt;view provider&lt;/p&gt;
+&lt;p&gt;View provider&lt;/p&gt;
 &lt;h2 id="synopsis"&gt;
 	Synopsis
 &lt;/h2&gt;
