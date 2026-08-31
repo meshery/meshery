@@ -52,19 +52,28 @@ The design applies cleanly only where the CRDs it references are installed:
 | `monitoring.coreos.com` | kube-prometheus-stack (Prometheus Operator) |
 | `*.k8s.elastic.co` | ECK operator |
 
-Placeholders to replace — every one is a `111122223333`-style dummy, so nothing
-here resolves to a real account:
+The design is seeded with dummy values throughout, and no ARN in it points at a
+real AWS account — but they are not all `111122223333`-style, so work the list
+rather than grepping for one pattern. Replace every one of these:
 
-- AWS account ID `111122223333` in every role ARN
+- AWS account ID `111122223333`, in every role ARN
 - the ACM certificate ARN on the `boutique-gateway` Gateway
 - the OIDC provider URL and `EXAMPLED539D4633E53DE1B716D3041E` ID in the
   `external-dns-irsa` trust policy
 - `Z0EXAMPLEHOSTEDZONE` in the `external-dns-irsa` inline policy — the hosted
   zone External DNS is allowed to write to
-- `shop.example.com` and the `--domain-filter` on `external-dns`
+- `shop.example.com`, on both the Gateway listener and the `--domain-filter`
+  argument to `external-dns`
 - `https://github.com/example-org/boutique-gitops.git` and
   `ghcr.io/example-org/boutique-app` on the Argo CD Application
-- `ami-0c02fb55956c7d316` on the bastion (region-specific)
+- `us-east-1`, and the `us-east-1a` / `us-east-1b` availability zones on the
+  subnets and node group — the region is baked into the ACK resources, the role
+  ARNs and the OIDC URL alike
+- `ami-0c02fb55956c7d316` on the bastion. Unlike the rest of this list it is a
+  real Amazon Linux 2 image, but AMI IDs are per-region: it resolves only in
+  `us-east-1` and must change with the region above.
+- the `10.0.0.0/16` VPC CIDR and its four subnet CIDRs, if they collide with a
+  network you already peer with
 - `bastion-sg` allows SSH from `10.0.0.0/16`; narrow it to your own range
 
 Four Secrets are referenced but deliberately not included — create them
