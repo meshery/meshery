@@ -2099,6 +2099,15 @@
         "short_description": "Ambiguous match, and no terminal to resolve it on",
         "probable_cause": "The command is running in a script, pipeline or CI job where stdin or stdout is redirected",
         "suggested_remediation": "Identify the item by its unique ID instead of its name\nNarrow the search so exactly one item matches"
+      },
+      "1254": {
+        "name": "ErrPublishInvalidArgsCode",
+        "code": "1254",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "invalid arguments for registry publish",
+        "probable_cause": "Incorrect number of arguments or missing mandatory arguments",
+        "suggested_remediation": "Run 'mesheryctl registry publish --help' for usage instructions"
       }
     }
   }
