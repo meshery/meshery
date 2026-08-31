@@ -7,7 +7,7 @@ subcommand: provider
 
 # mesheryctl system provider switch
 
-switch provider and redeploy
+Switch provider and redeploy
 
 ## Synopsis
 

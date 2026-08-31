@@ -7,7 +7,7 @@ subcommand: provider
 
 # mesheryctl system provider set
 
-set provider
+Set provider
 
 ## Synopsis
 

@@ -7,7 +7,7 @@ subcommand: channel
 
 # mesheryctl system channel set
 
-set release channel and version
+Set release channel and version
 
 ## Synopsis
 
