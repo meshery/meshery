@@ -77,13 +77,9 @@ export const kubernetesImportedNotify = (count: number): ConnectionCreatedNotify
   const noun = count === 1 ? 'connection' : 'connections';
   const summary = `Imported ${count} Kubernetes ${noun}.`;
   const event_type = count > 0 ? EVENT_TYPES.SUCCESS : EVENT_TYPES.WARNING;
-  if (isOnConnectionsPage() || count === 0) {
-    return { message: summary, event_type };
-  }
   return {
     message: summary,
     event_type,
-    link: { href: CONNECTIONS_PATH, label: 'View connections' },
   };
 };
 

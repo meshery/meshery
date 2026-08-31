@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { CoreConnectionKinds } from '@/utils/Enum';
+import { EVENT_TYPES } from 'lib/event-types';
 import {
   buildConnectionWizardKindConfigs,
   buildCredentialSecret,
@@ -304,9 +305,27 @@ describe('ConnectionWizard.helpers', () => {
     vi.unstubAllGlobals();
   });
 
-  it('formats kubernetes import notify summaries', () => {
+  it('formats kubernetes import notify summaries without duplicate link action', () => {
     vi.stubGlobal('window', { location: { pathname: '/dashboard' } });
-    expect(kubernetesImportedNotify(2).message).toBe('Imported 2 Kubernetes connections.');
+
+    const singular = kubernetesImportedNotify(1);
+    expect(singular.message).toBe('Imported 1 Kubernetes connection.');
+    expect(singular.event_type).toBe(EVENT_TYPES.SUCCESS);
+    expect(singular.link).toBeUndefined();
+
+    const plural = kubernetesImportedNotify(2);
+    expect(plural.message).toBe('Imported 2 Kubernetes connections.');
+    expect(plural.event_type).toBe(EVENT_TYPES.SUCCESS);
+    expect(plural.link).toBeUndefined();
+
+    const zero = kubernetesImportedNotify(0);
+    expect(zero.message).toBe('Imported 0 Kubernetes connections.');
+    expect(zero.event_type).toBe(EVENT_TYPES.WARNING);
+    expect(zero.link).toBeUndefined();
+
+    vi.stubGlobal('window', { location: { pathname: '/management/connections' } });
+    expect(kubernetesImportedNotify(1).link).toBeUndefined();
+
     vi.unstubAllGlobals();
   });
 });
