@@ -26,6 +26,7 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -64,6 +65,19 @@ var (
 				//     args = nginx service mesh -> ["nginx", "service", "mesh"] -> "NGINX_SERVICE_MESH"
 				r, _ := regexp.Compile(`\W`)
 				meshName = r.ReplaceAllString(strings.ToUpper(strings.Join(args, "_")), "_")
+			}
+
+			// a subcommand that names an adapter explicitly resolves from that
+			// name: --adapter carries the location Meshery Server dials to run
+			// the operation, so it has to select the mesh rather than be
+			// overwritten by whichever adapter happens to be connected
+			if cmd.Flags().Changed("adapter") {
+				utils.Log.Info("Verifying prerequisites...")
+				if err = resolveAdapterFlag(mctlCfg, meshName); err != nil {
+					return err
+				}
+				utils.Log.Info("verified prerequisites")
+				return nil
 			}
 
 			// verify the specified mesh is valid
@@ -108,6 +122,59 @@ func validateAdapter(mctlCfg *config.MesheryCtlConfig, meshName string) error {
 
 	// return an error if the mesh's adapter was not found
 	return ErrNoAdapters
+}
+
+// resolveAdapterFlag resolves the adapter named by --adapter and derives the mesh
+// to operate on from it. The flag carries an adapter location host (for example
+// "meshery-istio"); Meshery Server matches that location verbatim against a
+// registered adapter before dialling it over gRPC, so a value matching nothing
+// has to fail here instead of reaching the server as some other adapter.
+// requestedMesh, when non-empty, is the mesh the user named positionally.
+func resolveAdapterFlag(mctlCfg *config.MesheryCtlConfig, requestedMesh string) error {
+	// get details about the current meshery session
+	prefs, err := utils.GetSessionData(mctlCfg)
+	if err != nil {
+		return ErrGettingSessionData(err)
+	}
+
+	adapter, ok := findAdapter(prefs.MeshAdapters, adapterURL)
+	if !ok {
+		return ErrAdapterNotFound(adapterURL, adapterHosts(prefs.MeshAdapters))
+	}
+
+	// a positionally named mesh has to agree with the adapter that was asked for,
+	// otherwise the command would operate on a mesh the user never named
+	if requestedMesh != "" && requestedMesh != adapter.Name {
+		return ErrAdapterMeshMismatch(adapterURL, adapter.Name, requestedMesh)
+	}
+
+	adapterURL = adapter.Location
+	meshName = adapter.Name
+	return nil
+}
+
+// findAdapter looks up the registered mesh adapter whose Location's host
+// (the part before an optional ":port") matches adapterURL, and returns
+// that adapter so the caller can read Name and Location off the same match
+// instead of mixing fields from two different resolution passes.
+func findAdapter(adapters []*models.Adapter, adapterURL string) (*models.Adapter, bool) {
+	for _, adapter := range adapters {
+		host := strings.Split(adapter.Location, ":")[0]
+		if host == adapterURL {
+			return adapter, true
+		}
+	}
+	return nil, false
+}
+
+// adapterHosts returns the host portion of every registered adapter's Location,
+// which is the spelling --adapter accepts.
+func adapterHosts(adapters []*models.Adapter) []string {
+	hosts := make([]string, 0, len(adapters))
+	for _, adapter := range adapters {
+		hosts = append(hosts, strings.Split(adapter.Location, ":")[0])
+	}
+	return hosts
 }
 
 func validateMesh(mctlCfg *config.MesheryCtlConfig, meshName string) (string, error) {
