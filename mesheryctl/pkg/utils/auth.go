@@ -214,7 +214,7 @@ func AddAuthDetails(req *http.Request, filepath string) error {
 	return nil
 }
 
-// UpdateAuthDetails checks gets the token (old/refreshed) from meshery server and writes it back to the config file
+// UpdateAuthDetails gets the token (old/refreshed) from Meshery server and writes it back to the config file.
 func UpdateAuthDetails(filepath string) error {
 	return updateAuthDetails(&http.Client{}, filepath)
 }

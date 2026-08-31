@@ -29,7 +29,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// testcases for auth.go
+// TestAuth tests basic authentication functionality and request handling.
 func TestAuth(t *testing.T) {
 	handler := func(w http.ResponseWriter, r *http.Request) {
 		_, _ = fmt.Fprintln(w, "A simple server only for testing")
@@ -70,6 +70,7 @@ func TestAuth(t *testing.T) {
 	//@Aisuko Need a token file to do other testings
 }
 
+// TestProviderUnmarshalJSON tests JSON unmarshaling for canonical and legacy provider payloads.
 func TestProviderUnmarshalJSON(t *testing.T) {
 	t.Run("Given canonical camelCase provider fields, When unmarshaled, Then it populates Provider correctly", func(t *testing.T) {
 		payload := []byte(`{"providerUrl":"https://cloud.meshery.io","providerName":"Meshery"}`)
@@ -106,10 +107,12 @@ func TestProviderUnmarshalJSON(t *testing.T) {
 
 type roundTripFunc func(*http.Request) (*http.Response, error)
 
+// RoundTrip executes a single HTTP transaction using the underlying function.
 func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
 	return f(req)
 }
 
+// createTestTokenFile creates a temporary token file containing the specified JSON content.
 func createTestTokenFile(t *testing.T, contents string) string {
 	t.Helper()
 	path := filepath.Join(t.TempDir(), "token.json")
@@ -119,6 +122,7 @@ func createTestTokenFile(t *testing.T, contents string) string {
 	return path
 }
 
+// TestUpdateAuthDetails tests authentication token updates under various success and failure conditions.
 func TestUpdateAuthDetails(t *testing.T) {
 	viper.Set("current-context", "local")
 	viper.Set("contexts.local.endpoint", "http://localhost:9081")
