@@ -1,3 +1,0 @@
-# EDP Component Operator
-
-Source: /pr-preview/pr-21670/extensions/models/edp-component-operator/
