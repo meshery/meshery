@@ -87,13 +87,19 @@ real AWS account — but they are not all `111122223333`-style, so work the list
 rather than grepping for one pattern. Replace every one of these:
 
 - AWS account ID `111122223333`, in every role ARN
-- the ACM certificate ARN on the `boutique-gateway` Gateway
+- the ACM certificate ARN, which appears **twice** on the `boutique-gateway`
+  Gateway — once in the `alb.ingress.kubernetes.io/certificate-arn` annotation
+  and again in the HTTPS listener's `tls.options`. Change both; changing one
+  leaves the listener and the controller disagreeing about the certificate.
 - the OIDC provider URL and `EXAMPLED539D4633E53DE1B716D3041E` ID in the
   `external-dns-irsa` trust policy
 - `Z0EXAMPLEHOSTEDZONE` in the `external-dns-irsa` inline policy — the hosted
   zone External DNS is allowed to write to
-- `shop.example.com`, on both the Gateway listener and the `--domain-filter`
-  argument to `external-dns`
+- `shop.example.com`, on the Gateway listeners and the
+  `external-dns.alpha.kubernetes.io/hostname` annotation
+- `example.com` separately, as the `--domain-filter` argument to
+  `external-dns`. It is the parent zone, not the host — a find-and-replace
+  on `shop.example.com` alone will not touch it
 - `https://github.com/example-org/boutique-gitops.git` and
   `ghcr.io/example-org/boutique-app` on the Argo CD Application
 - `us-east-1`, and the `us-east-1a` / `us-east-1b` availability zones on the
@@ -131,10 +137,10 @@ kubectl -n boutique-app create secret generic postgres-orders \
 # and without it Image Updater cannot read tags from GHCR — the CD half of the
 # pipeline then does nothing, without failing loudly. Needs a PAT with
 # `read:packages`, and must be a `kubernetes.io/dockerconfigjson` secret.
-# `create secret docker-registry` has no file-based option for the password — it
-# only takes it as a flag value — and a command substitution reading the token
-# from a file is expanded by the shell before kubectl starts, so the token would
-# still land in argv and show up in `ps`. Log in against a throwaway
+# `create secret docker-registry` takes the password only through its
+# `--docker-password` flag, with no file-based alternative, and a command
+# substitution reading the token from a file is expanded by the shell before
+# kubectl starts — so the token would still land in argv and show up in `ps`. Log in against a throwaway
 # DOCKER_CONFIG instead and build the Secret from the config file it writes. The
 # temporary config also keeps other registries' credentials, and any credsStore
 # indirection, out of the Secret.
@@ -144,7 +150,8 @@ kubectl -n boutique-app create secret generic postgres-orders \
 # neither the token nor the config it lives in survives an interrupted setup.
 (
   set -e
-  export DOCKER_CONFIG="$(mktemp -d)"
+  # A bare `mktemp -d` is GNU-only; BSD/macOS mktemp requires a template.
+  export DOCKER_CONFIG="$(mktemp -d "${TMPDIR:-/tmp}/ghcr-creds.XXXXXX")"
   trap 'rm -rf "$DOCKER_CONFIG"; rm -f ./ghcr-pat.txt' EXIT
   docker login ghcr.io --username '<github-username>' --password-stdin < ./ghcr-pat.txt
   kubectl -n argocd create secret generic ghcr-creds \
