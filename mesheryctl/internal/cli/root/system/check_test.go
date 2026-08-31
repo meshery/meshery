@@ -6,11 +6,24 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
 var update = flag.Bool("update", false, "update golden files")
+
+func TestRunDockerHealthChecks_InvalidEndpointDoesNotPanic(t *testing.T) {
+	hc := &HealthChecker{
+		Options: &HealthCheckOptions{PrintLogs: false},
+		context: &config.Context{Endpoint: "localhost"},
+	}
+
+	err := hc.runDockerHealthChecks()
+	if err == nil {
+		t.Fatal("expected an error for an invalid docker endpoint")
+	}
+}
 
 // This is an Integration test
 func TestPreflightCmdIntegration(t *testing.T) {

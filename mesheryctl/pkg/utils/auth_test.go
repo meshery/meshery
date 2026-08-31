@@ -98,3 +98,17 @@ func TestProviderUnmarshalJSON(t *testing.T) {
 		}
 	})
 }
+
+func TestChooseDirectProvider_InvalidProviderDoesNotPanic(t *testing.T) {
+	providers := map[string]Provider{
+		"local": {ProviderName: "Local", ProviderURL: "http://localhost:8080"},
+	}
+
+	provider, err := chooseDirectProvider(providers, "InvalidProvider")
+	if err == nil {
+		t.Fatal("expected an error for an invalid provider")
+	}
+	if provider != (Provider{}) {
+		t.Fatalf("expected zero-value provider on invalid input, got %#v", provider)
+	}
+}

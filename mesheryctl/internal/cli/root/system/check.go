@@ -305,7 +305,16 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 	if hc.Options.PrintLogs {
 		utils.Log.Info("\nDocker \n--------------")
 	}
-	endpointParts := strings.Split(hc.context.GetEndpoint(), ":")
+	
+	// Validate endpoint format (should be host:port or similar)
+	endpoint := hc.context.GetEndpoint()
+	if endpoint == "" {
+		return ErrDockerContext(errors.New("context endpoint is invalid: endpoint is empty"))
+	}
+	endpointParts := strings.Split(endpoint, ":")
+	if len(endpointParts) < 2 {
+		return ErrDockerContext(errors.New("context endpoint is invalid: expected host:port format"))
+	}
 
 	// Check whether docker daemon is running using Docker client API
 	dockerCli, err := dockerclient.NewClientWithOpts(dockerclient.FromEnv, dockerclient.WithAPIVersionNegotiation())
