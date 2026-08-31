@@ -137,25 +137,30 @@ kubectl -n boutique-app create secret generic postgres-orders \
 # instead and build the Secret from the config file it writes. The temporary
 # config also keeps other registries' credentials, and any credsStore
 # indirection, out of the Secret.
-export DOCKER_CONFIG="$(mktemp -d)"
-# Arm the cleanup before the token is written anywhere. Without this, a failed
-# docker login or kubectl call aborts the script and leaves both the PAT file
-# and a docker config containing the token on disk.
-trap 'rm -rf "$DOCKER_CONFIG"; rm -f ./ghcr-pat.txt' EXIT INT TERM
-docker login ghcr.io --username '<github-username>' --password-stdin < ./ghcr-pat.txt
-kubectl -n argocd create secret generic ghcr-creds \
-  --type=kubernetes.io/dockerconfigjson \
-  --from-file=.dockerconfigjson="$DOCKER_CONFIG/config.json"
-docker logout ghcr.io
+# Runs in a subshell so the EXIT trap fires when the block ends rather than when
+# your shell does, and so the DOCKER_CONFIG override never escapes into the
+# calling session. set -e aborts on the first failure; the trap still runs, so
+# neither the token nor the config it lives in survives an interrupted setup.
+(
+  set -e
+  export DOCKER_CONFIG="$(mktemp -d)"
+  trap 'rm -rf "$DOCKER_CONFIG"; rm -f ./ghcr-pat.txt' EXIT
+  docker login ghcr.io --username '<github-username>' --password-stdin < ./ghcr-pat.txt
+  kubectl -n argocd create secret generic ghcr-creds \
+    --type=kubernetes.io/dockerconfigjson \
+    --from-file=.dockerconfigjson="$DOCKER_CONFIG/config.json"
+  docker logout ghcr.io
+)
 
-# Remove the credential files. shred is GNU coreutils and is absent on macOS,
+# Remove the remaining credential files (the GHCR PAT is already gone, removed
+# by the subshell's trap above). shred is GNU coreutils and is absent on macOS,
 # where this would otherwise fail and quietly leave the files behind. Note that
 # neither command reliably destroys data on a copy-on-write or wear-levelled
 # filesystem — write the files to a tmpfs mount if that matters to you.
 if command -v shred >/dev/null 2>&1; then
-  shred -u ./slack-webhook.txt ./grafana-password.txt ./postgres-password.txt ./ghcr-pat.txt
+  shred -u ./slack-webhook.txt ./grafana-password.txt ./postgres-password.txt
 else
-  rm -f ./slack-webhook.txt ./grafana-password.txt ./postgres-password.txt ./ghcr-pat.txt
+  rm -f ./slack-webhook.txt ./grafana-password.txt ./postgres-password.txt
 fi
 ```
 
