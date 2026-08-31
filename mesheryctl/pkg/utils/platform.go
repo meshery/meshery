@@ -249,11 +249,37 @@ func GetDeploymentVersion(filePath string) (string, error) {
 		return "", fmt.Errorf("unable to unmarshal config %s | %s", MesheryDeployment, err)
 	}
 
-	image := compose.Spec.Template.Spec.Containers[0].Image
-	spliter := strings.Split(image, ":")
-	version := strings.Split(spliter[1], "-")[1]
+	containers := compose.Spec.Template.Spec.Containers
+	if len(containers) == 0 {
+		return "", fmt.Errorf("unable to determine version: no containers found in %s", MesheryDeployment)
+	}
+	image := containers[0].Image
+	tag := imageTag(image)
+	if tag == "" {
+		return "", fmt.Errorf("unable to determine version: image %q in %s has no tag", image, MesheryDeployment)
+	}
+	// Meshery deployment tags are "channel-version" (e.g. stable-latest,
+	// stable-v0.7.0); the version is everything after the first dash.
+	_, version, found := strings.Cut(tag, "-")
+	if !found {
+		return "", fmt.Errorf("unable to determine version: unexpected image tag %q in %s", tag, MesheryDeployment)
+	}
 
 	return version, nil
+}
+
+// imageTag returns the tag portion of a container image reference, or "" when
+// the reference carries no tag. It ignores a registry port (the ":" before the
+// first "/") and any "@digest" suffix.
+func imageTag(image string) string {
+	if at := strings.IndexByte(image, '@'); at != -1 {
+		image = image[:at]
+	}
+	lastColon := strings.LastIndexByte(image, ':')
+	if lastColon == -1 || lastColon < strings.LastIndexByte(image, '/') {
+		return ""
+	}
+	return image[lastColon+1:]
 }
 
 // CanUseCachedOperatorManifests returns an error if it is not possible to use cached operator manifests
