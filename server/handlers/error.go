@@ -216,6 +216,7 @@ const (
 	ErrTelemetryPrometheusAuthCode         = "meshery-server-1435"
 	ErrMeshsyncReconcileCode               = "meshery-server-1442"
 	ErrUnsafeFilePathCode                  = "meshery-server-1443"
+	ErrModelNotFoundCode                   = "meshery-server-1484"
 	// Environment, workspace, organization, user and key operations previously
 	// reported every failure as ErrGetResult ("unable to get result", probable
 	// cause "Result Identifier provided is not valid") - a performance-results
@@ -1231,4 +1232,15 @@ func ErrResetInProgress() error {
 		[]string{"Seeding from a previous reset has not finished; starting another would drop tables mid-seed"},
 		[]string{"A reset was requested while an earlier one was still seeding keys, catalog designs, or components"},
 		[]string{"Wait for the in-flight reset to finish, then retry"})
+}
+
+func ErrModelNotFound(modelName string) error {
+	return errors.New(
+		ErrModelNotFoundCode,
+		errors.Alert,
+		[]string{"Model not found"},
+		[]string{fmt.Sprintf("Model %q was not found in the provided CSV input", modelName)},
+		[]string{"The requested model is not present in the CSV input"},
+		[]string{"Verify that the requested model exists in the CSV input"},
+	)
 }
