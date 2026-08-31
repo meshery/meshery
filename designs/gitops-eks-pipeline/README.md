@@ -151,7 +151,13 @@ kubectl -n boutique-app create secret generic postgres-orders \
 (
   set -e
   # A bare `mktemp -d` is GNU-only; BSD/macOS mktemp requires a template.
-  export DOCKER_CONFIG="$(mktemp -d "${TMPDIR:-/tmp}/ghcr-creds.XXXXXX")"
+  # Assign first and export separately: `export VAR="$(cmd)"` takes its exit
+  # status from the export builtin, so `set -e` would not fire if mktemp failed
+  # — DOCKER_CONFIG would be empty, docker would fall back to the real
+  # ~/.docker/config.json, and the PAT would be written there for good.
+  DOCKER_CONFIG="$(mktemp -d "${TMPDIR:-/tmp}/ghcr-creds.XXXXXX")"
+  [ -n "$DOCKER_CONFIG" ] && [ -d "$DOCKER_CONFIG" ] || exit 1
+  export DOCKER_CONFIG
   trap 'rm -rf "$DOCKER_CONFIG"; rm -f ./ghcr-pat.txt' EXIT
   docker login ghcr.io --username '<github-username>' --password-stdin < ./ghcr-pat.txt
   kubectl -n argocd create secret generic ghcr-creds \
