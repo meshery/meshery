@@ -76,7 +76,7 @@ The design applies cleanly only where the CRDs it references are installed:
 
 | Components | Requires |
 |---|---|
-| `ec2/eks/iam.services.k8s.aws` | ACK controllers for EC2, EKS and IAM |
+| `ec2.services.k8s.aws`, `eks.services.k8s.aws`, `iam.services.k8s.aws` | the ACK controllers for EC2, EKS and IAM respectively |
 | `argoproj.io` | Argo CD Operator |
 | `gateway.networking.k8s.io` | Gateway API CRDs + AWS Load Balancer Controller ≥ 2.9 |
 | `monitoring.coreos.com` | kube-prometheus-stack (Prometheus Operator) |
@@ -131,11 +131,12 @@ kubectl -n boutique-app create secret generic postgres-orders \
 # and without it Image Updater cannot read tags from GHCR — the CD half of the
 # pipeline then does nothing, without failing loudly. Needs a PAT with
 # `read:packages`, and must be a `kubernetes.io/dockerconfigjson` secret.
-# `create secret docker-registry` cannot read the password from a file, and
-# `--docker-password="$(< file)"` is expanded by the shell before kubectl starts,
-# so the token would land in argv. Log in against a throwaway DOCKER_CONFIG
-# instead and build the Secret from the config file it writes. The temporary
-# config also keeps other registries' credentials, and any credsStore
+# `create secret docker-registry` has no file-based option for the password — it
+# only takes it as a flag value — and a command substitution reading the token
+# from a file is expanded by the shell before kubectl starts, so the token would
+# still land in argv and show up in `ps`. Log in against a throwaway
+# DOCKER_CONFIG instead and build the Secret from the config file it writes. The
+# temporary config also keeps other registries' credentials, and any credsStore
 # indirection, out of the Secret.
 # Runs in a subshell so the EXIT trap fires when the block ends rather than when
 # your shell does, and so the DOCKER_CONFIG override never escapes into the
