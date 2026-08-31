@@ -422,3 +422,60 @@ func TestSaveWorkspaceHandler_SetsContentTypeOnSuccess(t *testing.T) {
 		t.Errorf("Content-Type = %q, want application/json", ct)
 	}
 }
+
+// TestDeleteWorkspaceHandler_ReturnsErrorOnMissingWorkspaceID verifies that
+// DeleteWorkspaceHandler returns 400 Bad Request when workspaceID is empty.
+func TestDeleteWorkspaceHandler_ReturnsErrorOnMissingWorkspaceID(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	provider := newWorkspaceSpyProvider()
+
+	req := httptest.NewRequest(http.MethodDelete, "/api/workspaces/", nil)
+	req = mux.SetURLVars(req, map[string]string{"id": ""})
+	rec := httptest.NewRecorder()
+
+	h.DeleteWorkspaceHandler(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusBadRequest, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), "workspaceId") {
+		t.Errorf("expected 400 body to mention workspaceId, got %q", rec.Body.String())
+	}
+}
+
+// TestGetWorkspaceByIdHandler_ReturnsErrorOnMissingWorkspaceID verifies that
+// GetWorkspaceByIdHandler returns 400 Bad Request when workspaceID is empty.
+func TestGetWorkspaceByIdHandler_ReturnsErrorOnMissingWorkspaceID(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	provider := newWorkspaceSpyProvider()
+
+	req := httptest.NewRequest(http.MethodGet, "/api/workspaces/?orgId=11111111-1111-1111-1111-111111111111", nil)
+	req = mux.SetURLVars(req, map[string]string{"id": ""})
+	rec := httptest.NewRecorder()
+
+	h.GetWorkspaceByIdHandler(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusBadRequest, rec.Body.String())
+	}
+	if !provider.called {
+		t.Errorf("provider should not be called when workspaceID is empty")
+	}
+}
+
+// TestGetEnvironmentsOfWorkspaceHandler_ReturnsErrorOnMissingWorkspaceID verifies
+// that nested handlers also validate workspaceID and return 400.
+func TestGetEnvironmentsOfWorkspaceHandler_ReturnsErrorOnMissingWorkspaceID(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	provider := newWorkspaceSpyProvider()
+
+	req := httptest.NewRequest(http.MethodGet, "/api/workspaces//environments", nil)
+	req = mux.SetURLVars(req, map[string]string{"id": ""})
+	rec := httptest.NewRecorder()
+
+	h.GetEnvironmentsOfWorkspaceHandler(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusBadRequest, rec.Body.String())
+	}
+}
