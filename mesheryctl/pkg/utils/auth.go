@@ -216,6 +216,15 @@ func AddAuthDetails(req *http.Request, filepath string) error {
 
 // UpdateAuthDetails checks gets the token (old/refreshed) from meshery server and writes it back to the config file
 func UpdateAuthDetails(filepath string) error {
+	return updateAuthDetails(&http.Client{}, filepath)
+}
+
+// updateAuthDetails updates authentication details using the provided HTTP client and saves them to filepath.
+func updateAuthDetails(client *http.Client, filepath string) error {
+	if client == nil {
+		client = &http.Client{}
+	}
+
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		return ErrLoadConfig(err)
@@ -230,7 +239,6 @@ func UpdateAuthDetails(filepath string) error {
 		return err
 	}
 
-	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		err = errors.Wrap(err, "error dispatching the request: ")

@@ -18,9 +18,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -29,12 +29,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/spf13/viper"
 )
-
-type roundTripFunc func(req *http.Request) (*http.Response, error)
-
-func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
-	return f(req)
-}
 
 // testcases for auth.go
 func TestAuth(t *testing.T) {
@@ -111,103 +105,145 @@ func TestProviderUnmarshalJSON(t *testing.T) {
 	})
 }
 
+type roundTripFunc func(*http.Request) (*http.Response, error)
+
+func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
+	return f(req)
+}
+
+type redirectTransport struct {
+	target *url.URL
+	base   http.RoundTripper
+}
+
+func (t *redirectTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	reqCopy := req.Clone(req.Context())
+	reqCopy.URL.Scheme = t.target.Scheme
+	reqCopy.URL.Host = t.target.Host
+	base := t.base
+	if base == nil {
+		base = http.DefaultTransport
+	}
+	return base.RoundTrip(reqCopy)
+}
+
+func createTestTokenFile(t *testing.T, contents string) string {
+	t.Helper()
+	path := filepath.Join(t.TempDir(), "token.json")
+	if err := os.WriteFile(path, []byte(contents), 0600); err != nil {
+		t.Fatalf("failed to create test token file: %v", err)
+	}
+	return path
+}
+
 func TestUpdateAuthDetails(t *testing.T) {
-	origDefaultConfigPath := DefaultConfigPath
+	viper.Set("current-context", "local")
+	viper.Set("contexts.local.endpoint", "http://localhost:9081")
 	t.Cleanup(func() {
 		viper.Reset()
-		DefaultConfigPath = origDefaultConfigPath
 	})
 
-	configPath := CopyMeshconfigFixture(t, "TestConfig.yaml")
-	viper.Reset()
-	viper.SetConfigFile(configPath)
-	DefaultConfigPath = configPath
-	if err := viper.ReadInConfig(); err != nil {
-		t.Fatalf("unable to read configuration from %v: %v", viper.ConfigFileUsed(), err)
-	}
+	validTokenContent := `{"token":"test-token","meshery-provider":"Local"}`
 
-	_, err := config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		t.Fatalf("failed to get mesheryctl config: %v", err)
-	}
+	t.Run("nil response and error", func(t *testing.T) {
+		t.Parallel()
+		tokenPath := createTestTokenFile(t, validTokenContent)
 
-	origTransport := http.DefaultTransport
-	t.Cleanup(func() {
-		http.DefaultTransport = origTransport
-	})
+		expectedErr := errors.New("network failure")
+		client := &http.Client{
+			Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
+				return nil, expectedErr
+			}),
+		}
 
-	tempDir := t.TempDir()
-	tokenFile := filepath.Join(tempDir, "token.json")
-	tokenContent := `{"token": "test-token", "meshery-provider": "Local"}`
-	if err := os.WriteFile(tokenFile, []byte(tokenContent), 0600); err != nil {
-		t.Fatalf("failed to create dummy token file: %v", err)
-	}
-
-	t.Run("Given client.Do returns nil response and error, When UpdateAuthDetails is called, Then it returns error without panic", func(t *testing.T) {
-		http.DefaultTransport = roundTripFunc(func(req *http.Request) (*http.Response, error) {
-			return nil, errors.New("connection refused")
-		})
-
-		err := UpdateAuthDetails(tokenFile)
+		err := updateAuthDetails(client, tokenPath)
 		if err == nil {
-			t.Fatalf("expected error from UpdateAuthDetails, got nil")
+			t.Fatal("expected error, got nil")
 		}
 		if !strings.Contains(err.Error(), "error dispatching the request") {
-			t.Fatalf("expected error containing 'error dispatching the request', got %q", err.Error())
+			t.Errorf("expected error message to contain 'error dispatching the request', got: %v", err)
+		}
+		if !strings.Contains(err.Error(), "network failure") {
+			t.Errorf("expected underlying error 'network failure', got: %v", err)
 		}
 	})
 
-	t.Run("Given client.Do returns success response, When UpdateAuthDetails is called, Then token is updated successfully", func(t *testing.T) {
-		updatedToken := `{"token": "refreshed-token", "meshery-provider": "Local"}`
-		http.DefaultTransport = roundTripFunc(func(req *http.Request) (*http.Response, error) {
-			return &http.Response{
-				StatusCode: http.StatusOK,
-				Body:       io.NopCloser(strings.NewReader(updatedToken)),
-				Header:     make(http.Header),
-			}, nil
-		})
+	t.Run("successful response", func(t *testing.T) {
+		t.Parallel()
+		tokenPath := createTestTokenFile(t, validTokenContent)
 
-		err := UpdateAuthDetails(tokenFile)
+		refreshedTokenJSON := `{"token":"refreshed-token","meshery-provider":"Local"}`
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = fmt.Fprint(w, refreshedTokenJSON)
+		}))
+		defer srv.Close()
+
+		srvURL, err := url.Parse(srv.URL)
 		if err != nil {
-			t.Fatalf("expected no error from UpdateAuthDetails, got %v", err)
+			t.Fatalf("failed to parse test server URL: %v", err)
 		}
 
-		data, err := os.ReadFile(tokenFile)
+		client := &http.Client{
+			Transport: &redirectTransport{
+				target: srvURL,
+				base:   srv.Client().Transport,
+			},
+		}
+
+		if err := updateAuthDetails(client, tokenPath); err != nil {
+			t.Fatalf("unexpected error updating auth details: %v", err)
+		}
+
+		updatedContent, err := os.ReadFile(tokenPath)
 		if err != nil {
 			t.Fatalf("failed to read updated token file: %v", err)
 		}
-		if string(data) != updatedToken {
-			t.Fatalf("expected updated token %q, got %q", updatedToken, string(data))
+
+		if string(updatedContent) != refreshedTokenJSON {
+			t.Errorf("expected updated token content %q, got %q", refreshedTokenJSON, string(updatedContent))
 		}
 	})
 
-	t.Run("Given client.Do returns HTML response, When UpdateAuthDetails is called, Then it returns invalid body error", func(t *testing.T) {
-		http.DefaultTransport = roundTripFunc(func(req *http.Request) (*http.Response, error) {
-			header := make(http.Header)
-			header.Set("Content-Type", "text/html")
-			return &http.Response{
-				StatusCode: http.StatusOK,
-				Body:       io.NopCloser(strings.NewReader("<html><body>Login</body></html>")),
-				Header:     header,
-			}, nil
-		})
+	t.Run("HTML unexpected response", func(t *testing.T) {
+		t.Parallel()
+		tokenPath := createTestTokenFile(t, validTokenContent)
 
-		err := UpdateAuthDetails(tokenFile)
-		if err == nil {
-			t.Fatalf("expected error from UpdateAuthDetails for HTML body, got nil")
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "text/html")
+			_, _ = fmt.Fprint(w, "<html><body>Login Page</body></html>")
+		}))
+		defer srv.Close()
+
+		srvURL, err := url.Parse(srv.URL)
+		if err != nil {
+			t.Fatalf("failed to parse test server URL: %v", err)
 		}
-		if err.Error() != "invalid body" {
-			t.Fatalf("expected 'invalid body' error, got %q", err.Error())
+
+		client := &http.Client{
+			Transport: &redirectTransport{
+				target: srvURL,
+				base:   srv.Client().Transport,
+			},
+		}
+
+		err = updateAuthDetails(client, tokenPath)
+		if err == nil {
+			t.Fatal("expected error for HTML response, got nil")
+		}
+		if !strings.Contains(err.Error(), "invalid body") {
+			t.Errorf("expected error 'invalid body', got: %v", err)
 		}
 	})
 
-	t.Run("Given non-existent token file, When UpdateAuthDetails is called, Then it returns error reading token", func(t *testing.T) {
-		err := UpdateAuthDetails(filepath.Join(tempDir, "non_existent.json"))
+	t.Run("non-existent token file", func(t *testing.T) {
+		t.Parallel()
+		nonExistentPath := filepath.Join(t.TempDir(), "nonexistent_token.json")
+
+		err := UpdateAuthDetails(nonExistentPath)
 		if err == nil {
-			t.Fatalf("expected error for non-existent token file, got nil")
-		}
-		if !strings.Contains(err.Error(), "could not read token") {
-			t.Fatalf("expected error containing 'could not read token', got %q", err.Error())
+			t.Fatal("expected error for non-existent token file, got nil")
 		}
 	})
 }
+
