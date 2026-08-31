@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//	http://www.apache.org/licenses/LICENSE-2.0
+//      http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,8 +17,10 @@ package utils
 import (
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetManifestTreeURL(t *testing.T) {
@@ -34,19 +36,10 @@ func TestGetManifestTreeURL(t *testing.T) {
 		defer func() { gitHubBaseURL = origURL }()
 
 		_, err := GetManifestTreeURL("v0.6.0")
-		if err == nil {
-			t.Fatalf("expected error, got nil")
-		}
-
-		if !strings.Contains(err.Error(), "403") {
-			t.Errorf("expected error message to contain '403', got: %v", err)
-		}
-		if !strings.Contains(err.Error(), "API rate limit exceeded") {
-			t.Errorf("expected error to contain rate limit message, got: %v", err)
-		}
-		if strings.Contains(err.Error(), "could not find path") {
-			t.Errorf("expected error not to be misleading 'could not find path', got: %v", err)
-		}
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "403")
+		assert.Contains(t, err.Error(), "API rate limit exceeded")
+		assert.NotContains(t, err.Error(), "could not find path")
 	})
 
 	t.Run("happy path with valid ManifestList", func(t *testing.T) {
@@ -70,14 +63,9 @@ func TestGetManifestTreeURL(t *testing.T) {
 		defer func() { gitHubBaseURL = origURL }()
 
 		treeURL, err := GetManifestTreeURL("v0.6.0")
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
-
+		require.NoError(t, err)
 		expected := "https://api.github.com/repos/meshery/meshery/git/trees/k8s-tree-sha"
-		if treeURL != expected {
-			t.Errorf("expected treeURL %s, got %s", expected, treeURL)
-		}
+		assert.Equal(t, expected, treeURL)
 	})
 }
 
@@ -90,16 +78,9 @@ func TestListManifests(t *testing.T) {
 		defer server.Close()
 
 		_, err := ListManifests(server.URL)
-		if err == nil {
-			t.Fatalf("expected error, got nil")
-		}
-
-		if !strings.Contains(err.Error(), "403") {
-			t.Errorf("expected error message to contain '403', got: %v", err)
-		}
-		if !strings.Contains(err.Error(), "API rate limit exceeded") {
-			t.Errorf("expected error to contain rate limit message, got: %v", err)
-		}
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "403")
+		assert.Contains(t, err.Error(), "API rate limit exceeded")
 	})
 
 	t.Run("happy path with valid ManifestList", func(t *testing.T) {
@@ -119,16 +100,8 @@ func TestListManifests(t *testing.T) {
 		defer server.Close()
 
 		manifests, err := ListManifests(server.URL)
-		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
-		}
-
-		if len(manifests) != 1 {
-			t.Fatalf("expected 1 manifest, got %d", len(manifests))
-		}
-		if manifests[0].Path != "install/deployment_yamls/k8s/meshery-deployment.yaml" {
-			t.Errorf("unexpected manifest path: %s", manifests[0].Path)
-		}
+		require.NoError(t, err)
+		require.Len(t, manifests, 1)
+		assert.Equal(t, "install/deployment_yamls/k8s/meshery-deployment.yaml", manifests[0].Path)
 	})
 }
-

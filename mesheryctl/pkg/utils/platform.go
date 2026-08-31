@@ -121,7 +121,7 @@ func GetManifestTreeURL(version string) (string, error) {
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return "", errors.Errorf("unexpected status %d from %s: %s", resp.StatusCode, url, string(body))
+		return "", ErrGithubAPIResponse(resp.StatusCode, url, string(body))
 	}
 
 	var manLis ManifestList
@@ -152,7 +152,7 @@ func ListManifests(url string) ([]Manifest, error) {
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, errors.Errorf("unexpected status %d from %s: %s", resp.StatusCode, url, string(body))
+		return nil, ErrGithubAPIResponse(resp.StatusCode, url, string(body))
 	}
 
 	var manLis ManifestList
