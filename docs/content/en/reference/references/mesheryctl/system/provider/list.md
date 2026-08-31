@@ -7,7 +7,7 @@ subcommand: provider
 
 # mesheryctl system provider list
 
-list available providers
+List available providers
 
 ## Synopsis
 

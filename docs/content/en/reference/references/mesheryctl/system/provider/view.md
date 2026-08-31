@@ -7,7 +7,7 @@ subcommand: provider
 
 # mesheryctl system provider view
 
-view provider
+View provider
 
 ## Synopsis
 
