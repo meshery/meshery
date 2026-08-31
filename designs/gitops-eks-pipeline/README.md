@@ -77,9 +77,10 @@ rather than grepping for one pattern. Replace every one of these:
 - `bastion-sg` allows SSH from `10.0.0.0/16`; narrow it to your own range
 
 Four Secrets are referenced but deliberately not included — create them
-yourself rather than committing them. Put each value in a file first: a
-`--from-literal` secret lands in your shell history and is briefly visible in
-`ps` while the command runs.
+yourself rather than committing them. Put each *secret* value in a file first:
+a `--from-literal` lands in your shell history and is briefly visible in `ps`
+while the command runs. Non-sensitive values are fine as literals, which is why
+the postgres username below still is one.
 
 ```bash
 # Slack webhook for the slack-alerts AlertmanagerConfig
@@ -114,7 +115,15 @@ kubectl -n argocd create secret generic ghcr-creds \
 docker logout ghcr.io
 rm -rf "$DOCKER_CONFIG"; unset DOCKER_CONFIG
 
-shred -u ./slack-webhook.txt ./grafana-password.txt ./postgres-password.txt ./ghcr-pat.txt
+# Remove the credential files. shred is GNU coreutils and is absent on macOS,
+# where this would otherwise fail and quietly leave the files behind. Note that
+# neither command reliably destroys data on a copy-on-write or wear-levelled
+# filesystem — write the files to a tmpfs mount if that matters to you.
+if command -v shred >/dev/null 2>&1; then
+  shred -u ./slack-webhook.txt ./grafana-password.txt ./postgres-password.txt ./ghcr-pat.txt
+else
+  rm -f ./slack-webhook.txt ./grafana-password.txt ./postgres-password.txt ./ghcr-pat.txt
+fi
 ```
 
 ## Notes on the modelling
