@@ -55,10 +55,12 @@ The design applies cleanly only where the CRDs it references are installed:
 Placeholders to replace — every one is a `111122223333`-style dummy, so nothing
 here resolves to a real account:
 
-- AWS account id `111122223333` in every role ARN
+- AWS account ID `111122223333` in every role ARN
 - the ACM certificate ARN on the `boutique-gateway` Gateway
-- the OIDC provider URL and `EXAMPLED539D4633E53DE1B716D3041E` id in the
+- the OIDC provider URL and `EXAMPLED539D4633E53DE1B716D3041E` ID in the
   `external-dns-irsa` trust policy
+- `Z0EXAMPLEHOSTEDZONE` in the `external-dns-irsa` inline policy — the hosted
+  zone External DNS is allowed to write to
 - `shop.example.com` and the `--domain-filter` on `external-dns`
 - `https://github.com/example-org/boutique-gitops.git` and
   `ghcr.io/example-org/boutique-app` on the Argo CD Application
