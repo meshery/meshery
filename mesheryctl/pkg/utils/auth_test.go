@@ -105,17 +105,21 @@ func TestProviderUnmarshalJSON(t *testing.T) {
 	})
 }
 
+// roundTripFunc adapts a custom function to the http.RoundTripper interface for testing.
 type roundTripFunc func(*http.Request) (*http.Response, error)
 
+// RoundTrip executes the custom transport function f on the incoming HTTP request.
 func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
 	return f(req)
 }
 
+// redirectTransport redirects HTTP requests to a target test server URL.
 type redirectTransport struct {
 	target *url.URL
 	base   http.RoundTripper
 }
 
+// RoundTrip rewrites the scheme and host of req to target and forwards it to the base transport.
 func (t *redirectTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	reqCopy := req.Clone(req.Context())
 	reqCopy.URL.Scheme = t.target.Scheme
@@ -127,6 +131,7 @@ func (t *redirectTransport) RoundTrip(req *http.Request) (*http.Response, error)
 	return base.RoundTrip(reqCopy)
 }
 
+// createTestTokenFile creates a temporary token file containing contents and returns its file path.
 func createTestTokenFile(t *testing.T, contents string) string {
 	t.Helper()
 	path := filepath.Join(t.TempDir(), "token.json")
@@ -136,6 +141,7 @@ func createTestTokenFile(t *testing.T, contents string) string {
 	return path
 }
 
+// TestUpdateAuthDetails tests UpdateAuthDetails for network errors, successful token updates, HTML responses, and non-existent token files.
 func TestUpdateAuthDetails(t *testing.T) {
 	viper.Set("current-context", "local")
 	viper.Set("contexts.local.endpoint", "http://localhost:9081")
