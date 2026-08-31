@@ -114,6 +114,7 @@ const (
 	ErrPersistCredentialCode              = "meshery-server-1308"
 	ErrPersistConnectionCode              = "meshery-server-1309"
 	ErrPrometheusScanCode                 = "meshery-server-1310"
+	ErrInitLoggerCode                     = "meshery-server-1484"
 	ErrGrafanaScanCode                    = "meshery-server-1311"
 	ErrDBCreateCode                       = "meshery-server-1312"
 	ErrDoRequestCode                      = "meshery-server-1321"
@@ -146,6 +147,8 @@ const (
 	ErrSeedingComponentsCode              = "meshery-server-1358"
 	ErrSeedingConnectionsCode             = "meshery-server-1462"
 	ErrSeedingConnectionKindCode          = "meshery-server-1463"
+	ErrNoSystemEventSinkCode              = "meshery-server-1482"
+	ErrSeedingStagePanicCode              = "meshery-server-1483"
 	ErrImportFailureCode                  = "meshery-server-1359"
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
@@ -613,6 +616,10 @@ func ErrPrometheusScan(err error) error {
 	return errors.New(ErrPrometheusScanCode, errors.Alert, []string{"Unable to connect to prometheus"}, []string{err.Error()}, []string{"Prometheus endpoint might not be reachable from Meshery", "Prometheus endpoint is incorrect"}, []string{"Check if your Prometheus endpoint are correct", "Connect to Prometheus from the settings page in the UI"})
 }
 
+func ErrInitLogger(err error) error {
+	return errors.New(ErrInitLoggerCode, errors.Alert, []string{"Unable to initialize logger"}, []string{err.Error()}, []string{"LOG_LEVEL is set to an unsupported value", "Logger configuration options are malformed"}, []string{"Set LOG_LEVEL to a supported value", "Check your logger configuration settings"})
+}
+
 func ErrDBCreate(err error) error {
 	return errors.New(ErrDBCreateCode, errors.Alert, []string{"Unable to create record"}, []string{err.Error()}, []string{"Record already exist", "Database connection is not reachable"}, []string{"Delete the record or try updating the record instead of recreating", "Rest the database connection"})
 }
@@ -704,6 +711,33 @@ func ErrSeedingConnectionKind(err error, kind string) error {
 		[]string{err.Error()},
 		[]string{fmt.Sprintf("The %s connection could not be written to Meshery's database", kind), "The connection definition for this kind may disagree with the connections table schema"},
 		[]string{fmt.Sprintf("Confirm the %s connection definition is valid; other connection kinds are unaffected and this one is seeded again on the next restart", kind)},
+	)
+}
+
+func ErrNoSystemEventSink() error {
+	return errors.New(
+		ErrNoSystemEventSinkCode,
+		errors.Alert,
+		[]string{"No sink is configured for Meshery's system events"},
+		[]string{"HandlerConfig.SystemEventPersister is nil, so events raised outside a user request - registry seeding summaries and registration failures - cannot be persisted"},
+		[]string{"Meshery Server was built with a HandlerConfig that does not wire SystemEventPersister"},
+		[]string{"Set HandlerConfig.SystemEventPersister when constructing the handler configuration; on a released build this indicates a defect, so please report it at https://github.com/meshery/meshery/issues/new/choose"},
+	)
+}
+
+// ErrSeedingStagePanic reports a fault that RunSeedStage recovered from. The
+// short description, probable cause and remediation are deliberately literal
+// rather than composed with the stage name: errorutil can only lift static
+// strings into docs/data/errorref, so an interpolated one publishes as an empty
+// entry (see ErrImportFailure). The stage and stack trace carry in the details.
+func ErrSeedingStagePanic(stage string, cause interface{}, stack []byte) error {
+	return errors.New(
+		ErrSeedingStagePanicCode,
+		errors.Alert,
+		[]string{"Meshery Server recovered from a fault while seeding its registry"},
+		[]string{fmt.Sprintf("faulting stage: %s", stage), fmt.Sprintf("%v\n%s", cause, stack)},
+		[]string{"An unexpected condition was hit while seeding, either at startup or while reseeding after a database reset"},
+		[]string{"Meshery Server is still serving, but whatever the faulting stage contributes may be missing or incomplete. Report the stack trace above at https://github.com/meshery/meshery/issues/new/choose, then seed again - restart Meshery Server, or re-run the reset that triggered the seeding"},
 	)
 }
 

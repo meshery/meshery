@@ -216,6 +216,7 @@ const (
 	ErrTelemetryPrometheusAuthCode         = "meshery-server-1435"
 	ErrMeshsyncReconcileCode               = "meshery-server-1442"
 	ErrUnsafeFilePathCode                  = "meshery-server-1443"
+	ErrModelNotFoundCode                   = "meshery-server-1484"
 	// Environment, workspace, organization, user and key operations previously
 	// reported every failure as ErrGetResult ("unable to get result", probable
 	// cause "Result Identifier provided is not valid") - a performance-results
@@ -238,6 +239,7 @@ const (
 	ErrGetUserCode               = "meshery-server-1460"
 	ErrGetUsersKeysCode          = "meshery-server-1461"
 	ErrFetchProfilesCode         = "meshery-server-1464"
+	ErrResetInProgressCode       = "meshery-server-1481"
 )
 
 var (
@@ -1222,4 +1224,23 @@ func ErrGetUser(err error) error {
 
 func ErrGetUsersKeys(err error) error {
 	return errors.New(ErrGetUsersKeysCode, errors.Alert, []string{"Unable to fetch API keys"}, []string{err.Error()}, []string{"Your account does not have permission to list API keys for this organization.", "The organization identifier in the request does not exist or is not one you belong to.", "The provider could not be reached or returned an error."}, []string{"Confirm you are a member of the selected organization and that your role grants permission to view its keys."})
+}
+
+func ErrResetInProgress() error {
+	return errors.New(ErrResetInProgressCode, errors.Alert,
+		[]string{"A database reset is already in progress"},
+		[]string{"Seeding from a previous reset has not finished; starting another would drop tables mid-seed"},
+		[]string{"A reset was requested while an earlier one was still seeding keys, catalog designs, or components"},
+		[]string{"Wait for the in-flight reset to finish, then retry"})
+}
+
+func ErrModelNotFound(modelName string) error {
+	return errors.New(
+		ErrModelNotFoundCode,
+		errors.Alert,
+		[]string{"Model not found"},
+		[]string{fmt.Sprintf("Model %q was not found in the provided CSV input", modelName)},
+		[]string{"The requested model is not present in the CSV input"},
+		[]string{"Verify that the requested model exists in the CSV input"},
+	)
 }

@@ -37,14 +37,14 @@ See [Importing Designs]({{< ref "guides/configuration-management/import-export-d
 <h4>1. Import of Referenced Designs</h4>
 <p>A Design may reference any number of other Designs, in essence, a Design may import any number of other Designs.  As an editor of a Design, you can make reference to another Design, while following principles of reusing and DRY (Do Not Repeat Yourself). Any referenced Design will subsequently be imported during the provisioning moment. To reference another design, do so by adding the following annotation <pre>type: $(#use \<url-of-remote-pattern\>)</pre> in your Design file. The referenced design will be expanded from the source.</p>
 <h4>2. Identification</h4>
-<p>Meshery relies on components registered at boot time. Only registered models and components can be managed with Meshery. Currently, models from the ArtifactHub repository are supported.</p>
+<p>Meshery relies on components registered in its <a href="{{< ref "concepts/logical/registry.md" >}}">Registry</a>. Only registered models and components can be managed with Meshery. Every registered model records the <b>registrant</b> that registered it - a connected Kubernetes cluster, Artifact Hub, GitHub, Meshery itself, or a deployed Meshery Adapter.</p>
 <h4>3. Validation</h4>
 <p>Components in the design are validated against the schema, ensuring consistency, similar to Kubernetes object validation but tailored for Designs.</p>
 
 <h4>4. Dependency Detection and Resolution</h4>
-<p>Meshery identifies and resolves dependencies among components using a dynamic mechanism based on each component’s origin (also known as its <code>host</code> or <code>registrant</code>). Provisioning order is critical—circular dependencies will result in termination of the deployment.</p>
+<p>Deployment order comes from what the design declares. A component's <code>dependsOn</code> entries name other components of the same design, and each entry becomes an edge of the graph provisioning walks. Before anything is deployed, Meshery rejects a design whose dependencies name a component the design does not contain, name a component whose name is shared by more than one component, or form a cycle. The registrant plays no part in this: it decides who fulfills a component and what can be installed on the component's behalf, not what a component depends on.</p>
 
-<p>Deployment Mechanism by Source:</p>
+<p>Installing what a component needs before applying it - its Operators and CRDs - is that separate, registrant-specific behavior, and what Meshery is able to install depends on the source of the model:</p>
 
 <ul>
   <li><b>Artifact Hub:</b> Uses Helm Go client for Kubernetes Operator and CRD deployment via <code>ApplyHelmChart()</code>.</li>
@@ -64,11 +64,19 @@ This logic is handled in the <code>NewDependencyHandler()</code> function, which
 
 <h4>5. Provisioning</h4>
 <p>A Directed Acyclic Graph (DAG) generated in the previous step is processed. Dependent components are processed sequentially, while others are processed in parallel. Meshery intelligently handles the deployment order to ensure successful deployment.</p>
+
+<p>A component is deployed only once every component it declares a dependency on has been deployed successfully. If one of those fails to apply, the component that depends on it is withheld rather than deployed, and is reported as such along with the dependency that failed; components that declared no dependency on the failed one are unaffected.</p>
+
+<p>Each component is fulfilled by whoever registered its model: Meshery Server applies the component itself when that registrant is only a source of definitions, and delegates over gRPC to a Meshery Adapter when the registrant advertises a network endpoint. One design can use both paths in a single deployment. See <a href="{{< ref "concepts/architecture/deployment-engine/index.md" >}}">Deployment Engine</a> for both paths in full, and for what withholding does when a component's own prerequisites fail, when several clusters are selected, and when a design is undeployed.</p>
 </details>
 
-<h3>Auto-Deployment of CRDs and Operators</h3>
+<h3 id="auto-deployment-of-crds-and-operators">Auto-Deployment of CRDs and Operators</h3>
 
 <p>Meshery automates the deployment of Custom Resource Definitions (CRDs) and operators based on the source from which a particular component was registered. By default, Meshery automatically deploys components that are sourced from Artifact Hub (utilizing Helm Charts). Support for OCI registries is expected in the near future.</p>
+
+{{% alert color="info" title="Registrants decide more than dependencies" %}}
+The registrant of a component's model also decides <i>who applies the component itself</i> - Meshery Server, or a Meshery Adapter reached over gRPC. See <a href="{{< ref "concepts/architecture/deployment-engine/index.md" >}}">Deployment Engine</a>.
+{{% /alert %}}
 
 <details>
 <summary><h4>Understanding CRDs and Why Deployment Order Matters</h4></summary>

@@ -44,7 +44,7 @@ func IsBetaOrStable(str string) bool {
 
 var viewCmd = &cobra.Command{
 	Use:   "view",
-	Short: "view release channel and version",
+	Short: "View release channel and version",
 	Long: `View release channel and version of context in focus
 Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/channel/view`,
 	Example: `
@@ -98,7 +98,7 @@ mesheryctl system channel view --all
 
 var setCmd = &cobra.Command{
 	Use:   "set [stable|stable-version|edge|edge-version]",
-	Short: "set release channel and version",
+	Short: "Set release channel and version",
 	Long: `Set release channel and version of context in focus
 Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/channel/set`,
 	Example: `
@@ -171,7 +171,7 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
 var switchCmd = &cobra.Command{
 	Use:   "switch [stable|stable-version|edge|edge-version]",
-	Short: "switch release channel and version",
+	Short: "Switch release channel and version",
 	Long: `Switch release channel and version of context in focus
 Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/channel/switch`,
 	Example: `

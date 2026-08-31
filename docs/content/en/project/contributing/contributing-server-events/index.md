@@ -62,6 +62,8 @@ Events in Meshery are persisted through two distinct mechanisms to ensure reliab
 
 The `provider.PersistEvent(*event,nil)` method stores all events in Meshery's local database. This method works identically for both Local and Remote providers, ensuring events are always accessible within your Meshery instance.
 
+An event raised outside any user request - the registrant summaries and registration failures emitted while models are seeded at boot - has no provider to route through, and on a deployment that pins `PROVIDER` the provider registration map may not even hold the one you would name. Persist those through `HandlerConfig.SystemEventPersister`, which writes to the same local database. See [Enforced Provider Flow]({{< ref "reference/extensibility/providers/index.md" >}}) for why a name lookup is not an option there.
+
 ### Remote Event Publishing
 
 The `provider.PublishEventToProvider(token, event)` method enables event synchronization with remote providers (like Meshery Cloud). For Local providers, this method is a no-op (does nothing), while Remote providers use it to send events to their remote services.
