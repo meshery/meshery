@@ -107,9 +107,6 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 
 						if err != nil {
 							arh.log.Error(ErrAutoRegister(err, connType))
-						}
-
-						if machineInst == nil {
 							continue
 						}
 
