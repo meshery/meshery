@@ -18,10 +18,10 @@ var AcademyCmd = &cobra.Command{
 	Long:  `Manage scaffolding and creation of Layer5 Academy content.`,
 	Example: `
 // Scaffold a full learning path tree
-mesheryctl academy create --type learning-path --title "My Path" --description "Desc" --level beginner --org 123e4567-e89b-12d3-a456-426614174000
+mesheryctl exp academy create --type learning-path --title "My Path" --description "Desc" --level beginner --org 123e4567-e89b-12d3-a456-426614174000
 
 // Scaffold a single course into an existing tree
-mesheryctl academy create course "New Course" --description "Desc" --into ./my-path
+mesheryctl exp academy create course "New Course" --description "Desc" --into ./my-path
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
@@ -34,7 +34,7 @@ mesheryctl academy create course "New Course" --description "Desc" --into ./my-p
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return utils.ErrInvalidArgument(errors.New(utils.RootError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl academy --help' to display usage guide.\n", args[0]))))
+			return utils.ErrInvalidArgument(errors.New(utils.ExpError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl exp academy --help' to display usage guide.\n", args[0]))))
 		}
 		return nil
 	},
