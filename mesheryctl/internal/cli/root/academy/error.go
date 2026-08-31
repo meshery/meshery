@@ -7,13 +7,13 @@ import (
 )
 
 var (
-	ErrInvalidNestingCode        = "mesheryctl-1254"
-	ErrTaxonomyTypeCode          = "mesheryctl-1255"
-	ErrScaffoldExistsCode        = "mesheryctl-1256"
-	ErrMissingOrgIDCode          = "mesheryctl-1257"
-	ErrMissingIntoCode           = "mesheryctl-1258"
-	ErrInvalidLevelCode          = "mesheryctl-1259"
-	ErrInvalidParentMetadataCode = "mesheryctl-1260"
+	ErrInvalidNestingCode        = "mesheryctl-1255"
+	ErrTaxonomyTypeCode          = "mesheryctl-1256"
+	ErrScaffoldExistsCode        = "mesheryctl-1257"
+	ErrMissingOrgIDCode          = "mesheryctl-1258"
+	ErrMissingIntoCode           = "mesheryctl-1259"
+	ErrInvalidLevelCode          = "mesheryctl-1260"
+	ErrInvalidParentMetadataCode = "mesheryctl-1261"
 )
 
 func errInvalidNesting(parent, child string) error {
