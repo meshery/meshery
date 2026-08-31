@@ -14,7 +14,12 @@
 
 package adapter
 
-import "github.com/meshery/meshkit/errors"
+import (
+	"fmt"
+	"strings"
+
+	"github.com/meshery/meshkit/errors"
+)
 
 // Please reference the following before contributing an error code:
 // https://docs.meshery.io/project/contributing/contributing-error
@@ -37,6 +42,8 @@ const (
 	ErrSendOperationCode                     = "mesheryctl-1034"
 	ErrValidMeshNameCode                     = "mesheryctl-1035"
 	ErrWaitValidateResponseCode              = "mesheryctl-1036"
+	ErrAdapterNotFoundCode                   = "mesheryctl-1255"
+	ErrAdapterMeshMismatchCode               = "mesheryctl-1256"
 )
 
 var (
@@ -165,4 +172,35 @@ func ErrWaitValidateResponse(err error) error {
 		[]string{err.Error()},
 		[]string{"Unable to create responses after verifying operation"},
 		[]string{"Ensure your connection is valid and verify the status of the Meshery server with `mesheryctl system status`."})
+}
+
+// ErrAdapterNotFound is returned when the value of `--adapter` matches no adapter
+// registered with Meshery Server. That value is the location Meshery Server dials
+// over gRPC to run the operation, so a name it does not recognise has to fail here
+// rather than be replaced by whichever adapter happens to be connected.
+func ErrAdapterNotFound(adapterURL string, availableAdapters []string) error {
+	// keep the remediation a literal so `errorutil` can export it to the error
+	// reference docs; the names of the connected adapters are only knowable at
+	// runtime, so they belong in the long description
+	detail := fmt.Sprintf("No connected adapter matches %q. No adapters are connected.", adapterURL)
+	if len(availableAdapters) > 0 {
+		detail = fmt.Sprintf("No connected adapter matches %q. Connected adapters: %s.", adapterURL, strings.Join(availableAdapters, ", "))
+	}
+
+	return errors.New(ErrAdapterNotFoundCode, errors.Fatal,
+		[]string{"Unable to find the requested adapter"},
+		[]string{detail},
+		[]string{"The name given to --adapter is misspelled, or that adapter is not deployed and connected to Meshery Server."},
+		[]string{"Pass the name of a connected adapter to --adapter. Use `mesheryctl system status` to see which adapters are running."})
+}
+
+// ErrAdapterMeshMismatch is returned when the mesh named positionally and the
+// adapter named by `--adapter` refer to different meshes, which would otherwise
+// silently operate on a mesh the user did not ask for.
+func ErrAdapterMeshMismatch(adapterURL, adapterMesh, requestedMesh string) error {
+	return errors.New(ErrAdapterMeshMismatchCode, errors.Fatal,
+		[]string{"Requested mesh does not match the requested adapter"},
+		[]string{fmt.Sprintf("Adapter %q serves %q, but %q was requested", adapterURL, adapterMesh, requestedMesh)},
+		[]string{"The mesh name and the --adapter value name two different meshes."},
+		[]string{"Drop the mesh name to validate the mesh the given adapter serves, or pass the adapter that serves the mesh you named."})
 }

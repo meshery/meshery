@@ -15,9 +15,15 @@
 package adapter
 
 import (
+	"net/http"
+	"path/filepath"
+	"runtime"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/errors"
 )
 
 // TestFindAdapter covers resolving a registered mesh adapter by the host
@@ -80,6 +86,112 @@ func TestFindAdapter(t *testing.T) {
 			}
 			if got.Location != tt.wantLoc {
 				t.Errorf("adapter Location = %q, want %q", got.Location, tt.wantLoc)
+			}
+		})
+	}
+}
+
+// TestValidateAdapterSelection pins that `--adapter` selects the adapter the
+// operation is sent to, per https://github.com/meshery/meshery/issues/21679
+// where an unrecognized name was silently replaced by whichever adapter
+// happened to be connected and the command still exited 0.
+func TestValidateAdapterSelection(t *testing.T) {
+	utils.SetupContextEnv(t)
+	utils.StartMockery(t)
+	t.Cleanup(func() { utils.StopMockery(t) })
+
+	testContext := utils.NewTestHelper(t)
+
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	fixturesDir := filepath.Join(filepath.Dir(filename), "fixtures")
+
+	tests := []struct {
+		name string
+		args []string
+		// wantErrCode, when set, is the meshkit code the command must fail with
+		wantErrCode string
+		// wantMesh and wantAdapter are what a successful run must resolve to
+		wantMesh    string
+		wantAdapter string
+	}{
+		{
+			name:        "unrecognized adapter is rejected",
+			args:        []string{"validate", "--adapter", "meshery-doesnotexist", "--spec", "smi"},
+			wantErrCode: ErrAdapterNotFoundCode,
+		},
+		{
+			name:        "mesh name contradicting the adapter is rejected",
+			args:        []string{"validate", "linkerd", "--adapter", "meshery-istio", "--spec", "smi"},
+			wantErrCode: ErrAdapterMeshMismatchCode,
+		},
+		{
+			name:        "connected adapter resolves to its own mesh",
+			args:        []string{"validate", "--adapter", "meshery-istio", "--spec", "smi"},
+			wantMesh:    "ISTIO",
+			wantAdapter: "meshery-istio:10000",
+		},
+		{
+			name:        "mesh name agreeing with the adapter is accepted",
+			args:        []string{"validate", "istio", "--adapter", "meshery-istio", "--spec", "smi"},
+			wantMesh:    "ISTIO",
+			wantAdapter: "meshery-istio:10000",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			httpmock.Reset()
+			httpmock.RegisterResponder(http.MethodGet, testContext.BaseURL+"/api/system/sync",
+				httpmock.NewStringResponder(200, utils.NewGoldenFile(t, "sync.adapters.golden", fixturesDir).Load()))
+
+			// capture what actually goes over the wire as the adapter to operate on
+			var sentAdapter string
+			httpmock.RegisterResponder(http.MethodPost, testContext.BaseURL+"/api/system/adapter/operation",
+				func(req *http.Request) (*http.Response, error) {
+					if err := req.ParseForm(); err != nil {
+						return nil, err
+					}
+					sentAdapter = req.PostFormValue("adapter")
+					return httpmock.NewStringResponse(200, ""), nil
+				})
+
+			// AdapterCmd and the vars its flags bind to are package-level
+			// singletons; meshName is not flag-bound, so it would otherwise
+			// survive from one invocation to the next
+			meshName = ""
+			adapterURL = ""
+			watch = false
+			utils.TokenFlag = filepath.Join(fixturesDir, "token.golden")
+			buff := utils.SetupMeshkitLoggerTesting(t, false)
+
+			AdapterCmd.SetArgs(tt.args)
+			AdapterCmd.SetOut(buff)
+			err := AdapterCmd.Execute()
+
+			if tt.wantErrCode != "" {
+				if err == nil {
+					t.Fatalf("expected %s, got no error (adapter sent: %q)", tt.wantErrCode, sentAdapter)
+				}
+				if got := errors.GetCode(err); got != tt.wantErrCode {
+					t.Fatalf("error code = %q, want %q (err: %v)", got, tt.wantErrCode, err)
+				}
+				if sentAdapter != "" {
+					t.Errorf("rejected run still sent an operation for adapter %q", sentAdapter)
+				}
+				return
+			}
+
+			if err != nil {
+				t.Fatal(err)
+			}
+			if meshName != tt.wantMesh {
+				t.Errorf("meshName = %q, want %q", meshName, tt.wantMesh)
+			}
+			if sentAdapter != tt.wantAdapter {
+				t.Errorf("adapter sent = %q, want %q", sentAdapter, tt.wantAdapter)
 			}
 		})
 	}
