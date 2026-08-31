@@ -100,10 +100,19 @@ kubectl -n boutique-app create secret generic postgres-orders \
 # and without it Image Updater cannot read tags from GHCR — the CD half of the
 # pipeline then does nothing, without failing loudly. Needs a PAT with
 # `read:packages`, and must be a `kubernetes.io/dockerconfigjson` secret.
-kubectl -n argocd create secret docker-registry ghcr-creds \
-  --docker-server=ghcr.io \
-  --docker-username='<github-username>' \
-  --docker-password="$(< ./ghcr-pat.txt)"
+# `create secret docker-registry` cannot read the password from a file, and
+# `--docker-password="$(< file)"` is expanded by the shell before kubectl starts,
+# so the token would land in argv. Log in against a throwaway DOCKER_CONFIG
+# instead and build the Secret from the config file it writes. The temporary
+# config also keeps other registries' credentials, and any credsStore
+# indirection, out of the Secret.
+export DOCKER_CONFIG="$(mktemp -d)"
+docker login ghcr.io --username '<github-username>' --password-stdin < ./ghcr-pat.txt
+kubectl -n argocd create secret generic ghcr-creds \
+  --type=kubernetes.io/dockerconfigjson \
+  --from-file=.dockerconfigjson="$DOCKER_CONFIG/config.json"
+docker logout ghcr.io
+rm -rf "$DOCKER_CONFIG"; unset DOCKER_CONFIG
 
 shred -u ./slack-webhook.txt ./grafana-password.txt ./postgres-password.txt ./ghcr-pat.txt
 ```
@@ -119,9 +128,12 @@ shred -u ./slack-webhook.txt ./grafana-password.txt ./postgres-password.txt ./gh
   registry that carries the full `gateway.networking.k8s.io/v1` set. The
   apiVersion, kind and configuration are what get applied, so the manifests are
   correct regardless of which model supplies the icon.
-- **Model versions need not match your registry exactly.** Component lookup
-  prefers an exact `model.version` match and falls back to any version of the
-  same model, so the design keeps resolving as the registry moves on.
+- **Every `model.version` here matches the registry exactly, deliberately.**
+  `FindCompDefinitionWithVersion` breaks on an exact `model.version` match but
+  otherwise assigns `match` on each iteration, so with no exact match you get
+  whichever entity the registry returned last. That is a best-effort fallback,
+  not a stable one — it can change as the registry gains versions. Keep the
+  versions aligned when you want predictable validation and provisioning.
 - **Every annotation carries a real apiVersion**, which is why the diagram
   furniture is drawn from `meshery-shapes` and `meshery-flowchart` rather than
   `meshery-dev-icons`. The validation stage resolves *every* component —
