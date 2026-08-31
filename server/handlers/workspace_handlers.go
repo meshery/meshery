@@ -13,6 +13,17 @@ import (
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 )
 
+// validateWorkspaceID validates that workspaceID is not empty
+func (h *Handler) validateWorkspaceID(w http.ResponseWriter, workspaceID string) bool {
+	if workspaceID == "" {
+		missingInput := models.ErrWorkspaceMissingInput()
+		h.log.Error(missingInput)
+		writeMeshkitError(w, missingInput, http.StatusBadRequest)
+		return false
+	}
+	return true
+}
+
 // workspacePayloadWire is a handler-local dual-accept wrapper around
 // workspace.WorkspacePayload (now v1beta3, canonical-camelCase). The
 // canonical wire form emits `organizationId`; the legacy `organization_id`
@@ -116,6 +127,9 @@ func (h *Handler) GetWorkspacesHandler(w http.ResponseWriter, req *http.Request,
 
 func (h *Handler) GetWorkspaceByIdHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(r)["id"]
+	if !h.validateWorkspaceID(w, workspaceID) {
+		return
+	}
 	q := r.URL.Query()
 	// Canonical form is `orgId`; `orgID` is dual-accepted during the Phase 2
 	// deprecation window. Retire once Phase 3 consumer migration completes.
@@ -259,6 +273,9 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 
 func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
+	if !h.validateWorkspaceID(w, workspaceID) {
+		return
+	}
 	q := req.URL.Query()
 	resp, err := provider.GetEnvironmentsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
@@ -276,6 +293,9 @@ func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *
 
 func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
+	if !h.validateWorkspaceID(w, workspaceID) {
+		return
+	}
 	q := req.URL.Query()
 	resp, err := provider.GetDesignsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), q["visibility"])
 	if err != nil {
@@ -293,6 +313,9 @@ func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.
 
 func (h *Handler) AddEnvironmentToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
+	if !h.validateWorkspaceID(w, workspaceID) {
+		return
+	}
 	environmentID := mux.Vars(req)["environmentID"]
 	resp, err := provider.AddEnvironmentToWorkspace(req, workspaceID, environmentID)
 	if err != nil {
@@ -309,6 +332,9 @@ func (h *Handler) AddEnvironmentToWorkspaceHandler(w http.ResponseWriter, req *h
 
 func (h *Handler) RemoveEnvironmentFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
+	if !h.validateWorkspaceID(w, workspaceID) {
+		return
+	}
 	environmentID := mux.Vars(req)["environmentID"]
 	resp, err := provider.RemoveEnvironmentFromWorkspace(req, workspaceID, environmentID)
 	if err != nil {
@@ -325,6 +351,9 @@ func (h *Handler) RemoveEnvironmentFromWorkspaceHandler(w http.ResponseWriter, r
 
 func (h *Handler) AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
+	if !h.validateWorkspaceID(w, workspaceID) {
+		return
+	}
 	designID := mux.Vars(req)["designID"]
 	resp, err := provider.AddDesignToWorkspace(req, workspaceID, designID)
 	if err != nil {
@@ -341,6 +370,9 @@ func (h *Handler) AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.R
 
 func (h *Handler) RemoveDesignFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
+	if !h.validateWorkspaceID(w, workspaceID) {
+		return
+	}
 	designID := mux.Vars(req)["designID"]
 	resp, err := provider.RemoveDesignFromWorkspace(req, workspaceID, designID)
 	if err != nil {
@@ -357,6 +389,9 @@ func (h *Handler) RemoveDesignFromWorkspaceHandler(w http.ResponseWriter, req *h
 
 func (h *Handler) GetViewsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
+	if !h.validateWorkspaceID(w, workspaceID) {
+		return
+	}
 	q := req.URL.Query()
 	resp, err := provider.GetViewsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
@@ -373,6 +408,9 @@ func (h *Handler) GetViewsOfWorkspaceHandler(w http.ResponseWriter, req *http.Re
 
 func (h *Handler) AddViewToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
+	if !h.validateWorkspaceID(w, workspaceID) {
+		return
+	}
 	viewID := mux.Vars(req)["viewID"]
 	resp, err := provider.AddViewToWorkspace(req, workspaceID, viewID)
 	if err != nil {
@@ -389,6 +427,9 @@ func (h *Handler) AddViewToWorkspaceHandler(w http.ResponseWriter, req *http.Req
 
 func (h *Handler) RemoveViewFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
+	if !h.validateWorkspaceID(w, workspaceID) {
+		return
+	}
 	viewID := mux.Vars(req)["viewID"]
 	resp, err := provider.RemoveViewFromWorkspace(req, workspaceID, viewID)
 	if err != nil {
@@ -405,6 +446,9 @@ func (h *Handler) RemoveViewFromWorkspaceHandler(w http.ResponseWriter, req *htt
 
 func (h *Handler) GetTeamsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
+	if !h.validateWorkspaceID(w, workspaceID) {
+		return
+	}
 	q := req.URL.Query()
 	resp, err := provider.GetTeamsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
@@ -421,6 +465,9 @@ func (h *Handler) GetTeamsOfWorkspaceHandler(w http.ResponseWriter, req *http.Re
 
 func (h *Handler) AddTeamToWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
+	if !h.validateWorkspaceID(w, workspaceID) {
+		return
+	}
 	teamID := mux.Vars(req)["teamID"]
 	resp, err := provider.AddTeamToWorkspace(req, workspaceID, teamID)
 	if err != nil {
@@ -437,6 +484,9 @@ func (h *Handler) AddTeamToWorkspaceHandler(w http.ResponseWriter, req *http.Req
 
 func (h *Handler) RemoveTeamFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
+	if !h.validateWorkspaceID(w, workspaceID) {
+		return
+	}
 	teamID := mux.Vars(req)["teamID"]
 	resp, err := provider.RemoveTeamFromWorkspace(req, workspaceID, teamID)
 	if err != nil {
