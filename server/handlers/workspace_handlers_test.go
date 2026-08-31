@@ -458,7 +458,7 @@ func TestGetWorkspaceByIdHandler_ReturnsErrorOnMissingWorkspaceID(t *testing.T) 
 	if rec.Code != http.StatusBadRequest {
 		t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusBadRequest, rec.Body.String())
 	}
-	if !provider.called {
+	if provider.called {
 		t.Errorf("provider should not be called when workspaceID is empty")
 	}
 }

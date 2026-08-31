@@ -198,10 +198,7 @@ func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request,
 
 func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(r)["id"]
-	if workspaceID == "" {
-		missingInput := models.ErrWorkspaceMissingInput()
-		h.log.Error(missingInput)
-		writeMeshkitError(w, missingInput, http.StatusBadRequest)
+	if !h.validateWorkspaceID(w, workspaceID) {
 		return
 	}
 	resp, err := provider.DeleteWorkspace(r, workspaceID)
@@ -220,10 +217,7 @@ func (h *Handler) DeleteWorkspaceHandler(w http.ResponseWriter, r *http.Request,
 
 func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
-	if workspaceID == "" {
-		missingInput := models.ErrWorkspaceMissingInput()
-		h.log.Error(missingInput)
-		writeMeshkitError(w, missingInput, http.StatusBadRequest)
+	if !h.validateWorkspaceID(w, workspaceID) {
 		return
 	}
 	bd, err := io.ReadAll(req.Body)
