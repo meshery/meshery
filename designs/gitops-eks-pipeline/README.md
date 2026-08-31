@@ -150,15 +150,20 @@ kubectl -n boutique-app create secret generic postgres-orders \
 # neither the token nor the config it lives in survives an interrupted setup.
 (
   set -e
+  # Arm cleanup before anything exists, so a failure during setup still removes
+  # the PAT file. The trap targets its own variable, initialised empty, so it
+  # can never delete a DOCKER_CONFIG the caller had already exported.
+  ghcr_tmp=""
+  trap 'rm -rf "$ghcr_tmp"; rm -f ./ghcr-pat.txt' EXIT
   # A bare `mktemp -d` is GNU-only; BSD/macOS mktemp requires a template.
   # Assign first and export separately: `export VAR="$(cmd)"` takes its exit
   # status from the export builtin, so `set -e` would not fire if mktemp failed
   # — DOCKER_CONFIG would be empty, docker would fall back to the real
   # ~/.docker/config.json, and the PAT would be written there for good.
-  DOCKER_CONFIG="$(mktemp -d "${TMPDIR:-/tmp}/ghcr-creds.XXXXXX")"
-  [ -n "$DOCKER_CONFIG" ] && [ -d "$DOCKER_CONFIG" ] || exit 1
+  ghcr_tmp="$(mktemp -d "${TMPDIR:-/tmp}/ghcr-creds.XXXXXX")"
+  [ -n "$ghcr_tmp" ] && [ -d "$ghcr_tmp" ] || exit 1
+  DOCKER_CONFIG="$ghcr_tmp"
   export DOCKER_CONFIG
-  trap 'rm -rf "$DOCKER_CONFIG"; rm -f ./ghcr-pat.txt' EXIT
   docker login ghcr.io --username '<github-username>' --password-stdin < ./ghcr-pat.txt
   kubectl -n argocd create secret generic ghcr-creds \
     --type=kubernetes.io/dockerconfigjson \
