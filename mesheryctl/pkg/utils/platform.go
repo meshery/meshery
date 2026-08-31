@@ -118,7 +118,14 @@ func GetManifestTreeURL(version string) (string, error) {
 	if err != nil {
 		return "", errors.Wrap(err, "failed to read response body")
 	}
-
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf(
+			"unexpected status %d from %s: %s",
+			resp.StatusCode,
+			url,
+			string(body),
+		)
+	}
 	var manLis ManifestList
 
 	err = json.Unmarshal([]byte(body), &manLis)
@@ -144,6 +151,14 @@ func ListManifests(url string) ([]Manifest, error) {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to read response body")
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf(
+			"unexpected status %d from %s: %s",
+			resp.StatusCode,
+			url,
+			string(body),
+		)
 	}
 
 	var manLis ManifestList

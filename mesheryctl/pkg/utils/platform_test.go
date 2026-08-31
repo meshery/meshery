@@ -15,6 +15,8 @@
 package utils
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"testing"
 )
 
@@ -29,4 +31,16 @@ func TestListManifests(t *testing.T) {
 			t.Errorf("ListManifests failed: %v", err)
 		}
 	})
+}
+func TestListManifestsHTTPError(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "server error", http.StatusInternalServerError)
+	}))
+	defer server.Close()
+
+	_, err := ListManifests(server.URL)
+
+	if err == nil {
+		t.Fatal("expected error for non-200 HTTP status")
+	}
 }
