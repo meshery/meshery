@@ -37,8 +37,38 @@ two remain annotations, because Terraform state is not a cluster resource.
 The AWS layer is *also* modelled as ACK custom resources, so the design can
 provision it from inside a management cluster if you would rather not run
 Terraform. **Pick one.** If your VPC and cluster already exist, deploy only the
-in-cluster components and leave the `ack-system` namespace out — nothing else in
-the design depends on those resources at apply time.
+in-cluster components and leave the `ack-system` namespace out.
+
+That split is clean for networking, but **not for identity**. Dropping
+`ack-system` also drops the one IAM role the design creates, and several
+workloads carry a `role-arn` annotation regardless of which path you take.
+Kubernetes will happily create a ServiceAccount whose annotation points at a
+role that does not exist — nothing fails at apply time, and the workload then
+cannot reach AWS at runtime. Read the next section before you deploy either
+way.
+
+### Identity is mostly a prerequisite, not part of the design
+
+The design references six IAM roles and creates exactly one. This is
+deliberate — a role's trust policy is specific to your account and cluster OIDC
+provider, so the design cannot supply a working one — but it means the other
+five must exist before the workloads that name them will function:
+
+| Role | Named by | Supplied by |
+|---|---|---|
+| `external-dns-irsa` | `external-dns` ServiceAccount | the design, in `ack-system` |
+| `aws-load-balancer-controller-irsa` | `aws-load-balancer-controller` ServiceAccount | **you** |
+| `argocd-image-updater-irsa` | `argocd-image-updater` ServiceAccount | **you** |
+| `boutique-app-pod-identity` | the `PodIdentityAssociation` | **you** |
+| `eks-cluster-role` | the EKS `Cluster` | **you**, before the cluster |
+| `eks-node-role` | the `Nodegroup` | **you**, before the node group |
+
+`external-dns-irsa` shows the shape to copy: an `iam.services.k8s.aws` `Role`
+with a web-identity trust policy naming your OIDC provider and the
+`system:serviceaccount:<ns>:<name>` subject, plus a least-privilege inline
+policy. The cluster and node roles are the standard EKS service roles and have
+to exist before the resources that reference them, so they are outside what
+this design can bootstrap.
 
 ## Before you deploy
 
@@ -108,12 +138,15 @@ kubectl -n boutique-app create secret generic postgres-orders \
 # config also keeps other registries' credentials, and any credsStore
 # indirection, out of the Secret.
 export DOCKER_CONFIG="$(mktemp -d)"
+# Arm the cleanup before the token is written anywhere. Without this, a failed
+# docker login or kubectl call aborts the script and leaves both the PAT file
+# and a docker config containing the token on disk.
+trap 'rm -rf "$DOCKER_CONFIG"; rm -f ./ghcr-pat.txt' EXIT INT TERM
 docker login ghcr.io --username '<github-username>' --password-stdin < ./ghcr-pat.txt
 kubectl -n argocd create secret generic ghcr-creds \
   --type=kubernetes.io/dockerconfigjson \
   --from-file=.dockerconfigjson="$DOCKER_CONFIG/config.json"
 docker logout ghcr.io
-rm -rf "$DOCKER_CONFIG"; unset DOCKER_CONFIG
 
 # Remove the credential files. shred is GNU coreutils and is absent on macOS,
 # where this would otherwise fail and quietly leave the files behind. Note that
