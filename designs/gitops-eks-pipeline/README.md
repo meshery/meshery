@@ -67,15 +67,36 @@ here resolves to a real account:
 - `ami-0c02fb55956c7d316` on the bastion (region-specific)
 - `bastion-sg` allows SSH from `10.0.0.0/16`; narrow it to your own range
 
-Three Secrets are referenced but deliberately not included — create them
-yourself rather than committing them:
+Four Secrets are referenced but deliberately not included — create them
+yourself rather than committing them. Put each value in a file first: a
+`--from-literal` secret lands in your shell history and is briefly visible in
+`ps` while the command runs.
 
 ```bash
+# Slack webhook for the slack-alerts AlertmanagerConfig
 kubectl -n monitoring create secret generic alertmanager-slack \
-  --from-literal=webhook-url='https://hooks.slack.com/services/...'
-kubectl -n monitoring create secret generic grafana-admin --from-literal=password='...'
+  --from-file=webhook-url=./slack-webhook.txt
+
+# Grafana admin password
+kubectl -n monitoring create secret generic grafana-admin \
+  --from-file=password=./grafana-password.txt
+
+# postgres-orders credentials (the username is not sensitive)
 kubectl -n boutique-app create secret generic postgres-orders \
-  --from-literal=username=orders --from-literal=password='...'
+  --from-literal=username=orders \
+  --from-file=password=./postgres-password.txt
+
+# GHCR credentials for Argo CD Image Updater. Required: the Application's
+# `app.pull-secret: pullsecret:argocd/ghcr-creds` annotation resolves to this,
+# and without it Image Updater cannot read tags from GHCR — the CD half of the
+# pipeline then does nothing, without failing loudly. Needs a PAT with
+# `read:packages`, and must be a `kubernetes.io/dockerconfigjson` secret.
+kubectl -n argocd create secret docker-registry ghcr-creds \
+  --docker-server=ghcr.io \
+  --docker-username='<github-username>' \
+  --docker-password="$(< ./ghcr-pat.txt)"
+
+shred -u ./slack-webhook.txt ./grafana-password.txt ./postgres-password.txt ./ghcr-pat.txt
 ```
 
 ## Notes on the modelling
