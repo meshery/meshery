@@ -15,8 +15,10 @@ Configure and switch between different named Meshery server and component versio
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context [command] [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +27,10 @@ mesheryctl system context [command] [flags]
 Base command
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context
 
+</div>
 </div>
 </pre> 
 

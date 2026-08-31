@@ -7,15 +7,17 @@ subcommand: provider
 
 # mesheryctl system provider set
 
-set provider
+Set provider
 
 ## Synopsis
 
 Set provider of context in focus. Run `mesheryctl system provider list` to see the available providers.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system provider set [provider] [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,8 +26,10 @@ mesheryctl system provider set [provider] [flags]
 Set provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system provider set [provider]
 
+</div>
 </div>
 </pre> 
 
