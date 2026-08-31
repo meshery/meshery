@@ -42,11 +42,11 @@ var viewCmd = &cobra.Command{
 // View relationships of a model in default format yaml
 mesheryctl relationship view [model-name]
 
-// View relationships of a model in JSON format
-mesheryctl relationship view [model-name] --output-format json
+// View relationships of a model in JSON, YAML, or TOON format
+mesheryctl relationship view [model-name] --output-format [json|yaml|toon]
 
-// View relationships of a model in json format and save it to a file
-mesheryctl relationship view [model-name] --output-format json --save
+// View relationships of a model in a specific format and save it to a file
+mesheryctl relationship view [model-name] --output-format [json|yaml|toon] --save
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
@@ -130,6 +130,6 @@ func formatLabel(rows []relationship.RelationshipDefinition) []string {
 }
 
 func init() {
-	viewCmd.Flags().StringVarP(&relationshipViewFlagsProvided.outputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	viewCmd.Flags().BoolVarP(&relationshipViewFlagsProvided.save, "save", "s", false, "(optional) save output as a JSON/YAML file")
+	viewCmd.Flags().StringVarP(&relationshipViewFlagsProvided.outputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml|toon]")
+	viewCmd.Flags().BoolVarP(&relationshipViewFlagsProvided.save, "save", "s", false, "(optional) save output as a JSON/YAML/TOON file")
 }

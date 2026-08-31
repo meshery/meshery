@@ -29,7 +29,7 @@ func ErrEncodingData(err error, encoder string) error {
 }
 
 func ErrUnsupportedFormat(format string) error {
-	return errors.New(ErrUnsupportedFormatCode, errors.Alert, []string{fmt.Sprintf("The output format '%s' is not supported. ", format)}, []string{fmt.Sprintf("Output format '%s' is not supported. ", format)}, []string{"An unsupported output format was requested. "}, []string{"Specify a supported output format. Choices are 'json' or 'yaml'."})
+	return errors.New(ErrUnsupportedFormatCode, errors.Alert, []string{fmt.Sprintf("The output format '%s' is not supported. ", format)}, []string{fmt.Sprintf("Output format '%s' is not supported. ", format)}, []string{"An unsupported output format was requested. "}, []string{"Specify a supported output format. Choices are 'json', 'yaml', or 'toon'."})
 }
 
 func ErrOutputFileNotSpecified() error {

@@ -90,9 +90,9 @@ func ErrNoProfileFound() error {
 func ErrInvalidOutputChoice() error {
 	return errors.New(ErrInvalidOutputChoiceCode, errors.Alert,
 		[]string{"Invalid output format choice"},
-		[]string{"Output format choice is invalid, use [json|yaml]"},
-		[]string{"Invalid JSON or YAML content"},
-		[]string{"Check the JSON or YAML structure.", formatErrorWithReference()})
+		[]string{"Output format choice is invalid, use [json|yaml|toon]"},
+		[]string{"Invalid JSON, YAML, or TOON content"},
+		[]string{"Check the JSON, YAML, or TOON structure.", formatErrorWithReference()})
 }
 
 func ErrFailUnmarshalFile(err error) error {

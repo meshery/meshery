@@ -15,7 +15,7 @@ import (
 )
 
 type cmdModelViewFlags struct {
-	OutputFormat string `json:"output-format" validate:"oneof=json yaml"`
+	OutputFormat string `json:"output-format" validate:"oneof=json yaml toon"`
 	Save         bool   `json:"save" validate:"boolean"`
 }
 
@@ -31,10 +31,10 @@ Find more information at: https://docs.meshery.io/reference/references/mesheryct
 mesheryctl model view [model-name]
 
 // View a specific model in specified format
-mesheryctl model view [model-name] --output-format [json|yaml]
+mesheryctl model view [model-name] --output-format [json|yaml|toon]
 
 // View a specific model in specified format and save it as a file
-mesheryctl model view [model-name] --output-format [json|yaml] --save
+mesheryctl model view [model-name] --output-format [json|yaml|toon] --save
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &modelViewFlags)
@@ -114,6 +114,6 @@ func getModelViewUrlPath(modelNameOrId string) string {
 }
 
 func init() {
-	viewModelCmd.Flags().StringVarP(&modelViewFlags.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	viewModelCmd.Flags().BoolVarP(&modelViewFlags.Save, "save", "s", false, "(optional) save output as a JSON/YAML file")
+	viewModelCmd.Flags().StringVarP(&modelViewFlags.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml|toon]")
+	viewModelCmd.Flags().BoolVarP(&modelViewFlags.Save, "save", "s", false, "(optional) save output as a JSON/YAML/TOON file")
 }

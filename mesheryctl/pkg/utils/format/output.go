@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/toon-format/toon-go"
 	"gopkg.in/yaml.v2"
 )
 
@@ -43,6 +44,19 @@ func OutputYaml(component interface{}) error {
 		return ErrOutputToYaml()
 	}
 	// Print the YAML output to standard output.
+	fmt.Print(string(output))
+	return nil
+}
+
+// OutputToon takes a component struct as input, marshals it into a nicely formatted TOON representation,
+// and prints it to standard output.
+func OutputToon(component interface{}) error {
+	// Marshal the component struct into TOON format.
+	output, err := toon.Marshal(component)
+	if err != nil {
+		return ErrOutputToToon()
+	}
+	// Print the TOON output to standard output.
 	fmt.Print(string(output))
 	return nil
 }

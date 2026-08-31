@@ -35,7 +35,7 @@ import (
 
 type filterViewFlags struct {
 	ViewAllFlag  bool   `json:"all" validate:"boolean"`
-	OutputFormat string `json:"output-format" validate:"required,oneof=json yaml"`
+	OutputFormat string `json:"output-format" validate:"required,oneof=json yaml toon"`
 	Save         bool   `json:"save" validate:"boolean"`
 }
 
@@ -54,11 +54,11 @@ mesheryctl filter view "[filter-name | ID]"
 // View all filter files
 mesheryctl filter view --all
 
-// View all filter files in json
-mesheryctl filter view --all --output-format json
+// View all filter files in a specific format
+mesheryctl filter view --all --output-format [json|yaml|toon]
 
-// View all filter files in json and save it to a file
-mesheryctl filter view --all --output-format json -s
+// View all filter files in a specific format and save it to a file
+mesheryctl filter view --all --output-format [json|yaml|toon] -s
 
 //View multi-word named filter files. Multi-word filter names should be enclosed in quotes
 mesheryctl filter view "filter name"
@@ -196,6 +196,6 @@ func saveToFile(
 
 func init() {
 	viewCmd.Flags().BoolVarP(&filterViewFlagsProvided.ViewAllFlag, "all", "a", false, "(optional) view all filters available")
-	viewCmd.Flags().StringVarP(&filterViewFlagsProvided.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	viewCmd.Flags().BoolVarP(&filterViewFlagsProvided.Save, "save", "s", false, "(optional) save output as a JSON/YAML file")
+	viewCmd.Flags().StringVarP(&filterViewFlagsProvided.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml|toon]")
+	viewCmd.Flags().BoolVarP(&filterViewFlagsProvided.Save, "save", "s", false, "(optional) save output as a JSON/YAML/TOON file")
 }

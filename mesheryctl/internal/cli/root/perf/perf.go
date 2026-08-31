@@ -46,9 +46,10 @@ mesheryctl perf profile sam-test
 // List performance results:
 mesheryctl perf result sam-test
 
-// Display Perf profile in JSON or YAML:
+// Display Perf profile in JSON, YAML, or TOON:
 mesheryctl perf result -o json
 mesheryctl perf result -o yaml
+mesheryctl perf result -o toon
 `,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -70,7 +71,7 @@ mesheryctl perf result -o yaml
 
 func init() {
 	PerfCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "(required) Path to meshery auth config")
-	PerfCmd.PersistentFlags().StringVarP(&outputFormatFlag, "output-format", "o", "", "(optional) format to display in [json|yaml]")
+	PerfCmd.PersistentFlags().StringVarP(&outputFormatFlag, "output-format", "o", "", "(optional) format to display in [json|yaml|toon]")
 	PerfCmd.PersistentFlags().BoolVarP(&utils.SilentFlag, "yes", "y", false, "(optional) assume yes for user interactive prompts.")
 
 	availableSubcommands = []*cobra.Command{profileCmd, resultCmd, applyCmd}

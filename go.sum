@@ -917,6 +917,8 @@ github.com/tonistiigi/units v0.0.0-20180711220420-6950e57a87ea h1:SXhTLE6pb6eld/
 github.com/tonistiigi/units v0.0.0-20180711220420-6950e57a87ea/go.mod h1:WPnis/6cRcDZSUvVmezrxJPkiO87ThFYsoUiMwWNDJk=
 github.com/tonistiigi/vt100 v0.0.0-20240514184818-90bafcd6abab h1:H6aJ0yKQ0gF49Qb2z5hI1UHxSQt4JMyxebFR15KnApw=
 github.com/tonistiigi/vt100 v0.0.0-20240514184818-90bafcd6abab/go.mod h1:ulncasL3N9uLrVann0m+CDlJKWsIAP34MPcOJF6VRvc=
+github.com/toon-format/toon-go v0.0.0-20251202084852-7ca0e27c4e8c h1:D8lDFovBMZywze1eh9iwMLcYor5f11mHBocLhO7cBe8=
+github.com/toon-format/toon-go v0.0.0-20251202084852-7ca0e27c4e8c/go.mod h1:j/BOnpF2ihnz4lELs99h9mwGJBx/zdleOUCnLLRPCsc=
 github.com/valyala/fastjson v1.6.5 h1:LLabX0wszE1JDH9+IxLK6b+tb4B7gNdTEFTRasd0Ejw=
 github.com/valyala/fastjson v1.6.5/go.mod h1:CLCAqky6SMuOcxStkYQvblddUtoRxhYMGLrsQns1aXY=
 github.com/vbatts/tar-split v0.12.2 h1:w/Y6tjxpeiFMR47yzZPlPj/FcPLpXbTUi/9H7d3CPa4=

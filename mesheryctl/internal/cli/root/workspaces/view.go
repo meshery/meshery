@@ -15,7 +15,7 @@ import (
 )
 
 type workspaceViewFlags struct {
-	OutputFormat string `json:"output-format" validate:"required,oneof=json yaml"`
+	OutputFormat string `json:"output-format" validate:"required,oneof=json yaml toon"`
 	Save         bool   `json:"save" validate:"boolean"`
 	OrgID        string `json:"orgId" validate:"required,uuid"`
 }
@@ -42,11 +42,11 @@ mesheryctl workspace view [workspace-id] --orgId [orgId]
 // View details of a specific workspace by name
 mesheryctl workspace view [workspace-name] --orgId [orgId]
 
-// View details of a specific workspace in JSON format
-mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json
+// View details of a specific workspace in a specific format
+mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format [json|yaml|toon]
 
-// View details of a specific workspace and save it to a file
-mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --save
+// View details of a specific workspace in a specific format and save it to a file
+mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format [json|yaml|toon] --save
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &workspaceViewFlagsProvided)
@@ -147,7 +147,7 @@ mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --
 }
 
 func init() {
-	viewWorkspaceCmd.Flags().StringVarP(&workspaceViewFlagsProvided.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	viewWorkspaceCmd.Flags().BoolVarP(&workspaceViewFlagsProvided.Save, "save", "s", false, "(optional) save output as a JSON/YAML file")
+	viewWorkspaceCmd.Flags().StringVarP(&workspaceViewFlagsProvided.OutputFormat, "output-format", "o", "yaml", "(optional) format to display in [json|yaml|toon]")
+	viewWorkspaceCmd.Flags().BoolVarP(&workspaceViewFlagsProvided.Save, "save", "s", false, "(optional) save output as a JSON/YAML/TOON file")
 	viewWorkspaceCmd.Flags().StringVarP(&workspaceViewFlagsProvided.OrgID, "orgId", "", "", "(required) organization ID")
 }
