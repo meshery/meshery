@@ -80,7 +80,9 @@
             "patch": {
               "mutatedRef": [
                 [
-                  "displayName"
+                  "configuration",
+                  "status",
+                  "endpoint"
                 ]
               ],
               "patchStrategy": "replace"

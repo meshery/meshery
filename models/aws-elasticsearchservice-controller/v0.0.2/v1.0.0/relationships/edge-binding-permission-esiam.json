@@ -30,37 +30,6 @@
         "from": [
           {
             "id": null,
-            "kind": "Role",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "model": {
-                "version": ""
-              },
-              "name": "aws-iam-controller",
-              "registrant": {
-                "kind": "github"
-              },
-              "version": ""
-            },
-            "patch": {
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "status",
-                  "ackResourceMetadata",
-                  "arn"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
-          }
-        ],
-        "to": [
-          {
-            "id": null,
             "kind": "ElasticsearchDomain",
             "match": {},
             "match_strategy_matrix": null,
@@ -77,12 +46,43 @@
               "version": ""
             },
             "patch": {
-              "mutatedRef": [
+              "mutatorRef": [
                 [
                   "configuration",
                   "spec",
                   "cognitoOptions",
                   "roleARN"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Role",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-iam-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "status",
+                  "ackResourceMetadata",
+                  "arn"
                 ]
               ],
               "patchStrategy": "replace"
