@@ -313,11 +313,12 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		token, _ := ctx.Value(models.TokenCtxKey).(string)
 		connection, statusCode, err := sm.Provider.GetConnectionByID(token, sm.ID)
 
-		// Prometheus/grafana verify on register but only insert the row on connect
-		// (DefaultConnectAction). A 404 here means not-yet-persisted — skip the
-		// status write rather than aborting a successful register. Other get
-		// failures still surface.
-		if connectionMissing(statusCode) {
+		// Prometheus/grafana verify on register but only insert the row on
+		// connect (DefaultConnectAction). A 404 after Register means
+		// not-yet-persisted — skip the status write rather than aborting a
+		// successful probe. A 404 after any other event (connect, disconnect,
+		// …) is a missing persisted row and must still fail.
+		if connectionMissing(statusCode) && originalEventType == Register {
 			sm.Log.Debugf("%s: connection %s not yet persisted after %q; skipping status update", sm.Name, sm.ID, originalEventType)
 		} else if err != nil {
 			return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
@@ -399,7 +400,8 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 
 // connectionMissing is true when GetConnectionByID reported no row (HTTP 404).
 // Local and remote providers both use StatusNotFound for that case; the status
-// code is the contract (do not string-match error text).
+// code is the contract (do not string-match error text). Callers must still
+// restrict the skip to Register; a 404 after persist is a real error.
 func connectionMissing(statusCode int) bool {
 	return statusCode == http.StatusNotFound
 }

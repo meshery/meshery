@@ -608,6 +608,32 @@ func TestSendEvent_StatusUpdateFailsOnProviderError(t *testing.T) {
 	}
 }
 
+// TestSendEvent_MissingConnectionOnConnectFails is the other boundary of the
+// register-only 404 skip: connect is when DefaultConnectAction inserts the row.
+// A 404 there means the persisted connection is gone, not "not yet inserted",
+// so SendEvent must fail and must not skip the status write.
+func TestSendEvent_MissingConnectionOnConnectFails(t *testing.T) {
+	provider := &fakeProvider{missingConnection: true}
+	sm := newRegisterTestMachine(t, provider, "prometheus")
+	sm.CurrentState = REGISTERED
+	sm.States[CONNECTED] = State{
+		Events: Events{},
+		Action: &stubAction{execNext: NoOp},
+	}
+	ctx := newTestContext(t)
+
+	event, err := sm.SendEvent(ctx, Connect, nil)
+	if err == nil {
+		t.Fatal("expected connect to fail when GetConnectionByID returns 404, got nil")
+	}
+	if event == nil {
+		t.Fatal("expected an error event when the persisted connection is missing, got nil")
+	}
+	if provider.updateCalls != 0 {
+		t.Fatalf("expected no status write after a missing-row 404 on connect, got %d UpdateConnectionById call(s)", provider.updateCalls)
+	}
+}
+
 // TestSendEvent_ExitActionFailureHaltsWithoutTransition covers the sibling of
 // the #20818 bypass: an exit action failing aborts the transition before the
 // machine advances, so like a NoOp halt it must route through the de-dup rather
