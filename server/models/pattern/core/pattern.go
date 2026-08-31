@@ -124,8 +124,7 @@ func isSpecialKey(k string) bool {
 	return false
 }
 
-// Format is passed to the deprecated Prettify and DePrettify methods; both currently
-// return their input unchanged. In case of any breaking change or bug caused by this,
+// In case of any breaking change or bug caused by this,
 // set this to false and the whitespace addition in schema generated/consumed would be
 // removed (will go back to default behavior).
 const Format prettifier = true
