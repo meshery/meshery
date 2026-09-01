@@ -151,14 +151,18 @@ jobs:
 
       - name: Wait for Meshery Server
         run: |
-          for i in $(seq 1 60); do
-            if curl -sf http://localhost:9081/api/system/version >/dev/null; then
-              echo "Meshery server ready after ${i}s"
+          probe_url="http://localhost:9081/api/system/version"
+          timeout_seconds=60
+          start_time=$(date +%s)
+          deadline=$((start_time + timeout_seconds))
+          while [ $(date +%s) -lt $deadline ]; do
+            if curl -sf --connect-timeout 2 --max-time 2 "$probe_url" >/dev/null; then
+              echo "Meshery server ready after $(($(date +%s) - start_time))s"
               exit 0
             fi
             sleep 1
           done
-          echo "::error::Meshery server did not become ready on :9081 within 60s"
+          echo "::error::Meshery server did not become ready at ${probe_url} within ${timeout_seconds}s"
           docker logs meshery || true
           exit 1
 
