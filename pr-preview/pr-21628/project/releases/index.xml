@@ -30726,7 +30726,7 @@ emove border radius from all of the buttons\ @amitamrutiya (#13874)&lt;/li&gt;
 &lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;[RJSF] Add title and some styling changes to rjsf components @Abhishek-kumar09 (#4840)&lt;/li&gt;
-&lt;li&gt;fix : Update update handler function to change the order of arguements @sudo-NithishKarthik (#4832)&lt;/li&gt;
+&lt;li&gt;fix : Update update handler function to change the order of arguments @sudo-NithishKarthik (#4832)&lt;/li&gt;
 &lt;li&gt;[ Visualizer ] restructuring to visualizer terminal | CU-1wn5nzk | CU-1c5dt1 @manav1403 (#4829)&lt;/li&gt;
 &lt;li&gt;added Meshsync status to tooltip @warunicorn19 (#4827)&lt;/li&gt;
 &lt;li&gt;Add meshsync status logo in header @Prakhar-Agarwal-byte (#4785)&lt;/li&gt;
