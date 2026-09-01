@@ -23,11 +23,32 @@
     },
     "version": ""
   },
-  "schemaVersion": "relationships.meshery.io/v1beta2",
+  "schemaVersion": "relationships.meshery.io/v1beta1",
   "selectors": [
     {
       "allow": {
         "from": [
+          {
+            "id": null,
+            "kind": "Subnet",
+            "match": {},
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {},
+              "name": "aws-ec2-controller"
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "displayName"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
           {
             "id": null,
             "kind": "DBInstance",
@@ -46,27 +67,6 @@
                   "subnetRef",
                   "from",
                   "name"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "Subnet",
-            "match": {},
-            "model": {
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "model": {},
-              "name": "aws-ec2-controller"
-            },
-            "patch": {
-              "mutatorRef": [
-                [
-                  "displayName"
                 ]
               ],
               "patchStrategy": "replace"
