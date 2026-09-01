@@ -50,26 +50,17 @@ export const isCreateConnectionQuery = (value: string | string[] | undefined): b
 export type ConnectionCreatedNotifyPayload = {
   message: string;
   event_type: typeof EVENT_TYPES.SUCCESS | typeof EVENT_TYPES.WARNING;
-  link?: { href: string; label: string };
 };
 
-const isOnConnectionsPage = (): boolean =>
-  typeof window !== 'undefined' && window.location.pathname.startsWith(CONNECTIONS_PATH);
-
 /**
- * Success snackbar after create/import. Plain string (BasicMarkdown-safe) plus an
- * optional same-tab action when not already on the Connections page.
+ * Success snackbar after create/import. Plain string (BasicMarkdown-safe).
  */
 export const connectionCreatedNotify = (label: string): ConnectionCreatedNotifyPayload => {
   const name = (label && String(label).trim()) || '';
   const summary = name ? `${name} connection created.` : 'Connection created.';
-  if (isOnConnectionsPage()) {
-    return { message: summary, event_type: EVENT_TYPES.SUCCESS };
-  }
   return {
     message: summary,
     event_type: EVENT_TYPES.SUCCESS,
-    link: { href: CONNECTIONS_PATH, label: 'View connections' },
   };
 };
 

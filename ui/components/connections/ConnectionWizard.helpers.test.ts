@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { CoreConnectionKinds } from '@/utils/Enum';
 import { EVENT_TYPES } from 'lib/event-types';
 import {
@@ -295,38 +295,30 @@ describe('ConnectionWizard.helpers', () => {
     expect(isCreateConnectionQuery('false')).toBe(false);
   });
 
-  it('builds connection-created notify payloads with optional View connections action', () => {
-    vi.stubGlobal('window', { location: { pathname: '/dashboard' } });
-    const payload = connectionCreatedNotify('Prometheus');
-    expect(payload.message).toBe('Prometheus connection created.');
-    expect(payload.link?.href).toBe('/management/connections');
-    vi.stubGlobal('window', { location: { pathname: '/management/connections' } });
-    expect(connectionCreatedNotify('Grafana').link).toBeUndefined();
-    vi.unstubAllGlobals();
+  it('builds connection-created notify payloads', () => {
+    expect(connectionCreatedNotify('Prometheus')).toEqual({
+      message: 'Prometheus connection created.',
+      event_type: EVENT_TYPES.SUCCESS,
+    });
+    expect(connectionCreatedNotify('')).toEqual({
+      message: 'Connection created.',
+      event_type: EVENT_TYPES.SUCCESS,
+    });
   });
 
-  it('formats kubernetes import notify summaries without duplicate link action', () => {
-    vi.stubGlobal('window', { location: { pathname: '/dashboard' } });
-
-    const singular = kubernetesImportedNotify(1);
-    expect(singular.message).toBe('Imported 1 Kubernetes connection.');
-    expect(singular.event_type).toBe(EVENT_TYPES.SUCCESS);
-    expect(singular.link).toBeUndefined();
-
-    const plural = kubernetesImportedNotify(2);
-    expect(plural.message).toBe('Imported 2 Kubernetes connections.');
-    expect(plural.event_type).toBe(EVENT_TYPES.SUCCESS);
-    expect(plural.link).toBeUndefined();
-
-    const zero = kubernetesImportedNotify(0);
-    expect(zero.message).toBe('Imported 0 Kubernetes connections.');
-    expect(zero.event_type).toBe(EVENT_TYPES.WARNING);
-    expect(zero.link).toBeUndefined();
-
-    vi.stubGlobal('window', { location: { pathname: '/management/connections' } });
-    expect(kubernetesImportedNotify(1).link).toBeUndefined();
-
-    vi.unstubAllGlobals();
+  it('formats kubernetes import notify summaries', () => {
+    expect(kubernetesImportedNotify(1)).toEqual({
+      message: 'Imported 1 Kubernetes connection.',
+      event_type: EVENT_TYPES.SUCCESS,
+    });
+    expect(kubernetesImportedNotify(2)).toEqual({
+      message: 'Imported 2 Kubernetes connections.',
+      event_type: EVENT_TYPES.SUCCESS,
+    });
+    expect(kubernetesImportedNotify(0)).toEqual({
+      message: 'Imported 0 Kubernetes connections.',
+      event_type: EVENT_TYPES.WARNING,
+    });
   });
 });
 
