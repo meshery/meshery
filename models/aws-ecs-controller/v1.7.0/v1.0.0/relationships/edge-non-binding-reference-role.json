@@ -23,7 +23,7 @@
     },
     "version": ""
   },
-  "schemaVersion": "relationships.meshery.io/v1beta2",
+  "schemaVersion": "relationships.meshery.io/v1beta1",
   "selectors": [
     {
       "allow": {
@@ -46,7 +46,7 @@
               "version": ""
             },
             "patch": {
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "spec",
@@ -78,9 +78,10 @@
               "version": ""
             },
             "patch": {
-              "mutatedRef": [
+              "mutatorRef": [
                 [
-                  "displayName"
+                  "metadata",
+                  "name"
                 ]
               ],
               "patchStrategy": "replace"
@@ -114,7 +115,7 @@
               "version": ""
             },
             "patch": {
-              "mutatorRef": [
+              "mutatedRef": [
                 [
                   "configuration",
                   "spec",
@@ -146,9 +147,10 @@
               "version": ""
             },
             "patch": {
-              "mutatedRef": [
+              "mutatorRef": [
                 [
-                  "displayName"
+                  "metadata",
+                  "name"
                 ]
               ],
               "patchStrategy": "replace"
