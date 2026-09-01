@@ -34,7 +34,8 @@ func TestListManifests(t *testing.T) {
 }
 func TestListManifestsHTTPError(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		http.Error(w, "server error", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("server error"))
 	}))
 	defer server.Close()
 
