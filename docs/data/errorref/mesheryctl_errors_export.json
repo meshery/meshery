@@ -2099,6 +2099,15 @@
         "short_description": "Ambiguous match, and no terminal to resolve it on",
         "probable_cause": "The command is running in a script, pipeline or CI job where stdin or stdout is redirected",
         "suggested_remediation": "Identify the item by its unique ID instead of its name\nNarrow the search so exactly one item matches"
+      },
+      "1254": {
+        "name": "ErrModelNotFoundCode",
+        "code": "1254",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Selected model not found",
+        "probable_cause": "The model name does not match any entry in the CSV's \\\"model\\\" column, or contains a typo",
+        "suggested_remediation": "Check the model name against the \\\"model\\\" column in your Models CSV, or omit --model to generate all eligible models"
       }
     }
   }

@@ -142,9 +142,8 @@ jobs:
       # is alerted to any automation breakage promptly.
       # -----------------------------------------------------------------------
       - name: 🚨 Alert on Failure
-        if: failure() && secrets.SLACK_BOT_TOKEN != ''
+        if: failure()
         uses: slackapi/slack-github-action@v2.1.1
-        # Only run if the Slack bot token secret is configured; skip gracefully otherwise.
         continue-on-error: true
         with:
           method: chat.postMessage

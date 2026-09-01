@@ -215,6 +215,15 @@ make helm-docs      # Generate Helm chart docs
   own `helpers/component_info.json` **in the same commit**, and the tracked docs reference at
   `docs/data/errorref/` must be regenerated or the new codes are silently omitted. Full
   contract: [writing MeshKit errors](./docs/content/en/project/contributing/contributing-error.md).
+- **MUST NOT resolve a provider by name out of `HandlerConfig.Providers` in boot-time
+  code.** `PROVIDER` enforcement deletes every non-enforced registration, Local included,
+  so `Providers[LocalProviderName]` yields a nil `Provider` on a pinned deployment - the
+  unrecovered nil-deref that killed the server during model seeding (#21584). Persist an
+  event raised outside a user request through `HandlerConfig.SystemEventPersister`; index
+  `Providers` only with the comma-ok form, and only on the request path. Boot-time work
+  that can fault belongs inside `models.RunSeedStage` so it degrades the server rather
+  than terminating it. Detail:
+  [Extensibility: Providers](./docs/content/en/reference/extensibility/providers/index.md).
 - Only `utils.Log.Error(err)` renders a MeshKit error's code, cause and remediation; cobra's
   default print shows just the message. In `mesheryctl` commands, log the structured error
   for the user *and* return it for the exit path.
@@ -476,6 +485,7 @@ worked detail behind them — open the one that matches what you are working on.
 | Releases, CI secrets, the QA dashboard | [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md) |
 | Connections and credential secrets | [Connections](./docs/content/en/project/contributing/models/connections.md) |
 | A permission-gated page, control or key | [Extensibility: Authorization](./docs/content/en/reference/extensibility/authorization/index.md) |
+| Providers, `PROVIDER` enforcement, boot-time seeding | [Extensibility: Providers](./docs/content/en/reference/extensibility/providers/index.md) |
 | UI extensions, Remote Components | [Contributing to Meshery UI](./docs/content/en/project/contributing/ui/ui.md) |
 | `mesheryctl`, golden files | [Contributing to Meshery CLI](./docs/content/en/project/contributing/cli/cli.md) |
 | A docs page, its assets or shortcodes | [Contributing to Meshery Docs](./docs/content/en/project/contributing/contributing-docs/docs.md) |

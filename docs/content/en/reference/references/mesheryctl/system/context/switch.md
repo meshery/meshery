@@ -7,7 +7,7 @@ subcommand: context
 
 # mesheryctl system context switch
 
-switch context
+Switch context
 
 ## Synopsis
 
@@ -15,8 +15,10 @@ Configure mesheryctl to actively use one one context vs. another context.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context switch context-name [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +27,10 @@ mesheryctl system context switch context-name [flags]
 Switch to context named "sample"
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context switch sample
 
+</div>
 </div>
 </pre> 
 
