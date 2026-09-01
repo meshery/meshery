@@ -114,16 +114,11 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           platforms: linux/amd64,linux/arm64
 
-      - name: Install Cosign
-        uses: sigstore/cosign-installer@v3.5.0
-        with:
-          cosign-release: 'v2.2.4'
-
       - name: Sign the published Docker image
-        run: |
-          for tag in ${{ steps.meta.outputs.tags }}; do
-            cosign sign --yes "${tag}"
-          done
+        uses: ./.github/actions/sign-images
+        with:
+          images: |
+            ${{ steps.meta.outputs.tags }}
 
       # -
       #   name: Docker Hub Description
