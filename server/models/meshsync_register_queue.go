@@ -11,8 +11,12 @@ var (
 	registrationQueue *MeshSyncRegistrationQueue
 )
 
-// Configure MeshSync to additionally publish the resources that can be registered as connection to other broker topic/subject (meshsync.registerconnection.queue?).
-// Meshery Server subscribes to that topic/subject and performs the necessary action.
+// MeshSyncRegistrationQueue holds a channel for queuing Kubernetes resources that are
+// eligible to be registered as Meshery connections.
+//
+// TODO: MeshSync additionally publishes these resources to a broker topic/subject
+// (meshsync.registerconnection.queue?); Meshery Server subscribes and performs the
+// necessary action.
 type MeshSyncRegistrationQueue struct {
 	RegChan chan MeshSyncRegistrationData
 }
