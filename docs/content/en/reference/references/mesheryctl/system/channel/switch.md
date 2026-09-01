@@ -7,7 +7,7 @@ subcommand: channel
 
 # mesheryctl system channel switch
 
-switch release channel and version
+Switch release channel and version
 
 ## Synopsis
 

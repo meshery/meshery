@@ -17,7 +17,7 @@ import (
 
 var TAB = "    "
 
-// representation of what could not be registered
+// RegistrationFailureLog represents what could not be registered.
 type RegistrationFailureLog struct {
 	// {'artifacthub':{'modelname': 'component' : {'jaegar': error}}}
 	// for models, the structure will be like this:
