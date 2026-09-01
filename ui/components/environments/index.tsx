@@ -538,6 +538,7 @@ const Environments = () => {
                     onClick={handleBulkDeleteEnvironmentConfirm}
                     permissionKey={Keys.WorkspaceManagementDeleteEnvironment}
                     sx={{ minWidth: 'auto', p: 0.5 }}
+                    aria-label="Delete selected environments"
                   >
                     <DeleteIcon fill="red" style={{ margin: '0 2px' }} />
                   </Button>

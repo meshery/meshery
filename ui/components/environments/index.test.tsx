@@ -283,17 +283,20 @@ describe('Environments toolbar', () => {
 
     // Before selection, bulk operations slot is not rendered
     expect(within(toolbar).queryByText(/selected/i)).not.toBeInTheDocument();
+    expect(within(toolbar).queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
 
     // Select an environment row
     await user.click(screen.getByTestId('select-env-1'));
 
-    // Assert toolbar displays the selection count alongside existing controls
+    // Assert toolbar displays the selection count alongside existing controls and delete button
     expect(within(toolbar).getByText(/1 environment selected/i)).toBeInTheDocument();
+    expect(within(toolbar).getByRole('button', { name: /delete/i })).toBeInTheDocument();
     expect(within(toolbar).getByRole('button', { name: /create/i })).toBeInTheDocument();
     expect(within(toolbar).getByPlaceholderText('Search by name')).toBeInTheDocument();
 
     // Select second environment
     await user.click(screen.getByTestId('select-env-2'));
     expect(within(toolbar).getByText(/2 environments selected/i)).toBeInTheDocument();
+    expect(within(toolbar).getByRole('button', { name: /delete/i })).toBeInTheDocument();
   });
 });
