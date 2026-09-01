@@ -33,7 +33,7 @@ var (
 	// ManifestsFolder is where the Kubernetes manifests are stored
 	ManifestsFolder = "manifests"
 	ReleaseTag      string
-	githubBaseURL   = "https://api.github.com"
+	gitHubBaseURL   = "https://api.github.com"
 )
 
 type K8sCompose struct {
@@ -121,7 +121,7 @@ func GetManifestTreeURL(version string) (string, error) {
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return "", ErrGithubAPIResponse(resp.StatusCode, url, string(body))
+		return "", ErrGitHubAPIResponse(resp.StatusCode, url, string(body))
 	}
 
 	var manLis ManifestList
@@ -152,7 +152,7 @@ func ListManifests(url string) ([]Manifest, error) {
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, ErrGithubAPIResponse(resp.StatusCode, url, string(body))
+		return nil, ErrGitHubAPIResponse(resp.StatusCode, url, string(body))
 	}
 
 	var manLis ManifestList
