@@ -40,6 +40,6 @@ Do so by passing the `ADAPTERS` environment variable to the Meshery Bash script.
 
 <h5>Demo of Meshery managing deployments across multiple Kubernetes clusters:</h5>
 
-{{< youtube id="yWPu3vq4vEs" start="5041" class="iframe-container" >}}
+{{< youtube id="yWPu3vq4vEs" start="5041" class="yt-embed-container" >}}
 
 See on YouTube: [Cloud Native Austin Virtual Meetup: April 2020](https://youtu.be/yWPu3vq4vEs?t=5041&list=PL3A-A6hPO2IOpTbdH89qR-4AE0ON13Zie)

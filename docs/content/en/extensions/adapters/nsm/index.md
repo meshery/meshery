@@ -24,7 +24,7 @@ The Meshery Adapter for Network Service Mesh includes a handful of sample applic
 
 Watch this presentation to see the Hello NSM Application in-action:
 
-{{< youtube id="4xKixsDTtdM" class="iframe-container" >}}
+{{< youtube id="4xKixsDTtdM" class="yt-embed-container" >}}
 
 See on YouTube: [Adopting Network Service Mesh with Meshery](https://www.youtube.com/watch?v=4xKixsDTtdM&list=PL3A-A6hPO2IOpTbdH89qR-4AE0ON13Zie)
 

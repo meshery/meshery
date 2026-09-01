@@ -498,7 +498,7 @@ If you are passionate about CI/CD pipelines, DevOps, automated testing, managing
 Note: This biweekly meeting series is currently on hiatus. We'll share an update when it resumes. Thank you for your patience!
   
 
-{{< youtube id="dlr_nzJV16Q" class="iframe-container training-video" >}}
+{{< youtube id="dlr_nzJV16Q" class="yt-embed-container training-video" >}}
 
 ## Cutting a release
 

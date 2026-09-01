@@ -63,7 +63,7 @@ It may happen that certain eval decisions contain results such that two differen
 
 For an in-depth review, watch this meeting recording.
 
-{{< youtube id="XrLpBVsm6nk" start="453" class="iframe-container" >}}
+{{< youtube id="XrLpBVsm6nk" start="453" class="yt-embed-container" >}}
 
 {{% alert color="dark" title="Future Feature" %}}
 Policy evaluation in WASM runtime is on roadmap for Meshery v0.8.3.

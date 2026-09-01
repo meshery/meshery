@@ -30,7 +30,7 @@ For developers, this extension is valuable as it enables them to manage their in
 
 <h5>Designer Walkthrough:</h5>
 
-{{< youtube id="qaoYRP3oLok" class="iframe-container" >}}
+{{< youtube id="qaoYRP3oLok" class="yt-embed-container" >}}
 
 See on YouTube: [Designer Walkthrough](https://www.youtube.com/watch?v=qaoYRP3oLok)
 
