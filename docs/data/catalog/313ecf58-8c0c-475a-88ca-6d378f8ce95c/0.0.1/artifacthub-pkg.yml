@@ -1,0 +1,25 @@
+createdAt: '2026-08-04T13:23:00Z'
+description: Provisions a standard 3-tier web application infrastructure utilizing
+  VPC, public/private subnets, Elastic Load Balancers, EC2 Web/App instances, and
+  RDS databases.
+displayName: AWS 3-Tier Web Application
+homeURL: https://docs.meshery.io/concepts/logical/designs
+install: mesheryctl design import -f
+license: Apache-2.0
+links:
+- name: download
+  url: ../../catalog/313ecf58-8c0c-475a-88ca-6d378f8ce95c/0.0.1/design.yml
+- name: Meshery Catalog
+  url: https://meshery.io/catalog
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+name: aws-3-tier-web-application
+provider:
+  name: 54a58e68-8c83-4683-a84e-4cf8d3256649
+readme: "Provisions a standard 3-tier web application infrastructure utilizing VPC,\
+  \ public/private subnets, Elastic Load Balancers, EC2 Web/App instances, and RDS\
+  \ databases.\n\n#### Caveats and Consideration\n\nSubnet parenting relationships\
+  \ require PR #21072 to be merged for full visual nesting.\n"
+screenshots:
+- title: Meshery Project
+  url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
+version: 0.0.1
