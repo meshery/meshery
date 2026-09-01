@@ -4250,6 +4250,15 @@
         "short_description": "Unable to initialize logger",
         "probable_cause": "LOG_LEVEL is set to an unsupported value\nLogger configuration options are malformed",
         "suggested_remediation": "Set LOG_LEVEL to a supported value\nCheck your logger configuration settings"
+      },
+      "1485": {
+        "name": "ErrModelNotFoundCode",
+        "code": "1485",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Model not found",
+        "probable_cause": "The requested model is not present in the CSV input",
+        "suggested_remediation": "Verify that the requested model exists in the CSV input"
       }
     }
   }
