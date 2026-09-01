@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@sistent/sistent', () => ({
@@ -39,8 +39,9 @@ vi.mock('@sistent/sistent', () => ({
         data-testid="textfield-wrapper"
         data-id={id}
         data-multiple={String(selectConfig?.multiple)}
-        data-rendered-value={String(renderedDisplay)}
+        data-rendered-value={typeof renderedDisplay === 'string' ? renderedDisplay : undefined}
       >
+        <div data-testid="rendered-display">{renderedDisplay}</div>
         <input
           data-testid="textfield"
           data-error={String(!!error)}
@@ -229,7 +230,7 @@ describe('CustomSelectWidget', () => {
 
     const wrapper = screen.getByTestId('textfield-wrapper');
     expect(wrapper).toHaveAttribute('data-multiple', 'true');
-    expect(wrapper).toHaveAttribute('data-rendered-value', 'Alpha');
+    expect(screen.getByTestId('rendered-display')).toHaveTextContent('Alpha');
   });
 
   it('renders without checkboxes for single-select fields', () => {
@@ -251,6 +252,29 @@ describe('CustomSelectWidget', () => {
 
     const wrapper = screen.getByTestId('textfield-wrapper');
     expect(wrapper).toHaveAttribute('data-multiple', 'false');
-    expect(wrapper).toHaveAttribute('data-rendered-value', 'Alpha');
+    expect(screen.getByTestId('rendered-display')).toHaveTextContent('Alpha');
+  });
+
+  it('preserves React-element labels when rendering multiple selected options', () => {
+    const customEnumOptions = [
+      { value: 'k8s', label: <span data-testid="k8s-badge">Kubernetes</span> },
+      { value: 'istio', label: <span data-testid="istio-badge">Istio</span> },
+    ];
+    render(
+      <CustomSelectWidget
+        id="s1"
+        label="Technology"
+        options={{ enumOptions: customEnumOptions, multiple: true }}
+        schema={{ type: 'array' }}
+        value={['k8s', 'istio']}
+        onChange={vi.fn()}
+        onBlur={vi.fn()}
+        onFocus={vi.fn()}
+      />,
+    );
+    const display = screen.getByTestId('rendered-display');
+    expect(within(display).getByTestId('k8s-badge')).toBeInTheDocument();
+    expect(within(display).getByTestId('istio-badge')).toBeInTheDocument();
+    expect(display).toHaveTextContent('Kubernetes, Istio');
   });
 });
