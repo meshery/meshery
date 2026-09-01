@@ -35,6 +35,8 @@ on:
         required: true
         default: "edge"
 
+permissions: {}
+
 env:
   GIT_VERSION: ${{ inputs.release-ver }}
   GIT_STRIPPED_VERSION: ${{ inputs.stripped-release-ver }}

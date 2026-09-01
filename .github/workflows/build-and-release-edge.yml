@@ -14,6 +14,8 @@ on:
       - ".github/**"
       - "install/**"
 
+permissions: {}
+
 jobs:
   docker-build-push:
     name: Docker build and push
@@ -60,7 +62,7 @@ jobs:
 
       - name: Set signing image tags
         id: signing-tags
-        run: echo "short_sha=${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
+        run: echo "short_sha=${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
 
       - name: Sign the published Docker image
         uses: ./.github/actions/sign-images
