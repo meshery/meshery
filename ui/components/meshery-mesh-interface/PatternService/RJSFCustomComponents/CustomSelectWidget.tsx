@@ -108,7 +108,12 @@ export default function CustomSelectWidget({
         slotProps={{
           ...incomingSlotProps,
           input: {
-            style: { paddingRight: '0px' },
+            ...legacyInputProps,
+            ...incomingSlotProps.input,
+            style: {
+              paddingRight: '0px',
+              ...(incomingSlotProps.input?.style || legacyInputProps?.style),
+            },
             endAdornment: (
               <InputAdornment position="start" style={{ position: 'absolute', right: '1rem' }}>
                 {rawErrors?.length > 0 && (
@@ -146,8 +151,6 @@ export default function CustomSelectWidget({
                 )}
               </InputAdornment>
             ),
-            ...legacyInputProps,
-            ...incomingSlotProps.input,
           },
           inputLabel: {
             ...legacyInputLabelProps,
