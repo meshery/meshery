@@ -216,7 +216,7 @@ const (
 	ErrTelemetryPrometheusAuthCode         = "meshery-server-1435"
 	ErrMeshsyncReconcileCode               = "meshery-server-1442"
 	ErrUnsafeFilePathCode                  = "meshery-server-1443"
-	ErrModelNotFoundCode                   = "meshery-server-1484"
+	ErrModelNotFoundCode                   = "meshery-server-1485"
 	// Environment, workspace, organization, user and key operations previously
 	// reported every failure as ErrGetResult ("unable to get result", probable
 	// cause "Result Identifier provided is not valid") - a performance-results
