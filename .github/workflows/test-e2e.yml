@@ -149,6 +149,19 @@ jobs:
             --name meshery \
             meshery-server:ci
 
+      - name: Wait for Meshery Server
+        run: |
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:9081/api/system/version >/dev/null; then
+              echo "Meshery server ready after ${i}s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "::error::Meshery server did not become ready on :9081 within 60s"
+          docker logs meshery || true
+          exit 1
+
       - name: Install Playwright
         run: make ui-setup-ci
 
