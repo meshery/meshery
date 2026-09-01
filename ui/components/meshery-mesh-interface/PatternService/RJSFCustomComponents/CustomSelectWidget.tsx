@@ -44,6 +44,14 @@ export default function CustomSelectWidget({
   formContext,
   ...textFieldProps
 }) {
+  const {
+    InputProps: legacyInputProps,
+    InputLabelProps: legacyInputLabelProps,
+    SelectProps: legacySelectProps,
+    slotProps: incomingSlotProps = {},
+    ...cleanTextFieldProps
+  } = textFieldProps;
+
   const { enumOptions, enumDisabled, emptyValue: optEmptyVal } = options;
   const xRjsfGridArea = schema?.['x-rjsf-grid-area']; // check if the field is used in different modal (e.g. publish)
 
@@ -97,88 +105,149 @@ export default function CustomSelectWidget({
         onBlur={_onBlur}
         onFocus={_onFocus}
         size="small"
-        InputProps={{
-          style: { paddingRight: '0px' },
-          endAdornment: (
-            <InputAdornment position="start" style={{ position: 'absolute', right: '1rem' }}>
-              {rawErrors?.length > 0 && (
-                <CustomTextTooltip
-                  bgColor={theme.palette.error.main}
-                  flag={formContext?.overrideFlag}
-                  title={rawErrors?.join('  ')}
-                  interactive={true}
-                >
-                  <IconButton component="span" size="small">
-                    <ErrorOutlineIcon
-                      width="14px"
-                      height="14px"
-                      fill={theme.palette.error.main}
-                      style={{ verticalAlign: 'middle', ...iconSmall }}
-                    />
-                  </IconButton>
-                </CustomTextTooltip>
-              )}
-              {typeof schema?.description === 'string' && schema.description && (
-                <CustomTextTooltip
-                  flag={formContext?.overrideFlag}
-                  title={schema.description}
-                  interactive={true}
-                >
-                  <IconButton component="span" size="small" style={{ marginRight: '4px' }}>
-                    <HelpOutlineIcon
-                      width="14px"
-                      height="14px"
-                      fill={theme.palette.mode === 'dark' ? 'white' : 'gray'}
-                      style={{ verticalAlign: 'middle', ...iconSmall }}
-                    />
-                  </IconButton>
-                </CustomTextTooltip>
-              )}
-            </InputAdornment>
-          ),
-        }}
-        {...textFieldProps}
-        select
-        InputLabelProps={{
-          ...textFieldProps.InputLabelProps,
-          shrink: !isEmpty,
-        }}
-        SelectProps={{
-          ...textFieldProps.SelectProps,
-          renderValue: (selected) => {
-            if (isMultiple && Array.isArray(selected)) {
-              return selected.map((i) => safeDisplayValue(enumOptions?.[i]?.label)).join(', ');
-            }
-            const idx = selected as number;
-            return safeDisplayValue(enumOptions?.[idx]?.label);
+        slotProps={{
+          ...incomingSlotProps,
+          input: {
+            style: { paddingRight: '0px' },
+            endAdornment: (
+              <InputAdornment position="start" style={{ position: 'absolute', right: '1rem' }}>
+                {rawErrors?.length > 0 && (
+                  <CustomTextTooltip
+                    bgColor={theme.palette.error.main}
+                    flag={formContext?.overrideFlag}
+                    title={rawErrors?.join('  ')}
+                    interactive={true}
+                  >
+                    <IconButton component="span" size="small">
+                      <ErrorOutlineIcon
+                        width="14px"
+                        height="14px"
+                        fill={theme.palette.error.main}
+                        style={{ verticalAlign: 'middle', ...iconSmall }}
+                      />
+                    </IconButton>
+                  </CustomTextTooltip>
+                )}
+                {typeof schema?.description === 'string' && schema.description && (
+                  <CustomTextTooltip
+                    flag={formContext?.overrideFlag}
+                    title={schema.description}
+                    interactive={true}
+                  >
+                    <IconButton component="span" size="small" style={{ marginRight: '4px' }}>
+                      <HelpOutlineIcon
+                        width="14px"
+                        height="14px"
+                        fill={theme.palette.mode === 'dark' ? 'white' : 'gray'}
+                        style={{ verticalAlign: 'middle', ...iconSmall }}
+                      />
+                    </IconButton>
+                  </CustomTextTooltip>
+                )}
+              </InputAdornment>
+            ),
+            ...legacyInputProps,
+            ...incomingSlotProps.input,
           },
-          multiple: isMultiple,
-          MenuProps: {
-            anchorOrigin: {
-              vertical: 'bottom',
-              horizontal: 'left',
+          inputLabel: {
+            shrink: !isEmpty,
+            ...legacyInputLabelProps,
+            ...incomingSlotProps.inputLabel,
+          },
+          select: {
+            multiple: isMultiple,
+            renderValue: (selected) => {
+              if (isMultiple && Array.isArray(selected)) {
+                return selected.map((i) => safeDisplayValue(enumOptions?.[i]?.label)).join(', ');
+              }
+              const idx = selected as number;
+              return safeDisplayValue(enumOptions?.[idx]?.label);
             },
-            transformOrigin: {
-              vertical: 'top',
-              horizontal: 'left',
-            },
-            getContentAnchorEl: null,
-            PaperProps: {
-              style: {
-                maxHeight: '400px',
+            MenuProps: {
+              anchorOrigin: {
+                vertical: 'bottom',
+                horizontal: 'left',
+              },
+              transformOrigin: {
+                vertical: 'top',
+                horizontal: 'left',
+              },
+              PaperProps: {
+                style: {
+                  maxHeight: '400px',
+                },
               },
             },
+            ...legacySelectProps,
+            ...incomingSlotProps.select,
           },
         }}
+        {...cleanTextFieldProps}
+        select
         aria-describedby={ariaDescribedByIds(id)}
       >
         {Array.isArray(enumOptions) &&
           enumOptions.map(({ value, label }, i) => {
             const disabled = Array.isArray(enumDisabled) && enumDisabled?.indexOf(value) !== -1;
+            const optionLabel = safeDisplayValue(label);
             return (
-              <MenuItem key={i} value={String(i)} disabled={disabled}>
-                {isMultiple && <Checkbox checked={selectedIndexes?.indexOf(String(i)) !== -1} />}
-                <ListItemText primary={safeDisplayValue(label)} />
+              <MenuItem
+                key={i}
+                value={String(i)}
+                disabled={disabled}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  flexWrap: 'nowrap',
+                  gap: '0.5rem',
+                  paddingRight: '2rem',
+                }}
+                sx={{
+                  display: 'flex !important',
+                  flexDirection: 'row !important',
+                  alignItems: 'center !important',
+                  flexWrap: 'nowrap !important',
+                  gap: '0.5rem !important',
+                  paddingRight: '2rem !important',
+                }}
+              >
+                {isMultiple && (
+                  <Checkbox
+                    checked={
+                      Array.isArray(selectedIndexes) ? selectedIndexes.includes(String(i)) : false
+                    }
+                    style={{ padding: 0, flexShrink: 0, marginRight: '0.25rem' }}
+                    sx={{
+                      padding: '0 !important',
+                      flexShrink: '0 !important',
+                      marginRight: '0.25rem !important',
+                    }}
+                  />
+                )}
+                <CustomTextTooltip
+                  flag={formContext?.overrideFlag}
+                  title={optionLabel}
+                  interactive={true}
+                >
+                  <ListItemText
+                    primary={optionLabel}
+                    primaryTypographyProps={{
+                      noWrap: true,
+                      style: {
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      },
+                    }}
+                    style={{
+                      margin: 0,
+                      minWidth: 0,
+                      flex: '1 1 auto',
+                      overflow: 'hidden',
+                    }}
+                  />
+                </CustomTextTooltip>
               </MenuItem>
             );
           })}
