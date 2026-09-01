@@ -87,11 +87,11 @@ Users can also narrow down the tests to just check the status of the Meshery ope
 
 ##### Question: I ran a preflight check to see if I satisfy all requirements for Meshery in my system. It returned positive results but I couldn't start Meshery. What to do?
 
-**Answer**: _Make sure if you've configured your system to run Meshery in smooth manner. For configuration, do check out the docs site and [this page]({{< ref "installation/_index.md" >}}) to see instructions related to the platform you use._
+**Answer**: _Make sure if you've configured your system to run Meshery in smooth manner. For configuration, do check out the docs site and [this page](/installation) to see instructions related to the platform you use._
 
 ##### Question: Do I need a Kubernetes cluster or will a Docker host suffice for Meshery deployments?
 
-**Answer**: _Meshery's [performance management]({{< ref "guides/performance-management/managing-performance/index.md" >}}) functionality does not require a Kubernetes cluster. The rest of Meshery's functionality (e.g. cloud native management) does require a Kubernetes cluster._
+**Answer**: _Meshery's [performance management](/guides/performance-management/managing-performance) functionality does not require a Kubernetes cluster. The rest of Meshery's functionality (e.g. cloud native management) does require a Kubernetes cluster._
 
 ##### Question: What are Meshery's production deployment requirements?
 
@@ -129,13 +129,24 @@ Users can also narrow down the tests to just check the status of the Meshery ope
 
 **Answer**: _Configure Meshery to use on your Kubernetes cluster, then upload the kubeconfig file via Meshery UI to notify Meshery to use that cluster. If that didn't work, feel free to [open up an issue](https://github.com/meshery/meshery/issues) in GitHub._
 
+### AI Adapter production checklist (optional)
+
+If you have enabled AI features in Meshery, complete the following checklist before moving to production:
+
+- **Decide local vs remote LLM provider based on data sensitivity** — use a locally hosted model when prompts or responses may contain sensitive workload data; use a remote provider only when data classification permits it.
+- **Store provider keys as secrets** — avoid hardcoding API keys in plaintext (for example, committed config files or shell-exported env vars); prefer a secrets manager or Kubernetes Secrets (mounted files or env vars sourced from Secrets) with least-privilege access.
+- **Confirm egress controls and allow-list for external LLM APIs** — verify that your network policy or firewall permits outbound traffic only to the specific provider endpoints your deployment requires.
+- **Validate provider endpoint reachability from Meshery server** — run a direct connectivity test (for example, `curl`/`nslookup`) from the Meshery Server runtime (pod/container/host) to verify reachability of your configured AI provider endpoint.
+- **Confirm logging does not expose secrets in AI requests or responses** — review log verbosity settings and ensure that prompt content and API keys are redacted or excluded from log output.
+- **Document a data retention policy for prompts and outputs** — define how long prompt and response data is stored, who can access it, and how it is purged in accordance with your organization's data governance requirements.
+
+
 ### Suggested Reading
 
 For an exhaustive list of `mesheryctl` commands and syntax:
 
-- See [`mesheryctl` Command Reference]({{< ref "reference/references/mesheryctl/_index.md" >}}).
+- See [`mesheryctl` Command Reference](/reference/mesheryctl).
 
 Guides to using Meshery's various features and components.
 
 {{< related-discussions tag="mesheryctl" >}}
-
