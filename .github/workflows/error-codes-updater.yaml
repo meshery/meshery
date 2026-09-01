@@ -50,8 +50,7 @@ jobs:
 
       - name: Build Error Utility
         run: |
-          go get github.com/meshery/meshkit/cmd/errorutil@master
-          go build -o ~/errorutil github.com/meshery/meshkit/cmd/errorutil
+          GOBIN=$HOME go install github.com/meshery/meshkit/cmd/errorutil@42fac19e642bf7cff9363593beb6afb3182752ec
 
       - name: Run Utility For Meshery Server
         uses: ./.github/actions/errorutil-runner

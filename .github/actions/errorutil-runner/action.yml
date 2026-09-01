@@ -43,13 +43,13 @@ runs:
             "${{ inputs.helpers_dir }}/errorutil_analyze_errors.json" \
             --baseline-summary "${{ inputs.baseline_helpers_dir }}/errorutil_analyze_summary.json" \
             --current-summary "${{ inputs.helpers_dir }}/errorutil_analyze_summary.json"
+        else
+          ~/errorutil update -d "${{ inputs.scan_dir }}" -i "${{ inputs.helpers_dir }}" -o "${{ inputs.helpers_dir }}" --skip-dirs "${{ inputs.skip_dirs }},.baseline"
+          
+          output=$(~/errorutil -d "${{ inputs.scan_dir }}" analyze -i "${{ inputs.helpers_dir }}" -o "${{ inputs.helpers_dir }}" --skip-dirs "${{ inputs.skip_dirs }},.baseline" | wc -c)
+          if [ "$output" -ne 0 ]; then
+            exit 1
+          fi
+          
+          echo '{ "errors_export": "" }' | jq --slurpfile export "${{ inputs.helpers_dir }}/errorutil_errors_export.json" '.errors_export = $export[0]' > "${{ inputs.export_dest }}"
         fi
-
-        ~/errorutil update -d "${{ inputs.scan_dir }}" -i "${{ inputs.helpers_dir }}" -o "${{ inputs.helpers_dir }}" --skip-dirs "${{ inputs.skip_dirs }},.baseline"
-        
-        output=$(~/errorutil -d "${{ inputs.scan_dir }}" analyze -i "${{ inputs.helpers_dir }}" -o "${{ inputs.helpers_dir }}" --skip-dirs "${{ inputs.skip_dirs }},.baseline" | wc -c)
-        if [ "$output" -ne 0 ]; then
-          exit 1
-        fi
-        
-        echo '{ "errors_export": "" }' | jq --slurpfile export "${{ inputs.helpers_dir }}/errorutil_errors_export.json" '.errors_export = $export[0]' > "${{ inputs.export_dest }}"
