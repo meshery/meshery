@@ -33,7 +33,7 @@ var (
 	// ManifestsFolder is where the Kubernetes manifests are stored
 	ManifestsFolder = "manifests"
 	ReleaseTag      string
-	gitHubBaseURL   = "https://api.github.com"
+	githubBaseURL   = "https://api.github.com"
 )
 
 type K8sCompose struct {
