@@ -1,0 +1,33 @@
+{{- /*
+  Returns one llms.txt file-list line for a page:
+
+      - [Title](https://docs.meshery.io/section/page/index.md): description
+
+  Per the llms.txt specification a list item is "a required markdown hyperlink
+  [name](url), then optionally a : and notes about the file".
+
+  Call with:
+    page  the Page to describe
+    note  optional string used in place of the page's own description
+*/ -}}
+{{- $p := .page -}}
+{{- $url := partial "llms-txt/md-url.html" $p -}}
+{{- $desc := .note | default $p.Description -}}
+{{- if not $desc -}}
+  {{- $desc = $p.Summary | plainify -}}
+{{- end -}}
+{{- $desc = htmlUnescape (truncate 200 (trim ($desc | plainify | replaceRE "\\s+" " ") " ")) -}}
+{{- $title := $p.Title | default $p.LinkTitle | default "Untitled" -}}
+{{- /* A Markdown link label ends at its first unescaped "]", so a title
+       containing a bracket would cut the label short and leave the URL behind
+       as plain text -- the entry would still look like prose but would no
+       longer be a link. Escape the backslash first, so that the escapes added
+       for the brackets are not themselves re-escaped. */ -}}
+{{- $title = replace $title "\\" "\\\\" -}}
+{{- $title = replace $title "[" "\\[" -}}
+{{- $title = replace $title "]" "\\]" -}}
+{{- $line := printf "- [%s](%s)" $title $url -}}
+{{- with $desc -}}
+  {{- $line = printf "%s: %s" $line . -}}
+{{- end -}}
+{{- return $line -}}

@@ -101,6 +101,34 @@ As a self-service engineering platform, Meshery enables collaborative design and
   taxonomy = []
   term = []
 
+# The formats below are declared but not switched on here. Declaring an output
+# format generates nothing by itself; config-llms.toml adds the [outputs]
+# entries that enable them, and is layered in by the build-llms make targets.
+# This keeps llms.txt, llms-full.txt and the 2,810 per-page index.md files out
+# of the standard contributor build.
+#
+# "llms" and "llmsfull" render once, for the home page. "md" publishes an
+# index.md beside every page's index.html; those are the URLs llms.txt points
+# at, so an agent that follows one receives Markdown prose rather than a themed
+# HTML page. Taxonomy and term pages stay unpublished, so neither file lists
+# them.
+[outputFormats]
+  [outputFormats.llms]
+    baseName = "llms"
+    mediaType = "text/plain"
+    isPlainText = true
+    notAlternative = true
+  [outputFormats.llmsfull]
+    baseName = "llms-full"
+    mediaType = "text/plain"
+    isPlainText = true
+    notAlternative = true
+  [outputFormats.md]
+    baseName = "index"
+    mediaType = "text/markdown"
+    isPlainText = true
+    notAlternative = true
+
 [sitemap]
   changefreq = "daily"
   priority = 0.5
@@ -193,6 +221,45 @@ no = 'Sorry to hear that. Please <a href="https://github.com/meshery/meshery/iss
 [params.ui.readingtime]
 enable = false
 
+# /llms.txt and /llms-full.txt, per https://llmstxt.org
+# Templates: layouts/index.llms.txt, layouts/index.llmsfull.txt
+[params.llms]
+enable_llms_txt = true
+enable_llms_full_txt = true
+
+# H1 of both files. site.Title is "Documentation", which does not identify the
+# project to an agent arriving with no other context.
+title = "Meshery Documentation"
+
+# Note shown against the home page in llms.txt. The home page has no
+# front-matter description -- it is a hero layout of HTML and link lists -- so
+# without this the generic summary fallback scrapes its nav labels into the
+# first entry of the index.
+home_note = "Documentation home: entry points for installation, concepts, guides, extensions, and reference."
+
+# Dropped from both files. Patterns: "/path/" matches exactly, "/path/*"
+# matches direct children, "/path/**" matches the path and all descendants.
+exclude = ["/search/"]
+
+# Machine-generated page sets. Each is linked once from the "Optional" section
+# of llms.txt rather than enumerated, and its pages are not inlined into
+# llms-full.txt. Together they are 2,508 of the site's 2,811 pages and 69% of
+# its Markdown by volume, and nearly all of them have no body at all -- they
+# are front matter rendered by a custom layout -- so enumerating them would
+# bury the hand-written docs while giving an agent nothing to read. Per-page
+# index.md output is still generated for them, so they stay reachable.
+[[params.llms.bulk]]
+path = "/project/compatibility/"
+note = "Per-integration compatibility test results, one page per test run. Front matter only; no prose."
+
+[[params.llms.bulk]]
+path = "/project/releases/"
+note = "Release notes for every published Meshery release."
+
+[[params.llms.bulk]]
+path = "/extensions/models/"
+note = "Generated reference for each supported model and its components. Front matter only; no prose."
+
 # hugo module configuration
 
 [module]
@@ -200,7 +267,9 @@ enable = false
   # replacements = "github.com/google/docsy -> ../../docsy"
   [module.hugoVersion]
     extended = true
-    min = "0.110.0"
+    # 0.117.0 introduced .RenderShortcodes, which the llms.txt templates need
+    # in order to expand shortcodes into their plain-text output.
+    min = "0.117.0"
   [[module.imports]]
     path = "github.com/google/docsy"
     disable = false

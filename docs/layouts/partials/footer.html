@@ -7,6 +7,14 @@
   </small>
   {{ end }}
 
+  {{/* Site-wide index for LLM agents (https://llmstxt.org). Shown only when the
+       build actually produced it, i.e. with config-llms.toml layered in. */}}
+  {{- with site.Home.OutputFormats.Get "llms" }}
+  <small class="ml-1">
+    <a href="{{ .RelPermalink }}">llms.txt</a>
+  </small>
+  {{- end }}
+
   <div class="footer-icons-list">
     <div class="footer-icons">
       <a

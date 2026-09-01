@@ -1,0 +1,11 @@
+{{- /*
+  Returns the permalink of a page's raw-Markdown rendition when the "md"
+  output format is enabled for it, falling back to the HTML permalink.
+
+  Call with a Page.
+*/ -}}
+{{- $url := .Permalink -}}
+{{- with .OutputFormats.Get "md" -}}
+  {{- $url = .Permalink -}}
+{{- end -}}
+{{- return $url -}}
