@@ -253,10 +253,10 @@ describe('Environments toolbar', () => {
     ENVIRONMENTS_QUERY_RESULT.data = { environments: [], totalCount: 0 };
   });
 
-  it('renders primaryActions and search scoped inside DataTableToolbar', () => {
+  it('renders primaryActions and search scoped inside DataTableToolbar', async () => {
     renderEnvironments();
 
-    const toolbar = screen.getByTestId('data-table-toolbar');
+    const toolbar = await screen.findByTestId('data-table-toolbar');
     expect(toolbar).toBeInTheDocument();
 
     const createButton = within(toolbar).getByRole('button', { name: /create/i });
