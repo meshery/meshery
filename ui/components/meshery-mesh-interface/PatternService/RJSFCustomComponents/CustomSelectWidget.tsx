@@ -150,11 +150,28 @@ export default function CustomSelectWidget({
             ...incomingSlotProps.input,
           },
           inputLabel: {
-            shrink: !isEmpty,
             ...legacyInputLabelProps,
             ...incomingSlotProps.inputLabel,
+            shrink: !isEmpty,
           },
           select: {
+            MenuProps: {
+              anchorOrigin: {
+                vertical: 'bottom',
+                horizontal: 'left',
+              },
+              transformOrigin: {
+                vertical: 'top',
+                horizontal: 'left',
+              },
+              PaperProps: {
+                style: {
+                  maxHeight: '400px',
+                },
+              },
+            },
+            ...legacySelectProps,
+            ...incomingSlotProps.select,
             multiple: isMultiple,
             renderValue: (selected) => {
               if (isMultiple && Array.isArray(selected)) {
@@ -175,23 +192,6 @@ export default function CustomSelectWidget({
               const rawLabel = enumOptions?.[idx]?.label;
               return React.isValidElement(rawLabel) ? rawLabel : safeDisplayValue(rawLabel);
             },
-            MenuProps: {
-              anchorOrigin: {
-                vertical: 'bottom',
-                horizontal: 'left',
-              },
-              transformOrigin: {
-                vertical: 'top',
-                horizontal: 'left',
-              },
-              PaperProps: {
-                style: {
-                  maxHeight: '400px',
-                },
-              },
-            },
-            ...legacySelectProps,
-            ...incomingSlotProps.select,
           },
         }}
         {...cleanTextFieldProps}
@@ -207,7 +207,7 @@ export default function CustomSelectWidget({
                 key={i}
                 value={String(i)}
                 disabled={disabled}
-                style={{
+                sx={{
                   display: 'flex',
                   flexDirection: 'row',
                   alignItems: 'center',
@@ -215,25 +215,16 @@ export default function CustomSelectWidget({
                   gap: '0.5rem',
                   paddingRight: '2rem',
                 }}
-                sx={{
-                  display: 'flex !important',
-                  flexDirection: 'row !important',
-                  alignItems: 'center !important',
-                  flexWrap: 'nowrap !important',
-                  gap: '0.5rem !important',
-                  paddingRight: '2rem !important',
-                }}
               >
                 {isMultiple && (
                   <Checkbox
                     checked={
                       Array.isArray(selectedIndexes) ? selectedIndexes.includes(String(i)) : false
                     }
-                    style={{ padding: 0, flexShrink: 0, marginRight: '0.25rem' }}
                     sx={{
-                      padding: '0 !important',
-                      flexShrink: '0 !important',
-                      marginRight: '0.25rem !important',
+                      padding: 0,
+                      flexShrink: 0,
+                      marginRight: '0.25rem',
                     }}
                   />
                 )}
