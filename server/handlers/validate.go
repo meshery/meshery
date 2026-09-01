@@ -40,7 +40,7 @@ type jsonSchemaValidationType struct {
 	Schema string `json:"$schema,omitempty"`
 }
 
-// request body should be json
+// ValidationHandler expects the request body to be JSON.
 // request body should be of format - {validationItems: {[id]:{schema: string, value: string, valueType: "JSON"|"YAML"|"CUE"}}}
 // response format - {[id]: {isValid: bool, error: string}}
 func (h *Handler) ValidationHandler(rw http.ResponseWriter, r *http.Request) {
