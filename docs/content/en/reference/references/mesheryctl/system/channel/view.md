@@ -7,7 +7,7 @@ subcommand: channel
 
 # mesheryctl system channel view
 
-view release channel and version
+View release channel and version
 
 ## Synopsis
 
