@@ -15,6 +15,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/meshery/meshkit/logger"
 	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
@@ -466,5 +467,61 @@ func TestRemoteProviderDoRequest_XAPIKeyAnonymousOnly(t *testing.T) {
 	}
 	if got := read("stale"); got != "" {
 		t.Fatalf("authenticated request with inbound X-API-Key must strip it, got %q", got)
+	}
+}
+
+func TestVerifyToken_MissingKid(t *testing.T) {
+	provider := newTestRemoteProvider(t, "http://localhost:9876")
+	provider.LoginCookieDuration = time.Hour
+
+	hdr := jwt.MapClaims{"alg": "RS256", "typ": "JWT"}
+	payload := jwt.MapClaims{"sub": "test", "exp": 9999999999}
+
+	hdrJSON, err := json.Marshal(hdr)
+	if err != nil {
+		t.Fatalf("marshal header: %v", err)
+	}
+	payloadJSON, err := json.Marshal(payload)
+	if err != nil {
+		t.Fatalf("marshal payload: %v", err)
+	}
+
+	encodeSegment := func(data []byte) string {
+		return base64.RawURLEncoding.EncodeToString(data)
+	}
+
+	tokenString := encodeSegment(hdrJSON) + "." + encodeSegment(payloadJSON) + ".fakesignature"
+
+	_, err = provider.VerifyToken(tokenString)
+	if err == nil {
+		t.Fatal("expected error for JWT with missing kid header, got nil")
+	}
+}
+
+func TestVerifyToken_InvalidKid(t *testing.T) {
+	provider := newTestRemoteProvider(t, "http://localhost:9876")
+	provider.LoginCookieDuration = time.Hour
+
+	hdr := jwt.MapClaims{"alg": "RS256", "typ": "JWT", "kid": 123}
+	payload := jwt.MapClaims{"sub": "test", "exp": 9999999999}
+
+	hdrJSON, err := json.Marshal(hdr)
+	if err != nil {
+		t.Fatalf("marshal header: %v", err)
+	}
+	payloadJSON, err := json.Marshal(payload)
+	if err != nil {
+		t.Fatalf("marshal payload: %v", err)
+	}
+
+	encodeSegment := func(data []byte) string {
+		return base64.RawURLEncoding.EncodeToString(data)
+	}
+
+	tokenString := encodeSegment(hdrJSON) + "." + encodeSegment(payloadJSON) + ".fakesignature"
+
+	_, err = provider.VerifyToken(tokenString)
+	if err == nil {
+		t.Fatal("expected error for JWT with numeric kid header, got nil")
 	}
 }
