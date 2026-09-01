@@ -15,8 +15,10 @@ Subscribe to a release channel. Choose between either 'stable' or 'edge' channel
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system channel [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,40 +27,50 @@ mesheryctl system channel [flags]
 Subscribe to release channel or version
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system channel
 
+</div>
 </div>
 </pre> 
 
 To set the channel
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
+</div>
 </div>
 </pre> 
 
 To pin/set the channel to a specific version
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system channel set stable-v0.6.0
 
+</div>
 </div>
 </pre> 
 
 To view release channel and version
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system channel view
 
+</div>
 </div>
 </pre> 
 
 To switch release channel and version
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 
+</div>
 </div>
 </pre> 
 

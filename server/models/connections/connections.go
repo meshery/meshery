@@ -72,9 +72,9 @@ var validConnectionStatusToManage = []ConnectionStatus{
 	NOTFOUND,
 }
 
-// Check whether the Connection should be managed.
-// Connections with status as Discovered, Registered, Connected should only be managed.
-// Eg: If the status is set as Maintenance or Ignore do not try to mange it, not even during greedy import of K8sConnection from KubeConfig.
+// ShouldConnectionBeManaged checks whether the Connection should be managed.
+// Connections with status as Discovered, Registered, Connected, or NotFound should only be managed.
+// Eg: If the status is set as Maintenance or Ignore do not try to manage it, not even during greedy import of K8sConnection from KubeConfig.
 func ShouldConnectionBeManaged(c Connection) bool {
 	for _, validStatus := range validConnectionStatusToManage {
 		if validStatus == c.Status {
@@ -122,11 +122,12 @@ func MergePayloadOntoExisting(payload *ConnectionPayload, existing *Connection) 
 	}
 }
 
-// The status-per-kind response wrapper surfaced on a few integrations
-// endpoints, and its element type. Both are the canonical v1beta3 connection
-// constructs rather than local stubs: the local copy of the page had dropped
-// `page`, `pageSize` and `totalCount`, so the swagger definition generated from
-// it (server/handlers/doc.go) under-described the response it documents.
+// ConnectionStatusInfo is the element type of the status-per-kind response
+// wrapper (ConnectionsStatusPage) surfaced on a few integrations endpoints.
+// Both are the canonical v1beta3 connection constructs rather than local stubs:
+// the local copy of the page had dropped `page`, `pageSize` and `totalCount`,
+// so the swagger definition generated from it (server/handlers/doc.go)
+// under-described the response it documents.
 type ConnectionStatusInfo = schemasConnection.ConnectionStatusInfo
 
 type ConnectionsStatusPage = schemasConnection.ConnectionsStatusPage
