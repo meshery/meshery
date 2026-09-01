@@ -15,8 +15,10 @@ Manage cloud and cloud native infrastructure using predefined designs.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,32 +27,40 @@ mesheryctl design [flags]
 Apply design file:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design apply --file [path to design file | URL of the file]
 
+</div>
 </div>
 </pre> 
 
 Delete design file:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design delete --file [path to design file]
 
+</div>
 </div>
 </pre> 
 
 View design file:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design view [design name | ID]
 
+</div>
 </div>
 </pre> 
 
 List all designs:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design list
 
+</div>
 </div>
 </pre> 
 
