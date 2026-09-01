@@ -60,8 +60,14 @@ vi.mock('@sistent/sistent', () => ({
       {children}
     </label>
   ),
-  Checkbox: ({ checked, style }: any) => (
-    <input type="checkbox" checked={!!checked} readOnly data-testid="checkbox" style={style} />
+  Checkbox: ({ checked, sx, style }: any) => (
+    <input
+      type="checkbox"
+      checked={!!checked}
+      readOnly
+      data-testid="checkbox"
+      style={sx ?? style}
+    />
   ),
   useTheme: () => ({ palette: { error: { main: '#f00' }, mode: 'light' } }),
 }));
