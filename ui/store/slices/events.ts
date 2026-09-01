@@ -27,6 +27,31 @@ const initialState = {
   isNotificationCenterOpen: false,
 };
 
+/**
+ * `openNotificationCenter` is dispatched into this store by Meshery extensions
+ * over the event bus (see `store/index.ts`), so its payload is whatever the
+ * extension chose to send. Anything non-serializable that lands in `ui` is held
+ * in Redux state forever - a React icon *component* used to, which trips RTK's
+ * serializable-state check and breaks state persistence and time-travel.
+ *
+ * Values are therefore screened on the way in. The icon travels as a name and
+ * is resolved to a component at render time by `resolveNotificationIcon`.
+ */
+const isSerializable = (value) => {
+  const type = typeof value;
+  if (value === null || type === 'string' || type === 'number' || type === 'boolean') {
+    return true;
+  }
+  // Functions (a bare icon component), symbols and undefined never are. A React
+  // element is caught by the recursion below: its `$$typeof` value is a symbol.
+  if (type !== 'object') return false;
+  if (Array.isArray(value)) return value.every(isSerializable);
+  return Object.values(value).every(isSerializable);
+};
+
+const serializableUi = (ui) =>
+  Object.fromEntries(Object.entries(ui || {}).filter(([, value]) => isSerializable(value)));
+
 const defaultEventProperties = {
   severity: SEVERITY.INFO,
   status: STATUS.UNREAD,
@@ -131,7 +156,7 @@ export const eventsSlice = createSlice({
       if (action.payload.ui) {
         state.ui = {
           ...state.ui,
-          ...action.payload.ui,
+          ...serializableUi(action.payload.ui),
         };
       }
     },
@@ -151,6 +176,7 @@ export const {
   updateEvent,
   toggleNotificationCenter,
   closeNotificationCenter,
+  openNotificationCenter,
   updateEvents,
 } = eventsSlice.actions;
 
