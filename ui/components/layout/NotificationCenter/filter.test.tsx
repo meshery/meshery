@@ -28,6 +28,9 @@ vi.mock('@/components/shared/FormFields/typing-filter', () => ({
         <button type="button" onClick={() => handleFilter({ status: [] })}>
           empty-status
         </button>
+        <button type="button" onClick={() => handleFilter({ severity: [] })}>
+          empty-severity
+        </button>
         <span data-testid="default-filters">{JSON.stringify(defaultFilters)}</span>
         <span data-testid="schema-json">{JSON.stringify(filterSchema)}</span>
       </div>
@@ -90,14 +93,29 @@ describe('NotificationCenter Filter', () => {
     expect(chips).toEqual([]);
   });
 
-  it('remounts TypingFilter when clearing so local chip state resyncs', () => {
-    render(<Filter handleFilter={vi.fn()} currentFilters={{ status: 'unread' }} />);
+  it('does not remount TypingFilter when filters change; chips re-seed via props', () => {
+    const { rerender } = render(
+      <Filter handleFilter={vi.fn()} currentFilters={{ status: 'unread' }} />,
+    );
     expect(typingFilterMountCount).toBe(1);
 
+    rerender(
+      <Filter handleFilter={vi.fn()} currentFilters={{ status: 'read', severity: ['error'] }} />,
+    );
+    rerender(<Filter handleFilter={vi.fn()} currentFilters={{}} />);
+
+    expect(typingFilterMountCount).toBe(1);
+    expect(JSON.parse(screen.getByTestId('default-filters').textContent || 'null')).toEqual([]);
+  });
+
+  it('forwards an empty payload when a multi-select dimension is emptied', () => {
+    const handleFilter = vi.fn();
+    render(<Filter handleFilter={handleFilter} currentFilters={{ severity: ['error'] }} />);
+
     act(() => {
-      screen.getByText('clear-filters').click();
+      screen.getByText('empty-severity').click();
     });
-    expect(typingFilterMountCount).toBe(2);
+    expect(handleFilter).toHaveBeenCalledWith({});
   });
 
   it('forwards non-empty filter changes', () => {
@@ -172,6 +190,12 @@ describe('filtersToChips', () => {
       { type: 'SEVERITY', value: 'warning', label: 'severity: warning' },
     ]);
   });
+
+  it('shows the last value for a multiple:false dimension holding an array (agrees with normalizeFilterPayload)', () => {
+    expect(filtersToChips({ status: ['unread', 'read'] }, schema)).toEqual([
+      { type: 'STATUS', value: 'read', label: 'status: read' },
+    ]);
+  });
 });
 
 describe('normalizeFilterPayload', () => {
@@ -194,5 +218,15 @@ describe('normalizeFilterPayload', () => {
 
   it('removes empty array status so clear yields an empty payload', () => {
     expect(normalizeFilterPayload({ status: [] }, schema)).toEqual({});
+  });
+
+  it('removes an emptied multi-select dimension (severity) instead of persisting { severity: [] }', () => {
+    expect(normalizeFilterPayload({ severity: [] }, schema)).toEqual({});
+  });
+
+  it('drops an emptied dimension while keeping the others', () => {
+    expect(normalizeFilterPayload({ status: 'unread', severity: [] }, schema)).toEqual({
+      status: 'unread',
+    });
   });
 });

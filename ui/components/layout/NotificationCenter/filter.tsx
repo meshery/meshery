@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { useGetEventFiltersQuery } from '../../../rtk-query/notificationCenter';
 import TypingFilter from '@/components/shared/FormFields/typing-filter';
 import { SEVERITY, STATUS } from './constants';
@@ -72,7 +72,7 @@ export const filtersToChips = (filters, filterSchema) => {
     }
     const values = Array.isArray(value) ? value : [value];
     const schema = filterSchema[schemaKey];
-    const limited = schema.multiple === false ? values.slice(0, 1) : values;
+    const limited = schema.multiple === false ? values.slice(-1) : values;
     limited.forEach((v) => {
       chips.push({
         type: schemaKey,
@@ -85,20 +85,23 @@ export const filtersToChips = (filters, filterSchema) => {
   return chips;
 };
 
-/** Coerce array-valued `multiple: false` filters to the last selected scalar. */
+/**
+ * Collapse an array-valued `multiple: false` filter to its last scalar, and drop
+ * any filter whose value is an empty array (so an emptied multi-select clears).
+ */
 export const normalizeFilterPayload = (filters, filterSchema) => {
   const normalized = { ...filters };
   Object.values(filterSchema).forEach((schema) => {
-    if (schema.multiple !== false) {
+    const value = normalized[schema.value];
+    if (!Array.isArray(value)) {
       return;
     }
-    const value = normalized[schema.value];
-    if (Array.isArray(value)) {
-      if (value.length > 0) {
-        normalized[schema.value] = value[value.length - 1];
-      } else {
-        delete normalized[schema.value];
-      }
+    if (value.length === 0) {
+      delete normalized[schema.value];
+      return;
+    }
+    if (schema.multiple === false) {
+      normalized[schema.value] = value[value.length - 1];
     }
   });
   return normalized;
@@ -106,9 +109,8 @@ export const normalizeFilterPayload = (filters, filterSchema) => {
 
 /**
  * Notification Center filter bar: NC schema, Redux→chip mapping, unread default.
- * TypingFilter is left unchanged (shared). Remount via `key` when chips change so
- * its local state initializes from the new `defaultFilters` without a Redux↔
- * useEffect sync loop.
+ * Chips flow one way: Redux → `filtersToChips` → TypingFilter's `defaultFilters`,
+ * which re-seeds its local state whenever that set changes.
  */
 const Filter = memo(function Filter({
   handleFilter,
@@ -118,33 +120,22 @@ const Filter = memo(function Filter({
   currentFilters: Record<string, unknown>;
 }) {
   const filterSchema = useFilterSchema();
-  const [resetVersion, setResetVersion] = useState(0);
   const selectedFilters = useMemo(
     () => filtersToChips(currentFilters, filterSchema),
     [currentFilters, filterSchema],
   );
-  const filtersKey = useMemo(
-    () => JSON.stringify({ selectedFilters, resetVersion }),
-    [selectedFilters, resetVersion],
-  );
 
-  // User clear removes all filters (including unread); remount so TypingFilter resyncs.
+  // An empty normalized payload clears every filter, including the unread default.
   const onFilterChange = useCallback(
     (filters: Record<string, unknown>) => {
       const normalized = normalizeFilterPayload(filters || {}, filterSchema);
-      if (Object.keys(normalized).length === 0) {
-        setResetVersion((version) => version + 1);
-        handleFilter({});
-        return;
-      }
-      handleFilter(normalized);
+      handleFilter(Object.keys(normalized).length === 0 ? {} : normalized);
     },
     [filterSchema, handleFilter],
   );
 
   return (
     <TypingFilter
-      key={filtersKey}
       handleFilter={onFilterChange}
       filterSchema={filterSchema}
       defaultFilters={selectedFilters}

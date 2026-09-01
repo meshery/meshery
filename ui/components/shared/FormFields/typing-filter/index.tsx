@@ -90,9 +90,12 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
   const [inputValue, setInputValue] = useState('');
   const [selectedFilters, setSelectedFilters] = useState(defaultFilters);
 
+  const defaultFiltersKey = (defaultFilters || [])
+    .map((filter) => `${filter?.type}:${filter?.value}`)
+    .join('|');
   useEffect(() => {
-    setSelectedFilters(defaultFilters);
-  }, [defaultFilters.length]);
+    setSelectedFilters(defaultFilters || []);
+  }, [defaultFiltersKey]);
 
   const getOptions = () => {
     if (inputValue.includes(':')) {
