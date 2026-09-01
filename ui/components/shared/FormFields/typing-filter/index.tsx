@@ -88,7 +88,7 @@ function transformData(data) {
 const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters }) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const [selectedFilters, setSelectedFilters] = useState(defaultFilters);
+  const [selectedFilters, setSelectedFilters] = useState(defaultFilters || []);
 
   const defaultFiltersKey = (defaultFilters || [])
     .map((filter) => `${filter?.type}:${filter?.value}`)
