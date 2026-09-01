@@ -158,10 +158,22 @@ export default function CustomSelectWidget({
             multiple: isMultiple,
             renderValue: (selected) => {
               if (isMultiple && Array.isArray(selected)) {
-                return selected.map((i) => safeDisplayValue(enumOptions?.[i]?.label)).join(', ');
+                return selected.map((i, index) => {
+                  const rawLabel = enumOptions?.[i]?.label;
+                  const labelNode = React.isValidElement(rawLabel)
+                    ? rawLabel
+                    : safeDisplayValue(rawLabel);
+                  return (
+                    <React.Fragment key={i}>
+                      {labelNode}
+                      {index < selected.length - 1 ? ', ' : ''}
+                    </React.Fragment>
+                  );
+                });
               }
               const idx = selected as number;
-              return safeDisplayValue(enumOptions?.[idx]?.label);
+              const rawLabel = enumOptions?.[idx]?.label;
+              return React.isValidElement(rawLabel) ? rawLabel : safeDisplayValue(rawLabel);
             },
             MenuProps: {
               anchorOrigin: {
@@ -189,7 +201,7 @@ export default function CustomSelectWidget({
         {Array.isArray(enumOptions) &&
           enumOptions.map(({ value, label }, i) => {
             const disabled = Array.isArray(enumDisabled) && enumDisabled?.indexOf(value) !== -1;
-            const optionLabel = safeDisplayValue(label);
+            const optionLabel = React.isValidElement(label) ? label : safeDisplayValue(label);
             return (
               <MenuItem
                 key={i}
