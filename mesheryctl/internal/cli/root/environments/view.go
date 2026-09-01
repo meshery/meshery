@@ -38,7 +38,7 @@ var environmentViewFlagsProvided environmentViewFlags
 
 var viewEnvironmentCmd = &cobra.Command{
 	Use:   "view",
-	Short: "View registered environmnents",
+	Short: "View registered environments",
 	Long: `View details of an environment registered in Meshery Server for a specific organization
 Find more information at: https://docs.meshery.io/reference/references/mesheryctl/environment/view`,
 	Example: `
