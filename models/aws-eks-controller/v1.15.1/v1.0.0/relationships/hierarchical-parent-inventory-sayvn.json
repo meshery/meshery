@@ -23,11 +23,39 @@
     },
     "version": ""
   },
-  "schemaVersion": "relationships.meshery.io/v1beta2",
+  "schemaVersion": "relationships.meshery.io/v1beta3",
   "selectors": [
     {
       "allow": {
         "from": [
+          {
+            "id": null,
+            "kind": "Cluster",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-eks-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "displayName"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
           {
             "id": null,
             "kind": "Nodegroup",
@@ -51,34 +79,6 @@
                   "configuration",
                   "spec",
                   "clusterName"
-                ]
-              ],
-              "patchStrategy": "replace"
-            }
-          }
-        ],
-        "to": [
-          {
-            "id": null,
-            "kind": "Cluster",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "displayName": "",
-              "id": "00000000-0000-0000-0000-000000000000",
-              "model": {
-                "version": ""
-              },
-              "name": "aws-eks-controller",
-              "registrant": {
-                "kind": "github"
-              },
-              "version": ""
-            },
-            "patch": {
-              "mutatorRef": [
-                [
-                  "displayName"
                 ]
               ],
               "patchStrategy": "replace"
