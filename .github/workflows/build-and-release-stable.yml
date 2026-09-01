@@ -4,7 +4,9 @@ on:
     tags:
       - "v*"
 
-permissions: {}
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   build:
