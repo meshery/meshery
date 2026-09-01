@@ -23,12 +23,17 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 1
+          fetch-depth: 0
+      - name: Determine merge-base
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          echo "MERGE_BASE=$(git merge-base HEAD origin/${{ github.base_ref }})" >> $GITHUB_ENV
       - name: Checkout base branch
         if: ${{ github.event_name == 'pull_request' }}
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.event.pull_request.base.sha }}
+          ref: ${{ env.MERGE_BASE }}
           path: .baseline
           fetch-depth: 1
           persist-credentials: false
