@@ -31,8 +31,16 @@ vi.mock('@sistent/sistent', () => ({
     slotProps,
     children,
   }: any) => {
-    const endAdornment = slotProps?.input?.endAdornment || InputProps?.endAdornment;
-    const selectConfig = slotProps?.select || SelectProps;
+    const ownerState = { disabled, error, value };
+    const inputConfig =
+      typeof slotProps?.input === 'function'
+        ? slotProps.input(ownerState)
+        : slotProps?.input || InputProps;
+    const selectConfig =
+      typeof slotProps?.select === 'function'
+        ? slotProps.select(ownerState)
+        : slotProps?.select || SelectProps;
+    const endAdornment = inputConfig?.endAdornment;
     const renderedDisplay = selectConfig?.renderValue ? selectConfig.renderValue(value) : null;
     return (
       <div
@@ -40,6 +48,8 @@ vi.mock('@sistent/sistent', () => ({
         data-id={id}
         data-multiple={String(selectConfig?.multiple)}
         data-rendered-value={typeof renderedDisplay === 'string' ? renderedDisplay : undefined}
+        data-menu-anchor={selectConfig?.MenuProps?.anchorOrigin?.vertical}
+        data-custom-input={inputConfig?.['data-custom-input']}
       >
         <div data-testid="rendered-display">{renderedDisplay}</div>
         <input
@@ -282,5 +292,75 @@ describe('CustomSelectWidget', () => {
     expect(within(display).getByTestId('k8s-badge')).toBeInTheDocument();
     expect(within(display).getByTestId('istio-badge')).toBeInTheDocument();
     expect(display).toHaveTextContent('Kubernetes, Istio');
+  });
+
+  it('supports callback-based slotProps functions', () => {
+    render(
+      <CustomSelectWidget
+        id="s1"
+        label="Pick"
+        options={{ enumOptions }}
+        schema={{}}
+        value="a"
+        slotProps={{
+          input: () => ({ 'data-custom-input': 'callback-applied' }),
+          select: () => ({
+            MenuProps: { anchorOrigin: { vertical: 'bottom', horizontal: 'left' } },
+          }),
+        }}
+        onChange={vi.fn()}
+        onBlur={vi.fn()}
+        onFocus={vi.fn()}
+      />,
+    );
+    const wrapper = screen.getByTestId('textfield-wrapper');
+    expect(wrapper).toHaveAttribute('data-custom-input', 'callback-applied');
+    expect(wrapper).toHaveAttribute('data-menu-anchor', 'bottom');
+  });
+
+  it('deep merges custom MenuProps and retains anchor defaults', () => {
+    render(
+      <CustomSelectWidget
+        id="s1"
+        label="Pick"
+        options={{ enumOptions }}
+        schema={{}}
+        value="a"
+        slotProps={{
+          select: {
+            MenuProps: {
+              className: 'custom-menu',
+            },
+          },
+        }}
+        onChange={vi.fn()}
+        onBlur={vi.fn()}
+        onFocus={vi.fn()}
+      />,
+    );
+    const wrapper = screen.getByTestId('textfield-wrapper');
+    expect(wrapper).toHaveAttribute('data-menu-anchor', 'bottom');
+  });
+
+  it('preserves and composes caller-provided endAdornment', () => {
+    render(
+      <CustomSelectWidget
+        id="s1"
+        label="Pick"
+        options={{ enumOptions }}
+        schema={{ description: 'Some description' }}
+        value="a"
+        slotProps={{
+          input: {
+            endAdornment: <span data-testid="caller-adornment">CUSTOM_ADORNMENT</span>,
+          },
+        }}
+        onChange={vi.fn()}
+        onBlur={vi.fn()}
+        onFocus={vi.fn()}
+      />,
+    );
+    expect(screen.getByTestId('caller-adornment')).toBeInTheDocument();
+    expect(screen.getByTestId('help-icon')).toBeInTheDocument();
   });
 });

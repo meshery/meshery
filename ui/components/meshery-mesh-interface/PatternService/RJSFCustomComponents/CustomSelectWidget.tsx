@@ -107,14 +107,21 @@ export default function CustomSelectWidget({
         size="small"
         slotProps={{
           ...incomingSlotProps,
-          input: {
-            ...legacyInputProps,
-            ...incomingSlotProps.input,
-            style: {
-              paddingRight: '0px',
-              ...(incomingSlotProps.input?.style || legacyInputProps?.style),
-            },
-            endAdornment: (
+          input: (ownerState: any) => {
+            const resolvedIncoming =
+              typeof incomingSlotProps.input === 'function'
+                ? incomingSlotProps.input(ownerState)
+                : incomingSlotProps.input || {};
+            const resolvedLegacy =
+              typeof legacyInputProps === 'function'
+                ? legacyInputProps(ownerState)
+                : legacyInputProps || {};
+            const callerEndAdornment = resolvedIncoming.endAdornment || resolvedLegacy.endAdornment;
+            const hasWidgetAdornment =
+              rawErrors?.length > 0 ||
+              (typeof schema?.description === 'string' && !!schema.description);
+
+            const widgetAdornment = hasWidgetAdornment ? (
               <InputAdornment position="start" style={{ position: 'absolute', right: '1rem' }}>
                 {rawErrors?.length > 0 && (
                   <CustomTextTooltip
@@ -150,51 +157,110 @@ export default function CustomSelectWidget({
                   </CustomTextTooltip>
                 )}
               </InputAdornment>
-            ),
-          },
-          inputLabel: {
-            ...legacyInputLabelProps,
-            ...incomingSlotProps.inputLabel,
-            shrink: !isEmpty,
-          },
-          select: {
-            MenuProps: {
-              anchorOrigin: {
-                vertical: 'bottom',
-                horizontal: 'left',
+            ) : null;
+
+            const finalEndAdornment =
+              callerEndAdornment && widgetAdornment ? (
+                <>
+                  {callerEndAdornment}
+                  {widgetAdornment}
+                </>
+              ) : (
+                callerEndAdornment || widgetAdornment
+              );
+
+            return {
+              ...resolvedLegacy,
+              ...resolvedIncoming,
+              style: {
+                ...resolvedLegacy?.style,
+                ...resolvedIncoming?.style,
+                paddingRight: '0px',
               },
-              transformOrigin: {
-                vertical: 'top',
-                horizontal: 'left',
+              endAdornment: finalEndAdornment,
+            };
+          },
+          inputLabel: (ownerState: any) => {
+            const resolvedIncoming =
+              typeof incomingSlotProps.inputLabel === 'function'
+                ? incomingSlotProps.inputLabel(ownerState)
+                : incomingSlotProps.inputLabel || {};
+            const resolvedLegacy =
+              typeof legacyInputLabelProps === 'function'
+                ? legacyInputLabelProps(ownerState)
+                : legacyInputLabelProps || {};
+            return {
+              ...resolvedLegacy,
+              ...resolvedIncoming,
+              shrink: !isEmpty,
+            };
+          },
+          select: (ownerState: any) => {
+            const resolvedIncoming =
+              typeof incomingSlotProps.select === 'function'
+                ? incomingSlotProps.select(ownerState)
+                : incomingSlotProps.select || {};
+            const resolvedLegacy =
+              typeof legacySelectProps === 'function'
+                ? legacySelectProps(ownerState)
+                : legacySelectProps || {};
+            const incomingMenuProps = resolvedIncoming.MenuProps || resolvedLegacy.MenuProps || {};
+            const incomingPaperSlot = incomingMenuProps.slotProps?.paper || {};
+            const incomingPaperProps = incomingMenuProps.PaperProps || {};
+
+            return {
+              ...resolvedLegacy,
+              ...resolvedIncoming,
+              multiple: isMultiple,
+              renderValue: (selected: any) => {
+                if (isMultiple && Array.isArray(selected)) {
+                  return selected.map((i: any, index: number) => {
+                    const rawLabel = enumOptions?.[i]?.label;
+                    const labelNode = React.isValidElement(rawLabel)
+                      ? rawLabel
+                      : safeDisplayValue(rawLabel);
+                    return (
+                      <React.Fragment key={i}>
+                        {labelNode}
+                        {index < selected.length - 1 ? ', ' : ''}
+                      </React.Fragment>
+                    );
+                  });
+                }
+                const idx = selected as number;
+                const rawLabel = enumOptions?.[idx]?.label;
+                return React.isValidElement(rawLabel) ? rawLabel : safeDisplayValue(rawLabel);
               },
-              PaperProps: {
-                style: {
-                  maxHeight: '400px',
+              MenuProps: {
+                anchorOrigin: {
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                },
+                transformOrigin: {
+                  vertical: 'top',
+                  horizontal: 'left',
+                },
+                ...incomingMenuProps,
+                PaperProps: {
+                  style: {
+                    maxHeight: '400px',
+                    ...incomingPaperProps.style,
+                  },
+                  ...incomingPaperProps,
+                },
+                slotProps: {
+                  ...incomingMenuProps.slotProps,
+                  paper: {
+                    style: {
+                      maxHeight: '400px',
+                      ...incomingPaperSlot.style,
+                      ...incomingPaperProps.style,
+                    },
+                    ...incomingPaperSlot,
+                  },
                 },
               },
-            },
-            ...legacySelectProps,
-            ...incomingSlotProps.select,
-            multiple: isMultiple,
-            renderValue: (selected) => {
-              if (isMultiple && Array.isArray(selected)) {
-                return selected.map((i, index) => {
-                  const rawLabel = enumOptions?.[i]?.label;
-                  const labelNode = React.isValidElement(rawLabel)
-                    ? rawLabel
-                    : safeDisplayValue(rawLabel);
-                  return (
-                    <React.Fragment key={i}>
-                      {labelNode}
-                      {index < selected.length - 1 ? ', ' : ''}
-                    </React.Fragment>
-                  );
-                });
-              }
-              const idx = selected as number;
-              const rawLabel = enumOptions?.[idx]?.label;
-              return React.isValidElement(rawLabel) ? rawLabel : safeDisplayValue(rawLabel);
-            },
+            };
           },
         }}
         {...cleanTextFieldProps}
