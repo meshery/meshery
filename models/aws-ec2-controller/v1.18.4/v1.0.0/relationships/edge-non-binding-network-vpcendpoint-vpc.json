@@ -23,7 +23,7 @@
     },
     "version": ""
   },
-  "schemaVersion": "relationships.meshery.io/v1beta1",
+  "schemaVersion": "relationships.meshery.io/v1beta3",
   "selectors": [
     {
       "allow": {
