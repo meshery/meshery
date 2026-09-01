@@ -23,6 +23,8 @@
   @media (max-width: 37.5em) {
     top: calc(var(--navbar-height) - 10);
     height: 100vh;
+    --sidebar-width: min(360px, calc(100vw - 2rem));
+    --sidebar-wrapper-width: var(--sidebar-width);
   }
 
   &--active {
@@ -55,6 +57,7 @@
     
     @media (max-width: 37.5em) {
       bottom: 7rem;
+      right: -2rem;
     }
   }
 }
@@ -91,9 +94,9 @@
   height: calc(100vh - var(--navbar-height) - 3vh);
   transition: all 0.5s ease-in-out;
   font-size: 1.5rem;
-  width: var(--sidebar-width);
-  max-width: var(--sidebar-width);
-  min-width: var(--sidebar-width);
+  width: 100%;
+  max-width: 100%;
+  min-width: 100%;
 
   /* Sidebar scrollbar aligned with global docs design */
   &::-webkit-scrollbar {
@@ -295,17 +298,7 @@
     padding-inline-start: 0.5rem; /* Slightly more indent for clear hierarchy */  }
 
   & .td-sidebar-nav .ul-1 ul>li>a.td-sidebar-link::before {
-    content: "•";
-    color: var(--sidebar-text-color);
-    font-size: 1.25rem;
-    font-weight: 900;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: 1.5rem;
-    min-width: 1.5rem;
-    flex-shrink: 0;
-    margin-right: -0.2rem;
+    content: none;
   }
 
   & .td-sidebar-nav__section .ul-1,
@@ -341,28 +334,17 @@
   // Breathing room between lists
   & .td-sidebar-nav ul > li > ul:first-of-type {
     padding-top: 1rem;
-    // background-color: purple;
   }
 
   // The last item in each list should have some breathing room at the bottom.
    & .td-sidebar-nav ul:has(.with-child) > li:last-of-type {
     padding-bottom: 1rem;
-    // background-color: orange;
-
   }
   // Root level sections
   & .td-sidebar-nav .ul-1>li>a.td-sidebar-link,
   & .td-sidebar-nav .ul-1>li>.sidebar-section-flex-wrapper>a.td-sidebar-link {
     font-weight: 600;
     font-size: 1.30rem;
-    // background-color: red;
-
-  }
-
-  // Leaf pages
-  & .td-sidebar-nav ul:not(.with-child) > li > a.td-sidebar-link {
-    font-weight: 400;
-    // background-color: green;
   }
 
   // Sections that contain child pages are emphasised over leaf pages so the
@@ -373,9 +355,11 @@
     font-size: 1.2rem;
   }
 
-  & .td-sidebar-nav__section.without-child > a.td-sidebar-link {
-    font-weight: 400;
-    
+  // Leaf pages
+  & .td-sidebar-nav__section.without-child a.td-sidebar-link {
+    font-family: "Qanelas Soft", "Open Sans", sans-serif, -apple-system, BlinkMacSystemFont, "segoe ui", Roboto, "apple color emoji", "segoe ui emoji", "segoe ui symbol";
+    font-weight: 300;
+    padding-left: 1.5rem; // Align leaf text with the text of expandable items
   }
 
   & .td-sidebar-link:hover,
@@ -387,6 +371,7 @@
       color: var(--brand-color);
     }
   }
+
 
   & .td-sidebar-link.active,
   & .td-sidebar-nav-active-item {
@@ -427,8 +412,7 @@
     padding: 0;
   }
 
-  & .td-sidebar-root-hidden>a.tree-root,
-  & .td-sidebar-root-hidden>label {
+  & .td-sidebar-root-hidden>a.tree-root {
     display: none;
   }
 
@@ -437,13 +421,11 @@
     padding-top: 0;
   }
 
-  & #td-section-nav>ul>li:has(>a.tree-root),
-  & #td-section-nav>ul>li:has(>label>a.tree-root) {
+  & #td-section-nav>ul>li:has(>a.tree-root) {
     border: 0;
     padding: 0;
 
-    >a.tree-root,
-    >label {
+    >a.tree-root {
       display: none;
     }
 
