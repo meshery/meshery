@@ -1,11 +1,16 @@
 import React, { useState, FC } from 'react';
-import { Button, Typography, ResponsiveDataTable, useTheme } from '@sistent/sistent';
+import {
+  Button,
+  Typography,
+  ResponsiveDataTable,
+  useTheme,
+  DataTableToolbar,
+  SearchBar,
+} from '@sistent/sistent';
 import resetDatabase from '@/graphql/queries/ResetDatabaseQuery';
 import debounce from '../utils/debounce';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
-import SearchBar from '../utils/custom-search';
-import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useGetDatabaseSummaryQuery } from '@/rtk-query/system';
 
 import { Keys } from '@meshery/schemas/permissions';
@@ -24,6 +29,14 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
   const { notify } = useNotification();
   const [sortOrder, setSortOrder] = useState('');
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+
+  const handleSearch = React.useCallback(
+    debounce((value) => {
+      setPage(0);
+      setSearchText(value != null ? value : '');
+    }, 500),
+    [],
+  );
 
   const handleError = (msg) => (error) => {
     updateProgress({ showProgress: false });
@@ -135,10 +148,11 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
 
   return (
     <>
-      <ToolWrapper style={customInlineStyle}>
-        <div style={{ display: 'flex' }}>
+      <DataTableToolbar
+        sx={customInlineStyle}
+        primaryActions={
           <Button
-            type="submit"
+            type="button"
             variant="contained"
             data-testid="database-reset-button"
             color="error"
@@ -155,18 +169,16 @@ const DatabaseSummary: FC<DatabaseSummaryProps> = (props) => {
               RESET DATABASE{' '}
             </Typography>
           </Button>
-        </div>
-        <div>
+        }
+        search={
           <SearchBar
-            onSearch={(value) => {
-              setSearchText(value);
-            }}
+            onSearch={handleSearch}
             expanded={isSearchExpanded}
             setExpanded={setIsSearchExpanded}
             placeholder="Search"
           />
-        </div>
-      </ToolWrapper>
+        }
+      />
       <ResponsiveDataTable
         data={databaseSummary?.tables}
         options={table_options}
