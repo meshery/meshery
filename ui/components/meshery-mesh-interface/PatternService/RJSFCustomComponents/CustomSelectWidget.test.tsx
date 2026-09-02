@@ -49,6 +49,10 @@ vi.mock('@sistent/sistent', () => ({
         data-multiple={String(selectConfig?.multiple)}
         data-rendered-value={typeof renderedDisplay === 'string' ? renderedDisplay : undefined}
         data-menu-anchor={selectConfig?.MenuProps?.anchorOrigin?.vertical}
+        data-menu-max-height={
+          selectConfig?.MenuProps?.slotProps?.paper?.style?.maxHeight ||
+          selectConfig?.MenuProps?.PaperProps?.style?.maxHeight
+        }
         data-custom-input={inputConfig?.['data-custom-input']}
       >
         <div data-testid="rendered-display">{renderedDisplay}</div>
@@ -318,7 +322,7 @@ describe('CustomSelectWidget', () => {
     expect(wrapper).toHaveAttribute('data-menu-anchor', 'bottom');
   });
 
-  it('deep merges custom MenuProps and retains anchor defaults', () => {
+  it('deep merges custom MenuProps and retains anchor defaults and maxHeight', () => {
     render(
       <CustomSelectWidget
         id="s1"
@@ -330,6 +334,18 @@ describe('CustomSelectWidget', () => {
           select: {
             MenuProps: {
               className: 'custom-menu',
+              PaperProps: {
+                style: {
+                  backgroundColor: 'blue',
+                },
+              },
+              slotProps: {
+                paper: {
+                  style: {
+                    color: 'white',
+                  },
+                },
+              },
             },
           },
         }}
@@ -340,6 +356,7 @@ describe('CustomSelectWidget', () => {
     );
     const wrapper = screen.getByTestId('textfield-wrapper');
     expect(wrapper).toHaveAttribute('data-menu-anchor', 'bottom');
+    expect(wrapper).toHaveAttribute('data-menu-max-height', '400px');
   });
 
   it('preserves and composes caller-provided endAdornment', () => {
