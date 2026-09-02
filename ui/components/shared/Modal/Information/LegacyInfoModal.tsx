@@ -431,7 +431,10 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
                   sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: { xs: 'flex-start', sm: 'flex-end' },
+                    justifyContent: {
+                      xs: 'flex-start',
+                      sm: 'flex-end',
+                    },
                   }}
                 >
                   <Typography
