@@ -40,6 +40,7 @@ export const DryRunComponentStyled = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.card,
   color: theme.palette.text.default,
   marginBlock: '0.5rem',
+  wordBreak: 'break-word',
 }));
 
 export const DryRunComponentLabel = styled(ListItem)(({ theme }) => ({
@@ -73,10 +74,12 @@ export const DryRunRootListStyled = styled(List)({
   width: '100%',
   position: 'relative',
   marginBottom: '0.5rem',
+  overflowX: 'auto',
 });
 
 export const DryRunSignleError = styled(ListItemText)(({ theme }) => ({
   paddingInline: theme.spacing(1),
   paddingBlock: theme.spacing(1),
   marginInline: theme.spacing(0.5),
+  wordBreak: 'break-word',
 }));
