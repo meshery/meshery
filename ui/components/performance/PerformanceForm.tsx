@@ -3,6 +3,7 @@ import {
   AccordionDetails,
   AccordionSummary,
   Autocomplete,
+  Box,
   Button,
   CustomTooltip,
   FormControlLabel,
@@ -298,8 +299,16 @@ const PerformanceForm: React.FC<PerformanceFormProps> = ({
                   onChange={handleChange('reqBody')}
                 ></TextField>
               </Grid2>
-              <Grid2 container spacing={1} alignItems="center" size="grow">
-                <Grid2 size={{ xs: 12, sm: 6 }}>
+              <Grid2 size={{ xs: 12, md: 6 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    alignItems: { xs: 'flex-start', sm: 'center' },
+                    gap: 1,
+                    width: '100%',
+                  }}
+                >
                   <TextField
                     id="additional_options"
                     name="additional_options"
@@ -317,16 +326,15 @@ const PerformanceForm: React.FC<PerformanceFormProps> = ({
                     variant="outlined"
                     size="small"
                     onChange={handleChange('additional_options')}
+                    sx={{ flex: 1 }}
                   />
-                </Grid2>
-                <Grid2 size={{ xs: 12, sm: 6 }}>
                   <label
                     htmlFor="upload-additional-options"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
                       gap: '0.5rem',
-                      paddingLeft: '0.2rem',
+                      flexShrink: 0,
                     }}
                   >
                     <Button
@@ -350,28 +358,36 @@ const PerformanceForm: React.FC<PerformanceFormProps> = ({
                       <HelpIcon style={{ margin: 0 }} />
                     </CustomTooltip>
                   </label>
-                </Grid2>
+                </Box>
               </Grid2>
-              <Grid2 container spacing={1} alignItems="center" size="grow">
-                <Grid2 size={{ xs: 12, sm: 6 }}>
+              <Grid2 size={{ xs: 12, md: 6 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    alignItems: { xs: 'flex-start', sm: 'center' },
+                    gap: 1,
+                    width: '100%',
+                  }}
+                >
                   <TextField
+                    id="upload-ssl-certificate"
+                    name="upload-ssl-certificate"
                     size="small"
                     variant="outlined"
                     margin="normal"
                     fullWidth
                     label={caCertificate?.name || 'Upload SSL Certificate e.g. .crt file'}
-                    style={{ width: '100%' }}
                     value={metadata?.ca_certificate.name}
+                    sx={{ flex: 1 }}
                   />
-                </Grid2>
-                <Grid2 size={{ xs: 12, sm: 6 }}>
                   <label
                     htmlFor="upload-cacertificate"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
                       gap: '0.5rem',
-                      paddingLeft: '0.2rem',
+                      flexShrink: 0,
                     }}
                   >
                     <Button
@@ -396,7 +412,7 @@ const PerformanceForm: React.FC<PerformanceFormProps> = ({
                       <HelpIcon style={{ margin: 0 }} />
                     </CustomTooltip>
                   </label>
-                </Grid2>
+                </Box>
               </Grid2>
             </Grid2>
           </AccordionDetails>
