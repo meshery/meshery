@@ -488,7 +488,7 @@ both of which have shipped as silent no-ops:
   decision, not a repair.
 
 Before editing a shared workflow, find its callers:
-`gh-axi api -X GET search/code -f q='<workflow-file> path:.github/workflows'`. A caller having
+`gh-axi api -X GET search/code --field q='<workflow-file> path:.github/workflows'`. A caller having
 zero runs (no matching tags/releases) means changes there are untested by CI - verify by
 reading, not by waiting for a green check.
 
