@@ -471,14 +471,16 @@ touching any of them.
 
 ## Reusable Workflows Consumed by Other Repos
 
-`.github/workflows/*.yaml` here are called by repos across `meshery` and `meshery-extensions`
-via `uses: meshery/meshery/.github/workflows/<file>@master`. Two traps, both of which have
-shipped as silent no-ops:
+`.github/workflows/*.{yml,yaml}` here are called by repos across `meshery` and
+`meshery-extensions` via `uses: meshery/meshery/.github/workflows/<file>@master`. Two traps,
+both of which have shipped as silent no-ops:
 
-- **`with:` values are Actions expressions, not shell.** `${GITHUB_REF/refs\/tags\//}` in a
-  `with:` value is forwarded verbatim - GitHub never evaluates it. Use `${{ github.ref_name }}`.
-  The same substitution inside a `run:` step is correct, because a shell evaluates it there;
-  don't "fix" those. `build-and-release-stable.yml` contains both forms.
+- **`with:` values are Actions expressions, not shell.** `${GITHUB_REF/refs\/tags\//}` or a
+  bare `${GITHUB_SHA}` in a `with:` value is forwarded verbatim - GitHub never evaluates it.
+  Use `${{ github.ref_name }}` / `${{ github.sha }}`. The same substitution inside a `run:`
+  step is correct, because a shell evaluates it there; don't "fix" those.
+  `build-and-release-stable.yml` shows the correct `run:` form; the `with:` form it once
+  carried was fixed in `7eac7cd01a7a`.
 - **`if: github.repository == 'meshery/meshery'` disables the job for every external caller.**
   In a reusable workflow the `github` context is the *caller's*, so this guard is false from
   any other repo. Jobs in caller files carry it too, and a job whose `needs:` dependency is
