@@ -141,7 +141,7 @@ func CreateK8sResource(
 	return nil
 }
 
-// DeleteK8sResouce deletes the given kubernetes resource
+// DeleteK8sResource deletes the given kubernetes resource
 func DeleteK8sResource(
 	client dynamic.Interface,
 	group,
