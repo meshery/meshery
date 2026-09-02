@@ -145,6 +145,26 @@ tests in adapters are end-to-end tests and use patternfile. The reusable workflo
       secrets:
         token: ${{ secrets.PROVIDER_TOKEN }}
 
+#### Two traps when calling a Meshery reusable workflow
+
+Both of these fail silently - the workflow runs and reports success while doing nothing you
+expected - so they are worth checking before you debug anything else:
+
+1. **A `with:` value is a GitHub Actions expression, not a shell command.** A shell parameter
+   expansion such as `${GITHUB_SHA}` or `${GITHUB_REF/refs\/tags\//}` in a `with:` value is
+   forwarded to the workflow verbatim, because nothing ever evaluates it. Use
+   `${{ github.sha }}` or `${{ github.ref_name }}` instead. The same expansion inside a `run:`
+   step is correct, because a shell evaluates it there.
+2. **A job guarded by `if: github.repository == 'meshery/meshery'` never runs for you.** In a
+   reusable workflow the `github` context belongs to the *caller*, so that condition is false
+   from any other repository. The adapter workflows described above carry no such guard, so
+   this does not affect them; it is a caveat for the other reusable workflows in
+   `meshery/meshery`, notably the CNCF Playground deployments.
+
+Contributors changing a shared workflow should also read the "Reusable Workflows Consumed by
+Other Repos" section of [`AGENTS.md`](https://github.com/meshery/meshery/blob/master/AGENTS.md)
+in the repository root.
+
 ### Functionality of Central Workflow
 
 1. Checks out the code of the repository(on the ref of latest commit of branch which made the PR) in which it is referenced.

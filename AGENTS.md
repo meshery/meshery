@@ -488,7 +488,7 @@ both of which have shipped as silent no-ops:
   decision, not a repair.
 
 Before editing a shared workflow, find its callers:
-`gh api -X GET search/code -f q='<workflow-file> path:.github/workflows'`. A caller having
+`gh-axi api -X GET search/code -f q='<workflow-file> path:.github/workflows'`. A caller having
 zero runs (no matching tags/releases) means changes there are untested by CI - verify by
 reading, not by waiting for a green check.
 
@@ -506,6 +506,7 @@ worked detail behind them — open the one that matches what you are working on.
 | MeshKit error codes | [How to write MeshKit compatible errors](./docs/content/en/project/contributing/contributing-error.md) |
 | A Go lint rule firing, or adding one | [Go Lint Rules](./docs/content/en/project/contributing/contributing-lint.md) |
 | Releases, CI secrets, the QA dashboard | [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md) |
+| A reusable workflow called from another repo | [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md) |
 | Connections and credential secrets | [Connections](./docs/content/en/project/contributing/models/connections.md) |
 | A permission-gated page, control or key | [Extensibility: Authorization](./docs/content/en/reference/extensibility/authorization/index.md) |
 | Providers, `PROVIDER` enforcement, boot-time seeding | [Extensibility: Providers](./docs/content/en/reference/extensibility/providers/index.md) |
