@@ -150,9 +150,8 @@ tests in adapters are end-to-end tests and use patternfile. The reusable workflo
 Both of these fail silently - the workflow runs and reports success while doing nothing you
 expected - so they are worth checking before you debug anything else:
 
-1. **A `with:` value is a GitHub Actions expression, not a shell command.** A shell parameter
-   expansion such as `${GITHUB_SHA}` or `${GITHUB_REF/refs\/tags\//}` in a `with:` value is
-   forwarded to the workflow verbatim, because nothing ever evaluates it. Use
+1. **A `with:` value is not evaluated by a shell.** Only `${{ ... }}` expressions are evaluated; shell-style expansions such as `${GITHUB_SHA}` or `${GITHUB_REF/refs\/tags\//}` in a `with:` value are
+   forwarded to the workflow verbatim, because nothing ever evaluates them. Use
    `${{ github.sha }}` or `${{ github.ref_name }}` instead. The same expansion inside a `run:`
    step is correct, because a shell evaluates it there.
 2. **A job guarded by `if: github.repository == 'meshery/meshery'` never runs for you.** In a
