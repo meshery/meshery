@@ -242,21 +242,21 @@ export default function CustomSelectWidget({
                 },
                 ...incomingMenuProps,
                 PaperProps: {
-                  style: {
-                    maxHeight: '400px',
-                    ...incomingPaperProps.style,
-                  },
                   ...incomingPaperProps,
+                  style: {
+                    ...incomingPaperProps.style,
+                    maxHeight: '400px',
+                  },
                 },
                 slotProps: {
                   ...incomingMenuProps.slotProps,
                   paper: {
-                    style: {
-                      maxHeight: '400px',
-                      ...incomingPaperSlot.style,
-                      ...incomingPaperProps.style,
-                    },
                     ...incomingPaperSlot,
+                    style: {
+                      ...incomingPaperProps.style,
+                      ...incomingPaperSlot.style,
+                      maxHeight: '400px',
+                    },
                   },
                 },
               },
