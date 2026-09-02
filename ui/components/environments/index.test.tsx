@@ -278,7 +278,7 @@ describe('Environments toolbar', () => {
 
     renderEnvironments();
 
-    const toolbar = screen.getByTestId('data-table-toolbar');
+    const toolbar = await screen.findByTestId('data-table-toolbar');
     expect(toolbar).toBeInTheDocument();
 
     // Before selection, bulk operations slot is not rendered
@@ -286,7 +286,8 @@ describe('Environments toolbar', () => {
     expect(within(toolbar).queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
 
     // Select an environment row
-    await user.click(screen.getByTestId('select-env-1'));
+    const checkbox1 = await screen.findByTestId('select-env-1');
+    await user.click(checkbox1);
 
     // Assert toolbar displays the selection count alongside existing controls and delete button
     expect(within(toolbar).getByText(/1 environment selected/i)).toBeInTheDocument();
@@ -295,7 +296,8 @@ describe('Environments toolbar', () => {
     expect(within(toolbar).getByPlaceholderText('Search by name')).toBeInTheDocument();
 
     // Select second environment
-    await user.click(screen.getByTestId('select-env-2'));
+    const checkbox2 = await screen.findByTestId('select-env-2');
+    await user.click(checkbox2);
     expect(within(toolbar).getByText(/2 environments selected/i)).toBeInTheDocument();
     expect(within(toolbar).getByRole('button', { name: /delete/i })).toBeInTheDocument();
   });
