@@ -420,6 +420,15 @@ of two separate defects. The two are now separated
   read by the consumers that predate the layered document (the connection state
   machine, the header status chips, the kubeconfig flows).
 
+The server only ever writes the snake_case key, but two of those legacy
+consumers (`ui/components/connections/metadata.tsx` and
+`ui/components/connections/wizard/kubernetesDeploymentMode.tsx`) read
+`metadata?.meshsyncDeploymentMode ?? metadata?.meshsync_deployment_mode`,
+accepting a camelCase spelling on top of it. This is not a second setting -
+both spellings resolve to the same materialized value above, and the fallback
+exists only so a camelCase value written by an older client is still read
+correctly.
+
 `connections.ResolveDeploymentMode` is the single decision point, and it reports
 the layer it resolved from:
 
