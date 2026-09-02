@@ -475,7 +475,7 @@ touching any of them.
 `meshery-extensions` via `uses: meshery/meshery/.github/workflows/<file>@master`. Two traps,
 both of which have shipped as silent no-ops:
 
-- **`with:` values are Actions expressions, not shell.** `${GITHUB_REF/refs\/tags\//}` or a
+- **`with:` values are not evaluated by a shell.** Only `${{ ... }}` expressions are evaluated; `${GITHUB_REF/refs\/tags\//}` or a
   bare `${GITHUB_SHA}` in a `with:` value is forwarded verbatim - GitHub never evaluates it.
   Use `${{ github.ref_name }}` / `${{ github.sha }}`. The same substitution inside a `run:`
   step is correct, because a shell evaluates it there; don't "fix" those.
