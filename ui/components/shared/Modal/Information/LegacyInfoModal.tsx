@@ -428,7 +428,11 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
                 </Grid>
                 <Grid
                   size={{ xs: 12, sm: 6 }}
-                  sx={{ display: 'flex', alignItems: 'center', justifyContent: { xs: 'flex-start', sm: 'flex-end' } }}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: { xs: 'flex-start', sm: 'flex-end' },
+                  }}
                 >
                   <Typography
                     gutterBottom
