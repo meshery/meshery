@@ -74,6 +74,7 @@ const (
 	ErrFetchContainersCode                = "mesheryctl-1242"
 	ErrInvalidComponentCode               = "mesheryctl-1243"
 	ErrMesheryEndpointNotAccessibleCode   = "mesheryctl-1244"
+	ErrInvalidEndpointCode                = "mesheryctl-1255"
 )
 
 var (
@@ -521,4 +522,14 @@ func ErrMesheryEndpointNotAccessible() error {
 		[]string{"Meshery endpoint did not become accessible within the expected time"},
 		[]string{"Meshery server may still be initializing or failed to start"},
 		[]string{"Check the status later with `mesheryctl system status`"})
+}
+
+func ErrInvalidEndpoint(endpoint string) error {
+	return errors.New(
+		ErrInvalidEndpointCode,
+		errors.Alert,
+		[]string{"Invalid endpoint configured in the current context"},
+		[]string{fmt.Sprintf("The context endpoint %q is not a valid host:port address", endpoint)},
+		[]string{"The `endpoint` of the current context in ~/.meshery/config.yaml is empty, has no port, or is otherwise malformed"},
+		[]string{"Set a valid endpoint such as `http://localhost:9081`. Run `mesheryctl system context view` to inspect the current context."})
 }
