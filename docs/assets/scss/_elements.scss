@@ -24,7 +24,7 @@ video.center {
 iframe {
   max-width: 100%;
 }
-iframe:not(.iframe-container iframe) {
+iframe:not(.yt-embed-container iframe) {
   max-width: 100%;
   aspect-ratio: 16 / 9;
   height: auto;
