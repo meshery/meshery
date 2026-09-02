@@ -80,7 +80,6 @@ const View = ({ setView, resource, k8sConfig }: DashboardViewProps) => {
     [getResourceCleanData, resource, router],
   );
 
-  // data is a ConnectionPage ({ connections: [...] }), not an array.
   // kind is a plain repeated query param (?kind=kubernetes) — not JSON-encoded.
   const { data: connectionsData } = useGetConnectionsQuery({
     page: 0,

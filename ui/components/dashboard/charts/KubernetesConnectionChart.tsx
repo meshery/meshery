@@ -27,7 +27,7 @@ export default function KubernetesConnectionStatsChart() {
     isError,
   } = useGetConnectionsQuery({
     page: 0,
-    // Plain ?kind=kubernetes (not JSON-encoded); pageSize matches Header filter shape.
+    // Plain ?kind=kubernetes (not JSON-encoded).
     pageSize: 'all',
     kind: CoreConnectionKinds.kubernetes,
   });
