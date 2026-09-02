@@ -18,9 +18,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestGetManifestTreeURL(t *testing.T) {
@@ -36,10 +33,9 @@ func TestGetManifestTreeURL(t *testing.T) {
 		defer func() { gitHubBaseURL = origURL }()
 
 		_, err := GetManifestTreeURL("v0.6.0")
-		require.Error(t, err)
-		assert.Contains(t, err.Error(), "403")
-		assert.Contains(t, err.Error(), "API rate limit exceeded")
-		assert.NotContains(t, err.Error(), "could not find path")
+		expectedURL := gitHubBaseURL + "/repos/" + "meshery" + "/" + "meshery" + "/git/trees/" + "v0.6.0" + "?recursive=1"
+		expectedErr := ErrGitHubAPIResponse(http.StatusForbidden, expectedURL, `{"message": "API rate limit exceeded"}`)
+		AssertMeshkitErrorsEqual(t, err, expectedErr)
 	})
 
 	t.Run("happy path with valid ManifestList", func(t *testing.T) {
@@ -63,9 +59,13 @@ func TestGetManifestTreeURL(t *testing.T) {
 		defer func() { gitHubBaseURL = origURL }()
 
 		treeURL, err := GetManifestTreeURL("v0.6.0")
-		require.NoError(t, err)
+		if err != nil {
+			t.Fatalf("expected no error, got: %v", err)
+		}
 		expected := "https://api.github.com/repos/meshery/meshery/git/trees/k8s-tree-sha"
-		assert.Equal(t, expected, treeURL)
+		if treeURL != expected {
+			t.Errorf("expected treeURL %q, got %q", expected, treeURL)
+		}
 	})
 }
 
@@ -78,9 +78,8 @@ func TestListManifests(t *testing.T) {
 		defer server.Close()
 
 		_, err := ListManifests(server.URL)
-		require.Error(t, err)
-		assert.Contains(t, err.Error(), "403")
-		assert.Contains(t, err.Error(), "API rate limit exceeded")
+		expectedErr := ErrGitHubAPIResponse(http.StatusForbidden, server.URL, `{"message": "API rate limit exceeded"}`)
+		AssertMeshkitErrorsEqual(t, err, expectedErr)
 	})
 
 	t.Run("happy path with valid ManifestList", func(t *testing.T) {
@@ -100,9 +99,16 @@ func TestListManifests(t *testing.T) {
 		defer server.Close()
 
 		manifests, err := ListManifests(server.URL)
-		require.NoError(t, err)
-		require.Len(t, manifests, 1)
-		assert.Equal(t, "install/deployment_yamls/k8s/meshery-deployment.yaml", manifests[0].Path)
+		if err != nil {
+			t.Fatalf("expected no error, got: %v", err)
+		}
+		if len(manifests) != 1 {
+			t.Fatalf("expected 1 manifest, got %d", len(manifests))
+		}
+		expectedPath := "install/deployment_yamls/k8s/meshery-deployment.yaml"
+		if manifests[0].Path != expectedPath {
+			t.Errorf("expected manifest path %q, got %q", expectedPath, manifests[0].Path)
+		}
 	})
 }
 
