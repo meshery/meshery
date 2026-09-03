@@ -75,14 +75,7 @@ export default function ActionButton({
         }}
         open={open}
         anchorEl={anchorRef.current}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
+        placement="bottom-start"
       >
         <Paper>
           <ClickAwayListener onClickAway={handleClose}>
