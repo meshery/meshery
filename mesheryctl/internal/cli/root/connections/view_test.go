@@ -1,11 +1,14 @@
 package connections
 
 import (
+	"bytes"
 	"fmt"
+	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
@@ -68,4 +71,96 @@ func TestConnectionViewCmd(t *testing.T) {
 
 	// Run tests
 	utils.InvokeMesheryctlTestListCommand(t, update, ConnectionsCmd, tests, currDir, "connection")
+}
+
+// TestConnectionViewSaveCreatesFile verifies that "connection view --save"
+// writes a file whose name includes the connection name and format extension.
+// Uses a temp dir as HOME so the real ~/.meshery is never touched.
+func TestConnectionViewSaveCreatesFile(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	defer utils.ResetCommandFlags(ConnectionsCmd, t)
+
+	utils.TokenFlag = utils.GetToken(t)
+
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("cannot determine current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	fixturesDir := filepath.Join(currDir, "fixtures")
+
+	apiResponse := utils.NewGoldenFile(t, "view.connection.api.response.golden", fixturesDir).Load()
+	httpmock.RegisterResponder("GET",
+		testContext.BaseURL+"/api/integrations/connections/"+connectionId,
+		httpmock.NewStringResponder(200, apiResponse))
+
+	// Override HOME and USERPROFILE (Windows) so os.UserHomeDir() resolves to temp dir
+	tmpHome := t.TempDir()
+	t.Setenv("HOME", tmpHome)
+	t.Setenv("USERPROFILE", tmpHome)
+
+	mesheryDir := filepath.Join(tmpHome, ".meshery")
+	if err := os.MkdirAll(mesheryDir, 0755); err != nil {
+		t.Fatalf("cannot create %s: %v", mesheryDir, err)
+	}
+	expectedFile := filepath.Join(mesheryDir, "connection_minikube.yaml")
+
+	// REPLACE WITH:
+	buf := &bytes.Buffer{}
+	ConnectionsCmd.SetOut(buf)
+	ConnectionsCmd.SetErr(buf)
+
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	ConnectionsCmd.SetArgs([]string{"view", connectionId, "--save"})
+	if execErr := ConnectionsCmd.Execute(); execErr != nil {
+		t.Fatalf("unexpected error: %v", execErr)
+	}
+
+	if _, statErr := os.Stat(expectedFile); os.IsNotExist(statErr) {
+		entries, _ := os.ReadDir(mesheryDir)
+		names := make([]string, 0, len(entries))
+		for _, e := range entries {
+			names = append(names, e.Name())
+		}
+		t.Errorf("--save: expected file %q to exist, got: %v", expectedFile, names)
+	}
+}
+
+// TestConnectionViewNoSaveWithBrokenHome verifies that "connection view" without
+// --save succeeds even when HOME is unset, proving os.UserHomeDir() is not called
+// on the non-save path.
+func TestConnectionViewNoSaveWithBrokenHome(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	defer utils.ResetCommandFlags(ConnectionsCmd, t)
+
+	utils.TokenFlag = utils.GetToken(t)
+
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("cannot determine current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	fixturesDir := filepath.Join(currDir, "fixtures")
+
+	apiResponse := utils.NewGoldenFile(t, "view.connection.api.response.golden", fixturesDir).Load()
+	httpmock.RegisterResponder("GET",
+		testContext.BaseURL+"/api/integrations/connections/"+connectionId,
+		httpmock.NewStringResponder(200, apiResponse))
+
+	// Unset HOME and USERPROFILE to simulate an environment where home dir is unavailable
+	t.Setenv("HOME", "")
+	t.Setenv("USERPROFILE", "")
+
+	buf := &bytes.Buffer{}
+	ConnectionsCmd.SetOut(buf)
+	ConnectionsCmd.SetErr(buf)
+
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+	ConnectionsCmd.SetArgs([]string{"view", connectionId})
+	if execErr := ConnectionsCmd.Execute(); execErr != nil {
+		t.Fatalf("view without --save should succeed even with no HOME: %v", execErr)
+	}
+
 }
