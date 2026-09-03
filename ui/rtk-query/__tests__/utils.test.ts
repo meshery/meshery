@@ -30,6 +30,33 @@ describe('initiateQuery', () => {
     expect(result).toEqual({ data: { ok: true } });
   });
 
+  it('releases the cache subscription that initiate() opened', async () => {
+    // The real dispatch returns a QueryActionCreatorResult, which is a promise
+    // that also carries unsubscribe(). Leaving it unsubscribed pins the cache
+    // entry for the life of the session.
+    const unsubscribe = vi.fn();
+    const subscription = Object.assign(Promise.resolve({ data: { ok: true } }), { unsubscribe });
+    dispatch.mockReturnValue(subscription);
+    const initiate = vi.fn().mockReturnValue({ type: 'thunk-action' });
+
+    const result = await initiateQuery({ initiate }, { id: 'abc' });
+
+    expect(result).toEqual({ data: { ok: true } });
+    expect(unsubscribe).toHaveBeenCalledTimes(1);
+  });
+
+  it('releases the subscription even when the query rejects', async () => {
+    const unsubscribe = vi.fn();
+    const subscription = Object.assign(Promise.reject(new Error('boom')), { unsubscribe });
+    dispatch.mockReturnValue(subscription);
+    const initiate = vi.fn().mockReturnValue({ type: 'thunk-action' });
+
+    const result = await initiateQuery({ initiate }, undefined);
+
+    expect(result.isError).toBe(true);
+    expect(unsubscribe).toHaveBeenCalledTimes(1);
+  });
+
   it('returns the awaited dispatch result on success', async () => {
     const fulfilled = {
       data: { foo: 'bar' },
