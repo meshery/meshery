@@ -72,7 +72,6 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 	if err != nil && !connPayload.SkipCredentialVerification {
 		return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": models.ErrPrometheusScan(err)}).Build(), models.ErrPrometheusScan(err)
 	}
-	// Stay in REGISTERED. Exit is not a machine edge and was misread as a follow-up event.
 	return machines.NoOp, nil, nil
 }
 
