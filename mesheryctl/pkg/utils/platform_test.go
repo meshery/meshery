@@ -14,11 +14,13 @@
 
 package utils
 
+// The function are related to download should be test in meshkit package, please do not add test here.
 import (
+	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
 )
-
-// The function are related to download should be test in meshkit package, please do not add test here.
 
 func TestListManifests(t *testing.T) {
 	t.Run("ListManifests with empty manifest", func(t *testing.T) {
@@ -30,7 +32,32 @@ func TestListManifests(t *testing.T) {
 		}
 	})
 }
+func TestListManifestsHTTPError(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte("server error"))
+	}))
+	defer server.Close()
 
+	_, err := ListManifests(server.URL)
+
+	if err == nil {
+		t.Fatal("expected error for non-200 HTTP status")
+	}
+	errMsg := err.Error()
+
+	if !strings.Contains(errMsg, "500") {
+		t.Errorf("expected error to contain status 500, got: %v", err)
+	}
+
+	if !strings.Contains(errMsg, server.URL) {
+		t.Errorf("expected error to contain server URL, got: %v", err)
+	}
+
+	if !strings.Contains(errMsg, "server error") {
+		t.Errorf("expected error to contain response body, got: %v", err)
+	}
+}
 func TestGetCleanPodName(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -66,8 +93,6 @@ func TestGetCleanPodName(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			// Names with fewer than two hyphen-separated segments used to panic with
-			// "slice bounds out of range"; GetCleanPodName must now return cleanly.
 			got := GetCleanPodName(tc.podName)
 			if got != tc.expected {
 				t.Errorf("GetCleanPodName(%q) = %q, want %q", tc.podName, got, tc.expected)
