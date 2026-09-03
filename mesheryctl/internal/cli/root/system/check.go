@@ -324,6 +324,15 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 	if hc.Options.PrintLogs {
 		utils.Log.Info("\nDocker \n--------------")
 	}
+	// NewHealthChecker validates the context name but never Context.Endpoint,
+	// and both entry points (Run and RunPreflightHealthChecks) reach this check.
+	// Reuse the parser system start relies on so an empty or malformed endpoint
+	// reports ErrInvalidEndpoint here instead of being mistaken for a Docker
+	// failure further down.
+	if _, _, err := parseContextEndpoint(hc.context.GetEndpoint()); err != nil {
+		return err
+	}
+
 	isLocal := isLocalMesheryEndpoint(hc.context.GetEndpoint())
 
 	// Check whether docker daemon is running using Docker client API

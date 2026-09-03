@@ -301,6 +301,16 @@ func parseContextEndpoint(endpoint string) (address string, port string, err err
 		return "", "", ErrInvalidEndpoint(endpoint)
 	}
 
+	// net.SplitHostPort only separates the two strings; it does not check that
+	// the port is a usable TCP port. configureDockerServices writes this value
+	// straight into the Docker port mapping, and resolveDockerEndpoint later
+	// runs it through strconv.Atoi, so reject a non-numeric or out-of-range
+	// port here rather than surfacing it as a Docker or conversion failure.
+	portNumber, portErr := strconv.Atoi(port)
+	if portErr != nil || portNumber < 1 || portNumber > 65535 {
+		return "", "", ErrInvalidEndpoint(endpoint)
+	}
+
 	address = host
 	if scheme != "" {
 		address = scheme + "://" + host
