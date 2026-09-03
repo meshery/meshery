@@ -37,6 +37,7 @@ mesheryctl model view [model-name] --output-format [json|yaml]
 mesheryctl model view [model-name] --output-format [json|yaml] --save
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		modelViewFlags.OutputFormat = strings.ToLower(modelViewFlags.OutputFormat)
 		return mesheryctlflags.ValidateCmdFlags(cmd, &modelViewFlags)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
@@ -69,35 +70,13 @@ mesheryctl model view [model-name] --output-format [json|yaml] --save
 			return nil
 		}
 
-		outputFormatterFactory := display.OutputFormatterFactory[*model.ModelDefinition]{}
-		outputFormatter, err := outputFormatterFactory.New(strings.ToLower(modelViewFlags.OutputFormat), selectedModel)
-		if err != nil {
-			return err
-		}
-
-		err = outputFormatter.WithOutput(cmd.OutOrStdout()).Display()
-		if err != nil {
-			return err
-		}
-
+		fileName := ""
 		if modelViewFlags.Save {
-			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[*model.ModelDefinition]{}
-			outputFormatterSaver, err := outputFormatterSaverFactory.New(modelViewFlags.OutputFormat, outputFormatter)
-			if err != nil {
-				return err
-			}
-
 			modelString := strings.ReplaceAll(fmt.Sprintf("%v", selectedModel.DisplayName), " ", "_")
-			fileName := filepath.Join(utils.MesheryFolder, fmt.Sprintf("model_%s.%s", modelString, modelViewFlags.OutputFormat))
-
-			outputFormatterSaver = outputFormatterSaver.WithFilePath(fileName)
-			err = outputFormatterSaver.Save()
-			if err != nil {
-				return err
-			}
+			fileName = filepath.Join(utils.MesheryFolder, fmt.Sprintf("model_%s", modelString))
 		}
 
-		return nil
+		return display.FormatAndSaveOutput(selectedModel, modelViewFlags.OutputFormat, cmd.OutOrStdout(), modelViewFlags.Save, fileName)
 	},
 }
 
