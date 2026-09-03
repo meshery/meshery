@@ -63,7 +63,13 @@ const Troubleshoot = ({ errorMessage, ...props }) => {
 
   return (
     <div>
-      <Button variant="contained" color="primary" size="large" onClick={handleOpen}>
+      <Button
+        variant="contained"
+        color="primary"
+        size="large"
+        onClick={handleOpen}
+        aria-label="Open Troubleshooting Guide"
+      >
         Troubleshooting Guide
       </Button>
       <Button
@@ -71,6 +77,7 @@ const Troubleshoot = ({ errorMessage, ...props }) => {
         color="primary"
         size="large"
         onClick={handleOpenForm}
+        aria-label="Open Help and Support Form"
         style={{
           marginLeft: '0.31rem',
         }}
