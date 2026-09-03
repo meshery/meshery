@@ -71,16 +71,24 @@ func (m *mockMiddlewareProvider) GetGenericPersister() *database.Handler {
 func TestKubernetesMiddleware_SecondInvocationAfter403(t *testing.T) {
 	var requestCount int32
 
+	// Create a channel to dictate what status code the mock server returns.
+	// This satisfies CodeRabbit's feedback to not use requestCount for deciding 403,
+	// while still allowing the first discovery request to succeed (200 OK) so the FSM is spawned,
+	// and the subsequent FSM request to fail with 403.
+	statusResponses := make(chan int, 2)
+	statusResponses <- http.StatusOK
+	statusResponses <- http.StatusForbidden
+
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		count := atomic.AddInt32(&requestCount, 1)
+		atomic.AddInt32(&requestCount, 1)
 		w.Header().Set("Content-Type", "application/json")
 		if r.URL.Path == "/api/v1/namespaces/kube-system" {
-			if count > 1 {
-				w.WriteHeader(http.StatusForbidden)
+			status := <-statusResponses
+			w.WriteHeader(status)
+			if status == http.StatusForbidden {
 				_, _ = w.Write([]byte(`{"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"forbidden","reason":"Forbidden","code":403}`))
 				return
 			}
-			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write([]byte(`{"metadata":{"uid":"test-uid"}}`))
 			return
 		}
@@ -138,13 +146,15 @@ users:
 	handler := &Handler{
 		log: log,
 		config: &models.HandlerConfig{
-			KubeConfigFolder: kubeConfigDir,
-			EventBroadcaster: models.NewBroadcaster("test"),
-			OperatorTracker:  models.NewOperatorTracker(false),
+			KubeConfigFolder:  kubeConfigDir,
+			EventBroadcaster:  models.NewBroadcaster("test"),
+			OperatorTracker:   models.NewOperatorTracker(false),
+			K8scontextChannel: models.NewContextHelper(),
 		},
 		ConnectionToStateMachineInstanceTracker: &machines.ConnectionToStateMachineInstanceTracker{
 			ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine),
 		},
+		MesheryCtrlsHelper: &models.MesheryControllersHelper{},
 	}
 
 	user := &models.User{ID: uuid.Must(uuid.NewV4())}
