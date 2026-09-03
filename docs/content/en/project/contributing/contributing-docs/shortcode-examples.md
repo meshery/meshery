@@ -346,7 +346,6 @@ All of them take no body, and all take no parameters except `mesheryctl-command-
 | `error-codes-detail` | `{{</* error-codes-detail */>}}` | [Error Codes Reference]({{< ref "reference/references/error-codes.md" >}}) |
 | `troubleshooting-guides-list` | `{{</* troubleshooting-guides-list */>}}` | [Error Codes Reference]({{< ref "reference/references/error-codes.md" >}}) |
 | `mesheryctl-command-table` | `{{</* mesheryctl-command-table command="adapter" */>}}` | [mesheryctl Reference]({{< ref "reference/references/mesheryctl/_index.md" >}}) |
-| `mesheryctl-guides-list` | `{{</* mesheryctl-guides-list */>}}` | [mesheryctl Installation]({{< ref "installation/mesheryctl/_index.md" >}}) |
 | `network-ports` | `{{</* network-ports */>}}` | [Architecture]({{< ref "concepts/architecture/_index.md" >}}) |
 | `permissions` | `{{</* permissions */>}}` | [Permissions Reference]({{< ref "reference/references/permissions.md" >}}) |
 | `tutorials-list` | `{{</* tutorials-list */>}}` | [Quick Start]({{< ref "installation/quick-start/index.md" >}}) |

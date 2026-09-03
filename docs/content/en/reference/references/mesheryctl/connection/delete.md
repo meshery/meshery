@@ -3,6 +3,7 @@ title: mesheryctl-connection-delete
 display_title: false
 command: connection
 subcommand: delete
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl connection delete

@@ -3,6 +3,7 @@ title: mesheryctl-model-list
 display_title: false
 command: model
 subcommand: list
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl model list

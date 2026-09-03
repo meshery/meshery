@@ -3,6 +3,7 @@ title: mesheryctl-system-channel-set
 display_title: false
 command: system
 subcommand: channel
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl system channel set

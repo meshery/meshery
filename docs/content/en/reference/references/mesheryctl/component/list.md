@@ -3,6 +3,7 @@ title: mesheryctl-component-list
 display_title: false
 command: component
 subcommand: list
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl component list

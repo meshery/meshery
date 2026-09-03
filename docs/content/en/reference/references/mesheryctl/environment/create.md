@@ -3,6 +3,7 @@ title: mesheryctl-environment-create
 display_title: false
 command: environment
 subcommand: create
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl environment create

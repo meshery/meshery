@@ -32,6 +32,7 @@ title: mesheryctl
 display_title: false
 command: mesheryctl
 subcommand: nil
+categories: [mesheryctl-ref]
 ---
 
 `
@@ -45,6 +46,7 @@ title: mesheryctl-adapter
 display_title: false
 command: adapter
 subcommand: nil
+categories: [mesheryctl-ref]
 ---
 
 `
@@ -58,6 +60,7 @@ title: mesheryctl-adapter-deploy
 display_title: false
 command: adapter
 subcommand: deploy
+categories: [mesheryctl-ref]
 ---
 
 `
@@ -71,6 +74,7 @@ title: mesheryctl-exp-relationship-generate
 display_title: false
 command: exp
 subcommand: relationship
+categories: [mesheryctl-ref]
 ---
 
 `

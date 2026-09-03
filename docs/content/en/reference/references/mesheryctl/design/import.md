@@ -3,6 +3,7 @@ title: mesheryctl-design-import
 display_title: false
 command: design
 subcommand: import
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl design import

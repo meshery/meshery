@@ -3,6 +3,7 @@ title: mesheryctl-system
 display_title: false
 command: system
 subcommand: nil
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl system

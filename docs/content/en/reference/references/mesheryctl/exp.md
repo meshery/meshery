@@ -3,6 +3,7 @@ title: mesheryctl-exp
 display_title: false
 command: exp
 subcommand: nil
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl exp

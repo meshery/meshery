@@ -3,6 +3,7 @@ title: mesheryctl-design
 display_title: false
 command: design
 subcommand: nil
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl design

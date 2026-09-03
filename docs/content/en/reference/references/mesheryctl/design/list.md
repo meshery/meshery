@@ -3,6 +3,7 @@ title: mesheryctl-design-list
 display_title: false
 command: design
 subcommand: list
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl design list

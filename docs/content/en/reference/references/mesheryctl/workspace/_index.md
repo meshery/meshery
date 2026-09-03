@@ -3,6 +3,7 @@ title: mesheryctl-workspace
 display_title: false
 command: workspace
 subcommand: nil
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl workspace

@@ -3,6 +3,7 @@ title: mesheryctl-design-delete
 display_title: false
 command: design
 subcommand: delete
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl design delete

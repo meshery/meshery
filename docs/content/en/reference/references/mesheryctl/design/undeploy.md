@@ -3,6 +3,7 @@ title: mesheryctl-design-undeploy
 display_title: false
 command: design
 subcommand: undeploy
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl design undeploy

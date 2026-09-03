@@ -3,6 +3,7 @@ title: mesheryctl-system-status
 display_title: false
 command: system
 subcommand: status
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl system status

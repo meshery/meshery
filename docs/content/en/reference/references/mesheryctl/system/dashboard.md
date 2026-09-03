@@ -3,6 +3,7 @@ title: mesheryctl-system-dashboard
 display_title: false
 command: system
 subcommand: dashboard
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl system dashboard

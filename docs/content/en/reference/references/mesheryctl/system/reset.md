@@ -3,6 +3,7 @@ title: mesheryctl-system-reset
 display_title: false
 command: system
 subcommand: reset
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl system reset

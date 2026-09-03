@@ -3,6 +3,7 @@ title: mesheryctl-connection-create
 display_title: false
 command: connection
 subcommand: create
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl connection create

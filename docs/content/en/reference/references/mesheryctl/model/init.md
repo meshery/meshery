@@ -3,6 +3,7 @@ title: mesheryctl-model-init
 display_title: false
 command: model
 subcommand: init
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl model init

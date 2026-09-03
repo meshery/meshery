@@ -3,6 +3,7 @@ title: mesheryctl-system-stop
 display_title: false
 command: system
 subcommand: stop
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl system stop

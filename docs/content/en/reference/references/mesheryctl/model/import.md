@@ -3,6 +3,7 @@ title: mesheryctl-model-import
 display_title: false
 command: model
 subcommand: import
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl model import

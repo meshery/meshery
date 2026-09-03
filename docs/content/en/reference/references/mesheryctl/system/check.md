@@ -3,6 +3,7 @@ title: mesheryctl-system-check
 display_title: false
 command: system
 subcommand: check
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl system check

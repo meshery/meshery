@@ -3,6 +3,7 @@ title: mesheryctl-design-deploy
 display_title: false
 command: design
 subcommand: deploy
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl design deploy

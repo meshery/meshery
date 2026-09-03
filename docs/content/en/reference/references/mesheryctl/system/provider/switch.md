@@ -3,6 +3,7 @@ title: mesheryctl-system-provider-switch
 display_title: false
 command: system
 subcommand: provider
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl system provider switch
