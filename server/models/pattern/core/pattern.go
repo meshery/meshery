@@ -7,6 +7,7 @@ import (
 	"io"
 	"path/filepath"
 	"strings"
+	"unicode"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models/pattern/utils"
@@ -189,13 +190,25 @@ func ToCytoscapeJS(patternFile *pattern.PatternFile, log logger.Handler) (cytosc
 			return cy, err
 		}
 
+		var data interface{} = *cmp
+		cmpByt, err := json.Marshal(cmp)
+		if err == nil {
+			var cmpMap map[string]interface{}
+			if err := json.Unmarshal(cmpByt, &cmpMap); err == nil {
+				if styles, ok := cmpMap["styles"].(map[string]interface{}); ok {
+					resolveDuplicateStyles(styles)
+				}
+				data = cmpMap
+			}
+		}
+
 		elem := cytoscapejs.Element{
 			Data:       elemData,
 			Position:   &elemPosition,
 			Selectable: true,
 			Grabbable:  true,
-			Scratch: map[string]component.ComponentDefinition{
-				"_data": *cmp,
+			Scratch: map[string]interface{}{
+				"_data": data,
 			},
 		}
 
@@ -540,4 +553,30 @@ func getCytoscapeJSPosition(component *component.ComponentDefinition, log logger
 	}
 
 	return pos, nil
+}
+
+func resolveDuplicateStyles(styles map[string]interface{}) {
+	for k := range styles {
+		kebab := toKebabCase(k)
+		if kebab != k {
+			if _, exists := styles[kebab]; exists {
+				delete(styles, k)
+			}
+		}
+	}
+}
+
+func toKebabCase(s string) string {
+	var res string
+	for i, r := range s {
+		if unicode.IsUpper(r) {
+			if i > 0 {
+				res += "-"
+			}
+			res += string(unicode.ToLower(r))
+		} else {
+			res += string(r)
+		}
+	}
+	return res
 }
