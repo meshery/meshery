@@ -2,6 +2,27 @@
 
 `mesheryctl` is the CLI client for Meshery.
 
+## Quick Start
+
+Install and start Meshery on macOS or Linux:
+
+```bash
+curl -L https://meshery.io/install | bash
+```
+
+### Non-interactive installation
+
+CI systems, scripts, and AI agents without a controlling TTY must set
+`PLATFORM` explicitly:
+
+```bash
+# Docker
+curl -L https://meshery.io/install | PLATFORM=docker bash -
+
+# Kubernetes
+curl -L https://meshery.io/install | PLATFORM=kubernetes bash -
+```
+
 # Contributing
 
 Please refer to the [Meshery Contributing Guidelines](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md) for setting up your development environment.
