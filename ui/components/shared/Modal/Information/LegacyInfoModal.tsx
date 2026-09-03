@@ -492,7 +492,13 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
           }
           variant="filled"
         >
-          <ActionContainer>
+          <ActionContainer
+            sx={{
+              overflow: { xs: 'auto' },
+              flexWrap: { xs: 'wrap' },
+              gap: { xs: '0.5rem' },
+            }}
+          >
             <TooltipButton title={'Copy Design Link'} onClick={handleCopy}>
               <CopyLinkButton>Copy Link</CopyLinkButton>
             </TooltipButton>
