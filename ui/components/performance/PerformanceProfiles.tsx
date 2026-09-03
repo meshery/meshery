@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Moment from 'react-moment';
-import { ToolWrapper } from '@/assets/styles/general/tool.styles';
+
 import {
   AddCircleIcon as AddIcon,
   Button,
@@ -19,6 +19,7 @@ import {
   Typography,
   useTheme,
   useHasPermission,
+  DataTableToolbar,
 } from '@sistent/sistent';
 import MesheryPerformanceComponent from './index';
 import PerformanceProfileGrid from './PerformanceProfileGrid';
@@ -445,27 +446,29 @@ function PerformanceProfile({ handleDelete }) {
   return (
     <>
       <div style={{ padding: '0.5rem' }}>
-        <ToolWrapper>
-          {width < 550 && isSearchExpanded ? null : (
-            <>
-              {(testProfiles.length > 0 || viewType == 'table') && (
-                <div style={{ width: 'fit-content', alignSelf: 'flex-start' }}>
-                  <Button
-                    aria-label="Add Performance Profile"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    onClick={() => setProfileForModal({})}
-                    permissionKey={Keys.PerformanceManagementAddPerformaceProfile}
-                  >
-                    <AddIcon style={{ paddingRight: '0.5', ...iconMedium }} />
-                    <ButtonTextWrapper> Add Performance Profile </ButtonTextWrapper>
-                  </Button>
-                </div>
-              )}
-            </>
-          )}
-          <ViewSwitchBUtton>
+        <DataTableToolbar
+          primaryActions={
+            width < 550 && isSearchExpanded ? null : (
+              <>
+                {(testProfiles.length > 0 || viewType == 'table') && (
+                  <div style={{ width: 'fit-content', alignSelf: 'flex-start' }}>
+                    <Button
+                      aria-label="Add Performance Profile"
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      onClick={() => setProfileForModal({})}
+                      permissionKey={Keys.PerformanceManagementAddPerformaceProfile}
+                    >
+                      <AddIcon style={{ paddingRight: '0.5', ...iconMedium }} />
+                      <ButtonTextWrapper> Add Performance Profile </ButtonTextWrapper>
+                    </Button>
+                  </div>
+                )}
+              </>
+            )
+          }
+          search={
             <SearchBar
               onSearch={(value) => {
                 setSearch(value);
@@ -474,16 +477,20 @@ function PerformanceProfile({ handleDelete }) {
               setExpanded={setIsSearchExpanded}
               placeholder="Search Profiles..."
             />
-            {viewType === 'table' && (
+          }
+          columnVisibility={
+            viewType === 'table' ? (
               <CustomColumnVisibilityControl
                 id="ref"
                 columns={columns}
                 customToolsProps={{ columnVisibility, setColumnVisibility }}
               />
-            )}
-            <ViewSwitch view={viewType} changeView={setViewType} />
-          </ViewSwitchBUtton>
-        </ToolWrapper>
+            ) : undefined
+          }
+        />
+        <ViewSwitchBUtton style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem', marginBottom: '0.5rem' }}>
+          <ViewSwitch view={viewType} changeView={setViewType} />
+        </ViewSwitchBUtton>
 
         {viewType === 'grid' ? (
           <PerformanceProfileGrid

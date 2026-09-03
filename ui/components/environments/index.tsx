@@ -8,11 +8,11 @@ import {
   PaginationItem,
   useHasPermission,
   useTheme,
+  DataTableToolbar,
 } from '@sistent/sistent';
 import { withRouter } from 'next/router';
 import { debounce } from 'lodash';
 import { CreateButtonWrapper, BulkActionWrapper } from './styles';
-import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import AddIconCircleBorder from '../../assets/icons/AddIconCircleBorder';
 import EnvironmentCard from './environment-card';
 import EnvironmentIcon from '../../assets/icons/Environment';
@@ -466,41 +466,45 @@ const Environments = () => {
     <NoSsr>
       {canViewEnv ? (
         <>
-          <ToolWrapper>
-            <CreateButtonWrapper style={{ marginRight: '2rem' }}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.CREATE)}
-                sx={{
-                  padding: '8px',
-                  borderRadius: '5px',
-                }}
-                permissionKey={Keys.WorkspaceManagementCreateEnvironment}
-                data-cy="btnResetDatabase"
-              >
-                <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
-                <Typography
+          <DataTableToolbar
+            primaryActions={
+              <CreateButtonWrapper style={{ marginRight: '2rem' }}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.CREATE)}
                   sx={{
-                    paddingLeft: '4px',
-                    marginRight: '4px',
+                    padding: '8px',
+                    borderRadius: '5px',
                   }}
+                  permissionKey={Keys.WorkspaceManagementCreateEnvironment}
+                  data-cy="btnResetDatabase"
                 >
-                  Create
-                </Typography>
-              </Button>
-            </CreateButtonWrapper>
-            <SearchBar
-              onSearch={(value) => {
-                setSearch(value);
-              }}
-              placeholder="Search Environments..."
-              expanded={isSearchExpanded}
-              setExpanded={setIsSearchExpanded}
-            />
-          </ToolWrapper>
+                  <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
+                  <Typography
+                    sx={{
+                      paddingLeft: '4px',
+                      marginRight: '4px',
+                    }}
+                  >
+                    Create
+                  </Typography>
+                </Button>
+              </CreateButtonWrapper>
+            }
+            search={
+              <SearchBar
+                onSearch={(value) => {
+                  setSearch(value);
+                }}
+                placeholder="Search Environments..."
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
+              />
+            }
+          />
           {selectedEnvironments.length > 0 && (
             <BulkActionWrapper>
               <Typography>
