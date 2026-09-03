@@ -112,9 +112,9 @@ export default function MeshSyncTable(props) {
     order: sortOrder,
     clusterIds: clusterIds,
   });
-  const availableKinds = (clusterSummary?.kinds || []).map((kind) => kind.Kind);
+  const availableKinds = (clusterSummary?.kinds || []).map((kind) => kind.kind);
   const availableModels = [
-    ...new Set((clusterSummary?.kinds || []).map((kind) => kind.Model).filter(Boolean)),
+    ...new Set((clusterSummary?.kinds || []).map((kind) => kind.model).filter(Boolean)),
   ];
   const availableNamespaces = clusterSummary?.namespaces || [];
   const meshSyncResources = meshSyncData?.resources || [];

@@ -464,11 +464,7 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 		return
 	}
 
-	var kindCounts []struct {
-		Kind  string
-		Model string
-		Count int64
-	}
+	var kindCounts []models.MeshSyncResourceKindSummary
 	var namespaces []string
 
 	// TODO: simplify into one query if possible
