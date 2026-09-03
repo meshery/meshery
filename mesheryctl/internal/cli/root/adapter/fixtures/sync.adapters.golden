@@ -1,0 +1,12 @@
+{
+    "meshAdapters": [
+        {
+            "adapterLocation": "meshery-istio:10000",
+            "name": "ISTIO"
+        },
+        {
+            "adapterLocation": "meshery-linkerd:10001",
+            "name": "LINKERD"
+        }
+    ]
+}

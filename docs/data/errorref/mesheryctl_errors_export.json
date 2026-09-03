@@ -2108,6 +2108,24 @@
         "short_description": "Selected model not found",
         "probable_cause": "The model name does not match any entry in the CSV's \\\"model\\\" column, or contains a typo",
         "suggested_remediation": "Check the model name against the \\\"model\\\" column in your Models CSV, or omit --model to generate all eligible models"
+      },
+      "1255": {
+        "name": "ErrAdapterNotFoundCode",
+        "code": "1255",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Unable to find the requested adapter",
+        "probable_cause": "The name given to --adapter is misspelled, or that adapter is not deployed and connected to Meshery Server.",
+        "suggested_remediation": "Pass the name of a connected adapter to --adapter. Use `mesheryctl system status` to see which adapters are running."
+      },
+      "1256": {
+        "name": "ErrAdapterMeshMismatchCode",
+        "code": "1256",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Requested mesh does not match the requested adapter",
+        "probable_cause": "The mesh name and the --adapter value name two different meshes.",
+        "suggested_remediation": "Drop the mesh name to validate the mesh the given adapter serves, or pass the adapter that serves the mesh you named."
       }
     }
   }

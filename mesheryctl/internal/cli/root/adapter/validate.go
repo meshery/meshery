@@ -16,11 +16,9 @@ package adapter
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -54,33 +52,6 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 	`,
 	Annotations: linkDocMeshValidate,
 	Long:        `Validate predefined conformance to different standard specifications`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		utils.Log.Info("Verifying prerequisites...")
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return err
-		}
-
-		prefs, err := utils.GetSessionData(mctlCfg)
-		if err != nil {
-			return ErrGettingSessionData(err)
-		}
-		//resolve adapterUrl to adapter Location
-		for _, adapter := range prefs.MeshAdapters {
-			adapterName := strings.Split(adapter.Location, ":")
-			if adapterName[0] == adapterURL {
-				adapterURL = adapter.Location
-				meshName = adapter.Location
-			}
-		}
-		//sync with available adapters
-		if err = validateAdapter(mctlCfg, meshName); err != nil {
-			return ErrValidatingAdapters(errors.Wrap(err, "Unable to sync with available adapters"))
-		}
-		utils.Log.Info("verified prerequisites")
-		return nil
-	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		utils.Log.Info("Starting cloud and cloud native infrastructure validation...")
 
