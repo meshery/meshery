@@ -565,8 +565,8 @@ func UpdateMesheryContainers() error {
 	return nil
 }
 
-// AskForConfirmation asks the user for confirmation. A user must type in "yes" or "no" and then press enter. It has fuzzy matching, so "y", "Y", "yes", "YES", and "Yes" all count as confirmations. If the input is not recognized, it will ask again. The function does not return until it gets a valid response from the user.
-func AskForConfirmation(s string) bool {
+// AskForConfirmation asks the user for confirmation. A user must type in "yes" or "no" and then press enter. It has fuzzy matching, so "y", "Y", "yes", "YES", and "Yes" all count as confirmations. If the input is not recognized, it will ask again. The function does not return until it gets a valid response from the user. Stdin read errors are returned to the caller instead of terminating the process.
+func AskForConfirmation(s string) (bool, error) {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
@@ -574,16 +574,16 @@ func AskForConfirmation(s string) bool {
 
 		response, err := reader.ReadString('\n')
 		if err != nil {
-			Log.Fatal(err)
+			return false, ErrReadInput(err)
 		}
 
 		response = strings.ToLower(strings.TrimSpace(response))
 
 		switch response {
 		case "y", "yes":
-			return true
+			return true, nil
 		case "n", "no":
-			return false
+			return false, nil
 		}
 	}
 }
@@ -789,24 +789,26 @@ func ValidName(mesheryServerUrl, args string, configuration string) (string, str
 	return fullName, ID, isName, nil
 }
 
-// AskForInput asks the user for an input and checks if it is in the available values
-func AskForInput(prompt string, allowed []string) string {
+// AskForInput asks the user for an input and checks if it is in the available values.
+// Stdin read errors are returned to the caller instead of terminating the process.
+func AskForInput(prompt string, allowed []string) (string, error) {
 	reader := bufio.NewReader(os.Stdin)
 
+	allowedPrompt := strings.Join(allowed, "/")
 	for {
-		fmt.Printf("%s %s: ", prompt, allowed)
+		fmt.Printf("%s [%s]: ", prompt, allowedPrompt)
 
 		response, err := reader.ReadString('\n')
 		if err != nil {
-			Log.Fatal(err)
+			return "", ErrReadInput(err)
 		}
 
 		response = strings.ToLower(strings.TrimSpace(response))
 
 		if StringInSlice(response, allowed) {
-			return response
+			return response, nil
 		}
-		Log.Fatalf("Invalid respose %s. Allowed responses %s", response, allowed)
+		Log.Infof("Invalid response %q. Allowed responses: %s", response, allowedPrompt)
 	}
 }
 
