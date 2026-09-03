@@ -394,7 +394,9 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                             </Typography>
 
                             <CopyButton
-                              text={typeof provider === 'string' ? provider : String(provider ?? '')}
+                              text={
+                                typeof provider === 'string' ? provider : String(provider ?? '')
+                              }
                             />
                           </BoxWrapper>
                         </CardContent>
