@@ -20,7 +20,7 @@ There are two ways to view metrics:
 ## Getting started
 
 1. Create a [Credential]({{< ref "concepts/logical/credentials.md" >}}) for your Grafana API key / service-account token, or your Prometheus token (if authentication is required).
-2. [Register a connection]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}) of kind **Grafana** or **Prometheus**, pointing at the instance URL and selecting the credential.
+2. [Register a connection]({{< ref "guides/infrastructure-management/creating-a-connection.md" >}}) of kind **Grafana** or **Prometheus**, pointing at the instance URL and selecting the credential.
 3. Open **Telemetry** in the Meshery navigation, pick your connection, and start viewing dashboards or metrics.
 
 For details on authentication, shared controls, and how rendering works, see the [Telemetry guide]({{< ref "guides/telemetry/_index.md" >}}).

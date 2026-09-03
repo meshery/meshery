@@ -16,7 +16,7 @@ depends on, and the knobs and diagnostics you use to operate it. For the generic
 connection state machine that applies to every kind of connection, see
 [Connections]({{< ref "concepts/logical/connections/index.md" >}}); for how to
 register one in the first place, see
-[Registering a Connection]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}).
+[Creating a Connection]({{< ref "guides/infrastructure-management/creating-a-connection.md" >}}).
 
 ## What happens when you connect a cluster
 
@@ -197,7 +197,7 @@ From the connection in Meshery UI you can:
 ## See Also
 
 - [Connections - states and lifecycle]({{< ref "concepts/logical/connections/index.md" >}})
-- [Registering a Connection]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}})
+- [Creating a Connection]({{< ref "guides/infrastructure-management/creating-a-connection.md" >}})
 - [Meshery Operator, MeshSync, Broker Troubleshooting]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md" >}})
 - [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) &middot; [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}}) &middot; [Meshery Broker]({{< ref "concepts/architecture/broker/index.md" >}})
 

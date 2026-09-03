@@ -50,4 +50,4 @@ Saved panels can be **edited** (title, type, unit) or **deleted** at any time. T
 ## Related
 
 - [Grafana Dashboards]({{< ref "guides/telemetry/grafana-dashboards.md" >}}) — for browsing and rendering existing Grafana dashboards.
-- [Registering a Connection]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}})
+- [Creating a Connection]({{< ref "guides/infrastructure-management/creating-a-connection.md" >}})
