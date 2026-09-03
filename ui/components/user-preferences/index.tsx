@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Tab,
   Tabs,
@@ -266,15 +266,32 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
     return words.join(' ');
   }
 
-  const RemoteProviderInfoTab = () => {
+  interface CopyButtonProps {
+    text: string;
+  }
+
+  const CopyButton: React.FC<CopyButtonProps> = ({ text }) => {
     const [copied, setCopied] = useState(false);
-    const copyToClipboard = (text) => {
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    useEffect(() => {
+      return () => {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+      };
+    }, []);
+
+    const handleCopy = (e: React.MouseEvent) => {
+      e.stopPropagation();
       navigator.clipboard
         .writeText(text)
         .then(() => {
+          if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+          }
           setCopied(true);
-
-          setTimeout(() => {
+          timeoutRef.current = setTimeout(() => {
             setCopied(false);
           }, 2000);
         })
@@ -283,6 +300,20 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
         });
     };
 
+    return (
+      <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
+        <IconButton
+          onClick={handleCopy}
+          style={{ padding: '0.25rem', float: 'right' }}
+          aria-label="Copy to clipboard"
+        >
+          <CopyIcon />
+        </IconButton>
+      </CustomTooltip>
+    );
+  };
+
+  const RemoteProviderInfoTab = () => {
     return (
       <NoSsr>
         <ErrorBoundary>
@@ -357,14 +388,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                               {provider}
                             </Typography>
 
-                            <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
-                              <IconButton
-                                onClick={() => copyToClipboard(provider)}
-                                style={{ padding: '0.25rem', float: 'right' }}
-                              >
-                                <CopyIcon />
-                              </IconButton>
-                            </CustomTooltip>
+                            <CopyButton text={provider} />
                           </BoxWrapper>
                         </CardContent>
                       </ProviderCard>
