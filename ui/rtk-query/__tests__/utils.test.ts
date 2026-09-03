@@ -45,6 +45,27 @@ describe('initiateQuery', () => {
     expect(unsubscribe).toHaveBeenCalledTimes(1);
   });
 
+  it('dispatches initiate exactly once and releases that one subscription', async () => {
+    // Guards against a refactor that dispatches twice, or that releases a
+    // different subscription than the one it awaited.
+    const unsubscribe = vi.fn();
+    const fulfilled = { data: { id: 'one' } };
+    const subscription = Object.assign(Promise.resolve(fulfilled), { unsubscribe });
+    dispatch.mockReturnValue(subscription);
+    const thunk = { type: 'thunk-action' };
+    const initiate = vi.fn().mockReturnValue(thunk);
+    const variables = { id: 'one' };
+
+    const result = await initiateQuery({ initiate }, variables);
+
+    expect(initiate).toHaveBeenCalledTimes(1);
+    expect(initiate).toHaveBeenCalledWith(variables);
+    expect(dispatch).toHaveBeenCalledTimes(1);
+    expect(dispatch).toHaveBeenCalledWith(thunk);
+    expect(result).toBe(fulfilled);
+    expect(unsubscribe).toHaveBeenCalledTimes(1);
+  });
+
   it('releases the subscription even when the query rejects', async () => {
     const unsubscribe = vi.fn();
     const subscription = Object.assign(Promise.reject(new Error('boom')), { unsubscribe });
