@@ -3,6 +3,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+// Independent flags so tablet (overflow Menu) is not collapsed into mobile (BottomSheet).
+let isOverflow = false;
 let isMobile = false;
 
 vi.mock('@sistent/sistent', () => {
@@ -29,11 +31,20 @@ vi.mock('@sistent/sistent', () => {
         {children}
       </button>
     ),
-    useMediaQuery: () => isMobile,
+    useMediaQuery: (query: string) => {
+      if (query === '(max-width:xl)') return isOverflow;
+      if (query === '(max-width:sm)') return isMobile;
+      return false;
+    },
     useTheme: () => ({
       palette: { mode: 'light', background: { paper: '#fff' } },
-      breakpoints: { down: () => '@media (max-width: 0)' },
+      breakpoints: { down: (key: string) => `(max-width:${key})` },
     }),
+    BottomSheet: ({ children, open }: any) =>
+      open ? <div data-testid="bottom-sheet">{children}</div> : null,
+    MenuList: ({ children }: any) => <div data-testid="menu-list">{children}</div>,
+    ListItemIcon: ({ children }: any) => <span>{children}</span>,
+    Typography: ({ children }: any) => <span>{children}</span>,
   };
 });
 
@@ -43,6 +54,7 @@ import { MenuComponent } from './MenuComponent';
 
 describe('MenuComponent', () => {
   beforeEach(() => {
+    isOverflow = false;
     isMobile = false;
   });
 
@@ -88,22 +100,34 @@ describe('MenuComponent', () => {
     expect(buttons[1]).toBeDisabled();
   });
 
-  it('renders a more-vert dropdown on mobile viewports', async () => {
-    isMobile = true;
+  it('renders an overflow Menu on tablet viewports (collapsed, not mobile)', async () => {
+    isOverflow = true;
+    isMobile = false;
     const user = userEvent.setup();
     render(<MenuComponent options={baseOptions} />);
 
     expect(screen.getByTestId('more-vert')).toBeInTheDocument();
     expect(screen.queryByTestId('menu')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('bottom-sheet')).not.toBeInTheDocument();
 
-    // Click anywhere on the MoreVert area to open the menu
     await user.click(screen.getByTestId('more-vert'));
     expect(screen.getByTestId('menu')).toBeInTheDocument();
-    // In mobile mode the menu wraps each option in its own block (styled MenuItem).
-    // The number of tooltips per-option should match options.length + 1 (the
-    // top-level "Quick Actions" trigger), so verify by tooltip count.
-    expect(screen.getByTestId('tooltip-Edit')).toBeInTheDocument();
-    expect(screen.getByTestId('tooltip-Delete')).toBeInTheDocument();
+    expect(screen.queryByTestId('bottom-sheet')).not.toBeInTheDocument();
+  });
+
+  it('renders a bottom sheet on mobile viewports', async () => {
+    isOverflow = true;
+    isMobile = true;
+    const user = userEvent.setup();
+    render(<MenuComponent options={baseOptions} />);
+
+    expect(screen.getByTestId('more-vert')).toBeInTheDocument();
+    expect(screen.queryByTestId('bottom-sheet')).not.toBeInTheDocument();
+
+    await user.click(screen.getByTestId('more-vert'));
+    expect(screen.getByTestId('bottom-sheet')).toBeInTheDocument();
+    expect(screen.queryByTestId('menu')).not.toBeInTheDocument();
+    expect(screen.getByTestId('menu-list')).toBeInTheDocument();
   });
 
   it('handles an empty options array without rendering buttons', () => {
