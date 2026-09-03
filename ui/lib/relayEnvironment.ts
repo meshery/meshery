@@ -1,12 +1,24 @@
-import { Environment, Network, RecordSource, Store } from 'relay-runtime';
+import {
+  Environment,
+  Network,
+  RecordSource,
+  Store,
+  type FetchFunction,
+  type RequestParameters,
+  type Variables,
+  type GraphQLResponse,
+} from 'relay-runtime';
 import { promisifiedDataFetch } from './data-fetch';
 
 // Meshery Server no longer exposes a `type Subscription`, so this environment is
 // request/response only — there is no graphql-ws client and no subscribe handler.
 // Real-time surfaces use Server-Sent Events (see lib/eventsSubscription.ts and
 // lib/controllersStatusSubscription.ts); everything else is REST.
-function fetchQuery(operation, variables) {
-  return promisifiedDataFetch('/api/system/graphql/query', {
+const fetchQuery: FetchFunction = (
+  operation: RequestParameters,
+  variables: Variables
+): Promise<GraphQLResponse> => {
+  return promisifiedDataFetch<GraphQLResponse>('/api/system/graphql/query', {
     method: 'POST',
     credentials: 'include',
     headers: {
@@ -17,9 +29,9 @@ function fetchQuery(operation, variables) {
       variables,
     }),
   });
-}
+};
 
-export const serializeRelayEnvironment = (environment) => {
+export const serializeRelayEnvironment = (environment: Environment) => {
   return environment.getStore().getSource().toJSON();
 };
 
@@ -28,7 +40,7 @@ export const serializeRelayEnvironment = (environment) => {
 // which defeats Relay's normalized cache.
 let clientEnvironment: Environment | null = null;
 
-export const createRelayEnvironment = (records = {}) => {
+export const createRelayEnvironment = (records: Record<string, unknown> = {}) => {
   // Server-side: always create a fresh environment per request
   if (typeof window === 'undefined') {
     return new Environment({

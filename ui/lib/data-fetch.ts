@@ -1,6 +1,6 @@
 let sessionExpiredShown = false;
 
-function showSessionExpiredAndRedirect() {
+function showSessionExpiredAndRedirect(): void {
   // Only show once even if multiple requests fail simultaneously
   if (sessionExpiredShown) return;
   sessionExpiredShown = true;
@@ -9,7 +9,7 @@ function showSessionExpiredAndRedirect() {
 
   // If the document isn't interactive yet, redirect immediately
   if (!document.body) {
-    window.location = redirectTo;
+    window.location.href = redirectTo;
     return;
   }
 
@@ -34,7 +34,7 @@ function showSessionExpiredAndRedirect() {
     'background:#477e96;color:#fff;border:none;border-radius:4px;padding:10px 32px;' +
     'font-size:14px;cursor:pointer';
   btn.onclick = () => {
-    window.location = redirectTo;
+    window.location.href = redirectTo;
   };
   box.appendChild(btn);
   overlay.appendChild(box);
@@ -42,15 +42,20 @@ function showSessionExpiredAndRedirect() {
 
   // Auto-redirect after 5 seconds if user doesn't click
   setTimeout(() => {
-    window.location = redirectTo;
+    window.location.href = redirectTo;
   }, 5000);
 }
 
 import { recordActivity } from './sessionTimer';
 
-const dataFetch = (url, options = {}, successFn, errorFn) => {
+const dataFetch = (
+  url: string,
+  options: RequestInit = {},
+  successFn?: (data: unknown) => void,
+  errorFn?: (err: unknown) => void
+): void => {
   if (errorFn === undefined) {
-    errorFn = (err) => {
+    errorFn = (err: unknown) => {
       console.error(`Error fetching ${url} --DataFetch`, err);
     };
   }
@@ -69,7 +74,7 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
         result = res.text().then((text) => {
           try {
             return JSON.parse(text);
-          } catch (e) {
+          } catch {
             return text;
           }
         });
@@ -81,11 +86,13 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
     })
     .then(successFn)
     .catch((e) => {
-      if (e.then) {
-        e.then((text) => errorFn(text));
+      if (e && typeof e.then === 'function') {
+        e.then((text: unknown) => {
+          if (errorFn) errorFn(text);
+        });
         return;
       }
-      errorFn(e);
+      if (errorFn) errorFn(e);
     });
 };
 
@@ -93,15 +100,15 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
  * promisifiedDataFetch adds a promise wrapper to the dataFetch function
  * and ideal for use inside async functions - which is most of the functions
  * @param {string} url url is the endpoint
- * @param {Record<string, any>} options HTTP request options
+ * @param {RequestInit} options HTTP request options
  * @returns
  */
-export function promisifiedDataFetch(url, options = {}) {
+export function promisifiedDataFetch<T = unknown>(url: string, options: RequestInit = {}): Promise<T> {
   return new Promise((resolve, reject) => {
     dataFetch(
       url,
       options,
-      (result) => resolve(result),
+      (result) => resolve(result as T),
       (err) => reject(err),
     );
   });
