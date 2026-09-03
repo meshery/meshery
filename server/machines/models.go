@@ -321,6 +321,9 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 				return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
 			}
 
+			// Defensive guard: a provider that reports no error but hands back a nil
+			// connection would panic on the field access below. Treat it as a
+			// retrieval failure so the caller sees an error instead of a crash.
 			if connection == nil {
 				err = ErrConnectionNotFound(sm.ID.String())
 				return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
