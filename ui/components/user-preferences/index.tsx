@@ -354,7 +354,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                                   component={HideScrollbar}
                                   style={{ marginRight: '20px' }}
                                 >
-                                  {provider}
+                                  {typeof provider === 'string' ? provider : String(provider ?? '')}
                                 </Typography>
                               </BoxWrapper>
                             </CardContent>
@@ -390,7 +390,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                               component={HideScrollbar}
                               style={{ marginRight: '20px' }}
                             >
-                              {provider}
+                              {typeof provider === 'string' ? provider : String(provider ?? '')}
                             </Typography>
 
                             <CopyButton
