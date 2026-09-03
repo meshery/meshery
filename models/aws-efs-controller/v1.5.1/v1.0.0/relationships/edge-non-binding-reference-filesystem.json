@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "AccessPoint",
+            "kind": "FileSystem",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -48,9 +48,7 @@
             "patch": {
               "mutatorRef": [
                 [
-                  "configuration",
-                  "spec",
-                  "fileSystemID"
+                  "displayName"
                 ]
               ],
               "patchStrategy": "replace"
@@ -60,7 +58,7 @@
         "to": [
           {
             "id": null,
-            "kind": "FileSystem",
+            "kind": "MountTarget",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -78,7 +76,41 @@
             "patch": {
               "mutatedRef": [
                 [
-                  "displayName"
+                  "configuration",
+                  "spec",
+                  "fileSystemRef",
+                  "from",
+                  "name"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          },
+          {
+            "id": null,
+            "kind": "AccessPoint",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-efs-controller",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "fileSystemRef",
+                  "from",
+                  "name"
                 ]
               ],
               "patchStrategy": "replace"
