@@ -127,6 +127,58 @@ const ThemeToggler: React.FC<ThemeTogglerProps> = ({ handleUpdateUserPref }) => 
   return <ThemeTogglerCore Component={Component}></ThemeTogglerCore>;
 };
 
+interface CopyButtonProps {
+  text: string;
+}
+
+const CopyButton: React.FC<CopyButtonProps> = ({ text }) => {
+  const [copied, setCopied] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        if (!isMountedRef.current) return;
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+        setCopied(true);
+        timeoutRef.current = setTimeout(() => {
+          if (!isMountedRef.current) return;
+          setCopied(false);
+        }, 2000);
+      })
+      .catch((error) => {
+        console.error('error copying to clipboard:', error);
+      });
+  };
+
+  return (
+    <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
+      <IconButton
+        onClick={handleCopy}
+        style={{ padding: '0.25rem', float: 'right' }}
+        aria-label="Copy to clipboard"
+      >
+        <CopyIcon />
+      </IconButton>
+    </CustomTooltip>
+  );
+};
+
 const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   const [anonymousStats, setAnonymousStats] = useState(props.anonymousStats);
   const [perfResultStats, setPerfResultStats] = useState(props.perfResultStats);
@@ -266,53 +318,6 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
     return words.join(' ');
   }
 
-  interface CopyButtonProps {
-    text: string;
-  }
-
-  const CopyButton: React.FC<CopyButtonProps> = ({ text }) => {
-    const [copied, setCopied] = useState(false);
-    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-    useEffect(() => {
-      return () => {
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current);
-        }
-      };
-    }, []);
-
-    const handleCopy = (e: React.MouseEvent) => {
-      e.stopPropagation();
-      navigator.clipboard
-        .writeText(text)
-        .then(() => {
-          if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-          }
-          setCopied(true);
-          timeoutRef.current = setTimeout(() => {
-            setCopied(false);
-          }, 2000);
-        })
-        .catch((error) => {
-          console.error('error copying to clipboard:', error);
-        });
-    };
-
-    return (
-      <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
-        <IconButton
-          onClick={handleCopy}
-          style={{ padding: '0.25rem', float: 'right' }}
-          aria-label="Copy to clipboard"
-        >
-          <CopyIcon />
-        </IconButton>
-      </CustomTooltip>
-    );
-  };
-
   const RemoteProviderInfoTab = () => {
     return (
       <NoSsr>
@@ -388,7 +393,9 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                               {provider}
                             </Typography>
 
-                            <CopyButton text={provider} />
+                            <CopyButton
+                              text={typeof provider === 'string' ? provider : String(provider ?? '')}
+                            />
                           </BoxWrapper>
                         </CardContent>
                       </ProviderCard>
