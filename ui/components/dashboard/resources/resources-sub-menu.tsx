@@ -7,6 +7,8 @@ import { SecondaryTab, SecondaryTabs, WrapperPaper } from '../style';
 import GetKubernetesNodeIcon from '../utils';
 import { iconMedium } from 'css/icons.styles';
 import { styled } from '@sistent/sistent';
+import { K8sEmptyState } from '@/components/shared/EmptyState/K8sContextEmptyState';
+import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
 
 const DashboardIconText = styled('div')({
   display: 'flex',
@@ -51,13 +53,10 @@ const ResourcesSubMenu = ({
     () => (isCRDS ? CRDsKeys.map((key) => key.model) : []),
     [CRDsKeys, isCRDS],
   );
-  const crdsKind = useMemo(() => {
-    if (isCRDS) {
-      const kinds = CRDsKeys.map((key) => key.name);
-      return kinds.length ? kinds : [''];
-    }
-    return [];
-  }, [CRDsKeys, isCRDS]);
+  const crdsKind = useMemo(
+    () => (isCRDS ? CRDsKeys.map((key) => key.name) : []),
+    [CRDsKeys, isCRDS],
+  );
 
   // useTableConfig is a custom hook, so it is called unconditionally at the top
   // level to keep hook order stable across renders.
@@ -81,11 +80,23 @@ const ResourcesSubMenu = ({
     () => tabs.findIndex((resourceName) => resourceName === selectedResource),
     [selectedResource, tabs],
   );
+  const clusterIds =
+    isCRDS && !CRDsKeys.length && Array.isArray(k8sConfig)
+      ? getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig)
+      : [];
+  const emptyStateMessage =
+    !Array.isArray(k8sConfig) || k8sConfig.length === 0
+      ? 'Connect a Kubernetes cluster to discover and view its custom resources.'
+      : !Array.isArray(selectedK8sContexts) || selectedK8sContexts.length === 0
+        ? 'Select a connected Kubernetes cluster to discover and view its custom resources.'
+        : clusterIds.length === 0
+          ? 'The selected Kubernetes connection is unavailable. Check its health in Connections, then select it again.'
+          : 'No custom resources are available for the selected Kubernetes cluster.';
 
   return (
     <>
       {isCRDS && !CRDsKeys.length ? (
-        <></>
+        <K8sEmptyState message={emptyStateMessage} />
       ) : (
         <WrapperPaper>
           <SecondaryTabs

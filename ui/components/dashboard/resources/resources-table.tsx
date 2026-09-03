@@ -116,11 +116,7 @@ const ResourcesTableInner = (props: ResourcesTableProps) => {
     workloadType,
     selectedK8sContexts,
   );
-  const tableConfig = (submenu ? resolvedConfig[workloadType] : resolvedConfig) ?? {
-    name: workloadType,
-    colViews: [],
-    columns: [],
-  };
+  const tableConfig = submenu ? resolvedConfig[workloadType] : resolvedConfig;
 
   const encodedClusterIds = useMemo(() => JSON.stringify(clusterIds), [clusterIds]);
 
