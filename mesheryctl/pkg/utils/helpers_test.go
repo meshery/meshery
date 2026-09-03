@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/pkg/errors"
@@ -760,5 +761,67 @@ func TestSubcommandNames(t *testing.T) {
 				t.Errorf("SubcommandNames() = %q, want %q", got, tt.expected)
 			}
 		})
+	}
+}
+
+// TestGetIDSkipsMalformedEntries pins GetID against a server response where an
+// item's id is missing or not a string. dat[configType] is decoded straight off
+// the wire as []interface{}, and nothing constrains the shape of an individual
+// entry beyond that - a partial record, or a schema drift between mesheryctl and
+// the server it talks to, should not crash a lookup that `design view`, `design
+// delete`, `design export`, `design undeploy`, `filter view` and `filter delete`
+// all depend on (via ValidId) to resolve a name or ID prefix typed on the command
+// line into a full ID.
+func TestGetIDSkipsMalformedEntries(t *testing.T) {
+	StartMockery(t)
+	defer StopMockery(t)
+
+	TokenFlag = GetToken(t)
+	defer func() { TokenFlag = "Not Set" }()
+
+	httpmock.RegisterResponder("GET", MesheryEndpoint+"/api/filter?page_size=10000",
+		httpmock.NewStringResponder(200, `{"filters":[
+			{"id":"11111111-1111-4111-8111-111111111111","name":"good"},
+			{"id":null,"name":"missing-id"},
+			{"name":"no-id-field"}
+		]}`))
+
+	ids, err := GetID(MesheryEndpoint, "filter")
+	if err != nil {
+		t.Fatalf("GetID returned an error: %v", err)
+	}
+
+	want := []string{"11111111-1111-4111-8111-111111111111"}
+	if !reflect.DeepEqual(ids, want) {
+		t.Errorf("GetID() = %v, want %v (entries without a string id should be skipped, not crash the lookup)", ids, want)
+	}
+}
+
+// TestGetNameSkipsMalformedEntries is GetName's side of the same contract: an
+// entry whose name or id isn't a string is left out of the map instead of
+// taking down the whole lookup (used by ValidName, behind `filter delete` when
+// the argument doesn't parse as an ID).
+func TestGetNameSkipsMalformedEntries(t *testing.T) {
+	StartMockery(t)
+	defer StopMockery(t)
+
+	TokenFlag = GetToken(t)
+	defer func() { TokenFlag = "Not Set" }()
+
+	httpmock.RegisterResponder("GET", MesheryEndpoint+"/api/filter?page_size=10000",
+		httpmock.NewStringResponder(200, `{"filters":[
+			{"id":"11111111-1111-4111-8111-111111111111","name":"good"},
+			{"id":"22222222-2222-4222-8222-222222222222","name":42},
+			{"id":33,"name":"numeric-id"}
+		]}`))
+
+	got, err := GetName(MesheryEndpoint, "filter")
+	if err != nil {
+		t.Fatalf("GetName returned an error: %v", err)
+	}
+
+	want := map[string]string{"good": "11111111-1111-4111-8111-111111111111"}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("GetName() = %v, want %v (entries without a string name/id should be skipped, not crash the lookup)", got, want)
 	}
 }
