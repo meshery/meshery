@@ -1,4 +1,89 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Mon, 24 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.68</title><link>/project/releases/v1.0.68/</link><pubDate>Mon, 24 Aug 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.68/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Thu, 03 Sep 2026 00:00:00 +0000</lastBuildDate><atom:link href="/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.69</title><link>/project/releases/v1.0.69/</link><pubDate>Thu, 03 Sep 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.69/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix(server): stop auto-registration from proceeding after machine init fails @ty239 (#20872)&lt;/li&gt;
+&lt;li&gt;[Docs] Add Meshery project vision @jamieplu (#21639)&lt;/li&gt;
+&lt;li&gt;Bump github.com/gorilla/websocket from 1.5.0 to 1.5.3 in /install/docker-extension @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#21604)&lt;/li&gt;
+&lt;li&gt;ROADMAP.md: v1.1.0 Revision @leecalcote (#21600)&lt;/li&gt;
+&lt;li&gt;[Docs] Fix typo in Docker Desktop extension authentication message @HariomPtdr (#21585)&lt;/li&gt;
+&lt;li&gt;[server] Fix malformed doc comments in server/models (batch 3) @wahidrizka (#21579)&lt;/li&gt;
+&lt;li&gt;[server] Fix malformed doc comments in server/models (batch 2) @wahidrizka (#21578)&lt;/li&gt;
+&lt;li&gt;Update ROADMAP.md with detailed version links @leecalcote (#21598)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix(mesheryctl): update next_error_code for ErrModelNotFoundCode causing duplicate code error @lekaf974 (#21705)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Fix GetCleanPodName panic on pod names with fewer than 2 hyphens @Gurkaran18 (#21657)&lt;/li&gt;
+&lt;li&gt;[server][mesheryctl] Fix malformed doc comments across the repo (consolidated) @wahidrizka (#21626)&lt;/li&gt;
+&lt;li&gt;feat(mesheryctl): support selecting a single model from CSV directory… @Omkar-Ugal (#21424)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Standardize capitalization of command Short descriptions @Gurkaran18 (#21504)&lt;/li&gt;
+&lt;li&gt;[Docs] Add copy button to mesheryctl reference command blocks @ganji759 (#21651)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Fix inverted server version check in system check @HariomPtdr (#21592)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Fix dead code in adapter name parsing @Gurkaran18 (#21608)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;fix(ui): fix GetConnections kind filter for Telemetry and dashboard @chaitanyamedidar (#20617)&lt;/li&gt;
+&lt;li&gt;[UI] Improve ConnectionTable bulk delete handling @hiyach28 (#21689)&lt;/li&gt;
+&lt;li&gt;[UI] Fix Performance Profiles bulk delete optimistic UI desync @hiyach28 (#21669)&lt;/li&gt;
+&lt;li&gt;[UI] Fix Workspace Edit/Delete stale closure bug @hiyach28 (#21635)&lt;/li&gt;
+&lt;li&gt;[Chore]: Update to Sistent v0.22.6 @l5io (#21607)&lt;/li&gt;
+&lt;li&gt;[UI] Change MeshSync deployment mode tooltip placement to top @anasghayas (#21596)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[CI] Document reusable-workflow traps for external callers, and fix three live instances @ritzorama (#21745)&lt;/li&gt;
+&lt;li&gt;Feat/improve model workflow @ishwar170695 (#21603)&lt;/li&gt;
+&lt;li&gt;[Models] Fix Ingress v1 backend paths; add Ingress and cert-manager relationship coverage @leecalcote (#21491)&lt;/li&gt;
+&lt;li&gt;[CI] Add raw error and run link to model-generator failure email @arjunmehta-git (#21606)&lt;/li&gt;
+&lt;li&gt;Fix Welcome First-Time Contributors workflow failure @sangramrath (#21530)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Create hiya.md @hiyach28 (#21767)&lt;/li&gt;
+&lt;li&gt;fix(docs): make embedded videos responsive @hiyach28 (#21628)&lt;/li&gt;
+&lt;li&gt;[CI] Document reusable-workflow traps for external callers, and fix three live instances @ritzorama (#21745)&lt;/li&gt;
+&lt;li&gt;fix(docs): update broken AWS EC2 tutorial catalog links @Junnygram (#21712)&lt;/li&gt;
+&lt;li&gt;feat(mesheryctl): support selecting a single model from CSV directory… @Omkar-Ugal (#21424)&lt;/li&gt;
+&lt;li&gt;docs: fix typo arguements -&amp;gt; arguments @vaibhav8a (#21671)&lt;/li&gt;
+&lt;li&gt;fix(server): return error instead of exiting process on logger init failure in connection machine actions @Maanvi212006 (#21311)&lt;/li&gt;
+&lt;li&gt;docs: add meeting attendance for Satyam Pandey (week of 08-27-2026) @SatyamPandey-07 (#21673)&lt;/li&gt;
+&lt;li&gt;docs(windows): fix broken Docker Desktop installation link @Retr0-XD (#21642)&lt;/li&gt;
+&lt;li&gt;[Docs] Add copy button to mesheryctl reference command blocks @ganji759 (#21651)&lt;/li&gt;
+&lt;li&gt;Introduction of Pritish @pritishsharma2006 (#21662)&lt;/li&gt;
+&lt;li&gt;Add Sulagna&amp;rsquo;s introduction to meeting notes @suzy-g38 (#21661)&lt;/li&gt;
+&lt;li&gt;Add introduction and attendance details @Harshvardhan1912 (#21660)&lt;/li&gt;
+&lt;li&gt;Add Omkar&amp;rsquo;s introduction to meeting notes @Omkar-Ugal (#21659)&lt;/li&gt;
+&lt;li&gt;Add attendance note for Amarachi Ezeonyekwere @Amarachi-Ezeonyekwere (#21658)&lt;/li&gt;
+&lt;li&gt;Create Introductory notes for Shion Ichikawa @Shion1305 (#21656)&lt;/li&gt;
+&lt;li&gt;Create jayant.md @Jayant-Sharma-Dev (#21655)&lt;/li&gt;
+&lt;li&gt;Create Sadath.md @sadath2001 (#21654)&lt;/li&gt;
+&lt;li&gt;docs(meetings): add Ayush Kushwaha newcomers attendance for week of 2… @FrozenLionMax (#21652)&lt;/li&gt;
+&lt;li&gt;Add Maanvi&amp;rsquo;s introduction Intro @Maanvi212006 (#21653)&lt;/li&gt;
+&lt;li&gt;Add relationship authoring skill and correct kind/type/subType docs @leecalcote (#21479)&lt;/li&gt;
+&lt;li&gt;[Models] Fix Ingress v1 backend paths; add Ingress and cert-manager relationship coverage @leecalcote (#21491)&lt;/li&gt;
+&lt;li&gt;Add Muhammad Ammar&amp;rsquo;s introduction to meeting notes @ammarhere02 (#21637)&lt;/li&gt;
+&lt;li&gt;[Docs] Add meeting notes for week of 2026-08-27 @hiyach28 (#21636)&lt;/li&gt;
+&lt;li&gt;[Docs] Fix code block alignment on command reference pages @ganji759 (#21609)&lt;/li&gt;
+&lt;li&gt;[Docs] Improve responsiveness for embedded iframes and images @suryaff733 (#21419)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@Amarachi-Ezeonyekwere, @Copilot, @FrozenLionMax, @Gurkaran18, @HariomPtdr, @Harshvardhan1912, @Jayant-Sharma-Dev, @Junnygram, @Maanvi212006, @Omkar-Ugal, @Retr0-XD, @SatyamPandey-07, @Shion1305, @alexquincy, @ammarhere02, @anasghayas, @arjunmehta-git, @banana-three-join, @carlosriosilva, @chaitanyamedidar, @dependabot[bot], @fitzergerald, @ganji759, @hiyach28, @hortison, @ishwar170695, @jamieplu, @l5io, @leecalcote, @lekaf974, @marblom007, @meshery-ci, @miacycle, @pritishsharma2006, @rishiraj38, @ritzorama, @sadath2001, @sangramrath, @simihablo, @suryaff733, @suzy-g38, @ty239, @vaibhav8a, @wahidrizka, @winkletinkle, @yi-nuo426 and [dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;)&lt;/p&gt;</description></item><item><title>v1.0.68</title><link>/project/releases/v1.0.68/</link><pubDate>Mon, 24 Aug 2026 00:00:00 +0000</pubDate><guid>/project/releases/v1.0.68/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -35009,7 +35094,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.68&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.69&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
