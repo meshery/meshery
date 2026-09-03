@@ -164,9 +164,10 @@
 	1. Hello NSM Application
 &lt;/h3&gt;
 &lt;p&gt;Watch this presentation to see the Hello NSM Application in-action:&lt;/p&gt;
-&lt;div class="iframe-container"&gt;
- &lt;iframe width="560" height="315" src="https://www.youtube.com/embed/4xKixsDTtdM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen&gt;&lt;/iframe&gt;
-&lt;/div&gt;
+&lt;div class="yt-embed-container"&gt;
+ &lt;iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/4xKixsDTtdM?autoplay=0&amp;amp;controls=1&amp;amp;end=0&amp;amp;loop=0&amp;amp;mute=0&amp;amp;start=0" title="YouTube video"&gt;&lt;/iframe&gt;
+ &lt;/div&gt;
+
 &lt;p&gt;See on YouTube: &lt;a href="https://www.youtube.com/watch?v=4xKixsDTtdM&amp;amp;list=PL3A-A6hPO2IOpTbdH89qR-4AE0ON13Zie"&gt;Adopting Network Service Mesh with Meshery&lt;/a&gt;&lt;/p&gt;
 &lt;h4 id="2-vpp-icmp-application"&gt;
 	2. VPP-ICMP Application
