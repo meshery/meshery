@@ -15,17 +15,9 @@ import { Typography, InfoCircleIcon, CustomTooltip, useTheme } from '@sistent/si
 import OrgSwitcher from './OrgSwitcher';
 // import RequestForm from './RequestForm';
 import CurrentSessionInfo from './CurrentSession';
+import MesheryVersionCompatibilityNotice from '../MesheryVersionCompatibilityNotice';
 
-//TODO: Add component for meshery version compatiblity error
-// const MesheryVersionCompatiblity = () => {
-//   return (
-//     <div>
-//       <Typography variant="p" component="p" align="center">
-//         <InstallMeshery action={MesheryAction.UPGRADE.KEY} />
-//       </Typography>
-//     </div>
-//   );
-// };
+export { MesheryVersionCompatibilityNotice };
 
 const UnknownServerSideError = (props) => {
   const { errorContent } = props;
