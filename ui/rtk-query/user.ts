@@ -370,7 +370,7 @@ export const getProviderCapabilities = async () => {
 };
 
 export const getUserAccessToken = async () => {
-  const accessToken = await initiateQuery(userApi.endpoints.getAccessToken, {}, {});
+  const accessToken = await initiateQuery(userApi.endpoints.getAccessToken, {});
   return accessToken;
 };
 
