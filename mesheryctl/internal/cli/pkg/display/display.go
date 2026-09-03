@@ -31,6 +31,7 @@ type DisplayDataAsync struct {
 	Header           []string
 	DisplayCountOnly bool
 	IsPage           bool
+	IsPageSize       bool // true only when --pagesize was explicitly set by the user
 	// Prompt-only field
 	SearchTerm     string
 	ErrNotFoundMsg string
