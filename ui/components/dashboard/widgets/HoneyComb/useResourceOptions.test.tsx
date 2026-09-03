@@ -7,8 +7,8 @@ vi.mock('../../resources/config', () => ({
     Workload: ['Pod', 'Deployment'],
     Configuration: ['ConfigMap'],
   },
-  getAllCustomResourceDefinitionsKinds: (kinds: Array<{ Kind: string }>) =>
-    kinds.filter((k) => k.Kind === 'ExoticCrd'),
+  getAllCustomResourceDefinitionsKinds: (kinds: Array<{ kind: string }>) =>
+    kinds.filter((k) => k.kind === 'ExoticCrd'),
 }));
 
 import {
@@ -30,10 +30,10 @@ describe('useResourceOptions', () => {
 
 describe('useResourceFiltering', () => {
   const kinds = [
-    { Kind: 'Pod', Count: 4 },
-    { Kind: 'Deployment', Count: 2 },
-    { Kind: 'ConfigMap', Count: 5 },
-    { Kind: 'ExoticCrd', Count: 1 },
+    { kind: 'Pod', count: 4 },
+    { kind: 'Deployment', count: 2 },
+    { kind: 'ConfigMap', count: 5 },
+    { kind: 'ExoticCrd', count: 1 },
   ];
 
   it('returns an empty array when kinds is undefined', () => {
@@ -49,26 +49,26 @@ describe('useResourceFiltering', () => {
 
   it('filters by category when groupBy matches a known category', () => {
     const { result } = renderHook(() => useResourceFiltering(kinds, 'workload', null));
-    expect(result.current.map((k) => k.Kind)).toEqual(['Pod', 'Deployment']);
+    expect(result.current.map((k) => k.kind)).toEqual(['Pod', 'Deployment']);
   });
 
   it('uses getAllCustomResourceDefinitionsKinds when groupBy is "crds"', () => {
     const { result } = renderHook(() => useResourceFiltering(kinds, 'crds', null));
-    expect(result.current.map((k) => k.Kind)).toEqual(['ExoticCrd']);
+    expect(result.current.map((k) => k.kind)).toEqual(['ExoticCrd']);
   });
 
   it('sorts ascending by Count when sortDirection is "asc"', () => {
     const { result } = renderHook(() =>
       useResourceFiltering(kinds, DEFAULT_GROUP_BY, SORT_DIRECTIONS.ASC),
     );
-    expect(result.current.map((k) => k.Count)).toEqual([1, 2, 4, 5]);
+    expect(result.current.map((k) => k.count)).toEqual([1, 2, 4, 5]);
   });
 
   it('sorts descending by Count when sortDirection is "desc"', () => {
     const { result } = renderHook(() =>
       useResourceFiltering(kinds, DEFAULT_GROUP_BY, SORT_DIRECTIONS.DESC),
     );
-    expect(result.current.map((k) => k.Count)).toEqual([5, 4, 2, 1]);
+    expect(result.current.map((k) => k.count)).toEqual([5, 4, 2, 1]);
   });
 
   it('returns an empty array when no kinds match the category', () => {
@@ -77,10 +77,10 @@ describe('useResourceFiltering', () => {
   });
 
   it('treats missing Count as zero when sorting', () => {
-    const sparse = [{ Kind: 'A' }, { Kind: 'B', Count: 3 }];
+    const sparse = [{ kind: 'A' }, { kind: 'B', count: 3 }];
     const { result } = renderHook(() =>
       useResourceFiltering(sparse, DEFAULT_GROUP_BY, SORT_DIRECTIONS.ASC),
     );
-    expect(result.current.map((k) => k.Kind)).toEqual(['A', 'B']);
+    expect(result.current.map((k) => k.kind)).toEqual(['A', 'B']);
   });
 });
