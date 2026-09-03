@@ -2,8 +2,6 @@ package system
 
 import (
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 // TestParseContextEndpoint guards against #21696: configureDockerServices split
@@ -70,22 +68,56 @@ func TestParseContextEndpoint(t *testing.T) {
 			endpoint: "   ",
 			wantErr:  true,
 		},
+		// net.SplitHostPort accepts any string after the colon, so the port is
+		// validated separately as a usable TCP port.
+		{
+			name:     "non-numeric port",
+			endpoint: "http://localhost:abcd",
+			wantErr:  true,
+		},
+		{
+			name:     "zero port",
+			endpoint: "http://localhost:0",
+			wantErr:  true,
+		},
+		{
+			name:     "port above the valid range",
+			endpoint: "http://localhost:65536",
+			wantErr:  true,
+		},
+		{
+			name:     "negative port",
+			endpoint: "localhost:-1",
+			wantErr:  true,
+		},
+		{
+			name:        "highest valid port",
+			endpoint:    "http://localhost:65535",
+			wantAddress: "http://localhost",
+			wantPort:    "65535",
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.NotPanics(t, func() {
-				address, port, err := parseContextEndpoint(tt.endpoint)
+			address, port, err := parseContextEndpoint(tt.endpoint)
 
-				if tt.wantErr {
-					assert.Error(t, err)
-					return
+			if tt.wantErr {
+				if err == nil {
+					t.Fatalf("parseContextEndpoint(%q): expected an error, got address %q and port %q", tt.endpoint, address, port)
 				}
+				return
+			}
 
-				assert.NoError(t, err)
-				assert.Equal(t, tt.wantAddress, address)
-				assert.Equal(t, tt.wantPort, port)
-			})
+			if err != nil {
+				t.Fatalf("parseContextEndpoint(%q): unexpected error: %v", tt.endpoint, err)
+			}
+			if address != tt.wantAddress {
+				t.Errorf("parseContextEndpoint(%q): address = %q, want %q", tt.endpoint, address, tt.wantAddress)
+			}
+			if port != tt.wantPort {
+				t.Errorf("parseContextEndpoint(%q): port = %q, want %q", tt.endpoint, port, tt.wantPort)
+			}
 		})
 	}
 }

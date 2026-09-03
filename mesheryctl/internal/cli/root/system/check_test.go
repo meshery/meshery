@@ -6,8 +6,9 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/stretchr/testify/assert"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 )
 
 var update = flag.Bool("update", false, "update golden files")
@@ -34,9 +35,44 @@ func TestIsLocalMesheryEndpoint(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.NotPanics(t, func() {
-				assert.Equal(t, tt.want, isLocalMesheryEndpoint(tt.endpoint))
-			})
+			if got := isLocalMesheryEndpoint(tt.endpoint); got != tt.want {
+				t.Errorf("isLocalMesheryEndpoint(%q) = %v, want %v", tt.endpoint, got, tt.want)
+			}
+		})
+	}
+}
+
+// TestRunDockerHealthChecksInvalidEndpoint pins the endpoint validation that
+// guards runDockerHealthChecks. NewHealthChecker only validates the context
+// name, so without this check a malformed endpoint reached the Docker error
+// handling below instead of reporting ErrInvalidEndpoint.
+func TestRunDockerHealthChecksInvalidEndpoint(t *testing.T) {
+	invalidEndpoints := []struct {
+		name     string
+		endpoint string
+	}{
+		{"empty endpoint", ""},
+		{"whitespace only", "   "},
+		{"bare host, no port", "localhost"},
+		{"scheme and host, no port", "http://localhost"},
+		{"non-numeric port", "http://localhost:abcd"},
+		{"port above the valid range", "http://localhost:65536"},
+	}
+
+	for _, tt := range invalidEndpoints {
+		t.Run(tt.name, func(t *testing.T) {
+			hc := &HealthChecker{
+				Options: &HealthCheckOptions{},
+				context: &config.Context{Endpoint: tt.endpoint},
+			}
+
+			err := hc.runDockerHealthChecks()
+			if err == nil {
+				t.Fatalf("runDockerHealthChecks() with endpoint %q: expected an error, got nil", tt.endpoint)
+			}
+			if code := meshkiterrors.GetCode(err); code != ErrInvalidEndpointCode {
+				t.Errorf("runDockerHealthChecks() with endpoint %q: error code = %s, want %s", tt.endpoint, code, ErrInvalidEndpointCode)
+			}
 		})
 	}
 }
@@ -95,7 +131,9 @@ func TestPreflightCmdIntegration(t *testing.T) {
 			}
 			expectedResponse := golden.Load()
 
-			assert.Equal(t, expectedResponse, actualResponse)
+			if actualResponse != expectedResponse {
+				t.Errorf("expected response %q, got %q", expectedResponse, actualResponse)
+			}
 		})
 		t.Log("PreflightCmdIntegration Test Passed")
 	}
