@@ -55,8 +55,10 @@ func GetControlPlaneState(ctx context.Context, selectors []MeshType, provider mo
 					continue
 				}
 
-				if len(strings.Split(objspec.Containers[0].Image, ":")) > 1 {
-					version = strings.Split(objspec.Containers[0].Image, ":")[1]
+				if len(objspec.Containers) > 0 {
+					if tag := imageTag(objspec.Containers[0].Image); tag != "" {
+						version = tag
+					}
 				}
 
 				members = append(members, &ControlPlaneMember{
@@ -82,4 +84,20 @@ func haveCommonElements(a []string, b map[string]bool) bool {
 		}
 	}
 	return false
+}
+
+// imageTag returns the tag portion of a container image reference, or "" when
+// the reference carries no tag. It ignores a registry port (the ":" that comes
+// before the first "/") and any "@digest" suffix, so a reference like
+// "localhost:5000/istio/proxyv2:1.20.0" yields "1.20.0" and
+// "localhost:5000/istio/proxyv2" yields "".
+func imageTag(image string) string {
+	if at := strings.IndexByte(image, '@'); at != -1 {
+		image = image[:at]
+	}
+	lastColon := strings.LastIndexByte(image, ':')
+	if lastColon == -1 || lastColon < strings.LastIndexByte(image, '/') {
+		return ""
+	}
+	return image[lastColon+1:]
 }
