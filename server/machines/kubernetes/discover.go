@@ -38,14 +38,15 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
 
 	err = k8sContext.AssignServerID(handler)
 	if err != nil {
+		meshkitErr := models.ErrUnreachableKubeAPI(err, k8sContext.Server)
 		if k8serrors.IsForbidden(err) || k8serrors.IsUnauthorized(err) {
 			return machines.Disconnect, eventBuilder.WithDescription(fmt.Sprintf("Could not assign server id, disconnecting context %s", k8sContext.Name)).WithMetadata(map[string]interface{}{
-				"error": err,
-			}).Build(), err
+				"error": meshkitErr,
+			}).Build(), meshkitErr
 		}
 		return machines.NotFound, eventBuilder.WithDescription(fmt.Sprintf("Could not assign server id, skipping context %s", k8sContext.Name)).WithMetadata(map[string]interface{}{
-			"error": err,
-		}).Build(), err
+			"error": meshkitErr,
+		}).Build(), meshkitErr
 	}
 
 	err = k8sContext.AssignVersion(handler)

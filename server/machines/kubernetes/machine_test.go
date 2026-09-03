@@ -56,7 +56,7 @@ func TestAssignInitialCtx_AttachesLoggerBeforeClientSetAssignment(t *testing.T) 
 	}
 	user := &models.User{ID: core.Uuid(userID)}
 
-	sysID := core.Uuid(uuid.FromStringOrNil("00000000-0000-0000-0000-000000000000"))
+	sysID := core.Uuid(uuid.Nil)
 
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, models.UserCtxKey, user)
@@ -279,7 +279,7 @@ func TestDiscoverAction_ErrorClassification(t *testing.T) {
 }
 
 // TestStateMachine_DiscoveryAuthorizationFailure_TransitionsToDisconnected exercises the
-// entire FSM lifecycle path for issue #14083:
+// entire FSM lifecycle path for an authorization failure:
 //
 // When AssignServerID returns 403 Forbidden:
 //  1. DiscoverAction returns machines.Disconnect
