@@ -253,4 +253,22 @@ describe('CRDsResourcesSubMenu', () => {
       'The selected Kubernetes connection is unavailable. Check its health in Connections, then select it again.',
     );
   });
+
+  it('explains when the selected Kubernetes cluster has no custom resources', () => {
+    const crdsResource = { submenu: true, useTableConfig: () => ({}) };
+    render(
+      <ResourcesSubMenu
+        k8sConfig={[{ id: 'cluster-1', kubernetesServerId: 'server-1' }]}
+        resource={crdsResource}
+        selectedK8sContexts={['cluster-1']}
+        selectedResource=""
+        handleChangeSelectedResource={vi.fn()}
+        isCRDS={true}
+      />,
+    );
+
+    expect(screen.getByTestId('crds-empty-state')).toHaveTextContent(
+      'No custom resources are available for the selected Kubernetes cluster.',
+    );
+  });
 });
