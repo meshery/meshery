@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Tab,
   Tabs,
@@ -125,6 +125,299 @@ const ThemeToggler: React.FC<ThemeTogglerProps> = ({ handleUpdateUserPref }) => 
   };
 
   return <ThemeTogglerCore Component={Component}></ThemeTogglerCore>;
+};
+
+function convertToTitleCase(str: string) {
+  const words = str.split('_');
+  for (let i = 0; i < words.length; i++) {
+    words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
+  }
+  return words.join(' ');
+}
+
+interface CopyButtonProps {
+  text: string;
+}
+
+const CopyButton: React.FC<CopyButtonProps> = ({ text }) => {
+  const [copied, setCopied] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleCopy = () => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        setCopied(true);
+        if (timerRef.current) clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => setCopied(false), 2000);
+      })
+      .catch((error) => {
+        console.error('Failed to copy text:', error);
+      });
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
+
+  return (
+    <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
+      <IconButton
+        aria-label="Copy to clipboard"
+        onClick={handleCopy}
+        style={{ padding: '0.25rem', float: 'right' }}
+      >
+        <CopyIcon />
+      </IconButton>
+    </CustomTooltip>
+  );
+};
+
+interface RemoteProviderInfoTabProps {
+  providerInfo: _ProviderInfo;
+  userData?: _UserData;
+}
+
+const RemoteProviderInfoTab: React.FC<RemoteProviderInfoTabProps> = ({ providerInfo, userData }) => {
+  return (
+    <NoSsr>
+      <ErrorBoundary>
+        <RootContainer>
+          <Typography variant="h5">Provider Information</Typography>
+          <ErrorBoundary>
+            <Grid2 container spacing={2} size="grow">
+              {providerInfo &&
+                Object.entries(providerInfo).map(
+                  ([providerName, provider], index) =>
+                    (index < 2 || index === 3) && (
+                      <Grid2 key={index} size={{ xs: 12, md: 4 }}>
+                        <ProviderCard>
+                          <CardHeader
+                            title={
+                              <Typography
+                                variant="h6"
+                                style={{
+                                  textDecoration: 'underline',
+                                  textDecorationColor: 'rgba(116,147,161,0.5)',
+                                  textUnderlineOffset: 10,
+                                }}
+                              >
+                                {convertToTitleCase(providerName)}
+                              </Typography>
+                            }
+                          />
+                          <CardContent>
+                            {' '}
+                            <BoxWrapper>
+                              <Typography
+                                variant="body1"
+                                component={HideScrollbar}
+                                style={{ marginRight: '20px' }}
+                              >
+                                {String(provider ?? '')}
+                              </Typography>
+                            </BoxWrapper>
+                          </CardContent>
+                        </ProviderCard>
+                      </Grid2>
+                    ),
+                )}
+            </Grid2>
+            {providerInfo &&
+              Object.entries(providerInfo).map(
+                ([providerName, provider], index) =>
+                  (index === 2 || index === 5) && (
+                    <ProviderCard key={index} sx={{ margin: '20px' }}>
+                      <CardHeader
+                        title={
+                          <Typography
+                            variant="h6"
+                            style={{
+                              textDecoration: 'underline',
+                              textDecorationColor: 'rgba(116,147,161,0.5)',
+                              textUnderlineOffset: 10,
+                            }}
+                          >
+                            {convertToTitleCase(providerName)}
+                          </Typography>
+                        }
+                      />
+                      <CardContent>
+                        {' '}
+                        <BoxWrapper>
+                          <Typography
+                            variant="body1"
+                            component={HideScrollbar}
+                            style={{ marginRight: '20px' }}
+                          >
+                            {String(provider ?? '')}
+                          </Typography>
+
+                          <CopyButton text={String(provider ?? '')} />
+                        </BoxWrapper>
+                      </CardContent>
+                    </ProviderCard>
+                  ),
+              )}
+          </ErrorBoundary>
+          <ProviderCard>
+            <CardHeader
+              title={
+                <Typography
+                  variant="h6"
+                  style={{
+                    textDecoration: 'underline',
+                    textDecorationColor: 'rgba(116,147,161,0.5)',
+                    textUnderlineOffset: 10,
+                  }}
+                >
+                  Description
+                </Typography>
+              }
+            />
+            <CardContent>
+              <ul>
+                {providerInfo.providerDescription &&
+                  providerInfo.providerDescription.map((desc, index) => (
+                    <li key={index}>
+                      <Typography>{desc}</Typography>
+                    </li>
+                  ))}
+              </ul>
+            </CardContent>
+          </ProviderCard>
+
+          <Divider />
+          <Typography variant="h5" style={{ margin: '20px 0' }}>
+            Capabilities
+          </Typography>
+
+          <Grid2
+            container
+            size="grow"
+            style={{ display: 'flex', justifyContent: 'space-between' }}
+          >
+            <GridCapabilityHeader
+              size={{ xs: 6 }}
+              style={{ borderRadius: '10px 0 0 0', padding: '10px 20px' }}
+            >
+              <Typography variant="body1" style={{ fontWeight: 'bold' }}>
+                Feature
+              </Typography>
+            </GridCapabilityHeader>
+            <GridCapabilityHeader
+              size={{ xs: 6 }}
+              style={{ borderRadius: '0 10px 0 0', padding: '10px 20px' }}
+            >
+              <Typography variant="body1" style={{ fontWeight: 'bold' }}>
+                Endpoint
+              </Typography>
+            </GridCapabilityHeader>
+            {providerInfo.capabilities &&
+              providerInfo.capabilities.map((capability, index) => (
+                <React.Fragment key={`${index}-${capability.feature}`}>
+                  <GridCapabilityHeader
+                    size={{ xs: 6 }}
+                    style={{
+                      padding: '20px 20px',
+                      backgroundColor:
+                        userData?.remoteProviderPreferences?.theme === 'dark'
+                          ? index % 2 === 0
+                            ? '#3D4F57'
+                            : '#293B43'
+                          : index % 2 === 0
+                            ? '#E7EFF3'
+                            : '#C9DBE3',
+                    }}
+                  >
+                    <Typography variant="body1" style={{ overflowWrap: 'anywhere' }}>
+                      {capability.feature}
+                    </Typography>
+                  </GridCapabilityHeader>
+                  <GridCapabilityHeader
+                    size={{ xs: 6 }}
+                    style={{
+                      padding: '20px 20px',
+                      backgroundColor:
+                        userData?.remoteProviderPreferences?.theme === 'dark'
+                          ? index % 2 === 0
+                            ? '#3D4F57'
+                            : '#293B43'
+                          : index % 2 === 0
+                            ? '#E7EFF3'
+                            : '#C9DBE3',
+                    }}
+                  >
+                    <Typography variant="body1" style={{ overflowWrap: 'anywhere' }}>
+                      {capability.endpoint}
+                    </Typography>
+                  </GridCapabilityHeader>
+                </React.Fragment>
+              ))}
+          </Grid2>
+          <Divider />
+          <Typography variant="h5" style={{ margin: '20px 0' }}>
+            Extensions
+          </Typography>
+          {providerInfo.extensions &&
+            Object.entries(providerInfo.extensions).map(([extensionName, extension], index) => (
+              <div key={index} margin="20px 0px">
+                <Typography variant="h6"> {convertToTitleCase(extensionName)}</Typography>
+                <Grid2 container spacing={2} size="grow" style={{ margin: '10px 0 20px 0' }}>
+                  <GridExtensionHeader
+                    size={{ xs: 6 }}
+                    style={{
+                      borderRadius: '10px 0 0 0',
+                      padding: '10px 20px',
+                    }}
+                  >
+                    <Typography variant="body1" style={{ fontWeight: 'bold' }}>
+                      Component
+                    </Typography>
+                  </GridExtensionHeader>
+                  <GridExtensionHeader
+                    size={{ xs: 6 }}
+                    style={{
+                      borderRadius: '0 10px 0 0',
+                      padding: '10px 20px',
+                    }}
+                  >
+                    <Typography variant="body1" style={{ fontWeight: 'bold' }}>
+                      Type
+                    </Typography>
+                  </GridExtensionHeader>
+
+                  <GridExtensionItem
+                    size={{ xs: 6 }}
+                    style={{
+                      borderRadius: '0 0 0 10px',
+                      padding: '20px 20px',
+                    }}
+                  >
+                    <Typography variant="body1" style={{ overflowWrap: 'anywhere' }}>
+                      {extension[0]?.component || ''}
+                    </Typography>
+                  </GridExtensionItem>
+                  <GridExtensionItem
+                    size={{ xs: 6 }}
+                    style={{
+                      borderRadius: '0 0 10px 0',
+                      padding: '20px 20px',
+                    }}
+                  >
+                    <Typography variant="body1" style={{ overflowWrap: 'anywhere' }}>
+                      {extension[0]?.type ? convertToTitleCase(extension[0].type) : ''}
+                    </Typography>
+                  </GridExtensionItem>
+                </Grid2>
+              </div>
+            ))}
+        </RootContainer>
+      </ErrorBoundary>
+    </NoSsr>
+  );
 };
 
 const UserPreference: React.FC<UserPreferenceProps> = (props) => {
@@ -257,277 +550,6 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
       setProviderInfo(capabilitiesData);
     }
   }, [isCapabilitiesDataFetched, capabilitiesData]);
-
-  function convertToTitleCase(str) {
-    const words = str.split('_');
-    for (let i = 0; i < words.length; i++) {
-      words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
-    }
-    return words.join(' ');
-  }
-
-  const RemoteProviderInfoTab = () => {
-    const [copied, setCopied] = useState(false);
-    const copyToClipboard = (text) => {
-      navigator.clipboard
-        .writeText(text)
-        .then(() => {
-          setCopied(true);
-
-          setTimeout(() => {
-            setCopied(false);
-          }, 2000);
-        })
-        .catch((error) => {
-          console.error('error copying to clipboard:', error);
-        });
-    };
-
-    return (
-      <NoSsr>
-        <ErrorBoundary>
-          <RootContainer>
-            <Typography variant="h5">Provider Information</Typography>
-            <ErrorBoundary>
-              <Grid2 container spacing={2} size="grow">
-                {providerInfo &&
-                  Object.entries(providerInfo).map(
-                    ([providerName, provider], index) =>
-                      (index < 2 || index === 3) && (
-                        <Grid2 key={index} size={{ xs: 12, md: 4 }}>
-                          <ProviderCard>
-                            <CardHeader
-                              title={
-                                <Typography
-                                  variant="h6"
-                                  style={{
-                                    textDecoration: 'underline',
-                                    textDecorationColor: 'rgba(116,147,161,0.5)',
-                                    textUnderlineOffset: 10,
-                                  }}
-                                >
-                                  {convertToTitleCase(providerName)}
-                                </Typography>
-                              }
-                            />
-                            <CardContent>
-                              {' '}
-                              <BoxWrapper>
-                                <Typography
-                                  variant="body1"
-                                  component={HideScrollbar}
-                                  style={{ marginRight: '20px' }}
-                                >
-                                  {provider}
-                                </Typography>
-                              </BoxWrapper>
-                            </CardContent>
-                          </ProviderCard>
-                        </Grid2>
-                      ),
-                  )}
-              </Grid2>
-              {providerInfo &&
-                Object.entries(providerInfo).map(
-                  ([providerName, provider], index) =>
-                    (index === 2 || index === 5) && (
-                      <ProviderCard key={index} sx={{ margin: '20px' }}>
-                        <CardHeader
-                          title={
-                            <Typography
-                              variant="h6"
-                              style={{
-                                textDecoration: 'underline',
-                                textDecorationColor: 'rgba(116,147,161,0.5)',
-                                textUnderlineOffset: 10,
-                              }}
-                            >
-                              {convertToTitleCase(providerName)}
-                            </Typography>
-                          }
-                        />
-                        <CardContent>
-                          {' '}
-                          <BoxWrapper>
-                            <Typography
-                              variant="body1"
-                              component={HideScrollbar}
-                              style={{ marginRight: '20px' }}
-                            >
-                              {provider}
-                            </Typography>
-
-                            <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
-                              <IconButton
-                                onClick={() => copyToClipboard(provider)}
-                                style={{ padding: '0.25rem', float: 'right' }}
-                              >
-                                <CopyIcon />
-                              </IconButton>
-                            </CustomTooltip>
-                          </BoxWrapper>
-                        </CardContent>
-                      </ProviderCard>
-                    ),
-                )}
-            </ErrorBoundary>
-            <ProviderCard>
-              <CardHeader
-                title={
-                  <Typography
-                    variant="h6"
-                    style={{
-                      textDecoration: 'underline',
-                      textDecorationColor: 'rgba(116,147,161,0.5)',
-                      textUnderlineOffset: 10,
-                    }}
-                  >
-                    Description
-                  </Typography>
-                }
-              />
-              <CardContent>
-                <ul>
-                  {providerInfo.providerDescription &&
-                    providerInfo.providerDescription.map((desc, index) => (
-                      <li key={index}>
-                        <Typography>{desc}</Typography>
-                      </li>
-                    ))}
-                </ul>
-              </CardContent>
-            </ProviderCard>
-
-            <Divider />
-            <Typography variant="h5" style={{ margin: '20px 0' }}>
-              Capabilities
-            </Typography>
-
-            <Grid2
-              container
-              size="grow"
-              style={{ display: 'flex', justifyContent: 'space-between' }}
-            >
-              <GridCapabilityHeader
-                size={{ xs: 6 }}
-                style={{ borderRadius: '10px 0 0 0', padding: '10px 20px' }}
-              >
-                <Typography variant="body1" style={{ fontWeight: 'bold' }}>
-                  Feature
-                </Typography>
-              </GridCapabilityHeader>
-              <GridCapabilityHeader
-                size={{ xs: 6 }}
-                style={{ borderRadius: '0 10px 0 0', padding: '10px 20px' }}
-              >
-                <Typography variant="body1" style={{ fontWeight: 'bold' }}>
-                  Endpoint
-                </Typography>
-              </GridCapabilityHeader>
-              {providerInfo.capabilities &&
-                providerInfo.capabilities.map((capability, index) => (
-                  <React.Fragment key={`${index}-${capability.feature}`}>
-                    <GridCapabilityHeader
-                      size={{ xs: 6 }}
-                      style={{
-                        padding: '20px 20px',
-                        backgroundColor:
-                          userData?.remoteProviderPreferences?.theme === 'dark'
-                            ? index % 2 === 0
-                              ? '#3D4F57'
-                              : '#293B43'
-                            : index % 2 === 0
-                              ? '#E7EFF3'
-                              : '#C9DBE3',
-                      }}
-                    >
-                      <Typography variant="body1" style={{ overflowWrap: 'anywhere' }}>
-                        {capability.feature}
-                      </Typography>
-                    </GridCapabilityHeader>
-                    <GridCapabilityHeader
-                      size={{ xs: 6 }}
-                      style={{
-                        padding: '20px 20px',
-                        backgroundColor:
-                          userData?.remoteProviderPreferences?.theme === 'dark'
-                            ? index % 2 === 0
-                              ? '#3D4F57'
-                              : '#293B43'
-                            : index % 2 === 0
-                              ? '#E7EFF3'
-                              : '#C9DBE3',
-                      }}
-                    >
-                      <Typography variant="body1" style={{ overflowWrap: 'anywhere' }}>
-                        {capability.endpoint}
-                      </Typography>
-                    </GridCapabilityHeader>
-                  </React.Fragment>
-                ))}
-            </Grid2>
-            <Divider />
-            <Typography variant="h5" style={{ margin: '20px 0' }}>
-              Extensions
-            </Typography>
-            {providerInfo.extensions &&
-              Object.entries(providerInfo.extensions).map(([extensionName, extension], index) => (
-                <div key={index} margin="20px 0px">
-                  <Typography variant="h6"> {convertToTitleCase(extensionName)}</Typography>
-                  <Grid2 container spacing={2} size="grow" style={{ margin: '10px 0 20px 0' }}>
-                    <GridExtensionHeader
-                      size={{ xs: 6 }}
-                      style={{
-                        borderRadius: '10px 0 0 0',
-                        padding: '10px 20px',
-                      }}
-                    >
-                      <Typography variant="body1" style={{ fontWeight: 'bold' }}>
-                        Component
-                      </Typography>
-                    </GridExtensionHeader>
-                    <GridExtensionHeader
-                      size={{ xs: 6 }}
-                      style={{
-                        borderRadius: '0 10px 0 0',
-                        padding: '10px 20px',
-                      }}
-                    >
-                      <Typography variant="body1" style={{ fontWeight: 'bold' }}>
-                        Type
-                      </Typography>
-                    </GridExtensionHeader>
-
-                    <GridExtensionItem
-                      size={{ xs: 6 }}
-                      style={{
-                        borderRadius: '0 0 0 10px',
-                        padding: '20px 20px',
-                      }}
-                    >
-                      <Typography variant="body1" style={{ overflowWrap: 'anywhere' }}>
-                        {extension[0]?.component || ''}
-                      </Typography>
-                    </GridExtensionItem>
-                    <GridExtensionItem
-                      size={{ xs: 6 }}
-                      style={{
-                        borderRadius: '0 0 10px 0',
-                        padding: '20px 20px',
-                      }}
-                    >
-                      <Typography variant="body1" style={{ overflowWrap: 'anywhere' }}>
-                        {extension[0]?.type ? convertToTitleCase(extension[0].type) : ''}
-                      </Typography>
-                    </GridExtensionItem>
-                  </Grid2>
-                </div>
-              ))}
-          </RootContainer>
-        </ErrorBoundary>
-      </NoSsr>
-    );
-  };
 
   const handleUpdateUserPref = (key, value) => {
     const updates = _.set(_.cloneDeep(userData), key, value);
@@ -664,7 +686,9 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                 </CustomTooltip>
               </SecondaryTabs>
               <StatsWrapper>
-                {value === 0 && <RemoteProviderInfoTab />}
+                {value === 0 && (
+                  <RemoteProviderInfoTab providerInfo={providerInfo} userData={userData} />
+                )}
 
                 {value === 1 && (
                   <ExtensionSandbox
