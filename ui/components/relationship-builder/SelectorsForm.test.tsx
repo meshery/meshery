@@ -46,7 +46,7 @@ vi.mock('@sistent/sistent', () => ({
       {children}
     </div>
   ),
-  TextField: ({ value, onChange, label, children, select }: any) => (
+  TextField: ({ helperText, value, onChange, label, children, select }: any) => (
     <div>
       <label>{label}</label>
       {select ? (
@@ -56,6 +56,7 @@ vi.mock('@sistent/sistent', () => ({
       ) : (
         <input data-testid={`input-${label}`} value={value || ''} onChange={onChange} />
       )}
+      {helperText && <span>{helperText}</span>}
     </div>
   ),
   Typography: ({ children }: any) => <span>{children}</span>,
@@ -74,6 +75,26 @@ vi.mock('../meshery-mesh-interface/PatternService/RJSF_wrapper', () => ({
   ),
 }));
 
+vi.mock('@meshery/schemas', () => ({
+  ModelDefinitionV1Beta1OpenApiSchema: {
+    components: {
+      schemas: {
+        ModelDefinition: {
+          properties: {
+            category: {
+              properties: {
+                name: {
+                  helperText: 'schema helper category',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}));
+
 vi.mock('@/utils/hooks/useMeshModelComponents', () => ({
   useMeshModelComponents: () => useMeshModelComponentsMock(),
 }));
@@ -90,7 +111,46 @@ describe('SelectorsForm', () => {
               items: {
                 properties: {
                   kind: {},
-                  model: {},
+                  model: {
+                    helperText: 'schema helper model allow from',
+                  },
+                  matchLabels: { type: 'string' },
+                },
+              },
+            },
+            to: {
+              items: {
+                properties: {
+                  kind: {},
+                  model: {
+                    helperText: 'schema helper model allow to',
+                  },
+                  matchLabels: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
+        deny: {
+          properties: {
+            from: {
+              items: {
+                properties: {
+                  kind: {},
+                  model: {
+                    helperText: 'schema helper model deny from',
+                  },
+                  matchLabels: { type: 'string' },
+                },
+              },
+            },
+            to: {
+              items: {
+                properties: {
+                  kind: {},
+                  model: {
+                    helperText: 'schema helper model deny to',
+                  },
                   matchLabels: { type: 'string' },
                 },
               },
@@ -206,5 +266,66 @@ describe('SelectorsForm', () => {
     fireEvent.click(triggers[0]);
 
     expect(onChange).toHaveBeenCalled();
+  });
+
+  it('renders schema helper text for model category selector', () => {
+    render(
+      <SelectorsForm
+        selectorsSchema={selectorsSchema}
+        formData={{
+          selectors: {
+            allow: { from: [{ kind: '', model: { name: '', registrant: { kind: '' } } }], to: [] },
+            deny: { from: [], to: [] },
+          },
+        }}
+        onChange={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText('schema helper category')).toBeInTheDocument();
+  });
+
+  it('renders schema helper text for allow from and to model selectors', () => {
+    render(
+      <SelectorsForm
+        selectorsSchema={selectorsSchema}
+        formData={{
+          selectors: {
+            allow: {
+              from: [{ kind: '', model: { name: '', registrant: { kind: '' } } }],
+              to: [{ kind: '', model: { name: '', registrant: { kind: '' } } }],
+            },
+            deny: { from: [], to: [] },
+          },
+        }}
+        onChange={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText('schema helper model allow from')).toBeInTheDocument();
+    expect(screen.getByText('schema helper model allow to')).toBeInTheDocument();
+  });
+
+  it('renders schema helper text for deny from and to model selectors', () => {
+    render(
+      <SelectorsForm
+        selectorsSchema={selectorsSchema}
+        formData={{
+          selectors: {
+            allow: { from: [], to: [] },
+            deny: {
+              from: [{ kind: '', model: { name: '', registrant: { kind: '' } } }],
+              to: [{ kind: '', model: { name: '', registrant: { kind: '' } } }],
+            },
+          },
+        }}
+        onChange={vi.fn()}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId('tab-1'));
+
+    expect(screen.getByText('schema helper model deny from')).toBeInTheDocument();
+    expect(screen.getByText('schema helper model deny to')).toBeInTheDocument();
   });
 });

@@ -16,12 +16,32 @@ vi.mock('@meshery/schemas', () => ({
             name: { type: 'string' },
             kind: { type: 'string' },
             capabilities: { type: 'array' },
+            model: {
+              helperText: 'schema helper model',
+            },
             selectors: {
               items: {
                 properties: {
                   allow: {
                     properties: { from: { items: { properties: { kind: {}, model: {} } } } },
                   },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  ModelDefinitionV1Beta1OpenApiSchema: {
+    components: {
+      schemas: {
+        ModelDefinition: {
+          properties: {
+            category: {
+              properties: {
+                name: {
+                  helperText: 'schema helper category',
                 },
               },
             },
@@ -56,7 +76,7 @@ vi.mock('@sistent/sistent', () => {
     ),
     CustomizedStepper: ({ children }: any) => <div data-testid="stepper">{children}</div>,
     Box: ({ children }: any) => <div>{children}</div>,
-    TextField: ({ value, onChange, label, children, select, id }: any) => (
+    TextField: ({ helperText, value, onChange, label, children, select, id }: any) => (
       <div>
         <label htmlFor={id}>{label}</label>
         {select ? (
@@ -66,6 +86,7 @@ vi.mock('@sistent/sistent', () => {
         ) : (
           <input data-testid={`input-${id}`} id={id} value={value || ''} onChange={onChange} />
         )}
+        {helperText && <span>{helperText}</span>}
       </div>
     ),
     MenuItem: ({ children, value, disabled }: any) => (
@@ -192,5 +213,18 @@ describe('RelationshipFormStepper', () => {
 
     fireEvent.click(screen.getByTestId('secondary-btn'));
     expect(stepper.goBack).toHaveBeenCalled();
+  });
+
+  it('renders helper text from schema metadata', () => {
+    useStepperMock.mockImplementation(({ steps }) =>
+      makeStepperMock({
+        activeStepComponent: steps[0].component,
+      }),
+    );
+
+    render(<RelationshipFormStepper handleClose={vi.fn()} />);
+
+    expect(screen.getByText('schema helper category')).toBeInTheDocument();
+    expect(screen.getByText('schema helper model')).toBeInTheDocument();
   });
 });
