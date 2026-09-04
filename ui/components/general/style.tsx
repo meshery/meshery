@@ -289,13 +289,19 @@ export const SideBarText = styled(ListItemText)(({ drawerCollapsed }) => ({
   fontSize: '1rem',
   color: 'inherit',
   visibility: drawerCollapsed ? 'hidden' : 'visible',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
   '& .MuiListItemText-primary': {
     fontSize: '1rem',
     color: 'inherit',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
   },
   '& .MuiTypography-root': {
     fontSize: '1rem',
     color: 'inherit',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
   },
 }));
 
@@ -363,6 +369,8 @@ export const HiddenText = styled(ListItemText)(({ drawerCollapsed, theme }) => (
   color: theme.palette.background.constant.white,
   fontSize: '14px',
   transition: drawerCollapsed ? 'opacity 200ms ease-in-out' : 'opacity 200ms ease-in-out',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
 }));
 
 export const LinkContainer = styled('div')(() => ({
