@@ -21,6 +21,7 @@ import {
   useTheme,
   PROMPT_VARIANTS,
   ModalFooter,
+  DataTableToolbar,
 } from '@sistent/sistent';
 import { EmptyState } from '@/components/lifecycle/general';
 import AddIconCircleBorder from '@/assets/icons/AddIconCircleBorder';
@@ -42,7 +43,6 @@ import _PromptComponent from '../general/PromptComponent';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '../general/error-404/index';
-import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import ViewSwitch from '@/components/general/ViewSwitch';
 import { CreateButtonWrapper } from './styles';
 import WorkspaceGridView from './WorkspaceGridView';
@@ -439,62 +439,68 @@ const Workspaces = ({ onSelectWorkspace }) => {
           </Breadcrumbs>
         </div>
         {!selectedWorkspace.id && (
-          <ToolWrapper>
-            <CreateButtonWrapper style={{ marginRight: '2rem' }}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={(e) =>
-                  handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE, selectedWorkspace)
-                }
-                sx={{
-                  backgroundColor: '#607d8b',
-                  padding: '8px',
-                  borderRadius: '5px',
-                }}
-                permissionKey={Keys.WorkspaceManagementCreateWorkspace}
-                data-cy="btnResetDatabase"
-              >
-                <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
-                <Typography
+          <DataTableToolbar
+            primaryActions={
+              <CreateButtonWrapper style={{ marginRight: '2rem' }}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={(e) =>
+                    handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE, selectedWorkspace)
+                  }
                   sx={{
-                    paddingLeft: '4px',
-                    marginRight: '4px',
-                    textTransform: 'none',
+                    backgroundColor: '#607d8b',
+                    padding: '8px',
+                    borderRadius: '5px',
                   }}
+                  permissionKey={Keys.WorkspaceManagementCreateWorkspace}
+                  data-cy="btnResetDatabase"
                 >
-                  Create
-                </Typography>
-              </Button>
-            </CreateButtonWrapper>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              {!selectedWorkspace?.id && (
-                <>
-                  <SearchBar
-                    onSearch={(value) => {
-                      setSearch(value);
+                  <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
+                  <Typography
+                    sx={{
+                      paddingLeft: '4px',
+                      marginRight: '4px',
+                      textTransform: 'none',
                     }}
-                    placeholder="Search Workspaces..."
-                    expanded={isSearchExpanded}
-                    setExpanded={setIsSearchExpanded}
-                  />
-                  {viewType !== 'grid' && (
-                    <CustomColumnVisibilityControl
-                      columns={columnList}
-                      customToolsProps={{ columnVisibility, setColumnVisibility }}
-                    />
-                  )}
-                </>
-              )}
-              <ViewSwitch
-                view={viewType}
-                changeView={handleViewChange}
-                key={`view-switch-${viewType}`} // Add key to force re-render when viewType changes
-              />
-            </Box>
-          </ToolWrapper>
+                  >
+                    Create
+                  </Typography>
+                </Button>
+              </CreateButtonWrapper>
+            }
+            search={
+              !selectedWorkspace?.id ? (
+                <SearchBar
+                  onSearch={(value) => {
+                    setSearch(value);
+                  }}
+                  placeholder="Search Workspaces..."
+                  expanded={isSearchExpanded}
+                  setExpanded={setIsSearchExpanded}
+                />
+              ) : undefined
+            }
+            columnVisibility={
+              !selectedWorkspace?.id && viewType !== 'grid' ? (
+                <CustomColumnVisibilityControl
+                  columns={columnList}
+                  customToolsProps={{ columnVisibility, setColumnVisibility }}
+                />
+              ) : undefined
+            }
+          />
+        )}
+        {!selectedWorkspace.id && (
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '-0.5rem', marginBottom: '0.5rem' }}>
+            <ViewSwitch
+              view={viewType}
+              changeView={handleViewChange}
+              key={`view-switch-${viewType}`}
+            />
+          </Box>
         )}
         <>
           {workspaces.length === 0 ? (
