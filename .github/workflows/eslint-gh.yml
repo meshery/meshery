@@ -62,6 +62,7 @@ jobs:
         working-directory: ui
         env:
           CI: 'true'
+          NODE_OPTIONS: '--max-old-space-size=6144'
         # --testTimeout: CI runners are ~1.4x slower than typical local boxes,
         #   so the default 5s would false-fail any test near that boundary.
         # --reporter=verbose: lists each test as it runs so failures are

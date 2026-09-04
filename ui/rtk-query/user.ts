@@ -1,5 +1,6 @@
 import { ctxUrl } from '../utils/multi-ctx';
 import { useGetUsersForOrgQuery as useSchemasGetUsersForOrgQuery } from '@meshery/schemas/mesheryApi';
+import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { api, mesheryApiPath } from './index';
 import { initiateQuery } from './utils';
 import { useGetOrgsQuery } from './organization';
@@ -151,8 +152,6 @@ export const userApi = api
           }
 
           try {
-            const ExtensionPointSchemaValidator =
-              require('../utils/ExtensionPointSchemaValidator').default;
             return ExtensionPointSchemaValidator(type)(response?.extensions[type]);
           } catch (error) {
             console.group('extension error');
@@ -194,10 +193,7 @@ export const userApi = api
         // Make sure we have proper tag
         providesTags: [Tags.PROVIDER_CAP],
       }),
-      getSystemVersion: builder.query({
-        query: () => '/api/system/version',
-        method: 'GET',
-      }),
+
       installProviderExtension: builder.mutation({
         query: (queryArg) => ({
           url: '/api/provider/extension/install',
@@ -301,7 +297,7 @@ export const {
   useHandleFeedbackFormSubmissionMutation,
   useGetAllUsersQuery,
   useRemoveUserFromTeamMutation,
-  useGetSystemVersionQuery,
+
   useInstallProviderExtensionMutation,
   useRemoveProviderExtensionMutation,
   useGetUserProfileSummaryByIdQuery,
@@ -377,11 +373,6 @@ export const getUserAccessToken = async () => {
 export const getUserProfile = async () => {
   const userProfile = await initiateQuery(userApi.endpoints.getLoggedInUser);
   return userProfile;
-};
-
-export const getSystemVersion = async () => {
-  const res = await initiateQuery(userApi.endpoints.getSystemVersion);
-  return res;
 };
 
 export const getAllUsers = async ({ page, pagesize, search }) => {
