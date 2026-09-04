@@ -239,18 +239,12 @@ const Environments = () => {
   const addConnectionToEnvironment = (environmentId, connectionId) =>
     addConnectionToEnvironmentMutator({ environmentId, connectionId })
       .unwrap()
-      .catch((err) => {
-        handleError({ error_msg: 'Unable to assign connection to environment' })(err);
-        throw err;
-      });
+      .catch(handleError({ error_msg: 'Unable to assign connection to environment' }));
 
   const removeConnectionFromEnvironment = (environmentId, connectionId) =>
     removeConnectionFromEnvMutator({ environmentId, connectionId })
       .unwrap()
-      .catch((err) => {
-        handleError({ error_msg: 'Unable to remove connection from environment' })(err);
-        throw err;
-      });
+      .catch(handleError({ error_msg: 'Unable to remove connection from environment' }));
 
   const handleEnvironmentModalOpen = (e, actionType, envObject) => {
     e.stopPropagation();
@@ -393,18 +387,12 @@ const Environments = () => {
     // modal vanishing as if the change had succeeded. allSettled keeps a single
     // failure from aborting the rest; each rejection is reported by the
     // mutators' own .catch above.
-    const results = await Promise.allSettled([
+    await Promise.allSettled([
       ...addedConnectionsIds.map((id) => addConnectionToEnvironment(connectionAssignEnv.id, id)),
       ...removedConnectionsIds.map((id) =>
         removeConnectionFromEnvironment(connectionAssignEnv.id, id),
       ),
     ]);
-
-    const hasFailures = results.some((result) => result.status === 'rejected');
-    if (hasFailures) {
-      return;
-    }
-
     setEnvironmentConnectionsData([]);
     setConnectionsData([]);
     handleonAssignConnectionModalClose();
