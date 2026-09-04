@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ModalBody, ModalFooter, NoSsr, useHasPermission } from '@sistent/sistent';
 import { URLValidator } from '../../utils/URLValidator';
-import { isValidJSON } from '../../utils/validators';
+import { isValidDuration, isValidJSON } from '../../utils/validators';
 import LoadTestTimerDialog from '../load-test-timer-dialog';
 import fetchControlPlanes from '@/graphql/queries/ControlPlanesQuery';
 import { ctxUrl, getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';
@@ -136,6 +136,9 @@ const MesheryPerformanceComponent_ = (props) => {
 
   const handleInputDurationChange = (event, newValue) => {
     setT(newValue);
+    if (tErrorState) {
+      setTError('');
+    }
   };
 
   const handleSubmit = () => {
@@ -144,27 +147,8 @@ const MesheryPerformanceComponent_ = (props) => {
       return;
     }
 
-    let err = false;
-    let tNum = 0;
-    try {
-      tNum = parseInt(t.substring(0, tState.length - 1));
-    } catch {
-      err = true;
-    }
-
-    if (
-      tState === '' ||
-      tState === null ||
-      !(
-        tState.toLowerCase().endsWith('h') ||
-        tState.toLowerCase().endsWith('m') ||
-        tState.toLowerCase().endsWith('s')
-      ) ||
-      err ||
-      tNum <= 0
-    ) {
+    if (!isValidDuration(tState)) {
       setTError('error-autocomplete-value');
-      closeModal && closeModal();
       return;
     }
 
@@ -177,6 +161,20 @@ const MesheryPerformanceComponent_ = (props) => {
     closeModal && closeModal();
   };
 
+  const handleSaveProfile = () => {
+    if (urlState === '') {
+      setUrlError(true);
+      return;
+    }
+
+    if (!isValidDuration(tState)) {
+      setTError('error-autocomplete-value');
+      return;
+    }
+
+    submitProfile();
+  };
+
   const submitProfile = (cb) => {
     const profile = generatePerformanceProfile({
       name: profileNameState,
@@ -186,7 +184,7 @@ const MesheryPerformanceComponent_ = (props) => {
       serviceMesh: meshNameState,
       concurrentRequest: +cState || 1,
       qps: +qpsState || 0,
-      duration: tState,
+      duration: (tState || '').trim(),
       requestHeaders: headersState,
       requestCookies: cookiesState,
       requestBody: reqBodyState,
@@ -208,6 +206,9 @@ const MesheryPerformanceComponent_ = (props) => {
     setC(0);
     setQps(0);
     setT('30s');
+    setTValue('30s');
+    setTError('');
+    setUrlError(false);
     setHeaders('');
     setCookies('');
     setReqBody('');
@@ -250,8 +251,9 @@ const MesheryPerformanceComponent_ = (props) => {
     const computedTestName = generateTestName(testNameState, meshNameState);
     setTestName(computedTestName);
 
-    const t1 = tState.substring(0, tState.length - 1);
-    const dur = tState.substring(tState.length - 1, tState.length).toLowerCase();
+    const trimmed = (tState || '').trim();
+    const t1 = trimmed.substring(0, trimmed.length - 1);
+    const dur = trimmed.substring(trimmed.length - 1, trimmed.length).toLowerCase();
 
     const data = {
       name: computedTestName,
@@ -527,7 +529,7 @@ const MesheryPerformanceComponent_ = (props) => {
                   hasTestResult={!!testResult}
                   onAbort={handleAbort}
                   onShowResults={() => setTestResultsOpen(true)}
-                  onSaveProfile={() => submitProfile()}
+                  onSaveProfile={handleSaveProfile}
                   onRunTest={handleSubmit}
                 />
               </React.Fragment>
