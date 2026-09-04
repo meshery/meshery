@@ -37,6 +37,11 @@ describe('LoadTestTimerDialog', () => {
     expect(screen.getByTestId('time-typography')).toHaveTextContent('02:00');
   });
 
+  it('handles duration strings with surrounding whitespace', () => {
+    render(<LoadTestTimerDialog open={true} t="  2m  " countDownComplete={vi.fn()} />);
+    expect(screen.getByTestId('time-typography')).toHaveTextContent('02:00');
+  });
+
   it('handles hours via the h suffix', () => {
     render(<LoadTestTimerDialog open={true} t="1h" countDownComplete={vi.fn()} />);
     expect(screen.getByTestId('time-typography')).toHaveTextContent('01:00:00');

@@ -539,7 +539,7 @@ const MesheryPerformanceComponent_ = (props) => {
               <CenterTimer>
                 <LoadTestTimerDialog
                   open={timerDialogOpenState}
-                  t={tState}
+                  t={(tState || '').trim()}
                   onClose={handleTimerDialogClose}
                   countDownComplete={handleTimerDialogClose}
                 />
