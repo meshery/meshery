@@ -484,7 +484,7 @@ const Environments = () => {
                 variant="contained"
                 color="primary"
                 size="large"
-                aria-label="Create Environment"
+                aria-label="Create environment"
                 onClick={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.CREATE)}
                 sx={{
                   padding: '8px',

@@ -209,7 +209,7 @@ const REJECTED_CREATE = {
 const openCreateModalAndSubmit = async () => {
   const user = userEvent.setup();
   renderEnvironments();
-  await user.click(screen.getByText('Create'));
+  await user.click(screen.getByRole('button', { name: 'Create environment' }));
   await user.click(await screen.findByTestId('submit-environment'));
 };
 
@@ -290,8 +290,9 @@ describe('Environments toolbar', () => {
     const toolbar = await screen.findByTestId('data-table-toolbar');
     expect(toolbar).toBeInTheDocument();
 
-    const createButton = within(toolbar).getByRole('button', { name: /create environment/i });
+    const createButton = within(toolbar).getByRole('button', { name: 'Create environment' });
     expect(createButton).toBeInTheDocument();
+    expect(createButton).toHaveAccessibleName('Create environment');
 
     const searchInput = within(toolbar).getByPlaceholderText('Search by name');
     expect(searchInput).toBeInTheDocument();
@@ -323,9 +324,7 @@ describe('Environments toolbar', () => {
     // Assert toolbar displays the selection count alongside existing controls and delete button
     expect(within(toolbar).getByText(/1 environment selected/i)).toBeInTheDocument();
     expect(within(toolbar).getByRole('button', { name: /delete/i })).toBeInTheDocument();
-    expect(
-      within(toolbar).getByRole('button', { name: /create environment/i }),
-    ).toBeInTheDocument();
+    expect(within(toolbar).getByRole('button', { name: 'Create environment' })).toBeInTheDocument();
     expect(within(toolbar).getByPlaceholderText('Search by name')).toBeInTheDocument();
 
     // Select second environment

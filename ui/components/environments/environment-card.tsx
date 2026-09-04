@@ -235,19 +235,16 @@ const EnvironmentCard = ({
                       ev.stopPropagation();
                       onEdit(ev);
                     }}
-                    sx={{
-                      color: (theme) =>
-                        theme.palette.icon?.constant?.white ||
-                        theme.palette.text?.constant?.white ||
-                        theme.palette.common?.white ||
-                        '#FFFFFF',
-                    }}
+                    sx={{ color: 'white' }}
                     disabled={
                       selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
                     }
                     permissionKey={Keys.WorkspaceManagementEditEnvironment}
                   >
-                    <EditIcon style={{ ...iconMedium, margin: '0 2px' }} fill="currentColor" />
+                    <EditIcon
+                      style={{ ...iconMedium, margin: '0 2px' }}
+                      fill={theme?.palette?.icon?.default}
+                    />
                   </IconButton>
                 </CustomTooltip>
                 <CustomTooltip title="Delete">
@@ -256,19 +253,16 @@ const EnvironmentCard = ({
                       ev.stopPropagation();
                       onDelete(ev);
                     }}
-                    sx={{
-                      color: (theme) =>
-                        theme.palette.icon?.constant?.white ||
-                        theme.palette.text?.constant?.white ||
-                        theme.palette.common?.white ||
-                        '#FFFFFF',
-                    }}
+                    sx={{ color: 'white' }}
                     disabled={
                       selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
                     }
                     permissionKey={Keys.WorkspaceManagementDeleteEnvironment}
                   >
-                    <DeleteIcon style={{ ...iconMedium, margin: '0 2px' }} fill="currentColor" />
+                    <DeleteIcon
+                      style={{ ...iconMedium, margin: '0 2px' }}
+                      fill={theme?.palette?.icon?.default}
+                    />
                   </IconButton>
                 </CustomTooltip>
               </Grid2>
