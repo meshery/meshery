@@ -6,7 +6,7 @@ vi.mock('@sistent/sistent', () => ({
   Box: ({ children }: any) => <div>{children}</div>,
   CircularProgress: ({ value }: any) => <div data-testid="progress" data-value={value} />,
   NoSsr: ({ children }: any) => <>{children}</>,
-  Typography: ({ children }: any) => <span data-testid="time-typography">{children}</span>,
+  Typography: ({ children, ...props }: any) => <span {...props}>{children}</span>,
 }));
 
 import LoadTestTimerDialog from './load-test-timer-dialog';
@@ -39,7 +39,7 @@ describe('LoadTestTimerDialog', () => {
 
   it('handles duration strings with surrounding whitespace', () => {
     render(<LoadTestTimerDialog open={true} t="  2m  " countDownComplete={vi.fn()} />);
-    expect(screen.getByTestId('time-typography')).toHaveTextContent('02:00');
+    expect(screen.getByText('02:00')).toBeInTheDocument();
   });
 
   it('handles hours via the h suffix', () => {

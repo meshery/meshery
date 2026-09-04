@@ -123,7 +123,7 @@ const LoadTestTimerDialog = ({ countDownComplete, t, open }) => {
               justifyContent: 'center',
             }}
           >
-            <Typography variant="h4" component="div" color="#667C89">
+            <Typography data-testid="time-typography" variant="h4" component="div" color="#667C89">
               {formattedTime}
             </Typography>
           </Box>
