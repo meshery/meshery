@@ -27,6 +27,8 @@ tags:
     description: Operations related to design evaluation
   - name: Feature_Features
     description: Operations related to features and entitlements
+  - name: Organization_SMTP_Configuration_OrganizationSmtp
+    description: Operations on an organization's own outbound mail server.
   - name: Registry_Registry
     description: Operations on Meshery's capabilities registry.
   - name: Support_Support
