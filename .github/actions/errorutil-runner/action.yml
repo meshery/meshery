@@ -33,8 +33,24 @@ runs:
         
         if [ "${{ github.event_name }}" == "pull_request" ]; then
           ~/errorutil -d "${{ inputs.baseline_scan_dir }}" analyze -i "${{ inputs.baseline_helpers_dir }}" -o "${{ inputs.baseline_helpers_dir }}" --skip-dirs "${{ inputs.skip_dirs }}"
-          
+
           ~/errorutil -d "${{ inputs.scan_dir }}" analyze -i "${{ inputs.helpers_dir }}" -o "${{ inputs.helpers_dir }}" --skip-dirs "${{ inputs.skip_dirs }},.baseline"
+
+          # Convention gate, parity with the post-merge `analyze | wc -c` gate.
+          # Duplicate error names, call-expression codes and deprecated NewDefault
+          # usage are NOT covered by `errorutil check`. Read them from the summary
+          # rather than from log output: on the read-only PR path an unallocated
+          # "replace_me" placeholder makes Export log an error, which would make a
+          # byte-count gate reject the primary supported workflow.
+          # Applied to the CURRENT tree only - never to the baseline, which would
+          # fail pull requests for pre-existing state.
+          SUMMARY="${{ inputs.helpers_dir }}/errorutil_analyze_summary.json"
+          if ! jq -e '(.duplicate_names | length) == 0 and (.call_expr_codes | length) == 0 and (.deprecated_new_default | length) == 0' "$SUMMARY" >/dev/null; then
+            echo "::error::errorutil analyze reported error-convention violations in ${{ inputs.helpers_dir }}"
+            jq '{duplicate_names, call_expr_codes, deprecated_new_default}' "$SUMMARY"
+            exit 1
+          fi
+
           ~/errorutil check \
             "${{ inputs.baseline_helpers_dir }}/errorutil_analyze_errors.json" \
             "${{ inputs.helpers_dir }}/errorutil_analyze_errors.json" \
