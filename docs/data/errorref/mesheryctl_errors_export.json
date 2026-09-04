@@ -2108,6 +2108,15 @@
         "short_description": "Selected model not found",
         "probable_cause": "The model name does not match any entry in the CSV's \\\"model\\\" column, or contains a typo",
         "suggested_remediation": "Check the model name against the \\\"model\\\" column in your Models CSV, or omit --model to generate all eligible models"
+      },
+      "1255": {
+        "name": "ErrInvalidEndpointCode",
+        "code": "1255",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid endpoint configured in the current context",
+        "probable_cause": "The `endpoint` of the current context in ~/.meshery/config.yaml is empty, has no port, or is otherwise malformed",
+        "suggested_remediation": "Set a valid endpoint such as `http://localhost:9081`. Run `mesheryctl system context view` to inspect the current context."
       }
     }
   }
