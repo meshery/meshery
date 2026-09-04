@@ -16,6 +16,16 @@ img.center {
   margin-left: auto;
   margin-right: auto;
 }
+
+// A centered screenshot sized to a fraction of the column (e.g. the DCO sign-off
+// IDE setting at width="50%") is too small to read on phones. Widen it to fill
+// the content column on small screens; normal and large screens keep the
+// authored width.
+img.mobile-full {
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+}
 video.center {
   display: block;
   margin-left: auto;
@@ -74,7 +84,7 @@ h5,
   font-weight: 400;
 }
 h6 {
-  font-size: .9rem;
+  font-size: 0.9rem;
   font-weight: 300;
 }
 
@@ -125,11 +135,10 @@ ol {
 li:has(> a[href*="/installation/quick-start"]) {
   list-style-type: none;
   margin-left: -2rem;
-  
+
   @media (max-width: 1200px) {
     margin-left: 0rem;
   }
-  
 }
 
 li:has(> a[href*="/extensions"]) {
@@ -148,7 +157,14 @@ pre,
 code,
 kbd,
 samp {
-  font-family: SFMono-Regular, Menlo, Monaco, Consolas, liberation mono, courier new, monospace;
+  font-family:
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    liberation mono,
+    courier new,
+    monospace;
 }
 
 button {
@@ -158,4 +174,3 @@ button {
   border-radius: 5px;
   border: 1px solid var(--color-secondary-light);
 }
-
