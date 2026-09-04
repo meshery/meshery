@@ -4,96 +4,96 @@ categories: [mesheryctl]
 description: Mesheryctl system commands for managing Meshery deployments.
 ---
 
-Let's get familiar with mesheryctl system commands. The syntax of the mesheryctl commands goes as follws : `mesheryctl <Main_command> <Argument> <Flags>`
+Let's get familiar with mesheryctl system commands. The syntax of the mesheryctl commands goes as follows : `mesheryctl <Main_command> <Argument> <Flags>`
 
 ## Main_command : system
 ### start 
 `mesheryctl system start` : This will initiate Meshery & automatically open it in your default web browser.
 
-<a href="images/start.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/start.png" /></a>
+<a href="images/start.png"><img class="content-image" alt="skip-browser" src="images/start.png" /></a>
 
 `mesheryctl system start --skip-browser` : It skips opening Meshery in your browser with the provided URL.
 
-<a href="images/skipbrowser.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/skipbrowser.png" /></a>
+<a href="images/skipbrowser.png"><img class="content-image" alt="skip-browser" src="images/skipbrowser.png" /></a>
 
 `mesheryctl system start --skip-update` : It is used when you want to skip updating Meshery if an update is available.
 
-<a href="images/system update.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/system update.png" /></a>
+<a href="images/system update.png"><img class="content-image" alt="skip-browser" src="images/system update.png" /></a>
 
 `mesheryctl system start --reset` : It resets your Meshery configuration file to its default configuration.
 
 `mesheryctl system start --platform string` : It allows you specify a platform for deploying Meshery.
 
-<a href="images/platform.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/platform.png" /></a>
+<a href="images/platform.png"><img class="content-image" alt="skip-browser" src="images/platform.png" /></a>
 
 
 ### stop 
 `mesheryctl system stop` : It stops Meshery resources & delete its associated namespaces.
 
-<a href="images/stop.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/stop.png" /></a>
+<a href="images/stop.png"><img class="content-image" alt="skip-browser" src="images/stop.png" /></a>
 
 `mesheryctl system stop --reset` : It stops Meshery and resets the Meshery configuration file to its default configuration.
 
-<a href="images/stop reset.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/stop reset.png" /></a>
+<a href="images/stop reset.png"><img class="content-image" alt="skip-browser" src="images/stop reset.png" /></a>
 
 `mesheryctl system stop --keep-namespace` : It stops Meshery without deleting the associated namespaces.
 
-<a href="images/keep namespace.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/keep namespace.png" /></a>
+<a href="images/keep namespace.png"><img class="content-image" alt="skip-browser" src="images/keep namespace.png" /></a>
 
 `mesheryctl system stop --force` : Force stops Meshery instead of gentle way. This is only used in emergency situations when `mesheryctl system stop` can't halt Meshery.
 
-<a href="images/force stop.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/force stop.png" /></a>
+<a href="images/force stop.png"><img class="content-image" alt="skip-browser" src="images/force stop.png" /></a>
 
 ### update
 `mesheryctl system update` : This updates Meshery itself, not the mesheryctl. Ensure Meshery is running when using this.
 
-<a href="images/system update.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/system update.png" /></a>
+<a href="images/system update.png"><img class="content-image" alt="skip-browser" src="images/system update.png" /></a>
 
 `mesheryctl system update --skip-reset` : Skips the check for a new manifest file.
 
-<a href="images/update skip reset.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/update skip reset.png" /></a>
+<a href="images/update skip reset.png"><img class="content-image" alt="skip-browser" src="images/update skip reset.png" /></a>
 
 ### reset
 `mesheryctl system reset` : Resets Meshery to its default configuration.
 
-<a href="images/reset.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/reset.png" /></a>
+<a href="images/reset.png"><img class="content-image" alt="skip-browser" src="images/reset.png" /></a>
 
 ### restart 
 `meshryctl system restart` : Stops Meshery and then starts it again. Opens the website in your default browser.
 
-<a href="images/restart.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/restart.png" /></a>
+<a href="images/restart.png"><img class="content-image" alt="skip-browser" src="images/restart.png" /></a>
 
 ### status 
 `mesheryctl system status` : Displays the status of Meshery components.
 
 `mesheryctl system status --verbose` : Provides additional data along with Meshery and its component status.
 
-<a href="images/system status.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/system status.png" /></a>
+<a href="images/system status.png"><img class="content-image" alt="skip-browser" src="images/system status.png" /></a>
 
 
 ### dashboard
 `mesheryctl system dashboard` : Opens the Meshery dashboard in your default browser.
 
-<a href="images/system dahboard.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/system dahboard.png" /></a>
+<a href="images/system dahboard.png"><img class="content-image" alt="skip-browser" src="images/system dahboard.png" /></a>
 
 `mesheryctl system dashboard --skip-browser` : Provides the link to the dashboard, allowing you to open it in any browser.
 
-<a href="images/dashboard skip.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/dashboard skip.png" /></a>
+<a href="images/dashboard skip.png"><img class="content-image" alt="skip-browser" src="images/dashboard skip.png" /></a>
 
 `mesheryctl system dashboard --port-forward` : If the current port is busy, it opens the dashboard on another port.
 
-<a href="images/portforward.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/portforward.png" /></a>
+<a href="images/portforward.png"><img class="content-image" alt="skip-browser" src="images/portforward.png" /></a>
 
 
 ### login 
 `mesheryctl system login` : Authenticates you with your selected provider.
 
-<a href="images/system login.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/system login.png" /></a>
+<a href="images/system login.png"><img class="content-image" alt="skip-browser" src="images/system login.png" /></a>
 
 ### check
-`mesheryctl system check` : Performs checks for both pre & post mesh deployment scenarios on Meshery.
+`mesheryctl system check` : Performs checks for both pre- and post-deployment scenarios on Meshery.
 
-<a href="images/system check.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/system check.png" /></a>
+<a href="images/system check.png"><img class="content-image" alt="skip-browser" src="images/system check.png" /></a>
 
 `mesheryctl system check --preflight` : Runs pre-deployment checks.
 
@@ -111,20 +111,20 @@ Let's get familiar with mesheryctl system commands. The syntax of the mesheryctl
 
 `mesheryctl system channel switch [stable|stable-version|edge|edge-version]` : Used to switch between channels.
 
-<a href="images/channel set.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/channel set.png" /></a>
+<a href="images/channel set.png"><img class="content-image" alt="skip-browser" src="images/channel set.png" /></a>
 
 `mesheryctl system channel view --all` : Displays all available channels.
 
 `mesheryctl system channel view` : Displays the current channel.
 
-<a href="images/channel view.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/channel view.png" /></a>
+<a href="images/channel view.png"><img class="content-image" alt="skip-browser" src="images/channel view.png" /></a>
 
 
 ## Main_command : system context
 ### create 
 `mesheryctl system context create 'context-name'` : Creates a new context with default parameters.
 
-<a href="images/context create.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/context create.png" /></a>
+<a href="images/context create.png"><img class="content-image" alt="skip-browser" src="images/context create.png" /></a>
 
 `mesheryctl system context create --component stringArray` : Specifies the component to be created in the context.
 
@@ -134,7 +134,7 @@ Let's get familiar with mesheryctl system commands. The syntax of the mesheryctl
 
 `mesheryctl system context create --url string` : Specifies the target URL.
 
-<a href="images/context flag.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/context flag.png" /></a>
+<a href="images/context flag.png"><img class="content-image" alt="skip-browser" src="images/context flag.png" /></a>
 
 
 ###  switch
@@ -143,38 +143,38 @@ Let's get familiar with mesheryctl system commands. The syntax of the mesheryctl
 ###  list
 `mesheryctl system context list` : Lists all your available Meshery contexts.
 
-<a href="images/context list.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/context list.png" /></a>
+<a href="images/context list.png"><img class="content-image" alt="skip-browser" src="images/context list.png" /></a>
 
-###  delete
+### delete
 `mesheryctl system context delete` : Delete context.
 
-<a href="images/context delete.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/context delete.png" /></a>
+<a href="images/context delete.png"><img class="content-image" alt="skip-browser" src="images/context delete.png" /></a>
 
 
-###  view
+### view
 `mesheryctl system context view` : Display all your contexts with additional information.
 
-<a href="images/context view.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/context view.png" /></a>
+<a href="images/context view.png"><img class="content-image" alt="skip-browser" src="images/context view.png" /></a>
 
 
 ## Main_command : system provider
 ### switch
 `mesheryctl system provider switch` : Changes your provider
 
-<a href="images/pro switch.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/pro switch.png" /></a>
+<a href="images/pro switch.png"><img class="content-image" alt="skip-browser" src="images/pro switch.png" /></a>
 
 ### list
 `mesheryctl system provider list` : Lists all available providers
 
-<a href="images/pro list.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/pro list.png" /></a>
+<a href="images/pro list.png"><img class="content-image" alt="skip-browser" src="images/pro list.png" /></a>
 
 ### set
 `mesheryctl system provider set` : Set your provider
 
-<a href="images/pro set.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/pro set.png" /></a>
+<a href="images/pro set.png"><img class="content-image" alt="skip-browser" src="images/pro set.png" /></a>
 
 ### view
 `mesheryctl system provider view` : Lists your current context and provider
 
-<a href="images/pro view.png"><img alt="skip-browser" style="width:500px;height:auto;" src="images/pro view.png" /></a>
+<a href="images/pro view.png"><img class="content-image" alt="skip-browser" src="images/pro view.png" /></a>
 

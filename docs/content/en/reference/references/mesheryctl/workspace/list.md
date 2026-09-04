@@ -15,8 +15,10 @@ List name of all registered workspaces
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl workspace list [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,24 +27,30 @@ mesheryctl workspace list [flags]
 List of workspace under a specific organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl workspace list --orgId [orgId]
 
+</div>
 </div>
 </pre> 
 
 List of workspace under a specific organization for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl workspace list --orgId [orgId] --page [page-number]
 
+</div>
 </div>
 </pre> 
 
 Display number of available  workspace under a specific organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl workspace list --orgId [orgId] --count
 
+</div>
 </div>
 </pre> 
 

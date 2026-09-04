@@ -15,8 +15,10 @@ Generates a folder structure and guides user on model creation
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model init [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,39 +27,40 @@ mesheryctl model init [flags]
 generates a folder structure
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model init [model-name]
 
+</div>
 </div>
 </pre> 
 
 generates a folder structure and sets up model version
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model init [model-name] --version [version] (default is v0.1.0)
 
+</div>
 </div>
 </pre> 
 
 generates a folder structure under specified path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model init [model-name] --path [path-to-location] (default is current folder)
 
+</div>
 </div>
 </pre> 
 
 generate a folder structure in json format
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is json)
+<div class='clipboardjs'>
+mesheryctl model init [model-name] --output-format [json|yaml] (default is json)
 
 </div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-    
-
 </div>
 </pre> 
 

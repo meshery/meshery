@@ -8,7 +8,7 @@ import {
   styled,
   NoSsr,
 } from '@sistent/sistent';
-import MesheryChartDialog from './MesheryChartDialog';
+import MesheryChartDialog from './general/MesheryChartDialog';
 import MesheryChart from './MesheryChart';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearResultsSelection } from '@/store/slices/prefTest';
@@ -78,7 +78,7 @@ function CustomToolbarSelect({ setSelectedRows }) {
       <NoSsr>
         <div className="custom-toolbar-select">
           <Tooltip title="Deselect ALL">
-            <StyledIconButton onClick={handleClickDeselectAll}>
+            <StyledIconButton aria-label="deselect all" onClick={handleClickDeselectAll}>
               <StyledIcon>
                 <IndeterminateCheckBox />
               </StyledIcon>
@@ -100,7 +100,7 @@ function CustomToolbarSelect({ setSelectedRows }) {
             </Tooltip>
           )}
           <Tooltip title="Compare selected">
-            <StyledIconButton onClick={handleCompareSelected}>
+            <StyledIconButton aria-label="compare selected" onClick={handleCompareSelected}>
               <StyledIcon>
                 <CompareArrows />
               </StyledIcon>

@@ -326,7 +326,7 @@ func GetComponentFieldPathFromK8sFieldPath(path string) (newpath string) {
 	return fmt.Sprintf("%s.%s", "settings", path)
 }
 
-// Prunes the diff part present in the k8s response message.
+// FormatK8sMessage prunes the diff part present in the k8s response message.
 // Diff corresponds to the previous change and applied change, and doesn't contain any info which can be helpful to the user.
 // If we want we can show this in a CodeEditor component.
 func FormatK8sMessage(message string) string {

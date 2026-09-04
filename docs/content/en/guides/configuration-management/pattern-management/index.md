@@ -76,6 +76,6 @@ Deploying application “BookCatalog”...
 Deployed. Endpoint(s) available at: http://localhost:8000/catalog
 ```
 
-## Related Reading
+## Related
 
 - [`mesheryctl design`]({{< ref "reference/references/mesheryctl/design/_index.md" >}})
