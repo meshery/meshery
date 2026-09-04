@@ -239,12 +239,18 @@ const Environments = () => {
   const addConnectionToEnvironment = (environmentId, connectionId) =>
     addConnectionToEnvironmentMutator({ environmentId, connectionId })
       .unwrap()
-      .catch(handleError({ error_msg: 'Unable to assign connection to environment' }));
+      .catch((err) => {
+        handleError({ error_msg: 'Unable to assign connection to environment' })(err);
+        throw err;
+      });
 
   const removeConnectionFromEnvironment = (environmentId, connectionId) =>
     removeConnectionFromEnvMutator({ environmentId, connectionId })
       .unwrap()
-      .catch(handleError({ error_msg: 'Unable to remove connection from environment' }));
+      .catch((err) => {
+        handleError({ error_msg: 'Unable to remove connection from environment' })(err);
+        throw err;
+      });
 
   const handleEnvironmentModalOpen = (e, actionType, envObject) => {
     e.stopPropagation();
@@ -387,12 +393,18 @@ const Environments = () => {
     // modal vanishing as if the change had succeeded. allSettled keeps a single
     // failure from aborting the rest; each rejection is reported by the
     // mutators' own .catch above.
-    await Promise.allSettled([
+    const results = await Promise.allSettled([
       ...addedConnectionsIds.map((id) => addConnectionToEnvironment(connectionAssignEnv.id, id)),
       ...removedConnectionsIds.map((id) =>
         removeConnectionFromEnvironment(connectionAssignEnv.id, id),
       ),
     ]);
+
+    const hasFailures = results.some((result) => result.status === 'rejected');
+    if (hasFailures) {
+      return;
+    }
+
     setEnvironmentConnectionsData([]);
     setConnectionsData([]);
     handleonAssignConnectionModalClose();
@@ -468,10 +480,11 @@ const Environments = () => {
             compactTrailing
             primaryActions={
               <Button
-                type="submit"
+                type="button"
                 variant="contained"
                 color="primary"
                 size="large"
+                aria-label="Create Environment"
                 onClick={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.CREATE)}
                 sx={{
                   padding: '8px',

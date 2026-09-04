@@ -33,6 +33,8 @@ const {
   createEnvironment,
   updateEnvironment,
   deleteEnvironment,
+  addConnectionToEnvironmentMutator,
+  removeConnectionFromEnvironmentMutator,
   ENVIRONMENTS_QUERY_RESULT,
   CONNECTIONS_QUERY_RESULT,
   NOOP_MUTATION,
@@ -42,6 +44,8 @@ const {
   createEnvironment: vi.fn(),
   updateEnvironment: vi.fn(),
   deleteEnvironment: vi.fn(),
+  addConnectionToEnvironmentMutator: vi.fn(),
+  removeConnectionFromEnvironmentMutator: vi.fn(),
   ENVIRONMENTS_QUERY_RESULT: {
     data: { environments: [], totalCount: 0 },
     isLoading: false,
@@ -67,8 +71,8 @@ vi.mock('../../rtk-query/environments', () => ({
   useDeleteEnvironmentMutation: () => [deleteEnvironment],
   useGetEnvironmentsQuery: () => ENVIRONMENTS_QUERY_RESULT,
   useGetEnvironmentConnectionsQuery: () => CONNECTIONS_QUERY_RESULT,
-  useAddConnectionToEnvironmentMutation: () => NOOP_MUTATION,
-  useRemoveConnectionFromEnvironmentMutation: () => NOOP_MUTATION,
+  useAddConnectionToEnvironmentMutation: () => [addConnectionToEnvironmentMutator],
+  useRemoveConnectionFromEnvironmentMutation: () => [removeConnectionFromEnvironmentMutator],
 }));
 
 vi.mock('react-redux', () => ({
@@ -104,13 +108,22 @@ vi.mock('../shared/Modal/Modal', () => ({
 }));
 
 vi.mock('./environment-card', () => ({
-  default: ({ onSelect, environmentDetails }: any) => (
-    <input
-      type="checkbox"
-      data-testid={`select-${environmentDetails?.id}`}
-      aria-label={`Select ${environmentDetails?.name}`}
-      onChange={onSelect}
-    />
+  default: ({ onSelect, onAssignConnection, environmentDetails }: any) => (
+    <div>
+      <input
+        type="checkbox"
+        data-testid={`select-${environmentDetails?.id}`}
+        aria-label={`Select ${environmentDetails?.name}`}
+        onChange={onSelect}
+      />
+      <button
+        type="button"
+        data-testid={`assign-conn-${environmentDetails?.id}`}
+        onClick={onAssignConnection}
+      >
+        Assign Connections
+      </button>
+    </div>
   ),
 }));
 vi.mock('../general/PromptComponent', () => ({
@@ -129,10 +142,28 @@ vi.mock('@sistent/sistent', async () => {
     // This suite exercises the create flow, not authorization: grant every
     // capability so the permission gates never mask the behaviour under test.
     useHasPermission: () => true,
-    Modal: ({ children, open }: any) => (open ? <div>{children}</div> : null),
+    Modal: ({ children, open, title }: any) =>
+      open ? (
+        <div data-testid="sistent-modal" aria-label={title}>
+          {children}
+        </div>
+      ) : null,
     ModalBody: ({ children }: any) => <div>{children}</div>,
     ModalFooter: ({ children }: any) => <div>{children}</div>,
-    TransferList: () => null,
+    TransferList: ({ assignedData }: any) => (
+      <button
+        type="button"
+        data-testid="mock-transfer-assign"
+        onClick={() =>
+          assignedData?.([
+            { id: 'conn-1', name: 'Connection 1' },
+            { id: 'conn-2', name: 'Connection 2' },
+          ])
+        }
+      >
+        Trigger Assignment
+      </button>
+    ),
   };
 });
 
@@ -259,7 +290,7 @@ describe('Environments toolbar', () => {
     const toolbar = await screen.findByTestId('data-table-toolbar');
     expect(toolbar).toBeInTheDocument();
 
-    const createButton = within(toolbar).getByRole('button', { name: /create/i });
+    const createButton = within(toolbar).getByRole('button', { name: /create environment/i });
     expect(createButton).toBeInTheDocument();
 
     const searchInput = within(toolbar).getByPlaceholderText('Search by name');
@@ -292,7 +323,9 @@ describe('Environments toolbar', () => {
     // Assert toolbar displays the selection count alongside existing controls and delete button
     expect(within(toolbar).getByText(/1 environment selected/i)).toBeInTheDocument();
     expect(within(toolbar).getByRole('button', { name: /delete/i })).toBeInTheDocument();
-    expect(within(toolbar).getByRole('button', { name: /create/i })).toBeInTheDocument();
+    expect(
+      within(toolbar).getByRole('button', { name: /create environment/i }),
+    ).toBeInTheDocument();
     expect(within(toolbar).getByPlaceholderText('Search by name')).toBeInTheDocument();
 
     // Select second environment
@@ -300,5 +333,83 @@ describe('Environments toolbar', () => {
     await user.click(checkbox2);
     expect(within(toolbar).getByText(/2 environments selected/i)).toBeInTheDocument();
     expect(within(toolbar).getByRole('button', { name: /delete/i })).toBeInTheDocument();
+  });
+});
+
+describe('Environments connection assignment lifecycle', () => {
+  beforeEach(() => {
+    notify.mockReset();
+    addConnectionToEnvironmentMutator.mockReset();
+    removeConnectionFromEnvironmentMutator.mockReset();
+    ENVIRONMENTS_QUERY_RESULT.data = {
+      environments: [{ id: 'env-1', name: 'Development' }],
+      totalCount: 1,
+    };
+  });
+
+  it('keeps modal open and reports errors when a mixed success/failure assignment occurs', async () => {
+    const user = userEvent.setup();
+    // Simulate mixed mutation outcomes: conn-1 succeeds, conn-2 fails
+    addConnectionToEnvironmentMutator.mockImplementation(({ connectionId }: any) => {
+      if (connectionId === 'conn-1') {
+        return { unwrap: () => Promise.resolve({ id: 'conn-1' }) };
+      }
+      return { unwrap: () => Promise.reject(new Error('Connection assignment failed')) };
+    });
+
+    renderEnvironments();
+
+    // Open Assign Connections modal for env-1
+    const assignBtn = await screen.findByTestId('assign-conn-env-1');
+    await user.click(assignBtn);
+
+    // Modal is opened
+    expect(await screen.findByTestId('sistent-modal')).toBeInTheDocument();
+
+    // Trigger staged assignments (adds conn-1 and conn-2)
+    const transferBtn = screen.getByTestId('mock-transfer-assign');
+    await user.click(transferBtn);
+
+    // Save changes
+    const saveBtn = screen.getByRole('button', { name: 'Save' });
+    await user.click(saveBtn);
+
+    // Verify error notification is surfaced
+    await waitFor(() => expect(notify).toHaveBeenCalled());
+    const types = notifiedEventTypes();
+    expect(types).toContain(EVENT_ERROR);
+
+    // Crucial assertion: because one assignment failed, the modal must remain open
+    expect(screen.getByTestId('sistent-modal')).toBeInTheDocument();
+    expect(addConnectionToEnvironmentMutator).toHaveBeenCalledTimes(2);
+  });
+
+  it('clears state and closes the modal when all assignments succeed', async () => {
+    const user = userEvent.setup();
+    addConnectionToEnvironmentMutator.mockReturnValue({
+      unwrap: () => Promise.resolve({ id: 'conn-success' }),
+    });
+
+    renderEnvironments();
+
+    // Open Assign Connections modal for env-1
+    const assignBtn = await screen.findByTestId('assign-conn-env-1');
+    await user.click(assignBtn);
+
+    expect(await screen.findByTestId('sistent-modal')).toBeInTheDocument();
+
+    // Trigger staged assignments
+    const transferBtn = screen.getByTestId('mock-transfer-assign');
+    await user.click(transferBtn);
+
+    // Save changes
+    const saveBtn = screen.getByRole('button', { name: 'Save' });
+    await user.click(saveBtn);
+
+    // Modal closes when all mutations succeed
+    await waitFor(() => {
+      expect(screen.queryByTestId('sistent-modal')).not.toBeInTheDocument();
+    });
+    expect(addConnectionToEnvironmentMutator).toHaveBeenCalledTimes(2);
   });
 });
