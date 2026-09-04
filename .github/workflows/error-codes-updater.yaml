@@ -55,12 +55,9 @@ jobs:
 
           rm -rf "$RUNNER_TEMP/meshkit"
           mkdir -p "$RUNNER_TEMP/meshkit"
-
-          git clone --no-checkout --filter=blob:none https://github.com/meshery/meshkit.git "$RUNNER_TEMP/meshkit"
           cd "$RUNNER_TEMP/meshkit"
 
-          git fetch --depth 1 origin 42fac19e642bf7cff9363593beb6afb3182752ec
-          git checkout --detach 42fac19e642bf7cff9363593beb6afb3182752ec
+          curl -sL https://github.com/meshery/meshkit/archive/42fac19e642bf7cff9363593beb6afb3182752ec.tar.gz | tar -xz --strip-components=1
 
           GOBIN="$HOME" go install ./cmd/errorutil
       - name: Run Utility For Meshery Server
