@@ -87,7 +87,7 @@ const MesheryPerformanceComponent_ = (props) => {
   const [selectedMeshState, setSelectedMesh] = useState('');
   const [availableAdaptersState, setAvailableAdapters] = useState([]);
   const [availableSMPMeshesState, setAvailableSMPMeshes] = useState([]);
-  const [metadataState, setMetadata] = useState(metadata);
+  const [metadataState, setMetadata] = useState(metadata ?? {});
   const { notify } = useNotification();
   const dispatch = useDispatch();
   const { data: userData, isSuccess: isUserDataFetched } =
