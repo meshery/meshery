@@ -114,6 +114,7 @@ vi.mock('@/assets/icons', () => ({
   Close: () => <svg data-testid="close-icon" />,
   Lock: () => <svg data-testid="lock-icon" />,
   Public: () => <svg data-testid="public-icon" />,
+  HelpOutlineOutlined: () => <svg data-testid="help-icon" />,
 }));
 
 vi.mock('@/components/meshery-mesh-interface/PatternService/RJSF_wrapper', () => ({
