@@ -7,29 +7,33 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/meshery/meshkit/database"
-	"github.com/meshery/meshkit/logger"
-	"github.com/meshery/schemas/models/core"
-	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/schemas/models/core"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
 type mockMiddlewareProvider struct {
 	models.Provider
+	mu     sync.RWMutex
 	conn   *connections.Connection
 	status connections.ConnectionStatus
 }
 
 func (m *mockMiddlewareProvider) LoadAllK8sContext(token string) ([]*models.K8sContext, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
 	if m.status == connections.DISCONNECTED {
 		return []*models.K8sContext{
 			{
@@ -44,17 +48,36 @@ func (m *mockMiddlewareProvider) LoadAllK8sContext(token string) ([]*models.K8sC
 }
 
 func (m *mockMiddlewareProvider) SaveK8sContext(token string, k8sContext models.K8sContext, additionalMetadata map[string]any) (connections.Connection, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
 	return *m.conn, nil
 }
 
 func (m *mockMiddlewareProvider) GetConnectionByID(token string, connectionID uuid.UUID) (*connections.Connection, int, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
 	return m.conn, 200, nil
 }
 
 func (m *mockMiddlewareProvider) UpdateConnectionById(token string, conn *connections.ConnectionPayload, connId string) (*connections.Connection, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
 	m.conn.Status = conn.Status
 	m.status = conn.Status
 	return m.conn, nil
+}
+
+func (m *mockMiddlewareProvider) GetStatus() connections.ConnectionStatus {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	return m.status
+}
+
+func (m *mockMiddlewareProvider) SetStatus(status connections.ConnectionStatus) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.conn.Status = status
+	m.status = status
 }
 
 func (m *mockMiddlewareProvider) PersistEvent(e events.Event, token string) error {
@@ -180,12 +203,13 @@ users:
 		t.Fatalf("expected first invocation to make a Kubernetes API request, got 0")
 	}
 
-	if provider.status != connections.DISCONNECTED {
-		t.Fatalf("expected connection status to transition to DISCONNECTED after 403, got %v", provider.status)
+	if provider.GetStatus() != connections.DISCONNECTED {
+		t.Fatalf("expected connection status to transition to DISCONNECTED after 403, got %v", provider.GetStatus())
 	}
 
 	// Phase 2: Second invocation
-	// Due to DISCONNECTED status, middleware should bypass discovery and NOT hit the K8s API.
+	// Due to DISCONNECTED status, K8sFSMMiddleware should bypass discovery and NOT hit the K8s API.
+	provider.SetStatus(connections.DISCONNECTED)
 	_, err = KubernetesMiddleware(ctx, handler, provider, user, []string{"all"})
 	if err != nil {
 		t.Fatalf("second middleware invocation failed: %v", err)
