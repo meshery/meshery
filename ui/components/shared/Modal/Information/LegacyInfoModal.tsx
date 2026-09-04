@@ -26,7 +26,7 @@ import {
   useHasPermission,
   useTheme,
 } from '@sistent/sistent';
-import { Close, Lock, Public } from '@/assets/icons';
+import { Close, Lock, Public, HelpOutlineOutlined } from '@/assets/icons';
 import * as yaml from 'js-yaml';
 import _ from 'lodash';
 import { useSnackbar } from 'notistack';
@@ -326,6 +326,7 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
   const [imageError, setImageError] = useState(false);
   const version = getDesignVersion(selectedResource);
   const canChangeVisibility = !isPublished && isOwner;
+  const [showModalFooterInfo, setModalFooterInfo] = useState(false);
   const handleError = () => {
     setImageError(true);
   };
@@ -486,17 +487,31 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
             </Grid>
           </Grid>
         </ModalBody>
-        <ModalFooter
-          helpText={
-            'Upon submitting your catalog item, an approval flow will be initiated. [Learn More](https://docs.meshery.io/concepts/catalog)'
-          }
-          variant="filled"
-        >
+        <ModalFooter variant="filled">
+          <Box
+            style={{
+              display: 'flex',
+              alignContent: 'center',
+              justifyContent: 'space-between',
+              minWidth: 1,
+            }}
+          >
+            <CustomTooltip
+              title={
+                'Upon submitting your catalog item, an approval flow will be initiated. [Learn More](https://docs.meshery.io/concepts/catalog)'
+              }
+              open={showModalFooterInfo}
+              placement="top"
+              onClose={() => setModalFooterInfo(false)}
+            >
+              <IconButton aria-label="HelpOutlineOutlined" onClick={() => setModalFooterInfo(true)}>
+                <HelpOutlineOutlined fill={theme.palette.common.white} style={iconMedium} />
+              </IconButton>
+            </CustomTooltip>
+          </Box>
           <ActionContainer
             sx={{
-              overflow: { xs: 'auto' },
-              flexWrap: { xs: 'wrap' },
-              gap: { xs: '0.5rem' },
+              gap: { xs: '0.25rem' },
             }}
           >
             <TooltipButton title={'Copy Design Link'} onClick={handleCopy}>
