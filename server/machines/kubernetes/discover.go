@@ -42,11 +42,11 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
 		if k8serrors.IsForbidden(err) || k8serrors.IsUnauthorized(err) {
 			return machines.Disconnect, eventBuilder.WithDescription(fmt.Sprintf("Could not assign server id, disconnecting context %s", k8sContext.Name)).WithMetadata(map[string]interface{}{
 				"error": meshkitErr,
-			}).Build(), meshkitErr
+			}).Build(), err
 		}
 		return machines.NotFound, eventBuilder.WithDescription(fmt.Sprintf("Could not assign server id, skipping context %s", k8sContext.Name)).WithMetadata(map[string]interface{}{
 			"error": meshkitErr,
-		}).Build(), meshkitErr
+		}).Build(), err
 	}
 
 	err = k8sContext.AssignVersion(handler)
