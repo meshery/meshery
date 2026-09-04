@@ -15,6 +15,7 @@ import (
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/meshsync/pkg/model"
 	"github.com/spf13/viper"
@@ -395,6 +396,37 @@ type dataHandlerToClusterID struct {
 	clusterID string
 }
 
+// shouldDriveDiscovery reports whether the middleware may start a background
+// Discovery for the connection backing a Kubernetes context.
+//
+// K8sFSMMiddleware calls StateMachine.ResetState() before every
+// SendEvent(machines.Discovery). ResetState() rewinds the machine to
+// machines.InitialState, and Initial() maps Discovery -> DISCOVERED, so a
+// connection the state machine already moved to a terminal state - notably
+// DISCONNECTED after a 401/403 from the Kubernetes API - is rediscovered anyway
+// and re-queries the cluster on every single request (issue #14083). The state
+// machine cannot defend itself against its own reset, so the caller has to.
+//
+// connections.ShouldConnectionBeManaged is the single authority on which
+// statuses may be managed, and DiscoverK8SContextFromKubeConfig already applies
+// it to the kubeconfig-discovery path. Consulting it here makes both discovery
+// paths obey the same rule rather than spelling out status names twice.
+//
+// A lookup failure returns true: a momentarily unreachable provider must not
+// silently stop Kubernetes management, and SendEvent performs - and reports on -
+// the same lookup itself.
+func shouldDriveDiscovery(h *Handler, provider models.Provider, token string, connectionID uuid.UUID) bool {
+	conn, _, err := provider.GetConnectionByID(token, connectionID)
+	if err != nil {
+		h.log.Debugf("could not read connection %s to decide whether discovery may run; proceeding: %v", connectionID, err)
+		return true
+	}
+	if conn == nil {
+		return true
+	}
+	return connections.ShouldConnectionBeManaged(*conn)
+}
+
 func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider, user *models.User) {
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
@@ -434,6 +466,11 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 		// on ResetState/SendEvent, or type-asserting its nil Context on the Cast
 		// below. See mhelpers.HasMachineContext for why.
 		if !mhelpers.HasMachineContext(inst) {
+			continue
+		}
+		// A connection the connection manager no longer considers manageable must
+		// not be re-driven through discovery; see shouldDriveDiscovery.
+		if !shouldDriveDiscovery(h, provider, token, connectionUUID) {
 			continue
 		}
 		inst.ResetState()

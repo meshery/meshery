@@ -486,3 +486,21 @@ func TestStateMachine_DiscoveryTransientFailure_TransitionsToNotFound(t *testing
 		t.Fatalf("expected Error severity notification event, got %#v", event)
 	}
 }
+
+// TestDisconnectedState_AllowsExplicitConnect pins the other half of the
+// rediscovery fix: DISCONNECTED must be terminal for automatic Discovery but
+// must stay recoverable by an explicit user action.
+func TestDisconnectedState_AllowsExplicitConnect(t *testing.T) {
+	state := Disconnected()
+
+	next, ok := state.Events[machines.Connect]
+	if !ok {
+		t.Fatal("expected Disconnected to keep an explicit Connect transition")
+	}
+	if next != machines.CONNECTED {
+		t.Fatalf("expected Connect to move to %q, got %q", machines.CONNECTED, next)
+	}
+	if _, ok := state.Events[machines.Discovery]; ok {
+		t.Fatal("Disconnected must not accept automatic Discovery; only an explicit user action may revive it")
+	}
+}

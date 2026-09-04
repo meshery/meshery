@@ -2,11 +2,8 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
-	"path/filepath"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -20,156 +17,169 @@ import (
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/core"
-	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 )
 
-type mockMiddlewareProvider struct {
+// localProviderMock reproduces the one DefaultLocalProvider behaviour this test
+// depends on: LoadAllK8sContext returns EVERY persisted Kubernetes context,
+// whatever its connection status.
+//
+// DefaultLocalProvider.LoadAllK8sContext passes string(connections.CONNECTED)
+// into DefaultLocalProvider.GetK8sContexts, but that method never reads its
+// withStatus parameter - it forwards to
+// MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, page, pageSize),
+// which has no status parameter and no join to the connections table. A mock
+// that filtered DISCONNECTED contexts out would delete the production failure
+// mode this test exists to catch, so it must not filter.
+type localProviderMock struct {
 	models.Provider
+
 	mu     sync.RWMutex
-	conn   *connections.Connection
-	status connections.ConnectionStatus
+	conn   connections.Connection
+	server string
+	db     *database.Handler
+
+	updateCalls atomic.Int32
+
+	// updated receives once per UpdateConnectionById call. StateMachine.SendEvent
+	// always writes the connection status when it advances, so this is an exact,
+	// non-timing signal that the state machine actually ran.
+	updated chan struct{}
 }
 
-func (m *mockMiddlewareProvider) LoadAllK8sContext(token string) ([]*models.K8sContext, error) {
+func (m *localProviderMock) LoadAllK8sContext(_ string) ([]*models.K8sContext, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-	if m.status == connections.DISCONNECTED {
-		return []*models.K8sContext{
-			{
-				ID:           "test-ctx-id",
-				Name:         "test-cluster",
-				Server:       "http://localhost",
-				ConnectionID: m.conn.ID.String(),
+	// Cluster and Auth are real persisted columns on k8s_contexts (sql.Map, no
+	// gorm:"-"), so a context loaded from the local provider can always build a
+	// working kube client. Reproduce that here or AssignInitialCtx fails and the
+	// machine is skipped for the wrong reason.
+	return []*models.K8sContext{
+		{
+			ID:           "test-ctx-id",
+			Name:         "test-context",
+			Server:       m.server,
+			ConnectionID: m.conn.ID.String(),
+			Cluster: map[string]interface{}{
+				"name": "test-cluster",
+				"cluster": map[string]interface{}{
+					"server":                   m.server,
+					"insecure-skip-tls-verify": true,
+				},
 			},
-		}, nil
-	}
-	return []*models.K8sContext{}, nil
+			Auth: map[string]interface{}{
+				"name": "test-user",
+				"user": map[string]interface{}{"token": "test-token"},
+			},
+		},
+	}, nil
 }
 
-func (m *mockMiddlewareProvider) SaveK8sContext(token string, k8sContext models.K8sContext, additionalMetadata map[string]any) (connections.Connection, error) {
+func (m *localProviderMock) GetConnectionByID(_ string, _ core.Uuid) (*connections.Connection, int, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-	return *m.conn, nil
+	// Hand back a copy: StateMachine.SendEvent reads Status and Metadata off this
+	// value outside our lock while UpdateConnectionById mutates the stored one.
+	conn := m.conn
+	return &conn, http.StatusOK, nil
 }
 
-func (m *mockMiddlewareProvider) GetConnectionByID(token string, connectionID uuid.UUID) (*connections.Connection, int, error) {
-	m.mu.RLock()
-	defer m.mu.RUnlock()
-	return m.conn, 200, nil
-}
-
-func (m *mockMiddlewareProvider) UpdateConnectionById(token string, conn *connections.ConnectionPayload, connId string) (*connections.Connection, error) {
+func (m *localProviderMock) UpdateConnectionById(_ string, payload *connections.ConnectionPayload, _ string) (*connections.Connection, error) {
 	m.mu.Lock()
-	defer m.mu.Unlock()
-	m.conn.Status = conn.Status
-	m.status = conn.Status
+	m.conn.Status = payload.Status
+	conn := m.conn
+	m.mu.Unlock()
+
+	m.updateCalls.Add(1)
+	select {
+	case m.updated <- struct{}{}:
+	default:
+	}
+	return &conn, nil
+}
+
+func (m *localProviderMock) SaveK8sContext(_ string, _ models.K8sContext, _ map[string]any) (connections.Connection, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
 	return m.conn, nil
 }
 
-func (m *mockMiddlewareProvider) GetStatus() connections.ConnectionStatus {
+func (m *localProviderMock) PersistEvent(_ events.Event, _ string) error { return nil }
+
+func (m *localProviderMock) GetGenericPersister() *database.Handler { return m.db }
+
+func (m *localProviderMock) status() connections.ConnectionStatus {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-	return m.status
+	return m.conn.Status
 }
 
-func (m *mockMiddlewareProvider) SetStatus(status connections.ConnectionStatus) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	m.conn.Status = status
-	m.status = status
-}
-
-func (m *mockMiddlewareProvider) PersistEvent(e events.Event, token string) error {
-	return nil
-}
-
-func (m *mockMiddlewareProvider) GetGenericPersister() *database.Handler {
-	return nil
-}
-
-// TestKubernetesMiddleware_SecondInvocationAfter403 verifies that a 403 Forbidden on the first discovery
-// correctly transitions the connection to DISCONNECTED, and that a subsequent middleware execution
-// does NOT cause an additional Kubernetes API request.
+// TestKubernetesMiddleware_SecondInvocationAfter403 drives the middleware pair
+// exactly as router/server.go wires /api/system/sync:
+//
+//	KubernetesMiddleware -> K8sFSMMiddleware
+//
+// The first request lets the real authorization-failure flow move the connection
+// to DISCONNECTED. The second request must then produce no Kubernetes API
+// traffic at all, because connections.ShouldConnectionBeManaged rejects a
+// DISCONNECTED connection before K8sFSMMiddleware can call ResetState() and
+// re-drive Discovery (issue #14083).
+//
+// The connection status is never set by hand: if the production transition
+// breaks, phase 1 fails rather than silently handing phase 2 a fabricated
+// precondition.
 func TestKubernetesMiddleware_SecondInvocationAfter403(t *testing.T) {
-	var requestCount int32
-
-	// Create a channel to dictate what status code the mock server returns.
-	// This satisfies CodeRabbit's feedback to not use requestCount for deciding 403,
-	// while still allowing the first discovery request to succeed (200 OK) so the FSM is spawned,
-	// and the subsequent FSM request to fail with 403.
-	statusResponses := make(chan int, 2)
-	statusResponses <- http.StatusOK
-	statusResponses <- http.StatusForbidden
+	var kubeRequests atomic.Int32
+	// requestPaths carries the path of every request the cluster receives, so
+	// phase 2 can fail fast and name the request that should not have happened
+	// instead of comparing a counter after a fixed sleep.
+	requestPaths := make(chan string, 16)
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		atomic.AddInt32(&requestCount, 1)
+		kubeRequests.Add(1)
+		select {
+		case requestPaths <- r.URL.Path:
+		default:
+		}
+
 		w.Header().Set("Content-Type", "application/json")
 		if r.URL.Path == "/api/v1/namespaces/kube-system" {
-			status := <-statusResponses
-			w.WriteHeader(status)
-			if status == http.StatusForbidden {
-				_, _ = w.Write([]byte(`{"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"forbidden","reason":"Forbidden","code":403}`))
-				return
-			}
-			_, _ = w.Write([]byte(`{"metadata":{"uid":"test-uid"}}`))
+			// Unconditional 403. This test provokes exactly one discovery, so the
+			// mock never has to guess which request in a sequence it is answering.
+			w.WriteHeader(http.StatusForbidden)
+			_, _ = w.Write([]byte(`{"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"namespaces \"kube-system\" is forbidden","reason":"Forbidden","code":403}`))
 			return
 		}
 		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`{}`))
 	}))
 	defer server.Close()
 
-	instID := core.Uuid(uuid.Must(uuid.NewV4()))
-	viper.Set("INSTANCE_ID", &instID)
-
-	kubeConfigDir := t.TempDir()
-	configContent := fmt.Sprintf(`
-apiVersion: v1
-clusters:
-- cluster:
-    server: %s
-    insecure-skip-tls-verify: true
-  name: test-cluster
-contexts:
-- context:
-    cluster: test-cluster
-    user: test-user
-  name: test-context
-current-context: test-context
-kind: Config
-preferences: {}
-users:
-- name: test-user
-  user:
-    token: test-token
-`, server.URL)
-
-	err := os.WriteFile(filepath.Join(kubeConfigDir, "config"), []byte(configContent), 0644)
+	db, err := database.New(database.Options{Engine: database.SQLITE, Filename: ":memory:"})
 	if err != nil {
-		t.Fatalf("failed to write mock kubeconfig: %v", err)
+		t.Fatalf("open in-memory database (this test needs CGO_ENABLED=1 and a C toolchain, like the other DB-backed tests in this package): %v", err)
 	}
 
-	connUUID := uuid.Must(uuid.NewV4())
-	provider := &mockMiddlewareProvider{
-		conn: &connections.Connection{
-			ID:     connUUID,
+	connID := core.Uuid(uuid.Must(uuid.NewV4()))
+	provider := &localProviderMock{
+		conn: connections.Connection{
+			ID:     connID,
 			Kind:   "kubernetes",
 			Status: connections.DISCOVERED,
 		},
-		status: connections.DISCOVERED,
+		server:  server.URL,
+		db:      &db,
+		updated: make(chan struct{}, 4),
 	}
 
-	log, err := logger.New("test", logger.Options{
-		Format:   logger.SyslogLogFormat,
-		LogLevel: int(logrus.DebugLevel),
-	})
+	log, err := logger.New("test", logger.Options{})
 	if err != nil {
-		t.Fatalf("failed to build test logger: %v", err)
+		t.Fatalf("build test logger: %v", err)
 	}
-	handler := &Handler{
+
+	h := &Handler{
 		log: log,
 		config: &models.HandlerConfig{
-			KubeConfigFolder:  kubeConfigDir,
+			KubeConfigFolder:  t.TempDir(),
 			EventBroadcaster:  models.NewBroadcaster("test"),
 			OperatorTracker:   models.NewOperatorTracker(false),
 			K8scontextChannel: models.NewContextHelper(),
@@ -180,46 +190,83 @@ users:
 		MesheryCtrlsHelper: &models.MesheryControllersHelper{},
 	}
 
-	user := &models.User{ID: uuid.Must(uuid.NewV4())}
-	ctx := context.WithValue(context.Background(), models.TokenCtxKey, "mock-token")
+	sysID := core.Uuid(uuid.Nil)
+	user := &models.User{ID: core.Uuid(uuid.Must(uuid.NewV4()))}
+	baseCtx := context.WithValue(context.Background(), models.TokenCtxKey, "test-token")
+	baseCtx = context.WithValue(baseCtx, models.UserCtxKey, user)
+	baseCtx = context.WithValue(baseCtx, models.ProviderCtxKey, models.Provider(provider))
+	baseCtx = context.WithValue(baseCtx, models.SystemIDKey, &sysID)
 
-	// Phase 1: First invocation
-	// The middleware will execute, FSM transitions to DISCOVERED, calls AssignServerID -> 403 Forbidden
-	// FSM will transition to DISCONNECTED.
-	ctx = context.WithValue(ctx, models.UserCtxKey, user)
-	ctx = context.WithValue(ctx, models.ProviderCtxKey, provider)
-	ctx = context.WithValue(ctx, models.SystemIDKey, &instID)
-
-	_, err = KubernetesMiddleware(ctx, handler, provider, user, []string{"all"})
+	// --- Phase 1: a DISCOVERED connection is discovered, gets 403, disconnects.
+	ctx, err := KubernetesMiddleware(baseCtx, h, provider, user, []string{"all"})
 	if err != nil {
-		t.Fatalf("first middleware invocation failed: %v", err)
+		t.Fatalf("first KubernetesMiddleware invocation: %v", err)
+	}
+	K8sFSMMiddleware(ctx, h, provider, user)
+
+	select {
+	case <-provider.updated:
+	case <-time.After(15 * time.Second):
+		t.Fatal("timed out waiting for the state machine to persist a status change on the first invocation")
 	}
 
-	// Wait for the asynchronous FSM to complete its execution
-	time.Sleep(200 * time.Millisecond)
+	if got := provider.status(); got != connections.DISCONNECTED {
+		t.Fatalf("after a 403 on discovery, want connection status %q, got %q", connections.DISCONNECTED, got)
+	}
+	requestsAfterFirst := kubeRequests.Load()
+	if requestsAfterFirst == 0 {
+		t.Fatal("the first invocation made no Kubernetes API request, so the 403 path was never exercised")
+	}
+	updatesAfterFirst := provider.updateCalls.Load()
 
-	countAfterFirst := atomic.LoadInt32(&requestCount)
-	if countAfterFirst == 0 {
-		t.Fatalf("expected first invocation to make a Kubernetes API request, got 0")
+	// --- Phase 2: the same connection, now DISCONNECTED, must be left alone.
+	for drained := false; !drained; {
+		select {
+		case <-requestPaths:
+		case <-provider.updated:
+		default:
+			drained = true
+		}
 	}
 
-	if provider.GetStatus() != connections.DISCONNECTED {
-		t.Fatalf("expected connection status to transition to DISCONNECTED after 403, got %v", provider.GetStatus())
-	}
-
-	// Phase 2: Second invocation
-	// Due to DISCONNECTED status, K8sFSMMiddleware should bypass discovery and NOT hit the K8s API.
-	provider.SetStatus(connections.DISCONNECTED)
-	_, err = KubernetesMiddleware(ctx, handler, provider, user, []string{"all"})
+	ctx, err = KubernetesMiddleware(baseCtx, h, provider, user, []string{"all"})
 	if err != nil {
-		t.Fatalf("second middleware invocation failed: %v", err)
+		t.Fatalf("second KubernetesMiddleware invocation: %v", err)
+	}
+	K8sFSMMiddleware(ctx, h, provider, user)
+
+	select {
+	case path := <-requestPaths:
+		t.Fatalf("the second invocation issued a Kubernetes API request to %q for a %q connection; "+
+			"K8sFSMMiddleware did not gate rediscovery on ShouldConnectionBeManaged (issue #14083)",
+			path, connections.DISCONNECTED)
+	case <-provider.updated:
+		t.Fatalf("the second invocation drove the state machine for a %q connection; "+
+			"K8sFSMMiddleware did not gate rediscovery on ShouldConnectionBeManaged (issue #14083)",
+			connections.DISCONNECTED)
+	case <-time.After(2 * time.Second):
+		// Nothing happened, which is the point.
 	}
 
-	// Wait briefly to ensure no asynchronous discovery fires
-	time.Sleep(100 * time.Millisecond)
+	if got := kubeRequests.Load(); got != requestsAfterFirst {
+		t.Fatalf("want %d Kubernetes API requests after the second invocation, got %d", requestsAfterFirst, got)
+	}
+	if got := provider.updateCalls.Load(); got != updatesAfterFirst {
+		t.Fatalf("want %d connection status writes after the second invocation, got %d", updatesAfterFirst, got)
+	}
+	if got := provider.status(); got != connections.DISCONNECTED {
+		t.Fatalf("want the connection to remain %q, got %q", connections.DISCONNECTED, got)
+	}
 
-	countAfterSecond := atomic.LoadInt32(&requestCount)
-	if countAfterSecond > countAfterFirst {
-		t.Fatalf("second invocation made %d additional Kubernetes API requests (expected 0). Total: %d", countAfterSecond-countAfterFirst, countAfterSecond)
+	inst, ok := h.ConnectionToStateMachineInstanceTracker.Get(connID)
+	if !ok {
+		t.Fatal("expected the Kubernetes state machine to still be tracked after the second invocation")
+	}
+	// Reading CurrentState without the machine's lock is safe here: control only
+	// reaches this line when the select above timed out, which means no SendEvent
+	// goroutine was ever started.
+	if inst.CurrentState != machines.DISCONNECTED {
+		t.Fatalf("want the machine to still be in %q, got %q - ResetState() ran, so discovery was re-driven",
+			machines.DISCONNECTED, inst.CurrentState)
 	}
 }
