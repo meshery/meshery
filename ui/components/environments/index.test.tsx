@@ -209,7 +209,8 @@ const REJECTED_CREATE = {
 const openCreateModalAndSubmit = async () => {
   const user = userEvent.setup();
   renderEnvironments();
-  await user.click(screen.getByRole('button', { name: 'Create environment' }));
+  const createButton = await screen.findByRole('button', { name: 'Create environment' });
+  await user.click(createButton);
   await user.click(await screen.findByTestId('submit-environment'));
 };
 
