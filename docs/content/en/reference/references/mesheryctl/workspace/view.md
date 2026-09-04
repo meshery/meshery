@@ -15,8 +15,10 @@ View a workspace by its ID or name.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl workspace view [workspace-name|workspace-id] [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,32 +27,40 @@ mesheryctl workspace view [workspace-name|workspace-id] [flags]
 View details of a specific workspace by ID
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl workspace view [workspace-id] --orgId [orgId]
 
+</div>
 </div>
 </pre> 
 
 View details of a specific workspace by name
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl workspace view [workspace-name] --orgId [orgId]
 
+</div>
 </div>
 </pre> 
 
 View details of a specific workspace in JSON format
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json
 
+</div>
 </div>
 </pre> 
 
 View details of a specific workspace and save it to a file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl workspace view [workspace-id] --orgId [orgId] --output-format json --save
 
+</div>
 </div>
 </pre> 
 
