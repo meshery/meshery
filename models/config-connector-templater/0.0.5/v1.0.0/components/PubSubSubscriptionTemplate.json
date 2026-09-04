@@ -119,7 +119,7 @@
       "description": "View relationships for the component",
       "displayName": "Relationships",
       "entityState": [
-        "declaration", 
+        "declaration",
         "instance"
       ],
       "key": "",
@@ -134,7 +134,7 @@
       "description": "View Component Definition ",
       "displayName": "Json Schema",
       "entityState": [
-        "declaration", 
+        "declaration",
         "instance"
       ],
       "key": "",
