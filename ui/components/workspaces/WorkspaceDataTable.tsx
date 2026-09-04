@@ -21,12 +21,12 @@ import {
   updateVisibleColumns,
   useTheme,
   useWindowDimensions,
-  WorkspaceEnvironmentSelection,
   WorkspaceIcon,
   Slide,
   ErrorBoundary,
   useHasPermission,
 } from '@sistent/sistent';
+import WorkspaceEnvironmentSelection from './WorkspaceEnvironmentSelection';
 import { useEffect, useState, useRef } from 'react';
 import { iconSmall } from 'css/icons.styles';
 import WorkSpaceContentDataTable from './WorkSpaceContentDataTable';
