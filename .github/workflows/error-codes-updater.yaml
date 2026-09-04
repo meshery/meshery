@@ -6,12 +6,14 @@ on:
     paths:
       - "**.go"
       - ".github/workflows/error-codes-updater.yaml"
+      - ".github/actions/errorutil-runner/**"
   pull_request:
     branches:
       - "master"
     paths:
       - "**.go"
       - ".github/workflows/error-codes-updater.yaml"
+      - ".github/actions/errorutil-runner/**"
 
 jobs:
   Update-error-codes:
@@ -29,7 +31,7 @@ jobs:
         run: |
           git fetch origin ${{ github.base_ref }}
           echo "MERGE_BASE=$(git merge-base HEAD origin/${{ github.base_ref }})" >> $GITHUB_ENV
-      - name: Checkout base branch
+      - name: Checkout merge-base (baseline)
         if: ${{ github.event_name == 'pull_request' }}
         uses: actions/checkout@v6
         with:

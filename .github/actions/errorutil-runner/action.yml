@@ -28,11 +28,8 @@ runs:
       run: |
         set -eo pipefail
         
-        # Navigate to the component directory if one is provided (mesheryctl)
-        # Note: we use relative paths for everything, so if we cd into mesheryctl, 
-        # we have to adjust our baseline and export paths if they were absolute from root.
-        # However, the easiest approach is to just run errorutil from the root directory for ALL components,
-        # providing the correct relative paths from root!
+        # Run errorutil from the workspace root for all components, using the provided
+        # scan/helpers paths (expressed relative to the workspace root).
         
         if [ "${{ github.event_name }}" == "pull_request" ]; then
           ~/errorutil -d "${{ inputs.baseline_scan_dir }}" analyze -i "${{ inputs.baseline_helpers_dir }}" -o "${{ inputs.baseline_helpers_dir }}" --skip-dirs "${{ inputs.skip_dirs }}"
