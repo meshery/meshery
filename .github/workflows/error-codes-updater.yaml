@@ -49,9 +49,20 @@ jobs:
           go-version-file: go.mod
 
       - name: Build Error Utility
+        shell: bash
         run: |
-          GOBIN=$HOME go install github.com/meshery/meshkit/cmd/errorutil@42fac19e642bf7cff9363593beb6afb3182752ec
+          set -euo pipefail
 
+          rm -rf "$RUNNER_TEMP/meshkit"
+          mkdir -p "$RUNNER_TEMP/meshkit"
+
+          git clone --no-checkout --filter=blob:none https://github.com/meshery/meshkit.git "$RUNNER_TEMP/meshkit"
+          cd "$RUNNER_TEMP/meshkit"
+
+          git fetch --depth 1 origin 42fac19e642bf7cff9363593beb6afb3182752ec
+          git checkout --detach 42fac19e642bf7cff9363593beb6afb3182752ec
+
+          GOBIN="$HOME" go install ./cmd/errorutil
       - name: Run Utility For Meshery Server
         uses: ./.github/actions/errorutil-runner
         with:
