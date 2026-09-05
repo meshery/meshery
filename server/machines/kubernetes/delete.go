@@ -50,12 +50,21 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 	contextID := machinectx.K8sContext.ID
 
 	go func() {
+		machinectx.ActionMutex.Lock()
+		defer machinectx.ActionMutex.Unlock()
+
+		if ctx.Err() != nil {
+			machinectx.log.Info("Delete side-effects aborted due to lifecycle cancellation")
+			return
+		}
 
 		machinectx.MesheryCtrlsHelper.UpdateOperatorsStatusMap(machinectx.OperatorTracker).
 			UndeployDeployedOperators(machinectx.OperatorTracker, contextID).
 			RemoveCtxControllerHandler(ctx, contextID)
 
 		machinectx.MesheryCtrlsHelper.RemoveMeshSyncDataHandler(ctx, contextID)
+
+		models.FlushMeshSyncData(ctx, machinectx.K8sContext, provider, machinectx.EventBroadcaster, user.ID.String(), sysID, log)
 	}()
 
 	_ctx, cancel := context.WithTimeout(ctx, 100*time.Millisecond)
@@ -63,8 +72,6 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 	context.AfterFunc(_ctx, func() {
 		// machinectx.MesheryCtrlsHelper.UpdateOperatorsStatusMap(machinectx.OperatorTracker)
 	})
-
-	go models.FlushMeshSyncData(ctx, machinectx.K8sContext, provider, machinectx.EventBroadcaster, user.ID.String(), sysID, log)
 
 	return machines.NoOp, nil, nil
 }
