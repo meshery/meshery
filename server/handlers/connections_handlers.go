@@ -62,7 +62,15 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 	} else {
 		smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 		connectionRegisterPayload := registrationEventToConnectionPayload(&registrationEvent)
-		_, err = provider.SaveConnection(&connectionRegisterPayload, token, false)
+
+		if connectionRegisterPayload.ID == uuid.Nil {
+			writeMeshkitError(w, models.ErrInvalidUUID(fmt.Errorf("missing connection id in connection registration payload")), http.StatusBadRequest)
+			return
+		}
+
+		persistPayload := connectionRegisterPayload
+		persistPayload.Status = connections.DISCOVERED
+		_, err = provider.SaveConnection(&persistPayload, token, false)
 		if err != nil {
 			wrappedErr := ErrFailToSave(err, "connection")
 			event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to persist the \"%s\" connection details", connectionRegisterPayload.Kind)).WithMetadata(map[string]interface{}{

@@ -101,3 +101,85 @@ func TestProcessConnectionRegistration_PersistsConnectionBeforeDrivingStateMachi
 		t.Fatalf("expected the connection to be persisted before the state machine runs, but it was not found: %v", err)
 	}
 }
+
+// TestProcessConnectionRegistration_PersistsWithDiscoveredStatus guards
+// against a second defect in the same code path: registrationEventToConnectionPayload
+// maps the wire event's Status field (a ConnectionRegistrationEventStatus like
+// "register") directly into connections.ConnectionPayload.Status via a bare
+// type cast. That value is a state-machine event name, not a valid
+// connections.ConnectionStatus (discovered/registered/connected/disconnected).
+// The persisted row must record DISCOVERED — the correct initial status for
+// a freshly-registered connection — not the raw event string.
+func TestProcessConnectionRegistration_PersistsWithDiscoveredStatus(t *testing.T) {
+	h, provider := newRegisterConnectionFixture(t)
+
+	connID := uuid.Must(uuid.NewV4())
+	coreID := core.Uuid(connID)
+	body := connectionv1beta3.ConnectionRegistrationEvent{
+		ID:                         &coreID,
+		Kind:                       "artifacthub",
+		Name:                       "test-connection",
+		Status:                     connectionv1beta3.ConnectionRegistrationEventStatusRegister,
+		SkipCredentialVerification: true,
+	}
+	bodyBytes, err := json.Marshal(body)
+	if err != nil {
+		t.Fatalf("marshal registration event: %v", err)
+	}
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	ctx := context.WithValue(context.Background(), models.UserCtxKey, user)
+	ctx = context.WithValue(ctx, models.SystemIDKey, h.SystemID)
+
+	req := httptest.NewRequest(http.MethodPost, "/api/integrations/connections/register", bytes.NewReader(bodyBytes)).WithContext(ctx)
+	rec := httptest.NewRecorder()
+
+	h.ProcessConnectionRegistration(rec, req, nil, user, provider)
+
+	conn, err := provider.ConnectionPersister.GetConnection(coreID, "artifacthub")
+	if err != nil {
+		t.Fatalf("expected the connection to be persisted, but it was not found: %v", err)
+	}
+	if conn.Status != connections.DISCOVERED {
+		t.Fatalf("expected persisted status to be %q, got %q (the raw wire event status must not leak into the connection's persisted status)", connections.DISCOVERED, conn.Status)
+	}
+}
+
+// TestProcessConnectionRegistration_RejectsNilConnectionID guards against a
+// registration event with a missing/nil connection ID being silently
+// persisted under a freshly-minted ID while the state machine continues to
+// operate on uuid.Nil — a divergence that reintroduces the #21813
+// "record not found" symptom under a different cause. A nil ID must be
+// rejected with 400 before any persistence or state-machine work happens.
+func TestProcessConnectionRegistration_RejectsNilConnectionID(t *testing.T) {
+	h, provider := newRegisterConnectionFixture(t)
+
+	body := connectionv1beta3.ConnectionRegistrationEvent{
+		ID:                         nil,
+		Kind:                       "artifacthub",
+		Name:                       "test-connection",
+		Status:                     connectionv1beta3.ConnectionRegistrationEventStatusRegister,
+		SkipCredentialVerification: true,
+	}
+	bodyBytes, err := json.Marshal(body)
+	if err != nil {
+		t.Fatalf("marshal registration event: %v", err)
+	}
+
+	user := &models.User{ID: uuid.Must(uuid.NewV4())}
+	ctx := context.WithValue(context.Background(), models.UserCtxKey, user)
+	ctx = context.WithValue(ctx, models.SystemIDKey, h.SystemID)
+
+	req := httptest.NewRequest(http.MethodPost, "/api/integrations/connections/register", bytes.NewReader(bodyBytes)).WithContext(ctx)
+	rec := httptest.NewRecorder()
+
+	h.ProcessConnectionRegistration(rec, req, nil, user, provider)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400 for a nil connection ID, got %d. body: %s", rec.Code, rec.Body.String())
+	}
+
+	if _, err := provider.ConnectionPersister.GetConnection(core.Uuid(uuid.Nil), "artifacthub"); err == nil {
+		t.Fatalf("expected no connection to be persisted under uuid.Nil, but one was found")
+	}
+}
