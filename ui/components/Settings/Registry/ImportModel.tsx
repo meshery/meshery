@@ -75,7 +75,7 @@ const ImportModelModal = React.memo(
               importBody: {
                 url,
               },
-              uploadType: 'url',
+              uploadType: 'urlImport',
               register: true,
             };
           } else {

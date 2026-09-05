@@ -29,7 +29,8 @@ const FinishModelGenerateStep = ({
     };
 
     performImport();
-  }, [registerMeshmodels, requestBody]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const subscription = operationsCenterActorRef.on(
