@@ -11,6 +11,7 @@ import {
   useTheme,
   IconButton,
   CustomTooltip,
+  Chip,
 } from '@sistent/sistent';
 import { iconMedium } from '../../css/icons.styles';
 
@@ -63,6 +64,10 @@ export const TransferButton = ({ title, count, onAssign, permissionKey }) => {
  * @param {Object} props.environmentDetails - The details of the environment.
  * @param {string} props.environmentDetails.name - The name of the environment.
  * @param {string} props.environmentDetails.description - The description of the environment.
+ * @param {string} [props.environmentDetails.purpose] - The purpose of the environment.
+ *   When equal to "administrative", the environment is platform-provisioned and shown
+ *   with an "Administrative" badge. Edit and delete affordances are disabled for such
+ *   environments because actions on them are likely to be refused by the server.
  * @param {Function} props.onDelete - Function to delete the environment.
  * @param {Function} props.onEdit - Function to edit the environment.
  * @param {Function} props.onSelect - Function to select environment for bulk actions.
@@ -88,6 +93,11 @@ const EnvironmentCard = ({
     { skip: !environmentDetails.id },
   );
   const environmentConnectionsCount = environmentConnections?.totalCount || 0;
+
+  // Compare against the literal "administrative".
+  // Do NOT test for "not user": the property is optional and absent for every
+  // environment that predates it, so a negative test would render those as administrative.
+  const isAdministrative = environmentDetails?.purpose === 'administrative';
 
   // this allows to handle both cases when deleted at is:
   // - timestamp or null
@@ -121,10 +131,25 @@ const EnvironmentCard = ({
               borderRadius: 2,
             }}
           >
-            <Grid2 sx={{ display: 'flex', flexDirection: 'row', pb: 1 }}>
+            <Grid2 sx={{ display: 'flex', flexDirection: 'row', pb: 1, alignItems: 'center' }}>
               <Name variant="body2" onClick={(e) => e.stopPropagation()}>
                 {environmentDetails?.name}
               </Name>
+              {isAdministrative && (
+                <Chip
+                  label="Administrative"
+                  size="small"
+                  sx={{
+                    ml: 1,
+                    backgroundColor: 'rgba(0, 179, 159, 0.12)',
+                    color: '#00B39F',
+                    border: '1px solid #00B39F',
+                    fontWeight: 600,
+                    fontSize: '0.7rem',
+                    height: '22px',
+                  }}
+                />
+              )}
             </Grid2>
             <Grid2
               sx={{
@@ -207,7 +232,7 @@ const EnvironmentCard = ({
             }}
           >
             <Grid2 sx={{ display: 'flex', flexDirection: 'row' }} size={{ xs: 12 }}>
-              <Grid2 sx={{ display: 'flex', alignItems: 'flex-start' }} size={{ xs: 6 }}>
+              <Grid2 sx={{ display: 'flex', alignItems: 'center', gap: 1 }} size={{ xs: 6 }}>
                 <BulkSelectCheckbox
                   onClick={(e) => e.stopPropagation()}
                   onChange={onSelect}
@@ -220,6 +245,20 @@ const EnvironmentCard = ({
                 >
                   {environmentDetails?.name}
                 </CardTitle>
+                {isAdministrative && (
+                  <Chip
+                    label="Administrative"
+                    size="small"
+                    sx={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                      color: 'white',
+                      border: '1px solid rgba(255, 255, 255, 0.5)',
+                      fontWeight: 600,
+                      fontSize: '0.7rem',
+                      height: '22px',
+                    }}
+                  />
+                )}
               </Grid2>
               <Grid2
                 size={{ xs: 6 }}
@@ -229,41 +268,57 @@ const EnvironmentCard = ({
                   justifyContent: 'flex-end',
                 }}
               >
-                <CustomTooltip title="Edit">
-                  <IconButton
-                    onClick={(ev) => {
-                      ev.stopPropagation();
-                      onEdit(ev);
-                    }}
-                    sx={{ color: 'white' }}
-                    disabled={
-                      selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
-                    }
-                    permissionKey={Keys.WorkspaceManagementEditEnvironment}
-                  >
-                    <EditIcon
-                      style={{ ...iconMedium, margin: '0 2px' }}
-                      fill={theme?.palette?.icon?.default}
-                    />
-                  </IconButton>
+                <CustomTooltip
+                  title={isAdministrative ? 'Administrative environments cannot be edited' : 'Edit'}
+                >
+                  {/* span ensures the tooltip is visible even when the button is disabled */}
+                  <span>
+                    <IconButton
+                      onClick={(ev) => {
+                        ev.stopPropagation();
+                        onEdit(ev);
+                      }}
+                      sx={{ color: 'white' }}
+                      disabled={
+                        isAdministrative ||
+                        selectedEnvironments?.filter((id) => id == environmentDetails.id)
+                          .length === 1
+                      }
+                      permissionKey={Keys.WorkspaceManagementEditEnvironment}
+                    >
+                      <EditIcon
+                        style={{ ...iconMedium, margin: '0 2px' }}
+                        fill={theme?.palette?.icon?.default}
+                      />
+                    </IconButton>
+                  </span>
                 </CustomTooltip>
-                <CustomTooltip title="Delete">
-                  <IconButton
-                    onClick={(ev) => {
-                      ev.stopPropagation();
-                      onDelete(ev);
-                    }}
-                    sx={{ color: 'white' }}
-                    disabled={
-                      selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
-                    }
-                    permissionKey={Keys.WorkspaceManagementDeleteEnvironment}
-                  >
-                    <DeleteIcon
-                      style={{ ...iconMedium, margin: '0 2px' }}
-                      fill={theme?.palette?.icon?.default}
-                    />
-                  </IconButton>
+                <CustomTooltip
+                  title={
+                    isAdministrative ? 'Administrative environments cannot be deleted' : 'Delete'
+                  }
+                >
+                  {/* span ensures the tooltip is visible even when the button is disabled */}
+                  <span>
+                    <IconButton
+                      onClick={(ev) => {
+                        ev.stopPropagation();
+                        onDelete(ev);
+                      }}
+                      sx={{ color: 'white' }}
+                      disabled={
+                        isAdministrative ||
+                        selectedEnvironments?.filter((id) => id == environmentDetails.id)
+                          .length === 1
+                      }
+                      permissionKey={Keys.WorkspaceManagementDeleteEnvironment}
+                    >
+                      <DeleteIcon
+                        style={{ ...iconMedium, margin: '0 2px' }}
+                        fill={theme?.palette?.icon?.default}
+                      />
+                    </IconButton>
+                  </span>
                 </CustomTooltip>
               </Grid2>
             </Grid2>
