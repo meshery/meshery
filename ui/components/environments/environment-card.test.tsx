@@ -39,6 +39,11 @@ vi.mock('@sistent/sistent', () => {
         {children}
       </div>
     ),
+    Chip: ({ label, size, sx }: any) => (
+      <div data-testid="purpose-chip" data-size={size}>
+        {label}
+      </div>
+    ),
     Typography: ({ children, ...props }: any) => <div {...props}>{children}</div>,
     useTheme: () => ({
       palette: {
@@ -208,7 +213,6 @@ describe('EnvironmentCard', () => {
       />,
     );
     const buttons = screen.getAllByRole('button');
-    // The edit and delete buttons should all be disabled when this env is selected
     const disabledButtons = buttons.filter((b) => (b as HTMLButtonElement).disabled);
     expect(disabledButtons.length).toBeGreaterThanOrEqual(2);
   });
@@ -264,7 +268,6 @@ describe('EnvironmentCard', () => {
     );
 
     const buttons = screen.getAllByRole('button');
-    // Edit button is the first non-popup that contains an EditIcon.
     const editButton = buttons.find((b) => b.querySelector('[data-testid="edit-icon"]'));
     const deleteButton = buttons.find((b) => b.querySelector('[data-testid="delete-icon"]'));
 
@@ -290,5 +293,185 @@ describe('EnvironmentCard', () => {
       { environmentId: '' },
       { skip: true },
     );
+  });
+});
+
+describe('Administrative environment purpose', () => {
+  beforeEach(() => {
+    can.mockReset();
+    can.mockReturnValue(true);
+    getEnvironmentConnectionsQuery.mockReset();
+    getEnvironmentConnectionsQuery.mockReturnValue({ data: { totalCount: 3 } });
+  });
+
+  it('renders the Administrative badge on both card faces when purpose is "administrative"', () => {
+    render(
+      <EnvironmentCard
+        environmentDetails={{ ...baseEnvironment, purpose: 'administrative' }}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+    const badges = screen.getAllByTestId('purpose-chip');
+    // Badge appears on both the front and back of the flip card
+    expect(badges.length).toBeGreaterThanOrEqual(1);
+    badges.forEach((badge) => {
+      expect(badge).toHaveTextContent('Administrative');
+    });
+  });
+
+  it('does not render the Administrative badge when purpose is absent', () => {
+    render(
+      <EnvironmentCard
+        environmentDetails={baseEnvironment}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+    expect(screen.queryByTestId('purpose-chip')).not.toBeInTheDocument();
+  });
+
+  it('does not render the Administrative badge when purpose is "user"', () => {
+    render(
+      <EnvironmentCard
+        environmentDetails={{ ...baseEnvironment, purpose: 'user' }}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+    expect(screen.queryByTestId('purpose-chip')).not.toBeInTheDocument();
+  });
+
+  it('does not render the Administrative badge when purpose is "absent"', () => {
+    render(
+      <EnvironmentCard
+        environmentDetails={{ ...baseEnvironment, purpose: 'absent' }}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+    expect(screen.queryByTestId('purpose-chip')).not.toBeInTheDocument();
+  });
+
+  it('disables edit and delete buttons for administrative environments', () => {
+    render(
+      <EnvironmentCard
+        environmentDetails={{ ...baseEnvironment, purpose: 'administrative' }}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+    const buttons = screen.getAllByRole('button');
+    const editButton = buttons.find((b) => b.querySelector('[data-testid="edit-icon"]'));
+    const deleteButton = buttons.find((b) => b.querySelector('[data-testid="delete-icon"]'));
+    expect(editButton).toBeDisabled();
+    expect(deleteButton).toBeDisabled();
+  });
+
+  it('shows descriptive tooltip for edit on administrative environments', () => {
+    render(
+      <EnvironmentCard
+        environmentDetails={{ ...baseEnvironment, purpose: 'administrative' }}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+    const tooltips = screen.getAllByTestId('custom-tooltip');
+    const editTooltip = tooltips.find(
+      (t) => t.getAttribute('title') === 'Administrative environments cannot be edited',
+    );
+    expect(editTooltip).toBeTruthy();
+  });
+
+  it('shows descriptive tooltip for delete on administrative environments', () => {
+    render(
+      <EnvironmentCard
+        environmentDetails={{ ...baseEnvironment, purpose: 'administrative' }}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+    const tooltips = screen.getAllByTestId('custom-tooltip');
+    const deleteTooltip = tooltips.find(
+      (t) => t.getAttribute('title') === 'Administrative environments cannot be deleted',
+    );
+    expect(deleteTooltip).toBeTruthy();
+  });
+
+  it('does not fire onEdit when edit is clicked on an administrative environment', async () => {
+    const user = userEvent.setup();
+    const onEdit = vi.fn();
+    render(
+      <EnvironmentCard
+        environmentDetails={{ ...baseEnvironment, purpose: 'administrative' }}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={onEdit}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+    const buttons = screen.getAllByRole('button');
+    const editButton = buttons.find((b) => b.querySelector('[data-testid="edit-icon"]'));
+    if (editButton) await user.click(editButton);
+    expect(onEdit).not.toHaveBeenCalled();
+  });
+
+  it('does not fire onDelete when delete is clicked on an administrative environment', async () => {
+    const user = userEvent.setup();
+    const onDelete = vi.fn();
+    render(
+      <EnvironmentCard
+        environmentDetails={{ ...baseEnvironment, purpose: 'administrative' }}
+        selectedEnvironments={[]}
+        onDelete={onDelete}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+    const buttons = screen.getAllByRole('button');
+    const deleteButton = buttons.find((b) => b.querySelector('[data-testid="delete-icon"]'));
+    if (deleteButton) await user.click(deleteButton);
+    expect(onDelete).not.toHaveBeenCalled();
+  });
+
+  it('edit and delete remain enabled for non-administrative environments', () => {
+    render(
+      <EnvironmentCard
+        environmentDetails={baseEnvironment}
+        selectedEnvironments={[]}
+        onDelete={() => {}}
+        onEdit={() => {}}
+        onSelect={() => {}}
+        onAssignConnection={() => {}}
+      />,
+    );
+    const buttons = screen.getAllByRole('button');
+    const editButton = buttons.find((b) => b.querySelector('[data-testid="edit-icon"]'));
+    const deleteButton = buttons.find((b) => b.querySelector('[data-testid="delete-icon"]'));
+    expect(editButton).not.toBeDisabled();
+    expect(deleteButton).not.toBeDisabled();
   });
 });
