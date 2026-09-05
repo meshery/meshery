@@ -141,7 +141,7 @@ import Environments from './index';
 
 const renderEnvironments = () =>
   render(
-    <SistentThemeProvider initialTheme="dark">
+    <SistentThemeProvider initialMode="dark">
       <Environments />
     </SistentThemeProvider>,
   );
