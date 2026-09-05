@@ -179,7 +179,11 @@ func TestProcessConnectionRegistration_RejectsNilConnectionID(t *testing.T) {
 		t.Fatalf("expected 400 for a nil connection ID, got %d. body: %s", rec.Code, rec.Body.String())
 	}
 
-	if _, err := provider.ConnectionPersister.GetConnection(core.Uuid(uuid.Nil), "artifacthub"); err == nil {
-		t.Fatalf("expected no connection to be persisted under uuid.Nil, but one was found")
+	page, err := provider.ConnectionPersister.GetConnections("", "", 0, 10, "", nil, nil, nil, "")
+	if err != nil {
+		t.Fatalf("list connections: %v", err)
+	}
+	if page.TotalCount != 0 {
+		t.Fatalf("expected no connection to be persisted for a nil ID, but found %d row(s)", page.TotalCount)
 	}
 }
