@@ -82,4 +82,29 @@ describe('PerformanceForm', () => {
 
     expect(handleInputDurationChange).toHaveBeenCalled();
   });
+
+  it('shows error styling and does not fire handleDurationChange when tError is set for an invalid duration', () => {
+    // Regression for: duration validation was evaluated against stale props instead of
+    // local form state, so invalid values (e.g. "0s", "abc") silently passed validation.
+    // handleSubmit / handleSaveProfile now sets tError="error-autocomplete-value" when
+    // isValidDuration(tState) returns false, keeping the modal open for correction.
+    const handleDurationChange = vi.fn();
+    const { container } = render(
+      <PerformanceForm
+        {...defaultProps}
+        t="abc"
+        tValue="abc"
+        tError="error-autocomplete-value"
+        handleDurationChange={handleDurationChange}
+      />,
+    );
+
+    // Error class must be present on the duration field so the user sees the validation error.
+    const errorElement = container.querySelector('.error-autocomplete-value');
+    expect(errorElement).not.toBeNull();
+
+    // The parent component (not the form) is responsible for blocking submission,
+    // so handleDurationChange should not have been called automatically.
+    expect(handleDurationChange).not.toHaveBeenCalled();
+  });
 });
