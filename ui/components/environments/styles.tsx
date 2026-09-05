@@ -1,18 +1,5 @@
 import { Checkbox, Typography, Button, useTheme, Card, styled, Box } from '@sistent/sistent';
 
-/** Bulk action bar styles */
-export const BulkActionWrapper = styled('div')({
-  width: '100%',
-  padding: '0.8rem',
-  justifyContent: 'space-between',
-  marginTop: '0.18rem',
-  marginBottom: '1rem',
-  borderRadius: '.25rem',
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-});
-
 /** Card Styles */
 
 export const CardWrapper = styled(Card)(() => {
@@ -211,13 +198,6 @@ export const StyledChip = styled('div')(({ theme }) => ({
     cursor: 'default',
   },
 }));
-
-export const CreateButtonWrapper = styled('div')({
-  display: 'flex',
-  justifyContent: 'flex-start',
-  alignItems: 'center',
-  whiteSpace: 'nowrap',
-});
 
 export const EditButton = styled('button')(({ theme }) => ({
   backgroundColor: theme.palette.background?.brand?.default,
