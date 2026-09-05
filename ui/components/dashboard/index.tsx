@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useNotificationHandlers } from '../../utils/hooks/useNotification';
 import { ResourcesConfig } from './resources/config';
@@ -13,7 +13,6 @@ import {
   Tab,
   Tabs,
   CustomTooltip,
-  Box,
   Stack,
   EditIcon,
   CloseIcon,
@@ -22,10 +21,13 @@ import {
   OutlinedResetIcon,
   useTheme,
   ErrorBoundary,
+  DashboardLayout,
+  WidgetPicker,
+  type WidgetItem,
 } from '@sistent/sistent';
 import { DashboardActionsContainer, WrapperPaper } from './style';
 import _ from 'lodash';
-import { AddWidgetsToLayoutPanel, LayoutActionButton, LayoutWidget } from './components';
+import { LayoutActionButton, LayoutWidget } from './components';
 import { Responsive } from 'react-grid-layout/legacy';
 import debounceWidthProvider from './debounceWidthProvider';
 import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT, OVERVIEW_LAYOUT } from './defaultLayout';
@@ -197,6 +199,8 @@ const Dashboard = () => {
     confirmNavigation();
   };
 
+  const { handleError, handleSuccess } = useNotificationHandlers();
+
   const widgetsToAdd = useMemo(
     () => getWidgetsAvailableToBeAdded(dashboardLayout, currentBreakPoint),
     [dashboardLayout, currentBreakPoint, widgets],
@@ -208,25 +212,41 @@ const Dashboard = () => {
     backgroundColor: theme.palette?.background?.tabs,
   };
 
-  const onAddWidget = (widget, key) => {
-    const newComponent = {
-      i: key,
-      x: 0,
-      static: false,
-      moved: false,
-      y: 10,
-      ...widget.defaultSizing,
-    };
-    const updatedLayouts = {
-      lg: [...dashboardLayout.lg, newComponent],
-      md: [...dashboardLayout.md, newComponent],
-      sm: [...dashboardLayout.sm, newComponent],
-      xs: [...dashboardLayout.xs, newComponent],
-      xxs: [...dashboardLayout.xxs, newComponent],
-    };
-    setDashboardLayout(updatedLayouts);
-  };
-  const { handleError, handleSuccess } = useNotificationHandlers();
+  const onAddWidget = useCallback(
+    (
+      widget: Omit<WidgetItem, 'key'> & { defaultSizing?: { w?: number; h?: number } },
+      key: string,
+    ) => {
+      const newComponent = {
+        i: key,
+        x: 0,
+        static: false,
+        moved: false,
+        y: 10,
+        ...(widget.defaultSizing || widgetSizing[key] || {}),
+      };
+      const updatedLayouts = {
+        lg: [...dashboardLayout.lg, newComponent],
+        md: [...dashboardLayout.md, newComponent],
+        sm: [...dashboardLayout.sm, newComponent],
+        xs: [...dashboardLayout.xs, newComponent],
+        xxs: [...dashboardLayout.xxs, newComponent],
+      };
+      setDashboardLayout(updatedLayouts);
+    },
+    [dashboardLayout, widgetSizing],
+  );
+
+  const sidebarContent = useMemo(
+    () => (
+      <WidgetPicker
+        widgetsToAdd={widgetsToAdd}
+        onAddWidget={onAddWidget}
+        onClose={() => setIsEditMode(false)}
+      />
+    ),
+    [widgetsToAdd, onAddWidget],
+  );
 
   const updateLayout = async (dashboardLayout) => {
     const constrainedLayoutToSave = applyMinSizeConstraints(
@@ -415,50 +435,48 @@ const Dashboard = () => {
         </WrapperPaper>
 
         <TabPanel value={resourceCategory} index={'Overview'}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <Box sx={{ padding: 0, width: '100%' }}>
-              <ResponsiveReactGridLayout
-                layouts={constrainedLayouts}
-                resizeHandles={availableHandles}
-                isResizable={isEditMode}
-                isDraggable={isEditMode}
-                cols={cols}
-                draggableHandle=".react-grid-dragHandleExample"
-                breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-                onBreakpointChange={onBreakpointChange}
-                onLayoutChange={onLayoutChange}
-                measureBeforeMount={false}
-                style={{
-                  backgroundColor: 'transparent',
-                }}
-                containerPadding={[0, 8]}
-              >
-                {widgetsToRenderForLayout(dashboardLayout, currentBreakPoint).map((widget) => {
-                  return (
-                    <div key={widget.key} style={isEditMode ? editModeStyles : {}}>
-                      <ErrorBoundary
-                        customFallback={(fallbackProps) => (
-                          <WidgetErrorFallback {...fallbackProps} widgetTitle={widget.title} />
-                        )}
-                      >
-                        <LayoutWidget
-                          isEditMode={isEditMode}
-                          key={widget.key}
-                          widget={widget}
-                          removeWidget={removeWidget}
-                        />
-                      </ErrorBoundary>
-                    </div>
-                  );
-                })}
-              </ResponsiveReactGridLayout>
-            </Box>
-            <AddWidgetsToLayoutPanel
-              editMode={isEditMode}
-              widgetsToAdd={widgetsToAdd}
-              onAddWidget={onAddWidget}
-            />
-          </Box>
+          <DashboardLayout
+            isSidebarOpen={isEditMode}
+            sidebarContent={sidebarContent}
+            sidebarTitle="Widget Picker"
+            sidebarTopOffset="64px"
+          >
+            <ResponsiveReactGridLayout
+              layouts={constrainedLayouts}
+              resizeHandles={availableHandles}
+              isResizable={isEditMode}
+              isDraggable={isEditMode}
+              cols={cols}
+              draggableHandle=".react-grid-dragHandleExample"
+              breakpoints={{ lg: 1200, md: 900, sm: 768, xs: 480, xxs: 0 }}
+              onBreakpointChange={onBreakpointChange}
+              onLayoutChange={onLayoutChange}
+              measureBeforeMount={false}
+              style={{
+                backgroundColor: 'transparent',
+              }}
+              containerPadding={[0, 8]}
+            >
+              {widgetsToRenderForLayout(dashboardLayout, currentBreakPoint).map((widget) => {
+                return (
+                  <div key={widget.key} style={isEditMode ? editModeStyles : {}}>
+                    <ErrorBoundary
+                      customFallback={(fallbackProps) => (
+                        <WidgetErrorFallback {...fallbackProps} widgetTitle={widget.title} />
+                      )}
+                    >
+                      <LayoutWidget
+                        isEditMode={isEditMode}
+                        key={widget.key}
+                        widget={widget}
+                        removeWidget={removeWidget}
+                      />
+                    </ErrorBoundary>
+                  </div>
+                );
+              })}
+            </ResponsiveReactGridLayout>
+          </DashboardLayout>
         </TabPanel>
 
         {Object.keys(ResourcesConfig).map((resource, idx) => {
