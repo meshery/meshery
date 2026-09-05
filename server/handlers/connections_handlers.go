@@ -62,6 +62,18 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 	} else {
 		smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 		connectionRegisterPayload := registrationEventToConnectionPayload(&registrationEvent)
+		_, err = provider.SaveConnection(&connectionRegisterPayload, token, false)
+		if err != nil {
+			wrappedErr := ErrFailToSave(err, "connection")
+			event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to persist the \"%s\" connection details", connectionRegisterPayload.Kind)).WithMetadata(map[string]interface{}{
+				"error": wrappedErr,
+			}).Build()
+			_ = provider.PersistEvent(*event, token)
+			go h.config.EventBroadcaster.Publish(userUUID, event)
+			h.log.Error(wrappedErr)
+			writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
+			return
+		}
 
 		machineCtx := make(map[string]string, 0)
 		inst, err := helpers.InitializeMachineWithContext(
