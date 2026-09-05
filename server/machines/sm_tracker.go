@@ -1,6 +1,7 @@
 package machines
 
 import (
+	"context"
 	"fmt"
 	"sync"
 
@@ -96,6 +97,38 @@ func (smt *ConnectionToStateMachineInstanceTracker) Remove(id core.Uuid) {
 	smt.mx.Lock()
 	defer smt.mx.Unlock()
 	delete(smt.ConnectToInstanceMap, id)
+}
+
+func (smt *ConnectionToStateMachineInstanceTracker) RemoveIfMatch(id core.Uuid, expectedInst *StateMachine) {
+	smt.mx.Lock()
+	defer smt.mx.Unlock()
+	if inst, ok := smt.ConnectToInstanceMap[id]; ok && inst == expectedInst {
+		delete(smt.ConnectToInstanceMap, id)
+	}
+}
+
+func (smt *ConnectionToStateMachineInstanceTracker) RemoveIfMatchAndState(id core.Uuid, expectedInst *StateMachine, allowedStates ...StateType) {
+	smt.mx.Lock()
+	defer smt.mx.Unlock()
+	if inst, ok := smt.ConnectToInstanceMap[id]; ok && inst == expectedInst {
+		currentState := inst.GetCurrentState()
+		for _, s := range allowedStates {
+			if currentState == s {
+				delete(smt.ConnectToInstanceMap, id)
+				return
+			}
+		}
+	}
+}
+
+func (smt *ConnectionToStateMachineInstanceTracker) RemoveIfMatchAndGeneration(id core.Uuid, expectedInst *StateMachine, expectedGeneration context.Context) {
+	smt.mx.Lock()
+	defer smt.mx.Unlock()
+	if inst, ok := smt.ConnectToInstanceMap[id]; ok && inst == expectedInst {
+		if inst.GetLifecycleCtx() == expectedGeneration {
+			delete(smt.ConnectToInstanceMap, id)
+		}
+	}
 }
 
 func (smt *ConnectionToStateMachineInstanceTracker) Add(id core.Uuid, inst *StateMachine) {

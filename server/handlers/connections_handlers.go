@@ -142,7 +142,10 @@ func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Requ
 
 	id, ok := body["id"]
 	if ok {
-		smInstancetracker.Remove(uuid.FromStringOrNil(id))
+		connectionID := uuid.FromStringOrNil(id)
+		if inst, ok := smInstancetracker.Get(connectionID); ok {
+			smInstancetracker.RemoveIfMatchAndState(connectionID, inst, machines.DISCOVERED, machines.REGISTERED, machines.InitialState, machines.DefaultState)
+		}
 	}
 }
 
@@ -159,7 +162,10 @@ func (h *Handler) CancelConnectionRegister(w http.ResponseWriter, req *http.Requ
 		return
 	}
 
-	h.ConnectionToStateMachineInstanceTracker.Remove(registrationID)
+	if inst, ok := h.ConnectionToStateMachineInstanceTracker.Get(registrationID); ok {
+		// Only allow cancellation if it is genuinely in an unestablished registration state
+		h.ConnectionToStateMachineInstanceTracker.RemoveIfMatchAndState(registrationID, inst, machines.DISCOVERED, machines.REGISTERED, machines.InitialState, machines.DefaultState)
+	}
 	w.WriteHeader(http.StatusNoContent)
 }
 
