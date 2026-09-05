@@ -12,9 +12,9 @@ import {
   TreeWrapper,
   DetailsContainer,
   InnerContainer,
-  CardStyle,
   WorkloadsContainer,
 } from '@/assets/styles/general/tool.styles';
+import TabCard from './TabCard';
 import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
 import { toLower } from 'lodash';
@@ -29,6 +29,7 @@ import {
   useGetComponentsQuery,
   useGetRelationshipsQuery,
   useGetRegistrantsQuery,
+  useGetConnectionDefinitionsQuery,
 } from '@/rtk-query/meshModel';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 import _ from 'lodash';
@@ -122,6 +123,9 @@ const MeshModelComponent_ = ({
   const { data: registrantsCountData } = useGetRegistrantsQuery({
     params: { page: 0, pagesize: 1 },
   });
+  const { data: connectionsCountData } = useGetConnectionDefinitionsQuery({
+    params: { page: 0, pagesize: 1 },
+  });
 
   const modelsData = modelsRes.data;
   const registrantsData = registrantsRes.data;
@@ -129,15 +133,17 @@ const MeshModelComponent_ = ({
   const relationshipsData = relationshipsRes.data;
   const connectionsData = connectionsRes.data;
 
-  const hasMoreModels = modelsData?.totalCount > modelsData?.pageSize * modelsData?.page;
+  const hasMoreModels =
+    modelsData?.totalCount > modelsData?.pageSize * ((modelsData?.page || 0) + 1);
   const hasMoreRegistrants =
-    registrantsData?.totalCount > registrantsData?.pageSize * registrantsData?.page;
+    registrantsData?.totalCount > registrantsData?.pageSize * ((registrantsData?.page || 0) + 1);
   const hasMoreComponents =
-    componentsData?.totalCount > componentsData?.pageSize * componentsData?.page;
+    componentsData?.totalCount > componentsData?.pageSize * ((componentsData?.page || 0) + 1);
   const hasMoreRelationships =
-    relationshipsData?.totalCount > relationshipsData?.pageSize * relationshipsData?.page;
+    relationshipsData?.totalCount >
+    relationshipsData?.pageSize * ((relationshipsData?.page || 0) + 1);
   const hasMoreConnections =
-    connectionsData?.totalCount > connectionsData?.pageSize * connectionsData?.page;
+    connectionsData?.totalCount > connectionsData?.pageSize * ((connectionsData?.page || 0) + 1);
 
   const loadNextModelsPage = useCallback(() => {
     if (modelsRes.isLoading || modelsRes.isFetching || !hasMoreModels) {
@@ -190,8 +196,8 @@ const MeshModelComponent_ = ({
           response = await getMeshModelsData(
             {
               params: {
-                page: searchText ? 0 : modelFilters.page,
-                pagesize: searchText ? 'all' : 25,
+                page: searchText || checked ? 0 : modelFilters.page,
+                pagesize: searchText || checked ? 'all' : 25,
                 components: false,
                 relationships: false,
                 search: searchText || '',
@@ -261,7 +267,9 @@ const MeshModelComponent_ = ({
         setResourcesDetail((prev) => {
           const incoming = response.data[view.toLowerCase()];
           const combined =
-            searchText || view === RELATIONSHIPS ? [...incoming] : [...prev, ...incoming];
+            searchText || (checked && view === MODELS) || view === RELATIONSHIPS
+              ? [...incoming]
+              : [...prev, ...incoming];
           // Use _.uniqWith for safe deep equality deduplication, as
           // not all objects (e.g. static seed files) carry unique UUIDs.
           return _.uniqWith(combined, _.isEqual);
@@ -498,7 +506,7 @@ const MeshModelComponent_ = ({
             />
             <TabCard
               label="Connections"
-              count={connectionsData?.totalCount || 0}
+              count={connectionsData?.totalCount ?? connectionsCountData?.totalCount ?? 0}
               active={view === CONNECTIONS}
               onClick={() => handleTabClick(CONNECTIONS)}
             />
@@ -634,21 +642,6 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
   );
 };
 
-const TabCard = ({ label, count, active, onClick }) => {
-  return (
-    <CardStyle isSelected={active} elevation={3} onClick={onClick}>
-      <span
-        style={{
-          fontSize: '1rem',
-          marginLeft: '4px',
-        }}
-      >
-        {`(${count?.toLocaleString() || 0})`}
-      </span>
-      {label}
-    </CardStyle>
-  );
-};
 const MeshModelComponent = (props) => {
   return (
     <NoSsr>

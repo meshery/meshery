@@ -1,0 +1,43 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "relationships.meshery.io/v1beta3",
+  "version": "v1.0.0",
+  "kind": "sibling",
+  "type": "matchlabels",
+  "subType": "tagsets",
+  "status": "enabled",
+  "evaluationQuery": "",
+  "metadata": {
+    "description": "SCHEMA-NATIVE encoding of tagsets using kind=sibling (the v1beta3 kind enum). Do not mix this with the in-tree hierarchical/sibling/matchlabels encoding in the same model.",
+    "isAnnotation": false
+  },
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "kubernetes",
+    "version": "v1.0.0",
+    "displayName": "kubernetes",
+    "registrant": { "kind": "github" },
+    "model": { "version": "v1.35.0" }
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "*",
+            "model": { "name": "*", "registrant": { "kind": "github" }, "model": { "version": "" } },
+            "match": { "refs": [["configuration", "metadata", "labels"]] }
+          }
+        ],
+        "to": [
+          {
+            "kind": "*",
+            "model": { "name": "*", "registrant": { "kind": "github" }, "model": { "version": "" } },
+            "match": { "refs": [["configuration", "metadata", "labels"]] }
+          }
+        ]
+      },
+      "deny": { "from": [], "to": [] }
+    }
+  ]
+}

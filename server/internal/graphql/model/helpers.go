@@ -6,19 +6,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/controllers"
-	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
-	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
-)
-
-// to be moved elsewhere
-const (
-	chartRepo = "https://meshery.github.io/meshery.io/charts"
 )
 
 var (
@@ -51,60 +42,11 @@ var (
 	}
 )
 
-// installs operator
-// To be depricated
-func installUsingHelm(client *mesherykube.Client, delete bool, _ models.AdaptersTrackerInterface) error {
-	// retrieving meshery's version to apply the appropriate chart
-	mesheryReleaseVersion := viper.GetString("BUILD")
-	if mesheryReleaseVersion == "" || mesheryReleaseVersion == "Not Set" || mesheryReleaseVersion == "edge-latest" {
-		_, latestRelease, err := handlers.CheckLatestVersion(mesheryReleaseVersion)
-		// if unable to fetch latest release tag, meshkit helm functions handle
-		// this automatically fetch the latest one
-		if err != nil {
-			logrus.Errorf("Couldn't check release tag: %s. Will use latest version", err)
-			mesheryReleaseVersion = ""
-		} else {
-			mesheryReleaseVersion = latestRelease
-		}
-	}
-	var (
-		act   = mesherykube.INSTALL
-		chart = "meshery-operator"
-	)
-	if delete {
-		act = mesherykube.UNINSTALL
-	}
-	// a basic check to see if meshery is installed in cluster
-	// this helps decide what chart should be used for installing operator
-	if viper.GetString("KUBERNETES_SERVICE_HOST") != "" {
-		// act = mesherykube.UPGRADE
-		chart = "meshery"
-	}
-
-	err := client.ApplyHelmChart(mesherykube.ApplyHelmChartConfig{
-		Namespace:   "meshery",
-		ReleaseName: "meshery-operator",
-		ChartLocation: mesherykube.HelmChartLocation{
-			Repository: chartRepo,
-			Chart:      chart,
-			Version:    mesheryReleaseVersion,
-		},
-		// CreateNamespace doesn't have any effect when the action is UNINSTALL
-		CreateNamespace: true,
-		Action:          act,
-	})
-	if err != nil {
-		return ErrApplyHelmChart(err)
-	}
-
-	return nil
-}
-
-// SetOverrideValues detects the currently insalled adapters and sets appropriate
+// SetOverrideValues detects the currently installed adapters and sets appropriate
 // overrides so as to not uninstall them. It also sets override values for
-// operator so that it can be enabled or disabled depending on the need
-
-// to be depricated
+// operator so that it can be enabled or disabled depending on the need.
+//
+// TODO: to be deprecated
 func SetOverrideValues(delete bool, adapterTracker models.AdaptersTrackerInterface) map[string]interface{} {
 	installedAdapters := make([]string, 0)
 	adapters := adapterTracker.GetAdapters(context.TODO())
@@ -186,7 +128,7 @@ func (k *K8sConnectionTracker) Set(id string, url string) {
 	k.contextToBroker[id] = url
 }
 
-// Takes a set of endpoints and discard the current endpoint if its not present in the set
+// ResetEndpoints takes a set of endpoints and discards any tracked endpoint that is not present in the set.
 func (k *K8sConnectionTracker) ResetEndpoints(available map[string]bool) {
 	k.mx.Lock()
 	defer k.mx.Unlock()
@@ -213,7 +155,7 @@ func (k *K8sConnectionTracker) Get(id string) (url string) {
 	return
 }
 
-// Takes the meshkit Logger and logs a comma separated list of currently tracked Broker Endpoints
+// Log takes the meshkit Logger and logs a comma-separated list of currently tracked broker endpoints.
 func (k *K8sConnectionTracker) Log(l logger.Handler) {
 	var e = "Connected broker endpoints : "
 	k.mx.Lock()

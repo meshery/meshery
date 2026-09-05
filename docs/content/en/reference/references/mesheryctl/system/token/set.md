@@ -14,8 +14,10 @@ Set token for context
 Set token for current context or context specified with --context flag.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system token set [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -23,8 +25,10 @@ mesheryctl system token set [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system token set [token-name] 
 
+</div>
 </div>
 </pre> 
 

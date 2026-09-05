@@ -2,7 +2,7 @@ package extensions
 
 import "net/http"
 
-// Router
+// Router pairs an HTTP handler with the URL path it should be served at, for extension endpoints registered into a shared routing table.
 type Router struct {
 	HTTPHandler http.Handler
 	Path        string

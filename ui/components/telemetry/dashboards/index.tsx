@@ -8,6 +8,7 @@ import {
   InsertChartIcon,
   Typography,
   styled,
+  useHasPermission,
   useTheme,
 } from '@sistent/sistent';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
@@ -18,6 +19,7 @@ import {
 } from '@/rtk-query/telemetryGrafana';
 import { CoreConnectionKinds } from '@/utils/Enum';
 import { Keys } from '@meshery/schemas/permissions';
+import DefaultError from '../../general/error-404/index';
 import { useConnectionWizardModal } from '@/utils/context/ConnectionWizardContextProvider';
 import ConnectionPicker, { TelemetryConnection } from '../common/ConnectionPicker';
 import PingStatus from '../common/PingStatus';
@@ -78,15 +80,23 @@ const TelemetryDashboards: React.FC = () => {
   const theme = useTheme();
   const { openCreateConnection } = useConnectionWizardModal();
 
-  const { data: connectionsData, isLoading: connectionsLoading } = useGetConnectionsQuery({
-    kind: JSON.stringify(['grafana']),
-    pagesize: 200,
-  });
+  const canViewMetrics = useHasPermission(Keys.MesherySystemViewMetrics);
+
+  // kind is a plain repeated query param (?kind=grafana) — never JSON-encoded.
+  // JSON.stringify(['grafana']) becomes kind=["grafana"] and matches nothing.
+  // Use CoreConnectionKinds (schemas) so literals stay single-sourced after #20949.
+  const { data: connectionsData, isLoading: connectionsLoading } = useGetConnectionsQuery(
+    {
+      kind: CoreConnectionKinds.grafana,
+      pageSize: 100,
+    },
+    { skip: !canViewMetrics },
+  );
 
   const connections: TelemetryConnection[] = useMemo(
     () =>
       ((connectionsData as any)?.connections ?? [])
-        .filter((c: any) => c.kind === 'grafana' && c.status !== 'deleted')
+        .filter((c: any) => c.kind === CoreConnectionKinds.grafana && c.status !== 'deleted')
         .map((c: any) => ({ id: c.id, name: c.name, kind: c.kind, metadata: c.metadata })),
     [connectionsData],
   );
@@ -111,7 +121,10 @@ const TelemetryDashboards: React.FC = () => {
   const selectedConnection = connections.find((c) => c.id === connectionID);
   const baseURL = selectedConnection?.metadata?.url as string | undefined;
 
-  const { data: pinnedData } = useGetPinnedBoardsQuery({ connectionID }, { skip: !connectionID });
+  const { data: pinnedData } = useGetPinnedBoardsQuery(
+    { connectionID },
+    { skip: !canViewMetrics || !connectionID },
+  );
   const pinned = (pinnedData as PinnedBoard[] | undefined) ?? [];
   const [updatePinnedBoards] = useUpdatePinnedBoardsMutation();
 
@@ -133,6 +146,10 @@ const TelemetryDashboards: React.FC = () => {
       /* invalidation will resync; surfaced via the library's own states */
     }
   };
+
+  if (!canViewMetrics) {
+    return <DefaultError permissionKey={Keys.MesherySystemViewMetrics} />;
+  }
 
   if (connectionsLoading) {
     return (
