@@ -10,7 +10,7 @@ module.exports = [
       'node_modules/**',
       'out/**',
       '.next/**',
-      'static/**',
+      '**/static/**',
       'package.json',
       'package-lock.json',
       'nodemon.json',

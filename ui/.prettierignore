@@ -11,7 +11,7 @@ public
 node_modules
 next-env.d.ts
 next.config.js
-.eslintrc.js
+eslint.config.js
 **/__generated__/**
 out
 ../server/**
