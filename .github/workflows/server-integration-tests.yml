@@ -17,6 +17,10 @@ on:
       - ".github/workflows/server-integration-tests.yml"
       - "install/kubernetes/helm/meshery-operator/**"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   server-integration-test-with-meshsync:
     name: Integration test with meshsync
