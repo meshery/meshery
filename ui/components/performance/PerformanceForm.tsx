@@ -357,7 +357,7 @@ const PerformanceForm: React.FC<PerformanceFormProps> = ({
                     fullWidth
                     label={caCertificate?.name || 'Upload SSL Certificate e.g. .crt file'}
                     style={{ width: '100%', margin: '0.5rem 0' }}
-                    value={metadata?.ca_certificate.name}
+                    value={metadata?.ca_certificate?.name || ''}
                   />
                 </Grid2>
                 <Grid2 size={{ xs: 6 }}>
