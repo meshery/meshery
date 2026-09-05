@@ -58,6 +58,14 @@ func TestSearchComponent(t *testing.T) {
 			ExpectedResponse: "components.search.output.golden",
 			ExpectError:      false,
 		},
+		{
+			Name:             "given valid name and model flag when component search then filter by model",
+			Args:             []string{"search", "Test", "--model", "kubernetes"},
+			URL:              fmt.Sprintf("/%s?model=kubernetes&search=Test&page=0&pagesize=10", componentApiPath),
+			Fixture:          "components.api.response.model.golden",
+            ExpectedResponse: "components.search.model.output.golden",
+			ExpectError:      false,
+		},
 	}
 
 	mesheryctlflags.InitValidators(ComponentCmd)
