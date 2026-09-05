@@ -3,6 +3,7 @@ title: mesheryctl-system-update
 display_title: false
 command: system
 subcommand: update
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl system update

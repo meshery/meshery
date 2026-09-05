@@ -3,6 +3,7 @@ title: mesheryctl-workspace-list
 display_title: false
 command: workspace
 subcommand: list
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl workspace list

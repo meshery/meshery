@@ -3,6 +3,7 @@ title: mesheryctl-system-login
 display_title: false
 command: system
 subcommand: login
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl system login

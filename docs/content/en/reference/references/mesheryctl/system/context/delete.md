@@ -3,6 +3,7 @@ title: mesheryctl-system-context-delete
 display_title: false
 command: system
 subcommand: context
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl system context delete

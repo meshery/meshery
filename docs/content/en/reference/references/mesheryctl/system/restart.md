@@ -3,6 +3,7 @@ title: mesheryctl-system-restart
 display_title: false
 command: system
 subcommand: restart
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl system restart

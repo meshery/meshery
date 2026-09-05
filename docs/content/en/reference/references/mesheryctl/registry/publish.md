@@ -3,6 +3,7 @@ title: mesheryctl-registry-publish
 display_title: false
 command: registry
 subcommand: publish
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl registry publish

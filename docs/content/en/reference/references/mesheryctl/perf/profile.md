@@ -3,6 +3,7 @@ title: mesheryctl-perf-profile
 display_title: false
 command: perf
 subcommand: profile
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl perf profile

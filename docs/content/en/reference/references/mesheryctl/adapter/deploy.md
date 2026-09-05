@@ -3,6 +3,7 @@ title: mesheryctl-adapter-deploy
 display_title: false
 command: adapter
 subcommand: deploy
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl adapter deploy

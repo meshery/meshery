@@ -3,6 +3,7 @@ title: mesheryctl-design-view
 display_title: false
 command: design
 subcommand: view
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl design view

@@ -20,13 +20,6 @@ To set up and run Meshery on Linux or macOS, you will need to install `mesheryct
 
 {{% mesheryctl/installation-bash %}}
 
-
-## Meshery CLI Guides
-
-Guides to using Meshery's various features and components.
-
-{{< mesheryctl-guides-list >}}
-
 {{< related-discussions tag="mesheryctl" >}}
 
 ### Installation Options

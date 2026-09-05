@@ -3,6 +3,7 @@ title: mesheryctl-filter-import
 display_title: false
 command: filter
 subcommand: import
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl filter import

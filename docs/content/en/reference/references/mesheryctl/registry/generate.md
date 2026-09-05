@@ -3,6 +3,7 @@ title: mesheryctl-registry-generate
 display_title: false
 command: registry
 subcommand: generate
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl registry generate

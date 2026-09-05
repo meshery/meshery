@@ -3,6 +3,7 @@ title: mesheryctl-workspace-create
 display_title: false
 command: workspace
 subcommand: create
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl workspace create

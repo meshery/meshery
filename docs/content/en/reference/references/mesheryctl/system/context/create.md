@@ -3,6 +3,7 @@ title: mesheryctl-system-context-create
 display_title: false
 command: system
 subcommand: context
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl system context create

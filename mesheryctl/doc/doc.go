@@ -36,6 +36,7 @@ title: %s
 display_title: false
 command: %s
 subcommand: %s
+categories: [mesheryctl-ref]
 ---
 
 `

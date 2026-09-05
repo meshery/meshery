@@ -3,6 +3,7 @@ title: mesheryctl-filter-delete
 display_title: false
 command: filter
 subcommand: delete
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl filter delete

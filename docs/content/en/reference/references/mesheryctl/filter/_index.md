@@ -3,6 +3,7 @@ title: mesheryctl-filter
 display_title: false
 command: filter
 subcommand: nil
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl filter

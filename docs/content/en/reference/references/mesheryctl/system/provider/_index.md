@@ -3,6 +3,7 @@ title: mesheryctl-system-provider
 display_title: false
 command: system
 subcommand: provider
+categories: [mesheryctl-ref]
 ---
 
 # mesheryctl system provider
