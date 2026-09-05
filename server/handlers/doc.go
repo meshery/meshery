@@ -1,14 +1,13 @@
 package handlers
 
 import (
-	"github.com/meshery/meshery/server/models/performance"
 	"bytes"
 
 	"github.com/go-openapi/strfmt"
-	
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/environments"
+	"github.com/meshery/meshery/server/models/performance"
 	"github.com/meshery/meshkit/models/events"
 	system "github.com/meshery/schemas/models/v1beta1/system"
 	workspace "github.com/meshery/schemas/models/v1beta1/workspace"

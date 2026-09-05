@@ -144,7 +144,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			}
 
 			if qps == "" {
-				qps = strconv.FormatInt(testClient.Rps, 10)
+				qps = strconv.FormatInt(int64(testClient.Rps), 10)
 			}
 
 			if concurrentRequests == "" {

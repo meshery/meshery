@@ -1,12 +1,11 @@
 package models
 
 import (
-	"github.com/meshery/meshery/server/models/performance"
 	"net/http"
 	"strings"
 
-	
 	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshery/server/models/performance"
 	"github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"

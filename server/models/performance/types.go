@@ -31,26 +31,27 @@ func (p Protocol) String() string {
 type LoadGenerator int32
 
 const (
-	LoadGenerator_UNSET LoadGenerator = 0
+	LoadGenerator_UNSET  LoadGenerator = 0
 	LoadGenerator_FORTIO LoadGenerator = 1
 )
 
 // Client holds client configuration for load test
 type Client struct {
-	Protocol      Protocol  `json:"protocol,omitempty"`
-	Connections   int32     `json:"connections,omitempty"`
-	Rps           int32     `json:"rps,omitempty"`
-	LoadGenerator string    `json:"loadGenerator,omitempty"`
-	EndpointUrls  []string  `json:"endpointUrls,omitempty"`
+	Protocol      Protocol `json:"protocol,omitempty"`
+	Connections   int32    `json:"connections,omitempty"`
+	Rps           int32    `json:"rps,omitempty"`
+	LoadGenerator string   `json:"loadGenerator,omitempty"`
+	EndpointUrls  []string `json:"endpointUrls,omitempty"`
+	Body          string   `json:"body,omitempty"`
 }
 
 // PerformanceTestConfig_Client is a nested type for backward compatibility
 type PerformanceTestConfig_Client struct {
-	Protocol      int32     `json:"protocol,omitempty"`
-	Connections   int32     `json:"connections,omitempty"`
-	Rps           int32     `json:"rps,omitempty"`
-	LoadGenerator string    `json:"loadGenerator,omitempty"`
-	EndpointUrls  []string  `json:"endpointUrls,omitempty"`
+	Protocol      int32    `json:"protocol,omitempty"`
+	Connections   int32    `json:"connections,omitempty"`
+	Rps           int32    `json:"rps,omitempty"`
+	LoadGenerator string   `json:"loadGenerator,omitempty"`
+	EndpointUrls  []string `json:"endpointUrls,omitempty"`
 }
 
 // Protocol constants for nested type
@@ -65,15 +66,15 @@ type PerformanceTestConfig_Client_Protocol int32
 
 // PerformanceTestConfig holds the performance test configuration
 type PerformanceTestConfig struct {
-	Name              string                            `json:"name,omitempty"`
-	Id                string                            `json:"id,omitempty"`
-	Duration          string                            `json:"duration,omitempty"`
-	QueriesPerSecond  int32                             `json:"queriesPerSecond,omitempty"`
-	ConcurrentRequest int32                             `json:"concurrentRequest,omitempty"`
-	TestURL           string                            `json:"testUrl,omitempty"`
-	RequestHeaders    map[string]string                 `json:"requestHeaders,omitempty"`
-	Clients           []Client                          `json:"clients,omitempty"`
-	ClientsNested     []*PerformanceTestConfig_Client   `json:"clientsNested,omitempty"`
+	Name              string                          `json:"name,omitempty"`
+	Id                string                          `json:"id,omitempty"`
+	Duration          string                          `json:"duration,omitempty"`
+	QueriesPerSecond  int32                           `json:"queriesPerSecond,omitempty"`
+	ConcurrentRequest int32                           `json:"concurrentRequest,omitempty"`
+	TestURL           string                          `json:"testUrl,omitempty"`
+	RequestHeaders    map[string]string               `json:"requestHeaders,omitempty"`
+	Clients           []Client                        `json:"clients,omitempty"`
+	ClientsNested     []*PerformanceTestConfig_Client `json:"clientsNested,omitempty"`
 }
 
 // ServiceMesh holds service mesh information
@@ -97,14 +98,13 @@ var ServiceMesh_Type_name = map[int32]string{
 
 // ServiceMesh_Type_value provides integer values for ServiceMesh type names
 var ServiceMesh_Type_value = map[string]int32{
-	"UNSET":     0,
-	"ISTIO":     1,
-	"LINKERD":   2,
-	"CONSUL":    3,
-	"OSMI":      4,
-	"APPMESH":   5,
-	"KUMA":      6,
-	"TRAEFIK":   7,
-	"OCTARINE":  8,
+	"UNSET":    0,
+	"ISTIO":    1,
+	"LINKERD":  2,
+	"CONSUL":   3,
+	"OSMI":     4,
+	"APPMESH":  5,
+	"KUMA":     6,
+	"TRAEFIK":  7,
+	"OCTARINE": 8,
 }
-

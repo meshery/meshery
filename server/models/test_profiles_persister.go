@@ -1,11 +1,10 @@
 package models
 
 import (
-	"github.com/meshery/meshery/server/models/performance"
 	"encoding/json"
 	"time"
 
-	
+	"github.com/meshery/meshery/server/models/performance"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/core"
 )
@@ -23,9 +22,9 @@ type PerformanceTestConfig struct {
 
 // UserTestProfiles - represents a page of user test configs
 type UserTestProfiles struct {
-	Page        uint64                       `json:"page"`
-	PageSize    uint64                       `json:"pageSize"`
-	TotalCount  int                          `json:"totalCount"`
+	Page        uint64                               `json:"page"`
+	PageSize    uint64                               `json:"pageSize"`
+	TotalCount  int                                  `json:"totalCount"`
 	TestConfigs []*performance.PerformanceTestConfig `json:"testConfigs"`
 }
 

@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"github.com/meshery/meshery/server/models/performance"
 	"encoding/json"
 	"net/http"
 	"strings"
@@ -9,8 +8,8 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 
-	
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/performance"
 )
 
 // SMPMeshes defines the JSON payload structure for available meshes api

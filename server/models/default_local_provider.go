@@ -1,7 +1,6 @@
 package models
 
 import (
-	"github.com/meshery/meshery/server/models/performance"
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
@@ -24,6 +23,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/httputil"
+	"github.com/meshery/meshery/server/models/performance"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
@@ -36,7 +36,6 @@ import (
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 	"github.com/oapi-codegen/runtime/types"
 	"github.com/pkg/errors"
-	
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 	"gorm.io/gorm"

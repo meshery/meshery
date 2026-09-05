@@ -1,7 +1,6 @@
 package models
 
 import (
-	"github.com/meshery/meshery/server/models/performance"
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
@@ -30,6 +29,7 @@ import (
 	servercore "github.com/meshery/meshery/server/core"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshery/server/models/httputil"
+	"github.com/meshery/meshery/server/models/performance"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/logger"
@@ -37,7 +37,6 @@ import (
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
-	
 	"github.com/spf13/viper"
 	"k8s.io/client-go/util/homedir"
 )

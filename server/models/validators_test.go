@@ -1,11 +1,10 @@
 package models
 
 import (
-	"github.com/meshery/meshery/server/models/performance"
 	"errors"
 	"testing"
 
-	
+	"github.com/meshery/meshery/server/models/performance"
 )
 
 func TestSMPPerformanceTestConfigValidator(t *testing.T) {
