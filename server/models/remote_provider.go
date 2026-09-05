@@ -308,7 +308,7 @@ func (l *RemoteProvider) fetchCapabilities(ctx context.Context, token string, ve
 
 	var resp *http.Response
 	if token == "" {
-		c := &http.Client{Timeout: 3 * time.Second}
+		c := httputil.NewHTTPClientWithTimeout(3 * time.Second)
 		const maxRetries = 3
 		for i := 0; i < maxRetries; i++ {
 			resp, err = c.Do(req)
@@ -544,7 +544,7 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 	buf, _ := encoding.Marshal(connectionPayload)
 	data := bytes.NewReader(buf)
 
-	client := &http.Client{}
+	client := httputil.DefaultHTTPClient
 	newReq, _ := http.NewRequest("POST", anonnymouseUserEp.String(), data)
 
 	newReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
@@ -4945,7 +4945,7 @@ func TarXZF(srcURL, destination string, log logger.Handler) error {
 		return fmt.Errorf("file is not of type tar.gz or tgz")
 	}
 
-	resp, err := http.Get(srcURL)
+	resp, err := httputil.DefaultHTTPClient.Get(srcURL)
 	if err != nil {
 		if resp == nil {
 			return fmt.Errorf("could not reach %v: %w", srcURL, err)

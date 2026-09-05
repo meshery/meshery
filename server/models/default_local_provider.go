@@ -746,7 +746,7 @@ func (l *DefaultLocalProvider) shipResults(_ *http.Request, data []byte) (string
 	remoteProviderURL, _ := url.Parse(l.ProviderBaseURL + "/api/performance/results")
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 	cReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
-	c := &http.Client{}
+	c := httputil.DefaultHTTPClient
 	resp, err := c.Do(cReq)
 	if err != nil {
 		l.Log.Warn(ErrDoRequest(err, cReq.Method, remoteProviderURL.String()))
@@ -797,7 +797,7 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 	remoteProviderURL, _ := url.Parse(l.ProviderBaseURL + "/result/metrics")
 	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 	cReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
-	c := &http.Client{}
+	c := httputil.DefaultHTTPClient
 	resp, err := c.Do(cReq)
 	if err != nil {
 		l.Log.Warn(ErrDoRequest(err, cReq.Method, remoteProviderURL.String()))
@@ -2005,7 +2005,7 @@ func githubRepoFilterScan(
 }
 
 func genericHTTPPatternFile(fileURL string, log logger.Handler) ([]MesheryPattern, error) {
-	resp, err := http.Get(fileURL)
+	resp, err := httputil.DefaultHTTPClient.Get(fileURL)
 	if err != nil {
 		return nil, err
 	}
@@ -2042,7 +2042,7 @@ func genericHTTPPatternFile(fileURL string, log logger.Handler) ([]MesheryPatter
 }
 
 func genericHTTPFilterFile(fileURL string, log logger.Handler) ([]MesheryFilter, error) {
-	resp, err := http.Get(fileURL)
+	resp, err := httputil.DefaultHTTPClient.Get(fileURL)
 	if err != nil {
 		return nil, err
 	}

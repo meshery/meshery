@@ -26,6 +26,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -237,7 +238,7 @@ func createMinikubeConnection() error {
 }
 
 func getContexts(configFile string) ([]string, error) {
-	client := &http.Client{}
+	client := httputil.DefaultHTTPClient
 
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
