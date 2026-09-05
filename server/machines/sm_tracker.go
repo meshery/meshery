@@ -131,6 +131,29 @@ func (smt *ConnectionToStateMachineInstanceTracker) RemoveIfMatchAndGeneration(i
 	}
 }
 
+// AddIfAbsent registers inst for id only when nothing is registered for it and
+// reports whether it did.
+//
+// It exists so a transition that has just adopted a machine can re-assert
+// ownership of the tracker entry after a concurrent delete cleanup removed it.
+// That cleanup is not wrong when it runs: at that moment the machine really is
+// the delete's, and the reconnect has not committed yet. It only becomes wrong
+// once the reconnect commits, and this is where the reconnect repairs it.
+// Unlike Add it never clobbers a different machine that some other request has
+// since created for the same id.
+func (smt *ConnectionToStateMachineInstanceTracker) AddIfAbsent(id core.Uuid, inst *StateMachine) bool {
+	smt.mx.Lock()
+	defer smt.mx.Unlock()
+	if smt.ConnectToInstanceMap == nil {
+		smt.ConnectToInstanceMap = make(map[core.Uuid]*StateMachine)
+	}
+	if _, ok := smt.ConnectToInstanceMap[id]; ok {
+		return false
+	}
+	smt.ConnectToInstanceMap[id] = inst
+	return true
+}
+
 func (smt *ConnectionToStateMachineInstanceTracker) Add(id core.Uuid, inst *StateMachine) {
 	smt.mx.Lock()
 	defer smt.mx.Unlock()

@@ -144,12 +144,42 @@ func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 // wherever possible use the userID and systemID from context as the events can be created from other comps or actors and not only user actors.
 // In cases when the event is received as part of some other event and not explicitly created by an actor, use the useID and systemID of the actor who initially invoked the machine.
 func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payload interface{}) (*events.Event, error) {
+	return sm.sendEvent(ctx, eventType, payload, nil)
+}
+
+// SendEventWithGeneration behaves exactly like SendEvent and additionally
+// reports the lifecycle generation this call leaves installed on the machine,
+// read while the machine lock is still held.
+//
+// Callers that must act on "the generation MY transition committed" have to use
+// this rather than calling GetLifecycleCtx() after SendEvent returns. SendEvent
+// releases sm.mx before returning, and a request already blocked on that lock
+// can commit in the gap; the caller would then read that newer generation and
+// treat a connection somebody else just adopted as its own. The delete cleanup
+// decides whether it still owns the tracker entry on exactly this comparison.
+//
+// The returned context is nil only for a machine on which no transition has
+// ever committed.
+func (sm *StateMachine) SendEventWithGeneration(ctx context.Context, eventType EventType, payload interface{}) (*events.Event, context.Context, error) {
+	var generation context.Context
+	event, err := sm.sendEvent(ctx, eventType, payload, &generation)
+	return event, generation, err
+}
+
+func (sm *StateMachine) sendEvent(ctx context.Context, eventType EventType, payload interface{}, generationOut *context.Context) (*events.Event, error) {
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
 	userUUID := user.ID
 	ctx = context.WithValue(ctx, models.ProviderCtxKey, sm.Provider)
 	sm.mx.Lock()
 	defer sm.mx.Unlock()
+	// Deferred calls run last-in-first-out, so this publishes the generation
+	// before the Unlock above releases the machine: the caller sees the
+	// generation this transition leaves behind, never one installed by a
+	// transition that commits after this call returns.
+	if generationOut != nil {
+		defer func() { *generationOut = sm.LifecycleCtx }()
+	}
 	var event *events.Event
 
 	// invalidTransitionEvent builds the Error event for a fatal transition

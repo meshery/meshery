@@ -193,3 +193,35 @@ func TestRemoveIfMatchAndState(t *testing.T) {
 	tracker2.RemoveIfMatchAndState(id2, inst2, allowed...)
 	tracker2.RemoveIfMatchAndState(core.Uuid(uuid.Must(uuid.NewV4())), inst2, allowed...)
 }
+
+func TestAddIfAbsent(t *testing.T) {
+	tracker := &ConnectionToStateMachineInstanceTracker{}
+	id := core.Uuid(uuid.Must(uuid.NewV4()))
+	first := &StateMachine{ID: id}
+	second := &StateMachine{ID: id}
+
+	// Adopts an id nothing holds, including through a nil map.
+	if !tracker.AddIfAbsent(id, first) {
+		t.Fatal("expected AddIfAbsent to adopt an unheld id")
+	}
+	if got, ok := tracker.Get(id); !ok || got != first {
+		t.Fatal("expected the adopted instance to be tracked")
+	}
+
+	// Never clobbers a machine somebody else already registered.
+	if tracker.AddIfAbsent(id, second) {
+		t.Fatal("expected AddIfAbsent to refuse an id that is already held")
+	}
+	if got, _ := tracker.Get(id); got != first {
+		t.Fatal("AddIfAbsent replaced an existing instance")
+	}
+
+	// Re-adoption after a removal is what the delete/reconnect hand-off needs.
+	tracker.Remove(id)
+	if !tracker.AddIfAbsent(id, second) {
+		t.Fatal("expected AddIfAbsent to re-adopt after the entry was removed")
+	}
+	if got, _ := tracker.Get(id); got != second {
+		t.Fatal("expected the re-adopted instance to be tracked")
+	}
+}

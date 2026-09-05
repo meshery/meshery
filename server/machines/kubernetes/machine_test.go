@@ -105,3 +105,26 @@ func TestRegisteredState_HasNotFoundTransition(t *testing.T) {
 		t.Fatalf("expected NotFound transition to go to %q, got %q", machines.NOTFOUND, next)
 	}
 }
+
+func TestDeleteStateAcceptsRegisterAndConnect(t *testing.T) {
+	state := Delete()
+
+	for event, want := range map[machines.EventType]machines.StateType{
+		machines.Register: machines.REGISTERED,
+		machines.Connect:  machines.CONNECTED,
+	} {
+		got, ok := state.Events[event]
+		if !ok {
+			t.Fatalf("expected DELETED to accept %q so a reconnect can adopt a machine that is still being cleaned up", event)
+		}
+		if got != want {
+			t.Fatalf("DELETED --%s--> %q, want %q", event, got, want)
+		}
+	}
+
+	// A retained DELETED machine must not accept a second Delete: the cleanup
+	// for the first one is still running and owns the tracker entry.
+	if next, ok := state.Events[machines.Delete]; ok {
+		t.Fatalf("expected DELETED to have no Delete edge, got %q", next)
+	}
+}
