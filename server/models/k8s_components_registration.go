@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"time"
 
 	"github.com/meshery/schemas/models/core"
 
@@ -59,6 +60,12 @@ type ComponentsRegistrationHelper struct {
 	ctxRegStatusMap map[string]RegistrationStatus
 	log             logger.Handler
 	mx              sync.RWMutex
+	// regSem bounds how many contexts are registered concurrently across all
+	// RegisterComponents calls on this helper. It is shared (not per-call) because
+	// the helper itself is a single long-lived instance reused across concurrent
+	// requests; a per-call semaphore would let N concurrent requests each get their
+	// own budget, multiplying the effective concurrency by N.
+	regSem chan struct{}
 }
 
 func NewComponentsRegistrationHelper(logger logger.Handler) *ComponentsRegistrationHelper {
@@ -66,6 +73,7 @@ func NewComponentsRegistrationHelper(logger logger.Handler) *ComponentsRegistrat
 		ctxRegStatusMap: make(map[string]RegistrationStatus),
 		log:             logger,
 		mx:              sync.RWMutex{},
+		regSem:          make(chan struct{}, maxConcurrentK8sRegistrations),
 	}
 }
 
@@ -83,6 +91,18 @@ func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *Comp
 }
 
 type K8sRegistrationFunction func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID core.Uuid, reg *meshmodel.RegistryManager, eb *Broadcast, log logger.Handler, ctxName string) error
+
+// maxConcurrentK8sRegistrations bounds how many contexts RegisterComponents will
+// register concurrently, independent of how many contexts a single request
+// supplies. Without this cap, a kubeconfig with a large number of contexts (which
+// need not point at real, reachable clusters) drives a goroutine, file descriptor,
+// and outbound-dial spike proportional to attacker-controlled input.
+const maxConcurrentK8sRegistrations = 10
+
+// k8sRegistrationTimeout bounds how long a single context's registration may run.
+// Without a deadline, a slow or unreachable API server can hold a semaphore slot
+// (see regSem) indefinitely, starving every other context waiting to register.
+const k8sRegistrationTimeout = 30 * time.Second
 
 // RegisterComponents starts registration of components for the contexts
 func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc []K8sRegistrationFunction, reg *meshmodel.RegistryManager, eventsBrodcaster *Broadcast, provider Provider, userID string, skip bool) {
@@ -102,6 +122,11 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 		return
 	}
 
+	// admit filters ctxs down to the ones that transition NotRegistered ->
+	// Registering, persisting/publishing the started event for each. Doing this
+	// synchronously, before any goroutine is spawned, keeps the (typically small)
+	// list of ctxs from itself becoming an unbounded amount of caller-side work.
+	admitted := make([]*K8sContext, 0, len(ctxs))
 	for _, ctx := range ctxs {
 		ctxID := ctx.ID
 		connectionID := uuid.FromStringOrNil(ctx.ConnectionID)
@@ -129,31 +154,62 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 		}
 		eventsBrodcaster.Publish(userUUID, event)
 
-		go func(ctx *K8sContext) {
-			// set the status to RegistrationComplete
-			defer func() {
-				cg.mx.Lock()
-				cg.ctxRegStatusMap[ctxID] = RegistrationComplete
-				cg.mx.Unlock()
+		admitted = append(admitted, ctx)
+	}
+	if len(admitted) == 0 {
+		return
+	}
 
-				cg.log.Info("components registered for context ", ctxName, " ID:", ctxID)
-			}()
+	// Dispatch from a single goroutine that acquires the shared semaphore before
+	// spawning each per-context worker. This bounds how many goroutines exist at
+	// once to maxConcurrentK8sRegistrations, not just how many run their
+	// registration work concurrently: acquiring the semaphore inside each worker
+	// (the previous approach) still spawned one goroutine per context up front,
+	// so a kubeconfig with a large number of contexts could still exhaust
+	// goroutine/memory/scheduler resources before registration started. The
+	// dispatcher itself runs off the caller's goroutine so the HTTP handler still
+	// returns its 202 Accepted immediately.
+	go func() {
+		for _, ctx := range admitted {
+			cg.regSem <- struct{}{}
 
-			// start registration
-			cfg, err := ctx.GenerateKubeConfig()
-			if err != nil {
-				cg.log.Error(err)
-				return
-			}
-			for _, f := range regFunc {
-				err = f(&provider, context.Background(), cfg, ctxID, ctx.ConnectionID, userID, *ctx.MesheryInstanceID, reg, eventsBrodcaster, cg.log, ctxName)
+			go func(ctx *K8sContext) {
+				defer func() { <-cg.regSem }()
+
+				ctxID := ctx.ID
+				ctxName := ctx.Name
+
+				// set the status to RegistrationComplete
+				defer func() {
+					cg.mx.Lock()
+					cg.ctxRegStatusMap[ctxID] = RegistrationComplete
+					cg.mx.Unlock()
+
+					cg.log.Info("components registered for context ", ctxName, " ID:", ctxID)
+				}()
+
+				// start registration
+				cfg, err := ctx.GenerateKubeConfig()
 				if err != nil {
-					cg.log.Error(ErrUnreachableKubeAPI(err, ctx.Server))
+					cg.log.Error(err)
 					return
 				}
-			}
-		}(ctx)
-	}
+
+				// Bound how long this context can hold its semaphore slot; see
+				// k8sRegistrationTimeout.
+				regCtx, cancel := context.WithTimeout(context.Background(), k8sRegistrationTimeout)
+				defer cancel()
+
+				for _, f := range regFunc {
+					err = f(&provider, regCtx, cfg, ctxID, ctx.ConnectionID, userID, *ctx.MesheryInstanceID, reg, eventsBrodcaster, cg.log, ctxName)
+					if err != nil {
+						cg.log.Error(ErrUnreachableKubeAPI(err, ctx.Server))
+						return
+					}
+				}
+			}(ctx)
+		}
+	}()
 }
 
 // Caches k8sMeshModel metadatas in memory to use at the time of dynamic k8s component generation
