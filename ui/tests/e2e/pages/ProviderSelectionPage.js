@@ -5,7 +5,13 @@ export class ProviderSelectionPage {
   }
 
   getProviderMenuItem(providerName) {
-    return this.page.getByRole('menuitem', { name: providerName });
+    // The MUI menu item renders as "${providerName}" in some CI setups, and as
+    // "${providerName} More information about ${providerName}" when the info
+    // icon button is present. Using a regex that matches either form avoids a
+    // Playwright strict-mode violation.
+    return this.page.getByRole('menuitem', {
+      name: new RegExp(`^${providerName}(?:\\s+More.*)?\\s*$`, 'i'),
+    });
   }
 
   async navigateToProviderSelection() {
