@@ -446,7 +446,7 @@ func chooseDirectProvider(provs map[string]Provider, option string) (Provider, e
 			return provArray[i], nil
 		}
 	}
-	return provArray[1], fmt.Errorf("the specified provider '%s' is not available. Please try giving correct provider name", option)
+	return Provider{}, fmt.Errorf("the specified provider '%s' is not available. Please try giving correct provider name", option)
 }
 
 func createProviderURI(provider Provider, host string, port int) (string, error) {
