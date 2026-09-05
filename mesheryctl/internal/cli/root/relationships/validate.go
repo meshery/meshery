@@ -140,45 +140,5 @@ func validateRelationshipFile(filePath string, data []byte) validation.Result {
 		}
 	}
 
-	var errs []string
-	if rel.SchemaVersion == "" {
-		errs = append(errs, "schemaVersion is required")
-	}
-	if rel.Kind == "" {
-		errs = append(errs, "kind is required")
-	} else {
-		validKinds := map[relationship.RelationshipDefinitionKind]bool{
-			relationship.Edge:         true,
-			relationship.Hierarchical: true,
-			relationship.Sibling:      true,
-		}
-		if !validKinds[rel.Kind] {
-			errs = append(errs, fmt.Sprintf("invalid kind %q: must be one of [edge, hierarchical, sibling]", rel.Kind))
-		}
-	}
-	if rel.RelationshipType == "" {
-		errs = append(errs, "type is required")
-	}
-	if rel.SubType == "" {
-		errs = append(errs, "subType is required")
-	}
-	if rel.Version == "" {
-		errs = append(errs, "version is required")
-	}
-
-	name := string(rel.Kind)
-	if rel.SubType != "" {
-		name = fmt.Sprintf("%s/%s", rel.Kind, rel.SubType)
-	}
-	if name == "/" || name == "" {
-		name = filepath.Base(filePath)
-	}
-
-	return validation.Result{
-		FilePath:   filePath,
-		EntityType: "relationship",
-		EntityName: name,
-		IsValid:    len(errs) == 0,
-		Errors:     errs,
-	}
+	return validation.ValidateRelationshipFields(filePath, rel)
 }

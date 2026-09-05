@@ -29,6 +29,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshkit/encoding"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
 )
 
 // maxResponseBytes limits URL-fetched file size to 25 MB.
@@ -164,7 +165,10 @@ func CollectFiles(paths []string, filter FileFilter) (map[string][]byte, error) 
 				}
 				data, readErr := os.ReadFile(filePath)
 				if readErr != nil {
-					return nil // skip unreadable files during directory walk
+					// Skip unreadable files during directory walk, but let the
+					// user know one was skipped rather than failing silently.
+					utils.Log.Warn(fmt.Errorf("skipping unreadable file %s: %w", filePath, readErr))
+					return nil
 				}
 				if filter == nil || filter(data) {
 					result[filePath] = data
@@ -185,6 +189,54 @@ func CollectFiles(paths []string, filter FileFilter) (map[string][]byte, error) 
 	}
 
 	return result, nil
+}
+
+// ValidateRelationshipFields checks the required fields of a relationship
+// definition and returns the Result for it. It is shared by
+// `mesheryctl model validate` and `mesheryctl relationship validate` so the
+// two commands never drift on what counts as a valid relationship.
+func ValidateRelationshipFields(filePath string, rel relationship.RelationshipDefinition) Result {
+	var errs []string
+	if rel.SchemaVersion == "" {
+		errs = append(errs, "schemaVersion is required")
+	}
+	if rel.Kind == "" {
+		errs = append(errs, "kind is required")
+	} else {
+		validKinds := map[relationship.RelationshipDefinitionKind]bool{
+			relationship.Edge:         true,
+			relationship.Hierarchical: true,
+			relationship.Sibling:      true,
+		}
+		if !validKinds[rel.Kind] {
+			errs = append(errs, fmt.Sprintf("invalid kind %q: must be one of [edge, hierarchical, sibling]", rel.Kind))
+		}
+	}
+	if rel.RelationshipType == "" {
+		errs = append(errs, "type is required")
+	}
+	if rel.SubType == "" {
+		errs = append(errs, "subType is required")
+	}
+	if rel.Version == "" {
+		errs = append(errs, "version is required")
+	}
+
+	name := string(rel.Kind)
+	if rel.SubType != "" {
+		name = fmt.Sprintf("%s/%s", rel.Kind, rel.SubType)
+	}
+	if name == "/" || name == "" {
+		name = filepath.Base(filePath)
+	}
+
+	return Result{
+		FilePath:   filePath,
+		EntityType: "relationship",
+		EntityName: name,
+		IsValid:    len(errs) == 0,
+		Errors:     errs,
+	}
 }
 
 // SortedPaths returns the keys of a map sorted lexicographically.

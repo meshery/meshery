@@ -5,8 +5,8 @@ import (
 )
 
 var (
-	ErrEmptySheetDataCode        = "mesheryctl-1204"
-	ErrValidateRelationshipCode  = "mesheryctl-1206"
+	ErrEmptySheetDataCode       = "mesheryctl-1204"
+	ErrValidateRelationshipCode = "mesheryctl-1256"
 )
 
 const (
