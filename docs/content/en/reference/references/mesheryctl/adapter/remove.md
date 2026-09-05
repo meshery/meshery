@@ -7,15 +7,17 @@ subcommand: remove
 
 # mesheryctl adapter remove
 
-remove cloud and cloud native infrastructure
+Remove cloud and cloud native infrastructure
 
 ## Synopsis
 
-remove cloud and cloud native infrastructure
+Remove cloud and cloud native infrastructure
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl adapter remove [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,23 +26,20 @@ mesheryctl adapter remove [flags]
 Remove Linkerd deployment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl adapter remove linkerd
 
+</div>
 </div>
 </pre> 
 
 Remove a Linkerd control plane found under a specific namespace (linkerd-ns)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl adapter remove linkerd --namespace linkerd-ns
 
 </div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-		
-
 </div>
 </pre> 
 

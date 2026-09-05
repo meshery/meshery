@@ -16,8 +16,10 @@ Print history of Meshery's logs and begin tailing them.
 It also shows the logs of a specific component.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system logs [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -26,23 +28,29 @@ mesheryctl system logs [flags]
 Show logs (without tailing)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system logs
 
+</div>
 </div>
 </pre> 
 
 Starts tailing Meshery server debug logs (works with components also)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system logs --follow
 
+</div>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system logs meshery-istio
 
+</div>
 </div>
 </pre> 
 
