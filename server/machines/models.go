@@ -45,10 +45,10 @@ type Payload struct {
 	Credential models.Credential
 }
 
-// Represents an event in the system/machine
+// EventType represents an event in the system/machine.
 type EventType string
 
-// Represents the mapping between event and the next state in the event's response
+// Events represents the mapping between an event and the next state in the event's response.
 type Events map[EventType]StateType
 
 type StateMachine struct {
@@ -125,9 +125,9 @@ func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 	return DefaultState, ErrInvalidTransitionEvent(sm.CurrentState, event)
 }
 
-// Returns events.Event and error. The func invoking the SendEvent should handle the error and publish the event.
-// wherever possible use the userID and systemID from context as the events can be created from other comps or actors and not only user actors.
-// In cases when the event is received as part of some other event and not explicitly created by an actor, use the useID and systemID of the actor who initially invoked the machine.
+// SendEvent returns events.Event and error. The func invoking SendEvent should handle the error and publish the event.
+// Wherever possible use the userID and systemID from context as the events can be created from other comps or actors and not only user actors.
+// In cases when the event is received as part of some other event and not explicitly created by an actor, use the userID and systemID of the actor who initially invoked the machine.
 func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payload interface{}) (*events.Event, error) {
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)

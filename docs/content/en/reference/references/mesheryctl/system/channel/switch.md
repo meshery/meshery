@@ -7,7 +7,7 @@ subcommand: channel
 
 # mesheryctl system channel switch
 
-switch release channel and version
+Switch release channel and version
 
 ## Synopsis
 
@@ -15,8 +15,10 @@ Switch release channel and version of context in focus
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system channel switch [stable|stable-version|edge|edge-version] [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +27,10 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version] [flag
 Switch between release channels
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 
+</div>
 </div>
 </pre> 
 
