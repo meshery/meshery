@@ -47,7 +47,6 @@ func (m *lifecycleTestMockProvider) UpdateConnectionById(token string, conn *con
 	}
 	m.mu.Unlock()
 
-
 	return &connections.Connection{ID: uuid.FromStringOrNil(connID), Name: name, Status: conn.Status, Kind: "kubernetes"}, nil
 }
 

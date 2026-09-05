@@ -150,3 +150,46 @@ func TestGetOrInitializePanicYieldsErrorToAllWaiters(t *testing.T) {
 		t.Fatalf("expected subsequent initialization to be attempted exactly 1 time, got %d", initAttempts)
 	}
 }
+
+func TestRemoveIfMatchAndState(t *testing.T) {
+	newTracked := func(state StateType) (*ConnectionToStateMachineInstanceTracker, core.Uuid, *StateMachine) {
+		tracker := &ConnectionToStateMachineInstanceTracker{ConnectToInstanceMap: map[core.Uuid]*StateMachine{}}
+		id := core.Uuid(uuid.Must(uuid.NewV4()))
+		inst := &StateMachine{ID: id, CurrentState: state}
+		tracker.Add(id, inst)
+		return tracker, id, inst
+	}
+
+	allowed := []StateType{DISCOVERED, REGISTERED, InitialState, DefaultState}
+
+	for _, state := range allowed {
+		tracker, id, inst := newTracked(state)
+		tracker.RemoveIfMatchAndState(id, inst, allowed...)
+		if _, ok := tracker.Get(id); ok {
+			t.Errorf("state %q: expected an unestablished machine to be removed", state)
+		}
+	}
+
+	for _, state := range []StateType{CONNECTED, DISCONNECTED, DELETED, NOTFOUND, IGNORED} {
+		tracker, id, inst := newTracked(state)
+		tracker.RemoveIfMatchAndState(id, inst, allowed...)
+		if _, ok := tracker.Get(id); !ok {
+			t.Errorf("state %q: an established machine must survive a registration cancel", state)
+		}
+	}
+
+	// A cancel must not drop a machine somebody else replaced under the same id.
+	tracker, id, inst := newTracked(REGISTERED)
+	other := &StateMachine{ID: id, CurrentState: REGISTERED}
+	tracker.Add(id, other)
+	tracker.RemoveIfMatchAndState(id, inst, allowed...)
+	if got, ok := tracker.Get(id); !ok || got != other {
+		t.Fatal("expected the replacement instance to survive a stale owner's removal")
+	}
+
+	// Idempotent, and safe on an unknown id.
+	tracker2, id2, inst2 := newTracked(REGISTERED)
+	tracker2.RemoveIfMatchAndState(id2, inst2, allowed...)
+	tracker2.RemoveIfMatchAndState(id2, inst2, allowed...)
+	tracker2.RemoveIfMatchAndState(core.Uuid(uuid.Must(uuid.NewV4())), inst2, allowed...)
+}
