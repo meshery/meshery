@@ -75,7 +75,9 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 		// inside the resolver and still yields the Settings defaults):
 		// connect with layer-free defaults and skip the cluster apply
 		// below, since the intended configuration is unknown.
-		machinectx.log.Error(errResolve)
+		if machinectx.log != nil {
+			machinectx.log.Error(errResolve)
+		}
 		mergedControllersConfig = nil
 	}
 
@@ -94,6 +96,16 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 	).Mode
 
 	go func() {
+		machinectx.ActionMutex.Lock()
+		defer machinectx.ActionMutex.Unlock()
+
+		if ctx.Err() != nil {
+			if machinectx.log != nil {
+				machinectx.log.Info("Connect side-effects aborted due to lifecycle cancellation")
+			}
+			return
+		}
+
 		// SetControllersConfig first: AddCtxControllerHandlers constructs the
 		// operator controller handler with the Helm chart version this document
 		// resolves to (operator.version), and captures it there.
@@ -103,6 +115,22 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 			AddCtxControllerHandlers(machinectx.K8sContext).
 			UpdateOperatorsStatusMap(machinectx.OperatorTracker).
 			DeployUndeployedOperators(machinectx.OperatorTracker, machinectx.K8sContext.ID)
+
+		// MeshKit's Deploy() does not accept a context.Context and therefore
+		// cannot be cancelled mid-flight. If a newer Disconnect/Delete
+		// transition was accepted while Deploy was running, LifecycleCtx will
+		// now be cancelled. Re-check before proceeding to MeshSync setup so
+		// that a stale Connect worker does not transiently publish a data
+		// handler that the subsequent Disconnect goroutine must remove.
+		// ActionMutex still guarantees that the Disconnect cleanup runs after
+		// this goroutine exits, so correctness is preserved either way — this
+		// re-check merely avoids the unnecessary transient work.
+		if ctx.Err() != nil {
+			if machinectx.log != nil {
+				machinectx.log.Info("Connect side-effects partially aborted: lifecycle cancelled during operator deploy")
+			}
+			return
+		}
 		ctrlHelper.AddMeshsyncDataHandlers(ctx, machinectx.K8sContext, userUUID, *sysID, provider)
 
 		// Operator mode: best-effort apply of the explicitly-set
@@ -121,7 +149,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 			// Detached context: the connect request's context ends with the
 			// HTTP request, while this apply runs alongside the async
 			// operator deployment.
-			applyCtx, cancelApply := context.WithTimeout(context.Background(), 2*time.Minute)
+			applyCtx, cancelApply := context.WithTimeout(ctx, 2*time.Minute)
 			defer cancelApply()
 			if _, errApply := models.ApplyControllersConfigToCluster(applyCtx, machinectx.log, kubeClient, mergedControllersConfig); errApply != nil {
 				machinectx.log.Error(errApply)
