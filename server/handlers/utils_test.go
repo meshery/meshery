@@ -235,3 +235,53 @@ func TestGetPaginationParams(t *testing.T) {
 		})
 	}
 }
+
+// TestGetPageSizeParam pins getPageSizeParam to the canonical-first,
+// legacy-fallback contract that server/handlers/utils.go:getPaginationParams
+// already established for pageSize. The ~20 handlers that pass a page-size
+// string straight through to a provider call (rather than parsing it via
+// getPaginationParams) route through this helper instead of reading
+// urlValues.Get("pagesize") directly, so a regression here would silently
+// break pagination for every one of those handlers the moment a caller
+// switches from the legacy "pagesize" spelling to the canonical "pageSize"
+// one (e.g. once #18526's schemas-generated RTK clients land).
+func TestGetPageSizeParam(t *testing.T) {
+	tests := []struct {
+		name     string
+		query    string
+		expected string
+	}{
+		{
+			name:     "canonical pageSize used when present",
+			query:    "?pageSize=50",
+			expected: "50",
+		},
+		{
+			name:     "legacy pagesize used as fallback",
+			query:    "?pagesize=50",
+			expected: "50",
+		},
+		{
+			name:     "canonical pageSize wins over legacy pagesize",
+			query:    "?pageSize=10&pagesize=20",
+			expected: "10",
+		},
+		{
+			name:     "empty string when neither present",
+			query:    "",
+			expected: "",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodGet, "/api/test"+tc.query, nil)
+
+			got := getPageSizeParam(req.URL.Query())
+
+			if got != tc.expected {
+				t.Errorf("getPageSizeParam() = %q, want %q", got, tc.expected)
+			}
+		})
+	}
+}

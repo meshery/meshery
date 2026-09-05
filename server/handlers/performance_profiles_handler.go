@@ -93,7 +93,7 @@ func (h *Handler) GetPerformanceProfilesHandler(
 
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetPerformanceProfiles(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
+	resp, err := provider.GetPerformanceProfiles(tokenString, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"))
 	if err != nil {
 		fetchErr := ErrFetchProfiles(err)
 		h.log.Error(fetchErr)

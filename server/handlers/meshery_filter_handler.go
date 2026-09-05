@@ -246,7 +246,7 @@ func (h *Handler) GetMesheryFiltersHandler(
 		}
 	}
 
-	resp, err := provider.GetMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), filter.Visibility)
+	resp, err := provider.GetMesheryFilters(tokenString, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"), filter.Visibility)
 	if err != nil {
 		h.log.Error(ErrFetchFilter(err))
 		writeMeshkitError(rw, ErrFetchFilter(err), http.StatusInternalServerError)
@@ -269,7 +269,7 @@ func (h *Handler) GetCatalogMesheryFiltersHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetCatalogMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
+	resp, err := provider.GetCatalogMesheryFilters(tokenString, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"))
 	if err != nil {
 		h.log.Error(ErrFetchFilter(err))
 		writeMeshkitError(rw, ErrFetchFilter(err), http.StatusInternalServerError)
