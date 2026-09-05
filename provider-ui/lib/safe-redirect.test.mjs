@@ -148,3 +148,25 @@ test("rejects http://localhost return_to on a production HTTPS page", () => {
   assert.equal(isTrusted("http://localhost:4000/steal"), false);
   assert.equal(isTrusted("http://127.0.0.1:4000/steal"), false);
 });
+
+test("rejects http://localhost return_to when the page is served over a LAN/Docker IP", () => {
+  // A non-HTTPS page on a private IP is NOT a localhost dev context: there
+  // `localhost` is a different machine (the visitor's), so the token must not
+  // be forwarded to it. Only a same-origin redirect back to the LAN page holds.
+  const origin = "http://192.168.1.40:3000";
+  assert.equal(isTrusted("http://localhost:9999/steal", origin), false);
+  assert.equal(isTrusted("http://127.0.0.1:9999/steal", origin), false);
+  assert.equal(isTrusted("http://192.168.1.40:3000/auth/redirect/accept", origin), true);
+  // Same holds for any other non-localhost http origin.
+  assert.equal(isTrusted("http://localhost:4000/steal", "http://example.test"), false);
+});
+
+test("allows a cross-port localhost return_to only in true localhost dev", () => {
+  // provider-ui at :3000 forwarding to the local provider at :9876 is a
+  // different port (so not same-origin), honoured because the PAGE itself is a
+  // localhost origin.
+  assert.equal(
+    isTrusted("http://localhost:9876/auth/redirect/accept", "http://localhost:3000"),
+    true,
+  );
+});

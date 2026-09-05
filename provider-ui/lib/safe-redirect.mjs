@@ -54,15 +54,17 @@ const isSameOrigin = (url, currentOrigin) => {
   }
 };
 
-// True when the page itself is not being served over HTTPS (local dev, or a
-// self-hosted server reached over a LAN/Docker IP). The localhost allowance
-// below only makes sense in that context — an HTTPS production page (e.g. a
-// trusted provider host) must never honour an http://localhost `return_to`,
-// or a phishing link could carry the real provider token to a listener on
-// the *victim's* own machine even though the page is otherwise fully secure.
-const isNonHttpsOrigin = (currentOrigin) => {
+// True when the page itself is an http localhost origin — the only context
+// where an `http://localhost` return_to may be honoured. It must be the PAGE's
+// own origin, not merely "not HTTPS": a page reached over a LAN/Docker IP
+// (e.g. http://192.168.x.x:3000) is also non-HTTPS, but there `localhost` is a
+// *different* machine (the visitor's), so forwarding the token to it would
+// cross a trust boundary. A self-hosted LAN page instead relies on the
+// same-origin allowance below; an HTTPS page never qualifies.
+const isLocalDevOrigin = (currentOrigin) => {
   try {
-    return new URL(currentOrigin).protocol !== "https:";
+    const origin = new URL(currentOrigin);
+    return origin.protocol === "http:" && isLocalhostHostname(origin.hostname.toLowerCase());
   } catch {
     return false;
   }
@@ -93,12 +95,12 @@ export const buildTrustedHosts = ({ providerUrl, currentOrigin, allowedHosts = [
 //   - HTTPS: the host (hostname + port) must be exactly trusted. Exact matching
 //     rejects look-alike subdomains and same-host-different-port.
 //   - HTTP: honoured only for local dev / a self-hosted server reached over a
-//     LAN/Docker IP — a localhost host (but only when the page itself is not
-//     served over HTTPS, so a production page can never be told to forward
-//     the token to a listener on the *victim's* machine), or an exact
-//     same-origin redirect back to the page itself (same-origin never crosses
-//     a trust boundary, and the full-origin check avoids an https->http
-//     downgrade to a roster host).
+//     LAN/Docker IP — a localhost host, but only when the PAGE itself is a
+//     localhost origin (so neither a production HTTPS page nor a page reached
+//     over a LAN/Docker IP can be told to forward the token to a listener on
+//     the *visitor's* own machine), or an exact same-origin redirect back to
+//     the page itself (same-origin never crosses a trust boundary, and the
+//     full-origin check avoids an https->http downgrade to a roster host).
 //   - Anything else (javascript:, data:, malformed, relative) is rejected.
 export const isReturnToTrusted = (returnTo, { trustedHosts, currentOrigin }) => {
   let url;
@@ -112,7 +114,7 @@ export const isReturnToTrusted = (returnTo, { trustedHosts, currentOrigin }) => 
   }
   if (url.protocol === "http:") {
     return (
-      (isNonHttpsOrigin(currentOrigin) && isLocalhostHostname(url.hostname.toLowerCase())) ||
+      (isLocalDevOrigin(currentOrigin) && isLocalhostHostname(url.hostname.toLowerCase())) ||
       isSameOrigin(url, currentOrigin)
     );
   }
