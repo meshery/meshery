@@ -30,15 +30,19 @@ const {
   EMPTY_QUERY_RESULT,
   NOOP_MUTATION,
   UI_STATE,
+  submittedOrgId,
 } = vi.hoisted(() => ({
   notify: vi.fn(),
   createWorkspace: vi.fn(),
   updateWorkspace: vi.fn(),
   deleteWorkspace: vi.fn(),
-  WORKSPACES_QUERY_RESULT: { data: { workspaces: [], totalCount: 0 } },
+  WORKSPACES_QUERY_RESULT: { data: { workspaces: [], totalCount: 0 }, isLoading: false },
   EMPTY_QUERY_RESULT: { data: undefined, isLoading: false },
   NOOP_MUTATION: [vi.fn()],
-  UI_STATE: { ui: { organization: { id: 'org-1' } } },
+  UI_STATE: { ui: { organization: { id: 'org-1' } as { id: string } | null } },
+  // Boxed so tests can override the id the mocked form "submits" without
+  // reassigning the hoisted binding itself (vi.hoisted values are const).
+  submittedOrgId: { current: 'org-1' as string | undefined },
 }));
 
 vi.mock('../../utils/hooks/useNotification', () => ({
@@ -92,7 +96,11 @@ vi.mock('../shared/Modal/Modal', () => ({
       data-testid="submit-workspace"
       disabled={isSubmitting}
       onClick={() =>
-        handleSubmit({ organizationId: 'org-1', name: 'team-space', description: 'shared' })
+        handleSubmit({
+          organizationId: submittedOrgId.current,
+          name: 'team-space',
+          description: 'shared',
+        })
       }
     >
       Save
@@ -124,7 +132,11 @@ vi.mock('@sistent/sistent', () => ({
       {children}
     </button>
   ),
+  CircularProgress: (props: any) => <div {...props} />,
   CustomColumnVisibilityControl: () => null,
+  CustomTooltip: ({ children, title }: any) => (
+    <div data-testid={`tooltip-${title}`}>{children}</div>
+  ),
   ErrorBoundary: ({ children }: any) => <>{children}</>,
   Modal: ({ children, open }: any) => (open ? <div>{children}</div> : null),
   ModalFooter: ({ children }: any) => <div>{children}</div>,
@@ -269,5 +281,101 @@ describe('Workspaces create flow notifications', () => {
     createWorkspace.mockReturnValue({ unwrap: () => Promise.resolve({ id: 'ws-1' }) });
     await userEvent.setup().click(screen.getByTestId('submit-workspace'));
     await waitFor(() => expect(screen.queryByTestId('submit-workspace')).not.toBeInTheDocument());
+  });
+});
+
+/**
+ * Regression coverage for meshery/meshery#21263.
+ *
+ * organizationId is a hidden field in the create-workspace form, seeded from
+ * `organization?.id` when the modal opens. If the org context hasn't
+ * hydrated yet, the user has no way to see or fix it, and the request used to
+ * reach the server with a missing/empty organizationId - which only surfaced
+ * as an opaque "Unable to unmarshal the : workspace" error. The Create button
+ * is disabled (with a tooltip) so that doomed click can't happen at all; the
+ * submit-time guard below is the remaining defense-in-depth for the other
+ * entry point into handleWorkspaceModalOpen (WorkspaceSwitcher's "+ Create
+ * Workspace", which does not go through this button).
+ */
+describe('Workspaces create flow — organization guard', () => {
+  beforeEach(() => {
+    notify.mockReset();
+    createWorkspace.mockReset();
+  });
+
+  afterEach(() => {
+    UI_STATE.ui.organization = { id: 'org-1' };
+    submittedOrgId.current = 'org-1';
+  });
+
+  it('disables the Create button with an explanatory tooltip while the organization has not loaded yet', async () => {
+    UI_STATE.ui.organization = null;
+    render(<Workspaces onSelectWorkspace={undefined} />);
+
+    const createButton = screen.getByText('Create').closest('button');
+    expect(createButton).toBeDisabled();
+    expect(screen.getByTestId(/^tooltip-Organization is still loading/)).toBeInTheDocument();
+
+    // A disabled native button does not dispatch click at all - the doomed
+    // action must be unreachable, not merely toasted after the fact.
+    await userEvent.setup().click(screen.getByText('Create'));
+
+    expect(screen.queryByTestId('submit-workspace')).not.toBeInTheDocument();
+    expect(createWorkspace).not.toHaveBeenCalled();
+    expect(notify).not.toHaveBeenCalled();
+  });
+
+  it('submit-time guard rejects creation when organizationId is missing, even with the modal already open', async () => {
+    submittedOrgId.current = undefined;
+
+    await openCreateModalAndSubmit();
+
+    expect(createWorkspace).not.toHaveBeenCalled();
+    await waitFor(() => expect(notify).toHaveBeenCalled());
+    const types = notifiedEventTypes();
+    expect(types).toContain('error');
+    expect(types).not.toContain('success');
+    expect(notify.mock.calls[0][0].message).toMatch(/organization/i);
+  });
+});
+
+/**
+ * Flagged in review on meshery/meshery#21335: the workspaces query is
+ * skipped until organization?.id hydrates, and a skipped RTK Query hook
+ * never reports isLoading - so `workspacesData` stayed undefined and
+ * `workspaces` defaulted to [], rendering EmptyState's "Click Create" prompt
+ * at the exact moment the Create button was disabled for "Organization is
+ * still loading…". Neither EmptyState nor the data views should render
+ * before organization and the workspaces query have both resolved.
+ */
+describe('Workspaces list — loading state', () => {
+  afterEach(() => {
+    UI_STATE.ui.organization = { id: 'org-1' };
+    WORKSPACES_QUERY_RESULT.data = { workspaces: [], totalCount: 0 };
+    WORKSPACES_QUERY_RESULT.isLoading = false;
+  });
+
+  it('shows a loading indicator instead of the empty state while the organization has not loaded yet', () => {
+    UI_STATE.ui.organization = null;
+    render(<Workspaces onSelectWorkspace={undefined} />);
+
+    expect(screen.getByTestId('workspaces-loading')).toBeInTheDocument();
+    expect(screen.queryByText('empty')).not.toBeInTheDocument();
+  });
+
+  it('shows a loading indicator instead of the empty state while the workspaces query is still in flight', () => {
+    WORKSPACES_QUERY_RESULT.data = undefined;
+    WORKSPACES_QUERY_RESULT.isLoading = true;
+    render(<Workspaces onSelectWorkspace={undefined} />);
+
+    expect(screen.getByTestId('workspaces-loading')).toBeInTheDocument();
+    expect(screen.queryByText('empty')).not.toBeInTheDocument();
+  });
+
+  it('shows the empty state once organization and workspace data have both resolved with zero workspaces', () => {
+    render(<Workspaces onSelectWorkspace={undefined} />);
+
+    expect(screen.queryByTestId('workspaces-loading')).not.toBeInTheDocument();
+    expect(screen.getByText('empty')).toBeInTheDocument();
   });
 });

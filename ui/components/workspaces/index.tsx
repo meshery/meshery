@@ -7,7 +7,9 @@ import {
 } from '@sistent/sistent';
 import {
   Box,
+  CircularProgress,
   CustomColumnVisibilityControl,
+  CustomTooltip,
   TeamsIcon,
   WorkspaceIcon,
   Modal,
@@ -185,7 +187,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
   const bulkDeleteRef = useRef(null);
   const { notify } = useNotification();
 
-  const { data: workspacesData } = useGetWorkspacesQuery(
+  const { data: workspacesData, isLoading: isWorkspacesLoading } = useGetWorkspacesQuery(
     {
       page: page,
       pagesize: pageSize,
@@ -205,7 +207,25 @@ const Workspaces = ({ onSelectWorkspace }) => {
   const [deleteWorkspace] = useDeleteWorkspaceMutation();
 
   const workspaces = workspacesData?.workspaces ? workspacesData.workspaces : [];
+  // The query above is skipped until organization?.id hydrates, and a skipped
+  // RTK Query hook never reports isLoading - so without this, `workspaces`
+  // reads as [] before the org has loaded and EmptyState's "Click Create"
+  // prompt flashes up at the exact moment the Create button is disabled for
+  // "Organization is still loading…" (flagged in review on meshery/meshery#21335).
+  const isResolvingWorkspaces = !organization?.id || isWorkspacesLoading;
   const handleCreateWorkspace = ({ organizationId, name, description }) => {
+    // Defense-in-depth: the modal only opens once organization?.id is present
+    // (see handleWorkspaceModalOpen), but organizationId is a hidden form
+    // field that nothing re-validates at submit time. Without this, a
+    // missing/invalid id reaches the server and surfaces only as an opaque
+    // unmarshal error (meshery/meshery#21263).
+    if (!organizationId) {
+      notify({
+        message: 'Unable to create workspace: organization is not available.',
+        event_type: EVENT_TYPES.ERROR,
+      });
+      return;
+    }
     createWorkspace({
       workspacePayload: {
         name: name,
@@ -318,11 +338,24 @@ const Workspaces = ({ onSelectWorkspace }) => {
       });
       setEditWorkspaceId(workspaceObject.id);
     } else {
+      // organizationId is hidden in the create form (see fetchSchema) and seeded
+      // solely from `organization` here, so the user has no way to see or
+      // correct it. If the org context hasn't hydrated yet, block opening the
+      // modal rather than let a workspace get created under an empty/invalid
+      // organizationId - the server only reports that as an opaque unmarshal
+      // error (meshery/meshery#21263).
+      if (!organization?.id) {
+        notify({
+          message: 'Organization is still loading. Please try again in a moment.',
+          event_type: EVENT_TYPES.ERROR,
+        });
+        return;
+      }
       setActionType(WORKSPACE_ACTION_TYPES.CREATE);
       setInitialData({
         name: undefined,
         description: '',
-        organizationId: organization?.id,
+        organizationId: organization.id,
       });
       setEditWorkspaceId('');
     }
@@ -441,33 +474,46 @@ const Workspaces = ({ onSelectWorkspace }) => {
         {!selectedWorkspace.id && (
           <ToolWrapper>
             <CreateButtonWrapper style={{ marginRight: '2rem' }}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={(e) =>
-                  handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE, selectedWorkspace)
-                }
-                sx={{
-                  backgroundColor: '#607d8b',
-                  padding: '8px',
-                  borderRadius: '5px',
-                }}
-                permissionKey={Keys.WorkspaceManagementCreateWorkspace}
-                data-cy="btnResetDatabase"
+              {/* organization?.id gates both the click handler (handleWorkspaceModalOpen)
+                  and the request payload (handleCreateWorkspace) - see meshery/meshery#21263.
+                  Disabling the button while it's falsy keeps the user from clicking into a
+                  doomed action instead of just toasting an error after the fact. MUI drops
+                  hover events on a disabled button, so the tooltip needs the wrapping span. */}
+              <CustomTooltip
+                title={!organization?.id ? 'Organization is still loading…' : ''}
+                disableHoverListener={Boolean(organization?.id)}
               >
-                <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
-                <Typography
-                  sx={{
-                    paddingLeft: '4px',
-                    marginRight: '4px',
-                    textTransform: 'none',
-                  }}
-                >
-                  Create
-                </Typography>
-              </Button>
+                <span>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={(e) =>
+                      handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE, selectedWorkspace)
+                    }
+                    disabled={!organization?.id}
+                    sx={{
+                      backgroundColor: '#607d8b',
+                      padding: '8px',
+                      borderRadius: '5px',
+                    }}
+                    permissionKey={Keys.WorkspaceManagementCreateWorkspace}
+                    data-cy="btnResetDatabase"
+                  >
+                    <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
+                    <Typography
+                      sx={{
+                        paddingLeft: '4px',
+                        marginRight: '4px',
+                        textTransform: 'none',
+                      }}
+                    >
+                      Create
+                    </Typography>
+                  </Button>
+                </span>
+              </CustomTooltip>
             </CreateButtonWrapper>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               {!selectedWorkspace?.id && (
@@ -497,7 +543,11 @@ const Workspaces = ({ onSelectWorkspace }) => {
           </ToolWrapper>
         )}
         <>
-          {workspaces.length === 0 ? (
+          {isResolvingWorkspaces ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
+              <CircularProgress data-testid="workspaces-loading" />
+            </Box>
+          ) : workspaces.length === 0 ? (
             <EmptyState
               icon={<WorkspaceIcon height="6rem" width="6rem" fill="#808080" />}
               message="No workspace available"
