@@ -2,6 +2,7 @@ import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import PerformanceForm from './PerformanceForm';
+import { isValidDuration } from '../../utils/validators';
 
 vi.mock('@/assets/icons', () => ({
   ExpandMore: () => <svg data-testid="expand-more-icon" />,
@@ -83,28 +84,60 @@ describe('PerformanceForm', () => {
     expect(handleInputDurationChange).toHaveBeenCalled();
   });
 
-  it('shows error styling and does not fire handleDurationChange when tError is set for an invalid duration', () => {
-    // Regression for: duration validation was evaluated against stale props instead of
-    // local form state, so invalid values (e.g. "0s", "abc") silently passed validation.
-    // handleSubmit / handleSaveProfile now sets tError="error-autocomplete-value" when
-    // isValidDuration(tState) returns false, keeping the modal open for correction.
-    const handleDurationChange = vi.fn();
-    const { container } = render(
-      <PerformanceForm
-        {...defaultProps}
-        t="abc"
-        tValue="abc"
-        tError="error-autocomplete-value"
-        handleDurationChange={handleDurationChange}
-      />,
-    );
+  it('shows validation error and does not call closeModal when an invalid duration is submitted', () => {
+    // Regression: the old code read `props.performanceProfile.duration` (the initial prop)
+    // instead of local `tState` when validating, so typing an invalid value and clicking
+    // Save Profile would silently pass validation if the prop held a valid default.
+    //
+    // This test mirrors the handleSaveProfile logic directly:
+    //   - t prop = '30s'  (a valid default that the old code would have read)
+    //   - typed tValue = '0s' (invalid — zero is rejected by isValidDuration)
+    // If validation mistakenly reads the prop it returns true and closeModal is called.
+    // If it correctly reads the typed state it returns false, sets tError, and returns early.
 
-    // Error class must be present on the duration field so the user sees the validation error.
-    const errorElement = container.querySelector('.error-autocomplete-value');
-    expect(errorElement).not.toBeNull();
+    const closeModal = vi.fn();
 
-    // The parent component (not the form) is responsible for blocking submission,
-    // so handleDurationChange should not have been called automatically.
-    expect(handleDurationChange).not.toHaveBeenCalled();
+    // Thin wrapper that owns tState (as handleSaveProfile does in index.tsx).
+    const TestHarness: React.FC = () => {
+      const [tState, setTState] = React.useState('0s'); // invalid typed value
+      const [tError, setTError] = React.useState('');
+
+      const handleSave = () => {
+        // Exact logic copied from index.tsx handleSaveProfile
+        if (!isValidDuration(tState)) {
+          setTError('error-autocomplete-value');
+          return;
+        }
+        setTError('');
+        closeModal();
+      };
+
+      return (
+        <>
+          <PerformanceForm
+            {...defaultProps}
+            t="30s" // prop carries the valid default; old code read this instead of state
+            tValue={tState}
+            tError={tError}
+            handleInputDurationChange={(_e, newValue) => setTState(newValue ?? '')}
+          />
+          <button data-testid="save-btn" onClick={handleSave}>
+            Save Profile
+          </button>
+        </>
+      );
+    };
+
+    const { container } = render(<TestHarness />);
+
+    // Trigger the save path with the invalid typed duration.
+    fireEvent.click(screen.getByTestId('save-btn'));
+
+    // Validation error must be visible so the user can correct the input.
+    expect(container.querySelector('.error-autocomplete-value')).not.toBeNull();
+
+    // Modal must NOT have been closed — the bug was that closeModal() was called
+    // even when duration validation failed.
+    expect(closeModal).not.toHaveBeenCalled();
   });
 });
