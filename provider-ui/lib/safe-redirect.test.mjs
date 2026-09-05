@@ -140,3 +140,11 @@ test("rejects a look-alike subdomain of a trusted host (exact match only)", () =
   assert.equal(isTrusted("https://evil.cloud.meshery.io/x"), false);
   assert.equal(isTrusted("https://cloud.meshery.io.evil.com/x"), false);
 });
+
+test("rejects http://localhost return_to on a production HTTPS page", () => {
+  // A phishing link on the real, HTTPS-served provider host must not be able
+  // to forward the token to a listener on the victim's own machine just
+  // because the target hostname is "localhost".
+  assert.equal(isTrusted("http://localhost:4000/steal"), false);
+  assert.equal(isTrusted("http://127.0.0.1:4000/steal"), false);
+});
