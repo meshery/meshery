@@ -33,6 +33,7 @@ var (
 	// ManifestsFolder is where the Kubernetes manifests are stored
 	ManifestsFolder = "manifests"
 	ReleaseTag      string
+	gitHubBaseURL   = "https://api.github.com"
 )
 
 type K8sCompose struct {
@@ -107,7 +108,7 @@ type Manifest struct {
 
 // GetManifestTreeURL returns the manifest tree url based on version
 func GetManifestTreeURL(version string) (string, error) {
-	url := "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + version + "?recursive=1"
+	url := gitHubBaseURL + "/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + version + "?recursive=1"
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to make GET request to %s", url)
@@ -117,6 +118,10 @@ func GetManifestTreeURL(version string) (string, error) {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", errors.Wrap(err, "failed to read response body")
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return "", ErrGitHubAPIResponse(resp.StatusCode, url, string(body))
 	}
 
 	var manLis ManifestList
@@ -144,6 +149,10 @@ func ListManifests(url string) ([]Manifest, error) {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to read response body")
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, ErrGitHubAPIResponse(resp.StatusCode, url, string(body))
 	}
 
 	var manLis ManifestList

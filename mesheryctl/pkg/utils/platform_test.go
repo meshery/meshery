@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//	http://www.apache.org/licenses/LICENSE-2.0
+//      http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,18 +15,99 @@
 package utils
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"testing"
 )
 
-// The function are related to download should be test in meshkit package, please do not add test here.
+func TestGetManifestTreeURL(t *testing.T) {
+	t.Run("returns error on non-200 HTTP status code (e.g. 403 Rate Limit)", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusForbidden)
+			_, _ = w.Write([]byte(`{"message": "API rate limit exceeded"}`))
+		}))
+		defer server.Close()
+
+		origURL := gitHubBaseURL
+		gitHubBaseURL = server.URL
+		defer func() { gitHubBaseURL = origURL }()
+
+		_, err := GetManifestTreeURL("v0.6.0")
+		expectedURL := gitHubBaseURL + "/repos/" + "meshery" + "/" + "meshery" + "/git/trees/" + "v0.6.0" + "?recursive=1"
+		expectedErr := ErrGitHubAPIResponse(http.StatusForbidden, expectedURL, `{"message": "API rate limit exceeded"}`)
+		AssertMeshkitErrorsEqual(t, err, expectedErr)
+	})
+
+	t.Run("happy path with valid ManifestList", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			respBody := `{
+				"sha": "12345",
+				"tree": [
+					{
+						"path": "install/deployment_yamls/k8s",
+						"url": "https://api.github.com/repos/meshery/meshery/git/trees/k8s-tree-sha"
+					}
+				]
+			}`
+			_, _ = w.Write([]byte(respBody))
+		}))
+		defer server.Close()
+
+		origURL := gitHubBaseURL
+		gitHubBaseURL = server.URL
+		defer func() { gitHubBaseURL = origURL }()
+
+		treeURL, err := GetManifestTreeURL("v0.6.0")
+		if err != nil {
+			t.Fatalf("expected no error, got: %v", err)
+		}
+		expected := "https://api.github.com/repos/meshery/meshery/git/trees/k8s-tree-sha"
+		if treeURL != expected {
+			t.Errorf("expected treeURL %q, got %q", expected, treeURL)
+		}
+	})
+}
 
 func TestListManifests(t *testing.T) {
-	t.Run("ListManifests with empty manifest", func(t *testing.T) {
-		url := "https://api.github.com/repos/meshery/meshery/git/trees/47c634a49e6d143a54d734437a26ad233146ddf5"
+	t.Run("returns error on non-200 HTTP status code (e.g. 403 Rate Limit)", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusForbidden)
+			_, _ = w.Write([]byte(`{"message": "API rate limit exceeded"}`))
+		}))
+		defer server.Close()
 
-		_, err := ListManifests(url)
+		_, err := ListManifests(server.URL)
+		expectedErr := ErrGitHubAPIResponse(http.StatusForbidden, server.URL, `{"message": "API rate limit exceeded"}`)
+		AssertMeshkitErrorsEqual(t, err, expectedErr)
+	})
+
+	t.Run("happy path with valid ManifestList", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			respBody := `{
+				"sha": "12345",
+				"tree": [
+					{
+						"path": "install/deployment_yamls/k8s/meshery-deployment.yaml",
+						"type": "blob"
+					}
+				]
+			}`
+			_, _ = w.Write([]byte(respBody))
+		}))
+		defer server.Close()
+
+		manifests, err := ListManifests(server.URL)
 		if err != nil {
-			t.Errorf("ListManifests failed: %v", err)
+			t.Fatalf("expected no error, got: %v", err)
+		}
+		if len(manifests) != 1 {
+			t.Fatalf("expected 1 manifest, got %d", len(manifests))
+		}
+		expectedPath := "install/deployment_yamls/k8s/meshery-deployment.yaml"
+		if manifests[0].Path != expectedPath {
+			t.Errorf("expected manifest path %q, got %q", expectedPath, manifests[0].Path)
 		}
 	})
 }
