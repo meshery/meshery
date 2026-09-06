@@ -7,7 +7,7 @@ subcommand: view
 
 # mesheryctl environment view
 
-View registered environmnents
+View registered environments
 
 ## Synopsis
 
