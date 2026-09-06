@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Tab,
   Tabs,
@@ -267,15 +267,37 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   }
 
   const RemoteProviderInfoTab = () => {
-    const [copied, setCopied] = useState(false);
-    const copyToClipboard = (text) => {
+    const [copiedKey, setCopiedKey] = useState<string | null>(null);
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const isMountedRef = useRef(true);
+
+    useEffect(() => {
+      isMountedRef.current = true;
+      return () => {
+        isMountedRef.current = false;
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+      };
+    }, []);
+
+    const copyToClipboard = (text: string, key: string) => {
       navigator.clipboard
         .writeText(text)
         .then(() => {
-          setCopied(true);
+          if (!isMountedRef.current) {
+            return;
+          }
 
-          setTimeout(() => {
-            setCopied(false);
+          if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+          }
+          setCopiedKey(key);
+
+          timeoutRef.current = setTimeout(() => {
+            if (isMountedRef.current) {
+              setCopiedKey(null);
+            }
           }, 2000);
         })
         .catch((error) => {
@@ -357,10 +379,17 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                               {provider}
                             </Typography>
 
-                            <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
+                            <CustomTooltip
+                              title={copiedKey === providerName ? 'Copied!' : 'Copy'}
+                              placement="top"
+                            >
                               <IconButton
-                                onClick={() => copyToClipboard(provider)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  copyToClipboard(provider as string, providerName);
+                                }}
                                 style={{ padding: '0.25rem', float: 'right' }}
+                                aria-label="Copy to clipboard"
                               >
                                 <CopyIcon />
                               </IconButton>
