@@ -184,8 +184,29 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 	},
 }
 
-// TODO
 func mesherySystem() error {
+	modelDir := modelsOutputPath
+	totalModelsPublished := 0
+	for _, model := range models {
+		registrantComponents, hasRegistrant := components[model.Registrant]
+		comps, ok := registrantComponents[model.Model]
+		if !hasRegistrant || !ok {
+			utils.Log.Debug("no components found for ", model.Model)
+			comps = []meshkitRegistryUtils.ComponentCSV{}
+		}
+
+		err := utils.GenerateIcons(model, comps, imgsOutputPath)
+		if err != nil {
+			return errors.Wrapf(utils.ErrGeneratingIcons(err, imgsOutputPath), "generating icons for model %s", model.Model)
+		}
+
+		_, _, err = WriteModelDefToFileSystem(&model, "", modelDir)
+		if err != nil {
+			return ErrGenerateModel(err, model.Model)
+		}
+		totalModelsPublished++
+	}
+	utils.Log.Info("Total models published: ", totalModelsPublished)
 	return nil
 }
 
@@ -197,8 +218,9 @@ func remoteProviderSystem() error {
 	modelDir := filepath.Join(outputPath)
 	totalModelsPublished := 0
 	for _, model := range models {
-		comps, ok := components[model.Registrant][model.Model]
-		if !ok {
+		registrantComponents, hasRegistrant := components[model.Registrant]
+		comps, ok := registrantComponents[model.Model]
+		if !hasRegistrant || !ok {
 			utils.Log.Debug("no components found for ", model.Model)
 			comps = []meshkitRegistryUtils.ComponentCSV{}
 		}
