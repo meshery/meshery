@@ -129,7 +129,10 @@ const WorkspaceGridView = ({
           boundaryCount={3}
           renderItem={(item) => (
             <PaginationItem
-              slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
+              slots={{
+                previous: (props) => <ChevronLeftIcon {...props} fill="currentColor" />,
+                next: (props) => <ChevronRightIcon {...props} fill="currentColor" />,
+              }}
               {...item}
             />
           )}
