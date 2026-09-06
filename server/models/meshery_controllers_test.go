@@ -1,9 +1,12 @@
 package models
 
 import (
+	"context"
+	"sync"
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/controllers"
 )
@@ -78,7 +81,7 @@ func TestAddCtxControllerHandlersReturnsEarlyOnInvalidConfig(t *testing.T) {
 		nil,
 		nil,
 	)
-	
+
 	// A successful execution of this function without panicking indicates the fix is working.
 	// We wrap in a defer-recover just to explicitly fail the test if a panic occurs.
 	defer func() {
@@ -93,4 +96,108 @@ func TestAddCtxControllerHandlersReturnsEarlyOnInvalidConfig(t *testing.T) {
 	if len(mch.ctxControllerHandlers) != 0 {
 		t.Fatalf("expected ctxControllerHandlers to be empty, got %d", len(mch.ctxControllerHandlers))
 	}
+}
+
+// TestMesheryControllersHelperConcurrency verifies safe R/W to map under RWMutex.
+// Added as part of #21265 lifecycle serialization.
+func TestMesheryControllersHelperConcurrency(t *testing.T) {
+	mch := &MesheryControllersHelper{
+		ctxControllerHandlers: make(map[MesheryController]controllers.IMesheryController),
+	}
+	var wg sync.WaitGroup
+	for i := 0; i < 100; i++ {
+		wg.Add(2)
+		go func() {
+			defer wg.Done()
+			mch.GetControllerHandlersForEachContext()
+			mch.GetMeshSyncDataHandlersForEachContext()
+		}()
+		go func() {
+			defer wg.Done()
+			mch.mu.Lock()
+			mch.ctxControllerHandlers = make(map[MesheryController]controllers.IMesheryController)
+			mch.mu.Unlock()
+		}()
+	}
+	wg.Wait()
+}
+
+// TestMesheryControllersHelperOperatorStatusConcurrency verifies concurrent calls to
+// UpdateOperatorsStatusMap, GetOperatorsStatusMap, and operatorStatusObserved
+// are safe under the race detector.
+func TestMesheryControllersHelperOperatorStatusConcurrency(t *testing.T) {
+	stub := &stubController{status: controllers.Deployed}
+	mch := &MesheryControllersHelper{
+		ctxControllerHandlers: map[MesheryController]controllers.IMesheryController{
+			MesheryOperator: stub,
+		},
+		meshsyncDeploymentMode: connections.MeshsyncDeploymentModeOperator,
+	}
+	ot := NewOperatorTracker(false)
+
+	var wg sync.WaitGroup
+	for i := 0; i < 100; i++ {
+		wg.Add(4)
+		go func() {
+			defer wg.Done()
+			mch.UpdateOperatorsStatusMap(ot)
+		}()
+		go func() {
+			defer wg.Done()
+			_ = mch.GetOperatorsStatusMap()
+		}()
+		go func() {
+			defer wg.Done()
+			_ = mch.operatorStatusObserved()
+		}()
+		go func() {
+			defer wg.Done()
+			mch.mu.Lock()
+			mch.ctxOperatorStatus = controllers.Undeployed
+			mch.mu.Unlock()
+		}()
+	}
+	wg.Wait()
+}
+
+// TestMesheryControllersHelper_TeardownReleasesSharedLockBeforeStop verifies that
+// RemoveMeshSyncDataHandler releases mch.mu before calling handler.Stop(), allowing
+// concurrent readers to acquire mch.mu while Stop() runs.
+func TestMesheryControllersHelper_TeardownReleasesSharedLockBeforeStop(t *testing.T) {
+	log, _ := logger.New("test", logger.Options{})
+	mch := &MesheryControllersHelper{
+		ctxControllerHandlers: make(map[MesheryController]controllers.IMesheryController),
+		log:                   log,
+	}
+
+	stopCalled := make(chan struct{})
+	stopUnblock := make(chan struct{})
+
+	handler := &MeshsyncDataHandler{
+		StopFunc: func() {
+			close(stopCalled)
+			<-stopUnblock
+		},
+	}
+	mch.ctxMeshsyncDataHandler = handler
+
+	ctx := context.Background()
+	done := make(chan struct{})
+	go func() {
+		mch.RemoveMeshSyncDataHandler(ctx, "test-ctx")
+		close(done)
+	}()
+
+	// Wait until handler.Stop() is executing
+	<-stopCalled
+
+	// Verify mch.mu is NOT held: GetMeshSyncDataHandlersForEachContext can acquire RLock and returns nil immediately.
+	got := mch.GetMeshSyncDataHandlersForEachContext()
+	if got != nil {
+		t.Fatalf("expected ctxMeshsyncDataHandler to be nil while Stop() runs, got: %v", got)
+	}
+
+	// Unblock Stop() and wait for RemoveMeshSyncDataHandler to finish.
+	close(stopUnblock)
+	<-done
 }
