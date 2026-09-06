@@ -224,22 +224,29 @@ mesheryctl system logs meshery-istio
 
 					req := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace).GetLogs(name, &podLogOpts)
 
-					logs, err := req.Stream(context.TODO())
+					logs, err := req.Stream(cmd.Context())
 					if err != nil {
 						return err
 					}
-					defer func() { _ = logs.Close() }()
 					var logBuf []byte
 					if !systemLogsFlags.Follow {
-						logBuf, err = io.ReadAll(logs)
+						err = func() error {
+							defer func() { _ = logs.Close() }()
+							logBuf, err = io.ReadAll(logs)
+							if err != nil {
+								return utils.ErrReadResponseBody(err)
+							}
+							printLogs(string(logBuf), name)
+							return nil
+						}()
 						if err != nil {
-							return utils.ErrReadResponseBody(err)
+							return err
 						}
-						printLogs(string(logBuf), name)
 					} else {
 						wg.Add(1)
-						go func() {
+						go func(logs io.ReadCloser) {
 							defer wg.Done()
+							defer func() { _ = logs.Close() }()
 							for {
 								buf := make([]byte, BYTE_SIZE)
 								numBytes, err := logs.Read(buf)
@@ -256,7 +263,7 @@ mesheryctl system logs meshery-istio
 								logBuf = buf[0:numBytes]
 								printLogs(string(logBuf), name)
 							}
-						}()
+						}(logs)
 					}
 				}
 			}
