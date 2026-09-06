@@ -16,15 +16,20 @@ package utils
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/spf13/viper"
 )
 
-// testcases for auth.go
+// TestAuth tests basic authentication functionality and request handling.
 func TestAuth(t *testing.T) {
 	handler := func(w http.ResponseWriter, r *http.Request) {
 		_, _ = fmt.Fprintln(w, "A simple server only for testing")
@@ -65,6 +70,7 @@ func TestAuth(t *testing.T) {
 	//@Aisuko Need a token file to do other testings
 }
 
+// TestProviderUnmarshalJSON tests JSON unmarshaling for canonical and legacy provider payloads.
 func TestProviderUnmarshalJSON(t *testing.T) {
 	t.Run("Given canonical camelCase provider fields, When unmarshaled, Then it populates Provider correctly", func(t *testing.T) {
 		payload := []byte(`{"providerUrl":"https://cloud.meshery.io","providerName":"Meshery"}`)
@@ -95,6 +101,124 @@ func TestProviderUnmarshalJSON(t *testing.T) {
 		}
 		if provider.ProviderURL != "https://cloud.meshery.io" {
 			t.Fatalf("expected provider URL https://cloud.meshery.io, got %q", provider.ProviderURL)
+		}
+	})
+}
+
+type roundTripFunc func(*http.Request) (*http.Response, error)
+
+// RoundTrip executes a single HTTP transaction using the underlying function.
+func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
+	return f(req)
+}
+
+// createTestTokenFile creates a temporary token file containing the specified JSON content.
+func createTestTokenFile(t *testing.T, contents string) string {
+	t.Helper()
+	path := filepath.Join(t.TempDir(), "token.json")
+	if err := os.WriteFile(path, []byte(contents), 0600); err != nil {
+		t.Fatalf("failed to create test token file: %v", err)
+	}
+	return path
+}
+
+// TestUpdateAuthDetails tests authentication token updates under various success and failure conditions.
+func TestUpdateAuthDetails(t *testing.T) {
+	viper.Set("current-context", "local")
+	viper.Set("contexts.local.endpoint", "http://localhost:9081")
+	t.Cleanup(func() {
+		viper.Reset()
+	})
+
+	validTokenContent := `{"token":"test-token","meshery-provider":"Local"}`
+
+	t.Run("nil response and error", func(t *testing.T) {
+		tokenPath := createTestTokenFile(t, validTokenContent)
+
+		expectedErr := errors.New("network failure")
+		client := &http.Client{
+			Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
+				return nil, expectedErr
+			}),
+		}
+
+		err := updateAuthDetails(client, tokenPath)
+		if err == nil {
+			t.Fatal("expected error, got nil")
+		}
+		if !strings.Contains(err.Error(), "error dispatching the request") {
+			t.Errorf("expected error message to contain 'error dispatching the request', got: %v", err)
+		}
+		if !strings.Contains(err.Error(), "network failure") {
+			t.Errorf("expected underlying error 'network failure', got: %v", err)
+		}
+	})
+
+	t.Run("successful response", func(t *testing.T) {
+		tokenPath := createTestTokenFile(t, validTokenContent)
+
+		refreshedTokenJSON := `{"token":"refreshed-token","meshery-provider":"Local"}`
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = fmt.Fprint(w, refreshedTokenJSON)
+		}))
+		defer srv.Close()
+
+		viper.Set("contexts.local.endpoint", srv.URL)
+
+		client := srv.Client()
+
+		if err := updateAuthDetails(client, tokenPath); err != nil {
+			t.Fatalf("unexpected error updating auth details: %v", err)
+		}
+
+		updatedContent, err := os.ReadFile(tokenPath)
+		if err != nil {
+			t.Fatalf("failed to read updated token file: %v", err)
+		}
+
+		if string(updatedContent) != refreshedTokenJSON {
+			t.Errorf("expected updated token content %q, got %q", refreshedTokenJSON, string(updatedContent))
+		}
+	})
+
+	t.Run("HTML unexpected response", func(t *testing.T) {
+		tokenPath := createTestTokenFile(t, validTokenContent)
+
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "text/html")
+			_, _ = fmt.Fprint(w, "<html><body>Login Page</body></html>")
+		}))
+		defer srv.Close()
+
+		viper.Set("contexts.local.endpoint", srv.URL)
+
+		client := srv.Client()
+
+		err := updateAuthDetails(client, tokenPath)
+		if err == nil {
+			t.Fatal("expected error for HTML response, got nil")
+		}
+		if !strings.Contains(err.Error(), "invalid body") {
+			t.Errorf("expected error 'invalid body', got: %v", err)
+		}
+	})
+
+	t.Run("non-existent token file", func(t *testing.T) {
+		nonExistentPath := filepath.Join(t.TempDir(), "nonexistent_token.json")
+
+		fakeClient := &http.Client{
+			Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
+				return nil, errors.New("network request should not be attempted")
+			}),
+		}
+
+		err := updateAuthDetails(fakeClient, nonExistentPath)
+		if err == nil {
+			t.Fatal("expected error for non-existent token file, got nil")
+		}
+		if !strings.Contains(err.Error(), "could not read token") {
+			t.Errorf("expected error containing 'could not read token', got %v", err)
 		}
 	})
 }
