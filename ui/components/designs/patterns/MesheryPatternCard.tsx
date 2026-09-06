@@ -52,7 +52,6 @@ import { VISIBILITY } from '@/utils/Enum';
 import PatternIcon from '@/assets/icons/Pattern';
 import { iconLarge, iconMedium } from 'css/icons.styles';
 import { VIEW_VISIBILITY } from '../../shared/Modal/Information/InfoModal';
-const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
 function MesheryPatternCard_({
   id,
@@ -86,7 +85,6 @@ function MesheryPatternCard_({
     ev.stopPropagation();
     fn(ev);
   };
-  const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [fullScreen, setFullScreen] = useState(false);
   const [showCode, setShowCode] = useState(false);
 
@@ -133,10 +131,6 @@ function MesheryPatternCard_({
         />
       )}
       <FlipCard
-        onClick={() => {
-          console.log(gridProps);
-          setGridProps(INITIAL_GRID_SIZE);
-        }}
         duration={600}
         onShow={() =>
           setTimeout(() => setShowCode((currentCodeVisibilty) => !currentCodeVisibilty), 500)
@@ -356,7 +350,16 @@ function MesheryPatternCard_({
             data-testid="pattern-card-back"
           >
             <YamlDialogTitleGrid item xs={12}>
-              <Typography variant="h6" data-testid="pattern-card-back-title">
+              <Typography
+                style={{
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  width: '100%',
+                }}
+                variant="h6"
+                data-testid="pattern-card-back-title"
+              >
                 {name}
               </Typography>
               <CardHeaderRight>
@@ -399,7 +402,7 @@ function MesheryPatternCard_({
                     options={{
                       theme: 'material',
                       lineNumbers: true,
-                      lineWrapping: true,
+                      lineWrapping: false,
                       gutters: ['CodeMirror-lint-markers'],
                       // @ts-ignore
                       lint: true,
