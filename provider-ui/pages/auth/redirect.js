@@ -1,18 +1,20 @@
 import { useEffect } from "react";
-import { PROVIDER_URL } from "../../lib/data-fetch";
+import { ALLOWED_RETURN_TO_HOSTS, PROVIDER_URL } from "../../lib/data-fetch";
+import { resolveSafeRedirectURL } from "../../lib/safe-redirect.mjs";
 
 const Redirect = () => {
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const returnTo = params.get("return_to");
-    let redirectURL;
-    if (returnTo) {
-      redirectURL = new URL(`${returnTo}?${params.toString()}`);
-    } else {
-      redirectURL = new URL(`${PROVIDER_URL}/?${params.toString()}`);
-    }
-
-    window.location.href = redirectURL.toString();
+    // Forward the browser (carrying the provider token in the query string)
+    // only to a trusted host. An unguarded forward here is an open redirect
+    // that leaks the token to an arbitrary origin; resolveSafeRedirectURL
+    // falls back to PROVIDER_URL for any untrusted return_to. See
+    // ../../lib/safe-redirect.mjs.
+    window.location.href = resolveSafeRedirectURL({
+      search: window.location.search,
+      providerUrl: PROVIDER_URL,
+      currentOrigin: window.location.origin,
+      allowedHosts: ALLOWED_RETURN_TO_HOSTS,
+    });
   }, []);
   return <></>;
 };
