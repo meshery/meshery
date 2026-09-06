@@ -170,6 +170,8 @@ const (
 	ErrOperatorChartNotPublishedCode      = "meshery-server-1470"
 	ErrOperatorChartSubstitutedCode       = "meshery-server-1471"
 	ErrNoMesheryReleasesFoundCode         = "meshery-server-1472"
+
+	ErrInvalidEnvironmentConnectionsFilterCode = "meshery-server-1486"
 )
 
 var (
@@ -283,6 +285,22 @@ func ErrRetrieveK8sClusterID(err error, contextName string) error {
 func ErrUnmarshal(err error, obj string) error {
 	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Unable to unmarshal the : ", obj}, []string{err.Error()}, []string{"Object is not a valid json object"}, []string{"Make sure if the object passed is a valid json"})
 }
+
+// ErrInvalidEnvironmentConnectionsFilter reports a `filter` query parameter
+// that GET /api/environments/{environmentID}/connections cannot decode. It is a
+// caller error, so the handler surfaces it as 400 rather than blaming the
+// provider.
+func ErrInvalidEnvironmentConnectionsFilter(err error) error {
+	return errors.New(
+		ErrInvalidEnvironmentConnectionsFilterCode,
+		errors.Alert,
+		[]string{"Invalid \"filter\" query parameter for environment connections"},
+		[]string{err.Error()},
+		[]string{"The filter parameter is not a JSON object, or one of its fields carries the wrong type"},
+		[]string{"Pass a JSON object, for example filter={\"assigned\":false} or filter={\"owner\":\"<uuid>\"}"},
+	)
+}
+
 func ErrGetSessionCookie(err error) error {
 	return errors.New(ErrGetSessionCookieCode, errors.Alert, []string{"Error occurred while getting session cookie"}, []string{err.Error()}, []string{}, []string{})
 }
