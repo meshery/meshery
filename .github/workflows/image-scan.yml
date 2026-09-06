@@ -37,7 +37,7 @@ jobs:
         run: make docker-build
       
       - name: Run Trivy scan on built image
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: 'meshery/meshery'
           format: 'json'
