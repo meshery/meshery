@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"context"
+	"sync"
 
 	"github.com/meshery/schemas/models/core"
 
@@ -115,6 +116,7 @@ type MachineCtx struct {
 	OperatorTracker    *models.OperatorTracker
 	K8scontextChannel  *models.K8scontextChan
 	RegistryManager    *meshmodel.RegistryManager
+	ActionMutex        *sync.Mutex
 }
 
 const (
@@ -159,6 +161,9 @@ func AssignInitialCtx(ctx context.Context, machineCtx interface{}, log logger.Ha
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
 		return nil, eventBuilder.Build(), err
+	}
+	if machinectx.ActionMutex == nil {
+		machinectx.ActionMutex = &sync.Mutex{}
 	}
 	// Attach the logger before any action that may log on an error path.
 	// AssignClientSetToContext threads machinectx.log into GenerateK8sClientSet,
