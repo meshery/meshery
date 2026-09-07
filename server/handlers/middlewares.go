@@ -127,6 +127,13 @@ func (h *Handler) NoCacheMiddleware(next http.Handler) http.Handler {
 // AuthMiddleware is a middleware to validate if a user is authenticated
 func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMechanism) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
+		defer func() {
+			if r := recover(); r != nil {
+				h.log.Error(fmt.Errorf("recovered from panic in AuthMiddleware: %v", r))
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			}
+		}()
+
 		refURLB64 := GetRefURL(req)
 
 		providerH := h.Provider
