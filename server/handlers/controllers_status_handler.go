@@ -156,7 +156,7 @@ func (h *Handler) mesheryHoldsLiveBrokerConnection(machinectx *kubernetes.Machin
 	if machinectx == nil || machinectx.MesheryCtrlsHelper == nil {
 		return false
 	}
-	dataHandler := machinectx.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext()
+	dataHandler := machinectx.MesheryCtrlsHelper.GetMeshsyncDataHandler()
 	return dataHandler != nil && dataHandler.IsConnected()
 }
 
