@@ -14,10 +14,17 @@ on:
       - ".github/**"
       - "install/**"
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   docker-build-push:
     name: Docker build and push
     if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && success()
+    permissions:
+      contents: read
+      id-token: write
     env:
       RELEASE_CHANNEL: "edge"
     runs-on: ubuntu-24.04
@@ -38,7 +45,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 1
-          ref: ${{ inputs.branch }} 
+          ref: ${{ inputs.branch }}
       - name: Docker login
         uses: azure/docker-login@v2
         with:
@@ -54,6 +61,18 @@ jobs:
           docker push ${{ secrets.IMAGE_NAME }}:edge-latest
           docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
           docker push ${{ secrets.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
+
+      - name: Set signing image tags
+        id: signing-tags
+        run: echo "short_sha=${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
+
+      - name: Sign the published Docker image
+        uses: ./.github/actions/sign-images
+        with:
+          images: |
+            ${{ secrets.IMAGE_NAME }}:edge-latest
+            ${{ secrets.IMAGE_NAME }}:edge-${{ steps.signing-tags.outputs.short_sha }}
+            ${{ secrets.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
 
   update-staging-playground:
     needs:
