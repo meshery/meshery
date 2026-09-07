@@ -64,7 +64,7 @@ Non-semantic relationships are those that are meaningful to you as a user and yo
 <details close><summary>Visual Representation of Non-Semantic Relationships</summary>
            <figure><br><figcaption>Non-Semantic Relationship: A Rectangle annotation (isAnnotation: true) visually groups a Pod and a Service without affecting their deployment or lifecycle. <a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=0f8e5810-46fe-4817-9a29-c00b33416609"> (open in playground)</a></figcaption>
            </figure>
-<div id="embedded-design-b8b1249f-a034-42e0-8a67-66db29877366" style="height:30rem;width:100%;"></div>
+<div id="embedded-design-0f8e5810-46fe-4817-9a29-c00b33416609" style="height:30rem;width:100%;"></div>
 <script src="./images/embedded-design-non-semantic-relationship.js" type="module" ></script>
 </details>
 
