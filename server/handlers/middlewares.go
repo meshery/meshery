@@ -130,7 +130,7 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
 		defer func() {
 			if r := recover(); r != nil {
 				h.log.Error(fmt.Errorf("recovered from panic in AuthMiddleware: %v", r))
-				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				writeJSONError(w, "Internal Server Error", http.StatusInternalServerError)
 			}
 		}()
 
