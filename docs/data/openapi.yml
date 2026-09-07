@@ -27,6 +27,8 @@ tags:
     description: Operations related to design evaluation
   - name: Feature_Features
     description: Operations related to features and entitlements
+  - name: Organization_SMTP_Configuration_OrganizationSmtp
+    description: Operations on an organization's own outbound mail server.
   - name: Registry_Registry
     description: Operations on Meshery's capabilities registry.
   - name: Support_Support
@@ -48025,6 +48027,7 @@ paths:
                           schemaVersion: environments.meshery.io/v1beta3
                           name: Production Environment
                           description: Connections and credentials for the production cluster.
+                          purpose: user
                           organizationId: 00000000-0000-0000-0000-000000000000
                           owner: 00000000-0000-0000-0000-000000000000
                           createdAt: '0001-01-01T00:00:00Z'
@@ -48156,6 +48159,56 @@ paths:
                             type: string
                             format: date-time
                             x-go-type-skip-optional-pointer: true
+                          purpose:
+                            type: string
+                            description: >-
+                              What the environment exists for. `user` is an ordinary environment that people create to
+                              logically group Connections and their Credentials. `administrative` designates an
+                              environment the platform itself provisions to hold organization-level configuration, and
+                              which resolvers of that configuration therefore trust.
+
+
+                              Absent means `user`. Nothing may read an unset or unrecognised value as administrative:
+                              test for the administrative value explicitly rather than for "not user", so the property
+                              fails closed.
+
+
+                              At most one live environment per organization may carry any single privileged purpose -
+                              `administrative`, and each privileged value a later version adds. Name those values
+                              explicitly wherever the rule is enforced, including the database index predicate: a "not
+                              `user`" test also matches the empty value that unmigrated rows and un-normalised writes
+                              read back as, which means ordinary. A resolver that selects an environment by purpose MUST
+                              fail closed when more than one live row matches: return an error rather than whichever row
+                              the database happened to return first.
+
+
+                              Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which every
+                              environment POST and PUT requestBody references, and from the create-or-edit form, so the
+                              environment create and update endpoints have no field for it. That exclusion is a codegen
+                              guarantee, never access control: the registrant connection inlines the full environment
+                              entity, so `registerRegistryComponent` and `registerRegistryRelationship` do carry
+                              `purpose` in a request type and consumers MUST refuse it on input there too. Whatever
+                              surface a value arrives on, every consumer MUST assign this property only from server-side
+                              provisioning or a data migration. Permission to create an environment does not confer the
+                              ability to make one administrative.
+
+
+                              The database index that enforces the uniqueness invariant, the migration path for
+                              environments that are administrative by naming convention today, and each consumer's
+                              obligations are specified in
+                              https://github.com/meshery/schemas/blob/master/docs/environment-purpose-contract.md.
+                            enum:
+                              - user
+                              - administrative
+                            x-enum-varnames:
+                              - EnvironmentPurposeUser
+                              - EnvironmentPurposeAdministrative
+                            x-go-type-skip-optional-pointer: true
+                            x-oapi-codegen-extra-tags:
+                              db: purpose
+                              gorm: not null;default:user
+                              json: purpose,omitempty
+                            x-order: 11
                       x-oapi-codegen-extra-tags:
                         db: '-'
                         gorm: '-'
@@ -58141,6 +58194,7 @@ paths:
                           schemaVersion: environments.meshery.io/v1beta3
                           name: Production Environment
                           description: Connections and credentials for the production cluster.
+                          purpose: user
                           organizationId: 00000000-0000-0000-0000-000000000000
                           owner: 00000000-0000-0000-0000-000000000000
                           createdAt: '0001-01-01T00:00:00Z'
@@ -58272,6 +58326,56 @@ paths:
                             type: string
                             format: date-time
                             x-go-type-skip-optional-pointer: true
+                          purpose:
+                            type: string
+                            description: >-
+                              What the environment exists for. `user` is an ordinary environment that people create to
+                              logically group Connections and their Credentials. `administrative` designates an
+                              environment the platform itself provisions to hold organization-level configuration, and
+                              which resolvers of that configuration therefore trust.
+
+
+                              Absent means `user`. Nothing may read an unset or unrecognised value as administrative:
+                              test for the administrative value explicitly rather than for "not user", so the property
+                              fails closed.
+
+
+                              At most one live environment per organization may carry any single privileged purpose -
+                              `administrative`, and each privileged value a later version adds. Name those values
+                              explicitly wherever the rule is enforced, including the database index predicate: a "not
+                              `user`" test also matches the empty value that unmigrated rows and un-normalised writes
+                              read back as, which means ordinary. A resolver that selects an environment by purpose MUST
+                              fail closed when more than one live row matches: return an error rather than whichever row
+                              the database happened to return first.
+
+
+                              Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which every
+                              environment POST and PUT requestBody references, and from the create-or-edit form, so the
+                              environment create and update endpoints have no field for it. That exclusion is a codegen
+                              guarantee, never access control: the registrant connection inlines the full environment
+                              entity, so `registerRegistryComponent` and `registerRegistryRelationship` do carry
+                              `purpose` in a request type and consumers MUST refuse it on input there too. Whatever
+                              surface a value arrives on, every consumer MUST assign this property only from server-side
+                              provisioning or a data migration. Permission to create an environment does not confer the
+                              ability to make one administrative.
+
+
+                              The database index that enforces the uniqueness invariant, the migration path for
+                              environments that are administrative by naming convention today, and each consumer's
+                              obligations are specified in
+                              https://github.com/meshery/schemas/blob/master/docs/environment-purpose-contract.md.
+                            enum:
+                              - user
+                              - administrative
+                            x-enum-varnames:
+                              - EnvironmentPurposeUser
+                              - EnvironmentPurposeAdministrative
+                            x-go-type-skip-optional-pointer: true
+                            x-oapi-codegen-extra-tags:
+                              db: purpose
+                              gorm: not null;default:user
+                              json: purpose,omitempty
+                            x-order: 11
                       x-oapi-codegen-extra-tags:
                         db: '-'
                         gorm: '-'
@@ -62946,17 +63050,32 @@ paths:
                           x-go-type: uuid.UUID
                           x-go-type-import:
                             path: github.com/gofrs/uuid
+                        orgOwner:
+                          description: >-
+                            UUID of the organization designated as the owner of this credential, for credentials that
+                            belong to a brand profile rather than to a person. Optional and independent of userId:
+                            userId continues to identify the user who created and owns the record, while orgOwner
+                            designates the organization the credential is for.
+                          x-order: 4
+                          x-go-name: OrgOwner
+                          x-oapi-codegen-extra-tags:
+                            db: org_owner
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
                         type:
                           type: string
                           description: Credential type (e.g. token, basic, AWS).
-                          x-order: 4
+                          x-order: 5
                           x-oapi-codegen-extra-tags:
                             db: type
                           maxLength: 255
                         secret:
                           type: object
                           description: Key-value pairs containing the sensitive credential data.
-                          x-order: 5
+                          x-order: 6
                           x-go-type: core.Map
                           x-go-type-import:
                             path: github.com/meshery/schemas/models/core
@@ -62969,7 +63088,7 @@ paths:
                           description: Timestamp when the credential was created.
                           x-go-type: time.Time
                           x-go-type-skip-optional-pointer: true
-                          x-order: 6
+                          x-order: 7
                           x-oapi-codegen-extra-tags:
                             db: created_at
                         updatedAt:
@@ -62978,7 +63097,7 @@ paths:
                           description: Timestamp when the credential was last updated.
                           x-go-type: time.Time
                           x-go-type-skip-optional-pointer: true
-                          x-order: 7
+                          x-order: 8
                           x-oapi-codegen-extra-tags:
                             db: updated_at
                         deletedAt:
@@ -62989,7 +63108,7 @@ paths:
                           x-go-type-import:
                             path: github.com/meshery/schemas/models/core
                           x-go-type-skip-optional-pointer: true
-                          x-order: 8
+                          x-order: 9
                           x-oapi-codegen-extra-tags:
                             db: deleted_at
                     x-order: 1
@@ -63067,15 +63186,29 @@ paths:
                   x-go-type: uuid.UUID
                   x-go-type-import:
                     path: github.com/gofrs/uuid
+                orgOwner:
+                  description: >-
+                    UUID of the organization to designate as the owner of this credential. A caller may supply this
+                    field; the server authorizes it against the authenticated principal and rejects the request when
+                    that principal may not write for the named organization.
+                  x-order: 4
+                  x-go-name: OrgOwner
+                  x-oapi-codegen-extra-tags:
+                    json: orgOwner,omitempty
+                  type: string
+                  format: uuid
+                  x-go-type: uuid.UUID
+                  x-go-type-import:
+                    path: github.com/gofrs/uuid
                 type:
                   type: string
                   description: Credential type (e.g. token, basic, AWS).
-                  x-order: 4
+                  x-order: 5
                   maxLength: 255
                 secret:
                   type: object
                   description: Key-value pairs containing the sensitive credential data.
-                  x-order: 5
+                  x-order: 6
                   x-go-type: core.Map
                   x-go-type-import:
                     path: github.com/meshery/schemas/models/core
@@ -63127,17 +63260,32 @@ paths:
                     x-go-type: uuid.UUID
                     x-go-type-import:
                       path: github.com/gofrs/uuid
+                  orgOwner:
+                    description: >-
+                      UUID of the organization designated as the owner of this credential, for credentials that belong
+                      to a brand profile rather than to a person. Optional and independent of userId: userId continues
+                      to identify the user who created and owns the record, while orgOwner designates the organization
+                      the credential is for.
+                    x-order: 4
+                    x-go-name: OrgOwner
+                    x-oapi-codegen-extra-tags:
+                      db: org_owner
+                    type: string
+                    format: uuid
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
                   type:
                     type: string
                     description: Credential type (e.g. token, basic, AWS).
-                    x-order: 4
+                    x-order: 5
                     x-oapi-codegen-extra-tags:
                       db: type
                     maxLength: 255
                   secret:
                     type: object
                     description: Key-value pairs containing the sensitive credential data.
-                    x-order: 5
+                    x-order: 6
                     x-go-type: core.Map
                     x-go-type-import:
                       path: github.com/meshery/schemas/models/core
@@ -63150,7 +63298,7 @@ paths:
                     description: Timestamp when the credential was created.
                     x-go-type: time.Time
                     x-go-type-skip-optional-pointer: true
-                    x-order: 6
+                    x-order: 7
                     x-oapi-codegen-extra-tags:
                       db: created_at
                   updatedAt:
@@ -63159,7 +63307,7 @@ paths:
                     description: Timestamp when the credential was last updated.
                     x-go-type: time.Time
                     x-go-type-skip-optional-pointer: true
-                    x-order: 7
+                    x-order: 8
                     x-oapi-codegen-extra-tags:
                       db: updated_at
                   deletedAt:
@@ -63170,7 +63318,7 @@ paths:
                     x-go-type-import:
                       path: github.com/meshery/schemas/models/core
                     x-go-type-skip-optional-pointer: true
-                    x-order: 8
+                    x-order: 9
                     x-oapi-codegen-extra-tags:
                       db: deleted_at
         '400':
@@ -63237,15 +63385,29 @@ paths:
                   x-go-type: uuid.UUID
                   x-go-type-import:
                     path: github.com/gofrs/uuid
+                orgOwner:
+                  description: >-
+                    UUID of the organization to designate as the owner of this credential. A caller may supply this
+                    field; the server authorizes it against the authenticated principal and rejects the request when
+                    that principal may not write for the named organization.
+                  x-order: 4
+                  x-go-name: OrgOwner
+                  x-oapi-codegen-extra-tags:
+                    json: orgOwner,omitempty
+                  type: string
+                  format: uuid
+                  x-go-type: uuid.UUID
+                  x-go-type-import:
+                    path: github.com/gofrs/uuid
                 type:
                   type: string
                   description: Credential type (e.g. token, basic, AWS).
-                  x-order: 4
+                  x-order: 5
                   maxLength: 255
                 secret:
                   type: object
                   description: Key-value pairs containing the sensitive credential data.
-                  x-order: 5
+                  x-order: 6
                   x-go-type: core.Map
                   x-go-type-import:
                     path: github.com/meshery/schemas/models/core
@@ -63297,17 +63459,32 @@ paths:
                     x-go-type: uuid.UUID
                     x-go-type-import:
                       path: github.com/gofrs/uuid
+                  orgOwner:
+                    description: >-
+                      UUID of the organization designated as the owner of this credential, for credentials that belong
+                      to a brand profile rather than to a person. Optional and independent of userId: userId continues
+                      to identify the user who created and owns the record, while orgOwner designates the organization
+                      the credential is for.
+                    x-order: 4
+                    x-go-name: OrgOwner
+                    x-oapi-codegen-extra-tags:
+                      db: org_owner
+                    type: string
+                    format: uuid
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
                   type:
                     type: string
                     description: Credential type (e.g. token, basic, AWS).
-                    x-order: 4
+                    x-order: 5
                     x-oapi-codegen-extra-tags:
                       db: type
                     maxLength: 255
                   secret:
                     type: object
                     description: Key-value pairs containing the sensitive credential data.
-                    x-order: 5
+                    x-order: 6
                     x-go-type: core.Map
                     x-go-type-import:
                       path: github.com/meshery/schemas/models/core
@@ -63320,7 +63497,7 @@ paths:
                     description: Timestamp when the credential was created.
                     x-go-type: time.Time
                     x-go-type-skip-optional-pointer: true
-                    x-order: 6
+                    x-order: 7
                     x-oapi-codegen-extra-tags:
                       db: created_at
                   updatedAt:
@@ -63329,7 +63506,7 @@ paths:
                     description: Timestamp when the credential was last updated.
                     x-go-type: time.Time
                     x-go-type-skip-optional-pointer: true
-                    x-order: 7
+                    x-order: 8
                     x-oapi-codegen-extra-tags:
                       db: updated_at
                   deletedAt:
@@ -63340,7 +63517,7 @@ paths:
                     x-go-type-import:
                       path: github.com/meshery/schemas/models/core
                     x-go-type-skip-optional-pointer: true
-                    x-order: 8
+                    x-order: 9
                     x-oapi-codegen-extra-tags:
                       db: deleted_at
         '400':
@@ -63488,17 +63665,32 @@ paths:
                     x-go-type: uuid.UUID
                     x-go-type-import:
                       path: github.com/gofrs/uuid
+                  orgOwner:
+                    description: >-
+                      UUID of the organization designated as the owner of this credential, for credentials that belong
+                      to a brand profile rather than to a person. Optional and independent of userId: userId continues
+                      to identify the user who created and owns the record, while orgOwner designates the organization
+                      the credential is for.
+                    x-order: 4
+                    x-go-name: OrgOwner
+                    x-oapi-codegen-extra-tags:
+                      db: org_owner
+                    type: string
+                    format: uuid
+                    x-go-type: uuid.UUID
+                    x-go-type-import:
+                      path: github.com/gofrs/uuid
                   type:
                     type: string
                     description: Credential type (e.g. token, basic, AWS).
-                    x-order: 4
+                    x-order: 5
                     x-oapi-codegen-extra-tags:
                       db: type
                     maxLength: 255
                   secret:
                     type: object
                     description: Key-value pairs containing the sensitive credential data.
-                    x-order: 5
+                    x-order: 6
                     x-go-type: core.Map
                     x-go-type-import:
                       path: github.com/meshery/schemas/models/core
@@ -63511,7 +63703,7 @@ paths:
                     description: Timestamp when the credential was created.
                     x-go-type: time.Time
                     x-go-type-skip-optional-pointer: true
-                    x-order: 6
+                    x-order: 7
                     x-oapi-codegen-extra-tags:
                       db: created_at
                   updatedAt:
@@ -63520,7 +63712,7 @@ paths:
                     description: Timestamp when the credential was last updated.
                     x-go-type: time.Time
                     x-go-type-skip-optional-pointer: true
-                    x-order: 7
+                    x-order: 8
                     x-oapi-codegen-extra-tags:
                       db: updated_at
                   deletedAt:
@@ -63531,7 +63723,7 @@ paths:
                     x-go-type-import:
                       path: github.com/meshery/schemas/models/core
                     x-go-type-skip-optional-pointer: true
-                    x-order: 8
+                    x-order: 9
                     x-oapi-codegen-extra-tags:
                       db: deleted_at
         '401':
@@ -64041,10 +64233,11 @@ paths:
                                   x-internal:
                                     - cloud
                                   description: >-
-                                    Per-organization overrides for the legal and support links shown on the auth pages
-                                    and the error page. termsOfService and privacy are the named legal links; support is
-                                    an open-ended set of named support contacts/links. Empty or omitted fields fall back
-                                    to the platform defaults.
+                                    Per-organization overrides for the legal, support, and social links shown on the
+                                    auth pages and the error page. termsOfService and privacy are the named legal links;
+                                    support is an open-ended set of named support contacts/links; social carries the
+                                    organization's brand profiles. Empty or omitted fields fall back to the platform
+                                    defaults.
                                   properties:
                                     termsOfService:
                                       type: string
@@ -64066,6 +64259,30 @@ paths:
                                         pages, keyed by display name with a value that is a URL, a mailto:/tel: link, or
                                         free text. For example a "slack" entry pointing at https://slack.meshery.io, a
                                         "discussion forum" entry, or a "support desk" entry holding a phone number.
+                                    social:
+                                      x-go-type: Social
+                                      type: object
+                                      x-internal:
+                                        - cloud
+                                      description: >-
+                                        The organization's social brand profiles. Deliberately a sibling of support
+                                        rather than an entry in it: support renders as support contacts on the auth and
+                                        error pages, where a brand profile does not belong. Each platform is a named,
+                                        individually validated URL so consumers can render the matching platform icon.
+                                        Empty or omitted fields fall back to the platform defaults.
+                                      properties:
+                                        linkedin:
+                                          type: string
+                                          format: uri
+                                          maxLength: 2048
+                                          description: URL of the organization's LinkedIn profile.
+                                          x-go-name: LinkedIn
+                                        x:
+                                          type: string
+                                          format: uri
+                                          maxLength: 2048
+                                          description: URL of the organization's X (formerly Twitter) profile.
+                                          x-go-name: X
                                 showAuthCarousel:
                                   type: boolean
                                   default: true
@@ -64315,9 +64532,10 @@ paths:
                       x-internal:
                         - cloud
                       description: >-
-                        Per-organization overrides for the legal and support links shown on the auth pages and the error
-                        page. termsOfService and privacy are the named legal links; support is an open-ended set of
-                        named support contacts/links. Empty or omitted fields fall back to the platform defaults.
+                        Per-organization overrides for the legal, support, and social links shown on the auth pages and
+                        the error page. termsOfService and privacy are the named legal links; support is an open-ended
+                        set of named support contacts/links; social carries the organization's brand profiles. Empty or
+                        omitted fields fall back to the platform defaults.
                       properties:
                         termsOfService:
                           type: string
@@ -64339,6 +64557,30 @@ paths:
                             by display name with a value that is a URL, a mailto:/tel: link, or free text. For example a
                             "slack" entry pointing at https://slack.meshery.io, a "discussion forum" entry, or a
                             "support desk" entry holding a phone number.
+                        social:
+                          x-go-type: Social
+                          type: object
+                          x-internal:
+                            - cloud
+                          description: >-
+                            The organization's social brand profiles. Deliberately a sibling of support rather than an
+                            entry in it: support renders as support contacts on the auth and error pages, where a brand
+                            profile does not belong. Each platform is a named, individually validated URL so consumers
+                            can render the matching platform icon. Empty or omitted fields fall back to the platform
+                            defaults.
+                          properties:
+                            linkedin:
+                              type: string
+                              format: uri
+                              maxLength: 2048
+                              description: URL of the organization's LinkedIn profile.
+                              x-go-name: LinkedIn
+                            x:
+                              type: string
+                              format: uri
+                              maxLength: 2048
+                              description: URL of the organization's X (formerly Twitter) profile.
+                              x-go-name: X
                     showAuthCarousel:
                       type: boolean
                       default: true
@@ -64586,10 +64828,11 @@ paths:
                                   x-internal:
                                     - cloud
                                   description: >-
-                                    Per-organization overrides for the legal and support links shown on the auth pages
-                                    and the error page. termsOfService and privacy are the named legal links; support is
-                                    an open-ended set of named support contacts/links. Empty or omitted fields fall back
-                                    to the platform defaults.
+                                    Per-organization overrides for the legal, support, and social links shown on the
+                                    auth pages and the error page. termsOfService and privacy are the named legal links;
+                                    support is an open-ended set of named support contacts/links; social carries the
+                                    organization's brand profiles. Empty or omitted fields fall back to the platform
+                                    defaults.
                                   properties:
                                     termsOfService:
                                       type: string
@@ -64611,6 +64854,30 @@ paths:
                                         pages, keyed by display name with a value that is a URL, a mailto:/tel: link, or
                                         free text. For example a "slack" entry pointing at https://slack.meshery.io, a
                                         "discussion forum" entry, or a "support desk" entry holding a phone number.
+                                    social:
+                                      x-go-type: Social
+                                      type: object
+                                      x-internal:
+                                        - cloud
+                                      description: >-
+                                        The organization's social brand profiles. Deliberately a sibling of support
+                                        rather than an entry in it: support renders as support contacts on the auth and
+                                        error pages, where a brand profile does not belong. Each platform is a named,
+                                        individually validated URL so consumers can render the matching platform icon.
+                                        Empty or omitted fields fall back to the platform defaults.
+                                      properties:
+                                        linkedin:
+                                          type: string
+                                          format: uri
+                                          maxLength: 2048
+                                          description: URL of the organization's LinkedIn profile.
+                                          x-go-name: LinkedIn
+                                        x:
+                                          type: string
+                                          format: uri
+                                          maxLength: 2048
+                                          description: URL of the organization's X (formerly Twitter) profile.
+                                          x-go-name: X
                                 showAuthCarousel:
                                   type: boolean
                                   default: true
@@ -65080,10 +65347,11 @@ paths:
                                   x-internal:
                                     - cloud
                                   description: >-
-                                    Per-organization overrides for the legal and support links shown on the auth pages
-                                    and the error page. termsOfService and privacy are the named legal links; support is
-                                    an open-ended set of named support contacts/links. Empty or omitted fields fall back
-                                    to the platform defaults.
+                                    Per-organization overrides for the legal, support, and social links shown on the
+                                    auth pages and the error page. termsOfService and privacy are the named legal links;
+                                    support is an open-ended set of named support contacts/links; social carries the
+                                    organization's brand profiles. Empty or omitted fields fall back to the platform
+                                    defaults.
                                   properties:
                                     termsOfService:
                                       type: string
@@ -65105,6 +65373,30 @@ paths:
                                         pages, keyed by display name with a value that is a URL, a mailto:/tel: link, or
                                         free text. For example a "slack" entry pointing at https://slack.meshery.io, a
                                         "discussion forum" entry, or a "support desk" entry holding a phone number.
+                                    social:
+                                      x-go-type: Social
+                                      type: object
+                                      x-internal:
+                                        - cloud
+                                      description: >-
+                                        The organization's social brand profiles. Deliberately a sibling of support
+                                        rather than an entry in it: support renders as support contacts on the auth and
+                                        error pages, where a brand profile does not belong. Each platform is a named,
+                                        individually validated URL so consumers can render the matching platform icon.
+                                        Empty or omitted fields fall back to the platform defaults.
+                                      properties:
+                                        linkedin:
+                                          type: string
+                                          format: uri
+                                          maxLength: 2048
+                                          description: URL of the organization's LinkedIn profile.
+                                          x-go-name: LinkedIn
+                                        x:
+                                          type: string
+                                          format: uri
+                                          maxLength: 2048
+                                          description: URL of the organization's X (formerly Twitter) profile.
+                                          x-go-name: X
                                 showAuthCarousel:
                                   type: boolean
                                   default: true
@@ -65440,9 +65732,10 @@ paths:
                       x-internal:
                         - cloud
                       description: >-
-                        Per-organization overrides for the legal and support links shown on the auth pages and the error
-                        page. termsOfService and privacy are the named legal links; support is an open-ended set of
-                        named support contacts/links. Empty or omitted fields fall back to the platform defaults.
+                        Per-organization overrides for the legal, support, and social links shown on the auth pages and
+                        the error page. termsOfService and privacy are the named legal links; support is an open-ended
+                        set of named support contacts/links; social carries the organization's brand profiles. Empty or
+                        omitted fields fall back to the platform defaults.
                       properties:
                         termsOfService:
                           type: string
@@ -65464,6 +65757,30 @@ paths:
                             by display name with a value that is a URL, a mailto:/tel: link, or free text. For example a
                             "slack" entry pointing at https://slack.meshery.io, a "discussion forum" entry, or a
                             "support desk" entry holding a phone number.
+                        social:
+                          x-go-type: Social
+                          type: object
+                          x-internal:
+                            - cloud
+                          description: >-
+                            The organization's social brand profiles. Deliberately a sibling of support rather than an
+                            entry in it: support renders as support contacts on the auth and error pages, where a brand
+                            profile does not belong. Each platform is a named, individually validated URL so consumers
+                            can render the matching platform icon. Empty or omitted fields fall back to the platform
+                            defaults.
+                          properties:
+                            linkedin:
+                              type: string
+                              format: uri
+                              maxLength: 2048
+                              description: URL of the organization's LinkedIn profile.
+                              x-go-name: LinkedIn
+                            x:
+                              type: string
+                              format: uri
+                              maxLength: 2048
+                              description: URL of the organization's X (formerly Twitter) profile.
+                              x-go-name: X
                     showAuthCarousel:
                       type: boolean
                       default: true
@@ -65711,10 +66028,11 @@ paths:
                                   x-internal:
                                     - cloud
                                   description: >-
-                                    Per-organization overrides for the legal and support links shown on the auth pages
-                                    and the error page. termsOfService and privacy are the named legal links; support is
-                                    an open-ended set of named support contacts/links. Empty or omitted fields fall back
-                                    to the platform defaults.
+                                    Per-organization overrides for the legal, support, and social links shown on the
+                                    auth pages and the error page. termsOfService and privacy are the named legal links;
+                                    support is an open-ended set of named support contacts/links; social carries the
+                                    organization's brand profiles. Empty or omitted fields fall back to the platform
+                                    defaults.
                                   properties:
                                     termsOfService:
                                       type: string
@@ -65736,6 +66054,30 @@ paths:
                                         pages, keyed by display name with a value that is a URL, a mailto:/tel: link, or
                                         free text. For example a "slack" entry pointing at https://slack.meshery.io, a
                                         "discussion forum" entry, or a "support desk" entry holding a phone number.
+                                    social:
+                                      x-go-type: Social
+                                      type: object
+                                      x-internal:
+                                        - cloud
+                                      description: >-
+                                        The organization's social brand profiles. Deliberately a sibling of support
+                                        rather than an entry in it: support renders as support contacts on the auth and
+                                        error pages, where a brand profile does not belong. Each platform is a named,
+                                        individually validated URL so consumers can render the matching platform icon.
+                                        Empty or omitted fields fall back to the platform defaults.
+                                      properties:
+                                        linkedin:
+                                          type: string
+                                          format: uri
+                                          maxLength: 2048
+                                          description: URL of the organization's LinkedIn profile.
+                                          x-go-name: LinkedIn
+                                        x:
+                                          type: string
+                                          format: uri
+                                          maxLength: 2048
+                                          description: URL of the organization's X (formerly Twitter) profile.
+                                          x-go-name: X
                                 showAuthCarousel:
                                   type: boolean
                                   default: true
@@ -66002,9 +66344,10 @@ paths:
                         x-internal:
                           - cloud
                         description: >-
-                          Per-organization overrides for the legal and support links shown on the auth pages and the
-                          error page. termsOfService and privacy are the named legal links; support is an open-ended set
-                          of named support contacts/links. Empty or omitted fields fall back to the platform defaults.
+                          Per-organization overrides for the legal, support, and social links shown on the auth pages
+                          and the error page. termsOfService and privacy are the named legal links; support is an
+                          open-ended set of named support contacts/links; social carries the organization's brand
+                          profiles. Empty or omitted fields fall back to the platform defaults.
                         properties:
                           termsOfService:
                             type: string
@@ -66026,6 +66369,30 @@ paths:
                               by display name with a value that is a URL, a mailto:/tel: link, or free text. For example
                               a "slack" entry pointing at https://slack.meshery.io, a "discussion forum" entry, or a
                               "support desk" entry holding a phone number.
+                          social:
+                            x-go-type: Social
+                            type: object
+                            x-internal:
+                              - cloud
+                            description: >-
+                              The organization's social brand profiles. Deliberately a sibling of support rather than an
+                              entry in it: support renders as support contacts on the auth and error pages, where a
+                              brand profile does not belong. Each platform is a named, individually validated URL so
+                              consumers can render the matching platform icon. Empty or omitted fields fall back to the
+                              platform defaults.
+                            properties:
+                              linkedin:
+                                type: string
+                                format: uri
+                                maxLength: 2048
+                                description: URL of the organization's LinkedIn profile.
+                                x-go-name: LinkedIn
+                              x:
+                                type: string
+                                format: uri
+                                maxLength: 2048
+                                description: URL of the organization's X (formerly Twitter) profile.
+                                x-go-name: X
                       showAuthCarousel:
                         type: boolean
                         default: true
@@ -69586,6 +69953,7 @@ paths:
                               schemaVersion: environments.meshery.io/v1beta3
                               name: Production Environment
                               description: Connections and credentials for the production cluster.
+                              purpose: user
                               organizationId: 00000000-0000-0000-0000-000000000000
                               owner: 00000000-0000-0000-0000-000000000000
                               createdAt: '0001-01-01T00:00:00Z'
@@ -69717,6 +70085,57 @@ paths:
                                 type: string
                                 format: date-time
                                 x-go-type-skip-optional-pointer: true
+                              purpose:
+                                type: string
+                                description: >-
+                                  What the environment exists for. `user` is an ordinary environment that people create
+                                  to logically group Connections and their Credentials. `administrative` designates an
+                                  environment the platform itself provisions to hold organization-level configuration,
+                                  and which resolvers of that configuration therefore trust.
+
+
+                                  Absent means `user`. Nothing may read an unset or unrecognised value as
+                                  administrative: test for the administrative value explicitly rather than for "not
+                                  user", so the property fails closed.
+
+
+                                  At most one live environment per organization may carry any single privileged purpose
+                                  - `administrative`, and each privileged value a later version adds. Name those values
+                                  explicitly wherever the rule is enforced, including the database index predicate: a
+                                  "not `user`" test also matches the empty value that unmigrated rows and un-normalised
+                                  writes read back as, which means ordinary. A resolver that selects an environment by
+                                  purpose MUST fail closed when more than one live row matches: return an error rather
+                                  than whichever row the database happened to return first.
+
+
+                                  Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which
+                                  every environment POST and PUT requestBody references, and from the create-or-edit
+                                  form, so the environment create and update endpoints have no field for it. That
+                                  exclusion is a codegen guarantee, never access control: the registrant connection
+                                  inlines the full environment entity, so `registerRegistryComponent` and
+                                  `registerRegistryRelationship` do carry `purpose` in a request type and consumers MUST
+                                  refuse it on input there too. Whatever surface a value arrives on, every consumer MUST
+                                  assign this property only from server-side provisioning or a data migration.
+                                  Permission to create an environment does not confer the ability to make one
+                                  administrative.
+
+
+                                  The database index that enforces the uniqueness invariant, the migration path for
+                                  environments that are administrative by naming convention today, and each consumer's
+                                  obligations are specified in
+                                  https://github.com/meshery/schemas/blob/master/docs/environment-purpose-contract.md.
+                                enum:
+                                  - user
+                                  - administrative
+                                x-enum-varnames:
+                                  - EnvironmentPurposeUser
+                                  - EnvironmentPurposeAdministrative
+                                x-go-type-skip-optional-pointer: true
+                                x-oapi-codegen-extra-tags:
+                                  db: purpose
+                                  gorm: not null;default:user
+                                  json: purpose,omitempty
+                                x-order: 11
                           x-oapi-codegen-extra-tags:
                             db: '-'
                             gorm: '-'
@@ -71002,6 +71421,7 @@ paths:
                         schemaVersion: environments.meshery.io/v1beta3
                         name: Production Environment
                         description: Connections and credentials for the production cluster.
+                        purpose: user
                         organizationId: 00000000-0000-0000-0000-000000000000
                         owner: 00000000-0000-0000-0000-000000000000
                         createdAt: '0001-01-01T00:00:00Z'
@@ -71131,6 +71551,56 @@ paths:
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
+                        purpose:
+                          type: string
+                          description: >-
+                            What the environment exists for. `user` is an ordinary environment that people create to
+                            logically group Connections and their Credentials. `administrative` designates an
+                            environment the platform itself provisions to hold organization-level configuration, and
+                            which resolvers of that configuration therefore trust.
+
+
+                            Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
+                            for the administrative value explicitly rather than for "not user", so the property fails
+                            closed.
+
+
+                            At most one live environment per organization may carry any single privileged purpose -
+                            `administrative`, and each privileged value a later version adds. Name those values
+                            explicitly wherever the rule is enforced, including the database index predicate: a "not
+                            `user`" test also matches the empty value that unmigrated rows and un-normalised writes read
+                            back as, which means ordinary. A resolver that selects an environment by purpose MUST fail
+                            closed when more than one live row matches: return an error rather than whichever row the
+                            database happened to return first.
+
+
+                            Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which every
+                            environment POST and PUT requestBody references, and from the create-or-edit form, so the
+                            environment create and update endpoints have no field for it. That exclusion is a codegen
+                            guarantee, never access control: the registrant connection inlines the full environment
+                            entity, so `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose`
+                            in a request type and consumers MUST refuse it on input there too. Whatever surface a value
+                            arrives on, every consumer MUST assign this property only from server-side provisioning or a
+                            data migration. Permission to create an environment does not confer the ability to make one
+                            administrative.
+
+
+                            The database index that enforces the uniqueness invariant, the migration path for
+                            environments that are administrative by naming convention today, and each consumer's
+                            obligations are specified in
+                            https://github.com/meshery/schemas/blob/master/docs/environment-purpose-contract.md.
+                          enum:
+                            - user
+                            - administrative
+                          x-enum-varnames:
+                            - EnvironmentPurposeUser
+                            - EnvironmentPurposeAdministrative
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: purpose
+                            gorm: not null;default:user
+                            json: purpose,omitempty
+                          x-order: 11
                     x-oapi-codegen-extra-tags:
                       db: '-'
                       gorm: '-'
@@ -72152,6 +72622,7 @@ paths:
                         schemaVersion: environments.meshery.io/v1beta3
                         name: Production Environment
                         description: Connections and credentials for the production cluster.
+                        purpose: user
                         organizationId: 00000000-0000-0000-0000-000000000000
                         owner: 00000000-0000-0000-0000-000000000000
                         createdAt: '0001-01-01T00:00:00Z'
@@ -72281,6 +72752,56 @@ paths:
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
+                        purpose:
+                          type: string
+                          description: >-
+                            What the environment exists for. `user` is an ordinary environment that people create to
+                            logically group Connections and their Credentials. `administrative` designates an
+                            environment the platform itself provisions to hold organization-level configuration, and
+                            which resolvers of that configuration therefore trust.
+
+
+                            Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
+                            for the administrative value explicitly rather than for "not user", so the property fails
+                            closed.
+
+
+                            At most one live environment per organization may carry any single privileged purpose -
+                            `administrative`, and each privileged value a later version adds. Name those values
+                            explicitly wherever the rule is enforced, including the database index predicate: a "not
+                            `user`" test also matches the empty value that unmigrated rows and un-normalised writes read
+                            back as, which means ordinary. A resolver that selects an environment by purpose MUST fail
+                            closed when more than one live row matches: return an error rather than whichever row the
+                            database happened to return first.
+
+
+                            Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which every
+                            environment POST and PUT requestBody references, and from the create-or-edit form, so the
+                            environment create and update endpoints have no field for it. That exclusion is a codegen
+                            guarantee, never access control: the registrant connection inlines the full environment
+                            entity, so `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose`
+                            in a request type and consumers MUST refuse it on input there too. Whatever surface a value
+                            arrives on, every consumer MUST assign this property only from server-side provisioning or a
+                            data migration. Permission to create an environment does not confer the ability to make one
+                            administrative.
+
+
+                            The database index that enforces the uniqueness invariant, the migration path for
+                            environments that are administrative by naming convention today, and each consumer's
+                            obligations are specified in
+                            https://github.com/meshery/schemas/blob/master/docs/environment-purpose-contract.md.
+                          enum:
+                            - user
+                            - administrative
+                          x-enum-varnames:
+                            - EnvironmentPurposeUser
+                            - EnvironmentPurposeAdministrative
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: purpose
+                            gorm: not null;default:user
+                            json: purpose,omitempty
+                          x-order: 11
                     x-oapi-codegen-extra-tags:
                       db: '-'
                       gorm: '-'
@@ -73550,6 +74071,7 @@ paths:
                         schemaVersion: environments.meshery.io/v1beta3
                         name: Production Environment
                         description: Connections and credentials for the production cluster.
+                        purpose: user
                         organizationId: 00000000-0000-0000-0000-000000000000
                         owner: 00000000-0000-0000-0000-000000000000
                         createdAt: '0001-01-01T00:00:00Z'
@@ -73679,6 +74201,56 @@ paths:
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
+                        purpose:
+                          type: string
+                          description: >-
+                            What the environment exists for. `user` is an ordinary environment that people create to
+                            logically group Connections and their Credentials. `administrative` designates an
+                            environment the platform itself provisions to hold organization-level configuration, and
+                            which resolvers of that configuration therefore trust.
+
+
+                            Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
+                            for the administrative value explicitly rather than for "not user", so the property fails
+                            closed.
+
+
+                            At most one live environment per organization may carry any single privileged purpose -
+                            `administrative`, and each privileged value a later version adds. Name those values
+                            explicitly wherever the rule is enforced, including the database index predicate: a "not
+                            `user`" test also matches the empty value that unmigrated rows and un-normalised writes read
+                            back as, which means ordinary. A resolver that selects an environment by purpose MUST fail
+                            closed when more than one live row matches: return an error rather than whichever row the
+                            database happened to return first.
+
+
+                            Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which every
+                            environment POST and PUT requestBody references, and from the create-or-edit form, so the
+                            environment create and update endpoints have no field for it. That exclusion is a codegen
+                            guarantee, never access control: the registrant connection inlines the full environment
+                            entity, so `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose`
+                            in a request type and consumers MUST refuse it on input there too. Whatever surface a value
+                            arrives on, every consumer MUST assign this property only from server-side provisioning or a
+                            data migration. Permission to create an environment does not confer the ability to make one
+                            administrative.
+
+
+                            The database index that enforces the uniqueness invariant, the migration path for
+                            environments that are administrative by naming convention today, and each consumer's
+                            obligations are specified in
+                            https://github.com/meshery/schemas/blob/master/docs/environment-purpose-contract.md.
+                          enum:
+                            - user
+                            - administrative
+                          x-enum-varnames:
+                            - EnvironmentPurposeUser
+                            - EnvironmentPurposeAdministrative
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: purpose
+                            gorm: not null;default:user
+                            json: purpose,omitempty
+                          x-order: 11
                     x-oapi-codegen-extra-tags:
                       db: '-'
                       gorm: '-'
@@ -74557,6 +75129,7 @@ paths:
                         schemaVersion: environments.meshery.io/v1beta3
                         name: Production Environment
                         description: Connections and credentials for the production cluster.
+                        purpose: user
                         organizationId: 00000000-0000-0000-0000-000000000000
                         owner: 00000000-0000-0000-0000-000000000000
                         createdAt: '0001-01-01T00:00:00Z'
@@ -74686,6 +75259,56 @@ paths:
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
+                        purpose:
+                          type: string
+                          description: >-
+                            What the environment exists for. `user` is an ordinary environment that people create to
+                            logically group Connections and their Credentials. `administrative` designates an
+                            environment the platform itself provisions to hold organization-level configuration, and
+                            which resolvers of that configuration therefore trust.
+
+
+                            Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
+                            for the administrative value explicitly rather than for "not user", so the property fails
+                            closed.
+
+
+                            At most one live environment per organization may carry any single privileged purpose -
+                            `administrative`, and each privileged value a later version adds. Name those values
+                            explicitly wherever the rule is enforced, including the database index predicate: a "not
+                            `user`" test also matches the empty value that unmigrated rows and un-normalised writes read
+                            back as, which means ordinary. A resolver that selects an environment by purpose MUST fail
+                            closed when more than one live row matches: return an error rather than whichever row the
+                            database happened to return first.
+
+
+                            Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which every
+                            environment POST and PUT requestBody references, and from the create-or-edit form, so the
+                            environment create and update endpoints have no field for it. That exclusion is a codegen
+                            guarantee, never access control: the registrant connection inlines the full environment
+                            entity, so `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose`
+                            in a request type and consumers MUST refuse it on input there too. Whatever surface a value
+                            arrives on, every consumer MUST assign this property only from server-side provisioning or a
+                            data migration. Permission to create an environment does not confer the ability to make one
+                            administrative.
+
+
+                            The database index that enforces the uniqueness invariant, the migration path for
+                            environments that are administrative by naming convention today, and each consumer's
+                            obligations are specified in
+                            https://github.com/meshery/schemas/blob/master/docs/environment-purpose-contract.md.
+                          enum:
+                            - user
+                            - administrative
+                          x-enum-varnames:
+                            - EnvironmentPurposeUser
+                            - EnvironmentPurposeAdministrative
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: purpose
+                            gorm: not null;default:user
+                            json: purpose,omitempty
+                          x-order: 11
                     x-oapi-codegen-extra-tags:
                       db: '-'
                       gorm: '-'
@@ -77614,7 +78237,15 @@ paths:
           application/json:
             schema:
               type: object
-              description: Payload for creating or updating an environment.
+              description: >-
+                Payload for creating or updating an environment. Carries only the client-settable fields. Server-owned
+                fields are deliberately absent: `id`, `owner`, `createdAt`, `updatedAt` and `deletedAt` because the
+                server assigns them, and `purpose` because permission to create an environment must not confer the
+                ability to designate it administrative. Excluding it here is a codegen guarantee rather than access
+                control: the registrant connection inlines the full environment entity, so `purpose` still reaches the
+                `registerRegistryComponent` and `registerRegistryRelationship` request types, and every consumer must
+                refuse it on input whatever surface it arrives on. Do not add `purpose` here - see
+                https://github.com/meshery/schemas/blob/master/docs/environment-purpose-contract.md.
               required:
                 - name
                 - organizationId
@@ -77663,6 +78294,7 @@ paths:
                   schemaVersion: environments.meshery.io/v1beta3
                   name: Production Environment
                   description: Connections and credentials for the production cluster.
+                  purpose: user
                   organizationId: 00000000-0000-0000-0000-000000000000
                   owner: 00000000-0000-0000-0000-000000000000
                   createdAt: '0001-01-01T00:00:00Z'
@@ -77791,6 +78423,52 @@ paths:
                     type: string
                     format: date-time
                     x-go-type-skip-optional-pointer: true
+                  purpose:
+                    type: string
+                    description: >-
+                      What the environment exists for. `user` is an ordinary environment that people create to logically
+                      group Connections and their Credentials. `administrative` designates an environment the platform
+                      itself provisions to hold organization-level configuration, and which resolvers of that
+                      configuration therefore trust.
+
+
+                      Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test for
+                      the administrative value explicitly rather than for "not user", so the property fails closed.
+
+
+                      At most one live environment per organization may carry any single privileged purpose -
+                      `administrative`, and each privileged value a later version adds. Name those values explicitly
+                      wherever the rule is enforced, including the database index predicate: a "not `user`" test also
+                      matches the empty value that unmigrated rows and un-normalised writes read back as, which means
+                      ordinary. A resolver that selects an environment by purpose MUST fail closed when more than one
+                      live row matches: return an error rather than whichever row the database happened to return first.
+
+
+                      Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which every
+                      environment POST and PUT requestBody references, and from the create-or-edit form, so the
+                      environment create and update endpoints have no field for it. That exclusion is a codegen
+                      guarantee, never access control: the registrant connection inlines the full environment entity, so
+                      `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose` in a request
+                      type and consumers MUST refuse it on input there too. Whatever surface a value arrives on, every
+                      consumer MUST assign this property only from server-side provisioning or a data migration.
+                      Permission to create an environment does not confer the ability to make one administrative.
+
+
+                      The database index that enforces the uniqueness invariant, the migration path for environments
+                      that are administrative by naming convention today, and each consumer's obligations are specified
+                      in https://github.com/meshery/schemas/blob/master/docs/environment-purpose-contract.md.
+                    enum:
+                      - user
+                      - administrative
+                    x-enum-varnames:
+                      - EnvironmentPurposeUser
+                      - EnvironmentPurposeAdministrative
+                    x-go-type-skip-optional-pointer: true
+                    x-oapi-codegen-extra-tags:
+                      db: purpose
+                      gorm: not null;default:user
+                      json: purpose,omitempty
+                    x-order: 11
         '400':
           description: Invalid request body or request param
           content:
@@ -77903,6 +78581,7 @@ paths:
                         schemaVersion: environments.meshery.io/v1beta3
                         name: Production Environment
                         description: Connections and credentials for the production cluster.
+                        purpose: user
                         organizationId: 00000000-0000-0000-0000-000000000000
                         owner: 00000000-0000-0000-0000-000000000000
                         createdAt: '0001-01-01T00:00:00Z'
@@ -78032,6 +78711,56 @@ paths:
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
+                        purpose:
+                          type: string
+                          description: >-
+                            What the environment exists for. `user` is an ordinary environment that people create to
+                            logically group Connections and their Credentials. `administrative` designates an
+                            environment the platform itself provisions to hold organization-level configuration, and
+                            which resolvers of that configuration therefore trust.
+
+
+                            Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
+                            for the administrative value explicitly rather than for "not user", so the property fails
+                            closed.
+
+
+                            At most one live environment per organization may carry any single privileged purpose -
+                            `administrative`, and each privileged value a later version adds. Name those values
+                            explicitly wherever the rule is enforced, including the database index predicate: a "not
+                            `user`" test also matches the empty value that unmigrated rows and un-normalised writes read
+                            back as, which means ordinary. A resolver that selects an environment by purpose MUST fail
+                            closed when more than one live row matches: return an error rather than whichever row the
+                            database happened to return first.
+
+
+                            Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which every
+                            environment POST and PUT requestBody references, and from the create-or-edit form, so the
+                            environment create and update endpoints have no field for it. That exclusion is a codegen
+                            guarantee, never access control: the registrant connection inlines the full environment
+                            entity, so `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose`
+                            in a request type and consumers MUST refuse it on input there too. Whatever surface a value
+                            arrives on, every consumer MUST assign this property only from server-side provisioning or a
+                            data migration. Permission to create an environment does not confer the ability to make one
+                            administrative.
+
+
+                            The database index that enforces the uniqueness invariant, the migration path for
+                            environments that are administrative by naming convention today, and each consumer's
+                            obligations are specified in
+                            https://github.com/meshery/schemas/blob/master/docs/environment-purpose-contract.md.
+                          enum:
+                            - user
+                            - administrative
+                          x-enum-varnames:
+                            - EnvironmentPurposeUser
+                            - EnvironmentPurposeAdministrative
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: purpose
+                            gorm: not null;default:user
+                            json: purpose,omitempty
+                          x-order: 11
                     description: Environments associated with this resource.
         '401':
           description: Expired JWT token used or insufficient privilege
@@ -78120,6 +78849,7 @@ paths:
                         schemaVersion: environments.meshery.io/v1beta3
                         name: Production Environment
                         description: Connections and credentials for the production cluster.
+                        purpose: user
                         organizationId: 00000000-0000-0000-0000-000000000000
                         owner: 00000000-0000-0000-0000-000000000000
                         createdAt: '0001-01-01T00:00:00Z'
@@ -78249,6 +78979,56 @@ paths:
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
+                        purpose:
+                          type: string
+                          description: >-
+                            What the environment exists for. `user` is an ordinary environment that people create to
+                            logically group Connections and their Credentials. `administrative` designates an
+                            environment the platform itself provisions to hold organization-level configuration, and
+                            which resolvers of that configuration therefore trust.
+
+
+                            Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
+                            for the administrative value explicitly rather than for "not user", so the property fails
+                            closed.
+
+
+                            At most one live environment per organization may carry any single privileged purpose -
+                            `administrative`, and each privileged value a later version adds. Name those values
+                            explicitly wherever the rule is enforced, including the database index predicate: a "not
+                            `user`" test also matches the empty value that unmigrated rows and un-normalised writes read
+                            back as, which means ordinary. A resolver that selects an environment by purpose MUST fail
+                            closed when more than one live row matches: return an error rather than whichever row the
+                            database happened to return first.
+
+
+                            Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which every
+                            environment POST and PUT requestBody references, and from the create-or-edit form, so the
+                            environment create and update endpoints have no field for it. That exclusion is a codegen
+                            guarantee, never access control: the registrant connection inlines the full environment
+                            entity, so `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose`
+                            in a request type and consumers MUST refuse it on input there too. Whatever surface a value
+                            arrives on, every consumer MUST assign this property only from server-side provisioning or a
+                            data migration. Permission to create an environment does not confer the ability to make one
+                            administrative.
+
+
+                            The database index that enforces the uniqueness invariant, the migration path for
+                            environments that are administrative by naming convention today, and each consumer's
+                            obligations are specified in
+                            https://github.com/meshery/schemas/blob/master/docs/environment-purpose-contract.md.
+                          enum:
+                            - user
+                            - administrative
+                          x-enum-varnames:
+                            - EnvironmentPurposeUser
+                            - EnvironmentPurposeAdministrative
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: purpose
+                            gorm: not null;default:user
+                            json: purpose,omitempty
+                          x-order: 11
                     description: Environments associated with this resource.
         '400':
           description: Invalid request body or request param
@@ -78301,7 +79081,15 @@ paths:
           application/json:
             schema:
               type: object
-              description: Payload for creating or updating an environment.
+              description: >-
+                Payload for creating or updating an environment. Carries only the client-settable fields. Server-owned
+                fields are deliberately absent: `id`, `owner`, `createdAt`, `updatedAt` and `deletedAt` because the
+                server assigns them, and `purpose` because permission to create an environment must not confer the
+                ability to designate it administrative. Excluding it here is a codegen guarantee rather than access
+                control: the registrant connection inlines the full environment entity, so `purpose` still reaches the
+                `registerRegistryComponent` and `registerRegistryRelationship` request types, and every consumer must
+                refuse it on input whatever surface it arrives on. Do not add `purpose` here - see
+                https://github.com/meshery/schemas/blob/master/docs/environment-purpose-contract.md.
               required:
                 - name
                 - organizationId
@@ -78377,6 +79165,7 @@ paths:
                         schemaVersion: environments.meshery.io/v1beta3
                         name: Production Environment
                         description: Connections and credentials for the production cluster.
+                        purpose: user
                         organizationId: 00000000-0000-0000-0000-000000000000
                         owner: 00000000-0000-0000-0000-000000000000
                         createdAt: '0001-01-01T00:00:00Z'
@@ -78506,6 +79295,56 @@ paths:
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
+                        purpose:
+                          type: string
+                          description: >-
+                            What the environment exists for. `user` is an ordinary environment that people create to
+                            logically group Connections and their Credentials. `administrative` designates an
+                            environment the platform itself provisions to hold organization-level configuration, and
+                            which resolvers of that configuration therefore trust.
+
+
+                            Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
+                            for the administrative value explicitly rather than for "not user", so the property fails
+                            closed.
+
+
+                            At most one live environment per organization may carry any single privileged purpose -
+                            `administrative`, and each privileged value a later version adds. Name those values
+                            explicitly wherever the rule is enforced, including the database index predicate: a "not
+                            `user`" test also matches the empty value that unmigrated rows and un-normalised writes read
+                            back as, which means ordinary. A resolver that selects an environment by purpose MUST fail
+                            closed when more than one live row matches: return an error rather than whichever row the
+                            database happened to return first.
+
+
+                            Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which every
+                            environment POST and PUT requestBody references, and from the create-or-edit form, so the
+                            environment create and update endpoints have no field for it. That exclusion is a codegen
+                            guarantee, never access control: the registrant connection inlines the full environment
+                            entity, so `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose`
+                            in a request type and consumers MUST refuse it on input there too. Whatever surface a value
+                            arrives on, every consumer MUST assign this property only from server-side provisioning or a
+                            data migration. Permission to create an environment does not confer the ability to make one
+                            administrative.
+
+
+                            The database index that enforces the uniqueness invariant, the migration path for
+                            environments that are administrative by naming convention today, and each consumer's
+                            obligations are specified in
+                            https://github.com/meshery/schemas/blob/master/docs/environment-purpose-contract.md.
+                          enum:
+                            - user
+                            - administrative
+                          x-enum-varnames:
+                            - EnvironmentPurposeUser
+                            - EnvironmentPurposeAdministrative
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: purpose
+                            gorm: not null;default:user
+                            json: purpose,omitempty
+                          x-order: 11
                     description: Environments associated with this resource.
         '400':
           description: Invalid request body or request param
@@ -82759,6 +83598,7 @@ paths:
                         schemaVersion: environments.meshery.io/v1beta3
                         name: Production Environment
                         description: Connections and credentials for the production cluster.
+                        purpose: user
                         organizationId: 00000000-0000-0000-0000-000000000000
                         owner: 00000000-0000-0000-0000-000000000000
                         createdAt: '0001-01-01T00:00:00Z'
@@ -82888,6 +83728,56 @@ paths:
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
+                        purpose:
+                          type: string
+                          description: >-
+                            What the environment exists for. `user` is an ordinary environment that people create to
+                            logically group Connections and their Credentials. `administrative` designates an
+                            environment the platform itself provisions to hold organization-level configuration, and
+                            which resolvers of that configuration therefore trust.
+
+
+                            Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
+                            for the administrative value explicitly rather than for "not user", so the property fails
+                            closed.
+
+
+                            At most one live environment per organization may carry any single privileged purpose -
+                            `administrative`, and each privileged value a later version adds. Name those values
+                            explicitly wherever the rule is enforced, including the database index predicate: a "not
+                            `user`" test also matches the empty value that unmigrated rows and un-normalised writes read
+                            back as, which means ordinary. A resolver that selects an environment by purpose MUST fail
+                            closed when more than one live row matches: return an error rather than whichever row the
+                            database happened to return first.
+
+
+                            Server-owned and not client-settable. It is absent from `EnvironmentPayload`, which every
+                            environment POST and PUT requestBody references, and from the create-or-edit form, so the
+                            environment create and update endpoints have no field for it. That exclusion is a codegen
+                            guarantee, never access control: the registrant connection inlines the full environment
+                            entity, so `registerRegistryComponent` and `registerRegistryRelationship` do carry `purpose`
+                            in a request type and consumers MUST refuse it on input there too. Whatever surface a value
+                            arrives on, every consumer MUST assign this property only from server-side provisioning or a
+                            data migration. Permission to create an environment does not confer the ability to make one
+                            administrative.
+
+
+                            The database index that enforces the uniqueness invariant, the migration path for
+                            environments that are administrative by naming convention today, and each consumer's
+                            obligations are specified in
+                            https://github.com/meshery/schemas/blob/master/docs/environment-purpose-contract.md.
+                          enum:
+                            - user
+                            - administrative
+                          x-enum-varnames:
+                            - EnvironmentPurposeUser
+                            - EnvironmentPurposeAdministrative
+                          x-go-type-skip-optional-pointer: true
+                          x-oapi-codegen-extra-tags:
+                            db: purpose
+                            gorm: not null;default:user
+                            json: purpose,omitempty
+                          x-order: 11
                     description: Environments associated with this resource.
         '400':
           description: Invalid request body or request param
