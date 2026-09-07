@@ -3,7 +3,6 @@ package core
 import (
 	"net/url"
 	"testing"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestEncodeRefUrl(t *testing.T) {
@@ -42,7 +41,9 @@ func TestEncodeRefUrl(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			actual := EncodeRefUrl(tc.input)
-			assert.Equal(t, tc.expected, actual, tc.name)
+			if actual != tc.expected {
+				t.Errorf("EncodeRefUrl() got = %v, want = %v", actual, tc.expected)
+			}
 		})
 	}
 }
@@ -68,7 +69,7 @@ func TestDecodeRefURL(t *testing.T) {
 		},
 		{
 			name:        "given invalid base64 string when DecodeRefURL then return error",
-			input:       "!!!not-base64!!!", 
+			input:       "!!!not-base64!!!",
 			expected:    "",
 			expectError: true,
 		},
@@ -78,11 +79,17 @@ func TestDecodeRefURL(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			actual, err := DecodeRefURL(tc.input)
 
-		if tc.expectError {
-				assert.Error(t, err, tc.name)
+			if tc.expectError {
+				if err == nil {
+					t.Errorf("DecodeRefURL() expected error, got nil")
+				}
 			} else {
-				assert.NoError(t, err, tc.name)
-				assert.Equal(t, tc.expected, actual, tc.name)
+				if err != nil {
+					t.Fatalf("DecodeRefURL() unexpected error: %v", err)
+				}
+				if actual != tc.expected {
+					t.Errorf("DecodeRefURL() got = %v, want = %v", actual, tc.expected)
+				}
 			}
 		})
 	}
@@ -112,9 +119,13 @@ func TestEncodeDecodeRoundtrip(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			encoded := EncodeRefUrl(tc.input)
 			decoded, err := DecodeRefURL(encoded)
-			
-			assert.NoError(t, err, tc.name)
-			assert.Equal(t, tc.input.String(), decoded, tc.name)
+
+			if err != nil {
+				t.Fatalf("DecodeRefURL() unexpected error: %v", err)
+			}
+			if decoded != tc.input.String() {
+				t.Errorf("Roundtrip got = %v, want = %v", decoded, tc.input.String())
+			}
 		})
 	}
 }
