@@ -20,7 +20,7 @@ import { TooltipWrappedConnectionChip } from '../connections/ConnectionChip';
 import ResourceDetailFormatData, { JSONViewFormatter } from './view-component';
 import { useRouter } from 'next/router';
 import GetKubernetesNodeIcon from './utils';
-import { CONNECTION_STATES } from '@/utils/Enum';
+import { CONNECTION_STATES, CoreConnectionKinds } from '@/utils/Enum';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
 
 const Container = styled('div')({
@@ -80,17 +80,15 @@ const View = ({ setView, resource, k8sConfig }: DashboardViewProps) => {
     [getResourceCleanData, resource, router],
   );
 
-  const { data: connectionsData } = useGetConnectionsQuery(
-    {
-      page: 0,
-      pagesize: 100,
-      search: '',
-      order: '',
-      status: '',
-      kind: JSON.stringify(['kubernetes']),
-    },
-    {},
-  );
+  // kind is a plain repeated query param (?kind=kubernetes) — not JSON-encoded.
+  const { data: connectionsData } = useGetConnectionsQuery({
+    page: 0,
+    pageSize: 100,
+    search: '',
+    order: '',
+    status: '',
+    kind: CoreConnectionKinds.kubernetes,
+  });
 
   if (!resource) return null;
 
