@@ -169,7 +169,7 @@ func ConvertFileToManifest(identifiedFile files.IdentifiedFile, rawFile FileToIm
 	}
 }
 
-// returns the design file , the type of file that was identified during converion , and any error
+// ConvertFileToDesign returns the design file, the type of file that was identified during conversion, and any error
 func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryManager, logger logger.Handler) (pattern.PatternFile, core.IaCFileTypes, error) {
 
 	defer utils.TrackTime(logger, time.Now(), "ConvertFileToDesign")

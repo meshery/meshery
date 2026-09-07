@@ -214,6 +214,9 @@ enable = false
     [[module.imports.mounts]]
       source = "layouts/partials/related-reading.html"
       target = "layouts/partials/related-reading.html"
+    [[module.imports.mounts]]
+      source = "assets/scss/_yt-embed-container.scss"
+      target = "assets/scss/_yt-embed-container.scss"
   [[module.mounts]]
     source = "static"
     target = "static"
