@@ -73,29 +73,72 @@ After you initiate an import, Meshery executes a **dataflow sequence** to proper
 4. **Validated components are stored in Meshery**
    Once validated, the design is stored in Meshery. Users can later deploy it to a supported platform (e.g., Kubernetes, Consul, Istio) using Meshery UI or CLI.
 
-## Export Methods
+## Export Methods & Formats
 
-Designs can also be exported either via **Meshery CLI** or **Meshery UI**. During export, Meshery gathers the design’s components, relationships, and metadata into a specified format.
+Designs can be exported either via **Meshery UI** or **Meshery CLI (`mesheryctl`)**. Exporting allows you to back up designs, distribute them as artifacts across registries, publish them, or package them into standard tools like Helm.
 
-#### 1. Using Meshery CLI
+### Supported Export Formats
+
+Meshery supports multiple export targets tailored to different lifecycle stages:
+
+| Format | Target Extension | Best For | Description |
+| :--- | :--- | :--- | :--- |
+| **Meshery Design (YAML)** | `.yaml` / `.yml` | GitOps & version control | Exports the full declarative Meshery Design manifest conforming to `designs.meshery.io/v1beta1`. |
+| **OCI Artifact** | `.tar` / OCI layer | Container registries & Artifact Hub | Packages the design into an Open Container Initiative (OCI) image artifact for registry distribution. |
+| **Helm Chart** | `.tgz` | Helm CLI & Kubernetes packaging | Converts and packages deployable components into a standard, deployable Helm Chart archive. |
+
+---
+
+### 1. Exporting via Meshery UI
+
+To export a design from the web interface:
+
+1. Navigate to **Designs** (or **Kanvas**) from the left navigation menu.
+2. In the designs list or grid, locate the design you wish to export.
+3. Click the **Action (three dots / menu)** or **Export** button on the design card.
+4. Select your desired export format:
+   - **Current**: Exports the active version of the design as a Meshery YAML manifest.
+   - **Original**: Exports the original imported source manifest (if imported from Helm or Kubernetes).
+   - **OCI**: Packages the design as an OCI artifact archive.
+   - **Helm Chart**: Generates a standard Helm chart archive (`.tgz`).
+5. Choose your local destination directory to download the exported file.
+
+---
+
+### 2. Exporting via Meshery CLI (`mesheryctl`)
+
+Use the `mesheryctl design export` command to export designs programmatically:
 
 ```bash
-mesheryctl design export --type <FORMAT> --output <DIRECTORY>
+# General syntax
+mesheryctl design export <design-name-or-id> [--type <FORMAT>] [--output <DIRECTORY>]
 ```
+
+Supported `--type` values:
+
+| Value | Description |
+| :--- | :--- |
+| `current` | *(default)* Exports the active design version as a Meshery YAML manifest (`.yaml`). |
+| `oci` | Packages and exports the design as an OCI artifact archive. |
+| `original` | Exports the original imported source artifact (e.g., the original Helm chart or Kubernetes manifest, when available). |
+
+#### Examples:
 
 ```bash
-# Example: Export to OCI format
-mesheryctl design export --type oci -o ./exports
+# Export design as a Meshery YAML manifest (default format)
+mesheryctl design export "MyDesign" --type current -o ./exports
+
+# Export design as an OCI artifact
+mesheryctl design export "MyDesign" --type oci -o ./exports
+
+# Export the original imported source (e.g., the original Helm chart or manifest)
+mesheryctl design export "MyDesign" --type original -o ./exports
 ```
 
-### 2. Using Meshery UI
-
-1. Go to **Designs > My Designs** and select the design you want to export.
-2. Click the **Export** action button.
-3. Choose an export format (e.g., `current`, `original`, `oci`).
-4. Specify the download location for your exported file.
+---
 
 ## Summary
 
-- **Import**: Meshery parses and validates your design, converts non-Meshery formats (e.g., Kubernetes Manifests, Helm Charts, Docker Compose) into Meshery Designs, and stores the design in Meshery. Users can later deploy it to the correct adapters as needed.
-- **Export**: Meshery **retrieves** the design from storage, **converts** its format if needed, **packages** it in the selected format (`current`, `original`, `oci`), and **delivers** it as a YAML file or OCI artifact via CLI or UI download.
+- **Import**: Meshery parses and validates your design, converts non-Meshery formats (e.g., Kubernetes Manifests, Helm Charts, Docker Compose) into Meshery Designs, and stores the design in your workspace.
+- **Export**: Meshery retrieves the design from storage, converts its format if needed, packages it in the selected format (`current` for YAML, `oci` for OCI artifact, or `original` for the original source artifact), and delivers it via CLI or UI download for GitOps, container registries, or package managers.
+
