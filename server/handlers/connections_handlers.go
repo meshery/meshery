@@ -267,12 +267,7 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 	page, _ := strconv.Atoi(q.Get("page"))
 	order := q.Get("order")
 	search := q.Get("search")
-	// Canonical camelCase `pageSize` (matches the schemas wire contract); fall
-	// back to legacy lowercase `pagesize` for older clients.
-	pageSizeStr := q.Get("pageSize")
-	if pageSizeStr == "" {
-		pageSizeStr = q.Get("pagesize")
-	}
+	pageSizeStr := getPageSizeParam(q)
 	filter := q.Get("filter")
 	name := q.Get("name")
 
@@ -341,7 +336,7 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 	page, _ := strconv.Atoi(q.Get("page"))
 	order := q.Get("order")
 	search := q.Get("search")
-	pageSize, _ := strconv.Atoi(q.Get("pagesize"))
+	pageSize, _ := strconv.Atoi(getPageSizeParam(q))
 
 	if pageSize > 25 {
 		pageSize = 25
