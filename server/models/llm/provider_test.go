@@ -10,22 +10,25 @@ import (
 
 func TestValidateURL(t *testing.T) {
 	tests := []struct {
-		name    string
-		url     string
-		wantErr bool
+		name       string
+		url        string
+		allowLocal bool
+		wantErr    bool
 	}{
-		{"Valid HTTPS URL", "https://api.openai.com/v1", false},
-		{"Valid HTTP Local URL", "http://localhost:11434", false},
-		{"Invalid Scheme", "ftp://localhost:11434", true},
-		{"Embedded Credentials", "https://user:pass@api.openai.com", true},
-		{"Metadata IP AWS", "http://169.254.169.254/latest/meta-data/", true},
-		{"Metadata IP GCP", "http://169.254.169.253", true},
-		{"Empty URL", "", true},
+		{"Valid HTTPS URL", "https://api.openai.com/v1", false, false},
+		{"Localhost with allowLocal=true", "http://localhost:11434", true, false},
+		{"Localhost with allowLocal=false", "http://localhost:11434", false, true},
+		{"Invalid Scheme", "ftp://localhost:11434", true, true},
+		{"Embedded Credentials", "https://user:pass@api.openai.com", false, true},
+		{"Metadata IP AWS", "http://169.254.169.254/latest/meta-data/", true, true},
+		{"Metadata IP AWS with allowLocal=false", "http://169.254.169.254/latest/meta-data/", false, true},
+		{"Metadata IP GCP", "http://169.254.169.253", false, true},
+		{"Empty URL", "", false, true},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := ValidateURL(tt.url)
+			_, err := ValidateURL(tt.url, tt.allowLocal)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ValidateURL() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -34,17 +37,17 @@ func TestValidateURL(t *testing.T) {
 }
 
 func TestEnsureHTTPS(t *testing.T) {
-	u1, _ := ValidateURL("http://api.openai.com")
+	u1, _ := ValidateURL("http://api.openai.com", false)
 	if err := EnsureHTTPS(u1); err == nil {
 		t.Errorf("EnsureHTTPS() expected error for external http URL")
 	}
 
-	u2, _ := ValidateURL("http://localhost:11434")
+	u2, _ := ValidateURL("http://localhost:11434", true)
 	if err := EnsureHTTPS(u2); err != nil {
 		t.Errorf("EnsureHTTPS() expected NO error for localhost http URL")
 	}
 
-	u3, _ := ValidateURL("https://api.openai.com")
+	u3, _ := ValidateURL("https://api.openai.com", false)
 	if err := EnsureHTTPS(u3); err != nil {
 		t.Errorf("EnsureHTTPS() expected NO error for external https URL")
 	}

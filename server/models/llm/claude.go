@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/meshery/meshery/server/models"
 )
 
 // ClaudeProvider implements the Provider interface for Anthropic.
@@ -21,7 +23,7 @@ type ClaudeProvider struct {
 func (p *ClaudeProvider) Initialize(ctx context.Context, config ProviderConfig, credentialSecret map[string]interface{}) error {
 	p.config = config
 
-	u, err := ValidateURL(config.ServerURL)
+	u, err := ValidateURL(config.ServerURL, false)
 	if err != nil {
 		return err
 	}
@@ -33,20 +35,21 @@ func (p *ClaudeProvider) Initialize(ctx context.Context, config ProviderConfig, 
 		return ErrInvalidCredentials(fmt.Errorf("credential secret map is nil"))
 	}
 	
-	apiKeyInterface, ok := credentialSecret["secret"]
-	if !ok || apiKeyInterface == "" {
-		apiKeyInterface, ok = credentialSecret["apiKey"]
-		if !ok || apiKeyInterface == "" {
-			return ErrInvalidCredentials(fmt.Errorf("API key not found in credential secret"))
+	// Use Meshery's canonical credential unwrapper
+	payload := models.CredentialPayload(credentialSecret)
+	if payload == nil {
+		p.apiKey = models.CredentialAuthSecret(credentialSecret)
+	} else {
+		if val, ok := payload["apiKey"].(string); ok && val != "" {
+			p.apiKey = val
+		} else if val, ok := payload["secret"].(string); ok && val != "" {
+			p.apiKey = val
 		}
 	}
 	
-	apiKey, ok := apiKeyInterface.(string)
-	if !ok || apiKey == "" {
-		return ErrInvalidCredentials(fmt.Errorf("API key is not a string or is empty"))
+	if p.apiKey == "" {
+		return ErrInvalidCredentials(fmt.Errorf("API key not found in credential secret"))
 	}
-	
-	p.apiKey = apiKey
 	p.httpClient = &http.Client{
 		Timeout: 60 * time.Second,
 	}

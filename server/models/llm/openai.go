@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/meshery/meshery/server/models"
 )
 
 // OpenAIProvider implements the Provider interface for OpenAI and OpenAI-compatible endpoints.
@@ -22,8 +24,8 @@ type OpenAIProvider struct {
 func (p *OpenAIProvider) Initialize(ctx context.Context, config ProviderConfig, credentialSecret map[string]interface{}) error {
 	p.config = config
 
-	// Validate URL
-	u, err := ValidateURL(config.ServerURL)
+	// Validate URL (OpenAI is a hosted provider, so block local IPs)
+	u, err := ValidateURL(config.ServerURL, false)
 	if err != nil {
 		return err
 	}
@@ -36,18 +38,21 @@ func (p *OpenAIProvider) Initialize(ctx context.Context, config ProviderConfig, 
 		return ErrInvalidCredentials(fmt.Errorf("credential secret map is nil"))
 	}
 	
-	// OpenAI typical key is just "secret" or "apiKey"
-	apiKeyInterface, ok := credentialSecret["secret"]
-	if !ok || apiKeyInterface == "" {
-		apiKeyInterface, ok = credentialSecret["apiKey"]
-		if !ok || apiKeyInterface == "" {
-			return ErrInvalidCredentials(fmt.Errorf("API key not found in credential secret"))
+	// Use Meshery's canonical credential unwrapper
+	payload := models.CredentialPayload(credentialSecret)
+	if payload == nil {
+		// Fallback to seeing if it's a bare string legacy secret
+		apiKey = models.CredentialAuthSecret(credentialSecret)
+	} else {
+		if val, ok := payload["apiKey"].(string); ok && val != "" {
+			apiKey = val
+		} else if val, ok := payload["secret"].(string); ok && val != "" {
+			apiKey = val
 		}
 	}
 	
-	apiKey, ok := apiKeyInterface.(string)
-	if !ok || apiKey == "" {
-		return ErrInvalidCredentials(fmt.Errorf("API key is not a string or is empty"))
+	if apiKey == "" {
+		return ErrInvalidCredentials(fmt.Errorf("API key not found in credential secret"))
 	}
 	
 	p.apiKey = apiKey

@@ -8,9 +8,9 @@ import (
 )
 
 // ValidateURL checks if a provider URL is safe to use.
-// It guards against SSRF by blocking metadata endpoints and enforcing schemes.
-// For cloud providers, HTTPS is generally expected, but we allow HTTP for local/LAN inference.
-func ValidateURL(rawURL string) (*url.URL, error) {
+// It guards against SSRF by resolving the hostname and checking all IP addresses.
+// If allowLocal is false, private network IPs and loopback are blocked.
+func ValidateURL(rawURL string, allowLocal bool) (*url.URL, error) {
 	if rawURL == "" {
 		return nil, errors.New("url cannot be empty")
 	}
@@ -24,49 +24,62 @@ func ValidateURL(rawURL string) (*url.URL, error) {
 		return nil, ErrSSRFValidation(errors.New("unsupported URL scheme, only http and https are allowed"))
 	}
 
-	// Do not allow credentials embedded in the URL (e.g., https://user:pass@host/)
 	if u.User != nil {
 		return nil, ErrSSRFValidation(errors.New("credentials must not be embedded in the URL"))
 	}
 
 	host := u.Hostname()
 
-	// Block known dangerous metadata endpoints (e.g., AWS, GCP, Azure metadata IPs)
-	if isMetadataEndpoint(host) {
-		return nil, ErrSSRFValidation(errors.New("metadata endpoints are not allowed"))
+	// Resolve the host to IPs to prevent DNS rebinding and evaluate actual targets
+	ips, err := net.LookupIP(host)
+	if err != nil {
+		// If we can't resolve it, we shouldn't trust it.
+		// However, for certain local environments, it might just be a local hostname.
+		// We'll return an error since DNS resolution is required for SSRF validation.
+		return nil, ErrSSRFValidation(fmt.Errorf("could not resolve hostname: %v", err))
+	}
+
+	for _, ip := range ips {
+		if err := validateIP(ip, allowLocal); err != nil {
+			return nil, ErrSSRFValidation(fmt.Errorf("host %s resolved to unsafe IP %s: %v", host, ip.String(), err))
+		}
 	}
 
 	return u, nil
 }
 
-// isMetadataEndpoint checks against common cloud metadata IP addresses.
-func isMetadataEndpoint(host string) bool {
+func validateIP(ip net.IP, allowLocal bool) error {
+	if ip.IsUnspecified() {
+		return errors.New("unspecified IP addresses are not allowed")
+	}
+	if ip.IsMulticast() || ip.IsLinkLocalMulticast() {
+		return errors.New("multicast IP addresses are not allowed")
+	}
+	if ip.IsLinkLocalUnicast() {
+		// This blocks 169.254.x.x (AWS/GCP metadata) and fe80::/10
+		return errors.New("link-local/metadata IP addresses are not allowed")
+	}
+
+	isPrivateOrLoopback := ip.IsLoopback() || ip.IsPrivate()
+
+	if isPrivateOrLoopback && !allowLocal {
+		return errors.New("private/loopback IPs are not allowed for this provider")
+	}
+
+	// Block specific known cloud metadata IPs just in case
 	metadataIPs := []string{
 		"169.254.169.254", // AWS, GCP, Azure
 		"169.254.169.253", // GCP
 		"169.254.169.250", // GCP
 		"100.100.100.200", // Alibaba
 	}
-
-	// Simple string match
-	for _, ip := range metadataIPs {
-		if host == ip {
-			return true
+	for _, mIP := range metadataIPs {
+		if ip.Equal(net.ParseIP(mIP)) {
+			return errors.New("metadata endpoints are strictly forbidden")
 		}
 	}
 
-	// Check if the host resolves to a metadata IP
-	// This helps prevent DNS rebinding where a safe domain resolves to a metadata IP.
-	// We only do this if it's not localhost/LAN to save time.
-	if net.ParseIP(host) != nil {
-		return false
-	}
-	
-	// Optional: we can do a DNS lookup here, but it might slow down validation.
-	// For now, strict IP matching is implemented. In a production environment with
-	// strict SSRF protection, we would dial and check the resolved IP.
-
-	return false
+	return nil
 }
 
 // EnsureHTTPS is a helper to verify HTTPS is used when interacting with cloud providers.

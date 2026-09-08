@@ -21,7 +21,8 @@ func (p *OllamaProvider) Initialize(ctx context.Context, config ProviderConfig, 
 	p.config = config
 
 	// Validate URL without enforcing HTTPS, as Ollama is usually local HTTP
-	u, err := ValidateURL(config.ServerURL)
+	// Allow private/loopback IPs since this is a local provider
+	u, err := ValidateURL(config.ServerURL, true)
 	if err != nil {
 		return err
 	}
