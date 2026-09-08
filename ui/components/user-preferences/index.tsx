@@ -284,10 +284,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
           }
           setCopied(key);
           timeoutRef.current = setTimeout(() => {
-            if (requestId !== requestIdRef.current) {
-              return;
-            }
-            setCopied(null);
+            setCopied((prev) => (prev === key ? null : prev));
             timeoutRef.current = null;
           }, 2000);
         })
