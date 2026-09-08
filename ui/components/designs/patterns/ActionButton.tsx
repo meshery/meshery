@@ -71,7 +71,7 @@ export default function ActionButton({
       </ButtonGroup>
       <Popper
         sx={{
-          zIndex: 1,
+          zIndex: (theme) => theme.zIndex.modal,
         }}
         open={open}
         anchorEl={anchorRef.current}
