@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Grid2,
   Typography,
@@ -48,7 +48,7 @@ const ChartContainer = styled('div')({
 
 const ChartWrapper = styled('div')({
   display: 'flex',
-  flexWrap: 'no-wrap',
+  flexWrap: 'nowrap',
   justifyContent: 'center',
   alignItems: 'center',
 });
@@ -69,11 +69,6 @@ const SocialPaper = styled(Paper)(({ theme }) => ({
 const SocialIconWrapper = styled('span')(({ theme }) => ({
   margin: theme.spacing(0.4),
 }));
-
-const ShareIconContainer = styled('div')({
-  display: 'flex',
-  justifyContent: 'flex-end',
-});
 
 function NonRecursiveConstructDisplayCells(data) {
   return Object.keys(data).map((el) => {
@@ -101,14 +96,13 @@ function MesheryChart(props) {
     return `I achieved ${rps.trim()} RPS running my service at a P99.9 of ${percentile} ms using @mesheryio with @smp_spec! Find out how fast your service is with`;
   };
 
-  const handleSocialExpandClick = (e, chartData) => {
+  const handleSocialExpandClick = (e, metadata, percentiles) => {
     setAnchorEl(e.currentTarget);
-    setSocialMessage(
-      getSocialMessageForPerformanceTest(
-        chartData.options.metadata.qps.display.value.split(' ')[1],
-        chartData.percentiles[4].Value,
-      ),
-    );
+    const qpsValue = metadata?.qps?.display?.value || '';
+    const rps = qpsValue.match(/[\d.]+/)?.[0] || '0';
+    const p99_9 = percentiles?.find((p: any) => p.Percentile === 99.9)?.Value || '0';
+
+    setSocialMessage(getSocialMessageForPerformanceTest(rps, p99_9));
     e.stopPropagation();
     setSocialExpand((prevState) => !prevState);
   };
@@ -125,12 +119,12 @@ function MesheryChart(props) {
       if (chartData && chartData.data && chartData.options) {
         const xAxes = [];
         const yAxes = [];
-        const colors = {};
-        const types = {};
-        const axes = {};
-        const axis = {};
-        const yAxisTracker = {};
-        const xAxisTracker = {};
+        const colors: Record<string, string> = {};
+        const types: Record<string, any> = {};
+        const axes: Record<string, string> = {};
+        const axis: Record<string, any> = {};
+        const yAxisTracker: Record<string, string> = {};
+        const xAxisTracker: Record<string, string> = {};
 
         if (chartData.data && chartData.data.datasets) {
           chartData.data.datasets.forEach((ds, ind) => {
@@ -175,14 +169,17 @@ function MesheryChart(props) {
           });
         }
 
-        const grid = {};
+        const grid: Record<string, any> = {};
 
         if (chartData.percentiles && chartData.percentiles.length > 0) {
           // position: "middle"
           // position: "start"
           let reTrack = 0;
-          const percentiles = chartData.percentiles.map(({ Percentile, Value }) => {
-            const re = { value: (Value * 1000).toFixed(2), text: `p${Percentile}` };
+          const percentiles = chartData?.percentiles?.map(({ Percentile, Value }) => {
+            const re: { value: string; text: string; position?: string } = {
+              value: (Value * 1000).toFixed(2),
+              text: `p${Percentile}`,
+            };
             switch (reTrack % 3) {
               case 0:
                 // re.position
@@ -220,13 +217,13 @@ function MesheryChart(props) {
           point: { r: 0, focus: { expand: { r: 5 } } },
           tooltip: { show: true },
         };
-        if (!props.hideTitle) {
+        if (!props.hideTitle && titleRef.current) {
           if (props.data.length == 4) {
             titleRef.current.innerText =
               chartData.options.title.text.slice(0, 2).join('\n') +
               '\n' +
               chartData.options.title.text[2].split('\n')[0];
-            if (chartData.options.title.text[2])
+            if (chartData.options.title.text[2] && percentileRef.current)
               percentileRef.current.innerText = chartData.options.title.text[2]
                 .split('\n')[1]
                 .split('|')
@@ -239,7 +236,6 @@ function MesheryChart(props) {
         chart.current = bb.generate(chartConfig);
       } else {
         chart.current = bb.generate({
-          type: line(),
           data: { columns: [] },
           bindto: chartRef.current,
         });
@@ -254,11 +250,11 @@ function MesheryChart(props) {
       const xAxes = [];
       const categories = [];
       const yAxes = [];
-      const colors = [];
-      const axes = {};
-      const axis = {};
+      const colors: Record<string, string> = {};
+      const axes: Record<string, string> = {};
+      const axis: Record<string, any> = {};
       let yTrack = 1;
-      const yAxisTracker = {};
+      const yAxisTracker: Record<string, string> = {};
       // const xAxisTracker = {};
 
       if (chartData.data && chartData.data.datasets) {
@@ -320,7 +316,7 @@ function MesheryChart(props) {
             axes,
           },
           axis,
-          legend: { show: true, position: 'right' },
+          legend: { show: true, position: 'right' as const },
           point: { r: 0, focus: { expand: { r: 5 } } },
           tooltip: { show: true },
         };
@@ -352,67 +348,87 @@ function MesheryChart(props) {
     chartData = singleChart(props.rawdata, tmpData);
   }
 
+  useEffect(() => {
+    if (!chartRef.current) return;
+    if (props.data.length > 2) {
+      processMultiChartData(chartData);
+    } else {
+      processChartData(chartData);
+    }
+  }, [props.data, props.rawdata]);
+
+  const renderMetadataBlock = (metadata, idx) => {
+    const percentiles = props.data?.[idx]?.runner_results?.DurationHistogram?.Percentiles || [];
+    return (
+      <div key={`metadata-${idx}`} style={{ marginBottom: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="subtitle1" style={{ fontWeight: 'bold' }}>
+            {metadata?.title?.display?.value || `Result ${idx + 1}`}
+          </Typography>
+          <ShareIconButton
+            aria-label="Share"
+            onClick={(e) => handleSocialExpandClick(e, metadata, percentiles)}
+          >
+            <ReplyIcon />
+          </ShareIconButton>
+        </div>
+        <Grid2 container spacing={2} style={{ padding: '0.5rem 0' }}>
+          {NonRecursiveConstructDisplayCells(metadata || {})
+            ?.filter(Boolean)
+            .map((el, i) => (
+              <Grid2 key={`nri-${idx}-${i}`} size={{ xs: 4 }}>
+                {el}
+              </Grid2>
+            ))}
+        </Grid2>
+      </div>
+    );
+  };
+
+  const metadata = chartData?.options?.metadata;
+
   return (
     <NoSsr>
-      <ShareIconContainer>
-        <ShareIconButton aria-label="Share" onClick={(e) => handleSocialExpandClick(e, chartData)}>
-          <ReplyIcon />
-        </ShareIconButton>
-      </ShareIconContainer>
-      <SocialPopper open={socialExpand} anchorEl={anchorEl} transition placement="bottom-end">
-        {({ TransitionProps }) => (
-          <ClickAwayListener onClickAway={() => setSocialExpand(false)}>
-            <Fade {...TransitionProps} timeout={350}>
-              <SocialPaper>
-                <SocialIconWrapper>
-                  <TwitterShareButton
-                    url={'https://meshery.io'}
-                    title={socialMessage}
-                    hashtags={['opensource']}
-                  >
-                    <TwitterIcon size={32} />
-                  </TwitterShareButton>
-                </SocialIconWrapper>
-                <SocialIconWrapper>
-                  <LinkedinShareButton url={'https://meshery.io'} summary={socialMessage}>
-                    <LinkedinIcon size={32} />
-                  </LinkedinShareButton>
-                </SocialIconWrapper>
-                <SocialIconWrapper>
-                  <FacebookShareButton
-                    url={'https://meshery.io'}
-                    quote={socialMessage}
-                    hashtag={'#opensource'}
-                  >
-                    <FacebookIcon size={32} />
-                  </FacebookShareButton>
-                </SocialIconWrapper>
-              </SocialPaper>
-            </Fade>
-          </ClickAwayListener>
-        )}
-      </SocialPopper>
       <div>
+        <SocialPopper open={socialExpand} anchorEl={anchorEl} transition placement="bottom-end">
+          {({ TransitionProps }) => (
+            <ClickAwayListener onClickAway={() => setSocialExpand(false)}>
+              <Fade {...TransitionProps} timeout={350}>
+                <SocialPaper>
+                  <SocialIconWrapper>
+                    <TwitterShareButton
+                      url={'https://meshery.io'}
+                      title={socialMessage}
+                      hashtags={['opensource']}
+                    >
+                      <TwitterIcon size={32} />
+                    </TwitterShareButton>
+                  </SocialIconWrapper>
+                  <SocialIconWrapper>
+                    <LinkedinShareButton url={'https://meshery.io'}>
+                      <LinkedinIcon size={32} />
+                    </LinkedinShareButton>
+                  </SocialIconWrapper>
+                  <SocialIconWrapper>
+                    <FacebookShareButton url={'https://meshery.io'} hashtag={'#opensource'}>
+                      <FacebookIcon size={32} />
+                    </FacebookShareButton>
+                  </SocialIconWrapper>
+                </SocialPaper>
+              </Fade>
+            </ClickAwayListener>
+          )}
+        </SocialPopper>
+
         <ChartTitle ref={titleRef} style={{ display: 'none' }} />
-        <Grid2 container justifyContent="center" style={{ padding: '0.5rem' }} size="grow">
-          {NonRecursiveConstructDisplayCells(chartData?.options?.metadata || {})?.map((el, i) => (
-            <Grid2 key={`nri-${i}`} size={{ xs: 4 }}>
-              {el}
-            </Grid2>
-          ))}
-        </Grid2>
+
+        {Array.isArray(metadata)
+          ? metadata.map((m, i) => renderMetadataBlock(m, i))
+          : renderMetadataBlock(metadata, 0)}
+
         <ChartWrapper>
           <ChartContainer ref={chartRef}></ChartContainer>
-          <ChartPercentiles
-            ref={(ch) => {
-              percentileRef.current = ch;
-              if (props.data.length > 2) {
-                processMultiChartData(chartData);
-              } else {
-                processChartData(chartData);
-              }
-            }}
-          >
+          <ChartPercentiles ref={percentileRef}>
             {props.data.length === 1 ? (
               <div>
                 <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom>
@@ -421,9 +437,11 @@ function MesheryChart(props) {
                 <div>
                   {NonRecursiveConstructDisplayCells(
                     chartData?.options?.metadata?.percentiles?.display?.value || {},
-                  ).map((el, i) => (
-                    <div key={`percentile-${i}`}>{el}</div>
-                  ))}
+                  )
+                    .filter(Boolean)
+                    .map((el, i) => (
+                      <div key={'percentile-' + i}>{el}</div>
+                    ))}
                 </div>
               </div>
             ) : null}
