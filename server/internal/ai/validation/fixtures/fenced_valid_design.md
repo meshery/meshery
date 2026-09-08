@@ -1,11 +1,12 @@
+```json
 {
   "schemaVersion": "designs.meshery.io/v1beta3",
-  "name": "secret-leak",
+  "name": "fenced-ai-design",
   "components": [{
     "id": "deployment",
     "component": {"kind": "Deployment", "version": "apps/v1"},
     "model": {"name": "kubernetes"},
-    "configuration": {"apiToken": "do-not-return-this"},
-    "metadata": {"authorization": "Bearer abcdefghijklmnop"}
+    "configuration": {}
   }]
 }
+```

@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"regexp"
 	"sort"
 	"strings"
@@ -20,6 +21,7 @@ const (
 	CodeSensitiveContent   = "sensitive_content"
 	CodeRelationship       = "invalid_relationship"
 	CodeDanglingReference  = "dangling_relationship_reference"
+	CodeComponent          = "invalid_component"
 	CurrentSchemaVersion   = "designs.meshery.io/v1beta3"
 )
 
@@ -63,6 +65,10 @@ func (e *ValidationError) Unwrap() error { return errors.New("AI design validati
 // Validate decodes a JSON or YAML Meshery design and applies the AI output
 // contract. It never contacts a provider, registry, database, or filesystem.
 func Validate(raw []byte) error {
+	var err error
+	if raw, err = extractDocument(raw); err != nil {
+		return &ValidationError{Issues: []Issue{{Code: CodeMalformed, Message: "output must be a single JSON or YAML document, optionally wrapped in one json or yaml Markdown fence"}}}
+	}
 	var document map[string]interface{}
 	if err := decode(raw, &document); err != nil {
 		return &ValidationError{Issues: []Issue{{Code: CodeMalformed, Message: "output must be a JSON or YAML object"}}}
@@ -74,6 +80,53 @@ func Validate(raw []byte) error {
 	return nil
 }
 
+// extractDocument accepts a bare document or exactly one complete json/yaml
+// Markdown fence. Prose, incomplete fences, and multiple fences are rejected
+// before YAML parsing so provider commentary cannot be mistaken for content.
+func extractDocument(raw []byte) ([]byte, error) {
+	trimmed := strings.TrimSpace(string(raw))
+	if trimmed == "" {
+		return nil, errors.New("empty document")
+	}
+	if !strings.Contains(trimmed, "```") {
+		return []byte(trimmed), nil
+	}
+	lines := strings.Split(trimmed, "\n")
+	if len(lines) < 3 {
+		return nil, errors.New("incomplete Markdown fence")
+	}
+	opening := strings.TrimSpace(lines[0])
+	if opening != "```json" && opening != "```yaml" {
+		return nil, errors.New("Markdown fence must be labelled json or yaml")
+	}
+	closing := -1
+	for index := 1; index < len(lines); index++ {
+		if strings.TrimSpace(lines[index]) == "```" {
+			closing = index
+			break
+		}
+		if strings.Contains(lines[index], "```") {
+			return nil, errors.New("multiple or malformed Markdown fences")
+		}
+	}
+	if closing < 0 {
+		return nil, errors.New("incomplete Markdown fence")
+	}
+	for _, line := range lines[closing+1:] {
+		if strings.TrimSpace(line) != "" {
+			return nil, errors.New("prose surrounding Markdown fence is not allowed")
+		}
+	}
+	content := strings.TrimSpace(strings.Join(lines[1:closing], "\n"))
+	if content == "" {
+		return nil, errors.New("empty Markdown fence")
+	}
+	return []byte(content), nil
+}
+
+// decode parses one YAML/JSON document and rejects a second document or a
+// malformed document separator. The caller has already removed an optional
+// Markdown fence.
 func decode(raw []byte, destination *map[string]interface{}) error {
 	decoder := yaml.NewDecoder(bytes.NewReader(raw))
 	decoder.KnownFields(false)
@@ -83,9 +136,18 @@ func decode(raw []byte, destination *map[string]interface{}) error {
 	if *destination == nil {
 		return errors.New("empty document")
 	}
+	var additional interface{}
+	if err := decoder.Decode(&additional); err != io.EOF {
+		if err == nil {
+			return errors.New("multiple YAML/JSON documents are not allowed")
+		}
+		return err
+	}
 	return nil
 }
 
+// validateDocument applies top-level metadata, component, secret, and
+// relationship rules in a stable order.
 func validateDocument(document map[string]interface{}) []Issue {
 	issues := make([]Issue, 0, 4)
 	version, ok := stringValue(document["schemaVersion"])
@@ -104,6 +166,9 @@ func validateDocument(document map[string]interface{}) []Issue {
 		issues = append(issues, Issue{CodeMetadata, "components", "components must be an array"})
 	} else if len(components) == 0 {
 		issues = append(issues, Issue{CodeMetadata, "components", "at least one component is required"})
+	}
+	for index, component := range components {
+		issues = append(issues, validateComponent(component, index)...)
 	}
 
 	issues = append(issues, sensitiveIssues(document, "")...)
@@ -134,7 +199,7 @@ func sensitiveIssues(value interface{}, path string) []Issue {
 				childPath = path + "." + key
 			}
 			if sensitiveKey.MatchString(key) {
-				issues = append(issues, Issue{Code: CodeSensitiveContent, Path: childPath, Message: "credential or secret-bearing fields are not allowed in AI-generated designs"})
+				issues = append(issues, Issue{Code: CodeSensitiveContent, Path: redactedPath(path), Message: "credential or secret-bearing fields are not allowed in AI-generated designs"})
 				continue
 			}
 			issues = append(issues, sensitiveIssues(typed[key], childPath)...)
@@ -151,6 +216,48 @@ func sensitiveIssues(value interface{}, path string) []Issue {
 	return issues
 }
 
+// validateComponent checks the minimum portable Meshery component envelope.
+// Registry-backed schema and relationship evaluation remain downstream.
+func validateComponent(value interface{}, index int) []Issue {
+	path := fmt.Sprintf("components[%d]", index)
+	component, ok := value.(map[string]interface{})
+	if !ok {
+		return []Issue{{Code: CodeComponent, Path: path, Message: "component entry must be an object"}}
+	}
+	issues := []Issue{}
+	definition, ok := component["component"].(map[string]interface{})
+	if !ok {
+		issues = append(issues, Issue{Code: CodeComponent, Path: path + ".component", Message: "component definition is required"})
+	} else {
+		for _, field := range []string{"kind", "version"} {
+			if value, exists := definition[field].(string); !exists || strings.TrimSpace(value) == "" {
+				issues = append(issues, Issue{Code: CodeComponent, Path: path + ".component." + field, Message: "component kind and version are required"})
+			}
+		}
+	}
+	model, ok := component["model"].(map[string]interface{})
+	if !ok {
+		issues = append(issues, Issue{Code: CodeComponent, Path: path + ".model", Message: "model definition is required"})
+	} else if name, exists := model["name"].(string); !exists || strings.TrimSpace(name) == "" {
+		issues = append(issues, Issue{Code: CodeComponent, Path: path + ".model.name", Message: "model name is required"})
+	}
+	if configuration, exists := component["configuration"]; !exists || configuration == nil {
+		issues = append(issues, Issue{Code: CodeComponent, Path: path + ".configuration", Message: "configuration is required"})
+	}
+	return issues
+}
+
+// redactedPath removes a sensitive field name from diagnostics while retaining
+// enough location context for callers to identify the rejected object.
+func redactedPath(parent string) string {
+	if parent == "" {
+		return "<redacted>"
+	}
+	return parent + ".<redacted>"
+}
+
+// relationshipIssues validates instance-edge endpoints. Selector-only
+// relationship definitions are intentionally deferred to registry validation.
 func relationshipIssues(document map[string]interface{}, components []interface{}) []Issue {
 	relationships, ok := sliceValue(document["relationships"])
 	if !ok {
@@ -181,13 +288,13 @@ func relationshipIssues(document map[string]interface{}, components []interface{
 			issues = append(issues, Issue{Code: CodeRelationship, Path: fmt.Sprintf("relationships[%d]", index), Message: "relationship must be an object"})
 			continue
 		}
-		from, hasFrom := endpoint(relationship, "source", "from", "origin")
-		to, hasTo := endpoint(relationship, "target", "to", "destination")
+		from, hasFrom, validFrom := endpoint(relationship, "source", "from", "origin")
+		to, hasTo, validTo := endpoint(relationship, "target", "to", "destination")
 		if !hasFrom && !hasTo {
 			continue // schema relationship definitions may contain selectors, not instance edges
 		}
 		path := fmt.Sprintf("relationships[%d]", index)
-		if !hasFrom || !hasTo {
+		if !hasFrom || !hasTo || !validFrom || !validTo {
 			issues = append(issues, Issue{Code: CodeRelationship, Path: path, Message: "relationship edges must define both source and target"})
 			continue
 		}
@@ -201,31 +308,52 @@ func relationshipIssues(document map[string]interface{}, components []interface{
 	return issues
 }
 
-func endpoint(relationship map[string]interface{}, names ...string) (string, bool) {
+// endpoint distinguishes an absent endpoint alias from an explicitly empty or
+// incorrectly typed alias, which must be rejected as a malformed edge.
+func endpoint(relationship map[string]interface{}, names ...string) (string, bool, bool) {
+	present := false
+	valid := true
+	resolved := ""
 	for _, name := range names {
 		value, exists := relationship[name]
 		if !exists {
 			continue
 		}
+		present = true
 		if text, ok := stringValue(value); ok && text != "" {
-			return text, true
+			if resolved == "" {
+				resolved = text
+			}
+			continue
 		}
 		if object, ok := value.(map[string]interface{}); ok {
+			found := false
 			for _, key := range []string{"id", "componentId", "componentID"} {
 				if text, ok := stringValue(object[key]); ok && text != "" {
-					return text, true
+					if resolved == "" {
+						resolved = text
+					}
+					found = true
+					break
 				}
 			}
+			if !found {
+				valid = false
+			}
+			continue
 		}
+		valid = false
 	}
-	return "", false
+	return resolved, present, valid && resolved != ""
 }
 
+// stringValue returns a string without coercing arbitrary YAML values.
 func stringValue(value interface{}) (string, bool) {
 	text, ok := value.(string)
 	return text, ok
 }
 
+// sliceValue returns an array without coercing arbitrary YAML values.
 func sliceValue(value interface{}) ([]interface{}, bool) {
 	slice, ok := value.([]interface{})
 	return slice, ok

@@ -1,4 +1,4 @@
 {
   "name": "missing-schema",
-  "components": [{"id": "deployment", "component": {"kind": "Deployment"}}]
+  "components": [{"id": "deployment", "component": {"kind": "Deployment", "version": "apps/v1"}, "model": {"name": "kubernetes"}, "configuration": {}}]
 }
