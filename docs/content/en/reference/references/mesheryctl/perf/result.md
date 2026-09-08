@@ -15,8 +15,10 @@ List all the available test results of a performance profile.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl perf result [profile-name] [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,24 +27,30 @@ mesheryctl perf result [profile-name] [flags]
 List Test results (maximum 25 results)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl perf result saturday-profile
 
+</div>
 </div>
 </pre> 
 
 View other set of performance results with --page (maximum 25 results)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl perf result saturday-profile --page 2
 
+</div>
 </div>
 </pre> 
 
 View single performance result with detailed information
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl perf result saturday-profile --view
 
+</div>
 </div>
 </pre> 
 

@@ -15,8 +15,10 @@ Search registered relationship(s) used by different models.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl relationship search [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,16 +27,20 @@ mesheryctl relationship search [flags]
 Search for a specific relationship
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
+<div class='clipboardjs'>
+mesheryctl relationship search [--kind &lt;kind&gt;] [--type &lt;type&gt;] [--subtype &lt;subtype&gt;] [--model &lt;model&gt;]
 
+</div>
 </div>
 </pre> 
 
 Search a relationship for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship search [--kind <kind>] [--page <int>]
+<div class='clipboardjs'>
+mesheryctl relationship search [--kind &lt;kind&gt;] [--page &lt;int&gt;]
 
+</div>
 </div>
 </pre> 
 

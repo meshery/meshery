@@ -15,8 +15,10 @@ Delete a filter file using the name or ID of a filter.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl filter delete [filter-name | ID] [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -26,8 +28,10 @@ Delete the specified WASM filter file using name or ID
 A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be deleted.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl filter delete [filter-name | ID]
 
+</div>
 </div>
 </pre> 
 
