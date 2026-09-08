@@ -8,6 +8,11 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./vitest.setup.ts'],
+    // Vitest 4 uses "forks" pool by default (each worker = isolated Node.js
+    // process with its own heap). Cap workers on CI to prevent the
+    // "JavaScript heap out of memory" crash seen on GitHub Actions runners
+    // when all 400+ test files are processed concurrently.
+    maxWorkers: process.env.CI ? 2 : undefined,
     include: ['**/__tests__/**/*.test.{ts,tsx}', '**/*.test.{ts,tsx}'],
     exclude: [
       'node_modules',
