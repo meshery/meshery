@@ -2,6 +2,7 @@ package llm
 
 import (
 	"errors"
+	"fmt"
 	"net"
 	"net/url"
 	"strings"
@@ -35,13 +36,12 @@ func ValidateURL(rawURL string, allowLocal bool) (*url.URL, error) {
 	if err != nil {
 		// If we can't resolve it, we shouldn't trust it.
 		// However, for certain local environments, it might just be a local hostname.
-		// We'll return an error since DNS resolution is required for SSRF validation.
-		return nil, ErrSSRFValidation(fmt.Errorf("could not resolve hostname: %v", err))
+		return nil, ErrSSRFValidation(fmt.Errorf("could not resolve hostname: %w", err))
 	}
 
 	for _, ip := range ips {
 		if err := validateIP(ip, allowLocal); err != nil {
-			return nil, ErrSSRFValidation(fmt.Errorf("host %s resolved to unsafe IP %s: %v", host, ip.String(), err))
+			return nil, ErrSSRFValidation(fmt.Errorf("host %s resolved to unsafe IP %s: %w", host, ip.String(), err))
 		}
 	}
 

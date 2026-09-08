@@ -22,17 +22,9 @@ func (p *OllamaProvider) Initialize(ctx context.Context, config ProviderConfig, 
 
 	// Validate URL without enforcing HTTPS, as Ollama is usually local HTTP
 	// Allow private/loopback IPs since this is a local provider
-	u, err := ValidateURL(config.ServerURL, true)
+	_, err := ValidateURL(config.ServerURL, true)
 	if err != nil {
 		return err
-	}
-
-	// Double check we are not accidentally hitting cloud endpoints over HTTP.
-	// If it's a known public cloud, we shouldn't use HTTP.
-	if !isLocalHostOrLAN(u.Hostname()) {
-		// Log a warning or strictly enforce HTTPS depending on security requirements.
-		// For now, we allow it if it passed ValidateURL, to support custom VPN/WAN setups,
-		// but typically Ollama is local.
 	}
 
 	p.httpClient = &http.Client{
@@ -91,7 +83,7 @@ func (p *OllamaProvider) Models(ctx context.Context) ([]ModelInfo, error) {
 	}
 
 	if err := json.Unmarshal(bodyBytes, &result); err != nil {
-		return nil, ErrMalformedResponse(fmt.Errorf("failed to parse JSON response: %v", err))
+		return nil, ErrMalformedResponse(fmt.Errorf("failed to parse JSON response: %w", err))
 	}
 
 	var models []ModelInfo
@@ -138,7 +130,7 @@ func (p *OllamaProvider) Generate(ctx context.Context, req *GenerateRequest) (*G
 
 	jsonBytes, err := json.Marshal(bodyData)
 	if err != nil {
-		return nil, ErrLLMInference(fmt.Errorf("failed to marshal request: %v", err))
+		return nil, ErrLLMInference(fmt.Errorf("failed to marshal request: %w", err))
 	}
 
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(jsonBytes))
@@ -170,7 +162,7 @@ func (p *OllamaProvider) Generate(ctx context.Context, req *GenerateRequest) (*G
 	}
 
 	if err := json.Unmarshal(bodyBytes, &result); err != nil {
-		return nil, ErrMalformedResponse(fmt.Errorf("failed to parse JSON response: %v", err))
+		return nil, ErrMalformedResponse(fmt.Errorf("failed to parse JSON response: %w", err))
 	}
 
 	return &GenerateResponse{

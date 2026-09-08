@@ -39,6 +39,7 @@ func (p *OpenAIProvider) Initialize(ctx context.Context, config ProviderConfig, 
 	}
 	
 	// Use Meshery's canonical credential unwrapper
+	var apiKey string
 	payload := models.CredentialPayload(credentialSecret)
 	if payload == nil {
 		// Fallback to seeing if it's a bare string legacy secret
@@ -155,7 +156,7 @@ func (p *OpenAIProvider) Generate(ctx context.Context, req *GenerateRequest) (*G
 
 	jsonBytes, err := json.Marshal(bodyData)
 	if err != nil {
-		return nil, ErrLLMInference(fmt.Errorf("failed to marshal request: %v", err))
+		return nil, ErrLLMInference(fmt.Errorf("failed to marshal request: %w", err))
 	}
 
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(jsonBytes))
@@ -194,7 +195,7 @@ func (p *OpenAIProvider) Generate(ctx context.Context, req *GenerateRequest) (*G
 	}
 
 	if err := json.Unmarshal(bodyBytes, &result); err != nil {
-		return nil, ErrMalformedResponse(fmt.Errorf("failed to parse JSON response: %v", err))
+		return nil, ErrMalformedResponse(fmt.Errorf("failed to parse JSON response: %w", err))
 	}
 
 	if len(result.Choices) == 0 {
