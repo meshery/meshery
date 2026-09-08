@@ -25,6 +25,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils/format"
 	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -35,9 +36,26 @@ var (
 	mctlCfg *config.MesheryCtlConfig
 )
 
+type versionInfo struct {
+	Version string `json:"version" yaml:"version"`
+	GitSHA  string `json:"git_sha" yaml:"git_sha"`
+}
+
+type versionOutput struct {
+	Client versionInfo `json:"client" yaml:"client"`
+	Server versionInfo `json:"server" yaml:"server"`
+}
+
+var outputFormat string
+
 var linkDoc = map[string]string{
 	"link":    "![version-usage](../../images/version.png)",
 	"caption": "Usage of mesheryctl version",
+}
+
+// init configures flags for the version command.
+func init() {
+	versionCmd.Flags().StringVarP(&outputFormat, "output-format", "o", "", "(optional) format to display in [json|yaml]")
 }
 
 // versionCmd represents the version command
@@ -114,7 +132,11 @@ mesheryctl version
 		url := mctlCfg.GetBaseMesheryURL()
 		build := constants.GetMesheryctlVersion()
 		commitsha := constants.GetMesheryctlCommitsha()
-		defer utils.CheckMesheryctlClientVersion(build)
+		defer func() {
+			if outputFormat == "" {
+				utils.CheckMesheryctlClientVersion(build)
+			}
+		}()
 
 		version := config.Version{
 			Build:          "unavailable",
@@ -125,45 +147,54 @@ mesheryctl version
 		header := []string{"", "Version", "GitSHA"}
 		rows := [][]string{{"Client", build, commitsha}, {"Server", version.GetBuild(), version.GetCommitSHA()}}
 
+		var serverError error
 		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/version", url), nil)
 		if err != nil {
-			utils.PrintToTable(header, rows, nil)
-			utils.Log.Error(ErrGettingRequestContext(err))
-			return
+			serverError = err
+		} else {
+			client := &http.Client{Timeout: 10 * time.Second}
+			resp, err := client.Do(req)
+
+			if err != nil {
+
+				// resp is nil here except when CheckRedirect fails, and in that
+				// case net/http has already closed resp.Body for us — see the
+				// (Client).Do docs — so there is nothing left to close.
+				serverError = err
+			} else {
+				// needs multiple defer as Body.Close needs a valid response
+				defer func() { _ = resp.Body.Close() }()
+				data, err := io.ReadAll(resp.Body)
+				if err != nil {
+					serverError = err
+				} else {
+					err = json.Unmarshal(data, &version)
+					if err != nil {
+						serverError = err
+					}
+				}
+			}
 		}
 
-		client := &http.Client{Timeout: 10 * time.Second}
-		resp, err := client.Do(req)
-
-		if err != nil {
-
-			// resp is nil here except when CheckRedirect fails, and in that
-			// case net/http has already closed resp.Body for us — see the
-			// (Client).Do docs — so there is nothing left to close.
-
-			utils.PrintToTable(header, rows, nil)
-			utils.Log.Warn(ErrConnectingToServer(err))
-			return
+		res := versionOutput{
+			Client: versionInfo{Version: build, GitSHA: commitsha},
+			Server: versionInfo{Version: version.GetBuild(), GitSHA: version.GetCommitSHA()},
 		}
 
-		// needs multiple defer as Body.Close needs a valid response
-		defer func() { _ = resp.Body.Close() }()
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
+		switch outputFormat {
+		case "json":
+			_ = format.OutputJson(res)
+		case "yaml":
+			_ = format.OutputYaml(res)
+		case "":
+			rows[1][1] = version.GetBuild()
+			rows[1][2] = version.GetCommitSHA()
 			utils.PrintToTable(header, rows, nil)
-			utils.Log.Error(utils.ErrInvalidAPIResponse(err))
-			return
+			if serverError != nil {
+				utils.Log.Warn(ErrConnectingToServer(serverError))
+			}
+		default:
+			utils.Log.Error(utils.ErrFlagsInvalid(fmt.Errorf("invalid value for --output-format '%s': valid values are json yaml", outputFormat)))
 		}
-
-		err = json.Unmarshal(data, &version)
-		if err != nil {
-			utils.PrintToTable(header, rows, nil)
-			utils.Log.Error(ErrUnmarshallingAPIData(err))
-			return
-		}
-
-		rows[1][1] = version.GetBuild()
-		rows[1][2] = version.GetCommitSHA()
-		utils.PrintToTable(header, rows, nil)
 	},
 }
