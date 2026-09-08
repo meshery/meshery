@@ -106,10 +106,7 @@ mesheryctl design deploy -f [filepath] -s [source type]
 			// Merge args to get pattern-name
 			patternName := strings.Join(args, " ")
 
-			queryParams := url.Values{}
-			queryParams.Set("populate", "pattern_file")
-			queryParams.Set("search", url.QueryEscape(patternName))
-			urlPath := fmt.Sprintf("%s?%s", patternURLPath, queryParams.Encode())
+			urlPath := getDesignDeploySearchURLPath(patternURLPath, patternName)
 			// search and fetch patterns with pattern-name
 			utils.Log.Debug("Fetching designs")
 
@@ -212,6 +209,28 @@ func multiplepatternsConfirmation(profiles []models.MesheryPattern) int {
 			return index
 		}
 	}
+}
+
+// getDesignDeploySearchURLPath builds the design lookup URL for a name search.
+//
+// The name is handed to url.Values unescaped: Encode() percent-encodes each
+// value exactly once, and the server reads it back with r.URL.Query(). Escaping
+// it beforehand with url.QueryEscape encoded it twice, so "My Design" reached
+// the server as the literal "My+Design" and the LIKE never matched - reported
+// as `design not found` rather than as an encoding fault. Every name that
+// percent-encodes was affected: spaces, "&", "+", and all non-ASCII.
+// getDesignViewUrlPath in view.go does the same single encoding.
+//
+// The name is passed through exactly as the caller built it. Normalising it
+// here - trimming, for instance - would widen the LIKE and can turn a
+// one-match deploy into a multi-match one, which is a lookup-semantics change
+// rather than an encoding fix. See the discussion on #21847.
+func getDesignDeploySearchURLPath(baseAPIPath, designName string) string {
+	queryParams := url.Values{}
+	queryParams.Set("populate", "pattern_file")
+	queryParams.Set("search", designName)
+
+	return fmt.Sprintf("%s?%s", baseAPIPath, queryParams.Encode())
 }
 
 func init() {
