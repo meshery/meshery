@@ -64,29 +64,6 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y expect
 
-      - name: Verify dependencies
-        run: |
-          set -e
-
-          echo "Bash: $(bash --version | head -n 1)"
-          echo "BATS: $(bats --version)"
-          echo "Expect: $(expect -v 2>&1 | head -n 1)"
-          echo "Curl: $(curl --version | head -n 1)"
-          echo "Docker: $(docker --version)"
-          echo "Helm: $(helm version --short)"
-          echo "Kubectl: $(kubectl version --client)"
-          echo "Minikube: $(minikube version --short)"
-          echo "Homebrew: $(brew --version | head -n 1)"
-
-          command -v bash
-          command -v bats
-          command -v expect
-          command -v curl
-          command -v docker
-          command -v helm
-          command -v kubectl
-          command -v minikube
-          command -v brew
 
       - name: Run installer E2E tests
         working-directory: ./install/tests/e2e/001-installation
