@@ -197,7 +197,7 @@ run_expect() {
 }
 
 
-@test "Given docker as the platform when installing then docker is accepted" {
+@test "Given docker as the platform when installing then succeed" {
   run_expect '
     set timeout 300
 
