@@ -309,7 +309,10 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 	if err != nil {
 		return nil, ErrPraseUnverified(err)
 	}
-	kid := tokenUP.Header["kid"].(string)
+	kid, kidOK := tokenUP.Header["kid"].(string)
+	if !kidOK {
+		return nil, ErrTokenDecode(fmt.Errorf("missing or invalid kid in token header"))
+	}
 
 	var jtk map[string]interface{}
 	t, _ := base64.RawStdEncoding.DecodeString(x[1])
