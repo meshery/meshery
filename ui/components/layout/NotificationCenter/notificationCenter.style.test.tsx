@@ -25,6 +25,7 @@ vi.mock('@sistent/sistent', () => {
     IconButton: ({ children, ...props }: any) => <button {...props}>{children}</button>,
     Typography: ({ children, ...props }: any) => <span {...props}>{children}</span>,
     InfoIcon: () => null,
+    CheckCircleIcon: () => null,
     createTheme: () => ({ breakpoints: { up: () => '', down: () => '' } }),
     notificationColors: {
       info: { main: '#info' },
