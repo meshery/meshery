@@ -3,8 +3,6 @@ import {
   Box,
   useTheme,
   Typography,
-  Stack,
-  AddIcon,
   IconButton,
   Card,
   CardContent,
@@ -36,80 +34,6 @@ const actionIconProps = (theme: Theme) => ({
   primaryFill: theme.palette.background.neutral.default,
   ...iconMedium,
 });
-
-type AddWidgetsToLayoutPanelProps = {
-  widgetsToAdd: Widget[];
-  editMode: boolean;
-  onAddWidget: (widget: Widget, key: string) => void;
-};
-
-export const AddWidgetsToLayoutPanel = ({
-  widgetsToAdd,
-  editMode,
-  onAddWidget,
-}: AddWidgetsToLayoutPanelProps) => {
-  const theme = useTheme();
-  const iconsProps = layoutIconProps(theme);
-
-  if (!editMode) {
-    return null;
-  }
-  return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      gap="0.5rem"
-      p={2}
-      width="100%"
-      bgcolor={theme.palette.background.card}
-      boxShadow="0px 2px 10px rgba(0, 0, 0, 0.2)"
-      marginBlock={'1rem'}
-      minHeight={'17rem'}
-    >
-      <Typography variant="h5"> Widgets</Typography>
-      {widgetsToAdd.length == 0 && (
-        <Box marginInline={'auto'} marginTop={'5%'}>
-          <Typography variant="h6"> All widgets added to the layout </Typography>
-        </Box>
-      )}
-
-      <Box
-        sx={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '1rem',
-        }}
-      >
-        {widgetsToAdd.map(({ key, ...widget }) => (
-          <StyledCard
-            key={key}
-            sx={{
-              height: '18rem',
-              width: '100%',
-              maxWidth: '16rem',
-            }}
-          >
-            <Stack direction="row" alignItems="center" justifyContent="space-between">
-              <Typography variant="button">{widget.title}</Typography>
-              <IconButton onClick={() => onAddWidget(widget, key)}>
-                <AddIcon {...iconsProps} />
-              </IconButton>
-            </Stack>
-            <img
-              src={widget.thumbnail}
-              alt={widget.title}
-              style={{
-                width: '100%',
-                height: 'auto',
-                objectFit: 'contain',
-              }}
-            />
-          </StyledCard>
-        ))}
-      </Box>
-    </Box>
-  );
-};
 
 type StyledCardProps = {
   title?: React.ReactNode;
