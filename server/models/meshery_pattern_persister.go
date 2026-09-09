@@ -21,6 +21,28 @@ type MesheryPatternPersister struct {
 	DB *database.Handler
 }
 
+// stampLocalProviderOwner sets the built-in provider's single user as the
+// design owner. MesheryPattern.UserID/User are gorm:"-" (never a DB column),
+// and the local provider is single-user, so every design it persists is owned
+// by the local "meshery" user. Emitting userId plus the embedded user profile
+// matches the schemas v1beta3 design.MesheryPattern wire contract, so the UI
+// resolves the owner without a second lookup - this is the root-cause fix for
+// the design Info modal's "Owner: undefined undefined".
+//
+// Published designs are left untouched: on the built-in provider those are the
+// seeded community catalog, which the local user neither authored nor owns.
+// The guard lives here rather than at the call sites so no read path can opt
+// out of it - GetMesheryPatterns accepts a visibility filter and can therefore
+// return published designs too.
+func stampLocalProviderOwner(p *MesheryPattern) {
+	if p == nil || !LocalProviderOwnsContent(p.Visibility) {
+		return
+	}
+	id := LocalProviderUserID
+	p.UserID = &id
+	p.User = LocalProviderContentUser()
+}
+
 // MesheryPatternPage represents a page of performance profiles
 type MesheryPatternPage struct {
 	Page       uint64            `json:"page"`
@@ -56,6 +78,10 @@ func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, pag
 
 	query.Count(&count)
 	Paginate(uint(page), uint(pageSize))(query).Find(&patterns)
+
+	for _, p := range patterns {
+		stampLocalProviderOwner(p)
+	}
 
 	mesheryPatternPage := &MesheryPatternPage{
 		Page:       page,
@@ -208,13 +234,17 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 		pattern.PatternFile = string(byt)
 	}
 
+	// Stamp before marshalling so the save/clone response carries the same
+	// owner contract as the GET paths. UserID/User are gorm:"-", so this is
+	// response shaping only - nothing extra is persisted.
+	stampLocalProviderOwner(pattern)
+
 	return marshalMesheryPatterns([]MesheryPattern{*pattern}), mpp.DB.Save(pattern).Error
 }
 
 // SaveMesheryPatterns batch inserts the given patterns
 func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []MesheryPattern) ([]byte, error) {
 	finalPatterns := []MesheryPattern{}
-	nilOwner := ""
 	for _, pattern := range mesheryPatterns {
 
 		pf, err := patterns.GetPatternFormat(pattern.PatternFile)
@@ -225,7 +255,6 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []Mesher
 		if pattern.Visibility == "" {
 			pattern.Visibility = Private
 		}
-		pattern.Owner = &nilOwner
 		if pattern.ID == nil {
 			id, err := uuid.NewV4()
 			if err != nil {
@@ -241,6 +270,8 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []Mesher
 			pf.Version = nextVersion
 		}
 
+		stampLocalProviderOwner(&pattern)
+
 		finalPatterns = append(finalPatterns, pattern)
 	}
 
@@ -251,6 +282,7 @@ func (mpp *MesheryPatternPersister) GetMesheryPattern(id core.Uuid) ([]byte, err
 	var mesheryPattern MesheryPattern
 
 	err := mpp.DB.First(&mesheryPattern, id).Error
+	stampLocalProviderOwner(&mesheryPattern)
 	return marshalMesheryPattern(&mesheryPattern), err
 }
 

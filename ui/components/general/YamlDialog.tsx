@@ -4,12 +4,13 @@ import {
   DialogActions,
   DialogContent,
   Divider,
-  FullScreenExitIcon,
   FullScreenIcon,
+  FullScreenExitIcon,
   IconButton,
   SaveIcon,
   Tooltip,
 } from '@sistent/sistent';
+import { Keys } from '@meshery/schemas/permissions';
 import { UnControlled as CodeMirror } from './CodeMirror';
 import { YamlDialogTitleText, StyledDialog } from './YamlDialog.styles';
 import { StyledCodeMirrorWrapper } from '../designs/patterns/Cards.styles';
@@ -23,7 +24,31 @@ const YAMLDialog = ({
   deleteHandler,
   updateHandler,
   isReadOnly = false,
+  type,
+  updatePermissionKey,
+  deletePermissionKey,
 }) => {
+  const defaultUpdateKey =
+    type === 'pattern'
+      ? Keys.CatalogManagementEditDesign
+      : type === 'filter'
+        ? Keys.CatalogManagementEditWasmFilter
+        : undefined;
+  const defaultDeleteKey =
+    type === 'pattern'
+      ? Keys.CatalogManagementDeleteADesign
+      : type === 'filter'
+        ? Keys.CatalogManagementDeleteWasmFilter
+        : undefined;
+
+  const resolvedUpdateKey = updatePermissionKey || defaultUpdateKey;
+  const resolvedDeleteKey = deletePermissionKey || defaultDeleteKey;
+
+  if (process.env.NODE_ENV !== 'production' && (!resolvedUpdateKey || !resolvedDeleteKey)) {
+    console.warn(
+      `YAMLDialog: could not resolve a permission key (type="${type}"). Pass a valid type ('pattern' | 'filter') or explicit updatePermissionKey/deletePermissionKey props.`,
+    );
+  }
   return (
     <Dialog
       aria-labelledby="filter-dialog-title"
@@ -36,7 +61,11 @@ const YAMLDialog = ({
         <YamlDialogTitleText variant="h6">{name}</YamlDialogTitleText>
         <Tooltip title="Exit Fullscreen" arrow placement="bottom">
           <IconButton onClick={toggleFullScreen} size="large">
-            {fullScreen ? <FullScreenExitIcon /> : <FullScreenIcon />}
+            {fullScreen ? (
+              <FullScreenExitIcon fill="currentColor" />
+            ) : (
+              <FullScreenIcon fill="currentColor" />
+            )}
           </IconButton>
         </Tooltip>
       </StyledDialog>
@@ -62,12 +91,24 @@ const YAMLDialog = ({
       {!isReadOnly && (
         <DialogActions>
           <Tooltip title="Update Pattern">
-            <IconButton aria-label="Update" color="primary" onClick={updateHandler} size="large">
+            <IconButton
+              aria-label="Update"
+              color="primary"
+              onClick={updateHandler}
+              size="large"
+              permissionKey={resolvedUpdateKey}
+            >
               <SaveIcon />
             </IconButton>
           </Tooltip>
           <Tooltip title="Delete Filter">
-            <IconButton aria-label="Delete" color="primary" onClick={deleteHandler} size="large">
+            <IconButton
+              aria-label="Delete"
+              color="primary"
+              onClick={deleteHandler}
+              size="large"
+              permissionKey={resolvedDeleteKey}
+            >
               <DeleteIcon />
             </IconButton>
           </Tooltip>

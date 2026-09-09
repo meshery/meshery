@@ -9,6 +9,7 @@ import (
 	isql "github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshkit/models/catalog/v1alpha1"
 	"github.com/meshery/schemas/models/core"
+	user "github.com/meshery/schemas/models/v1beta2/user"
 	"gopkg.in/yaml.v2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -88,9 +89,20 @@ type MesheryPattern struct {
 
 	Name        string `json:"name,omitempty"`
 	PatternFile string `json:"patternFile"`
-	// Meshery doesn't have the owner field
-	// but the remote provider is allowed to provide one
-	Owner *string `json:"owner" gorm:"-"`
+	// UserID is the id of the design's owner. On the wire it is emitted as
+	// "userId", matching the canonical schemas v1beta3 design.MesheryPattern
+	// contract (github.com/meshery/schemas/models/v1beta3/design) rather than
+	// the legacy "owner" spelling the schema-generated UI client no longer
+	// reads. It is not persisted locally (gorm:"-"): the built-in provider is
+	// single-user and stamps the owner on read (see the pattern persister),
+	// while the remote provider (meshery-cloud) supplies it.
+	UserID *core.Uuid `json:"userId,omitempty" gorm:"-"`
+	// User is the owning user's joined profile, emitted as "user" per the same
+	// design.MesheryPattern contract. Its type is sourced from schemas
+	// (v1beta2 user.User, the exact type design.MesheryPattern.User uses) so
+	// the owner/user contract is single-sourced from schemas, not redeclared
+	// locally.
+	User *user.User `json:"user,omitempty" gorm:"-"`
 
 	Location      isql.Map             `json:"location"`
 	Visibility    string               `json:"visibility"`

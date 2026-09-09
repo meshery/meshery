@@ -122,19 +122,14 @@ func MergePayloadOntoExisting(payload *ConnectionPayload, existing *Connection) 
 	}
 }
 
-type ConnectionStatusInfo struct {
-	Status string `json:"status" db:"status"`
-	Count  int    `json:"count" db:"count"`
-}
+// The status-per-kind response wrapper surfaced on a few integrations
+// endpoints, and its element type. Both are the canonical v1beta3 connection
+// constructs rather than local stubs: the local copy of the page had dropped
+// `page`, `pageSize` and `totalCount`, so the swagger definition generated from
+// it (server/handlers/doc.go) under-described the response it documents.
+type ConnectionStatusInfo = schemasConnection.ConnectionStatusInfo
 
-// ConnectionsStatusPage is a Meshery-local swagger stub for the status-per-kind
-// response wrapper surfaced on a few integrations endpoints. The canonical
-// v1beta3 schema publishes camelCase on the wire, so the JSON tag here matches
-// `connectionsStatus`. No runtime handler emits this struct today — it is a
-// doc-only placeholder referenced from server/handlers/doc.go.
-type ConnectionsStatusPage struct {
-	ConnectionsStatus []*ConnectionStatusInfo `json:"connectionsStatus"`
-}
+type ConnectionsStatusPage = schemasConnection.ConnectionsStatusPage
 
 type ConnectionPayload struct {
 	ID                         core.Uuid              `json:"id,omitempty"`

@@ -26,7 +26,7 @@ var FilterCmd = &cobra.Command{
 	Use:   "filter",
 	Short: "Manage WebAssembly filters",
 	Long: `Cloud Native Filter Management
-Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl#command-reference`,
 	Example: `
 // Base command for WASM filters:
 mesheryctl filter [subcommands]

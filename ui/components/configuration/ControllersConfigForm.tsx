@@ -8,11 +8,31 @@ import {
   Divider,
   FormControlLabel,
   Grid2,
+  InfoTooltip,
   MenuItem,
   TextField,
   Typography,
 } from '@sistent/sistent';
-import type { ControllersConfigDoc } from '@/rtk-query/controllersConfig';
+import type { UpdateControllersDefaultConfigApiArg } from '@meshery/schemas/mesheryApi';
+import { getPath, setPath, type FieldPath } from './fieldPath';
+import {
+  dormantPathsIn,
+  isInertIn,
+  type ConfigSection,
+  type DeploymentModeGovernance,
+} from './deploymentMode';
+import { DeploymentModeBanner, SectionHeading, SectionNotice } from './DeploymentModeNotices';
+
+/**
+ * The editable controllers configuration document: the generated PUT request
+ * body, i.e. the wire document without the server-stamped `schemaVersion`.
+ * Both layers (server-wide defaults and the per-connection override) accept
+ * this exact shape.
+ */
+export type ControllersConfigDoc = UpdateControllersDefaultConfigApiArg['body'];
+
+/** As returned by the server, which stamps the schema revision onto the document. */
+export type VersionedControllersConfigDoc = ControllersConfigDoc & { schemaVersion?: string };
 
 // Built-in defaults mirrored from Meshery Server (BuiltInControllersConfig):
 // what applies when no layer sets a field.
@@ -24,55 +44,6 @@ export const BUILT_IN_CONTROLLERS_CONFIG: ControllersConfigDoc = {
 
 const INHERIT = '__inherit__';
 const WATCH_EVENTS = ['ADDED', 'MODIFIED', 'DELETED'] as const;
-
-type FieldPath = (string | number)[];
-
-const getPath = (doc: ControllersConfigDoc | null | undefined, path: FieldPath): unknown => {
-  let node: unknown = doc;
-  for (const key of path) {
-    if (node == null || typeof node !== 'object') return undefined;
-    node = (node as Record<string | number, unknown>)[key];
-  }
-  return node;
-};
-
-// deleteAtPath removes the leaf at path and prunes any parents left empty,
-// so an all-inherit section disappears from the document entirely.
-const deleteAtPath = (node: unknown, path: FieldPath): void => {
-  if (node == null || typeof node !== 'object' || path.length === 0) return;
-  const obj = node as Record<string | number, unknown>;
-  const [head, ...rest] = path;
-  if (rest.length === 0) {
-    delete obj[head];
-    return;
-  }
-  deleteAtPath(obj[head], rest);
-  const child = obj[head];
-  if (child && typeof child === 'object' && Object.keys(child as object).length === 0) {
-    delete obj[head];
-  }
-};
-
-const setPath = (
-  doc: ControllersConfigDoc,
-  path: FieldPath,
-  value: unknown,
-): ControllersConfigDoc => {
-  const next: ControllersConfigDoc = JSON.parse(JSON.stringify(doc ?? {}));
-  if (value === undefined) {
-    deleteAtPath(next, path);
-    return next;
-  }
-  let node: Record<string | number, unknown> = next as Record<string | number, unknown>;
-  for (const key of path.slice(0, -1)) {
-    if (node[key] == null || typeof node[key] !== 'object') {
-      node[key] = {};
-    }
-    node = node[key] as Record<string | number, unknown>;
-  }
-  node[path[path.length - 1]] = value;
-  return next;
-};
 
 type SourceInfo = { label: string; overridden: boolean };
 
@@ -90,6 +61,12 @@ export type ControllersConfigFormProps = {
   inheritLabel?: string;
   /** Show per-field source chips (used on the per-connection editor). */
   showSourceIndicators?: boolean;
+  /**
+   * The deployment mode governing this editor. Meshery Operator manages
+   * MeshSync and Meshery Broker, so the mode decides which settings can reach
+   * anything at all; without it the form treats every field as live.
+   */
+  deploymentMode?: DeploymentModeGovernance;
   disabled?: boolean;
 };
 
@@ -97,6 +74,12 @@ export type ControllersConfigFormProps = {
  * Layered editor for the Meshery Operator, MeshSync, and Broker
  * configuration. Every control is tri-state: leaving a field on "Inherit"
  * (or empty) keeps it absent from the document so the next layer applies.
+ *
+ * The form is governed by the effective deployment mode: on a connection
+ * running MeshSync embedded in Meshery Server, the settings that configure
+ * in-cluster objects are rendered inert and say why, and any value already
+ * stored for them is shown as dormant with a way to clear it - rather than
+ * being offered as a live control that Meshery Server will silently skip.
  */
 export default function ControllersConfigForm({
   value,
@@ -104,6 +87,7 @@ export default function ControllersConfigForm({
   inheritedLayers = [BUILT_IN_CONTROLLERS_CONFIG],
   inheritLabel = 'Inherited',
   showSourceIndicators = false,
+  deploymentMode,
   disabled = false,
 }: ControllersConfigFormProps) {
   const inheritedValue = (path: FieldPath): unknown => {
@@ -135,13 +119,54 @@ export default function ControllersConfigForm({
     );
   };
 
-  const fieldLabel = (text: string, path: FieldPath) => (
-    <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '0.25rem' }}>
+  // A field is inert when the connection's effective mode cannot apply it.
+  const isInert = (path: FieldPath): boolean => isInertIn(deploymentMode, path);
+
+  const isDisabled = (path: FieldPath): boolean => disabled || isInert(path);
+
+  const clearDormant = (section: ConfigSection) => {
+    onChange(
+      dormantPathsIn(deploymentMode, value, section).reduce(
+        (doc, path) => setPath(doc, path, undefined),
+        value,
+      ),
+    );
+  };
+
+  const fieldLabel = (text: string, path: FieldPath, helper?: string) => (
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        marginBottom: '0.25rem',
+        gap: '0.25rem',
+        flexWrap: 'wrap',
+      }}
+    >
       <Typography variant="body2" sx={{ fontWeight: 500 }}>
         {text}
       </Typography>
+      {helper ? <InfoTooltip helpText={helper} placement="top" /> : null}
       {sourceChip(path)}
+      {isInert(path) ? (
+        <Chip
+          size="small"
+          label="Not applied"
+          variant="outlined"
+          sx={{ marginLeft: '0.25rem', height: '20px' }}
+        />
+      ) : null}
     </Box>
+  );
+
+  const notice = (section: ConfigSection) => (
+    <SectionNotice
+      section={section}
+      governance={deploymentMode}
+      value={value}
+      onClearDormant={clearDormant}
+      disabled={disabled}
+    />
   );
 
   const triStateBoolean = (label: string, path: FieldPath, helper?: string) => {
@@ -149,18 +174,17 @@ export default function ControllersConfigForm({
     const inherited = inheritedValue(path) as boolean | undefined;
     return (
       <Grid2 size={{ xs: 12, md: 4 }}>
-        {fieldLabel(label, path)}
+        {fieldLabel(label, path, helper)}
         <TextField
           select
           fullWidth
           size="small"
-          disabled={disabled}
+          disabled={isDisabled(path)}
           value={current === undefined ? INHERIT : current ? 'true' : 'false'}
           onChange={(e) => {
             const v = e.target.value;
             onChange(setPath(value, path, v === INHERIT ? undefined : v === 'true'));
           }}
-          helperText={helper}
         >
           <MenuItem value={INHERIT}>
             Inherit ({inherited === undefined ? 'unset' : inherited ? 'Enabled' : 'Disabled'})
@@ -182,12 +206,12 @@ export default function ControllersConfigForm({
     const inherited = inheritedValue(path);
     return (
       <Grid2 size={{ xs: 12, md: opts?.mdSize ?? 4 }}>
-        {fieldLabel(label, path)}
+        {fieldLabel(label, path, helper)}
         <TextField
           fullWidth
           size="small"
           type={opts?.number ? 'number' : 'text'}
-          disabled={disabled}
+          disabled={isDisabled(path)}
           value={current ?? ''}
           placeholder={inherited !== undefined ? `Inherit (${inherited})` : 'Inherit'}
           slotProps={opts?.number ? { htmlInput: { min: opts?.min, max: opts?.max } } : undefined}
@@ -199,7 +223,6 @@ export default function ControllersConfigForm({
             }
             onChange(setPath(value, path, opts?.number ? Number(raw) : raw));
           }}
-          helperText={helper}
         />
       </Grid2>
     );
@@ -210,11 +233,11 @@ export default function ControllersConfigForm({
     const inherited = inheritedValue(path) as string[] | undefined;
     return (
       <Grid2 size={{ xs: 12, md: 6 }}>
-        {fieldLabel(label, path)}
+        {fieldLabel(label, path, helper)}
         <TextField
           fullWidth
           size="small"
-          disabled={disabled}
+          disabled={isDisabled(path)}
           value={current ? current.join(', ') : ''}
           placeholder={
             inherited && inherited.length > 0
@@ -238,7 +261,6 @@ export default function ControllersConfigForm({
               ),
             );
           }}
-          helperText={helper}
         />
       </Grid2>
     );
@@ -258,12 +280,12 @@ export default function ControllersConfigForm({
     const inherited = inheritedValue(path) as string | undefined;
     return (
       <Grid2 size={{ xs: 12, md: 4 }}>
-        {fieldLabel(label, path)}
+        {fieldLabel(label, path, helper)}
         <TextField
           select
           fullWidth
           size="small"
-          disabled={disabled}
+          disabled={isDisabled(path)}
           value={current ?? INHERIT}
           onChange={(e) => {
             const v = e.target.value;
@@ -274,7 +296,6 @@ export default function ControllersConfigForm({
             }
             onChange(next);
           }}
-          helperText={helper}
         >
           <MenuItem value={INHERIT}>Inherit ({inherited ?? 'unset'})</MenuItem>
           {options.map((option) => (
@@ -362,10 +383,11 @@ export default function ControllersConfigForm({
 
   return (
     <Box>
+      <DeploymentModeBanner governance={deploymentMode} />
+
       {/* Meshery Operator */}
-      <Typography variant="subtitle1" sx={{ fontWeight: 600, marginBottom: '0.5rem' }}>
-        Meshery Operator
-      </Typography>
+      <SectionHeading title="Meshery Operator" section="operator" governance={deploymentMode} />
+      {notice('operator')}
       <Grid2 container spacing={2}>
         {enumSelect(
           'Deployment mode',
@@ -379,16 +401,15 @@ export default function ControllersConfigForm({
         {textInput(
           'Operator version',
           ['operator', 'version'],
-          'Helm chart version. Inherit tracks the Meshery Server release.',
+          'Helm chart version (operator mode). Applying upgrades the Meshery Operator release. Inherit tracks the Meshery Server release.',
         )}
       </Grid2>
 
       <Divider sx={{ margin: '1.5rem 0' }} />
 
       {/* MeshSync */}
-      <Typography variant="subtitle1" sx={{ fontWeight: 600, marginBottom: '0.5rem' }}>
-        MeshSync
-      </Typography>
+      <SectionHeading title="MeshSync" section="meshsync" governance={deploymentMode} />
+      {notice('meshsync')}
       <Grid2 container spacing={2}>
         {textInput(
           'MeshSync version',
@@ -423,7 +444,10 @@ export default function ControllersConfigForm({
         )}
       </Grid2>
 
-      {redactSecrets !== true && (
+      {/* In embedded mode this setting is not what decides redaction - the
+          Meshery Server process environment is - so the warning would name the
+          wrong control. The section notice states that instead. */}
+      {redactSecrets !== true && !isInert(['meshsync', 'redactSecrets']) && (
         <Alert severity="warning" sx={{ marginTop: '1rem' }}>
           Secret redaction is disabled: Kubernetes Secret values within the watch scope are
           published un-redacted. Enable secret redaction or exclude Secrets from the watch scope.
@@ -431,20 +455,15 @@ export default function ControllersConfigForm({
       )}
 
       <Box sx={{ marginTop: '1.5rem' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '0.25rem' }}>
-          <Typography variant="body2" sx={{ fontWeight: 500 }}>
-            Watched resources (discovery scope)
-          </Typography>
-          {sourceChip(['meshsync', 'watchList'])}
-        </Box>
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
-          At most one of whitelist or blacklist. Applying a watch-scope change restarts MeshSync
-          pods automatically.
-        </Typography>
+        {fieldLabel(
+          'Watched resources (discovery scope)',
+          ['meshsync', 'watchList'],
+          'At most one of whitelist or blacklist. Applying a watch-scope change restarts MeshSync pods automatically. In blacklist mode, enter one resource key per line in "<plural>.<version>.<group>" form.',
+        )}
         <TextField
           select
           size="small"
-          disabled={disabled}
+          disabled={isDisabled(['meshsync', 'watchList'])}
           value={watchMode}
           onChange={(e) => setWatchMode(e.target.value)}
           sx={{ minWidth: '260px' }}
@@ -468,7 +487,7 @@ export default function ControllersConfigForm({
               >
                 <TextField
                   size="small"
-                  disabled={disabled}
+                  disabled={isDisabled(['meshsync', 'watchList'])}
                   value={row.resource}
                   placeholder="pods.v1. or deployments.v1.apps"
                   sx={{ minWidth: '280px' }}
@@ -484,7 +503,7 @@ export default function ControllersConfigForm({
                     control={
                       <Checkbox
                         size="small"
-                        disabled={disabled}
+                        disabled={isDisabled(['meshsync', 'watchList'])}
                         checked={(row.events ?? []).includes(eventType)}
                         onChange={(e) => {
                           const rows = [...whitelist];
@@ -504,7 +523,7 @@ export default function ControllersConfigForm({
                 ))}
                 <Button
                   size="small"
-                  disabled={disabled}
+                  disabled={isDisabled(['meshsync', 'watchList'])}
                   onClick={() => setWhitelist(whitelist.filter((_, i) => i !== index))}
                 >
                   Remove
@@ -514,7 +533,7 @@ export default function ControllersConfigForm({
             <Button
               size="small"
               variant="outlined"
-              disabled={disabled}
+              disabled={isDisabled(['meshsync', 'watchList'])}
               onClick={() =>
                 setWhitelist([...whitelist, { resource: '', events: [...WATCH_EVENTS] }])
               }
@@ -530,11 +549,10 @@ export default function ControllersConfigForm({
             multiline
             minRows={3}
             size="small"
-            disabled={disabled}
+            disabled={isDisabled(['meshsync', 'watchList'])}
             sx={{ marginTop: '1rem' }}
             value={blacklist.join('\n')}
             placeholder={'secrets.v1.\nevents.v1.'}
-            helperText='One resource key per line, in "<plural>.<version>.<group>" form.'
             onChange={(e) =>
               setBlacklist(
                 e.target.value
@@ -550,9 +568,8 @@ export default function ControllersConfigForm({
       <Divider sx={{ margin: '1.5rem 0' }} />
 
       {/* Meshery Broker */}
-      <Typography variant="subtitle1" sx={{ fontWeight: 600, marginBottom: '0.5rem' }}>
-        Meshery Broker
-      </Typography>
+      <SectionHeading title="Meshery Broker" section="broker" governance={deploymentMode} />
+      {notice('broker')}
       <Grid2 container spacing={2}>
         {textInput(
           'Broker version',
@@ -593,16 +610,19 @@ export default function ControllersConfigForm({
             'Comma-separated CIDRs allowed to reach the broker.',
           )}
         <Grid2 size={{ xs: 12, md: 6 }}>
-          {fieldLabel('Service annotations', ['broker', 'service', 'annotations'])}
+          {fieldLabel(
+            'Service annotations',
+            ['broker', 'service', 'annotations'],
+            'One key=value per line. Merged onto the broker client Service.',
+          )}
           <TextField
             fullWidth
             multiline
             minRows={2}
             size="small"
-            disabled={disabled}
+            disabled={isDisabled(['broker', 'service', 'annotations'])}
             value={annotationsText}
             placeholder={'key=value\nservice.beta.kubernetes.io/aws-load-balancer-internal=true'}
-            helperText="One key=value per line. Merged onto the broker client Service."
             onChange={(e) => setAnnotationsFromText(e.target.value)}
           />
         </Grid2>

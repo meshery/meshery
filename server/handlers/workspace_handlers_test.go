@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/schemas/models/v1beta3/workspace"
 )
 
 // workspaceSpyProvider embeds DefaultLocalProvider and records the orgID
@@ -38,6 +40,11 @@ func (m *workspaceSpyProvider) GetWorkspaceByID(_ *http.Request, _, orgID string
 	m.called = true
 	m.observedOrgID = orgID
 	return []byte(`{}`), nil
+}
+
+func (m *workspaceSpyProvider) SaveWorkspace(_ *http.Request, _ *workspace.WorkspacePayload, _ string, _ bool) ([]byte, error) {
+	m.called = true
+	return []byte(`{"id":"11111111-1111-1111-1111-111111111111"}`), nil
 }
 
 // TestGetWorkspacesHandler_AcceptsOrgIdAndLegacyOrgID asserts that the
@@ -269,5 +276,149 @@ func TestWorkspaceUpdatePayloadWire_UnmarshalJSON(t *testing.T) {
 				t.Fatalf("OrganizationID = %q, want %q", got, tc.wantOrg)
 			}
 		})
+	}
+}
+
+// workspaceFailingProvider embeds DefaultLocalProvider and fails every
+// workspace call with a caller-supplied error.
+type workspaceFailingProvider struct {
+	*models.DefaultLocalProvider
+	err error
+}
+
+func newWorkspaceFailingProvider(err error) *workspaceFailingProvider {
+	base := &models.DefaultLocalProvider{}
+	base.Initialize()
+	return &workspaceFailingProvider{DefaultLocalProvider: base, err: err}
+}
+
+func (m *workspaceFailingProvider) SaveWorkspace(_ *http.Request, _ *workspace.WorkspacePayload, _ string, _ bool) ([]byte, error) {
+	return nil, m.err
+}
+
+func (m *workspaceFailingProvider) GetWorkspaces(_, _, _, _, _, _, _ string) ([]byte, error) {
+	return nil, m.err
+}
+
+func (m *workspaceFailingProvider) DeleteWorkspace(_ *http.Request, _ string) ([]byte, error) {
+	return nil, m.err
+}
+
+// TestSaveWorkspaceHandler_PropagatesProviderStatus mirrors the environment
+// coverage: the workspace handlers carried the identical defect (ErrGetResult
+// + hardcoded 404 on every provider failure), so they get the identical
+// contract - real status out, workspace-specific code out.
+func TestSaveWorkspaceHandler_PropagatesProviderStatus(t *testing.T) {
+	cases := []struct {
+		name        string
+		providerErr error
+		wantStatus  int
+	}{
+		{
+			name:        "provider 403 surfaces as 403, not 404",
+			providerErr: models.ErrPost(errors.New("failed to save the workspace"), "Workspace", http.StatusForbidden),
+			wantStatus:  http.StatusForbidden,
+		},
+		{
+			name:        "provider 409 surfaces as 409",
+			providerErr: models.ErrPost(errors.New("workspace already exists"), "Workspace", http.StatusConflict),
+			wantStatus:  http.StatusConflict,
+		},
+		{
+			name:        "unreachable provider defaults to 502, never 404",
+			providerErr: models.ErrUnreachableRemoteProvider(errors.New("dial tcp: connection refused")),
+			wantStatus:  http.StatusBadGateway,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			provider := newWorkspaceFailingProvider(tc.providerErr)
+
+			body := `{"name":"team-space","description":"","organizationId":"11111111-1111-1111-1111-111111111111"}`
+			req := httptest.NewRequest(http.MethodPost, "/api/workspaces", strings.NewReader(body))
+			rec := httptest.NewRecorder()
+
+			h.SaveWorkspaceHandler(rec, req, nil, nil, provider)
+
+			if rec.Code != tc.wantStatus {
+				t.Fatalf("status = %d, want %d (body=%q)", rec.Code, tc.wantStatus, rec.Body.String())
+			}
+			if rec.Code == http.StatusCreated {
+				t.Fatal("a failed create must never answer 201")
+			}
+
+			var decoded struct {
+				Error                string   `json:"error"`
+				Code                 string   `json:"code"`
+				SuggestedRemediation []string `json:"suggestedRemediation"`
+			}
+			if err := json.Unmarshal(rec.Body.Bytes(), &decoded); err != nil {
+				t.Fatalf("error body did not parse as JSON: %v (body=%q)", err, rec.Body.String())
+			}
+			if decoded.Code != ErrSaveWorkspaceCode {
+				t.Errorf("code = %q, want %q", decoded.Code, ErrSaveWorkspaceCode)
+			}
+			if decoded.Code == ErrGetResultCode {
+				t.Errorf("code regressed to the performance-results code %s", ErrGetResultCode)
+			}
+			if strings.Contains(decoded.Error, "unable to get result") {
+				t.Errorf("message regressed to the results wording: %q", decoded.Error)
+			}
+			if len(decoded.SuggestedRemediation) == 0 {
+				t.Error("expected workspace-specific remediation on the wire")
+			}
+		})
+	}
+}
+
+// TestGetWorkspacesHandler_PropagatesProviderStatus covers the read path.
+func TestGetWorkspacesHandler_PropagatesProviderStatus(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	provider := newWorkspaceFailingProvider(
+		models.ErrFetch(errors.New("forbidden"), "Workspaces", http.StatusForbidden),
+	)
+
+	req := httptest.NewRequest(http.MethodGet, "/api/workspaces?orgId=11111111-1111-1111-1111-111111111111", nil)
+	req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+	rec := httptest.NewRecorder()
+
+	h.GetWorkspacesHandler(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusForbidden {
+		t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusForbidden, rec.Body.String())
+	}
+
+	var decoded struct {
+		Code string `json:"code"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &decoded); err != nil {
+		t.Fatalf("error body did not parse as JSON: %v", err)
+	}
+	if decoded.Code != ErrGetWorkspacesCode {
+		t.Errorf("code = %q, want %q", decoded.Code, ErrGetWorkspacesCode)
+	}
+}
+
+// TestSaveWorkspaceHandler_SetsContentTypeOnSuccess guards an adjacent bug
+// found while fixing the above: the success path called w.WriteHeader before
+// w.Header().Set, so Content-Type was silently dropped. RTK Query's default
+// baseQuery dispatches on Content-Type, so the 201 body arrived unparsed.
+func TestSaveWorkspaceHandler_SetsContentTypeOnSuccess(t *testing.T) {
+	h := newTestHandler(t, map[string]models.Provider{}, "")
+	provider := newWorkspaceSpyProvider()
+
+	body := `{"name":"team-space","organizationId":"11111111-1111-1111-1111-111111111111"}`
+	req := httptest.NewRequest(http.MethodPost, "/api/workspaces", strings.NewReader(body))
+	rec := httptest.NewRecorder()
+
+	h.SaveWorkspaceHandler(rec, req, nil, nil, provider)
+
+	if rec.Code != http.StatusCreated {
+		t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusCreated, rec.Body.String())
+	}
+	if ct := rec.Header().Get("Content-Type"); ct != "application/json" {
+		t.Errorf("Content-Type = %q, want application/json", ct)
 	}
 }

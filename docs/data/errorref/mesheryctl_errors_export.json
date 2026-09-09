@@ -397,7 +397,7 @@
         "long_description": "No profile found with given name",
         "short_description": "No profile found",
         "probable_cause": "Invalid profile name or no profile name provided",
-        "suggested_remediation": "Ensure a valid profile name is inputted. See https://docs.meshery.io/reference/mesheryctl/perf/apply for more details"
+        "suggested_remediation": "Ensure a valid profile name is inputted. See https://docs.meshery.io/reference/references/mesheryctl/perf/apply for more details"
       },
       "1047": {
         "name": "ErrInvalidOutputChoiceCode",
@@ -460,7 +460,7 @@
         "long_description": "",
         "short_description": "Healthchecks Failed",
         "probable_cause": "Failed to initialize healthchecker",
-        "suggested_remediation": "Ensure Mesheryctl is running and has the right configurations. See https://docs.meshery.io/reference/mesheryctl/system/check for checking Meshery components"
+        "suggested_remediation": "Ensure Mesheryctl is running and has the right configurations. See https://docs.meshery.io/reference/references/mesheryctl/system/check for checking Meshery components"
       },
       "1054": {
         "name": "ErrPerformanceProfileResultCode",
@@ -2090,6 +2090,15 @@
         "short_description": "",
         "probable_cause": "A model version directory name escapes the models directory\nThe models directory layout was modified while the purge was running",
         "suggested_remediation": "Inspect the models directory for unexpected entries\nRe-run mesheryctl registry purge from the root of a meshery/meshery fork"
+      },
+      "1253": {
+        "name": "ErrAmbiguousSelectionCode",
+        "code": "1253",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Ambiguous match, and no terminal to resolve it on",
+        "probable_cause": "The command is running in a script, pipeline or CI job where stdin or stdout is redirected",
+        "suggested_remediation": "Identify the item by its unique ID instead of its name\nNarrow the search so exactly one item matches"
       }
     }
   }

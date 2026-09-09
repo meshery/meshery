@@ -85,7 +85,6 @@ REPOS=(
   "meshery/schemas"
   # "meshery/meshery"
   # "meshery/meshkit"
-  # "layer5io/sistent"
 )
 
 repo_root="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"

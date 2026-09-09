@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/models/registration"
@@ -114,7 +115,7 @@ func getLatestModelDefDir(latestVersionDirPath string) (string, error) {
 }
 
 // SeedComponents registers the latest versions of models
-func SeedComponents(log logger.Handler, hc *HandlerConfig, regm *meshmodel.RegistryManager) {
+func SeedComponents(log logger.Handler, hc *HandlerConfig, regm *meshmodel.RegistryManager, db *database.Handler) {
 	regErrorStore := NewRegistrationFailureLogHandler()
 	regHelper := registration.NewRegistrationHelper(utils.UI, regm, regErrorStore)
 	modelDirPaths, err := GetModelDirectoryPaths(ModelsPath)
@@ -128,4 +129,10 @@ func SeedComponents(log logger.Handler, hc *HandlerConfig, regm *meshmodel.Regis
 	}
 
 	RegistryLog(log, hc, regm, regErrorStore)
+
+	// Registration has now put every connection definition in the registry and
+	// created the registrant Connections they describe. Seeding is folded in
+	// here, rather than left to each caller, so that every path that rebuilds
+	// the registry - boot, database reset, hard reset - seeds too.
+	SeedConnections(log, db, regm)
 }

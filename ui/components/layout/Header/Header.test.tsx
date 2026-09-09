@@ -71,7 +71,13 @@ vi.mock('@/rtk-query/connection', () => ({
 }));
 
 vi.mock('../../../utils/Enum', () => ({
-  CONNECTION_KINDS: { KUBERNETES: 'kubernetes' },
+  CoreConnectionKinds: {
+    meshery: 'meshery',
+    kubernetes: 'kubernetes',
+    prometheus: 'prometheus',
+    grafana: 'grafana',
+    github: 'github',
+  },
   CONNECTION_STATES: { DELETED: 'deleted' },
 }));
 

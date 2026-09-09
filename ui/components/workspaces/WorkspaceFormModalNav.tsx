@@ -16,6 +16,7 @@ import {
   PeopleIcon,
   ViewIcon,
   WorkspaceIcon,
+  useHasPermission,
   useMediaQuery,
 } from '@sistent/sistent';
 import { styled, useTheme } from '@/theme';
@@ -30,11 +31,13 @@ import WorkspaceContent from './SpacesSwitcher/WorkspaceContent';
 import { useGetProviderCapabilitiesQuery, useGetSelectedOrganization } from '@/rtk-query/user';
 import { isLocalProvider } from '@/utils/provider';
 import SharedContent from './SpacesSwitcher/SharedContent';
-import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 import type { Theme } from '@/theme';
 import { NavItem, WorkspacesSection, NavConfigItem } from './WorkspaceFormModalSections';
+
+/** Nav item selected on open, and the fallback when a selection loses its gate. */
+const DEFAULT_NAV_ID = 'Recents (Global)';
 
 const Layout = styled(Box)({
   display: 'flex',
@@ -47,7 +50,15 @@ export type HeaderInfo = {
   icon: React.ReactNode;
 };
 
-const getNavItem = (theme: Theme): NavConfigItem[] => {
+/**
+ * Single source of truth for the drawer's nav items and their permission gates.
+ * Both the drawer (which filters disabled items out) and the content wrapper
+ * (which resolves the selected item to its body) read from this hook, so the
+ * navigation and the content it renders can never diverge on the permission key
+ * they authorize against.
+ */
+const useNavConfig = (theme: Theme): NavConfigItem[] => {
+  const canViewViews = useHasPermission(Keys.KanvasViewViews);
   return [
     {
       id: 'Recents (Global)',
@@ -72,7 +83,7 @@ const getNavItem = (theme: Theme): NavConfigItem[] => {
       id: 'My-Views',
       label: 'My Views',
       icon: <ViewIcon {...iconSmall} fill={theme.palette.icon.default} />,
-      enabled: CAN(Keys.KanvasViewViews.id, Keys.KanvasViewViews.function),
+      enabled: canViewViews,
       content: <MyViewsContent />,
     },
     {
@@ -97,6 +108,7 @@ const WorkspaceContentWrapper: FC<WorkspaceContentWrapperProps> = ({
 }) => {
   const workspaceSwitcherContext = useContext(WorkspaceModalContext);
   const theme = useTheme();
+  const navConfig = useNavConfig(theme);
 
   useEffect(() => {
     if (id === 'All Workspaces') {
@@ -107,8 +119,9 @@ const WorkspaceContentWrapper: FC<WorkspaceContentWrapperProps> = ({
     }
   }, [id, workspacesData]);
 
-  const navConfig = getNavItem(theme);
-  const mainItem = navConfig.find((item) => item.id === id);
+  // Match the drawer's own filter: an item the user cannot see must not be
+  // renderable by id either, so a stale/deep-linked selection cannot bypass the gate.
+  const mainItem = navConfig.find((item) => item.id === id && item.enabled !== false);
 
   if (mainItem && mainItem.content) {
     return <>{mainItem.content}</>;
@@ -137,8 +150,22 @@ export const Navigation: FC<NavigationProps> = ({ setHeaderInfo }) => {
   const isLocal = isLocalProvider(capabilitiesData);
   const workspaceSwitcherContext = useContext(WorkspaceModalContext);
   const { selectedWorkspace } = workspaceSwitcherContext;
-  const [selectedId, setSelectedId] = useState<string>(selectedWorkspace?.id || 'Recents (Global)');
-  const navConfig = getNavItem(theme).filter((item) => item.enabled !== false);
+  const [selectedId, setSelectedId] = useState<string>(selectedWorkspace?.id || DEFAULT_NAV_ID);
+  const allNavItems = useNavConfig(theme);
+  const navConfig = allNavItems.filter((item) => item.enabled !== false);
+
+  // A selection can outlive its permission (revoked mid-session). The drawer
+  // drops the item and the content wrapper falls back, but `selectedId` would
+  // otherwise keep the header naming a view that no longer renders. Reconcile
+  // to the default instead. Guarded on a boolean so this cannot loop, and only
+  // nav ids are considered - a selected workspace id is never in `allNavItems`.
+  const selectedNavItemRevoked =
+    allNavItems.find((item) => item.id === selectedId)?.enabled === false;
+  useEffect(() => {
+    if (selectedNavItemRevoked) {
+      setSelectedId(DEFAULT_NAV_ID);
+    }
+  }, [selectedNavItemRevoked]);
   const { selectedOrganization } = useGetSelectedOrganization();
   const { data: workspacesData, isLoading } = useGetWorkspacesQuery(
     {

@@ -83,7 +83,7 @@ function FilterCardGridItem({
         name={filter.name}
         updatedAt={filter.updatedAt}
         createdAt={filter.createdAt}
-        ownerId={filter.userId}
+        ownerId={filter.owner}
         filterResource={yaml}
         canPublishFilter={canPublishFilter}
         handlePublishModal={handlePublishModal}

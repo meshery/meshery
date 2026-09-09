@@ -105,8 +105,9 @@ Now, Meshery will run on the default port `http://localhost:9081`.
 
 **Please note**: If you see "Meshery Development Incompatible" while trying to sign into Meshery Server, then follow these steps:
 
-<a href="../images/meshery-development-incompatible-error.png">
-  <img style= "width: 600px;" src="../images/meshery-development-incompatible-error.png" />
+<a href="../../images/meshery-development-incompatible-error.png">
+  <img style="width: 600px;" src="../../images/meshery-development-incompatible-error.png"
+       alt="Meshery Development Incompatible error dialog" />
 </a>
 
 Potential Solution:

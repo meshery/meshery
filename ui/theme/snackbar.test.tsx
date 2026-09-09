@@ -46,4 +46,21 @@ describe('ThemeResponsiveSnackbar', () => {
 
     expect(screen.getByTestId('SnackbarContent-success')).toHaveTextContent('saved');
   });
+
+  // `BasicMarkdown` emits sibling block elements. As direct children of the
+  // content row they became sibling flex items and laid out horizontally, so a
+  // multi-block MeshKit error read "Unable to create the environmentmeshery-
+  // server-1448". The markdown needs its own column inside the row.
+  it('stacks the markdown blocks in a column instead of the content row', () => {
+    render(<ThemeResponsiveSnackbar id={1} variant="error" message={'**Failed**\n\n`code-1`'} />);
+
+    const row = screen.getByTestId('SnackbarContent-error');
+    const messageColumn = screen.getByTestId('SnackbarContent-message');
+
+    expect(row.style.flexDirection).not.toBe('column');
+    expect(messageColumn.parentElement).toBe(row);
+    expect(messageColumn.style.flexDirection).toBe('column');
+    // Long unbreakable strings must wrap rather than overflow the toast.
+    expect(messageColumn.style.minWidth).toBe('0px');
+  });
 });

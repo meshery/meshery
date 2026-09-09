@@ -44,6 +44,11 @@ module.exports = defineConfig({
     video: {
       mode: 'retain-on-failure',
     },
+    /* Keep a screenshot of the final failed state. Together with trace + video
+     * (all retain-on-failure), the allure-playwright reporter attaches these to
+     * each failed result, so a failure is debuggable in the Allure report
+     * (e.g. the Connection Lifecycle report) instead of showing only the error. */
+    screenshot: 'only-on-failure',
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'retain-on-failure',
     provider: process.env.MESHERY_PROVIDER || 'Local',

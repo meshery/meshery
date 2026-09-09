@@ -2,6 +2,9 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+const canSpy = vi.fn((_key?: unknown) => true);
+import { Keys } from '@meshery/schemas/permissions';
 import InfoModal from './InfoModal';
 
 const notify = vi.fn();
@@ -21,6 +24,7 @@ const publishMock = vi.fn().mockReturnValue({
     }),
 });
 const mockGetUserById = vi.fn();
+const mockGetProviderCapabilities = vi.fn();
 const mockGetMeshModels = vi.fn();
 
 let mockState: any = { ui: { user: { id: 'u1', roleNames: ['admin'] } } };
@@ -34,8 +38,12 @@ vi.mock('@/rtk-query/design', () => ({
   useUpdatePatternFileMutation: () => [updatePatternMock],
 }));
 
+// The options argument is forwarded on purpose: the `skip` guard that keeps the
+// modal from firing a redundant by-id lookup lives there, so a mock that drops
+// it would let the guard be deleted with the suite still green.
 vi.mock('@/rtk-query/user', () => ({
-  useGetUserByIdQuery: (id: string) => mockGetUserById(id),
+  useGetUserByIdQuery: (id: string, options?: unknown) => mockGetUserById(id, options),
+  useGetProviderCapabilitiesQuery: () => mockGetProviderCapabilities(),
 }));
 
 vi.mock('@/api/meshmodel', () => ({
@@ -52,10 +60,6 @@ vi.mock('@/store/ProviderStoreWrapper', () => ({
 
 vi.mock('@/store/slices/mesheryUi', () => ({
   updateProgress: vi.fn(),
-}));
-
-vi.mock('@/utils/can', () => ({
-  default: () => true,
 }));
 
 vi.mock('@/utils/objects', () => ({
@@ -81,7 +85,8 @@ vi.mock('../../../../utils/hooks/useNotification', () => ({
 }));
 
 vi.mock('../../../../rtk-query/user', () => ({
-  useGetUserByIdQuery: (id: string) => mockGetUserById(id),
+  useGetUserByIdQuery: (id: string, options?: unknown) => mockGetUserById(id, options),
+  useGetProviderCapabilitiesQuery: () => mockGetProviderCapabilities(),
 }));
 
 vi.mock('../../../../lib/event-types', () => ({
@@ -204,6 +209,7 @@ vi.mock('@sistent/sistent', () => {
       shadows: ['none', 's1', 's2', 's3', 's4', 's5', 's6', 's7', 's8'],
     }),
     styled,
+    useHasPermission: (key: { id?: string }) => canSpy(key),
   };
 });
 
@@ -225,12 +231,17 @@ const baseSelectedResource = {
 
 describe('InfoModal', () => {
   beforeEach(() => {
+    canSpy.mockClear();
+    canSpy.mockReturnValue(true);
     notify.mockReset();
     enqueueSnackbar.mockReset();
     closeSnackbar.mockReset();
+    mockGetUserById.mockReset();
     mockGetUserById.mockReturnValue({
       data: { id: 'user-1', firstName: 'Bob', lastName: 'Jones', avatarUrl: '/b.png' },
     });
+    mockGetProviderCapabilities.mockReset();
+    mockGetProviderCapabilities.mockReturnValue({ data: { providerType: 'remote' } });
     mockGetMeshModels.mockResolvedValue({
       models: [{ name: 'kubernetes', displayName: 'Kubernetes' }],
     });
@@ -292,6 +303,51 @@ describe('InfoModal', () => {
     );
 
     expect(screen.getByTestId('publish-btn')).toHaveTextContent('Publish to Catalog');
+  });
+
+  it('enables Publish to Catalog for an owner holding the publish permission', () => {
+    render(
+      <InfoModal
+        infoModalOpen={true}
+        handleInfoModalClose={vi.fn()}
+        resourceOwnerID="u1"
+        selectedResource={baseSelectedResource}
+        patternFetcher={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId('publish-btn')).toBeEnabled();
+    expect(canSpy).toHaveBeenCalledWith(Keys.CatalogManagementPublishDesign);
+  });
+
+  it('disables Publish to Catalog when the publish permission is denied', () => {
+    canSpy.mockReturnValue(false);
+    render(
+      <InfoModal
+        infoModalOpen={true}
+        handleInfoModalClose={vi.fn()}
+        resourceOwnerID="u1"
+        selectedResource={baseSelectedResource}
+        patternFetcher={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId('publish-btn')).toBeDisabled();
+  });
+
+  it('disables Publish to Catalog when the signed-in user does not own the design', () => {
+    mockState = { ui: { user: { id: 'someone-else', roleNames: ['admin'] } } };
+    render(
+      <InfoModal
+        infoModalOpen={true}
+        handleInfoModalClose={vi.fn()}
+        resourceOwnerID="u1"
+        selectedResource={baseSelectedResource}
+        patternFetcher={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId('publish-btn')).toBeDisabled();
   });
 
   it('shows Published when the resource is already published', () => {
@@ -381,5 +437,106 @@ describe('InfoModal', () => {
     );
 
     expect(screen.getByAltText('My Design')).toHaveAttribute('src', '/design-1.png');
+  });
+
+  it('renders the owner from the design embedded user profile', () => {
+    // The schemas design.MesheryPattern contract joins the owner profile onto
+    // the design as `user`. The modal must render it directly (no lookup), the
+    // root-cause fix for "Owner: undefined undefined".
+    render(
+      <InfoModal
+        infoModalOpen={true}
+        handleInfoModalClose={vi.fn()}
+        resourceOwnerID="u1"
+        selectedResource={{
+          ...baseSelectedResource,
+          user: { id: 'u9', firstName: 'Ada', lastName: 'Lovelace', avatarUrl: '/a.png' },
+        }}
+        patternFetcher={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText('Ada Lovelace')).toBeInTheDocument();
+    // The embedded profile wins over the by-id lookup mock (Bob Jones).
+    expect(screen.queryByText('Bob Jones')).not.toBeInTheDocument();
+    const tooltips = Array.from(document.querySelectorAll('[data-tooltip]')).map((el) =>
+      el.getAttribute('data-tooltip'),
+    );
+    expect(tooltips).toContain('Owner: Ada Lovelace');
+    // The redundant by-id request must actually be suppressed, not merely
+    // out-ranked by the `??`.
+    expect(mockGetUserById.mock.calls[0][1]).toEqual(expect.objectContaining({ skip: true }));
+  });
+
+  it('falls back to the by-id user lookup when the design has no embedded user', () => {
+    render(
+      <InfoModal
+        infoModalOpen={true}
+        handleInfoModalClose={vi.fn()}
+        resourceOwnerID="u1"
+        selectedResource={baseSelectedResource}
+        patternFetcher={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText('Bob Jones')).toBeInTheDocument();
+    expect(mockGetUserById.mock.calls[0][0]).toBe('u1');
+    expect(mockGetUserById.mock.calls[0][1]).toEqual(expect.objectContaining({ skip: false }));
+  });
+
+  it('links the owner avatar to the Meshery Cloud profile on a remote provider', () => {
+    render(
+      <InfoModal
+        infoModalOpen={true}
+        handleInfoModalClose={vi.fn()}
+        resourceOwnerID="u1"
+        selectedResource={baseSelectedResource}
+        patternFetcher={vi.fn()}
+      />,
+    );
+
+    const avatarLink = screen.getByTestId('avatar').closest('a');
+    expect(avatarLink).toHaveAttribute('href', 'https://cloud.meshery.io/user/user-1');
+  });
+
+  it('does not link the owner avatar to Meshery Cloud on the built-in local provider', () => {
+    // The local provider's user is a synthetic, local-only identity, so the
+    // cloud profile URL would 404.
+    mockGetProviderCapabilities.mockReturnValue({ data: { providerType: 'local' } });
+
+    render(
+      <InfoModal
+        infoModalOpen={true}
+        handleInfoModalClose={vi.fn()}
+        resourceOwnerID="u1"
+        selectedResource={baseSelectedResource}
+        patternFetcher={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText('Bob Jones')).toBeInTheDocument();
+    expect(screen.getByTestId('avatar').closest('a')).toBeNull();
+    expect(document.querySelector('a[href*="cloud.meshery.io/user"]')).toBeNull();
+  });
+
+  it('shows a bare "Owner" label, never "undefined undefined", when the owner cannot be resolved', () => {
+    mockGetUserById.mockReturnValue({ data: undefined });
+
+    render(
+      <InfoModal
+        infoModalOpen={true}
+        handleInfoModalClose={vi.fn()}
+        resourceOwnerID=""
+        selectedResource={{ ...baseSelectedResource, userId: undefined, user: undefined }}
+        patternFetcher={vi.fn()}
+      />,
+    );
+
+    const tooltips = Array.from(document.querySelectorAll('[data-tooltip]')).map((el) =>
+      el.getAttribute('data-tooltip'),
+    );
+    expect(tooltips).toContain('Owner');
+    expect(tooltips.some((t) => t?.includes('undefined'))).toBe(false);
+    expect(screen.queryByText(/undefined/)).not.toBeInTheDocument();
   });
 });

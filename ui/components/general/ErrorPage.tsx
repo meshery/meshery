@@ -84,6 +84,7 @@ const CustomErrorMessage = ({ message, showImage = true }: CustomErrorMessagePro
             <StyledLink
               href="https://meshery.io/community#community-forums/c/meshery/5"
               target="_blank"
+              rel="noopener noreferrer"
             >
               discussion forum
             </StyledLink>

@@ -5,13 +5,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const can = vi.fn(() => true);
 const getUserByIdQuery = vi.fn();
+const getProviderCapabilitiesQuery = vi.fn();
 
 vi.mock('@/utils/can', () => ({
   default: (...args: unknown[]) => can(...args),
 }));
 
-vi.mock('../../rtk-query/user', () => ({
+vi.mock('@/rtk-query/user', () => ({
   useGetUserByIdQuery: (...args: unknown[]) => getUserByIdQuery(...args),
+  useGetProviderCapabilitiesQuery: () => getProviderCapabilitiesQuery(),
 }));
 
 vi.mock('../../utils/Enum', () => ({
@@ -131,6 +133,8 @@ describe('FiltersCard', () => {
     can.mockReturnValue(true);
     getUserByIdQuery.mockReset();
     getUserByIdQuery.mockReturnValue({ data: { avatarUrl: 'https://a.io/u.png' } });
+    getProviderCapabilitiesQuery.mockReset();
+    getProviderCapabilitiesQuery.mockReturnValue({ data: { providerType: 'remote' } });
   });
 
   const baseProps = {
@@ -212,11 +216,30 @@ describe('FiltersCard', () => {
 
   it('passes ownerId to useGetUserByIdQuery', () => {
     render(<FiltersCard {...baseProps} ownerId="user-42" />);
-    expect(getUserByIdQuery).toHaveBeenCalledWith('user-42');
+    expect(getUserByIdQuery).toHaveBeenCalledWith(
+      'user-42',
+      expect.objectContaining({ skip: false }),
+    );
   });
 
   it('renders the avatar with the fetched owner avatarUrl', () => {
     render(<FiltersCard {...baseProps} />);
     expect(screen.getByTestId('avatar')).toHaveAttribute('data-src', 'https://a.io/u.png');
+  });
+
+  it('links the owner avatar on a remote provider', () => {
+    render(<FiltersCard {...baseProps} ownerId="user-42" />);
+    expect(screen.getByTestId('avatar').closest('a')).not.toBeNull();
+  });
+
+  it('does not link the owner avatar on the built-in local provider', () => {
+    // The local provider's user has no Meshery Cloud profile page, so the link
+    // would 404.
+    getProviderCapabilitiesQuery.mockReturnValue({ data: { providerType: 'local' } });
+
+    render(<FiltersCard {...baseProps} ownerId="user-42" />);
+
+    expect(screen.getByTestId('avatar')).toBeInTheDocument();
+    expect(screen.getByTestId('avatar').closest('a')).toBeNull();
   });
 });

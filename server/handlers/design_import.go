@@ -77,9 +77,9 @@ func resolveImportVariant(body pattern.MesheryPatternImportRequestBody) (importV
 				Name: stringFromPtr(filePayload.Name),
 				File: FileToImport{FileName: filePayload.FileName},
 			},
-			ErrInvalidImportRequest(errors.New("request body must contain exactly one of File Import (file + file_name) or URL Import (url), not both"))
+			ErrInvalidImportRequest(errors.New("request body must contain exactly one of File Import (file + fileName) or URL Import (url), not both"))
 	case !hasFile && !hasURL:
-		return importVariant{}, ErrInvalidImportRequest(errors.New("request body must contain either a File Import (file + file_name) or a URL Import (url)"))
+		return importVariant{}, ErrInvalidImportRequest(errors.New("request body must contain either a File Import (file + fileName) or a URL Import (url)"))
 	case hasFile:
 		return importVariant{
 			Name: stringFromPtr(filePayload.Name),

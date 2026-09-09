@@ -7,7 +7,7 @@ import { ConnectionChip } from '../../connections/ConnectionChip';
 import { normalizeStaticImagePath } from '../../../utils/fallback';
 import { useLazyGetSystemSyncQuery } from '../../../rtk-query/system';
 import { useUpdateConnectionStatusMutation } from '../../../rtk-query/connection';
-import { CONNECTION_KINDS, CONNECTION_STATES } from '../../../utils/Enum';
+import { CONNECTION_STATES, CoreConnectionKinds } from '../../../utils/Enum';
 import ConnectionStateTransitionModal from '../../connections/ConnectionStateTransitionModal';
 import type { ConnectionStateTransitionModalRef } from '../../connections/ConnectionStateTransitionModal';
 import { iconMedium, iconSmall } from '../../../css/icons.styles';
@@ -130,7 +130,7 @@ const K8sContextConnectionChip_ = ({
             // through normalizeStaticImagePath, which turns SVG markup into a
             // data URI. Prefixing with "/" here would corrupt the SVG markup.
             iconSrc={
-              connectionMetadataState?.[CONNECTION_KINDS.KUBERNETES]?.icon ||
+              connectionMetadataState?.[CoreConnectionKinds.kubernetes]?.icon ||
               '/static/img/integrations/kubernetes.svg'
             }
             status={connectionStatus}
@@ -169,7 +169,7 @@ function K8sContextMenu({
   // plain kind=kubernetes (not JSON-encoded) and pageSize=all so status dots
   // resolve for every cluster in the switcher.
   const { data: connectionData } = useGetConnectionsQuery({
-    kind: CONNECTION_KINDS.KUBERNETES,
+    kind: CoreConnectionKinds.kubernetes,
     pageSize: 'all',
   });
 
@@ -192,7 +192,7 @@ function K8sContextMenu({
     )?.connectionStatus;
     const confirmed = await deleteCtxtRef.current?.show({
       targetStatus: CONNECTION_STATES.DELETED,
-      kind: CONNECTION_KINDS.KUBERNETES,
+      kind: CoreConnectionKinds.kubernetes,
       currentStatus,
       connections: [{ id: connectionID, name, status: currentStatus }],
     });
@@ -209,7 +209,7 @@ function K8sContextMenu({
       };
       try {
         await updateConnectionStatus({
-          kind: CONNECTION_KINDS.KUBERNETES,
+          kind: CoreConnectionKinds.kubernetes,
           body: { [connectionID]: CONNECTION_STATES.DELETED },
         }).unwrap();
         successHandlerGenerator(
@@ -249,7 +249,7 @@ function K8sContextMenu({
               className="k8s-image"
               src={
                 normalizeStaticImagePath(
-                  connectionMetadataState?.[CONNECTION_KINDS.KUBERNETES]?.icon,
+                  connectionMetadataState?.[CoreConnectionKinds.kubernetes]?.icon,
                 ) || '/static/img/integrations/kubernetes.svg'
               }
               onError={(e) => {

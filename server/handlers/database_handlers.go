@@ -12,7 +12,6 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
-	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	system "github.com/meshery/schemas/models/v1beta1/system"
 	"github.com/spf13/viper"
 	"gorm.io/gorm/clause"
@@ -138,23 +137,13 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 			}
 		}
 
-		err = dbHandler.AutoMigrate(
-			&meshsyncmodel.KubernetesKeyValue{},
-			&meshsyncmodel.KubernetesResource{},
-			&meshsyncmodel.KubernetesResourceSpec{},
-			&meshsyncmodel.KubernetesResourceStatus{},
-			&meshsyncmodel.KubernetesResourceObjectMeta{},
-			&models.PerformanceProfile{},
-			&models.MesheryResult{},
-			&models.MesheryPattern{},
-			&models.MesheryFilter{},
-			&models.PatternResource{},
-			&models.MesheryApplication{},
-			&models.UserPreference{},
-			&models.PerformanceTestConfig{},
-			&models.SmiResultWithID{},
-			&models.K8sContext{},
-		)
+		// Re-migrate the full system-table set after dropping every table.
+		// Sharing models.SystemDatabaseModels with boot and the GraphQL hard
+		// reset is what keeps the reset from re-creating only a stale subset -
+		// previously environments/environment_connection_mappings were never
+		// recreated, so GetConnections (which LEFT JOINs
+		// environment_connection_mappings) returned 500 until a restart.
+		err = models.AutoMigrateSystemTables(dbHandler)
 
 		if err != nil {
 			writeMeshkitError(w, ErrMigrateDatabaseTables(err), http.StatusInternalServerError)
@@ -174,7 +163,7 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 			return
 		}
 		go func() {
-			models.SeedComponents(h.log, h.config, h.registryManager)
+			models.SeedComponents(h.log, h.config, h.registryManager, dbHandler)
 			krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		}()
 		writeJSONMessage(w, system.SystemMessageResponse{Message: "Database reset successful"}, http.StatusOK)

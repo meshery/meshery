@@ -1,6 +1,5 @@
-import { Button, Typography } from '@sistent/sistent';
+import { Button, Typography, useHasPermission } from '@sistent/sistent';
 import { styled } from '@/theme';
-import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
 import AddIconCircleBorder from '@/assets/icons/AddIconCircleBorder';
 import { useConnectionWizardModal } from '@/utils/context/ConnectionWizardContextProvider';
@@ -11,10 +10,6 @@ const LaunchButton = styled(Button)({
   padding: '8px',
 });
 
-const canOpenConnectionWizard = () =>
-  CAN(Keys.LifecycleManagementAddCluster.id, Keys.LifecycleManagementAddCluster.function) ||
-  CAN(Keys.MesherySystemConnectMetrics.id, Keys.MesherySystemConnectMetrics.function);
-
 /**
  * Connections-toolbar entry for Create Connection. Opens the app-level wizard
  * (no kind preset) so selection starts at "Choose Connection".
@@ -22,7 +17,9 @@ const canOpenConnectionWizard = () =>
 const ConnectionWizardLauncher = () => {
   const { openCreateConnection } = useConnectionWizardModal();
 
-  const hasPermission = canOpenConnectionWizard();
+  const canAddCluster = useHasPermission(Keys.LifecycleManagementAddCluster);
+  const canConnectMetrics = useHasPermission(Keys.MesherySystemConnectMetrics);
+  const hasPermission = canAddCluster || canConnectMetrics;
 
   return (
     <LaunchButton

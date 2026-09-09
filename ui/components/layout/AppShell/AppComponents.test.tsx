@@ -29,7 +29,13 @@ vi.mock('@/utils/can', () => ({
 }));
 
 vi.mock('@/utils/Enum', () => ({
-  CONNECTION_KINDS: { KUBERNETES: 'kubernetes' },
+  CoreConnectionKinds: {
+    meshery: 'meshery',
+    kubernetes: 'kubernetes',
+    prometheus: 'prometheus',
+    grafana: 'grafana',
+    github: 'github',
+  },
 }));
 
 vi.mock('@/store/slices/mesheryUi', () => ({
@@ -54,6 +60,7 @@ vi.mock('@sistent/sistent', () => ({
       background: { brand: { default: '#00b39f' } },
     },
   }),
+  useHasPermission: () => true,
 }));
 
 vi.mock('../Navigator/Navigator', () => ({

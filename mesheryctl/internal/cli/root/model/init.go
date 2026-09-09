@@ -1,12 +1,15 @@
 package model
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+	"unicode"
 
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -27,7 +30,7 @@ var initModelCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Generates scaffolding for convenient model creation",
 	Long: `Generates a folder structure and guides user on model creation
-Find more information at: https://docs.meshery.io/reference/mesheryctl/model/init`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/model/init`,
 	Example: `
 // generates a folder structure
 mesheryctl model init [model-name]
@@ -39,7 +42,7 @@ mesheryctl model init [model-name] --version [version] (default is v0.1.0)
 mesheryctl model init [model-name] --path [path-to-location] (default is current folder)
 
 // generate a folder structure in json format
-mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is json)
+mesheryctl model init [model-name] --output-format [json|yaml] (default is json)
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &modelInitFlags)
@@ -121,6 +124,16 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 					if err != nil {
 						return ErrModelInit(err)
 					}
+					// The scaffold templates ship with placeholder identifiers
+					// ("untitled-model"/"Untitled Model"). Write the user-supplied
+					// model name into the generated model definition so the model
+					// is usable without a manual find-and-replace.
+					if templatePath == initModelTemplatePathModel {
+						content, err = initModelInjectName(content, modelInitFlags.OutputFormat, modelName)
+						if err != nil {
+							return ErrModelInit(err)
+						}
+					}
 					filePath := filepath.Join(
 
 						itemFolderPath,
@@ -172,9 +185,59 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 			return err
 		}
 
-		// TODO put a model name into generated model file
 		return nil
 	},
+}
+
+// initModelInjectName sets the top-level name (system identifier) and a derived,
+// human-readable displayName on the scaffolded model definition. The scaffold
+// templates ship with placeholder values, so without this the generated model
+// would register as "untitled-model"/"Untitled Model" regardless of the name the
+// user passed to `model init`. Decode/encode via a generic map so every template
+// field is preserved and only the two identity fields are overwritten.
+func initModelInjectName(content []byte, outputFormat string, modelName string) ([]byte, error) {
+	displayName := initModelDeriveDisplayName(modelName)
+
+	var model map[string]interface{}
+	switch outputFormat {
+	case "json":
+		if err := json.Unmarshal(content, &model); err != nil {
+			return nil, err
+		}
+		model["name"] = modelName
+		model["displayName"] = displayName
+		var buf bytes.Buffer
+		enc := json.NewEncoder(&buf)
+		enc.SetEscapeHTML(false)
+		enc.SetIndent("", "  ")
+		if err := enc.Encode(model); err != nil {
+			return nil, err
+		}
+		return buf.Bytes(), nil
+	case "yaml":
+		if err := yaml.Unmarshal(content, &model); err != nil {
+			return nil, err
+		}
+		model["name"] = modelName
+		model["displayName"] = displayName
+		return yaml.Marshal(model)
+	}
+	// Output format is validated in PreRunE; any other value is unreachable.
+	return content, nil
+}
+
+// initModelDeriveDisplayName turns a system model name (e.g. "digitalocean-icons")
+// into a human-readable display name (e.g. "Digitalocean Icons"). It is only a
+// sensible default; users are expected to refine it during editing.
+func initModelDeriveDisplayName(modelName string) string {
+	replacer := strings.NewReplacer("-", " ", "_", " ")
+	words := strings.Fields(replacer.Replace(modelName))
+	for i, word := range words {
+		runes := []rune(word)
+		runes[0] = unicode.ToUpper(runes[0])
+		words[i] = string(runes)
+	}
+	return strings.Join(words, " ")
 }
 
 func init() {
@@ -213,7 +276,7 @@ $ mesheryctl model import {modelFolder}
 To export this model as OCI image:
 $ mesheryctl model build {modelName}/{modelVersion} --path {path}
 
-Detailed guide: https://docs.meshery.io/guides/creating-new-model-with-mesheryctl`
+Detailed guide: https://docs.meshery.io/guides/configuration-management/creating-models`
 
 // TODO
 // initModelData fits well for json and yaml format

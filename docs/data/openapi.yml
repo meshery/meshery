@@ -21,6 +21,8 @@ servers:
 tags:
   - name: Meshery_Controllers_Configuration_controllers
     description: APIs for configuring Meshery Operator, MeshSync, and Meshery Broker.
+  - name: Console_API_Console
+    description: Interactive terminal and log consoles against a connection's resources.
   - name: Evaluation_Evaluation
     description: Operations related to design evaluation
   - name: Feature_Features
@@ -3486,6 +3488,364 @@ paths:
             text/plain:
               schema:
                 type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /api/integrations/connections/{connectionId}/console/capabilities:
+    get:
+      x-internal:
+        - meshery
+      tags:
+        - Console_API_Console
+      operationId: getConsoleCapabilities
+      summary: Report which console kinds a resource supports
+      description: >-
+        Resolve what the connection's console driver can do with the addressed resource, against live state rather than
+        a static table: whether a resource admits a terminal generally depends on its current status. Used by a client
+        to decide whether to offer a terminal or a log tail before opening a socket, and which containers the user may
+        choose between.
+      parameters:
+        - name: connectionId
+          in: path
+          required: true
+          description: The connection whose resources the console addresses.
+          schema:
+            type: string
+            format: uuid
+        - name: resource
+          in: query
+          required: true
+          description: The driver-specific resource type, e.g. `pod` for a kubernetes connection.
+          schema:
+            type: string
+            maxLength: 253
+        - name: name
+          in: query
+          required: true
+          description: The resource's name within its scope.
+          schema:
+            type: string
+            maxLength: 253
+        - name: namespace
+          in: query
+          required: false
+          description: The resource's parent scope, where it has one. Required for namespaced Kubernetes resources.
+          schema:
+            type: string
+            maxLength: 253
+        - name: container
+          in: query
+          required: false
+          description: >-
+            A sub-target within the resource, e.g. a container within a pod. The driver's default sub-target is used
+            when omitted.
+          schema:
+            type: string
+            maxLength: 253
+      responses:
+        '200':
+          description: The console kinds the target admits.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: >-
+                  What a driver can do with one specific target. Resolved against live state rather than a static table,
+                  because whether a target admits a terminal generally depends on its current status.
+                additionalProperties: false
+                required:
+                  - terminal
+                  - logs
+                properties:
+                  terminal:
+                    type: boolean
+                    description: Whether an interactive terminal can be opened.
+                    x-oapi-codegen-extra-tags:
+                      json: terminal
+                  logs:
+                    type: boolean
+                    description: Whether a log stream can be opened.
+                    x-oapi-codegen-extra-tags:
+                      json: logs
+                  containers:
+                    type: array
+                    description: The addressable sub-targets, if the resource has any.
+                    maxItems: 256
+                    items:
+                      type: string
+                      maxLength: 253
+                    x-oapi-codegen-extra-tags:
+                      json: containers,omitempty
+                    x-go-type-skip-optional-pointer: true
+                  defaultContainer:
+                    type: string
+                    description: The sub-target used when ConsoleTarget.container is empty.
+                    maxLength: 253
+                    x-oapi-codegen-extra-tags:
+                      json: defaultContainer,omitempty
+                    x-go-type-skip-optional-pointer: true
+                  reason:
+                    type: string
+                    description: >-
+                      Explains, for a human, why an unsupported console kind is unsupported — e.g. that the pod is not
+                      running.
+                    maxLength: 1024
+                    x-oapi-codegen-extra-tags:
+                      json: reason,omitempty
+                    x-go-type-skip-optional-pointer: true
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Result not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /api/integrations/connections/{connectionId}/console/terminal:
+    get:
+      x-internal:
+        - meshery
+      tags:
+        - Console_API_Console
+      operationId: openTerminalConsole
+      summary: Open an interactive terminal over a WebSocket
+      description: >-
+        Upgrade to a WebSocket carrying an interactive, TTY-backed shell in the target resource. Consume with a native
+        WebSocket client, not a generated RTK hook.
+
+        Everything that can fail with a useful HTTP status — an unknown target, an unsupported console kind, an
+        exhausted per-user console budget — is settled before the upgrade, so those failures arrive as ordinary HTTP
+        responses rather than as a socket that opens and immediately closes. The handshake enforces a same-origin check:
+        it is authenticated by an ambient session cookie, so accepting any Origin would let any page the user visits
+        open a shell as them.
+
+        The console runs with the requesting user's own credential, so the target's native authorization (Kubernetes
+        RBAC, for a kubernetes connection) governs it unchanged.
+
+        See ConsoleControlMessage for the frame protocol.
+      parameters:
+        - name: connectionId
+          in: path
+          required: true
+          description: The connection whose resources the console addresses.
+          schema:
+            type: string
+            format: uuid
+        - name: resource
+          in: query
+          required: true
+          description: The driver-specific resource type, e.g. `pod` for a kubernetes connection.
+          schema:
+            type: string
+            maxLength: 253
+        - name: name
+          in: query
+          required: true
+          description: The resource's name within its scope.
+          schema:
+            type: string
+            maxLength: 253
+        - name: namespace
+          in: query
+          required: false
+          description: The resource's parent scope, where it has one. Required for namespaced Kubernetes resources.
+          schema:
+            type: string
+            maxLength: 253
+        - name: container
+          in: query
+          required: false
+          description: >-
+            A sub-target within the resource, e.g. a container within a pod. The driver's default sub-target is used
+            when omitted.
+          schema:
+            type: string
+            maxLength: 253
+        - name: command
+          in: query
+          description: >-
+            The argv to execute, one query parameter per element. When omitted the driver picks a sensible interactive
+            shell for the target.
+          required: false
+          schema:
+            type: array
+            maxItems: 64
+            items:
+              type: string
+              maxLength: 4096
+      responses:
+        '101':
+          description: >-
+            Switching Protocols. The connection becomes a console WebSocket speaking the frame protocol on
+            ConsoleControlMessage.
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '403':
+          description: The WebSocket handshake carried an Origin that is neither the server's own nor in its configured allow-list.
+        '404':
+          description: Result not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '429':
+          description: The user already holds the maximum number of concurrent consoles.
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /api/integrations/connections/{connectionId}/console/logs:
+    get:
+      x-internal:
+        - meshery
+      tags:
+        - Console_API_Console
+      operationId: openLogConsole
+      summary: Stream a resource's logs over a WebSocket
+      description: >-
+        Upgrade to a WebSocket carrying the target resource's log output. With `follow=true` the socket stays open until
+        the client leaves; otherwise it closes once the available history has been sent. Consume with a native WebSocket
+        client, not a generated RTK hook.
+
+        The stream parameters below are fixed when the remote log stream is created and cannot be renegotiated on a live
+        socket: changing any of them means opening a new console.
+
+        See ConsoleControlMessage for the frame protocol.
+      parameters:
+        - name: connectionId
+          in: path
+          required: true
+          description: The connection whose resources the console addresses.
+          schema:
+            type: string
+            format: uuid
+        - name: resource
+          in: query
+          required: true
+          description: The driver-specific resource type, e.g. `pod` for a kubernetes connection.
+          schema:
+            type: string
+            maxLength: 253
+        - name: name
+          in: query
+          required: true
+          description: The resource's name within its scope.
+          schema:
+            type: string
+            maxLength: 253
+        - name: namespace
+          in: query
+          required: false
+          description: The resource's parent scope, where it has one. Required for namespaced Kubernetes resources.
+          schema:
+            type: string
+            maxLength: 253
+        - name: container
+          in: query
+          required: false
+          description: >-
+            A sub-target within the resource, e.g. a container within a pod. The driver's default sub-target is used
+            when omitted.
+          schema:
+            type: string
+            maxLength: 253
+        - name: follow
+          in: query
+          description: Keep the stream open and append new output as it is produced.
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: previous
+          in: query
+          description: Return the logs of the target's prior instance, if any.
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: timestamps
+          in: query
+          description: Prefix each line with an RFC 3339 timestamp.
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: tailLines
+          in: query
+          description: Cap how many lines of history are replayed before following. Omit for no limit.
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+        - name: sinceSeconds
+          in: query
+          description: >-
+            Bound history to output produced within the last N seconds. Omit for no bound; a value of 0 is treated as
+            omitted.
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+      responses:
+        '101':
+          description: >-
+            Switching Protocols. The connection becomes a console WebSocket speaking the frame protocol on
+            ConsoleControlMessage.
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '403':
+          description: The WebSocket handshake carried an Origin that is neither the server's own nor in its configured allow-list.
+        '404':
+          description: Result not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '429':
+          description: The user already holds the maximum number of concurrent consoles.
         '500':
           description: Internal server error
           content:
@@ -64293,6 +64653,12 @@ paths:
             text/plain:
               schema:
                 type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
         '500':
           description: Internal server error
           content:
@@ -64775,6 +65141,12 @@ paths:
             text/plain:
               schema:
                 type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
         '404':
           description: Result not found
           content:
@@ -64825,6 +65197,12 @@ paths:
                 type: string
         '401':
           description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
           content:
             text/plain:
               schema:
@@ -65400,6 +65778,12 @@ paths:
             text/plain:
               schema:
                 type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
         '404':
           description: Result not found
           content:
@@ -65654,6 +66038,12 @@ paths:
             text/plain:
               schema:
                 type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
         '404':
           description: Result not found
           content:
@@ -65902,6 +66292,12 @@ paths:
           description: Bad request
         '401':
           description: Unauthorized
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
         '404':
           description: Not found
         '500':
@@ -66046,6 +66442,12 @@ paths:
           description: Bad request
         '401':
           description: Unauthorized
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
         '404':
           description: Not found
         '500':
@@ -66108,6 +66510,12 @@ paths:
                 type: string
         '401':
           description: Unauthorized
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
         '404':
           description: Result not found
           content:
@@ -66162,6 +66570,12 @@ paths:
           description: User removed from organization
         '401':
           description: Unauthorized
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
         '404':
           description: Result not found
           content:
@@ -66849,6 +67263,12 @@ paths:
             text/plain:
               schema:
                 type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
         '404':
           description: Result not found
           content:
@@ -67492,6 +67912,12 @@ paths:
             text/plain:
               schema:
                 type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
         '404':
           description: Result not found
           content:
@@ -68115,6 +68541,12 @@ paths:
             text/plain:
               schema:
                 type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
         '500':
           description: Internal server error
           content:
@@ -68259,6 +68691,12 @@ paths:
                       x-go-type-skip-optional-pointer: true
         '401':
           description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
           content:
             text/plain:
               schema:
@@ -77402,7 +77840,7 @@ paths:
             text/plain:
               schema:
                 type: string
-  /events/{eventId}:
+  /api/events/{eventId}:
     delete:
       x-internal:
         - cloud
@@ -77446,69 +77884,7 @@ paths:
             text/plain:
               schema:
                 type: string
-  /events:
-    post:
-      x-internal:
-        - cloud
-        - meshery
-      tags:
-        - Events_events
-      operationId: createEvent
-      summary: Create a new event
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              description: Payload for creating a new event.
-              additionalProperties: true
-              properties:
-                owner:
-                  type: string
-                  format: uuid
-                  description: UUID of the user associated with the event.
-                  x-go-type: uuid.UUID
-                  x-go-type-import:
-                    path: github.com/gofrs/uuid
-                  x-go-name: Owner
-                  x-oapi-codegen-extra-tags:
-                    db: owner
-                    json: owner,omitempty
-                category:
-                  type: string
-                  description: The category of the event.
-                  maxLength: 500
-                action:
-                  type: string
-                  description: The action of the event.
-                  maxLength: 500
-                description:
-                  type: string
-                  description: Description of the event.
-                  maxLength: 5000
-      responses:
-        '201':
-          description: Event created
-        '400':
-          description: Invalid request body or request param
-          content:
-            text/plain:
-              schema:
-                type: string
-        '401':
-          description: Expired JWT token used or insufficient privilege
-          content:
-            text/plain:
-              schema:
-                type: string
-        '500':
-          description: Internal server error
-          content:
-            text/plain:
-              schema:
-                type: string
-  /events/delete:
+  /api/events/delete:
     post:
       x-internal:
         - cloud
@@ -77572,7 +77948,7 @@ paths:
             text/plain:
               schema:
                 type: string
-  /events/status:
+  /api/events/status:
     put:
       x-internal:
         - cloud
@@ -77642,7 +78018,7 @@ paths:
             text/plain:
               schema:
                 type: string
-  /events/{eventId}/status:
+  /api/events/{eventId}/status:
     put:
       x-internal:
         - cloud
@@ -77711,6 +78087,68 @@ paths:
                 type: string
         '404':
           description: Result not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /api/events:
+    post:
+      x-internal:
+        - cloud
+        - meshery
+      tags:
+        - Events_events
+      operationId: createEvent
+      summary: Create a new event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Payload for creating a new event.
+              additionalProperties: true
+              properties:
+                owner:
+                  type: string
+                  format: uuid
+                  description: UUID of the user associated with the event.
+                  x-go-type: uuid.UUID
+                  x-go-type-import:
+                    path: github.com/gofrs/uuid
+                  x-go-name: Owner
+                  x-oapi-codegen-extra-tags:
+                    db: owner
+                    json: owner,omitempty
+                category:
+                  type: string
+                  description: The category of the event.
+                  maxLength: 500
+                action:
+                  type: string
+                  description: The action of the event.
+                  maxLength: 500
+                description:
+                  type: string
+                  description: Description of the event.
+                  maxLength: 5000
+      responses:
+        '201':
+          description: Event created
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Expired JWT token used or insufficient privilege
           content:
             text/plain:
               schema:

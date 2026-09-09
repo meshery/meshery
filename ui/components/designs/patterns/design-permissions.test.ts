@@ -1,36 +1,22 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-
-// CAN reads the global CASL ability; mock it so each case can drive the
-// permission branch independently of any real ability state.
-const canMock = vi.fn();
-vi.mock('@/utils/can', () => ({ default: (...args: unknown[]) => canMock(...args) }));
-
+import { describe, expect, it } from 'vitest';
 import { canEditDesign } from './design-permissions';
 
 describe('canEditDesign', () => {
-  beforeEach(() => {
-    canMock.mockReset();
-  });
-
   it('allows any holder of the CatalogManagementEditDesign permission, even a non-owner', () => {
-    canMock.mockReturnValue(true);
-    expect(canEditDesign({ id: 'user-1' }, { userId: 'someone-else' })).toBe(true);
+    expect(canEditDesign({ id: 'user-1' }, { userId: 'someone-else' }, true)).toBe(true);
   });
 
   it('allows the owner even without the CatalogManagementEditDesign permission', () => {
-    canMock.mockReturnValue(false);
-    expect(canEditDesign({ id: 'owner-1' }, { userId: 'owner-1' })).toBe(true);
+    expect(canEditDesign({ id: 'owner-1' }, { userId: 'owner-1' }, false)).toBe(true);
   });
 
   it('denies a non-owner who lacks the CatalogManagementEditDesign permission', () => {
-    canMock.mockReturnValue(false);
-    expect(canEditDesign({ id: 'user-1' }, { userId: 'owner-2' })).toBe(false);
+    expect(canEditDesign({ id: 'user-1' }, { userId: 'owner-2' }, false)).toBe(false);
   });
 
   it('denies an unauthenticated user on an owner-less design (no undefined === undefined match)', () => {
-    canMock.mockReturnValue(false);
-    expect(canEditDesign(undefined, undefined)).toBe(false);
-    expect(canEditDesign({}, {})).toBe(false);
-    expect(canEditDesign({ id: undefined }, { userId: undefined })).toBe(false);
+    expect(canEditDesign(undefined, undefined, false)).toBe(false);
+    expect(canEditDesign({}, {}, false)).toBe(false);
+    expect(canEditDesign({ id: undefined }, { userId: undefined }, false)).toBe(false);
   });
 });

@@ -211,7 +211,8 @@ function generateColumnsForDisplay(
               color="inherit"
               onClick={() => setSelectedProfileIdxForChart(tableMeta.rowIndex)}
             >
-              <BarChartIcon style={iconMedium} /> {/* can change it to large */}
+              <BarChartIcon style={iconMedium} fill={theme?.palette?.icon?.default} />{' '}
+              {/* can change it to large */}
             </IconButton>
           );
         },

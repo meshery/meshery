@@ -74,7 +74,7 @@ func TestRunProviderWithNoCmdOrFlag(t *testing.T) {
 	actualResponse := err.Error()
 
 	expectedResponse := "please specify a flag or subcommand. Use 'mesheryctl system provider --help' to display user guide." + "\n\n"
-	expectedResponse += "See https://docs.meshery.io/reference/mesheryctl/system/provider for usage details\n"
+	expectedResponse += "See https://docs.meshery.io/reference/references/mesheryctl/system/provider for usage details\n"
 
 	if expectedResponse != actualResponse {
 		t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)

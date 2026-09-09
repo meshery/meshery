@@ -41,7 +41,7 @@ var RegistryCmd = &cobra.Command{
 	Use:   "registry",
 	Short: "Manage the capability registry",
 	Long: `Manage the state and contents of Meshery’s internal registry of capabilities.
-Find more information at: https://docs.meshery.io/reference/mesheryctl/registry`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/registry`,
 	Example: `mesheryctl registry [subcommand]`,
 
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {

@@ -71,7 +71,7 @@ var purgeCmd = &cobra.Command{
 Prerequisite: Execute this command from the root of a meshery/meshery repo fork; it operates on the "./models" directory relative to the current working directory.
 
 The "kubernetes" and "meshery-core" models are always excluded from purging, regardless of flags. Use --exclude to skip additional models.
-Find more information at: https://docs.meshery.io/reference/mesheryctl/registry/purge`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/registry/purge`,
 	Example: `
 // Retain only the latest version of every model (default).
 mesheryctl registry purge

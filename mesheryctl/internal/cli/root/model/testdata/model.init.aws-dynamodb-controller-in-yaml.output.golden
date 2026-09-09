@@ -22,4 +22,4 @@ $ mesheryctl model import test-case-aws-dynamodb-controller
 To export this model as OCI image:
 $ mesheryctl model build test-case-aws-dynamodb-controller/v0.1.0 --path .
 
-Detailed guide: https://docs.meshery.io/guides/creating-new-model-with-mesheryctl
+Detailed guide: https://docs.meshery.io/guides/configuration-management/creating-models

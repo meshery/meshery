@@ -5,7 +5,7 @@ import {
   useGetWorkspacesQuery,
   useUnassignEnvironmentFromWorkspaceMutation,
 } from '@/rtk-query/workspace';
-import CAN from '@/utils/can';
+
 import { useNotificationHandlers } from '@/utils/hooks/useNotification';
 import { Keys } from '@meshery/schemas/permissions';
 import { getColumnValue } from '@/utils/utils';
@@ -25,6 +25,7 @@ import {
   WorkspaceIcon,
   Slide,
   ErrorBoundary,
+  useHasPermission,
 } from '@sistent/sistent';
 import { useEffect, useState } from 'react';
 import { iconSmall } from 'css/icons.styles';
@@ -44,6 +45,7 @@ const WorkspaceDataTable = ({
   search,
   viewType,
 }) => {
+  const isAssignEnvAllowed = useHasPermission(Keys.WorkspaceManagementAssignEnvironmentToWorkspace);
   let colViews = [
     ['id', 'na'],
     ['name', 'xs'],
@@ -210,10 +212,7 @@ const WorkspaceDataTable = ({
                 useUnassignEnvironmentFromWorkspaceMutation
               }
               useNotificationHandlers={useNotificationHandlers}
-              isAssignedEnvironmentAllowed={CAN(
-                Keys.WorkspaceManagementAssignEnvironmentToWorkspace.id,
-                Keys.WorkspaceManagementAssignEnvironmentToWorkspace.function,
-              )}
+              isAssignedEnvironmentAllowed={isAssignEnvAllowed}
             />
           );
         },

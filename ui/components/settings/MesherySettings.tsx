@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { NoSsr } from '@sistent/sistent';
+import { NoSsr, useHasPermission } from '@sistent/sistent';
 import {
   CustomTooltip,
   Typography,
@@ -28,7 +28,7 @@ import {
   getRelationshipsDetail,
   getMeshModelRegistrants,
 } from '../../api/meshmodel';
-import CAN from '@/utils/can';
+
 import { Keys } from '@meshery/schemas/permissions';
 import { ADAPTERS, RESET, OVERVIEW, REGISTRY, CONTROLLERS } from '@/constants/navigator';
 import MesheryControllersConfig from './MesheryControllersConfig';
@@ -115,6 +115,9 @@ const settingsRouter = (router: ReturnType<typeof useRouter>): SettingsRouter =>
 
 //TODO: Tabs are hardcoded everywhere
 const MesherySettings = () => {
+  const canViewSettings = useHasPermission(Keys.MesherySystemViewSettings);
+  const canViewInfra = useHasPermission(Keys.InfrastructureManagementViewCloudNativeInfrastructure);
+  const canViewRegistry = useHasPermission(Keys.MesherySystemViewRegistry);
   const router = useRouter();
   const { selectedSettingsCategory } = settingsRouter(router);
   const theme = useTheme();
@@ -200,7 +203,7 @@ const MesherySettings = () => {
   }
   return (
     <>
-      {CAN(Keys.MesherySystemViewSettings.id, Keys.MesherySystemViewSettings.function) ? (
+      {canViewSettings ? (
         <>
           <div sx={{ flexGrow: 1, maxWidth: '100%', height: 'auto' }}>
             <StyledPaper square>
@@ -240,12 +243,7 @@ const MesherySettings = () => {
                     label="Adapters"
                     data-cy="tabServiceMeshes"
                     value={ADAPTERS}
-                    disabled={
-                      !CAN(
-                        Keys.InfrastructureManagementViewCloudNativeInfrastructure.id,
-                        Keys.InfrastructureManagementViewCloudNativeInfrastructure.function,
-                      )
-                    }
+                    disabled={!canViewInfra}
                   />
                 </CustomTooltip>
                 <CustomTooltip title="Registry" placement="top" value={REGISTRY}>
@@ -254,12 +252,7 @@ const MesherySettings = () => {
                     label="Registry"
                     data-testid="settings-tab-registry"
                     value={REGISTRY}
-                    disabled={
-                      !CAN(
-                        Keys.MesherySystemViewRegistry.id,
-                        Keys.MesherySystemViewRegistry.function,
-                      )
-                    }
+                    disabled={!canViewRegistry}
                   />
                 </CustomTooltip>
 
@@ -337,16 +330,12 @@ const MesherySettings = () => {
                 </NoSsr>
               </TabContainer>
             )}
-            {tabVal === ADAPTERS &&
-              CAN(
-                Keys.InfrastructureManagementViewCloudNativeInfrastructure.id,
-                Keys.InfrastructureManagementViewCloudNativeInfrastructure.function,
-              ) && (
-                <TabContainer>
-                  <MeshAdapterConfigComponent />
-                </TabContainer>
-              )}
-            {tabVal === REGISTRY && (
+            {tabVal === ADAPTERS && canViewInfra && (
+              <TabContainer>
+                <MeshAdapterConfigComponent />
+              </TabContainer>
+            )}
+            {tabVal === REGISTRY && canViewRegistry && (
               <TabContainer>
                 <MeshModelComponent settingsRouter={settingsRouter} />
               </TabContainer>

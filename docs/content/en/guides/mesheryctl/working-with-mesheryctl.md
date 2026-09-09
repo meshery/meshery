@@ -66,7 +66,7 @@ contexts:
     provider: [meshery's providers: "Meshery", "None", ...]
     # add ENVs here
     env:
-      meshsync_deployment_mode: ["operator" or "embedded", defaults to "operator"]
+      meshsync_default_deployment_mode: ["operator" or "embedded", defaults to "embedded"]
 
   [context2-name]:
     endpoint: [url to meshery server rest api]

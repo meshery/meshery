@@ -21,8 +21,9 @@ func (h *Handler) GetUsersKeys(w http.ResponseWriter, req *http.Request, _ *mode
 	orgID := mux.Vars(req)["orgID"]
 	resp, err := provider.GetUsersKeys(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), orgID)
 	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		writeMeshkitError(w, ErrGetResult(err), http.StatusNotFound)
+		handlerErr := ErrGetUsersKeys(err)
+		h.log.Error(handlerErr)
+		writeMeshkitError(w, handlerErr, providerStatus(err))
 		return
 	}
 

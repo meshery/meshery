@@ -71,10 +71,17 @@ New
 
 {{< code code=`bd, err := json.Marshal(providers)
   if err != nil {
-          obj := "provider"
-          http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+          marshalErr := ErrMarshal(err, "providers")
+          h.log.Error(marshalErr)
+          writeMeshkitError(w, marshalErr, http.StatusInternalServerError)
           return
       }` >}}
+
+`http.Error` is rejected by CI in the `./server` module: it writes a plain-text
+body and strips the MeshKit code, severity, and remediation that clients parse.
+See [HTTP Error Response Contract]({{< ref "project/contributing/error-contract.md" >}})
+for the response shape, the `writeMeshkitError` / `writeJSONError` helpers, and
+how to choose the status code.
 
 ## Replacing logrus
 

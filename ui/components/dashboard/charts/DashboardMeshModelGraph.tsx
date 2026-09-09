@@ -13,10 +13,9 @@ import {
   useGetRegistrantsQuery,
 } from '@/rtk-query/meshModel';
 import { DashboardSection } from '../style';
-import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
 import { useRouter } from 'next/router';
-import { Grid2, InfoOutlinedIcon, Typography, useTheme } from '@sistent/sistent';
+import { Grid2, InfoOutlinedIcon, Typography, useHasPermission, useTheme } from '@sistent/sistent';
 
 function MeshModelContructs() {
   const params = {
@@ -67,17 +66,14 @@ function MeshModelContructs() {
     [data, theme],
   );
 
+  const canViewRegistry = useHasPermission(Keys.MesherySystemViewRegistry);
+
   return (
     <Link
       href="/settings?settingsCategory=Registry"
       style={{
         textDecoration: 'none',
-        pointerEvents: !CAN(
-          Keys.MesherySystemViewRegistry.id,
-          Keys.MesherySystemViewRegistry.function,
-        )
-          ? 'none'
-          : 'auto',
+        pointerEvents: !canViewRegistry ? 'none' : 'auto',
       }}
     >
       <DashboardSection>

@@ -9,6 +9,7 @@ let registrantsCount = 4;
 let categorySummary: Record<string, number> = {};
 
 const bbChartSpy = vi.fn();
+const canSpy = vi.fn((_key?: unknown) => true);
 
 vi.mock('billboard.js', () => ({ donut: () => 'donut' }));
 
@@ -51,8 +52,6 @@ vi.mock('@/rtk-query/meshModel', () => ({
   useGetCategoriesSummary: () => categorySummary,
 }));
 
-vi.mock('@/utils/can', () => ({ default: () => true }));
-
 vi.mock('next/router', () => ({ useRouter: () => ({ push: vi.fn() }) }));
 
 vi.mock('../style', () => ({
@@ -64,18 +63,38 @@ vi.mock('@sistent/sistent', () => ({
   InfoOutlinedIcon: () => <svg data-testid="info-icon" />,
   Typography: ({ children }: { children?: React.ReactNode }) => <p>{children}</p>,
   useTheme: () => ({ palette: { icon: { default: '#000' } } }),
+  // Forward the requested key so tests can pin *which* permission the Registry
+  // link authorizes against, not just that it asked for one.
+  useHasPermission: (key: unknown) => canSpy(key),
 }));
 
+import { Keys } from '@meshery/schemas/permissions';
 import MeshModelGraph from './DashboardMeshModelGraph';
 
 describe('DashboardMeshModelGraph', () => {
   beforeEach(() => {
     bbChartSpy.mockReset();
+    canSpy.mockClear();
+    canSpy.mockReturnValue(true);
     modelsCount = 1;
     componentsCount = 2;
     relationshipsCount = 3;
     registrantsCount = 4;
     categorySummary = { Networking: 5, Security: 3 };
+  });
+
+  it('authorizes the Registry link against MesherySystemViewRegistry', () => {
+    render(<MeshModelGraph />);
+    expect(canSpy).toHaveBeenCalledWith(Keys.MesherySystemViewRegistry);
+  });
+
+  it('disables the Registry link when the registry permission is denied', () => {
+    canSpy.mockReturnValue(false);
+    render(<MeshModelGraph />);
+    const registryLink = screen
+      .getAllByRole('link')
+      .find((link) => link.getAttribute('href') === '/settings?settingsCategory=Registry');
+    expect(registryLink).toHaveStyle({ pointerEvents: 'none' });
   });
 
   it('renders both subcharts (Models by Category and Registry)', () => {

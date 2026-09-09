@@ -10,6 +10,7 @@ import {
 } from '@/rtk-query/connection';
 import type { ConnectionWizardKindConfig } from '../ConnectionWizard.helpers';
 import { buildSteps } from './registry';
+import { useKindPermission } from './useKindPermission';
 import type {
   GenericRecord,
   WizardContext,
@@ -39,6 +40,15 @@ export type UseConnectionWizardParams = {
    */
   skipKindSelection?: boolean;
   onComplete?: () => void;
+};
+
+const shallowEqualArray = <T,>(a: readonly T[], b: readonly T[]): boolean =>
+  a === b || (a.length === b.length && a.every((item, index) => item === b[index]));
+
+const shallowEqualRecord = <T,>(a: Record<string, T>, b: Record<string, T>): boolean => {
+  if (a === b) return true;
+  const keys = Object.keys(a);
+  return keys.length === Object.keys(b).length && keys.every((key) => a[key] === b[key]);
 };
 
 const makeInitialData = (params: UseConnectionWizardParams): WizardData => ({
@@ -89,14 +99,32 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
   }, []);
 
   // Keep the externally-owned inputs (kind list, icons) in sync with the store.
+  //
+  // These params are plain literals at most call sites, so their identity
+  // changes on every render of the caller. Writing a fresh state object
+  // unconditionally would therefore re-render the caller, mint new params, and
+  // re-run this effect forever. Returning `current` unchanged makes React bail
+  // out of the re-render, so the sync has to compare by value, not identity.
   const { availableKinds, isLoadingKinds, connectionIconMap } = params;
   useEffect(() => {
-    setData((current) => ({
-      ...current,
-      availableKinds: availableKinds ?? [],
-      isLoadingKinds: isLoadingKinds ?? false,
-      connectionIconMap: connectionIconMap ?? {},
-    }));
+    setData((current) => {
+      const nextKinds = availableKinds ?? [];
+      const nextIsLoading = isLoadingKinds ?? false;
+      const nextIconMap = connectionIconMap ?? {};
+      if (
+        current.isLoadingKinds === nextIsLoading &&
+        shallowEqualArray(current.availableKinds, nextKinds) &&
+        shallowEqualRecord(current.connectionIconMap, nextIconMap)
+      ) {
+        return current;
+      }
+      return {
+        ...current,
+        availableKinds: nextKinds,
+        isLoadingKinds: nextIsLoading,
+        connectionIconMap: nextIconMap,
+      };
+    });
   }, [availableKinds, isLoadingKinds, connectionIconMap]);
 
   // In configure mode the connection (kind + details) is resolved
@@ -106,12 +134,17 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
     if (mode !== 'configure') {
       return;
     }
-    setData((current) => ({
-      ...current,
-      kindConfig: initialKindConfig ?? null,
-      registrationResult: initialRegistrationResult ?? current.registrationResult,
-    }));
+    setData((current) => {
+      const nextKindConfig = initialKindConfig ?? null;
+      const nextResult = initialRegistrationResult ?? current.registrationResult;
+      if (current.kindConfig === nextKindConfig && current.registrationResult === nextResult) {
+        return current;
+      }
+      return { ...current, kindConfig: nextKindConfig, registrationResult: nextResult };
+    });
   }, [mode, initialKindConfig, initialRegistrationResult]);
+
+  const kindPermission = useKindPermission();
 
   // Create-mode deep link: once kind definitions load, pre-select `presetKind`
   // and optionally land on the step after "Choose Connection" (Import Kubeconfig
@@ -137,6 +170,16 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
       return;
     }
 
+    // Resolve permission *before* recording the preset as applied. Permissions
+    // resolve asynchronously, so marking the preset applied while access is
+    // still denied would latch the preset in on a later re-run and never advance
+    // an authorized user. Leaving it unapplied keeps the kind chooser in charge:
+    // it disables the kinds the user cannot use, which is a clearer dead end
+    // than a pre-selected kind with a permanently disabled "Next".
+    if (!kindPermission(kindConfig)) {
+      return;
+    }
+
     appliedPresetRef.current = presetKind;
     setData((current) => ({ ...current, kindConfig }));
     if (skipKindSelection) {
@@ -144,7 +187,7 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
       // step (Import Kubeconfig for the kubernetes extension).
       setActiveIndex(1);
     }
-  }, [isOpen, mode, presetKind, skipKindSelection, availableKinds]);
+  }, [isOpen, mode, presetKind, skipKindSelection, availableKinds, kindPermission]);
 
   // Keep `reset` stable while still resetting from the latest params: read them
   // from a ref updated in the render body (not an effect, so children never see
@@ -238,7 +281,8 @@ export const useConnectionWizard = (params: UseConnectionWizardParams) => {
     advancingRef.current = false;
   }, [safeIndex]);
 
-  const canProceed = activeStep?.canProceed ? activeStep.canProceed(ctx) : true;
+  const isKindAllowed = !data.kindConfig || kindPermission(data.kindConfig);
+  const canProceed = isKindAllowed && (activeStep?.canProceed ? activeStep.canProceed(ctx) : true);
   const canGoBack = safeIndex > 0;
   const nextLabel = activeStep?.nextLabel ? activeStep.nextLabel(ctx) : isLast ? 'Finish' : 'Next';
 

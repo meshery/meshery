@@ -62,7 +62,7 @@ Select from the list of [Providers]({{< ref "reference/extensibility/providers/i
 ## 4. Configure Connections to your Kubernetes Clusters
 
 **Out-of-Cluster Deployments**
-If you have deployed Meshery out-of-cluster, Meshery Server will automatically attempt to connect to any available Kubernetes clusters found in your kubeconfig (under `$HOME/.kube/config`) and in kubeconfigs uploaded through Meshery UI. Meshery Server deploys [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}}), [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}), and Broker into the `meshery` namespace (by default).
+If you have deployed Meshery out-of-cluster, Meshery Server will automatically attempt to connect to any available Kubernetes clusters found in your kubeconfig (under `$HOME/.kube/config`) and in kubeconfigs uploaded through Meshery UI. By default, [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) runs embedded inside Meshery Server and nothing is installed into your cluster. Only when a connection uses operator mode does Meshery Server deploy [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}}), MeshSync, and Broker into the `meshery` namespace. To switch a connection between the two, see [MeshSync deployment modes]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#meshsync-deployment-modes" >}}).
 
 **In-Cluster Deployments**
 If you have deployed Meshery in-cluster, Meshery Server will automatically connect to the Kubernetes API Server available in the control plane.
@@ -73,11 +73,13 @@ Visit <i class="fas fa-cog"></i> Settings:
   <img class="center" style="width:min(100%,650px);" src="./images/meshery-settings.png" />
 </a>
 
-If your config has not been autodetected, you can manually upload your kubeconfig file (or any number of kubeconfig files). By default, Meshery will attempt to connect to and deploy Meshery Operator to each reachable context contained in the imported kubeconfig files. See [Managing Kubernetes Clusters]({{< ref "installation/kubernetes/_index.md" >}}) for more information.
+If your config has not been autodetected, you can manually upload your kubeconfig file (or any number of kubeconfig files). Meshery will attempt to connect to each reachable context contained in the imported kubeconfig files, using the default embedded mode unless that context's connection is set to operator mode. See [Managing Kubernetes Clusters]({{< ref "installation/kubernetes/_index.md" >}}) for more information.
 
 ## 5. Verify Deployment
 
 Run connectivity tests and verify the health of your Meshery system. Verify Meshery's connection to your Kubernetes clusters by clicking on the connection chip. A quick connectivity test will run and inform you of Meshery's ability to reach and authenticate to your Kubernetes control plane(s). You will be notified of your connection status. You can also verify any other connection between Meshery and either its components (like [Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}})) or other managed infrastructure by clicking on any of the connection chips. When clicked, a chip will perform an ad hoc connectivity test.
+
+If the Meshery Operator does not reach a healthy status, its status card and the connection's Diagnostics carry the reason - deploying the Operator needs outbound access to the Meshery chart repository, and Meshery retries resolution on each deploy, so a transient outage clears by redeploying. See [Meshery Operator and MeshSync troubleshooting]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md" >}}).
 
 <a href="./images/k8s-context-switcher.png" alt="Meshery Kubernetes Context Switcher">
   <img class="center" style="width:min(100%,350px);" src="./images/k8s-context-switcher.png" />

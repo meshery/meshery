@@ -74,6 +74,37 @@ Collectively, Meshery repositories will generally have CI workflow for commits a
 - Helm charts lint (helm)
 - Helm charts release, tag and push(stefanprodan/helm-gh-pages@master)
 
+### Test result reporting (QA dashboard)
+
+Test results from across the Meshery ecosystem are published as [Allure](https://allurereport.org/) reports on the QA dashboard at [qa.meshery.io](https://qa.meshery.io). CI in each repository converts its test output to Allure results and commits them to the [`meshery/qa`](https://github.com/meshery/qa) repository, which regenerates and deploys the dashboard via GitHub Pages. Each report on the dashboard (Meshery, Mesheryctl, Kubernetes Connections, and extension reports) is a filtered view over one shared pool of results, selected by the **labels** on each result.
+
+Result labels are injected at each test source:
+
+- **UI (Playwright):** global labels via `ALLURE_LABEL_<name>=<value>` (see `ui/package.json`), Playwright `@tag`s (surfaced as `tag` labels), and per-test `allure.label()` from `allure-playwright`'s runtime API.
+- **CLI / server (Go, BATS):** the `ALLURE_LABELS="key=value,..."` env var consumed by `mesheryctl/bats-to-allure.js` and `server/gotest-to-allure.js`.
+
+#### Test Group tagging contract (Connection Lifecycle)
+
+Reports on the QA dashboard are **keyed on the Test Plan Test Group** (the [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit) "Latest" tab, **column B**), emitted as the `testGroup` label. Any Test Group can drive its own filtered `meshery/qa` report; the **Connection Lifecycle** report is the first consumer, aggregating connection tests from both the UI and the CLI.
+
+The "Latest" tab columns are: **A = Test #, B = Test Group, C = Client, D = Component Under Test.** A connection test MUST carry these labels (the shared, cross-client contract - use these exact names so both clients group together and the report filter matches):
+
+| Label | Source (Test Plan) | Values | Purpose |
+| --- | --- | --- | --- |
+| `testGroup` | column B ("Test Group") | e.g. `Connection Lifecycle` | Report filter key |
+| `testId` | column A ("Test #") | `TC-<n>` | Stable per-behavior id |
+| `client` | column C ("Client") | `UI` or `CLI` | Groups results by which client exercised the behavior |
+| `componentUnderTest` | column D ("Component Under Test") | e.g. `Kubernetes Connection` | Component grouping |
+| `epic` | - | `Kubernetes Connections` (constant) | Legacy/transitional filter key (see below) |
+
+The report keys on `testGroup`, so tagged tests still appear in their `project` report (Meshery or Mesheryctl); the Connection Lifecycle report is an additional lens, not a relocation. **Transitional:** results carrying no `testGroup` label are still matched via the legacy `epic` (with a `componentUnderTest` fallback) selector, so results predating the `testGroup` label remain visible; this fallback drops once every connection result carries `testGroup`. The full token-to-label mapping lives in the [`mesheryctl/bats-to-allure.js`](https://github.com/meshery/meshery/blob/master/mesheryctl/bats-to-allure.js) header (CLI `[tg=...]`/`[cut=...]` tokens) and `ui/tests/e2e/connections.testmap.ts` (UI).
+
+**Row deep-link.** Each connection result also carries an Allure `tms` **link** ("Test Plan TC-\<n\>") that opens that test's exact row on the "Latest" tab, so a reviewer can click from a report test back to its source case. Both lanes derive the row from the Test # by the same fixed offset (`ROW = TestNum - 778`) encoding the *current* tab layout; the offset lives - with a prominent regenerate-if-re-sorted caveat - in `mesheryctl/bats-to-allure.js` (CLI) and `ui/tests/e2e/connections.testmap.ts` (UI), and the two MUST stay in lockstep.
+
+**Failure evidence.** A failed test carries its captured run output in the report, not just the assertion line. The CLI lane runs BATS with `--print-output-on-failure` and the converter attaches the captured `mesheryctl` transcript (`statusDetails` message + trace, plus a "CLI output (bats)" text attachment); the UI lane runs Playwright with `trace`, `screenshot`, and `video` all `retain-on-failure`, which the `allure-playwright` reporter attaches to each failed result alongside the error and stack.
+
+> The `mesheryctl` BATS e2e results and Go unit results are committed to separate directories (`mesheryctl-bats-results/` and `mesheryctl-unit-results/`) in `meshery/qa` and merged at report-build time, so the two feeders no longer overwrite each other.
+
 ### UI Build System
 
 Meshery UI (`/ui`) and Provider UI (`/provider-ui`) are built using [Next.js](https://nextjs.org/) with [SWC](https://swc.rs/) (Speedy Web Compiler) as the default compiler.
@@ -220,6 +251,8 @@ The charts lint check, charts build, and charts release workflows are all trigge
 ### Check Helm Charts
 
 Every PR which includes changes to the files under `install/kubernetes/` directory in the `meshery/meshery` will trigger a Github Action to check for any mistakes in Helm charts using the `helm lint` command.
+
+The same job additionally runs `install/scripts/check-operator-chart-appversions.sh`, which fails the PR when the `meshery-operator` chart and its `meshery-broker` and `meshery-meshsync` subcharts advertise different `appVersion` values. `helm lint` does not compare a parent chart's `appVersion` with its subcharts', so a subchart left behind on an older operator release passes lint while advertising an application it was never published alongside. Run the same check locally with `make helm-operator-lint`; the script's header explains what it accepts and why.
 
 ### Release Helm Charts to Github and Artifact Hub
 
