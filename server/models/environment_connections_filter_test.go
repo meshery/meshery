@@ -77,6 +77,11 @@ func TestParseEnvironmentConnectionsFilterRejectsBadInput(t *testing.T) {
 		{"applyfilters grammar", "owner abc", ""},
 		{"not json at all", "deleted_at Deleted", ""},
 		{"json array", `["assigned"]`, ""},
+		// json.Unmarshal decodes a top-level "null" into a nil map without
+		// error, and every subsequent map lookup on a nil map succeeds by
+		// returning the zero value - so this silently fell through to the
+		// default filter instead of being rejected.
+		{"top-level null", `null`, ""},
 	}
 
 	for _, tt := range tests {

@@ -52,6 +52,10 @@ func ParseEnvironmentConnectionsFilter(filter string) (EnvironmentConnectionsFil
 	if err := json.Unmarshal([]byte(filter), &raw); err != nil {
 		return parsed, ErrInvalidEnvironmentConnectionsFilter(err)
 	}
+	if raw == nil {
+		return parsed, ErrInvalidEnvironmentConnectionsFilter(
+			fmt.Errorf(`filter must be a JSON object, got %s`, jsonTypeName(nil)))
+	}
 
 	if value, ok := raw["assigned"]; ok {
 		assigned, ok := value.(bool)
