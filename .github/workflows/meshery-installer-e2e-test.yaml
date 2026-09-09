@@ -14,6 +14,9 @@ on:
     paths:
       - "install/**"
       - ".github/workflows/meshery-installer-e2e-test.yaml"
+  
+  schedule:
+    - cron: '0 12 * * 1'
 
   workflow_dispatch:
 
@@ -71,7 +74,7 @@ jobs:
         env:
           BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
           TERM: xterm
-        run: bats --print-output-on-failure --timing installer.bats
+        run: bats --print-output-on-failure --timing .
 
       - name: Collect diagnostics on failure
         if: failure()
