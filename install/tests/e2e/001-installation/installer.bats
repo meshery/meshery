@@ -222,7 +222,7 @@ run_expect() {
 }
 
 
-@test "Given kubernetes as the platform when installing then kubernetes is accepted" {
+@test "Given kubernetes as the platform when installing then succed" {
   run_expect '
     set timeout 300
 
