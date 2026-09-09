@@ -198,9 +198,11 @@ If the issue requires making new doc page that replaces the old page, please don
 **Page-bundle assets** use standard relative paths. For assets adjacent to `index.md` or `_index.md`, or inside that page bundle:
 
 ```md
-![Architecture]({{< static "images/meshery-architecture.webp" >}})
-<img src="{{< static "images/meshery-architecture.webp" >}}" />
+![Architecture](./images/your-image.webp)
+<img src="./images/your-image.webp" />
 ```
+
+A page that carries its own images belongs in a leaf bundle - `<page>/index.md` beside `<page>/images/`, the way `concepts/architecture/operator/` is laid out. A plain `<page>.md` publishes at `<page>/`, one level below the directory it was written in, so a relative path from it to a sibling `images/` directory 404s. Either move the page into a leaf bundle or reference the image from `static/`.
 
 **Global shared assets** under `static/` use the `static` shortcode:
 

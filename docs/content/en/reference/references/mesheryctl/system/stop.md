@@ -12,10 +12,13 @@ Stop Meshery
 ## Synopsis
 
 Stop all Meshery containers / remove all Meshery resources.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system stop [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,32 +27,40 @@ mesheryctl system stop [flags]
 Stop Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system stop
 
+</div>
 </div>
 </pre> 
 
 Reset Meshery's configuration file to default settings.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system stop --reset
 
+</div>
 </div>
 </pre> 
 
 (optional) keep the Meshery namespace during uninstallation
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system stop --keep-namespace
 
+</div>
 </div>
 </pre> 
 
 Stop Meshery forcefully (use it when system stop doesn't work)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system stop --force
 
+</div>
 </div>
 </pre> 
 

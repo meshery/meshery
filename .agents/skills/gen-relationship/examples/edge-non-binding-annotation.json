@@ -1,0 +1,41 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "relationships.meshery.io/v1beta3",
+  "version": "v1.0.0",
+  "kind": "edge",
+  "type": "non-binding",
+  "subType": "annotation",
+  "status": "enabled",
+  "evaluationQuery": "",
+  "metadata": {
+    "description": "A designer-drawn connection with no lifecycle effect. metadata.isAnnotation is true; omit patch. Meshery does not mutate either component.",
+    "isAnnotation": true
+  },
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "meshery-shapes",
+    "version": "v1.0.0",
+    "displayName": "meshery-shapes",
+    "registrant": { "kind": "github" },
+    "model": { "version": "0.7.2" }
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Rectangle",
+            "model": { "name": "meshery-shapes", "registrant": { "kind": "github" }, "model": { "version": "" } }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Circle",
+            "model": { "name": "meshery-shapes", "registrant": { "kind": "github" }, "model": { "version": "" } }
+          }
+        ]
+      },
+      "deny": { "from": [], "to": [] }
+    }
+  ]
+}

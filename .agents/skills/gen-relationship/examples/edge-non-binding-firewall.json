@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "relationships.meshery.io/v1beta3",
+  "version": "v1.0.0",
+  "kind": "edge",
+  "type": "non-binding",
+  "subType": "firewall",
+  "status": "enabled",
+  "evaluationQuery": "",
+  "metadata": {
+    "description": "A NetworkPolicy constrains ingress/egress of matching Pods. The policy podSelector is the mutator; the Pod labels are the mutated sink.",
+    "isAnnotation": false
+  },
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "kubernetes",
+    "version": "v1.0.0",
+    "displayName": "kubernetes",
+    "registrant": { "kind": "github" },
+    "model": { "version": "v1.35.0" }
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "NetworkPolicy",
+            "model": { "name": "kubernetes", "registrant": { "kind": "github" }, "model": { "version": "" } },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["configuration", "spec", "podSelector", "matchLabels"]]
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Pod",
+            "model": { "name": "kubernetes", "registrant": { "kind": "github" }, "model": { "version": "" } },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["configuration", "metadata", "labels"]]
+            }
+          }
+        ]
+      },
+      "deny": { "from": [], "to": [] }
+    }
+  ]
+}

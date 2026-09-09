@@ -38,6 +38,18 @@ Sistent's peers (`@mui/x-date-pickers`, `date-fns`, the `@rjsf/*` set, `xstate`/
 
 `@meshery/schemas` deliberately keeps its `latest` dist-tag *below* its highest semver (1.4.0 is stale). That is safe because npm prefers the `latest`-tagged version whenever it satisfies the range, so the `^1.3.x` carets do not jump to 1.4.0 - but verify the resolved version in every regenerated lockfile rather than assuming it.
 
+## The docs build fails on `sass` even though `sass` is installed
+
+A docs build that ends in `TOCSS-DART: failed to transform "/scss/_styles_project.scss" (text/x-scss): got unexpected EOF when executing "sass"` is not a stylesheet problem and not a permissions problem, whatever the message says. The site transpiles its SCSS with `transpiler: "dartsass"`, which shells out to the *first* `sass` on `PATH` and speaks the Dart Sass embedded protocol to it. Anything else on `PATH` under that name - most often a Ruby `sass` gem, or the `sass-embedded` npm package installed in pure-JS mode - answers with nothing and the build dies rendering every page.
+
+`make -C docs check-deps` does not catch this: it only checks that *a* `sass` exists.
+
+Confirm which one you have, and that it speaks the protocol:
+
+{{< code code=`which -a sass && sass --embedded --version` >}}
+
+A working Dart Sass prints a JSON blob containing `protocolVersion`. If it prints anything else, put a real Dart Sass release first on `PATH` - the same one CI installs, downloaded from the [dart-sass releases](https://github.com/sass/dart-sass/releases) - rather than removing whatever else is there.
+
 ## `make docs-mesheryctl` rewrites ~100 pages with your home directory
 
 `make docs-mesheryctl` (that is, `cd mesheryctl/doc && go run doc.go`) bakes the machine's `$HOME` into every generated page's "Options inherited from parent commands" block, via the `--config` default path. Running it locally rewrites all ~100 pages under `docs/content/en/reference/references/mesheryctl/` with your local home directory, even when only one command changed.

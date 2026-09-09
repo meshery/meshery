@@ -4,9 +4,9 @@
 
 # Contributing
 
-Please refer the [Meshery Contributing Guidelines](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md) for setting up your development environment.
+Please refer to the [Meshery Contributing Guidelines](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md) for setting up your development environment.
 
-Refer the [mesheryctl- Command Reference and Tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0) for current status of `mesheryctl`.
+Refer to the [mesheryctl- Command Reference and Tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0) for current status of `mesheryctl`.
 
 For a quick introduction to `mesheryctl`, checkout [Beginner's guide to contributing to Meshery and mesheryctl](https://youtu.be/hh_kFLZx3G4).
 
@@ -18,7 +18,7 @@ The [`/mesheryctl`](https://github.com/meshery/meshery/tree/master/mesheryctl) f
 
 After making changes, run `make` in the `mesheryctl` folder to build the binary. You can then use the binary by, say, `./mesheryctl system start`.
 
-Refer the [Meshery CLI Commands and Documentation](https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#heading=h.5fucij4hc5wt) for a complete reference of `mesheryctl`.
+Refer to the [Meshery CLI Commands and Documentation](https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#heading=h.5fucij4hc5wt) for a complete reference of `mesheryctl`.
 
 ## `mesheryctl` command reference
 
