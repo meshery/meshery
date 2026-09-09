@@ -154,7 +154,7 @@ run_expect() {
 }
 
 
-@test "Given wrong platforms provided when installing then installer exits after 5 invalid attempts" {
+@test "Given wrong platforms provided when installing then failed after 5 invalid attempts" {
   run_expect '
     set timeout 150
     log_user 1
