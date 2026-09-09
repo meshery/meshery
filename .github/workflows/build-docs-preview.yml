@@ -66,6 +66,12 @@ jobs:
           sudo ln -sf /usr/local/lib/dart-sass/sass /usr/local/bin/dart-sass
           dart-sass --version
 
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: docs/go.mod
+          cache: false
+
       - name: Setup Node
         uses: actions/setup-node@v6
         with:

@@ -32,7 +32,8 @@ When a connection has been discovered, it will be listed in the MeshSync browser
 
 ### State: Registered
 
-The connection in this state have been verified for its use and reachability but not yet being used. Almost all reachable connections will auto transition to Registered state from [Discovered](#state-discovered) state and it is upto the user what to do with this connection (i.e. User needs to administratively process the connection). It can be transitioned to [Connected](#state-connected), [Maintenance](#state-maintenance) and [Not Found](#state-not-found).
+The connection in this state has been verified for its use and reachability but is not yet being used. Almost all reachable connections will auto transition to Registered state from [Discovered](#state-discovered) state and it is up to the user what to do with this connection (i.e. User needs to administratively process the connection). It can be transitioned to [Connected](#state-connected) and [Maintenance](#state-maintenance).<br>
+Auto transition to [Not Found](#state-not-found) will occur if registration fails or Meshery can no longer reach the connection.
 
 > Example: User manually selects the registered Prometheus connection and transition to the [connected](#state-connected) state (i.e. User administratively processes the connection).
 
@@ -78,13 +79,13 @@ The connection is administratively processed to be deleted and removed from Mesh
 
 ### State: Not Found
 
-User tried registering the connection **manually** but Meshery could not connect to it or if the connection is unavailable now. User can delete the connection or try re-registering.
+The connection could not be verified (for example, registration failed or the resource is no longer available). This is an automatic transition; users do not administratively set Not Found. The user can delete the connection or try re-registering.
 
 {{% alert color="info" title="Not Found vs Disconnected" %}}
-You might attempt to transition to Connected state but the connection is unavaialble now due to being deleted/some other reason. This is distinctly different than a cluster with Prometheuses installed for `application monitoring` which was connected previously but is now unreachable from Meshery's view of management due to change in API token/similar issue.
+You might attempt to transition to Connected state but the connection is unavailable now due to being deleted/some other reason. This is distinctly different than a cluster with Prometheuses installed for `application monitoring` which was connected previously but is now unreachable from Meshery's view of management due to change in API token/similar issue.
 {{% /alert %}}
 
-_Connections like **Registration of Meshery server with remote provider** (and few other connection types) can self transtion to the valid states._
+_Connections like **Registration of Meshery server with remote provider** (and few other connection types) can self transition to the valid states._
 
 ## Registering Connections with Remote Providers
 

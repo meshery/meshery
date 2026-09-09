@@ -57,7 +57,8 @@ func focusedSystemContext(cmd *cobra.Command, defaultContext string) string {
 var SystemCmd = &cobra.Command{
 	Use:   "system",
 	Short: "Configure, deploy, and operate Meshery deployments",
-	Long:  `Manage the state and configuration of Meshery server, components, and client.`,
+	Long: `Manage the state and configuration of Meshery server, components, and client.
+	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Help()

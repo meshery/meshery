@@ -63,11 +63,6 @@ var (
 				//     args = Linkerd -> ["LINKERD"] -> "LINKERD"
 				//     args = nginx service mesh -> ["nginx", "service", "mesh"] -> "NGINX_SERVICE_MESH"
 				r, _ := regexp.Compile(`\W`)
-
-				// If the mesh name is single word and without any spaces eg: istio, linkerd
-				if len(args) == 1 {
-					meshName = strings.ToUpper(args[0])
-				}
 				meshName = r.ReplaceAllString(strings.ToUpper(strings.Join(args, "_")), "_")
 			}
 
@@ -272,15 +267,16 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	method := "GET"
 	client := &http.Client{}
 	req, err := utils.NewRequest(method, path, nil)
-	req.Header.Add("Accept", "text/event-stream")
 	if err != nil {
-		return "", ErrCreatingDeployResponseRequest(err)
+		return "", ErrCreatingValidateResponseRequest(err)
 	}
+	req.Header.Add("Accept", "text/event-stream")
 
 	res, err := client.Do(req)
 	if err != nil {
 		return "", ErrCreatingValidateRequest(err)
 	}
+	defer func() { _ = res.Body.Close() }()
 
 	event, err := utils.ConvertRespToSSE(res)
 	if err != nil {

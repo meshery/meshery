@@ -34,6 +34,7 @@ import (
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
+	userv1beta2 "github.com/meshery/schemas/models/v1beta2/user"
 	"github.com/meshery/schemas/models/v1beta3/environment"
 	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
@@ -122,10 +123,13 @@ type RemoteProvider struct {
 
 	MeshsyncDefaultDeploymentMode connections.MeshsyncDeploymentMode
 }
-type AnonymousFlowResponse struct {
-	AccessToken string    `json:"accessToken"`
-	Owner       core.Uuid `json:"owner,omitempty"`
-}
+
+// AnonymousFlowResponse is the remote provider's reply to the anonymous-user
+// mint. It is a CONSUMED contract - the provider produces it, Meshery Server
+// only decodes it - so it is the schemas construct itself, never a local
+// re-declaration. A local copy is how the field silently became `owner` while
+// the provider kept sending `userId`.
+type AnonymousFlowResponse = userv1beta2.AnonymousFlowResponse
 
 type userSession struct {
 	token   string
@@ -349,7 +353,7 @@ func (l *RemoteProvider) fetchCapabilities(ctx context.Context, token string, ve
 	return providerProperties, nil
 }
 
-// downloadProviderExtensionPackage will download the remote provider extensions
+// DownloadProviderExtensionPackage will download the remote provider extensions
 // package
 func (l *ProviderProperties) DownloadProviderExtensionPackage(log logger.Handler) {
 	// Skip download if the SKIP_DOWNLOAD_EXTENSIONS flag is set
@@ -567,11 +571,24 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 		return
 	}
 
+	// A nil user id means the provider's reply carried none. Writing
+	// capabilities under the zero UUID would collapse every anonymous session
+	// onto a single row rather than fail, so refuse it outright - before the
+	// JWT cookie is set, so a refused session leaves no half-authenticated
+	// browser state behind.
+	if flowResponse.UserID.IsNil() {
+		err = ErrAnonymousUserIDMissing()
+		l.Log.Error(err)
+		http.Redirect(res, req, errorUI, http.StatusFound)
+
+		return
+	}
+
 	l.SetJWTCookie(res, flowResponse.AccessToken)
 
-	err = l.WriteCapabilitiesForUser(flowResponse.Owner.String(), &providerProperties)
+	err = l.WriteCapabilitiesForUser(flowResponse.UserID.String(), &providerProperties)
 	if err != nil {
-		err = ErrDBPut(fmt.Errorf("failed to write capabilities for the user %s: %w", flowResponse.Owner.String(), err))
+		err = ErrDBPut(fmt.Errorf("failed to write capabilities for the user %s: %w", flowResponse.UserID.String(), err))
 		l.Log.Error(err)
 		http.Redirect(res, req, errorUI, http.StatusFound)
 
@@ -836,7 +853,7 @@ func (l *RemoteProvider) GetUsers(token, page, pageSize, search, order, filter s
 	return nil, err
 }
 
-// Returns Keys from a user /api/identity/users/keys
+// GetUsersKeys returns keys from a user via /api/identity/users/keys
 func (l *RemoteProvider) GetUsersKeys(token, page, pageSize, search, order, filter string, orgID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(UsersKeys) {
 		l.Log.Warn(ErrOperationNotAvailable)
@@ -1025,9 +1042,7 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error 
 	return errors.New(string(bd))
 }
 
-// HandleUnAuthenticated
-//
-// Redirects to alert user of expired session.
+// HandleUnAuthenticated redirects to alert user of expired session.
 // Includes redirect loop detection — if the user has been redirected more than
 // MaxAuthRetries times within a short window, an error page is served instead
 // of continuing the redirect chain.
@@ -2173,7 +2188,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 		q.Set("type", typ)
 	}
 	if oamType != "" {
-		q.Set("oam_type", oamType)
+		q.Set("oamType", oamType)
 	}
 
 	remoteProviderURL.RawQuery = q.Encode()
@@ -2688,7 +2703,7 @@ func (l *RemoteProvider) CloneMesheryPattern(req *http.Request, patternID string
 	return nil, err
 }
 
-// PublishMesheryPattern publishes a meshery pattern with the given id to catalog
+// PublishCatalogPattern publishes a meshery pattern with the given id to catalog
 func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryPatternsCatalog) {
 		l.Log.Error(ErrOperationNotAvailable)
@@ -2743,7 +2758,7 @@ func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPattern
 	return nil, err
 }
 
-// UnPublishMesheryPattern unpublishes a meshery pattern with the given id to catalog
+// UnPublishCatalogPattern unpublishes a meshery pattern with the given id to catalog
 func (l *RemoteProvider) UnPublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryPatternsCatalog) {
 		l.Log.Error(ErrOperationNotAvailable)
@@ -3267,7 +3282,7 @@ func (l *RemoteProvider) CloneMesheryFilter(req *http.Request, filterID string, 
 	return nil, err
 }
 
-// CloneMesheryFilter publishes a meshery filter with the given id to catalog
+// PublishCatalogFilter publishes a meshery filter with the given id to catalog
 func (l *RemoteProvider) PublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryFiltersCatalog) {
 		l.Log.Error(ErrOperationNotAvailable)
@@ -3322,7 +3337,7 @@ func (l *RemoteProvider) PublishCatalogFilter(req *http.Request, publishFilterRe
 	return nil, err
 }
 
-// UnPublishMesheryFilter publishes a meshery filter with the given id to catalog
+// UnPublishCatalogFilter unpublishes a meshery filter with the given id from catalog
 func (l *RemoteProvider) UnPublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryFiltersCatalog) {
 		l.Log.Error(ErrOperationNotAvailable)
@@ -5045,7 +5060,7 @@ func (l *RemoteProvider) GetKubeClient() *mesherykube.Client {
 	return l.KubeClient
 }
 
-// SaveCredential - to save a creadential for an integration
+// SaveUserCredential - to save a credential for an integration
 func (l *RemoteProvider) SaveUserCredential(token string, credential *Credential) (*Credential, error) {
 	var createdCredential Credential
 	if !l.Capabilities.IsSupported(PersistCredentials) {
@@ -5088,7 +5103,7 @@ func (l *RemoteProvider) SaveUserCredential(token string, credential *Credential
 	return nil, ErrFetch(fmt.Errorf("failed to save the credential"), string(bdr), resp.StatusCode)
 }
 
-// GetCredentials - to get saved credentials
+// GetUserCredentials - to get saved credentials
 func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, pageSize int, search, order string) (*CredentialsPage, error) {
 	if !l.Capabilities.IsSupported(PersistCredentials) {
 		l.Log.Error(ErrOperationNotAvailable)
@@ -5227,7 +5242,7 @@ func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID co
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
 	q := remoteProviderURL.Query()
-	q.Add("credential_id", credentialID.String())
+	q.Add("credentialId", credentialID.String())
 	remoteProviderURL.RawQuery = q.Encode()
 	l.Log.Debug("constructed credential url: ", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)

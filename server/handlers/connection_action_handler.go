@@ -325,7 +325,7 @@ func (h *Handler) reconcileMeshsyncDeploymentMode(ctx context.Context, connectio
 	// Undeploy the previous MeshSync setup for this context.
 	ctrlHelper.
 		UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-		UndeployDeployedOperators(machineCtx.OperatorTracker).
+		UndeployDeployedOperators(machineCtx.OperatorTracker, contextID).
 		RemoveCtxControllerHandler(ctx, contextID)
 	ctrlHelper.RemoveMeshSyncDataHandler(ctx, contextID)
 
@@ -339,7 +339,7 @@ func (h *Handler) reconcileMeshsyncDeploymentMode(ctx context.Context, connectio
 		SetMeshsyncDeploymentMode(newMode).
 		AddCtxControllerHandlers(machineCtx.K8sContext).
 		UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-		DeployUndeployedOperators(machineCtx.OperatorTracker).
+		DeployUndeployedOperators(machineCtx.OperatorTracker, contextID).
 		AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, mesheryInstanceID, provider)
 
 	return nil

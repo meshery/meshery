@@ -114,9 +114,11 @@ const Environments = () => {
     },
   );
 
-  const [createEnvironment, createResult] = useCreateEnvironmentMutation();
+  const [createEnvironment, createEnvResult] = useCreateEnvironmentMutation();
+  const isCreatingEnvironment = Boolean(createEnvResult?.isLoading);
 
-  const [updateEnvironment, updateResult] = useUpdateEnvironmentMutation();
+  const [updateEnvironment, updateEnvResult] = useUpdateEnvironmentMutation();
+  const isUpdatingEnvironment = Boolean(updateEnvResult?.isLoading);
 
   const [deleteEnvironment] = useDeleteEnvironmentMutation();
 
@@ -277,6 +279,7 @@ const Environments = () => {
   };
 
   const handleCreateEnvironment = ({ organizationId, name, description }) => {
+    if (isCreatingEnvironment) return;
     createEnvironment({
       environmentPayload: {
         name: name,
@@ -293,6 +296,7 @@ const Environments = () => {
   };
 
   const handleEditEnvironment = ({ name, description }) => {
+    if (isUpdatingEnvironment) return;
     updateEnvironment({
       environmentId: editEnvId,
       environmentPayload: {
@@ -582,7 +586,7 @@ const Environments = () => {
                 submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
                 initialData={initialData}
                 handleClose={handleEnvironmentModalClose}
-                isSubmitting={createResult.isLoading || updateResult.isLoading}
+                isLoading={isCreatingEnvironment || isUpdatingEnvironment}
               />
             </SisitentModal>
           )}
@@ -641,7 +645,7 @@ const Environments = () => {
           <_PromptComponent ref={modalRef} />
         </>
       ) : (
-        <DefaultError />
+        <DefaultError permissionKey={Keys.WorkspaceManagementViewEnvironment} />
       )}
     </NoSsr>
   );

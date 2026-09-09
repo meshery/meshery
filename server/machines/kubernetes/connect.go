@@ -17,7 +17,9 @@ import (
 
 type ConnectAction struct{}
 
-// Execute On Entry and Exit should not return next eventtype i suppose, look again.
+// ExecuteOnEntry is a no-op; ConnectAction performs all of its work in Execute.
+//
+// TODO: Execute On Entry and Exit should not return next eventtype i suppose, look again.
 func (ca *ConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	return machines.NoOp, nil, nil
 }
@@ -102,7 +104,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 			SetMeshsyncDeploymentMode(meshsyncDeploymentMode).
 			AddCtxControllerHandlers(machinectx.K8sContext).
 			UpdateOperatorsStatusMap(machinectx.OperatorTracker).
-			DeployUndeployedOperators(machinectx.OperatorTracker)
+			DeployUndeployedOperators(machinectx.OperatorTracker, machinectx.K8sContext.ID)
 		ctrlHelper.AddMeshsyncDataHandlers(ctx, machinectx.K8sContext, userUUID, *sysID, provider)
 
 		// Operator mode: best-effort apply of the explicitly-set

@@ -7,7 +7,7 @@ aliases:
 
 ## What are Meshery Adapters?
 
-Part of Meshery's extensibility as a platform, Meshery Adapters are purpopse-built to address an area in need of management that is either considered optional to the platform and/or is considered an area in which additional depth of control is needed. Adapters extend Meshery's management capabilities in any number of ways, including lifecycle, configuration, performance, governance, identity and so on. Meshery Adapters come in different form factors, and depending on their purpose, deliver different sets or capabilities. Each Adapter registers its capabilities with Meshery Server. Meshery Server, in-turn, exposes those capabilities for you to control.
+Part of Meshery's extensibility as a platform, Meshery Adapters are purpose-built to address an area in need of management that is either considered optional to the platform and/or is considered an area in which additional depth of control is needed. Adapters extend Meshery's management capabilities in any number of ways, including lifecycle, configuration, performance, governance, identity and so on. Meshery Adapters come in different form factors, and depending on their purpose, deliver different sets or capabilities. Each Adapter registers its capabilities with Meshery Server. Meshery Server, in-turn, exposes those capabilities for you to control.
 
 ## Meshery Adapters for Lifecycle Management
 
@@ -24,6 +24,8 @@ Meshery Server allows users to generate traffic load tests using fortio.
 ## Adapter Deployment and Registration
 
 Like every Meshery component, Meshery Adapters use MeshKit.
+
+When an Adapter registers its models with Meshery Server, it also tells the server where to reach it. That is what makes an Adapter more than a source of definitions: at deployment time, any component belonging to a model an Adapter registered is provisioned *by that Adapter*, over gRPC, rather than by Meshery Server. See [Deployment Engine]({{< ref "concepts/architecture/deployment-engine/index.md" >}}) for how Meshery chooses between the two.
 
 ### Adapter FAQs
 

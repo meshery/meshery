@@ -28,11 +28,11 @@ aliases:
 
 Meshery supports the deployment of a variety of sample applications on Meshery Adapter for Consul. Use Meshery to deploy any of these sample applications.
 
-- [httpbin]({{< ref "guides/infrastructure-management/sample-apps/index.md#httpbin" >}})
+- httpbin
   - Httpbin is a simple HTTP request and response service.
-- [Bookinfo]({{< ref "guides/infrastructure-management/sample-apps/index.md#bookinfo" >}})
+- Bookinfo
   - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
-- [Image Hub]({{< ref "guides/infrastructure-management/sample-apps/index.md#imagehub" >}})
+- Image Hub
   - Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.
 
 ### Performance management of Consul and it workloads

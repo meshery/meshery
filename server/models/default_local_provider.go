@@ -275,7 +275,7 @@ func (l *DefaultLocalProvider) GetProviderType() ProviderType {
 func (l *DefaultLocalProvider) DownloadProviderExtensionPackage() {
 }
 
-// downloadProviderExtensionPackage will download the remote provider extensions
+// DownloadProviderExtensionPackageFromURL will download the remote provider extensions
 // package
 func (l *DefaultLocalProvider) DownloadProviderExtensionPackageFromURL(packageUrl string, log logger.Handler) error {
 	// Skip download if the SKIP_DOWNLOAD_EXTENSIONS flag is set
@@ -640,7 +640,7 @@ func (l *DefaultLocalProvider) FetchResults(_, page, pageSize, _, _, profileID s
 	return l.ResultPersister.GetResults(pg, pgs, profileID, l.Log)
 }
 
-// FetchResults - fetches results from provider backend
+// FetchAllResults - fetches results from provider backend
 func (l *DefaultLocalProvider) FetchAllResults(_, page, pageSize, _, _, _, _ string) ([]byte, error) {
 	if page == "" {
 		page = "0"
@@ -720,7 +720,7 @@ func (l *DefaultLocalProvider) FetchSmiResults(_ *http.Request, page, pageSize, 
 	return l.SmiResultPersister.GetResults(pg, pgs)
 }
 
-// FetchSmiResults - fetches results from provider backend
+// FetchSmiResult - fetches results from provider backend
 func (l *DefaultLocalProvider) FetchSmiResult(_ *http.Request, _, _, _, _ string, resultID core.Uuid) ([]byte, error) {
 	return l.SmiResultPersister.GetResult(resultID)
 }
@@ -1005,7 +1005,7 @@ func (l *DefaultLocalProvider) DeleteMesheryPattern(_ *http.Request, patternID s
 	return l.MesheryPatternPersister.DeleteMesheryPattern(id)
 }
 
-// DeleteMesheryPattern deletes a meshery pattern with the given id
+// DeleteMesheryPatterns deletes the meshery patterns specified in the given request body
 func (l *DefaultLocalProvider) DeleteMesheryPatterns(_ *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
 	return l.MesheryPatternPersister.DeleteMesheryPatterns(patterns)
 }
@@ -1477,6 +1477,23 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	// Use the relative directory for patterns
 	catalogDir := filepath.Join("..", "..", "docs", "data", "catalog")
 
+	// Every pass mints a fresh uuid.NewV4() per catalog file and
+	// SaveMesheryPattern has no dedupe, so seeding into a table that already
+	// holds designs duplicates the whole catalog. Cleanup() drops
+	// meshery_patterns on a clean shutdown, which normally hides this - but not
+	// after an unclean exit, and not on the reset path, which re-migrates the
+	// table while the process keeps running.
+	//
+	// Published designs are exactly the seeded catalog on the built-in provider:
+	// PublishCatalogPattern returns ErrLocalProviderSupport, so a local user
+	// cannot create one. Private, user-authored designs are never touched.
+	if err := l.MesheryPatternPersister.DB.
+		Where("visibility = ?", Published).
+		Delete(&MesheryPattern{}).Error; err != nil {
+		log.Error(ErrGettingSeededComponents(err, "Patterns"))
+		return
+	}
+
 	for _, seedContent := range seedContents {
 		switch seedContent {
 		case "Pattern":
@@ -1486,24 +1503,25 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 				return
 			}
 
+			seeded := make([]*MesheryPattern, 0, len(files))
 			for _, file := range files {
 				if file.Name != "design.yml" && file.Name != "design.yaml" {
 					continue
 				}
 
-				id, err := uuid.NewV4()
-				if err != nil {
-					log.Error(err)
-					continue
-				}
-
 				patternName, err := GetPatternName(file.Content)
 				if err != nil {
-					log.Error(err)
-					continue
+					log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
+					return
 				}
 
-				pattern := &MesheryPattern{
+				id, err := uuid.NewV4()
+				if err != nil {
+					log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
+					return
+				}
+
+				seeded = append(seeded, &MesheryPattern{
 					PatternFile: file.Content,
 					Name:        patternName,
 					ID:          &id,
@@ -1514,31 +1532,50 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 						"type":   "local",
 						"branch": "",
 					},
-				}
+				})
+			}
 
-				if _, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern); err != nil {
-					log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
-				}
+			if len(seeded) == 0 {
+				log.Error(ErrGettingSeededComponents(
+					fmt.Errorf("no catalog designs found under %s", catalogDir), seedContent+"s"))
+				return
+			}
+
+			if err := l.MesheryPatternPersister.ReplaceSeededPatterns(seeded); err != nil {
+				log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
 			}
 		}
 	}
-	// Seed default organization before the UI requests organizations.
-	id := uuid.Must(uuid.NewV4())
+
+	if err := l.SeedDefaultOrganization(); err != nil {
+		log.Error(err)
+	}
+}
+
+// SeedDefaultOrganization creates the built-in "My Org" organization when none
+// exists. The count guard makes it idempotent, so it is safe to call from any
+// path that may run against an already-populated database.
+func (l *DefaultLocalProvider) SeedDefaultOrganization() error {
+	count, err := l.OrganizationPersister.GetOrganizationsCount()
+	if err != nil {
+		return ErrGettingSeededComponents(err, "organization")
+	}
+	if count != 0 {
+		return nil
+	}
+
 	org := &organization.Organization{
-		ID:          id,
+		ID:          uuid.Must(uuid.NewV4()),
 		Name:        "My Org",
 		Country:     "",
 		Region:      "",
 		Description: "This is default organization",
 		Owner:       uuid.Nil,
 	}
-	count, _ := l.OrganizationPersister.GetOrganizationsCount()
-	if count == 0 {
-		_, err := l.OrganizationPersister.SaveOrganization(org)
-		if err != nil {
-			log.Error(ErrGettingSeededComponents(err, "organization"))
-		}
+	if _, err := l.OrganizationPersister.SaveOrganization(org); err != nil {
+		return ErrSavingSeededComponents(err, "organization")
 	}
+	return nil
 }
 
 func (l *DefaultLocalProvider) Cleanup() error {
@@ -1680,7 +1717,7 @@ func (l *DefaultLocalProvider) GetOrganizations(_, page, pageSize, search, order
 	return l.OrganizationPersister.GetOrganizations(search, order, pg, pgs, updatedAfter)
 }
 
-// GetKeys returns the list of keys
+// GetUsersKeys returns the list of keys
 func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, search, order, updatedAfter string, _ string) ([]byte, error) {
 	keys, err := l.KeyPersister.GetUsersKeys(search, order, updatedAfter)
 	if err != nil {
@@ -1689,7 +1726,7 @@ func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, search, order, updatedAfter
 	return keys, nil
 }
 
-// GetKey returns the key for the given keyID
+// GetUsersKey returns the key for the given keyID
 func (l *DefaultLocalProvider) GetUsersKey(_ *http.Request, keyID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(keyID)
 	return l.KeyPersister.GetUsersKey(id)

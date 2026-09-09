@@ -20,6 +20,7 @@ type credentialSpyProvider struct {
 	*models.DefaultLocalProvider
 	observedSave   atomic.Pointer[models.Credential]
 	observedUpdate atomic.Pointer[models.Credential]
+	observedDelete atomic.Pointer[uuid.UUID]
 }
 
 func newCredentialSpyProvider() *credentialSpyProvider {
@@ -38,6 +39,83 @@ func (m *credentialSpyProvider) UpdateUserCredential(_ *http.Request, c *models.
 	cp := *c
 	m.observedUpdate.Store(&cp)
 	return c, nil
+}
+
+func (m *credentialSpyProvider) DeleteUserCredential(_ *http.Request, id uuid.UUID) (*models.Credential, error) {
+	m.observedDelete.Store(&id)
+	return nil, nil
+}
+
+// TestDeleteUserCredential_QueryParamContract pins the delete param to the
+// canonical camelCase `credentialId` that schemas' generated
+// deleteUserCredential sends, while keeping the legacy `credential_id`
+// spelling working. The handler read only `credential_id`, so the UI had to
+// hand-roll a local RTK endpoint to talk to it — the generated one resolved a
+// nil UUID and deleted nothing.
+func TestDeleteUserCredential_QueryParamContract(t *testing.T) {
+	id := uuid.Must(uuid.FromString("55555555-5555-5555-5555-555555555555"))
+
+	for _, tc := range []struct {
+		name  string
+		query string
+	}{
+		{"canonical camelCase", "credentialId=" + id.String()},
+		{"legacy snake_case", "credential_id=" + id.String()},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			p := newCredentialSpyProvider()
+
+			req := httptest.NewRequest(http.MethodDelete, "/api/integrations/credentials?"+tc.query, nil)
+			rec := httptest.NewRecorder()
+
+			h.DeleteUserCredential(rec, req, nil, &models.User{}, p)
+
+			if rec.Code != http.StatusOK {
+				t.Fatalf("expected 200, got %d (body=%q)", rec.Code, rec.Body.String())
+			}
+			got := p.observedDelete.Load()
+			if got == nil {
+				t.Fatal("provider DeleteUserCredential was not invoked")
+			}
+			if *got != id {
+				t.Errorf("deleted id = %v, want %v", *got, id)
+			}
+		})
+	}
+}
+
+// TestDeleteUserCredential_RejectsMissingOrInvalidID pins that a missing or
+// malformed id is a 400 and never reaches the provider. uuid.FromStringOrNil
+// used to coerce both to the zero UUID, so the handler reported a successful
+// delete having removed nothing.
+func TestDeleteUserCredential_RejectsMissingOrInvalidID(t *testing.T) {
+	for _, tc := range []struct {
+		name  string
+		query string
+	}{
+		{"absent", ""},
+		{"empty", "credentialId="},
+		{"malformed", "credentialId=not-a-uuid"},
+		{"explicit nil uuid", "credentialId=00000000-0000-0000-0000-000000000000"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			p := newCredentialSpyProvider()
+
+			req := httptest.NewRequest(http.MethodDelete, "/api/integrations/credentials?"+tc.query, nil)
+			rec := httptest.NewRecorder()
+
+			h.DeleteUserCredential(rec, req, nil, &models.User{}, p)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Errorf("expected 400, got %d (body=%q)", rec.Code, rec.Body.String())
+			}
+			if p.observedDelete.Load() != nil {
+				t.Error("provider DeleteUserCredential was invoked for an unusable id")
+			}
+		})
+	}
 }
 
 // TestSaveUserCredential_ClientSuppliedUserIdCannotOverride verifies the

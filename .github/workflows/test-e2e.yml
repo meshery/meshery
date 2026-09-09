@@ -18,9 +18,28 @@ on:
       playwright-report-artifact:
         value: ${{ jobs.test-e2e.outputs.playwright-report-artifact }}
     
-    secrets: 
-      REMOTE_PROVIDER_TOKEN:
-        description: 'Token for authenticating with the remote provider'
+    secrets:
+      # Named for the organization secret it is fed from, deliberately. This
+      # input used to be called REMOTE_PROVIDER_TOKEN and the caller filled it
+      # from `secrets.REMOTE_PROVIDER_TOKEN` - a secret that exists on neither
+      # meshery/meshery nor the meshery org. The alias is what let the typo
+      # survive: a missing secret expands to the empty string, so the wiring
+      # looked deliberate and read as correct in review. One name end to end
+      # means the next reader can grep it against the real secret list.
+      #
+      # `required: true` was considered - it would reject a caller that drops
+      # the secret from its `secrets:` block - and deliberately rejected. The
+      # documentation for `on.workflow_call.secrets.<secret_id>.required` says
+      # only that the secret must be supplied and does not say how an empty
+      # value is treated. Every fork and Dependabot run resolves this secret to
+      # the empty string, so if that counts as "not supplied" the whole job
+      # aborts at workflow-call time for outside contributors - including the
+      # Local provider tests, which need no credential - and nothing before a
+      # merge can tell us which way it goes. The pre-flight step below already
+      # reports the missing-value case with a message naming all three ways it
+      # can happen.
+      REMOTE_PROVIDER_TEST_USER_TOKEN:
+        description: 'Session token for the dedicated remote-provider CI test user (org secret REMOTE_PROVIDER_TEST_USER_TOKEN)'
         required: false
 
 permissions:
@@ -43,9 +62,64 @@ jobs:
         with:
           egress-policy: audit
           
+      # Before Kind, Docker and the browser download, so a credential
+      # misconfiguration costs seconds rather than the whole job.
+      #
+      # A missing secret expands to the empty string, never an error, so a check
+      # like this one is the only thing separating "wired to the wrong secret
+      # name" from "wired correctly". Without it the remote-provider project
+      # authenticated against nothing from 2026-05-18 until 2026-08-05, and the
+      # first symptom anyone saw was a Playwright error ("Email is required for
+      # login") that reads like a broken test rather than absent CI config.
+      #
+      # Only `push` selects chromium-meshery-provider (npm test:e2e:ci:full);
+      # pull_request runs test:e2e:ci:local, which never touches the remote
+      # provider, so a missing token there is nothing to fail on. That is also
+      # why fork PRs - which cannot read secrets at all - are unaffected.
+      #
+      # It still reports on pull_request rather than being skipped there,
+      # because a PR that changes this wiring has no other way to show that the
+      # secret name resolves: the project it feeds does not run until the change
+      # is already on master. That reporting is only worth anything if it
+      # distinguishes the cases. A fork PR reads no secrets at all, and a
+      # Dependabot run reads a *separate* Dependabot secrets store rather than
+      # this repository's Actions secrets - so an empty value in either case
+      # says nothing about whether the secret resolves. Every other same-
+      # repository PR does read them, so an empty value there means the secret
+      # itself stopped resolving - the exact silent-empty-string failure this
+      # step exists to surface. Calling them all "expected" would hide that
+      # behind the benign cases until the next push to master; calling them all
+      # a misconfiguration would cry wolf on every fork and Dependabot PR.
+      - name: Verify remote-provider credentials are available
+        env:
+          REMOTE_PROVIDER_TEST_USER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
+          REMOTE_PROVIDER_URL: "https://cloud.meshery.io"
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPO: ${{ github.repository }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          if [ -n "$REMOTE_PROVIDER_TEST_USER_TOKEN" ]; then
+            echo "Remote-provider credentials present (REMOTE_PROVIDER_TEST_USER_TOKEN resolved)."
+            exit 0
+          fi
+          if [ "$EVENT_NAME" = "push" ]; then
+            echo "::error::REMOTE_PROVIDER_TEST_USER_TOKEN is empty. The chromium-meshery-provider project cannot authenticate against ${REMOTE_PROVIDER_URL}, and every test in it would then fail on a missing storage state. Three things can leave it empty: the org secret does not exist, the org secret is not exposed to this repository, or the calling workflow does not pass it in its 'secrets:' block (.github/workflows/build-and-test.yml) - the last is what broke this before."
+            exit 1
+          fi
+          if [ -n "$HEAD_REPO" ] && [ "$HEAD_REPO" != "$BASE_REPO" ]; then
+            echo "::notice::REMOTE_PROVIDER_TEST_USER_TOKEN is empty. Expected on a pull request from the fork ${HEAD_REPO}, which cannot read secrets. This build runs the Local provider only, so nothing here needs it."
+            exit 0
+          fi
+          if [ "$ACTOR" = "dependabot[bot]" ]; then
+            echo "::notice::REMOTE_PROVIDER_TEST_USER_TOKEN is empty. Expected on a Dependabot run, which reads the separate Dependabot secrets store rather than this repository's Actions secrets. This build runs the Local provider only, so nothing here needs it."
+            exit 0
+          fi
+          echo "::warning::REMOTE_PROVIDER_TEST_USER_TOKEN did not resolve on a ${EVENT_NAME} build of ${BASE_REPO}, which can read this repository's secrets. This is not expected: the org secret has most likely been renamed, deleted, or dropped from this repository's exposure. The next push to master will fail this job at this step, and chromium-meshery-provider will not authenticate until the secret is restored. Not blocking here, because this build runs the Local provider only."
+
       - name: Check out code
         uses: actions/checkout@v6
-        
+
       - name: Setup Kubernetes (Kind)
         uses: helm/kind-action@v1.14.0
         with:
@@ -86,12 +160,12 @@ jobs:
         env:
           MESHERY_SERVER_URL: 'http://localhost:9081'
           REMOTE_PROVIDER_URL: "https://cloud.meshery.io"
-          # The Playwright suite reads PROVIDER_TOKEN (ui/tests/e2e/env.js); the
-          # secret itself is named REMOTE_PROVIDER_TOKEN. The env var name must
-          # match what env.js consumes, otherwise remote.setup.js falls back to
-          # (unset) email/password auth and the Meshery-provider project never
-          # authenticates.
-          PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TOKEN }}
+          # ui/tests/e2e/env.js reads PROVIDER_TOKEN; the org secret that holds a
+          # maintained token for the purpose-built remote-provider CI test user
+          # is REMOTE_PROVIDER_TEST_USER_TOKEN - the same one mesheryctl-e2e.yaml
+          # uses. Do not point this at PROVIDER_TOKEN: that org secret is a
+          # static token last refreshed 2024-03-08 and has expired.
+          PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then
             make ui-test-e2e-full

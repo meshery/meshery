@@ -15,8 +15,10 @@ Updates the component metadata (SVGs, shapes, styles and other) by referring fro
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry update [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,24 +27,30 @@ mesheryctl registry update [flags]
 Update models from Meshery Integration Spreadsheet
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred "$CRED" -i [path to the directory containing models].
 
+</div>
 </div>
 </pre> 
 
 Updating models in the meshery/meshery repository based on the spreadsheet
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred "$CRED"
 
+</div>
 </div>
 </pre> 
 
 Updating models in the meshery/meshery repository based on flag
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred "$CRED" --model "[model-name]"
 
+</div>
 </div>
 </pre> 
 
