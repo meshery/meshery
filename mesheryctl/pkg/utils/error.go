@@ -81,6 +81,7 @@ var (
 	ErrDockerComposeLogsCode          = "mesheryctl-1226"
 	ErrMesheryCheckRunningStatusCode  = "mesheryctl-1227"
 	ErrDockerComposeStopCode          = "mesheryctl-1228"
+	ErrNoTerminalForPromptCode        = "mesheryctl-1259"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -820,6 +821,27 @@ func ErrPromptCancelled() error {
 		[]string{"Selection prompt has been cancelled"},
 		[]string{"The selection prompt was interrupted"},
 		[]string{"Run the command again and complete the selection"},
+	)
+}
+
+// ErrNoTerminalForPrompt reports that a command needed to ask the user to
+// choose between several things, and there is no terminal to ask on.
+//
+// This is deliberately not ErrPromptCancelled. Nothing was cancelled: in a
+// pipeline or a CI job there was never a prompt the user could answer, and
+// telling an operator their selection was "cancelled" sends them looking for a
+// Ctrl+C or a killed process rather than for the missing terminal.
+//
+// what should name the choice that could not be made, e.g. "a design to
+// deploy", and hint should name the flag or identifier that avoids the prompt.
+func ErrNoTerminalForPrompt(what, hint string) error {
+	return errors.New(
+		ErrNoTerminalForPromptCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("Cannot ask for %s without an interactive terminal", what)},
+		[]string{"This command needed to prompt for a selection, and standard input or standard output is not a terminal"},
+		[]string{"The command was run from a script, a pipe, a CI job, or with standard input redirected"},
+		[]string{hint, "Run the command from an interactive terminal"},
 	)
 }
 

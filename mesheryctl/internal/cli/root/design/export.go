@@ -312,6 +312,13 @@ func selectPatternPrompt(patterns []models.MesheryPattern, baseURL string) (mode
 		patternInfos[i+1] = strings.Join(rowParts, " ")
 	}
 
+	if !utils.IsInteractiveTerminal() {
+		return models.MesheryPattern{}, utils.ErrNoTerminalForPrompt(
+			"which design to export",
+			"Pass the design ID instead of a name that matches several designs",
+		)
+	}
+
 	prompt := promptui.Select{
 		Label: "Select a design",
 		Items: patternInfos,
