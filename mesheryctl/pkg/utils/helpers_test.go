@@ -12,6 +12,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 	"k8s.io/client-go/tools/clientcmd/api"
 )
 
@@ -714,6 +715,49 @@ func TestGetCurrentK8sContext(t *testing.T) {
 				} else if !strings.Contains(err.Error(), tt.wantErrString) {
 					t.Errorf("getCurrentK8sContextForTest() error = %v, want error containing %v", err.Error(), tt.wantErrString)
 				}
+			}
+		})
+	}
+}
+
+// TestSubcommandNames pins the contract that makes an "invalid subcommand"
+// message self-maintaining: the advertised list is derived from the same slice
+// the command validates against, so adding a subcommand cannot leave the error
+// message advertising a stale set.
+func TestSubcommandNames(t *testing.T) {
+	tests := []struct {
+		name      string
+		available []*cobra.Command
+		expected  string
+	}{
+		{
+			name:      "no subcommands",
+			available: nil,
+			expected:  "",
+		},
+		{
+			name:      "single subcommand",
+			available: []*cobra.Command{{Use: "view"}},
+			expected:  "view",
+		},
+		{
+			name: "names are sorted, not declaration-ordered",
+			available: []*cobra.Command{
+				{Use: "view"}, {Use: "generate"}, {Use: "list"}, {Use: "search"},
+			},
+			expected: "generate, list, search, view",
+		},
+		{
+			name:      "usage line is reduced to the command name",
+			available: []*cobra.Command{{Use: "view [model-name]"}, {Use: "list [flags]"}},
+			expected:  "list, view",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := SubcommandNames(tt.available); got != tt.expected {
+				t.Errorf("SubcommandNames() = %q, want %q", got, tt.expected)
 			}
 		})
 	}

@@ -14,7 +14,7 @@ links:
 readme: "1. The storage for a given Pod must either be provisioned by a PersistentVolume Provisioner based on the requested storage class, or pre-provisioned by an admin.\n2. Deleting and/or scaling a StatefulSet down will not delete the volumes associated with the StatefulSet. This is done to ensure data safety, which is generally more valuable than an automatic purge of all related StatefulSet resources.\n3. StatefulSets currently require a Headless Service to be responsible for the network identity of the Pods. You are responsible for creating this Service.\n4. StatefulSets do not provide any guarantees on the termination of pods when a StatefulSet is deleted. To achieve ordered and graceful termination of the pods in the StatefulSet, it is possible to scale the StatefulSet down to 0 prior to deletion.\n5. When using Rolling Updates with the default Pod Management Policy (OrderedReady), it's possible to get into a broken state that requires manual intervention to repair. \n ##h4 Caveats and Consideration \n"
 install: mesheryctl design import -f
 provider:
-    name: b6467d0a-f11e-4614-9eb2-ab80c4f1c58d
+    name: 9c002340-78db-4817-9146-d6a7250d20a1
 screenshots:
     - title: Meshery Project
       url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

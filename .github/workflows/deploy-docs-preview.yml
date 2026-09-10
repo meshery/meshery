@@ -49,6 +49,8 @@ jobs:
     needs: read-metadata
     runs-on: ubuntu-24.04
     steps:
+      - uses: actions/checkout@v6
+
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -58,12 +60,24 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy PR preview
+        id: preview
         uses: rossjrw/pr-preview-action@ffa7509e91a3ec8dfc2e5536c4d5c1acdf7a6de9 #1.8.1
         with:
           source-dir: ./docs-preview-build/docs/public
+          pages-base-url: docs.meshery.io # otherwise meshery.github.io/meshery is used as a default
+          umbrella-dir: pr-preview # must match the /pr-preview/ baseURL the build bakes
           qr-code: false
+          comment: false
           action: ${{ needs.read-metadata.outputs.action == 'closed' && 'remove' || 'deploy' }}
           pr-number: ${{ needs.read-metadata.outputs.pr-number }}
+
+      - name: Comment preview URL on the PR
+        uses: marocchino/sticky-pull-request-comment@67d0dec7b07ed060a405f9b2a64b8ab319fdd7db # v2.9.2
+        with:
+          header: pr-preview
+          number: ${{ needs.read-metadata.outputs.pr-number }}
+          message: |
+            📖 Docs preview: ${{ steps.preview.outputs.preview-url }}
 
   prune:
     needs: read-metadata

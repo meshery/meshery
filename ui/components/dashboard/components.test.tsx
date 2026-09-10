@@ -44,6 +44,18 @@ vi.mock('@sistent/sistent', () => ({
   ),
   DeleteIcon: (props: any) => <svg data-testid="delete-icon" data-fill={props.fill} />,
   DragIcon: (props: any) => <svg data-testid="drag-icon" data-fill={props.fill} />,
+  styled: (Component: any) => () => (props: any) => {
+    if (typeof Component === 'string') {
+      const Tag = Component as any;
+      return <Tag {...props} />;
+    }
+    return <Component {...props} />;
+  },
+  Paper: ({ children }: any) => <div>{children}</div>,
+  Tab: ({ children }: any) => <div>{children}</div>,
+  Tabs: ({ children }: any) => <div>{children}</div>,
+  gray: {},
+  charcoal: {},
 }));
 
 vi.mock('css/icons.styles', () => ({

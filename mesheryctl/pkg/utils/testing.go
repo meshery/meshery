@@ -78,16 +78,157 @@ func InitTestEnvironment(t *testing.T) *TestHelper {
 	return testContext
 }
 
-// equals fails the test if exp is not equal to act.
+// Equals fails the test unless exp and act are deeply equal, reporting the
+// difference through tb.
+//
+// Never report through os.Stdout. The golden-file helpers below swap os.Stdout
+// for a pipe to capture command output and close the write end before
+// comparing, so anything printed to os.Stdout from here goes to a closed pipe
+// and is lost. `fmt.Printf` also detaches the message from the failing test
+// under `go test -json`, which is what CI runs. Either one alone made every
+// golden failure undiagnosable - a bare FAIL with no expected/got.
+//
+// Formatting matters as much as the destination: `%#v` renders a multi-line
+// golden as a single escaped Go-syntax blob, so even a message that surfaced
+// said only that something differed, never what. Strings are therefore diffed
+// rather than dumped; see stringDiff.
 func Equals(tb testing.TB, exp, act interface{}) {
-	if !reflect.DeepEqual(exp, act) {
-		_, file, line, _ := runtime.Caller(1)
-		fmt.Printf("\033[31m%s:%d:\n\n\texp: %#v\n\n\tgot: %#v\033[39m\n\n", filepath.Base(file), line, exp, act)
-		tb.FailNow()
+	tb.Helper()
+	if reflect.DeepEqual(exp, act) {
+		return
+	}
+
+	expStr, expOK := exp.(string)
+	actStr, actOK := act.(string)
+	if expOK && actOK {
+		tb.Fatalf("golden mismatch\n%s", stringDiff(expStr, actStr))
+	}
+
+	tb.Fatalf("not equal\n\texpected: %#v\n\tactual:   %#v", exp, act)
+}
+
+// stringDiff renders a line-oriented difference between two strings, naming the
+// first line that differs and making otherwise-invisible causes visible:
+// trailing whitespace, a missing or extra trailing newline, and CR/LF drift are
+// the usual reasons a golden file "looks identical" but is not.
+func stringDiff(exp, act string) string {
+	var b strings.Builder
+
+	expLines := strings.Split(exp, "\n")
+	actLines := strings.Split(act, "\n")
+
+	// Compare presence as well as content. For "a" versus "a\n", Split yields
+	// ["a"] and ["a", ""], so comparing only the (defaulted) empty strings at
+	// index 1 finds no difference and the diagnostic silently omits the very
+	// thing that differs - a missing or extra final newline.
+	firstDiff := -1
+	for i := 0; i < len(expLines) || i < len(actLines); i++ {
+		haveE, haveA := i < len(expLines), i < len(actLines)
+		var e, a string
+		if haveE {
+			e = expLines[i]
+		}
+		if haveA {
+			a = actLines[i]
+		}
+		if haveE != haveA || e != a {
+			firstDiff = i
+			break
+		}
+	}
+
+	if firstDiff >= 0 {
+		fmt.Fprintf(&b, "\tfirst difference at line %d:\n", firstDiff+1)
+		var e, a string
+		haveE, haveA := firstDiff < len(expLines), firstDiff < len(actLines)
+		if haveE {
+			e = expLines[firstDiff]
+		}
+		if haveA {
+			a = actLines[firstDiff]
+		}
+		// A single-line golden (rendered JSON, for instance) can be many
+		// kilobytes wide. Dumping both in full names the line but not the
+		// difference, so window around the first differing column instead.
+		if haveE && haveA && (len(e) > diffLineWidth || len(a) > diffLineWidth) {
+			col := 0
+			for col < len(e) && col < len(a) && e[col] == a[col] {
+				col++
+			}
+			fmt.Fprintf(&b, "\t  first differing column %d of %d/%d\n", col+1, len(e), len(a))
+			fmt.Fprintf(&b, "\t  expected: %s\n", window(e, col))
+			fmt.Fprintf(&b, "\t  actual:   %s\n", window(a, col))
+		} else {
+			if haveE {
+				fmt.Fprintf(&b, "\t  expected: %s\n", visible(e))
+			} else {
+				fmt.Fprintf(&b, "\t  expected: <no line %d; expected ends at line %d>\n", firstDiff+1, len(expLines))
+			}
+			if haveA {
+				fmt.Fprintf(&b, "\t  actual:   %s\n", visible(a))
+			} else {
+				fmt.Fprintf(&b, "\t  actual:   <no line %d; actual ends at line %d>\n", firstDiff+1, len(actLines))
+			}
+		}
+	}
+
+	fmt.Fprintf(&b, "\tline counts: expected %d, actual %d\n", len(expLines), len(actLines))
+	fmt.Fprintf(&b, "\tbyte counts: expected %d, actual %d\n", len(exp), len(act))
+
+	b.WriteString("\n\t--- expected ---\n")
+	writeNumbered(&b, expLines)
+	b.WriteString("\n\t--- actual ---\n")
+	writeNumbered(&b, actLines)
+
+	if strings.TrimSpace(exp) == strings.TrimSpace(act) {
+		b.WriteString("\n\tNOTE: the two differ only in leading/trailing whitespace.\n")
+	}
+	return b.String()
+}
+
+// diffLineWidth is the point past which a differing line is windowed around
+// the first differing column rather than printed whole.
+const diffLineWidth = 200
+
+// window renders a slice of s centred on col, with a caret marking the column.
+func window(s string, col int) string {
+	const pad = 60
+	start := col - pad
+	if start < 0 {
+		start = 0
+	}
+	end := col + pad
+	if end > len(s) {
+		end = len(s)
+	}
+	prefix, suffix := "", ""
+	if start > 0 {
+		prefix = "..."
+	}
+	if end < len(s) {
+		suffix = "..."
+	}
+	seg := visible(s[start:end])
+	return fmt.Sprintf("%s%s%s   [at column %d]", prefix, seg, suffix, col+1)
+}
+
+func writeNumbered(b *strings.Builder, lines []string) {
+	for i, l := range lines {
+		fmt.Fprintf(b, "\t%4d | %s\n", i+1, visible(l))
 	}
 }
 
-// Path to the current file
+// visible marks up characters that are otherwise impossible to see in a diff.
+func visible(s string) string {
+	r := strings.NewReplacer("\r", "␍", "\t", "→")
+	out := r.Replace(s)
+	if out != strings.TrimRight(out, " ") {
+		out = strings.TrimRight(out, " ") + strings.Repeat("·", len(out)-len(strings.TrimRight(out, " ")))
+	}
+	return out
+}
+
+// GetBasePath returns the directory containing this file
 func GetBasePath(t *testing.T) string {
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -110,7 +251,7 @@ func (tf *GoldenFile) Load() string {
 	return normalizedContent
 }
 
-// Load a Golden file
+// LoadByte loads a golden file and returns its raw bytes
 func (tf *GoldenFile) LoadByte() []byte {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
@@ -122,7 +263,7 @@ func (tf *GoldenFile) LoadByte() []byte {
 	return content
 }
 
-// write a Golden file
+// Write writes content to the golden file, creating it if it does not already exist
 func (tf *GoldenFile) Write(content string) {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
@@ -145,7 +286,7 @@ func (tf *GoldenFile) Write(content string) {
 	}
 }
 
-// write a Golden file
+// WriteInByte writes raw bytes to the golden file
 func (tf *GoldenFile) WriteInByte(content []byte) {
 	tf.t.Helper()
 	path := filepath.Join(tf.dir, tf.name)
@@ -155,16 +296,47 @@ func (tf *GoldenFile) WriteInByte(content []byte) {
 	}
 }
 
-// use default context /pkg/utils/TestConfig.yaml
-func SetupContextEnv(t *testing.T) {
+// SharedTestConfigPath resolves pkg/utils/TestConfig.yaml from the working
+// directory of a test package four levels below the mesheryctl module root,
+// which is where every caller of SetupContextEnv lives.
+func SharedTestConfigPath(t *testing.T) string {
+	t.Helper()
 	path, err := os.Getwd()
 	if err != nil {
-		t.Error("unable to locate meshery directory")
+		t.Fatalf("unable to locate meshery directory: %v", err)
 	}
+	return filepath.Join(path, "..", "..", "..", "..", "pkg", "utils", "TestConfig.yaml")
+}
+
+// CopyMeshconfigFixture copies a meshconfig fixture into a directory private to
+// t and returns the copy's path.
+//
+// pkg/utils/TestConfig.yaml is loaded by every mesheryctl test package, and
+// `go test ./mesheryctl/...` runs those packages as concurrent processes. It
+// therefore has to stay read-only on disk: a command under test persists the
+// active meshconfig through viper.WriteConfig, which truncates the file before
+// it rewrites it, and a sibling package reading inside that window parses an
+// empty document with no error at all. The resulting config has an empty
+// current-context, and the first request made with it reaches
+// MesheryCtlConfig.GetBaseMesheryURL, which calls Log.Fatal and exits the whole
+// test binary - a package-level FAIL with no failing test named. Pointing each
+// test at its own copy keeps writes off the shared fixture.
+func CopyMeshconfigFixture(t *testing.T, src string) string {
+	t.Helper()
+	dst := filepath.Join(t.TempDir(), "config.yaml")
+	if err := Populate(src, dst); err != nil {
+		t.Fatalf("unable to copy meshconfig fixture %v: %v", src, err)
+	}
+	return dst
+}
+
+// SetupContextEnv sets up the test context using the default pkg/utils/TestConfig.yaml configuration
+func SetupContextEnv(t *testing.T) {
+	configPath := CopyMeshconfigFixture(t, SharedTestConfigPath(t))
 	viper.Reset()
-	viper.SetConfigFile(path + "/../../../../pkg/utils/TestConfig.yaml")
-	DefaultConfigPath = path + "/../../../../pkg/utils/TestConfig.yaml"
-	err = viper.ReadInConfig()
+	viper.SetConfigFile(configPath)
+	DefaultConfigPath = configPath
+	err := viper.ReadInConfig()
 	if err != nil {
 		t.Errorf("unable to read configuration from %v, %v", viper.ConfigFileUsed(), err.Error())
 	}
@@ -175,7 +347,7 @@ func SetupContextEnv(t *testing.T) {
 	}
 }
 
-// setup logrus formatter and return the buffer in which commands output is to be set.
+// SetupLogrusGrabTesting sets up the logrus formatter and returns the buffer that command output is written to.
 func SetupLogrusGrabTesting(_ *testing.T, _ bool) *bytes.Buffer {
 	b := bytes.NewBufferString("")
 	logrus.SetOutput(b)
@@ -183,7 +355,7 @@ func SetupLogrusGrabTesting(_ *testing.T, _ bool) *bytes.Buffer {
 	return b
 }
 
-// setup meshkit logger for testing and return the buffer in which commands output is to be set.
+// SetupMeshkitLoggerTesting sets up the Meshkit logger for testing and returns the buffer that command output is written to.
 func SetupMeshkitLoggerTesting(_ *testing.T, verbose bool) *bytes.Buffer {
 	b := bytes.NewBufferString("")
 	logLevel := logrus.InfoLevel
@@ -197,7 +369,7 @@ func SetupMeshkitLoggerTesting(_ *testing.T, verbose bool) *bytes.Buffer {
 	return b
 }
 
-// setup custom context with SetupCustomContextEnv
+// SetupCustomContextEnv sets up the test context using the configuration file at pathToContext
 func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 	viper.Reset()
 	ViperCompose = viper.New()
@@ -217,18 +389,18 @@ func SetupCustomContextEnv(t *testing.T, pathToContext string) {
 	}
 }
 
-// Start mock HTTP client to mock requests
+// StartMockery activates HTTP mocking so requests made during the test are intercepted
 func StartMockery(t *testing.T) {
 	// activate http mocking
 	httpmock.Activate()
 }
 
-// stop HTTP mock client
+// StopMockery deactivates HTTP mocking and resets it
 func StopMockery(_ *testing.T) {
 	httpmock.DeactivateAndReset()
 }
 
-// Set file location for testing stuff
+// SetFileLocationTesting points MesheryFolder, DockerComposeFile, and AuthConfigFile at fixtures under dir, for use in tests
 func SetFileLocationTesting(dir string) {
 	MesheryFolder = filepath.Join(dir, "fixtures", MesheryFolder)
 	DockerComposeFile = filepath.Join(MesheryFolder, DockerComposeFile)
@@ -288,16 +460,15 @@ func StartMockMesheryServer(t *testing.T) error {
 	return nil
 }
 
-// The HandlePagination function add special characters that is not
-// handle properly in test. This function will remove undesired characters
-// and spaces to ensure excepted versus actual result match when using http.MockURL
+// CleanStringFromHandlePagination removes undesired characters and spaces added by the
+// HandlePagination function so that expected and actual results match in tests using MockURL
 func CleanStringFromHandlePagination(data string) string {
 	cleaned := StripAnsiEscapeCodes(data)
 	cleaned = formatToTabs(cleaned)
 	return cleaned
 }
 
-// removeANSICodes removes ANSI escape codes from a string.
+// StripAnsiEscapeCodes removes ANSI escape codes from a string.
 //
 // Parameters:
 //

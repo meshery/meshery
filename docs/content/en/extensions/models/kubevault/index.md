@@ -141,7 +141,11 @@ components:
   colorIcon: extensions/models/kubevault/components/vault-relay/icons/color/vault-relay-color.svg
   whiteIcon: extensions/models/kubevault/components/vault-relay/icons/white/vault-relay-white.svg
   description: 
-components-count: 33
+- name: vault-relay
+  colorIcon: extensions/models/kubevault/components/vault-relay/icons/color/vault-relay-color.svg
+  whiteIcon: extensions/models/kubevault/components/vault-relay/icons/white/vault-relay-white.svg
+  description: 
+components-count: 34
 relationships: 
 relationship-count: 0
 featureList: [

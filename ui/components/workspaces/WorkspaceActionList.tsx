@@ -9,7 +9,6 @@ import {
   Menu,
   MenuItem,
   MoreVertIcon,
-  useHasPermission,
   useTheme,
   useWindowDimensions,
 } from '@sistent/sistent';
@@ -31,8 +30,6 @@ const WorkspaceActionList = ({
   const { width } = useWindowDimensions();
   const isMobile = width < 1024;
   const theme = useTheme();
-  const canEditWorkspace = useHasPermission(Keys.WorkspaceManagementEditWorkspace);
-  const canDeleteWorkspace = useHasPermission(Keys.WorkspaceManagementDeleteWorkspace);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -67,14 +64,14 @@ const WorkspaceActionList = ({
       label: 'Edit Workspace',
       icon: <EditIcon style={{ fill: theme.palette.icon.default, ...iconMedium }} />,
       onClick: (e) => handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.EDIT, selectedWorkspace),
-      disabled: !canEditWorkspace,
+      permissionKey: Keys.WorkspaceManagementEditWorkspace,
     },
     {
       key: 'delete-workspace',
       label: 'Delete Workspace',
       icon: <DeleteIcon style={{ fill: theme.palette.icon.default, ...iconMedium }} />,
       onClick: (e) => handleDeleteWorkspaceConfirm(e, selectedWorkspace),
-      disabled: !canDeleteWorkspace,
+      permissionKey: Keys.WorkspaceManagementDeleteWorkspace,
     },
   ];
 
@@ -87,14 +84,14 @@ const WorkspaceActionList = ({
               <MoreVertIcon />
             </IconButton>
             <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-              {actionItems.map(({ key, label, icon, onClick, disabled }) => (
+              {actionItems.map(({ key, label, icon, onClick, permissionKey }) => (
                 <MenuItem
                   key={key}
                   onClick={(e) => {
                     onClick(e);
                     handleClose(e);
                   }}
-                  disabled={disabled}
+                  permissionKey={permissionKey}
                 >
                   <ListItemIcon>{icon}</ListItemIcon>
                   {label}
@@ -104,9 +101,13 @@ const WorkspaceActionList = ({
           </>
         ) : (
           <>
-            {actionItems.map(({ key, label, icon, onClick, disabled }) => (
+            {actionItems.map(({ key, label, icon, onClick, permissionKey }) => (
               <CustomTooltip title={label} key={key}>
-                <IconButton aria-label={key} onClick={(e) => onClick(e)} disabled={disabled}>
+                <IconButton
+                  aria-label={key}
+                  onClick={(e) => onClick(e)}
+                  permissionKey={permissionKey}
+                >
                   {icon}
                 </IconButton>
               </CustomTooltip>

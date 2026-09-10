@@ -7,15 +7,18 @@ subcommand: provider
 
 # mesheryctl system provider view
 
-view provider
+View provider
 
 ## Synopsis
 
-View provider of context in focus
+View provider of context in focus.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system provider view [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,8 +27,10 @@ mesheryctl system provider view [flags]
 View current provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system provider view
 
+</div>
 </div>
 </pre> 
 

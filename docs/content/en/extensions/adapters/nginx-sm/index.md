@@ -26,13 +26,13 @@ The Meshery Adapter for NGINX Service Mesh is currently under construction (stab
 
 The Meshery Adapter for NGINX Service Mesh includes a handful of sample applications. Use Meshery to deploy any of these sample applications.
 
-- [Emojivoto]({{< ref "guides/infrastructure-management/sample-apps/index.md" >}})
+- Emojivoto
 
   - A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.
 
-- [Bookinfo]({{< ref "guides/infrastructure-management/sample-apps/index.md" >}})
-
-- [Httpbin]({{< ref "guides/infrastructure-management/sample-apps/index.md" >}})
+- Bookinfo
+  - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
+- Httpbin
 
   - Httpbin is a simple HTTP request and response service.
 

@@ -7,6 +7,7 @@ import {
   useGetUserCredentialsQuery as useSchemasGetUserCredentialsQuery,
   useUpdateConnectionMutation as useSchemasUpdateConnectionMutation,
 } from '@meshery/schemas/mesheryApi';
+import { useCallback, useMemo } from 'react';
 import { api, mesheryApiPath } from './index';
 
 // These must match the tag types declared on the shared `mesheryApi`
@@ -144,10 +145,16 @@ const wrapConnectionIdLazyQuery = (endpoint: {
   ];
 }) => {
   return () => {
-    const [trigger, ...rest] = endpoint.useLazyQuery();
-    const wrappedTrigger = (connectionId: string, preferCacheValue?: boolean) =>
-      trigger({ connectionId }, preferCacheValue);
-    return [wrappedTrigger, ...rest] as const;
+    const [trigger, result, lastPromiseInfo] = endpoint.useLazyQuery();
+    const wrappedTrigger = useCallback(
+      (connectionId: string, preferCacheValue?: boolean) =>
+        trigger({ connectionId }, preferCacheValue),
+      [trigger],
+    );
+    return useMemo(
+      () => [wrappedTrigger, result, lastPromiseInfo] as const,
+      [wrappedTrigger, result, lastPromiseInfo],
+    );
   };
 };
 

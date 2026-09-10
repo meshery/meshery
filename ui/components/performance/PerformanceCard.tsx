@@ -35,7 +35,7 @@ function PerformanceCard({
   requestSizeRestore,
 }) {
   const theme = useTheme();
-  const { owner, hasCloudProfile } = useResourceOwner(profile.userId);
+  const { owner, hasCloudProfile } = useResourceOwner(profile.owner);
   const dataTestIDs = useTestIDsGenerator('performanceProfileCard');
 
   const {
@@ -180,7 +180,11 @@ function PerformanceCard({
         <div style={{}}>
           <BottomPart>
             {hasCloudProfile ? (
-              <Link href={`${MESHERY_CLOUD_PROD}/user/${profile.userId}`} target="_blank">
+              <Link
+                href={`${MESHERY_CLOUD_PROD}/user/${profile.owner}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Avatar alt="profile-avatar" src={owner?.avatarUrl} />
               </Link>
             ) : (
@@ -292,7 +296,7 @@ function PerformanceCard({
                   data-testid={dataTestIDs('edit')}
                   permissionKey={Keys.PerformanceManagementEditPerformanceTest}
                 >
-                  <EditIcon style={iconMedium} />
+                  <EditIcon style={iconMedium} fill={theme?.palette?.icon?.default} />
                 </IconButton>
               </CustomTooltip>
               <CustomTooltip title="Delete">
@@ -301,7 +305,7 @@ function PerformanceCard({
                   data-testid={dataTestIDs('delete')}
                   permissionKey={Keys.PerformanceManagementDeletePerformanceTest}
                 >
-                  <DeleteIcon style={iconMedium} />
+                  <DeleteIcon style={iconMedium} fill={theme?.palette?.icon?.default} />
                 </IconButton>
               </CustomTooltip>
             </div>

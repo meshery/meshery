@@ -8,6 +8,7 @@ a > * {
 }
 img {
   max-width: 100%;
+  height: auto;
   border-style: none;
 }
 img.center {
@@ -19,6 +20,14 @@ video.center {
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+iframe {
+  max-width: 100%;
+}
+iframe:not(.yt-embed-container iframe) {
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
 }
 
 p {
