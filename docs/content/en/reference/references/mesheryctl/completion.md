@@ -3,7 +3,7 @@ title: mesheryctl-completion
 display_title: false
 command: completion
 subcommand: nil
-categories: [mesheryctl-ref]
+categories: [mesheryctl-completion]
 ---
 
 # mesheryctl completion

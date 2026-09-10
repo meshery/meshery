@@ -3,7 +3,7 @@ title: mesheryctl-adapter
 display_title: false
 command: adapter
 subcommand: nil
-categories: [mesheryctl-ref]
+categories: [mesheryctl-adapter]
 ---
 
 # mesheryctl adapter

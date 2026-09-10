@@ -3,7 +3,7 @@ title: mesheryctl-relationship
 display_title: false
 command: relationship
 subcommand: nil
-categories: [mesheryctl-ref]
+categories: [mesheryctl-relationship]
 ---
 
 # mesheryctl relationship

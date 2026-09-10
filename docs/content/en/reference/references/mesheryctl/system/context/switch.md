@@ -3,7 +3,7 @@ title: mesheryctl-system-context-switch
 display_title: false
 command: system
 subcommand: context
-categories: [mesheryctl-ref]
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system context switch

@@ -3,7 +3,7 @@ title: mesheryctl-environment-delete
 display_title: false
 command: environment
 subcommand: delete
-categories: [mesheryctl-ref]
+categories: [mesheryctl-environment]
 ---
 
 # mesheryctl environment delete

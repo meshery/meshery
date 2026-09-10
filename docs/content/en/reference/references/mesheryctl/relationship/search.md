@@ -3,7 +3,7 @@ title: mesheryctl-relationship-search
 display_title: false
 command: relationship
 subcommand: search
-categories: [mesheryctl-ref]
+categories: [mesheryctl-relationship]
 ---
 
 # mesheryctl relationship search

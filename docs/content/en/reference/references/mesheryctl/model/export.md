@@ -3,7 +3,7 @@ title: mesheryctl-model-export
 display_title: false
 command: model
 subcommand: export
-categories: [mesheryctl-ref]
+categories: [mesheryctl-model]
 ---
 
 # mesheryctl model export

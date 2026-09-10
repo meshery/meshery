@@ -3,7 +3,7 @@ title: mesheryctl-environment-view
 display_title: false
 command: environment
 subcommand: view
-categories: [mesheryctl-ref]
+categories: [mesheryctl-environment]
 ---
 
 # mesheryctl environment view

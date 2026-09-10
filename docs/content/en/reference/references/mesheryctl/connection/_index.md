@@ -3,7 +3,7 @@ title: mesheryctl-connection
 display_title: false
 command: connection
 subcommand: nil
-categories: [mesheryctl-ref]
+categories: [mesheryctl-connection]
 ---
 
 # mesheryctl connection

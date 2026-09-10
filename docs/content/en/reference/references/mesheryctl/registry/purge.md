@@ -3,7 +3,7 @@ title: mesheryctl-registry-purge
 display_title: false
 command: registry
 subcommand: purge
-categories: [mesheryctl-ref]
+categories: [mesheryctl-registry]
 ---
 
 # mesheryctl registry purge

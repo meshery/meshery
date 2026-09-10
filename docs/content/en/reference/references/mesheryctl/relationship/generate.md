@@ -3,7 +3,7 @@ title: mesheryctl-relationship-generate
 display_title: false
 command: relationship
 subcommand: generate
-categories: [mesheryctl-ref]
+categories: [mesheryctl-relationship]
 ---
 
 # mesheryctl relationship generate

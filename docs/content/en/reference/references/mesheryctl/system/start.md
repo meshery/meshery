@@ -3,7 +3,7 @@ title: mesheryctl-system-start
 display_title: false
 command: system
 subcommand: start
-categories: [mesheryctl-ref]
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system start

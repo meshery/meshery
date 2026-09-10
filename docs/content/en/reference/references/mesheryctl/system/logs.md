@@ -3,7 +3,7 @@ title: mesheryctl-system-logs
 display_title: false
 command: system
 subcommand: logs
-categories: [mesheryctl-ref]
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system logs

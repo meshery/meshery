@@ -3,7 +3,7 @@ title: mesheryctl-version
 display_title: false
 command: version
 subcommand: nil
-categories: [mesheryctl-ref]
+categories: [mesheryctl-version]
 ---
 
 # mesheryctl version

@@ -3,7 +3,7 @@ title: mesheryctl-organization
 display_title: false
 command: organization
 subcommand: nil
-categories: [mesheryctl-ref]
+categories: [mesheryctl-organization]
 ---
 
 # mesheryctl organization

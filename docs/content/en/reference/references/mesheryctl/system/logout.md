@@ -3,7 +3,7 @@ title: mesheryctl-system-logout
 display_title: false
 command: system
 subcommand: logout
-categories: [mesheryctl-ref]
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system logout

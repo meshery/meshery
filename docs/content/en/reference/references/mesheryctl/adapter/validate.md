@@ -3,7 +3,7 @@ title: mesheryctl-adapter-validate
 display_title: false
 command: adapter
 subcommand: validate
-categories: [mesheryctl-ref]
+categories: [mesheryctl-adapter]
 ---
 
 # mesheryctl adapter validate

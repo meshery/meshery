@@ -3,7 +3,7 @@ title: mesheryctl-system-token-list
 display_title: false
 command: system
 subcommand: token
-categories: [mesheryctl-ref]
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system token list

@@ -3,7 +3,7 @@ title: mesheryctl-system-delete
 display_title: false
 command: system
 subcommand: delete
-categories: [mesheryctl-ref]
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system delete

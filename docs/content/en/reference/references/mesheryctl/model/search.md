@@ -3,7 +3,7 @@ title: mesheryctl-model-search
 display_title: false
 command: model
 subcommand: search
-categories: [mesheryctl-ref]
+categories: [mesheryctl-model]
 ---
 
 # mesheryctl model search

@@ -3,7 +3,7 @@ title: mesheryctl-design-export
 display_title: false
 command: design
 subcommand: export
-categories: [mesheryctl-ref]
+categories: [mesheryctl-design]
 ---
 
 # mesheryctl design export

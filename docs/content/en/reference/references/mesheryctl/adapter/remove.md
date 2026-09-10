@@ -3,7 +3,7 @@ title: mesheryctl-adapter-remove
 display_title: false
 command: adapter
 subcommand: remove
-categories: [mesheryctl-ref]
+categories: [mesheryctl-adapter]
 ---
 
 # mesheryctl adapter remove

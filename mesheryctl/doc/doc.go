@@ -36,7 +36,7 @@ title: %s
 display_title: false
 command: %s
 subcommand: %s
-categories: [mesheryctl-ref]
+categories: [%s]
 ---
 
 `
@@ -46,7 +46,7 @@ func prepender(filename string) string {
 	idx := strings.Index(filename, "mesheryctl")
 	if idx == -1 {
 		base := strings.TrimSuffix(filepath.Base(filename), ".md")
-		return fmt.Sprintf(markdownTemplateCommand, base, base, "nil")
+		return fmt.Sprintf(markdownTemplateCommand, base, base, "nil", "mesheryctl-ref")
 	}
 
 	relPath := strings.TrimSuffix(filename[idx:], ".md")
@@ -73,12 +73,18 @@ func prepender(filename string) string {
 		subcommand = parts[2] // Set the second part as the subcommand
 	}
 
+	category := "mesheryctl-ref"
+	if len(parts) >= 2 {
+		category = fmt.Sprintf("mesheryctl-%s", parts[1])
+	}
+
 	title := strings.Join(parts, "-")
 
 	return fmt.Sprintf(markdownTemplateCommand,
 		title,
 		command,
 		subcommand,
+		category,
 	)
 }
 

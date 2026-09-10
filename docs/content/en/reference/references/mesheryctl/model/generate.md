@@ -3,7 +3,7 @@ title: mesheryctl-model-generate
 display_title: false
 command: model
 subcommand: generate
-categories: [mesheryctl-ref]
+categories: [mesheryctl-model]
 ---
 
 # mesheryctl model generate

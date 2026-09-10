@@ -3,7 +3,7 @@ title: mesheryctl-registry-update
 display_title: false
 command: registry
 subcommand: update
-categories: [mesheryctl-ref]
+categories: [mesheryctl-registry]
 ---
 
 # mesheryctl registry update

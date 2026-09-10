@@ -3,7 +3,7 @@ title: mesheryctl-registry
 display_title: false
 command: registry
 subcommand: nil
-categories: [mesheryctl-ref]
+categories: [mesheryctl-registry]
 ---
 
 # mesheryctl registry

@@ -3,7 +3,7 @@ title: mesheryctl-perf-result
 display_title: false
 command: perf
 subcommand: result
-categories: [mesheryctl-ref]
+categories: [mesheryctl-perf]
 ---
 
 # mesheryctl perf result
