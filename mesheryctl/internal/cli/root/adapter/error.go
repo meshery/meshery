@@ -44,6 +44,7 @@ const (
 	ErrWaitValidateResponseCode              = "mesheryctl-1036"
 	ErrAdapterNotFoundCode                   = "mesheryctl-1255"
 	ErrAdapterMeshMismatchCode               = "mesheryctl-1256"
+	ErrAmbiguousAdapterCode                  = "mesheryctl-1257"
 )
 
 var (
@@ -191,7 +192,7 @@ func ErrAdapterNotFound(adapterURL string, availableAdapters []string) error {
 		[]string{"Unable to find the requested adapter"},
 		[]string{detail},
 		[]string{"The name given to --adapter is misspelled, or that adapter is not deployed and connected to Meshery Server."},
-		[]string{"Pass the name of a connected adapter to --adapter. Use `mesheryctl system status` to see which adapters are running."})
+		[]string{"Pass the name or the host:port location of a connected adapter to --adapter. Use `mesheryctl system status` to see which adapters are running."})
 }
 
 // ErrAdapterMeshMismatch is returned when the mesh named positionally and the
@@ -203,4 +204,14 @@ func ErrAdapterMeshMismatch(adapterURL, adapterMesh, requestedMesh string) error
 		[]string{fmt.Sprintf("Adapter %q serves %q, but %q was requested", adapterURL, adapterMesh, requestedMesh)},
 		[]string{"The mesh name and the --adapter value name two different meshes."},
 		[]string{"Drop the mesh name to validate the mesh the given adapter serves, or pass the adapter that serves the mesh you named."})
+}
+
+// ErrAmbiguousAdapter is returned when the value of `--adapter` names a host shared
+// by several connected adapters, so it does not identify one of them.
+func ErrAmbiguousAdapter(adapterURL string, candidates []string) error {
+	return errors.New(ErrAmbiguousAdapterCode, errors.Fatal,
+		[]string{"Ambiguous adapter"},
+		[]string{fmt.Sprintf("%q matches %d connected adapters: %s", adapterURL, len(candidates), strings.Join(candidates, ", "))},
+		[]string{"Several connected adapters share the host given to --adapter, so it does not identify a single adapter."},
+		[]string{"Pass the full host:port location of the adapter to --adapter instead of the host alone."})
 }

@@ -17,6 +17,7 @@ package adapter
 import (
 	"errors"
 	"io"
+	"net"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -125,25 +126,24 @@ func validateAdapter(mctlCfg *config.MesheryCtlConfig, meshName string) error {
 }
 
 // resolveAdapterFlag resolves the adapter named by --adapter and derives the mesh
-// to operate on from it. The flag carries an adapter location host (for example
-// "meshery-istio"); Meshery Server matches that location verbatim against a
+// to operate on from it. Meshery Server matches the location verbatim against a
 // registered adapter before dialling it over gRPC, so a value matching nothing
 // has to fail here instead of reaching the server as some other adapter.
-// requestedMesh, when non-empty, is the mesh the user named positionally.
 func resolveAdapterFlag(mctlCfg *config.MesheryCtlConfig, requestedMesh string) error {
-	// get details about the current meshery session
 	prefs, err := utils.GetSessionData(mctlCfg)
 	if err != nil {
 		return ErrGettingSessionData(err)
 	}
 
-	adapter, ok := findAdapter(prefs.MeshAdapters, adapterURL)
-	if !ok {
-		return ErrAdapterNotFound(adapterURL, adapterHosts(prefs.MeshAdapters))
+	matches := findAdapters(prefs.MeshAdapters, adapterURL)
+	switch {
+	case len(matches) == 0:
+		return ErrAdapterNotFound(adapterURL, adapterLocations(prefs.MeshAdapters))
+	case len(matches) > 1:
+		return ErrAmbiguousAdapter(adapterURL, adapterLocations(matches))
 	}
+	adapter := matches[0]
 
-	// a positionally named mesh has to agree with the adapter that was asked for,
-	// otherwise the command would operate on a mesh the user never named
 	if requestedMesh != "" && requestedMesh != adapter.Name {
 		return ErrAdapterMeshMismatch(adapterURL, adapter.Name, requestedMesh)
 	}
@@ -153,28 +153,46 @@ func resolveAdapterFlag(mctlCfg *config.MesheryCtlConfig, requestedMesh string) 
 	return nil
 }
 
-// findAdapter looks up the registered mesh adapter whose Location's host
-// (the part before an optional ":port") matches adapterURL, and returns
-// that adapter so the caller can read Name and Location off the same match
-// instead of mixing fields from two different resolution passes.
-func findAdapter(adapters []*models.Adapter, adapterURL string) (*models.Adapter, bool) {
+// findAdapters returns the registered adapters addressed by adapterURL. An exact
+// Location match wins outright; otherwise, when adapterURL carries no port, every
+// adapter sharing its host is returned so the caller can reject an ambiguous
+// reference rather than silently picking one.
+func findAdapters(adapters []*models.Adapter, adapterURL string) []*models.Adapter {
 	for _, adapter := range adapters {
-		host := strings.Split(adapter.Location, ":")[0]
-		if host == adapterURL {
-			return adapter, true
+		if adapter.Location == adapterURL {
+			return []*models.Adapter{adapter}
 		}
 	}
-	return nil, false
+
+	if _, _, err := net.SplitHostPort(adapterURL); err == nil {
+		return nil
+	}
+
+	host := adapterHost(adapterURL)
+	var matches []*models.Adapter
+	for _, adapter := range adapters {
+		if adapterHost(adapter.Location) == host {
+			matches = append(matches, adapter)
+		}
+	}
+	return matches
 }
 
-// adapterHosts returns the host portion of every registered adapter's Location,
-// which is the spelling --adapter accepts.
-func adapterHosts(adapters []*models.Adapter) []string {
-	hosts := make([]string, 0, len(adapters))
-	for _, adapter := range adapters {
-		hosts = append(hosts, strings.Split(adapter.Location, ":")[0])
+// adapterHost returns the host portion of an adapter location, keeping IPv6
+// addresses intact whether or not they carry a port or square brackets.
+func adapterHost(location string) string {
+	if host, _, err := net.SplitHostPort(location); err == nil {
+		return host
 	}
-	return hosts
+	return strings.Trim(location, "[]")
+}
+
+func adapterLocations(adapters []*models.Adapter) []string {
+	locations := make([]string, 0, len(adapters))
+	for _, adapter := range adapters {
+		locations = append(locations, adapter.Location)
+	}
+	return locations
 }
 
 func validateMesh(mctlCfg *config.MesheryCtlConfig, meshName string) (string, error) {
