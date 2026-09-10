@@ -40,6 +40,7 @@ const (
 	ErrDesignInvalidApiResponseCode   = "mesheryctl-1199"
 	ErrEvaluateDesignCode             = "mesheryctl-1247"
 	ErrEvaluateDesignResponseCode     = "mesheryctl-1248"
+	ErrDesignSelectNotInteractiveCode = "mesheryctl-1257"
 )
 
 const (
@@ -189,4 +190,16 @@ func ErrEvaluateDesignResponse(err error) error {
 		[]string{err.Error()},
 		[]string{"The Meshery server returned an error while evaluating the design", "The design file may be invalid or the server may be experiencing issues"},
 		[]string{"Ensure the design file is valid", "Check that the Meshery server is running and accessible", "Verify that the server has the required policies loaded"})
+}
+
+// ErrDesignSelectionNotInteractive reports that several designs share the name
+// the user gave, and that there is no interactive stdin to ask which one they
+// meant. Returning a choice here would deploy or apply a design nobody
+// selected, so the command stops instead.
+func ErrDesignSelectNotInteractive(designName string, matches int) error {
+	return errors.New(ErrDesignSelectNotInteractiveCode, errors.Fatal,
+		[]string{"Cannot choose between multiple designs without an interactive terminal"},
+		[]string{fmt.Sprintf("%d designs match the name %q, and standard input is not interactive so the selection prompt cannot be answered", matches, designName)},
+		[]string{"The command was run from a script, a pipe, a CI job, or with standard input redirected", "More than one design shares the given name"},
+		[]string{"Pass the design ID instead of the name", "Run the command from an interactive terminal", "Give the design a unique name with 'mesheryctl design list' to find the one you want"})
 }
