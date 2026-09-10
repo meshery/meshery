@@ -33,11 +33,22 @@ mesheryctl version
 </div>
 </pre> 
 
+To view the version in JSON or YAML format
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl version -o json
+
+</div>
+</div>
+</pre>
+
 ## Options
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help   help for version
+  -o, --output-format string   (optional) format to display in [json|yaml|table|string]
 
 </div>
 </pre>
