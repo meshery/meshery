@@ -26,66 +26,93 @@ import (
 	"github.com/meshery/meshkit/errors"
 )
 
-// TestFindAdapter covers resolving a registered mesh adapter by the host
-// portion of its Location, including the no-port case from
-// https://github.com/meshery/meshery/issues/21630 where matching used to
-// leak adapter.Location into the caller's meshName instead of adapter.Name.
-func TestFindAdapter(t *testing.T) {
+// TestFindAdapters covers resolving a registered mesh adapter from --adapter by
+// exact location or by host, including the no-port case from
+// https://github.com/meshery/meshery/issues/21630 and the host collision, exact
+// host:port and IPv6 cases raised in review on
+// https://github.com/meshery/meshery/pull/21702.
+func TestFindAdapters(t *testing.T) {
 	adapters := []*models.Adapter{
 		{Name: "ISTIO", Location: "meshery-istio:10000"},
-		{Name: "NSM", Location: "meshery-nsm"}, // registered without a port
+		{Name: "NSM", Location: "meshery-nsm"},
+		{Name: "LOCAL_ISTIO", Location: "localhost:10000"},
+		{Name: "LOCAL_LINKERD", Location: "localhost:10001"},
+		{Name: "IPV6_CONSUL", Location: "[::1]:10002"},
 	}
 
 	tests := []struct {
 		name       string
 		adapterURL string
-		wantFound  bool
-		wantName   string
-		wantLoc    string
+		want       []string
 	}{
 		{
-			name:       "adapter registered with a port",
+			name:       "host of an adapter registered with a port",
 			adapterURL: "meshery-istio",
-			wantFound:  true,
-			wantName:   "ISTIO",
-			wantLoc:    "meshery-istio:10000",
+			want:       []string{"ISTIO"},
 		},
 		{
 			name:       "adapter registered without a port",
 			adapterURL: "meshery-nsm",
-			wantFound:  true,
-			wantName:   "NSM",
-			wantLoc:    "meshery-nsm",
+			want:       []string{"NSM"},
+		},
+		{
+			name:       "exact host:port location",
+			adapterURL: "meshery-istio:10000",
+			want:       []string{"ISTIO"},
+		},
+		{
+			name:       "exact location disambiguates a shared host",
+			adapterURL: "localhost:10001",
+			want:       []string{"LOCAL_LINKERD"},
+		},
+		{
+			name:       "host shared by several adapters returns all of them",
+			adapterURL: "localhost",
+			want:       []string{"LOCAL_ISTIO", "LOCAL_LINKERD"},
+		},
+		{
+			name:       "exact IPv6 location",
+			adapterURL: "[::1]:10002",
+			want:       []string{"IPV6_CONSUL"},
+		},
+		{
+			name:       "IPv6 host without a port",
+			adapterURL: "::1",
+			want:       []string{"IPV6_CONSUL"},
+		},
+		{
+			name:       "bracketed IPv6 host without a port",
+			adapterURL: "[::1]",
+			want:       []string{"IPV6_CONSUL"},
+		},
+		{
+			name:       "known host with an unregistered port",
+			adapterURL: "localhost:19999",
+			want:       nil,
 		},
 		{
 			name:       "no matching adapter",
 			adapterURL: "meshery-linkerd",
-			wantFound:  false,
+			want:       nil,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, ok := findAdapter(adapters, tt.adapterURL)
+			got := findAdapters(adapters, tt.adapterURL)
 
-			if ok != tt.wantFound {
-				t.Fatalf("findAdapter() found = %v, want %v", ok, tt.wantFound)
+			names := make([]string, 0, len(got))
+			for _, adapter := range got {
+				names = append(names, adapter.Name)
 			}
-			if !tt.wantFound {
-				if got != nil {
-					t.Fatalf("findAdapter() adapter = %#v, want nil", got)
+
+			if len(names) != len(tt.want) {
+				t.Fatalf("findAdapters() = %v, want %v", names, tt.want)
+			}
+			for i := range names {
+				if names[i] != tt.want[i] {
+					t.Fatalf("findAdapters() = %v, want %v", names, tt.want)
 				}
-				return
-			}
-
-			if got == nil {
-				t.Fatal("findAdapter() returned nil adapter")
-			}
-			if got.Name != tt.wantName {
-				t.Errorf("adapter Name = %q, want %q", got.Name, tt.wantName)
-			}
-			if got.Location != tt.wantLoc {
-				t.Errorf("adapter Location = %q, want %q", got.Location, tt.wantLoc)
 			}
 		})
 	}
@@ -111,6 +138,9 @@ func TestValidateAdapterSelection(t *testing.T) {
 	tests := []struct {
 		name string
 		args []string
+		// fixture is the session data the server responds with, defaulting to
+		// adapters on distinct hosts
+		fixture string
 		// wantErrCode, when set, is the meshkit code the command must fail with
 		wantErrCode string
 		// wantMesh and wantAdapter are what a successful run must resolve to
@@ -139,13 +169,37 @@ func TestValidateAdapterSelection(t *testing.T) {
 			wantMesh:    "ISTIO",
 			wantAdapter: "meshery-istio:10000",
 		},
+		{
+			name:        "exact host:port location is accepted",
+			args:        []string{"validate", "--adapter", "meshery-istio:10000", "--spec", "smi"},
+			wantMesh:    "ISTIO",
+			wantAdapter: "meshery-istio:10000",
+		},
+		{
+			name:        "host shared by several adapters is rejected",
+			args:        []string{"validate", "--adapter", "localhost", "--spec", "smi"},
+			fixture:     "sync.localhost.golden",
+			wantErrCode: ErrAmbiguousAdapterCode,
+		},
+		{
+			name:        "exact location selects one of several adapters on a host",
+			args:        []string{"validate", "--adapter", "localhost:10001", "--spec", "smi"},
+			fixture:     "sync.localhost.golden",
+			wantMesh:    "LINKERD",
+			wantAdapter: "localhost:10001",
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			fixture := tt.fixture
+			if fixture == "" {
+				fixture = "sync.adapters.golden"
+			}
+
 			httpmock.Reset()
 			httpmock.RegisterResponder(http.MethodGet, testContext.BaseURL+"/api/system/sync",
-				httpmock.NewStringResponder(200, utils.NewGoldenFile(t, "sync.adapters.golden", fixturesDir).Load()))
+				httpmock.NewStringResponder(200, utils.NewGoldenFile(t, fixture, fixturesDir).Load()))
 
 			// capture what actually goes over the wire as the adapter to operate on
 			var sentAdapter string
