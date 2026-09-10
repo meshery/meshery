@@ -195,7 +195,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	// so the repeated background failure is suppressed.
 	haltedWithoutTransition := false
 
-	for eventType != NoOp {
+	for eventType != NoOp && eventType != Exit {
 		nextState, err := sm.getNextState(eventType)
 		if err != nil {
 			sm.Log.Error(err)
