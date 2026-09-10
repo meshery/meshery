@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -20,6 +21,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/meshery/meshery/server/models/pattern/patterns/k8s"
+	"github.com/meshery/meshery/server/models/pattern/planner"
 	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
 
 	"github.com/meshery/meshery/server/models/pattern/stages"
@@ -372,20 +374,36 @@ func (sap *serviceActionProvider) Terminate(err error) {
 func (sap *serviceActionProvider) Mutate(p *pattern.PatternFile) {
 	//TODO: externalize these mutation rules with policies.
 	//1. Enforce the deployment of CRDs before other resources
-	for _, component := range p.Components {
-		if component.Component.Kind == "CustomResourceDefinition" {
-			for _, comp := range p.Components {
-				if comp.Component.Kind != "CustomResourceDefinition" {
-					dependsOnSlice, err := utils.Cast[[]string](comp.Metadata.AdditionalProperties["dependsOn"])
-					if err != nil {
-						err = errors.Wrapf(err, "Failed to cast 'dependsOn' to []string for component %s", comp.DisplayName)
-						sap.log.Error(err)
-						sap.Terminate(err)
-					}
-					dependsOnSlice = append(dependsOnSlice, comp.ID.String())
-					comp.Metadata.AdditionalProperties["dependsOn"] = dependsOnSlice
-				}
+	//
+	// A dependency names another component of the same design by its name, so
+	// each non-CRD component is made to depend on the CRD's name. A component
+	// never depends on itself.
+	for _, crd := range p.Components {
+		if crd.Component.Kind != "CustomResourceDefinition" {
+			continue
+		}
+
+		for _, comp := range p.Components {
+			if comp.Component.Kind == "CustomResourceDefinition" {
+				continue
 			}
+
+			dependsOn, err := planner.DeclaredDependencies(p.Name, comp)
+			if err != nil {
+				sap.log.Error(err)
+				sap.Terminate(err)
+				return
+			}
+
+			if slices.Contains(dependsOn, crd.DisplayName) {
+				continue
+			}
+
+			if comp.Metadata.AdditionalProperties == nil {
+				comp.Metadata.AdditionalProperties = map[string]interface{}{}
+			}
+
+			comp.Metadata.AdditionalProperties["dependsOn"] = append(dependsOn, crd.DisplayName)
 		}
 	}
 }

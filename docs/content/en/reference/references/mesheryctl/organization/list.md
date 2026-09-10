@@ -15,8 +15,10 @@ List all registered organizations with their id, name and date of creation. Orga
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl organization list [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,24 +27,30 @@ mesheryctl organization list [flags]
 list all organizations
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl organization list
 
+</div>
 </div>
 </pre> 
 
 list organizations for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl organization list --page [page-number]
 
+</div>
 </div>
 </pre> 
 
 Display number of available organizations
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl organization list --count
 
+</div>
 </div>
 </pre> 
 
