@@ -185,6 +185,13 @@ mesheryctl design deploy -f [filepath] -s [source type]
 }
 
 func multiplepatternsConfirmation(profiles []models.MesheryPattern, designName string) (int, error) {
+	// Ask before printing anything. mesheryctl already knows whether a human
+	// can answer, and listing every match only to fail afterwards is noise in a
+	// CI log.
+	if !utils.IsInteractiveTerminal() {
+		return 0, ErrDesignSelectNotInteractive(designName, len(profiles))
+	}
+
 	reader := bufio.NewReader(os.Stdin)
 
 	patternFileByt, _ := yaml.Marshal(designFile)
@@ -202,10 +209,11 @@ func multiplepatternsConfirmation(profiles []models.MesheryPattern, designName s
 		fmt.Printf("Enter the index of design: ")
 		response, err := reader.ReadString('\n')
 		if err != nil {
-			// No interactive stdin - a script, a pipe, a CI job. Retrying
+			// Reached with a terminal attached but the stream closed under
+			// us - Ctrl-D, or the terminal going away mid-prompt. Retrying
 			// cannot help, because every further read returns the same error,
 			// and falling through would select whichever design happens to be
-			// first. Stop rather than deploy something nobody chose.
+			// first.
 			return 0, ErrDesignSelectNotInteractive(designName, len(profiles))
 		}
 

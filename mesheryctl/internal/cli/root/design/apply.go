@@ -268,6 +268,13 @@ mesheryctl design apply [design-name]
 }
 
 func multiplePatternsConfirmation(profiles []models.MesheryPattern, designName string) (int, error) {
+	// Ask before printing anything. mesheryctl already knows whether a human
+	// can answer, and listing every match only to fail afterwards is noise in a
+	// CI log.
+	if !utils.IsInteractiveTerminal() {
+		return 0, ErrDesignSelectNotInteractive(designName, len(profiles))
+	}
+
 	reader := bufio.NewReader(os.Stdin)
 
 	for index, a := range profiles {
@@ -283,8 +290,8 @@ func multiplePatternsConfirmation(profiles []models.MesheryPattern, designName s
 		fmt.Printf("Enter the index of profile: ")
 		response, err := reader.ReadString('\n')
 		if err != nil {
-			// See the note in deploy.go: no interactive stdin means retrying
-			// cannot help and falling through would apply an unchosen design.
+			// See the note in deploy.go: the stream closing under a live
+			// terminal still has to stop rather than apply an unchosen design.
 			return 0, ErrDesignSelectNotInteractive(designName, len(profiles))
 		}
 
