@@ -403,7 +403,19 @@ func K8sContextGenerateID(kc K8sContext) (string, error) {
 	// For in-cluster contexts, exclude the token from the hash to prevent ID changes
 	// when the service-account token rotates. The token is mutable authentication
 	// material that should not affect the logical connection identity.
-	if kc.Auth != nil {
+	// In-cluster contexts are identified by their server URL pattern (kubernetes.default.svc).
+	isInCluster := false
+	serverURL := kc.Server
+	if serverURL == "" && kc.Cluster != nil {
+		if clusterServer, ok := kc.Cluster["server"].(string); ok {
+			serverURL = clusterServer
+		}
+	}
+	if serverURL != "" && (serverURL == "https://kubernetes.default.svc" || serverURL == "https://kubernetes.default") {
+		isInCluster = true
+	}
+
+	if isInCluster && kc.Auth != nil {
 		if user, ok := kc.Auth["user"].(map[string]interface{}); ok {
 			if _, hasToken := user["token"]; hasToken {
 				// Create a copy of auth without the token for ID generation

@@ -274,7 +274,7 @@ func TestK8sContextsFromKubeconfigDiscoversAllContexts(t *testing.T) {
 }
 
 // TestK8sContextGenerateID verifies that K8sContextGenerateID excludes service-account
-// tokens from the hash to prevent ID changes when tokens rotate (issue #21810)
+// tokens from the hash for in-cluster contexts to prevent ID changes when tokens rotate (issue #21810)
 func TestK8sContextGenerateID(t *testing.T) {
 	instanceID, _ := uuid.NewV4()
 
@@ -291,7 +291,7 @@ func TestK8sContextGenerateID(t *testing.T) {
 				Cluster:           sql.Map{"server": "https://k8s.example.com"},
 				MesheryInstanceID: &instanceID,
 			},
-			wantSame: true, // ID should be same after token change
+			wantSame: false, // ID should CHANGE after token change for regular contexts
 		},
 		{
 			name: "in-cluster context with token",
@@ -299,9 +299,21 @@ func TestK8sContextGenerateID(t *testing.T) {
 				Name:              "in-cluster-context",
 				Auth:              sql.Map{"user": map[string]interface{}{"token": "service-account-token"}},
 				Cluster:           sql.Map{"server": "https://kubernetes.default.svc"},
+				Server:            "https://kubernetes.default.svc",
 				MesheryInstanceID: &instanceID,
 			},
-			wantSame: true, // ID should be same after token rotation
+			wantSame: true, // ID should be same after token rotation for in-cluster contexts
+		},
+		{
+			name: "in-cluster context with token (short server URL)",
+			context: K8sContext{
+				Name:              "in-cluster-context-short",
+				Auth:              sql.Map{"user": map[string]interface{}{"token": "service-account-token"}},
+				Cluster:           sql.Map{"server": "https://kubernetes.default"},
+				Server:            "https://kubernetes.default",
+				MesheryInstanceID: &instanceID,
+			},
+			wantSame: true, // ID should be same after token rotation for in-cluster contexts
 		},
 		{
 			name: "context without token",
@@ -311,7 +323,7 @@ func TestK8sContextGenerateID(t *testing.T) {
 				Cluster:           sql.Map{"server": "https://k8s.example.com"},
 				MesheryInstanceID: &instanceID,
 			},
-			wantSame: true,
+			wantSame: true, // ID should be same since no token to change
 		},
 	}
 
@@ -341,6 +353,9 @@ func TestK8sContextGenerateID(t *testing.T) {
 			// Check if IDs remain the same
 			if tt.wantSame && id1 != id2 {
 				t.Errorf("ID changed after token rotation, got %v, want %v", id2, id1)
+			}
+			if !tt.wantSame && id1 == id2 {
+				t.Errorf("ID did not change after token rotation, got %v, want different", id1)
 			}
 		})
 	}
