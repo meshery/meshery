@@ -408,7 +408,7 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
             </Grid>
             <Grid size={{ xs: 8, lg: 'grow' }}>
               <Grid container spacing={2}>
-                <Grid size={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Typography gutterBottom variant="subtitle1">
                     <CustomTooltip
                       title={
@@ -427,8 +427,15 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
                   </Typography>
                 </Grid>
                 <Grid
-                  size={6}
-                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
+                  size={{ xs: 12, sm: 6 }}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: {
+                      xs: 'flex-start',
+                      sm: 'flex-end',
+                    },
+                  }}
                 >
                   <Typography
                     gutterBottom
