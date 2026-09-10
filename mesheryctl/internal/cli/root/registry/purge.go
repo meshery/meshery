@@ -128,7 +128,10 @@ mesheryctl registry purge --retain 2 -y
 
 		userResponse := utils.SilentFlag
 		if !userResponse {
-			userResponse = utils.AskForConfirmation(fmt.Sprintf("This will permanently delete %s under %s. Are you sure you want to continue", pluralize(plan.totalToRemove(), "model version directory", "model version directories"), modelsDir))
+			userResponse, err = utils.AskForConfirmation(fmt.Sprintf("This will permanently delete %s under %s. Are you sure you want to continue", pluralize(plan.totalToRemove(), "model version directory", "model version directories"), modelsDir))
+			if err != nil {
+				return err
+			}
 		}
 		if !userResponse {
 			utils.Log.Info("Purge aborted.")

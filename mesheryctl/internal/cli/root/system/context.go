@@ -150,7 +150,10 @@ mesheryctl system context delete [context name]
 			if utils.SilentFlag {
 				res = true
 			} else {
-				res = utils.AskForConfirmation("Are you sure you want to delete the current context")
+				res, err = utils.AskForConfirmation("Are you sure you want to delete the current context")
+				if err != nil {
+					return err
+				}
 			}
 
 			if !res {
