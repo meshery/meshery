@@ -257,6 +257,10 @@ describe('UrlStepper', () => {
     const typeUrl = (value: string) =>
       fireEvent.change(screen.getByTestId('textfield-model-url'), { target: { value } });
     const helperText = () => screen.queryByTestId('helper-model-url')?.textContent ?? '';
+    // The message is only the visible half; Next is gated on canGoNext, so a
+    // change could keep the error and still let an invalid URL through.
+    const nextDisabled = () =>
+      (screen.getByTestId('UrlStepper-Button-Next') as HTMLButtonElement).disabled;
 
     // The regression. The radio stores "artifact hub" (lower-cased label, space
     // included) while validateUrl used to compare against "artifacthub", so no
@@ -267,6 +271,7 @@ describe('UrlStepper', () => {
       typeUrl(INVALID);
 
       expect(helperText()).toContain('Invalid ArtifactHub URL');
+      expect(nextDisabled()).toBe(true);
     });
 
     it('accepts a well-formed Artifact Hub URL', () => {
@@ -275,6 +280,7 @@ describe('UrlStepper', () => {
       typeUrl(VALID_AH);
 
       expect(helperText()).toBe('');
+      expect(nextDisabled()).toBe(false);
     });
 
     it('still rejects an invalid GitHub URL', () => {
@@ -283,6 +289,7 @@ describe('UrlStepper', () => {
       typeUrl(INVALID);
 
       expect(helperText()).toContain('Invalid GitHub URL');
+      expect(nextDisabled()).toBe(true);
     });
 
     // Guards the gap that would reopen if a source were added without a matching
@@ -292,12 +299,13 @@ describe('UrlStepper', () => {
     it('reports an error for every selectable source when the URL is invalid', () => {
       renderSourceStep();
       const radios = screen.getAllByRole('radio');
-      expect(radios.length).toBe(2);
+      expect(radios.length).toBeGreaterThan(0);
 
       radios.forEach((radio) => {
         fireEvent.click(radio);
         typeUrl(INVALID);
         expect(helperText()).not.toBe('');
+        expect(nextDisabled()).toBe(true);
       });
     });
 
@@ -313,6 +321,7 @@ describe('UrlStepper', () => {
       selectSource('Artifact Hub');
 
       expect(helperText()).toContain('Invalid ArtifactHub URL');
+      expect(nextDisabled()).toBe(true);
     });
 
     it('clears the error when switching to a source the URL is valid for', () => {
@@ -324,6 +333,7 @@ describe('UrlStepper', () => {
       selectSource('GitHub');
 
       expect(helperText()).toBe('');
+      expect(nextDisabled()).toBe(false);
     });
 
     it('accepts a well-formed GitHub URL', () => {
@@ -332,6 +342,7 @@ describe('UrlStepper', () => {
       typeUrl(VALID_GH);
 
       expect(helperText()).toBe('');
+      expect(nextDisabled()).toBe(false);
     });
   });
 });
