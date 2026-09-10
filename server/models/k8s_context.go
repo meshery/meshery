@@ -48,6 +48,11 @@ type K8sContext struct {
 	// transition to the connected state. An unreachable context can still be
 	// registered as a (discovered) connection.
 	Reachable bool `json:"reachable" yaml:"-" gorm:"-"`
+	// IsInCluster indicates whether the context was created from in-cluster
+	// configuration. It is transient (never persisted): it is set by
+	// NewK8sContextFromInClusterConfig and used by K8sContextGenerateID to determine
+	// whether to exclude service-account tokens from the ID hash.
+	IsInCluster bool `json:"isInCluster" yaml:"-" gorm:"-"`
 }
 
 // K8sContextFromConnection converts a kubernetes connection into a K8sContext.
@@ -148,6 +153,7 @@ func (kcfg InternalKubeConfig) K8sContext(name string, instanceID *core.Uuid, lo
 		server,
 		instanceID,
 		log,
+		false, // isInCluster = false for kubeconfig contexts
 	)
 }
 
@@ -158,8 +164,9 @@ func NewK8sContextWithServerID(
 	server string,
 	instanceID *core.Uuid,
 	log logger.Handler,
+	isInCluster bool,
 ) (*K8sContext, error) {
-	ctx, _ := NewK8sContext(contextName, clusters, users, server, instanceID, log)
+	ctx, _ := NewK8sContext(contextName, clusters, users, server, instanceID, log, isInCluster)
 
 	// Perform Ping test on the cluster
 	if err := ctx.PingTest(); err != nil {
@@ -349,6 +356,7 @@ func NewK8sContextFromInClusterConfig(contextName string, instanceID *core.Uuid,
 		server,
 		instanceID,
 		log,
+		true, // isInCluster = true for in-cluster config
 	)
 }
 
@@ -365,6 +373,7 @@ func NewK8sContext(
 	server string,
 	instanceID *core.Uuid,
 	log logger.Handler,
+	isInCluster bool,
 ) (K8sContext, string) {
 	ctx := K8sContext{
 		Name:              contextName,
@@ -372,6 +381,7 @@ func NewK8sContext(
 		Auth:              user,
 		Server:            server,
 		MesheryInstanceID: instanceID,
+		IsInCluster:       isInCluster,
 	}
 
 	ID, err := K8sContextGenerateID(ctx)
@@ -403,19 +413,8 @@ func K8sContextGenerateID(kc K8sContext) (string, error) {
 	// For in-cluster contexts, exclude the token from the hash to prevent ID changes
 	// when the service-account token rotates. The token is mutable authentication
 	// material that should not affect the logical connection identity.
-	// In-cluster contexts are identified by their server URL pattern (kubernetes.default.svc).
-	isInCluster := false
-	serverURL := kc.Server
-	if serverURL == "" && kc.Cluster != nil {
-		if clusterServer, ok := kc.Cluster["server"].(string); ok {
-			serverURL = clusterServer
-		}
-	}
-	if serverURL != "" && (serverURL == "https://kubernetes.default.svc" || serverURL == "https://kubernetes.default") {
-		isInCluster = true
-	}
-
-	if isInCluster && kc.Auth != nil {
+	// In-cluster provenance is explicitly set by NewK8sContextFromInClusterConfig.
+	if kc.IsInCluster && kc.Auth != nil {
 		if user, ok := kc.Auth["user"].(map[string]interface{}); ok {
 			if _, hasToken := user["token"]; hasToken {
 				// Create a copy of auth without the token for ID generation
