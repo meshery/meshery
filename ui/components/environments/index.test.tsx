@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -103,13 +103,15 @@ vi.mock('../shared/Modal/Modal', () => ({
   ),
 }));
 
-vi.mock('./environment-card', () => ({ default: () => null }));
-vi.mock('./styles', () => ({
-  CreateButtonWrapper: ({ children }: any) => <div>{children}</div>,
-  BulkActionWrapper: ({ children }: any) => <div>{children}</div>,
-}));
-vi.mock('@/assets/styles/general/tool.styles', () => ({
-  ToolWrapper: ({ children }: any) => <div>{children}</div>,
+vi.mock('./environment-card', () => ({
+  default: ({ onSelect, environmentDetails }: any) => (
+    <input
+      type="checkbox"
+      data-testid={`select-${environmentDetails?.id}`}
+      aria-label={`Select ${environmentDetails?.name}`}
+      onChange={onSelect}
+    />
+  ),
 }));
 vi.mock('../general/PromptComponent', () => ({
   default: React.forwardRef(() => null),
@@ -120,43 +122,29 @@ vi.mock('../../assets/icons/AddIconCircleBorder', () => ({ default: () => null }
 vi.mock('../../assets/icons/Environment', () => ({ default: () => null }));
 vi.mock('../../assets/icons/Connection', () => ({ default: () => null }));
 
-vi.mock('@sistent/sistent', () => ({
-  // This suite exercises the create flow, not authorization: grant every
-  // capability so the permission gates never mask the behaviour under test.
-  useHasPermission: () => true,
-  Button: ({ children, onClick, ...rest }: any) => (
-    <button onClick={onClick} {...rest}>
-      {children}
-    </button>
-  ),
-  ChevronLeftIcon: () => null,
-  ChevronRightIcon: () => null,
-  DeleteIcon: () => null,
-  ErrorBoundary: ({ children }: any) => <>{children}</>,
-  Grid2: ({ children }: any) => <div>{children}</div>,
-  Modal: ({ children, open }: any) => (open ? <div>{children}</div> : null),
-  ModalBody: ({ children }: any) => <div>{children}</div>,
-  ModalFooter: ({ children }: any) => <div>{children}</div>,
-  NoSsr: ({ children }: any) => <>{children}</>,
-  Pagination: () => null,
-  PaginationItem: () => null,
-  PrimaryActionButtons: () => null,
-  PROMPT_VARIANTS: { DANGER: 'danger' },
-  SearchBar: () => null,
-  TransferList: () => null,
-  Typography: ({ children }: any) => <span>{children}</span>,
-  createAndEditEnvironmentSchema: {},
-  createAndEditEnvironmentUiSchema: {},
-  useTheme: () => ({
-    palette: {
-      icon: { default: '#000', secondary: '#111' },
-      background: { constant: { table: '#fff' } },
-      text: { default: '#000' },
-    },
-  }),
-}));
+vi.mock('@sistent/sistent', async () => {
+  const actual = await vi.importActual<any>('@sistent/sistent');
+  return {
+    ...actual,
+    // This suite exercises the create flow, not authorization: grant every
+    // capability so the permission gates never mask the behaviour under test.
+    useHasPermission: () => true,
+    Modal: ({ children, open }: any) => (open ? <div>{children}</div> : null),
+    ModalBody: ({ children }: any) => <div>{children}</div>,
+    ModalFooter: ({ children }: any) => <div>{children}</div>,
+    TransferList: () => null,
+  };
+});
 
+import { SistentThemeProvider } from '@sistent/sistent';
 import Environments from './index';
+
+const renderEnvironments = () =>
+  render(
+    <SistentThemeProvider initialMode="dark">
+      <Environments />
+    </SistentThemeProvider>,
+  );
 
 const EVENT_ERROR = 'error';
 const EVENT_SUCCESS = 'success';
@@ -189,8 +177,9 @@ const REJECTED_CREATE = {
 
 const openCreateModalAndSubmit = async () => {
   const user = userEvent.setup();
-  render(<Environments />);
-  await user.click(screen.getByText('Create'));
+  renderEnvironments();
+  const createButton = await screen.findByRole('button', { name: 'Create environment' });
+  await user.click(createButton);
   await user.click(await screen.findByTestId('submit-environment'));
 };
 
@@ -257,5 +246,61 @@ describe('Environments create flow notifications', () => {
     expect(createEnvironment).toHaveBeenCalledWith({
       environmentPayload: expect.objectContaining({ organizationId: 'org-1' }),
     });
+  });
+});
+
+describe('Environments toolbar', () => {
+  beforeEach(() => {
+    ENVIRONMENTS_QUERY_RESULT.data = { environments: [], totalCount: 0 };
+  });
+
+  it('renders primaryActions and search scoped inside DataTableToolbar', async () => {
+    renderEnvironments();
+
+    const toolbar = await screen.findByTestId('data-table-toolbar');
+    expect(toolbar).toBeInTheDocument();
+
+    const createButton = within(toolbar).getByRole('button', { name: 'Create environment' });
+    expect(createButton).toBeInTheDocument();
+    expect(createButton).toHaveAccessibleName('Create environment');
+
+    const searchInput = within(toolbar).getByPlaceholderText('Search by name');
+    expect(searchInput).toBeInTheDocument();
+  });
+
+  it('renders bulk operations with selection count and delete button when an environment is selected', async () => {
+    const user = userEvent.setup();
+    ENVIRONMENTS_QUERY_RESULT.data = {
+      environments: [
+        { id: 'env-1', name: 'Development' },
+        { id: 'env-2', name: 'Production' },
+      ],
+      totalCount: 2,
+    };
+
+    renderEnvironments();
+
+    const toolbar = await screen.findByTestId('data-table-toolbar');
+    expect(toolbar).toBeInTheDocument();
+
+    // Before selection, bulk operations slot is not rendered
+    expect(within(toolbar).queryByText(/selected/i)).not.toBeInTheDocument();
+    expect(within(toolbar).queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
+
+    // Select an environment row
+    const checkbox1 = await screen.findByTestId('select-env-1');
+    await user.click(checkbox1);
+
+    // Assert toolbar displays the selection count alongside existing controls and delete button
+    expect(within(toolbar).getByText(/1 environment selected/i)).toBeInTheDocument();
+    expect(within(toolbar).getByRole('button', { name: /delete/i })).toBeInTheDocument();
+    expect(within(toolbar).getByRole('button', { name: 'Create environment' })).toBeInTheDocument();
+    expect(within(toolbar).getByPlaceholderText('Search by name')).toBeInTheDocument();
+
+    // Select second environment
+    const checkbox2 = await screen.findByTestId('select-env-2');
+    await user.click(checkbox2);
+    expect(within(toolbar).getByText(/2 environments selected/i)).toBeInTheDocument();
+    expect(within(toolbar).getByRole('button', { name: /delete/i })).toBeInTheDocument();
   });
 });
