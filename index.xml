@@ -36322,13 +36322,19 @@ A &lt;strong&gt;&lt;a href="/concepts/logical/designs/"&gt;design&lt;/a&gt;&lt;/
 	Performance Management
 &lt;/h3&gt;
 &lt;p&gt;Identify overhead involved in running the App Mesh, various App Mesh configurations while running different workloads and on different infrastructure. The adapter facilitates data plane and control plane performance testing.&lt;/p&gt;</description></item><item><title>Meshery Adapter for Cilium Service Mesh</title><link>/extensions/adapters/cilium/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/adapters/cilium/</guid><description>&lt;p&gt;The Meshery Adapter for Cilium Service Mesh is currently under construction (stable state), which means that the adapter is not functional and cannot be interacted with through the &lt;a href="/installation/#6-you-will-now-be-directed-to-the-meshery-ui"&gt; Meshery UI &lt;/a&gt;at the moment. Check back here to see updates.&lt;/p&gt;
-&lt;p&gt;Want to contribute? Check our &lt;a href="https://github.com/meshery/meshery-cilium"&gt;progress&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Meshery Adapter for Consul</title><link>/extensions/adapters/consul/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/adapters/consul/</guid><description>&lt;h3 id="features"&gt;
+&lt;p&gt;Want to contribute? Check our &lt;a href="https://github.com/meshery/meshery-cilium"&gt;progress&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Meshery Adapter for Consul</title><link>/extensions/adapters/consul/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/adapters/consul/</guid><description>&lt;div class="alert alert-primary" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;How adapters install and configure infrastructure&lt;/div&gt;
+
+
+Adapters share a common Day 1 / Day 2 model: they install infrastructure with the project's own Helm charts, Kubernetes manifests, and/or CLI (with fallback), and they apply ongoing configuration by deploying Meshery Designs through Meshery Server's registry of registrants. That behavior, and related FAQs, is documented on the [Adapters](/concepts/architecture/adapters/) page. This page covers only what is specific to Consul.
+&lt;/div&gt;
+
+&lt;h3 id="features"&gt;
 	Features
 &lt;/h3&gt;
 &lt;ol&gt;
 &lt;li&gt;Lifecycle management of Consul&lt;/li&gt;
 &lt;li&gt;Lifecycle management of sample applications&lt;/li&gt;
-&lt;li&gt;Performance management of Consul and it workloads
+&lt;li&gt;Performance management of Consul and its workloads
 &lt;ul&gt;
 &lt;li&gt;Prometheus and Grafana integration&lt;/li&gt;
 &lt;/ul&gt;
@@ -36336,34 +36342,16 @@ A &lt;strong&gt;&lt;a href="/concepts/logical/designs/"&gt;design&lt;/a&gt;&lt;/
 &lt;li&gt;Configuration management and best practices of Consul&lt;/li&gt;
 &lt;li&gt;Custom configuration&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h3 id="sample-applications"&gt;
-	Sample Applications
+&lt;h3 id="lifecycle-management-of-consul"&gt;
+	Lifecycle management of Consul
 &lt;/h3&gt;
-&lt;p&gt;Meshery supports the deployment of a variety of sample applications on Meshery Adapter for Consul. Use Meshery to deploy any of these sample applications.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;httpbin
-&lt;ul&gt;
-&lt;li&gt;Httpbin is a simple HTTP request and response service.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Bookinfo
-&lt;ul&gt;
-&lt;li&gt;The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Image Hub
-&lt;ul&gt;
-&lt;li&gt;Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id="performance-management-of-consul-and-it-workloads"&gt;
-	Performance management of Consul and it workloads
-&lt;/h3&gt;
-&lt;h4 id="prometheus-and-grafana-integration"&gt;
-	Prometheus and Grafana integration
-&lt;/h4&gt;
-&lt;p&gt;The Meshery Adapter for Consul will connect to Meshery Adapter for Consul&amp;rsquo;s Prometheus and Grafana instances running in the control plane (typically found in a separate namespace) or other instances to which Meshery has network reachability.&lt;/p&gt;</description></item><item><title>Meshery Adapter for Istio</title><link>/extensions/adapters/istio/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/adapters/istio/</guid><description>&lt;h2 id="features"&gt;
+&lt;p&gt;The Meshery Adapter for Consul can install &lt;strong&gt;v1.8.4&lt;/strong&gt; and later of Consul on a connected Kubernetes cluster.&lt;/p&gt;</description></item><item><title>Meshery Adapter for Istio</title><link>/extensions/adapters/istio/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/adapters/istio/</guid><description>&lt;div class="alert alert-primary" role="alert"&gt;&lt;div class="h4 alert-heading" role="heading"&gt;How adapters install and configure infrastructure&lt;/div&gt;
+
+
+Adapters share a common Day 1 / Day 2 model: they install infrastructure with the project's own Helm charts, Kubernetes manifests, and/or CLI (with fallback), and they apply ongoing configuration by deploying Meshery Designs through Meshery Server's registry of registrants. That behavior, and related FAQs, is documented on the [Adapters](/concepts/architecture/adapters/) page. This page covers only what is specific to Istio.
+&lt;/div&gt;
+
+&lt;h2 id="features"&gt;
 	Features
 &lt;/h2&gt;
 &lt;ol&gt;
@@ -36380,36 +36368,10 @@ A &lt;strong&gt;&lt;a href="/concepts/logical/designs/"&gt;design&lt;/a&gt;&lt;/
 &lt;/ol&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
-&lt;h3 id="workload-management"&gt;
-	Workload Management
+&lt;h3 id="lifecycle-management-of-istio"&gt;
+	Lifecycle management of Istio
 &lt;/h3&gt;
-&lt;p&gt;The Meshery Adapter for Istio includes a handful of sample applications. Use Meshery to deploy any of these sample applications:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Bookinfo
-&lt;ul&gt;
-&lt;li&gt;The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Httpbin
-&lt;ul&gt;
-&lt;li&gt;Httpbin is a simple HTTP request and response service.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Online Boutique
-&lt;ul&gt;
-&lt;li&gt;Online Boutique Application is a web-based, e-commerce demo application from the Google Cloud Platform.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Image Hub
-&lt;ul&gt;
-&lt;li&gt;Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id="using-cloud-native-standards"&gt;
-	Using Cloud Native Standards
-&lt;/h2&gt;
-&lt;p&gt;Meshery&amp;rsquo;s powerful performance management functionality is accomplished through implementation of &lt;a href="https://smp-spec.io"&gt;Cloud Native Performance&lt;/a&gt;. Meshery enables operators to deploy WebAssembly filters to Envoy-based data planes. Meshery facilitates learning about functionality and performance of infrastructure and workloads and incorporates the collection and display of metrics from applications using Prometheus and Grafana integrations.&lt;/p&gt;</description></item><item><title>Meshery Adapter for Kuma</title><link>/extensions/adapters/kuma/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/adapters/kuma/</guid><description>&lt;h2 id="workload-management"&gt;
+&lt;p&gt;The Meshery Adapter for Istio can install &lt;strong&gt;v1.6.0&lt;/strong&gt; and later of Istio on a connected Kubernetes cluster.&lt;/p&gt;</description></item><item><title>Meshery Adapter for Kuma</title><link>/extensions/adapters/kuma/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/adapters/kuma/</guid><description>&lt;h2 id="workload-management"&gt;
 	Workload Management
 &lt;/h2&gt;
 &lt;p&gt;The following sample applications are available in this adapter.&lt;/p&gt;
@@ -36743,7 +36705,35 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 	Screenshots
 &lt;/h2&gt;
 &lt;p&gt;Usage of mesheryctl adapter validate
-&lt;img class="content-image" src="../../../images/mesh-validate.png" alt="mesh-validate-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-completion</title><link>/reference/references/mesheryctl/completion/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/completion/</guid><description>&lt;h1 id="mesheryctl-completion"&gt;
+&lt;img class="content-image" src="../../../images/mesh-validate.png" alt="mesh-validate-usage" /&gt;&lt;/p&gt;</description></item><item><title>mesheryctl-axi</title><link>/extensions/extensions/mesheryctl-axi/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/extensions/mesheryctl-axi/</guid><description>&lt;h1 id="-mesheryctl-axi"&gt;
+	🤖 mesheryctl-axi
+&lt;/h1&gt;
+&lt;p&gt;&lt;code&gt;mesheryctl-axi&lt;/code&gt; is an &lt;a href="https://axi.md/"&gt;AXI&lt;/a&gt;-compliant wrapper around &lt;a href="/reference/references/mesheryctl/"&gt;&lt;code&gt;mesheryctl&lt;/code&gt;&lt;/a&gt;, built for AI coding agents. Where &lt;code&gt;mesheryctl&lt;/code&gt; is optimized for a human at a terminal, &lt;code&gt;mesheryctl-axi&lt;/code&gt; is optimized for an agent consuming the output as context: it wraps the human CLI rather than replacing it, so the two stay in step.&lt;/p&gt;
+&lt;h2 id="features"&gt;
+	Features
+&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Token-efficient TOON reporting:&lt;/strong&gt; &lt;code&gt;list&lt;/code&gt; and &lt;code&gt;view&lt;/code&gt; results are rendered in &lt;a href="https://toonformat.dev/"&gt;TOON&lt;/a&gt; rather than verbose tables or JSON, reducing the context an agent spends reading them.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Always non-interactive:&lt;/strong&gt; no TTY prompts, so a command never wedges an unattended agent session.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Structured errors:&lt;/strong&gt; unknown flags and failures exit non-zero with a structured TOON error rather than free-form text.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;help[]&lt;/code&gt; next-step suggestions:&lt;/strong&gt; successful commands append the commands an agent is most likely to want next.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Definitive empty states:&lt;/strong&gt; an empty result is reported explicitly (for example, &lt;code&gt;connections: 0&lt;/code&gt;) instead of as silence.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Schema-faithful content:&lt;/strong&gt; design and model &lt;em&gt;content&lt;/em&gt; is returned as raw YAML or JSON - never re-encoded as TOON.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="installation-and-use"&gt;
+	Installation and Use
+&lt;/h2&gt;
+&lt;h3 id="prerequisites"&gt;
+	Prerequisites
+&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Node.js&lt;/strong&gt; v22 or newer.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;mesheryctl&lt;/code&gt; installed and authenticated.&lt;/strong&gt; &lt;code&gt;mesheryctl-axi&lt;/code&gt; spawns &lt;code&gt;mesheryctl&lt;/code&gt;; it does not embed Meshery. See &lt;a href="/installation/mesheryctl/"&gt;Installing mesheryctl&lt;/a&gt;. Point at a specific binary with &lt;code&gt;MESHERYCTL_BIN=/path/to/mesheryctl&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="usage"&gt;
+	Usage
+&lt;/h3&gt;
+&lt;p&gt;Run it directly with &lt;code&gt;npx&lt;/code&gt; - no global install required:&lt;/p&gt;</description></item><item><title>mesheryctl-completion</title><link>/reference/references/mesheryctl/completion/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/reference/references/mesheryctl/completion/</guid><description>&lt;h1 id="mesheryctl-completion"&gt;
 	mesheryctl completion
 &lt;/h1&gt;
 &lt;p&gt;Generate shell completion scripts&lt;/p&gt;
