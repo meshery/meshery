@@ -118,33 +118,14 @@
       " {{/**/ -}}
       id="{{ $mid }}-li" {{- /**/ -}}
     >
-    {{ if (and $p.Site.Params.ui.sidebar_menu_foldable (ge $ulNr 1)) -}}
-    <input type="checkbox" id="{{ $mid }}-check"{{ if $activePath}} checked{{ end }}/>
-    <label for="{{ $mid }}-check">{{/**/ -}}
-      <a href="{{ $manualLink }}"
-        {{- if ne $s.LinkTitle $manualLinkTitle }} {{/**/ -}}
-          title="{{ $manualLinkTitle }}"
-        {{- end -}}
-        {{ with $s.Params.manualLinkTarget }} {{/**/ -}}
-          target="{{ . }}"
-          {{- if eq . "_blank" }} rel="noopener"{{ end -}}
-        {{ end }} {{/**/ -}}
-        class="align-left ps-0 {{ if $active}} active{{ end }} td-sidebar-link
-          {{- if $s.IsPage }} td-sidebar-link__page
-          {{- else }} td-sidebar-link__section
-          {{- end }}
-          {{- if $treeRoot }} tree-root{{ end }}" {{/**/ -}}
-        id="{{ $mid }}" {{- /**/ -}}
-      >
-        {{- with $s.Params.Icon -}}
-          <i class="{{ . }}"></i>
-        {{- end -}}
-        <span class="{{ if $active }}td-sidebar-nav-active-item{{ end }}">
-          {{- $s.LinkTitle -}}
-        </span> {{- /**/ -}}
-      </a> {{- /**/ -}}
-    </label>
-    {{ else -}}
+    {{ if and $withChild (not $treeRoot) }}
+    <div class="sidebar-section-flex-wrapper">
+      <button class="sidebar-section-toggle" type="button"
+        aria-label="Toggle {{ $s.LinkTitle }}"
+        aria-expanded="{{ if $activePath }}true{{ else }}false{{ end }}">
+        <svg class="caret-icon" viewBox="0 0 16 16" width="1em" height="1em" aria-hidden="true" focusable="false"><path d="M6 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    {{ end }}
       <a href="{{ $manualLink }}"
         {{- if ne $s.LinkTitle $manualLinkTitle }} title="{{ $manualLinkTitle }}"{{ end -}}
         {{ with $s.Params.manualLinkTarget }} {{/**/ -}}
@@ -167,7 +148,9 @@
       ">
         {{- $s.LinkTitle -}}
       </span></a>
-    {{- end -}}
+    {{ if and $withChild (not $treeRoot) }}
+    </div>
+    {{ end }}
     {{ if $withChild -}}
     {{ $ulNr := add $ulNr 1 }}
     <ul class="ul-{{ $ulNr }}{{ if (gt $ulNr 1)}} foldable{{end}}">
