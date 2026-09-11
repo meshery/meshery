@@ -91,7 +91,7 @@ Using curl, you can access Meshery's REST API by executing this command:
 
 #### Troubleshooting Authentication
 
-If the request returns an authentication or authorization error (such as `401 Unauthorized` or `403 Forbidden`), verify that you are using a valid Meshery token and that it is included in the request headers. See the [Meshery token documentation]({{< ref "reference/rest-apis/_index.md#how-to-get-your-token" >}}) for instructions on obtaining a token.
+If the request returns an authentication or authorization error (such as `401 Unauthorized` or `403 Forbidden`), verify that you are using a valid Meshery token and that it is included in the request headers. See the [Meshery token documentation]({{< ref "reference/references/rest-apis/_index.md#how-to-get-your-token" >}}) for instructions on obtaining a token.
 <br />
 
 ## Endpoints
