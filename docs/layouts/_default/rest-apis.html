@@ -511,8 +511,6 @@
 
                     {{ with index $schema "description" }}
                       <div class="rest-api-prose">{{ . | markdownify }}</div>
-                    {{ else }}
-                      <p class="rest-api-media-block__summary">Schema: <code>{{ $schemaType }}</code></p>
                     {{ end }}
 
                     {{ if gt (len (index $fields "rows")) 0 }}
@@ -664,8 +662,6 @@
 
                           {{ with index $schema "description" }}
                             <div class="rest-api-prose">{{ . | markdownify }}</div>
-                          {{ else }}
-                            <p class="rest-api-media-block__summary">Schema: <code>{{ $schemaType }}</code></p>
                           {{ end }}
 
                           {{ if gt (len (index $fields "rows")) 0 }}
