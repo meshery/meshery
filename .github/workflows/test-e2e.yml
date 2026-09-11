@@ -149,6 +149,23 @@ jobs:
             --name meshery \
             meshery-server:ci
 
+      - name: Wait for Meshery Server
+        run: |
+          probe_url="http://localhost:9081/api/system/version"
+          timeout_seconds=60
+          start_time=$(date +%s)
+          deadline=$((start_time + timeout_seconds))
+          while [ $(date +%s) -lt $deadline ]; do
+            if curl -sf --connect-timeout 2 --max-time 2 "$probe_url" >/dev/null; then
+              echo "Meshery server ready after $(($(date +%s) - start_time))s"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "::error::Meshery server did not become ready at ${probe_url} within ${timeout_seconds}s"
+          docker logs meshery || true
+          exit 1
+
       - name: Install Playwright
         run: make ui-setup-ci
 
