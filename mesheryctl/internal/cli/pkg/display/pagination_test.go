@@ -42,6 +42,7 @@ func TestListAsyncPagination(t *testing.T) {
 				DataType:         "items",
 				DisplayCountOnly: false,
 				IsPage:           true,
+				IsPageSize:       true,
 				Header:           []string{"ID", "Name"},
 			},
 			processDataFunc: func(data *[]items) ([][]string, int64) {
@@ -68,6 +69,7 @@ func TestListAsyncPagination(t *testing.T) {
 				DataType:         "items",
 				DisplayCountOnly: true,
 				IsPage:           false,
+				IsPageSize:       true,
 				Header:           []string{"ID", "Name"},
 			},
 			processDataFunc: func(data *[]items) ([][]string, int64) {
@@ -94,6 +96,7 @@ func TestListAsyncPagination(t *testing.T) {
 				DataType:         "items",
 				DisplayCountOnly: true,
 				IsPage:           false,
+				IsPageSize:       true,
 				Header:           []string{"ID", "Name"},
 			},
 			processDataFunc: func(data *[]items) ([][]string, int64) {
@@ -117,6 +120,7 @@ func TestListAsyncPagination(t *testing.T) {
 				DataType:         "items",
 				DisplayCountOnly: true,
 				IsPage:           false,
+				IsPageSize:       true,
 				Header:           []string{"ID", "Name"},
 			},
 			processDataFunc: func(data *[]items) ([][]string, int64) {
@@ -140,6 +144,7 @@ func TestListAsyncPagination(t *testing.T) {
 				DataType:         "items",
 				DisplayCountOnly: true,
 				IsPage:           false,
+				IsPageSize:       true,
 				Header:           []string{"ID", "Name"},
 			},
 			processDataFunc: func(data *[]items) ([][]string, int64) {
@@ -304,7 +309,7 @@ func TestPromptAsyncPagination(t *testing.T) {
 				t.Fatalf("Failed to marshal API response: %v", err)
 			}
 
-			mockURL := testContext.BaseURL + "/test?page=0&pagesize=10&search=" + tt.searchTerm
+			mockURL := testContext.BaseURL + "/test?page=0&search=" + tt.searchTerm
 			httpmock.RegisterResponder("GET", mockURL,
 				httpmock.NewStringResponder(tt.apiStatusCode, string(mApiResponse)))
 

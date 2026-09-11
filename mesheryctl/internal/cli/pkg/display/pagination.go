@@ -49,7 +49,8 @@ func HandlePaginationAsync[T any](
 			pagesQuerySearch.Set("page", fmt.Sprintf("%d", currentPage))
 		}
 
-		if !strings.Contains(displayData.UrlPath, "pagesize=") {
+		// Only inject pagesize when the flag was explicitly set; let the server use its default otherwise.
+		if displayData.IsPageSize && !strings.Contains(displayData.UrlPath, "pagesize=") {
 			pagesQuerySearch.Set("pagesize", fmt.Sprintf("%d", effectivePageSize))
 		}
 
