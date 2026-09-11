@@ -31,7 +31,7 @@ I recently started contributing to Meshery and submitted my first pull request.
 
 **Issue:** [#21878](https://github.com/meshery/meshery/issues/21878)
 
-**PR:** [Return 400 for malformed event filter query parameters](https://github.com/meshery/meshery/pull/new/fix/malformed-event-filter)
+**PR:** [Return 400 for malformed event filter query parameters](https://github.com/meshery/meshery/pull/21903)
 
 The contribution fixes an issue where malformed JSON in event filter query parameters could be ignored by the Meshery server.
 
