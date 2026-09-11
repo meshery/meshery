@@ -1,9 +1,18 @@
+# Classification: Security scan (validation-only, read-only token sufficient for scan;
+#   issues:write needed only to create/update vulnerability tracking issues).
+# Trigger: push to master, pull_request (NOT pull_request_target — see security note below), manual.
+#
+# Security note: This workflow was previously triggered by pull_request_target, which
+# runs forked-PR code with the base repo's GITHUB_TOKEN (write scope). Because the job
+# executes `make docker-build` (arbitrary code from the PR), a malicious PR could exfiltrate
+# secrets or mutate the repository. This workflow now uses `pull_request` and additionally
+# skips execution for forked PRs (see the job-level `if:` guard), eliminating this attack vector.
+# Ref: https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
 name: Trivy Container Image Scan
 
 on:
   workflow_dispatch:
-  pull_request_target:
-    types: [opened, synchronize, reopened]
+  pull_request:
     branches:
       - "master"
     paths-ignore:
@@ -27,27 +36,33 @@ permissions:
 jobs:
   build-and-scan:
     name: Build & Scan Container Image
-    runs-on: ubuntu-latest
-
+    if: github.repository == 'meshery/meshery' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
       - name: Build Docker image
         run: make docker-build
-      
-      - name: Run Trivy scan on built image
-        uses: aquasecurity/trivy-action@master
+
+      # Pin to v0.36.0 commit SHA for supply-chain safety.
+      # trivy-action's master branch was compromised in March 2026 — never use @master.
+      # Ref: https://github.com/aquasecurity/trivy-action/releases/tag/v0.36.0
+      - name: Run Trivy vulnerability scan
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: 'meshery/meshery'
           format: 'json'
           output: 'trivy-scan-results.json'
 
       - name: Upload scan results
+        if: ${{ always() && !cancelled() && hashFiles('trivy-scan-results.json') != '' }}
         uses: actions/upload-artifact@v6
         with:
           name: trivy-scan-results
           path: trivy-scan-results.json
+          retention-days: 30
 
       - name: Parse Trivy Results
         id: parse_trivy
