@@ -187,7 +187,7 @@ export const FormatDryRunResponse = ({
     <DryRunRootListStyled
       aria-labelledby="nested-list-subheader"
       subheader={
-        <ValidationSubHeader disableSticky="true" component="div" id="nested-list-subheader">
+        <ValidationSubHeader component="div" id="nested-list-subheader">
           {canShowComponentCount && (
             <Typography variant="h6" disablePadding style={{ color: theme.palette.text.default }}>
               {configurableComponentsCount} component{configurableComponentsCount > 1 ? 's' : ''}{' '}
@@ -209,7 +209,6 @@ export const FormatDryRunResponse = ({
         </ValidationSubHeader>
       }
     >
-      <div style={{ padding: '1rem' }}> </div>
       {dryRunRequestErrors?.map((error, index) => (
         <FormatStructuredData key={index} data={error?.data || error?.error} />
       ))}
