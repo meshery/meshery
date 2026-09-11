@@ -22,7 +22,7 @@
 }
 
 .toc-label {
-  color: var(--color-white);
+  color: var(--color-secondary-medium);
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
 }
@@ -40,15 +40,15 @@
   }
   &:hover {
     .fa-chevron-right::before, .fa-chevron-left::before {
-        color: var(--color-white);
+        color: var(--brand-color-secondary);
     }
-    color: var(--color-white);
+    color: var(--brand-color-secondary);
   }
 }
 
 .toc-card.next {
   text-align: right;
-  grid-column: 2; /* Force into empty right hand space safely when isolated */
+  grid-column: 2;
 
   .toc-title {
     justify-content: flex-end;
