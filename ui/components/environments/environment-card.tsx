@@ -98,8 +98,6 @@ const EnvironmentCard = ({
   // Do NOT test for "not user": the property is optional and absent for every
   // environment that predates it, so a negative test would render those as administrative.
   const isAdministrative = environmentDetails?.purpose === 'administrative';
-  const isCurrentlySelected =
-    selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1;
 
   // this allows to handle both cases when deleted at is:
   // - timestamp or null
@@ -120,7 +118,11 @@ const EnvironmentCard = ({
   return (
     <>
       <FlipCard
-        disableFlip={isCurrentlySelected}
+        disableFlip={
+          selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
+            ? true
+            : false
+        }
         frontComponents={
           <CardWrapper
             sx={{
@@ -129,7 +131,10 @@ const EnvironmentCard = ({
               borderRadius: 2,
             }}
           >
-            <Grid2 sx={{ display: 'flex', flexDirection: 'row', pb: 1, alignItems: 'center' }}>
+            <Grid2
+              sx={{ display: 'flex', flexDirection: 'row', pb: 1, alignItems: 'center' }}
+              data-testid={isAdministrative ? 'administrative-badge' : undefined}
+            >
               <Name variant="body2" onClick={(e) => e.stopPropagation()}>
                 {environmentDetails?.name}
               </Name>
@@ -230,7 +235,11 @@ const EnvironmentCard = ({
             }}
           >
             <Grid2 sx={{ display: 'flex', flexDirection: 'row' }} size={{ xs: 12 }}>
-              <Grid2 sx={{ display: 'flex', alignItems: 'center', gap: 1 }} size={{ xs: 6 }}>
+              <Grid2
+                sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                size={{ xs: 6 }}
+                data-testid={isAdministrative ? 'administrative-badge' : undefined}
+              >
                 <BulkSelectCheckbox
                   onClick={(e) => e.stopPropagation()}
                   onChange={onSelect}
@@ -277,7 +286,10 @@ const EnvironmentCard = ({
                         onEdit(ev);
                       }}
                       sx={{ color: 'white' }}
-                      disabled={isAdministrative || isCurrentlySelected}
+                      disabled={
+                        isAdministrative ||
+                        selectedEnvironments?.some((id) => id == environmentDetails.id)
+                      }
                       permissionKey={Keys.WorkspaceManagementEditEnvironment}
                     >
                       <EditIcon
@@ -300,7 +312,10 @@ const EnvironmentCard = ({
                         onDelete(ev);
                       }}
                       sx={{ color: 'white' }}
-                      disabled={isAdministrative || isCurrentlySelected}
+                      disabled={
+                        isAdministrative ||
+                        selectedEnvironments?.some((id) => id == environmentDetails.id)
+                      }
                       permissionKey={Keys.WorkspaceManagementDeleteEnvironment}
                     >
                       <DeleteIcon
