@@ -273,11 +273,25 @@ func TestValidateURL(t *testing.T) {
 // }
 
 func TestTruncateID(t *testing.T) {
-	id := "1234567890"
-	want := "12345678"
-	got := TruncateID(id)
-	if got != want {
-		t.Errorf("TruncateID got = %v want = %v", got, want)
+	tests := []struct {
+		name string
+		id   string
+		want string
+	}{
+		{name: "longer than 8", id: "1234567890", want: "12345678"},
+		{name: "exactly 8", id: "12345678", want: "12345678"},
+		{name: "shorter than 8", id: "abc", want: "abc"},
+		{name: "empty", id: "", want: ""},
+		{name: "uuid prefix", id: "0195b0ab-1f4d-7a3c-9c1e-3a5f8d2b6c40", want: "0195b0ab"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := TruncateID(tt.id)
+			if got != tt.want {
+				t.Errorf("TruncateID(%q) = %q, want %q", tt.id, got, tt.want)
+			}
+		})
 	}
 }
 
