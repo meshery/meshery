@@ -22,6 +22,7 @@ const (
 	ErrReadMesheryConfigCode = "mesheryctl-1220"
 	ErrDuplicateContextCode  = "mesheryctl-1221"
 	ErrWriteMeshConfigCode   = "mesheryctl-1222"
+	ErrEmptyConfigPathCode   = "mesheryctl-1254"
 )
 
 func ErrInvalidMeshConfig(err error) error {
@@ -59,4 +60,12 @@ func ErrWriteMeshConfig(err error) error {
 		[]string{err.Error()},
 		[]string{"Unable to write to config file"},
 		[]string{"Ensure that you have the correct permissions to write to the config file at `$HOME/.meshery/config.yaml`."})
+}
+
+func ErrEmptyConfigPath() error {
+	return errors.New(ErrEmptyConfigPathCode, errors.Fatal,
+		[]string{"Meshery configuration context path cannot be empty"},
+		[]string{"An empty configuration path was passed to mesheryctl"},
+		[]string{"The `--config` flag was set to an empty value, or an empty path was otherwise passed into the config system"},
+		[]string{"Pass a valid path to your meshconfig file, or omit the `--config` flag to use the default at `$HOME/.meshery/config.yaml`."})
 }
