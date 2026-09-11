@@ -25,8 +25,9 @@ import (
 )
 
 type cmdComponentSearchFlags struct {
-	Page     int `json:"page" validate:"omitempty,gte=1"`
-	PageSize int `json:"page-size" validate:"omitempty,gte=1"`
+	Page     int    `json:"page" validate:"omitempty,gte=1"`
+	PageSize int    `json:"page-size" validate:"omitempty,gte=1"`
+	Model    string `json:"model"`
 }
 
 var componentSearchFlags cmdComponentSearchFlags
@@ -46,6 +47,9 @@ mesheryctl component search "Component name"
 
 // Search list of components of specified page [int]
 mesheryctl component search [query-text] [--page 1]
+
+// Search components belonging to a specific model
+mesheryctl component search [query-text] [--model model-name]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		return mesheryctlflags.ValidateCmdFlags(cmd, &componentSearchFlags)
@@ -59,6 +63,9 @@ mesheryctl component search [query-text] [--page 1]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		searchValue := url.Values{}
 		searchValue.Add("search", args[0])
+		if componentSearchFlags.Model != "" {
+			searchValue.Add("model", componentSearchFlags.Model)
+		}
 
 		modelData := display.DisplayDataAsync{
 			UrlPath:  fmt.Sprintf("%s?%s", componentApiPath, searchValue.Encode()),
@@ -80,4 +87,5 @@ mesheryctl component search [query-text] [--page 1]
 func init() {
 	searchComponentsCmd.Flags().IntVarP(&componentSearchFlags.Page, "page", "p", 1, "(optional) List next set of components with --page (default = 1)")
 	searchComponentsCmd.Flags().IntVarP(&componentSearchFlags.PageSize, "pagesize", "s", 10, "(optional) List next set of components with --pagesize (default = 10)")
+	searchComponentsCmd.Flags().StringVarP(&componentSearchFlags.Model, "model", "m", "", "(optional) Filter components by model name")
 }
