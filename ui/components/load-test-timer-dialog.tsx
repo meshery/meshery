@@ -2,18 +2,23 @@ import React, { useEffect, useState } from 'react';
 import { Box, CircularProgress, NoSsr, Typography } from '@sistent/sistent';
 
 const parseDuration = (value) => {
-  if (!value) {
+  if (!value || typeof value !== 'string') {
     return 0;
   }
 
-  const tNum = parseInt(value.substring(0, value.length - 1), 10);
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return 0;
+  }
+
+  const tNum = parseInt(trimmed.substring(0, trimmed.length - 1), 10);
 
   if (Number.isNaN(tNum)) {
-    console.error(`Failed to parse duration value: ${value}`);
+    console.error(`Failed to parse duration value: ${trimmed}`);
     return 0;
   }
 
-  switch (value.substring(value.length - 1, value.length).toLowerCase()) {
+  switch (trimmed.substring(trimmed.length - 1, trimmed.length).toLowerCase()) {
     case 'h':
       return tNum * 60 * 60;
     case 'm':
@@ -118,7 +123,7 @@ const LoadTestTimerDialog = ({ countDownComplete, t, open }) => {
               justifyContent: 'center',
             }}
           >
-            <Typography variant="h4" component="div" color="#667C89">
+            <Typography data-testid="time-typography" variant="h4" component="div" color="#667C89">
               {formattedTime}
             </Typography>
           </Box>

@@ -4,7 +4,7 @@ vi.mock('uuid', () => ({
   v4: () => 'mocked-uuid-value',
 }));
 
-import { generateTestName, generateUUID } from './helper';
+import { generateTestName, generateUUID, isValidDuration } from './helper';
 
 describe('generateTestName', () => {
   it('returns the original name when one is supplied', () => {
@@ -35,5 +35,22 @@ describe('generateTestName', () => {
 describe('generateUUID', () => {
   it('proxies to the uuid v4 implementation', () => {
     expect(generateUUID()).toBe('mocked-uuid-value');
+  });
+});
+
+describe('isValidDuration (re-exported from helper)', () => {
+  it('accepts valid performance durations', () => {
+    expect(isValidDuration('30s')).toBe(true);
+    expect(isValidDuration('15s')).toBe(true);
+    expect(isValidDuration('1m')).toBe(true);
+    expect(isValidDuration('2h')).toBe(true);
+  });
+
+  it('rejects invalid performance durations', () => {
+    expect(isValidDuration('0s')).toBe(false);
+    expect(isValidDuration('abcs')).toBe(false);
+    expect(isValidDuration('12abcs')).toBe(false);
+    expect(isValidDuration('')).toBe(false);
+    expect(isValidDuration(null)).toBe(false);
   });
 });
