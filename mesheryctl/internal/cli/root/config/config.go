@@ -152,7 +152,7 @@ func (mc *MesheryCtlConfig) GetCurrentContext() (*Context, error) {
 	return currentContext, err
 }
 
-// Get any context
+// GetContext validates and returns a pointer to the named context.
 func (mc *MesheryCtlConfig) GetContext(name string) (*Context, error) {
 	context, err := mc.CheckIfGivenContextIsValid(name)
 	if err != nil {

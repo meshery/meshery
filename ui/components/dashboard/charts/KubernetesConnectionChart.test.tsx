@@ -15,6 +15,7 @@ let connectionsQueryReturn: {
 };
 const canSpy = vi.fn(() => true);
 const bbChartSpy = vi.fn();
+const useGetConnectionsQuery = vi.fn();
 
 vi.mock('billboard.js', () => ({
   donut: () => 'donut',
@@ -49,7 +50,7 @@ vi.mock('next/link', () => ({
 }));
 
 vi.mock('@/rtk-query/connection', () => ({
-  useGetConnectionsQuery: () => connectionsQueryReturn,
+  useGetConnectionsQuery: (...args: unknown[]) => useGetConnectionsQuery(...args),
 }));
 
 vi.mock('@/utils/can', () => ({
@@ -108,12 +109,18 @@ describe('KubernetesConnectionStatsChart', () => {
       isLoading: false,
       isError: false,
     };
+    useGetConnectionsQuery.mockReset();
+    useGetConnectionsQuery.mockImplementation(() => connectionsQueryReturn);
   });
 
   it('shows ConnectCluster fallback when there are no kubernetes connections', () => {
     render(<KubernetesConnectionStatsChart />);
     expect(screen.getByTestId('connect-cluster')).toHaveTextContent(
       'No connections found in your clusters',
+    );
+    // #20617: plain ?kind=kubernetes, not JSON.stringify(['kubernetes'])
+    expect(useGetConnectionsQuery).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: 'kubernetes', pageSize: 'all' }),
     );
   });
 

@@ -1,0 +1,97 @@
+{
+  "evaluationQuery": "",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "edge",
+  "metadata": {
+    "description": "A cert-manager Certificate issues its certificate into the Secret named by spec.secretName; an Ingress terminates TLS with that same Secret. The Certificate's secretName is written into the Ingress's first TLS entry (spec.tls.0.secretName) so the two stay in sync. This edge and the Kubernetes Secret -> Ingress TLS edge are alternative sources for the same spec.tls.0.secretName sink: connect the Ingress either to the Secret directly or to the cert-manager Certificate that issues it. A design that carries both converges when the two names agree; wiring both with disagreeing names is a contradictory design. The relationship is suggested for any Certificate/Ingress pair whose two fields are both still unset; setting the Certificate's spec.secretName is what drives the Ingress's first TLS entry.",
+    "isAnnotation": false,
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "displayName": "cert-manager",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.21.1"
+    },
+    "name": "cert-manager",
+    "registrant": {
+      "kind": "github"
+    },
+    "version": "v1.0.0"
+  },
+  "schemaVersion": "relationships.meshery.io/v1beta2",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Certificate",
+            "model": {
+              "displayName": "cert-manager",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "cert-manager",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "secretName"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Ingress",
+            "model": {
+              "displayName": "Kubernetes",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "github"
+              },
+              "version": ""
+            },
+            "patch": {
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "tls",
+                  "0",
+                  "secretName"
+                ]
+              ],
+              "patchStrategy": "replace"
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ],
+  "status": "enabled",
+  "subType": "reference",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}
