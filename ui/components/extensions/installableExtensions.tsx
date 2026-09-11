@@ -10,6 +10,7 @@ import {
   useInstallProviderExtensionMutation,
   useRemoveProviderExtensionMutation,
 } from '@/rtk-query/user';
+import { Keys } from '@meshery/schemas/permissions';
 import { CardContainer, FrontSideDescription } from 'css/icons.styles';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '@/utils/hooks';
@@ -254,6 +255,7 @@ const InstallableExtension: React.FC<InstallableExtensionProps> = ({ extension }
               onClick={handleInstall}
               data-testid="install-btn"
               disabled={!isLocal || !installReady || isMutating}
+              permissionKey={Keys.ExtensibilityInstallExtension}
             >
               {isInstalling ? 'Installing...' : installReady ? 'Install' : 'Preparing...'}
             </Button>
@@ -267,6 +269,7 @@ const InstallableExtension: React.FC<InstallableExtensionProps> = ({ extension }
                   data-testid="uninstall-btn"
                   disabled={isMutating}
                   sx={{ marginRight: 2 }}
+                  permissionKey={Keys.ExtensibilityUninstallExtension}
                 >
                   {isRemoving || isRemovingFromProvider ? 'Removing...' : 'Remove'}
                 </Button>

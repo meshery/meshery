@@ -36,6 +36,7 @@ The following tools are required to build and run the Meshery documentation site
 
 - [Node.js](https://nodejs.org/) (LTS recommended)
 - [Go](https://go.dev/dl/) (required for Hugo modules)
+- [Dart Sass](https://gohugo.io/functions/css/sass/#dart-sass) (required to transpile the site's stylesheets)
 
 {{% alert color="light" title="Note" %}}
 In case of any installation issues, use the [discussion forum](https://discuss.meshery.io/).
@@ -75,7 +76,7 @@ In case of any installation issues, use the [discussion forum](https://discuss.m
   </code>
   </div></pre>
 
-  This runs `hugo server -D -F`, which serves the site with draft and future content enabled. The site will be available at `http://localhost:1313`.
+  This runs `hugo -e dev -DFE --minify server`, which serves the site with draft and future content enabled. The site will be available at `http://localhost:1313`.
 
 - To build the site without serving:
 
@@ -197,9 +198,11 @@ If the issue requires making new doc page that replaces the old page, please don
 **Page-bundle assets** use standard relative paths. For assets adjacent to `index.md` or `_index.md`, or inside that page bundle:
 
 ```md
-![Architecture]({{< static "images/meshery-architecture.webp" >}})
-<img src="{{< static "images/meshery-architecture.webp" >}}" />
+![Architecture](./images/your-image.webp)
+<img src="./images/your-image.webp" />
 ```
+
+A page that carries its own images belongs in a leaf bundle - `<page>/index.md` beside `<page>/images/`, the way `concepts/architecture/operator/` is laid out. A plain `<page>.md` publishes at `<page>/`, one level below the directory it was written in, so a relative path from it to a sibling `images/` directory 404s. Either move the page into a leaf bundle or reference the image from `static/`.
 
 **Global shared assets** under `static/` use the `static` shortcode:
 

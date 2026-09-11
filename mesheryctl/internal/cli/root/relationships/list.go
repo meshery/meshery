@@ -37,7 +37,8 @@ var relationshipListFlags cmdRelationshipListFlags
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered relationships",
-	Long:  "List all relationships registered in Meshery Server",
+	Long: `List all relationships registered in Meshery Server.
+	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/relationship/list`,
 	Example: `
 // List all relationships
 mesheryctl relationship list

@@ -54,6 +54,81 @@ describe('ConnectionWizard.helpers', () => {
     });
   });
 
+  // Persisted credential `secret` shapes, all of which exist in production and
+  // all of which have to keep resolving to the string auth material PromCred /
+  // GrafanaCred rehydrate from `credentialSecret.secret`. See
+  // ui/utils/credentialSecret.ts for the shape catalogue.
+  it('resolves the canonical secret shape where the secret object is the payload', () => {
+    expect(
+      buildCredentialSecret(
+        {
+          id: 'cred-canonical',
+          name: 'grafana-canonical',
+          secret: { grafanaURL: 'https://grafana.example', grafanaAPIKey: 'canonical-key' },
+        },
+        null,
+      ),
+    ).toEqual({
+      id: 'cred-canonical',
+      name: 'grafana-canonical',
+      secret: 'canonical-key',
+    });
+  });
+
+  it('resolves the legacy double-nested secret shape', () => {
+    expect(
+      buildCredentialSecret(
+        {
+          id: 'cred-nested',
+          name: 'grafana-nested',
+          secret: {
+            credentialName: 'grafana-nested',
+            secret: { grafanaURL: 'https://grafana.example', grafanaAPIKey: 'nested-key' },
+          },
+        },
+        null,
+      ),
+    ).toEqual({
+      id: 'cred-nested',
+      name: 'grafana-nested',
+      secret: 'nested-key',
+    });
+  });
+
+  it('resolves an anonymous canonical credential to no auth material', () => {
+    expect(
+      buildCredentialSecret(
+        {
+          id: 'cred-prom',
+          name: 'prom-canonical',
+          secret: { prometheusURL: 'https://prom.example' },
+        },
+        null,
+      ),
+    ).toEqual({
+      id: 'cred-prom',
+      name: 'prom-canonical',
+      secret: undefined,
+    });
+  });
+
+  it('leaves the kubernetes secret shape without string auth material', () => {
+    expect(
+      buildCredentialSecret(
+        {
+          id: 'cred-k8s',
+          name: 'kube-cred',
+          secret: { auth: { clusterToken: 'tok' }, cluster: { server: 'https://k8s.example' } },
+        },
+        null,
+      ),
+    ).toEqual({
+      id: 'cred-k8s',
+      name: 'kube-cred',
+      secret: undefined,
+    });
+  });
+
   it('normalizes the new-credential form payload when no credential is selected', () => {
     expect(
       buildCredentialSecret(null, {

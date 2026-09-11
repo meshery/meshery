@@ -237,7 +237,7 @@ function Dashboard() {
           </Modal>
         </>
       ) : (
-        <DefaultError />
+        <DefaultError permissionKey={Keys.PerformanceManagementViewPerformanceProfiles} />
       )}
     </>
   );

@@ -4160,6 +4160,105 @@
         "short_description": "Unable to reach Meshery Operator lifecycle for this Kubernetes connection",
         "probable_cause": "The connection is not connected yet, or its state machine has not finished initializing.",
         "suggested_remediation": "Wait for the Kubernetes connection to reach the connected state, then retry.\nIf it stays disconnected, check the connection's diagnostics for why its Kubernetes client could not be created."
+      },
+      "1475": {
+        "name": "ErrInvalidDependencyCode",
+        "code": "1475",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "A component declares its dependencies in a form Meshery cannot read",
+        "probable_cause": "The design was written by a tool that spells the dependsOn entry differently, or was hand-edited outside of Meshery",
+        "suggested_remediation": "Edit the design so that the dependsOn entry on that component is a list of the names of other components in the same design"
+      },
+      "1476": {
+        "name": "ErrUnresolvedDependencyCode",
+        "code": "1476",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "A component depends on something that is not a component of the design",
+        "probable_cause": "The component that was depended upon has been renamed or removed while the dependency on it was left in place",
+        "suggested_remediation": "Open the design in Meshery and either restore a component with the name that was depended upon, or remove that dependency"
+      },
+      "1477": {
+        "name": "ErrAmbiguousDependencyCode",
+        "code": "1477",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "A component depends on a name that more than one component of the design carries",
+        "probable_cause": "Component names are not required to be unique within a design, and more than one component was given the same name",
+        "suggested_remediation": "Open the design in Meshery and rename those components so that the one being depended upon is uniquely named"
+      },
+      "1478": {
+        "name": "ErrUnknownPlanNodeCode",
+        "code": "1478",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "The execution plan refers to a component that is not part of it",
+        "probable_cause": "The design is internally inconsistent: it declares a dependency on a component that it does not contain",
+        "suggested_remediation": "Open the design in Meshery, remove or repoint the dangling dependency, and try again"
+      },
+      "1479": {
+        "name": "ErrCyclicDependencyCode",
+        "code": "1479",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "The components of a design depend on each other in a loop",
+        "probable_cause": "Two or more components of the design declare a dependency on each other, either directly or through a chain of other components",
+        "suggested_remediation": "Open the design in Meshery and remove one of the dependencies that closes the loop, then try again"
+      },
+      "1480": {
+        "name": "ErrDependencyNotSatisfiedCode",
+        "code": "1480",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "A component was withheld because a component it depends on did not succeed",
+        "probable_cause": "A component that this one's order depends on did not succeed",
+        "suggested_remediation": "Resolve the failure reported for that component, then try the design again"
+      },
+      "1481": {
+        "name": "ErrResetInProgressCode",
+        "code": "1481",
+        "severity": "Alert",
+        "long_description": "Seeding from a previous reset has not finished; starting another would drop tables mid-seed",
+        "short_description": "A database reset is already in progress",
+        "probable_cause": "A reset was requested while an earlier one was still seeding keys, catalog designs, or components",
+        "suggested_remediation": "Wait for the in-flight reset to finish, then retry"
+      },
+      "1482": {
+        "name": "ErrNoSystemEventSinkCode",
+        "code": "1482",
+        "severity": "Alert",
+        "long_description": "HandlerConfig.SystemEventPersister is nil, so events raised outside a user request - registry seeding summaries and registration failures - cannot be persisted",
+        "short_description": "No sink is configured for Meshery's system events",
+        "probable_cause": "Meshery Server was built with a HandlerConfig that does not wire SystemEventPersister",
+        "suggested_remediation": "Set HandlerConfig.SystemEventPersister when constructing the handler configuration; on a released build this indicates a defect, so please report it at https://github.com/meshery/meshery/issues/new/choose"
+      },
+      "1483": {
+        "name": "ErrSeedingStagePanicCode",
+        "code": "1483",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Meshery Server recovered from a fault while seeding its registry",
+        "probable_cause": "An unexpected condition was hit while seeding, either at startup or while reseeding after a database reset",
+        "suggested_remediation": "Meshery Server is still serving, but whatever the faulting stage contributes may be missing or incomplete. Report the stack trace above at https://github.com/meshery/meshery/issues/new/choose, then seed again - restart Meshery Server, or re-run the reset that triggered the seeding"
+      },
+      "1484": {
+        "name": "ErrInitLoggerCode",
+        "code": "1484",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to initialize logger",
+        "probable_cause": "LOG_LEVEL is set to an unsupported value\nLogger configuration options are malformed",
+        "suggested_remediation": "Set LOG_LEVEL to a supported value\nCheck your logger configuration settings"
+      },
+      "1485": {
+        "name": "ErrModelNotFoundCode",
+        "code": "1485",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Model not found",
+        "probable_cause": "The requested model is not present in the CSV input",
+        "suggested_remediation": "Verify that the requested model exists in the CSV input"
       }
     }
   }

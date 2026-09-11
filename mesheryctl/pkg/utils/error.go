@@ -173,7 +173,7 @@ func SystemProviderSubError(msg string, cmd string) string {
 	}
 }
 
-// SystemProviderSubError returns a formatted error message with a link to `provider` command usage page
+// SystemModelSubError returns a formatted error message with a link to `model` command usage page
 // in addition to the error message
 func SystemModelSubError(msg string, cmd string) string {
 	switch cmd {
