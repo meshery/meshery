@@ -304,7 +304,7 @@ describe('Administrative environment purpose', () => {
     getEnvironmentConnectionsQuery.mockReturnValue({ data: { totalCount: 3 } });
   });
 
-  it('renders the Administrative badge on both card faces when purpose is "administrative"', () => {
+  it('surfaces the administrative purpose designation when purpose is "administrative"', () => {
     render(
       <EnvironmentCard
         environmentDetails={{ ...baseEnvironment, purpose: 'administrative' }}
@@ -315,12 +315,20 @@ describe('Administrative environment purpose', () => {
         onAssignConnection={() => {}}
       />,
     );
-    // Badge wrapper span appears on both front and back of the flip card
-    const badges = screen.getAllByTestId('administrative-badge');
-    expect(badges.length).toBeGreaterThanOrEqual(1);
+    // The administrative designation is surfaced via the Chip badge and
+    // the descriptive tooltip on the edit button — both driven by isAdministrative.
+    const tooltips = screen.getAllByTestId('custom-tooltip');
+    const editTooltip = tooltips.find(
+      (t) => t.getAttribute('title') === 'Administrative environments cannot be edited',
+    );
+    expect(editTooltip).toBeTruthy();
+    const deleteTooltip = tooltips.find(
+      (t) => t.getAttribute('title') === 'Administrative environments cannot be deleted',
+    );
+    expect(deleteTooltip).toBeTruthy();
   });
 
-  it('does not render the Administrative badge when purpose is absent', () => {
+  it('does not restrict edit/delete when purpose is absent', () => {
     render(
       <EnvironmentCard
         environmentDetails={baseEnvironment}
@@ -331,10 +339,12 @@ describe('Administrative environment purpose', () => {
         onAssignConnection={() => {}}
       />,
     );
-    expect(screen.queryByTestId('administrative-badge')).not.toBeInTheDocument();
+    const tooltips = screen.getAllByTestId('custom-tooltip');
+    expect(tooltips.find((t) => t.getAttribute('title') === 'Edit')).toBeTruthy();
+    expect(tooltips.find((t) => t.getAttribute('title') === 'Delete')).toBeTruthy();
   });
 
-  it('does not render the Administrative badge when purpose is "user"', () => {
+  it('does not restrict edit/delete when purpose is "user"', () => {
     render(
       <EnvironmentCard
         environmentDetails={{ ...baseEnvironment, purpose: 'user' }}
@@ -345,10 +355,12 @@ describe('Administrative environment purpose', () => {
         onAssignConnection={() => {}}
       />,
     );
-    expect(screen.queryByTestId('administrative-badge')).not.toBeInTheDocument();
+    const tooltips = screen.getAllByTestId('custom-tooltip');
+    expect(tooltips.find((t) => t.getAttribute('title') === 'Edit')).toBeTruthy();
+    expect(tooltips.find((t) => t.getAttribute('title') === 'Delete')).toBeTruthy();
   });
 
-  it('does not render the Administrative badge when purpose is "absent"', () => {
+  it('does not restrict edit/delete when purpose is "absent"', () => {
     render(
       <EnvironmentCard
         environmentDetails={{ ...baseEnvironment, purpose: 'absent' }}
@@ -359,7 +371,9 @@ describe('Administrative environment purpose', () => {
         onAssignConnection={() => {}}
       />,
     );
-    expect(screen.queryByTestId('administrative-badge')).not.toBeInTheDocument();
+    const tooltips = screen.getAllByTestId('custom-tooltip');
+    expect(tooltips.find((t) => t.getAttribute('title') === 'Edit')).toBeTruthy();
+    expect(tooltips.find((t) => t.getAttribute('title') === 'Delete')).toBeTruthy();
   });
 
   it('disables edit and delete buttons for administrative environments', () => {
