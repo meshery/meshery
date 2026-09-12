@@ -130,7 +130,7 @@ const Dashboard = () => {
   };
 
   const [currentBreakPoint, setCurrentBreakpoint] = useState('lg');
-  const { selectedK8sContexts, k8sConfig, isDrawerCollapsed } = useSelector((state) => state.ui);
+  const { selectedK8sContexts, k8sConfig } = useSelector((state) => state.ui);
   const [isEditMode, setIsEditMode] = useState(false);
 
   useEffect(() => {
