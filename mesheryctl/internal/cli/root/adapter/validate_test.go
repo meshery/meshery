@@ -18,12 +18,14 @@ import (
 	"net/http"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/errors"
+	"github.com/spf13/pflag"
 )
 
 // TestFindAdapters covers resolving a registered mesh adapter from --adapter by
@@ -143,6 +145,8 @@ func TestValidateAdapterSelection(t *testing.T) {
 		fixture string
 		// wantErrCode, when set, is the meshkit code the command must fail with
 		wantErrCode string
+		// wantErr, when set, is text a non-meshkit error must contain
+		wantErr string
 		// wantMesh and wantAdapter are what a successful run must resolve to
 		wantMesh    string
 		wantAdapter string
@@ -156,6 +160,11 @@ func TestValidateAdapterSelection(t *testing.T) {
 			name:        "mesh name contradicting the adapter is rejected",
 			args:        []string{"validate", "linkerd", "--adapter", "meshery-istio", "--spec", "smi"},
 			wantErrCode: ErrAdapterMeshMismatchCode,
+		},
+		{
+			name:    "omitted adapter fails before prompting for a mesh",
+			args:    []string{"validate", "--spec", "smi"},
+			wantErr: `required flag(s) "adapter" not set`,
 		},
 		{
 			name:        "connected adapter resolves to its own mesh",
@@ -198,8 +207,13 @@ func TestValidateAdapterSelection(t *testing.T) {
 			}
 
 			httpmock.Reset()
+			syncBody := utils.NewGoldenFile(t, fixture, fixturesDir).Load()
+			syncCalls := 0
 			httpmock.RegisterResponder(http.MethodGet, testContext.BaseURL+"/api/system/sync",
-				httpmock.NewStringResponder(200, utils.NewGoldenFile(t, fixture, fixturesDir).Load()))
+				func(req *http.Request) (*http.Response, error) {
+					syncCalls++
+					return httpmock.NewStringResponse(200, syncBody), nil
+				})
 
 			// capture what actually goes over the wire as the adapter to operate on
 			var sentAdapter string
@@ -218,12 +232,23 @@ func TestValidateAdapterSelection(t *testing.T) {
 			meshName = ""
 			adapterURL = ""
 			watch = false
+			validateCmd.Flags().VisitAll(func(f *pflag.Flag) { f.Changed = false })
 			utils.TokenFlag = filepath.Join(fixturesDir, "token.golden")
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
 
 			AdapterCmd.SetArgs(tt.args)
 			AdapterCmd.SetOut(buff)
 			err := AdapterCmd.Execute()
+
+			if tt.wantErr != "" {
+				if err == nil || !strings.Contains(err.Error(), tt.wantErr) {
+					t.Fatalf("error = %v, want it to contain %q", err, tt.wantErr)
+				}
+				if syncCalls != 0 {
+					t.Errorf("fetched session data %d times before rejecting the command", syncCalls)
+				}
+				return
+			}
 
 			if tt.wantErrCode != "" {
 				if err == nil {

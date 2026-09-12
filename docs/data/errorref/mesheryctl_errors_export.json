@@ -282,15 +282,6 @@
         "probable_cause": "",
         "suggested_remediation": "Join https://mesheryio.slack.com/archives/C010H0HE2E6"
       },
-      "1033": {
-        "name": "ErrValidateAdapterCode",
-        "code": "1033",
-        "severity": "Fatal",
-        "long_description": "",
-        "short_description": "Unable to validate adapter",
-        "probable_cause": "Unable to fetch Mesh adapter, adapter not valid.",
-        "suggested_remediation": "Enter a valid Mesh adapter."
-      },
       "1034": {
         "name": "ErrSendOperationCode",
         "code": "1034",
@@ -2115,8 +2106,8 @@
         "severity": "Fatal",
         "long_description": "",
         "short_description": "Unable to find the requested adapter",
-        "probable_cause": "The name given to --adapter is misspelled, or that adapter is not deployed and connected to Meshery Server.",
-        "suggested_remediation": "Pass the name or the host:port location of a connected adapter to --adapter. Use `mesheryctl system status` to see which adapters are running."
+        "probable_cause": "The value given to --adapter matches neither the host nor the full location of a connected adapter, or that adapter is not deployed and connected to Meshery Server.",
+        "suggested_remediation": "Pass the host (for example meshery-istio) or the full host:port location (for example meshery-istio:10000) of a connected adapter to --adapter. Mesh names such as ISTIO are not accepted. Use `mesheryctl system status` to see which adapters are running."
       },
       "1256": {
         "name": "ErrAdapterMeshMismatchCode",
