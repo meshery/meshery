@@ -6,6 +6,7 @@ import {
   Button,
   CustomColumnVisibilityControl,
   CustomTooltip,
+  DeleteIcon,
   EditIcon,
   IconButton,
   Modal,
@@ -59,7 +60,7 @@ import type { GetPerformanceProfilesApiResponse } from '@meshery/schemas/meshery
 type PerformanceProfileItem = GetPerformanceProfilesApiResponse['profiles'][number];
 type SelectablePerformanceProfile = PerformanceProfileItem & { runTest?: boolean };
 
-function PerformanceProfile({ handleDelete }) {
+function PerformanceProfile() {
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     'grid',
@@ -375,14 +376,63 @@ function PerformanceProfile({ handleDelete }) {
       },
     },
 
-    onRowsDelete: async function handleDeleteRow(row) {
-      let response = await showModal(Object.keys(row.lookup).length);
-      if (response === 'DELETE') {
-        const pids = Object.keys(row.lookup).map((idx) => testProfiles[idx]?.id);
-        pids.forEach((pid) => handleDelete(pid));
-      } else {
-        refetchProfiles();
-      }
+    customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
+      const handleBulkDelete = async () => {
+        const pids = selectedRows.data.map(({ index }) => testProfiles[index]?.id).filter(Boolean);
+
+        if (pids.length === 0) return;
+
+        let response = await showModal(pids.length);
+        if (response === 'DELETE') {
+          dispatch(updateProgressAction({ showProgress: true }));
+          Promise.allSettled(pids.map((pid) => deletePerformanceProfile({ id: pid }).unwrap()))
+            .then((results) => {
+              let successCount = 0;
+              let failureCount = 0;
+
+              results.forEach((result) => {
+                if (result.status === 'fulfilled') {
+                  successCount++;
+                } else {
+                  failureCount++;
+                }
+              });
+
+              if (successCount > 0) {
+                notify({
+                  message: `${successCount} Performance Profile${successCount > 1 ? 's' : ''} Deleted!`,
+                  event_type: EVENT_TYPES.SUCCESS,
+                });
+              }
+              if (failureCount > 0) {
+                notify({
+                  message: `Failed to delete ${failureCount} Profile${failureCount > 1 ? 's' : ''}`,
+                  event_type: EVENT_TYPES.ERROR,
+                });
+              }
+            })
+            .finally(() => {
+              dispatch(updateProgressAction({ showProgress: false }));
+              setSelectedRows([]);
+              refetchProfiles();
+            });
+        }
+      };
+
+      return (
+        <div style={{ marginRight: '24px' }}>
+          <CustomTooltip title={'Delete'}>
+            <div>
+              <IconButton
+                onClick={handleBulkDelete}
+                permissionKey={Keys.PerformanceManagementDeletePerformanceTest}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </div>
+          </CustomTooltip>
+        </div>
+      );
     },
 
     onTableChange: (action, tableState) => {
