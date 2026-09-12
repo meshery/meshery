@@ -28,12 +28,12 @@ func TestGetManifestTreeURL(t *testing.T) {
 		}))
 		defer server.Close()
 
-		origURL := gitHubBaseURL
-		gitHubBaseURL = server.URL
-		defer func() { gitHubBaseURL = origURL }()
+		origURL := githubBaseURL
+		githubBaseURL = server.URL
+		defer func() { githubBaseURL = origURL }()
 
 		_, err := GetManifestTreeURL("v0.6.0")
-		expectedURL := gitHubBaseURL + "/repos/" + "meshery" + "/" + "meshery" + "/git/trees/" + "v0.6.0" + "?recursive=1"
+		expectedURL := githubBaseURL + "/repos/" + "meshery" + "/" + "meshery" + "/git/trees/" + "v0.6.0" + "?recursive=1"
 		expectedErr := ErrGitHubAPIResponse(http.StatusForbidden, expectedURL, `{"message": "API rate limit exceeded"}`)
 		AssertMeshkitErrorsEqual(t, err, expectedErr)
 	})
@@ -54,9 +54,9 @@ func TestGetManifestTreeURL(t *testing.T) {
 		}))
 		defer server.Close()
 
-		origURL := gitHubBaseURL
-		gitHubBaseURL = server.URL
-		defer func() { gitHubBaseURL = origURL }()
+		origURL := githubBaseURL
+		githubBaseURL = server.URL
+		defer func() { githubBaseURL = origURL }()
 
 		treeURL, err := GetManifestTreeURL("v0.6.0")
 		if err != nil {

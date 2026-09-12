@@ -33,7 +33,7 @@ var (
 	// ManifestsFolder is where the Kubernetes manifests are stored
 	ManifestsFolder = "manifests"
 	ReleaseTag      string
-	gitHubBaseURL   = "https://api.github.com"
+	githubBaseURL   = "https://api.github.com"
 )
 
 type K8sCompose struct {
@@ -108,7 +108,7 @@ type Manifest struct {
 
 // GetManifestTreeURL returns the manifest tree url based on version
 func GetManifestTreeURL(version string) (string, error) {
-	url := gitHubBaseURL + "/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + version + "?recursive=1"
+	url := githubBaseURL + "/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + version + "?recursive=1"
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to make GET request to %s", url)

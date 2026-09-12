@@ -563,6 +563,7 @@ func ErrResponseStatus(statusCode int) error {
 		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
 }
 
+// ErrGitHubAPIResponse returns an error when the GitHub API returns a non-200 HTTP response.
 func ErrGitHubAPIResponse(statusCode int, url string, body string) error {
 	return errors.New(ErrGitHubAPIResponseCode, errors.Alert,
 		[]string{"Unexpected response from GitHub API"},
