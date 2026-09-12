@@ -48,11 +48,6 @@ type K8sContext struct {
 	// transition to the connected state. An unreachable context can still be
 	// registered as a (discovered) connection.
 	Reachable bool `json:"reachable" yaml:"-" gorm:"-"`
-	// IsInCluster indicates whether the context was created from in-cluster
-	// configuration. It is transient (never persisted): it is set by
-	// NewK8sContextFromInClusterConfig and used by K8sContextGenerateID to determine
-	// whether to exclude service-account tokens from the ID hash.
-	IsInCluster bool `json:"isInCluster" yaml:"-" gorm:"-"`
 }
 
 // K8sContextFromConnection converts a kubernetes connection into a K8sContext.
@@ -153,7 +148,6 @@ func (kcfg InternalKubeConfig) K8sContext(name string, instanceID *core.Uuid, lo
 		server,
 		instanceID,
 		log,
-		false, // isInCluster = false for kubeconfig contexts
 	)
 }
 
@@ -164,9 +158,8 @@ func NewK8sContextWithServerID(
 	server string,
 	instanceID *core.Uuid,
 	log logger.Handler,
-	isInCluster bool,
 ) (*K8sContext, error) {
-	ctx, _ := NewK8sContext(contextName, clusters, users, server, instanceID, log, isInCluster)
+	ctx, _ := NewK8sContext(contextName, clusters, users, server, instanceID, log)
 
 	// Perform Ping test on the cluster
 	if err := ctx.PingTest(); err != nil {
@@ -316,29 +309,32 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 	return kcs
 }
 
+// Package-level variables for in-cluster file paths, can be overridden in tests
+var (
+	inClusterTokenFile  = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+	inClusterRootCAFile = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+)
+
 func NewK8sContextFromInClusterConfig(contextName string, instanceID *core.Uuid, log logger.Handler) (*K8sContext, error) {
-	const (
-		tokenFile  = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-		rootCAFile = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
-	)
 	host, port := os.Getenv("KUBERNETES_SERVICE_HOST"), os.Getenv("KUBERNETES_SERVICE_PORT")
 	if len(host) == 0 || len(port) == 0 {
 		return nil, ErrMesheryNotInCluster
 	}
 
-	token, err := os.ReadFile(tokenFile)
+	token, err := os.ReadFile(inClusterTokenFile)
 	if err != nil {
 		return nil, err
 	}
 
 	server := "https://" + net.JoinHostPort(host, port)
 
-	caData, err := os.ReadFile(rootCAFile)
+	caData, err := os.ReadFile(inClusterRootCAFile)
 	if err != nil {
 		return nil, err
 	}
 
-	return NewK8sContextWithServerID(
+	// Create context with in-cluster deployment type set before ID generation
+	ctx, err := NewK8sContextWithServerID(
 		contextName,
 		map[string]interface{}{
 			"cluster": map[string]interface{}{
@@ -356,8 +352,22 @@ func NewK8sContextFromInClusterConfig(contextName string, instanceID *core.Uuid,
 		server,
 		instanceID,
 		log,
-		true, // isInCluster = true for in-cluster config
 	)
+	if err != nil {
+		return nil, err
+	}
+
+	// Set deployment type to mark this as in-cluster for ID generation
+	ctx.DeploymentType = "in_cluster"
+
+	// Regenerate ID with correct deployment type set
+	newID, err := K8sContextGenerateID(*ctx)
+	if err != nil {
+		return nil, err
+	}
+	ctx.ID = newID
+
+	return ctx, nil
 }
 
 // NewK8sContext takes in name of the context, cluster info of the contexts,
@@ -373,7 +383,6 @@ func NewK8sContext(
 	server string,
 	instanceID *core.Uuid,
 	log logger.Handler,
-	isInCluster bool,
 ) (K8sContext, string) {
 	ctx := K8sContext{
 		Name:              contextName,
@@ -381,7 +390,6 @@ func NewK8sContext(
 		Auth:              user,
 		Server:            server,
 		MesheryInstanceID: instanceID,
-		IsInCluster:       isInCluster,
 	}
 
 	ID, err := K8sContextGenerateID(ctx)
@@ -413,8 +421,8 @@ func K8sContextGenerateID(kc K8sContext) (string, error) {
 	// For in-cluster contexts, exclude the token from the hash to prevent ID changes
 	// when the service-account token rotates. The token is mutable authentication
 	// material that should not affect the logical connection identity.
-	// In-cluster provenance is explicitly set by NewK8sContextFromInClusterConfig.
-	if kc.IsInCluster && kc.Auth != nil {
+	// In-cluster provenance is determined by DeploymentType field, which is persisted.
+	if kc.DeploymentType == "in_cluster" && kc.Auth != nil {
 		if user, ok := kc.Auth["user"].(map[string]interface{}); ok {
 			if _, hasToken := user["token"]; hasToken {
 				// Create a copy of auth without the token for ID generation
