@@ -101,10 +101,16 @@ vi.mock('@sistent/sistent', () => ({
       error: { dark: 'darkred' },
       common: { white: 'white' },
     },
+    breakpoints: { down: () => '(max-width:600px)' },
   }),
+  useMediaQuery: () => false,
   TableCell: ({ children }) => <div>{children}</div>,
   TableRow: ({ children }) => <div>{children}</div>,
   Popover: ({ open, children }) => (open ? <div>{children}</div> : null),
+  BottomSheet: ({ open, children }) => (open ? <div>{children}</div> : null),
+  MenuList: ({ children }) => <div>{children}</div>,
+  ListItemIcon: ({ children }) => <span>{children}</span>,
+  CopyLinkIcon: () => <svg data-testid="copy-link-icon" />,
   DeleteIcon: () => <svg data-testid="delete-icon" />,
 }));
 

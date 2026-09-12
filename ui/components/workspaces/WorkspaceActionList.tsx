@@ -1,16 +1,17 @@
 import {
   AccessTimeFilledIcon,
+  BottomSheet,
   CustomTooltip,
   DeleteIcon,
   EditIcon,
   GroupAddIcon,
   IconButton,
   ListItemIcon,
-  Menu,
   MenuItem,
+  MenuList,
   MoreVertIcon,
+  useMediaQuery,
   useTheme,
-  useWindowDimensions,
 } from '@sistent/sistent';
 import { useState } from 'react';
 import { TableIconsContainer, IconWrapper } from './styles';
@@ -27,23 +28,19 @@ const WorkspaceActionList = ({
   workspaceName,
   selectedWorkspace,
 }) => {
-  const { width } = useWindowDimensions();
-  const isMobile = width < 1024;
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+  const [open, setOpen] = useState(false);
 
   const handleClick = (event) => {
     event.stopPropagation();
     event.preventDefault();
-    setAnchorEl(event.currentTarget);
+    setOpen(true);
   };
 
-  const handleClose = (event) => {
-    event.stopPropagation();
-    event.preventDefault();
-    setAnchorEl(null);
+  const handleClose = () => {
+    setOpen(false);
   };
 
   const actionItems = [
@@ -83,21 +80,23 @@ const WorkspaceActionList = ({
             <IconButton aria-label="more" onClick={handleClick}>
               <MoreVertIcon />
             </IconButton>
-            <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-              {actionItems.map(({ key, label, icon, onClick, permissionKey }) => (
-                <MenuItem
-                  key={key}
-                  onClick={(e) => {
-                    onClick(e);
-                    handleClose(e);
-                  }}
-                  permissionKey={permissionKey}
-                >
-                  <ListItemIcon>{icon}</ListItemIcon>
-                  {label}
-                </MenuItem>
-              ))}
-            </Menu>
+            <BottomSheet open={open} onClose={handleClose} title="Workspace Actions">
+              <MenuList disablePadding>
+                {actionItems.map(({ key, label, icon, onClick, permissionKey }) => (
+                  <MenuItem
+                    key={key}
+                    onClick={(e) => {
+                      onClick(e);
+                      handleClose();
+                    }}
+                    permissionKey={permissionKey}
+                  >
+                    <ListItemIcon>{icon}</ListItemIcon>
+                    {label}
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </BottomSheet>
           </>
         ) : (
           <>

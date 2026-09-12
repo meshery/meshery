@@ -66,14 +66,6 @@ vi.mock('@/utils/objects', () => ({
   filterEmptyFields: (obj: any) => obj || {},
 }));
 
-vi.mock('@/utils/TooltipButton', () => ({
-  default: ({ children, title, onClick }: any) => (
-    <span data-testid="tooltip-btn" data-title={title} onClick={onClick}>
-      {children}
-    </span>
-  ),
-}));
-
 vi.mock('../../../../utils/utils', () => ({
   getDesignVersion: (r: any) => r?.version || '',
   getSharableCommonHostAndprotocolLink: (r: any) => `https://meshery.io/${r?.id}`,
@@ -139,7 +131,11 @@ vi.mock('notistack', () => ({
 
 vi.mock('./styles', () => ({
   ActionContainer: ({ children }: any) => <div data-testid="action-container">{children}</div>,
-  CopyLinkButton: ({ children }: any) => <span>{children}</span>,
+  CopyLinkButton: ({ children, onClick, sx: _sx, ...props }: any) => (
+    <button type="button" onClick={onClick} {...props}>
+      {children}
+    </button>
+  ),
   CreatAtContainer: ({ children }: any) => <span>{children}</span>,
   ResourceName: ({ children }: any) => <span data-testid="resource-name">{children}</span>,
 }));
@@ -397,7 +393,7 @@ describe('InfoModal', () => {
       />,
     );
 
-    await user.click(screen.getByTestId('tooltip-btn'));
+    await user.click(screen.getByRole('button', { name: 'Copy Link' }));
     expect(writeText).toHaveBeenCalledWith('https://meshery.io/p1');
     expect(enqueueSnackbar).toHaveBeenCalled();
   });
