@@ -5,7 +5,7 @@ setup() {
     _load_bats_libraries
 }
 
-@test "given help flag when running mesheryctl system config eks --help then usage information is displayed" {
+@test "[TC-1013][cut=Kubernetes Connection][tg=Connection Lifecycle] given help flag when running mesheryctl system config eks --help then usage information is displayed" {
     run $MESHERYCTL_BIN system config eks --help
 
     assert_success
@@ -13,14 +13,14 @@ setup() {
     assert_output --partial "mesheryctl system config eks --token auth.json"
 }
 
-@test "given more than one argument when running mesheryctl system config eks then an error message is displayed" {
+@test "[TC-1013][cut=Kubernetes Connection][tg=Connection Lifecycle] given more than one argument when running mesheryctl system config eks then an error message is displayed" {
     run $MESHERYCTL_BIN system config eks extra-arg
 
     assert_failure
     assert_output --partial "more than one config name provided"
 }
 
-@test "given aws CLI is not installed when running mesheryctl system config eks then an error is displayed" {
+@test "[TC-1013][cut=Kubernetes Connection][tg=Connection Lifecycle] given aws CLI is not installed when running mesheryctl system config eks then an error is displayed" {
     PATH=/dev/null run $MESHERYCTL_BIN system config eks
 
     assert_failure

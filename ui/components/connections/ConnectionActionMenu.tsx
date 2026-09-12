@@ -1,5 +1,6 @@
-import { Button, Popover, Typography, SettingsIcon, CopyLinkIcon } from '@sistent/sistent';
-import { ActionListItem } from './styles';
+import { Popover, Typography, SettingsIcon, CopyLinkIcon } from '@sistent/sistent';
+import { ActionButton, ActionListItem } from './styles';
+import { Keys } from '@meshery/schemas/permissions';
 import { iconMedium } from '../../css/icons.styles';
 
 type ConnectionActionMenuProps = {
@@ -31,31 +32,37 @@ export const ConnectionActionMenu = ({
     >
       {onConfigure && (
         <ActionListItem>
-          <Button type="button" onClick={onConfigure} data-cy="btnConfigureConnection">
+          <ActionButton
+            type="button"
+            onClick={onConfigure}
+            data-cy="btnConfigureConnection"
+            permissionKey={Keys.LifecycleManagementEditConnection}
+          >
             <SettingsIcon {...iconMedium} />
             <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
               Configure
             </Typography>
-          </Button>
+          </ActionButton>
         </ActionListItem>
       )}
       {onConfigureControllers && (
         <ActionListItem>
-          <Button
+          <ActionButton
             type="button"
             onClick={onConfigureControllers}
             data-cy="btnConfigureConnectionControllers"
+            permissionKey={Keys.LifecycleManagementEditConnection}
           >
             <SettingsIcon {...iconMedium} />
             <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
               Configure Controllers
             </Typography>
-          </Button>
+          </ActionButton>
         </ActionListItem>
       )}
       {onCopyLink && (
         <ActionListItem>
-          <Button
+          <ActionButton
             type="button"
             onClick={() => {
               onCopyLink();
@@ -67,7 +74,7 @@ export const ConnectionActionMenu = ({
             <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
               Copy link
             </Typography>
-          </Button>
+          </ActionButton>
         </ActionListItem>
       )}
     </Popover>

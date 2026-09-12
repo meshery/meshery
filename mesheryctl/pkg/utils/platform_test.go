@@ -30,3 +30,48 @@ func TestListManifests(t *testing.T) {
 		}
 	})
 }
+
+func TestGetCleanPodName(t *testing.T) {
+	tests := []struct {
+		name     string
+		podName  string
+		expected string
+	}{
+		{
+			name:     "standard deployment pod name",
+			podName:  "meshery-broker-7d9f8c9b47-x8vqp",
+			expected: "meshery-broker",
+		},
+		{
+			name:     "two segments, alphabetic second segment joins both",
+			podName:  "brokerpod-abc",
+			expected: "brokerpod-abc",
+		},
+		{
+			name:     "statefulset pod name, numeric ordinal falls back to first segment",
+			podName:  "broker-0",
+			expected: "broker",
+		},
+		{
+			name:     "single word pod name with no hyphen",
+			podName:  "meshery",
+			expected: "meshery",
+		},
+		{
+			name:     "empty pod name",
+			podName:  "",
+			expected: "",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			// Names with fewer than two hyphen-separated segments used to panic with
+			// "slice bounds out of range"; GetCleanPodName must now return cleanly.
+			got := GetCleanPodName(tc.podName)
+			if got != tc.expected {
+				t.Errorf("GetCleanPodName(%q) = %q, want %q", tc.podName, got, tc.expected)
+			}
+		})
+	}
+}

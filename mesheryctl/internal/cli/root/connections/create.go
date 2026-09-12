@@ -46,7 +46,8 @@ type userPrompt struct {
 var createConnectionCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new connection",
-	Long:  `Create a new connection to a Kubernetes cluster or other supported platform`,
+	Long: `Create a new connection to a Kubernetes cluster or other supported platform.
+	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/connection/create`,
 	Example: `
 // Create a new Kubernetes connection using a specific type
 mesheryctl connection create --type aks
@@ -292,13 +293,29 @@ func getContexts(configFile string) ([]string, error) {
 	return contextNames, nil
 }
 
-func setContext(configFile, cname string) error {
+// registeredK8sContext is the subset of the server's per-context registration
+// response that the CLI needs. The `/api/system/kubernetes` response
+// (server SaveK8sContextResponse) has no schemas-generated equivalent, so this
+// is a parse-only DTO — not a duplicate of a schemas type.
+type registeredK8sContext struct {
+	Name         string `json:"name"`
+	ConnectionID string `json:"connectionId"`
+}
+
+type saveK8sContextResponse struct {
+	RegisteredContexts []registeredK8sContext `json:"registeredContexts"`
+	ConnectedContexts  []registeredK8sContext `json:"connectedContexts"`
+}
+
+// setContext registers the chosen kubeconfig context with Meshery and returns
+// the id of the connection created (or reused) for that context.
+func setContext(configFile, cname string) (string, error) {
 	contextParams := map[string]string{
 		"contextName": cname,
 	}
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// setContextURL endpoint points to set context
@@ -306,20 +323,44 @@ func setContext(configFile, cname string) error {
 	req, err := utils.UploadFileWithParams(setContextURL, contextParams, utils.ParamName, configFile)
 
 	if err != nil {
-		return utils.ErrUploadFileWithParams(err, configFile)
+		return "", utils.ErrUploadFileWithParams(err, configFile)
 	}
 	res, err := utils.MakeRequest(req)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer func() { _ = res.Body.Close() }()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return utils.ErrReadResponseBody(err)
+		return "", utils.ErrReadResponseBody(err)
 	}
 	utils.Log.Debugf("Set context API response: %s", string(body))
-	return nil
+
+	var response saveK8sContextResponse
+	if err := json.Unmarshal(body, &response); err != nil {
+		// The context was still registered; only id resolution is best-effort.
+		utils.Log.Debugf("Unable to parse set context response for connection id: %s", err.Error())
+		return "", nil
+	}
+
+	return connectionIDForContext(response, cname), nil
+}
+
+// connectionIDForContext resolves the connection id for the given context name.
+// It returns the id only on an exact name match; when the server does not echo
+// the requested context name it returns "" rather than guessing. A
+// multi-context kubeconfig registers every context, so an arbitrary fallback
+// could surface a different context's id than the one the user selected and
+// mis-target `connection view`/`connection delete`.
+func connectionIDForContext(response saveK8sContextResponse, cname string) string {
+	all := append(append([]registeredK8sContext{}, response.ConnectedContexts...), response.RegisteredContexts...)
+	for _, ctx := range all {
+		if ctx.Name == cname && ctx.ConnectionID != "" {
+			return ctx.ConnectionID
+		}
+	}
+	return ""
 }
 
 // Given the token path, get the context and set the token in the chosen context
@@ -345,12 +386,18 @@ func setToken() error {
 	}
 	utils.Log.Debugf("Chosen context : %s out of the %d available contexts", chosenCtx, len(contexts))
 
-	err = setContext(utils.ConfigPath, chosenCtx)
+	connectionID, err := setContext(utils.ConfigPath, chosenCtx)
 	if err != nil {
 		return utils.ErrSetKubernetesContext(err)
 	}
 
 	utils.Log.Infof("Token set in context %s", chosenCtx)
+	// Emit the created/reused connection id in a stable, parseable form so it
+	// can be fed to `connection view`/`connection delete` (and captured by e2e
+	// tests). The prefix is a documented contract — do not reformat casually.
+	if connectionID != "" {
+		utils.Log.Infof("connection_id: %s", connectionID)
+	}
 	return nil
 }
 

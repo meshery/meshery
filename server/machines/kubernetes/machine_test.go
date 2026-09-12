@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/schemas/models/core"
@@ -89,5 +90,18 @@ func TestAssignInitialCtx_AttachesLoggerBeforeClientSetAssignment(t *testing.T) 
 	// ran, which is the invariant the ordering fix establishes.
 	if machinectx.log != log {
 		t.Fatal("expected machinectx.log to be the logger passed into AssignInitialCtx and assigned before AssignClientSetToContext; a different or nil value reintroduces the login-panic ordering bug")
+	}
+}
+
+func TestRegisteredState_HasNotFoundTransition(t *testing.T) {
+	state := Registered()
+
+	next, ok := state.Events[machines.NotFound]
+	if !ok {
+		t.Fatal("expected Registered state to define a NotFound transition")
+	}
+
+	if next != machines.NOTFOUND {
+		t.Fatalf("expected NotFound transition to go to %q, got %q", machines.NOTFOUND, next)
 	}
 }

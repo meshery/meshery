@@ -11,11 +11,14 @@ Generate relationships documents
 
 ## Synopsis
 
-Generate relationships documents from a CSV file or Google Spreadsheet
+Generate relationships documents from a CSV file or Google Spreadsheet.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl relationship generate [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,24 +27,30 @@ mesheryctl relationship generate [flags]
 Generate relationships documents from a CSV file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship generate --file <path-to-relationships.csv>
+<div class='clipboardjs'>
+mesheryctl relationship generate --file &lt;path-to-relationships.csv&gt;
 
+</div>
 </div>
 </pre> 
 
 Generate relationships documents with a custom output path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl relationship generate --file <path-to-relationships.csv> --output <path-to-output.json>
+<div class='clipboardjs'>
+mesheryctl relationship generate --file &lt;path-to-relationships.csv&gt; --output &lt;path-to-output.json&gt;
 
+</div>
 </div>
 </pre> 
 
 Generate relationships documents from a Google Spreadsheet
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
 
+</div>
 </div>
 </pre> 
 

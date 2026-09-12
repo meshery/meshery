@@ -17,8 +17,10 @@ Expects input to be in the format scaffolded by the model init command.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model build [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -27,22 +29,19 @@ mesheryctl model build [flags]
 Create an OCI-compliant package from the model files
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model build [model-name]
 
 </div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl model build [model-name]/[model-version]
-
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-    
+<div class='clipboardjs'>
+mesheryctl model build [model-name]/[model-version]
 
+</div>
 </div>
 </pre> 
 

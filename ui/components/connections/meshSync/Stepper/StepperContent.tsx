@@ -24,6 +24,7 @@ import { JsonParse, randomPatternNameGenerator } from '../../../../utils/utils';
 import Notification from './Notification';
 import { useProcessConnectionRegistrationMutation } from '@/rtk-query/connection';
 import { useGetCredentialsQuery } from '@/rtk-query/credentials';
+import { resolveCredentialAuthSecret } from '@/utils/credentialSecret';
 
 const CONNECTION_TYPES = ['Prometheus Connection', 'Grafana Connection'];
 
@@ -237,7 +238,9 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
     return {
       id: selectedCredential?.id,
       name: selectedCredential?.name,
-      secret: selectedCredential?.secret?.secret,
+      // Which persisted shape holds the auth material is not this component's
+      // business - see ui/utils/credentialSecret.ts for the shape catalogue.
+      secret: resolveCredentialAuthSecret(selectedCredential?.secret),
     };
   };
 

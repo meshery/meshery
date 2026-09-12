@@ -95,10 +95,9 @@ func (h *Handler) GetPerformanceProfilesHandler(
 
 	resp, err := provider.GetPerformanceProfiles(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
 	if err != nil {
-		obj := "performance profile"
-		//get query performance profile
-		h.log.Error(ErrQueryGet(obj))
-		writeMeshkitError(rw, ErrQueryGet(obj), http.StatusInternalServerError)
+		fetchErr := ErrFetchProfiles(err)
+		h.log.Error(fetchErr)
+		writeMeshkitError(rw, fetchErr, http.StatusInternalServerError)
 		return
 	}
 
@@ -144,10 +143,9 @@ func (h *Handler) GetPerformanceProfileHandler(
 
 	resp, err := provider.GetPerformanceProfile(r, performanceProfileID)
 	if err != nil {
-		obj := "performanceProfile"
-		//Queury Error performance profile
-		h.log.Error(ErrQueryGet(obj))
-		writeMeshkitError(rw, ErrQueryGet(obj), http.StatusInternalServerError)
+		fetchErr := ErrFetchProfile(err)
+		h.log.Error(fetchErr)
+		writeMeshkitError(rw, fetchErr, http.StatusInternalServerError)
 		return
 	}
 

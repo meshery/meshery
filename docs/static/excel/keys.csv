@@ -86,7 +86,7 @@ Environments,Delete Environment,Dissolve environment and all connection membersh
 Environments,Edit Environment,Edit environment and it connection membership,,,,,X,,X,X,Organization Management,145ab6ed-b4b6-4e34-ada5-78dada250f89,X,TRUE
 Environments,Assign connections to environment,Add new connections to environments,,,,,X,,X,X,Organization Management,52cbe0b8-9aa7-4605-8eed-aa37e595adbb,X,TRUE
 Environments,Remove connections from environment,"Remove connections from environment, ",,,,,X,,X,X,Organization Management,65648682-e47f-43d7-a5ad-dc042803f951,X,TRUE
-Catalog,View Catalog,View all items in catalog,X,X,,,X,,X,X,User View,0cd05106-36b6-4393-a08e-4222fc10c8de,X,FALSE
+Catalog,View Catalog,View all items in catalog,X,X,,,X,,X,X,User View,0cd05106-36b6-4393-a08e-4222fc10c8de,X,TRUE
 Workspace,View Workspace,See all workspaces within an organization,X,X,,,X,,X,X,Workspace Management,bc9379e8-dc18-4655-b53c-c641271c4ba3,X,TRUE
 Workspace,Delete Workspace,Dissolve workspace and all team and environment memberships. Leave associated resources intact,,,,,X,,X,X,Workspace Management,09eb0507-2f14-4bc4-92c5-9e26a4efbd5e,X,TRUE
 Workspace,Edit Workspace,Edit workspace and it's team and environment membership,,,,,X,,X,X,Workspace Management,4112230f-5d1e-4d30-9790-942ad5c1dc50,X,TRUE

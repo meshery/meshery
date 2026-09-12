@@ -128,6 +128,8 @@ function MesheryPatternCard_({
           deleteHandler={deleteHandler}
           type={'pattern'}
           isReadOnly={isReadOnly}
+          updatePermissionKey={Keys.CatalogManagementEditDesign}
+          deletePermissionKey={Keys.CatalogManagementDeleteADesign}
         />
       )}
       <FlipCard
@@ -359,7 +361,11 @@ function MesheryPatternCard_({
               </Typography>
               <CardHeaderRight>
                 {hasCloudProfile ? (
-                  <Link href={`${MESHERY_CLOUD_PROD}/user/${pattern?.userId}`} target="_blank">
+                  <Link
+                    href={`${MESHERY_CLOUD_PROD}/user/${pattern?.userId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <Avatar alt="profile-avatar" src={owner?.avatarUrl} />
                   </Link>
                 ) : (
@@ -421,9 +427,7 @@ function MesheryPatternCard_({
                       variant="caption"
                       style={{
                         fontStyle: 'italic',
-                        color: `${
-                          theme.palette.type === 'dark' ? 'rgba(255, 255, 255, 0.7)' : '#647881'
-                        }`,
+                        color: `${theme.palette.type === 'dark' ? 'rgba(255, 255, 255, 0.7)' : '#647881'}`,
                       }}
                       data-testid="pattern-card-created-at"
                     >

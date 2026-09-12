@@ -13,6 +13,7 @@ import {
   InnerContainer,
   WorkloadsContainer,
 } from '@/assets/styles/general/tool.styles';
+import TabCard from './TabCard';
 import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
 import { TabBar, TabCard } from './MeshModelToolbar';
@@ -27,6 +28,7 @@ import {
   useGetComponentsQuery,
   useGetRelationshipsQuery,
   useGetRegistrantsQuery,
+  useGetConnectionDefinitionsQuery,
 } from '@/rtk-query/meshModel';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 import _ from 'lodash';
@@ -113,6 +115,9 @@ const MeshModelComponent_ = ({
   const { data: registrantsCountData } = useGetRegistrantsQuery({
     params: { page: 0, pagesize: 1 },
   });
+  const { data: connectionsCountData } = useGetConnectionDefinitionsQuery({
+    params: { page: 0, pagesize: 1 },
+  });
 
   const getRegistrants = useCallback(async () => {
     let response;
@@ -164,14 +169,17 @@ const MeshModelComponent_ = ({
   const relationshipsData = relationshipsRes.data;
   const connectionsData = connectionsRes.data;
 
-  const hasMoreModels = modelsData?.totalCount > modelsData?.pageSize * modelsData?.page;
-  const hasMoreRegistrants = false;
+  const hasMoreModels =
+    modelsData?.totalCount > modelsData?.pageSize * ((modelsData?.page || 0) + 1);
+  const hasMoreRegistrants =
+    registrantsData?.totalCount > registrantsData?.pageSize * ((registrantsData?.page || 0) + 1);
   const hasMoreComponents =
-    componentsData?.totalCount > componentsData?.pageSize * componentsData?.page;
+    componentsData?.totalCount > componentsData?.pageSize * ((componentsData?.page || 0) + 1);
   const hasMoreRelationships =
-    relationshipsData?.totalCount > relationshipsData?.pageSize * relationshipsData?.page;
+    relationshipsData?.totalCount >
+    relationshipsData?.pageSize * ((relationshipsData?.page || 0) + 1);
   const hasMoreConnections =
-    connectionsData?.totalCount > connectionsData?.pageSize * connectionsData?.page;
+    connectionsData?.totalCount > connectionsData?.pageSize * ((connectionsData?.page || 0) + 1);
 
   const loadNextModelsPage = useCallback(() => {
     if (modelsRes.isLoading || modelsRes.isFetching || !hasMoreModels) {
@@ -222,8 +230,8 @@ const MeshModelComponent_ = ({
           response = await getMeshModelsData(
             {
               params: {
-                page: searchText ? 0 : modelFilters.page,
-                pagesize: searchText ? 'all' : 25,
+                page: searchText || checked ? 0 : modelFilters.page,
+                pagesize: searchText || checked ? 'all' : 25,
                 components: false,
                 relationships: false,
                 search: searchText || '',
@@ -292,19 +300,11 @@ const MeshModelComponent_ = ({
         setResourcesDetail((prev) => {
           const incoming = response.data[view.toLowerCase()];
           const combined =
-            searchText || view === RELATIONSHIPS || view === REGISTRANTS
+            searchText || (checked && view === MODELS) || view === RELATIONSHIPS
               ? [...incoming]
               : [...prev, ...incoming];
-          if (view === REGISTRANTS) {
-            const seen = new Set();
-            return [...combined]
-              .reverse()
-              .filter((x) => {
-                const key = x?.id;
-                return !key || (!seen.has(key) && seen.add(key));
-              })
-              .reverse();
-          }
+          // Use _.uniqWith for safe deep equality deduplication, as
+          // not all objects (e.g. static seed files) carry unique UUIDs.
           return _.uniqWith(combined, _.isEqual);
         });
 
@@ -503,7 +503,7 @@ const MeshModelComponent_ = ({
             />
             <TabCard
               label="Connections"
-              count={connectionsData?.totalCount || 0}
+              count={connectionsData?.totalCount ?? connectionsCountData?.totalCount ?? 0}
               active={view === CONNECTIONS}
               onClick={() => handleTabClick(CONNECTIONS)}
             />
@@ -580,4 +580,11 @@ const MeshModelComponent = (props) => (
   </NoSsr>
 );
 
+const MeshModelComponent = (props) => {
+  return (
+    <NoSsr>
+      <MeshModelComponent_ {...props} />
+    </NoSsr>
+  );
+};
 export default MeshModelComponent;

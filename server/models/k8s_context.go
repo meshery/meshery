@@ -77,8 +77,15 @@ func K8sContextFromConnection(provider Provider, token string, connection *conne
 	}
 
 	ctx.ConnectionID = connection.ID.String()
-	ctx.Auth, _ = credential.Secret["auth"].(map[string]interface{})
-	ctx.Cluster, _ = credential.Secret["cluster"].(map[string]interface{})
+	// Kubernetes credentials are persisted with the secret map as the payload
+	// ({auth, cluster}), while the credential form writes a double-nested wrapper
+	// one level up. CredentialPayload unwraps both to the payload. The form's
+	// payload then names the cluster with clusterName/clusterServerURL rather
+	// than a `cluster` block, so it yields auth but no cluster - see
+	// https://github.com/meshery/meshery/issues/21336.
+	credentialPayload := CredentialPayload(credential.Secret)
+	ctx.Auth, _ = credentialPayload["auth"].(map[string]interface{})
+	ctx.Cluster, _ = credentialPayload["cluster"].(map[string]interface{})
 	ctx.CreatedAt = &connection.CreatedAt
 	ctx.UpdatedAt = &connection.UpdatedAt
 

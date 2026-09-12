@@ -132,7 +132,6 @@ export const ShareWorkspaceModal_: FC<ShareWorkspaceModalInternalProps> = ({
       fetchAccessActors={fetchAccessActors}
       hostURL={MESHERY_CLOUD_PROD}
       handleUpdateVisibility={handleUpdateVisibility}
-      accessActorsInfoOfResource={accessActorsInfoOfResource?.users}
     />
   );
 };

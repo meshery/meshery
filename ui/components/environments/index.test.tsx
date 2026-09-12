@@ -62,8 +62,8 @@ vi.mock('../../utils/hooks/useNotification', () => ({
 }));
 
 vi.mock('../../rtk-query/environments', () => ({
-  useCreateEnvironmentMutation: () => [createEnvironment],
-  useUpdateEnvironmentMutation: () => [updateEnvironment],
+  useCreateEnvironmentMutation: () => [createEnvironment, { isLoading: false }],
+  useUpdateEnvironmentMutation: () => [updateEnvironment, { isLoading: false }],
   useDeleteEnvironmentMutation: () => [deleteEnvironment],
   useGetEnvironmentsQuery: () => ENVIRONMENTS_QUERY_RESULT,
   useGetEnvironmentConnectionsQuery: () => CONNECTIONS_QUERY_RESULT,
@@ -90,9 +90,10 @@ vi.mock('@meshery/schemas/permissions', () => ({
 // The RJSF form is not under test; expose a button that submits the payload the
 // real form would produce.
 vi.mock('../shared/Modal/Modal', () => ({
-  RJSFModalWrapper: ({ handleSubmit }: any) => (
+  RJSFModalWrapper: ({ handleSubmit, isSubmitting }: any) => (
     <button
       data-testid="submit-environment"
+      disabled={isSubmitting}
       onClick={() =>
         handleSubmit({ organizationId: 'org-1', name: 'prod', description: 'production' })
       }
