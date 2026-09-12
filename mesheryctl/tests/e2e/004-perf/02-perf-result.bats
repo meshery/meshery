@@ -5,7 +5,7 @@ setup() {
 	_load_bats_libraries
 }
 
-@test "mesheryctl perf result displays results with correct headers and at least 2 entries" {
+@test "[cut=Performance][tg=Performance Result] mesheryctl perf result displays results with correct headers and at least 2 entries" {
     run $MESHERYCTL_BIN perf result test-profile
 
     assert_success
