@@ -410,15 +410,16 @@ func matchComponentPairs(
 	fromKind := selectorItemKind(fromSel)
 	toKind := selectorItemKind(toSel)
 
-	for _, compFrom := range comps {
-		if !componentMatchesKind(compFrom, fromKind) {
-			continue
-		}
-		for _, compTo := range comps {
+	// Bucket by kind once instead of re-testing the kind of every candidate
+	// inside the inner loop, which made the kind check itself O(C^2).
+	// filterComponentsByKindTyped appends in slice order, so pair order is
+	// unchanged.
+	fromComps := filterComponentsByKindTyped(comps, fromKind)
+	toComps := filterComponentsByKindTyped(comps, toKind)
+
+	for _, compFrom := range fromComps {
+		for _, compTo := range toComps {
 			if compFrom.ID == compTo.ID {
-				continue
-			}
-			if !componentMatchesKind(compTo, toKind) {
 				continue
 			}
 			if !matchingMutators(compFrom, compTo, fromSel, toSel, design) {
