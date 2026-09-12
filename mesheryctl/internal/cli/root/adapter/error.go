@@ -38,7 +38,6 @@ const (
 	ErrCreatingValidateResponseRequestCode   = "mesheryctl-1030"
 	ErrTimeoutWaitingForValidateResponseCode = "mesheryctl-1031"
 	ErrSMIConformanceTestsFailedCode         = "mesheryctl-1032"
-	ErrValidateAdapterCode                   = "mesheryctl-1033"
 	ErrSendOperationCode                     = "mesheryctl-1034"
 	ErrValidMeshNameCode                     = "mesheryctl-1035"
 	ErrWaitValidateResponseCode              = "mesheryctl-1036"
@@ -143,14 +142,6 @@ func ErrCreatingValidateResponseStream(err error) error {
 		[]string{"Check your network connection and verify the status of the Meshery server with `mesheryctl system status`."})
 }
 
-func ErrValidatingAdapters(err error) error {
-	return errors.New(ErrValidateAdapterCode, errors.Fatal,
-		[]string{"Unable to validate adapter"},
-		[]string{err.Error()},
-		[]string{"Unable to fetch Mesh adapter, adapter not valid."},
-		[]string{"Enter a valid Mesh adapter."})
-}
-
 func ErrSendOperation(err error) error {
 	return errors.New(ErrSendOperationCode, errors.Alert,
 		[]string{"Unable to perform operation"},
@@ -191,8 +182,8 @@ func ErrAdapterNotFound(adapterURL string, availableAdapters []string) error {
 	return errors.New(ErrAdapterNotFoundCode, errors.Fatal,
 		[]string{"Unable to find the requested adapter"},
 		[]string{detail},
-		[]string{"The name given to --adapter is misspelled, or that adapter is not deployed and connected to Meshery Server."},
-		[]string{"Pass the name or the host:port location of a connected adapter to --adapter. Use `mesheryctl system status` to see which adapters are running."})
+		[]string{"The value given to --adapter matches neither the host nor the full location of a connected adapter, or that adapter is not deployed and connected to Meshery Server."},
+		[]string{"Pass the host (for example meshery-istio) or the full host:port location (for example meshery-istio:10000) of a connected adapter to --adapter. Mesh names such as ISTIO are not accepted. Use `mesheryctl system status` to see which adapters are running."})
 }
 
 // ErrAdapterMeshMismatch is returned when the mesh named positionally and the

@@ -45,7 +45,7 @@ var validateCmd = &cobra.Command{
 	Short: "Validate conformance to predefined standards",
 	Example: `
 // Validate conformance to predefined standards
-mesheryctl adapter validate [mesh name] --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
+mesheryctl adapter validate [mesh name] --adapter [adapter host or host:port location] --token [path to token for authentication] --spec [specification to be used for conformance test]
 
 // Validate Istio to predefined standards
 mesheryctl adapter validate istio --adapter meshery-istio --spec smi
@@ -83,7 +83,7 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 func init() {
 	validateCmd.Flags().StringVarP(&spec, "spec", "s", "smi", "(Required) specification to be used for conformance test (smi/istio-vet)")
 	_ = validateCmd.MarkFlagRequired("spec")
-	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-nsm", "(Required) Adapter to use for validation")
+	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "", "(Required) Adapter to use for validation, as its host (meshery-istio) or host:port location (meshery-istio:10000)")
 	_ = validateCmd.MarkFlagRequired("adapter")
 	validateCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 	validateCmd.Flags().BoolVarP(&watch, "watch", "w", false, "Watch for events and verify operation (in beta testing)")

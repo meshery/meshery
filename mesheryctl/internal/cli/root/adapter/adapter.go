@@ -52,6 +52,12 @@ var (
 				return cmd.Help()
 			}
 
+			// cobra validates required flags only after this hook, which would
+			// otherwise prompt for a mesh before reporting a missing --adapter
+			if err = cmd.ValidateRequiredFlags(); err != nil {
+				return err
+			}
+
 			// get the meshery config
 			mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
@@ -81,6 +87,7 @@ var (
 				return nil
 			}
 
+			// only deploy and remove reach here; validate requires --adapter
 			// verify the specified mesh is valid
 			// if no mesh was specified, the user will be prompted to select one
 			meshName, err = validateMesh(mctlCfg, meshName)
