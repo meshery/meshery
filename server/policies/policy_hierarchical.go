@@ -65,8 +65,5 @@ func (p *HierarchicalParentChildPolicy) IdentifyRelationship(relDef *relationshi
 }
 
 func (p *HierarchicalParentChildPolicy) SideEffects(rel *relationship.RelationshipDefinition, design *pattern.PatternFile) []PolicyAction {
-	if getRelStatus(rel) == StatusDeleted {
-		return nil
-	}
 	return patchMutatorsAction(rel, design)
 }

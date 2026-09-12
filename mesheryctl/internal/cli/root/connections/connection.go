@@ -6,7 +6,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/meshery/schemas/models/v1beta3/connection"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -22,7 +22,7 @@ var ConnectionsCmd = &cobra.Command{
 	Use:   "connection",
 	Short: "Manage Meshery connections",
 	Long: `View and manage your Meshery connection.
-Find more information at: https://docs.meshery.io/reference/mesheryctl/connection`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/connection`,
 	Example: `
 // Display total count of all available connections
 mesheryctl connection --count

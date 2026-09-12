@@ -1,6 +1,10 @@
-// @ts-nocheck
 import { createTheme } from '@sistent/sistent';
-import createCache from '@emotion/cache';
+import createCache, { EmotionCache } from '@emotion/cache';
+
+type PageContext = {
+  theme: ReturnType<typeof createTheme>;
+  emotionCache: EmotionCache;
+};
 
 // Create a custom theme
 const theme = createTheme({
@@ -12,16 +16,16 @@ const createEmotionCache = () => {
   return createCache({ key: 'css', prepend: true });
 };
 
-function createPageContext() {
+function createPageContext(): PageContext {
   return {
     theme,
     emotionCache: createEmotionCache(),
   };
 }
 
-let pageContext;
+let pageContext: PageContext | undefined;
 
-export default function getPageContext() {
+export default function getPageContext(): PageContext {
   // Make sure to create a new context for every server-side request
   if (typeof window === 'undefined') {
     return createPageContext();

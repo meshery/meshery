@@ -2,8 +2,85 @@ package handlers
 
 import (
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
+
+	"github.com/meshery/meshery/server/models/httputil"
+	meshkitutils "github.com/meshery/meshkit/utils"
 )
+
+// Response helpers
+// ----------------
+//
+// These four helpers are the canonical way to write an HTTP response from
+// server/handlers. Never use http.Error — it emits Content-Type: text/plain
+// which crashes RTK Query's default baseQuery on the UI (see
+// docs/content/en/project/contributing/error-contract.md).
+//
+// The real implementations live in server/models/httputil so both
+// server/handlers and server/models (and any future sibling) can call them
+// without an import cycle. These wrappers preserve the original unexported
+// identifiers so none of the ~150 existing call sites in this package had to
+// change during the migration.
+//
+// Reach for:
+//   - writeMeshkitError     — ANY error path. If err wraps a *meshkiterrors.Error
+//                             or *ErrorV2, the code/severity/cause/remediation
+//                             survive onto the wire. If it doesn't, the .Error()
+//                             string is still emitted as JSON.
+//   - writeJSONError        — error paths where the message is a bare string with
+//                             no MeshKit wrapper. Prefer promoting the string to
+//                             a MeshKit error and using writeMeshkitError instead.
+//   - writeJSONMessage      — success paths that return a small status or result
+//                             payload (e.g. {"message": "deleted"}).
+//   - writeJSONEmptyObject  — success paths that need to return an empty JSON
+//                             object ({}) with the Content-Type header set.
+
+func writeJSONError(w http.ResponseWriter, message string, status int) {
+	httputil.WriteJSONError(w, message, status)
+}
+
+func writeMeshkitError(w http.ResponseWriter, err error, status int) {
+	httputil.WriteMeshkitError(w, err, status)
+}
+
+func writeJSONMessage(w http.ResponseWriter, payload any, status int) {
+	httputil.WriteJSONMessage(w, payload, status)
+}
+
+func writeJSONEmptyObject(w http.ResponseWriter, status int) {
+	httputil.WriteJSONEmptyObject(w, status)
+}
+
+// providerStatus returns the HTTP status to surface for a failure that came
+// back from the provider layer.
+//
+// Handlers used to hardcode http.StatusNotFound on every provider error, so a
+// 403 from the remote provider reached the browser as a 404 - a response the
+// UI did not recognise as a failure at all, which is how a rejected "create
+// environment" produced a success toast. ErrFetch/ErrPost now tag the error
+// with the provider's real status (see models/httputil.WithProviderStatus);
+// this reads it back.
+//
+// The fallback is http.StatusBadGateway: when the provider never produced an
+// HTTP status the failure is still an upstream one (unreachable provider,
+// unsupported capability, unreadable response body), and 502 says that
+// honestly. It is never 404, because "not found" is a claim about the
+// resource that we have no evidence for.
+func providerStatus(err error) int {
+	return httputil.StatusForProviderError(err, http.StatusBadGateway)
+}
+
+// providerStatusOrInternal is providerStatus for a code path the *local*
+// provider also reaches. There the failure is a Meshery Server one - its own
+// database - and 502 would blame an upstream that was never involved, so the
+// fallback stays 500. A tagged provider status is still honoured, which is the
+// whole point of reading it back.
+func providerStatusOrInternal(err error) int {
+	return httputil.StatusForProviderError(err, http.StatusInternalServerError)
+}
 
 const (
 	defaultPageSize = 25
@@ -14,10 +91,16 @@ func getPaginationParams(req *http.Request) (page, offset, limit int, search, or
 
 	urlValues := req.URL.Query()
 	page, _ = strconv.Atoi(urlValues.Get("page"))
-	limitstr := urlValues.Get("pagesize")
+	// pageSize is the canonical camelCase wire param (schemas registry
+	// construct); pagesize is the legacy spelling still sent by
+	// pre-/api/registry clients.
+	limitstr := urlValues.Get("pageSize")
+	if limitstr == "" {
+		limitstr = urlValues.Get("pagesize")
+	}
 	if limitstr != "all" {
 		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 {
+		if limit <= 0 {
 			limit = defaultPageSize
 		}
 	}
@@ -51,26 +134,96 @@ func extractBoolQueryParams(r *http.Request, params ...string) (map[string]bool,
 	return result, nil
 }
 
-// TODO: Remone completely after confirm is no more needed
-// func getLatestKubeVersionFromRegistry(reg *registry.RegistryManager) string {
-// 	entities, _, _, _ := reg.GetEntities(&v1beta1.ModelFilter{
-// 		Name: "kubernetes",
-// 	})
+// allowedDirError signals that a requested path resolved outside every directory
+// the file endpoints may serve. A distinct sentinel type lets callers map it to
+// HTTP 400 while treating any other failure (a missing or unreadable file) as
+// HTTP 500, so a legitimate not-found is never reported as an attack. It is an
+// internal control-flow signal; the handler translates it into a structured
+// MeshKit error at the response boundary.
+type allowedDirError string
 
-// 	versions := []string{}
+func (e allowedDirError) Error() string { return string(e) }
 
-// 	for _, entity := range entities {
-// 		modelDef, err := utils.Cast[*model.ModelDefinition](entity)
-// 		if err != nil {
-// 			continue
-// 		}
-// 		versions = append(versions, modelDef.Model.Version)
-// 	}
-// 	if len(versions) == 0 {
-// 		return ""
-// 	}
+// errFileOutsideAllowedDirs is the sentinel returned by SafeOpenFile for a path
+// outside the allowed directories.
+const errFileOutsideAllowedDirs = allowedDirError("file path is outside allowed directories")
 
-// 	versions = utils.SortDottedStringsByDigits(versions)
+// allowedFileDirs returns the directories the fileView/fileDownload endpoints
+// are permitted to serve from. Only the Meshery registry log directory is
+// exposed: these endpoints exist solely to surface those logs, and broadening
+// the set to the whole home directory or os.TempDir() would let the
+// unauthenticated endpoints read the Meshery database, provider credentials, or
+// other processes' temporary files.
+//
+// Both home-directory derivations are included because the server writes these
+// logs through two different helpers whose results can diverge: registry-logs.log
+// via os.UserHomeDir() ($HOME) in cmd/main.go, and model-generation.log via
+// meshkit's GetHome() (the passwd entry). $HOME and the passwd home differ under
+// systemd units, sudo, or containers started with an explicit HOME.
+func allowedFileDirs() []string {
+	dirs := make([]string, 0, 2)
+	seen := make(map[string]bool, 2)
+	add := func(home string) {
+		if home == "" {
+			return
+		}
+		dir := filepath.Join(home, ".meshery", "logs")
+		if !seen[dir] {
+			seen[dir] = true
+			dirs = append(dirs, dir)
+		}
+	}
+	// A failed home lookup only drops that one entry; it must not disable the
+	// remaining allowed directories.
+	if home, err := os.UserHomeDir(); err == nil {
+		add(home)
+	}
+	add(meshkitutils.GetHome())
+	return dirs
+}
 
-// 	return versions[0]
-// }
+// SafeOpenFile opens providedPath for reading, but only when it resolves to a
+// file inside one of the allowedFileDirs. The file is opened through os.Root so
+// that ".." components and symlinks cannot escape the allowed directory, and so
+// that validation and open are a single operation with no time-of-check/
+// time-of-use gap (validating a path string that the caller later re-opens lets
+// a component be swapped for a symlink in between). The caller owns the returned
+// *os.File and must close it.
+func SafeOpenFile(providedPath string) (*os.File, error) {
+	if providedPath == "" {
+		return nil, errFileOutsideAllowedDirs
+	}
+
+	// filepath.Abs applies filepath.Clean, lexically resolving any ".." elements
+	// up front, so no separate substring check is needed.
+	absPath, err := filepath.Abs(providedPath)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, dir := range allowedFileDirs() {
+		rel, err := filepath.Rel(dir, absPath)
+		if err != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(os.PathSeparator)) {
+			continue // absPath is not inside this directory
+		}
+
+		root, err := os.OpenRoot(dir)
+		if err != nil {
+			continue // directory is missing or not a directory
+		}
+		// os.Root confines the open to dir: a rel that escapes via ".." or a
+		// symlink pointing outside dir fails here instead of being followed. The
+		// returned file remains valid after the root is closed.
+		file, err := root.Open(rel)
+		_ = root.Close()
+		if err != nil {
+			// Inside an allowed dir but not openable (missing, unreadable, or a
+			// symlink escaping the root). Never serve it; surface a read error
+			// rather than an out-of-bounds rejection.
+			return nil, err
+		}
+		return file, nil
+	}
+
+	return nil, errFileOutsideAllowedDirs
+}

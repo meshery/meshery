@@ -1,7 +1,7 @@
 ---
 title: Thanos
 subtitle: Collaborative and visual infrastructure as design for Thanos
-image: /extensions/models/thanos/icons/color/thanos-color.svg
+image: extensions/models/thanos/icons/color/thanos-color.svg
 aliases: /extensibility/integrations/thanos
 docURL: https://docs.meshery.io/extensibility/integrations/thanos
 description: 

@@ -7,10 +7,10 @@
       "sub_type": "orchestrator",
       "kind": "kubernetes",
       "metadata": {
-        "deployment_type": "",
+        "deploymentType": "",
         "id": "96f33ba3-3a05-4810-91d2-7fa87cd06c24",
-        "kubernetes_server_id": "5a47f66d-392a-47f0-bf9d-ae4409bc526d",
-        "meshery_instance_id": "a1312e10-8c75-4558-8e75-ab1b8791dc39",
+        "kubernetesServerId": "5a47f66d-392a-47f0-bf9d-ae4409bc526d",
+        "mesheryInstanceId": "a1312e10-8c75-4558-8e75-ab1b8791dc39",
         "name": "minikube",
         "server": "https://localhost",
         "version": "v1.31.0"

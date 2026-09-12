@@ -14,11 +14,7 @@ links:
 readme: "For detailed considerations on each relationship type, refer to the corresponding individual published designs. These designs provide in-depth insights into best practices, configuration strategies, and potential impacts for each type of relationship. \n ##h4 Caveats and Consideration \n"
 install: mesheryctl design import -f
 provider:
-    name: 7cc3290b-9c57-4f93-8fb0-dbc5664c95a1
+    name: cf6aabe7-a397-444a-a087-eebad74c58cc
 screenshots:
-    - title: MeshMap Snapshot
-      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/7b717cb2-24a1-4f4a-976e-ef1c9a982696-light.png
-    - title: MeshMap Snapshot
-      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/7b717cb2-24a1-4f4a-976e-ef1c9a982696-dark.png
     - title: Meshery Project
       url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

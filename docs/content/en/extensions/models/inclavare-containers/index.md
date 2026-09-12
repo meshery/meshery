@@ -1,7 +1,7 @@
 ---
 title: Inclavare Containers
 subtitle: Collaborative and visual infrastructure as design for Inclavare Containers
-image: /extensions/models/inclavare-containers/icons/color/inclavare-containers-color.svg
+image: extensions/models/inclavare-containers/icons/color/inclavare-containers-color.svg
 aliases: /extensibility/integrations/inclavare-containers
 docURL: https://docs.meshery.io/extensibility/integrations/inclavare containers
 description: 

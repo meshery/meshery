@@ -1,7 +1,7 @@
 ---
 title: BFE
 subtitle: Collaborative and visual infrastructure as design for BFE
-image: /extensions/models/bfe/icons/color/bfe-color.svg
+image: extensions/models/bfe/icons/color/bfe-color.svg
 aliases: /extensibility/integrations/bfe
 docURL: https://docs.meshery.io/extensibility/integrations/bfe
 description: 

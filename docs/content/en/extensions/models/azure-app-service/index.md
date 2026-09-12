@@ -1,7 +1,7 @@
 ---
 title: Azure App Service
 subtitle: Collaborative and visual infrastructure as design for Azure App Service
-image: /extensions/models/azure-app-service/icons/color/azure-app-service-color.svg
+image: extensions/models/azure-app-service/icons/color/azure-app-service-color.svg
 aliases: /extensibility/integrations/azure-app-service
 docURL: https://docs.meshery.io/extensibility/integrations/azure-app-service
 description: 
@@ -10,20 +10,20 @@ integrations-subcategory: App Integration
 registrant: GitHub
 components: 
 - name: auth-config
-  colorIcon: content/en/extensions/models/azure-app-service/components/auth-config/icons/color/auth-config-color.svg
-  whiteIcon: content/en/extensions/models/azure-app-service/components/auth-config/icons/white/auth-config-white.svg
+  colorIcon: extensions/models/azure-app-service/components/auth-config/icons/color/auth-config-color.svg
+  whiteIcon: extensions/models/azure-app-service/components/auth-config/icons/white/auth-config-white.svg
   description: 
 - name: container-app
-  colorIcon: content/en/extensions/models/azure-app-service/components/container-app/icons/color/container-app-color.svg
-  whiteIcon: content/en/extensions/models/azure-app-service/components/container-app/icons/white/container-app-white.svg
+  colorIcon: extensions/models/azure-app-service/components/container-app/icons/color/container-app-color.svg
+  whiteIcon: extensions/models/azure-app-service/components/container-app/icons/white/container-app-white.svg
   description: 
 - name: job
-  colorIcon: content/en/extensions/models/azure-app-service/components/job/icons/color/job-color.svg
-  whiteIcon: content/en/extensions/models/azure-app-service/components/job/icons/white/job-white.svg
+  colorIcon: extensions/models/azure-app-service/components/job/icons/color/job-color.svg
+  whiteIcon: extensions/models/azure-app-service/components/job/icons/white/job-white.svg
   description: 
 - name: managed-environment
-  colorIcon: content/en/extensions/models/azure-app-service/components/managed-environment/icons/color/managed-environment-color.svg
-  whiteIcon: content/en/extensions/models/azure-app-service/components/managed-environment/icons/white/managed-environment-white.svg
+  colorIcon: extensions/models/azure-app-service/components/managed-environment/icons/color/managed-environment-color.svg
+  whiteIcon: extensions/models/azure-app-service/components/managed-environment/icons/white/managed-environment-white.svg
   description: 
 components-count: 4
 relationships: 

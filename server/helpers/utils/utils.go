@@ -16,8 +16,8 @@ import (
 
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/utils"
-	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta3/component"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"gorm.io/gorm"
@@ -32,6 +32,31 @@ const (
 	RegistryLocation      = ".meshery/models"
 	DefVersion            = "1.0.0"
 )
+
+// SplitAndTrim splits s on any rune that appears in delims, trims whitespace
+// from each resulting field, and discards empty entries. Use this when reading
+// delimited values from an environment variable via viper.GetString:
+// viper.GetStringSlice does not split a single delimited env-var value into
+// multiple slice entries when AutomaticEnv is enabled, so the whole string
+// flows through as one element. Pass the full set of expected separator
+// characters — e.g. ", \t\n\r" — to accept either comma-separated or
+// whitespace-separated configurations, which both forms appear across the
+// Meshery manifests in install/.
+func SplitAndTrim(s, delims string) []string {
+	if s == "" {
+		return nil
+	}
+	fields := strings.FieldsFunc(s, func(r rune) bool {
+		return strings.ContainsRune(delims, r)
+	})
+	out := make([]string, 0, len(fields))
+	for _, f := range fields {
+		if f = strings.TrimSpace(f); f != "" {
+			out = append(out, f)
+		}
+	}
+	return out
+}
 
 // RecursiveCastMapStringInterfaceToMapStringInterface will convert a
 // map[string]interface{} recursively => map[string]interface{}
@@ -121,18 +146,6 @@ func ToMapStringInterface(mp interface{}) map[string]interface{} {
 	}
 
 	return res
-}
-
-func IsClosed[K any](ch chan K) bool {
-	if ch == nil {
-		return true
-	}
-	select {
-	case <-ch:
-		return true
-	default:
-	}
-	return false
 }
 
 const UI = "../../ui/public/static/img/meshmodels" //Relative to cmd/main.go
@@ -313,7 +326,7 @@ func GetComponentFieldPathFromK8sFieldPath(path string) (newpath string) {
 	return fmt.Sprintf("%s.%s", "settings", path)
 }
 
-// Prunes the diff part present in the k8s response message.
+// FormatK8sMessage prunes the diff part present in the k8s response message.
 // Diff corresponds to the previous change and applied change, and doesn't contain any info which can be helpful to the user.
 // If we want we can show this in a CodeEditor component.
 func FormatK8sMessage(message string) string {

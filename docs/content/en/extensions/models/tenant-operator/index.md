@@ -1,7 +1,7 @@
 ---
 title: Tenant Operator
 subtitle: Collaborative and visual infrastructure as design for Tenant Operator
-image: /extensions/models/tenant-operator/icons/color/tenant-operator-color.svg
+image: extensions/models/tenant-operator/icons/color/tenant-operator-color.svg
 aliases: /extensibility/integrations/tenant-operator
 docURL: https://docs.meshery.io/extensibility/integrations/tenant-operator
 description: 
@@ -10,32 +10,32 @@ integrations-subcategory: Kubernetes
 registrant: Artifact Hub
 components: 
 - name: integration-config
-  colorIcon: content/en/extensions/models/tenant-operator/components/integration-config/icons/color/integration-config-color.svg
-  whiteIcon: content/en/extensions/models/tenant-operator/components/integration-config/icons/white/integration-config-white.svg
+  colorIcon: extensions/models/tenant-operator/components/integration-config/icons/color/integration-config-color.svg
+  whiteIcon: extensions/models/tenant-operator/components/integration-config/icons/white/integration-config-white.svg
   description: 
 - name: quota
-  colorIcon: content/en/extensions/models/tenant-operator/components/quota/icons/color/quota-color.svg
-  whiteIcon: content/en/extensions/models/tenant-operator/components/quota/icons/white/quota-white.svg
+  colorIcon: extensions/models/tenant-operator/components/quota/icons/color/quota-color.svg
+  whiteIcon: extensions/models/tenant-operator/components/quota/icons/white/quota-white.svg
   description: 
 - name: resource-supervisor
-  colorIcon: content/en/extensions/models/tenant-operator/components/resource-supervisor/icons/color/resource-supervisor-color.svg
-  whiteIcon: content/en/extensions/models/tenant-operator/components/resource-supervisor/icons/white/resource-supervisor-white.svg
+  colorIcon: extensions/models/tenant-operator/components/resource-supervisor/icons/color/resource-supervisor-color.svg
+  whiteIcon: extensions/models/tenant-operator/components/resource-supervisor/icons/white/resource-supervisor-white.svg
   description: 
 - name: template-group-instance
-  colorIcon: content/en/extensions/models/tenant-operator/components/template-group-instance/icons/color/template-group-instance-color.svg
-  whiteIcon: content/en/extensions/models/tenant-operator/components/template-group-instance/icons/white/template-group-instance-white.svg
+  colorIcon: extensions/models/tenant-operator/components/template-group-instance/icons/color/template-group-instance-color.svg
+  whiteIcon: extensions/models/tenant-operator/components/template-group-instance/icons/white/template-group-instance-white.svg
   description: 
 - name: template-instance
-  colorIcon: content/en/extensions/models/tenant-operator/components/template-instance/icons/color/template-instance-color.svg
-  whiteIcon: content/en/extensions/models/tenant-operator/components/template-instance/icons/white/template-instance-white.svg
+  colorIcon: extensions/models/tenant-operator/components/template-instance/icons/color/template-instance-color.svg
+  whiteIcon: extensions/models/tenant-operator/components/template-instance/icons/white/template-instance-white.svg
   description: 
 - name: template
-  colorIcon: content/en/extensions/models/tenant-operator/components/template/icons/color/template-color.svg
-  whiteIcon: content/en/extensions/models/tenant-operator/components/template/icons/white/template-white.svg
+  colorIcon: extensions/models/tenant-operator/components/template/icons/color/template-color.svg
+  whiteIcon: extensions/models/tenant-operator/components/template/icons/white/template-white.svg
   description: 
 - name: tenant
-  colorIcon: content/en/extensions/models/tenant-operator/components/tenant/icons/color/tenant-color.svg
-  whiteIcon: content/en/extensions/models/tenant-operator/components/tenant/icons/white/tenant-white.svg
+  colorIcon: extensions/models/tenant-operator/components/tenant/icons/color/tenant-color.svg
+  whiteIcon: extensions/models/tenant-operator/components/tenant/icons/white/tenant-white.svg
   description: 
 components-count: 7
 relationships: 

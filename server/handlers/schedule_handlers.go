@@ -23,11 +23,9 @@ func (h *Handler) SaveScheduleHandler(
 
 	var parsedBody *models.Schedule
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
-		rw.WriteHeader(http.StatusBadRequest)
 		//failed to read request body
-		//fmt.Fprintf(rw, ErrRequestBody(err).Error(), err)
 		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
@@ -35,7 +33,7 @@ func (h *Handler) SaveScheduleHandler(
 	if err != nil {
 		//failed to get user token
 		h.log.Error(ErrRetrieveUserToken(err))
-		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 
 		return
 	}
@@ -45,7 +43,7 @@ func (h *Handler) SaveScheduleHandler(
 		obj := "schedule"
 		//Failed to save the schedule
 		h.log.Error(ErrFailToSave(err, obj))
-		http.Error(rw, ErrFailToSave(err, obj).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrFailToSave(err, obj), http.StatusInternalServerError)
 
 		return
 	}
@@ -70,7 +68,7 @@ func (h *Handler) GetSchedulesHandler(
 		obj := "schedules"
 		//unable to get schedules
 		h.log.Error(ErrQueryGet(obj))
-		http.Error(rw, ErrQueryGet(obj).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrQueryGet(obj), http.StatusInternalServerError)
 		return
 	}
 
@@ -95,7 +93,7 @@ func (h *Handler) DeleteScheduleHandler(
 		obj := "schedule"
 		//unable to delete schedules
 		h.log.Error(ErrFailToDelete(err, obj))
-		http.Error(rw, ErrFailToDelete(err, obj).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrFailToDelete(err, obj), http.StatusInternalServerError)
 		return
 	}
 
@@ -120,7 +118,7 @@ func (h *Handler) GetScheduleHandler(
 		obj := "schedule"
 		//failed to get schedules
 		h.log.Error(ErrQueryGet(obj))
-		http.Error(rw, ErrQueryGet(obj).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrQueryGet(obj), http.StatusInternalServerError)
 		return
 	}
 

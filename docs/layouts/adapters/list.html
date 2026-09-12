@@ -6,7 +6,7 @@
     {{ range where .Site.Pages "Type" "adapters" }}
     {{ if .Params.image }}
     <tr>
-      <td><img src="{{ .Params.image }}" style="width:20px" /> <a href="{{ .Permalink }}">{{ .Params.name }}</a></td>
+      <td><img src="{{ .Params.image | relURL }}" style="width:20px" /> <a href="{{ .RelPermalink }}">{{ .Params.name }}</a></td>
       <td>{{ .Params.earliest_version }}</td>
     </tr>
     {{ end }}

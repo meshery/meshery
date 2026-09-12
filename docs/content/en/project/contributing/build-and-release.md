@@ -14,7 +14,7 @@ Meshery’s build and release system incorporates many tools, organized into dif
 Today, Meshery and Meshery adapters are released as Docker container images, available on Docker Hub. Meshery adapters are out-of-process adapters (meaning not compiled into the main Meshery binary), and as such, are independent build artifacts and Helm charts. The Docker images are created and tagged with the git commit SHA, then pushed to Docker Hub automatically using GitHub Actions. Subsequently, when contributions containing content for the Helm charts of Meshery and Meshery Adapter are linted and merged, they will be pushed and released to [meshery.io](https://github.com/meshery/meshery.io) Github page by GitHub Action automatically.
 
 All repositories under the `github.com/meshery` and `github.com/meshery-extensions` organizations use immutable releases.
-<img width="954" height="166" alt="immutable-releases-setting" src="https://github.com/user-attachments/assets/4435086f-db09-449e-a154-70979b8b01d1" />
+<img class="content-image" alt="GitHub Immutable Releases Setting" src="https://github.com/user-attachments/assets/4435086f-db09-449e-a154-70979b8b01d1" />
 
 
 ### Artifact Repositories
@@ -49,11 +49,11 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 - `METAL_AUTH_TOKEN`: Authentication token for metal provider
 - `METAL_SERVER1`: Configuration for metal server 1
 - `PLAYGROUND_CONFIG`: Configuration for playground environments
-- `PROVIDER_TOKEN`: General provider authentication token
-- `RELEASEDRAFTER_PAT`: Personal access token for Release Drafter
-- `RELEASEDRAFTER_PAT`: Personal access token for release notes generation
+- `PROVIDER_TOKEN`: Legacy static remote-provider token, last refreshed 2024-03-08 and expired. Do not use it to authenticate against a remote provider - use `REMOTE_PROVIDER_TEST_USER_TOKEN`. Still referenced by the adapter workflows (`e2etest.yaml`, `mesheryctl-e2e.yaml`).
+- `RELEASEDRAFTER_PAT`: Personal access token for Release Drafter, used for release notes generation
+- `REMOTE_PROVIDER_TEST_USER_TOKEN`: Maintained session token for the purpose-built remote-provider CI test user. This is the token the E2E workflow (`test-e2e.yml`, as `PROVIDER_TOKEN`) and the mesheryctl BATS suite (`mesheryctl-e2e.yaml`, as `MESHERY_PROVIDER_TOKEN`) authenticate with.
 - `REMOTE_PROVIDER_USER_EMAIL`: Email used for authentication in Playwright tests
-- `REMOTE_PROVIDER_USER_PASS`: Password used for authentication in Playwright tests
+- `REMOTE_PROVIDER_USER_PASS`: Password used for authentication in Playwright tests. Note that `ui/tests/e2e/env.js` reads `REMOTE_PROVIDER_USER_PASSWORD`, so this secret's name does not match the variable it would have to fill; the email/password path is consequently not wired into CI, which authenticates by token instead.
 
 The Docker Hub user, `mesheryci`, belongs to the "ciusers" team in Docker Hub and acts as the service account under which these automated builds are being pushed. Every time a new Docker Hub repository is created we have to grant “Admin” (in order to update the README in the Docker Hub repository) permissions to the ciusers team.
 
@@ -73,6 +73,37 @@ Collectively, Meshery repositories will generally have CI workflow for commits a
 - Docker build, tag and push
 - Helm charts lint (helm)
 - Helm charts release, tag and push(stefanprodan/helm-gh-pages@master)
+
+### Test result reporting (QA dashboard)
+
+Test results from across the Meshery ecosystem are published as [Allure](https://allurereport.org/) reports on the QA dashboard at [qa.meshery.io](https://qa.meshery.io). CI in each repository converts its test output to Allure results and commits them to the [`meshery/qa`](https://github.com/meshery/qa) repository, which regenerates and deploys the dashboard via GitHub Pages. Each report on the dashboard (Meshery, Mesheryctl, Kubernetes Connections, and extension reports) is a filtered view over one shared pool of results, selected by the **labels** on each result.
+
+Result labels are injected at each test source:
+
+- **UI (Playwright):** global labels via `ALLURE_LABEL_<name>=<value>` (see `ui/package.json`), Playwright `@tag`s (surfaced as `tag` labels), and per-test `allure.label()` from `allure-playwright`'s runtime API.
+- **CLI / server (Go, BATS):** the `ALLURE_LABELS="key=value,..."` env var consumed by `mesheryctl/bats-to-allure.js` and `server/gotest-to-allure.js`.
+
+#### Test Group tagging contract (Connection Lifecycle)
+
+Reports on the QA dashboard are **keyed on the Test Plan Test Group** (the [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit) "Latest" tab, **column B**), emitted as the `testGroup` label. Any Test Group can drive its own filtered `meshery/qa` report; the **Connection Lifecycle** report is the first consumer, aggregating connection tests from both the UI and the CLI.
+
+The "Latest" tab columns are: **A = Test #, B = Test Group, C = Client, D = Component Under Test.** A connection test MUST carry these labels (the shared, cross-client contract - use these exact names so both clients group together and the report filter matches):
+
+| Label | Source (Test Plan) | Values | Purpose |
+| --- | --- | --- | --- |
+| `testGroup` | column B ("Test Group") | e.g. `Connection Lifecycle` | Report filter key |
+| `testId` | column A ("Test #") | `TC-<n>` | Stable per-behavior id |
+| `client` | column C ("Client") | `UI` or `CLI` | Groups results by which client exercised the behavior |
+| `componentUnderTest` | column D ("Component Under Test") | e.g. `Kubernetes Connection` | Component grouping |
+| `epic` | - | `Kubernetes Connections` (constant) | Legacy/transitional filter key (see below) |
+
+The report keys on `testGroup`, so tagged tests still appear in their `project` report (Meshery or Mesheryctl); the Connection Lifecycle report is an additional lens, not a relocation. **Transitional:** results carrying no `testGroup` label are still matched via the legacy `epic` (with a `componentUnderTest` fallback) selector, so results predating the `testGroup` label remain visible; this fallback drops once every connection result carries `testGroup`. The full token-to-label mapping lives in the [`mesheryctl/bats-to-allure.js`](https://github.com/meshery/meshery/blob/master/mesheryctl/bats-to-allure.js) header (CLI `[tg=...]`/`[cut=...]` tokens) and `ui/tests/e2e/connections.testmap.ts` (UI).
+
+**Row deep-link.** Each connection result also carries an Allure `tms` **link** ("Test Plan TC-\<n\>") that opens that test's exact row on the "Latest" tab, so a reviewer can click from a report test back to its source case. Both lanes derive the row from the Test # by the same fixed offset (`ROW = TestNum - 778`) encoding the *current* tab layout; the offset lives - with a prominent regenerate-if-re-sorted caveat - in `mesheryctl/bats-to-allure.js` (CLI) and `ui/tests/e2e/connections.testmap.ts` (UI), and the two MUST stay in lockstep.
+
+**Failure evidence.** A failed test carries its captured run output in the report, not just the assertion line. The CLI lane runs BATS with `--print-output-on-failure` and the converter attaches the captured `mesheryctl` transcript (`statusDetails` message + trace, plus a "CLI output (bats)" text attachment); the UI lane runs Playwright with `trace`, `screenshot`, and `video` all `retain-on-failure`, which the `allure-playwright` reporter attaches to each failed result alongside the error and stack.
+
+> The `mesheryctl` BATS e2e results and Go unit results are committed to separate directories (`mesheryctl-bats-results/` and `mesheryctl-unit-results/`) in `meshery/qa` and merged at report-build time, so the two feeders no longer overwrite each other.
 
 ### UI Build System
 
@@ -113,6 +144,25 @@ tests in adapters are end-to-end tests and use patternfile. The reusable workflo
       ...
       secrets:
         token: ${{ secrets.PROVIDER_TOKEN }}
+
+#### Two traps when calling a Meshery reusable workflow
+
+Both of these fail silently - the workflow runs and reports success while doing nothing you
+expected - so they are worth checking before you debug anything else:
+
+1. **A `with:` value is not evaluated by a shell.** Only `${{ ... }}` expressions are evaluated; shell-style expansions such as `${GITHUB_SHA}` or `${GITHUB_REF/refs\/tags\//}` in a `with:` value are
+   forwarded to the workflow verbatim, because nothing ever evaluates them. Use
+   `${{ github.sha }}` or `${{ github.ref_name }}` instead. The same expansion inside a `run:`
+   step is correct, because a shell evaluates it there.
+2. **A job guarded by `if: github.repository == 'meshery/meshery'` never runs for you.** In a
+   reusable workflow the `github` context belongs to the *caller*, so that condition is false
+   from any other repository. The adapter workflows described above carry no such guard, so
+   this does not affect them; it is a caveat for the other reusable workflows in
+   `meshery/meshery`, notably the CNCF Playground deployments.
+
+Contributors changing a shared workflow should also read the "Reusable Workflows Consumed by
+Other Repos" section of [`AGENTS.md`](https://github.com/meshery/meshery/blob/master/AGENTS.md)
+in the repository root.
 
 ### Functionality of Central Workflow
 
@@ -211,7 +261,7 @@ GoReleaser facilitates the creation of a brew formula for mesheryctl. The [homeb
 
 ##### Scoop
 
-GoReleaser facilitates the creation of a Scoop app for mesheryctl. The [scoop-bucket](https://github.com/layer5io/scoop-bucket) repository is the location of Meshery’s Scoop bucket.
+GoReleaser facilitates the creation of a Scoop app for mesheryctl. The [scoop-bucket](https://github.com/meshery/scoop-bucket) repository is the location of Meshery’s Scoop bucket.
 
 ## Helm Charts Lint Check, Build, and Release
 
@@ -220,6 +270,8 @@ The charts lint check, charts build, and charts release workflows are all trigge
 ### Check Helm Charts
 
 Every PR which includes changes to the files under `install/kubernetes/` directory in the `meshery/meshery` will trigger a Github Action to check for any mistakes in Helm charts using the `helm lint` command.
+
+The same job additionally runs `install/scripts/check-operator-chart-appversions.sh`, which fails the PR when the `meshery-operator` chart and its `meshery-broker` and `meshery-meshsync` subcharts advertise different `appVersion` values. `helm lint` does not compare a parent chart's `appVersion` with its subcharts', so a subchart left behind on an older operator release passes lint while advertising an application it was never published alongside. Run the same check locally with `make helm-operator-lint`; the script's header explains what it accepts and why.
 
 ### Release Helm Charts to Github and Artifact Hub
 
@@ -236,7 +288,7 @@ Meshery and its components follow the commonly used, semantic versioning for its
 
 ### Component Versioning
 
-Meshery comprises a number of components including a server, adapters, UI, and CLI. As an application, Meshery is a composition of these different functional components. While all of Meshery’s components generally deploy as a collective unit (together), each component is versioned independently, so as to allow them to be loosely coupled and iterate on functionality independently. Some of the components must be upgraded simultaneously, while others may be upgraded independently. See [Upgrading Meshery](/installation/upgrades) for more information.
+Meshery comprises a number of components including a server, adapters, UI, and CLI. As an application, Meshery is a composition of these different functional components. While all of Meshery’s components generally deploy as a collective unit (together), each component is versioned independently, so as to allow them to be loosely coupled and iterate on functionality independently. Some of the components must be upgraded simultaneously, while others may be upgraded independently. See [Upgrading Meshery]({{< ref "installation/upgrades/index.md" >}}) for more information.
 
 GitHub release tags will contain a semantic version number. Semantic version numbers will have to be managed manually by tagging a relevant commit in the master branch with a semantic version number (example: v1.2.3).
 
@@ -443,52 +495,39 @@ The different types (Daily, Stable, LTS) represent different product quality lev
 
 ## Versioning Documentation
 
-### For new major release
+The Meshery documentation site is built with [Hugo](https://gohugo.io/) using the [Docsy](https://www.docsy.dev/) theme. Hugo content lives under `docs/content/en/`, and the rendered site is published from the `master` branch via the docs site workflow. There is no longer a Jekyll/Bundler step or per-version `_site` checkout — Hugo serves the live docs directly from the content tree on `master`, and historical versions are accessible via the GitHub repository's release tags (no static-HTML snapshots are produced as part of the release process).
 
-The structure which the docs follow right now is, The main `docs` folder has the most recent version of documentation, while there are sub-folders for previous versions, v0.x (x being the last major release).
-On release of a new major version, the static html files for the most recent version is generated and is renamed as the release version (v0.x).
+### For a new major release
 
-##### Steps:
+When a new major version is cut:
 
-After cloning the Meshery repository
+1. Update the version metadata in `docs/config.toml` (or the corresponding Hugo `params` block) so the site footer and version selector reflect the new release line.
+1. Add or update the release notes file at `docs/content/en/project/releases/<version>.md` (one file per release; the [release-flow workflow](https://github.com/meshery/meshery/actions) drafts these for maintainer review).
+1. If deprecating a docs section, mark the affected page with `aliases:` / `expiryDate:` in its front matter so Hugo emits redirects rather than 404s.
+1. To preview locally, install Hugo (extended) and run `make docs` from the repo root — the Makefile target wraps `hugo server` with the project's content path.
 
-1. `cd docs` > `bundle install` > `make docs`
-1. On executing `make docs` a `_site` folder is created which has static html files.
-1. The `_site` folder is renamed to `v0.x`.
-1. This `v0.x` folder is now the latest version of docs.
+### For an older release
 
-##### _In the `v0.x` folder_
-
-1. Search and replace all the instances where there is a direct path is defined to include the version name in the path, i.e, all paths to intra-page links and images should start with `/v0.x/`.
-
-- Look for `href="/` and replace with `href="/0.x/`
-- Look for `src="/`and replace with `src="/0.x/` <br/><br/>
-  <a href="/project/contributing/images/search-and-replace.png">
-  <img src="/project/contributing/images/search-and-replace.png" />
-  </a>
-
-### For old release
-
-For older releases we have to travel back in time. Using the `Tags` in github we go to a previous release, `v0.X.x`, the `.x` here should be the latest version of the archived docs.
-
-##### Steps:
-
-1. Copy the commit ID for that release. <br/><br/>
-   <a href="/project/contributing/images/commit-ID.png">
-   <img src="/project/contributing/images/commit-ID.png" />
-   </a>
-
-1. `git checkout <commit ID>` > `cd docs` > `bundle install` > `make docs`
-1. On executing `make docs` a `_site` folder is created which has static html files.
-1. The `_site` folder is renamed to `v0.X` and is copied into the `docs` folder of the present version.
+To browse the docs as they existed at a previous release tag, navigate to the `meshery/meshery` repository on GitHub, switch to the desired release tag (e.g. `v1.0.14`), and view `docs/content/en/` directly. The site does not host per-tag static archives; the GitHub source tree at the tagged commit is the canonical historical view.
 
 ## Bi-Weekly Meetings
 
 If you are passionate about CI/CD pipelines, DevOps, automated testing, managing deployments, or if you want to learn how to use Meshery and its features, you are invited to join the bi-weekly Build and Release meetings. Find meeting details and agenda in the [community calendar](https://meshery.io/calendar) and the [meeting minutes document](https://docs.google.com/document/d/1GrVdGHZAYeu6wHNLLoiaKNqBtk7enXE9XeDRCvdA4bY/edit#). The meetings are open to everyone and recorded for later viewing. We hope to see you there!
 
-<div class="training-video">
-  <iframe width="560" height="315"
-    src="https://www.youtube.com/embed/dlr_nzJV16Q"
-    title="Training Video" frameborder="0" allowfullscreen>
-  </iframe>
-</div>
+Note: This biweekly meeting series is currently on hiatus. We'll share an update when it resumes. Thank you for your patience!
+  
+
+{{< youtube id="dlr_nzJV16Q" class="yt-embed-container training-video" >}}
+
+## Cutting a release
+
+Meshery has **no automatic release cadence**. Release Drafter keeps exactly one draft release current on every push to `master`. Publishing that draft creates the `v*` tag, and that tag is what fires `build-and-release-stable.yml` and its fan-out.
+
+Follow `.agents/skills/cut-release/SKILL.md`. Never hand-author a tag or release notes - the version tag is already set by Release Drafter and auto-increments after each release.
+
+### Publication is not proven by a zero exit code
+
+`gh release edit --draft=false` can exit 0 and leave the release a draft; this was observed while cutting v1.0.65. Publication is proven only by:
+
+1. Re-reading the release and seeing `draft: false` **and** a non-null `published_at`.
+2. The release-triggered workflow runs actually appearing.

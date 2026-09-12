@@ -1,7 +1,7 @@
 ---
 title: SPIFFE
 subtitle: Collaborative and visual infrastructure as design for SPIFFE
-image: /extensions/models/spiffe/icons/color/spiffe-color.svg
+image: extensions/models/spiffe/icons/color/spiffe-color.svg
 aliases: /extensibility/integrations/spiffe
 docURL: https://docs.meshery.io/extensibility/integrations/spiffe
 description: 

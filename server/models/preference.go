@@ -2,46 +2,24 @@ package models
 
 import (
 	"encoding/gob"
+	"encoding/json"
 	"time"
-
-	"github.com/grafana-tools/sdk"
 )
 
 // K8SNode - represents a kubernetes node
 type K8SNode struct {
-	InternalIP              string `json:"internal_ip,omitempty"`
+	InternalIP              string `json:"internalIp,omitempty"`
 	HostName                string `json:"hostname,omitempty"`
-	AllocatableCPU          string `json:"allocatable_cpu,omitempty"`
-	AllocatableMemory       string `json:"allocatable_memory,omitempty"`
-	CapacityCPU             string `json:"capacity_cpu,omitempty"`
-	CapacityMemory          string `json:"capacity_memory,omitempty"`
-	OSImage                 string `json:"os_image,omitempty"`
-	OperatingSystem         string `json:"operating_system,omitempty"`
-	KubeletVersion          string `json:"kubelet_version,omitempty"`
-	KubeProxyVersion        string `json:"kubeproxy_version,omitempty"`
-	ContainerRuntimeVersion string `json:"container_runtime_version,omitempty"`
+	AllocatableCPU          string `json:"allocatableCpu,omitempty"`
+	AllocatableMemory       string `json:"allocatableMemory,omitempty"`
+	CapacityCPU             string `json:"capacityCpu,omitempty"`
+	CapacityMemory          string `json:"capacityMemory,omitempty"`
+	OSImage                 string `json:"osImage,omitempty"`
+	OperatingSystem         string `json:"operatingSystem,omitempty"`
+	KubeletVersion          string `json:"kubeletVersion,omitempty"`
+	KubeProxyVersion        string `json:"kubeproxyVersion,omitempty"`
+	ContainerRuntimeVersion string `json:"containerRuntimeVersion,omitempty"`
 	Architecture            string `json:"architecture,omitempty"`
-}
-
-// Grafana represents the Grafana session config
-type Grafana struct {
-	GrafanaURL    string `json:"grafanaURL,omitempty"`
-	GrafanaAPIKey string `json:"grafanaAPIKey,omitempty"`
-	// GrafanaBoardSearch string          `json:"grafanaBoardSearch,omitempty"`
-	GrafanaBoards []*SelectedGrafanaConfig `json:"selectedBoardsConfigs,omitempty"`
-}
-
-// SelectedGrafanaConfig represents the selected boards, panels, and template variables
-type SelectedGrafanaConfig struct {
-	GrafanaBoard         *GrafanaBoard `json:"board,omitempty"`
-	GrafanaPanels        []*sdk.Panel  `json:"panels,omitempty"`
-	SelectedTemplateVars []string      `json:"templateVars,omitempty"`
-}
-
-// Prometheus represents the prometheus session config
-type Prometheus struct {
-	PrometheusURL                   string                   `json:"prometheusURL,omitempty"`
-	SelectedPrometheusBoardsConfigs []*SelectedGrafanaConfig `json:"selectedPrometheusBoardsConfigs,omitempty"`
 }
 
 // LoadTestPreferences represents the load test preferences
@@ -52,26 +30,66 @@ type LoadTestPreferences struct {
 	LoadGenerator      string `json:"gen,omitempty"`
 }
 
-// Parameters to updates Anonymous stats
+// PreferenceParams holds the parameters used to update anonymous usage stats.
 type PreferenceParams struct {
 	AnonymousUsageStats  bool `json:"anonymousUsageStats"`
 	AnonymousPerfResults bool `json:"anonymousPerfResults"`
 }
 
-// Preference represents the data stored in session / local DB
+// Preference represents the data stored in session / local DB.
+//
+// The wire form follows the schemas v1beta1 user.Preference construct, which is
+// also what meshery-cloud reads and writes.
 type Preference struct {
 	MeshAdapters                      []*Adapter             `json:"meshAdapters,omitempty"`
-	Grafana                           *Grafana               `json:"grafana,omitempty"`
-	Prometheus                        *Prometheus            `json:"prometheus,omitempty"`
 	LoadTestPreferences               *LoadTestPreferences   `json:"loadTestPrefs,omitempty"`
 	AnonymousUsageStats               bool                   `json:"anonymousUsageStats"`
 	AnonymousPerfResults              bool                   `json:"anonymousPerfResults"`
-	UpdatedAt                         time.Time              `json:"updated_at,omitempty"`
+	UpdatedAt                         time.Time              `json:"updatedAt,omitempty"`
 	DashboardPreferences              map[string]interface{} `json:"dashboardPreferences,omitempty"`
-	SelectedOrganizationID            string                 `json:"selectedOrganizationID,omitempty"`
+	SelectedOrganizationID            string                 `json:"selectedOrganizationId,omitempty"`
 	SelectedWorkspaceForOrganizations map[string]string      `json:"selectedWorkspaceForOrganizations,omitempty"` // map[orgID]workspaceID
 	UsersExtensionPreferences         map[string]interface{} `json:"usersExtensionPreferences,omitempty"`
 	RemoteProviderPreferences         map[string]interface{} `json:"remoteProviderPreferences,omitempty"`
+}
+
+// UnmarshalJSON accepts the legacy all-caps `selectedOrganizationID` spelling in
+// addition to the canonical `selectedOrganizationId`.
+//
+// The canonical key is what schemas declares and what meshery-cloud reads, so
+// the all-caps local spelling meant the selected organization never round
+// tripped through a remote provider: executePrefSync PUT `selectedOrganizationID`,
+// which meshery-cloud ignores, and the provider's reply carried
+// `selectedOrganizationId`, which this struct ignored. Reading both keeps
+// preferences already persisted under the legacy key - in the local provider's
+// database, and in any remote provider not yet on the canonical spelling -
+// readable after the rename.
+//
+// Which key wins is decided on payload key *presence*, not on whether the
+// destination is already populated: UserPrefsHandler decodes the request body
+// onto the Preference the session middleware already read from the persister,
+// so the destination is normally non-empty before this runs. Both keys are
+// therefore decoded through pointers - the shallower fields shadow the
+// embedded struct's own `selectedOrganizationId` - and the destination is left
+// untouched when the payload carries neither.
+func (p *Preference) UnmarshalJSON(data []byte) error {
+	type preferenceAlias Preference
+	aliased := struct {
+		*preferenceAlias
+		SelectedOrganizationID       *string `json:"selectedOrganizationId,omitempty"`
+		LegacySelectedOrganizationID *string `json:"selectedOrganizationID,omitempty"`
+	}{preferenceAlias: (*preferenceAlias)(p)}
+
+	if err := json.Unmarshal(data, &aliased); err != nil {
+		return err
+	}
+	switch {
+	case aliased.SelectedOrganizationID != nil:
+		p.SelectedOrganizationID = *aliased.SelectedOrganizationID
+	case aliased.LegacySelectedOrganizationID != nil:
+		p.SelectedOrganizationID = *aliased.LegacySelectedOrganizationID
+	}
+	return nil
 }
 
 // NewDefaultPreference returns a preference initialized with Meshery's default opt-in values.
@@ -103,10 +121,4 @@ type CapabilitiesPersister interface {
 	ReadCapabilitiesForUser(userID string) (*ProviderProperties, error)
 	WriteCapabilitiesForUser(userID string, data *ProviderProperties) error
 	DeleteCapabilitiesForUser(userID string) error
-}
-
-// Parameters to save Grafana configuration
-type GrafanaConfigParams struct {
-	GrafanaURL    string `json:"grafanaURL,omitempty"`
-	GrafanaAPIKey string `json:"grafanaAPIKey,omitempty"`
 }

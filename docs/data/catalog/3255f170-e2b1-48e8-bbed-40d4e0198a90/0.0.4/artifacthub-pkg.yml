@@ -17,11 +17,7 @@ links:
 readme: "Dependency Awareness: Users should understand that the child components (e.g., config maps, roles) depend on the parent (e.g., namespace). If the parent component is deleted or modified, it will affect the child components.\n\n \n ##h4 Caveats and Consideration \n"
 install: mesheryctl design import -f
 provider:
-    name: 7cc3290b-9c57-4f93-8fb0-dbc5664c95a1
+    name: cf6aabe7-a397-444a-a087-eebad74c58cc
 screenshots:
-    - title: MeshMap Snapshot
-      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3255f170-e2b1-48e8-bbed-40d4e0198a90-light.png
-    - title: MeshMap Snapshot
-      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3255f170-e2b1-48e8-bbed-40d4e0198a90-dark.png
     - title: Meshery Project
       url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

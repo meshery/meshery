@@ -1,7 +1,7 @@
 ---
 title: Wasmcloud
 subtitle: Collaborative and visual infrastructure as design for Wasmcloud
-image: /extensions/models/wasmcloud/icons/color/wasmcloud-color.svg
+image: extensions/models/wasmcloud/icons/color/wasmcloud-color.svg
 aliases: /extensibility/integrations/wasmcloud
 docURL: https://docs.meshery.io/extensibility/integrations/wasmcloud
 description: 

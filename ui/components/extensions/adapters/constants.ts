@@ -2,6 +2,7 @@ interface AdapterConfig {
   name: string;
   label: string;
   imageSrc: string;
+  darkImageSrc?: string;
   description: string;
   defaultPort: number;
   enabled: boolean;
@@ -70,6 +71,7 @@ export const adaptersList: AdaptersListType = {
     name: 'Kuma',
     label: 'meshery-kuma',
     imageSrc: '/static/img/adapters/kuma.svg',
+    darkImageSrc: '/static/img/adapters/kuma-white.svg',
     description: adaptersDescription('Kuma'),
     defaultPort: 10007,
     enabled: false,
@@ -93,12 +95,13 @@ export const adaptersList: AdaptersListType = {
     enabled: false,
     url: '',
   },
-  NIGHTHAWK: {
-    name: 'Nighthawk',
-    label: 'meshery-nighthawk',
-    imageSrc: '/static/img/adapters/nighthawk-logo.svg',
-    description: adaptersDescription('Performance Characterization by Meshery Nighthawk'),
-    defaultPort: 10013,
+  APP_MESH: {
+    name: 'App Mesh',
+    label: 'meshery-app-mesh',
+    imageSrc: '/static/img/adapters/app_mesh.svg',
+    darkImageSrc: '/static/img/adapters/app_mesh-white.svg',
+    description: adaptersDescription('App Mesh'),
+    defaultPort: 10005,
     enabled: false,
     url: '',
   },

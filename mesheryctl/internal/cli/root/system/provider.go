@@ -25,11 +25,6 @@ import (
 	"sort"
 )
 
-var (
-	MesheryProvider = "Layer5"
-	NoneProvider    = "None"
-)
-
 type cmdProviderViewFlags struct {
 	All bool `json:"all" validate:"boolean"`
 }
@@ -43,8 +38,9 @@ func PrintProviderToStdout(ctx config.Context, contextName string) string {
 
 var viewProviderCmd = &cobra.Command{
 	Use:   "view",
-	Short: "view provider",
-	Long:  "View provider of context in focus",
+	Short: "View provider",
+	Long: `View provider of context in focus.
+	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/provider/view`,
 	Example: `
 // View current provider
 mesheryctl system provider view
@@ -93,7 +89,7 @@ mesheryctl system provider view
 // listProviderCmd represents the list command
 var listProviderCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list available providers",
+	Short: "List available providers",
 	Long:  "List current provider and available providers",
 	Example: `
 // List all available providers
@@ -164,7 +160,7 @@ var providerSetFlags cmdProviderSetFlags
 
 var setProviderCmd = &cobra.Command{
 	Use:   "set [provider]",
-	Short: "set provider",
+	Short: "Set provider",
 	Long:  "Set provider of context in focus. Run `mesheryctl system provider list` to see the available providers.",
 	Example: `
 // Set provider
@@ -242,7 +238,7 @@ mesheryctl system provider set [provider]
 
 var switchProviderCmd = &cobra.Command{
 	Use:   "switch [provider]",
-	Short: "switch provider and redeploy",
+	Short: "Switch provider and redeploy",
 	Long:  "Switch provider of context in focus and redeploy Meshery. Run `mesheryctl system provider list` to see the available providers.",
 	Example: `
 // Switch provider and redeploy Meshery

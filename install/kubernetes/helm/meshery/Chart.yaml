@@ -13,7 +13,6 @@ keywords:
   - meshery-traefik-mesh
   - meshery-nginx-sm
   - meshery-app-mesh
-  - meshery-nighthawk
   - meshery-operator
 source:
   - https://github.com/meshery/meshery
@@ -67,11 +66,8 @@ dependencies:
   - name: meshery-cilium
     version: 0.7.0
     condition: meshery-cilium.enabled
-  - name: meshery-nighthawk
-    version: 0.7.0
-    condition: meshery-nighthawk.enabled
   - name: meshery-operator
-    version: 0.8.0
+    version: 1.0.5
     repository: "file://../meshery-operator"
     condition: meshery-operator.enabled
 

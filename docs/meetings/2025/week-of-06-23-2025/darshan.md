@@ -1,1 +1,0 @@
-Darshan for attendance

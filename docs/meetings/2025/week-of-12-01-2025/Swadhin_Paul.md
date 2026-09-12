@@ -1,1 +1,0 @@
-Hi, I’m Swadhin Paul, a 2025 graduate passionate about building real-time and scalable apps with React Native, Next.js, and Node.js. I enjoy learning new technologies and exploring AI product ideas. Looking forward to working with you all, learning from the community, and making open source contributions!

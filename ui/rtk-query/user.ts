@@ -1,24 +1,24 @@
 import { ctxUrl } from '../utils/multi-ctx';
-import {
-  mesheryApi,
-  useGetTeamsQuery as useSchemasGetTeamsQuery,
-  useGetUsersForOrgQuery as useSchemasGetUsersForOrgQuery,
-} from '@meshery/schemas/mesheryApi';
+import { useGetUsersForOrgQuery as useSchemasGetUsersForOrgQuery } from '@meshery/schemas/mesheryApi';
 import { api, mesheryApiPath } from './index';
 import { initiateQuery } from './utils';
 import { useGetOrgsQuery } from './organization';
 import { useGetWorkspacesQuery } from './workspace';
 import { normalizeLoadTestPrefs } from '../lib/load-test-prefs';
+import { normalizeLoggedInUser, normalizeProviderCapabilities } from './transforms';
+import { normalizeUserProfileSummary } from './userProfile';
 
 const Tags = {
   USER_PREF: 'userPref',
   LOAD_TEST_PREF: 'loadTestPref',
   PROVIDER_CAP: 'provider_capabilities',
+  TEAMS: 'teams',
+  USERS: 'users',
 };
 
 export const userApi = api
   .enhanceEndpoints({
-    addTagTypes: [Tags.USER_PREF, Tags.LOAD_TEST_PREF, Tags.PROVIDER_CAP],
+    addTagTypes: [Tags.USER_PREF, Tags.LOAD_TEST_PREF, Tags.PROVIDER_CAP, Tags.TEAMS, Tags.USERS],
   })
   .injectEndpoints({
     endpoints: (builder) => ({
@@ -101,29 +101,43 @@ export const userApi = api
           url: '/api/user',
           method: 'GET',
         }),
+        transformResponse: normalizeLoggedInUser,
         // All callers share one cache entry per user session (client-side Redux store).
         // This does not affect other users—each browser has its own isolated store.
         serializeQueryArgs: ({ endpointName }) => endpointName,
       }),
+      // Stopgap, not a duplicated schemas endpoint: @meshery/schemas does not
+      // yet expose a provider-capabilities operation. It is explicitly "pending
+      // the provider-capabilities schema tracked separately in the
+      // identifier-uniformity program" (see @meshery/schemas cloudApi). Once
+      // that schema lands, replace this with the generated mesheryApi query and
+      // migrate consumers (incl. ui/utils/provider.ts).
       getProviderCapabilities: builder.query({
         query: () => '/api/provider/capabilities',
         method: 'GET',
+        transformResponse: normalizeProviderCapabilities,
       }),
       getUserProfileSummaryById: builder.query({
         query: (queryArg) => ({
           url: `/api/user/profile/${queryArg.id}`,
+          // Attempt JSON parsing on every response — success bodies are JSON,
+          // and most error paths also return structured JSON via
+          // writeJSONError. Fall back to the raw text for any non-JSON error
+          // body (legacy upstreams, reverse proxies, etc.) so RTK Query
+          // surfaces a readable error.data instead of throwing SyntaxError.
+          responseHandler: async (response) => {
+            const text = await response.text();
+            if (!text) {
+              return undefined;
+            }
+            try {
+              return JSON.parse(text);
+            } catch {
+              return text;
+            }
+          },
         }),
-        transformResponse: (response) => {
-          // Modify the response data to keep only necessary fields
-          return {
-            id: response.id,
-            email: response?.email,
-            user_id: response?.user_id,
-            avatar_url: response?.avatar_url,
-            first_name: response?.first_name,
-            last_name: response?.last_name,
-          };
-        },
+        transformResponse: normalizeUserProfileSummary,
       }),
       getExtensionsByType: builder.query({
         query: () => ({
@@ -184,6 +198,24 @@ export const userApi = api
         query: () => '/api/system/version',
         method: 'GET',
       }),
+      installProviderExtension: builder.mutation({
+        query: (queryArg) => ({
+          url: '/api/provider/extension/install',
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: queryArg,
+        }),
+        invalidatesTags: [Tags.PROVIDER_CAP],
+      }),
+      removeProviderExtension: builder.mutation({
+        query: (queryArg) => ({
+          url: '/api/provider/extension/remove',
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: queryArg,
+        }),
+        invalidatesTags: [Tags.PROVIDER_CAP],
+      }),
       handleFeedbackFormSubmission: builder.mutation({
         query: (queryArg) => ({
           url: mesheryApiPath(`extensions/api/identity/users/notify/feedback`),
@@ -204,6 +236,23 @@ export const userApi = api
           },
         }),
         providesTags: ['users'],
+      }),
+      // Hand-written since @meshery/schemas 1.3.25: the teams endpoints were
+      // reclassified as cloud-only in the schemas spec (meshery/schemas#1015),
+      // which removed getTeams from the generated mesheryApi surface. Meshery
+      // Server still proxies the endpoint for providers that serve it, so the
+      // query lives here now, mirroring the generated hook's argument shape.
+      getTeams: builder.query({
+        query: (queryArg) => ({
+          url: `/api/identity/orgs/${queryArg.orgId}/teams`,
+          params: {
+            search: queryArg.search,
+            order: queryArg.order,
+            page: queryArg.page,
+            pagesize: queryArg.pagesize,
+          },
+        }),
+        providesTags: ['teams'],
       }),
       removeUserFromTeam: builder.mutation({
         query: (queryArg) => ({
@@ -231,6 +280,7 @@ export const userApi = api
         },
       }),
     }),
+    overrideExisting: true,
   });
 
 export const {
@@ -252,15 +302,22 @@ export const {
   useGetAllUsersQuery,
   useRemoveUserFromTeamMutation,
   useGetSystemVersionQuery,
+  useInstallProviderExtensionMutation,
+  useRemoveProviderExtensionMutation,
   useGetUserProfileSummaryByIdQuery,
 } = userApi;
 
-export const useGetUserByIdQuery = (id, options) =>
+export const useGetUserByIdQuery = (id, options = {}) =>
   useGetUserProfileSummaryByIdQuery(
     {
       id,
     },
-    options,
+    // Falsy id must always skip — a caller's explicit skip can tighten but
+    // not loosen that invariant. Merging options first and forcing skip last
+    // prevents `{skip: false}` in options from re-enabling the query with an
+    // empty/invalid UUID and reintroducing the 400/404 loop this wrapper
+    // exists to prevent.
+    { ...options, skip: !id || options?.skip },
   );
 
 export const useGetUsersForOrgQuery = (queryArg, options) =>
@@ -278,7 +335,7 @@ export const useGetUsersForOrgQuery = (queryArg, options) =>
   );
 
 export const useGetTeamsQuery = (queryArg, options) =>
-  useSchemasGetTeamsQuery(
+  userApi.endpoints.getTeams.useQuery(
     {
       orgId: queryArg?.orgId,
       search: queryArg?.search,
@@ -290,7 +347,7 @@ export const useGetTeamsQuery = (queryArg, options) =>
   );
 
 export const useLazyGetTeamsQuery = () => {
-  const [trigger, result, lastPromiseInfo] = mesheryApi.endpoints.getTeams.useLazyQuery();
+  const [trigger, result, lastPromiseInfo] = userApi.endpoints.getTeams.useLazyQuery();
 
   const wrappedTrigger = (queryArg, preferCacheValue) =>
     trigger(
@@ -348,8 +405,15 @@ export const useGetSelectedOrganization = () => {
     error: errorLoadingAllOrgs,
   } = useGetOrgsQuery();
 
+  // `selectedOrganizationId` is the canonical key (schemas v1beta1
+  // user.Preference, and what meshery-cloud reads and writes). Meshery Server
+  // used to spell it `selectedOrganizationID`; the legacy read below keeps
+  // preferences persisted under that spelling resolving until they are
+  // rewritten on the next selection.
+  const selectedOrganizationId =
+    userPrefs?.selectedOrganizationId ?? userPrefs?.selectedOrganizationID;
   const existingSelectedOrganization = allOrgs?.organizations?.find(
-    (org) => org.id === userPrefs?.selectedOrganizationID,
+    (org) => org.id === selectedOrganizationId,
   );
 
   const selectedOrganization = existingSelectedOrganization ?? allOrgs?.organizations?.[0];
@@ -380,7 +444,7 @@ export const useGetSelectedWorkspace = () => {
       page: 0,
       pagesize: 'all',
       order: 'updated_at desc',
-      orgID: selectedOrganization?.id,
+      orgId: selectedOrganization?.id,
     },
     {
       skip: !selectedOrganization?.id,
@@ -412,8 +476,8 @@ export const useGetSelectedWorkspace = () => {
 export const useUpdateSelectedOrganizationMutation = () => {
   const [updateUserPref, response] = useUpdateUserPrefMutation();
 
-  const updateSelectedOrganization = async (orgId) => {
-    await updateUserPref({ selectedOrganizationID: orgId });
+  const updateSelectedOrganization = (orgId) => {
+    return updateUserPref({ selectedOrganizationId: orgId });
   };
 
   return [updateSelectedOrganization, response];

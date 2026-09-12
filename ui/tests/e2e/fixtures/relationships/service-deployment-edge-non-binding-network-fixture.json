@@ -6,19 +6,12 @@
   "metadata": {
     "resolvedAliases": {
       "cadad307-e39e-449d-bd7c-d3cf6a0b536e": {
-        "alias_component_id": "cadad307-e39e-449d-bd7c-d3cf6a0b536e",
-        "immediate_parent_id": "20b9e320-8329-4804-ab5c-3da8c620cac5",
-        "immediate_ref_field_path": [
-          "configuration",
-          "spec",
-          "template",
-          "spec",
-          "containers",
-          "0"
-        ],
-        "relationship_id": "c7b6e9fa-4443-4010-bd41-35958a4f6277",
-        "resolved_parent_id": "20b9e320-8329-4804-ab5c-3da8c620cac5",
-        "resolved_ref_field_path": ["configuration", "spec", "template", "spec", "containers", "0"]
+        "aliasComponentId": "cadad307-e39e-449d-bd7c-d3cf6a0b536e",
+        "immediateParentId": "20b9e320-8329-4804-ab5c-3da8c620cac5",
+        "immediateRefFieldPath": ["configuration", "spec", "template", "spec", "containers", "0"],
+        "relationshipId": "c7b6e9fa-4443-4010-bd41-35958a4f6277",
+        "resolvedParentId": "20b9e320-8329-4804-ab5c-3da8c620cac5",
+        "resolvedRefFieldPath": ["configuration", "spec", "template", "spec", "containers", "0"]
       }
     }
   },

@@ -1,16 +1,16 @@
 ---
-title: Meshery Community
+title: Community
 description: Meshery's open source, cloud native community
 categories: [community]
 ---
 
-Meshery is a CNCF project maintained by engineers from Layer5, VMware, Red Hat, Rackspace, Citrix, Instabase, Microsoft, OpenGov, Computas AS, Rill Data, Quantex, Lumina Networks, API7, F5, Citi, Acquia, and HashiCorp. Meshery is an open source project that adheres to the [CNCF's Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md). Meshery advance the state of the art surrounding cloud native management and enable adopters of Cloud Native technologies and techniques to do so with confidence. Our shared commitment to the open source spirit pushes Meshery forward.
+Meshery is a CNCF project maintained by engineers from NetSkope, Google, VMware, Red Hat, Rackspace, Citrix, Instabase, Layer5, Microsoft, OpenGov, Computas AS, Rill Data, Quantex, Lumina Networks, API7, F5, Citi, Acquia, HashiCorp, TCS, DigitalOcean, Solarwinds, and others. Meshery is an open source project that adheres to the [CNCF's Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md). Meshery advance the state of the art surrounding cloud native management and enable adopters of Cloud Native technologies and techniques to do so with confidence. Our shared commitment to the open source spirit pushes Meshery forward.
 
 ## Getting involved in the Community
 
 Get involved with Meshery and supporting projects. Start by reading through the [Newcomers Guide](https://meshery.io/community), which provides details on how to participate. Seek out other community members, who will make sure you are not left out. We always have a role for everyone whether to be a code-writer, a community manager, user, advocate, or just to listen in. The Meshery community is always open and warmly welcomes you.  If this is your first time making open source contribution, you are in the right place!
 
-Please see our [contributing guide](/project/contributing) for specific details about setting up your development environment and to start learning the innerworkings of a specific Meshery component.
+Please see our [contributing guide]({{< ref "project/contributing/_index.md" >}}) for specific details about setting up your development environment and to start learning the innerworkings of a specific Meshery component.
 
 #### Community First
 

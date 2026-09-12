@@ -33,7 +33,7 @@ type componentFlags struct {
 var (
 	availableSubcommands = []*cobra.Command{listComponentCmd, viewComponentCmd, searchComponentsCmd}
 
-	componentApiPath       = "api/meshmodels/components"
+	componentApiPath       = "api/registry/components"
 	componentFlagsProvided = &componentFlags{}
 )
 
@@ -42,7 +42,7 @@ var ComponentCmd = &cobra.Command{
 	Use:   "component",
 	Short: "Manage Meshery components",
 	Long: `List, search and view component(s) and detailed informations
-Find more information at: https://docs.meshery.io/reference/mesheryctl/component`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/component`,
 	Example: `
 // Display number of available components in Meshery
 mesheryctl component --count
@@ -118,5 +118,5 @@ func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponen
 
 	}
 
-	return rows, int64(componentsResponse.Count)
+	return rows, componentsResponse.TotalCount
 }

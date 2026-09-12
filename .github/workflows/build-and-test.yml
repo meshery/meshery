@@ -1,0 +1,68 @@
+name: Meshery Build And Test 
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - "master"
+    paths-ignore:
+      - "docs/**"
+      - "mesheryctl/**"
+      - "*.md"
+      # Inert .github paths only. This used to exclude ".github/**" wholesale,
+      # which meant a PR changing this workflow - or test-e2e.yml, or the
+      # composite actions they call - ran no build and no E2E at all. Changes to
+      # CI were exactly the changes CI never tested, so a workflow repair shipped
+      # completely unverified. Anything under .github/workflows, .github/actions
+      # or .github/scripts now builds and tests; templates, meetings, assets and
+      # the top-level config files still do not.
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/meetings/**"
+      - ".github/assets/**"
+      - ".github/agents/**"
+      - ".github/samples/**"
+      - ".github/aw/**"
+      - ".github/*.md"
+      - ".github/*.yml"
+      - ".github/*.yaml"
+      - "Makefile"
+  push:
+    branches:
+      - "master"
+    paths-ignore:
+      - "docs/**"
+      - "mesheryctl/**"
+      - "*.md"
+      # Same narrowing as the pull_request trigger above.
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/meetings/**"
+      - ".github/assets/**"
+      - ".github/agents/**"
+      - ".github/samples/**"
+      - ".github/aw/**"
+      - ".github/*.md"
+      - ".github/*.yml"
+      - ".github/*.yaml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-meshery:
+    uses: ./.github/workflows/build-meshery-image.yml
+  tests-e2e:
+    needs: [build-meshery]
+    uses: ./.github/workflows/test-e2e.yml
+    with:
+      meshery-image: ${{ needs.build-meshery.outputs.meshery-image }}
+    secrets:
+      REMOTE_PROVIDER_TEST_USER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
+  publish-allure-report:
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}    
+    needs: [build-meshery, tests-e2e]
+    uses: ./.github/workflows/publish-allure-report.yml
+    with:
+      project: "meshery"
+      allure-path: "allure-results"
+      allure-results-artifact: ${{ needs.tests-e2e.outputs.allure-results-artifact }}
+    secrets:
+      GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}

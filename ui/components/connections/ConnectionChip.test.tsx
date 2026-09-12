@@ -1,0 +1,243 @@
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  ConnectionChip,
+  ConnectionStateChip,
+  TooltipWrappedConnectionChip,
+} from './ConnectionChip';
+
+const normalizeStaticImagePath = vi.fn((src?: string) => src);
+
+vi.mock('@sistent/sistent', () => {
+  const styled = (Component) => () => {
+    const StyledComponent = ({ children, ...props }) => (
+      <Component {...props}>{children}</Component>
+    );
+    StyledComponent.displayName = 'StyledSistentMock';
+    return StyledComponent;
+  };
+
+  return {
+    Avatar: ({ children, src, sx }) => (
+      <div data-testid="avatar" data-src={src} data-size={JSON.stringify(sx || {})}>
+        {children}
+      </div>
+    ),
+    AssignmentTurnedInIcon: () => <svg data-testid="assignment-icon" />,
+    CancelIcon: () => <svg data-testid="cancel-icon-svg" />,
+    CheckCircleIcon: () => <svg data-testid="check-circle-icon" />,
+    CustomTooltip: ({ title, children }) => (
+      <div data-testid="tooltip" data-title={String(title)}>
+        {children}
+      </div>
+    ),
+    DeleteForeverIcon: () => <svg data-testid="delete-forever-icon" />,
+    ExploreIcon: () => <svg data-testid="explore-icon" />,
+    HandymanIcon: () => <svg data-testid="handyman-icon" />,
+    RemoveIcon: () => <svg data-testid="remove-icon" />,
+    WarningIcon: (props: { 'data-testid'?: string }) => (
+      <svg data-testid={props['data-testid'] || 'WarningIcon'} />
+    ),
+    Typography: ({ children }) => <span>{children}</span>,
+    // Orange bucket for disconnected / maintenance
+    notificationColors: { warning: { light: 'orange' } },
+    styled,
+    createTheme: () => ({ breakpoints: {} }),
+    useTheme: () => ({
+      palette: {
+        background: {
+          brand: { default: 'brand' },
+          // Yellow / amber bucket for partial (registered, discovered, …)
+          warning: { default: 'yellow' },
+        },
+        text: { disabled: 'disabled' },
+      },
+    }),
+  };
+});
+
+vi.mock('@/utils/fallback', () => ({
+  normalizeStaticImagePath: (...args) => normalizeStaticImagePath(...args),
+}));
+
+vi.mock('../general/CustomAvatar', () => ({
+  default: ({ children, color }) => (
+    <div data-testid="badge-avatar" data-color={color}>
+      {children}
+    </div>
+  ),
+}));
+
+vi.mock('./styles', () => {
+  const makeStateChip = (testId: string) => {
+    const StateChip = ({ avatar, label }) => (
+      <div data-testid={testId}>
+        {avatar}
+        <span>{label}</span>
+      </div>
+    );
+
+    StateChip.displayName = `${testId}Mock`;
+    return StateChip;
+  };
+
+  return {
+    ChipWrapper: ({ label, onClick, onDelete, disabled, avatar, style }) => (
+      <div data-testid="chip-wrapper" data-width={style?.width}>
+        {avatar}
+        <button onClick={onClick} disabled={disabled}>
+          {label}
+        </button>
+        {onDelete ? <button onClick={onDelete}>delete</button> : null}
+      </div>
+    ),
+    ConnectedChip: makeStateChip('connected-state-chip'),
+    DeletedChip: makeStateChip('deleted-state-chip'),
+    DisconnectedChip: makeStateChip('disconnected-state-chip'),
+    DiscoveredChip: makeStateChip('discovered-state-chip'),
+    IgnoredChip: makeStateChip('ignored-state-chip'),
+    MaintainanceChip: makeStateChip('maintenance-state-chip'),
+    NotFoundChip: makeStateChip('not-found-state-chip'),
+    RegisteredChip: makeStateChip('registered-state-chip'),
+  };
+});
+
+vi.mock('css/icons.styles', () => ({
+  iconMedium: {},
+  iconSmall: {},
+}));
+
+vi.mock('@/assets/icons/Connection', () => ({
+  default: () => <svg data-testid="connection-icon" />,
+}));
+
+vi.mock('../../assets/icons/disconnect', () => ({
+  default: () => <svg data-testid="disconnect-icon" />,
+}));
+
+describe('ConnectionChip', () => {
+  beforeEach(() => {
+    normalizeStaticImagePath.mockClear();
+  });
+
+  it('calls handlePing when clicked and renders a normalized avatar source', async () => {
+    const user = userEvent.setup();
+    const handlePing = vi.fn();
+
+    render(
+      <ConnectionChip
+        title="cluster-a"
+        handlePing={handlePing}
+        iconSrc="/static/img/integrations/kubernetes.svg"
+        status="connected"
+        width="12rem"
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'cluster-a' }));
+
+    expect(handlePing).toHaveBeenCalledTimes(1);
+    expect(normalizeStaticImagePath).toHaveBeenCalledWith(
+      '/static/img/integrations/kubernetes.svg',
+    );
+    expect(screen.getByTestId('avatar')).toHaveAttribute(
+      'data-src',
+      '/static/img/integrations/kubernetes.svg',
+    );
+    expect(screen.getByTestId('chip-wrapper')).toHaveAttribute('data-width', '12rem');
+    expect(screen.getByTestId('badge-avatar')).toHaveAttribute('data-color', 'brand');
+  });
+
+  it('respects disabled chips by blocking ping and delete actions', async () => {
+    const user = userEvent.setup();
+    const handlePing = vi.fn();
+    const onDelete = vi.fn();
+
+    render(
+      <ConnectionChip
+        title="operator"
+        handlePing={handlePing}
+        onDelete={onDelete}
+        disabled={true}
+        status="running"
+      />,
+    );
+
+    const button = screen.getByRole('button', { name: 'operator' });
+    expect(button).toBeDisabled();
+
+    await user.click(button);
+
+    expect(handlePing).not.toHaveBeenCalled();
+    expect(screen.queryByRole('button', { name: 'delete' })).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ['connected', 'brand'],
+    ['registered', 'yellow'],
+    ['discovered', 'yellow'],
+    ['disconnected', 'orange'],
+    ['maintenance', 'orange'],
+    ['ignored', 'disabled'],
+    ['deleted', 'disabled'],
+    ['not found', 'disabled'],
+  ] as const)('maps status "%s" to status-dot color token "%s"', (status, expectedColor) => {
+    render(<ConnectionChip title="cluster" status={status} />);
+
+    expect(screen.getByTestId('badge-avatar')).toHaveAttribute('data-color', expectedColor);
+  });
+
+  it('omits the status badge when status is not provided', () => {
+    render(<ConnectionChip title="cluster" />);
+
+    expect(screen.queryByTestId('badge-avatar')).not.toBeInTheDocument();
+  });
+});
+
+describe('TooltipWrappedConnectionChip', () => {
+  it('prefers explicit tooltip content over the title', () => {
+    render(<TooltipWrappedConnectionChip title="cluster-a" tooltip="Server: demo" />);
+
+    expect(screen.getByTestId('tooltip')).toHaveAttribute('data-title', 'Server: demo');
+  });
+});
+
+describe('ConnectionStateChip', () => {
+  it('maps actionable states to transition labels', () => {
+    render(<ConnectionStateChip status="connected" actionable={true} />);
+
+    expect(screen.getByTestId('connected-state-chip')).toHaveTextContent('Connect');
+  });
+
+  it('renders known states and falls back to the discovered chip for unknown statuses', () => {
+    const { rerender } = render(<ConnectionStateChip status="not found" />);
+    expect(screen.getByTestId('not-found-state-chip')).toHaveTextContent('not found');
+
+    rerender(<ConnectionStateChip status="mystery-state" />);
+    expect(screen.getByTestId('discovered-state-chip')).toHaveTextContent('mystery-state');
+  });
+
+  it('renders the deleted-state chip with its DeleteForever avatar icon', () => {
+    // Regression guard: the icon barrel re-exported a non-existent
+    // `DeleteForever` from Sistent (which only exports `DeleteForeverIcon`),
+    // so the avatar resolved to `undefined` and crashed the Connections page
+    // with "Element type is invalid" (React error #130) whenever a DELETED
+    // connection was listed.
+    render(<ConnectionStateChip status="deleted" />);
+
+    expect(screen.getByTestId('deleted-state-chip')).toHaveTextContent('deleted');
+    expect(screen.getByTestId('delete-forever-icon')).toBeInTheDocument();
+  });
+
+  it('uses a warning indicator for not-found instead of a cancel/X icon', () => {
+    // CancelIcon was aliased as NotInterestedRounded and looked like a
+    // destructive delete control on not-found connection chips.
+    render(<ConnectionStateChip status="not found" />);
+
+    expect(screen.getByTestId('not-found-state-chip')).toHaveTextContent('not found');
+    expect(screen.getByTestId('not-found-warning-icon')).toBeInTheDocument();
+    expect(screen.queryByTestId('cancel-icon-svg')).not.toBeInTheDocument();
+  });
+});

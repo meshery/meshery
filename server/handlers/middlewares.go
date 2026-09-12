@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
@@ -35,25 +36,60 @@ func isTransientProviderError(err error) bool {
 
 const providerQParamName = "provider"
 
+// legacyProviderAliasWarnOnce ensures the "None"->"Local" deprecation warning
+// fires at most once per process lifetime, regardless of how many requests
+// arrive with the legacy alias.
+var legacyProviderAliasWarnOnce sync.Once
+
+// resolveProviderName returns the provider name for a request based on, in
+// order: the provider cookie, the provider header, the ?provider= query
+// param, and finally the enforced default. Returns "" only in
+// multi-provider mode when the client supplied no hint. The returned name is
+// passed through models.NormalizeProviderName so the legacy "None" alias
+// resolves to "Local"; the second return value indicates whether the raw
+// input was a casing of the legacy alias so the caller can log a one-shot
+// deprecation warning.
+//
+// When PROVIDER is unset, cookie then header then ?provider= select the
+// provider. When PROVIDER is set, those client hints are ignored so a stale
+// Local cookie cannot override a pinned remote.
+func resolveProviderName(req *http.Request, cookieName, enforcedProvider string) (string, bool) {
+	// When PROVIDER is set, it is the only provider this process will use.
+	// Cookie, header, and ?provider= cannot override it; those were the
+	// paths that let a client keep using Local on a pinned-remote deployment.
+	if enforced := models.NormalizeProviderName(enforcedProvider); enforced != "" {
+		usedLegacyAlias := strings.EqualFold(enforcedProvider, models.LocalProviderLegacyAlias)
+		return enforced, usedLegacyAlias
+	}
+	var name string
+	if ck, err := req.Cookie(cookieName); err == nil && ck.Value != "" {
+		name = ck.Value
+	} else if hdr := req.Header.Get(cookieName); hdr != "" {
+		name = hdr
+	} else if q := req.URL.Query().Get(providerQParamName); q != "" {
+		name = q
+	}
+	usedLegacyAlias := strings.EqualFold(name, models.LocalProviderLegacyAlias)
+	return models.NormalizeProviderName(name), usedLegacyAlias
+}
+
 // ProviderMiddleware is a middleware to validate if a provider is set
 func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
-		var providerName string
 		var provider models.Provider
-		ck, err := req.Cookie(h.config.ProviderCookieName)
-		if err == nil {
-			providerName = ck.Value
-		} else {
-			providerName = req.Header.Get(h.config.ProviderCookieName)
-			// allow provider to be set using query parameter
-			// this is OK since provider information is not sensitive
-
-			if providerName == "" {
-				providerName = req.URL.Query().Get(providerQParamName)
-			}
+		providerName, usedLegacyAlias := resolveProviderName(req, h.config.ProviderCookieName, h.Provider)
+		if usedLegacyAlias {
+			legacyProviderAliasWarnOnce.Do(func() {
+				h.log.Warnf("DEPRECATION: the local provider name %q is the legacy alias for %q and will be removed in a future Meshery release. Update meshery-provider cookies, the PROVIDER environment variable, and ~/.meshery/config.yaml to use %q. This warning is logged once per server process.", models.LocalProviderLegacyAlias, models.LocalProviderName, models.LocalProviderName)
+			})
 		}
 		if providerName != "" {
-			provider = h.config.Providers[providerName]
+			if providerKey, ok := models.ResolveProviderKey(providerName, h.config.Providers); ok {
+				provider = h.config.Providers[providerKey]
+			}
+			if provider == nil && h.Provider != "" && providerName == models.NormalizeProviderName(h.Provider) {
+				h.log.Errorf("enforced provider %q is not registered in h.config.Providers; ProviderUIHandler will degrade to serving the provider-selection UI instead of auto-login. Register %q in PROVIDERS or unset PROVIDER on this deployment.", h.Provider, h.Provider)
+			}
 		}
 		ctx := context.WithValue(req.Context(), models.ProviderCtxKey, provider) // nolint
 
@@ -117,13 +153,20 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
 				return
 			}
 
-			// Because server verifies the value of the "PROVIDER" environemnt variable and doesn't allow unsupported provider value,
-			// the below situation cannot occur.
-
-			// if providerH != "" && providerH != provider.Name() {
-			// 	w.WriteHeader(http.StatusUnauthorized)
-			// 	return
-			// }
+			if providerH != "" {
+				enforcedKey, ok := models.ResolveProviderKey(providerH, h.config.Providers)
+				if ok {
+					gotKey, gotOK := models.ResolveProviderKey(provider.Name(), h.config.Providers)
+					if !gotOK || gotKey != enforcedKey {
+						// Log the mismatch: without it this 401 is indistinguishable
+						// from an ordinary auth failure, and the enforced-provider
+						// case is exactly the one an operator needs to recognise.
+						h.log.Infof("[AUTH_FLOW] step=AuthMiddleware action=provider_mismatch path=%s enforced=%q got=%q", req.URL.Path, enforcedKey, provider.Name())
+						w.WriteHeader(http.StatusUnauthorized)
+						return
+					}
+				}
+			}
 			// logrus.Debugf("provider %s", provider)
 			isValid, err := h.validateAuth(provider, req)
 			if !isValid {
@@ -160,7 +203,7 @@ func (h *Handler) KubernetesMiddleware(next func(http.ResponseWriter, *http.Requ
 		ctx := req.Context()
 		ctx, err := KubernetesMiddleware(ctx, h, provider, user, req.URL.Query()["contexts"])
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			writeMeshkitError(w, err, http.StatusInternalServerError)
 			return
 		}
 
@@ -195,12 +238,21 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		user, err := provider.GetUserDetails(req)
 		if err != nil {
 			h.log.Error(ErrGetUserDetails(err))
-			// Distinguish auth failures from transient provider errors.
-			// If the token cookie is missing/invalid, the user genuinely needs to re-authenticate.
-			// But if Cloud is temporarily unreachable, we must NOT destroy the user's session
-			// by logging them out — that would cause a redirect loop when Cloud recovers.
+			// INTENTIONAL log/wire divergence. We log ErrGetUserDetails so the
+			// operational trail captures *what* failed (the get-user call), but
+			// we surface ErrTransientProvider on the wire so the client can
+			// distinguish between a transient failure (e.g., Cloud unreachable)
+			// and a genuine auth failure. Conflating the two would either flood
+			// logs with misleading transient classifications or hide the
+			// auth-vs-network distinction from clients. Don't "fix" this to
+			// match without reading PR #18919.
+			//
+			// Behavioral consequence: on a transient provider error we must NOT
+			// destroy the user's session by logging them out — that would cause
+			// a redirect loop when Cloud recovers. A missing/invalid token
+			// cookie still falls through to the genuine auth-failure path below.
 			if isTransientProviderError(err) {
-				http.Error(w, "Remote provider temporarily unavailable. Please try again.", http.StatusServiceUnavailable)
+				writeMeshkitError(w, ErrTransientProvider(err), http.StatusServiceUnavailable)
 				return
 			}
 			// Genuine auth failure — logout and redirect to login
@@ -210,17 +262,17 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 				provider.HandleUnAuthenticated(w, req)
 				return
 			}
-			http.Error(w, ErrGetUserDetails(err).Error(), http.StatusUnauthorized)
+			writeMeshkitError(w, ErrGetUserDetails(err), http.StatusUnauthorized)
 			return
 		}
-		prefObj, err := provider.ReadFromPersister(user.UserId)
+		prefObj, err := provider.ReadFromPersister(user.ID.String())
 		if err != nil {
 			// log underlying error from persister along with high-level context
-			h.log.Warn(fmt.Errorf("%w: userID=%s: %v", ErrReadSessionPersistor, user.UserId, err))
+			h.log.Warn(fmt.Errorf("%w: userID=%s: %v", ErrReadSessionPersistor, user.ID.String(), err))
 			prefObj = models.NewDefaultPreference()
 		} else if prefObj == nil {
 			// persister unexpectedly returned a nil preference without error
-			h.log.Warn(fmt.Errorf("%w: persister returned nil preference without error for userID=%s", ErrReadSessionPersistor, user.UserId))
+			h.log.Warn(fmt.Errorf("%w: persister returned nil preference without error for userID=%s", ErrReadSessionPersistor, user.ID.String()))
 			prefObj = models.NewDefaultPreference()
 		}
 
@@ -237,7 +289,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 	})
 }
 
-// GraphqlSessionInjectorMiddleware - is a middleware which injects user and session object
+// GraphqlMiddleware adapts next to the handler-chain signature and forwards the request to it, without injecting anything
 func (h *Handler) GraphqlMiddleware(next http.Handler) func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider) {
 	return func(w http.ResponseWriter, req *http.Request, pref *models.Preference, user *models.User, prov models.Provider) {
 		next.ServeHTTP(w, req)
@@ -313,6 +365,12 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 			h.log.Error(err)
 		}
 
+		// Skip a machine that failed to initialize rather than nil-dereferencing
+		// on ResetState/SendEvent. The connection stays stuck until the tracker
+		// entry is removed; see mhelpers.HasMachineContext for why.
+		if !mhelpers.HasMachineContext(inst) {
+			continue
+		}
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
@@ -372,6 +430,12 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 			h.log.Error(err)
 		}
 
+		// Skip a machine that failed to initialize rather than nil-dereferencing
+		// on ResetState/SendEvent, or type-asserting its nil Context on the Cast
+		// below. See mhelpers.HasMachineContext for why.
+		if !mhelpers.HasMachineContext(inst) {
+			continue
+		}
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)

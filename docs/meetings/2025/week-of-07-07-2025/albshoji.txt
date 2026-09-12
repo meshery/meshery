@@ -1,3 +1,0 @@
-name: Albert Katayama Shoji
-linkedin: https://www.linkedin.com/in/albert-katayama-shoji-9a1007249/
-github: https://github.com/Albshoji

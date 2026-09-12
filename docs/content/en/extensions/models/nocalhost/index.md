@@ -1,7 +1,7 @@
 ---
 title: Nocalhost
 subtitle: Collaborative and visual infrastructure as design for Nocalhost
-image: /extensions/models/nocalhost/icons/color/nocalhost-color.svg
+image: extensions/models/nocalhost/icons/color/nocalhost-color.svg
 aliases: /extensibility/integrations/nocalhost
 docURL: https://docs.meshery.io/extensibility/integrations/nocalhost
 description: 

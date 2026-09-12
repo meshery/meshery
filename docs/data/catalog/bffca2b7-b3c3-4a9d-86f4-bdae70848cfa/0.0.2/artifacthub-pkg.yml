@@ -17,11 +17,7 @@ links:
 readme: "1. Environment Variables:\nVerify that the environment variables such as AWS_REGION, AWS_ENDPOINT_URL, and ACK_LOG_LEVEL are correctly set according to your AWS environment and logging preferences. Incorrect values could lead to improper functioning or failure of the controller.\n\n2. Secrets Management:\nIf AWS credentials are required, make sure the AWS_SHARED_CREDENTIALS_FILE and AWS_PROFILE environment variables are correctly configured and the referenced Kubernetes secret exists. Missing or misconfigured secrets can prevent the controller from authenticating with AWS.\n\n3. Resource Requests and Limits:\nReview and adjust the resource requests and limits to match the expected workload and available cluster resources. Insufficient resources can lead to performance issues, while overly generous requests can waste cluster resources.\n\n4. Probes Configuration:\nThe liveness and readiness probes are configured with specific paths and ports. Ensure that these endpoints are correctly implemented in the application. Misconfigured probes can result in the pod being killed or marked as unready. \n ##h4 Caveats and Consideration \n"
 install: mesheryctl design import -f
 provider:
-    name: 7cc3290b-9c57-4f93-8fb0-dbc5664c95a1
+    name: cf6aabe7-a397-444a-a087-eebad74c58cc
 screenshots:
-    - title: MeshMap Snapshot
-      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/bffca2b7-b3c3-4a9d-86f4-bdae70848cfa-light.png
-    - title: MeshMap Snapshot
-      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/bffca2b7-b3c3-4a9d-86f4-bdae70848cfa-dark.png
     - title: Meshery Project
       url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

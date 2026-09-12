@@ -5,11 +5,11 @@ categories: [contributing]
 ---
 
 
-Meshery Adapters are the Extension Points in Meshery's architecture. Their design, the process of creating a new adapter is documented in [Extensibility: Meshery Adapters](/extensibility/adapters).
+Meshery Adapters are the Extension Points in Meshery's architecture. Their design, the process of creating a new adapter is documented in [Extensibility: Meshery Adapters]({{< ref "concepts/architecture/adapters.md" >}}).
 
 With the [CONTRIBUTING.md](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#adapter) in mind, understand that development follows the usual fork-and-pull request workflow described here, see also GitHub Process. On forking GitHub deactivates all workflows. It is safe and good practice to activate them such that the code is validated on each push. This requires that branches filter for “on push” is set to ‘**’ to be triggered also on branches containing ‘/’  in their name.  The actions are parameterized using secrets (see Build & Release Strategy). The Docker image is only built and pushed to Docker Hub if a tag is pushed and the corresponding authentication information is configured.
 
-Each commit has to be signed off, see [Contributing Overview](/project/contributing).
+Each commit has to be signed off, see [Contributing Overview]({{< ref "project/contributing/_index.md" >}}).
 
 ### Running an adapter as a container
 
@@ -27,13 +27,14 @@ Another way to test your local changes is to run the adapter as a process. To do
 Meshery uses adapters to manage and interact with different cloud native infrastructure. Meshery adapters are written in Go. Whether you are creating a new adapter or modifying an existing adapter, be sure to read the [Meshery Adapters](https://docs.google.com/document/d/1b8JAMzr3Rntu7CudRaYv6r6ccACJONAB5t7ISCaPNuA/edit#) design specification. For new adapters, start with the Repository Template(https://github.com/meshery/meshery). 
 
 1. Get the proto buf spec file from Meshery repo:
-   `wget https://raw.githubusercontent.com/meshery/meshery/master/meshes/meshops.proto`
+wget -P meshes https://raw.githubusercontent.com/meshery/meshery/master/server/meshes/meshops.proto
 1. Generate code
    1. Using Go as an example, do the following:
       - adding GOPATH to PATH: `export PATH=$PATH:$GOPATH/bin`
       - install grpc: `go get -u google.golang.org/grpc`
-      - install protoc plugin for go: `go get -u github.com/golang/protobuf/protoc-gen-go`
-      - Generate Go code: `protoc -I meshes/ meshes/meshops.proto --go_out=plugins=grpc:./meshes/`
+      - install protoc plugin for go: `go install google.golang.org/protobuf/cmd/protoc-gen-go@latest`
+      - install protoc plugin for Go gRPC: `go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest`
+      - Generate Go code: `protoc --proto_path=meshes --go_out=meshes --go_opt=paths=source_relative --go-grpc_out=meshes --go-grpc_opt=paths=source_relative meshops.proto`
    1. For other languages, please refer to gRPC.io for language-specific guides.
 1. Implement the service methods and expose the gRPC server on a port of your choice (e.g. 10000).
 

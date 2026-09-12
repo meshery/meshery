@@ -1,5 +1,5 @@
 {{- $command_name := .Get "command" -}}
-{{- $commands := .Site.Data.mesheryctlcommands.cmds -}}
+{{- $commands := hugo.Data.mesheryctlcommands.cmds -}}
 {{- $command := index $commands $command_name -}}
 
 <table class="mesheryctl-reference-table">
@@ -16,12 +16,14 @@
     {{- if $command.name }}
       <!-- Standard command structure (global, system, perf, adapter, etc.) -->
       <tr>
-        <td rowspan="100"><a href="/reference/mesheryctl/{{ if eq $command_name "global" }}main{{ else }}{{ $command_name }}{{ end }}">{{ $command.name }}</a></td>
+        {{- $command_path := printf "reference/references/mesheryctl/%s" (cond (eq $command_name "global") "" $command_name) -}}
+        {{- $command_page := site.GetPage $command_path -}}
+        <td rowspan="100">{{ if $command_page }}<a href="{{ $command_page.RelPermalink }}">{{ $command.name }}</a>{{ else }}{{ $command.name }}{{ end }}</td>
         <td></td>
         <td></td>
         <td>{{ $command.description }}</td>
       </tr>
-      
+
       <!-- Flags -->
       {{- if $command.flags }}
         {{- range $key, $flag := $command.flags }}
@@ -32,12 +34,14 @@
       </tr>
         {{- end }}
       {{- end }}
-      
+
       <!-- Subcommands and their flags -->
       {{- if $command.subcommands }}
         {{- range $subkey, $subcommand := $command.subcommands }}
       <tr>
-        <td><a href="/reference/mesheryctl/{{ if eq $command_name "global" }}main{{ else }}{{ $command_name }}{{ end }}/{{ $subkey }}">{{ $subcommand.name }}</a></td>
+        {{- $subcommand_path := printf "reference/references/mesheryctl/%s%s" (cond (eq $command_name "global") "" (printf "%s/" $command_name)) $subkey -}}
+        {{- $subcommand_page := site.GetPage $subcommand_path -}}
+        <td>{{ if $subcommand_page }}<a href="{{ $subcommand_page.RelPermalink }}">{{ $subcommand.name }}</a>{{ else }}{{ $subcommand.name }}{{ end }}</td>
         <td></td>
         <td>{{ $subcommand.description }}</td>
       </tr>
@@ -56,13 +60,15 @@
       <!-- Nested command structure (exp with relationship, workspace, organization) -->
       {{- range $subkey, $subcommand := $command }}
       {{- $first := true }}
-      
+
       <!-- Output category-level flags first with category name -->
       {{- if $subcommand.flags }}
         {{- range $flagkey, $flag := $subcommand.flags }}
       <tr>
         {{- if $first }}
-        <td><a href="/reference/mesheryctl/{{ $command_name }}/{{ $subkey }}">{{ $subcommand.name }}</a></td>
+        {{- $subcommand_path := printf "reference/references/mesheryctl/%s/%s" $command_name $subkey -}}
+        {{- $subcommand_page := site.GetPage $subcommand_path -}}
+        <td>{{ if $subcommand_page }}<a href="{{ $subcommand_page.RelPermalink }}">{{ $subcommand.name }}</a>{{ else }}{{ $subcommand.name }}{{ end }}</td>
         {{- $first = false }}
         {{- else }}
         <td></td>
@@ -73,18 +79,22 @@
       </tr>
         {{- end }}
       {{- end }}
-      
+
       <!-- Output subcommands -->
       {{- if $subcommand.subcommands }}
         {{- range $subsubkey, $subsubcommand := $subcommand.subcommands }}
       <tr>
         {{- if $first }}
-        <td><a href="/reference/mesheryctl/{{ $command_name }}/{{ $subkey }}">{{ $subcommand.name }}</a></td>
+        {{- $subcommand_path := printf "reference/references/mesheryctl/%s/%s" $command_name $subkey -}}
+        {{- $subcommand_page := site.GetPage $subcommand_path -}}
+        <td>{{ if $subcommand_page }}<a href="{{ $subcommand_page.RelPermalink }}">{{ $subcommand.name }}</a>{{ else }}{{ $subcommand.name }}{{ end }}</td>
         {{- $first = false }}
         {{- else }}
         <td></td>
         {{- end }}
-        <td><a href="/reference/mesheryctl/{{ $command_name }}/{{ $subkey }}/{{ $subsubkey }}">{{ $subsubcommand.name }}</a></td>
+        {{- $subsubcommand_path := printf "reference/references/mesheryctl/%s/%s/%s" $command_name $subkey $subsubkey -}}
+        {{- $subsubcommand_page := site.GetPage $subsubcommand_path -}}
+        <td>{{ if $subsubcommand_page }}<a href="{{ $subsubcommand_page.RelPermalink }}">{{ $subsubcommand.name }}</a>{{ else }}{{ $subsubcommand.name }}{{ end }}</td>
         <td></td>
         <td>{{ $subsubcommand.description }}</td>
       </tr>

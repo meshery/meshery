@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/meshery/meshkit/encoding"
-	"github.com/meshery/schemas/models/v1beta1"
 )
 
 // RecursiveCastMapStringInterfaceToMapStringInterface will convert a
@@ -112,15 +111,38 @@ func GetRandomAlphabetsOfDigit(length int) (s string) {
 	return
 }
 
+// IsDesignInAlpha2Format reports whether a stored design predates the versioned
+// design schema and therefore must be migrated by convertV1alpha2ToV1beta3.
+//
+// Every design schema from v1beta1 onward stamps a versioned
+// "designs.meshery.io/<version>" schemaVersion (v1beta1, v1beta3, ...); the
+// legacy v1alpha2 format carries none (it is identified instead by a top-level
+// `services` map). Detection therefore keys off the canonical schemaVersion
+// prefix rather than whitelisting a single "current" version.
+//
+// Whitelisting one version is what regressed imported-design rendering: the
+// import pipeline (NewPatternFileFromK8sManifest) stamps v1beta3, but this
+// guard only recognized v1beta1, so every freshly imported design failed the
+// check, was misclassified as alpha2, and convertV1alpha2ToV1beta3 reparsed it
+// as a v1alpha2.PatternFile (which has `services`, not `components`) -
+// producing a design with zero components that rendered as an empty canvas.
+// Matching the prefix keeps current and future design schema versions out of
+// the lossy migration path.
 func IsDesignInAlpha2Format(patternFile string) (bool, error) {
-	design := map[string]interface{}{}
-	err := encoding.Unmarshal([]byte(patternFile), &design)
-	if err != nil {
+	// Decode only schemaVersion into a targeted struct instead of the whole
+	// file into a map[string]interface{}, which would allocate the entire
+	// nested design tree just to read one field. Both the json and yaml tags
+	// are required: encoding.Unmarshal tries encoding/json first and falls back
+	// to gopkg.in/yaml.v3, so a json-only tag would miss the camelCase
+	// schemaVersion key in a YAML-encoded pattern file and misclassify it.
+	var design struct {
+		SchemaVersion string `json:"schemaVersion" yaml:"schemaVersion"`
+	}
+	if err := encoding.Unmarshal([]byte(patternFile), &design); err != nil {
 		return true, err
 	}
 
-	val, ok := design["schemaVersion"]
-	if ok && val == v1beta1.DesignSchemaVersion {
+	if strings.HasPrefix(design.SchemaVersion, "designs.meshery.io/") {
 		return false, nil
 	}
 	return true, nil

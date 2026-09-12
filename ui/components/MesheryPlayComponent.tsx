@@ -3,6 +3,7 @@ import {
   Button,
   Divider,
   MenuItem,
+  SettingsIcon,
   TextField,
   Grid2,
   Typography,
@@ -11,12 +12,14 @@ import {
   gray,
   charcoal,
   NoSsr,
+  useHasPermission,
 } from '@sistent/sistent';
 import { useRouter } from 'next/router';
-import SettingsIcon from '@mui/icons-material/Settings';
 import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAdapter } from '@/store/slices/adapter';
+import { Keys } from '@meshery/schemas/permissions';
+import DefaultError from './general/error-404/index';
 
 const StyledButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(3),
@@ -57,6 +60,9 @@ const MesheryPlayComponent = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { meshAdapters } = useSelector((state) => state.adapter);
+  const canViewAdapter = useHasPermission(
+    Keys.InfrastructureManagementViewCloudNativeInfrastructure,
+  );
   // Initialize state
   const [adapter, setAdapterState] = useState(() => {
     if (meshAdapters && meshAdapters.length > 0) {
@@ -69,7 +75,7 @@ const MesheryPlayComponent = () => {
     const queryParam = router?.query?.adapter;
     if (queryParam) {
       const selectedAdapter = meshAdapters.find(
-        ({ adapter_location }) => adapter_location === queryParam,
+        ({ adapterLocation }) => adapterLocation === queryParam,
       );
       if (selectedAdapter) {
         setAdapterState(selectedAdapter);
@@ -98,7 +104,7 @@ const MesheryPlayComponent = () => {
   };
 
   const pickImage = (adapter) => {
-    let image = '/static/img/meshery-logo.png';
+    let image = '/static/img/meshery-logo/meshery-logo.png';
     let imageIcon = <img src={image} style={{ width: '24px' }} alt="Meshery Logo" />;
     if (adapter && adapter.name) {
       image = `/static/img/${adapter.name.toLowerCase()}.svg`;
@@ -111,7 +117,7 @@ const MesheryPlayComponent = () => {
     return (event) => {
       if (event.target.value !== '') {
         const selectedAdapter = meshAdapters.filter(
-          ({ adapter_location }) => adapter_location === event.target.value,
+          ({ adapterLocation }) => adapterLocation === event.target.value,
         );
         if (selectedAdapter && selectedAdapter.size === 1) {
           setAdapterState(selectedAdapter[0]);
@@ -125,7 +131,7 @@ const MesheryPlayComponent = () => {
     let adapCount = 0;
     let adapter;
     meshAdapters.forEach((adap) => {
-      if (adap.adapter_location === adapter) {
+      if (adap.adapterLocation === adapter) {
         adapter = adap;
         meshAdapters.forEach((ad) => {
           if (ad.name == adap.name) adapCount += 1;
@@ -146,6 +152,12 @@ const MesheryPlayComponent = () => {
     }
     return '';
   };
+
+  if (!canViewAdapter) {
+    return (
+      <DefaultError permissionKey={Keys.InfrastructureManagementViewCloudNativeInfrastructure} />
+    );
+  }
 
   if (meshAdapters.length === 0) {
     return (
@@ -192,7 +204,7 @@ const MesheryPlayComponent = () => {
                   label="Select Meshery Adapter"
                   data-cy="lifecycle-service-mesh-type"
                   fullWidth
-                  value={adapter && adapter.adapter_location ? adapter.adapter_location : ''}
+                  value={adapter && adapter.adapterLocation ? adapter.adapterLocation : ''}
                   margin="normal"
                   variant="outlined"
                   sx={{
@@ -214,15 +226,15 @@ const MesheryPlayComponent = () => {
                 >
                   {meshAdapters.map((ada) => (
                     <MenuItem
-                      key={`${ada.adapter_location}_${new Date().getTime()}`}
-                      value={ada.adapter_location}
+                      key={`${ada.adapterLocation}_${new Date().getTime()}`}
+                      value={ada.adapterLocation}
                       sx={{
                         display: 'flex',
                       }}
                     >
                       {pickImage(ada)}
                       <Typography variant="body1" sx={{ ml: 1 }}>
-                        {ada.adapter_location}
+                        {ada.adapterLocation}
                       </Typography>
                     </MenuItem>
                   ))}
@@ -232,7 +244,7 @@ const MesheryPlayComponent = () => {
           </Grid2>
         </PlayRoot>
         <Divider variant="fullWidth" light />
-        {adapter && adapter.adapter_location && (
+        {adapter && adapter.adapterLocation && (
           <MesheryAdapterPlayComponent adapter={adapter} adapter_icon={imageIcon} />
         )}
       </NoSsr>

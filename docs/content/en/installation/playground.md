@@ -1,7 +1,8 @@
 ---
-title: Meshery Playground
-description: Details about Meshery Playground
+title: Using Meshery Playground
+description: An alternative to installing Meshery
 categories: [project]
+weight: -5
 ---
 
 _Try out Meshery Playground at [https://playground.meshery.io/](https://playground.meshery.io/)_
@@ -32,13 +33,13 @@ _The Meshery Playground is connected to live Kubernetes cluster(s) and allows us
 
 **Answer:** _No, all of the designs that you have created in the Meshery Playground are saved to your user account and will be available to you each time you sign in to your account. Your designs will be available in the Meshery Playground and any of your other Meshery deployments, too._
 
-_In other words, all work done in Kanvas Designer is persisted to your user account._
+_In other words, all work done in Meshery Design Configurator is persisted to your user account._
 
 #### Question: Will I lose my Meshery deployments in the Cloud Native Playground?
 
 **Answer:** _Yes, the Meshery Playground clusters are reset on a daily basis. However, only deployments (not designs) that you may have created will be lost._
 
-_In other words, only Kanvas Visualizer is reset. All of your work in Meshery UI and Kanvas Designer will remain in your user account._
+_In other words, only Meshery Dashboard is reset. All of your work in Meshery UI and Meshery Design Configurator will remain in your user account._
 
 #### Question: Is there a demo user account that everyone can use?
 
@@ -50,4 +51,4 @@ _To ensure accountability in the Playground, it's crucial to promote the use of 
 
 #### Question: Can I deploy Meshery on-premises?
 
-**Answer:** _Yes, Meshery can be deployed on-premises with a single command to download, install, and run your own instance of Meshery in your environment. See all supported platforms to deploy your own Meshery instance at [https://docs.meshery.io/installation](/installation)._
+**Answer:** _Yes, Meshery can be deployed on-premises with a single command to download, install, and run your own instance of Meshery in your environment. See all supported platforms to deploy your own Meshery instance at [https://docs.meshery.io/installation]({{< ref "installation/_index.md" >}})._

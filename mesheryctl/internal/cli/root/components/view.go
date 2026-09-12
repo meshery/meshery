@@ -24,7 +24,7 @@ import (
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
-	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/spf13/cobra"
 )
 
@@ -40,7 +40,7 @@ var viewComponentCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View registered components",
 	Long: `View a component registered in Meshery Server
-Find more information at: https://docs.meshery.io/reference/mesheryctl/component/view`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/component/view`,
 	Example: `
 // View details of a specific component
 mesheryctl component view [component-name | component-id]
@@ -85,7 +85,7 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 			},
 			formatLabel,
 			func(data *models.MeshmodelComponentsAPIResponse) ([]component.ComponentDefinition, int64) {
-				return data.Components, data.Count
+				return data.Components, data.TotalCount
 			},
 			selectedComponent,
 		)

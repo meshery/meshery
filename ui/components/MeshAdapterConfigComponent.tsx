@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Grid2, Chip, Button, TextField, Tooltip, Avatar, styled } from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
-import ReactSelectWrapper from './ReactSelectWrapper';
+import ReactSelectWrapper from './general/ReactSelectWrapper';
 
-import changeAdapterState from './graphql/mutations/AdapterStatusMutation';
+import changeAdapterState from '@/graphql/mutations/AdapterStatusMutation';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
-import BadgeAvatars from './CustomAvatar';
-import { keys } from '@/utils/permission_constants';
-import CAN from '@/utils/can';
+import BadgeAvatars from './general/CustomAvatar';
+import { Keys } from '@meshery/schemas/permissions';
+
 import { iconMedium } from 'css/icons.styles';
 import {
   useGetAdaptersQuery,
@@ -58,8 +58,9 @@ const STATUS = {
 
 const MeshAdapterConfigComponent = () => {
   const labelRef = useRef(null);
-  const { meshAdapters: globalAdapters } = useSelector((state) => state.adapter);
-  const { meshAdaptersts: meshAdapterStates } = useSelector((state) => state.adapter);
+  const { meshAdapters: globalAdapters, meshAdaptersts: meshAdapterStates } = useSelector(
+    (state) => state.adapter,
+  );
   const [meshAdapters, setMeshAdapters] = useState(globalAdapters);
   const [ts, setTs] = useState(meshAdapterStates);
   const [meshLocationURLError, setMeshLocationURLError] = useState(false);
@@ -79,13 +80,13 @@ const MeshAdapterConfigComponent = () => {
 
   const setAdapterURLs =
     adapters?.map((res) => ({
-      value: res.adapter_location,
-      label: res.adapter_location,
+      value: res.adapterLocation,
+      label: res.adapterLocation,
     })) || [];
 
   const availableAdapters =
     availableAdaptersData?.map((res) => ({
-      value: res.adapter_location,
+      value: res.adapterLocation,
       label: res.name,
     })) || [];
 
@@ -153,9 +154,11 @@ const MeshAdapterConfigComponent = () => {
       setSelectedAvailableAdapter(newValue);
       setSelectedAvailableAdapterError(false);
 
-      if (newValue !== null) {
+      if (newValue && !newValue.__isNew__) {
         setMeshDeployURL(newValue.value);
         setMeshDeployURLError(false);
+      } else {
+        setMeshDeployURL('');
       }
     }
   };
@@ -362,7 +365,7 @@ const MeshAdapterConfigComponent = () => {
       showAdapters = (
         <AlignRight>
           {meshAdapters.map((adapter) => {
-            let image = '/static/img/meshery-logo.png';
+            let image = '/static/img/meshery-logo/meshery-logo.png';
             if (adapter.name) {
               image = '/static/img/' + adapter.name.toLowerCase() + '.svg';
             }
@@ -378,9 +381,9 @@ const MeshAdapterConfigComponent = () => {
                           .join(' ')} (${adapter.version})`}
               >
                 <AdapterChipStyled
-                  label={adapter.adapter_location}
-                  onDelete={handleDelete(adapter.adapter_location)}
-                  onClick={handleClick(adapter.adapter_location)}
+                  label={adapter.adapterLocation}
+                  onDelete={handleDelete(adapter.adapterLocation)}
+                  onClick={handleClick(adapter.adapterLocation)}
                   icon={
                     // logoIcon
                     <BadgeAvatars color={getStatusColor(adapterStates[adapter.name])}>
@@ -423,12 +426,7 @@ const MeshAdapterConfigComponent = () => {
                 color="primary"
                 size="large"
                 onClick={handleAdapterUndeploy}
-                disabled={
-                  !CAN(
-                    keys.UNDEPLOY_CLOUD_NATIVE_INFRASTRUCTURE.action,
-                    keys.UNDEPLOY_CLOUD_NATIVE_INFRASTRUCTURE.subject,
-                  )
-                }
+                permissionKey={Keys.InfrastructureManagementUndeployCloudNativeInfrastructure}
               >
                 Undeploy
               </AdapterButton>
@@ -440,7 +438,7 @@ const MeshAdapterConfigComponent = () => {
                 size="large"
                 onClick={handleSubmit}
                 data-cy="btnSubmitMeshAdapter"
-                disabled={!CAN(keys.CONNECT_ADAPTER.action, keys.CONNECT_ADAPTER.subject)}
+                permissionKey={Keys.MesherySystemConnectAdapter}
               >
                 Connect
               </AdapterButton>
@@ -465,37 +463,37 @@ const MeshAdapterConfigComponent = () => {
               />
             </Grid2>
           </Grid2>
-          <Grid2 container spacing={1} alignItems="flex-end" justifyContent="flex-end" size="grow">
+          <Grid2
+            container
+            spacing={1}
+            alignItems="flex-end"
+            justifyContent="flex-end"
+            size="grow"
+            sx={{ pt: 4 }}
+          >
             <div ref={labelRef}>
               <TextField
                 id="deployPort"
                 type="text"
                 label="Enter Port"
                 variant="standard"
-                onChange={(e) => handleDeployPortChange(e.target)}
+                onChange={(e) => handleDeployPortChange(e.target as HTMLInputElement)}
                 value={meshDeployURL}
                 error={meshDeployURLError}
               />
             </div>
             <React.Fragment>
-              <AdapterButtons>
-                <AdapterButton
-                  type="submit"
-                  variant="contained"
-                  data-testid="adapter-deploy-button"
-                  color="primary"
-                  size="large"
-                  onClick={handleAdapterDeploy}
-                  disabled={
-                    !CAN(
-                      keys.DEPLOY_CLOUD_NATIVE_INFRASTRUCTURE.action,
-                      keys.DEPLOY_CLOUD_NATIVE_INFRASTRUCTURE.subject,
-                    )
-                  }
-                >
-                  Deploy
-                </AdapterButton>
-              </AdapterButtons>
+              <AdapterButton
+                type="submit"
+                variant="contained"
+                data-testid="adapter-deploy-button"
+                color="primary"
+                size="large"
+                onClick={handleAdapterDeploy}
+                permissionKey={Keys.InfrastructureManagementDeployCloudNativeInfrastructure}
+              >
+                Deploy
+              </AdapterButton>
             </React.Fragment>
           </Grid2>
         </WrapperStyledDiv>

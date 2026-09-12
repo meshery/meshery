@@ -1,0 +1,93 @@
+import { expect, test } from '@playwright/test';
+import { ExtensionsPage } from './pages/ExtensionsPage';
+
+const URLS = {
+  DESIGNS: {
+    DOCS: 'https://docs.meshery.io/',
+    DESIGNER_EMBED: 'https://meshery.io/extensions/meshery-design-embed',
+  },
+  DOCKER: {
+    EXTENSION: 'https://hub.docker.com/extensions/meshery/docker-extension-meshery',
+  },
+  MESHERY: {
+    CATALOG: 'https://meshery.io/catalog',
+    ADAPTER_DOCS: 'https://docs.meshery.io/concepts/architecture/adapters',
+  },
+};
+
+test.describe('Extensions Section Tests', () => {
+  // The shared beforeEach calls extensionsPage.goto(), which in turn calls
+  // dashboardPage.navigateToDashboard() (two 120s visibility waits) and
+  // navigateToExtensions() (another 120s wait). Under the default
+  // BASE_TIMEOUT=60s the hook itself dies before those inner waits can
+  // resolve when CI is under load.
+  test.describe.configure({ timeout: 180_000 });
+
+  let extensionsPage: ExtensionsPage;
+
+  test.beforeEach(async ({ page }) => {
+    extensionsPage = new ExtensionsPage(page);
+    await extensionsPage.goto();
+  });
+
+  test('Verify extension nav items use top-level layout', async () => {
+    test.skip(
+      !(await extensionsPage.hasExtensionNavigation()),
+      'Navigator extensions are not rendered for this provider in CI.',
+    );
+    await extensionsPage.verifyExtensionNavItemsUseTopLevelLayout();
+  });
+
+  test('Verify Performance Analysis Details', async () => {
+    test.skip(
+      !(await extensionsPage.hasPerformanceAnalysis()),
+      'Performance Analysis section is not rendered for this provider in CI.',
+    );
+    await extensionsPage.verifyPerformanceAnalysisDetails();
+  });
+
+  test('Verify Meshery Docker Extension Details', async () => {
+    test.skip(
+      !(await extensionsPage.hasDockerExtension()),
+      'Docker extension section is not rendered for this provider in CI.',
+    );
+    await expect(extensionsPage.dockerExtensionHeading).toBeVisible();
+    await extensionsPage.verifyNewTab(
+      extensionsPage.dockerExtensionDownloadBtn,
+      URLS.DOCKER.EXTENSION,
+    );
+  });
+
+  test('Verify Meshery Design Embed Details', async () => {
+    test.skip(
+      !(await extensionsPage.hasDesignEmbed()),
+      'Design Embed section is not rendered for this provider in CI.',
+    );
+    await expect(extensionsPage.designEmbedLearnMoreBtn).toBeVisible();
+    await extensionsPage.verifyNewTab(
+      extensionsPage.designEmbedLearnMoreBtn,
+      URLS.DESIGNS.DESIGNER_EMBED,
+    );
+  });
+
+  test('Verify Meshery Catalog Section Details', async () => {
+    test.skip(
+      !(await extensionsPage.hasCatalogSection()),
+      'Meshery Catalog section is not rendered for this provider in CI.',
+    );
+    await expect(extensionsPage.catalogSectionHeading).toBeVisible();
+    await extensionsPage.toggleCatalog();
+    await extensionsPage.verifyNewTab(extensionsPage.catalogLink, URLS.MESHERY.CATALOG);
+  });
+
+  test('Verify Meshery Adapter for Istio Section', async () => {
+    test.skip(
+      !(await extensionsPage.hasIstioAdapterDocs()),
+      'Istio adapter docs link is not rendered for this provider in CI.',
+    );
+    await extensionsPage.verifyNewTab(
+      extensionsPage.adapterDocsIstioLink,
+      URLS.MESHERY.ADAPTER_DOCS,
+    );
+  });
+});

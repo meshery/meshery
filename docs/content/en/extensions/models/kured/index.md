@@ -1,7 +1,7 @@
 ---
 title: Kured
 subtitle: Collaborative and visual infrastructure as design for Kured
-image: /extensions/models/kured/icons/color/kured-color.svg
+image: extensions/models/kured/icons/color/kured-color.svg
 aliases: /extensibility/integrations/kured
 docURL: https://docs.meshery.io/extensibility/integrations/kured
 description: 

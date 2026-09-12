@@ -5,14 +5,12 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/encoding"
@@ -21,7 +19,6 @@ import (
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
 )
 
 type cmdModelImportFlags struct {
@@ -34,7 +31,7 @@ var importModelCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import models",
 	Long: `Import models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name
-Find more information at: https://docs.meshery.io/reference/mesheryctl/model/import`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/model/import`,
 	Example: `
 // Import model
 mesheryctl model import --file [URI]
@@ -74,7 +71,7 @@ mesheryctl model import --file [path-to-csv-directory]
 		}
 
 		if utils.IsValidUrl(path) {
-			return registerModel(nil, nil, nil, "", "urlImport", path, true)
+			return registerModel(nil, nil, nil, "", "urlImport", path, "", true)
 		}
 
 		hasCSVs := hasCSVs(path)
@@ -96,7 +93,7 @@ mesheryctl model import --file [path-to-csv-directory]
 				if err != nil {
 					return utils.ErrFileRead(err)
 				}
-				err = registerModel(modelData, componentData, relationshipData, "model.csv", "csv", "", true)
+				err = registerModel(modelData, componentData, relationshipData, "model.csv", "csv", "", "", true)
 				if err != nil {
 					return err
 				}
@@ -134,7 +131,7 @@ mesheryctl model import --file [path-to-csv-directory]
 			fileName = filepath.Base(path)
 		}
 
-		err = registerModel(tarData, nil, nil, fileName, "file", "", true)
+		err = registerModel(tarData, nil, nil, fileName, "file", "", "", true)
 		if err != nil {
 			return err
 		}
@@ -156,14 +153,8 @@ func hasCSVs(path string) bool {
 	return false
 }
 
-func registerModel(data []byte, componentData []byte, relationshipData []byte, filename string, dataType string, sourceURI string, register bool) error {
-	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		return err
-	}
-
-	baseURL := mctlCfg.GetBaseMesheryURL()
-	url := baseURL + "/api/meshmodels/register"
+func registerModel(data []byte, componentData []byte, relationshipData []byte, filename string, dataType string, sourceURI string, selectedModel string, register bool) error {
+	urlPath := "api/registry/register"
 	var importRequest schemav1beta1.ImportRequest
 	importRequest.UploadType = dataType
 	switch dataType {
@@ -171,13 +162,14 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 		importRequest.ImportBody.ModelCsv = "data:text/csv;base64," + base64.StdEncoding.EncodeToString(data)
 		importRequest.ImportBody.ComponentCsv = "data:text/csv;base64," + base64.StdEncoding.EncodeToString(componentData)
 		importRequest.ImportBody.RelationshipCSV = "data:text/csv;base64," + base64.StdEncoding.EncodeToString(relationshipData)
+		importRequest.ImportBody.Model.Model = strings.TrimSpace(selectedModel)
 	case "file":
 		importRequest.ImportBody.ModelFile = data
 	default:
 		if data != nil {
-			err = encoding.Unmarshal(data, &importRequest.ImportBody.Model)
+			err := encoding.Unmarshal(data, &importRequest.ImportBody.Model)
 			if err != nil {
-				return err
+				return utils.ErrUnmarshal(err)
 			}
 		}
 	}
@@ -186,34 +178,24 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 	importRequest.Register = register
 	requestBody, err := json.Marshal(importRequest)
 	if err != nil {
-		return err
+		return utils.ErrMarshal(err)
 	}
 
-	req, err := utils.NewRequest(http.MethodPost, url, bytes.NewReader(requestBody))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := api.Add(urlPath, bytes.NewReader(requestBody), headers)
 	if err != nil {
 		return err
 	}
-	req.Header.Set("Content-Type", "application/json")
 
-	resp, err := utils.MakeRequest(req)
+	response, err := api.GenerateDataFromBodyResponse[models.RegistryAPIResponse](req)
 	if err != nil {
 		return err
 	}
 
-	defer func() { _ = resp.Body.Close() }()
-	bodyBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		err = models.ErrDataRead(err, "response body")
-		return err
-	}
-	var response models.RegistryAPIResponse
-
-	if err := encoding.Unmarshal((bodyBytes), &response); err != nil {
-		err = models.ErrUnmarshal(err, "response body")
-		return err
-	}
-
-	displayEntities(&response)
+	displayEntities(response)
 
 	if len(response.EntityTypeSummary.SuccessfulModels) == 0 {
 		return utils.ErrInvalidModel()
@@ -224,13 +206,13 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 
 func displayEntities(response *models.RegistryAPIResponse) {
 	displaySummary(response)
-	ok := displayEmtpyModel(response)
+	ok := displayEmptyModel(response)
 	if !ok {
 		return
 	}
-	displayEntitisIfModel(response)
+	displayEntitiesIfModel(response)
 }
-func displayEmtpyModel(response *models.RegistryAPIResponse) bool {
+func displayEmptyModel(response *models.RegistryAPIResponse) bool {
 	if len(response.ModelName) != 0 && response.EntityCount.CompCount == 0 && response.EntityCount.RelCount == 0 {
 		if response.EntityCount.TotalErrCount == 0 {
 			return false
@@ -239,13 +221,13 @@ func displayEmtpyModel(response *models.RegistryAPIResponse) bool {
 	return true
 }
 
-// TO check the case if we were never able to read the file at first palce
+// TO check the case if we were never able to read the file at first place
 func hasExtension(name string) bool {
 	extension := filepath.Ext(name)
 	return extension != ""
 }
 
-func displayEntitisIfModel(response *models.RegistryAPIResponse) {
+func displayEntitiesIfModel(response *models.RegistryAPIResponse) {
 	var modelsWithoutExtension []string
 	var modelsWithExtension []string
 

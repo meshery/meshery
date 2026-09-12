@@ -1,4 +1,4 @@
-import { FILTER, PATTERN } from './Enum';
+import { FILTER, PATTERN } from '@/constants/navigator';
 
 const DOWNLOAD_PATH = {
   [PATTERN]: ({ id, source_type, params }) =>

@@ -11,8 +11,8 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: http
+      targetPort: https-metrics
       protocol: TCP
-      name: http
+      name: https-metrics
   selector:
     {{- include "meshery-operator.selectorLabels" . | nindent 4 }}

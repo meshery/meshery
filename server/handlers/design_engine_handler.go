@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -20,6 +21,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/meshery/meshery/server/models/pattern/patterns/k8s"
+	"github.com/meshery/meshery/server/models/pattern/planner"
 	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
 
 	"github.com/meshery/meshery/server/models/pattern/stages"
@@ -28,8 +30,8 @@ import (
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
 	meshkube "github.com/meshery/meshkit/utils/kubernetes"
-	"github.com/meshery/schemas/models/v1beta1/component"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta2/component"
+	pattern "github.com/meshery/schemas/models/v1beta3/design"
 	"github.com/pkg/errors"
 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -48,8 +50,9 @@ func (h *Handler) PatternFileHandler(
 	userID := user.ID
 	token, ok := r.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
-		h.log.Error(ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token")))
-		http.Error(rw, ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token")).Error(), http.StatusInternalServerError)
+		tokenErr := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
+		h.log.Error(tokenErr)
+		writeMeshkitError(rw, tokenErr, http.StatusInternalServerError)
 		return
 	}
 	var payload models.MesheryPatternFileDeployPayload
@@ -59,23 +62,13 @@ func (h *Handler) PatternFileHandler(
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
-
-		rw.WriteHeader(http.StatusBadRequest)
-		if _, writeErr := fmt.Fprintf(rw, "failed to read request body: %s", err); writeErr != nil {
-			h.log.Error(writeErr)
-		}
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 
 	if err := json.Unmarshal(body, &payload); err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
-
-		rw.WriteHeader(http.StatusBadRequest)
-		if _, writeErr := fmt.Fprintf(rw, "failed to unmarshal request body: %s", err); writeErr != nil {
-			h.log.Error(writeErr)
-		}
+		writeMeshkitError(rw, ErrDecoding(err, "design engine request"), http.StatusBadRequest)
 		return
 	}
 
@@ -97,18 +90,18 @@ func (h *Handler) PatternFileHandler(
 	isDesignInAlpha2Format, err := patternutils.IsDesignInAlpha2Format(payload.PatternFile)
 	if err != nil {
 		err = ErrPatternFile(err)
-		event := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("view").WithDescription("Failed to parse design").WithMetadata(map[string]interface{}{"error": err, "id": payload.PatternID}).Build()
+		event := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("view").WithDescription("Failed to parse design").WithMetadata(map[string]interface{}{"error": err, "id": payload.PatternID}).Build()
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		h.log.Error(err)
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, err, http.StatusInternalServerError)
 		return
 	}
 
 	if isDesignInAlpha2Format {
-		eventBuilder := events.NewEvent().ActedUpon(patternID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert")
+		eventBuilder := events.NewEvent().ActedUpon(patternID).FromSystem(*h.SystemID).FromOwner(userID).WithCategory("pattern").WithAction("convert")
 
-		_, patternFileStr, err := h.convertV1alpha2ToV1beta1(&models.MesheryPattern{
+		_, patternFileStr, err := h.convertV1alpha2ToV1beta3(&models.MesheryPattern{
 			ID:          &patternID,
 			PatternFile: payload.PatternFile,
 		}, eventBuilder)
@@ -119,7 +112,7 @@ func (h *Handler) PatternFileHandler(
 
 		if err != nil {
 			h.log.Error(err)
-			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			writeMeshkitError(rw, err, http.StatusInternalServerError)
 			return
 		}
 		patternFileByte = []byte(patternFileStr)
@@ -128,7 +121,7 @@ func (h *Handler) PatternFileHandler(
 	patternFile, err := patterncore.NewPatternFile(patternFileByte)
 	if err != nil {
 		h.log.Error(ErrPatternFile(err))
-		http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrPatternFile(err), http.StatusBadRequest)
 		return
 	}
 
@@ -172,7 +165,7 @@ func (h *Handler) PatternFileHandler(
 	}
 	response, err := _processPattern(opts)
 
-	eventBuilder := events.NewEvent().ActedUpon(patternID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(action)
+	eventBuilder := events.NewEvent().ActedUpon(patternID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(action)
 
 	if err != nil {
 		err := ErrPatternDeploy(err, patternFile.Name)
@@ -185,7 +178,7 @@ func (h *Handler) PatternFileHandler(
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		h.log.Error(err)
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -195,11 +188,16 @@ func (h *Handler) PatternFileHandler(
 
 	serverURL, _ := r.Context().Value(models.MesheryServerURL).(string)
 
+	// NOTE: design_id (snake_case) in this URL is the meshmap extension's URL
+	// query-param contract; flipping it requires a coordinated meshmap-side
+	// change. The metadata map keys below are flipped to canonical camelCase
+	// (event_trackers.metadata wire) but the URL is left as-is until the
+	// extension contract is migrated.
 	viewLink := fmt.Sprintf("%s/extension/meshmap?mode=operator&type=view&design_id=%s", serverURL, patternID)
 	description = fmt.Sprintf("%s.", description)
-	metadata["view_link"] = viewLink
-	metadata["design_name"] = patternFile.Name
-	metadata["design_id"] = patternID
+	metadata["viewLink"] = viewLink
+	metadata["designName"] = patternFile.Name
+	metadata["designId"] = patternID
 
 	var event *events.Event
 	if action == "deploy" || action == "dry-run" {
@@ -376,20 +374,36 @@ func (sap *serviceActionProvider) Terminate(err error) {
 func (sap *serviceActionProvider) Mutate(p *pattern.PatternFile) {
 	//TODO: externalize these mutation rules with policies.
 	//1. Enforce the deployment of CRDs before other resources
-	for _, component := range p.Components {
-		if component.Component.Kind == "CustomResourceDefinition" {
-			for _, comp := range p.Components {
-				if comp.Component.Kind != "CustomResourceDefinition" {
-					dependsOnSlice, err := utils.Cast[[]string](comp.Metadata.AdditionalProperties["dependsOn"])
-					if err != nil {
-						err = errors.Wrapf(err, "Failed to cast 'dependsOn' to []string for component %s", comp.DisplayName)
-						sap.log.Error(err)
-						sap.Terminate(err)
-					}
-					dependsOnSlice = append(dependsOnSlice, comp.ID.String())
-					comp.Metadata.AdditionalProperties["dependsOn"] = dependsOnSlice
-				}
+	//
+	// A dependency names another component of the same design by its name, so
+	// each non-CRD component is made to depend on the CRD's name. A component
+	// never depends on itself.
+	for _, crd := range p.Components {
+		if crd.Component.Kind != "CustomResourceDefinition" {
+			continue
+		}
+
+		for _, comp := range p.Components {
+			if comp.Component.Kind == "CustomResourceDefinition" {
+				continue
 			}
+
+			dependsOn, err := planner.DeclaredDependencies(p.Name, comp)
+			if err != nil {
+				sap.log.Error(err)
+				sap.Terminate(err)
+				return
+			}
+
+			if slices.Contains(dependsOn, crd.DisplayName) {
+				continue
+			}
+
+			if comp.Metadata.AdditionalProperties == nil {
+				comp.Metadata.AdditionalProperties = map[string]interface{}{}
+			}
+
+			comp.Metadata.AdditionalProperties["dependsOn"] = append(dependsOn, crd.DisplayName)
 		}
 	}
 }
@@ -523,7 +537,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 	msgs := []patterns.DeploymentMessagePerContext{}
 	for _, host := range ccp.Hosts {
 		// Hack until adapters fix the concurrent client
-		// creation issue: https://github.com/layer5io/meshery-adapter-library/issues/32
+		// creation issue: https://github.com/meshery/meshery-adapter-library/issues/32
 		time.Sleep(50 * time.Microsecond)
 		sap.log.Debug("Execute operations on: ", host.Kind)
 
@@ -593,7 +607,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 			KubeConfigs:  kconfigs,
 			Declarations: []string{compStr},
 		})
-		sucess := err == nil
+		success := err == nil
 		msgs = append(msgs, patterns.DeploymentMessagePerContext{
 			SystemName: hostName,
 			Location:   fmt.Sprintf("%s:%s", hostName, strconv.Itoa(hostPort)),
@@ -603,7 +617,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 					Model:      ccp.Component.Model.Name,
 					CompName:   ccp.Component.DisplayName,
 					DesignName: sap.patternName,
-					Success:    sucess,
+					Success:    success,
 					Message:    resp.GetMessage(),
 					Error:      err,
 				},

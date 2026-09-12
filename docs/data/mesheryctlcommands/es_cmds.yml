@@ -230,7 +230,7 @@ system-context:
 perf:
   name: perf
   description: Gestión del rendimiento y evaluación comparativa mediante la CLI de Meshery
-  usage: mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token "provider=Layer5"
+  usage: mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token "provider=Meshery"
 
   flags:
     output-format:
@@ -275,8 +275,8 @@ perf:
         load-generator:
           name: --load-generator
           arg: apply
-          description: "Elección del generador de carga: fortio (OR) wrk2 (predeterminado: fortio)."
-          usage: mesheryctl perf apply [profile-name] --url [URL] --load-generator [fortio/wrk2]
+          description: "Elección del generador de carga: fortio (predeterminado: fortio)."
+          usage: mesheryctl perf apply [profile-name] --url [URL] --load-generator [fortio]
         mesh:
           name: --mesh
           arg: apply

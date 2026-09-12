@@ -17,17 +17,16 @@ var (
 	Kuma      = Adapter{Name: "meshery-kuma", Location: "10007"}
 	Nginx     = Adapter{Name: "meshery-nginx-sm", Location: "10010"}
 	Cilium    = Adapter{Name: "meshery-cilium", Location: "10012"}
-	Nighthawk = Adapter{Name: "meshery-nighthawk", Location: "10013"}
 )
 
-var ListAvailableAdapters = []Adapter{Istio, Linkerd, Consul, Kuma, NSM, Nginx, AppMesh, Cilium, Traefik, Nighthawk}
+var ListAvailableAdapters = []Adapter{Istio, Linkerd, Consul, Kuma, NSM, Nginx, AppMesh, Cilium, Traefik}
 
 // Adapter represents an adapter in Meshery
 type Adapter struct {
-	Location     string                       `json:"adapter_location"`
+	Location     string                       `json:"adapterLocation"`
 	Name         string                       `json:"name"`
 	Version      string                       `json:"version"`
-	GitCommitSHA string                       `json:"git_commit_sha"`
+	GitCommitSHA string                       `json:"gitCommitSha"`
 	Ops          []*meshes.SupportedOperation `json:"ops"`
 }
 

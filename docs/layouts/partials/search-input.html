@@ -1,0 +1,67 @@
+{{/* cSpell:ignore docsy docsearch absurlreplacer */ -}}
+
+{{ .Scratch.Set "docsy-search" 0 -}}
+
+{{ if .Site.Params.gcs_engine_id -}}
+{{ .Scratch.Add "docsy-search" 1 -}}
+
+<div class="td-search">
+  <div class="td-search__icon"></div>
+  <input type="search" name="q" {{/**/ -}}
+    class="td-search__input form-control td-search-input" {{/**/ -}}
+    placeholder='{{ T "ui_search" }}' {{/**/ -}}
+    aria-label='{{ T "ui_search" }}' autocomplete="off">
+</div>
+
+{{- end -}}
+
+
+{{ if and .Site.Params.search (isset .Site.Params.search "algolia") -}}
+{{ .Scratch.Add "docsy-search" 1 -}}
+{{ .Scratch.Add "docsearch-id-num" 1 -}}
+
+<div class="td-search">
+  <div class="td-search--algolia" id="docsearch-{{ mod (.Scratch.Get "docsearch-id-num") 2 }}"></div>
+</div>
+
+{{- end -}}
+
+
+{{ if .Site.Params.offlineSearch -}}
+{{ .Scratch.Add "docsy-search" 1 -}}
+
+{{ $offlineSearchIndex := resources.Get "json/offline-search-index.json" | resources.ExecuteAsTemplate "offline-search-index.json" . -}}
+{{ if hugo.IsProduction -}}
+{{/* Use `md5` as finger print hash function to shorten file name to avoid `file name too long` error. */ -}}
+{{ $offlineSearchIndex = $offlineSearchIndex | fingerprint "md5" -}}
+{{ end -}}
+{{ $offlineSearchLink := $offlineSearchIndex.RelPermalink -}}
+
+<div class="td-search td-search--offline">
+  <div class="td-search__icon"></div>
+  <input
+    type="search"
+    name="q"
+    class="td-search__input form-control"
+    placeholder='{{ T "ui_search" }}'
+    aria-label='{{ T "ui_search" }}'
+    autocomplete="off"
+    {{/*
+      The data attribute name of the json file URL must end with `src` since
+      Hugo's absurlreplacer requires `src`, `href`, `action` or `srcset` suffix for the attribute name.
+      If the absurlreplacer is not applied, the URL will start with `/`.
+      It causes the json file loading error when when relativeURLs is enabled.
+      https://github.com/google/docsy/issues/181
+    */}}
+    data-offline-search-index-json-src="{{ $offlineSearchLink }}"
+    data-offline-search-base-href="{{ "" | relURL }}"
+    data-offline-search-max-results="{{ .Site.Params.offlineSearchMaxResults | default 10 }}"
+  >
+</div>
+
+{{- end -}}
+
+{{ if gt (.Scratch.Get "docsy-search") 1 -}}
+{{ warnf `You have more than one site-search option configured: choose only one.
+      For details, see https://www.docsy.dev/docs/content/search.` -}}
+{{ end -}}

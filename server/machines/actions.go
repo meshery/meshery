@@ -40,7 +40,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
 
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
 
@@ -55,7 +55,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 		credName, _ := payload.CredentialSecret["name"].(string)
 		credential, err = provider.SaveUserCredential(token, &models.Credential{
 			Name:   credName,
-			UserId: &userUUID,
+			UserId: userUUID,
 			Type:   payload.Kind,
 			Secret: payload.CredentialSecret,
 		})
@@ -88,7 +88,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 		}
 		credentialID = &parsed
 	} else {
-		credentialID = credential.ID
+		credentialID = &credential.ID
 	}
 
 	connection, err := provider.SaveConnection(&connections.ConnectionPayload{

@@ -40,7 +40,7 @@ var restartCmd = &cobra.Command{
 	Use:   "restart",
 	Short: "Stop, then start Meshery",
 	Long: `Restart all Meshery containers / pods.
-Find more information at: https://docs.meshery.io/reference/mesheryctl/system/restart`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/restart`,
 	Example: `
 // Restart all Meshery containers, their instances and their connected volumes
 mesheryctl system restart

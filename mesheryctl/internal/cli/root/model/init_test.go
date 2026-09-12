@@ -1,6 +1,7 @@
 package model
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -12,6 +13,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v3"
 )
 
 func TestModelInit(t *testing.T) {
@@ -87,11 +89,7 @@ func TestModelInit(t *testing.T) {
 		ExpectedError      error
 		IsOutputGolden     bool
 	}{
-		// NOTE:
-		// we need this test with full params on the first place,
-		// to prevent side effects of using same command object in model build test.
-		//
-		// TODO: think about how to fix this.
+		// NOTE: Test with full params provided explicitly.
 		{
 			Name:             "given all default parameters when model init model is initialized",
 			Args:             []string{"init", initTestEC2Controller, "--version", initTestVersion, "--path", ".", "--output-format", "json"},
@@ -152,13 +150,11 @@ func TestModelInit(t *testing.T) {
 			},
 			AfterTestRemoveDir: initTestDynamoController,
 		},
-		// Added --output-format json in this test because somehow
-		// the --output-format yaml from the previous test case is propagated to this test case
-		// which is only the behaviour inside the test.
-		// TODO think about how to reset the flags between the test cases.
+		// Test case with custom path and version specified.
+		// Flag leakage was fixed, so --output-format yaml from previous test case won't bleed here.
 		{
 			Name:             "given custom path and version when model init model is initialized with custom path and version specified",
-			Args:             []string{"init", initTestEC2Controller, "--path", "test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
+			Args:             []string{"init", initTestEC2Controller, "--path", "test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.custom-dir.aws-ec2-controller.output.golden",
 			ExpectedDirs: []string{
@@ -213,7 +209,7 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: "test_case_some_other_custom_dir",
 		},
 		{
-			Name: "model init fail if model/version folder esists",
+			Name: "given existing model/version folder when model init then throw error",
 			Args: []string{"init", initTestEC2Controller, "--path", ".", "--version", initTestInvalidVersion},
 			SetupHook: func() {
 				err := os.MkdirAll(filepath.Join(initTestEC2Controller, initTestInvalidVersion), initModelDirPerm)
@@ -228,7 +224,7 @@ func TestModelInit(t *testing.T) {
 			ExpectedError:      ErrModelInitFromString(fmt.Sprintf(errInitFolderExists, filepath.Join(initTestEC2Controller, initTestInvalidVersion))),
 		},
 		{
-			Name:             "model init with invalid version format",
+			Name:             "given invalid version format when model init then throw error",
 			Args:             []string{"init", initTestEC2Controller, "--version", "1.2"},
 			ExpectError:      true,
 			ExpectedResponse: "",
@@ -236,7 +232,7 @@ func TestModelInit(t *testing.T) {
 			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --version '1.2': version must be in format vX.X.X")),
 		},
 		{
-			Name:             "model init with invalid output format",
+			Name:             "given invalid output format when model init then throw error",
 			Args:             []string{"init", "test-case-aws-ec2-controller", "--output-format", "protobuf"},
 			ExpectError:      true,
 			ExpectedResponse: "",
@@ -244,28 +240,28 @@ func TestModelInit(t *testing.T) {
 			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --output-format 'protobuf': valid values are json yaml")),
 		},
 		{
-			Name:             "model init no model name",
+			Name:             "given no model name provided when model init then throw error",
 			Args:             []string{"init", "--output-format", "json", "--version", "v0.1.0"},
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelInitFromString(errInitOneArg),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("%s", errInitOneArg)),
 		},
 		{
-			Name:             "model init too many arguments",
+			Name:             "given too many arguments when model init then throw error",
 			Args:             []string{"init", "test-case-aws-ec2-controller", "test-case-aws-dynamodb-controller", "--output-format", "json", "--version", "v0.1.0"},
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelInitFromString(errInitOneArg),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("%s", errInitOneArg)),
 		},
 		{
-			Name:             "model init invalid model name (underscore)",
+			Name:             "given invalid model name when model init then throw error",
 			Args:             []string{"init", "test-case_aws-ec2-controller", "--output-format", "json", "--version", "v0.1.0"},
 			ExpectError:      true,
 			ExpectedResponse: "",
 			IsOutputGolden:   false,
-			ExpectedError:    ErrModelInit(fmt.Errorf("invalid model name: name must match pattern ^[a-z0-9-]+$")),
+			ExpectedError:    ErrModelInit(fmt.Errorf("%s", "invalid model name: name must match pattern ^[a-z0-9-]+$")),
 		},
 	}
 
@@ -341,4 +337,55 @@ func TestModelInit(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestInitModelDeriveDisplayName(t *testing.T) {
+	cases := map[string]string{
+		"digitalocean-icons": "Digitalocean Icons",
+		"cert-manager":       "Cert Manager",
+		"aws_ec2_controller": "Aws Ec2 Controller",
+		"istio":              "Istio",
+		"a-b-c":              "A B C",
+	}
+	for in, want := range cases {
+		assert.Equal(t, want, initModelDeriveDisplayName(in), "deriving display name for %q", in)
+	}
+}
+
+func TestInitModelInjectName(t *testing.T) {
+	// Verify that the scaffold's placeholder identifiers are replaced with the
+	// user-supplied model name while every other template field is preserved.
+	// Regression test for the model definition being left as "untitled-model".
+	modelName := "digitalocean-icons"
+
+	t.Run("json", func(t *testing.T) {
+		content, err := getTemplateInOutputFormat(initModelTemplatePathModel, "json")
+		assert.NoError(t, err)
+
+		out, err := initModelInjectName(content, "json", modelName)
+		assert.NoError(t, err)
+
+		var got map[string]interface{}
+		assert.NoError(t, json.Unmarshal(out, &got))
+		assert.Equal(t, modelName, got["name"])
+		assert.Equal(t, "Digitalocean Icons", got["displayName"])
+		// a representative untouched field must survive the round-trip
+		assert.Contains(t, got, "schemaVersion")
+		assert.Contains(t, got, "metadata")
+		assert.Contains(t, string(out), "<svg")
+	})
+
+	t.Run("yaml", func(t *testing.T) {
+		content, err := getTemplateInOutputFormat(initModelTemplatePathModel, "yaml")
+		assert.NoError(t, err)
+
+		out, err := initModelInjectName(content, "yaml", modelName)
+		assert.NoError(t, err)
+
+		var got map[string]interface{}
+		assert.NoError(t, yaml.Unmarshal(out, &got))
+		assert.Equal(t, modelName, got["name"])
+		assert.Equal(t, "Digitalocean Icons", got["displayName"])
+		assert.Contains(t, got, "schemaVersion")
+	})
 }

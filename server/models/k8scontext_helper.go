@@ -2,8 +2,6 @@ package models
 
 import (
 	"sync"
-
-	"github.com/meshery/meshery/server/helpers/utils"
 )
 
 type K8scontextChan struct {
@@ -43,11 +41,15 @@ func (k *K8scontextChan) PublishContext() {
 	k.mx.Unlock()
 
 	for _, ch := range subscribers {
-		if !utils.IsClosed(ch) {
-			select {
-			case ch <- struct{}{}:
-			default:
-			}
+		// Non-blocking coalescing send. A subscriber that already has a pending
+		// signal buffered doesn't need another; a departed subscriber is removed
+		// via UnsubscribeContext and its channel is never closed, so this can
+		// neither block the publisher nor panic on a closed channel. The former
+		// utils.IsClosed guard was a destructive receive that silently consumed a
+		// buffered signal, dropping the refetch it was meant to trigger.
+		select {
+		case ch <- struct{}{}:
+		default:
 		}
 	}
 }

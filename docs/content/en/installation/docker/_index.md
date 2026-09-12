@@ -1,11 +1,12 @@
 ---
-title: Docker
+title: Install on Docker
 categories: [docker]
 aliases:
 - /installation/platforms/docker
 display_title: false
-image: /installation/docker/images/docker.svg
+image: installation/docker/images/docker.svg
 description: Install Meshery on Docker
+weight: 10
 ---
 
 {{< installation/installation_prerequisites >}}
@@ -41,7 +42,7 @@ This is useful when:
 
 ## Post-Installation Steps
 
-Optionally, you can verify the health of your Meshery deployment using [mesheryctl system check](/reference/mesheryctl/system/check).
+Optionally, you can verify the health of your Meshery deployment using [mesheryctl system check]({{< ref "reference/references/mesheryctl/system/check.md" >}}).
 
 You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 

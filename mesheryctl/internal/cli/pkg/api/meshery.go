@@ -13,13 +13,13 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Generic function to fetch data from Mesehry server needs to be type of meshery data ApiResponse
+// Fetch sends a GET request to the given URL and unmarshals the JSON response body into T.
 func Fetch[T any](url string) (*T, error) {
 	resp, err := makeRequest(url, http.MethodGet, nil, nil)
 	if err != nil {
 		return nil, err
 	}
-	return generateDataFromBodyResponse[T](resp)
+	return GenerateDataFromBodyResponse[T](resp)
 }
 
 func FetchData(url string) ([]byte, error) {
@@ -47,13 +47,16 @@ func Add(url string, body io.Reader, headers map[string]string) (*http.Response,
 	return makeRequest(url, http.MethodPost, body, headers)
 }
 
-func generateDataFromBodyResponse[T any](response *http.Response) (*T, error) {
-	// defers the closing of the response body after its use, ensuring that the resources are properly released.
+func GenerateDataFromBodyResponse[T any](response *http.Response) (*T, error) {
+	if response == nil || response.Body == nil {
+		return nil, ErrGenerateDataForInvalidResponse()
+	}
+
 	defer func() { _ = response.Body.Close() }()
 
 	data, err := io.ReadAll(response.Body)
 	if err != nil {
-		return nil, err
+		return nil, utils.ErrReadFromBody(err)
 	}
 
 	var apiResult T

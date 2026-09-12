@@ -1,8 +1,65 @@
+- CVE: CVE-2024-36535
+  DateAnnounced: "2024-07-24"
+  Severity: Critical
+  CVSS: "9.8"
+  Description: "Insecure default permissions in Meshery v0.7.51 allow an attacker to access sensitive data and escalate privileges by obtaining the Meshery ServiceAccount token. With the default Helm installation the interface is exposed on an external IP and permits open self-registration, so anyone who can reach it can sign up, gain broad visibility into cluster activity, deploy pods, and execute arbitrary code unless Meshery is secured or restricted to internal networks."
+  AffectedComponent: Default deployment / RBAC (ServiceAccount token)
+  VulnerableVersion: v0.7.51
+  PatchedVersion: Mitigation only
+  FixDetails: 'Mitigated by configuration &mdash; see <a href="__security_hardening__">Security Hardening</a> and <a href="__authentication_identity__">Authentication &amp; Identity</a>'
+  Links: '<a href="https://nvd.nist.gov/vuln/detail/CVE-2024-36535">NVD</a>,<br><a href="https://www.cve.org/CVERecord?id=CVE-2024-36535">cve.org</a>,<br><a href="https://gist.github.com/HouqiyuA/2950c3993cdeff23afcbd73ba7a33879">advisory</a>'
+
+- CVE: CVE-2024-35182
+  DateAnnounced: "2024-08-05"
+  Severity: Medium
+  CVSS: "5.9"
+  Description: "A SQL injection vulnerability in Meshery prior to v0.7.22 in the events API (/api/v2/events, GetAllEvents) allows a remote attacker to execute arbitrary SQL via the sort parameter, including stacked queries and arbitrary file writes via ATTACH DATABASE."
+  AffectedComponent: Events API (GetAllEvents)
+  VulnerableVersion: "< v0.7.22"
+  PatchedVersion: v0.7.22
+  FixDetails: '<a href="https://github.com/meshery/meshery/pull/10280">PR #10280</a>'
+  Links: '<a href="https://nvd.nist.gov/vuln/detail/CVE-2024-35182">NVD</a>,<br><a href="https://github.com/advisories/GHSA-h7cm-jvpp-69xf">GHSA-h7cm-jvpp-69xf</a>,<br><a href="https://securitylab.github.com/advisories/GHSL-2024-013_GHSL-2024-014_Meshery/">GitHub Security Lab</a>'
+
+- CVE: CVE-2024-35181
+  DateAnnounced: "2024-08-05"
+  Severity: Medium
+  CVSS: "5.9"
+  Description: "A SQL injection vulnerability in Meshery prior to v0.7.22 in the GetMeshSyncResourcesKinds handler (/api/system/meshsync/resources/kinds) allows a remote attacker to execute arbitrary SQL via the order parameter, including stacked queries and arbitrary file writes via ATTACH DATABASE."
+  AffectedComponent: MeshSync resources API (GetMeshSyncResourcesKinds)
+  VulnerableVersion: "< v0.7.22"
+  PatchedVersion: v0.7.22
+  FixDetails: '<a href="https://github.com/meshery/meshery/pull/10280">PR #10280</a>'
+  Links: '<a href="https://nvd.nist.gov/vuln/detail/CVE-2024-35181">NVD</a>,<br><a href="https://github.com/advisories/GHSA-9f24-jrv4-f8g5">GHSA-9f24-jrv4-f8g5</a>,<br><a href="https://securitylab.github.com/advisories/GHSL-2024-013_GHSL-2024-014_Meshery/">GitHub Security Lab</a>'
+
+- CVE: CVE-2024-29031
+  DateAnnounced: "2024-08-05"
+  Severity: High
+  CVSS: "7.5"
+  Description: "A SQL injection vulnerability in Meshery prior to v0.7.17 allows a remote attacker to obtain sensitive information via the order parameter of the GetMeshSyncResources function."
+  AffectedComponent: MeshSync resources API (GetMeshSyncResources)
+  VulnerableVersion: "< v0.7.17"
+  PatchedVersion: v0.7.17
+  FixDetails: '<a href="https://github.com/meshery/meshery/pull/10207">PR #10207</a>'
+  Links: '<a href="https://nvd.nist.gov/vuln/detail/CVE-2024-29031">NVD</a>,<br><a href="https://github.com/advisories/GHSA-652r-q29p-m25h">GHSA-652r-q29p-m25h</a>,<br><a href="https://securitylab.github.com/advisories/GHSL-2023-249_Meshery/">GitHub Security Lab</a>'
+
+- CVE: CVE-2023-46575
+  DateAnnounced: "2023-11-24"
+  Severity: Critical
+  CVSS: "9.1"
+  Description: "A SQL injection vulnerability in Meshery prior to v0.6.179 enables a remote attacker to retrieve sensitive information and execute arbitrary code via the order parameter."
+  AffectedComponent: REST API (order parameter)
+  VulnerableVersion: "< v0.6.179"
+  PatchedVersion: v0.6.179
+  FixDetails: '<a href="https://github.com/meshery/meshery/pull/9372">PR #9372</a>'
+  Links: '<a href="https://nvd.nist.gov/vuln/detail/CVE-2023-46575">NVD</a>,<br><a href="https://github.com/advisories/GHSA-9jjc-grg5-67gj">GHSA-9jjc-grg5-67gj</a>'
+
 - CVE: CVE-2021-31856
-  DateAnnounced: 2021-04-28
+  DateAnnounced: "2021-04-28"
+  Severity: Critical
+  CVSS: "9.8"
   Description: "A SQL Injection vulnerability in the REST API in Meshery 0.5.2 allows an attacker to execute arbitrary SQL commands via the /experimental/patternfiles endpoint (order parameter in GetMesheryPatterns in models/meshery_pattern_persister.go)."
   AffectedComponent: REST API
   VulnerableVersion: v0.5.2
   PatchedVersion: v0.5.3
-  FixDetails: <a href="https://github.com/meshery/meshery/pull/2745">fix pull</a> 
-  Links: <a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-31856">mitre</a>,<br><a href="https://github.com/ssst0n3/CVE-2021-31856">details</a>
+  FixDetails: '<a href="https://github.com/meshery/meshery/pull/2745">PR #2745</a>'
+  Links: '<a href="https://nvd.nist.gov/vuln/detail/CVE-2021-31856">NVD</a>,<br><a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-31856">mitre</a>,<br><a href="https://github.com/ssst0n3/CVE-2021-31856">details</a>'

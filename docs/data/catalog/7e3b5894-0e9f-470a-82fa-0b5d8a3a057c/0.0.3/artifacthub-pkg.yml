@@ -16,9 +16,5 @@ install: mesheryctl design import -f
 provider:
     name: c6efdf65-2280-4bc2-a61c-73c36af20fa8
 screenshots:
-    - title: MeshMap Snapshot
-      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/7e3b5894-0e9f-470a-82fa-0b5d8a3a057c-light.png
-    - title: MeshMap Snapshot
-      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/7e3b5894-0e9f-470a-82fa-0b5d8a3a057c-dark.png
     - title: Meshery Project
       url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

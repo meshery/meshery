@@ -3,6 +3,8 @@ package policies
 import (
 	"testing"
 	"time"
+
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
 
 func TestObjectGetNested(t *testing.T) {
@@ -255,3 +257,24 @@ func TestNewUUIDNonDeterminism(t *testing.T) {
 		t.Error("newUUID should produce different UUIDs on successive calls (time-based)")
 	}
 }
+
+// Two SelectorSetItems built from independently-allocated pointer fields must
+// canonicalize to the same seed; otherwise %v leaks pointer addresses into
+// staticUUID.
+func TestCanonicalSeedTypedStructIsAddressIndependent(t *testing.T) {
+	build := func() relationship.SelectorSetItem {
+		kind := "Pod"
+		return relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{{Kind: &kind}},
+				To:   []relationship.SelectorItem{{Kind: &kind}},
+			},
+		}
+	}
+	a := canonicalSeed(build())
+	b := canonicalSeed(build())
+	if a != b {
+		t.Fatalf("canonicalSeed leaked pointer addresses for typed struct:\n  a=%s\n  b=%s", a, b)
+	}
+}
+

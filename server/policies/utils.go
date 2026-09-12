@@ -73,14 +73,18 @@ func isDirectReference(ref []string) bool {
 }
 
 // canonicalSeed converts a seed to a canonical string representation.
-// Uses json.Marshal for maps/slices to ensure deterministic key ordering.
+// Strings pass through verbatim; everything else goes through json.Marshal so
+// typed structs containing pointer fields don't leak %v memory addresses into
+// the seed (which would make staticUUID non-deterministic across processes).
 func canonicalSeed(seed interface{}) string {
-	switch seed.(type) {
-	case map[string]interface{}, []interface{}:
-		b, err := json.Marshal(seed)
-		if err == nil {
-			return string(b)
-		}
+	switch v := seed.(type) {
+	case nil:
+		return ""
+	case string:
+		return v
+	}
+	if b, err := json.Marshal(seed); err == nil {
+		return string(b)
 	}
 	return fmt.Sprintf("%v", seed)
 }

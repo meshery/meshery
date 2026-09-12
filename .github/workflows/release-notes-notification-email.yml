@@ -1,0 +1,76 @@
+name: Notify Email
+on: 
+  workflow_dispatch:
+    inputs:
+      to:
+        description: 'recipient'
+        required: false
+  workflow_call:
+    inputs:
+      to:
+        description: 'recipient'
+        type: string
+        required: true
+      release-tag:
+        type: string
+        required: true
+    secrets:
+      token:
+        description: 'A token passed from the caller workflow'
+        required: true
+      MAIL_PASSWORD:
+        required: true
+      MAIL_USERNAME:
+        required: true
+
+jobs:
+  email:
+    name: Prepare email
+    runs-on: "ubuntu-24.04"
+    steps:
+      - name: grab release notes
+        run: |
+          curl https://raw.githubusercontent.com/meshery/meshery/master/docs/content/en/project/releases/${{inputs.release-tag}}.md | sed -e '1,5d' > meshery-release-notification.html
+          echo "
+          
+          ## 🛝 Access ${{inputs.release-tag}} in the [Meshery Playground](https://playground.meshery.io) 
+          " >> meshery-release-notification.html
+      - name: Send email
+        uses: dawidd6/action-send-mail@v6
+        with:
+          # Required mail server address:
+          server_address: smtp.gmail.com
+          # Required mail server port:
+          server_port: 465
+          # Optional (recommended): mail server username:
+          username: ${{secrets.MAIL_USERNAME}}
+          # Optional (recommended) mail server password:
+          password: ${{secrets.MAIL_PASSWORD}}
+          # Required mail subject:
+          subject: Meshery ${{inputs.release-tag}} Release Notes
+          # Required recipients' addresses:
+          to: ${{inputs.to}}
+          # Required sender full name (address can be skipped):
+          from: |
+            "Meshery Releaser" <no-reply@meshery.io>
+          # Optional whether this connection use TLS (default is true if server_port is 465)
+          secure: true
+          # Optional plain body:
+          body: |
+            New Release: Meshery ${{inputs.release-tag}}. Find details at https://docs.meshery.io/project/releases/${{inputs.release-tag}}
+          # Optional HTML body read from file:
+          html_body: file://meshery-release-notification.html
+          # Optional carbon copy recipients:
+          # cc:
+          # Optional blind carbon copy  recipients:
+          # bcc: r2d2@example.com,hansolo@example.com
+          # Optional recipient of the email response:
+          reply_to: no-reply@meshery.io
+          # Optional unsigned/invalid certificates allowance:
+          ignore_cert: true
+          # Optional converting Markdown to HTML (set content_type to text/html too):
+          convert_markdown: false
+          # Optional attachments:
+          attachments: attachments.zip,git.diff,./dist/static/*.js
+          # Optional priority: 'high', 'normal' (default) or 'low'
+          priority: low

@@ -47,9 +47,8 @@ const SCAN_DIRS = [
 
 // Skipped entirely. These are the same exclusions applied in
 // eslint.config.js to the hex/rgba no-restricted-syntax rule: the theme
-// module, legacy theme/constants directories (scheduled for deletion),
-// SVG icon components, third-party integration helpers, static assets,
-// and tests.
+// module, SVG icon components, third-party integration helpers, static
+// assets, and tests.
 const IGNORED_DIRS = new Set([
   'node_modules',
   '.next',
@@ -60,9 +59,7 @@ const IGNORED_DIRS = new Set([
   '__generated__',
   // Scoped opt-outs matching the ESLint rule
   'theme',
-  'themes',
   'assets',
-  'constants',
   'lib',
   'public',
   'tests',
@@ -156,9 +153,7 @@ function main() {
   process.stdout.write('==============================\n');
   process.stdout.write('Patterns: #RGB/#RGBA/#RRGGBB/#RRGGBBAA, rgb(), rgba()\n');
   process.stdout.write(`Scope:    ${SCAN_DIRS.join(', ')}\n`);
-  process.stdout.write(
-    'Ignored:  theme, themes, assets, constants, lib, public, tests, __generated__\n\n',
-  );
+  process.stdout.write('Ignored:  theme, assets, lib, public, tests, __generated__\n\n');
 
   const limit = showAll ? offenders.length : Math.min(20, offenders.length);
   if (offenders.length === 0) {

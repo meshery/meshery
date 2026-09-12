@@ -14,11 +14,7 @@ links:
 readme: "1. Ensure the correct StorageClass is configured for your PersistentVolume.\n\n2. Verify that the requested storage size in the PersistentVolumeClaim matches the actual storage needs of your application.\n\n \n ##h4 Caveats and Consideration \n"
 install: mesheryctl design import -f
 provider:
-    name: 7cc3290b-9c57-4f93-8fb0-dbc5664c95a1
+    name: cf6aabe7-a397-444a-a087-eebad74c58cc
 screenshots:
-    - title: MeshMap Snapshot
-      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/37422db6-b585-4b1a-baaa-d307d33d5ebf-light.png
-    - title: MeshMap Snapshot
-      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/37422db6-b585-4b1a-baaa-d307d33d5ebf-dark.png
     - title: Meshery Project
       url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

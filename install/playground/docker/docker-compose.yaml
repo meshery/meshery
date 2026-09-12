@@ -2,12 +2,12 @@ services:
     meshery:
         image: meshery/meshery:playground-latest
         environment:
-            - PROVIDER_BASE_URLS=https://cloud.layer5.io
+            - PROVIDER_BASE_URLS=https://cloud.meshery.io
             - ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-traefik-mesh:10006 meshery-nginx-sm:10010 meshery-cilium:10012
             - EVENT=mesheryLocal
             - PORT=9081
             - MESHERY_SERVER_CALLBACK_URL=https://playground.meshery.io/api/user/token
-            - PROVIDER=Layer5
+            - PROVIDER=Meshery
         volumes:
             - $HOME/.kube:/home/appuser/.kube:ro
             - $HOME/.minikube:$HOME/.minikube:ro

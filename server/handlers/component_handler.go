@@ -32,9 +32,9 @@ import (
 	_models "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
-	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	_model "github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta3/component"
 
 	"github.com/meshery/meshkit/models/meshmodel/entity"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
@@ -44,6 +44,8 @@ import (
 )
 
 /**Meshmodel endpoints **/
+
+// DefaultPageSizeForMeshModelComponents is the default page size used when listing Meshmodel components.
 const DefaultPageSizeForMeshModelComponents = 25
 
 func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http.Request) {
@@ -84,10 +86,10 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	}
 
 	res := models.MeshmodelsDuplicateAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		Count:    count,
-		Models:   models.FindDuplicateModels(modelDefs),
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: count,
+		Models:     models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -140,10 +142,10 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	}
 
 	res := models.MeshmodelsDuplicateAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		Count:    count,
-		Models:   models.FindDuplicateModels(modelDefs),
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: count,
+		Models:     models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -200,10 +202,10 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := models.MeshmodelsDuplicateAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		Count:    count,
-		Models:   models.FindDuplicateModels(modelDefs),
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: count,
+		Models:     models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -257,10 +259,10 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 	}
 
 	res := models.MeshmodelsDuplicateAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		Count:    count,
-		Models:   models.FindDuplicateModels(modelDefs),
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: count,
+		Models:     models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -300,7 +302,7 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 	res := models.MeshmodelCategoriesAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		Count:      count,
+		TotalCount: count,
 		Categories: categories,
 	}
 
@@ -342,7 +344,7 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 	res := models.MeshmodelCategoriesAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		Count:      count,
+		TotalCount: count,
 		Categories: categories,
 	}
 
@@ -396,7 +398,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		Count:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -448,7 +450,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		Count:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -501,7 +503,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		Count:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -552,7 +554,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		Count:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -603,7 +605,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		Count:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -654,7 +656,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		Count:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -703,7 +705,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		Count:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -752,7 +754,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	res := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		Count:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -765,14 +767,14 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	}
 }
 
-// request body should be json
-// request body should be of ComponentCapability format
+// RegisterMeshmodelComponents expects the request body to be JSON, decoded into a registry.MeshModelRegistrantData.
 func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
 	var cc registry.MeshModelRegistrantData
 	err := dec.Decode(&cc)
 	if err != nil {
-		http.Error(rw, err.Error(), http.StatusBadRequest)
+		h.log.Error(ErrRequestBody(err))
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
 	var c component.ComponentDefinition
@@ -782,22 +784,26 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 		var isRegistranError bool
 		err = json.Unmarshal(cc.Entity, &c)
 		if err != nil {
-			http.Error(rw, err.Error(), http.StatusBadRequest)
+			h.log.Error(models.ErrUnmarshal(err, "component definition"))
+			writeMeshkitError(rw, models.ErrUnmarshal(err, "component definition"), http.StatusBadRequest)
 			return
 		}
 		utils.WriteSVGsOnFileSystem(&c)
 		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Connection, &c)
-		helpers.HandleError(cc.Connection, &c, err, isModelError, isRegistranError)
+		helpers.HandleError(registry.RegistrantHostToV1beta1(cc.Connection), &c, err, isModelError, isRegistranError)
 	}
 	err = helpers.WriteLogsToFiles()
 	if err != nil {
-		h.log.Error(err)
-	}
-	if err != nil {
-		http.Error(rw, err.Error(), http.StatusBadRequest)
+		// WriteLogsToFiles is an internal flush of registry-attempt
+		// state to REGISTRY_LOG_FILE — the failure is server-side
+		// (filesystem permissions, disk full, marshal error), so
+		// surface a 500 with structured remediation instead of the
+		// previous raw 400.
+		wrappedErr := ErrWriteRegistryLogs(err)
+		h.log.Error(wrappedErr)
+		writeMeshkitError(rw, wrappedErr, http.StatusInternalServerError)
 		return
 	}
-	go h.config.MeshModelSummaryChannel.Publish()
 }
 
 func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request) {
@@ -818,7 +824,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	hosts, count, err := h.registryManager.GetRegistrants(filter)
 	if err != nil {
 		h.log.Error(ErrGetMeshModels(err))
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrGetMeshModels(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -832,7 +838,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	res := models.MeshmodelRegistrantsAPIResponse{
 		Page:        page,
 		PageSize:    int(pgSize),
-		Count:       count,
+		TotalCount:  count,
 		Registrants: hosts,
 	}
 
@@ -845,40 +851,47 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	}
 }
 
-// request body should be json
-// request body should be of struct containing ID and Status fields
+// UpdateEntityStatus expects the request body to be a JSON object with id, status, displayName (and legacy displayname) fields.
 func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	dec := json.NewDecoder(r.Body)
 	userID := user.ID
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
 		h.log.Error(ErrRetrieveUserToken(err))
-		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
 	entityType := mux.Vars(r)["entityType"]
 	var updateData struct {
-		ID          string `json:"id"`
-		Status      string `json:"status"`
-		DisplayName string `json:"displayname"`
+		ID     string `json:"id"`
+		Status string `json:"status"`
+		// displayName is the canonical wire key (EntityStatusPayload in the
+		// schemas registry construct); displayname is the legacy spelling
+		// still sent by pre-/api/registry clients.
+		DisplayName       string `json:"displayName"`
+		DisplayNameLegacy string `json:"displayname"`
 	}
 	err = dec.Decode(&updateData)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
+	if updateData.DisplayName == "" {
+		updateData.DisplayName = updateData.DisplayNameLegacy
+	}
 
-	eventBuilder := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithCategory(entityType).WithAction("update")
+	eventBuilder := events.NewEvent().ActedUpon(userID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory(entityType).WithAction("update")
 	err = h.registryManager.UpdateEntityStatus(updateData.ID, updateData.Status, entityType)
 	if err != nil {
+		wrappedErr := ErrUpdateEntityStatus(err)
 		eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update '%s' status to %s", updateData.DisplayName, updateData.Status)).WithMetadata(map[string]interface{}{
-			"error": err,
+			"error": wrappedErr,
 		})
 		_event := eventBuilder.Build()
 		_ = provider.PersistEvent(*_event, token)
 		go h.config.EventBroadcaster.Publish(userID, _event)
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, wrappedErr, http.StatusInternalServerError)
 		return
 	}
 
@@ -926,7 +939,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
 		h.log.Error(ErrRetrieveUserToken(err))
-		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -937,7 +950,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	if err != nil {
 		h.log.Info("Error in unmarshalling request body")
 		h.sendErrorEvent(userID, provider, "Error in unmarshalling request body", err, token)
-		http.Error(rw, "Invalid request format", http.StatusBadRequest)
+		writeMeshkitError(rw, models.ErrUnmarshal(err, "import request"), http.StatusBadRequest)
 		return
 	}
 
@@ -1060,19 +1073,26 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 				h.log.Error(err)
 			}
 		}()
-
-		err = meshkitRegistryUtils.InvokeGenerationFromSheet(&wg, tempDir, 0, 0, "", "", modelCsvFile.Name(), componentCsvFile.Name(), "", relationshipCsvFile.Name(), 0, nil)
+		selectedModel := strings.TrimSpace(importRequest.ImportBody.Model.Model)
+		err = meshkitRegistryUtils.InvokeGenerationFromSheet(&wg, tempDir, 0, 0, "", selectedModel, modelCsvFile.Name(), componentCsvFile.Name(), "", relationshipCsvFile.Name(), 0, nil)
 		if err != nil {
 			h.handleError(rw, err, "Error invoking generation from sheet")
 			h.sendErrorEvent(userID, provider, "Error invoking generation from sheet", err, token)
 			return
 		}
 
-		h.sendEventForImport(userID, provider, 0, "", true, token)
 		modelDirPaths, err := models.GetModelDirectoryPaths(tempDir)
 		if err != nil {
 			h.log.Error(models.ErrSeedingComponents(err))
 		}
+		if selectedModel != "" && len(modelDirPaths) == 0 {
+			err := ErrModelNotFound(selectedModel)
+			writeMeshkitError(rw, err, http.StatusNotFound)
+			h.sendErrorEvent(userID, provider, err.Error(), err, token)
+			return
+		}
+		h.sendEventForImport(userID, provider, 0, "", true, token)
+
 		if importRequest.Register {
 			for _, dirPath := range modelDirPaths {
 				dir := registration.NewDir(dirPath)
@@ -1156,7 +1176,8 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	case "file":
 		base64Data, err := json.Marshal(importRequest.ImportBody.ModelFile)
 		if err != nil {
-			http.Error(rw, "Internal server error", http.StatusInternalServerError)
+			h.log.Error(models.ErrMarshal(err, "model file"))
+			writeMeshkitError(rw, models.ErrMarshal(err, "model file"), http.StatusInternalServerError)
 			return
 		}
 		base64String := string(base64Data)
@@ -1165,7 +1186,8 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 
 		decodedBytes, err := base64.StdEncoding.DecodeString(base64String)
 		if err != nil {
-			http.Error(rw, "Invalid base64 data", http.StatusBadRequest)
+			h.log.Error(fmt.Errorf("invalid base64 data: %w", err))
+			writeMeshkitError(rw, ErrInvalidBase64Data(err), http.StatusBadRequest)
 			return
 		}
 		tempFile, err = CreateTemp(importRequest.ImportBody.FileName, decodedBytes)
@@ -1264,8 +1286,17 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	modelId := r.URL.Query().Get("id")
 	name := r.URL.Query().Get("name")
 	version := r.URL.Query().Get("version")
-	outputFormat := r.URL.Query().Get("output_format")
-	fileTypes := r.URL.Query().Get("file_type")
+	// outputFormat/fileType are the canonical camelCase wire params (schemas
+	// registry construct); the snake_case spellings are the legacy forms
+	// still sent by pre-/api/registry clients.
+	outputFormat := r.URL.Query().Get("outputFormat")
+	if outputFormat == "" {
+		outputFormat = r.URL.Query().Get("output_format")
+	}
+	fileTypes := r.URL.Query().Get("fileType")
+	if fileTypes == "" {
+		fileTypes = r.URL.Query().Get("file_type")
+	}
 	if fileTypes == "" {
 		fileTypes = "oci"
 	}
@@ -1294,7 +1325,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	e, _, _, err := h.registryManager.GetEntities(modelFilter)
 	if err != nil {
 		h.log.Error(ErrGetMeshModels(err))
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrGetMeshModels(err), http.StatusInternalServerError)
 		return
 	}
 
@@ -1314,13 +1345,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 			message += fmt.Sprintf("version %s ", version)
 		}
 		message += "has not been found"
-		// h.log.Error(ErrGetMeshModels(err))
-		// http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusNotFound)
-		rw.WriteHeader(http.StatusNotFound)
-		// rw.Write([]byte(message))
-		if _, err := fmt.Fprintln(rw, message); err != nil {
-			h.log.Error(err)
-		}
+		writeJSONError(rw, message, http.StatusNotFound)
 		return
 	}
 
@@ -1350,7 +1375,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			err = meshkitutils.ErrCreateDir(err, "Error creating temp directory")
 			h.log.Error(err)
-			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			writeMeshkitError(rw, ErrExportModel(err, "temp directory creation"), http.StatusInternalServerError)
 			return
 		}
 	}
@@ -1378,7 +1403,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	err = model.WriteModelDefinition(filepath.Join(versionDir, fmt.Sprintf("model.%s", outputFormat)), outputFormat)
 	if err != nil {
 		h.log.Error(err)
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, ErrExportModel(err, "model definition write"), http.StatusInternalServerError)
 		return
 	}
 	componentsDir := filepath.Join(versionDir, "components")
@@ -1415,8 +1440,8 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	if fileTypes == "oci" {
 		img, err := meshkitOci.BuildImage(modelDir)
 		if err != nil {
-			h.log.Error(err) // TODO: Add appropriate meshkit error
-			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			h.log.Error(err)
+			writeMeshkitError(rw, ErrExportModel(err, "OCI image build"), http.StatusInternalServerError)
 			return
 		}
 
@@ -1425,7 +1450,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		err = meshkitOci.SaveOCIArtifact(img, tarfileName, model.Name)
 		if err != nil {
 			h.log.Error(err)
-			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			writeMeshkitError(rw, ErrExportModel(err, "OCI artifact save"), http.StatusInternalServerError)
 			return
 		}
 
@@ -1439,14 +1464,14 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		err := meshkitutils.Compress(modelDir, &tarData)
 		if err != nil {
 			h.log.Error(err)
-			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			writeMeshkitError(rw, ErrExportModel(err, "tar.gz compress"), http.StatusInternalServerError)
 			return
 		}
 		tarfileName = filepath.Join(modelDir, "model.tar.gz")
 		err = os.WriteFile(tarfileName, tarData.Bytes(), 0644)
 		if err != nil {
 			h.log.Error(err)
-			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			writeMeshkitError(rw, ErrExportModel(err, "tar.gz write"), http.StatusInternalServerError)
 			return
 		}
 		byt, _ = os.ReadFile(tarfileName)
@@ -1475,9 +1500,9 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) er
 		if err != nil {
 			return meshkitutils.ErrUnmarshal(err)
 		}
-		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(connection.Connection{
+		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(registry.RegistrantHostToV1beta3(connection.Connection{
 			Kind: c.Model.Registrant.Kind,
-		}, &c)
+		}), &c)
 		helpers.HandleError(connection.Connection{
 			Kind: c.Model.Registrant.Kind,
 		}, &c, err, isModelError, isRegistrantError)
@@ -1488,9 +1513,9 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) er
 		if err != nil {
 			return meshkitutils.ErrUnmarshal(err)
 		}
-		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(connection.Connection{
+		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(registry.RegistrantHostToV1beta3(connection.Connection{
 			Kind: r.Model.Registrant.Kind,
-		}, &r)
+		}), &r)
 		helpers.HandleError(connection.Connection{
 			Kind: r.Model.Registrant.Kind,
 		}, &r, err, isModelError, isRegistrantError)
@@ -1503,7 +1528,8 @@ func (h *Handler) DeleteModel(rw http.ResponseWriter, r *http.Request, _ *models
 	modelID := mux.Vars(r)["id"]
 	modelUUID, err := uuid.FromString(modelID)
 	if err != nil {
-		http.Error(rw, ErrInvalidUUID(err).Error(), http.StatusBadRequest)
+		h.log.Error(models.ErrInvalidUUID(err))
+		writeMeshkitError(rw, models.ErrInvalidUUID(err), http.StatusBadRequest)
 		return
 	}
 
@@ -1559,12 +1585,12 @@ func (h *Handler) DeleteModel(rw http.ResponseWriter, r *http.Request, _ *models
 
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			http.Error(rw, fmt.Sprintf("model with id %s not found", modelID), http.StatusNotFound)
+			writeJSONError(rw, fmt.Sprintf("model with id %s not found", modelID), http.StatusNotFound)
 			return
 		}
 		mesheryErr := models.ErrDBDelete(err, "")
 		h.log.Error(mesheryErr)
-		http.Error(rw, mesheryErr.Error(), http.StatusInternalServerError)
+		writeMeshkitError(rw, mesheryErr, http.StatusInternalServerError)
 		return
 	}
 

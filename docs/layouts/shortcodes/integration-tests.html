@@ -108,14 +108,16 @@
             <td style="white-space:nowrap;"><a href="https://github.com/meshery/meshery-{{ index .Params "service-mesh" | lower }}">{{ $comp }}</a></td>
             <td><a href="https://github.com/meshery/meshery-{{ index .Params "service-mesh" | lower }}/releases">{{ $version }}</a></td>
             <td><a href="https://github.com/meshery/meshery/releases/tag/{{ index .Params "meshery-server-version" }}">{{ index .Params "meshery-server-version" }}</a></td>
-            <td style="white-space: nowrap;"><img style="height: 2rem; vertical-align: text-bottom; margin-right: 8px;" src="/installation/compatibility-matrix/images/service-meshes/{{ index .Params "service-mesh" | lower }}.svg" /><a href="/extensions/adapters/{{ index .Params "service-mesh" | lower }}">{{ index .Params "service-mesh" }}</a></td>
+            {{- $service_mesh := index .Params "service-mesh" | lower -}}
+            {{- $adapter_page := site.GetPage (printf "extensions/adapters/%s" $service_mesh) -}}
+            <td style="white-space: nowrap;"><img style="height: 2rem; vertical-align: text-bottom; margin-right: 8px;" src="{{ printf "project/compatibility-matrix/images/service-meshes/%s.svg" $service_mesh | relURL }}" />{{ if $adapter_page }}<a href="{{ $adapter_page.RelPermalink }}">{{ index .Params "service-mesh" }}</a>{{ else }}{{ index .Params "service-mesh" }}{{ end }}</td>
             <td>{{ index .Params "service-mesh-version" }}</td>
           </tr>
           <tr class="hidden-details" id="{{ $comp }}-edge" style="visibility:hidden; display:none;">
             <td colspan="2" class="details">
               <i>Platform:</i>
               <ul style="margin: 5px 0;">
-                <li><img style="height: 1rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/kubernetes-icon-color.svg" /> {{ index .Params "k8s-distro" | default "Unknown" }} {{ index .Params "k8s-version" | default "" }}</li>
+                <li><img style="height: 1rem; vertical-align: text-bottom;" src="{{ "project/compatibility-matrix/images/service-meshes/kubernetes-icon-color.svg" | relURL }}" /> {{ index .Params "k8s-distro" | default "Unknown" }} {{ index .Params "k8s-version" | default "" }}</li>
               </ul>
             </td>
             <td colspan="4" class="details">
@@ -123,14 +125,14 @@
               <table style="border:0; margin-top: 5px;">
                 {{- if index .Params "tests" -}}
                   {{- range $pod, $status := index .Params "tests" -}}
-                    {{- $test_icon := "/installation/compatibility-matrix/images/service-meshes/passing.svg" -}}
+                    {{- $test_icon := "project/compatibility-matrix/images/service-meshes/passing.svg" -}}
                     {{- if eq (trim $status " ") "Running" -}}
-                      {{- $test_icon = "/installation/compatibility-matrix/images/service-meshes/passing.svg" -}}
+                      {{- $test_icon = "project/compatibility-matrix/images/service-meshes/passing.svg" -}}
                     {{- else -}}
-                      {{- $test_icon = "/installation/compatibility-matrix/images/service-meshes/failing.svg" -}}
+                      {{- $test_icon = "project/compatibility-matrix/images/service-meshes/failing.svg" -}}
                     {{- end -}}
                     <tr style="background-color: transparent;">
-                      <td><img style="height: 24px; width: 24px; margin-right: 8px;" src="{{ $test_icon }}" alt="Test Status" /></td>
+                      <td><img style="height: 24px; width: 24px; margin-right: 8px;" src="{{ $test_icon | relURL }}" alt="Test Status" /></td>
                       <td>{{ $pod }}</td>
                     </tr>
                   {{- end -}}
@@ -170,14 +172,16 @@
           <td style="white-space:nowrap;"><a href="https://github.com/meshery/meshery-{{ index .Params "service-mesh" | lower }}">{{ $comp }}</a></td>
           <td><a href="https://github.com/meshery/meshery-{{ index .Params "service-mesh" | lower }}/releases/tag/{{ index .Params "meshery-component-version" }}">{{ index .Params "meshery-component-version" }}</a></td>
           <td><a href="https://github.com/meshery/meshery/releases/tag/{{ index .Params "meshery-server-version" }}">{{ index .Params "meshery-server-version" }}</a></td>
-          <td style="white-space:nowrap;"><img style="height: 2rem; vertical-align: text-bottom; margin-right: 8px;" src="/installation/compatibility-matrix/images/service-meshes/{{ index .Params "service-mesh" | lower }}.svg" /><a href="/extensions/adapters/{{ index .Params "service-mesh" | lower }}">{{ index .Params "service-mesh" }}</a></td>
+          {{- $service_mesh := index .Params "service-mesh" | lower -}}
+          {{- $adapter_page := site.GetPage (printf "extensions/adapters/%s" $service_mesh) -}}
+          <td style="white-space:nowrap;"><img style="height: 2rem; vertical-align: text-bottom; margin-right: 8px;" src="{{ printf "project/compatibility-matrix/images/service-meshes/%s.svg" $service_mesh | relURL }}" />{{ if $adapter_page }}<a href="{{ $adapter_page.RelPermalink }}">{{ index .Params "service-mesh" }}</a>{{ else }}{{ index .Params "service-mesh" }}{{ end }}</td>
           <td>{{ index .Params "service-mesh-version" }}</td>
         </tr>
         <tr class="hidden-details" id="{{ $comp }}-stable" style="visibility:hidden; display:none;">
           <td colspan="2" class="details">
             <i>Platform:</i>
             <ul style="margin: 5px 0;">
-              <li><img style="height: 1rem; vertical-align: text-bottom;" src="/installation/compatibility-matrix/images/service-meshes/kubernetes-icon-color.svg" /> {{ index .Params "k8s-distro" | default "Unknown" }} {{ index .Params "k8s-version" | default "" }}</li>
+              <li><img style="height: 1rem; vertical-align: text-bottom;" src="{{ "project/compatibility-matrix/images/service-meshes/kubernetes-icon-color.svg" | relURL }}" /> {{ index .Params "k8s-distro" | default "Unknown" }} {{ index .Params "k8s-version" | default "" }}</li>
             </ul>
           </td>
           <td colspan="4" class="details">
@@ -185,14 +189,14 @@
             <table style="border:0; margin-top: 5px;">
               {{- if index .Params "tests" -}}
                 {{- range $pod, $status := index .Params "tests" -}}
-                  {{- $test_icon := "/installation/compatibility-matrix/images/service-meshes/passing.svg" -}}
+                  {{- $test_icon := "project/compatibility-matrix/images/service-meshes/passing.svg" -}}
                   {{- if eq (trim $status " ") "Running" -}}
-                    {{- $test_icon = "/installation/compatibility-matrix/images/service-meshes/passing.svg" -}}
+                    {{- $test_icon = "project/compatibility-matrix/images/service-meshes/passing.svg" -}}
                   {{- else -}}
-                    {{- $test_icon = "/installation/compatibility-matrix/images/service-meshes/failing.svg" -}}
+                    {{- $test_icon = "project/compatibility-matrix/images/service-meshes/failing.svg" -}}
                   {{- end -}}
                   <tr style="background-color: transparent;">
-                    <td><img style="height: 24px; width: 24px; margin-right: 8px;" src="{{ $test_icon }}" alt="Test Status" /></td>
+                    <td><img style="height: 24px; width: 24px; margin-right: 8px;" src="{{ $test_icon | relURL }}" alt="Test Status" /></td>
                     <td>{{ $pod }}</td>
                   </tr>
                 {{- end -}}

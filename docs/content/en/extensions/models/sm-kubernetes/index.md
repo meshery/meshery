@@ -1,7 +1,7 @@
 ---
 title: Bitwarden
 subtitle: Collaborative and visual infrastructure as design for Bitwarden
-image: /extensions/models/sm-kubernetes/icons/color/sm-kubernetes-color.svg
+image: extensions/models/sm-kubernetes/icons/color/sm-kubernetes-color.svg
 aliases: /extensibility/integrations/sm-kubernetes
 docURL: https://docs.meshery.io/extensibility/integrations/sm-kubernetes
 description: 

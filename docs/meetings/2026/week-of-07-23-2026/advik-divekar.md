@@ -1,0 +1,1 @@
+Hi, Advik here! Currently in my third year, NMIMS Mumbai, B-Tech CSEDS. I'm ranked #18 GSSoC contributor and have been active in Open source. I would love to work on issues that require python, go or any frontend knowledge

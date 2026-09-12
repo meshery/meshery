@@ -5,7 +5,11 @@ aliases:
 - /extensibility/providers
 ---
 
-Meshery offers _Providers_ as a point of extensibility. It has a built-in Local Provider, named **"None"** and supports _Remote Providers_ that are designed to be pluggable. _Remote Providers_ offer a point of extension to users / integrators to deliver enhanced functionality such as authentication and authorization, using Meshery as a platform.
+Meshery offers _Providers_ as a point of extensibility. It has a built-in Local Provider, named **"Local"** and supports _Remote Providers_ that are designed to be pluggable. _Remote Providers_ offer a point of extension to users / integrators to deliver enhanced functionality such as authentication and authorization, using Meshery as a platform.
+
+{{% alert color="info" title="Naming change" %}}
+The built-in local provider was previously named **"None"** and is now named **"Local"**. Meshery Server accepts `"None"` as a backward-compatible alias on cookies, the `PROVIDER` environment variable, and `~/.meshery/config.yaml`, so existing sessions and configurations continue to work without changes.
+{{% /alert %}}
 
 1. **Extensibility points offer clean separation of Meshery's core functionality versus plugin functionality.**
    - See a list of [Meshery's extensions](https://meshery.io/extensions).
@@ -19,6 +23,9 @@ Some examples include:
 
 - **Authentication and Authorization**
   - Examples: session management, two factor authentication, LDAP integration.
+- **Identity and Organization Management**
+  - Examples: multi-tenant [Organizations]({{< ref "concepts/logical/organizations.md" >}}), teams as user groups, fine-grained roles and permissions.
+  - Examples: per-organization identity providers (OAuth/OIDC single sign-on), custom domains, and branding/white-labeling.
 - **Long-Term Persistence**
   - Examples: Storage and retrieval of performance test results.
   - Examples: Storage and retrieval of user preferences.
@@ -43,12 +50,21 @@ There are two types of providers defined in Meshery, `local` and `remote`.
 - The **Local** provider is built-into Meshery.
 - **Remote providers** can be implemented by anyone or an organization that wishes to integrate with Meshery. Any number of Remote providers may be available in your Meshery deployment.
 
+### Identity and Multi-Tenancy
+
+The provider you choose determines whether Meshery is single-user or multi-tenant:
+
+- With the **Local** provider, Meshery is **single-user**: there is no authentication, no identity, and no multi-tenancy. There are no [Organizations]({{< ref "concepts/logical/organizations.md" >}}), teams, or shared ownership — every resource belongs to the single local user.
+- With a **Remote Provider**, Meshery is **multi-user and multi-tenant**. The provider supplies identity, and [Organizations]({{< ref "concepts/logical/organizations.md" >}}) become the unit of tenancy: they group users, own all Workspaces, Environments, Designs, and Connections, and carry the roles and permissions that govern access. A Remote Provider can extend an Organization further with its own identity provider, custom domain, and branding.
+
+This is the central reason to use a Remote Provider for any shared, ongoing, or public-facing Meshery deployment — see [Recommended Production Deployment Settings](#recommended-production-deployment-settings) below. For the tenancy model itself, see [Organizations]({{< ref "concepts/logical/organizations.md" >}}).
+
 ### Default Installation Configuration
 
 By default, Meshery installations **do not have a provider preselected**. This is an intentional design choice: upon first launch, users are presented with the provider selection UI, allowing them to make an informed choice among all available providers.
 
 {{% alert color="info" title="Why no default provider?" %}} 
-It might be tempting to preselect the Local provider (\"None\") as the default; however, doing so would preclude selection of any other provider by new users who are unaware of other options being available. By leaving the provider unset, all users (whether individual or team-based) are presented with the full range of available providers on first use. 
+It might be tempting to preselect the Local provider (\"Local\") as the default; however, doing so would preclude selection of any other provider by new users who are unaware of other options being available. By leaving the provider unset, all users (whether individual or team-based) are presented with the full range of available providers on first use. 
 {{% /alert %}}
 
 ### Recommended Production Deployment Settings
@@ -60,52 +76,76 @@ For production deployments, consider the following security best practices regar
 - **Enforce a specific provider** using the `PROVIDER` environment variable only when you have a clear operational requirement to do so, such as locking a deployment to a particular identity provider.
 - **Use `mesheryctl system provider set`** to explicitly configure a provider for a given context when needed.
 - **Use `mesheryctl system provider reset`** to clear an enforced provider and return to the provider selection UI.
+- **Vet the provider before you allow it.** A Remote Provider's capabilities document names the extension package Meshery downloads and loads, so selecting a provider decides whose code runs in Meshery UI's browser context and, where the package carries a server-side plugin, in-process inside Meshery Server. Prefer first-party and maintained providers, and pin what you have reviewed with [`SKIP_DOWNLOAD_EXTENSIONS`](#skip_download_extensions) and [`PROVIDER_CAPABILITIES_FILEPATH`](#provider_capabilities_filepath). See [Trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}}) for the full production guidance.
 
+{{% alert color="warning" title="Provider selection is a code-trust decision" %}}
+Beyond identity and persistence, the provider you select supplies loadable extension code.
+Treat adding an unfamiliar Remote Provider the way you would treat adding an unfamiliar
+binary to a production host. See
+[Trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}})
+and
+[Authentication, Authorization & Identity]({{< ref "installation/production/authentication-and-identity.md" >}}).
+{{% /alert %}}
+
+#### AI Provider Usage in Production
+
+When integrating AI providers with Meshery, apply the following additional controls:
+
+- **Prefer local inference for sensitive environments** — use locally hosted models to prevent sensitive workload data from leaving your network boundary.
+- **Rotate API keys and restrict to minimum scopes** — issue short-lived, least-privilege credentials and rotate them on a defined schedule.
+- **Limit outbound network access to known provider endpoints** — use egress policies or firewall rules to allow only the specific AI provider hostnames your deployment requires.
+- **Avoid logging prompts or model responses unless required** — treat model inputs and outputs as potentially sensitive; disable verbose logging by default and apply retention limits if logging is necessary.
+- **Define an incident response plan for leaked API keys** — document revocation steps, affected-system audit procedures, and communication channels before an incident occurs.
 
 ### Remote Providers
 
-The use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. This provides security for the public-facing Meshery UI as the remote provider enforces identity with authentication and authorization. You should also use a remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people). This can be seen when using Meshery Playground, where a user is prompted to login through the _Layer5 Cloud_ remote provider. Visit [Meshery Playground](https://playground.meshery.io/) to experience this.
+The use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. This provides security for the public-facing Meshery UI as the remote provider enforces identity with authentication and authorization. You should also use a remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people). This can be seen when using Meshery Playground, where a user is prompted to login through the _Meshery Cloud_ remote provider. Visit [Meshery Playground](https://playground.meshery.io/) to experience this.
 
 A specific provider can be enforced in a Meshery instance by passing the name of the provider with the env variable `PROVIDER`. This applies to both remote and local providers.
 
-Name: **"Layer5"** (default)
+Name: **"Meshery"** (default), URL: `https://cloud.meshery.io`
 
 - Enforces user authentication.
 - Long-term term persistence.
 - Save environment setup.
 - Retrieve performance test results.
-- Events are stored locally and can be published to remote provider. [Read more about server events](/project/contributing/contributing-server-events)
+- Events are stored locally and can be published to remote provider. [Read more about server events]({{< ref "project/contributing/contributing-server-events/index.md" >}})
+
+Name: **"Digital Ocean"**, URL: `https://meshery.digitalocean.com`
+
+- Alternate remote provider, also shipped in the default `PROVIDER_BASE_URLS` list.
+- Same capability surface as the Meshery remote provider; choose based on your organization's account.
 
 #### Example remote provider
 
-Name: **"Acme"** (default)
+Name: **"Acme"**
 
 - Enforces user authentication.
 - Long-term term persistence.
 - Save environment setup.
 - Retrieve performance test results.
-- Events are stored locally and can be published to remote provider. [Read more about server events](/project/contributing/contributing-server-events)
+- Events are stored locally and can be published to remote provider. [Read more about server events]({{< ref "project/contributing/contributing-server-events/index.md" >}})
 - Free to use.
 
 ### Local Provider
 
-The use of the Local Provider, **"None"**, puts Meshery into a single-user mode and does not require authentication. Use the Local provider when your use of Meshery is intended to be shortlived.
+The use of the Local Provider, **"Local"**, puts Meshery into a single-user mode and does not require authentication. Use the Local provider when your use of Meshery is intended to be shortlived.
 
-Name: **"None"**
+Name: **"Local"** (legacy alias: **"None"**)
 
 - No user authentication.
 - Immediate login - users are redirected directly to the dashboard without authentication prompts.
 - Container-local storage of test results. Ephemeral.
 - Environment setup not saved.
 - No performance test result history.
-- Server events are stored locally in database. [Read more about server events](/project/contributing/contributing-server-events)
+- Server events are stored locally in database. [Read more about server events]({{< ref "project/contributing/contributing-server-events/index.md" >}})
 - Free to use.
 
 #### Login Behavior
 
-When the Local Provider is selected, users are immediately redirected to the Meshery dashboard without any authentication challenges. The login flow for **"None"** provider:
+When the Local Provider is selected, users are immediately redirected to the Meshery dashboard without any authentication challenges. The login flow for the **"Local"** provider:
 
-1. User selects **"None"** provider from the provider selection UI (or it's enforced via `PROVIDER` environment variable)
+1. User selects **"Local"** provider from the provider selection UI (or it's enforced via the `PROVIDER` environment variable; `PROVIDER=None` is still accepted as a legacy alias)
 2. The provider cookie is set and user is redirected to `/user/login`
 3. `InitiateLogin` immediately redirects to `/` (dashboard) or to the originally requested page if a deep-link was preserved
 4. User begins working with Meshery without any authentication barriers
@@ -121,18 +161,39 @@ Understanding how provider selection leads to authentication and dashboard acces
 1. **Provider Selection**: User visits Meshery and is presented with the provider selection UI at `/provider` (unless a provider is enforced via the `PROVIDER` environment variable)
 2. **Provider Activation**: User selects a provider → Meshery sets a `meshery-provider` cookie and redirects to `/user/login?provider=<name>`
 3. **Login Initiation**: The `/user/login` route resolves the provider and calls the provider's `InitiateLogin` method:
-   - **For "None" (Local)**: Immediately redirects to `/` (dashboard) or to the deep-link target if one was preserved
+   - **For "Local"**: Immediately redirects to `/` (dashboard) or to the deep-link target if one was preserved
    - **For Remote Providers**: Redirects to the remote provider's OAuth login page (e.g., GitHub, Google)
 4. **Post-Authentication**: After successful authentication, user is redirected to the dashboard or originally requested page
 
 ### Enforced Provider Flow
 
-When the `PROVIDER` environment variable is set (e.g., `PROVIDER=None` or `PROVIDER=Meshery`):
+When the `PROVIDER` environment variable is set (e.g., `PROVIDER=Local` or `PROVIDER=Meshery`):
 
-1. Provider selection UI is bypassed
-2. The specified provider is automatically activated and cookie is set
-3. User is redirected directly to `/user/login`
-4. Login flow proceeds as described above based on provider type
+1. At **server boot**, only that provider is registered. If the value is a remote, the Local Provider is not registered at all.
+2. Provider selection UI is bypassed; cookie, header, and `?provider=` cannot select a different provider.
+3. User is redirected directly to `/user/login`.
+4. Login flow proceeds as described above based on provider type.
+5. If `PROVIDER` is set but cannot be resolved to a registered provider, Meshery refuses to start (it does not fall back to the chooser).
+6. Changing `PROVIDER` on an existing deployment requires a restart. It is not a build-time flag. Re-login is required; data does not migrate between providers.
+
+Boot-time work is unaffected by the pin. Model seeding, connection seeding, and
+key seeding all run before any user request and are provider-independent, so a
+pinned deployment seeds exactly what an unpinned one does, and the system events
+raised while seeding (the `For registrant ... imported ...` summaries and any
+registration failures) are persisted to the same `events` table either way.
+
+{{% alert color="warning" title="Contributing: do not look a provider up by name at boot" %}}
+Because enforcement empties the registration map of everything but the pinned
+provider, server code that runs at boot must not resolve a provider by name from
+`HandlerConfig.Providers` - `Providers["Local"]` yields a nil `Provider` on a
+pinned deployment. Code needing to persist an event outside a user request takes
+`HandlerConfig.SystemEventPersister` instead, which is wired directly to the
+database and is independent of which providers are registered. Reaching into the
+registration map for a sink is what made a pinned deployment panic at boot in
+[#21584](https://github.com/meshery/meshery/issues/21584). Request-path code is
+unaffected: it receives its provider from the request context, which enforcement
+resolves consistently.
+{{% /alert %}}
 
 ### Deep-Link Preservation
 
@@ -143,7 +204,7 @@ Meshery preserves the originally requested URL when authentication is required, 
 - The Local Provider supports this functionality, validating `ref` values to prevent open redirects (absolute URLs, protocol-relative URLs, and URLs with schemes/hosts are rejected)
 - If `ref` validation fails or is absent, users are redirected to the dashboard (`/`)
 
-**Example**: User visits `https://meshery.example.com/extension/meshmap` while unauthenticated → redirected to login with `ref` parameter → after login, automatically returned to MeshMap extension.
+**Example**: User visits `https://meshery.example.com/extension/meshmap` while unauthenticated → redirected to login with `ref` parameter → after login, automatically returned to the extension.
 
 {{% alert color="info" title="Deep-Link Security" %}}
 Deep-link targets are validated to prevent open redirect vulnerabilities. Only relative paths within the Meshery application are accepted.
@@ -153,19 +214,21 @@ Deep-link targets are validated to prevent open redirect vulnerabilities. Only r
 
 Meshery provides runtime configuration options to control provider behavior:
 
+For the full server-wide reference, including provider-independent settings such as tracing, policy evaluation, and storage paths, see [Meshery Server Environment Variables]({{< ref "installation/advanced/environment-variables.md" >}}).
+
 ### PROVIDER
 
-This environment variable enforces a specific provider, bypassing the provider selection UI. This is useful for:
+This environment variable hard-enforces a specific provider at server boot: only that provider is registered, the chooser is skipped, and client hints cannot override it. This is useful for:
 - Dedicated deployments where only one provider should be available
 - Automated environments and CI/CD pipelines
 - Simplified user experience when provider choice is predetermined
 
 Accepted values:
-- `None` - Enforces the Local Provider (no authentication)
-- `Meshery` - Enforces the Meshery (Layer5 Cloud) Remote Provider
+- `Local` - Enforces the Local Provider (no authentication). `None` is accepted as a legacy alias.
+- `Meshery` - Enforces the Meshery (Meshery Cloud) Remote Provider
 - Any other registered remote provider name
 
-Example: `PROVIDER=None`
+Example: `PROVIDER=Local`
 
 When set, users are automatically directed to the specified provider's login flow upon accessing Meshery.
 
@@ -196,6 +259,13 @@ Example: `SKIP_DOWNLOAD_EXTENSIONS=true`
 - Release channel updates
 
 When `SKIP_DOWNLOAD_EXTENSIONS` is enabled, existing extension packages will still be loaded if present, but no new versions will be retrieved.
+
+**Security use:** because existing packages continue to load, this variable doubles as a
+pin. Setting it to `true` holds a production deployment on an extension package you have
+already reviewed instead of accepting whatever the provider publishes next. Pair it with
+[`PROVIDER_CAPABILITIES_FILEPATH`](#provider_capabilities_filepath) when the capability set
+itself should not drift, and see
+[Trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}}).
 
 ## Design Principles: Meshery Remote Provider Framework
 
@@ -288,11 +358,11 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
 <details>
 <summary>Capabilities Endpoint Example</summary>
 {{< code code=`{
-  "provider_type": "remote",
-  "package_version": "v0.1.0",
-  "package_url": "https://layer5labs.github.io/meshery-extensions-packages/provider.tar.gz",
-  "provider_name": "Meshery",
-  "provider_description": [
+  "providerType": "remote",
+  "packageVersion": "v0.1.0",
+  "packageURL": "https://<hostname>>/meshery-extensions-packages/provider.tar.gz",
+  "providerName": "Meshery",
+  "providerDescription": [
     "Persistent sessions",
     "Save environment setup",
     "Retrieve performance test results",
@@ -301,7 +371,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
   "extensions": {
     "navigator": [
       {
-        "title": "MeshMap",
+        "title": "Designer",
         "href": {
           "uri": "/meshmap",
           "external": false
@@ -328,7 +398,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
     "account": [
       {
           "title": "Overview",
-          "on_click_callback": 1,
+          "onClickCallback": 1,
           "href": {
               "uri": "/account/overview",
               "external": false
@@ -340,7 +410,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
       },
       {
           "title": "Profile",
-          "on_click_callback": 1,
+          "onClickCallback": 1,
           "href": {
               "uri": "/account/profile",
               "external": false
@@ -352,7 +422,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
       },
       {
           "title": "API Tokens",
-          "on_click_callback": 1,
+          "onClickCallback": 1,
           "href": {
               "uri": "/account/tokens",
               "external": false
@@ -363,7 +433,7 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
           "type": "full_page"
       }
     ],
-    "user_prefs": [
+    "userPrefs": [
       {
         "component": "/provider/userprefs/meshmap-preferences.js"
       }

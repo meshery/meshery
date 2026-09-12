@@ -16,24 +16,21 @@ const (
 	ErrModelUnsupportedVersionCode      = "mesheryctl-1149"
 	ErrModelBuildCode                   = "mesheryctl-1151"
 	ErrDeleteModelCode                  = "mesheryctl-1200"
+	ErrModelNotFoundCode                = "mesheryctl-1254"
 
 	// Error Constants
 	errBuildUsage                    = "Usage:\nmesheryctl model build [model-name]\nor\nmesheryctl model build [model-name]/[model-version]\n\nRun 'mesheryctl model build --help' to see detailed help message"
 	errBuildFolderNotFound           = "\nfolder %s does not exist"
 	errBuildMultiVersionNotSupported = "\nCommand does not support multiple versions build under one image"
 
-	errInitOneArg            = "must provide only one argument: model name"
-	errInitUnsupportedFormat = "[ %s ] are the only format supported"
-	errInitInvalidVersion    = "version must follow a semver format, f.e. v1.2.3"
-	errInitFolderExists      = "folder %s exists, please specify different model name or version"
+	errInitOneArg       = "model init requires one argument: 'Model name' using kebab-cased (eg. model-name, aws-model-name)"
+	errInitFolderExists = "folder %s exists, please specify different model name or version"
 
 	errSearchUsage     = "Usage: mesheryctl model search [query-text]\nRun 'mesheryctl model search --help' to see detailed help message"
 	errSearchModelName = "Please provide a model name. " + errSearchUsage
 
 	errInvalidArg = "only one argument must be provided and needs to be enclosed by double quotes if it contains spaces (eg. \"model name\", modelName)"
 
-	viewUsageMsg        = "Usage: mesheryctl model view [model-name]\nRun 'mesheryctl model view --help' to see detailed help message"
-	formaterrMsg        = "[ yaml, json ] are the only format supported\n\nUsage: mesheryctl model view --output-format [yaml|json]\nRun 'mesheryctl model view --help' to see detailed help message"
 	errDeleteInvalidArg = "[ model-id | model-name ] is required\n\nUsage: mesheryctl model delete [model-id | model-name]\nRun 'mesheryctl model delete --help' to see detailed help message"
 
 	errGenerateUsageMsg = "Usage: mesheryctl model generate [ file | filePath | URL ] path\nRun 'mesheryctl model generate --help' to see detailed help message"
@@ -84,4 +81,12 @@ func ErrDeleteModel(err error, nameOrID string) error {
 		[]string{fmt.Sprintf("Failed to delete model with name or ID '%s': %s", nameOrID, err.Error())},
 		[]string{"The specified model name or ID may not exist"},
 		[]string{"Verify the model name or ID using 'mesheryctl model list' and try again"})
+}
+
+func ErrModelNotFound(modelName string) error {
+	return errors.New(ErrModelNotFoundCode, errors.Alert,
+		[]string{"Selected model not found"},
+		[]string{fmt.Sprintf("The model %q provided via --model was not found in the CSV input", modelName)},
+		[]string{"The model name does not match any entry in the CSV's \"model\" column, or contains a typo"},
+		[]string{"Check the model name against the \"model\" column in your Models CSV, or omit --model to generate all eligible models"})
 }

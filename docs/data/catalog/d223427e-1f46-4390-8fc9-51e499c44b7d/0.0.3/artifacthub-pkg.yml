@@ -21,11 +21,7 @@ links:
 readme: "Key Differentiators\n\nLoad balancing is based on timeproof DNS protocol which is perfect for global scope and extremely reliable.\nNo dedicated management cluster and no single point of failure.\nKubernetes native application health checks utilizing status of Liveness and Readiness probes for load balancing decisions\nConfiguration with a single Kubernetes CRD of Gslb kind\n\nrefer this repo for more info https://github.com/k8gb-io/k8gb \n ##h4 Caveats and Consideration \n"
 install: mesheryctl design import -f
 provider:
-    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+    name: 6e718f76-a798-485f-b915-8d5cc8a2d97a
 screenshots:
-    - title: MeshMap Snapshot
-      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/d223427e-1f46-4390-8fc9-51e499c44b7d-light.png
-    - title: MeshMap Snapshot
-      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/d223427e-1f46-4390-8fc9-51e499c44b7d-dark.png
     - title: Meshery Project
       url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

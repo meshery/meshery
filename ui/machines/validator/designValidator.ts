@@ -123,8 +123,8 @@ const DryRunDesignActor = fromPromise(async ({ input: { validationPayload } }) =
       : designsApi.endpoints.undeployPattern;
 
   const dryRunResults = await initiateQuery(dryRunEndpoint, {
-    pattern_file: encodeDesignFile(design),
-    pattern_id: design.id,
+    patternFile: encodeDesignFile(design),
+    patternId: design.id,
     skipCRD: !includeDependencies,
     selectedK8sContexts: k8sContexts,
     dryRun: true,

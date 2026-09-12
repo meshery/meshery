@@ -25,11 +25,7 @@ links:
 readme: "refer for  Caveats And Considerations from this docs https://developer.hashicorp.com/vault/docs/platform/k8s \n ##h4 Caveats and Consideration \n"
 install: mesheryctl design import -f
 provider:
-    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+    name: 6e718f76-a798-485f-b915-8d5cc8a2d97a
 screenshots:
-    - title: MeshMap Snapshot
-      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/254aa1d3-d972-4894-813a-f58fdd24021c-light.png
-    - title: MeshMap Snapshot
-      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/254aa1d3-d972-4894-813a-f58fdd24021c-dark.png
     - title: Meshery Project
       url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

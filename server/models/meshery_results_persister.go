@@ -16,22 +16,22 @@ type MesheryResultsPersister struct {
 // MesheryResultPage - represents a page of meshery results
 type MesheryResultPage struct {
 	Page       uint64           `json:"page"`
-	PageSize   uint64           `json:"page_size"`
-	TotalCount int              `json:"total_count"`
+	PageSize   uint64           `json:"pageSize"`
+	TotalCount int              `json:"totalCount"`
 	Results    []*MesheryResult `json:"results"`
 }
 
 type localMesheryResultDBRepresentation struct {
-	ID                 core.Uuid  `json:"meshery_id,omitempty"`
+	ID                 core.Uuid  `json:"mesheryId,omitempty"`
 	Name               string     `json:"name,omitempty"`
 	Mesh               string     `json:"mesh,omitempty"`
-	PerformanceProfile *core.Uuid `json:"performance_profile,omitempty"`
-	Result             []byte     `json:"runner_results,omitempty" gorm:"type:JSONB"`
+	PerformanceProfile *core.Uuid `json:"performanceProfile,omitempty"`
+	Result             []byte     `json:"runnerResults,omitempty" gorm:"type:JSONB"`
 
-	ServerMetrics     interface{} `json:"server_metrics,omitempty" gorm:"type:JSONB"`
-	ServerBoardConfig interface{} `json:"server_board_config,omitempty" gorm:"type:JSONB"`
+	ServerMetrics     interface{} `json:"serverMetrics,omitempty" gorm:"type:JSONB"`
+	ServerBoardConfig interface{} `json:"serverBoardConfig,omitempty" gorm:"type:JSONB"`
 
-	TestStartTime          *time.Time         `json:"test_start_time,omitempty"`
+	TestStartTime          *time.Time         `json:"testStartTime,omitempty"`
 	PerformanceProfileInfo PerformanceProfile `json:"-" gorm:"constraint:OnDelete:SET NULL;foreignKey:PerformanceProfile"`
 }
 

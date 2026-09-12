@@ -38,16 +38,16 @@ Find more information at: https://docs.meshery.io/concepts/logical/environments
 	`,
 	Example: `
 // Create an environment in an organization
-mesheryctl environment create --orgID [orgID] --name [name] --description [description]
+mesheryctl environment create --orgId [orgId] --name [name] --description [description]
 
 // Delete an environment in an organization
 mesheryctl environment delete environment-id
 
 // List of registered environments in an organization
-mesheryctl environment list --orgID [orgID]
+mesheryctl environment list --orgId [orgId]
 
 // View a particular environment
-mesheryctl environment view --orgID [orgID]
+mesheryctl environment view --orgId [orgId]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {

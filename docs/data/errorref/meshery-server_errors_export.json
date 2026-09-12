@@ -289,7 +289,7 @@
         "long_description": "",
         "short_description": "unable to get: ",
         "probable_cause": "Query parameter is not a part of the request",
-        "suggested_remediation": "Make sure to pass the query paramater in the request"
+        "suggested_remediation": "Make sure to pass the query parameter in the request"
       },
       "1033": {
         "name": "ErrGetResultCode",
@@ -712,7 +712,7 @@
         "long_description": "",
         "short_description": "Error failed to save filter",
         "probable_cause": "Cannot save the Filter due to wrong path or URL\nFilter is corrupted.",
-        "suggested_remediation": "Check if the given path or URL of the filter is correct\nTry uplaoding a different filter"
+        "suggested_remediation": "Check if the given path or URL of the filter is correct\nTry uploading a different filter"
       },
       "1080": {
         "name": "ErrDecodeFilterCode",
@@ -766,7 +766,7 @@
         "long_description": "",
         "short_description": "Error failed to save design.",
         "probable_cause": "Cannot save the design due to an invalid path or URL",
-        "suggested_remediation": "Verify that you have an active user session. Try logging and in again.\nConfirm that you have sufficient permissions to save the design.\nTry reducing the size of the design file by removing the number of images, using alternative image formats or removing other non-critical components from the design. See https://docs.layer5.io/kanvas/advanced/performance/."
+        "suggested_remediation": "Verify that you have an active user session. Try logging and in again.\nConfirm that you have sufficient permissions to save the design.\nTry reducing the size of the design file by removing the number of images, using alternative image formats or removing other non-critical components from the design."
       },
       "1086": {
         "name": "ErrSaveApplicationCode",
@@ -782,27 +782,27 @@
         "code": "1087",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error failed to get design",
-        "probable_cause": "Cannot get the design with the given design ID",
-        "suggested_remediation": "Check if the given design ID is correct"
+        "short_description": "Unable to open this design",
+        "probable_cause": "The design ID in the URL is malformed or does not exist.\nThe design has been deleted by its owner.\nYour account does not have permission to view this design — it may belong to another organization or be set to private.\nYour session has expired or the remote provider is currently unreachable.",
+        "suggested_remediation": "Verify the design link — confirm the full design ID is intact, with no missing or extra characters.\nOpen My Designs and confirm the design still exists; if it was shared with you, ask the owner to re-share or grant access.\nSign out and sign back in to refresh your session, then retry."
       },
       "1088": {
         "name": "ErrDeletePatternCode",
         "code": "1088",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error failed to delete design",
-        "probable_cause": "Failed to delete design with the given ID",
-        "suggested_remediation": "Check if the design ID is correct"
+        "short_description": "Unable to delete this design",
+        "probable_cause": "The design ID is malformed or no longer exists — it may already have been deleted.\nYour account does not have permission to delete this design — only authorized users (such as the owner) can delete it.\nYour session has expired or the remote provider is currently unreachable.",
+        "suggested_remediation": "Refresh the designs list to confirm the design still exists before retrying.\nIf the design was shared with you, ask its owner to delete it.\nSign out and sign back in to refresh your session, then retry."
       },
       "1089": {
         "name": "ErrFetchPatternCode",
         "code": "1089",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error failed to fetch design",
-        "probable_cause": "Failed to retrieve the list of all the designs",
-        "suggested_remediation": ""
+        "short_description": "Unable to load your designs",
+        "probable_cause": "The remote provider is currently unreachable or returned an error.\nYour session has expired or your authentication token is no longer valid.\nNetwork connectivity between Meshery Server and the remote provider has been interrupted.",
+        "suggested_remediation": "Check your network connection and reload the page.\nSign out and sign back in to refresh your session, then retry.\nConfirm that the configured remote provider is online."
       },
       "1090": {
         "name": "ErrImportPatternCode",
@@ -845,9 +845,9 @@
         "code": "1094",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error failed to convert design file to Cytoscape object",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "short_description": "Failed to migrate design to current schema version",
+        "probable_cause": "The persisted design is in an older schema version (e.g. v1alpha2) whose ConvertFrom path rejected one of its fields.\nA field present in the older schema has no clean mapping to the current v1beta3 PatternFile shape.",
+        "suggested_remediation": "Inspect server logs for the underlying conversion error. If the design is irrecoverable, re-import its source content via the design import endpoint, which re-runs the full conversion pipeline."
       },
       "1095": {
         "name": "ErrInvalidKubeConfigCode",
@@ -953,7 +953,7 @@
         "code": "1106",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "could not get meshmodel entitities",
+        "short_description": "could not get meshmodel entities",
         "probable_cause": "Meshmodel entity could not be converted into valid json\ndata in the registry was inconsistent",
         "suggested_remediation": "make sure correct and consistent data is present inside the registry\ndrop the Meshmodel tables and restart Meshery server"
       },
@@ -973,7 +973,7 @@
         "long_description": "",
         "short_description": "could not resolve rego relationship",
         "probable_cause": "The rego evaluation engine failed to resolve policies\nDesign-File/Application-File is in incorrect format\nThe policy query is invalid\nThe evaluation engine response is unexpected for the code written",
-        "suggested_remediation": "Make sure the design-file/application-file is a valid yaml\nMake sure you're proving correct rego query\nMake sure the server is evaluating the query correctly, add some logs"
+        "suggested_remediation": "Make sure the design-file/application-file is a valid yaml\nMake sure you're providing correct rego query\nMake sure the server is evaluating the query correctly, add some logs"
       },
       "1109": {
         "name": "ErrGetLatestVersionCode",
@@ -1144,7 +1144,7 @@
         "long_description": "",
         "short_description": "",
         "probable_cause": "Insufficient permissions to write into file\nfile might be corrupted",
-        "suggested_remediation": "check if sufficient permissions are givent to the file\ncheck if the file is corrupted"
+        "suggested_remediation": "check if sufficient permissions are given to the file\ncheck if the file is corrupted"
       },
       "1128": {
         "name": "ErrBuildOCIImgCode",
@@ -1183,13 +1183,13 @@
         "suggested_remediation": "check if the OCI artifact is valid and not corrupted"
       },
       "1132": {
-        "name": "ErrWaklingLocalDirectoryCode",
+        "name": "ErrWalkingLocalDirectoryCode",
         "code": "1132",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Failed to walk local directory",
-        "probable_cause": "unable to walk local directory\nlocal directory may be corrupted",
-        "suggested_remediation": "check if the local directory is valid and not corrupted"
+        "short_description": "Failed to walk local directory: ",
+        "probable_cause": "unable to walk local directory at \nlocal directory may be corrupted or inaccessible",
+        "suggested_remediation": "check if the local directory is valid and has correct permissions"
       },
       "1133": {
         "name": "ErrConvertingK8sManifestToDesignCode",
@@ -1226,15 +1226,6 @@
         "short_description": "Failed to convert helm chart to design",
         "probable_cause": "unable to convert helm chart to design\nhelm chart may be corrupted\nincorrect source type selected",
         "suggested_remediation": "check if the helm chart is valid and not corrupted\ncheck if the source type selected is Helm Chart"
-      },
-      "1137": {
-        "name": "ErrInvalidUUIDCode",
-        "code": "1137",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "invalid or empty uuid",
-        "probable_cause": "provided id is not a valid uuid",
-        "suggested_remediation": "provide a valid uuid"
       },
       "1138": {
         "name": "ErrErrNewDynamicClientGeneratorCode",
@@ -1380,30 +1371,12 @@
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "1154": {
-        "name": "ErrStartingNighthawkServerCode",
-        "code": "1154",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to start the nighthawk server",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
       "1155": {
         "name": "ErrTransformingDataCode",
         "code": "1155",
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error while transforming data",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "1156": {
-        "name": "ErrRunningNighthawkServerCode",
-        "code": "1156",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error while running nighthawk server",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -1794,33 +1767,6 @@
         "probable_cause": "Meshery is crashed or not reachable",
         "suggested_remediation": "Restart Meshery Server\nPlease check if Meshery server is accessible to the Database"
       },
-      "1200": {
-        "name": "ErrConfigurationPatternsCode",
-        "code": "1200",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for designs stopped",
-        "short_description": "Configuration Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
-      },
-      "1201": {
-        "name": "ErrConfigurationApplicationsCode",
-        "code": "1201",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for Applications stopped",
-        "short_description": "Configuration Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
-      },
-      "1202": {
-        "name": "ErrConfigurationFiltersCode",
-        "code": "1202",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for Filters stopped",
-        "short_description": "Configuration Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
-      },
       "1203": {
         "name": "ErrK8sContextCode",
         "code": "1203",
@@ -1829,33 +1775,6 @@
         "short_description": "Failed to get k8s context from remote provider",
         "probable_cause": "Could be a network issue",
         "suggested_remediation": ""
-      },
-      "1204": {
-        "name": "ErrClusterResourcesSubscriptionCode",
-        "code": "1204",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for ClusterResources Subscription stopped",
-        "short_description": "ClusterResources Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
-      },
-      "1205": {
-        "name": "ErrGettingClusterResourcesCode",
-        "code": "1205",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to retrieve cluster resources",
-        "probable_cause": "Table in the database might not exists",
-        "suggested_remediation": ""
-      },
-      "1206": {
-        "name": "ErrMeshModelSummarySubscriptionCode",
-        "code": "1206",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for MeshModelSummary Subscription stopped",
-        "short_description": "MeshModelSummary Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
       },
       "1207": {
         "name": "ErrGettingMeshModelSummaryCode",
@@ -1892,24 +1811,6 @@
         "short_description": "Unable to process adapter request, incomplete request",
         "probable_cause": "",
         "suggested_remediation": ""
-      },
-      "1211": {
-        "name": "ErrPerformanceProfilesSubscriptionCode",
-        "code": "1211",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for PerformanceProfiles stopped",
-        "short_description": "PerformanceProfiles Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
-      },
-      "1212": {
-        "name": "ErrPerformanceResultSubscriptionCode",
-        "code": "1212",
-        "severity": "Alert",
-        "long_description": "GraphQL subscription for PerformanceResult stopped",
-        "short_description": "PerformanceResult Subscription failed",
-        "probable_cause": "Could be a network issue",
-        "suggested_remediation": "Confirm that Meshery Server is reachable from your browser."
       },
       "1213": {
         "name": "ErrGormDatabaseCode",
@@ -2456,7 +2357,7 @@
         "code": "1273",
         "severity": "Alert",
         "long_description": "You dont have access to the capability",
-        "short_description": "Capablity is not supported by your Provider",
+        "short_description": "Capability is not supported by your Provider",
         "probable_cause": "Not logged in to the vaild remote Provider",
         "suggested_remediation": "Connect to the vaild remote Provider\nAsk the Provider Adim for access"
       },
@@ -2744,7 +2645,7 @@
         "code": "1305",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Unable to flush MeshSync data for context %s at %s ",
+        "short_description": "",
         "probable_cause": "Meshery Database handler is not accessible to perform operations",
         "suggested_remediation": "Restart Meshery Server or Perform Hard Reset"
       },
@@ -3276,8 +3177,8 @@
         "severity": "Alert",
         "long_description": "Unable to locate the compressed file(.tar.gz) inside the OCI image.",
         "short_description": "No tar file found inside OCI image",
-        "probable_cause": "The OCI image does not contain a ziped file.",
-        "suggested_remediation": "Verify that the OCI image contains a ziped file."
+        "probable_cause": "The OCI image does not contain a zipped file.",
+        "suggested_remediation": "Verify that the OCI image contains a zipped file."
       },
       "1366": {
         "name": "ErrFileTypeCode",
@@ -3364,10 +3265,10 @@
         "name": "ErrWorkspaceMissingInputCode",
         "code": "1375",
         "severity": "Alert",
-        "long_description": "WorkspaceID or OrgID cannot be empty",
+        "long_description": "a required workspace input was not provided (orgId is required; workspaceId is required for single-workspace operations)",
         "short_description": "Invalid input for workspace operation",
-        "probable_cause": "The workspace ID and organization ID are required for this operation.",
-        "suggested_remediation": "Ensure that both WorkspaceID and OrgID are provided and not empty."
+        "probable_cause": "Required workspace input values were not provided for this operation.",
+        "suggested_remediation": "Ensure orgId is provided as a query parameter (and workspaceId is provided in the URL path for single-workspace operations)."
       },
       "1376": {
         "name": "ErrApplyPatchCode",
@@ -3386,6 +3287,978 @@
         "short_description": "failed to parse action payload",
         "probable_cause": "action value may be malformed",
         "suggested_remediation": "check the policy engine action output"
+      },
+      "1378": {
+        "name": "ErrTransientProviderCode",
+        "code": "1378",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Remote provider temporarily unavailable",
+        "probable_cause": "Network connectivity issue, Cloud outage, or firewall blocking egress.",
+        "suggested_remediation": "Retry the request. If this persists, check https://status.meshery.io and verify Meshery Server can reach Meshery Cloud."
+      },
+      "1379": {
+        "name": "ErrMeshsyncEventCode",
+        "code": "1379",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error processing MeshSync event",
+        "probable_cause": "MeshSync encountered an error while processing a broker event",
+        "suggested_remediation": "Check MeshSync logs for details. Ensure the Kubernetes cluster is reachable and MeshSync is running correctly."
+      },
+      "1380": {
+        "name": "ErrMeshsyncStoreUpdatesCode",
+        "code": "1380",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error processing MeshSync store update",
+        "probable_cause": "MeshSync encountered an error while processing a store update event",
+        "suggested_remediation": "Check MeshSync store logs. Verify that the database connection is active and the store is not corrupted."
+      },
+      "1381": {
+        "name": "ErrServeSchemaCode",
+        "code": "1381",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to serve the requested schema",
+        "probable_cause": "Requested resource's schema could not be found or read",
+        "suggested_remediation": "Ensure the resource name is spelled correctly and that the schema is bundled with the server"
+      },
+      "1382": {
+        "name": "ErrInvalidFileRequestCode",
+        "code": "1382",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid file request",
+        "probable_cause": "The provided file query parameter could not be decoded",
+        "suggested_remediation": "Ensure the file parameter is a properly URL-encoded path"
+      },
+      "1383": {
+        "name": "ErrReadFileContentCode",
+        "code": "1383",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to read file content",
+        "probable_cause": "The file could not be opened or streamed to the response",
+        "suggested_remediation": "Verify the file exists and the server has permission to read it"
+      },
+      "1384": {
+        "name": "ErrExtensionEndpointNotRegisteredCode",
+        "code": "1384",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "No extension is registered for endpoint: ",
+        "probable_cause": "Requested extension is not loaded into this Meshery server",
+        "suggested_remediation": "Install the extension or check that its provider registered the route on startup"
+      },
+      "1385": {
+        "name": "ErrUserNotFoundCode",
+        "code": "1385",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "User not found",
+        "probable_cause": "The user may have been deleted or the id is incorrect",
+        "suggested_remediation": "Verify the user id is correct and that the user has not been removed"
+      },
+      "1386": {
+        "name": "ErrFetchTokenCode",
+        "code": "1386",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to obtain authentication token from request context",
+        "probable_cause": "The request may not be authenticated or the token was not propagated into the context",
+        "suggested_remediation": "Ensure the request is authenticated and that upstream middleware injects the token into context"
+      },
+      "1387": {
+        "name": "ErrHandlerShareDesignCode",
+        "code": "1387",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to share design",
+        "probable_cause": "The remote provider rejected the share request\nNetwork connectivity issue\nInvalid payload",
+        "suggested_remediation": "Verify the share request payload and target recipients, then retry"
+      },
+      "1388": {
+        "name": "ErrHandlerShareFilterCode",
+        "code": "1388",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to share filter",
+        "probable_cause": "The remote provider rejected the share request\nNetwork connectivity issue\nInvalid payload",
+        "suggested_remediation": "Verify the share request payload and target recipients, then retry"
+      },
+      "1389": {
+        "name": "ErrGetUserCredentialCode",
+        "code": "1389",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to get user credential",
+        "probable_cause": "Credential may not exist, caller may lack access, or the provider is unreachable",
+        "suggested_remediation": "Verify the credential id and that the current user has access to it"
+      },
+      "1390": {
+        "name": "ErrSaveUserCredentialCode",
+        "code": "1390",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to save user credential",
+        "probable_cause": "Invalid credential payload or the provider rejected the request",
+        "suggested_remediation": "Verify the credential payload matches the expected schema and retry"
+      },
+      "1391": {
+        "name": "ErrUpdateUserCredentialCode",
+        "code": "1391",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to update user credential",
+        "probable_cause": "Credential may not exist, caller may lack access, or the payload is invalid",
+        "suggested_remediation": "Verify the credential id, caller permissions, and payload, then retry"
+      },
+      "1392": {
+        "name": "ErrDeleteUserCredentialCode",
+        "code": "1392",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to delete user credential",
+        "probable_cause": "Credential may not exist or the caller may lack permission",
+        "suggested_remediation": "Verify the credential id and caller permissions, then retry"
+      },
+      "1393": {
+        "name": "ErrEncodeUserCredentialCode",
+        "code": "1393",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to encode user credential response",
+        "probable_cause": "Credential payload could not be serialized to JSON",
+        "suggested_remediation": "Check server logs for serialization details"
+      },
+      "1394": {
+        "name": "ErrUnknownConnectionKindCode",
+        "code": "1394",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to register resource as connection",
+        "probable_cause": "The specified connection kind is not registered with Meshery",
+        "suggested_remediation": "Verify the connection kind is spelled correctly and that its definition is installed"
+      },
+      "1395": {
+        "name": "ErrGetK8sContextsCode",
+        "code": "1395",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to get Kubernetes contexts",
+        "probable_cause": "The remote provider may be unreachable or the stored context data is corrupted",
+        "suggested_remediation": "Verify the remote provider is reachable and retry; if the issue persists, check server logs"
+      },
+      "1396": {
+        "name": "ErrEncodeK8sContextsCode",
+        "code": "1396",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to encode Kubernetes context response",
+        "probable_cause": "Response data could not be serialized to JSON",
+        "suggested_remediation": "Check server logs for serialization details"
+      },
+      "1397": {
+        "name": "ErrCreateDatabaseArchiveDirCode",
+        "code": "1397",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Directory could not be created due to a non-existent path",
+        "probable_cause": "Meshery's configuration directory does not exist or is not writable",
+        "suggested_remediation": "Verify that ~/.meshery/config exists and that the server process has write permission"
+      },
+      "1398": {
+        "name": "ErrOpenDatabaseFileCode",
+        "code": "1398",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "The database does not exist or you don't have enough permission to access it",
+        "probable_cause": "mesherydb.sql is missing or not readable by the server process",
+        "suggested_remediation": "Verify that mesherydb.sql exists under ~/.meshery/config and that the server process can read it"
+      },
+      "1399": {
+        "name": "ErrCreateDatabaseArchiveFileCode",
+        "code": "1399",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Destination file can not be created",
+        "probable_cause": "Archive target path is not writable or disk is full",
+        "suggested_remediation": "Ensure ~/.meshery/config/.archive is writable and has free space"
+      },
+      "1400": {
+        "name": "ErrCopyDatabaseFileCode",
+        "code": "1400",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Can not copy file from source to destination",
+        "probable_cause": "I/O error while archiving the current database, or disk is full",
+        "suggested_remediation": "Check disk space and filesystem permissions for ~/.meshery/config"
+      },
+      "1401": {
+        "name": "ErrObtainDatabaseHandlerCode",
+        "code": "1401",
+        "severity": "Alert",
+        "long_description": "Provider returned a nil generic persister",
+        "short_description": "Failed to obtain database handler",
+        "probable_cause": "The configured provider does not expose a persister, or initialization has not completed",
+        "suggested_remediation": "Verify the active provider supports system database reset and that the server is fully initialized"
+      },
+      "1402": {
+        "name": "ErrAccessDatabaseTablesCode",
+        "code": "1402",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Can not access database tables",
+        "probable_cause": "The database file is locked, corrupt, or inaccessible",
+        "suggested_remediation": "Check that no other process is holding a lock on mesherydb and that the file is not corrupt"
+      },
+      "1403": {
+        "name": "ErrDropDatabaseTableCode",
+        "code": "1403",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Cannot drop table from database",
+        "probable_cause": "Migrator could not drop an existing table — schema or connection issue",
+        "suggested_remediation": "Check server logs for details and verify database integrity"
+      },
+      "1404": {
+        "name": "ErrMigrateDatabaseTablesCode",
+        "code": "1404",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Can not migrate tables to database",
+        "probable_cause": "Auto-migrate or registry manager setup failed during database reset",
+        "suggested_remediation": "Check server logs for migration details and verify the database is accessible"
+      },
+      "1405": {
+        "name": "ErrFetchResultsCode",
+        "code": "1405",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while getting load test results",
+        "probable_cause": "The remote provider is unreachable, the profile id is invalid, or the results store is unavailable",
+        "suggested_remediation": "Verify connectivity to the remote provider and retry; confirm the profile id is correct"
+      },
+      "1406": {
+        "name": "ErrMissingResultIDCode",
+        "code": "1406",
+        "severity": "Alert",
+        "long_description": "No result id was supplied in the URL path",
+        "short_description": "Missing result id in request",
+        "probable_cause": "The client did not include a result identifier",
+        "suggested_remediation": "Provide the result id in the request URL, for example /api/user/performance/results/{id}"
+      },
+      "1407": {
+        "name": "ErrHandlerGenerateUUIDCode",
+        "code": "1407",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to generate a unique identifier",
+        "probable_cause": "Secure random source is unavailable on this host",
+        "suggested_remediation": "Retry the request; if the error persists, verify the host's /dev/urandom or equivalent entropy source is accessible"
+      },
+      "1408": {
+        "name": "ErrMethodNotAllowedCode",
+        "code": "1408",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "HTTP method not allowed for this endpoint",
+        "probable_cause": "The client used an HTTP verb the route does not support",
+        "suggested_remediation": "Use one of the supported HTTP methods for this endpoint"
+      },
+      "1409": {
+        "name": "ErrMissingRouteVariableCode",
+        "code": "1409",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The client called the endpoint without supplying a required path segment.",
+        "suggested_remediation": ""
+      },
+      "1410": {
+        "name": "ErrRetrieveEventTypesCode",
+        "code": "1410",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not retrieve event categories and actions",
+        "probable_cause": "Database is not reachable or corrupt.\nRemote provider event-type endpoint is unavailable.",
+        "suggested_remediation": "Check database connectivity and provider availability, then retry."
+      },
+      "1411": {
+        "name": "ErrDeprecatedAPICode",
+        "code": "1411",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "This API is deprecated",
+        "probable_cause": "Client is using an older Meshery UI or mesheryctl that still targets the retired endpoint.",
+        "suggested_remediation": ""
+      },
+      "1412": {
+        "name": "ErrInvalidConnectionKindCode",
+        "code": "1412",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The connectionID in the URL references a connection created for a different integration.",
+        "suggested_remediation": ""
+      },
+      "1413": {
+        "name": "ErrUpdateConnectionCode",
+        "code": "1413",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not update the connection",
+        "probable_cause": "Remote provider is unreachable.\nConnection has been deleted since it was loaded.\nPersisted metadata is corrupt.",
+        "suggested_remediation": "Verify provider connectivity and that the connection still exists, then retry."
+      },
+      "1414": {
+        "name": "ErrExportModelCode",
+        "code": "1414",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Temp directory is not writable.\nModel definition references a missing dependency.\nOCI/tar tooling produced an invalid artifact.",
+        "suggested_remediation": "Retry the export; if it persists, inspect server logs and disk availability under the temp directory."
+      },
+      "1415": {
+        "name": "ErrInvalidContextsConfigCode",
+        "code": "1415",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid contexts configuration",
+        "probable_cause": "The `contexts` form field is not a valid JSON map from context ID to {meshsync_deployment_mode: string}.",
+        "suggested_remediation": "Send a well-formed JSON object in the `contexts` form field, e.g. {\\\"<contextID>\\\": {\\\"meshsync_deployment_mode\\\": \\\"operator\\\"}}."
+      },
+      "1416": {
+        "name": "ErrEmptyConnectionIDCode",
+        "code": "1416",
+        "severity": "Alert",
+        "long_description": "No connection ID was supplied in the canonical `connectionId` query parameter (the legacy `connection_id` spelling is also accepted during the Phase 2 deprecation window).",
+        "short_description": "Empty connection ID",
+        "probable_cause": "The client did not pass `connectionId` in the query string.\nA URL template did not get its parameter substituted.",
+        "suggested_remediation": "Pass the connection ID of the Kubernetes context to be pinged, e.g. /api/system/kubernetes/ping?connectionId=<id>."
+      },
+      "1417": {
+        "name": "ErrPolicyEvalTimeoutCode",
+        "code": "1417",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Relationship policy evaluation timed out",
+        "probable_cause": "The design is large enough that the policy engine needs more than the configured timeout.\nOne of the Rego/Go policies under evaluation is in a slow path or infinite loop.",
+        "suggested_remediation": "Increase the POLICY_EVAL_TIMEOUT setting (default 3m) if the design genuinely needs more time, or retry with a smaller design."
+      },
+      "1418": {
+        "name": "ErrPolicyEvalCode",
+        "code": "1418",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Relationship policy evaluation failed",
+        "probable_cause": "A registered relationship policy returned an error during evaluation.\nA cycle or invalid declaration in the design triggered an engine panic recovered as an error.",
+        "suggested_remediation": "Inspect server logs for the underlying policy error. If the design has recently been edited, revert the most recent change and retry."
+      },
+      "1419": {
+        "name": "ErrInvalidBase64DataCode",
+        "code": "1419",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid base64 data",
+        "probable_cause": "The supplied payload was not a valid base64-encoded string.\nThe payload may have been corrupted in transit or encoded with the wrong alphabet (URL-safe vs. standard).",
+        "suggested_remediation": "Verify the client is base64-encoding the file with the standard alphabet before sending it.\nIf the payload was hand-edited, re-encode it from the source bytes and retry."
+      },
+      "1420": {
+        "name": "ErrRemoteProviderCapabilitiesCode",
+        "code": "1420",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to load capabilities from remote provider",
+        "probable_cause": "Remote provider is unreachable, the manifest endpoint is down, or the response is malformed.",
+        "suggested_remediation": "Verify the remote provider is reachable, check its manifest endpoint, and retry."
+      },
+      "1421": {
+        "name": "ErrRemoteProviderAuthExhaustedCode",
+        "code": "1421",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Authentication failed after multiple attempts",
+        "probable_cause": "Invalid or expired credentials, or the auth endpoint is rejecting requests.",
+        "suggested_remediation": "Log out and sign in again; if this persists, check that the remote provider's auth endpoint is healthy."
+      },
+      "1422": {
+        "name": "ErrInvalidImportRequestCode",
+        "code": "1422",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid design import request",
+        "probable_cause": "The request body did not match exactly one variant of the import oneOf — the File variant requires `file` and `fileName`, the URL variant requires `url`.\nBoth variants were provided, or neither was.",
+        "suggested_remediation": "Send a request body with exactly one variant set: either {\\\"file\\\": <bytes>, \\\"fileName\\\": \\\"design.yml\\\"} or {\\\"url\\\": \\\"https://...\\\"}."
+      },
+      "1423": {
+        "name": "ErrConvertToDesignCode",
+        "code": "1423",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to convert uploaded file to a design",
+        "probable_cause": "The uploaded file extension is not one of the supported import formats (.yml, .yaml, .json, .tar, .tar.gz, .tgz, .zip).\nThe file is corrupt or its content does not parse as the type implied by its extension.\nThe Kubernetes manifest references a kind/apiVersion that does not match any registered component definition.",
+        "suggested_remediation": "Verify the file is one of the supported formats and content-types, and that it parses cleanly outside Meshery.\nIf the source is a Kubernetes manifest, ensure each kind it references has a corresponding model registered in the Meshery registry."
+      },
+      "1424": {
+        "name": "ErrCompressArtifactCode",
+        "code": "1424",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to compress design as OCI artifact",
+        "probable_cause": "The server-side tar writer hit an I/O error while packaging the design YAML and the artifacthub-pkg metadata.\nAvailable memory or disk for the in-memory archive buffer was exhausted.",
+        "suggested_remediation": "Retry the export. If the failure persists, inspect server logs for the underlying writer error and ensure the host has sufficient resources."
+      },
+      "1425": {
+        "name": "ErrWriteRegistryLogsCode",
+        "code": "1425",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to flush registry logs",
+        "probable_cause": "The path configured in REGISTRY_LOG_FILE is not writable by the Meshery process (missing directory, missing permissions, or the disk is full).\nAn in-memory log entry could not be marshaled into the on-disk format.",
+        "suggested_remediation": "Verify REGISTRY_LOG_FILE points to a writable path with sufficient free disk and that the Meshery process owns or has write permission to its parent directory."
+      },
+      "1426": {
+        "name": "ErrUpdateEntityStatusCode",
+        "code": "1426",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to update entity status",
+        "probable_cause": "The entity ID does not exist in the registry.\nThe registry's persistence layer rejected the status update — typically a database connection or transaction failure.",
+        "suggested_remediation": "Verify the entity ID exists by listing the entities of the same type. If it does, retry the request and inspect server logs for the underlying registry error."
+      },
+      "1427": {
+        "name": "ErrExtensionProxyCode",
+        "code": "1427",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Extension proxy request failed",
+        "probable_cause": "The remote provider could not be reached (network failure, DNS resolution, or TLS handshake failure).\nThe remote provider returned a non-2xx response that the proxy could not translate.\nThe active provider is the local provider, which has no extensions backend.",
+        "suggested_remediation": "Verify the remote provider is reachable from this Meshery instance and that the user's session token has not expired. Retry the request after re-authenticating if the failure persists.\nIf running against the local provider, switch to a remote provider that exposes the extensions surface."
+      },
+      "1428": {
+        "name": "ErrInitializeMachineCode",
+        "code": "1428",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to initialize connection state machine",
+        "probable_cause": "The connection kind has no registered machine type in the state-machine registry.\nThe state machine's persister could not write the initial state to the database.",
+        "suggested_remediation": "Verify the connection kind is one of the supported types. If it is, retry the request and inspect server logs for the underlying machine-bootstrap error."
+      },
+      "1429": {
+        "name": "ErrSendMachineEventCode",
+        "code": "1429",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to advance connection state machine",
+        "probable_cause": "The requested event is not valid from the connection's current state.\nA side-effect action attached to the transition (e.g. provisioning, discovery) returned an error.",
+        "suggested_remediation": "Inspect the connection's current status before retrying. If the failure originates from a side-effect action, address the underlying cause (e.g. cluster reachability, credential validity) and retry."
+      },
+      "1430": {
+        "name": "ErrTelemetryGrafanaCode",
+        "code": "1430",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The Grafana instance is unreachable or returned an error.\nThe stored credential (API key / basic auth) is missing, expired, or lacks permission.\nThe connection's URL is incorrect.",
+        "suggested_remediation": "Verify the Grafana URL is reachable from the Meshery server and that the connection's credential is valid, then retry."
+      },
+      "1431": {
+        "name": "ErrTelemetryPrometheusCode",
+        "code": "1431",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The Prometheus instance is unreachable or returned an error.\nThe stored credential (API key / basic auth) is missing, expired, or lacks permission.\nThe connection's URL is incorrect.",
+        "suggested_remediation": "Verify the Prometheus URL is reachable from the Meshery server and that the connection's credential is valid, then retry."
+      },
+      "1432": {
+        "name": "ErrInvalidUUIDValueCode",
+        "code": "1432",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid UUID",
+        "probable_cause": "The provided identifier is not a valid UUID",
+        "suggested_remediation": "Provide a valid UUID"
+      },
+      "1433": {
+        "name": "ErrTelemetryGrafanaDatasourceCode",
+        "code": "1433",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The dashboard references a datasource by a name or uid that does not exist in this Grafana instance.\nThe datasource is provisioned only in a different environment.\nThe connection's credential cannot list datasources, so a name could not be resolved to a uid.",
+        "suggested_remediation": "Confirm the datasource exists in this Grafana instance and that the connection's credential has permission to read datasources."
+      },
+      "1434": {
+        "name": "ErrTelemetryGrafanaAuthCode",
+        "code": "1434",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Grafana rejected the connection's credential",
+        "probable_cause": "The API key / token is missing, expired, or invalid.\nThe credential lacks permission for this operation.",
+        "suggested_remediation": "Update the connection with a valid Grafana credential that has the required permissions, then retry."
+      },
+      "1435": {
+        "name": "ErrTelemetryPrometheusAuthCode",
+        "code": "1435",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Prometheus rejected the connection's credential",
+        "probable_cause": "The API key / token is missing, expired, or invalid.\nThe credential lacks permission for this operation.",
+        "suggested_remediation": "Update the connection with a valid Prometheus credential that has the required permissions, then retry."
+      },
+      "1436": {
+        "name": "ErrYAMLUnmarshalCode",
+        "code": "1436",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to parse YAML configuration",
+        "probable_cause": "malformed YAML in component configuration",
+        "suggested_remediation": "verify the YAML syntax in your design configuration"
+      },
+      "1437": {
+        "name": "ErrControllersConfigInvalidCode",
+        "code": "1437",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid controllers configuration.",
+        "probable_cause": "The submitted Meshery Operator / MeshSync / Broker configuration violates a validation rule.",
+        "suggested_remediation": "Correct the highlighted field and resubmit. Replica counts must be 1-10, a watch list sets at most one of whitelist or blacklist, and load-balancer settings require the LoadBalancer service type."
+      },
+      "1438": {
+        "name": "ErrControllersConfigMetadataCode",
+        "code": "1438",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to read or write the connection's controllers configuration.",
+        "probable_cause": "The controllers_config entry on the connection's metadata is not valid JSON or does not match the expected schema.",
+        "suggested_remediation": "Clear the connection's controllers configuration override and reapply it from the Connections page."
+      },
+      "1439": {
+        "name": "ErrSystemSettingsCode",
+        "code": "1439",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error accessing server-wide system settings",
+        "probable_cause": "The system_settings store could not be read or written, or the stored value is not valid JSON.",
+        "suggested_remediation": "Verify Meshery Server's database is reachable and writable, then retry the operation."
+      },
+      "1440": {
+        "name": "ErrApplyControllersConfigCode",
+        "code": "1440",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error applying controllers configuration to the cluster",
+        "probable_cause": "The MeshSync or Broker custom resource could not be patched, or the MeshSync deployment overlay could not be applied.\nThe Meshery Operator may not be deployed on the target cluster yet.",
+        "suggested_remediation": "Confirm the cluster is reachable and the Meshery Operator is deployed (operator deployment mode).\nRetry the change; configuration is re-applied whenever the connection reconnects."
+      },
+      "1441": {
+        "name": "ErrEmptyMeshSyncHandlerCode",
+        "code": "1441",
+        "severity": "Alert",
+        "long_description": "The MeshSync database handler is nil, or its underlying database connection is not initialized",
+        "short_description": "MeshSync data flush skipped: database handler is not usable",
+        "probable_cause": "Meshery Database handler is not accessible to perform operations\nMeshery Database is crashed or not reachable",
+        "suggested_remediation": "Restart Meshery Server\nVerify that Meshery Server can reach the database"
+      },
+      "1442": {
+        "name": "ErrMeshsyncReconcileCode",
+        "code": "1442",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to reconcile MeshSync deployment mode",
+        "probable_cause": "The connection's state machine or Kubernetes controllers may not be ready, or the cluster is unreachable",
+        "suggested_remediation": "Ensure the connection is connected and the cluster is reachable, then retry the mode change"
+      },
+      "1443": {
+        "name": "ErrUnsafeFilePathCode",
+        "code": "1443",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unsafe file path requested",
+        "probable_cause": "The requested file path resolves outside the directories these endpoints are permitted to serve (the Meshery log directory under ~/.meshery/logs)",
+        "suggested_remediation": "Request only files that live under ~/.meshery/logs; paths outside it, or symlinks that escape it, are rejected"
+      },
+      "1444": {
+        "name": "ErrConnectionNotFoundCode",
+        "code": "1444",
+        "severity": "Alert",
+        "long_description": "The provider returned no connection for the given id without reporting an error.",
+        "short_description": "",
+        "probable_cause": "The connection may have been deleted, or the persisted record is missing.",
+        "suggested_remediation": "Reinitialise the connection, or verify the connection id exists in the provider."
+      },
+      "1445": {
+        "name": "ErrReconcileServerIDCode",
+        "code": "1445",
+        "severity": "None",
+        "long_description": "",
+        "short_description": "Failed to reconcile the persisted Kubernetes server ID for the connection",
+        "probable_cause": "The connection's persisted kubernetesServerId could not be read from or written to the connection store while syncing it with the live cluster's server ID.",
+        "suggested_remediation": "Verify the connection still exists and Meshery can reach the provider's connection store. The reconcile is retried automatically on the next discovery cycle."
+      },
+      "1446": {
+        "name": "ErrGetEnvironmentsCode",
+        "code": "1446",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch environments",
+        "probable_cause": "Your account does not have permission to list environments in this organization.\nThe organization identifier in the request does not exist or is not one you belong to.\nThe provider could not be reached or returned an error.",
+        "suggested_remediation": "Confirm you are a member of the selected organization and that your role grants read access to environments. If the organization is correct, retry once the provider is reachable."
+      },
+      "1447": {
+        "name": "ErrGetEnvironmentCode",
+        "code": "1447",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch the environment",
+        "probable_cause": "Your account does not have permission to view this environment.\nThe environment has been deleted, or the identifier belongs to a different organization.\nThe provider could not be reached or returned an error.",
+        "suggested_remediation": "Verify the environment still exists in the selected organization and that your role grants read access to it."
+      },
+      "1448": {
+        "name": "ErrSaveEnvironmentCode",
+        "code": "1448",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to create the environment",
+        "probable_cause": "Your account does not have permission to create environments in this organization.\nAn environment with the same name already exists in this organization.\nThe organization identifier is missing or does not exist.\nThe provider could not be reached or rejected the request.",
+        "suggested_remediation": "Confirm your role in the selected organization grants permission to create environments, and that the environment name is not already in use. The environment was NOT created - retry after resolving the cause."
+      },
+      "1449": {
+        "name": "ErrUpdateEnvironmentCode",
+        "code": "1449",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to update the environment",
+        "probable_cause": "Your account does not have permission to modify this environment.\nThe environment has been deleted, or another name in the organization conflicts with the new one.\nThe provider could not be reached or rejected the request.",
+        "suggested_remediation": "Confirm your role grants write access to this environment and that the new name is unique within the organization. The environment was NOT updated - retry after resolving the cause."
+      },
+      "1450": {
+        "name": "ErrDeleteEnvironmentCode",
+        "code": "1450",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to delete the environment",
+        "probable_cause": "Your account does not have permission to delete this environment.\nThe environment has already been deleted.\nThe provider could not be reached or rejected the request.",
+        "suggested_remediation": "Confirm your role grants delete access to this environment. If it no longer appears in the list, it has already been removed."
+      },
+      "1451": {
+        "name": "ErrEnvironmentConnectionCode",
+        "code": "1451",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The environment or the connection has been deleted, or they belong to different organizations.\nThe provider could not be reached or rejected the request.",
+        "suggested_remediation": ""
+      },
+      "1452": {
+        "name": "ErrGetWorkspacesCode",
+        "code": "1452",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch workspaces",
+        "probable_cause": "Your account does not have permission to list workspaces in this organization.\nThe organization identifier in the request does not exist or is not one you belong to.\nThe provider could not be reached or returned an error.",
+        "suggested_remediation": "Confirm you are a member of the selected organization and that your role grants read access to workspaces."
+      },
+      "1453": {
+        "name": "ErrGetWorkspaceCode",
+        "code": "1453",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch the workspace",
+        "probable_cause": "Your account does not have permission to view this workspace.\nThe workspace has been deleted, or the identifier belongs to a different organization.\nThe provider could not be reached or returned an error.",
+        "suggested_remediation": "Verify the workspace still exists in the selected organization and that your role grants read access to it."
+      },
+      "1454": {
+        "name": "ErrSaveWorkspaceCode",
+        "code": "1454",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to create the workspace",
+        "probable_cause": "Your account does not have permission to create workspaces in this organization.\nA workspace with the same name already exists in this organization.\nThe organization identifier is missing or does not exist.\nThe provider could not be reached or rejected the request.",
+        "suggested_remediation": "Confirm your role in the selected organization grants permission to create workspaces, and that the workspace name is not already in use. The workspace was NOT created - retry after resolving the cause."
+      },
+      "1455": {
+        "name": "ErrUpdateWorkspaceCode",
+        "code": "1455",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to update the workspace",
+        "probable_cause": "Your account does not have permission to modify this workspace.\nThe workspace has been deleted, or another name in the organization conflicts with the new one.\nThe provider could not be reached or rejected the request.",
+        "suggested_remediation": "Confirm your role grants write access to this workspace and that the new name is unique within the organization. The workspace was NOT updated - retry after resolving the cause."
+      },
+      "1456": {
+        "name": "ErrDeleteWorkspaceCode",
+        "code": "1456",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to delete the workspace",
+        "probable_cause": "Your account does not have permission to delete this workspace.\nThe workspace has already been deleted.\nThe provider could not be reached or rejected the request.",
+        "suggested_remediation": "Confirm your role grants delete access to this workspace. If it no longer appears in the list, it has already been removed."
+      },
+      "1457": {
+        "name": "ErrWorkspaceResourceCode",
+        "code": "1457",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The workspace or the resource being associated has been deleted, or they belong to different organizations.\nThe provider could not be reached or rejected the request.",
+        "suggested_remediation": ""
+      },
+      "1458": {
+        "name": "ErrGetOrganizationsCode",
+        "code": "1458",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch organizations",
+        "probable_cause": "Your session has expired or your account is not a member of any organization.\nThe provider could not be reached or returned an error.",
+        "suggested_remediation": "Sign in again and retry. If the problem persists, verify the remote provider is reachable from this Meshery instance."
+      },
+      "1459": {
+        "name": "ErrGetUsersCode",
+        "code": "1459",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch users",
+        "probable_cause": "Your account does not have permission to list users.\nThe provider could not be reached or returned an error.",
+        "suggested_remediation": "Confirm your role grants permission to view the user directory for this organization."
+      },
+      "1460": {
+        "name": "ErrGetUserCode",
+        "code": "1460",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch the user",
+        "probable_cause": "Your account does not have permission to view this user.\nNo user exists with the requested identifier.\nThe provider could not be reached or returned an error.",
+        "suggested_remediation": "Verify the user identifier is correct and that your role grants permission to view other users."
+      },
+      "1461": {
+        "name": "ErrGetUsersKeysCode",
+        "code": "1461",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to fetch API keys",
+        "probable_cause": "Your account does not have permission to list API keys for this organization.\nThe organization identifier in the request does not exist or is not one you belong to.\nThe provider could not be reached or returned an error.",
+        "suggested_remediation": "Confirm you are a member of the selected organization and that your role grants permission to view its keys."
+      },
+      "1462": {
+        "name": "ErrSeedingConnectionsCode",
+        "code": "1462",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to seed Meshery's system-owned connections",
+        "probable_cause": "The registry could not be read for registered connection definitions\nMeshery's database is unreachable or its connections table could not be queried",
+        "suggested_remediation": "Confirm Meshery's database is reachable and that model registration completed; the connections are seeded again on the next restart"
+      },
+      "1463": {
+        "name": "ErrSeedingConnectionKindCode",
+        "code": "1463",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The connection definition for this kind may disagree with the connections table schema",
+        "suggested_remediation": ""
+      },
+      "1464": {
+        "name": "ErrFetchProfilesCode",
+        "code": "1464",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to fetch performance profiles",
+        "probable_cause": "The performance profiles could not be read from the database\nThe performance_profiles table is out of sync with the performance profile model",
+        "suggested_remediation": "Inspect the underlying database error reported above\nMake sure the Meshery database schema is up to date with the running Meshery Server"
+      },
+      "1465": {
+        "name": "ErrOperatorHandlerNotAttachedCode",
+        "code": "1465",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "No Meshery Operator controller handler is attached",
+        "probable_cause": "The connection's kubeconfig could not be generated, or the Kubernetes client could not be created.",
+        "suggested_remediation": "Reconnect the Kubernetes connection and retry; the configuration is re-applied on connect."
+      },
+      "1466": {
+        "name": "ErrReconcileOperatorChartVersionCode",
+        "code": "1466",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error deploying Meshery Operator at the configured chart version",
+        "probable_cause": "The requested Meshery Operator Helm chart version does not exist in the chart repository, or the cluster rejected the Helm release.",
+        "suggested_remediation": "Confirm the chart version exists in the Meshery Operator Helm repository, or clear operator.version to track the Meshery Server release.\nConfirm the cluster is reachable and the Meshery namespace is writable."
+      },
+      "1467": {
+        "name": "ErrAnonymousUserIDMissingCode",
+        "code": "1467",
+        "severity": "Alert",
+        "long_description": "The remote provider's anonymous user flow response contained no userId.",
+        "short_description": "Anonymous user session could not be established",
+        "probable_cause": "The remote provider does not implement the schemas v1beta2 AnonymousFlowResponse contract, or it returned an empty user id.",
+        "suggested_remediation": "Confirm the configured remote provider is reachable and up to date, then retry signing in."
+      },
+      "1468": {
+        "name": "ErrNoOperatorChartPublishedCode",
+        "code": "1468",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "No Meshery Operator Helm chart is published",
+        "probable_cause": "The chart repository index was served from an unexpected location, its published charts were removed, or it currently carries only prerelease charts, which Meshery never selects on its own.",
+        "suggested_remediation": "To deploy a prerelease chart deliberately, set operator.version on the Kubernetes connection to that exact version."
+      },
+      "1469": {
+        "name": "ErrOperatorChartNotPinnedCode",
+        "code": "1469",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Meshery Operator chart version is not a released version",
+        "probable_cause": "A moving tag (for example stable-latest or edge-latest) or a non-version string was configured as the operator chart version.",
+        "suggested_remediation": "Set operator.version to a released chart version, or clear it to track this Meshery Server release. This error's cause names the newest released version."
+      },
+      "1470": {
+        "name": "ErrOperatorChartNotPublishedCode",
+        "code": "1470",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Meshery Operator chart version is not published",
+        "probable_cause": "The configured chart version was mistyped, or it was never published to the Meshery Helm chart repository.",
+        "suggested_remediation": "Set operator.version to a published chart version, or clear it to track this Meshery Server release. This error's cause names the newest published version."
+      },
+      "1471": {
+        "name": "ErrOperatorChartSubstitutedCode",
+        "code": "1471",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Meshery Operator was deployed at a different chart version than this server's release",
+        "probable_cause": "The chart version matching this Meshery Server release is either not published yet or is too old to deploy successfully.",
+        "suggested_remediation": "No action is required. To choose the chart version yourself, set operator.version on the Kubernetes connection."
+      },
+      "1472": {
+        "name": "ErrNoMesheryReleasesFoundCode",
+        "code": "1472",
+        "severity": "Alert",
+        "long_description": "The GitHub releases listing for meshery/meshery returned no tags.",
+        "short_description": "No Meshery releases were found",
+        "probable_cause": "GitHub returned an empty or filtered release listing, possibly because the request was rate-limited.",
+        "suggested_remediation": "Retry later. This only affects the reported latest-version comparison; Meshery continues to run."
+      },
+      "1473": {
+        "name": "ErrHelmChartIndexCode",
+        "code": "1473",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to read the Helm chart repository index.",
+        "probable_cause": "The Helm chart repository is unreachable, returned an error, or served an index that is not valid YAML. Meshery Server may have no outbound network access, or the repository may be temporarily unavailable.",
+        "suggested_remediation": "Confirm that the chart repository named in this error's cause is reachable from the Meshery Server pod or container, then retry. If Meshery runs behind a proxy, confirm the proxy environment variables are set on the server."
+      },
+      "1474": {
+        "name": "ErrOperatorControllersHelperCode",
+        "code": "1474",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to reach Meshery Operator lifecycle for this Kubernetes connection",
+        "probable_cause": "The connection is not connected yet, or its state machine has not finished initializing.",
+        "suggested_remediation": "Wait for the Kubernetes connection to reach the connected state, then retry.\nIf it stays disconnected, check the connection's diagnostics for why its Kubernetes client could not be created."
+      },
+      "1475": {
+        "name": "ErrInvalidDependencyCode",
+        "code": "1475",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "A component declares its dependencies in a form Meshery cannot read",
+        "probable_cause": "The design was written by a tool that spells the dependsOn entry differently, or was hand-edited outside of Meshery",
+        "suggested_remediation": "Edit the design so that the dependsOn entry on that component is a list of the names of other components in the same design"
+      },
+      "1476": {
+        "name": "ErrUnresolvedDependencyCode",
+        "code": "1476",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "A component depends on something that is not a component of the design",
+        "probable_cause": "The component that was depended upon has been renamed or removed while the dependency on it was left in place",
+        "suggested_remediation": "Open the design in Meshery and either restore a component with the name that was depended upon, or remove that dependency"
+      },
+      "1477": {
+        "name": "ErrAmbiguousDependencyCode",
+        "code": "1477",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "A component depends on a name that more than one component of the design carries",
+        "probable_cause": "Component names are not required to be unique within a design, and more than one component was given the same name",
+        "suggested_remediation": "Open the design in Meshery and rename those components so that the one being depended upon is uniquely named"
+      },
+      "1478": {
+        "name": "ErrUnknownPlanNodeCode",
+        "code": "1478",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "The execution plan refers to a component that is not part of it",
+        "probable_cause": "The design is internally inconsistent: it declares a dependency on a component that it does not contain",
+        "suggested_remediation": "Open the design in Meshery, remove or repoint the dangling dependency, and try again"
+      },
+      "1479": {
+        "name": "ErrCyclicDependencyCode",
+        "code": "1479",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "The components of a design depend on each other in a loop",
+        "probable_cause": "Two or more components of the design declare a dependency on each other, either directly or through a chain of other components",
+        "suggested_remediation": "Open the design in Meshery and remove one of the dependencies that closes the loop, then try again"
+      },
+      "1480": {
+        "name": "ErrDependencyNotSatisfiedCode",
+        "code": "1480",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "A component was withheld because a component it depends on did not succeed",
+        "probable_cause": "A component that this one's order depends on did not succeed",
+        "suggested_remediation": "Resolve the failure reported for that component, then try the design again"
+      },
+      "1481": {
+        "name": "ErrResetInProgressCode",
+        "code": "1481",
+        "severity": "Alert",
+        "long_description": "Seeding from a previous reset has not finished; starting another would drop tables mid-seed",
+        "short_description": "A database reset is already in progress",
+        "probable_cause": "A reset was requested while an earlier one was still seeding keys, catalog designs, or components",
+        "suggested_remediation": "Wait for the in-flight reset to finish, then retry"
+      },
+      "1482": {
+        "name": "ErrNoSystemEventSinkCode",
+        "code": "1482",
+        "severity": "Alert",
+        "long_description": "HandlerConfig.SystemEventPersister is nil, so events raised outside a user request - registry seeding summaries and registration failures - cannot be persisted",
+        "short_description": "No sink is configured for Meshery's system events",
+        "probable_cause": "Meshery Server was built with a HandlerConfig that does not wire SystemEventPersister",
+        "suggested_remediation": "Set HandlerConfig.SystemEventPersister when constructing the handler configuration; on a released build this indicates a defect, so please report it at https://github.com/meshery/meshery/issues/new/choose"
+      },
+      "1483": {
+        "name": "ErrSeedingStagePanicCode",
+        "code": "1483",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Meshery Server recovered from a fault while seeding its registry",
+        "probable_cause": "An unexpected condition was hit while seeding, either at startup or while reseeding after a database reset",
+        "suggested_remediation": "Meshery Server is still serving, but whatever the faulting stage contributes may be missing or incomplete. Report the stack trace above at https://github.com/meshery/meshery/issues/new/choose, then seed again - restart Meshery Server, or re-run the reset that triggered the seeding"
+      },
+      "1484": {
+        "name": "ErrInitLoggerCode",
+        "code": "1484",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to initialize logger",
+        "probable_cause": "LOG_LEVEL is set to an unsupported value\nLogger configuration options are malformed",
+        "suggested_remediation": "Set LOG_LEVEL to a supported value\nCheck your logger configuration settings"
+      },
+      "1485": {
+        "name": "ErrModelNotFoundCode",
+        "code": "1485",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Model not found",
+        "probable_cause": "The requested model is not present in the CSV input",
+        "suggested_remediation": "Verify that the requested model exists in the CSV input"
       }
     }
   }

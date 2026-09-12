@@ -8,7 +8,7 @@ aliases:
 
 Ever wondered what the different icons and shapes in Meshery represent? Whether you're looking at a dashboard, a settings page, or a design, you'll encounter a rich library of visual elements. This guide is here to help you understand what they mean.
 
-The [components](/concepts/logical/components) in Meshery fall into two fundamental categories, distinguished by whether they can be orchestrated (managed) by Meshery during deployment:
+The [components]({{< ref "concepts/logical/components.md" >}}) in Meshery fall into two fundamental categories, distinguished by whether they can be orchestrated (managed) by Meshery during deployment:
 
 - **Semantic Components (Orchestratable):** These represent actual infrastructure resources that Meshery can understand and manage during deployment. Examples include Kubernetes resources (like Pods and Services), databases, and other infrastructure components. Meshery will actively manage their lifecycle during deployment.
 
@@ -20,7 +20,7 @@ All components, whether semantic or non-semantic, support rich visual customizat
 
 ## Semantic Components
 
-These components represent real infrastructure that Meshery can manage. They can be either built-in (like Kubernetes components) or custom components that you [create](/guides/configuration-management/creating-models).
+These components represent real infrastructure that Meshery can manage. They can be either built-in (like Kubernetes components) or custom components that you [create]({{< ref "guides/configuration-management/creating-models/index.md" >}}).
 
 ### Kubernetes Components
 
@@ -43,7 +43,7 @@ Meshery supports various technologies (like AWS, Prometheus, Istio, KEDA, etc.) 
 </a>
 
 {{% alert color="info" title="Exploring All Integrations" %}}
-This guide covers the visual style of components. For a complete catalog of all technologies that Meshery integrates, visit the integrations directory. <strong><a href='/extensions/integrations'>Explore All Integrations</a></strong>
+This guide covers the visual style of components. For a complete catalog of all technologies that Meshery integrates, visit the integrations directory. <strong><a href='{{< ref "extensions/models/_index.md" >}}'>Explore All Integrations</a></strong>
 {{% /alert %}}
 
 ## Non-semantic Components
@@ -58,7 +58,7 @@ These components help you document and organize your designs without affecting t
 While these components are ignored during deployment, they support the same visual customization options as semantic components.
 
 {{% alert color="info" title="Edge Components" %}}
-To learn more about edge components and their visual styles, visit the <strong><a href='/extensions/edges-shape-guide'>Edge Components Guide</a></strong>
+To learn more about edge components and their visual styles, visit the <strong><a href='{{< ref "guides/configuration-management/edges-guide.md" >}}'>Edge Components Guide</a></strong>
 {{% /alert %}}
 
 ## Foundational Elements
