@@ -309,19 +309,45 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 	if err != nil {
 		return nil, ErrPraseUnverified(err)
 	}
-	kid := tokenUP.Header["kid"].(string)
+	kid, ok := tokenUP.Header["kid"].(string)
+	if !ok || kid == "" {
+		return nil, ErrPraseUnverified(fmt.Errorf("token header missing or invalid 'kid'"))
+	}
+
+	if len(x) < 2 {
+		return nil, ErrPraseUnverified(fmt.Errorf("malformed token: missing payload segment"))
+	}
 
 	var jtk map[string]interface{}
-	t, _ := base64.RawStdEncoding.DecodeString(x[1])
+	t, decodeErr := base64.RawStdEncoding.DecodeString(x[1])
+	if decodeErr != nil {
+		t, decodeErr = base64.RawURLEncoding.DecodeString(x[1])
+		if decodeErr != nil {
+			return nil, ErrPraseUnverified(decodeErr)
+		}
+	}
 	if err := json.Unmarshal(t, &jtk); err != nil {
 		return nil, ErrPraseUnverified(err)
 	}
 
 	// TODO: Once hydra fixes https://github.com/ory/hydra/issues/1542
 	// we should rather configure hydra auth server to remove nbf field in the token
-	_, ok := jtk["exp"]
-	if ok {
-		exp := int64(jtk["exp"].(float64))
+	if expRaw, ok := jtk["exp"]; ok {
+		var exp int64
+		switch v := expRaw.(type) {
+		case float64:
+			exp = int64(v)
+		case int64:
+			exp = v
+		case json.Number:
+			parsed, err := v.Int64()
+			if err != nil {
+				return nil, ErrPraseUnverified(fmt.Errorf("token claim 'exp' is not a valid number: %w", err))
+			}
+			exp = parsed
+		default:
+			return nil, ErrPraseUnverified(fmt.Errorf("token claim 'exp' is not a valid number"))
+		}
 		if time.Now().Unix() > exp {
 			return nil, ErrTokenExpired
 		}
