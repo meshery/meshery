@@ -4,8 +4,8 @@ import { useNotificationHandlers } from '../../utils/hooks/useNotification';
 import { ResourcesConfig } from './resources/config';
 import ResourcesTable from './resources/resources-table';
 import ResourcesSubMenu, { CRDsResourcesSubMenu } from './resources/resources-sub-menu';
-import KubernetesIcon from '../../assets/icons/technology/kubernetes';
 import MesheryIcon from './images/meshery-icon';
+import GetKubernetesNodeIcon from './utils';
 import { TabPanel } from './tabpanel';
 import { iconLarge } from '../../css/icons.styles';
 import { useWindowDimensions } from '@/utils/dimension';
@@ -25,7 +25,7 @@ import {
   useMediaQuery,
   ErrorBoundary,
 } from '@sistent/sistent';
-import { WrapperPaper } from './style';
+import { DashboardActionsContainer, WrapperPaper } from './style';
 import _ from 'lodash';
 import { AddWidgetsToLayoutPanel, LayoutActionButton, LayoutWidget } from './components';
 import { Responsive } from 'react-grid-layout/legacy';
@@ -86,6 +86,17 @@ const useDashboardRouter = () => {
 };
 
 const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
+
+const CATEGORY_ICON_KIND: Record<string, string> = {
+  Node: 'Node',
+  Namespace: 'Namespace',
+  Workload: 'Deployment',
+  Configuration: 'ConfigMap',
+  Network: 'Service',
+  Security: 'ClusterRole',
+  Storage: 'PersistentVolume',
+  CRDS: 'CustomResourceDefinition',
+};
 
 const Dashboard = () => {
   const { data: userData, isLoading } = useGetUserPrefQuery();
@@ -308,7 +319,7 @@ const Dashboard = () => {
     },
   };
 
-  const topBarActions = Object.entries(_.omit(LayoutActions, 'START_EDIT'))
+  const topBarActions = Object.entries(LayoutActions)
     .filter(([, action]) => action.isShown)
     .map(([key, layoutAction]) => ({ key, ...layoutAction }));
 
@@ -353,6 +364,23 @@ const Dashboard = () => {
   return (
     <>
       <>
+        {resourceCategory === 'Overview' && (
+          <DashboardActionsContainer>
+            <Stack
+              direction="row"
+              useFlexGap
+              spacing={{ xs: 1, sm: 2 }}
+              justifyContent="flex-end"
+              alignItems="center"
+              flexWrap="wrap"
+            >
+              {topBarActions.map(({ key, ...layoutAction }) => (
+                <LayoutActionButton {...layoutAction} key={key} />
+              ))}
+            </Stack>
+          </DashboardActionsContainer>
+        )}
+
         <WrapperPaper>
           <Tabs
             sx={{
@@ -386,7 +414,10 @@ const Dashboard = () => {
                       resource === 'Overview' ? (
                         <MesheryIcon style={iconLarge} />
                       ) : (
-                        <KubernetesIcon style={iconLarge} />
+                        <GetKubernetesNodeIcon
+                          kind={CATEGORY_ICON_KIND[resource] ?? resource}
+                          size={iconLarge}
+                        />
                       )
                     }
                     label={resource}
@@ -400,50 +431,6 @@ const Dashboard = () => {
         <TabPanel value={resourceCategory} index={'Overview'}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <Box sx={{ padding: 0, width: '100%' }}>
-              <Stack
-                direction="row"
-                useFlexGap
-                gap="0rem 2rem"
-                justifyContent="end"
-                flexWrap={'wrap-reverse'}
-              >
-                {(isSmallDevice && !isDrawerCollapsed) || isMobile ? (
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      paddingTop: '0.25rem',
-                      width: '100%',
-                    }}
-                  >
-                    <LayoutActionButton {...topBarActions[0]} />
-                    {isEditMode && (
-                      <ActionButton
-                        defaultActionClick={LayoutActions.SAVE_AND_CLOSE.action}
-                        defaultActionDisabled={false}
-                        options={[
-                          {
-                            icon: <LayoutActions.SAVE_LAYOUT.Icon {...smallIconsProps} />,
-                            label: LayoutActions.SAVE_LAYOUT.label,
-                            onClick: LayoutActions.SAVE_LAYOUT.action,
-                          },
-                          {
-                            icon: <LayoutActions.RESET_LAYOUT.Icon {...smallIconsProps} />,
-                            label: LayoutActions.RESET_LAYOUT.label,
-                            onClick: LayoutActions.RESET_LAYOUT.action,
-                          },
-                        ]}
-                        label={LayoutActions.SAVE_AND_CLOSE.label}
-                      />
-                    )}
-                  </div>
-                ) : (
-                  topBarActions.map(({ key, ...layoutAction }) => (
-                    <LayoutActionButton {...layoutAction} key={key} />
-                  ))
-                )}
-              </Stack>
-
               <ResponsiveReactGridLayout
                 layouts={constrainedLayouts}
                 resizeHandles={availableHandles}
@@ -479,7 +466,6 @@ const Dashboard = () => {
                   );
                 })}
               </ResponsiveReactGridLayout>
-              <LayoutActionButton {...LayoutActions.START_EDIT} />
             </Box>
             <AddWidgetsToLayoutPanel
               editMode={isEditMode}

@@ -113,6 +113,15 @@ When using build-time extensions:
 - **Review Content**: Always review the contents of the `.meshery` directory before building to ensure no sensitive information or malicious content is included.
 - **Secrets Management**: Do not include secrets, passwords, or API keys in the build-time `.meshery` directory. Use environment variables or runtime configuration for sensitive data.
 - **Trust Sources**: Only include content from trusted sources to avoid introducing security vulnerabilities.
+- **Same trust boundary as runtime extensions**: content baked in at build time runs with the same privileges as content loaded at runtime, and is present before Meshery starts. Apply the same review bar described in [Trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}}).
+
+{{% alert color="info" title="A build-time package is a supply-chain control" %}}
+Pre-packaging a reviewed provider extension in your own image is the strongest way to fix
+what runs in an air-gapped or regulated deployment: what ships is what your pipeline
+approved, with no runtime download to intercept or drift. Pair it with
+`SKIP_DOWNLOAD_EXTENSIONS=true` so Meshery does not fetch a newer package at login. See
+[Supply-chain integrity]({{< ref "installation/production/security-hardening.md#supply-chain-integrity" >}}).
+{{% /alert %}}
 
 ### Comparison with Runtime Extension Points
 

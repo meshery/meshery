@@ -17,7 +17,9 @@ import (
 
 type ConnectAction struct{}
 
-// Execute On Entry and Exit should not return next eventtype i suppose, look again.
+// ExecuteOnEntry is a no-op; ConnectAction performs all of its work in Execute.
+//
+// TODO: Execute On Entry and Exit should not return next eventtype i suppose, look again.
 func (ca *ConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	return machines.NoOp, nil, nil
 }

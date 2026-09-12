@@ -55,8 +55,10 @@ vi.mock('@/utils/hooks/useKubernetesHook', () => ({
 }));
 
 vi.mock('../connections/ConnectionChip', () => ({
-  TooltipWrappedConnectionChip: ({ title }: any) => (
-    <div data-testid="connection-chip">{title}</div>
+  TooltipWrappedConnectionChip: ({ title, status }: any) => (
+    <div data-testid="connection-chip" data-status={status}>
+      {title}
+    </div>
   ),
 }));
 
@@ -71,7 +73,8 @@ vi.mock('./utils', () => ({
   ),
 }));
 
-vi.mock('@/utils/Enum', () => ({
+vi.mock('@/utils/Enum', async () => ({
+  ...(await vi.importActual('@/utils/Enum')),
   CONNECTION_STATES: { DISCONNECTED: 'disconnected', CONNECTED: 'connected' },
 }));
 
@@ -89,6 +92,7 @@ vi.mock('../../utils/TooltipButton', () => ({
 
 vi.mock('./resources/config', () => ({ ALL_VIEW: 'all' }));
 
+import { CONNECTION_STATES } from '@/utils/Enum';
 import View, { Title } from './view';
 
 describe('View', () => {
@@ -126,6 +130,10 @@ describe('View', () => {
     expect(img).toHaveAttribute('src', '/icon.svg');
     expect(screen.getByText('pod-1')).toBeInTheDocument();
     expect(screen.getByTestId('connection-chip')).toHaveTextContent('ctx-cluster-1');
+    // #20617: plain ?kind=kubernetes, not JSON.stringify(['kubernetes'])
+    expect(useGetConnectionsQuery).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: 'kubernetes', pageSize: 100 }),
+    );
   });
 
   it('navigates back and switches view when the back button is clicked', async () => {
@@ -145,6 +153,27 @@ describe('View', () => {
     await user.click(screen.getByTestId('tooltip-button'));
     expect(back).toHaveBeenCalled();
     expect(setView).toHaveBeenCalledWith('all');
+  });
+
+  it('renders cleanly without crashing when connection data is loading (undefined)', () => {
+    useGetConnectionsQuery.mockReturnValue({ data: undefined });
+    render(
+      <View
+        setView={setView}
+        resource={{
+          kind: 'Pod',
+          cluster_id: 'cluster-1',
+          metadata: { name: 'pod-1' },
+          component_metadata: { styles: {} },
+        }}
+        k8sConfig={{}}
+      />,
+    );
+    expect(screen.getByText('pod-1')).toBeInTheDocument();
+    expect(screen.getByTestId('connection-chip')).toHaveAttribute(
+      'data-status',
+      CONNECTION_STATES.DISCONNECTED,
+    );
   });
 });
 

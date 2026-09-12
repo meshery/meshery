@@ -22,7 +22,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/fatih/color"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
@@ -31,18 +32,20 @@ import (
 	"github.com/spf13/viper"
 )
 
-var (
-	pageSize   = 25
-	pageNumber int
-	verbose    bool
-	// Color for the whiteboard printer
-	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
-)
+type filterListFlags struct {
+	Count    bool `json:"count" validate:"boolean"`
+	Page     int  `json:"page" validate:"gte=1"`
+	PageSize int  `json:"pageSize" validate:"gte=1"`
+	Verbose  bool `json:"verbose" validate:"boolean"`
+}
+
+var filterListFlagsProvided filterListFlags
 
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List filters",
-	Long:  `Display list of all available filter files.`,
+	Long: `Display list of all available filter files.
+	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/filter/list`,
 	Example: `
 // List all WASM filter files present
 mesheryctl filter list	(maximum 25 filters)
@@ -53,6 +56,9 @@ mesheryctl filter list Test (maximum 25 filters)
 // Search for filter with space
 mesheryctl filter list 'Test Filter' (maximum 25 filters)
 	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &filterListFlagsProvided)
+	},
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -64,9 +70,15 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 			searchString = strings.ReplaceAll(args[0], " ", "%20")
 		}
 
-		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
+		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, filterListFlagsProvided.PageSize, filterListFlagsProvided.Page-1)
 		if err != nil {
+			utils.Log.Error(err)
 			return ErrFetchFilter(err)
+		}
+
+		if filterListFlagsProvided.Count {
+			utils.DisplayCount("filter", int64(response.TotalCount))
+			return nil
 		}
 
 		if len(args) > 0 && len(response.Filters) == 0 {
@@ -86,7 +98,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 		var header []string
 		var footer []string
 
-		if verbose {
+		if filterListFlagsProvided.Verbose {
 			if utils.IsLocalProvider(provider) {
 				for _, v := range response.Filters {
 					FilterID := v.ID.String()
@@ -142,17 +154,11 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 			footer = []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""}
 		}
 
-		countFlag := cmd.Flag("count")
-		if countFlag != nil && countFlag.Value.String() == "true" {
-			_, _ = whiteBoardPrinter.Println("Total number of filter: ", len(data))
-			return nil
-		}
-
 		if cmd.Flags().Changed("page") {
 			utils.PrintToTable(header, data, footer)
 			return nil
 		}
-		err = utils.HandlePagination(pageSize, "filter files", data, header, footer)
+		err = utils.HandlePagination(filterListFlagsProvided.PageSize, "filter files", data, header, footer)
 		if err != nil {
 			return utils.ErrHandlePagination(err)
 		}
@@ -200,6 +206,8 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 }
 
 func init() {
-	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display full length user and filter file identifiers")
-	listCmd.Flags().IntVarP(&pageNumber, "page", "p", 1, "(optional) List next set of filters with --page (default = 1)")
+	listCmd.Flags().BoolVarP(&filterListFlagsProvided.Count, "count", "c", false, "(optional) Display count only")
+	listCmd.Flags().IntVarP(&filterListFlagsProvided.Page, "page", "p", 1, "(optional) List next set of filters with --page (default = 1)")
+	listCmd.Flags().IntVarP(&filterListFlagsProvided.PageSize, "pagesize", "s", 25, "(optional) List next set of filters with --pagesize (default = 25)")
+	listCmd.Flags().BoolVarP(&filterListFlagsProvided.Verbose, "verbose", "v", false, "Display full length user and filter file identifiers")
 }

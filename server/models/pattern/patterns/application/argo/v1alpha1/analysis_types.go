@@ -17,7 +17,7 @@ type ClusterAnalysisTemplate struct {
 	Spec AnalysisTemplateSpec `json:"spec" protobuf:"bytes,2,opt,name=spec"`
 }
 
-// AnalysisTemplateList is a list of AnalysisTemplate resources
+// ClusterAnalysisTemplateList is a list of ClusterAnalysisTemplate resources
 type ClusterAnalysisTemplateList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata" protobuf:"bytes,1,opt,name=metadata"`

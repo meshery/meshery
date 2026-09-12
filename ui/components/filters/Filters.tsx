@@ -565,7 +565,7 @@ function MesheryFilters() {
               <_PromptComponent ref={modalRef} />
             </>
           ) : (
-            <DefaultError />
+            <DefaultError permissionKey={Keys.CatalogManagementViewFilters} />
           )}
         </NoSsr>
       </>

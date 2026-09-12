@@ -35,8 +35,9 @@ import (
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete design file",
-	Long:  `delete design file will trigger deletion of the design file`,
-	Args:  cobra.MinimumNArgs(0),
+	Long: `delete design file will trigger deletion of the design file.
+	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/design/delete`,
+	Args: cobra.MinimumNArgs(0),
 	Example: `
 // delete a design file
 mesheryctl design delete [file | URL]

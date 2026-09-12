@@ -26,7 +26,8 @@ import (
 var deleteCmd = &cobra.Command{
 	Use:   "delete [filter-name | ID]",
 	Short: "Delete a filter file",
-	Long:  `Delete a filter file using the name or ID of a filter`,
+	Long: `Delete a filter file using the name or ID of a filter.
+	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/filter/delete`,
 	Example: `
 // Delete the specified WASM filter file using name or ID
 // A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be deleted.
