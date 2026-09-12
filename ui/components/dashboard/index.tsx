@@ -21,8 +21,6 @@ import {
   OutlinedValidateIcon,
   OutlinedResetIcon,
   useTheme,
-  ActionButton,
-  useMediaQuery,
   ErrorBoundary,
 } from '@sistent/sistent';
 import { DashboardActionsContainer, WrapperPaper } from './style';
@@ -147,16 +145,6 @@ const Dashboard = () => {
       primaryFill: theme.palette.icon.default,
       secondaryFill: theme.palette.icon.secondary,
       width: '40',
-    }),
-    [theme.palette.icon.default, theme.palette.icon.secondary],
-  );
-  const smallIconsProps = useMemo(
-    () => ({
-      fill: theme.palette.icon.default,
-      primaryFill: theme.palette.icon.default,
-      secondaryFill: theme.palette.icon.secondary,
-      width: '30',
-      height: '30',
     }),
     [theme.palette.icon.default, theme.palette.icon.secondary],
   );
@@ -358,8 +346,6 @@ const Dashboard = () => {
     () => applyMinSizeConstraints(dashboardLayout, defaultLayout, cols, widgetSizing),
     [dashboardLayout, defaultLayout, widgetSizing],
   );
-  const isSmallDevice = useMediaQuery('(max-width:720px)');
-  const isMobile = useMediaQuery('(max-width:599px)');
 
   return (
     <>
