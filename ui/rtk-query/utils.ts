@@ -37,8 +37,14 @@ export const appendInvalidatesTags =
  * @returns {Promise<Object>} - A Promise resolving with an object containing query execution results.
  */
 export const initiateQuery = async (query, variables) => {
+  // initiate() opens a cache subscription that is only released by
+  // unsubscribing. Callers here read the result and drop it, so without the
+  // release in `finally` the entry is pinned for the life of the session and
+  // keepUnusedDataFor never applies.
+  let subscription;
   try {
-    return await store.dispatch(query.initiate(variables));
+    subscription = store.dispatch(query.initiate(variables));
+    return await subscription;
   } catch (error) {
     // Return an object with error details if there's an exception
     return {
@@ -49,5 +55,10 @@ export const initiateQuery = async (query, variables) => {
       isLoading: false,
       isError: true,
     };
+  } finally {
+    // `query` is untyped here, so guard the call as well as the value: a
+    // caller passing something that is not an RTK-Query endpoint still gets
+    // the old behaviour rather than a TypeError.
+    subscription?.unsubscribe?.();
   }
 };
