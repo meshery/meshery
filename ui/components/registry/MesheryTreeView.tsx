@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useLayoutEffect, useState, useRef, useCallback } from 'react';
 import {
   IconButton,
   FormControlLabel,
@@ -79,7 +79,17 @@ const MesheryTreeView = React.memo(
     const { width } = useWindowDimensions();
     const [isSearchExpanded, setIsSearchExpanded] = useState(searchText ? true : false);
 
-    const scrollRef = useRef<number | null>(null);
+    // Offsets are keyed by view: every view shares this one component instance,
+    // so a single offset would let the last view scrolled decide where the next
+    // one lands (scroll Models to 120, scroll Relationships to 40, return to
+    // Models and it would restore 40).
+    const scrollOffsetsRef = useRef<Record<string, number>>({});
+    // The scrollable container is rendered conditionally (it is replaced by the
+    // empty/no-result state when there is nothing to list), so hold it in a ref
+    // rather than reaching for it with document.querySelector: the query
+    // returns null on exactly those renders, and it would also pick the first
+    // matching node on the page rather than this component's own.
+    const scrollContainerRef = useRef<HTMLDivElement | null>(null);
     // Stable ref so the deep-link useEffect can read showDetailsData without
     // subscribing to it as a dependency (which would cause an infinite loop).
     const showDetailsDataRef = useRef(showDetailsData);
@@ -95,17 +105,36 @@ const MesheryTreeView = React.memo(
           [scrollingView]: Number(prevPage[scrollingView]) + 1,
         }));
       }
-      if (!data.length === 0) {
-        scrollRef.current = div.scrollTop;
+      // `!data.length === 0` parsed as `(!data.length) === 0`, comparing a
+      // boolean against a number, so it was never true and the offset was never
+      // recorded - which in turn left the restore effect below permanently
+      // inert. The intent is "remember the offset whenever there is a list".
+      // Keyed by `view`, the same key the restore reads. Each renderTree call is
+      // guarded by `view === <constant>` and handed that constant, so
+      // `scrollingView` is `view` here; using `view` directly means the save and
+      // restore cannot drift apart if that ever stops holding.
+      if (data.length !== 0) {
+        scrollOffsetsRef.current[view] = div.scrollTop;
       }
     };
 
-    useEffect(() => {
-      if (scrollRef.current) {
-        const div = document.querySelector('.scrollElement');
-        div.scrollTop = scrollRef.current;
+    // useLayoutEffect, not useEffect: this runs before the browser paints, so the
+    // list appears at the restored offset. useEffect would paint at the top first
+    // and then jump, which is visible.
+    useLayoutEffect(() => {
+      const container = scrollContainerRef.current;
+      const savedOffset = scrollOffsetsRef.current[view];
+      // Compare against undefined explicitly: an offset of 0 is a legitimate
+      // saved position, and a truthiness check would silently skip restoring it.
+      // (`undefined` rather than `null` because a missing Record key reads as
+      // undefined.)
+      if (container && savedOffset !== undefined) {
+        container.scrollTop = savedOffset;
       }
-    }, [data]);
+      // `view` is a dependency in its own right: switching tabs remounts the
+      // container, and the offset to restore is that view's, not the last one
+      // written.
+    }, [data, view]);
 
     const handleChecked = useCallback(() => {
       setChecked((prevChecked) => !prevChecked);
@@ -358,6 +387,7 @@ const MesheryTreeView = React.memo(
           ) : (
             <div
               className="scrollElement"
+              ref={scrollContainerRef}
               style={{ overflowY: 'auto', height: scrollHeight }}
               onScroll={handleScroll(type)}
             >
