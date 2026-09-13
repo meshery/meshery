@@ -17,41 +17,41 @@ require_spreadsheet_credentials() {
     fi
 }
 
-@test "given no arguments when running mesheryctl registry publish then an error about required args is displayed" {
+@test "[cut=Registry][tg=Registry Publish] given no arguments when running mesheryctl registry publish then an error about required args is displayed" {
     run $MESHERYCTL_BIN registry publish
     assert_failure
     assert_output --partial "system, google sheet credential, sheet-id, models output path, imgs output path"
     assert_output --partial "are required"
 }
 
-@test "given fewer than five arguments when running mesheryctl registry publish then an error about required args is displayed" {
+@test "[cut=Registry][tg=Registry Publish] given fewer than five arguments when running mesheryctl registry publish then an error about required args is displayed" {
     run $MESHERYCTL_BIN registry publish website
     assert_failure
     assert_output --partial "system, google sheet credential, sheet-id, models output path, imgs output path"
     assert_output --partial "are required"
 }
 
-@test "given invalid spreadsheet credentials when running mesheryctl registry publish then an error is displayed" {
+@test "[cut=Registry][tg=Registry Publish] given invalid spreadsheet credentials when running mesheryctl registry publish then an error is displayed" {
     run $MESHERYCTL_BIN registry publish website "invalid-cred" "invalid-id" "$TESTDATA_DIR/models" "$TESTDATA_DIR/imgs"
     assert_failure
     assert_output --partial "Invalid JWT Token"
 }
 
-@test "given an invalid output format when running mesheryctl registry publish website then an error is displayed" {
+@test "[cut=Registry][tg=Registry Publish] given an invalid output format when running mesheryctl registry publish website then an error is displayed" {
     require_spreadsheet_credentials
     run $MESHERYCTL_BIN registry publish website "$TEST_SPREADSHEET_CRED" "$TEST_SPREADSHEET_ID" "$TESTDATA_DIR/models" "$TESTDATA_DIR/imgs" -o "invalid"
     assert_failure
     assert_output --partial "invalid output format"
 }
 
-@test "given an invalid system when running mesheryctl registry publish then an error is displayed" {
+@test "[cut=Registry][tg=Registry Publish] given an invalid system when running mesheryctl registry publish then an error is displayed" {
     require_spreadsheet_credentials
     run $MESHERYCTL_BIN registry publish invalid-system "$TEST_SPREADSHEET_CRED" "$TEST_SPREADSHEET_ID" "$TESTDATA_DIR/models" "$TESTDATA_DIR/imgs"
     assert_failure
     assert_output --partial "invalid system"
 }
 
-@test "given valid credentials when running mesheryctl registry publish to website with md format then models are published" {
+@test "[cut=Registry][tg=Registry Publish] given valid credentials when running mesheryctl registry publish to website with md format then models are published" {
     require_spreadsheet_credentials
     mkdir -p "$TESTDATA_DIR/models-out" "$TESTDATA_DIR/imgs-out"
     run $MESHERYCTL_BIN registry publish website "$TEST_SPREADSHEET_CRED" "$TEST_SPREADSHEET_ID" "$TESTDATA_DIR/models-out" "$TESTDATA_DIR/imgs-out" -o md
