@@ -15,8 +15,10 @@ Export, generate, import, list, search and view model(s) and detailed informatio
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,95 +27,119 @@ mesheryctl model [flags]
 Display number of available models in Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model --count
 
+</div>
 </div>
 </pre> 
 
 Export registered models
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model export [model-name]
 
+</div>
 </div>
 </pre> 
 
 Generate a model from a CSV directory
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model generate [path-to-csv-directory]
 
+</div>
 </div>
 </pre> 
 
 Generate a model from a URL based on a JSON template
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model generate --file [URL] --template [path-to-template.json]
 
+</div>
 </div>
 </pre> 
 
 Import model(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model import -f [Uri]
 
+</div>
 </div>
 </pre> 
 
 List available model(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model list
 
+</div>
 </div>
 </pre> 
 
 Delete available model(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model delete [model-id]
 
+</div>
 </div>
 </pre> 
 
 Search for a specific model
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model search [model-name]
 
+</div>
 </div>
 </pre> 
 
 View a specific model
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model view [model-name]
 
+</div>
 </div>
 </pre> 
 
 Scaffold a folder structure for model creation
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model init [model-name]
 
+</div>
 </div>
 </pre> 
 
 Create an OCI-compliant package from the model files
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model build [model-name]
 
+</div>
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model build [model-name]/[model-version]
 
+</div>
 </div>
 </pre> 
 

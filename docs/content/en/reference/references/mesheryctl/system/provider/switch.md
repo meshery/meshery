@@ -7,15 +7,17 @@ subcommand: provider
 
 # mesheryctl system provider switch
 
-switch provider and redeploy
+Switch provider and redeploy
 
 ## Synopsis
 
 Switch provider of context in focus and redeploy Meshery. Run `mesheryctl system provider list` to see the available providers.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system provider switch [provider] [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,8 +26,10 @@ mesheryctl system provider switch [provider] [flags]
 Switch provider and redeploy Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system provider switch [provider]
 
+</div>
 </div>
 </pre> 
 

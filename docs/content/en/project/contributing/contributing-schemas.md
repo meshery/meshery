@@ -29,7 +29,8 @@ This comprehensive guide covers everything you need to know to contribute to the
 17. [Testing Your Changes](#testing-your-changes)
 18. [Common Mistakes to Avoid](#common-mistakes-to-avoid)
 19. [Checklist for Schema Changes](#checklist-for-schema-changes)
-20. [Getting Help](#getting-help)
+20. [Consuming schemas from meshery/meshery](#consuming-schemas-from-mesherymeshery)
+21. [Getting Help](#getting-help)
 
 ---
 
@@ -1222,6 +1223,39 @@ make golang-generate
 - Write a guide that's accurate, actionable, and friendly
 
 *Why it matters:* Docs are often the first impression contributors get. Schema-driven clarity starts here.
+
+## Consuming schemas from meshery/meshery
+
+Any new or changed HTTP API - a new endpoint, a new or renamed query parameter, a new request or response field - is defined here first and consumed through the generated client. One OpenAPI definition drives the Go models, the TypeScript types and the RTK Query client (`@meshery/schemas/{mesheryApi,cloudApi}`). Hand-rolling any of them silently diverges the wire contract between `meshery/meshery` and `meshery-cloud`.
+
+### Workflow for adding or updating an endpoint
+
+1. **Define** the path and schemas in the matching construct's `api.yml` - for example `schemas/constructs/v1beta1/system/api.yml` for `/api/system/*`, or `.../connection/api.yml` for `/api/integrations/connections*`. Follow the conventions above: `operationId` is lower-camel `verbNoun`, wire params and properties are camelCase, Meshery-only endpoints carry `x-internal: ["meshery"]`, objects set `additionalProperties: false`, and strings set `maxLength`.
+2. **Regenerate**: `make bundle-openapi generate-rtk generate-golang` (or `make build` for the full dist). Verify the new `useXQuery` / `mesheryApi.endpoints.X` hooks appear.
+3. **Validate**: `make validate-schemas && make consumer-audit`.
+4. **Consume** the generated hook in the UI, importing from `@meshery/schemas/mesheryApi`. Wrap it in `ui/rtk-query/*` only for thin ergonomics such as bare-id arguments or cache tags - never to re-declare the request. See [Schema-Driven UI Development](/project/contributing/ui/schemas) for the RTK Query rules, including why a local endpoint that shadows a generated one is dead code.
+5. **Release coupling**: schemas releases are automated - do not manually create releases. Until a new `@meshery/schemas` is published and the consumer's dependency is bumped, development uses a local link (`ui/package.json` → `"@meshery/schemas": "file:../schemas"`, and the `replace github.com/meshery/schemas => ../schemas` directive in `go.mod`). Both the version bump and reverting that local link are part of the normal release flow - never commit the local link as the permanent dependency.
+
+### Narrow exceptions
+
+- **Server-Sent Events and streaming.** RTK codegen cannot produce a useful hook for `text/event-stream`. Still document the endpoint in `api.yml`, but consume it with a native `EventSource` client under `ui/lib/*` - for example `ui/lib/controllersStatusSubscription.ts`.
+- Truly Meshery-internal endpoints with no cross-repo consumer may skip schemas, but the omission must be justified in the pull request description.
+
+### The Go side ships models, not a client
+
+Schemas ships **models only, with no generated HTTP client**. `mesheryctl` therefore builds request bodies from the generated structs - and, for `oneOf` bodies, from the `From<Variant>Payload` union builders - rather than from a `map[string]interface{}`. See `mesheryctl/internal/cli/root/design/import.go`. A hand-written map is how camelCase `fileName` regressed to `file_name`.
+
+### A consumed contract is the schemas type, not a copy of it
+
+A struct that Meshery only *decodes* from a remote provider, or only *encodes* to one, carries no local freedom: it is the schemas construct, aliased. A local copy is how `AnonymousFlowResponse` came to read `owner` while Layer5 Cloud kept sending `userId`, so every anonymous sign-in wrote its capabilities under the nil UUID. The same rename hit `PatternResource` and `Preference.selectedOrganizationId`.
+
+When a Go type must stay local because it doubles as a GORM model - the schemas models carry `db:` tags GORM does not read - keep the **JSON tags identical** to the schemas construct and pin the column explicitly with `gorm:"column:..."`. See `server/models/pattern_resource.go`. Guard it with a test comparing the emitted JSON keys against the schemas type rather than restating them by hand.
+
+### A rename propagates further than the Go field name
+
+GORM derives the AutoMigrate column from the *field name* through its naming strategy (snake_case), not from the `db:` tag; only a `gorm:"column:..."` tag overrides it. Renaming `UserID` to `Owner` therefore renames the column `user_id` to `owner` whatever the `db:` tag says, and any hand-written SQL naming the old column breaks - silently, if the GORM error is dropped.
+
+After bumping schemas, grep every raw column reference for the old spelling - `Select`, `Where`, `Order`, `Joins`, `Scan`, and migrations, not just `Select` - along with the `mesheryctl` fixtures, and propagate GORM errors so the next such rename fails loudly. Regression test: `server/models/performance_profile_persister_test.go`.
 
 ## Getting Help
 

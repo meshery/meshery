@@ -207,7 +207,7 @@ mesheryctl system context delete [context name]
 // listContextCmd represents the list command
 var listContextCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list contexts",
+	Short: "List contexts",
 	Long: `List current context and available contexts.
 Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/context/list`,
 	Example: `
@@ -374,7 +374,7 @@ var linkDocContextSwitch = map[string]string{
 // switchContextCmd represents the switch command
 var switchContextCmd = &cobra.Command{
 	Use:   "switch context-name",
-	Short: "switch context",
+	Short: "Switch context",
 	Long: `Configure mesheryctl to actively use one one context vs. another context.
 Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/context/switch`,
 	Example: `

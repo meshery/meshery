@@ -13,7 +13,7 @@ setup() {
   export MESHERYCTL_CONFIG_PATH="$HOME/.meshery/config.yaml"
 }
 
-@test "mesheryctl system dashboard fails when kubeconfig is missing" {
+@test "[cut=System][tg=System Dashboard] mesheryctl system dashboard fails when kubeconfig is missing" {
   mv "$KUBECONFIG" "$KUBECONFIG.bak" || true
   > "$KUBECONFIG"
 
@@ -23,7 +23,7 @@ setup() {
   mv "$KUBECONFIG.bak" "$KUBECONFIG" || true
 }
 
-@test "mesheryctl system dashboard fails when meshery server is unreachable" {
+@test "[cut=System][tg=System Dashboard] mesheryctl system dashboard fails when meshery server is unreachable" {
   echo "" > "$KUBECONFIG"
 
   run $MESHERYCTL_BIN system dashboard --skip-browser
@@ -32,7 +32,7 @@ setup() {
   cp "$REAL_KUBECONFIG" "$KUBECONFIG" 2>/dev/null || true
 }
 
-@test "mesheryctl system dashboard succeeds when meshery server is running" {
+@test "[cut=System][tg=System Dashboard] mesheryctl system dashboard succeeds when meshery server is running" {
   run $MESHERYCTL_BIN system dashboard --skip-browser
   assert_success
   assert_output --regexp "Opening Meshery|Meshery UI available at"
