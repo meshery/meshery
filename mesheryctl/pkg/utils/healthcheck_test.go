@@ -21,6 +21,10 @@ var versionCheck = []struct {
 	{"1.12.8", [3]int{1, 12, 8}},
 	{"1.12.9", [3]int{1, 12, 9}},
 	{"1.12.10", [3]int{1, 12, 10}},
+	// Regression for #21761: version strings with more than three components
+	// (as some distributions report) must parse to major.minor.patch, not panic.
+	{"v1.28.3.1", [3]int{1, 28, 3}},
+	{"v1.26.4.2", [3]int{1, 26, 4}},
 }
 
 func TestGetK8sVersion(t *testing.T) {
