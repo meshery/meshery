@@ -17,13 +17,16 @@ package experimental
 import (
 	"fmt"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/academy"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
 var (
-	availableSubcommands []*cobra.Command
+	availableSubcommands = []*cobra.Command{
+		academy.AcademyCmd,
+	}
 )
 
 // ExpCmd represents the Experimental commands
