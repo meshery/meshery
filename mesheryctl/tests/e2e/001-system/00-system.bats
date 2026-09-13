@@ -4,7 +4,7 @@ setup() {
 	_load_bats_libraries
 }
 
-@test "mesheryctl system help display help" {
+@test "[cut=System][tg=System Management] mesheryctl system help display help" {
     run $MESHERYCTL_BIN system --help
     assert_success
     
