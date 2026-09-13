@@ -53,6 +53,26 @@ func printLogs(logs string, podName string) {
 	}
 }
 
+// followLogs reads from logs until it hits EOF or an error, printing each chunk
+// as it arrives. It must process any bytes returned before checking the error,
+// since a Reader can return (n > 0, io.EOF) on the same call.
+func followLogs(logs io.Reader, podName string) {
+	for {
+		buf := make([]byte, BYTE_SIZE)
+		numBytes, err := logs.Read(buf)
+		if numBytes > 0 {
+			printLogs(string(buf[0:numBytes]), podName)
+		}
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			utils.Log.Errorf("error occurred while processing logs %v", err)
+			break
+		}
+	}
+}
+
 type cmdSystemLogsFlags struct {
 	Follow bool `json:"follow" validate:"boolean"`
 }
@@ -240,22 +260,7 @@ mesheryctl system logs meshery-istio
 						wg.Add(1)
 						go func() {
 							defer wg.Done()
-							for {
-								buf := make([]byte, BYTE_SIZE)
-								numBytes, err := logs.Read(buf)
-								if numBytes == 0 {
-									continue
-								}
-								if err == io.EOF {
-									break
-								}
-								if err != nil {
-									utils.Log.Errorf("error occurred while processing logs %v", err)
-									break
-								}
-								logBuf = buf[0:numBytes]
-								printLogs(string(logBuf), name)
-							}
+							followLogs(logs, name)
 						}()
 					}
 				}
