@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshkit/database"
 	mkerrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/logger"
@@ -269,5 +270,196 @@ func TestK8sContextsFromKubeconfigDiscoversAllContexts(t *testing.T) {
 		if want := fmt.Sprintf("ctx-%d", i); name != want {
 			t.Errorf("context[%d] = %q, want %q", i, name, want)
 		}
+	}
+}
+
+// TestK8sContextGenerateID verifies that K8sContextGenerateID excludes service-account
+// tokens from the hash for in-cluster contexts to prevent ID changes when tokens rotate (issue #21810)
+func TestK8sContextGenerateID(t *testing.T) {
+	instanceID, _ := uuid.NewV4()
+
+	tests := []struct {
+		name     string
+		context  K8sContext
+		wantSame bool // whether ID should remain same after token change
+	}{
+		{
+			name: "regular context with token",
+			context: K8sContext{
+				Name:              "test-context",
+				Auth:              sql.Map{"user": map[string]interface{}{"token": "original-token"}},
+				Cluster:           sql.Map{"server": "https://k8s.example.com"},
+				MesheryInstanceID: &instanceID,
+			},
+			wantSame: false, // ID should CHANGE after token change for regular contexts
+		},
+		{
+			name: "in-cluster context with token",
+			context: K8sContext{
+				Name:              "in-cluster-context",
+				Auth:              sql.Map{"user": map[string]interface{}{"token": "service-account-token"}},
+				Cluster:           sql.Map{"server": "https://kubernetes.default.svc"},
+				Server:            "https://kubernetes.default.svc",
+				MesheryInstanceID: &instanceID,
+				DeploymentType:    "in_cluster", // Explicit in-cluster provenance
+			},
+			wantSame: true, // ID should be same after token rotation for in-cluster contexts
+		},
+		{
+			name: "in-cluster context with token (host+port URL)",
+			context: K8sContext{
+				Name:              "in-cluster-context-hostport",
+				Auth:              sql.Map{"user": map[string]interface{}{"token": "service-account-token"}},
+				Cluster:           sql.Map{"server": "https://10.0.0.1:443"},
+				Server:            "https://10.0.0.1:443",
+				MesheryInstanceID: &instanceID,
+				DeploymentType:    "in_cluster", // Explicit in-cluster provenance (actual in-cluster URL format)
+			},
+			wantSame: true, // ID should be same after token rotation for in-cluster contexts
+		},
+		{
+			name: "context without token",
+			context: K8sContext{
+				Name:              "no-token-context",
+				Auth:              sql.Map{"user": map[string]interface{}{"client-certificate": "cert"}},
+				Cluster:           sql.Map{"server": "https://k8s.example.com"},
+				MesheryInstanceID: &instanceID,
+			},
+			wantSame: true, // ID should be same since no token to change
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Generate initial ID
+			id1, err := K8sContextGenerateID(tt.context)
+			if err != nil {
+				t.Fatalf("K8sContextGenerateID() error = %v", err)
+			}
+
+			// Simulate token rotation by changing the token
+			if tt.context.Auth != nil {
+				if user, ok := tt.context.Auth["user"].(map[string]interface{}); ok {
+					if _, hasToken := user["token"]; hasToken {
+						user["token"] = "rotated-token"
+					}
+				}
+			}
+
+			// Generate ID after token change
+			id2, err := K8sContextGenerateID(tt.context)
+			if err != nil {
+				t.Fatalf("K8sContextGenerateID() error = %v", err)
+			}
+
+			// Check if IDs remain the same
+			if tt.wantSame && id1 != id2 {
+				t.Errorf("ID changed after token rotation, got %v, want %v", id2, id1)
+			}
+			if !tt.wantSame && id1 == id2 {
+				t.Errorf("ID did not change after token rotation, got %v, want different", id1)
+			}
+		})
+	}
+}
+
+// TestNewK8sContextFromInClusterConfigTokenRotation verifies that in-cluster contexts
+// produce stable IDs when service-account tokens rotate using DeploymentType for provenance.
+// This test simulates the persistence/reload cycle to ensure IDs remain stable.
+// Note: The real constructor NewK8sContextFromInClusterConfig requires a reachable
+// Kubernetes cluster (it performs PingTest, GenerateKubeHandler, AssignVersion, and
+// queries kube-system namespace). Testing the full constructor path would require
+// mocking the Kubernetes client, which is beyond the scope of this change.
+// This test verifies the ID generation logic using the same DeploymentType approach
+// that the constructor now uses.
+func TestNewK8sContextFromInClusterConfigTokenRotation(t *testing.T) {
+	instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+
+	// Simulate in-cluster context with DeploymentType set before ID generation
+	// This mimics what NewK8sContextFromInClusterConfig does after setting DeploymentType
+	ctx1 := K8sContext{
+		Name:              "in-cluster-context",
+		Auth:              sql.Map{"user": map[string]interface{}{"token": "initial-token"}},
+		Cluster:           sql.Map{"server": "https://10.0.0.1:443"},
+		Server:            "https://10.0.0.1:443",
+		MesheryInstanceID: &instanceID,
+		DeploymentType:    "in_cluster", // This is what NewK8sContextFromInClusterConfig sets
+	}
+
+	id1, err := K8sContextGenerateID(ctx1)
+	if err != nil {
+		t.Fatalf("K8sContextGenerateID() error = %v", err)
+	}
+
+	// Simulate token rotation with same DeploymentType (persistence/reload scenario)
+	ctx2 := K8sContext{
+		Name:              "in-cluster-context",
+		Auth:              sql.Map{"user": map[string]interface{}{"token": "rotated-token"}},
+		Cluster:           sql.Map{"server": "https://10.0.0.1:443"},
+		Server:            "https://10.0.0.1:443",
+		MesheryInstanceID: &instanceID,
+		DeploymentType:    "in_cluster", // Preserved from persistence
+	}
+
+	id2, err := K8sContextGenerateID(ctx2)
+	if err != nil {
+		t.Fatalf("K8sContextGenerateID() error = %v", err)
+	}
+
+	// IDs must be the same for in-cluster contexts with different tokens
+	if id1 != id2 {
+		t.Errorf("in-cluster context ID changed after token rotation: got %v, want %v", id2, id1)
+	}
+
+	// Verify persistence/reload concept: create context representing persisted state
+	persistedCtx := K8sContext{
+		Name:              "in-cluster-context",
+		Auth:              ctx2.Auth,
+		Cluster:           ctx2.Cluster,
+		Server:            ctx2.Server,
+		MesheryInstanceID: &instanceID,
+		DeploymentType:    "in_cluster", // Preserved from persistence
+	}
+
+	id3, err := K8sContextGenerateID(persistedCtx)
+	if err != nil {
+		t.Fatalf("K8sContextGenerateID() error = %v", err)
+	}
+
+	// ID must remain the same with DeploymentType preserved
+	if id1 != id3 {
+		t.Errorf("persisted context ID differs from original: got %v, want %v", id3, id1)
+	}
+
+	// Verify regular context behavior: different tokens should produce different IDs
+	regularCtx1 := K8sContext{
+		Name:              "regular-context",
+		Auth:              sql.Map{"user": map[string]interface{}{"token": "token-1"}},
+		Cluster:           sql.Map{"server": "https://k8s.example.com"},
+		MesheryInstanceID: &instanceID,
+		DeploymentType:    "out_of_cluster", // Regular context
+	}
+
+	regularID1, err := K8sContextGenerateID(regularCtx1)
+	if err != nil {
+		t.Fatalf("K8sContextGenerateID() error = %v", err)
+	}
+
+	regularCtx2 := K8sContext{
+		Name:              "regular-context",
+		Auth:              sql.Map{"user": map[string]interface{}{"token": "token-2"}},
+		Cluster:           sql.Map{"server": "https://k8s.example.com"},
+		MesheryInstanceID: &instanceID,
+		DeploymentType:    "out_of_cluster", // Regular context
+	}
+
+	regularID2, err := K8sContextGenerateID(regularCtx2)
+	if err != nil {
+		t.Fatalf("K8sContextGenerateID() error = %v", err)
+	}
+
+	// IDs must be different for regular contexts with different tokens
+	if regularID1 == regularID2 {
+		t.Errorf("regular context ID did not change after token rotation: got %v, want different", regularID1)
 	}
 }

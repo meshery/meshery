@@ -567,6 +567,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 			h.log.Warn(ErrNilClusterContext(err))
 			return contexts, err
 		}
+		// DeploymentType is already set by NewK8sContextFromInClusterConfig before ID generation
 		cc.DeploymentType = "in_cluster"
 		conn, err := prov.SaveK8sContext(token, *cc, nil)
 		if err != nil {
@@ -599,7 +600,10 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		metadata["context"] = models.RedactCredentialsForContext(ctx)
 		metadata["description"] = fmt.Sprintf("K8S context \"%s\" discovered with cluster at %s", ctx.Name, ctx.Server)
 		metadata["description"] = fmt.Sprintf("Connection established with context \"%s\" at %s", ctx.Name, ctx.Server)
-		ctx.DeploymentType = "out_of_cluster"
+		// Set deployment type for kubeconfig contexts if not already set
+		if ctx.DeploymentType == "" {
+			ctx.DeploymentType = "out_of_cluster"
+		}
 		conn, err := prov.SaveK8sContext(token, *ctx, nil)
 		if err != nil {
 			h.log.Warn(ErrFailToSaveContext(err))

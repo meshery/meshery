@@ -309,29 +309,32 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 	return kcs
 }
 
+// Package-level variables for in-cluster file paths, can be overridden in tests
+var (
+	inClusterTokenFile  = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+	inClusterRootCAFile = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+)
+
 func NewK8sContextFromInClusterConfig(contextName string, instanceID *core.Uuid, log logger.Handler) (*K8sContext, error) {
-	const (
-		tokenFile  = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-		rootCAFile = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
-	)
 	host, port := os.Getenv("KUBERNETES_SERVICE_HOST"), os.Getenv("KUBERNETES_SERVICE_PORT")
 	if len(host) == 0 || len(port) == 0 {
 		return nil, ErrMesheryNotInCluster
 	}
 
-	token, err := os.ReadFile(tokenFile)
+	token, err := os.ReadFile(inClusterTokenFile)
 	if err != nil {
 		return nil, err
 	}
 
 	server := "https://" + net.JoinHostPort(host, port)
 
-	caData, err := os.ReadFile(rootCAFile)
+	caData, err := os.ReadFile(inClusterRootCAFile)
 	if err != nil {
 		return nil, err
 	}
 
-	return NewK8sContextWithServerID(
+	// Create context with in-cluster deployment type set before ID generation
+	ctx, err := NewK8sContextWithServerID(
 		contextName,
 		map[string]interface{}{
 			"cluster": map[string]interface{}{
@@ -350,6 +353,21 @@ func NewK8sContextFromInClusterConfig(contextName string, instanceID *core.Uuid,
 		instanceID,
 		log,
 	)
+	if err != nil {
+		return nil, err
+	}
+
+	// Set deployment type to mark this as in-cluster for ID generation
+	ctx.DeploymentType = "in_cluster"
+
+	// Regenerate ID with correct deployment type set
+	newID, err := K8sContextGenerateID(*ctx)
+	if err != nil {
+		return nil, err
+	}
+	ctx.ID = newID
+
+	return ctx, nil
 }
 
 // NewK8sContext takes in name of the context, cluster info of the contexts,
@@ -390,12 +408,41 @@ func NewK8sContext(
 // K8sContextGenerateID takes in a kubernetes context and generates an ID for it
 //
 // If the context remains the same, it is guaranteed that the ID will be same
+// For in-cluster contexts, excludes the service-account token from the hash to prevent
+// ID changes when the token rotates (issue #21810)
 func K8sContextGenerateID(kc K8sContext) (string, error) {
 	data := map[string]interface{}{
 		"cluster": kc.Cluster,
 		"auth":    kc.Auth,
 		"meshery": kc.MesheryInstanceID.String(),
 		"name":    kc.Name,
+	}
+
+	// For in-cluster contexts, exclude the token from the hash to prevent ID changes
+	// when the service-account token rotates. The token is mutable authentication
+	// material that should not affect the logical connection identity.
+	// In-cluster provenance is determined by DeploymentType field, which is persisted.
+	if kc.DeploymentType == "in_cluster" && kc.Auth != nil {
+		if user, ok := kc.Auth["user"].(map[string]interface{}); ok {
+			if _, hasToken := user["token"]; hasToken {
+				// Create a copy of auth without the token for ID generation
+				authCopy := make(map[string]interface{})
+				for k, v := range kc.Auth {
+					if k == "user" {
+						userCopy := make(map[string]interface{})
+						for userK, userV := range user {
+							if userK != "token" {
+								userCopy[userK] = userV
+							}
+						}
+						authCopy[k] = userCopy
+					} else {
+						authCopy[k] = v
+					}
+				}
+				data["auth"] = authCopy
+			}
+		}
 	}
 
 	byt, err := json.Marshal(data)
