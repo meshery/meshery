@@ -113,7 +113,7 @@ You may now proceed to manage any cloud native infrastructure supported by Meshe
 
 <div class="section">
     <ul>
-        <li><a href="{{< ref "guides/troubleshooting/installation.md" >}}">Troubleshooting Meshery Installations</a></li>
+        <li><a href="{{< ref "guides/troubleshooting/installation/index.md" >}}">Troubleshooting Meshery Installations</a></li>
         <li><a href="{{< ref "reference/references/error-codes.md" >}}">Meshery Error Code Reference</a></li>
         <li><a href="{{< ref "reference/references/mesheryctl/system/check.md" >}}">mesheryctl system check</a></li> 
     </ul>
