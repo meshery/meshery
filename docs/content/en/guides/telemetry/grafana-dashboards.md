@@ -42,4 +42,4 @@ Meshery renders panels by querying Grafana's datasource proxy server-side and dr
 ## Related
 
 - [Prometheus Metrics]({{< ref "guides/telemetry/prometheus-metrics.md" >}}) — for exploring raw Prometheus metrics and saving your own PromQL panels.
-- [Registering a Connection]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}})
+- [Creating a Connection]({{< ref "guides/infrastructure-management/creating-a-connection.md" >}})

@@ -31,7 +31,7 @@ Telemetry derives the authentication scheme from the connection's credential sec
 Before using Telemetry, register at least one Grafana or Prometheus connection:
 
 1. Create a [Credential]({{< ref "concepts/logical/credentials.md" >}}) holding your Grafana API key / service-account token, or your Prometheus token (if your Prometheus requires authentication).
-2. [Register the connection]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}) of kind **Grafana** or **Prometheus**, pointing at the instance URL and selecting the credential.
+2. [Register the connection]({{< ref "guides/infrastructure-management/creating-a-connection.md" >}}) of kind **Grafana** or **Prometheus**, pointing at the instance URL and selecting the credential.
 
 Once a connection reaches the **Connected** or **Registered** state, it becomes selectable in the Telemetry connection picker.
 
