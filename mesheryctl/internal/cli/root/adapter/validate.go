@@ -16,11 +16,9 @@ package adapter
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -47,40 +45,13 @@ var validateCmd = &cobra.Command{
 	Short: "Validate conformance to predefined standards",
 	Example: `
 // Validate conformance to predefined standards
-mesheryctl adapter validate [mesh name] --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
+mesheryctl adapter validate [mesh name] --adapter [adapter host or host:port location] --token [path to token for authentication] --spec [specification to be used for conformance test]
 
 // Validate Istio to predefined standards
 mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 	`,
 	Annotations: linkDocMeshValidate,
 	Long:        `Validate predefined conformance to different standard specifications`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		utils.Log.Info("Verifying prerequisites...")
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return err
-		}
-
-		prefs, err := utils.GetSessionData(mctlCfg)
-		if err != nil {
-			return ErrGettingSessionData(err)
-		}
-		//resolve adapterUrl to adapter Location
-		for _, adapter := range prefs.MeshAdapters {
-			adapterName := strings.Split(adapter.Location, ":")
-			if adapterName[0] == adapterURL {
-				adapterURL = adapter.Location
-				meshName = adapter.Location
-			}
-		}
-		//sync with available adapters
-		if err = validateAdapter(mctlCfg, meshName); err != nil {
-			return ErrValidatingAdapters(errors.Wrap(err, "Unable to sync with available adapters"))
-		}
-		utils.Log.Info("verified prerequisites")
-		return nil
-	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		utils.Log.Info("Starting cloud and cloud native infrastructure validation...")
 
@@ -112,7 +83,7 @@ mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 func init() {
 	validateCmd.Flags().StringVarP(&spec, "spec", "s", "smi", "(Required) specification to be used for conformance test (smi/istio-vet)")
 	_ = validateCmd.MarkFlagRequired("spec")
-	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-nsm", "(Required) Adapter to use for validation")
+	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "", "(Required) Adapter to use for validation, as its host (meshery-istio) or host:port location (meshery-istio:10000)")
 	_ = validateCmd.MarkFlagRequired("adapter")
 	validateCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 	validateCmd.Flags().BoolVarP(&watch, "watch", "w", false, "Watch for events and verify operation (in beta testing)")
