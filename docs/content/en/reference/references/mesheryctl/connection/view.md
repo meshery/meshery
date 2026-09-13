@@ -3,6 +3,7 @@ title: mesheryctl-connection-view
 display_title: false
 command: connection
 subcommand: view
+categories: [mesheryctl-connection]
 ---
 
 # mesheryctl connection view

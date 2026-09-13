@@ -3,6 +3,7 @@ title: mesheryctl-system-token-delete
 display_title: false
 command: system
 subcommand: token
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system token delete

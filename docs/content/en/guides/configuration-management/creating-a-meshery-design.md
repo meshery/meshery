@@ -108,11 +108,3 @@ mesheryctl design list
 
 See the [`mesheryctl design` reference]({{< ref "reference/references/mesheryctl/design/_index.md" >}}) for the full subcommand reference.
 {{< /tabs >}}
-
-## Related
-
-- [Meshery Designs concept]({{< ref "concepts/logical/designs.md" >}})
-- [Importing Designs]({{< ref "guides/configuration-management/importing-models/index.md" >}})
-- [Deploying a Design]({{< ref "guides/configuration-management/working-with-designs/index.md" >}})
-- [`mesheryctl design` reference]({{< ref "reference/references/mesheryctl/design/_index.md" >}})
-- [Meshery Catalog](https://meshery.io/catalog)

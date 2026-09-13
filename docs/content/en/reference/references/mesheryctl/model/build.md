@@ -3,6 +3,7 @@ title: mesheryctl-model-build
 display_title: false
 command: model
 subcommand: build
+categories: [mesheryctl-model]
 ---
 
 # mesheryctl model build
