@@ -49,3 +49,39 @@ make: *** [Makefile:76: server] Error 1
 #### See Also
 
 - [Error Code Reference]({{< ref "reference/references/error-codes.md" >}})
+
+## Meshery Server startup checklist
+
+If Meshery Server does not become ready, first confirm that the runtime is
+available and then inspect the server logs:
+
+### Docker
+
+```bash
+docker info
+docker ps -a --filter name=meshery
+docker logs meshery --tail 200
+```
+
+Check that the configured port is free and that the container has not exited.
+Use `docker inspect meshery` to review its environment and exit status.
+
+### Kubernetes
+
+```bash
+kubectl get pods -n meshery
+kubectl get events -n meshery --sort-by=.lastTimestamp
+kubectl logs -n meshery deploy/meshery --all-containers --tail=200
+kubectl describe pod -n meshery -l app=meshery
+```
+
+If the pod is pending, check scheduling, image-pull, and volume events. If it
+restarts, inspect the container's previous logs with `--previous`. A port
+forward can confirm that the service is reachable from the local machine:
+
+```bash
+kubectl port-forward -n meshery svc/meshery 9081:9081
+```
+
+These checks identify runtime, connectivity, configuration, and dependency
+failures without requiring access to production systems.
