@@ -30,7 +30,7 @@
         "from": [
           {
             "id": null,
-            "kind": "Allocation",
+            "kind": "ElasticIPAddress",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
