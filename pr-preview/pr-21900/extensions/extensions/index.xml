@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Extensions on Documentation</title><link>/pr-preview/pr-21900/extensions/extensions/</link><description>Recent content in Extensions on Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="/pr-preview/pr-21900/extensions/extensions/index.xml" rel="self" type="application/rss+xml"/><item><title>Helm Snapshot</title><link>/pr-preview/pr-21900/extensions/extensions/helm-snapshot/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-21900/extensions/extensions/helm-snapshot/</guid><description>&lt;h1 id="helm-snapshot"&gt;
+	&lt;img style="height: 4rem; width: 4rem; vertical-align: middle;" src="images/helm-chart-color.svg" data-logo-for-dark="images/helm-chart-white.svg" data-logo-for-light="images/helm-chart-color.svg" class="logo-dark-light" alt="" /&gt; Helm Snapshot
+&lt;/h1&gt;
+&lt;h2 id="extension-overview"&gt;
+	Extension Overview
+&lt;/h2&gt;
+&lt;p&gt;The &lt;strong&gt;Helm Snapshot Plugin&lt;/strong&gt; allows users to generate a visual snapshot of their Helm charts directly from the command line. It simplifies the process of creating Meshery Snapshots, providing a visual representation of packaged Helm charts. This plugin integrates with Meshery Cloud and GitHub Actions to automate the workflow of snapshot creation, which is especially useful for Helm users who need to quickly visualize their chart configurations.&lt;/p&gt;</description></item><item><title>Kanvas</title><link>/pr-preview/pr-21900/extensions/extensions/kanvas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-21900/extensions/extensions/kanvas/</guid><description>&lt;h1 id="kanvas"&gt;
+	&lt;img style="height: 4rem; width: 4rem; vertical-align: middle;" src="images/icon-color.svg" alt="" /&gt; Kanvas
+&lt;/h1&gt;
+&lt;p&gt;Kanvas is a GitOps-infused cloud native &lt;b&gt;visual designer&lt;/b&gt; for Kubernetes and cloud native applications. This extension works with your Kubernetes clusters so that you design and manage your infrastructure and applications between members of your team. This extension has two modes: Designer and Operator. Create and share your own Kubernetes deployments and patterns in Designer. Deploy your designs and manage your infrastructure using Operator. It includes multi-user collaboration features that allow teams to work together seamlessly towards achieving their goals in a more timely manner. This extension aims at removing all the challenging aspects of collaboration from the equation so that everyone on your team can be on the same page when it comes to managing cloud-native infrastructure projects.&lt;/p&gt;</description></item><item><title>kubectl MeshSync Snapshot</title><link>/pr-preview/pr-21900/extensions/extensions/kubectl-meshsync-snapshot/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-21900/extensions/extensions/kubectl-meshsync-snapshot/</guid><description>&lt;h1 id="kubectl-meshsync-snapshot"&gt;
+	&lt;img style="height: 4rem; width: 4rem; vertical-align: middle;" src="images/meshsync.svg" alt="" /&gt; kubectl MeshSync Snapshot
+&lt;/h1&gt;
+&lt;p&gt;A &lt;code&gt;kubectl&lt;/code&gt; plugin for performing an ad hoc collection of resource information from a Kubernetes cluster and sending the cluster resources details to a Meshery Server. &lt;code&gt;kubectl meshsync snapshot&lt;/code&gt; is a native kubectl plugin for conveniently synchronizing the state of your cluster with Meshery Server.&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h2 id="about-meshery-extensions"&gt;
+	About Meshery Extensions
+&lt;/h2&gt;
+&lt;p&gt;&lt;a href="https://meshery.io/extensions"&gt;Meshery Extensions&lt;/a&gt; are plugins or add-ons that enhance the functionality of the Meshery platform beyond its core capabilities. Meshery supports different types of extensions (&lt;a href="/pr-preview/pr-21900/extensions/"&gt;docs&lt;/a&gt;):&lt;/p&gt;</description></item><item><title>mesheryctl-axi</title><link>/pr-preview/pr-21900/extensions/extensions/mesheryctl-axi/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-21900/extensions/extensions/mesheryctl-axi/</guid><description>&lt;h1 id="-mesheryctl-axi"&gt;
+	🤖 mesheryctl-axi
+&lt;/h1&gt;
+&lt;p&gt;&lt;code&gt;mesheryctl-axi&lt;/code&gt; is an &lt;a href="https://axi.md/"&gt;AXI&lt;/a&gt;-compliant wrapper around &lt;a href="/pr-preview/pr-21900/reference/references/mesheryctl/"&gt;&lt;code&gt;mesheryctl&lt;/code&gt;&lt;/a&gt;, built for AI coding agents. Where &lt;code&gt;mesheryctl&lt;/code&gt; is optimized for a human at a terminal, &lt;code&gt;mesheryctl-axi&lt;/code&gt; is optimized for an agent consuming the output as context: it wraps the human CLI rather than replacing it, so the two stay in step.&lt;/p&gt;
+&lt;h2 id="features"&gt;
+	Features
+&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Token-efficient TOON reporting:&lt;/strong&gt; &lt;code&gt;list&lt;/code&gt; and &lt;code&gt;view&lt;/code&gt; results are rendered in &lt;a href="https://toonformat.dev/"&gt;TOON&lt;/a&gt; rather than verbose tables or JSON, reducing the context an agent spends reading them.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Always non-interactive:&lt;/strong&gt; no TTY prompts, so a command never wedges an unattended agent session.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Structured errors:&lt;/strong&gt; unknown flags and failures exit non-zero with a structured TOON error rather than free-form text.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;help[]&lt;/code&gt; next-step suggestions:&lt;/strong&gt; successful commands append the commands an agent is most likely to want next.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Definitive empty states:&lt;/strong&gt; an empty result is reported explicitly (for example, &lt;code&gt;connections: 0&lt;/code&gt;) instead of as silence.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Schema-faithful content:&lt;/strong&gt; design and model &lt;em&gt;content&lt;/em&gt; is returned as raw YAML or JSON - never re-encoded as TOON.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="installation-and-use"&gt;
+	Installation and Use
+&lt;/h2&gt;
+&lt;h3 id="prerequisites"&gt;
+	Prerequisites
+&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Node.js&lt;/strong&gt; v22 or newer.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;code&gt;mesheryctl&lt;/code&gt; installed and authenticated.&lt;/strong&gt; &lt;code&gt;mesheryctl-axi&lt;/code&gt; spawns &lt;code&gt;mesheryctl&lt;/code&gt;; it does not embed Meshery. See &lt;a href="/pr-preview/pr-21900/installation/mesheryctl/"&gt;Installing mesheryctl&lt;/a&gt;. Point at a specific binary with &lt;code&gt;MESHERYCTL_BIN=/path/to/mesheryctl&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="usage"&gt;
+	Usage
+&lt;/h3&gt;
+&lt;p&gt;Run it directly with &lt;code&gt;npx&lt;/code&gt; - no global install required:&lt;/p&gt;</description></item></channel></rss>
