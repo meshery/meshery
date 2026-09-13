@@ -74,7 +74,7 @@ const (
 	ErrFetchContainersCode                = "mesheryctl-1242"
 	ErrInvalidComponentCode               = "mesheryctl-1243"
 	ErrMesheryEndpointNotAccessibleCode   = "mesheryctl-1244"
-	ErrInvalidEndpointCode                = "mesheryctl-1255"
+	ErrInvalidEndpointCode                = "mesheryctl-1259"
 )
 
 var (
