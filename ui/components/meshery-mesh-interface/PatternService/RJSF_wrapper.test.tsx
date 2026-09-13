@@ -3,10 +3,10 @@ import { render, screen, act } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 const rjsfFormMock = vi.fn();
-const errorHandlerMock = vi.fn();
+const notifyMock = vi.fn();
 
-vi.mock('../../ErrorHandling', () => ({
-  default: () => errorHandlerMock,
+vi.mock('../../../utils/hooks/useNotification', () => ({
+  useNotification: () => ({ notify: notifyMock }),
 }));
 
 vi.mock('../helpers', () => ({
@@ -35,7 +35,7 @@ import RJSFWrapper from './RJSF_wrapper';
 describe('RJSFWrapper', () => {
   beforeEach(() => {
     rjsfFormMock.mockClear();
-    errorHandlerMock.mockClear();
+    notifyMock.mockClear();
   });
 
   it('renders the RJSF form initially as loading', () => {
