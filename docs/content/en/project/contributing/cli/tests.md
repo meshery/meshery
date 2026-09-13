@@ -56,7 +56,7 @@ cd bats-core
 ./install.sh $HOME
 ```
 
-Some tests could use bats libraires as helpers to create the tests suite.
+Some tests could use bats libraries as helpers to create the test suite.
 
 #### Setup Dependencies
 
@@ -74,11 +74,11 @@ There are a few ways to set up the Meshery server, but for end-to-end testing, w
 make server
 ```
 
-Be aware that some test cases require the availability of a Kubernetes cluster and one or more  Meshery Adapters. In those cases, please refer to the [installation guides]({{< ref "installation/_index.md" >}})) (like that of [installing Meshery on Minikube]({{< ref "installation/kubernetes/minikube/index.md" >}})). 
+Be aware that some test cases require the availability of a Kubernetes cluster and one or more  Meshery Adapters. In those cases, please refer to the [installation guides]({{< ref "installation/_index.md" >}}) (like that of [installing Meshery on Minikube]({{< ref "installation/kubernetes/minikube/index.md" >}})). 
 
 ### Authentication
 
-To run the tests successfully, you need be logged in to your Meshery account. This is required to access the Meshery Server and perform operations on it. Whether using the local or a remote provider, you will need to generate a token from your user account to use while writing and executing tests.
+To run the tests successfully, you need to be logged in to your Meshery account. This is required to access the Meshery Server and perform operations on it. Whether using the local or a remote provider, you will need to generate a token from your user account to use while writing and executing tests.
 
 **Remote Provider Example**
 
@@ -99,11 +99,11 @@ mesheryctl system login
 
 ## Writing End-to-End Test Cases
 
-Once all prerequisites have been met, you are setup to run, add, update new test cases.To keep the development of tests consistents and maintainable, we have put some guidance on implementation process which are describe above.
+Once all prerequisites have been met, you are set up to run, add, and update new test cases. To keep the development of tests consistent and maintainable, we have provided guidance on the implementation process described below.
 
 ### Folder structure
 
-The tests will be available in[`mesheryctl/tests/e2e`](https://github.com/meshery/meshery/tree/master/mesheryctl/tests/e2e) folder with the following structure which is done to follow the code base structure of `mesheryctl`.
+The tests will be available in the [`mesheryctl/tests/e2e`](https://github.com/meshery/meshery/tree/master/mesheryctl/tests/e2e) folder with the following structure which is done to follow the code base structure of `mesheryctl`.
 
 ```shell
 ├── aaa-<command>
@@ -120,23 +120,23 @@ The tests will be available in[`mesheryctl/tests/e2e`](https://github.com/mesher
 
 ### Test Case Naming Convention
 
-Bats will run the tests sequentially so we use a prefix code alphanumeric to be able to order tests as required  when necessary. The prefix code is used to order the tests in a way that makes sense for the command under test. The prefix code is used to group the tests by command and subcommand. The prefix code is also used to order the tests within the command and subcommand. For example, you need to import a [Meshery Model]({{< ref "concepts/logical/models/index.md" >}}) before being able to view the details of that model
+Bats will run the tests sequentially so we use an alphanumeric prefix code to be able to order tests as required when necessary. The prefix code is used to order the tests in a way that makes sense for the command under test. The prefix code is used to group the tests by command and subcommand. The prefix code is also used to order the tests within the command and subcommand. For example, you need to import a [Meshery Model]({{< ref "concepts/logical/models/index.md" >}}) before being able to view the details of that model.
 
 **Test Folder**
-- **prefix**: 3 digits alphanumeric code
+- **prefix**: 3-digit alphanumeric code
 - **name**: command under test
   
 Example: `011-design`
 
 **Test File**
 
-- **prefix**: 2 digits numeric code
+- **prefix**: 2-digit numeric code
 - **name**: subcommand under test
 - **extension**: bats
 
 Example: `05-list.bats`
 
-For consistency, we will keep the prefix *00-* for the command under test in the folder and subcommands will start at *01-*. Here an example with `mesheryctl model` command:
+For consistency, we will keep the prefix *00-* for the command under test in the folder and subcommands will start at *01-*. Here is an example with `mesheryctl model` command:
 
 ```bash
 002-model/
@@ -147,7 +147,7 @@ For consistency, we will keep the prefix *00-* for the command under test in the
 ## Run End-to-End (locally)
 
 
-Make sure you are in `meshery/mesheryctl` directory
+Make sure you are in the `meshery/mesheryctl` directory.
 
 **Run all tests** 
 
@@ -155,11 +155,11 @@ Make sure you are in `meshery/mesheryctl` directory
 # run tests building mesheryctl binary
 make e2e
 
-# run tests without buiding mesheryctl binary
+# run tests without building mesheryctl binary
 make e2e-no-build
 ```
 
-**Run a specific commmand tests suite**
+**Run a specific command tests suite**
 
 
 ```bash
@@ -175,7 +175,7 @@ make e2e-no-build BATS_FOLDER_PATTERN=002-model
 ```bash
 make e2e-no-build BATS_FOLDER_PATTERN=<test folder name> BATS_FILE_PATTERN=<test command name>
 
-# Example to run mesheryctl model genereate tests
+# Example to run mesheryctl model generate tests
 make e2e-no-build BATS_FOLDER_PATTERN=002-model BATS_FILE_PATTERN=06-model-generate
 ```
 
@@ -193,7 +193,7 @@ To use these, ensure you are in the `meshery/mesheryctl/tests/e2e` directory.
 
 **Run tests with already built binary**
 
-This excludes the need to build the binary everytime there is an attempt to run all the tests.
+This excludes the need to build the binary every time there is an attempt to run all the tests.
 
 ```bash
   bash run_tests_local.sh
@@ -201,9 +201,9 @@ This excludes the need to build the binary everytime there is an attempt to run 
 
 NB: This works if there is an existing `mesheryctl` binary. If there isn't, the binary will be built. 
 
-**Enforce rebuilding the  binary**
+**Enforce rebuilding the binary**
 
-This involves parsing a flag for the binary to be built whether it exists or not. This comes in handy when you have local changes and possibly will like to test.
+This involves passing a flag for the binary to be built whether it exists or not. This comes in handy when you have local changes and possibly would like to test.
 
 ```bash
   bash run_tests_local.sh -b
@@ -278,7 +278,7 @@ We will exclusively use the Bats Core framework and its built-in functionalities
 
 **Key Principles:**
 
-* **Pure Bats Core:** Avoid relying on external custom scripts or libraries beyond what Bats Core provides, while there might be occasional need to deviate from the library. Take in consideration that doing so all increases the possibility for bugs as well as our sustaining costs.
+* **Pure Bats Core:** Avoid relying on external custom scripts or libraries beyond what Bats Core provides, while there might be occasional need to deviate from the library. Take into consideration that doing so increases the possibility for bugs as well as our sustaining costs.
 * **Focus on `mesheryctl`:** The tests should primarily interact with the `mesheryctl` CLI.
 * **Clear Assertions:** Use Bats Core's assertion functions (`assert`, `assert_success`, `assert_failure`, `assert_output`, etc.) to verify expected outcomes.
 * **Setup and Teardown:** Utilize `setup()` and `teardown()` functions to prepare the testing environment and clean up afterwards.
@@ -329,11 +329,11 @@ The BATS suite runs with `--print-output-on-failure`, so a failing test's captur
 
 #### Test Data
 
-If a command requries a specific id, name or any predefined value ensure that the data is created by your test or another test beforehand. Do not rely on external or uncontrolled data as it will lead to unexpected results.
+If a command requires a specific ID, name or any predefined value ensure that the data is created by your test or another test beforehand. Do not rely on external or uncontrolled data as it will lead to unexpected results.
 
 **Example:**
 
-In the following example, we must have create a model with the name `model-test` before creating or running the following test
+In the following example, we must create a model with the name `model-test` before creating or running the following test
 
 ```bash
 @test "mesheryctl model view providing a model name should display model information" {
@@ -346,7 +346,7 @@ In the following example, we must have create a model with the name `model-test`
 
 Official documentation is available at [https://bats-core.readthedocs.io/en/stable/](https://bats-core.readthedocs.io/en/stable/)
 
-Github organization [https://github.com/bats-core](https://github.com/bats-core) contains bats-core repository and also bats libraries repositoires  
+Github organization [https://github.com/bats-core](https://github.com/bats-core) contains bats-core repository and also bats libraries repositories  
 
 1.  **Basic Test Structure:** A Bats test file consists of one or more test cases defined using the `@test` keyword.
 

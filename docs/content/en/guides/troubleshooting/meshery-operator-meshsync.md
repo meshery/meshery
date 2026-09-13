@@ -307,7 +307,7 @@ kubectl -n meshery get deploy meshery-meshsync \
 ## See Also
 
 - [Kubernetes Connection Lifecycle]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md" >}})
-- [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation.md" >}})
+- [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation/index.md" >}})
 - [Troubleshooting Errors while running Meshery]({{< ref "guides/troubleshooting/meshery-server.md" >}})
 
 {{< related-discussions tag="meshery" >}}
