@@ -4259,6 +4259,15 @@
         "short_description": "Model not found",
         "probable_cause": "The requested model is not present in the CSV input",
         "suggested_remediation": "Verify that the requested model exists in the CSV input"
+      },
+      "1488": {
+        "name": "ErrInvalidWorkspaceFilterCode",
+        "code": "1488",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid \\\"filter\\\" query parameter for a workspace listing",
+        "probable_cause": "The filter parameter is not a JSON object, or one of its fields carries the wrong type",
+        "suggested_remediation": "Pass a JSON object, for example filter={\\\"assigned\\\":false} or filter={\\\"owner\\\":\\\"<uuid>\\\"}"
       }
     }
   }
