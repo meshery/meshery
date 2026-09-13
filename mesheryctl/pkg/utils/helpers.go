@@ -621,8 +621,13 @@ func BoldString(s string) string {
 	return fmt.Sprintf("\033[1m%s\033[0m", s)
 }
 
-// ClearLine clears the last line from output
+// ClearLine clears the last line from output.
+// No-op when stdout/stdin are not an interactive terminal so redirected and
+// piped runs do not emit clear/cls sequences (AXI / #20979).
 func ClearLine() {
+	if !IsInteractiveTerminal() {
+		return
+	}
 	clearCmd := exec.Command("clear", "-x") // for UNIX-like systems
 	if runtime.GOOS == "windows" {
 		clearCmd = exec.Command("cmd", "/c", "cls") // for Windows
@@ -1290,14 +1295,11 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 
 		// Same reasoning as display.listPageHandler: without a terminal there is
 		// nobody to press the key, and keyboard.GetKeys fails on /dev/tty rather
-		// than blocking. Stop after this page instead of turning a successful
-		// listing into a non-zero exit.
+		// than blocking. Advance automatically so scripts/CI get the full list.
 		if !IsInteractiveTerminal() {
-			Log.Infof(
-				"Showing page %d only: paging through results needs an interactive terminal. Use --page to select a page.",
-				startIndex/pageSize+1,
-			)
-			break
+			startIndex = endIndex
+			endIndex = min(len(data), startIndex+pageSize)
+			continue
 		}
 
 		keysEvents, err := keyboard.GetKeys(10)
