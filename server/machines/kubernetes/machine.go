@@ -22,9 +22,10 @@ import (
 func Discovered() machines.State {
 	return machines.State{
 		Events: machines.Events{
-			machines.Register: machines.REGISTERED,
-			machines.NotFound: machines.NOTFOUND,
-			machines.Delete:   machines.DELETED,
+			machines.Register:   machines.REGISTERED,
+			machines.NotFound:   machines.NOTFOUND,
+			machines.Delete:     machines.DELETED,
+			machines.Disconnect: machines.DISCONNECTED,
 		},
 		Action: &DiscoverAction{},
 	}

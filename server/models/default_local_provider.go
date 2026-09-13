@@ -566,6 +566,9 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 	return *connectionCreated, nil
 }
 
+// TODO: (https://github.com/meshery/meshery/issues/21809) GetK8sContexts currently ignores its withStatus argument, so
+// LoadAllK8sContext's CONNECTED filter is not applied for the local provider.
+// K8sFSMMiddleware compensates via shouldDriveDiscovery.
 func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error) {
 	if page == "" {
 		page = "0"
