@@ -81,6 +81,7 @@ var (
 	ErrDockerComposeLogsCode          = "mesheryctl-1226"
 	ErrMesheryCheckRunningStatusCode  = "mesheryctl-1227"
 	ErrDockerComposeStopCode          = "mesheryctl-1228"
+	ErrGitHubAPIResponseCode          = "mesheryctl-1255"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -560,6 +561,15 @@ func ErrResponseStatus(statusCode int) error {
 		[]string{"Server returned with status code: " + fmt.Sprint(statusCode)},
 		[]string{"Error occurred while generating a response"},
 		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
+}
+
+// ErrGitHubAPIResponse returns an error when the GitHub API returns a non-200 HTTP response.
+func ErrGitHubAPIResponse(statusCode int, url string, body string) error {
+	return errors.New(ErrGitHubAPIResponseCode, errors.Alert,
+		[]string{"Unexpected response from GitHub API"},
+		[]string{fmt.Sprintf("GitHub API at %s returned status %d: %s", url, statusCode, body)},
+		[]string{"GitHub API may be rate-limiting requests or the requested resource may not exist"},
+		[]string{"Wait a few minutes and try again, or check https://www.githubstatus.com for GitHub API status"})
 }
 
 func ErrJSONToYAML(err error) error {
