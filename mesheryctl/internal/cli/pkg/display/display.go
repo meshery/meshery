@@ -93,6 +93,13 @@ func SelectFromPagedResults[T any](rows []T, formatLabel promptLabelBuilder[T], 
 		names = append(names, loadMoreLabel)
 	}
 
+	if !utils.IsInteractiveTerminal() {
+		return zero, false, utils.ErrNoTerminalForPrompt(
+			"which page to load",
+			"Pass --page to choose a page, or --pagesize all to fetch everything",
+		)
+	}
+
 	prompt := promptui.Select{
 		Label: "Select item",
 		Items: names,
