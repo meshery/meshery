@@ -12,7 +12,18 @@
  * keep the surface intentionally small.
  */
 /* eslint-disable no-restricted-imports */
-export { SimpleTreeView, TreeItem, treeItemClasses } from '@mui/x-tree-view';
+import React from 'react';
+import { SimpleTreeView, TreeItem as MuiTreeItem, treeItemClasses } from '@mui/x-tree-view';
+import Collapse from '@mui/material/Collapse';
+
+export const TreeItem = React.forwardRef((props: any, ref: any) => {
+  return (
+    <MuiTreeItem ref={ref} {...props} slots={{ groupTransition: Collapse, ...props?.slots }} />
+  );
+});
+TreeItem.displayName = 'TreeItem';
+
+export { SimpleTreeView, treeItemClasses };
 export type {
   SimpleTreeViewProps,
   SimpleTreeViewSlots,

@@ -25,7 +25,7 @@ import (
 )
 
 var (
-	availableSubcommands = []*cobra.Command{generateCmd, publishCmd, updateCmd, purgeCmd}
+	availableSubcommands = []*cobra.Command{generateCmd, publishCmd, updateCmd, purgeCmd, deleteCmd}
 
 	spreadsheeetID          string
 	spreadsheeetCred        string

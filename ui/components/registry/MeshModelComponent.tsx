@@ -7,7 +7,6 @@ import {
   CONNECTIONS,
 } from '../../constants/navigator';
 import {
-  MeshModelToolbar,
   MainContainer,
   TreeWrapper,
   DetailsContainer,
@@ -17,7 +16,7 @@ import {
 import TabCard from './TabCard';
 import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
-import { toLower } from 'lodash';
+import { TabBar, TabCard } from './MeshModelToolbar';
 import { useRouter } from 'next/router';
 import {
   useLazyGetMeshModelsQuery,
@@ -33,16 +32,8 @@ import {
 } from '@/rtk-query/meshModel';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 import _ from 'lodash';
-import {
-  Button,
-  NoSsr,
-  AddCircleIcon as AddIcon,
-  ExternalLinkIcon as LinkIcon,
-  FileUploadIcon as UploadIcon,
-  useMediaQuery,
-} from '@sistent/sistent';
+import { NoSsr, useMediaQuery } from '@sistent/sistent';
 import { useTheme } from '@/theme';
-import { iconSmall } from 'css/icons.styles';
 import { useInfiniteScrollRef, useMeshModelComponentRouter } from './hooks';
 import ImportModelModal from './ImportModelModal';
 import CreateModelModal from './CreateModelModal';
@@ -98,6 +89,7 @@ const MeshModelComponent_ = ({
   const [componentsFilters, setComponentsFilters] = useState<{ page: number }>({ page: 0 });
   const [relationshipsFilters, setRelationshipsFilters] = useState<{ page: number }>({ page: 0 });
   const [connectionsFilters, setConnectionsFilters] = useState<{ page: number }>({ page: 0 });
+  const [activeRegistrantsCount, setActiveRegistrantsCount] = useState<number | null>(null);
 
   /**
    * RTK Lazy Queries
@@ -127,6 +119,50 @@ const MeshModelComponent_ = ({
     params: { page: 0, pagesize: 1 },
   });
 
+  const getRegistrants = useCallback(async () => {
+    let response;
+    try {
+      const res = await getRegistrantsData(
+        {
+          params: {
+            page: 0,
+            pagesize: 0,
+            search: searchText || '',
+          },
+        },
+        false,
+      ).unwrap();
+      const registrants = res?.registrants || [];
+      const activeRegistrants = registrants.filter(
+        (r: any) => r?.summary?.models && r.summary.models > 0,
+      );
+      response = {
+        data: {
+          registrants: activeRegistrants,
+        },
+      };
+      setActiveRegistrantsCount((prev) =>
+        prev === activeRegistrants.length ? prev : activeRegistrants.length,
+      );
+    } catch (err) {
+      console.error('Error fetching registrants:', err);
+      response = { data: { registrants: [] } };
+      setActiveRegistrantsCount(0);
+    }
+    setRowsPerPage(25);
+    return response;
+  }, [getRegistrantsData, searchText]);
+
+  useEffect(() => {
+    setActiveRegistrantsCount(null);
+  }, [searchText]);
+
+  useEffect(() => {
+    if (activeRegistrantsCount === null) {
+      getRegistrants();
+    }
+  }, [activeRegistrantsCount, getRegistrants]);
+
   const modelsData = modelsRes.data;
   const registrantsData = registrantsRes.data;
   const componentsData = componentsRes.data;
@@ -153,11 +189,9 @@ const MeshModelComponent_ = ({
   }, [modelsRes, hasMoreModels]);
 
   const loadNextRegistrantsPage = useCallback(() => {
-    if (registrantsRes.isLoading || registrantsRes.isFetching || !hasMoreRegistrants) {
-      return;
-    }
-    setRegistrantsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
-  }, [registrantsRes, hasMoreRegistrants]);
+    // Registrants are fetched all at once with pagesize 0, so infinite page loading is disabled.
+    return;
+  }, []);
 
   const loadNextComponentsPage = useCallback(() => {
     if (componentsRes.isLoading || componentsRes.isFetching || !hasMoreComponents) {
@@ -233,7 +267,6 @@ const MeshModelComponent_ = ({
           break;
         case REGISTRANTS:
           response = await getRegistrants();
-
           break;
         case CONNECTIONS: {
           const res = await getConnectionDefinitionsData(
@@ -302,56 +335,13 @@ const MeshModelComponent_ = ({
     // resourcesDetail intentionally omitted — read via functional setState above
     // to avoid stale-closure re-fetch loop and O(n²) _.isEqual dedup.
     checked,
+    getRegistrants,
   ]);
 
-  const getRegistrants = async () => {
-    let registrantResponse;
-    let response;
-    registrantResponse = await getRegistrantsData(
-      {
-        params: {
-          page: searchText ? 0 : registrantFilters.page,
-          pagesize: searchText ? 'all' : 25,
-          search: searchText || '',
-        },
-      },
-      true,
-    );
-    if (registrantResponse.data && registrantResponse.data.registrants) {
-      const registrants = registrantResponse.data.registrants;
-      const tempResourcesDetail = [];
-
-      for (let registrant of registrants) {
-        let hostname = toLower(registrant?.hostname);
-        const { data: modelRes } = await getMeshModelsData(
-          {
-            params: {
-              page: page?.Models,
-              pagesize: 'all',
-              registrant: hostname,
-              components: false,
-              relationships: false,
-            },
-          },
-          true,
-        );
-        if (modelRes.models && modelRes.models.length > 0) {
-          const updatedRegistrant = {
-            ...registrant,
-            models: removeDuplicateVersions(modelRes.models) || [],
-          };
-          tempResourcesDetail.push(updatedRegistrant);
-        }
-      }
-      response = {
-        data: {
-          registrants: tempResourcesDetail,
-        },
-      };
-    }
-    setRowsPerPage(25);
-    return response;
-  };
+  const refetch = useCallback(() => {
+    setActiveRegistrantsCount(null);
+    fetchData();
+  }, [fetchData]);
   const handleTabClick = (selectedView) => {
     // -> use settingsRouter when not in modal mode (Settings page)
     if (handleChangeSelectedTab && externalView === null) {
@@ -500,7 +490,14 @@ const MeshModelComponent_ = ({
             />
             <TabCard
               label="Registrants"
-              count={registrantsData?.totalCount ?? registrantsCountData?.totalCount ?? 0}
+              count={
+                view === REGISTRANTS
+                  ? resourcesDetail.length
+                  : (activeRegistrantsCount ??
+                    registrantsData?.totalCount ??
+                    registrantsCountData?.totalCount ??
+                    0)
+              }
               active={view === REGISTRANTS}
               onClick={() => handleTabClick(REGISTRANTS)}
             />
@@ -569,7 +566,7 @@ const MeshModelComponent_ = ({
               setShowDetailsData={setShowDetailsData}
             />
           ) : (
-            <MeshModelDetails view={view} showDetailsData={showDetailsData} />
+            <MeshModelDetails view={view} showDetailsData={showDetailsData} refetch={refetch} />
           )}
         </TreeWrapper>
       </MainContainer>
@@ -577,70 +574,11 @@ const MeshModelComponent_ = ({
   );
 };
 
-const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal }) => {
-  return (
-    <MeshModelToolbar>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'flex-start',
-          alignItems: 'center',
-          gap: '0.75rem',
-          flexWrap: 'wrap',
-        }}
-      >
-        {view === MODELS && (
-          <>
-            <Button
-              aria-label="Create Model"
-              variant="contained"
-              color="primary"
-              onClick={openCreateModal}
-              style={{ display: 'flex' }}
-              disabled={false} //TODO: Need to make key for this component
-              startIcon={<AddIcon style={iconSmall} />}
-              data-testid="TabBar-Button-CreateModel"
-            >
-              Create Model
-            </Button>
-            <Button
-              aria-label="Import Model"
-              variant="contained"
-              color="primary"
-              onClick={openImportModal}
-              style={{ display: 'flex' }}
-              disabled={false} //TODO: Need to make key for this component
-              startIcon={<UploadIcon />}
-              data-testid="TabBar-Button-ImportModel"
-            >
-              Import Model
-            </Button>
-          </>
-        )}
-
-        {view === RELATIONSHIPS && (
-          <Button
-            aria-label="Create Relationship"
-            variant="contained"
-            color="primary"
-            onClick={openRelationshipModal}
-            style={{ display: 'flex' }}
-            disabled={false}
-            startIcon={<LinkIcon />}
-            data-testid="TabBar-Button-CreateRelationship"
-          >
-            Create Relationship
-          </Button>
-        )}
-      </div>
-      {/*
-      This builk operation is not yet supported
-      <DisableButton disabled variant="contained" startIcon={<DoNotDisturbOnIcon />}>
-        Ignore
-      </DisableButton> */}
-    </MeshModelToolbar>
-  );
-};
+const MeshModelComponent = (props) => (
+  <NoSsr>
+    <MeshModelComponent_ {...props} />
+  </NoSsr>
+);
 
 const MeshModelComponent = (props) => {
   return (
