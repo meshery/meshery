@@ -302,7 +302,7 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID core.Uuid, se
 		query = query.Where("EXISTS (SELECT 1 FROM workspaces_environments_mappings AS wem WHERE e.id = wem.environment_id AND wem.workspace_id = ? AND wem.deleted_at IS NULL)", workspaceID)
 	} else {
 		// Environments not assigned to the workspace
-		query = query.Joins("LEFT JOIN workspaces_environments_mappings AS wem ON e.id = wem.environment_id AND wem.workspace_id = ?", workspaceID).
+		query = query.Joins("LEFT JOIN workspaces_environments_mappings AS wem ON e.id = wem.environment_id AND wem.workspace_id = ? AND wem.deleted_at IS NULL", workspaceID).
 			Where("wem.workspace_id IS NULL")
 	}
 
@@ -475,7 +475,7 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID core.Uuid, search,
 		query = query.Where("EXISTS (SELECT 1 FROM workspaces_designs_mappings AS wdm WHERE d.id = wdm.design_id AND wdm.workspace_id = ? AND wdm.deleted_at IS NULL)", workspaceID)
 	} else {
 		// Designs not assigned to the workspace
-		query = query.Joins("LEFT JOIN workspaces_designs_mappings AS wdm ON d.id = wdm.design_id AND wdm.workspace_id = ?", workspaceID).
+		query = query.Joins("LEFT JOIN workspaces_designs_mappings AS wdm ON d.id = wdm.design_id AND wdm.workspace_id = ? AND wdm.deleted_at IS NULL", workspaceID).
 			Where("wdm.workspace_id IS NULL")
 	}
 
@@ -635,7 +635,7 @@ func (wp *WorkspacePersister) GetWorkspaceViews(workspaceID core.Uuid, search, o
 	if workspaceFilter.Assigned {
 		query = query.Where("EXISTS (SELECT 1 FROM workspaces_views_mappings AS wvm WHERE v.id = wvm.view_id AND wvm.workspace_id = ? AND wvm.deleted_at IS NULL)", workspaceID)
 	} else {
-		query = query.Joins("LEFT JOIN workspaces_views_mappings AS wvm ON v.id = wvm.view_id AND wvm.workspace_id = ?", workspaceID).
+		query = query.Joins("LEFT JOIN workspaces_views_mappings AS wvm ON v.id = wvm.view_id AND wvm.workspace_id = ? AND wvm.deleted_at IS NULL", workspaceID).
 			Where("wvm.workspace_id IS NULL")
 	}
 
@@ -763,7 +763,7 @@ func (wp *WorkspacePersister) GetWorkspaceTeams(workspaceID core.Uuid, search, o
 	if workspaceFilter.Assigned {
 		query = query.Where("EXISTS (SELECT 1 FROM workspaces_teams_mappings AS wtm WHERE t.id = wtm.team_id AND wtm.workspace_id = ? AND wtm.deleted_at IS NULL)", workspaceID)
 	} else {
-		query = query.Joins("LEFT JOIN workspaces_teams_mappings AS wtm ON t.id = wtm.team_id AND wtm.workspace_id = ?", workspaceID).
+		query = query.Joins("LEFT JOIN workspaces_teams_mappings AS wtm ON t.id = wtm.team_id AND wtm.workspace_id = ? AND wtm.deleted_at IS NULL", workspaceID).
 			Where("wtm.workspace_id IS NULL")
 	}
 
