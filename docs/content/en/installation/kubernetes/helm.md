@@ -77,7 +77,7 @@ Verify health status with detailed information using verbose mode:
 **Example output:**
 ```
 [+]capabilities ok
-[i]extension extension package found
+[i]extension package found
 healthz check passed
 ```
 
