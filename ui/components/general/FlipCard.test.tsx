@@ -14,6 +14,8 @@ vi.mock('./FlipCard.styles', () => ({
       {children}
     </div>
   ),
+  CardFaceFront: ({ children }: any) => <div data-testid="card-face-front">{children}</div>,
+  CardFaceBack: ({ children }: any) => <div data-testid="card-face-back">{children}</div>,
 }));
 
 vi.mock('@/utils/hooks', () => ({
