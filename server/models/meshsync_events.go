@@ -177,18 +177,16 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 				continue
 			}
 
+			objects := make([]meshsyncmodel.KubernetesResource, 0, len(objectsSlice))
 			for _, object := range objectsSlice {
 				obj, err := mh.Unmarshal(object)
 				if err != nil {
 					continue
 				}
-
-				err = mh.persistStoreUpdate(&obj)
-				if err != nil {
-					mh.log.Error(err)
-					continue
-				}
+				objects = append(objects, obj)
 			}
+
+			mh.persistStoreUpdates(objects)
 		}
 	}
 }
@@ -260,28 +258,52 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 	return nil
 }
 
-func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.KubernetesResource) error {
+// persistStoreUpdates writes a full resync payload to the database inside a
+// single dbHandler lock acquisition and a single transaction, rather than
+// once per object. dbHandler is shared by every connected cluster's
+// MeshsyncDataHandler, so a resync carrying thousands of objects previously
+// paid SQLite's per-statement commit cost once per object while holding that
+// shared lock, stalling every other connected cluster's real-time MeshSync
+// writes for the whole resync. Batching the writes into one transaction
+// keeps the same per-object create/update semantics but commits once for the
+// whole payload.
+func (mh *MeshsyncDataHandler) persistStoreUpdates(objects []meshsyncmodel.KubernetesResource) {
+	if len(objects) == 0 {
+		return
+	}
+
 	mh.dbHandler.Lock()
 	defer mh.dbHandler.Unlock()
-	compMetadata, model := mh.getComponentMetadata(object.APIVersion, object.Kind)
-	object.ComponentMetadata = utils.MergeMaps(object.ComponentMetadata, compMetadata)
-	object.Model = model
-	result := mh.dbHandler.Create(object)
+
 	regQueue := GetMeshSyncRegistrationQueue()
 
-	go regQueue.Send(MeshSyncRegistrationData{MeshsyncDataHandler: *mh, Obj: *object})
+	err := mh.dbHandler.Transaction(func(tx *gorm.DB) error {
+		for i := range objects {
+			object := &objects[i]
 
-	if result.Error != nil {
-		result = mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(object)
-		if result.Error != nil {
-			return ErrDBPut(result.Error)
+			compMetadata, model := mh.getComponentMetadata(object.APIVersion, object.Kind)
+			object.ComponentMetadata = utils.MergeMaps(object.ComponentMetadata, compMetadata)
+			object.Model = model
+
+			result := tx.Create(object)
+			if result.Error != nil {
+				result = tx.Session(&gorm.Session{FullSaveAssociations: true}).Updates(object)
+				if result.Error != nil {
+					mh.log.Error(ErrDBPut(result.Error))
+					continue
+				}
+				mh.log.Info("Updated object: ", object.KubernetesResourceMeta.Name, "/", object.KubernetesResourceMeta.Namespace, " of kind: ", object.Kind, " in the database")
+			} else {
+				mh.log.Info("Added object: ", object.KubernetesResourceMeta.Name, "/", object.KubernetesResourceMeta.Namespace, " of kind: ", object.Kind, " to the database")
+			}
+
+			go regQueue.Send(MeshSyncRegistrationData{MeshsyncDataHandler: *mh, Obj: *object})
 		}
-		mh.log.Info("Updated object: ", object.KubernetesResourceMeta.Name, "/", object.KubernetesResourceMeta.Namespace, " of kind: ", object.Kind, " in the database")
 		return nil
+	})
+	if err != nil {
+		mh.log.Error(ErrDBPut(err))
 	}
-	mh.log.Info("Added object: ", object.KubernetesResourceMeta.Name, "/", object.KubernetesResourceMeta.Namespace, " of kind: ", object.Kind, " to the database")
-
-	return nil
 }
 
 func RemoveStaleObjects(dbHandler database.Handler) error {
