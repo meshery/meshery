@@ -37,6 +37,8 @@ var relationshipConformanceModels = []string{"kubernetes", "cert-manager"}
 // each entry must still fail to resolve, so fixing one forces its removal here.
 // Repair of every entry below is tracked in meshery/meshery#21490.
 var knownUnresolvedMutationPaths = map[string]bool{
+	"kubernetes/edge-non-binding-network-jccsr.json|Ingress|configuration.spec.rules.0.http.paths.0.backend.serviceName":             true,
+	"kubernetes/edge-non-binding-network-jccsr.json|Ingress|configuration.spec.rules.0.http.paths.0.backend.servicePort":             true,
 	"kubernetes/edge-non-binding-reference-aatvf.json|ServiceAccount|configuration.spec.signerName":                                  true,
 	"kubernetes/edge-non-binding-reference-amdty.json|WatchEvent|configuration.object.kind":                                          true,
 	"kubernetes/edge-non-binding-reference-cyynq.json|StorageVersion|configuration.spec.resource.group":                              true,
@@ -406,22 +408,34 @@ func TestRelationshipMutationPathsResolveAgainstComponentSchemas(t *testing.T) {
 	}
 }
 
-// TestIngressToServiceEdgeUsesNetworkingV1BackendShape pins meshery/meshery#21482
-// in the artifact the fix changed: the Ingress -> Service edge must mutate the
-// networking.k8s.io/v1 backend shape, in every kubernetes version directory the
-// definition is fanned out to. Both roles are pinned separately and in order,
-// because patchMutatorsAction pairs mutatorRefs[i] with mutatedRefs[i] and
-// resolveMutatorMutatedRefs decides edge direction from which side declares
-// which ref - reordering one side, or swapping the two roles, silently inverts
-// what the engine writes where.
-func TestIngressToServiceEdgeUsesNetworkingV1BackendShape(t *testing.T) {
+// TestIngressToServiceEdgeUsesBothBackendShapes pins meshery/meshery#21482.
+// The Ingress -> Service edge must support mutating both the modern
+// networking.k8s.io/v1 backend shape and the legacy v1beta1 shape (where the
+// legacy serviceName/servicePort selector follows the networking.k8s.io/v1 selector),
+// in every kubernetes version directory the definition is fanned out to.
+// Both roles are pinned separately and in order, because patchMutatorsAction pairs
+// mutatorRefs[i] with mutatedRefs[i] and resolveMutatorMutatedRefs decides edge direction.
+func TestIngressToServiceEdgeUsesBothBackendShapes(t *testing.T) {
 	root := repoRoot(t)
 
-	wantMutated := [][]string{
+	wantMutatedLatest := [][]string{
+		{"configuration", "spec", "rules", "0", "http", "paths", "0", "backend", "service", "name"},
+		{"configuration", "spec", "rules", "0", "http", "paths", "0", "backend", "service", "port", "number"},
+		{"configuration", "spec", "rules", "0", "http", "paths", "0", "backend", "serviceName"},
+		{"configuration", "spec", "rules", "0", "http", "paths", "0", "backend", "servicePort"},
+	}
+	wantMutatorLatest := [][]string{
+		{"displayName"},
+		{"configuration", "spec", "ports", "0", "port"},
+		{"displayName"},
+		{"configuration", "spec", "ports", "0", "port"},
+	}
+
+	wantMutatedLegacy := [][]string{
 		{"configuration", "spec", "rules", "0", "http", "paths", "0", "backend", "service", "name"},
 		{"configuration", "spec", "rules", "0", "http", "paths", "0", "backend", "service", "port", "number"},
 	}
-	wantMutator := [][]string{
+	wantMutatorLegacy := [][]string{
 		{"displayName"},
 		{"configuration", "spec", "ports", "0", "port"},
 	}
@@ -464,6 +478,15 @@ func TestIngressToServiceEdgeUsesNetworkingV1BackendShape(t *testing.T) {
 		}
 
 		version := filepath.Base(filepath.Dir(modelDir))
+		var wantMutated, wantMutator [][]string
+		if version == "v1.37.0-rc.1" {
+			wantMutated = wantMutatedLatest
+			wantMutator = wantMutatorLatest
+		} else {
+			wantMutated = wantMutatedLegacy
+			wantMutator = wantMutatorLegacy
+		}
+
 		assertPathsInOrder(t, version, "Ingress mutatedRef", ingressMutated, wantMutated)
 		assertPathsInOrder(t, version, "Service mutatorRef", serviceMutator, wantMutator)
 		assertPathsInOrder(t, version, "Ingress mutatorRef", ingressMutator, nil)
