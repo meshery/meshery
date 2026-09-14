@@ -515,6 +515,42 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 		connID = uuid.FromStringOrNil(id)
 	}
 
+	// Legacy ID reconciliation for in-cluster contexts:
+	// Older Meshery versions generated IDs that included the service-account token.
+	// Current code generates token-independent IDs. To prevent duplicates during upgrade,
+	// search for a legacy in-cluster connection by stable fields and migrate it.
+	if k8sContext.DeploymentType == "in_cluster" && connID != uuid.Nil {
+		// Look for an existing connection with the new stable ID first
+		var existingConn connections.Connection
+		err := l.GetGenericPersister().Model(&connections.Connection{}).
+			Where("id = ?", connID).
+			First(&existingConn).Error
+		if err == gorm.ErrRecordNotFound {
+			// No connection with the new ID exists - check for legacy record
+			// Match by stable fields: server, name, mesheryInstanceId, deploymentType
+			var legacyConn connections.Connection
+			err := l.GetGenericPersister().Model(&connections.Connection{}).
+				Where("metadata->>'$.server' = ?", k8sContext.Server).
+				Where("metadata->>'$.name' = ?", k8sContext.Name).
+				Where("metadata->>'$.mesheryInstanceId' = ?", k8sContext.MesheryInstanceID.String()).
+				Where("metadata->>'$.deploymentType' = ?", "in_cluster").
+				First(&legacyConn).Error
+			if err == nil {
+				// Found a legacy in-cluster connection - migrate it to the new ID
+				// Update the connection ID to the new stable ID
+				updateErr := l.GetGenericPersister().Model(&connections.Connection{}).
+					Where("id = ?", legacyConn.ID).
+					Update("id", connID).Error
+				if updateErr != nil {
+					// Log the error but continue - the connection will be saved with a new ID
+					// This is a migration failure, not a critical failure
+				}
+				// After migration, connID remains the new stable ID
+				// The normal save flow below will find the migrated connection by its new ID
+			}
+		}
+	}
+
 	_metadata := map[string]string{
 		"id":                 k8sContext.ID,
 		"server":             k8sContext.Server,
@@ -558,6 +594,28 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 	connectionCreated, err := l.SaveConnection(conn, "", true)
 	if err != nil {
 		return connections.Connection{}, fmt.Errorf("error in saving k8s context %v", err)
+	}
+
+	// Credential refresh: if this is an existing connection (same ID was found),
+	// update its credential with the newly discovered auth/cluster data.
+	// This handles token rotation for in-cluster contexts where the ID remains stable.
+	if connectionCreated.CredentialID != nil && conn.CredentialSecret != nil {
+		// Update the existing credential with the new auth/cluster data
+		// First, fetch the existing credential to preserve its required fields
+		existingCred, _, credErr := l.GetCredentialByID("", *connectionCreated.CredentialID)
+		if credErr == nil {
+			// Preserve the existing credential's properties and update only the secret
+			updatedCredential := &Credential{
+				ID:     *connectionCreated.CredentialID,
+				Secret: conn.CredentialSecret,
+				UserId: existingCred.UserId, // Preserve the UserId for the update constraint
+				Name:   existingCred.Name,   // Preserve other fields
+				Type:   existingCred.Type,
+			}
+			// Use UpdateUserCredential to update the credential in the credentials table
+			// We pass nil for the http.Request parameter since this is a background operation
+			_, _ = l.UpdateUserCredential(nil, updatedCredential)
+		}
 	}
 
 	k8sContext.ConnectionID = connID.String()

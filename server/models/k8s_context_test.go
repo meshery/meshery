@@ -463,3 +463,119 @@ func TestNewK8sContextFromInClusterConfigTokenRotation(t *testing.T) {
 		t.Errorf("regular context ID did not change after token rotation: got %v, want different", regularID1)
 	}
 }
+
+// TestInClusterContextCARotationStability verifies that in-cluster context IDs
+// remain stable when CA certificate data rotates. For in-cluster contexts,
+// certificate-authority-data is excluded from the ID hash.
+func TestInClusterContextCARotationStability(t *testing.T) {
+	instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+
+	// Test CA rotation for in-cluster context
+	ctx1 := K8sContext{
+		Name:              "in-cluster-context",
+		Auth:              sql.Map{"user": map[string]interface{}{"token": "service-account-token"}},
+		Cluster:           sql.Map{"cluster": map[string]interface{}{"certificate-authority-data": "ca-data-v1", "server": "https://10.0.0.1:443"}},
+		Server:            "https://10.0.0.1:443",
+		MesheryInstanceID: &instanceID,
+		DeploymentType:    "in_cluster",
+	}
+
+	id1, err := K8sContextGenerateID(ctx1)
+	if err != nil {
+		t.Fatalf("K8sContextGenerateID() error = %v", err)
+	}
+
+	// Simulate CA rotation
+	ctx2 := K8sContext{
+		Name:              "in-cluster-context",
+		Auth:              sql.Map{"user": map[string]interface{}{"token": "service-account-token"}},
+		Cluster:           sql.Map{"cluster": map[string]interface{}{"certificate-authority-data": "ca-data-v2", "server": "https://10.0.0.1:443"}},
+		Server:            "https://10.0.0.1:443",
+		MesheryInstanceID: &instanceID,
+		DeploymentType:    "in_cluster",
+	}
+
+	id2, err := K8sContextGenerateID(ctx2)
+	if err != nil {
+		t.Fatalf("K8sContextGenerateID() error = %v", err)
+	}
+
+	// IDs must be the same for in-cluster contexts with different CA data
+	if id1 != id2 {
+		t.Errorf("in-cluster context ID changed after CA rotation: got %v, want %v", id2, id1)
+	}
+
+	// Test CA rotation for regular context (should change ID)
+	regularCtx1 := K8sContext{
+		Name:              "regular-context",
+		Auth:              sql.Map{"user": map[string]interface{}{"token": "token-1"}},
+		Cluster:           sql.Map{"cluster": map[string]interface{}{"certificate-authority-data": "ca-data-v1", "server": "https://k8s.example.com"}},
+		Server:            "https://k8s.example.com",
+		MesheryInstanceID: &instanceID,
+		DeploymentType:    "out_of_cluster",
+	}
+
+	regularID1, err := K8sContextGenerateID(regularCtx1)
+	if err != nil {
+		t.Fatalf("K8sContextGenerateID() error = %v", err)
+	}
+
+	regularCtx2 := K8sContext{
+		Name:              "regular-context",
+		Auth:              sql.Map{"user": map[string]interface{}{"token": "token-1"}},
+		Cluster:           sql.Map{"cluster": map[string]interface{}{"certificate-authority-data": "ca-data-v2", "server": "https://k8s.example.com"}},
+		Server:            "https://k8s.example.com",
+		MesheryInstanceID: &instanceID,
+		DeploymentType:    "out_of_cluster",
+	}
+
+	regularID2, err := K8sContextGenerateID(regularCtx2)
+	if err != nil {
+		t.Fatalf("K8sContextGenerateID() error = %v", err)
+	}
+
+	// IDs must be different for regular contexts with different CA data
+	if regularID1 == regularID2 {
+		t.Errorf("regular context ID did not change after CA rotation: got %v, want different", regularID1)
+	}
+}
+
+// TestInClusterContextTokenAndCARotationStability verifies that in-cluster context IDs
+// remain stable when both token and CA certificate data rotate simultaneously.
+func TestInClusterContextTokenAndCARotationStability(t *testing.T) {
+	instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+
+	ctx1 := K8sContext{
+		Name:              "in-cluster-context",
+		Auth:              sql.Map{"user": map[string]interface{}{"token": "token-v1"}},
+		Cluster:           sql.Map{"cluster": map[string]interface{}{"certificate-authority-data": "ca-data-v1", "server": "https://10.0.0.1:443"}},
+		Server:            "https://10.0.0.1:443",
+		MesheryInstanceID: &instanceID,
+		DeploymentType:    "in_cluster",
+	}
+
+	id1, err := K8sContextGenerateID(ctx1)
+	if err != nil {
+		t.Fatalf("K8sContextGenerateID() error = %v", err)
+	}
+
+	// Simulate both token and CA rotation
+	ctx2 := K8sContext{
+		Name:              "in-cluster-context",
+		Auth:              sql.Map{"user": map[string]interface{}{"token": "token-v2"}},
+		Cluster:           sql.Map{"cluster": map[string]interface{}{"certificate-authority-data": "ca-data-v2", "server": "https://10.0.0.1:443"}},
+		Server:            "https://10.0.0.1:443",
+		MesheryInstanceID: &instanceID,
+		DeploymentType:    "in_cluster",
+	}
+
+	id2, err := K8sContextGenerateID(ctx2)
+	if err != nil {
+		t.Fatalf("K8sContextGenerateID() error = %v", err)
+	}
+
+	// IDs must be the same for in-cluster contexts with both token and CA rotation
+	if id1 != id2 {
+		t.Errorf("in-cluster context ID changed after token and CA rotation: got %v, want %v", id2, id1)
+	}
+}

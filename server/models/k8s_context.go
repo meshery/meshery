@@ -323,14 +323,14 @@ func NewK8sContextFromInClusterConfig(contextName string, instanceID *core.Uuid,
 
 	token, err := os.ReadFile(inClusterTokenFile)
 	if err != nil {
-		return nil, err
+		return nil, ErrReadInClusterToken(err)
 	}
 
 	server := "https://" + net.JoinHostPort(host, port)
 
 	caData, err := os.ReadFile(inClusterRootCAFile)
 	if err != nil {
-		return nil, err
+		return nil, ErrReadInClusterCA(err)
 	}
 
 	// Create context with in-cluster deployment type set before ID generation
@@ -418,29 +418,55 @@ func K8sContextGenerateID(kc K8sContext) (string, error) {
 		"name":    kc.Name,
 	}
 
-	// For in-cluster contexts, exclude the token from the hash to prevent ID changes
-	// when the service-account token rotates. The token is mutable authentication
-	// material that should not affect the logical connection identity.
+	// For in-cluster contexts, exclude the token and certificate-authority-data from the hash
+	// to prevent ID changes when the service-account token or CA certificate rotates. These are
+	// mutable authentication material that should not affect the logical connection identity.
 	// In-cluster provenance is determined by DeploymentType field, which is persisted.
-	if kc.DeploymentType == "in_cluster" && kc.Auth != nil {
-		if user, ok := kc.Auth["user"].(map[string]interface{}); ok {
-			if _, hasToken := user["token"]; hasToken {
-				// Create a copy of auth without the token for ID generation
-				authCopy := make(map[string]interface{})
-				for k, v := range kc.Auth {
-					if k == "user" {
-						userCopy := make(map[string]interface{})
-						for userK, userV := range user {
-							if userK != "token" {
-								userCopy[userK] = userV
+	if kc.DeploymentType == "in_cluster" {
+		// Exclude token from auth
+		if kc.Auth != nil {
+			if user, ok := kc.Auth["user"].(map[string]interface{}); ok {
+				if _, hasToken := user["token"]; hasToken {
+					// Create a copy of auth without the token for ID generation
+					authCopy := make(map[string]interface{})
+					for k, v := range kc.Auth {
+						if k == "user" {
+							userCopy := make(map[string]interface{})
+							for userK, userV := range user {
+								if userK != "token" {
+									userCopy[userK] = userV
+								}
 							}
+							authCopy[k] = userCopy
+						} else {
+							authCopy[k] = v
 						}
-						authCopy[k] = userCopy
-					} else {
-						authCopy[k] = v
 					}
+					data["auth"] = authCopy
 				}
-				data["auth"] = authCopy
+			}
+		}
+		// Exclude certificate-authority-data from cluster
+		if kc.Cluster != nil {
+			if cluster, ok := kc.Cluster["cluster"].(map[string]interface{}); ok {
+				if _, hasCAData := cluster["certificate-authority-data"]; hasCAData {
+					// Create a copy of cluster without the certificate-authority-data for ID generation
+					clusterCopy := make(map[string]interface{})
+					for k, v := range kc.Cluster {
+						if k == "cluster" {
+							clusterInnerCopy := make(map[string]interface{})
+							for clusterK, clusterV := range cluster {
+								if clusterK != "certificate-authority-data" {
+									clusterInnerCopy[clusterK] = clusterV
+								}
+							}
+							clusterCopy[k] = clusterInnerCopy
+						} else {
+							clusterCopy[k] = v
+						}
+					}
+					data["cluster"] = clusterCopy
+				}
 			}
 		}
 	}
