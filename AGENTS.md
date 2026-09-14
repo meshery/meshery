@@ -402,7 +402,7 @@ so it covers lock files this list does not enumerate.
 
 ### Provider Plugins
 
-Interface: `server/models/provider.go` — implement auth, preferences, and sync externally.
+Interface: `server/models/providers.go` — implement auth, preferences, and sync externally.
 
 ### Adapters (gRPC)
 
@@ -424,7 +424,7 @@ Detail: [UI Extensions](./docs/content/en/project/contributing/ui/ui.md).
 
 ### GraphQL
 
-Schema: `server/internal/graphql/schema.graphql`. Add queries/mutations/subscriptions then run `make graphql-build`.
+Schema: `server/internal/graphql/schema/schema.graphql`. Add queries/mutations/subscriptions then run `make graphql-build`.
 
 ### Feature Flags
 
