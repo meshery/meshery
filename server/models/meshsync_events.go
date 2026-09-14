@@ -275,7 +275,11 @@ func (mh *MeshsyncDataHandler) persistStoreUpdates(objects []meshsyncmodel.Kuber
 	mh.dbHandler.Lock()
 	defer mh.dbHandler.Unlock()
 
-	regQueue := GetMeshSyncRegistrationQueue()
+	// Registrations are queued only after the transaction actually commits.
+	// Sending them from inside the callback would publish a resource for
+	// registration even if the transaction as a whole is later rolled back,
+	// leaving connection processing to act on state that was never persisted.
+	registrations := make([]MeshSyncRegistrationData, 0, len(objects))
 
 	err := mh.dbHandler.Transaction(func(tx *gorm.DB) error {
 		for i := range objects {
@@ -297,12 +301,18 @@ func (mh *MeshsyncDataHandler) persistStoreUpdates(objects []meshsyncmodel.Kuber
 				mh.log.Info("Added object: ", object.KubernetesResourceMeta.Name, "/", object.KubernetesResourceMeta.Namespace, " of kind: ", object.Kind, " to the database")
 			}
 
-			go regQueue.Send(MeshSyncRegistrationData{MeshsyncDataHandler: *mh, Obj: *object})
+			registrations = append(registrations, MeshSyncRegistrationData{MeshsyncDataHandler: *mh, Obj: *object})
 		}
 		return nil
 	})
 	if err != nil {
 		mh.log.Error(ErrDBPut(err))
+		return
+	}
+
+	regQueue := GetMeshSyncRegistrationQueue()
+	for _, registration := range registrations {
+		go regQueue.Send(registration)
 	}
 }
 

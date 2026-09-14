@@ -668,13 +668,19 @@ func TestPersistStoreUpdatesUpdatesExistingObjectAndContinuesBatch(t *testing.T)
 
 // TestPersistStoreUpdatesEmptyBatchIsNoop ensures an empty resync payload
 // (e.g. every object failed to unmarshal) does not acquire the shared lock
-// or touch the database.
+// or touch the database. The lock is held by the test itself before calling
+// persistStoreUpdates: if the empty-batch fast path were ever removed and it
+// tried to acquire dbHandler's lock, that call would block on this held lock
+// instead of the test passing silently.
 func TestPersistStoreUpdatesEmptyBatchIsNoop(t *testing.T) {
 	dbHandler := newTestDBHandler(t)
 	handler := &MeshsyncDataHandler{
 		dbHandler: dbHandler,
 		log:       newTestMeshsyncLogger(t),
 	}
+
+	dbHandler.Lock()
+	defer dbHandler.Unlock()
 
 	done := make(chan struct{})
 	go func() {
