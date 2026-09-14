@@ -120,38 +120,53 @@ func assertNoPayload(t *testing.T, ch <-chan []byte, name string) {
 	}
 }
 
-func TestGetAllEvents_MalformedCategoryFilter(t *testing.T) {
-	systemID := core.Uuid(uuid.Must(uuid.NewV4()))
-	provider := &eventsSpyProvider{DefaultLocalProvider: &models.DefaultLocalProvider{}}
-	h := &Handler{
-		SystemID: &systemID,
-		log:      newTestLogger(t),
-	}
-	user := &models.User{ID: uuid.Must(uuid.NewV4())}
-	req := httptest.NewRequest(http.MethodGet, "/api/system/events?category=not-json", nil)
-	rec := httptest.NewRecorder()
-
-	h.GetAllEvents(rec, req, nil, user, provider)
-
-	if rec.Code != http.StatusBadRequest {
-		t.Fatalf("expected 400 for malformed category filter, got %d (body=%q)", rec.Code, rec.Body.String())
-	}
-	if provider.getEventsCalled {
-		t.Fatal("GetEvents was called for a malformed category filter")
+func TestGetAllEvents_MalformedFilters(t *testing.T) {
+	tests := []struct {
+		name   string
+		query  string
+		filter string
+	}{
+		{name: "category", query: "category=not-json", filter: "event category filter"},
+		{name: "action", query: "action=not-json", filter: "event action filter"},
+		{name: "severity", query: "severity=not-json", filter: "event severity filter"},
+		{name: "actedUpon", query: "actedUpon=not-json", filter: "event acted upon filter"},
 	}
 
-	var response struct {
-		Error string `json:"error"`
-		Code  string `json:"code"`
-	}
-	if err := json.NewDecoder(rec.Body).Decode(&response); err != nil {
-		t.Fatalf("expected a JSON error response, got %v", err)
-	}
-	if !strings.Contains(response.Error, "event category filter") {
-		t.Fatalf("expected error to identify the event category filter, got %q", response.Error)
-	}
-	if response.Code != "meshery-server-1226" {
-		t.Fatalf("expected Meshery error code meshery-server-1226, got %q", response.Code)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			systemID := core.Uuid(uuid.Must(uuid.NewV4()))
+			provider := &eventsSpyProvider{DefaultLocalProvider: &models.DefaultLocalProvider{}}
+			h := &Handler{
+				SystemID: &systemID,
+				log:      newTestLogger(t),
+			}
+			user := &models.User{ID: uuid.Must(uuid.NewV4())}
+			req := httptest.NewRequest(http.MethodGet, "/api/system/events?"+tt.query, nil)
+			rec := httptest.NewRecorder()
+
+			h.GetAllEvents(rec, req, nil, user, provider)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("expected 400 for malformed %s filter, got %d (body=%q)", tt.name, rec.Code, rec.Body.String())
+			}
+			if provider.getEventsCalled {
+				t.Fatalf("GetEvents was called for a malformed %s filter", tt.name)
+			}
+
+			var response struct {
+				Error string `json:"error"`
+				Code  string `json:"code"`
+			}
+			if err := json.NewDecoder(rec.Body).Decode(&response); err != nil {
+				t.Fatalf("expected a JSON error response, got %v", err)
+			}
+			if !strings.Contains(response.Error, tt.filter) {
+				t.Fatalf("expected error to identify the %s, got %q", tt.filter, response.Error)
+			}
+			if response.Code != "meshery-server-1226" {
+				t.Fatalf("expected Meshery error code meshery-server-1226, got %q", response.Code)
+			}
+		})
 	}
 }
 
