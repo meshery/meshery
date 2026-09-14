@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -87,7 +88,7 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 
 // MakeRequest sends an HTTP request, validates the response, and returns the response or an error.
 func MakeRequest(req *http.Request) (*http.Response, error) {
-	client := &http.Client{}
+	client := httputil.DefaultHTTPClient
 
 	// check status code from request, checks for issues with auth token
 	resp, err := client.Do(req)
@@ -230,7 +231,7 @@ func UpdateAuthDetails(filepath string) error {
 		return err
 	}
 
-	client := &http.Client{}
+	client := httputil.DefaultHTTPClient
 	resp, err := client.Do(req)
 	if err != nil {
 		err = errors.Wrap(err, "error dispatching the request: ")
@@ -346,10 +347,11 @@ func InitiateLogin(mctlCfg *config.MesheryCtlConfig, option string) ([]byte, err
 func GetProviderInfo(mctCfg *config.MesheryCtlConfig) (map[string]Provider, error) {
 	res := map[string]Provider{}
 
-	resp, err := http.Get(mctCfg.GetBaseMesheryURL() + "/api/providers")
+	resp, err := httputil.DefaultHTTPClient.Get(mctCfg.GetBaseMesheryURL() + "/api/providers")
 	if err != nil {
 		return nil, err
 	}
+	defer SafeClose(resp.Body)
 
 	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
 		return nil, err
@@ -481,7 +483,7 @@ func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token
 		HttpOnly: true,
 	})
 
-	cli := &http.Client{}
+	cli := httputil.DefaultHTTPClient
 	resp, err := cli.Do(req)
 	if err != nil {
 		return nil, err

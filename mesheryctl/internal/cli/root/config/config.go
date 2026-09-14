@@ -12,6 +12,7 @@ import (
 
 	mesheryctllogger "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/logger"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
+	"github.com/meshery/meshery/server/models/httputil"
 
 	"net/http"
 	"time"
@@ -257,7 +258,7 @@ func (ctx *Context) ValidateVersion() error {
 	if err != nil {
 		return err
 	}
-	client := &http.Client{Timeout: 10 * time.Second}
+	client := httputil.NewHTTPClientWithTimeout(10 * time.Second)
 	resp, err := client.Do(req)
 	if err != nil {
 		return errors.Wrapf(err, "failed to make GET request to %s", url)

@@ -26,6 +26,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/httputil"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -132,7 +133,7 @@ mesheryctl version
 			return
 		}
 
-		client := &http.Client{Timeout: 10 * time.Second}
+		client := httputil.NewHTTPClientWithTimeout(10 * time.Second)
 		resp, err := client.Do(req)
 
 		if err != nil {

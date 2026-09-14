@@ -8,8 +8,10 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
+	"time"
 
 	meshkiterrors "github.com/meshery/meshkit/errors"
 )
@@ -548,6 +550,97 @@ func TestEncodeIntoResponseWriter_DemonstratesLatentBug(t *testing.T) {
 		return
 	}
 	t.Errorf("expected truncation or concatenation as proof of corruption; got a single clean object %+v with body=%q. The standard library may have changed — re-validate buffer-encode regression tests.", first, string(bodyBytes))
+}
+
+func TestHTTPClient_TimeoutsAndConstructors(t *testing.T) {
+	if DefaultHTTPClient == nil {
+		t.Fatal("expected DefaultHTTPClient to be initialized")
+	}
+	if DefaultHTTPClient.Timeout != 30*time.Second {
+		t.Errorf("expected DefaultHTTPClient timeout to be 30s, got %v", DefaultHTTPClient.Timeout)
+	}
+
+	cli := NewHTTPClient()
+	if cli == nil || cli.Timeout != 30*time.Second {
+		t.Errorf("expected NewHTTPClient timeout to be 30s, got %v", cli.Timeout)
+	}
+
+	customCli := NewHTTPClientWithTimeout(5 * time.Second)
+	if customCli == nil || customCli.Timeout != 5*time.Second {
+		t.Errorf("expected NewHTTPClientWithTimeout to set 5s timeout, got %v", customCli.Timeout)
+	}
+}
+
+func TestHTTPClient_RequestTimeoutBehavior(t *testing.T) {
+	// Behavioral test: verify an outbound HTTP GET request actually times out
+	// and returns a timeout error when the remote server fails to respond in time.
+	serverDone := make(chan struct{})
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		select {
+		case <-time.After(300 * time.Millisecond):
+			w.WriteHeader(http.StatusOK)
+		case <-r.Context().Done():
+		}
+		close(serverDone)
+	}))
+	defer server.Close()
+
+	client := NewHTTPClientWithTimeout(50 * time.Millisecond)
+
+	start := time.Now()
+	_, err := client.Get(server.URL)
+	duration := time.Since(start)
+
+	if err == nil {
+		t.Fatal("expected request to time out and return an error, got nil")
+	}
+
+	var urlErr *url.Error
+	if !errors.As(err, &urlErr) || !urlErr.Timeout() {
+		t.Errorf("expected timeout error (urlErr.Timeout() == true), got: %v", err)
+	}
+
+	if duration >= 300*time.Millisecond {
+		t.Errorf("expected request to abort early due to client timeout (~50ms), but it took %v", duration)
+	}
+
+	<-serverDone
+}
+
+func TestHTTPClient_PostTimeoutBehavior(t *testing.T) {
+	// Behavioral test: verify an outbound HTTP POST request actually times out
+	// and returns a timeout error when the remote server hangs.
+	serverDone := make(chan struct{})
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		select {
+		case <-time.After(300 * time.Millisecond):
+			w.WriteHeader(http.StatusOK)
+		case <-r.Context().Done():
+		}
+		close(serverDone)
+	}))
+	defer server.Close()
+
+	client := NewHTTPClientWithTimeout(50 * time.Millisecond)
+
+	start := time.Now()
+	_, err := client.Post(server.URL, "application/json", strings.NewReader(`{"key":"value"}`))
+	duration := time.Since(start)
+
+	if err == nil {
+		t.Fatal("expected POST request to time out and return an error, got nil")
+	}
+
+	var urlErr *url.Error
+	if !errors.As(err, &urlErr) || !urlErr.Timeout() {
+		t.Errorf("expected timeout error (urlErr.Timeout() == true), got: %v", err)
+	}
+
+	if duration >= 300*time.Millisecond {
+		t.Errorf("expected POST request to abort early due to client timeout (~50ms), but took %v", duration)
+	}
+
+	<-serverDone
 }
 
 // TestWriteMeshkitError_EmitsCauseAndRemediationAsArrays pins the wire contract

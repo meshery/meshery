@@ -3,7 +3,6 @@ package utils
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"os/exec"
 	"regexp"
 	"strconv"
@@ -11,6 +10,7 @@ import (
 	"time"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/server/models/httputil"
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/pkg/errors"
 
@@ -146,7 +146,7 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 	urlTest := urlEndpoint + "/api/system/version"
 
 	// Checking if Meshery is running with the URL obtained
-	resp, err := http.Get(urlTest)
+	resp, err := httputil.DefaultHTTPClient.Get(urlTest)
 	if err != nil {
 		Log.Infof("Meshery endpoint from current context is not reachable using the URL: %s\n", urlTest)
 		Log.Debugf("Error while reaching Meshery endpoint: %v\n", err)
