@@ -129,7 +129,12 @@ vi.mock('@sistent/sistent', async () => {
     // This suite exercises the create flow, not authorization: grant every
     // capability so the permission gates never mask the behaviour under test.
     useHasPermission: () => true,
-    Modal: ({ children, open }: any) => (open ? <div>{children}</div> : null),
+    Modal: ({ children, open, title }: any) =>
+      open ? (
+        <div data-testid="sistent-modal" aria-label={title}>
+          {children}
+        </div>
+      ) : null,
     ModalBody: ({ children }: any) => <div>{children}</div>,
     ModalFooter: ({ children }: any) => <div>{children}</div>,
     TransferList: () => null,
@@ -266,6 +271,22 @@ describe('Environments toolbar', () => {
 
     const searchInput = within(toolbar).getByPlaceholderText('Search by name');
     expect(searchInput).toBeInTheDocument();
+  });
+
+  it('opens the create environment modal when clicking the create button in the toolbar', async () => {
+    const user = userEvent.setup();
+    renderEnvironments();
+
+    const toolbar = await screen.findByTestId('data-table-toolbar');
+    const createButton = within(toolbar).getByRole('button', { name: 'Create environment' });
+
+    expect(screen.queryByTestId('sistent-modal')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('submit-environment')).not.toBeInTheDocument();
+
+    await user.click(createButton);
+
+    expect(await screen.findByTestId('sistent-modal')).toBeInTheDocument();
+    expect(screen.getByTestId('submit-environment')).toBeInTheDocument();
   });
 
   it('renders bulk operations with selection count and delete button when an environment is selected', async () => {

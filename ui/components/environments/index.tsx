@@ -10,7 +10,7 @@ import {
   DeleteIcon,
   ErrorBoundary,
   Grid2,
-  Modal as SisitentModal,
+  Modal as SistentModal,
   ModalBody,
   ModalFooter,
   NoSsr,
@@ -601,7 +601,7 @@ const Environments = () => {
             />
           )}
           {(canCreateEnv || canEditEnv) && environmentModal.open && (
-            <SisitentModal
+            <SistentModal
               open={environmentModal.open}
               closeModal={handleEnvironmentModalClose}
               title={actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'}
@@ -619,9 +619,9 @@ const Environments = () => {
                 handleClose={handleEnvironmentModalClose}
                 isLoading={isCreatingEnvironment || isUpdatingEnvironment}
               />
-            </SisitentModal>
+            </SistentModal>
           )}
-          <SisitentModal
+          <SistentModal
             open={assignConnectionModal}
             closeModal={handleonAssignConnectionModalClose}
             title={`${connectionAssignEnv.name} Resources`}
@@ -672,7 +672,7 @@ const Environments = () => {
                 }}
               />
             </ModalFooter>
-          </SisitentModal>
+          </SistentModal>
           <_PromptComponent ref={modalRef} />
         </>
       ) : (
