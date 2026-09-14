@@ -198,7 +198,7 @@ func TestGetComponentMetadataWithNilModel(t *testing.T) {
 		}()
 
 		// Call with non-existent apiVersion and kind
-		data, model := handler.getComponentMetadata("non/existent/v1", "NonExistentKind")
+		data, model := handler.getComponentMetadata(handler.dbHandler.DB, "non/existent/v1", "NonExistentKind")
 
 		// Verify that it returns without panicking
 		if data == nil {
@@ -221,7 +221,7 @@ func TestGetComponentMetadataWithNilModel(t *testing.T) {
 
 		// This test would require setting up proper test data with models
 		// For now, we just verify it doesn't panic with non-existent records
-		data, model := handler.getComponentMetadata("v1", "Pod")
+		data, model := handler.getComponentMetadata(handler.dbHandler.DB, "v1", "Pod")
 
 		if data == nil {
 			t.Error("Expected data to be non-nil")
@@ -244,7 +244,7 @@ func TestGetComponentMetadataWithoutRegistryTablesFallsBackSilently(t *testing.T
 		log:       testLogger,
 	}
 
-	data, model := handler.getComponentMetadata("v1", "Pod")
+	data, model := handler.getComponentMetadata(handler.dbHandler.DB, "v1", "Pod")
 
 	if data == nil {
 		t.Fatal("expected fallback metadata to be returned")
@@ -302,7 +302,7 @@ func TestGetComponentMetadataReturnsAssociatedModelName(t *testing.T) {
 		log:       mockLogger,
 	}
 
-	data, modelName := handler.getComponentMetadata("v1", "Pod")
+	data, modelName := handler.getComponentMetadata(handler.dbHandler.DB, "v1", "Pod")
 	if modelName != "kubernetes" {
 		t.Fatalf("expected associated model name to be returned, got %q", modelName)
 	}

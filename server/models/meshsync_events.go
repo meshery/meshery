@@ -225,7 +225,7 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 	regQueue := GetMeshSyncRegistrationQueue()
 	switch event.EventType {
 	case broker.Add:
-		compMetadata, model := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
+		compMetadata, model := mh.getComponentMetadata(mh.dbHandler.DB, obj.APIVersion, obj.Kind)
 		obj.ComponentMetadata = utils.MergeMaps(obj.ComponentMetadata, compMetadata)
 		obj.Model = model
 		result := mh.dbHandler.Create(&obj)
@@ -238,7 +238,7 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 			}
 		}
 	case broker.Update:
-		compMetadata, model := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
+		compMetadata, model := mh.getComponentMetadata(mh.dbHandler.DB, obj.APIVersion, obj.Kind)
 		obj.ComponentMetadata = utils.MergeMaps(obj.ComponentMetadata, compMetadata)
 		obj.Model = model
 		result := mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&obj)
@@ -285,7 +285,7 @@ func (mh *MeshsyncDataHandler) persistStoreUpdates(objects []meshsyncmodel.Kuber
 		for i := range objects {
 			object := &objects[i]
 
-			compMetadata, model := mh.getComponentMetadata(object.APIVersion, object.Kind)
+			compMetadata, model := mh.getComponentMetadata(tx, object.APIVersion, object.Kind)
 			object.ComponentMetadata = utils.MergeMaps(object.ComponentMetadata, compMetadata)
 			object.Model = model
 
@@ -360,7 +360,13 @@ func (mh *MeshsyncDataHandler) requestMeshsyncStore() error {
 
 // Returns metadata for the component identified by apiVersion and kind.
 // If the component does not exist in the registry, default metadata for k8s component is returned.
-func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind string) (data map[string]interface{}, model string) {
+// db is the executor to query through: mh.dbHandler outside a transaction,
+// or the active tx when called from within one. Querying through mh.dbHandler
+// while a transaction is already open on the same dbHandler risks the query
+// being served by a different underlying connection than the one the
+// transaction holds, which for an in-memory SQLite database means a
+// different, empty database rather than merely a consistency race.
+func (mh *MeshsyncDataHandler) getComponentMetadata(db *gorm.DB, apiVersion string, kind string) (data map[string]interface{}, model string) {
 	componentDef := component.ComponentDefinition{} // Retrieve the entire component
 	defer func() {
 		data, _ = utils.MarshalAndUnmarshal[component.ComponentDefinition, map[string]interface{}](componentDef)
@@ -370,7 +376,7 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 	}()
 
 	// Query the database for the complete component definition.
-	result := mh.dbHandler.Model(component.ComponentDefinition{}).
+	result := db.Model(component.ComponentDefinition{}).
 		Where("component->>'version' = ? AND component->>'kind' = ?", apiVersion, kind).
 		First(&componentDef)
 
@@ -391,7 +397,7 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 
 	if componentDef.ModelID != nil {
 		modelDef := modelv1beta1.ModelDefinition{}
-		result = mh.dbHandler.Session(&gorm.Session{NewDB: true}).Model(&modelv1beta1.ModelDefinition{}).
+		result = db.Session(&gorm.Session{NewDB: true}).Model(&modelv1beta1.ModelDefinition{}).
 			Where("id = ?", componentDef.ModelID).
 			First(&modelDef)
 		if result.Error == nil {
