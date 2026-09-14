@@ -1163,22 +1163,23 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 		// Update the existing credential with the new auth/cluster data
 		// First, fetch the existing credential to preserve its required fields
 		existingCred, _, credErr := l.GetCredentialByID(token, *connection.CredentialID)
-		if credErr == nil {
-			// Preserve the existing credential's properties and update only the secret
-			updatedCredential := &Credential{
-				ID:     *connection.CredentialID,
-				Secret: conn.CredentialSecret,
-				UserId: existingCred.UserId, // Preserve the UserId for the update constraint
-				Name:   existingCred.Name,   // Preserve other fields
-				Type:   existingCred.Type,
-			}
-			// Use UpdateUserCredential to update the credential via the remote provider
-			_, updateErr := l.UpdateUserCredential(nil, updatedCredential)
-			if updateErr != nil {
-				// Log the error but don't fail the entire save operation
-				// The connection was still saved successfully, just the credential refresh failed
-				l.Log.Warn(fmt.Errorf("credential refresh failed for connection %s: %v", connection.ID, updateErr))
-			}
+		if credErr != nil {
+			// Return error if we can't fetch the existing credential
+			return connections.Connection{}, fmt.Errorf("failed to fetch credential for refresh: %w", credErr)
+		}
+		// Preserve the existing credential's properties and update only the secret
+		updatedCredential := &Credential{
+			ID:     *connection.CredentialID,
+			Secret: conn.CredentialSecret,
+			UserId: existingCred.UserId, // Preserve the UserId for the update constraint
+			Name:   existingCred.Name,   // Preserve other fields
+			Type:   existingCred.Type,
+		}
+		// Use UpdateUserCredential to update the credential via the remote provider
+		_, updateErr := l.UpdateUserCredential(nil, updatedCredential)
+		if updateErr != nil {
+			// Return error if credential update fails
+			return connections.Connection{}, fmt.Errorf("failed to update credential for refresh: %w", updateErr)
 		}
 	}
 

@@ -542,8 +542,14 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 					Where("id = ?", legacyConn.ID).
 					Update("id", connID).Error
 				if updateErr != nil {
-					// Log the error but continue - the connection will be saved with a new ID
-					// This is a migration failure, not a critical failure
+					// Return the migration error to prevent duplicate creation
+					return connections.Connection{}, ErrDBPut(updateErr)
+				}
+				// Update environment_connection_mappings to reference the new connection ID
+				updateMappingsErr := l.GetGenericPersister().Exec("UPDATE environment_connection_mappings SET connection_id = ? WHERE connection_id = ?", connID, legacyConn.ID).Error
+				if updateMappingsErr != nil {
+					// Return the error - this is a data integrity issue
+					return connections.Connection{}, ErrDBPut(updateMappingsErr)
 				}
 				// After migration, connID remains the new stable ID
 				// The normal save flow below will find the migrated connection by its new ID
@@ -603,18 +609,24 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 		// Update the existing credential with the new auth/cluster data
 		// First, fetch the existing credential to preserve its required fields
 		existingCred, _, credErr := l.GetCredentialByID("", *connectionCreated.CredentialID)
-		if credErr == nil {
-			// Preserve the existing credential's properties and update only the secret
-			updatedCredential := &Credential{
-				ID:     *connectionCreated.CredentialID,
-				Secret: conn.CredentialSecret,
-				UserId: existingCred.UserId, // Preserve the UserId for the update constraint
-				Name:   existingCred.Name,   // Preserve other fields
-				Type:   existingCred.Type,
-			}
-			// Use UpdateUserCredential to update the credential in the credentials table
-			// We pass nil for the http.Request parameter since this is a background operation
-			_, _ = l.UpdateUserCredential(nil, updatedCredential)
+		if credErr != nil {
+			// Return error if we can't fetch the existing credential
+			return connections.Connection{}, fmt.Errorf("failed to fetch credential for refresh: %w", credErr)
+		}
+		// Preserve the existing credential's properties and update only the secret
+		updatedCredential := &Credential{
+			ID:     *connectionCreated.CredentialID,
+			Secret: conn.CredentialSecret,
+			UserId: existingCred.UserId, // Preserve the UserId for the update constraint
+			Name:   existingCred.Name,   // Preserve other fields
+			Type:   existingCred.Type,
+		}
+		// Use UpdateUserCredential to update the credential in the credentials table
+		// We pass nil for the http.Request parameter since this is a background operation
+		_, updateErr := l.UpdateUserCredential(nil, updatedCredential)
+		if updateErr != nil {
+			// Return error if credential update fails
+			return connections.Connection{}, fmt.Errorf("failed to update credential for refresh: %w", updateErr)
 		}
 	}
 
