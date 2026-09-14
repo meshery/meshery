@@ -53,13 +53,6 @@
                   "subnetRef"
                 ]
               ],
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "subnetID"
-                ]
-              ],
               "patchStrategy": "replace"
             }
           }
@@ -83,13 +76,6 @@
               "version": ""
             },
             "patch": {
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "id"
-                ]
-              ],
               "mutatedRef": [
                 [
                   "displayName"
@@ -130,16 +116,7 @@
                 [
                   "configuration",
                   "spec",
-                  "subnetRefs",
-                  "_"
-                ]
-              ],
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "subnetIDs",
-                  "_"
+                  "subnetRefs"
                 ]
               ],
               "patchStrategy": "replace"
@@ -165,13 +142,6 @@
               "version": ""
             },
             "patch": {
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "id"
-                ]
-              ],
               "mutatedRef": [
                 [
                   "displayName"
@@ -212,16 +182,7 @@
                 [
                   "configuration",
                   "spec",
-                  "subnetRefs",
-                  "_"
-                ]
-              ],
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "subnetIDs",
-                  "_"
+                  "subnetRefs"
                 ]
               ],
               "patchStrategy": "replace"
@@ -247,13 +208,6 @@
               "version": ""
             },
             "patch": {
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "id"
-                ]
-              ],
               "mutatedRef": [
                 [
                   "displayName"
