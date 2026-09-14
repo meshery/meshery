@@ -81,8 +81,19 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
-		if len(args) != 5 {
-			return errors.New(utils.RegistryError("[ system, google sheet credential, sheet-id, models output path, imgs output path] are required\n\nUsage: \nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]\nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]\nRun 'mesheryctl registry publish --help'", "publish"))
+		// All systems require at least: system, credential, sheet-id, models-output-path.
+		if len(args) < 4 || len(args) > 5 {
+			return ErrPublishInvalidArgs("[ system, google sheet credential, sheet-id, models output path ] are required. [ imgs output path ] is optional for 'meshery' but required for 'remote-provider' and 'website'.\n\nUsage: \nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]\nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]\nRun 'mesheryctl registry publish --help'")
+		}
+
+		// remote-provider and website always write icons, so imgs-output-path is mandatory.
+		sys := args[0]
+		if sys != "meshery" && sys != "remote-provider" && sys != "website" {
+			return ErrPublishInvalidArgs(fmt.Sprintf("unknown system: '%s'. Supported systems are 'meshery', 'remote-provider', and 'website'\n\nRun 'mesheryctl registry publish --help' for usage instructions", sys))
+		}
+
+		if (sys == "remote-provider" || sys == "website") && (len(args) < 5 || args[4] == "") {
+			return ErrPublishInvalidArgs(fmt.Sprintf("imgs-output-path is required (and cannot be empty) for the '%s' system\n\nUsage: \nmesheryctl registry publish %s [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]\nRun 'mesheryctl registry publish --help'", sys, sys))
 		}
 
 		return nil
@@ -93,7 +104,9 @@ mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		googleSheetCredential = args[1]
 		sheetID = args[2]
 		modelsOutputPath = args[3]
-		imgsOutputPath = args[4]
+		if len(args) == 5 {
+			imgsOutputPath = args[4]
+		}
 
 		srv, err := meshkitUtils.NewSheetSRV(googleSheetCredential)
 		if err != nil {

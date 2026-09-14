@@ -2108,6 +2108,15 @@
         "short_description": "Selected model not found",
         "probable_cause": "The model name does not match any entry in the CSV's \\\"model\\\" column, or contains a typo",
         "suggested_remediation": "Check the model name against the \\\"model\\\" column in your Models CSV, or omit --model to generate all eligible models"
+      },
+      "1255": {
+        "name": "ErrPublishInvalidArgsCode",
+        "code": "1255",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "invalid arguments for registry publish",
+        "probable_cause": "Incorrect number of arguments or missing mandatory arguments",
+        "suggested_remediation": "The first four arguments (system, google sheet credential, sheet-id, models output path) are required for all systems. The 5th argument (imgs-output-path) is optional for the 'meshery' system, but mandatory for 'remote-provider' and 'website'. Run 'mesheryctl registry publish --help' for usage instructions."
       }
     }
   }
