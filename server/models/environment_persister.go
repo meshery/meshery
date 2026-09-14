@@ -204,6 +204,15 @@ func (ep *EnvironmentPersister) DeleteEnvironmentByID(environmentID core.Uuid) (
 
 // AddConnectionToEnvironment adds a connection to an environment
 func (ep *EnvironmentPersister) AddConnectionToEnvironment(environmentID, connectionID core.Uuid) ([]byte, error) {
+	var existingMapping environment.EnvironmentConnectionMapping
+	if err := ep.DB.Where("environment_id = ? AND connection_id = ?", environmentID, connectionID).First(&existingMapping).Error; err == nil {
+		envJSON, err := json.Marshal(existingMapping)
+		if err != nil {
+			return nil, err
+		}
+		return envJSON, nil
+	}
+
 	envConMapping := environment.EnvironmentConnectionMapping{
 		ConnectionID:  &connectionID,
 		EnvironmentID: &environmentID,
@@ -281,6 +290,13 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uui
 	query.Count(&count)
 
 	var connectionsFetched []*connections.Connection
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "all"
+	}
+
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, err
