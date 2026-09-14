@@ -125,7 +125,10 @@ mesheryctl design deploy -f [filepath] -s [source type]
 				patternFile, _ = patterns.GetPatternFormat(response.Patterns[0].PatternFile)
 			} else {
 				// Multiple patterns with same name
-				index = multiplepatternsConfirmation(response.Patterns)
+				index, err = multiplepatternsConfirmation(response.Patterns, patternName)
+				if err != nil {
+					return err
+				}
 				patternFile, _ = patterns.GetPatternFormat(response.Patterns[index].PatternFile)
 			}
 		} else if designDeployFlags.SkipSave {
@@ -181,7 +184,14 @@ mesheryctl design deploy -f [filepath] -s [source type]
 	},
 }
 
-func multiplepatternsConfirmation(profiles []models.MesheryPattern) int {
+func multiplepatternsConfirmation(profiles []models.MesheryPattern, designName string) (int, error) {
+	// Ask before printing anything. mesheryctl already knows whether a human
+	// can answer, and listing every match only to fail afterwards is noise in a
+	// CI log.
+	if !utils.IsInteractiveTerminal() {
+		return 0, ErrDesignSelectNotInteractive(designName, len(profiles))
+	}
+
 	reader := bufio.NewReader(os.Stdin)
 
 	patternFileByt, _ := yaml.Marshal(designFile)
@@ -199,18 +209,29 @@ func multiplepatternsConfirmation(profiles []models.MesheryPattern) int {
 		fmt.Printf("Enter the index of design: ")
 		response, err := reader.ReadString('\n')
 		if err != nil {
-			utils.Log.Info(err)
+			// Reached with a terminal attached but the stream closed under
+			// us - Ctrl-D, or the terminal going away mid-prompt. Retrying
+			// cannot help, because every further read returns the same error,
+			// and falling through would select whichever design happens to be
+			// first.
+			return 0, ErrDesignSelectNotInteractive(designName, len(profiles))
 		}
+
 		response = strings.ToLower(strings.TrimSpace(response))
+
 		index, err := strconv.Atoi(response)
 		if err != nil {
-			utils.Log.Info(err)
+			// A real user typed something unparseable; asking again is useful.
+			utils.Log.Info("Please enter the number shown next to the design you want")
+			continue
 		}
+
 		if index < 0 || index >= len(profiles) {
-			utils.Log.Info("Invalid index")
-		} else {
-			return index
+			utils.Log.Infof("Invalid index; enter a number between 0 and %d", len(profiles)-1)
+			continue
 		}
+
+		return index, nil
 	}
 }
 

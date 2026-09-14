@@ -104,7 +104,10 @@ mesheryctl design apply [design-name]
 				designFile = response.Patterns[0].PatternFile
 			} else {
 				// Multiple patterns with same name
-				index = multiplePatternsConfirmation(response.Patterns)
+				index, err = multiplePatternsConfirmation(response.Patterns, patternName)
+				if err != nil {
+					return err
+				}
 				designFile = response.Patterns[index].PatternFile
 			}
 		} else {
@@ -264,7 +267,14 @@ mesheryctl design apply [design-name]
 	},
 }
 
-func multiplePatternsConfirmation(profiles []models.MesheryPattern) int {
+func multiplePatternsConfirmation(profiles []models.MesheryPattern, designName string) (int, error) {
+	// Ask before printing anything. mesheryctl already knows whether a human
+	// can answer, and listing every match only to fail afterwards is noise in a
+	// CI log.
+	if !utils.IsInteractiveTerminal() {
+		return 0, ErrDesignSelectNotInteractive(designName, len(profiles))
+	}
+
 	reader := bufio.NewReader(os.Stdin)
 
 	for index, a := range profiles {
@@ -280,18 +290,25 @@ func multiplePatternsConfirmation(profiles []models.MesheryPattern) int {
 		fmt.Printf("Enter the index of profile: ")
 		response, err := reader.ReadString('\n')
 		if err != nil {
-			utils.Log.Warn(err)
+			// See the note in deploy.go: the stream closing under a live
+			// terminal still has to stop rather than apply an unchosen design.
+			return 0, ErrDesignSelectNotInteractive(designName, len(profiles))
 		}
+
 		response = strings.ToLower(strings.TrimSpace(response))
+
 		index, err := strconv.Atoi(response)
 		if err != nil {
-			utils.Log.Info(err)
+			utils.Log.Info("Please enter the number shown next to the design you want")
+			continue
 		}
+
 		if index < 0 || index >= len(profiles) {
-			utils.Log.Info("Invalid index")
-		} else {
-			return index
+			utils.Log.Infof("Invalid index; enter a number between 0 and %d", len(profiles)-1)
+			continue
 		}
+
+		return index, nil
 	}
 }
 
