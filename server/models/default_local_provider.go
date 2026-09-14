@@ -537,19 +537,26 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 				First(&legacyConn).Error
 			if err == nil {
 				// Found a legacy in-cluster connection - migrate it to the new ID
-				// Update the connection ID to the new stable ID
-				updateErr := l.GetGenericPersister().Model(&connections.Connection{}).
-					Where("id = ?", legacyConn.ID).
-					Update("id", connID).Error
-				if updateErr != nil {
+				// Use a transaction to ensure atomic updates to both connections.id
+				// and environment_connection_mappings.connection_id for data integrity
+				transactionErr := l.GetGenericPersister().Transaction(func(tx *gorm.DB) error {
+					// Update environment_connection_mappings to reference the new connection ID
+					updateMappingsErr := tx.Exec("UPDATE environment_connection_mappings SET connection_id = ? WHERE connection_id = ?", connID, legacyConn.ID).Error
+					if updateMappingsErr != nil {
+						return updateMappingsErr
+					}
+					// Update the connection ID to the new stable ID
+					updateErr := tx.Model(&connections.Connection{}).
+						Where("id = ?", legacyConn.ID).
+						Update("id", connID).Error
+					if updateErr != nil {
+						return updateErr
+					}
+					return nil
+				})
+				if transactionErr != nil {
 					// Return the migration error to prevent duplicate creation
-					return connections.Connection{}, ErrDBPut(updateErr)
-				}
-				// Update environment_connection_mappings to reference the new connection ID
-				updateMappingsErr := l.GetGenericPersister().Exec("UPDATE environment_connection_mappings SET connection_id = ? WHERE connection_id = ?", connID, legacyConn.ID).Error
-				if updateMappingsErr != nil {
-					// Return the error - this is a data integrity issue
-					return connections.Connection{}, ErrDBPut(updateMappingsErr)
+					return connections.Connection{}, ErrDBPut(transactionErr)
 				}
 				// After migration, connID remains the new stable ID
 				// The normal save flow below will find the migrated connection by its new ID

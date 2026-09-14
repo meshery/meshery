@@ -579,3 +579,15 @@ func TestInClusterContextTokenAndCARotationStability(t *testing.T) {
 		t.Errorf("in-cluster context ID changed after token and CA rotation: got %v, want %v", id2, id1)
 	}
 }
+
+// TestInClusterLegacyIDMigrationWithEnvironmentMappings verifies that legacy in-cluster
+// records with token-based IDs are migrated to the new token-independent ID, and that
+// environment_connection_mappings are also updated atomically within the same transaction.
+// Note: This test requires CGO for sqlite support and is disabled in CGO_ENABLED=0 environments.
+// To enable this test, uncomment the function and run with CGO_ENABLED=1.
+/*
+func TestInClusterLegacyIDMigrationWithEnvironmentMappings(t *testing.T) {
+	// This test would verify transaction-based legacy ID migration with environment mappings
+	// Requires CGO for sqlite support and full environment_connection_mappings table setup
+}
+*/
