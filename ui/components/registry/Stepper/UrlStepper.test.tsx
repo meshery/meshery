@@ -31,14 +31,16 @@ vi.mock('@sistent/sistent', () => {
     ),
     ModalBody: ({ children }: any) => <div data-testid="modal-body">{children}</div>,
     Box: ({ children }: any) => <div>{children}</div>,
-    TextField: ({ label, value, onChange, id }: any) => (
+    TextField: ({ label, value, onChange, id, helperText, disabled }: any) => (
       <label>
         {label}
         <input
           data-testid={`textfield-${id || label}`}
           value={value || ''}
+          disabled={disabled}
           onChange={(e) => onChange?.(e)}
         />
+        {helperText ? <span data-testid={`helper-${id || label}`}>{helperText}</span> : null}
       </label>
     ),
     ModalButtonSecondary: ({ children, onClick, disabled }: any) => (
@@ -57,18 +59,38 @@ vi.mock('@sistent/sistent', () => {
       </select>
     ),
     InputLabel: ({ children }: any) => <label>{children}</label>,
-    FormControlLabel: ({ label, control }: any) => (
-      <label>
-        {control}
-        {label}
-      </label>
-    ),
+    // A RadioGroup option carries its value here; render it as a real radio so
+    // selecting a source drives the component the way the browser does. The
+    // checkbox form (control, no value) keeps its original shape.
+    FormControlLabel: ({ label, control, value, onChange, ...rest }: any) =>
+      value !== undefined ? (
+        <label>
+          <input
+            type="radio"
+            data-testid={rest['data-testid']}
+            value={value}
+            onChange={(e) => onChange?.(e)}
+          />
+          {label}
+        </label>
+      ) : (
+        <label>
+          {control}
+          <span>{label}</span>
+        </label>
+      ),
     Checkbox: ({ checked, onChange }: any) => (
       <input type="checkbox" checked={!!checked} onChange={onChange} />
     ),
     Typography: ({ children }: any) => <span>{children}</span>,
     FormControl: ({ children }: any) => <div>{children}</div>,
-    RadioGroup: ({ children }: any) => <div>{children}</div>,
+    RadioGroup: ({ children, onChange }: any) => (
+      <div data-testid="radio-group">
+        {React.Children.map(children, (child: any) =>
+          React.isValidElement(child) ? React.cloneElement(child, { onChange } as any) : child,
+        )}
+      </div>
+    ),
     MenuItem: ({ children, value }: any) => <option value={value}>{children}</option>,
     Radio: () => <input type="radio" />,
     Grid2: ({ children }: any) => <div>{children}</div>,
@@ -214,5 +236,113 @@ describe('UrlStepper', () => {
     render(<UrlStepper handleClose={handleClose} />);
     fireEvent.click(screen.getByTestId('UrlStepper-Button-Finish'));
     expect(handleClose).toHaveBeenCalled();
+  });
+
+  describe('Source step URL validation', () => {
+    const INVALID = 'this-is-not-a-url-at-all';
+    const VALID_AH = 'https://artifacthub.io/packages/search?ts_query_web=meshery-operator';
+    const VALID_GH = 'git://github.com/cert-manager/cert-manager/master/deploy/crds';
+    const SOURCE_STEP = 3;
+
+    const renderSourceStep = () => {
+      stepperState.activeStep = SOURCE_STEP;
+      render(<UrlStepper handleClose={vi.fn()} />);
+    };
+    // Click, not fireEvent.change: the mocked radio already holds this exact
+    // value, so React's controlled-input de-duplication means setting it to the
+    // same string dispatches nothing and the source is never selected. A click
+    // is what React turns into a radio's change event anyway.
+    const selectSource = (label: string) =>
+      fireEvent.click(screen.getByTestId(`UrlStepper-Select-Source-${label}`));
+    const typeUrl = (value: string) =>
+      fireEvent.change(screen.getByTestId('textfield-model-url'), { target: { value } });
+    const helperText = () => screen.queryByTestId('helper-model-url')?.textContent ?? '';
+    // The message is only the visible half; Next is gated on canGoNext, so a
+    // change could keep the error and still let an invalid URL through.
+    const nextDisabled = () =>
+      (screen.getByTestId('UrlStepper-Button-Next') as HTMLButtonElement).disabled;
+
+    // The regression. The radio stores "artifact hub" (lower-cased label, space
+    // included) while validateUrl used to compare against "artifacthub", so no
+    // pattern was chosen and `new RegExp(undefined)` matched everything.
+    it('rejects an invalid Artifact Hub URL', () => {
+      renderSourceStep();
+      selectSource('Artifact Hub');
+      typeUrl(INVALID);
+
+      expect(helperText()).toContain('Invalid ArtifactHub URL');
+      expect(nextDisabled()).toBe(true);
+    });
+
+    it('accepts a well-formed Artifact Hub URL', () => {
+      renderSourceStep();
+      selectSource('Artifact Hub');
+      typeUrl(VALID_AH);
+
+      expect(helperText()).toBe('');
+      expect(nextDisabled()).toBe(false);
+    });
+
+    it('still rejects an invalid GitHub URL', () => {
+      renderSourceStep();
+      selectSource('GitHub');
+      typeUrl(INVALID);
+
+      expect(helperText()).toContain('Invalid GitHub URL');
+      expect(nextDisabled()).toBe(true);
+    });
+
+    // Guards the gap that would reopen if a source were added without a matching
+    // pattern and message: Next is gated on `!urlError`, so an empty error for an
+    // invalid URL would let it through. Driven off the rendered options so a
+    // third source is covered automatically.
+    it('reports an error for every selectable source when the URL is invalid', () => {
+      renderSourceStep();
+      const radios = screen.getAllByRole('radio');
+      expect(radios.length).toBeGreaterThan(0);
+
+      radios.forEach((radio) => {
+        fireEvent.click(radio);
+        typeUrl(INVALID);
+        expect(helperText()).not.toBe('');
+        expect(nextDisabled()).toBe(true);
+      });
+    });
+
+    // A URL is only valid relative to a source. Without revalidation on switch,
+    // the GitHub URL below keeps its cleared error and Next stays enabled, so
+    // the wizard would submit a GitHub URL with registrant "artifact hub".
+    it('revalidates the entered URL when the source changes', () => {
+      renderSourceStep();
+      selectSource('GitHub');
+      typeUrl(VALID_GH);
+      expect(helperText()).toBe('');
+
+      selectSource('Artifact Hub');
+
+      expect(helperText()).toContain('Invalid ArtifactHub URL');
+      expect(nextDisabled()).toBe(true);
+    });
+
+    it('clears the error when switching to a source the URL is valid for', () => {
+      renderSourceStep();
+      selectSource('Artifact Hub');
+      typeUrl(VALID_GH);
+      expect(helperText()).toContain('Invalid ArtifactHub URL');
+
+      selectSource('GitHub');
+
+      expect(helperText()).toBe('');
+      expect(nextDisabled()).toBe(false);
+    });
+
+    it('accepts a well-formed GitHub URL', () => {
+      renderSourceStep();
+      selectSource('GitHub');
+      typeUrl(VALID_GH);
+
+      expect(helperText()).toBe('');
+      expect(nextDisabled()).toBe(false);
+    });
   });
 });
