@@ -422,3 +422,106 @@ func TestSaveWorkspaceHandler_SetsContentTypeOnSuccess(t *testing.T) {
 		t.Errorf("Content-Type = %q, want application/json", ct)
 	}
 }
+
+func (m *workspaceFailingProvider) GetEnvironmentsOfWorkspace(_ *http.Request, _, _, _, _, _, _ string) ([]byte, error) {
+	return nil, m.err
+}
+
+func (m *workspaceFailingProvider) GetDesignsOfWorkspace(_ *http.Request, _, _, _, _, _, _ string, _ []string) ([]byte, error) {
+	return nil, m.err
+}
+
+func (m *workspaceFailingProvider) GetViewsOfWorkspace(_ *http.Request, _, _, _, _, _, _ string) ([]byte, error) {
+	return nil, m.err
+}
+
+func (m *workspaceFailingProvider) GetTeamsOfWorkspace(_ *http.Request, _, _, _, _, _, _ string) ([]byte, error) {
+	return nil, m.err
+}
+
+// TestWorkspaceListingHandlers_FilterErrorIs400 pins the status half of the
+// two-grammar filter fix. A `filter` the endpoint cannot decode is the
+// caller's mistake, so all four workspace listings must answer 400 - not the
+// 502 providerStatus falls back to, which would blame a remote provider that
+// was never asked (and on the local provider was never involved at all).
+func TestWorkspaceListingHandlers_FilterErrorIs400(t *testing.T) {
+	handlers := map[string]struct {
+		call     func(*Handler, http.ResponseWriter, *http.Request, models.Provider)
+		wantCode string
+	}{
+		"environments": {
+			call: func(h *Handler, w http.ResponseWriter, r *http.Request, p models.Provider) {
+				h.GetEnvironmentsOfWorkspaceHandler(w, r, nil, nil, p)
+			},
+			wantCode: ErrWorkspaceResourceCode,
+		},
+		"designs": {
+			call: func(h *Handler, w http.ResponseWriter, r *http.Request, p models.Provider) {
+				h.GetDesignsOfWorkspaceHandler(w, r, nil, nil, p)
+			},
+			wantCode: ErrWorkspaceResourceCode,
+		},
+		"views": {
+			call: func(h *Handler, w http.ResponseWriter, r *http.Request, p models.Provider) {
+				h.GetViewsOfWorkspaceHandler(w, r, nil, nil, p)
+			},
+			wantCode: ErrWorkspaceResourceCode,
+		},
+		"teams": {
+			call: func(h *Handler, w http.ResponseWriter, r *http.Request, p models.Provider) {
+				h.GetTeamsOfWorkspaceHandler(w, r, nil, nil, p)
+			},
+			wantCode: ErrWorkspaceResourceCode,
+		},
+	}
+
+	cases := []struct {
+		name        string
+		providerErr error
+		wantStatus  int
+	}{
+		{
+			name:        "malformed filter is a client error",
+			providerErr: models.ErrInvalidWorkspaceFilter(errors.New(`"assigned" must be a boolean, got a string`)),
+			wantStatus:  http.StatusBadRequest,
+		},
+		{
+			name:        "non-JSON filter is a client error",
+			providerErr: models.ErrInvalidWorkspaceFilter(errors.New("invalid character 'o' looking for beginning of value")),
+			wantStatus:  http.StatusBadRequest,
+		},
+		{
+			// Every other failure keeps the pre-existing behaviour.
+			name:        "provider 403 still surfaces as 403",
+			providerErr: models.ErrFetch(errors.New("forbidden"), "Workspace", http.StatusForbidden),
+			wantStatus:  http.StatusForbidden,
+		},
+		{
+			name:        "unreachable provider still defaults to 502",
+			providerErr: models.ErrUnreachableRemoteProvider(errors.New("dial tcp: connection refused")),
+			wantStatus:  http.StatusBadGateway,
+		},
+	}
+
+	for resource, hc := range handlers {
+		for _, tc := range cases {
+			t.Run(resource+"/"+tc.name, func(t *testing.T) {
+				h := newTestHandler(t, map[string]models.Provider{}, "")
+				provider := newWorkspaceFailingProvider(tc.providerErr)
+
+				req := httptest.NewRequest(http.MethodGet, "/api/workspaces/ws-1/"+resource+"?filter=%7B%22assigned%22%3A%22false%22%7D", nil)
+				req = mux.SetURLVars(req, map[string]string{"id": "ws-1"})
+				rec := httptest.NewRecorder()
+
+				hc.call(h, rec, req, provider)
+
+				if rec.Code != tc.wantStatus {
+					t.Fatalf("status = %d, want %d (body=%q)", rec.Code, tc.wantStatus, rec.Body.String())
+				}
+				if decoded := decodeErrorBody(t, rec.Body.Bytes()); decoded.Code != hc.wantCode {
+					t.Errorf("code = %q, want %q", decoded.Code, hc.wantCode)
+				}
+			})
+		}
+	}
+}
