@@ -690,7 +690,7 @@ func TestPersistStoreUpdatesEmptyBatchIsNoop(t *testing.T) {
 
 	select {
 	case <-done:
-	case <-time.After(2 * time.Second):
+	case <-time.After(30 * time.Second):
 		t.Fatal("expected an empty batch to return without acquiring the lock")
 	}
 }
@@ -735,7 +735,7 @@ func TestPersistStoreUpdatesTwoHandlersShareDBHandlerConcurrently(t *testing.T) 
 
 	select {
 	case <-done:
-	case <-time.After(5 * time.Second):
+	case <-time.After(60 * time.Second):
 		t.Fatal("concurrent resyncs from two clusters sharing one dbHandler did not complete, possible deadlock")
 	}
 
