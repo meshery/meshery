@@ -55,7 +55,9 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	// eventCategory :=
 	filter, err := getEventFilter(req)
 	if err != nil {
-		h.log.Warn(err)
+		h.log.Error(err)
+		writeMeshkitError(w, err, http.StatusBadRequest)
+		return
 	}
 	filter.Limit = limit
 	filter.Offset = offset
