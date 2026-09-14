@@ -813,6 +813,13 @@ func AskForInput(prompt string, allowed []string) string {
 // RunSelectPrompt displays a selection prompt with the given label and items.
 // Returns the selected index or ErrPromptCancelled if the user cancels (Ctrl+C/Ctrl+D).
 func RunSelectPrompt(label string, items []string) (int, error) {
+	if !IsInteractiveTerminal() {
+		return 0, ErrNoTerminalForPrompt(
+			"which item to select",
+			"Identify the item explicitly rather than choosing from a list",
+		)
+	}
+
 	prompt := promptui.Select{
 		Label: label,
 		Items: items,
