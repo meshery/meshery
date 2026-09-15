@@ -1696,7 +1696,7 @@ func (l *DefaultLocalProvider) DeleteUserCredential(_ *http.Request, credentialI
 }
 
 // GetOrganizations returns the list of organizations
-func (l *DefaultLocalProvider) GetOrganizations(_, page, pageSize, search, order, updatedAfter string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetOrganizations(_, page, pageSize, search, order, filter string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -1714,7 +1714,7 @@ func (l *DefaultLocalProvider) GetOrganizations(_, page, pageSize, search, order
 		return nil, ErrPageSize(err)
 	}
 
-	return l.OrganizationPersister.GetOrganizations(search, order, pg, pgs, updatedAfter)
+	return l.OrganizationPersister.GetOrganizations(search, order, pg, pgs, filter)
 }
 
 // GetUsersKeys returns the list of keys
