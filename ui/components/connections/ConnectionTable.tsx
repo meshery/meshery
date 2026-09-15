@@ -119,8 +119,12 @@ const ConnectionTable = ({
   );
 
   // Applied filters come from URL state so they survive navigation.
-  const statusFilter = tableState.filters.status || null;
-  const kindFilter = tableState.filters.kind || null;
+  const statusFilter =
+    tableState.filters.status && tableState.filters.status !== 'All'
+      ? tableState.filters.status
+      : null;
+  const kindFilter =
+    tableState.filters.kind && tableState.filters.kind !== 'All' ? tableState.filters.kind : null;
 
   const [rowData, setRowData] = useState<RowData | null>(null);
   const [rowsExpanded, setRowsExpanded] = useState<number[]>([]);
@@ -191,11 +195,14 @@ const ConnectionTable = ({
     [kindFilterOptions],
   );
 
-  const handleApplyFilter = () => {
+  // Use the filters argument — UniversalFilter Apply updates state in the same
+  // tick, so reading selectedFilters here would keep the previous filter.
+  const handleApplyFilter = (filters?: SelectedFilters) => {
+    const next = filters ?? selectedFilters;
     updateTableState({
       filters: {
-        status: selectedFilters.status === 'All' ? '' : selectedFilters.status,
-        kind: selectedFilters.kind === 'All' ? '' : selectedFilters.kind,
+        status: !next.status || next.status === 'All' ? '' : next.status,
+        kind: !next.kind || next.kind === 'All' ? '' : next.kind,
       },
       page: 0,
     });
