@@ -832,12 +832,20 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 	)
 
 	entityAdapter := RegistrantDataEntity{Data: cc}
+	if _, err := entityAdapter.PkgUnit(regErrorStore); err != nil {
+		h.log.Error(ErrRequestBody(err))
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
+	}
+
 	regHelper.Register(entityAdapter)
 
-	if len(regErrorStore.GetEntityRegErrors()) > 0 {
-		for _, regErr := range regErrorStore.GetEntityRegErrors() {
+	if regErrors := regErrorStore.GetEntityRegErrors(); len(regErrors) > 0 {
+		for _, regErr := range regErrors {
 			h.log.Error(regErr.Err)
 		}
+		writeMeshkitError(rw, regErrors[0].Err, http.StatusInternalServerError)
+		return
 	}
 }
 
