@@ -23,11 +23,7 @@ linkTitle: Documentation
         <li>🚀 <a href="{{< ref "installation/quick-start/index.md" >}}">Quick Start</a> , <a href="{{< ref "project/_index.md" >}}">Overview</a>, and <a href="{{< ref "project/FAQ.md" >}}">FAQs</a></li>
     </ul>
     <details>
-      <summary>
-        <p style="display:inline">
-          <a href="{{< ref "installation/_index.md" >}}" class="text-black">Installation</a>
-        </p>
-      </summary>
+      <summary>Installation</summary>
       <ul class="section-title">
         {{< section-pages section="installation" >}}
       </ul>
@@ -40,21 +36,13 @@ linkTitle: Documentation
         <div class="btn-primary">Concepts</div>
     </a>
     <details>
-      <summary>
-        <p style="display:inline">
-          <a href="{{< ref "concepts/logical/_index.md" >}}" class="text-black">Logical</a>
-        </p>
-      </summary>
+      <summary>Logical</summary>
       <ul>
         {{< section-pages section="concepts/logical" >}}
       </ul>
     </details>
     <details>
-      <summary>
-        <p style="display:inline">
-          <a href="{{< ref "concepts/architecture/_index.md" >}}" class="text-black section-title">Architectural</a>
-        </p>
-      </summary>
+      <summary>Architectural</summary>
       <ul>
         {{< section-pages section="concepts/architecture" >}}
       </ul>
@@ -70,61 +58,37 @@ linkTitle: Documentation
         <div class="btn-primary">Guides & Tutorials</div>
     </a>
     <details>
-      <summary>
-        <p style="display:inline">
-          <a href="{{< ref "guides/mesheryctl/_index.md" >}}" class="text-black">Using Meshery CLI Guides</a>
-        </p>
-      </summary>
+      <summary>Using Meshery CLI Guides</summary>
       <ul class="section-title">
         {{< section-pages section="guides/mesheryctl" >}}
       </ul>
     </details>
     <details>
-      <summary>
-        <p style="display:inline">
-          <a href="{{< ref "guides/tutorials/_index.md" >}}" class="text-black">🧑‍🔬 Tutorials</a>
-        </p>
-      </summary>
+      <summary>🧑‍🔬 Tutorials</summary>
       <ul class="section-title">
         {{< section-pages section="guides/tutorials" >}}
       </ul>
     </details>
     <details>
-      <summary>
-        <p style="display:inline">
-          <a href="{{< ref "guides/infrastructure-management/_index.md" >}}" class="text-black">Infrastructure Management</a>
-        </p>
-      </summary>
+      <summary>Infrastructure Management</summary>
       <ul class="section-title">
         {{< section-pages section="guides/infrastructure-management" >}}
       </ul>
     </details>
     <details>
-      <summary>
-        <p style="display:inline">
-          <a href="{{< ref "guides/performance-management/_index.md" >}}" class="text-black">Performance Management</a>
-        </p>
-      </summary>
+      <summary>Performance Management</summary>
       <ul class="section-title">
         {{< section-pages section="guides/performance-management" >}}
       </ul>
     </details>
     <details>
-      <summary>
-        <p style="display:inline">
-          <a href="{{< ref "guides/configuration-management/_index.md" >}}" class="text-black">Configuration Management</a>
-        </p>
-      </summary>
+      <summary>Configuration Management</summary>
       <ul class="section-title">
         {{< section-pages section="guides/configuration-management" >}}
       </ul>
-    </details>  
+    </details>
     <details>
-      <summary>
-        <p style="display:inline">
-          <a href="{{< ref "guides/troubleshooting/_index.md" >}}" class="text-black">Troubleshooting Guides</a>
-        </p>
-      </summary>
+      <summary>Troubleshooting Guides</summary>
       <ul class="section-title">
         {{< section-pages section="guides/troubleshooting" >}}
       </ul>
@@ -137,21 +101,13 @@ linkTitle: Documentation
         <div class="btn-primary">Integrations & Extensions</div>
     </a>
     <details>
-      <summary>
-        <p style="display:inline">
-          <a href="{{< ref "extensions/_index.md" >}}" class="text-black">Extensions</a>
-        </p>
-      </summary>
+      <summary>Extensions</summary>
       <ul class="section-title">
         {{< section-pages section="extensions" >}}
       </ul>
     </details>
     <details>
-      <summary>
-        <p style="display:inline">
-<a href="{{< ref "extensions/models/_index.md" >}}" class="text-black">Models</a>
-        </p>
-      </summary>
+      <summary>Models</summary>
       <ul class="section-title">
         {{< model-categories >}}
         <li>See all <a href="{{< ref "extensions/models/_index.md" >}}">{{< model-count >}} models</a></li>
@@ -169,22 +125,14 @@ linkTitle: Documentation
         <div class="btn-primary">Contributing & Community</div>
     </a>
     <details>
-      <summary>
-        <p style="display:inline">
-          <a href="{{< ref "project/_index.md" >}}" class="text-black">Community</a>
-        </p>
-      </summary>
+      <summary>Community</summary>
       <ul class="section-title">
         {{< section-pages section="project" >}}
       </ul>
     </details>
     <!-- CONTRIBUTING -->
     <details>
-      <summary>
-        <p style="display:inline">
-          <a href="{{< ref "project/contributing/_index.md" >}}" class="text-black">Contributing</a>
-        </p>
-      </summary>
+      <summary>Contributing</summary>
       <ul class="section-title">
         {{< section-pages section="project/contributing" >}}
       </ul>
@@ -198,22 +146,14 @@ linkTitle: Documentation
     </a>
     <!-- Reference -->
     <details>
-      <summary>
-        <p style="display:inline">
-          <a href="{{< ref "reference/_index.md" >}}" class="text-black">Reference</a>
-        </p>
-      </summary>
+      <summary>Reference</summary>
       <ul class="section-title">
         {{< section-pages section="reference/references" >}}
       </ul>
     </details>
     <!-- Extensibility -->
     <details>
-      <summary>
-        <p style="display:inline">
-          <a href="{{< ref "reference/extensibility/_index.md" >}}" class="text-black">Extensibility</a>
-        </p>
-      </summary>
+      <summary>Extensibility</summary>
       <ul class="section-title">
         {{< section-pages section="reference/extensibility" >}}
       </ul>
