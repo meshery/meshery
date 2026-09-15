@@ -111,6 +111,6 @@ You may now proceed to manage any cloud native infrastructure supported by Meshe
 
 ## Additional Resources
 
-- [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation.md" >}})
+- [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation/index.md" >}})
 - [Meshery Error Code Reference]({{< ref "reference/references/error-codes.md" >}})
 - [mesheryctl system check]({{< ref "reference/references/mesheryctl/system/check.md" >}})
