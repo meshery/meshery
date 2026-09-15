@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="100%" height="100%" fill="#fff"/>
+  <rect x="80" y="80" width="1120" height="560" rx="24" fill="#fafafa" stroke="#ddd" stroke-width="2"/>
+  <rect x="120" y="120" width="220" height="32" rx="8" fill="#f5f5f5"/>
+  <rect x="360" y="120" width="180" height="32" rx="8" fill="#f5f5f5"/>
+  <rect x="120" y="180" width="800" height="24" rx="8" fill="#f0f0f0"/>
+  <rect x="120" y="220" width="640" height="24" rx="8" fill="#f0f0f0"/>
+  <rect x="240" y="280" width="720" height="220" rx="20" fill="#fff4e5" stroke="#f0b36a" stroke-width="2"/>
+  <circle cx="280" cy="330" r="24" fill="#f59e0b"/>
+  <text x="324" y="338" font-family="Arial, sans-serif" font-size="28" font-weight="600" fill="#111">Version Compatibility Notice</text>
+  <rect x="280" y="370" width="220" height="36" rx="16" fill="#fff" stroke="#f59e0b"/>
+  <text x="296" y="394" font-family="Arial, sans-serif" font-size="20" fill="#111">Current: v0.7.0</text>
+  <rect x="520" y="370" width="220" height="36" rx="16" fill="#fff" stroke="#22c55e"/>
+  <text x="536" y="394" font-family="Arial, sans-serif" font-size="20" fill="#111">Required: v0.7.1+</text>
+  <text x="280" y="440" font-family="Arial, sans-serif" font-size="22" fill="#444">The notice shows a placeholder version instead of the runtime version.</text>
+</svg>
