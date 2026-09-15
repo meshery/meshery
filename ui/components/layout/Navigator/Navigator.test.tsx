@@ -395,9 +395,7 @@ describe('Navigator', () => {
     expect(
       rootExtension.querySelector(':scope > [data-component="SideBarListItem"]'),
     ).not.toBeNull();
-    expect(
-      rootExtension.querySelector(':scope > [data-component="NavigatorListItem"]'),
-    ).toBeNull();
+    expect(rootExtension.querySelector(':scope > [data-component="NavigatorListItem"]')).toBeNull();
   });
 
   it('renders nested extensions with NavigatorListItem rather than the sidebar row', async () => {
