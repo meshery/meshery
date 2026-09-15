@@ -1,4 +1,4 @@
-import React, { useState, useContext, useMemo } from 'react';
+import React, { useState, useContext, useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { NotificationDrawerButton } from '../NotificationCenter/index';
 import User from '../../User';
@@ -391,7 +391,7 @@ const Header = ({
   setActiveContexts,
   searchContexts,
 }) => {
-  const { notify } = useNotification;
+  const { notify } = useNotification();
   const { openModal } = useContext(WorkspaceModalContext) || {};
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.up('md'));
@@ -402,13 +402,15 @@ const Header = ({
     error: providerCapabilitiesError,
   } = useGetProviderCapabilitiesQuery();
 
-  if (isProviderCapabilitiesError) {
-    notify({
-      message: 'Error fetching provider capabilities',
-      event_type: EVENT_TYPES.ERROR,
-      details: providerCapabilitiesError?.data,
-    });
-  }
+  useEffect(() => {
+    if (isProviderCapabilitiesError) {
+      notify?.({
+        message: 'Error fetching provider capabilities',
+        event_type: EVENT_TYPES.ERROR,
+        details: providerCapabilitiesError?.data,
+      });
+    }
+  }, [isProviderCapabilitiesError, providerCapabilitiesError, notify]);
 
   const remoteProviderUrl = providerCapabilities?.providerUrl;
   const collaboratorExtensionUri = providerCapabilities?.extensions?.collaborator?.[0]?.component;
