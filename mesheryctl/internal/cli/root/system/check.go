@@ -19,7 +19,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
+	"net/url"
 	"runtime"
 	"slices"
 	"strings"
@@ -300,17 +302,43 @@ func wrapDockerStartError(err error) error {
 	return ErrDockerStart(errors.Wrapf(err, "failed to start Docker "))
 }
 
+// isLocalMesheryEndpoint reports whether endpoint points at localhost/127.0.0.1.
+//
+// It tolerates endpoints that lack a scheme, a port, or both (e.g. "localhost",
+// "" or a manually edited ~/.meshery/config.yaml) instead of assuming a fixed
+// number of ":"-separated segments, which panicked on any such endpoint (#21696).
+func isLocalMesheryEndpoint(endpoint string) bool {
+	if u, err := url.Parse(endpoint); err == nil && u.Hostname() != "" {
+		return u.Hostname() == "localhost" || u.Hostname() == "127.0.0.1"
+	}
+	host := endpoint
+	if h, _, err := net.SplitHostPort(endpoint); err == nil {
+		host = h
+	}
+	host = strings.TrimPrefix(host, "//")
+	return host == "localhost" || host == "127.0.0.1"
+}
+
 // Run healthchecks to verify if docker is running and active
 func (hc *HealthChecker) runDockerHealthChecks() error {
 	if hc.Options.PrintLogs {
 		utils.Log.Info("\nDocker \n--------------")
 	}
-	endpointParts := strings.Split(hc.context.GetEndpoint(), ":")
+	// NewHealthChecker validates the context name but never Context.Endpoint,
+	// and both entry points (Run and RunPreflightHealthChecks) reach this check.
+	// Reuse the parser system start relies on so an empty or malformed endpoint
+	// reports ErrInvalidEndpoint here instead of being mistaken for a Docker
+	// failure further down.
+	if _, _, err := parseContextEndpoint(hc.context.GetEndpoint()); err != nil {
+		return err
+	}
+
+	isLocal := isLocalMesheryEndpoint(hc.context.GetEndpoint())
 
 	// Check whether docker daemon is running using Docker client API
 	dockerCli, err := dockerclient.NewClientWithOpts(dockerclient.FromEnv, dockerclient.WithAPIVersionNegotiation())
 	if err != nil {
-		if endpointParts[1] != "//localhost" {
+		if !isLocal {
 			return wrapDockerContextError(err, hc)
 		}
 		if hc.Options.IsPreRunE { // if this is PreRunExec we trigger self installation
@@ -336,7 +364,7 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 		// Try to ping the Docker daemon to verify it's actually running
 		_, err = dockerCli.Ping(context.Background())
 		if err != nil {
-			if endpointParts[1] != "//localhost" {
+			if !isLocal {
 				return wrapDockerContextError(err, hc)
 			}
 			if hc.Options.IsPreRunE { // if this is PreRunExec we trigger self installation
