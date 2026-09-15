@@ -59,7 +59,7 @@ mesheryctl design view [design-name | ID]
 ## Screenshots
 
 Usage of mesheryctl design view
-![pattern-view-usage](../../../images/patternView.png)
+![pattern-view-usage](../../images/patternView.png)
 
 ## See Also
 

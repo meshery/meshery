@@ -69,7 +69,7 @@ mesheryctl design apply [design-name]
 ## Screenshots
 
 Usage of mesheryctl design apply
-![pattern-apply-usage](../../../images/patternApply.png)
+![pattern-apply-usage](../../images/patternApply.png)
 
 ## See Also
 

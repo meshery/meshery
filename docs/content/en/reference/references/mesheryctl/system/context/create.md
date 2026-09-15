@@ -73,7 +73,7 @@ mesheryctl system context create [context-name] --components [meshery-nsm] --pla
 ## Screenshots
 
 Usage of mesheryctl context create
-![context-create-usage](../../../../images/newcontext.png)
+![context-create-usage](../../../images/newcontext.png)
 
 ## See Also
 
