@@ -46,6 +46,38 @@ func TestListComponent(t *testing.T) {
 			ExpectedResponse: "components.list.count.empty.ouput.golden",
 			ExpectError:      false,
 		},
+		{
+			Name:             "list components with model",
+			Args:             []string{"list", "--model", "kubernetes"},
+			URL:              "/api/registry/models/kubernetes/components?page=0&pagesize=10",
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "components.list.output.golden",
+			ExpectError:      false,
+		},
+		{
+			Name:             "list components with model and count",
+			Args:             []string{"list", "--model", "kubernetes", "--count"},
+			URL:              "/api/registry/models/kubernetes/components?page=0&pagesize=10",
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "components.list.count.output.golden",
+			ExpectError:      false,
+		},
+		{
+			Name:             "list components with model and pagination",
+			Args:             []string{"list", "--model", "kubernetes", "--page", "2", "--pagesize", "20"},
+			URL:              "/api/registry/models/kubernetes/components?page=1&pagesize=20",
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "components.search.output.golden",
+			ExpectError:      false,
+		},
+		{
+			Name:             "list components with special character model name",
+			Args:             []string{"list", "--model", "test model"},
+			URL:              "/api/registry/models/test%20model/components?page=0&pagesize=10",
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "components.list.output.golden",
+			ExpectError:      false,
+		},
 	}
 
 	mesheryctlflags.InitValidators(ComponentCmd)
