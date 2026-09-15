@@ -19,6 +19,7 @@ type RootCmdTestInput struct {
 func resetFlags() {
 	cfgFile = utils.DefaultConfigPath
 	verbose = false
+	versionOutputFormat = ""
 }
 
 func TestRootCmdIntegration(t *testing.T) {
