@@ -535,7 +535,6 @@ describe('user endpoints', () => {
     expect(utilsMod.initiateQuery).toHaveBeenCalledWith(
       userMod.userApi.endpoints.getAccessToken,
       {},
-      {},
     );
   });
 
