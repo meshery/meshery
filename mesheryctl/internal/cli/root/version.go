@@ -22,6 +22,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -32,7 +33,8 @@ import (
 
 var (
 	// Mesheryctl config - holds config handler
-	mctlCfg *config.MesheryCtlConfig
+	mctlCfg             *config.MesheryCtlConfig
+	versionOutputFormat string
 )
 
 var linkDoc = map[string]string{
@@ -51,6 +53,12 @@ mesheryctl version
 	`,
 	Annotations: linkDoc,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if versionOutputFormat != "" {
+			if err := display.ValidateOutputFormat(versionOutputFormat); err != nil {
+				return err
+			}
+		}
+
 		var err error
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -114,8 +122,10 @@ mesheryctl version
 		url := mctlCfg.GetBaseMesheryURL()
 		build := constants.GetMesheryctlVersion()
 		commitsha := constants.GetMesheryctlCommitsha()
-		defer utils.CheckMesheryctlClientVersion(build)
 
+		if versionOutputFormat == "" || versionOutputFormat == "table" {
+			defer utils.CheckMesheryctlClientVersion(build)
+		}
 		version := config.Version{
 			Build:          "unavailable",
 			CommitSHA:      "unavailable",
@@ -164,6 +174,53 @@ mesheryctl version
 
 		rows[1][1] = version.GetBuild()
 		rows[1][2] = version.GetCommitSHA()
-		utils.PrintToTable(header, rows, nil)
+		displayVersionOutput(cmd, versionOutputFormat, build, commitsha, version, header, rows)
 	},
+}
+
+func displayVersionOutput(cmd *cobra.Command, outputFormat, build, commitsha string, version config.Version, header []string, rows [][]string) error {
+	output := map[string]any{
+		"client": map[string]string{
+			"version": build,
+			"git_sha": commitsha,
+		},
+		"server": map[string]string{
+			"version": version.GetBuild(),
+			"git_sha": version.GetCommitSHA(),
+		},
+	}
+
+	switch outputFormat {
+	case "json":
+		formatter := &display.JSONOutputFormatter[map[string]any]{
+			Data: output,
+			EncoderSettings: display.JsonEncoderSettings{
+				SetEscapeHTML: false,
+				IndentPrefix:  "",
+				IndentValue:   "  ",
+			},
+			Out: cmd.OutOrStdout(),
+		}
+		return formatter.Display()
+	case "yaml":
+		formatter := &display.YAMLOutputFormatter[map[string]any]{
+			Data: output,
+			Out:  cmd.OutOrStdout(),
+		}
+		return formatter.Display()
+	default:
+		utils.PrintToTable(header, rows, nil)
+		return nil
+	}
+}
+
+
+func init() {
+	versionCmd.Flags().StringVarP(
+		&versionOutputFormat,
+		"output-format",
+		"o",
+		"",
+		"Output format: json, yaml",
+	)
 }
