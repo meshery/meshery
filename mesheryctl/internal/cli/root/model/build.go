@@ -133,6 +133,26 @@ mesheryctl model build [model-name]/[model-version]
 			return ErrModelBuild(err)
 		}
 
+		// Display success confirmation with file size
+		fileInfo, err := os.Stat(imageName)
+		if err == nil {
+			utils.Log.Infof("Successfully built OCI artifact: %s (%s)", imageName, formatFileSize(fileInfo.Size()))
+		} else {
+			utils.Log.Debugf("could not stat built artifact: %v", err)
+			utils.Log.Infof("Successfully built OCI artifact: %s", imageName)
+		}
+
+		// Display next-step guidance
+		utils.Log.Info("")
+		utils.Log.Info(
+			initModelReplacePlaceholders(
+				buildModelNextStepsText,
+				map[string]string{
+					"{imageName}": imageName,
+				},
+			),
+		)
+
 		return nil
 	},
 }
@@ -178,4 +198,23 @@ func buildModelCompileImageName(name string, version string, extension string) s
 		name,
 		extension,
 	)
+}
+
+const buildModelNextStepsText = `Next steps:
+  To import this model into Meshery:
+  $ mesheryctl model import --file {imageName}`
+
+func formatFileSize(size int64) string {
+	const (
+		kb = 1024
+		mb = 1024 * kb
+	)
+	switch {
+	case size >= mb:
+		return fmt.Sprintf("%.1f MB", float64(size)/float64(mb))
+	case size >= kb:
+		return fmt.Sprintf("%.1f KB", float64(size)/float64(kb))
+	default:
+		return fmt.Sprintf("%d B", size)
+	}
 }
