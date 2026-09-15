@@ -211,6 +211,15 @@ vi.mock('@/rtk-query/user', () => ({
               icon: '/provider/navigator/img/kanvas-icon.svg',
               href: '/meshmap',
               show: true,
+              children: [
+                {
+                  id: 'kanvas-designer',
+                  title: 'Designer',
+                  icon: '/provider/navigator/img/designer-icon.svg',
+                  href: '/meshmap/designer',
+                  show: true,
+                },
+              ],
             },
           ],
         },
@@ -381,8 +390,23 @@ describe('Navigator', () => {
     const rootExtension = await screen.findByTestId('extension-nav-root-item');
 
     // Root extensions must use SideBarListItem so that hover styling, padding and text
-    // treatment match the core navigator rows; NavigatorListItem is for nested items only.
-    expect(rootExtension.querySelector('[data-component="SideBarListItem"]')).not.toBeNull();
-    expect(rootExtension.querySelector('[data-component="NavigatorListItem"]')).toBeNull();
+    // treatment match the core navigator rows. Scoped to direct children, because the
+    // nested submenu renders inside this same element.
+    expect(
+      rootExtension.querySelector(':scope > [data-component="SideBarListItem"]'),
+    ).not.toBeNull();
+    expect(
+      rootExtension.querySelector(':scope > [data-component="NavigatorListItem"]'),
+    ).toBeNull();
+  });
+
+  it('renders nested extensions with NavigatorListItem rather than the sidebar row', async () => {
+    render(<Navigator />);
+    const submenu = await screen.findByTestId('extension-nav-submenu');
+
+    // Only depth 1 gets the core-row treatment; selecting SideBarListItem at every
+    // depth would indent nested extensions incorrectly.
+    expect(submenu.querySelector('[data-component="NavigatorListItem"]')).not.toBeNull();
+    expect(submenu.querySelector('[data-component="SideBarListItem"]')).toBeNull();
   });
 });
