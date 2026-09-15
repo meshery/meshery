@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	meshkiterrors "github.com/meshery/meshkit/errors"
 )
 
 func TestValidateFixtures(t *testing.T) {
@@ -70,6 +72,31 @@ func TestValidationErrorUnwrapUsesSentinel(t *testing.T) {
 	}
 	if !errors.Is(err, ErrValidation) {
 		t.Errorf("expected errors.Is(err, ErrValidation) to be true, got false")
+	}
+}
+
+func TestValidateRejectsClientSecretVariants(t *testing.T) {
+	base := `{"schemaVersion":"designs.meshery.io/v1beta3","name":"client-secret","components":[{"component":{"kind":"Deployment","version":"apps/v1"},"model":{"name":"kubernetes"},"configuration":{%q:"x"}}]}`
+	for _, key := range []string{"clientSecret", "client_secret", "client-secret", "CLIENTSECRET"} {
+		t.Run(key, func(t *testing.T) {
+			err := Validate([]byte(fmt.Sprintf(base, key)))
+			var validationErr *ValidationError
+			if !errors.As(err, &validationErr) || !hasIssue(validationErr, CodeSensitiveContent) {
+				t.Fatalf("expected sensitive content issue for %q, got %v", key, err)
+			}
+		})
+	}
+}
+
+func TestValidationSentinelHasMeshKitMetadata(t *testing.T) {
+	if got := meshkiterrors.GetCode(ErrValidation); got != ErrValidationCode {
+		t.Fatalf("expected ErrValidation code %q, got %q", ErrValidationCode, got)
+	}
+	if got := meshkiterrors.GetSeverity(ErrValidation); got != meshkiterrors.Alert {
+		t.Fatalf("expected ErrValidation severity %q, got %q", meshkiterrors.Alert, got)
+	}
+	if meshkiterrors.GetCause(ErrValidation) == "" || meshkiterrors.GetRemedy(ErrValidation) == "" {
+		t.Fatal("expected ErrValidation cause and remediation metadata")
 	}
 }
 

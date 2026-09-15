@@ -11,6 +11,7 @@ import (
 	"sort"
 	"strings"
 
+	meshkiterrors "github.com/meshery/meshkit/errors"
 	"gopkg.in/yaml.v3"
 )
 
@@ -23,6 +24,7 @@ const (
 	CodeDanglingReference  = "dangling_relationship_reference"
 	CodeComponent          = "invalid_component"
 	CurrentSchemaVersion   = "designs.meshery.io/v1beta3"
+	ErrValidationCode      = "meshery-server-1486"
 )
 
 var acceptedSchemaVersions = map[string]struct{}{
@@ -31,7 +33,14 @@ var acceptedSchemaVersions = map[string]struct{}{
 }
 
 // ErrValidation identifies a failed AI design validation.
-var ErrValidation = errors.New("AI design validation failed")
+var ErrValidation = meshkiterrors.New(
+	ErrValidationCode,
+	meshkiterrors.Alert,
+	[]string{"AI design validation failed"},
+	[]string{"The AI-generated design failed validation"},
+	[]string{"The design contains malformed, unsupported, or sensitive content"},
+	[]string{"Correct the design output and submit it for validation again"},
+)
 
 // Issue is a stable, machine-readable validation failure. Path uses JSON-style
 // field notation where a location can be identified.
@@ -185,7 +194,7 @@ func validateDocument(document map[string]interface{}) []Issue {
 // exact sensitive field name is present, even if its value is only a
 // placeholder. Kubernetes reference fields such as secretRef and secretName
 // are not credentials and therefore remain valid.
-var sensitiveKey = regexp.MustCompile(`(?i)^(?:authorization|api[-_.]?(?:key|token)|access[-_.]?(?:key|token)|bearer|token|password|secret(?:[-_.]?(?:key|data|value))?|private[-_.]?key|client[-_.]?key[-_.]?data|kubeconfig|credential)$`)
+var sensitiveKey = regexp.MustCompile(`(?i)^(?:authorization|api[-_.]?(?:key|token)|access[-_.]?(?:key|token)|bearer|token|password|secret(?:[-_.]?(?:key|data|value))?|client[-_.]?secret|private[-_.]?key|client[-_.]?key[-_.]?data|kubeconfig|credential)$`)
 var sensitiveValue = regexp.MustCompile(`(?is)(bearer\s+[A-Za-z0-9._~+/=-]{12,}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|client-key-data\s*[:=]|apiVersion:\s*v1\s*\n[\s\S]*kind:\s*Config)`)
 
 func sensitiveIssues(value interface{}, path string) []Issue {
