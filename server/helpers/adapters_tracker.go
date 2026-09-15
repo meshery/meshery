@@ -125,7 +125,10 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 			for _, net := range nets {
 				if net.Name == netName {
 					// Create and start the container
-					portNum := strings.Split(adapter.Location, ":")[1] // eg: for location=meshery-istio:10000, portNum=10000
+					portNum, err := AdapterPort(adapter.Location) // eg: meshery-istio:10000 → 10000
+					if err != nil {
+						return ErrDeployingAdapterInDocker(err)
+					}
 					port := nat.Port(portNum + "/tcp")
 					adapterContainerCreatedBody, err := cli.ContainerCreate(ctx, &container.Config{
 						Image: adapterImage,
@@ -242,17 +245,21 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 		if err != nil {
 			return ErrUnDeployingAdapterInDocker(err)
 		}
+		portNum, err := AdapterPort(adapter.Location)
+		if err != nil {
+			return ErrUnDeployingAdapterInDocker(err)
+		}
 		var containerID string
 		for _, container := range containers {
 			for _, p := range container.Ports {
-				if strconv.Itoa(int(p.PublicPort)) == strings.Split(adapter.Location, ":")[1] {
+				if strconv.Itoa(int(p.PublicPort)) == portNum {
 					containerID = container.ID
 					break
 				}
 			}
 		}
 		if containerID == "" {
-			return ErrUnDeployingAdapterInDocker(fmt.Errorf("no container found for port %s", strings.Split(adapter.Location, ":")[1]))
+			return ErrUnDeployingAdapterInDocker(fmt.Errorf("no container found for port %s", portNum))
 		}
 
 		// Stop and remove the container
