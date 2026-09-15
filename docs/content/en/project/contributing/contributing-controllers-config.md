@@ -420,6 +420,25 @@ of two separate defects. The two are now separated
   read by the consumers that predate the layered document (the connection state
   machine, the header status chips, the kubeconfig flows).
 
+The server only ever writes the snake_case key into this materialized
+`connection.metadata` field - not to be confused with the unrelated
+`ContextOptions.meshsyncDeploymentMode` camelCase field the kubeconfig
+import request body accepts per context
+(`server/handlers/k8sconfig_handler.go`), which the server *reads* from
+the client and then resolves into this same snake_case metadata key via
+`MaterializeMeshsyncDeploymentMode`. That import-time field is a separate
+wire contract for a separate direction (client to server, one-time, at
+import) and is out of scope here.
+
+Within the materialized metadata field itself, two legacy consumers
+(`ui/components/connections/metadata.tsx` and
+`ui/components/connections/wizard/kubernetesDeploymentMode.tsx`) read
+`metadata?.meshsyncDeploymentMode ?? metadata?.meshsync_deployment_mode`,
+accepting a camelCase spelling on top of it. This is not a second setting -
+both spellings resolve to the same materialized value above, and the fallback
+exists only so a camelCase value written by an older client is still read
+correctly.
+
 `connections.ResolveDeploymentMode` is the single decision point, and it reports
 the layer it resolved from:
 
