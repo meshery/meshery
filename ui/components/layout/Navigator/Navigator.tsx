@@ -20,6 +20,7 @@ import {
   FileIcon,
   GithubIcon,
   DiscussForumIcon,
+  ClickAwayListener,
 } from '@sistent/sistent';
 import ExtensionPointSchemaValidator from '../../../utils/ExtensionPointSchemaValidator';
 import { cursorNotAllowed, disabledStyle } from '../../../css/disableComponent.styles';
@@ -33,7 +34,6 @@ import {
   TOGGLER,
 } from '../../../constants/navigator';
 import { iconSmall } from '../../../css/icons.styles';
-import CAN from '@/utils/can';
 import { CustomTextTooltip } from '../../meshery-mesh-interface/PatternService/CustomTextTooltip';
 import {
   HideScrollbar,
@@ -129,7 +129,7 @@ const buildLifecycleIcon = (adapterName, href, currentPath) => {
   const normalizedName = adapterName?.toLowerCase();
   const image = normalizedName
     ? `/static/img/${normalizedName}-light.svg`
-    : '/static/img/meshery-logo.png';
+    : '/static/img/meshery-logo/meshery-logo.png';
 
   return (
     <img
@@ -150,7 +150,7 @@ const resolveNavigatorComponents = ({
   currentPath,
 }) => {
   const designPersistenceEnabled = Boolean(
-    providerUiAccessControl?.providerCapabilities?.some(
+    providerUiAccessControl?.providerPayload?.providerCapabilities?.some(
       (capability) => capability.feature === 'persist-meshery-patterns',
     ),
   );
@@ -166,7 +166,7 @@ const resolveNavigatorComponents = ({
 
           return {
             ...child,
-            icon: buildLifecycleIcon(child.id, child.href, currentPath),
+            icon: child.icon ?? buildLifecycleIcon(child.id, child.href, currentPath),
             children: buildAdapterChildren(meshAdapters, child.id),
           };
         }),
@@ -174,11 +174,8 @@ const resolveNavigatorComponents = ({
     }
 
     if (category.id === CONFIGURATION) {
-      let show = false;
-
       const children = category.children?.map((child) => {
         if (child.id === 'Designs') {
-          show = designPersistenceEnabled;
           return {
             ...child,
             show: designPersistenceEnabled,
@@ -197,7 +194,6 @@ const resolveNavigatorComponents = ({
 
       return {
         ...category,
-        show,
         children,
       };
     }
@@ -206,21 +202,8 @@ const resolveNavigatorComponents = ({
   });
 };
 
-const NavigatorWrapper = () => {
-  const isMobile = useMediaQuery('(max-width:599px)');
-  const dispatch = useDispatch();
-  const { isDrawerCollapsed } = useSelector((state) => state.ui);
-
-  useEffect(() => {
-    if (isMobile && !isDrawerCollapsed) {
-      dispatch(toggleDrawer({ isDrawerCollapsed: true }));
-    }
-  }, [dispatch, isDrawerCollapsed, isMobile]);
-
-  return <NavigatorContent />;
-};
-
 const NavigatorContent = () => {
+  const { isDrawerCollapsed } = useSelector((state) => state.ui);
   const { meshAdapters } = useSelector((state) => state.adapter);
   const dispatch = useDispatch();
   const { catalogVisibility } = useSelector((state) => state.ui);
@@ -250,6 +233,8 @@ const NavigatorContent = () => {
       currentPath,
     });
   }, [providerUiAccessControl, catalogVisibility, currentPath, meshAdapters, theme]);
+
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const ExternalLinkIcon = (
     <IconExternalLink
@@ -289,7 +274,7 @@ const NavigatorContent = () => {
     },
     {
       id: 'forum',
-      href: 'https://meshery.io/community#community-forums',
+      href: 'https://discuss.meshery.io',
       title: 'Discussion Forum',
       icon: <DiscussForumIcon fill="currentColor" height="28px" width="28px" />,
       hovericon: <DiscussForumIcon height="28px" width="28px" />,
@@ -353,6 +338,28 @@ const NavigatorContent = () => {
     dispatch(updateBetaBadge({ isBeta: activeNavigatorItem.isBeta }));
   }, [currentPath, dispatch, navigatorComponents]);
 
+  useEffect(() => {
+    if (isMobile && !isDrawerCollapsed) {
+      dispatch(toggleDrawer({ isDrawerCollapsed: true }));
+    }
+    // This effect depends explicitely at the state of isMobile,
+    // it closes the sidebar on mount when isMobile too
+  }, [isMobile]);
+
+  useEffect(() => {
+    if (!isMobile || isDrawerCollapsed) return;
+
+    const handleRouteChange = () => {
+      dispatch(toggleDrawer({ isDrawerCollapsed: true }));
+    };
+
+    router.events?.on('routeChangeStart', handleRouteChange);
+
+    return () => {
+      router.events?.off('routeChangeStart', handleRouteChange);
+    };
+  }, [router.events, dispatch, isMobile, isDrawerCollapsed]);
+
   const handleTitleClick = () => {
     router.push('/');
   };
@@ -388,6 +395,11 @@ const NavigatorContent = () => {
     if (release_channel === 'stable') return `${release_channel}-${build}`;
 
     return `${build}`;
+  };
+  const handleClickOutside = () => {
+    if (isMobile && !isDrawerCollapsed) {
+      dispatch(toggleDrawer({ isDrawerCollapsed: true }));
+    }
   };
 
   const versionUpdateMsg = () => {
@@ -474,7 +486,6 @@ const NavigatorContent = () => {
 
         const listItemProps = isRootItem
           ? {
-              button: !!href,
               dense: true,
               link: !!href,
               isActive,
@@ -491,7 +502,7 @@ const NavigatorContent = () => {
         return (
           <RootDiv key={id} data-testid={depth === 1 ? 'extension-nav-root-item' : undefined}>
             <ListItemComponent {...listItemProps}>
-              {extensionPointContent(icon, href, title, isDrawerCollapsed, isHovered)}
+              {extensionPointContent(icon, href, title, isDrawerCollapsed, isHovered, isRootItem)}
             </ListItemComponent>
             {childExtensions}
           </RootDiv>
@@ -514,14 +525,14 @@ const NavigatorContent = () => {
     );
   };
 
-  const extensionPointContent = (icon, href, name, drawerCollapsed, isHovered) => {
+  const extensionPointContent = (icon, href, name, drawerCollapsed, isHovered, isRootItem) => {
     const content = (
       <NavigatorLink data-testid={name}>
         <CustomTooltip
           title={name}
           placement="right"
           disableFocusListener={!drawerCollapsed}
-          disableHoverListener={true}
+          disableHoverListener={isRootItem || !drawerCollapsed}
           disableTouchListener={!drawerCollapsed}
           TransitionComponent={Zoom}
         >
@@ -531,6 +542,7 @@ const NavigatorContent = () => {
                 <ListItemIcon style={{ marginLeft: '20%', marginBottom: '0.4rem' }}>
                   <img
                     src={icon}
+                    alt={`${name} icon`}
                     style={{
                       width: '20px',
                       filter: currentPath === href ? activeIconFilter : '',
@@ -543,6 +555,7 @@ const NavigatorContent = () => {
             <MainListIcon>
               <img
                 src={icon}
+                alt={`${name} icon`}
                 style={{
                   width: '20px',
                   filter: currentPath === href ? activeIconFilter : '',
@@ -588,7 +601,7 @@ const NavigatorContent = () => {
             show: showc,
             link: linkc,
             children: childrenc,
-            permission: permissionc,
+            permissionKey: permissionc,
           }) => {
             if (typeof showc !== 'undefined' && !showc) {
               return null;
@@ -619,7 +632,8 @@ const NavigatorContent = () => {
                       router.push(hrefc);
                     }
                   }}
-                  disabled={permissionc ? !CAN(permissionc.action, permissionc.subject) : false}
+                  permissionKey={permissionc}
+                  permissionAction="showShield"
                 >
                   {linkContent(iconc, titlec, hrefc, false, isDrawerCollapsed)}
                 </ListItemComponent>
@@ -661,7 +675,7 @@ const NavigatorContent = () => {
     }
     return linkContent;
   };
-  const { isDrawerCollapsed } = useSelector((state) => state.ui);
+
   const Title = (
     <div
       style={
@@ -676,16 +690,25 @@ const NavigatorContent = () => {
         >
           {isDrawerCollapsed ? (
             <>
-              <MainLogoCollapsed src="/static/img/meshery-logo.png" onClick={handleTitleClick} />
+              <MainLogoCollapsed
+                src="/static/img/meshery-logo/meshery-logo.png"
+                onClick={handleTitleClick}
+              />
               <MainLogoTextCollapsed
-                src="/static/img/meshery-logo-text.png"
+                src="/static/img/meshery-logo/meshery-logo-text.png"
                 onClick={handleTitleClick}
               />
             </>
           ) : (
             <>
-              <MainLogo src="/static/img/meshery-logo.png" onClick={handleTitleClick} />
-              <MainLogoText src="/static/img/meshery-logo-text.png" onClick={handleTitleClick} />
+              <MainLogo
+                src="/static/img/meshery-logo/meshery-logo.png"
+                onClick={handleTitleClick}
+              />
+              <MainLogoText
+                src="/static/img/meshery-logo/meshery-logo-text.png"
+                onClick={handleTitleClick}
+              />
             </>
           )}
         </StyledListItem>
@@ -707,64 +730,71 @@ const NavigatorContent = () => {
             children,
             hovericon,
             submenu,
-            permission,
+            permissionKey,
           }) => {
+            const hasChildren = Array.isArray(children) && children.length > 0;
             return (
               <RootDiv key={childId}>
                 <SideBarListItem
-                  button={!!link}
                   dense
                   key={childId}
                   link={!!link}
                   isActive={currentPath === href}
                   isShow={!show}
-                  onClick={() => toggleItemCollapse(childId)}
+                  onClick={() => {
+                    // Leaf items navigate via their link; there is nothing to expand/collapse,
+                    // so never add them to openItems (doing so would strand them there and break
+                    // the submenu-aware onMouseLeave below).
+                    if (!hasChildren) return;
+                    // Keep an already-open link submenu open when its row is clicked again.
+                    if (link && openItems.includes(childId)) return;
+                    toggleItemCollapse(childId);
+                  }}
                   onMouseOver={() => (isDrawerCollapsed ? setHoveredId(childId) : null)}
                   onMouseLeave={() =>
                     !submenu || !openItems.includes(childId) ? setHoveredId(null) : null
                   }
-                  disabled={permission ? !CAN(permission.action, permission.subject) : false}
+                  permissionKey={permissionKey}
+                  permissionAction="showShield"
+                  {...(link && href ? { component: Link, href } : {})}
                 >
-                  <Link href={link ? href : ''}>
-                    <NavigatorLink data-testid={childId}>
-                      <CustomTooltip
-                        title={childId}
-                        placement="right"
-                        disableFocusListener={!isDrawerCollapsed}
-                        disableHoverListener={true}
-                        disableTouchListener={!isDrawerCollapsed}
-                        TransitionComponent={Zoom}
-                      >
-                        {isDrawerCollapsed &&
-                        (hoveredId === childId || (openItems.includes(childId) && submenu)) ? (
-                          <div>
-                            <CustomTooltip
-                              title={title}
-                              placement="right"
-                              TransitionComponent={Zoom}
-                            >
-                              <ListItemIcon
-                                onClick={() => toggleItemCollapse(childId)}
-                                style={{ marginLeft: '20%', marginBottom: '0.4rem' }}
-                              >
-                                {hovericon}
-                              </ListItemIcon>
-                            </CustomTooltip>
-                          </div>
-                        ) : (
-                          <MainListIcon>{icon}</MainListIcon>
-                        )}
-                      </CustomTooltip>
-                      <SideBarText drawerCollapsed={isDrawerCollapsed}>{title}</SideBarText>
-                    </NavigatorLink>
-                  </Link>
-                  <ExpandMore
-                    onClick={() => toggleItemCollapse(childId)}
-                    isCollapsed={openItems.includes(childId)}
-                    isDrawerCollapsed={isDrawerCollapsed}
-                    theme={theme}
-                    hasChildren={!!children}
-                  />
+                  <NavigatorLink data-testid={childId}>
+                    <CustomTooltip
+                      title={childId}
+                      placement="right"
+                      disableFocusListener={!isDrawerCollapsed}
+                      disableHoverListener={true}
+                      disableTouchListener={!isDrawerCollapsed}
+                      TransitionComponent={Zoom}
+                    >
+                      {isDrawerCollapsed &&
+                      (hoveredId === childId || (openItems.includes(childId) && submenu)) ? (
+                        <div>
+                          <CustomTooltip title={title} placement="right" TransitionComponent={Zoom}>
+                            <ListItemIcon style={{ marginLeft: '20%', marginBottom: '0.4rem' }}>
+                              {hovericon ?? icon}
+                            </ListItemIcon>
+                          </CustomTooltip>
+                        </div>
+                      ) : (
+                        <MainListIcon>{icon}</MainListIcon>
+                      )}
+                    </CustomTooltip>
+                    <SideBarText drawerCollapsed={isDrawerCollapsed}>{title}</SideBarText>
+                  </NavigatorLink>
+                  {hasChildren && (
+                    <ExpandMore
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleItemCollapse(childId);
+                      }}
+                      isExpanded={openItems.includes(childId)}
+                      theme={theme}
+                      hasChildren={hasChildren}
+                      isDrawerCollapsed={isDrawerCollapsed}
+                    />
+                  )}
                 </SideBarListItem>
                 <Collapse
                   in={openItems.includes(childId)}
@@ -796,6 +826,7 @@ const NavigatorContent = () => {
     <>
       <NavigatorHelpIcons
         isCollapsed={isDrawerCollapsed}
+        isHelperOpen={showHelperButton}
         size="large"
         orientation={isDrawerCollapsed ? 'vertical' : 'horizontal'}
       >
@@ -830,7 +861,7 @@ const NavigatorContent = () => {
             </HelpListItem>
           );
         })}
-        <ListItem key="help-button" style={{ display: isDrawerCollapsed ? 'inherit' : 'none' }}>
+        <HelpListItem key="help-button" style={{ display: isDrawerCollapsed ? 'flex' : 'none' }}>
           <CustomTextTooltip title="Help" placement={isDrawerCollapsed ? 'right' : 'top'}>
             <HelpButton isCollapsed={isDrawerCollapsed} onClick={toggleSpacing}>
               <HelpOutlinedIcon
@@ -852,7 +883,7 @@ const NavigatorContent = () => {
               />
             </HelpButton>
           </CustomTextTooltip>
-        </ListItem>
+        </HelpListItem>
       </NavigatorHelpIcons>
     </>
   );
@@ -885,21 +916,21 @@ const NavigatorContent = () => {
     </ListItem>
   );
 
+  const isTogglerEnabled = providerUiAccessControl?.isNavigatorComponentEnabled?.([TOGGLER]);
+
   const Chevron = (
     <ChevronButtonWrapper
+      type="button"
       isCollapsed={isDrawerCollapsed}
-      style={
-        providerUiAccessControl?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : cursorNotAllowed
-      }
+      onClick={isTogglerEnabled ? toggleMiniDrawer : undefined}
+      aria-label="Toggle sidebar navigation"
+      aria-expanded={!isDrawerCollapsed}
+      style={isTogglerEnabled ? {} : cursorNotAllowed}
+      disabled={!isTogglerEnabled}
     >
-      <div
-        style={
-          providerUiAccessControl?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : disabledStyle
-        }
-        onClick={toggleMiniDrawer}
-      >
+      <div style={isTogglerEnabled ? {} : disabledStyle}>
         <LeftArrowIcon
-          alt="Sidebar collapse toggle"
+          aria-hidden="true"
           style={{
             cursor: 'pointer',
             verticalAlign: 'middle',
@@ -915,19 +946,25 @@ const NavigatorContent = () => {
 
   return (
     <NoSsr>
-      <SidebarDrawer isCollapsed={isDrawerCollapsed} variant="permanent">
-        {Title}
-        {Menu}
-        <FixedSidebarFooter>
-          {Chevron}
-          {HelpIcons}
-          {Version}
-        </FixedSidebarFooter>
-      </SidebarDrawer>
+      <ClickAwayListener
+        onClickAway={handleClickOutside}
+        mouseEvent={isMobile ? 'onMouseDown' : false}
+        touchEvent={isMobile ? 'onTouchStart' : false}
+      >
+        <SidebarDrawer isCollapsed={isDrawerCollapsed} variant="permanent">
+          {Title}
+          {Menu}
+          <FixedSidebarFooter>
+            {Chevron}
+            {HelpIcons}
+            {Version}
+          </FixedSidebarFooter>
+        </SidebarDrawer>
+      </ClickAwayListener>
     </NoSsr>
   );
 };
 
-export const Navigator = NavigatorWrapper;
+export const Navigator = NavigatorContent;
 
 export default Navigator;
