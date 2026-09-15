@@ -61,6 +61,17 @@ export const PropertyFormatters = {
   },
   // MeshSync event field formatters - imported from formatters/meshsync_events.js
   ...MeshSyncPropertyFormatters,
+  discoveredBy: (value) => {
+    if (value !== 'MeshSync') {
+      return <SectionBody body={value} />;
+    }
+
+    return (
+      <TitleLink href="https://docs.meshery.io/concepts/architecture/meshsync" target="_blank">
+        MeshSync
+      </TitleLink>
+    );
+  },
   error: (value) => <ErrorMetadataFormatter metadata={value} event={event} />,
   dryRunResponse: (value) => <DryRunResponse response={value} />,
   ModelImportMessage: (value) => value && <ModelImportMessages message={value} />,
