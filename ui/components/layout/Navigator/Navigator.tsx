@@ -469,13 +469,14 @@ const NavigatorContent = () => {
         const childExtensions = renderNavigatorExtensions(subItems, depth + 1);
         const isRootItem = depth === 1;
         const ListItemComponent = isRootItem ? SideBarListItem : NavigatorListItemII;
-        const isHovered = hoveredExtensionId === id;
+        // Only root-level items swap to the hover icon, mirroring the core navigator items.
+        const isHovered = isRootItem && hoveredExtensionId === id;
 
         const listItemProps = isRootItem
           ? {
-              button: true,
+              button: !!href,
               dense: true,
-              link: true,
+              link: !!href,
               isActive,
               onMouseOver: () => (isDrawerCollapsed ? setHoveredExtensionId(id) : null),
               onMouseLeave: () => setHoveredExtensionId(null),
@@ -485,8 +486,6 @@ const NavigatorContent = () => {
               depth,
               isDrawerCollapsed,
               isActive,
-              onMouseOver: () => (isDrawerCollapsed ? setHoveredExtensionId(id) : null),
-              onMouseLeave: () => setHoveredExtensionId(null),
             };
 
         return (
@@ -522,19 +521,23 @@ const NavigatorContent = () => {
           title={name}
           placement="right"
           disableFocusListener={!drawerCollapsed}
+          disableHoverListener={true}
           disableTouchListener={!drawerCollapsed}
+          TransitionComponent={Zoom}
         >
           {drawerCollapsed && isHovered ? (
             <div>
-              <ListItemIcon style={{ marginLeft: '20%', marginBottom: '0.4rem' }}>
-                <img
-                  src={icon}
-                  style={{
-                    width: '20px',
-                    filter: currentPath === href ? activeIconFilter : '',
-                  }}
-                />
-              </ListItemIcon>
+              <CustomTooltip title={name} placement="right" TransitionComponent={Zoom}>
+                <ListItemIcon style={{ marginLeft: '20%', marginBottom: '0.4rem' }}>
+                  <img
+                    src={icon}
+                    style={{
+                      width: '20px',
+                      filter: currentPath === href ? activeIconFilter : '',
+                    }}
+                  />
+                </ListItemIcon>
+              </CustomTooltip>
             </div>
           ) : (
             <MainListIcon>
