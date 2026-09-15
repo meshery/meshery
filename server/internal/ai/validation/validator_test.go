@@ -93,7 +93,7 @@ func TestValidationSentinelHasMeshKitMetadata(t *testing.T) {
 		t.Fatalf("expected ErrValidation code %q, got %q", ErrValidationCode, got)
 	}
 	if got := meshkiterrors.GetSeverity(ErrValidation); got != meshkiterrors.Alert {
-		t.Fatalf("expected ErrValidation severity %q, got %q", meshkiterrors.Alert, got)
+		t.Fatalf("expected ErrValidation severity %v, got %v", meshkiterrors.Alert, got)
 	}
 	if meshkiterrors.GetCause(ErrValidation) == "" || meshkiterrors.GetRemedy(ErrValidation) == "" {
 		t.Fatal("expected ErrValidation cause and remediation metadata")
