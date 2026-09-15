@@ -144,7 +144,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     isOpen: false,
     relayEnvironment: createRelayEnvironment(),
     connectionMetadata: {},
-    keys: [],
     abilities: [],
     abilityUpdated: false,
   });
@@ -387,26 +386,47 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
     [dispatch],
   );
 
-  const updateAbility = useCallback(() => {
-    ability.update(
-      state.keys?.map((key) => ({ action: key.id, subject: _.lowerCase(key.function) })),
-    );
-    setState((prevState) => ({ ...prevState, abilityUpdated: true }));
-  }, [state.keys]);
+  const updateAbility = useCallback(
+    (keys) => {
+      const safeKeys = Array.isArray(keys) ? keys : [];
+      const abilities = safeKeys
+        .filter((key) => key && typeof key === 'object' && typeof key.id === 'string')
+        .map((key) => ({ action: key.id, subject: _.lowerCase(typeof key.function === 'string' ? key.function : '') }));
+      ability.update(abilities);
+      setState((prevState) => ({ ...prevState, abilityUpdated: true }));
+    },
+    [],
+  );
 
   const loadAbility = useCallback(
     async (orgID, reFetchKeys) => {
-      const storedKeys = sessionStorage.getItem('keys');
-      if (storedKeys !== null && !reFetchKeys && storedKeys !== 'undefined') {
-        setState((prevState) => ({ ...prevState, keys: JSON.parse(storedKeys) }));
-        updateAbility();
+      let storedKeys = sessionStorage.getItem('keys');
+      if (storedKeys === 'undefined' || storedKeys === 'null') {
+        sessionStorage.removeItem('keys');
+        storedKeys = null;
+      }
+      let validKeys = null;
+      if (storedKeys !== null && !reFetchKeys) {
+        try {
+          const parsedKeys = JSON.parse(storedKeys);
+          if (!Array.isArray(parsedKeys)) {
+            throw new Error('Invalid keys data');
+          }
+          validKeys = parsedKeys;
+        } catch (err) {
+          console.warn('Failed to read keys from sessionStorage; clearing stored value:', err);
+          sessionStorage.removeItem('keys');
+          validKeys = null;
+        }
+      }
+      if (validKeys) {
+        updateAbility(validKeys);
       } else {
         try {
           const result = await fetchUserKeys({ orgId: orgID }).unwrap();
           if (result) {
-            setState((prevState) => ({ ...prevState, keys: result.keys }));
             dispatch(setKeys({ keys: result.keys }));
-            updateAbility();
+            updateAbility(result.keys);
           }
         } catch (err) {
           console.log('There was an error fetching user keys:', err);
@@ -417,22 +437,46 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
   );
 
   const loadOrg = useCallback(async () => {
-    const currentOrg = sessionStorage.getItem('currentOrg');
-    let reFetchKeys = false;
+    let currentOrg = sessionStorage.getItem('currentOrg');
 
-    if (currentOrg && currentOrg !== 'undefined') {
-      let org = JSON.parse(currentOrg);
-      await loadAbility(org.id, reFetchKeys);
-      setCurrentOrganization(org);
+    if (currentOrg === 'undefined' || currentOrg === 'null') {
+      sessionStorage.removeItem('currentOrg');
+      currentOrg = null;
+    }
+
+    let reFetchKeys = false;
+    let org = null;
+
+    if (currentOrg) {
+      try {
+        org = JSON.parse(currentOrg);
+        if (
+          !org ||
+          typeof org !== 'object' ||
+          typeof org.id !== 'string' ||
+          org.id.trim() === ''
+        ) {
+          throw new Error('Invalid organization data');
+        }
+      } catch (err) {
+        console.warn('Failed to read currentOrg from sessionStorage; clearing stored value:', err);
+        sessionStorage.removeItem('currentOrg');
+        currentOrg = null;
+        org = null;
+      }
+
+      if (org) {
+        await loadAbility(org.id, reFetchKeys);
+        setCurrentOrganization(org);
+      }
     }
 
     try {
       const result = await fetchOrganizations({}).unwrap();
       let organizationToSet;
-      const sessionOrg = currentOrg ? JSON.parse(currentOrg) : null;
 
-      if (currentOrg) {
-        const indx = result.organizations.findIndex((org) => org.id === sessionOrg.id);
+      if (org) {
+        const indx = result.organizations.findIndex((o) => o.id === org.id);
         if (indx === -1) {
           organizationToSet = result.organizations[0];
           reFetchKeys = true;
