@@ -4,7 +4,7 @@ import { ExtensionsPage } from './pages/ExtensionsPage';
 const URLS = {
   DESIGNS: {
     DOCS: 'https://docs.meshery.io/',
-    DESIGNER_EMBED: 'https://meshery.io/extensions/meshery-design-embed',
+    DESIGNER_EMBED: 'https://docs.meshery.io/extensions',
   },
   DOCKER: {
     EXTENSION: 'https://hub.docker.com/extensions/meshery/docker-extension-meshery',
