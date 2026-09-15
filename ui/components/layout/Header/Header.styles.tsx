@@ -36,10 +36,10 @@ export const UserContainer = styled('div')(({ theme }) => ({
   paddingLeft: 1,
   display: 'flex',
   alignItems: 'center',
+  marginBlock: '0.5rem',
   [theme.breakpoints.down('sm')]: {
     width: '100%',
     justifyContent: 'flex-end',
-    marginBlock: '0.5rem',
   },
 }));
 
