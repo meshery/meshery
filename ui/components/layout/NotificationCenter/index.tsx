@@ -12,6 +12,8 @@ import {
   Checkbox,
   Collapse,
   IconButton,
+  useMediaQuery,
+  ChevronRightIcon,
 } from '@sistent/sistent';
 import Filter from './filter';
 import BellIcon from '../../../assets/icons/BellIcon';
@@ -34,6 +36,7 @@ import {
   SideList,
   StyledBadge,
   StyledNotificationDrawer,
+  MobileDrawerCloseHandle,
   Title,
   TitleBellIcon,
 } from './notificationCenter.style';
@@ -165,6 +168,7 @@ const NotificationCountChip = ({ notificationStyle, count, type, handleClick, se
     fill: theme.palette.mode === 'dark' ? darkColor : notificationStyle?.color,
     height: '20px',
     width: '20px',
+    style: { flexShrink: 0, width: '20px', height: '20px' },
   };
   count = Number(count).toLocaleString('en', { useGrouping: true });
   return (
@@ -177,6 +181,8 @@ const NotificationCountChip = ({ notificationStyle, count, type, handleClick, se
               selectedSeverity === severity
                 ? `solid 2px ${chipStyles.fill}`
                 : 'solid 2px transparent',
+            minWidth: '5rem',
+            minHeight: '2.2rem',
           }}
           onClick={handleClick}
         >
@@ -192,7 +198,13 @@ const NotificationCountChip = ({ notificationStyle, count, type, handleClick, se
 
 const Header = ({ handleFilter, handleClose }) => {
   const uiConfig = useSelector((state) => state.events.ui);
+  const selectedSeverity = useSelector(selectSeverity);
+  const currentFilters = useSelector((state) => state.events.current_view?.filters || {});
+  const isReadStatusSelected = currentFilters.status === STATUS.READ;
+
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const statusStyle = getStatusStyle(theme);
   const { data } = useGetEventsSummaryQuery({
     status: STATUS.UNREAD,
@@ -203,20 +215,64 @@ const Header = ({ handleFilter, handleClose }) => {
     readCount: 0,
   };
 
+  const totalUnreadCount = (countBySeverityLevel || []).reduce(
+    (acc, item) => acc + (item.count || 0),
+    0,
+  );
+
   const onClickSeverity = (severity) => {
-    handleFilter({
-      severity: [severity],
-      status: STATUS.UNREAD,
-    });
+    if (selectedSeverity === severity) {
+      handleFilter({
+        status: STATUS.UNREAD,
+      });
+    } else {
+      handleFilter({
+        severity: [severity],
+        status: STATUS.UNREAD,
+      });
+    }
+    setIsMobileMenuOpen(false);
   };
 
   const onClickStatus = (status) => {
-    handleFilter({
-      status: status,
-    });
+    if (isReadStatusSelected && status === STATUS.READ) {
+      handleFilter({
+        status: STATUS.UNREAD,
+      });
+    } else {
+      handleFilter({
+        status: status,
+      });
+    }
+    setIsMobileMenuOpen(false);
   };
 
   const Icon = uiConfig.icon || BellIcon;
+  const ReadIconComp = statusStyle[STATUS.READ]?.icon || ReadIcon;
+
+  let ActiveIconComponent = ReadIconComp;
+  let activeIconColor = theme.palette.text.primary;
+  let activeCount = totalUnreadCount;
+  let activeBg = alpha(theme.palette.text.primary, 0.12);
+  let activeBorder = 'solid 2px transparent';
+
+  if (selectedSeverity && SEVERITY_STYLE[selectedSeverity]) {
+    const sevStyle = SEVERITY_STYLE[selectedSeverity];
+    const darkColor = sevStyle?.darkColor || sevStyle?.color;
+    ActiveIconComponent = sevStyle.icon;
+    activeIconColor = theme.palette.mode === 'dark' ? darkColor : sevStyle.color;
+    activeCount = getSeverityCount(countBySeverityLevel, selectedSeverity);
+    activeBg = alpha(activeIconColor, 0.2);
+    activeBorder = `solid 2px ${activeIconColor}`;
+  } else if (isReadStatusSelected) {
+    const readStyle = statusStyle[STATUS.READ];
+    ActiveIconComponent = readStyle?.icon || ReadIcon;
+    activeIconColor = readStyle?.color || theme.palette.text.primary;
+    activeCount = readCount;
+    activeBg = alpha(activeIconColor, 0.2);
+    activeBorder = `solid 2px ${activeIconColor}`;
+  }
+
   return (
     <NotificationContainer>
       <Title>
@@ -225,25 +281,121 @@ const Header = ({ handleFilter, handleClose }) => {
         </TitleBellIcon>
         <Typography variant="h6">{uiConfig.title || 'Notifications'}</Typography>
       </Title>
-      <SeverityChips>
-        {Object.values(SEVERITY).map((severity) => (
+      {isMobile ? (
+        <ClickAwayListener onClickAway={() => setIsMobileMenuOpen(false)}>
+          <Box sx={{ position: 'relative' }}>
+            <Button
+              aria-label="Filter notifications"
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-notification-filter-menu"
+              onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+              style={{
+                backgroundColor: activeBg,
+                border: activeBorder,
+                borderRadius: '0.3rem',
+                padding: '0.25rem 0.55rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                color: theme.palette.text.primary,
+                textTransform: 'none',
+                fontWeight: 600,
+                fontSize: '0.85rem',
+                minHeight: '2rem',
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  width: '18px',
+                  height: '18px',
+                }}
+              >
+                <ActiveIconComponent
+                  height="18px"
+                  width="18px"
+                  fill={activeIconColor}
+                  style={{ flexShrink: 0, width: '18px', height: '18px' }}
+                />
+              </Box>
+              <span>{Number(activeCount).toLocaleString('en', { useGrouping: true })}</span>
+              <span
+                style={{
+                  fontSize: '0.55rem',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  marginLeft: '0.1rem',
+                  opacity: 0.85,
+                  flexShrink: 0,
+                }}
+              >
+                {isMobileMenuOpen ? '▼' : '▶'}
+              </span>
+            </Button>
+            {isMobileMenuOpen && (
+              <Box
+                id="mobile-notification-filter-menu"
+                sx={{
+                  position: 'absolute',
+                  top: 'calc(100% + 8px)',
+                  right: 0,
+                  zIndex: 1500,
+                  backgroundColor: theme.palette.mode === 'dark' ? '#263238' : '#ffffff',
+                  padding: '0.5rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.5rem',
+                  boxShadow: theme.shadows[8] || '0 8px 24px rgba(0, 0, 0, 0.4)',
+                  borderRadius: '0.375rem',
+                  border: `1px solid ${alpha(theme.palette.divider || '#fff', 0.15)}`,
+                  minWidth: '6.5rem',
+                }}
+              >
+                {Object.values(SEVERITY).map((severity) => (
+                  <NotificationCountChip
+                    key={severity}
+                    severity={severity}
+                    handleClick={() => onClickSeverity(severity)}
+                    notificationStyle={SEVERITY_STYLE[severity]}
+                    type={`Unread ${severity}(s)`}
+                    count={getSeverityCount(countBySeverityLevel, severity)}
+                  />
+                ))}
+                <NotificationCountChip
+                  notificationStyle={statusStyle[STATUS.READ]}
+                  handleClick={() => onClickStatus(STATUS.READ)}
+                  type={STATUS.READ}
+                  severity={STATUS.READ}
+                  count={readCount}
+                />
+              </Box>
+            )}
+          </Box>
+        </ClickAwayListener>
+      ) : (
+        <SeverityChips>
+          {Object.values(SEVERITY).map((severity) => (
+            <NotificationCountChip
+              key={severity}
+              severity={severity}
+              handleClick={() => onClickSeverity(severity)}
+              notificationStyle={SEVERITY_STYLE[severity]}
+              type={`Unread ${severity}(s)`}
+              count={getSeverityCount(countBySeverityLevel, severity)}
+            />
+          ))}
           <NotificationCountChip
-            key={severity}
-            severity={severity}
-            handleClick={() => onClickSeverity(severity)}
-            notificationStyle={SEVERITY_STYLE[severity]}
-            type={`Unread ${severity}(s)`}
-            count={getSeverityCount(countBySeverityLevel, severity)}
+            notificationStyle={statusStyle[STATUS.READ]}
+            handleClick={() => onClickStatus(STATUS.READ)}
+            type={STATUS.READ}
+            severity={STATUS.READ}
+            count={readCount}
           />
-        ))}
-        <NotificationCountChip
-          notificationStyle={statusStyle[STATUS.READ]}
-          handleClick={() => onClickStatus(STATUS.READ)}
-          type={STATUS.READ}
-          severity={STATUS.READ}
-          count={readCount}
-        />
-      </SeverityChips>
+        </SeverityChips>
+      )}
     </NotificationContainer>
   );
 };
@@ -479,8 +631,25 @@ const NotificationCenterDrawer = () => {
           isNotificationCenterOpen={isNotificationCenterOpen}
           BackdropComponent={<DarkBackdrop open={isNotificationCenterOpen} />}
         >
-          <div>
-            <div>
+          <MobileDrawerCloseHandle
+            type="button"
+            data-testid="mobile-drawer-close-handle"
+            onClick={handleClose}
+            aria-label="Close notifications"
+          >
+            <ChevronRightIcon fill="#fff" height="22px" width="22px" />
+          </MobileDrawerCloseHandle>
+          <div
+            style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}
+          >
+            <div
+              style={{
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
+              }}
+            >
               <SideList>
                 <Header handleFilter={handleFilter} handleClose={handleClose}></Header>
                 <Divider light />
