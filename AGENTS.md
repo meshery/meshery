@@ -469,6 +469,29 @@ touching any of them.
 - Hooks in `.agents/hooks/`: `format-frontend.sh` (post-edit Prettier) and
   `block-lockfiles.sh` (pre-edit lock-file guard).
 
+## Reusable Workflows Consumed by Other Repos
+
+`.github/workflows/*.{yml,yaml}` here are called by repos across `meshery` and
+`meshery-extensions` via `uses: meshery/meshery/.github/workflows/<file>@master`. Two traps,
+both of which have shipped as silent no-ops:
+
+- **`with:` values are not evaluated by a shell.** Only `${{ ... }}` expressions are evaluated; `${GITHUB_REF/refs\/tags\//}` or a
+  bare `${GITHUB_SHA}` in a `with:` value is forwarded verbatim - GitHub never evaluates it.
+  Use `${{ github.ref_name }}` / `${{ github.sha }}`. The same substitution inside a `run:`
+  step is correct, because a shell evaluates it there; don't "fix" those.
+  `build-and-release-stable.yml` shows the correct `run:` form; the `with:` form it once
+  carried was fixed in `7eac7cd01a7a`.
+- **`if: github.repository == 'meshery/meshery'` disables the job for every external caller.**
+  In a reusable workflow the `github` context is the *caller's*, so this guard is false from
+  any other repo. Jobs in caller files carry it too, and a job whose `needs:` dependency is
+  skipped is itself skipped. Changing such a guard activates dormant deploys - a product
+  decision, not a repair.
+
+Before editing a shared workflow, find its callers:
+`gh-axi api -X GET search/code --field q='<workflow-file> path:.github/workflows'`. A caller having
+zero runs (no matching tags/releases) means changes there are untested by CI - verify by
+reading, not by waiting for a green check.
+
 ## Further Reading
 
 The rules above are complete on their own. These files hold the reasoning, evidence and
@@ -483,6 +506,7 @@ worked detail behind them — open the one that matches what you are working on.
 | MeshKit error codes | [How to write MeshKit compatible errors](./docs/content/en/project/contributing/contributing-error.md) |
 | A Go lint rule firing, or adding one | [Go Lint Rules](./docs/content/en/project/contributing/contributing-lint.md) |
 | Releases, CI secrets, the QA dashboard | [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md) |
+| A reusable workflow called from another repo | [Build & Release (CI)](./docs/content/en/project/contributing/build-and-release.md) |
 | Connections and credential secrets | [Connections](./docs/content/en/project/contributing/models/connections.md) |
 | A permission-gated page, control or key | [Extensibility: Authorization](./docs/content/en/reference/extensibility/authorization/index.md) |
 | Providers, `PROVIDER` enforcement, boot-time seeding | [Extensibility: Providers](./docs/content/en/reference/extensibility/providers/index.md) |

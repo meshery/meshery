@@ -73,7 +73,7 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	}
 }
 
-// Reset the system database to its initial state.
+// ResetSystemDatabase resets the system database to its initial state.
 func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 
 	mesherydbPath := path.Join(utils.GetHome(), ".meshery/config")
