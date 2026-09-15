@@ -3,6 +3,7 @@ package model
 import (
 	"context"
 	"fmt"
+	"net"
 	"net/url"
 	"strconv"
 	"strings"
@@ -120,6 +121,24 @@ func GetMeshSyncInfo(meshsync controllers.IMesheryController, broker controllers
 	return meshsyncControllerStatus
 }
 
+// brokerHostPort parses a "host:port" broker endpoint into a utils.HostPort.
+// It returns ok=false for an empty or malformed endpoint (for example a bare
+// host with no port, or an unset external endpoint). Parsing the endpoint by
+// hand with strings.Split(endpoint, ":")[1] previously panicked with an index
+// out of range in exactly those cases, which crashed the server because the
+// caller runs SubscribeToBroker in a goroutine with no recover.
+func brokerHostPort(endpoint string) (utils.HostPort, bool) {
+	host, portStr, err := net.SplitHostPort(endpoint)
+	if err != nil {
+		return utils.HostPort{}, false
+	}
+	port, err := strconv.Atoi(portStr)
+	if err != nil {
+		return utils.HostPort{}, false
+	}
+	return utils.HostPort{Address: host, Port: int32(port)}, true
+}
+
 func SubscribeToBroker(_ models.Provider, mesheryKubeClient *mesherykube.Client, datach chan *brokerpkg.Message, brokerConn brokerpkg.Handler, ct *K8sConnectionTracker) (string, error) {
 	var broker *operatorv1alpha1.Broker
 	var endpoints []string
@@ -145,32 +164,33 @@ func SubscribeToBroker(_ models.Provider, mesheryKubeClient *mesherykube.Client,
 		time.Sleep(1 * time.Second)
 	}
 
+	// The loop above can fall through on timeout with broker still nil (the
+	// broker resource never became available, or every Get errored). Guard
+	// against it so a bare goroutine caller does not panic and crash the server.
+	if broker == nil {
+		return "", ErrMesheryClient(fmt.Errorf("timed out waiting for meshery-broker; broker resource not available"))
+	}
+
 	endpoint := broker.Status.Endpoint.Internal
-	if len(strings.Split(broker.Status.Endpoint.Internal, ":")) > 1 {
-		port, _ := strconv.Atoi(strings.Split(broker.Status.Endpoint.Internal, ":")[1])
-		if !utils.TcpCheck(&utils.HostPort{
-			Address: strings.Split(broker.Status.Endpoint.Internal, ":")[0],
-			Port:    int32(port),
-		}, nil) {
-			endpoint = broker.Status.Endpoint.External
-			port, _ = strconv.Atoi(strings.Split(broker.Status.Endpoint.External, ":")[1])
-			if !utils.TcpCheck(&utils.HostPort{
-				Address: strings.Split(broker.Status.Endpoint.External, ":")[0],
-				Port:    int32(port),
-			}, nil) {
-				if !utils.TcpCheck(&utils.HostPort{
-					Address: "host.docker.internal",
-					Port:    int32(port),
-				}, nil) {
-					u, _ := url.Parse(mesheryKubeClient.RestConfig.Host)
-					if utils.TcpCheck(&utils.HostPort{
-						Address: u.Hostname(),
-						Port:    int32(port),
+	if internal, ok := brokerHostPort(broker.Status.Endpoint.Internal); ok {
+		if !utils.TcpCheck(&internal, nil) {
+			if external, ok := brokerHostPort(broker.Status.Endpoint.External); ok {
+				endpoint = broker.Status.Endpoint.External
+				if !utils.TcpCheck(&external, nil) {
+					if !utils.TcpCheck(&utils.HostPort{
+						Address: "host.docker.internal",
+						Port:    external.Port,
 					}, nil) {
-						endpoint = fmt.Sprintf("%s:%d", u.Hostname(), int32(port))
+						u, _ := url.Parse(mesheryKubeClient.RestConfig.Host)
+						if utils.TcpCheck(&utils.HostPort{
+							Address: u.Hostname(),
+							Port:    external.Port,
+						}, nil) {
+							endpoint = fmt.Sprintf("%s:%d", u.Hostname(), external.Port)
+						}
+					} else {
+						endpoint = fmt.Sprintf("host.docker.internal:%d", external.Port)
 					}
-				} else {
-					endpoint = fmt.Sprintf("host.docker.internal:%d", int32(port))
 				}
 			}
 		}
