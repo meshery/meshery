@@ -23,14 +23,14 @@ func TestSearchComponent(t *testing.T) {
 	// test scenarios for fetching data
 	tests := []utils.MesheryListCommandTest{
 		{
-			Name:             "given no arguments provided when component search  then throw error",
+			Name:             "given no arguments and no flags provided when component search then throw error",
 			Args:             []string{"search"},
 			URL:              "",
 			Fixture:          "components.api.response.golden",
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("%v\n%v", errInvalidArg, searchUsageMsg)),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("provide a search query or use --model flag\n\n%s", searchUsageMsg)),
 		},
 		{
 			Name:             "given multiple argument provided when component search then throw error",
@@ -40,7 +40,7 @@ func TestSearchComponent(t *testing.T) {
 			ExpectedResponse: "",
 			ExpectError:      true,
 			IsOutputGolden:   false,
-			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("%v\n%v", errInvalidArg, searchUsageMsg)),
+			ExpectedError:    utils.ErrInvalidArgument(fmt.Errorf("at most one argument (search query) can be provided\n\n%s", searchUsageMsg)),
 		},
 		{
 			Name:             "given valid name provided when component search then display matching results",
@@ -56,6 +56,38 @@ func TestSearchComponent(t *testing.T) {
 			URL:              fmt.Sprintf("/%s?search=Test&page=1&pagesize=10", componentApiPath),
 			Fixture:          "components.api.response.golden",
 			ExpectedResponse: "components.search.output.golden",
+			ExpectError:      false,
+		},
+		{
+			Name:             "given model flag provided when component search then display matching results",
+			Args:             []string{"search", "--model", "component-test-0"},
+			URL:              "/api/meshmodels/models/component-test-0/components?page=0&pagesize=10",
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "components.search.success.output.golden",
+			ExpectError:      false,
+		},
+		{
+			Name:             "given model and query provided when component search then display matching results",
+			Args:             []string{"search", "Test", "--model", "component-test-0"},
+			URL:              "/api/meshmodels/models/component-test-0/components?search=Test&page=0&pagesize=10",
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "components.search.success.output.golden",
+			ExpectError:      false,
+		},
+		{
+			Name:             "given valid name provided when component search with json output then display json",
+			Args:             []string{"search", "Test", "-o", "json"},
+			URL:              fmt.Sprintf("/%s?search=Test&pagesize=all", componentApiPath),
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "components.search.json.output.golden",
+			ExpectError:      false,
+		},
+		{
+			Name:             "given model flag provided when component search with yaml output then display yaml",
+			Args:             []string{"search", "--model", "component-test-0", "-o", "yaml"},
+			URL:              "/api/meshmodels/models/component-test-0/components?pagesize=all",
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "components.search.yaml.output.golden",
 			ExpectError:      false,
 		},
 	}
