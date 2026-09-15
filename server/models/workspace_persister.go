@@ -190,7 +190,7 @@ func (wp *WorkspacePersister) UpdateWorkspaceByID(selectedWorkspace *workspace.W
 	return selectedWorkspace, nil
 }
 
-// Get workspace by ID
+// GetWorkspace returns a workspace by ID
 func (wp *WorkspacePersister) GetWorkspace(id core.Uuid) (*workspace.Workspace, error) {
 	workspace := workspace.Workspace{}
 	query := wp.DB.Where("id = ?", id)
@@ -213,7 +213,7 @@ func (wp *WorkspacePersister) GetWorkspaceByID(workspaceID core.Uuid) ([]byte, e
 	return wsJSON, nil
 }
 
-// UpdateWorkspaceByID updates a single workspace by ID
+// UpdateWorkspace updates a workspace's fields from the given payload and persists the change
 func (wp *WorkspacePersister) UpdateWorkspace(workspaceID core.Uuid, payload *workspace.WorkspaceUpdatePayload) (*workspace.Workspace, error) {
 	ws, err := wp.GetWorkspace(workspaceID)
 	if err != nil {

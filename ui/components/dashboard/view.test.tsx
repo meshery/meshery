@@ -73,7 +73,8 @@ vi.mock('./utils', () => ({
   ),
 }));
 
-vi.mock('@/utils/Enum', () => ({
+vi.mock('@/utils/Enum', async () => ({
+  ...(await vi.importActual('@/utils/Enum')),
   CONNECTION_STATES: { DISCONNECTED: 'disconnected', CONNECTED: 'connected' },
 }));
 
@@ -129,6 +130,10 @@ describe('View', () => {
     expect(img).toHaveAttribute('src', '/icon.svg');
     expect(screen.getByText('pod-1')).toBeInTheDocument();
     expect(screen.getByTestId('connection-chip')).toHaveTextContent('ctx-cluster-1');
+    // #20617: plain ?kind=kubernetes, not JSON.stringify(['kubernetes'])
+    expect(useGetConnectionsQuery).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: 'kubernetes', pageSize: 100 }),
+    );
   });
 
   it('navigates back and switches view when the back button is clicked', async () => {

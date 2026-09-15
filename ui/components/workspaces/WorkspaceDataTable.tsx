@@ -27,7 +27,7 @@ import {
   ErrorBoundary,
   useHasPermission,
 } from '@sistent/sistent';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { iconSmall } from 'css/icons.styles';
 import WorkSpaceContentDataTable from './WorkSpaceContentDataTable';
 import WorkspaceActionList from './WorkspaceActionList';
@@ -85,6 +85,9 @@ const WorkspaceDataTable = ({
   );
 
   const workspacesData = workspaces?.workspaces ? workspaces.workspaces : [];
+
+  const workspacesDataRef = useRef(workspacesData);
+  workspacesDataRef.current = workspacesData;
 
   const columns = [
     {
@@ -281,7 +284,7 @@ const WorkspaceDataTable = ({
               handleDeleteWorkspaceConfirm={handleDeleteWorkspaceConfirm}
               workspaceId={workspaceId}
               workspaceName={workspaceName}
-              selectedWorkspace={workspacesData[tableMeta.rowIndex]}
+              selectedWorkspace={workspacesDataRef.current[tableMeta.rowIndex]}
             />
           );
         },

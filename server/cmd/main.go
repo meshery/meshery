@@ -292,6 +292,15 @@ func main() {
 
 		EventBroadcaster: models.NewBroadcaster("Events"),
 
+		// System events (registry seeding summaries, registration failures)
+		// are raised outside any user request, so they are persisted through
+		// their own sink rather than through Providers - which PROVIDER
+		// enforcement may reduce to a single remote with no Local entry.
+		// This is the same database handler every provider's own
+		// EventsPersister wraps, so the events land in the same table either
+		// way.
+		SystemEventPersister: &models.EventsPersister{DB: dbHandler},
+
 		K8scontextChannel: models.NewContextHelper(),
 		OperatorTracker:   models.NewOperatorTracker(viper.GetBool("DISABLE_OPERATOR")),
 	}
@@ -303,20 +312,34 @@ func main() {
 	//seed the local meshmodel components
 	rego := policies.Rego{}
 
+	// Seeding runs off the request path, in its own goroutine, so a fault in
+	// any stage must degrade the server rather than terminate it: an
+	// unrecovered panic here would take the HTTP listener down with it. Each
+	// stage is wrapped separately so one faulting stage still leaves the
+	// others to run.
 	go func() {
+		models.RunSeedStage(log, "user keys", func() {
+			krh.SeedKeys(viper.GetString("KEYS_PATH"))
+		})
+
 		// This is where models are seeded from meshmodel directory to registry
-		models.SeedComponents(log, hc, regManager, dbHandler)
+		models.RunSeedStage(log, "models", func() {
+			models.SeedComponents(log, hc, regManager, dbHandler)
+		})
 		// Rego is intialized for passing of policy if the policies are made to be per model base this needs to be removed.
-		r, err := policies.NewRegoInstance(models.PoliciesPath, regManager)
-		if err != nil {
-			log.Warn(handlers.ErrCreatingOPAInstance(err))
-		} else {
-			rego = *r
-		}
-		krh.SeedKeys(viper.GetString("KEYS_PATH"))
+		models.RunSeedStage(log, "policies", func() {
+			r, err := policies.NewRegoInstance(models.PoliciesPath, regManager)
+			if err != nil {
+				log.Warn(handlers.ErrCreatingOPAInstance(err))
+			} else {
+				rego = *r
+			}
+		})
 	}()
 
-	lProv.SeedContent(log)
+	models.RunSeedStage(log, "content", func() {
+		lProv.SeedContent(log)
+	})
 	provs[lProv.Name()] = lProv
 
 	// Trim once here so a whitespace-only PROVIDER behaves exactly like unset
