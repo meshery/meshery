@@ -14,7 +14,7 @@ For the underlying concepts, see the canonical references:
 
 - [Connections]({{< ref "concepts/logical/connections/index.md" >}}) - what a Connection is and its full state lifecycle.
 - [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}) - the discovery component, its architecture, and its FAQs.
-- [Registering a Connection]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}) - the Connection Wizard mechanics, step by step.
+- [Creating a Connection]({{< ref "guides/infrastructure-management/creating-a-connection.md" >}}) - the Connection Wizard mechanics, step by step.
 - [Managing Connections]({{< ref "guides/infrastructure-management/lifecycle-management/index.md" >}}) - operating Connections after they are registered.
 
 {{% alert color="info" title="What 'management' means at each stage" %}}
@@ -29,7 +29,7 @@ Meshery does not brand what it deploys, either: resources created by deploying a
 
 ## What happens when you connect a live cluster
 
-Connecting an existing cluster is the same flow as connecting any cluster - the [Connection Wizard]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}) or `mesheryctl`. Mechanically, this is what takes place:
+Connecting an existing cluster is the same flow as connecting any cluster - the [Connection Wizard]({{< ref "guides/infrastructure-management/creating-a-connection.md" >}}) or `mesheryctl`. Mechanically, this is what takes place:
 
 1. **You upload a kubeconfig and select contexts.** Meshery parses the file and lists its contexts, indicating which are reachable; nothing is persisted yet. Each context you select becomes its own [Connection]({{< ref "concepts/logical/connections/index.md" >}}).
 2. **Each Connection enters the state machine.** New Kubernetes Connections are created in the [Discovered]({{< ref "concepts/logical/connections/index.md#state-discovered" >}}) state. Reachable ones transition automatically through [Registered]({{< ref "concepts/logical/connections/index.md#state-registered" >}}) (Meshery verifies reachability against the cluster's `/livez` endpoint and registers the cluster's component models) to [Connected]({{< ref "concepts/logical/connections/index.md#state-connected" >}}) in the same import. Unreachable contexts remain Discovered until you act on them.
@@ -99,7 +99,7 @@ MeshSync's default watch list includes `secrets.v1.`, and Secret **values are pu
 ## Walkthrough: bringing a live cluster under management
 
 1. **(Optional) Rehearse discovery offline.** MeshSync's file output mode captures a point-in-time snapshot of a cluster to local YAML with nothing installed and no Broker involved - a zero-commitment preview of exactly what discovery would collect. The [kubectl meshsync snapshot]({{< ref "extensions/extensions/kubectl-meshsync-snapshot/index.md" >}}) plugin packages this.
-2. **Connect the cluster.** In the Meshery UI (**Lifecycle → Connections → Create Connection → Kubernetes**), upload your kubeconfig, select the contexts to import, and choose each context's MeshSync deployment mode - embedded if you are not ready to install anything into a production cluster, operator for in-cluster, event-streamed discovery. Full steps: [Registering a Connection]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}). For managed clouds, `mesheryctl system config aks|eks|gke|minikube` uploads the context for you.
+2. **Connect the cluster.** In the Meshery UI (**Lifecycle → Connections → Create Connection → Kubernetes**), upload your kubeconfig, select the contexts to import, and choose each context's MeshSync deployment mode - embedded if you are not ready to install anything into a production cluster, operator for in-cluster, event-streamed discovery. Full steps: [Creating a Connection]({{< ref "guides/infrastructure-management/creating-a-connection.md" >}}). For managed clouds, `mesheryctl system config aks|eks|gke|minikube` uploads the context for you.
 3. **Verify component health.** Confirm the Connection shows **Connected** in the Connections table. In operator mode, verify the in-cluster components:
 
    ```bash
@@ -130,7 +130,7 @@ MeshSync's default watch list includes `secrets.v1.`, and Secret **values are pu
 ## Related
 
 - [Configuring Meshery Operator, MeshSync, and Broker]({{< ref "guides/infrastructure-management/configuring-operator-meshsync-broker.md" >}}) - every deployment and discovery-scoping knob in one place.
-- [Registering a Connection]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}) - the Connection Wizard, step by step.
+- [Creating a Connection]({{< ref "guides/infrastructure-management/creating-a-connection.md" >}}) - the Connection Wizard, step by step.
 - [Connections]({{< ref "concepts/logical/connections/index.md" >}}) - concepts and the state lifecycle.
 - [Managing Connections]({{< ref "guides/infrastructure-management/lifecycle-management/index.md" >}}) - lifecycle operations on registered Connections.
 - [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}), [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}}), and [Meshery Broker]({{< ref "concepts/architecture/broker/index.md" >}}) - component architecture.
