@@ -22,7 +22,7 @@ var (
 	ErrPurgeReadModelsDirCode    = "mesheryctl-1250"
 	ErrPurgeRemoveCode           = "mesheryctl-1251"
 	ErrPurgeUnsafePathCode       = "mesheryctl-1252"
-	ErrPublishInvalidArgsCode    = "mesheryctl-1255"
+	ErrPublishInvalidArgsCode    = "mesheryctl-1256"
 )
 
 func ErrUpdateRegistry(err error, path string) error {
