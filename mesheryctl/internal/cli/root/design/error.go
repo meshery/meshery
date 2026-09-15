@@ -40,7 +40,7 @@ const (
 	ErrDesignInvalidApiResponseCode   = "mesheryctl-1199"
 	ErrEvaluateDesignCode             = "mesheryctl-1247"
 	ErrEvaluateDesignResponseCode     = "mesheryctl-1248"
-	ErrDesignSelectNotInteractiveCode = "mesheryctl-1257"
+	ErrDesignSelectNotInteractiveCode = "mesheryctl-1256"
 )
 
 const (
