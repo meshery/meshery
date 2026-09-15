@@ -6,10 +6,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Box, Button, Grid2, Typography, styled } from '@sistent/sistent';
 import {
   useGetProviderCapabilitiesQuery,
-  useGetSystemVersionQuery,
   useInstallProviderExtensionMutation,
   useRemoveProviderExtensionMutation,
 } from '@/rtk-query/user';
+import { useGetSystemVersionQuery } from '@meshery/schemas/mesheryApi';
 import { Keys } from '@meshery/schemas/permissions';
 import { CardContainer, FrontSideDescription } from 'css/icons.styles';
 import { EVENT_TYPES } from '../../lib/event-types';
