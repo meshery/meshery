@@ -21,6 +21,12 @@ var versionCheck = []struct {
 	{"1.12.8", [3]int{1, 12, 8}},
 	{"1.12.9", [3]int{1, 12, 9}},
 	{"1.12.10", [3]int{1, 12, 10}},
+	// Multi-part and vendor-forked versions: fix for #21761.
+	// Only the first three numeric segments are parsed into [3]int.
+	{"1.28.3.1", [3]int{1, 28, 3}},
+	{"1.26.4.2", [3]int{1, 26, 4}},
+	{"1.28.3.1.7", [3]int{1, 28, 3}},
+	{"v1.28.3", [3]int{1, 28, 3}},
 }
 
 func TestGetK8sVersion(t *testing.T) {
