@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 
+	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/schemas/models/core"
 
 	"github.com/gofrs/uuid"
@@ -18,7 +19,7 @@ type OrganizationPersister struct {
 }
 
 // GetOrganizations returns all of the organizations
-func (op *OrganizationPersister) GetOrganizations(search, order string, page, pageSize uint64, updatedAfter string) ([]byte, error) {
+func (op *OrganizationPersister) GetOrganizations(search, order string, page, pageSize uint64, filter string) ([]byte, error) {
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
@@ -28,12 +29,16 @@ func (op *OrganizationPersister) GetOrganizations(search, order string, page, pa
 	count := int64(0)
 	organizations := []*organization.Organization{}
 
-	query := op.DB.Where("updated_at > ?", updatedAfter).Order(order)
+	query := op.DB.Model(&organization.Organization{})
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
 		query = query.Where("(lower(organizations.name) like ?)", like)
 	}
+
+	dynamicKeys := []string{"name", "owner", "country", "region"}
+	query = utils.ApplyFilters(query, filter, dynamicKeys)
+	query = query.Order(order)
 
 	query.Table("organizations").Count(&count)
 
