@@ -3,6 +3,7 @@ import {
   AccordionDetails,
   AccordionSummary,
   Autocomplete,
+  Box,
   Button,
   CustomTooltip,
   FormControlLabel,
@@ -298,8 +299,16 @@ const PerformanceForm: React.FC<PerformanceFormProps> = ({
                   onChange={handleChange('reqBody')}
                 ></TextField>
               </Grid2>
-              <Grid2 container size="grow">
-                <Grid2 size={{ xs: 6 }}>
+              <Grid2 size={{ xs: 12, md: 6 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    alignItems: { xs: 'flex-start', sm: 'center' },
+                    gap: 1,
+                    width: '100%',
+                  }}
+                >
                   <TextField
                     id="additional_options"
                     name="additional_options"
@@ -317,20 +326,23 @@ const PerformanceForm: React.FC<PerformanceFormProps> = ({
                     variant="outlined"
                     size="small"
                     onChange={handleChange('additional_options')}
+                    sx={{ flex: 1 }}
                   />
-                </Grid2>
-                <Grid2 size={{ xs: 6 }}>
                   <label
                     htmlFor="upload-additional-options"
-                    style={{ paddingLeft: '0.7rem', paddingTop: '8px' }}
-                    fullWidth
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      flexShrink: 0,
+                    }}
                   >
                     <Button
                       variant="outlined"
                       onChange={handleChange('additional_options')}
                       aria-label="Upload Button"
                       component="span"
-                      style={{ margin: '0.5rem', marginTop: '1.15rem' }}
+                      style={{ margin: 0 }}
                     >
                       <input
                         id="upload-additional-options"
@@ -343,34 +355,47 @@ const PerformanceForm: React.FC<PerformanceFormProps> = ({
                       Browse
                     </Button>
                     <CustomTooltip title={infoFlags} interactive>
-                      <HelpIcon />
+                      <HelpIcon style={{ margin: 0 }} />
                     </CustomTooltip>
                   </label>
-                </Grid2>
+                </Box>
               </Grid2>
-              <Grid2 container size="grow">
-                <Grid2 size={{ xs: 6 }}>
+              <Grid2 size={{ xs: 12, md: 6 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    alignItems: { xs: 'flex-start', sm: 'center' },
+                    gap: 1,
+                    width: '100%',
+                  }}
+                >
                   <TextField
+                    id="upload-ssl-certificate"
+                    name="upload-ssl-certificate"
                     size="small"
                     variant="outlined"
                     margin="normal"
                     fullWidth
                     label={caCertificate?.name || 'Upload SSL Certificate e.g. .crt file'}
-                    style={{ width: '100%', margin: '0.5rem 0' }}
                     value={metadata?.ca_certificate.name}
+                    sx={{ flex: 1 }}
                   />
-                </Grid2>
-                <Grid2 size={{ xs: 6 }}>
                   <label
                     htmlFor="upload-cacertificate"
-                    style={{ paddingLeft: '0.7rem', paddingTop: '8px' }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      flexShrink: 0,
+                    }}
                   >
                     <Button
                       variant="outlined"
                       aria-label="Upload Button"
                       onChange={handleChange('caCertificate')}
                       component="span"
-                      style={{ margin: '0.5rem' }}
+                      style={{ margin: 0 }}
                     >
                       <input
                         id="upload-cacertificate"
@@ -384,10 +409,10 @@ const PerformanceForm: React.FC<PerformanceFormProps> = ({
                       Browse
                     </Button>
                     <CustomTooltip title={infoCRTCertificates} interactive>
-                      <HelpIcon />
+                      <HelpIcon style={{ margin: 0 }} />
                     </CustomTooltip>
                   </label>
-                </Grid2>
+                </Box>
               </Grid2>
             </Grid2>
           </AccordionDetails>
