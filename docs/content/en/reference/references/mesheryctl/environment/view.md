@@ -8,7 +8,7 @@ categories: [mesheryctl-environment]
 
 # mesheryctl environment view
 
-View registered environmnents
+View registered environments
 
 ## Synopsis
 
