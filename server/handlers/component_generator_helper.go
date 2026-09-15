@@ -475,7 +475,7 @@ func ErrMsgContruct(response *models.RegistryAPIResponse) string {
 	return msg
 }
 func determinePluralWord(count int, word string) string {
-	if count > 1 {
+	if count != 1 {
 		if strings.HasSuffix(word, "y") {
 			return word[:len(word)-1] + "ies"
 		} else if strings.HasSuffix(word, "s") {
