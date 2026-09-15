@@ -2,6 +2,12 @@ package core
 
 import (
 	"testing"
+
+	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/models/pattern/pattern"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/schemas/models/core"
+	"github.com/meshery/schemas/models/v1beta2/component"
 )
 
 func TestDesignNameFromFileName(t *testing.T) {
@@ -89,5 +95,88 @@ func TestDesignNameFromFileName(t *testing.T) {
 				t.Errorf("expected %q, got %q", tt.expectedName, result)
 			}
 		})
+	}
+}
+
+func TestToCytoscapeJSDuplicateStyles(t *testing.T) {
+	log, _ := logger.New("test", logger.Options{Format: logger.SyslogLogFormat})
+
+	// Setup component definition with overlapping styles
+	cmpId, _ := uuid.NewV4()
+	bgColor := "blue"
+	textOpacity := float32(1.0)
+	cmp := component.ComponentDefinition{
+		ID: cmpId,
+		Styles: &core.ComponentStyles{
+			BackgroundColor: &bgColor,
+			TextOpacity:     &textOpacity,
+			AdditionalProperties: map[string]interface{}{
+				"backgroundColor": "red",
+				"textOpacity":     0.5,
+				"borderWidth":     "2px",
+				"border-width":    "2px",
+				"transparent":     "true", // ordinary CSS value
+				"inherit":         "true",
+			},
+		},
+	}
+
+	pf := &pattern.PatternFile{
+		Components: []*component.ComponentDefinition{&cmp},
+	}
+
+	cy, err := ToCytoscapeJS(pf, log)
+	if err != nil {
+		t.Fatalf("ToCytoscapeJS failed: %v", err)
+	}
+
+	if len(cy.Elements) != 1 {
+		t.Fatalf("Expected 1 element, got %d", len(cy.Elements))
+	}
+
+	elem := cy.Elements[0]
+	scratch, ok := elem.Scratch.(map[string]interface{})
+	if !ok {
+		t.Fatalf("Scratch is not map[string]interface{}")
+	}
+
+	data, ok := scratch["_data"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("_data is not map[string]interface{}")
+	}
+
+	styles, ok := data["styles"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("styles is not map[string]interface{}")
+	}
+
+	// Verify duplicate camelCase/kebab-case resolution
+	if _, exists := styles["backgroundColor"]; exists {
+		t.Errorf("Expected camelCase 'backgroundColor' to be deleted")
+	}
+	if _, exists := styles["textOpacity"]; exists {
+		t.Errorf("Expected camelCase 'textOpacity' to be deleted")
+	}
+	if _, exists := styles["borderWidth"]; exists {
+		t.Errorf("Expected camelCase 'borderWidth' to be deleted")
+	}
+
+	// Verify legitimate kebab-case properties exist
+	if _, exists := styles["background-color"]; !exists {
+		t.Errorf("Expected kebab-case 'background-color' to be preserved")
+	}
+	if _, exists := styles["text-opacity"]; !exists {
+		t.Errorf("Expected kebab-case 'text-opacity' to be preserved")
+	}
+	if _, exists := styles["border-width"]; !exists {
+		t.Errorf("Expected kebab-case 'border-width' to be preserved")
+	}
+
+	// Verify other unrelated values
+	if _, exists := styles["transparent"]; !exists {
+		t.Errorf("Expected 'transparent' to be preserved")
+	}
+	if _, exists := styles["inherit"]; !exists {
+		t.Errorf("Expected 'inherit' to be preserved")
 	}
 }
