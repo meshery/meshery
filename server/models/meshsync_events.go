@@ -177,18 +177,16 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 				continue
 			}
 
+			objects := make([]meshsyncmodel.KubernetesResource, 0, len(objectsSlice))
 			for _, object := range objectsSlice {
 				obj, err := mh.Unmarshal(object)
 				if err != nil {
 					continue
 				}
-
-				err = mh.persistStoreUpdate(&obj)
-				if err != nil {
-					mh.log.Error(err)
-					continue
-				}
+				objects = append(objects, obj)
 			}
+
+			mh.persistStoreUpdates(objects)
 		}
 	}
 }
@@ -227,7 +225,7 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 	regQueue := GetMeshSyncRegistrationQueue()
 	switch event.EventType {
 	case broker.Add:
-		compMetadata, model := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
+		compMetadata, model := mh.getComponentMetadata(mh.dbHandler.DB, obj.APIVersion, obj.Kind)
 		obj.ComponentMetadata = utils.MergeMaps(obj.ComponentMetadata, compMetadata)
 		obj.Model = model
 		result := mh.dbHandler.Create(&obj)
@@ -240,7 +238,7 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 			}
 		}
 	case broker.Update:
-		compMetadata, model := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
+		compMetadata, model := mh.getComponentMetadata(mh.dbHandler.DB, obj.APIVersion, obj.Kind)
 		obj.ComponentMetadata = utils.MergeMaps(obj.ComponentMetadata, compMetadata)
 		obj.Model = model
 		result := mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&obj)
@@ -260,28 +258,62 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 	return nil
 }
 
-func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.KubernetesResource) error {
+// persistStoreUpdates writes a full resync payload to the database inside a
+// single dbHandler lock acquisition and a single transaction, rather than
+// once per object. dbHandler is shared by every connected cluster's
+// MeshsyncDataHandler, so a resync carrying thousands of objects previously
+// paid SQLite's per-statement commit cost once per object while holding that
+// shared lock, stalling every other connected cluster's real-time MeshSync
+// writes for the whole resync. Batching the writes into one transaction
+// keeps the same per-object create/update semantics but commits once for the
+// whole payload.
+func (mh *MeshsyncDataHandler) persistStoreUpdates(objects []meshsyncmodel.KubernetesResource) {
+	if len(objects) == 0 {
+		return
+	}
+
 	mh.dbHandler.Lock()
 	defer mh.dbHandler.Unlock()
-	compMetadata, model := mh.getComponentMetadata(object.APIVersion, object.Kind)
-	object.ComponentMetadata = utils.MergeMaps(object.ComponentMetadata, compMetadata)
-	object.Model = model
-	result := mh.dbHandler.Create(object)
-	regQueue := GetMeshSyncRegistrationQueue()
 
-	go regQueue.Send(MeshSyncRegistrationData{MeshsyncDataHandler: *mh, Obj: *object})
+	// Registrations are queued only after the transaction actually commits.
+	// Sending them from inside the callback would publish a resource for
+	// registration even if the transaction as a whole is later rolled back,
+	// leaving connection processing to act on state that was never persisted.
+	registrations := make([]MeshSyncRegistrationData, 0, len(objects))
 
-	if result.Error != nil {
-		result = mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(object)
-		if result.Error != nil {
-			return ErrDBPut(result.Error)
+	err := mh.dbHandler.Transaction(func(tx *gorm.DB) error {
+		for i := range objects {
+			object := &objects[i]
+
+			compMetadata, model := mh.getComponentMetadata(tx, object.APIVersion, object.Kind)
+			object.ComponentMetadata = utils.MergeMaps(object.ComponentMetadata, compMetadata)
+			object.Model = model
+
+			result := tx.Create(object)
+			if result.Error != nil {
+				result = tx.Session(&gorm.Session{FullSaveAssociations: true}).Updates(object)
+				if result.Error != nil {
+					mh.log.Error(ErrDBPut(result.Error))
+					continue
+				}
+				mh.log.Info("Updated object: ", object.KubernetesResourceMeta.Name, "/", object.KubernetesResourceMeta.Namespace, " of kind: ", object.Kind, " in the database")
+			} else {
+				mh.log.Info("Added object: ", object.KubernetesResourceMeta.Name, "/", object.KubernetesResourceMeta.Namespace, " of kind: ", object.Kind, " to the database")
+			}
+
+			registrations = append(registrations, MeshSyncRegistrationData{MeshsyncDataHandler: *mh, Obj: *object})
 		}
-		mh.log.Info("Updated object: ", object.KubernetesResourceMeta.Name, "/", object.KubernetesResourceMeta.Namespace, " of kind: ", object.Kind, " in the database")
 		return nil
+	})
+	if err != nil {
+		mh.log.Error(ErrDBPut(err))
+		return
 	}
-	mh.log.Info("Added object: ", object.KubernetesResourceMeta.Name, "/", object.KubernetesResourceMeta.Namespace, " of kind: ", object.Kind, " to the database")
 
-	return nil
+	regQueue := GetMeshSyncRegistrationQueue()
+	for _, registration := range registrations {
+		go regQueue.Send(registration)
+	}
 }
 
 func RemoveStaleObjects(dbHandler database.Handler) error {
@@ -328,7 +360,13 @@ func (mh *MeshsyncDataHandler) requestMeshsyncStore() error {
 
 // Returns metadata for the component identified by apiVersion and kind.
 // If the component does not exist in the registry, default metadata for k8s component is returned.
-func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind string) (data map[string]interface{}, model string) {
+// db is the executor to query through: mh.dbHandler outside a transaction,
+// or the active tx when called from within one. Querying through mh.dbHandler
+// while a transaction is already open on the same dbHandler risks the query
+// being served by a different underlying connection than the one the
+// transaction holds, which for an in-memory SQLite database means a
+// different, empty database rather than merely a consistency race.
+func (mh *MeshsyncDataHandler) getComponentMetadata(db *gorm.DB, apiVersion string, kind string) (data map[string]interface{}, model string) {
 	componentDef := component.ComponentDefinition{} // Retrieve the entire component
 	defer func() {
 		data, _ = utils.MarshalAndUnmarshal[component.ComponentDefinition, map[string]interface{}](componentDef)
@@ -338,7 +376,7 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 	}()
 
 	// Query the database for the complete component definition.
-	result := mh.dbHandler.Model(component.ComponentDefinition{}).
+	result := db.Model(component.ComponentDefinition{}).
 		Where("component->>'version' = ? AND component->>'kind' = ?", apiVersion, kind).
 		First(&componentDef)
 
@@ -359,7 +397,7 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 
 	if componentDef.ModelID != nil {
 		modelDef := modelv1beta1.ModelDefinition{}
-		result = mh.dbHandler.Session(&gorm.Session{NewDB: true}).Model(&modelv1beta1.ModelDefinition{}).
+		result = db.Session(&gorm.Session{NewDB: true}).Model(&modelv1beta1.ModelDefinition{}).
 			Where("id = ?", componentDef.ModelID).
 			First(&modelDef)
 		if result.Error == nil {
