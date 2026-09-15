@@ -92,7 +92,7 @@ mesheryctl system context view --all
 ## Screenshots
 
 Usage of mesheryctl context view
-![context-view-usage](../../../../images/context-view.png)
+![context-view-usage](../../../images/context-view.png)
 
 ## See Also
 
