@@ -170,6 +170,11 @@ const (
 	ErrOperatorChartNotPublishedCode      = "meshery-server-1470"
 	ErrOperatorChartSubstitutedCode       = "meshery-server-1471"
 	ErrNoMesheryReleasesFoundCode         = "meshery-server-1472"
+
+	// 1486 is claimed by ErrInvalidEnvironmentConnectionsFilter on the
+	// sibling fix for #21826, which has not merged yet; this takes the code
+	// after it so the two cannot collide whichever lands first.
+	ErrInvalidWorkspaceFilterCode = "meshery-server-1488"
 )
 
 var (
@@ -283,6 +288,21 @@ func ErrRetrieveK8sClusterID(err error, contextName string) error {
 func ErrUnmarshal(err error, obj string) error {
 	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Unable to unmarshal the : ", obj}, []string{err.Error()}, []string{"Object is not a valid json object"}, []string{"Make sure if the object passed is a valid json"})
 }
+
+// ErrInvalidWorkspaceFilter reports a `filter` query parameter that a
+// workspace-scoped listing cannot decode. It is a caller error, so the handler
+// surfaces it as 400 rather than blaming the provider.
+func ErrInvalidWorkspaceFilter(err error) error {
+	return errors.New(
+		ErrInvalidWorkspaceFilterCode,
+		errors.Alert,
+		[]string{"Invalid \"filter\" query parameter for a workspace listing"},
+		[]string{err.Error()},
+		[]string{"The filter parameter is not a JSON object, or one of its fields carries the wrong type"},
+		[]string{"Pass a JSON object, for example filter={\"assigned\":false} or filter={\"owner\":\"<uuid>\"}"},
+	)
+}
+
 func ErrGetSessionCookie(err error) error {
 	return errors.New(ErrGetSessionCookieCode, errors.Alert, []string{"Error occurred while getting session cookie"}, []string{err.Error()}, []string{}, []string{})
 }
