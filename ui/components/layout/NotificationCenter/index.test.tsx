@@ -22,6 +22,7 @@ const dispatchMock = vi.fn();
 const fetchEventsMock = vi.fn();
 const deleteEventsMutation = vi.fn();
 const updateEventsMutation = vi.fn();
+const lazyQueryState = { isFetching: false };
 const summaryQuery: { data: any; error: any; isLoading: boolean } = {
   data: { countBySeverityLevel: [], readCount: 0 },
   error: null,
@@ -71,7 +72,7 @@ vi.mock('../../../store/slices/events', () => ({
 vi.mock('../../../rtk-query/notificationCenter', () => ({
   useDeleteEventsMutation: () => [deleteEventsMutation, { isLoading: false }],
   useGetEventsSummaryQuery: () => summaryQuery,
-  useLazyGetEventsQuery: () => [fetchEventsMock, { isFetching: false }],
+  useLazyGetEventsQuery: () => [fetchEventsMock, lazyQueryState],
   useUpdateEventsMutation: () => [updateEventsMutation, { isLoading: false }],
 }));
 
@@ -249,6 +250,7 @@ beforeEach(() => {
   summaryQuery.data = { countBySeverityLevel: [], readCount: 0 };
   summaryQuery.error = null;
   summaryQuery.isLoading = false;
+  lazyQueryState.isFetching = false;
   sliceState.isNotificationCenterOpen = true;
   sliceState.events = [
     { id: 'e1', description: 'Event 1', severity: 'informational', status: 'unread' },
@@ -298,10 +300,18 @@ describe('NotificationCenter (default export)', () => {
     );
   });
 
-  it('renders an empty state when there are no events', () => {
+  it('renders an empty state when there are no events and loading is finished', () => {
     sliceState.events = [];
+    lazyQueryState.isFetching = false;
     render(<NotificationCenter />);
     expect(screen.getByText(/No notifications to show/i)).toBeInTheDocument();
+  });
+
+  it('does not render the empty state while notifications are still loading', () => {
+    sliceState.events = [];
+    lazyQueryState.isFetching = true;
+    render(<NotificationCenter />);
+    expect(screen.queryByText(/No notifications to show/i)).not.toBeInTheDocument();
   });
 });
 
