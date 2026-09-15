@@ -51,6 +51,10 @@ type fakeProvider struct {
 	// exercising the de-duplication gate.
 	status connections.ConnectionStatus
 
+	// missingConnection: GetConnectionByID returns 404 (row not yet inserted —
+	// prometheus/grafana register before DefaultConnectAction).
+	missingConnection bool
+
 	getErr    error
 	updateErr error
 
@@ -59,6 +63,9 @@ type fakeProvider struct {
 }
 
 func (f *fakeProvider) GetConnectionByID(_ string, connectionID core.Uuid) (*connections.Connection, int, error) {
+	if f.missingConnection {
+		return nil, http.StatusNotFound, errors.New("record not found")
+	}
 	if f.getErr != nil {
 		return nil, http.StatusInternalServerError, f.getErr
 	}
@@ -511,6 +518,120 @@ func (a *failingExitAction) Execute(context.Context, interface{}, interface{}) (
 
 func (a *failingExitAction) ExecuteOnExit(context.Context, interface{}, interface{}) (EventType, *events.Event, error) {
 	return NoOp, nil, a.exitErr
+}
+
+// newRegisterTestMachine builds DISCOVERED --Register--> REGISTERED, matching
+// the prometheus/grafana register graph (action settles with NoOp).
+func newRegisterTestMachine(t *testing.T, provider models.Provider, name string) *StateMachine {
+	t.Helper()
+	log, err := logger.New("test", logger.Options{})
+	if err != nil {
+		t.Fatalf("failed to build test logger: %v", err)
+	}
+	connectionID, err := uuid.NewV4()
+	if err != nil {
+		t.Fatalf("failed to generate connection UUID: %v", err)
+	}
+	return &StateMachine{
+		ID:            core.Uuid(connectionID),
+		Name:          name,
+		InitialState:  DISCOVERED,
+		CurrentState:  DISCOVERED,
+		PreviousState: DefaultState,
+		Log:           log,
+		Provider:      provider,
+		States: States{
+			DISCOVERED: State{
+				Events: Events{Register: REGISTERED},
+				Action: nil,
+			},
+			REGISTERED: State{
+				Events: Events{Connect: CONNECTED},
+				Action: &stubAction{execNext: NoOp},
+			},
+		},
+	}
+}
+
+// TestSendEvent_RegisterSucceedsWhenConnectionNotYetPersisted covers the
+// prometheus/grafana wizard path: register advances to REGISTERED before
+// DefaultConnectAction inserts a row. A GetConnectionByID 404 must not turn
+// that success into "record not found".
+func TestSendEvent_RegisterSucceedsWhenConnectionNotYetPersisted(t *testing.T) {
+	provider := &fakeProvider{missingConnection: true}
+	sm := newRegisterTestMachine(t, provider, "prometheus")
+	ctx := newTestContext(t)
+
+	event, err := sm.SendEvent(ctx, Register, nil)
+	if err != nil {
+		t.Fatalf("expected register to succeed when connection is not yet persisted, got %v", err)
+	}
+	if event == nil {
+		t.Fatal("expected a confirmation event on successful register, got nil")
+	}
+	if event.Severity != events.Informational {
+		t.Fatalf("expected Informational severity, got %q", event.Severity)
+	}
+	if sm.CurrentState != REGISTERED {
+		t.Fatalf("expected machine to settle in %q, got %q", REGISTERED, sm.CurrentState)
+	}
+	if provider.updateCalls != 0 {
+		t.Fatalf("expected no status write when connection is missing, got %d UpdateConnectionById call(s)", provider.updateCalls)
+	}
+}
+
+// TestSendEvent_StatusUpdateFailsOnProviderError is the boundary of the 404
+// soft-skip: after the same register transition, a non-404 GetConnectionByID
+// failure still returns error + event and must not call UpdateConnectionById.
+func TestSendEvent_StatusUpdateFailsOnProviderError(t *testing.T) {
+	getErr := errors.New("provider unavailable")
+	provider := &fakeProvider{getErr: getErr}
+	sm := newRegisterTestMachine(t, provider, "prometheus")
+	ctx := newTestContext(t)
+
+	event, err := sm.SendEvent(ctx, Register, nil)
+	if err == nil {
+		t.Fatal("expected GetConnectionByID provider error to fail SendEvent, got nil")
+	}
+	if !errors.Is(err, getErr) {
+		t.Fatalf("expected the original provider error, got %v", err)
+	}
+	if event == nil {
+		t.Fatal("expected an error event when status retrieval fails, got nil")
+	}
+	// Transition already completed before the status write; only the write fails.
+	if sm.CurrentState != REGISTERED {
+		t.Fatalf("expected machine to have settled in %q before the status failure, got %q", REGISTERED, sm.CurrentState)
+	}
+	if provider.updateCalls != 0 {
+		t.Fatalf("expected no status write after get failure, got %d UpdateConnectionById call(s)", provider.updateCalls)
+	}
+}
+
+// TestSendEvent_MissingConnectionOnConnectFails is the other boundary of the
+// register-only 404 skip: connect is when DefaultConnectAction inserts the row.
+// A 404 there means the persisted connection is gone, not "not yet inserted",
+// so SendEvent must fail and must not skip the status write.
+func TestSendEvent_MissingConnectionOnConnectFails(t *testing.T) {
+	provider := &fakeProvider{missingConnection: true}
+	sm := newRegisterTestMachine(t, provider, "prometheus")
+	sm.CurrentState = REGISTERED
+	sm.States[CONNECTED] = State{
+		Events: Events{},
+		Action: &stubAction{execNext: NoOp},
+	}
+	ctx := newTestContext(t)
+
+	event, err := sm.SendEvent(ctx, Connect, nil)
+	if err == nil {
+		t.Fatal("expected connect to fail when GetConnectionByID returns 404, got nil")
+	}
+	if event == nil {
+		t.Fatal("expected an error event when the persisted connection is missing, got nil")
+	}
+	if provider.updateCalls != 0 {
+		t.Fatalf("expected no status write after a missing-row 404 on connect, got %d UpdateConnectionById call(s)", provider.updateCalls)
+	}
 }
 
 // TestSendEvent_ExitActionFailureHaltsWithoutTransition covers the sibling of
