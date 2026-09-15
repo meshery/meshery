@@ -52,6 +52,7 @@ mesheryctl component view [component-name | component-id] -o [json|yaml]
 mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		cmdComponentViewFlags.OutputFormat = strings.ToLower(cmdComponentViewFlags.OutputFormat)
 		return mesheryctlflags.ValidateCmdFlags(cmd, &cmdComponentViewFlags)
 	},
 	Args: func(_ *cobra.Command, args []string) error {
@@ -93,35 +94,13 @@ mesheryctl component view [component-name | component-id] -o [json|yaml] --save
 			return err
 		}
 
-		outputFormatterFactory := display.OutputFormatterFactory[component.ComponentDefinition]{}
-		outputFormatter, err := outputFormatterFactory.New(cmdComponentViewFlags.OutputFormat, *selectedComponent)
-		if err != nil {
-			return err
-		}
-
-		err = outputFormatter.Display()
-		if err != nil {
-			return err
-		}
-
+		fileName := ""
 		if cmdComponentViewFlags.Save {
-			outputFormatterSaverFactory := display.OutputFormatterSaverFactory[component.ComponentDefinition]{}
-			outputFormatterSaver, err := outputFormatterSaverFactory.New(cmdComponentViewFlags.OutputFormat, outputFormatter)
-			if err != nil {
-				return err
-			}
-
 			componentString := strings.ReplaceAll(fmt.Sprintf("%v", selectedComponent.DisplayName), " ", "_")
-			fileName := filepath.Join(utils.MesheryFolder, fmt.Sprintf("component_%s.%s", componentString, cmdComponentViewFlags.OutputFormat))
-
-			outputFormatterSaver = outputFormatterSaver.WithFilePath(fileName)
-			err = outputFormatterSaver.Save()
-			if err != nil {
-				return err
-			}
+			fileName = filepath.Join(utils.MesheryFolder, fmt.Sprintf("component_%s", componentString))
 		}
 
-		return nil
+		return display.FormatAndSaveOutput(*selectedComponent, cmdComponentViewFlags.OutputFormat, cmd.OutOrStdout(), cmdComponentViewFlags.Save, fileName)
 	},
 }
 
