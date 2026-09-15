@@ -2,6 +2,7 @@ package policies
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/gofrs/uuid"
@@ -63,7 +64,7 @@ func identifyInventoryAdditionsForRel(
 		return nil
 	}
 	var out []PolicyAction
-	emittedIDs := map[string]bool{}
+	emittedKeys := map[string]bool{}
 
 	for _, ss := range *rel.Selectors {
 		mutatedSels, mutatorSels := partitionByPatchRole(ss)
@@ -91,6 +92,18 @@ func identifyInventoryAdditionsForRel(
 					if candidate == nil {
 						continue
 					}
+					// De-duplicate on the candidate's content, ignoring the (always
+					// unique) random component ID it was just assigned. Without
+					// this, several mutated components that imply the same missing
+					// parent (e.g. multiple Pods in the same missing namespace)
+					// each produce their own candidate with a different random
+					// ID, so an ID-keyed dedup can never collapse them. The rego
+					// engine avoids this because its candidate id is derived from
+					// the candidate's content, not randomly generated.
+					key := inventoryCandidateKey(candidate)
+					if emittedKeys[key] {
+						continue
+					}
 					// The rego runs feasibility against the relationship-as-a-whole;
 					// re-use the existing helper so cross-model relationships
 					// (azure EventSubscription→azure-storage StorageAccount) are
@@ -98,10 +111,7 @@ func identifyInventoryAdditionsForRel(
 					if feasibleRelationshipSelectorBetween(mutatedComp, candidate, rel) == nil {
 						continue
 					}
-					if emittedIDs[candidate.ID.String()] {
-						continue
-					}
-					emittedIDs[candidate.ID.String()] = true
+					emittedKeys[key] = true
 					out = append(out, newAddComponentAction(candidate))
 				}
 			}
@@ -157,6 +167,38 @@ func extractValuesAtPaths(
 		values = append(values, v)
 	}
 	return values, true
+}
+
+// inventoryCandidateKey derives a de-duplication key from a built
+// candidate's content, ignoring its random component ID. Two candidates
+// that would add the same logical component (same kind, model, displayName
+// and configuration) represent the same addition (e.g. "a Namespace named
+// default") and must collapse to one add_component action. Keying on the
+// built candidate rather than the selector inputs also captures the effect
+// of the mutatorRef paths, which decide where the mutated values land on
+// the candidate.
+func inventoryCandidateKey(candidate *component.ComponentDefinition) string {
+	content := struct {
+		Kind          string                      `json:"kind"`
+		Model         modelv1beta1.ModelReference `json:"model"`
+		DisplayName   string                      `json:"displayName"`
+		Configuration map[string]interface{}      `json:"configuration"`
+	}{
+		Kind:          candidate.Component.Kind,
+		Model:         candidate.ModelReference,
+		DisplayName:   candidate.DisplayName,
+		Configuration: candidate.Configuration,
+	}
+	key, err := json.Marshal(content)
+	if err != nil {
+		// Configuration values come from JSON-decoded design content, so
+		// marshaling only fails on values JSON cannot represent (e.g. NaN).
+		// Fall back to fmt's textual form, which is also deterministic (map
+		// keys print in sorted order), so distinct candidates keep distinct
+		// keys and identical ones still collapse.
+		return fmt.Sprintf("%v|%v|%v|%#v", candidate.Component.Kind, candidate.ModelReference, candidate.DisplayName, candidate.Configuration)
+	}
+	return string(key)
 }
 
 // existsMatchingMutatorComponent answers "is there already a parent in the
