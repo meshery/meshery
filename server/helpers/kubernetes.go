@@ -33,6 +33,10 @@ func getK8SClientSet(kubeconfig []byte, contextName string) (*kubernetes.Clients
 		if err != nil {
 			return nil, ErrClientConfig(err)
 		}
+		if clientConfig.TLSClientConfig.Insecure {
+			clientConfig.TLSClientConfig.CAFile = ""
+			clientConfig.TLSClientConfig.CAData = nil
+		}
 	}
 	clientConfig.Timeout = 2 * time.Minute
 	clientset, err := kubernetes.NewForConfig(clientConfig)
