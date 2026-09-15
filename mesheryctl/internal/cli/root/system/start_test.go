@@ -1,6 +1,8 @@
 package system
 
 import (
+	"net"
+	"net/url"
 	"testing"
 )
 
@@ -96,6 +98,27 @@ func TestParseContextEndpoint(t *testing.T) {
 			wantAddress: "http://localhost",
 			wantPort:    "65535",
 		},
+		// net.SplitHostPort strips the brackets from an IPv6 literal. Dropping
+		// them makes the rejoined address unparseable ("http://::1"), so the
+		// brackets have to be restored.
+		{
+			name:        "IPv6 loopback with scheme and port",
+			endpoint:    "http://[::1]:9081",
+			wantAddress: "http://[::1]",
+			wantPort:    "9081",
+		},
+		{
+			name:        "IPv6 loopback without scheme",
+			endpoint:    "[::1]:9081",
+			wantAddress: "[::1]",
+			wantPort:    "9081",
+		},
+		{
+			name:        "full IPv6 address with scheme and port",
+			endpoint:    "http://[2001:db8::1]:9081",
+			wantAddress: "http://[2001:db8::1]",
+			wantPort:    "9081",
+		},
 	}
 
 	for _, tt := range tests {
@@ -117,6 +140,26 @@ func TestParseContextEndpoint(t *testing.T) {
 			}
 			if port != tt.wantPort {
 				t.Errorf("parseContextEndpoint(%q): port = %q, want %q", tt.endpoint, port, tt.wantPort)
+			}
+
+			// Both callers rejoin the two values: configureDockerServices as a
+			// Docker port mapping and resolveDockerEndpoint as the endpoint it
+			// waits on. The rejoined form must parse back to the same host and
+			// port, which is what the missing IPv6 brackets broke.
+			rejoined := address + ":" + port
+			hostPort := rejoined
+			if u, err := url.Parse(rejoined); err == nil && u.Host != "" {
+				hostPort = u.Host
+			}
+			gotHost, gotPort, err := net.SplitHostPort(hostPort)
+			if err != nil {
+				t.Fatalf("parseContextEndpoint(%q): rejoined address %q does not split: %v", tt.endpoint, rejoined, err)
+			}
+			if gotPort != tt.wantPort {
+				t.Errorf("parseContextEndpoint(%q): rejoined address %q has port %q, want %q", tt.endpoint, rejoined, gotPort, tt.wantPort)
+			}
+			if gotHost == "" {
+				t.Errorf("parseContextEndpoint(%q): rejoined address %q has an empty host", tt.endpoint, rejoined)
 			}
 		})
 	}

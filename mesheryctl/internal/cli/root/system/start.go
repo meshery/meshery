@@ -311,9 +311,15 @@ func parseContextEndpoint(endpoint string) (address string, port string, err err
 		return "", "", ErrInvalidEndpoint(endpoint)
 	}
 
+	// net.SplitHostPort strips the brackets from an IPv6 literal, so re-add them
+	// before the host is rejoined with a scheme here or with a port by the
+	// callers — "http://::1" and "::1:9081" are both unparseable.
 	address = host
+	if strings.Contains(address, ":") {
+		address = "[" + address + "]"
+	}
 	if scheme != "" {
-		address = scheme + "://" + host
+		address = scheme + "://" + address
 	}
 
 	return address, port, nil
