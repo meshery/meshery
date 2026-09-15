@@ -65,8 +65,20 @@ getcodeelement.each(function () {
 
 var clipboard = new Clipboard('.clipbtn', {
     text: function (trigger) {
-        var container = trigger.closest('pre') || trigger.closest('.highlight');
-        var content = container ? container.querySelector('.clipboardjs') : null;
+        var btnWrap = trigger.closest('.btn-copy-wrap');
+        var prev = btnWrap ? btnWrap.previousElementSibling : null;
+        var content = null;
+        if (prev) {
+            if (prev.classList && prev.classList.contains('clipboardjs')) {
+                content = prev;
+            } else if (prev.querySelector) {
+                content = prev.querySelector('.clipboardjs');
+            }
+        }
+        if (!content) {
+            var container = trigger.closest('pre') || trigger.closest('.highlight') || trigger.closest('.codeblock');
+            content = container ? container.querySelector('.clipboardjs') : null;
+        }
         var text = content ? content.textContent : '';
         return text.trim().replace(/^\s*\$\s+/gm, '');
     }
@@ -74,6 +86,7 @@ var clipboard = new Clipboard('.clipbtn', {
 
 /* Change copy icon to check icon when successfully copied*/
 clipboard.on("success", (e) => {
+    e.clearSelection();
     const button = e.trigger;
     if (button.dataset.isCopying === "true") {
         return;
