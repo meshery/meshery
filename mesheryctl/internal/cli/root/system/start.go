@@ -273,32 +273,36 @@ func startDockerDeployment(mctlCfg *config.MesheryCtlConfig, currCtx *config.Con
 	return nil
 }
 
-// parseContextEndpoint splits a context endpoint into the address mesheryctl
-// dials and its port.
+// splitContextEndpoint splits a context endpoint into its scheme, host and
+// port. The port is empty when the endpoint carries none.
 //
 // The endpoint is user-editable (~/.meshery/config.yaml) and so is not
 // guaranteed to carry a scheme or a port. Splitting it on ":" and indexing the
 // result is what panicked with "index out of range [1] with length 1" on any
-// portless endpoint (#21696), so parse it properly and report a malformed one
-// as an actionable error instead.
-//
-// The returned address keeps the scheme when the endpoint has one, matching the
-// "<scheme>://<host>" form the localhost branch of resolveDockerEndpoint writes.
-func parseContextEndpoint(endpoint string) (address string, port string, err error) {
+// portless endpoint (#21696), so parse it properly and let each caller decide
+// what it requires.
+func splitContextEndpoint(endpoint string) (scheme, host, port string, err error) {
 	hostPort := strings.TrimSpace(endpoint)
 	if hostPort == "" {
-		return "", "", ErrInvalidEndpoint(endpoint)
+		return "", "", "", ErrInvalidEndpoint(endpoint)
 	}
 
-	scheme := ""
 	if u, parseErr := url.Parse(hostPort); parseErr == nil && u.Host != "" {
 		scheme = u.Scheme
 		hostPort = u.Host
 	}
 
-	host, port, splitErr := net.SplitHostPort(hostPort)
-	if splitErr != nil || host == "" || port == "" {
-		return "", "", ErrInvalidEndpoint(endpoint)
+	// SplitHostPort fails on a portless host, which is not an error here — the
+	// callers that need a port say so themselves.
+	if h, p, splitErr := net.SplitHostPort(hostPort); splitErr == nil {
+		host, port = h, p
+	} else {
+		host = hostPort
+	}
+
+	host = strings.TrimPrefix(host, "//")
+	if host == "" {
+		return "", "", "", ErrInvalidEndpoint(endpoint)
 	}
 
 	// net.SplitHostPort only separates the two strings; it does not check that
@@ -306,8 +310,32 @@ func parseContextEndpoint(endpoint string) (address string, port string, err err
 	// straight into the Docker port mapping, and resolveDockerEndpoint later
 	// runs it through strconv.Atoi, so reject a non-numeric or out-of-range
 	// port here rather than surfacing it as a Docker or conversion failure.
-	portNumber, portErr := strconv.Atoi(port)
-	if portErr != nil || portNumber < 1 || portNumber > 65535 {
+	if port != "" {
+		portNumber, portErr := strconv.Atoi(port)
+		if portErr != nil || portNumber < 1 || portNumber > 65535 {
+			return "", "", "", ErrInvalidEndpoint(endpoint)
+		}
+	}
+
+	return scheme, host, port, nil
+}
+
+// parseContextEndpoint splits a context endpoint into the address mesheryctl
+// dials and its port.
+//
+// An explicit port is required: configureDockerServices writes it into the
+// Docker port mapping, so there is nothing sensible to publish without one.
+// Callers that only need to reach the endpoint should use
+// validateContextEndpoint, which accepts a scheme's default port.
+//
+// The returned address keeps the scheme when the endpoint has one, matching the
+// "<scheme>://<host>" form the localhost branch of resolveDockerEndpoint writes.
+func parseContextEndpoint(endpoint string) (address string, port string, err error) {
+	scheme, host, port, err := splitContextEndpoint(endpoint)
+	if err != nil {
+		return "", "", err
+	}
+	if port == "" {
 		return "", "", ErrInvalidEndpoint(endpoint)
 	}
 
@@ -315,7 +343,7 @@ func parseContextEndpoint(endpoint string) (address string, port string, err err
 	// before the host is rejoined with a scheme here or with a port by the
 	// callers — "http://::1" and "::1:9081" are both unparseable.
 	address = host
-	if strings.Contains(address, ":") {
+	if strings.Contains(address, ":") && !strings.HasPrefix(address, "[") {
 		address = "[" + address + "]"
 	}
 	if scheme != "" {
@@ -323,6 +351,39 @@ func parseContextEndpoint(endpoint string) (address string, port string, err err
 	}
 
 	return address, port, nil
+}
+
+// validateContextEndpoint reports whether endpoint is well-formed enough to be
+// reached, without requiring an explicit port.
+//
+// The Docker health checks only need to know that the endpoint is not garbage;
+// a schemed URL such as "https://meshery.example.com" is dialed on its scheme's
+// default port, so rejecting it for want of a ":443" would fail the health
+// check on a valid remote endpoint. A portless endpoint carrying no scheme
+// ("localhost") stays invalid — that is the #21696 misconfiguration, and
+// nothing can infer a port from it.
+func validateContextEndpoint(endpoint string) error {
+	scheme, _, port, err := splitContextEndpoint(endpoint)
+	if err != nil {
+		return err
+	}
+	if port == "" && scheme == "" {
+		return ErrInvalidEndpoint(endpoint)
+	}
+	return nil
+}
+
+// isLocalhostAddress reports whether address is localhost.
+//
+// A suffix match treats "notlocalhost" — or any host ending in it — as local,
+// which skips resolveDockerEndpoint's confirmation prompt and then overwrites
+// the configured endpoint with "http://localhost", so compare the host itself.
+func isLocalhostAddress(address string) bool {
+	_, host, _, err := splitContextEndpoint(address)
+	if err != nil {
+		return false
+	}
+	return strings.EqualFold(strings.Trim(host, "[]"), "localhost")
 }
 
 func configureDockerServices(currCtx *config.Context, mesheryImageVersion, callbackURL string) (string, string, error) {
@@ -420,7 +481,7 @@ func resolveDockerEndpoint(mctlCfg *config.MesheryCtlConfig, currCtx *config.Con
 	var endpoint meshkitutils.HostPort
 
 	userResponse := false
-	if utils.SilentFlag || strings.HasSuffix(address, "localhost") {
+	if utils.SilentFlag || isLocalhostAddress(address) {
 		userResponse = true
 	} else {
 		userResponse = utils.AskForConfirmation("The endpoint address will be changed to localhost. Are you sure you want to continue?")

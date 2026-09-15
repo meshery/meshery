@@ -328,8 +328,9 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 	// and both entry points (Run and RunPreflightHealthChecks) reach this check.
 	// Reuse the parser system start relies on so an empty or malformed endpoint
 	// reports ErrInvalidEndpoint here instead of being mistaken for a Docker
-	// failure further down.
-	if _, _, err := parseContextEndpoint(hc.context.GetEndpoint()); err != nil {
+	// failure further down. Unlike system start these checks never publish a
+	// Docker port, so a schemed endpoint without one is accepted.
+	if err := validateContextEndpoint(hc.context.GetEndpoint()); err != nil {
 		return err
 	}
 

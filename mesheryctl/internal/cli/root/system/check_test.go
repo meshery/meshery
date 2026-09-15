@@ -54,7 +54,6 @@ func TestRunDockerHealthChecksInvalidEndpoint(t *testing.T) {
 		{"empty endpoint", ""},
 		{"whitespace only", "   "},
 		{"bare host, no port", "localhost"},
-		{"scheme and host, no port", "http://localhost"},
 		{"non-numeric port", "http://localhost:abcd"},
 		{"port above the valid range", "http://localhost:65536"},
 	}
@@ -72,6 +71,38 @@ func TestRunDockerHealthChecksInvalidEndpoint(t *testing.T) {
 			}
 			if code := meshkiterrors.GetCode(err); code != ErrInvalidEndpointCode {
 				t.Errorf("runDockerHealthChecks() with endpoint %q: error code = %s, want %s", tt.endpoint, code, ErrInvalidEndpointCode)
+			}
+		})
+	}
+}
+
+// TestRunDockerHealthChecksPortlessSchemedEndpoint pins the other half of that
+// validation: these checks never publish a Docker port, so an endpoint that
+// omits one but names a scheme is dialed on the scheme's default port and must
+// not be rejected as malformed. Requiring a port here failed the health check
+// on a valid remote endpoint.
+//
+// The checks that follow need a Docker daemon, so the assertion is only that
+// the endpoint itself was accepted — any other failure is allowed.
+func TestRunDockerHealthChecksPortlessSchemedEndpoint(t *testing.T) {
+	validEndpoints := []struct {
+		name     string
+		endpoint string
+	}{
+		{"https remote host, no port", "https://meshery.example.com"},
+		{"http localhost, no port", "http://localhost"},
+	}
+
+	for _, tt := range validEndpoints {
+		t.Run(tt.name, func(t *testing.T) {
+			hc := &HealthChecker{
+				Options: &HealthCheckOptions{},
+				context: &config.Context{Endpoint: tt.endpoint},
+			}
+
+			err := hc.runDockerHealthChecks()
+			if code := meshkiterrors.GetCode(err); err != nil && code == ErrInvalidEndpointCode {
+				t.Errorf("runDockerHealthChecks() with endpoint %q: rejected as invalid, want the endpoint accepted", tt.endpoint)
 			}
 		})
 	}
