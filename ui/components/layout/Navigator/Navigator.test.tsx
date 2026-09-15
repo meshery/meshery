@@ -131,6 +131,16 @@ vi.mock('../../general/style', () => {
     );
     return Mock;
   };
+  // The plain `make()` mocks are indistinguishable from one another, so list items
+  // whose choice is meaningful get tagged with the name of the real implementation.
+  const makeTagged = (componentName: string) => {
+    const Mock = ({ children, ...props }: any) => (
+      <div data-component={componentName} {...props}>
+        {children}
+      </div>
+    );
+    return Mock;
+  };
   return {
     HideScrollbar: make('hide-scrollbar'),
     LinkContainer: make(),
@@ -149,12 +159,12 @@ vi.mock('../../general/style', () => {
       <img data-testid="main-logo-text-collapsed" src={src} onClick={onClick} />
     ),
     NavigatorList: make('nav-list'),
-    NavigatorListItem: make(),
+    NavigatorListItem: makeTagged('NavigatorListItem'),
     NavigatorListItemII: make(),
     NavigatorListItemIII: make(),
     RootDiv: make(),
     SecondaryDivider: make(),
-    SideBarListItem: make(),
+    SideBarListItem: makeTagged('SideBarListItem'),
     SideBarText: make(),
     StyledListItem: ({ children, component, onClick, ...props }: any) => {
       const Comp = component || 'div';
@@ -364,5 +374,15 @@ describe('Navigator', () => {
     expect(kanvasIcon.style.transform).toBe('');
     expect(kanvasIcon.style.top).toBe('');
     expect(kanvasIcon.style.right).toBe('');
+  });
+
+  it('renders root extensions with the same list item used by the core nav rows', async () => {
+    render(<Navigator />);
+    const rootExtension = await screen.findByTestId('extension-nav-root-item');
+
+    // Root extensions must use SideBarListItem so that hover styling, padding and text
+    // treatment match the core navigator rows; NavigatorListItem is for nested items only.
+    expect(rootExtension.querySelector('[data-component="SideBarListItem"]')).not.toBeNull();
+    expect(rootExtension.querySelector('[data-component="NavigatorListItem"]')).toBeNull();
   });
 });
