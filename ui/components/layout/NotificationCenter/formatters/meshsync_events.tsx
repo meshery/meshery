@@ -37,7 +37,7 @@ export const ConnectionFieldFormatter = ({ value, fieldName }) => {
           label={value}
           clickable
           component="a"
-          href={`/management/connections?tab=connections&searchText=${encodeURIComponent(value)}`}
+          href={`/management/connections?tab=connections&con_q=${encodeURIComponent(value)}`}
           target="_self"
           style={{
             marginBlock: '0.25rem',
