@@ -303,6 +303,12 @@ describe('NotificationCenter (default export)', () => {
     render(<NotificationCenter />);
     expect(screen.getByText(/No notifications to show/i)).toBeInTheDocument();
   });
+
+  it('renders zero severity counts when the summary returns null severity levels', () => {
+    summaryQuery.data = { countBySeverityLevel: null, readCount: 0 };
+    render(<NotificationCenter />);
+    expect(screen.getAllByText('0')).toHaveLength(5);
+  });
 });
 
 describe('NotificationDrawerButton', () => {
