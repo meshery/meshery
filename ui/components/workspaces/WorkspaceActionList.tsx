@@ -92,6 +92,10 @@ const WorkspaceActionList = ({
                     handleClose(e);
                   }}
                   permissionKey={permissionKey}
+                  sx={{
+                    minWidth: 160,
+                    pr: 4.5,
+                  }}
                 >
                   <ListItemIcon>{icon}</ListItemIcon>
                   {label}
