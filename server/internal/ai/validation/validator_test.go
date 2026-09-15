@@ -53,6 +53,26 @@ func TestValidateFixtures(t *testing.T) {
 	}
 }
 
+func TestValidateAllowsKubernetesSecretReferences(t *testing.T) {
+	raw, err := os.ReadFile(filepath.Join("fixtures", "valid_kubernetes_secret_references.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := Validate(raw); err != nil {
+		t.Fatalf("valid Kubernetes references rejected: %v", err)
+	}
+}
+
+func TestValidationErrorUnwrapUsesSentinel(t *testing.T) {
+	err := Validate([]byte(`{"schemaVersion":"designs.meshery.io/v1beta3","name":"invalid","components":[]}`))
+	if err == nil {
+		t.Fatal("expected validation error")
+	}
+	if !errors.Is(err, ErrValidation) {
+		t.Errorf("expected errors.Is(err, ErrValidation) to be true, got false")
+	}
+}
+
 func TestValidateYAMLAndMalformedOutput(t *testing.T) {
 	validYAML := []byte("schemaVersion: designs.meshery.io/v1beta3\nname: yaml-design\ncomponents:\n  - id: one\n    component:\n      kind: Deployment\n      version: apps/v1\n    model:\n      name: kubernetes\n    configuration: {}\n")
 	if err := Validate(validYAML); err != nil {
