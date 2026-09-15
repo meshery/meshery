@@ -74,8 +74,7 @@ func (h *Handler) ServerEventConfigurationHandler(w http.ResponseWriter, req *ht
 	case http.MethodGet:
 		h.ServerEventConfigurationGet(w, req, prefObj, user, provider)
 	default:
-		// TODO(error-code): promote to MeshKit code
-		writeJSONError(w, "Method not allowed", http.StatusMethodNotAllowed)
+		writeMeshkitError(w, ErrMethodNotAllowed(req.Method), http.StatusMethodNotAllowed)
 	}
 }
 

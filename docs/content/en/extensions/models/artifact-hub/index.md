@@ -1,7 +1,7 @@
 ---
 title: Artifact Hub
 subtitle: Collaborative and visual infrastructure as design for Artifact Hub
-image: /extensions/models/artifact-hub/icons/color/artifact-hub-color.svg
+image: extensions/models/artifact-hub/icons/color/artifact-hub-color.svg
 aliases: /extensibility/integrations/artifact-hub
 docURL: https://docs.meshery.io/extensibility/integrations/artifact-hub
 description: 

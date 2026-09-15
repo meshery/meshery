@@ -9,6 +9,7 @@ let queryReturn: any = {
   isError: false,
   error: null,
 };
+let routerSelectedItemUUID = '';
 
 vi.mock('@sistent/sistent', () => ({
   CircularProgress: () => <div data-testid="loading-spinner" />,
@@ -16,6 +17,7 @@ vi.mock('@sistent/sistent', () => ({
 
 vi.mock('../../constants/navigator', () => ({
   MODELS: 'Models',
+  RELATIONSHIPS: 'Relationships',
 }));
 
 vi.mock('./StyledTreeItem', () => ({
@@ -52,6 +54,10 @@ vi.mock('lib/event-types', () => ({
   EVENT_TYPES: { ERROR: 'error' },
 }));
 
+vi.mock('./hooks', () => ({
+  useRegistryRouter: () => ({ selectedItemUUID: routerSelectedItemUUID }),
+}));
+
 vi.mock('./RelationshipTree', () => ({
   default: ({ data, view, idForKindAsProp }: any) => (
     <div data-testid="relationship-tree" data-view={view} data-id-prop={idForKindAsProp}>
@@ -67,6 +73,7 @@ describe('VersionedModelRelationshipTree', () => {
     modelDef: { id: 'm1' },
     versionedModelDef: { id: 'v1', name: 'mname', model: { version: '1.0.0' } },
     setShowDetailsData: vi.fn(),
+    showDetailsData: { type: '', data: {} },
     handleToggle: vi.fn(),
     handleSelect: vi.fn(),
     selected: [],
@@ -80,6 +87,7 @@ describe('VersionedModelRelationshipTree', () => {
       isError: false,
       error: null,
     };
+    routerSelectedItemUUID = '';
     notify.mockReset();
   });
 

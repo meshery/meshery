@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import {
+  Box,
   CatalogIcon,
   DesignIcon,
   EditIcon,
@@ -10,6 +11,7 @@ import {
 } from '@sistent/sistent';
 import { useGetUserDesignsQuery } from '@/rtk-query/design';
 import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
+import WidgetErrorFallback from './WidgetErrorFallback';
 
 type DashboardIconProps = {
   fill?: string;
@@ -49,14 +51,21 @@ const cardData = [
 const MyDesignsWidget = ({ iconsProps }: MyDesignsWidgetProps) => {
   const [sortOrder, setSortOrder] = useState(DEFAULT_SORT_ORDER);
   const { data: userData } = useGetLoggedInUserQuery();
-  const { data: patternsData, isFetching: isPatternsFetching } = useGetUserDesignsQuery({
-    expandUser: true,
-    page: 0,
-    pagesize: 7,
-    order: sortOrder,
-    userId: userData?.id,
-    metrics: true,
-  });
+  const {
+    data: patternsData,
+    isFetching: isPatternsFetching,
+    isError: isPatternsError,
+  } = useGetUserDesignsQuery(
+    {
+      expandUser: true,
+      page: 0,
+      pagesize: 7,
+      order: sortOrder,
+      userId: userData?.id,
+      metrics: true,
+    },
+    { skip: !userData?.id },
+  );
   const theme = useTheme();
 
   const resources = useMemo(
@@ -77,26 +86,44 @@ const MyDesignsWidget = ({ iconsProps }: MyDesignsWidgetProps) => {
     [patternsData?.patterns],
   );
 
+  if (isPatternsError) {
+    return (
+      <WidgetErrorFallback
+        widgetTitle="My Recent Designs"
+        message="Unable to load your designs. Please try again later."
+      />
+    );
+  }
+
   return (
-    <DesignCard
-      isPatternsFetching={isPatternsFetching}
-      cardData={cardData}
-      resources={resources}
-      icon={
-        <DesignIcon
-          {...iconsProps}
-          fill={theme.palette.icon.default}
-          primaryFill={theme.palette.icon.default}
-          secondaryFill={theme.palette.icon.default}
-        />
-      }
-      title="MY RECENT DESIGNS"
-      actionButton={true}
-      href={`${MESHERY_CLOUD_PROD}/catalog/content/my-designs`}
-      btnTitle="See All Designs"
-      sortOrder={sortOrder}
-      setSortOrder={setSortOrder}
-    />
+    <Box
+      sx={{
+        height: '100%',
+        '& > .MuiPaper-root': {
+          overflow: 'auto',
+        },
+      }}
+    >
+      <DesignCard
+        isPatternsFetching={isPatternsFetching}
+        cardData={cardData}
+        resources={resources}
+        icon={
+          <DesignIcon
+            {...iconsProps}
+            fill={theme.palette.icon.default}
+            primaryFill={theme.palette.icon.default}
+            secondaryFill={theme.palette.icon.default}
+          />
+        }
+        title="MY RECENT DESIGNS"
+        actionButton={true}
+        href={`${MESHERY_CLOUD_PROD}/catalog/content/my-designs`}
+        btnTitle="See All Designs"
+        sortOrder={sortOrder}
+        setSortOrder={setSortOrder}
+      />
+    </Box>
   );
 };
 

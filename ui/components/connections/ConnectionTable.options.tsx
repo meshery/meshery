@@ -2,8 +2,8 @@ import React, { useMemo } from 'react';
 import { Button, Grid2, Table, TableCell, TableRow, DeleteIcon, useTheme } from '@sistent/sistent';
 import { ContentContainer, InnerTableContainer } from './styles';
 import { iconMedium } from '../../css/icons.styles';
-import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+
+import { Keys } from '@meshery/schemas/permissions';
 import FormatConnectionMetadata from './metadata';
 import type { ConnectionRow, ExpansionFlags, SelectedRows } from './ConnectionTable.types';
 
@@ -76,7 +76,7 @@ export const useConnectionTableOptions = ({
           size="large"
           onClick={() => handleDeleteConnections(selected)}
           sx={{ backgroundColor: `${theme.palette.error.dark} !important`, marginRight: '10px' }}
-          disabled={!CAN(keys.DELETE_A_CONNECTION.action, keys.DELETE_A_CONNECTION.subject)}
+          permissionKey={Keys.LifecycleManagementDeleteAConnection}
           data-testid="Button-delete-connections"
         >
           <DeleteIcon style={iconMedium} fill={theme.palette.common.white} />
@@ -125,7 +125,18 @@ export const useConnectionTableOptions = ({
 
         expansionFlags.current.isHandlingExpansion = true;
         const expandedRows = allRowsExpanded.slice(-1);
-        setRowsExpanded(expandedRows.map((item) => item.index));
+        // mui-datatables fires `onRowExpansionChange` for every internal
+        // re-render where the expanded set is unchanged. Bailing out on a
+        // value-equal write avoids enqueuing redundant setState commits which
+        // can cascade into the React #185 update-depth limit on slow renders.
+        const nextExpandedRows = expandedRows.map((item) => item.index);
+        const hasExpandedRowsChanged =
+          nextExpandedRows.length !== rowsExpanded.length ||
+          nextExpandedRows.some((rowIndex, index) => rowIndex !== rowsExpanded[index]);
+
+        if (hasExpandedRowsChanged) {
+          setRowsExpanded(nextExpandedRows);
+        }
 
         if (expandedRows.length > 0) {
           const index = expandedRows[0].index;
@@ -138,7 +149,11 @@ export const useConnectionTableOptions = ({
           ) {
             updateUrlWithConnectionId(connection.id);
           }
-        } else if (updateUrlWithConnectionId && !expansionFlags.current.isInitialLoad) {
+        } else if (
+          updateUrlWithConnectionId &&
+          !expansionFlags.current.isInitialLoad &&
+          selectedConnectionId
+        ) {
           updateUrlWithConnectionId('');
         }
 
@@ -152,7 +167,11 @@ export const useConnectionTableOptions = ({
               <Table>
                 <TableRow style={{ padding: 0 }}>
                   <TableCell style={{ overflowX: 'hidden', padding: 0 }}>
-                    <Grid2 container style={{ textTransform: 'lowercase' }} size="grow">
+                    {/* No text-transform here: the details include IDs, URLs,
+                        build SHAs, and version strings whose casing is
+                        meaningful - lowercasing them made the expanded view
+                        hard to read (and wrong to copy). */}
+                    <Grid2 container size="grow">
                       <ContentContainer size={{ xs: 12 }}>
                         <FormatConnectionMetadata
                           connection={connection}

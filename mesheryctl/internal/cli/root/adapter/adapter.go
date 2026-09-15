@@ -23,7 +23,6 @@ import (
 	"strings"
 	"time"
 
-	smp "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -44,7 +43,7 @@ var (
 		Use:   "adapter",
 		Short: "Connect and use Meshery adapters",
 		Long: `Provisioning, configuration, and on-going operational management of cloud and cloud native infrastructure.
-	Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
+	Find more information at: https://docs.meshery.io/reference/references/mesheryctl#command-reference`,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			// if `mesh` command is ran without any subcommands, show Help and exit
 			if cmd.HasSubCommands() {
@@ -64,11 +63,6 @@ var (
 				//     args = Linkerd -> ["LINKERD"] -> "LINKERD"
 				//     args = nginx service mesh -> ["nginx", "service", "mesh"] -> "NGINX_SERVICE_MESH"
 				r, _ := regexp.Compile(`\W`)
-
-				// If the mesh name is single word and without any spaces eg: istio, linkerd
-				if len(args) == 1 {
-					meshName = strings.ToUpper(args[0])
-				}
 				meshName = r.ReplaceAllString(strings.ToUpper(strings.Join(args, "_")), "_")
 			}
 
@@ -117,15 +111,12 @@ func validateAdapter(mctlCfg *config.MesheryCtlConfig, meshName string) error {
 }
 
 func validateMesh(mctlCfg *config.MesheryCtlConfig, meshName string) (string, error) {
-	// if a mesh name is provided, verify it is valid
+	// A mesh/technology is now identified by a Meshery Registry model name
+	// (free-form) rather than a fixed service-mesh enum, so any explicitly
+	// provided name is accepted as-is. This also avoids dropping into
+	// interactive mode when the command is run by automation.
 	if meshName != "" {
-		if _, ok := smp.ServiceMesh_Type_value[meshName]; ok {
-			return meshName, nil
-		}
-		// return an error if the provided mesh name is invalid
-		// this prevents it from dropping into interactive mode
-		// in case the command is being ran by automation
-		return "", ErrValidMeshName(meshName)
+		return meshName, nil
 	}
 
 	// get details about the current meshery session
@@ -276,15 +267,16 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 	method := "GET"
 	client := &http.Client{}
 	req, err := utils.NewRequest(method, path, nil)
-	req.Header.Add("Accept", "text/event-stream")
 	if err != nil {
-		return "", ErrCreatingDeployResponseRequest(err)
+		return "", ErrCreatingValidateResponseRequest(err)
 	}
+	req.Header.Add("Accept", "text/event-stream")
 
 	res, err := client.Do(req)
 	if err != nil {
 		return "", ErrCreatingValidateRequest(err)
 	}
+	defer func() { _ = res.Body.Close() }()
 
 	event, err := utils.ConvertRespToSSE(res)
 	if err != nil {

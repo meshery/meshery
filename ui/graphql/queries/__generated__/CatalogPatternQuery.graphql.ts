@@ -1,7 +1,6 @@
 /**
- * @generated SignedSource<<88101f491730ed0dd7b8c4afde952862>>
+ * @generated SignedSource<<4bebefcea2f0a42cf3959efb0cd7d2f3>>
  * @lightSyntaxTransform
- * @nogrep
  */
 
 /* tslint:disable */
@@ -32,9 +31,9 @@ export type CatalogPatternQuery$data = {
     readonly created_at: string | null | undefined;
     readonly id: string;
     readonly name: string;
+    readonly owner: string;
     readonly pattern_file: string;
     readonly updated_at: string | null | undefined;
-    readonly user_id: string;
     readonly visibility: string;
   }>;
 };
@@ -84,7 +83,7 @@ v1 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "user_id",
+        "name": "owner",
         "storageKey": null
       },
       {
@@ -128,32 +127,32 @@ v1 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": (v0/*:: as any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "CatalogPatternQuery",
-    "selections": (v1/*: any*/),
+    "selections": (v1/*:: as any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": (v0/*:: as any*/),
     "kind": "Operation",
     "name": "CatalogPatternQuery",
-    "selections": (v1/*: any*/)
+    "selections": (v1/*:: as any*/)
   },
   "params": {
-    "cacheID": "5819e3c1959f0e6ce5329f2a222a499d",
+    "cacheID": "880497347177fc329969f0a4218b06af",
     "id": null,
     "metadata": {},
     "name": "CatalogPatternQuery",
     "operationKind": "query",
-    "text": "query CatalogPatternQuery(\n  $selector: CatalogSelector!\n) {\n  catalogPatterns: fetchPatternCatalogContent(selector: $selector) {\n    id\n    name\n    user_id\n    pattern_file\n    visibility\n    catalog_data\n    created_at\n    updated_at\n  }\n}\n"
+    "text": "query CatalogPatternQuery(\n  $selector: CatalogSelector!\n) {\n  catalogPatterns: fetchPatternCatalogContent(selector: $selector) {\n    id\n    name\n    owner\n    pattern_file\n    visibility\n    catalog_data\n    created_at\n    updated_at\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3662bdbf1b55f72dec9757315e54e8ab";
+(node as any).hash = "48bb95eadad2e0dadd14e1f394741790";
 
 export default node;

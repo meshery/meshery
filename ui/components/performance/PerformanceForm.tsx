@@ -419,7 +419,6 @@ const PerformanceForm: React.FC<PerformanceFormProps> = ({
               <FormControlLabel
                 key={index}
                 value={lg}
-                disabled={lg === 'wrk2'}
                 control={<RadioButton color="primary" />}
                 label={lg}
               />

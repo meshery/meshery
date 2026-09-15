@@ -2,6 +2,7 @@ interface AdapterConfig {
   name: string;
   label: string;
   imageSrc: string;
+  darkImageSrc?: string;
   description: string;
   defaultPort: number;
   enabled: boolean;
@@ -70,6 +71,7 @@ export const adaptersList: AdaptersListType = {
     name: 'Kuma',
     label: 'meshery-kuma',
     imageSrc: '/static/img/adapters/kuma.svg',
+    darkImageSrc: '/static/img/adapters/kuma-white.svg',
     description: adaptersDescription('Kuma'),
     defaultPort: 10007,
     enabled: false,
@@ -90,6 +92,16 @@ export const adaptersList: AdaptersListType = {
     imageSrc: '/static/img/adapters/cilium_service_mesh.svg',
     description: adaptersDescription('Cilium Service Mesh'),
     defaultPort: 10012,
+    enabled: false,
+    url: '',
+  },
+  APP_MESH: {
+    name: 'App Mesh',
+    label: 'meshery-app-mesh',
+    imageSrc: '/static/img/adapters/app_mesh.svg',
+    darkImageSrc: '/static/img/adapters/app_mesh-white.svg',
+    description: adaptersDescription('App Mesh'),
+    defaultPort: 10005,
     enabled: false,
     url: '',
   },

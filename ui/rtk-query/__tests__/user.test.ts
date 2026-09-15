@@ -21,9 +21,13 @@ vi.mock('@/utils/utils', () => ({
   },
 }));
 
-// Mock the rtk-query helper `initiateQuery` so we don't transitively pull
-// `../store` into the test environment.
+// Mock the rtk-query helpers so we don't transitively pull `../store` into the
+// test environment. `appendInvalidatesTags` arrives via `./workspace`, which
+// user.ts imports for useGetWorkspacesQuery; it must behave like the real one
+// (return an enhanceEndpoints callback) rather than be a bare stub, because
+// enhanceEndpoints invokes it against the live endpoint definition.
 vi.mock('../utils', () => ({
+  appendInvalidatesTags: () => () => {},
   initiateQuery: vi.fn(
     async (
       query: { initiate: (variables: unknown, options?: unknown) => unknown },
@@ -120,6 +124,8 @@ describe('user endpoints', () => {
     expect(mod.useGetAllUsersQuery).toBeTypeOf('function');
     expect(mod.useRemoveUserFromTeamMutation).toBeTypeOf('function');
     expect(mod.useGetSystemVersionQuery).toBeTypeOf('function');
+    expect(mod.useInstallProviderExtensionMutation).toBeTypeOf('function');
+    expect(mod.useRemoveProviderExtensionMutation).toBeTypeOf('function');
     expect(mod.useGetUserProfileSummaryByIdQuery).toBeTypeOf('function');
     expect(mod.useGetUserByIdQuery).toBeTypeOf('function');
     expect(mod.useGetUsersForOrgQuery).toBeTypeOf('function');
@@ -133,10 +139,10 @@ describe('user endpoints', () => {
     expect(mod.getAllUsers).toBeTypeOf('function');
   });
 
-  it('getLoadTestPrefs GETs /api/user/prefs with context query and normalizes prefs', async () => {
+  it('getLoadTestPrefs GETs /api/user/prefs with context query and coerces legacy wrk2 to fortio', async () => {
     fetchMock.mockResolvedValue(
       okResponse({
-        loadTestPrefs: { c: 5, qps: 10, t: '60s', gen: 'fortio' },
+        loadTestPrefs: { c: 5, qps: 10, t: '60s', gen: 'wrk2' },
       }),
     );
     const { api, store } = await setupStore();
@@ -161,7 +167,7 @@ describe('user endpoints', () => {
     await store.dispatch(
       api.endpoints.updateLoadTestPrefs.initiate({
         selectedK8sContexts: ['ctx-a'],
-        loadTestPrefs: { c: 3, qps: 5, t: '20s', gen: 'wrk2' },
+        loadTestPrefs: { c: 3, qps: 5, t: '20s', gen: 'fortio' },
       }),
     );
     const req = fetchMock.mock.calls[0][0] as Request;
@@ -169,7 +175,7 @@ describe('user endpoints', () => {
     expect(req.url).toContain('/api/user/prefs?contexts=ctx-a');
     expect(req.headers.get('content-type')).toContain('application/json');
     const body = JSON.parse(await req.text());
-    expect(body).toEqual({ loadTestPrefs: { c: 3, qps: 5, t: '20s', gen: 'wrk2' } });
+    expect(body).toEqual({ loadTestPrefs: { c: 3, qps: 5, t: '20s', gen: 'fortio' } });
   });
 
   it('getToken GETs /api/token', async () => {
@@ -195,12 +201,12 @@ describe('user endpoints', () => {
     fetchMock.mockResolvedValue(okResponse({}));
     const { api, store } = await setupStore();
     await store.dispatch(
-      api.endpoints.updateUserPref.initiate({ selectedOrganizationID: 'org-9' }),
+      api.endpoints.updateUserPref.initiate({ selectedOrganizationId: 'org-9' }),
     );
     const req = fetchMock.mock.calls[0][0] as Request;
     expect(req.method).toBe('POST');
     expect(req.url).toContain('/api/user/prefs');
-    expect(JSON.parse(await req.text())).toEqual({ selectedOrganizationID: 'org-9' });
+    expect(JSON.parse(await req.text())).toEqual({ selectedOrganizationId: 'org-9' });
   });
 
   it('getUserPrefWithContext uses same-origin credentials with contexts in URL', async () => {
@@ -365,6 +371,35 @@ describe('user endpoints', () => {
     await store.dispatch(api.endpoints.getSystemVersion.initiate({}));
     const req = fetchMock.mock.calls[0][0] as Request;
     expect(req.url).toContain('/api/system/version');
+  });
+
+  it('installProviderExtension POSTs /api/provider/extension/install with the extension payload', async () => {
+    fetchMock.mockResolvedValue(okResponse({}));
+    const { api, store } = await setupStore();
+    const body = {
+      extType: 'navigator',
+      packageUrl: 'https://example.com/provider-meshery.tar.gz',
+      extensionMetadata: { title: 'Kanvas' },
+    };
+    await store.dispatch(api.endpoints.installProviderExtension.initiate(body));
+    const req = fetchMock.mock.calls[0][0] as Request;
+    expect(req.method).toBe('POST');
+    expect(req.url).toContain('/api/provider/extension/install');
+    expect(JSON.parse(await req.text())).toEqual(body);
+  });
+
+  it('removeProviderExtension POSTs /api/provider/extension/remove with the extension identity', async () => {
+    fetchMock.mockResolvedValue(okResponse({}));
+    const { api, store } = await setupStore();
+    const body = {
+      extType: 'navigator',
+      title: 'Kanvas',
+    };
+    await store.dispatch(api.endpoints.removeProviderExtension.initiate(body));
+    const req = fetchMock.mock.calls[0][0] as Request;
+    expect(req.method).toBe('POST');
+    expect(req.url).toContain('/api/provider/extension/remove');
+    expect(JSON.parse(await req.text())).toEqual(body);
   });
 
   it('handleFeedbackFormSubmission POSTs the extensions feedback URL', async () => {

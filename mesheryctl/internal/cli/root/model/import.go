@@ -31,7 +31,7 @@ var importModelCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import models",
 	Long: `Import models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name
-Find more information at: https://docs.meshery.io/reference/mesheryctl/model/import`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/model/import`,
 	Example: `
 // Import model
 mesheryctl model import --file [URI]
@@ -71,7 +71,7 @@ mesheryctl model import --file [path-to-csv-directory]
 		}
 
 		if utils.IsValidUrl(path) {
-			return registerModel(nil, nil, nil, "", "urlImport", path, true)
+			return registerModel(nil, nil, nil, "", "urlImport", path, "", true)
 		}
 
 		hasCSVs := hasCSVs(path)
@@ -93,7 +93,7 @@ mesheryctl model import --file [path-to-csv-directory]
 				if err != nil {
 					return utils.ErrFileRead(err)
 				}
-				err = registerModel(modelData, componentData, relationshipData, "model.csv", "csv", "", true)
+				err = registerModel(modelData, componentData, relationshipData, "model.csv", "csv", "", "", true)
 				if err != nil {
 					return err
 				}
@@ -131,7 +131,7 @@ mesheryctl model import --file [path-to-csv-directory]
 			fileName = filepath.Base(path)
 		}
 
-		err = registerModel(tarData, nil, nil, fileName, "file", "", true)
+		err = registerModel(tarData, nil, nil, fileName, "file", "", "", true)
 		if err != nil {
 			return err
 		}
@@ -153,8 +153,8 @@ func hasCSVs(path string) bool {
 	return false
 }
 
-func registerModel(data []byte, componentData []byte, relationshipData []byte, filename string, dataType string, sourceURI string, register bool) error {
-	urlPath := "api/meshmodels/register"
+func registerModel(data []byte, componentData []byte, relationshipData []byte, filename string, dataType string, sourceURI string, selectedModel string, register bool) error {
+	urlPath := "api/registry/register"
 	var importRequest schemav1beta1.ImportRequest
 	importRequest.UploadType = dataType
 	switch dataType {
@@ -162,6 +162,7 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 		importRequest.ImportBody.ModelCsv = "data:text/csv;base64," + base64.StdEncoding.EncodeToString(data)
 		importRequest.ImportBody.ComponentCsv = "data:text/csv;base64," + base64.StdEncoding.EncodeToString(componentData)
 		importRequest.ImportBody.RelationshipCSV = "data:text/csv;base64," + base64.StdEncoding.EncodeToString(relationshipData)
+		importRequest.ImportBody.Model.Model = strings.TrimSpace(selectedModel)
 	case "file":
 		importRequest.ImportBody.ModelFile = data
 	default:
@@ -205,13 +206,13 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 
 func displayEntities(response *models.RegistryAPIResponse) {
 	displaySummary(response)
-	ok := displayEmtpyModel(response)
+	ok := displayEmptyModel(response)
 	if !ok {
 		return
 	}
-	displayEntitisIfModel(response)
+	displayEntitiesIfModel(response)
 }
-func displayEmtpyModel(response *models.RegistryAPIResponse) bool {
+func displayEmptyModel(response *models.RegistryAPIResponse) bool {
 	if len(response.ModelName) != 0 && response.EntityCount.CompCount == 0 && response.EntityCount.RelCount == 0 {
 		if response.EntityCount.TotalErrCount == 0 {
 			return false
@@ -220,13 +221,13 @@ func displayEmtpyModel(response *models.RegistryAPIResponse) bool {
 	return true
 }
 
-// TO check the case if we were never able to read the file at first palce
+// TO check the case if we were never able to read the file at first place
 func hasExtension(name string) bool {
 	extension := filepath.Ext(name)
 	return extension != ""
 }
 
-func displayEntitisIfModel(response *models.RegistryAPIResponse) {
+func displayEntitiesIfModel(response *models.RegistryAPIResponse) {
 	var modelsWithoutExtension []string
 	var modelsWithExtension []string
 

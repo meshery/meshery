@@ -1,7 +1,7 @@
 ---
 title: Azure Search
 subtitle: Collaborative and visual infrastructure as design for Azure Search
-image: /extensions/models/azure-search/icons/color/azure-search-color.svg
+image: extensions/models/azure-search/icons/color/azure-search-color.svg
 aliases: /extensibility/integrations/azure-search
 docURL: https://docs.meshery.io/extensibility/integrations/azure-search
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Tracing
 registrant: GitHub
 components: 
 - name: search-service
-  colorIcon: content/en/extensions/models/azure-search/components/search-service/icons/color/search-service-color.svg
-  whiteIcon: content/en/extensions/models/azure-search/components/search-service/icons/white/search-service-white.svg
+  colorIcon: extensions/models/azure-search/components/search-service/icons/color/search-service-color.svg
+  whiteIcon: extensions/models/azure-search/components/search-service/icons/white/search-service-white.svg
   description: 
 components-count: 1
 relationships: 

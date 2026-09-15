@@ -5,9 +5,9 @@ import {
   useGetWorkspacesQuery,
   useUnassignEnvironmentFromWorkspaceMutation,
 } from '@/rtk-query/workspace';
-import CAN from '@/utils/can';
+
 import { useNotificationHandlers } from '@/utils/hooks/useNotification';
-import { keys } from '@/utils/permission_constants';
+import { Keys } from '@meshery/schemas/permissions';
 import { getColumnValue } from '@/utils/utils';
 import {
   AuthorCell,
@@ -25,8 +25,9 @@ import {
   WorkspaceIcon,
   Slide,
   ErrorBoundary,
+  useHasPermission,
 } from '@sistent/sistent';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { iconSmall } from 'css/icons.styles';
 import WorkSpaceContentDataTable from './WorkSpaceContentDataTable';
 import WorkspaceActionList from './WorkspaceActionList';
@@ -44,6 +45,7 @@ const WorkspaceDataTable = ({
   search,
   viewType,
 }) => {
+  const isAssignEnvAllowed = useHasPermission(Keys.WorkspaceManagementAssignEnvironmentToWorkspace);
   let colViews = [
     ['id', 'na'],
     ['name', 'xs'],
@@ -84,6 +86,9 @@ const WorkspaceDataTable = ({
 
   const workspacesData = workspaces?.workspaces ? workspaces.workspaces : [];
 
+  const workspacesDataRef = useRef(workspacesData);
+  workspacesDataRef.current = workspacesData;
+
   const columns = [
     {
       name: 'id',
@@ -119,7 +124,7 @@ const WorkspaceDataTable = ({
         sort: true,
         customBodyRender: (value) => {
           return (
-            <Box display="flex" gap={'0.5rem'}>
+            <Box sx={{ display: 'flex', gap: '0.5rem' }}>
               <WorkspaceIcon {...iconSmall} fill={theme.palette.icon.default} />
               {value}
             </Box>
@@ -210,10 +215,7 @@ const WorkspaceDataTable = ({
                 useUnassignEnvironmentFromWorkspaceMutation
               }
               useNotificationHandlers={useNotificationHandlers}
-              isAssignedEnvironmentAllowed={CAN(
-                keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.action,
-                keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.subject,
-              )}
+              isAssignedEnvironmentAllowed={isAssignEnvAllowed}
             />
           );
         },
@@ -282,7 +284,7 @@ const WorkspaceDataTable = ({
               handleDeleteWorkspaceConfirm={handleDeleteWorkspaceConfirm}
               workspaceId={workspaceId}
               workspaceName={workspaceName}
-              selectedWorkspace={workspacesData[tableMeta.rowIndex]}
+              selectedWorkspace={workspacesDataRef.current[tableMeta.rowIndex]}
             />
           );
         },

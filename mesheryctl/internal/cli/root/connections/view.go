@@ -41,7 +41,7 @@ var viewConnectionCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View a connection",
 	Long: `View a connection by its ID or name.
-Find more information at: https://docs.meshery.io/reference/mesheryctl/connection/view`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/connection/view`,
 	Example: `
 // View details of a specific connection in default format (yaml)
 mesheryctl connection view [connection-name|connection-id]
@@ -138,7 +138,7 @@ func selectConnectionPrompt(connectionsList []*connection.Connection) (*connecti
 	connectionNames := make([]string, len(connectionsList))
 
 	for i, conn := range connectionsList {
-		connectionNames[i] = fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn.ID.String(), conn.Name, conn.Type)
+		connectionNames[i] = fmt.Sprintf("ID: %s, Name: %s, Type: %s", conn.ID.String(), conn.Name, conn.ConnectionType)
 	}
 
 	i, err := utils.RunSelectPrompt("Select connection", connectionNames)

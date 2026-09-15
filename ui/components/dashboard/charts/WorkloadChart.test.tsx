@@ -9,7 +9,7 @@ vi.mock('billboard.js', () => ({
   donut: () => 'donut',
 }));
 
-vi.mock('../../BBChart', () => ({
+vi.mock('../../general/BBChart', () => ({
   default: (props: { options: unknown }) => {
     bbChartSpy(props.options);
     return <div data-testid="bb-chart" />;
@@ -45,12 +45,6 @@ vi.mock('@/utils/can', () => ({
   default: (...args: unknown[]) => canSpy(...args),
 }));
 
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    VIEW_CONNECTIONS: { action: 'view', subject: 'connections' },
-  },
-}));
-
 vi.mock('@sistent/sistent', () => ({
   Box: ({ children }: { children?: React.ReactNode }) => <div data-testid="box">{children}</div>,
   MenuItem: ({ children, value }: { children?: React.ReactNode; value?: string }) => (
@@ -76,6 +70,7 @@ vi.mock('@sistent/sistent', () => ({
   Typography: ({ children, className }: { children?: React.ReactNode; className?: string }) => (
     <p className={className}>{children}</p>
   ),
+  useHasPermission: () => canSpy(),
 }));
 
 vi.mock('@/theme', () => ({

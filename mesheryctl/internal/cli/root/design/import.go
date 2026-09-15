@@ -18,7 +18,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
-	"net/http"
 	"os"
 	"path"
 
@@ -96,7 +95,7 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 			sourceType = string(core.DockerCompose)
 		}
 
-		pattern, err := importPattern(sourceType, file, patternURL, true)
+		pattern, err := importPattern(sourceType, file, patternURL)
 		if err != nil {
 			return err
 		}
@@ -107,10 +106,30 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 	},
 }
 
-func importPattern(sourceType string, file string, patternURL string, save bool) (*models.MesheryPattern, error) {
-	var req *http.Request
-	var pattern *models.MesheryPattern
+// marshalDesignImportBody builds the `POST /api/pattern/import` request body
+// through the schemas-generated union type rather than a hand-written
+// map[string]interface{}. The wire field names - notably camelCase `fileName` -
+// then come from the generated struct tags, so they cannot drift from the
+// contract: sending the legacy snake_case `file_name` leaves the server's oneOf
+// unmatched and the request is rejected with "Invalid design import request"
+// (meshery-server-1422), the bug this endpoint regressed with before.
+//
+// `variant` selects the oneOf arm via the generated
+// FromMesheryPatternImport{File,URL}Payload builders.
+func marshalDesignImportBody(variant func(*pattern.MesheryPatternImportRequestBody) error) ([]byte, error) {
+	var body pattern.MesheryPatternImportRequestBody
+	if err := variant(&body); err != nil {
+		return nil, utils.ErrMarshal(err)
+	}
 
+	jsonValues, err := json.Marshal(body)
+	if err != nil {
+		return nil, utils.ErrMarshal(err)
+	}
+	return jsonValues, nil
+}
+
+func importPattern(sourceType string, file string, patternURL string) (*models.MesheryPattern, error) {
 	// If design name is not provided
 	// use file name as default
 	var patternName string
@@ -121,89 +140,86 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 		patternName = name
 	}
 
-	validURL := utils.IsValidUrl(file)
-	// Check if the pattern is file or URL
-	if !validURL {
+	// Check if the design is a file or a URL and build the matching oneOf arm.
+	if !utils.IsValidUrl(file) {
 		content, err := os.ReadFile(file)
 		if err != nil {
 			return nil, utils.ErrFileRead(err)
 		}
 
-		jsonValues, err := json.Marshal(map[string]interface{}{
-			"name":      patternName,
-			"file":      content,
-			"file_name": fileName,
-			"save":      save,
+		jsonValues, err := marshalDesignImportBody(func(body *pattern.MesheryPatternImportRequestBody) error {
+			return body.FromMesheryPatternImportFilePayload(pattern.MesheryPatternImportFilePayload{
+				Name:     &patternName,
+				File:     content,
+				FileName: fileName,
+			})
 		})
-		if err != nil {
-			return nil, utils.ErrMarshal(err)
-		}
-		req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 		if err != nil {
 			return nil, err
 		}
 
-		resp, err := utils.MakeRequest(req)
+		imported, err := postDesignImport(patternURL, jsonValues)
 		if err != nil {
 			return nil, err
 		}
 		utils.Log.Debug("design file saved")
-		var response []*models.MesheryPattern
-		defer func() { _ = resp.Body.Close() }()
-
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			utils.Log.Debug("failed to read response body")
-			return nil, utils.ErrReadResponseBody(err)
-		}
-		err = json.Unmarshal(body, &response)
-		if err != nil {
-			utils.Log.Debug("failed to unmarshal JSON response")
-			return nil, utils.ErrUnmarshal(err)
-		}
-		// set pattern
-		pattern = response[0]
-	} else {
-		var jsonValues []byte
-
-		jsonValues, err := json.Marshal(map[string]interface{}{
-			"url":  file,
-			"name": patternName,
-			"save": save,
-		})
-		if err != nil {
-			return nil, utils.ErrMarshal(err)
-		}
-
-		req, err := utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
-		if err != nil {
-			return nil, utils.ErrCreatingRequest(err)
-		}
-
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			return nil, utils.ErrRequestResponse(err)
-		}
-		utils.Log.Debug("Fetched the design from the remote host")
-		var response []*models.MesheryPattern
-		defer func() { _ = resp.Body.Close() }()
-
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			utils.Log.Debug("failed to read response body")
-			return nil, utils.ErrReadResponseBody(err)
-		}
-		err = json.Unmarshal(body, &response)
-		if err != nil {
-			utils.Log.Debug("failed to unmarshal JSON response")
-			return nil, utils.ErrUnmarshal(err)
-		}
-
-		// set pattern
-		pattern = response[0]
+		return imported, nil
 	}
 
-	return pattern, nil
+	jsonValues, err := marshalDesignImportBody(func(body *pattern.MesheryPatternImportRequestBody) error {
+		return body.FromMesheryPatternImportURLPayload(pattern.MesheryPatternImportURLPayload{
+			Name: &patternName,
+			Url:  file,
+		})
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	imported, err := postDesignImport(patternURL, jsonValues)
+	if err != nil {
+		return nil, err
+	}
+	utils.Log.Debug("Fetched the design from the remote host")
+	return imported, nil
+}
+
+// postDesignImport POSTs an already-marshalled import body and returns the
+// first design from the response collection. Both oneOf arms share it so the
+// response handling cannot drift between them - the divergence that let the
+// snake_case `file_name` bug survive in only one arm.
+func postDesignImport(patternURL string, jsonValues []byte) (*models.MesheryPattern, error) {
+	req, err := utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
+	if err != nil {
+		return nil, utils.ErrCreatingRequest(err)
+	}
+
+	resp, err := utils.MakeRequest(req)
+	if err != nil {
+		return nil, utils.ErrRequestResponse(err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		utils.Log.Debug("failed to read response body")
+		return nil, utils.ErrReadResponseBody(err)
+	}
+
+	var response []*models.MesheryPattern
+	if err := json.Unmarshal(body, &response); err != nil {
+		utils.Log.Debug("failed to unmarshal JSON response")
+		return nil, utils.ErrUnmarshal(err)
+	}
+
+	// The server returns the saved design(s) as a collection. Guard the index
+	// so an empty (or null) collection surfaces as a structured error instead
+	// of panicking with an out-of-range index.
+	if len(response) == 0 || response[0] == nil {
+		return nil, ErrDesignInvalidApiResponse("design import returned no design")
+	}
+
+	return response[0], nil
 }
 
 func init() {

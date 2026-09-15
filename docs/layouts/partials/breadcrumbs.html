@@ -1,20 +1,11 @@
 <div id="breadcrumbs">
-  {{ $root := . }}
-  {{ $url := $root.RelPermalink }}
-  {{ $crumbs := split $url "/" }}
-
-  {{ if ne $url "/" }}
-    <a href="{{ $root.Site.BaseURL }}">home</a>
-  {{ end }}
-
-  {{ range $index, $crumb := $crumbs }}
-    {{ if and $crumb (gt (len $crumb) 0) (gt $index 0) }}
-      {{ if eq (add $index 1) (len $crumbs) }}
-        / {{ lower $root.Page.Title }}
-      {{ else }}
-        {{ $path := delimit (first (add $index 1) $crumbs) "/" }}
-       / <a href="{{ printf "%s/" $path | absURL }}">{{ replace (replace (lower $crumb) "-" " ") ".html" "" }}</a>
+  {{ if not .IsHome }}
+    <a href="{{ "" | relURL }}">home</a>
+    {{ range .Ancestors.Reverse }}
+      {{ if ne . $.Site.Home }}
+        / <a href="{{ .RelPermalink }}">{{ lower .LinkTitle }}</a>
       {{ end }}
     {{ end }}
+    / {{ lower .Page.Title }}
   {{ end }}
 </div>

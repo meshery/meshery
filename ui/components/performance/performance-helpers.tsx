@@ -30,16 +30,16 @@ export function generatePerformanceProfile(data) {
   return {
     ...(id && { id }),
     name: performanceProfileName,
-    load_generators: [loadGenerator],
+    loadGenerators: [loadGenerator],
     endpoints: [endpoint],
-    service_mesh: serviceMesh,
-    concurrent_request: concurrentRequest,
+    serviceMesh,
+    concurrentRequest,
     qps,
     duration,
-    request_headers: requestHeaders,
-    request_body: requestBody,
-    request_cookies: requestCookies,
-    content_type: contentType,
+    requestHeaders,
+    requestBody,
+    requestCookies,
+    contentType,
     metadata: {
       additional_options: [additional_options],
       ca_certificate: {
@@ -50,7 +50,7 @@ export function generatePerformanceProfile(data) {
   };
 }
 
-export const loadGenerators = ['fortio', 'wrk2'];
+export const loadGenerators = ['fortio'];
 
 export const infoFlags = <>Only .json files are supported.</>;
 
@@ -65,7 +65,6 @@ export const infoloadGenerators = (
         go (golang). Allows to specify a set query-per-second load and record latency histograms and
         other useful stats.{' '}
       </li>
-      <li> wrk2 - A constant throughput, correct latency recording variant of wrk.</li>
     </ul>
     <Link
       style={{ textDecoration: 'underline' }}

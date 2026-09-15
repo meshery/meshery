@@ -17,6 +17,7 @@ import {
   SettingsRemoteIcon,
   useTheme,
   ErrorBoundary,
+  useHasPermission,
 } from '@sistent/sistent';
 import CopyIcon from '../../assets/icons/CopyIcon';
 import _ from 'lodash';
@@ -38,23 +39,26 @@ import {
   FormGroupWrapper,
 } from './style';
 import ExtensionSandbox from '../ExtensionSandbox';
-import RemoteComponent from '../RemoteComponent';
+import RemoteComponent from '../general/RemoteComponent';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
 import MesherySettingsPerformanceComponent from '../settings/MesherySettingsPerformanceComponent';
 import { iconMedium } from '../../css/icons.styles';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { useWindowDimensions } from '@/utils/dimension';
+import { isLocalProvider } from '@/utils/provider';
 import {
   useGetProviderCapabilitiesQuery,
   useGetUserPrefQuery,
   useUpdateUserPrefMutation,
   useUpdateUserPrefWithContextMutation,
 } from '@/rtk-query/user';
-import { ThemeTogglerCore } from '@/themes/hooks';
+import { ThemeTogglerCore } from '@/theme/hooks';
 import { SecondaryTab, SecondaryTabs } from '../dashboard/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleCatalogContent, updateProgress } from '@/store/slices/mesheryUi';
+import { Keys } from '@meshery/schemas/permissions';
+import DefaultError from '../general/error-404/index';
 
 interface ThemeTogglerProps {
   handleUpdateUserPref: (_theme: string) => void;
@@ -128,7 +132,6 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   const [perfResultStats, setPerfResultStats] = useState(props.perfResultStats);
   const [tabVal, setTabVal] = useState(0);
   const [userPrefs, setUserPrefs] = useState(ExtensionPointSchemaValidator('userPrefs')());
-  const [providerType, setProviderType] = useState('');
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
@@ -138,15 +141,16 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const { providerCapabilities } = useSelector((state) => state.ui);
+  const canViewUserPreferences = useHasPermission(Keys.ExtensibilityViewMesheryUserPreferences);
   const {
     data: userData,
     isSuccess: isUserDataFetched,
     isError: isUserDataError,
     error: userDataError,
-  } = useGetUserPrefQuery();
+  } = useGetUserPrefQuery(undefined, { skip: !canViewUserPreferences });
 
   const { data: capabilitiesData, isSuccess: isCapabilitiesDataFetched } =
-    useGetProviderCapabilitiesQuery();
+    useGetProviderCapabilitiesQuery(undefined, { skip: !canViewUserPreferences });
 
   const [updateUserPref] = useUpdateUserPrefMutation();
   const [updateUserPrefWithContext] = useUpdateUserPrefWithContextMutation();
@@ -236,7 +240,6 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
       setUserPrefs(
         ExtensionPointSchemaValidator('userPrefs')(providerCapabilities?.extensions?.userPrefs),
       );
-      setProviderType(providerCapabilities?.providerType);
     }
   }, [providerCapabilities]);
 
@@ -384,16 +387,14 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                 }
               />
               <CardContent>
-                <Typography>
-                  <ul>
-                    {providerInfo.providerDescription &&
-                      providerInfo.providerDescription.map((desc, index) => (
-                        <li key={index}>
-                          <Typography>{desc}</Typography>
-                        </li>
-                      ))}
-                  </ul>
-                </Typography>
+                <ul>
+                  {providerInfo.providerDescription &&
+                    providerInfo.providerDescription.map((desc, index) => (
+                      <li key={index}>
+                        <Typography>{desc}</Typography>
+                      </li>
+                    ))}
+                </ul>
               </CardContent>
             </ProviderCard>
 
@@ -425,9 +426,8 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
               </GridCapabilityHeader>
               {providerInfo.capabilities &&
                 providerInfo.capabilities.map((capability, index) => (
-                  <>
+                  <React.Fragment key={`${index}-${capability.feature}`}>
                     <GridCapabilityHeader
-                      key={`${index}-${capability.feature}`}
                       size={{ xs: 6 }}
                       style={{
                         padding: '20px 20px',
@@ -441,10 +441,11 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                               : '#C9DBE3',
                       }}
                     >
-                      <Typography variant="body1">{capability.feature}</Typography>
+                      <Typography variant="body1" style={{ overflowWrap: 'anywhere' }}>
+                        {capability.feature}
+                      </Typography>
                     </GridCapabilityHeader>
                     <GridCapabilityHeader
-                      key={`${index}-${capability.endpoint}`}
                       size={{ xs: 6 }}
                       style={{
                         padding: '20px 20px',
@@ -458,9 +459,11 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                               : '#C9DBE3',
                       }}
                     >
-                      <Typography variant="body1">{capability.endpoint}</Typography>
+                      <Typography variant="body1" style={{ overflowWrap: 'anywhere' }}>
+                        {capability.endpoint}
+                      </Typography>
                     </GridCapabilityHeader>
-                  </>
+                  </React.Fragment>
                 ))}
             </Grid2>
             <Divider />
@@ -502,7 +505,9 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                         padding: '20px 20px',
                       }}
                     >
-                      <Typography variant="body1">{extension[0].component}</Typography>
+                      <Typography variant="body1" style={{ overflowWrap: 'anywhere' }}>
+                        {extension[0]?.component || ''}
+                      </Typography>
                     </GridExtensionItem>
                     <GridExtensionItem
                       size={{ xs: 6 }}
@@ -511,8 +516,8 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                         padding: '20px 20px',
                       }}
                     >
-                      <Typography variant="body1">
-                        {convertToTitleCase(extension[0].type)}
+                      <Typography variant="body1" style={{ overflowWrap: 'anywhere' }}>
+                        {extension[0]?.type ? convertToTitleCase(extension[0].type) : ''}
                       </Typography>
                     </GridExtensionItem>
                   </Grid2>
@@ -528,6 +533,11 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
     const updates = _.set(_.cloneDeep(userData), key, value);
     updateUserPrefWithContext(updates);
   };
+
+  if (!canViewUserPreferences) {
+    return <DefaultError permissionKey={Keys.ExtensibilityViewMesheryUserPreferences} />;
+  }
+
   return (
     <>
       <NoSsr>
@@ -540,7 +550,6 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
             allowScrollButtonsMobile={true}
             indicatorColor="primary"
             textColor="primary"
-            centered
           >
             <CustomTooltip title="General preferences" placement="top">
               <Tab
@@ -555,7 +564,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
               />
             </CustomTooltip>
             {/* NOTE: This tab's appearance is logical hence it must be put at last here! Otherwise added logic will need to be added for tab numbers!*/}
-            {userPrefs && providerType != 'local' && (
+            {userPrefs && !isLocalProvider(providerCapabilities) && (
               <CustomTooltip title="Remote Provider preferences" placement="top">
                 <Tab
                   icon={<SettingsRemoteIcon style={iconMedium} />}
@@ -636,7 +645,7 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
             </>
           )}
           {tabVal === 1 && <MesherySettingsPerformanceComponent />}
-          {tabVal === 2 && userPrefs && providerType !== 'local' && (
+          {tabVal === 2 && userPrefs && !isLocalProvider(providerCapabilities) && (
             <>
               <SecondaryTabs
                 value={value}
@@ -646,7 +655,6 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                 allowScrollButtonsMobile={true}
                 indicatorColor="primary"
                 textColor="primary"
-                centered
               >
                 <CustomTooltip title="Details" placement="top">
                   <SecondaryTab label={<TabLabel>Details</TabLabel>} />

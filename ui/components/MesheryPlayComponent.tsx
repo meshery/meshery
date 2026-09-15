@@ -12,11 +12,14 @@ import {
   gray,
   charcoal,
   NoSsr,
+  useHasPermission,
 } from '@sistent/sistent';
 import { useRouter } from 'next/router';
 import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAdapter } from '@/store/slices/adapter';
+import { Keys } from '@meshery/schemas/permissions';
+import DefaultError from './general/error-404/index';
 
 const StyledButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(3),
@@ -57,6 +60,9 @@ const MesheryPlayComponent = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { meshAdapters } = useSelector((state) => state.adapter);
+  const canViewAdapter = useHasPermission(
+    Keys.InfrastructureManagementViewCloudNativeInfrastructure,
+  );
   // Initialize state
   const [adapter, setAdapterState] = useState(() => {
     if (meshAdapters && meshAdapters.length > 0) {
@@ -98,7 +104,7 @@ const MesheryPlayComponent = () => {
   };
 
   const pickImage = (adapter) => {
-    let image = '/static/img/meshery-logo.png';
+    let image = '/static/img/meshery-logo/meshery-logo.png';
     let imageIcon = <img src={image} style={{ width: '24px' }} alt="Meshery Logo" />;
     if (adapter && adapter.name) {
       image = `/static/img/${adapter.name.toLowerCase()}.svg`;
@@ -146,6 +152,12 @@ const MesheryPlayComponent = () => {
     }
     return '';
   };
+
+  if (!canViewAdapter) {
+    return (
+      <DefaultError permissionKey={Keys.InfrastructureManagementViewCloudNativeInfrastructure} />
+    );
+  }
 
   if (meshAdapters.length === 0) {
     return (

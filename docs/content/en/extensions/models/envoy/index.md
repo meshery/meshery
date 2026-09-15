@@ -1,7 +1,7 @@
 ---
 title: Envoy
 subtitle: Collaborative and visual infrastructure as design for Envoy
-image: /extensions/models/envoy/icons/color/envoy-color.svg
+image: extensions/models/envoy/icons/color/envoy-color.svg
 aliases: /extensibility/integrations/envoy
 docURL: https://docs.meshery.io/extensibility/integrations/envoy
 description: 

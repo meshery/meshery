@@ -101,8 +101,8 @@ const MeshSyncEmptyState = () => {
           <img
             src={
               theme.palette.mode === 'dark'
-                ? '/static/img/meshsync-white.svg'
-                : '/static/img/meshsync.svg'
+                ? '/static/img/integrations/meshsync-white.svg'
+                : '/static/img/extensions/meshsync.svg'
             }
             alt="MeshSync"
             style={{ width: '24px', height: '24px' }}
@@ -152,7 +152,7 @@ const MeshSyncEmptyState = () => {
               <Link
                 href="https://docs.meshery.io/concepts/architecture/meshsync"
                 target="_blank"
-                rel="noopener"
+                rel="noopener noreferrer"
               >
                 documentation
               </Link>{' '}

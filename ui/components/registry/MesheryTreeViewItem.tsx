@@ -66,7 +66,8 @@ const MesheryTreeViewItem = ({
                 : `v${versionedModelDef?.model?.version}`
             }
             check={true}
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               setShowDetailsData({
                 type: MODELS,
                 data: versionedModelDef,
@@ -85,6 +86,7 @@ const MesheryTreeViewItem = ({
               modelDef={modelDef}
               versionedModelDef={versionedModelDef}
               setShowDetailsData={setShowDetailsData}
+              showDetailsData={showDetailsData}
               handleToggle={handleToggle}
               handleSelect={handleSelect}
               selected={selected}

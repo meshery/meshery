@@ -43,8 +43,6 @@
 <div id="tablesContainer"></div>
 
 <script type="module">
-  import { keys } from '/js/permission_constants.js';
-
   window.onload = function () {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', '/excel/keys.csv', true);
@@ -88,7 +86,7 @@
           categories[category].push(row);
         });
 
-        const headers = ["Category", "Key Name", "Description", "Key ID", "Moniker"];
+        const headers = ["Category", "Key Name", "Description", "Key ID"];
 
         // Generate tables
         const container = document.getElementById('tablesContainer');
@@ -121,13 +119,6 @@
                 tr.appendChild(td);
               }
             });
-
-            // Render Moniker as 5th column
-            const monikerTd = document.createElement('td');
-            monikerTd.style.padding = '1rem';
-            const matchingPermissionKey = Object.keys(keys).find(key => keys[key].subject === row[1]);
-            monikerTd.textContent = matchingPermissionKey ?? '—';
-            tr.appendChild(monikerTd);
 
             tbody.appendChild(tr);
           });

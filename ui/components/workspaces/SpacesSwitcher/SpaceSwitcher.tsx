@@ -2,6 +2,7 @@ import { useGetOrgsQuery } from '@/rtk-query/organization';
 import React, { useState, useContext } from 'react';
 import {
   Button,
+  Box,
   FormControl,
   FormControlLabel,
   FormGroup,
@@ -20,6 +21,8 @@ import {
 import { NoSsr } from '@sistent/sistent';
 import { useRouter } from 'next/router';
 import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
+import { useNotification } from '@/utils/hooks/useNotification';
+import { EVENT_TYPES } from 'lib/event-types';
 import { iconLarge, iconXLarge } from 'css/icons.styles';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
 import _ from 'lodash';
@@ -32,6 +35,7 @@ import {
 import { MobileOrgWksSwither } from './MobileViewSwitcher';
 import WorkspaceFormModal from '../WorkspaceFormModal';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { BottomSheetInlineSelect } from './BottomSheetInlineSelect';
 
 export const SlideInMenu = styled('div')(() => ({
   width: 0,
@@ -113,15 +117,20 @@ export const StyledTextField = styled(TextField)(({ theme }) => ({
 export const StyledHeader = styled(Typography)(({ theme }) => ({
   paddingLeft: theme.spacing(1),
   fontSize: '1.65rem',
+  color: theme.palette.common.white,
+  minWidth: 0,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+
+  [theme.breakpoints.down('md')]: {
+    fontSize: '1.125rem',
+    flex: '1 1 auto',
+  },
 
   [theme.breakpoints.down('sm')]: {
-    fontSize: '1.25rem',
-    maxWidth: '7rem',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
+    fontSize: '1rem',
   },
-  color: theme.palette.common.white,
 }));
 export const StyledBetaHeader = styled('sup')(({ theme }) => ({
   color: theme.palette.background.constant.white,
@@ -132,13 +141,15 @@ export const StyledBetaHeader = styled('sup')(({ theme }) => ({
 const StyledSwitcher = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
-  justifyContent: 'center',
   alignItems: 'center',
+  minWidth: 0,
+  flex: 1,
+  overflow: 'hidden',
   fontSize: '1.5rem',
   userSelect: 'none',
   transition: 'width 2s ease-in',
   color: theme.palette.common.white,
-  gap: '0.5rem 0rem',
+  gap: theme.spacing(0.5),
 }));
 
 export function OrgMenu(props) {
@@ -150,6 +161,7 @@ export function OrgMenu(props) {
   const isSmallScreen = useMediaQuery('(max-width:400px)');
   const { selectedOrganization: selectedOrgFromPref } = useGetSelectedOrganization();
   const { currentLoadedResource } = useContext(WorkspaceModalContext);
+  const { notify } = useNotification();
 
   const selectedOrganization = currentLoadedResource?.org?.id
     ? currentLoadedResource.org
@@ -164,19 +176,81 @@ export function OrgMenu(props) {
   if (!selectedOrganization) return null;
 
   const organization = selectedOrganization;
-  const { open, fromMobileView } = props;
+  const { open, fromMobileView, expanded, onExpandedChange } = props;
 
-  const handleOrgSelect = (e) => {
-    const id = e.target.value;
-    updateSelectedOrg(id);
+  const handleOrgSelectById = async (id: string) => {
+    const selected = uniqueOrgs.find((org) => org.id === id);
+    try {
+      await updateSelectedOrg(id).unwrap();
+      if (selected && typeof window !== 'undefined' && window.sessionStorage) {
+        sessionStorage.setItem('currentOrg', JSON.stringify(selected));
+        sessionStorage.removeItem('keys');
+        sessionStorage.removeItem('currentWorkspace');
+      }
+      window.location.reload();
+    } catch (err) {
+      notify({
+        message: 'Failed to switch organization. Please try again.',
+        event_type: EVENT_TYPES.ERROR,
+      });
+    }
   };
+
+  const handleOrgSelect = async (e) => {
+    await handleOrgSelectById(e.target.value);
+  };
+
+  if (fromMobileView) {
+    const orgIcon = (
+      <OrgOutlinedIcon
+        width="24"
+        height="24"
+        className="OrgClass"
+        fill={theme.palette.icon.default}
+      />
+    );
+
+    return (
+      <NoSsr>
+        {isOrgsSuccess && orgs && open && (
+          <BottomSheetInlineSelect
+            data-cy="mesh-adapter-url"
+            value={organization?.id ?? ''}
+            options={uniqueOrgs.map((org) => ({
+              id: org.id,
+              label: org.name || 'Private Org',
+            }))}
+            onSelect={handleOrgSelectById}
+            expanded={expanded}
+            onExpandedChange={onExpandedChange}
+            renderOption={(option) => (
+              <>
+                {orgIcon}
+                <Box
+                  component="span"
+                  sx={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {option.label}
+                </Box>
+              </>
+            )}
+          />
+        )}
+      </NoSsr>
+    );
+  }
 
   return (
     <NoSsr>
       {isOrgsSuccess && orgs && open && (
         <Grid2
           sx={{
-            width: isSmallScreen ? '80%' : open ? 'auto' : 0,
+            width: isSmallScreen ? '100%' : open ? 'auto' : 0,
+            minWidth: 0,
             overflow: open ? '' : 'hidden',
             transition: 'all 1s',
           }}
@@ -203,9 +277,7 @@ export function OrgMenu(props) {
                             fill: theme.palette.background.constant.white,
                             paddingBlock: '9px 8px',
                             paddingInline: '18px 34px',
-                            color: fromMobileView
-                              ? theme.palette.text.default
-                              : theme.palette.background.constant.white,
+                            color: theme.palette.background.constant.white,
                           },
                         }}
                         renderValue={() => {
@@ -299,7 +371,7 @@ function OrganizationAndWorkSpaceSwitcher() {
                 </Button>
               </div>
             </CustomTooltip>
-            <OrgMenu open={orgOpen} organization={organization} />/
+            <OrgMenu open={orgOpen} />/
             <CustomTooltip title={'Workspaces'}>
               <div>
                 <Button
@@ -316,7 +388,7 @@ function OrganizationAndWorkSpaceSwitcher() {
                 </Button>
               </div>
             </CustomTooltip>
-            <WorkspaceSwitcher open={workspaceOpen} organization={organization} router={router} />/
+            <WorkspaceSwitcher open={workspaceOpen} />
           </>
         )}
         <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '0' : '' }} />

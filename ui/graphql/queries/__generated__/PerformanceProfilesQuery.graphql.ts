@@ -1,7 +1,6 @@
 /**
- * @generated SignedSource<<3a91d48a9bbe2cc55f168d5b23085cfe>>
+ * @generated SignedSource<<e858cbc38373dc9acafb4ce25fc836fc>>
  * @lightSyntaxTransform
- * @nogrep
  */
 
 /* tslint:disable */
@@ -39,6 +38,7 @@ export type PerformanceProfilesQuery$data = {
       readonly load_generators: ReadonlyArray<string | null | undefined> | null | undefined;
       readonly metadata: any | null | undefined;
       readonly name: string | null | undefined;
+      readonly owner: string;
       readonly qps: number | null | undefined;
       readonly request_body: string | null | undefined;
       readonly request_cookies: string | null | undefined;
@@ -46,7 +46,6 @@ export type PerformanceProfilesQuery$data = {
       readonly service_mesh: string | null | undefined;
       readonly total_results: number | null | undefined;
       readonly updated_at: string | null | undefined;
-      readonly user_id: string;
     } | null | undefined> | null | undefined;
     readonly total_count: number;
   };
@@ -189,7 +188,7 @@ v1 = [
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "user_id",
+            "name": "owner",
             "storageKey": null
           },
           {
@@ -243,32 +242,32 @@ v1 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": (v0/*:: as any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "PerformanceProfilesQuery",
-    "selections": (v1/*: any*/),
+    "selections": (v1/*:: as any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": (v0/*:: as any*/),
     "kind": "Operation",
     "name": "PerformanceProfilesQuery",
-    "selections": (v1/*: any*/)
+    "selections": (v1/*:: as any*/)
   },
   "params": {
-    "cacheID": "05fcaffb37eda9d52f8bd45bd8da5550",
+    "cacheID": "8ffd7b9ef40079715ea7faf925a7cdee",
     "id": null,
     "metadata": {},
     "name": "PerformanceProfilesQuery",
     "operationKind": "query",
-    "text": "query PerformanceProfilesQuery(\n  $selector: PageFilter!\n) {\n  getPerformanceProfiles(selector: $selector) {\n    page\n    page_size\n    total_count\n    profiles {\n      concurrent_request\n      created_at\n      duration\n      endpoints\n      id\n      last_run\n      load_generators\n      name\n      qps\n      total_results\n      updated_at\n      user_id\n      request_body\n      request_cookies\n      request_headers\n      content_type\n      service_mesh\n      metadata\n    }\n  }\n}\n"
+    "text": "query PerformanceProfilesQuery(\n  $selector: PageFilter!\n) {\n  getPerformanceProfiles(selector: $selector) {\n    page\n    page_size\n    total_count\n    profiles {\n      concurrent_request\n      created_at\n      duration\n      endpoints\n      id\n      last_run\n      load_generators\n      name\n      qps\n      total_results\n      updated_at\n      owner\n      request_body\n      request_cookies\n      request_headers\n      content_type\n      service_mesh\n      metadata\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "a901902df4422ec63fa999ca605a644b";
+(node as any).hash = "e90e411c6edfd5023b8eb3a0c23e0e97";
 
 export default node;

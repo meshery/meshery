@@ -1,1 +1,1 @@
-export { default } from './resources-sub-menu.tsx';
+export { default, CRDsResourcesSubMenu } from './resources-sub-menu.tsx';

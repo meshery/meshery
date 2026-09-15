@@ -63,6 +63,7 @@ interface FormModalBaseProps {
   isSubmitDisabled?: boolean;
   /** Size token; defaults to `md`. */
   size?: ModalSize;
+  sx?: object;
 }
 
 export interface RjsfFormModalProps<TFormData = unknown> extends FormModalBaseProps {
@@ -106,6 +107,7 @@ export const FormModal = <TFormData,>(props: FormModalProps<TFormData>) => {
     cancelText = 'Cancel',
     isSubmitDisabled = false,
     size = 'md',
+    sx,
   } = props;
 
   const rjsfRef = useRef<RjsfFormRef['current']>(null);
@@ -150,6 +152,7 @@ export const FormModal = <TFormData,>(props: FormModalProps<TFormData>) => {
       headerIcon={headerIcon}
       helpText={helpText}
       size={size}
+      sx={sx}
       actions={
         <>
           <ModalButtonSecondary onClick={onClose}>{cancelText}</ModalButtonSecondary>

@@ -43,14 +43,14 @@ describe('prefTest slice', () => {
       const state = prefTestReducer(
         initial,
         updateLoadTestPref({
-          loadTestPref: { qps: 50, t: '1m', c: 10, gen: 'wrk2', ts },
+          loadTestPref: { qps: 50, t: '1m', c: 10, gen: 'fortio', ts },
         }),
       );
       expect(state.loadTestPref).toEqual({
         qps: 50,
         t: '1m',
         c: 10,
-        gen: 'wrk2',
+        gen: 'fortio',
         ts,
       });
     });

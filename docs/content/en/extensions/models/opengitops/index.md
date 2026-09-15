@@ -1,7 +1,7 @@
 ---
 title: OpenGitOps
 subtitle: Collaborative and visual infrastructure as design for OpenGitOps
-image: /extensions/models/opengitops/icons/color/opengitops-color.svg
+image: extensions/models/opengitops/icons/color/opengitops-color.svg
 aliases: /extensibility/integrations/opengitops
 docURL: https://docs.meshery.io/extensibility/integrations/opengitops
 description: 

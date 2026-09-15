@@ -10,7 +10,12 @@ import {
   Popper,
 } from '@sistent/sistent';
 
-export default function ActionButton({ defaultActionClick, options }) {
+export default function ActionButton({
+  defaultActionClick,
+  options,
+  permissionKey,
+  permissionAction,
+}) {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
 
@@ -46,6 +51,8 @@ export default function ActionButton({ defaultActionClick, options }) {
           }}
           onClick={defaultActionClick}
           variant="outlined"
+          permissionKey={permissionKey}
+          permissionAction={permissionAction}
         >
           Action
         </Button>
@@ -84,7 +91,9 @@ export default function ActionButton({ defaultActionClick, options }) {
                 <MenuItem
                   data-testid={`action-btn-option-${option.label}`}
                   disabled={option.disabled}
-                  key={option}
+                  permissionKey={option.permissionKey}
+                  permissionAction={option.permissionAction}
+                  key={option.label}
                   onClick={(event) => {
                     handleMenuItemClick(event);
                     option.onClick(event, index);

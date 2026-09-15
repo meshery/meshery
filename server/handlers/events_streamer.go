@@ -491,7 +491,7 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 		log.Debug("Received an event.")
 		eventType := event.EventType.String()
 		eventBuilder := events.NewEvent().FromSystem(uuid.FromStringOrNil(event.Component)).
-			WithSeverity(events.Informational).WithDescription(event.Summary).WithCategory(event.ComponentName).WithAction("deploy").FromUser(userUUID)
+			WithSeverity(events.Informational).WithDescription(event.Summary).WithCategory(event.ComponentName).WithAction("deploy").FromOwner(userUUID)
 		if strings.Contains(event.Summary, "removed") {
 			eventBuilder.WithAction("undeploy")
 		}
@@ -557,13 +557,13 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 		return
 	}
 
-	if evt.ActedUpon.IsNil() || evt.Action == "" || evt.Category == "" || evt.Severity == "" {
+	if evt.ActedUpon == uuid.Nil || evt.Action == "" || evt.Category == "" || evt.Severity == "" {
 		h.log.Error(models.ErrInvalidEventData())
 		writeMeshkitError(w, models.ErrInvalidEventData(), http.StatusBadRequest)
 		return
 	}
 
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).
+	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).
 		WithCategory(evt.Category).WithAction(evt.Action).WithSeverity(events.EventSeverity(evt.Severity)).
 		WithDescription(evt.Description).WithMetadata(evt.Metadata).ActedUpon(evt.ActedUpon)
 

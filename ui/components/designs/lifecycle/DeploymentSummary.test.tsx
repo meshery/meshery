@@ -2,10 +2,6 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/themes/index', () => ({
-  NOTIFICATIONCOLORS: { SUCCESS: '#0f0', ERROR: '#f00' },
-}));
-
 vi.mock('@sistent/sistent', () => {
   const styled = (_tag: any) => () => {
     const Styled = ({ children, ...rest }: any) => <div {...rest}>{children}</div>;

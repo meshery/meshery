@@ -27,7 +27,7 @@ vi.mock('../user', () => ({
     useUpdateSelectedOrganizationMutationMock(...args),
 }));
 
-vi.mock('@/components/ErrorPage', () => ({
+vi.mock('@/components/general/ErrorPage', () => ({
   default: ({ message }: { message?: string }) =>
     React.createElement('div', { 'data-testid': 'error-page' }, message ?? 'error'),
 }));

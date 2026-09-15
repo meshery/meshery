@@ -7,10 +7,7 @@ import {
   ErrorMain,
   ErrorSectionContent,
   StyledButton,
-  ImageContainer,
   IconWrapper,
-  Logo,
-  LogoText,
   StyledDivider,
   ErrorLink,
 } from './styles';
@@ -44,7 +41,7 @@ const UnknownServerSideError = (props) => {
 };
 
 const DefaultError = (props) => {
-  const { errorTitle, errorContent, errorType } = props;
+  const { errorTitle, errorContent, errorType, permissionKey } = props;
   const theme = useTheme();
 
   return (
@@ -56,17 +53,6 @@ const DefaultError = (props) => {
           alignItems: 'center',
         }}
       >
-        <ImageContainer>
-          <Logo src="/static/img/meshery-logo/meshery-logo.svg" alt="Meshery logo" />
-          <LogoText
-            src={
-              theme.palette.mode === 'dark'
-                ? '/static/img/meshery-logo/meshery-white.svg'
-                : '/static/img/meshery-logo/meshery-black.svg'
-            }
-            alt="Meshery logo text"
-          />
-        </ImageContainer>
         <Typography
           variant="h4"
           component="h4"
@@ -76,7 +62,7 @@ const DefaultError = (props) => {
         >
           {errorTitle
             ? errorTitle
-            : "Oops! It seems like you don't have the necessary permissions to view this page."}
+            : "Oops! You don't have the required permissions to access this page."}
         </Typography>
         {errorType === ErrorTypes.UNKNOWN ? (
           <UnknownServerSideError errorContent={errorContent} />
@@ -89,7 +75,7 @@ const DefaultError = (props) => {
             <Typography variant="h5" component="h5" align="center" fontWeight={600}>
               YOUR CURRENT SESSION
             </Typography>
-            <CurrentSessionInfo />
+            <CurrentSessionInfo permissionKey={permissionKey} />
           </ErrorSection>
           <StyledDivider orientation="vertical" flexItem />
           <ErrorSection>
@@ -104,7 +90,7 @@ const DefaultError = (props) => {
                 justifyContent: 'center',
               }}
             >
-              <OrgSwitcher />
+              <OrgSwitcher permissionKey={permissionKey} />
               {/*<Divider />
                 <RequestForm />*/}
             </ErrorSectionContent>
@@ -121,11 +107,8 @@ const DefaultError = (props) => {
       </StyledButton>
       <Typography variant="textB1Regular" component="p" align="center">
         For more help, please inquire on the
-        <ErrorLink href="https://meshery.io/community#community-forums">
-          {' '}
-          discussion forum
-        </ErrorLink>{' '}
-        or the <ErrorLink href="https://slack.meshery.io"> Slack workspace</ErrorLink>.
+        <ErrorLink href="https://discuss.meshery.io"> discussion forum</ErrorLink> or the{' '}
+        <ErrorLink href="https://slack.meshery.io"> Slack workspace</ErrorLink>.
       </Typography>
     </ErrorMain>
   );

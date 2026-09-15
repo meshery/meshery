@@ -14,8 +14,19 @@ import { mesheryApiPath } from '../index';
 // We need the real mesheryApi (used by connection.ts to inject endpoints)
 // but a controlled stub of the wrapped hooks. Use importActual to preserve
 // the rest of the module.
-const { schemasGetConnections, lazyTriggerRef, lazyResult, lazyLastInfo } = vi.hoisted(() => ({
+const {
+  schemasGetConnections,
+  schemasGetUserCredentials,
+  schemasUpdateConnectionTrigger,
+  schemasUpdateConnectionResult,
+  lazyTriggerRef,
+  lazyResult,
+  lazyLastInfo,
+} = vi.hoisted(() => ({
   schemasGetConnections: vi.fn(),
+  schemasGetUserCredentials: vi.fn(),
+  schemasUpdateConnectionTrigger: vi.fn(),
+  schemasUpdateConnectionResult: { isLoading: false },
   lazyTriggerRef: { current: vi.fn() },
   lazyResult: { isFetching: false },
   lazyLastInfo: { lastArg: null },
@@ -29,6 +40,11 @@ vi.mock('@meshery/schemas/mesheryApi', async () => {
   return {
     ...actual,
     useGetConnectionsQuery: (...args: unknown[]) => schemasGetConnections(...args),
+    useGetUserCredentialsQuery: (...args: unknown[]) => schemasGetUserCredentials(...args),
+    useUpdateConnectionMutation: () => [
+      schemasUpdateConnectionTrigger,
+      schemasUpdateConnectionResult,
+    ],
     mesheryApi: {
       ...mesheryApi,
       endpoints: {
@@ -42,7 +58,12 @@ vi.mock('@meshery/schemas/mesheryApi', async () => {
   };
 });
 
-import { useGetConnectionsQuery, useLazyGetConnectionsQuery } from '../connection';
+import {
+  useGetConnectionsQuery,
+  useGetCredentialsQuery,
+  useLazyGetConnectionsQuery,
+  useUpdateConnectionByIdMutation,
+} from '../connection';
 
 describe('connection – URLs', () => {
   it('builds the credentials URL', () => {
@@ -125,7 +146,7 @@ describe('useGetConnectionsQuery wrapper', () => {
     expect(schemasGetConnections).toHaveBeenCalledWith(
       {
         page: '3',
-        pagesize: '25',
+        pageSize: '25',
         search: 'foo',
         order: 'asc',
         status: 'connected',
@@ -202,7 +223,7 @@ describe('connection mutations – HTTP contracts', () => {
     vi.restoreAllMocks();
   });
 
-  it('verifyAndRegisterConnection POSTs to /integrations/connections/register', async () => {
+  it('processConnectionRegistration POSTs to /integrations/connections/register', async () => {
     (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
       ok: true,
       status: 200,
@@ -211,7 +232,7 @@ describe('connection mutations – HTTP contracts', () => {
 
     await fetch(mesheryApiPath('integrations/connections/register'), {
       method: 'POST',
-      body: JSON.stringify({ kind: 'aws' }),
+      body: JSON.stringify({ kind: 'aws', status: 'initialize' }),
     });
 
     expect(global.fetch).toHaveBeenCalledWith(
@@ -238,20 +259,21 @@ describe('connection mutations – HTTP contracts', () => {
     );
   });
 
-  it('cancelConnectionRegister sends DELETE with a body', async () => {
+  it('cancelConnectionRegister sends DELETE with the registration id in the path', async () => {
     (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
       ok: true,
       status: 204,
       text: () => Promise.resolve(''),
     });
 
-    await fetch(mesheryApiPath('integrations/connections/register'), {
+    // Schemas contract: DELETE /api/integrations/connections/register/{registrationId}
+    // — no request body; unknown ids are ignored (idempotent).
+    await fetch(mesheryApiPath('integrations/connections/register/reg-1'), {
       method: 'DELETE',
-      body: JSON.stringify({ id: 'conn-1' }),
     });
 
     expect(global.fetch).toHaveBeenCalledWith(
-      '/api/integrations/connections/register',
+      '/api/integrations/connections/register/reg-1',
       expect.objectContaining({ method: 'DELETE' }),
     );
   });
@@ -270,20 +292,91 @@ describe('connection mutations – HTTP contracts', () => {
   });
 });
 
+// These two endpoints used to be re-declared locally even though
+// @meshery/schemas/mesheryApi already generates them. They now delegate, so the
+// tests below pin the delegation rather than a hand-built URL.
+describe('useGetCredentialsQuery wrapper', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('delegates to the schemas getUserCredentials query', () => {
+    useGetCredentialsQuery();
+    // Forwarded as-is, not defaulted to `{}`: RTK keys the cache off this arg,
+    // so `{}` would key separately from a plain schemas call. Either way every
+    // param is undefined, giving the bare GET /api/integrations/credentials.
+    expect(schemasGetUserCredentials).toHaveBeenCalledWith(undefined, undefined);
+  });
+
+  it('forwards options so callers can still skip the query', () => {
+    useGetCredentialsQuery(undefined, { skip: true });
+    expect(schemasGetUserCredentials).toHaveBeenCalledWith(undefined, { skip: true });
+  });
+});
+
+describe('useUpdateConnectionByIdMutation wrapper', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('delegates to the schemas updateConnection mutation', () => {
+    const [trigger] = useUpdateConnectionByIdMutation();
+    trigger({ connectionId: 'conn-1', body: { status: 'CONNECTED' } });
+
+    expect(schemasUpdateConnectionTrigger).toHaveBeenCalledWith({
+      connectionId: 'conn-1',
+      body: { status: 'CONNECTED', metadata: undefined },
+    });
+  });
+
+  it('returns the trigger result untouched so callers keep .unwrap()', () => {
+    // Every caller does updateConnectionById(...).unwrap(); the wrapper has to
+    // hand back RTK's promise rather than swallow it.
+    const promise = { unwrap: () => Promise.resolve({ id: 'conn-1' }) };
+    schemasUpdateConnectionTrigger.mockReturnValue(promise);
+
+    const [trigger] = useUpdateConnectionByIdMutation();
+    const returned = trigger({ connectionId: 'conn-1', body: { status: 'CONNECTED' } });
+
+    expect(returned).toBe(promise);
+    expect(typeof (returned as typeof promise).unwrap).toBe('function');
+  });
+
+  it('narrows the body to status + metadata', () => {
+    const [trigger] = useUpdateConnectionByIdMutation();
+    // @ts-expect-error extra fields are passed on purpose, to prove they are stripped
+    trigger({
+      connectionId: 'conn-1',
+      body: { status: 'CONNECTED', metadata: { a: 1 }, name: 'nope', kind: 'nope' },
+    });
+
+    // `name`/`kind` must not reach the server: the endpoint only honours status
+    // and metadata, and the local declaration used to strip everything else.
+    expect(schemasUpdateConnectionTrigger).toHaveBeenCalledWith({
+      connectionId: 'conn-1',
+      body: { status: 'CONNECTED', metadata: { a: 1 } },
+    });
+  });
+});
+
 describe('connection module surface', () => {
   it('exports all expected mutation/query hooks', async () => {
     const mod = await import('../connection');
     expect(typeof mod.useGetCredentialsQuery).toBe('function');
-    expect(typeof mod.useVerifyAndRegisterConnectionMutation).toBe('function');
-    expect(typeof mod.useConnectToConnectionMutation).toBe('function');
+    // Schemas-generated since @meshery/schemas 1.3.32 — re-exported (or thinly
+    // wrapped) rather than re-declared locally.
+    expect(typeof mod.useProcessConnectionRegistrationMutation).toBe('function');
+    expect(typeof mod.useCancelConnectionRegisterMutation).toBe('function');
+    expect(typeof mod.useAddKubernetesConfigMutation).toBe('function');
+    expect(typeof mod.useDiscoverKubernetesContextsMutation).toBe('function');
+    expect(typeof mod.useLazyPingKubernetesQuery).toBe('function');
+    // Still hand-rolled: the {kind}-scoped connection routes are not yet
+    // defined in meshery/schemas.
     expect(typeof mod.useLazyGetConnectionDetailsQuery).toBe('function');
     expect(typeof mod.useVerifyConnectionURLMutation).toBe('function');
     expect(typeof mod.useConnectionMetaDataMutation).toBe('function');
     expect(typeof mod.useConfigureConnectionMutation).toBe('function');
     expect(typeof mod.useUpdateConnectionByIdMutation).toBe('function');
-    expect(typeof mod.useCancelConnectionRegisterMutation).toBe('function');
-    expect(typeof mod.useAddKubernetesConfigMutation).toBe('function');
-    expect(typeof mod.useLazyPingKubernetesQuery).toBe('function');
     expect(typeof mod.useUpdateConnectionStatusMutation).toBe('function');
   });
 });

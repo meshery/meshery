@@ -1,7 +1,7 @@
 ---
 title: Azure Devices
 subtitle: Collaborative and visual infrastructure as design for Azure Devices
-image: /extensions/models/azure-devices/icons/color/azure-devices-color.svg
+image: extensions/models/azure-devices/icons/color/azure-devices-color.svg
 aliases: /extensibility/integrations/azure-devices
 docURL: https://docs.meshery.io/extensibility/integrations/azure-devices
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Machine Learning
 registrant: GitHub
 components: 
 - name: iot-hub
-  colorIcon: content/en/extensions/models/azure-devices/components/iot-hub/icons/color/iot-hub-color.svg
-  whiteIcon: content/en/extensions/models/azure-devices/components/iot-hub/icons/white/iot-hub-white.svg
+  colorIcon: extensions/models/azure-devices/components/iot-hub/icons/color/iot-hub-color.svg
+  whiteIcon: extensions/models/azure-devices/components/iot-hub/icons/white/iot-hub-white.svg
   description: 
 components-count: 1
 relationships: 

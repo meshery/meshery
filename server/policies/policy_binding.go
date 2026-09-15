@@ -1,8 +1,10 @@
 package policies
 
 import (
+	"sort"
 	"strings"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
@@ -167,10 +169,44 @@ func identifyBindingRelationships(relDef *relationship.RelationshipDefinition, d
 		fromComps := filterComponentsByKindSetTyped(design.Components, fromSelByKind)
 		toComps := filterComponentsByToSelectorsTyped(design.Components, ss.Allow.To)
 
-		for bindingKind := range bindingKinds {
+		// Iterate kinds in sorted order so identification output (and thus
+		// generated relationship IDs) does not depend on map iteration randomness.
+		sortedBindingKinds := make([]string, 0, len(bindingKinds))
+		for k := range bindingKinds {
+			sortedBindingKinds = append(sortedBindingKinds, k)
+		}
+		sort.Strings(sortedBindingKinds)
+		for _, bindingKind := range sortedBindingKinds {
 			bindingDecls := filterComponentsByKindTyped(design.Components, bindingKind)
 			if len(bindingDecls) == 0 {
 				continue
+			}
+
+			// Precompute, per bindingDecl, the toDecls whose (kind, mutated value)
+			// validate against this binding. Each (bindingDecl, toDecl) pair is
+			// checked exactly once here instead of once per matching fromDecl in
+			// the loop below, which drops the dominating O(N³) work to O(N²).
+			// Lists are appended in design order so output stays deterministic.
+			type toMatch struct {
+				decl *component.ComponentDefinition
+				sel  relationship.SelectorItem
+			}
+			validToDecls := make(map[uuid.UUID][]toMatch, len(bindingDecls))
+			for _, bindingDecl := range bindingDecls {
+				for _, toDecl := range toComps {
+					if toDecl.ID == bindingDecl.ID {
+						continue
+					}
+					toKind := toDecl.Component.Kind
+					toSel, exists := toSelByPair[toKind+"#"+bindingKind]
+					if !exists {
+						continue
+					}
+					if !isValidBindingTyped(bindingDecl, toDecl, toSel, design) {
+						continue
+					}
+					validToDecls[bindingDecl.ID] = append(validToDecls[bindingDecl.ID], toMatch{decl: toDecl, sel: toSel})
+				}
 			}
 
 			for _, fromDecl := range fromComps {
@@ -188,20 +224,10 @@ func identifyBindingRelationships(relDef *relationship.RelationshipDefinition, d
 						continue
 					}
 
-					for _, toDecl := range toComps {
-						if toDecl.ID == bindingDecl.ID {
-							continue
-						}
-						toKind := toDecl.Component.Kind
-						toSel, exists := toSelByPair[toKind+"#"+bindingKind]
-						if !exists {
-							continue
-						}
+					for _, tm := range validToDecls[bindingDecl.ID] {
+						toDecl, toSel := tm.decl, tm.sel
 
 						if ss.Deny != nil && isRelationshipDenied(fromDecl, toDecl, ss.Deny) {
-							continue
-						}
-						if !isValidBindingTyped(bindingDecl, toDecl, toSel, design) {
 							continue
 						}
 

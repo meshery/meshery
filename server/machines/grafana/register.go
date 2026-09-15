@@ -2,11 +2,11 @@ package grafana
 
 import (
 	"context"
-	"os"
 
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
+	grafanatelemetry "github.com/meshery/meshery/server/models/telemetry/grafana"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/utils"
@@ -31,15 +31,14 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 		LogLevel: logLevel,
 	})
 	if err != nil {
-		logrus.Error(err)
-		os.Exit(1)
+		return machines.NoOp, nil, models.ErrInitLogger(err)
 	}
 
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
 	userUUID := user.ID
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)
 
 	connPayload, err := utils.Cast[connections.ConnectionPayload](data)
 	if err != nil {
@@ -65,8 +64,8 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
-	grafanaClient := models.NewGrafanaClient(&log)
-	err = grafanaClient.Validate(ctx, grafanaConn.URL, grafanaCred.APIKeyOrBasicAuth)
+	grafanaClient := grafanatelemetry.New(grafanaConn.URL, grafanaCred.APIKeyOrBasicAuth, log)
+	_, err = grafanaClient.Health(ctx)
 	if err != nil && !connPayload.SkipCredentialVerification {
 		return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": models.ErrGrafanaScan(err)}).Build(), models.ErrGrafanaScan(err)
 	}

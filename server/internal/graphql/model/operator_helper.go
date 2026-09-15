@@ -38,16 +38,6 @@ type connection struct {
 	Name string `json:"name"`
 }
 
-func Initialize(client *mesherykube.Client, delete bool, adapterTracker models.AdaptersTrackerInterface) error {
-	// installOperator
-	err := installUsingHelm(client, delete, adapterTracker)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func GetOperator(kubeclient *mesherykube.Client) (string, string, error) {
 	if kubeclient == nil || kubeclient.KubeClient == nil {
 		return "", "", ErrMesheryClientNil

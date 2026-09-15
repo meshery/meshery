@@ -78,7 +78,7 @@ function PatternServiceForm({
     >
       {(SettingsForm) => {
         return (
-          <Box width={'100%'}>
+          <Box sx={{ width: '100%' }}>
             <AppBar
               style={{
                 boxShadow: `0px 2px 4px -1px "#677E88"`,

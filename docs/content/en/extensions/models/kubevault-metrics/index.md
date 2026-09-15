@@ -1,7 +1,7 @@
 ---
 title: Kubevault Metrics
 subtitle: Collaborative and visual infrastructure as design for Kubevault Metrics
-image: /extensions/models/kubevault-metrics/icons/color/kubevault-metrics-color.svg
+image: extensions/models/kubevault-metrics/icons/color/kubevault-metrics-color.svg
 aliases: /extensibility/integrations/kubevault-metrics
 docURL: https://docs.meshery.io/extensibility/integrations/kubevault-metrics
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Uncategorized
 registrant: Artifact Hub
 components: 
 - name: metrics-configuration
-  colorIcon: content/en/extensions/models/kubevault-metrics/components/metrics-configuration/icons/color/metrics-configuration-color.svg
-  whiteIcon: content/en/extensions/models/kubevault-metrics/components/metrics-configuration/icons/white/metrics-configuration-white.svg
+  colorIcon: extensions/models/kubevault-metrics/components/metrics-configuration/icons/color/metrics-configuration-color.svg
+  whiteIcon: extensions/models/kubevault-metrics/components/metrics-configuration/icons/white/metrics-configuration-white.svg
   description: 
 components-count: 1
 relationships: 

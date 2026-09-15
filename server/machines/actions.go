@@ -40,7 +40,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
 
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
 

@@ -1,13 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('./configuration/config', () => ({ ConfigurationTableConfig: vi.fn() }));
-vi.mock('./network/config', () => ({ NetWorkTableConfig: vi.fn() }));
-vi.mock('./security/config', () => ({ SecurityTypesConfig: vi.fn() }));
-vi.mock('./storage/config', () => ({ StorageTableConfig: vi.fn() }));
-vi.mock('./workloads/config', () => ({ WorkloadTableConfig: vi.fn() }));
-vi.mock('./namespace/config', () => ({ NamespaceTableConfig: vi.fn() }));
-vi.mock('./nodes/config', () => ({ NodeTableConfig: vi.fn() }));
-vi.mock('./crds/config', () => ({ CustomResourceConfig: vi.fn() }));
+vi.mock('./configuration/config', () => ({ useConfigurationTableConfig: vi.fn() }));
+vi.mock('./network/config', () => ({ useNetWorkTableConfig: vi.fn() }));
+vi.mock('./security/config', () => ({ useSecurityTypesConfig: vi.fn() }));
+vi.mock('./storage/config', () => ({ useStorageTableConfig: vi.fn() }));
+vi.mock('./workloads/config', () => ({ useWorkloadTableConfig: vi.fn() }));
+vi.mock('./namespace/config', () => ({ useNamespaceTableConfig: vi.fn() }));
+vi.mock('./nodes/config', () => ({ useNodeTableConfig: vi.fn() }));
+vi.mock('./crds/config', () => ({ useCustomResourceConfig: vi.fn() }));
 
 import {
   ALL_VIEW,
@@ -65,15 +65,15 @@ describe('generateDynamicURL', () => {
 describe('getAllCustomResourceDefinitionsKinds', () => {
   it('filters out kinds that are in the known resource menu', () => {
     const kinds = [
-      { Kind: 'Pod' },
-      { Kind: 'Service' },
-      { Kind: 'NotebookSpec' },
-      { Kind: 'Node' },
-      { Kind: 'Namespace' },
-      { Kind: 'AcmeRandom' },
+      { kind: 'Pod' },
+      { kind: 'Service' },
+      { kind: 'NotebookSpec' },
+      { kind: 'Node' },
+      { kind: 'Namespace' },
+      { kind: 'AcmeRandom' },
     ];
     const crds = getAllCustomResourceDefinitionsKinds(kinds);
-    expect(crds.map((k) => k.Kind)).toEqual(['NotebookSpec', 'AcmeRandom']);
+    expect(crds.map((k) => k.kind)).toEqual(['NotebookSpec', 'AcmeRandom']);
   });
 
   it('returns [] when the input is null/undefined', () => {
@@ -82,7 +82,7 @@ describe('getAllCustomResourceDefinitionsKinds', () => {
   });
 
   it('returns [] when no kinds qualify as custom resources', () => {
-    const kinds = [{ Kind: 'Pod' }, { Kind: 'Node' }];
+    const kinds = [{ kind: 'Pod' }, { kind: 'Node' }];
     expect(getAllCustomResourceDefinitionsKinds(kinds)).toEqual([]);
   });
 });

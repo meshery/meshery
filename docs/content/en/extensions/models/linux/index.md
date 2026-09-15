@@ -1,7 +1,7 @@
 ---
 title: Linux
 subtitle: Collaborative and visual infrastructure as design for Linux
-image: /extensions/models/linux/icons/color/linux-color.svg
+image: extensions/models/linux/icons/color/linux-color.svg
 aliases: /extensibility/integrations/linux
 docURL: https://docs.meshery.io/installation/linux-mac
 description: 

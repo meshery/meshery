@@ -1,7 +1,7 @@
 ---
 title: Fluentd Operator
 subtitle: Collaborative and visual infrastructure as design for Fluentd Operator
-image: /extensions/models/fluentd-operator/icons/color/fluentd-operator-color.svg
+image: extensions/models/fluentd-operator/icons/color/fluentd-operator-color.svg
 aliases: /extensibility/integrations/fluentd-operator
 docURL: https://docs.meshery.io/extensibility/integrations/fluentd-operator
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Logging
 registrant: Artifact Hub
 components: 
 - name: fluentd-config
-  colorIcon: content/en/extensions/models/fluentd-operator/components/fluentd-config/icons/color/fluentd-config-color.svg
-  whiteIcon: content/en/extensions/models/fluentd-operator/components/fluentd-config/icons/white/fluentd-config-white.svg
+  colorIcon: extensions/models/fluentd-operator/components/fluentd-config/icons/color/fluentd-config-color.svg
+  whiteIcon: extensions/models/fluentd-operator/components/fluentd-config/icons/white/fluentd-config-white.svg
   description: 
 components-count: 1
 relationships: 

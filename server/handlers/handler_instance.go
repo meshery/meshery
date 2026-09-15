@@ -14,13 +14,11 @@ import (
 	"github.com/meshery/meshkit/utils/events"
 	"github.com/meshery/schemas/models/core"
 	"github.com/spf13/viper"
-	"github.com/vmihailenco/taskq/v3"
 )
 
 // Handler type is the bucket for configs and http handlers
 type Handler struct {
 	config          *models.HandlerConfig
-	task            *taskq.Task
 	MeshsyncChannel chan struct{}
 	log             logger.Handler
 	// to be removed
@@ -74,11 +72,6 @@ func NewHandlerInstance(
 		MeshsyncDefaultDeploymentMode:           meshsyncDefaultDeploymentMode,
 		evalTracker:                             newEvaluationTracker(),
 	}
-
-	h.task = taskq.RegisterTask(&taskq.TaskOptions{
-		Name:    "submitMetrics",
-		Handler: h.CollectStaticMetrics,
-	})
 
 	return h
 }

@@ -2,7 +2,6 @@ package kubernetes
 
 import (
 	"context"
-	"os"
 	"time"
 
 	"github.com/meshery/meshery/server/machines"
@@ -31,15 +30,14 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 		LogLevel: logLevel,
 	})
 	if err != nil {
-		logrus.Error(err)
-		os.Exit(1)
+		return machines.NoOp, nil, models.ErrInitLogger(err)
 	}
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	userUUID := user.ID
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
 
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
@@ -52,7 +50,7 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 	go func() {
 
 		machinectx.MesheryCtrlsHelper.UpdateOperatorsStatusMap(machinectx.OperatorTracker).
-			UndeployDeployedOperators(machinectx.OperatorTracker).
+			UndeployDeployedOperators(machinectx.OperatorTracker, contextID).
 			RemoveCtxControllerHandler(ctx, contextID)
 
 		machinectx.MesheryCtrlsHelper.RemoveMeshSyncDataHandler(ctx, contextID)

@@ -48,7 +48,6 @@ const SCAN_DIRS = [
   'machines',
   'hooks',
   'api',
-  'themes',
   'theme',
   'lib',
 ];

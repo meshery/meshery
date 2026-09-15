@@ -10,8 +10,8 @@ import {
   GridPaginationStyles,
 } from '../designs/patterns/Grid.styles';
 import { RJSFModalWrapper } from '../shared/Modal/Modal';
-import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+
+import { Keys } from '@meshery/schemas/permissions';
 import { Modal as SistentModal } from '@sistent/sistent';
 import Filter from '../../public/static/img/drawer-icons/filter_svg';
 
@@ -83,7 +83,7 @@ function FilterCardGridItem({
         name={filter.name}
         updatedAt={filter.updatedAt}
         createdAt={filter.createdAt}
-        ownerId={filter.userId}
+        ownerId={filter.owner}
         filterResource={yaml}
         canPublishFilter={canPublishFilter}
         handlePublishModal={handlePublishModal}
@@ -226,16 +226,15 @@ function FiltersGrid({
             <GridNoTextStyles align="center" color="textSecondary">
               No Filters Found
             </GridNoTextStyles>
-            <div>
+            <div style={{ marginRight: '2rem' }}>
               <Button
                 aria-label="Add Application"
                 variant="contained"
                 color="primary"
-                disabled={!CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject)}
+                permissionKey={Keys.CatalogManagementImportFilter}
                 size="large"
                 // @ts-ignore
                 onClick={handleUploadImport}
-                style={{ marginRight: '2rem' }}
               >
                 <GridAddIconStyles />
                 Import Filter

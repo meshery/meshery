@@ -6,6 +6,7 @@ import {
   Button,
   CustomColumnVisibilityControl,
   CustomTooltip,
+  DeleteIcon,
   EditIcon,
   IconButton,
   Modal,
@@ -18,27 +19,32 @@ import {
   TableRow,
   Typography,
   useTheme,
+  useHasPermission,
 } from '@sistent/sistent';
 import MesheryPerformanceComponent from './index';
 import PerformanceProfileGrid from './PerformanceProfileGrid';
 import PerformanceResults from './PerformanceResults';
-import _PromptComponent from '../PromptComponent';
-import ViewSwitch from '../ViewSwitch';
+import _PromptComponent from '../general/PromptComponent';
+import ViewSwitch from '../general/ViewSwitch';
 import { EVENT_TYPES } from '../../lib/event-types';
-import fetchPerformanceProfiles from '@/graphql/queries/PerformanceProfilesQuery';
-import subscribePerformanceProfiles from '@/graphql/subscriptions/PerformanceProfilesSubscription';
 import { iconMedium } from '../../css/icons.styles';
-import { useDeletePerformanceProfileMutation } from '@/rtk-query/performance-profile';
+import {
+  useDeletePerformanceProfileMutation,
+  useGetPerformanceProfilesQuery,
+} from '@/rtk-query/performance-profile';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { updateVisibleColumns } from '@/utils/responsive-column';
 import { useWindowDimensions } from '@/utils/dimension';
 import { ConditionalTooltip } from '@/utils/utils';
-import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
+
+import { Keys } from '@meshery/schemas/permissions';
+import DefaultError from '../general/error-404';
+import { isLocalProvider } from '@/utils/provider';
 import { ButtonTextWrapper, ProfileContainer, ViewSwitchBUtton } from './style';
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
-import { useSelector } from 'react-redux';
-import { updateProgress } from '@/store/slices/mesheryUi';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateProgressAction } from '@/store/slices/mesheryUi';
+import type { GetPerformanceProfilesApiResponse } from '@meshery/schemas/mesheryApi';
 
 /**
  * Type Definition for View Type
@@ -51,7 +57,10 @@ import { updateProgress } from '@/store/slices/mesheryUi';
  * @param {{ view: TypeView, changeView: (view: TypeView) => void }} props
  */
 
-function PerformanceProfile({ handleDelete }) {
+type PerformanceProfileItem = GetPerformanceProfilesApiResponse['profiles'][number];
+type SelectablePerformanceProfile = PerformanceProfileItem & { runTest?: boolean };
+
+function PerformanceProfile() {
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     'grid',
@@ -59,84 +68,55 @@ function PerformanceProfile({ handleDelete }) {
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('updated_at desc');
+  const [sortOrder, setSortOrder] = useState('updatedAt desc');
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  const [testProfiles, setTestProfiles] = useState([]);
-  const [profileForModal, setProfileForModal] = useState();
+  const [testProfiles, setTestProfiles] = useState<PerformanceProfileItem[]>([]);
+  const [profileForModal, setProfileForModal] = useState<Partial<SelectablePerformanceProfile>>();
   const { notify } = useNotification();
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const { user } = useSelector((state) => state.ui);
+  const { providerCapabilities } = useSelector((state) => state.ui);
+  const canViewPerformanceProfiles = useHasPermission(
+    Keys.PerformanceManagementViewPerformanceProfiles,
+  );
+  const dispatch = useDispatch();
 
   const [deletePerformanceProfile] = useDeletePerformanceProfileMutation();
-  /**
-   * fetch performance profiles when the page loads
-   */
+  const {
+    data: performanceProfilesData,
+    isFetching: isFetchingProfiles,
+    isError: isProfileFetchError,
+    error: profileFetchError,
+    refetch: refetchProfiles,
+  } = useGetPerformanceProfilesQuery(
+    {
+      page,
+      pagesize: pageSize,
+      search,
+      order: sortOrder,
+    },
+    {
+      skip: !canViewPerformanceProfiles,
+    },
+  );
   useEffect(() => {
-    fetchTestProfiles(page, pageSize, search, sortOrder);
-    const subscription = subscribePerformanceProfiles(
-      (res) => {
-        let result = res?.subscribePerfProfiles;
-        if (typeof result !== 'undefined') {
-          if (result) {
-            setCount(result.total_count || 0);
-            setPageSize(result.page_size || 0);
-            setTestProfiles(result.profiles || []);
-            setPage(result.page || 0);
-          }
-        }
-      },
-      {
-        selector: {
-          pageSize: `${pageSize}`,
-          page: `${page}`,
-          search: `${encodeURIComponent(search)}`,
-          order: `${sortOrder}`,
-        },
-      },
-    );
-    return () => {
-      subscription.dispose();
-    };
-  }, [page, pageSize, search, sortOrder]);
+    dispatch(updateProgressAction({ showProgress: isFetchingProfiles }));
+  }, [dispatch, isFetchingProfiles]);
 
-  /**
-   * fetchTestProfiles constructs the queries based on the parameters given
-   * and fetches the performance profiles
-   * @param {number} page current page
-   * @param {number} pageSize items per page
-   * @param {string} search search string
-   * @param {string} sortOrder order of sort
-   */
-  function fetchTestProfiles(page, pageSize, search, sortOrder) {
-    if (!search) search = '';
-    if (!sortOrder) sortOrder = '';
+  useEffect(() => {
+    if (!performanceProfilesData) return;
 
-    updateProgress({ showProgress: true });
-    fetchPerformanceProfiles({
-      selector: {
-        pageSize: `${pageSize}`,
-        page: `${page}`,
-        search: `${encodeURIComponent(search)}`,
-        order: `${sortOrder}`,
-      },
-    }).subscribe({
-      next: (res) => {
-        let result = res?.getPerformanceProfiles;
-        updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          if (result) {
-            setCount(result.total_count || 0);
-            setPageSize(result.page_size || 0);
-            setTestProfiles(result.profiles || []);
-            // setPage(result.page || 0);
-          }
-        }
-      },
-      error: handleError('Failed to Fetch Profiles'),
-    });
-  }
+    setCount(performanceProfilesData.totalCount || 0);
+    setPageSize(performanceProfilesData.pageSize || pageSize);
+    setTestProfiles(performanceProfilesData.profiles || []);
+  }, [performanceProfilesData]);
+
+  useEffect(() => {
+    if (isProfileFetchError) {
+      handleError('Failed to Fetch Profiles')(profileFetchError);
+    }
+  }, [isProfileFetchError, profileFetchError]);
 
   async function showModal(count) {
     let response = await modalRef.current.show({
@@ -154,16 +134,16 @@ function PerformanceProfile({ handleDelete }) {
     deletePerformanceProfile({ id: id })
       .unwrap()
       .then(() => {
-        updateProgress({ showProgress: false });
+        dispatch(updateProgressAction({ showProgress: false }));
         notify({ message: 'Performance Profile Deleted!', event_type: EVENT_TYPES.SUCCESS });
-        fetchTestProfiles(page, pageSize, search, sortOrder);
+        refetchProfiles();
       })
       .catch(() => handleError('Failed To Delete Profile'));
   }
 
   function handleError(msg) {
     return function (error) {
-      updateProgress({ showProgress: false });
+      dispatch(updateProgressAction({ showProgress: false }));
       notify({
         message: `${msg}: ${error}`,
         event_type: EVENT_TYPES.ERROR,
@@ -172,7 +152,7 @@ function PerformanceProfile({ handleDelete }) {
     };
   }
 
-  const [selectedProfile, setSelectedProfile] = useState();
+  const [selectedProfile, setSelectedProfile] = useState<SelectablePerformanceProfile>();
   useEffect(() => {
     setProfileForModal(selectedProfile);
   }, [selectedProfile]);
@@ -185,7 +165,7 @@ function PerformanceProfile({ handleDelete }) {
     ['endpoints', 'l'],
     ['lastRun', 'l'],
     ['nextRun', 'na'],
-    ['updated_at', 'l'],
+    ['updatedAt', 'l'],
     ['Actions', 'xs'],
   ];
 
@@ -273,7 +253,7 @@ function PerformanceProfile({ handleDelete }) {
       },
     },
     {
-      name: 'updated_at',
+      name: 'updatedAt',
       label: 'Updated At',
       options: {
         filter: false,
@@ -310,15 +290,12 @@ function PerformanceProfile({ handleDelete }) {
               <CustomTooltip title="Edit">
                 <div>
                   <IconButton
-                    style={iconMedium}
                     onClick={(ev) => {
                       ev.stopPropagation();
                       setSelectedProfile(testProfiles[tableMeta.rowIndex]);
                     }}
                     aria-label="edit"
-                    disabled={
-                      !CAN(keys.EDIT_PERFORMANCE_TEST.action, keys.EDIT_PERFORMANCE_TEST.subject)
-                    }
+                    permissionKey={Keys.PerformanceManagementEditPerformanceTest}
                   >
                     <EditIcon
                       style={{
@@ -333,13 +310,12 @@ function PerformanceProfile({ handleDelete }) {
               <CustomTooltip title="Run test">
                 <div>
                   <IconButton
-                    style={iconMedium}
                     onClick={(ev) => {
                       ev.stopPropagation();
                       setSelectedProfile({ ...testProfiles[tableMeta.rowIndex], runTest: true });
                     }}
                     aria-label="run"
-                    disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
+                    permissionKey={Keys.PerformanceManagementRunTest}
                   >
                     <PlayArrowIcon
                       style={{
@@ -378,8 +354,7 @@ function PerformanceProfile({ handleDelete }) {
     filter: false,
     search: false,
     viewColumns: false,
-    sort: !(user && user.userId === 'meshery'),
-    // search : !(user && user.userId === "meshery"),
+    sort: !isLocalProvider(providerCapabilities),
     filterType: 'textField',
     responsive: 'standard',
     resizableColumns: true,
@@ -392,7 +367,7 @@ function PerformanceProfile({ handleDelete }) {
     print: false,
     download: false,
     sortOrder: {
-      name: 'updated_at',
+      name: 'updatedAt',
       direction: 'desc',
     },
     textLabels: {
@@ -401,14 +376,63 @@ function PerformanceProfile({ handleDelete }) {
       },
     },
 
-    onRowsDelete: async function handleDeleteRow(row) {
-      let response = await showModal(Object.keys(row.lookup).length);
-      if (response === 'DELETE') {
-        const pids = Object.keys(row.lookup).map((idx) => testProfiles[idx]?.id);
-        pids.forEach((pid) => handleDelete(pid));
-      } else {
-        fetchTestProfiles(page, pageSize, search, sortOrder);
-      }
+    customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
+      const handleBulkDelete = async () => {
+        const pids = selectedRows.data.map(({ index }) => testProfiles[index]?.id).filter(Boolean);
+
+        if (pids.length === 0) return;
+
+        let response = await showModal(pids.length);
+        if (response === 'DELETE') {
+          dispatch(updateProgressAction({ showProgress: true }));
+          Promise.allSettled(pids.map((pid) => deletePerformanceProfile({ id: pid }).unwrap()))
+            .then((results) => {
+              let successCount = 0;
+              let failureCount = 0;
+
+              results.forEach((result) => {
+                if (result.status === 'fulfilled') {
+                  successCount++;
+                } else {
+                  failureCount++;
+                }
+              });
+
+              if (successCount > 0) {
+                notify({
+                  message: `${successCount} Performance Profile${successCount > 1 ? 's' : ''} Deleted!`,
+                  event_type: EVENT_TYPES.SUCCESS,
+                });
+              }
+              if (failureCount > 0) {
+                notify({
+                  message: `Failed to delete ${failureCount} Profile${failureCount > 1 ? 's' : ''}`,
+                  event_type: EVENT_TYPES.ERROR,
+                });
+              }
+            })
+            .finally(() => {
+              dispatch(updateProgressAction({ showProgress: false }));
+              setSelectedRows([]);
+              refetchProfiles();
+            });
+        }
+      };
+
+      return (
+        <div style={{ marginRight: '24px' }}>
+          <CustomTooltip title={'Delete'}>
+            <div>
+              <IconButton
+                onClick={handleBulkDelete}
+                permissionKey={Keys.PerformanceManagementDeletePerformanceTest}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </div>
+          </CustomTooltip>
+        </div>
+      );
     },
 
     onTableChange: (action, tableState) => {
@@ -454,9 +478,7 @@ function PerformanceProfile({ handleDelete }) {
               // @ts-ignore
               CustomHeader={<Typography variant="h6">Test Results</Typography>}
               // @ts-ignore
-              endpoint={`/api/user/performance/profiles/${
-                testProfiles[rowMeta.rowIndex].id
-              }/results`}
+              endpoint={`/api/user/performance/profiles/${testProfiles[rowMeta.rowIndex].id}/results`}
               // @ts-ignore
               elevation={0}
             />
@@ -465,6 +487,10 @@ function PerformanceProfile({ handleDelete }) {
       );
     },
   };
+
+  if (!canViewPerformanceProfiles) {
+    return <DefaultError permissionKey={Keys.PerformanceManagementViewPerformanceProfiles} />;
+  }
 
   return (
     <>
@@ -480,12 +506,7 @@ function PerformanceProfile({ handleDelete }) {
                     color="primary"
                     size="large"
                     onClick={() => setProfileForModal({})}
-                    disabled={
-                      !CAN(
-                        keys.ADD_PERFORMANCE_PROFILE.action,
-                        keys.ADD_PERFORMANCE_PROFILE.subject,
-                      )
-                    }
+                    permissionKey={Keys.PerformanceManagementAddPerformaceProfile}
                   >
                     <AddIcon style={{ paddingRight: '0.5', ...iconMedium }} />
                     <ButtonTextWrapper> Add Performance Profile </ButtonTextWrapper>
@@ -498,7 +519,6 @@ function PerformanceProfile({ handleDelete }) {
             <SearchBar
               onSearch={(value) => {
                 setSearch(value);
-                fetchTestProfiles(page, pageSize, value, sortOrder);
               }}
               expanded={isSearchExpanded}
               setExpanded={setIsSearchExpanded}
@@ -546,9 +566,7 @@ function PerformanceProfile({ handleDelete }) {
                 color="primary"
                 size="large"
                 onClick={() => setProfileForModal({})}
-                disabled={
-                  !CAN(keys.ADD_PERFORMANCE_PROFILE.action, keys.ADD_PERFORMANCE_PROFILE.subject)
-                }
+                permissionKey={Keys.PerformanceManagementAddPerformaceProfile}
               >
                 <Typography className="addIcon">Add Performance Profile</Typography>
               </Button>
@@ -565,16 +583,16 @@ function PerformanceProfile({ handleDelete }) {
             loadAsPerformanceProfile
             performanceProfileID={profileForModal?.id}
             profileName={profileForModal?.name}
-            meshName={profileForModal?.service_mesh}
+            meshName={profileForModal?.serviceMesh}
             url={profileForModal?.endpoints?.[0]}
             qps={profileForModal?.qps}
-            loadGenerator={profileForModal?.load_generators?.[0]}
+            loadGenerator={profileForModal?.loadGenerators?.[0]}
             t={profileForModal?.duration}
-            c={profileForModal?.concurrent_request}
-            reqBody={profileForModal?.request_body}
-            headers={profileForModal?.request_headers}
-            cookies={profileForModal?.request_cookies}
-            contentType={profileForModal?.content_type}
+            c={profileForModal?.concurrentRequest}
+            reqBody={profileForModal?.requestBody}
+            headers={profileForModal?.requestHeaders}
+            cookies={profileForModal?.requestCookies}
+            contentType={profileForModal?.contentType}
             runTestOnMount={!!profileForModal?.runTest}
             metadata={profileForModal?.metadata}
             closeModal={() => setProfileForModal(undefined)}

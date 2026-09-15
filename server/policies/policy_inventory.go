@@ -20,7 +20,7 @@ import (
 // Why this exists: the OPA/Rego policy engine ships this behavior, the Go
 // policy engine did not. Same input design produced different results
 // depending on USE_GO_POLICY_ENGINE — a real parity break that surfaced as
-// "Kanvas designs are missing components when the Go engine is used."
+// "Meshery designs are missing components when the Go engine is used."
 //
 // Fires only on hierarchical/parent/inventory relationships; everything
 // else returns no actions, matching the rego rule's guard clauses.

@@ -3,11 +3,13 @@ import { getFallbackImageBasedOnKind, normalizeStaticImagePath } from '../fallba
 
 describe('getFallbackImageBasedOnKind', () => {
   it('returns the meshery logo for the meshery kind', () => {
-    expect(getFallbackImageBasedOnKind('meshery')).toBe('static/img/meshery-logo.png');
+    expect(getFallbackImageBasedOnKind('meshery')).toBe('static/img/meshery-logo/meshery-logo.png');
   });
 
   it('returns the kubernetes svg for the kubernetes kind', () => {
-    expect(getFallbackImageBasedOnKind('kubernetes')).toBe('static/img/kubernetes.svg');
+    expect(getFallbackImageBasedOnKind('kubernetes')).toBe(
+      'static/img/integrations/kubernetes.svg',
+    );
   });
 
   it('returns undefined for unknown kinds', () => {
@@ -44,6 +46,18 @@ describe('normalizeStaticImagePath', () => {
   it('passes through data: and blob: URIs unchanged', () => {
     expect(normalizeStaticImagePath('data:image/png;base64,abc')).toBe('data:image/png;base64,abc');
     expect(normalizeStaticImagePath('blob:something')).toBe('blob:something');
+  });
+
+  it('encodes inline SVG markup as a data URI', () => {
+    const svg = '<svg viewBox="0 0 1 1"><path d="M0 0h1v1z"/></svg>';
+    expect(normalizeStaticImagePath(svg)).toBe(
+      `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`,
+    );
+    // Also handles SVGs that open with an XML prolog.
+    const xmlSvg = '<?xml version="1.0"?><svg></svg>';
+    expect(normalizeStaticImagePath(xmlSvg)).toBe(
+      `data:image/svg+xml;charset=utf-8,${encodeURIComponent(xmlSvg)}`,
+    );
   });
 
   it('prepends a slash to bare static paths', () => {

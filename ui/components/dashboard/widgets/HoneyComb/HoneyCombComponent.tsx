@@ -34,6 +34,7 @@ import {
   useResourceOptions,
 } from './useResourceOptions';
 import GetKubernetesNodeIcon from '../../utils';
+import WidgetErrorFallback from '../WidgetErrorFallback';
 
 type HoneycombComponentProps = {
   kinds?: ResourceKind[];
@@ -61,7 +62,7 @@ const HoneycombComponent = ({
   const groupOptions = useResourceOptions();
   const filteredKinds = useResourceFiltering(kinds, groupBy, sortDirection);
   const loadingItems = useMemo<ResourceKind[]>(
-    () => Array.from({ length: LOADING_SKELETON_COUNT }, () => ({ Kind: 'loading' })),
+    () => Array.from({ length: LOADING_SKELETON_COUNT }, () => ({ kind: 'loading' })),
     [],
   );
 
@@ -95,12 +96,12 @@ const HoneycombComponent = ({
   const renderKind = useCallback(
     (item: ResourceKind) => {
       return (
-        <Hexagon onClick={() => handleKindClick(item.Kind)}>
+        <Hexagon onClick={() => handleKindClick(item.kind)}>
           <SelectedHexagon>
-            <CustomTooltip title={item.Kind || ''} placement="top">
+            <CustomTooltip title={item.kind || ''} placement="top">
               <IconWrapper>
-                <GetKubernetesNodeIcon kind={item.Kind} model={item.Model} />
-                <ResourceCount variant="subtitle1">{item.Count}</ResourceCount>
+                <GetKubernetesNodeIcon kind={item.kind} model={item.model} />
+                <ResourceCount variant="subtitle1">{item.count}</ResourceCount>
               </IconWrapper>
             </CustomTooltip>
           </SelectedHexagon>
@@ -113,7 +114,11 @@ const HoneycombComponent = ({
   const hasFilteredKinds = filteredKinds.length > 0;
 
   return (
-    <ErrorBoundary>
+    <ErrorBoundary
+      customFallback={(fallbackProps) => (
+        <WidgetErrorFallback {...fallbackProps} widgetTitle="Cluster Resource Overview" />
+      )}
+    >
       <HoneycombRoot isEditMode={isEditMode}>
         <HeaderContainer>
           <Typography variant="h6" fontWeight="700">

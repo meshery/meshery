@@ -40,10 +40,7 @@ vi.mock('./styles', () => ({
     <div data-testid="content-container">{children}</div>
   ),
   StyledButton: ({ children, href }: any) => <a href={href}>{children}</a>,
-  ImageContainer: ({ children }: any) => <div>{children}</div>,
   IconWrapper: ({ children }: any) => <div>{children}</div>,
-  Logo: ({ src, alt }: any) => <img src={src} alt={alt} />,
-  LogoText: ({ src, alt }: any) => <img data-testid="logo-text" src={src} alt={alt} />,
   StyledDivider: () => <hr />,
   ErrorLink: ({ children, href }: any) => <a href={href}>{children}</a>,
 }));
@@ -53,7 +50,7 @@ import DefaultError from './index';
 describe('DefaultError', () => {
   it('renders the default permissions message when no errorTitle is provided', () => {
     render(<DefaultError />);
-    expect(screen.getByText(/you don't have the necessary permissions/i)).toBeInTheDocument();
+    expect(screen.getByText(/you don't have the required permissions/i)).toBeInTheDocument();
     expect(screen.getByTestId('org-switcher')).toBeInTheDocument();
     expect(screen.getByTestId('current-session')).toBeInTheDocument();
   });
@@ -79,7 +76,7 @@ describe('DefaultError', () => {
     expect(dashboard).toHaveAttribute('href', '/');
 
     const forumLink = screen.getByText('discussion forum').closest('a');
-    expect(forumLink).toHaveAttribute('href', expect.stringContaining('meshery.io/community'));
+    expect(forumLink).toHaveAttribute('href', 'https://discuss.meshery.io');
     const slackLink = screen.getByText('Slack workspace').closest('a');
     expect(slackLink).toHaveAttribute('href', 'https://slack.meshery.io');
   });

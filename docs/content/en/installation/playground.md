@@ -1,7 +1,8 @@
 ---
-title: Meshery Playground
-description: Details about Meshery Playground
+title: Using Meshery Playground
+description: An alternative to installing Meshery
 categories: [project]
+weight: -5
 ---
 
 _Try out Meshery Playground at [https://playground.meshery.io/](https://playground.meshery.io/)_
@@ -50,4 +51,4 @@ _To ensure accountability in the Playground, it's crucial to promote the use of 
 
 #### Question: Can I deploy Meshery on-premises?
 
-**Answer:** _Yes, Meshery can be deployed on-premises with a single command to download, install, and run your own instance of Meshery in your environment. See all supported platforms to deploy your own Meshery instance at [https://docs.meshery.io/installation](/installation)._
+**Answer:** _Yes, Meshery can be deployed on-premises with a single command to download, install, and run your own instance of Meshery in your environment. See all supported platforms to deploy your own Meshery instance at [https://docs.meshery.io/installation]({{< ref "installation/_index.md" >}})._

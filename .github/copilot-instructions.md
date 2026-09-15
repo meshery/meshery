@@ -15,7 +15,7 @@ Meshery is a cloud native manager that enables the design and management of Kube
 ## Tech Stack
 
 ### Backend (Server & CLI)
-- **Language**: Go 1.25.5
+- **Language**: Go 1.26.4
 - **Framework**: Cobra (CLI), Go modules
 - **Key Libraries**: MeshKit, Viper (config), gqlgen (GraphQL)
 

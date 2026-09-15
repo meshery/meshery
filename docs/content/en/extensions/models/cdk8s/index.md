@@ -1,7 +1,7 @@
 ---
 title: cdk8s For Kubernetes
 subtitle: Collaborative and visual infrastructure as design for cdk8s For Kubernetes
-image: /extensions/models/cdk8s/icons/color/cdk8s-color.svg
+image: extensions/models/cdk8s/icons/color/cdk8s-color.svg
 aliases: /extensibility/integrations/cdk8s
 docURL: https://docs.meshery.io/extensibility/integrations/cdk8s
 description: 

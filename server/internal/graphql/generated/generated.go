@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"sync"
 	"sync/atomic"
-	"time"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -41,7 +40,6 @@ type Config struct {
 type ResolverRoot interface {
 	Mutation() MutationResolver
 	Query() QueryResolver
-	Subscription() SubscriptionResolver
 }
 
 type DirectiveRoot struct {
@@ -54,25 +52,6 @@ type ComplexityRoot struct {
 		Owner func(childComplexity int) int
 	}
 
-	ApplicationPage struct {
-		Applications func(childComplexity int) int
-		Page         func(childComplexity int) int
-		PageSize     func(childComplexity int) int
-		TotalCount   func(childComplexity int) int
-	}
-
-	ApplicationResult struct {
-		ApplicationFile func(childComplexity int) int
-		CreatedAt       func(childComplexity int) int
-		ID              func(childComplexity int) int
-		Location        func(childComplexity int) int
-		Name            func(childComplexity int) int
-		Type            func(childComplexity int) int
-		UpdatedAt       func(childComplexity int) int
-		UserID          func(childComplexity int) int
-		Visibility      func(childComplexity int) int
-	}
-
 	CatalogFilter struct {
 		CatalogData    func(childComplexity int) int
 		CreatedAt      func(childComplexity int) int
@@ -81,8 +60,8 @@ type ComplexityRoot struct {
 		ID             func(childComplexity int) int
 		Location       func(childComplexity int) int
 		Name           func(childComplexity int) int
+		Owner          func(childComplexity int) int
 		UpdatedAt      func(childComplexity int) int
-		UserID         func(childComplexity int) int
 		Visibility     func(childComplexity int) int
 	}
 
@@ -92,20 +71,10 @@ type ComplexityRoot struct {
 		ID          func(childComplexity int) int
 		Location    func(childComplexity int) int
 		Name        func(childComplexity int) int
+		Owner       func(childComplexity int) int
 		PatternFile func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
-		UserID      func(childComplexity int) int
 		Visibility  func(childComplexity int) int
-	}
-
-	ClusterResources struct {
-		Resources func(childComplexity int) int
-	}
-
-	ConfigurationPage struct {
-		Applications func(childComplexity int) int
-		Filters      func(childComplexity int) int
-		Patterns     func(childComplexity int) int
 	}
 
 	Container struct {
@@ -156,43 +125,6 @@ type ComplexityRoot struct {
 	Error struct {
 		Code        func(childComplexity int) int
 		Description func(childComplexity int) int
-	}
-
-	Event struct {
-		ActedUpon   func(childComplexity int) int
-		Action      func(childComplexity int) int
-		Category    func(childComplexity int) int
-		CreatedAt   func(childComplexity int) int
-		DeletedAt   func(childComplexity int) int
-		Description func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Metadata    func(childComplexity int) int
-		OperationID func(childComplexity int) int
-		Severity    func(childComplexity int) int
-		Status      func(childComplexity int) int
-		SystemID    func(childComplexity int) int
-		UpdatedAt   func(childComplexity int) int
-		UserID      func(childComplexity int) int
-	}
-
-	FilterPage struct {
-		Filters    func(childComplexity int) int
-		Page       func(childComplexity int) int
-		PageSize   func(childComplexity int) int
-		TotalCount func(childComplexity int) int
-	}
-
-	FilterResult struct {
-		CatalogData    func(childComplexity int) int
-		CreatedAt      func(childComplexity int) int
-		FilterFile     func(childComplexity int) int
-		FilterResource func(childComplexity int) int
-		ID             func(childComplexity int) int
-		Location       func(childComplexity int) int
-		Name           func(childComplexity int) int
-		UpdatedAt      func(childComplexity int) int
-		UserID         func(childComplexity int) int
-		Visibility     func(childComplexity int) int
 	}
 
 	K8sContext struct {
@@ -260,6 +192,7 @@ type ComplexityRoot struct {
 		Mesh               func(childComplexity int) int
 		MesheryID          func(childComplexity int) int
 		Name               func(childComplexity int) int
+		Owner              func(childComplexity int) int
 		PerformanceProfile func(childComplexity int) int
 		RunnerResults      func(childComplexity int) int
 		ServerBoardConfig  func(childComplexity int) int
@@ -267,7 +200,6 @@ type ComplexityRoot struct {
 		TestID             func(childComplexity int) int
 		TestStartTime      func(childComplexity int) int
 		UpdatedAt          func(childComplexity int) int
-		UserID             func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -307,10 +239,10 @@ type ComplexityRoot struct {
 		ID          func(childComplexity int) int
 		Location    func(childComplexity int) int
 		Name        func(childComplexity int) int
+		Owner       func(childComplexity int) int
 		PatternFile func(childComplexity int) int
 		Type        func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
-		UserID      func(childComplexity int) int
 		Visibility  func(childComplexity int) int
 	}
 
@@ -339,6 +271,7 @@ type ComplexityRoot struct {
 		LoadGenerators    func(childComplexity int) int
 		Metadata          func(childComplexity int) int
 		Name              func(childComplexity int) int
+		Owner             func(childComplexity int) int
 		QPS               func(childComplexity int) int
 		RequestBody       func(childComplexity int) int
 		RequestCookies    func(childComplexity int) int
@@ -346,7 +279,6 @@ type ComplexityRoot struct {
 		ServiceMesh       func(childComplexity int) int
 		TotalResults      func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
-		UserID            func(childComplexity int) int
 	}
 
 	Query struct {
@@ -362,28 +294,9 @@ type ComplexityRoot struct {
 		GetDataPlanes              func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetKubectlDescribe         func(childComplexity int, name string, kind string, namespace string) int
 		GetMeshModelSummary        func(childComplexity int, selector model.MeshModelSummarySelector) int
-		GetMeshsyncStatus          func(childComplexity int, connectionID string) int
-		GetNatsStatus              func(childComplexity int, connectionID string) int
-		GetOperatorStatus          func(childComplexity int, connectionID string) int
 		GetPerfResult              func(childComplexity int, id string) int
 		GetPerformanceProfiles     func(childComplexity int, selector model.PageFilter) int
 		ResyncCluster              func(childComplexity int, selector *model.ReSyncActions, k8scontextID string) int
-	}
-
-	Resource struct {
-		Count func(childComplexity int) int
-		Kind  func(childComplexity int) int
-	}
-
-	Subscription struct {
-		SubscribeClusterResources         func(childComplexity int, k8scontextIDs []string, namespace string) int
-		SubscribeConfiguration            func(childComplexity int, patternSelector model.PageFilter, filterSelector model.PageFilter) int
-		SubscribeEvents                   func(childComplexity int) int
-		SubscribeK8sContext               func(childComplexity int, selector model.PageFilter) int
-		SubscribeMeshModelSummary         func(childComplexity int, selector model.MeshModelSummarySelector) int
-		SubscribeMesheryControllersStatus func(childComplexity int, connectionIDs []string) int
-		SubscribePerfProfiles             func(childComplexity int, selector model.PageFilter) int
-		SubscribePerfResults              func(childComplexity int, selector model.PageFilter, profileID string) int
 	}
 
 	TelemetryComp struct {
@@ -401,10 +314,7 @@ type QueryResolver interface {
 	GetAvailableAddons(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.AddonList, error)
 	GetControlPlanes(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.ControlPlane, error)
 	GetDataPlanes(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.DataPlane, error)
-	GetOperatorStatus(ctx context.Context, connectionID string) (*model.MesheryControllersStatusListItem, error)
 	ResyncCluster(ctx context.Context, selector *model.ReSyncActions, k8scontextID string) (model.Status, error)
-	GetMeshsyncStatus(ctx context.Context, connectionID string) (*model.OperatorControllerStatus, error)
-	GetNatsStatus(ctx context.Context, connectionID string) (*model.OperatorControllerStatus, error)
 	GetAvailableNamespaces(ctx context.Context, k8sClusterIDs []string) ([]*model.NameSpace, error)
 	GetPerfResult(ctx context.Context, id string) (*model.MesheryResult, error)
 	FetchResults(ctx context.Context, selector model.PageFilter, profileID string) (*model.PerfPageResult, error)
@@ -416,16 +326,6 @@ type QueryResolver interface {
 	FetchFilterCatalogContent(ctx context.Context, selector *model.CatalogSelector) ([]*model.CatalogFilter, error)
 	GetMeshModelSummary(ctx context.Context, selector model.MeshModelSummarySelector) (*model.MeshModelSummary, error)
 	FetchTelemetryComponents(ctx context.Context, contexts []string) ([]*model.TelemetryComp, error)
-}
-type SubscriptionResolver interface {
-	SubscribePerfProfiles(ctx context.Context, selector model.PageFilter) (<-chan *model.PerfPageProfiles, error)
-	SubscribePerfResults(ctx context.Context, selector model.PageFilter, profileID string) (<-chan *model.PerfPageResult, error)
-	SubscribeMesheryControllersStatus(ctx context.Context, connectionIDs []string) (<-chan []*model.MesheryControllersStatusListItem, error)
-	SubscribeConfiguration(ctx context.Context, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error)
-	SubscribeClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (<-chan *model.ClusterResources, error)
-	SubscribeK8sContext(ctx context.Context, selector model.PageFilter) (<-chan *model.K8sContextsPage, error)
-	SubscribeMeshModelSummary(ctx context.Context, selector model.MeshModelSummarySelector) (<-chan *model.MeshModelSummary, error)
-	SubscribeEvents(ctx context.Context) (<-chan *model.Event, error)
 }
 
 type executableSchema struct {
@@ -459,86 +359,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.AddonList.Owner(childComplexity), true
-
-	case "ApplicationPage.applications":
-		if e.complexity.ApplicationPage.Applications == nil {
-			break
-		}
-
-		return e.complexity.ApplicationPage.Applications(childComplexity), true
-	case "ApplicationPage.page":
-		if e.complexity.ApplicationPage.Page == nil {
-			break
-		}
-
-		return e.complexity.ApplicationPage.Page(childComplexity), true
-	case "ApplicationPage.page_size":
-		if e.complexity.ApplicationPage.PageSize == nil {
-			break
-		}
-
-		return e.complexity.ApplicationPage.PageSize(childComplexity), true
-	case "ApplicationPage.total_count":
-		if e.complexity.ApplicationPage.TotalCount == nil {
-			break
-		}
-
-		return e.complexity.ApplicationPage.TotalCount(childComplexity), true
-
-	case "ApplicationResult.application_file":
-		if e.complexity.ApplicationResult.ApplicationFile == nil {
-			break
-		}
-
-		return e.complexity.ApplicationResult.ApplicationFile(childComplexity), true
-	case "ApplicationResult.created_at":
-		if e.complexity.ApplicationResult.CreatedAt == nil {
-			break
-		}
-
-		return e.complexity.ApplicationResult.CreatedAt(childComplexity), true
-	case "ApplicationResult.id":
-		if e.complexity.ApplicationResult.ID == nil {
-			break
-		}
-
-		return e.complexity.ApplicationResult.ID(childComplexity), true
-	case "ApplicationResult.location":
-		if e.complexity.ApplicationResult.Location == nil {
-			break
-		}
-
-		return e.complexity.ApplicationResult.Location(childComplexity), true
-	case "ApplicationResult.name":
-		if e.complexity.ApplicationResult.Name == nil {
-			break
-		}
-
-		return e.complexity.ApplicationResult.Name(childComplexity), true
-	case "ApplicationResult.type":
-		if e.complexity.ApplicationResult.Type == nil {
-			break
-		}
-
-		return e.complexity.ApplicationResult.Type(childComplexity), true
-	case "ApplicationResult.updated_at":
-		if e.complexity.ApplicationResult.UpdatedAt == nil {
-			break
-		}
-
-		return e.complexity.ApplicationResult.UpdatedAt(childComplexity), true
-	case "ApplicationResult.user_id":
-		if e.complexity.ApplicationResult.UserID == nil {
-			break
-		}
-
-		return e.complexity.ApplicationResult.UserID(childComplexity), true
-	case "ApplicationResult.visibility":
-		if e.complexity.ApplicationResult.Visibility == nil {
-			break
-		}
-
-		return e.complexity.ApplicationResult.Visibility(childComplexity), true
 
 	case "CatalogFilter.catalog_data":
 		if e.complexity.CatalogFilter.CatalogData == nil {
@@ -582,18 +402,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.CatalogFilter.Name(childComplexity), true
+	case "CatalogFilter.owner":
+		if e.complexity.CatalogFilter.Owner == nil {
+			break
+		}
+
+		return e.complexity.CatalogFilter.Owner(childComplexity), true
 	case "CatalogFilter.updated_at":
 		if e.complexity.CatalogFilter.UpdatedAt == nil {
 			break
 		}
 
 		return e.complexity.CatalogFilter.UpdatedAt(childComplexity), true
-	case "CatalogFilter.user_id":
-		if e.complexity.CatalogFilter.UserID == nil {
-			break
-		}
-
-		return e.complexity.CatalogFilter.UserID(childComplexity), true
 	case "CatalogFilter.visibility":
 		if e.complexity.CatalogFilter.Visibility == nil {
 			break
@@ -631,6 +451,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.CatalogPattern.Name(childComplexity), true
+	case "CatalogPattern.owner":
+		if e.complexity.CatalogPattern.Owner == nil {
+			break
+		}
+
+		return e.complexity.CatalogPattern.Owner(childComplexity), true
 	case "CatalogPattern.pattern_file":
 		if e.complexity.CatalogPattern.PatternFile == nil {
 			break
@@ -643,44 +469,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.CatalogPattern.UpdatedAt(childComplexity), true
-	case "CatalogPattern.user_id":
-		if e.complexity.CatalogPattern.UserID == nil {
-			break
-		}
-
-		return e.complexity.CatalogPattern.UserID(childComplexity), true
 	case "CatalogPattern.visibility":
 		if e.complexity.CatalogPattern.Visibility == nil {
 			break
 		}
 
 		return e.complexity.CatalogPattern.Visibility(childComplexity), true
-
-	case "ClusterResources.resources":
-		if e.complexity.ClusterResources.Resources == nil {
-			break
-		}
-
-		return e.complexity.ClusterResources.Resources(childComplexity), true
-
-	case "ConfigurationPage.applications":
-		if e.complexity.ConfigurationPage.Applications == nil {
-			break
-		}
-
-		return e.complexity.ConfigurationPage.Applications(childComplexity), true
-	case "ConfigurationPage.filters":
-		if e.complexity.ConfigurationPage.Filters == nil {
-			break
-		}
-
-		return e.complexity.ConfigurationPage.Filters(childComplexity), true
-	case "ConfigurationPage.patterns":
-		if e.complexity.ConfigurationPage.Patterns == nil {
-			break
-		}
-
-		return e.complexity.ConfigurationPage.Patterns(childComplexity), true
 
 	case "Container.containerName":
 		if e.complexity.Container.ContainerName == nil {
@@ -862,177 +656,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Error.Description(childComplexity), true
-
-	case "Event.actedUpon":
-		if e.complexity.Event.ActedUpon == nil {
-			break
-		}
-
-		return e.complexity.Event.ActedUpon(childComplexity), true
-	case "Event.action":
-		if e.complexity.Event.Action == nil {
-			break
-		}
-
-		return e.complexity.Event.Action(childComplexity), true
-	case "Event.category":
-		if e.complexity.Event.Category == nil {
-			break
-		}
-
-		return e.complexity.Event.Category(childComplexity), true
-	case "Event.createdAt":
-		if e.complexity.Event.CreatedAt == nil {
-			break
-		}
-
-		return e.complexity.Event.CreatedAt(childComplexity), true
-	case "Event.deletedAt":
-		if e.complexity.Event.DeletedAt == nil {
-			break
-		}
-
-		return e.complexity.Event.DeletedAt(childComplexity), true
-	case "Event.description":
-		if e.complexity.Event.Description == nil {
-			break
-		}
-
-		return e.complexity.Event.Description(childComplexity), true
-	case "Event.id":
-		if e.complexity.Event.ID == nil {
-			break
-		}
-
-		return e.complexity.Event.ID(childComplexity), true
-	case "Event.metadata":
-		if e.complexity.Event.Metadata == nil {
-			break
-		}
-
-		return e.complexity.Event.Metadata(childComplexity), true
-	case "Event.operationID":
-		if e.complexity.Event.OperationID == nil {
-			break
-		}
-
-		return e.complexity.Event.OperationID(childComplexity), true
-	case "Event.severity":
-		if e.complexity.Event.Severity == nil {
-			break
-		}
-
-		return e.complexity.Event.Severity(childComplexity), true
-	case "Event.status":
-		if e.complexity.Event.Status == nil {
-			break
-		}
-
-		return e.complexity.Event.Status(childComplexity), true
-	case "Event.systemID":
-		if e.complexity.Event.SystemID == nil {
-			break
-		}
-
-		return e.complexity.Event.SystemID(childComplexity), true
-	case "Event.updatedAt":
-		if e.complexity.Event.UpdatedAt == nil {
-			break
-		}
-
-		return e.complexity.Event.UpdatedAt(childComplexity), true
-	case "Event.userID":
-		if e.complexity.Event.UserID == nil {
-			break
-		}
-
-		return e.complexity.Event.UserID(childComplexity), true
-
-	case "FilterPage.filters":
-		if e.complexity.FilterPage.Filters == nil {
-			break
-		}
-
-		return e.complexity.FilterPage.Filters(childComplexity), true
-	case "FilterPage.page":
-		if e.complexity.FilterPage.Page == nil {
-			break
-		}
-
-		return e.complexity.FilterPage.Page(childComplexity), true
-	case "FilterPage.page_size":
-		if e.complexity.FilterPage.PageSize == nil {
-			break
-		}
-
-		return e.complexity.FilterPage.PageSize(childComplexity), true
-	case "FilterPage.total_count":
-		if e.complexity.FilterPage.TotalCount == nil {
-			break
-		}
-
-		return e.complexity.FilterPage.TotalCount(childComplexity), true
-
-	case "FilterResult.catalog_data":
-		if e.complexity.FilterResult.CatalogData == nil {
-			break
-		}
-
-		return e.complexity.FilterResult.CatalogData(childComplexity), true
-	case "FilterResult.created_at":
-		if e.complexity.FilterResult.CreatedAt == nil {
-			break
-		}
-
-		return e.complexity.FilterResult.CreatedAt(childComplexity), true
-	case "FilterResult.filter_file":
-		if e.complexity.FilterResult.FilterFile == nil {
-			break
-		}
-
-		return e.complexity.FilterResult.FilterFile(childComplexity), true
-	case "FilterResult.filter_resource":
-		if e.complexity.FilterResult.FilterResource == nil {
-			break
-		}
-
-		return e.complexity.FilterResult.FilterResource(childComplexity), true
-	case "FilterResult.id":
-		if e.complexity.FilterResult.ID == nil {
-			break
-		}
-
-		return e.complexity.FilterResult.ID(childComplexity), true
-	case "FilterResult.location":
-		if e.complexity.FilterResult.Location == nil {
-			break
-		}
-
-		return e.complexity.FilterResult.Location(childComplexity), true
-	case "FilterResult.name":
-		if e.complexity.FilterResult.Name == nil {
-			break
-		}
-
-		return e.complexity.FilterResult.Name(childComplexity), true
-	case "FilterResult.updated_at":
-		if e.complexity.FilterResult.UpdatedAt == nil {
-			break
-		}
-
-		return e.complexity.FilterResult.UpdatedAt(childComplexity), true
-	case "FilterResult.user_id":
-		if e.complexity.FilterResult.UserID == nil {
-			break
-		}
-
-		return e.complexity.FilterResult.UserID(childComplexity), true
-	case "FilterResult.visibility":
-		if e.complexity.FilterResult.Visibility == nil {
-			break
-		}
-
-		return e.complexity.FilterResult.Visibility(childComplexity), true
 
 	case "K8sContext.connectionId":
 		if e.complexity.K8sContext.ConnectionID == nil {
@@ -1265,6 +888,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.MesheryResult.Name(childComplexity), true
+	case "MesheryResult.owner":
+		if e.complexity.MesheryResult.Owner == nil {
+			break
+		}
+
+		return e.complexity.MesheryResult.Owner(childComplexity), true
 	case "MesheryResult.performance_profile":
 		if e.complexity.MesheryResult.PerformanceProfile == nil {
 			break
@@ -1307,12 +936,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.MesheryResult.UpdatedAt(childComplexity), true
-	case "MesheryResult.user_id":
-		if e.complexity.MesheryResult.UserID == nil {
-			break
-		}
-
-		return e.complexity.MesheryResult.UserID(childComplexity), true
 
 	case "Mutation.changeAdapterStatus":
 		if e.complexity.Mutation.ChangeAdapterStatus == nil {
@@ -1455,6 +1078,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.PatternResult.Name(childComplexity), true
+	case "PatternResult.owner":
+		if e.complexity.PatternResult.Owner == nil {
+			break
+		}
+
+		return e.complexity.PatternResult.Owner(childComplexity), true
 	case "PatternResult.pattern_file":
 		if e.complexity.PatternResult.PatternFile == nil {
 			break
@@ -1473,12 +1102,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.PatternResult.UpdatedAt(childComplexity), true
-	case "PatternResult.user_id":
-		if e.complexity.PatternResult.UserID == nil {
-			break
-		}
-
-		return e.complexity.PatternResult.UserID(childComplexity), true
 	case "PatternResult.visibility":
 		if e.complexity.PatternResult.Visibility == nil {
 			break
@@ -1596,6 +1219,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.PerfProfile.Name(childComplexity), true
+	case "PerfProfile.owner":
+		if e.complexity.PerfProfile.Owner == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.Owner(childComplexity), true
 	case "PerfProfile.qps":
 		if e.complexity.PerfProfile.QPS == nil {
 			break
@@ -1638,12 +1267,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.PerfProfile.UpdatedAt(childComplexity), true
-	case "PerfProfile.user_id":
-		if e.complexity.PerfProfile.UserID == nil {
-			break
-		}
-
-		return e.complexity.PerfProfile.UserID(childComplexity), true
 
 	case "Query.fetchAllResults":
 		if e.complexity.Query.FetchAllResults == nil {
@@ -1777,39 +1400,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.GetMeshModelSummary(childComplexity, args["selector"].(model.MeshModelSummarySelector)), true
-	case "Query.getMeshsyncStatus":
-		if e.complexity.Query.GetMeshsyncStatus == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getMeshsyncStatus_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetMeshsyncStatus(childComplexity, args["connectionID"].(string)), true
-	case "Query.getNatsStatus":
-		if e.complexity.Query.GetNatsStatus == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getNatsStatus_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetNatsStatus(childComplexity, args["connectionID"].(string)), true
-	case "Query.getOperatorStatus":
-		if e.complexity.Query.GetOperatorStatus == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getOperatorStatus_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetOperatorStatus(childComplexity, args["connectionID"].(string)), true
 	case "Query.getPerfResult":
 		if e.complexity.Query.GetPerfResult == nil {
 			break
@@ -1843,103 +1433,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.ResyncCluster(childComplexity, args["selector"].(*model.ReSyncActions), args["k8scontextID"].(string)), true
-
-	case "Resource.count":
-		if e.complexity.Resource.Count == nil {
-			break
-		}
-
-		return e.complexity.Resource.Count(childComplexity), true
-	case "Resource.kind":
-		if e.complexity.Resource.Kind == nil {
-			break
-		}
-
-		return e.complexity.Resource.Kind(childComplexity), true
-
-	case "Subscription.subscribeClusterResources":
-		if e.complexity.Subscription.SubscribeClusterResources == nil {
-			break
-		}
-
-		args, err := ec.field_Subscription_subscribeClusterResources_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Subscription.SubscribeClusterResources(childComplexity, args["k8scontextIDs"].([]string), args["namespace"].(string)), true
-	case "Subscription.subscribeConfiguration":
-		if e.complexity.Subscription.SubscribeConfiguration == nil {
-			break
-		}
-
-		args, err := ec.field_Subscription_subscribeConfiguration_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Subscription.SubscribeConfiguration(childComplexity, args["patternSelector"].(model.PageFilter), args["filterSelector"].(model.PageFilter)), true
-	case "Subscription.subscribeEvents":
-		if e.complexity.Subscription.SubscribeEvents == nil {
-			break
-		}
-
-		return e.complexity.Subscription.SubscribeEvents(childComplexity), true
-	case "Subscription.subscribeK8sContext":
-		if e.complexity.Subscription.SubscribeK8sContext == nil {
-			break
-		}
-
-		args, err := ec.field_Subscription_subscribeK8sContext_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Subscription.SubscribeK8sContext(childComplexity, args["selector"].(model.PageFilter)), true
-	case "Subscription.subscribeMeshModelSummary":
-		if e.complexity.Subscription.SubscribeMeshModelSummary == nil {
-			break
-		}
-
-		args, err := ec.field_Subscription_subscribeMeshModelSummary_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Subscription.SubscribeMeshModelSummary(childComplexity, args["selector"].(model.MeshModelSummarySelector)), true
-	case "Subscription.subscribeMesheryControllersStatus":
-		if e.complexity.Subscription.SubscribeMesheryControllersStatus == nil {
-			break
-		}
-
-		args, err := ec.field_Subscription_subscribeMesheryControllersStatus_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Subscription.SubscribeMesheryControllersStatus(childComplexity, args["connectionIDs"].([]string)), true
-	case "Subscription.subscribePerfProfiles":
-		if e.complexity.Subscription.SubscribePerfProfiles == nil {
-			break
-		}
-
-		args, err := ec.field_Subscription_subscribePerfProfiles_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Subscription.SubscribePerfProfiles(childComplexity, args["selector"].(model.PageFilter)), true
-	case "Subscription.subscribePerfResults":
-		if e.complexity.Subscription.SubscribePerfResults == nil {
-			break
-		}
-
-		args, err := ec.field_Subscription_subscribePerfResults_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Subscription.SubscribePerfResults(childComplexity, args["selector"].(model.PageFilter), args["profileID"].(string)), true
 
 	case "TelemetryComp.name":
 		if e.complexity.TelemetryComp.Name == nil {
@@ -2019,23 +1512,6 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 			ctx = graphql.WithUnmarshalerMap(ctx, inputUnmarshalMap)
 			data := ec._Mutation(ctx, opCtx.Operation.SelectionSet)
 			var buf bytes.Buffer
-			data.MarshalGQL(&buf)
-
-			return &graphql.Response{
-				Data: buf.Bytes(),
-			}
-		}
-	case ast.Subscription:
-		next := ec._Subscription(ctx, opCtx.Operation.SelectionSet)
-
-		var buf bytes.Buffer
-		return func(ctx context.Context) *graphql.Response {
-			buf.Reset()
-			data := next(ctx)
-
-			if data == nil {
-				return nil
-			}
 			data.MarshalGQL(&buf)
 
 			return &graphql.Response{
@@ -2205,48 +1681,11 @@ type Error {
   description: String!
 }
 
-# ================= EVENTS =================
-
-type Event {
-  id: ID!,
-  userID: ID!,
-  actedUpon: ID!,
-  operationID: ID!,
-  systemID: ID!,
-  severity: Severity!,
-  action: String!,
-  status: String!,
-  category: String!,
-  description: String!,
-  metadata: Map,
-  createdAt: Time!,
-  updatedAt: Time!,
-  deletedAt: Time
-}
-
-enum Severity {
-  alert,
-  critical,
-  debug,
-  emergency,
-  error,
-  warning,
-  informational
-}
-
 # ================ DASHBOARD ================
 
-type Resource {
-  # Name of resource
-  kind: String!,
-  # Number of resouce
-  count: Int!
-}
-
-# Details about discovered workloads
-type ClusterResources {
-  resources: [Resource!]!,
-}
+# NOTE: the Resource / ClusterResources types were removed along with
+# subscribeClusterResources. Cluster resource counts are served over REST by
+# GET /api/system/meshsync/resources/summary.
 
 # =================== ADDONS =====================
 
@@ -2416,32 +1855,10 @@ type K8sContextsPage {
 
 # ================= Configuration ===================
 
-type ConfigurationPage {
-  applications: ApplicationPage
-  patterns: PatternPageResult
-  filters: FilterPage
-}
-
-# ================= Applications ====================
-
-type ApplicationPage {
-  page: Int!
-  page_size: Int!
-  total_count: Int!
-  applications: [ApplicationResult]
-}
-
-type ApplicationResult {
-  id: ID!
-  name: String!
-  application_file: String!
-  type: NullString!
-  user_id: String!
-  location: Location!
-  visibility: String!
-  created_at: String
-  updated_at: String
-}
+# NOTE: ConfigurationPage / ApplicationPage / ApplicationResult / FilterPage /
+# FilterResult were removed along with subscribeConfiguration. Patterns and
+# filters are served over REST (GET /api/pattern, GET /api/filter) and the UI
+# refetches via RTK cache invalidation.
 
 type NullString {
   String: String!
@@ -2450,31 +1867,11 @@ type NullString {
 
 # ================= Filters =======================
 
-type FilterPage {
-  page: Int!
-  page_size: Int!
-  total_count: Int!
-  filters: [FilterResult]
-}
-
-type FilterResult {
-  id: ID!
-  name: String!
-  filter_file: String!
-  filter_resource: String!
-  user_id: String!
-  location: Location!
-  visibility: String!
-  catalog_data: Map
-  created_at: String
-  updated_at: String
-}
-
 type CatalogFilter {
   id: ID!
   name: String!
   filter_file: String!
-  user_id: String!
+  owner: String!
   location: Location!
   filter_resource: String!
   visibility: String!
@@ -2495,7 +1892,7 @@ type PatternPageResult {
 type PatternResult {
   id: ID!
   name: String!
-  user_id: String!
+  owner: String!
   location: Location!
   pattern_file: String!
   visibility: String!
@@ -2517,7 +1914,7 @@ type Location {
 type CatalogPattern {
   id: ID!
   name: String!
-  user_id: String!
+  owner: String!
   pattern_file: String!
   location: Location!
   visibility: String!
@@ -2556,7 +1953,7 @@ type PerfProfile {
   qps: Int
   total_results: Int
   updated_at: String
-  user_id: String!
+  owner: String!
   request_headers: String
   request_cookies: String
   request_body: String
@@ -2575,7 +1972,7 @@ type MesheryResult {
   server_metrics: String
   server_board_config: String
   test_start_time: String
-  user_id: String
+  owner: String
   updated_at: String
   created_at: String
 }
@@ -2670,27 +2067,12 @@ type Query {
     filter: ServiceMeshFilter
   ): [DataPlane!]!
 
-  # Query status of Meshery Operator in your cluster
-  getOperatorStatus(
-        connectionID: String!
-  ): MesheryControllersStatusListItem @KubernetesMiddleware
-
   # Query to resync the cluster discovery
   resyncCluster(
     # Selector to control several resync actions
     selector: ReSyncActions
     k8scontextID: String!
   ): Status!  @KubernetesMiddleware
-
-  # Check the Meshsync Status
-  getMeshsyncStatus(
-        connectionID: String!
-  ): OperatorControllerStatus!
-
-  # Check is Meshey Server is connected to NATS
-  getNatsStatus(
-        connectionID: String!
-  ): OperatorControllerStatus!
 
   # Query available Namesapces in your cluster
   getAvailableNamespaces(
@@ -2753,39 +2135,20 @@ type Mutation {
   changeAdapterStatus(input: AdapterStatusInput): Status! @KubernetesMiddleware
 }
 
-type Subscription {
-  # Listen to changes in Performance Profiles
-  subscribePerfProfiles(selector: PageFilter!): PerfPageProfiles!
-
-  # Listen to all results for profile ID
-  subscribePerfResults(selector: PageFilter!, profileID: String!): PerfPageResult!
-
-  # Listen to changes in the status of meshery controllers
-  subscribeMesheryControllersStatus(
-    connectionIDs: [String!]
-  ): [MesheryControllersStatusListItem!]! @KubernetesMiddleware
-
-  # Listen to the events that MeshSync is sending through Meshery Broker.
-  # Note: It does not listen to the changes in meshery database, but to meshsync events
-  # subscribeMeshSyncEvents(
-  #  connectionIDs: [String!]
-  #  eventTypes: [MeshSyncEventType!]
-  #) : MeshSyncEvent! @KubernetesMiddleware
-
-  subscribeConfiguration( patternSelector: PageFilter!, filterSelector: PageFilter!) : ConfigurationPage!
-
-  subscribeClusterResources(
-    k8scontextIDs: [String!],
-    namespace: String!
-  ): ClusterResources!
-
-  subscribeK8sContext(selector: PageFilter!) : K8sContextsPage!
-
-  subscribeMeshModelSummary(selector: MeshModelSummarySelector!) : MeshModelSummary!
-
-  # Publish events to user
-  subscribeEvents : Event!
-}
+# NOTE: there is no ` + "`" + `type Subscription` + "`" + ` any more — GraphQL subscriptions have
+# been fully retired from Meshery Server, and with them the graphql-ws WebSocket
+# transport. Real-time surfaces use Server-Sent Events; everything else is REST.
+#
+#   subscribeEvents                  -> GET /api/system/events/subscribe (SSE)
+#   subscribeMesheryControllersStatus-> GET /api/system/controllers/status/subscribe (SSE)
+#   subscribeK8sContext              -> GET /api/integrations/connections?kind=kubernetes
+#   subscribePerfProfiles/Results    -> GET /api/user/performance/profiles[/{id}/results]
+#   subscribeClusterResources        -> GET /api/system/meshsync/resources[/summary]
+#   subscribeMeshModelSummary        -> GET /api/meshmodels/{components,relationships}
+#   subscribeConfiguration           -> GET /api/pattern, GET /api/filter
+#
+# The last four were pure refetch-on-signal loops over an equivalent Query, and
+# the UI now refetches via RTK cache invalidation instead.
 
 type KctlDescribeDetails {
   describe: String
@@ -2980,39 +2343,6 @@ func (ec *executionContext) field_Query_getMeshModelSummary_args(ctx context.Con
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_getMeshsyncStatus_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
-	var err error
-	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "connectionID", ec.unmarshalNString2string)
-	if err != nil {
-		return nil, err
-	}
-	args["connectionID"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_getNatsStatus_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
-	var err error
-	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "connectionID", ec.unmarshalNString2string)
-	if err != nil {
-		return nil, err
-	}
-	args["connectionID"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_getOperatorStatus_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
-	var err error
-	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "connectionID", ec.unmarshalNString2string)
-	if err != nil {
-		return nil, err
-	}
-	args["connectionID"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Query_getPerfResult_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -3048,98 +2378,6 @@ func (ec *executionContext) field_Query_resyncCluster_args(ctx context.Context, 
 		return nil, err
 	}
 	args["k8scontextID"] = arg1
-	return args, nil
-}
-
-func (ec *executionContext) field_Subscription_subscribeClusterResources_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
-	var err error
-	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "k8scontextIDs", ec.unmarshalOString2ᚕstringᚄ)
-	if err != nil {
-		return nil, err
-	}
-	args["k8scontextIDs"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "namespace", ec.unmarshalNString2string)
-	if err != nil {
-		return nil, err
-	}
-	args["namespace"] = arg1
-	return args, nil
-}
-
-func (ec *executionContext) field_Subscription_subscribeConfiguration_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
-	var err error
-	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "patternSelector", ec.unmarshalNPageFilter2githubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter)
-	if err != nil {
-		return nil, err
-	}
-	args["patternSelector"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "filterSelector", ec.unmarshalNPageFilter2githubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter)
-	if err != nil {
-		return nil, err
-	}
-	args["filterSelector"] = arg1
-	return args, nil
-}
-
-func (ec *executionContext) field_Subscription_subscribeK8sContext_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
-	var err error
-	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "selector", ec.unmarshalNPageFilter2githubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter)
-	if err != nil {
-		return nil, err
-	}
-	args["selector"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Subscription_subscribeMeshModelSummary_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
-	var err error
-	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "selector", ec.unmarshalNMeshModelSummarySelector2githubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelSummarySelector)
-	if err != nil {
-		return nil, err
-	}
-	args["selector"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Subscription_subscribeMesheryControllersStatus_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
-	var err error
-	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "connectionIDs", ec.unmarshalOString2ᚕstringᚄ)
-	if err != nil {
-		return nil, err
-	}
-	args["connectionIDs"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Subscription_subscribePerfProfiles_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
-	var err error
-	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "selector", ec.unmarshalNPageFilter2githubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter)
-	if err != nil {
-		return nil, err
-	}
-	args["selector"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Subscription_subscribePerfResults_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
-	var err error
-	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "selector", ec.unmarshalNPageFilter2githubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter)
-	if err != nil {
-		return nil, err
-	}
-	args["selector"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "profileID", ec.unmarshalNString2string)
-	if err != nil {
-		return nil, err
-	}
-	args["profileID"] = arg1
 	return args, nil
 }
 
@@ -3253,419 +2491,6 @@ func (ec *executionContext) fieldContext_AddonList_owner(_ context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _ApplicationPage_page(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationPage) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_ApplicationPage_page,
-		func(ctx context.Context) (any, error) {
-			return obj.Page, nil
-		},
-		nil,
-		ec.marshalNInt2int,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_ApplicationPage_page(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ApplicationPage",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ApplicationPage_page_size(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationPage) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_ApplicationPage_page_size,
-		func(ctx context.Context) (any, error) {
-			return obj.PageSize, nil
-		},
-		nil,
-		ec.marshalNInt2int,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_ApplicationPage_page_size(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ApplicationPage",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ApplicationPage_total_count(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationPage) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_ApplicationPage_total_count,
-		func(ctx context.Context) (any, error) {
-			return obj.TotalCount, nil
-		},
-		nil,
-		ec.marshalNInt2int,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_ApplicationPage_total_count(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ApplicationPage",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ApplicationPage_applications(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationPage) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_ApplicationPage_applications,
-		func(ctx context.Context) (any, error) {
-			return obj.Applications, nil
-		},
-		nil,
-		ec.marshalOApplicationResult2ᚕᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐApplicationResult,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_ApplicationPage_applications(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ApplicationPage",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_ApplicationResult_id(ctx, field)
-			case "name":
-				return ec.fieldContext_ApplicationResult_name(ctx, field)
-			case "application_file":
-				return ec.fieldContext_ApplicationResult_application_file(ctx, field)
-			case "type":
-				return ec.fieldContext_ApplicationResult_type(ctx, field)
-			case "user_id":
-				return ec.fieldContext_ApplicationResult_user_id(ctx, field)
-			case "location":
-				return ec.fieldContext_ApplicationResult_location(ctx, field)
-			case "visibility":
-				return ec.fieldContext_ApplicationResult_visibility(ctx, field)
-			case "created_at":
-				return ec.fieldContext_ApplicationResult_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_ApplicationResult_updated_at(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ApplicationResult", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ApplicationResult_id(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationResult) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_ApplicationResult_id,
-		func(ctx context.Context) (any, error) {
-			return obj.ID, nil
-		},
-		nil,
-		ec.marshalNID2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_ApplicationResult_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ApplicationResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ApplicationResult_name(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationResult) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_ApplicationResult_name,
-		func(ctx context.Context) (any, error) {
-			return obj.Name, nil
-		},
-		nil,
-		ec.marshalNString2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_ApplicationResult_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ApplicationResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ApplicationResult_application_file(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationResult) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_ApplicationResult_application_file,
-		func(ctx context.Context) (any, error) {
-			return obj.ApplicationFile, nil
-		},
-		nil,
-		ec.marshalNString2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_ApplicationResult_application_file(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ApplicationResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ApplicationResult_type(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationResult) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_ApplicationResult_type,
-		func(ctx context.Context) (any, error) {
-			return obj.Type, nil
-		},
-		nil,
-		ec.marshalNNullString2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐNullString,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_ApplicationResult_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ApplicationResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "String":
-				return ec.fieldContext_NullString_String(ctx, field)
-			case "Valid":
-				return ec.fieldContext_NullString_Valid(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type NullString", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ApplicationResult_user_id(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationResult) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_ApplicationResult_user_id,
-		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
-		},
-		nil,
-		ec.marshalNString2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_ApplicationResult_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ApplicationResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ApplicationResult_location(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationResult) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_ApplicationResult_location,
-		func(ctx context.Context) (any, error) {
-			return obj.Location, nil
-		},
-		nil,
-		ec.marshalNLocation2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐLocation,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_ApplicationResult_location(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ApplicationResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "branch":
-				return ec.fieldContext_Location_branch(ctx, field)
-			case "host":
-				return ec.fieldContext_Location_host(ctx, field)
-			case "path":
-				return ec.fieldContext_Location_path(ctx, field)
-			case "type":
-				return ec.fieldContext_Location_type(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Location", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ApplicationResult_visibility(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationResult) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_ApplicationResult_visibility,
-		func(ctx context.Context) (any, error) {
-			return obj.Visibility, nil
-		},
-		nil,
-		ec.marshalNString2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_ApplicationResult_visibility(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ApplicationResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ApplicationResult_created_at(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationResult) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_ApplicationResult_created_at,
-		func(ctx context.Context) (any, error) {
-			return obj.CreatedAt, nil
-		},
-		nil,
-		ec.marshalOString2ᚖstring,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_ApplicationResult_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ApplicationResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ApplicationResult_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.ApplicationResult) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_ApplicationResult_updated_at,
-		func(ctx context.Context) (any, error) {
-			return obj.UpdatedAt, nil
-		},
-		nil,
-		ec.marshalOString2ᚖstring,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_ApplicationResult_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ApplicationResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _CatalogFilter_id(ctx context.Context, field graphql.CollectedField, obj *model.CatalogFilter) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -3753,14 +2578,14 @@ func (ec *executionContext) fieldContext_CatalogFilter_filter_file(_ context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _CatalogFilter_user_id(ctx context.Context, field graphql.CollectedField, obj *model.CatalogFilter) (ret graphql.Marshaler) {
+func (ec *executionContext) _CatalogFilter_owner(ctx context.Context, field graphql.CollectedField, obj *model.CatalogFilter) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_CatalogFilter_user_id,
+		ec.fieldContext_CatalogFilter_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNString2string,
@@ -3769,7 +2594,7 @@ func (ec *executionContext) _CatalogFilter_user_id(ctx context.Context, field gr
 	)
 }
 
-func (ec *executionContext) fieldContext_CatalogFilter_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_CatalogFilter_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "CatalogFilter",
 		Field:      field,
@@ -4024,14 +2849,14 @@ func (ec *executionContext) fieldContext_CatalogPattern_name(_ context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _CatalogPattern_user_id(ctx context.Context, field graphql.CollectedField, obj *model.CatalogPattern) (ret graphql.Marshaler) {
+func (ec *executionContext) _CatalogPattern_owner(ctx context.Context, field graphql.CollectedField, obj *model.CatalogPattern) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_CatalogPattern_user_id,
+		ec.fieldContext_CatalogPattern_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNString2string,
@@ -4040,7 +2865,7 @@ func (ec *executionContext) _CatalogPattern_user_id(ctx context.Context, field g
 	)
 }
 
-func (ec *executionContext) fieldContext_CatalogPattern_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_CatalogPattern_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "CatalogPattern",
 		Field:      field,
@@ -4232,158 +3057,6 @@ func (ec *executionContext) fieldContext_CatalogPattern_updated_at(_ context.Con
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ClusterResources_resources(ctx context.Context, field graphql.CollectedField, obj *model.ClusterResources) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_ClusterResources_resources,
-		func(ctx context.Context) (any, error) {
-			return obj.Resources, nil
-		},
-		nil,
-		ec.marshalNResource2ᚕᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐResourceᚄ,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_ClusterResources_resources(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ClusterResources",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "kind":
-				return ec.fieldContext_Resource_kind(ctx, field)
-			case "count":
-				return ec.fieldContext_Resource_count(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Resource", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ConfigurationPage_applications(ctx context.Context, field graphql.CollectedField, obj *model.ConfigurationPage) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_ConfigurationPage_applications,
-		func(ctx context.Context) (any, error) {
-			return obj.Applications, nil
-		},
-		nil,
-		ec.marshalOApplicationPage2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐApplicationPage,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_ConfigurationPage_applications(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ConfigurationPage",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "page":
-				return ec.fieldContext_ApplicationPage_page(ctx, field)
-			case "page_size":
-				return ec.fieldContext_ApplicationPage_page_size(ctx, field)
-			case "total_count":
-				return ec.fieldContext_ApplicationPage_total_count(ctx, field)
-			case "applications":
-				return ec.fieldContext_ApplicationPage_applications(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ApplicationPage", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ConfigurationPage_patterns(ctx context.Context, field graphql.CollectedField, obj *model.ConfigurationPage) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_ConfigurationPage_patterns,
-		func(ctx context.Context) (any, error) {
-			return obj.Patterns, nil
-		},
-		nil,
-		ec.marshalOPatternPageResult2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPatternPageResult,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_ConfigurationPage_patterns(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ConfigurationPage",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "page":
-				return ec.fieldContext_PatternPageResult_page(ctx, field)
-			case "page_size":
-				return ec.fieldContext_PatternPageResult_page_size(ctx, field)
-			case "total_count":
-				return ec.fieldContext_PatternPageResult_total_count(ctx, field)
-			case "patterns":
-				return ec.fieldContext_PatternPageResult_patterns(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type PatternPageResult", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _ConfigurationPage_filters(ctx context.Context, field graphql.CollectedField, obj *model.ConfigurationPage) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_ConfigurationPage_filters,
-		func(ctx context.Context) (any, error) {
-			return obj.Filters, nil
-		},
-		nil,
-		ec.marshalOFilterPage2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐFilterPage,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_ConfigurationPage_filters(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ConfigurationPage",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "page":
-				return ec.fieldContext_FilterPage_page(ctx, field)
-			case "page_size":
-				return ec.fieldContext_FilterPage_page_size(ctx, field)
-			case "total_count":
-				return ec.fieldContext_FilterPage_total_count(ctx, field)
-			case "filters":
-				return ec.fieldContext_FilterPage_filters(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type FilterPage", field.Name)
 		},
 	}
 	return fc, nil
@@ -5288,850 +3961,6 @@ func (ec *executionContext) _Error_description(ctx context.Context, field graphq
 func (ec *executionContext) fieldContext_Error_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Error",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_id(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_id,
-		func(ctx context.Context) (any, error) {
-			return obj.ID, nil
-		},
-		nil,
-		ec.marshalNID2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_userID(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_userID,
-		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
-		},
-		nil,
-		ec.marshalNID2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_userID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_actedUpon(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_actedUpon,
-		func(ctx context.Context) (any, error) {
-			return obj.ActedUpon, nil
-		},
-		nil,
-		ec.marshalNID2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_actedUpon(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_operationID(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_operationID,
-		func(ctx context.Context) (any, error) {
-			return obj.OperationID, nil
-		},
-		nil,
-		ec.marshalNID2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_operationID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_systemID(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_systemID,
-		func(ctx context.Context) (any, error) {
-			return obj.SystemID, nil
-		},
-		nil,
-		ec.marshalNID2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_systemID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_severity(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_severity,
-		func(ctx context.Context) (any, error) {
-			return obj.Severity, nil
-		},
-		nil,
-		ec.marshalNSeverity2githubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐSeverity,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_severity(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Severity does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_action(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_action,
-		func(ctx context.Context) (any, error) {
-			return obj.Action, nil
-		},
-		nil,
-		ec.marshalNString2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_action(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_status(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_status,
-		func(ctx context.Context) (any, error) {
-			return obj.Status, nil
-		},
-		nil,
-		ec.marshalNString2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_category(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_category,
-		func(ctx context.Context) (any, error) {
-			return obj.Category, nil
-		},
-		nil,
-		ec.marshalNString2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_category(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_description(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_description,
-		func(ctx context.Context) (any, error) {
-			return obj.Description, nil
-		},
-		nil,
-		ec.marshalNString2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_metadata(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_metadata,
-		func(ctx context.Context) (any, error) {
-			return obj.Metadata, nil
-		},
-		nil,
-		ec.marshalOMap2map,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_metadata(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Map does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_createdAt,
-		func(ctx context.Context) (any, error) {
-			return obj.CreatedAt, nil
-		},
-		nil,
-		ec.marshalNTime2timeᚐTime,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_updatedAt,
-		func(ctx context.Context) (any, error) {
-			return obj.UpdatedAt, nil
-		},
-		nil,
-		ec.marshalNTime2timeᚐTime,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Event_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Event_deletedAt,
-		func(ctx context.Context) (any, error) {
-			return obj.DeletedAt, nil
-		},
-		nil,
-		ec.marshalOTime2ᚖtimeᚐTime,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_Event_deletedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Event",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _FilterPage_page(ctx context.Context, field graphql.CollectedField, obj *model.FilterPage) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_FilterPage_page,
-		func(ctx context.Context) (any, error) {
-			return obj.Page, nil
-		},
-		nil,
-		ec.marshalNInt2int,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_FilterPage_page(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "FilterPage",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _FilterPage_page_size(ctx context.Context, field graphql.CollectedField, obj *model.FilterPage) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_FilterPage_page_size,
-		func(ctx context.Context) (any, error) {
-			return obj.PageSize, nil
-		},
-		nil,
-		ec.marshalNInt2int,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_FilterPage_page_size(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "FilterPage",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _FilterPage_total_count(ctx context.Context, field graphql.CollectedField, obj *model.FilterPage) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_FilterPage_total_count,
-		func(ctx context.Context) (any, error) {
-			return obj.TotalCount, nil
-		},
-		nil,
-		ec.marshalNInt2int,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_FilterPage_total_count(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "FilterPage",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _FilterPage_filters(ctx context.Context, field graphql.CollectedField, obj *model.FilterPage) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_FilterPage_filters,
-		func(ctx context.Context) (any, error) {
-			return obj.Filters, nil
-		},
-		nil,
-		ec.marshalOFilterResult2ᚕᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐFilterResult,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_FilterPage_filters(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "FilterPage",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_FilterResult_id(ctx, field)
-			case "name":
-				return ec.fieldContext_FilterResult_name(ctx, field)
-			case "filter_file":
-				return ec.fieldContext_FilterResult_filter_file(ctx, field)
-			case "filter_resource":
-				return ec.fieldContext_FilterResult_filter_resource(ctx, field)
-			case "user_id":
-				return ec.fieldContext_FilterResult_user_id(ctx, field)
-			case "location":
-				return ec.fieldContext_FilterResult_location(ctx, field)
-			case "visibility":
-				return ec.fieldContext_FilterResult_visibility(ctx, field)
-			case "catalog_data":
-				return ec.fieldContext_FilterResult_catalog_data(ctx, field)
-			case "created_at":
-				return ec.fieldContext_FilterResult_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_FilterResult_updated_at(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type FilterResult", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _FilterResult_id(ctx context.Context, field graphql.CollectedField, obj *model.FilterResult) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_FilterResult_id,
-		func(ctx context.Context) (any, error) {
-			return obj.ID, nil
-		},
-		nil,
-		ec.marshalNID2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_FilterResult_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "FilterResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _FilterResult_name(ctx context.Context, field graphql.CollectedField, obj *model.FilterResult) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_FilterResult_name,
-		func(ctx context.Context) (any, error) {
-			return obj.Name, nil
-		},
-		nil,
-		ec.marshalNString2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_FilterResult_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "FilterResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _FilterResult_filter_file(ctx context.Context, field graphql.CollectedField, obj *model.FilterResult) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_FilterResult_filter_file,
-		func(ctx context.Context) (any, error) {
-			return obj.FilterFile, nil
-		},
-		nil,
-		ec.marshalNString2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_FilterResult_filter_file(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "FilterResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _FilterResult_filter_resource(ctx context.Context, field graphql.CollectedField, obj *model.FilterResult) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_FilterResult_filter_resource,
-		func(ctx context.Context) (any, error) {
-			return obj.FilterResource, nil
-		},
-		nil,
-		ec.marshalNString2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_FilterResult_filter_resource(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "FilterResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _FilterResult_user_id(ctx context.Context, field graphql.CollectedField, obj *model.FilterResult) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_FilterResult_user_id,
-		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
-		},
-		nil,
-		ec.marshalNString2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_FilterResult_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "FilterResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _FilterResult_location(ctx context.Context, field graphql.CollectedField, obj *model.FilterResult) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_FilterResult_location,
-		func(ctx context.Context) (any, error) {
-			return obj.Location, nil
-		},
-		nil,
-		ec.marshalNLocation2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐLocation,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_FilterResult_location(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "FilterResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "branch":
-				return ec.fieldContext_Location_branch(ctx, field)
-			case "host":
-				return ec.fieldContext_Location_host(ctx, field)
-			case "path":
-				return ec.fieldContext_Location_path(ctx, field)
-			case "type":
-				return ec.fieldContext_Location_type(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Location", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _FilterResult_visibility(ctx context.Context, field graphql.CollectedField, obj *model.FilterResult) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_FilterResult_visibility,
-		func(ctx context.Context) (any, error) {
-			return obj.Visibility, nil
-		},
-		nil,
-		ec.marshalNString2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_FilterResult_visibility(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "FilterResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _FilterResult_catalog_data(ctx context.Context, field graphql.CollectedField, obj *model.FilterResult) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_FilterResult_catalog_data,
-		func(ctx context.Context) (any, error) {
-			return obj.CatalogData, nil
-		},
-		nil,
-		ec.marshalOMap2map,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_FilterResult_catalog_data(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "FilterResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Map does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _FilterResult_created_at(ctx context.Context, field graphql.CollectedField, obj *model.FilterResult) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_FilterResult_created_at,
-		func(ctx context.Context) (any, error) {
-			return obj.CreatedAt, nil
-		},
-		nil,
-		ec.marshalOString2ᚖstring,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_FilterResult_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "FilterResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _FilterResult_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.FilterResult) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_FilterResult_updated_at,
-		func(ctx context.Context) (any, error) {
-			return obj.UpdatedAt, nil
-		},
-		nil,
-		ec.marshalOString2ᚖstring,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_FilterResult_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "FilterResult",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -7398,14 +5227,14 @@ func (ec *executionContext) fieldContext_MesheryResult_test_start_time(_ context
 	return fc, nil
 }
 
-func (ec *executionContext) _MesheryResult_user_id(ctx context.Context, field graphql.CollectedField, obj *model.MesheryResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _MesheryResult_owner(ctx context.Context, field graphql.CollectedField, obj *model.MesheryResult) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_MesheryResult_user_id,
+		ec.fieldContext_MesheryResult_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalOString2ᚖstring,
@@ -7414,7 +5243,7 @@ func (ec *executionContext) _MesheryResult_user_id(ctx context.Context, field gr
 	)
 }
 
-func (ec *executionContext) fieldContext_MesheryResult_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_MesheryResult_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "MesheryResult",
 		Field:      field,
@@ -7946,8 +5775,8 @@ func (ec *executionContext) fieldContext_PatternPageResult_patterns(_ context.Co
 				return ec.fieldContext_PatternResult_id(ctx, field)
 			case "name":
 				return ec.fieldContext_PatternResult_name(ctx, field)
-			case "user_id":
-				return ec.fieldContext_PatternResult_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_PatternResult_owner(ctx, field)
 			case "location":
 				return ec.fieldContext_PatternResult_location(ctx, field)
 			case "pattern_file":
@@ -8031,14 +5860,14 @@ func (ec *executionContext) fieldContext_PatternResult_name(_ context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _PatternResult_user_id(ctx context.Context, field graphql.CollectedField, obj *model.PatternResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _PatternResult_owner(ctx context.Context, field graphql.CollectedField, obj *model.PatternResult) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PatternResult_user_id,
+		ec.fieldContext_PatternResult_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNString2string,
@@ -8047,7 +5876,7 @@ func (ec *executionContext) _PatternResult_user_id(ctx context.Context, field gr
 	)
 }
 
-func (ec *executionContext) fieldContext_PatternResult_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PatternResult_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PatternResult",
 		Field:      field,
@@ -8470,8 +6299,8 @@ func (ec *executionContext) fieldContext_PerfPageProfiles_profiles(_ context.Con
 				return ec.fieldContext_PerfProfile_total_results(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_PerfProfile_updated_at(ctx, field)
-			case "user_id":
-				return ec.fieldContext_PerfProfile_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_PerfProfile_owner(ctx, field)
 			case "request_headers":
 				return ec.fieldContext_PerfProfile_request_headers(ctx, field)
 			case "request_cookies":
@@ -8620,8 +6449,8 @@ func (ec *executionContext) fieldContext_PerfPageResult_results(_ context.Contex
 				return ec.fieldContext_MesheryResult_server_board_config(ctx, field)
 			case "test_start_time":
 				return ec.fieldContext_MesheryResult_test_start_time(ctx, field)
-			case "user_id":
-				return ec.fieldContext_MesheryResult_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_MesheryResult_owner(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_MesheryResult_updated_at(ctx, field)
 			case "created_at":
@@ -8952,14 +6781,14 @@ func (ec *executionContext) fieldContext_PerfProfile_updated_at(_ context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _PerfProfile_user_id(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+func (ec *executionContext) _PerfProfile_owner(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_PerfProfile_user_id,
+		ec.fieldContext_PerfProfile_owner,
 		func(ctx context.Context) (any, error) {
-			return obj.UserID, nil
+			return obj.Owner, nil
 		},
 		nil,
 		ec.marshalNString2string,
@@ -8968,7 +6797,7 @@ func (ec *executionContext) _PerfProfile_user_id(ctx context.Context, field grap
 	)
 }
 
-func (ec *executionContext) fieldContext_PerfProfile_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PerfProfile_owner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PerfProfile",
 		Field:      field,
@@ -9296,70 +7125,6 @@ func (ec *executionContext) fieldContext_Query_getDataPlanes(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_getOperatorStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Query_getOperatorStatus,
-		func(ctx context.Context) (any, error) {
-			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Query().GetOperatorStatus(ctx, fc.Args["connectionID"].(string))
-		},
-		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
-			directive0 := next
-
-			directive1 := func(ctx context.Context) (any, error) {
-				if ec.directives.KubernetesMiddleware == nil {
-					var zeroVal *model.MesheryControllersStatusListItem
-					return zeroVal, errors.New("directive KubernetesMiddleware is not implemented")
-				}
-				return ec.directives.KubernetesMiddleware(ctx, nil, directive0)
-			}
-
-			next = directive1
-			return next
-		},
-		ec.marshalOMesheryControllersStatusListItem2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryControllersStatusListItem,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_Query_getOperatorStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "connectionID":
-				return ec.fieldContext_MesheryControllersStatusListItem_connectionID(ctx, field)
-			case "controller":
-				return ec.fieldContext_MesheryControllersStatusListItem_controller(ctx, field)
-			case "status":
-				return ec.fieldContext_MesheryControllersStatusListItem_status(ctx, field)
-			case "version":
-				return ec.fieldContext_MesheryControllersStatusListItem_version(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type MesheryControllersStatusListItem", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getOperatorStatus_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Query_resyncCluster(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -9408,112 +7173,6 @@ func (ec *executionContext) fieldContext_Query_resyncCluster(ctx context.Context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_resyncCluster_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_getMeshsyncStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Query_getMeshsyncStatus,
-		func(ctx context.Context) (any, error) {
-			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Query().GetMeshsyncStatus(ctx, fc.Args["connectionID"].(string))
-		},
-		nil,
-		ec.marshalNOperatorControllerStatus2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Query_getMeshsyncStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "name":
-				return ec.fieldContext_OperatorControllerStatus_name(ctx, field)
-			case "version":
-				return ec.fieldContext_OperatorControllerStatus_version(ctx, field)
-			case "status":
-				return ec.fieldContext_OperatorControllerStatus_status(ctx, field)
-			case "error":
-				return ec.fieldContext_OperatorControllerStatus_error(ctx, field)
-			case "connectionID":
-				return ec.fieldContext_OperatorControllerStatus_connectionID(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type OperatorControllerStatus", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getMeshsyncStatus_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_getNatsStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Query_getNatsStatus,
-		func(ctx context.Context) (any, error) {
-			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Query().GetNatsStatus(ctx, fc.Args["connectionID"].(string))
-		},
-		nil,
-		ec.marshalNOperatorControllerStatus2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Query_getNatsStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "name":
-				return ec.fieldContext_OperatorControllerStatus_name(ctx, field)
-			case "version":
-				return ec.fieldContext_OperatorControllerStatus_version(ctx, field)
-			case "status":
-				return ec.fieldContext_OperatorControllerStatus_status(ctx, field)
-			case "error":
-				return ec.fieldContext_OperatorControllerStatus_error(ctx, field)
-			case "connectionID":
-				return ec.fieldContext_OperatorControllerStatus_connectionID(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type OperatorControllerStatus", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getNatsStatus_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -9608,8 +7267,8 @@ func (ec *executionContext) fieldContext_Query_getPerfResult(ctx context.Context
 				return ec.fieldContext_MesheryResult_server_board_config(ctx, field)
 			case "test_start_time":
 				return ec.fieldContext_MesheryResult_test_start_time(ctx, field)
-			case "user_id":
-				return ec.fieldContext_MesheryResult_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_MesheryResult_owner(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_MesheryResult_updated_at(ctx, field)
 			case "created_at":
@@ -9912,8 +7571,8 @@ func (ec *executionContext) fieldContext_Query_fetchPatternCatalogContent(ctx co
 				return ec.fieldContext_CatalogPattern_id(ctx, field)
 			case "name":
 				return ec.fieldContext_CatalogPattern_name(ctx, field)
-			case "user_id":
-				return ec.fieldContext_CatalogPattern_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_CatalogPattern_owner(ctx, field)
 			case "pattern_file":
 				return ec.fieldContext_CatalogPattern_pattern_file(ctx, field)
 			case "location":
@@ -9975,8 +7634,8 @@ func (ec *executionContext) fieldContext_Query_fetchFilterCatalogContent(ctx con
 				return ec.fieldContext_CatalogFilter_name(ctx, field)
 			case "filter_file":
 				return ec.fieldContext_CatalogFilter_filter_file(ctx, field)
-			case "user_id":
-				return ec.fieldContext_CatalogFilter_user_id(ctx, field)
+			case "owner":
+				return ec.fieldContext_CatalogFilter_owner(ctx, field)
 			case "location":
 				return ec.fieldContext_CatalogFilter_location(ctx, field)
 			case "filter_resource":
@@ -10206,477 +7865,6 @@ func (ec *executionContext) fieldContext_Query___schema(_ context.Context, field
 				return ec.fieldContext___Schema_directives(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Schema", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Resource_kind(ctx context.Context, field graphql.CollectedField, obj *model.Resource) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Resource_kind,
-		func(ctx context.Context) (any, error) {
-			return obj.Kind, nil
-		},
-		nil,
-		ec.marshalNString2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Resource_kind(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Resource",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Resource_count(ctx context.Context, field graphql.CollectedField, obj *model.Resource) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Resource_count,
-		func(ctx context.Context) (any, error) {
-			return obj.Count, nil
-		},
-		nil,
-		ec.marshalNInt2int,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Resource_count(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Resource",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Subscription_subscribePerfProfiles(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
-	return graphql.ResolveFieldStream(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Subscription_subscribePerfProfiles,
-		func(ctx context.Context) (any, error) {
-			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Subscription().SubscribePerfProfiles(ctx, fc.Args["selector"].(model.PageFilter))
-		},
-		nil,
-		ec.marshalNPerfPageProfiles2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPerfPageProfiles,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Subscription_subscribePerfProfiles(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Subscription",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "page":
-				return ec.fieldContext_PerfPageProfiles_page(ctx, field)
-			case "page_size":
-				return ec.fieldContext_PerfPageProfiles_page_size(ctx, field)
-			case "total_count":
-				return ec.fieldContext_PerfPageProfiles_total_count(ctx, field)
-			case "profiles":
-				return ec.fieldContext_PerfPageProfiles_profiles(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type PerfPageProfiles", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Subscription_subscribePerfProfiles_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Subscription_subscribePerfResults(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
-	return graphql.ResolveFieldStream(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Subscription_subscribePerfResults,
-		func(ctx context.Context) (any, error) {
-			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Subscription().SubscribePerfResults(ctx, fc.Args["selector"].(model.PageFilter), fc.Args["profileID"].(string))
-		},
-		nil,
-		ec.marshalNPerfPageResult2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPerfPageResult,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Subscription_subscribePerfResults(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Subscription",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "page":
-				return ec.fieldContext_PerfPageResult_page(ctx, field)
-			case "page_size":
-				return ec.fieldContext_PerfPageResult_page_size(ctx, field)
-			case "total_count":
-				return ec.fieldContext_PerfPageResult_total_count(ctx, field)
-			case "results":
-				return ec.fieldContext_PerfPageResult_results(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type PerfPageResult", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Subscription_subscribePerfResults_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Subscription_subscribeMesheryControllersStatus(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
-	return graphql.ResolveFieldStream(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Subscription_subscribeMesheryControllersStatus,
-		func(ctx context.Context) (any, error) {
-			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Subscription().SubscribeMesheryControllersStatus(ctx, fc.Args["connectionIDs"].([]string))
-		},
-		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
-			directive0 := next
-
-			directive1 := func(ctx context.Context) (any, error) {
-				if ec.directives.KubernetesMiddleware == nil {
-					var zeroVal []*model.MesheryControllersStatusListItem
-					return zeroVal, errors.New("directive KubernetesMiddleware is not implemented")
-				}
-				return ec.directives.KubernetesMiddleware(ctx, nil, directive0)
-			}
-
-			next = directive1
-			return next
-		},
-		ec.marshalNMesheryControllersStatusListItem2ᚕᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryControllersStatusListItemᚄ,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Subscription_subscribeMesheryControllersStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Subscription",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "connectionID":
-				return ec.fieldContext_MesheryControllersStatusListItem_connectionID(ctx, field)
-			case "controller":
-				return ec.fieldContext_MesheryControllersStatusListItem_controller(ctx, field)
-			case "status":
-				return ec.fieldContext_MesheryControllersStatusListItem_status(ctx, field)
-			case "version":
-				return ec.fieldContext_MesheryControllersStatusListItem_version(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type MesheryControllersStatusListItem", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Subscription_subscribeMesheryControllersStatus_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Subscription_subscribeConfiguration(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
-	return graphql.ResolveFieldStream(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Subscription_subscribeConfiguration,
-		func(ctx context.Context) (any, error) {
-			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Subscription().SubscribeConfiguration(ctx, fc.Args["patternSelector"].(model.PageFilter), fc.Args["filterSelector"].(model.PageFilter))
-		},
-		nil,
-		ec.marshalNConfigurationPage2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐConfigurationPage,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Subscription_subscribeConfiguration(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Subscription",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "applications":
-				return ec.fieldContext_ConfigurationPage_applications(ctx, field)
-			case "patterns":
-				return ec.fieldContext_ConfigurationPage_patterns(ctx, field)
-			case "filters":
-				return ec.fieldContext_ConfigurationPage_filters(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ConfigurationPage", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Subscription_subscribeConfiguration_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Subscription_subscribeClusterResources(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
-	return graphql.ResolveFieldStream(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Subscription_subscribeClusterResources,
-		func(ctx context.Context) (any, error) {
-			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Subscription().SubscribeClusterResources(ctx, fc.Args["k8scontextIDs"].([]string), fc.Args["namespace"].(string))
-		},
-		nil,
-		ec.marshalNClusterResources2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐClusterResources,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Subscription_subscribeClusterResources(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Subscription",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "resources":
-				return ec.fieldContext_ClusterResources_resources(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ClusterResources", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Subscription_subscribeClusterResources_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Subscription_subscribeK8sContext(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
-	return graphql.ResolveFieldStream(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Subscription_subscribeK8sContext,
-		func(ctx context.Context) (any, error) {
-			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Subscription().SubscribeK8sContext(ctx, fc.Args["selector"].(model.PageFilter))
-		},
-		nil,
-		ec.marshalNK8sContextsPage2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐK8sContextsPage,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Subscription_subscribeK8sContext(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Subscription",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "total_count":
-				return ec.fieldContext_K8sContextsPage_total_count(ctx, field)
-			case "contexts":
-				return ec.fieldContext_K8sContextsPage_contexts(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type K8sContextsPage", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Subscription_subscribeK8sContext_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Subscription_subscribeMeshModelSummary(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
-	return graphql.ResolveFieldStream(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Subscription_subscribeMeshModelSummary,
-		func(ctx context.Context) (any, error) {
-			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Subscription().SubscribeMeshModelSummary(ctx, fc.Args["selector"].(model.MeshModelSummarySelector))
-		},
-		nil,
-		ec.marshalNMeshModelSummary2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelSummary,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Subscription_subscribeMeshModelSummary(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Subscription",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "components":
-				return ec.fieldContext_MeshModelSummary_components(ctx, field)
-			case "relationships":
-				return ec.fieldContext_MeshModelSummary_relationships(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type MeshModelSummary", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Subscription_subscribeMeshModelSummary_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Subscription_subscribeEvents(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
-	return graphql.ResolveFieldStream(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Subscription_subscribeEvents,
-		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Subscription().SubscribeEvents(ctx)
-		},
-		nil,
-		ec.marshalNEvent2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐEvent,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Subscription_subscribeEvents(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Subscription",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Event_id(ctx, field)
-			case "userID":
-				return ec.fieldContext_Event_userID(ctx, field)
-			case "actedUpon":
-				return ec.fieldContext_Event_actedUpon(ctx, field)
-			case "operationID":
-				return ec.fieldContext_Event_operationID(ctx, field)
-			case "systemID":
-				return ec.fieldContext_Event_systemID(ctx, field)
-			case "severity":
-				return ec.fieldContext_Event_severity(ctx, field)
-			case "action":
-				return ec.fieldContext_Event_action(ctx, field)
-			case "status":
-				return ec.fieldContext_Event_status(ctx, field)
-			case "category":
-				return ec.fieldContext_Event_category(ctx, field)
-			case "description":
-				return ec.fieldContext_Event_description(ctx, field)
-			case "metadata":
-				return ec.fieldContext_Event_metadata(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Event_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Event_updatedAt(ctx, field)
-			case "deletedAt":
-				return ec.fieldContext_Event_deletedAt(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Event", field.Name)
 		},
 	}
 	return fc, nil
@@ -12679,130 +9867,6 @@ func (ec *executionContext) _AddonList(ctx context.Context, sel ast.SelectionSet
 	return out
 }
 
-var applicationPageImplementors = []string{"ApplicationPage"}
-
-func (ec *executionContext) _ApplicationPage(ctx context.Context, sel ast.SelectionSet, obj *model.ApplicationPage) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, applicationPageImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("ApplicationPage")
-		case "page":
-			out.Values[i] = ec._ApplicationPage_page(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "page_size":
-			out.Values[i] = ec._ApplicationPage_page_size(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "total_count":
-			out.Values[i] = ec._ApplicationPage_total_count(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "applications":
-			out.Values[i] = ec._ApplicationPage_applications(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var applicationResultImplementors = []string{"ApplicationResult"}
-
-func (ec *executionContext) _ApplicationResult(ctx context.Context, sel ast.SelectionSet, obj *model.ApplicationResult) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, applicationResultImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("ApplicationResult")
-		case "id":
-			out.Values[i] = ec._ApplicationResult_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "name":
-			out.Values[i] = ec._ApplicationResult_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "application_file":
-			out.Values[i] = ec._ApplicationResult_application_file(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "type":
-			out.Values[i] = ec._ApplicationResult_type(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "user_id":
-			out.Values[i] = ec._ApplicationResult_user_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "location":
-			out.Values[i] = ec._ApplicationResult_location(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "visibility":
-			out.Values[i] = ec._ApplicationResult_visibility(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "created_at":
-			out.Values[i] = ec._ApplicationResult_created_at(ctx, field, obj)
-		case "updated_at":
-			out.Values[i] = ec._ApplicationResult_updated_at(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
 var catalogFilterImplementors = []string{"CatalogFilter"}
 
 func (ec *executionContext) _CatalogFilter(ctx context.Context, sel ast.SelectionSet, obj *model.CatalogFilter) graphql.Marshaler {
@@ -12829,8 +9893,8 @@ func (ec *executionContext) _CatalogFilter(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "user_id":
-			out.Values[i] = ec._CatalogFilter_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._CatalogFilter_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -12899,8 +9963,8 @@ func (ec *executionContext) _CatalogPattern(ctx context.Context, sel ast.Selecti
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "user_id":
-			out.Values[i] = ec._CatalogPattern_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._CatalogPattern_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -12925,85 +9989,6 @@ func (ec *executionContext) _CatalogPattern(ctx context.Context, sel ast.Selecti
 			out.Values[i] = ec._CatalogPattern_created_at(ctx, field, obj)
 		case "updated_at":
 			out.Values[i] = ec._CatalogPattern_updated_at(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var clusterResourcesImplementors = []string{"ClusterResources"}
-
-func (ec *executionContext) _ClusterResources(ctx context.Context, sel ast.SelectionSet, obj *model.ClusterResources) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, clusterResourcesImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("ClusterResources")
-		case "resources":
-			out.Values[i] = ec._ClusterResources_resources(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var configurationPageImplementors = []string{"ConfigurationPage"}
-
-func (ec *executionContext) _ConfigurationPage(ctx context.Context, sel ast.SelectionSet, obj *model.ConfigurationPage) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, configurationPageImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("ConfigurationPage")
-		case "applications":
-			out.Values[i] = ec._ConfigurationPage_applications(ctx, field, obj)
-		case "patterns":
-			out.Values[i] = ec._ConfigurationPage_patterns(ctx, field, obj)
-		case "filters":
-			out.Values[i] = ec._ConfigurationPage_filters(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -13357,230 +10342,6 @@ func (ec *executionContext) _Error(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var eventImplementors = []string{"Event"}
-
-func (ec *executionContext) _Event(ctx context.Context, sel ast.SelectionSet, obj *model.Event) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, eventImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Event")
-		case "id":
-			out.Values[i] = ec._Event_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "userID":
-			out.Values[i] = ec._Event_userID(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "actedUpon":
-			out.Values[i] = ec._Event_actedUpon(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "operationID":
-			out.Values[i] = ec._Event_operationID(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "systemID":
-			out.Values[i] = ec._Event_systemID(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "severity":
-			out.Values[i] = ec._Event_severity(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "action":
-			out.Values[i] = ec._Event_action(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "status":
-			out.Values[i] = ec._Event_status(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "category":
-			out.Values[i] = ec._Event_category(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "description":
-			out.Values[i] = ec._Event_description(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "metadata":
-			out.Values[i] = ec._Event_metadata(ctx, field, obj)
-		case "createdAt":
-			out.Values[i] = ec._Event_createdAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "updatedAt":
-			out.Values[i] = ec._Event_updatedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "deletedAt":
-			out.Values[i] = ec._Event_deletedAt(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var filterPageImplementors = []string{"FilterPage"}
-
-func (ec *executionContext) _FilterPage(ctx context.Context, sel ast.SelectionSet, obj *model.FilterPage) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, filterPageImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("FilterPage")
-		case "page":
-			out.Values[i] = ec._FilterPage_page(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "page_size":
-			out.Values[i] = ec._FilterPage_page_size(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "total_count":
-			out.Values[i] = ec._FilterPage_total_count(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "filters":
-			out.Values[i] = ec._FilterPage_filters(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var filterResultImplementors = []string{"FilterResult"}
-
-func (ec *executionContext) _FilterResult(ctx context.Context, sel ast.SelectionSet, obj *model.FilterResult) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, filterResultImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("FilterResult")
-		case "id":
-			out.Values[i] = ec._FilterResult_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "name":
-			out.Values[i] = ec._FilterResult_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "filter_file":
-			out.Values[i] = ec._FilterResult_filter_file(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "filter_resource":
-			out.Values[i] = ec._FilterResult_filter_resource(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "user_id":
-			out.Values[i] = ec._FilterResult_user_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "location":
-			out.Values[i] = ec._FilterResult_location(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "visibility":
-			out.Values[i] = ec._FilterResult_visibility(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "catalog_data":
-			out.Values[i] = ec._FilterResult_catalog_data(ctx, field, obj)
-		case "created_at":
-			out.Values[i] = ec._FilterResult_created_at(ctx, field, obj)
-		case "updated_at":
-			out.Values[i] = ec._FilterResult_updated_at(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -14080,8 +10841,8 @@ func (ec *executionContext) _MesheryResult(ctx context.Context, sel ast.Selectio
 			out.Values[i] = ec._MesheryResult_server_board_config(ctx, field, obj)
 		case "test_start_time":
 			out.Values[i] = ec._MesheryResult_test_start_time(ctx, field, obj)
-		case "user_id":
-			out.Values[i] = ec._MesheryResult_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._MesheryResult_owner(ctx, field, obj)
 		case "updated_at":
 			out.Values[i] = ec._MesheryResult_updated_at(ctx, field, obj)
 		case "created_at":
@@ -14376,8 +11137,8 @@ func (ec *executionContext) _PatternResult(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "user_id":
-			out.Values[i] = ec._PatternResult_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._PatternResult_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -14578,8 +11339,8 @@ func (ec *executionContext) _PerfProfile(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._PerfProfile_total_results(ctx, field, obj)
 		case "updated_at":
 			out.Values[i] = ec._PerfProfile_updated_at(ctx, field, obj)
-		case "user_id":
-			out.Values[i] = ec._PerfProfile_user_id(ctx, field, obj)
+		case "owner":
+			out.Values[i] = ec._PerfProfile_owner(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -14703,25 +11464,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getOperatorStatus":
-			field := field
-
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getOperatorStatus(ctx, field)
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "resyncCluster":
 			field := field
 
@@ -14732,50 +11474,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_resyncCluster(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getMeshsyncStatus":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getMeshsyncStatus(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getNatsStatus":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getNatsStatus(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -15056,84 +11754,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	}
 
 	return out
-}
-
-var resourceImplementors = []string{"Resource"}
-
-func (ec *executionContext) _Resource(ctx context.Context, sel ast.SelectionSet, obj *model.Resource) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, resourceImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Resource")
-		case "kind":
-			out.Values[i] = ec._Resource_kind(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "count":
-			out.Values[i] = ec._Resource_count(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var subscriptionImplementors = []string{"Subscription"}
-
-func (ec *executionContext) _Subscription(ctx context.Context, sel ast.SelectionSet) func(ctx context.Context) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, subscriptionImplementors)
-	ctx = graphql.WithFieldContext(ctx, &graphql.FieldContext{
-		Object: "Subscription",
-	})
-	if len(fields) != 1 {
-		graphql.AddErrorf(ctx, "must subscribe to exactly one stream")
-		return nil
-	}
-
-	switch fields[0].Name {
-	case "subscribePerfProfiles":
-		return ec._Subscription_subscribePerfProfiles(ctx, fields[0])
-	case "subscribePerfResults":
-		return ec._Subscription_subscribePerfResults(ctx, fields[0])
-	case "subscribeMesheryControllersStatus":
-		return ec._Subscription_subscribeMesheryControllersStatus(ctx, fields[0])
-	case "subscribeConfiguration":
-		return ec._Subscription_subscribeConfiguration(ctx, fields[0])
-	case "subscribeClusterResources":
-		return ec._Subscription_subscribeClusterResources(ctx, fields[0])
-	case "subscribeK8sContext":
-		return ec._Subscription_subscribeK8sContext(ctx, fields[0])
-	case "subscribeMeshModelSummary":
-		return ec._Subscription_subscribeMeshModelSummary(ctx, fields[0])
-	case "subscribeEvents":
-		return ec._Subscription_subscribeEvents(ctx, fields[0])
-	default:
-		panic("unknown field " + strconv.Quote(fields[0].Name))
-	}
 }
 
 var telemetryCompImplementors = []string{"TelemetryComp"}
@@ -15720,34 +12340,6 @@ func (ec *executionContext) marshalNCatalogPattern2ᚖgithubᚗcomᚋmesheryᚋm
 	return ec._CatalogPattern(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNClusterResources2githubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐClusterResources(ctx context.Context, sel ast.SelectionSet, v model.ClusterResources) graphql.Marshaler {
-	return ec._ClusterResources(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNClusterResources2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐClusterResources(ctx context.Context, sel ast.SelectionSet, v *model.ClusterResources) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._ClusterResources(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNConfigurationPage2githubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐConfigurationPage(ctx context.Context, sel ast.SelectionSet, v model.ConfigurationPage) graphql.Marshaler {
-	return ec._ConfigurationPage(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNConfigurationPage2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐConfigurationPage(ctx context.Context, sel ast.SelectionSet, v *model.ConfigurationPage) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._ConfigurationPage(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalNContainer2ᚕᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐContainerᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Container) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -15964,20 +12556,6 @@ func (ec *executionContext) marshalNDataPlane2ᚖgithubᚗcomᚋmesheryᚋmesher
 	return ec._DataPlane(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNEvent2githubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐEvent(ctx context.Context, sel ast.SelectionSet, v model.Event) graphql.Marshaler {
-	return ec._Event(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNEvent2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐEvent(ctx context.Context, sel ast.SelectionSet, v *model.Event) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._Event(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v any) (string, error) {
 	res, err := graphql.UnmarshalID(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -16046,20 +12624,6 @@ func (ec *executionContext) marshalNK8sContext2ᚕᚖgithubᚗcomᚋmesheryᚋme
 	wg.Wait()
 
 	return ret
-}
-
-func (ec *executionContext) marshalNK8sContextsPage2githubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐK8sContextsPage(ctx context.Context, sel ast.SelectionSet, v model.K8sContextsPage) graphql.Marshaler {
-	return ec._K8sContextsPage(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNK8sContextsPage2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐK8sContextsPage(ctx context.Context, sel ast.SelectionSet, v *model.K8sContextsPage) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._K8sContextsPage(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNKctlDescribeDetails2githubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐKctlDescribeDetails(ctx context.Context, sel ast.SelectionSet, v model.KctlDescribeDetails) graphql.Marshaler {
@@ -16145,60 +12709,6 @@ func (ec *executionContext) marshalNMesheryControllerStatus2githubᚗcomᚋmeshe
 	return v
 }
 
-func (ec *executionContext) marshalNMesheryControllersStatusListItem2ᚕᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryControllersStatusListItemᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.MesheryControllersStatusListItem) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNMesheryControllersStatusListItem2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryControllersStatusListItem(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
-func (ec *executionContext) marshalNMesheryControllersStatusListItem2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryControllersStatusListItem(ctx context.Context, sel ast.SelectionSet, v *model.MesheryControllersStatusListItem) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._MesheryControllersStatusListItem(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalNNameSpace2ᚕᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐNameSpaceᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.NameSpace) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -16253,30 +12763,6 @@ func (ec *executionContext) marshalNNameSpace2ᚖgithubᚗcomᚋmesheryᚋmesher
 	return ec._NameSpace(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNNullString2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐNullString(ctx context.Context, sel ast.SelectionSet, v *model.NullString) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._NullString(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNOperatorControllerStatus2githubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx context.Context, sel ast.SelectionSet, v model.OperatorControllerStatus) graphql.Marshaler {
-	return ec._OperatorControllerStatus(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNOperatorControllerStatus2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatus(ctx context.Context, sel ast.SelectionSet, v *model.OperatorControllerStatus) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._OperatorControllerStatus(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalNPageFilter2githubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx context.Context, v any) (model.PageFilter, error) {
 	res, err := ec.unmarshalInputPageFilter(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -16322,70 +12808,6 @@ func (ec *executionContext) marshalNPerfPageResult2ᚖgithubᚗcomᚋmesheryᚋm
 		return graphql.Null
 	}
 	return ec._PerfPageResult(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNResource2ᚕᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐResourceᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Resource) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNResource2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐResource(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
-func (ec *executionContext) marshalNResource2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐResource(ctx context.Context, sel ast.SelectionSet, v *model.Resource) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._Resource(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNSeverity2githubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐSeverity(ctx context.Context, v any) (model.Severity, error) {
-	var res model.Severity
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNSeverity2githubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐSeverity(ctx context.Context, sel ast.SelectionSet, v model.Severity) graphql.Marshaler {
-	return v
 }
 
 func (ec *executionContext) unmarshalNStatus2githubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx context.Context, v any) (model.Status, error) {
@@ -16450,22 +12872,6 @@ func (ec *executionContext) marshalNTelemetryComp2ᚕᚖgithubᚗcomᚋmeshery�
 	wg.Wait()
 
 	return ret
-}
-
-func (ec *executionContext) unmarshalNTime2timeᚐTime(ctx context.Context, v any) (time.Time, error) {
-	res, err := graphql.UnmarshalTime(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel ast.SelectionSet, v time.Time) graphql.Marshaler {
-	_ = sel
-	res := graphql.MarshalTime(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
-		}
-	}
-	return res
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
@@ -16747,61 +13153,6 @@ func (ec *executionContext) marshalOAny2interface(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) marshalOApplicationPage2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐApplicationPage(ctx context.Context, sel ast.SelectionSet, v *model.ApplicationPage) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._ApplicationPage(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOApplicationResult2ᚕᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐApplicationResult(ctx context.Context, sel ast.SelectionSet, v []*model.ApplicationResult) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOApplicationResult2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐApplicationResult(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
-func (ec *executionContext) marshalOApplicationResult2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐApplicationResult(ctx context.Context, sel ast.SelectionSet, v *model.ApplicationResult) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._ApplicationResult(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v any) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -16947,61 +13298,6 @@ func (ec *executionContext) marshalOError2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋ
 		return graphql.Null
 	}
 	return ec._Error(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOFilterPage2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐFilterPage(ctx context.Context, sel ast.SelectionSet, v *model.FilterPage) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._FilterPage(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOFilterResult2ᚕᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐFilterResult(ctx context.Context, sel ast.SelectionSet, v []*model.FilterResult) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOFilterResult2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐFilterResult(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
-func (ec *executionContext) marshalOFilterResult2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐFilterResult(ctx context.Context, sel ast.SelectionSet, v *model.FilterResult) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._FilterResult(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v any) (*int, error) {
@@ -17157,13 +13453,6 @@ func (ec *executionContext) marshalOMeshType2ᚖgithubᚗcomᚋmesheryᚋmeshery
 	return v
 }
 
-func (ec *executionContext) marshalOMesheryControllersStatusListItem2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryControllersStatusListItem(ctx context.Context, sel ast.SelectionSet, v *model.MesheryControllersStatusListItem) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._MesheryControllersStatusListItem(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalOMesheryResult2ᚕᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMesheryResult(ctx context.Context, sel ast.SelectionSet, v []*model.MesheryResult) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -17225,13 +13514,6 @@ func (ec *executionContext) unmarshalOOperatorStatusInput2ᚖgithubᚗcomᚋmesh
 	}
 	res, err := ec.unmarshalInputOperatorStatusInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOPatternPageResult2ᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPatternPageResult(ctx context.Context, sel ast.SelectionSet, v *model.PatternPageResult) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._PatternPageResult(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOPatternResult2ᚕᚖgithubᚗcomᚋmesheryᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPatternResult(ctx context.Context, sel ast.SelectionSet, v []*model.PatternResult) graphql.Marshaler {
@@ -17435,24 +13717,6 @@ func (ec *executionContext) marshalOTelemetryComp2ᚖgithubᚗcomᚋmesheryᚋme
 		return graphql.Null
 	}
 	return ec._TelemetryComp(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOTime2ᚖtimeᚐTime(ctx context.Context, v any) (*time.Time, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := graphql.UnmarshalTime(v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOTime2ᚖtimeᚐTime(ctx context.Context, sel ast.SelectionSet, v *time.Time) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	_ = sel
-	_ = ctx
-	res := graphql.MarshalTime(*v)
-	return res
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

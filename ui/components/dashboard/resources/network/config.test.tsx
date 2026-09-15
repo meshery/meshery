@@ -23,11 +23,11 @@ vi.mock('./network-policy-columns', () => ({
   buildNetworkPolicyColumns: () => ({ name: 'NetworkPolicy', columns: [] }),
 }));
 
-import { NetWorkTableConfig } from './config';
+import { useNetWorkTableConfig } from './config';
 
-describe('NetWorkTableConfig', () => {
+describe('useNetWorkTableConfig', () => {
   it('exposes the documented network workload configs', () => {
-    const result = NetWorkTableConfig(vi.fn(), [], {}, {}, 'Service');
+    const result = useNetWorkTableConfig(vi.fn(), [], {}, {}, 'Service');
     expect(Object.keys(result)).toEqual([
       'Service',
       'Endpoints',

@@ -26,7 +26,13 @@ vi.mock('../sortable-table-cell', () => ({
   SortableTableCell: ({ columnData }: any) => <th>{columnData?.label}</th>,
 }));
 vi.mock('../../../../utils/Enum', () => ({
-  CONNECTION_KINDS: { KUBERNETES: 'kubernetes' },
+  CoreConnectionKinds: {
+    meshery: 'meshery',
+    kubernetes: 'kubernetes',
+    prometheus: 'prometheus',
+    grafana: 'grafana',
+    github: 'github',
+  },
 }));
 vi.mock('@/components/data-formatter', () => ({
   FormatId: ({ id }: any) => <span>{id}</span>,
@@ -38,11 +44,11 @@ vi.mock('../config', () => ({
   SINGLE_VIEW: 'single',
 }));
 
-import { NamespaceTableConfig } from './config';
+import { useNamespaceTableConfig } from './config';
 
-describe('NamespaceTableConfig', () => {
+describe('useNamespaceTableConfig', () => {
   const switchView = vi.fn();
-  const config = NamespaceTableConfig(
+  const config = useNamespaceTableConfig(
     switchView,
     [{ metadata: { name: 'ns1' } }],
     {},
@@ -93,7 +99,7 @@ describe('NamespaceTableConfig', () => {
   });
 
   it('falls back to empty icon when connection metadata is missing', () => {
-    const minimalConfig = NamespaceTableConfig(switchView, [], {}, null, 'Namespace');
+    const minimalConfig = useNamespaceTableConfig(switchView, [], {}, null, 'Namespace');
     const clusterCol = minimalConfig.columns.find((c: any) => c.name === 'cluster_id');
     expect(typeof clusterCol.options.customBodyRender).toBe('function');
   });

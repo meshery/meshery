@@ -24,6 +24,18 @@ type DeploymentMessagePerComp struct {
 	Message    string
 	Metadata   map[string]interface{}
 	Error      error
+
+	// IsPrerequisite marks an outcome reported for the prerequisites a
+	// component needs rather than for the component itself.
+	//
+	// Installing prerequisites is deliberately fail-forward - what a component
+	// needs may already be present in the cluster - and the component is
+	// applied either way. A failed install therefore carries Success: false
+	// like any other entry, and this flag is the only thing telling the two
+	// apart: whatever decides whether the components that depend on this one
+	// may proceed has to skip the entries carrying it, or a component that did
+	// deploy ends up withholding its dependents.
+	IsPrerequisite bool
 }
 
 type DeploymentMessagePerContext struct {
@@ -67,11 +79,12 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 			for _, comp := range componets {
 				if !skipCrdAndOperator && depHandler != nil && comp.Model.Name != (_models.Kubernetes{}).String() {
 					deploymentMsg := DeploymentMessagePerComp{
-						Kind:       comp.Component.Kind,
-						Model:      comp.Model.Name,
-						CompName:   comp.DisplayName,
-						Success:    true,
-						DesignName: patternName,
+						Kind:           comp.Component.Kind,
+						Model:          comp.Model.Name,
+						CompName:       comp.DisplayName,
+						Success:        true,
+						DesignName:     patternName,
+						IsPrerequisite: true,
 					}
 
 					// Deploys resources that are required inside cluster for successful deployment of the design.
@@ -83,10 +96,14 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 					v1beta3Comp := patternutils.ComponentV1beta2ToV1beta3(&comp)
 					result, err := depHandler.HandleDependents(*v1beta3Comp, kcli, !isDel, upgradeExistingRelease)
 					// If dependencies were not resolved fail forward, there can be case that dependency already exist in the cluster.
+					//
+					// The failure stays on this component's own summary entry and is
+					// deliberately not returned from Process: the error Process returns
+					// means the design could not be dispatched at all, and a component
+					// that goes on to apply successfully must not be treated as failed.
 					deploymentMsg.Message = result
 					if err != nil {
 						deploymentMsg.Success = false
-						errs = append(errs, err)
 						deploymentMsg.Error = err
 					}
 					msgsPerComp = append(msgsPerComp, deploymentMsg)

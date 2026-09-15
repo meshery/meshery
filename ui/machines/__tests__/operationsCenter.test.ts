@@ -1,13 +1,13 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { createActor } from 'xstate';
 
-// The operationsCenter machine subscribes to a relay GraphQL events stream
-// and bridges them into the redux store + the snackbar notifier. We mock the
+// The operationsCenter machine subscribes to the events SSE stream and bridges
+// each event into the redux store + the snackbar notifier. We mock the
 // subscription module, the redux store, the rtk-query API and the
 // NotificationCenter constants so we can drive events and assert side
 // effects.
 
-type EventCallback = (result: { event?: unknown }) => void;
+type EventCallback = (event: unknown) => void;
 type ErrorCallback = (err: unknown) => void;
 
 const hoisted = vi.hoisted(() => ({
@@ -23,8 +23,8 @@ const subscriptionState = hoisted.subscriptionState;
 const dispatch = hoisted.dispatch;
 const pushEvent = hoisted.pushEvent;
 
-vi.mock('@/graphql/subscriptions/EventsSubscription', () => ({
-  default: (next: EventCallback, error: ErrorCallback) => {
+vi.mock('lib/eventsSubscription', () => ({
+  subscribeToEvents: (next: EventCallback, error: ErrorCallback) => {
     hoisted.subscriptionState.onEvent = next;
     hoisted.subscriptionState.onError = error;
     return { dispose: hoisted.subscriptionState.dispose };
@@ -143,15 +143,15 @@ describe('operationsCenter machine', () => {
   it('forwards subscription stream events into the machine via the next callback', () => {
     const { actor } = startActor();
     const event = { id: 'live', description: 'streamed', severity: 'warning' };
-    subscriptionState.onEvent?.({ event });
+    subscriptionState.onEvent?.(event);
     expect(pushEvent).toHaveBeenCalledWith(event);
     actor.stop();
   });
 
-  it('ignores stream callbacks without an event payload but logs', () => {
+  it('ignores empty stream callbacks but logs', () => {
     const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const { actor } = startActor();
-    subscriptionState.onEvent?.({});
+    subscriptionState.onEvent?.(null);
     expect(pushEvent).not.toHaveBeenCalled();
     expect(errSpy).toHaveBeenCalled();
     errSpy.mockRestore();
