@@ -45,6 +45,7 @@ import {
   MainLogoText,
   MainLogoTextCollapsed,
   NavigatorList,
+  NavigatorListItem,
   NavigatorListItemII,
   NavigatorListItemIII,
   RootDiv,
@@ -216,7 +217,6 @@ const NavigatorContent = () => {
   const [showHelperButton, setShowHelperButton] = useState(false);
   const [openItems, setOpenItems] = useState<string[]>([]);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [hoveredExtensionId, setHoveredExtensionId] = useState<string | null>(null);
   const [providerUiAccessControl, setProviderUiAccessControl] =
     useState<ProviderUiAccessControl | null>(null);
   const [versionDetail, setVersionDetail] = useState(defaultVersionDetail);
@@ -479,18 +479,15 @@ const NavigatorContent = () => {
 
         const isActive = currentPath === href;
         const childExtensions = renderNavigatorExtensions(subItems, depth + 1);
+        // Root-level extensions use the same list item as the core navigator rows so that
+        // hover styling, padding and text treatment are uniform across the whole sidebar.
         const isRootItem = depth === 1;
-        const ListItemComponent = isRootItem ? SideBarListItem : NavigatorListItemII;
-        // Only root-level items swap to the hover icon, mirroring the core navigator items.
-        const isHovered = isRootItem && hoveredExtensionId === id;
-
+        const ListItemComponent = isRootItem ? SideBarListItem : NavigatorListItem;
         const listItemProps = isRootItem
           ? {
               dense: true,
               link: !!href,
               isActive,
-              onMouseOver: () => (isDrawerCollapsed ? setHoveredExtensionId(id) : null),
-              onMouseLeave: () => setHoveredExtensionId(null),
             }
           : {
               button: true,
@@ -502,7 +499,7 @@ const NavigatorContent = () => {
         return (
           <RootDiv key={id} data-testid={depth === 1 ? 'extension-nav-root-item' : undefined}>
             <ListItemComponent {...listItemProps}>
-              {extensionPointContent(icon, href, title, isDrawerCollapsed, isHovered, isRootItem)}
+              {extensionPointContent(icon, href, title, isDrawerCollapsed)}
             </ListItemComponent>
             {childExtensions}
           </RootDiv>
@@ -525,33 +522,17 @@ const NavigatorContent = () => {
     );
   };
 
-  const extensionPointContent = (icon, href, name, drawerCollapsed, isHovered, isRootItem) => {
-    const content = (
-      <NavigatorLink data-testid={name}>
-        <CustomTooltip
-          title={name}
-          placement="right"
-          disableFocusListener={!drawerCollapsed}
-          disableHoverListener={isRootItem || !drawerCollapsed}
-          disableTouchListener={!drawerCollapsed}
-          TransitionComponent={Zoom}
-        >
-          {drawerCollapsed && isHovered ? (
-            <div>
-              <CustomTooltip title={name} placement="right" TransitionComponent={Zoom}>
-                <ListItemIcon style={{ marginLeft: '20%', marginBottom: '0.4rem' }}>
-                  <img
-                    src={icon}
-                    alt={`${name} icon`}
-                    style={{
-                      width: '20px',
-                      filter: currentPath === href ? activeIconFilter : '',
-                    }}
-                  />
-                </ListItemIcon>
-              </CustomTooltip>
-            </div>
-          ) : (
+  const extensionPointContent = (icon, href, name, drawerCollapsed) => {
+    let content = (
+      <>
+        <NavigatorLink data-testid={name}>
+          <CustomTooltip
+            title={name}
+            placement="right"
+            disableFocusListener={!drawerCollapsed}
+            disableTouchListener={!drawerCollapsed}
+            disableHoverListener={!drawerCollapsed}
+          >
             <MainListIcon>
               <img
                 src={icon}
@@ -562,24 +543,24 @@ const NavigatorContent = () => {
                 }}
               />
             </MainListIcon>
-          )}
-        </CustomTooltip>
-        <SideBarText drawerCollapsed={drawerCollapsed}>{name}</SideBarText>
-      </NavigatorLink>
+          </CustomTooltip>
+          <SideBarText drawerCollapsed={drawerCollapsed}>{name}</SideBarText>
+        </NavigatorLink>
+      </>
     );
 
-    if (!href) {
-      return content;
+    if (href) {
+      content = (
+        <Link
+          href={href}
+          onClick={() => dispatch(updateExtensionType({ extensionType: 'navigator' }))}
+        >
+          <Box>{content}</Box>
+        </Link>
+      );
     }
 
-    return (
-      <Link
-        href={href}
-        onClick={() => dispatch(updateExtensionType({ extensionType: 'navigator' }))}
-      >
-        {content}
-      </Link>
-    );
+    return content;
   };
 
   const renderChildren = (idname, children, depth) => {
