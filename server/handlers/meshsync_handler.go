@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"github.com/meshery/schemas/models/core"
@@ -14,6 +15,7 @@ import (
 	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
 	"github.com/meshery/meshkit/models/patterns"
 	"github.com/meshery/meshsync/pkg/model"
+
 	// NOTE: meshsync_handler retains v1beta1/pattern + v1beta1/component
 	// because it calls EvaluateDesign, which consumes
 	// pattern.EvaluationRequest / pattern.EvaluationResponse. Those eval
@@ -264,7 +266,13 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 		ClusterIds []string `json:"clusterIds"`
 	}{}
 
-	clusterIds := r.URL.Query().Get("clusterIds")
+	urlEncodedClusterIds := r.URL.Query().Get("clusterIds")
+	clusterIds, err := url.QueryUnescape(urlEncodedClusterIds)
+	if err != nil {
+		h.log.Error(ErrFetchMeshSyncResources(err))
+		writeMeshkitError(rw, ErrFetchMeshSyncResources(err), http.StatusInternalServerError)
+		return
+	}
 	if clusterIds != "" {
 		err := json.Unmarshal([]byte(clusterIds), &filter.ClusterIds)
 		if err != nil {
@@ -321,7 +329,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	order = models.SanitizeOrderInput(order, []string{"creation_timestamp", "name", "kind", "model", "api_version", "namespace"})
 	query.Order(order)
 
-	err := query.Find(&resources).Error
+	err = query.Find(&resources).Error
 	if err != nil {
 		h.log.Error(ErrFetchMeshSyncResources(err))
 		writeMeshkitError(rw, ErrFetchMeshSyncResources(err), http.StatusInternalServerError)
