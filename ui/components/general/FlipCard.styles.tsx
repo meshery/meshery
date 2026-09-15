@@ -14,3 +14,14 @@ export const InnerCard = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#202020' : '#fff',
   cursor: 'pointer',
 }));
+
+export const CardFaceFront = styled('div')({
+  backfaceVisibility: 'hidden',
+  width: '100%',
+});
+
+export const CardFaceBack = styled('div')({
+  backfaceVisibility: 'hidden',
+  transform: 'scale(-1, 1)',
+  width: '100%',
+});

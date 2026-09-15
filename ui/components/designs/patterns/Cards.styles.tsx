@@ -1,14 +1,20 @@
 import { Grid, styled } from '@sistent/sistent';
 
-export const StyledCodeMirrorWrapper = styled('div')(({ fullScreen }) => ({
-  height: fullScreen ? '100%' : undefined,
-  width: '100%',
-  '& .cm-editor': {
-    minHeight: '300px',
+export const StyledCodeMirrorWrapper = styled('div')<{ fullScreen?: boolean }>(
+  ({ fullScreen }) => ({
     height: fullScreen ? '100%' : undefined,
     width: '100%',
-  },
-}));
+    '& .cm-editor': {
+      minHeight: '300px',
+      height: fullScreen ? '100%' : '300px',
+      maxHeight: fullScreen ? '100%' : '350px',
+      width: '100%',
+    },
+    '& .cm-scroller': {
+      overflow: 'auto',
+    },
+  }),
+);
 
 export const CardBackGrid = styled(Grid)(() => ({
   marginBottom: '0.25rem',
