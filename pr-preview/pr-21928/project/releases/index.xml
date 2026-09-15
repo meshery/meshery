@@ -1,4 +1,95 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/pr-preview/pr-21928/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Thu, 03 Sep 2026 00:00:00 +0000</lastBuildDate><atom:link href="/pr-preview/pr-21928/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.69</title><link>/pr-preview/pr-21928/project/releases/v1.0.69/</link><pubDate>Thu, 03 Sep 2026 00:00:00 +0000</pubDate><guid>/pr-preview/pr-21928/project/releases/v1.0.69/</guid><description>&lt;h2 id="whats-new"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Releases on Documentation</title><link>/pr-preview/pr-21928/project/releases/</link><description>Recent content in Releases on Documentation</description><generator>Hugo</generator><language>en</language><lastBuildDate>Mon, 14 Sep 2026 00:00:00 +0000</lastBuildDate><atom:link href="/pr-preview/pr-21928/project/releases/index.xml" rel="self" type="application/rss+xml"/><item><title>v1.0.70</title><link>/pr-preview/pr-21928/project/releases/v1.0.70/</link><pubDate>Mon, 14 Sep 2026 00:00:00 +0000</pubDate><guid>/pr-preview/pr-21928/project/releases/v1.0.70/</guid><description>&lt;h2 id="whats-new"&gt;
+	What&amp;rsquo;s New
+&lt;/h2&gt;
+&lt;h2 id="-general"&gt;
+	🔤 General
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Bump colord from 2.9.3 to 2.10.0 in /install/docker-extension/ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#21860)&lt;/li&gt;
+&lt;li&gt;Update ADOPTERS.md with new and removed entries @SuryanshGarg04 (#21871)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-cli"&gt;
+	⌨️ Meshery CLI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[mesheryctl] Add traceability tags to Half A BATS tests @Zayden369 (#21863)&lt;/li&gt;
+&lt;li&gt;fix(mesheryctl): prevent nil response panic in auth update @Kanika0306 (#21682)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-meshery-ui"&gt;
+	🖥 Meshery UI
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;build(deps): bump fast-uri from 3.1.4 to 3.1.5 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#21122)&lt;/li&gt;
+&lt;li&gt;fix(ui): make error page buttons responsive and always visible on mobile @Gagansharma-code (#21346)&lt;/li&gt;
+&lt;li&gt;Bump joi from 18.2.3 to 18.2.8 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#21862)&lt;/li&gt;
+&lt;li&gt;Bump joi from 18.2.1 to 18.2.8 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#21861)&lt;/li&gt;
+&lt;li&gt;[Server][UI] Emit camelCase keys in meshsync resources summary @Prasad8830 (#21765)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-maintenance"&gt;
+	🧰 Maintenance
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;build(deps): bump fast-uri from 3.1.4 to 3.1.5 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#21122)&lt;/li&gt;
+&lt;li&gt;[mesheryctl] Add traceability tags to Half A BATS tests @Zayden369 (#21863)&lt;/li&gt;
+&lt;li&gt;Bump joi from 18.2.3 to 18.2.8 in /provider-ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#21862)&lt;/li&gt;
+&lt;li&gt;Bump joi from 18.2.1 to 18.2.8 in /ui @[dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;) (#21861)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-documentation"&gt;
+	📖 Documentation
+&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;add Deepakkumar&amp;rsquo;s attendance for todays newcomers meeting @NiftyOracle (#21920)&lt;/li&gt;
+&lt;li&gt;Create introduction for Lucky Sharma (peterParker) @lucky1426shrma (#21933)&lt;/li&gt;
+&lt;li&gt;[Docs] Add mesheryctl-axi to the extensions catalog @yi-nuo426 (#21944)&lt;/li&gt;
+&lt;li&gt;[Docs] Update details of the Istio adapter @fitzergerald (#21942)&lt;/li&gt;
+&lt;li&gt;Enhance documentation for Meshery Adapters @fitzergerald (#21941)&lt;/li&gt;
+&lt;li&gt;Revise Consul adapter documentation for clarity @fitzergerald (#21943)&lt;/li&gt;
+&lt;li&gt;add Shiv&amp;rsquo;s Introduction @chshiv (#21936)&lt;/li&gt;
+&lt;li&gt;marked aashi-jain&amp;rsquo;s new commer attendance @AashiJain971 (#21926)&lt;/li&gt;
+&lt;li&gt;Create Khushi Nataraj introduction document @must-not-be-namedd (#21934)&lt;/li&gt;
+&lt;li&gt;Add Priyanshi Jain&amp;rsquo;s introduction and portfolio link @priyanshijain1 (#21935)&lt;/li&gt;
+&lt;li&gt;Add introductory information for Vinay Raj @uservinay777-space (#21930)&lt;/li&gt;
+&lt;li&gt;Introduction of Nakul @nakul-git139 (#21932)&lt;/li&gt;
+&lt;li&gt;ayush introduction @AyushKumarMishra123 (#21929)&lt;/li&gt;
+&lt;li&gt;Create mahak.md @Mahakgupta108 (#21925)&lt;/li&gt;
+&lt;li&gt;Create Anushka.md for personal introduction @k-anushka14 (#21923)&lt;/li&gt;
+&lt;li&gt;Add Sujith&amp;rsquo;s introduction to meeting notes @v-sai-sujith (#21922)&lt;/li&gt;
+&lt;li&gt;Create Smit @smitkhadatkar123-rgb (#21924)&lt;/li&gt;
+&lt;li&gt;Create Srijan Jaiswal.md for Introduction @ionfwsrijan (#21927)&lt;/li&gt;
+&lt;li&gt;Add Tejaswi.md with introduction @tejaswiverma121-byte (#21919)&lt;/li&gt;
+&lt;li&gt;Add Suryansh Garg&amp;rsquo;s introduction to meetings documentation @SuryanshGarg04 (#21917)&lt;/li&gt;
+&lt;li&gt;Add Maanvi Chetwani&amp;rsquo;s introduction @Maanvi212006 (#21915)&lt;/li&gt;
+&lt;li&gt;Add introduction for Debangshu Das @debangshu919 (#21918)&lt;/li&gt;
+&lt;li&gt;Add Rachit&amp;rsquo;s introduction in markdown file @Rachit-Ingole (#21916)&lt;/li&gt;
+&lt;li&gt;[Docs] Add relationship testing, validation, and contribution best practices @ObaidAbdullah16 (#19663)&lt;/li&gt;
+&lt;li&gt;add maanvi&amp;rsquo;s intro @Maanvi212006 (#21905)&lt;/li&gt;
+&lt;li&gt;docs(contributing): enable section-index page titles @smishraa30 (#21219)&lt;/li&gt;
+&lt;li&gt;Create Deepakkumar.md @NiftyOracle (#21806)&lt;/li&gt;
+&lt;li&gt;docs: add community meeting introduction @KDeekshita (#21801)&lt;/li&gt;
+&lt;li&gt;Add Prakash Shukla&amp;rsquo;s introduction to meetings documentation @PrakashShukla0907 (#21799)&lt;/li&gt;
+&lt;li&gt;Add introduction for Vijyot Silare @vijyotsilare (#21800)&lt;/li&gt;
+&lt;li&gt;Add Dushyant Acharya&amp;rsquo;s introduction to meetings @Dotify71 (#21798)&lt;/li&gt;
+&lt;li&gt;Add Sai Rishaindra introduction @SaiRishaindra (#21794)&lt;/li&gt;
+&lt;li&gt;Create Aayush_Yadav_attendance @maverickaayush (#21797)&lt;/li&gt;
+&lt;li&gt;added my attendance for today @twenty-III (#21795)&lt;/li&gt;
+&lt;li&gt;Create Pranav_Choudhary.md for newcomer meeting notes @pranavchoudhary-tech (#21793)&lt;/li&gt;
+&lt;li&gt;Add introduction for Bhavya Maheshwari @m-bhavyaa (#21792)&lt;/li&gt;
+&lt;li&gt;Create sulagna.md @suzy-g38 (#21789)&lt;/li&gt;
+&lt;li&gt;Rename Ahmed Mansour file to use hyphens @AhmedMansour21 (#21790)&lt;/li&gt;
+&lt;li&gt;Update Amarachi Ezeonyekwere.md with introduction @Amarachi-Ezeonyekwere (#21786)&lt;/li&gt;
+&lt;li&gt;Add introduction for Jay Arora @cutiepie-10 (#21785)&lt;/li&gt;
+&lt;li&gt;Add introduction for Aayush Yadav @maverickaayush (#21784)&lt;/li&gt;
+&lt;li&gt;Add attendance note for Arpit Raj @Arpit-Raj1 (#21787)&lt;/li&gt;
+&lt;li&gt;Add introductory note from Vansh @VANSH3104 (#21781)&lt;/li&gt;
+&lt;li&gt;Add Maanvi&amp;rsquo;s introduction in maanvi.md @Maanvi212006 (#21780)&lt;/li&gt;
+&lt;li&gt;Create Kafeel.md @kafeelraza (#21783)&lt;/li&gt;
+&lt;li&gt;Create Ahmed Mansour @AhmedMansour21 (#21782)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="-contributors"&gt;
+	👨🏽‍💻 Contributors
+&lt;/h2&gt;
+&lt;p&gt;Thank you to our contributors for making this release possible:
+@AashiJain971, @AhmedMansour21, @Amarachi-Ezeonyekwere, @Arpit-Raj1, @AyushKumarMishra123, @Bhumikagarggg, @Dotify71, @Gagansharma-code, @KDeekshita, @Kanika0306, @Maanvi212006, @Mahakgupta108, @NiftyOracle, @ObaidAbdullah16, @PrakashShukla0907, @Prasad8830, @Rachit-Ingole, @SaiRishaindra, @SuryanshGarg04, @VANSH3104, @Zayden369, @alexquincy, @arjunmehta-git, @banana-three-join, @chshiv, @cutiepie-10, @debangshu919, @dependabot[bot], @fitzergerald, @ionfwsrijan, @jamieplu, @k-anushka14, @kafeelraza, @l5io, @leecalcote, @lucky1426shrma, @m-bhavyaa, @marblom007, @maverickaayush, @meshery-ci, @miacycle, @must-not-be-namedd, @nakul-git139, @pontusringblom, @pranavchoudhary-tech, @priyanshijain1, @sangramrath, @saurabhraghuvanshii, @smishraa30, @smitkhadatkar123-rgb, @suzy-g38, @tejaswiverma121-byte, @twenty-III, @uservinay777-space, @v-sai-sujith, @vijyotsilare, @yi-nuo426 and [dependabot[bot]](&lt;a href="https://github.com/apps/dependabot"&gt;https://github.com/apps/dependabot&lt;/a&gt;)&lt;/p&gt;</description></item><item><title>v1.0.69</title><link>/pr-preview/pr-21928/project/releases/v1.0.69/</link><pubDate>Thu, 03 Sep 2026 00:00:00 +0000</pubDate><guid>/pr-preview/pr-21928/project/releases/v1.0.69/</guid><description>&lt;h2 id="whats-new"&gt;
 	What&amp;rsquo;s New
 &lt;/h2&gt;
 &lt;h2 id="-general"&gt;
@@ -35094,7 +35185,7 @@ Conforming to Navigation Conformances @dhruv0000 (#1618)&lt;/li&gt;
 &lt;li&gt;Run preconfigured commands on Kubernetes with Istio.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/pr-preview/pr-21928/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-21928/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.69&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/pr-preview/pr-21928/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-21928/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
+&lt;/ul&gt;</description></item><item><title>Latest Release</title><link>/pr-preview/pr-21928/project/releases/latest/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-21928/project/releases/latest/</guid><description>&lt;h2&gt;v1.0.70&lt;/h2&gt;</description></item><item><title>Roadmap v0.7.0</title><link>/pr-preview/pr-21928/project/releases/roadmap-v0.7/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-21928/project/releases/roadmap-v0.7/</guid><description>&lt;p&gt;The proposed Meshery v0.7.0 Roadmap is listed by component. Use this thread to refine and hardened these plans and assignments. If you are interested in contributing to or leading any of these items, please comment below.&lt;/p&gt;
 &lt;p&gt;See the &lt;a href="https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_0_164"&gt;Meshery Architecture deck&lt;/a&gt; for additional visual designs and functional specifications.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Legend:&lt;/strong&gt;&lt;/p&gt;
 &lt;blockquote&gt;
