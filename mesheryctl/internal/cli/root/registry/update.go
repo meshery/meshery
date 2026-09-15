@@ -91,7 +91,7 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 			return err
 		}
 
-		sheetGID = GetSheetIDFromTitle(resp, "Components")
+		sheetGID = utils.GetSheetIDFromTitle(resp, "Components")
 
 		err = InvokeCompUpdate()
 		if err != nil {
