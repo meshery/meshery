@@ -34,7 +34,6 @@ import * as styles from './styles';
 
 describe('environments/styles', () => {
   it('exports all expected styled components', () => {
-    expect(styles.BulkActionWrapper).toBeDefined();
     expect(styles.CardWrapper).toBeDefined();
     expect(styles.Statistic).toBeDefined();
     expect(styles.StatisticName).toBeDefined();
@@ -55,7 +54,6 @@ describe('environments/styles', () => {
     expect(styles.Name).toBeDefined();
     expect(styles.Status).toBeDefined();
     expect(styles.StyledChip).toBeDefined();
-    expect(styles.CreateButtonWrapper).toBeDefined();
     expect(styles.EditButton).toBeDefined();
     expect(styles.TextButton).toBeDefined();
     expect(styles.IconButton).toBeDefined();
@@ -63,9 +61,9 @@ describe('environments/styles', () => {
 
   it('renders styled components without error', () => {
     const { container } = render(
-      <styles.BulkActionWrapper>
+      <styles.CardWrapper>
         <styles.Name>hello</styles.Name>
-      </styles.BulkActionWrapper>,
+      </styles.CardWrapper>,
     );
     expect(container).toBeInTheDocument();
   });
