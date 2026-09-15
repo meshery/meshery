@@ -329,16 +329,20 @@ func DeduplicateRelationshipRows(rows []RelationshipRow, existingValues [][]inte
 			continue
 		}
 		modelName := fmt.Sprintf("%v", sRow[0])
+		version := ""
+		if len(sRow) > 1 {
+			version = fmt.Sprintf("%v", sRow[1])
+		}
 		filename := ""
 		if len(sRow) > 14 {
 			filename = fmt.Sprintf("%v", sRow[14])
 		}
-		existingRows[fmt.Sprintf("%s:%s", modelName, filename)] = true
+		existingRows[fmt.Sprintf("%s:%s:%s", modelName, version, filename)] = true
 	}
 
 	var newSheetValues [][]interface{}
 	for _, r := range rows {
-		key := fmt.Sprintf("%s:%s", r.Model, r.Filename)
+		key := fmt.Sprintf("%s:%s:%s", r.Model, r.Version, r.Filename)
 		if !existingRows[key] {
 			newSheetValues = append(newSheetValues, r.ToSheetRow())
 			existingRows[key] = true

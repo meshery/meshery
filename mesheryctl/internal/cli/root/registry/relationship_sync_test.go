@@ -157,6 +157,7 @@ func TestDeduplicateRelationshipRows(t *testing.T) {
 	rows := []RelationshipRow{
 		{
 			Model:    "aws-ecs-controller",
+			Version:  "v1.0.0",
 			Filename: "edge-non-binding-reference-role.json",
 			Kind:     "edge",
 			Type:     "non-binding",
@@ -166,6 +167,7 @@ func TestDeduplicateRelationshipRows(t *testing.T) {
 		},
 		{
 			Model:    "aws-ecs-controller",
+			Version:  "v1.0.0",
 			Filename: "hierarchical-parent-inventory-cluster.json",
 			Kind:     "hierarchical",
 			Type:     "parent",
@@ -198,4 +200,50 @@ func TestDeduplicateRelationshipRows(t *testing.T) {
 		t.Errorf("expected filename hierarchical-parent-inventory-cluster.json, got %v", newRows[0][14])
 	}
 }
+
+func TestDeduplicateRelationshipRows_MultiVersion(t *testing.T) {
+	rows := []RelationshipRow{
+		{
+			Model:    "aws-ecs-controller",
+			Version:  "v1.5.0",
+			Filename: "edge-binding-reference-ftbrz.json",
+			Kind:     "edge",
+			Type:     "binding",
+			SubType:  "reference",
+		},
+		{
+			Model:    "aws-ecs-controller",
+			Version:  "v1.7.0",
+			Filename: "edge-binding-reference-ftbrz.json",
+			Kind:     "edge",
+			Type:     "binding",
+			SubType:  "reference",
+		},
+	}
+
+	// Case 1: Deduplication within input rows across different versions should preserve both versions
+	newRows := DeduplicateRelationshipRows(rows, nil)
+	if len(newRows) != 2 {
+		t.Fatalf("expected 2 new rows for different versions, got %d", len(newRows))
+	}
+	if newRows[0][1] != "v1.5.0" || newRows[1][1] != "v1.7.0" {
+		t.Errorf("expected versions v1.5.0 and v1.7.0 to be preserved, got %v and %v", newRows[0][1], newRows[1][1])
+	}
+
+	// Case 2: Existing spreadsheet contains only v1.5.0; v1.7.0 should still be added as new
+	existingSheetValues := [][]interface{}{
+		{"Meshery Relationship Definitions Header 1"},
+		{"Model", "Version", "kind", "type", "subType", "", "", "", "", "", "", "", "", "", "filename"},
+		{"aws-ecs-controller", "v1.5.0", "edge", "binding", "reference", "", "", "", "", "", "", "", "", "", "edge-binding-reference-ftbrz.json"},
+	}
+
+	filteredRows := DeduplicateRelationshipRows(rows, existingSheetValues)
+	if len(filteredRows) != 1 {
+		t.Fatalf("expected 1 new row for v1.7.0, got %d", len(filteredRows))
+	}
+	if filteredRows[0][1] != "v1.7.0" {
+		t.Errorf("expected preserved row to be v1.7.0, got %v", filteredRows[0][1])
+	}
+}
+
 
