@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -468,3 +469,76 @@ func TestRemoteProviderDoRequest_XAPIKeyAnonymousOnly(t *testing.T) {
 		t.Fatalf("authenticated request with inbound X-API-Key must strip it, got %q", got)
 	}
 }
+
+func TestRemoteProvider_VerifyToken_Safeguards(t *testing.T) {
+	provider := newTestRemoteProvider(t, "http://localhost:9876")
+
+	makeToken := func(headerJSON, payloadJSON string) string {
+		hB64 := base64.RawURLEncoding.EncodeToString([]byte(headerJSON))
+		pB64 := base64.RawURLEncoding.EncodeToString([]byte(payloadJSON))
+		sigB64 := base64.RawURLEncoding.EncodeToString([]byte("signature"))
+		rawJWT := strings.Join([]string{hB64, pB64, sigB64}, ".")
+		return encodeTestToken(t, oauth2.Token{AccessToken: rawJWT})
+	}
+
+	tests := []struct {
+		name        string
+		header      string
+		payload     string
+		expectError bool
+		errTarget   error
+	}{
+		{
+			name:        "missing kid in header",
+			header:      `{"alg":"RS256"}`,
+			payload:     `{"sub":"user123","exp":4102444800}`,
+			expectError: true,
+		},
+		{
+			name:        "non-string kid (integer) in header",
+			header:      `{"alg":"RS256","kid":12345}`,
+			payload:     `{"sub":"user123","exp":4102444800}`,
+			expectError: true,
+		},
+		{
+			name:        "empty string kid in header",
+			header:      `{"alg":"RS256","kid":""}`,
+			payload:     `{"sub":"user123","exp":4102444800}`,
+			expectError: true,
+		},
+		{
+			name:        "non-numeric exp claim in payload",
+			header:      `{"alg":"RS256","kid":"valid-key-id"}`,
+			payload:     `{"sub":"user123","exp":"not-a-number"}`,
+			expectError: true,
+		},
+		{
+			name:        "expired token",
+			header:      `{"alg":"RS256","kid":"valid-key-id"}`,
+			payload:     `{"sub":"user123","exp":1000}`,
+			expectError: true,
+			errTarget:   ErrTokenExpired,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			token := makeToken(tc.header, tc.payload)
+
+			defer func() {
+				if r := recover(); r != nil {
+					t.Fatalf("VerifyToken panicked unexpectedly on %s: %v", tc.name, r)
+				}
+			}()
+
+			claims, err := provider.VerifyToken(token)
+			if tc.expectError && err == nil {
+				t.Fatalf("expected error for %s, got nil (claims: %v)", tc.name, claims)
+			}
+			if tc.errTarget != nil && !errors.Is(err, tc.errTarget) {
+				t.Fatalf("expected error %v, got %v", tc.errTarget, err)
+			}
+		})
+	}
+}
+
