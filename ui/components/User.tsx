@@ -90,7 +90,10 @@ const User = (props) => {
         <div data-testid="profile-button">
           <IconButtonAvatar color={color} aria-haspopup="true" onClick={goToProfile}>
             <Avatar
-              sx={{ height: 36, width: 36 }}
+              sx={{
+                height: { xs: 28, sm: 36 },
+                width: { xs: 28, sm: 36 },
+              }}
               src={isGetUserSuccess ? userData?.avatarUrl : null}
               imgProps={{ referrerPolicy: 'no-referrer' }}
             />
