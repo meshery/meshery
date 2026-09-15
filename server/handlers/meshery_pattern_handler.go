@@ -1045,7 +1045,13 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			event := eb.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to create artifacthub pkg for the design \"%s\"", pattern.Name)).WithMetadata(map[string]interface{}{"error": err}).Build()
 			_ = provider.PersistEvent(*event, token)
 			go h.config.EventBroadcaster.Publish(userID, event)
+			return
 		}
+		defer func() {
+			if err := artifactHubPkgFile.Close(); err != nil {
+				h.log.Error(err)
+			}
+		}()
 
 		data, err := createArtifactHubPkg(pattern, strings.Trim(fmt.Sprintf("%s %s", user.FirstName, user.LastName), " "))
 		if err != nil {
@@ -1125,6 +1131,10 @@ func (h *Handler) DownloadMesheryPatternHandler(
 
 			writeMeshkitError(rw, ErrSaveOCIArtifact(err), http.StatusInternalServerError)
 			return
+		}
+
+		if err := file.Close(); err != nil {
+			h.log.Error(err)
 		}
 
 		file, err = os.OpenFile(tmpOCITarFilePath, os.O_RDONLY, 0444)
