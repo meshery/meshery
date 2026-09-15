@@ -189,7 +189,9 @@ func multiplepatternsConfirmation(profiles []models.MesheryPattern, designName s
 	// can answer, and listing every match only to fail afterwards is noise in a
 	// CI log.
 	if !utils.IsInteractiveTerminal() {
-		return 0, ErrDesignSelectNotInteractive(designName, len(profiles))
+		err := ErrDesignSelectNotInteractive(designName, len(profiles))
+		utils.Log.Error(err)
+		return 0, err
 	}
 
 	reader := bufio.NewReader(os.Stdin)
@@ -214,7 +216,9 @@ func multiplepatternsConfirmation(profiles []models.MesheryPattern, designName s
 			// cannot help, because every further read returns the same error,
 			// and falling through would select whichever design happens to be
 			// first.
-			return 0, ErrDesignSelectNotInteractive(designName, len(profiles))
+			selectErr := ErrDesignSelectNotInteractive(designName, len(profiles))
+			utils.Log.Error(selectErr)
+			return 0, selectErr
 		}
 
 		response = strings.ToLower(strings.TrimSpace(response))

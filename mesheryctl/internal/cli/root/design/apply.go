@@ -272,7 +272,9 @@ func multiplePatternsConfirmation(profiles []models.MesheryPattern, designName s
 	// can answer, and listing every match only to fail afterwards is noise in a
 	// CI log.
 	if !utils.IsInteractiveTerminal() {
-		return 0, ErrDesignSelectNotInteractive(designName, len(profiles))
+		err := ErrDesignSelectNotInteractive(designName, len(profiles))
+		utils.Log.Error(err)
+		return 0, err
 	}
 
 	reader := bufio.NewReader(os.Stdin)
@@ -292,7 +294,9 @@ func multiplePatternsConfirmation(profiles []models.MesheryPattern, designName s
 		if err != nil {
 			// See the note in deploy.go: the stream closing under a live
 			// terminal still has to stop rather than apply an unchosen design.
-			return 0, ErrDesignSelectNotInteractive(designName, len(profiles))
+			selectErr := ErrDesignSelectNotInteractive(designName, len(profiles))
+			utils.Log.Error(selectErr)
+			return 0, selectErr
 		}
 
 		response = strings.ToLower(strings.TrimSpace(response))

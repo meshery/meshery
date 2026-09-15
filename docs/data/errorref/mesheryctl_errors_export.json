@@ -2117,6 +2117,15 @@
         "short_description": "Unexpected response from GitHub API",
         "probable_cause": "GitHub API may be rate-limiting requests or the requested resource may not exist",
         "suggested_remediation": "Wait a few minutes and try again, or check https://www.githubstatus.com for GitHub API status"
+      },
+      "1256": {
+        "name": "ErrDesignSelectNotInteractiveCode",
+        "code": "1256",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Cannot choose between multiple designs without an interactive terminal",
+        "probable_cause": "The command was run from a script, a pipe, a CI job, or with standard input redirected\nMore than one design shares the given name",
+        "suggested_remediation": "Pass the design ID instead of the name\nRun the command from an interactive terminal\nGive the design a unique name with 'mesheryctl design list' to find the one you want"
       }
     }
   }
