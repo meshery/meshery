@@ -8,6 +8,7 @@ import {
   PaginationItem,
   useHasPermission,
   useTheme,
+  Chip,
 } from '@sistent/sistent';
 import { withRouter } from 'next/router';
 import { debounce } from 'lodash';
@@ -521,6 +522,20 @@ const Environments = () => {
               <Grid2 container spacing={2} sx={{ marginTop: '10px' }} size="grow">
                 {environments.map((environment) => (
                   <Grid2 key={environment.id} size={{ xs: 12, md: 6 }}>
+                    {environment.purpose === 'administrative' && (
+                      <Chip
+                        label="Administrative"
+                        size="small"
+                        sx={{
+                          mb: 1,
+                          backgroundColor: 'rgba(0, 179, 159, 0.12)',
+                          color: '#00B39F',
+                          border: '1px solid #00B39F',
+                          fontWeight: 600,
+                          fontSize: '0.7rem',
+                        }}
+                      />
+                    )}
                     <EnvironmentCard
                       // classes={classes}
                       environmentDetails={environment}
@@ -566,7 +581,7 @@ const Environments = () => {
                 />
               }
               message="No environment available"
-              pointerLabel="Click “Create” to establish your first environment."
+              pointerLabel='Click "Create" to establish your first environment.'
             />
           )}
           {(canCreateEnv || canEditEnv) && environmentModal.open && (
