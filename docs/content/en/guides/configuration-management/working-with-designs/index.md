@@ -69,7 +69,7 @@ Like patterns, Meshery also comes with some sample WebAssembly Filters for you t
 
 You can also import these filters manually to your provider from the [wasm-filters](https://github.com/meshery-extensions/wasm-filters) repo.
 
-Meshery's sample application [ImageHub]({{< ref "guides/infrastructure-management/sample-apps/index.md" >}}) will let you test out configuring these filters out-of-the-box.
+Meshery's sample application ImageHub will let you test out configuring these filters out-of-the-box.
 
 You can onboard ImageHub to an installed service mesh as shown below.
 

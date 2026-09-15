@@ -41,7 +41,7 @@ You will find two types of models in the registry: Static and Dynamic.
 - **Static Models:** Pre-defined models included with each Meshery release. See the full list of static models.
 - **Dynamic Models:** Generated at run-time by connecting Meshery to supported platforms like Kubernetes clusters or cloud providers.
 
-Each Meshery release comes with a built-in set of models automatically registered at Meshery Server boot-time. These built-in models offer a core set of entities for Meshery's supported [integrations]({{< ref "extensions/models" >}}). Once Meshery Server is running, and as it connects to and discovers your infrastructure, *dynamic models* are automatically generated. A given Meshery release may not include all possible models found in your environment, so Meshery automatically generates *and registers* new models and components based on the specific infrastructure Meshery is connected to. Dyanmic models often lack additional metadata, such as descriptions, tags, and relationships, which are typically included in static models.
+Each Meshery release comes with a built-in set of models automatically registered at Meshery Server boot-time. These built-in models offer a core set of entities for Meshery's supported [integrations]({{< ref "extensions/models" >}}). Once Meshery Server is running, and as it connects to and discovers your infrastructure, *dynamic models* are automatically generated. A given Meshery release may not include all possible models found in your environment, so Meshery automatically generates *and registers* new models and components based on the specific infrastructure Meshery is connected to. Dynamic models often lack additional metadata, such as descriptions, tags, and relationships, which are typically included in static models.
 
 ## Interacting with the Meshery Registry
 
@@ -62,6 +62,8 @@ See [`mesheryctl registry generate`]({{< ref "reference/references/mesheryctl/re
 Once registered in the Meshery Registry, Models and their entities are available for use within that specific Meshery Server.
 
 Meshery [Adapters]({{< ref "concepts/architecture/adapters.md" >}}) are one example of a Registrant. Registrants are responsible for the registration of entities in the Meshery Registry. Adapters are responsible for the sourcing and registration of entities and the packaging of these enties into one or more models.
+
+A model's registrant is not only a record of provenance. At deployment time, the registrant of a component's model determines who fulfills that component: Meshery Server itself, or an Adapter reached over the network. See [Deployment Engine]({{< ref "concepts/architecture/deployment-engine/index.md" >}}).
 
 #### Using Meshery CLI to Register a Model
 

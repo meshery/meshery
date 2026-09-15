@@ -6,6 +6,7 @@ import {
   Button,
   CustomColumnVisibilityControl,
   CustomTooltip,
+  DeleteIcon,
   EditIcon,
   IconButton,
   Modal,
@@ -18,6 +19,7 @@ import {
   TableRow,
   Typography,
   useTheme,
+  useHasPermission,
 } from '@sistent/sistent';
 import MesheryPerformanceComponent from './index';
 import PerformanceProfileGrid from './PerformanceProfileGrid';
@@ -36,6 +38,7 @@ import { useWindowDimensions } from '@/utils/dimension';
 import { ConditionalTooltip } from '@/utils/utils';
 
 import { Keys } from '@meshery/schemas/permissions';
+import DefaultError from '../general/error-404';
 import { isLocalProvider } from '@/utils/provider';
 import { ButtonTextWrapper, ProfileContainer, ViewSwitchBUtton } from './style';
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
@@ -57,7 +60,7 @@ import type { GetPerformanceProfilesApiResponse } from '@meshery/schemas/meshery
 type PerformanceProfileItem = GetPerformanceProfilesApiResponse['profiles'][number];
 type SelectablePerformanceProfile = PerformanceProfileItem & { runTest?: boolean };
 
-function PerformanceProfile({ handleDelete }) {
+function PerformanceProfile() {
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     'grid',
@@ -74,6 +77,9 @@ function PerformanceProfile({ handleDelete }) {
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const { providerCapabilities } = useSelector((state) => state.ui);
+  const canViewPerformanceProfiles = useHasPermission(
+    Keys.PerformanceManagementViewPerformanceProfiles,
+  );
   const dispatch = useDispatch();
 
   const [deletePerformanceProfile] = useDeletePerformanceProfileMutation();
@@ -83,13 +89,17 @@ function PerformanceProfile({ handleDelete }) {
     isError: isProfileFetchError,
     error: profileFetchError,
     refetch: refetchProfiles,
-  } = useGetPerformanceProfilesQuery({
-    page,
-    pagesize: pageSize,
-    search,
-    order: sortOrder,
-  });
-
+  } = useGetPerformanceProfilesQuery(
+    {
+      page,
+      pagesize: pageSize,
+      search,
+      order: sortOrder,
+    },
+    {
+      skip: !canViewPerformanceProfiles,
+    },
+  );
   useEffect(() => {
     dispatch(updateProgressAction({ showProgress: isFetchingProfiles }));
   }, [dispatch, isFetchingProfiles]);
@@ -366,14 +376,63 @@ function PerformanceProfile({ handleDelete }) {
       },
     },
 
-    onRowsDelete: async function handleDeleteRow(row) {
-      let response = await showModal(Object.keys(row.lookup).length);
-      if (response === 'DELETE') {
-        const pids = Object.keys(row.lookup).map((idx) => testProfiles[idx]?.id);
-        pids.forEach((pid) => handleDelete(pid));
-      } else {
-        refetchProfiles();
-      }
+    customToolbarSelect: (selectedRows, displayData, setSelectedRows) => {
+      const handleBulkDelete = async () => {
+        const pids = selectedRows.data.map(({ index }) => testProfiles[index]?.id).filter(Boolean);
+
+        if (pids.length === 0) return;
+
+        let response = await showModal(pids.length);
+        if (response === 'DELETE') {
+          dispatch(updateProgressAction({ showProgress: true }));
+          Promise.allSettled(pids.map((pid) => deletePerformanceProfile({ id: pid }).unwrap()))
+            .then((results) => {
+              let successCount = 0;
+              let failureCount = 0;
+
+              results.forEach((result) => {
+                if (result.status === 'fulfilled') {
+                  successCount++;
+                } else {
+                  failureCount++;
+                }
+              });
+
+              if (successCount > 0) {
+                notify({
+                  message: `${successCount} Performance Profile${successCount > 1 ? 's' : ''} Deleted!`,
+                  event_type: EVENT_TYPES.SUCCESS,
+                });
+              }
+              if (failureCount > 0) {
+                notify({
+                  message: `Failed to delete ${failureCount} Profile${failureCount > 1 ? 's' : ''}`,
+                  event_type: EVENT_TYPES.ERROR,
+                });
+              }
+            })
+            .finally(() => {
+              dispatch(updateProgressAction({ showProgress: false }));
+              setSelectedRows([]);
+              refetchProfiles();
+            });
+        }
+      };
+
+      return (
+        <div style={{ marginRight: '24px' }}>
+          <CustomTooltip title={'Delete'}>
+            <div>
+              <IconButton
+                onClick={handleBulkDelete}
+                permissionKey={Keys.PerformanceManagementDeletePerformanceTest}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </div>
+          </CustomTooltip>
+        </div>
+      );
     },
 
     onTableChange: (action, tableState) => {
@@ -428,6 +487,10 @@ function PerformanceProfile({ handleDelete }) {
       );
     },
   };
+
+  if (!canViewPerformanceProfiles) {
+    return <DefaultError permissionKey={Keys.PerformanceManagementViewPerformanceProfiles} />;
+  }
 
   return (
     <>

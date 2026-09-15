@@ -3,19 +3,22 @@ title: mesheryctl-system-provider-list
 display_title: false
 command: system
 subcommand: provider
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system provider list
 
-list available providers
+List available providers
 
 ## Synopsis
 
 List current provider and available providers
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system provider list [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,8 +27,10 @@ mesheryctl system provider list [flags]
 List all available providers
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system provider list
 
+</div>
 </div>
 </pre> 
 

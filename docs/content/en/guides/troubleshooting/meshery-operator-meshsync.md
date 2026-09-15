@@ -40,9 +40,9 @@ Each Meshery Operator controller offers a health status that you can use to unde
 - **UNDEPLOYED:** Custom Resource not deployed.
 - **CONNECTED:** Deployed, sending data to Meshery Server.
 
-### When a controller reports UNKOWN
+### When a controller reports UNKNOWN
 
-Any of the three can instead report **UNKOWN** (spelled that way on the wire). It is not a health state: it means Meshery made no observation of that controller on this cluster, so it is asserting nothing about it. All three report it at once when the connection's kubeconfig could not be read or its Kubernetes client could not be created, since nothing about the cluster was observable. The cards stay visible on purpose - the reason is in the connection's [Diagnostics](#diagnostics-in-the-connection-detail-view) and in the events feed, not in the status itself.
+Any of the three can instead report **UNKNOWN** (spelled that way on the wire). It is not a health state: it means Meshery made no observation of that controller on this cluster, so it is asserting nothing about it. All three report it at once when the connection's kubeconfig could not be read or its Kubernetes client could not be created, since nothing about the cluster was observable. The cards stay visible on purpose - the reason is in the connection's [Diagnostics](#diagnostics-in-the-connection-detail-view) and in the events feed, not in the status itself.
 
 ## Meshery Operator Deployment Scenarios
 
@@ -303,12 +303,6 @@ kubectl -n meshery get deploy meshery-meshsync \
 - **A new or changed CRD triggers a full re-discovery.** MeshSync watches the cluster's CustomResourceDefinitions and rebuilds its informers when the CRD set changes. On clusters where controllers rewrite CRDs frequently (for example, cert-manager's CA injector updating CRD `caBundle` fields), this can cause repeated re-discovery and transient load or gaps. If you observe this, scope discovery with a whitelist (see the [MeshSync configuration FAQ]({{< ref "concepts/architecture/meshsync.md#meshsync-faqs" >}})).
 - **Secrets are discovered by default.** MeshSync watches `secrets.v1.`, and the Secret objects it forwards to Meshery Server include their `data` and `stringData` payload. Those Secret contents are therefore transmitted over the Broker and persisted in the Meshery Database. In security-sensitive environments, either blacklist `secrets.v1.` (or use a whitelist that omits it) to keep Secrets out of discovery entirely, or set `MESHSYNC_REDACT_SECRETS=true` on the MeshSync Deployment to keep discovering Secrets while replacing their values with `[REDACTED]` (keys are preserved). See [Redacting Secret contents]({{< ref "guides/infrastructure-management/configuring-operator-meshsync-broker.md#redacting-secret-contents" >}}).
 - **Discovery is watch-driven with no periodic re-list.** MeshSync relies on the Kubernetes watch stream rather than polling. If you suspect the in-memory snapshot has drifted, force a re-list with `kubectl -n meshery rollout restart deploy/meshery-meshsync` or reset the Meshery Database from the UI.
-
-## See Also
-
-- [Kubernetes Connection Lifecycle]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md" >}})
-- [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation.md" >}})
-- [Troubleshooting Errors while running Meshery]({{< ref "guides/troubleshooting/meshery-server.md" >}})
 
 {{< related-discussions tag="meshery" >}}
 

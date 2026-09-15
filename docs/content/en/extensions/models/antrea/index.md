@@ -85,7 +85,11 @@ components:
   colorIcon: extensions/models/antrea/components/flow-exporter-destination/icons/color/flow-exporter-destination-color.svg
   whiteIcon: extensions/models/antrea/components/flow-exporter-destination/icons/white/flow-exporter-destination-white.svg
   description: 
-components-count: 19
+- name: antrea-node-config
+  colorIcon: extensions/models/antrea/components/antrea-node-config/icons/color/antrea-node-config-color.svg
+  whiteIcon: extensions/models/antrea/components/antrea-node-config/icons/white/antrea-node-config-white.svg
+  description: 
+components-count: 20
 relationships: 
 relationship-count: 0
 featureList: [

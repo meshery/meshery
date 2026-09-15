@@ -26,6 +26,9 @@ let capabilitiesReturn: any = {
 };
 
 vi.mock('@sistent/sistent', () => ({
+  // This suite exercises preference toggles, not authorization: grant every
+  // capability so the permission gate never masks the behaviour under test.
+  useHasPermission: () => true,
   Tab: ({ label, ...rest }: any) => <button {...rest}>{label}</button>,
   Tabs: ({ children, value, onChange }: any) => (
     <div data-testid="tabs" data-value={value} onClick={(e) => onChange?.(e, 0)}>
@@ -50,6 +53,17 @@ vi.mock('@sistent/sistent', () => ({
     />
   ),
   IconButton: ({ children, onClick }: any) => <button onClick={onClick}>{children}</button>,
+  Select: ({ children, ...rest }: any) => <select {...rest}>{children}</select>,
+  Box: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
+  TextField: (props: any) => <input {...props} />,
+  Chip: ({ label, ...rest }: any) => <span {...rest}>{label}</span>,
+  Button: ({ children, onClick, ...rest }: any) => (
+    <button onClick={onClick} {...rest}>
+      {children}
+    </button>
+  ),
+  Divider: (props: any) => <hr {...props} />,
+  LeftArrowIcon: () => <svg />,
   CardContent: ({ children }: any) => <div>{children}</div>,
   CardHeader: ({ children }: any) => <div>{children}</div>,
   CustomTooltip: ({ children }: any) => <>{children}</>,
@@ -61,6 +75,18 @@ vi.mock('@sistent/sistent', () => ({
     palette: { icon: { default: 'icon' }, mode: 'light' },
   }),
   ErrorBoundary: ({ children }: any) => <>{children}</>,
+  // `DefaultError` (rendered by the new permission guard) imports `styled`
+  // from error-404/styles.tsx. See the same comment in workspaces/index.test.tsx.
+  styled: (Component: any) => () => {
+    if (typeof Component === 'string') {
+      return ({ children, ...rest }: any) => <Component {...rest}>{children}</Component>;
+    }
+    return Component;
+  },
+}));
+
+vi.mock('../general/error-404/index', () => ({
+  default: ({ permissionKey }: any) => <div data-testid="default-error">{permissionKey}</div>,
 }));
 
 vi.mock('../../assets/icons/CopyIcon', () => ({

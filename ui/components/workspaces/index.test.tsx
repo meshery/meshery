@@ -130,6 +130,7 @@ vi.mock('@sistent/sistent', () => ({
   ModalFooter: ({ children }: any) => <div>{children}</div>,
   NoSsr: ({ children }: any) => <>{children}</>,
   PROMPT_VARIANTS: { DANGER: 'danger' },
+  Select: ({ children, ...rest }: any) => <select {...rest}>{children}</select>,
   SearchBar: () => null,
   TeamsIcon: () => null,
   Typography: ({ children }: any) => <span>{children}</span>,
@@ -147,6 +148,22 @@ vi.mock('@sistent/sistent', () => ({
       background: { brand: { default: '#000' }, constant: { table: '#fff' } },
     },
   }),
+  // `DefaultError` (rendered by the new permission guard) imports `styled`
+  // from error-404/styles.tsx to build its `ErrorMain` wrapper. Emulate the
+  // real styled-components-style API closely enough that a tag-name call
+  // (`styled('main')`) or component call (`styled(SomeComponent)`) both
+  // return a renderable element, ignoring the style function/object passed
+  // to the second call.
+  styled: (Component: any) => () => {
+    if (typeof Component === 'string') {
+      return ({ children, ...rest }: any) => <Component {...rest}>{children}</Component>;
+    }
+    return Component;
+  },
+}));
+
+vi.mock('../general/error-404/index', () => ({
+  default: ({ permissionKey }: any) => <div data-testid="default-error">{permissionKey}</div>,
 }));
 
 import Workspaces from './index';

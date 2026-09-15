@@ -82,10 +82,10 @@ The connection is administratively processed to be deleted and removed from Mesh
 The connection could not be verified (for example, registration failed or the resource is no longer available). This is an automatic transition; users do not administratively set Not Found. The user can delete the connection or try re-registering.
 
 {{% alert color="info" title="Not Found vs Disconnected" %}}
-You might attempt to transition to Connected state but the connection is unavaialble now due to being deleted/some other reason. This is distinctly different than a cluster with Prometheuses installed for `application monitoring` which was connected previously but is now unreachable from Meshery's view of management due to change in API token/similar issue.
+You might attempt to transition to Connected state but the connection is unavailable now due to being deleted/some other reason. This is distinctly different than a cluster with Prometheuses installed for `application monitoring` which was connected previously but is now unreachable from Meshery's view of management due to change in API token/similar issue.
 {{% /alert %}}
 
-_Connections like **Registration of Meshery server with remote provider** (and few other connection types) can self transtion to the valid states._
+_Connections like **Registration of Meshery server with remote provider** (and few other connection types) can self transition to the valid states._
 
 ## Registering Connections with Remote Providers
 

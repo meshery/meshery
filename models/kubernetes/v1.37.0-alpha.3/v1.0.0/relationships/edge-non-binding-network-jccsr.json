@@ -55,7 +55,8 @@
                   "paths",
                   "0",
                   "backend",
-                  "serviceName"
+                  "service",
+                  "name"
                 ],
                 [
                   "configuration",
@@ -66,7 +67,9 @@
                   "paths",
                   "0",
                   "backend",
-                  "servicePort"
+                  "service",
+                  "port",
+                  "number"
                 ]
               ],
               "patchStrategy": "replace"

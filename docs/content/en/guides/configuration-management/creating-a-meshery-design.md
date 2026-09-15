@@ -26,6 +26,8 @@ The Design Configurator is a built-in tool in Meshery UI. It lets you browse inf
 2. Click **+ New Design** (or open an existing design to edit it).  
    The Design Configurator opens with an empty canvas and a component panel on the left.
 
+Opening the configurator requires the **View Designs** permission, the same key the **Designs** page itself requires. Without it, the configurator shows the permission-denied page rather than the canvas. See [Extensibility: Authorization]({{< ref "reference/extensibility/authorization/index.md" >}}).
+
 ### Step 2 — Name Your Design
 
 Give your design a meaningful name in the **Design Name** field at the top of the configurator. This name is used when saving, sharing, or deploying the design.
@@ -106,11 +108,3 @@ mesheryctl design list
 
 See the [`mesheryctl design` reference]({{< ref "reference/references/mesheryctl/design/_index.md" >}}) for the full subcommand reference.
 {{< /tabs >}}
-
-## Related
-
-- [Meshery Designs concept]({{< ref "concepts/logical/designs.md" >}})
-- [Importing Designs]({{< ref "guides/configuration-management/importing-models/index.md" >}})
-- [Deploying a Design]({{< ref "guides/configuration-management/working-with-designs/index.md" >}})
-- [`mesheryctl design` reference]({{< ref "reference/references/mesheryctl/design/_index.md" >}})
-- [Meshery Catalog](https://meshery.io/catalog)

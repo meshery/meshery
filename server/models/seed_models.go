@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 	"sort"
 	"time"
 
@@ -112,6 +113,38 @@ func getLatestModelDefDir(latestVersionDirPath string) (string, error) {
 	})
 
 	return modelDefs[0].dirPath, nil
+}
+
+// RunSeedStage runs one seeding stage, converting a panic inside it into a
+// logged, structured error.
+//
+// Nine of the ten stages run in a bare goroutine - the boot goroutine in
+// cmd/main.go and the two paths that reseed after a reset
+// (handlers.ResetSystemDatabase and the GraphQL resyncCluster hard reset) -
+// where Go gives a panic no second chance. The tenth, boot's "content" stage,
+// runs synchronously on main's own goroutine, where a panic unwinds main and
+// exits just as surely. Either shape takes down the whole process, HTTP
+// listener included, which is not a proportionate response to a seeding fault
+// - a Meshery Server with an incomplete registry is still useful, and the
+// operator can read the error and act on it, whereas a server that exits at
+// boot leaves them with a crash loop and no UI to read it in
+// (meshery/meshery#21584).
+//
+// Each stage is wrapped separately so one faulting stage does not skip the
+// others.
+//
+// The cover is bounded by what recover can reach: only panics on the wrapped
+// stage's own goroutine. A stage that itself spawns a goroutine - SeedKeys
+// does, in keys_helper.go - leaves that goroutine outside this recover, and a
+// panic there still terminates the process. Recovering it belongs where it is
+// spawned, not here.
+func RunSeedStage(log logger.Handler, stage string, fn func()) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Error(ErrSeedingStagePanic(stage, r, debug.Stack()))
+		}
+	}()
+	fn()
 }
 
 // SeedComponents registers the latest versions of models
