@@ -33,6 +33,10 @@
 #   build              Build locally with draft, future, and expired content.
 #   build-preview      Build for a deploy preview (uses DEPLOY_PRIME_URL).
 #   build-production   Build for production. Pass BASE_URL=... to set the base URL.
+#   build-llms         Build locally, also emitting llms.txt, llms-full.txt and
+#                      the per-page Markdown renditions.
+#   build-production-llms
+#                      Build for production with those files. Pass BASE_URL=...
 #   site               Serve locally with live reload.
 #   serve              Serve locally once, file watcher off (no live reload).
 #   clean              Empty the build cache, reinstall dependencies, run 'site'.
@@ -97,6 +101,25 @@ build-production: check-go check-deps
 		npm run build:production -- --baseURL "$$base_url"; \
 	else \
 		npm run build:production; \
+	fi
+
+## Build docs.meshery.io locally including the LLM-facing files: /llms.txt,
+## /llms-full.txt, and an index.md rendition beside every page. These are kept
+## out of `build` so the standard contributor flow is not slowed by ~2,810
+## extra files; config-llms.toml layers the output formats on when asked for.
+build-llms: check-go check-deps
+	npm run build:llms
+
+## Build docs.meshery.io for production including the LLM-facing files.
+## Pass BASE_URL=... to set the base URL, exactly as build-production does.
+build-production-llms: check-go check-deps
+	set -e; \
+	if [ -n "$(BASE_URL)" ]; then \
+		base_url="$(BASE_URL)"; \
+		base_url="$${base_url%/}/"; \
+		npm run build:production:llms -- --baseURL "$$base_url"; \
+	else \
+		npm run build:production:llms; \
 	fi
 
 ## Build and run docs.meshery.io on your local machine (draft and future content enabled).
