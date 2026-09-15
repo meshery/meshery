@@ -20,6 +20,8 @@ export interface PerformanceFormSetters {
   setJsonError: (v: boolean) => void;
   setDisableTest: (v: boolean) => void;
   setUrlError: (v: boolean) => void;
+  setCError: (v: boolean) => void;
+  setQpsError: (v: boolean) => void;
 }
 
 /**
@@ -49,6 +51,8 @@ export const createPerformanceFormChangeHandler = (setters: PerformanceFormSette
     setJsonError,
     setDisableTest,
     setUrlError,
+    setCError,
+    setQpsError,
   } = setters;
 
   return (name: string) => (event: any) => {
@@ -125,9 +129,11 @@ export const createPerformanceFormChangeHandler = (setters: PerformanceFormSette
         break;
       case 'c':
         setC(value);
+        if (+value > 0) setCError(false);
         break;
       case 'qps':
         setQps(value);
+        if (+value >= 0) setQpsError(false);
         break;
       case 'headers':
         setHeaders(value);
