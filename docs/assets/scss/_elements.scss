@@ -132,7 +132,13 @@ li:has(> a[href*="/installation/quick-start"]) {
   
 }
 
-li:has(> a[href*="/extensions"]) {
+// Flattens the entries of a section listing (`ul.section-title`), which renders
+// each child page as "<link> - <description>" and supplies its own indent.
+// Keep it scoped to that list: unscoped, `li:has(> a[href*="/extensions"])` also
+// matched ordinary prose linking to /extensions, so the "About Meshery
+// Extensions" block carried by every extension page silently lost its
+// "Integrations" bullet.
+ul.section-title li:has(> a[href*="/extensions"]) {
   list-style-type: none;
   margin-left: -2rem;
 }
