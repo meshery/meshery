@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"strconv"
 	"strings"
 	"time"
@@ -205,12 +206,15 @@ func (ep *EnvironmentPersister) DeleteEnvironmentByID(environmentID core.Uuid) (
 // AddConnectionToEnvironment adds a connection to an environment
 func (ep *EnvironmentPersister) AddConnectionToEnvironment(environmentID, connectionID core.Uuid) ([]byte, error) {
 	var existingMapping environment.EnvironmentConnectionMapping
-	if err := ep.DB.Where("environment_id = ? AND connection_id = ?", environmentID, connectionID).First(&existingMapping).Error; err == nil {
+	err := ep.DB.Where("environment_id = ? AND connection_id = ?", environmentID, connectionID).First(&existingMapping).Error
+	if err == nil {
 		envJSON, err := json.Marshal(existingMapping)
 		if err != nil {
 			return nil, err
 		}
 		return envJSON, nil
+	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, ErrDBRead(err)
 	}
 
 	envConMapping := environment.EnvironmentConnectionMapping{
@@ -228,6 +232,10 @@ func (ep *EnvironmentPersister) AddConnectionToEnvironment(environmentID, connec
 
 	// Add connection to environment
 	if err := ep.DB.Create(envConMapping).Error; err != nil {
+		var duplicateMapping environment.EnvironmentConnectionMapping
+		if findErr := ep.DB.Where("environment_id = ? AND connection_id = ?", environmentID, connectionID).First(&duplicateMapping).Error; findErr == nil {
+			return json.Marshal(duplicateMapping)
+		}
 		return nil, ErrDBCreate(err)
 	}
 

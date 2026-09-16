@@ -418,6 +418,8 @@ const Environments = () => {
     setAssignConnectionModal(true);
     setConnectionsData([]);
     setEnvironmentConnectionsData([]);
+    setAssignedConnections([]);
+    setDisableTranferButton(true);
     setConnectionsPage(0);
     setConnectionsOfEnvironmentPage(0);
     setConnectionAssignEnv(environment);
@@ -429,6 +431,8 @@ const Environments = () => {
     setSkip(true);
     setConnectionsData([]);
     setEnvironmentConnectionsData([]);
+    setAssignedConnections([]);
+    setDisableTranferButton(true);
     setConnectionsPage(0);
     setConnectionsOfEnvironmentPage(0);
     setConnectionAssignEnv({});
