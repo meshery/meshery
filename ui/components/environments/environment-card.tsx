@@ -243,7 +243,7 @@ const EnvironmentCard = ({
                 <BulkSelectCheckbox
                   onClick={(e) => e.stopPropagation()}
                   onChange={onSelect}
-                  disabled={deleted ? true : false}
+                  disabled={deleted || isAdministrative}
                 />
                 <CardTitle
                   sx={{ color: 'white' }}
