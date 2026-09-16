@@ -151,6 +151,7 @@ Repositories:
 | Arjun Mehta            | @arjunmehta-git   | TCS          | meshery-extensions/meshery-extensions-packages, meshery-extensions/integrations-workflow |
 | Kate Suttons           | @suttonskate      | Layer5       | meshery-extensions/meshery-academy             |
 | Rian Cteulp            | @ritzorama        | Independent  | meshery-extensions/kanvas-site                 |
+| Shiekh Mohammad        | @winkletinkle     | TCS Labs     | meshery-extensions/mesheryctl-axi              |
 
 
 See also: [GOVERNANCE.md](./GOVERNANCE.md).
