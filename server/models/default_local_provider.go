@@ -537,13 +537,19 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 				First(&legacyConn).Error
 			if err == nil {
 				// Found a legacy in-cluster connection - migrate it to the new ID
-				// Use a transaction to ensure atomic updates to both connections.id
-				// and environment_connection_mappings.connection_id for data integrity
+				// Use a transaction to ensure atomic updates to connections.id,
+				// environment_connection_mappings.connection_id, and k8s_contexts.connection_id
+				// for data integrity and to prevent stale k8s_contexts rows
 				transactionErr := l.GetGenericPersister().Transaction(func(tx *gorm.DB) error {
 					// Update environment_connection_mappings to reference the new connection ID
 					updateMappingsErr := tx.Exec("UPDATE environment_connection_mappings SET connection_id = ? WHERE connection_id = ?", connID, legacyConn.ID).Error
 					if updateMappingsErr != nil {
 						return updateMappingsErr
+					}
+					// Update k8s_contexts to reference the new connection ID
+					updateK8sContextsErr := tx.Exec("UPDATE k8s_contexts SET connection_id = ? WHERE connection_id = ?", connID.String(), legacyConn.ID.String()).Error
+					if updateK8sContextsErr != nil {
+						return updateK8sContextsErr
 					}
 					// Update the connection ID to the new stable ID
 					updateErr := tx.Model(&connections.Connection{}).
@@ -612,7 +618,7 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 	// Credential refresh: if this is an existing connection (same ID was found),
 	// update its credential with the newly discovered auth/cluster data.
 	// This handles token rotation for in-cluster contexts where the ID remains stable.
-	if connectionCreated.CredentialID != nil && conn.CredentialSecret != nil {
+	if connectionCreated.CredentialID != nil && uuid.FromStringOrNil(connectionCreated.CredentialID.String()) != uuid.Nil && conn.CredentialSecret != nil {
 		// Update the existing credential with the new auth/cluster data
 		// First, fetch the existing credential to preserve its required fields
 		existingCred, _, credErr := l.GetCredentialByID("", *connectionCreated.CredentialID)
@@ -628,12 +634,11 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 			Name:   existingCred.Name,   // Preserve other fields
 			Type:   existingCred.Type,
 		}
-		// Use UpdateUserCredential to update the credential in the credentials table
-		// We pass nil for the http.Request parameter since this is a background operation
-		_, updateErr := l.UpdateUserCredential(nil, updatedCredential)
-		if updateErr != nil {
-			// Return error if credential update fails
-			return connections.Connection{}, fmt.Errorf("failed to update credential for refresh: %w", updateErr)
+		// Update the credential directly using GORM to avoid nil request panic
+		// This replicates the logic from UpdateUserCredential without requiring an http.Request
+		db := l.GetGenericPersister().Model(&Credential{}).Where("user_id = ? AND id = ? AND deleted_at is NULL", updatedCredential.UserId, updatedCredential.ID).Updates(updatedCredential)
+		if db.Error != nil {
+			return connections.Connection{}, fmt.Errorf("failed to update credential for refresh: %w", db.Error)
 		}
 	}
 
