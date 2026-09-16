@@ -147,11 +147,17 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			seedingStarted = true
 			go func() {
 				defer models.ReleaseResetLock()
-				krh.SeedKeys(viper.GetString("KEYS_PATH"))
-				if lp, ok := provider.(*models.DefaultLocalProvider); ok {
-					lp.SeedContent(r.Log)
-				}
-				models.SeedComponents(r.Log, r.Config, rm, dbHandler)
+				models.RunSeedStage(r.Log, "user keys", func() {
+					krh.SeedKeys(viper.GetString("KEYS_PATH"))
+				})
+				models.RunSeedStage(r.Log, "content", func() {
+					if lp, ok := provider.(*models.DefaultLocalProvider); ok {
+						lp.SeedContent(r.Log)
+					}
+				})
+				models.RunSeedStage(r.Log, "models", func() {
+					models.SeedComponents(r.Log, r.Config, rm, dbHandler)
+				})
 			}()
 			r.Log.Info("Hard reset complete.")
 		} else { //Delete meshsync objects coming from a particular cluster

@@ -44,7 +44,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// MesheryPatternRequestBody refers to the type of request body that
+// MesheryPatternPOSTRequestBody refers to the type of request body that
 // SaveMesheryPattern would receive. Canonical wire form for the
 // wrapper is `patternData` (camelCase) per the identifier-naming
 // migration; the legacy snake_case `pattern_data` spelling is still
@@ -414,7 +414,7 @@ func (h *Handler) handlePatternPOST(
 
 }
 
-// Verifies and converts a pattern to design format if required.
+// VerifyAndConvertToDesign verifies and converts a pattern to design format if required.
 // A pattern is required to be converted to design format iff,
 // 1. pattern_file attribute is empty, and
 // 2. The "type" (sourcetype/original content) is not Design. [is one of compose/helmchart/manifests]
@@ -1844,8 +1844,8 @@ func (h *Handler) handlePatternUpdate(
 
 }
 
-// PatternFileRequestHandler will handle requests of both type GET and POST
-// on the route /api/pattern
+// DesignFileRequestHandlerWithSourceType will handle requests of both type POST and PUT
+// on the route /api/pattern/{sourcetype}
 func (h *Handler) DesignFileRequestHandlerWithSourceType(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -1885,7 +1885,7 @@ func (h *Handler) GetMesheryDesignTypesHandler(
 	}
 }
 
-// GetMesheryPatternHandler fetched the design using the given id and sourcetype
+// GetMesheryPatternSourceHandler fetches the design using the given id and sourcetype
 func (h *Handler) GetMesheryPatternSourceHandler(
 	rw http.ResponseWriter,
 	r *http.Request,

@@ -275,7 +275,7 @@ func (l *DefaultLocalProvider) GetProviderType() ProviderType {
 func (l *DefaultLocalProvider) DownloadProviderExtensionPackage() {
 }
 
-// downloadProviderExtensionPackage will download the remote provider extensions
+// DownloadProviderExtensionPackageFromURL will download the remote provider extensions
 // package
 func (l *DefaultLocalProvider) DownloadProviderExtensionPackageFromURL(packageUrl string, log logger.Handler) error {
 	// Skip download if the SKIP_DOWNLOAD_EXTENSIONS flag is set
@@ -640,7 +640,7 @@ func (l *DefaultLocalProvider) FetchResults(_, page, pageSize, _, _, profileID s
 	return l.ResultPersister.GetResults(pg, pgs, profileID, l.Log)
 }
 
-// FetchResults - fetches results from provider backend
+// FetchAllResults - fetches results from provider backend
 func (l *DefaultLocalProvider) FetchAllResults(_, page, pageSize, _, _, _, _ string) ([]byte, error) {
 	if page == "" {
 		page = "0"
@@ -720,7 +720,7 @@ func (l *DefaultLocalProvider) FetchSmiResults(_ *http.Request, page, pageSize, 
 	return l.SmiResultPersister.GetResults(pg, pgs)
 }
 
-// FetchSmiResults - fetches results from provider backend
+// FetchSmiResult - fetches results from provider backend
 func (l *DefaultLocalProvider) FetchSmiResult(_ *http.Request, _, _, _, _ string, resultID core.Uuid) ([]byte, error) {
 	return l.SmiResultPersister.GetResult(resultID)
 }
@@ -1005,7 +1005,7 @@ func (l *DefaultLocalProvider) DeleteMesheryPattern(_ *http.Request, patternID s
 	return l.MesheryPatternPersister.DeleteMesheryPattern(id)
 }
 
-// DeleteMesheryPattern deletes a meshery pattern with the given id
+// DeleteMesheryPatterns deletes the meshery patterns specified in the given request body
 func (l *DefaultLocalProvider) DeleteMesheryPatterns(_ *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
 	return l.MesheryPatternPersister.DeleteMesheryPatterns(patterns)
 }
@@ -1717,7 +1717,7 @@ func (l *DefaultLocalProvider) GetOrganizations(_, page, pageSize, search, order
 	return l.OrganizationPersister.GetOrganizations(search, order, pg, pgs, updatedAfter)
 }
 
-// GetKeys returns the list of keys
+// GetUsersKeys returns the list of keys
 func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, search, order, updatedAfter string, _ string) ([]byte, error) {
 	keys, err := l.KeyPersister.GetUsersKeys(search, order, updatedAfter)
 	if err != nil {
@@ -1726,7 +1726,7 @@ func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, search, order, updatedAfter
 	return keys, nil
 }
 
-// GetKey returns the key for the given keyID
+// GetUsersKey returns the key for the given keyID
 func (l *DefaultLocalProvider) GetUsersKey(_ *http.Request, keyID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(keyID)
 	return l.KeyPersister.GetUsersKey(id)
