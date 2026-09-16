@@ -30,4 +30,4 @@ assignees: ''
 - 📚 [Meshery Extensibility Providers](https://docs.meshery.io/extensibility/providers)
 - ⌨️ [Meshery API Docs](https://docs.meshery.io/extensibility/api)
 - 📺 [Self-paced Contributor Trainings](https://meshery.io/talks-and-trainings#trainings)
-- 🙋🏾🙋🏼 Questions: [Discussion Forum](https://meshery.io/community#community-forums) and [Community Slack](https://slack.meshery.io)
+- 🙋🏾🙋🏼 Questions: [Discussion Forum](https://discuss.meshery.io) and [Community Slack](https://slack.meshery.io)

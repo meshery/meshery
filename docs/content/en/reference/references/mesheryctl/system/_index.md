@@ -3,6 +3,7 @@ title: mesheryctl-system
 display_title: false
 command: system
 subcommand: nil
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system
@@ -15,8 +16,10 @@ Manage the state and configuration of Meshery server, components, and client.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system [flags]
 
+</div>
 </div>
 </pre> 
 

@@ -176,6 +176,25 @@ When the `PROVIDER` environment variable is set (e.g., `PROVIDER=Local` or `PROV
 5. If `PROVIDER` is set but cannot be resolved to a registered provider, Meshery refuses to start (it does not fall back to the chooser).
 6. Changing `PROVIDER` on an existing deployment requires a restart. It is not a build-time flag. Re-login is required; data does not migrate between providers.
 
+Boot-time work is unaffected by the pin. Model seeding, connection seeding, and
+key seeding all run before any user request and are provider-independent, so a
+pinned deployment seeds exactly what an unpinned one does, and the system events
+raised while seeding (the `For registrant ... imported ...` summaries and any
+registration failures) are persisted to the same `events` table either way.
+
+{{% alert color="warning" title="Contributing: do not look a provider up by name at boot" %}}
+Because enforcement empties the registration map of everything but the pinned
+provider, server code that runs at boot must not resolve a provider by name from
+`HandlerConfig.Providers` - `Providers["Local"]` yields a nil `Provider` on a
+pinned deployment. Code needing to persist an event outside a user request takes
+`HandlerConfig.SystemEventPersister` instead, which is wired directly to the
+database and is independent of which providers are registered. Reaching into the
+registration map for a sink is what made a pinned deployment panic at boot in
+[#21584](https://github.com/meshery/meshery/issues/21584). Request-path code is
+unaffected: it receives its provider from the request context, which enforcement
+resolves consistently.
+{{% /alert %}}
+
 ### Deep-Link Preservation
 
 Meshery preserves the originally requested URL when authentication is required, enabling seamless navigation after login:

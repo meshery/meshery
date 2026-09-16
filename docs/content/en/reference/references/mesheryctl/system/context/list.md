@@ -3,11 +3,12 @@ title: mesheryctl-system-context-list
 display_title: false
 command: system
 subcommand: context
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system context list
 
-list contexts
+List contexts
 
 ## Synopsis
 
@@ -15,8 +16,10 @@ List current context and available contexts.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context list [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +28,10 @@ mesheryctl system context list [flags]
 List all contexts present
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system context list
 
+</div>
 </div>
 </pre> 
 

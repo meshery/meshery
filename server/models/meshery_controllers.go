@@ -310,7 +310,7 @@ func (mch *MesheryControllersHelper) ResolveControllersConfigForConnection(metad
 	return merged, effective, nil
 }
 
-// initializes Meshsync data handler for the contexts for whom it has not been
+// AddMeshsyncDataHandlers initializes Meshsync data handler for the contexts for whom it has not been
 // initialized yet. Apart from updating the map, it also runs the handler after
 // updating the map. The presence of a handler for a context in a map indicate that
 // the meshsync data for that context is properly being handled
@@ -746,7 +746,7 @@ func (mch *MesheryControllersHelper) ResyncMeshsync(ctx context.Context) error {
 	return nil
 }
 
-// attach a MesheryController for each context if
+// AddCtxControllerHandlers attaches a MesheryController for each context if
 // 1. the config is valid
 // 2. if it is not already attached
 func (mch *MesheryControllersHelper) AddCtxControllerHandlers(ctx K8sContext) *MesheryControllersHelper {
@@ -1008,7 +1008,7 @@ func (mch *MesheryControllersHelper) RemoveCtxControllerHandler(ctx context.Cont
 	mch.ctxControllerHandlers = nil
 }
 
-// update the status of MesheryOperator in all the contexts
+// UpdateOperatorsStatusMap updates the status of MesheryOperator in all the contexts
 // for whom MesheryControllers are attached
 // should be called after AddCtxControllerHandlers
 func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracker) *MesheryControllersHelper {
@@ -1187,7 +1187,7 @@ func (mch *MesheryControllersHelper) SetOperatorDeployment(k8sctx K8sContext, de
 	return nil
 }
 
-// looks at the status of Meshery Operator for each cluster and takes necessary action.
+// DeployUndeployedOperators looks at the status of Meshery Operator for each cluster and takes necessary action.
 // it will deploy the operator only when it is in NotDeployed state
 func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTracker, contextID string) *MesheryControllersHelper {
 	if ot.DisableOperator { //Return true everytime so that operators stay in undeployed state across all contexts
@@ -1297,7 +1297,7 @@ func NewOperatorDeploymentConfig(adapterTracker AdaptersTrackerInterface) contro
 	}
 }
 
-// checkLatestVersion takes in the current server version compares it with the target
+// CheckLatestVersion takes in the current server version compares it with the target
 // and returns the (isOutdated, latestVersion, error)
 func CheckLatestVersion(serverVersion string) (*bool, string, error) {
 	// Inform user of the latest release version
@@ -1389,8 +1389,8 @@ func setOverrideValues(delete bool, adapterTracker AdaptersTrackerInterface) map
 	return overrideValues
 }
 
-// setOverrideValues detects the currently insalled adapters and sets appropriate
-// overrides so as to not uninstall them.
+// SetOverrideValuesForMesheryDeploy detects the currently installed adapters and sets appropriate
+// overrides so as to not uninstall them, then sets the override for the given adapter based on install.
 func SetOverrideValuesForMesheryDeploy(adapters []Adapter, adapter Adapter, install bool) map[string]interface{} {
 	installedAdapters := make([]string, 0)
 	for _, adapter := range adapters {
