@@ -55,14 +55,34 @@ mesheryctl organization list --count
 </div>
 </pre> 
 
+list organizations as structured output, for use in scripts
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl organization list --output-format json
+
+</div>
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl organization list --output-format yaml
+
+</div>
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --count          total number of registered orgs
-  -h, --help           help for list
-  -p, --page int       (optional) Page number of paginated results (default 1)
-  -s, --pagesize int   (optional) Number of organizations per page (default 10)
+      --count                  total number of registered orgs
+  -h, --help                   help for list
+  -o, --output-format string   (optional) format to display in [json|yaml]. Defaults to a human-readable table
+  -p, --page int               (optional) Page number of paginated results (default 1)
+  -s, --pagesize int           (optional) Number of organizations per page (default 10)
 
 </div>
 </pre>

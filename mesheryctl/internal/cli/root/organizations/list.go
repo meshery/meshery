@@ -17,6 +17,7 @@ package organizations
 import (
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
@@ -53,7 +54,7 @@ mesheryctl organization list --output-format yaml
 		}
 
 		if count, _ := cmd.Flags().GetBool("count"); count {
-    		return ErrCountWithOutputFormat()
+			return ErrCountWithOutputFormat()
 		}
 
 		return display.ValidateOutputFormat(outputFormat)
@@ -65,7 +66,7 @@ mesheryctl organization list --output-format yaml
 		outputFormat, _ := cmd.Flags().GetString("output-format")
 
 		if outputFormat != "" {
-			return listOrgsAsStructuredOutput(cmd.OutOrStdout(),outputFormat, page, pagesize)
+			return listOrgsAsStructuredOutput(cmd.OutOrStdout(), outputFormat, page, pagesize)
 		}
 
 		data := display.DisplayDataAsync{
@@ -88,6 +89,8 @@ mesheryctl organization list --output-format yaml
 // page/pagesize query as display.HandlePaginationAsync so `--page`/
 // `--pagesize` mean the same thing regardless of `--output-format`.
 func listOrgsAsStructuredOutput(out io.Writer, outputFormat string, page, pagesize int) error {
+	outputFormat = strings.ToLower(outputFormat)
+
 	currentPage := page - 1
 	if currentPage < 0 {
 		currentPage = 0

@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	ErrCountWithOutputFormatCode = "mesheryctl-1255"
+	ErrCountWithOutputFormatCode = "mesheryctl-1256"
 )
 
 func ErrCountWithOutputFormat() error {
