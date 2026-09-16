@@ -11,13 +11,12 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
-// TestEnvironmentViewNoSaveWithBrokenHome verifies that "environment view --orgId"
-// without --save succeeds even when HOME/USERPROFILE is unset, proving
-// os.UserHomeDir() is not called on the non-save path.
-func TestEnvironmentViewNoSaveWithBrokenHome(t *testing.T) {
+// runEnvironmentViewTest handles all shared scaffolding for environment view tests.
+func runEnvironmentViewTest(t *testing.T, args []string) error {
+	t.Helper()
 	testContext := utils.InitTestEnvironment(t)
-	defer utils.StopMockery(t)
-	defer utils.ResetCommandFlags(EnvironmentCmd, t)
+	t.Cleanup(func() { utils.StopMockery(t) })
+	t.Cleanup(func() { utils.ResetCommandFlags(EnvironmentCmd, t) })
 
 	utils.TokenFlag = utils.GetToken(t)
 
@@ -25,50 +24,35 @@ func TestEnvironmentViewNoSaveWithBrokenHome(t *testing.T) {
 	if !ok {
 		t.Fatal("cannot determine current working directory")
 	}
-	currDir := filepath.Dir(filename)
-	fixturesDir := filepath.Join(currDir, "fixtures")
+	fixturesDir := filepath.Join(filepath.Dir(filename), "fixtures")
 
 	apiResponse := utils.NewGoldenFile(t, "view.environment.api.response.golden", fixturesDir).Load()
 	httpmock.RegisterResponder("GET",
 		testContext.BaseURL+"/api/environments?orgId="+testConstants["orgId"],
 		httpmock.NewStringResponder(200, apiResponse))
-
-	// Unset HOME and USERPROFILE to simulate unavailable home directory
-	t.Setenv("HOME", "")
-	t.Setenv("USERPROFILE", "")
 
 	buf := &bytes.Buffer{}
 	EnvironmentCmd.SetOut(buf)
 	EnvironmentCmd.SetErr(buf)
-
 	_ = utils.SetupMeshkitLoggerTesting(t, false)
-	EnvironmentCmd.SetArgs([]string{"view", "--orgId", testConstants["orgId"]})
-	if execErr := EnvironmentCmd.Execute(); execErr != nil {
-		t.Fatalf("view without --save should succeed even with no HOME: %v", execErr)
+	EnvironmentCmd.SetArgs(args)
+	return EnvironmentCmd.Execute()
+}
+
+// TestEnvironmentViewNoSaveWithBrokenHome verifies that "environment view --orgId"
+// without --save succeeds even when HOME/USERPROFILE is unset, proving
+// os.UserHomeDir() is not called on the non-save path.
+func TestEnvironmentViewNoSaveWithBrokenHome(t *testing.T) {
+	t.Setenv("HOME", "")
+	t.Setenv("USERPROFILE", "")
+	if err := runEnvironmentViewTest(t, []string{"view", "--orgId", testConstants["orgId"]}); err != nil {
+		t.Fatalf("view without --save should succeed even with no HOME: %v", err)
 	}
 }
 
-// TestConnectionViewNoSaveWithBrokenHome equivalent for environments --save path:
-// verifies saved file uses correct extension and isolated temp home.
+// TestEnvironmentViewSaveCreatesFile verifies saved file uses correct
+// extension and is written into an isolated temp home directory.
 func TestEnvironmentViewSaveCreatesFile(t *testing.T) {
-	testContext := utils.InitTestEnvironment(t)
-	defer utils.StopMockery(t)
-	defer utils.ResetCommandFlags(EnvironmentCmd, t)
-
-	utils.TokenFlag = utils.GetToken(t)
-
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("cannot determine current working directory")
-	}
-	currDir := filepath.Dir(filename)
-	fixturesDir := filepath.Join(currDir, "fixtures")
-
-	apiResponse := utils.NewGoldenFile(t, "view.environment.api.response.golden", fixturesDir).Load()
-	httpmock.RegisterResponder("GET",
-		testContext.BaseURL+"/api/environments?orgId="+testConstants["orgId"],
-		httpmock.NewStringResponder(200, apiResponse))
-
 	tmpHome := t.TempDir()
 	t.Setenv("HOME", tmpHome)
 	t.Setenv("USERPROFILE", tmpHome)
@@ -77,19 +61,13 @@ func TestEnvironmentViewSaveCreatesFile(t *testing.T) {
 	if err := os.MkdirAll(mesheryDir, 0755); err != nil {
 		t.Fatalf("cannot create %s: %v", mesheryDir, err)
 	}
-	expectedFile := filepath.Join(mesheryDir, "environment_test-environment.yaml")
 
-	buf := &bytes.Buffer{}
-	EnvironmentCmd.SetOut(buf)
-	EnvironmentCmd.SetErr(buf)
-
-	_ = utils.SetupMeshkitLoggerTesting(t, false)
-	EnvironmentCmd.SetArgs([]string{"view", "--orgId", testConstants["orgId"], "--save"})
-	if execErr := EnvironmentCmd.Execute(); execErr != nil {
-		t.Fatalf("unexpected error: %v", execErr)
+	if err := runEnvironmentViewTest(t, []string{"view", "--orgId", testConstants["orgId"], "--save"}); err != nil {
+		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if _, statErr := os.Stat(expectedFile); os.IsNotExist(statErr) {
+	expectedFile := filepath.Join(mesheryDir, "environment_test-environment.yaml")
+	if _, err := os.Stat(expectedFile); os.IsNotExist(err) {
 		entries, _ := os.ReadDir(mesheryDir)
 		names := make([]string, 0, len(entries))
 		for _, e := range entries {

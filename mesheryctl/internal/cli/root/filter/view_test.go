@@ -1,6 +1,7 @@
 package filter
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -60,8 +61,8 @@ func TestFilterViewSaveCreatesFileWithExtension(t *testing.T) {
 	mesheryctlflags.InitValidators(FilterCmd)
 
 	testContext := utils.InitTestEnvironment(t)
-	defer utils.StopMockery(t)
-	defer utils.ResetCommandFlags(FilterCmd, t)
+	t.Cleanup(func() { utils.StopMockery(t) })
+	t.Cleanup(func() { utils.ResetCommandFlags(FilterCmd, t) })
 
 	utils.TokenFlag = utils.GetToken(t)
 
@@ -69,8 +70,7 @@ func TestFilterViewSaveCreatesFileWithExtension(t *testing.T) {
 	if !ok {
 		t.Fatal("cannot determine current working directory")
 	}
-	currDir := filepath.Dir(filename)
-	fixturesDir := filepath.Join(currDir, "fixtures")
+	fixturesDir := filepath.Join(filepath.Dir(filename), "fixtures")
 
 	const filterID = "957fbc9b-a655-4892-823d-375102a9587c"
 	apiResponse := utils.NewGoldenFile(t, "view.id.filter.api.response.golden", fixturesDir).Load()
@@ -88,25 +88,16 @@ func TestFilterViewSaveCreatesFileWithExtension(t *testing.T) {
 	utils.MesheryFolder = tmpDir
 	t.Cleanup(func() { utils.MesheryFolder = origMesheryFolder })
 
-	expectedFile := filepath.Join(tmpDir, "filter_KumaTest_957fbc9b.json")
-
-	origStdout := os.Stdout
-	_, w, _ := os.Pipe()
-	os.Stdout = w
-	defer func() {
-		_ = w.Close()
-		os.Stdout = origStdout
-	}()
-
+	buf := &bytes.Buffer{}
+	FilterCmd.SetOut(buf)
+	FilterCmd.SetErr(buf)
 	_ = utils.SetupMeshkitLoggerTesting(t, false)
 	FilterCmd.SetArgs([]string{"view", filterID, "--output-format", "json", "--save"})
 	if err := FilterCmd.Execute(); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	_ = w.Close()
-	os.Stdout = origStdout
-
+	expectedFile := filepath.Join(tmpDir, "filter_KumaTest_957fbc9b.json")
 	if _, err := os.Stat(expectedFile); os.IsNotExist(err) {
 		entries, _ := os.ReadDir(tmpDir)
 		names := make([]string, 0, len(entries))
