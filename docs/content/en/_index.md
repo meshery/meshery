@@ -25,6 +25,7 @@ linkTitle: Documentation
     <details>
       <summary>Installation</summary>
       <ul class="section-title">
+        <li><a href="{{< ref "installation/_index.md" >}}">Overview</a></li>
         {{< section-pages section="installation" >}}
       </ul>
     </details>
@@ -38,12 +39,14 @@ linkTitle: Documentation
     <details>
       <summary>Logical</summary>
       <ul>
+        <li><a href="{{< ref "concepts/logical/_index.md" >}}">Overview</a></li>
         {{< section-pages section="concepts/logical" >}}
       </ul>
     </details>
     <details>
       <summary>Architectural</summary>
       <ul>
+        <li><a href="{{< ref "concepts/architecture/_index.md" >}}">Overview</a></li>
         {{< section-pages section="concepts/architecture" >}}
       </ul>
     </details>
@@ -60,36 +63,42 @@ linkTitle: Documentation
     <details>
       <summary>Using Meshery CLI Guides</summary>
       <ul class="section-title">
+        <li><a href="{{< ref "guides/mesheryctl/_index.md" >}}">Overview</a></li>
         {{< section-pages section="guides/mesheryctl" >}}
       </ul>
     </details>
     <details>
       <summary>🧑‍🔬 Tutorials</summary>
       <ul class="section-title">
+        <li><a href="{{< ref "guides/tutorials/_index.md" >}}">Overview</a></li>
         {{< section-pages section="guides/tutorials" >}}
       </ul>
     </details>
     <details>
       <summary>Infrastructure Management</summary>
       <ul class="section-title">
+        <li><a href="{{< ref "guides/infrastructure-management/_index.md" >}}">Overview</a></li>
         {{< section-pages section="guides/infrastructure-management" >}}
       </ul>
     </details>
     <details>
       <summary>Performance Management</summary>
       <ul class="section-title">
+        <li><a href="{{< ref "guides/performance-management/_index.md" >}}">Overview</a></li>
         {{< section-pages section="guides/performance-management" >}}
       </ul>
     </details>
     <details>
       <summary>Configuration Management</summary>
       <ul class="section-title">
+        <li><a href="{{< ref "guides/configuration-management/_index.md" >}}">Overview</a></li>
         {{< section-pages section="guides/configuration-management" >}}
       </ul>
     </details>
     <details>
       <summary>Troubleshooting Guides</summary>
       <ul class="section-title">
+        <li><a href="{{< ref "guides/troubleshooting/_index.md" >}}">Overview</a></li>
         {{< section-pages section="guides/troubleshooting" >}}
       </ul>
     </details>
@@ -103,6 +112,7 @@ linkTitle: Documentation
     <details>
       <summary>Extensions</summary>
       <ul class="section-title">
+        <li><a href="{{< ref "extensions/_index.md" >}}">Overview</a></li>
         {{< section-pages section="extensions" >}}
       </ul>
     </details>
@@ -127,6 +137,7 @@ linkTitle: Documentation
     <details>
       <summary>Community</summary>
       <ul class="section-title">
+        <li><a href="{{< ref "project/_index.md" >}}">Overview</a></li>
         {{< section-pages section="project" >}}
       </ul>
     </details>
@@ -134,6 +145,7 @@ linkTitle: Documentation
     <details>
       <summary>Contributing</summary>
       <ul class="section-title">
+        <li><a href="{{< ref "project/contributing/_index.md" >}}">Overview</a></li>
         {{< section-pages section="project/contributing" >}}
       </ul>
     </details>
@@ -148,6 +160,7 @@ linkTitle: Documentation
     <details>
       <summary>Reference</summary>
       <ul class="section-title">
+        <li><a href="{{< ref "reference/_index.md" >}}">Overview</a></li>
         {{< section-pages section="reference/references" >}}
       </ul>
     </details>
@@ -155,6 +168,7 @@ linkTitle: Documentation
     <details>
       <summary>Extensibility</summary>
       <ul class="section-title">
+        <li><a href="{{< ref "reference/extensibility/_index.md" >}}">Overview</a></li>
         {{< section-pages section="reference/extensibility" >}}
       </ul>
     </details>
