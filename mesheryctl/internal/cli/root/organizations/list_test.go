@@ -1,10 +1,9 @@
 package organizations
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
-	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -34,12 +33,19 @@ func TestListOrganizations(t *testing.T) {
 			ExpectedResponse: "list.organization.golden",
 			ExpectError:      false,
 		},
-		{
+				{
 			Name:          "List organizations with an invalid --output-format value returns an error",
 			Args:          []string{"list", "--output-format", "foo"},
 			Fixture:       "list.organization.response.golden",
 			ExpectError:   true,
 			ExpectedError: display.ErrInvalidOutputFormat("foo"),
+		},
+		{
+			Name:          "List organizations with --count and --output-format together returns an error",
+			Args:          []string{"list", "--count", "--output-format", "json"},
+			Fixture:       "list.organization.response.golden",
+			ExpectError:   true,
+			ExpectedError: ErrCountWithOutputFormat(),
 		},
 	}
 
@@ -74,25 +80,18 @@ func TestListOrganizationsStructuredOutput(t *testing.T) {
 		t.Run(format, func(t *testing.T) {
 			defer utils.ResetCommandFlags(OrgCmd, t)
 
-			originalStdout := os.Stdout
-			r, w, _ := os.Pipe()
-			os.Stdout = w
-			defer func() { os.Stdout = originalStdout }()
-
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
-			OrgCmd.SetArgs([]string{"list", "--output-format", format})
-			OrgCmd.SetOut(w)
-			err := OrgCmd.Execute()
-			_ = w.Close()
 
-			if err != nil {
+			var buf bytes.Buffer
+			OrgCmd.SetArgs([]string{"list", "--output-format", format})
+			OrgCmd.SetOut(&buf)
+			defer OrgCmd.SetOut(nil)
+
+			if err := OrgCmd.Execute(); err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
 
-			out, readErr := io.ReadAll(r)
-			if readErr != nil {
-				t.Fatalf("failed to read command output: %v", readErr)
-			}
+			out := buf.Bytes()
 
 			var page models.OrganizationsPage
 			switch format {
