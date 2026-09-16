@@ -146,7 +146,7 @@ Repositories:
 | Ijeoma Eti             | @Aijeyomah        | Manufactured | meshery-extensions/helm-kanvas-snapshot        |
 | Pranav Singh           | @theBeginner86    | Intel        | meshery-extensions/helm-kanvas-snapshot        |
 | Mia Grenell            | @miacycle         | USyd         | meshery-extensions/meshery-academy             |
-| Yi Nuo                 | @yi-nuo426        | HKUDS        | meshery-extensions/kubectl-meshsync-snapshot   |
+| Yi Nuo                 | @yi-nuo426        | HKUDS        | meshery-extensions/kubectl-meshsync-snapshot, meshery-extensions/mesheryctl-axi |
 | Cooper Fitzgerald      | @cooperfitzgerald | Independent  | meshery-extensions/mcp-server                  |
 | Arjun Mehta            | @arjunmehta-git   | TCS          | meshery-extensions/meshery-extensions-packages, meshery-extensions/integrations-workflow |
 | Kate Suttons           | @suttonskate      | Layer5       | meshery-extensions/meshery-academy             |
