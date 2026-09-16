@@ -2117,6 +2117,15 @@
         "short_description": "Unexpected response from GitHub API",
         "probable_cause": "GitHub API may be rate-limiting requests or the requested resource may not exist",
         "suggested_remediation": "Wait a few minutes and try again, or check https://www.githubstatus.com for GitHub API status"
+      },
+      "1257": {
+        "name": "ErrNoTerminalForPromptCode",
+        "code": "1257",
+        "severity": "Alert",
+        "long_description": "This command needed to prompt for a selection, and standard input or standard output is not a terminal",
+        "short_description": "",
+        "probable_cause": "The command was run from a script, a pipe, a CI job, or with standard input redirected",
+        "suggested_remediation": "Run the command from an interactive terminal"
       }
     }
   }
