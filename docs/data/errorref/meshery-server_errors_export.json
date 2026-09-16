@@ -4259,6 +4259,15 @@
         "short_description": "Model not found",
         "probable_cause": "The requested model is not present in the CSV input",
         "suggested_remediation": "Verify that the requested model exists in the CSV input"
+      },
+      "1486": {
+        "name": "ErrValidationCode",
+        "code": "1486",
+        "severity": "Alert",
+        "long_description": "The AI-generated design failed validation",
+        "short_description": "AI design validation failed",
+        "probable_cause": "The design contains malformed, unsupported, or sensitive content",
+        "suggested_remediation": "Correct the design output and submit it for validation again"
       }
     }
   }
