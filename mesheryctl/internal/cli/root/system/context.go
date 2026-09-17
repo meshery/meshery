@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -447,7 +448,7 @@ mesheryctl system context ping --context context-name
 			return errors.Wrap(err, "error creating the request")
 		}
 
-		if err := attachContextAuthDetails(req, contextPingFlags.Context, contextData.Token); err != nil {
+		if err := attachContextAuthDetails(req, contextPingFlags.Context, contextData.Token, contextData.Endpoint); err != nil {
 			return errors.Wrap(err, "unable to attach stored token")
 		}
 
@@ -630,7 +631,12 @@ func getContextWithTokenLocation(c *config.Context) (*contextWithLocation, bool)
 // read it is returned as an error instead of silently pinging unauthenticated,
 // which would otherwise be misreported as "Token invalid/expired" when the
 // real problem is that mesheryctl couldn't read its own stored token file.
-func attachContextAuthDetails(req *http.Request, contextName string, tokenName string) error {
+//
+// It also refuses to send the resolved token to a plaintext HTTP endpoint
+// unless that endpoint is loopback - see refuseInsecureTokenTransport. This
+// guard is local to `context ping`; it does not change how any other
+// mesheryctl command sends its stored token.
+func attachContextAuthDetails(req *http.Request, contextName string, tokenName string, endpoint string) error {
 	if tokenName == "" {
 		return nil
 	}
@@ -653,11 +659,39 @@ func attachContextAuthDetails(req *http.Request, contextName string, tokenName s
 		return fmt.Errorf("token file not found at %s", tokenPath)
 	}
 
+	if err := refuseInsecureTokenTransport(endpoint); err != nil {
+		return err
+	}
+
 	if err := utils.AddAuthDetails(req, tokenPath); err != nil {
 		return errors.Wrap(err, "unable to read token file")
 	}
 
 	return nil
+}
+
+// refuseInsecureTokenTransport rejects a plaintext HTTP endpoint unless its
+// host is loopback (localhost, 127.0.0.1, ::1) - the default local dev setup,
+// which must keep working unchanged. Anything else served over http:// would
+// otherwise carry the stored token in the clear.
+func refuseInsecureTokenTransport(endpoint string) error {
+	parsed, err := url.Parse(endpoint)
+	if err != nil {
+		return errors.Wrap(err, "unable to parse endpoint")
+	}
+	if parsed.Scheme != "http" {
+		return nil
+	}
+
+	host := parsed.Hostname()
+	if strings.EqualFold(host, "localhost") {
+		return nil
+	}
+	if ip := net.ParseIP(host); ip != nil && ip.IsLoopback() {
+		return nil
+	}
+
+	return fmt.Errorf("refusing to send stored token over plaintext HTTP to non-loopback endpoint %s", endpoint)
 }
 
 // describePingConnectionError extracts the underlying transport error (e.g.

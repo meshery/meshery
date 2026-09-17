@@ -644,6 +644,40 @@ func TestContextPingCmd(t *testing.T) {
 		}
 	})
 
+	t.Run("non-loopback http endpoint refuses to send the stored token", func(t *testing.T) {
+		contextPingFlags.Context = ""
+
+		// Switch to a fixture whose only context is a non-loopback http://
+		// endpoint, so the new scheme guard in attachContextAuthDetails is
+		// the thing that stops the request - not a missing token or file.
+		// Restore the fixture used by the rest of this test afterward.
+		utils.SetupCustomContextEnv(t, currDir+"/fixtures/.meshery/NonLoopbackContext.yaml")
+		defer utils.SetupCustomContextEnv(t, currDir+"/fixtures/.meshery/TestContext.yaml")
+
+		callsBefore := httpmock.GetTotalCallCount()
+
+		buf := utils.SetupMeshkitLoggerTesting(t, false)
+		SystemCmd.SetOut(buf)
+		SystemCmd.SetErr(buf)
+		SystemCmd.SetArgs([]string{"context", "ping"})
+		err := SystemCmd.Execute()
+		if err == nil {
+			t.Fatal("expected a non-nil error for a non-loopback http endpoint")
+		}
+		if !strings.Contains(err.Error(), "refusing to send stored token over plaintext HTTP to non-loopback endpoint") {
+			t.Fatalf("expected a plaintext-HTTP refusal error, got: %v", err)
+		}
+
+		if got := httpmock.GetTotalCallCount(); got != callsBefore {
+			t.Fatalf("expected no network call when the endpoint is refused, call count went from %d to %d", callsBefore, got)
+		}
+
+		out := buf.String()
+		if strings.Contains(out, "Server reachable") {
+			t.Fatalf("did not expect a reachability verdict when the endpoint was refused, got: %s", out)
+		}
+	})
+
 	t.Run("nonexistent context name errors out", func(t *testing.T) {
 		contextPingFlags.Context = ""
 		buf := utils.SetupMeshkitLoggerTesting(t, false)

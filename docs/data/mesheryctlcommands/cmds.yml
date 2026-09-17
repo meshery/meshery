@@ -346,7 +346,7 @@ system-context:
     ping:
       name: ping
       description: Check connectivity and token validity for a Meshery context
-      usage: mesheryctl system context ping
+      usage: mesheryctl system context ping [context-name]
       flags:
         context:
           name: --context, -c
