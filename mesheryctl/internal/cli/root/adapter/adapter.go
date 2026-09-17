@@ -15,6 +15,7 @@
 package adapter
 
 import (
+	"context"
 	"errors"
 	"io"
 	"net/http"
@@ -31,6 +32,13 @@ import (
 )
 
 var availableSubcommands []*cobra.Command
+
+type sseEventStatus string
+
+const (
+	sseEventSuccessful sseEventStatus = "successful"
+	sseEventError      sseEventStatus = "error"
+)
 
 // AdapterCmd represents the Performance Management CLI command
 var (
@@ -214,6 +222,45 @@ func sendOperationRequest(mctlCfg *config.MesheryCtlConfig, query string, delete
 	return string(body), nil
 }
 
+func waitForSSEEvent(ctx context.Context, event <-chan utils.Event, query string, matchSummary bool) <-chan sseEventStatus {
+	eventChan := make(chan sseEventStatus, 1)
+	successLogFormat := "%s\n%s\n"
+	errorLogFormat := "%s\n"
+	queryLower := strings.ToLower(query)
+
+	go func() {
+		defer close(eventChan)
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case i, ok := <-event:
+				if !ok {
+					return
+				}
+				summary := strings.ToLower(i.Data.Summary)
+				details := strings.ToLower(i.Data.Details)
+				switch {
+				case matchSummary && strings.Contains(summary, queryLower):
+					utils.Log.Infof(successLogFormat, i.Data.Summary, i.Data.Details)
+					eventChan <- sseEventSuccessful
+					return
+				case !matchSummary && strings.Contains(details, queryLower):
+					utils.Log.Infof(successLogFormat, i.Data.Summary, i.Data.Details)
+					eventChan <- sseEventSuccessful
+					return
+				case strings.Contains(summary, "error") || strings.Contains(details, "error"):
+					utils.Log.Infof(errorLogFormat, i.Data.Summary)
+					eventChan <- sseEventError
+					return
+				}
+			}
+		}
+	}()
+
+	return eventChan
+}
+
 func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (string, error) {
 	path := mctlCfg.GetBaseMesheryURL() + "/api/events?client=cli_deploy"
 	method := "GET"
@@ -229,32 +276,23 @@ func waitForDeployResponse(mctlCfg *config.MesheryCtlConfig, query string) (stri
 	}
 	defer func() { _ = res.Body.Close() }()
 
-	event, err := utils.ConvertRespToSSE(res)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	event, err := utils.ConvertRespToSSE(ctx, res)
 	if err != nil {
 		return "", ErrCreatingDeployResponseStream(err)
 	}
 
 	timer := time.NewTimer(time.Duration(1200) * time.Second)
-	eventChan := make(chan string)
-
-	// Run a goroutine to wait for the response
-	go func() {
-		for i := range event {
-			if strings.Contains(i.Data.Details, query) {
-				eventChan <- "successful"
-				utils.Log.Infof("%s\n%s\n", i.Data.Summary, i.Data.Details)
-			} else if strings.Contains(i.Data.Details, "Error") {
-				eventChan <- "error"
-				utils.Log.Infof("%s\n", i.Data.Summary)
-			}
-		}
-	}()
+	defer timer.Stop()
+	eventChan := waitForSSEEvent(ctx, event, query, false)
 
 	select {
 	case <-timer.C:
 		return "", ErrTimeoutWaitingForDeployResponse
-	case event := <-eventChan:
-		if event != "successful" {
+	case eventStatus := <-eventChan:
+		if eventStatus != sseEventSuccessful {
 			return "", ErrFailedDeployingMesh
 		}
 	}
@@ -274,36 +312,27 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 
 	res, err := client.Do(req)
 	if err != nil {
-		return "", ErrCreatingValidateRequest(err)
+		return "", ErrCreatingValidateResponseRequest(err)
 	}
 	defer func() { _ = res.Body.Close() }()
 
-	event, err := utils.ConvertRespToSSE(res)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	event, err := utils.ConvertRespToSSE(ctx, res)
 	if err != nil {
 		return "", ErrCreatingValidateResponseStream(err)
 	}
 
 	timer := time.NewTimer(time.Duration(1200) * time.Second)
-	eventChan := make(chan string)
-
-	// Run a goroutine to wait for the response
-	go func() {
-		for i := range event {
-			if strings.Contains(i.Data.Summary, query) {
-				eventChan <- "successful"
-				utils.Log.Infof("%s\n%s", i.Data.Summary, i.Data.Details)
-			} else if strings.Contains(i.Data.Details, "error") {
-				eventChan <- "error"
-				utils.Log.Infof("%s", i.Data.Summary)
-			}
-		}
-	}()
+	defer timer.Stop()
+	eventChan := waitForSSEEvent(ctx, event, query, true)
 
 	select {
 	case <-timer.C:
 		return "", ErrTimeoutWaitingForValidateResponse
-	case event := <-eventChan:
-		if event != "successful" {
+	case eventStatus := <-eventChan:
+		if eventStatus != sseEventSuccessful {
 			return "", ErrSMIConformanceTestsFailed
 		}
 	}
