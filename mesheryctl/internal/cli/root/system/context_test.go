@@ -495,6 +495,15 @@ func TestContextPingCmd(t *testing.T) {
 	currDir := filepath.Dir(filename)
 	utils.SetupCustomContextEnv(t, currDir+"/fixtures/.meshery/TestContext.yaml")
 
+	// TestContext.yaml's contexts reference stored tokens ("default",
+	// "default2") that attachContextAuthDetails must resolve to a real file
+	// on disk; point MesheryFolder at the fixture directory containing
+	// auth.json so that resolution succeeds, and restore it afterward since
+	// it is a package-level var shared with other tests in this binary.
+	origMesheryFolder := utils.MesheryFolder
+	utils.SetFileLocationTesting(currDir)
+	defer func() { utils.MesheryFolder = origMesheryFolder }()
+
 	utils.StartMockery(t)
 	defer utils.StopMockery(t)
 
@@ -580,6 +589,49 @@ func TestContextPingCmd(t *testing.T) {
 		}
 		if strings.Contains(out, "Token valid") || strings.Contains(out, "Token invalid") {
 			t.Fatalf("did not expect a token verdict when the server is unreachable, got: %s", out)
+		}
+	})
+
+	t.Run("token configured but file missing surfaces an error without contacting the server", func(t *testing.T) {
+		contextPingFlags.Context = ""
+
+		// Point MesheryFolder at a location with no auth.json, so the
+		// context's configured token ("default") cannot be resolved to a
+		// real file, without touching the fixture used by other subtests.
+		missingTokenDir := t.TempDir()
+		origMesheryFolder := utils.MesheryFolder
+		utils.MesheryFolder = missingTokenDir
+		defer func() { utils.MesheryFolder = origMesheryFolder }()
+
+		callsBefore := httpmock.GetTotalCallCount()
+
+		buf := utils.SetupMeshkitLoggerTesting(t, false)
+		SystemCmd.SetOut(buf)
+		SystemCmd.SetErr(buf)
+		SystemCmd.SetArgs([]string{"context", "ping"})
+		err := SystemCmd.Execute()
+		if err == nil {
+			t.Fatal("expected a non-nil error when the stored token file is missing")
+		}
+		if !strings.Contains(err.Error(), "unable to attach stored token") {
+			t.Fatalf("expected a token-attachment error, got: %v", err)
+		}
+
+		if got := httpmock.GetTotalCallCount(); got != callsBefore {
+			t.Fatalf("expected no network call when the token file could not be attached, call count went from %d to %d", callsBefore, got)
+		}
+
+		out := buf.String()
+		for _, want := range []string{
+			"Context: local",
+			"Endpoint: http://localhost:9081",
+		} {
+			if !strings.Contains(out, want) {
+				t.Fatalf("expected output to contain %q, got: %s", want, out)
+			}
+		}
+		if strings.Contains(out, "Server reachable") {
+			t.Fatalf("did not expect a reachability verdict when the token could not be attached, got: %s", out)
 		}
 	})
 

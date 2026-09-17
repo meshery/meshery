@@ -447,9 +447,20 @@ mesheryctl system context ping --context context-name
 			return errors.Wrap(err, "error creating the request")
 		}
 
-		attachContextAuthDetails(req, contextPingFlags.Context, contextData.Token)
+		if err := attachContextAuthDetails(req, contextPingFlags.Context, contextData.Token); err != nil {
+			return errors.Wrap(err, "unable to attach stored token")
+		}
 
-		client := &http.Client{Timeout: pingContextRequestTimeout}
+		client := &http.Client{
+			Timeout: pingContextRequestTimeout,
+			// Inspect the original response instead of silently following a
+			// redirect (e.g. to a login page), which could otherwise return a
+			// 200 and cause an unauthenticated request to be misreported as
+			// having a valid token.
+			CheckRedirect: func(_ *http.Request, _ []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
+		}
 		resp, err := client.Do(req)
 		if err != nil {
 			utils.Log.Warnf("❌ Server unreachable: %s", describePingConnectionError(err))
@@ -613,29 +624,40 @@ func getContextWithTokenLocation(c *config.Context) (*contextWithLocation, bool)
 }
 
 // attachContextAuthDetails resolves the on-disk token file for tokenName under
-// contextName and, if found, attaches it to req. It is best-effort: a context
-// with no usable token is pinged unauthenticated rather than failing outright,
-// so an invalid/expired token can still be reported as such by the server.
-func attachContextAuthDetails(req *http.Request, contextName string, tokenName string) {
-	if tokenName == "" || configuration == nil {
-		return
+// contextName and attaches it to req. A context configured with no token name
+// at all pings unauthenticated - the server can correctly report that as an
+// invalid token. But once a token IS configured, any failure to resolve or
+// read it is returned as an error instead of silently pinging unauthenticated,
+// which would otherwise be misreported as "Token invalid/expired" when the
+// real problem is that mesheryctl couldn't read its own stored token file.
+func attachContextAuthDetails(req *http.Request, contextName string, tokenName string) error {
+	if tokenName == "" {
+		return nil
 	}
 
 	token, err := configuration.GetTokenForContext(contextName)
 	if err != nil {
-		return
+		return errors.Wrap(err, "unable to resolve token for context")
 	}
 
 	tokenPath, err := utils.GetTokenLocation(token)
 	if err != nil {
-		return
+		return errors.Wrap(err, "unable to locate token file")
 	}
 
-	if exists, err := utils.CheckFileExists(tokenPath); err != nil || !exists {
-		return
+	exists, err := utils.CheckFileExists(tokenPath)
+	if err != nil {
+		return errors.Wrap(err, "unable to check token file")
+	}
+	if !exists {
+		return fmt.Errorf("token file not found at %s", tokenPath)
 	}
 
-	_ = utils.AddAuthDetails(req, tokenPath)
+	if err := utils.AddAuthDetails(req, tokenPath); err != nil {
+		return errors.Wrap(err, "unable to read token file")
+	}
+
+	return nil
 }
 
 // describePingConnectionError extracts the underlying transport error (e.g.
