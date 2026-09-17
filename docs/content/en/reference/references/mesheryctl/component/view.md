@@ -3,6 +3,7 @@ title: mesheryctl-component-view
 display_title: false
 command: component
 subcommand: view
+categories: [mesheryctl-component]
 ---
 
 # mesheryctl component view
