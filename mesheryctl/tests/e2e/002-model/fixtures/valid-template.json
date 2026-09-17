@@ -1,7 +1,7 @@
 {
   "registrant": "github",
   "model": "cert-manager",
-  "displayName": "Cert Manager",
+  "modelDisplayName": "Cert Manager",
   "category": "Security",
   "subCategory": "Certificates",
   "primaryColor": "#0B5FFF",
