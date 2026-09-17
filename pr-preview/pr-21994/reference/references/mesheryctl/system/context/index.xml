@@ -172,44 +172,7 @@ mesheryctl system context list
 &lt;h2 id="see-also"&gt;
 	See Also
 &lt;/h2&gt;
-&lt;p&gt;Go back to &lt;a href="/pr-preview/pr-21994/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/pr-preview/pr-21994/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-context-ping</title><link>/pr-preview/pr-21994/reference/references/mesheryctl/system/context/ping/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-21994/reference/references/mesheryctl/system/context/ping/</guid><description>&lt;h1 id="mesheryctl-system-context-ping"&gt;
-	mesheryctl system context ping
-&lt;/h1&gt;
-&lt;p&gt;Check connectivity and token validity for a Meshery context&lt;/p&gt;
-&lt;h2 id="synopsis"&gt;
-	Synopsis
-&lt;/h2&gt;
-&lt;p&gt;Check whether the Meshery Server for a context is reachable and whether the stored authentication token is still valid.&lt;/p&gt;
-&lt;pre class='codeblock-pre'&gt;
-&lt;div class='codeblock'&gt;
-&lt;div class='clipboardjs'&gt;
-mesheryctl system context ping [context-name | --context context-name] [flags]
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/pre&gt; 
-&lt;h2 id="examples"&gt;
-	Examples
-&lt;/h2&gt;
-&lt;p&gt;Ping the current context&lt;/p&gt;
-&lt;pre class='codeblock-pre'&gt;
-&lt;div class='codeblock'&gt;
-&lt;div class='clipboardjs'&gt;
-mesheryctl system context ping
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/pre&gt; 
-&lt;p&gt;Ping a specified context&lt;/p&gt;
-&lt;pre class='codeblock-pre'&gt;
-&lt;div class='codeblock'&gt;
-&lt;div class='clipboardjs'&gt;
-mesheryctl system context ping context-name
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/pre&gt; 
-&lt;p&gt;Ping a specified context using the &amp;ndash;context flag&lt;/p&gt;</description></item><item><title>mesheryctl-system-context-switch</title><link>/pr-preview/pr-21994/reference/references/mesheryctl/system/context/switch/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-21994/reference/references/mesheryctl/system/context/switch/</guid><description>&lt;h1 id="mesheryctl-system-context-switch"&gt;
+&lt;p&gt;Go back to &lt;a href="/pr-preview/pr-21994/reference/references/mesheryctl/"&gt;command reference index&lt;/a&gt;, if you want to add content manually to the CLI documentation, please refer to the &lt;a href="/pr-preview/pr-21994/project/contributing/cli/cli/#preserving-manually-added-documentation"&gt;instruction&lt;/a&gt; for guidance.&lt;/p&gt;</description></item><item><title>mesheryctl-system-context-switch</title><link>/pr-preview/pr-21994/reference/references/mesheryctl/system/context/switch/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/pr-preview/pr-21994/reference/references/mesheryctl/system/context/switch/</guid><description>&lt;h1 id="mesheryctl-system-context-switch"&gt;
 	mesheryctl system context switch
 &lt;/h1&gt;
 &lt;p&gt;Switch context&lt;/p&gt;
