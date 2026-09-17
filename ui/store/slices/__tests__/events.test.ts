@@ -1,9 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import eventsReducer, {
   pushEvent,
+  pushEvents,
+  selectAreAllEventsChecked,
+  selectCheckedEvents,
   setEvents,
+  setCurrentView,
   toggleNotificationCenter,
   closeNotificationCenter,
+  updateCheckAllEvents,
+  updateEvents,
 } from '../events';
 
 const makeEvent = (overrides = {}) => ({
@@ -65,5 +71,39 @@ describe('events slice', () => {
     state = eventsReducer(state, closeNotificationCenter());
     expect(state.isNotificationCenterOpen).toBe(false);
     expect(state.current_view.page).toBe(0);
+  });
+
+  it('does not count deleted notifications in bulk selection', () => {
+    let state = eventsReducer(
+      undefined,
+      setEvents([
+        makeEvent({ id: 'visible-1' }),
+        makeEvent({ id: 'visible-2' }),
+        makeEvent({ id: 'read-1', status: 'read' }),
+      ]),
+    );
+    state = eventsReducer(
+      state,
+      setCurrentView({ ...state.current_view, filters: { status: 'unread' } }),
+    );
+
+    state = eventsReducer(state, updateCheckAllEvents(true));
+    state = eventsReducer(
+      state,
+      updateEvents([
+        { id: 'visible-1', changes: { is_deleted: true, checked: false } },
+        { id: 'visible-2', changes: { is_deleted: true, checked: false } },
+      ]),
+    );
+
+    state = eventsReducer(
+      state,
+      pushEvents([makeEvent({ id: 'next-1' }), makeEvent({ id: 'next-2' })]),
+    );
+    state = eventsReducer(state, updateCheckAllEvents(true));
+
+    const rootState = { events: state };
+    expect(selectCheckedEvents(rootState).map((event) => event.id)).toEqual(['next-1', 'next-2']);
+    expect(selectAreAllEventsChecked(rootState)).toBe(true);
   });
 });
