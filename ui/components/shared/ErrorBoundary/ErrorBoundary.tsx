@@ -3,7 +3,6 @@ import {
   Modal,
   helpAndSupportModalSchema,
   helpAndSupportModalUiSchema,
-  useTheme,
 } from '@sistent/sistent';
 import { useState } from 'react';
 import { RJSFModalWrapper } from '../Modal/Modal';
@@ -14,14 +13,9 @@ import { EVENT_TYPES } from 'lib/event-types';
 import { useGetLoggedInUserQuery, useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { isRemoteProvider } from '@/utils/provider';
 
-import {
-  EditButton,
-  FallbackWrapper,
-  TextButton,
-  ToolBarButtonContainer,
-  TryAgainButton,
-} from '../../general/style';
+import { EditButton, TryAgainButton } from '../../general/style';
 import { StickyFeedbackButton } from '../../general/feedback';
+import { ErrorPageActions, FallbackWrapper } from './style';
 
 /**
  * CustomErrorFallback component can be use to show error message to users
@@ -31,7 +25,6 @@ const CustomErrorFallback = (props) => {
   const [openSupportModal, setOpenSupportModal] = useState(false);
 
   const { error } = props;
-  const theme = useTheme();
   const { notify } = useNotification();
   const [triggerWebhook] = useSupportWebHookMutation();
   const { data: userData } = useGetLoggedInUserQuery();
@@ -83,29 +76,17 @@ const CustomErrorFallback = (props) => {
   return (
     <FallbackWrapper>
       <Fallback showPackageInfo={true} {...props}>
-        <>
+        <ErrorPageActions>
           {showSupportBasedOnProvider ? (
-            <ToolBarButtonContainer style={{ marginTop: '0.7rem' }}>
-              <EditButton
-                variant="contained"
-                style={{ marginRight: '0.7rem' }}
-                onClick={handleOpenSupportModal}
-              >
-                <TextButton>Get Help</TextButton>
-              </EditButton>
-            </ToolBarButtonContainer>
+            <EditButton variant="contained" onClick={handleOpenSupportModal}>
+              Get Help
+            </EditButton>
           ) : null}
-        </>
 
-        <TryAgainButton color="primary" onClick={props.resetErrorBoundary}>
-          <TextButton
-            style={{
-              color: theme.palette.text.default,
-            }}
-          >
+          <TryAgainButton color="primary" onClick={props.resetErrorBoundary}>
             Try Again
-          </TextButton>
-        </TryAgainButton>
+          </TryAgainButton>
+        </ErrorPageActions>
 
         <Modal
           open={openSupportModal}
