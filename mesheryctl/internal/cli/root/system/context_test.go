@@ -1,12 +1,15 @@
 package system
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
@@ -480,6 +483,115 @@ func TestContextSwitchCmd(t *testing.T) {
 		})
 		t.Log("SwitchContextCmd test passed")
 	}
+}
+
+func TestContextPingCmd(t *testing.T) {
+	resetVariables()
+	// get current directory
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	utils.SetupCustomContextEnv(t, currDir+"/fixtures/.meshery/TestContext.yaml")
+
+	utils.StartMockery(t)
+	defer utils.StopMockery(t)
+
+	mesheryctlflags.InitValidators(SystemCmd)
+
+	t.Run("valid token reports reachable and valid", func(t *testing.T) {
+		contextPingFlags.Context = ""
+		httpmock.RegisterResponder("GET", "http://localhost:9081/api/user",
+			httpmock.NewStringResponder(200, `{"email":"alice@example.com"}`))
+
+		buf := utils.SetupMeshkitLoggerTesting(t, false)
+		SystemCmd.SetOut(buf)
+		SystemCmd.SetErr(buf)
+		SystemCmd.SetArgs([]string{"context", "ping"})
+		err := SystemCmd.Execute()
+		if err != nil {
+			t.Fatalf("expected no error for a valid token, got: %v", err)
+		}
+
+		out := buf.String()
+		for _, want := range []string{
+			"Context: local",
+			"Endpoint: http://localhost:9081",
+			"✅ Server reachable",
+			"✅ Token valid (user: alice@example.com)",
+		} {
+			if !strings.Contains(out, want) {
+				t.Fatalf("expected output to contain %q, got: %s", want, out)
+			}
+		}
+	})
+
+	t.Run("expired or invalid token is reported, not mistaken for unreachable", func(t *testing.T) {
+		contextPingFlags.Context = ""
+		httpmock.RegisterResponder("GET", "http://localhost:32242/api/user",
+			httpmock.NewStringResponder(401, `{"error":"unauthorized"}`))
+
+		buf := utils.SetupMeshkitLoggerTesting(t, false)
+		SystemCmd.SetOut(buf)
+		SystemCmd.SetErr(buf)
+		SystemCmd.SetArgs([]string{"context", "ping", "local2"})
+		err := SystemCmd.Execute()
+		if err == nil {
+			t.Fatal("expected a non-nil error for an invalid/expired token")
+		}
+
+		out := buf.String()
+		for _, want := range []string{
+			"Context: local2",
+			"Endpoint: http://localhost:32242",
+			"✅ Server reachable",
+			"⚠️  Token invalid/expired",
+		} {
+			if !strings.Contains(out, want) {
+				t.Fatalf("expected output to contain %q, got: %s", want, out)
+			}
+		}
+	})
+
+	t.Run("unreachable server is reported without a token verdict", func(t *testing.T) {
+		contextPingFlags.Context = ""
+		httpmock.RegisterResponder("GET", "http://localhost:9081/api/user",
+			httpmock.NewErrorResponder(errors.New("dial tcp: connect: connection refused")))
+
+		buf := utils.SetupMeshkitLoggerTesting(t, false)
+		SystemCmd.SetOut(buf)
+		SystemCmd.SetErr(buf)
+		SystemCmd.SetArgs([]string{"context", "ping"})
+		err := SystemCmd.Execute()
+		if err == nil {
+			t.Fatal("expected a non-nil error for an unreachable server")
+		}
+
+		out := buf.String()
+		for _, want := range []string{
+			"Context: local",
+			"Endpoint: http://localhost:9081",
+			"❌ Server unreachable: dial tcp: connect: connection refused",
+		} {
+			if !strings.Contains(out, want) {
+				t.Fatalf("expected output to contain %q, got: %s", want, out)
+			}
+		}
+		if strings.Contains(out, "Token valid") || strings.Contains(out, "Token invalid") {
+			t.Fatalf("did not expect a token verdict when the server is unreachable, got: %s", out)
+		}
+	})
+
+	t.Run("nonexistent context name errors out", func(t *testing.T) {
+		contextPingFlags.Context = ""
+		buf := utils.SetupMeshkitLoggerTesting(t, false)
+		SystemCmd.SetOut(buf)
+		SystemCmd.SetErr(buf)
+		SystemCmd.SetArgs([]string{"context", "ping", "does-not-exist"})
+		err := SystemCmd.Execute()
+		utils.AssertMeshkitErrorsEqual(t, err, ErrContextNotExists(fmt.Errorf("context `does-not-exist` does not exist")))
+	})
 }
 
 func resetVariables() {

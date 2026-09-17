@@ -1,10 +1,15 @@
 package system
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+	"net/url"
 	"os"
 	"sort"
 	"strings"
+	"time"
 
 	"gopkg.in/yaml.v2"
 
@@ -16,6 +21,10 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+// pingContextRequestTimeout bounds the /api/user liveness check so a
+// dead server is reported quickly instead of hanging.
+const pingContextRequestTimeout = 4 * time.Second
 
 var (
 	configuration     *config.MesheryCtlConfig
@@ -366,6 +375,105 @@ mesheryctl system context view --all
 	},
 }
 
+type cmdContextPingFlags struct {
+	Context string `json:"context" validate:"omitempty"`
+}
+
+var contextPingFlags cmdContextPingFlags
+
+// pingTokenResponse captures the subset of the /api/user response used to
+// report which user the stored token belongs to.
+type pingTokenResponse struct {
+	Email string `json:"email,omitempty"`
+}
+
+// pingContextCmd represents the ping command
+var pingContextCmd = &cobra.Command{
+	Use:   "ping [context-name | --context context-name]",
+	Short: "Check connectivity and token validity for a Meshery context",
+	Long: `Check whether the Meshery Server for a context is reachable and whether the stored authentication token is still valid.
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/context/ping`,
+	Example: `
+// Ping the current context
+mesheryctl system context ping
+
+// Ping a specified context
+mesheryctl system context ping context-name
+
+// Ping a specified context using the --context flag
+mesheryctl system context ping --context context-name
+	`,
+	SilenceUsage: true,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &contextPingFlags)
+	},
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("%s", errArgMsg))
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		err := viper.Unmarshal(&configuration)
+		if err != nil {
+			return ErrUnmarshallConfig(err)
+		}
+
+		if len(args) != 0 {
+			contextPingFlags.Context = strings.ToLower(args[0])
+		}
+		if contextPingFlags.Context == "" {
+			contextPingFlags.Context = viper.GetString("current-context")
+		}
+		if contextPingFlags.Context == "" {
+			return ErrContextNotExists(fmt.Errorf("current context not set"))
+		}
+
+		contextData, ok := configuration.Contexts[contextPingFlags.Context]
+		if !ok {
+			return ErrContextNotExists(
+				fmt.Errorf(
+					"context `%s` does not exist",
+					contextPingFlags.Context,
+				),
+			)
+		}
+
+		utils.Log.Infof("Context: %s", contextPingFlags.Context)
+		utils.Log.Infof("Endpoint: %s", contextData.Endpoint)
+
+		req, err := http.NewRequest("GET", contextData.Endpoint+"/api/user", nil)
+		if err != nil {
+			return errors.Wrap(err, "error creating the request")
+		}
+
+		attachContextAuthDetails(req, contextPingFlags.Context, contextData.Token)
+
+		client := &http.Client{Timeout: pingContextRequestTimeout}
+		resp, err := client.Do(req)
+		if err != nil {
+			utils.Log.Warnf("❌ Server unreachable: %s", describePingConnectionError(err))
+			return errors.New("meshery server unreachable")
+		}
+		defer utils.SafeClose(resp.Body)
+
+		utils.Log.Info("✅ Server reachable")
+
+		switch {
+		case resp.StatusCode >= 200 && resp.StatusCode < 300:
+			body, _ := io.ReadAll(resp.Body)
+			utils.Log.Infof("✅ Token valid (user: %s)", extractPingTokenEmail(body))
+			return nil
+		case resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden:
+			utils.Log.Warnf("⚠️  Token invalid/expired")
+			return errors.New("token invalid or expired")
+		default:
+			utils.Log.Warnf("⚠️  Meshery Server responded with an unexpected status: %d", resp.StatusCode)
+			return errors.New("meshery server returned an unexpected response")
+		}
+	},
+}
+
 var linkDocContextSwitch = map[string]string{
 	"link":    "![context-switch-usage](../../../../images/contextswitch.png)",
 	"caption": "Usage of mesheryctl context switch",
@@ -452,7 +560,7 @@ mesheryctl system context
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemContextSubError(fmt.Sprintf("'%s' is an invalid command. Include one of these arguments: [ create | delete | list | switch | view ]. Use 'mesheryctl system context --help' to display sample usage.\n", args[0]), "context"))
+			return errors.New(utils.SystemContextSubError(fmt.Sprintf("'%s' is an invalid command. Include one of these arguments: [ create | delete | list | ping | switch | view ]. Use 'mesheryctl system context --help' to display sample usage.\n", args[0]), "context"))
 		}
 
 		return nil
@@ -466,6 +574,7 @@ func init() {
 		switchContextCmd,
 		viewContextCmd,
 		listContextCmd,
+		pingContextCmd,
 	}
 	createContextCmd.Flags().StringVarP(&contextCreateFlags.URL, "url", "u", "", "Meshery Server URL with Port (default: http://localhost:9081)")
 	createContextCmd.Flags().BoolVarP(&contextCreateFlags.Set, "set", "s", false, "Set as current context")
@@ -475,6 +584,7 @@ func init() {
 	deleteContextCmd.Flags().StringVarP(&contextDeleteFlags.Set, "set", "s", "", "New context to deploy Meshery")
 	viewContextCmd.Flags().StringVarP(&contextViewFlags.Context, "context", "c", "", "Show config for the context")
 	viewContextCmd.Flags().BoolVar(&contextViewFlags.All, "all", false, "Show configs for all of the context")
+	pingContextCmd.Flags().StringVarP(&contextPingFlags.Context, "context", "c", "", "Ping the given context")
 	ContextCmd.PersistentFlags().StringVarP(&tempCntxt, "context", "c", "", "(optional) temporarily change the current context.")
 	ContextCmd.AddCommand(availableSubcommands...)
 }
@@ -500,4 +610,50 @@ func getContextWithTokenLocation(c *config.Context) (*contextWithLocation, bool)
 		return &temp, false
 	}
 	return &temp, true
+}
+
+// attachContextAuthDetails resolves the on-disk token file for tokenName under
+// contextName and, if found, attaches it to req. It is best-effort: a context
+// with no usable token is pinged unauthenticated rather than failing outright,
+// so an invalid/expired token can still be reported as such by the server.
+func attachContextAuthDetails(req *http.Request, contextName string, tokenName string) {
+	if tokenName == "" || configuration == nil {
+		return
+	}
+
+	token, err := configuration.GetTokenForContext(contextName)
+	if err != nil {
+		return
+	}
+
+	tokenPath, err := utils.GetTokenLocation(token)
+	if err != nil {
+		return
+	}
+
+	if exists, err := utils.CheckFileExists(tokenPath); err != nil || !exists {
+		return
+	}
+
+	_ = utils.AddAuthDetails(req, tokenPath)
+}
+
+// describePingConnectionError extracts the underlying transport error (e.g.
+// "connection refused") from the *url.Error wrapper net/http returns, so the
+// user sees the actual cause rather than a redundant "Get <url>:" prefix.
+func describePingConnectionError(err error) string {
+	if urlErr, ok := err.(*url.Error); ok && urlErr.Err != nil {
+		return urlErr.Err.Error()
+	}
+	return err.Error()
+}
+
+// extractPingTokenEmail best-effort parses the /api/user response body for
+// the authenticated user's email address.
+func extractPingTokenEmail(body []byte) string {
+	var parsed pingTokenResponse
+	if err := json.Unmarshal(body, &parsed); err != nil || parsed.Email == "" {
+		return "unknown"
+	}
+	return parsed.Email
 }
