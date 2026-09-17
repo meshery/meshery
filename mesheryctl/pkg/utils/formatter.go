@@ -18,13 +18,13 @@ func (f *TerminalFormatter) Format(entry *log.Entry) ([]byte, error) {
 	return append([]byte(entry.Message), '\n'), nil
 }
 
-// Call this function to setup logrus
+// SetupLogrusFormatter sets up logrus with the terminal formatter
 func SetupLogrusFormatter() {
 	//log formatter for improved UX
 	log.SetFormatter(new(TerminalFormatter))
 }
 
-// Initialize Meshkit Logger instance
+// SetupMeshkitLogger initializes a Meshkit logger instance
 func SetupMeshkitLogger(name string, debugLevel bool, output io.Writer) logger.Handler {
 	logLevel := viper.GetInt("LOG_LEVEL")
 	if !debugLevel {

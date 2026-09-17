@@ -169,10 +169,31 @@ Understanding how provider selection leads to authentication and dashboard acces
 
 When the `PROVIDER` environment variable is set (e.g., `PROVIDER=Local` or `PROVIDER=Meshery`):
 
-1. Provider selection UI is bypassed
-2. The specified provider is automatically activated and cookie is set
-3. User is redirected directly to `/user/login`
-4. Login flow proceeds as described above based on provider type
+1. At **server boot**, only that provider is registered. If the value is a remote, the Local Provider is not registered at all.
+2. Provider selection UI is bypassed; cookie, header, and `?provider=` cannot select a different provider.
+3. User is redirected directly to `/user/login`.
+4. Login flow proceeds as described above based on provider type.
+5. If `PROVIDER` is set but cannot be resolved to a registered provider, Meshery refuses to start (it does not fall back to the chooser).
+6. Changing `PROVIDER` on an existing deployment requires a restart. It is not a build-time flag. Re-login is required; data does not migrate between providers.
+
+Boot-time work is unaffected by the pin. Model seeding, connection seeding, and
+key seeding all run before any user request and are provider-independent, so a
+pinned deployment seeds exactly what an unpinned one does, and the system events
+raised while seeding (the `For registrant ... imported ...` summaries and any
+registration failures) are persisted to the same `events` table either way.
+
+{{% alert color="warning" title="Contributing: do not look a provider up by name at boot" %}}
+Because enforcement empties the registration map of everything but the pinned
+provider, server code that runs at boot must not resolve a provider by name from
+`HandlerConfig.Providers` - `Providers["Local"]` yields a nil `Provider` on a
+pinned deployment. Code needing to persist an event outside a user request takes
+`HandlerConfig.SystemEventPersister` instead, which is wired directly to the
+database and is independent of which providers are registered. Reaching into the
+registration map for a sink is what made a pinned deployment panic at boot in
+[#21584](https://github.com/meshery/meshery/issues/21584). Request-path code is
+unaffected: it receives its provider from the request context, which enforcement
+resolves consistently.
+{{% /alert %}}
 
 ### Deep-Link Preservation
 
@@ -197,7 +218,7 @@ For the full server-wide reference, including provider-independent settings such
 
 ### PROVIDER
 
-This environment variable enforces a specific provider, bypassing the provider selection UI. This is useful for:
+This environment variable hard-enforces a specific provider at server boot: only that provider is registered, the chooser is skipped, and client hints cannot override it. This is useful for:
 - Dedicated deployments where only one provider should be available
 - Automated environments and CI/CD pipelines
 - Simplified user experience when provider choice is predetermined
