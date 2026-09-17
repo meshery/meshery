@@ -2,6 +2,8 @@ package relationships
 
 import (
 	"bytes"
+	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -12,10 +14,52 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
-// runRelationshipViewTest handles all shared scaffolding for relationship view tests.
+func TestView(t *testing.T) {
+	mesheryctlflags.InitValidators(RelationshipCmd)
+
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+
+	tests := []utils.MesheryListCommandTest{
+		{
+			Name:             "given no model name provided when running relationship view then throw error",
+			Args:             []string{"view"},
+			URL:              "/api/registry/models/kubernetes/relationships",
+			Fixture:          "view.relationship.empty.response.golden",
+			ExpectedResponse: "",
+			IsOutputGolden:   false,
+			ExpectError:      true,
+			ExpectedError:    utils.ErrInvalidArgument(errors.New(errInvalidArg)),
+		},
+		{
+			Name:             "given model name provided when running relationship view then display registered relationship",
+			Args:             []string{"view", "kubernetes"},
+			URL:              "/api/registry/models/kubernetes/relationships?page=0&pagesize=10",
+			Fixture:          "view.relationship.api.response.golden",
+			ExpectedResponse: "view.relationship.output.golden",
+			ExpectError:      false,
+		},
+		{
+			Name:             "given non existing model name provided when running relationship view then display no relationship found",
+			Args:             []string{"view", "nonexistent"},
+			URL:              "/api/registry/models/nonexistent/relationships?page=0&pagesize=10",
+			Fixture:          "view.relationship.empty.response.golden",
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrNotFound(fmt.Errorf("No relationship(s) found for the model with name: %s", "nonexistent")),
+		},
+	}
+
+	utils.InvokeMesheryctlTestListCommand(t, update, RelationshipCmd, tests, currDir, "relationships")
+}
+
+// runRelationshipViewTest handles shared scaffolding for relationship view save tests.
 func runRelationshipViewTest(t *testing.T, args []string) error {
 	t.Helper()
-	mesheryctlflags.InitValidators(RelationshipCmd)
 	testContext := utils.InitTestEnvironment(t)
 	t.Cleanup(func() { utils.StopMockery(t) })
 	t.Cleanup(func() { utils.ResetCommandFlags(RelationshipCmd, t) })
