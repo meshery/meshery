@@ -36,7 +36,7 @@
   "devDependencies": {
     "autoprefixer": "^10.4.27",
     "hugo-extended": "0.158.0",
-    "markdownlint-cli2": "^0.18.1",
+    "markdownlint-cli2": "^0.23.2",
     "postcss": "^8.5.12",
     "postcss-cli": "^11.0.1"
   }
