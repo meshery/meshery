@@ -4,9 +4,7 @@ import (
 	"github.com/meshery/meshkit/errors"
 )
 
-var (
-	ErrCountWithOutputFormatCode = "mesheryctl-1256"
-)
+const ErrCountWithOutputFormatCode = "mesheryctl-1256"
 
 func ErrCountWithOutputFormat() error {
 	return errors.New(

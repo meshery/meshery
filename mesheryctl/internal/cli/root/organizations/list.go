@@ -91,14 +91,10 @@ mesheryctl organization list --output-format yaml
 func listOrgsAsStructuredOutput(out io.Writer, outputFormat string, page, pagesize int) error {
 	outputFormat = strings.ToLower(outputFormat)
 
-	currentPage := page - 1
-	if currentPage < 0 {
-		currentPage = 0
-	}
-	effectivePageSize := pagesize
-	if effectivePageSize <= 0 {
-		effectivePageSize = 10
-	}
+	// Same zero-based page/pagesize conversion display.HandlePaginationAsync
+	// applies for the table path, via the shared helper so the two don't
+	// drift out of sync with each other.
+	currentPage, effectivePageSize := display.NormalizePagination(page, pagesize)
 
 	urlPath := fmt.Sprintf("%s?page=%d&pagesize=%d", organizationsApiPath, currentPage, effectivePageSize)
 	orgsData, err := api.Fetch[models.OrganizationsPage](urlPath)
