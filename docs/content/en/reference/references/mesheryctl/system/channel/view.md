@@ -3,11 +3,12 @@ title: mesheryctl-system-channel-view
 display_title: false
 command: system
 subcommand: channel
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system channel view
 
-view release channel and version
+View release channel and version
 
 ## Synopsis
 

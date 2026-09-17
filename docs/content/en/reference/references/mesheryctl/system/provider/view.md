@@ -3,11 +3,12 @@ title: mesheryctl-system-provider-view
 display_title: false
 command: system
 subcommand: provider
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system provider view
 
-view provider
+View provider
 
 ## Synopsis
 

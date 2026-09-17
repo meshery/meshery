@@ -32,7 +32,7 @@ type componentGenerationResponseDataItem struct {
 	Errors     []string                        `json:"errors"`
 }
 
-// request body should be json
+// MeshModelGenerationHandler expects the request body to be JSON.
 // request body should be of format - {data: [{name: string, register: boolean}]}
 // response format - {data: [{name: string, components: [component], errors: [string] }]}
 func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Request) {

@@ -264,8 +264,7 @@ func (cp *ConnectionPersister) UpdateConnectionByID(connection *connections.Conn
 	return connection, nil
 }
 
-// Get connection by ID
-// If kind is provided filter with kind too
+// GetConnection gets a connection by ID. If kind is provided, it also filters by kind.
 func (cp *ConnectionPersister) GetConnection(id core.Uuid, kind string) (*connections.Connection, error) {
 	connection := connections.Connection{}
 	query := cp.DB.Where("id = ?", id)

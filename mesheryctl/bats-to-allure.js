@@ -211,11 +211,15 @@ function parseTestLine(rawStatus, rawName, extraLabels = []) {
   return { status, name: cleanName, skipReason, labels, links };
 }
 
+const CONVERTER_OWNED_LABELS = Object.freeze({
+  framework: "bats",
+  language: "bash",
+  project: "mesheryctl"
+});
+
 function baseLabels(extraLabels) {
   return [
-    { name: "framework", value: "bats" },
-    { name: "language", value: "bash" },
-    { name: "project", value: "mesheryctl" },
+    ...Object.entries(CONVERTER_OWNED_LABELS).map(([name, value]) => ({ name, value })),
     // This converter only ever processes mesheryctl (CLI) results.
     { name: "client", value: "CLI" },
     ...extraLabels
@@ -247,6 +251,17 @@ function dedupeLabels(labels) {
     }
   }
   return out;
+}
+
+// framework/language/project describe the converter itself, so neither
+// ALLURE_LABELS nor title tokens may replace them. Other single-valued labels
+// retain the existing last-value-wins precedence (for example [client=UI]).
+function resultLabels(extraLabels, titleLabels) {
+  return dedupeLabels([...baseLabels(extraLabels), ...titleLabels]).map(label =>
+    Object.hasOwn(CONVERTER_OWNED_LABELS, label.name)
+      ? { name: label.name, value: CONVERTER_OWNED_LABELS[label.name] }
+      : label
+  );
 }
 
 function createAllureResult({ name, status, start, stop, details, labels, links }) {
@@ -329,7 +344,7 @@ function convertTapToAllure(tapFile) {
         start,
         stop: start + 1,
         details: parsed.skipReason || null,
-        labels: dedupeLabels([...baseLabels(extraLabels), ...parsed.labels]),
+        labels: resultLabels(extraLabels, parsed.labels),
         links: parsed.links
       });
 

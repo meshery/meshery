@@ -3,11 +3,12 @@ title: mesheryctl-system-provider-list
 display_title: false
 command: system
 subcommand: provider
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system provider list
 
-list available providers
+List available providers
 
 ## Synopsis
 

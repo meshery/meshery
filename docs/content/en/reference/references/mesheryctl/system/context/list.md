@@ -3,11 +3,12 @@ title: mesheryctl-system-context-list
 display_title: false
 command: system
 subcommand: context
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system context list
 
-list contexts
+List contexts
 
 ## Synopsis
 

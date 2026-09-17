@@ -3,11 +3,12 @@ title: mesheryctl-system-provider-switch
 display_title: false
 command: system
 subcommand: provider
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system provider switch
 
-switch provider and redeploy
+Switch provider and redeploy
 
 ## Synopsis
 

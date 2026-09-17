@@ -3,11 +3,12 @@ title: mesheryctl-system-channel-set
 display_title: false
 command: system
 subcommand: channel
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system channel set
 
-set release channel and version
+Set release channel and version
 
 ## Synopsis
 
