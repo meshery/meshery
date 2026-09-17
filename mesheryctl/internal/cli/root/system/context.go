@@ -442,7 +442,7 @@ mesheryctl system context ping --context context-name
 		utils.Log.Infof("Context: %s", contextPingFlags.Context)
 		utils.Log.Infof("Endpoint: %s", contextData.Endpoint)
 
-		req, err := http.NewRequest("GET", contextData.Endpoint+"/api/user", nil)
+		req, err := http.NewRequest("GET", strings.TrimRight(contextData.Endpoint, "/")+"/api/user", nil)
 		if err != nil {
 			return errors.Wrap(err, "error creating the request")
 		}
