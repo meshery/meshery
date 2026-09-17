@@ -34,7 +34,7 @@ import {
 // tests are self-contained and fail loudly if the UI never fires the request.
 // ────────────────────────────────────────────────────────────────────────────
 
-// Raw YAML for the URL-import fixture.  Served from the public GitHub raw URL
+// Raw JSON for the URL-import fixture.  Served from the public GitHub raw URL
 // so it is reachable from any environment without extra setup.
 const DESIGN_FIXTURE_URL =
   'https://raw.githubusercontent.com/meshery/meshery/refs/heads/master/' +
@@ -133,8 +133,8 @@ test.describe('Design Import Tests', () => {
   //
   // Intercepts the POST to /api/pattern/import and asserts the body contains
   // `url` and `name` keys.  Stubs the response to 200 so the test does not
-  // depend on an external URL being reachable.  Self-skips if the Designs page
-  // cannot load (no running server).
+  // depend on an external URL being reachable. This test will fail if the Designs page
+  // cannot load (no running ui).
   test(
     'Import via URL sends the correct wire body (url, name)',
     { tag: designImportTags('importViaUrl') },
