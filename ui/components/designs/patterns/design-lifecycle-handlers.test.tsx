@@ -220,26 +220,35 @@ describe('buildDesignLifecycleHandlers', () => {
     parseDesignFileMock.mockReturnValueOnce(null as any);
     const deps = makeDeps();
     const handlers = buildDesignLifecycleHandlers(deps);
+    const expectedError = expect.objectContaining({
+      message: 'Failed to parse design "Bad Design"',
+      event_type: expect.objectContaining({ type: 'error' }),
+    });
 
     await handlers.directDeploy(undefined, 'invalid-yaml', 'Bad Design', 'id-1');
     expect(deps.handleDeploy).not.toHaveBeenCalled();
-    expect(deps.notify).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: 'Failed to parse design "Bad Design"',
-        event_type: expect.objectContaining({ type: 'error' }),
-      }),
-    );
+    expect(deps.notify).toHaveBeenCalledTimes(1);
+    expect(deps.notify).toHaveBeenCalledWith(expectedError);
 
+    deps.notify.mockClear();
     parseDesignFileMock.mockReturnValueOnce(null as any);
     await handlers.directUndeploy(undefined, 'invalid-yaml', 'Bad Design', 'id-1');
     expect(deps.handleUndeploy).not.toHaveBeenCalled();
+    expect(deps.notify).toHaveBeenCalledTimes(1);
+    expect(deps.notify).toHaveBeenCalledWith(expectedError);
 
+    deps.notify.mockClear();
     parseDesignFileMock.mockReturnValueOnce(null as any);
     handlers.directDryRun(undefined, 'invalid-yaml', 'Bad Design');
     expect(deps.designValidationActorRef.send).not.toHaveBeenCalled();
+    expect(deps.notify).toHaveBeenCalledTimes(1);
+    expect(deps.notify).toHaveBeenCalledWith(expectedError);
 
+    deps.notify.mockClear();
     parseDesignFileMock.mockReturnValueOnce(null as any);
     handlers.directValidate(undefined, 'invalid-yaml', 'Bad Design');
     expect(deps.designValidationActorRef.send).not.toHaveBeenCalled();
+    expect(deps.notify).toHaveBeenCalledTimes(1);
+    expect(deps.notify).toHaveBeenCalledWith(expectedError);
   });
 });
