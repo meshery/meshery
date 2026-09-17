@@ -70,18 +70,23 @@ describe('ActionButton', () => {
   });
 
   it('toggles interactive mode when main Action button is clicked without defaultActionClick', () => {
+    const validateClick = vi.fn();
     render(
       <ActionButton
         options={[
-          { label: 'Validate', icon: <span data-testid="validate-icon" />, onClick: vi.fn() },
+          { label: 'Validate', icon: <span data-testid="validate-icon" />, onClick: validateClick },
         ]}
       />,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Action' }));
+    expect(validateClick).not.toHaveBeenCalled();
     expect(screen.getByTestId('popper')).toBeInTheDocument();
     expect(screen.getByText('Validate')).toBeInTheDocument();
     expect(screen.getByTestId('validate-icon')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Validate' }));
+    expect(validateClick).toHaveBeenCalledTimes(1);
   });
 
   it('toggles single-click mode when dropdown toggle is clicked', () => {
@@ -106,9 +111,12 @@ describe('ActionButton', () => {
     render(<ActionButton options={[{ label: 'Deploy', icon: <svg />, onClick, onDirectClick }]} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Action' }));
+    expect(onClick).not.toHaveBeenCalled();
+    expect(onDirectClick).not.toHaveBeenCalled();
+
     fireEvent.click(screen.getByRole('button', { name: 'Deploy' }));
 
-    expect(onClick).toHaveBeenCalled();
+    expect(onClick).toHaveBeenCalledTimes(1);
     expect(onDirectClick).not.toHaveBeenCalled();
     expect(screen.queryByTestId('popper')).not.toBeInTheDocument();
   });
