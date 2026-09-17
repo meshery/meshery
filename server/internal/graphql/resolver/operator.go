@@ -3,9 +3,13 @@ package resolver
 import (
 	"context"
 
+	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/internal/graphql/model"
+	mhelpers "github.com/meshery/meshery/server/machines/helpers"
+	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
-	"github.com/meshery/meshkit/models/controllers"
+	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/meshkit/utils/broadcast"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 )
@@ -24,6 +28,43 @@ import (
 type operatorStatusK8sContext struct {
 	ctxID      string
 	processing interface{}
+}
+
+// operatorControllersHelper resolves the controllers helper that owns Meshery
+// Operator lifecycle for a Kubernetes context, by way of that connection's
+// state machine - the same route the resync and controller-status paths take.
+//
+// Operator install and removal go through the helper rather than a meshkit
+// handler read straight out of the request context, because the helper is what
+// holds the resolved Helm chart version and refuses an install when no
+// published version could be pinned. Reaching around it is how an unresolvable
+// version would reach Helm from this entry point while every other one refused.
+func operatorControllersHelper(ctx context.Context, k8scontext models.K8sContext) (*models.MesheryControllersHelper, error) {
+	connectionDetail := "Kubernetes context " + k8scontext.ID + " (connection " + k8scontext.ConnectionID + ")"
+
+	h, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
+	if !ok || h == nil {
+		return nil, ErrOperatorControllersHelper("No Meshery handler is present in the request context.")
+	}
+	tracker := h.ConnectionToStateMachineInstanceTracker
+	if tracker == nil {
+		return nil, ErrOperatorControllersHelper("No connection state machine tracker is available on the Meshery handler.")
+	}
+	if k8scontext.ConnectionID == "" {
+		return nil, ErrOperatorControllersHelper("Kubernetes context " + k8scontext.ID + " carries no connection id.")
+	}
+	inst, ok := tracker.Get(uuid.FromStringOrNil(k8scontext.ConnectionID))
+	if !ok || inst == nil || !mhelpers.HasMachineContext(inst) {
+		return nil, ErrOperatorControllersHelper(connectionDetail + " has no ready state machine.")
+	}
+	machinectx, castErr := utils.Cast[*kubernetes.MachineCtx](inst.Context)
+	if castErr != nil {
+		return nil, ErrOperatorControllersHelper(castErr.Error())
+	}
+	if machinectx.MesheryCtrlsHelper == nil {
+		return nil, ErrOperatorControllersHelper(connectionDetail + " has no controllers helper attached.")
+	}
+	return machinectx.MesheryCtrlsHelper, nil
 }
 
 func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Provider, status model.Status, ctxID string) (model.Status, error) {
@@ -92,19 +133,35 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		return model.StatusUnknown, ErrNilClient
 	}
 
+	// Resolve the lifecycle owner before reporting the request as accepted, so a
+	// connection that cannot be acted on fails the mutation outright instead of
+	// reporting "processing" and then going quiet.
+	ctrlHelper, err := operatorControllersHelper(ctx, k8scontext)
+	if err != nil {
+		r.Log.Error(err)
+		r.Broadcast.Submit(broadcast.BroadcastMessage{
+			Source: broadcast.OperatorSyncChannel,
+			Data: operatorStatusK8sContext{
+				processing: err,
+				ctxID:      ctxID,
+			},
+			Type: "error",
+		})
+		return model.StatusUnknown, err
+	}
+
 	go func(del bool, kubeclient *mesherykube.Client) {
 		if r.Config.OperatorTracker.DisableOperator { //Do not deploy operator is explicitly in disabled mode
 			r.Log.Info("skipping operator deployment (in disabled mode)")
 			return
 		}
-		op, _ := ctx.Value(models.MesheryControllerHandlersKey).(map[string]map[models.MesheryController]controllers.IMesheryController)
 
-		var err error
-		if del {
-			err = op[ctxID][models.MesheryOperator].Undeploy()
-		} else {
-			err = op[ctxID][models.MesheryOperator].Deploy(true)
-		}
+		// SetOperatorDeployment carries the same guard the connect-time path
+		// uses, so an unresolvable chart version is refused identically here
+		// rather than being handed to Helm as an opaque chart-not-found. It also
+		// re-resolves that version first, so clicking deploy again after the
+		// chart repository recovers is a retry that can actually succeed.
+		err := ctrlHelper.SetOperatorDeployment(k8scontext, !del)
 		if err != nil {
 			r.Log.Error(err)
 			r.Broadcast.Submit(broadcast.BroadcastMessage{

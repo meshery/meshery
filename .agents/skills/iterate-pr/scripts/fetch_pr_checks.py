@@ -6,9 +6,15 @@
 Fetch PR CI checks and optional failure snippets.
 
 Usage:
-    python fetch_pr_checks.py [--pr PR_NUMBER]
+    uv run fetch_pr_checks.py [--pr PR_NUMBER]
+    python3 fetch_pr_checks.py [--pr PR_NUMBER]
 
 If --pr is not specified, uses the PR for the current branch.
+
+Output contract: a single JSON object on stdout carrying a top-level ``status``
+field, ``"ok"`` or ``"error"``. On error ``summary`` and ``checks`` are ``null``
+- never empty - so a caller reading only stdout cannot mistake a failed lookup
+for a green PR. Errors also exit non-zero.
 """
 
 from __future__ import annotations
@@ -18,7 +24,7 @@ import json
 import re
 import subprocess
 import sys
-from typing import Any
+from typing import Any, NoReturn
 
 RUN_ID_PATTERN = re.compile(r"/actions/runs/(\d+)")
 FAILURE_PATTERNS = [
@@ -41,17 +47,37 @@ FAILURE_PATTERNS = [
 ]
 
 
-def fail(message: str) -> None:
-    print(json.dumps({"error": message}))
+def fail(message: str) -> NoReturn:
+    """Emit a machine-readable failure and exit non-zero."""
+    print(
+        json.dumps(
+            {
+                "status": "error",
+                "error": message,
+                "pr": None,
+                "summary": None,
+                "checks": None,
+                "action_required": (
+                    "STOP: CI status could not be fetched, so this PR's check state "
+                    "is unknown. Do not treat this as 'checks passed' and do not "
+                    f"merge. Cause: {message}"
+                ),
+            },
+            indent=2,
+        )
+    )
     sys.exit(1)
 
 
 def run_gh_json(args: list[str], allowed_exit_codes: tuple[int, ...] = (0,)) -> Any:
-    result = subprocess.run(
-        ["gh", *args],
-        capture_output=True,
-        text=True,
-    )
+    try:
+        result = subprocess.run(
+            ["gh", *args],
+            capture_output=True,
+            text=True,
+        )
+    except OSError as exc:
+        raise RuntimeError(f"failed to run gh CLI: {exc}") from exc
 
     if result.returncode not in allowed_exit_codes:
         stderr = (result.stderr or result.stdout).strip() or "unknown gh error"
@@ -130,12 +156,21 @@ def extract_failure_snippet(log_text: str, max_lines: int = 50) -> str:
 
 
 def get_run_logs(run_id: int) -> str | None:
-    result = subprocess.run(
-        ["gh", "run", "view", str(run_id), "--log-failed"],
-        capture_output=True,
-        text=True,
-        timeout=60,
-    )
+    """Failure logs for a run, or ``None`` when they cannot be read.
+
+    A log snippet is an enrichment, so every failure here degrades to no
+    snippet. Raising instead would abort an otherwise-complete checks fetch and
+    leave stdout empty, which is the one thing this script's contract forbids.
+    """
+    try:
+        result = subprocess.run(
+            ["gh", "run", "view", str(run_id), "--log-failed"],
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+    except (subprocess.TimeoutExpired, OSError):
+        return None
     if result.returncode != 0:
         return None
     return result.stdout if result.stdout.strip() else None
@@ -186,6 +221,7 @@ def main() -> None:
         processed_checks.append(processed)
 
     output = {
+        "status": "ok",
         "pr": {
             "number": pr_number,
             "url": pr_info.get("url", ""),

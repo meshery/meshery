@@ -39,9 +39,11 @@
     padding: 0.5rem;
 
     width: var(--sidebar-wrapper-width);
-    background: #121212;
-    background: linear-gradient(37deg, rgba(71, 126, 150, 0.52) 0%, rgba(0, 0, 0, 0.81) 12%, rgba(60, 73, 79, 1) 100%);
+    background: var(--sidebar-wrapper-background);
     box-shadow: var(--box-shadow-primary);
+    @media (max-width: 75em) {
+      background: var(--sidebar-wrapper-background-mobile);
+    }
   }
   & .icon-container {
     height: fit-content;
@@ -512,5 +514,5 @@
 
 /* Sidebar toggle button arrows - white color */
 #td-sidebar-menu .sidebar-section-toggle .caret-icon path {
-  stroke: var(--sidebar-text-color);
+  color: var(--sidebar-text-color);
 }

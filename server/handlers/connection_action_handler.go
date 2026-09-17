@@ -15,6 +15,7 @@ import (
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/core"
+	controllersconfig "github.com/meshery/schemas/models/v1alpha1/controllers_config"
 	schemasConnection "github.com/meshery/schemas/models/v1beta3/connection"
 )
 
@@ -107,26 +108,50 @@ func (h *Handler) setMeshsyncDeploymentModeAction(
 		return
 	}
 
-	oldMode := connections.MeshsyncDeploymentModeFromMetadata(existing.Metadata)
-	if oldMode == connections.MeshsyncDeploymentModeUndefined {
-		oldMode = h.MeshsyncDefaultDeploymentMode
-		if oldMode == connections.MeshsyncDeploymentModeUndefined {
-			oldMode = connections.MeshsyncDeploymentModeDefault
-		}
+	// Resolve the mode this connection is actually running through the same
+	// chain the rest of the server uses, rather than trusting the materialized
+	// cache alone: a server-wide default changed since the last write would
+	// otherwise make this handler compare against a stale value.
+	override, err := connections.ControllersConfigFromMetadata(existing.Metadata)
+	if err != nil {
+		h.log.Error(err)
+		writeMeshkitError(w, err, http.StatusBadRequest)
+		return
 	}
+	serverDefaults, err := models.GetControllersConfigDefaults(h.dbHandler)
+	if err != nil {
+		h.log.Error(err)
+		writeMeshkitError(w, err, http.StatusInternalServerError)
+		return
+	}
+	merged, _ := connections.ResolveControllersConfig(override, serverDefaults)
+	oldMode := connections.ResolveDeploymentMode(merged, existing.Metadata, h.MeshsyncDefaultDeploymentMode).Mode
 
 	// Idempotent: mode already at target — return current connection unchanged.
+	// An inherited mode that already equals the target is still recorded as an
+	// explicit override below only when it differs, so pressing "operator" on a
+	// connection already inheriting "operator" does not pin it.
 	if oldMode == newMode {
 		writeJSONMessage(w, existing, http.StatusOK)
 		return
 	}
 
 	// Server owns the merge: preserve all existing metadata, set only the mode.
+	// The choice is stored once, in the layered controllers-configuration
+	// override — the same field the controllers editor writes — so the two
+	// entry points can never disagree about what this connection is set to.
+	// The meshsync_deployment_mode entry is refreshed purely as the
+	// materialization legacy consumers read.
 	metadata := existing.Metadata
 	if metadata == nil {
 		metadata = core.Map{}
 	}
-	connections.SetMeshsyncDeploymentModeToMetadata(metadata, newMode)
+	if err := connections.SetDeploymentModeOverride(metadata, newMode); err != nil {
+		h.log.Error(err)
+		writeMeshkitError(w, err, http.StatusBadRequest)
+		return
+	}
+	connections.MaterializeMeshsyncDeploymentMode(metadata, newMode)
 
 	// Persist to the connection identified by the URL id (never a nil id).
 	payload := &connections.ConnectionPayload{
@@ -161,7 +186,7 @@ func (h *Handler) setMeshsyncDeploymentModeAction(
 	// Detach from the request lifecycle but keep context values (token, etc.).
 	detachedCtx := context.WithoutCancel(req.Context())
 	go func() {
-		if rerr := h.reconcileMeshsyncDeploymentMode(detachedCtx, connectionID, newMode, userID, provider); rerr != nil {
+		if rerr := h.reconcileMeshsyncDeploymentMode(detachedCtx, connectionID, newMode, merged, userID, provider); rerr != nil {
 			h.log.Error(rerr)
 			event := eventBuilder.WithSeverity(events.Error).
 				WithDescription(fmt.Sprintf("MeshSync mode saved as '%s' but redeploy failed for connection %s", newMode, updated.Name)).
@@ -266,7 +291,13 @@ func (h *Handler) flushMeshsyncAction(
 // the previous MeshSync setup and (re)deploy it for newMode. It reads the live
 // machine context, so it must run after the connection's FSM exists (i.e. the
 // connection is connected). Safe to run in a detached goroutine.
-func (h *Handler) reconcileMeshsyncDeploymentMode(ctx context.Context, connectionID core.Uuid, newMode connections.MeshsyncDeploymentMode, userID core.Uuid, provider models.Provider) error {
+//
+// merged is the connection's resolved (layered) controllers configuration. It
+// is stashed on the helper before the handlers are re-attached because the
+// operator controller handler is constructed with the Helm chart version that
+// document resolves to (`operator.version`). Pass nil only when the intended
+// configuration is genuinely unknown.
+func (h *Handler) reconcileMeshsyncDeploymentMode(ctx context.Context, connectionID core.Uuid, newMode connections.MeshsyncDeploymentMode, merged *controllersconfig.MesheryControllersConfig, userID core.Uuid, provider models.Provider) error {
 	if h.SystemID == nil {
 		return ErrMeshsyncReconcile("system id is not configured")
 	}
@@ -294,16 +325,21 @@ func (h *Handler) reconcileMeshsyncDeploymentMode(ctx context.Context, connectio
 	// Undeploy the previous MeshSync setup for this context.
 	ctrlHelper.
 		UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-		UndeployDeployedOperators(machineCtx.OperatorTracker).
+		UndeployDeployedOperators(machineCtx.OperatorTracker, contextID).
 		RemoveCtxControllerHandler(ctx, contextID)
 	ctrlHelper.RemoveMeshSyncDataHandler(ctx, contextID)
 
-	// Deploy MeshSync for the new mode.
+	// Deploy MeshSync for the new mode. The resolved configuration is stashed
+	// first: AddCtxControllerHandlers constructs the operator controller handler
+	// with the Helm chart version it resolves to (operator.version).
+	if merged != nil {
+		ctrlHelper.SetControllersConfig(merged)
+	}
 	ctrlHelper.
-		AddCtxControllerHandlers(machineCtx.K8sContext).
 		SetMeshsyncDeploymentMode(newMode).
+		AddCtxControllerHandlers(machineCtx.K8sContext).
 		UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-		DeployUndeployedOperators(machineCtx.OperatorTracker).
+		DeployUndeployedOperators(machineCtx.OperatorTracker, contextID).
 		AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, mesheryInstanceID, provider)
 
 	return nil

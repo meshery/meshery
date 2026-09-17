@@ -219,7 +219,7 @@
       'meshery-istio': 'meshery-istio-past-results',
       'meshery-linkerd': 'meshery-linkerd-past-results',
       'meshery-kuma': 'meshery-kuma-past-results',
-      'meshery-nginx-sm': 'meshery-nginx-sm-past-results',
+      'meshery-nginx-sm': 'meshery-nginx-past-results',
       'meshery-traefik-mesh': 'meshery-traefik-mesh-past-results',
       'meshery-cilium': 'meshery-cilium-past-results',
       'meshery-consul': 'meshery-consul-past-results'
@@ -227,7 +227,7 @@
     
     const page = adapterMap[adapter];
     if (page) {
-      window.location.href = `{{ "installation/compatibility-matrix/" | relURL }}${page}`;
+      window.location.href = `{{ "project/compatibility-matrix/" | relURL }}${page}`;
     }
   }
   

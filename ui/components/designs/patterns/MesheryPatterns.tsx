@@ -36,7 +36,7 @@ import {
   useDeletePatternMutation,
   useDeployPatternMutation,
   useGetPatternsQuery,
-  useImportPatternMutation,
+  useImportDesignMutation,
   usePublishPatternMutation,
   useUndeployPatternMutation,
   useUnpublishPatternMutation,
@@ -145,7 +145,7 @@ function MesheryPatterns({
   const [publishCatalog] = usePublishPatternMutation();
   const [unpublishCatalog] = useUnpublishPatternMutation();
   const [deletePattern] = useDeletePatternMutation();
-  const [importPattern] = useImportPatternMutation();
+  const [importDesign] = useImportDesignMutation();
   const [updatePattern] = useUpdatePatternFileMutation();
   const [uploadPatternFile] = useUploadPatternFileMutation();
   const [deletePatternFile] = useDeletePatternFileMutation();
@@ -230,7 +230,7 @@ function MesheryPatterns({
     unpublishCatalog,
     deletePattern,
     deletePatternFile,
-    importPattern,
+    importDesign,
     updatePattern,
     uploadPatternFile,
     deployPatternMutation,
@@ -464,9 +464,10 @@ function MesheryPatterns({
     },
   };
 
-  const handleApplyFilter = () => {
+  const handleApplyFilter = (filters: Record<string, string>) => {
+    const visibility = filters.visibility ?? 'All';
     updateTableState({
-      filters: { vis: selectedFilters.visibility === 'All' ? '' : selectedFilters.visibility },
+      filters: { vis: visibility === 'All' ? '' : visibility },
       page: 0,
     });
   };
@@ -590,7 +591,13 @@ function MesheryPatterns({
             <_PromptComponent ref={modalRef} />
           </>
         ) : (
-          <DefaultError />
+          <DefaultError
+            permissionKey={
+              pageTitle === 'Catalog'
+                ? Keys.CatalogManagementViewCatalog
+                : Keys.CatalogManagementViewDesigns
+            }
+          />
         )}
       </NoSsr>
     </>

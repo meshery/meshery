@@ -3,6 +3,7 @@ title: mesheryctl-design-deploy
 display_title: false
 command: design
 subcommand: deploy
+categories: [mesheryctl-design]
 ---
 
 # mesheryctl design deploy
@@ -11,11 +12,14 @@ Deploy design
 
 ## Synopsis
 
-Command will trigger deploy of design
+Command will trigger deploy of design.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design deploy [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,8 +28,10 @@ mesheryctl design deploy [flags]
 Deploy design by providing file path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design deploy -f [filepath] -s [source type]
 
+</div>
 </div>
 </pre> 
 

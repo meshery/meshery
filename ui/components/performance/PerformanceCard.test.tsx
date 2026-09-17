@@ -88,7 +88,7 @@ describe('PerformanceCard', () => {
   const baseProps = {
     profile: {
       id: 'p-1',
-      userId: 'user-42',
+      owner: 'user-42',
       name: 'my perf profile',
       endpoints: ['http://x'],
       loadGenerators: ['fortio'],

@@ -12,6 +12,8 @@ aliases: [/project/contributing/contributing-cli]
     <li><a href="https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?gid=1907616946#gid=1907616946">Meshery Test Plan</a>: Test cases for end-to-end testing of Meshery functionality.</li>
  <li><a href="https://github.com/meshery/meshery/labels/component%2Fmesheryctl">mesheryctl open issues and pull requests</a>: Matching the "component/mesheryctl" label.</li></ul>{{% /alert %}}
 
+{{< member-form >}}
+
 ### Designing Commands
 
 The [Meshery CLI Style Guide]({{< ref "project/contributing/cli/ux-guide" >}}) outlines the process by which new commands are designed and contains a collection of principles and conventions that need to be followed while designing `mesheryctl` commands. `mesheryctl` might be the interface that the users first have with Meshery. As such, `mesheryctl` needs to provide a great UX.
@@ -106,7 +108,11 @@ Annotations: linkDocPatternApply,
 
 ### Linting
 
-`mesheryctl` uses [golangci-lint](https://github.com/golangci/golangci-lint). See the .github/workflow/ci.yaml for syntax used during Meshery's build process.
+`mesheryctl` uses [golangci-lint](https://github.com/golangci/golangci-lint) with the repo-wide configuration at `.github/.golangci.yml`, plus Meshery's repo-specific Go analyzers - notably the one that fails the build when a `gorm` `ORDER BY` clause is built from an unsanitized value. Run both from `mesheryctl/`:
+
+{{< code code=`make lint` >}}
+
+That target is the CLI-scoped equivalent of the two jobs that gate your pull request in [`.github/workflows/go-testing-ci.yml`](https://github.com/meshery/meshery/blob/master/.github/workflows/go-testing-ci.yml): `golangci-lint-cli` applies the same shared configuration to `mesheryctl`, and `golangci-lint-server` runs the `ORDER BY` analyzer over the whole root module, `mesheryctl` included. What each rule protects and what to do when one fires is in [Go Lint Rules]({{< ref "project/contributing/contributing-lint.md" >}}).
 
 ### Testing
 
@@ -165,9 +171,60 @@ In the above code sample, the test is marked with **“Integration”** in the t
 
 {{< code code=`go test -run Integration ./... -race -coverprofile=coverage.txt -covermode=atomic` >}}
 
-To update golden files with the test output use the `--update` flag:
+#### Updating golden files
+
+Test packages that compare against golden files declare an `update` flag:
 
 {{< code code=`var update = flag.Bool("update", false, "update golden files")` >}}
+
+Pass it after `-args` so `go test` hands it to the test binary rather than
+interpreting it itself. Regenerate only the package you are changing:
+
+{{< code code=`cd mesheryctl && go test --short ./internal/cli/root/relationships/ -args -update` >}}
+
+{{% alert color="warning" title="A golden file must encode intended behavior" %}}
+`-update` rewrites the expectation to whatever the command currently prints, so
+it will just as happily record a regression. After regenerating, read the diff
+and confirm each change is output you actually want users to see - correct
+message text, a documentation URL that resolves, the right set of subcommands.
+If the diff shows the command is wrong, fix the command and regenerate; never
+let `-update` settle a disagreement between the test and the code.
+{{% /alert %}}
+
+**Fixtures** and **testdata** are not interchangeable (see "Key Test Writing
+Principles" above): `-update` regenerates only the expected output under
+`testdata/`. When a wire contract changes, the fixture holding the mocked
+response is usually the file that has gone stale - updating only the expectation
+bakes the broken behavior into the test.
+
+#### The shared meshconfig fixture is read-only
+
+`utils.SetupContextEnv` loads `mesheryctl/pkg/utils/TestConfig.yaml`, and almost
+every command package reaches it through `utils.InitTestEnvironment`. Because
+`go test ./mesheryctl/...` runs each package as its own process and several of
+them at once, that one file is mutable state shared across concurrent
+processes.
+
+Any command that persists configuration - `system channel set`, `system context
+create`, `system token create` - calls `viper.WriteConfig`, which truncates the
+active config file before rewriting it. Point viper at the shared fixture and a
+sibling package reading it inside that window parses an empty document and gets
+no error for it, leaving an empty `current-context`. The next request made with
+that config reaches `MesheryCtlConfig.GetBaseMesheryURL`, which calls
+`Log.Fatal` and exits the whole test binary, so the run reports a bare
+package-level `FAIL` that names no test and points at no assertion.
+
+`SetupContextEnv` therefore hands each test a private copy of the fixture
+through `utils.CopyMeshconfigFixture`. A test that needs a writable meshconfig
+must use that helper, or `utils.SetupCustomContextEnv` with a testdata file of
+its own. Never point viper at `pkg/utils/TestConfig.yaml` directly.
+
+{{% alert color="warning" title="A fixture write can look harmless" %}}
+`system channel set stable` rewrote the shared fixture with byte-identical
+content, so it left the working tree clean and nothing in review suggested a
+test was writing to it. The truncate is what breaks sibling packages, not the
+content, and only the file's modification time recorded that it happened.
+{{% /alert %}}
 
 #### End-to-end Tests
 

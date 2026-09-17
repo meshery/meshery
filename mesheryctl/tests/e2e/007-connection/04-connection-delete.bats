@@ -18,8 +18,15 @@ teardown_file() {
     assert_output --partial "Error"
 }
 
+# The id must be a well-formed, *non-nil* UUID. The server treats the nil UUID
+# as invalid rather than missing (GetConnectionByID rejects it outright with a
+# 400 ErrInvalidUUID, and the remote provider 401s a DELETE on it), so it never
+# reaches the not-found branch this test covers. Any syntactically valid UUID
+# that was never issued does: the persister returns ErrResultNotFound, the
+# handler maps that to 404, and delete.go turns a 404 into a warning and exit 0
+# ("No connection with ID %q found") rather than a hard failure.
 @test "[TC-1066][cut=Kubernetes Connection][tg=Connection Lifecycle] given a non existing connection-id is provided as an argument when running mesheryctl connection delete non-existing-id then an error message is displayed" {
-    NONEXISTENT_ID="00000000-0000-0000-0000-000000000000"
+    NONEXISTENT_ID="deadbeef-dead-4ead-8ead-deadbeefdead"
 
     run $MESHERYCTL_BIN connection delete "$NONEXISTENT_ID"
     assert_success

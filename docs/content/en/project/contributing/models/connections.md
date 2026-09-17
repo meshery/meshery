@@ -115,6 +115,34 @@ Both are [JSON Schemas](https://json-schema.org/). The Connection Wizard renders
 
 Because these schemas live on the definition, the wizard needs no per-kind UI code to render them. Adding a property to the schema adds a field to the form.
 
+#### How a credential's `secret` is persisted - and read
+
+The canonical form, declared in [`meshery/schemas`](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1beta1/credential/forms), is a top-level `name` plus a `secret` object holding the kind-specific fields. **The persisted `secret` object *is* the payload.**
+
+Four shapes exist in stored data in total - the canonical one plus three others - and Meshery reads all of them. Two of the three non-canonical shapes are still written today: Meshery writes the Kubernetes shape when it imports a kubeconfig, and its credential form writes the double-nested wrapper.
+
+| Shape | Stored `secret` | Where the payload is |
+| --- | --- | --- |
+| Canonical | `{"grafanaURL": "...", "grafanaAPIKey": "..."}` | the object itself |
+| Kubernetes | `{"auth": {...}, "cluster": {...}}` | the object itself |
+| Legacy double-nested | `{"credentialName": "x", "secret": {...}}` | one level down |
+| Legacy string | `{"secret": "<token>"}` | a bare string |
+
+Legacy rows are never rewritten - tolerance is what keeps them working. Two mirrored helpers own the whole decision, and every read site goes through them rather than reaching into the map:
+
+- **Go** - `models.CredentialPayload` (the object carrying the credential's fields) and `models.CredentialAuthSecret` (the string auth material) in `server/models/credential_secret.go`.
+- **TypeScript** - `resolveCredentialPayload` and `resolveCredentialAuthSecret` in `ui/utils/credentialSecret.ts`.
+
+Ambiguity resolves toward the canonical shape: an object is only unwrapped when it consists of nothing but the legacy wrapper keys (`credentialName`, `name`, `secret`), so a canonical payload that happens to carry its own `secret` field is left alone. The one shape this cannot distinguish is a payload whose *only* fields are `name` and `secret` - no canonical form has that shape, so keep a new credential kind's payload away from it.
+
+What must stay in step between the two files is the **resolution rules**, not the return types: the helpers deliberately differ on the legacy string shape, where the TypeScript `resolveCredentialPayload` returns the bare string and the Go `CredentialPayload` returns nil because it is typed to a map (Go callers use `CredentialAuthSecret`). The auth-key list is currently grafana only; a credential kind whose canonical form holds string auth material under a new property must be added to `canonicalAuthSecretKeys` **and** `CANONICAL_AUTH_SECRET_KEYS`.
+
+The helpers resolve the wrapper, not the field names inside it. A Kubernetes credential created through the credential form describes its cluster with `clusterName`/`clusterServerURL` rather than the kubeconfig-style `cluster` block `K8sContextFromConnection` reads, so it yields an auth block but no cluster; which side moves is tracked in [meshery/meshery#21336](https://github.com/meshery/meshery/issues/21336).
+
+{{% alert color="warning" title="The registration payload's `secret` is a string" %}}
+The server rehydrates `credentialSecret.secret` into `PromCred`/`GrafanaCred`, whose `secret` field is a plain string. Handing it an object fails the `register` (verify) step outright, which is why the wizard sends `resolveCredentialAuthSecret(...)` rather than the payload object.
+{{% /alert %}}
+
 ### Visual identity: `styles`
 
 `styles` carries inline SVG markup for the kind's icon: `svgColor` (for light backgrounds), `svgWhite` (for dark backgrounds), and optionally `svgComplete`. Follow the same icon conventions as [Components]({{< ref "project/contributing/models/components" >}}).

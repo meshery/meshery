@@ -1,4 +1,6 @@
 import type { TestInfo } from '@playwright/test';
+import * as allure from 'allure-js-commons';
+import { testPlanLink } from './testPlanLink';
 
 /**
  * Traceability map for the Kubernetes Connection Playwright suite.
@@ -27,6 +29,15 @@ export const CONN_EPIC = 'Kubernetes Connections';
 
 /** Client label for the shared cross-lane contract (UI vs CLI). */
 export const CONN_CLIENT = 'UI';
+
+// Test Plan deep-link (part A): the row-derivation contract lives in the pure,
+// unit-tested `./testPlanLink` helper (guards the `TC-<n>` shape and the
+// 1012..1089 connection block, returning null otherwise so a malformed/
+// out-of-block id never becomes a wrong link). Every CONN_CASES testId is inside
+// that block by construction (see CONN_CASES below), so the guard normally
+// passes - it exists so a future out-of-block id fails safe instead of emitting
+// `range=ANaN`. Re-exported here for back-compat with existing importers.
+export { testPlanLink } from './testPlanLink';
 
 export interface ConnCase {
   /** Meshery Test Plan "Latest" tab, column A ("Test #"), e.g. `TC-98`. */
@@ -125,7 +136,7 @@ export function connTagsUntracked(componentUnderTest: string): string[] {
  * Playwright reporter only processes `relationship` annotations - it does not
  * read these; the tags from {@link connTags} are what it surfaces.)
  */
-export function annotateConnCase(testInfo: TestInfo, key: ConnCaseKey): void {
+export async function annotateConnCase(testInfo: TestInfo, key: ConnCaseKey): Promise<void> {
   const testCase = CONN_CASES[key];
   testInfo.annotations.push(
     { type: 'testId', description: testCase.testId },
@@ -135,6 +146,18 @@ export function annotateConnCase(testInfo: TestInfo, key: ConnCaseKey): void {
     { type: 'feature', description: testCase.feature },
     { type: 'story', description: testCase.story },
   );
+
+  // Emit the Test Plan row as a real Allure `tms` link (part A) - the UI-lane
+  // counterpart to the CLI converter's `links` entry. This uses the
+  // allure-js-commons runtime API for the same reason as the testGroup label:
+  // allure-playwright maps only known annotation types (epic/feature/story) to
+  // the report, so a custom link must be set through allure.link to appear. The
+  // helper returns null for an out-of-block/malformed id (fail-safe, no wrong
+  // link); every tracked case is in-block so this normally yields a link.
+  const link = testPlanLink(testCase.testId);
+  if (link) {
+    await allure.link(link.url, link.name, 'tms');
+  }
 }
 
 /**

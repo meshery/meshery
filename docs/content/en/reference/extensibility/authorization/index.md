@@ -81,24 +81,30 @@ On startup, Meshery Server's [`SeedKeys`](https://github.com/meshery/meshery/blo
 #### Phase 3: Wire Key in the UI
 
 ##### Step 5: Direct Import from Schemas
-Because Meshery UI depends on `@meshery/schemas`, you can gate new UI behavior by importing `Keys` directly from `@meshery/schemas/permissions` instead of adding a manual entry to `ui/utils/permission_constants.ts`. Many existing components still use `permission_constants.ts`, so only those legacy call sites require updates until they are migrated.
+Because Meshery UI depends on `@meshery/schemas`, you can gate new UI behavior by importing `Keys` directly from `@meshery/schemas/permissions`. There is no hand-maintained constant map to update: `ui/utils/permission_constants.ts` was removed once every call site had been migrated to the generated keys.
 
 Simply import the `Keys` object directly from `@meshery/schemas/permissions` in your component:
 {{< code code=`import { Keys } from '@meshery/schemas/permissions';` >}}
 
-##### Step 6: Gate the Component using `CAN`
-Pass the schema key's `id` (action) and `function` (subject) to the `CAN` utility to check permissions:
-{{< code code=`import CAN from '@/utils/can';
+##### Step 6: Gate the Component
+Prefer the `useHasPermission` hook from [Sistent](https://github.com/layer5io/sistent), which takes the whole key object:
+{{< code code=`import { useHasPermission } from '@sistent/sistent';
 import { Keys } from '@meshery/schemas/permissions';
 
-const key = Keys.CatalogManagementEvaluateRelationships;
-const canEvaluate = CAN(key.id, key.function);
+const canEvaluate = useHasPermission(Keys.CatalogManagementEvaluateRelationships);
 
 return (
   <Button disabled={!canEvaluate} onClick={handleEvaluate}>
     Evaluate Relationships
   </Button>
 );` >}}
+
+Sistent controls also accept the key directly as a `permissionKey` prop, which is the shortest form when the only effect is to disable the control:
+{{< code code=`<Button permissionKey={Keys.CatalogManagementEvaluateRelationships} onClick={handleEvaluate}>
+  Evaluate Relationships
+</Button>` >}}
+
+See [Gating spellings](#gating-spellings) for when to reach for the older `CAN(...)` utility instead.
 
 ##### Step 7: Verify End-to-End
 1. Run `make ui-lint` to verify that there are no formatting or typescript errors.
@@ -123,18 +129,21 @@ This example shows how the **Evaluate Relationships** key is wired across each l
 {{< code code=`export const Keys = {
   CatalogManagementEvaluateRelationships: {
     id: "c7752be7-5c0f-465d-a8ba-5594acd08b93",
-    function: "Evaluate Relationships",
     category: "Catalog Management",
-    subcategory: "Designs"
+    subcategory: "Designs",
+    function: "Evaluate Relationships",
+    description: "Evaluate relationships inside a design"
   }
 }` >}}
 
-3. **React Component Gating**:
-{{< code code=`import CAN from '@/utils/can';
+3. **CASL rule built on login** - `id` becomes the rule's action, `function` its subject:
+{{< code code=`{ action: "c7752be7-5c0f-465d-a8ba-5594acd08b93", subject: "evaluate relationships" }` >}}
+
+4. **React Component Gating** (see [Gating spellings](#gating-spellings) for the other two forms):
+{{< code code=`import { useHasPermission } from '@sistent/sistent';
 import { Keys } from '@meshery/schemas/permissions';
 
-const key = Keys.CatalogManagementEvaluateRelationships;
-const canEvaluate = CAN(key.id, key.function);
+const canEvaluate = useHasPermission(Keys.CatalogManagementEvaluateRelationships);
 return canEvaluate ? <EvaluateRelationshipsButton /> : null;` >}}
 
 ---
@@ -146,14 +155,14 @@ When testing permission keys locally, the main client-side caches are stored und
 | Location | Key / object | Contents |
 |----------|--------------|----------|
 | **`Cookies`** | `token` | The session authorization token. Sent automatically with requests to authenticate the user and authorize access to org-specific permission keys. |
-| **`Cookies`** | `meshery-provider` | The active provider (e.g., `Local` or `Layer5`). |
+| **`Cookies`** | `meshery-provider` | The active provider (e.g., `Local` or `Meshery`). |
 | **`sessionStorage`** | `keys` | JSON array of key objects from the provider (`id`, `function`, `category`, …). Written by [`setKeys`](https://github.com/meshery/meshery/blob/master/ui/store/slices/mesheryUi.ts) and read on startup by [`loadAbility`](https://github.com/meshery/meshery/blob/master/ui/pages/_app.tsx). |
 | **`sessionStorage`** | `currentOrg` | Selected organization. Keys are fetched per org via `GET /api/identity/orgs/{orgId}/users/keys`. |
 | **In-memory (CASL)** | `ability` in [`ui/utils/can.ts`](https://github.com/meshery/meshery/blob/master/ui/utils/can.ts) | Runtime rules: `{ action: key.id, subject: lowerCase(key.function) }`. Updated by [`ability.update(...)`](https://github.com/meshery/meshery/blob/master/ui/rtk-query/ability.tsx). |
 | **Redux store** | `state.ui.keys` | Same array as `sessionStorage.keys`. |
 | **RTK Query cache** | `getUserKeys` | Cached response for `/api/identity/orgs/{orgId}/users/keys`. |
 
-On login, Meshery either reuses `sessionStorage.keys` or refetches from the provider, then updates CASL. The static map in [`permission_constants.ts`](https://github.com/meshery/meshery/blob/master/ui/utils/permission_constants.ts) is source code—not browser storage—but `CAN(...)` compares those constants against the CASL rules built from the stored provider keys.
+On login, Meshery either reuses `sessionStorage.keys` or refetches from the provider, then updates CASL. The [`Keys`](https://github.com/meshery/schemas/blob/master/typescript/permissions.ts) object is generated source code—not browser storage—but every gating spelling compares those constants against the CASL rules built from the stored provider keys.
 
 Inspect keys in DevTools (**Application → Session Storage**):
 {{< code code=`JSON.parse(sessionStorage.getItem('keys'))
@@ -170,17 +179,19 @@ Use this checklist when a gated button does not appear, permissions look stale a
 ##### 1. Confirm the provider returned the key
 In DevTools **Network**, check the response for:
 `GET /api/identity/orgs/{orgId}/users/keys`
-Verify your UUID is in the `keys` array. If you're gating via `permission_constants.ts`, `_.lowerCase(function)` from the API should match `_.lowerCase(subject)` passed to `CAN(...)`.
+Verify your UUID is in the `keys` array. The API's `function` is what CASL stores as the rule subject (lower-cased), so it must match the `function` on the `Keys` entry you are gating with.
 
 ##### 2. Clear stale browser cache
 Meshery reuses `sessionStorage.keys` until the org changes or keys are refetched:
 {{< code code=`sessionStorage.removeItem('keys');
 location.reload();` >}}
 
-##### 3. Verify the UI constant map
-In [`permission_constants.ts`](https://github.com/meshery/meshery/blob/master/ui/utils/permission_constants.ts):
-*   `action` = key UUID (`id` from the API)
-*   `subject` = key `function` from the API (capitalization/camelCase differences are normalized by `_.lowerCase` in `CAN`)
+##### 3. Verify the generated key
+In [`Keys`](https://github.com/meshery/schemas/blob/master/typescript/permissions.ts), published by `@meshery/schemas`:
+*   `id` = the key UUID, matched against the CASL rule's action
+*   `function` = the human-readable operation name, matched against the CASL rule's subject (capitalization differences are normalized by `_.lowerCase`)
+
+If the key is missing from `Keys` altogether, it has not made it through the spreadsheet → schemas generation described above; re-run Phase 1 rather than declaring it locally.
 
 ##### 4. Confirm CASL loaded the rules
 *   **Redux DevTools**: check `state.ui.keys` for the expected UUID.
@@ -191,19 +202,19 @@ In [`permission_constants.ts`](https://github.com/meshery/meshery/blob/master/ui
 The key must be in [`server/permissions/keys.csv`](https://github.com/meshery/meshery/blob/master/server/permissions/keys.csv) with **`Local Provider = TRUE`**. Restart Meshery Server (or reset the local DB) after the CSV updates.
 
 ##### 6. Remote Provider: confirm role assignment
-Keys come from roles assigned in the Remote Provider admin UI. An empty API response usually means a role/keychain issue—not a missing `permission_constants.ts` entry alone.
+Keys come from roles assigned in the Remote Provider admin UI. An empty API response usually means a role/keychain issue—not a missing entry in the generated `Keys` alone.
 
 ##### 7. Verify browser cookies and session validity
 Verify that the `token` cookie is set and not expired:
 *   Open DevTools **Application** -> **Storage** -> **Cookies** and select the Meshery site URL.
 *   Confirm that the `token` cookie is present. If it is missing or has expired, you will be redirected to the login page or receive a `401 Unauthorized` response when fetching keys.
-*   Check that the `meshery-provider` cookie matches the intended provider (e.g., `Local` or `Layer5`).
+*   Check that the `meshery-provider` cookie matches the intended provider (e.g., `Local` or `Meshery`).
 
 ##### Common symptoms
 
 | Symptom | Likely cause |
 |---------|----------------|
-| Button never appears | User lacks the key; if gating via `permission_constants.ts`, missing entry; or `CAN(...)` not wired |
+| Button never appears | User lacks the key; the key is missing from the generated `Keys`; or the gate is not wired |
 | New key not visible after merge | Stale `sessionStorage.keys`; missing Local Provider seed row; or only schemas PR merged |
 | Works in one org, not another | Keys are org-scoped—check `currentOrg` and refetch keys |
 | API returns `401` or `403` when fetching keys | Expired or missing `token` cookie; verify browser cookie store |
@@ -222,21 +233,53 @@ Meshery utilizes CASL (JS-based permission framework) to evaluate any given user
 
 [CASL.js](https://casl.js.org) is an isomorphic authorization JavaScript library which restricts what resources a given client is allowed to access. It's designed to be incrementally adoptable and can easily scale between a simple claim based and fully featured subject and attribute based authorization. It makes it easy to manage and share permissions/keys across UI components, API services, and database queries.
 
-An example of how CASL evaluates permissions in the UI:
-{{< code code=`<React.Fragment>
-	{CAN(keys.DELETE_CONNECTION.action, keys.DELETE_CONNECTION.subject) && (
-		<Button id="delete-connection">Delete</Button>
-	)}
-</React.Fragment>` >}}
+Upon user login, the provider returns the list of authorized permission keys. Those keys are used to build and update the CASL ability rules on the frontend, and each key is registered as a rule of `{ action: key.id, subject: lowerCase(key.function) }`. Every gate in Meshery UI is a query against that one ability instance.
 
-Upon user login, the backend returns the list of authorized permissions. These permissions are then used to build and update the CASL ability rules on the frontend. The UI maintains a constant file containing all allowed permissions (referred to as keys). With the help of these keys, the `CAN` function evaluates permissions at runtime and renders the UI accordingly.
+### Gating spellings
 
-{{% alert color="dark" title="Note" %}}
-It's important to understand not all pages uses CASL authorization, means even if you are not assigned with any role within organization you might access preferences page and Meshery UI dashboard.
+Three spellings exist, and they are equivalent - all three end up calling the same CASL `ability`. Each takes a key from `@meshery/schemas/permissions`, whose entries carry `id`, `function`, `category`, `subcategory` and `description`.
+
+1.  **`useHasPermission` hook** - the usual spelling, and the one to reach for in new code. Pass the whole key object; the hook resolves `id` and `function` for you.
+{{< code code=`import { useHasPermission } from '@sistent/sistent';
+import { Keys } from '@meshery/schemas/permissions';
+
+const canDelete = useHasPermission(Keys.LifecycleManagementDeleteAConnection);
+
+return canDelete ? <Button id="delete-connection">Delete</Button> : null;` >}}
+
+2.  **`permissionKey` prop** - Sistent controls gate themselves. By default the control renders disabled behind a shield icon whose tooltip names the missing key; pass `permissionAction="hide"` to render nothing instead.
+{{< code code=`import { Keys } from '@meshery/schemas/permissions';
+
+<Button id="delete-connection" permissionKey={Keys.LifecycleManagementDeleteAConnection}>
+  Delete
+</Button>` >}}
+
+3.  **`CAN(...)` utility** - the original spelling, still used where a hook cannot be called (outside a component, or inside a callback). It takes the two fields separately rather than the key object.
+{{< code code=`import CAN from '@/utils/can';
+import { Keys } from '@meshery/schemas/permissions';
+
+const key = Keys.LifecycleManagementDeleteAConnection;
+const canDelete = CAN(key.id, key.function);` >}}
+
+### Access gating and control gating
+
+CASL gates Meshery UI at two levels, and they are not the same thing:
+
+*   **Access gating** replaces a page's whole content with the permission-denied page when your session lacks the key that page requires.
+*   **Control gating** renders the page, and hides or disables only the individual affordances within it - a button, a link, a menu item - that you lack the key for.
+
+Every content-bearing page in Meshery UI except the landing page (`/`) is access-gated; that one exception is described below. Where the page owns RTK Query hooks, pass `skip` on the same flag so a denied session issues no request at all.
+
+{{% alert color="dark" title="Note: the Meshery UI dashboard is a deliberate exception" %}}
+The **Meshery UI dashboard** (`/`) is control-gated only. It renders for an organization member holding no keys at all, with the links they cannot follow disabled in place, rather than replacing itself with the permission-denied page.
+
+This is by design, not an oversight: `/` is where Meshery lands you after login, so access-gating it would strand a newly invited member on an error screen before anyone has assigned them a role. Every other content-bearing page - including the design configurator and the user preferences page - is access-gated.
 {{% /alert %}}
+
+Access gating is a presentation control, not an enforcement boundary. Meshery Server authenticates every request, and authorization is decided by the configured [Remote Provider]({{< ref "reference/extensibility/providers/index.md" >}}) and enforced per handler on the server. An ungated page therefore never implies an ungated API.
 
 ## Authorization using Local Provider
 
-Meshery's built-in identity provider, "Local" Provider, operates with a large set of predefined keys interspersed throughout Meshery UI and persisted in [Meshery Database]({{< ref "concepts/architecture/database/index.md" >}}). These keys are used to evaluate the permissions of a given user and render the UI accordingly. The keys are grouped into three categories: `action`, `subject`, and `object`.
+Meshery's built-in identity provider, "Local" Provider, operates with a large set of predefined keys interspersed throughout Meshery UI and persisted in [Meshery Database]({{< ref "concepts/architecture/database/index.md" >}}). These keys are used to evaluate the permissions of a given user and render the UI accordingly. Each persisted key carries an `id`, a `function` (the operation it permits), and a `category`/`subcategory` pair that places it in a domain - the same shape the Remote Provider returns, so the UI gates identically under either provider.
 
 {{< discuss >}}

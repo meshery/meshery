@@ -73,6 +73,15 @@ func providerStatus(err error) int {
 	return httputil.StatusForProviderError(err, http.StatusBadGateway)
 }
 
+// providerStatusOrInternal is providerStatus for a code path the *local*
+// provider also reaches. There the failure is a Meshery Server one - its own
+// database - and 502 would blame an upstream that was never involved, so the
+// fallback stays 500. A tagged provider status is still honoured, which is the
+// whole point of reading it back.
+func providerStatusOrInternal(err error) int {
+	return httputil.StatusForProviderError(err, http.StatusInternalServerError)
+}
+
 const (
 	defaultPageSize = 25
 	queryParamTrue  = "true"
@@ -91,7 +100,7 @@ func getPaginationParams(req *http.Request) (page, offset, limit int, search, or
 	}
 	if limitstr != "all" {
 		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 {
+		if limit <= 0 {
 			limit = defaultPageSize
 		}
 	}

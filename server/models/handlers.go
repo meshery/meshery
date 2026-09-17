@@ -292,6 +292,16 @@ type HandlerConfig struct {
 	ProviderCookieName     string
 	ProviderCookieDuration time.Duration
 
+	// SystemEventPersister is the sink for events raised outside any user
+	// request - registry seeding summaries, registration failures. It is
+	// deliberately NOT resolved from Providers: PROVIDER enforcement drops
+	// every non-enforced registration (Local included), so a lookup keyed on
+	// a provider name is only valid on an unpinned deployment. Wired in
+	// cmd/main.go to the same database handler every provider's
+	// EventsPersister uses, so the events land in the same `events` table
+	// whether or not a deployment pins PROVIDER.
+	SystemEventPersister SystemEventPersister
+
 	// to be removed
 	BrokerEndpointURL *string
 

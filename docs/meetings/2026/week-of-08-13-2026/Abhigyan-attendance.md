@@ -1,0 +1,1 @@
+Hi, My name is Abhigyan Tiwari. I am a CSE pre-final year student and I love CP, DSA. Recently started doing backend engineering in Go, Python and learning more of distributed systems. Have made few projects including a Trading System Benchmarking and Hosting Platform in Go, deployed on AWS for the IICPC Hackathon. I look forward to contributing to Meshery.

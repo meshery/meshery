@@ -111,6 +111,9 @@ function FiltersCard_({
           setYaml={setYaml}
           deleteHandler={deleteHandler}
           updateHandler={updateHandler}
+          type={'filter'}
+          updatePermissionKey={Keys.CatalogManagementEditWasmFilter}
+          deletePermissionKey={Keys.CatalogManagementDeleteWasmFilter}
         />
       )}
       <FlipCard
@@ -242,7 +245,11 @@ function FiltersCard_({
               <Typography variant="h6">{name}</Typography>
               <CardHeaderRight>
                 {hasCloudProfile ? (
-                  <Link href={`${MESHERY_CLOUD_PROD}/user/${ownerId}`} target="_blank">
+                  <Link
+                    href={`${MESHERY_CLOUD_PROD}/user/${ownerId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <Avatar alt="profile-avatar" src={owner?.avatarUrl} />
                   </Link>
                 ) : (

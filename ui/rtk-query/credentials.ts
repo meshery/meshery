@@ -1,39 +1,21 @@
 import {
   mesheryApi,
+  useDeleteUserCredentialMutation as useSchemasDeleteUserCredentialMutation,
   useGetCredentialByIdQuery as useSchemasGetCredentialByIdQuery,
   useGetUserCredentialsQuery as useSchemasGetUserCredentialsQuery,
   useSaveUserCredentialMutation as useSchemasSaveUserCredentialMutation,
   useUpdateUserCredentialMutation as useSchemasUpdateUserCredentialMutation,
 } from '@meshery/schemas/mesheryApi';
-import { api, mesheryApiPath } from './index';
 
-// The tag type registered on the shared `mesheryApi` (see
-// @meshery/schemas/mesheryApi), which the schemas credential endpoints provide
-// and invalidate. A bare 'credentials' is not a registered tag type, so
-// invalidating it silently invalidates nothing and the list never refetches.
-const TAGS = {
-  CREDENTIALS: 'credential_credentials',
-};
-
-// `deleteCredential` is the one credential endpoint still declared here: the
-// schemas-generated `deleteUserCredential` sends `?credentialId=`, but the
-// server reads `credential_id` (DeleteUserCredential in
-// server/handlers/credentials_handlers.go), so the generated endpoint would
-// resolve a nil UUID and delete nothing. Everything else delegates to schemas.
-const credentialsApi = api.injectEndpoints({
-  endpoints: (builder) => ({
-    deleteCredential: builder.mutation({
-      query: (credentialId) => ({
-        url: mesheryApiPath(`integrations/credentials?credential_id=${credentialId}`),
-        method: 'DELETE',
-      }),
-      invalidatesTags: [TAGS.CREDENTIALS],
-    }),
-  }),
-  overrideExisting: true,
-});
-
-export const { useDeleteCredentialMutation } = credentialsApi;
+// Every credential endpoint is now the schemas-generated one; the hooks below
+// only adapt call shapes (bare id / bare credential) to the generated args.
+//
+// `deleteCredential` used to be re-declared here because the generated
+// `deleteUserCredential` sends `?credentialId=` while the server read only
+// `credential_id`, so the generated endpoint resolved a nil UUID and deleted
+// nothing. The fix belonged in the server, not in a fork of the request:
+// DeleteUserCredential now reads the canonical camelCase param (keeping
+// `credential_id` as a legacy fallback) and rejects an unusable id outright.
 
 // Backed by the schemas-generated `getUserCredentials` (GET
 // /api/integrations/credentials). Callers pass no list args, so every schemas
@@ -47,6 +29,12 @@ export const useGetCredentialsQuery = (queryArg?: undefined, options?: object) =
 // Callers pass a bare id; the schemas endpoints take `{ credentialId }`.
 export const useGetCredentialByIdQuery = (credentialId: string, options?: object) =>
   useSchemasGetCredentialByIdQuery({ credentialId }, options);
+
+export const useDeleteCredentialMutation = () => {
+  const [trigger, result] = useSchemasDeleteUserCredentialMutation();
+  const wrappedTrigger = (credentialId: string) => trigger({ credentialId });
+  return [wrappedTrigger, result] as const;
+};
 
 export const useLazyGetCredentialByIdQuery = () => {
   const [trigger, ...rest] = mesheryApi.endpoints.getCredentialById.useLazyQuery();

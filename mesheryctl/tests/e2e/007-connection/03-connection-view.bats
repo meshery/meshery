@@ -51,13 +51,21 @@ require_connection_id() {
     assert_file_exists "$SAVED_FILE"
 }
 
+# The nil UUID is syntactically well-formed, so view takes the by-id path
+# (isArgumentUUID) and the server rejects it in GetConnectionByID
+# (server/handlers/connections_handlers.go), which writes a 400
+# models.ErrInvalidUUID. That envelope carries "Invalid UUID" as its short
+# description and "invalid connection ID" as its cause. Assert those, not
+# "Invalid connection ID" (capitalised) — that string is emitted nowhere in
+# mesheryctl or meshery server, so the assertion could never pass.
 @test "[TC-1080][cut=Kubernetes Connection][tg=Connection Lifecycle] given an invalid connection-id is provided as an argument when running mesheryctl connection view --save then a message error is displayed" {
-    NONEXISTENT_ID="00000000-0000-0000-0000-000000000000"
+    INVALID_ID="00000000-0000-0000-0000-000000000000"
 
-    run $MESHERYCTL_BIN connection view --save "$NONEXISTENT_ID"
+    run $MESHERYCTL_BIN connection view --save "$INVALID_ID"
     assert_failure
     assert_output --partial "Error"
-    assert_output --partial "Invalid connection ID"
+    assert_output --partial "Invalid UUID"
+    assert_output --partial "invalid connection ID"
 }
 
 @test "[TC-1080][cut=Kubernetes Connection][tg=Connection Lifecycle] given no argument is provided when running mesheryctl connection view connection-id --output-format then a message error is displayed" {
@@ -75,8 +83,14 @@ require_connection_id() {
     run $MESHERYCTL_BIN connection view "$CONNECTION_ID" --output-format foo
     assert_failure
     assert_output --partial "Error"
-    assert_output --partial "output-format choice is invalid"
-    assert_output --partial "use [json|yaml]"
+    # display.ErrInvalidOutputFormat: short description "Invalid Output Format",
+    # cause `Provided output format "foo" is invalid`, remediation
+    # "Ensure using [json|yaml] as the output format". The previously asserted
+    # "output-format choice is invalid" / "use [json|yaml]" are not emitted by
+    # any of those four parts.
+    assert_output --partial "Invalid Output Format"
+    assert_output --partial "is invalid"
+    assert_output --partial "[json|yaml]"
 }
 
 @test "[TC-1080][cut=Kubernetes Connection][tg=Connection Lifecycle] given a valid argument is provided as an argument when running mesheryctl connection view connection-id --output-format yaml then a details in default format is displayed" {
@@ -105,13 +119,17 @@ require_connection_id() {
     assert_output --partial "\"createdAt\""
 }
 
+# Same 400 models.ErrInvalidUUID envelope as the --save case above; the
+# rejection happens before any output formatting, so --output-format json does
+# not change the error text.
 @test "[TC-1080][cut=Kubernetes Connection][tg=Connection Lifecycle] given an invalid connection-id is provided as an argument when running mesheryctl connection view --output-format json/yaml then a message error is displayed" {
-    NONEXISTENT_ID="00000000-0000-0000-0000-000000000000"
+    INVALID_ID="00000000-0000-0000-0000-000000000000"
 
-    run $MESHERYCTL_BIN connection view "$NONEXISTENT_ID" --output-format json
+    run $MESHERYCTL_BIN connection view "$INVALID_ID" --output-format json
     assert_failure
     assert_output --partial "Error"
-    assert_output --partial "Invalid connection ID"
+    assert_output --partial "Invalid UUID"
+    assert_output --partial "invalid connection ID"
 }
 
 @test "[TC-1080][cut=Kubernetes Connection][tg=Connection Lifecycle] given no connection-id is provided as an argument when running mesheryctl connection view --output-format then a message error is displayed" {

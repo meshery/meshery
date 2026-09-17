@@ -63,7 +63,7 @@ reference material.
 | **[Infrastructure, Sizing & Performance]({{< ref "installation/production/infrastructure-sizing-and-performance.md" >}})** | Resource requirements per component, capacity planning, MeshSync tiered discovery, Broker throughput, scalability levers, and known performance bounds. |
 | **[High Availability & Resiliency]({{< ref "installation/production/high-availability-and-resiliency.md" >}})** | Replication, health probes, failure modes and recovery, the ephemeral database, Remote Provider persistence, and backup & disaster recovery posture. |
 | **[Networking & Connectivity]({{< ref "installation/production/networking-and-connectivity.md" >}})** | Network port and directional-flow matrix, ingress and Emissary configuration, secure WebSocket support, CDN and edge caching of the UI, Broker exposure, egress, and network policies. |
-| **[Security Hardening]({{< ref "installation/production/security-hardening.md" >}})** | RBAC and least privilege, pod and container security contexts, secret and kubeconfig handling, TLS, supply-chain integrity, and namespace isolation. |
+| **[Security Hardening]({{< ref "installation/production/security-hardening.md" >}})** | RBAC and least privilege, pod and container security contexts, secret and kubeconfig handling, TLS, supply-chain integrity, namespace isolation, and [trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}}). |
 | **[Authentication, Authorization & Identity]({{< ref "installation/production/authentication-and-identity.md" >}})** | Why to preselect a Remote Provider over the Local Provider, OAuth callback configuration, identity providers, and keys/permissions. |
 | **[Multi-Cluster & Multi-Cloud Operations]({{< ref "installation/production/multi-cluster-and-multi-cloud.md" >}})** | Managed vs. unmanaged cluster connections, one Operator per cluster, kubeconfig and context management, MeshSync modes, and cloud-specific guidance. |
 | **[Monitoring, Observability & Health KPIs]({{< ref "installation/production/monitoring-observability-and-kpis.md" >}})** | Health endpoints, the key performance indicators of Meshery's health, metrics, tracing, centralized logging, and alerting. |
@@ -90,6 +90,12 @@ deployment decisions:
    out-of-cluster and multi-cloud topologies.
 5. **Observe the management plane itself.** Meshery exposes health endpoints and
    metrics; treat them as first-class signals and alert on them.
+6. **Treat every enabled extension as trusted code.** Meshery's
+   [extension points]({{< ref "reference/extensibility/_index.md" >}}) - adapters,
+   Providers, models and integrations, and UI extensions - run inside your
+   deployment's trust boundary, without a sandbox between them and Meshery. Enable
+   only what you need, from publishers you trust, at versions you pin. See
+   [Trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}}).
 
 ## Before you begin
 

@@ -256,7 +256,7 @@ function Connections() {
           )}
         </>
       ) : (
-        <DefaultError />
+        <DefaultError permissionKey={Keys.WorkspaceManagementViewConnections} />
       )}
     </NoSsr>
   );
