@@ -24,6 +24,10 @@ function PatternCardGridItem({
   handlePublishModal,
   handleUnpublishModal,
   handleUnDeploy,
+  handleDirectDeploy,
+  handleDirectUnDeploy,
+  handleDirectDryRun,
+  handleDirectVerify,
   handleClone,
   handleSubmit,
   handleDownload,
@@ -54,6 +58,10 @@ function PatternCardGridItem({
         handleDryRun={handleDryRun}
         handlePublishModal={handlePublishModal}
         handleUnDeploy={handleUnDeploy}
+        handleDirectDeploy={handleDirectDeploy}
+        handleDirectUnDeploy={handleDirectUnDeploy}
+        handleDirectDryRun={handleDirectDryRun}
+        handleDirectVerify={handleDirectVerify}
         handleUnpublishModal={handleUnpublishModal}
         handleClone={handleClone}
         handleInfoModal={handleInfoModal}
@@ -142,6 +150,10 @@ function MesheryPatternGrid({
   openValidationModal,
   openUndeployModal,
   openDryRunModal,
+  directDeploy,
+  directUndeploy,
+  directDryRun,
+  directValidate,
   hideVisibility = false,
   arePatternsReadOnly = false,
   'data-testid': testId = 'meshery-patterns-grid',
@@ -225,6 +237,14 @@ function MesheryPatternGrid({
               handleVerify={(e) =>
                 openValidationModal(e, pattern.patternFile, pattern.name, pattern.id)
               }
+              handleDirectDeploy={(e) => {
+                directDeploy?.(e, pattern.patternFile, pattern.name, pattern.id);
+              }}
+              handleDirectUnDeploy={(e) => {
+                directUndeploy?.(e, pattern.patternFile, pattern.name, pattern.id);
+              }}
+              handleDirectDryRun={(e) => directDryRun?.(e, pattern.patternFile, pattern.name)}
+              handleDirectVerify={(e) => directValidate?.(e, pattern.patternFile, pattern.name)}
               handlePublishModal={() => handlePublishModal(pattern)}
               handleUnpublishModal={(e) => handleUnpublishModal(e, pattern)()}
               handleInfoModal={() => handleInfoModal(pattern)}

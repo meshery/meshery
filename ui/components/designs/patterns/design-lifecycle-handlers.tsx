@@ -9,12 +9,14 @@ import { DryRunDesign } from '../lifecycle/DryRun';
 import { ValidateDesign } from '../lifecycle/ValidateDesign';
 import { DEPLOYMENT_TYPE } from '../lifecycle/common';
 import { parseDesignFile } from '../../../utils/utils';
+import { designValidatorCommands } from '../../../machines/validator/designValidator';
+import { EVENT_TYPES } from '../../../lib/event-types';
 
 /**
- * Builds the four design-lifecycle modal openers (deploy / undeploy /
- * dryrun / validate).
+ * Builds the design-lifecycle modal openers (deploy / undeploy /
+ * dryrun / validate) and direct (single-click) action executors.
  *
- * Each returned function preserves the exact behavior of the original
+ * Each returned modal opener preserves the exact behavior of the original
  * inline definitions in MesheryPatterns.tsx — same modal title strings,
  * same icons, same stepper / modal-body wrapping, same arg shapes.
  */
@@ -24,6 +26,7 @@ export function buildDesignLifecycleHandlers({
   selectedK8sContexts,
   handleDeploy,
   handleUndeploy,
+  notify,
 }) {
   const openDeployModal = (e, pattern_file, name) => {
     const design = parseDesignFile(pattern_file);
@@ -105,5 +108,65 @@ export function buildDesignLifecycleHandlers({
     });
   };
 
-  return { openDeployModal, openUndeployModal, openDryRunModal, openValidateModal };
+  const directDeploy = async (e, pattern_file, name, id) => {
+    e?.stopPropagation?.();
+    const design = parseDesignFile(pattern_file);
+    if (id) {
+      design.id = id;
+    }
+    await handleDeploy?.({ design, selectedK8sContexts });
+    notify?.({
+      message: `Deploying design "${name}"`,
+      event_type: EVENT_TYPES.INFO,
+    });
+  };
+
+  const directUndeploy = async (e, pattern_file, name, id) => {
+    e?.stopPropagation?.();
+    const design = parseDesignFile(pattern_file);
+    if (id) {
+      design.id = id;
+    }
+    await handleUndeploy?.({ design, selectedK8sContexts });
+    notify?.({
+      message: `Undeploying design "${name}"`,
+      event_type: EVENT_TYPES.INFO,
+    });
+  };
+
+  const directDryRun = (e, pattern_file, name) => {
+    e?.stopPropagation?.();
+    const design = parseDesignFile(pattern_file);
+    designValidationActorRef?.send?.(
+      designValidatorCommands.dryRunDesignDeployment({
+        design,
+        k8sContexts: selectedK8sContexts,
+      }),
+    );
+    notify?.({
+      message: `Running dry run for design "${name}"`,
+      event_type: EVENT_TYPES.INFO,
+    });
+  };
+
+  const directValidate = (e, pattern_file, name) => {
+    e?.stopPropagation?.();
+    const design = parseDesignFile(pattern_file);
+    designValidationActorRef?.send?.(designValidatorCommands.validateDesignSchema({ design }));
+    notify?.({
+      message: `Validating design "${name}"`,
+      event_type: EVENT_TYPES.INFO,
+    });
+  };
+
+  return {
+    openDeployModal,
+    openUndeployModal,
+    openDryRunModal,
+    openValidateModal,
+    directDeploy,
+    directUndeploy,
+    directDryRun,
+    directValidate,
+  };
 }
