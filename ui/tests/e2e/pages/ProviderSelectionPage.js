@@ -9,8 +9,9 @@ export class ProviderSelectionPage {
     // "${providerName} More information about ${providerName}" when the info
     // icon button is present. Using a regex that matches either form avoids a
     // Playwright strict-mode violation.
+    const escapedProviderName = providerName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     return this.page.getByRole('menuitem', {
-      name: new RegExp(`^${providerName}(?:\\s+More.*)?\\s*$`, 'i'),
+      name: new RegExp(`^${escapedProviderName}(?:\\s+More.*)?\\s*$`, 'i'),
     });
   }
 
