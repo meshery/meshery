@@ -19,7 +19,7 @@ var (
 	mx                sync.Mutex
 )
 
-// Defines the version metadata for the extension
+// ExtensionVersion defines the version metadata for the extension
 type ExtensionVersion struct {
 	Version string `json:"version,omitempty"`
 }
@@ -100,10 +100,8 @@ func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, _ *http.Reques
 	}
 }
 
-/*
-* ExtensionsHandler is a handler function which works as a proxy to resolve the
-* request of any extension point to its remote provider
- */
+// ExtensionsHandler is a handler function which works as a proxy to resolve the
+// request of any extension point to its remote provider
 func (h *Handler) ExtensionsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	resp, err := provider.ExtensionProxy(req)
 	if err != nil {

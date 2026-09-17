@@ -5,7 +5,7 @@ setup() {
 	_load_bats_libraries
 }
 
-@test "mesheryctl perf profile lists available profiles including test-profile" {
+@test "[cut=Performance][tg=Performance Profile] mesheryctl perf profile lists available profiles including test-profile" {
     run $MESHERYCTL_BIN perf profile
 
     assert_success
@@ -22,7 +22,7 @@ setup() {
     assert_line --partial "test-profile"
 }
 
-@test "mesheryctl perf profile returns message when profile is not found" {
+@test "[cut=Performance][tg=Performance Profile] mesheryctl perf profile returns message when profile is not found" {
     run $MESHERYCTL_BIN perf profile not-found-profile
 
     assert_success
