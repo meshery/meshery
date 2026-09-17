@@ -237,14 +237,24 @@ function MesheryPatternGrid({
               handleVerify={(e) =>
                 openValidationModal(e, pattern.patternFile, pattern.name, pattern.id)
               }
-              handleDirectDeploy={(e) => {
-                directDeploy?.(e, pattern.patternFile, pattern.name, pattern.id);
-              }}
-              handleDirectUnDeploy={(e) => {
-                directUndeploy?.(e, pattern.patternFile, pattern.name, pattern.id);
-              }}
-              handleDirectDryRun={(e) => directDryRun?.(e, pattern.patternFile, pattern.name)}
-              handleDirectVerify={(e) => directValidate?.(e, pattern.patternFile, pattern.name)}
+              handleDirectDeploy={
+                directDeploy
+                  ? (e) => directDeploy(e, pattern.patternFile, pattern.name, pattern.id)
+                  : undefined
+              }
+              handleDirectUnDeploy={
+                directUndeploy
+                  ? (e) => directUndeploy(e, pattern.patternFile, pattern.name, pattern.id)
+                  : undefined
+              }
+              handleDirectDryRun={
+                directDryRun ? (e) => directDryRun(e, pattern.patternFile, pattern.name) : undefined
+              }
+              handleDirectVerify={
+                directValidate
+                  ? (e) => directValidate(e, pattern.patternFile, pattern.name)
+                  : undefined
+              }
               handlePublishModal={() => handlePublishModal(pattern)}
               handleUnpublishModal={(e) => handleUnpublishModal(e, pattern)()}
               handleInfoModal={() => handleInfoModal(pattern)}

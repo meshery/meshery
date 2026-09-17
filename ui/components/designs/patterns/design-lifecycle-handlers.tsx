@@ -108,9 +108,20 @@ export function buildDesignLifecycleHandlers({
     });
   };
 
+  /**
+   * Directly deploys a design without opening the confirmation stepper modal.
+   * Emits an error notification and returns early if the design file cannot be parsed.
+   */
   const directDeploy = async (e, pattern_file, name, id) => {
     e?.stopPropagation?.();
     const design = parseDesignFile(pattern_file);
+    if (!design) {
+      notify?.({
+        message: `Failed to parse design "${name}"`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+      return;
+    }
     if (id) {
       design.id = id;
     }
@@ -121,9 +132,20 @@ export function buildDesignLifecycleHandlers({
     });
   };
 
+  /**
+   * Directly undeploys a design without opening the confirmation stepper modal.
+   * Emits an error notification and returns early if the design file cannot be parsed.
+   */
   const directUndeploy = async (e, pattern_file, name, id) => {
     e?.stopPropagation?.();
     const design = parseDesignFile(pattern_file);
+    if (!design) {
+      notify?.({
+        message: `Failed to parse design "${name}"`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+      return;
+    }
     if (id) {
       design.id = id;
     }
@@ -134,9 +156,20 @@ export function buildDesignLifecycleHandlers({
     });
   };
 
+  /**
+   * Directly runs a dry-run deployment for a design via the validation machine.
+   * Emits an error notification and returns early if the design file cannot be parsed.
+   */
   const directDryRun = (e, pattern_file, name) => {
     e?.stopPropagation?.();
     const design = parseDesignFile(pattern_file);
+    if (!design) {
+      notify?.({
+        message: `Failed to parse design "${name}"`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+      return;
+    }
     designValidationActorRef?.send?.(
       designValidatorCommands.dryRunDesignDeployment({
         design,
@@ -149,9 +182,20 @@ export function buildDesignLifecycleHandlers({
     });
   };
 
+  /**
+   * Directly runs schema validation for a design via the validation machine.
+   * Emits an error notification and returns early if the design file cannot be parsed.
+   */
   const directValidate = (e, pattern_file, name) => {
     e?.stopPropagation?.();
     const design = parseDesignFile(pattern_file);
+    if (!design) {
+      notify?.({
+        message: `Failed to parse design "${name}"`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+      return;
+    }
     designValidationActorRef?.send?.(designValidatorCommands.validateDesignSchema({ design }));
     notify?.({
       message: `Validating design "${name}"`,

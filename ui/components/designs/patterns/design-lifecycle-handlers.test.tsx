@@ -4,9 +4,13 @@ import { describe, expect, it, vi } from 'vitest';
 
 const parseDesignFileMock = vi.fn((fileContents: string) => ({ parsed: fileContents }));
 
-vi.mock('@sistent/sistent', () => ({
-  ModalBody: ({ children }: any) => <div data-testid="modal-body">{children}</div>,
-}));
+vi.mock('@sistent/sistent', async (importOriginal) => {
+  const actual = await importOriginal<Record<string, unknown>>();
+  return {
+    ...actual,
+    ModalBody: ({ children }: any) => <div data-testid="modal-body">{children}</div>,
+  };
+});
 
 vi.mock('@/assets/icons', () => ({
   DoneAll: () => <svg data-testid="done-all" />,
@@ -210,5 +214,32 @@ describe('buildDesignLifecycleHandlers', () => {
         message: 'Validating design "My Design"',
       }),
     );
+  });
+
+  it('direct handlers emit error notifications and abort when design parsing fails', async () => {
+    parseDesignFileMock.mockReturnValueOnce(null as any);
+    const deps = makeDeps();
+    const handlers = buildDesignLifecycleHandlers(deps);
+
+    await handlers.directDeploy(undefined, 'invalid-yaml', 'Bad Design', 'id-1');
+    expect(deps.handleDeploy).not.toHaveBeenCalled();
+    expect(deps.notify).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Failed to parse design "Bad Design"',
+        event_type: expect.objectContaining({ type: 'error' }),
+      }),
+    );
+
+    parseDesignFileMock.mockReturnValueOnce(null as any);
+    await handlers.directUndeploy(undefined, 'invalid-yaml', 'Bad Design', 'id-1');
+    expect(deps.handleUndeploy).not.toHaveBeenCalled();
+
+    parseDesignFileMock.mockReturnValueOnce(null as any);
+    handlers.directDryRun(undefined, 'invalid-yaml', 'Bad Design');
+    expect(deps.designValidationActorRef.send).not.toHaveBeenCalled();
+
+    parseDesignFileMock.mockReturnValueOnce(null as any);
+    handlers.directValidate(undefined, 'invalid-yaml', 'Bad Design');
+    expect(deps.designValidationActorRef.send).not.toHaveBeenCalled();
   });
 });
