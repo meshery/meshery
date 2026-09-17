@@ -498,11 +498,20 @@ func TestContextPingCmd(t *testing.T) {
 	// TestContext.yaml's contexts reference stored tokens ("default",
 	// "default2") that attachContextAuthDetails must resolve to a real file
 	// on disk; point MesheryFolder at the fixture directory containing
-	// auth.json so that resolution succeeds, and restore it afterward since
-	// it is a package-level var shared with other tests in this binary.
+	// auth.json so that resolution succeeds. SetFileLocationTesting also
+	// mutates DockerComposeFile and AuthConfigFile as a side effect, so all
+	// three package-level vars must be restored, not just MesheryFolder, or
+	// later tests in this binary (e.g. TestResetCmd) inherit this test's
+	// fixture paths.
 	origMesheryFolder := utils.MesheryFolder
+	origDockerComposeFile := utils.DockerComposeFile
+	origAuthConfigFile := utils.AuthConfigFile
 	utils.SetFileLocationTesting(currDir)
-	defer func() { utils.MesheryFolder = origMesheryFolder }()
+	t.Cleanup(func() {
+		utils.MesheryFolder = origMesheryFolder
+		utils.DockerComposeFile = origDockerComposeFile
+		utils.AuthConfigFile = origAuthConfigFile
+	})
 
 	utils.StartMockery(t)
 	defer utils.StopMockery(t)

@@ -343,16 +343,6 @@ system-context:
       name: list
       description: List all contexts present
       usage: mesheryctl system context list
-    ping:
-      name: ping
-      description: Check connectivity and token validity for a Meshery context
-      usage: mesheryctl system context ping
-      flags:
-        context:
-          name: --context, -c
-          description: ping the specified context
-          usage: mesheryctl system context ping --context [context name]
-          example: mesheryctl system context ping --context docker-edge
 
 system-provider:
   name: system provider
