@@ -17,3 +17,5 @@ export const generateTestName = (name: string, meshName: string): string => {
 export function generateUUID(): string {
   return uuid();
 }
+
+export { isValidDuration } from '../../utils/validators';
