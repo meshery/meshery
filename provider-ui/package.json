@@ -9,6 +9,7 @@
     "start": "NODE_ENV=production node server.js",
     "lint": "eslint . --cache",
     "lint:fix": "eslint . --cache --fix",
+    "test": "node --test",
     "clean": "rm -rf .next,out"
   },
   "keywords": [],
