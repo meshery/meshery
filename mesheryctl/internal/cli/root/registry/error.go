@@ -22,6 +22,7 @@ var (
 	ErrPurgeReadModelsDirCode    = "mesheryctl-1250"
 	ErrPurgeRemoveCode           = "mesheryctl-1251"
 	ErrPurgeUnsafePathCode       = "mesheryctl-1252"
+	ErrPublishInvalidArgsCode    = "mesheryctl-1256"
 )
 
 func ErrUpdateRegistry(err error, path string) error {
@@ -78,4 +79,8 @@ func ErrPurgeUnsafePath(path, modelsDir string) error {
 
 func ErrPurgeRemove(err error, path string) error {
 	return errors.New(ErrPurgeRemoveCode, errors.Alert, []string{fmt.Sprintf("error removing model version directory: %s", path)}, []string{err.Error()}, []string{"Insufficient filesystem permissions", "The directory is in use by another process"}, []string{"Ensure sufficient permissions to delete the directory", "Retry the purge after closing any process using the directory"})
+}
+
+func ErrPublishInvalidArgs(msg string) error {
+	return errors.New(ErrPublishInvalidArgsCode, errors.Alert, []string{"invalid flags for registry publish"}, []string{msg}, []string{"Missing or invalid required flags, or positional arguments passed instead of flags"}, []string{"Provide --system, --spreadsheet-cred, --spreadsheet-id and --models-output-path for all systems. --imgs-output-path is optional for the 'meshery' system but required for 'remote-provider' and 'website'. Run 'mesheryctl registry publish --help' for usage instructions."})
 }
