@@ -19,10 +19,10 @@ import (
 //
 // TODO: Move to schemas
 type OrganizationsPage struct {
-	Organizations []*organization.Organization `json:"organizations"`
-	TotalCount    int                          `json:"totalCount"`
-	Page          uint64                       `json:"page"`
-	PageSize      uint64                       `json:"pageSize"`
+	Organizations []*organization.Organization `json:"organizations" yaml:"organizations"`
+	TotalCount    int                          `json:"totalCount" yaml:"totalCount"`
+	Page          uint64                       `json:"page" yaml:"page"`
+	PageSize      uint64                       `json:"pageSize" yaml:"pageSize"`
 }
 
 // MarshalJSON emits both camelCase (canonical) and snake_case (legacy)
