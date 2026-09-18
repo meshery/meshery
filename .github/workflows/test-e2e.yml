@@ -156,11 +156,15 @@ jobs:
           start_time=$(date +%s)
           deadline=$((start_time + timeout_seconds))
           while [ $(date +%s) -lt $deadline ]; do
-            if curl -sf --connect-timeout 2 --max-time 2 "$probe_url" >/dev/null; then
+            remaining=$((deadline - $(date +%s)))
+            [ "$remaining" -gt 0 ] || break
+            request_timeout=$((remaining < 2 ? remaining : 2))
+            if curl -sf --connect-timeout 2 --max-time "$request_timeout" "$probe_url" >/dev/null; then
               echo "Meshery server ready after $(($(date +%s) - start_time))s"
               exit 0
             fi
-            sleep 1
+            remaining=$((deadline - $(date +%s)))
+            [ "$remaining" -gt 0 ] && sleep 1
           done
           echo "::error::Meshery server did not become ready at ${probe_url} within ${timeout_seconds}s"
           docker logs meshery || true
