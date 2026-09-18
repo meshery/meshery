@@ -35,6 +35,8 @@ on:
         required: true
         default: "edge"
 
+permissions: {}
+
 env:
   GIT_VERSION: ${{ inputs.release-ver }}
   GIT_STRIPPED_VERSION: ${{ inputs.stripped-release-ver }}
@@ -55,6 +57,9 @@ jobs:
 
   docker-extension:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Checkout 🛎️ repo
         uses: actions/checkout@v6
@@ -110,6 +115,12 @@ jobs:
             RELEASE_CHANNEL=${{env.RELEASE_CHANNEL}}
           tags: ${{ steps.meta.outputs.tags }}
           platforms: linux/amd64,linux/arm64
+
+      - name: Sign the published Docker image
+        uses: ./.github/actions/sign-images
+        with:
+          images: |
+            ${{ steps.meta.outputs.tags }}
 
       # -
       #   name: Docker Hub Description

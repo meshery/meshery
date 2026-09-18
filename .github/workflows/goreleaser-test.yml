@@ -24,4 +24,4 @@ jobs:
           RELEASE_CHANNEL: "stable"
         with:
           version: 2
-          args: build --clean --skip=validate -f .github/.goreleaser.yml
+          args: build --clean --skip=validate,sign -f .github/.goreleaser.yml
