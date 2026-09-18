@@ -37,7 +37,7 @@ kubectl exec --namespace meshery deployment/meshery -- \
 
 ```
 [+]capabilities ok
-[i]extension extension package found
+[i]extension package found
 healthz check passed
 ```
 
