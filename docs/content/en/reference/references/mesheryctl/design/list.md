@@ -3,6 +3,7 @@ title: mesheryctl-design-list
 display_title: false
 command: design
 subcommand: list
+categories: [mesheryctl-design]
 ---
 
 # mesheryctl design list
@@ -15,8 +16,10 @@ Display list of all available designs.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design list [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,40 +28,50 @@ mesheryctl design list [flags]
 Display a list of all available designs
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design list
 
+</div>
 </div>
 </pre> 
 
 Display a list of all available designs with verbose output
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design list --verbose
 
+</div>
 </div>
 </pre> 
 
 Display a list of all available designs with specified page number (10 designs per page by default)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design list --page [pange-number]
 
+</div>
 </div>
 </pre> 
 
 Display a list of all available designs with custom page size (10 designs per page by default)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design list --pagesize [page-size]
 
+</div>
 </div>
 </pre> 
 
 Display only the count of all available designs
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design list --count
 
+</div>
 </div>
 </pre> 
 
