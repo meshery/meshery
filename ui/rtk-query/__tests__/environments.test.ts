@@ -21,6 +21,12 @@ const { triggers, schemasGetEnvs, schemasGetEnvConns, result } = vi.hoisted(() =
 }));
 
 vi.mock('@meshery/schemas/mesheryApi', () => ({
+  mesheryApi: {
+    enhanceEndpoints: vi.fn(),
+    reducerPath: 'mesheryApi',
+    reducer: () => ({}),
+    middleware: () => (next: (action: unknown) => unknown) => (action: unknown) => next(action),
+  },
   useGetEnvironmentsQuery: (...args: unknown[]) => schemasGetEnvs(...args),
   useGetEnvironmentConnectionsQuery: (...args: unknown[]) => schemasGetEnvConns(...args),
   useCreateEnvironmentMutation: () => [triggers.create, result],
