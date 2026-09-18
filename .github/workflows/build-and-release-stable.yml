@@ -12,9 +12,6 @@ jobs:
   build:
     name: Docker build and push
     if: ${{ github.repository == 'meshery/meshery' }}
-    permissions:
-      contents: read
-      id-token: write
     env:
       RELEASE_CHANNEL: "stable"
     runs-on: ubuntu-24.04
@@ -81,9 +78,6 @@ jobs:
     name: Mesheryctl build & release
     if: ${{ github.repository == 'meshery/meshery' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, 'patch') && !contains(github.ref, 'alpha') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc') }}
     runs-on: macos-latest
-    permissions:
-      contents: read
-      id-token: write
     steps:
       - name: Check out code
         uses: actions/checkout@v6

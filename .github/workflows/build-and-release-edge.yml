@@ -22,9 +22,6 @@ jobs:
   docker-build-push:
     name: Docker build and push
     if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && success()
-    permissions:
-      contents: read
-      id-token: write
     env:
       RELEASE_CHANNEL: "edge"
     runs-on: ubuntu-24.04
