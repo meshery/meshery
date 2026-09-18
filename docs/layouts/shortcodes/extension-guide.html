@@ -44,7 +44,7 @@
       .extension-guide-svg-container img {
         width: 40%;
       }
-      .extenion-guide-card{
+      .extension-guide-card{
         max-width: 30rem;
         flex-direction: column;
       }
@@ -56,7 +56,7 @@
 {{ $guideTitle := .Get "guide_title" }}
 {{ $guideDescription := .Get "guide_description" }}
 {{ $guideSvg := .Get "guide_svg" }}
-{{ $guideAssetsFolder := .Get "guide_assests_folder" }}
+{{ $guideAssetsFolder := or (.Get "guide_assets_folder") (.Get "guide_assests_folder") }}
 
 <div class="extension-guides-container">
   {{ $data := index hugo.Data $dataFile }}
