@@ -41815,12 +41815,19 @@ be imported into the current release: invalid ownership metadata; label validati
 &lt;p&gt;Situation: Unable to start Meshery Server with &lt;code&gt;make run-local&lt;/code&gt; due to error of &lt;code&gt;key/value size is invalid&lt;/code&gt;&lt;/p&gt;</description></item><item><title>Tuf</title><link>/extensions/models/tuf/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/tuf/</guid><description/></item><item><title>Using Meshery CLI</title><link>/guides/mesheryctl/working-with-mesheryctl/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/guides/mesheryctl/working-with-mesheryctl/</guid><description>&lt;p&gt;Meshery&amp;rsquo;s command line interface is &lt;code&gt;mesheryctl&lt;/code&gt;. Use &lt;code&gt;mesheryctl&lt;/code&gt; to both manage the lifecycle of Meshery itself and to access and invoke any of Meshery&amp;rsquo;s application and cloud native management functions. &lt;code&gt;mesheryctl&lt;/code&gt; commands can be categorized as follows:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;mesheryctl&lt;/code&gt; - Global overrides and flags&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;mesheryctl app&lt;/code&gt; - Cloud Native Application Management&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;mesheryctl filter&lt;/code&gt; - Cloud Native Filter Management&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;mesheryctl mesh&lt;/code&gt; - Cloud Native Lifecycle &amp;amp; Configuration Management&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;mesheryctl perf&lt;/code&gt; - Cloud Native Performance Management&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;mesheryctl design&lt;/code&gt; - Cloud Native Pattern Configuration &amp;amp; Management&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;mesheryctl system&lt;/code&gt; - Meshery Lifecycle and Troubleshooting&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl design&lt;/code&gt; - Cloud Native Pattern Configuration &amp;amp; Management&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl model&lt;/code&gt; - Model Management and Registry Operations&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl component&lt;/code&gt; - Meshery Component Management&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl relationship&lt;/code&gt; - Component Relationship Management&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl registry&lt;/code&gt; - Capability Registry Publishing and Management&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl connection&lt;/code&gt; - Connection and Credential Management&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl environment&lt;/code&gt; - Environment Management&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl workspace&lt;/code&gt; - Workspace Management&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl organization&lt;/code&gt; - Organization Management&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl filter&lt;/code&gt; - Cloud Native Filter Management&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl perf&lt;/code&gt; - Cloud Native Performance Management&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;mesheryctl adapter&lt;/code&gt; - Meshery Adapter Management&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id="configuring-meshery-deployments-with-meshconfig"&gt;
 	Configuring Meshery Deployments with meshconfig
