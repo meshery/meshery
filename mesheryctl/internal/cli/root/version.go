@@ -22,6 +22,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/printer"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -30,14 +31,60 @@ import (
 	"github.com/spf13/viper"
 )
 
+type versionInfo struct {
+	Version string `json:"version" yaml:"version"`
+	GitSHA  string `json:"gitSha" yaml:"gitSha"`
+}
+
+type versionOutput struct {
+	Client versionInfo `json:"client" yaml:"client"`
+	Server versionInfo `json:"server" yaml:"server"`
+}
+
+// stringOutput make human string output for version command
+func (v versionOutput) stringOutput() string {
+	clientSHA := formatShortSHA(v.Client.GitSHA)
+
+	serverSHA := v.Server.GitSHA
+	if serverSHA != "unavailable" {
+		serverSHA = formatShortSHA(serverSHA)
+	}
+
+	out := fmt.Sprintf("Client Version: %s", v.Client.Version)
+	if clientSHA != "" && clientSHA != "unavailable" {
+		out += fmt.Sprintf(" (%s)", clientSHA)
+	}
+
+	out += fmt.Sprintf("\nServer Version: %s", v.Server.Version)
+	if serverSHA != "" && serverSHA != "unavailable" {
+		out += fmt.Sprintf(" (%s)", serverSHA)
+	}
+
+	return out + "\n"
+}
+
+// formatShortSHA make commitSHA shorter for human output
+func formatShortSHA(sha string) string {
+	if len(sha) > 7 {
+		return sha[:7]
+	}
+	return sha
+}
+
 var (
 	// Mesheryctl config - holds config handler
 	mctlCfg *config.MesheryCtlConfig
+
+	outputFormat string
 )
 
 var linkDoc = map[string]string{
 	"link":    "![version-usage](../../images/version.png)",
 	"caption": "Usage of mesheryctl version",
+}
+
+func init() {
+	printer.AddFormatFlag(versionCmd, &outputFormat)
 }
 
 // versionCmd represents the version command
@@ -109,61 +156,69 @@ mesheryctl version
 		}
 		return nil
 	},
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
+		activePrinter, err := printer.New(outputFormat, cmd.OutOrStdout())
 
-		url := mctlCfg.GetBaseMesheryURL()
+		if err != nil {
+			return err
+		}
+
 		build := constants.GetMesheryctlVersion()
 		commitsha := constants.GetMesheryctlCommitsha()
-		defer utils.CheckMesheryctlClientVersion(build)
 
-		version := config.Version{
-			Build:          "unavailable",
-			CommitSHA:      "unavailable",
-			ReleaseChannel: "unavailable",
+		isHumanOutput := outputFormat == "" || outputFormat == "table" || outputFormat == "string"
+
+		if isHumanOutput {
+			defer utils.CheckMesheryctlClientVersion(build)
 		}
 
-		header := []string{"", "Version", "GitSHA"}
-		rows := [][]string{{"Client", build, commitsha}, {"Server", version.GetBuild(), version.GetCommitSHA()}}
-
-		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/version", url), nil)
-		if err != nil {
-			utils.PrintToTable(header, rows, nil)
-			utils.Log.Error(ErrGettingRequestContext(err))
-			return
+		out := versionOutput{
+			Client: versionInfo{Version: build, GitSHA: commitsha},
+			Server: versionInfo{Version: "unavailable", GitSHA: "unavailable"},
 		}
 
-		client := &http.Client{Timeout: 10 * time.Second}
-		resp, err := client.Do(req)
-
-		if err != nil {
-
-			// resp is nil here except when CheckRedirect fails, and in that
-			// case net/http has already closed resp.Body for us — see the
-			// (Client).Do docs — so there is nothing left to close.
-
-			utils.PrintToTable(header, rows, nil)
-			utils.Log.Warn(ErrConnectingToServer(err))
-			return
+		if mctlCfg != nil {
+			if srv, err := fetchServerVersion(mctlCfg.GetBaseMesheryURL()); err == nil {
+				out.Server = srv
+			} else if isHumanOutput {
+				utils.Log.Warn(ErrConnectingToServer(err))
+			}
 		}
 
-		// needs multiple defer as Body.Close needs a valid response
-		defer func() { _ = resp.Body.Close() }()
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
-			utils.PrintToTable(header, rows, nil)
-			utils.Log.Error(utils.ErrInvalidAPIResponse(err))
-			return
-		}
-
-		err = json.Unmarshal(data, &version)
-		if err != nil {
-			utils.PrintToTable(header, rows, nil)
-			utils.Log.Error(ErrUnmarshallingAPIData(err))
-			return
-		}
-
-		rows[1][1] = version.GetBuild()
-		rows[1][2] = version.GetCommitSHA()
-		utils.PrintToTable(header, rows, nil)
+		return activePrinter.Print(out, func(w io.Writer) error {
+			_, err := fmt.Fprint(w, out.stringOutput())
+			return err
+		})
 	},
+}
+
+// fetchServerVersion helper function to fetch version info from api
+func fetchServerVersion(baseURL string) (versionInfo, error) {
+	client := &http.Client{Timeout: 5 * time.Second}
+	resp, err := client.Get(fmt.Sprintf("%s/api/system/version", baseURL))
+	if err != nil {
+		return versionInfo{}, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	if resp.StatusCode != http.StatusOK {
+		return versionInfo{}, fmt.Errorf("server returned status: %d", resp.StatusCode)
+	}
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return versionInfo{}, err
+	}
+
+	var raw config.Version
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return versionInfo{}, err
+	}
+
+	return versionInfo{
+		Version: raw.GetBuild(),
+		GitSHA:  raw.GetCommitSHA(),
+	}, nil
 }
