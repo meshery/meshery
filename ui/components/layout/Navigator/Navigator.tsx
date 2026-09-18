@@ -485,8 +485,13 @@ const NavigatorContent = () => {
         const ListItemComponent = isRootItem ? SideBarListItem : NavigatorListItem;
         const listItemProps = isRootItem
           ? {
+              // `link` gates only the hover background in SideBarListItem. Every core
+              // navigator row passes it, and the NavigatorListItem this replaces applied
+              // that background unconditionally, so pass it here too rather than deriving
+              // it from href - otherwise an href-less root extension would be the one row
+              // in the sidebar with no hover background.
               dense: true,
-              link: !!href,
+              link: true,
               isActive,
             }
           : {
