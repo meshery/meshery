@@ -214,7 +214,10 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 			userResponse = true
 		} else {
 			// ask user for confirmation
-			userResponse = utils.AskForConfirmation("The Meshery deployment in context '" + focusedContext + "' will be replaced with a new Meshery deployment and channel subscription. Are you sure you want to continue")
+			userResponse, err = utils.AskForConfirmation("The Meshery deployment in context '" + focusedContext + "' will be replaced with a new Meshery deployment and channel subscription. Are you sure you want to continue")
+			if err != nil {
+				return err
+			}
 		}
 
 		if !userResponse {
