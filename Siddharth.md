@@ -1,1 +1,1 @@
-Hi I am Siddharth and I am working as SDE at freshworks, looking forward to contributibng for meshery and would love to conenct with you guys on LinkedInd https://www.linkedin.com/in/siddharth-murugesan/
+Hi everyone, I'm Siddharth, an SDE at Freshworks. I'm looking forward to contributing to Meshery, and I'd be glad to connect on LinkedIn: https://www.linkedin.com/in/siddharth-murugesan/
