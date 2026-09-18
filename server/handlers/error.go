@@ -217,6 +217,7 @@ const (
 	ErrMeshsyncReconcileCode               = "meshery-server-1442"
 	ErrUnsafeFilePathCode                  = "meshery-server-1443"
 	ErrModelNotFoundCode                   = "meshery-server-1485"
+	ErrInvalidRegistrySVGAssetCode         = "meshery-server-1486"
 	// Environment, workspace, organization, user and key operations previously
 	// reported every failure as ErrGetResult ("unable to get result", probable
 	// cause "Result Identifier provided is not valid") - a performance-results
@@ -832,6 +833,16 @@ func ErrInvalidFileRequest(err error) error {
 }
 func ErrUnsafeFilePath(err error) error {
 	return errors.New(ErrUnsafeFilePathCode, errors.Alert, []string{"Unsafe file path requested"}, []string{err.Error()}, []string{"The requested file path resolves outside the directories these endpoints are permitted to serve (the Meshery log directory under ~/.meshery/logs)"}, []string{"Request only files that live under ~/.meshery/logs; paths outside it, or symlinks that escape it, are rejected"})
+}
+
+// ErrInvalidRegistrySVGAsset wraps a rejected registrant-supplied icon
+// asset during component or model registration: an unsafe Model.Name /
+// Component.Kind (path separators, "..", or any character outside a plain
+// slug) or SVG content containing a script, event handler, foreignObject,
+// or javascript: URI. Emitted with HTTP 400 because the request itself is
+// the problem, not the server.
+func ErrInvalidRegistrySVGAsset(err error) error {
+	return errors.New(ErrInvalidRegistrySVGAssetCode, errors.Alert, []string{"Invalid registry icon asset"}, []string{err.Error()}, []string{"Model.Name or Component.Kind contains characters other than a plain slug (letters, digits, '.', '_', '-'), most likely path separators or \"..\"", "The SVG content includes a <script> tag, an event-handler attribute, a <foreignObject>, or a javascript: URI"}, []string{"Use a plain alphanumeric slug for the model/component name and kind, and ensure SVG assets contain only static markup with no embedded scripts"})
 }
 func ErrReadFileContent(err error, file string) error {
 	return errors.New(ErrReadFileContentCode, errors.Alert, []string{"Failed to read file content", file}, []string{err.Error()}, []string{"The file could not be opened or streamed to the response"}, []string{"Verify the file exists and the server has permission to read it"})

@@ -69,7 +69,11 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 			for _, comp := range comps {
 				var isModelError bool
 				var isRegistranError bool
-				utils.WriteSVGsOnFileSystem(&comp)
+				if err = utils.WriteSVGsOnFileSystem(&comp); err != nil {
+					h.log.Error(ErrInvalidRegistrySVGAsset(err))
+					responseItem.Errors = append(responseItem.Errors, err.Error())
+					continue
+				}
 				host := fmt.Sprintf("%s.artifacthub.meshery", gpi.Name)
 				isRegistranError, isModelError, err = h.registryManager.RegisterEntity(registry.RegistrantHostToV1beta3(connection.Connection{
 					Kind: artifacthub.ArtifactHub,
