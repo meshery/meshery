@@ -1,12 +1,15 @@
 package system
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
@@ -480,6 +483,210 @@ func TestContextSwitchCmd(t *testing.T) {
 		})
 		t.Log("SwitchContextCmd test passed")
 	}
+}
+
+func TestContextPingCmd(t *testing.T) {
+	resetVariables()
+	// get current directory
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	utils.SetupCustomContextEnv(t, currDir+"/fixtures/.meshery/TestContext.yaml")
+
+	// TestContext.yaml's contexts reference stored tokens ("default",
+	// "default2") that attachContextAuthDetails must resolve to a real file
+	// on disk; point MesheryFolder at the fixture directory containing
+	// auth.json so that resolution succeeds. SetFileLocationTesting also
+	// mutates DockerComposeFile and AuthConfigFile as a side effect, so all
+	// three package-level vars must be restored, not just MesheryFolder, or
+	// later tests in this binary (e.g. TestResetCmd) inherit this test's
+	// fixture paths.
+	origMesheryFolder := utils.MesheryFolder
+	origDockerComposeFile := utils.DockerComposeFile
+	origAuthConfigFile := utils.AuthConfigFile
+	utils.SetFileLocationTesting(currDir)
+	t.Cleanup(func() {
+		utils.MesheryFolder = origMesheryFolder
+		utils.DockerComposeFile = origDockerComposeFile
+		utils.AuthConfigFile = origAuthConfigFile
+	})
+
+	utils.StartMockery(t)
+	defer utils.StopMockery(t)
+
+	mesheryctlflags.InitValidators(SystemCmd)
+
+	t.Run("valid token reports reachable and valid", func(t *testing.T) {
+		contextPingFlags.Context = ""
+		httpmock.RegisterResponder("GET", "http://localhost:9081/api/user",
+			httpmock.NewStringResponder(200, `{"email":"alice@example.com"}`))
+
+		buf := utils.SetupMeshkitLoggerTesting(t, false)
+		SystemCmd.SetOut(buf)
+		SystemCmd.SetErr(buf)
+		SystemCmd.SetArgs([]string{"context", "ping"})
+		err := SystemCmd.Execute()
+		if err != nil {
+			t.Fatalf("expected no error for a valid token, got: %v", err)
+		}
+
+		out := buf.String()
+		for _, want := range []string{
+			"Context: local",
+			"Endpoint: http://localhost:9081",
+			"✅ Server reachable",
+			"✅ Token valid (user: alice@example.com)",
+		} {
+			if !strings.Contains(out, want) {
+				t.Fatalf("expected output to contain %q, got: %s", want, out)
+			}
+		}
+	})
+
+	t.Run("expired or invalid token is reported, not mistaken for unreachable", func(t *testing.T) {
+		contextPingFlags.Context = ""
+		httpmock.RegisterResponder("GET", "http://localhost:32242/api/user",
+			httpmock.NewStringResponder(401, `{"error":"unauthorized"}`))
+
+		buf := utils.SetupMeshkitLoggerTesting(t, false)
+		SystemCmd.SetOut(buf)
+		SystemCmd.SetErr(buf)
+		SystemCmd.SetArgs([]string{"context", "ping", "local2"})
+		err := SystemCmd.Execute()
+		if err == nil {
+			t.Fatal("expected a non-nil error for an invalid/expired token")
+		}
+
+		out := buf.String()
+		for _, want := range []string{
+			"Context: local2",
+			"Endpoint: http://localhost:32242",
+			"✅ Server reachable",
+			"⚠️  Token invalid/expired",
+		} {
+			if !strings.Contains(out, want) {
+				t.Fatalf("expected output to contain %q, got: %s", want, out)
+			}
+		}
+	})
+
+	t.Run("unreachable server is reported without a token verdict", func(t *testing.T) {
+		contextPingFlags.Context = ""
+		httpmock.RegisterResponder("GET", "http://localhost:9081/api/user",
+			httpmock.NewErrorResponder(errors.New("dial tcp: connect: connection refused")))
+
+		buf := utils.SetupMeshkitLoggerTesting(t, false)
+		SystemCmd.SetOut(buf)
+		SystemCmd.SetErr(buf)
+		SystemCmd.SetArgs([]string{"context", "ping"})
+		err := SystemCmd.Execute()
+		if err == nil {
+			t.Fatal("expected a non-nil error for an unreachable server")
+		}
+
+		out := buf.String()
+		for _, want := range []string{
+			"Context: local",
+			"Endpoint: http://localhost:9081",
+			"❌ Server unreachable: dial tcp: connect: connection refused",
+		} {
+			if !strings.Contains(out, want) {
+				t.Fatalf("expected output to contain %q, got: %s", want, out)
+			}
+		}
+		if strings.Contains(out, "Token valid") || strings.Contains(out, "Token invalid") {
+			t.Fatalf("did not expect a token verdict when the server is unreachable, got: %s", out)
+		}
+	})
+
+	t.Run("token configured but file missing surfaces an error without contacting the server", func(t *testing.T) {
+		contextPingFlags.Context = ""
+
+		// Point MesheryFolder at a location with no auth.json, so the
+		// context's configured token ("default") cannot be resolved to a
+		// real file, without touching the fixture used by other subtests.
+		missingTokenDir := t.TempDir()
+		origMesheryFolder := utils.MesheryFolder
+		utils.MesheryFolder = missingTokenDir
+		defer func() { utils.MesheryFolder = origMesheryFolder }()
+
+		callsBefore := httpmock.GetTotalCallCount()
+
+		buf := utils.SetupMeshkitLoggerTesting(t, false)
+		SystemCmd.SetOut(buf)
+		SystemCmd.SetErr(buf)
+		SystemCmd.SetArgs([]string{"context", "ping"})
+		err := SystemCmd.Execute()
+		if err == nil {
+			t.Fatal("expected a non-nil error when the stored token file is missing")
+		}
+		if !strings.Contains(err.Error(), "unable to attach stored token") {
+			t.Fatalf("expected a token-attachment error, got: %v", err)
+		}
+
+		if got := httpmock.GetTotalCallCount(); got != callsBefore {
+			t.Fatalf("expected no network call when the token file could not be attached, call count went from %d to %d", callsBefore, got)
+		}
+
+		out := buf.String()
+		for _, want := range []string{
+			"Context: local",
+			"Endpoint: http://localhost:9081",
+		} {
+			if !strings.Contains(out, want) {
+				t.Fatalf("expected output to contain %q, got: %s", want, out)
+			}
+		}
+		if strings.Contains(out, "Server reachable") {
+			t.Fatalf("did not expect a reachability verdict when the token could not be attached, got: %s", out)
+		}
+	})
+
+	t.Run("non-loopback http endpoint refuses to send the stored token", func(t *testing.T) {
+		contextPingFlags.Context = ""
+
+		// Switch to a fixture whose only context is a non-loopback http://
+		// endpoint, so the new scheme guard in attachContextAuthDetails is
+		// the thing that stops the request - not a missing token or file.
+		// Restore the fixture used by the rest of this test afterward.
+		utils.SetupCustomContextEnv(t, currDir+"/fixtures/.meshery/NonLoopbackContext.yaml")
+		defer utils.SetupCustomContextEnv(t, currDir+"/fixtures/.meshery/TestContext.yaml")
+
+		callsBefore := httpmock.GetTotalCallCount()
+
+		buf := utils.SetupMeshkitLoggerTesting(t, false)
+		SystemCmd.SetOut(buf)
+		SystemCmd.SetErr(buf)
+		SystemCmd.SetArgs([]string{"context", "ping"})
+		err := SystemCmd.Execute()
+		if err == nil {
+			t.Fatal("expected a non-nil error for a non-loopback http endpoint")
+		}
+		if !strings.Contains(err.Error(), "refusing to send stored token over plaintext HTTP to non-loopback endpoint") {
+			t.Fatalf("expected a plaintext-HTTP refusal error, got: %v", err)
+		}
+
+		if got := httpmock.GetTotalCallCount(); got != callsBefore {
+			t.Fatalf("expected no network call when the endpoint is refused, call count went from %d to %d", callsBefore, got)
+		}
+
+		out := buf.String()
+		if strings.Contains(out, "Server reachable") {
+			t.Fatalf("did not expect a reachability verdict when the endpoint was refused, got: %s", out)
+		}
+	})
+
+	t.Run("nonexistent context name errors out", func(t *testing.T) {
+		contextPingFlags.Context = ""
+		buf := utils.SetupMeshkitLoggerTesting(t, false)
+		SystemCmd.SetOut(buf)
+		SystemCmd.SetErr(buf)
+		SystemCmd.SetArgs([]string{"context", "ping", "does-not-exist"})
+		err := SystemCmd.Execute()
+		utils.AssertMeshkitErrorsEqual(t, err, ErrContextNotExists(fmt.Errorf("context `does-not-exist` does not exist")))
+	})
 }
 
 func resetVariables() {
