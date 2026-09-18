@@ -77,15 +77,6 @@ export const adaptersList: AdaptersListType = {
     enabled: false,
     url: '',
   },
-  NGINX_SERVICE_MESH: {
-    name: 'NGINX Service Mesh',
-    label: 'meshery-nginx-sm',
-    imageSrc: '/static/img/adapters/nginx.svg',
-    description: adaptersDescription('NGINX Service Mesh'),
-    defaultPort: 10010,
-    enabled: false,
-    url: '',
-  },
   CILIUM_SERVICE_MESH: {
     name: 'Cilium Service Mesh',
     label: 'meshery-cilium',
