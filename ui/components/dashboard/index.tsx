@@ -225,16 +225,15 @@ const Dashboard = () => {
         y: 10,
         ...(widget.defaultSizing || widgetSizing[key] || {}),
       };
-      const updatedLayouts = {
-        lg: [...dashboardLayout.lg, newComponent],
-        md: [...dashboardLayout.md, newComponent],
-        sm: [...dashboardLayout.sm, newComponent],
-        xs: [...dashboardLayout.xs, newComponent],
-        xxs: [...dashboardLayout.xxs, newComponent],
-      };
-      setDashboardLayout(updatedLayouts);
+      setDashboardLayout((prev) => ({
+        lg: [...prev.lg, newComponent],
+        md: [...prev.md, newComponent],
+        sm: [...prev.sm, newComponent],
+        xs: [...prev.xs, newComponent],
+        xxs: [...prev.xxs, newComponent],
+      }));
     },
-    [dashboardLayout, widgetSizing],
+    [widgetSizing],
   );
 
   const sidebarContent = useMemo(
@@ -242,9 +241,12 @@ const Dashboard = () => {
       <WidgetPicker
         widgetsToAdd={widgetsToAdd}
         onAddWidget={onAddWidget}
-        onClose={() => setIsEditMode(false)}
+        onClose={() => cancelEditing()}
       />
     ),
+    // cancelEditing is stable (no deps that change on drag); arrow wrapper is
+    // required because cancelEditing is declared after this useMemo (const TDZ).
+
     [widgetsToAdd, onAddWidget],
   );
 
@@ -440,6 +442,7 @@ const Dashboard = () => {
             sidebarContent={sidebarContent}
             sidebarTitle="Widget Picker"
             sidebarTopOffset="64px"
+            sidebarHeight="calc(100vh - 64px)"
           >
             <ResponsiveReactGridLayout
               layouts={constrainedLayouts}

@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import { WidgetPicker } from '@sistent/sistent';
 import { LayoutActionButton, LayoutWidget, StyledCard } from './components';
 
 vi.mock('@sistent/sistent', () => ({
@@ -98,43 +97,14 @@ vi.mock('css/icons.styles', () => ({
   iconMedium: {},
 }));
 
-describe('WidgetPicker', () => {
-  it('shows the empty state when no widgets are available to add', () => {
-    render(<WidgetPicker widgetsToAdd={[]} onAddWidget={vi.fn()} />);
-    expect(screen.getByText(/All widgets added to the layout/i)).toBeInTheDocument();
-  });
-
-  it('renders widget cards and invokes onAddWidget on click', async () => {
-    const user = userEvent.setup();
-    const onAddWidget = vi.fn();
-    render(
-      <WidgetPicker
-        widgetsToAdd={[{ key: 'OVERVIEW', title: 'Overview', thumbnail: '/a.png' }]}
-        onAddWidget={onAddWidget}
-      />,
-    );
-
-    expect(screen.getByText('Overview')).toBeInTheDocument();
-    const img = screen.getByRole('img', { name: /overview/i });
-    expect(img).toHaveAttribute('src', '/a.png');
-
-    await user.click(screen.getByRole('button', { name: /add overview widget/i }));
-    expect(onAddWidget).toHaveBeenCalledTimes(1);
-    expect(onAddWidget).toHaveBeenCalledWith(
-      { title: 'Overview', thumbnail: '/a.png' },
-      'OVERVIEW',
-    );
-  });
-
-  it('calls onClose when close button is clicked', async () => {
-    const user = userEvent.setup();
-    const onClose = vi.fn();
-    render(<WidgetPicker widgetsToAdd={[]} onAddWidget={vi.fn()} onClose={onClose} />);
-
-    await user.click(screen.getByRole('button', { name: /close widget picker/i }));
-    expect(onClose).toHaveBeenCalledTimes(1);
-  });
-});
+// NOTE: WidgetPicker is exported from @sistent/sistent. Because this file
+// mocks the entire @sistent/sistent module, any test that imports and renders
+// WidgetPicker from here only exercises the local vi.mock stub — not the real
+// component — and cannot catch regressions in Sistent. Real WidgetPicker
+// coverage belongs in layer5io/sistent's own test suite. If Meshery-specific
+// integration behavior needs asserting (e.g. the onClose callback restores
+// orgDashboardLayout), write an integration test against the Dashboard component
+// directly rather than the WidgetPicker sub-component in isolation.
 
 describe('LayoutActionButton', () => {
   const FakeIcon = (props: any) => <svg data-testid="fake-icon" {...props} />;
