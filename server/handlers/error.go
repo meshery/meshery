@@ -218,6 +218,7 @@ const (
 	ErrUnsafeFilePathCode                  = "meshery-server-1443"
 	ErrModelNotFoundCode                   = "meshery-server-1485"
 	ErrInvalidRegistrySVGAssetCode         = "meshery-server-1486"
+	ErrWriteRegistrySVGAssetCode           = "meshery-server-1487"
 	// Environment, workspace, organization, user and key operations previously
 	// reported every failure as ErrGetResult ("unable to get result", probable
 	// cause "Result Identifier provided is not valid") - a performance-results
@@ -843,6 +844,15 @@ func ErrUnsafeFilePath(err error) error {
 // the problem, not the server.
 func ErrInvalidRegistrySVGAsset(err error) error {
 	return errors.New(ErrInvalidRegistrySVGAssetCode, errors.Alert, []string{"Invalid registry icon asset"}, []string{err.Error()}, []string{"Model.Name or Component.Kind contains characters other than a plain slug (letters, digits, '.', '_', '-'), most likely path separators or \"..\"", "The SVG content includes a <script> tag, an event-handler attribute, a <foreignObject>, or a javascript: URI"}, []string{"Use a plain alphanumeric slug for the model/component name and kind, and ensure SVG assets contain only static markup with no embedded scripts"})
+}
+
+// ErrWriteRegistrySVGAsset wraps a filesystem or I/O failure writing an
+// already-valid icon asset during component or model registration, as
+// opposed to ErrInvalidRegistrySVGAsset, which is the request's fault.
+// Emitted with HTTP 500 because the failure is server-side (disk full,
+// missing permissions, or the meshmodels directory unexpectedly gone).
+func ErrWriteRegistrySVGAsset(err error) error {
+	return errors.New(ErrWriteRegistrySVGAssetCode, errors.Alert, []string{"Failed to write registry icon asset"}, []string{err.Error()}, []string{"The ui/public/static/img/meshmodels directory is missing, unwritable, or the disk is full"}, []string{"Verify the Meshery process has write permission to the ui/ static assets directory and that sufficient disk space is available"})
 }
 func ErrReadFileContent(err error, file string) error {
 	return errors.New(ErrReadFileContentCode, errors.Alert, []string{"Failed to read file content", file}, []string{err.Error()}, []string{"The file could not be opened or streamed to the response"}, []string{"Verify the file exists and the server has permission to read it"})

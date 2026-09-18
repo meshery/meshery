@@ -133,6 +133,15 @@ func TestValidateSVGContent(t *testing.T) {
 		{name: "onerror handler is rejected", svg: `<svg><image href="x" onerror="evil()"/></svg>`, wantErr: true},
 		{name: "foreignObject is rejected", svg: `<svg><foreignObject><body onload="evil()"/></foreignObject></svg>`, wantErr: true},
 		{name: "javascript URI is rejected", svg: `<svg><a href="javascript:evil()">click</a></svg>`, wantErr: true},
+		{name: "HTML-entity-encoded javascript URI is rejected", svg: `<svg><a href="&#106;avascript:evil()">click</a></svg>`, wantErr: true},
+		{name: "hex-entity-encoded javascript URI is rejected", svg: `<svg><a href="&#x6a;avascript:evil()">click</a></svg>`, wantErr: true},
+		{name: "mixed-case event handler is rejected", svg: `<svg OnLoad="evil()"></svg>`, wantErr: true},
+		{name: "iframe is rejected", svg: `<svg><iframe src="https://evil.example"/></svg>`, wantErr: true},
+		{name: "embed is rejected", svg: `<svg><embed src="https://evil.example"/></svg>`, wantErr: true},
+		{name: "object is rejected", svg: `<svg><object data="https://evil.example"/></svg>`, wantErr: true},
+		{name: "duplicate attribute is rejected as malformed rather than silently picking one value", svg: `<svg onload="safe()" onload="evil()"></svg>`, wantErr: true},
+		{name: "unescaped ampersand is rejected as malformed rather than tolerated like a browser would", svg: `<svg><title>Fish & Chips</title></svg>`, wantErr: true},
+		{name: "clean SVG with a style block is allowed", svg: `<svg xmlns="http://www.w3.org/2000/svg"><style>.a{fill:red}</style><path class="a" d="M12 2L2 7"/></svg>`, wantErr: false},
 	}
 
 	for _, tc := range tests {

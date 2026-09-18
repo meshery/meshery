@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -66,11 +67,21 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 			continue
 		}
 		if gpi.Register {
+			// registeredComps holds only the components that actually made
+			// it through SVG validation and registration, so a component
+			// rejected below (invalid icon asset) is not reported back to
+			// the caller as if it had succeeded.
+			registeredComps := make([]component.ComponentDefinition, 0, len(comps))
 			for _, comp := range comps {
 				var isModelError bool
 				var isRegistranError bool
 				if err = utils.WriteSVGsOnFileSystem(&comp); err != nil {
-					h.log.Error(ErrInvalidRegistrySVGAsset(err))
+					var invalidAsset utils.InvalidRegistrySVGAssetError
+					if errors.As(err, &invalidAsset) {
+						h.log.Error(ErrInvalidRegistrySVGAsset(err))
+					} else {
+						h.log.Error(ErrWriteRegistrySVGAsset(err))
+					}
 					responseItem.Errors = append(responseItem.Errors, err.Error())
 					continue
 				}
@@ -86,10 +97,14 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 				}, &comp, err, isModelError, isRegistranError)
 				if err != nil {
 					h.log.Error(ErrGenerateComponents(err))
+					responseItem.Errors = append(responseItem.Errors, err.Error())
+					continue
 				}
 
 				h.log.Info(comp.DisplayName, " component for ", gpi.Name, " generated")
+				registeredComps = append(registeredComps, comp)
 			}
+			comps = registeredComps
 		}
 
 		responseItem.Components = comps

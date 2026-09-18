@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -789,8 +790,14 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 			return
 		}
 		if err = utils.WriteSVGsOnFileSystem(&c); err != nil {
-			h.log.Error(ErrInvalidRegistrySVGAsset(err))
-			writeMeshkitError(rw, ErrInvalidRegistrySVGAsset(err), http.StatusBadRequest)
+			var invalidAsset utils.InvalidRegistrySVGAssetError
+			if errors.As(err, &invalidAsset) {
+				h.log.Error(ErrInvalidRegistrySVGAsset(err))
+				writeMeshkitError(rw, ErrInvalidRegistrySVGAsset(err), http.StatusBadRequest)
+			} else {
+				h.log.Error(ErrWriteRegistrySVGAsset(err))
+				writeMeshkitError(rw, ErrWriteRegistrySVGAsset(err), http.StatusInternalServerError)
+			}
 			return
 		}
 		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Connection, &c)

@@ -3,8 +3,10 @@ package utils
 import (
 	"database/sql/driver"
 	"encoding/json"
+	"encoding/xml"
 	"errors"
 	"fmt"
+	"html"
 	"html/template"
 	"io"
 	"net/http"
@@ -161,17 +163,75 @@ var UISVGPaths = make([]string, 1)
 // stripped-but-still-attacker-influenced value gives no real guarantee.
 var registrySVGPathComponentPattern = regexp.MustCompile(`^[a-zA-Z0-9](?:[a-zA-Z0-9._-]{0,254}[a-zA-Z0-9])?$`)
 
-// dangerousSVGContentPattern flags the markers that matter for SVG-based
-// XSS: inline <script>, event-handler attributes (onload=, onerror=, ...),
-// <foreignObject> (which can embed arbitrary HTML), and javascript: URIs.
-// These files are later served from the UI's own static path, so caller-
-// supplied content containing any of these would execute in the UI's
-// origin, where session cookies live.
-var dangerousSVGContentPattern = regexp.MustCompile(`(?i)<\s*script\b|<\s*foreignobject\b|\bon[a-z]+\s*=|javascript:`)
+// dangerousSVGElements are element local names (case-insensitive, namespace
+// prefix stripped) that must never appear in a caller-supplied SVG asset:
+// script and foreignObject can carry or embed arbitrary script; iframe,
+// embed, and object can load and execute another document entirely.
+var dangerousSVGElements = map[string]bool{
+	"script":        true,
+	"foreignobject": true,
+	"iframe":        true,
+	"embed":         true,
+	"object":        true,
+}
+
+// dangerousSVGAttrValuePattern matches a javascript: (or vbscript:) URI once
+// an attribute value has been whitespace-collapsed, catching the common
+// obfuscation of splitting the scheme with tabs/newlines that some legacy
+// URI parsers tolerated.
+var dangerousSVGAttrValuePattern = regexp.MustCompile(`(?i)^\s*(javascript|vbscript)\s*:`)
+
+// containsDangerousSVGContent structurally walks svg as XML rather than
+// pattern-matching the raw bytes, so a script or event handler split across
+// unusual whitespace, attribute order, or HTML-entity-encoded characters
+// (for example &#106;avascript:) cannot slip past a single regex the way it
+// could with the string this replaced. html.UnescapeString normalizes
+// entities in every attribute value before it is checked. If the content
+// does not even parse as well-formed XML, it is rejected outright: real SVG
+// icon assets are well-formed, and a browser's own SVG/HTML parser is far
+// more forgiving of malformed markup than encoding/xml, so tolerating
+// malformed input here would open exactly the obfuscation gap this
+// function exists to close.
+func containsDangerousSVGContent(svg string) bool {
+	dec := xml.NewDecoder(strings.NewReader(svg))
+	for {
+		tok, err := dec.Token()
+		if err != nil {
+			return err != io.EOF
+		}
+		start, ok := tok.(xml.StartElement)
+		if !ok {
+			continue
+		}
+		if dangerousSVGElements[strings.ToLower(start.Name.Local)] {
+			return true
+		}
+		for _, attr := range start.Attr {
+			name := strings.ToLower(attr.Name.Local)
+			if strings.HasPrefix(name, "on") {
+				return true
+			}
+			value := html.UnescapeString(attr.Value)
+			if dangerousSVGAttrValuePattern.MatchString(value) {
+				return true
+			}
+		}
+	}
+}
+
+// InvalidRegistrySVGAssetError signals that a caller-supplied Model.Name,
+// Component.Kind, or SVG content was rejected by validation, as opposed to
+// a filesystem or I/O failure encountered while writing an already-valid
+// asset. A distinct type lets a caller of WriteSVGsOnFileSystem map it to
+// HTTP 400 while treating any other failure as HTTP 500, so a disk-full or
+// permission error is never reported back as if the request were bad.
+type InvalidRegistrySVGAssetError string
+
+func (e InvalidRegistrySVGAssetError) Error() string { return string(e) }
 
 func validateRegistrySVGPathComponent(value string) error {
 	if !registrySVGPathComponentPattern.MatchString(value) {
-		return fmt.Errorf("invalid registry path component %q: must be a plain alphanumeric slug (letters, digits, '.', '_', '-')", value)
+		return InvalidRegistrySVGAssetError(fmt.Sprintf("invalid registry path component %q: must be a plain alphanumeric slug (letters, digits, '.', '_', '-')", value))
 	}
 	return nil
 }
@@ -180,8 +240,8 @@ func validateSVGContent(svg string) error {
 	if svg == "" {
 		return nil
 	}
-	if dangerousSVGContentPattern.MatchString(svg) {
-		return fmt.Errorf("SVG content contains a script, event handler, foreignObject, or javascript: URI, which is not permitted")
+	if containsDangerousSVGContent(svg) {
+		return InvalidRegistrySVGAssetError("SVG content contains a script, event handler, foreignObject, or javascript: URI, which is not permitted")
 	}
 	return nil
 }
@@ -317,6 +377,12 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 	return svgColorPath, svgWhitePath, svgCompletePath, nil
 }
 
+// WriteSVGsOnFileSystem returns an InvalidRegistrySVGAssetError when
+// comp.Model.Name, comp.Component.Kind, or an SVG field was rejected by
+// validation, and a plain error for any other failure (a filesystem or I/O
+// problem writing an already-valid asset). Callers should check for
+// InvalidRegistrySVGAssetError to tell the two apart: the former is the
+// caller's fault (HTTP 400), the latter is the server's (HTTP 500).
 func WriteSVGsOnFileSystem(comp *component.ComponentDefinition) error {
 
 	if comp.Styles != nil {
