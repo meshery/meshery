@@ -3,6 +3,7 @@ title: mesheryctl-design-apply
 display_title: false
 command: design
 subcommand: apply
+categories: [mesheryctl-design]
 ---
 
 # mesheryctl design apply

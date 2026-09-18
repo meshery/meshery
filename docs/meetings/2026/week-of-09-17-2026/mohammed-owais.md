@@ -1,0 +1,3 @@
+Hi! I’m Mohammed Owais, a final year computer science student at Sir MVIT specializing in full stack web development and AI engineering. On the technical side, I build multi agent RAG architectures using tools like LangChain, Gemini, and Python, and I contribute code to Y Combinator backed open source projects like Emdash and Mastra.
+
+Beyond system architecture, I have a strong foundation in problem solving with over 450 DSA problems solved. I also co lead TechHub, where I’ve organized 10+ events and mentored 20+ junior developers, and I'm a Top 5 national parliamentary debater. I love combining deep technical execution with strong communication to build impactful, AI driven products
