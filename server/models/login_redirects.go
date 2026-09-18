@@ -52,6 +52,7 @@ func selectPostLoginRefValue(r *http.Request, cookieName string) string {
 var authInitiationPaths = []string{
 	"/user/login",
 	"/auth/login",
+	"/login",
 	"/api/user/token",
 	"/provider",
 }
