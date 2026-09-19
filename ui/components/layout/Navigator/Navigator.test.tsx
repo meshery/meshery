@@ -131,6 +131,16 @@ vi.mock('../../general/style', () => {
     );
     return Mock;
   };
+  // The plain `make()` mocks are indistinguishable from one another, so list items
+  // whose choice is meaningful get tagged with the name of the real implementation.
+  const makeTagged = (componentName: string) => {
+    const Mock = ({ children, ...props }: any) => (
+      <div data-component={componentName} {...props}>
+        {children}
+      </div>
+    );
+    return Mock;
+  };
   return {
     HideScrollbar: make('hide-scrollbar'),
     LinkContainer: make(),
@@ -149,12 +159,12 @@ vi.mock('../../general/style', () => {
       <img data-testid="main-logo-text-collapsed" src={src} onClick={onClick} />
     ),
     NavigatorList: make('nav-list'),
-    NavigatorListItem: make(),
+    NavigatorListItem: makeTagged('NavigatorListItem'),
     NavigatorListItemII: make(),
     NavigatorListItemIII: make(),
     RootDiv: make(),
     SecondaryDivider: make(),
-    SideBarListItem: make(),
+    SideBarListItem: makeTagged('SideBarListItem'),
     SideBarText: make(),
     StyledListItem: ({ children, component, onClick, ...props }: any) => {
       const Comp = component || 'div';
@@ -201,6 +211,15 @@ vi.mock('@/rtk-query/user', () => ({
               icon: '/provider/navigator/img/kanvas-icon.svg',
               href: '/meshmap',
               show: true,
+              children: [
+                {
+                  id: 'kanvas-designer',
+                  title: 'Designer',
+                  icon: '/provider/navigator/img/designer-icon.svg',
+                  href: '/meshmap/designer',
+                  show: true,
+                },
+              ],
             },
           ],
         },
@@ -364,5 +383,28 @@ describe('Navigator', () => {
     expect(kanvasIcon.style.transform).toBe('');
     expect(kanvasIcon.style.top).toBe('');
     expect(kanvasIcon.style.right).toBe('');
+  });
+
+  it('renders root extensions with the same list item used by the core nav rows', async () => {
+    render(<Navigator />);
+    const rootExtension = await screen.findByTestId('extension-nav-root-item');
+
+    // Root extensions must use SideBarListItem so that hover styling, padding and text
+    // treatment match the core navigator rows. Scoped to direct children, because the
+    // nested submenu renders inside this same element.
+    expect(
+      rootExtension.querySelector(':scope > [data-component="SideBarListItem"]'),
+    ).not.toBeNull();
+    expect(rootExtension.querySelector(':scope > [data-component="NavigatorListItem"]')).toBeNull();
+  });
+
+  it('renders nested extensions with NavigatorListItem rather than the sidebar row', async () => {
+    render(<Navigator />);
+    const submenu = await screen.findByTestId('extension-nav-submenu');
+
+    // Only depth 1 gets the core-row treatment; selecting SideBarListItem at every
+    // depth would indent nested extensions incorrectly.
+    expect(submenu.querySelector('[data-component="NavigatorListItem"]')).not.toBeNull();
+    expect(submenu.querySelector('[data-component="SideBarListItem"]')).toBeNull();
   });
 });
