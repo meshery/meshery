@@ -1,13 +1,17 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { configureStore } from '@reduxjs/toolkit';
+import { Provider } from 'react-redux';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   AddWidgetsToLayoutPanel,
   LayoutActionButton,
   LayoutWidget,
   StyledCard,
 } from './components';
+
+const useMediaQueryMock = vi.hoisted(() => vi.fn(() => false));
 
 vi.mock('@sistent/sistent', () => ({
   Box: ({ children }: any) => <div data-testid="box">{children}</div>,
@@ -20,7 +24,9 @@ vi.mock('@sistent/sistent', () => ({
         elevatedComponents: '#ddd',
       },
     },
+    breakpoints: { down: () => '' },
   }),
+  useMediaQuery: useMediaQueryMock,
   Typography: ({ children, variant }: any) => <span data-variant={variant}>{children}</span>,
   Stack: ({ children }: any) => <div>{children}</div>,
   AddIcon: (props: any) => <svg data-testid="add-icon" data-fill={props.fill} />,
@@ -102,15 +108,28 @@ describe('AddWidgetsToLayoutPanel', () => {
 describe('LayoutActionButton', () => {
   const FakeIcon = (props: any) => <svg data-testid="fake-icon" {...props} />;
 
+  const createTestStore = () =>
+    configureStore({
+      reducer: {
+        ui: (state = { isDrawerCollapsed: false }) => state,
+      },
+    });
+
+  afterEach(() => {
+    useMediaQueryMock.mockReturnValue(false);
+  });
+
   it('renders nothing when isShown is false', () => {
     const { container } = render(
-      <LayoutActionButton
-        Icon={FakeIcon}
-        label="Edit"
-        action={vi.fn()}
-        description="Edit layout"
-        isShown={false}
-      />,
+      <Provider store={createTestStore()}>
+        <LayoutActionButton
+          Icon={FakeIcon}
+          label="Edit"
+          action={vi.fn()}
+          description="Edit layout"
+          isShown={false}
+        />
+      </Provider>,
     );
     expect(container.firstChild).toBeNull();
   });
@@ -119,18 +138,39 @@ describe('LayoutActionButton', () => {
     const user = userEvent.setup();
     const action = vi.fn();
     render(
-      <LayoutActionButton
-        Icon={FakeIcon}
-        label="Edit"
-        action={action}
-        description="Edit layout"
-        isShown={true}
-      />,
+      <Provider store={createTestStore()}>
+        <LayoutActionButton
+          Icon={FakeIcon}
+          label="Edit"
+          action={action}
+          description="Edit layout"
+          isShown={true}
+        />
+      </Provider>,
     );
     expect(screen.getByText('Edit')).toBeInTheDocument();
     expect(screen.getByTestId('tooltip')).toHaveAttribute('data-title', 'Edit layout');
     await user.click(screen.getByRole('button'));
     expect(action).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders only the icon for non-edit actions on small devices', () => {
+    useMediaQueryMock.mockReturnValue(true);
+    render(
+      <Provider store={createTestStore()}>
+        <LayoutActionButton
+          Icon={FakeIcon}
+          label="Share"
+          action={vi.fn()}
+          description="Share layout"
+          isShown={true}
+        />
+      </Provider>,
+    );
+
+    expect(screen.queryByText('Share')).not.toBeInTheDocument();
+    expect(screen.getByTestId('fake-icon')).toBeInTheDocument();
+    expect(screen.getByTestId('tooltip')).toHaveAttribute('data-title', 'Share layout');
   });
 });
 
