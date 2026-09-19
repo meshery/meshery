@@ -36,7 +36,7 @@ That secret must be referred to by the same name in the caller (`.github/workflo
 
 During the setup phase, Playwright utilizes these environment variables to log in and store credentials securely in the `playwright/.auth` directory. To protect sensitive data, the `.gitignore` file is configured to exclude `.env` files and any JSON files within the `/playwright/.auth` directory from the GitHub repository.
 
-Locally, the dotenv file these variables are read from is **`ui/.env`** - `ui/tests/e2e/env.js` loads it, so it applies however Playwright is invoked. The repository-root `.env` also works when you go through the make targets (`make ui-test`, `make ui-test-e2e-full`, `make ui-test-e2e-local`), because each of those sources it into the environment before running Playwright. A real environment variable always wins over a value in `ui/.env`. `ui/tests/e2e/.env.example` is the template to copy there (`cd ui && cp tests/e2e/.env.example .env`); note that `ui/tests/e2e/.env` itself is read by nothing despite having its own `.gitignore` entry - credentials placed there are silently ignored.
+Locally, the dotenv file these variables are read from is **`ui/.env`** - `ui/tests/e2e/env.js` loads it, so it applies however Playwright is invoked (whether via `make ui-integration-tests` or directly with npm scripts like `npm run test:e2e`). A real environment variable always wins over a value in `ui/.env`. `ui/tests/e2e/.env.example` is the template to copy there (`cd ui && cp tests/e2e/.env.example .env`); note that `ui/tests/e2e/.env` itself is read by nothing despite having its own `.gitignore` entry - credentials placed there are silently ignored.
 
 There are several tools to help you to working with environment variables locally for each project such as [direnv](https://github.com/direnv/direnv), it can work across multiple shell such as Bash, Powershell, Oh my zsh, Fish, etc
 
@@ -58,13 +58,9 @@ This approach is very quick to build, but also dependent on your operating syste
 
 {{< code code=`make ui-build` >}}
 
-- Compile the Golang into binary file for Meshery Server
-
-{{< code code=`make build-server` >}}
-
 - Run the Meshery Server on localhost port 9081
 
-{{< code code=`make server-binary` >}}
+{{< code code=`make server` >}}
 
 ### Meshery CLI
 
@@ -88,13 +84,13 @@ For Playwrights, always try to use a native OS whenever possible. The Docker-bas
 
 ### Playwright on Native OS (Recommended)
 
-Setup playwright:
+Setup Playwright and dependencies:
 
-{{< code code=`make ui-test-setup` >}}
+{{< code code=`make ui-setup && (cd ui && npx playwright install --with-deps)` >}}
 
 Run the all project and test cases:
 
-{{< code code=`make ui-test` >}}
+{{< code code=`make ui-integration-tests` >}}
 
 ### Playwright server on docker based image
 
