@@ -65,6 +65,10 @@ function MesheryPatternCard_({
   handleUnpublishModal,
   handleDeploy,
   handleUnDeploy,
+  handleDirectDeploy,
+  handleDirectUnDeploy,
+  handleDirectDryRun,
+  handleDirectVerify,
   handleDownload,
   updateHandler,
   deleteHandler,
@@ -215,13 +219,14 @@ function MesheryPatternCard_({
                 </TooltipButton>
               )}
               <ActionButton
-                defaultActionClick={(e) => genericClickHandler(e, handleVerify)}
                 permissionKey={Keys.CatalogManagementValidateDesign}
                 options={[
                   {
                     label: 'Validate',
                     icon: <CheckIcon style={iconMedium} />,
                     onClick: (e) => genericClickHandler(e, handleVerify),
+                    onDirectClick: (e) =>
+                      genericClickHandler(e, handleDirectVerify || handleVerify),
                     permissionKey: Keys.CatalogManagementValidateDesign,
                     'data-testid': 'pattern-btn-validate',
                   },
@@ -229,6 +234,8 @@ function MesheryPatternCard_({
                     label: 'Dry Run',
                     icon: <DryRunIcon style={iconMedium} />,
                     onClick: (e) => genericClickHandler(e, handleDryRun),
+                    onDirectClick: (e) =>
+                      genericClickHandler(e, handleDirectDryRun || handleDryRun),
                     permissionKey: Keys.CatalogManagementValidateDesign,
                     'data-testid': 'pattern-btn-dryrun',
                   },
@@ -236,6 +243,8 @@ function MesheryPatternCard_({
                     label: 'Deploy',
                     icon: <DoneAllIcon fill="currentColor" style={iconMedium} />,
                     onClick: (e) => genericClickHandler(e, handleDeploy),
+                    onDirectClick: (e) =>
+                      genericClickHandler(e, handleDirectDeploy || handleDeploy),
                     permissionKey: Keys.CatalogManagementDeployDesign,
                     'data-testid': 'pattern-btn-deploy',
                   },
@@ -243,6 +252,8 @@ function MesheryPatternCard_({
                     label: 'Undeploy',
                     icon: <UndeployIcon fill={crimson[40]} style={iconMedium} />,
                     onClick: (e) => genericClickHandler(e, handleUnDeploy),
+                    onDirectClick: (e) =>
+                      genericClickHandler(e, handleDirectUnDeploy || handleUnDeploy),
                     permissionKey: Keys.CatalogManagementUndeployDesign,
                     'data-testid': 'pattern-btn-undeploy',
                   },
@@ -250,6 +261,7 @@ function MesheryPatternCard_({
                     label: 'Evaluate',
                     icon: <AccountTreeIcon fill={'currentColor'} style={iconMedium} />,
                     onClick: (e) => genericClickHandler(e, handleEvaluate),
+                    onDirectClick: (e) => genericClickHandler(e, handleEvaluate),
                     permissionKey: Keys.CatalogManagementEvaluateRelationships,
                     'data-testid': 'pattern-btn-evaluate',
                   },
