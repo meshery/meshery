@@ -89,12 +89,6 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 			selectedConnection = fetchedConnection
 		}
 
-		// Get the home directory of the user to save the output file
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			return utils.ErrRetrieveHomeDir(errors.Wrap(err, "failed to determine user home directory"))
-		}
-
 		outputFormatterFactory := display.OutputFormatterFactory[connection.Connection]{}
 		outputFormatter, err := outputFormatterFactory.New(connectionViewFlagsProvided.outputFormat, *selectedConnection)
 		if err != nil {
@@ -107,6 +101,12 @@ mesheryctl connection view [connection-name|connection-id] --output-format json 
 		}
 
 		if connectionViewFlagsProvided.save {
+			// Get the home directory of the user to save the output file
+			homeDir, err := os.UserHomeDir()
+			if err != nil {
+				return utils.ErrRetrieveHomeDir(errors.Wrap(err, "failed to determine user home directory"))
+			}
+
 			// Prepare the connection string for file naming since connection from local provider
 			// can be created without a name.
 			connectionString := func(c connection.Connection) string {
