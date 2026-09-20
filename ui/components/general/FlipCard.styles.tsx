@@ -24,4 +24,5 @@ export const CardFaceBack = styled('div')({
   backfaceVisibility: 'hidden',
   transform: 'scale(-1, 1)',
   width: '100%',
+  wordBreak: 'break-word',
 });

@@ -25,6 +25,7 @@ function FlipCard({ duration = 500, onClick, onShow, children }: FlipCardProps) 
 
   return (
     <FlipCardWrapper
+      data-testid="flip-card-wrapper"
       onClick={() => {
         setFlipped((f) => !f);
         onClick?.();
@@ -32,6 +33,7 @@ function FlipCard({ duration = 500, onClick, onShow, children }: FlipCardProps) 
       }}
     >
       <InnerCard
+        data-testid="inner-card"
         style={{
           transform: flipped ? 'scale(-1,1)' : undefined,
           transition: `transform ${duration}ms`,
@@ -39,9 +41,13 @@ function FlipCard({ duration = 500, onClick, onShow, children }: FlipCardProps) 
         }}
       >
         {!activeBack ? (
-          <CardFaceFront>{React.isValidElement(Front) ? Front : null}</CardFaceFront>
+          <CardFaceFront data-testid="card-face-front">
+            {React.isValidElement(Front) ? Front : null}
+          </CardFaceFront>
         ) : (
-          <CardFaceBack>{React.isValidElement(Back) ? Back : null}</CardFaceBack>
+          <CardFaceBack data-testid="card-face-back">
+            {React.isValidElement(Back) ? Back : null}
+          </CardFaceBack>
         )}
       </InnerCard>
     </FlipCardWrapper>

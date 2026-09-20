@@ -5,9 +5,7 @@ export const StyledCodeMirrorWrapper = styled('div')<{ fullScreen?: boolean }>(
     height: fullScreen ? '100%' : undefined,
     width: '100%',
     '& .cm-editor': {
-      minHeight: '300px',
       height: fullScreen ? '100%' : '300px',
-      maxHeight: fullScreen ? '100%' : '350px',
       width: '100%',
     },
     '& .cm-scroller': {

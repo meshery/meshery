@@ -3,21 +3,6 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import FlipCard from './FlipCard';
 
-vi.mock('./FlipCard.styles', () => ({
-  FlipCardWrapper: ({ children, onClick }: any) => (
-    <div data-testid="flip-card-wrapper" onClick={onClick}>
-      {children}
-    </div>
-  ),
-  InnerCard: ({ children, style }: any) => (
-    <div data-testid="inner-card" style={style}>
-      {children}
-    </div>
-  ),
-  CardFaceFront: ({ children }: any) => <div data-testid="card-face-front">{children}</div>,
-  CardFaceBack: ({ children }: any) => <div data-testid="card-face-back">{children}</div>,
-}));
-
 vi.mock('@/utils/hooks', () => ({
   useTimeout: (callback: () => void, delay: number) => {
     // Synchronously schedule via real timers to mimic the actual hook behavior.
@@ -75,6 +60,7 @@ describe('FlipCard', () => {
     );
 
     expect(screen.getByTestId('front')).toBeInTheDocument();
+    expect(screen.getByTestId('card-face-front')).toHaveStyle({ width: '100%' });
 
     act(() => {
       fireEvent.click(screen.getByTestId('flip-card-wrapper'));
@@ -90,6 +76,14 @@ describe('FlipCard', () => {
 
     expect(screen.getByTestId('back')).toBeInTheDocument();
     expect(screen.queryByTestId('front')).not.toBeInTheDocument();
+
+    const backFace = screen.getByTestId('card-face-back');
+    expect(backFace).toBeInTheDocument();
+    expect(backFace).toHaveStyle({
+      width: '100%',
+      wordBreak: 'break-word',
+    });
+    expect(backFace.style.maxWidth).toBe('');
   });
 
   it('uses the default 500ms duration when none is provided', () => {
