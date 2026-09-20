@@ -80,27 +80,6 @@ func TestDeployMesh(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
-			Name: "Test Deploy Nginx",
-			Args: []string{"deploy", "nginx", "service", "mesh"},
-			URLs: []utils.MockURL{
-				{
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/system/sync",
-					Response:     "sync.golden",
-					ResponseCode: 200,
-				},
-				{
-					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/system/adapter/operation",
-					Response:     "deploy.golden",
-					ResponseCode: 200,
-				},
-			},
-			ExpectedResponse: "deploy.nginx.output.golden",
-			Token:            filepath.Join(fixturesDir, "token.golden"),
-			ExpectError:      false,
-		},
-		{
 			Name: "Test Deploy Linkerd with namespace",
 			Args: []string{"deploy", "linkerd", "--namespace", "linkerd-ns"},
 			URLs: []utils.MockURL{

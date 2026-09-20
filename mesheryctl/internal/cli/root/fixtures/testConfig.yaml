@@ -12,7 +12,6 @@ contexts:
             - meshery-kuma
             - meshery-osm
             - meshery-traefik-mesh
-            - meshery-nginx-sm
             - meshery-cilium
         channel: stable
         version: latest
@@ -29,7 +28,6 @@ contexts:
             - meshery-kuma
             - meshery-osm
             - meshery-traefik-mesh
-            - meshery-nginx-sm
             - meshery-cilium
         channel: edge
         version: latest
