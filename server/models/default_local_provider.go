@@ -1471,7 +1471,7 @@ func (l *DefaultLocalProvider) GetKubeClient() *mesherykube.Client {
 	return l.KubeClient
 }
 
-func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
+func (l *DefaultLocalProvider) SeedContent(seedLog *SeedLog, log logger.Handler) {
 	seedContents := []string{"Pattern"}
 
 	// Use the relative directory for patterns
@@ -1490,6 +1490,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	if err := l.MesheryPatternPersister.DB.
 		Where("visibility = ?", Published).
 		Delete(&MesheryPattern{}).Error; err != nil {
+		seedLog.Errorf("Failed to clear previously seeded designs: %v", ErrGettingSeededComponents(err, "Patterns"))
 		log.Error(ErrGettingSeededComponents(err, "Patterns"))
 		return
 	}
@@ -1497,8 +1498,10 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	for _, seedContent := range seedContents {
 		switch seedContent {
 		case "Pattern":
+			seedLog.Detailf("Sourcing catalog designs from %s.", catalogDir)
 			files, err := walker.WalkLocalDirectory(catalogDir)
 			if err != nil {
+				seedLog.Errorf("Failed to walk catalog directory %s: %v", catalogDir, err)
 				log.Error(err)
 				return
 			}
@@ -1511,12 +1514,14 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 
 				patternName, err := GetPatternName(file.Content)
 				if err != nil {
+					seedLog.Errorf("Failed to read design %s: %v", file.Name, ErrGettingSeededComponents(err, seedContent+"s"))
 					log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
 					return
 				}
 
 				id, err := uuid.NewV4()
 				if err != nil {
+					seedLog.Errorf("Failed to mint an ID for design %s: %v", file.Name, ErrGettingSeededComponents(err, seedContent+"s"))
 					log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
 					return
 				}
@@ -1536,19 +1541,25 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 			}
 
 			if len(seeded) == 0 {
+				seedLog.Errorf("No catalog designs found under %s.", catalogDir)
 				log.Error(ErrGettingSeededComponents(
 					fmt.Errorf("no catalog designs found under %s", catalogDir), seedContent+"s"))
 				return
 			}
 
 			if err := l.MesheryPatternPersister.ReplaceSeededPatterns(seeded); err != nil {
+				seedLog.Errorf("Failed to seed %d catalog designs: %v", len(seeded), ErrGettingSeededComponents(err, seedContent+"s"))
 				log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
 			}
+			seedLog.Reportf("Seeded %d catalog designs from %s.", len(seeded), catalogDir)
 		}
 	}
 
 	if err := l.SeedDefaultOrganization(); err != nil {
+		seedLog.Errorf("Failed to seed the default organization: %v", err)
 		log.Error(err)
+	} else {
+		seedLog.Reportf("Default organization is ready.")
 	}
 }
 

@@ -2,10 +2,12 @@ package models
 
 import (
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"runtime/debug"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/meshery/meshery/server/helpers/utils"
@@ -138,17 +140,59 @@ func getLatestModelDefDir(latestVersionDirPath string) (string, error) {
 // does, in keys_helper.go - leaves that goroutine outside this recover, and a
 // panic there still terminates the process. Recovering it belongs where it is
 // spawned, not here.
-func RunSeedStage(log logger.Handler, stage string, fn func()) {
+func RunSeedStage(log logger.Handler, seedLog *SeedLog, fn func(*SeedLog)) {
+	if seedLog == nil {
+		seedLog = &SeedLog{stage: "unknown"}
+	}
+	startedAt := time.Now()
+	log.Infof("Seeding %q started.", seedLog.Stage())
+	if seedLog.startedAt.IsZero() {
+		seedLog.startedAt = startedAt
+	}
+	seedLog.Header()
+	status := SeedStatusSuccess
+
+	// The report runs last (LIFO): it must observe the status the recover
+	// handler below sets before writing the final outcome line.
+	defer func() {
+		seedLog.Reportf("Seeding %q %s after %s. Log: %s", seedLog.Stage(), status, time.Since(startedAt).Round(time.Millisecond), seedLog.Path())
+		if err := seedLog.publishEvent(status); err != nil {
+			log.Error(err)
+		}
+		seedLog.Close()
+	}()
 	defer func() {
 		if r := recover(); r != nil {
-			log.Error(ErrSeedingStagePanic(stage, r, debug.Stack()))
+			status = SeedStatusFailed
+			seedLog.Errorf("Seeding %q panicked: %v\n%s", seedLog.Stage(), r, debug.Stack())
+			log.Error(ErrSeedingStagePanic(string(seedLog.Stage()), r, debug.Stack()))
 		}
 	}()
-	fn()
+
+	fn(seedLog)
+}
+
+// CountPolicyFiles returns the number of .rego policy files under dir, used to
+// report how many policies were seeded into the registry.
+func CountPolicyFiles(dir string) (int, error) {
+	count := 0
+	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		if !d.IsDir() && strings.HasSuffix(d.Name(), ".rego") {
+			count++
+		}
+		return nil
+	})
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
 }
 
 // SeedComponents registers the latest versions of models
-func SeedComponents(log logger.Handler, hc *HandlerConfig, regm *meshmodel.RegistryManager, db *database.Handler) {
+func SeedComponents(log logger.Handler, seedLog *SeedLog, hc *HandlerConfig, regm *meshmodel.RegistryManager, db *database.Handler) {
 	regErrorStore := NewRegistrationFailureLogHandler()
 	regHelper := registration.NewRegistrationHelper(utils.UI, regm, regErrorStore)
 	modelDirPaths, err := GetModelDirectoryPaths(ModelsPath)
@@ -156,12 +200,13 @@ func SeedComponents(log logger.Handler, hc *HandlerConfig, regm *meshmodel.Regis
 		log.Error(ErrSeedingComponents(err))
 	}
 
+	seedLog.Detailf("Registering models from %d model definition directories.", len(modelDirPaths))
 	for _, dirPath := range modelDirPaths {
 		dir := registration.NewDir(dirPath)
 		regHelper.Register(dir)
 	}
 
-	RegistryLog(log, hc, regm, regErrorStore)
+	RegistryLog(log, seedLog, hc, regm, regErrorStore)
 
 	// Registration has now put every connection definition in the registry and
 	// created the registrant Connections they describe. Seeding is folded in

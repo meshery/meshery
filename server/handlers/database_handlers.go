@@ -202,16 +202,16 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 		seedingStarted = true
 		go func() {
 			defer models.ReleaseResetLock()
-			models.RunSeedStage(h.log, "user keys", func() {
-				krh.SeedKeys(viper.GetString("KEYS_PATH"))
+			models.RunSeedStage(h.log, models.NewSeedLogForSystem(h.log, h.config.SystemEventPersister, models.SeedStageKeys), func(seedLog *models.SeedLog) {
+				krh.SeedKeys(seedLog, viper.GetString("KEYS_PATH"))
 			})
-			models.RunSeedStage(h.log, "content", func() {
+			models.RunSeedStage(h.log, models.NewSeedLogForSystem(h.log, h.config.SystemEventPersister, models.SeedStageDesigns), func(seedLog *models.SeedLog) {
 				if lp, ok := provider.(*models.DefaultLocalProvider); ok {
-					lp.SeedContent(h.log)
+					lp.SeedContent(seedLog, h.log)
 				}
 			})
-			models.RunSeedStage(h.log, "models", func() {
-				models.SeedComponents(h.log, h.config, h.registryManager, dbHandler)
+			models.RunSeedStage(h.log, models.NewSeedLogForSystem(h.log, h.config.SystemEventPersister, models.SeedStageModels), func(seedLog *models.SeedLog) {
+				models.SeedComponents(h.log, seedLog, h.config, h.registryManager, dbHandler)
 			})
 		}()
 		writeJSONMessage(w, system.SystemMessageResponse{Message: "Database reset successful"}, http.StatusOK)

@@ -4259,6 +4259,15 @@
         "short_description": "Model not found",
         "probable_cause": "The requested model is not present in the CSV input",
         "suggested_remediation": "Verify that the requested model exists in the CSV input"
+      },
+      "1486": {
+        "name": "ErrCreatingSeedLogCode",
+        "code": "1486",
+        "severity": "None",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The seed log directory or file could not be created under $HOME/.meshery/logs/seed",
+        "suggested_remediation": "Check that the home directory is writable and that $HOME/.meshery/logs/seed can be created. Content is still seeded; only the per-type seed log for this stage is missing."
       }
     }
   }

@@ -147,16 +147,16 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			seedingStarted = true
 			go func() {
 				defer models.ReleaseResetLock()
-				models.RunSeedStage(r.Log, "user keys", func() {
-					krh.SeedKeys(viper.GetString("KEYS_PATH"))
+				models.RunSeedStage(r.Log, models.NewSeedLogForSystem(r.Log, r.Config.SystemEventPersister, models.SeedStageKeys), func(seedLog *models.SeedLog) {
+					krh.SeedKeys(seedLog, viper.GetString("KEYS_PATH"))
 				})
-				models.RunSeedStage(r.Log, "content", func() {
+				models.RunSeedStage(r.Log, models.NewSeedLogForSystem(r.Log, r.Config.SystemEventPersister, models.SeedStageDesigns), func(seedLog *models.SeedLog) {
 					if lp, ok := provider.(*models.DefaultLocalProvider); ok {
-						lp.SeedContent(r.Log)
+						lp.SeedContent(seedLog, r.Log)
 					}
 				})
-				models.RunSeedStage(r.Log, "models", func() {
-					models.SeedComponents(r.Log, r.Config, rm, dbHandler)
+				models.RunSeedStage(r.Log, models.NewSeedLogForSystem(r.Log, r.Config.SystemEventPersister, models.SeedStageModels), func(seedLog *models.SeedLog) {
+					models.SeedComponents(r.Log, seedLog, r.Config, rm, dbHandler)
 				})
 			}()
 			r.Log.Info("Hard reset complete.")

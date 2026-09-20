@@ -158,7 +158,8 @@ func TestRegistryLogUnderEnforcedProviderSeedsWithoutPanicking(t *testing.T) {
 	viper.Set("REGISTRY_LOG_FILE", t.TempDir()+"/registry-errors.log")
 	t.Cleanup(func() { viper.Set("REGISTRY_LOG_FILE", "") })
 
-	RegistryLog(registryLogTestLogger(t), hc, regm, NewRegistrationFailureLogHandler())
+	log := registryLogTestLogger(t)
+	RegistryLog(log, newTestSeedLog(t, log, SeedStageModels), hc, regm, NewRegistrationFailureLogHandler())
 
 	persisted := persistedSystemEvents(t, db)
 	if len(persisted) == 0 {
@@ -188,7 +189,8 @@ func TestRegistryLogDoesNotReadTheProviderRegistry(t *testing.T) {
 	viper.Set("REGISTRY_LOG_FILE", t.TempDir()+"/registry-errors.log")
 	t.Cleanup(func() { viper.Set("REGISTRY_LOG_FILE", "") })
 
-	RegistryLog(registryLogTestLogger(t), hc, regm, NewRegistrationFailureLogHandler())
+	log := registryLogTestLogger(t)
+	RegistryLog(log, newTestSeedLog(t, log, SeedStageModels), hc, regm, NewRegistrationFailureLogHandler())
 
 	if len(persistedSystemEvents(t, db)) == 0 {
 		t.Fatal("no system event was persisted with an empty provider registry")
@@ -208,7 +210,7 @@ func TestRegistryLogWithoutASystemEventSinkStillLogs(t *testing.T) {
 	t.Cleanup(func() { viper.Set("REGISTRY_LOG_FILE", "") })
 
 	log, sink := capturingTestLogger(t)
-	RegistryLog(log, hc, regm, NewRegistrationFailureLogHandler())
+	RegistryLog(log, newTestSeedLog(t, log, SeedStageModels), hc, regm, NewRegistrationFailureLogHandler())
 
 	if got := len(persistedSystemEvents(t, db)); got != 0 {
 		t.Fatalf("expected no persisted events without a sink, got %d", got)
@@ -225,10 +227,11 @@ func TestRunSeedStageRecoversPanic(t *testing.T) {
 	ran := false
 
 	log, sink := capturingTestLogger(t)
-	RunSeedStage(log, "models", func() {
+	seedLog := newTestSeedLog(t, log, SeedStageModels)
+	RunSeedStage(log, seedLog, func(_ *SeedLog) {
 		panic("boom")
 	})
-	RunSeedStage(log, "policies", func() {
+	RunSeedStage(log, newTestSeedLog(t, log, SeedStagePolicies), func(_ *SeedLog) {
 		ran = true
 	})
 
@@ -237,5 +240,8 @@ func TestRunSeedStageRecoversPanic(t *testing.T) {
 	}
 	if !sink.reports(t, ErrSeedingStagePanicCode) {
 		t.Fatalf("the recovered fault was not reported as %s, so containing it swallowed it; emitted: %+v", ErrSeedingStagePanicCode, sink.records(t))
+	}
+	if got := readSeedLog(t, seedLog.Path()); !strings.Contains(got, "panicked") {
+		t.Fatalf("the recovered fault was not recorded in the stage's dedicated seed log:\n%s", got)
 	}
 }

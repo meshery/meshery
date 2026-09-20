@@ -232,7 +232,7 @@ func formatRegistrantSummary(kind string, summary v1beta1.EntitySummary) string 
 	return fmt.Sprintf("For registrant %s imported %s.", kind, strings.Join(parts, ", "))
 }
 
-func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *meshmodel.RegistryManager, regErrorStore *RegistrationFailureLog) {
+func RegistryLog(log logger.Handler, seedLog *SeedLog, handlerConfig *HandlerConfig, regManager *meshmodel.RegistryManager, regErrorStore *RegistrationFailureLog) {
 	// Seeding runs before any user request, so there is no provider to route
 	// these events through - and, since PROVIDER enforcement, no guarantee
 	// that any particular provider is even registered. This used to read
@@ -268,6 +268,7 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 		successMessage := formatRegistrantSummary(kind, summary)
 
 		log.Info(successMessage)
+		seedLog.Reportf("%s", successMessage)
 		eventBuilder.WithMetadata(map[string]interface{}{
 			"kind":    kind,
 			"doclink": "https://docs.meshery.io/concepts/logical#logical-concepts",
@@ -283,14 +284,17 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 			log.Error(err)
 		}
 		if failLog != "" {
+			seedLog.Errorf("Registration failures for registrant %s: %s", kind, failLog)
 			log.Error(meshmodel.ErrRegisteringEntity(failLog, kind))
 		}
 
 	}
 	err = writeLogsToFiles(regErrorStore)
 	if err != nil {
+		seedLog.Errorf("Failed to write the registry failure report: %v", err)
 		log.Error(err)
 	}
+	seedLog.Detailf("Registered registrants: %d.", len(orderedKinds))
 }
 
 func (rfl *RegistrationFailureLog) GetEntityRegErrors() []EntityRegError {

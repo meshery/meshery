@@ -83,6 +83,19 @@ The server log levels can be configured at runtime by changing the env variable 
 
 The default setting for the `LOG_LEVEL` is `4` (Info). However, if the `DEBUG` environmental variable is configured as `TRUE`, it supersedes the value set in the `LOG_LEVEL` environmental variable, and the logging level is then adjusted to `5`(Debug).
 
+### Content Seeding Logs
+
+On boot, Meshery seeds content (user keys, models and their registrations, OPA policies, and catalog designs) in its own goroutine. Each content type gets a **dedicated log file** under `$HOME/.meshery/logs/seed/`, so an operator can review exactly one stage without draining the aggregate report:
+
+| Stage | Content seeded | Log file |
+|---|---|---|
+| `keys` | User keys from `KEYS_PATH` | `keys.log` |
+| `models` | Models and registrations into the registry | `models.log` |
+| `policies` | OPA policies from `POLICIES_PATH` | `policies.log` |
+| `designs` | Catalog designs and the default organization | `designs.log` |
+
+Every `Reportf` line in a stage (its summary) is mirrored to the process (stdout) log, so the aggregate report still carries one summary per stage; `Detailf` lines stay in the dedicated file only. A stage initialized with `models.NewSeedLogForSystem(process, persister, stage)` publishes a system event on completion whose metadata carries its dedicated file as `ViewLink` ("Get Logs") and `DownloadLink` ("Download File"), served by Meshery's `/api/system/fileView` and `/api/system/fileDownload` handlers, so the logs are reviewable inside the Meshery UI. Each stage runs through `models.RunSeedStage(log, seedLog, fn)`, which recovers a panicking stage, reports it, and lets the remaining stages finish.
+
 ### Runtime Configuration Environment Variables
 
 Meshery Server supports a broader set of runtime, provider, tracing, policy, and metadata environment variables than the contributor-specific subset that used to be documented here.

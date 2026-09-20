@@ -50,7 +50,7 @@ func (kh *KeysRegistrationHelper) GetIndexForRegisterCol(cols []string) int {
 	return shouldRegisterColIndex
 }
 
-func (kh *KeysRegistrationHelper) SeedKeys(filePath string) {
+func (kh *KeysRegistrationHelper) SeedKeys(seedLog *SeedLog, filePath string) {
 	ch := make(chan Key, 1)
 	errorChan := make(chan error, 1)
 	csvReader, err := csv.NewCSVParser[Key](filePath, rowIndex, map[string]string{
@@ -65,14 +65,16 @@ func (kh *KeysRegistrationHelper) SeedKeys(filePath string) {
 	})
 
 	if err != nil {
-		kh.log.Error(err)
+		seedLog.Errorf("Failed to read keys CSV %s: %v", filePath, err)
 		return
 	}
 
+	seeded := 0
+	failures := 0
 	go func() {
 		err := csvReader.Parse(ch, errorChan)
 		if err != nil {
-			kh.log.Error(err)
+			seedLog.Errorf("Failed to parse keys CSV %s: %v", filePath, err)
 		}
 	}()
 	for {
@@ -81,12 +83,19 @@ func (kh *KeysRegistrationHelper) SeedKeys(filePath string) {
 		case data := <-ch:
 			_, err := kh.keyPersister.SaveUsersKey(&data)
 			if err != nil {
+				failures++
+				seedLog.Detailf("Failed to save key %s: %v", data.ID.String(), err)
 				kh.log.Error(err)
+			} else {
+				seeded++
+				seedLog.Detailf("Seeded key %s.", data.ID.String())
 			}
 		case err := <-errorChan:
-			kh.log.Error(err)
+			failures++
+			seedLog.Errorf("Error while parsing keys CSV %s: %v", filePath, err)
 
 		case <-csvReader.Context.Done():
+			seedLog.Reportf("Seeded %d keys from %s (%d failures).", seeded, filePath, failures)
 			return
 		}
 	}

@@ -316,29 +316,41 @@ func main() {
 	// any stage must degrade the server rather than terminate it: an
 	// unrecovered panic here would take the HTTP listener down with it. Each
 	// stage is wrapped separately so one faulting stage still leaves the
-	// others to run.
+	// others to run, and each stage writes its own dedicated log file under
+	// ~/.meshery/logs/seed (keys.log, models.log, policies.log, designs.log)
+	// for review in the UI.
+	newSeedLog := func(stage models.SeedStage) *models.SeedLog {
+		return models.NewSeedLogForSystem(log, hc.SystemEventPersister, stage)
+	}
+
 	go func() {
-		models.RunSeedStage(log, "user keys", func() {
-			krh.SeedKeys(viper.GetString("KEYS_PATH"))
+		models.RunSeedStage(log, newSeedLog(models.SeedStageKeys), func(seedLog *models.SeedLog) {
+			krh.SeedKeys(seedLog, viper.GetString("KEYS_PATH"))
 		})
 
 		// This is where models are seeded from meshmodel directory to registry
-		models.RunSeedStage(log, "models", func() {
-			models.SeedComponents(log, hc, regManager, dbHandler)
+		models.RunSeedStage(log, newSeedLog(models.SeedStageModels), func(seedLog *models.SeedLog) {
+			models.SeedComponents(log, seedLog, hc, regManager, dbHandler)
 		})
 		// Rego is intialized for passing of policy if the policies are made to be per model base this needs to be removed.
-		models.RunSeedStage(log, "policies", func() {
+		models.RunSeedStage(log, newSeedLog(models.SeedStagePolicies), func(seedLog *models.SeedLog) {
+			policyCount, err := models.CountPolicyFiles(models.PoliciesPath)
+			if err != nil {
+				seedLog.Detailf("Could not enumerate policy files under %s: %v", models.PoliciesPath, err)
+			}
 			r, err := policies.NewRegoInstance(models.PoliciesPath, regManager)
 			if err != nil {
+				seedLog.Errorf("Failed to initialize policies from %s: %v", models.PoliciesPath, err)
 				log.Warn(handlers.ErrCreatingOPAInstance(err))
 			} else {
 				rego = *r
+				seedLog.Reportf("Loaded %d policies from %s.", policyCount, models.PoliciesPath)
 			}
 		})
 	}()
 
-	models.RunSeedStage(log, "content", func() {
-		lProv.SeedContent(log)
+	models.RunSeedStage(log, newSeedLog(models.SeedStageDesigns), func(seedLog *models.SeedLog) {
+		lProv.SeedContent(seedLog, log)
 	})
 	provs[lProv.Name()] = lProv
 

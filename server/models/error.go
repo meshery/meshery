@@ -149,6 +149,7 @@ const (
 	ErrSeedingConnectionKindCode          = "meshery-server-1463"
 	ErrNoSystemEventSinkCode              = "meshery-server-1482"
 	ErrSeedingStagePanicCode              = "meshery-server-1483"
+	ErrCreatingSeedLogCode                = "meshery-server-1486"
 	ErrImportFailureCode                  = "meshery-server-1359"
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
@@ -738,6 +739,20 @@ func ErrSeedingStagePanic(stage string, cause interface{}, stack []byte) error {
 		[]string{fmt.Sprintf("faulting stage: %s", stage), fmt.Sprintf("%v\n%s", cause, stack)},
 		[]string{"An unexpected condition was hit while seeding, either at startup or while reseeding after a database reset"},
 		[]string{"Meshery Server is still serving, but whatever the faulting stage contributes may be missing or incomplete. Report the stack trace above at https://github.com/meshery/meshery/issues/new/choose, then seed again - restart Meshery Server, or re-run the reset that triggered the seeding"},
+	)
+}
+
+// ErrCreatingSeedLog reports a failure to create the dedicated log file for a
+// seeded content type. Seed logging is best-effort: the seeding itself still
+// runs, and the report degrades to the process (stdout) log only.
+func ErrCreatingSeedLog(stage SeedStage, err error) error {
+	return errors.New(
+		ErrCreatingSeedLogCode,
+		errors.None,
+		[]string{fmt.Sprintf("Failed to create the seed log for %q content", stage)},
+		[]string{err.Error()},
+		[]string{"The seed log directory or file could not be created under $HOME/.meshery/logs/seed"},
+		[]string{"Check that the home directory is writable and that $HOME/.meshery/logs/seed can be created. Content is still seeded; only the per-type seed log for this stage is missing."},
 	)
 }
 
