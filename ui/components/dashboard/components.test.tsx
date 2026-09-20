@@ -108,12 +108,16 @@ describe('AddWidgetsToLayoutPanel', () => {
 describe('LayoutActionButton', () => {
   const FakeIcon = (props: any) => <svg data-testid="fake-icon" {...props} />;
 
-  const createTestStore = () =>
+  const createTestStore = (isDrawerCollapsed = false) =>
     configureStore({
       reducer: {
-        ui: (state = { isDrawerCollapsed: false }) => state,
+        ui: (state = { isDrawerCollapsed }) => state,
       },
     });
+
+  const setMediaQueries = (isSmallTablet: boolean, isMobile: boolean) => {
+    useMediaQueryMock.mockReturnValueOnce(isSmallTablet).mockReturnValueOnce(isMobile);
+  };
 
   afterEach(() => {
     useMediaQueryMock.mockReturnValue(false);
@@ -154,8 +158,8 @@ describe('LayoutActionButton', () => {
     expect(action).toHaveBeenCalledTimes(1);
   });
 
-  it('renders only the icon for non-edit actions on small devices', () => {
-    useMediaQueryMock.mockReturnValue(true);
+  it('renders only the icon below md with an expanded drawer', () => {
+    setMediaQueries(true, false);
     render(
       <Provider store={createTestStore()}>
         <LayoutActionButton
@@ -171,6 +175,58 @@ describe('LayoutActionButton', () => {
     expect(screen.queryByText('Share')).not.toBeInTheDocument();
     expect(screen.getByTestId('fake-icon')).toBeInTheDocument();
     expect(screen.getByTestId('tooltip')).toHaveAttribute('data-title', 'Share layout');
+  });
+
+  it('keeps the label visible below md with a collapsed drawer', () => {
+    setMediaQueries(true, false);
+    render(
+      <Provider store={createTestStore(true)}>
+        <LayoutActionButton
+          Icon={FakeIcon}
+          label="Share"
+          action={vi.fn()}
+          description="Share layout"
+          isShown={true}
+        />
+      </Provider>,
+    );
+
+    expect(screen.getByText('Share')).toBeInTheDocument();
+  });
+
+  it('renders only the icon below sm with a collapsed drawer', () => {
+    setMediaQueries(true, true);
+    render(
+      <Provider store={createTestStore(true)}>
+        <LayoutActionButton
+          Icon={FakeIcon}
+          label="Share"
+          action={vi.fn()}
+          description="Share layout"
+          isShown={true}
+        />
+      </Provider>,
+    );
+
+    expect(screen.queryByText('Share')).not.toBeInTheDocument();
+    expect(screen.getByTestId('fake-icon')).toBeInTheDocument();
+  });
+
+  it('keeps the label visible when neither breakpoint matches', () => {
+    setMediaQueries(false, false);
+    render(
+      <Provider store={createTestStore()}>
+        <LayoutActionButton
+          Icon={FakeIcon}
+          label="Share"
+          action={vi.fn()}
+          description="Share layout"
+          isShown={true}
+        />
+      </Provider>,
+    );
+
+    expect(screen.getByText('Share')).toBeInTheDocument();
   });
 });
 
