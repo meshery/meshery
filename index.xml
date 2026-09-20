@@ -41585,9 +41585,11 @@ Container Registry, AWS ECR, and so on), exactly like a container image.&lt;/p&g
 &lt;p&gt;Usage:
 mesheryctl system check [flags]&lt;/p&gt;
 &lt;p&gt;Flags:
-&amp;ndash;adapter Check status of Meshery adapters
+&amp;ndash;adapter string Check status of specified meshery adapter
+&amp;ndash;adapters Check status of meshery adapters
+&amp;ndash;components Check status of Meshery components
 -h, &amp;ndash;help help for check
-&amp;ndash;operator Check status of Meshery operators
+&amp;ndash;operator Verify the health of Meshery Operator&amp;rsquo;s deployment with MeshSync and Broker
 &amp;ndash;pre Verify environment readiness to deploy Meshery
 &amp;ndash;preflight Verify environment readiness to deploy Meshery&lt;/p&gt;</description></item><item><title>Rustrial Aws Eks Iam Auth Controller</title><link>/extensions/models/rustrial-aws-eks-iam-auth-controller/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/rustrial-aws-eks-iam-auth-controller/</guid><description/></item><item><title>Saferwall</title><link>/extensions/models/saferwall/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/saferwall/</guid><description/></item><item><title>Scheduler Plugins</title><link>/extensions/models/scheduler-plugins/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/extensions/models/scheduler-plugins/</guid><description/></item><item><title>Schema-Driven UI Development in Meshery</title><link>/project/contributing/ui/schemas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/project/contributing/ui/schemas/</guid><description>&lt;p&gt;Meshery aims to decouple the UI logic from hardcoded structures and become fully schema-driven. This allows the UI to dynamically adapt based on changes in the underlying schema without requiring constant manual updates. This document explains how to integrate schema definitions from the &lt;a href="https://github.com/meshery/schemas"&gt;&lt;code&gt;meshery/schemas&lt;/code&gt;&lt;/a&gt; repository into the Meshery UI using a code-generation approach.&lt;/p&gt;
 &lt;hr&gt;
