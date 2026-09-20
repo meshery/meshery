@@ -35,7 +35,8 @@ func NewKeysRegistrationHelper(dbHandler *database.Handler, log logger.Handler) 
 	return krh, err
 }
 
-// returns the spreadsheet column index that captures whether the key should be registered.
+// GetIndexForRegisterCol returns the spreadsheet column index that captures whether the
+// key should be registered, or -1 if the column is absent.
 func (kh *KeysRegistrationHelper) GetIndexForRegisterCol(cols []string) int {
 	if shouldRegisterColIndex != -1 {
 		return shouldRegisterColIndex

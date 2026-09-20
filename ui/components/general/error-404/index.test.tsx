@@ -76,7 +76,7 @@ describe('DefaultError', () => {
     expect(dashboard).toHaveAttribute('href', '/');
 
     const forumLink = screen.getByText('discussion forum').closest('a');
-    expect(forumLink).toHaveAttribute('href', expect.stringContaining('meshery.io/community'));
+    expect(forumLink).toHaveAttribute('href', 'https://discuss.meshery.io');
     const slackLink = screen.getByText('Slack workspace').closest('a');
     expect(slackLink).toHaveAttribute('href', 'https://slack.meshery.io');
   });
