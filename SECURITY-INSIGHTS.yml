@@ -88,8 +88,9 @@ repository:
   security:
     assessments:
       self:
+        evidence: https://github.com/meshery/meshery/blob/master/.github/security-self-assessment.md
         comment: |
-          Self assessment has not yet been completed.
+          CNCF TAG Security based self-assessment.
   documentation:
     contributing-guide: https://docs.meshery.io/project/contributing
     governance: https://github.com/meshery/meshery/blob/master/GOVERNANCE.md

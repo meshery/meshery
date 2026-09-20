@@ -27,5 +27,5 @@ assignees: ''
 
 - 🎨 Wireframes and [designs for Meshery UI](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI) in Figma [(open invite)](https://www.figma.com/team_invite/redeem/GvB8SudhEOoq3JOvoLaoMs)
 - 🖥 [Contributing to Meshery UI](https://docs.meshery.io/project/contributing/contributing-ui)
-- 🙋🏾🙋🏼 Questions: [Discussion Forum](https://meshery.io/community#community-forums) and [Community Slack](https://slack.meshery.io)
+- 🙋🏾🙋🏼 Questions: [Discussion Forum](https://discuss.meshery.io) and [Community Slack](https://slack.meshery.io)
 - 📺 [Self-paced Contributor Trainings](https://meshery.io/talks-and-trainings#trainings)

@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "relationships.meshery.io/v1beta3",
+  "version": "v1.0.0",
+  "kind": "edge",
+  "type": "binding",
+  "subType": "network",
+  "status": "enabled",
+  "evaluationQuery": "",
+  "metadata": {
+    "description": "A binding network edge: connecting the components provisions or rewrites network identity, not just documents a selector match. Rare in-tree; most Service-to-workload links are edge/non-binding/network.",
+    "isAnnotation": false
+  },
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "aws-elasticsearchservice-controller",
+    "version": "v1.0.0",
+    "displayName": "aws-elasticsearchservice-controller",
+    "registrant": { "kind": "github" },
+    "model": { "version": "v0.0.2" }
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Listener",
+            "model": { "name": "aws-elasticsearchservice-controller", "registrant": { "kind": "github" }, "model": { "version": "" } },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [["configuration", "spec", "domainName"]]
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Domain",
+            "model": { "name": "aws-elasticsearchservice-controller", "registrant": { "kind": "github" }, "model": { "version": "" } },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [["configuration", "metadata", "name"]]
+            }
+          }
+        ]
+      },
+      "deny": { "from": [], "to": [] }
+    }
+  ]
+}
