@@ -56,7 +56,7 @@ describe('useCustomResourceConfig', () => {
   });
 
   it('builds a config map keyed by custom resource Kind', () => {
-    const result = callConfig([{ Kind: 'MyCRD', Model: 'my-model' }]);
+    const result = callConfig([{ kind: 'MyCRD', model: 'my-model' }]);
     expect(result['MyCRD']).toBeDefined();
     expect(result['MyCRD'].name).toBe('MyCRD');
     expect(result['MyCRD'].model).toBe('my-model');

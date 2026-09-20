@@ -3,6 +3,7 @@ title: mesheryctl-design-evaluate
 display_title: false
 command: design
 subcommand: evaluate
+categories: [mesheryctl-design]
 ---
 
 # mesheryctl design evaluate
