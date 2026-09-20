@@ -28,6 +28,7 @@ import {
 } from '@/store/slices/globalEnvironmentContext';
 import { Button } from '@sistent/sistent';
 import { AddIcon, AddCircleIcon } from '@sistent/sistent';
+import { Keys } from '@meshery/schemas/permissions';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const DeploymentTargetContext = createContext({
@@ -67,7 +68,13 @@ const K8sContextConnection = ({ connection, environment }) => {
   const toggleK8sConnection = () => dispatch(toggleConnection(environment, connection));
   return (
     <K8sContextConnectionChip
-      ctx={{ ...connection.metadata, connectionId: connection.id }}
+      ctx={{
+        ...connection.metadata,
+        connectionId: connection.id,
+        // Surface lifecycle status so the avatar status-dot renders without a
+        // separate connections-list lookup.
+        connectionStatus: connection.status,
+      }}
       onSelectChange={toggleK8sConnection}
       selected={isSelected}
       selectable
@@ -96,6 +103,7 @@ const EnvironmentConnections = ({ environment, connections, onAddConnection }) =
             color="primary"
             onClick={onAddConnection}
             startIcon={<AddCircleIcon />}
+            permissionKey={Keys.WorkspaceManagementEditEnvironment}
           >
             Add a connection
           </InlineButton>{' '}
@@ -188,6 +196,7 @@ export const EnvironmentsEmptyState = ({ message, onButtonClick }) => {
         color="primary"
         onClick={onButtonClick}
         style={{ margin: '0.6rem 0.6rem', whiteSpace: 'nowrap' }}
+        permissionKey={Keys.WorkspaceManagementCreateEnvironment}
       >
         <AddIcon fill={theme.palette.background.constant.white} />
         Add Environments
@@ -219,6 +228,7 @@ export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
               <IconButton
                 onClick={() => setIsEnvrionmentModalOpen(true)}
                 aria-label="edit-environments"
+                permissionKey={Keys.WorkspaceManagementEditEnvironment}
               >
                 <Edit fill={theme.palette.icon.default} />
               </IconButton>

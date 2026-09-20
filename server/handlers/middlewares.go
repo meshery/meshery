@@ -50,11 +50,17 @@ var legacyProviderAliasWarnOnce sync.Once
 // input was a casing of the legacy alias so the caller can log a one-shot
 // deprecation warning.
 //
-// Falling through to enforcedProvider here is what removes the need for a
-// cookie round-trip via /provider, which is fragile across SameSite/popup/CDN
-// boundaries and was the trigger for an observed /user/login ⇄ /provider
-// redirect loop on enforced-provider hosts.
+// When PROVIDER is unset, cookie then header then ?provider= select the
+// provider. When PROVIDER is set, those client hints are ignored so a stale
+// Local cookie cannot override a pinned remote.
 func resolveProviderName(req *http.Request, cookieName, enforcedProvider string) (string, bool) {
+	// When PROVIDER is set, it is the only provider this process will use.
+	// Cookie, header, and ?provider= cannot override it; those were the
+	// paths that let a client keep using Local on a pinned-remote deployment.
+	if enforced := models.NormalizeProviderName(enforcedProvider); enforced != "" {
+		usedLegacyAlias := strings.EqualFold(enforcedProvider, models.LocalProviderLegacyAlias)
+		return enforced, usedLegacyAlias
+	}
 	var name string
 	if ck, err := req.Cookie(cookieName); err == nil && ck.Value != "" {
 		name = ck.Value
@@ -62,8 +68,6 @@ func resolveProviderName(req *http.Request, cookieName, enforcedProvider string)
 		name = hdr
 	} else if q := req.URL.Query().Get(providerQParamName); q != "" {
 		name = q
-	} else {
-		name = enforcedProvider
 	}
 	usedLegacyAlias := strings.EqualFold(name, models.LocalProviderLegacyAlias)
 	return models.NormalizeProviderName(name), usedLegacyAlias
@@ -149,13 +153,20 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
 				return
 			}
 
-			// Because server verifies the value of the "PROVIDER" environemnt variable and doesn't allow unsupported provider value,
-			// the below situation cannot occur.
-
-			// if providerH != "" && providerH != provider.Name() {
-			// 	w.WriteHeader(http.StatusUnauthorized)
-			// 	return
-			// }
+			if providerH != "" {
+				enforcedKey, ok := models.ResolveProviderKey(providerH, h.config.Providers)
+				if ok {
+					gotKey, gotOK := models.ResolveProviderKey(provider.Name(), h.config.Providers)
+					if !gotOK || gotKey != enforcedKey {
+						// Log the mismatch: without it this 401 is indistinguishable
+						// from an ordinary auth failure, and the enforced-provider
+						// case is exactly the one an operator needs to recognise.
+						h.log.Infof("[AUTH_FLOW] step=AuthMiddleware action=provider_mismatch path=%s enforced=%q got=%q", req.URL.Path, enforcedKey, provider.Name())
+						w.WriteHeader(http.StatusUnauthorized)
+						return
+					}
+				}
+			}
 			// logrus.Debugf("provider %s", provider)
 			isValid, err := h.validateAuth(provider, req)
 			if !isValid {
@@ -278,7 +289,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 	})
 }
 
-// GraphqlSessionInjectorMiddleware - is a middleware which injects user and session object
+// GraphqlMiddleware adapts next to the handler-chain signature and forwards the request to it, without injecting anything
 func (h *Handler) GraphqlMiddleware(next http.Handler) func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider) {
 	return func(w http.ResponseWriter, req *http.Request, pref *models.Preference, user *models.User, prov models.Provider) {
 		next.ServeHTTP(w, req)
@@ -354,6 +365,12 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 			h.log.Error(err)
 		}
 
+		// Skip a machine that failed to initialize rather than nil-dereferencing
+		// on ResetState/SendEvent. The connection stays stuck until the tracker
+		// entry is removed; see mhelpers.HasMachineContext for why.
+		if !mhelpers.HasMachineContext(inst) {
+			continue
+		}
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
@@ -413,6 +430,12 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 			h.log.Error(err)
 		}
 
+		// Skip a machine that failed to initialize rather than nil-dereferencing
+		// on ResetState/SendEvent, or type-asserting its nil Context on the Cast
+		// below. See mhelpers.HasMachineContext for why.
+		if !mhelpers.HasMachineContext(inst) {
+			continue
+		}
 		inst.ResetState()
 		go func(inst *machines.StateMachine) {
 			event, err := inst.SendEvent(ctx, machines.Discovery, nil)

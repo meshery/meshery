@@ -71,13 +71,19 @@ describe('rtkErrorMiddleware', () => {
     expect(dispatched.payload.id).toMatch(/^rtk-error-\d+$/);
   });
 
-  it('skips dispatch for 401 status (auth middleware territory)', () => {
+  it('dispatches a visible error event for 401 status instead of swallowing it', () => {
     const storeApi = makeStoreApi();
     const next = vi.fn();
-    const action = makeRejectedAction({ payload: { status: 401 } });
+    const action = makeRejectedAction({
+      payload: { status: 401, data: { error: 'Unauthorized' } },
+    });
     rtkErrorMiddleware(storeApi as any)(next)(action);
 
-    expect(storeApi.dispatch).not.toHaveBeenCalled();
+    expect(storeApi.dispatch).toHaveBeenCalledTimes(1);
+    const dispatched = storeApi.dispatch.mock.calls[0][0];
+    expect(dispatched.type).toBe(pushEvent({} as any).type);
+    expect(dispatched.payload.severity).toBe('error');
+    expect(dispatched.payload.description).toBe('Unable to load thing: Unauthorized');
     expect(next).toHaveBeenCalledWith(action);
   });
 

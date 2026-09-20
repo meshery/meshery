@@ -34,7 +34,8 @@ import (
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
-	"github.com/meshery/schemas/models/v1beta1/environment"
+	userv1beta2 "github.com/meshery/schemas/models/v1beta2/user"
+	"github.com/meshery/schemas/models/v1beta3/environment"
 	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
 	"github.com/spf13/viper"
@@ -45,6 +46,23 @@ const (
 	PROVIDER_CAPABILITIES_FILEPATH_ENV = "PROVIDER_CAPABILITIES_FILEPATH"
 	SKIP_DOWNLOAD_EXTENSIONS_ENV       = "SKIP_DOWNLOAD_EXTENSIONS"
 )
+
+// statusOf reports the HTTP status carried by resp, or 0 when there is no
+// response to read one from.
+//
+// DoRequest returns (nil, err) for every transport-level failure and for a
+// failed token refresh, so the `if err != nil` branch of each call site holds a
+// nil response. Reading resp.StatusCode there - which ten call sites did -
+// panics precisely when the remote provider is unreachable, i.e. exactly when
+// the error path is meant to report a clean failure. 0 is the honest value:
+// the request never produced a status, and httputil.WithProviderStatus ignores
+// anything outside 400-599, so no fabricated status is propagated either.
+func statusOf(resp *http.Response) int {
+	if resp == nil {
+		return 0
+	}
+	return resp.StatusCode
+}
 
 func shouldPropagateProviderVersion(version string) bool {
 	normalized := strings.TrimSpace(version)
@@ -105,10 +123,13 @@ type RemoteProvider struct {
 
 	MeshsyncDefaultDeploymentMode connections.MeshsyncDeploymentMode
 }
-type AnonymousFlowResponse struct {
-	AccessToken string    `json:"accessToken"`
-	Owner       core.Uuid `json:"owner,omitempty"`
-}
+
+// AnonymousFlowResponse is the remote provider's reply to the anonymous-user
+// mint. It is a CONSUMED contract - the provider produces it, Meshery Server
+// only decodes it - so it is the schemas construct itself, never a local
+// re-declaration. A local copy is how the field silently became `owner` while
+// the provider kept sending `userId`.
+type AnonymousFlowResponse = userv1beta2.AnonymousFlowResponse
 
 type userSession struct {
 	token   string
@@ -332,7 +353,7 @@ func (l *RemoteProvider) fetchCapabilities(ctx context.Context, token string, ve
 	return providerProperties, nil
 }
 
-// downloadProviderExtensionPackage will download the remote provider extensions
+// DownloadProviderExtensionPackage will download the remote provider extensions
 // package
 func (l *ProviderProperties) DownloadProviderExtensionPackage(log logger.Handler) {
 	// Skip download if the SKIP_DOWNLOAD_EXTENSIONS flag is set
@@ -550,11 +571,24 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 		return
 	}
 
+	// A nil user id means the provider's reply carried none. Writing
+	// capabilities under the zero UUID would collapse every anonymous session
+	// onto a single row rather than fail, so refuse it outright - before the
+	// JWT cookie is set, so a refused session leaves no half-authenticated
+	// browser state behind.
+	if flowResponse.UserID.IsNil() {
+		err = ErrAnonymousUserIDMissing()
+		l.Log.Error(err)
+		http.Redirect(res, req, errorUI, http.StatusFound)
+
+		return
+	}
+
 	l.SetJWTCookie(res, flowResponse.AccessToken)
 
-	err = l.WriteCapabilitiesForUser(flowResponse.Owner.String(), &providerProperties)
+	err = l.WriteCapabilitiesForUser(flowResponse.UserID.String(), &providerProperties)
 	if err != nil {
-		err = ErrDBPut(fmt.Errorf("failed to write capabilities for the user %s: %w", flowResponse.Owner.String(), err))
+		err = ErrDBPut(fmt.Errorf("failed to write capabilities for the user %s: %w", flowResponse.UserID.String(), err))
 		l.Log.Error(err)
 		http.Redirect(res, req, errorUI, http.StatusFound)
 
@@ -819,7 +853,7 @@ func (l *RemoteProvider) GetUsers(token, page, pageSize, search, order, filter s
 	return nil, err
 }
 
-// Returns Keys from a user /api/identity/users/keys
+// GetUsersKeys returns keys from a user via /api/identity/users/keys
 func (l *RemoteProvider) GetUsersKeys(token, page, pageSize, search, order, filter string, orgID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(UsersKeys) {
 		l.Log.Warn(ErrOperationNotAvailable)
@@ -1008,9 +1042,7 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error 
 	return errors.New(string(bd))
 }
 
-// HandleUnAuthenticated
-//
-// Redirects to alert user of expired session.
+// HandleUnAuthenticated redirects to alert user of expired session.
 // Includes redirect loop detection — if the user has been redirected more than
 // MaxAuthRetries times within a short window, an error page is served instead
 // of continuing the redirect chain.
@@ -1080,7 +1112,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 
 	// if undefined -> set to default
 	if connections.MeshsyncDeploymentModeFromMetadata(metadata) == connections.MeshsyncDeploymentModeUndefined {
-		connections.SetMeshsyncDeploymentModeToMetadata(
+		connections.MaterializeMeshsyncDeploymentMode(
 			metadata,
 			l.MeshsyncDefaultDeploymentMode,
 		)
@@ -1170,7 +1202,7 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -1587,7 +1619,7 @@ func (l *RemoteProvider) PublishResults(req *http.Request, result *MesheryResult
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return "", ErrDataRead(err, "Perf Result")
 	}
 	if resp.StatusCode == http.StatusCreated {
@@ -1804,7 +1836,7 @@ func (l *RemoteProvider) GetEventTypes(token string, userID core.Uuid, sysID cor
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
-		return eventTypes, ErrFetch(err, "Events", resp.StatusCode)
+		return eventTypes, ErrFetch(err, "Events", statusOf(resp))
 	}
 
 	defer func() {
@@ -2156,7 +2188,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 		q.Set("type", typ)
 	}
 	if oamType != "" {
-		q.Set("oam_type", oamType)
+		q.Set("oamType", oamType)
 	}
 
 	remoteProviderURL.RawQuery = q.Encode()
@@ -2180,7 +2212,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 	if resp.StatusCode == http.StatusOK {
 		var pr PatternResourcePage
 		if err := json.NewDecoder(resp.Body).Decode(&pr); err != nil {
-			l.Log.Error(ErrDataRead(err, "respone body"))
+			l.Log.Error(ErrDataRead(err, "response body"))
 			return nil, ErrUnmarshal(err, "design Page Resource")
 		}
 
@@ -2315,7 +2347,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -2400,7 +2432,7 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -2547,7 +2579,7 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string, 
 	bdr, err := io.ReadAll(resp.Body)
 
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return bdr, ErrDataRead(err, "design:"+patternID)
 	}
 
@@ -2600,7 +2632,7 @@ func (l *RemoteProvider) DeleteMesheryPattern(req *http.Request, patternID strin
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -2658,7 +2690,7 @@ func (l *RemoteProvider) CloneMesheryPattern(req *http.Request, patternID string
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -2671,7 +2703,7 @@ func (l *RemoteProvider) CloneMesheryPattern(req *http.Request, patternID string
 	return nil, err
 }
 
-// PublishMesheryPattern publishes a meshery pattern with the given id to catalog
+// PublishCatalogPattern publishes a meshery pattern with the given id to catalog
 func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryPatternsCatalog) {
 		l.Log.Error(ErrOperationNotAvailable)
@@ -2713,7 +2745,7 @@ func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPattern
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -2726,7 +2758,7 @@ func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPattern
 	return nil, err
 }
 
-// UnPublishMesheryPattern unpublishes a meshery pattern with the given id to catalog
+// UnPublishCatalogPattern unpublishes a meshery pattern with the given id to catalog
 func (l *RemoteProvider) UnPublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryPatternsCatalog) {
 		l.Log.Error(ErrOperationNotAvailable)
@@ -2768,7 +2800,7 @@ func (l *RemoteProvider) UnPublishCatalogPattern(req *http.Request, publishPatte
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -2824,7 +2856,7 @@ func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns Meshe
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -3237,7 +3269,7 @@ func (l *RemoteProvider) CloneMesheryFilter(req *http.Request, filterID string, 
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -3250,7 +3282,7 @@ func (l *RemoteProvider) CloneMesheryFilter(req *http.Request, filterID string, 
 	return nil, err
 }
 
-// CloneMesheryFilter publishes a meshery filter with the given id to catalog
+// PublishCatalogFilter publishes a meshery filter with the given id to catalog
 func (l *RemoteProvider) PublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryFiltersCatalog) {
 		l.Log.Error(ErrOperationNotAvailable)
@@ -3292,7 +3324,7 @@ func (l *RemoteProvider) PublishCatalogFilter(req *http.Request, publishFilterRe
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -3305,7 +3337,7 @@ func (l *RemoteProvider) PublishCatalogFilter(req *http.Request, publishFilterRe
 	return nil, err
 }
 
-// UnPublishMesheryFilter publishes a meshery filter with the given id to catalog
+// UnPublishCatalogFilter unpublishes a meshery filter with the given id from catalog
 func (l *RemoteProvider) UnPublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryFiltersCatalog) {
 		l.Log.Error(ErrOperationNotAvailable)
@@ -3347,7 +3379,7 @@ func (l *RemoteProvider) UnPublishCatalogFilter(req *http.Request, publishFilter
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -3450,7 +3482,7 @@ func (l *RemoteProvider) GetApplicationSourceContent(req *http.Request, applicat
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, ErrDataRead(err, "Application")
 	}
 
@@ -3492,7 +3524,7 @@ func (l *RemoteProvider) GetDesignSourceContent(token, designID string) ([]byte,
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, ErrDataRead(err, "Pattern")
 	}
 
@@ -3552,7 +3584,7 @@ func (l *RemoteProvider) GetMesheryApplications(tokenString string, page, pageSi
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, ErrDataRead(err, "Application")
 	}
 
@@ -4495,7 +4527,8 @@ func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, tok
 		if err != nil {
 			return nil, ErrUnmarshal(err, "Connection \"%s\" of type \"%s\" with status \"%s\" from the remote provider")
 		}
-		l.Log.Debug("connections, ", connectionPage)
+		l.Log.Debugf("RemoteProvider::SaveConnection: parsed %d connection(s) (page=%d, pageSize=%d, totalCount=%d)",
+			len(connectionPage.Connections), connectionPage.Page, connectionPage.PageSize, connectionPage.TotalCount)
 		// On POST request to Remote Provider API, the response always contains single entry/connection.
 		if len(connectionPage.Connections) > 0 {
 			return connectionPage.Connections[0], nil
@@ -4551,7 +4584,7 @@ func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, 
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		return nil, ErrFetch(err, "Connections Page", resp.StatusCode)
+		return nil, ErrFetch(err, "Connections Page", statusOf(resp))
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
@@ -4686,7 +4719,7 @@ func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *connect
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		return nil, ErrFetch(err, "Update Connection", resp.StatusCode)
+		return nil, ErrFetch(err, "Update Connection", statusOf(resp))
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
@@ -4794,7 +4827,7 @@ func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID core.U
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		err = ErrDelete(err, "Connection: "+connectionID.String(), resp.StatusCode)
+		err = ErrDelete(err, "Connection: "+connectionID.String(), statusOf(resp))
 		l.Log.Error(err)
 		return nil, err
 	}
@@ -5027,7 +5060,7 @@ func (l *RemoteProvider) GetKubeClient() *mesherykube.Client {
 	return l.KubeClient
 }
 
-// SaveCredential - to save a creadential for an integration
+// SaveUserCredential - to save a credential for an integration
 func (l *RemoteProvider) SaveUserCredential(token string, credential *Credential) (*Credential, error) {
 	var createdCredential Credential
 	if !l.Capabilities.IsSupported(PersistCredentials) {
@@ -5070,7 +5103,7 @@ func (l *RemoteProvider) SaveUserCredential(token string, credential *Credential
 	return nil, ErrFetch(fmt.Errorf("failed to save the credential"), string(bdr), resp.StatusCode)
 }
 
-// GetCredentials - to get saved credentials
+// GetUserCredentials - to get saved credentials
 func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, pageSize int, search, order string) (*CredentialsPage, error) {
 	if !l.Capabilities.IsSupported(PersistCredentials) {
 		l.Log.Error(ErrOperationNotAvailable)
@@ -5094,7 +5127,7 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, p
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		return nil, ErrFetch(err, "Credentials Page", resp.StatusCode)
+		return nil, ErrFetch(err, "Credentials Page", statusOf(resp))
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
@@ -5130,7 +5163,7 @@ func (l *RemoteProvider) GetCredentialByID(token string, credentialID core.Uuid)
 		if resp != nil {
 			statusCode = resp.StatusCode
 		}
-		return nil, statusCode, ErrFetch(err, "Credentials Page", resp.StatusCode)
+		return nil, statusCode, ErrFetch(err, "Credentials Page", statusOf(resp))
 	}
 	defer func() {
 		if err := resp.Body.Close(); err != nil {
@@ -5209,7 +5242,7 @@ func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID co
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
 	q := remoteProviderURL.Query()
-	q.Add("credential_id", credentialID.String())
+	q.Add("credentialId", credentialID.String())
 	remoteProviderURL.RawQuery = q.Encode()
 	l.Log.Debug("constructed credential url: ", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
@@ -5220,7 +5253,7 @@ func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID co
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		err = ErrDelete(err, "Credential: "+credentialID.String(), resp.StatusCode)
+		err = ErrDelete(err, "Credential: "+credentialID.String(), statusOf(resp))
 		l.Log.Error(err)
 		return nil, err
 	}
@@ -5365,7 +5398,7 @@ func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID, or
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -5453,7 +5486,7 @@ func (l *RemoteProvider) DeleteEnvironment(req *http.Request, environmentID stri
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -5542,7 +5575,7 @@ func (l *RemoteProvider) AddConnectionToEnvironment(req *http.Request, environme
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -5582,7 +5615,7 @@ func (l *RemoteProvider) RemoveConnectionFromEnvironment(req *http.Request, envi
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -5642,7 +5675,7 @@ func (l *RemoteProvider) GetConnectionsOfEnvironment(req *http.Request, environm
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
@@ -6085,7 +6118,7 @@ func (l *RemoteProvider) GetEnvironmentsOfWorkspace(req *http.Request, workspace
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
-		return nil, ErrFetch(err, "Workspace", resp.StatusCode)
+		return nil, ErrFetch(err, "Workspace", statusOf(resp))
 	}
 
 	defer func() {
@@ -6120,7 +6153,7 @@ func (l *RemoteProvider) AddDesignToWorkspace(req *http.Request, workspaceID str
 	}
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
-		return nil, ErrFetch(err, "Workspace", resp.StatusCode)
+		return nil, ErrFetch(err, "Workspace", statusOf(resp))
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -6177,7 +6210,7 @@ func (l *RemoteProvider) GetDesignsOfWorkspace(req *http.Request, workspaceID, p
 	}
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
-		return nil, ErrFetch(err, "Workspace", resp.StatusCode)
+		return nil, ErrFetch(err, "Workspace", statusOf(resp))
 	}
 	defer func() {
 		_ = resp.Body.Close()

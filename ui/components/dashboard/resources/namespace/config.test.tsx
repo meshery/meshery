@@ -26,7 +26,13 @@ vi.mock('../sortable-table-cell', () => ({
   SortableTableCell: ({ columnData }: any) => <th>{columnData?.label}</th>,
 }));
 vi.mock('../../../../utils/Enum', () => ({
-  CONNECTION_KINDS: { KUBERNETES: 'kubernetes' },
+  CoreConnectionKinds: {
+    meshery: 'meshery',
+    kubernetes: 'kubernetes',
+    prometheus: 'prometheus',
+    grafana: 'grafana',
+    github: 'github',
+  },
 }));
 vi.mock('@/components/data-formatter', () => ({
   FormatId: ({ id }: any) => <span>{id}</span>,

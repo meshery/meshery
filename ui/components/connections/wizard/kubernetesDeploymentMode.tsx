@@ -1,4 +1,4 @@
-import { Alert, Box, Radio, Typography, SettingsIcon } from '@sistent/sistent';
+import { Alert, Box, CustomTooltip, Radio, Typography, SettingsIcon } from '@sistent/sistent';
 import { alpha, styled } from '@/theme';
 import { EVENT_TYPES } from 'lib/event-types';
 import { MESHSYNC_DEPLOYMENT_TYPE } from '@/utils/Enum';
@@ -9,6 +9,15 @@ import type { GenericRecord, WizardContext, WizardStep } from './types';
 // Matches the backend's MeshsyncDeploymentModeDefault (embedded) used when no
 // mode is supplied. Keep in sync with server/models/connections.
 export const DEFAULT_MESHSYNC_DEPLOYMENT_MODE = MESHSYNC_DEPLOYMENT_TYPE.EMBEDDED;
+
+/** Canonical docs for MeshSync + deployment modes (anchor deep links). */
+export const MESHSYNC_DOCS_URL = 'https://docs.meshery.io/concepts/architecture/meshsync';
+export const MESHSYNC_MODES_DOCS_URL =
+  'https://docs.meshery.io/concepts/architecture/meshsync#meshsync-deployment-mode';
+export const MESHSYNC_OPERATOR_MODE_DOCS_URL =
+  'https://docs.meshery.io/concepts/architecture/meshsync#operator-mode';
+export const MESHSYNC_EMBEDDED_MODE_DOCS_URL =
+  'https://docs.meshery.io/concepts/architecture/meshsync#embedded-mode-default';
 
 const ModeCard = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'selected',
@@ -34,20 +43,25 @@ export const MESHSYNC_DEPLOYMENT_MODE_OPTIONS = [
     value: MESHSYNC_DEPLOYMENT_TYPE.OPERATOR,
     label: 'Operator',
     description:
-      'Install the Meshery Operator into the cluster. MeshSync runs in-cluster and streams resource changes to Meshery in real time.',
+      'Installs Meshery Operator in the cluster, along with the MeshSync controller, which subscribes to and streams updates on "interesting" resources in real-time. You can configure and refine which resources MeshSync subscribes to.',
+    docsUrl: MESHSYNC_OPERATOR_MODE_DOCS_URL,
   },
   {
     value: MESHSYNC_DEPLOYMENT_TYPE.EMBEDDED,
     label: 'Embedded',
     description:
-      'Run MeshSync from within Meshery Server. Nothing is installed into the cluster; discovery happens out-of-cluster.',
+      'Runs MeshSync inside Meshery Server (default). Nothing is installed into the cluster.',
+    docsUrl: MESHSYNC_EMBEDDED_MODE_DOCS_URL,
   },
-];
+] as const;
+
+/** Hover copy for a mode option, with a docs deep link. */
+export const getMeshsyncModeTooltip = (option: { description: string; docsUrl: string }): string =>
+  `${option.description} [Learn more](${option.docsUrl})`;
 
 /**
- * Presentational picker for the MeshSync deployment mode. `value` is the chosen
- * mode; `currentValue` (optional) tags the mode already persisted on the
- * connection as "Current" — used in the configure flow.
+ * Presentational picker for MeshSync deployment mode. Mode details appear on
+ * hover (CustomTooltip), not as always-on body copy.
  */
 export const MeshsyncDeploymentModePicker = ({
   value,
@@ -62,45 +76,48 @@ export const MeshsyncDeploymentModePicker = ({
     {MESHSYNC_DEPLOYMENT_MODE_OPTIONS.map((option) => {
       const selected = value === option.value;
       return (
-        <ModeCard
+        <CustomTooltip
           key={option.value}
-          selected={selected}
-          role="radio"
-          aria-checked={selected}
-          tabIndex={0}
-          onClick={() => onChange(option.value)}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-              event.preventDefault();
-              onChange(option.value);
-            }
-          }}
+          interactive
+          title={getMeshsyncModeTooltip(option)}
+          placement="top"
         >
-          <Radio
-            checked={selected}
-            tabIndex={-1}
-            onChange={() => onChange(option.value)}
-            sx={{ p: 0, mt: 0.25 }}
-          />
-          <Box sx={{ display: 'grid', gap: 0.5, minWidth: 0 }}>
-            <Typography variant="body1" sx={{ fontWeight: 600 }}>
-              {option.label}
-              {option.value === currentValue && (
-                <Typography
-                  component="span"
-                  variant="caption"
-                  color="text.secondary"
-                  sx={{ ml: 1 }}
-                >
-                  Current
-                </Typography>
-              )}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {option.description}
-            </Typography>
-          </Box>
-        </ModeCard>
+          <ModeCard
+            selected={selected}
+            role="radio"
+            aria-checked={selected}
+            tabIndex={0}
+            onClick={() => onChange(option.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                onChange(option.value);
+              }
+            }}
+          >
+            <Radio
+              checked={selected}
+              tabIndex={-1}
+              onChange={() => onChange(option.value)}
+              sx={{ p: 0, mt: 0.25 }}
+            />
+            <Box sx={{ display: 'grid', gap: 0.25, minWidth: 0 }}>
+              <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                {option.label}
+                {option.value === currentValue && (
+                  <Typography
+                    component="span"
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ ml: 1 }}
+                  >
+                    Current
+                  </Typography>
+                )}
+              </Typography>
+            </Box>
+          </ModeCard>
+        </CustomTooltip>
       );
     })}
   </Box>
@@ -108,6 +125,36 @@ export const MeshsyncDeploymentModePicker = ({
 
 export const getConfiguredConnection = (ctx: WizardContext): GenericRecord =>
   (ctx.data.registrationResult as GenericRecord) || {};
+
+/**
+ * The connection as the server left it after a setMeshsyncMode action.
+ *
+ * The server stores the choice once - in the connection's layered
+ * controllers-configuration override - and refreshes the
+ * `meshsync_deployment_mode` materialization from it. Adopting the response
+ * verbatim keeps the wizard from carrying a second, hand-assembled copy of the
+ * same fact that the controllers editor would then contradict.
+ *
+ * A provider may answer 2xx with an empty body; only then does the local merge
+ * of the selected mode apply, so the step still shows what the user just chose.
+ */
+export const applyMeshsyncModeResult = (
+  connection: GenericRecord,
+  response: GenericRecord | undefined | null,
+  selectedMode: string,
+): GenericRecord => {
+  const serverMetadata = (response?.metadata as GenericRecord) || null;
+  if (serverMetadata) {
+    return { ...connection, ...response, metadata: serverMetadata };
+  }
+  return {
+    ...connection,
+    metadata: {
+      ...((connection.metadata as GenericRecord) || {}),
+      meshsync_deployment_mode: selectedMode,
+    },
+  };
+};
 
 // The persisted mode, accepting either the camelCase or snake_case metadata key
 // (mirrors how the connections table reads it).
@@ -169,12 +216,15 @@ export const kubernetesDeploymentModeStep: WizardStep = {
     try {
       // Dedicated action endpoint: the server owns the metadata merge and the
       // MeshSync redeploy, keyed on the connection id.
-      await ctx.services.setMeshsyncMode(connectionId, selectedMode as 'operator' | 'embedded');
+      const updated = await ctx.services.setMeshsyncMode(
+        connectionId,
+        selectedMode as 'operator' | 'embedded',
+      );
       // Keep the local connection in sync so the step shows the new mode as
       // current if the user steps back into it.
-      const metadata = (connection.metadata as GenericRecord) || {};
-      const nextMetadata = { ...metadata, meshsync_deployment_mode: selectedMode };
-      ctx.patch({ registrationResult: { ...connection, metadata: nextMetadata } });
+      ctx.patch({
+        registrationResult: applyMeshsyncModeResult(connection, updated, selectedMode),
+      });
       ctx.services.notify({
         message: `MeshSync deployment mode set to ${selectedMode}.`,
         event_type: EVENT_TYPES.SUCCESS,

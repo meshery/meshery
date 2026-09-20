@@ -124,8 +124,12 @@ spec:
                 type: integer
               version:
                 description: |-
-                  Version pins the NATS server image tag. When empty the operator uses its
-                  bundled default NATS version.
+                  Version pins the NATS server image tag. When empty the operator uses the
+                  pinned NATS version from its vendored chart - never a moving channel tag.
+                  Use the bare tag the registry publishes ("2.14.2-alpine"); a leading "v"
+                  is stripped for you, because library/nats publishes no v-prefixed image
+                  tags. A moving tag ("latest") is honoured if you ask for one explicitly,
+                  and is then pulled on every restart.
                 type: string
             type: object
           status:
@@ -299,8 +303,12 @@ spec:
                 type: integer
               version:
                 description: |-
-                  Version pins the NATS server image tag. When empty the operator uses its
-                  bundled default NATS version.
+                  Version pins the NATS server image tag. When empty the operator uses the
+                  pinned NATS version from its vendored chart - never a moving channel tag.
+                  Use the bare tag the registry publishes ("2.14.2-alpine"); a leading "v"
+                  is stripped for you, because library/nats publishes no v-prefixed image
+                  tags. A moving tag ("latest") is honoured if you ask for one explicitly,
+                  and is then pulled on every restart.
                 type: string
             type: object
           status:
@@ -438,6 +446,15 @@ spec:
                 minimum: 1
                 type: integer
               version:
+                description: |-
+                  Version pins the MeshSync image tag. When empty the operator deploys the
+                  pinned default MeshSync release it ships with - never a moving channel
+                  tag, so the image a cluster runs cannot change under it on a pod restart.
+                  Use the bare semantic version the registry publishes ("1.0.3"); a leading
+                  "v" is stripped for you, because meshery/meshsync publishes no
+                  v-prefixed image tags even though its releases are named that way. A
+                  moving tag ("edge-latest") is honoured if you ask for one explicitly, and
+                  is then pulled on every restart.
                 type: string
               watch-list:
                 description: ConfigMap holds configuration data for pods to consume.
@@ -607,6 +624,15 @@ spec:
                 minimum: 1
                 type: integer
               version:
+                description: |-
+                  Version pins the MeshSync image tag. When empty the operator deploys the
+                  pinned default MeshSync release it ships with - never a moving channel
+                  tag, so the image a cluster runs cannot change under it on a pod restart.
+                  Use the bare semantic version the registry publishes ("1.0.3"); a leading
+                  "v" is stripped for you, because meshery/meshsync publishes no
+                  v-prefixed image tags even though its releases are named that way. A
+                  moving tag ("edge-latest") is honoured if you ask for one explicitly, and
+                  is then pulled on every restart.
                 type: string
               watch-list:
                 description: ConfigMap holds configuration data for pods to consume.

@@ -405,8 +405,15 @@ export const useGetSelectedOrganization = () => {
     error: errorLoadingAllOrgs,
   } = useGetOrgsQuery();
 
+  // `selectedOrganizationId` is the canonical key (schemas v1beta1
+  // user.Preference, and what meshery-cloud reads and writes). Meshery Server
+  // used to spell it `selectedOrganizationID`; the legacy read below keeps
+  // preferences persisted under that spelling resolving until they are
+  // rewritten on the next selection.
+  const selectedOrganizationId =
+    userPrefs?.selectedOrganizationId ?? userPrefs?.selectedOrganizationID;
   const existingSelectedOrganization = allOrgs?.organizations?.find(
-    (org) => org.id === userPrefs?.selectedOrganizationID,
+    (org) => org.id === selectedOrganizationId,
   );
 
   const selectedOrganization = existingSelectedOrganization ?? allOrgs?.organizations?.[0];
@@ -470,7 +477,7 @@ export const useUpdateSelectedOrganizationMutation = () => {
   const [updateUserPref, response] = useUpdateUserPrefMutation();
 
   const updateSelectedOrganization = (orgId) => {
-    return updateUserPref({ selectedOrganizationID: orgId });
+    return updateUserPref({ selectedOrganizationId: orgId });
   };
 
   return [updateSelectedOrganization, response];

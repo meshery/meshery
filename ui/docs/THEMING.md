@@ -7,8 +7,7 @@ The short version:
 - Theme primitives (colors, spacing, breakpoints, the `styled()` factory, the
   `useTheme()` hook) come from `@sistent/sistent`, the Meshery design system.
 - The project-local front door is `@/theme`. Import everything theme-related
-  from there, not from `@sistent/sistent` directly and not from the legacy
-  `@/themes*` modules.
+  from there, not from `@sistent/sistent` directly.
 - Hardcoded colors (hex literals, `rgb()`, `rgba()`) and inline `style={{}}`
   props for static values are banned in component code. Use `theme.palette.*`
   via `styled()` instead.
@@ -87,9 +86,9 @@ import { styled } from '@sistent/sistent';
 ```
 
 Today's `no-restricted-imports` rule in
-[`ui/eslint.config.js`](../eslint.config.js) blocks the legacy
-`@/themes*` / `@/constants/colors` paths, the `@/theme/index` deep import,
-and direct `@mui/*` / `@material-ui/*` / `@rjsf/mui` imports. Routing
+[`ui/eslint.config.js`](../eslint.config.js) blocks the `@/theme/index`
+deep import and direct `@mui/*` / `@material-ui/*` / `@rjsf/mui` imports.
+Routing
 theme primitives through `@/theme` rather than `@sistent/sistent` is
 project convention; a later phase may tighten the rule.
 
@@ -159,9 +158,7 @@ Literal colors are only allowed in modules that define the theme or ship
 non-themed assets:
 
 - `ui/theme/**` — the theme module itself.
-- `ui/themes/**` — the legacy theme module, scheduled for deletion.
 - `ui/assets/**` — SVG icons encoded as React components.
-- `ui/constants/**` — legacy color constants, scheduled for deletion.
 - `ui/lib/**` — third-party integration helpers.
 - `ui/public/**` — static assets.
 
@@ -281,15 +278,10 @@ In practice, 90%+ of components in this codebase should be `styled()`.
 A migration table for the legacy modules that the lint rules and the
 restructure plan call out for deletion:
 
-| Legacy import                                                               | Replace with                                                                                                                                                                                                                              |
-| --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `import { Colors } from '@/themes/app'`                                     | `theme.palette.*` (e.g. `theme.palette.error.main`)                                                                                                                                                                                       |
-| `import { notificationColors, darkNotificationColors } from '@/themes/app'` | `theme.palette.*` (the theme handles the dark variant)                                                                                                                                                                                    |
-| `import { NOTIFICATIONCOLORS } from '@/themes'`                             | `theme.palette.*`                                                                                                                                                                                                                         |
-| `import { PRIMARY_COLOR } from '@/constants/colors'`                        | `theme.palette.primary.main`                                                                                                                                                                                                              |
-| `import { lightenOrDarkenColor } from '@/utils/lightenOrDarkenColor'`       | `import { lighten, darken } from '@/theme'`. The legacy helper accepts percent (`-100..100`); the MUI utilities take a coefficient (`0..1`). Convert by dividing by 100 and using `darken` for negative percents, `lighten` for positive. |
-| `import { styled } from '@/theme/index'`                                    | `import { styled } from '@/theme'`                                                                                                                                                                                                        |
-| `import { ... } from '@mui/material'`                                       | `import { ... } from '@sistent/sistent'`                                                                                                                                                                                                  |
+| Legacy import                            | Replace with                             |
+| ---------------------------------------- | ---------------------------------------- |
+| `import { styled } from '@/theme/index'` | `import { styled } from '@/theme'`       |
+| `import { ... } from '@mui/material'`    | `import { ... } from '@sistent/sistent'` |
 
 For the underlying ESLint configuration that enforces these mappings, see
 the `no-restricted-imports` block in
@@ -331,7 +323,8 @@ belong upstream.
 
 ## RJSF theme
 
-`ui/themes/rjsf.ts` currently uses Material UI's `createTheme` to configure
+`ui/theme/rjsf.ts` currently builds plain MUI themes with `createTheme`
+(imported via its `@sistent/sistent` re-export) to configure
 the [react-jsonschema-form](https://github.com/rjsf-team/react-jsonschema-form)
 adapter. A later phase (see §4.4 of [`../restructure-plan.md`](../restructure-plan.md))
 migrates it to a Sistent-backed theme via `extendSistentTheme`.
@@ -343,7 +336,7 @@ Until then:
   to import from `@rjsf/mui` directly — the lint rule
   (`no-restricted-imports`) blocks the import everywhere else.
 - App code should consume the shared RJSF wrapper, not `@rjsf/mui` and not
-  `ui/themes/rjsf.ts` directly.
+  `ui/theme/rjsf.ts` directly.
 
 ---
 

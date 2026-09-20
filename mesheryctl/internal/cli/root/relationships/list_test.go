@@ -24,7 +24,7 @@ func TestList(t *testing.T) {
 		{
 			Name:             "List registered relationships empty",
 			Args:             []string{"list"},
-			URL:              "/api/meshmodels/relationships",
+			URL:              "/api/registry/relationships",
 			Fixture:          "list.relationship.api.empty.response.golden",
 			ExpectedResponse: "list.relationship.empty.output.golden",
 			ExpectError:      false,
@@ -33,7 +33,7 @@ func TestList(t *testing.T) {
 		{
 			Name:             "List registered relationships",
 			Args:             []string{"list"},
-			URL:              "/api/meshmodels/relationships",
+			URL:              "/api/registry/relationships",
 			Fixture:          "list.relationship.api.response.golden",
 			ExpectedResponse: "list.relationship.output.golden",
 			ExpectError:      false,
@@ -42,7 +42,7 @@ func TestList(t *testing.T) {
 		{
 			Name:             "Display count of registered relationships empty result",
 			Args:             []string{"list", "--count"},
-			URL:              "/api/meshmodels/relationships",
+			URL:              "/api/registry/relationships",
 			Fixture:          "list.relationship.api.empty.response.golden",
 			ExpectedResponse: "list.count.relationship.empty.output.golden",
 			ExpectError:      false,
@@ -51,7 +51,7 @@ func TestList(t *testing.T) {
 		{
 			Name:             "Display count of registered relationships",
 			Args:             []string{"list", "--count"},
-			URL:              "/api/meshmodels/relationships",
+			URL:              "/api/registry/relationships",
 			Fixture:          "list.relationship.api.response.golden",
 			ExpectedResponse: "list.count.relationship.output.golden",
 			ExpectError:      false,

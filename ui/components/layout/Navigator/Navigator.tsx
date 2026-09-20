@@ -20,6 +20,7 @@ import {
   FileIcon,
   GithubIcon,
   DiscussForumIcon,
+  ClickAwayListener,
 } from '@sistent/sistent';
 import ExtensionPointSchemaValidator from '../../../utils/ExtensionPointSchemaValidator';
 import { cursorNotAllowed, disabledStyle } from '../../../css/disableComponent.styles';
@@ -33,7 +34,6 @@ import {
   TOGGLER,
 } from '../../../constants/navigator';
 import { iconSmall } from '../../../css/icons.styles';
-import CAN from '@/utils/can';
 import { CustomTextTooltip } from '../../meshery-mesh-interface/PatternService/CustomTextTooltip';
 import {
   HideScrollbar,
@@ -203,21 +203,8 @@ const resolveNavigatorComponents = ({
   });
 };
 
-const NavigatorWrapper = () => {
-  const isMobile = useMediaQuery('(max-width:599px)');
-  const dispatch = useDispatch();
-  const { isDrawerCollapsed } = useSelector((state) => state.ui);
-
-  useEffect(() => {
-    if (isMobile && !isDrawerCollapsed) {
-      dispatch(toggleDrawer({ isDrawerCollapsed: true }));
-    }
-  }, [dispatch, isDrawerCollapsed, isMobile]);
-
-  return <NavigatorContent />;
-};
-
 const NavigatorContent = () => {
+  const { isDrawerCollapsed } = useSelector((state) => state.ui);
   const { meshAdapters } = useSelector((state) => state.adapter);
   const dispatch = useDispatch();
   const { catalogVisibility } = useSelector((state) => state.ui);
@@ -246,6 +233,8 @@ const NavigatorContent = () => {
       currentPath,
     });
   }, [providerUiAccessControl, catalogVisibility, currentPath, meshAdapters, theme]);
+
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const ExternalLinkIcon = (
     <IconExternalLink
@@ -285,7 +274,7 @@ const NavigatorContent = () => {
     },
     {
       id: 'forum',
-      href: 'https://meshery.io/community#community-forums',
+      href: 'https://discuss.meshery.io',
       title: 'Discussion Forum',
       icon: <DiscussForumIcon fill="currentColor" height="28px" width="28px" />,
       hovericon: <DiscussForumIcon height="28px" width="28px" />,
@@ -349,6 +338,28 @@ const NavigatorContent = () => {
     dispatch(updateBetaBadge({ isBeta: activeNavigatorItem.isBeta }));
   }, [currentPath, dispatch, navigatorComponents]);
 
+  useEffect(() => {
+    if (isMobile && !isDrawerCollapsed) {
+      dispatch(toggleDrawer({ isDrawerCollapsed: true }));
+    }
+    // This effect depends explicitely at the state of isMobile,
+    // it closes the sidebar on mount when isMobile too
+  }, [isMobile]);
+
+  useEffect(() => {
+    if (!isMobile || isDrawerCollapsed) return;
+
+    const handleRouteChange = () => {
+      dispatch(toggleDrawer({ isDrawerCollapsed: true }));
+    };
+
+    router.events?.on('routeChangeStart', handleRouteChange);
+
+    return () => {
+      router.events?.off('routeChangeStart', handleRouteChange);
+    };
+  }, [router.events, dispatch, isMobile, isDrawerCollapsed]);
+
   const handleTitleClick = () => {
     router.push('/');
   };
@@ -384,6 +395,11 @@ const NavigatorContent = () => {
     if (release_channel === 'stable') return `${release_channel}-${build}`;
 
     return `${build}`;
+  };
+  const handleClickOutside = () => {
+    if (isMobile && !isDrawerCollapsed) {
+      dispatch(toggleDrawer({ isDrawerCollapsed: true }));
+    }
   };
 
   const versionUpdateMsg = () => {
@@ -448,22 +464,6 @@ const NavigatorContent = () => {
     );
   };
 
-  const handleExtensionIconMouseEnter = (event: React.MouseEvent<HTMLImageElement>) => {
-    const image = event.currentTarget;
-
-    image.style.transform = 'translate(-20%, -25%)';
-    image.style.top = '0';
-    image.style.right = '0';
-  };
-
-  const handleExtensionIconMouseLeave = (event: React.MouseEvent<HTMLImageElement>) => {
-    const image = event.currentTarget;
-
-    image.style.transform = 'translate(0, 0)';
-    image.style.top = 'auto';
-    image.style.right = 'auto';
-  };
-
   const renderNavigatorExtensions = (children, depth) => {
     if (!children || children.length === 0) {
       return null;
@@ -520,16 +520,16 @@ const NavigatorContent = () => {
             placement="right"
             disableFocusListener={!drawerCollapsed}
             disableTouchListener={!drawerCollapsed}
+            disableHoverListener={!drawerCollapsed}
           >
             <MainListIcon>
               <img
                 src={icon}
+                alt={`${name} icon`}
                 style={{
                   width: '20px',
                   filter: currentPath === href ? activeIconFilter : '',
                 }}
-                onMouseOver={handleExtensionIconMouseEnter}
-                onMouseOut={handleExtensionIconMouseLeave}
               />
             </MainListIcon>
           </CustomTooltip>
@@ -571,7 +571,7 @@ const NavigatorContent = () => {
             show: showc,
             link: linkc,
             children: childrenc,
-            permission: permissionc,
+            permissionKey: permissionc,
           }) => {
             if (typeof showc !== 'undefined' && !showc) {
               return null;
@@ -602,7 +602,8 @@ const NavigatorContent = () => {
                       router.push(hrefc);
                     }
                   }}
-                  disabled={permissionc ? !CAN(permissionc.action, permissionc.subject) : false}
+                  permissionKey={permissionc}
+                  permissionAction="showShield"
                 >
                   {linkContent(iconc, titlec, hrefc, false, isDrawerCollapsed)}
                 </ListItemComponent>
@@ -644,7 +645,7 @@ const NavigatorContent = () => {
     }
     return linkContent;
   };
-  const { isDrawerCollapsed } = useSelector((state) => state.ui);
+
   const Title = (
     <div
       style={
@@ -699,7 +700,7 @@ const NavigatorContent = () => {
             children,
             hovericon,
             submenu,
-            permission,
+            permissionKey,
           }) => {
             const hasChildren = Array.isArray(children) && children.length > 0;
             return (
@@ -723,7 +724,8 @@ const NavigatorContent = () => {
                   onMouseLeave={() =>
                     !submenu || !openItems.includes(childId) ? setHoveredId(null) : null
                   }
-                  disabled={permission ? !CAN(permission.action, permission.subject) : false}
+                  permissionKey={permissionKey}
+                  permissionAction="showShield"
                   {...(link && href ? { component: Link, href } : {})}
                 >
                   <NavigatorLink data-testid={childId}>
@@ -740,7 +742,7 @@ const NavigatorContent = () => {
                         <div>
                           <CustomTooltip title={title} placement="right" TransitionComponent={Zoom}>
                             <ListItemIcon style={{ marginLeft: '20%', marginBottom: '0.4rem' }}>
-                              {hovericon}
+                              {hovericon ?? icon}
                             </ListItemIcon>
                           </CustomTooltip>
                         </div>
@@ -794,6 +796,7 @@ const NavigatorContent = () => {
     <>
       <NavigatorHelpIcons
         isCollapsed={isDrawerCollapsed}
+        isHelperOpen={showHelperButton}
         size="large"
         orientation={isDrawerCollapsed ? 'vertical' : 'horizontal'}
       >
@@ -828,7 +831,7 @@ const NavigatorContent = () => {
             </HelpListItem>
           );
         })}
-        <ListItem key="help-button" style={{ display: isDrawerCollapsed ? 'inherit' : 'none' }}>
+        <HelpListItem key="help-button" style={{ display: isDrawerCollapsed ? 'flex' : 'none' }}>
           <CustomTextTooltip title="Help" placement={isDrawerCollapsed ? 'right' : 'top'}>
             <HelpButton isCollapsed={isDrawerCollapsed} onClick={toggleSpacing}>
               <HelpOutlinedIcon
@@ -850,7 +853,7 @@ const NavigatorContent = () => {
               />
             </HelpButton>
           </CustomTextTooltip>
-        </ListItem>
+        </HelpListItem>
       </NavigatorHelpIcons>
     </>
   );
@@ -883,21 +886,21 @@ const NavigatorContent = () => {
     </ListItem>
   );
 
+  const isTogglerEnabled = providerUiAccessControl?.isNavigatorComponentEnabled?.([TOGGLER]);
+
   const Chevron = (
     <ChevronButtonWrapper
+      type="button"
       isCollapsed={isDrawerCollapsed}
-      style={
-        providerUiAccessControl?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : cursorNotAllowed
-      }
+      onClick={isTogglerEnabled ? toggleMiniDrawer : undefined}
+      aria-label="Toggle sidebar navigation"
+      aria-expanded={!isDrawerCollapsed}
+      style={isTogglerEnabled ? {} : cursorNotAllowed}
+      disabled={!isTogglerEnabled}
     >
-      <div
-        style={
-          providerUiAccessControl?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : disabledStyle
-        }
-        onClick={toggleMiniDrawer}
-      >
+      <div style={isTogglerEnabled ? {} : disabledStyle}>
         <LeftArrowIcon
-          alt="Sidebar collapse toggle"
+          aria-hidden="true"
           style={{
             cursor: 'pointer',
             verticalAlign: 'middle',
@@ -913,19 +916,25 @@ const NavigatorContent = () => {
 
   return (
     <NoSsr>
-      <SidebarDrawer isCollapsed={isDrawerCollapsed} variant="permanent">
-        {Title}
-        {Menu}
-        <FixedSidebarFooter>
-          {Chevron}
-          {HelpIcons}
-          {Version}
-        </FixedSidebarFooter>
-      </SidebarDrawer>
+      <ClickAwayListener
+        onClickAway={handleClickOutside}
+        mouseEvent={isMobile ? 'onMouseDown' : false}
+        touchEvent={isMobile ? 'onTouchStart' : false}
+      >
+        <SidebarDrawer isCollapsed={isDrawerCollapsed} variant="permanent">
+          {Title}
+          {Menu}
+          <FixedSidebarFooter>
+            {Chevron}
+            {HelpIcons}
+            {Version}
+          </FixedSidebarFooter>
+        </SidebarDrawer>
+      </ClickAwayListener>
     </NoSsr>
   );
 };
 
-export const Navigator = NavigatorWrapper;
+export const Navigator = NavigatorContent;
 
 export default Navigator;

@@ -12,7 +12,7 @@ import (
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
-	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta3/environment"
 	"gorm.io/gorm"
 )
 
@@ -23,12 +23,7 @@ type EnvironmentPersister struct {
 }
 
 func (ep *EnvironmentPersister) fetchUserDetails() *User {
-
-	return &User{
-		ID:        LocalProviderUserID,
-		FirstName: "Meshery",
-		LastName:  "Meshery",
-	}
+	return LocalProviderUser()
 }
 
 // GetEnvironments returns all of the environments
@@ -160,7 +155,7 @@ func (ep *EnvironmentPersister) UpdateEnvironmentByID(env *environment.Environme
 	return env, nil
 }
 
-// Get environment by ID
+// GetEnvironment returns an environment by ID
 func (ep *EnvironmentPersister) GetEnvironment(id core.Uuid) (*environment.Environment, error) {
 	environment := environment.Environment{}
 	query := ep.DB.Where("id = ?", id)
@@ -183,7 +178,7 @@ func (ep *EnvironmentPersister) GetEnvironmentByID(environmentID core.Uuid) ([]b
 	return envJSON, nil
 }
 
-// UpdateEnvironmentByID updates a single environment by ID
+// UpdateEnvironment updates an environment's fields from the given payload and persists the change
 func (ep *EnvironmentPersister) UpdateEnvironment(environmentID core.Uuid, payload *environment.EnvironmentPayload) (*environment.Environment, error) {
 	env, err := ep.GetEnvironment(environmentID)
 	if err != nil {
@@ -192,7 +187,7 @@ func (ep *EnvironmentPersister) UpdateEnvironment(environmentID core.Uuid, paylo
 
 	env.Name = payload.Name
 	env.Description = payload.Description
-	env.OrganizationID = core.Uuid(payload.OrgId)
+	env.OrganizationID = core.Uuid(payload.OrgID)
 
 	return ep.UpdateEnvironmentByID(env)
 }
@@ -210,8 +205,8 @@ func (ep *EnvironmentPersister) DeleteEnvironmentByID(environmentID core.Uuid) (
 // AddConnectionToEnvironment adds a connection to an environment
 func (ep *EnvironmentPersister) AddConnectionToEnvironment(environmentID, connectionID core.Uuid) ([]byte, error) {
 	envConMapping := environment.EnvironmentConnectionMapping{
-		ConnectionId:  &connectionID,
-		EnvironmentId: &environmentID,
+		ConnectionID:  &connectionID,
+		EnvironmentID: &environmentID,
 		CreatedAt:     time.Now(),
 		UpdatedAt:     time.Now(),
 	}

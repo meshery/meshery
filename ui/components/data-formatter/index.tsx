@@ -36,22 +36,45 @@ const Level = ({ children }) => {
  * Pure function to format data
  * @returns {string}
  */
+// Missing or unparsable timestamps render as a placeholder instead of the
+// engine's "Invalid Date" string, which read as a bug wherever it appeared
+// (e.g. a table cell for a record whose payload lacked the field).
+const MISSING_DATE_PLACEHOLDER = '-';
+
+const parseDate = (date) => {
+  if (date === null || date === undefined || date === '') {
+    return null;
+  }
+  // Already a Date (e.g. formatDateTime handing its parsed value to
+  // formatDate/formatTime) — validate without cloning.
+  const parsed = date instanceof Date ? date : new Date(date);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+};
+
 export const formatDate = (date) => {
+  const parsed = parseDate(date);
+  if (!parsed) {
+    return MISSING_DATE_PLACEHOLDER;
+  }
   const options = { year: 'numeric', month: 'short', day: 'numeric' };
-  const formattedDate = new Date(date).toLocaleDateString('en-US', options);
-  return formattedDate;
+  return parsed.toLocaleDateString('en-US', options);
 };
 
 export const formatTime = (date) => {
+  const parsed = parseDate(date);
+  if (!parsed) {
+    return MISSING_DATE_PLACEHOLDER;
+  }
   const options = { hour: 'numeric', minute: 'numeric', second: 'numeric' };
-  const formattedTime = new Date(date).toLocaleTimeString('en-US', options);
-  return formattedTime;
+  return parsed.toLocaleTimeString('en-US', options);
 };
 
 export const formatDateTime = (date) => {
-  const formattedDate = formatDate(date);
-  const formattedTime = formatTime(date);
-  return `${formattedDate} ${formattedTime || ''}`;
+  const parsed = parseDate(date);
+  if (!parsed) {
+    return MISSING_DATE_PLACEHOLDER;
+  }
+  return `${formatDate(parsed)} ${formatTime(parsed)}`;
 };
 
 /**

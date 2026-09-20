@@ -31,7 +31,22 @@ components:
   description: 
 components-count: 5
 relationships: 
-relationship-count: 0
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+- type: "non-binding"
+  kind: "edge"
+  description: ""
+relationship-count: 5
 featureList: [
   "Deploy and manage F5 BIG-IP resources directly from Kubernetes using CRDs",
   "Invite anyone to review and make changes to your private designs.",

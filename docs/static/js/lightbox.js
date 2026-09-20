@@ -38,6 +38,7 @@
     function isLightboxImage(element) {
         if (element.tagName !== "IMG") return false;
         if (element.dataset.noLightbox !== undefined) return false;
+        if (element.closest('a[href]')) return false;
         if (element.height < 50 && element.width < 50) return false;
         
         var contentSelectors = [

@@ -104,6 +104,7 @@ const telemetryPrometheusApi = api.injectEndpoints({
 
 export const {
   usePingPrometheusConnectionQuery,
+  useLazyPingPrometheusConnectionQuery,
   useListPrometheusMetricsQuery,
   useLazyListPrometheusMetricsQuery,
   usePrometheusLabelValuesQuery,

@@ -15,12 +15,13 @@ let connectionsQueryReturn: {
 };
 const canSpy = vi.fn(() => true);
 const bbChartSpy = vi.fn();
+const useGetConnectionsQuery = vi.fn();
 
 vi.mock('billboard.js', () => ({
   donut: () => 'donut',
 }));
 
-vi.mock('../../BBChart', () => ({
+vi.mock('../../general/BBChart', () => ({
   default: (props: { options: unknown }) => {
     bbChartSpy(props.options);
     return <div data-testid="bb-chart" />;
@@ -48,16 +49,8 @@ vi.mock('next/link', () => ({
   ),
 }));
 
-vi.mock('../../../css/icons.styles', () => ({
-  iconSmall: {},
-}));
-
-vi.mock('@/components/meshery-mesh-interface/PatternService/CustomTextTooltip', () => ({
-  CustomTextTooltip: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
-}));
-
 vi.mock('@/rtk-query/connection', () => ({
-  useGetConnectionsQuery: () => connectionsQueryReturn,
+  useGetConnectionsQuery: (...args: unknown[]) => useGetConnectionsQuery(...args),
 }));
 
 vi.mock('@/utils/can', () => ({
@@ -94,12 +87,13 @@ vi.mock('../style', () => ({
 vi.mock('@sistent/sistent', () => ({
   Box: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
   CircularProgress: () => <div data-testid="circular-progress" />,
-  InfoOutlinedIcon: () => <svg data-testid="info-icon" />,
+  InfoTooltip: () => <svg data-testid="info-icon" />,
   KubernetesIcon: () => <svg data-testid="k8s-icon" />,
   Typography: ({ children }: { children?: React.ReactNode }) => <p>{children}</p>,
   useTheme: () => ({
     palette: { mode: 'light', icon: { default: '#000', disabled: '#777' } },
   }),
+  useHasPermission: () => canSpy(),
 }));
 
 import KubernetesConnectionStatsChart from './KubernetesConnectionChart';
@@ -115,12 +109,18 @@ describe('KubernetesConnectionStatsChart', () => {
       isLoading: false,
       isError: false,
     };
+    useGetConnectionsQuery.mockReset();
+    useGetConnectionsQuery.mockImplementation(() => connectionsQueryReturn);
   });
 
   it('shows ConnectCluster fallback when there are no kubernetes connections', () => {
     render(<KubernetesConnectionStatsChart />);
     expect(screen.getByTestId('connect-cluster')).toHaveTextContent(
       'No connections found in your clusters',
+    );
+    // #20617: plain ?kind=kubernetes, not JSON.stringify(['kubernetes'])
+    expect(useGetConnectionsQuery).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: 'kubernetes', pageSize: 'all' }),
     );
   });
 

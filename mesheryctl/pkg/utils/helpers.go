@@ -15,6 +15,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -51,70 +52,73 @@ const (
 	MeshsyncURL   = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
 
 	// Documentation URLs
-	docsBaseURL                    = "https://docs.meshery.io/"
-	rootUsageURL                   = docsBaseURL + "reference/mesheryctl"
-	perfUsageURL                   = docsBaseURL + "reference/mesheryctl/perf"
-	systemUsageURL                 = docsBaseURL + "reference/mesheryctl/system"
-	systemStopURL                  = docsBaseURL + "reference/mesheryctl/system/stop"
-	systemUpdateURL                = docsBaseURL + "reference/mesheryctl/system/update"
-	systemResetURL                 = docsBaseURL + "reference/mesheryctl/system/reset"
-	systemStatusURL                = docsBaseURL + "reference/mesheryctl/system/status"
-	systemRestartURL               = docsBaseURL + "reference/mesheryctl/system/restart"
-	meshUsageURL                   = docsBaseURL + "reference/mesheryctl/mesh"
-	expUsageURL                    = docsBaseURL + "reference/mesheryctl/exp"
-	filterUsageURL                 = docsBaseURL + "reference/mesheryctl/filter"
-	filterImportURL                = docsBaseURL + "reference/mesheryctl/filter/import"
-	filterDeleteURL                = docsBaseURL + "reference/mesheryctl/filter/delete"
-	filterListURL                  = docsBaseURL + "reference/mesheryctl/filter/list"
-	filterViewURL                  = docsBaseURL + "reference/mesheryctl/filter/view"
-	designUsageURL                 = docsBaseURL + "reference/mesheryctl/design"
-	designViewURL                  = docsBaseURL + "reference/mesheryctl/design/view"
-	designExportURL                = docsBaseURL + "reference/mesheryctl/design/export"
-	contextDeleteURL               = docsBaseURL + "reference/mesheryctl/system/context/delete"
-	contextViewURL                 = docsBaseURL + "reference/mesheryctl/system/context/view"
-	contextCreateURL               = docsBaseURL + "reference/mesheryctl/system/context/create"
-	contextUsageURL                = docsBaseURL + "reference/mesheryctl/system/context"
-	channelUsageURL                = docsBaseURL + "reference/mesheryctl/system/channel"
-	channelSetURL                  = docsBaseURL + "reference/mesheryctl/system/channel/set"
-	channelSwitchURL               = docsBaseURL + "reference/mesheryctl/system/channel/switch"
-	channelViewURL                 = docsBaseURL + "reference/mesheryctl/system/channel/view"
-	providerUsageURL               = docsBaseURL + "reference/mesheryctl/system/provider"
-	providerViewURL                = docsBaseURL + "reference/mesheryctl/system/provider/view"
-	providerListURL                = docsBaseURL + "reference/mesheryctl/system/provider/list"
-	providerSetURL                 = docsBaseURL + "reference/mesheryctl/system/provider/set"
-	providerResetURL               = docsBaseURL + "reference/mesheryctl/system/provider/reset"
-	providerSwitchURL              = docsBaseURL + "reference/mesheryctl/system/provider/switch"
-	tokenUsageURL                  = docsBaseURL + "reference/mesheryctl/system/token"
-	modelUsageURL                  = docsBaseURL + "reference/mesheryctl/system/model"
-	modelListURL                   = docsBaseURL + "reference/mesheryctl/system/model/list"
-	modelImportURl                 = docsBaseURL + "reference/mesheryctl/system/model/import"
-	modelViewURL                   = docsBaseURL + "reference/mesheryctl/system/model/view"
-	registryUsageURL               = docsBaseURL + "reference/mesheryctl/registry"
-	registryPublishURL             = docsBaseURL + "reference/mesheryctl/registry/publish"
-	registryGenerateURL            = docsBaseURL + "reference/mesheryctl/registry/generate"
-	registryUpdateURL              = docsBaseURL + "reference/mesheryctl/registry/update"
-	relationshipUsageURL           = docsBaseURL + "reference/mesheryctl/relationships"
-	cmdRelationshipGenerateDocsURL = docsBaseURL + "reference/mesheryctl/relationships/generate"
-	relationshipViewURL            = docsBaseURL + "reference/mesheryctl/relationships/view"
-	workspaceUsageURL              = docsBaseURL + "reference/mesheryctl/workspace"
-	workspaceCreateURL             = docsBaseURL + "reference/mesheryctl/workspace/create"
-	workspaceListURL               = docsBaseURL + "reference/mesheryctl/workspace/list"
-	environmentUsageURL            = docsBaseURL + "reference/mesheryctl/exp/environment"
-	environmentCreateURL           = docsBaseURL + "reference/mesheryctl/exp/environment/create"
-	environmentDeleteURL           = docsBaseURL + "reference/mesheryctl/exp/environment/delete"
-	environmentListURL             = docsBaseURL + "reference/mesheryctl/exp/environment/list"
-	environmentViewURL             = docsBaseURL + "reference/mesheryctl/exp/environment/view"
-	componentUsageURL              = docsBaseURL + "reference/mesheryctl/exp/components"
-	componentListURL               = docsBaseURL + "reference/mesheryctl/exp/components/list"
-	componentSearchURL             = docsBaseURL + "reference/mesheryctl/exp/components/search"
-	componentViewURL               = docsBaseURL + "reference/mesheryctl/exp/components/view"
-	connectionUsageURL             = docsBaseURL + "reference/mesheryctl/connections"
-	connectionDeleteURL            = docsBaseURL + "reference/mesheryctl/connections/delete"
-	connectionListURL              = docsBaseURL + "reference/mesheryctl/connections/list"
-	expRelationshipUsageURL        = docsBaseURL + "reference/mesheryctl/exp/relationship"
-	expRelationshipGenerateURL     = docsBaseURL + "reference/mesheryctl/exp/relationship/generate"
-	expRelationshipViewURL         = docsBaseURL + "reference/mesheryctl/exp/relationship/view"
-	expRelationshipListURL         = docsBaseURL + "reference/mesheryctl/exp/relationship/list"
+	docsBaseURL      = "https://docs.meshery.io/"
+	rootUsageURL     = docsBaseURL + "reference/references/mesheryctl"
+	perfUsageURL     = docsBaseURL + "reference/references/mesheryctl/perf"
+	systemUsageURL   = docsBaseURL + "reference/references/mesheryctl/system"
+	systemStopURL    = docsBaseURL + "reference/references/mesheryctl/system/stop"
+	systemUpdateURL  = docsBaseURL + "reference/references/mesheryctl/system/update"
+	systemResetURL   = docsBaseURL + "reference/references/mesheryctl/system/reset"
+	systemStatusURL  = docsBaseURL + "reference/references/mesheryctl/system/status"
+	systemRestartURL = docsBaseURL + "reference/references/mesheryctl/system/restart"
+	// No dedicated page exists for `mesheryctl mesh`; point at the command
+	// reference index rather than a 404.
+	meshUsageURL                   = docsBaseURL + "reference/references/mesheryctl"
+	expUsageURL                    = docsBaseURL + "reference/references/mesheryctl/exp"
+	filterUsageURL                 = docsBaseURL + "reference/references/mesheryctl/filter"
+	filterImportURL                = docsBaseURL + "reference/references/mesheryctl/filter/import"
+	filterDeleteURL                = docsBaseURL + "reference/references/mesheryctl/filter/delete"
+	filterListURL                  = docsBaseURL + "reference/references/mesheryctl/filter/list"
+	filterViewURL                  = docsBaseURL + "reference/references/mesheryctl/filter/view"
+	designUsageURL                 = docsBaseURL + "reference/references/mesheryctl/design"
+	designViewURL                  = docsBaseURL + "reference/references/mesheryctl/design/view"
+	designExportURL                = docsBaseURL + "reference/references/mesheryctl/design/export"
+	contextDeleteURL               = docsBaseURL + "reference/references/mesheryctl/system/context/delete"
+	contextViewURL                 = docsBaseURL + "reference/references/mesheryctl/system/context/view"
+	contextCreateURL               = docsBaseURL + "reference/references/mesheryctl/system/context/create"
+	contextUsageURL                = docsBaseURL + "reference/references/mesheryctl/system/context"
+	channelUsageURL                = docsBaseURL + "reference/references/mesheryctl/system/channel"
+	channelSetURL                  = docsBaseURL + "reference/references/mesheryctl/system/channel/set"
+	channelSwitchURL               = docsBaseURL + "reference/references/mesheryctl/system/channel/switch"
+	channelViewURL                 = docsBaseURL + "reference/references/mesheryctl/system/channel/view"
+	providerUsageURL               = docsBaseURL + "reference/references/mesheryctl/system/provider"
+	providerViewURL                = docsBaseURL + "reference/references/mesheryctl/system/provider/view"
+	providerListURL                = docsBaseURL + "reference/references/mesheryctl/system/provider/list"
+	providerSetURL                 = docsBaseURL + "reference/references/mesheryctl/system/provider/set"
+	providerResetURL               = docsBaseURL + "reference/references/mesheryctl/system/provider/reset"
+	providerSwitchURL              = docsBaseURL + "reference/references/mesheryctl/system/provider/switch"
+	tokenUsageURL                  = docsBaseURL + "reference/references/mesheryctl/system/token"
+	modelUsageURL                  = docsBaseURL + "reference/references/mesheryctl/model"
+	modelListURL                   = docsBaseURL + "reference/references/mesheryctl/model/list"
+	modelImportURl                 = docsBaseURL + "reference/references/mesheryctl/model/import"
+	modelViewURL                   = docsBaseURL + "reference/references/mesheryctl/model/view"
+	registryUsageURL               = docsBaseURL + "reference/references/mesheryctl/registry"
+	registryPublishURL             = docsBaseURL + "reference/references/mesheryctl/registry/publish"
+	registryGenerateURL            = docsBaseURL + "reference/references/mesheryctl/registry/generate"
+	registryUpdateURL              = docsBaseURL + "reference/references/mesheryctl/registry/update"
+	registryPurgeURL               = docsBaseURL + "reference/references/mesheryctl/registry/purge"
+	relationshipUsageURL           = docsBaseURL + "reference/references/mesheryctl/relationship"
+	cmdRelationshipGenerateDocsURL = docsBaseURL + "reference/references/mesheryctl/relationship/generate"
+	relationshipViewURL            = docsBaseURL + "reference/references/mesheryctl/relationship/view"
+	workspaceUsageURL              = docsBaseURL + "reference/references/mesheryctl/workspace"
+	workspaceCreateURL             = docsBaseURL + "reference/references/mesheryctl/workspace/create"
+	workspaceListURL               = docsBaseURL + "reference/references/mesheryctl/workspace/list"
+	environmentUsageURL            = docsBaseURL + "reference/references/mesheryctl/environment"
+	environmentCreateURL           = docsBaseURL + "reference/references/mesheryctl/environment/create"
+	environmentDeleteURL           = docsBaseURL + "reference/references/mesheryctl/environment/delete"
+	environmentListURL             = docsBaseURL + "reference/references/mesheryctl/environment/list"
+	environmentViewURL             = docsBaseURL + "reference/references/mesheryctl/environment/view"
+	componentUsageURL              = docsBaseURL + "reference/references/mesheryctl/component"
+	componentListURL               = docsBaseURL + "reference/references/mesheryctl/component/list"
+	componentSearchURL             = docsBaseURL + "reference/references/mesheryctl/component/search"
+	componentViewURL               = docsBaseURL + "reference/references/mesheryctl/component/view"
+	connectionUsageURL             = docsBaseURL + "reference/references/mesheryctl/connection"
+	connectionDeleteURL            = docsBaseURL + "reference/references/mesheryctl/connection/delete"
+	connectionListURL              = docsBaseURL + "reference/references/mesheryctl/connection/list"
+	expRelationshipUsageURL        = docsBaseURL + "reference/references/mesheryctl/relationship"
+	expRelationshipGenerateURL     = docsBaseURL + "reference/references/mesheryctl/relationship/generate"
+	expRelationshipViewURL         = docsBaseURL + "reference/references/mesheryctl/relationship/view"
+	expRelationshipListURL         = docsBaseURL + "reference/references/mesheryctl/relationship/list"
 
 	// Meshery Server Location
 	EndpointProtocol = "http"
@@ -164,6 +168,7 @@ const (
 	cmdRegistryPublish          cmdType = "registry publish"
 	cmdRegistryGenerate         cmdType = "registry generate"
 	cmdRegistryUpdate           cmdType = "registry update"
+	cmdRegistryPurge            cmdType = "registry purge"
 	cmdConnection               cmdType = "connection"
 	cmdConnectionList           cmdType = "connection list"
 	cmdConnectionDelete         cmdType = "connection delete"
@@ -454,7 +459,7 @@ func SetFileLocation() error {
 	return nil
 }
 
-// NavigateToBroswer naviagtes to the endpoint displaying Meshery UI in the broswer.
+// NavigateToBrowser navigates to the endpoint displaying the Meshery UI in the browser.
 func NavigateToBrowser(endpoint string) error {
 	err := browser.OpenURL(endpoint)
 	return err
@@ -513,6 +518,24 @@ func IsValidSubcommand(available []*cobra.Command, sub string) bool {
 		}
 	}
 	return false
+}
+
+// SubcommandNames renders the names of available subcommands for use in an
+// "invalid subcommand" message, e.g. "generate, list, search, view".
+//
+// Callers pass the same slice they hand IsValidSubcommand, so the set a command
+// advertises cannot drift from the set it accepts. Hand-listing the names in the
+// message string is how `mesheryctl relationship` came to offer only "[view]"
+// while accepting four subcommands.
+func SubcommandNames(available []*cobra.Command) string {
+	names := make([]string, 0, len(available))
+	for _, s := range available {
+		if name := s.Name(); name != "" {
+			names = append(names, name)
+		}
+	}
+	sort.Strings(names)
+	return strings.Join(names, ", ")
 }
 
 // ContentTypeIsHTML Checks if the response is an HTML resposnse
@@ -709,7 +732,7 @@ func GetName(mesheryServerUrl, configuration string) (map[string]string, error) 
 	return nameIdMap, nil
 }
 
-// Delete configuration from meshery server endpoint /api/{configurations}/{id}
+// DeleteConfiguration deletes configuration from meshery server endpoint /api/{configurations}/{id}
 func DeleteConfiguration(mesheryServerUrl, id, configuration string) error {
 	url := mesheryServerUrl + "/api/" + configuration + "/" + id
 	req, err := NewRequest("DELETE", url, nil)
@@ -744,7 +767,7 @@ func ValidId(mesheryServerUrl, args string, configuration string) (string, bool,
 	return args, isID, nil
 }
 
-// ValidId - Check if args is a valid name or a valid name prefix and returns the full name and ID
+// ValidName - Check if args is a valid name or a valid name prefix and returns the full name and ID
 func ValidName(mesheryServerUrl, args string, configuration string) (string, string, bool, error) {
 	isName := false
 	nameIdMap, err := GetName(mesheryServerUrl, configuration)
@@ -830,7 +853,7 @@ func ParseURLGithub(URL string) (string, string, error) {
 	return URL, "", ErrParsingUrl(errors.New("only github urls are supported"))
 }
 
-// Indicate an ongoing Process at a given time on CLI
+// CreateDefaultSpinner creates a spinner that indicates an ongoing process on the CLI
 func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 	s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
 
@@ -839,7 +862,7 @@ func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 	return s
 }
 
-// Get Meshery Session Data/Details (Adapters)
+// GetSessionData gets Meshery session data/details (adapters)
 func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error) {
 	path := mctlCfg.GetBaseMesheryURL() + "/api/system/sync"
 	method := "GET"
@@ -1265,6 +1288,18 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 			break
 		}
 
+		// Same reasoning as display.listPageHandler: without a terminal there is
+		// nobody to press the key, and keyboard.GetKeys fails on /dev/tty rather
+		// than blocking. Stop after this page instead of turning a successful
+		// listing into a non-zero exit.
+		if !IsInteractiveTerminal() {
+			Log.Infof(
+				"Showing page %d only: paging through results needs an interactive terminal. Use --page to select a page.",
+				startIndex/pageSize+1,
+			)
+			break
+		}
+
 		keysEvents, err := keyboard.GetKeys(10)
 		if err != nil {
 			return err
@@ -1338,7 +1373,7 @@ func IsValidUrl(path string) bool {
 	return u.Scheme != "" && u.Host != ""
 }
 
-// get current k8s context
+// GetCurrentK8sContext gets current k8s context
 func GetCurrentK8sContext(client *meshkitkube.Client) (string, error) {
 	if client == nil {
 		return "", fmt.Errorf("kubernetes client is nil")

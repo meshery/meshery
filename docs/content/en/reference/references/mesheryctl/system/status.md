@@ -3,6 +3,7 @@ title: mesheryctl-system-status
 display_title: false
 command: system
 subcommand: status
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system status
@@ -12,10 +13,13 @@ Check Meshery status
 ## Synopsis
 
 Check status of Meshery and Meshery components.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system status [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,16 +28,20 @@ mesheryctl system status [flags]
 Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system status
 
+</div>
 </div>
 </pre> 
 
 (optional) Extra data in status table
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system status --verbose
 
+</div>
 </div>
 </pre> 
 

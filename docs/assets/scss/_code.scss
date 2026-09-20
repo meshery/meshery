@@ -11,7 +11,7 @@ code::-webkit-scrollbar {
 }
 .td-content {
   p code,
-  li > code,
+  li>code,
   table code {
     color: inherit;
     padding: 0.2em 0.4em;
@@ -42,12 +42,12 @@ code::-webkit-scrollbar {
   border-radius: 0.25rem;
 }
 .td-content .highlight {
-  margin: 2rem 0;
-  padding: 1rem;
+  margin: 1rem 0;
+  padding: 0.75rem;
   background-color: var(--color-primary-medium);
   overflow: hidden;
 }
-.td-content pre > code {
+.td-content pre>code {
   padding: 10px 0;
   margin: 0;
   font-size: 100%;
@@ -60,7 +60,6 @@ code::-webkit-scrollbar {
   overflow: auto;
   color: var(--color-secondary-dark);
 }
-
 pre {
   display: block;
   color: var(--color-grey-medium);
@@ -71,25 +70,22 @@ pre {
 pre::-webkit-scrollbar {
   display: none;
 }
-
 .highlight pre {
   border: none !important;
 }
-
 .td-content {
+  pre:not(.codeblock-pre) {
+    word-wrap: normal;
+    background-color: var(--color-primary-medium);
+    padding: 0.75rem;
+    overflow: hidden;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
   .highlight pre {
     margin: 0;
     padding: 0;
-  }
-  pre {
-    word-wrap: normal;
-    background-color: var(--color-primary-medium);
-    padding: 1rem;
-    overflow: hidden;
-    
-    & ::-webkit-scrollbar {
-      display: none;
-    }
   }
 }
 

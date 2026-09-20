@@ -12,6 +12,7 @@ import { Modal } from '@/components/shared/Modal';
 import { useListConnectionDefinitionsQuery } from '@meshery/schemas/mesheryApi';
 import {
   buildConnectionWizardKindConfigs,
+  DEFAULT_CONNECTION_DOCS_URL,
   type ConnectionWizardKindConfig,
 } from './ConnectionWizard.helpers';
 import { useConnectionWizard } from './wizard/useConnectionWizard';
@@ -91,13 +92,26 @@ const ConnectionConfigureModal = ({
     }
   }, [isOpen]);
 
-  const steps = wizard.stepLabels.map((label, index) => ({
-    label,
-    icon: index === wizard.stepLabels.length - 1 ? CheckIcon : DescriptionIcon,
+  const steps = wizard.steps.map((step, index) => ({
+    label: step.label,
+    icon: index === wizard.steps.length - 1 ? CheckIcon : step.icon || DescriptionIcon,
     component: <></>,
   }));
 
   const ActiveBody = wizard.activeStep?.Component;
+
+  const helpText = useMemo(() => {
+    const stepHelp = wizard.activeStep?.helpText;
+    if (typeof stepHelp === 'function') {
+      return stepHelp(wizard.ctx);
+    }
+    if (typeof stepHelp === 'string' && stepHelp.length > 0) {
+      return stepHelp;
+    }
+    const label = kindConfig?.label || connection?.kind || 'connection';
+    const docsUrl = kindConfig?.docsUrl || DEFAULT_CONNECTION_DOCS_URL;
+    return `Configure this ${label} connection. [Learn more about connections](${docsUrl}).`;
+  }, [wizard.activeStep, wizard.ctx, kindConfig, connection?.kind]);
 
   const handleClose = () => {
     if (wizard.isBusy) {
@@ -118,7 +132,7 @@ const ConnectionConfigureModal = ({
           {ActiveBody ? <ActiveBody ctx={wizard.ctx} /> : <></>}
         </WizardStepper>
       </ModalBody>
-      <ModalFooter variant="filled">
+      <ModalFooter variant="filled" helpText={helpText}>
         <Box sx={{ width: '100%', display: 'flex', justifyContent: 'end', gap: 2 }}>
           <ModalButtonSecondary
             onClick={wizard.canGoBack ? wizard.back : handleClose}

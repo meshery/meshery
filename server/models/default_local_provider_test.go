@@ -53,6 +53,63 @@ func TestSaveUserCredentialReturnsPopulatedCredential(t *testing.T) {
 	}
 }
 
+// TestGetUserCredentialsRejectsUnsanitizedOrderInput verifies that GetUserCredentials
+// no longer passes the caller-supplied "order" query parameter straight into gorm's
+// Order(), which treats a plain string as raw, unescaped SQL. Without sanitization,
+// arbitrary attacker-controlled text (e.g. "foobar asc", or a crafted SQL injection
+// payload) reaches the database driver directly -- an unpatched sibling of the
+// SQL injection vulnerabilities already fixed elsewhere (CVE-2024-35181, CVE-2024-35182)
+// via models.SanitizeOrderInput, which this endpoint had been missed by.
+func TestGetUserCredentialsRejectsUnsanitizedOrderInput(t *testing.T) {
+	provider := newTestProviderWithCredentialDB(t)
+
+	userID, err := uuid.NewV4()
+	if err != nil {
+		t.Fatalf("failed to generate user id: %v", err)
+	}
+
+	for _, name := range []string{"b-cred", "a-cred"} {
+		cred := &Credential{Name: name, Type: "token", UserId: userID}
+		if _, err := provider.SaveUserCredential("tok", cred); err != nil {
+			t.Fatalf("failed to seed credential %q: %v", name, err)
+		}
+	}
+
+	t.Run("rejects unsanitized order input", func(t *testing.T) {
+		// "foobar" is not a real column. Pre-fix, this string was handed straight to
+		// gorm's Order(), which built `ORDER BY foobar asc` and the query failed with
+		// a driver-level "no such column" error -- proof the raw input reached SQL
+		// construction unsanitized. Post-fix, SanitizeOrderInput rejects it outright
+		// and Order() becomes a no-op, so the query must still succeed.
+		page, err := provider.GetUserCredentials(nil, userID.String(), 0, 10, "", "foobar asc")
+		if err != nil {
+			t.Fatalf("unsanitized order value reached the query and caused an error: %v", err)
+		}
+		if page.TotalCount != 2 {
+			t.Errorf("got TotalCount=%d, want 2", page.TotalCount)
+		}
+	})
+
+	t.Run("accepts legitimate order input", func(t *testing.T) {
+		// A legitimate, allowlisted order value must still work after sanitization.
+		page, err := provider.GetUserCredentials(nil, userID.String(), 0, 10, "", "name asc")
+		if err != nil {
+			t.Fatalf("unexpected error with legitimate order value: %v", err)
+		}
+		if len(page.Credentials) != 2 || page.Credentials[0].Name != "a-cred" || page.Credentials[1].Name != "b-cred" {
+			t.Fatalf("got order %v, want [a-cred b-cred]", credentialNames(page.Credentials))
+		}
+	})
+}
+
+func credentialNames(creds []Credential) []string {
+	names := make([]string, len(creds))
+	for i, c := range creds {
+		names[i] = c.Name
+	}
+	return names
+}
+
 // TestEventsPersisterPersistEventAcceptsStructValue verifies that PersistEvent
 // successfully writes events when called with a struct value (the shape
 // callers pass via `PersistSystemEvent(*event)`). The function previously

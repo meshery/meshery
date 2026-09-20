@@ -15,8 +15,12 @@ type MesheryFilter struct {
 
 	Name       string `json:"name,omitempty"`
 	FilterFile []byte `json:"filterFile"`
-	// Meshery doesn't have the owner field
-	// but the remote provider is allowed to provide one
+	// Owner is the id of the filter's owner. "owner" is the canonical wire key
+	// for filters per the schemas v1beta3 filter.MesheryFilter contract (and is
+	// what meshery-cloud emits) - unlike designs, whose canonical key is
+	// "userId". It is not persisted locally (gorm:"-"): the built-in provider is
+	// single-user and stamps the owner on read (see the filter persister), while
+	// the remote provider supplies it.
 	Owner *string `json:"owner" gorm:"-"`
 
 	Location       sql.Map    `json:"location"`
@@ -32,8 +36,9 @@ type MesheryFilterPayload struct {
 
 	Name       string `json:"name,omitempty"`
 	FilterFile []byte `json:"filterFile"`
-	// Meshery doesn't have the owner field
-	// but the remote provider is allowed to provide one
+	// Owner is the id of the filter's owner, keyed as "owner" per the schemas
+	// v1beta3 filter contract. The remote provider is allowed to supply one;
+	// the built-in provider derives it from its single user.
 	Owner *string `json:"owner"`
 
 	Location       sql.Map    `json:"location"`
@@ -51,7 +56,7 @@ type MesheryCatalogFilterRequestBody struct {
 	CatalogData sql.Map   `json:"catalogData,omitempty"`
 }
 
-// MesheryCatalogFilterRequestBody refers to the type of request body
+// MesheryCloneFilterRequestBody refers to the type of request body
 // that CloneMesheryFilterHandler would receive
 type MesheryCloneFilterRequestBody struct {
 	Name string `json:"name,omitempty"`

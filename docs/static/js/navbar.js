@@ -14,6 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (toggleBtn) {
         toggleBtn.addEventListener("click", setMode);
     }
+
+    updateLogos();
 });
 
 function setMode() {

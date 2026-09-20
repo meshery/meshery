@@ -284,6 +284,7 @@ server-playground: dep-check
 ## Lint check Meshery Server.
 golangci: error dep-check
 	golangci-lint run --config=.github/.golangci.yml --timeout=10m
+	go run ./server/internal/lint/orderby/cmd/orderbylint ./...
 
 ## Build Meshery's protobufs.
 proto-build:
@@ -320,7 +321,7 @@ ui-setup: dep-check-node
 
 ## Clean Install dependencies for building Meshery UI.
 ui-setup-ci: dep-check-node
-	cd ui; npm ci; cd ..
+	cd ui && npm ci
 
 ## Run Meshery UI on your local machine. Listen for changes.
 ui: dep-check-node
@@ -343,12 +344,12 @@ ui-provider-test: dep-check-node
 	cd provider-ui; npm run test; cd ..
 
 ## Builds all Meshery UIs  on your local machine.
-ui-build: ui-setup wasm-engine
+ui-build: ui-setup policy-engine
 	cd ui; npm run lint:fix || echo "Warning: Lint issues detected in ui but continuing build"; npm run build; cd ..
 	cd provider-ui; npm run lint:fix || echo "Warning: Lint issues detected in provider-ui but continuing build"; npm run build; cd ..
 
 ## Build only Meshery UI on your local machine.
-ui-meshery-build: dep-check-node wasm-engine
+ui-meshery-build: dep-check-node policy-engine
 	cd ui; npm run build; cd ..
 
 ## Builds only the provider user interface on your local machine
@@ -357,7 +358,7 @@ ui-provider-build:
 
 ## Run Meshery End-to-End Integration Tests against your local Meshery UI (runs in non-interactive mode).
 ui-integration-tests: ui-setup
-	cd ui; npm run ci-test-integration; cd ..
+	cd ui; npm run test:e2e:ci:local; cd ..
 
 #-----------------------------------------------------------------------------
 # Meshery Docs
@@ -412,11 +413,15 @@ check-go:
 #-----------------------------------------------------------------------------
 # Meshery Helm Charts
 #-----------------------------------------------------------------------------
-.PHONY: helm-docs helm-operator-docs helm-meshery-docs helm-operator-lint helm-lint
+.PHONY: helm-docs helm-operator-docs helm-meshery-docs helm-operator-lint helm-operator-appversion-check helm-lint
 ## Generate all Meshery Helm Chart documentation in markdown format.
 helm-docs: helm-operator-docs helm-meshery-docs
 
-## Generate Meshery Operator Helm Chart documentation in markdown format.
+# WARNING: this overwrites install/kubernetes/helm/meshery-operator/README.md, which is
+# hand-maintained. values.yaml has no `# --` comments and there is no README.md.gotmpl,
+# so helm-docs would delete that README's "CRD lifecycle" section and every per-value
+# description. Read the note at the top of that file before running this.
+## Generate Meshery Operator Helm Chart docs. WARNING: overwrites the hand-maintained meshery-operator README - read the note at its top first.
 helm-operator-docs: dep-check
 	GO111MODULE=on go get github.com/norwoodj/helm-docs/cmd/helm-docs
 	$(GOPATH)/bin/helm-docs -c install/kubernetes/helm/meshery-operator
@@ -430,8 +435,13 @@ helm-meshery-docs: dep-check
 helm-lint: helm-operator-lint helm-meshery-lint
 
 ## Lint Meshery Operator Helm Chart
-helm-operator-lint:
+helm-operator-lint: helm-operator-appversion-check
 	helm lint install/kubernetes/helm/meshery-operator --with-subcharts
+
+## Assert the Meshery Operator chart and its subcharts advertise the same appVersion
+helm-operator-appversion-check:
+	./install/scripts/check-operator-chart-appversions.sh --self-test
+	./install/scripts/check-operator-chart-appversions.sh install/kubernetes/helm/meshery-operator
 ## Lint Meshery Server and Adapter Helm Charts
 helm-meshery-lint:
 	helm lint install/kubernetes/helm/meshery --with-subcharts
@@ -477,9 +487,9 @@ policy-test:
 	@cd server/policies && go test -v ./...
 
 ## Build the Go relationship engine as a wasm binary for browser/extension use
-.PHONY: wasm-engine
-wasm-engine: dep-check-go
-	@echo "Building Go relationship engine wasm..."
+.PHONY: policy-engine
+policy-engine: dep-check-go
+	@echo "Building policy engine WASM..."
 	@cd server/policies/wasm && \
 		go mod tidy && \
 		GOOS=js GOARCH=wasm go build -trimpath -ldflags="-s -w" -o policy_engine.wasm .
@@ -558,7 +568,7 @@ server-integration-tests-meshsync: docker-build server-integration-tests-meshsyn
 .PHONY: ui-test-setup ui-test ui-test-e2e-full ui-test-e2e-local
 ## Install Playwright dependencies for UI tests
 ui-test-setup: dep-check-node
-	cd ui; npx playwright install chromium --with-deps; cd ..
+	cd ui && npx playwright install chromium --with-deps
 
 ## Run Meshery UI End-to-End Tests
 ui-test: dep-check-node
@@ -568,12 +578,12 @@ ui-test: dep-check-node
 ## Run Meshery UI End-to-End Tests in CI environment (Local and Remote Providers)
 ui-test-e2e-full: dep-check-node
 	 touch .env
-	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci:full ; cd ..
+	 @set -a; source .env; set +a; cd ui && npm run test:e2e:ci:full
 
 ## Run Meshery UI End-to-End Tests in CI environment (Local Provider)
 ui-test-e2e-local: dep-check-node
 	 touch .env
-	 @set -a; source .env; cd ui; set +a; npm run test:e2e:ci:local ; cd ..
+	 @set -a; source .env; set +a; cd ui && npm run test:e2e:ci:local
 
 #-----------------------------------------------------------------------------
 # Testing - Meshery CLI

@@ -140,10 +140,16 @@ export const ExpandMore = ({ isExpanded, hasChildren, theme, isDrawerCollapsed, 
     aria-expanded={!!isExpanded}
     aria-label={isExpanded ? 'Collapse' : 'Expand'}
     style={{
-      padding: 0,
-      display: hasChildren ? 'inline-block' : 'none',
+      padding: isDrawerCollapsed ? '2px' : '6px',
+      display: hasChildren ? 'inline-flex' : 'none',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minWidth: 'auto',
+      minHeight: 'auto',
+      borderRadius: '50%',
+      marginLeft: 'auto',
       position: isDrawerCollapsed ? 'absolute' : 'relative',
-      right: isDrawerCollapsed ? '5px' : 'auto',
+      right: isDrawerCollapsed ? '2px' : 'auto',
     }}
     {...props}
   >
@@ -333,11 +339,12 @@ export const MainListIcon = styled(ListItemIcon)(({ theme }) => ({
 }));
 
 export const ListIconSide = styled(ListItemIcon)(({ theme }) => ({
-  paddingTop: theme.spacing(0.5),
-  textAlign: 'center',
-  display: 'inline-table',
-  paddingRight: theme.spacing(0.5),
-  marginLeft: theme.spacing(0.8),
+  minWidth: 'unset',
+  margin: 0,
+  padding: 0,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
   color: theme.palette.background.constant.white,
   opacity: '0.7',
   transition: 'opacity 200ms linear',
@@ -373,14 +380,26 @@ export const NavigatorWrapper = styled('div')({
 });
 
 export const NavigatorHelpIcons = styled(ButtonGroup, {
-  shouldForwardProp: (prop) => prop !== 'isCollapsed',
-})(({ isCollapsed }) => ({
+  shouldForwardProp: (prop) => prop !== 'isCollapsed' && prop !== 'isHelperOpen',
+})(({ isCollapsed, isHelperOpen }: { isCollapsed?: boolean; isHelperOpen?: boolean }) => ({
+  width: '100%',
+  alignItems: 'center',
+  justifyContent: 'center',
   ...(isCollapsed && {
-    marginRight: 4,
-    alignItems: 'center',
+    margin: 0,
+    padding: 0,
+    ...(isHelperOpen && {
+      border: `1px solid ${alpha(charcoal[100], 0.15)}`,
+      borderRadius: '8px',
+      width: 'calc(100% - 16px)',
+      margin: '8px auto',
+      padding: '4px 0',
+      backgroundColor: alpha(charcoal[10], 0.25),
+    }),
   }),
   ...(!isCollapsed && {
     padding: '5px',
+    justifyContent: 'space-around',
     '& > li': {
       padding: '0',
     },
@@ -394,7 +413,7 @@ export const NavigatorFooter = styled('div')({
   marginBottom: '0.5rem',
 });
 
-export const ChevronButtonWrapper = styled('div', {
+export const ChevronButtonWrapper = styled('button', {
   shouldForwardProp: (prop) => prop !== 'isCollapsed',
 })(({ isCollapsed, theme }) => ({
   backgroundColor: theme.palette.background.tabs,
@@ -408,6 +427,8 @@ export const ChevronButtonWrapper = styled('div', {
   position: 'fixed',
   borderRadius: '0 5px 5px 0',
   cursor: 'pointer',
+  border: 'none',
+  padding: 0,
   bottom: '12%',
   left: isCollapsed ? '49px' : '257px',
   zIndex: '1400',
@@ -425,6 +446,10 @@ export const ChevronButtonWrapper = styled('div', {
     opacity: 1,
     background: !isCollapsed ? theme.palette.background.card : undefined,
   },
+  '&:focus-visible': {
+    outline: `2px solid ${theme.palette.primary.main}`,
+    outlineOffset: '2px',
+  },
 }));
 
 export const NavigatorLink = styled('span')({
@@ -437,8 +462,13 @@ export const NavigatorLink = styled('span')({
 
 export const HelpListItem = styled(ListItem)(({ theme }) => ({
   paddingLeft: 0,
+  paddingRight: 0,
   paddingTop: theme.spacing(1.25),
   paddingBottom: theme.spacing(1.25),
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: '100%',
   color: theme.palette.background.constant.disabled,
   fill: theme.palette.background.constant.white,
   '&:hover': {
@@ -452,17 +482,11 @@ export const HelpListItem = styled(ListItem)(({ theme }) => ({
 
 export const HelpButton = styled(IconButton, {
   shouldForwardProp: (prop) => prop !== 'isCollapsed',
-})(({ isCollapsed }) => ({
+})(() => ({
   height: '32px',
   width: '32px',
   padding: '4px',
-  ...(isCollapsed && {
-    marginTop: '-4px',
-    transform: 'translateX(0px)',
-  }),
-  ...(!isCollapsed && {
-    transform: 'translateX(0.5px)',
-  }),
+  margin: 0,
 }));
 
 export const FixedSidebarFooter = styled('div')({

@@ -89,6 +89,11 @@
     display: flex;
     flex-direction: column;
 
+    img,
+    svg {
+      display: none;
+    }
+
     // gap: 10px;
     & ul {
       font-size: .9rem;

@@ -35,16 +35,16 @@ func TestGetBuild(t *testing.T) {
 
 func TestGetLocation(t *testing.T) {
 	token := Token{}
+	mesheryFolder := ".meshery"
+
 	for _, test := range tests {
 		token.SetLocation(test)
 		got := token.GetLocation()
 		want, err := os.UserHomeDir()
-		MesheryFolder := ".meshery"
-		path := filepath.Join(want, MesheryFolder, test)
-		want = path
 		if err != nil {
-			t.Errorf("Fail")
+			t.Fatalf("os.UserHomeDir() returned unexpected error: %v", err)
 		}
+		want = filepath.Join(want, mesheryFolder, test)
 		if got != want {
 			t.Errorf("got %q want %q", got, want)
 		}

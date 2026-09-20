@@ -9,7 +9,7 @@ vi.mock('billboard.js', () => ({
   donut: () => 'donut',
 }));
 
-vi.mock('../../BBChart', () => ({
+vi.mock('../../general/BBChart', () => ({
   default: (props: { options: unknown }) => {
     bbChartSpy(props.options);
     return <div data-testid="bb-chart" />;
@@ -70,6 +70,7 @@ vi.mock('@sistent/sistent', () => ({
   Typography: ({ children, className }: { children?: React.ReactNode; className?: string }) => (
     <p className={className}>{children}</p>
   ),
+  useHasPermission: () => canSpy(),
 }));
 
 vi.mock('@/theme', () => ({

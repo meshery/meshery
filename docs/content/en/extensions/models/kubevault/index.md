@@ -133,7 +133,19 @@ components:
   colorIcon: extensions/models/kubevault/components/issuer/icons/color/issuer-color.svg
   whiteIcon: extensions/models/kubevault/components/issuer/icons/white/issuer-white.svg
   description: 
-components-count: 31
+- name: namespace-slice
+  colorIcon: extensions/models/kubevault/components/namespace-slice/icons/color/namespace-slice-color.svg
+  whiteIcon: extensions/models/kubevault/components/namespace-slice/icons/white/namespace-slice-white.svg
+  description: 
+- name: vault-relay
+  colorIcon: extensions/models/kubevault/components/vault-relay/icons/color/vault-relay-color.svg
+  whiteIcon: extensions/models/kubevault/components/vault-relay/icons/white/vault-relay-white.svg
+  description: 
+- name: vault-relay
+  colorIcon: extensions/models/kubevault/components/vault-relay/icons/color/vault-relay-color.svg
+  whiteIcon: extensions/models/kubevault/components/vault-relay/icons/white/vault-relay-white.svg
+  description: 
+components-count: 34
 relationships: 
 relationship-count: 0
 featureList: [

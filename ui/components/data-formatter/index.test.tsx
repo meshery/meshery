@@ -83,6 +83,14 @@ describe('formatDate/formatTime/formatDateTime', () => {
     expect(both).toContain('2024');
     expect(both).toMatch(/\d+:\d+:\d+/);
   });
+
+  it('renders a placeholder instead of "Invalid Date" for missing or unparsable input', () => {
+    for (const bad of [undefined, null, '', 'not-a-date']) {
+      expect(formatDate(bad)).toBe('-');
+      expect(formatTime(bad)).toBe('-');
+      expect(formatDateTime(bad)).toBe('-');
+    }
+  });
 });
 
 describe('FormattedDate', () => {

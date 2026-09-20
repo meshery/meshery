@@ -53,7 +53,15 @@ components:
   colorIcon: extensions/models/aws-cloudfront-controller/components/iam-role-selector/icons/color/iam-role-selector-color.svg
   whiteIcon: extensions/models/aws-cloudfront-controller/components/iam-role-selector/icons/white/iam-role-selector-white.svg
   description: 
-components-count: 11
+- name: connection-group
+  colorIcon: extensions/models/aws-cloudfront-controller/components/connection-group/icons/color/connection-group-color.svg
+  whiteIcon: extensions/models/aws-cloudfront-controller/components/connection-group/icons/white/connection-group-white.svg
+  description: 
+- name: distribution-tenant
+  colorIcon: extensions/models/aws-cloudfront-controller/components/distribution-tenant/icons/color/distribution-tenant-color.svg
+  whiteIcon: extensions/models/aws-cloudfront-controller/components/distribution-tenant/icons/white/distribution-tenant-white.svg
+  description: 
+components-count: 13
 relationships: 
 - type: "non-binding"
   kind: "edge"

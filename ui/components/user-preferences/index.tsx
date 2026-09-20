@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Tab,
   Tabs,
@@ -17,6 +17,7 @@ import {
   SettingsRemoteIcon,
   useTheme,
   ErrorBoundary,
+  useHasPermission,
 } from '@sistent/sistent';
 import CopyIcon from '../../assets/icons/CopyIcon';
 import _ from 'lodash';
@@ -38,7 +39,7 @@ import {
   FormGroupWrapper,
 } from './style';
 import ExtensionSandbox from '../ExtensionSandbox';
-import RemoteComponent from '../RemoteComponent';
+import RemoteComponent from '../general/RemoteComponent';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
 import MesherySettingsPerformanceComponent from '../settings/MesherySettingsPerformanceComponent';
 import { iconMedium } from '../../css/icons.styles';
@@ -52,10 +53,12 @@ import {
   useUpdateUserPrefMutation,
   useUpdateUserPrefWithContextMutation,
 } from '@/rtk-query/user';
-import { ThemeTogglerCore } from '@/themes/hooks';
+import { ThemeTogglerCore } from '@/theme/hooks';
 import { SecondaryTab, SecondaryTabs } from '../dashboard/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleCatalogContent, updateProgress } from '@/store/slices/mesheryUi';
+import { Keys } from '@meshery/schemas/permissions';
+import DefaultError from '../general/error-404/index';
 
 interface ThemeTogglerProps {
   handleUpdateUserPref: (_theme: string) => void;
@@ -138,15 +141,16 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const { providerCapabilities } = useSelector((state) => state.ui);
+  const canViewUserPreferences = useHasPermission(Keys.ExtensibilityViewMesheryUserPreferences);
   const {
     data: userData,
     isSuccess: isUserDataFetched,
     isError: isUserDataError,
     error: userDataError,
-  } = useGetUserPrefQuery();
+  } = useGetUserPrefQuery(undefined, { skip: !canViewUserPreferences });
 
   const { data: capabilitiesData, isSuccess: isCapabilitiesDataFetched } =
-    useGetProviderCapabilitiesQuery();
+    useGetProviderCapabilitiesQuery(undefined, { skip: !canViewUserPreferences });
 
   const [updateUserPref] = useUpdateUserPrefMutation();
   const [updateUserPrefWithContext] = useUpdateUserPrefWithContextMutation();
@@ -263,21 +267,40 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
   }
 
   const RemoteProviderInfoTab = () => {
-    const [copied, setCopied] = useState(false);
-    const copyToClipboard = (text) => {
+    const [copied, setCopied] = useState<string | null>(null);
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const requestIdRef = useRef<number>(0);
+    const copyToClipboard = (text: string, key: string): void => {
+      const requestId = ++requestIdRef.current;
       navigator.clipboard
         .writeText(text)
         .then(() => {
-          setCopied(true);
+          if (requestId !== requestIdRef.current) {
+            return;
+          }
 
-          setTimeout(() => {
-            setCopied(false);
+          if (timeoutRef.current !== null) {
+            clearTimeout(timeoutRef.current);
+          }
+          setCopied(key);
+          timeoutRef.current = setTimeout(() => {
+            setCopied((prev) => (prev === key ? null : prev));
+            timeoutRef.current = null;
           }, 2000);
         })
         .catch((error) => {
           console.error('error copying to clipboard:', error);
         });
     };
+
+    useEffect(() => {
+      return () => {
+        if (timeoutRef.current !== null) {
+          clearTimeout(timeoutRef.current);
+        }
+        requestIdRef.current++;
+      };
+    }, []);
 
     return (
       <NoSsr>
@@ -353,9 +376,12 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
                               {provider}
                             </Typography>
 
-                            <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
+                            <CustomTooltip
+                              title={copied === providerName ? 'Copied!' : 'Copy'}
+                              placement="top"
+                            >
                               <IconButton
-                                onClick={() => copyToClipboard(provider)}
+                                onClick={() => copyToClipboard(provider, providerName)}
                                 style={{ padding: '0.25rem', float: 'right' }}
                               >
                                 <CopyIcon />
@@ -529,6 +555,11 @@ const UserPreference: React.FC<UserPreferenceProps> = (props) => {
     const updates = _.set(_.cloneDeep(userData), key, value);
     updateUserPrefWithContext(updates);
   };
+
+  if (!canViewUserPreferences) {
+    return <DefaultError permissionKey={Keys.ExtensibilityViewMesheryUserPreferences} />;
+  }
+
   return (
     <>
       <NoSsr>

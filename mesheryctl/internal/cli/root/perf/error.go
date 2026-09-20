@@ -84,7 +84,7 @@ func ErrNoProfileFound() error {
 		[]string{"No profile found"},
 		[]string{"No profile found with given name"},
 		[]string{"Invalid profile name or no profile name provided"},
-		[]string{"Ensure a valid profile name is inputted. See https://docs.meshery.io/reference/mesheryctl/perf/apply for more details"})
+		[]string{"Ensure a valid profile name is inputted. See https://docs.meshery.io/reference/references/mesheryctl/perf/apply for more details"})
 }
 
 func ErrInvalidOutputChoice() error {
@@ -113,7 +113,7 @@ func ErrInvalidTestConfigFile() error {
 }
 
 func formatErrorWithReference() string {
-	baseURL := "https://docs.meshery.io/reference/mesheryctl/perf"
+	baseURL := "https://docs.meshery.io/reference/references/mesheryctl/perf"
 	switch cmdUsed {
 	case "apply":
 		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/apply")
@@ -148,7 +148,7 @@ func ErrHealthChecker(err error) error {
 		[]string{"Healthchecks Failed"},
 		[]string{err.Error()},
 		[]string{"Failed to initialize healthchecker"},
-		[]string{"Ensure Mesheryctl is running and has the right configurations. See https://docs.meshery.io/reference/mesheryctl/system/check for checking Meshery components"})
+		[]string{"Ensure Mesheryctl is running and has the right configurations. See https://docs.meshery.io/reference/references/mesheryctl/system/check for checking Meshery components"})
 }
 
 func ErrPerformanceProfileResult(err error) error {

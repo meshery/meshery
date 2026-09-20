@@ -1,6 +1,3 @@
-import CAN from '@/utils/can';
-import { Keys } from '@meshery/schemas/permissions';
-
 type UserLike = { id?: string } | null | undefined;
 type DesignLike = { userId?: string } | null | undefined;
 
@@ -18,6 +15,8 @@ type DesignLike = { userId?: string } | null | undefined;
  * additionally gated on CAN(Keys.CatalogManagementEditDesign) at each call site (`disabled={!CAN}`),
  * so an owner without the permission sees the affordance but it stays disabled.
  */
-export const canEditDesign = (user: UserLike, design: DesignLike): boolean =>
-  CAN(Keys.CatalogManagementEditDesign.id, Keys.CatalogManagementEditDesign.function) ||
-  (!!user?.id && user.id === design?.userId);
+export const canEditDesign = (
+  user: UserLike,
+  design: DesignLike,
+  hasEditPermission: boolean,
+): boolean => hasEditPermission || (!!user?.id && user.id === design?.userId);

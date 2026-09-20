@@ -120,16 +120,27 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		"kubernetes",
 		kubernetes.AssignInitialCtx,
 	)
-	go func(inst *machines.StateMachine) {
-		event, err = inst.SendEvent(req.Context(), machines.Delete, nil)
-		if err != nil {
-			h.log.Error(err)
-			h.log.Debug(event)
-			return
-		}
-
+	// A machine that never initialized has no FSM state to unwind and no
+	// cluster-side resources to clean up: DeleteAction's work (undeploying
+	// operators, flushing MeshSync data) all runs off a MachineCtx that was
+	// never assigned, so SendEvent would only fail with ErrAssertMachineCtx.
+	// Crucially it would also fail *before* reaching the Remove below, leaking
+	// the tracker entry for a connection the user just deleted - so drop the
+	// entry directly instead. See mhelpers.HasMachineContext.
+	if !mhelpers.HasMachineContext(inst) {
 		smInstanceTracker.Remove(connectionUUID)
-	}(inst)
+	} else {
+		go func(inst *machines.StateMachine) {
+			event, err := inst.SendEvent(req.Context(), machines.Delete, nil)
+			if err != nil {
+				h.log.Error(err)
+				h.log.Debug(event)
+				return
+			}
+
+			smInstanceTracker.Remove(connectionUUID)
+		}(inst)
+	}
 
 	if err != nil {
 		h.log.Error(err)

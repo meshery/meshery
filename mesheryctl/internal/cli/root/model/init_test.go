@@ -1,6 +1,7 @@
 package model
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -12,6 +13,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/yaml.v3"
 )
 
 func TestModelInit(t *testing.T) {
@@ -335,4 +337,55 @@ func TestModelInit(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestInitModelDeriveDisplayName(t *testing.T) {
+	cases := map[string]string{
+		"digitalocean-icons": "Digitalocean Icons",
+		"cert-manager":       "Cert Manager",
+		"aws_ec2_controller": "Aws Ec2 Controller",
+		"istio":              "Istio",
+		"a-b-c":              "A B C",
+	}
+	for in, want := range cases {
+		assert.Equal(t, want, initModelDeriveDisplayName(in), "deriving display name for %q", in)
+	}
+}
+
+func TestInitModelInjectName(t *testing.T) {
+	// Verify that the scaffold's placeholder identifiers are replaced with the
+	// user-supplied model name while every other template field is preserved.
+	// Regression test for the model definition being left as "untitled-model".
+	modelName := "digitalocean-icons"
+
+	t.Run("json", func(t *testing.T) {
+		content, err := getTemplateInOutputFormat(initModelTemplatePathModel, "json")
+		assert.NoError(t, err)
+
+		out, err := initModelInjectName(content, "json", modelName)
+		assert.NoError(t, err)
+
+		var got map[string]interface{}
+		assert.NoError(t, json.Unmarshal(out, &got))
+		assert.Equal(t, modelName, got["name"])
+		assert.Equal(t, "Digitalocean Icons", got["displayName"])
+		// a representative untouched field must survive the round-trip
+		assert.Contains(t, got, "schemaVersion")
+		assert.Contains(t, got, "metadata")
+		assert.Contains(t, string(out), "<svg")
+	})
+
+	t.Run("yaml", func(t *testing.T) {
+		content, err := getTemplateInOutputFormat(initModelTemplatePathModel, "yaml")
+		assert.NoError(t, err)
+
+		out, err := initModelInjectName(content, "yaml", modelName)
+		assert.NoError(t, err)
+
+		var got map[string]interface{}
+		assert.NoError(t, yaml.Unmarshal(out, &got))
+		assert.Equal(t, modelName, got["name"])
+		assert.Equal(t, "Digitalocean Icons", got["displayName"])
+		assert.Contains(t, got, "schemaVersion")
+	})
 }

@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/meshery/schemas/models/core"
+	connectionv1beta3 "github.com/meshery/schemas/models/v1beta3/connection"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -21,15 +22,26 @@ import (
 	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/events"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
+	"github.com/meshery/meshkit/utils"
 )
 
+// ProcessConnectionRegistration drives the connection registration state
+// machine (POST /api/integrations/connections/register). The wire contract is
+// the schemas-defined ConnectionRegistrationEvent: an `initialize` event
+// returns the registration bootstrap, every other event advances the tracked
+// registration and responds with an empty body.
 func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	if req.Method == http.MethodDelete {
+		// Deprecated: cancelling via DELETE on this route with the tracker id in
+		// the body predates the schemas contract (v1.3.32). New clients cancel via
+		// DELETE /api/integrations/connections/register/{registrationId}
+		// (CancelConnectionRegister). Retire this branch once no supported client
+		// sends the legacy shape.
 		h.handleProcessTermination(w, req)
 		return
 	}
 
-	connectionRegisterPayload := connections.ConnectionPayload{}
+	registrationEvent := connectionv1beta3.ConnectionRegistrationEvent{}
 	userUUID := user.ID
 	token, err := provider.GetProviderToken(req)
 	if err != nil {
@@ -37,7 +49,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 		writeMeshkitError(w, ErrRetrieveUserToken(err), http.StatusInternalServerError)
 		return
 	}
-	err = json.NewDecoder(req.Body).Decode(&connectionRegisterPayload)
+	err = json.NewDecoder(req.Body).Decode(&registrationEvent)
 	if err != nil {
 		writeMeshkitError(w, models.ErrUnmarshal(err, "connection registration payload"), http.StatusBadRequest)
 		return
@@ -45,10 +57,11 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*h.SystemID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
 
-	if string(connectionRegisterPayload.Status) == string(machines.Init) {
-		h.handleRegistrationInitEvent(w, req, &connectionRegisterPayload)
+	if registrationEvent.Status == connectionv1beta3.ConnectionRegistrationEventStatusInitialize {
+		h.handleRegistrationInitEvent(w, &registrationEvent)
 	} else {
 		smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
+		connectionRegisterPayload := registrationEventToConnectionPayload(&registrationEvent)
 
 		machineCtx := make(map[string]string, 0)
 		inst, err := helpers.InitializeMachineWithContext(
@@ -77,7 +90,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 			return
 		}
 
-		event, err := inst.SendEvent(req.Context(), machines.EventType(connectionRegisterPayload.Status), connectionRegisterPayload)
+		event, err := inst.SendEvent(req.Context(), machines.EventType(registrationEvent.Status), connectionRegisterPayload)
 		if err != nil {
 			wrappedErr := ErrSendMachineEvent(err)
 			h.log.Error(wrappedErr)
@@ -91,6 +104,31 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 	}
 }
 
+// registrationEventToConnectionPayload converts the schemas wire event into the
+// internal payload the connection state machines consume
+// (machines/*/register.go casts the event data to connections.ConnectionPayload).
+// The two shapes share the same wire fields; only the Go types differ.
+func registrationEventToConnectionPayload(event *connectionv1beta3.ConnectionRegistrationEvent) connections.ConnectionPayload {
+	payload := connections.ConnectionPayload{
+		Kind:                       event.Kind,
+		SubType:                    event.SubType,
+		Type:                       event.Type,
+		MetaData:                   event.Metadata,
+		Status:                     connections.ConnectionStatus(event.Status),
+		CredentialSecret:           event.CredentialSecret,
+		Name:                       event.Name,
+		CredentialID:               event.CredentialID,
+		Model:                      event.Model,
+		SkipCredentialVerification: event.SkipCredentialVerification,
+	}
+	if event.ID != nil {
+		payload.ID = *event.ID
+	}
+	return payload
+}
+
+// handleProcessTermination is the deprecated body-based cancel path; see the
+// deprecation note in ProcessConnectionRegistration.
 func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Request) {
 	body := make(map[string]string, 0)
 	err := json.NewDecoder(req.Body).Decode(&body)
@@ -108,33 +146,64 @@ func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Requ
 	}
 }
 
-func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.Request, payload *connections.ConnectionPayload) {
-	compFilter := &regv1beta1.ComponentFilter{
-		Name:  fmt.Sprintf("%sConnection", payload.Kind),
-		Limit: 1,
-	}
-	schema := make(map[string]interface{}, 1)
-	connectionComponent, _, _, _ := h.registryManager.GetEntities(compFilter)
-	if len(connectionComponent) == 0 {
-		writeMeshkitError(w, ErrUnknownConnectionKind(payload.Kind), http.StatusBadRequest)
+// CancelConnectionRegister discards the in-progress registration state machine
+// tracked by the {registrationId} path parameter
+// (DELETE /api/integrations/connections/register/{registrationId}). Idempotent:
+// unknown ids are ignored. Nothing is persisted for the abandoned process.
+func (h *Handler) CancelConnectionRegister(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
+	registrationID, err := uuid.FromString(mux.Vars(req)["registrationId"])
+	if err != nil {
+		invalidIDErr := models.ErrInvalidUUID(err)
+		h.log.Error(invalidIDErr)
+		writeMeshkitError(w, invalidIDErr, http.StatusBadRequest)
 		return
 	}
 
-	schema["connection"] = connectionComponent[0]
+	h.ConnectionToStateMachineInstanceTracker.Remove(registrationID)
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, event *connectionv1beta3.ConnectionRegistrationEvent) {
+	compFilter := &regv1beta1.ComponentFilter{
+		Name:  fmt.Sprintf("%sConnection", event.Kind),
+		Limit: 1,
+	}
+	connectionComponent, _, _, _ := h.registryManager.GetEntities(compFilter)
+	if len(connectionComponent) == 0 {
+		writeMeshkitError(w, ErrUnknownConnectionKind(event.Kind), http.StatusBadRequest)
+		return
+	}
+
+	connectionDefinition, err := utils.MarshalAndUnmarshal[interface{}, core.Map](connectionComponent[0])
+	if err != nil {
+		h.log.Error(ErrWriteResponse(err))
+		writeMeshkitError(w, ErrWriteResponse(err), http.StatusInternalServerError)
+		return
+	}
+
+	// The bootstrap id acts as the connection registration process tracker.
+	// Clients echo it on every subsequent event until the process completes or
+	// is cancelled.
+	bootstrap := connectionv1beta3.ConnectionRegistrationBootstrap{
+		Connection: connectionDefinition,
+		ID:         uuid.Must(uuid.NewV4()),
+	}
+
 	credential, _, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
-		Name:  fmt.Sprintf("%sCredential", payload.Kind),
+		Name:  fmt.Sprintf("%sCredential", event.Kind),
 		Limit: 1,
 	})
-
 	if len(credential) > 0 {
-		schema["credential"] = credential[0]
+		credentialDefinition, err := utils.MarshalAndUnmarshal[interface{}, core.Map](credential[0])
+		if err != nil {
+			h.log.Error(ErrWriteResponse(err))
+			writeMeshkitError(w, ErrWriteResponse(err), http.StatusInternalServerError)
+			return
+		}
+		bootstrap.Credential = credentialDefinition
 	}
-	// id act as a connection registration process tracker.
-	// The clients should always include this "id" in the subsequent API calls until the process is completed or terminated.
-	id := uuid.Must(uuid.NewV4())
-	schema["id"] = id
 
-	err := json.NewEncoder(w).Encode(&schema)
+	err = json.NewEncoder(w).Encode(&bootstrap)
 	if err != nil {
 		h.log.Error(ErrWriteResponse(err))
 	}
@@ -460,12 +529,34 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 			kubernetes.AssignInitialCtx,
 		)
 
+		// A connection being deleted must not leave a tracker entry behind,
+		// whichever way its machine failed. InitializeMachineWithContext caches
+		// the instance *before* surfacing a Start error, so both the error return
+		// below and the no-context return after it would otherwise strand the
+		// entry - the first for a fresh failure, the second for every later cache
+		// hit. Nothing can drive that machine afterwards, and the delete paths
+		// that normally Remove it (the goroutine below, DeleteContext) both do so
+		// only after a SendEvent that cannot succeed without a Context.
+		usable := err == nil && helpers.HasMachineContext(inst)
+		if !usable && connection.Status == connections.DELETED {
+			smInstanceTracker.Remove(connectionID)
+		}
+
 		if err != nil {
 			eventBuilder = eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", connectionID)).WithMetadata(map[string]interface{}{
 				"error": err,
 			})
 			return *eventBuilder.Build(), err
 		}
+		// A machine whose Context was never assigned cannot service the event:
+		// SendEvent would only fail on ErrAssertMachineCtx and publish an error
+		// the user can do nothing about. Same shape as the DeleteContext guard in
+		// contexts_handler.go; see helpers.HasMachineContext.
+		if !usable {
+			h.log.Debug(fmt.Sprintf("machine instance for connection %s has no context assigned, skipping the %q event", connectionID, connection.Status))
+			return *eventBuilder.Build(), nil
+		}
+
 		// detach from the http request lifecycle so that the goroutine isn't cancelled when
 		// the handler returns, while preserving context values (e.g. TokenCtxKey) that downstream calls depend on.
 		detachedCtx := context.WithoutCancel(ctx)
@@ -493,6 +584,7 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	userID := user.ID
+
 	token, err := provider.GetProviderToken(req)
 	if err != nil {
 		h.log.Error(ErrRetrieveUserToken(err))
@@ -503,8 +595,27 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 
 	deletedConnection, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {
-		obj := "connection"
-		_err := ErrFailToSave(err, obj)
+		// Deleting an id the provider never issued is "not found", not a
+		// failure to write. The local provider says so with ErrResultNotFound;
+		// the remote provider says so with its own 404, which ErrDelete now
+		// carries (models.ErrDelete -> httputil.WithProviderStatus). Answer 404
+		// for either, and answer it *before* the failure event: a delete
+		// addressed to a stale id is a client mistake, not an incident worth a
+		// persisted error notification.
+		//
+		// Previously every failure - including a plain 404 - was wrapped in
+		// ErrFailToSave and answered 500, so `mesheryctl connection delete
+		// <unknown-uuid>` reported "Failed to Save: .connection"
+		// (meshery-server-1051), "Provider Database could be down or not
+		// reachable". That is the wrong verb, the wrong code and the wrong
+		// diagnosis for a connection that simply is not there.
+		if errors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound {
+			h.log.Warnf("No connection with ID %q found to delete", connectionID)
+			writeMeshkitError(w, err, http.StatusNotFound)
+			return
+		}
+
+		_err := ErrFailToDelete(err, "connection")
 		metadata := map[string]interface{}{
 			"error": _err,
 		}
@@ -512,17 +623,22 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		_ = provider.PersistEvent(*event, token)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
-		if errors.GetCode(err) == models.ErrResultNotFoundCode {
-			h.log.Warnf("No connection with ID %q found to delete", connectionID)
-			writeMeshkitError(w, _err, http.StatusNotFound)
-			return
-		}
 		h.log.Error(_err)
-		writeMeshkitError(w, _err, http.StatusInternalServerError)
+		// Surface the status the provider actually returned (403, 409, 5xx ...)
+		// rather than reporting every upstream refusal as a fault inside
+		// Meshery Server. The fallback stays 500 because this path is also the
+		// local provider's, where an untagged failure really is ours.
+		writeMeshkitError(w, _err, providerStatusOrInternal(err))
 		return
 	}
 
-	description := fmt.Sprintf("Connection %s deleted.", deletedConnection.Name)
+	// A provider is free to answer a successful delete without echoing the
+	// deleted row back; dereferencing it unconditionally panicked the request.
+	deletedName := connectionID.String()
+	if deletedConnection != nil && deletedConnection.Name != "" {
+		deletedName = deletedConnection.Name
+	}
+	description := fmt.Sprintf("Connection %s deleted.", deletedName)
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
 
 	_ = provider.PersistEvent(*event, token)
@@ -601,22 +717,40 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("machine context does not contain reference to MesheryCtrlsHelper for connection %s", connectionID)
 		}
 
+		// Resolve BEFORE tearing anything down. A resolution failure means the
+		// intended configuration is unknown, and undeploying the operators only
+		// to rebuild them from the last-known-good document is a partial
+		// reconciliation performed on unreadable input - the same fault as
+		// reconciling a connection whose override will not parse. Fail with the
+		// connection left exactly as it is instead.
+		merged, _, resolveErr := ctrlHelper.ResolveControllersConfigForConnection(newConnection.MetaData)
+		if resolveErr != nil {
+			h.log.Error(resolveErr)
+			return existingMeshSyncMode, newMeshSyncMode, false, resolveErr
+		}
+
 		// disconnect
 		{
 			contextID := machineCtx.K8sContext.ID
 			ctrlHelper.
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-				UndeployDeployedOperators(machineCtx.OperatorTracker).
+				UndeployDeployedOperators(machineCtx.OperatorTracker, contextID).
 				RemoveCtxControllerHandler(ctx, contextID)
 			ctrlHelper.RemoveMeshSyncDataHandler(ctx, contextID)
 		}
-		// connect
+		// connect. The controllers configuration is refreshed and stashed
+		// before AddCtxControllerHandlers, which constructs the operator
+		// controller handler with the Helm chart version that document
+		// resolves to (operator.version) and captures it there. Resolving from
+		// the incoming payload's metadata rather than the helper's stale copy
+		// is what lets one save change the mode and the chart version at once.
 		{
+			ctrlHelper.SetControllersConfig(merged)
 			ctrlHelper.
-				AddCtxControllerHandlers(machineCtx.K8sContext).
 				SetMeshsyncDeploymentMode(newMeshSyncMode).
+				AddCtxControllerHandlers(machineCtx.K8sContext).
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-				DeployUndeployedOperators(machineCtx.OperatorTracker).
+				DeployUndeployedOperators(machineCtx.OperatorTracker, machineCtx.K8sContext.ID).
 				AddMeshsyncDataHandlers(ctx, machineCtx.K8sContext, userID, mesheryInstanceID, provider)
 		}
 

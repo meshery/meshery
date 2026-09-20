@@ -1,17 +1,25 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { NoSsr } from '@sistent/sistent';
-import { ErrorBoundary, AppBar } from '@sistent/sistent';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  NoSsr,
+  ErrorBoundary,
+  AppBar,
+  InfoTooltip,
+  useHasPermission,
+  useTheme,
+} from '@sistent/sistent';
 import Modal from '../shared/Modal/Modal';
 import { ConnectionIconText, ConnectionTab, ConnectionTabs } from './styles';
 import MeshSyncTable from './meshSync';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
-import CAN from '@/utils/can';
+
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '../general/error-404/index';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
 import CustomErrorFallback from '../shared/ErrorBoundary/ErrorBoundary';
 import ConnectionTable from './ConnectionTable';
+import { CREATE_CONNECTION_QUERY, isCreateConnectionQuery } from './ConnectionWizard.helpers';
+import { useConnectionWizardModal } from '@/utils/context/ConnectionWizardContextProvider';
 import { useRouter } from 'next/router';
 
 /**
@@ -65,12 +73,40 @@ function ConnectionManagementPage(props) {
   );
 }
 function Connections() {
+  const hasViewConnections = useHasPermission(Keys.WorkspaceManagementViewConnections);
+  const theme = useTheme();
   const router = useRouter();
-  const { query, pathname, push, isReady } = router;
+  const { query, pathname, push, isReady, replace } = router;
+  const { openCreateConnection } = useConnectionWizardModal();
   const tabParam = typeof query.tab === 'string' ? query.tab.toLowerCase() : undefined;
   const connectionId = typeof query.connectionId === 'string' ? query.connectionId : undefined;
 
   const tab = useMemo(() => (tabParam === 'meshsync' ? 1 : 0), [tabParam]);
+
+  // Optional shareable deep link: ?create=true&kind=kubernetes
+  const createParam = query[CREATE_CONNECTION_QUERY.create];
+  const kindParam = query[CREATE_CONNECTION_QUERY.kind];
+  const createFlag = Array.isArray(createParam) ? createParam[0] : createParam;
+  const kindFromQuery =
+    typeof kindParam === 'string' && kindParam.length > 0
+      ? kindParam
+      : Array.isArray(kindParam) && kindParam[0]
+        ? kindParam[0]
+        : null;
+
+  useEffect(() => {
+    if (!isReady || !isCreateConnectionQuery(createFlag)) {
+      return;
+    }
+    openCreateConnection({
+      kind: kindFromQuery,
+      skipKindSelection: Boolean(kindFromQuery),
+    });
+    const nextQuery = { ...query };
+    delete nextQuery[CREATE_CONNECTION_QUERY.create];
+    delete nextQuery[CREATE_CONNECTION_QUERY.kind];
+    replace({ pathname, query: nextQuery }, undefined, { shallow: true });
+  }, [isReady, createFlag, kindFromQuery, openCreateConnection]);
 
   // Next.js's pages-router `router.query` and `router.push` get fresh
   // references on each render, which previously cascaded into a new
@@ -141,63 +177,86 @@ function Connections() {
     [updateUrlParams],
   );
 
+  // Rendered by whichever table is active (ConnectionTable or MeshSyncTable) so
+  // the tab switcher stays visible - and functional - on both tabs, above
+  // that table's own toolbar. Memoized so the unstable JSX identity doesn't
+  // cascade into the tables' props on every render (this page has previously
+  // hit React error #185 from exactly this kind of churn).
+  const tabs = useMemo(
+    () => (
+      <AppBar position="static" color="default" style={{ marginBottom: '3rem' }}>
+        <ConnectionTabs
+          value={tab}
+          onChange={handleTabChange}
+          indicatorColor="primary"
+          textColor="primary"
+          variant="fullWidth"
+          sx={{
+            height: '10%',
+          }}
+        >
+          <ConnectionTab
+            label={
+              <ConnectionIconText>
+                <span style={{ marginRight: '0.3rem' }}>Connections</span>
+                <ConnectionIcon width="20" height="20" />
+              </ConnectionIconText>
+            }
+          />
+          <ConnectionTab
+            label={
+              <ConnectionIconText>
+                <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
+                <MeshsyncIcon width="20" height="20" />
+                <span
+                  onClick={(e) => e.stopPropagation()}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  style={{
+                    display: 'inline-flex',
+                    marginLeft: '5px',
+                    // Info icon uses currentColor; keep it stable when the Tab
+                    // is selected (selected tabs set color to primary.main).
+                    color: theme.palette.icon.default,
+                  }}
+                >
+                  <InfoTooltip
+                    helpText={`MeshSync discovers and keeps Meshery in sync with your Kubernetes clusters. [Learn more](https://docs.meshery.io/concepts/architecture/meshsync/)`}
+                    placement="top"
+                    interactive
+                  />
+                </span>
+              </ConnectionIconText>
+            }
+          />
+        </ConnectionTabs>
+      </AppBar>
+    ),
+    [tab, handleTabChange, theme.palette.icon.default],
+  );
+
   if (!isReady) return null;
+
   return (
     <NoSsr>
-      {CAN(
-        Keys.WorkspaceManagementViewConnections.id,
-        Keys.WorkspaceManagementViewConnections.function,
-      ) ? (
+      {hasViewConnections ? (
         <>
-          <AppBar position="static" color="default" style={{ marginBottom: '3rem' }}>
-            <ConnectionTabs
-              value={tab}
-              onChange={handleTabChange}
-              indicatorColor="primary"
-              textColor="primary"
-              variant="fullWidth"
-              sx={{
-                height: '10%',
-              }}
-            >
-              <ConnectionTab
-                label={
-                  <ConnectionIconText>
-                    <span style={{ marginRight: '0.3rem' }}>Connections</span>
-                    <ConnectionIcon width="20" height="20" />
-                  </ConnectionIconText>
-                }
-              />
-              <ConnectionTab
-                label={
-                  <ConnectionIconText>
-                    <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
-                    <MeshsyncIcon width="20" height="20" />
-                  </ConnectionIconText>
-                }
-              />
-            </ConnectionTabs>
-          </AppBar>
-
-          {tab === 0 &&
-            CAN(
-              Keys.WorkspaceManagementViewConnections.id,
-              Keys.WorkspaceManagementViewConnections.function,
-            ) && (
-              <ConnectionTable
-                selectedConnectionId={connectionId}
-                updateUrlWithConnectionId={updateUrlWithConnectionId}
-              />
-            )}
+          {tab === 0 && (
+            <ConnectionTable
+              selectedConnectionId={connectionId}
+              updateUrlWithConnectionId={updateUrlWithConnectionId}
+              tabs={tabs}
+            />
+          )}
           {tab === 1 && (
             <MeshSyncTable
               selectedResourceId={connectionId}
               updateUrlWithResourceId={updateUrlWithConnectionId}
+              tabs={tabs}
             />
           )}
         </>
       ) : (
-        <DefaultError />
+        <DefaultError permissionKey={Keys.WorkspaceManagementViewConnections} />
       )}
     </NoSsr>
   );

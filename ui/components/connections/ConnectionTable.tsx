@@ -1,16 +1,19 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { PROMPT_VARIANTS, ResponsiveDataTable } from '@sistent/sistent';
+import { ResponsiveDataTable } from '@sistent/sistent';
 import LoadingScreen from '../shared/LoadingState/LoadingComponent';
 import { EVENT_TYPES } from '../../lib/event-types';
-import _PromptComponent from '../PromptComponent';
+import ConnectionStateTransitionModal from './ConnectionStateTransitionModal';
+import type { ConnectionStateTransitionModalRef } from './ConnectionStateTransitionModal';
 
-import { CONNECTION_KINDS, CONNECTION_STATES } from '../../utils/Enum';
+import { CONNECTION_STATES } from '../../utils/Enum';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import useGrafanaPingHook from '@/utils/hooks/useGrafanaPingHook';
+import usePrometheusPingHook from '@/utils/hooks/usePrometheusPingHook';
 import { getResponsiveColumnVisibility } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import { useGetEnvironmentsQuery } from '../../rtk-query/environments';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
+import { useListConnectionDefinitionsQuery } from '@meshery/schemas/mesheryApi';
 import { useTableUrlState } from '@/utils/hooks/useTableUrlState';
 import { useColumnVisibilityPreference } from '@/utils/hooks/useColumnVisibilityPreference';
 
@@ -30,7 +33,8 @@ import {
   CONNECTION_DOCS_URL,
   ENVIRONMENT_DOCS_URL,
   getErrorMessage,
-  getStatusTransition,
+  toServerSortOrder,
+  toUiSortOrder,
 } from './ConnectionTable.constants';
 import type { ConnectionTransitionMap } from './ConnectionTable.constants';
 import { useConnectionActions } from './ConnectionTable.hooks';
@@ -58,6 +62,7 @@ const ConnectionTable = ({
   selectedFilter,
   selectedConnectionId,
   updateUrlWithConnectionId,
+  tabs,
 }: ConnectionTableProps) => {
   const {
     organization,
@@ -81,6 +86,7 @@ const ConnectionTable = ({
   );
   const ping = useKubernetesHook();
   const pingGrafana = useGrafanaPingHook();
+  const pingPrometheus = usePrometheusPingHook();
   const { width } = useWindowDimensions();
 
   const { tableState, updateTableState, copyRowDeepLink } = useTableUrlState({
@@ -91,7 +97,7 @@ const ConnectionTable = ({
     defaults: {
       page: 0,
       pageSize: 10,
-      sortOrder: 'created_at desc',
+      sortOrder: 'createdAt desc',
       search: '',
       filters: { status: '', kind: '' },
     },
@@ -138,11 +144,29 @@ const ConnectionTable = ({
   const [controllersConfigConnection, setControllersConfigConnection] =
     useState<ConfigurableConnection | null>(null);
   const open = Boolean(anchorEl);
-  const modalRef = useRef<{ show: (options: unknown) => Promise<string | null> } | null>(null);
+  const modalRef = useRef<ConnectionStateTransitionModalRef | null>(null);
   const lastNotifiedErrorsRef = useRef<{ environments: string; connections: string }>({
     environments: '',
     connections: '',
   });
+
+  // The set of connection kinds is fetched from the registry rather than
+  // hardcoded, so the Kind filter reflects whatever connections are registered.
+  const { data: connectionDefinitionsResponse } = useListConnectionDefinitionsQuery({});
+  const kindFilterOptions = useMemo(() => {
+    const seen = new Set<string>();
+    return (connectionDefinitionsResponse?.connectionDefinitions || []).reduce<
+      { label: string; value: string }[]
+    >((options, definition) => {
+      const kind = definition?.kind;
+      if (!kind || seen.has(kind)) {
+        return options;
+      }
+      seen.add(kind);
+      options.push({ label: definition?.name || kind, value: kind });
+      return options;
+    }, []);
+  }, [connectionDefinitionsResponse?.connectionDefinitions]);
 
   const filters = useMemo(
     () => ({
@@ -161,10 +185,10 @@ const ConnectionTable = ({
       },
       kind: {
         name: 'Kind',
-        options: Object.entries(CONNECTION_KINDS).map(([key, value]) => ({ label: key, value })),
+        options: kindFilterOptions,
       },
     }),
-    [],
+    [kindFilterOptions],
   );
 
   const handleApplyFilter = () => {
@@ -192,7 +216,7 @@ const ConnectionTable = ({
       page: page,
       pageSize: pageSize,
       search: search,
-      order: sortOrder,
+      order: toServerSortOrder(sortOrder),
       // Repeated query params (?status=connected, ?kind=kubernetes) — no JSON.
       status: statusFilter || undefined,
       kind: selectedFilter || kindFilter || undefined,
@@ -269,6 +293,8 @@ const ConnectionTable = ({
     // for missing fields (the Name column uses `metadata.name`/kind, etc.).
     // Do NOT drop connections for a missing name/kind/status: that wrongly hid
     // real connections. The only guard is against null/undefined array entries.
+    // Columns read the v1beta3 camelCase wire shape (createdAt, updatedAt,
+    // subType). Sort clicks map to DB snake_case via toServerSortOrder.
     return connectionData.connections.filter(Boolean).map((connection) => ({
       ...connection,
       nextStatus: connection.nextStatus || connectionMetadataState?.[connection.kind]?.transitions,
@@ -292,8 +318,11 @@ const ConnectionTable = ({
       ['environments', 'm'],
       ['kind', 'm'],
       ['type', 's'],
-      ['sub_type', 'na'],
-      ['created_at', 'na'],
+      // subType stays hidden by default, as it was before; users can enable it
+      // from the column-visibility control.
+      ['subType', 'na'],
+      // Discovered At visible by default at every breakpoint (master: 'xs').
+      ['createdAt', 'xs'],
       ['status', 'xs'],
       ['Actions', 'xs'],
       ['transitionMap', 'xs'],
@@ -307,19 +336,19 @@ const ConnectionTable = ({
         return;
       }
 
-      const response = await modalRef.current.show({
-        title: `Delete Connection`,
-        subtitle: `Are you sure that you want to delete the connection?`,
-        primaryOption: 'DELETE',
-        showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-        variant: PROMPT_VARIANTS.DANGER,
+      const connection = filteredConnections.find((conn) => conn.id === connectionId);
+      const confirmed = await modalRef.current.show({
+        targetStatus: CONNECTION_STATES.DELETED,
+        currentStatus: connection?.status,
+        kind: connection?.kind,
+        connections: [{ id: connectionId, name: connection?.name, status: connection?.status }],
       });
 
-      if (response === 'DELETE') {
+      if (confirmed) {
         await updateConnectionStatus(connectionId, CONNECTION_STATES.DELETED);
       }
     },
-    [updateConnectionStatus],
+    [filteredConnections, updateConnectionStatus],
   );
 
   const handleDeleteConnections = useCallback(
@@ -333,33 +362,57 @@ const ConnectionTable = ({
       // be invalidated/reordered by an in-flight refetch in that window — using
       // the index after-the-fact dereferenced stale rows and silently no-op'd
       // (no PUT, no notification), which surfaced as a hung e2e snackbar wait.
-      const ids = selected.data
-        .map(({ index }) => filteredConnections[index]?.id)
-        .filter(Boolean) as string[];
+      const selectedConnections = selected.data
+        .map(({ index }) => filteredConnections[index])
+        .filter(Boolean);
 
-      if (ids.length === 0) {
+      if (selectedConnections.length === 0) {
         return;
       }
 
-      const response = await modalRef.current.show({
-        title: `Delete Connections`,
-        subtitle: `Are you sure that you want to delete the connections?`,
-        primaryOption: 'DELETE',
-        showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-        variant: PROMPT_VARIANTS.DANGER,
+      // Kind-specific ramifications only apply when the whole selection is of
+      // one kind; a mixed selection gets the generic copy. Per-connection
+      // status lets the modal resolve the definition-authored description when
+      // the selection's current states agree.
+      const kinds = new Set(selectedConnections.map((connection) => connection.kind));
+      const confirmed = await modalRef.current.show({
+        targetStatus: CONNECTION_STATES.DELETED,
+        kind: kinds.size === 1 ? selectedConnections[0].kind : undefined,
+        connections: selectedConnections.map(({ id, name, status }) => ({ id, name, status })),
       });
 
-      if (response === 'DELETE') {
-        await Promise.all(
-          ids.map((connectionId) =>
-            updateConnectionStatus(connectionId, CONNECTION_STATES.DELETED),
+      if (confirmed) {
+        // Use the raw mutator here so Promise.allSettled can handle
+        // success and failure for each deletion. Keep updateConnectionStatus
+        // unchanged for single-connection actions.
+        const results = await Promise.allSettled(
+          selectedConnections.map(({ id }) =>
+            updateConnectionByIdMutator({
+              connectionId: id,
+              body: { status: CONNECTION_STATES.DELETED },
+            }).unwrap(),
           ),
         );
+
+        const successCount = results.filter((r) => r.status === 'fulfilled').length;
+        const failureCount = results.filter((r) => r.status === 'rejected').length;
+
+        if (successCount > 0) {
+          notify({
+            message: `${successCount} Connection${successCount > 1 ? 's' : ''} deleted`,
+            event_type: EVENT_TYPES.SUCCESS,
+          });
+        }
+        if (failureCount > 0) {
+          notify({
+            message: `Failed to delete ${failureCount} Connection${failureCount > 1 ? 's' : ''}`,
+            event_type: EVENT_TYPES.ERROR,
+          });
+        }
       }
     },
-    [filteredConnections, updateConnectionStatus],
+    [filteredConnections, updateConnectionByIdMutator, notify],
   );
-
   const handleActionMenuClose = useCallback(() => {
     setAnchorEl(null);
     setRowData(null);
@@ -462,24 +515,21 @@ const ConnectionTable = ({
         return;
       }
 
-      const subtitle = getStatusTransition(
-        connectionMetadataState?.[connectionKind]?.transitionMap,
-        connectionStatus,
-        status.toLowerCase(),
-      );
-      const response = await modalRef.current.show({
-        title: `Transition connection to ${status.toUpperCase()}?`,
-        subtitle,
-        primaryOption: 'Confirm',
-        showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-        variant: PROMPT_VARIANTS.WARNING,
+      const connection = filteredConnections.find((conn) => conn.id === connectionId);
+      // The modal resolves the definition-authored description for this
+      // transition itself (kind + currentStatus → connectionMetadataState).
+      const confirmed = await modalRef.current.show({
+        targetStatus: status.toLowerCase(),
+        currentStatus: connectionStatus,
+        kind: connectionKind,
+        connections: [{ id: connectionId, name: connection?.name }],
       });
 
-      if (response === 'Confirm') {
+      if (confirmed) {
         await updateConnectionStatus(connectionId, status);
       }
     },
-    [connectionMetadataState, updateConnectionStatus],
+    [filteredConnections, updateConnectionStatus],
   );
 
   const handleActionMenuOpen = useCallback((event, tableMeta: RowData) => {
@@ -564,6 +614,7 @@ const ConnectionTable = ({
     handleActionMenuOpen,
     ping,
     pingGrafana,
+    pingPrometheus,
     transitionMapByKind,
   });
   const columnNames = useMemo(
@@ -577,7 +628,10 @@ const ConnectionTable = ({
     pageSize,
     setPage,
     setPageSize,
-    sortOrder,
+    // Normalized to column names: a bookmarked snake_case param would not
+    // match any column, dropping the active-sort indicator. The server query
+    // above translates the other way, via toServerSortOrder.
+    sortOrder: toUiSortOrder(sortOrder),
     setSortOrder,
     rowsExpanded,
     setRowsExpanded,
@@ -630,6 +684,8 @@ const ConnectionTable = ({
 
   return (
     <>
+      {tabs}
+
       <ConnectionTableToolbar
         isSearchExpanded={isSearchExpanded}
         setIsSearchExpanded={setIsSearchExpanded}
@@ -652,7 +708,7 @@ const ConnectionTable = ({
         columnVisibility={columnVisibility}
       />
 
-      <_PromptComponent ref={modalRef} />
+      <ConnectionStateTransitionModal ref={modalRef} />
       <ConnectionActionMenu
         anchorEl={anchorEl}
         open={open}

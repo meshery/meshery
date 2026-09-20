@@ -3,6 +3,7 @@ title: mesheryctl-system-token-list
 display_title: false
 command: system
 subcommand: token
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system token list
@@ -14,8 +15,10 @@ List tokens
 List all the tokens in your meshconfig
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system token list [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -23,8 +26,10 @@ mesheryctl system token list [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system token list
 
+</div>
 </div>
 </pre> 
 

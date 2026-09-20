@@ -1,22 +1,21 @@
 import React, { useMemo } from 'react';
 import { donut } from 'billboard.js';
-import BBChart from '../../BBChart';
+import BBChart from '../../general/BBChart';
 import { dataToColors, isValidColumnName } from '../../../utils/charts';
 import Link from 'next/link';
-import { iconSmall } from '../../../css/icons.styles';
-import { CustomTextTooltip } from '@/components/meshery-mesh-interface/PatternService/CustomTextTooltip';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
-import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
 import { useRouter } from 'next/router';
+import { CoreConnectionKinds } from '@/utils/Enum';
 import { DashboardSection, LoadingContainer } from '../style';
 import ConnectCluster from './ConnectCluster';
 import {
   Box,
   CircularProgress,
-  InfoOutlinedIcon,
+  InfoTooltip,
   KubernetesIcon,
   Typography,
+  useHasPermission,
   useTheme,
 } from '@sistent/sistent';
 import WidgetErrorFallback from '../widgets/WidgetErrorFallback';
@@ -28,8 +27,9 @@ export default function KubernetesConnectionStatsChart() {
     isError,
   } = useGetConnectionsQuery({
     page: 0,
-    pagesize: 'all',
-    kind: JSON.stringify(['kubernetes']),
+    // Plain ?kind=kubernetes (not JSON-encoded).
+    pageSize: 'all',
+    kind: CoreConnectionKinds.kubernetes,
   });
   const router = useRouter();
   const theme = useTheme();
@@ -90,10 +90,7 @@ export default function KubernetesConnectionStatsChart() {
     [chartData, router, theme],
   );
 
-  const canViewConnections = CAN(
-    Keys.WorkspaceManagementViewConnections.id,
-    Keys.WorkspaceManagementViewConnections.function,
-  );
+  const canViewConnections = useHasPermission(Keys.WorkspaceManagementViewConnections);
   const header = (
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -109,15 +106,11 @@ export default function KubernetesConnectionStatsChart() {
           KUBERNETES CLUSTER STATUS
         </Typography>
       </div>
-      <div onClick={(e) => e.stopPropagation()}>
-        <CustomTextTooltip title="This chart shows the status of connections to your Kubernetes clusters.">
-          <div>
-            <InfoOutlinedIcon
-              color={theme.palette.icon.default}
-              style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-            />
-          </div>
-        </CustomTextTooltip>
+      <div onClick={(e) => e.stopPropagation()} style={{ color: theme.palette.icon.default }}>
+        <InfoTooltip
+          helpText="This chart shows the status of connections to your Kubernetes clusters."
+          style={{ marginLeft: '5px' }}
+        />
       </div>
     </div>
   );

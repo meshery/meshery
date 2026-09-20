@@ -14,6 +14,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 
 	"net/http"
+	"time"
 )
 
 // legacyProviderConfigWarnOnce gates the one-shot deprecation warning emitted
@@ -139,7 +140,7 @@ func (mc *MesheryCtlConfig) GetCurrentContext() (*Context, error) {
 	return currentContext, err
 }
 
-// Get any context
+// GetContext validates and returns a pointer to the named context.
 func (mc *MesheryCtlConfig) GetContext(name string) (*Context, error) {
 	context, err := mc.CheckIfGivenContextIsValid(name)
 	if err != nil {
@@ -256,7 +257,7 @@ func (ctx *Context) ValidateVersion() error {
 	if err != nil {
 		return err
 	}
-	client := &http.Client{}
+	client := &http.Client{Timeout: 10 * time.Second}
 	resp, err := client.Do(req)
 	if err != nil {
 		return errors.Wrapf(err, "failed to make GET request to %s", url)

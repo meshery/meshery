@@ -1,24 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Typography } from '@sistent/sistent';
 import { Modal } from '@/components/shared/Modal';
 import { ModalButtonPrimary, ModalButtonSecondary } from '@sistent/sistent';
-import { useNotification } from '@/utils/hooks/useNotification';
-import { EVENT_TYPES } from '../../lib/event-types';
 import {
   useGetConnectionControllersConfigQuery,
   useUpdateConnectionControllersConfigMutation,
-  type ControllersConfigDoc,
-} from '@/rtk-query/controllersConfig';
+} from '@meshery/schemas/mesheryApi';
 import ControllersConfigForm, {
   BUILT_IN_CONTROLLERS_CONFIG,
 } from '@/components/configuration/ControllersConfigForm';
-
-const stripSchemaVersion = (doc?: ControllersConfigDoc | null): ControllersConfigDoc => {
-  if (!doc) return {};
-  const rest = { ...doc };
-  delete rest.schemaVersion;
-  return rest;
-};
+import { useControllersConfigDraft } from '@/components/configuration/useControllersConfigDraft';
+import { connectionDeploymentMode } from '@/components/configuration/deploymentMode';
 
 type ConnectionControllersConfigModalProps = {
   isOpen: boolean;
@@ -39,38 +31,35 @@ export default function ConnectionControllersConfigModal({
   connectionId,
   connectionName,
 }: ConnectionControllersConfigModalProps) {
-  const { notify } = useNotification();
-  const { data, isLoading } = useGetConnectionControllersConfigQuery(
+  const { data, isLoading, error } = useGetConnectionControllersConfigQuery(
     { connectionId },
     { skip: !isOpen || !connectionId },
   );
   const [updateOverride, { isLoading: isSaving }] = useUpdateConnectionControllersConfigMutation();
-  const [draft, setDraft] = useState<ControllersConfigDoc>({});
-  const [dirty, setDirty] = useState(false);
+  const { draft, dirty, onChange, discard, save } = useControllersConfigDraft({
+    isLoaded: Boolean(data),
+    source: data?.override,
+    loadError: error,
+    save: (body) => updateOverride({ connectionId, body }).unwrap(),
+    messages: {
+      loadError: 'Failed to load the controllers configuration for this connection.',
+      saveError: 'Failed to apply the controllers configuration override.',
+      saveSuccess: `Controllers configuration applied to ${connectionName || 'connection'}.`,
+    },
+    onSaved: onClose,
+  });
 
-  useEffect(() => {
-    if (data && !dirty) {
-      setDraft(stripSchemaVersion(data.override));
-    }
-  }, [data, dirty]);
-
-  const handleSave = async () => {
-    try {
-      await updateOverride({ connectionId, body: draft }).unwrap();
-      setDirty(false);
-      notify({
-        message: `Controllers configuration applied to ${connectionName || 'connection'}.`,
-        event_type: EVENT_TYPES.SUCCESS,
-      });
-      onClose();
-    } catch (err) {
-      notify({
-        message: 'Failed to apply the controllers configuration override.',
-        event_type: EVENT_TYPES.ERROR,
-        details: String((err as { data?: unknown })?.data ?? err),
-      });
-    }
-  };
+  // Meshery Operator manages MeshSync and Meshery Broker, so the mode this
+  // connection resolves to decides which settings can reach the cluster at all.
+  // It follows the draft, not just the persisted state: switching the mode
+  // select brings the dependent sections to life (or puts them to sleep)
+  // before the save rather than after it.
+  const deploymentMode = connectionDeploymentMode({
+    draft,
+    persistedOverride: data?.override,
+    serverDefault: data?.default,
+    serverEffective: data?.effective,
+  });
 
   return (
     <Modal
@@ -86,8 +75,11 @@ export default function ConnectionControllersConfigModal({
           <ModalButtonSecondary onClick={onClose} disabled={isSaving}>
             Cancel
           </ModalButtonSecondary>
+          <ModalButtonSecondary onClick={discard} disabled={!dirty || isSaving}>
+            Discard changes
+          </ModalButtonSecondary>
           <ModalButtonPrimary
-            onClick={handleSave}
+            onClick={save}
             disabled={!dirty || isSaving}
             data-testid="connection-controllers-config-save"
           >
@@ -103,13 +95,11 @@ export default function ConnectionControllersConfigModal({
       </Typography>
       <ControllersConfigForm
         value={draft}
-        onChange={(next) => {
-          setDraft(next);
-          setDirty(true);
-        }}
+        onChange={onChange}
         inheritedLayers={[data?.default, BUILT_IN_CONTROLLERS_CONFIG]}
         inheritLabel="Server default"
         showSourceIndicators
+        deploymentMode={deploymentMode}
         disabled={isLoading || isSaving}
       />
     </Modal>

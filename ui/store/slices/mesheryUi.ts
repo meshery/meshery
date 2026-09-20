@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
+import { MESHERY_EXTENSION_EVENT } from '@sistent/sistent';
+import { getK8sClusterIdsFromCtxId, persistSelectedK8sContexts } from '@/utils/multi-ctx';
 import { mesheryEventBus } from '@/utils/eventBus';
 import { store } from '..';
 
@@ -51,7 +52,8 @@ const coreSlice = createSlice({
     },
     setK8sContexts: (state, action) => {
       state.selectedK8sContexts = action.payload.selectedK8sContexts;
-      // Note: Event bus publication would be handled in the thunk action
+      // Note: Side effects (session persistence, event bus publication) are
+      // handled in the setK8sContexts thunk below; this reducer is side-effect free.
     },
     updateProgress: (state, action) => {
       state.showProgress = action.payload.showProgress;
@@ -115,8 +117,14 @@ export const {
 export const setK8sContexts = (payload) => (dispatch) => {
   dispatch(setK8sContextsAction(payload));
 
+  // Session-persist the selection so it survives navigation and reloads.
+  // Every selection change in the app flows through this thunk (header
+  // checkboxes, deploy modal, context search), making it the single
+  // persistence funnel while keeping the reducer pure.
+  persistSelectedK8sContexts(payload.selectedK8sContexts);
+
   mesheryEventBus.publish({
-    type: 'K8S_CONTEXTS_UPDATED',
+    type: MESHERY_EXTENSION_EVENT.K8sContextsUpdated,
     data: {
       selectedK8sContexts: payload.selectedK8sContexts,
     },

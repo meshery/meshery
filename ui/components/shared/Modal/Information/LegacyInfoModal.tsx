@@ -1,7 +1,6 @@
 import ServiceMesheryIcon from '@/assets/icons/ServiceMesheryIcon';
 import { usePublishPatternMutation, useUpdatePatternFileMutation } from '@/rtk-query/design';
 import TooltipButton from '@/utils/TooltipButton';
-import CAN from '@/utils/can';
 import { filterEmptyFields } from '@/utils/objects';
 import { Keys } from '@meshery/schemas/permissions';
 import {
@@ -24,6 +23,7 @@ import {
   Skeleton,
   Typography,
   VisibilityChipMenu,
+  useHasPermission,
   useTheme,
 } from '@sistent/sistent';
 import { Close, Lock, Public } from '@/assets/icons';
@@ -35,7 +35,7 @@ import PatternIcon from '../../../../assets/icons/Pattern';
 import { MESHERY_CLOUD_PROD } from '../../../../constants/endpoints';
 import { iconMedium, iconSmall } from '../../../../css/icons.styles';
 import { EVENT_TYPES } from '../../../../lib/event-types';
-import { useGetUserByIdQuery } from '../../../../rtk-query/user';
+import { useResourceOwner } from '@/utils/hooks/useResourceOwner';
 import { useNotification } from '../../../../utils/hooks/useNotification';
 import {
   getDesignVersion,
@@ -83,11 +83,15 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
   const [saveFormLoading, setSaveFormLoading] = useState(false);
   const [uiSchema, setUiSchema] = useState({});
   const { notify } = useNotification();
+  const canPublishDesign = useHasPermission(Keys.CatalogManagementPublishDesign);
 
   const [updatePattern] = useUpdatePatternFileMutation();
   const currentUserID = currentUser?.id;
   const isAdmin = currentUser?.roleNames?.includes('admin') || false;
-  const { data: resourceUserProfile } = useGetUserByIdQuery(resourceOwnerID);
+  const { owner: resourceUserProfile, hasCloudProfile } = useResourceOwner(
+    resourceOwnerID,
+    selectedResource?.user,
+  );
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const isOwner = currentUserID === resourceOwnerID;
   const [meshModels, setMeshModels] = useState([]);
@@ -283,6 +287,11 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
 
   useEffect(() => {
     if (publishSchema) {
+      // The compatibility/Technology field's `ui:widget: select` is defined in
+      // the canonical catalog form UI schema in meshery/schemas
+      // (constructs/v1beta2/catalog/forms/publish.ui.json), so it flows in via
+      // publishSchema.uiSchema. Do not re-patch it here - keeping presentation
+      // in the construct's schema is the single source of truth.
       const newUiSchema = { ...publishSchema.uiSchema };
 
       if (isReadOnly) {
@@ -402,12 +411,17 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
                 <Grid size={6}>
                   <Typography gutterBottom variant="subtitle1">
                     <CustomTooltip
-                      title={`Owner: ${
-                        resourceUserProfile?.firstName + ' ' + resourceUserProfile?.lastName
-                      }`}
+                      title={
+                        resourceUserProfile
+                          ? `Owner: ${resourceUserProfile.firstName || ''} ${resourceUserProfile.lastName || ''}`
+                          : 'Owner'
+                      }
                     >
                       <div>
-                        <OwnerChip userProfile={resourceUserProfile} />
+                        <OwnerChip
+                          userProfile={resourceUserProfile}
+                          hasCloudProfile={hasCloudProfile}
+                        />
                       </div>
                     </CustomTooltip>
                   </Typography>
@@ -454,6 +468,18 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
                     liveValidate={false}
                     formRef={formRef}
                     hideTitle={true}
+                    transformErrors={(errors) => {
+                      return errors?.map((error) => {
+                        if (
+                          error.property === '.compatibility' ||
+                          (error.name === 'required' &&
+                            error.params?.missingProperty === 'compatibility')
+                        ) {
+                          error.message = 'Please select at least one technology.';
+                        }
+                        return error;
+                      });
+                    }}
                   />
                 </Grid>
               </Grid>
@@ -476,14 +502,7 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
               variant="outlined"
               onClick={handlePublishController}
               disabled={
-                !isPublished
-                  ? false
-                  : !(
-                      CAN(
-                        Keys.CatalogManagementPublishDesign.id,
-                        Keys.CatalogManagementPublishDesign.function,
-                      ) && currentUser?.id === selectedResource?.userId
-                    ) || isPublished
+                isPublished || !(canPublishDesign && currentUser?.id === selectedResource?.userId)
               }
             >
               {isPublished ? 'Published' : 'Publish to Catalog'}
@@ -515,19 +534,27 @@ const InfoModal_: FC<InfoModalProps> = React.memo((props) => {
 
 InfoModal_.displayName = 'InfoModal_';
 
-const OwnerChip = ({ userProfile }) => {
+const OwnerChip = ({ userProfile, hasCloudProfile = true }) => {
+  if (!userProfile) {
+    return (
+      <Box style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+        <Skeleton variant="circular" width={40} height={40} />
+      </Box>
+    );
+  }
+
+  const avatar = <Avatar src={userProfile.avatarUrl} />;
+
   return (
     <Box style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-      {userProfile ? (
-        <>
-          <Link href={`${MESHERY_CLOUD_PROD}/user/${userProfile.id}`} rel="noopener noreferrer">
-            <Avatar src={userProfile.avatarUrl} />
-          </Link>
-          <Typography>{`${userProfile.firstName} ${userProfile.lastName}`}</Typography>
-        </>
+      {hasCloudProfile ? (
+        <Link href={`${MESHERY_CLOUD_PROD}/user/${userProfile.id}`} rel="noopener noreferrer">
+          {avatar}
+        </Link>
       ) : (
-        <Skeleton variant="circular" width={40} height={40} />
+        avatar
       )}
+      <Typography>{`${userProfile.firstName || ''} ${userProfile.lastName || ''}`}</Typography>
     </Box>
   );
 };
