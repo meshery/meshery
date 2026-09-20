@@ -28,6 +28,10 @@ vi.mock('next/dynamic', () => ({
   },
 }));
 
+vi.mock('./yamlPlainScalarHighlight', () => ({
+  yamlPlainScalarHighlight: 'yaml-scalar-ext',
+}));
+
 vi.mock('@uiw/codemirror-theme-material', () => ({
   material: {},
 }));
@@ -89,6 +93,7 @@ describe('CodeMirror', () => {
   it('adds language extension for YAML mode', () => {
     render(<CodeMirror value="x" options={{ mode: 'text/x-yaml' }} />);
     expect(lastReactCMProps.extensions).toContain('yaml-ext');
+    expect(lastReactCMProps.extensions).toContain('yaml-scalar-ext');
   });
 
   it('adds language extension for JSON mode', () => {

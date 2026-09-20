@@ -6,6 +6,7 @@ import { yaml } from '@codemirror/lang-yaml';
 import { EditorView } from '@codemirror/view';
 import { lintGutter, linter } from '@codemirror/lint';
 import * as jsyaml from 'js-yaml';
+import { yamlPlainScalarHighlight } from './yamlPlainScalarHighlight';
 
 const ReactCodeMirror = dynamic(() => import('@uiw/react-codemirror').then((mod) => mod.default), {
   ssr: false,
@@ -103,6 +104,10 @@ const CodeMirror = ({
 
     if (languageExtension) {
       editorExtensions.push(languageExtension);
+    }
+
+    if (options.mode === 'text/x-yaml') {
+      editorExtensions.push(yamlPlainScalarHighlight);
     }
 
     if (options.lineWrapping) {
