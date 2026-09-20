@@ -51,7 +51,7 @@ Some projects I've worked on include:
 ## Connect With Me
 
 - **GitHub:** [k-anushka14](https://github.com/k-anushka14)
-- **LinkedIn:** [Anushka Kawalkar](www.linkedin.com/in/anushka-kawalkar)
+- **LinkedIn:** [Anushka Kawalkar](https://www.linkedin.com/in/anushka-kawalkar)
 
 ---
 
