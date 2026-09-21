@@ -582,3 +582,46 @@ func TestSendEvent_ExitActionFailureHaltsWithoutTransition(t *testing.T) {
 		t.Fatalf("expected persisted status to remain CONNECTED, got %q", provider.status)
 	}
 }
+
+// TestSendEvent_ExitEventHaltsWithoutInvalidTransition covers the bug fixed by
+// treating Exit as loop-terminal: an action (like the real Prometheus/Grafana
+// RegisterAction.Execute) that reports success by emitting Exit must not be
+// treated as an ordinary event needing its own transition. Before the fix,
+// Exit was passed into getNextState() and, since REGISTERED (like the real
+// state machines) registers no Exit transition, this failed with an
+// "unsupported transition event" error even though the action itself
+// succeeded.
+func TestSendEvent_ExitEventHaltsWithoutInvalidTransition(t *testing.T) {
+	provider := &fakeProvider{status: connections.DISCOVERED}
+	sm := newTestMachine(t, provider, &stubAction{execNext: NoOp})
+	// REGISTERED's action reports success via Exit, exactly like the real
+	// Prometheus/Grafana RegisterAction.Execute on a successful health check.
+	// Like the real machines, no Exit transition is registered anywhere.
+	sm.States[REGISTERED] = State{
+		Events: Events{Connect: CONNECTED, Ignore: IGNORED},
+		Action: &stubAction{execNext: Exit},
+	}
+	ctx := newTestContext(t)
+
+	// Reach DISCOVERED first (Register is only valid from there).
+	if _, err := sm.SendEvent(ctx, Discovery, nil); err != nil {
+		t.Fatalf("setup: unexpected error reaching DISCOVERED: %v", err)
+	}
+
+	event, err := sm.SendEvent(ctx, Register, nil)
+	if err != nil {
+		t.Fatalf("expected Exit to halt the loop without an invalid-transition error, got %v", err)
+	}
+	if event == nil {
+		t.Fatal("expected a confirmation event when the machine settles in REGISTERED, got nil")
+	}
+	if event.Severity != events.Informational {
+		t.Fatalf("expected Informational severity on success, got %q", event.Severity)
+	}
+	if sm.CurrentState != REGISTERED {
+		t.Fatalf("expected machine to settle in %q after Exit, got %q", REGISTERED, sm.CurrentState)
+	}
+	if provider.lastUpdateTo != connections.ConnectionStatus(REGISTERED) {
+		t.Fatalf("expected connection status persisted as %q, got %q", REGISTERED, provider.lastUpdateTo)
+	}
+}
