@@ -131,14 +131,14 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		smInstanceTracker.Remove(connectionUUID)
 	} else {
 		go func(inst *machines.StateMachine) {
+			defer smInstanceTracker.Remove(connectionUUID)
+
 			event, err := inst.SendEvent(req.Context(), machines.Delete, nil)
 			if err != nil {
 				h.log.Error(err)
 				h.log.Debug(event)
 				return
 			}
-
-			smInstanceTracker.Remove(connectionUUID)
 		}(inst)
 	}
 
