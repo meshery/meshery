@@ -182,9 +182,14 @@ func patchMutatorsAction(rel *relationship.RelationshipDefinition, design *patte
 			count = len(mutatedRefs)
 		}
 
+		mutatorMap, _ := toGenericMap(mutatorComp)
+		mutatedMap, _ := toGenericMap(mutatedComp)
+
 		for i := 0; i < count; i++ {
-			mutatorValue := configurationForComponentAtPath(mutatorRefs[i], mutatorComp, design)
-			oldValue := configurationForComponentAtPath(mutatedRefs[i], mutatedComp, design)
+			resolvedMutator := resolvePath(mutatorRefs[i], mutatorMap)
+			resolvedMutated := resolvePath(mutatedRefs[i], mutatedMap)
+			mutatorValue := configurationForComponentAtPath(resolvedMutator, mutatorComp, design)
+			oldValue := configurationForComponentAtPath(resolvedMutated, mutatedComp, design)
 			if mutatorValue == nil {
 				continue
 			}
@@ -192,13 +197,13 @@ func patchMutatorsAction(rel *relationship.RelationshipDefinition, design *patte
 				if !deepEqual(mutatorValue, oldValue) {
 					continue
 				}
-				actions = append(actions, cleanupActionForPath(mutatedID, mutatedRefs[i], mutatedComp))
+				actions = append(actions, cleanupActionForPath(mutatedID, resolvedMutated, mutatedComp))
 				continue
 			}
 			if deepEqual(mutatorValue, oldValue) {
 				continue
 			}
-			actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(mutatedRefs[i]), mutatedID, mutatedRefs[i], mutatorValue))
+			actions = append(actions, newComponentUpdateAction(getComponentUpdateOp(resolvedMutated), mutatedID, resolvedMutated, mutatorValue))
 		}
 	}
 	return actions
@@ -491,10 +496,14 @@ func matchingMutators(
 	}
 
 	strategies := getMatchStrategyForSelector(fromClause)
+	mutatorMap, _ := toGenericMap(mutatorComp)
+	mutatedMap, _ := toGenericMap(mutatedComp)
 
 	for i := 0; i < count; i++ {
-		mutatorValue := configurationForComponentAtPath(mutatorRefs[i], mutatorComp, design)
-		mutatedValue := configurationForComponentAtPath(mutatedRefs[i], mutatedComp, design)
+		resolvedMutator := resolvePath(mutatorRefs[i], mutatorMap)
+		resolvedMutated := resolvePath(mutatedRefs[i], mutatedMap)
+		mutatorValue := configurationForComponentAtPath(resolvedMutator, mutatorComp, design)
+		mutatedValue := configurationForComponentAtPath(resolvedMutated, mutatedComp, design)
 		strategy := getStrategyForValueAt(strategies, i)
 		if !matchValuesWithStrategies(mutatorValue, mutatedValue, strategy) {
 			return false

@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
 
@@ -277,4 +279,77 @@ func TestCanonicalSeedTypedStructIsAddressIndependent(t *testing.T) {
 		t.Fatalf("canonicalSeed leaked pointer addresses for typed struct:\n  a=%s\n  b=%s", a, b)
 	}
 }
+
+func TestMatchingMutators_ArrayPaths(t *testing.T) {
+	compFrom := &component.ComponentDefinition{
+		Component: component.Component{
+			Kind: "SecurityGroup",
+		},
+		Configuration: map[string]interface{}{
+			"name": "my-sg",
+		},
+	}
+
+	compTo := &component.ComponentDefinition{
+		Component: component.Component{
+			Kind: "EC2Instance",
+		},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{
+				"securityGroupRefs": []interface{}{
+					map[string]interface{}{
+						"name": "my-sg",
+					},
+				},
+			},
+		},
+	}
+
+	design := &pattern.PatternFile{
+		Components: []*component.ComponentDefinition{compFrom, compTo},
+	}
+
+	mutatorRefWildcard := [][]string{{"configuration", "name"}}
+	mutatedRefWildcard := [][]string{{"configuration", "spec", "securityGroupRefs", "_", "name"}}
+
+	mutatorRefIndex := [][]string{{"configuration", "name"}}
+	mutatedRefIndex := [][]string{{"configuration", "spec", "securityGroupRefs", "0", "name"}}
+
+	fromClauseWildcard := relationship.SelectorItem{
+		RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+			MutatorRef: &mutatorRefWildcard,
+		},
+	}
+	toClauseWildcard := relationship.SelectorItem{
+		RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+			MutatedRef: &mutatedRefWildcard,
+		},
+	}
+
+	fromClauseIndex := relationship.SelectorItem{
+		RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+			MutatorRef: &mutatorRefIndex,
+		},
+	}
+	toClauseIndex := relationship.SelectorItem{
+		RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+			MutatedRef: &mutatedRefIndex,
+		},
+	}
+
+	t.Run("wildcard path matches", func(t *testing.T) {
+		matched := matchingMutators(compFrom, compTo, fromClauseWildcard, toClauseWildcard, design)
+		if !matched {
+			t.Error("Expected matchingMutators to resolve path wildcard '_' and return true")
+		}
+	})
+
+	t.Run("index path matches", func(t *testing.T) {
+		matched := matchingMutators(compFrom, compTo, fromClauseIndex, toClauseIndex, design)
+		if !matched {
+			t.Error("Expected matchingMutators to resolve path index '0' and return true")
+		}
+	})
+}
+
 
