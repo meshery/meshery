@@ -182,7 +182,12 @@ func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	_ = json.Unmarshal(body, &reqBody)
+	if err = json.Unmarshal(body, &reqBody); err != nil {
+		_err := models.ErrUnmarshal(err, "bulk update event status")
+		h.log.Error(_err)
+		writeMeshkitError(w, _err, http.StatusBadRequest)
+		return
+	}
 	err = provider.BulkUpdateEventStatus(token, reqBody.StatusIDs, reqBody.Status)
 	if err != nil {
 		_err := ErrBulkUpdateEvent(err)
@@ -207,7 +212,12 @@ func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, pref
 		return
 	}
 
-	_ = json.Unmarshal(body, &reqBody)
+	if err = json.Unmarshal(body, &reqBody); err != nil {
+		_err := models.ErrUnmarshal(err, "bulk delete event")
+		h.log.Error(_err)
+		writeMeshkitError(w, _err, http.StatusBadRequest)
+		return
+	}
 	err = provider.BulkDeleteEvent(token, reqBody.IDs)
 	if err != nil {
 		_err := ErrBulkDeleteEvent(err)
