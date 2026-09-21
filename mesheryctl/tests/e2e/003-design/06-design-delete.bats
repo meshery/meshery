@@ -10,7 +10,7 @@ setup() {
   export TESTDATA_DIR="$TEMP_DATA_DIR/testdata/design"
 }
 
-@test "mesheryctl design delete removes the associate design" {
+@test "[cut=Design][tg=Design Delete] mesheryctl design delete removes the associate design" {
   # Check if the design ID file exists (created by previous import test)
   if [[ ! -f "$TESTDATA_DIR/id" ]]; then
     skip "Design ID file not found (import test may have failed)"
@@ -26,7 +26,7 @@ setup() {
 }
 
 
-@test "mesheryctl design delete for non-existent ID gives appropriate response" {
+@test "[cut=Design][tg=Design Delete] mesheryctl design delete for non-existent ID gives appropriate response" {
   # Use a non-existent design ID
   NONEXISTENT_ID="00000000-0000-0000-0000-000000000000"
 
