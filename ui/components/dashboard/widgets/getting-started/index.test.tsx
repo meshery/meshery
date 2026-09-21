@@ -9,14 +9,13 @@ let profile: {
 } = {
   data: { preferences: { remoteProviderPreferences: { getstarted: ['step-1'] } } },
 };
+
 let currentOrg: { id?: string } | null = { id: 'org-1' };
 
 const actionCardSpy = vi.fn();
 const modalSpy = vi.fn();
 
 vi.mock('@/rtk-query/user', () => ({
-  useGetLoggedInUserQuery: () => loggedIn,
-  useGetUserByIdQuery: () => profile,
   useHandleUserInviteMutation: () => [vi.fn()],
   useLazyGetTeamsQuery: () => [vi.fn()],
   useUpdateUserPrefMutation: () => [vi.fn()],
@@ -26,8 +25,11 @@ vi.mock('@/rtk-query/orgRoles', () => ({
   useGetUserOrgRolesQuery: () => ({ data: [] }),
 }));
 
-vi.mock('@/rtk-query/organization', () => ({
+vi.mock('@meshery/schemas/mesheryApi', () => ({
   useGetOrgsQuery: () => ({ data: [] }),
+  useGetUserQuery: () => loggedIn,
+  useGetUserProfileByIdQuery: ({ id }: any = {}, { skip }: any = {}) =>
+    skip || !id ? { data: undefined } : profile,
 }));
 
 vi.mock('@/utils/hooks/useNotification', () => ({
@@ -98,6 +100,7 @@ describe('GetStarted', () => {
     profile = {
       data: { preferences: { remoteProviderPreferences: { getstarted: ['step-1'] } } },
     };
+
     currentOrg = { id: 'org-1' };
   });
 
@@ -133,6 +136,7 @@ describe('GetStarted', () => {
 
   it('defaults completedSteps to [] when remoteProviderPreferences.getstarted is missing', () => {
     profile = { data: { preferences: {} } };
+
     render(<GetStarted />);
     const props = actionCardSpy.mock.calls[0][0];
     expect(props.completedSteps).toEqual([]);
