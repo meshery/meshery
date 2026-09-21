@@ -24,11 +24,20 @@ components:
         namespace: three-tier-app
       spec:
         replicas: 2
+        selector:
+          matchLabels:
+            app: frontend-ui
         template:
+          metadata:
+            labels:
+              app: frontend-ui
           spec:
             containers:
               - name: frontend-ui
                 image: nginx:alpine
+                ports:
+                  - containerPort: 80
+                    name: http
 
   - id: comp-frontend-svc
     schemaVersion: components.meshery.io/v1beta1
@@ -47,9 +56,12 @@ components:
         namespace: three-tier-app
       spec:
         type: LoadBalancer
+        selector:
+          app: frontend-ui
         ports:
           - port: 80
             targetPort: 80
+            name: http
 
   - id: comp-backend-dep
     schemaVersion: components.meshery.io/v1beta1
@@ -68,11 +80,20 @@ components:
         namespace: three-tier-app
       spec:
         replicas: 2
+        selector:
+          matchLabels:
+            app: fastapi-backend
         template:
+          metadata:
+            labels:
+              app: fastapi-backend
           spec:
             containers:
               - name: fastapi-backend
                 image: tiangolo/uvicorn-gunicorn-fastapi:python3.10-slim
+                ports:
+                  - containerPort: 8000
+                    name: http
 
   - id: comp-backend-svc
     schemaVersion: components.meshery.io/v1beta1
@@ -91,9 +112,55 @@ components:
         namespace: three-tier-app
       spec:
         type: ClusterIP
+        selector:
+          app: fastapi-backend
         ports:
           - port: 8000
             targetPort: 8000
+            name: http
+
+  - id: comp-postgres-sec
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: PostgreSQL Secret
+    format: JSON
+    model:
+      name: kubernetes
+      version: v1.28.0
+    component:
+      kind: Secret
+      version: v1
+    configuration:
+      metadata:
+        name: postgres-secret
+        namespace: three-tier-app
+      type: Opaque
+      stringData:
+        POSTGRES_DB: appdb
+        POSTGRES_USER: appuser
+        POSTGRES_PASSWORD: securepassword123
+
+  - id: comp-postgres-pvc
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: PostgreSQL PVC
+    format: JSON
+    model:
+      name: kubernetes
+      version: v1.28.0
+    component:
+      kind: PersistentVolumeClaim
+      version: v1
+    configuration:
+      metadata:
+        name: postgres-pvc
+        namespace: three-tier-app
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
 
   - id: comp-postgres-dep
     schemaVersion: components.meshery.io/v1beta1
@@ -112,11 +179,37 @@ components:
         namespace: three-tier-app
       spec:
         replicas: 1
+        selector:
+          matchLabels:
+            app: postgres
         template:
+          metadata:
+            labels:
+              app: postgres
           spec:
             containers:
               - name: postgres
                 image: postgres:16-alpine
+                ports:
+                  - containerPort: 5432
+                    name: postgres
+                env:
+                  - name: POSTGRES_DB
+                    value: "appdb"
+                  - name: POSTGRES_USER
+                    value: "appuser"
+                  - name: POSTGRES_PASSWORD
+                    valueFrom:
+                      secretKeyRef:
+                        name: postgres-secret
+                        key: POSTGRES_PASSWORD
+                volumeMounts:
+                  - name: postgres-storage
+                    mountPath: /var/lib/postgresql/data
+            volumes:
+              - name: postgres-storage
+                persistentVolumeClaim:
+                  claimName: postgres-pvc
 
   - id: comp-postgres-svc
     schemaVersion: components.meshery.io/v1beta1
@@ -135,9 +228,12 @@ components:
         namespace: three-tier-app
       spec:
         type: ClusterIP
+        selector:
+          app: postgres
         ports:
           - port: 5432
             targetPort: 5432
+            name: postgres
 
 relationships:
   - id: rel-frontend-to-backend
