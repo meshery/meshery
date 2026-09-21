@@ -93,7 +93,7 @@ Renders a responsive card grid from a data file in `docs/data/`. Each card shows
 | `guide_title` | Yes | — | Key in each data entry whose value is used as the card title, and as the image `alt` text. |
 | `guide_description` | Yes | — | Key in each data entry whose value is used as the card description. Entries missing this key render a card with no description. |
 | `guide_svg` | Yes | — | Key in each data entry whose value is the image filename. Entries missing this key render a card with no image. |
-| `guide_assests_folder` | Yes | — | Folder name under `images/`. Lowercased before use, producing `images/<folder>/<filename>`. Note the spelling — `assests` is the parameter name in the implementation. |
+| `guide_assets_folder` | Yes | — | Folder name under `images/`. Lowercased before use, producing `images/<folder>/<filename>`. Preferred when both parameters are provided; `guide_assests_folder` is retained for backward compatibility. |
 
 Takes no body. Use the `{{</* */>}}` form.
 
@@ -105,7 +105,7 @@ Takes no body. Use the `{{</* */>}}` form.
   guide_title="Edge"
   guide_description="Description"
   guide_svg="SVG"
-  guide_assests_folder="shapes"
+  guide_assets_folder="shapes"
 */>}}
 ```
 
@@ -116,7 +116,7 @@ Takes no body. Use the `{{</* */>}}` form.
   guide_title="Edge"
   guide_description="Description"
   guide_svg="SVG"
-  guide_assests_folder="shapes"
+  guide_assets_folder="shapes"
 >}}
 
 ### latest-release
