@@ -113,7 +113,6 @@ type MachineCtx struct {
 	clientset          *kubernetes.Client
 	log                logger.Handler
 	OperatorTracker    *models.OperatorTracker
-	K8scontextChannel  *models.K8scontextChan
 	RegistryManager    *meshmodel.RegistryManager
 }
 

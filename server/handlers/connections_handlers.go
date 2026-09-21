@@ -511,7 +511,6 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 			K8sCompRegHelper:   h.K8sCompRegHelper,
 			OperatorTracker:    h.config.OperatorTracker,
-			K8scontextChannel:  h.config.K8scontextChannel,
 			EventBroadcaster:   h.config.EventBroadcaster,
 			RegistryManager:    h.registryManager,
 		}
