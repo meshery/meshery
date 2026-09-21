@@ -81,6 +81,9 @@ type StateMachine struct {
 	Log logger.Handler
 
 	Provider models.Provider
+
+	LifecycleCtx    context.Context
+	CancelLifecycle context.CancelFunc
 }
 
 func (sm *StateMachine) AssignProvider(provider models.Provider) *StateMachine {
@@ -227,7 +230,11 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		// Execute exit actions before entering new state.
 		action := sm.States[sm.CurrentState].Action
 		if action != nil {
-			_, event, err = action.ExecuteOnExit(ctx, sm.Context, nil)
+			exitCtx := ctx
+			if sm.LifecycleCtx != nil {
+				exitCtx = sm.LifecycleCtx
+			}
+			_, event, err = action.ExecuteOnExit(exitCtx, sm.Context, nil)
 			if err != nil {
 				sm.Log.Error(err)
 				sm.Log.Debug(event)
@@ -250,9 +257,14 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			}
 		}
 
+		if sm.CancelLifecycle != nil {
+			sm.CancelLifecycle()
+		}
+		sm.LifecycleCtx, sm.CancelLifecycle = context.WithCancel(context.WithoutCancel(ctx))
+
 		if state.Action != nil {
 			// Execute entry actions for the state entered.
-			eventType, event, err = state.Action.ExecuteOnEntry(ctx, sm.Context, nil)
+			eventType, event, err = state.Action.ExecuteOnEntry(sm.LifecycleCtx, sm.Context, nil)
 			sm.Log.Debugf("%s: entry action executed, event emitted %v", sm.Name, eventType)
 
 			if err != nil {
@@ -267,7 +279,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 					break
 				}
 			} else {
-				eventType, event, err = state.Action.Execute(ctx, sm.Context, payload)
+				eventType, event, err = state.Action.Execute(sm.LifecycleCtx, sm.Context, payload)
 
 				sm.Log.Debugf("%s: inside action executed, event emitted %v", sm.Name, eventType)
 				if err != nil {
