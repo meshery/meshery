@@ -413,7 +413,7 @@ const NavigatorContent = () => {
             href={`https://docs.meshery.io/project/releases/${latest}`}
             target="_blank"
             rel="noreferrer"
-            style={{ color: 'white' }}
+            style={{ color: theme.palette.common.white }}
           >
             <CustomTextTooltip
               title={`Newer version of Meshery available: ${latest}`}
@@ -440,7 +440,7 @@ const NavigatorContent = () => {
           href="https://docs.meshery.io/project/releases"
           target="_blank"
           rel="noreferrer"
-          style={{ color: 'white' }}
+          style={{ color: theme.palette.common.white }}
         >
           <OpenInNewIcon
             fill={theme.palette.background.constant.white}
@@ -454,7 +454,7 @@ const NavigatorContent = () => {
         href={`https://docs.meshery.io/project/releases/${build}`}
         target="_blank"
         rel="noreferrer"
-        style={{ color: 'white' }}
+        style={{ color: theme.palette.common.white }}
       >
         <OpenInNewIcon
           fill={theme.palette.background.constant.white}
