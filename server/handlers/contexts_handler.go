@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -13,6 +14,10 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/events"
 )
+
+type trackerCleanupDoneKeyType string
+
+const trackerCleanupDoneKey trackerCleanupDoneKeyType = "trackerCleanupDone"
 
 // Deprecated: GetAllContexts (GET /api/system/kubernetes/contexts) is being
 // retired in favor of the connections API (kind=kubernetes) — everything is now
@@ -86,9 +91,10 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 	k8scontext, err := provider.GetK8sContext(token, contextID)
 	if err != nil {
-		eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to delete connection for %s", k8scontext.Name)).WithMetadata(map[string]interface{}{
-			"error": err,
-		})
+		wrappedErr := ErrGetK8sContexts(err)
+		h.log.Error(wrappedErr)
+		writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
+		return
 	}
 
 	description := fmt.Sprintf("Delete request received for kubernetes context \"%s\"", k8scontext.Name)
@@ -120,6 +126,18 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		"kubernetes",
 		kubernetes.AssignInitialCtx,
 	)
+	if err != nil {
+		wrappedErr := ErrInitializeMachine(err)
+		initErrEvent := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to initialize connection %s for deletion", contextID)).WithMetadata(map[string]interface{}{
+			"error": wrappedErr,
+		}).Build()
+		if initErrEvent != nil {
+			_ = provider.PersistEvent(*initErrEvent, token)
+			go h.config.EventBroadcaster.Publish(userID, initErrEvent)
+		}
+		h.log.Error(wrappedErr)
+	}
+
 	// A machine that never initialized has no FSM state to unwind and no
 	// cluster-side resources to clean up: DeleteAction's work (undeploying
 	// operators, flushing MeshSync data) all runs off a MachineCtx that was
@@ -127,31 +145,51 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	// Crucially it would also fail *before* reaching the Remove below, leaking
 	// the tracker entry for a connection the user just deleted - so drop the
 	// entry directly instead. See mhelpers.HasMachineContext.
-	if !mhelpers.HasMachineContext(inst) {
+	if err != nil || !mhelpers.HasMachineContext(inst) {
 		smInstanceTracker.Remove(connectionUUID)
-	} else {
-		go func(inst *machines.StateMachine) {
-			event, err := inst.SendEvent(req.Context(), machines.Delete, nil)
-			if err != nil {
-				h.log.Error(err)
-				h.log.Debug(event)
-				return
-			}
-
-			smInstanceTracker.Remove(connectionUUID)
-		}(inst)
+		w.WriteHeader(http.StatusOK)
+		return
 	}
 
-	if err != nil {
-		h.log.Error(err)
-		eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", contextID)).WithMetadata(map[string]interface{}{
-			"error": err,
-		})
-		event := eventBuilder.Build()
-		_ = provider.PersistEvent(*event, token)
-		go h.config.EventBroadcaster.Publish(userID, event)
-	}
-	// go h.config.EventBroadcaster.Publish(userID, event)
+	// Detach from the HTTP request lifecycle so that side-effects aren't cancelled when the handler returns
+	detachedCtx := context.WithoutCancel(req.Context())
 
-	// h.config.K8scontextChannel.PublishContext()
+	// Create a channel that will be closed exactly once when cleanup finishes
+	done := make(chan struct{})
+
+	deleteEvent, sendErr := inst.SendEvent(detachedCtx, machines.Delete, done)
+	if sendErr != nil {
+		wrappedErr := ErrSendMachineEvent(sendErr)
+		h.log.Error(wrappedErr)
+		if deleteEvent != nil {
+			_ = provider.PersistEvent(*deleteEvent, token)
+			go h.config.EventBroadcaster.Publish(userID, deleteEvent)
+		}
+		writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
+		return
+	}
+
+	// Retain the StateMachine in the tracker while the background Delete cleanup runs.
+	// We wait for the 'done' channel to be closed by the Delete transition's cleanup
+	// goroutine. If a RECONNECT occurs during cleanup, it will reuse this
+	// StateMachine and block on the ActionMutex, preserving the lifecycle owner.
+	deleteGenerationCtx := inst.GetLifecycleCtx()
+	go func() {
+		<-done
+
+		// Cleanup is finished. Only remove the StateMachine from the tracker if the
+		// specific Delete operation that initiated this cleanup is still the active
+		// lifecycle generation. (i.e. no RECONNECT adopted the StateMachine).
+		smInstanceTracker.RemoveIfMatchAndGeneration(connectionUUID, inst, deleteGenerationCtx)
+
+		if ch, ok := req.Context().Value(trackerCleanupDoneKey).(chan struct{}); ok && ch != nil {
+			close(ch)
+		}
+	}()
+
+	if deleteEvent != nil {
+		_ = provider.PersistEvent(*deleteEvent, token)
+		go h.config.EventBroadcaster.Publish(userID, deleteEvent)
+	}
+	w.WriteHeader(http.StatusOK)
 }
