@@ -546,10 +546,11 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 					if updateMappingsErr != nil {
 						return updateMappingsErr
 					}
-					// Update k8s_contexts to reference the new connection ID
-					updateK8sContextsErr := tx.Exec("UPDATE k8s_contexts SET connection_id = ? WHERE connection_id = ?", connID.String(), legacyConn.ID.String()).Error
-					if updateK8sContextsErr != nil {
-						return updateK8sContextsErr
+					// Delete the legacy k8s_contexts row to prevent duplicate contexts
+					// After migration, a new context row will be created by the normal save flow
+					deleteK8sContextsErr := tx.Exec("DELETE FROM k8s_contexts WHERE connection_id = ?", legacyConn.ID.String()).Error
+					if deleteK8sContextsErr != nil {
+						return deleteK8sContextsErr
 					}
 					// Update the connection ID to the new stable ID
 					updateErr := tx.Model(&connections.Connection{}).
@@ -644,7 +645,20 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 
 	k8sContext.ConnectionID = connID.String()
 
-	_, _ = l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
+	// Persist the k8s context. If it already exists (e.g., on token rotation),
+	// update it instead of creating a duplicate. This handles local provider
+	// credential refresh where auth is stored in k8s_contexts.auth.
+	_, err = l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
+	if err == ErrContextAlreadyPersisted {
+		// Context already exists - update it with the new auth/cluster data
+		err = l.MesheryK8sContextPersister.UpdateMesheryK8sContext(k8sContext)
+		if err != nil {
+			return connections.Connection{}, fmt.Errorf("failed to update k8s context for refresh: %w", err)
+		}
+	} else if err != nil {
+		return connections.Connection{}, fmt.Errorf("failed to save k8s context: %w", err)
+	}
+
 	return *connectionCreated, nil
 }
 
