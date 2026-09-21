@@ -216,8 +216,8 @@ func (h *Handler) ProviderUIHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		h.log.Errorf(
-			"enforced provider %q is not registered in h.config.Providers; serving the provider-selection UI instead of looping. Register %q in PROVIDERS or unset PROVIDER on this deployment.",
-			h.Provider, h.Provider,
+			"enforced provider %q is not registered in h.config.Providers; serving the provider-selection UI instead of looping. Add provider base URL to PROVIDER_BASE_URLS or unset PROVIDER on this deployment.",
+			h.Provider,
 		)
 	} else if h.config.PlaygroundBuild {
 		h.log.Errorf(
