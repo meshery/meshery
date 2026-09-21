@@ -248,18 +248,13 @@ export function makeTitle(rawdata, res) {
   title.push(`Minimum: ${myRound(1000.0 * res.DurationHistogram.Min, 3)} ms`);
   title.push(`Average: ${myRound(1000.0 * res.DurationHistogram.Avg, 3)} ms`);
   title.push(`Maximum: ${myRound(1000.0 * res.DurationHistogram.Max, 3)} ms`);
-  var percStr = `Minimum: ${myRound(1000.0 * res.DurationHistogram.Min, 3)} ms \nAverage: ${myRound(
-    1000.0 * res.DurationHistogram.Avg,
-    3,
-  )} ms \nMaximum: ${myRound(1000.0 * res.DurationHistogram.Max, 3)} ms\n`;
   var percStr_2 = 'Percentiles: ';
-  if (res.DurationHistogram.Percentiles) {
-    for (var i = 0; i < res.DurationHistogram.Percentiles.length; i++) {
-      var p = res.DurationHistogram.Percentiles[i];
-      percStr_2 += `p${p.Percentile}: ${myRound(1000 * p.Value, 2)} ms; `;
-      percStr += `p${p.Percentile}: ${myRound(1000 * p.Value, 2)} ms; `;
-    }
-    percStr = percStr.slice(0, -2);
+  if (res.DurationHistogram.Percentiles && res.DurationHistogram.Percentiles.length > 0) {
+    const pStrs = res.DurationHistogram.Percentiles.map(
+      (p: { Percentile: number; Value: number }) =>
+        `p${p.Percentile}: ${myRound(1000 * p.Value, 2)} ms`
+    );
+    percStr_2 += pStrs.join('; ') + '; ';
   }
   var statusOk =
     typeof res.RetCodes !== 'undefined' && res.RetCodes !== null ? res.RetCodes[200] : 0;
