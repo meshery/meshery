@@ -1,0 +1,179 @@
+name: 3-Tier Web Application on Kubernetes
+schemaVersion: designs.meshery.io/v1beta1
+version: 0.0.1
+metadata:
+  description: "A 3-tier cloud-native architecture connecting a React/Nginx frontend UI, a FastAPI backend API, and a PostgreSQL database using Kubernetes Deployments, Services, ConfigMaps, and Secrets."
+  categories:
+    - App Delivery
+    - Cloud Native
+components:
+  - id: comp-frontend-dep
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: Frontend UI Deployment
+    format: JSON
+    model:
+      name: kubernetes
+      version: v1.28.0
+    component:
+      kind: Deployment
+      version: apps/v1
+    configuration:
+      metadata:
+        name: frontend-deployment
+        namespace: three-tier-app
+      spec:
+        replicas: 2
+        template:
+          spec:
+            containers:
+              - name: frontend-ui
+                image: nginx:alpine
+
+  - id: comp-frontend-svc
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: Frontend Service
+    format: JSON
+    model:
+      name: kubernetes
+      version: v1.28.0
+    component:
+      kind: Service
+      version: v1
+    configuration:
+      metadata:
+        name: frontend-service
+        namespace: three-tier-app
+      spec:
+        type: LoadBalancer
+        ports:
+          - port: 80
+            targetPort: 80
+
+  - id: comp-backend-dep
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: FastAPI Backend Deployment
+    format: JSON
+    model:
+      name: kubernetes
+      version: v1.28.0
+    component:
+      kind: Deployment
+      version: apps/v1
+    configuration:
+      metadata:
+        name: backend-deployment
+        namespace: three-tier-app
+      spec:
+        replicas: 2
+        template:
+          spec:
+            containers:
+              - name: fastapi-backend
+                image: tiangolo/uvicorn-gunicorn-fastapi:python3.10-slim
+
+  - id: comp-backend-svc
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: Backend Service
+    format: JSON
+    model:
+      name: kubernetes
+      version: v1.28.0
+    component:
+      kind: Service
+      version: v1
+    configuration:
+      metadata:
+        name: backend-service
+        namespace: three-tier-app
+      spec:
+        type: ClusterIP
+        ports:
+          - port: 8000
+            targetPort: 8000
+
+  - id: comp-postgres-dep
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: PostgreSQL Deployment
+    format: JSON
+    model:
+      name: kubernetes
+      version: v1.28.0
+    component:
+      kind: Deployment
+      version: apps/v1
+    configuration:
+      metadata:
+        name: postgres-deployment
+        namespace: three-tier-app
+      spec:
+        replicas: 1
+        template:
+          spec:
+            containers:
+              - name: postgres
+                image: postgres:16-alpine
+
+  - id: comp-postgres-svc
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: PostgreSQL Service
+    format: JSON
+    model:
+      name: kubernetes
+      version: v1.28.0
+    component:
+      kind: Service
+      version: v1
+    configuration:
+      metadata:
+        name: postgres-service
+        namespace: three-tier-app
+      spec:
+        type: ClusterIP
+        ports:
+          - port: 5432
+            targetPort: 5432
+
+relationships:
+  - id: rel-frontend-to-backend
+    schemaVersion: relationships.meshery.io/v1beta1
+    version: v1.0.0
+    kind: Edge
+    type: Network
+    subType: HTTP
+    selectors:
+      - allow:
+          from:
+            - kind: Deployment
+              id: comp-frontend-dep
+          to:
+            - kind: Service
+              id: comp-backend-svc
+    styles:
+      lineStyle: solid
+      lineColor: "#00B39F"
+      label: "HTTP REST :8000"
+
+  - id: rel-backend-to-postgres
+    schemaVersion: relationships.meshery.io/v1beta1
+    version: v1.0.0
+    kind: Edge
+    type: Network
+    subType: TCP
+    selectors:
+      - allow:
+          from:
+            - kind: Deployment
+              id: comp-backend-dep
+          to:
+            - kind: Service
+              id: comp-postgres-svc
+    styles:
+      lineStyle: solid
+      lineColor: "#326CE5"
+      label: "TCP :5432"
