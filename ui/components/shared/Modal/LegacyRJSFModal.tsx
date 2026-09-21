@@ -75,6 +75,9 @@ const SchemaVersion: FC<SchemaVersionProps> = ({ schema_array, type, schemaChang
  * @param {Object} props.showInfoIcon - Determines whether to show the info icon adjacent to the modal button.
  * @param {string} props.submitBtnText - The text for the submit button.
  * @param {Object} props.uiSchema - The UI schema for the form fields.
+ * @param {boolean} props.submitDisabled - Disables the submit button for a consumer-owned
+ * reason, OR-ed with the modal's own reasons (a forbidden title, and the pending state while
+ * the schema is still loading). Defaults to false.
  */
 
 // Meshery extensions also uses this modal
@@ -94,6 +97,7 @@ function Modal(props) {
     helpText,
     RJSFWrapperComponent = null,
     initialData = {},
+    submitDisabled = false,
   } = props;
 
   const [canNotSubmit, setCanNotSubmit] = useState(false);
@@ -175,7 +179,7 @@ function Modal(props) {
             secondaryText="Cancel"
             primaryButtonProps={{
               onClick: handleFormSubmit,
-              disabled: canNotSubmit,
+              disabled: canNotSubmit || loadingSchema || submitDisabled,
             }}
             secondaryButtonProps={{
               onClick: handleClose,
@@ -201,6 +205,7 @@ function RJSFModalWrapper({
   helpText,
   widgets = {},
   isSubmitting = false,
+  submitDisabled = false,
 }) {
   const formRef = useRef();
   const formStateRef = useRef();
@@ -270,7 +275,7 @@ function RJSFModalWrapper({
           secondaryText="Cancel"
           primaryButtonProps={{
             onClick: handleFormSubmit,
-            disabled: canNotSubmit || isSubmitting,
+            disabled: canNotSubmit || loadingSchema || isSubmitting || submitDisabled,
             startIcon: isSubmitting ? <CircularProgress size={16} /> : undefined,
           }}
           secondaryButtonProps={{
