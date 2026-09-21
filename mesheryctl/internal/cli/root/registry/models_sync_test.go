@@ -458,7 +458,7 @@ func TestExportModelsToCSV_RoundTrip(t *testing.T) {
 	}
 	reader := csv.NewReader(f)
 	header, err := reader.Read()
-	f.Close()
+	_ = f.Close()
 	if err != nil {
 		t.Fatalf("failed to read CSV header: %v", err)
 	}
@@ -485,7 +485,7 @@ func TestExportModelsToCSV_RoundTrip(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to reopen CSV: %v", err)
 	}
-	defer f2.Close()
+	defer func() { _ = f2.Close() }()
 
 	var parsedRows []meshkitRegistryUtils.ModelCSV
 	if err := gocsv.UnmarshalFile(f2, &parsedRows); err != nil {
@@ -548,7 +548,7 @@ func TestExportComponentsToCSV_RoundTrip(t *testing.T) {
 	}
 	reader := csv.NewReader(f)
 	header, err := reader.Read()
-	f.Close()
+	_ = f.Close()
 	if err != nil {
 		t.Fatalf("failed to read CSV header: %v", err)
 	}
@@ -575,7 +575,7 @@ func TestExportComponentsToCSV_RoundTrip(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to reopen CSV: %v", err)
 	}
-	defer f2.Close()
+	defer func() { _ = f2.Close() }()
 
 	var parsedRows []meshkitRegistryUtils.ComponentCSV
 	if err := gocsv.UnmarshalFile(f2, &parsedRows); err != nil {
