@@ -14,7 +14,75 @@
 
 package system
 
-import "testing"
+import (
+	"io"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+)
+
+// eofOnceReader returns one chunk of data, then (0, io.EOF) on every call after,
+// the same way a k8s pod log stream reports its end.
+type eofOnceReader struct{ sent bool }
+
+func (r *eofOnceReader) Read(p []byte) (int, error) {
+	if !r.sent {
+		r.sent = true
+		return copy(p, []byte("last line\n")), nil
+	}
+	return 0, io.EOF
+}
+
+func TestFollowLogsReturnsOnEOF(t *testing.T) {
+	utils.SetupMeshkitLoggerTesting(t, false)
+
+	done := make(chan struct{})
+	go func() {
+		followLogs(&eofOnceReader{}, "test-pod")
+		close(done)
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(2 * time.Second):
+		t.Fatal("followLogs did not return within 2s of the stream reporting io.EOF")
+	}
+}
+
+// eofWithDataReader returns its data and io.EOF on the same call, which the
+// io.Reader contract permits and which loses the final chunk if the error is
+// checked before the bytes are processed.
+type eofWithDataReader struct{ sent bool }
+
+func (r *eofWithDataReader) Read(p []byte) (int, error) {
+	if !r.sent {
+		r.sent = true
+		return copy(p, []byte("final chunk\n")), io.EOF
+	}
+	return 0, io.EOF
+}
+
+func TestFollowLogsPrintsDataReturnedWithEOF(t *testing.T) {
+	buf := utils.SetupMeshkitLoggerTesting(t, false)
+
+	done := make(chan struct{})
+	go func() {
+		followLogs(&eofWithDataReader{}, "test-pod")
+		close(done)
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(2 * time.Second):
+		t.Fatal("followLogs did not return within 2s of the stream reporting io.EOF")
+	}
+
+	if !strings.Contains(buf.String(), "final chunk") {
+		t.Fatalf("followLogs dropped the chunk returned alongside io.EOF, log output was %q", buf.String())
+	}
+}
 
 func TestIsPodRequired(t *testing.T) {
 	type args struct {
