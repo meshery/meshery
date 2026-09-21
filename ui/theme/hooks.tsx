@@ -4,17 +4,64 @@ import _ from 'lodash/fp';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import { useMediaQuery } from '@sistent/sistent';
 
-export const useThemePreference = () => {
-  const { data, ...res } = useGetUserPrefQuery();
-  // Default to dark on the server and first client render, matching the
-  // pre-hydration UI; resolves to the real system preference after mount.
+const THEME_STORAGE_KEY = 'meshery-theme';
+
+type ThemeMode = 'light' | 'dark';
+
+const isThemeMode = (value: string | null): value is ThemeMode =>
+  value === 'light' || value === 'dark';
+
+const getStoredTheme = (): ThemeMode | null => {
+  try {
+    const value = localStorage.getItem(THEME_STORAGE_KEY);
+    return isThemeMode(value) ? value : null;
+  } catch {
+    return null;
+  }
+};
+
+const setStoredTheme = (theme: ThemeMode): void => {
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch {
+    // Ignore storage errors (e.g., storage disabled/unavailable).
+  }
+};
+
+// Default to dark on the server and first client render, matching the
+// pre-hydration UI; resolves to the real system preference after mount.
+export const useGetSystemTheme = (): ThemeMode => {
   const prefersDark = useMediaQuery('(prefers-color-scheme: dark)', { defaultMatches: true });
-  const mode = data?.remoteProviderPreferences?.theme || (prefersDark ? 'dark' : 'light');
+  return prefersDark ? 'dark' : 'light';
+};
+
+export const useThemePreference = () => {
+  const { data, isLoading, ...res } = useGetUserPrefQuery();
+  const systemPref = useGetSystemTheme();
+  const [storedMode, setStoredMode] = useState<ThemeMode | null>(getStoredTheme);
+
+  useEffect(() => {
+    const handler = () => setStoredMode(getStoredTheme());
+    window.addEventListener('theme-change', handler);
+    return () => window.removeEventListener('theme-change', handler);
+  }, []);
+
+  const remoteThemeValue = data?.remoteProviderPreferences?.theme ?? null;
+  const remoteMode = isThemeMode(remoteThemeValue) ? remoteThemeValue : null;
+  const mode = isLoading ? storedMode || systemPref : remoteMode || storedMode || systemPref;
+
+  useEffect(() => {
+    const remoteTheme = data?.remoteProviderPreferences?.theme;
+    if (!isLoading && isThemeMode(remoteTheme)) {
+      setStoredTheme(remoteTheme);
+      setStoredMode(remoteTheme);
+    }
+  }, [isLoading, data?.remoteProviderPreferences?.theme]);
 
   return {
-    data: {
-      mode,
-    },
+    data: { mode },
+    isLoading,
+    setStoredMode,
     ...res,
   };
 };
@@ -22,21 +69,23 @@ export const useThemePreference = () => {
 const ThemeTogglerCore_ = ({ Component }) => {
   const themePref = useThemePreference();
   const [handleUpdateUserPref] = useUpdateUserPrefWithContextMutation();
-  const { data: userPrefs } = useGetUserPrefQuery();
-  const [mode, setMode] = useState(themePref?.data?.mode);
+  const { data: userPrefs, isLoading } = useGetUserPrefQuery();
 
-  useEffect(() => {
-    setMode(themePref?.data?.mode);
-  }, [themePref?.data?.mode]);
+  const mode = themePref?.data?.mode;
+  const { setStoredMode } = themePref;
 
   const toggleTheme = () => {
+    if (isLoading) return;
     const newTheme = mode === 'light' ? 'dark' : 'light';
-    setMode(newTheme);
-    const updated = _.set('remoteProviderPreferences.theme', newTheme, userPrefs);
+    setStoredTheme(newTheme);
+    setStoredMode(newTheme);
+    window.dispatchEvent(new Event('theme-change'));
 
-    handleUpdateUserPref({
-      body: updated,
-    });
+    const isRemoteProvider = !!userPrefs?.remoteProviderPreferences;
+    if (isRemoteProvider) {
+      const updated = _.set('remoteProviderPreferences.theme', newTheme, userPrefs);
+      handleUpdateUserPref({ body: updated });
+    }
   };
 
   return <Component mode={mode} toggleTheme={toggleTheme} />;
