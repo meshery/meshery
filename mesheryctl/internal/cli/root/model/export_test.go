@@ -70,18 +70,16 @@ func TestExportModelToFile(t *testing.T) {
 	const modelName = "test-model"
 	exportedContent := []byte("exported-model-archive-bytes")
 
-	// Mirror the query RunE builds, so the expectation tracks export.go rather
-	// than restating url.Values.Encode() ordering. Flag defaults: components and
-	// relationships enabled, file_type=oci, output_format=yaml, page=1.
+	// Must match the URL export.go requests: httpmock answers only an exact match.
 	queryParams := url.Values{}
 	queryParams.Set("name", modelName)
-	queryParams.Set("output_format", "yaml")
-	queryParams.Set("file_type", "oci")
+	queryParams.Set("outputFormat", "yaml")
+	queryParams.Set("fileType", "oci")
 	queryParams.Set("components", "true")
 	queryParams.Set("relationships", "true")
 	queryParams.Set("page", "1")
 
-	exportURL := fmt.Sprintf("%s/api/meshmodels/export?%s", testContext.BaseURL, queryParams.Encode())
+	exportURL := fmt.Sprintf("%s/api/registry/export?%s", testContext.BaseURL, queryParams.Encode())
 	httpmock.RegisterResponder("GET", exportURL,
 		httpmock.NewBytesResponder(200, exportedContent))
 
