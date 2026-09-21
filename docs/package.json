@@ -18,6 +18,8 @@
     "build": "npm run _build",
     "build:preview": "npm run _hugo-dev -- --cleanDestinationDir --minify --baseURL \"${DEPLOY_PRIME_URL:-/}\"",
     "build:production": "npm run _hugo -- --cleanDestinationDir --minify --gc",
+    "build:llms": "npm run _hugo -- -e dev -DFE --cleanDestinationDir --config hugo.toml,config-llms.toml",
+    "build:production:llms": "npm run _hugo -- --cleanDestinationDir --minify --gc --config hugo.toml,config-llms.toml",
     "site": "npm run _site",
     "serve": "npm run _serve",
     "clean": "rm -Rf public/* resources",

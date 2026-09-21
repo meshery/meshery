@@ -34,5 +34,12 @@
 {{ with .CurrentSection.AlternativeOutputFormats.Get "print" -}}
   <a id="print" href="{{ .RelPermalink | safeURL }}"><i class="fa-solid fa-print fa-fw"></i> {{ T "print_entire_section" }}</a>
 {{ end }}
+{{/* Only present when the site was built with config-llms.toml layered in, so
+     the standard build renders exactly what it did before. The md format is
+     notAlternative and therefore absent from AlternativeOutputFormats, so it
+     has to be looked up by name. */ -}}
+{{ with .OutputFormats.Get "md" -}}
+  <a id="markdown" href="{{ .RelPermalink | safeURL }}"><i class="fa-solid fa-file-lines fa-fw"></i> {{ T "view_as_markdown" }}</a>
+{{ end }}
 </div>
 {{ end -}}
