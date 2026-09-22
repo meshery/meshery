@@ -305,11 +305,11 @@ describe('Notification component', () => {
     expect(lastCall.type).toBe('events/updateIsEventChecked');
   });
 
-  it('prefers history_title over description when in history mode', () => {
+  it('prefers historyTitle over description when in history mode', () => {
     selectors.ui = { history_mode: true };
     selectors.event = {
       ...selectors.event,
-      metadata: { history_title: 'History Title' },
+      metadata: { historyTitle: 'History Title' },
     };
     render(<Notification event_id="evt-1" />);
     expect(screen.getByText('History Title')).toBeInTheDocument();
