@@ -27,75 +27,63 @@
   {{ partial "sidebar-tree.html" $args }}
 {{- end }}
 <script>
-  (function() {
-    function injectToggleButton(li, icon, position, extraClass) {
-      // Only process sections that actually have children (ul exists)
-      var ul = li.querySelector(":scope > ul");
-      var a = li.querySelector(":scope > a.td-sidebar-link");
-      if (!a || !ul) return;
-      
-      if (li.querySelector(':scope > .sidebar-section-flex-wrapper')) return;
-      
-      var btn = document.createElement("button");
-      btn.className = "sidebar-section-toggle " + (extraClass || "");
-      btn.setAttribute("aria-label", "Toggle section");
-      btn.innerHTML = icon;
-      btn.onclick = function(e) {
-        e.preventDefault();
-        
-        var $ul = $(ul);
-        var childLis = ul.querySelectorAll(":scope > li");
-        var isClosed = childLis.length > 0 && !childLis[0].classList.contains("show");
-        
-        if (isClosed) {
-          $ul.hide();
-          childLis.forEach(function(childLi) {
-            childLi.classList.add("show");
-          });
-        }
-        
-        $ul.slideToggle(400, function() {
-          if ($ul.css("display") === "none") {
-            childLis.forEach(function(childLi) {
-              childLi.classList.remove("show");
-            });
-            $ul.css("display", "");
-          }
-        });
-
-        li.classList.toggle("active-path");
-      };
-      
-      var wrapper = document.createElement("div");
-      wrapper.className = "sidebar-section-flex-wrapper";
-      a.parentNode.insertBefore(wrapper, a);
-      
-      if (position === "after") {
-        wrapper.style.justifyContent = "space-between";
-        wrapper.appendChild(a);
-        wrapper.appendChild(btn);
-      } else {
-        wrapper.appendChild(btn);
-        wrapper.appendChild(a);
-      }
-    }
-
-    var caretIcon = '<svg class="caret-icon" viewBox="0 0 16 16" width="1em" height="1em" aria-hidden="true" focusable="false"><path d="M6 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-
-    var rootLis = document.querySelectorAll(".td-sidebar-nav .ul-1 > li.with-child");
-    rootLis.forEach(function(li) {
-      injectToggleButton(li, caretIcon, "before", "");
-    });
-
-    var childLis = document.querySelectorAll(".td-sidebar-nav .ul-1 ul li.with-child");
-    childLis.forEach(function(li) {
-      injectToggleButton(li, caretIcon, "before", "child-toggle");
-    });
-  })();
-</script>
-
-<script>
   $(function() {
+    // 1. Sidebar Section Toggle (Event Delegation)
+    $(document).on('click', '.sidebar-section-toggle', function(e) {
+      e.preventDefault();
+      
+      var flexWrapper = this.parentNode;
+      var li = flexWrapper.parentNode;
+      var ul = li.querySelector("ul");
+      if (!ul) return;
+      
+      var $ul = $(ul);
+      var childLis = Array.from(ul.children).filter(child => child.tagName === 'LI');
+      var isClosed = childLis.length > 0 && !childLis[0].classList.contains("show");
+      
+      if (isClosed) {
+        $ul.hide();
+        childLis.forEach(function(childLi) {
+          childLi.classList.add("show");
+        });
+      }
+      
+      $ul.slideToggle(400, function() {
+        if ($ul.css("display") === "none") {
+          childLis.forEach(function(childLi) {
+            childLi.classList.remove("show");
+          });
+          $ul.css("display", "");
+        }
+      });
+
+      li.classList.toggle("active-path");
+      this.setAttribute(
+        "aria-expanded",
+        String(li.classList.contains("active-path"))
+      );
+    });
+
+    // 2. Mobile Sidebar Click Outside & Link Click Listener
+    document.addEventListener("click", function(event) {
+      // Only apply on mobile breakpoint
+      if (!window.matchMedia("(max-width: 37.5em)").matches) return;
+      
+      const isSidebarActive = document.querySelector(".left-container.left-container--active");
+      if (!isSidebarActive) return;
+
+      const clickedInsideSidebar = event.target.closest(".left-container");
+      const clickedMainToggleBtn = event.target.closest("#toggleBtnSidebarNav");
+      const clickedLink = event.target.closest("#td-sidebar-menu a");
+
+      // Close sidebar if a link is clicked, or if clicked outside completely
+      if (clickedLink || (!clickedInsideSidebar && !clickedMainToggleBtn)) {
+        const toggle = document.getElementById("toggleBtnSidebarNav");
+        if (toggle) toggle.click();
+      }
+    });
+
+    // 3. Search Form Logic
     function getSiteRootUrl() {
       const rootLink = document.querySelector("a.navbar-brand, #td-section-nav a.tree-root");
       const href = rootLink ? rootLink.getAttribute("href") : "/";
@@ -104,16 +92,14 @@
 
     function buildSearchUrl(query) {
       const url = new URL("search/", getSiteRootUrl());
-
       if (query) {
         url.searchParams.set("q", query);
       }
-
       return url.toString();
     }
 
     const $rootSidebarItem = $("#td-section-nav > ul > li").filter(function() {
-      return $(this).find('> a.tree-root, > label > a.tree-root').length > 0;
+      return $(this).find('> a.tree-root').length > 0;
     }).first();
     const $sidebarSearchForm = $("#td-sidebar-menu form.td-sidebar__search");
     const $sidebarSearchInput = $sidebarSearchForm.find('input[name="q"]').first();
@@ -123,7 +109,7 @@
     }
 
     if (!$sidebarSearchForm.length || !$sidebarSearchInput.length) {
-      return;
+      return; // Early return for search logic ONLY
     }
 
     $sidebarSearchForm.attr("action", buildSearchUrl(""));
@@ -143,6 +129,8 @@
       }
 
       event.preventDefault();
+      
+      // Close sidebar on search submit for mobile
       if (window.matchMedia("(max-width: 37.5em)").matches &&
           document.querySelector(".left-container.left-container--active")) {
         const toggle = document.getElementById("toggleBtnSidebarNav");
@@ -150,17 +138,6 @@
       }
 
       window.location.assign(buildSearchUrl(query));
-    });
-
-    document.addEventListener("click", function(event) {
-      if (
-        window.matchMedia("(max-width: 37.5em)").matches &&
-        document.querySelector(".left-container.left-container--active") &&
-        (event.target.closest("#td-sidebar-menu a") || event.target.closest("#td-sidebar-menu button"))
-      ) {
-        const toggle = document.getElementById("toggleBtnSidebarNav");
-        if (toggle) toggle.click();
-      }
     });
   });
 </script>
