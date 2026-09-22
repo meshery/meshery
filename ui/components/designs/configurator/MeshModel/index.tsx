@@ -1,15 +1,17 @@
 import {
   Avatar,
   AvatarGroup,
-  CircularProgress,
   FormControl,
   Grid2,
   IconButton,
+  InputAdornment,
+  Menu,
   MenuItem,
   TextField,
   Toolbar,
   CustomTooltip,
   styled,
+  useTheme,
 } from '@sistent/sistent';
 import React, { useEffect, useRef, useState } from 'react';
 import AppBarComponent from './styledComponents/AppBar';
@@ -17,6 +19,7 @@ import {
   Delete as DeleteIcon,
   Save as SaveIcon,
   ArrowBack,
+  ExpandMoreIcon,
   SaveAs as SaveAsIcon,
 } from '@/assets/icons';
 import { NoSsr } from '@sistent/sistent';
@@ -39,6 +42,8 @@ const ScrollContainer = styled('div')({
 export default function DesignConfigurator() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedModel, setSelectedModel] = useState(null);
+  const [browseCategory, setBrowseCategory] = useState(null);
+  const [menuAnchor, setMenuAnchor] = useState(null);
   const { models, meshmodelComponents, getModelFromCategory, getComponentsFromModel, categories } =
     useMeshModelComponents();
   const {
@@ -58,6 +63,8 @@ export default function DesignConfigurator() {
   const router = useRouter();
   const { design_id } = router.query;
 
+  const theme = useTheme();
+
   useEffect(
     function loadDesignOnMount() {
       if (design_id) {
@@ -67,17 +74,34 @@ export default function DesignConfigurator() {
     [design_id],
   );
 
-  function handleCategoryChange(event) {
-    setSelectedCategory(event.target.value);
-    getModelFromCategory(event.target.value);
+  function handleDropdownOpen(event) {
+    setBrowseCategory(null);
+    setMenuAnchor(event.currentTarget);
   }
 
-  function handleModelChange(event) {
-    if (event.target.value) {
-      getComponentsFromModel(event.target.value);
-      setSelectedModel(event.target.value);
-    }
+  function handleDropdownClose() {
+    setMenuAnchor(null);
+    setBrowseCategory(null);
   }
+
+  function handleDeselect() {
+    setSelectedCategory(null);
+    setSelectedModel(null);
+    handleDropdownClose();
+  }
+
+  function handleModelPick(category, model) {
+    setSelectedCategory(category);
+    setSelectedModel(model);
+    getComponentsFromModel(model);
+    handleDropdownClose();
+  }
+
+  const selectedModelData = models?.[selectedCategory]?.find((m) => m.name === selectedModel);
+  const displayText =
+    menuAnchor && browseCategory
+      ? browseCategory
+      : selectedModelData?.displayName || selectedModel || '';
 
   return (
     <NoSsr>
@@ -89,94 +113,106 @@ export default function DesignConfigurator() {
       <AppBarComponent position="static" elevation={0} data-testid="design-configurator-app-bar">
         <Toolbar>
           <div style={{ flexGrow: 1 }}>
-            {/* Category Selector */}
             <FormControl>
               <TextField
-                select={true}
-                SelectProps={{
-                  MenuProps: {
-                    anchorOrigin: {
-                      vertical: 'bottom',
-                      horizontal: 'left',
-                    },
-                    getContentAnchorEl: null,
-                  },
-                  renderValue: (selected) => {
-                    if (!selected || selected.length === 0) {
-                      return <em>Select Category</em>;
-                    }
-
-                    return selected;
-                  },
-                  displayEmpty: true,
-                }}
-                InputProps={{ disableUnderline: true }}
-                labelId="category-selector"
-                id="category-selector"
-                data-testid="category-selector"
-                value={selectedCategory}
-                onChange={handleCategoryChange}
-                fullWidth
                 variant="standard"
+                id="category-model-selector"
+                data-testid="category-model-selector"
+                value={displayText}
+                placeholder="Select Category & Model"
+                onClick={handleDropdownOpen}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    handleDropdownOpen(event);
+                  }
+                }}
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <ExpandMoreIcon />
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+                fullWidth
+              />
+              <Menu
+                anchorEl={menuAnchor}
+                open={Boolean(menuAnchor)}
+                onClose={handleDropdownClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
+                slotProps={{
+                  paper: {
+                    style: {
+                      maxHeight: 400,
+                      overflowY: 'auto',
+                    },
+                  },
+                }}
               >
-                {categories.map((cat) => (
-                  <MenuItem data-testid={cat.name} key={cat.name} value={cat.name}>
-                    {cat.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </FormControl>
-
-            {/* Model Selector */}
-            {selectedCategory && (
-              <FormControl>
-                <TextField
-                  placeholder="select Model"
-                  select={true}
-                  SelectProps={{
-                    MenuProps: {
-                      anchorOrigin: {
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                      },
-                      getContentAnchorEl: null,
-                    },
-                    renderValue: (selected) => {
-                      if (!selected || selected.length === 0) {
-                        return <em>Select Model</em>;
-                      }
-
-                      return removeHyphenAndCapitalise(selected);
-                    },
-                    displayEmpty: true,
-                  }}
-                  InputProps={{ disableUnderline: true }}
-                  labelId="model-selector"
-                  id="model-selector"
-                  data-testid="model-selector"
-                  value={selectedModel}
-                  onChange={handleModelChange}
-                  fullWidth
-                  variant="standard"
-                >
-                  {models?.[selectedCategory] ? (
-                    models[selectedCategory].map(function renderModels(model, idx) {
-                      return (
+                {browseCategory === null
+                  ? [
+                      <MenuItem
+                        key="none"
+                        onClick={handleDeselect}
+                        data-testid="clear-category-model-selector"
+                      >
+                        <em>None</em>
+                      </MenuItem>,
+                      ...(categories ?? []).map((cat) => (
                         <MenuItem
-                          data-testid={`${model.name}`}
-                          key={`${model.name}-${idx}`}
-                          value={model.name}
+                          key={cat.name}
+                          onClick={() => {
+                            getModelFromCategory(cat.name);
+                            setBrowseCategory(cat.name);
+                          }}
+                          data-testid={cat.name}
                         >
-                          {model.displayName}
+                          {cat.name}
                         </MenuItem>
-                      );
-                    })
-                  ) : (
-                    <RenderModelNull selectedCategory={selectedCategory} models={models} />
-                  )}
-                </TextField>
-              </FormControl>
-            )}
+                      )),
+                    ]
+                  : [
+                      <MenuItem
+                        key="back"
+                        onClick={() => setBrowseCategory(null)}
+                        data-testid="back-to-categories"
+                      >
+                        ← {browseCategory}
+                      </MenuItem>,
+                      ...(models?.[browseCategory]?.length
+                        ? models[browseCategory].map((model, idx) => (
+                            <MenuItem
+                              key={`${browseCategory}-${model.name}-${idx}`}
+                              onClick={() => handleModelPick(browseCategory, model.name)}
+                              data-testid={`${browseCategory}-${model.name}`}
+                            >
+                              {model.displayName}
+                            </MenuItem>
+                          ))
+                        : models?.[browseCategory]
+                          ? [
+                              <MenuItem key="empty" disabled>
+                                No models found
+                              </MenuItem>,
+                            ]
+                          : [
+                              <MenuItem key="loading" disabled>
+                                Loading…
+                              </MenuItem>,
+                            ]),
+                    ]}
+              </Menu>
+            </FormControl>
           </div>
 
           {/* Action Toolbar */}
@@ -195,7 +231,7 @@ export default function DesignConfigurator() {
                 onClick={designSave}
                 permissionKey={Keys.CatalogManagementCreateNewDesign}
               >
-                <SaveAsIcon style={iconMedium} />
+                <SaveAsIcon fill={theme.palette.icon.default} style={iconMedium} />
               </IconButton>
             </div>
           </CustomTooltip>
@@ -304,26 +340,4 @@ export default function DesignConfigurator() {
       </Grid2>
     </NoSsr>
   );
-}
-
-function RenderModelNull({ selectedCategory, models }) {
-  if (!selectedCategory) {
-    return <MenuItem value={undefined}>Select a Category First</MenuItem>;
-  }
-
-  if (!models?.[selectedCategory]) {
-    return <CircularProgress />;
-  }
-}
-
-function removeHyphenAndCapitalise(str) {
-  if (!str) {
-    return '';
-  }
-
-  return str
-    .split('-')
-    .filter((word) => word)
-    .map((word) => word[0].toUpperCase() + word.substring(1))
-    .join(' ');
 }
