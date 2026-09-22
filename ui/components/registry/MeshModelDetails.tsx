@@ -9,8 +9,13 @@ import {
   CircularProgress,
   Button,
   DownloadIcon,
+  DeleteIcon,
   ExpandMoreIcon,
 } from '@sistent/sistent';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
+import { useDeleteModelsByRegistrantMutation } from '@/rtk-query/meshModel';
+import { useNotification } from '../../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../../lib/event-types';
 import { useTheme } from '@/theme';
 import { REGISTRY_ITEM_STATES } from '@/utils/Enum';
 import { normalizeStaticImagePath } from '@/utils/fallback';
@@ -34,6 +39,12 @@ import { iconSmall } from 'css/icons.styles';
 const ReactJson = dynamic(() => import('@microlink/react-json-view'), { ssr: false });
 
 const ExportAvailable = true;
+
+const RegistrantHeader = styled('div')(() => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+}));
 
 type KeyValueProps = { property: string; value: string | number | string[] | null | undefined };
 const KeyValue = ({ property, value }: KeyValueProps) => {
@@ -363,7 +374,15 @@ const RelationshipContents = ({ relationshipDef }: { relationshipDef: any }) => 
   );
 };
 
-const RegistrantContent = ({ registrant }: { registrant: any }) => {
+const RegistrantContent = ({
+  registrant,
+  onDelete,
+  isDeleting,
+}: {
+  registrant: any;
+  onDelete?: (id: string, name: string) => void;
+  isDeleting?: boolean;
+}) => {
   const PropertyFormattersLeft = {
     models: (value) => <KeyValue property="Models" value={value} />,
     components: (value) => <KeyValue property="Components" value={value} />,
@@ -391,9 +410,25 @@ const RegistrantContent = ({ registrant }: { registrant: any }) => {
   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <StyledTitle>{registrant?.hostname}</StyledTitle>
-      </div>
+      <RegistrantHeader>
+        <StyledTitle>{registrant?.hostname || registrant?.name}</StyledTitle>
+        {onDelete && (
+          <Button
+            variant="contained"
+            color="error"
+            size="small"
+            disabled={
+              isDeleting || !registrant?.summary?.models || registrant?.summary?.models === 0
+            }
+            onClick={() => onDelete(registrant.id, registrant.hostname || registrant.name)}
+            style={{ textTransform: 'none' }}
+            data-testid="delete-all-models-button"
+          >
+            <DeleteIcon style={{ marginRight: '0.25rem', width: '18px', height: '18px' }} />
+            Delete All Models ({registrant?.summary?.models || 0})
+          </Button>
+        )}
+      </RegistrantHeader>
       <RenderContents
         metaDataLeft={metaDataLeft}
         metaDataRight={metaDataRight}
@@ -488,7 +523,7 @@ const StatusChip = ({ entityData, entityType }: { entityData: any; entityType: s
           sx={{
             textTransform: 'capitalize',
           }}
-          disabled={!isSuccess} // Disable the select when isSuccess is false
+          disabled={!isSuccess}
         >
           {nextStatus.map((status) => (
             <MenuItem style={{ textTransform: 'capitalize' }} value={status} key={status}>
@@ -506,10 +541,65 @@ const StatusChip = ({ entityData, entityType }: { entityData: any; entityType: s
 const MeshModelDetails = ({
   view,
   showDetailsData,
+  refetch,
 }: {
   view: string;
   showDetailsData: { type: string; data: any };
+  refetch?: () => void;
 }) => {
+  const [deleteModelsByRegistrant, { isLoading: isDeleting }] =
+    useDeleteModelsByRegistrantMutation();
+  const { notify } = useNotification();
+  const [deleteModalState, setDeleteModalState] = React.useState<{
+    open: boolean;
+    connectionId: string;
+    registrantName: string;
+    modelCount: number;
+  }>({
+    open: false,
+    connectionId: '',
+    registrantName: '',
+    modelCount: 0,
+  });
+
+  const handleDeleteModels = (connectionId: string, registrantName: string) => {
+    const modelCount = showDetailsData.data?.summary?.models || 0;
+    setDeleteModalState({
+      open: true,
+      connectionId,
+      registrantName,
+      modelCount,
+    });
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      const res = await deleteModelsByRegistrant({
+        connectionId: deleteModalState.connectionId,
+      }).unwrap();
+      const deletedCount = res?.count;
+      notify({
+        message: (
+          <span style={{ color: '#ff4d4f', fontWeight: 600 }}>
+            {res?.message ||
+              `Deleted ${deletedCount !== undefined ? deletedCount : 0} models for registrant "${deleteModalState.registrantName}"`}
+          </span>
+        ) as any,
+        event_type: EVENT_TYPES.DELETED,
+      });
+      setDeleteModalState((prev) => ({ ...prev, open: false }));
+      if (refetch) {
+        refetch();
+      }
+    } catch (err) {
+      console.error('Failed to delete models:', err);
+      notify({
+        message: `Failed to delete models for registrant "${deleteModalState.registrantName}"`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+    }
+  };
+
   const isEmptyDetails =
     Object.keys(showDetailsData.data).length === 0 || showDetailsData.type === 'none';
 
@@ -526,7 +616,13 @@ const MeshModelDetails = ({
       case COMPONENTS:
         return <ComponentContents componentDef={showDetailsData.data} />;
       case REGISTRANTS:
-        return <RegistrantContent registrant={showDetailsData.data} />;
+        return (
+          <RegistrantContent
+            registrant={showDetailsData.data}
+            onDelete={handleDeleteModels}
+            isDeleting={isDeleting}
+          />
+        );
       default:
         return null;
     }
@@ -535,6 +631,14 @@ const MeshModelDetails = ({
   return (
     <DetailsContainer isEmpty={isEmptyDetails}>
       {isEmptyDetails ? renderEmptyDetails() : getContent(showDetailsData.type)}
+      <DeleteConfirmationModal
+        open={deleteModalState.open}
+        onClose={() => setDeleteModalState((prev) => ({ ...prev, open: false }))}
+        onConfirm={handleConfirmDelete}
+        registrantName={deleteModalState.registrantName}
+        modelCount={deleteModalState.modelCount}
+        isDeleting={isDeleting}
+      />
     </DetailsContainer>
   );
 };
