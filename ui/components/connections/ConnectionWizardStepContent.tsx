@@ -3,7 +3,6 @@ import {
   Checkbox,
   CheckCircleIcon,
   CircularProgress,
-  CloudUploadIcon,
   MenuItem,
   TextField,
   Typography,
@@ -28,18 +27,12 @@ type CredentialOption = {
   name?: string;
 };
 
-const StepLayout = styled(Box)(({ theme }) => ({
+export const StepLayout = styled(Box)(({ theme }) => ({
   display: 'grid',
   gap: theme.spacing(3),
 }));
 
-// ---------------------------------------------------------------------------
-// Shared step header: a bold title with a muted one-line subtitle. Replaces the
-// loose body paragraphs each step used to lead with, giving every step a
-// consistent visual hierarchy.
-// ---------------------------------------------------------------------------
-
-const StepHeader = ({ title, subtitle }: { title: string; subtitle?: ReactNode }) => (
+export const StepHeader = ({ title, subtitle }: { title: string; subtitle?: ReactNode }) => (
   <Box sx={{ display: 'grid', gap: 0.5 }}>
     <Typography variant="h6" sx={{ fontWeight: 600 }}>
       {title}
@@ -68,8 +61,6 @@ const KindCard = styled('button', {
   background: selected
     ? alpha(theme.palette.background.brand.default, 0.06)
     : theme.palette.background.card,
-  // A native <button> defaults to the UA text color; set it explicitly so the
-  // Typography children (which inherit) follow the theme in dark mode.
   color: theme.palette.text.primary,
   padding: theme.spacing(2.5),
   cursor: 'pointer',
@@ -101,8 +92,6 @@ const KindIconWrap = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  // A light, neutral tile so colored integration logos read clearly on the
-  // dark card surface.
   background: theme.palette.common.white,
   border: `1px solid ${theme.palette.divider}`,
   marginBottom: theme.spacing(0.5),
@@ -188,46 +177,6 @@ const InlineNotice = styled(Box)(({ theme }) => ({
   padding: theme.spacing(1, 1.5),
 }));
 
-const UploadDropzone = styled('button')(({ theme }) => ({
-  width: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  gap: theme.spacing(1),
-  padding: theme.spacing(4),
-  borderRadius: theme.spacing(1.5),
-  border: `1.5px dashed ${theme.palette.divider}`,
-  background: theme.palette.background.card,
-  color: theme.palette.text.primary,
-  cursor: 'pointer',
-  textAlign: 'center',
-  transition: 'border-color 0.15s ease, background 0.15s ease',
-  '&:hover': {
-    borderColor: theme.palette.background.brand.default,
-    background: alpha(theme.palette.background.brand.default, 0.04),
-  },
-}));
-
-const UploadIconCircle = styled(Box)(({ theme }) => ({
-  width: 56,
-  height: 56,
-  borderRadius: '50%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  background: alpha(theme.palette.background.brand.default, 0.12),
-}));
-
-const UploadIcon = styled(CloudUploadIcon)(({ theme }) => ({
-  width: 28,
-  height: 28,
-  fill: theme.palette.background.brand.default,
-}));
-
-const HiddenFileInput = styled('input')({
-  display: 'none',
-});
-
 const FormContainer = styled(Box)(({ theme }) => ({
   borderRadius: theme.spacing(1.5),
   border: `1px solid ${theme.palette.divider}`,
@@ -271,14 +220,6 @@ export const ConnectionKindSelectionStep = ({
         <KindGrid>
           {kinds.map((config) => {
             const isPermitted = canUseKind(config);
-            // Prefer the SVG carried on the connection definition, then the redux
-            // connection metadata icon, then the per-kind static asset.
-            // normalizeStaticImagePath turns inline SVG markup into a data URI and
-            // normalizes repo-relative paths.
-            //
-            // The icon tile (KindIconWrap) is always a white surface, so always
-            // use the COLOR variant — the white variant (e.g. Kubernetes' all-white
-            // logo) would render white-on-white and disappear.
             const definitionSvg = config.svgColor || config.svgWhite;
             const iconSrc =
               normalizeStaticImagePath(definitionSvg) ||
@@ -328,10 +269,6 @@ export const ConnectionKindSelectionStep = ({
   );
 };
 
-// Derive an RJSF uiSchema from a connection/credential JSON schema so each
-// field gets a placeholder hint. Meshery's RJSF widgets already surface a
-// field's `description` as a hover info-button; we mirror that text into a
-// `ui:placeholder` so the guidance is also visible inline in the empty input.
 const buildPlaceholderUiSchema = (
   schema: Record<string, unknown> | null,
 ): Record<string, { 'ui:placeholder': string }> => {
@@ -523,57 +460,6 @@ export const CredentialAssociationStep = ({
   );
 };
 
-type KubernetesImportStepProps = {
-  kubeconfigFile: File | null;
-  onPickFile: (file: File | null) => void;
-};
-
-export const KubernetesImportStep = ({ kubeconfigFile, onPickFile }: KubernetesImportStepProps) => (
-  <StepLayout>
-    <StepHeader
-      title="Upload a kubeconfig"
-      subtitle="Upload a kubeconfig file. Meshery will read the Kubernetes contexts inside and let you choose which ones to import."
-    />
-    <UploadDropzone
-      type="button"
-      onClick={() => document.getElementById('connection-wizard-kubeconfig-input')?.click()}
-    >
-      <UploadIconCircle>
-        <UploadIcon />
-      </UploadIconCircle>
-      {kubeconfigFile ? (
-        <Typography
-          variant="body1"
-          title={kubeconfigFile.name}
-          sx={{
-            fontWeight: 600,
-            maxWidth: '100%',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {kubeconfigFile.name}
-        </Typography>
-      ) : (
-        <Typography variant="body1" sx={{ fontWeight: 600 }}>
-          Click to choose a kubeconfig file
-        </Typography>
-      )}
-      <Typography variant="caption" color="text.secondary">
-        {kubeconfigFile
-          ? 'Click to replace the selected file'
-          : 'Accepts kubeconfigs with embedded certificates'}
-      </Typography>
-    </UploadDropzone>
-    <HiddenFileInput
-      id="connection-wizard-kubeconfig-input"
-      type="file"
-      onChange={(event) => onPickFile(event.target.files?.[0] || null)}
-    />
-  </StepLayout>
-);
-
 type ConnectionReviewStepProps = {
   isKubernetes: boolean;
   label?: string;
@@ -645,7 +531,3 @@ export const ConnectionReviewStep = ({
     </SummaryCard>
   </StepLayout>
 );
-
-// Re-exported so step modules can compose the shared header for steps that
-// don't use one of the components above.
-export { StepHeader };
