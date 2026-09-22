@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import * as jsYaml from 'js-yaml';
 import { useNotification } from '../../../../../utils/hooks/useNotification';
+import useDelayedYamlErrorNotify from '../../useDelayedYamlErrorNotify';
 import { EVENT_TYPES } from '../../../../../lib/event-types';
 import {
   useUpdatePatternFileMutation,
@@ -17,6 +18,7 @@ export default function useDesignLifecycle() {
   });
   const [designYaml, setDesignyaml] = useState('');
   const { notify } = useNotification();
+  const { scheduleInvalidYamlCheck, cancelPendingYamlError } = useDelayedYamlErrorNotify();
   const [updatePatternFile] = useUpdatePatternFileMutation();
   const [deletePatternFile] = useDeletePatternFileMutation();
   const [fetchDesign] = useLazyGetDesignQuery();
@@ -183,13 +185,10 @@ export default function useDesignLifecycle() {
   const updateDesignData = ({ yamlData }) => {
     try {
       const designData = jsYaml.load(yamlData);
+      cancelPendingYamlError();
       setDesignJson(designData);
-    } catch (err) {
-      notify({
-        message: `Invalid Yaml Data`,
-        event_type: EVENT_TYPES.ERROR,
-        details: err.toString(),
-      });
+    } catch {
+      scheduleInvalidYamlCheck(yamlData);
     }
   };
   return {
