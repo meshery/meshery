@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/meshery/meshkit/models/events"
+
 	models "github.com/meshery/meshery/server/models"
 )
 
@@ -268,13 +270,67 @@ func (h *Handler) ProviderComponentsHandler(
 	if strings.HasPrefix(r.URL.Path, serverReqBasePath) {
 		h.ExtensionsEndpointHandler(w, r, prefObj, user, provider)
 	} else if r.URL.Path == loadReqBasePath {
+		token, _ := r.Context().Value(models.TokenCtxKey).(string)
+		if token == "" {
+			if ck, err := r.Cookie(models.TokenCookieName); err == nil {
+				token = ck.Value
+			}
+		}
+		providerProps := provider.GetProviderProperties()
+		metadata := map[string]interface{}{
+			"providerName":   providerProps.ProviderName,
+			"packageVersion": providerProps.PackageVersion,
+			"packageURL":     providerProps.PackageURL,
+		}
+
+		if len(providerProps.Extensions.GraphQL) > 0 {
+			gql := providerProps.Extensions.GraphQL[0]
+
+			metadata["component"] = gql.Component
+			metadata["path"] = gql.Path
+			metadata["type"] = gql.Type
+		}
+		eventBuilder := events.NewEvent().
+			ActedUpon(user.ID).
+			FromOwner(user.ID).
+			FromSystem(*h.SystemID).
+			WithCategory("extension").
+			WithAction("load")
 		err := h.LoadExtensionFromPackage(w, r, provider)
 		if err != nil {
-			// failed to load extensions from package
-			h.log.Error(ErrFailToLoadExtensions(err))
-			writeMeshkitError(w, ErrFailToLoadExtensions(err), http.StatusInternalServerError)
+			_err := ErrFailToLoadExtensions(err)
+
+			metadata["error"] = _err
+
+			event := eventBuilder.
+				WithSeverity(events.Error).
+				WithDescription(fmt.Sprintf(
+					"Failed to load extension %s (%s).",
+					providerProps.ProviderName,
+					providerProps.PackageVersion,
+				)).
+				WithMetadata(metadata).
+				Build()
+
+			_ = provider.PersistEvent(*event, token)
+			go h.config.EventBroadcaster.Publish(user.ID, event)
+
+			h.log.Error(_err)
+			writeMeshkitError(w, _err, http.StatusInternalServerError)
 			return
 		}
+		event := eventBuilder.
+			WithSeverity(events.Informational).
+			WithDescription(fmt.Sprintf(
+				"Extension %s (%s) loaded successfully.",
+				providerProps.ProviderName,
+				providerProps.PackageVersion,
+			)).
+			WithMetadata(metadata).
+			Build()
+
+		_ = provider.PersistEvent(*event, token)
+		go h.config.EventBroadcaster.Publish(user.ID, event)
 		writeJSONEmptyObject(w, http.StatusOK)
 	} else {
 		ServeReactComponentFromPackage(w, r, uiReqBasePath, provider)
