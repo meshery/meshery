@@ -1,0 +1,31 @@
+name: Sign Docker images
+description: Sign published Docker image tags with Sigstore Cosign
+
+inputs:
+  images:
+    description: Newline-separated Docker image references to sign
+    required: true
+  cosign-release:
+    description: Cosign version to install
+    required: false
+    default: v2.2.4
+
+runs:
+  using: composite
+  steps:
+    - name: Install Cosign
+      uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20 # v3.5.0
+      with:
+        cosign-release: ${{ inputs.cosign-release }}
+
+    - name: Sign images
+      shell: bash
+      run: |
+        while IFS= read -r image; do
+          image="${image#"${image%%[![:space:]]*}"}"
+          image="${image%"${image##*[![:space:]]}"}"
+          [ -z "$image" ] && continue
+          cosign sign --yes "${image}"
+        done <<'EOF'
+        ${{ inputs.images }}
+        EOF

@@ -7,22 +7,30 @@ on:
         required: true
         default: v0.x.x
 
+permissions: {}
+
 jobs:
 
   ctlrelease:
     name: Mesheryctl build & release
-    if: github.repository == 'meshery/meshery' && ${{inputs.release-tag}} && !contains(github.ref, 'patch') && !contains(github.ref, 'alpha') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
+    if: github.repository == 'meshery/meshery' && inputs['release-tag'] && !contains(github.ref, 'patch') && !contains(github.ref, 'alpha') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
     runs-on: macos-latest
-    
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Check out code
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Set up Go
-        uses: actions/setup-go@master
+        uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20 # v3.5.0
+        with:
+          cosign-release: v2.2.4
       - name: goreleaser with tag
         uses: goreleaser/goreleaser-action@v6
         env:
@@ -40,4 +48,4 @@ jobs:
           tag-name: ${{inputs.release-tag}}
         env:
           COMMITTER_TOKEN: ${{ secrets.MESHERY_CI }}
- 
+
