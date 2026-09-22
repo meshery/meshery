@@ -86,9 +86,9 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 			return err
 		}
 		resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
-		if err != nil || resp.HTTPStatusCode != 200 {
-			utils.Log.Error(ErrUpdateRegistry(err, outputLocation))
-			return err
+		if fetchErr := checkSpreadsheetFetch(resp, err, modelLocation); fetchErr != nil {
+			utils.Log.Error(fetchErr)
+			return fetchErr
 		}
 
 		sheetGID = GetSheetIDFromTitle(resp, "Components")
@@ -96,7 +96,7 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		err = InvokeCompUpdate()
 		if err != nil {
 			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		return nil
@@ -139,7 +139,7 @@ func InvokeCompUpdate() error {
 	if err != nil {
 		err = ErrUpdateRegistry(err, modelLocation)
 		utils.Log.Error(err)
-		return nil
+		return err
 	}
 
 	utils.Log.Info("Total Registrants: ", len(componentCSVHelper.Components))
