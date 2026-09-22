@@ -24,7 +24,11 @@ func (kp *KeyPersister) GetUsersKeys(search, order, updatedAfter string) ([]byte
 	count := int64(0)
 	keys := []Key{}
 
-	query := kp.DB.Where("updated_at > ?", updatedAfter).Order(order)
+	query := kp.DB.Order(order)
+
+	if strings.TrimSpace(updatedAfter) != "" {
+		query = query.Where("updated_at > ?", strings.TrimSpace(updatedAfter))
+	}
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
