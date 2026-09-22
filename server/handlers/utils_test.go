@@ -112,6 +112,17 @@ func TestSafeOpenFile(t *testing.T) {
 		t.Fatalf("failed to write dotted log file: %v", err)
 	}
 
+	// A seed log as written by a seeding stage: seed logs live one level under
+	// the allowed logs dir, so the UI's "Get Logs" link must resolve for them.
+	seedDir := filepath.Join(tmpHome, ".meshery", "logs", "seed")
+	if err := os.MkdirAll(seedDir, 0o755); err != nil {
+		t.Fatalf("failed to create seed log dir: %v", err)
+	}
+	seedLogFile := filepath.Join(seedDir, "keys.log")
+	if err := os.WriteFile(seedLogFile, []byte("Seeding \"keys\" completed.\n"), 0o644); err != nil {
+		t.Fatalf("failed to write seed log file: %v", err)
+	}
+
 	// A sensitive file inside ~/.meshery but OUTSIDE the logs dir: the point of
 	// the fix is that these are no longer reachable through the endpoints.
 	sensitiveFile := filepath.Join(tmpHome, ".meshery", "mesherydb.sql")
@@ -140,6 +151,21 @@ func TestSafeOpenFile(t *testing.T) {
 			t.Fatalf("SafeOpenFile(%q) unexpected error: %v", dotsFile, err)
 		}
 		_ = f.Close()
+	})
+
+	t.Run("seed log under logs is served", func(t *testing.T) {
+		f, err := SafeOpenFile(seedLogFile)
+		if err != nil {
+			t.Fatalf("SafeOpenFile(%q) unexpected error: %v", seedLogFile, err)
+		}
+		defer func() { _ = f.Close() }()
+		got, err := io.ReadAll(f)
+		if err != nil {
+			t.Fatalf("reading returned seed log: %v", err)
+		}
+		if string(got) != "Seeding \"keys\" completed.\n" {
+			t.Errorf("seed log content = %q", got)
+		}
 	})
 
 	// wantOutside distinguishes the out-of-allowed-dirs sentinel (handler → 400)

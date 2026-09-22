@@ -155,6 +155,9 @@ func RunSeedStage(log logger.Handler, seedLog *SeedLog, fn func(*SeedLog)) {
 	// The report runs last (LIFO): it must observe the status the recover
 	// handler below sets before writing the final outcome line.
 	defer func() {
+		if status == SeedStatusSuccess && seedLog.HasErrors() {
+			status = SeedStatusFailed
+		}
 		seedLog.Reportf("Seeding %q %s after %s. Log: %s", seedLog.Stage(), status, time.Since(startedAt).Round(time.Millisecond), seedLog.Path())
 		if err := seedLog.publishEvent(status); err != nil {
 			log.Error(err)

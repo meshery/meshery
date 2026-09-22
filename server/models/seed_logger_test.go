@@ -137,3 +137,45 @@ func TestRunSeedStageWritesOutcomeAndPublishesEvent(t *testing.T) {
 		t.Fatalf("stage metadata mismatch: %#v", persisted[0].Metadata)
 	}
 }
+
+// TestRunSeedStageReportsFailedByError pins that a stage which records an error
+// - without panicking - is reported as failed in its aggregate outcome line and
+// file, not completed. Registration and seeding errors are routine, and an
+// operator reading the stdout report must not be told a stage completed when
+// its file shows otherwise.
+func TestRunSeedStageReportsFailedByError(t *testing.T) {
+	log, _ := capturingTestLogger(t)
+	seedLog := newTestSeedLog(t, log, SeedStageModels)
+	RunSeedStage(log, seedLog, func(sl *SeedLog) {
+		sl.Errorf("failed to register model %s", "jaegar")
+	})
+
+	content := readSeedLog(t, seedLog.Path())
+	if !strings.Contains(content, "Seeding \"models\" failed") {
+		t.Fatalf("stage that recorded an error was not reported failed:\n%s", content)
+	}
+	if strings.Contains(content, "completed") {
+		t.Fatalf("stage that recorded an error was reported completed:\n%s", content)
+	}
+}
+
+// TestSeedLogsRootIsServableByFileView pins the UI-review location contract:
+// seed logs must live under $HOME/.meshery/logs/seed, inside the directory the
+// /api/system/fileView and /api/system/fileDownload endpoints are confined to
+// by SafeOpenFile. A seed log written anywhere else would render the "Get Logs"
+// and "Download File" links dead.
+func TestSeedLogsRootIsServableByFileView(t *testing.T) {
+	if _, ok := os.LookupEnv("HOME"); !ok {
+		t.Skip("HOME is not the home-dir source on this platform")
+	}
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+
+	root, err := seedLogsRoot()
+	if err != nil {
+		t.Fatalf("seedLogsRoot(): %v", err)
+	}
+	if want := filepath.Join(home, ".meshery", "logs", "seed"); root != want {
+		t.Fatalf("seedLogsRoot() = %q, want %q", root, want)
+	}
+}

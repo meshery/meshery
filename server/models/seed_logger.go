@@ -73,6 +73,7 @@ type SeedLog struct {
 	file      *os.File
 	path      string
 	startedAt time.Time
+	errCount  int
 
 	persister SystemEventPersister
 	systemID  core.Uuid
@@ -145,14 +146,21 @@ func (sl *SeedLog) Detailf(format string, args ...interface{}) {
 }
 
 // Errorf appends an error line to the dedicated file and forwards it to the
-// process log.
+// process log. Recording an error marks the stage as failed: the aggregate
+// outcome line and the published event use the failure status, so a stage that
+// ran into trouble is never reported as completed.
 func (sl *SeedLog) Errorf(format string, args ...interface{}) {
+	sl.errCount++
 	line := fmt.Sprintf(format, args...)
 	sl.write(line)
 	if sl.process != nil {
 		sl.process.Error(fmt.Errorf("%s", line))
 	}
 }
+
+// HasErrors reports whether the stage recorded any error line. RunSeedStage
+// uses it to decide between the completed and failed outcome.
+func (sl *SeedLog) HasErrors() bool { return sl.errCount > 0 }
 
 // Header writes the stage header into the dedicated file.
 func (sl *SeedLog) Header() {
