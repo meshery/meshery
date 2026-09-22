@@ -44,7 +44,7 @@ describe('stepsData', () => {
   });
 
   it('uses MESHERY_CLOUD_PROD in the GitHub setup action', () => {
-    // Step 2: GitOps your infra with Kanvas Snapshots
+    // Step 2: GitOps your infra with snapshots
     const gitHubAction = stepsData[1].journey[0].primaryAction;
     expect(typeof gitHubAction).toBe('function');
 
@@ -100,7 +100,7 @@ describe('stepsData', () => {
     const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
     (action as () => void)();
     expect(openSpy).toHaveBeenCalledWith(
-      'https://cloud.meshery.io/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery',
+      'https://cloud.meshery.io/academy/learning-paths/d011fd20-a3f5-4480-883b-dfb34321d168/mastering-meshery',
       '_blank',
     );
     openSpy.mockRestore();

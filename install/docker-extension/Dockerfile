@@ -1,4 +1,4 @@
-FROM golang:1.25-alpine3.23 AS builder
+FROM golang:1.26.4-alpine3.23 AS builder
 ENV CGO_ENABLED=0
 RUN apk update && apk add --no-cache gcc libc-dev make
 WORKDIR /backend
@@ -12,7 +12,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
   --mount=type=cache,target=/root/.cache/go-build \
   make bin
 
-FROM node:20-alpine3.23 AS client-builder
+FROM --platform=$BUILDPLATFORM node:22-alpine3.23 AS client-builder
 WORKDIR /ui
 # cache packages in layer
 COPY ui/package.json ui/package-lock.json ./
@@ -52,7 +52,7 @@ LABEL org.opencontainers.image.title="Meshery" \
   </ul>" \
   com.docker.desktop.extension.icon="https://raw.githubusercontent.com/meshery/meshery/master/install/docker-extension/docs/img/meshery-logo-light.svg" \
   com.docker.extension.publisher-url="https://meshery.io" \
-  com.docker.extension.additional-urls="[{\"title\":\"Documentation\",\"url\":\"https://docs.meshery.io\"},{\"title\":\"Project\",\"url\":\"https://meshery.io\"},{\"title\":\"Slack\",\"url\":\"https://slack.meshery.io\"},{\"title\":\"Discussion Forum\",\"url\":\"https://meshery.io/community#community-forums\"}]"
+  com.docker.extension.additional-urls="[{\"title\":\"Documentation\",\"url\":\"https://docs.meshery.io\"},{\"title\":\"Project\",\"url\":\"https://meshery.io\"},{\"title\":\"Slack\",\"url\":\"https://slack.meshery.io\"},{\"title\":\"Discussion Forum\",\"url\":\"https://discuss.meshery.io\"}]"
 COPY --from=builder /backend/bin/service /
 COPY docker-compose.yaml .
 COPY metadata.json .

@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// PreferencePersister assists with persisting session in store
+// SessionPreferencePersister assists with persisting session in store.
 type SessionPreferencePersister struct {
 	DB *database.Handler
 }

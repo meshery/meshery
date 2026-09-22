@@ -14,14 +14,36 @@ export const topicsList = [
 // Extension Point: Add more remote providers here as needed.
 // This is a list of remote providers that are supported by the Meshery Docker Extension.
 export const REMOTE_PROVIDERS = [
+    // BEGIN AUTO-GENERATED from install/providers.env - run `make providers-propagate`
     {
-        name: "Layer5",
+        name: "Meshery",
         url: "https://cloud.meshery.io",
     },
     {
-        name: "Exoscale",
-        url: "https://cloud.exoscale.com",
+        name: "Intel",
+        url: "https://perf.smp-spec.io",
     },
+    {
+        name: "Layer5",
+        url: "https://cloud.layer5.io",
+    },
+    {
+        name: "TATA Labs",
+        url: "https://platform.tata-consulting.co.uk",
+    },
+    {
+        name: "Cisco ET&I",
+        url: "https://collab.eti.cisco.com",
+    },
+    {
+        name: "Metabit Trading",
+        url: "https://kickstart.metabit.com",
+    },
+    {
+        name: "OD10 Ventures",
+        url: "https://provider.od10.in",
+    },
+    // END AUTO-GENERATED
 ];
 
 export const SELECTED_REMOTE_PROVIDER =

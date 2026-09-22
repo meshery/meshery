@@ -80,14 +80,16 @@
       }
     }
 
+    var caretIcon = '<svg class="caret-icon" viewBox="0 0 16 16" width="1em" height="1em" aria-hidden="true" focusable="false"><path d="M6 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
     var rootLis = document.querySelectorAll(".td-sidebar-nav .ul-1 > li.with-child");
     rootLis.forEach(function(li) {
-      injectToggleButton(li, "⇅", "before", "");
+      injectToggleButton(li, caretIcon, "before", "");
     });
 
     var childLis = document.querySelectorAll(".td-sidebar-nav .ul-1 ul li.with-child");
     childLis.forEach(function(li) {
-      injectToggleButton(li, "⇅", "before", "child-toggle");
+      injectToggleButton(li, caretIcon, "before", "child-toggle");
     });
   })();
 </script>
@@ -141,7 +143,24 @@
       }
 
       event.preventDefault();
+      if (window.matchMedia("(max-width: 37.5em)").matches &&
+          document.querySelector(".left-container.left-container--active")) {
+        const toggle = document.getElementById("toggleBtnSidebarNav");
+        if (toggle) toggle.click();
+      }
+
       window.location.assign(buildSearchUrl(query));
+    });
+
+    document.addEventListener("click", function(event) {
+      if (
+        window.matchMedia("(max-width: 37.5em)").matches &&
+        document.querySelector(".left-container.left-container--active") &&
+        (event.target.closest("#td-sidebar-menu a") || event.target.closest("#td-sidebar-menu button"))
+      ) {
+        const toggle = document.getElementById("toggleBtnSidebarNav");
+        if (toggle) toggle.click();
+      }
     });
   });
 </script>

@@ -1,7 +1,7 @@
 ---
 title: Azure Subscription
 subtitle: Collaborative and visual infrastructure as design for Azure Subscription
-image: /extensions/models/azure-subscription/icons/color/azure-subscription-color.svg
+image: extensions/models/azure-subscription/icons/color/azure-subscription-color.svg
 aliases: /extensibility/integrations/azure-subscription
 docURL: https://docs.meshery.io/extensibility/integrations/azure-subscription
 description: 
@@ -10,8 +10,8 @@ integrations-subcategory: Streaming & Messaging
 registrant: GitHub
 components: 
 - name: alias
-  colorIcon: content/en/extensions/models/azure-subscription/components/alias/icons/color/alias-color.svg
-  whiteIcon: content/en/extensions/models/azure-subscription/components/alias/icons/white/alias-white.svg
+  colorIcon: extensions/models/azure-subscription/components/alias/icons/color/alias-color.svg
+  whiteIcon: extensions/models/azure-subscription/components/alias/icons/white/alias-white.svg
   description: 
 components-count: 1
 relationships: 

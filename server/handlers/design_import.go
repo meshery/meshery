@@ -77,9 +77,9 @@ func resolveImportVariant(body pattern.MesheryPatternImportRequestBody) (importV
 				Name: stringFromPtr(filePayload.Name),
 				File: FileToImport{FileName: filePayload.FileName},
 			},
-			ErrInvalidImportRequest(errors.New("request body must contain exactly one of File Import (file + file_name) or URL Import (url), not both"))
+			ErrInvalidImportRequest(errors.New("request body must contain exactly one of File Import (file + fileName) or URL Import (url), not both"))
 	case !hasFile && !hasURL:
-		return importVariant{}, ErrInvalidImportRequest(errors.New("request body must contain either a File Import (file + file_name) or a URL Import (url)"))
+		return importVariant{}, ErrInvalidImportRequest(errors.New("request body must contain either a File Import (file + fileName) or a URL Import (url)"))
 	case hasFile:
 		return importVariant{
 			Name: stringFromPtr(filePayload.Name),
@@ -169,7 +169,7 @@ func ConvertFileToManifest(identifiedFile files.IdentifiedFile, rawFile FileToIm
 	}
 }
 
-// returns the design file , the type of file that was identified during converion , and any error
+// ConvertFileToDesign returns the design file, the type of file that was identified during conversion, and any error
 func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryManager, logger logger.Handler) (pattern.PatternFile, core.IaCFileTypes, error) {
 
 	defer utils.TrackTime(logger, time.Now(), "ConvertFileToDesign")
@@ -293,7 +293,7 @@ func (h *Handler) DesignFileImportHandler(
 
 	var err error
 	userID := user.ID
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("create").ActedUpon(userID).WithSeverity(events.Informational)
+	eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("create").ActedUpon(userID).WithSeverity(events.Informational)
 
 	var importBody pattern.MesheryPatternImportRequestBody
 

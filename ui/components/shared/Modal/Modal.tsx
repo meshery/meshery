@@ -64,6 +64,7 @@ export interface ModalProps {
    * size or stacking overrides.
    */
   className?: string;
+  sx?: object;
   /** Forwarded to the underlying Dialog root for cypress/test selectors. */
   'aria-labelledby'?: string;
   'aria-describedby'?: string;
@@ -90,6 +91,7 @@ export const Modal: FC<ModalProps> = ({
   isFullScreenModeAllowed,
   disableBodyWrap = false,
   className,
+  sx,
   ...ariaProps
 }) => {
   return (
@@ -103,6 +105,7 @@ export const Modal: FC<ModalProps> = ({
       fullWidth
       isFullScreenModeAllowed={isFullScreenModeAllowed}
       className={className}
+      sx={sx}
       {...ariaProps}
     >
       {disableBodyWrap ? children : <SistentModalBody>{children}</SistentModalBody>}

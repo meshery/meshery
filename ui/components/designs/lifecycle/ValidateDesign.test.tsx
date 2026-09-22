@@ -72,10 +72,6 @@ vi.mock('@/assets/icons/AlertIcon', () => ({
   default: () => <svg data-testid="alert-icon" />,
 }));
 
-vi.mock('@/themes/index', () => ({
-  NOTIFICATIONCOLORS: { WARNING: '#ffaa00', SUCCESS_V2: '#00ff00' },
-}));
-
 vi.mock('./styles', () => ({
   ValidatedComponent: ({ children }: any) => (
     <div data-testid="validated-component">{children}</div>

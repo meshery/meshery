@@ -119,7 +119,7 @@ func (h *Handler) RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http
 			return
 		}
 		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Connection, &r)
-		helpers.HandleError(cc.Connection, &r, err, isModelError, isRegistranError)
+		helpers.HandleError(registry.RegistrantHostToV1beta1(cc.Connection), &r, err, isModelError, isRegistranError)
 	}
 	err = helpers.WriteLogsToFiles()
 	if err != nil {
@@ -132,5 +132,4 @@ func (h *Handler) RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http
 		writeMeshkitError(rw, wrappedErr, http.StatusInternalServerError)
 		return
 	}
-	go h.config.MeshModelSummaryChannel.Publish()
 }

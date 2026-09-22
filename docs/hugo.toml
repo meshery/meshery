@@ -1,6 +1,6 @@
 baseURL = "https://docs.meshery.io"
 title = "Documentation"
-relativeURLs = true
+relativeURLs = false
 canonifyURLs = false
 
 # Language settings
@@ -21,8 +21,7 @@ ignoreFiles = ["^meetings/.*", "^notes/.*", "^integrations/.*" ]
 # Will give values to .Lastmod etc.
 enableGitInfo = true
 
-# Comment out to enable taxonomies in Docsy
-# disableKinds = ["taxonomy", "term"]
+# Keep taxonomy metadata available to templates, but do not publish taxonomy listing pages.
 
 # You can add your own taxonomies
 [taxonomies]
@@ -39,6 +38,22 @@ taxonomyCloudTitle = ["Tags", "Categories"]
 # set taxonomyPageHeader = [] to hide taxonomies on the page headers
 taxonomyPageHeader = ["tags", "categories"]
 
+[related]
+  threshold = 70
+  includeNewer = true
+  toLower = true
+
+  [[related.indices]]
+    name = "section"
+    weight = 10
+
+  [[related.indices]]
+    name = "tags"
+    weight = 50
+
+  [[related.indices]]
+    name = "categories"
+    weight = 70
 
 staticDir = ['static']
 
@@ -70,7 +85,7 @@ id = "G-HX135VWX9B"
 
 [languages]
 [languages.en]
-languageName = "English"
+label = "English"
 # Weight used for sorting.
 weight = 1
 [languages.en.params]
@@ -92,15 +107,15 @@ As a self-service engineering platform, Meshery enables collaborative design and
     # Uncomment if you want your chosen highlight style used for code blocks without a specified language
     # guessSyntax = "true"
     noClasses = false
-    
+
 # Everything below this are Site Params
 
 # Comment out if you don't want the "print entire section" link enabled.
 [outputs]
   home = ["HTML", "RSS", "SITEMAP"]
   section = ["HTML", "RSS"]
-  taxonomy = ["HTML", "RSS"]
-  term = ["HTML", "RSS"]
+  taxonomy = []
+  term = []
 
 [sitemap]
   changefreq = "daily"
@@ -208,6 +223,16 @@ enable = false
   [[module.imports]]
     path = "github.com/google/docsy/dependencies"
     disable = false
+  [[module.imports]]
+    path = "github.com/layer5io/docs"
+    disable = false
+    ignoreConfig = true
+    [[module.imports.mounts]]
+      source = "layouts/partials/related-reading.html"
+      target = "layouts/partials/related-reading.html"
+    [[module.imports.mounts]]
+      source = "assets/scss/_yt-embed-container.scss"
+      target = "assets/scss/_yt-embed-container.scss"
   [[module.mounts]]
     source = "static"
     target = "static"

@@ -36,6 +36,12 @@ vi.mock('@sistent/sistent', () => {
         {children}
       </div>
     ),
+    IconButton: ({ children, onClick }: any) => (
+      <button data-testid="close-button" onClick={onClick}>
+        {children}
+      </button>
+    ),
+    CloseIcon: () => <span data-testid="close-icon">X</span>,
     styled,
   };
 });
@@ -87,5 +93,16 @@ describe('GenericModal', () => {
     render(<GenericModal open={true} Content={<span>Body</span>} handleClose={vi.fn()} />);
 
     expect(screen.getByTestId('modal')).toHaveAttribute('data-max-width', 'lg');
+  });
+
+  it('renders the close button and calls handleClose when clicked', () => {
+    const handleClose = vi.fn();
+    render(<GenericModal open={true} Content={<span>Body</span>} handleClose={handleClose} />);
+
+    const closeBtn = screen.getByTestId('close-button');
+    expect(closeBtn).toBeInTheDocument();
+
+    closeBtn.click();
+    expect(handleClose).toHaveBeenCalledTimes(1);
   });
 });

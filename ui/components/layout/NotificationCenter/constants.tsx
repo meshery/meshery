@@ -1,8 +1,7 @@
-import { NOTIFICATIONCOLORS } from '../../../themes';
 import AlertIcon from '../../../assets/icons/AlertIcon';
 import ErrorIcon from '../../../assets/icons/ErrorIcon';
 import ReadIcon from '../../../assets/icons/ReadIcon';
-import { InfoIcon } from '@sistent/sistent';
+import { InfoIcon, notificationColors } from '@sistent/sistent';
 import type { Theme } from '@sistent/sistent';
 
 export const SEVERITY = {
@@ -41,23 +40,23 @@ export const getStatusStyle = (theme: Theme) => ({
 export const SEVERITY_STYLE = {
   [SEVERITY.INFO]: {
     icon: InfoIcon,
-    color: NOTIFICATIONCOLORS.INFO,
-    darkColor: NOTIFICATIONCOLORS.INFO,
+    color: notificationColors.info.main,
+    darkColor: notificationColors.info.main,
   },
   [SEVERITY.ERROR]: {
     icon: ErrorIcon,
-    color: NOTIFICATIONCOLORS.ERROR,
-    darkColor: NOTIFICATIONCOLORS.ERROR_DARK,
+    color: notificationColors.error.main,
+    darkColor: notificationColors.error.dark,
   },
   [SEVERITY.WARNING]: {
     icon: AlertIcon,
-    color: NOTIFICATIONCOLORS.WARNING,
-    darkColor: NOTIFICATIONCOLORS.WARNING,
+    color: notificationColors.warning.main,
+    darkColor: notificationColors.warning.main,
   },
   [SEVERITY.SUCCESS]: {
     icon: InfoIcon,
-    color: NOTIFICATIONCOLORS.SUCCESS,
-    darkColor: NOTIFICATIONCOLORS.SUCCESS,
+    color: notificationColors.success.main,
+    darkColor: notificationColors.success.main,
   },
 };
 
@@ -70,15 +69,15 @@ export const eventDetailFormatterKey = ({
 }): string => `${action}-${category}`;
 
 export const EVENT_TYPE = {
-  DEPLOY_DESIGN: {
+  CatalogManagementDeployDesign: {
     category: 'pattern',
     action: 'deploy',
   },
-  UNDEPLOY_DESIGN: {
+  CatalogManagementUndeployDesign: {
     category: 'pattern',
     action: 'undeploy',
   },
-  VALIDATE_DESIGN: {
+  CatalogManagementValidateDesign: {
     category: 'pattern',
     action: 'validate',
   },

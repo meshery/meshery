@@ -19,14 +19,14 @@ vi.mock('@sistent/sistent', () => ({
       <span>{label}</span>
     </label>
   ),
-  Switch: ({ checked, onClick, disabled, ...rest }: any) => (
+  Switch: ({ checked, onClick, onChange, disabled, ...rest }: any) => (
     <input
       type="checkbox"
       data-testid="switch"
       checked={!!checked}
       onClick={onClick}
       disabled={disabled}
-      onChange={() => {}}
+      onChange={onChange}
       {...rest}
     />
   ),
@@ -40,6 +40,7 @@ vi.mock('../../constants/navigator', () => ({
   COMPONENTS: 'Components',
   RELATIONSHIPS: 'Relationships',
   REGISTRANTS: 'Registrants',
+  CONNECTIONS: 'Connections',
 }));
 
 vi.mock('@/utils/custom-search', () => ({
@@ -112,6 +113,10 @@ vi.mock('./ComponentTree', () => ({
 
 vi.mock('./RelationshipTree', () => ({
   default: (props: any) => <div data-testid="relationships-tree" data-len={props.data.length} />,
+}));
+
+vi.mock('./ConnectionDefinitionTree', () => ({
+  default: (props: any) => <div data-testid="connections-tree" data-len={props.data.length} />,
 }));
 
 import MesheryTreeView from './MesheryTreeView';

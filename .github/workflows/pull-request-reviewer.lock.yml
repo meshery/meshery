@@ -680,6 +680,13 @@ jobs:
         run: bash "${RUNNER_TEMP}/gh-aw/actions/audit_pre_agent_workspace.sh"
       - name: Execute GitHub Copilot CLI
         id: agentic_execution
+        # This is an advisory reviewer (safe-outputs failure reporting is fully
+        # disabled). A transient/systemic model-provider error - e.g. Copilot
+        # "429 quota exceeded" - must not hard-fail the PR's `agent` check.
+        # Tolerate the failure here (mirroring the detection-engine step below);
+        # the always()-guarded output/collation steps no-op on empty output.
+        # Preserve this on `gh aw compile` / upstream to gh-aw.
+        continue-on-error: true
         # Copilot CLI tool arguments (sorted):
         timeout-minutes: 20
         run: |

@@ -59,6 +59,15 @@ func (mh *MeshsyncDataHandler) GetBrokerHandler() broker.Handler {
 	return mh.broker
 }
 
+// IsConnected reports whether Meshery currently holds a live broker connection
+// for this connection — i.e. it is actually able to receive MeshSync data. This
+// is the authoritative "connected" signal, as opposed to re-probing the broker's
+// monitoring endpoint (which false-negatives when that endpoint isn't reachable
+// from Meshery even though the data path is up).
+func (mh *MeshsyncDataHandler) IsConnected() bool {
+	return mh != nil && mh.broker != nil && mh.broker.IsConnected()
+}
+
 func (mh *MeshsyncDataHandler) Run() error {
 	storeSubscriptionStatusChan := make(chan bool)
 	if mh.listenerWg == nil {

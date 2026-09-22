@@ -153,7 +153,7 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
       {
         component: (
           <div>
-            <Box display="flex" alignItems="center" mb={2}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               <Typography>
                 Please enter a unique <strong>Relationship Name</strong> for your relationship
                 definition.
@@ -289,12 +289,12 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
       {
         component: (
           <div>
-            <Box display="flex" alignItems="center">
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Typography>Define your relationship properties using the form below.</Typography>
             </Box>
 
             {selectedModel && meshmodelComponents[selectedModel] && (
-              <Box mb={3} mt={2}>
+              <Box sx={{ mb: 3, mt: 2 }}>
                 <Typography variant="subtitle1" mb={1}>
                   Selected Model: <strong>{selectedModel}</strong>
                 </Typography>
@@ -346,7 +346,7 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
       {
         component: (
           <div>
-            <Box display="flex" alignItems="center" mb={2}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               <Typography>Review the JSON output for your relationship definition.</Typography>
             </Box>
             <StyledSummaryBox>
@@ -366,7 +366,7 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
                 {jsonOutput || 'No JSON preview available. Please go back and try again.'}
               </pre>
             </StyledSummaryBox>
-            <Box mt={2} display="flex" justifyContent="center">
+            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
               <ModalButtonPrimary onClick={handleDownload} startIcon={<SaveAltIcon />}>
                 Download JSON
               </ModalButtonPrimary>

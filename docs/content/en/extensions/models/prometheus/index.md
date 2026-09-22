@@ -1,7 +1,7 @@
 ---
 title: Prometheus
 subtitle: Discover and connect to your Prometheus servers and Operators
-image: /extensions/models/prometheus/icons/color/prometheus-color.svg
+image: extensions/models/prometheus/icons/color/prometheus-color.svg
 aliases: /extensibility/integrations/prometheus
 docURL: https://docs.meshery.io/extensibility/integrations/prometheus
 description: 

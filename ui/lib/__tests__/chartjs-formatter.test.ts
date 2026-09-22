@@ -143,6 +143,18 @@ describe('getMetadata', () => {
     expect(md.url.display.value).toBe('https://raw.example.com');
   });
 
+  it('uses schema camelCase rawdata URL when supplied', () => {
+    const rawdata = [
+      {
+        name: 'Raw Title',
+        runnerResults: { URL: 'https://raw.example.com' },
+      },
+    ];
+    const md = getMetadata(rawdata, makeResult());
+    expect(md.title.display.value).toBe('Raw Title');
+    expect(md.url.display.value).toBe('https://raw.example.com');
+  });
+
   it('falls back to "No Title" / "No URL" when both are missing', () => {
     const res = makeResult({ Labels: '' });
     const md = getMetadata(null, res);
@@ -266,6 +278,13 @@ describe('makeTitle', () => {
 
   it('uses rawdata title and URL when supplied', () => {
     const rawdata = [{ name: 'RawName', runner_results: { URL: 'https://raw' } }];
+    const result = makeTitle(rawdata, makeResult());
+    expect(result).toContain('Title: RawName');
+    expect(result).toContain('URL: https://raw');
+  });
+
+  it('uses schema camelCase rawdata URL when supplied', () => {
+    const rawdata = [{ name: 'RawName', runnerResults: { URL: 'https://raw' } }];
     const result = makeTitle(rawdata, makeResult());
     expect(result).toContain('Title: RawName');
     expect(result).toContain('URL: https://raw');

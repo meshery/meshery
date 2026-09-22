@@ -1,7 +1,7 @@
 ---
 title: Telepresence
 subtitle: Collaborative and visual infrastructure as design for Telepresence
-image: /extensions/models/telepresence/icons/color/telepresence-color.svg
+image: extensions/models/telepresence/icons/color/telepresence-color.svg
 aliases: /extensibility/integrations/telepresence
 docURL: https://docs.meshery.io/extensibility/integrations/telepresence
 description: 

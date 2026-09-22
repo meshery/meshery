@@ -6,6 +6,10 @@ const canMock = vi.fn(() => true);
 
 vi.mock('@sistent/sistent', () => ({
   Box: ({ children }: any) => <div>{children}</div>,
+  crimson: { 40: '#F91313' },
+  InfoOutlinedIcon: () => <svg data-testid="info-outlined" />,
+  AccountTreeIcon: () => <svg data-testid="account-tree" />,
+  EditIcon: () => <svg data-testid="edit" />,
 }));
 
 vi.mock('react-moment', () => ({
@@ -16,8 +20,6 @@ vi.mock('@/assets/icons', () => ({
   GetApp: () => <svg data-testid="get-app" />,
   DoneAll: () => <svg data-testid="done-all" />,
   Public: () => <svg data-testid="public" />,
-  Edit: () => <svg data-testid="edit" />,
-  InfoOutlined: () => <svg data-testid="info-outlined" />,
 }));
 
 vi.mock('../../../public/static/img/UndeployIcon', () => ({
@@ -41,19 +43,6 @@ vi.mock('../../connections/common', () => ({
 
 vi.mock('@/utils/can', () => ({
   default: (...args: any[]) => canMock(...args),
-}));
-
-vi.mock('@/utils/permission_constants', () => ({
-  keys: {
-    EDIT_DESIGN: { action: 'edit', subject: 'design' },
-    CLONE_DESIGN: { action: 'clone', subject: 'design' },
-    VALIDATE_DESIGN: { action: 'validate', subject: 'design' },
-    UNDEPLOY_DESIGN: { action: 'undeploy', subject: 'design' },
-    DEPLOY_DESIGN: { action: 'deploy', subject: 'design' },
-    DOWNLOAD_A_DESIGN: { action: 'download', subject: 'design' },
-    DETAILS_OF_DESIGN: { action: 'details', subject: 'design' },
-    UNPUBLISH_DESIGN: { action: 'unpublish', subject: 'design' },
-  },
 }));
 
 vi.mock('@/assets/icons/CheckIcon', () => ({
@@ -109,7 +98,21 @@ const makeHandlers = () => ({
   handleDesignDownloadModal: vi.fn(),
   handleInfoModal: vi.fn(),
   handleUnpublishModal: vi.fn(),
+  handleEvaluateRelationship: vi.fn(),
   userCanEdit: (_: any) => true,
+});
+
+const makePermissions = () => ({
+  editDesign: true,
+  cloneDesign: true,
+  validateDesign: true,
+  evaluateRelationships: true,
+  undeployDesign: true,
+  deployDesign: true,
+  downloadDesign: true,
+  detailsOfDesign: true,
+  publishDesign: true,
+  unpublishDesign: true,
 });
 
 describe('PATTERN_COL_VIEWS', () => {
@@ -133,6 +136,7 @@ describe('buildPatternActions', () => {
       patterns: [{ id: 'p1' }],
       tableMeta: { rowIndex: 0 },
       handlers,
+      permissions: makePermissions(),
     });
     const labels = actions.map((a: any) => a.label);
     expect(labels).toContain('Edit');
@@ -149,6 +153,7 @@ describe('buildPatternActions', () => {
       patterns: [{ id: 'p1' }],
       tableMeta: { rowIndex: 0 },
       handlers: makeHandlers(),
+      permissions: makePermissions(),
     });
     expect(actions.map((a: any) => a.label)).toContain('Unpublish');
   });
@@ -161,6 +166,7 @@ describe('buildPatternActions', () => {
       patterns: [{ id: 'p1' }],
       tableMeta: { rowIndex: 0 },
       handlers,
+      permissions: makePermissions(),
     });
     const edit = actions.find((a: any) => a.label === 'Edit');
     expect(edit).toBeDefined();
@@ -172,7 +178,11 @@ describe('buildPatternActions', () => {
 describe('buildPatternColumns', () => {
   it('returns columns and renders an ActionPopover for the actions column', () => {
     const patterns = [{ id: 'p1', name: 'p', visibility: 'private', patternFile: '' }];
-    const columns = buildPatternColumns({ patterns, handlers: makeHandlers() });
+    const columns = buildPatternColumns({
+      patterns,
+      handlers: makeHandlers(),
+      permissions: makePermissions(),
+    });
 
     expect(columns.map((c: any) => c.name)).toEqual([
       'name',
@@ -189,7 +199,11 @@ describe('buildPatternColumns', () => {
 
   it('renders a Moment-formatted cell for created_at and updated_at', () => {
     const patterns = [{ id: 'p1', name: 'p', visibility: 'private', patternFile: '' }];
-    const columns = buildPatternColumns({ patterns, handlers: makeHandlers() });
+    const columns = buildPatternColumns({
+      patterns,
+      handlers: makeHandlers(),
+      permissions: makePermissions(),
+    });
     const createdAt = columns.find((c: any) => c.name === 'created_at');
     render(createdAt!.options.customBodyRender('2024-01-02'));
     expect(screen.getByTestId('moment')).toHaveTextContent('2024-01-02');
@@ -197,8 +211,8 @@ describe('buildPatternColumns', () => {
 });
 
 describe('buildPatternsTableOptions', () => {
-  it('returns a config preserving the supplied page, page size and counts', () => {
-    const options = buildPatternsTableOptions({
+  const build = (overrides: any = {}) =>
+    buildPatternsTableOptions({
       patterns: [],
       columns: [],
       count: 42,
@@ -206,7 +220,7 @@ describe('buildPatternsTableOptions', () => {
       page: 3,
       search: '',
       sortOrder: 'name asc',
-      user: null,
+      isLocalProvider: false,
       searchTimeout: { current: null },
       setPage: vi.fn(),
       setPageSize: vi.fn(),
@@ -215,8 +229,11 @@ describe('buildPatternsTableOptions', () => {
       setSelectedRowData: vi.fn(),
       deletePatterns: vi.fn(),
       showModal: vi.fn(),
-      initPatternsSubscription: vi.fn(),
+      ...overrides,
     });
+
+  it('returns a config preserving the supplied page, page size and counts', () => {
+    const options = build();
 
     expect(options.count).toBe(42);
     expect(options.rowsPerPage).toBe(10);
@@ -224,5 +241,10 @@ describe('buildPatternsTableOptions', () => {
     expect(options.sortOrder).toEqual({ name: 'name', direction: 'asc' });
     expect(options.print).toBe(false);
     expect(options.download).toBe(false);
+  });
+
+  it('disables sort on the local provider and enables it on a remote provider', () => {
+    expect(build({ isLocalProvider: true }).sort).toBe(false);
+    expect(build().sort).toBe(true);
   });
 });

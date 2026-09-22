@@ -1,13 +1,20 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import {
+  MODELS,
+  COMPONENTS,
+  RELATIONSHIPS,
+  REGISTRANTS,
+  CONNECTIONS,
+} from '../../constants/navigator';
 import {
   MeshModelToolbar,
   MainContainer,
   TreeWrapper,
   DetailsContainer,
   InnerContainer,
-  CardStyle,
+  WorkloadsContainer,
 } from '@/assets/styles/general/tool.styles';
+import TabCard from './TabCard';
 import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
 import { toLower } from 'lodash';
@@ -17,6 +24,12 @@ import {
   useLazyGetComponentsQuery,
   useLazyGetRelationshipsQuery,
   useLazyGetRegistrantsQuery,
+  useLazyGetConnectionDefinitionsQuery,
+  useGetMeshModelsQuery,
+  useGetComponentsQuery,
+  useGetRelationshipsQuery,
+  useGetRegistrantsQuery,
+  useGetConnectionDefinitionsQuery,
 } from '@/rtk-query/meshModel';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 import _ from 'lodash';
@@ -26,12 +39,15 @@ import {
   AddCircleIcon as AddIcon,
   ExternalLinkIcon as LinkIcon,
   FileUploadIcon as UploadIcon,
+  useMediaQuery,
 } from '@sistent/sistent';
+import { useTheme } from '@/theme';
 import { iconSmall } from 'css/icons.styles';
 import { useInfiniteScrollRef, useMeshModelComponentRouter } from './hooks';
 import ImportModelModal from './ImportModelModal';
 import CreateModelModal from './CreateModelModal';
 import CreateRelationshipModal from './CreateRelationshipModal';
+import MeshModelMobileDetails from './MeshModelMobileDetails';
 
 type MeshModelComponentProps = {
   settingsRouter?: (_router: any) => { handleChangeSelectedTab?: (_tab: string) => void };
@@ -46,6 +62,8 @@ const MeshModelComponent_ = ({
   externalSearchText = null, // External search text from modal
   externalSelectedItemUUID = null, // External selected item UUID from modal
 }: MeshModelComponentProps) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
   // -> use settingsRouter when not in modal mode (Settings page)
   const { handleChangeSelectedTab } =
@@ -59,6 +77,7 @@ const MeshModelComponent_ = ({
     Components: 0,
     Relationships: 0,
     Registrants: 0,
+    Connections: 0,
   });
 
   // Use external search text if provided, otherwise use query from router
@@ -78,6 +97,7 @@ const MeshModelComponent_ = ({
   const [registrantFilters, setRegistrantsFilters] = useState<{ page: number }>({ page: 0 });
   const [componentsFilters, setComponentsFilters] = useState<{ page: number }>({ page: 0 });
   const [relationshipsFilters, setRelationshipsFilters] = useState<{ page: number }>({ page: 0 });
+  const [connectionsFilters, setConnectionsFilters] = useState<{ page: number }>({ page: 0 });
 
   /**
    * RTK Lazy Queries
@@ -86,19 +106,44 @@ const MeshModelComponent_ = ({
   const [getComponentsData, componentsRes] = useLazyGetComponentsQuery();
   const [getRelationshipsData, relationshipsRes] = useLazyGetRelationshipsQuery();
   const [getRegistrantsData, registrantsRes] = useLazyGetRegistrantsQuery();
+  const [getConnectionDefinitionsData, connectionsRes] = useLazyGetConnectionDefinitionsQuery();
+
+  /**
+   * RTK Queries for counts
+   */
+  const { data: modelsCountData } = useGetMeshModelsQuery({
+    params: { page: 0, pagesize: 1, components: false, relationships: false },
+  });
+  const { data: componentsCountData } = useGetComponentsQuery({
+    params: { page: 0, pagesize: 1, trim: true },
+  });
+  const { data: relationshipsCountData } = useGetRelationshipsQuery({
+    params: { page: 0, pagesize: 1 },
+  });
+  const { data: registrantsCountData } = useGetRegistrantsQuery({
+    params: { page: 0, pagesize: 1 },
+  });
+  const { data: connectionsCountData } = useGetConnectionDefinitionsQuery({
+    params: { page: 0, pagesize: 1 },
+  });
 
   const modelsData = modelsRes.data;
   const registrantsData = registrantsRes.data;
   const componentsData = componentsRes.data;
   const relationshipsData = relationshipsRes.data;
+  const connectionsData = connectionsRes.data;
 
-  const hasMoreModels = modelsData?.totalCount > modelsData?.pageSize * modelsData?.page;
+  const hasMoreModels =
+    modelsData?.totalCount > modelsData?.pageSize * ((modelsData?.page || 0) + 1);
   const hasMoreRegistrants =
-    registrantsData?.totalCount > registrantsData?.pageSize * registrantsData?.page;
+    registrantsData?.totalCount > registrantsData?.pageSize * ((registrantsData?.page || 0) + 1);
   const hasMoreComponents =
-    componentsData?.totalCount > componentsData?.pageSize * componentsData?.page;
+    componentsData?.totalCount > componentsData?.pageSize * ((componentsData?.page || 0) + 1);
   const hasMoreRelationships =
-    componentsData?.totalCount > relationshipsData?.pageSize * relationshipsData?.page;
+    relationshipsData?.totalCount >
+    relationshipsData?.pageSize * ((relationshipsData?.page || 0) + 1);
+  const hasMoreConnections =
+    connectionsData?.totalCount > connectionsData?.pageSize * ((connectionsData?.page || 0) + 1);
 
   const loadNextModelsPage = useCallback(() => {
     if (modelsRes.isLoading || modelsRes.isFetching || !hasMoreModels) {
@@ -127,6 +172,13 @@ const MeshModelComponent_ = ({
     }
     setRelationshipsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
   }, [relationshipsRes, hasMoreRelationships]);
+
+  const loadNextConnectionsPage = useCallback(() => {
+    if (connectionsRes.isLoading || connectionsRes.isFetching || !hasMoreConnections) {
+      return;
+    }
+    setConnectionsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
+  }, [connectionsRes, hasMoreConnections]);
   /**
    * IntersectionObservers
    */
@@ -134,6 +186,7 @@ const MeshModelComponent_ = ({
   const lastComponentRef = useInfiniteScrollRef(loadNextComponentsPage);
   const lastRelationshipRef = useInfiniteScrollRef(loadNextRelationshipsPage);
   const lastRegistrantRef = useInfiniteScrollRef(loadNextRegistrantsPage);
+  const lastConnectionRef = useInfiniteScrollRef(loadNextConnectionsPage);
 
   const fetchData = useCallback(async () => {
     try {
@@ -143,8 +196,8 @@ const MeshModelComponent_ = ({
           response = await getMeshModelsData(
             {
               params: {
-                page: searchText ? 0 : modelFilters.page,
-                pagesize: searchText ? 'all' : 25,
+                page: searchText || checked ? 0 : modelFilters.page,
+                pagesize: searchText || checked ? 'all' : 25,
                 components: false,
                 relationships: false,
                 search: searchText || '',
@@ -182,6 +235,24 @@ const MeshModelComponent_ = ({
           response = await getRegistrants();
 
           break;
+        case CONNECTIONS: {
+          const res = await getConnectionDefinitionsData(
+            {
+              params: {
+                page: searchText ? 0 : connectionsFilters.page,
+                pagesize: searchText ? 'all' : rowsPerPage,
+                search: searchText || '',
+              },
+            },
+            true,
+          );
+          // The endpoint returns the page under `connectionDefinitions`; normalize
+          // it to the view key (`connections`) the generic handler below expects.
+          response = res?.data
+            ? { ...res, data: { ...res.data, connections: res.data.connectionDefinitions || [] } }
+            : res;
+          break;
+        }
         default:
           break;
       }
@@ -190,16 +261,19 @@ const MeshModelComponent_ = ({
         // Avoid appending data to the previous dataset.
         // preventing duplicate entries and ensuring the UI reflects the API's response accurately.
         // For instance, during a search, display the data returned by the API instead of appending it to the previous results.
-        let newData = [];
-        if (response.data[view.toLowerCase()]) {
-          newData =
-            searchText || view === RELATIONSHIPS
-              ? [...response.data[view.toLowerCase()]]
-              : [...resourcesDetail, ...response.data[view.toLowerCase()]];
-        }
-
-        // Set unique data
-        setResourcesDetail(_.uniqWith(newData, _.isEqual));
+        // Use functional setState so we don't need resourcesDetail in the
+        // useCallback dependency array (which caused a stale-closure re-fetch
+        // loop and the 2304ms Redux middleware warning).
+        setResourcesDetail((prev) => {
+          const incoming = response.data[view.toLowerCase()];
+          const combined =
+            searchText || (checked && view === MODELS) || view === RELATIONSHIPS
+              ? [...incoming]
+              : [...prev, ...incoming];
+          // Use _.uniqWith for safe deep equality deduplication, as
+          // not all objects (e.g. static seed files) carry unique UUIDs.
+          return _.uniqWith(combined, _.isEqual);
+        });
 
         // Deeplink may contain higher rowsPerPage val for first time fetch
         // In such case set it to default as 14 after UI renders
@@ -217,13 +291,16 @@ const MeshModelComponent_ = ({
     getComponentsData,
     getRelationshipsData,
     getRegistrantsData,
+    getConnectionDefinitionsData,
     modelFilters,
     registrantFilters,
+    connectionsFilters,
     view,
     page,
     rowsPerPage,
     searchText,
-    resourcesDetail,
+    // resourcesDetail intentionally omitted — read via functional setState above
+    // to avoid stale-closure re-fetch loop and O(n²) _.isEqual dedup.
     checked,
   ]);
 
@@ -289,6 +366,7 @@ const MeshModelComponent_ = ({
     setRegistrantsFilters({ page: 0 });
     setComponentsFilters({ page: 0 });
     setRelationshipsFilters({ page: 0 });
+    setConnectionsFilters({ page: 0 });
     setPage({
       Models: 0,
       Components: 0,
@@ -316,6 +394,11 @@ const MeshModelComponent_ = ({
     }
   };
 
+  // Memoize so MesheryTreeView receives the same array reference when nothing
+  // has changed. This is what makes the O(1) referential guard in
+  // MesheryTreeView.tsx safe (prevState.data === data).
+  const treeData = useMemo(modifyData, [resourcesDetail, view, checked]);
+
   useEffect(() => {
     if (searchText !== null && page[view] > 0) {
       setPage({
@@ -329,12 +412,23 @@ const MeshModelComponent_ = ({
 
   useEffect(() => {
     fetchData();
-  }, [view, page, rowsPerPage, checked, searchText, modelFilters, registrantFilters]);
+  }, [
+    view,
+    page,
+    rowsPerPage,
+    checked,
+    searchText,
+    modelFilters,
+    registrantFilters,
+    connectionsFilters,
+  ]);
 
-  // Update view when external view changes (for modal usage)
+  // Sync view state with externalView or selectedTab (for modal or route usage)
   useEffect(() => {
-    if (externalView && externalView !== view) {
-      setView(externalView);
+    const newView =
+      externalView ?? (typeof selectedTab === 'string' ? selectedTab : selectedTab?.[0]);
+    if (newView && newView !== view) {
+      setView(newView);
       setResourcesDetail([]);
       setSearchText(externalSearchText || null);
       setModelsFilters({ page: 0 });
@@ -352,7 +446,7 @@ const MeshModelComponent_ = ({
         data: {},
       });
     }
-  }, [externalView, externalSearchText]);
+  }, [externalView, selectedTab, externalSearchText]);
 
   useEffect(() => {
     if (externalSearchText !== null && externalSearchText !== searchText) {
@@ -361,7 +455,7 @@ const MeshModelComponent_ = ({
   }, [externalSearchText]);
 
   return (
-    <div data-test="workloads">
+    <WorkloadsContainer data-test="workloads">
       <ImportModelModal
         isImportModalOpen={isImportModalOpen}
         setIsImportModalOpen={setIsImportModalOpen}
@@ -388,27 +482,33 @@ const MeshModelComponent_ = ({
           <InnerContainer>
             <TabCard
               label="Models"
-              count={modelsData?.totalCount || 0}
+              count={modelsData?.totalCount ?? modelsCountData?.totalCount ?? 0}
               active={view === MODELS}
               onClick={() => handleTabClick(MODELS)}
             />
             <TabCard
               label="Components"
-              count={componentsData?.totalCount || 0}
+              count={componentsData?.totalCount ?? componentsCountData?.totalCount ?? 0}
               active={view === COMPONENTS}
               onClick={() => handleTabClick(COMPONENTS)}
             />
             <TabCard
               label="Relationships"
-              count={relationshipsData?.totalCount || 0}
+              count={relationshipsData?.totalCount ?? relationshipsCountData?.totalCount ?? 0}
               active={view === RELATIONSHIPS}
               onClick={() => handleTabClick(RELATIONSHIPS)}
             />
             <TabCard
               label="Registrants"
-              count={registrantsData?.totalCount || 0}
+              count={registrantsData?.totalCount ?? registrantsCountData?.totalCount ?? 0}
               active={view === REGISTRANTS}
               onClick={() => handleTabClick(REGISTRANTS)}
+            />
+            <TabCard
+              label="Connections"
+              count={connectionsData?.totalCount ?? connectionsCountData?.totalCount ?? 0}
+              active={view === CONNECTIONS}
+              onClick={() => handleTabClick(CONNECTIONS)}
             />
           </InnerContainer>
         )}
@@ -426,7 +526,7 @@ const MeshModelComponent_ = ({
             }}
           >
             <MesheryTreeView
-              data={modifyData()}
+              data={treeData}
               view={view}
               setSearchText={setSearchText}
               setPage={setPage}
@@ -444,29 +544,36 @@ const MeshModelComponent_ = ({
                 [REGISTRANTS]: lastRegistrantRef,
                 [COMPONENTS]: lastComponentRef,
                 [RELATIONSHIPS]: lastRelationshipRef,
+                [CONNECTIONS]: lastConnectionRef,
               }}
               isFetching={{
                 [MODELS]: modelsRes.isFetching,
                 [REGISTRANTS]: registrantsRes.isFetching,
                 [COMPONENTS]: componentsRes.isFetching,
                 [RELATIONSHIPS]: relationshipsRes.isFetching,
+                [CONNECTIONS]: connectionsRes.isFetching,
               }}
               isLoading={{
                 [MODELS]: modelsRes.isLoading,
                 [REGISTRANTS]: registrantsRes.isLoading,
                 [COMPONENTS]: componentsRes.isLoading,
                 [RELATIONSHIPS]: relationshipsRes.isLoading,
+                [CONNECTIONS]: connectionsRes.isLoading,
               }}
             />
           </DetailsContainer>
-          <MeshModelDetails
-            view={view}
-            setShowDetailsData={setShowDetailsData}
-            showDetailsData={showDetailsData}
-          />
+          {isMobile ? (
+            <MeshModelMobileDetails
+              view={view}
+              showDetailsData={showDetailsData}
+              setShowDetailsData={setShowDetailsData}
+            />
+          ) : (
+            <MeshModelDetails view={view} showDetailsData={showDetailsData} />
+          )}
         </TreeWrapper>
       </MainContainer>
-    </div>
+    </WorkloadsContainer>
   );
 };
 
@@ -476,9 +583,10 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
       <div
         style={{
           display: 'flex',
-          justifyContent: 'space-between',
+          justifyContent: 'flex-start',
           alignItems: 'center',
-          gap: '1rem', // Add some space between buttons
+          gap: '0.75rem',
+          flexWrap: 'wrap',
         }}
       >
         {view === MODELS && (
@@ -534,21 +642,6 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
   );
 };
 
-const TabCard = ({ label, count, active, onClick }) => {
-  return (
-    <CardStyle isSelected={active} elevation={3} onClick={onClick}>
-      <span
-        style={{
-          fontSize: '1rem',
-          marginLeft: '4px',
-        }}
-      >
-        {`(${count})`}
-      </span>
-      {label}
-    </CardStyle>
-  );
-};
 const MeshModelComponent = (props) => {
   return (
     <NoSsr>

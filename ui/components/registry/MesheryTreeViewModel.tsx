@@ -53,7 +53,7 @@ const MesheryTreeViewModel = ({
       ))}
       <div ref={lastModelRef} style={{ height: '3rem' }}>
         {isModelFetching && (
-          <Box display="flex" justifyContent="center" alignItems="center" padding={2}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 2 }}>
             <CircularProgress size={24} />
           </Box>
         )}

@@ -148,18 +148,6 @@ func ToMapStringInterface(mp interface{}) map[string]interface{} {
 	return res
 }
 
-func IsClosed[K any](ch chan K) bool {
-	if ch == nil {
-		return true
-	}
-	select {
-	case <-ch:
-		return true
-	default:
-	}
-	return false
-}
-
 const UI = "../../ui/public/static/img/meshmodels" //Relative to cmd/main.go
 var UISVGPaths = make([]string, 1)
 
@@ -338,7 +326,7 @@ func GetComponentFieldPathFromK8sFieldPath(path string) (newpath string) {
 	return fmt.Sprintf("%s.%s", "settings", path)
 }
 
-// Prunes the diff part present in the k8s response message.
+// FormatK8sMessage prunes the diff part present in the k8s response message.
 // Diff corresponds to the previous change and applied change, and doesn't contain any info which can be helpful to the user.
 // If we want we can show this in a CodeEditor component.
 func FormatK8sMessage(message string) string {

@@ -4,6 +4,7 @@ import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import {
   CustomColumnVisibilityControl,
+  DataTableToolbar,
   ResponsiveDataTable,
   SearchBar,
   UniversalFilter,
@@ -13,7 +14,6 @@ import {
 import { MeshSyncDataFormatter } from '../metadata';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { DefaultTableCell, SortableTableCell } from '../common';
-import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import {
   JsonParse,
   camelcaseToSnakecase,
@@ -43,7 +43,7 @@ const ACTION_TYPES = {
 };
 
 export default function MeshSyncTable(props) {
-  const { selectedResourceId, updateUrlWithResourceId } = props;
+  const { selectedResourceId, updateUrlWithResourceId, tabs } = props;
   const callbackRef = useRef();
   const [openRegistrationModal, setRegistrationModal] = useState(false);
   const [page, setPage] = useState(0);
@@ -112,9 +112,9 @@ export default function MeshSyncTable(props) {
     order: sortOrder,
     clusterIds: clusterIds,
   });
-  const availableKinds = (clusterSummary?.kinds || []).map((kind) => kind.Kind);
+  const availableKinds = (clusterSummary?.kinds || []).map((kind) => kind.kind);
   const availableModels = [
-    ...new Set((clusterSummary?.kinds || []).map((kind) => kind.Model).filter(Boolean)),
+    ...new Set((clusterSummary?.kinds || []).map((kind) => kind.model).filter(Boolean)),
   ];
   const availableNamespaces = clusterSummary?.namespaces || [];
   const meshSyncResources = meshSyncData?.resources || [];
@@ -689,39 +689,39 @@ export default function MeshSyncTable(props) {
 
   return (
     <>
-      <ToolWrapper style={{ marginBottom: '5px', marginTop: '-30px' }}>
-        <div
-          style={{
-            display: 'flex',
-            borderRadius: '0.5rem 0.5rem 0 0',
-            width: '100%',
-            justifyContent: 'end',
-          }}
-        >
-          <SearchBar
-            onSearch={(value) => {
-              setSearch(value);
-            }}
-            expanded={isSearchExpanded}
-            setExpanded={setIsSearchExpanded}
-            placeholder="Search Connections..."
-          />
+      {tabs}
 
+      <DataTableToolbar
+        search={
+          <div data-testid="MeshSyncTable-search">
+            <SearchBar
+              onSearch={(value) => {
+                setSearch(value);
+              }}
+              expanded={isSearchExpanded}
+              setExpanded={setIsSearchExpanded}
+              placeholder="Search MeshSync Resources..."
+            />
+          </div>
+        }
+        filter={
           <UniversalFilter
-            id="ref"
+            id="meshsync-table-filter"
             filters={filters}
             selectedFilters={selectedFilters}
             setSelectedFilters={setSelectedFilters}
             handleApplyFilter={handleApplyFilter}
           />
-
+        }
+        columnVisibility={
           <CustomColumnVisibilityControl
-            id="ref"
+            style={{ zIndex: 1300 }}
+            id="meshsync-table-column-visibility"
             columns={getVisibilityColums(columns)}
             customToolsProps={{ columnVisibility, setColumnVisibility }}
           />
-        </div>
-      </ToolWrapper>
+        }
+      />
 
       {!meshSyncResources || meshSyncResources.length === 0 ? (
         <MeshSyncEmptyState />

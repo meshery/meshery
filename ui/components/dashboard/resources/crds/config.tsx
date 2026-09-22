@@ -6,11 +6,11 @@ import { Title } from '../../view';
 import { TooltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
 import useKubernetesHook from '@/utils/hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
-import { CONNECTION_KINDS } from '../../../../utils/Enum';
+import { CoreConnectionKinds } from '../../../../utils/Enum';
 import { FormatId } from '@/components/data-formatter';
 import { useGetMeshSyncResourceKindsQuery } from '@/rtk-query/meshsync';
 
-export const CustomResourceConfig = (
+export const useCustomResourceConfig = (
   switchView,
   meshSyncResources,
   k8sConfig,
@@ -38,9 +38,9 @@ export const CustomResourceConfig = (
   const customResourceConfigs = {};
 
   customResources?.forEach((resource) => {
-    customResourceConfigs[resource?.Kind] = {
-      name: resource?.Kind,
-      model: resource?.Model, // model is used to identify the resource image
+    customResourceConfigs[resource?.kind] = {
+      name: resource?.kind,
+      model: resource?.model, // model is used to identify the resource image
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
@@ -74,8 +74,8 @@ export const CustomResourceConfig = (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   value={value}
-                  kind={resource?.Kind}
-                  model={resource?.Model}
+                  kind={resource?.kind}
+                  model={resource?.model}
                 />
               );
             },
@@ -145,7 +145,7 @@ export const CustomResourceConfig = (
                     title={context.name}
                     iconSrc={
                       connectionMetadataState
-                        ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                        ? connectionMetadataState[CoreConnectionKinds.kubernetes]?.icon
                         : ''
                     }
                     handlePing={() => ping(context.name, context.server, context.connectionId)}

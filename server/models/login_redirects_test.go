@@ -49,7 +49,7 @@ func TestResolvePostLoginRedirect(t *testing.T) {
 		},
 		// Regression coverage: /user/login and /api/user/token are auth
 		// initiation paths. Redirecting to them after a successful token
-		// exchange re-enters the OAuth dance and caused Kanvas to hang on
+		// exchange re-enters the OAuth dance and caused to hang on
 		// the loading splash indefinitely (meshery-server-1345 followed by
 		// a second InitiateLogin in the same second).
 		{
@@ -59,12 +59,12 @@ func TestResolvePostLoginRedirect(t *testing.T) {
 		},
 		{
 			name:     "/user/login with query falls back",
-			rawRef:   "/user/login?provider=Layer5",
+			rawRef:   "/user/login?provider=Meshery",
 			expected: fallback,
 		},
 		{
 			name:     "encoded /user/login ref falls back",
-			rawRef:   base64.RawURLEncoding.EncodeToString([]byte("/user/login?provider=Layer5")),
+			rawRef:   base64.RawURLEncoding.EncodeToString([]byte("/user/login?provider=Meshery")),
 			expected: fallback,
 		},
 		{
@@ -96,7 +96,7 @@ func TestSelectPostLoginRefValue(t *testing.T) {
 
 	const cookieName = "playground.meshery.io_ref"
 	const cookieValue = "L2V4dGVuc2lvbi9tZXNobWFw" // base64 of /extension/meshmap
-	const queryValue = "L2Rhc2hib2FyZA"             // base64 of /dashboard
+	const queryValue = "L2Rhc2hib2FyZA"            // base64 of /dashboard
 
 	tests := []struct {
 		name     string

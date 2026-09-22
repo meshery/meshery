@@ -56,10 +56,6 @@ vi.mock('../../../machines/validator/designValidator', () => ({
   useIsValidatingDryRun: vi.fn(),
 }));
 
-vi.mock('@/themes/index', () => ({
-  NOTIFICATIONCOLORS: { ERROR_DARK: '#dc0', SUCCESS_V2: '#0f0' },
-}));
-
 vi.mock('../../data-formatter', () => ({
   FormatStructuredData: ({ data }: any) => (
     <pre data-testid="structured">{JSON.stringify(data)}</pre>

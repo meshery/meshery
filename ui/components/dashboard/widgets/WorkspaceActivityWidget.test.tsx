@@ -5,6 +5,8 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 
 let workspacesQueryReturn: {
   data?: { workspaces?: Array<{ id: string; name: string }> };
+  isError?: boolean;
+  isLoading?: boolean;
 } = { data: { workspaces: [] } };
 
 let eventsQueryReturn: {
@@ -59,11 +61,25 @@ vi.mock('@sistent/sistent', () => ({
   },
 }));
 
+const widgetErrorFallbackSpy = vi.fn();
+
+vi.mock('./WidgetErrorFallback', () => ({
+  default: (props: { widgetTitle: string; message?: string }) => {
+    widgetErrorFallbackSpy(props);
+    return (
+      <div data-testid="widget-error-fallback" data-title={props.widgetTitle}>
+        {props.message}
+      </div>
+    );
+  },
+}));
+
 import WorkspaceActivityWidget from './WorkspaceActivityWidget';
 
 describe('WorkspaceActivityWidget', () => {
   beforeEach(() => {
     activityCardSpy.mockReset();
+    widgetErrorFallbackSpy.mockReset();
     workspacesQueryReturn = {
       data: {
         workspaces: [
@@ -71,6 +87,8 @@ describe('WorkspaceActivityWidget', () => {
           { id: 'ws-2', name: 'WS Two' },
         ],
       },
+      isError: false,
+      isLoading: false,
     };
     eventsQueryReturn = {
       data: { data: [{ id: 'evt-1' }, { id: 'evt-2' }] },
@@ -117,5 +135,15 @@ describe('WorkspaceActivityWidget', () => {
     workspacesQueryReturn = { data: { workspaces: [] } };
     render(<WorkspaceActivityWidget />);
     expect(screen.getByTestId('activity-card')).toBeInTheDocument();
+  });
+
+  it('shows the error fallback when the workspaces query fails', () => {
+    workspacesQueryReturn = { isError: true };
+    render(<WorkspaceActivityWidget />);
+    expect(screen.getByTestId('widget-error-fallback')).toHaveAttribute(
+      'data-title',
+      'Workspace Activity',
+    );
+    expect(screen.queryByTestId('activity-card')).not.toBeInTheDocument();
   });
 });

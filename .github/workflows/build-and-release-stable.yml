@@ -65,7 +65,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@master
         with:
-          go-version: "1.25"
+          go-version-file: go.mod
       - name: goreleaser with tag
         uses: goreleaser/goreleaser-action@v6
         env:

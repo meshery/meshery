@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
-  ChevronLeft,
-  ChevronRight,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   Grid2,
   L5DeleteIcon,
   Modal,
@@ -13,10 +13,11 @@ import {
   ModalButtonSecondary,
   useTheme,
   ErrorBoundary,
+  useHasPermission,
 } from '@sistent/sistent';
 import { useDeleteWorkspaceMutation } from '@/rtk-query/workspace';
-import { keys } from '@/utils/permission_constants';
-import CAN from '@/utils/can';
+import { Keys } from '@meshery/schemas/permissions';
+
 import { useNotificationHandlers } from '@/utils/hooks/useNotification';
 import { UserCommonBox } from './styles';
 import MesheryWorkspaceCard from './MesheryWorkspaceCard';
@@ -33,6 +34,7 @@ const WorkspaceGridView = ({
   const [deleteWorkspacesModal, setDeleteWorkspacesModal] = useState(false);
   const [selectedWorkspaces, setSelectedWorkspaces] = useState([]);
   const [deleteWorkspace] = useDeleteWorkspaceMutation();
+  const isDeleteAllowed = useHasPermission(Keys.WorkspaceManagementDeleteWorkspace);
 
   const handleDeleteWorkspacesModalClose = () => {
     setDeleteWorkspacesModal(false);
@@ -42,14 +44,16 @@ const WorkspaceGridView = ({
     setDeleteWorkspacesModal(true);
   };
 
-  const { handleSuccess, handleError } = useNotificationHandlers();
+  const { handleSuccess, notifyApiError } = useNotificationHandlers();
   const handleDeleteWorkspace = (id) => {
     deleteWorkspace({
       workspaceId: id,
     })
       .unwrap()
       .then(() => handleSuccess(`Workspace deleted`))
-      .catch((error) => handleError(`Workspace Delete Error: ${error?.data}`));
+      // `${error?.data}` rendered the JSON error envelope as "[object Object]".
+      // notifyApiError unpacks the MeshKit code, cause and remediation instead.
+      .catch((error) => notifyApiError(error, 'Unable to delete workspace'));
   };
 
   const handleBulkDeleteEnv = () => {
@@ -92,11 +96,7 @@ const WorkspaceGridView = ({
 
             <L5DeleteIcon
               onClick={handleDeleteWorkspacesModalOpen}
-              disabled={
-                selectedWorkspaces.length > 0
-                  ? !CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject)
-                  : true
-              }
+              disabled={selectedWorkspaces.length > 0 ? !isDeleteAllowed : true}
             />
           </UserCommonBox>
         )}
@@ -128,11 +128,14 @@ const WorkspaceGridView = ({
           onChange={debounce((_, page) => setPage(page - 1), 150)}
           boundaryCount={3}
           renderItem={(item) => (
-            <PaginationItem slots={{ previous: ChevronLeft, next: ChevronRight }} {...item} />
+            <PaginationItem
+              slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
+              {...item}
+            />
           )}
         />
       </Grid2>
-      {CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject) && (
+      {isDeleteAllowed && (
         <Modal
           open={deleteWorkspacesModal}
           closeModal={handleDeleteWorkspacesModalClose}

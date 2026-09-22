@@ -6,6 +6,15 @@ linters:
   enable:
     - forbidigo
   settings:
+    staticcheck:
+      checks:
+        - all
+        - "-ST1000" # temporarily disabled.
+        - "-ST1003" # temporarily disabled.
+        - "-ST1005" # temporarily disabled.
+        - "-ST1020" # temporarily disabled.
+        - "-ST1021" # temporarily disabled.
+        - "-ST1022" # temporarily disabled.
     forbidigo:
       forbid:
         - pattern: '^http\.Error$'

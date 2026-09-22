@@ -41,11 +41,11 @@ vi.mock('./mutating-webhook-configuration-columns', () => ({
   }),
 }));
 
-import { ConfigurationTableConfig } from './config';
+import { useConfigurationTableConfig } from './config';
 
-describe('ConfigurationTableConfig', () => {
+describe('useConfigurationTableConfig', () => {
   it('exposes the canonical configuration workload configs', () => {
-    const result = ConfigurationTableConfig(vi.fn(), [], {}, {}, 'ConfigMap');
+    const result = useConfigurationTableConfig(vi.fn(), [], {}, {}, 'ConfigMap');
     expect(Object.keys(result)).toEqual([
       'ConfigMap',
       'Secret',

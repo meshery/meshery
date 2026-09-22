@@ -7,8 +7,8 @@ vi.mock('../../lib/data-fetch', () => ({
 }));
 
 vi.mock('../../constants/endpoints', () => ({
-  MESHMODEL_ENDPOINT: '/api/meshmodels/models',
-  MESHMODEL_COMPONENT_ENDPOINT: '/api/meshmodels',
+  REGISTRY_MODELS_ENDPOINT: '/api/registry/models',
+  REGISTRY_ENDPOINT: '/api/registry',
 }));
 
 import {
@@ -38,7 +38,7 @@ describe('api/meshmodel', () => {
       await getMeshModels();
       expect(promisifiedDataFetch).toHaveBeenCalledTimes(1);
       const url = promisifiedDataFetch.mock.calls[0][0] as string;
-      expect(url).toContain('/api/meshmodels/models');
+      expect(url).toContain('/api/registry/models');
       expect(url).toContain('page=1');
       expect(url).toContain('pagesize=all');
       expect(url).toContain('trim=true');
@@ -71,23 +71,23 @@ describe('api/meshmodel', () => {
     it('builds component-by-model URL with defaults', async () => {
       await getComponentFromModelApi('istio');
       expect(promisifiedDataFetch).toHaveBeenCalledWith(
-        '/api/meshmodels/models/istio/components?pagesize=all&trim=true',
+        '/api/registry/models/istio/components?pagesize=all&trim=true',
       );
     });
 
     it('accepts custom pageSize and trim values', async () => {
       await getComponentFromModelApi('linkerd', 50, false);
       expect(promisifiedDataFetch).toHaveBeenCalledWith(
-        '/api/meshmodels/models/linkerd/components?pagesize=50&trim=false',
+        '/api/registry/models/linkerd/components?pagesize=50&trim=false',
       );
     });
   });
 
   describe('getDuplicateModels', () => {
-    it('queries the model endpoint with a version query string', async () => {
+    it('queries the model endpoint with a version query string and no trailing whitespace', async () => {
       await getDuplicateModels('istio', '1.0.0');
       const arg = promisifiedDataFetch.mock.calls[0][0] as string;
-      expect(arg.startsWith('/api/meshmodels/models/istio?version=1.0.0')).toBe(true);
+      expect(arg).toBe('/api/registry/models/istio?version=1.0.0');
     });
   });
 
@@ -95,14 +95,14 @@ describe('api/meshmodel', () => {
     it('encodes componentKind, apiVersion and modelName', async () => {
       await getDuplicateComponents('Pod', 'v1', 'k8s');
       expect(promisifiedDataFetch).toHaveBeenCalledWith(
-        '/api/meshmodels/components/Pod?apiVersion=v1&model=k8s',
+        '/api/registry/components/Pod?apiVersion=v1&model=k8s',
       );
     });
 
     it('URL-encodes special characters in apiVersion and modelName', async () => {
       await getDuplicateComponents('Pod', 'v1/beta', 'k8s core');
       expect(promisifiedDataFetch).toHaveBeenCalledWith(
-        '/api/meshmodels/components/Pod?apiVersion=v1%2Fbeta&model=k8s+core',
+        '/api/registry/components/Pod?apiVersion=v1%2Fbeta&model=k8s+core',
       );
     });
   });
@@ -111,14 +111,14 @@ describe('api/meshmodel', () => {
     it('uses default pagination values', async () => {
       await getMeshModelRegistrants();
       expect(promisifiedDataFetch).toHaveBeenCalledWith(
-        '/api/meshmodels/registrants?page=1&pageSize=all',
+        '/api/registry/registrants?page=1&pageSize=all',
       );
     });
 
     it('forwards custom pagination values', async () => {
       await getMeshModelRegistrants(7, 10);
       expect(promisifiedDataFetch).toHaveBeenCalledWith(
-        '/api/meshmodels/registrants?page=7&pageSize=10',
+        '/api/registry/registrants?page=7&pageSize=10',
       );
     });
   });
@@ -127,27 +127,27 @@ describe('api/meshmodel', () => {
     it('builds versioned URL with all parameters', async () => {
       await getVersionedComponentFromModel('istio', '1.18', 25, false);
       expect(promisifiedDataFetch).toHaveBeenCalledWith(
-        '/api/meshmodels/models/istio/components?version=1.18&pagesize=25&trim=false',
+        '/api/registry/models/istio/components?version=1.18&pagesize=25&trim=false',
       );
     });
 
     it('uses defaults for pageSize and trim', async () => {
       await getVersionedComponentFromModel('istio', '1.18');
       expect(promisifiedDataFetch).toHaveBeenCalledWith(
-        '/api/meshmodels/models/istio/components?version=1.18&pagesize=all&trim=true',
+        '/api/registry/models/istio/components?version=1.18&pagesize=all&trim=true',
       );
     });
   });
 
   describe('paginated detail endpoints', () => {
-    it('getComponentsDetail builds /api/meshmodels/components URL', async () => {
+    it('getComponentsDetail builds /api/registry/components URL', async () => {
       await getComponentsDetail(3);
-      expect(promisifiedDataFetch).toHaveBeenCalledWith('/api/meshmodels/components?page=3');
+      expect(promisifiedDataFetch).toHaveBeenCalledWith('/api/registry/components?page=3');
     });
 
-    it('getRelationshipsDetail builds /api/meshmodels/relationships URL', async () => {
+    it('getRelationshipsDetail builds /api/registry/relationships URL', async () => {
       await getRelationshipsDetail(2);
-      expect(promisifiedDataFetch).toHaveBeenCalledWith('/api/meshmodels/relationships?page=2');
+      expect(promisifiedDataFetch).toHaveBeenCalledWith('/api/registry/relationships?page=2');
     });
   });
 
@@ -155,28 +155,28 @@ describe('api/meshmodel', () => {
     it('emits no version/apiVersion query when both are absent', async () => {
       await getMeshModelComponent('istio', 'Service', undefined, undefined);
       expect(promisifiedDataFetch).toHaveBeenCalledWith(
-        '/api/meshmodels/models/istio/components/Service',
+        '/api/registry/models/istio/components/Service',
       );
     });
 
     it('emits a leading question mark when only version is provided', async () => {
       await getMeshModelComponent('istio', 'Service', '1.0', undefined);
       expect(promisifiedDataFetch).toHaveBeenCalledWith(
-        '/api/meshmodels/models/istio/components/Service?version=1.0',
+        '/api/registry/models/istio/components/Service?version=1.0',
       );
     });
 
     it('emits a leading question mark when only apiVersion is provided', async () => {
       await getMeshModelComponent('istio', 'Service', undefined, 'v1');
       expect(promisifiedDataFetch).toHaveBeenCalledWith(
-        '/api/meshmodels/models/istio/components/Service?apiVersion=v1',
+        '/api/registry/models/istio/components/Service?apiVersion=v1',
       );
     });
 
     it('uses ampersand to join apiVersion when both version and apiVersion present', async () => {
       await getMeshModelComponent('istio', 'Service', '1.0', 'v1');
       expect(promisifiedDataFetch).toHaveBeenCalledWith(
-        '/api/meshmodels/models/istio/components/Service?version=1.0&apiVersion=v1',
+        '/api/registry/models/istio/components/Service?version=1.0&apiVersion=v1',
       );
     });
   });
@@ -184,18 +184,18 @@ describe('api/meshmodel', () => {
   describe('component-by-name and category endpoints', () => {
     it('getMeshModelComponentByName builds URL', async () => {
       await getMeshModelComponentByName('Deployment');
-      expect(promisifiedDataFetch).toHaveBeenCalledWith('/api/meshmodels/components/Deployment');
+      expect(promisifiedDataFetch).toHaveBeenCalledWith('/api/registry/components/Deployment');
     });
 
     it('fetchCategories hits the categories endpoint', async () => {
       await fetchCategories();
-      expect(promisifiedDataFetch).toHaveBeenCalledWith('/api/meshmodels/categories');
+      expect(promisifiedDataFetch).toHaveBeenCalledWith('/api/registry/categories');
     });
 
     it('getModelFromCategoryApi builds URL with all pagesize', async () => {
       await getModelFromCategoryApi('Orchestration');
       expect(promisifiedDataFetch).toHaveBeenCalledWith(
-        '/api/meshmodels/categories/Orchestration/models?pagesize=all',
+        '/api/registry/categories/Orchestration/models?pagesize=all',
       );
     });
   });
@@ -204,7 +204,7 @@ describe('api/meshmodel', () => {
     it('uses default options when none provided', async () => {
       await getModelByName('istio');
       const url = promisifiedDataFetch.mock.calls[0][0] as string;
-      expect(url).toContain('/api/meshmodels/models/istio');
+      expect(url).toContain('/api/registry/models/istio');
       expect(url).toContain('trim=true');
       expect(url).toContain('pagesize=all');
     });

@@ -198,6 +198,7 @@ func TestWalletPatchingFullPipeline(t *testing.T) {
 	if err != nil {
 		t.Fatalf("EvaluateDesign failed: %v", err)
 	}
+	assertWasmMatches(t, *design, nil, resp)
 
 	// Find PodTemplate in the result and verify configuration was patched.
 	for _, comp := range resp.Design.Components {
@@ -706,10 +707,12 @@ func TestBindingIdentificationFullPipeline(t *testing.T) {
 
 	log, _ := logger.New("test", logger.Options{Format: logger.SyslogLogFormat})
 	engine := NewGoEngine(log)
-	resp, err := engine.EvaluateDesign(*design, []*relationship.RelationshipDefinition{relDef})
+	regRels := []*relationship.RelationshipDefinition{relDef}
+	resp, err := engine.EvaluateDesign(*design, regRels)
 	if err != nil {
 		t.Fatalf("EvaluateDesign failed: %v", err)
 	}
+	assertWasmMatches(t, *design, regRels, resp)
 
 	bindingFound := false
 	for _, rel := range resp.Design.Relationships {
@@ -887,6 +890,7 @@ func TestInventoryPatchingFullPipeline(t *testing.T) {
 	if err != nil {
 		t.Fatalf("EvaluateDesign failed: %v", err)
 	}
+	assertWasmMatches(t, *design, nil, resp)
 
 	// Verify the Deployment's namespace was patched to "production".
 	for _, comp := range resp.Design.Components {

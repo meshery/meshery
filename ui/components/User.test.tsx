@@ -207,8 +207,11 @@ describe('User component', () => {
     expect(payload.details).toBe('oops');
   });
 
-  it('navigates to the profile URL when the avatar is clicked', async () => {
+  it('opens profile URL in a new tab when avatar is clicked', async () => {
     const user = userEvent.setup();
+    const mockOpen = vi.fn();
+    window.open = mockOpen;
+
     mockGetUserQuery = {
       data: { status: 'authenticated' },
       isSuccess: true,
@@ -228,10 +231,14 @@ describe('User component', () => {
     await waitFor(() => expect(ExtensionPointSchemaValidator).toHaveBeenCalledWith('account'));
 
     await user.click(screen.getByTestId('icon-button-avatar'));
-    expect(window.location.href).toContain('https://cloud.test/profile');
+    expect(mockOpen).toHaveBeenCalledWith(
+      'https://cloud.test/profile',
+      '_blank',
+      'noopener,noreferrer',
+    );
   });
 
-  it('does not redirect when no profile URL is present', async () => {
+  it('shows a warning when no profile URL is present', async () => {
     const user = userEvent.setup();
     mockGetUserQuery = {
       data: { status: 'authenticated' },
@@ -239,12 +246,16 @@ describe('User component', () => {
       isError: false,
       error: undefined,
     };
+    // no extensions.account → profileUrl will be undefined
+    mockProviderCapabilities = {
+      providerUrl: 'https://provider.test',
+    };
 
-    const startingHref = window.location.href;
     render(<UserProvider />);
 
     await user.click(screen.getByTestId('icon-button-avatar'));
-    // window.location.href should still be the same since profileUrl is undefined
-    expect(window.location.href).toBe(startingHref);
+    await waitFor(() => expect(notify).toHaveBeenCalled());
+    const [payload] = notify.mock.calls[0];
+    expect(payload.message).toBe('Please log in to access this profile');
   });
 });

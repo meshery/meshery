@@ -12,13 +12,13 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
-	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
+	system "github.com/meshery/schemas/models/v1beta1/system"
 	"github.com/spf13/viper"
 	"gorm.io/gorm/clause"
 )
 
 func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	var tables []*models.SqliteSchema
+	var tables []system.SystemDatabaseTable
 	var recordCount int
 	var totalTables int64
 	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
@@ -49,12 +49,12 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 
 	tableFinder.Find(&tables)
 
-	for _, table := range tables {
-		h.dbHandler.DB.Table(table.Name).Count(&table.Count)
-		recordCount += int(table.Count)
+	for i := range tables {
+		h.dbHandler.DB.Table(tables[i].Name).Count(&tables[i].Count)
+		recordCount += int(tables[i].Count)
 	}
 
-	databaseSummary := &models.DatabaseSummary{
+	databaseSummary := &system.SystemDatabaseSummary{
 		Page:        page,
 		PageSize:    limit,
 		TotalTables: int(totalTables),
@@ -73,7 +73,7 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	}
 }
 
-// Reset the system database to its initial state.
+// ResetSystemDatabase resets the system database to its initial state.
 func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 
 	mesherydbPath := path.Join(utils.GetHome(), ".meshery/config")
@@ -120,6 +120,23 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 		writeMeshkitError(w, ErrObtainDatabaseHandler(), http.StatusInternalServerError)
 		return
 	} else {
+		// Held for the whole workflow, including the seeding goroutine below.
+		// dbHandler's own lock is released when this function returns, which
+		// leaves the goroutine unprotected: a second reset could acquire it and
+		// drop tables mid-seed. Released by whichever goroutine finishes the
+		// work, not on handler return - hence the seedingStarted flag, which
+		// makes sure every early return below still releases.
+		if !models.TryAcquireResetLock() {
+			writeMeshkitError(w, ErrResetInProgress(), http.StatusConflict)
+			return
+		}
+		seedingStarted := false
+		defer func() {
+			if !seedingStarted {
+				models.ReleaseResetLock()
+			}
+		}()
+
 		dbHandler.Lock()
 		defer dbHandler.Unlock()
 
@@ -130,6 +147,14 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 		}
 
 		for _, table := range tables {
+			// The GraphQL hard reset (resolver/meshsync.go) skips this table
+			// deliberately; this path did not, so the same reset produced
+			// different results depending on the entry point. Nothing re-seeds
+			// events, so dropping it here is unrecoverable data loss.
+			// Re-migrating it below is idempotent.
+			if table == "events" {
+				continue
+			}
 			err = dbHandler.Migrator().DropTable(table)
 			if err != nil {
 				writeMeshkitError(w, ErrDropDatabaseTable(err), http.StatusInternalServerError)
@@ -137,23 +162,13 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 			}
 		}
 
-		err = dbHandler.AutoMigrate(
-			&meshsyncmodel.KubernetesKeyValue{},
-			&meshsyncmodel.KubernetesResource{},
-			&meshsyncmodel.KubernetesResourceSpec{},
-			&meshsyncmodel.KubernetesResourceStatus{},
-			&meshsyncmodel.KubernetesResourceObjectMeta{},
-			&models.PerformanceProfile{},
-			&models.MesheryResult{},
-			&models.MesheryPattern{},
-			&models.MesheryFilter{},
-			&models.PatternResource{},
-			&models.MesheryApplication{},
-			&models.UserPreference{},
-			&models.PerformanceTestConfig{},
-			&models.SmiResultWithID{},
-			&models.K8sContext{},
-		)
+		// Re-migrate the full system-table set after dropping every table.
+		// Sharing models.SystemDatabaseModels with boot and the GraphQL hard
+		// reset is what keeps the reset from re-creating only a stale subset -
+		// previously environments/environment_connection_mappings were never
+		// recreated, so GetConnections (which LEFT JOINs
+		// environment_connection_mappings) returned 500 until a restart.
+		err = models.AutoMigrateSystemTables(dbHandler)
 
 		if err != nil {
 			writeMeshkitError(w, ErrMigrateDatabaseTables(err), http.StatusInternalServerError)
@@ -172,10 +187,33 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 			writeMeshkitError(w, ErrMigrateDatabaseTables(err), http.StatusInternalServerError)
 			return
 		}
+
+		// Seeded synchronously, before the success response: organizations is
+		// dropped and re-migrated above but was only ever seeded at boot, and
+		// the UI skips its keys query without an org - resolving to no
+		// permissions until a restart.
+		if lp, ok := provider.(*models.DefaultLocalProvider); ok {
+			if err := lp.SeedDefaultOrganization(); err != nil {
+				writeMeshkitError(w, err, http.StatusInternalServerError)
+				return
+			}
+		}
+
+		seedingStarted = true
 		go func() {
-			models.SeedComponents(h.log, h.config, h.registryManager)
-			krh.SeedKeys(viper.GetString("KEYS_PATH"))
+			defer models.ReleaseResetLock()
+			models.RunSeedStage(h.log, "user keys", func() {
+				krh.SeedKeys(viper.GetString("KEYS_PATH"))
+			})
+			models.RunSeedStage(h.log, "content", func() {
+				if lp, ok := provider.(*models.DefaultLocalProvider); ok {
+					lp.SeedContent(h.log)
+				}
+			})
+			models.RunSeedStage(h.log, "models", func() {
+				models.SeedComponents(h.log, h.config, h.registryManager, dbHandler)
+			})
 		}()
-		writeJSONMessage(w, map[string]string{"message": "Database reset successful"}, http.StatusOK)
+		writeJSONMessage(w, system.SystemMessageResponse{Message: "Database reset successful"}, http.StatusOK)
 	}
 }

@@ -28,7 +28,13 @@ vi.mock('../sortable-table-cell', () => ({
   SortableTableCell: ({ columnData }: any) => <th>{columnData?.label}</th>,
 }));
 vi.mock('../../../../utils/Enum', () => ({
-  CONNECTION_KINDS: { KUBERNETES: 'kubernetes' },
+  CoreConnectionKinds: {
+    meshery: 'meshery',
+    kubernetes: 'kubernetes',
+    prometheus: 'prometheus',
+    grafana: 'grafana',
+    github: 'github',
+  },
 }));
 vi.mock('@/components/data-formatter', () => ({
   FormatId: ({ id }: any) => <span>{id}</span>,
@@ -38,10 +44,10 @@ vi.mock('../../view', () => ({
 }));
 vi.mock('../config', () => ({ SINGLE_VIEW: 'single' }));
 
-import { NodeTableConfig } from './config';
+import { useNodeTableConfig } from './config';
 
-describe('NodeTableConfig', () => {
-  const config = NodeTableConfig(vi.fn(), [{}], {}, {}, 'Node');
+describe('useNodeTableConfig', () => {
+  const config = useNodeTableConfig(vi.fn(), [{}], {}, {}, 'Node');
 
   it('describes the Node columns with the documented column names', () => {
     expect(config.name).toBe('Node');

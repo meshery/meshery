@@ -114,7 +114,6 @@ const ComponentWithIcon = ({ component }: { component: ModelComponent }) => {
   return (
     <Grid2
       container
-      alignItems="center"
       spacing={1}
       style={{
         marginBottom: '8px',
@@ -122,6 +121,7 @@ const ComponentWithIcon = ({ component }: { component: ModelComponent }) => {
         marginTop: '8px',
       }}
       size="grow"
+      sx={{ alignItems: 'center' }}
     >
       <Grid2>
         <div
@@ -235,7 +235,7 @@ export const ModelImportedSection = ({
         const hasErrors = Array.isArray(detail.Errors) && detail.Errors.length > 0;
 
         return (
-          <Box key={index} mb={2}>
+          <Box key={index} sx={{ mb: 2 }}>
             <div
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
               data-testid={`ModelImportedSection-ModelHeader-${modelName}`}
@@ -263,7 +263,7 @@ export const ModelImportedSection = ({
                   </span>
                 </Typography>
                 {detail.Components.map((component, idx) => (
-                  <Box key={idx} ml={2}>
+                  <Box key={idx} sx={{ ml: 2 }}>
                     <ComponentWithIcon component={component} />
                   </Box>
                 ))}
@@ -277,7 +277,7 @@ export const ModelImportedSection = ({
                   </span>
                 </Typography>
                 {detail.Relationships.map((relationship, idx) => (
-                  <Box key={idx} ml={2}>
+                  <Box key={idx} sx={{ ml: 2 }}>
                     <RelationshipDetail relationship={relationship} />
                   </Box>
                 ))}

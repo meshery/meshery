@@ -71,11 +71,11 @@ export const stepsData = [
       {
         id: 3,
         title: 'Design snapshots in your PRs',
-        image: `/static/img/getting-started/kanvas-snapshots.png`,
+        image: `/static/img/getting-started/snapshots.png`,
         content: (
           <p>
-            See your deployment before you merge. Connect Kanvas to your GitHub repo and see changes
-            pull request-to-pull request.
+            See your deployment before you merge. Connect the extension to your GitHub repo and see
+            changes pull request-to-pull request.
           </p>
         ),
         previousButton: false,
@@ -223,7 +223,7 @@ export const stepsData = [
         actionName: ActionName.LEARN,
         primaryAction: () => {
           window.open(
-            `${MESHERY_CLOUD_PROD}/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery`,
+            `${MESHERY_CLOUD_PROD}/academy/learning-paths/d011fd20-a3f5-4480-883b-dfb34321d168/mastering-meshery`,
             '_blank',
           );
         },

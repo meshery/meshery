@@ -46,7 +46,7 @@
 //   DESIGN_TYPES.forEach(({ type }) => {
 //     test(`displays ${type} design card correctly`, async ({ provider }) => {
 //       test.skip(
-//         provider === 'None' && type === 'public',
+//         provider === 'Local' && type === 'public',
 //         `Skipping test for provider: ${provider}`,
 //       );
 //       await designPage.applyVisibilityFilter(type);

@@ -4,15 +4,22 @@ categories: [mesheryctl]
 description: Guides for common tasks while using Meshery's CLI, mesheryctl.
 ---
 
-Meshery's command line interface is `mesheryctl`. Use `mesheryctl` to both manage the lifecyle of Meshery itself and to access and invoke any of Meshery's application and cloud native management functions. `mesheryctl` commands can be categorized as follows:
+Meshery's command line interface is `mesheryctl`. Use `mesheryctl` to both manage the lifecycle of Meshery itself and to access and invoke any of Meshery's application and cloud native management functions. `mesheryctl` commands can be categorized as follows:
 
 - `mesheryctl` - Global overrides and flags
-- `mesheryctl app` - Cloud Native Application Management
-- `mesheryctl filter` - Cloud Native Filter Management
-- `mesheryctl mesh` - Cloud Native Lifecycle & Configuration Management
-- `mesheryctl perf` - Cloud Native Performance Management
-- `mesheryctl design` - Cloud Native Pattern Configuration & Management
 - `mesheryctl system` - Meshery Lifecycle and Troubleshooting
+- `mesheryctl design` - Cloud Native Pattern Configuration & Management
+- `mesheryctl model` - Model Management and Registry Operations
+- `mesheryctl component` - Meshery Component Management
+- `mesheryctl relationship` - Component Relationship Management
+- `mesheryctl registry` - Capability Registry Publishing and Management
+- `mesheryctl connection` - Connection and Credential Management
+- `mesheryctl environment` - Environment Management
+- `mesheryctl workspace` - Workspace Management
+- `mesheryctl organization` - Organization Management
+- `mesheryctl filter` - Cloud Native Filter Management
+- `mesheryctl perf` - Cloud Native Performance Management
+- `mesheryctl adapter` - Meshery Adapter Management
 
 ## Configuring Meshery Deployments with meshconfig
 
@@ -66,7 +73,7 @@ contexts:
     provider: [meshery's providers: "Meshery", "None", ...]
     # add ENVs here
     env:
-      meshsync_deployment_mode: ["operator" or "embedded", defaults to "operator"]
+      meshsync_default_deployment_mode: ["operator" or "embedded", defaults to "embedded"]
 
   [context2-name]:
     endpoint: [url to meshery server rest api]
@@ -97,7 +104,7 @@ Endpoints specify the access URL for the Meshery UI, for a deployment. Endpoints
 
 #### Question: Can I get an API token using mesheryctl?
 
-Yes, if you need to establish a session with your Meshery Server, you can [authenticate using mesheryctl](/guides/mesheryctl/authenticate-with-meshery-via-cli), using `mesheryctl system login`.
+Yes, if you need to establish a session with your Meshery Server, you can [authenticate using mesheryctl]({{< ref "guides/mesheryctl/authenticate-with-meshery-via-cli/index.md" >}}), using `mesheryctl system login`.
 
 ## Advanced Installation
 
@@ -121,7 +128,7 @@ services:
 
 For an exhaustive list of `mesheryctl` commands and syntax:
 
-- See [`mesheryctl` Command Reference](/reference/mesheryctl).
+- See [`mesheryctl` Command Reference]({{< ref "reference/references/mesheryctl/_index.md" >}}).
 
 Guides to using Meshery's various features and components.
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ .Site.Language.Lang }}" class="no-js">
   <head>
-    {{ partialCached "head.html" (dict "Title" .Title "Description" .Params.abstract "Site" .Site) .RelPermalink }}
+    {{ partial "head.html" (dict "Title" .Title "Description" .Params.abstract "Kind" .Kind "Permalink" .Permalink "Site" .Site) }}
     {{ partialCached "header.html" . .RelPermalink }}
     <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -38,25 +38,21 @@
       <div class="left-container">
         <script>
           (function () {
-            let state = localStorage.getItem('sidebar-state')
-            if (!state) {
+            const leftContainer = document.querySelector(".left-container");
+                
+            if (!leftContainer) return
+
+            let state = localStorage.getItem('leftContainer-state');
+
+            if (!state) {  
               const isDesktop = window.matchMedia("(min-width: 75em)").matches;
-              state = isDesktop ? 'active' : 'inactive'
-
-              localStorage.setItem('sidebar-state', state)
+              state =  isDesktop ? 'active' : 'inactive';
+              localStorage.setItem('leftContainer-state', state);
             }
-
-            let sidebar = document.querySelector('.left-container');
-            if (sidebar) {
-               if (state === 'active'){
-                sidebar.classList.add('left-container--active')
-              } else {
-                sidebar.classList.remove('left-container--active')
-              }
-            }
+                
+            leftContainer.classList.toggle('left-container--active', state === 'active')
           })();
         </script>
-
         <div class="sidebar-container-wrapper">
           <div class="sidebar-container">
             {{ partial "sidebar.html" . }}
@@ -81,6 +77,9 @@
             <h1>{{ .Title }}</h1>
           {{ end }}
           {{ block "main" . }}{{ end }}
+          <div class="related-reading">
+            {{ partial "related-reading.html" . -}}
+          </div>
         </div>
         {{ if or .IsPage .IsSection }}
           {{ partial "pagination.html" . }}

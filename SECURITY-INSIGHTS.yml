@@ -75,19 +75,22 @@ repository:
   core-team:
     - name: Lee Calcote
       affiliation: Layer5
-      primary: true
+      primary: false
     - name: Sangram Rath
       affiliation: OD10
+      primary: true
     - name: Mia Grenell
       affiliation: The University of Texas at Austin
+      primary: false
   license:
     url: https://github.com/meshery/meshery/blob/master/LICENSE
     expression: Apache-2.0
   security:
     assessments:
       self:
+        evidence: https://github.com/meshery/meshery/blob/master/.github/security-self-assessment.md
         comment: |
-          Self assessment has not yet been completed.
+          CNCF TAG Security based self-assessment.
   documentation:
     contributing-guide: https://docs.meshery.io/project/contributing
     governance: https://github.com/meshery/meshery/blob/master/GOVERNANCE.md

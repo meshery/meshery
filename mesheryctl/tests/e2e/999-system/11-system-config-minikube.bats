@@ -5,7 +5,7 @@ setup() {
     _load_bats_libraries
 }
 
-@test "given help flag when running mesheryctl system config minikube --help then usage information is displayed" {
+@test "[TC-1013][cut=Kubernetes Connection][tg=Connection Lifecycle] given help flag when running mesheryctl system config minikube --help then usage information is displayed" {
     run $MESHERYCTL_BIN system config minikube --help
 
     assert_success
@@ -13,7 +13,7 @@ setup() {
     assert_output --partial "mesheryctl system config minikube --token auth.json"
 }
 
-@test "given more than one argument when running mesheryctl system config minikube then an error message is displayed" {
+@test "[TC-1013][cut=Kubernetes Connection][tg=Connection Lifecycle] given more than one argument when running mesheryctl system config minikube then an error message is displayed" {
     run $MESHERYCTL_BIN system config minikube extra-arg
 
     assert_failure

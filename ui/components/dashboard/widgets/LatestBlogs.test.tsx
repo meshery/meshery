@@ -38,11 +38,25 @@ vi.mock('@sistent/sistent', () => ({
   DesignIcon: () => <svg data-testid="design-icon" />,
 }));
 
+const widgetErrorFallbackSpy = vi.fn();
+
+vi.mock('./WidgetErrorFallback', () => ({
+  default: (props: { widgetTitle: string; message?: string }) => {
+    widgetErrorFallbackSpy(props);
+    return (
+      <div data-testid="widget-error-fallback" data-title={props.widgetTitle}>
+        {props.message}
+      </div>
+    );
+  },
+}));
+
 import LatestBlogs from './LatestBlogs';
 
 describe('LatestBlogs', () => {
   beforeEach(() => {
     plainCardSpy.mockReset();
+    widgetErrorFallbackSpy.mockReset();
     vi.restoreAllMocks();
   });
 
@@ -124,13 +138,49 @@ describe('LatestBlogs', () => {
     });
   });
 
-  it('logs the error and stops loading on fetch failure', async () => {
+  it('logs the error and shows the error fallback on fetch failure', async () => {
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     global.fetch = vi.fn().mockRejectedValue(new Error('network down')) as never;
 
     render(<LatestBlogs />);
     await waitFor(() => {
       expect(errorSpy).toHaveBeenCalled();
+      expect(screen.getByTestId('widget-error-fallback')).toHaveAttribute(
+        'data-title',
+        'Latest Blogs',
+      );
     });
+    expect(screen.queryByTestId('plain-card')).not.toBeInTheDocument();
+  });
+
+  it('shows the error fallback when the feed responds with a non-ok status', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 500,
+      text: () => Promise.resolve(''),
+    }) as never;
+
+    render(<LatestBlogs />);
+    await waitFor(() => {
+      expect(errorSpy).toHaveBeenCalled();
+      expect(screen.getByTestId('widget-error-fallback')).toBeInTheDocument();
+    });
+  });
+
+  it('shows an empty-state message when the feed returns zero entries', async () => {
+    const feedXml = `<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom"></feed>`;
+
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(feedXml),
+    }) as never;
+
+    render(<LatestBlogs />);
+    await waitFor(() => {
+      expect(screen.getByText('No blog posts found.')).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId('widget-error-fallback')).not.toBeInTheDocument();
   });
 });

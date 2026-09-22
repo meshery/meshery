@@ -3,9 +3,9 @@ import { useRouter } from 'next/router';
 import { useNotificationHandlers } from '../../utils/hooks/useNotification';
 import { ResourcesConfig } from './resources/config';
 import ResourcesTable from './resources/resources-table';
-import ResourcesSubMenu from './resources/resources-sub-menu';
-import KubernetesIcon from '../../assets/icons/technology/kubernetes';
+import ResourcesSubMenu, { CRDsResourcesSubMenu } from './resources/resources-sub-menu';
 import MesheryIcon from './images/meshery-icon';
+import GetKubernetesNodeIcon from './utils';
 import { TabPanel } from './tabpanel';
 import { iconLarge } from '../../css/icons.styles';
 import { useWindowDimensions } from '@/utils/dimension';
@@ -23,7 +23,7 @@ import {
   useTheme,
   ErrorBoundary,
 } from '@sistent/sistent';
-import { WrapperPaper } from './style';
+import { DashboardActionsContainer, WrapperPaper } from './style';
 import _ from 'lodash';
 import { AddWidgetsToLayoutPanel, LayoutActionButton, LayoutWidget } from './components';
 import { Responsive } from 'react-grid-layout/legacy';
@@ -32,6 +32,7 @@ import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT, OVERVIEW_LAYOUT } from './defaul
 import { applyMinSizeConstraints } from './layoutConstraints';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import getWidgets from './widgets/getWidgets';
+import WidgetErrorFallback from './widgets/WidgetErrorFallback';
 import { TABS_SCROLL_BUTTONS_CLASS } from './constants';
 import { useSelector } from 'react-redux';
 import useUnsavedChanges from './useUnsavedChanges';
@@ -83,6 +84,17 @@ const useDashboardRouter = () => {
 };
 
 const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
+
+const CATEGORY_ICON_KIND: Record<string, string> = {
+  Node: 'Node',
+  Namespace: 'Namespace',
+  Workload: 'Deployment',
+  Configuration: 'ConfigMap',
+  Network: 'Service',
+  Security: 'ClusterRole',
+  Storage: 'PersistentVolume',
+  CRDS: 'CustomResourceDefinition',
+};
 
 const Dashboard = () => {
   const { data: userData, isLoading } = useGetUserPrefQuery();
@@ -295,14 +307,11 @@ const Dashboard = () => {
     },
   };
 
-  const topBarActions = Object.entries(_.omit(LayoutActions, 'START_EDIT'))
+  const topBarActions = Object.entries(LayoutActions)
     .filter(([, action]) => action.isShown)
     .map(([key, layoutAction]) => ({ key, ...layoutAction }));
 
   const onBreakpointChange = (breakpoint) => {
-    if (!isEditMode) {
-      return;
-    }
     setCurrentBreakpoint(breakpoint);
   };
   useEffect(() => {
@@ -341,6 +350,23 @@ const Dashboard = () => {
   return (
     <>
       <>
+        {resourceCategory === 'Overview' && (
+          <DashboardActionsContainer>
+            <Stack
+              direction="row"
+              useFlexGap
+              spacing={{ xs: 1, sm: 2 }}
+              justifyContent="flex-end"
+              alignItems="center"
+              flexWrap="wrap"
+            >
+              {topBarActions.map(({ key, ...layoutAction }) => (
+                <LayoutActionButton {...layoutAction} key={key} />
+              ))}
+            </Stack>
+          </DashboardActionsContainer>
+        )}
+
         <WrapperPaper>
           <Tabs
             sx={{
@@ -374,7 +400,10 @@ const Dashboard = () => {
                       resource === 'Overview' ? (
                         <MesheryIcon style={iconLarge} />
                       ) : (
-                        <KubernetesIcon style={iconLarge} />
+                        <GetKubernetesNodeIcon
+                          kind={CATEGORY_ICON_KIND[resource] ?? resource}
+                          size={iconLarge}
+                        />
                       )
                     }
                     label={resource}
@@ -386,20 +415,8 @@ const Dashboard = () => {
         </WrapperPaper>
 
         <TabPanel value={resourceCategory} index={'Overview'}>
-          <Box display="flex" flexDirection={'column'} gap="1rem">
-            <Box padding={0} width={'100%'}>
-              <Stack
-                direction="row"
-                useFlexGap
-                gap="0rem 2rem"
-                justifyContent="end"
-                flexWrap={'wrap-reverse'}
-              >
-                {topBarActions.map(({ key, ...layoutAction }) => (
-                  <LayoutActionButton {...layoutAction} key={key} />
-                ))}
-              </Stack>
-
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <Box sx={{ padding: 0, width: '100%' }}>
               <ResponsiveReactGridLayout
                 layouts={constrainedLayouts}
                 resizeHandles={availableHandles}
@@ -419,7 +436,11 @@ const Dashboard = () => {
                 {widgetsToRenderForLayout(dashboardLayout, currentBreakPoint).map((widget) => {
                   return (
                     <div key={widget.key} style={isEditMode ? editModeStyles : {}}>
-                      <ErrorBoundary>
+                      <ErrorBoundary
+                        customFallback={(fallbackProps) => (
+                          <WidgetErrorFallback {...fallbackProps} widgetTitle={widget.title} />
+                        )}
+                      >
                         <LayoutWidget
                           isEditMode={isEditMode}
                           key={widget.key}
@@ -431,7 +452,6 @@ const Dashboard = () => {
                   );
                 })}
               </ResponsiveReactGridLayout>
-              <LayoutActionButton {...LayoutActions.START_EDIT} />
             </Box>
             <AddWidgetsToLayoutPanel
               editMode={isEditMode}
@@ -442,43 +462,42 @@ const Dashboard = () => {
         </TabPanel>
 
         {Object.keys(ResourcesConfig).map((resource, idx) => {
-          let CRDsKeys = [];
           const isCRDS = resource === 'CRDS';
-          if (isCRDS) {
-            const TableValue = Object.values(
-              ResourcesConfig[resource].tableConfig(
-                null,
-                null,
-                k8sConfig,
-                null,
-                resource,
-                selectedK8sContexts,
-              ),
-            );
-            CRDsKeys = TableValue.map((item) => _.pick(item, ['name', 'model']));
-          }
+          const config = ResourcesConfig[resource];
 
           return (
             <TabPanel value={resourceCategory} index={resource} key={`${resource}-${idx}`}>
-              {ResourcesConfig[resource].submenu ? (
-                <ResourcesSubMenu
-                  key={idx}
-                  resource={ResourcesConfig[resource]}
-                  selectedResource={selectedResource}
-                  handleChangeSelectedResource={handleChangeSelectedResource}
-                  k8sConfig={k8sConfig}
-                  selectedK8sContexts={selectedK8sContexts}
-                  CRDsKeys={CRDsKeys}
-                  isCRDS={isCRDS}
-                />
+              {config.submenu ? (
+                // CRDs resolve their kinds via a hook, so they render through a
+                // dedicated component that invokes that hook at its own top level
+                // rather than the parent calling it inside this render loop.
+                isCRDS ? (
+                  <CRDsResourcesSubMenu
+                    key={idx}
+                    resource={config}
+                    selectedResource={selectedResource}
+                    handleChangeSelectedResource={handleChangeSelectedResource}
+                    k8sConfig={k8sConfig}
+                    selectedK8sContexts={selectedK8sContexts}
+                  />
+                ) : (
+                  <ResourcesSubMenu
+                    key={idx}
+                    resource={config}
+                    selectedResource={selectedResource}
+                    handleChangeSelectedResource={handleChangeSelectedResource}
+                    k8sConfig={k8sConfig}
+                    selectedK8sContexts={selectedK8sContexts}
+                  />
+                )
               ) : (
                 <ResourcesTable
                   key={idx}
                   workloadType={resource}
                   k8sConfig={k8sConfig}
                   selectedK8sContexts={selectedK8sContexts}
-                  resourceConfig={ResourcesConfig[resource].tableConfig}
-                  menu={ResourcesConfig[resource].submenu}
+                  useResourceConfig={config.useTableConfig}
+                  submenu={config.submenu}
                 />
               )}
             </TabPanel>

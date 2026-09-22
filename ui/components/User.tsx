@@ -33,13 +33,19 @@ const User = (props) => {
   const goToProfile = () => {
     const profileUrl = getProfileUrl();
     if (profileUrl) {
-      window.location = profileUrl;
+      window.open(profileUrl, '_blank', 'noopener,noreferrer');
       return;
     }
+    notify({
+      message: 'Please log in to access this profile',
+      event_type: EVENT_TYPES.WARNING,
+    });
   };
 
   useEffect(() => {
     if (!userLoaded && isGetUserSuccess) {
+      // userData is normalized by getLoggedInUser's transformResponse
+      // (userId backfilled from id for the v1beta3 Cloud response).
       dispatch(updateUser({ user: userData }));
       setUserLoaded(true);
     } else if (isGetUserError) {
