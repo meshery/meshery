@@ -5,7 +5,20 @@ import { json } from '@codemirror/lang-json';
 import { yaml } from '@codemirror/lang-yaml';
 import { EditorView } from '@codemirror/view';
 import { lintGutter, linter } from '@codemirror/lint';
+import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
+import { tags } from '@lezer/highlight';
 import jsyaml from 'js-yaml';
+
+// The material theme only styles `tags.string` (quoted scalars); unquoted
+// YAML scalars are tagged `tags.content` and fall back to the default text
+// color. Paint them with the same green so quoted and unquoted values read
+// as the same kind of token. Color must match materialDarkStyle's t.string.
+// eslint-disable-next-line no-restricted-syntax -- must match @uiw/codemirror-theme-material's hardcoded string color, not an app theme token
+const YAML_STRING_COLOR = '#99d066';
+const yamlScalarHighlightStyle = HighlightStyle.define([
+  { tag: tags.content, color: YAML_STRING_COLOR },
+]);
+const yamlScalarHighlighting = syntaxHighlighting(yamlScalarHighlightStyle);
 
 const ReactCodeMirror = dynamic(() => import('@uiw/react-codemirror').then((mod) => mod.default), {
   ssr: false,
@@ -103,6 +116,10 @@ const CodeMirror = ({
 
     if (languageExtension) {
       editorExtensions.push(languageExtension);
+    }
+
+    if (options.mode === 'text/x-yaml') {
+      editorExtensions.push(yamlScalarHighlighting);
     }
 
     if (options.lineWrapping) {

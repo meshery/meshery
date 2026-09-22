@@ -45,6 +45,15 @@ vi.mock('@codemirror/lint', () => ({
   linter: (fn: any) => ({ fn, marker: 'linter' }),
 }));
 
+vi.mock('@codemirror/language', () => ({
+  HighlightStyle: { define: (specs: any) => ({ specs, marker: 'highlight-style' }) },
+  syntaxHighlighting: (style: any) => ({ style, marker: 'syntax-highlighting' }),
+}));
+
+vi.mock('@lezer/highlight', () => ({
+  tags: { content: 'tag-content' },
+}));
+
 vi.mock('js-yaml', () => ({
   default: {
     load: (doc: string) => {
@@ -94,6 +103,21 @@ describe('CodeMirror', () => {
   it('adds language extension for JSON mode', () => {
     render(<CodeMirror value="x" options={{ mode: 'application/json' }} />);
     expect(lastReactCMProps.extensions).toContain('json-ext');
+  });
+
+  it('adds a syntax highlighting extension styling unquoted YAML scalars like strings', () => {
+    render(<CodeMirror value="x" options={{ mode: 'text/x-yaml' }} />);
+    const exts = lastReactCMProps.extensions;
+    const highlightExt = exts.find((e: any) => e?.marker === 'syntax-highlighting');
+    expect(highlightExt).toBeDefined();
+    expect(highlightExt.style.marker).toBe('highlight-style');
+    expect(highlightExt.style.specs).toEqual([{ tag: 'tag-content', color: '#99d066' }]);
+  });
+
+  it('does not add the YAML scalar highlighting extension for JSON mode', () => {
+    render(<CodeMirror value="x" options={{ mode: 'application/json' }} />);
+    const exts = lastReactCMProps.extensions;
+    expect(exts.some((e: any) => e?.marker === 'syntax-highlighting')).toBe(false);
   });
 
   it('enables lineWrapping when option is set', () => {
