@@ -274,8 +274,9 @@ const MesheryPerformanceComponent_ = (props) => {
       .join('&');
 
     const runURL =
-      ctxUrl(`/api/user/performance/profiles/${id}/run`, selectedK8sContexts) + '&cert=true';
-    startEventStream(`${runURL}${selectedK8sContexts?.length > 0 ? '&' : '?'}${params}`);
+      ctxUrl(`/api/user/performance/profiles/${id}/run`, selectedK8sContexts) +
+      `${selectedK8sContexts?.length > 0 ? '&' : '?'}cert=true`;
+    startEventStream(`${runURL}&${params}`);
     setBlockRunTest(true); // to block the button
   };
 
