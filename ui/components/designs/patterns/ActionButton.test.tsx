@@ -114,4 +114,26 @@ describe('ActionButton', () => {
     expect(mainBtn).toHaveAttribute('data-permission-key', JSON.stringify(keyObj));
     expect(mainBtn).toHaveAttribute('data-permission-action', 'hide');
   });
+
+  it('renders with custom label when provided', () => {
+    render(<ActionButton label="Actions" options={[]} />);
+    expect(screen.getByRole('button', { name: 'Actions' })).toBeInTheDocument();
+  });
+
+  it('toggles the dropdown popper when main button is clicked without defaultActionClick', () => {
+    render(
+      <ActionButton
+        label="Actions"
+        options={[{ label: 'Validate', icon: <svg />, onClick: vi.fn() }]}
+      />,
+    );
+
+    expect(screen.queryByTestId('popper')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Actions' }));
+    expect(screen.getByTestId('popper')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Validate' })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Actions' }));
+    expect(screen.queryByTestId('popper')).not.toBeInTheDocument();
+  });
 });
