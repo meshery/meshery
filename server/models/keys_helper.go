@@ -71,32 +71,51 @@ func (kh *KeysRegistrationHelper) SeedKeys(seedLog *SeedLog, filePath string) {
 
 	seeded := 0
 	failures := 0
+
+	// The parser goroutine reports through channels only - the loop below is
+	// the single writer to the SeedLog. Errorf from inside the goroutine would
+	// race the loop's own seedLog writes and the Close a finished stage runs.
+	parserDone := make(chan error, 1)
 	go func() {
-		err := csvReader.Parse(ch, errorChan)
-		if err != nil {
-			seedLog.Errorf("Failed to parse keys CSV %s: %v", filePath, err)
-		}
+		parserDone <- csvReader.Parse(ch, errorChan)
 	}()
+
+	saveKey := func(data Key) {
+		if _, err := kh.keyPersister.SaveUsersKey(&data); err != nil {
+			failures++
+			seedLog.Detailf("Failed to save key %s: %v", data.ID.String(), err)
+			kh.log.Error(err)
+		} else {
+			seeded++
+			seedLog.Detailf("Seeded key %s.", data.ID.String())
+		}
+	}
+
 	for {
 		select {
-
 		case data := <-ch:
-			_, err := kh.keyPersister.SaveUsersKey(&data)
-			if err != nil {
-				failures++
-				seedLog.Detailf("Failed to save key %s: %v", data.ID.String(), err)
-				kh.log.Error(err)
-			} else {
-				seeded++
-				seedLog.Detailf("Seeded key %s.", data.ID.String())
-			}
+			saveKey(data)
+
 		case err := <-errorChan:
 			failures++
 			seedLog.Errorf("Error while parsing keys CSV %s: %v", filePath, err)
 
-		case <-csvReader.Context.Done():
-			seedLog.Reportf("Seeded %d keys from %s (%d failures).", seeded, filePath, failures)
-			return
+		case err := <-parserDone:
+			if err != nil {
+				failures++
+				seedLog.Errorf("Failed to parse keys CSV %s: %v", filePath, err)
+			}
+			// The parser has returned, but one key can still sit in the
+			// buffered channel; persist it before the summary is written.
+			for {
+				select {
+				case data := <-ch:
+					saveKey(data)
+				default:
+					seedLog.Reportf("Seeded %d keys from %s (%d failures).", seeded, filePath, failures)
+					return
+				}
+			}
 		}
 	}
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 
 	gofrs "github.com/gofrs/uuid"
@@ -75,8 +76,36 @@ type SeedLog struct {
 	startedAt time.Time
 	errCount  int
 
+	// mu is the per-stage lifecycle lock. NewSeedLog acquires it around the
+	// truncating os.Create, and Close releases it, so the boot goroutine and
+	// the reset/hard-reset paths cannot open the same stage's log at once.
+	// It is nil for a seed log whose file could not be created or that has
+	// already been closed.
+	mu *sync.Mutex
+
 	persister SystemEventPersister
 	systemID  core.Uuid
+}
+
+// seedLifecycleLocksByStage keyed by content type: NewSeedLog truncates
+// <stage>.log, so two concurrent runs of the same stage would clobber each
+// other's open file. Keying by stage - instead of one global lock - keeps the
+// four content types seeding concurrently during boot, each serialized against
+// its own reset-time twin.
+var (
+	seedLifecycleLocksMu      sync.Mutex
+	seedLifecycleLocksByStage = make(map[SeedStage]*sync.Mutex)
+)
+
+func seedLifecycleLock(stage SeedStage) *sync.Mutex {
+	seedLifecycleLocksMu.Lock()
+	defer seedLifecycleLocksMu.Unlock()
+	mu, ok := seedLifecycleLocksByStage[stage]
+	if !ok {
+		mu = &sync.Mutex{}
+		seedLifecycleLocksByStage[stage] = mu
+	}
+	return mu
 }
 
 // NewSeedLog creates the dedicated seed log for one content type.
@@ -93,9 +122,13 @@ func NewSeedLog(process logger.Handler, stage SeedStage) (*SeedLog, error) {
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return sl, ErrCreatingSeedLog(stage, err)
 	}
+	sl.mu = seedLifecycleLock(stage)
+	sl.mu.Lock()
 	sl.path = filepath.Join(dir, stage.fileName())
 	file, err := os.Create(sl.path)
 	if err != nil {
+		sl.mu.Unlock()
+		sl.mu = nil
 		return sl, ErrCreatingSeedLog(stage, err)
 	}
 	sl.file = file
@@ -167,14 +200,20 @@ func (sl *SeedLog) Header() {
 	sl.write(fmt.Sprintf("Seeding %q started at %s.", sl.stage, sl.startedAt.Format(time.RFC3339)))
 }
 
-// Close flushes and closes the dedicated log file.
+// Close flushes and closes the dedicated log file and releases the stage's
+// lifecycle lock. It is idempotent: a log closed once already, or one whose
+// file never opened, is a no-op.
 func (sl *SeedLog) Close() {
-	if sl.file == nil {
+	if sl.mu == nil {
 		return
 	}
-	_ = sl.file.Sync()
-	_ = sl.file.Close()
-	sl.file = nil
+	if sl.file != nil {
+		_ = sl.file.Sync()
+		_ = sl.file.Close()
+		sl.file = nil
+	}
+	sl.mu.Unlock()
+	sl.mu = nil
 }
 
 func (sl *SeedLog) write(line string) {

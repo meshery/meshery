@@ -25,6 +25,7 @@ func newTestSeedLog(t *testing.T, process logger.Handler, stage SeedStage) *Seed
 	if err != nil {
 		t.Fatalf("NewSeedLog(%q): %v", stage, err)
 	}
+	t.Cleanup(func() { seedLog.Close() })
 	return seedLog
 }
 

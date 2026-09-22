@@ -1550,6 +1550,7 @@ func (l *DefaultLocalProvider) SeedContent(seedLog *SeedLog, log logger.Handler)
 			if err := l.MesheryPatternPersister.ReplaceSeededPatterns(seeded); err != nil {
 				seedLog.Errorf("Failed to seed %d catalog designs: %v", len(seeded), ErrGettingSeededComponents(err, seedContent+"s"))
 				log.Error(ErrGettingSeededComponents(err, seedContent+"s"))
+				return
 			}
 			seedLog.Reportf("Seeded %d catalog designs from %s.", len(seeded), catalogDir)
 		}

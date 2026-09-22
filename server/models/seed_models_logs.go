@@ -266,8 +266,6 @@ func RegistryLog(log logger.Handler, seedLog *SeedLog, handlerConfig *HandlerCon
 		summary := kindSummaries[kind]
 		eventBuilder := events.NewEvent().FromSystem(sysID).FromOwner(sysID).WithCategory("entity").WithAction("get_summary")
 		successMessage := formatRegistrantSummary(kind, summary)
-
-		log.Info(successMessage)
 		seedLog.Reportf("%s", successMessage)
 		eventBuilder.WithMetadata(map[string]interface{}{
 			"kind":    kind,
