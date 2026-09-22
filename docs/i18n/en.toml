@@ -61,6 +61,15 @@ other = "Return to the regular view of this page"
 [print_entire_section]
 other = "Print entire section"
 
+[toc_components]
+other = "Components"
+
+[toc_related_designs]
+other = "Related Designs"
+
+[toc_related_tutorials]
+other = "Related Tutorials"
+
 # Feedback
 [feedback_title]
 other = "Feedback"
