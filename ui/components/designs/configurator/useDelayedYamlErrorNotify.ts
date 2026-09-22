@@ -8,8 +8,8 @@ export const DESIGN_YAML_ERROR_IDLE_MS = 400;
 
 export default function useDelayedYamlErrorNotify() {
   const { notify } = useNotification();
-  const timeoutRef = useRef(null);
-  const pendingYamlRef = useRef(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingYamlRef = useRef<string | null>(null);
 
   const cancelPendingYamlError = useCallback(() => {
     if (timeoutRef.current) {
@@ -20,7 +20,7 @@ export default function useDelayedYamlErrorNotify() {
   }, []);
 
   const scheduleInvalidYamlCheck = useCallback(
-    (yamlData) => {
+    (yamlData: string) => {
       pendingYamlRef.current = yamlData;
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -29,13 +29,17 @@ export default function useDelayedYamlErrorNotify() {
         timeoutRef.current = null;
         const text = pendingYamlRef.current;
         pendingYamlRef.current = null;
+        if (text === null) {
+          return;
+        }
         try {
           jsYaml.load(text);
         } catch (err) {
+          const details = err instanceof Error ? err.toString() : String(err);
           notify({
             message: `Invalid Yaml Data`,
             event_type: EVENT_TYPES.ERROR,
-            details: err.toString(),
+            details,
           });
         }
       }, DESIGN_YAML_ERROR_IDLE_MS);
