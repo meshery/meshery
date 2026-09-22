@@ -25,6 +25,9 @@ var versionCheck = []struct {
 	// (as some distributions report) must parse to major.minor.patch, not panic.
 	{"v1.28.3.1", [3]int{1, 28, 3}},
 	{"v1.26.4.2", [3]int{1, 26, 4}},
+	// Five segments: the extra components past major.minor.patch are dropped
+	// regardless of how many there are, so the loop bound never overflows.
+	{"1.28.3.1.7", [3]int{1, 28, 3}},
 }
 
 func TestGetK8sVersion(t *testing.T) {
