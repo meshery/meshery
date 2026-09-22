@@ -54,7 +54,7 @@ export const PropertyFormatters = {
         label={value}
         clickable
         component="a"
-        href={`/management/connections?tab=connections&searchText=${encodeURIComponent(value)}`}
+        href={`/management/connections?tab=connections&con_q=${encodeURIComponent(value)}`}
         target="_self"
       />
     );
