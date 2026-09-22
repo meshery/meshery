@@ -80,7 +80,7 @@ The request will be sent to the Meshery API using the configured cookies for aut
 
 Each of the API endpoints are exposed through [server.go](https://github.com/meshery/meshery/blob/master/server/router/server.go). Endpoints are grouped by function (e.g. `/api/mesh` or `/api/perf`).
 
-Alternatively, [Remote Providers]({{< ref "providers/index.md" >}}) can extend Meshery's endpoints behind the `/api/extensions/` endpoint.
+Alternatively, [Remote Providers]({{< ref "reference/extensibility/providers/index.md" >}}) can extend Meshery's endpoints behind the `/api/extensions/` endpoint.
 
 ## Authorization
 

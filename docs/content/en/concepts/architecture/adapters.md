@@ -36,7 +36,7 @@ Meshery does not invent a parallel installer when the project already ships Helm
 
 ### Day 2: Ongoing configuration through Designs
 
-Ongoing configuration management of the given infrastructure is performed through the deployment of [Meshery Designs]({{< ref "guides/configuration-management/working-with-designs/_index.md" >}}), not by re-running the Day 1 installer for every change.
+Ongoing configuration management of the given infrastructure is performed through the deployment of [Meshery Designs]({{< ref "guides/configuration-management/working-with-designs/index.md" >}}), not by re-running the Day 1 installer for every change.
 
 1. Meshery Server receives a request to deploy a design.
 2. Server itemizes each component in the design.
