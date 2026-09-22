@@ -35,6 +35,7 @@ type Handler struct {
 	ConnectionToStateMachineInstanceTracker *machines.ConnectionToStateMachineInstanceTracker
 	MeshsyncDefaultDeploymentMode           connections.MeshsyncDeploymentMode
 	evalTracker                             *evaluationTracker
+	patternExecutor                         patternExecutor
 }
 
 // NewHandlerInstance returns a Handler instance
@@ -71,6 +72,7 @@ func NewHandlerInstance(
 		ConnectionToStateMachineInstanceTracker: connToInstanceTracker,
 		MeshsyncDefaultDeploymentMode:           meshsyncDefaultDeploymentMode,
 		evalTracker:                             newEvaluationTracker(),
+		patternExecutor:                         nativePatternExecutor{},
 	}
 
 	return h
