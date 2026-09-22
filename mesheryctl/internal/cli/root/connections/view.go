@@ -21,7 +21,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -150,7 +150,7 @@ func selectConnectionPrompt(connectionsList []*connection.Connection) (*connecti
 }
 
 func isArgumentUUID(arg string) bool {
-	_, err := uuid.FromString(arg)
+	_, err := uuid.Parse(arg)
 	return err == nil
 }
 
