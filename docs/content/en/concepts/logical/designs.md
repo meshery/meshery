@@ -7,7 +7,56 @@ aliases:
 
 Like a Google Doc, Designs are your primary tool for collaborative authorship of your infrastructure and services. A Design describes all the resources and their properties that you want for a single deployment based on Meshery’s declarative syntax (see [Meshery Schemas repo](https://github.com/meshery/schemas)). By default, Designs are stored in your user account, but can be manually exported, programmatically snapshotted, or automatically synchronized to any OCI-compatible registry (e.g. Docker Hub, AWS ECR, and so on), or Git-based repositories (coming in v0.8). You can share designs and collaborate in real-time on their creation. Designs can be imported, exported, versioned, forked, merged, snapshotted, published, shared, embedded, templatized, and more.
 
-As the deployable unit in Meshery, a Design consists of [Components]({{< ref "concepts/logical/components.md" >}}) and [Relationships]({{< ref "concepts/logical/relationships/index.md" >}}). Designs are how you can describe your desired infrastructure state.
+As the primary management unit in Meshery, a Design consists of [Components]({{< ref "concepts/logical/components.md" >}}) and [Relationships]({{< ref "concepts/logical/relationships/index.md" >}}). Configurable and Deployable designs are the deployable unit — used to provision and manage live infrastructure. Annotation-only designs are non-deployable, serving as visual architecture diagrams and documentation. Designs are how you can describe your desired infrastructure state.
+
+## Types of Meshery Designs
+
+Meshery supports two primary classifications of designs to accommodate both architectural planning and infrastructure orchestration:
+
+```text
+                      ┌─────────────────────────────────────────┐
+                      │             Meshery Design              │
+                      └────────────────────┬────────────────────┘
+                                           │
+                    ┌──────────────────────┴──────────────────────┐
+                    ▼                                             ▼
+      ┌───────────────────────────┐                 ┌───────────────────────────┐
+      │   Annotation-Only Design  │                 │     Deployable Design     │
+      ├───────────────────────────┤                 ├───────────────────────────┤
+      │ • Visual architecture     │                 │ • Functional workloads    │
+      │ • Boundaries & shapes     │                 │ • Kubernetes & Helm specs │
+      │ • Non-deployable nodes    │                 │ • Schema-validated props  │
+      │ • System documentation    │                 │ • Reconciled to clusters  │
+      └───────────────────────────┘                 └───────────────────────────┘
+```
+
+### 1. Annotation-Only Designs (Visual & Architecture Diagrams)
+
+**Annotation-only designs** are created for architectural diagramming, conceptual mapping, system topologies, and documentation. They allow platform engineers, architects, and DevOps teams to visualize multi-tier systems, cloud resources, and network boundaries without generating deployable workload manifests.
+
+- **Non-Deployable Components**: Components in an annotation-only design are visual shapes, annotations, note blocks, boundaries, and logical components flagged with `isAnnotation: true` in their metadata.
+- **Visual Relationships**: Define directional arrows, dependency annotations, or spatial containment without triggering operational provisioning actions in connected clusters.
+- **Catalog & Documentation**: Annotation-only designs can be published to the [Meshery Catalog]({{< ref "concepts/architecture/catalog/index.md" >}}), embedded into documentation, or shared across teams as reference architectures.
+
+### 2. Configurable and Deployable Designs
+
+**Configurable and Deployable designs** represent functional infrastructure and application workloads that can be provisioned, configured, validated, and managed across environments.
+
+- **Model-Backed Components**: Every component is backed by an active [Meshery Model]({{< ref "concepts/logical/models/index.md" >}}) (e.g., Kubernetes `Deployment`, `Service`, `StatefulSet`, Istio `VirtualService`, or Cloud Provider CRDs).
+- **Schema-Driven Configuration**: Each component contains a declarative specification that is validated against its model's JSON Schema.
+- **Orchestration & Lifecycle**: Deployable designs can be dry-run tested, deployed, updated, or undeployed to connected Kubernetes clusters and cloud providers via Meshery Server's deployment engine.
+
+### Comparison: Annotation-Only vs. Deployable Designs
+
+| Attribute | Annotation-Only Designs | Configurable & Deployable Designs |
+| :--- | :--- | :--- |
+| **Primary Purpose** | Visual diagrams, topology mapping, documentation | Infrastructure provisioning, GitOps, configuration management |
+| **Deployability** | Non-deployable (visual canvas elements) | Fully deployable to connected Kubernetes clusters & clouds |
+| **Component Backing** | Visual shapes, annotations (`isAnnotation: true`), sticky notes | Registered Meshery Models & JSON Schemas |
+| **Relationships** | Visual pointers, groupings, semantic connections | Structural, hierarchical, and network orchestration relationships |
+| **Export Formats** | YAML (`.yaml`), OCI artifact | YAML (`.yaml`), OCI artifact, Helm chart package (`.tgz`) |
+| **Catalog Availability** | Yes (Published as Reference Architecture / Diagram) | Yes (Published as Deployable Pattern / Cloud Native Solution) |
+
 
 ### Constraints on Designs
 
@@ -20,7 +69,7 @@ As the deployable unit in Meshery, a Design consists of [Components]({{< ref "co
 - Designs can be **cloned**. Cloning a Design creates a new Design that is a copy of the original Design. The new Design is owned by the user who cloned it.
 - Designs can be **merged**. Merging a Design combines two Designs into a single Design. 
   <!-- - Designs can be forked. Forking a Design creates a new Design that is a copy of the original Design. The new Design is owned by the user who forked it. -->
-- Designs can be exported as JSON files or OCI images.
+- Designs can be exported as YAML files or OCI artifacts (and as Helm chart packages for deployable designs).
 - [Designs can be listed in Artifact Hub](https://artifacthub.io/packages/search?kind=24&sort=relevance&page=1) repos.
 - Designs can be imported:
   - as Kubernetes Manifests, Docker Compose, Helm Charts, or Meshery Designs.
