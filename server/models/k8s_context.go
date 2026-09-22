@@ -256,12 +256,20 @@ func K8sContextsFromKubeconfigWithOptions(provider Provider, userID string, _ *B
 		}
 
 		if err := kc.AssignServerID(handler); err != nil {
+			// AssignServerID deliberately returns the raw Kubernetes error so callers
+			// such as kubernetes.DiscoverAction can classify it with
+			// k8serrors.IsForbidden/IsUnauthorized - meshkit's *errors.Error has no
+			// Unwrap method, so errors.As cannot see an APIStatus through it. Wrap it
+			// here, at the presentation boundary, so the metadata this function hands
+			// to addK8SConfig - which persists and broadcasts it - keeps the
+			// meshery-server-1304 code, probable cause and suggested remediation.
+			mkErr := ErrUnreachableKubeAPI(err, kc.Server)
 
 			_ = eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Could not assign server id, skipping context %s", kc.Name)).WithMetadata(map[string]interface{}{
-				"error": err,
+				"error": mkErr,
 			}).Build()
 
-			metadata["error"] = err
+			metadata["error"] = mkErr
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
 			eventMetadata[name] = metadata
 
@@ -480,7 +488,7 @@ func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
 	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
 	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), "kube-system", v1.GetOptions{})
 	if err != nil {
-		return ErrUnreachableKubeAPI(err, kc.Server)
+		return err
 	}
 	uid := ksns.GetUID()
 	ksUUID := uuid.FromStringOrNil(string(uid))
