@@ -119,27 +119,6 @@ components:
             targetPort: 8000
             name: http
 
-  - id: comp-postgres-sec
-    schemaVersion: components.meshery.io/v1beta1
-    version: v1.0.0
-    displayName: PostgreSQL Secret
-    format: JSON
-    model:
-      name: kubernetes
-      version: v1.28.0
-    component:
-      kind: Secret
-      version: v1
-    configuration:
-      metadata:
-        name: postgres-secret
-        namespace: three-tier-app
-      type: Opaque
-      stringData:
-        POSTGRES_DB: appdb
-        POSTGRES_USER: appuser
-        POSTGRES_PASSWORD: securepassword123
-
   - id: comp-postgres-pvc
     schemaVersion: components.meshery.io/v1beta1
     version: v1.0.0
