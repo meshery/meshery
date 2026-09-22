@@ -271,4 +271,21 @@ describe('createPatternsActions', () => {
       event_type: 'error',
     });
   });
+
+  it('handleClone clones a pattern and notifies on success', async () => {
+    const deps = baseDeps();
+    deps.clonePattern.mockReturnValue({ unwrap: () => Promise.resolve({}) });
+
+    const actions = createPatternsActions(deps);
+    await actions.handleClone('p-1', 'My Pattern');
+
+    expect(deps.clonePattern).toHaveBeenCalledWith({
+      body: { name: 'My Pattern (Copy)' },
+      patternID: 'p-1',
+    });
+    expect(deps.notify).toHaveBeenCalledWith({
+      message: '"My Pattern" Design cloned',
+      event_type: 'success',
+    });
+  });
 });
