@@ -15,6 +15,7 @@ import {
 } from '@sistent/sistent';
 import Filter from './filter';
 import BellIcon from '../../../assets/icons/BellIcon';
+import { resolveNotificationIcon } from './notificationIcons';
 import { iconMedium } from '../../../css/icons.styles';
 import {
   NOTIFICATION_CENTER_TOGGLE_CLASS,
@@ -216,7 +217,7 @@ const Header = ({ handleFilter, handleClose }) => {
     });
   };
 
-  const Icon = uiConfig.icon || BellIcon;
+  const Icon = resolveNotificationIcon(uiConfig.icon);
   return (
     <NotificationContainer>
       <Title>
