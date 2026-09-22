@@ -84,6 +84,13 @@ jobs:
         run: |
           cd docs
           [[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true
+      - name: Cache Hugo resources
+        uses: actions/cache@v4
+        with:
+          path: docs/resources/_gen
+          key: hugo-resources-${{ hashFiles('docs/content/en/**') }}
+          restore-keys: |
+            hugo-resources-
       - name: Build with Hugo
         env:
           # For maximum backward compatibility with Hugo modules
