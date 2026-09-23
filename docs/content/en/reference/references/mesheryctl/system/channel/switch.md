@@ -3,6 +3,7 @@ title: mesheryctl-system-channel-switch
 display_title: false
 command: system
 subcommand: channel
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system channel switch
