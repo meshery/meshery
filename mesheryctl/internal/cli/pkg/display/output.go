@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 
@@ -13,6 +14,47 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"gopkg.in/yaml.v3"
 )
+
+func FormatAndSaveOutput[T any](data T, format string, out io.Writer, save bool, filePath string) error {
+	format = strings.ToLower(format)
+
+	outputFormatterFactory := OutputFormatterFactory[T]{}
+	outputFormatter, err := outputFormatterFactory.New(format, data)
+	if err != nil {
+		return err
+	}
+
+	if out != nil {
+		outputFormatter = outputFormatter.WithOutput(out)
+	}
+
+	err = outputFormatter.Display()
+	if err != nil {
+		return err
+	}
+
+	if !save {
+		return nil
+	}
+
+	if filePath != "" {
+		fileExtension := filepath.Ext(filePath)
+		baseFilePath := filePath
+		if strings.EqualFold(fileExtension, ".json") || strings.EqualFold(fileExtension, ".yaml") {
+			baseFilePath = strings.TrimSuffix(filePath, fileExtension)
+		}
+		filePath = fmt.Sprintf("%s.%s", baseFilePath, format)
+	}
+
+	outputFormatterSaverFactory := OutputFormatterSaverFactory[T]{}
+	outputFormatterSaver, err := outputFormatterSaverFactory.New(format, outputFormatter)
+	if err != nil {
+		return err
+	}
+
+	outputFormatterSaver = outputFormatterSaver.WithFilePath(filePath)
+	return outputFormatterSaver.Save()
+}
 
 type OutputFormatter[T any] interface {
 	Display() error
