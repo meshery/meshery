@@ -158,17 +158,22 @@ get_array_aware_configuration_for_component_at_path(ref, component, design) := r
 	not is_direct_reference(ref)
 	direct_ref := pop_last(ref)
 
-	# remove nullish values
-	items := [item |
-		some item in object_get_nested(get_component_configuration(component, design), pop_first(direct_ref), [])
-		item != null
+	all_items := object_get_nested(get_component_configuration(component, design), pop_first(direct_ref), [])
+
+	# skip nullish values but keep each element's original array position:
+	# a null hole must not shift the indexes of the elements after it
+	indexed_items := [[index, all_items[index]] |
+		some index in numbers.range(0, count(all_items) - 1)
+		all_items[index] != null
 	]
 
-	count(items) > 0
+	count(indexed_items) > 0
+
+	items := [entry[1] | some entry in indexed_items]
 
 	paths := [path |
-		some index in numbers.range(0, count(items) - 1)
-		path := array.concat(direct_ref, [sprintf("%d", [index])])
+		some entry in indexed_items
+		path := array.concat(direct_ref, [sprintf("%d", [entry[0]])])
 	]
 
 	result := {
