@@ -100,7 +100,7 @@ jobs:
       # requirement and the PR review process).
       # -----------------------------------------------------------------------
       - name: 🎉 Welcome First-Time PR Author
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request_target'
         uses: actions/first-interaction@v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
