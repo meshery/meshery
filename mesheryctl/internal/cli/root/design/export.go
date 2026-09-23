@@ -337,7 +337,8 @@ func selectPatternPrompt(patterns []models.MesheryPattern, baseURL string) (mode
 }
 
 func getUniqueFilename(filename string) string {
-	base, ext := filepath.Split(strings.TrimSuffix(filename, filepath.Ext(filename)))
+	ext := filepath.Ext(filename)
+	base := strings.TrimSuffix(filename, ext)
 	for i := 1; ; i++ {
 		if _, err := os.Stat(filename); os.IsNotExist(err) {
 			break
