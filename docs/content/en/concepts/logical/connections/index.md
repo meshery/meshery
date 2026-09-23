@@ -90,7 +90,7 @@ _Connections like **Registration of Meshery server with remote provider** (and f
 ## Registering Connections with Remote Providers
 
 {{% alert color="info" title="Use the Connection Wizard" %}}
-The [Connection Wizard]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}) is the canonical, guided way to register or update any Connection from the Meshery UI. The summary below describes the same flow conceptually.
+The [Connection Wizard]({{< ref "guides/infrastructure-management/creating-a-connection.md" >}}) is the canonical, guided way to register or update any Connection from the Meshery UI. The summary below describes the same flow conceptually.
 {{% /alert %}}
 
 To register a connection with a remote provider, you need to follow these steps:
