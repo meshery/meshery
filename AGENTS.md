@@ -365,7 +365,7 @@ the sheet↔code map `ui/tests/e2e/connections.testmap.ts`). Contract docs:
 
 ## Security & Compliance
 
-- Report vulnerabilities: [security@meshery.dev](mailto:security@meshery.dev) — acknowledged in 10 business days.
+- Report vulnerabilities: [security@meshery.io](mailto:security@meshery.io) — acknowledged in 10 business days.
 - Never commit secrets; use env vars (`PROVIDER_BASE_URLS`, `KEYS_PATH`) and GitHub Secrets.
 - CodeQL runs on every PR; OpenSSF Scorecard tracks security posture.
 - Apache 2.0 license — verify dependency compatibility.
