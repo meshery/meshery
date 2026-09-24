@@ -1,6 +1,7 @@
 const nextConfig = require('eslint-config-next');
 const prettierRecommended = require('eslint-plugin-prettier/recommended');
 const unusedImports = require('eslint-plugin-unused-imports');
+const noUnclosedGraphQLWsConnections = require('./eslint-rules/no-unclosed-graphql-ws-connections');
 const globals = require('globals');
 
 // ESLint 10: eslint-config-next's babel-based parser returns a scope manager that
@@ -552,6 +553,20 @@ module.exports = [
       // the restructure plan is tracked separately by scripts/audit-size.js
       // (run via `npm run audit:size`) rather than by ESLint.
       'max-lines': ['warn', { max: 600, skipComments: true, skipBlankLines: true }],
+    },
+  },
+
+  // Custom ESLint rules shipped in-repo (see ui/eslint-rules/).
+  {
+    plugins: {
+      meshery: {
+        rules: {
+          'no-unclosed-graphql-ws-connections': noUnclosedGraphQLWsConnections,
+        },
+      },
+    },
+    rules: {
+      'meshery/no-unclosed-graphql-ws-connections': 'error',
     },
   },
 
