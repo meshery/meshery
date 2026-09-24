@@ -42,6 +42,7 @@ jobs:
 
       - name: Run Utility For Meshery Server
         run: |
+          mkdir -p ./docs/data/errorref ./docs/_data/errorref
           ~/errorutil update -d . -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl,docs
           output=$(~/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl | wc -c)
           if [ "$output" -ne 0 ]; then
