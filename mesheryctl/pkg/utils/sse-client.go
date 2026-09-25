@@ -59,7 +59,9 @@ func loop(ctx context.Context, reader *bufio.Reader, events chan Event) {
 
 		line, err := reader.ReadBytes('\n')
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "error during resp.Body read:%s\n", err)
+			if ctx.Err() == nil {
+				fmt.Fprintf(os.Stderr, "error during resp.Body read:%s\n", err)
+			}
 
 			closeEvents()
 			return
