@@ -173,7 +173,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 ## Screenshots
 
 Usage of mesheryctl perf apply
-![perf-apply-usage](../../../images/perf-apply.png)
+![perf-apply-usage](../../images/perf-apply.png)
 
 ## See Also
 
