@@ -119,5 +119,53 @@ ruleTester.run('no-unclosed-graphql-ws-connections', rule, {
       `,
       errors: [{ messageId: 'unclosedWsConnection' }],
     },
+    {
+      // An empty cleanup does not dispose of the client.
+      code: `
+        import { createClient } from 'graphql-ws';
+        useEffect(() => {
+          const client = createClient({ url: 'ws://localhost/graphql' });
+          return () => {};
+        }, []);
+      `,
+      errors: [{ messageId: 'unclosedWsConnection' }],
+    },
+    {
+      // A cleanup that disposes of a different client does not count.
+      code: `
+        import { createClient } from 'graphql-ws';
+        useEffect(() => {
+          const client = createClient({ url: 'ws://localhost/graphql' });
+          return () => otherClient.dispose();
+        }, []);
+      `,
+      errors: [{ messageId: 'unclosedWsConnection' }],
+    },
+    {
+      // client.terminate() is not a disposal — it only drops the current
+      // socket and the connection may retry.
+      code: `
+        import { createClient } from 'graphql-ws';
+        useEffect(() => {
+          const client = createClient({ url: 'ws://localhost/graphql' });
+          client.terminate();
+        }, []);
+      `,
+      errors: [{ messageId: 'unclosedWsConnection' }],
+    },
+    {
+      // A function-declaration cleanup that is declared but never returned
+      // or called does not dispose of the client.
+      code: `
+        import { createClient } from 'graphql-ws';
+        useEffect(() => {
+          const client = createClient({ url: 'ws://localhost/graphql' });
+          function cleanup() {
+            client.dispose();
+          }
+        }, []);
+      `,
+      errors: [{ messageId: 'unclosedWsConnection' }],
+    },
   ],
 });
