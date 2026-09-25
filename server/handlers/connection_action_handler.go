@@ -9,6 +9,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	"github.com/meshery/meshery/server/machines"
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
@@ -317,6 +318,20 @@ func (h *Handler) reconcileMeshsyncDeploymentMode(ctx context.Context, connectio
 	}
 	if machineCtx == nil || machineCtx.MesheryCtrlsHelper == nil {
 		return ErrMeshsyncReconcile(fmt.Sprintf("machine context or controllers helper is nil for connection %s", connectionID))
+	}
+
+	machineCtx.ActionMutex.Lock()
+	defer machineCtx.ActionMutex.Unlock()
+
+	generationCtx := machine.GetLifecycleCtx()
+	if generationCtx != nil && generationCtx.Err() != nil {
+		return fmt.Errorf("mode reconciliation aborted: superseded by a newer lifecycle transition")
+	}
+
+	currentState := machine.GetCurrentState()
+	if currentState != machines.CONNECTED {
+		h.log.Infof("Connection %s is not CONNECTED (current state: %s); skipping active deployment of new MeshSync mode", connectionID, currentState)
+		return nil
 	}
 
 	ctrlHelper := machineCtx.MesheryCtrlsHelper
