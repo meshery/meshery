@@ -9,12 +9,14 @@ import { DryRunDesign } from '../lifecycle/DryRun';
 import { ValidateDesign } from '../lifecycle/ValidateDesign';
 import { DEPLOYMENT_TYPE } from '../lifecycle/common';
 import { parseDesignFile } from '../../../utils/utils';
+import { designValidatorCommands } from '../../../machines/validator/designValidator';
+import { EVENT_TYPES } from '../../../lib/event-types';
 
 /**
- * Builds the four design-lifecycle modal openers (deploy / undeploy /
- * dryrun / validate).
+ * Builds the design-lifecycle modal openers (deploy / undeploy /
+ * dryrun / validate) and direct (single-click) action executors.
  *
- * Each returned function preserves the exact behavior of the original
+ * Each returned modal opener preserves the exact behavior of the original
  * inline definitions in MesheryPatterns.tsx — same modal title strings,
  * same icons, same stepper / modal-body wrapping, same arg shapes.
  */
@@ -24,6 +26,7 @@ export function buildDesignLifecycleHandlers({
   selectedK8sContexts,
   handleDeploy,
   handleUndeploy,
+  notify,
 }) {
   const openDeployModal = (e, pattern_file, name) => {
     const design = parseDesignFile(pattern_file);
@@ -105,5 +108,109 @@ export function buildDesignLifecycleHandlers({
     });
   };
 
-  return { openDeployModal, openUndeployModal, openDryRunModal, openValidateModal };
+  /**
+   * Directly deploys a design without opening the confirmation stepper modal.
+   * Emits an error notification and returns early if the design file cannot be parsed.
+   */
+  const directDeploy = async (e, pattern_file, name, id) => {
+    e?.stopPropagation?.();
+    const design = parseDesignFile(pattern_file);
+    if (!design) {
+      notify?.({
+        message: `Failed to parse design "${name}"`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+      return;
+    }
+    if (id) {
+      design.id = id;
+    }
+    await handleDeploy?.({ design, selectedK8sContexts });
+    notify?.({
+      message: `Deploying design "${name}"`,
+      event_type: EVENT_TYPES.INFO,
+    });
+  };
+
+  /**
+   * Directly undeploys a design without opening the confirmation stepper modal.
+   * Emits an error notification and returns early if the design file cannot be parsed.
+   */
+  const directUndeploy = async (e, pattern_file, name, id) => {
+    e?.stopPropagation?.();
+    const design = parseDesignFile(pattern_file);
+    if (!design) {
+      notify?.({
+        message: `Failed to parse design "${name}"`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+      return;
+    }
+    if (id) {
+      design.id = id;
+    }
+    await handleUndeploy?.({ design, selectedK8sContexts });
+    notify?.({
+      message: `Undeploying design "${name}"`,
+      event_type: EVENT_TYPES.INFO,
+    });
+  };
+
+  /**
+   * Directly runs a dry-run deployment for a design via the validation machine.
+   * Emits an error notification and returns early if the design file cannot be parsed.
+   */
+  const directDryRun = (e, pattern_file, name) => {
+    e?.stopPropagation?.();
+    const design = parseDesignFile(pattern_file);
+    if (!design) {
+      notify?.({
+        message: `Failed to parse design "${name}"`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+      return;
+    }
+    designValidationActorRef?.send?.(
+      designValidatorCommands.dryRunDesignDeployment({
+        design,
+        k8sContexts: selectedK8sContexts,
+      }),
+    );
+    notify?.({
+      message: `Running dry run for design "${name}"`,
+      event_type: EVENT_TYPES.INFO,
+    });
+  };
+
+  /**
+   * Directly runs schema validation for a design via the validation machine.
+   * Emits an error notification and returns early if the design file cannot be parsed.
+   */
+  const directValidate = (e, pattern_file, name) => {
+    e?.stopPropagation?.();
+    const design = parseDesignFile(pattern_file);
+    if (!design) {
+      notify?.({
+        message: `Failed to parse design "${name}"`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+      return;
+    }
+    designValidationActorRef?.send?.(designValidatorCommands.validateDesignSchema({ design }));
+    notify?.({
+      message: `Validating design "${name}"`,
+      event_type: EVENT_TYPES.INFO,
+    });
+  };
+
+  return {
+    openDeployModal,
+    openUndeployModal,
+    openDryRunModal,
+    openValidateModal,
+    directDeploy,
+    directUndeploy,
+    directDryRun,
+    directValidate,
+  };
 }

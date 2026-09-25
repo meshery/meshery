@@ -4,9 +4,13 @@ import { describe, expect, it, vi } from 'vitest';
 
 const parseDesignFileMock = vi.fn((fileContents: string) => ({ parsed: fileContents }));
 
-vi.mock('@sistent/sistent', () => ({
-  ModalBody: ({ children }: any) => <div data-testid="modal-body">{children}</div>,
-}));
+vi.mock('@sistent/sistent', async (importOriginal) => {
+  const actual = await importOriginal<Record<string, unknown>>();
+  return {
+    ...actual,
+    ModalBody: ({ children }: any) => <div data-testid="modal-body">{children}</div>,
+  };
+});
 
 vi.mock('@/assets/icons', () => ({
   DoneAll: () => <svg data-testid="done-all" />,
@@ -62,20 +66,25 @@ const makeDeps = () => {
   };
   return {
     designLifecycleModal,
-    designValidationActorRef: { id: 'validation-actor' },
+    designValidationActorRef: { send: vi.fn() },
     selectedK8sContexts: ['ctx-a'],
     handleDeploy: vi.fn(),
     handleUndeploy: vi.fn(),
+    notify: vi.fn(),
   };
 };
 
 describe('buildDesignLifecycleHandlers', () => {
-  it('returns all four lifecycle handlers', () => {
+  it('returns all modal and direct lifecycle handlers', () => {
     const handlers = buildDesignLifecycleHandlers(makeDeps());
     expect(typeof handlers.openDeployModal).toBe('function');
     expect(typeof handlers.openUndeployModal).toBe('function');
     expect(typeof handlers.openDryRunModal).toBe('function');
     expect(typeof handlers.openValidateModal).toBe('function');
+    expect(typeof handlers.directDeploy).toBe('function');
+    expect(typeof handlers.directUndeploy).toBe('function');
+    expect(typeof handlers.directDryRun).toBe('function');
+    expect(typeof handlers.directValidate).toBe('function');
   });
 
   it('openDeployModal stops propagation and opens a modal containing the DeployStepper', () => {
@@ -125,5 +134,121 @@ describe('buildDesignLifecycleHandlers', () => {
     expect(args.title).toBe('Validate design "X"');
     render(args.reactNode);
     expect(screen.getByTestId('validate-design')).toBeInTheDocument();
+  });
+
+  it('directDeploy executes handleDeploy and notifies the user', async () => {
+    const deps = makeDeps();
+    const handlers = buildDesignLifecycleHandlers(deps);
+    const stop = vi.fn();
+
+    await handlers.directDeploy(
+      { stopPropagation: stop } as any,
+      'yaml-bytes',
+      'My Design',
+      'id-123',
+    );
+
+    expect(stop).toHaveBeenCalled();
+    expect(deps.handleDeploy).toHaveBeenCalledWith({
+      design: expect.objectContaining({ id: 'id-123', parsed: 'yaml-bytes' }),
+      selectedK8sContexts: ['ctx-a'],
+    });
+    expect(deps.notify).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Deploying design "My Design"',
+      }),
+    );
+  });
+
+  it('directUndeploy executes handleUndeploy and notifies the user', async () => {
+    const deps = makeDeps();
+    const handlers = buildDesignLifecycleHandlers(deps);
+    const stop = vi.fn();
+
+    await handlers.directUndeploy(
+      { stopPropagation: stop } as any,
+      'yaml-bytes',
+      'My Design',
+      'id-123',
+    );
+
+    expect(stop).toHaveBeenCalled();
+    expect(deps.handleUndeploy).toHaveBeenCalledWith({
+      design: expect.objectContaining({ id: 'id-123', parsed: 'yaml-bytes' }),
+      selectedK8sContexts: ['ctx-a'],
+    });
+    expect(deps.notify).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Undeploying design "My Design"',
+      }),
+    );
+  });
+
+  it('directDryRun dispatches dry run command to validation actor and notifies', () => {
+    const deps = makeDeps();
+    const handlers = buildDesignLifecycleHandlers(deps);
+    const stop = vi.fn();
+
+    handlers.directDryRun({ stopPropagation: stop } as any, 'yaml-bytes', 'My Design');
+
+    expect(stop).toHaveBeenCalled();
+    expect(deps.designValidationActorRef.send).toHaveBeenCalled();
+    expect(deps.notify).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Running dry run for design "My Design"',
+      }),
+    );
+  });
+
+  it('directValidate dispatches validation schema command to validation actor and notifies', () => {
+    const deps = makeDeps();
+    const handlers = buildDesignLifecycleHandlers(deps);
+    const stop = vi.fn();
+
+    handlers.directValidate({ stopPropagation: stop } as any, 'yaml-bytes', 'My Design');
+
+    expect(stop).toHaveBeenCalled();
+    expect(deps.designValidationActorRef.send).toHaveBeenCalled();
+    expect(deps.notify).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Validating design "My Design"',
+      }),
+    );
+  });
+
+  it('direct handlers emit error notifications and abort when design parsing fails', async () => {
+    parseDesignFileMock.mockReturnValueOnce(null as any);
+    const deps = makeDeps();
+    const handlers = buildDesignLifecycleHandlers(deps);
+    const expectedError = expect.objectContaining({
+      message: 'Failed to parse design "Bad Design"',
+      event_type: expect.objectContaining({ type: 'error' }),
+    });
+
+    await handlers.directDeploy(undefined, 'invalid-yaml', 'Bad Design', 'id-1');
+    expect(deps.handleDeploy).not.toHaveBeenCalled();
+    expect(deps.notify).toHaveBeenCalledTimes(1);
+    expect(deps.notify).toHaveBeenCalledWith(expectedError);
+
+    deps.notify.mockClear();
+    parseDesignFileMock.mockReturnValueOnce(null as any);
+    await handlers.directUndeploy(undefined, 'invalid-yaml', 'Bad Design', 'id-1');
+    expect(deps.handleUndeploy).not.toHaveBeenCalled();
+    expect(deps.notify).toHaveBeenCalledTimes(1);
+    expect(deps.notify).toHaveBeenCalledWith(expectedError);
+
+    deps.notify.mockClear();
+    parseDesignFileMock.mockReturnValueOnce(null as any);
+    handlers.directDryRun(undefined, 'invalid-yaml', 'Bad Design');
+    expect(deps.designValidationActorRef.send).not.toHaveBeenCalled();
+    expect(deps.notify).toHaveBeenCalledTimes(1);
+    expect(deps.notify).toHaveBeenCalledWith(expectedError);
+
+    deps.notify.mockClear();
+    parseDesignFileMock.mockReturnValueOnce(null as any);
+    handlers.directValidate(undefined, 'invalid-yaml', 'Bad Design');
+    expect(deps.designValidationActorRef.send).not.toHaveBeenCalled();
+    expect(deps.notify).toHaveBeenCalledTimes(1);
+    expect(deps.notify).toHaveBeenCalledWith(expectedError);
   });
 });
