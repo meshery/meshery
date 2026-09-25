@@ -1,2 +1,29 @@
-<img class="content-image" src="{{ cond (hasPrefix .Destination "/") (.Destination | relURL) (.Destination | safeURL) }}" alt="{{ .Text }}" {{ with .Title }}title="{{ . }}" {{ end
-    }} />
+{{- $dest := .Destination -}}
+{{- $alt := .Text -}}
+{{- $title := .Title -}}
+{{- $img := "" -}}
+{{- $ext := lower (path.Ext $dest) -}}
+
+{{- if and (in (slice ".png" ".jpg" ".jpeg") $ext) (not (urls.Parse $dest).Scheme) (not (hasPrefix $dest "//")) -}}
+  {{- $rel := $dest -}}
+  {{- if not (hasPrefix $dest "/") -}}
+    {{- with .Page.File -}}
+      {{- $rel = path.Join (replace .Dir "\\" "/") $dest -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $img = resources.Get (path.Join "contentimg" $rel) -}}
+  {{- if not $img -}}{{- $img = resources.Get $rel -}}{{- end -}}
+{{- end -}}
+
+{{- with $img }}
+  {{- $webp := .Process "webp q85" }}
+  <picture>
+    <source srcset="{{ $webp.RelPermalink }}" type="image/webp" width="{{ .Width }}" height="{{ .Height }}">
+    <img class="content-image" src="{{ cond (hasPrefix $dest "/") ($dest | relURL) ($dest | safeURL) }}" alt="{{ $alt }}"
+    width="{{ .Width }}" height="{{ .Height }}"
+    {{ with $title }}title="{{ . }}"{{ end }} />
+  </picture>
+{{- else }}
+  <img class="content-image" src="{{ cond (hasPrefix $dest "/") ($dest | relURL) ($dest | safeURL) }}" alt="{{ $alt }}"
+  {{ with $title }}title="{{ . }}"{{ end }} />
+{{- end }}
