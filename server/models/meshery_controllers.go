@@ -1358,9 +1358,6 @@ func setOverrideValues(delete bool, adapterTracker AdaptersTrackerInterface) map
 		"meshery-nsm": map[string]interface{}{
 			"enabled": false,
 		},
-		"meshery-nginx-sm": map[string]interface{}{
-			"enabled": false,
-		},
 		"meshery-traefik-mesh": map[string]interface{}{
 			"enabled": false,
 		},
@@ -1416,9 +1413,6 @@ func SetOverrideValuesForMesheryDeploy(adapters []Adapter, adapter Adapter, inst
 			"enabled": false,
 		},
 		"meshery-nsm": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-nginx-sm": map[string]interface{}{
 			"enabled": false,
 		},
 		"meshery-traefik-mesh": map[string]interface{}{
