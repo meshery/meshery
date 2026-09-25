@@ -111,6 +111,34 @@ function effectManagesResources(body, clientVarName) {
     return false;
   };
 
+  // Resolves a function-valued local binding (a FunctionDeclaration or a
+  // VariableDeclarator whose initializer is a function) by name, so cleanups
+  // returned by reference resolve correctly.
+  const findLocalFunction = (name) => {
+    for (const statement of body.body) {
+      if (statement.type === 'FunctionDeclaration' && statement.id.name === name) {
+        return statement;
+      }
+      if (
+        statement.type === 'VariableDeclaration' &&
+        statement.declarations &&
+        statement.declarations.length > 0
+      ) {
+        for (const declaration of statement.declarations) {
+          if (
+            declaration.id.type === 'Identifier' &&
+            declaration.id.name === name &&
+            declaration.init &&
+            isFunction(declaration.init)
+          ) {
+            return declaration.init;
+          }
+        }
+      }
+    }
+    return null;
+  };
+
   // Returns whether the returned cleanup function disposes of THIS client
   // (descends exactly one level into the returned function's body).
   const cleanupClosesClient = (fn) => {
@@ -134,8 +162,12 @@ function effectManagesResources(body, clientVarName) {
     if (node.type === 'ReturnStatement' && node.argument) {
       // A returned cleanup only marks the client as closed when it disposes
       // of this exact client; an empty or unrelated cleanup does not count.
-      if (isFunction(node.argument)) {
-        if (cleanupClosesClient(node.argument)) locallyHandled = true;
+      let cleanup = node.argument;
+      if (cleanup.type === 'Identifier') {
+        cleanup = findLocalFunction(cleanup.name);
+      }
+      if (cleanup && isFunction(cleanup) && cleanupClosesClient(cleanup)) {
+        locallyHandled = true;
       }
       return;
     }

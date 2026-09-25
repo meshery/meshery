@@ -71,6 +71,39 @@ ruleTester.run('no-unclosed-graphql-ws-connections', rule, {
         }, []);
       `,
     },
+    {
+      // A function-declaration cleanup that disposes of the client and is
+      // returned by reference is acceptable.
+      code: `
+        import { createClient } from 'graphql-ws';
+        function Component() {
+          useEffect(() => {
+            const client = createClient({ url: 'ws://localhost/graphql' });
+            function cleanup() {
+              client.dispose();
+            }
+            return cleanup;
+          }, []);
+          return null;
+        }
+      `,
+    },
+    {
+      // A function-valued variable cleanup returned by reference is acceptable.
+      code: `
+        import { createClient } from 'graphql-ws';
+        function Component() {
+          useEffect(() => {
+            const client = createClient({ url: 'ws://localhost/graphql' });
+            const cleanup = () => {
+              client.dispose();
+            };
+            return cleanup;
+          }, []);
+          return null;
+        }
+      `,
+    },
   ],
   invalid: [
     {
