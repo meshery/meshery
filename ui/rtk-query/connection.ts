@@ -6,9 +6,14 @@ import {
   useGetControllerDiagnosticsQuery as useSchemasGetControllerDiagnosticsQuery,
   useGetUserCredentialsQuery as useSchemasGetUserCredentialsQuery,
   useUpdateConnectionMutation as useSchemasUpdateConnectionMutation,
+  useLazyGetConnectionDetailsQuery,
+  useVerifyConnectionUrlMutation as useVerifyConnectionURLMutation,
+  useConnectionMetaDataMutation,
+  useConfigureConnectionMutation,
+  useUpdateConnectionStatusMutation,
 } from '@meshery/schemas/mesheryApi';
 import { useCallback, useMemo } from 'react';
-import { api, mesheryApiPath } from './index';
+import { api } from './index';
 
 // These must match the tag types declared on the shared `mesheryApi`
 // (see @meshery/schemas/mesheryApi) — the connections list query
@@ -22,59 +27,15 @@ const TAGS = {
 // Registration state-machine, cancel, kubeconfig import/discovery and
 // kubernetes ping are schemas-generated since @meshery/schemas 1.3.32
 // (processConnectionRegistration, cancelConnectionRegister,
-// addKubernetesConfig, discoverKubernetesContexts, pingKubernetes). Only the
-// {kind}-scoped connection routes below remain hand-rolled — they are not yet
-// defined in meshery/schemas.
-const connectionsApi = api.injectEndpoints({
-  overrideExisting: true,
-  endpoints: (builder) => ({
-    getConnectionDetails: builder.query({
-      query: (queryArg) => ({
-        url: mesheryApiPath(`integrations/connections/${queryArg.connectionKind}/details`),
-        params: { id: queryArg.repoURL },
-      }),
-    }),
-    verifyConnectionURL: builder.mutation({
-      query: (queryArg) => ({
-        url: mesheryApiPath(`integrations/connections/${queryArg.connectionKind}/verify`),
-        method: 'POST',
-        params: { id: queryArg.repoURL },
-      }),
-    }),
-    connectionMetaData: builder.mutation({
-      query: (queryArg) => ({
-        url: mesheryApiPath(`integrations/connections/${queryArg.connectionKind}/metadata`),
-        method: 'POST',
-        body: queryArg.body,
-      }),
-    }),
-    configureConnection: builder.mutation({
-      query: (queryArg) => ({
-        url: mesheryApiPath(`integrations/connections/${queryArg.connectionKind}/configure`),
-        method: 'POST',
-        body: queryArg.body,
-      }),
-    }),
-    updateConnectionStatus: builder.mutation({
-      query: ({ kind, body }) => ({
-        url: mesheryApiPath(`integrations/connections/${kind}/status`),
-        method: 'PUT',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      }),
-      invalidatesTags: () => [{ type: TAGS.CONNECTIONS }],
-    }),
-  }),
-});
+// addKubernetesConfig, discoverKubernetesContexts, pingKubernetes).
 
-export const {
+export {
   useLazyGetConnectionDetailsQuery,
   useVerifyConnectionURLMutation,
   useConnectionMetaDataMutation,
   useConfigureConnectionMutation,
   useUpdateConnectionStatusMutation,
-} = connectionsApi;
+};
 
 // The registration state-machine hooks need no ergonomics on top of the
 // generated client; re-export them so components keep a single import site for
