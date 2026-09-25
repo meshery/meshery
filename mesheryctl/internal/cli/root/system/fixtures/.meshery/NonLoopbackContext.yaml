@@ -1,0 +1,12 @@
+contexts:
+  remote:
+    endpoint: http://203.0.113.10:9081
+    token: default
+    platform: kubernetes
+    channel: stable
+    version: latest
+    provider: Meshery
+current-context: remote
+tokens:
+  - location: auth.json
+    name: default
