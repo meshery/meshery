@@ -69,7 +69,7 @@ export const useNotification = () => {
       id = null,
       message,
       dataTestID = 'notify',
-      details = null,
+      details = null as string | null,
       event_type,
       timestamp = null,
       customEvent = null,
