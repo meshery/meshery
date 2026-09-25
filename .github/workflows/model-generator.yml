@@ -76,6 +76,7 @@ jobs:
             -i ../models \
             --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" \
             --spreadsheet-cred "$CRED" \
+            --sync-relationships \
             2>&1 | tee "$RUNNER_TEMP/update.log"
 
       - name: Pull changes from remote
