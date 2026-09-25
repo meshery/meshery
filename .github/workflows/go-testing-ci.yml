@@ -79,6 +79,15 @@ jobs:
           node-version: 22
       - name: Run coverage
         run: go test -json --short ./server/... -race -coverprofile=server-coverage.txt -covermode=atomic > server-test-output.json
+      - name: Upload raw test output
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: server-test-output
+          path: |
+            server-test-output.json
+            server-coverage.txt
+          retention-days: 7
       - name: Convert Go test results to Allure
         if: ${{ !cancelled() }}
         run: |
