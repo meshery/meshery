@@ -233,7 +233,9 @@ make helm-docs      # Generate Helm chart docs
 
 - ESLint + Prettier (config: `ui/.eslintrc.js`).
 - Functional components with hooks; no class components.
-- Use `@sistent/sistent` design system; fall back to MUI.
+- Use `@sistent/sistent` design system; fall back to MUI. Consult
+  `node_modules/@sistent/sistent/DESIGN.md` when available, or the Sistent release
+  matching the version resolved by the relevant UI package, rather than `master`.
 - Redux Toolkit for global state; GraphQL via Relay; REST via Axios.
 - Playwright for E2E tests.
 - **Every content-bearing page needs an *access* gate, not just gated controls.**
