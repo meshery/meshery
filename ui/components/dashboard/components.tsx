@@ -12,7 +12,9 @@ import {
   DeleteIcon,
   DragIcon,
   type Theme,
+  useMediaQuery,
 } from '@sistent/sistent';
+import { useSelector } from 'react-redux';
 
 import { iconMedium } from 'css/icons.styles';
 import { ActionButton } from './style';
@@ -179,9 +181,24 @@ export const LayoutActionButton = ({
 }: LayoutActionButtonProps) => {
   const theme = useTheme();
   const iconsProps = actionIconProps(theme);
+  const { isDrawerCollapsed } = useSelector((state) => state.ui);
+  const isSmallTablet = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   if (!isShown) {
     return null;
+  }
+
+  if (label !== 'Edit' && ((isSmallTablet && !isDrawerCollapsed) || isMobile)) {
+    return (
+      <CustomTooltip title={description} variant="standard">
+        <ActionButton
+          variant="text"
+          onClick={action}
+          endIcon={<Icon {...iconsProps} />}
+        ></ActionButton>
+      </CustomTooltip>
+    );
   }
 
   return (
