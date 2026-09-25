@@ -109,7 +109,7 @@ The Docker Desktop application for Windows includes a comprehensive set of tools
   </tr>
   <tr>
     <td>Home</td>
-    <td><a href="https://docs.docker.com/docker-for-windows/install-windows-home/">Docker Desktop for Windows Home</a></td>
+    <td><a href="https://docs.docker.com/desktop/install/windows-install/">Docker Desktop for Windows</a></td>
   </tr>
 </table>
 
