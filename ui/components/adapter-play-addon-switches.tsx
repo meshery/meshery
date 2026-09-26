@@ -27,7 +27,7 @@ const AdapterAddonSwitches: React.FC<AdapterAddonSwitchesProps> = ({
   if (!selectedAdapterOps.length) return null;
 
   return (
-    <FormControl component="fieldset" style={{ padding: '1rem' }}>
+    <FormControl component="fieldset" style={{ padding: '1rem', width: '100%', margin: 0 }}>
       <FormLabel component="legend">Customize Addons</FormLabel>
       <FormGroup>
         {selectedAdapterOps

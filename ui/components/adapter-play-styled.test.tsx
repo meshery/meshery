@@ -52,6 +52,9 @@ import {
   ChipNamespaceContainer,
   InputWrapper,
   AdapterCard,
+  AdapterOperationsLayout,
+  AdapterCategoryGrid,
+  AdapterAddonPanel,
 } from './adapter-play-styled';
 
 describe('adapter-play-styled', () => {
@@ -106,5 +109,16 @@ describe('adapter-play-styled', () => {
   it('exports an AdapterCard that wraps Card', () => {
     render(<AdapterCard>card content</AdapterCard>);
     expect(screen.getByTestId('card')).toHaveTextContent('card content');
+  });
+
+  it('exports layout wrappers for adapter operations', () => {
+    render(
+      <AdapterOperationsLayout>
+        <AdapterCategoryGrid>
+          <AdapterAddonPanel>operation</AdapterAddonPanel>
+        </AdapterCategoryGrid>
+      </AdapterOperationsLayout>,
+    );
+    expect(screen.getByText('operation')).toBeInTheDocument();
   });
 });

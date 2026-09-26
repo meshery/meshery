@@ -22,6 +22,9 @@ import { updateProgress } from '@/store/slices/mesheryUi';
 import {
   AdapterChip,
   AdapterSmWrapper,
+  AdapterAddonPanel,
+  AdapterCategoryGrid,
+  AdapterOperationsLayout,
   ChipNamespaceContainer,
   InputWrapper,
   PaneSection,
@@ -543,6 +546,8 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
     );
   };
 
+  const addonOperations = extractAddonOperations(2);
+
   const handleAddonSwitchChange = (name, checked, ops) => {
     setAddonSwitchGroup({ ...addonSwitchGroup, [name]: checked });
     submitOp(ops.category, ops.key, !addonSwitchGroup[ops.key]);
@@ -591,7 +596,7 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
                     item
                     xs={12}
                     alignItems="flex-start"
-                    justify="space-between"
+                    justifyContent="space-between"
                   >
                     <div>{adapterChip}</div>
                     <InputWrapper>
@@ -613,16 +618,10 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
                       />
                     </InputWrapper>
                   </ChipNamespaceContainer>
-                  <Grid container spacing={1} style={{ margin: '1rem' }}>
-                    <Grid
-                      container
-                      item
-                      lg={!extractAddonOperations(2).length ? 12 : 10}
-                      xs={12}
-                      spacing={2}
-                    >
+                  <AdapterOperationsLayout hasAddons={addonOperations.length > 0}>
+                    <AdapterCategoryGrid>
                       {filteredOps.map((val, i) => (
-                        <Grid item lg={3} md={4} xs={12} key={`adapter-card-${i}`}>
+                        <div key={`adapter-card-${i}`}>
                           <AdapterCategoryCard
                             cat={typeof val === 'undefined' ? 0 : val}
                             adapterOps={adapter?.ops ?? []}
@@ -633,19 +632,19 @@ const MesheryAdapterPlayComponent: React.FC<MesheryAdapterPlayComponentProps> = 
                             onMenuItemClick={handleSubmit}
                             renderYamlDialog={renderYamlDialog}
                           />
-                        </Grid>
+                        </div>
                       ))}
-                    </Grid>
-                    <Grid container item lg={2} xs={12}>
-                      <Grid item xs={12} md={4}>
+                    </AdapterCategoryGrid>
+                    {addonOperations.length > 0 && (
+                      <AdapterAddonPanel>
                         <AdapterAddonSwitches
-                          selectedAdapterOps={extractAddonOperations(2)}
+                          selectedAdapterOps={addonOperations}
                           addonSwitchGroup={addonSwitchGroup}
                           onSwitchChange={handleAddonSwitchChange}
                         />
-                      </Grid>
-                    </Grid>
-                  </Grid>
+                      </AdapterAddonPanel>
+                    )}
+                  </AdapterOperationsLayout>
                 </Grid>
               </PaneSection>
             </Grid>
