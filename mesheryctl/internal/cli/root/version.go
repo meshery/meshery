@@ -20,8 +20,10 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -32,7 +34,8 @@ import (
 
 var (
 	// Mesheryctl config - holds config handler
-	mctlCfg *config.MesheryCtlConfig
+	mctlCfg             *config.MesheryCtlConfig
+	versionOutputFormat string
 )
 
 var linkDoc = map[string]string{
@@ -51,6 +54,13 @@ mesheryctl version
 	`,
 	Annotations: linkDoc,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if versionOutputFormat != "" {
+			versionOutputFormat = strings.ToLower(versionOutputFormat)
+			if err := display.ValidateOutputFormat(versionOutputFormat); err != nil {
+				return err
+			}
+		}
+
 		var err error
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -109,13 +119,15 @@ mesheryctl version
 		}
 		return nil
 	},
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 
 		url := mctlCfg.GetBaseMesheryURL()
 		build := constants.GetMesheryctlVersion()
 		commitsha := constants.GetMesheryctlCommitsha()
-		defer utils.CheckMesheryctlClientVersion(build)
 
+		if versionOutputFormat == "" || versionOutputFormat == "table" {
+			defer utils.CheckMesheryctlClientVersion(build)
+		}
 		version := config.Version{
 			Build:          "unavailable",
 			CommitSHA:      "unavailable",
@@ -127,43 +139,92 @@ mesheryctl version
 
 		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/version", url), nil)
 		if err != nil {
-			utils.PrintToTable(header, rows, nil)
+			if err := displayVersionOutput(cmd, versionOutputFormat, build, commitsha, version, header, rows); err != nil {
+				utils.Log.Error(err)
+			}
 			utils.Log.Error(ErrGettingRequestContext(err))
-			return
+			return nil
 		}
 
 		client := &http.Client{Timeout: 10 * time.Second}
 		resp, err := client.Do(req)
 
 		if err != nil {
-
-			// resp is nil here except when CheckRedirect fails, and in that
-			// case net/http has already closed resp.Body for us — see the
-			// (Client).Do docs — so there is nothing left to close.
-
-			utils.PrintToTable(header, rows, nil)
+			if err := displayVersionOutput(cmd, versionOutputFormat, build, commitsha, version, header, rows); err != nil {
+				utils.Log.Error(err)
+			}
 			utils.Log.Warn(ErrConnectingToServer(err))
-			return
+			return nil
 		}
 
 		// needs multiple defer as Body.Close needs a valid response
 		defer func() { _ = resp.Body.Close() }()
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
-			utils.PrintToTable(header, rows, nil)
+			if err := displayVersionOutput(cmd, versionOutputFormat, build, commitsha, version, header, rows); err != nil {
+				utils.Log.Error(err)
+			}
 			utils.Log.Error(utils.ErrInvalidAPIResponse(err))
-			return
+			return nil
 		}
 
 		err = json.Unmarshal(data, &version)
 		if err != nil {
-			utils.PrintToTable(header, rows, nil)
+			if err := displayVersionOutput(cmd, versionOutputFormat, build, commitsha, version, header, rows); err != nil {
+				utils.Log.Error(err)
+			}
 			utils.Log.Error(ErrUnmarshallingAPIData(err))
-			return
+			return nil
 		}
 
 		rows[1][1] = version.GetBuild()
 		rows[1][2] = version.GetCommitSHA()
-		utils.PrintToTable(header, rows, nil)
+		return displayVersionOutput(cmd, versionOutputFormat, build, commitsha, version, header, rows)
 	},
+}
+
+func displayVersionOutput(cmd *cobra.Command, outputFormat, build, commitsha string, version config.Version, header []string, rows [][]string) error {
+	output := map[string]any{
+		"client": map[string]string{
+			"version": build,
+			"git_sha": commitsha,
+		},
+		"server": map[string]string{
+			"version": version.GetBuild(),
+			"git_sha": version.GetCommitSHA(),
+		},
+	}
+
+	switch outputFormat {
+	case "json":
+		formatter := &display.JSONOutputFormatter[map[string]any]{
+			Data: output,
+			EncoderSettings: display.JsonEncoderSettings{
+				SetEscapeHTML: false,
+				IndentPrefix:  "",
+				IndentValue:   "  ",
+			},
+			Out: cmd.OutOrStdout(),
+		}
+		return formatter.Display()
+	case "yaml":
+		formatter := &display.YAMLOutputFormatter[map[string]any]{
+			Data: output,
+			Out:  cmd.OutOrStdout(),
+		}
+		return formatter.Display()
+	default:
+		utils.PrintToTable(header, rows, nil)
+		return nil
+	}
+}
+
+func init() {
+	versionCmd.Flags().StringVarP(
+		&versionOutputFormat,
+		"output-format",
+		"o",
+		"",
+		"Output format: json, yaml",
+	)
 }
