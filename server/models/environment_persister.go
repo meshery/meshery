@@ -238,22 +238,17 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uui
 		order = "connections.updated_at desc"
 	}
 
-	isAssigned := true
-	// Parse the filter JSON string
-	if filter != "" {
-		var filterMap map[string]interface{}
-		err := json.Unmarshal([]byte(filter), &filterMap)
-		if err != nil {
-			return nil, err
-		}
-
-		if assignedVal, ok := filterMap["assigned"]; ok {
-			isAssigned = assignedVal.(bool)
-		}
+	// Decode `filter` once. This endpoint used to hand the same string to
+	// json.Unmarshal here *and* to utils.ApplyFilters below, whose grammar is
+	// "key value" rather than JSON - so each parser disabled the other and the
+	// owner filter was unreachable. See issue #21826.
+	parsedFilter, err := ParseEnvironmentConnectionsFilter(filter)
+	if err != nil {
+		return nil, err
 	}
 
 	var query *gorm.DB
-	if isAssigned {
+	if parsedFilter.Assigned {
 		// Query for connection that are assigned to given environment
 		query = ep.DB.Table("environment_connection_mappings").
 			Joins("JOIN connections ON connections.id = environment_connection_mappings.connection_id").
@@ -272,9 +267,12 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID core.Uui
 		query = query.Where("lower(connections.name) LIKE ?", like)
 	}
 
-	// Apply additional filters
-	dynamicKeys := []string{"owner", "organization_id"}
-	query = utils.ApplyFilters(query, filter, dynamicKeys)
+	// Apply additional filters decoded out of `filter` above. `owner` is the
+	// only one this endpoint can serve: the queries above run against
+	// `connections`, which has an `owner` column but no `organization_id`.
+	if parsedFilter.Owner != "" {
+		query = query.Where("connections.owner = ?", parsedFilter.Owner)
+	}
 	query = query.Order(order)
 
 	count := int64(0)

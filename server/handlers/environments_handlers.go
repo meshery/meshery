@@ -9,6 +9,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/v1beta3/environment"
@@ -245,11 +246,22 @@ func (h *Handler) GetConnectionsOfEnvironmentHandler(w http.ResponseWriter, r *h
 	if err != nil {
 		handlerErr := ErrEnvironmentConnection(err, "list the connections of")
 		h.log.Error(handlerErr)
-		writeMeshkitError(w, handlerErr, providerStatus(err))
+		writeMeshkitError(w, handlerErr, environmentConnectionsStatus(err))
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	if _, err := fmt.Fprint(w, string(resp)); err != nil {
 		h.log.Error(err)
 	}
+}
+
+// environmentConnectionsStatus picks the status for a failed connections
+// listing. A rejected `filter` is the caller's mistake, so it is a 400 -
+// providerStatus would otherwise blame a remote provider (502) that was never
+// asked, and on the local provider was never even involved.
+func environmentConnectionsStatus(err error) int {
+	if meshkiterrors.GetCode(err) == models.ErrInvalidEnvironmentConnectionsFilterCode {
+		return http.StatusBadRequest
+	}
+	return providerStatus(err)
 }
