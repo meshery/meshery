@@ -8,6 +8,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	meshkiterrors "github.com/meshery/meshkit/errors"
 
 	"github.com/meshery/meshery/server/models"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
@@ -252,7 +253,7 @@ func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "list the environments of")
 		h.log.Error(handlerErr)
-		writeMeshkitError(w, handlerErr, providerStatus(err))
+		writeMeshkitError(w, handlerErr, workspaceFilterStatus(err))
 		return
 	}
 
@@ -269,7 +270,7 @@ func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "list the designs of")
 		h.log.Error(handlerErr)
-		writeMeshkitError(w, handlerErr, providerStatus(err))
+		writeMeshkitError(w, handlerErr, workspaceFilterStatus(err))
 		return
 	}
 
@@ -350,7 +351,7 @@ func (h *Handler) GetViewsOfWorkspaceHandler(w http.ResponseWriter, req *http.Re
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "list the views of")
 		h.log.Error(handlerErr)
-		writeMeshkitError(w, handlerErr, providerStatus(err))
+		writeMeshkitError(w, handlerErr, workspaceFilterStatus(err))
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -398,7 +399,7 @@ func (h *Handler) GetTeamsOfWorkspaceHandler(w http.ResponseWriter, req *http.Re
 	if err != nil {
 		handlerErr := ErrWorkspaceResource(err, "list the teams of")
 		h.log.Error(handlerErr)
-		writeMeshkitError(w, handlerErr, providerStatus(err))
+		writeMeshkitError(w, handlerErr, workspaceFilterStatus(err))
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -437,4 +438,15 @@ func (h *Handler) RemoveTeamFromWorkspaceHandler(w http.ResponseWriter, req *htt
 	if _, err := w.Write(resp); err != nil {
 		h.log.Error(err)
 	}
+}
+
+// workspaceFilterStatus picks the status for a failed workspace listing. A
+// rejected `filter` is the caller's mistake, so it is a 400 - providerStatus
+// would otherwise blame a remote provider (502) that was never asked, and on
+// the local provider was never even involved.
+func workspaceFilterStatus(err error) int {
+	if meshkiterrors.GetCode(err) == models.ErrInvalidWorkspaceFilterCode {
+		return http.StatusBadRequest
+	}
+	return providerStatus(err)
 }
