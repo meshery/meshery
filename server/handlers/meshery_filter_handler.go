@@ -16,8 +16,8 @@ import (
 	"github.com/meshery/meshkit/models/events"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1"
-	"github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta3/component"
 )
 
 func (h *Handler) GetMesheryFilterFileHandler(
@@ -228,7 +228,11 @@ func (h *Handler) GetMesheryFiltersHandler(
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
-	tokenString := r.Context().Value(models.TokenCtxKey).(string)
+	tokenString, ok := r.Context().Value(models.TokenCtxKey).(string)
+	if !ok {
+		writeMeshkitError(rw, ErrFetchToken(fmt.Errorf("token not found in request context")), http.StatusInternalServerError)
+		return
+	}
 
 	filter := struct {
 		Visibility []string `json:"visibility"`
@@ -267,7 +271,11 @@ func (h *Handler) GetCatalogMesheryFiltersHandler(
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
-	tokenString := r.Context().Value(models.TokenCtxKey).(string)
+	tokenString, ok := r.Context().Value(models.TokenCtxKey).(string)
+	if !ok {
+		writeMeshkitError(rw, ErrFetchToken(fmt.Errorf("token not found in request context")), http.StatusInternalServerError)
+		return
+	}
 
 	resp, err := provider.GetCatalogMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
 	if err != nil {
