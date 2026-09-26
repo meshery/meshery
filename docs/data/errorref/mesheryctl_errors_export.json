@@ -2117,6 +2117,15 @@
         "short_description": "Unexpected response from GitHub API",
         "probable_cause": "GitHub API may be rate-limiting requests or the requested resource may not exist",
         "suggested_remediation": "Wait a few minutes and try again, or check https://www.githubstatus.com for GitHub API status"
+      },
+      "1256": {
+        "name": "ErrCountWithOutputFormatCode",
+        "code": "1256",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Cannot combine --count with --output-format",
+        "probable_cause": "--count only has a defined meaning for the default table output",
+        "suggested_remediation": "Use --count on its own for a total, or --output-format on its own for structured (json|yaml) output of the full page"
       }
     }
   }

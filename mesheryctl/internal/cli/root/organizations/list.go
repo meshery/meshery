@@ -15,6 +15,11 @@
 package organizations
 
 import (
+	"fmt"
+	"io"
+	"strings"
+
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
@@ -34,11 +39,36 @@ mesheryctl organization list --page [page-number]
 
 // Display number of available organizations
 mesheryctl organization list --count
+
+// list organizations as structured output, for use in scripts
+mesheryctl organization list --output-format json
+mesheryctl organization list --output-format yaml
 	`,
+	Args: func(cmd *cobra.Command, _ []string) error {
+		outputFormat, _ := cmd.Flags().GetString("output-format")
+		if outputFormat == "" {
+			// Default (unset) means "render the interactive table" - only
+			// validate when the caller actually asked for a machine-readable
+			// format.
+			return nil
+		}
+
+		if count, _ := cmd.Flags().GetBool("count"); count {
+			return ErrCountWithOutputFormat()
+		}
+
+		return display.ValidateOutputFormat(outputFormat)
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		page, _ := cmd.Flags().GetInt("page")
 		pagesize, _ := cmd.Flags().GetInt("pagesize")
 		count, _ := cmd.Flags().GetBool("count")
+		outputFormat, _ := cmd.Flags().GetString("output-format")
+
+		if outputFormat != "" {
+			return listOrgsAsStructuredOutput(cmd.OutOrStdout(), outputFormat, page, pagesize)
+		}
+
 		data := display.DisplayDataAsync{
 			UrlPath:          organizationsApiPath,
 			Page:             page,
@@ -51,6 +81,34 @@ mesheryctl organization list --count
 
 		return display.ListAsyncPagination(data, processOrgData)
 	},
+}
+
+// listOrgsAsStructuredOutput fetches a single page of organizations and
+// renders it as JSON or YAML, instead of the interactive table used by the
+// default `organization list` path. It builds the same zero-based
+// page/pagesize query as display.HandlePaginationAsync so `--page`/
+// `--pagesize` mean the same thing regardless of `--output-format`.
+func listOrgsAsStructuredOutput(out io.Writer, outputFormat string, page, pagesize int) error {
+	outputFormat = strings.ToLower(outputFormat)
+
+	// Same zero-based page/pagesize conversion display.HandlePaginationAsync
+	// applies for the table path, via the shared helper so the two don't
+	// drift out of sync with each other.
+	currentPage, effectivePageSize := display.NormalizePagination(page, pagesize)
+
+	urlPath := fmt.Sprintf("%s?page=%d&pagesize=%d", organizationsApiPath, currentPage, effectivePageSize)
+	orgsData, err := api.Fetch[models.OrganizationsPage](urlPath)
+	if err != nil {
+		return err
+	}
+
+	outputFormatterFactory := display.OutputFormatterFactory[*models.OrganizationsPage]{}
+	outputFormatter, err := outputFormatterFactory.New(outputFormat, orgsData)
+	if err != nil {
+		return err
+	}
+
+	return outputFormatter.WithOutput(out).Display()
 }
 
 func processOrgData(orgs *models.OrganizationsPage) ([][]string, int64) {
@@ -70,5 +128,5 @@ func init() {
 	listOrgCmd.Flags().IntP("page", "p", 1, "(optional) Page number of paginated results")
 	listOrgCmd.Flags().IntP("pagesize", "s", 10, "(optional) Number of organizations per page")
 	listOrgCmd.Flags().BoolP("count", "", false, "total number of registered orgs")
-
+	listOrgCmd.Flags().StringP("output-format", "o", "", "(optional) format to display in [json|yaml]. Defaults to a human-readable table")
 }
