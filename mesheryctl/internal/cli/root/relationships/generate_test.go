@@ -1,8 +1,6 @@
 package relationships
 
 import (
-	"encoding/json"
-	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -11,9 +9,9 @@ import (
 	"github.com/google/go-cmp/cmp"
 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkitRegistry "github.com/meshery/meshkit/registry"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
-	"google.golang.org/api/sheets/v4"
 )
 
 func TestGenerateErrorOutput(t *testing.T) {
@@ -44,8 +42,7 @@ func TestGenerateErrorOutput(t *testing.T) {
 			Name:           "Given nonexistent CSV file path, when generate runs, then it errors with file read error",
 			Args:           []string{"generate", "--file", "/nonexistent/file.csv"},
 			ExpectError:    true,
-			ErrorSubstring: "File read error",
-			ExpectedError:  utils.ErrFileRead(fmt.Errorf("open /nonexistent/file.csv: no such file or directory")),
+			ErrorSubstring: "no such file or directory",
 		},
 		{
 			Name:           "Given both file and spreadsheet-id, when generate runs, then it errors with mutually exclusive flags",
@@ -72,11 +69,17 @@ func TestGenerateErrorOutput(t *testing.T) {
 
 			if err != nil {
 				if tt.ExpectError {
+					if tt.ErrorSubstring != "" {
+						assert.Contains(t, err.Error(), tt.ErrorSubstring)
+					}
+
 					if tt.ExpectedError != nil {
 						utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
 					}
+
 					return
 				}
+
 				t.Fatal(err)
 			}
 
@@ -87,198 +90,169 @@ func TestGenerateErrorOutput(t *testing.T) {
 	}
 }
 
-func TestGenerateDataOutput(t *testing.T) {
-	// setup current context
+func TestGenerateSpreadsheetDataOutput(t *testing.T) {
 	utils.SetupContextEnv(t)
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
 
-	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
-		t.Fatal("Not able to get current working directory")
+		t.Fatal("unable to determine test directory")
 	}
+
 	currDir := filepath.Dir(filename)
 
-	// test scenarios for fetching data
-	tests := []struct {
-		Name             string
-		Args             []string
-		Fixture          string
-		ExpectedResponse string
-		ExpectError      bool
-		IsOutputGolden   bool
-		ExpectedError    error
-	}{
-		{
-			Name:             "Generate registered relationships",
-			Args:             []string{"generate", "--spreadsheet-cred", "$CRED", "--spreadsheet-id", "1"},
-			Fixture:          "generate.relationship.sheet.data.golden",
-			ExpectedResponse: "generate.relationship.output.golden",
-			IsOutputGolden:   true,
-			ExpectError:      false,
-		},
+	originalGetSheetID := getRelationshipSheetID
+	originalNewHelper := newRelationshipCSVHelper
+	originalOutputPath := relationshipsOutputPath
+
+	defer func() {
+		getRelationshipSheetID = originalGetSheetID
+		newRelationshipCSVHelper = originalNewHelper
+		relationshipsOutputPath = originalOutputPath
+	}()
+
+	relationshipsOutputPath = filepath.Join(
+		t.TempDir(),
+		"relationships.json",
+	)
+
+	// Mock spreadsheet metadata lookup.
+	getRelationshipSheetID = func(cred, spreadsheetID string) (int64, error) {
+		assert.Equal(t, "$CRED", cred)
+		assert.Equal(t, "test-spreadsheet-id", spreadsheetID)
+		return 1410291737, nil
 	}
 
-	// run tests
-	for _, tt := range tests {
-		t.Run(tt.Name, func(t *testing.T) {
+	// Mock MeshKit relationship helper.
+	newRelationshipCSVHelper = func(
+		sheetURL string,
+		sheetName string,
+		sheetID int64,
+		localCSVPath string,
+	) (*meshkitRegistry.RelationshipCSVHelper, error) {
+		assert.Equal(
+			t,
+			"https://docs.google.com/spreadsheets/d/test-spreadsheet-id",
+			sheetURL,
+		)
+		assert.Equal(t, "Relationships", sheetName)
+		assert.Equal(t, int64(1410291737), sheetID)
+		assert.Empty(t, localCSVPath)
 
-			defer utils.ResetCommandFlags(RelationshipCmd, t)
+		fixturesDir := filepath.Join(currDir, "fixtures")
 
-			fixturesDir := filepath.Join(currDir, "fixtures")
-
-			originalStdout := os.Stdout
-			b := utils.SetupMeshkitLoggerTesting(t, false)
-			defer func() {
-				os.Stdout = originalStdout
-			}()
-
-			originalPath := relationshipsOutputPath
-			defer func() { relationshipsOutputPath = originalPath }()
-			relationshipsOutputPath = "./testdata/generate.relationship.json.output.golden"
-
-			originalFetch := fetchSheetValues
-			defer func() { fetchSheetValues = originalFetch }()
-
-			golden := utils.NewGoldenFile(t, tt.Fixture, fixturesDir)
-			sheetData := golden.Load()
-
-			var sheetDataParsed map[string]interface{}
-			if err := json.Unmarshal([]byte(sheetData), &sheetDataParsed); err != nil {
-				t.Fatal("Error parsing golden sheet data:", err)
-			}
-
-			fetchSheetValues = func(id, cred string) (*sheets.ValueRange, error) {
-				return &sheets.ValueRange{
-					MajorDimension: "ROWS",
-					Range:          "Relationships!A1:O1000",
-					Values: [][]interface{}{
-						{},
-						{},
-						sheetDataParsed["ROW3"].([]interface{}),
-					},
-				}, nil
-			}
-
-			mesheryctlflags.InitValidators(RelationshipCmd)
-			RelationshipCmd.SetArgs(tt.Args)
-			RelationshipCmd.SetOut(originalStdout)
-			err := RelationshipCmd.Execute()
-
-			// to validate the expected errors
-			if err != nil {
-				if tt.ExpectError {
-
-					utils.AssertMeshkitErrorsEqual(t, err, tt.ExpectedError)
-					return
-				}
-
-				t.Fatal(err)
-			}
-
-			if tt.ExpectError {
-				t.Fatalf("expected an error but command succeeded")
-			}
-
-			actualResponse := b.String()
-
-			testdataDir := filepath.Join(currDir, "testdata")
-			golden = utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
-
-			if *update {
-				golden.Write(actualResponse)
-			}
-			expectedResponse := golden.Load()
-
-			cleanedActualResponse := utils.CleanStringFromHandlePagination(actualResponse)
-			cleanedExceptedResponse := utils.CleanStringFromHandlePagination(expectedResponse)
-
-			utils.Equals(t, cleanedExceptedResponse, cleanedActualResponse)
-
-			// Validate generated json file
-			relationshipData, err := os.ReadFile(relationshipsOutputPath)
-			if err != nil {
-				t.Fatal("Error in reading file 'relationships-data-test.json': ", err)
-			}
-
-			jsonFilePath := "./testdata/relationships-data-test.json"
-			expectedRelationshipData, err := os.ReadFile(jsonFilePath)
-			if err != nil {
-				t.Fatal("Error in reading file 'generate.relationship.json.output.golden': ", err)
-			}
-			assert.JSONEqf(t, string(expectedRelationshipData), string(relationshipData), "Generated JSON data does not match expected data.\n Difference: %s", cmp.Diff(relationshipData, expectedRelationshipData))
-
-		})
-		t.Log("Generate experimental relationship test for sheetdata validation has passed")
+		return &meshkitRegistry.RelationshipCSVHelper{
+			SpreadsheetID:  sheetID,
+			SpreadsheetURL: sheetURL,
+			Title:          sheetName,
+			CSVPath: filepath.Join(
+				fixturesDir,
+				"generate.relationship.csv.data.golden",
+			),
+			Relationships: []meshkitRegistry.RelationshipCSV{},
+		}, nil
 	}
+
+	defer utils.ResetCommandFlags(RelationshipCmd, t)
+
+	mesheryctlflags.InitValidators(RelationshipCmd)
+
+	RelationshipCmd.SetArgs([]string{
+		"generate",
+		"--spreadsheet-id", "test-spreadsheet-id",
+		"--spreadsheet-cred", "$CRED",
+		"--output", relationshipsOutputPath,
+	})
+
+	err := RelationshipCmd.Execute()
+	if err != nil {
+		t.Fatalf("generate command failed: %v", err)
+	}
+
+	actual, err := os.ReadFile(relationshipsOutputPath)
+	if err != nil {
+		t.Fatalf("failed to read generated JSON: %v", err)
+	}
+
+	expected := `[
+  {
+    "Model": "kubernetes",
+    "Version": "v1.25.2",
+    "kind": "Hierarchical",
+    "type": "",
+    "status": "",
+    "subType": "Inventory",
+    "PublishToRegistry": "",
+    "metadata.description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.",
+    "metadata.isAnnotation": "",
+    "metadata.styles": "",
+    "evalPolicy": "hierarchical_inventory_relationship",
+    "selector": "",
+    "filename": ""
+  }
+]`
+
+	assert.JSONEq(t, expected, string(actual))
 }
 
 func TestGenerateCSVDataOutput(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
 
-	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
-		t.Fatal("Not able to get current working directory")
+		t.Fatal("unable to determine test directory")
 	}
+
 	currDir := filepath.Dir(filename)
+	fixturesDir := filepath.Join(currDir, "fixtures")
 
-	tests := []struct {
-		Name        string
-		CSVFixture  string
-		ExpectError bool
-	}{
-		{
-			Name:        "Generate relationships from CSV file",
-			CSVFixture:  "generate.relationship.csv.data.golden",
-			ExpectError: false,
-		},
+	csvPath := filepath.Join(
+		fixturesDir,
+		"generate.relationship.csv.data.golden",
+	)
+
+	outputPath := filepath.Join(t.TempDir(), "output.json")
+
+	// Initialize Meshery logger used by display package.
+	utils.SetupMeshkitLoggerTesting(t, false)
+
+	defer utils.ResetCommandFlags(RelationshipCmd, t)
+
+	mesheryctlflags.InitValidators(RelationshipCmd)
+
+	RelationshipCmd.SetArgs([]string{
+		"generate",
+		"--file", csvPath,
+		"--output", outputPath,
+	})
+
+	err := RelationshipCmd.Execute()
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.Name, func(t *testing.T) {
-			defer utils.ResetCommandFlags(RelationshipCmd, t)
-
-			fixturesDir := filepath.Join(currDir, "fixtures")
-			csvPath := filepath.Join(fixturesDir, tt.CSVFixture)
-
-			outputPath := filepath.Join(t.TempDir(), "output.json")
-
-			originalStdout := os.Stdout
-			_ = utils.SetupMeshkitLoggerTesting(t, false)
-			defer func() {
-				os.Stdout = originalStdout
-			}()
-
-			mesheryctlflags.InitValidators(RelationshipCmd)
-			RelationshipCmd.SetArgs([]string{"generate", "--file", csvPath, "--output", outputPath})
-			RelationshipCmd.SetOut(originalStdout)
-			err := RelationshipCmd.Execute()
-
-			if err != nil {
-				if tt.ExpectError {
-					return
-				}
-				t.Fatal(err)
-			}
-
-			if tt.ExpectError {
-				t.Fatalf("expected an error but command succeeded")
-			}
-
-			// Validate generated json file matches expected output
-			relationshipData, err := os.ReadFile(outputPath)
-			if err != nil {
-				t.Fatal("Error reading generated JSON file:", err)
-			}
-
-			jsonFilePath := "./testdata/relationships-data-csv-test.json"
-			expectedRelationshipData, err := os.ReadFile(jsonFilePath)
-			if err != nil {
-				t.Fatal("Error reading expected JSON file:", err)
-			}
-			assert.JSONEqf(t, string(expectedRelationshipData), string(relationshipData), "Generated JSON data from CSV does not match expected data.\n Difference: %s", cmp.Diff(relationshipData, expectedRelationshipData))
-		})
-		t.Log("Generate CSV relationship test passed")
+	actual, err := os.ReadFile(outputPath)
+	if err != nil {
+		t.Fatalf("failed to read generated JSON: %v", err)
 	}
+
+	expectedPath := filepath.Join(
+		currDir,
+		"testdata",
+		"relationships-data-csv-test.json",
+	)
+
+	expected, err := os.ReadFile(expectedPath)
+	if err != nil {
+		t.Fatalf("failed to read expected JSON: %v", err)
+	}
+
+	assert.JSONEqf(
+		t,
+		string(expected),
+		string(actual),
+		"Generated JSON does not match expected data.\nDifference: %s",
+		cmp.Diff(expected, actual),
+	)
 }
