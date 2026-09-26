@@ -16,6 +16,7 @@ package environments
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -63,18 +64,42 @@ mesheryctl environment list --orgId [orgId] --pagesize [pagesize]
 			return utils.ErrInvalidUUID(fmt.Errorf("invalid orgId: %s", environmentListFlagsProvided.orgId))
 		}
 
+		if cmd.Flags().Changed("page") && environmentListFlagsProvided.page < 1 {
+			return utils.ErrInvalidArgument(errors.New("page must be >= 1"))
+		}
+
+		if cmd.Flags().Changed("pagesize") && environmentListFlagsProvided.pagesize <= 0 {
+			return utils.ErrInvalidArgument(errors.New("pagesize must be > 0"))
+		}
+
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// Build the query string using url.Values for safe encoding.
+		query := url.Values{}
+		query.Add("orgId", environmentListFlagsProvided.orgId)
+
+		// Forward --page only when explicitly set; convert from 1-based (user) to 0-based (API).
+		if cmd.Flags().Changed("page") {
+			query.Add("page", fmt.Sprint(environmentListFlagsProvided.page-1))
+		}
+
+		// Forward --pagesize only when explicitly set; let the server use its default otherwise.
+		if cmd.Flags().Changed("pagesize") {
+			query.Add("pagesize", fmt.Sprint(environmentListFlagsProvided.pagesize))
+		}
+
+		urlPath := fmt.Sprintf("%s?%s", environmentApiPath, query.Encode())
 
 		data := display.DisplayDataAsync{
-			UrlPath:          fmt.Sprintf("%s?orgId=%s", environmentApiPath, environmentListFlagsProvided.orgId),
+			UrlPath:          urlPath,
 			DataType:         "environments",
 			Header:           []string{"ID", "Name", "Organization ID", "Description", "Created At", "Updated At"},
 			Page:             environmentListFlagsProvided.page,
 			PageSize:         environmentListFlagsProvided.pagesize,
 			DisplayCountOnly: environmentListFlagsProvided.count,
-			IsPage:           cmd.Flags().Changed("page"),
+			IsPage:     cmd.Flags().Changed("page"),
+			IsPageSize: cmd.Flags().Changed("pagesize"),
 		}
 
 		return display.ListAsyncPagination(data, processEnvironmentData)
