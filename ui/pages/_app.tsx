@@ -397,8 +397,21 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, emotionCache }) =>
   const loadAbility = useCallback(
     async (orgID, reFetchKeys) => {
       const storedKeys = sessionStorage.getItem('keys');
+      let parsedKeys = null;
       if (storedKeys !== null && !reFetchKeys && storedKeys !== 'undefined') {
-        setState((prevState) => ({ ...prevState, keys: JSON.parse(storedKeys) }));
+        try {
+          const parsed = JSON.parse(storedKeys);
+          if (Array.isArray(parsed)) {
+            parsedKeys = parsed;
+          } else {
+            sessionStorage.removeItem('keys');
+          }
+        } catch {
+          sessionStorage.removeItem('keys');
+        }
+      }
+      if (parsedKeys !== null) {
+        setState((prevState) => ({ ...prevState, keys: parsedKeys }));
         updateAbility();
       } else {
         try {
