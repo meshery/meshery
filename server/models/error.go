@@ -147,6 +147,8 @@ const (
 	ErrSeedingComponentsCode              = "meshery-server-1358"
 	ErrSeedingConnectionsCode             = "meshery-server-1462"
 	ErrSeedingConnectionKindCode          = "meshery-server-1463"
+	ErrReadInClusterTokenCode             = "meshery-server-1486"
+	ErrReadInClusterCACode                = "meshery-server-1487"
 	ErrNoSystemEventSinkCode              = "meshery-server-1482"
 	ErrSeedingStagePanicCode              = "meshery-server-1483"
 	ErrImportFailureCode                  = "meshery-server-1359"
@@ -545,6 +547,14 @@ func ErrFetchData(err error) error {
 
 func ErrSessionCopy(err error) error {
 	return errors.New(ErrSessionCopyCode, errors.Alert, []string{"Error: session copy error"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrReadInClusterToken(err error) error {
+	return errors.New(ErrReadInClusterTokenCode, errors.Alert, []string{"Error reading in-cluster service account token"}, []string{err.Error()}, []string{"Meshery may not be running in a Kubernetes cluster", "Service account token file may be missing or inaccessible"}, []string{"Ensure Meshery is running in-cluster with proper service account permissions", "Verify the service account token file exists at the expected path"})
+}
+
+func ErrReadInClusterCA(err error) error {
+	return errors.New(ErrReadInClusterCACode, errors.Alert, []string{"Error reading in-cluster CA certificate"}, []string{err.Error()}, []string{"Meshery may not be running in a Kubernetes cluster", "CA certificate file may be missing or inaccessible"}, []string{"Ensure Meshery is running in-cluster with proper service account permissions", "Verify the CA certificate file exists at the expected path"})
 }
 
 func ErrGettingSeededComponents(err error, content string) error {
