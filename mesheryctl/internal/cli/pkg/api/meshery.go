@@ -47,6 +47,15 @@ func Add(url string, body io.Reader, headers map[string]string) (*http.Response,
 	return makeRequest(url, http.MethodPost, body, headers)
 }
 
+// Update sends a PUT request to the given URL path with the provided body and optional headers.
+// headers may be nil. Header keys/values will be added to the http.Request before dispatch.
+// This mirrors Add (POST) and Delete, which were already exported here; nothing calling this
+// package could previously issue a PUT, even though several server routes (e.g.
+// PUT /api/workspaces/{id}) expect one.
+func Update(url string, body io.Reader, headers map[string]string) (*http.Response, error) {
+	return makeRequest(url, http.MethodPut, body, headers)
+}
+
 func GenerateDataFromBodyResponse[T any](response *http.Response) (*T, error) {
 	if response == nil || response.Body == nil {
 		return nil, ErrGenerateDataForInvalidResponse()

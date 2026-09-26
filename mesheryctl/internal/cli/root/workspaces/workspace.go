@@ -23,7 +23,7 @@ import (
 )
 
 var (
-	availableSubcommands = []*cobra.Command{listWorkspaceCmd, createWorkspaceCmd, viewWorkspaceCmd}
+	availableSubcommands = []*cobra.Command{listWorkspaceCmd, createWorkspaceCmd, viewWorkspaceCmd, updateWorkspaceCmd}
 	workspacesApiPath    = "api/workspaces"
 )
 
@@ -39,6 +39,9 @@ mesheryctl workspace list --orgId [orgId]
 
 // To create a workspace
 mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
+
+// To update a workspace
+mesheryctl workspace update [workspace-id] --orgId [orgId] --name [new-name] --description [new-description]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 || len(args) > 1 {
