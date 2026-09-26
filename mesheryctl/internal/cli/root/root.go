@@ -74,6 +74,7 @@ mesheryctl -v [or] --verbose
 		// Initialize a validator and add it to the command context
 		// This allows us to use the same validator instance across all subcommands and avoid initializing multiple instances of the validator
 		mesheryctlflags.InitValidators(cmd)
+
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
