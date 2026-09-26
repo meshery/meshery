@@ -33,7 +33,6 @@ export const PaneSection = styled('div')(({ theme }) => ({
 export const ChipNamespaceContainer = styled(Grid)(() => ({
   gap: '2rem',
   margin: '0px',
-  width: '100%',
 }));
 
 export const InputWrapper = styled('div')(() => ({
@@ -45,38 +44,4 @@ export const AdapterCard = styled(Card)(() => ({
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-}));
-
-interface AdapterOperationsLayoutProps {
-  hasAddons?: boolean;
-}
-
-export const AdapterOperationsLayout = styled('div', {
-  shouldForwardProp: (prop) => prop !== 'hasAddons',
-})<AdapterOperationsLayoutProps>(({ theme, hasAddons = false }) => ({
-  display: 'grid',
-  gridTemplateColumns: 'minmax(0, 1fr)',
-  gap: theme.spacing(2),
-  alignItems: 'stretch',
-  width: '100%',
-  minWidth: 0,
-  [theme.breakpoints.up('lg')]: hasAddons
-    ? {
-        gridTemplateColumns: 'minmax(0, 5fr) minmax(16rem, 1fr)',
-      }
-    : {},
-}));
-
-export const AdapterCategoryGrid = styled('div')(({ theme }) => ({
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(16rem, 1fr))',
-  gap: theme.spacing(2),
-  alignItems: 'stretch',
-  minWidth: 0,
-}));
-
-export const AdapterAddonPanel = styled('div')(() => ({
-  display: 'flex',
-  alignItems: 'stretch',
-  minWidth: 0,
 }));

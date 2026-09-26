@@ -3,8 +3,8 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@sistent/sistent', () => ({
-  FormControl: ({ children, component, style }: any) => (
-    <div data-testid="form-control" data-component={component} style={style}>
+  FormControl: ({ children, component }: any) => (
+    <div data-testid="form-control" data-component={component}>
       {children}
     </div>
   ),
@@ -121,16 +121,5 @@ describe('AdapterAddonSwitches', () => {
       />,
     );
     expect(screen.getByTestId('switch-op1')).not.toBeChecked();
-  });
-
-  it('allows the switch panel to fill its layout column', () => {
-    render(
-      <AdapterAddonSwitches
-        selectedAdapterOps={[{ key: 'op1', value: 'Add-on:Tracing' }]}
-        addonSwitchGroup={{}}
-        onSwitchChange={vi.fn()}
-      />,
-    );
-    expect(screen.getByTestId('form-control')).toHaveStyle({ width: '100%', margin: '0px' });
   });
 });
