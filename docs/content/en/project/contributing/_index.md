@@ -13,7 +13,46 @@ Please do! Thanks for your help! 🎈 Meshery is community-built and welcomes co
 
 Meshery and it's various architectural components are written in different languages, including Golang, Javascript (React.js and Next.js) To make building, testing, and the experience of contributing consistent across all Meshery components, a `Makefile` is included in the every repository. These `make` targets are what you will use to build, run, test, and document.
 
+### Cloning the Repository
+
+The Meshery repository is large. Depending on which functional area you are working on, you may not need to clone the entire repository. Consider **sparse cloning** to skip large directories unrelated to your work.
+
+**Directories you may want to exclude:**
+
+| Directory | Approx. Size | Notes |
+|-----------|-------------|-------|
+| `/models` | ~1 GB | Only needed when working on Meshery models |
+| `/docs/static/v*` | Large | Old, archived versions of Meshery Docs |
+
+{{% alert color="warning" title="Excluding /models limits your local registry" %}}
+The `/models` directory populates Meshery's model registry when you build and run Meshery. If you exclude it, your local instance will register only a minimal set of models, which severely limits your ability to create sophisticated Meshery designs. Only exclude `/models` if you are not working with models or designs. To restore it later, re-run `git sparse-checkout set` without the `!/models/` pattern and rebuild.
+{{% /alert %}}
+
+**Sparse clone** (check out everything except the large directories):
+
+```bash
+# Clone metadata only — no blobs, no working tree yet
+git clone --filter=blob:none --no-checkout https://github.com/meshery/meshery.git
+cd meshery
+
+# Enable sparse-checkout in non-cone (pattern) mode so directories can be excluded
+git sparse-checkout set --no-cone '/*' '!/models/' '!/docs/static/v*/'
+
+# Check out master (excluded directories are skipped)
+git checkout master
+```
+
+Here `/*` includes everything at the repository root, and each `!` line excludes a large directory. To restore an excluded directory later, re-run the `set` command without its `!` line, or run `git sparse-checkout disable` for the full working tree.
+
+**Shallow clone** (less history, faster) — fetches only the latest commit, but still checks out the full working tree (including `/models`). To exclude the large directories, use the sparse-checkout above instead.
+
+```bash
+git clone --depth=1 https://github.com/meshery/meshery.git
+```
+
 To contribute to Meshery, please follow this basic fork-and-pull request [gitflow]({{< ref "project/contributing/contributing-gitflow.md" >}}).
+
+
 
 <details>
 <summary>Adding your sign-off on commits (Developer Certificate of Origin)</summary>
