@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { loadCachedUserKeys } from '../userKeys';
 
 const validKeys = [
@@ -17,6 +17,25 @@ const validKeys = [
 describe('loadCachedUserKeys', () => {
   beforeEach(() => {
     window.sessionStorage.clear();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('returns null instead of throwing when sessionStorage is unavailable', () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new DOMException('The operation is insecure.', 'SecurityError');
+    });
+    expect(loadCachedUserKeys()).toBeNull();
+  });
+
+  it('returns null instead of throwing when a corrupted entry cannot be removed', () => {
+    window.sessionStorage.setItem('keys', 'undefined{broken]');
+    vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {
+      throw new DOMException('The operation is insecure.', 'SecurityError');
+    });
+    expect(loadCachedUserKeys()).toBeNull();
   });
 
   it('returns the cached keys when the entry is a valid key array', () => {
