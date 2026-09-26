@@ -1,0 +1,1 @@
+“Hi everyone, I’m Suryansh. I’m currently pursuing my second year of B.Tech in Computer Science and Engineering with a specialization in AI/ML. I’m interested in development, AI, and open source. I’m new to Meshery, so I’m here to understand the project, learn from the community, and hopefully start contributing. Looking forward to connecting with everyone.”
