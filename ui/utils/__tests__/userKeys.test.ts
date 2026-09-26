@@ -24,18 +24,20 @@ describe('loadCachedUserKeys', () => {
   });
 
   it('returns null instead of throwing when sessionStorage is unavailable', () => {
-    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+    const getItem = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
       throw new DOMException('The operation is insecure.', 'SecurityError');
     });
     expect(loadCachedUserKeys()).toBeNull();
+    expect(getItem).toHaveBeenCalledWith('keys');
   });
 
   it('returns null instead of throwing when a corrupted entry cannot be removed', () => {
     window.sessionStorage.setItem('keys', 'undefined{broken]');
-    vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {
+    const removeItem = vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {
       throw new DOMException('The operation is insecure.', 'SecurityError');
     });
     expect(loadCachedUserKeys()).toBeNull();
+    expect(removeItem).toHaveBeenCalledWith('keys');
   });
 
   it('returns the cached keys when the entry is a valid key array', () => {
