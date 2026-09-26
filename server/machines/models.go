@@ -3,6 +3,7 @@ package machines
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"sync"
 
 	"github.com/meshery/meshery/server/models"
@@ -310,44 +311,47 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	// transition skips this block too: nothing advanced, so nothing to persist.
 	if sm.Provider != nil && originalEventType != Exit && !haltedWithoutTransition {
 		token, _ := ctx.Value(models.TokenCtxKey).(string)
-		connection, _, err := sm.Provider.GetConnectionByID(token, sm.ID)
+		connection, statusCode, err := sm.Provider.GetConnectionByID(token, sm.ID)
 
-		if err != nil {
+		notYetPersisted := originalEventType == Register && statusCode == http.StatusNotFound
+		if notYetPersisted {
+			sm.Log.Debugf("%s: connection %s not yet persisted after %q; skipping status update", sm.Name, sm.ID, originalEventType)
+		} else {
+			if err != nil {
+				return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
+			}
 
-			return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
+			// Defensive guard: a provider that reports no error but hands back a nil
+			// connection would panic on the field access below. Treat it as a
+			// retrieval failure so the caller sees an error instead of a crash.
+			if connection == nil {
+				err = ErrConnectionNotFound(sm.ID.String())
+				return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
+			}
+
+			// Only a real status change should produce a user-facing failure event
+			// (see statusChanged above).
+			statusChanged = connection.Status != connections.ConnectionStatus(sm.CurrentState)
+
+			connectionPayload := &connections.ConnectionPayload{
+				ID:       sm.ID,
+				Kind:     connection.Kind,
+				MetaData: connection.Metadata,
+				Status:   connections.ConnectionStatus(sm.CurrentState)}
+
+			if connectionPayload.MetaData == nil {
+				connectionPayload.MetaData = map[string]interface{}{}
+			}
+
+			connection, err = sm.Provider.UpdateConnectionById(token, connectionPayload, sm.ID.String())
+
+			if err != nil {
+				// In this case should the current state be again set to previous state i.e. should we rollback. But not only state should be rollback but other actions as well, rn we don't rollback state.
+				return events.NewEvent().WithDescription(fmt.Sprintf("Operation succeeded but failed to update the status of the connection to %s.", sm.CurrentState)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
+			}
+
+			sm.Log.Debugf("%s: updated \"status\" for connection with id: %s to \"%s\"", sm.Name, connection.ID, sm.CurrentState)
 		}
-
-		// Defensive guard: a provider that reports no error but hands back a nil
-		// connection would panic on the field access below. Treat it as a
-		// retrieval failure so the caller sees an error instead of a crash.
-		if connection == nil {
-			err = ErrConnectionNotFound(sm.ID.String())
-			return events.NewEvent().WithDescription(fmt.Sprintf("Failed to retrieve the connection with id %s to update status.", sm.ID)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
-		}
-
-		// Compare the currently persisted status against the state the machine
-		// settled in. Only an actual change should produce a user-facing failure
-		// event (see statusChanged above).
-		statusChanged = connection.Status != connections.ConnectionStatus(sm.CurrentState)
-
-		connectionPayload := &connections.ConnectionPayload{
-			ID:       sm.ID,
-			Kind:     connection.Kind,
-			MetaData: connection.Metadata,
-			Status:   connections.ConnectionStatus(sm.CurrentState)}
-
-		if connectionPayload.MetaData == nil {
-			connectionPayload.MetaData = map[string]interface{}{}
-		}
-
-		connection, err = sm.Provider.UpdateConnectionById(token, connectionPayload, sm.ID.String())
-
-		if err != nil {
-			// In this case should the current state be again set to previous state i.e. should we rollback. But not only state should be rollback but other actions as well, rn we don't rollback state.
-			return events.NewEvent().WithDescription(fmt.Sprintf("Operation succeeded but failed to update the status of the connection to %s.", sm.CurrentState)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromOwner(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
-		}
-
-		sm.Log.Debugf("%s: updated \"status\" for connection with id: %s to \"%s\"", sm.Name, connection.ID, sm.CurrentState)
 	}
 
 	// A genuine failure (action error or fatal transition error) occurred
