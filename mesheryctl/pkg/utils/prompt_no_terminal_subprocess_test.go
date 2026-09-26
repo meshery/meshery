@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"strings"
@@ -23,10 +24,10 @@ func TestRunSelectPromptInARealNonTerminalProcess(t *testing.T) {
 		// Child: IsInteractiveTerminal is untouched here.
 		_, err := RunSelectPrompt("Select item", []string{"a", "b", "c"})
 		if err == nil {
-			os.Stdout.WriteString("NOERROR")
+			fmt.Print("NOERROR")
 			return
 		}
-		os.Stdout.WriteString(errors.GetCode(err) + "\n" + err.Error())
+		fmt.Print(errors.GetCode(err) + "\n" + err.Error())
 		return
 	}
 
@@ -40,11 +41,11 @@ func TestRunSelectPromptInARealNonTerminalProcess(t *testing.T) {
 	if err != nil {
 		t.Fatalf("pipe: %v", err)
 	}
-	defer stdinWriter.Close()
+	defer func() { _ = stdinWriter.Close() }()
 	cmd.Stdin = stdin
 
 	out, err := cmd.Output()
-	stdin.Close()
+	_ = stdin.Close()
 	if err != nil {
 		t.Fatalf("subprocess failed: %v (output: %s)", err, out)
 	}
