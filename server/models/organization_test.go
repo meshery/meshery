@@ -2,8 +2,12 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 	"testing"
+
+	"github.com/gofrs/uuid"
+	"github.com/meshery/schemas/models/v1beta2/organization"
 )
 
 // TestOrganizationsPage_MarshalEmitsBothKeyFlavors locks in the
@@ -34,10 +38,10 @@ func TestOrganizationsPage_MarshalEmitsBothKeyFlavors(t *testing.T) {
 // both are present.
 func TestOrganizationsPage_UnmarshalAcceptsEitherKeyFlavor(t *testing.T) {
 	cases := []struct {
-		name        string
-		body        string
-		wantTotal   int
-		wantPageSz  uint64
+		name       string
+		body       string
+		wantTotal  int
+		wantPageSz uint64
 	}{
 		{"canonical only", `{"totalCount":5,"page":1,"pageSize":10}`, 5, 10},
 		{"legacy only", `{"total_count":5,"page":1,"page_size":10}`, 5, 10},
@@ -85,4 +89,161 @@ func TestOrganizationsPage_UnmarshalResetsFieldsOnReuse(t *testing.T) {
 	if p.Page != 2 {
 		t.Errorf("Page = %d, want 2", p.Page)
 	}
+}
+
+// TestOrganizationPersister_GetOrganizations_Filter verifies that
+// OrganizationPersister.GetOrganizations and DefaultLocalProvider.GetOrganizations
+// process `filter` parameters dynamically via utils.ApplyFilters rather than
+// incorrectly treating the parameter as an updatedAfter timestamp cutoff.
+func TestOrganizationPersister_GetOrganizations_Filter(t *testing.T) {
+	db := newMigratedDB(t)
+	op := &OrganizationPersister{DB: db}
+	lp := &DefaultLocalProvider{OrganizationPersister: op}
+
+	owner1 := uuid.Must(uuid.NewV4())
+	owner2 := uuid.Must(uuid.NewV4())
+
+	org1 := &organization.Organization{
+		ID:          uuid.Must(uuid.NewV4()),
+		Name:        "AlphaOrg",
+		Description: "Alpha organization",
+		Country:     "US",
+		Region:      "West",
+		Owner:       owner1,
+	}
+	org2 := &organization.Organization{
+		ID:          uuid.Must(uuid.NewV4()),
+		Name:        "BetaOrg",
+		Description: "Beta organization",
+		Country:     "CA",
+		Region:      "East",
+		Owner:       owner2,
+	}
+
+	if _, err := op.SaveOrganization(org1); err != nil {
+		t.Fatalf("SaveOrganization(org1): %v", err)
+	}
+	if _, err := op.SaveOrganization(org2); err != nil {
+		t.Fatalf("SaveOrganization(org2): %v", err)
+	}
+
+	t.Run("unfiltered returns all organizations", func(t *testing.T) {
+		raw, err := op.GetOrganizations("", "", 0, 10, "")
+		if err != nil {
+			t.Fatalf("GetOrganizations: %v", err)
+		}
+		var page OrganizationsPage
+		if err := json.Unmarshal(raw, &page); err != nil {
+			t.Fatalf("unmarshal: %v", err)
+		}
+		if page.TotalCount != 2 || len(page.Organizations) != 2 {
+			t.Fatalf("got %d orgs, want 2", page.TotalCount)
+		}
+	})
+
+	t.Run("filter by name returns matching organization", func(t *testing.T) {
+		raw, err := op.GetOrganizations("", "", 0, 10, "name AlphaOrg")
+		if err != nil {
+			t.Fatalf("GetOrganizations: %v", err)
+		}
+		var page OrganizationsPage
+		if err := json.Unmarshal(raw, &page); err != nil {
+			t.Fatalf("unmarshal: %v", err)
+		}
+		if page.TotalCount != 1 || len(page.Organizations) != 1 {
+			t.Fatalf("got %d orgs, want 1", page.TotalCount)
+		}
+		if page.Organizations[0].Name != "AlphaOrg" {
+			t.Errorf("got name %q, want AlphaOrg", page.Organizations[0].Name)
+		}
+	})
+
+	t.Run("filter by owner returns matching organization", func(t *testing.T) {
+		raw, err := op.GetOrganizations("", "", 0, 10, fmt.Sprintf("owner %s", owner2))
+		if err != nil {
+			t.Fatalf("GetOrganizations: %v", err)
+		}
+		var page OrganizationsPage
+		if err := json.Unmarshal(raw, &page); err != nil {
+			t.Fatalf("unmarshal: %v", err)
+		}
+		if page.TotalCount != 1 || len(page.Organizations) != 1 {
+			t.Fatalf("got %d orgs, want 1", page.TotalCount)
+		}
+		if page.Organizations[0].Name != "BetaOrg" {
+			t.Errorf("got name %q, want BetaOrg", page.Organizations[0].Name)
+		}
+	})
+
+	t.Run("arbitrary filter value does not corrupt timestamp query", func(t *testing.T) {
+		// Previously, passing "owner" would execute `WHERE updated_at > 'owner'`.
+		// With utils.ApplyFilters, a filter with no matching key/value simply returns 0 matching results without SQL timestamp errors.
+		raw, err := op.GetOrganizations("", "", 0, 10, "owner non-existent-id")
+		if err != nil {
+			t.Fatalf("GetOrganizations should not fail on non-timestamp filter: %v", err)
+		}
+		var page OrganizationsPage
+		if err := json.Unmarshal(raw, &page); err != nil {
+			t.Fatalf("unmarshal: %v", err)
+		}
+		if page.TotalCount != 0 {
+			t.Fatalf("got %d orgs, want 0", page.TotalCount)
+		}
+	})
+
+	t.Run("search by substring works", func(t *testing.T) {
+		raw, err := op.GetOrganizations("beta", "", 0, 10, "")
+		if err != nil {
+			t.Fatalf("GetOrganizations: %v", err)
+		}
+		var page OrganizationsPage
+		if err := json.Unmarshal(raw, &page); err != nil {
+			t.Fatalf("unmarshal: %v", err)
+		}
+		if page.TotalCount != 1 || page.Organizations[0].Name != "BetaOrg" {
+			t.Fatalf("search failed, got: %+v", page)
+		}
+	})
+
+	t.Run("ordering works", func(t *testing.T) {
+		raw, err := op.GetOrganizations("", "name desc", 0, 10, "")
+		if err != nil {
+			t.Fatalf("GetOrganizations: %v", err)
+		}
+		var page OrganizationsPage
+		if err := json.Unmarshal(raw, &page); err != nil {
+			t.Fatalf("unmarshal: %v", err)
+		}
+		if len(page.Organizations) != 2 || page.Organizations[0].Name != "BetaOrg" {
+			t.Fatalf("ordering failed, got first: %s", page.Organizations[0].Name)
+		}
+	})
+
+	t.Run("pagination works", func(t *testing.T) {
+		raw, err := op.GetOrganizations("", "name asc", 0, 1, "")
+		if err != nil {
+			t.Fatalf("GetOrganizations: %v", err)
+		}
+		var page OrganizationsPage
+		if err := json.Unmarshal(raw, &page); err != nil {
+			t.Fatalf("unmarshal: %v", err)
+		}
+		if page.TotalCount != 2 || len(page.Organizations) != 1 || page.Organizations[0].Name != "AlphaOrg" {
+			t.Fatalf("pagination failed, got: %+v", page)
+		}
+	})
+
+	t.Run("DefaultLocalProvider delegates filter correctly", func(t *testing.T) {
+		raw, err := lp.GetOrganizations("", "0", "10", "", "", "name AlphaOrg")
+		if err != nil {
+			t.Fatalf("lp.GetOrganizations: %v", err)
+		}
+		var page OrganizationsPage
+		if err := json.Unmarshal(raw, &page); err != nil {
+			t.Fatalf("unmarshal: %v", err)
+		}
+		if page.TotalCount != 1 || page.Organizations[0].Name != "AlphaOrg" {
+			t.Fatalf("DefaultLocalProvider filter delegation failed: %+v", page)
+		}
+	})
 }
