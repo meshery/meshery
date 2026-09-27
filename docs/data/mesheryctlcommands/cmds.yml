@@ -401,6 +401,56 @@ system-provider:
           usage: mesheryctl system provider view --all
           example: mesheryctl system provider view --all
 
+system-token:
+  name: system token
+  description: Manage Meshery user tokens
+  usage: mesheryctl system token [flags]
+
+  subcommands:
+    create:
+      name: create
+      description: Create a token in your meshconfig
+      usage: mesheryctl system token create [token-name]
+      example: |
+        mesheryctl system token create [token-name] -f [token-path]
+          mesheryctl system token create [token-name] (default path is auth.json)
+          mesheryctl system token create [token-name] -f [token-path] --set
+      flags:
+        filepath:
+          name: --filepath, -f
+          description: Add the token location
+          usage: mesheryctl system token create [token-name] --filepath [token-path]
+        set:
+          name: --set, -s
+          description: Set as current token
+          usage: mesheryctl system token create [token-name] --set
+    delete:
+      name: delete
+      description: Delete a token from your meshconfig
+      usage: mesheryctl system token delete [token-name]
+    set:
+      name: set
+      description: Set token for context
+      usage: mesheryctl system token set [token-name]
+      flags:
+        context:
+          name: --context
+          description: Pass the context
+          usage: mesheryctl system token set [token-name] --context [context name]
+    list:
+      name: list
+      description: List all the tokens in your meshconfig
+      usage: mesheryctl system token list
+    view:
+      name: view
+      description: View a specific token in meshery config
+      usage: mesheryctl system token view [token-name]
+      flags:
+        all:
+          name: --all
+          description: set the flag to view all the tokens
+          usage: mesheryctl system token view --all
+
 perf:
   name: perf
   description: Performance Management and Benchmarking using Meshery CLI

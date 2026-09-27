@@ -56,6 +56,32 @@
           {{- end }}
         {{- end }}
       {{- end }}
+
+      <!-- Grouped subcommands stored as separate "<command>-<group>" data entries (e.g. system-context, system-token) -->
+      {{- $group_prefix := printf "%s-" $command_name }}
+      {{- range $groupkey, $groupcommand := $commands }}
+        {{- if strings.HasPrefix $groupkey $group_prefix }}
+          {{- $groupname := strings.TrimPrefix $group_prefix $groupkey }}
+      <tr>
+        {{- $group_path := printf "reference/references/mesheryctl/%s/%s" $command_name $groupname -}}
+        {{- $group_page := site.GetPage $group_path -}}
+        <td>{{ if $group_page }}<a href="{{ $group_page.RelPermalink }}">{{ $groupname }}</a>{{ else }}{{ $groupname }}{{ end }}</td>
+        <td></td>
+        <td>{{ $groupcommand.description }}</td>
+      </tr>
+          {{- if $groupcommand.subcommands }}
+            {{- range $subkey, $subcommand := $groupcommand.subcommands }}
+      <tr>
+        <td></td>
+        {{- $sub_path := printf "reference/references/mesheryctl/%s/%s/%s" $command_name $groupname $subkey -}}
+        {{- $sub_page := site.GetPage $sub_path -}}
+        <td>{{ if $sub_page }}<a href="{{ $sub_page.RelPermalink }}">{{ $subcommand.name }}</a>{{ else }}{{ $subcommand.name }}{{ end }}</td>
+        <td>{{ $subcommand.description }}</td>
+      </tr>
+            {{- end }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
     {{- else }}
       <!-- Nested command structure (exp with relationship, workspace, organization) -->
       {{- range $subkey, $subcommand := $command }}
