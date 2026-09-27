@@ -14,7 +14,6 @@ import (
 	"github.com/meshery/meshery/server/helpers/utils"
 	isql "github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshkit/database"
-	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/models/catalog/v1alpha1"
 	catalogv1beta1 "github.com/meshery/schemas/models/v1beta1/catalog"
 	"github.com/meshery/schemas/models/v1beta3/environment"
@@ -603,6 +602,11 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID core.Uuid, search,
 // pattern_caveats) and on the type of patternFile - a stored YAML string
 // locally, a structured document in v1beta1. A round-trip silently drops the
 // former and fails every non-empty page on the latter (meshery/meshery#21948).
+//
+// patternFile is deliberately left unset. It is optional in the contract, no
+// consumer of the listing reads it (the full design is fetched by id), and
+// stored designs use the v1beta3 design schema, so decoding them into the
+// v1beta1 document would silently drop fields.
 func schemaMesheryPatterns(patterns []*MesheryPattern) []patternv1beta1.MesheryPattern {
 	designs := make([]patternv1beta1.MesheryPattern, 0, len(patterns))
 	for _, p := range patterns {
@@ -614,7 +618,6 @@ func schemaMesheryPatterns(patterns []*MesheryPattern) []patternv1beta1.MesheryP
 			CatalogData: schemaCatalogData(p.CatalogData),
 			Location:    schemaLocation(p.Location),
 			Name:        p.Name,
-			PatternFile: schemaPatternFile(p.PatternFile),
 			Visibility:  p.Visibility,
 		}
 		if p.ID != nil {
@@ -634,22 +637,6 @@ func schemaMesheryPatterns(patterns []*MesheryPattern) []patternv1beta1.MesheryP
 	}
 
 	return designs
-}
-
-// schemaPatternFile decodes a stored design body into the v1beta1 document.
-// The body is optional in the contract and no workspace listing consumer reads
-// it, so an empty or undecodable body is omitted rather than failing the page.
-func schemaPatternFile(patternFile string) *patternv1beta1.PatternFile {
-	if strings.TrimSpace(patternFile) == "" {
-		return nil
-	}
-
-	decoded := &patternv1beta1.PatternFile{}
-	if err := encoding.Unmarshal([]byte(patternFile), decoded); err != nil {
-		return nil
-	}
-
-	return decoded
 }
 
 func schemaCatalogData(catalogData v1alpha1.CatalogData) *catalogv1beta1.CatalogData {

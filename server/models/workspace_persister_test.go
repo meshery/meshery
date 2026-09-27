@@ -1,6 +1,7 @@
 package models
 
 import (
+	"bytes"
 	"encoding/json"
 	"testing"
 	"time"
@@ -10,8 +11,14 @@ import (
 	"github.com/meshery/meshkit/database"
 	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/catalog/v1alpha1"
+	"github.com/meshery/meshkit/models/patterns"
 	"github.com/meshery/schemas/models/core"
+	"github.com/meshery/schemas/models/v1beta2/component"
+	corev1beta2 "github.com/meshery/schemas/models/v1beta2/core"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
+	"github.com/meshery/schemas/models/v1beta3/design"
 	workspace "github.com/meshery/schemas/models/v1beta3/workspace"
+	"gopkg.in/yaml.v2"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"net/http"
@@ -401,25 +408,81 @@ func createWorkspaceTestDesign(t *testing.T, dbHandler *database.Handler, name s
 		t.Fatalf("failed to generate design id: %v", err)
 	}
 
-	// Stored the way the pattern persister stores it: a YAML design body.
-	design := MesheryPattern{
-		ID:         &designID,
-		Name:       name,
-		Visibility: Private,
-		PatternFile: "id: " + designID.String() + "\n" +
-			"name: " + name + "\n" +
-			"schemaVersion: designs.meshery.io/v1beta1\n" +
-			"version: 0.0.1\n" +
-			"components: []\n" +
-			"relationships: []\n",
-		CreatedAt: &now,
-		UpdatedAt: &now,
+	pattern := MesheryPattern{
+		ID:          &designID,
+		Name:        name,
+		Visibility:  Private,
+		PatternFile: workspaceTestDesignBody(t, designID, name),
+		CreatedAt:   &now,
+		UpdatedAt:   &now,
 	}
-	if err := dbHandler.Create(&design).Error; err != nil {
+	if err := dbHandler.Create(&pattern).Error; err != nil {
 		t.Fatalf("failed to persist design %q: %v", name, err)
 	}
 
 	return designID
+}
+
+// workspaceTestDesignBody returns a design in the current (v1beta3) schema,
+// YAML-encoded the way the pattern persister stores it. It carries components,
+// a relationship and resolved aliases: content the v1beta1 document the
+// listing contract declares cannot represent, so a listing that decoded the
+// body into it would silently drop fields.
+func workspaceTestDesignBody(t *testing.T, designID core.Uuid, name string) string {
+	t.Helper()
+
+	namespace := &component.ComponentDefinition{
+		ID:          uuid.Must(uuid.NewV4()),
+		DisplayName: "demo-namespace",
+		Component:   component.Component{Kind: "Namespace", Version: "v1"},
+	}
+	deployment := &component.ComponentDefinition{
+		ID:          uuid.Must(uuid.NewV4()),
+		DisplayName: "demo-deployment",
+		Component:   component.Component{Kind: "Deployment", Version: "apps/v1"},
+	}
+	parent := &relationship.RelationshipDefinition{
+		ID:               uuid.Must(uuid.NewV4()),
+		Kind:             relationship.Hierarchical,
+		RelationshipType: "parent",
+		SubType:          "inventory",
+		SchemaVersion:    "relationships.meshery.io/v1alpha3",
+		Version:          "v1.0.0",
+	}
+	aliases := map[string]corev1beta2.ResolvedAlias{
+		deployment.ID.String(): {
+			AliasComponentId:     deployment.ID,
+			ImmediateParentId:    namespace.ID,
+			RelationshipId:       parent.ID,
+			ResolvedParentId:     namespace.ID,
+			ResolvedRefFieldPath: []string{"metadata", "namespace"},
+		},
+	}
+
+	body, err := yaml.Marshal(&design.PatternFile{
+		ID:            designID,
+		Name:          name,
+		SchemaVersion: "designs.meshery.io/v1beta1",
+		Version:       "0.0.1",
+		Components:    []*component.ComponentDefinition{namespace, deployment},
+		Relationships: []*relationship.RelationshipDefinition{parent},
+		Metadata:      &design.PatternFile_Metadata{ResolvedAliases: &aliases},
+	})
+	if err != nil {
+		t.Fatalf("failed to encode design %q: %v", name, err)
+	}
+
+	// Guard the fixture itself: it must read back as a current design, the
+	// same way the server reads stored designs.
+	stored, err := patterns.GetPatternFormat(string(body))
+	if err != nil {
+		t.Fatalf("design %q does not read back as a current design: %v", name, err)
+	}
+	if len(stored.Components) != 2 || len(stored.Relationships) != 1 || stored.Metadata == nil || stored.Metadata.ResolvedAliases == nil {
+		t.Fatalf("design %q lost content on the way to storage: %+v", name, stored)
+	}
+
+	return string(body)
 }
 
 // Regression for meshery/meshery#21948: every non-empty page failed to convert
@@ -483,14 +546,17 @@ func TestWorkspacePersisterGetWorkspaceDesigns_ReturnsNonEmptyPage(t *testing.T)
 			if got.UserId != LocalProviderUserID {
 				t.Errorf("expected local provider owner %s, got %s", LocalProviderUserID, got.UserId)
 			}
-			if got.PatternFile == nil || got.PatternFile.Name != tt.wantName {
-				t.Errorf("expected decoded patternFile named %q, got %+v", tt.wantName, got.PatternFile)
+			// The stored body is a current-schema design with components,
+			// relationships and resolved aliases. The listing must leave it
+			// out rather than ship a lossy v1beta1 conversion of it.
+			if bytes.Contains(raw, []byte(`"patternFile"`)) {
+				t.Errorf("expected the listing to omit patternFile, got %s", raw)
 			}
 		})
 	}
 }
 
-func TestSchemaMesheryPatterns_MapsFieldsAndToleratesUnreadableBody(t *testing.T) {
+func TestSchemaMesheryPatterns_MapsFieldsAndOmitsDesignBody(t *testing.T) {
 	designID, err := uuid.NewV4()
 	if err != nil {
 		t.Fatalf("failed to generate design id: %v", err)
@@ -501,7 +567,7 @@ func TestSchemaMesheryPatterns_MapsFieldsAndToleratesUnreadableBody(t *testing.T
 		{
 			ID:          &designID,
 			Name:        "catalog-design",
-			PatternFile: "name: [unterminated",
+			PatternFile: "name: catalog-design\nschemaVersion: designs.meshery.io/v1beta1\n",
 			Location:    map[string]interface{}{"type": "local", "port": 9081},
 			CatalogData: v1alpha1.CatalogData{
 				PatternCaveats: "caveats",
@@ -521,7 +587,7 @@ func TestSchemaMesheryPatterns_MapsFieldsAndToleratesUnreadableBody(t *testing.T
 
 	for _, d := range got {
 		if d.PatternFile != nil {
-			t.Errorf("expected unreadable or empty body on %q to be omitted, got %+v", d.Name, d.PatternFile)
+			t.Errorf("expected the design body on %q to be omitted, got %+v", d.Name, d.PatternFile)
 		}
 	}
 
