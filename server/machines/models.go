@@ -81,11 +81,26 @@ type StateMachine struct {
 	Log logger.Handler
 
 	Provider models.Provider
+
+	LifecycleCtx    context.Context
+	CancelLifecycle context.CancelFunc
 }
 
 func (sm *StateMachine) AssignProvider(provider models.Provider) *StateMachine {
 	sm.Provider = provider
 	return sm
+}
+
+func (sm *StateMachine) GetCurrentState() StateType {
+	sm.mx.RLock()
+	defer sm.mx.RUnlock()
+	return sm.CurrentState
+}
+
+func (sm *StateMachine) GetLifecycleCtx() context.Context {
+	sm.mx.RLock()
+	defer sm.mx.RUnlock()
+	return sm.LifecycleCtx
 }
 
 func (sm *StateMachine) Start(ctx context.Context, machinectx interface{}, log logger.Handler, init connections.InitFunc) (*events.Event, error) {
@@ -129,12 +144,42 @@ func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 // Wherever possible use the userID and systemID from context as the events can be created from other comps or actors and not only user actors.
 // In cases when the event is received as part of some other event and not explicitly created by an actor, use the userID and systemID of the actor who initially invoked the machine.
 func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payload interface{}) (*events.Event, error) {
+	return sm.sendEvent(ctx, eventType, payload, nil)
+}
+
+// SendEventWithGeneration behaves exactly like SendEvent and additionally
+// reports the lifecycle generation this call leaves installed on the machine,
+// read while the machine lock is still held.
+//
+// Callers that must act on "the generation MY transition committed" have to use
+// this rather than calling GetLifecycleCtx() after SendEvent returns. SendEvent
+// releases sm.mx before returning, and a request already blocked on that lock
+// can commit in the gap; the caller would then read that newer generation and
+// treat a connection somebody else just adopted as its own. The delete cleanup
+// decides whether it still owns the tracker entry on exactly this comparison.
+//
+// The returned context is nil only for a machine on which no transition has
+// ever committed.
+func (sm *StateMachine) SendEventWithGeneration(ctx context.Context, eventType EventType, payload interface{}) (*events.Event, context.Context, error) {
+	var generation context.Context
+	event, err := sm.sendEvent(ctx, eventType, payload, &generation)
+	return event, generation, err
+}
+
+func (sm *StateMachine) sendEvent(ctx context.Context, eventType EventType, payload interface{}, generationOut *context.Context) (*events.Event, error) {
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
 	userUUID := user.ID
 	ctx = context.WithValue(ctx, models.ProviderCtxKey, sm.Provider)
 	sm.mx.Lock()
 	defer sm.mx.Unlock()
+	// Deferred calls run last-in-first-out, so this publishes the generation
+	// before the Unlock above releases the machine: the caller sees the
+	// generation this transition leaves behind, never one installed by a
+	// transition that commits after this call returns.
+	if generationOut != nil {
+		defer func() { *generationOut = sm.LifecycleCtx }()
+	}
 	var event *events.Event
 
 	// invalidTransitionEvent builds the Error event for a fatal transition
@@ -227,7 +272,11 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		// Execute exit actions before entering new state.
 		action := sm.States[sm.CurrentState].Action
 		if action != nil {
-			_, event, err = action.ExecuteOnExit(ctx, sm.Context, nil)
+			exitCtx := ctx
+			if sm.LifecycleCtx != nil {
+				exitCtx = sm.LifecycleCtx
+			}
+			_, event, err = action.ExecuteOnExit(exitCtx, sm.Context, nil)
 			if err != nil {
 				sm.Log.Error(err)
 				sm.Log.Debug(event)
@@ -250,9 +299,19 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			}
 		}
 
+		prevLifecycleCtx, prevCancelLifecycle := sm.LifecycleCtx, sm.CancelLifecycle
+		sm.LifecycleCtx, sm.CancelLifecycle = context.WithCancel(context.WithoutCancel(ctx))
+		transitionCancel := sm.CancelLifecycle
+
+		abandonTransitionGeneration := func() {
+			transitionCancel()
+			sm.LifecycleCtx = prevLifecycleCtx
+			sm.CancelLifecycle = prevCancelLifecycle
+		}
+
 		if state.Action != nil {
 			// Execute entry actions for the state entered.
-			eventType, event, err = state.Action.ExecuteOnEntry(ctx, sm.Context, nil)
+			eventType, event, err = state.Action.ExecuteOnEntry(sm.LifecycleCtx, sm.Context, nil)
 			sm.Log.Debugf("%s: entry action executed, event emitted %v", sm.Name, eventType)
 
 			if err != nil {
@@ -264,10 +323,11 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 				}
 				if eventType == NoOp {
 					haltedWithoutTransition = true
+					abandonTransitionGeneration()
 					break
 				}
 			} else {
-				eventType, event, err = state.Action.Execute(ctx, sm.Context, payload)
+				eventType, event, err = state.Action.Execute(sm.LifecycleCtx, sm.Context, payload)
 
 				sm.Log.Debugf("%s: inside action executed, event emitted %v", sm.Name, eventType)
 				if err != nil {
@@ -279,11 +339,16 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 					}
 					if eventType == NoOp {
 						haltedWithoutTransition = true
+						abandonTransitionGeneration()
 						break
 					}
 
 				}
 			}
+		}
+
+		if prevCancelLifecycle != nil {
+			prevCancelLifecycle()
 		}
 
 		sm.PreviousState = sm.CurrentState
