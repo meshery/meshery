@@ -8,6 +8,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/errors"
 	"gopkg.in/yaml.v2"
 )
 
@@ -85,7 +86,11 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 	bdr, err := p.GetResult(tokenString, key)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
-		writeMeshkitError(w, ErrGetResult(err), http.StatusInternalServerError)
+		status := http.StatusInternalServerError
+		if errors.GetCode(err) == models.ErrResultNotFoundCode {
+			status = http.StatusNotFound
+		}
+		writeMeshkitError(w, ErrGetResult(err), status)
 		return
 	}
 	sp, err := bdr.ConvertToSpec(h.log)
