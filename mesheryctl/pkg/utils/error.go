@@ -848,8 +848,8 @@ func ErrNoTerminalForPrompt(what, hint string) error {
 	return errors.New(
 		ErrNoTerminalForPromptCode,
 		errors.Alert,
-		[]string{fmt.Sprintf("Cannot ask for %s without an interactive terminal", what)},
-		[]string{"This command needed to prompt for a selection, and standard input or standard output is not a terminal"},
+		[]string{"Cannot ask for a selection without an interactive terminal"},
+		[]string{fmt.Sprintf("This command needed to prompt for %s, and standard input or standard output is not a terminal", what)},
 		[]string{"The command was run from a script, a pipe, a CI job, or with standard input redirected"},
 		[]string{hint, "Run the command from an interactive terminal"},
 	)
