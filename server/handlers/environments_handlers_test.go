@@ -294,3 +294,62 @@ func TestDeleteEnvironmentHandler_PropagatesProviderStatus(t *testing.T) {
 		t.Errorf("code = %q, want %q", decoded.Code, ErrDeleteEnvironmentCode)
 	}
 }
+
+func (m *environmentFailingProvider) GetConnectionsOfEnvironment(_ *http.Request, _, _, _, _, _, _ string) ([]byte, error) {
+	return nil, m.err
+}
+
+// TestGetConnectionsOfEnvironmentHandler_FilterErrorIs400 pins the status half
+// of issue #21826. A `filter` the endpoint cannot decode is the caller's
+// mistake, so it must answer 400 - not the 502 providerStatus falls back to,
+// which would blame a remote provider that was never asked (and on the local
+// provider was never involved at all).
+func TestGetConnectionsOfEnvironmentHandler_FilterErrorIs400(t *testing.T) {
+	cases := []struct {
+		name        string
+		providerErr error
+		wantStatus  int
+	}{
+		{
+			name:        "malformed filter is a client error",
+			providerErr: models.ErrInvalidEnvironmentConnectionsFilter(errors.New(`"assigned" must be a boolean, got a string`)),
+			wantStatus:  http.StatusBadRequest,
+		},
+		{
+			name:        "non-JSON filter is a client error",
+			providerErr: models.ErrInvalidEnvironmentConnectionsFilter(errors.New("invalid character 'o' looking for beginning of value")),
+			wantStatus:  http.StatusBadRequest,
+		},
+		{
+			// Every other failure keeps the pre-existing behaviour.
+			name:        "provider 403 still surfaces as 403",
+			providerErr: models.ErrFetch(errors.New("forbidden"), "Environment", http.StatusForbidden),
+			wantStatus:  http.StatusForbidden,
+		},
+		{
+			name:        "unreachable provider still defaults to 502",
+			providerErr: models.ErrUnreachableRemoteProvider(errors.New("dial tcp: connection refused")),
+			wantStatus:  http.StatusBadGateway,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			provider := newEnvironmentFailingProvider(tc.providerErr)
+
+			req := httptest.NewRequest(http.MethodGet, "/api/environments/env-1/connections?filter=%7B%22assigned%22%3A%22false%22%7D", nil)
+			req = mux.SetURLVars(req, map[string]string{"environmentID": "env-1"})
+			rec := httptest.NewRecorder()
+
+			h.GetConnectionsOfEnvironmentHandler(rec, req, nil, nil, provider)
+
+			if rec.Code != tc.wantStatus {
+				t.Fatalf("status = %d, want %d (body=%q)", rec.Code, tc.wantStatus, rec.Body.String())
+			}
+			if decoded := decodeErrorBody(t, rec.Body.Bytes()); decoded.Code != ErrEnvironmentConnectionCode {
+				t.Errorf("code = %q, want %q", decoded.Code, ErrEnvironmentConnectionCode)
+			}
+		})
+	}
+}
