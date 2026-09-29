@@ -142,7 +142,10 @@ func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Requ
 
 	id, ok := body["id"]
 	if ok {
-		smInstancetracker.Remove(uuid.FromStringOrNil(id))
+		connectionID := uuid.FromStringOrNil(id)
+		if inst, ok := smInstancetracker.Get(connectionID); ok {
+			smInstancetracker.RemoveIfMatchAndState(connectionID, inst, machines.DISCOVERED, machines.REGISTERED, machines.InitialState, machines.DefaultState)
+		}
 	}
 }
 
@@ -159,7 +162,10 @@ func (h *Handler) CancelConnectionRegister(w http.ResponseWriter, req *http.Requ
 		return
 	}
 
-	h.ConnectionToStateMachineInstanceTracker.Remove(registrationID)
+	if inst, ok := h.ConnectionToStateMachineInstanceTracker.Get(registrationID); ok {
+		// Only allow cancellation if it is genuinely in an unestablished registration state
+		h.ConnectionToStateMachineInstanceTracker.RemoveIfMatchAndState(registrationID, inst, machines.DISCOVERED, machines.REGISTERED, machines.InitialState, machines.DefaultState)
+	}
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -429,6 +435,8 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
+	connection.ID = connectionID
+
 	// MeshSync deployment-mode changes are handled by the dedicated
 	// POST /api/integrations/connections/{connectionId}/actions endpoint
 	// (PerformConnectionAction), which owns the metadata merge and cluster-side
@@ -471,8 +479,17 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	eventBuilder = eventBuilder.WithDescription(description)
 
 	if connection.Status != "" {
-		event, _ := h.NotifySmOfConnectionStatusChange(req.Context(), userID, provider, token, connection)
-		_ = provider.PersistEvent(event, token)
+		smEvent, err := h.NotifySmOfConnectionStatusChange(req.Context(), userID, provider, token, connection)
+		if err != nil {
+			wrappedErr := ErrSendMachineEvent(err)
+			h.log.Error(wrappedErr)
+			if smEvent.Description != "" {
+				_ = provider.PersistEvent(smEvent, token)
+				go h.config.EventBroadcaster.Publish(userID, &smEvent)
+			}
+			writeMeshkitError(w, wrappedErr, http.StatusInternalServerError)
+			return
+		}
 	}
 
 	event := eventBuilder.WithSeverity(events.Informational).Build()
@@ -557,25 +574,48 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 			return *eventBuilder.Build(), nil
 		}
 
-		// detach from the http request lifecycle so that the goroutine isn't cancelled when
+		// detach from the http request lifecycle so that the side-effects aren't cancelled when
 		// the handler returns, while preserving context values (e.g. TokenCtxKey) that downstream calls depend on.
 		detachedCtx := context.WithoutCancel(ctx)
-		go func(inst *machines.StateMachine, status connections.ConnectionStatus) {
-			event, err := inst.SendEvent(detachedCtx, machines.EventType(helpers.StatusToEvent(status)), nil)
-			if err != nil {
-				h.log.Error(err)
-				_ = provider.PersistEvent(*event, token)
-				h.config.EventBroadcaster.Publish(userID, event)
-				return
-			}
 
-			if status == connections.DELETED {
-				smInstanceTracker.Remove(inst.ID)
-			}
+		var done chan struct{}
+		if connection.Status == connections.DELETED {
+			done = make(chan struct{})
+		}
 
+		event, err := inst.SendEvent(detachedCtx, machines.EventType(helpers.StatusToEvent(connection.Status)), done)
+		if err != nil {
+			h.log.Error(err)
+			if event != nil {
+				return *event, err
+			}
+			return events.Event{}, err
+		}
+
+		if connection.Status == connections.DELETED {
+			// Retain the StateMachine in the tracker while the background Delete cleanup runs.
+			deleteGenerationCtx := inst.GetLifecycleCtx()
+			go func() {
+				<-done
+
+				// Cleanup is finished. Only remove the StateMachine from the tracker if the
+				// specific Delete operation that initiated this cleanup is still the active
+				// lifecycle generation. (i.e. no RECONNECT adopted the StateMachine).
+				smInstanceTracker.RemoveIfMatchAndGeneration(inst.ID, inst, deleteGenerationCtx)
+
+				if doneChan, ok := detachedCtx.Value(trackerCleanupDoneKey).(chan struct{}); ok && doneChan != nil {
+					close(doneChan)
+				}
+			}()
+		}
+
+		if event != nil {
 			_ = provider.PersistEvent(*event, token)
 			h.config.EventBroadcaster.Publish(userID, event)
-		}(inst, connection.Status)
+			return *event, nil
+		}
+
+		return events.Event{}, nil
 	}
 
 	return *eventBuilder.Build(), nil
@@ -727,6 +767,15 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 		if resolveErr != nil {
 			h.log.Error(resolveErr)
 			return existingMeshSyncMode, newMeshSyncMode, false, resolveErr
+		}
+
+		generationCtx := machine.GetLifecycleCtx()
+
+		machineCtx.ActionMutex.Lock()
+		defer machineCtx.ActionMutex.Unlock()
+
+		if generationCtx != nil && generationCtx.Err() != nil {
+			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("mode change aborted: superseded by a newer lifecycle transition")
 		}
 
 		// disconnect
