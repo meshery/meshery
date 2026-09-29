@@ -320,8 +320,9 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 	obj := "connections"
 
 	if err != nil {
-		h.log.Error(ErrQueryGet(obj))
-		writeMeshkitError(w, ErrQueryGet(obj), http.StatusInternalServerError)
+		wrappedErr := ErrGetConnections(err)
+		h.log.Error(wrappedErr)
+		writeMeshkitError(w, wrappedErr, providerStatusOrInternal(err))
 		return
 	}
 
