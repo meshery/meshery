@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/v1beta3/environment"
+	"gorm.io/gorm"
 )
 
 // TestEnvironmentPayloadWire_UnmarshalJSON exercises the dual-accept body
@@ -146,6 +147,10 @@ func (m *environmentFailingProvider) GetEnvironments(_, _, _, _, _, _, _ string)
 }
 
 func (m *environmentFailingProvider) DeleteEnvironment(_ *http.Request, _ string) ([]byte, error) {
+	return nil, m.err
+}
+
+func (m *environmentFailingProvider) UpdateEnvironment(_ *http.Request, _ *environment.EnvironmentPayload, _ string) (*environment.Environment, error) {
 	return nil, m.err
 }
 
@@ -354,5 +359,34 @@ func TestDeleteEnvironmentHandler_PropagatesProviderStatus(t *testing.T) {
 	}
 	if decoded := decodeErrorBody(t, rec.Body.Bytes()); decoded.Code != ErrDeleteEnvironmentCode {
 		t.Errorf("code = %q, want %q", decoded.Code, ErrDeleteEnvironmentCode)
+	}
+}
+
+func TestUpdateEnvironmentHandler_NotFoundReturns404(t *testing.T) {
+	tests := []struct {
+		name string
+		err  error
+	}{
+		{name: "local database", err: models.ErrResultNotFound(gorm.ErrRecordNotFound)},
+		{name: "remote provider", err: models.ErrFetch(errors.New("environment not found"), "Environment", http.StatusNotFound)},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			provider := newEnvironmentFailingProvider(tt.err)
+			req := httptest.NewRequest(http.MethodPut, "/api/environments/11111111-1111-1111-1111-111111111111", strings.NewReader(`{"name":"updated","description":"","organizationId":"22222222-2222-2222-2222-222222222222"}`))
+			req = mux.SetURLVars(req, map[string]string{"id": "11111111-1111-1111-1111-111111111111"})
+			rec := httptest.NewRecorder()
+
+			h.UpdateEnvironmentHandler(rec, req, nil, nil, provider)
+
+			if rec.Code != http.StatusNotFound {
+				t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusNotFound, rec.Body.String())
+			}
+			if decoded := decodeErrorBody(t, rec.Body.Bytes()); decoded.Code != ErrUpdateEnvironmentCode {
+				t.Fatalf("code = %q, want %q", decoded.Code, ErrUpdateEnvironmentCode)
+			}
+		})
 	}
 }
