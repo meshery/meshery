@@ -3,6 +3,7 @@ title: mesheryctl-perf-apply
 display_title: false
 command: perf
 subcommand: apply
+categories: [mesheryctl-perf]
 ---
 
 # mesheryctl perf apply
