@@ -275,6 +275,107 @@ func (m *environmentAllowThenDenyProvider) SaveEnvironment(_ *http.Request, _ *e
 	return nil, m.denyErr
 }
 
+type environmentRecordingProvider struct {
+	*models.DefaultLocalProvider
+	saveCalls   int
+	updateCalls int
+}
+
+func newEnvironmentRecordingProvider() *environmentRecordingProvider {
+	base := &models.DefaultLocalProvider{}
+	base.Initialize()
+	return &environmentRecordingProvider{DefaultLocalProvider: base}
+}
+
+func (m *environmentRecordingProvider) SaveEnvironment(_ *http.Request, _ *environment.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
+	m.saveCalls++
+	return []byte(`{"id":"11111111-1111-1111-1111-111111111111","name":"valid"}`), nil
+}
+
+func (m *environmentRecordingProvider) UpdateEnvironment(_ *http.Request, payload *environment.EnvironmentPayload, _ string) (*environment.Environment, error) {
+	m.updateCalls++
+	return &environment.Environment{Name: payload.Name, Description: payload.Description}, nil
+}
+
+func TestEnvironmentWriteHandlersRejectMalformedJSONAsBadRequest(t *testing.T) {
+	tests := []struct {
+		name string
+		call func(*Handler, http.ResponseWriter, *http.Request, models.Provider)
+	}{
+		{
+			name: "create",
+			call: func(h *Handler, w http.ResponseWriter, req *http.Request, provider models.Provider) {
+				h.SaveEnvironment(w, req, nil, nil, provider)
+			},
+		},
+		{
+			name: "update",
+			call: func(h *Handler, w http.ResponseWriter, req *http.Request, provider models.Provider) {
+				req = mux.SetURLVars(req, map[string]string{"id": "11111111-1111-1111-1111-111111111111"})
+				h.UpdateEnvironmentHandler(w, req, nil, nil, provider)
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := newTestHandler(t, map[string]models.Provider{}, "")
+			provider := newEnvironmentRecordingProvider()
+			req := httptest.NewRequest(http.MethodPost, "/api/environments", strings.NewReader(`{"name":`))
+			rec := httptest.NewRecorder()
+
+			tt.call(h, rec, req, provider)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusBadRequest, rec.Body.String())
+			}
+			if decoded := decodeErrorBody(t, rec.Body.Bytes()); decoded.Code != models.ErrUnmarshalCode {
+				t.Fatalf("code = %q, want %q", decoded.Code, models.ErrUnmarshalCode)
+			}
+			if provider.saveCalls != 0 || provider.updateCalls != 0 {
+				t.Fatalf("provider calls = {save:%d update:%d}, want none", provider.saveCalls, provider.updateCalls)
+			}
+		})
+	}
+}
+
+func TestEnvironmentWriteHandlersAcceptValidJSON(t *testing.T) {
+	const body = `{"name":"valid","description":"description","organizationId":"22222222-2222-2222-2222-222222222222"}`
+
+	t.Run("create", func(t *testing.T) {
+		h := newTestHandler(t, map[string]models.Provider{}, "")
+		provider := newEnvironmentRecordingProvider()
+		req := httptest.NewRequest(http.MethodPost, "/api/environments", strings.NewReader(body))
+		rec := httptest.NewRecorder()
+
+		h.SaveEnvironment(rec, req, nil, nil, provider)
+
+		if rec.Code != http.StatusCreated {
+			t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusCreated, rec.Body.String())
+		}
+		if provider.saveCalls != 1 {
+			t.Fatalf("save calls = %d, want 1", provider.saveCalls)
+		}
+	})
+
+	t.Run("update", func(t *testing.T) {
+		h := newTestHandler(t, map[string]models.Provider{}, "")
+		provider := newEnvironmentRecordingProvider()
+		req := httptest.NewRequest(http.MethodPut, "/api/environments/11111111-1111-1111-1111-111111111111", strings.NewReader(body))
+		req = mux.SetURLVars(req, map[string]string{"id": "11111111-1111-1111-1111-111111111111"})
+		rec := httptest.NewRecorder()
+
+		h.UpdateEnvironmentHandler(rec, req, nil, nil, provider)
+
+		if rec.Code != http.StatusOK {
+			t.Fatalf("status = %d, want %d (body=%q)", rec.Code, http.StatusOK, rec.Body.String())
+		}
+		if provider.updateCalls != 1 {
+			t.Fatalf("update calls = %d, want 1", provider.updateCalls)
+		}
+	})
+}
+
 // TestSaveEnvironmentHandler_AllowsThenRefusesSameRequest closes the
 // "same request, one refused" gap: one SaveEnvironment request body driven
 // twice against a stub provider must succeed with 201 while the provider
