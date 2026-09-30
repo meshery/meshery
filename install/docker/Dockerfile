@@ -12,10 +12,10 @@ RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSU
 # Compile the Go relationship/policy engine to WebAssembly and stage Go's
 # wasm_exec.js runtime glue. ui/pages/_document.tsx loads
 # /static/wasm/wasm_exec.js on every page, and the engine fetches
-# /static/wasm/policy_engine.wasm at runtime. Both are .gitignore'd artifacts
-# emitted by the `wasm-engine` Makefile target, which this container build never
-# ran -- so the request fell through to the SPA HTML shell and the browser
-# refused to execute it (MIME 'text/plain'). Full source is copied because
+# /static/wasm/policy_engine.wasm at runtime. Both are gitignored build
+# outputs; this image compiles them here so a request does not fall through
+# to the SPA HTML shell and get refused by the browser (MIME 'text/plain').
+# Full source is copied because
 # server/policies/wasm/go.mod sets `replace github.com/meshery/meshery => ../../../`.
 FROM golang:1.26.4 AS meshery-wasm
 WORKDIR /github.com/meshery/meshery
