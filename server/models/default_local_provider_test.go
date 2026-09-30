@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"strings"
 	"testing"
 
@@ -374,5 +375,48 @@ func TestDefaultLocalProviderInstallExtension_ReplacesMatchingNavigatorExtension
 	}
 	if provider.Extensions.Navigator[0].Component != "/provider/navigator/meshmap/index.js?packageVersion=new" {
 		t.Fatalf("expected replacement component to be stored, got %q", provider.Extensions.Navigator[0].Component)
+	}
+}
+
+// TestDefaultLocalProviderGetPerformanceProfilesAppliesSearchAndOrder pins that
+// the local provider forwards `search` and `order` to the persister. It used to
+// discard both, so the profile search and sort did nothing on the local
+// provider, and `mesheryctl perf apply <name>` could run an unrelated profile.
+func TestDefaultLocalProviderGetPerformanceProfilesAppliesSearchAndOrder(t *testing.T) {
+	provider := &DefaultLocalProvider{
+		PerformanceProfilesPersister: &PerformanceProfilePersister{DB: newMigratedDB(t)},
+	}
+
+	// beta is saved last so that, without a forwarded order, the default
+	// updated_at desc order does not already produce the name asc result.
+	for _, name := range []string{"alpha", "beta"} {
+		profile := &PerformanceProfile{ID: mustUUID(t), Name: name, Duration: "30s"}
+		if err := provider.PerformanceProfilesPersister.SavePerformanceProfile(profile.ID, profile); err != nil {
+			t.Fatalf("SavePerformanceProfile(%s): %v", name, err)
+		}
+	}
+
+	names := func(search, order string) []string {
+		t.Helper()
+		raw, err := provider.GetPerformanceProfiles("", "0", "10", search, order)
+		if err != nil {
+			t.Fatalf("GetPerformanceProfiles(search=%q, order=%q): %v", search, order, err)
+		}
+		var page PerformanceProfilePage
+		if err := json.Unmarshal(raw, &page); err != nil {
+			t.Fatalf("unmarshal page: %v", err)
+		}
+		got := make([]string, 0, len(page.Profiles))
+		for _, p := range page.Profiles {
+			got = append(got, p.Name)
+		}
+		return got
+	}
+
+	if got := names("alpha", ""); len(got) != 1 || got[0] != "alpha" {
+		t.Errorf("search=alpha returned %v, want [alpha]", got)
+	}
+	if got := names("", "name asc"); len(got) != 2 || got[0] != "alpha" || got[1] != "beta" {
+		t.Errorf("order=name asc returned %v, want [alpha beta]", got)
 	}
 }
