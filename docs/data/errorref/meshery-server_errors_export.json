@@ -4259,6 +4259,15 @@
         "short_description": "Model not found",
         "probable_cause": "The requested model is not present in the CSV input",
         "suggested_remediation": "Verify that the requested model exists in the CSV input"
+      },
+      "1486": {
+        "name": "ErrKeysRegisterColumnMissingCode",
+        "code": "1486",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Meshery Server could not determine which keys to register with the Local Provider",
+        "probable_cause": "The header row of the keys file was renamed or dropped, so no row could be selected for registration and nothing is seeded from this file; on a fresh or reset database the Key table stays empty, while previously seeded keys are left untouched",
+        "suggested_remediation": "Restore the missing header in server/permissions/keys.csv (or the file KEYS_PATH points at) and restart Meshery Server so keys seed again"
       }
     }
   }

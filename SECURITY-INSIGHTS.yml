@@ -64,7 +64,7 @@ project:
     bug-bounty-available: false
     contact:
       name: Meshery Security
-      email: security@meshery.dev
+      email: security@meshery.io
       primary: true
 
 repository:

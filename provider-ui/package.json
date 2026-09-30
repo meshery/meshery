@@ -4,9 +4,9 @@
   "description": "the service mesh management plane",
   "main": "index.js",
   "scripts": {
-    "dev": "node ui_dev_server.js",
-    "build": "npm run clean && next build",
-    "start": "NODE_ENV=production node server.js",
+    "dev": "node init && node ui_dev_server.js",
+    "build": "node init && npm run clean && next build",
+    "start": "node init && NODE_ENV=production node server.js",
     "lint": "eslint . --cache",
     "lint:fix": "eslint . --cache --fix",
     "clean": "rm -rf .next,out"

@@ -3,6 +3,7 @@ title: mesheryctl-component
 display_title: false
 command: component
 subcommand: nil
+categories: [mesheryctl-component]
 ---
 
 # mesheryctl component

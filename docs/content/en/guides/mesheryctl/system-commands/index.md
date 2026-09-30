@@ -59,7 +59,7 @@ Let's get familiar with mesheryctl system commands. The syntax of the mesheryctl
 <a href="images/reset.png"><img class="content-image" alt="skip-browser" src="images/reset.png" /></a>
 
 ### restart 
-`meshryctl system restart` : Stops Meshery and then starts it again. Opens the website in your default browser.
+`mesheryctl system restart` : Stops Meshery and then starts it again. Opens the website in your default browser.
 
 <a href="images/restart.png"><img class="content-image" alt="skip-browser" src="images/restart.png" /></a>
 
@@ -97,7 +97,7 @@ Let's get familiar with mesheryctl system commands. The syntax of the mesheryctl
 
 `mesheryctl system check --preflight` : Runs pre-deployment checks.
 
-`mesheryctl system check --adapter` : Runs checks for a specific Mesh adapter.
+`mesheryctl system check --adapter <adapter-name>` : Runs checks for a specified Mesh adapter.
 
 `mesheryctl system check --adapters` : Runs checks for Meshery adapters
 
@@ -126,7 +126,7 @@ Let's get familiar with mesheryctl system commands. The syntax of the mesheryctl
 
 <a href="images/context create.png"><img class="content-image" alt="skip-browser" src="images/context create.png" /></a>
 
-`mesheryctl system context create --component stringArray` : Specifies the component to be created in the context.
+`mesheryctl system context create --components stringArray` : Specifies the components to be created in the context.
 
 `mesheryctl system context create --platform string` : Specifies the platform.
 

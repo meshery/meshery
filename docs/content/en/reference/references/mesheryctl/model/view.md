@@ -3,6 +3,7 @@ title: mesheryctl-model-view
 display_title: false
 command: model
 subcommand: view
+categories: [mesheryctl-model]
 ---
 
 # mesheryctl model view

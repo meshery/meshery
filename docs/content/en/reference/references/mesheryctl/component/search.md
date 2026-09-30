@@ -3,6 +3,7 @@ title: mesheryctl-component-search
 display_title: false
 command: component
 subcommand: search
+categories: [mesheryctl-component]
 ---
 
 # mesheryctl component search

@@ -195,6 +195,27 @@ unaffected: it receives its provider from the request context, which enforcement
 resolves consistently.
 {{% /alert %}}
 
+{{% alert color="warning" title="Contributing: a seeding fault must not terminate the server" %}}
+Every boot seeding stage runs through `models.RunSeedStage`, which recovers a
+panic raised inside that stage, logs it as
+[`meshery-server-1483`]({{< ref "reference/references/error-codes.md" >}}) with
+the stage name and stack trace, and lets the remaining stages run. A Meshery
+Server with an incomplete registry is still useful and its operator can read the
+error; one that exits at boot leaves them a crash loop and no UI to read it in.
+
+`recover` reaches only the goroutine that deferred it, so wrapping a stage does
+not cover a goroutine that stage spawns - a fault there would still take the
+process down. A stage that spawns one therefore recovers at its own spawn site
+and reports through the same `ErrSeedingStagePanic`, making the failure
+indistinguishable in the log from one `RunSeedStage` caught itself. `SeedKeys`
+(`server/models/keys_helper.go`), which parses `keys.csv` on a spawned
+goroutine, is the only seeding callee that spawns one today; give any new one
+the same deferred recover rather than widening `RunSeedStage`, which cannot
+reach a child goroutine. Both halves are pinned by tests in `server/models`:
+`TestRunSeedStageRecoversPanic` and
+`TestSeedKeysChildGoroutinePanicIsContained`.
+{{% /alert %}}
+
 ### Deep-Link Preservation
 
 Meshery preserves the originally requested URL when authentication is required, enabling seamless navigation after login:

@@ -49,5 +49,3 @@ You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 {{< installation/accessing-meshery-ui >}}
 
 {{< related-discussions tag="meshery" >}}
-
-### See Also

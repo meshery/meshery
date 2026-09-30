@@ -15,7 +15,6 @@
 
 .DS_Store
 .dccache
-.vscode/
 .cusorignore
 *.config
 **/__pycache__/
@@ -94,7 +93,6 @@ allure-results/
 playwright-report/
 
 install/docker-extension/vm/vm
-.env
 ui/.env
 *.env
 */.env
@@ -116,3 +114,4 @@ LLMs
 # worktree permanently dirty, which breaks `git rebase` and validation runs.
 .remember/
 
+config.bat
