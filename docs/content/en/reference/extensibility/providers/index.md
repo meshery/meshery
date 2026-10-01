@@ -218,17 +218,22 @@ reach a child goroutine. Both halves are pinned by tests in `server/models`:
 
 ### Deep-Link Preservation
 
-Meshery preserves the originally requested URL when authentication is required, enabling seamless navigation after login:
+Meshery preserves the originally requested in-app destination - its path and query, plus its fragment where the browser captured one - on the entry paths that capture it: an unauthenticated first visit, which is routed through provider selection (`/provider`) with the page attached, and the **Sign In** control offered during an anonymous session, which sends the page the user is standing on. A session that expires mid-use takes neither path - it is sent to `/auth/login` carrying that page's own query but not the page itself - so re-authentication lands on the default page rather than the original destination.
 
-- When an unauthenticated user attempts to access a protected page, the URL is base64-encoded into a `ref` query parameter
-- After successful login, the provider decodes `ref` and redirects to the original destination
-- The Local Provider supports this functionality, validating `ref` values to prevent open redirects (absolute URLs, protocol-relative URLs, and URLs with schemes/hosts are rejected)
-- If `ref` validation fails or is absent, users are redirected to the dashboard (`/`)
+- Where the destination is captured, the in-app URL is base64-encoded into a `ref` query parameter
+- Meshery owns that destination for the rest of the flow: `InitiateLogin` records it in a one-shot, `HttpOnly` cookie on Meshery's own domain rather than trusting the value back out of the provider's auth chain, where a custom-domain bounce can rewrite it. A login carrying no `ref` deletes any cookie an abandoned earlier attempt left behind, so a stale destination cannot outrank this login's own
+- When the provider returns to `/api/user/token`, that cookie supplies the destination and is deleted. Only if it is absent or empty does Meshery fall back to the `?ref=` the provider echoed back. A deployment that offers anonymous sessions writes no cookie at all, because its exit resolves the destination from the request in hand - which is how a Sign In taken during an anonymous session keeps its query
+- The same validation gate runs at every entry point: the Local Provider's login, the Remote Provider's token handler, and the anonymous-session exit
+- If validation fails, or no `ref` is present at all, the user lands on the default page for that provider - the dashboard (`/`) or a [provider-defined redirect](#provider-defined-redirects) target
 
-**Example**: User visits `https://meshery.example.com/extension/meshmap` while unauthenticated → redirected to login with `ref` parameter → after login, automatically returned to the extension.
+**Example**: A user who has not yet selected a provider visits `https://meshery.example.com/extension/meshmap?mode=design` → redirected to provider selection and on to login, with the page carried in a `ref` parameter → after login, automatically returned to the extension with `mode=design` intact.
 
 {{% alert color="info" title="Deep-Link Security" %}}
-Deep-link targets are validated to prevent open redirect vulnerabilities. Only relative paths within the Meshery application are accepted.
+Deep-link targets are validated to prevent open redirect vulnerabilities and post-login redirect loops:
+
+- A relative in-app path is used as-is. An absolute URL is accepted only when its host is Meshery's own, and is then reduced to its path and query; every other host is rejected. The host compared against is taken from `MESHERY_SERVER_CALLBACK_URL` when set, falling back to the request's `Host` - so a rewritten `Host` header cannot widen the test
+- Protocol-relative values (`//host`) and backslashes in the path are rejected, because a browser reads either as the start of a new authority
+- Routes whose job is to *start* authentication are rejected as destinations, otherwise the browser immediately re-enters the OAuth dance and the original target is lost: `/user/login`, `/auth/login`, `/api/user/token`, `/provider`, and `/login` (the Remote Provider's own login page, which a custom-domain bounce can synthesize into the `ref` it echoes back). The check runs on the normalized target as well as the decoded one, so encoded or fragment-hidden traversal onto one of those routes is caught too
 {{% /alert %}}
 
 ## Runtime Configuration Options
