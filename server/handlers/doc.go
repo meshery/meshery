@@ -175,7 +175,7 @@ type listProvidersRespWrapper struct {
 }
 
 // Returns provider capabilities
-// swaggere:response providerPropertiesRespWrapper
+// swagger:response providerPropertiesRespWrapper
 type providerPropertiesRespWrapper struct {
 	// in: body
 	Body models.ProviderProperties
