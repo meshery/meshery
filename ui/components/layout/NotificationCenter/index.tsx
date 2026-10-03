@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { CustomTooltip, NoSsr } from '@sistent/sistent';
 import {
   alpha,
@@ -423,6 +423,7 @@ const NotificationCenterDrawer = () => {
   const [fetchEvents, { isFetching }] = useLazyGetEventsQuery();
   const hasMore = useSelector((state) => state.events.current_view.has_more);
   const initialViewToLoad = useSelector((state) => state.events.view_to_fetch_on_open);
+  const currentFilters = useSelector((state: any) => state.events.current_view.filters);
 
   const [isLoadingFilters, setIsLoadingFilters] = useState(false); // whether we are loading filters and basically should show loading spinner as we are loading the whole page
 
@@ -445,11 +446,14 @@ const NotificationCenterDrawer = () => {
   };
   // const { showFullNotificationCenter } = props;
   const open = Boolean(anchorEl) || isNotificationCenterOpen;
-  const handleFilter = async (filters) => {
-    setIsLoadingFilters(true);
-    await dispatch(loadEvents(fetchEvents, 0, filters));
-    setIsLoadingFilters(false);
-  };
+  const handleFilter = useCallback(
+    async (filters) => {
+      setIsLoadingFilters(true);
+      await dispatch(loadEvents(fetchEvents, 0, filters));
+      setIsLoadingFilters(false);
+    },
+    [dispatch, fetchEvents],
+  );
   const drawerRef = useRef();
   const clickwayHandler = (e) => {
     // checks if event has occured/bubbled up from clicking inside notificationcenter or on the bell icon
@@ -485,7 +489,7 @@ const NotificationCenterDrawer = () => {
                 <Header handleFilter={handleFilter} handleClose={handleClose}></Header>
                 <Divider light />
                 <Container>
-                  <Filter handleFilter={handleFilter}></Filter>
+                  <Filter handleFilter={handleFilter} currentFilters={currentFilters}></Filter>
                   <BulkActions />
 
                   {isLoadingFilters ? (
