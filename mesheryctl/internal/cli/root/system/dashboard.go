@@ -17,6 +17,7 @@ package system
 import (
 	"context"
 	"fmt"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -152,8 +153,32 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 				}
 
 				if err = portforward.Init(); err != nil {
-					// TODO: consider falling back to an ephemeral port if defaultPort is taken
-					return ErrRunPortForward(err)
+					if !isLocalPortInUse(options.host, dashboardCmdFlags.Port) {
+						utils.Log.Error(err)
+						return ErrRunPortForward(err)
+					}
+
+					utils.Log.Warnf("Port-forwarding on port %d failed (%v), retrying with an available port...", dashboardCmdFlags.Port, err)
+
+					portforward, err = utils.NewPortForward(
+						cmd.Context(),
+						client,
+						utils.MesheryNamespace,
+						"meshery",
+						options.host,
+						0,
+						options.podPort,
+						false,
+					)
+					if err != nil {
+						utils.Log.Error(err)
+						return ErrInitPortForward(err)
+					}
+
+					if err = portforward.Init(); err != nil {
+						utils.Log.Error(err)
+						return ErrRunPortForward(err)
+					}
 				}
 				utils.Log.Info("Port-forwarding for Meshery UI...")
 
@@ -173,7 +198,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 						}
 					}
 				}()
-				utils.Log.Infof("Forwarding port %v -> %v", options.podPort, dashboardCmdFlags.Port)
+				utils.Log.Infof("Forwarding port %v -> %v", options.podPort, portforward.AddressAndPort())
 				utils.Log.Infof("Meshery UI available at: %s", mesheryURL)
 				utils.Log.Info("Opening Meshery UI in default browser...")
 				err = utils.NavigateToBrowser(mesheryURL)
@@ -236,6 +261,15 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 
 		return nil
 	},
+}
+
+func isLocalPortInUse(host string, port int) bool {
+	ln, err := net.Listen("tcp", fmt.Sprintf("%s:%d", host, port))
+	if err != nil {
+		return true
+	}
+	_ = ln.Close()
+	return false
 }
 
 // keepConnectionAlive to stop being timed out with port forwarding
