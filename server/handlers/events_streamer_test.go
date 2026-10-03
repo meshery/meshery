@@ -3,14 +3,22 @@ package handlers
 import (
 	"bytes"
 	"context"
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/meshes"
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
 	_events "github.com/meshery/meshkit/utils/events"
+	"github.com/meshery/schemas/models/core"
 )
 
 const testTimeout = time.Second
@@ -79,6 +87,16 @@ func newTestLogger(t *testing.T) logger.Handler {
 	return log
 }
 
+type eventsSpyProvider struct {
+	*models.DefaultLocalProvider
+	getEventsCalled bool
+}
+
+func (p *eventsSpyProvider) GetEvents(_ string, _ *events.EventsFilter, _ int, _ core.Uuid, _ core.Uuid) (*models.EventsResponse, error) {
+	p.getEventsCalled = true
+	return &models.EventsResponse{}, nil
+}
+
 func waitForPayload(t *testing.T, ch <-chan []byte, name string) []byte {
 	t.Helper()
 
@@ -99,6 +117,56 @@ func assertNoPayload(t *testing.T, ch <-chan []byte, name string) {
 	case payload := <-ch:
 		t.Fatalf("unexpected payload for %s: %s", name, payload)
 	case <-time.After(100 * time.Millisecond):
+	}
+}
+
+func TestGetAllEvents_MalformedFilters(t *testing.T) {
+	tests := []struct {
+		name   string
+		query  string
+		filter string
+	}{
+		{name: "category", query: "category=not-json", filter: "event category filter"},
+		{name: "action", query: "action=not-json", filter: "event action filter"},
+		{name: "severity", query: "severity=not-json", filter: "event severity filter"},
+		{name: "actedUpon", query: "actedUpon=not-json", filter: "event acted upon filter"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			systemID := core.Uuid(uuid.Must(uuid.NewV4()))
+			provider := &eventsSpyProvider{DefaultLocalProvider: &models.DefaultLocalProvider{}}
+			h := &Handler{
+				SystemID: &systemID,
+				log:      newTestLogger(t),
+			}
+			user := &models.User{ID: uuid.Must(uuid.NewV4())}
+			req := httptest.NewRequest(http.MethodGet, "/api/system/events?"+tt.query, nil)
+			rec := httptest.NewRecorder()
+
+			h.GetAllEvents(rec, req, nil, user, provider)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("expected 400 for malformed %s filter, got %d (body=%q)", tt.name, rec.Code, rec.Body.String())
+			}
+			if provider.getEventsCalled {
+				t.Fatalf("GetEvents was called for a malformed %s filter", tt.name)
+			}
+
+			var response struct {
+				Error string `json:"error"`
+				Code  string `json:"code"`
+			}
+			if err := json.NewDecoder(rec.Body).Decode(&response); err != nil {
+				t.Fatalf("expected a JSON error response, got %v", err)
+			}
+			if !strings.Contains(response.Error, tt.filter) {
+				t.Fatalf("expected error to identify the %s, got %q", tt.filter, response.Error)
+			}
+			if response.Code != "meshery-server-1226" {
+				t.Fatalf("expected Meshery error code meshery-server-1226, got %q", response.Code)
+			}
+		})
 	}
 }
 
