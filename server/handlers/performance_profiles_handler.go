@@ -91,7 +91,11 @@ func (h *Handler) GetPerformanceProfilesHandler(
 ) {
 	q := r.URL.Query()
 
-	tokenString := r.Context().Value(models.TokenCtxKey).(string)
+	tokenString, ok := r.Context().Value(models.TokenCtxKey).(string)
+	if !ok {
+		writeMeshkitError(rw, ErrFetchToken(fmt.Errorf("token not found in request context")), http.StatusInternalServerError)
+		return
+	}
 
 	resp, err := provider.GetPerformanceProfiles(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
 	if err != nil {
