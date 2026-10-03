@@ -8,24 +8,47 @@ import {
   MenuList,
   Paper,
   Popper,
+  CustomTooltip,
+  Box,
 } from '@sistent/sistent';
 
 export default function ActionButton({
   defaultActionClick,
-  options,
+  options = [],
   permissionKey,
   permissionAction,
+  label = 'Action',
 }) {
   const [open, setOpen] = React.useState(false);
+  const [interactiveMode, setInteractiveMode] = React.useState(true);
   const anchorRef = React.useRef(null);
 
   const handleMenuItemClick = () => {
     setOpen(false);
   };
 
-  const handleToggle = (event) => {
+  const handleActionButtonClick = (event) => {
     event.stopPropagation();
-    setOpen((prevOpen) => !prevOpen);
+    if (defaultActionClick) {
+      defaultActionClick(event);
+      return;
+    }
+    if (open && interactiveMode) {
+      setOpen(false);
+    } else {
+      setInteractiveMode(true);
+      setOpen(true);
+    }
+  };
+
+  const handleArrowClick = (event) => {
+    event.stopPropagation();
+    if (open && !interactiveMode) {
+      setOpen(false);
+    } else {
+      setInteractiveMode(false);
+      setOpen(true);
+    }
   };
 
   const handleClose = (event) => {
@@ -44,63 +67,94 @@ export default function ActionButton({
         ref={anchorRef}
         aria-label="Button group with a nested menu"
       >
-        <Button
-          sx={{
-            padding: '6px 9px',
-            borderRadius: '8px',
-          }}
-          onClick={defaultActionClick}
-          variant="outlined"
-          permissionKey={permissionKey}
-          permissionAction={permissionAction}
-        >
-          Action
-        </Button>
-        <Button
-          sx={{
-            padding: '6px 9px',
-            borderRadius: '8px',
-          }}
-          size="small"
-          onClick={handleToggle}
-          variant="outlined"
-          data-testid="action-btn-toggle"
-        >
-          <ArrowDropDownIcon />
-        </Button>
+        <CustomTooltip title="Invoke actions interactively" placement="top">
+          <Button
+            sx={{
+              padding: '6px 9px',
+              borderRadius: '8px',
+            }}
+            onClick={handleActionButtonClick}
+            variant="outlined"
+            permissionKey={permissionKey}
+            permissionAction={permissionAction}
+          >
+            {label}
+          </Button>
+        </CustomTooltip>
+        <CustomTooltip title="Invoke actions in single click" placement="top">
+          <Button
+            sx={{
+              padding: '6px 9px',
+              borderRadius: '8px',
+            }}
+            size="small"
+            onClick={handleArrowClick}
+            variant="outlined"
+            data-testid="action-btn-toggle"
+          >
+            <ArrowDropDownIcon />
+          </Button>
+        </CustomTooltip>
       </ButtonGroup>
       <Popper
         sx={{
-          zIndex: 1,
+          zIndex: 1300,
         }}
         open={open}
         anchorEl={anchorRef.current}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
+        placement={interactiveMode ? 'bottom-start' : 'bottom-end'}
       >
         <Paper>
           <ClickAwayListener onClickAway={handleClose}>
             <MenuList id="split-button-menu" autoFocusItem>
               {options.map((option, index) => (
                 <MenuItem
-                  data-testid={`action-btn-option-${option.label}`}
+                  data-testid={option['data-testid'] || `action-btn-option-${option.label}`}
                   disabled={option.disabled}
                   permissionKey={option.permissionKey}
                   permissionAction={option.permissionAction}
-                  key={option.label}
+                  key={option.label || index}
                   onClick={(event) => {
-                    handleMenuItemClick(event);
-                    option.onClick(event, index);
+                    handleMenuItemClick();
+                    if (interactiveMode) {
+                      option.onClick?.(event, index);
+                    } else if (option.onDirectClick) {
+                      option.onDirectClick(event, index);
+                    } else {
+                      option.onClick?.(event, index);
+                    }
+                  }}
+                  sx={{
+                    justifyContent: interactiveMode ? 'flex-start' : 'center',
+                    minWidth: interactiveMode ? '140px' : 'auto',
+                    padding: interactiveMode ? '6px 16px' : '6px 12px',
                   }}
                 >
-                  <div style={{ marginRight: '0.5rem' }}>{option.icon}</div>
-                  {option.label}
+                  <CustomTooltip
+                    title={option.label}
+                    placement="left"
+                    disableHoverListener={interactiveMode}
+                  >
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: interactiveMode ? 'flex-start' : 'center',
+                        width: '100%',
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          marginRight: interactiveMode ? '0.5rem' : 0,
+                        }}
+                      >
+                        {option.icon}
+                      </Box>
+                      {interactiveMode && option.label}
+                    </Box>
+                  </CustomTooltip>
                 </MenuItem>
               ))}
             </MenuList>

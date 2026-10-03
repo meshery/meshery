@@ -350,14 +350,23 @@ function MesheryPatterns({
     setPatterns(patterns?.filter((content) => content.visibility !== VISIBILITY.PUBLISHED) || []);
   };
 
-  const { openDeployModal, openUndeployModal, openDryRunModal, openValidateModal } =
-    buildDesignLifecycleHandlers({
-      designLifecycleModal,
-      designValidationActorRef,
-      selectedK8sContexts,
-      handleDeploy,
-      handleUndeploy,
-    });
+  const {
+    openDeployModal,
+    openUndeployModal,
+    openDryRunModal,
+    openValidateModal,
+    directDeploy,
+    directUndeploy,
+    directDryRun,
+    directValidate,
+  } = buildDesignLifecycleHandlers({
+    designLifecycleModal,
+    designValidationActorRef,
+    selectedK8sContexts,
+    handleDeploy,
+    handleUndeploy,
+    notify,
+  });
 
   const userCanEdit = (pattern) => canEditDesign(user, pattern, canEditDesignPermission);
 
@@ -556,6 +565,10 @@ function MesheryPatterns({
                 openValidationModal={openValidateModal}
                 openDryRunModal={openDryRunModal}
                 openDeployModal={openDeployModal}
+                directDeploy={directDeploy}
+                directUndeploy={directUndeploy}
+                directDryRun={directDryRun}
+                directValidate={directValidate}
                 hideVisibility={hideVisibility}
                 arePatternsReadOnly={arePatternsReadOnly}
               />
