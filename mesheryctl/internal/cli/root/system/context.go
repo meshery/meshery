@@ -1,10 +1,16 @@
 package system
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
+	"net"
+	"net/http"
+	"net/url"
 	"os"
 	"sort"
 	"strings"
+	"time"
 
 	"gopkg.in/yaml.v2"
 
@@ -16,6 +22,10 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+// pingContextRequestTimeout bounds the /api/user liveness check so a
+// dead server is reported quickly instead of hanging.
+const pingContextRequestTimeout = 4 * time.Second
 
 var (
 	configuration     *config.MesheryCtlConfig
@@ -366,6 +376,116 @@ mesheryctl system context view --all
 	},
 }
 
+type cmdContextPingFlags struct {
+	Context string `json:"context" validate:"omitempty"`
+}
+
+var contextPingFlags cmdContextPingFlags
+
+// pingTokenResponse captures the subset of the /api/user response used to
+// report which user the stored token belongs to.
+type pingTokenResponse struct {
+	Email string `json:"email,omitempty"`
+}
+
+// pingContextCmd represents the ping command
+var pingContextCmd = &cobra.Command{
+	Use:   "ping [context-name | --context context-name]",
+	Short: "Check connectivity and token validity for a Meshery context",
+	Long: `Check whether the Meshery Server for a context is reachable and whether the stored authentication token is still valid.
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/system/context/ping`,
+	Example: `
+// Ping the current context
+mesheryctl system context ping
+
+// Ping a specified context
+mesheryctl system context ping context-name
+
+// Ping a specified context using the --context flag
+mesheryctl system context ping --context context-name
+	`,
+	SilenceUsage: true,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		return mesheryctlflags.ValidateCmdFlags(cmd, &contextPingFlags)
+	},
+	Args: func(_ *cobra.Command, args []string) error {
+		if len(args) > 1 {
+			return utils.ErrInvalidArgument(fmt.Errorf("%s", errArgMsg))
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		err := viper.Unmarshal(&configuration)
+		if err != nil {
+			return ErrUnmarshallConfig(err)
+		}
+
+		if len(args) != 0 {
+			contextPingFlags.Context = strings.ToLower(args[0])
+		}
+		if contextPingFlags.Context == "" {
+			contextPingFlags.Context = viper.GetString("current-context")
+		}
+		if contextPingFlags.Context == "" {
+			return ErrContextNotExists(fmt.Errorf("current context not set"))
+		}
+
+		contextData, ok := configuration.Contexts[contextPingFlags.Context]
+		if !ok {
+			return ErrContextNotExists(
+				fmt.Errorf(
+					"context `%s` does not exist",
+					contextPingFlags.Context,
+				),
+			)
+		}
+
+		utils.Log.Infof("Context: %s", contextPingFlags.Context)
+		utils.Log.Infof("Endpoint: %s", contextData.Endpoint)
+
+		req, err := http.NewRequest("GET", strings.TrimRight(contextData.Endpoint, "/")+"/api/user", nil)
+		if err != nil {
+			return errors.Wrap(err, "error creating the request")
+		}
+
+		if err := attachContextAuthDetails(req, contextPingFlags.Context, contextData.Token, contextData.Endpoint); err != nil {
+			return errors.Wrap(err, "unable to attach stored token")
+		}
+
+		client := &http.Client{
+			Timeout: pingContextRequestTimeout,
+			// Inspect the original response instead of silently following a
+			// redirect (e.g. to a login page), which could otherwise return a
+			// 200 and cause an unauthenticated request to be misreported as
+			// having a valid token.
+			CheckRedirect: func(_ *http.Request, _ []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
+		}
+		resp, err := client.Do(req)
+		if err != nil {
+			utils.Log.Warnf("❌ Server unreachable: %s", describePingConnectionError(err))
+			return errors.New("meshery server unreachable")
+		}
+		defer utils.SafeClose(resp.Body)
+
+		utils.Log.Info("✅ Server reachable")
+
+		switch {
+		case resp.StatusCode >= 200 && resp.StatusCode < 300:
+			body, _ := io.ReadAll(resp.Body)
+			utils.Log.Infof("✅ Token valid (user: %s)", extractPingTokenEmail(body))
+			return nil
+		case resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden:
+			utils.Log.Warnf("⚠️  Token invalid/expired")
+			return errors.New("token invalid or expired")
+		default:
+			utils.Log.Warnf("⚠️  Meshery Server responded with an unexpected status: %d", resp.StatusCode)
+			return errors.New("meshery server returned an unexpected response")
+		}
+	},
+}
+
 var linkDocContextSwitch = map[string]string{
 	"link":    "![context-switch-usage](../../../../images/contextswitch.png)",
 	"caption": "Usage of mesheryctl context switch",
@@ -452,7 +572,7 @@ mesheryctl system context
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemContextSubError(fmt.Sprintf("'%s' is an invalid command. Include one of these arguments: [ create | delete | list | switch | view ]. Use 'mesheryctl system context --help' to display sample usage.\n", args[0]), "context"))
+			return errors.New(utils.SystemContextSubError(fmt.Sprintf("'%s' is an invalid command. Include one of these arguments: [ create | delete | list | ping | switch | view ]. Use 'mesheryctl system context --help' to display sample usage.\n", args[0]), "context"))
 		}
 
 		return nil
@@ -466,6 +586,7 @@ func init() {
 		switchContextCmd,
 		viewContextCmd,
 		listContextCmd,
+		pingContextCmd,
 	}
 	createContextCmd.Flags().StringVarP(&contextCreateFlags.URL, "url", "u", "", "Meshery Server URL with Port (default: http://localhost:9081)")
 	createContextCmd.Flags().BoolVarP(&contextCreateFlags.Set, "set", "s", false, "Set as current context")
@@ -475,6 +596,7 @@ func init() {
 	deleteContextCmd.Flags().StringVarP(&contextDeleteFlags.Set, "set", "s", "", "New context to deploy Meshery")
 	viewContextCmd.Flags().StringVarP(&contextViewFlags.Context, "context", "c", "", "Show config for the context")
 	viewContextCmd.Flags().BoolVar(&contextViewFlags.All, "all", false, "Show configs for all of the context")
+	pingContextCmd.Flags().StringVarP(&contextPingFlags.Context, "context", "c", "", "Ping the given context")
 	ContextCmd.PersistentFlags().StringVarP(&tempCntxt, "context", "c", "", "(optional) temporarily change the current context.")
 	ContextCmd.AddCommand(availableSubcommands...)
 }
@@ -500,4 +622,94 @@ func getContextWithTokenLocation(c *config.Context) (*contextWithLocation, bool)
 		return &temp, false
 	}
 	return &temp, true
+}
+
+// attachContextAuthDetails resolves the on-disk token file for tokenName under
+// contextName and attaches it to req. A context configured with no token name
+// at all pings unauthenticated - the server can correctly report that as an
+// invalid token. But once a token IS configured, any failure to resolve or
+// read it is returned as an error instead of silently pinging unauthenticated,
+// which would otherwise be misreported as "Token invalid/expired" when the
+// real problem is that mesheryctl couldn't read its own stored token file.
+//
+// It also refuses to send the resolved token to a plaintext HTTP endpoint
+// unless that endpoint is loopback - see refuseInsecureTokenTransport. This
+// guard is local to `context ping`; it does not change how any other
+// mesheryctl command sends its stored token.
+func attachContextAuthDetails(req *http.Request, contextName string, tokenName string, endpoint string) error {
+	if tokenName == "" {
+		return nil
+	}
+
+	token, err := configuration.GetTokenForContext(contextName)
+	if err != nil {
+		return errors.Wrap(err, "unable to resolve token for context")
+	}
+
+	tokenPath, err := utils.GetTokenLocation(token)
+	if err != nil {
+		return errors.Wrap(err, "unable to locate token file")
+	}
+
+	exists, err := utils.CheckFileExists(tokenPath)
+	if err != nil {
+		return errors.Wrap(err, "unable to check token file")
+	}
+	if !exists {
+		return fmt.Errorf("token file not found at %s", tokenPath)
+	}
+
+	if err := refuseInsecureTokenTransport(endpoint); err != nil {
+		return err
+	}
+
+	if err := utils.AddAuthDetails(req, tokenPath); err != nil {
+		return errors.Wrap(err, "unable to read token file")
+	}
+
+	return nil
+}
+
+// refuseInsecureTokenTransport rejects a plaintext HTTP endpoint unless its
+// host is loopback (localhost, 127.0.0.1, ::1) - the default local dev setup,
+// which must keep working unchanged. Anything else served over http:// would
+// otherwise carry the stored token in the clear.
+func refuseInsecureTokenTransport(endpoint string) error {
+	parsed, err := url.Parse(endpoint)
+	if err != nil {
+		return errors.Wrap(err, "unable to parse endpoint")
+	}
+	if parsed.Scheme != "http" {
+		return nil
+	}
+
+	host := parsed.Hostname()
+	if strings.EqualFold(host, "localhost") {
+		return nil
+	}
+	if ip := net.ParseIP(host); ip != nil && ip.IsLoopback() {
+		return nil
+	}
+
+	return fmt.Errorf("refusing to send stored token over plaintext HTTP to non-loopback endpoint %s", endpoint)
+}
+
+// describePingConnectionError extracts the underlying transport error (e.g.
+// "connection refused") from the *url.Error wrapper net/http returns, so the
+// user sees the actual cause rather than a redundant "Get <url>:" prefix.
+func describePingConnectionError(err error) string {
+	if urlErr, ok := err.(*url.Error); ok && urlErr.Err != nil {
+		return urlErr.Err.Error()
+	}
+	return err.Error()
+}
+
+// extractPingTokenEmail best-effort parses the /api/user response body for
+// the authenticated user's email address.
+func extractPingTokenEmail(body []byte) string {
+	var parsed pingTokenResponse
+	if err := json.Unmarshal(body, &parsed); err != nil || parsed.Email == "" {
+		return "unknown"
+	}
+	return parsed.Email
 }
