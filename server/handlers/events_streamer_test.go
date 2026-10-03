@@ -3,14 +3,19 @@ package handlers
 import (
 	"bytes"
 	"context"
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
 	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
 
 	"github.com/meshery/meshery/server/meshes"
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
 	_events "github.com/meshery/meshkit/utils/events"
+	"github.com/meshery/schemas/models/core"
 )
 
 const testTimeout = time.Second
@@ -428,5 +433,107 @@ func TestListenForCoreEvents_IgnoresUnexpectedPayloads(t *testing.T) {
 	case <-done:
 	case <-time.After(testTimeout):
 		t.Fatal("edge-case listener did not stop after cancellation")
+	}
+}
+
+type bulkEventSpyProvider struct {
+	*models.DefaultLocalProvider
+	bulkUpdateCalled atomic.Bool
+	bulkDeleteCalled atomic.Bool
+}
+
+func newBulkEventSpyProvider() *bulkEventSpyProvider {
+	base := &models.DefaultLocalProvider{}
+	base.Initialize()
+	return &bulkEventSpyProvider{DefaultLocalProvider: base}
+}
+
+func (s *bulkEventSpyProvider) BulkUpdateEventStatus(_ string, _ []*core.Uuid, _ string) error {
+	s.bulkUpdateCalled.Store(true)
+	return nil
+}
+
+func (s *bulkEventSpyProvider) BulkDeleteEvent(_ string, _ []*core.Uuid) error {
+	s.bulkDeleteCalled.Store(true)
+	return nil
+}
+
+func TestBulkUpdateEventStatus_MalformedJSON(t *testing.T) {
+	h := &Handler{config: &models.HandlerConfig{}, log: newTestLogger(t)}
+	spy := newBulkEventSpyProvider()
+
+	req := httptest.NewRequest(http.MethodPost, "/api/events/bulk", bytes.NewBufferString("not json"))
+	req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+	rec := httptest.NewRecorder()
+
+	h.BulkUpdateEventStatus(rec, req, nil, nil, spy)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+	if spy.bulkUpdateCalled.Load() {
+		t.Fatal("provider BulkUpdateEventStatus should not be called on malformed JSON")
+	}
+}
+
+func TestBulkUpdateEventStatus_ValidJSON(t *testing.T) {
+	h := &Handler{config: &models.HandlerConfig{}, log: newTestLogger(t)}
+	spy := newBulkEventSpyProvider()
+
+	payload, err := json.Marshal(eventStatusPayload{Status: "read"})
+	if err != nil {
+		t.Fatalf("failed to marshal test payload: %v", err)
+	}
+	req := httptest.NewRequest(http.MethodPost, "/api/events/bulk", bytes.NewReader(payload))
+	req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+	rec := httptest.NewRecorder()
+
+	h.BulkUpdateEventStatus(rec, req, nil, nil, spy)
+
+	if rec.Code == http.StatusBadRequest {
+		t.Fatalf("valid JSON should not return 400, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+	if !spy.bulkUpdateCalled.Load() {
+		t.Fatal("provider BulkUpdateEventStatus should be called for valid JSON")
+	}
+}
+
+func TestBulkDeleteEvent_MalformedJSON(t *testing.T) {
+	h := &Handler{config: &models.HandlerConfig{}, log: newTestLogger(t)}
+	spy := newBulkEventSpyProvider()
+
+	req := httptest.NewRequest(http.MethodPost, "/api/events/bulk", bytes.NewBufferString("{bad"))
+	req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+	rec := httptest.NewRecorder()
+
+	h.BulkDeleteEvent(rec, req, nil, nil, spy)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+	if spy.bulkDeleteCalled.Load() {
+		t.Fatal("provider BulkDeleteEvent should not be called on malformed JSON")
+	}
+}
+
+func TestBulkDeleteEvent_ValidJSON(t *testing.T) {
+	h := &Handler{config: &models.HandlerConfig{}, log: newTestLogger(t)}
+	spy := newBulkEventSpyProvider()
+
+	payload, err := json.Marshal(statusIDs{})
+	if err != nil {
+		t.Fatalf("failed to marshal test payload: %v", err)
+	}
+	req := httptest.NewRequest(http.MethodPost, "/api/events/bulk", bytes.NewReader(payload))
+	req = req.WithContext(context.WithValue(req.Context(), models.TokenCtxKey, "test-token"))
+	rec := httptest.NewRecorder()
+
+	h.BulkDeleteEvent(rec, req, nil, nil, spy)
+
+	if rec.Code == http.StatusBadRequest {
+		t.Fatalf("valid JSON should not return 400, got %d (body=%q)", rec.Code, rec.Body.String())
+	}
+	if !spy.bulkDeleteCalled.Load() {
+		t.Fatal("provider BulkDeleteEvent should be called for valid JSON")
 	}
 }
