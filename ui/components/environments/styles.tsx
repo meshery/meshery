@@ -239,8 +239,12 @@ export const TextButton = styled('button')({
 
 export const IconButton = styled('button')({
   minWidth: 'fit-content',
+  cursor: 'pointer',
   '&:hover': {
     background: 'transparent',
+  },
+  '&:disabled': {
+    cursor: 'not-allowed',
   },
   padding: 0,
   background: 'none',
