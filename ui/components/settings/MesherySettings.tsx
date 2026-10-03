@@ -134,6 +134,17 @@ const MesherySettings = () => {
     isMeshConfigured: k8sConfig.clusterConfigured,
   });
 
+  const [windowWidth, setWindowWidth] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth : 0,
+  );
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   const systemResetPromptRef = useRef<{ show: (_args: any) => Promise<string> } | null>(null);
 
   useEffect(() => {
@@ -208,9 +219,10 @@ const MesherySettings = () => {
           <div sx={{ flexGrow: 1, maxWidth: '100%', height: 'auto' }}>
             <StyledPaper square>
               <Tabs
+                key={windowWidth < 900 ? 'mobile' : 'desktop'}
                 value={tabVal}
                 onChange={handleChange('tabVal')}
-                variant={window.innerWidth < 900 ? 'scrollable' : 'fullWidth'}
+                variant={windowWidth < 900 ? 'scrollable' : 'fullWidth'}
                 scrollButtons="on"
                 indicatorColor="primary"
                 textColor="primary"
