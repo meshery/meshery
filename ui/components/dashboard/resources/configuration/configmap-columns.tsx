@@ -7,6 +7,7 @@ import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CoreConnectionKinds } from '../../../../utils/Enum';
 import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
 import { FormatId } from '@/components/data-formatter';
+import { safeJsonParse } from '../../../../utils/json-parse';
 
 export const buildConfigMapColumns = ({
   switchView,
@@ -84,7 +85,7 @@ export const buildConfigMapColumns = ({
         },
         customBodyRender: function CustomBody(val) {
           if (!val) return <>-</>;
-          const parseVal = JSON.parse(val);
+          const parseVal = safeJsonParse<Record<string, unknown>>(val);
           const keys = parseVal ? Object.keys(parseVal) : [];
           return <>{keys.join(', ')}</>;
         },
