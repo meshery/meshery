@@ -37,3 +37,22 @@ func TestMeshSyncResourcesSummaryKindsAreCamelCase(t *testing.T) {
 		}
 	}
 }
+
+// Each summary label is exactly {key, value} (MeshSyncLabel in meshery/schemas
+// v1beta1/meshsync). `value` must be emitted even when empty: node-role labels
+// such as node-role.kubernetes.io/control-plane carry an empty value, and the
+// meshsync KubernetesKeyValue these used to be encoded as dropped it.
+func TestMeshSyncResourcesSummaryLabelsAreKeyValuePairs(t *testing.T) {
+	payload, err := json.Marshal(MeshSyncResourcesSummaryAPIResponse{
+		Labels: []MeshSyncLabel{{Key: "node-role.kubernetes.io/control-plane", Value: ""}},
+	})
+	if err != nil {
+		t.Fatalf("marshalling summary response: %v", err)
+	}
+
+	got := string(payload)
+	want := `"labels":[{"key":"node-role.kubernetes.io/control-plane","value":""}]`
+	if !strings.Contains(got, want) {
+		t.Errorf("summary labels are not {key, value} pairs\nwant substring: %s\ngot: %s", want, got)
+	}
+}
