@@ -3,17 +3,25 @@ package policies
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"reflect"
+	"sort"
 	"strings"
 	"testing"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"github.com/open-policy-agent/opa/v1/ast"
 	"github.com/open-policy-agent/opa/v1/rego"
 	"github.com/open-policy-agent/opa/v1/tester"
 	"github.com/open-policy-agent/opa/v1/topdown"
+
+	"github.com/meshery/schemas/models/v1beta1/component"
+	modelv1beta1 "github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta2/relationship"
 )
 
 // designFileName extracts a human-friendly design file name from a test location.
@@ -309,6 +317,42 @@ func TestRelationshipEvaluationScenarios(t *testing.T) {
 			designFile:  "namespace_parent_inline",
 			expected:    true,
 		},
+		{
+			// A null hole in an array must not shift the indexes of the
+			// elements after it: the paths must reference the elements'
+			// original array positions, like the Go engine's
+			// getArrayAwareConfigPaths. Filtering nulls before generating
+			// indexes produced paths [0, 1] here, where index 1 is the
+			// null element itself.
+			name:  "array_aware_paths_preserve_original_indexes_across_null_holes",
+			query: `data.core_utils.get_array_aware_configuration_for_component_at_path(["configuration", "spec", "containers", "_"], input.component, input)`,
+			input: map[string]interface{}{
+				"component": map[string]interface{}{
+					"id": "pod-1",
+					"configuration": map[string]interface{}{
+						"spec": map[string]interface{}{
+							"containers": []interface{}{
+								map[string]interface{}{"name": "c0"},
+								nil,
+								map[string]interface{}{"name": "c2"},
+							},
+						},
+					},
+				},
+			},
+			expectError: false,
+			designFile:  "inline",
+			expected: map[string]interface{}{
+				"items": []interface{}{
+					map[string]interface{}{"name": "c0"},
+					map[string]interface{}{"name": "c2"},
+				},
+				"paths": []interface{}{
+					[]interface{}{"configuration", "spec", "containers", "0"},
+					[]interface{}{"configuration", "spec", "containers", "2"},
+				},
+			},
+		},
 	}
 
 	for _, tc := range testCases {
@@ -387,5 +431,158 @@ func TestRegoSyntax(t *testing.T) {
 				t.Errorf("Parse error in %s: %v", filepath.Base(file), err)
 			}
 		})
+	}
+}
+
+// TestParity_RegoAndGoEngineAliasPathsAcrossNullHole runs alias
+// identification for a Pod whose containers array has a null hole through
+// BOTH engines and asserts the emitted alias paths reference the same
+// original array positions. The Go engine (getArrayAwareConfigPaths) skips
+// the null but keeps original indexes; the Rego helper filtered nulls before
+// generating indexes, so its second alias path pointed at the null element.
+func TestParity_RegoAndGoEngineAliasPathsAcrossNullHole(t *testing.T) {
+	podID, err := uuid.FromString("00000000-0000-0000-0000-0000000000c1")
+	if err != nil {
+		t.Fatalf("parse pod id: %v", err)
+	}
+	pod := &component.ComponentDefinition{
+		Component:      component.Component{Kind: "Pod"},
+		Model:          &modelv1beta1.ModelDefinition{Name: "kubernetes"},
+		ModelReference: modelv1beta1.ModelReference{Name: "kubernetes"},
+		Configuration: map[string]interface{}{
+			"spec": map[string]interface{}{
+				"containers": []interface{}{
+					map[string]interface{}{"name": "c0"},
+					nil,
+					map[string]interface{}{"name": "c2"},
+				},
+			},
+		},
+	}
+	pod.ID = podID
+
+	design := makePatternFile([]*component.ComponentDefinition{pod}, nil)
+
+	mutatorRef := relationship.MutatorRef{[]string{"configuration", "spec", "containers", "_"}}
+	mutatedRef := relationship.MutatedRef{[]string{"configuration", "spec", "containers", "_"}}
+	selectorSet := relationship.SelectorSet{
+		relationship.SelectorSetItem{
+			Allow: relationship.Selector{
+				From: []relationship.SelectorItem{
+					{
+						Kind: strPtr("Container"),
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatorRef: &mutatorRef,
+						},
+					},
+				},
+				To: []relationship.SelectorItem{
+					{
+						Kind:  strPtr("Pod"),
+						Model: &modelv1beta1.ModelReference{Name: "kubernetes"},
+						RelationshipDefinitionSelectorsPatch: &relationship.RelationshipDefinitionSelectorsPatch{
+							MutatedRef: &mutatedRef,
+						},
+					},
+				},
+			},
+		},
+	}
+
+	relDef := &relationship.RelationshipDefinition{
+		Kind:             relationship.RelationshipDefinitionKind("hierarchical"),
+		RelationshipType: "parent",
+		SubType:          "alias",
+		Model:            modelv1beta1.ModelReference{Name: "kubernetes"},
+		Selectors:        &selectorSet,
+	}
+	relDef.ID, err = uuid.FromString("00000000-0000-0000-0000-0000000000d1")
+	if err != nil {
+		t.Fatalf("parse relationship id: %v", err)
+	}
+
+	goIdentified := (&AliasPolicy{}).IdentifyRelationship(relDef, design)
+	var goIdx []string
+	for _, decl := range goIdentified {
+		for _, ss := range *decl.Selectors {
+			for _, f := range ss.Allow.From {
+				mr := *f.RelationshipDefinitionSelectorsPatch.MutatorRef
+				goIdx = append(goIdx, mr[0][len(mr[0])-1])
+			}
+		}
+	}
+	sort.Strings(goIdx)
+
+	relJSON, err := json.Marshal(relDef)
+	if err != nil {
+		t.Fatalf("marshal relationship: %v", err)
+	}
+	designJSON, err := json.Marshal(design)
+	if err != nil {
+		t.Fatalf("marshal design: %v", err)
+	}
+	var relMap, designMap map[string]interface{}
+	if err := json.Unmarshal(relJSON, &relMap); err != nil {
+		t.Fatalf("unmarshal relationship: %v", err)
+	}
+	if err := json.Unmarshal(designJSON, &designMap); err != nil {
+		t.Fatalf("unmarshal design: %v", err)
+	}
+
+	policiesDir := "../../models/meshery-core/0.7.2/v1.0.0/policies"
+	policyFiles, err := collectRegoFiles(policiesDir)
+	if err != nil {
+		t.Fatalf("collect rego files: %v", err)
+	}
+	var opts []func(*rego.Rego)
+	for _, file := range policyFiles {
+		if strings.Contains(file, "/tests/") || strings.HasSuffix(file, ".template") {
+			continue
+		}
+		content, readErr := os.ReadFile(file)
+		if readErr != nil {
+			t.Fatalf("read %s: %v", file, readErr)
+		}
+		opts = append(opts, rego.Module(file, string(content)))
+	}
+	opts = append(opts,
+		rego.Query(`data.eval.identify_relationship(input.relationship, input.design_file, "alias_relationships_policy")`),
+		rego.Input(map[string]interface{}{
+			"relationship": relMap,
+			"design_file":  designMap,
+		}),
+	)
+
+	rs, err := rego.New(opts...).Eval(context.Background())
+	if err != nil {
+		t.Fatalf("rego eval: %v", err)
+	}
+
+	var regoIdx []string
+	if len(rs) > 0 && len(rs[0].Expressions) > 0 {
+		rels, ok := rs[0].Expressions[0].Value.([]interface{})
+		if !ok {
+			t.Fatalf("unexpected rego result shape: %#v", rs[0].Expressions[0].Value)
+		}
+		for _, r := range rels {
+			rm, ok := r.(map[string]interface{})
+			if !ok {
+				t.Fatalf("unexpected relationship shape: %#v", r)
+			}
+			for _, ss := range rm["selectors"].([]interface{}) {
+				allow := ss.(map[string]interface{})["allow"].(map[string]interface{})
+				for _, f := range allow["from"].([]interface{}) {
+					patch := f.(map[string]interface{})["patch"].(map[string]interface{})
+					mr := patch["mutatorRef"].([]interface{})
+					path := mr[0].([]interface{})
+					regoIdx = append(regoIdx, fmt.Sprintf("%v", path[len(path)-1]))
+				}
+			}
+		}
+	}
+	sort.Strings(regoIdx)
+
+	if strings.Join(goIdx, ",") != strings.Join(regoIdx, ",") {
+		t.Fatalf("engine divergence: Go alias paths reference indexes %v, Rego %v", goIdx, regoIdx)
 	}
 }
