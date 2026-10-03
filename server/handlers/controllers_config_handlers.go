@@ -181,8 +181,10 @@ func (h *Handler) UpdateConnectionControllersConfig(w http.ResponseWriter, req *
 
 	// A deployment-mode change tears down and reattaches the controller
 	// machinery for the connection (deploy/undeploy operator, restart the
-	// MeshSync data pipeline). Delegated to the existing mode-change path so
-	// both entry points behave identically.
+	// MeshSync data pipeline).
+	// Delegated to the existing mode-change path. The two entry points are not
+	// identical: that path has no CONNECTED gate and reports a superseded
+	// lifecycle as an error, where the connection-action path skips quietly.
 	if _, _, modeChanged, err := h.handleMeshSyncDeploymentModeChange(req.Context(), connectionID, payload, token, userID, provider); err != nil {
 		h.log.Error(err)
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to apply MeshSync deployment mode change.").WithMetadata(map[string]interface{}{"error": err}).Build()
@@ -348,6 +350,20 @@ func (h *Handler) applyControllersConfigToConnection(
 		h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Error, "Failed to resolve the connection's controllers configuration.", map[string]interface{}{"error": err, "connectionId": connectionID})
 		return
 	}
+
+	generationCtx := machine.GetLifecycleCtx()
+	if generationCtx == nil {
+		generationCtx = context.Background()
+	}
+
+	machineCtx.ActionMutex.Lock()
+	defer machineCtx.ActionMutex.Unlock()
+
+	if generationCtx.Err() != nil {
+		h.log.Warnf("controllers config: aborted due to newer lifecycle transition for connection %s", connectionID)
+		return
+	}
+
 	ctrlHelper.SetControllersConfig(merged)
 
 	// The layered document outranks the materialized meshsync_deployment_mode
@@ -381,7 +397,7 @@ func (h *Handler) applyControllersConfigToConnection(
 			h.emitControllersConfigApplyEvent(eventBuilder, provider, token, userID, events.Error, "Failed to reach the connection's cluster to apply the controllers configuration.", map[string]interface{}{"error": err, "connectionId": connectionID})
 			return
 		}
-		applyCtx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+		applyCtx, cancel := context.WithTimeout(generationCtx, 2*time.Minute)
 		defer cancel()
 		result, err := models.ApplyControllersConfigToCluster(applyCtx, h.log, kubeClient, merged)
 		if err != nil {

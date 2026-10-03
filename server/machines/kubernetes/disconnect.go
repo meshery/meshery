@@ -31,12 +31,19 @@ func (da *DisconnectAction) Execute(ctx context.Context, machineCtx interface{},
 
 	contextID := machinectx.K8sContext.ID
 	go func() {
+		machinectx.ActionMutex.Lock()
+		defer machinectx.ActionMutex.Unlock()
+
+		if ctx.Err() != nil {
+			machinectx.log.Info("Disconnect side-effects aborted due to lifecycle cancellation")
+			return
+		}
+
 		machinectx.MesheryCtrlsHelper.
 			UpdateOperatorsStatusMap(machinectx.OperatorTracker).
 			UndeployDeployedOperators(machinectx.OperatorTracker, contextID).
 			RemoveCtxControllerHandler(ctx, contextID)
 		machinectx.MesheryCtrlsHelper.RemoveMeshSyncDataHandler(ctx, contextID)
-
 	}()
 
 	_ctx, cancel := context.WithTimeout(ctx, 100*time.Millisecond)

@@ -1,19 +1,22 @@
 package helpers
 
 import (
+	"context"
+	"fmt"
 	"testing"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/core"
 )
 
 // HasMachineContext gates every site that drives a state machine returned by
-// InitializeMachineWithContext. It has to reject both shapes of a failed
-// initialization: the nil instance returned on the first attempt, and the
-// cached, non-nil-but-Context-less instance every later attempt gets back.
+// InitializeMachineWithContext. It has to reject both shapes of an unusable
+// machine: the nil instance returned when initialization failed, and a
+// non-nil instance whose Context was never assigned.
 func TestHasMachineContext(t *testing.T) {
 	tests := []struct {
 		name string
@@ -26,9 +29,9 @@ func TestHasMachineContext(t *testing.T) {
 			want: false,
 		},
 		{
-			// InitializeMachineWithContext Adds to the tracker before checking the
-			// Start error, so this is what every call after the first one sees for
-			// a connection whose cluster was unreachable.
+			// A machine whose Context was never assigned: a nil InitFunc leaves
+			// this shape, and any caller that has to resolve the Context must
+			// reject it rather than drive it.
 			name: "cached instance whose Start failed",
 			inst: &machines.StateMachine{Context: nil},
 			want: false,
@@ -118,5 +121,48 @@ func TestGetMachineCoversEveryDefinitionKind(t *testing.T) {
 				t.Fatalf("getMachine(%q) has no CONNECTED action; the connection would never be persisted", tt.kind)
 			}
 		})
+	}
+}
+
+// TestInitializeMachineWithContext_FailedStartLeavesNoTrackerEntry verifies that
+// if inst.Start fails, InitializeMachineWithContext returns an error and does NOT
+// leave a failed machine registered in smInstanceTracker.
+func TestInitializeMachineWithContext_FailedStartLeavesNoTrackerEntry(t *testing.T) {
+	connID := core.Uuid(uuid.Must(uuid.NewV4()))
+	userID := core.Uuid(uuid.Must(uuid.NewV4()))
+	tracker := &machines.ConnectionToStateMachineInstanceTracker{
+		ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine),
+	}
+	log, err := logger.New("test", logger.Options{Format: logger.JsonLogFormat})
+	if err != nil {
+		t.Fatalf("logger.New() error = %v", err)
+	}
+
+	failingInitFunc := func(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error) {
+		return nil, nil, fmt.Errorf("simulated init failure")
+	}
+
+	inst, err := InitializeMachineWithContext(
+		&kubernetes.MachineCtx{},
+		context.Background(),
+		connID,
+		userID,
+		tracker,
+		log,
+		nil,
+		machines.InitialState,
+		"kubernetes",
+		failingInitFunc,
+	)
+
+	if err == nil {
+		t.Fatal("expected InitializeMachineWithContext to fail with simulated init failure, got nil")
+	}
+	if inst != nil {
+		t.Fatalf("expected returned machine instance to be nil, got: %v", inst)
+	}
+
+	if _, ok := tracker.Get(connID); ok {
+		t.Fatal("expected machine to NOT be registered in smInstanceTracker after failed Start, but tracker entry was present")
 	}
 }
