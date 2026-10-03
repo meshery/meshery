@@ -36,7 +36,7 @@ var (
 )
 
 var linkDoc = map[string]string{
-	"link":    "![version-usage](../../images/version.png)",
+	"link":    "![version-usage](../images/version.png)",
 	"caption": "Usage of mesheryctl version",
 }
 
