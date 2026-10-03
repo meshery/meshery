@@ -1,0 +1,23 @@
+{{- /*
+  Returns the raw-Markdown rendition of a single page: an H1, the front-matter
+  description as a blockquote, a link back to the canonical HTML page, and the
+  body with shortcodes expanded.
+
+  This is what the "md" output format publishes as index.md alongside each
+  page's index.html, and what every link in llms.txt points at.
+
+  Call with a Page.
+*/ -}}
+{{- $lines := slice (printf "# %s" (.Title | default site.Title)) -}}
+{{- with .Description -}}
+  {{- $lines = $lines | append "" -}}
+  {{- $lines = $lines | append (printf "> %s" (trim (. | plainify | replaceRE "\\s+" " ") " ")) -}}
+{{- end -}}
+{{- $lines = $lines | append "" -}}
+{{- $lines = $lines | append (printf "Source: %s" .Permalink) -}}
+{{- with .RawContent -}}
+  {{- $lines = $lines | append "" -}}
+  {{- $lines = $lines | append (trim (printf "%s" $.RenderShortcodes) "\r\n") -}}
+{{- end -}}
+{{- $lines = $lines | append "" -}}
+{{- return (delimit $lines "\n") -}}
