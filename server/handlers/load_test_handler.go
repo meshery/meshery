@@ -348,11 +348,15 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 
 	notify := req.Context()
 
+	// Channel ownership contract:
+	// - The producer goroutine closes respChan after executeLoadTest returns.
+	// - The streaming goroutine closes endChan after respChan is fully drained.
+	// This prevents send-on-closed-channel races during client disconnects.
 	respChan := make(chan *models.LoadTestResponse, 100)
 	endChan := make(chan struct{})
-	defer close(endChan)
 
 	go func() {
+		defer close(endChan)
 		defer func() {
 			if r := recover(); r != nil {
 				h.log.Error(ErrPanicRecovery(r))
@@ -376,6 +380,7 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 				// the buffered slots fill. Continue draining so the worker
 				// can finish and close(respChan) terminates this loop.
 				h.log.Error(models.ErrMarshal(err, "meshery result for shipping"))
+				// Keep draining the stream to avoid blocking the producer goroutine.
 				errPayload, mErr := json.Marshal(&models.LoadTestResponse{
 					Status:  models.LoadTestError,
 					Message: models.ErrMarshal(err, "meshery result for shipping").Error(),
@@ -395,13 +400,17 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 			flusher.Flush()
 			h.log.Debug("Flushed the messages on the wire...")
 		}
-		endChan <- struct{}{}
 		h.log.Debug("response channel closed")
 	}()
 	go func() {
+		defer close(respChan)
+		defer func() {
+			if r := recover(); r != nil {
+				h.log.Error(ErrPanicRecovery(r))
+			}
+		}()
 		ctx := context.Background()
 		h.executeLoadTest(ctx, req, profileID, testName, meshName, testUUID, prefObj, provider, loadTestOptions, respChan)
-		close(respChan)
 	}()
 	select {
 	case <-notify.Done():
