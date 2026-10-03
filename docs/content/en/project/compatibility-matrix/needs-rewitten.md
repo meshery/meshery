@@ -58,7 +58,7 @@ Docker is enough to run Meshery locally and use many of its features. A Kubernet
 - For Docker-based installs, use a current Docker Engine or Docker Desktop release that includes Compose support and can run the Meshery container set reliably. See [Install Meshery on Docker]({{< ref "installation/docker/_index.md" >}}).
 - The Docker Extension path applies when Docker Desktop supports extensions and Kubernetes is enabled in Docker Desktop. See [Install Docker Extension for Meshery]({{< ref "installation/docker/docker-extension/index.md" >}}).
 - Standard Meshery installation does not require local Go or Node.js runtimes. Those are contributor dependencies for [building Meshery from source]({{< ref "project/contributing/_index.md" >}}).
-- If you plan to run Meshery out-of-cluster against Kubernetes, ensure the host running Meshery can reach the Kubernetes API and any broker endpoints exposed by your cluster. If connectivity fails, start with [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation.md" >}}).
+- If you plan to run Meshery out-of-cluster against Kubernetes, ensure the host running Meshery can reach the Kubernetes API and any broker endpoints exposed by your cluster. If connectivity fails, start with [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation/index.md" >}}).
 
 ## Release Channel Guidance
 
@@ -105,4 +105,4 @@ For rollout planning after initial installation, continue with [Upgrading Mesher
 - [Build & Release (CI)]({{< ref "project/contributing/build-and-release.md" >}})
 - [Upgrading Meshery]({{< ref "installation/upgrades/index.md" >}})
 - [Running system checks using Meshery CLI]({{< ref "guides/mesheryctl/running-system-checks-using-mesheryctl.md" >}})
-- [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation.md" >}})
+- [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation/index.md" >}})

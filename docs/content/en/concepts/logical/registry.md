@@ -13,13 +13,13 @@ As the central repository for all capabilities known to Meshery, the registry co
 <details>
   <summary>Contents of the Registry</summary>
   <br /><br />
-  <a href="{{< ref "models/index.md" >}}">Models</a>: Blueprints defining configurations for interacting with cloud native infrastructure. They consist of operations, components, relationships, and policies.
+  <a href="{{< ref "concepts/logical/models/index.md" >}}">Models</a>: Blueprints defining configurations for interacting with cloud native infrastructure. They consist of operations, components, relationships, and policies.
   <ul>
-    <li><a href="{{< ref "components.md" >}}">Components</a>: Reusable building blocks for depicting capabilities defined within models.</li>
-    <li><a href="{{< ref "relationships/index.md" >}}">Relationships</a>: Define the nature of connections between components within a model, describing how they interact and depend on each other.</li>
-    <li><a href="{{< ref "policies/index.md" >}}">Policies</a>: Enforce specific rules and governance for system behavior under Meshery's management.</li>
-    <li><a href="{{< ref "connections/index.md" >}}">Connections</a>: Managed and unmanaged resources that Meshery can interact with.</li>
-    <li><a href="{{< ref "credentials.md" >}}">Credentials</a>: Optionally, included secrets associated with connections contained in a model.</li>
+    <li><a href="{{< ref "concepts/logical/components.md" >}}">Components</a>: Reusable building blocks for depicting capabilities defined within models.</li>
+    <li><a href="{{< ref "concepts/logical/relationships/index.md" >}}">Relationships</a>: Define the nature of connections between components within a model, describing how they interact and depend on each other.</li>
+    <li><a href="{{< ref "concepts/logical/policies/index.md" >}}">Policies</a>: Enforce specific rules and governance for system behavior under Meshery's management.</li>
+    <li><a href="{{< ref "concepts/logical/connections/index.md" >}}">Connections</a>: Managed and unmanaged resources that Meshery can interact with.</li>
+    <li><a href="{{< ref "concepts/logical/credentials.md" >}}">Credentials</a>: Optionally, included secrets associated with connections contained in a model.</li>
   </ul>
   <br />
 </details>
