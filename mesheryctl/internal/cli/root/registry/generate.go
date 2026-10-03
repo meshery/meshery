@@ -56,6 +56,24 @@ var (
 	// Whether to generate only the latest version of each model
 	latestVersionOnly bool
 )
+
+// checkSpreadsheetFetch validates the result of a spreadsheet fetch and
+// returns an explicit, non-nil error for network failures, a nil response,
+// or non-200 HTTP responses, so callers never mistake a failed fetch for
+// success or dereference a nil response.
+func checkSpreadsheetFetch(resp *sheets.Spreadsheet, err error, location string) error {
+	if err != nil {
+		return ErrUpdateRegistry(err, location)
+	}
+	if resp == nil {
+		return ErrUpdateRegistry(fmt.Errorf("received nil response fetching spreadsheet"), location)
+	}
+	if resp.HTTPStatusCode != 200 {
+		return ErrUpdateRegistry(fmt.Errorf("unexpected HTTP status %d fetching spreadsheet", resp.HTTPStatusCode), location)
+	}
+	return nil
+}
+
 var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate Models",
@@ -194,9 +212,9 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 			}
 
 			resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
-			if err != nil || resp.HTTPStatusCode != 200 {
-				utils.Log.Error(ErrUpdateRegistry(err, outputLocation))
-				return err
+			if fetchErr := checkSpreadsheetFetch(resp, err, outputLocation); fetchErr != nil {
+				utils.Log.Error(fetchErr)
+				return fetchErr
 			}
 			fmt.Println("✅ Connected to spreadsheet successfully")
 
