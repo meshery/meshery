@@ -58,7 +58,7 @@ describe('ConnectionFieldFormatter', () => {
     expect(chip).toHaveTextContent('my-conn id');
     expect(chip).toHaveAttribute(
       'href',
-      `/management/connections?tab=connections&searchText=${encodeURIComponent('my-conn id')}`,
+      `/management/connections?tab=connections&con_q=${encodeURIComponent('my-conn id')}`,
     );
     expect(chip).toHaveAttribute('data-clickable', 'true');
     expect(chip).toHaveAttribute('data-component', 'a');
