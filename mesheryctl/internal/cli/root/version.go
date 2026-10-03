@@ -44,9 +44,10 @@ var linkDoc = map[string]string{
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Show Meshery CLI and Server versions",
+	Args:  cobra.NoArgs,
 	Long:  `Version of Meshery command line client - mesheryctl.`,
 	Example: `
-// To view the current version and SHA of release binary of mesheryctl client 
+// To view the current version and SHA of release binary of mesheryctl client and server
 mesheryctl version
 	`,
 	Annotations: linkDoc,
