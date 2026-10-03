@@ -6,8 +6,19 @@ ARG RELEASE_CHANNEL
 
 RUN adduser --disabled-login appuser
 WORKDIR /github.com/meshery/meshery
+
+# Cache Go module downloads across builds so a new dependency only
+# fetches what's missing instead of redownloading everything.
+COPY go.mod go.sum ./
+RUN --mount=type=cache,target=/go/pkg/mod \
+    GOPROXY=https://proxy.golang.org GOSUMDB=off go mod download
 ADD . .
-RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    cd server/cmd && \
+    GOPROXY=https://proxy.golang.org GOSUMDB=off go build \
+    -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" \
+    -tags draft -o /meshery .
 
 # Compile the Go relationship/policy engine to WebAssembly and stage Go's
 # wasm_exec.js runtime glue. ui/pages/_document.tsx loads
