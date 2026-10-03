@@ -123,6 +123,11 @@ func kindToResource(kind string) string {
 }
 
 func formatDryRunResponse(resp []byte, err error) (status map[string]interface{}, success bool, meshkiterr error) {
+	if err != nil {
+		meshkiterr = ErrDryRun(err, "failed to execute dry run request")
+		return
+	}
+
 	e := json.Unmarshal(resp, &status)
 	if e != nil {
 		meshkiterr = models.ErrMarshal(e, fmt.Sprintf("Cannot serialize Status object from the server: %s", e.Error()))
