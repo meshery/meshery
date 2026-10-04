@@ -62,12 +62,26 @@ async function openKubernetesWizard(page: Page): Promise<void> {
   await page.goto('/management/connections?create=true&kind=kubernetes', {
     waitUntil: 'domcontentloaded',
   });
+  const uploadHeading = page.getByRole('heading', { name: 'Upload a kubeconfig' });
+  const deniedKubernetesKind = page
+    .locator('button:disabled')
+    .filter({ hasText: 'Kubernetes' })
+    .filter({ hasText: "You don't have permission to add this connection type." });
+
+  // A denied remote-provider user stays on "Choose Connection". Surface the
+  // missing CI-user grant instead of timing out on the upload heading.
+  await expect(uploadHeading.or(deniedKubernetesKind)).toBeVisible();
+  if (await deniedKubernetesKind.isVisible()) {
+    throw new Error(
+      'The remote-provider test user lacks LifecycleManagementAddCluster in its selected organization. Grant that permission to the account behind REMOTE_PROVIDER_TEST_USER_TOKEN.',
+    );
+  }
   // The wizard opens preset to Kubernetes on the "Import Kubeconfig" step. Its
   // StepHeader is an h6 ("Upload a kubeconfig"), a reliable heading anchor for
   // "the wizard opened and reached the kubeconfig step". The modal chrome title
   // ("Create Connection") is not rendered as a heading element, so it must not
   // be asserted via getByRole('heading').
-  await expect(page.getByRole('heading', { name: 'Upload a kubeconfig' })).toBeVisible();
+  await expect(uploadHeading).toBeVisible();
 }
 
 /** Attach a kubeconfig to the wizard's hidden file input. */
