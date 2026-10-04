@@ -85,28 +85,89 @@ export function parsePromMatrix(resp: any, legendFormat?: string): ChartSeries[]
   });
 }
 
-// formatValue renders a numeric metric value with light unit awareness for
-// stat panels.
+const SHORT_SUFFIXES = ['', 'K', 'M', 'B'];
+const IEC_PREFIXES = ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei'];
+const SI_PREFIXES = ['', 'k', 'M', 'G', 'T', 'P', 'E'];
+
+// Time units in seconds, largest first.
+const TIME_UNITS: Array<[number, string]> = [
+  [365 * 24 * 60 * 60, 'year'],
+  [7 * 24 * 60 * 60, 'week'],
+  [24 * 60 * 60, 'day'],
+  [60 * 60, 'hour'],
+  [60, 'min'],
+  [1, 's'],
+];
+
+// scale divides value by base until it fits below base, choosing the matching
+// entry of suffixes. It compares the rounded value so 999.999 becomes 1.00K
+// rather than 1000.00.
+function scale(value: number, base: number, suffixes: string[]): [string, string] {
+  let scaled = value;
+  let i = 0;
+  while (i < suffixes.length - 1 && Math.abs(Number(scaled.toFixed(2))) >= base) {
+    scaled /= base;
+    i++;
+  }
+  return [scaled.toFixed(2), suffixes[i]];
+}
+
+function formatShort(value: number): string {
+  const abs = Math.abs(value);
+  if (abs < 1 && abs > 0) return value.toFixed(4);
+  const [num, suffix] = scale(value, 1000, SHORT_SUFFIXES);
+  return `${num}${suffix}`;
+}
+
+function formatPrefixed(value: number, base: number, prefixes: string[], unit: string): string {
+  const [num, prefix] = scale(value, base, prefixes);
+  return `${num} ${prefix}${unit}`;
+}
+
+function formatSeconds(seconds: number): string {
+  const abs = Math.abs(seconds);
+  if (abs > 0 && abs < 1) return `${(seconds * 1000).toFixed(2)} ms`;
+  for (const [size, label] of TIME_UNITS) {
+    if (Number((abs / size).toFixed(2)) >= 1) return `${(seconds / size).toFixed(2)} ${label}`;
+  }
+  return `${seconds.toFixed(2)} s`;
+}
+
+// formatValue renders a numeric metric value for chart axes, tooltips and stat
+// panels, following Grafana's unit ids (fieldConfig.defaults.unit).
 export function formatValue(value: number, unit?: string): string {
   if (!isFinite(value)) return '—';
-  const abs = Math.abs(value);
-  let formatted: string;
-  if (abs >= 1_000_000_000) formatted = `${(value / 1_000_000_000).toFixed(2)}B`;
-  else if (abs >= 1_000_000) formatted = `${(value / 1_000_000).toFixed(2)}M`;
-  else if (abs >= 1_000) formatted = `${(value / 1_000).toFixed(2)}K`;
-  else if (abs < 1 && abs > 0) formatted = value.toFixed(4);
-  else formatted = value.toFixed(2);
+
+  if (unit?.startsWith('suffix:')) return `${formatShort(value)}${unit.slice('suffix:'.length)}`;
+  if (unit?.startsWith('prefix:')) return `${unit.slice('prefix:'.length)}${formatShort(value)}`;
 
   switch (unit) {
+    case undefined:
+    case '':
+    case 'none':
+    case 'short':
+      return formatShort(value);
     case 'percent':
-      return `${formatted}%`;
+      return `${formatShort(value)}%`;
     case 'percentunit':
       return `${(value * 100).toFixed(2)}%`;
     case 'bytes':
-      return `${formatted} B`;
+      return formatPrefixed(value, 1024, IEC_PREFIXES, 'B');
+    case 'decbytes':
+      return formatPrefixed(value, 1000, SI_PREFIXES, 'B');
+    case 'binBps':
+      return formatPrefixed(value, 1024, IEC_PREFIXES, 'B/s');
+    case 'Bps':
+      return formatPrefixed(value, 1000, SI_PREFIXES, 'B/s');
     case 's':
-      return `${formatted} s`;
+      return formatSeconds(value);
+    case 'ms':
+      return formatSeconds(value / 1000);
+    case 'reqps':
+      return `${formatShort(value)} req/s`;
+    case 'ops':
+      return `${formatShort(value)} ops/s`;
     default:
-      return formatted;
+      return `${formatShort(value)} ${unit}`;
   }
 }
