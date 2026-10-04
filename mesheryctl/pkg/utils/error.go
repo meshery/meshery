@@ -112,6 +112,8 @@ func SystemLifeCycleError(msg string, cmd string) string {
 	switch cmd {
 	case "stop":
 		return formatError(msg, cmdSystemStop)
+	case "uninstall":
+		return formatError(msg, cmdSystemUninstall)
 	case "update":
 		return formatError(msg, cmdSystemUpdate)
 	case "reset":
@@ -309,6 +311,7 @@ var cmdUsageURLs = map[cmdType]string{
 	cmdMesh:                     meshUsageURL,
 	cmdSystem:                   systemUsageURL,
 	cmdSystemStop:               systemStopURL,
+	cmdSystemUninstall:          systemUninstallURL,
 	cmdSystemUpdate:             systemUpdateURL,
 	cmdSystemReset:              systemResetURL,
 	cmdSystemStatus:             systemStatusURL,

@@ -74,6 +74,7 @@ const (
 	ErrFetchContainersCode                = "mesheryctl-1242"
 	ErrInvalidComponentCode               = "mesheryctl-1243"
 	ErrMesheryEndpointNotAccessibleCode   = "mesheryctl-1244"
+	ErrUninstallMesheryCode               = "mesheryctl-1256"
 )
 
 var (
@@ -115,6 +116,8 @@ func FormatErrorReference() string {
 		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/status")
 	case "stop":
 		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/stop")
+	case "uninstall":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/uninstall")
 	case "token":
 		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/token")
 	case "update":
@@ -150,6 +153,15 @@ func ErrSystemEksGetCredentials(err error) error {
 
 func ErrStopMeshery(err error) error {
 	return errors.New(ErrStopMesheryCode, errors.Alert, []string{"Error stopping Meshery"}, []string{err.Error()}, []string{"Meshery server is not stopped, some of the docker containers are still running"}, []string{"Verify all docker containers of Meshery server are stopped"})
+}
+
+func ErrUninstallMeshery(err error) error {
+	return errors.New(ErrUninstallMesheryCode,
+		errors.Alert,
+		[]string{"Error uninstalling Meshery"},
+		[]string{err.Error()},
+		[]string{"Meshery is not uninstalled, some of the Meshery resources are still present"},
+		[]string{"Verify all Meshery resources (Docker containers, Kubernetes resources) are removed and retry with `mesheryctl system uninstall --force`. See https://docs.meshery.io/reference/references/mesheryctl/system/uninstall for usage details"})
 }
 
 func ErrResetMeshconfig(err error) error {
