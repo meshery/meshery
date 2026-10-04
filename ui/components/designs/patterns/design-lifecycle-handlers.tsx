@@ -71,7 +71,14 @@ export function buildDesignLifecycleHandlers({
       title: `Dryrun design "${name}"`,
       headerIcon: <DryRunIcon fill="#fff" height={'2rem'} width={'2rem'} />,
       reactNode: (
-        <ModalBody style={{ minWidth: '30rem', width: 'auto' }}>
+        <ModalBody
+          style={{
+            width: '100%',
+            minWidth: 0,
+            boxSizing: 'border-box',
+            overflow: 'auto',
+          }}
+        >
           <DryRunDesign
             handleClose={designLifecycleModal.closeModal}
             validationMachine={designValidationActorRef}
@@ -92,7 +99,14 @@ export function buildDesignLifecycleHandlers({
       title: `Validate design "${name}"`,
       headerIcon: <CheckIcon fill="#fff" height={'2rem'} width={'2rem'} />,
       reactNode: (
-        <ModalBody style={{ minWidth: '30rem', width: 'auto' }}>
+        <ModalBody
+          style={{
+            width: '100%',
+            minWidth: 0,
+            boxSizing: 'border-box',
+            overflow: 'auto',
+          }}
+        >
           <ValidateDesign
             handleClose={designLifecycleModal.closeModal}
             validationMachine={designValidationActorRef}
