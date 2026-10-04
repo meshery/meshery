@@ -29,6 +29,7 @@ const filters = api
           method: 'POST',
           body: queryArg.body,
         }),
+        invalidatesTags: [{ type: TAGS.FILTERS }],
       }),
       publishFilter: builder.mutation({
         query: (queryArg) => ({
@@ -36,6 +37,7 @@ const filters = api
           method: 'POST',
           body: queryArg.publishBody,
         }),
+        invalidatesTags: [{ type: TAGS.FILTERS }],
       }),
       unpublishFilter: builder.mutation({
         query: (queryArg) => ({
@@ -43,12 +45,14 @@ const filters = api
           method: 'DELETE',
           body: queryArg.unpublishBody,
         }),
+        invalidatesTags: [{ type: TAGS.FILTERS }],
       }),
       deleteFilter: builder.mutation({
         query: (queryArg) => ({
           url: mesheryApiPath(`filter/${queryArg.id}`),
           method: 'DELETE',
         }),
+        invalidatesTags: [{ type: TAGS.FILTERS }],
       }),
       updateFilterFile: builder.mutation({
         query: (queryArg) => ({
@@ -56,6 +60,7 @@ const filters = api
           method: 'POST',
           body: queryArg.updateBody,
         }),
+        invalidatesTags: [{ type: TAGS.FILTERS }],
       }),
       uploadFilterFile: builder.mutation({
         query: (queryArg) => ({
@@ -66,6 +71,7 @@ const filters = api
           method: 'POST',
           body: queryArg.uploadBody,
         }),
+        invalidatesTags: [{ type: TAGS.FILTERS }],
       }),
     }),
   });
