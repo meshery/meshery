@@ -141,7 +141,7 @@ To run playwright for specific project only, for example meshery-provider, you c
 {{< code code=`npx playwright test --ui --project=chromium-meshery-provider` >}}
 
 To run specific test, you can add the test file location, for example:
-{{< code code=`npx playwright test --ui --project=chromium-meshery-provider tests/e2e/service-mesh-performance.spec.ts` >}}
+{{< code code=`npx playwright test --ui --project=chromium-meshery-provider tests/e2e/connections.spec.ts` >}}
 
 For more detail, you can read the [Playwright Cli docs](https://playwright.dev/docs/test-cli)
 
