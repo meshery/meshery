@@ -1,4 +1,5 @@
 import { expect, Page, Response } from '@playwright/test';
+import { Keys } from '@meshery/schemas/permissions';
 import * as allure from 'allure-js-commons';
 import fs from 'fs';
 import os from 'os';
@@ -59,23 +60,26 @@ function waitForConnectionsApiResponse(page: Page): Promise<Response> {
 
 /** Open the Connection Wizard directly on the Kubernetes kubeconfig step. */
 async function openKubernetesWizard(page: Page): Promise<void> {
+  // A full navigation reloads the UI's permissions. Register the listener
+  // before navigating so the result reflects the selected organization and
+  // cannot be confused with the briefly disabled kind card during bootstrap.
+  const userKeysResponse = page.waitForResponse(
+    (response) =>
+      response.request().method() === 'GET' &&
+      /\/api\/identity\/orgs\/[^/]+\/users\/keys(\?|$)/.test(response.url()),
+  );
   await page.goto('/management/connections?create=true&kind=kubernetes', {
     waitUntil: 'domcontentloaded',
   });
-  const uploadHeading = page.getByRole('heading', { name: 'Upload a kubeconfig' });
-  const deniedKubernetesKind = page
-    .locator('button:disabled')
-    .filter({ hasText: 'Kubernetes' })
-    .filter({ hasText: "You don't have permission to add this connection type." });
-
-  // A denied remote-provider user stays on "Choose Connection". Surface the
-  // missing CI-user grant instead of timing out on the upload heading.
-  await expect(uploadHeading.or(deniedKubernetesKind)).toBeVisible();
-  if (await deniedKubernetesKind.isVisible()) {
+  const response = await userKeysResponse;
+  expect(response.ok(), 'selected-organization user keys request failed').toBeTruthy();
+  const { keys } = await response.json();
+  if (!keys?.some((key: { id: string }) => key.id === Keys.LifecycleManagementAddCluster.id)) {
     throw new Error(
       'The remote-provider test user lacks LifecycleManagementAddCluster in its selected organization. Grant that permission to the account behind REMOTE_PROVIDER_TEST_USER_TOKEN.',
     );
   }
+  const uploadHeading = page.getByRole('heading', { name: 'Upload a kubeconfig' });
   // The wizard opens preset to Kubernetes on the "Import Kubeconfig" step. Its
   // StepHeader is an h6 ("Upload a kubeconfig"), a reliable heading anchor for
   // "the wizard opened and reached the kubeconfig step". The modal chrome title
