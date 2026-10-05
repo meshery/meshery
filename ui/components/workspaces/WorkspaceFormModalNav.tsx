@@ -31,7 +31,7 @@ import { useGetProviderCapabilitiesQuery, useGetSelectedOrganization } from '@/r
 import { isLocalProvider } from '@/utils/provider';
 import SharedContent from './SpacesSwitcher/SharedContent';
 import { Keys } from '@meshery/schemas/permissions';
-import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { WorkspaceModalContext } from '@/utils/context/workspaceModalContext';
 import type { Theme } from '@/theme';
 import { NavItem, WorkspacesSection, NavConfigItem } from './WorkspaceFormModalSections';
 

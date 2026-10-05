@@ -32,7 +32,7 @@ import {
 } from '@/rtk-query/workspace';
 import { getDefaultFilterType, useContentDelete, useContentDownload } from './hooks';
 import ExportDesignModal from '../../designs/export/ExportDesignModal';
-import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { WorkspaceModalContext } from '@/utils/context/workspaceModalContext';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { useNotification } from '@/utils/hooks/useNotification';

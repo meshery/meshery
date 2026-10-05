@@ -79,7 +79,7 @@ vi.mock('@meshery/schemas/permissions', () => ({
 
 // The factory is hoisted above module scope, so it must not close over any
 // top-level const - build the default value inline.
-vi.mock('@/utils/context/WorkspaceModalContextProvider', () => ({
+vi.mock('@/utils/context/workspaceModalContext', () => ({
   WorkspaceModalContext: React.createContext({
     createNewWorkspaceModalOpen: false,
     setCreateNewWorkspaceModalOpen: () => {},
