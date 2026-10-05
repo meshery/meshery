@@ -20,3 +20,5 @@
 .idea/
 *.tmproj
 .vscode/
+# helm-docs template source, not a chart artifact
+README.md.gotmpl
