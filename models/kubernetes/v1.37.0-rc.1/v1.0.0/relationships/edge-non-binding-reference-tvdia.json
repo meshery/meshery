@@ -47,7 +47,10 @@
             "patch": {
               "mutatorRef": [
                 [
-                  "displayName"
+                  "configuration",
+                  "spec",
+                  "boundObjectRef",
+                  "name"
                 ]
               ],
               "patchStrategy": "replace"
@@ -75,8 +78,8 @@
               "mutatedRef": [
                 [
                   "configuration",
-                  "spec",
-                  "audiences"
+                  "metadata",
+                  "name"
                 ]
               ],
               "patchStrategy": "replace"
