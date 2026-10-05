@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
@@ -375,4 +376,64 @@ func TestDefaultLocalProviderInstallExtension_ReplacesMatchingNavigatorExtension
 	if provider.Extensions.Navigator[0].Component != "/provider/navigator/meshmap/index.js?packageVersion=new" {
 		t.Fatalf("expected replacement component to be stored, got %q", provider.Extensions.Navigator[0].Component)
 	}
+}
+
+func TestDefaultLocalProviderSaveK8sContextPropagatesPersistenceFailure(t *testing.T) {
+	newProvider := func(t *testing.T) (*DefaultLocalProvider, *database.Handler) {
+		t.Helper()
+
+		connectionDB, err := database.New(database.Options{Engine: database.SQLITE, Filename: ":memory:"})
+		if err != nil {
+			t.Fatalf("open connection database: %v", err)
+		}
+		if err := connectionDB.AutoMigrate(&connections.Connection{}); err != nil {
+			t.Fatalf("migrate connections: %v", err)
+		}
+
+		contextDB, err := database.New(database.Options{Engine: database.SQLITE, Filename: ":memory:"})
+		if err != nil {
+			t.Fatalf("open context database: %v", err)
+		}
+		if err := contextDB.AutoMigrate(&K8sContext{}); err != nil {
+			t.Fatalf("migrate Kubernetes contexts: %v", err)
+		}
+
+		return &DefaultLocalProvider{
+			ConnectionPersister:        &ConnectionPersister{DB: &connectionDB},
+			MesheryK8sContextPersister: &MesheryK8sContextPersister{DB: &contextDB},
+		}, &contextDB
+	}
+
+	newContext := func() K8sContext {
+		instanceID := uuid.Must(uuid.NewV4())
+		return K8sContext{
+			Name:              "test-context",
+			Server:            "https://cluster.example.test",
+			MesheryInstanceID: &instanceID,
+			Auth:              map[string]interface{}{},
+			Cluster:           map[string]interface{}{"server": "https://cluster.example.test"},
+		}
+	}
+
+	t.Run("context persistence failure", func(t *testing.T) {
+		provider, contextDB := newProvider(t)
+		if err := contextDB.DBClose(); err != nil {
+			t.Fatalf("close context database: %v", err)
+		}
+
+		if _, err := provider.SaveK8sContext("", newContext(), nil); err == nil {
+			t.Fatal("SaveK8sContext returned nil after context persistence failed")
+		}
+	})
+
+	t.Run("success", func(t *testing.T) {
+		provider, _ := newProvider(t)
+		connection, err := provider.SaveK8sContext("", newContext(), nil)
+		if err != nil {
+			t.Fatalf("SaveK8sContext returned error: %v", err)
+		}
+		if connection.ID == uuid.Nil {
+			t.Fatal("SaveK8sContext returned a connection without an ID")
+		}
+	})
 }
