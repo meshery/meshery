@@ -40,4 +40,25 @@ describe('schemaValidatorMachine', () => {
     expect(ctx).toHaveProperty('returnAddress');
     actor.stop();
   });
+
+  it('rejects with an error message containing the unsupported payload type', async () => {
+    const actor = createActor(schemaValidatorMachine);
+    actor.start();
+
+    // Send a validation command with an unsupported payload type
+    const promise = actor.send({
+      type: 'VALIDATE',
+      data: {
+        validationPayload: {
+          validationPayloadType: 'unsupported',
+        },
+        returnAddress: 'test-address',
+      },
+    });
+
+    // The actor should reject with an error containing the unsupported type
+    await expect(promise).rejects.toThrow('Invalid validation payload type: unsupported');
+
+    actor.stop();
+  });
 });
