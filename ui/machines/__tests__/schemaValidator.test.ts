@@ -43,7 +43,9 @@ describe('schemaValidatorMachine', () => {
   });
 
   it('rejects with an error message containing the unsupported payload type', async () => {
-    const actor = createActor(schemaValidatorMachine);
+    const actor = createActor(schemaValidatorMachine, {
+      systemId: 'test-address',
+    });
     actor.start();
 
     try {
