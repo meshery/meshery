@@ -41,12 +41,18 @@ describe('schemaValidatorMachine', () => {
     actor.stop();
   });
 
-  it('rejects with an error message containing the unsupported payload type', async () => {
+  it('rejects with an error message containing the unsupported payload type', () => {
     const actor = createActor(schemaValidatorMachine);
     actor.start();
 
+    // Capture the error emitted by the actor
+    const seenErrors: Error[] = [];
+    actor.on('error', (err) => {
+      seenErrors.push(err);
+    });
+
     // Send a validation command with an unsupported payload type
-    const promise = actor.send({
+    actor.send({
       type: 'VALIDATE',
       data: {
         validationPayload: {
@@ -56,8 +62,9 @@ describe('schemaValidatorMachine', () => {
       },
     });
 
-    // The actor should reject with an error containing the unsupported type
-    await expect(promise).rejects.toThrow('Invalid validation payload type: unsupported');
+    // The actor should emit an error containing the unsupported type
+    expect(seenErrors).toHaveLength(1);
+    expect(seenErrors[0].message).toContain('Invalid validation payload type: unsupported');
 
     actor.stop();
   });
