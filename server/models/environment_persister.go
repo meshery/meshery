@@ -142,13 +142,16 @@ func (ep *EnvironmentPersister) DeleteEnvironment(environment *environment.Envir
 }
 
 func (ep *EnvironmentPersister) UpdateEnvironmentByID(env *environment.Environment) (*environment.Environment, error) {
-	err := ep.DB.Save(env).Error
-	if err != nil {
-		return nil, ErrDBPut(err)
+	result := ep.DB.Model(&environment.Environment{}).Where("id = ?", env.ID).Select("*").Updates(env)
+	if result.Error != nil {
+		return nil, ErrDBPut(result.Error)
+	}
+	if result.RowsAffected == 0 {
+		return nil, ErrResultNotFound(gorm.ErrRecordNotFound)
 	}
 
 	updatedEnvironment := environment.Environment{}
-	err = ep.DB.Model(&updatedEnvironment).Where("id = ?", env.ID).First(&updatedEnvironment).Error
+	err := ep.DB.Model(&updatedEnvironment).Where("id = ?", env.ID).First(&updatedEnvironment).Error
 	if err != nil {
 		return nil, ErrDBRead(err)
 	}
