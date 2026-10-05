@@ -10,7 +10,7 @@ setup() {
   export FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures"
 }
 
-@test "mesheryctl design import -f nginx.yaml displays imported and output the design Id" {
+@test "[cut=Design][tg=Design Import] mesheryctl design import -f nginx.yaml displays imported and output the design Id" {
   # Import the design directly from the testdata directory
   run $MESHERYCTL_BIN design import -f "$FIXTURES_DIR/design-import/nginx.yaml" --source-type "Kubernetes Manifest"
   assert_success
@@ -21,7 +21,7 @@ setup() {
   echo "$DESIGN_ID" > "$TESTDATA_DIR/id"
 }
 
-@test "mesheryctl design import with an invalid path displays an error message" {
+@test "[cut=Design][tg=Design Import] mesheryctl design import with an invalid path displays an error message" {
   # Use a non-existent file path
   run $MESHERYCTL_BIN design import -f "$TESTDATA_DIR/design-import/nonexistent.yaml" --source-type "Kubernetes Manifest"
   # TODO: Update command to assert is failing
