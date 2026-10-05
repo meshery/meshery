@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { createActor } from 'xstate';
+import { createActor, waitFor } from 'xstate';
 import { componentKey, schemaValidatorMachine } from '../validator/schemaValidator';
+import { dataValidatorCommands } from '@sistent/sistent';
 
 describe('componentKey', () => {
   it('combines kind, model name and version with hyphens', () => {
@@ -46,29 +47,25 @@ describe('schemaValidatorMachine', () => {
     actor.start();
 
     try {
-      // Capture the error emitted by the actor
-      const errorPromise = new Promise<Error>((resolve) => {
-        actor.on('error', (err) => {
-          resolve(err);
-        });
-      });
-
-      // Send a validation command with an unsupported payload type
-      actor.send({
-        type: 'VALIDATE',
-        data: {
+      // Send the proper event using dataValidatorCommands
+      actor.send(
+        dataValidatorCommands.validateData({
           validationPayload: {
             validationPayloadType: 'unsupported',
           },
           returnAddress: 'test-address',
-        },
+        }),
+      );
+
+      // Wait for the machine to process the event and store the error in validationResults
+      const snapshot = await waitFor(actor, (snapshot) => {
+        const results = snapshot.context.validationResults;
+        // Wait until validationResults contains the error string
+        return typeof results === 'string' && results.includes('Invalid validation payload type');
       });
 
-      // Wait for the actor to emit the error
-      const error = await errorPromise;
-
-      // The error should contain the unsupported type
-      expect(error.message).toContain('Invalid validation payload type: unsupported');
+      // The error message should contain the unsupported type
+      expect(snapshot.context.validationResults).toContain('Invalid validation payload type: unsupported');
     } finally {
       actor.stop();
     }
