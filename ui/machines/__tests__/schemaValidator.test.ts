@@ -65,7 +65,9 @@ describe('schemaValidatorMachine', () => {
       });
 
       // The error message should contain the unsupported type
-      expect(snapshot.context.validationResults).toContain('Invalid validation payload type: unsupported');
+      expect(snapshot.context.validationResults).toContain(
+        'Invalid validation payload type: unsupported',
+      );
     } finally {
       actor.stop();
     }
