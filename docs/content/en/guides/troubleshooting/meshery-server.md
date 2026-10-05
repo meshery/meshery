@@ -6,6 +6,40 @@ aliases:
 categories: [troubleshooting]
 ---
 
+## Meshery Server startup troubleshooting
+
+If Meshery Server fails to start, first identify how Meshery is being run
+and then check the corresponding service status and logs.
+
+### Common symptoms
+
+| Symptom | Possible cause |
+| --- | --- |
+| Meshery Server does not start | Container/service or dependency failure |
+| Meshery Server is not reachable | Server/container is not running or the port is unavailable |
+| `mesheryctl system start` fails | Kubernetes resources, configuration, or cluster issues |
+| `make server` fails | Local development environment or dependency/database issue |
+
+### Basic diagnostics
+
+#### Docker
+
+Check that Docker is running and inspect the Meshery container:
+
+```bash
+docker ps
+docker logs <meshery-container>
+```
+
+#### Kubernetes
+
+If Meshery is running on Kubernetes, check the status of Meshery pods and inspect the logs of the affected pod.
+
+```bash
+kubectl get pods -n meshery
+kubectl logs -n meshery <meshery-pod>
+
+```
 ## mesheryctl system start
 
 **Error:**
