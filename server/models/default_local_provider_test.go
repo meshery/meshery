@@ -3,11 +3,13 @@ package models
 import (
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/database"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/schemas/models/v1beta3/environment"
 	"github.com/spf13/viper"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -374,5 +376,64 @@ func TestDefaultLocalProviderInstallExtension_ReplacesMatchingNavigatorExtension
 	}
 	if provider.Extensions.Navigator[0].Component != "/provider/navigator/meshmap/index.js?packageVersion=new" {
 		t.Fatalf("expected replacement component to be stored, got %q", provider.Extensions.Navigator[0].Component)
+	}
+}
+
+func TestDefaultLocalProviderUpdateEnvironmentPreservesImmutableFields(t *testing.T) {
+	db, err := database.New(database.Options{Engine: database.SQLITE, Filename: ":memory:"})
+	if err != nil {
+		t.Fatalf("open database: %v", err)
+	}
+	if err := db.AutoMigrate(&environment.Environment{}); err != nil {
+		t.Fatalf("migrate environments: %v", err)
+	}
+	persister := &EnvironmentPersister{DB: &db}
+	provider := &DefaultLocalProvider{EnvironmentPersister: persister}
+
+	environmentID := uuid.Must(uuid.NewV4())
+	organizationID := uuid.Must(uuid.NewV4())
+	requestedOrganizationID := uuid.Must(uuid.NewV4())
+	ownerID := uuid.Must(uuid.NewV4())
+	createdAt := time.Date(2024, time.January, 2, 3, 4, 5, 0, time.UTC)
+	original := &environment.Environment{
+		ID:             environmentID,
+		Name:           "old name",
+		Description:    "old description",
+		OrganizationID: organizationID,
+		Owner:          &ownerID,
+		CreatedAt:      createdAt,
+		UpdatedAt:      createdAt,
+	}
+	if err := db.Create(original).Error; err != nil {
+		t.Fatalf("create environment: %v", err)
+	}
+
+	updated, err := provider.UpdateEnvironment(nil, &environment.EnvironmentPayload{
+		Name:        "new name",
+		Description: "new description",
+		OrgID:       requestedOrganizationID,
+	}, environmentID.String())
+	if err != nil {
+		t.Fatalf("UpdateEnvironment returned error: %v", err)
+	}
+	if updated.Name != "new name" || updated.Description != "new description" {
+		t.Fatalf("mutable fields = {%q, %q}, want {%q, %q}", updated.Name, updated.Description, "new name", "new description")
+	}
+	if updated.OrganizationID != organizationID {
+		t.Fatalf("organization ID = %s, want %s", updated.OrganizationID, organizationID)
+	}
+	if !updated.CreatedAt.Equal(createdAt) {
+		t.Fatalf("createdAt = %s, want %s", updated.CreatedAt, createdAt)
+	}
+	if updated.Owner == nil || *updated.Owner != ownerID {
+		t.Fatalf("owner = %v, want %s", updated.Owner, ownerID)
+	}
+
+	persisted, err := persister.GetEnvironment(environmentID)
+	if err != nil {
+		t.Fatalf("read updated environment: %v", err)
+	}
+	if persisted.OrganizationID != organizationID || !persisted.CreatedAt.Equal(createdAt) || persisted.Owner == nil || *persisted.Owner != ownerID {
+		t.Fatalf("persisted immutable fields changed: organization=%s createdAt=%s owner=%v", persisted.OrganizationID, persisted.CreatedAt, persisted.Owner)
 	}
 }
