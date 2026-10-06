@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"net/http"
 	"path/filepath"
 	"runtime"
 	"testing"
 
+	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
@@ -154,4 +156,30 @@ func TestProfileCmd(t *testing.T) {
 
 	// Run tests in logger format
 	utils.RunMesheryctlMultiURLTests(t, update, PerfCmd, loggerTests, currDir, "perf", resetVariables)
+}
+
+// TestFetchPerformanceProfilesEscapesSearch pins that the profile name reaches
+// the server unchanged. It used to be sent with only spaces encoded, so "a&b"
+// arrived as search=a and "50%" was dropped by the server's query parser.
+func TestFetchPerformanceProfilesEscapesSearch(t *testing.T) {
+	testContext := utils.InitTestEnvironment(t)
+	defer utils.StopMockery(t)
+	utils.TokenFlag = utils.GetToken(t)
+
+	var gotSearch string
+	httpmock.RegisterResponder("GET", testContext.BaseURL+"/api/performance/profiles",
+		func(req *http.Request) (*http.Response, error) {
+			gotSearch = req.URL.Query().Get("search")
+			return httpmock.NewStringResponse(200, `{"profiles":[]}`), nil
+		})
+
+	for _, search := range []string{"a&b", "50%", "test 3", "a+b"} {
+		gotSearch = ""
+		if _, _, err := fetchPerformanceProfiles(testContext.BaseURL, search, 25, 0); err != nil {
+			t.Fatalf("fetchPerformanceProfiles(%q): %v", search, err)
+		}
+		if gotSearch != search {
+			t.Errorf("server received search=%q, want %q", gotSearch, search)
+		}
+	}
 }
