@@ -163,7 +163,11 @@ vi.mock('@sistent/sistent', () => {
       <span data-tooltip={String(title)}>{children}</span>
     ),
     getFormatDate: (d: string) => `date:${d}`,
-    Grid: ({ children }: any) => <div>{children}</div>,
+    Grid: ({ children, size, sx }: any) => (
+      <div data-size={JSON.stringify(size)} data-sx={JSON.stringify(sx)}>
+        {children}
+      </div>
+    ),
     IconButton: ({ children, onClick }: any) => <button onClick={onClick}>{children}</button>,
     Link: ({ children, href }: any) => <a href={href}>{children}</a>,
     Modal: ({ open, closeModal, title, children }: any) =>
@@ -190,7 +194,11 @@ vi.mock('@sistent/sistent', () => {
     publishCatalogItemSchema: { type: 'object' },
     publishCatalogItemUiSchema: {},
     Skeleton: () => <div data-testid="skeleton" />,
-    Typography: ({ children, variant }: any) => <span data-variant={variant}>{children}</span>,
+    Typography: ({ children, variant, style }: any) => (
+      <span data-variant={variant} style={style}>
+        {children}
+      </span>
+    ),
     VisibilityChipMenu: ({ value, onChange, enabled }: any) => (
       <button
         data-testid="visibility-menu"
@@ -376,6 +384,49 @@ describe('InfoModal', () => {
     );
 
     expect(screen.getByTestId('visibility-menu')).toHaveAttribute('data-value', 'public');
+  });
+
+  it('stacks the owner above a left-aligned visibility badge on extra-small screens', () => {
+    // In two fixed half-width cells the right-aligned badge overflowed to the
+    // left, over the owner's name, once the modal got narrow.
+    render(
+      <InfoModal
+        infoModalOpen={true}
+        handleInfoModalClose={vi.fn()}
+        resourceOwnerID="u1"
+        selectedResource={baseSelectedResource}
+        patternFetcher={vi.fn()}
+      />,
+    );
+
+    const ownerCell = screen.getByText('Bob Jones').closest('[data-size]');
+    const visibilityCell = screen.getByTestId('visibility-menu').closest('[data-size]');
+
+    expect(JSON.parse(ownerCell?.getAttribute('data-size') ?? '')).toEqual({ xs: 12, sm: 6 });
+    expect(JSON.parse(visibilityCell?.getAttribute('data-size') ?? '')).toEqual({ xs: 12, sm: 6 });
+    expect(JSON.parse(visibilityCell?.getAttribute('data-sx') ?? '').justifyContent).toEqual({
+      xs: 'flex-start',
+      sm: 'flex-end',
+    });
+  });
+
+  it('lets a long owner name wrap within its cell', () => {
+    render(
+      <InfoModal
+        infoModalOpen={true}
+        handleInfoModalClose={vi.fn()}
+        resourceOwnerID="u1"
+        selectedResource={{
+          ...baseSelectedResource,
+          user: { id: 'u9', firstName: 'Maximiliana', lastName: 'Vandersteenhoven' },
+        }}
+        patternFetcher={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText('Maximiliana Vandersteenhoven')).toHaveStyle({
+      overflowWrap: 'anywhere',
+    });
   });
 
   it('copies the link via the tooltip button', async () => {
