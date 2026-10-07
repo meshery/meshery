@@ -349,14 +349,14 @@ jobs:
       #     pattern_url: https://raw.githubusercontent.com/service-mesh-patterns/service-mesh-patterns/master/samples/bookInfoPattern.yaml
 
       - name: Apply Kubernetes Metrics Service Pattern
-        uses: layer5io/meshery-cloud-native-patterns-action@master
+        uses: layer5io/meshery-cloud-native-patterns-action@5c2133bb53cd8a1910bbc4108ad8c5f2161af40a
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: ${{ matrix.platform }}
           pattern_url: https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/57f7230d-015b-4892-9042-cd1ea97fcb30.yaml
 
       - name: Load "Serve An LLM With Multiple GPUs In GKE" design
-        uses: layer5io/meshery-cloud-native-patterns-action@master
+        uses: layer5io/meshery-cloud-native-patterns-action@5c2133bb53cd8a1910bbc4108ad8c5f2161af40a
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: ${{ matrix.platform }}
