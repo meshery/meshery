@@ -16,17 +16,15 @@ This quick start guide enables you to download, install, and run Meshery in a si
 
 If you are on a macOS or Linux system, you can download, install, and run both `mesheryctl` and Meshery Server by executing the following command.
 
-<!-- <pre class="codeblock-pre" style="padding: 0; font-size:0px;">
-<div class="codeblock" style="display: block;">
-  <div class="clipboardjs" style="visibility:hidden;padding: 0;">
+<!-- <div class="codeblock" style="display: block; position: relative;">
+  <div class="clipboardjs" style="visibility:hidden;padding: 0; height: 0; margin: 0; overflow: hidden; font-size: 0; line-height: 0;">
     <span style="visibility:hidden">curl -L https://meshery.io/install | PLATFORM=kubernetes bash -</span>
   </div>
   <div class="window-buttons"></div>
   <div id="termynal0" style="width:fit-content;min-height:content-fit;" data-termynal="">
     <span data-ty="input">curl -L https://meshery.io/install | PLATFORM=kubernetes bash -</span>
   </div>
-</div>
-</pre>-->
+</div> -->
 <!-- <script src="../../assets/js/terminal.js" data-termynal-container="#termynal0"></script> -->
 
 <pre class="codeblock-pre">
