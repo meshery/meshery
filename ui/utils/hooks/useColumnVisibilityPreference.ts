@@ -54,10 +54,12 @@ export function useColumnVisibilityPreference(
     (updater: SetStateAction<Record<string, boolean | undefined>>) => {
       setColumnVisibility((prev) => {
         const next = typeof updater === 'function' ? updater(prev) : updater;
-        // Persist only defined (non-undefined) values.
-        const toStore: Record<string, boolean> = {};
+        // Persist only the columns this update changed. `next` is the full map
+        // (responsive defaults included), so storing all of it would freeze
+        // every column at its current-width value.
+        const toStore: Record<string, boolean> = { ...storedPrefs.current };
         for (const [col, val] of Object.entries(next)) {
-          if (val !== undefined) toStore[col] = val;
+          if (val !== undefined && val !== prev[col]) toStore[col] = val;
         }
         storedPrefs.current = toStore;
         saveToStorage(tableKey, toStore);
