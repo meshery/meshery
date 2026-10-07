@@ -3,11 +3,12 @@ title: mesheryctl-system-provider-set
 display_title: false
 command: system
 subcommand: provider
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system provider set
 
-set provider
+Set provider
 
 ## Synopsis
 

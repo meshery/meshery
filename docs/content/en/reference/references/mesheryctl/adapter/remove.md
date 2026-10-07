@@ -3,15 +3,16 @@ title: mesheryctl-adapter-remove
 display_title: false
 command: adapter
 subcommand: remove
+categories: [mesheryctl-adapter]
 ---
 
 # mesheryctl adapter remove
 
-remove cloud and cloud native infrastructure
+Remove cloud and cloud native infrastructure
 
 ## Synopsis
 
-remove cloud and cloud native infrastructure
+Remove cloud and cloud native infrastructure
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>

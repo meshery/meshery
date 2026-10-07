@@ -3,15 +3,16 @@ title: mesheryctl-relationship-view
 display_title: false
 command: relationship
 subcommand: view
+categories: [mesheryctl-relationship]
 ---
 
 # mesheryctl relationship view
 
-view relationships of a model by its name
+View relationships of a model by its name
 
 ## Synopsis
 
-view a relationship queried by the model name.
+View a relationship queried by the model name.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>

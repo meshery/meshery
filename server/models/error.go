@@ -114,6 +114,7 @@ const (
 	ErrPersistCredentialCode              = "meshery-server-1308"
 	ErrPersistConnectionCode              = "meshery-server-1309"
 	ErrPrometheusScanCode                 = "meshery-server-1310"
+	ErrInitLoggerCode                     = "meshery-server-1484"
 	ErrGrafanaScanCode                    = "meshery-server-1311"
 	ErrDBCreateCode                       = "meshery-server-1312"
 	ErrDoRequestCode                      = "meshery-server-1321"
@@ -148,6 +149,7 @@ const (
 	ErrSeedingConnectionKindCode          = "meshery-server-1463"
 	ErrNoSystemEventSinkCode              = "meshery-server-1482"
 	ErrSeedingStagePanicCode              = "meshery-server-1483"
+	ErrKeysRegisterColumnMissingCode      = "meshery-server-1486"
 	ErrImportFailureCode                  = "meshery-server-1359"
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
@@ -615,6 +617,10 @@ func ErrPrometheusScan(err error) error {
 	return errors.New(ErrPrometheusScanCode, errors.Alert, []string{"Unable to connect to prometheus"}, []string{err.Error()}, []string{"Prometheus endpoint might not be reachable from Meshery", "Prometheus endpoint is incorrect"}, []string{"Check if your Prometheus endpoint are correct", "Connect to Prometheus from the settings page in the UI"})
 }
 
+func ErrInitLogger(err error) error {
+	return errors.New(ErrInitLoggerCode, errors.Alert, []string{"Unable to initialize logger"}, []string{err.Error()}, []string{"LOG_LEVEL is set to an unsupported value", "Logger configuration options are malformed"}, []string{"Set LOG_LEVEL to a supported value", "Check your logger configuration settings"})
+}
+
 func ErrDBCreate(err error) error {
 	return errors.New(ErrDBCreateCode, errors.Alert, []string{"Unable to create record"}, []string{err.Error()}, []string{"Record already exist", "Database connection is not reachable"}, []string{"Delete the record or try updating the record instead of recreating", "Rest the database connection"})
 }
@@ -733,6 +739,22 @@ func ErrSeedingStagePanic(stage string, cause interface{}, stack []byte) error {
 		[]string{fmt.Sprintf("faulting stage: %s", stage), fmt.Sprintf("%v\n%s", cause, stack)},
 		[]string{"An unexpected condition was hit while seeding, either at startup or while reseeding after a database reset"},
 		[]string{"Meshery Server is still serving, but whatever the faulting stage contributes may be missing or incomplete. Report the stack trace above at https://github.com/meshery/meshery/issues/new/choose, then seed again - restart Meshery Server, or re-run the reset that triggered the seeding"},
+	)
+}
+
+// ErrKeysRegisterColumnMissing reports that the keys file's header row no
+// longer carries the column that selects which keys register with the Local
+// Provider, so SeedKeys can select no row at all. The short description stays
+// literal: errorutil can only lift static strings into docs/data/errorref, so
+// the absent column name carries in the details.
+func ErrKeysRegisterColumnMissing(column string) error {
+	return errors.New(
+		ErrKeysRegisterColumnMissingCode,
+		errors.Alert,
+		[]string{"Meshery Server could not determine which keys to register with the Local Provider"},
+		[]string{fmt.Sprintf("register column %q is missing from the keys file header", column)},
+		[]string{"The header row of the keys file was renamed or dropped, so no row could be selected for registration and nothing is seeded from this file; on a fresh or reset database the Key table stays empty, while previously seeded keys are left untouched"},
+		[]string{"Restore the missing header in server/permissions/keys.csv (or the file KEYS_PATH points at) and restart Meshery Server so keys seed again"},
 	)
 }
 
