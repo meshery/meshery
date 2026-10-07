@@ -41,8 +41,6 @@ import { VisibilityChipMenu } from '@sistent/sistent';
 import { VIEW_VISIBILITY } from '../shared/Modal/Information/InfoModal';
 import { iconMedium } from 'css/icons.styles';
 
-const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
-
 type FilterDescription = Record<string, string>;
 
 type FiltersCardProps = {
@@ -86,7 +84,6 @@ function FiltersCard_({
     ev.stopPropagation();
     fn(ev);
   };
-  const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [fullScreen, setFullScreen] = useState(false);
   const [showCode, setShowCode] = useState(false);
 
@@ -117,10 +114,6 @@ function FiltersCard_({
         />
       )}
       <FlipCard
-        onClick={() => {
-          console.log(gridProps);
-          setGridProps(INITIAL_GRID_SIZE);
-        }}
         duration={600}
         onShow={() =>
           setTimeout(() => setShowCode((currentCodeVisibilty) => !currentCodeVisibilty), 500)
@@ -242,7 +235,17 @@ function FiltersCard_({
         <>
           <CardBackGrid container spacing={1} alignContent="space-between" alignItems="center">
             <YamlDialogTitleGrid item xs={12}>
-              <Typography variant="h6">{name}</Typography>
+              <Typography
+                style={{
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  width: '100%',
+                }}
+                variant="h6"
+              >
+                {name}
+              </Typography>
               <CardHeaderRight>
                 {hasCloudProfile ? (
                   <Link
@@ -280,7 +283,7 @@ function FiltersCard_({
                     options={{
                       theme: 'material',
                       lineNumbers: true,
-                      lineWrapping: true,
+                      lineWrapping: false,
                       gutters: ['CodeMirror-lint-markers'],
                       // @ts-ignore
                       lint: true,
