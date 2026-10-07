@@ -1,0 +1,291 @@
+name: PR Review Suggestions
+
+on:
+  pull_request_target:
+    types: [opened, reopened, labeled]
+    branches:
+      - master
+
+concurrency:
+  group: pr-review-suggestions-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  issues: write
+  pull-requests: read
+
+jobs:
+  suggest-reviews:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Suggest Related Pull Requests to Review
+        uses: actions/github-script@v8
+        with:
+          script: |
+            try {
+              const pr = context.payload.pull_request;
+              if (!pr) {
+                core.info('No pull request found in event payload.');
+                return;
+              }
+
+              const prNumber = pr.number;
+              const prTitle = pr.title || '';
+              const prBody = pr.body || '';
+
+              // Fetch the latest PR details from the API to guarantee current labels and metadata
+              let currentPRData;
+              try {
+                const { data } = await github.rest.pulls.get({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: prNumber
+                });
+                currentPRData = data;
+              } catch (err) {
+                core.warning(`Could not fetch current PR details from API, using payload: ${err.message}`);
+                currentPRData = pr;
+              }
+
+              core.info(`Processing suggestions for PR #${prNumber}: "${currentPRData.title || prTitle}"`);
+
+              // Common low-value stopwords to ignore during text matching
+              const STOP_WORDS = new Set([
+                'the', 'a', 'an', 'this', 'that', 'is', 'are', 'was', 'were',
+                'and', 'or', 'to', 'of', 'for', 'in', 'on', 'with', 'from',
+                'fix', 'add', 'update', 'change', 'changes', 'issue', 'pull',
+                'request', 'pr', 'improve', 'new',
+                'by', 'at', 'it', 'as', 'be', 'all', 'not', 'we', 'you', 'i',
+                'our', 'my', 'do', 'does', 'did', 'but', 'so', 'if', 'then',
+                'into', 'also', 'has', 'have', 'had', 'been'
+              ]);
+
+              // Helper: Normalize labels into language and area/component categories
+              function normalizeLabels(labels) {
+                const languageLabels = [];
+                const areaComponentLabels = [];
+
+                for (const label of labels || []) {
+                  const name = typeof label === 'string' ? label : label.name;
+                  if (!name) continue;
+                  const lower = name.toLowerCase();
+                  if (lower.startsWith('language/')) {
+                    languageLabels.push(lower);
+                  } else if (lower.startsWith('area/') || lower.startsWith('component/')) {
+                    areaComponentLabels.push(lower);
+                  }
+                }
+
+                return { languageLabels, areaComponentLabels };
+              }
+
+              // Helper: Normalize and tokenize text into unique technical tokens
+              function tokenizeText(text) {
+                if (!text || typeof text !== 'string') return new Set();
+                const cleaned = text.toLowerCase().replace(/[^a-z0-9_/-]/g, ' ');
+                const tokens = cleaned.split(/\s+/).filter(token => {
+                  return token.length > 1 && !STOP_WORDS.has(token);
+                });
+                return new Set(tokens);
+              }
+
+              // Helper: Calculate deterministic relevance score between current PR and a candidate
+              function calculateScore(current, candidate) {
+                // Eligibility requirement: Candidate must share at least one language/*,
+                // area/*, or component/* label with the current PR.
+                const hasLanguageMatch = current.languageLabels.some(l => candidate.languageLabels.includes(l));
+                const hasAreaComponentMatch = current.areaComponentLabels.some(l => candidate.areaComponentLabels.includes(l));
+
+                if (!hasLanguageMatch && !hasAreaComponentMatch) {
+                  return 0; // Ineligible: text-only overlap without label overlap is excluded
+                }
+
+                let score = 0;
+
+                // Language matching: +40 if sharing at least one language/* label
+                if (hasLanguageMatch) {
+                  score += 40;
+                }
+
+                // Area/Component matching: +40 if sharing at least one area/* or component/* label
+                if (hasAreaComponentMatch) {
+                  score += 40;
+                }
+
+                // Title technical keyword overlap: +10 per unique matching token (ranking refinement)
+                let sharedTitleCount = 0;
+                for (const token of current.titleTokens) {
+                  if (candidate.titleTokens.has(token)) {
+                    sharedTitleCount++;
+                  }
+                }
+                score += sharedTitleCount * 10;
+
+                // Description/Body technical keyword overlap: +5 per unique matching token (ranking refinement)
+                let sharedBodyCount = 0;
+                for (const token of current.bodyTokens) {
+                  if (candidate.bodyTokens.has(token)) {
+                    sharedBodyCount++;
+                  }
+                }
+                score += sharedBodyCount * 5;
+
+                return score;
+              }
+
+              // Normalize current PR data
+              const currentLabels = normalizeLabels(currentPRData.labels);
+              const currentItem = {
+                number: prNumber,
+                title: currentPRData.title || prTitle,
+                body: currentPRData.body || prBody,
+                languageLabels: currentLabels.languageLabels,
+                areaComponentLabels: currentLabels.areaComponentLabels,
+                titleTokens: tokenizeText(currentPRData.title || prTitle),
+                bodyTokens: tokenizeText(currentPRData.body || prBody)
+              };
+
+              // Fetch candidate open PRs (up to 100 recently updated)
+              let openPRs = [];
+              try {
+                const response = await github.rest.pulls.list({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  state: 'open',
+                  per_page: 100,
+                  sort: 'updated',
+                  direction: 'desc'
+                });
+                openPRs = response.data || [];
+              } catch (err) {
+                core.warning(`Failed to fetch open PRs: ${err.message}`);
+                return;
+              }
+
+              core.info(`Found ${openPRs.length} open PR candidates in repository.`);
+
+              // Filter candidate PRs
+              const candidatePRs = [];
+              const seenNumbers = new Set();
+
+              for (const candidate of openPRs) {
+                if (candidate.number === prNumber) continue;
+                if (candidate.draft) continue;
+                if (candidate.state !== 'open') continue;
+                if (seenNumbers.has(candidate.number)) continue;
+                seenNumbers.add(candidate.number);
+
+                candidatePRs.push(candidate);
+              }
+
+              // Score candidates
+              const scoredCandidates = [];
+
+              for (const candidate of candidatePRs) {
+                const candidateLabels = normalizeLabels(candidate.labels);
+
+                // Eligibility check: Candidate must share at least one language, area, or component label
+                const hasLanguageOverlap = currentItem.languageLabels.some(l => candidateLabels.languageLabels.includes(l));
+                const hasAreaComponentOverlap = currentItem.areaComponentLabels.some(l => candidateLabels.areaComponentLabels.includes(l));
+                if (!hasLanguageOverlap && !hasAreaComponentOverlap) {
+                  continue; // Ineligible: text-only overlap without label overlap is excluded
+                }
+
+                const candidateItem = {
+                  number: candidate.number,
+                  title: candidate.title || '',
+                  html_url: candidate.html_url,
+                  languageLabels: candidateLabels.languageLabels,
+                  areaComponentLabels: candidateLabels.areaComponentLabels,
+                  titleTokens: tokenizeText(candidate.title || ''),
+                  bodyTokens: tokenizeText(candidate.body || '')
+                };
+
+                const score = calculateScore(currentItem, candidateItem);
+                if (score > 0) {
+                  scoredCandidates.push({
+                    number: candidate.number,
+                    title: candidate.title || '',
+                    html_url: candidate.html_url,
+                    score: score
+                  });
+                }
+              }
+
+              // Rank candidates: descending score, tie-break by PR number descending
+              scoredCandidates.sort((a, b) => {
+                if (b.score !== a.score) {
+                  return b.score - a.score;
+                }
+                return b.number - a.number;
+              });
+
+              const topCandidates = scoredCandidates.slice(0, 3);
+              core.info(`Scored candidates count: ${scoredCandidates.length}`);
+              core.info(`Selected ${topCandidates.length} candidate(s): ${topCandidates.map(c => `#${c.number} (score: ${c.score})`).join(', ') || 'none'}`);
+
+              // Sticky comment marker
+              const MARKER = '<!-- meshery-review-suggestions -->';
+
+              let commentBody = '';
+
+              if (topCandidates.length > 0) {
+                const prList = topCandidates
+                  .map(c => `- [#${c.number}](${c.html_url}) — ${c.title.replace(/\r?\n/g, ' ').trim()}`)
+                  .join('\n');
+
+                const commentSections = [
+                  MARKER,
+                  '### 🔎 PRs you may want to review',
+                  'Based on the language, area, and context of this PR, here are a few related open PRs that may be useful to review:\n\n' + prList,
+                  'Reviewing related work can help contributors learn the codebase and contribute review capacity back to the community.',
+                  '_This is only a suggestion and does not block your PR._'
+                ];
+
+                commentBody = commentSections.join('\n\n');
+              } else {
+                const commentSections = [
+                  MARKER,
+                  '### 🔎 PRs you may want to review',
+                  'Based on the language, area, and context of this PR, no closely related open PRs were found to review at this time.',
+                  'Reviewing related work can help contributors learn the codebase and contribute review capacity back to the community.',
+                  '_This is only a suggestion and does not block your PR._'
+                ];
+
+                commentBody = commentSections.join('\n\n');
+              }
+
+              // Retrieve existing comments to update existing sticky comment or create new one
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                per_page: 100
+              });
+
+              const existingComment = comments.find(c => c.body && c.body.includes(MARKER));
+
+              if (existingComment) {
+                if (existingComment.body.trim() === commentBody.trim()) {
+                  core.info('Existing suggestion comment is already up-to-date.');
+                } else {
+                  core.info(`Updating existing suggestion comment (id: ${existingComment.id}).`);
+                  await github.rest.issues.updateComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    comment_id: existingComment.id,
+                    body: commentBody
+                  });
+                }
+              } else {
+                core.info('Creating new suggestion comment.');
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                  body: commentBody
+                });
+              }
+            } catch (error) {
+              core.warning(`PR review suggestions failed safely: ${error.message}`);
+            }
