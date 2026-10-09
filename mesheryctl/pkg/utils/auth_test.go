@@ -17,8 +17,10 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"sync/atomic"
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -97,4 +99,63 @@ func TestProviderUnmarshalJSON(t *testing.T) {
 			t.Fatalf("expected provider URL https://cloud.meshery.io, got %q", provider.ProviderURL)
 		}
 	})
+}
+
+// bodyCloseTracker counts Close calls on a response body.
+type bodyCloseTracker struct {
+	io.ReadCloser
+	closes *int32
+}
+
+func (b *bodyCloseTracker) Close() error {
+	atomic.AddInt32(b.closes, 1)
+	return b.ReadCloser.Close()
+}
+
+type trackingTransport struct {
+	base   http.RoundTripper
+	closes *int32
+}
+
+func (t *trackingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	resp, err := t.base.RoundTrip(req)
+	if err != nil {
+		return nil, err
+	}
+	resp.Body = &bodyCloseTracker{ReadCloser: resp.Body, closes: t.closes}
+	return resp, nil
+}
+
+// GetProviderInfo decodes the response body, but it has to close it as well.
+// Decoding alone leaves the body open, and it is also skipped entirely when
+// decoding fails.
+func TestGetProviderInfoClosesTheResponseBody(t *testing.T) {
+	SetupMeshkitLoggerTesting(t, false)
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = fmt.Fprint(w, `{"Meshery":{"provider_name":"Meshery","provider_url":"https://cloud.meshery.io"}}`)
+	}))
+	defer server.Close()
+
+	var closes int32
+	original := http.DefaultTransport
+	http.DefaultTransport = &trackingTransport{base: original, closes: &closes}
+	defer func() { http.DefaultTransport = original }()
+
+	mctCfg := &config.MesheryCtlConfig{
+		CurrentContext: "local",
+		Contexts:       map[string]config.Context{"local": {Endpoint: server.URL}},
+	}
+
+	providers, err := GetProviderInfo(mctCfg)
+	if err != nil {
+		t.Fatalf("GetProviderInfo returned an error: %v", err)
+	}
+	if _, ok := providers["Meshery"]; !ok {
+		t.Fatalf("expected the Meshery provider in the response, got %v", providers)
+	}
+
+	if got := atomic.LoadInt32(&closes); got != 1 {
+		t.Fatalf("expected the response body to be closed once, got %d", got)
+	}
 }
