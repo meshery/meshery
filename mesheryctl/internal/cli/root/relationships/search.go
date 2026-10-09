@@ -42,7 +42,8 @@ var (
 var searchCmd = &cobra.Command{
 	Use:   "search",
 	Short: "Search registered relationship(s)",
-	Long:  "Search registered relationship(s) used by different models",
+	Long: `Search registered relationship(s) used by different models.
+	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/relationship/search`,
 	Example: `
 // Search for a specific relationship
 mesheryctl relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
@@ -106,10 +107,10 @@ func init() {
 
 // buildSearchUrl constructs the API URL for the relationship search endpoint.
 func buildSearchUrl() string {
-	base := "api/meshmodels/relationships"
+	base := "api/registry/relationships"
 
 	if searchRelationshipFlagsProvided.Model != "" {
-		base = fmt.Sprintf("api/meshmodels/models/%s/relationships",
+		base = fmt.Sprintf("api/registry/models/%s/relationships",
 			url.PathEscape(searchRelationshipFlagsProvided.Model))
 	}
 

@@ -1,0 +1,5 @@
+{
+  "enabledPlugins": {
+    "helm-chart-builder@claude-code-skills": true
+  }
+}

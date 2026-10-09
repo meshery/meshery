@@ -6,7 +6,7 @@
     {
       "id": "0bc8f57c-38a5-415d-a994-87a3791a931e",
       "name": "TEST 3",
-      "userId": "145496f6-f5d2-40b9-841e-1b5471b60411",
+      "owner": "145496f6-f5d2-40b9-841e-1b5471b60411",
       "loadGenerators": [
         "fortio"
       ],
@@ -23,7 +23,7 @@
     {
       "id": "ab1c9822-ec86-49ef-8ee9-f1f22f63398b",
       "name": "BookInfo Test 3",
-      "userId": "090e7114-509a-4046-81f1-9c5fb8daf724",
+      "owner": "090e7114-509a-4046-81f1-9c5fb8daf724",
       "loadGenerators": [
         "fortio"
       ],

@@ -1,7 +1,9 @@
 package model
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"path/filepath"
 	"runtime"
@@ -29,7 +31,7 @@ func TestModelGenerate(t *testing.T) {
 	testdataDir := filepath.Join(currDir, "testdata")
 	fixturesDir := filepath.Join(currDir, "fixtures")
 
-	apiURL := "/api/meshmodels/register"
+	apiURL := "/api/registry/register"
 
 	type tc struct {
 		Name             string
@@ -41,6 +43,7 @@ func TestModelGenerate(t *testing.T) {
 		ExpectErr        bool
 		RaisedError      error
 		HttpCode         int
+		AssertRequest    func(t *testing.T, body []byte)
 	}
 
 	tests := []tc{
@@ -68,6 +71,35 @@ func TestModelGenerate(t *testing.T) {
 			ExpectedResponse: "generate.dir.skipped.output.golden",
 			HttpCode:         200,
 		},
+		{
+			Name:             "model generate: from CSV directory with selected model",
+			Args:             []string{"generate", "--file", filepath.Join(fixturesDir, "templates", "template-csvs"), "--model", "couchbase"},
+			ExpectedResponse: "generate.dir.skip-register.output.golden",
+			URL:              apiURL,
+			Fixture:          "generate.api.ok.response.golden",
+			HttpCode:         200,
+			AssertRequest: func(t *testing.T, body []byte) {
+				t.Helper()
+				var payload struct {
+					UploadType string `json:"uploadType"`
+					ImportBody struct {
+						Model struct {
+							Model string `json:"model"`
+						} `json:"model"`
+					} `json:"importBody"`
+				}
+				err := json.Unmarshal(body, &payload)
+				if err != nil {
+					t.Fatalf("failed to unmarshal request body: %v", err)
+				}
+				if payload.UploadType != "csv" {
+					t.Errorf("expected uploadType %q, got %q", "csv", payload.UploadType)
+				}
+				if payload.ImportBody.Model.Model != "couchbase" {
+					t.Errorf("expected model %q, got %q", "couchbase", payload.ImportBody.Model.Model)
+				}
+			},
+		},
 	}
 
 	var resetFlags func(*cobra.Command, *testing.T)
@@ -91,6 +123,13 @@ func TestModelGenerate(t *testing.T) {
 				apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).LoadByte()
 
 				httpmock.RegisterResponder("POST", testContext.BaseURL+tt.URL, func(req *http.Request) (*http.Response, error) {
+					if tt.AssertRequest != nil {
+						reqBody, err := io.ReadAll(req.Body)
+						if err != nil {
+							t.Fatalf("failed to read request body: %v", err)
+						}
+						tt.AssertRequest(t, reqBody)
+					}
 
 					return httpmock.NewBytesResponse(tt.HttpCode, apiResponse), nil
 				})

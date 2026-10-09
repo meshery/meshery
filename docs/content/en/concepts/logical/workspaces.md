@@ -42,7 +42,7 @@ See "[Environments]({{< ref "concepts/logical/environments.md" >}})" section for
 
 - Infrastructure Designs are essential for creating reusable deployment templates. Users belonging to teams with access to a workspace can utilize these designs to deploy resources in the Kubernetes clusters associated with that workspace.
 - Like a shared drive (or or shared collection of files), Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
-- One ore more designs can be assigned to a workspace.
+- One or more designs can be assigned to a workspace.
 - Same design can be assigned to multiple workspaces.
 
 See "[Meshery Designs]({{< ref "concepts/logical/designs.md" >}})" section for more information.
@@ -63,7 +63,7 @@ Related reading: Learn more about [extensible authorization]({{< ref "reference/
 <!-- ### Teams
 
 - A Workspace is closely associated with Teams in Meshery. Teams are groups of users with varying permissions, and they are at the center of resource access and management within a Workspace.
-- One ore more teams can be assigned to a workspace.
+- One or more teams can be assigned to a workspace.
 - Same team can be assigned to multiple workspaces.
 
 See "[Teams](https://docs.meshery.io/extensions/team-management)" section for more information. -->
@@ -80,7 +80,7 @@ See "[Connections]({{< ref "concepts/logical/connections/index.md" >}})" section
 
 To make the most of Meshery Workspaces, here are some best practices:
 
-- Clearly define permissions in the form of team assignement to ensure proper access control.
+- Clearly define permissions in the form of team assignment to ensure proper access control.
 - Use Infrastructure Designs to standardize resource deployments.
 - Regularly review and update your Workspace's resources and configurations.
 

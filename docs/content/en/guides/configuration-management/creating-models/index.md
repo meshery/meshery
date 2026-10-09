@@ -132,18 +132,71 @@ Meshery Server is not required to generate models. The Meshery CLI can be used t
 
 {{< tabs id="mesheryctl-tabs" level="2" >}}
 <!-- tab -->
+Using Scaffold (model init) | fa fa-folder-tree
+
+<p>The scaffold workflow is the most direct way to hand-author a model - especially an <strong>annotation-only</strong> model (a curated set of icons used purely for visual diagramming). Unlike the CSV and Spreadsheet workflows, it does not require forking <code>meshery/meshery</code> or a Google Spreadsheet credential; it produces model files locally, packages them as an OCI image, and registers them into a running Meshery Server.</p>
+
+<h4>1. Scaffold the model</h4>
+<p>Generate the folder structure with <code>mesheryctl model init</code>:</p>
+<code>mesheryctl model init digitalocean-icons --version v0.1.0</code>
+<p>This creates:</p>
+<code>
+digitalocean-icons/
+<br />└── v0.1.0/
+<br />&nbsp;&nbsp;&nbsp;&nbsp;├── model.json          # model definition (name and displayName are pre-filled from the argument)
+<br />&nbsp;&nbsp;&nbsp;&nbsp;├── components/          # one sample component; add one JSON file per component
+<br />&nbsp;&nbsp;&nbsp;&nbsp;├── relationships/
+<br />&nbsp;&nbsp;&nbsp;&nbsp;├── connections/
+<br />&nbsp;&nbsp;&nbsp;&nbsp;└── credentials/
+</code>
+
+<h4>2. Edit <code>model.json</code></h4>
+<p>Open <code>digitalocean-icons/v0.1.0/model.json</code> and set the model's identity and appearance:</p>
+<ul>
+  <li><code>category.name</code> and <code>subCategory</code> - e.g. <code>Platform</code> / <code>Cloud Provider</code>.</li>
+  <li><code>registrant.kind</code> - e.g. <code>meshery</code>.</li>
+  <li><code>description</code> - a short summary of what the model provides.</li>
+  <li><code>metadata.svgColor</code> and <code>metadata.svgWhite</code> - the model's display icon, as an inline SVG string (strip any <code>&lt;?xml ...?&gt;</code> header and collapse the SVG to a single line).</li>
+  <li><code>metadata.isAnnotation</code> - set to <code>true</code> for an annotation-only (visual diagramming) model.</li>
+</ul>
+
+<h4>3. Add one component per capability</h4>
+<p><code>model init</code> drops a single sample component under <code>components/</code>. Add one JSON file per component (delete the sample if unused). For each component set:</p>
+<ul>
+  <li><code>displayName</code> - the human-readable name shown in the UI (e.g. <code>DO Logo Icon Blue</code>).</li>
+  <li><code>component.kind</code> - the unique identifier for the component (e.g. <code>do-logo-icon-blue</code>).</li>
+  <li><code>styles.svgColor</code> and <code>styles.svgWhite</code> - the component's inline SVG.</li>
+  <li><code>metadata.isAnnotation</code> - <code>true</code> for annotation components.</li>
+</ul>
+
+{{% alert color="warning" title="Component schemaVersion compatibility" %}}
+For the widest server compatibility, set each component's <code>schemaVersion</code> to <code>components.meshery.io/v1beta1</code> and the model's to <code>models.meshery.io/v1beta2</code>. Meshery Servers only accept the <code>v1beta3</code> component wire format once they ship a MeshKit new enough to recognize it; a released server that predates that support rejects <code>v1beta3</code> components with a generic "No valid component or relationship found in the Model provided" error at import time.
+{{% /alert %}}
+
+<h4>4. Package the model as an OCI image</h4>
+<code>mesheryctl model build digitalocean-icons/v0.1.0</code>
+<p>This writes an OCI artifact named <code>&lt;model&gt;-&lt;version&gt;.tar</code> (e.g. <code>digitalocean-icons-v0-1-0.tar</code>) to your current directory.</p>
+
+<h4>5. Register the model into a Meshery Server</h4>
+<p>Import the packaged artifact (or the model directory) into your connected Meshery Server. This step requires a running server and an authenticated <code>mesheryctl</code> context (see <a href="{{< ref "reference/references/mesheryctl/system/login.md" >}}"><code>mesheryctl system login</code></a>):</p>
+<code>mesheryctl model import -f digitalocean-icons-v0-1-0.tar</code>
+<p>Verify the result:</p>
+<code>mesheryctl model view digitalocean-icons</code>
+<p>See <a href="{{< ref "guides/configuration-management/importing-models/index.md" >}}">Importing Models</a> for the full set of import sources and <a href="{{< ref "guides/configuration-management/push-pull-model-image.md" >}}">Push or Pull a Model Image</a> for packaging details.</p>
+
+<!-- tab -->
 Using CSV | fa fa-list
 
 <h4>1. Understanding the Template Directory</h4>
-<p>Inside your forked Meshery repository, you'll find the templates-csvs directory containing three essential CSV files:</p>
+<p>Inside your forked Meshery repository, you'll find the <code>template-csvs</code> directory containing three essential CSV files:</p>
 <code>
-    mesheryctl/templates/templates-csvs/
+    mesheryctl/templates/template-csvs/
     <br />
-    ├── models.csv       # Define model metadata and core properties
+    ├── Models.csv       # Define model metadata and core properties
     <br />
-    ├── components.csv   # Specify individual components and their characteristics
+    ├── Components.csv   # Specify individual components and their characteristics
     <br />
-    └── relationships.csv # Define how components interact and connect
+    └── Relationships.csv # Define how components interact and connect
     <br />
 </code>
 
@@ -152,7 +205,8 @@ Using CSV | fa fa-list
 
 <h4>3. Generating Your Model</h4>
 <p>Once you've customized your CSV files, you can generate your model using a single command. Ensure you're in the root directory of your forked Meshery repository, as this maintains the correct file path relationships:</p>
-<code>mesheryctl registry generate --directory templates-csvs --model "YOUR_MODEL_NAME"</code>
+<code>mesheryctl registry generate --directory mesheryctl/templates/template-csvs --model "YOUR_MODEL_NAME"</code>
+<p>The <code>--directory</code> flag takes the path to the folder that contains <code>Models.csv</code> and <code>Components.csv</code> (<code>Relationships.csv</code> is optional). This path is CSV-driven and does <strong>not</strong> require a Google Spreadsheet credential.</p>
 
 <h4>4. Locating Generated Files</h4>
 <p>After successful generation, your model's files will be created in the repository's <code>models/</code> directory. You can find these files at <code>meshery/models/[YOUR_MODEL_NAME]/</code>. Take time to review these generated files to ensure they accurately reflect your intended model structure.</p>
@@ -206,6 +260,11 @@ Using Integration Spreadsheet | fa fa-table
 <code>
   source ~/.bashrc
 </code>
+<p>The value passed to <code>--spreadsheet-cred</code> is the <strong>base64-encoded contents of the service-account JSON</strong> (the string itself), not a file path and not <code>GOOGLE_APPLICATION_CREDENTIALS</code>. Pass it as <code>--spreadsheet-cred "$SHEET_CRED"</code>.</p>
+
+{{% alert color="warning" title="Trap: a misleading &quot;Invalid JWT Token&quot; error" %}}
+If <code>$SHEET_CRED</code> is empty or is not valid base64, <code>mesheryctl</code> reports <code>Invalid JWT Token</code> even though the real problem is the credential never decoded. Before running <code>registry generate</code>/<code>registry update</code>, confirm the variable is set and decodes cleanly: <code>echo "$SHEET_CRED" | base64 --decode | head -c 20</code> should print the start of the JSON (e.g. <code>{"type": "service_</code>).
+{{% /alert %}}
 
 <h4>4. Spreadsheet Access Configuration</h4>
 <ol>

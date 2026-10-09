@@ -26,20 +26,14 @@ vi.mock('@sistent/sistent', () => {
     Typography: ({ children, ...props }: any) => <span {...props}>{children}</span>,
     InfoIcon: () => null,
     createTheme: () => ({ breakpoints: { up: () => '', down: () => '' } }),
+    notificationColors: {
+      info: { main: '#info' },
+      error: { main: '#error', dark: '#error_dark' },
+      warning: { main: '#warning', light: '#warning_light' },
+      success: { main: '#success' },
+    },
   };
 });
-
-// Avoid transitively loading the real themes module (which imports MUI's
-// createTheme during evaluation) via `constants.tsx`.
-vi.mock('../../../themes', () => ({
-  NOTIFICATIONCOLORS: {
-    INFO: '#info',
-    ERROR: '#error',
-    ERROR_DARK: '#error_dark',
-    WARNING: '#warning',
-    SUCCESS: '#success',
-  },
-}));
 
 vi.mock('../../../assets/icons/AlertIcon', () => ({ default: () => null }));
 vi.mock('../../../assets/icons/ErrorIcon', () => ({ default: () => null }));

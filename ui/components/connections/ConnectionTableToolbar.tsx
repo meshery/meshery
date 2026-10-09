@@ -1,8 +1,11 @@
 import React from 'react';
-import { CustomColumnVisibilityControl, SearchBar, UniversalFilter } from '@sistent/sistent';
+import {
+  CustomColumnVisibilityControl,
+  SearchBar,
+  UniversalFilter,
+  DataTableToolbar,
+} from '@sistent/sistent';
 import { CreateButton } from './styles';
-import { ToolWrapper } from '@/assets/styles/general/tool.styles';
-import { styled } from '@/theme';
 import ConnectionWizardLauncher from './ConnectionWizardLauncher';
 import { getVisibilityColums } from '../../utils/utils';
 import type { SelectedFilters } from './ConnectionTable.types';
@@ -20,13 +23,6 @@ type ConnectionTableToolbarProps = {
   setColumnVisibility: (visibility: Record<string, boolean | undefined>) => void;
 };
 
-const ToolbarActions = styled('div')(() => ({
-  display: 'flex',
-  borderRadius: '0.5rem 0.5rem 0 0',
-  width: '100%',
-  justifyContent: 'flex-end',
-}));
-
 export const ConnectionTableToolbar = ({
   isSearchExpanded,
   setIsSearchExpanded,
@@ -40,11 +36,13 @@ export const ConnectionTableToolbar = ({
   setColumnVisibility,
 }: ConnectionTableToolbarProps) => {
   return (
-    <ToolWrapper style={{ marginBottom: '5px', marginTop: '-30px' }}>
-      <CreateButton>
-        <ConnectionWizardLauncher />
-      </CreateButton>
-      <ToolbarActions>
+    <DataTableToolbar
+      primaryActions={
+        <CreateButton>
+          <ConnectionWizardLauncher />
+        </CreateButton>
+      }
+      search={
         <div data-testid="ConnectionTable-search">
           <SearchBar
             onSearch={onSearch}
@@ -53,22 +51,27 @@ export const ConnectionTableToolbar = ({
             setExpanded={setIsSearchExpanded}
           />
         </div>
-
+      }
+      filter={
         <UniversalFilter
-          id="ref"
+          id="connection-table-filter"
           filters={filters}
           selectedFilters={selectedFilters}
           setSelectedFilters={setSelectedFilters}
           handleApplyFilter={handleApplyFilter}
         />
-
+      }
+      columnVisibility={
         <CustomColumnVisibilityControl
           style={{ zIndex: 1300 }}
-          id="ref"
+          id="connection-table-column-visibility"
           columns={getVisibilityColums(columns)}
-          customToolsProps={{ columnVisibility, setColumnVisibility }}
+          customToolsProps={{
+            columnVisibility,
+            setColumnVisibility,
+          }}
         />
-      </ToolbarActions>
-    </ToolWrapper>
+      }
+    />
   );
 };

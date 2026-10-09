@@ -1,0 +1,1 @@
+Hello everyone! I'm Aryan Burnwal, a 3rd-year CS student and aspiring backend and systems dev. I want to connect with people and learn more about DevOps and working on large-scale projects. Excited to work with you all!

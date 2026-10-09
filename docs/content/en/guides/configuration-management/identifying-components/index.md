@@ -79,7 +79,7 @@ These are the quintessential building blocks for many diagrams – your circles,
   guide_title="Shape"
   guide_description="Description"
   guide_svg="SVG"
-  guide_assests_folder="shapes"
+  guide_assets_folder="shapes"
 >}}
 
 </details>
@@ -94,7 +94,7 @@ This group includes shapes that, by common convention, often evoke a more specif
   guide_title="Shape"
   guide_description="Description"
   guide_svg="SVG"
-  guide_assests_folder="shapes"
+  guide_assets_folder="shapes"
 >}}
 
 </details>
@@ -109,7 +109,7 @@ When your diagrams require a more distinct visual style or an element for emphas
   guide_title="Shape"
   guide_description="Description"
   guide_svg="SVG"
-  guide_assests_folder="shapes"
+  guide_assets_folder="shapes"
 >}}
 
 </details>

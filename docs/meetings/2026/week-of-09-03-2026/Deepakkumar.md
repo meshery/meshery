@@ -1,0 +1,3 @@
+Hi everyone! I'm Deepakkumar Malkar, founder of NiftyOracle — a live fintech platform on Google Play Store. I'm applying for LFX Mentorship Term 3 2026 with Meshery. Excited to be here.
+
+I'm focused on fintech and AI product development. I built NiftyOracle — a live real-time options analytics platform on Google Play Store. I'm passionate about cloud-native architecture and making complex financial data accessible through intuitive UI.

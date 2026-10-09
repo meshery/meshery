@@ -2,7 +2,9 @@ version: 0.0.6
 name: managing-configuration-for-kubernetes-pods
 displayName: Managing Configuration for Kubernetes Pods
 createdAt: "2025-08-26T20:46:34Z"
-description: Managing Configuration for Kubernetes Pods
+description: |-
+    This design pattern demonstrates the standard method for managing and injecting configuration into Pods within a Kubernetes environment.
+    t is based on a diagram from the Exoscale documentation.
 logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
 license: Apache-2.0
 homeURL: https://docs.meshery.io/concepts/logical/designs
@@ -11,7 +13,7 @@ links:
       url: ../../catalog/6046f07a-e9b5-4ffd-ad5d-d8d5f55a2203/0.0.6/design.yml
     - name: Meshery Catalog
       url: https://meshery.io/catalog
-readme: " \n ##h4 Caveats and Consideration \n"
+readme: "The purpose is for visualization and learning, not for direct production deployment without modification. \n ##h4 Caveats and Consideration \n"
 install: mesheryctl design import -f
 provider:
     name: 724ae674-2804-4579-929a-816e68bccb29

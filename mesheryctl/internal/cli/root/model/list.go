@@ -20,7 +20,7 @@ var listModelCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered models",
 	Long: `List all registered models by pagination (10 models per page)
-Find more information at: https://docs.meshery.io/reference/mesheryctl/model/list`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/model/list`,
 	Example: `
 // List of models
 mesheryctl model list

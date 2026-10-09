@@ -19,7 +19,19 @@ test.describe('Telemetry Section Tests', () => {
     await dashboardPage.navigateToDashboard();
   });
 
-  test('Charts (Grafana) page loads', async ({ page }: { page: Page }) => {
+  // Quarantined, not deleted - see meshery/meshery#21172.
+  //
+  // This case exhausts its 180s budget on CI and dies on the clock rather than
+  // on an assertion, so it reports no locator, no snippet and no file location.
+  // Two fixes have already been applied to the nav path it exercises (retrying
+  // the swallowed pre-hydration click, then bounding each retry attempt) and
+  // neither is sufficient. It was failing 5 of 20 runs before the E2E gate could
+  // fail the build, and it now blocks unrelated PRs - it failed a
+  // documentation-only change.
+  //
+  // Remove this `fixme` in the PR that fixes the underlying cost. Raising the
+  // timeout is not that fix; it would only make the silence longer.
+  test.fixme('Charts (Grafana) page loads', async ({ page }: { page: Page }) => {
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.navigateToTelemetryCharts();
 

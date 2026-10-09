@@ -25,10 +25,16 @@ import (
 // `Connection.Metadata[MeshsyncDeploymentModeMetadataKey]`.
 type MeshsyncDeploymentMode string
 
-// MeshsyncDeploymentModeMetadataKey is the key under which the deployment mode
-// is stored on a connection's metadata map. Kept as snake_case because it is
-// persisted on the wire alongside other metadata entries and renaming it
-// would break every connection already carrying the key.
+// MeshsyncDeploymentModeMetadataKey is the key under which the *materialized*
+// deployment mode is cached on a connection's metadata map, for the consumers
+// that predate the layered controllers-configuration document. It is not where
+// a user's explicit choice is stored - that is
+// `controllers_config.operator.deploymentMode`, written through
+// SetDeploymentModeOverride. See deployment_mode_resolution.go.
+//
+// Kept as snake_case because it is persisted on the wire alongside other
+// metadata entries and renaming it would break every connection already
+// carrying the key.
 const MeshsyncDeploymentModeMetadataKey = "meshsync_deployment_mode"
 
 const (
@@ -53,10 +59,14 @@ func MeshsyncDeploymentModeFromString(value string) MeshsyncDeploymentMode {
 	}
 }
 
-// MeshsyncDeploymentModeFromMetadata extracts the deployment mode stored on
-// a connection's metadata map. Both strongly-typed (MeshsyncDeploymentMode)
-// and string-shaped values are accepted; any other type (or a nil metadata
-// map) falls back to MeshsyncDeploymentModeUndefined.
+// MeshsyncDeploymentModeFromMetadata reads the materialized deployment-mode
+// cache from a connection's metadata map. Both strongly-typed
+// (MeshsyncDeploymentMode) and string-shaped values are accepted; any other
+// type (or a nil metadata map) falls back to MeshsyncDeploymentModeUndefined.
+//
+// This is "what is the connection running", not "what did the user choose".
+// Code deciding which mode a connection *should* run must call
+// ResolveDeploymentMode, which ranks this cache below the layered document.
 func MeshsyncDeploymentModeFromMetadata(metadata core.Map) MeshsyncDeploymentMode {
 	if metadata == nil {
 		return MeshsyncDeploymentModeUndefined
@@ -76,11 +86,15 @@ func MeshsyncDeploymentModeFromMetadata(metadata core.Map) MeshsyncDeploymentMod
 	}
 }
 
-// SetMeshsyncDeploymentModeToMetadata writes (or overwrites) the deployment
-// mode entry on a connection's metadata map. A nil metadata map is a no-op
-// (writing to a nil map would panic); callers that need to set a mode on a
-// fresh connection must initialise the map first.
-func SetMeshsyncDeploymentModeToMetadata(metadata core.Map, value MeshsyncDeploymentMode) {
+// MaterializeMeshsyncDeploymentMode writes (or overwrites) the deployment-mode
+// cache on a connection's metadata map with an already-resolved mode, so the
+// consumers that predate the layered document keep seeing the truth. It records
+// a *result*, never an intent: to record a user's explicit choice, call
+// SetDeploymentModeOverride and materialize the newly resolved mode afterwards.
+//
+// A nil metadata map is a no-op (writing to a nil map would panic); callers
+// that need to set a mode on a fresh connection must initialise the map first.
+func MaterializeMeshsyncDeploymentMode(metadata core.Map, value MeshsyncDeploymentMode) {
 	if metadata == nil {
 		return
 	}

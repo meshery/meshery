@@ -152,7 +152,7 @@ const MeshSyncEmptyState = () => {
               <Link
                 href="https://docs.meshery.io/concepts/architecture/meshsync"
                 target="_blank"
-                rel="noopener"
+                rel="noopener noreferrer"
               >
                 documentation
               </Link>{' '}

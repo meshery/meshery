@@ -55,7 +55,8 @@ var linkDocDesignDeploy = map[string]string{
 var deployDesignCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Deploy design",
-	Long:  `Command will trigger deploy of design`,
+	Long: `Command will trigger deploy of design.
+	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/design/deploy`,
 	Example: `
 // Deploy design by providing file path
 mesheryctl design deploy -f [filepath] -s [source type]
@@ -138,7 +139,7 @@ mesheryctl design deploy -f [filepath] -s [source type]
 				return err
 			}
 			patternImportURL := fmt.Sprintf("%s/%s/import", mctlCfg.GetBaseMesheryURL(), patternURLPath)
-			pattern, err := importPattern(designDeployFlags.SourceType, designDeployFlags.File, patternImportURL, !designDeployFlags.SkipSave)
+			pattern, err := importPattern(designDeployFlags.SourceType, designDeployFlags.File, patternImportURL)
 			if err != nil {
 				return err
 			}

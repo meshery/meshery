@@ -51,14 +51,13 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/google/go-cmp v0.7.0
 	github.com/gorilla/mux v1.8.1
-	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674
 	github.com/jarcoal/httpmock v1.4.1
 	github.com/jinzhu/copier v0.4.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/meshery/meshery-operator v1.0.3
 	github.com/meshery/meshkit v1.0.22
 	github.com/meshery/meshsync v1.0.3
-	github.com/meshery/schemas v1.3.26
+	github.com/meshery/schemas v1.3.37
 	github.com/nsf/termbox-go v1.1.1
 	github.com/oapi-codegen/runtime v1.4.2
 	github.com/olekukonko/tablewriter v1.1.4
@@ -76,10 +75,12 @@ require (
 	go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux v0.64.0
 	go.opentelemetry.io/otel/sdk v1.43.0
 	golang.org/x/oauth2 v0.36.0
+	golang.org/x/term v0.44.0
 	golang.org/x/text v0.38.0
+	golang.org/x/tools v0.45.0
 	gonum.org/v1/gonum v0.17.0
 	google.golang.org/api v0.287.0
-	google.golang.org/grpc v1.81.1
+	google.golang.org/grpc v1.82.1
 	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -242,6 +243,7 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.17 // indirect
 	github.com/googleapis/gax-go/v2 v2.22.0 // indirect
+	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674 // indirect
 	github.com/gosuri/uitable v0.0.4 // indirect
 	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0 // indirect
@@ -399,13 +401,13 @@ require (
 	golang.org/x/crypto v0.53.0 // indirect
 	golang.org/x/crypto/x509roots/fallback v0.0.0-20250406160420-959f8f3db0fb // indirect
 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
+	golang.org/x/mod v0.36.0 // indirect
 	golang.org/x/net v0.56.0 // indirect
 	golang.org/x/sync v0.21.0 // indirect
 	golang.org/x/sys v0.46.0 // indirect
-	golang.org/x/term v0.44.0 // indirect
 	golang.org/x/time v0.15.0 // indirect
 	golang.org/x/tools/godoc v0.1.0-deprecated // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260401024825-9d38bb4040a9 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20260414002931-afd174a4e478 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260622175928-b703f567277d // indirect
 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect

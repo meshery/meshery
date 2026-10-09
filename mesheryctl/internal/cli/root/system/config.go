@@ -33,6 +33,13 @@ import (
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 )
 
+// NOTE: `system config` is deprecated in favor of `connection create` (see
+// configCmd.Deprecated below). getContexts/setContext/setToken here duplicate the
+// canonical implementation in internal/cli/root/connections/create.go. Do not
+// extend this copy; when the deprecation window closes, delete this path and let
+// `connection create` be the single Kubernetes-connect implementation. Any fix
+// to the connect flow must be made in the connections package (and mirrored here
+// only if the deprecated command must keep working).
 func getContexts(configFile string) ([]string, error) {
 
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())

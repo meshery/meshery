@@ -39,7 +39,7 @@ var DesignCmd = &cobra.Command{
 	Use:   "design",
 	Short: "Manage cloud native designs",
 	Long: `Manage cloud and cloud native infrastructure using predefined designs.
-Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl#command-reference`,
 	Example: `
 // Apply design file:
 mesheryctl design apply --file [path to design file | URL of the file]

@@ -43,7 +43,7 @@ vi.mock('@/assets/icons', () => ({
   Save: () => <svg data-testid="save-icon" />,
 }));
 
-vi.mock('../../CodeMirror', () => ({
+vi.mock('../../general/CodeMirror', () => ({
   UnControlled: ({ value, onChange }: any) => (
     <textarea
       data-testid="codemirror"

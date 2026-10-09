@@ -9,6 +9,7 @@ import (
 	isql "github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshkit/models/catalog/v1alpha1"
 	"github.com/meshery/schemas/models/core"
+	user "github.com/meshery/schemas/models/v1beta2/user"
 	"gopkg.in/yaml.v2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -48,7 +49,7 @@ const (
 	Design        DesignType = "Design"
 )
 
-// reason for adding this constucts is because these has been removed in latest client-go
+// ListMetaApplyConfiguration exists because this construct was removed in the latest client-go
 // https://github.com/kubernetes/client-go/commit/0f17f43973be78f6dcaf6d9a8614fcb35be40d5c#diff-b49fe30cb74d2c3c9c0ca1438056432985f3cad978fd6440f91b695e16195ded
 type ListMetaApplyConfiguration struct {
 	SelfLink           *string `json:"selfLink,omitempty"`
@@ -88,9 +89,20 @@ type MesheryPattern struct {
 
 	Name        string `json:"name,omitempty"`
 	PatternFile string `json:"patternFile"`
-	// Meshery doesn't have the owner field
-	// but the remote provider is allowed to provide one
-	Owner *string `json:"owner" gorm:"-"`
+	// UserID is the id of the design's owner. On the wire it is emitted as
+	// "userId", matching the canonical schemas v1beta3 design.MesheryPattern
+	// contract (github.com/meshery/schemas/models/v1beta3/design) rather than
+	// the legacy "owner" spelling the schema-generated UI client no longer
+	// reads. It is not persisted locally (gorm:"-"): the built-in provider is
+	// single-user and stamps the owner on read (see the pattern persister),
+	// while the remote provider (meshery-cloud) supplies it.
+	UserID *core.Uuid `json:"userId,omitempty" gorm:"-"`
+	// User is the owning user's joined profile, emitted as "user" per the same
+	// design.MesheryPattern contract. Its type is sourced from schemas
+	// (v1beta2 user.User, the exact type design.MesheryPattern.User uses) so
+	// the owner/user contract is single-sourced from schemas, not redeclared
+	// locally.
+	User *user.User `json:"user,omitempty" gorm:"-"`
 
 	Location      isql.Map             `json:"location"`
 	Visibility    string               `json:"visibility"`
@@ -191,7 +203,7 @@ type MesheryCatalogPatternRequestBody struct {
 	CatalogData isql.Map  `json:"catalogData,omitempty"`
 }
 
-// MesheryCatalogPatternRequestBody refers to the type of request body
+// MesheryClonePatternRequestBody refers to the type of request body
 // that CloneMesheryPatternHandler would receive
 type MesheryClonePatternRequestBody struct {
 	Name string `json:"name,omitempty"`

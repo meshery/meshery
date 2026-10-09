@@ -26,7 +26,7 @@ Alternatively, directly modify the `~/.meshery/meshery.yaml` configuration file,
 
 #### Configuration: Running more than one instance of the same Meshery adapter
 
-The default configuration of a Meshery deployment includes one instance of each of the Meshery Adapters (that have reached a stable version status). You may choose to run multiple instances of the same type of Meshery Adapter; for example, two instances of the Meshery Adapter for NGINX Service Mesh. To do so, you can use either of Meshery's clients to modify your Meshery deployment:
+The default configuration of a Meshery deployment includes one instance of each of the Meshery Adapters (that have reached a stable version status). You may choose to run multiple instances of the same type of Meshery Adapter; for example, two instances of the Meshery Adapter for Istio. To do so, you can use either of Meshery's clients to modify your Meshery deployment:
 - Using `mesheryctl`, modify `~/.meshery/meshery.yaml` to include multiple copies of the given adapter.
 - Using Meshery UI, navigate to the Settings page and enter the host and port of your additional adapter.
 
@@ -40,6 +40,6 @@ Do so by passing the `ADAPTERS` environment variable to the Meshery Bash script.
 
 <h5>Demo of Meshery managing deployments across multiple Kubernetes clusters:</h5>
 
-<iframe class="container" width="560" height="315" src="https://www.youtube.com/embed/yWPu3vq4vEs?start=5041" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+{{< youtube id="yWPu3vq4vEs" start="5041" class="yt-embed-container" >}}
 
 See on YouTube: [Cloud Native Austin Virtual Meetup: April 2020](https://youtu.be/yWPu3vq4vEs?t=5041&list=PL3A-A6hPO2IOpTbdH89qR-4AE0ON13Zie)

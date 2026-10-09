@@ -1,5 +1,5 @@
 {{- $command_name := .Get "command" -}}
-{{- $commands := .Site.Data.mesheryctlcommands.cmds -}}
+{{- $commands := hugo.Data.mesheryctlcommands.cmds -}}
 {{- $command := index $commands $command_name -}}
 
 <table class="mesheryctl-reference-table">
@@ -23,7 +23,7 @@
         <td></td>
         <td>{{ $command.description }}</td>
       </tr>
-      
+
       <!-- Flags -->
       {{- if $command.flags }}
         {{- range $key, $flag := $command.flags }}
@@ -34,7 +34,7 @@
       </tr>
         {{- end }}
       {{- end }}
-      
+
       <!-- Subcommands and their flags -->
       {{- if $command.subcommands }}
         {{- range $subkey, $subcommand := $command.subcommands }}
@@ -60,7 +60,7 @@
       <!-- Nested command structure (exp with relationship, workspace, organization) -->
       {{- range $subkey, $subcommand := $command }}
       {{- $first := true }}
-      
+
       <!-- Output category-level flags first with category name -->
       {{- if $subcommand.flags }}
         {{- range $flagkey, $flag := $subcommand.flags }}
@@ -79,7 +79,7 @@
       </tr>
         {{- end }}
       {{- end }}
-      
+
       <!-- Output subcommands -->
       {{- if $subcommand.subcommands }}
         {{- range $subsubkey, $subsubcommand := $subcommand.subcommands }}

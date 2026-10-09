@@ -80,8 +80,9 @@ func splitTestDuration(duration string) (string, string) {
 var applyCmd = &cobra.Command{
 	Use:   "apply [profile-name]",
 	Short: "Run a Performance test",
-	Long:  `Run Performance test using existing profiles or using flags`,
-	Args:  cobra.MinimumNArgs(0),
+	Long: `Run Performance test using existing profiles or using flags.
+	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/perf/apply`,
+	Args: cobra.MinimumNArgs(0),
 	Example: `
 // Execute a Performance test with the specified performance profile
 mesheryctl perf apply meshery-profile [flags]

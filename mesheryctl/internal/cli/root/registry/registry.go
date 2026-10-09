@@ -25,7 +25,7 @@ import (
 )
 
 var (
-	availableSubcommands = []*cobra.Command{generateCmd, publishCmd, updateCmd}
+	availableSubcommands = []*cobra.Command{generateCmd, publishCmd, updateCmd, purgeCmd}
 
 	spreadsheeetID          string
 	spreadsheeetCred        string
@@ -36,12 +36,12 @@ var (
 	csvDirectory            string
 )
 
-// PublishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
+// RegistryCmd represents the registry command, which manages the state and contents of Meshery's internal registry of capabilities.
 var RegistryCmd = &cobra.Command{
 	Use:   "registry",
 	Short: "Manage the capability registry",
 	Long: `Manage the state and contents of Meshery’s internal registry of capabilities.
-Find more information at: https://docs.meshery.io/reference/mesheryctl/registry`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/registry`,
 	Example: `mesheryctl registry [subcommand]`,
 
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {

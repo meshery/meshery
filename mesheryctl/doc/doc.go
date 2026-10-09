@@ -36,6 +36,7 @@ title: %s
 display_title: false
 command: %s
 subcommand: %s
+categories: [%s]
 ---
 
 `
@@ -45,7 +46,7 @@ func prepender(filename string) string {
 	idx := strings.Index(filename, "mesheryctl")
 	if idx == -1 {
 		base := strings.TrimSuffix(filepath.Base(filename), ".md")
-		return fmt.Sprintf(markdownTemplateCommand, base, base, "nil")
+		return fmt.Sprintf(markdownTemplateCommand, base, base, "nil", "mesheryctl-ref")
 	}
 
 	relPath := strings.TrimSuffix(filename[idx:], ".md")
@@ -72,12 +73,18 @@ func prepender(filename string) string {
 		subcommand = parts[2] // Set the second part as the subcommand
 	}
 
+	category := "mesheryctl-ref"
+	if len(parts) >= 2 {
+		category = fmt.Sprintf("mesheryctl-%s", parts[1])
+	}
+
 	title := strings.Join(parts, "-")
 
 	return fmt.Sprintf(markdownTemplateCommand,
 		title,
 		command,
 		subcommand,
+		category,
 	)
 }
 
@@ -130,6 +137,15 @@ func doc() {
 	fmt.Println("Documentation generated at " + markDownPath)
 }
 
+var codeEscaper = strings.NewReplacer("&", "&amp;", "<", "&lt;", ">", "&gt;")
+
+// writeCodeBlock writes an escaped, copyable code block for a command
+func writeCodeBlock(buf *bytes.Buffer, code string) {
+	fmt.Fprintf(buf,
+		"<pre class='codeblock-pre'>\n<div class='codeblock'>\n<div class='clipboardjs'>\n%s\n\n</div>\n</div>\n</pre> \n\n",
+		codeEscaper.Replace(code))
+}
+
 // printOptions prints the options for a command
 func printOptions(buf *bytes.Buffer, cmd *cobra.Command) error {
 	flags := cmd.NonInheritedFlags()
@@ -178,7 +194,7 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, manuallyAddedContent map
 
 	// check if the command is runnable
 	if cmd.Runnable() {
-		fmt.Fprintf(buf, "<pre class='codeblock-pre'>\n<div class='codeblock'>\n%s\n\n</div>\n</pre> \n\n", cmd.UseLine())
+		writeCodeBlock(buf, cmd.UseLine())
 	}
 
 	// check cmd has annotations link and caption
@@ -196,14 +212,14 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, manuallyAddedContent map
 		buf.WriteString("## Examples\n\n")
 		var examples = strings.Split(cmd.Example, "\n")
 		for i := 0; i < len(examples); i++ {
-			if examples[i] != "" && examples[i] != " " && examples[i] != "	" {
+			if strings.TrimSpace(examples[i]) != "" {
 				if strings.HasPrefix(examples[i], "//") {
 					// Description Line
 					buf.WriteString(strings.ReplaceAll(examples[i], "// ", "") + "\n")
 				} else {
 					// Code Block Line
 
-					fmt.Fprintf(buf, "<pre class='codeblock-pre'>\n<div class='codeblock'>\n%s\n\n</div>\n</pre> \n\n", examples[i])
+					writeCodeBlock(buf, examples[i])
 				}
 			}
 		}

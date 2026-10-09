@@ -1,6 +1,6 @@
 import React from 'react';
 import MesheryPatterns from '@/components/designs/patterns/MesheryPatterns';
-import { MesheryPage } from '@/components/MesheryPage';
+import { MesheryPage } from '@/components/general/MesheryPage';
 
 function Patterns() {
   return (

@@ -11,9 +11,9 @@ import {
   FullScreenExitIcon,
 } from '@sistent/sistent';
 import { Close as CloseIcon, Delete as DeleteIcon, Save as SaveIcon } from '@/assets/icons';
-import { UnControlled as CodeMirror } from '../../CodeMirror';
+import { UnControlled as CodeMirror } from '../../general/CodeMirror';
 import { FILE_OPS } from '../../../utils/Enum';
-import CAN from '@/utils/can';
+
 import { Keys } from '@meshery/schemas/permissions';
 import { YamlDialogTitle, YamlDialogTitleText } from './MesheryPatterns.styled';
 
@@ -56,7 +56,11 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
             title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
             onClick={toggleFullScreen}
           >
-            {fullScreen ? <FullScreenExitIcon /> : <FullScreenIcon />}
+            {fullScreen ? (
+              <FullScreenExitIcon fill="currentColor" />
+            ) : (
+              <FullScreenIcon fill="currentColor" />
+            )}
           </CustomTooltip>
           <CustomTooltip placement="top" title="Exit" onClick={onClose}>
             <CloseIcon />
@@ -89,12 +93,7 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
             <CustomTooltip title="Update Design">
               <IconButton
                 aria-label="Update"
-                disabled={
-                  !CAN(
-                    Keys.CatalogManagementEditDesign.id,
-                    Keys.CatalogManagementEditDesign.function,
-                  )
-                }
+                permissionKey={Keys.CatalogManagementEditDesign}
                 onClick={() =>
                   onSubmit({
                     data: yaml,
@@ -111,12 +110,7 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
             <CustomTooltip title="Delete Pattern">
               <IconButton
                 aria-label="Delete"
-                disabled={
-                  !CAN(
-                    Keys.CatalogManagementDeleteADesign.id,
-                    Keys.CatalogManagementDeleteADesign.function,
-                  )
-                }
+                permissionKey={Keys.CatalogManagementDeleteADesign}
                 onClick={() =>
                   onSubmit({
                     data: yaml,

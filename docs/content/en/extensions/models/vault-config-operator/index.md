@@ -209,7 +209,171 @@ components:
   colorIcon: extensions/models/vault-config-operator/components/identity-token-role/icons/color/identity-token-role-color.svg
   whiteIcon: extensions/models/vault-config-operator/components/identity-token-role/icons/white/identity-token-role-white.svg
   description: 
-components-count: 50
+- name: namespace
+  colorIcon: extensions/models/vault-config-operator/components/namespace/icons/color/namespace-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/namespace/icons/white/namespace-white.svg
+  description: 
+- name: ali-cloud-auth-engine-role
+  colorIcon: extensions/models/vault-config-operator/components/ali-cloud-auth-engine-role/icons/color/ali-cloud-auth-engine-role-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/ali-cloud-auth-engine-role/icons/white/ali-cloud-auth-engine-role-white.svg
+  description: 
+- name: app-role-auth-engine-role
+  colorIcon: extensions/models/vault-config-operator/components/app-role-auth-engine-role/icons/color/app-role-auth-engine-role-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/app-role-auth-engine-role/icons/white/app-role-auth-engine-role-white.svg
+  description: 
+- name: aws-auth-engine-client-config
+  colorIcon: extensions/models/vault-config-operator/components/aws-auth-engine-client-config/icons/color/aws-auth-engine-client-config-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/aws-auth-engine-client-config/icons/white/aws-auth-engine-client-config-white.svg
+  description: 
+- name: aws-auth-engine-identity-config
+  colorIcon: extensions/models/vault-config-operator/components/aws-auth-engine-identity-config/icons/color/aws-auth-engine-identity-config-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/aws-auth-engine-identity-config/icons/white/aws-auth-engine-identity-config-white.svg
+  description: 
+- name: aws-auth-engine-role
+  colorIcon: extensions/models/vault-config-operator/components/aws-auth-engine-role/icons/color/aws-auth-engine-role-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/aws-auth-engine-role/icons/white/aws-auth-engine-role-white.svg
+  description: 
+- name: aws-secret-engine-config
+  colorIcon: extensions/models/vault-config-operator/components/aws-secret-engine-config/icons/color/aws-secret-engine-config-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/aws-secret-engine-config/icons/white/aws-secret-engine-config-white.svg
+  description: 
+- name: aws-secret-engine-role
+  colorIcon: extensions/models/vault-config-operator/components/aws-secret-engine-role/icons/color/aws-secret-engine-role-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/aws-secret-engine-role/icons/white/aws-secret-engine-role-white.svg
+  description: 
+- name: cf-auth-engine-config
+  colorIcon: extensions/models/vault-config-operator/components/cf-auth-engine-config/icons/color/cf-auth-engine-config-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/cf-auth-engine-config/icons/white/cf-auth-engine-config-white.svg
+  description: 
+- name: cf-auth-engine-role
+  colorIcon: extensions/models/vault-config-operator/components/cf-auth-engine-role/icons/color/cf-auth-engine-role-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/cf-auth-engine-role/icons/white/cf-auth-engine-role-white.svg
+  description: 
+- name: consul-secret-engine-config
+  colorIcon: extensions/models/vault-config-operator/components/consul-secret-engine-config/icons/color/consul-secret-engine-config-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/consul-secret-engine-config/icons/white/consul-secret-engine-config-white.svg
+  description: 
+- name: consul-secret-engine-role
+  colorIcon: extensions/models/vault-config-operator/components/consul-secret-engine-role/icons/color/consul-secret-engine-role-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/consul-secret-engine-role/icons/white/consul-secret-engine-role-white.svg
+  description: 
+- name: gcp-secret-engine-config
+  colorIcon: extensions/models/vault-config-operator/components/gcp-secret-engine-config/icons/color/gcp-secret-engine-config-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/gcp-secret-engine-config/icons/white/gcp-secret-engine-config-white.svg
+  description: 
+- name: gcp-secret-engine-roleset
+  colorIcon: extensions/models/vault-config-operator/components/gcp-secret-engine-roleset/icons/color/gcp-secret-engine-roleset-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/gcp-secret-engine-roleset/icons/white/gcp-secret-engine-roleset-white.svg
+  description: 
+- name: gcp-secret-engine-static-account
+  colorIcon: extensions/models/vault-config-operator/components/gcp-secret-engine-static-account/icons/color/gcp-secret-engine-static-account-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/gcp-secret-engine-static-account/icons/white/gcp-secret-engine-static-account-white.svg
+  description: 
+- name: git-hub-auth-engine-config
+  colorIcon: extensions/models/vault-config-operator/components/git-hub-auth-engine-config/icons/color/git-hub-auth-engine-config-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/git-hub-auth-engine-config/icons/white/git-hub-auth-engine-config-white.svg
+  description: 
+- name: git-hub-auth-engine-team-map
+  colorIcon: extensions/models/vault-config-operator/components/git-hub-auth-engine-team-map/icons/color/git-hub-auth-engine-team-map-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/git-hub-auth-engine-team-map/icons/white/git-hub-auth-engine-team-map-white.svg
+  description: 
+- name: git-hub-auth-engine-user-map
+  colorIcon: extensions/models/vault-config-operator/components/git-hub-auth-engine-user-map/icons/color/git-hub-auth-engine-user-map-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/git-hub-auth-engine-user-map/icons/white/git-hub-auth-engine-user-map-white.svg
+  description: 
+- name: kerberos-auth-engine-config
+  colorIcon: extensions/models/vault-config-operator/components/kerberos-auth-engine-config/icons/color/kerberos-auth-engine-config-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/kerberos-auth-engine-config/icons/white/kerberos-auth-engine-config-white.svg
+  description: 
+- name: kerberos-auth-engine-group
+  colorIcon: extensions/models/vault-config-operator/components/kerberos-auth-engine-group/icons/color/kerberos-auth-engine-group-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/kerberos-auth-engine-group/icons/white/kerberos-auth-engine-group-white.svg
+  description: 
+- name: kerberos-auth-engine-ldap-config
+  colorIcon: extensions/models/vault-config-operator/components/kerberos-auth-engine-ldap-config/icons/color/kerberos-auth-engine-ldap-config-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/kerberos-auth-engine-ldap-config/icons/white/kerberos-auth-engine-ldap-config-white.svg
+  description: 
+- name: ldap-secret-engine-config
+  colorIcon: extensions/models/vault-config-operator/components/ldap-secret-engine-config/icons/color/ldap-secret-engine-config-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/ldap-secret-engine-config/icons/white/ldap-secret-engine-config-white.svg
+  description: 
+- name: ldap-secret-engine-dynamic-role
+  colorIcon: extensions/models/vault-config-operator/components/ldap-secret-engine-dynamic-role/icons/color/ldap-secret-engine-dynamic-role-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/ldap-secret-engine-dynamic-role/icons/white/ldap-secret-engine-dynamic-role-white.svg
+  description: 
+- name: ldap-secret-engine-static-role
+  colorIcon: extensions/models/vault-config-operator/components/ldap-secret-engine-static-role/icons/color/ldap-secret-engine-static-role-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/ldap-secret-engine-static-role/icons/white/ldap-secret-engine-static-role-white.svg
+  description: 
+- name: mongo-db-atlas-secret-engine-config
+  colorIcon: extensions/models/vault-config-operator/components/mongo-db-atlas-secret-engine-config/icons/color/mongo-db-atlas-secret-engine-config-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/mongo-db-atlas-secret-engine-config/icons/white/mongo-db-atlas-secret-engine-config-white.svg
+  description: 
+- name: mongo-db-atlas-secret-engine-role
+  colorIcon: extensions/models/vault-config-operator/components/mongo-db-atlas-secret-engine-role/icons/color/mongo-db-atlas-secret-engine-role-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/mongo-db-atlas-secret-engine-role/icons/white/mongo-db-atlas-secret-engine-role-white.svg
+  description: 
+- name: nomad-secret-engine-config
+  colorIcon: extensions/models/vault-config-operator/components/nomad-secret-engine-config/icons/color/nomad-secret-engine-config-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/nomad-secret-engine-config/icons/white/nomad-secret-engine-config-white.svg
+  description: 
+- name: nomad-secret-engine-role
+  colorIcon: extensions/models/vault-config-operator/components/nomad-secret-engine-role/icons/color/nomad-secret-engine-role-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/nomad-secret-engine-role/icons/white/nomad-secret-engine-role-white.svg
+  description: 
+- name: oci-auth-engine-config
+  colorIcon: extensions/models/vault-config-operator/components/oci-auth-engine-config/icons/color/oci-auth-engine-config-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/oci-auth-engine-config/icons/white/oci-auth-engine-config-white.svg
+  description: 
+- name: oci-auth-engine-role
+  colorIcon: extensions/models/vault-config-operator/components/oci-auth-engine-role/icons/color/oci-auth-engine-role-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/oci-auth-engine-role/icons/white/oci-auth-engine-role-white.svg
+  description: 
+- name: okta-auth-engine-config
+  colorIcon: extensions/models/vault-config-operator/components/okta-auth-engine-config/icons/color/okta-auth-engine-config-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/okta-auth-engine-config/icons/white/okta-auth-engine-config-white.svg
+  description: 
+- name: okta-auth-engine-group
+  colorIcon: extensions/models/vault-config-operator/components/okta-auth-engine-group/icons/color/okta-auth-engine-group-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/okta-auth-engine-group/icons/white/okta-auth-engine-group-white.svg
+  description: 
+- name: radius-auth-engine-config
+  colorIcon: extensions/models/vault-config-operator/components/radius-auth-engine-config/icons/color/radius-auth-engine-config-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/radius-auth-engine-config/icons/white/radius-auth-engine-config-white.svg
+  description: 
+- name: radius-auth-engine-user
+  colorIcon: extensions/models/vault-config-operator/components/radius-auth-engine-user/icons/color/radius-auth-engine-user-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/radius-auth-engine-user/icons/white/radius-auth-engine-user-white.svg
+  description: 
+- name: ssh-secret-engine-config
+  colorIcon: extensions/models/vault-config-operator/components/ssh-secret-engine-config/icons/color/ssh-secret-engine-config-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/ssh-secret-engine-config/icons/white/ssh-secret-engine-config-white.svg
+  description: 
+- name: ssh-secret-engine-role
+  colorIcon: extensions/models/vault-config-operator/components/ssh-secret-engine-role/icons/color/ssh-secret-engine-role-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/ssh-secret-engine-role/icons/white/ssh-secret-engine-role-white.svg
+  description: 
+- name: terraform-cloud-secret-engine-config
+  colorIcon: extensions/models/vault-config-operator/components/terraform-cloud-secret-engine-config/icons/color/terraform-cloud-secret-engine-config-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/terraform-cloud-secret-engine-config/icons/white/terraform-cloud-secret-engine-config-white.svg
+  description: 
+- name: terraform-cloud-secret-engine-role
+  colorIcon: extensions/models/vault-config-operator/components/terraform-cloud-secret-engine-role/icons/color/terraform-cloud-secret-engine-role-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/terraform-cloud-secret-engine-role/icons/white/terraform-cloud-secret-engine-role-white.svg
+  description: 
+- name: totp-secret-engine-key
+  colorIcon: extensions/models/vault-config-operator/components/totp-secret-engine-key/icons/color/totp-secret-engine-key-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/totp-secret-engine-key/icons/white/totp-secret-engine-key-white.svg
+  description: 
+- name: transit-secret-engine-key
+  colorIcon: extensions/models/vault-config-operator/components/transit-secret-engine-key/icons/color/transit-secret-engine-key-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/transit-secret-engine-key/icons/white/transit-secret-engine-key-white.svg
+  description: 
+- name: userpass-auth-engine-user
+  colorIcon: extensions/models/vault-config-operator/components/userpass-auth-engine-user/icons/color/userpass-auth-engine-user-color.svg
+  whiteIcon: extensions/models/vault-config-operator/components/userpass-auth-engine-user/icons/white/userpass-auth-engine-user-white.svg
+  description: 
+components-count: 91
 relationships: 
 relationship-count: 0
 featureList: [

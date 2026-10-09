@@ -21,9 +21,13 @@ vi.mock('@/utils/utils', () => ({
   },
 }));
 
-// Mock the rtk-query helper `initiateQuery` so we don't transitively pull
-// `../store` into the test environment.
+// Mock the rtk-query helpers so we don't transitively pull `../store` into the
+// test environment. `appendInvalidatesTags` arrives via `./workspace`, which
+// user.ts imports for useGetWorkspacesQuery; it must behave like the real one
+// (return an enhanceEndpoints callback) rather than be a bare stub, because
+// enhanceEndpoints invokes it against the live endpoint definition.
 vi.mock('../utils', () => ({
+  appendInvalidatesTags: () => () => {},
   initiateQuery: vi.fn(
     async (
       query: { initiate: (variables: unknown, options?: unknown) => unknown },
@@ -197,12 +201,12 @@ describe('user endpoints', () => {
     fetchMock.mockResolvedValue(okResponse({}));
     const { api, store } = await setupStore();
     await store.dispatch(
-      api.endpoints.updateUserPref.initiate({ selectedOrganizationID: 'org-9' }),
+      api.endpoints.updateUserPref.initiate({ selectedOrganizationId: 'org-9' }),
     );
     const req = fetchMock.mock.calls[0][0] as Request;
     expect(req.method).toBe('POST');
     expect(req.url).toContain('/api/user/prefs');
-    expect(JSON.parse(await req.text())).toEqual({ selectedOrganizationID: 'org-9' });
+    expect(JSON.parse(await req.text())).toEqual({ selectedOrganizationId: 'org-9' });
   });
 
   it('getUserPrefWithContext uses same-origin credentials with contexts in URL', async () => {

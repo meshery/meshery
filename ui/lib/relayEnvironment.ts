@@ -1,7 +1,10 @@
-import { createClient } from 'graphql-ws';
-import { Environment, Network, Observable, RecordSource, Store } from 'relay-runtime';
+import { Environment, Network, RecordSource, Store } from 'relay-runtime';
 import { promisifiedDataFetch } from './data-fetch';
 
+// Meshery Server no longer exposes a `type Subscription`, so this environment is
+// request/response only — there is no graphql-ws client and no subscribe handler.
+// Real-time surfaces use Server-Sent Events (see lib/eventsSubscription.ts and
+// lib/controllersStatusSubscription.ts); everything else is REST.
 function fetchQuery(operation, variables) {
   return promisifiedDataFetch('/api/system/graphql/query', {
     method: 'POST',
@@ -13,54 +16,6 @@ function fetchQuery(operation, variables) {
       query: operation.text,
       variables,
     }),
-  });
-}
-
-export let subscriptionClient;
-
-if (typeof window !== 'undefined') {
-  const isWss = window.location.protocol === 'https:';
-  const wsProtocol = isWss ? 'wss://' : 'ws://';
-  subscriptionClient = createClient({
-    url: wsProtocol + window.location.host + '/api/system/graphql/query',
-    retryAttempts: Infinity,
-    shouldRetry: () => true,
-    retryWait: (retries) => {
-      const baseDelay = 1000;
-      const maxDelay = 30000;
-      const delay = Math.min(baseDelay * 2 ** retries, maxDelay);
-      return new Promise((resolve) => setTimeout(resolve, delay));
-    },
-    keepAlive: 30_000,
-    on: {
-      closed: (event) => {
-        if (event && typeof event !== 'number') {
-          console.warn('[GraphQL WS] Connection closed:', event);
-        }
-      },
-      error: (error) => {
-        console.error('[GraphQL WS] Connection error:', error);
-      },
-      connected: () => {
-        console.info('[GraphQL WS] Connected');
-      },
-    },
-  });
-}
-
-function fetchOrSubscribe(operation, variables) {
-  return Observable.create((sink) => {
-    if (!operation.text) {
-      return sink.error(new Error('Operation text cannot be empty'));
-    }
-    return subscriptionClient.subscribe(
-      {
-        operationName: operation.name,
-        query: operation.text,
-        variables,
-      },
-      sink,
-    );
   });
 }
 
@@ -78,7 +33,7 @@ export const createRelayEnvironment = (records = {}) => {
   if (typeof window === 'undefined') {
     return new Environment({
       store: new Store(new RecordSource(records)),
-      network: Network.create(fetchQuery, fetchOrSubscribe),
+      network: Network.create(fetchQuery),
     });
   }
 
@@ -86,7 +41,7 @@ export const createRelayEnvironment = (records = {}) => {
   if (!clientEnvironment) {
     clientEnvironment = new Environment({
       store: new Store(new RecordSource(records)),
-      network: Network.create(fetchQuery, fetchOrSubscribe),
+      network: Network.create(fetchQuery),
     });
   }
 

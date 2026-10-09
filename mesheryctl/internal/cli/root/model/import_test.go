@@ -50,7 +50,7 @@ func TestImportModelReturnsErrorForURLImportFailure(t *testing.T) {
 	utils.TokenFlag = utils.GetToken(t)
 	mesheryctlflags.InitValidators(ModelCmd)
 
-	httpmock.RegisterResponder("POST", testContext.BaseURL+"/api/meshmodels/register",
+	httpmock.RegisterResponder("POST", testContext.BaseURL+"/api/registry/register",
 		httpmock.NewStringResponder(500, errMessage))
 
 	buf := utils.SetupMeshkitLoggerTesting(t, false)

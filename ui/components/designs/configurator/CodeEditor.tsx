@@ -1,5 +1,5 @@
 import { Card, CardContent, styled } from '@sistent/sistent';
-import { UnControlled as CodeMirror } from '../../CodeMirror';
+import { UnControlled as CodeMirror } from '../../general/CodeMirror';
 
 export const CodeMirrorWrapper = styled('div')(() => ({
   '& .cm-editor': {

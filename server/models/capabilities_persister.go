@@ -13,7 +13,7 @@ type UserCapabilities struct {
 	Capabilities ProviderProperties `json:"capabilities" gorm:"type:bytes;serializer:json" db:"capabilities"`
 }
 
-// ReadFromPersister - reads the capabilities for the given userID
+// ReadCapabilitiesForUser - reads the capabilities for the given userID
 func (u *UserCapabilitiesPersister) ReadCapabilitiesForUser(userID string) (*ProviderProperties, error) {
 	if u.DB == nil {
 		return nil, ErrDBConnection
@@ -32,7 +32,7 @@ func (u *UserCapabilitiesPersister) ReadCapabilitiesForUser(userID string) (*Pro
 	return &capabilities.Capabilities, nil
 }
 
-// WriteToPersister persists the capabilities for the user
+// WriteCapabilitiesForUser persists the capabilities for the user
 func (u *UserCapabilitiesPersister) WriteCapabilitiesForUser(userID string, data *ProviderProperties) error {
 	if u.DB == nil {
 		return ErrDBConnection
@@ -55,7 +55,7 @@ func (u *UserCapabilitiesPersister) WriteCapabilitiesForUser(userID string, data
 	return nil
 }
 
-// DeleteFromPersister removes the capabilities for the user
+// DeleteCapabilitiesForUser removes the capabilities for the user
 func (u *UserCapabilitiesPersister) DeleteCapabilitiesForUser(userID string) error {
 	if u.DB == nil {
 		return ErrDBConnection

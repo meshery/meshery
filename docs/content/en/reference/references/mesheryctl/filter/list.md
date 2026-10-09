@@ -3,6 +3,7 @@ title: mesheryctl-filter-list
 display_title: false
 command: filter
 subcommand: list
+categories: [mesheryctl-filter]
 ---
 
 # mesheryctl filter list
@@ -12,10 +13,13 @@ List filters
 ## Synopsis
 
 Display list of all available filter files.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl filter list [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,24 +28,30 @@ mesheryctl filter list [flags]
 List all WASM filter files present
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl filter list	(maximum 25 filters)
 
+</div>
 </div>
 </pre> 
 
 Search for filter
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl filter list Test (maximum 25 filters)
 
+</div>
 </div>
 </pre> 
 
 Search for filter with space
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
+</div>
 </div>
 </pre> 
 
@@ -49,9 +59,11 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help       help for list
-  -p, --page int   (optional) List next set of filters with --page (default = 1) (default 1)
-  -v, --verbose    Display full length user and filter file identifiers
+  -c, --count          (optional) Display count only
+  -h, --help           help for list
+  -p, --page int       (optional) List next set of filters with --page (default = 1) (default 1)
+  -s, --pagesize int   (optional) List next set of filters with --pagesize (default = 25) (default 25)
+  -v, --verbose        Display full length user and filter file identifiers
 
 </div>
 </pre>

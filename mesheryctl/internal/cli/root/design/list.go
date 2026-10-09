@@ -41,7 +41,7 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List designs",
 	Long: `Display list of all available designs.
-Find more information at: https://docs.meshery.io/reference/mesheryctl/design/list
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/design/list
 `,
 	Args: cobra.MinimumNArgs(0),
 	Example: `
@@ -111,15 +111,13 @@ func processDesignData(data *models.PatternsAPIResponse) ([][]string, int64) {
 		updatedAt := formatTimeToString(v.UpdatedAt, verbose)
 
 		if !utils.IsLocalProvider(provider) {
-			owner := func(owner *string) string {
-				if owner != nil {
-					if verbose {
-						return *owner
-					}
-					return utils.TruncateID(*owner)
+			owner := "null"
+			if v.UserID != nil {
+				owner = v.UserID.String()
+				if !verbose {
+					owner = utils.TruncateID(owner)
 				}
-				return "null"
-			}(v.Owner)
+			}
 			displayData = append(displayData, []string{designId, owner, designName, createdAt, updatedAt})
 		} else {
 			displayData = append(displayData, []string{designId, designName, createdAt, updatedAt})

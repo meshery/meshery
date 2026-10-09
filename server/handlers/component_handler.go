@@ -32,9 +32,9 @@ import (
 	_models "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
-	"github.com/meshery/schemas/models/v1beta3/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	_model "github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta3/component"
 
 	"github.com/meshery/meshkit/models/meshmodel/entity"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
@@ -44,6 +44,8 @@ import (
 )
 
 /**Meshmodel endpoints **/
+
+// DefaultPageSizeForMeshModelComponents is the default page size used when listing Meshmodel components.
 const DefaultPageSizeForMeshModelComponents = 25
 
 func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http.Request) {
@@ -84,10 +86,10 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	}
 
 	res := models.MeshmodelsDuplicateAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		TotalCount:    count,
-		Models:   models.FindDuplicateModels(modelDefs),
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: count,
+		Models:     models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -140,10 +142,10 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	}
 
 	res := models.MeshmodelsDuplicateAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		TotalCount:    count,
-		Models:   models.FindDuplicateModels(modelDefs),
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: count,
+		Models:     models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -200,10 +202,10 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	res := models.MeshmodelsDuplicateAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		TotalCount:    count,
-		Models:   models.FindDuplicateModels(modelDefs),
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: count,
+		Models:     models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -257,10 +259,10 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 	}
 
 	res := models.MeshmodelsDuplicateAPIResponse{
-		Page:     page,
-		PageSize: int(pgSize),
-		TotalCount:    count,
-		Models:   models.FindDuplicateModels(modelDefs),
+		Page:       page,
+		PageSize:   int(pgSize),
+		TotalCount: count,
+		Models:     models.FindDuplicateModels(modelDefs),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -300,7 +302,7 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 	res := models.MeshmodelCategoriesAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Categories: categories,
 	}
 
@@ -342,7 +344,7 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 	res := models.MeshmodelCategoriesAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Categories: categories,
 	}
 
@@ -396,7 +398,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -448,7 +450,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -501,7 +503,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -552,7 +554,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -603,7 +605,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -654,7 +656,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -703,7 +705,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	response := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -752,7 +754,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	res := models.MeshmodelComponentsDuplicateAPIResponse{
 		Page:       page,
 		PageSize:   int(pgSize),
-		TotalCount:      count,
+		TotalCount: count,
 		Components: models.FindDuplicateComponents(comps),
 	}
 
@@ -765,8 +767,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	}
 }
 
-// request body should be json
-// request body should be of ComponentCapability format
+// RegisterMeshmodelComponents expects the request body to be JSON, decoded into a registry.MeshModelRegistrantData.
 func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
 	var cc registry.MeshModelRegistrantData
@@ -803,7 +804,6 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 		writeMeshkitError(rw, wrappedErr, http.StatusInternalServerError)
 		return
 	}
-	go h.config.MeshModelSummaryChannel.Publish()
 }
 
 func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request) {
@@ -838,7 +838,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	res := models.MeshmodelRegistrantsAPIResponse{
 		Page:        page,
 		PageSize:    int(pgSize),
-		TotalCount:       count,
+		TotalCount:  count,
 		Registrants: hosts,
 	}
 
@@ -851,8 +851,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	}
 }
 
-// request body should be json
-// request body should be of struct containing ID and Status fields
+// UpdateEntityStatus expects the request body to be a JSON object with id, status, displayName (and legacy displayname) fields.
 func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	dec := json.NewDecoder(r.Body)
 	userID := user.ID
@@ -864,15 +863,22 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 	}
 	entityType := mux.Vars(r)["entityType"]
 	var updateData struct {
-		ID          string `json:"id"`
-		Status      string `json:"status"`
-		DisplayName string `json:"displayname"`
+		ID     string `json:"id"`
+		Status string `json:"status"`
+		// displayName is the canonical wire key (EntityStatusPayload in the
+		// schemas registry construct); displayname is the legacy spelling
+		// still sent by pre-/api/registry clients.
+		DisplayName       string `json:"displayName"`
+		DisplayNameLegacy string `json:"displayname"`
 	}
 	err = dec.Decode(&updateData)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
+	}
+	if updateData.DisplayName == "" {
+		updateData.DisplayName = updateData.DisplayNameLegacy
 	}
 
 	eventBuilder := events.NewEvent().ActedUpon(userID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory(entityType).WithAction("update")
@@ -1067,19 +1073,26 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 				h.log.Error(err)
 			}
 		}()
-
-		err = meshkitRegistryUtils.InvokeGenerationFromSheet(&wg, tempDir, 0, 0, "", "", modelCsvFile.Name(), componentCsvFile.Name(), "", relationshipCsvFile.Name(), 0, nil)
+		selectedModel := strings.TrimSpace(importRequest.ImportBody.Model.Model)
+		err = meshkitRegistryUtils.InvokeGenerationFromSheet(&wg, tempDir, 0, 0, "", selectedModel, modelCsvFile.Name(), componentCsvFile.Name(), "", relationshipCsvFile.Name(), 0, nil)
 		if err != nil {
 			h.handleError(rw, err, "Error invoking generation from sheet")
 			h.sendErrorEvent(userID, provider, "Error invoking generation from sheet", err, token)
 			return
 		}
 
-		h.sendEventForImport(userID, provider, 0, "", true, token)
 		modelDirPaths, err := models.GetModelDirectoryPaths(tempDir)
 		if err != nil {
 			h.log.Error(models.ErrSeedingComponents(err))
 		}
+		if selectedModel != "" && len(modelDirPaths) == 0 {
+			err := ErrModelNotFound(selectedModel)
+			writeMeshkitError(rw, err, http.StatusNotFound)
+			h.sendErrorEvent(userID, provider, err.Error(), err, token)
+			return
+		}
+		h.sendEventForImport(userID, provider, 0, "", true, token)
+
 		if importRequest.Register {
 			for _, dirPath := range modelDirPaths {
 				dir := registration.NewDir(dirPath)
@@ -1273,8 +1286,17 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	modelId := r.URL.Query().Get("id")
 	name := r.URL.Query().Get("name")
 	version := r.URL.Query().Get("version")
-	outputFormat := r.URL.Query().Get("output_format")
-	fileTypes := r.URL.Query().Get("file_type")
+	// outputFormat/fileType are the canonical camelCase wire params (schemas
+	// registry construct); the snake_case spellings are the legacy forms
+	// still sent by pre-/api/registry clients.
+	outputFormat := r.URL.Query().Get("outputFormat")
+	if outputFormat == "" {
+		outputFormat = r.URL.Query().Get("output_format")
+	}
+	fileTypes := r.URL.Query().Get("fileType")
+	if fileTypes == "" {
+		fileTypes = r.URL.Query().Get("file_type")
+	}
 	if fileTypes == "" {
 		fileTypes = "oci"
 	}

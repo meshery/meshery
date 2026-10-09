@@ -96,9 +96,37 @@ and what you should — and should not — touch by hand.
 **Installation.** When Meshery Server connects to a Kubernetes cluster (in
 operator deployment mode), it installs the `meshery-operator` Helm chart from
 [meshery.io/charts](https://meshery.io/charts) into the `meshery` namespace.
-The chart version it requests **matches the Meshery Server release version** —
+The chart version it asks for **matches the Meshery Server release version** -
 each Server release snapshots the operator chart (and the operator version
 pinned inside it) as of that release.
+
+**What actually gets deployed is always a published chart.** The Server reads
+the repository's index before installing and never hands Helm a version the
+repository does not carry, so two everyday cases are corrected rather than
+failed:
+
+- **Not published yet.** Chart publishing trails Server releases, so a current
+  Server routinely names a chart that does not exist yet. The newest published
+  release is deployed instead.
+- **Too old to run.** A Server old enough to name a chart below `v1.0.51`, the
+  oldest chart verified to deploy successfully, gets the oldest published chart
+  at or above that boundary. Every chart checked below it leaves the Operator
+  Pod unable to become ready; the symptoms and the reasoning are in
+  [Meshery Operator will not start]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md#meshery-operator-will-not-start-imagepullbackoff-and-a-missing-webhook-certificate" >}}).
+
+Neither substitution is silent: it is reported in the events feed, naming the
+version that was deployed and why. Release candidates are never chosen for you.
+If the chart repository cannot be reached at all, installation is withheld with
+a visible error rather than attempted at an unverified version, while an
+already-installed Operator keeps reporting its status and version as usual.
+
+To choose the chart version yourself instead of tracking the Server release,
+set `operator.version` on the connection. A version you set is deployed exactly
+as written, or refused with a visible error if it names a version the repository
+does not publish or a moving tag such as `stable-latest` - it is never
+substituted, and the minimum above does not apply to it, so a pin below
+`v1.0.51` is installed as asked. See
+[Choosing the chart version yourself]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md#choosing-the-chart-version-yourself" >}}).
 
 **Upgrades.** Upgrading Meshery Server is what upgrades the Operator: on
 (re)connection, the Server re-applies the operator chart at its own (new)
@@ -113,9 +141,11 @@ the Operator is missing or unhealthy. Two practical consequences:
 
 - **Manual operator changes are temporary.** A hand-run
   `helm upgrade meshery-operator --version <x>` or an edited image tag on a
-  Server-managed cluster will be reverted to the Server's pinned chart version
-  by the next reconciliation. Standalone/manual operator installs are only
-  durable on clusters that Meshery Server does not manage.
+  Server-managed cluster will be reverted to the chart version the Server
+  resolves (above) by the next reconciliation. `operator.version` on the
+  connection is the durable way to choose a version on a managed cluster;
+  standalone/manual operator installs are only durable on clusters that Meshery
+  Server does not manage.
 - **Operator versions are pinned, not floating.** The operator image is a
   fixed version per chart release (no `stable-latest` drift): an Operator pod
   restart never silently changes the operator version. Upgrades happen only

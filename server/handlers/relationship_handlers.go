@@ -132,5 +132,4 @@ func (h *Handler) RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http
 		writeMeshkitError(rw, wrappedErr, http.StatusInternalServerError)
 		return
 	}
-	go h.config.MeshModelSummaryChannel.Publish()
 }

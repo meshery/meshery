@@ -13,4 +13,3 @@ export {
   useIsValidatingDryRun,
 } from './validator/designValidator';
 export { schemaValidatorMachine } from './validator/schemaValidator';
-export { wsConnectionMachine, WS_CONNECTION_EVENTS } from './wsConnection';

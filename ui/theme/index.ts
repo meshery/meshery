@@ -10,7 +10,7 @@ import type { Theme } from '@sistent/sistent';
  *
  * Phase 1 treats `@/theme` as the approved, project-local import path for
  * theme primitives. Prefer it over importing those primitives directly from
- * Sistent or from legacy `@/themes*` modules.
+ * Sistent.
  *
  *   import { useTheme, styled, alpha } from '@/theme';
  *
@@ -19,11 +19,11 @@ import type { Theme } from '@sistent/sistent';
  *   - Prefer spacing from `theme.spacing()` instead of hard-coded pixel values where possible.
  *   - Prefer breakpoints from `theme.breakpoints.*`.
  *
- * Some legacy theme files in the UI still contain literal color and spacing
- * values; treat those as migration candidates rather than precedent for new code.
- *
- * `@/themes/hooks` remains for theme-preference plumbing until a later phase,
- * but new theme-entrypoint imports should start from `@/theme`.
+ * Sibling modules hold theme plumbing that is not part of the entry point:
+ * `@/theme/hooks` (theme-preference state), `@/theme/rjsf` (RJSF form themes),
+ * and `@/theme/snackbar` (the theme-responsive notification renderer). Treat
+ * remaining literal color and spacing values in the UI as migration
+ * candidates rather than precedent for new code.
  *
  * If Sistent is missing a token the app needs, open an issue or PR upstream
  * rather than redefining it here. This file must remain a thin wrapper:

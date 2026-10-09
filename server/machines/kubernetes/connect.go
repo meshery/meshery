@@ -17,7 +17,9 @@ import (
 
 type ConnectAction struct{}
 
-// Execute On Entry and Exit should not return next eventtype i suppose, look again.
+// ExecuteOnEntry is a no-op; ConnectAction performs all of its work in Execute.
+//
+// TODO: Execute On Entry and Exit should not return next eventtype i suppose, look again.
 func (ca *ConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
 	return machines.NoOp, nil, nil
 }
@@ -79,30 +81,30 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 		mergedControllersConfig = nil
 	}
 
-	meshsyncDeploymentMode := connections.MeshsyncDeploymentModeFromMetadata(connection.Metadata)
-	if meshsyncDeploymentMode == connections.MeshsyncDeploymentModeUndefined {
-		// Fall back to the server-wide default configured in Settings.
-		meshsyncDeploymentMode = connections.DeploymentModeFromControllersConfig(mergedControllersConfig)
-	}
-	if meshsyncDeploymentMode == connections.MeshsyncDeploymentModeUndefined {
-		// TODO:
-		// maybe not call to viper here and propagate default value from above,
-		// f.e. when machine is created
-		meshsyncDeploymentMode = connections.MeshsyncDeploymentModeFromString(
-			viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE"),
-		)
-		if meshsyncDeploymentMode == connections.MeshsyncDeploymentModeUndefined {
-			meshsyncDeploymentMode = connections.MeshsyncDeploymentModeDefault
-		}
-	}
+	// The layered document (per-connection override over the server-wide
+	// default) outranks the materialized meshsync_deployment_mode cache, so a
+	// connection that inherits its mode picks up a changed server-wide default
+	// on reconnect instead of replaying the mode it last ran in.
+	//
+	// TODO:
+	// maybe not call to viper here and propagate default value from above,
+	// f.e. when machine is created
+	meshsyncDeploymentMode := connections.ResolveDeploymentMode(
+		mergedControllersConfig,
+		connection.Metadata,
+		connections.MeshsyncDeploymentModeFromString(viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE")),
+	).Mode
 
 	go func() {
+		// SetControllersConfig first: AddCtxControllerHandlers constructs the
+		// operator controller handler with the Helm chart version this document
+		// resolves to (operator.version), and captures it there.
 		ctrlHelper := machinectx.MesheryCtrlsHelper.
-			AddCtxControllerHandlers(machinectx.K8sContext).
-			SetMeshsyncDeploymentMode(meshsyncDeploymentMode).
 			SetControllersConfig(mergedControllersConfig).
+			SetMeshsyncDeploymentMode(meshsyncDeploymentMode).
+			AddCtxControllerHandlers(machinectx.K8sContext).
 			UpdateOperatorsStatusMap(machinectx.OperatorTracker).
-			DeployUndeployedOperators(machinectx.OperatorTracker)
+			DeployUndeployedOperators(machinectx.OperatorTracker, machinectx.K8sContext.ID)
 		ctrlHelper.AddMeshsyncDataHandlers(ctx, machinectx.K8sContext, userUUID, *sysID, provider)
 
 		// Operator mode: best-effort apply of the explicitly-set

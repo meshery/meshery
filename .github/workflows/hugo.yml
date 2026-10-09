@@ -37,7 +37,9 @@ jobs:
           # entire repository, which materially cuts checkout IO. There are no
           # submodules, so submodule fetching is intentionally omitted.
           filter: blob:none
-          sparse-checkout: docs
+          sparse-checkout: |
+            install
+            docs
           sparse-checkout-cone-mode: true
       - name: Checkout gh-pages for preview retention
         if: github.event.action != 'closed'

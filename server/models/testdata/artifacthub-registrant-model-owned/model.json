@@ -1,0 +1,32 @@
+{
+  "id": "b3f5c1e2-0000-4000-8000-000000000011",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "name": "meshery-test-artifacthub-registrant-owned",
+  "displayName": "Meshery Test Artifact Hub Registrant (owned variant)",
+  "description": "Test-only fixture. A second model published under the Artifact Hub registrant whose `registrant` blob carries `user_id`/`credential_id`/`deleted_at`. Because a registrant Connection's id is a content hash of the whole blob, this hashes to a different row than artifacthub-registrant-model - reproducing the non-uniform shipped blobs (meshery/meshery#20950) so the canonical-pick test sees two artifacthub registrant rows.",
+  "status": "enabled",
+  "registrant": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Artifact Hub",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "type": "registry",
+    "sub_type": "",
+    "kind": "artifacthub",
+    "status": "discovered",
+    "user_id": "00000000-0000-0000-0000-000000000000",
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "deleted_at": "0001-01-01T00:00:00Z"
+  },
+  "category": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Uncategorized"
+  },
+  "model": {
+    "version": "1.0.0"
+  },
+  "metadata": {
+    "isAnnotation": false
+  }
+}

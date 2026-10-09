@@ -44,7 +44,7 @@ vi.mock('@sistent/sistent', () => ({
   PlayArrowIcon: () => <svg data-testid="play-icon" />,
 }));
 
-vi.mock('./CodeMirror', () => ({
+vi.mock('./general/CodeMirror', () => ({
   Controlled: ({ value, onBeforeChange, options }: any) => (
     <textarea
       data-testid="codemirror"
@@ -55,7 +55,7 @@ vi.mock('./CodeMirror', () => ({
   ),
 }));
 
-vi.mock('./ReactSelectWrapper', () => ({
+vi.mock('./general/ReactSelectWrapper', () => ({
   default: ({ label, value, error, options, onChange }: any) => (
     <div data-testid={`select-${label}`} data-error={String(!!error)}>
       <span data-testid={`select-${label}-value`}>{value?.label}</span>

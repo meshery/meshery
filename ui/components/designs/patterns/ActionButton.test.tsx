@@ -4,8 +4,16 @@ import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@sistent/sistent', () => ({
   ArrowDropDownIcon: () => <svg data-testid="dropdown-icon" />,
-  Button: ({ children, onClick, ...rest }: any) => (
-    <button type="button" onClick={onClick} {...rest}>
+  Button: ({ children, onClick, permissionKey, permissionAction, ...rest }: any) => (
+    <button
+      type="button"
+      onClick={onClick}
+      data-permission-key={
+        typeof permissionKey === 'object' ? JSON.stringify(permissionKey) : permissionKey
+      }
+      data-permission-action={permissionAction}
+      {...rest}
+    >
       {children}
     </button>
   ),
@@ -89,5 +97,21 @@ describe('ActionButton', () => {
 
     fireEvent.click(screen.getByTestId('action-btn-toggle'));
     expect(screen.getByRole('button', { name: 'Disabled' })).toBeDisabled();
+  });
+
+  it('forwards permissionKey and permissionAction to the primary Action button', () => {
+    const keyObj = { id: 'test_key', function: 'read' };
+    render(
+      <ActionButton
+        defaultActionClick={vi.fn()}
+        options={[]}
+        permissionKey={keyObj}
+        permissionAction="hide"
+      />,
+    );
+
+    const mainBtn = screen.getByRole('button', { name: 'Action' });
+    expect(mainBtn).toHaveAttribute('data-permission-key', JSON.stringify(keyObj));
+    expect(mainBtn).toHaveAttribute('data-permission-action', 'hide');
   });
 });

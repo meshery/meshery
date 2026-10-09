@@ -48,7 +48,7 @@ func (h *Handler) prometheusTelemetryClientForConnection(token string, connectio
 			return nil, connection, sc, cerr
 		}
 		if cred != nil {
-			secret, _ = cred.Secret["secret"].(string)
+			secret = models.CredentialAuthSecret(cred.Secret)
 		}
 	}
 	return prometheus.New(baseURL, secret, h.log), connection, http.StatusOK, nil

@@ -4,9 +4,8 @@ import { useGetLoggedInUserQuery, useLazyGetTokenQuery } from '@/rtk-query/user'
 import ExtensionPointSchemaValidator from '../../../utils/ExtensionPointSchemaValidator';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
-import CAN from '@/utils/can';
 import { Keys } from '@meshery/schemas/permissions';
-import { MenuIcon, NavigationNavbar, Popover } from '@sistent/sistent';
+import { MenuIcon, NavigationNavbar, Popover, useHasPermission } from '@sistent/sistent';
 import { IconButtonMenu } from './Header.styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateExtensionType, updateUser } from '@/store/slices/mesheryUi';
@@ -27,6 +26,7 @@ function exportToJsonFile(jsonData, filename) {
  * Insert custom logic here to handle Single User mode, Anonymous User mode, Multi User mode behavior.
  */
 const HeaderMenu = () => {
+  const hasDownloadTokenPermission = useHasPermission(Keys.SecurityManagementDownloadToken);
   const dispatch = useDispatch();
   const { providerCapabilities } = useSelector((state) => state.ui);
   const [userLoaded, setUserLoaded] = useState(false);
@@ -134,10 +134,7 @@ const HeaderMenu = () => {
         id: 'get-token',
         title: 'Get Token',
         onClick: handleGetToken,
-        permission: CAN(
-          Keys.SecurityManagementDownloadToken.id,
-          Keys.SecurityManagementDownloadToken.function,
-        ),
+        permission: hasDownloadTokenPermission,
       });
     }
 

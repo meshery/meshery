@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { donut } from 'billboard.js';
-import BBChart from '../../BBChart';
+import BBChart from '../../general/BBChart';
 import { CircularProgress, KEPPEL, Typography, Stack } from '@sistent/sistent';
 import { useTheme } from '@/theme';
 import { getLegendTemplate } from './utils';

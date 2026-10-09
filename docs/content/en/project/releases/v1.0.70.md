@@ -1,0 +1,86 @@
+---
+title: v1.0.70
+date: 2026-09-14
+tag: v1.0.70
+prerelease: false
+---
+
+## What's New
+## 🔤 General
+- Bump colord from 2.9.3 to 2.10.0 in /install/docker-extension/ui @\[dependabot\[bot\]\](https://github.com/apps/dependabot) (#21860)
+- Update ADOPTERS.md with new and removed entries @SuryanshGarg04 (#21871)
+
+## ⌨️ Meshery CLI
+
+- \[mesheryctl\] Add traceability tags to Half A BATS tests @Zayden369 (#21863)
+- fix(mesheryctl): prevent nil response panic in auth update @Kanika0306 (#21682)
+
+## 🖥 Meshery UI
+
+- build(deps): bump fast-uri from 3.1.4 to 3.1.5 in /provider-ui @\[dependabot\[bot\]\](https://github.com/apps/dependabot) (#21122)
+- fix(ui): make error page buttons responsive and always visible on mobile @Gagansharma-code (#21346)
+- Bump joi from 18.2.3 to 18.2.8 in /provider-ui @\[dependabot\[bot\]\](https://github.com/apps/dependabot) (#21862)
+- Bump joi from 18.2.1 to 18.2.8 in /ui @\[dependabot\[bot\]\](https://github.com/apps/dependabot) (#21861)
+- \[Server\]\[UI\] Emit camelCase keys in meshsync resources summary @Prasad8830 (#21765)
+
+## 🧰 Maintenance
+
+- build(deps): bump fast-uri from 3.1.4 to 3.1.5 in /provider-ui @\[dependabot\[bot\]\](https://github.com/apps/dependabot) (#21122)
+- \[mesheryctl\] Add traceability tags to Half A BATS tests @Zayden369 (#21863)
+- Bump joi from 18.2.3 to 18.2.8 in /provider-ui @\[dependabot\[bot\]\](https://github.com/apps/dependabot) (#21862)
+- Bump joi from 18.2.1 to 18.2.8 in /ui @\[dependabot\[bot\]\](https://github.com/apps/dependabot) (#21861)
+
+## 📖 Documentation
+
+- add Deepakkumar's attendance for todays newcomers meeting @NiftyOracle (#21920)
+- Create introduction for Lucky Sharma (peterParker) @lucky1426shrma (#21933)
+- \[Docs\] Add mesheryctl-axi to the extensions catalog @yi-nuo426 (#21944)
+- \[Docs\] Update details of the Istio adapter @fitzergerald (#21942)
+- Enhance documentation for Meshery Adapters @fitzergerald (#21941)
+- Revise Consul adapter documentation for clarity @fitzergerald (#21943)
+- add Shiv's Introduction @chshiv (#21936)
+- marked aashi-jain's new commer attendance @AashiJain971 (#21926)
+- Create Khushi Nataraj introduction document @must-not-be-namedd (#21934)
+- Add Priyanshi Jain's introduction and portfolio link @priyanshijain1 (#21935)
+- Add introductory information for Vinay Raj @uservinay777-space (#21930)
+- Introduction of Nakul @nakul-git139 (#21932)
+- ayush introduction @AyushKumarMishra123 (#21929)
+- Create mahak.md @Mahakgupta108 (#21925)
+- Create Anushka.md for personal introduction @k-anushka14 (#21923)
+- Add Sujith's introduction to meeting notes @v-sai-sujith (#21922)
+- Create Smit @smitkhadatkar123-rgb (#21924)
+- Create Srijan Jaiswal.md for Introduction @ionfwsrijan (#21927)
+- Add Tejaswi.md with introduction @tejaswiverma121-byte (#21919)
+- Add Suryansh Garg's introduction to meetings documentation @SuryanshGarg04 (#21917)
+- Add Maanvi Chetwani's introduction @Maanvi212006 (#21915)
+- Add introduction for Debangshu Das @debangshu919 (#21918)
+- Add Rachit's introduction in markdown file @Rachit-Ingole (#21916)
+- \[Docs\] Add relationship testing, validation, and contribution best practices @ObaidAbdullah16 (#19663)
+- add maanvi's intro @Maanvi212006 (#21905)
+- docs(contributing): enable section-index page titles @smishraa30 (#21219)
+- Create Deepakkumar.md @NiftyOracle (#21806)
+- docs: add community meeting introduction @KDeekshita (#21801)
+- Add Prakash Shukla's introduction to meetings documentation @PrakashShukla0907 (#21799)
+- Add introduction for Vijyot Silare @vijyotsilare (#21800)
+- Add Dushyant Acharya's introduction to meetings @Dotify71 (#21798)
+- Add Sai Rishaindra introduction @SaiRishaindra (#21794)
+- Create Aayush_Yadav_attendance @maverickaayush (#21797)
+- added  my attendance for today @twenty-III (#21795)
+- Create Pranav_Choudhary.md for newcomer meeting notes @pranavchoudhary-tech (#21793)
+- Add introduction for Bhavya Maheshwari @m-bhavyaa (#21792)
+- Create sulagna.md @suzy-g38 (#21789)
+- Rename Ahmed Mansour file to use hyphens @AhmedMansour21 (#21790)
+- Update Amarachi Ezeonyekwere.md with introduction @Amarachi-Ezeonyekwere (#21786)
+- Add introduction for Jay Arora @cutiepie-10 (#21785)
+- Add introduction for Aayush Yadav @maverickaayush (#21784)
+- Add attendance note for Arpit Raj @Arpit-Raj1 (#21787)
+- Add introductory note from Vansh @VANSH3104 (#21781)
+- Add Maanvi's introduction in maanvi.md @Maanvi212006 (#21780)
+- Create Kafeel.md @kafeelraza (#21783)
+- Create Ahmed Mansour @AhmedMansour21 (#21782)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@AashiJain971, @AhmedMansour21, @Amarachi-Ezeonyekwere, @Arpit-Raj1, @AyushKumarMishra123, @Bhumikagarggg, @Dotify71, @Gagansharma-code, @KDeekshita, @Kanika0306, @Maanvi212006, @Mahakgupta108, @NiftyOracle, @ObaidAbdullah16, @PrakashShukla0907, @Prasad8830, @Rachit-Ingole, @SaiRishaindra, @SuryanshGarg04, @VANSH3104, @Zayden369, @alexquincy, @arjunmehta-git, @banana-three-join, @chshiv, @cutiepie-10, @debangshu919, @dependabot\[bot\], @fitzergerald, @ionfwsrijan, @jamieplu, @k-anushka14, @kafeelraza, @l5io, @leecalcote, @lucky1426shrma, @m-bhavyaa, @marblom007, @maverickaayush, @meshery-ci, @miacycle, @must-not-be-namedd, @nakul-git139, @pontusringblom, @pranavchoudhary-tech, @priyanshijain1, @sangramrath, @saurabhraghuvanshii, @smishraa30, @smitkhadatkar123-rgb, @suzy-g38, @tejaswiverma121-byte, @twenty-III, @uservinay777-space, @v-sai-sujith, @vijyotsilare, @yi-nuo426 and \[dependabot\[bot\]\](https://github.com/apps/dependabot)
+

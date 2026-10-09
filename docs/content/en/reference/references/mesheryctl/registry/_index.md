@@ -3,6 +3,7 @@ title: mesheryctl-registry
 display_title: false
 command: registry
 subcommand: nil
+categories: [mesheryctl-registry]
 ---
 
 # mesheryctl registry
@@ -15,8 +16,10 @@ Manage the state and contents of Meshery’s internal registry of capabilities.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,8 +27,10 @@ mesheryctl registry [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl registry [subcommand]
 
+</div>
 </div>
 </pre> 
 

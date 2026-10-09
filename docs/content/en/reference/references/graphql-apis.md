@@ -958,6 +958,7 @@ Status of Meshery Operator and its controllers.
 | <a id="perfprofilelast_run"></a>`last_run` | [`String`](#string) |  |
 | <a id="perfprofileload_generators"></a>`load_generators` | [`[String]`](#string) |  |
 | <a id="perfprofilename"></a>`name` | [`String`](#string) |  |
+| <a id="perfprofileowner"></a>`owner` | [`String!`](#string) |  |
 | <a id="perfprofileqps"></a>`qps` | [`Int`](#int) |  |
 | <a id="perfprofilerequest_body"></a>`request_body` | [`String`](#string) |  |
 | <a id="perfprofilerequest_cookies"></a>`request_cookies` | [`String`](#string) |  |
@@ -965,7 +966,6 @@ Status of Meshery Operator and its controllers.
 | <a id="perfprofileservice_mesh"></a>`service_mesh` | [`String`](#string) |  |
 | <a id="perfprofiletotal_results"></a>`total_results` | [`Int`](#int) |  |
 | <a id="perfprofileupdated_at"></a>`updated_at` | [`String`](#string) |  |
-| <a id="perfprofileuser_id"></a>`user_id` | [`String!`](#string) |  |
 
 ### `Resource`
 

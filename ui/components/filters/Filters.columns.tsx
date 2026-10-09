@@ -5,7 +5,7 @@ import Moment from 'react-moment';
 import CloneIcon from '../../public/static/img/CloneIcon';
 import { iconMedium } from '../../css/icons.styles';
 import { VISIBILITY } from '../../utils/Enum';
-import CAN from '@/utils/can';
+
 import { Keys } from '@meshery/schemas/permissions';
 import { DefaultTableCell, SortableTableCell } from '../connections/common/index';
 import TooltipIcon from './TooltipIcon';
@@ -137,12 +137,7 @@ export function buildFiltersColumns({
                     e.stopPropagation();
                     handleClone(rowData.id, rowData.name);
                   }}
-                  disabled={
-                    !CAN(
-                      Keys.CatalogManagementCloneWasmFilter.id,
-                      Keys.CatalogManagementCloneWasmFilter.function,
-                    )
-                  }
+                  permissionKey={Keys.CatalogManagementCloneWasmFilter}
                 >
                   <CloneIcon fill="currentColor" />
                 </TooltipIcon>
@@ -153,12 +148,7 @@ export function buildFiltersColumns({
                     e.stopPropagation();
                     setSelectedRowData(filters[tableMeta.rowIndex]);
                   }}
-                  disabled={
-                    !CAN(
-                      Keys.CatalogManagementEditWasmFilter.id,
-                      Keys.CatalogManagementEditWasmFilter.function,
-                    )
-                  }
+                  permissionKey={Keys.CatalogManagementEditWasmFilter}
                 >
                   <EditIcon aria-label="config" color="inherit" style={iconMedium} />
                 </TooltipIcon>
@@ -166,24 +156,14 @@ export function buildFiltersColumns({
               <TooltipIcon
                 title="Download"
                 onClick={(e) => handleDownload(e, rowData.id, rowData.name)}
-                disabled={
-                  !CAN(
-                    Keys.CatalogManagementDownloadAWasmFilter.id,
-                    Keys.CatalogManagementDownloadAWasmFilter.function,
-                  )
-                }
+                permissionKey={Keys.CatalogManagementDownloadAWasmFilter}
               >
                 <GetAppIcon data-cy="download-button" />
               </TooltipIcon>
               <TooltipIcon
                 title="Filter Information"
                 onClick={() => handleInfoModal(rowData)}
-                disabled={
-                  !CAN(
-                    Keys.CatalogManagementDetailsOfWasmFilter.id,
-                    Keys.CatalogManagementDetailsOfWasmFilter.function,
-                  )
-                }
+                permissionKey={Keys.CatalogManagementDetailsOfWasmFilter}
               >
                 <InfoOutlinedIcon data-cy="information-button" />
               </TooltipIcon>
@@ -191,12 +171,7 @@ export function buildFiltersColumns({
                 <TooltipIcon
                   title="Publish"
                   onClick={(ev) => handlePublishModal(ev, rowData)}
-                  disabled={
-                    !CAN(
-                      Keys.CatalogManagementPublishWasmFilter.id,
-                      Keys.CatalogManagementPublishWasmFilter.function,
-                    )
-                  }
+                  permissionKey={Keys.CatalogManagementPublishWasmFilter}
                 >
                   <PublicIcon fill="#F91313" data-cy="publish-button" />
                 </TooltipIcon>
@@ -204,12 +179,7 @@ export function buildFiltersColumns({
                 <TooltipIcon
                   title="Unpublish"
                   onClick={(ev) => handleUnpublishModal(ev, rowData)?.()}
-                  disabled={
-                    !CAN(
-                      Keys.CatalogManagementUnpublishWasmFilter.id,
-                      Keys.CatalogManagementUnpublishWasmFilter.function,
-                    )
-                  }
+                  permissionKey={Keys.CatalogManagementUnpublishWasmFilter}
                 >
                   <PublicIcon fill="#F91313" data-cy="unpublish-button" />
                 </TooltipIcon>

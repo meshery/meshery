@@ -151,6 +151,20 @@ weight: 100
 
 </details>
 
+<details><summary>
+<h6>Question: Which version of Meshery Operator does Meshery install, and can I choose it?</h6></summary>
+<strong>Answer:</strong> <p>When Meshery Server connects to a Kubernetes cluster in operator mode, it installs the <code>meshery-operator</code> Helm chart at a version that tracks its own release - but it validates that version against the chart repository's published index first, so what lands on your cluster is always a chart that exists. A version not yet published (chart publishing trails Meshery Server releases) resolves to the newest published chart; a version too old to deploy is raised to the oldest published chart that does; release candidates are never chosen for you. Every substitution is reported in the events feed.</p>
+
+<p>To choose the version yourself, set <code>operator.version</code> on the connection. An explicit pin is honored exactly as written, and is refused with a visible error - not silently replaced - if it names an unpublished version or a moving tag such as <code>stable-latest</code>. See <a href="{{< ref "guides/troubleshooting/meshery-operator-meshsync.md#choosing-the-chart-version-yourself" >}}">Choosing the chart version yourself</a>.</p>
+
+<p>To confirm what is deployed:</p>
+
+<pre><code>kubectl -n meshery get deploy meshery-operator -o jsonpath='{.spec.template.spec.containers[0].image}'</code></pre>
+
+<p>If the Operator never becomes ready after connecting a cluster - a <code>kube-rbac-proxy</code> container stuck in <code>ImagePullBackOff</code>, or the manager crash-looping on a missing <code>tls.crt</code> - an old chart is installed. See <a href="{{< ref "guides/troubleshooting/meshery-operator-meshsync.md#meshery-operator-will-not-start-imagepullbackoff-and-a-missing-webhook-certificate" >}}">Meshery Operator will not start</a>; the remedy is to upgrade Meshery Server.</p>
+
+</details>
+
 ## Contributing FAQs
 
 <details>

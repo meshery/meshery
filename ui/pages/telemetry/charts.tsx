@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box } from '@sistent/sistent';
 import TelemetryDashboards from '@/components/telemetry/dashboards';
-import { MesheryPage, PageContainer } from '../../components/MesheryPage';
+import { MesheryPage, PageContainer } from '../../components/general/MesheryPage';
 
 const TelemetryCharts = () => {
   return (

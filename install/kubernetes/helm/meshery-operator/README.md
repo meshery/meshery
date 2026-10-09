@@ -1,6 +1,17 @@
+<!--
+  HAND-MAINTAINED - do NOT regenerate with `make helm-operator-docs` (helm-docs).
+  values.yaml carries no `# --` description comments and there is no
+  README.md.gotmpl here, so the generator would delete the extended chart
+  description, the "CRD lifecycle" section, and every Description cell below.
+  Regenerating is safe only after that migration (curated prose -> README.md.gotmpl,
+  descriptions -> `# --` comments in values.yaml); until then edit by hand and keep
+  the badges, Requirements and Values defaults in step with Chart.yaml/values.yaml.
+  The two subchart READMEs under charts/ are pure helm-docs output and are safe.
+-->
+
 # meshery-operator
 
-![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.0](https://img.shields.io/badge/AppVersion-1.0.0-informational?style=flat-square)
+![Version: 1.0.5](https://img.shields.io/badge/Version-1.0.5-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.5](https://img.shields.io/badge/AppVersion-1.0.5-informational?style=flat-square)
 
 Meshery Operator chart. Deploys the [meshery-operator](https://github.com/meshery/meshery-operator) manager, which reconciles the `Broker` (NATS) and `MeshSync` custom resources.
 
@@ -59,7 +70,7 @@ The chart's `version`/`appVersion` and the CRD bundles under `crds/` and
 | fullnameOverride | string | `"meshery-operator"` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
 | image.repository | string | `"meshery/meshery-operator"` |  |
-| image.tag | string | `"1.0.0"` | Pinned operator release, stamped by the sync workflow. Kept explicit because server-release chart publishing re-stamps appVersion with the server tag; empty falls back to the chart appVersion |
+| image.tag | string | `"1.0.5"` | Pinned operator release, stamped by the sync workflow. Kept explicit because server-release chart publishing re-stamps appVersion with the server tag; empty falls back to the chart appVersion |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | object | `{}` |  |
 | ingress.enabled | bool | `false` |  |

@@ -17,9 +17,6 @@ dependencies:
 - name: meshery-traefik-mesh
   repository: ""
   version: 0.7.0
-- name: meshery-nginx-sm
-  repository: ""
-  version: 0.7.0
 - name: meshery-app-mesh
   repository: ""
   version: 0.7.0
@@ -28,6 +25,6 @@ dependencies:
   version: 0.7.0
 - name: meshery-operator
   repository: file://../meshery-operator
-  version: 1.0.4
-digest: sha256:ffa1af8305dff1ba252a8bd01a8760391a8ddea2dad8755cd8a991e4632bba3c
-generated: "2026-07-07T04:25:43.730976854Z"
+  version: 1.0.5
+digest: sha256:583c1d325c3b22eeafa2675ee2f38b13c842231f958a10499f87d9d586cbbda2
+generated: "2026-09-29T09:02:51.857261105Z"

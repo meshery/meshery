@@ -29,9 +29,33 @@ setup() {
     _load_bats_libraries
     load "$E2E_HELPERS_PATH/constants"
 
-    export MESHERY_URL="${MESHERY_SERVER_URL:-http://localhost:9081}"
     export MESHERY_NS="meshery"
     export MESHERY_AUTH_FILE="${MESHERY_AUTH_FILE:-$HOME/.meshery/auth.json}"
+    export MESHERY_CONFIG_FILE="${MESHERY_CONFIG_FILE_PATH:-$HOME/.meshery/config.yaml}"
+    export MESHERY_URL="${MESHERY_SERVER_URL:-$(_meshery_endpoint)}"
+}
+
+# _meshery_endpoint returns the server URL mesheryctl is configured to talk to.
+#
+# http://localhost:9081 is only right when the server is reachable on loopback,
+# as it is under `make server`. Started with
+# `mesheryctl system start --platform kubernetes` it is published at the
+# context's endpoint instead, and the raw curl below then failed to connect
+# (curl exit 7) - which aborted the test outright, since the failure propagated
+# out of the `diag=$(...)` assignment before the reachability guard that was
+# meant to skip could run. Read the endpoint the rest of the suite already uses,
+# and keep loopback only as the last resort.
+_meshery_endpoint() {
+    local endpoint=""
+    if [ -r "${MESHERY_CONFIG_FILE:-$HOME/.meshery/config.yaml}" ] && command -v yq >/dev/null 2>&1; then
+        endpoint=$(yq -r '.contexts.local.endpoint // ""' \
+            "${MESHERY_CONFIG_FILE:-$HOME/.meshery/config.yaml}" 2>/dev/null)
+    fi
+    if [ -n "$endpoint" ] && [ "$endpoint" != "null" ]; then
+        echo "$endpoint"
+        return
+    fi
+    echo "http://localhost:9081"
 }
 
 # _need skips the test unless the given command is available.
@@ -46,11 +70,44 @@ _diagnostics() {
     local token provider
     token=$(jq -r '.token // empty' "$MESHERY_AUTH_FILE")
     provider=$(jq -r '."meshery-provider" // "Meshery"' "$MESHERY_AUTH_FILE")
-    curl -s --cookie "token=${token}; meshery-provider=${provider}" \
-        "${MESHERY_URL}/api/system/controllers/diagnostics?connectionId=${conn_id}"
+    # `|| true` so an unreachable server yields empty output instead of a
+    # non-zero exit: every caller assigns this with `diag=$(_diagnostics ...)`,
+    # and the failure would otherwise abort the test before the guard that is
+    # meant to skip on exactly that condition.
+    _authed_get "/api/system/controllers/diagnostics?connectionId=${conn_id}"
 }
 
-@test "kubernetes connection broker diagnostics recover once NATS is reachable" {
+# _authed_get <path> -> GETs path from the Meshery server with the provider
+# session cookies mesheryctl uses (token + meshery-provider from auth.json).
+_authed_get() {
+    local token provider
+    token=$(jq -r '.token // empty' "$MESHERY_AUTH_FILE")
+    provider=$(jq -r '."meshery-provider" // "Meshery"' "$MESHERY_AUTH_FILE")
+    # `|| true` so an unreachable server yields empty output instead of a
+    # non-zero exit: callers assign this with `x=$(...)`, and the failure would
+    # otherwise abort the test before the guard meant to skip on exactly that
+    # condition.
+    curl -s --cookie "token=${token}; meshery-provider=${provider}" \
+        "${MESHERY_URL}${1}" || true
+}
+
+# _this_servers_connection_id prints the connection id of a kubernetes context
+# registered to *this* Meshery server, or nothing.
+#
+# `connection list --kind kubernetes` is the wrong source here. Under the remote
+# provider it lists every kubernetes connection on the account - 294 of them on
+# the shared CI provider account, most from other clusters and earlier runs -
+# and taking the first would ask for diagnostics on a connection this server
+# holds no session for, which reports connection_inactive and skips. The k8s
+# contexts endpoint is scoped by mesheryInstanceId (see
+# RemoteProvider.GetK8sContexts), so it answers the question actually being
+# asked: which kubernetes connection is *this* server's.
+_this_servers_connection_id() {
+    _authed_get "/api/system/kubernetes/contexts?pagesize=25" \
+        | jq -r '[.contexts[]? | .connectionId // empty] | first // empty' 2>/dev/null
+}
+
+@test "[TC-1031][cut=Kubernetes Connection][tg=Connection Lifecycle] kubernetes connection broker diagnostics recover once NATS is reachable" {
     _need jq
     _need kubectl
     _need curl
@@ -66,12 +123,20 @@ _diagnostics() {
     [ "${nats_ready:-0}" -ge 1 ] 2>/dev/null \
         || skip "meshery-nats not Ready (readyReplicas=${nats_ready:-0}); if crash-looping, the operator injects the NATS token unquoted into nats.conf"
 
-    # --- 1. resolve the kubernetes connection id ---
-    run "$MESHERYCTL_BIN" connection list --kind kubernetes
-    assert_success
+    # --- 1. resolve *this server's* kubernetes connection id ---
     local conn_id
-    conn_id=$(echo "$output" | grep -oiE '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' | head -n1)
+    conn_id=$(_this_servers_connection_id)
+
+    # Fall back to the account-wide listing only when the contexts endpoint gave
+    # nothing (a local provider, or an older server). It is a weaker source - see
+    # the note on _this_servers_connection_id - so it is second, not first.
+    if [ -z "$conn_id" ]; then
+        run "$MESHERYCTL_BIN" connection list --kind kubernetes
+        assert_success
+        conn_id=$(echo "$output" | grep -oiE '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' | head -n1)
+    fi
     [ -n "$conn_id" ] || skip "no kubernetes connection found; connect the current context first"
+    echo "connectionId=$conn_id"
 
     # --- 2. sanity: diagnostics endpoint is reachable + authed, returns valid JSON ---
     local diag

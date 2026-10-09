@@ -10,7 +10,7 @@ import {
   Stack,
 } from '@sistent/sistent';
 import { useTheme } from '@/theme';
-import BBChart from '@/components/BBChart';
+import BBChart from '@/components/general/BBChart';
 import { getLegendTemplate } from './utils';
 import ConnectCluster from './ConnectCluster';
 import { LoadingContainer, ChartSectionWithColumn, LegendSection } from '../style';

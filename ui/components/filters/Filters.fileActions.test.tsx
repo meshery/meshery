@@ -8,10 +8,6 @@ vi.mock('@/store/slices/mesheryUi', () => ({
   updateProgress: (...args: unknown[]) => updateProgress(...args),
 }));
 
-vi.mock('@/graphql/subscriptions/ConfigurationSubscription', () => ({
-  default: vi.fn(),
-}));
-
 vi.mock('../../utils/Enum', () => ({
   FILE_OPS: {
     DELETE: 'DELETE',
@@ -50,7 +46,6 @@ import {
   createHandlePublish,
   createHandleClone,
   createDeleteFilter,
-  createInitFiltersSubscription,
 } from './Filters.fileActions';
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
@@ -464,36 +459,5 @@ describe('createDeleteFilter', () => {
       message: 'Filter deleted',
       event_type: 'SUCCESS',
     });
-  });
-});
-
-describe('createInitFiltersSubscription', () => {
-  it('disposes prior subscription before creating a new one', () => {
-    const disposeMock = vi.fn();
-    const disposeConfSubscriptionRef = { current: { dispose: disposeMock } };
-
-    const init = createInitFiltersSubscription({
-      page: 0,
-      pageSize: 10,
-      search: '',
-      sortOrder: '',
-      disposeConfSubscriptionRef: disposeConfSubscriptionRef as any,
-    });
-
-    init();
-    expect(disposeMock).toHaveBeenCalledTimes(1);
-  });
-
-  it('starts a subscription even when no prior dispose ref exists', () => {
-    const disposeConfSubscriptionRef = { current: null };
-    const init = createInitFiltersSubscription({
-      page: 1,
-      pageSize: 25,
-      search: 'foo',
-      sortOrder: 'name asc',
-      disposeConfSubscriptionRef: disposeConfSubscriptionRef as any,
-    });
-
-    expect(() => init()).not.toThrow();
   });
 });

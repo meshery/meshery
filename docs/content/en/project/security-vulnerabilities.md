@@ -70,7 +70,7 @@ branches.
 - Meshery team ensures all necessary binaries are promptly built and published.
 
 - Once the binaries are available, an announcement is sent out on the following channels:
-  - The [Meshery blog](https://meshery.io/blog/)
+  - The [Meshery blog](https://meshery.io/blog)
   - The [Meshery X feed](https://x.com/mesheryio)
   - The [#announcements](https://mesheryio.slack.com/archives/CSF3PSZT9) channel on community [Slack](https://slack.meshery.io/)
 

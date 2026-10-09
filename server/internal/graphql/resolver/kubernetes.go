@@ -2,7 +2,6 @@ package resolver
 
 import (
 	"context"
-	"database/sql"
 	"strings"
 
 	"github.com/meshery/meshery/server/internal/graphql/model"
@@ -88,85 +87,5 @@ func (r *Resolver) getKubectlDescribe(_ context.Context, name, kind, namespace s
 
 	return &model.KctlDescribeDetails{
 		Describe: &details,
-	}, nil
-}
-
-func (r *Resolver) subscribeClusterResources(ctx context.Context, provider models.Provider, k8scontextIDs []string, namespace string) (<-chan *model.ClusterResources, error) {
-	ch := make(chan struct{}, 1)
-	ch <- struct{}{}
-	respChan := make(chan *model.ClusterResources)
-
-	r.Config.DashboardK8sResourcesChan.SubscribeDashbordK8Resources(ch)
-
-	go func() {
-		// Remove this listener when the subscription ends so PublishDashboardK8sResources
-		// stops tracking it (the channel is never closed, so removal is enough).
-		defer r.Config.DashboardK8sResourcesChan.UnsubscribeDashboardK8sResources(ch)
-		r.Log.Info("Initializing Cluster Resources subscription")
-		for {
-			select {
-			case <-ch:
-				clusterResources, err := r.getClusterResources(ctx, provider, k8scontextIDs, namespace)
-				if err != nil {
-					r.Log.Error(ErrClusterResourcesSubscription(err))
-					break
-				}
-				respChan <- clusterResources
-			case <-ctx.Done():
-				r.Log.Info("Cluster Resources subscription stopped")
-				return
-			}
-		}
-	}()
-
-	return respChan, nil
-}
-
-func (r *Resolver) getClusterResources(ctx context.Context, provider models.Provider, k8scontextIDs []string, namespace string) (*model.ClusterResources, error) {
-	var cids []string
-	query := `
-		SELECT count(kind) as count, kind FROM kubernetes_resources kr LEFT JOIN kubernetes_resource_object_meta rom on kr.id = rom.id 
-			WHERE kr.kind <> 'Namespace' AND rom.namespace = '' AND kr.cluster_id IN (?) GROUP BY kind
-				UNION 
-		SELECT count(kind) as count, kind FROM kubernetes_resources kr LEFT JOIN kubernetes_resource_object_meta rom on kr.id = rom.id 
-			WHERE rom.namespace IN (?) AND kr.cluster_id IN (?) GROUP BY kind 
-				UNION			
-		SELECT count(kind) as count, kind FROM kubernetes_resources kr 
-			WHERE kr.kind = 'Namespace' AND kr.cluster_id IN (?) GROUP BY kind`
-
-	var rows *sql.Rows
-	var err error
-	if len(k8scontextIDs) == 0 {
-		return nil, ErrEmptyCurrentK8sContext
-	}
-
-	cids = k8scontextIDs
-
-	rows, err = provider.GetGenericPersister().Raw(query, cids, namespace, cids, cids).Rows()
-
-	if err != nil {
-		r.Log.Error(ErrGettingClusterResources(err))
-		return nil, err
-	}
-
-	defer func() {
-		if closeErr := rows.Close(); closeErr != nil {
-			r.Log.Error(closeErr)
-		}
-	}()
-
-	resources := make([]*model.Resource, 0)
-	for rows.Next() {
-		var resource model.Resource
-		err := rows.Scan(&resource.Count, &resource.Kind)
-		if err != nil {
-			r.Log.Error(ErrGettingClusterResources(err))
-			return nil, err
-		}
-		resources = append(resources, &resource)
-	}
-
-	return &model.ClusterResources{
-		Resources: resources,
 	}, nil
 }

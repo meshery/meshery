@@ -12,7 +12,7 @@ setup() {
    export CHECK_PREREQUISISTE_RESULT="Meshery prerequisites met"
 }
 
-@test "given all requirements are met, when running mesheryctl system check then required sections are displayed" {
+@test "[cut=System][tg=System Checks] given all requirements are met, when running mesheryctl system check then required sections are displayed" {
    run $MESHERYCTL_BIN system check
    assert_output --partial "$CHECK_KUBERNETES_API_HEADER"
    assert_output --partial "$CHECK_KUBERNETES_VERSION_HEADER"
@@ -20,7 +20,7 @@ setup() {
    assert_output --partial "$CHECK_MESHERY_OPERATORS_HEADER"
 }
 
-@test "given all requirements are met, when running mesheryctl system check --pre then required sections and prerequisites result are displayed" {
+@test "[cut=System][tg=System Checks] given all requirements are met, when running mesheryctl system check --pre then required sections and prerequisites result are displayed" {
    run $MESHERYCTL_BIN system check --pre
    assert_success
 
@@ -30,8 +30,8 @@ setup() {
    assert_output --partial "$CHECK_PREREQUISISTE_RESULT"
 }
 
-@test "given all requirements are met, when running mesheryctl system check --preflight then required sections and prerequisites result are displayed" {
-   run $MESHERYCTL_BIN system check --pre
+@test "[cut=System][tg=System Checks] given all requirements are met, when running mesheryctl system check --preflight then required sections and prerequisites result are displayed" {
+   run $MESHERYCTL_BIN system check --preflight
    assert_success
 
    assert_output --partial "$CHECK_DOCKER_HEADER"
@@ -40,7 +40,7 @@ setup() {
    assert_output --partial "$CHECK_PREREQUISISTE_RESULT"
 }
 
-@test "given all requirements are met, when running mesheryctl system check --operator then operators are shown in running state" {
+@test "[TC-1034][cut=Kubernetes Connection][tg=Connection Lifecycle] given all requirements are met, when running mesheryctl system check --operator then operators are shown in running state" {
    run $MESHERYCTL_BIN system check --operator
    assert_success
 

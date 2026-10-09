@@ -1,22 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Box, Button, Paper, Typography } from '@sistent/sistent';
-import { useNotification } from '@/utils/hooks/useNotification';
-import { EVENT_TYPES } from '../../lib/event-types';
 import {
   useGetControllersDefaultConfigQuery,
   useUpdateControllersDefaultConfigMutation,
-  type ControllersConfigDoc,
-} from '@/rtk-query/controllersConfig';
+} from '@meshery/schemas/mesheryApi';
 import ControllersConfigForm, {
   BUILT_IN_CONTROLLERS_CONFIG,
 } from '@/components/configuration/ControllersConfigForm';
-
-const stripSchemaVersion = (doc?: ControllersConfigDoc | null): ControllersConfigDoc => {
-  if (!doc) return {};
-  const rest = { ...doc };
-  delete rest.schemaVersion;
-  return rest;
-};
+import { useControllersConfigDraft } from '@/components/configuration/useControllersConfigDraft';
+import { serverDefaultDeploymentMode } from '@/components/configuration/deploymentMode';
 
 /**
  * Settings tab: server-wide defaults for the Meshery Operator, MeshSync, and
@@ -25,50 +17,20 @@ const stripSchemaVersion = (doc?: ControllersConfigDoc | null): ControllersConfi
  * overrides (Connections page) take precedence over everything set here.
  */
 export default function MesheryControllersConfig() {
-  const { notify } = useNotification();
   const { data, isLoading, error } = useGetControllersDefaultConfigQuery();
   const [updateDefaults, { isLoading: isSaving }] = useUpdateControllersDefaultConfigMutation();
-  const [draft, setDraft] = useState<ControllersConfigDoc>({});
-  const [dirty, setDirty] = useState(false);
-
-  useEffect(() => {
-    if (data && !dirty) {
-      setDraft(stripSchemaVersion(data));
-    }
-  }, [data, dirty]);
-
-  const handleSave = async () => {
-    try {
-      await updateDefaults({ body: draft }).unwrap();
-      setDirty(false);
-      notify({
-        message:
-          'Server-wide controllers configuration defaults saved. Re-applying to connected clusters.',
-        event_type: EVENT_TYPES.SUCCESS,
-      });
-    } catch (err) {
-      notify({
-        message: 'Failed to save controllers configuration defaults.',
-        event_type: EVENT_TYPES.ERROR,
-        details: String((err as { data?: unknown })?.data ?? err),
-      });
-    }
-  };
-
-  const handleDiscard = () => {
-    setDraft(stripSchemaVersion(data));
-    setDirty(false);
-  };
-
-  // Notify once per load failure rather than on every render.
-  useEffect(() => {
-    if (error) {
-      notify({
-        message: 'Failed to load controllers configuration defaults.',
-        event_type: EVENT_TYPES.ERROR,
-      });
-    }
-  }, [error]);
+  const { draft, dirty, onChange, discard, save } = useControllersConfigDraft({
+    isLoaded: Boolean(data),
+    source: data,
+    loadError: error,
+    save: (body) => updateDefaults({ body }).unwrap(),
+    messages: {
+      loadError: 'Failed to load controllers configuration defaults.',
+      saveError: 'Failed to save controllers configuration defaults.',
+      saveSuccess:
+        'Server-wide controllers configuration defaults saved. Re-applying to connected clusters.',
+    },
+  });
 
   return (
     <Paper sx={{ padding: '1.5rem', marginTop: '1rem' }}>
@@ -83,22 +45,20 @@ export default function MesheryControllersConfig() {
 
       <ControllersConfigForm
         value={draft}
-        onChange={(next) => {
-          setDraft(next);
-          setDirty(true);
-        }}
+        onChange={onChange}
         inheritedLayers={[BUILT_IN_CONTROLLERS_CONFIG]}
         inheritLabel="Built-in default"
+        deploymentMode={serverDefaultDeploymentMode(draft)}
         disabled={isLoading || isSaving}
       />
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1.5rem' }}>
-        <Button variant="outlined" onClick={handleDiscard} disabled={!dirty || isSaving}>
+        <Button variant="outlined" onClick={discard} disabled={!dirty || isSaving}>
           Discard changes
         </Button>
         <Button
           variant="contained"
-          onClick={handleSave}
+          onClick={save}
           disabled={!dirty || isSaving}
           data-testid="controllers-config-save"
         >

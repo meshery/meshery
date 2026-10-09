@@ -31,4 +31,8 @@ This architecture supports multi-tenancy, white-labeling (for branded experience
 
 Meshery Academies exemplifies Meshery’s philosophy of extensibility—empowering the community to democratize cloud native knowledge through practical, visual, and interactive learning experiences. It serves as both an official learning hub for Meshery (with paths like “Mastering Meshery”) and a framework for anyone to create their own specialized academies.
 
-To find a complete list of academies available, explore the repositories under the [meshery-academy topic](https://github.com/topics/meshery-academy), like [meshery-academy](https://github.com/meshery-extensions/meshery-academy). Contributions and extensions are welcome in the Meshery Extensions organization.
+### Browse Academies
+
+To find a complete list of academies available, explore the repositories under the "[meshery-academy](https://github.com/topics/meshery-academy)" topic, like [meshery-academy](https://github.com/meshery-extensions/meshery-academy). Contributions and extensions are welcome in the [meshery-extensions](https://github.com/meshery-extensions) organization.
+
+See https://meshery.io/extensions for a list of academies, too.

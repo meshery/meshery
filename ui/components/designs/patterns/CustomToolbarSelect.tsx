@@ -1,6 +1,6 @@
 import React from 'react';
 import { CustomTooltip, DeleteIcon, IconButton } from '@sistent/sistent';
-import CAN from '@/utils/can';
+
 import { Keys } from '@meshery/schemas/permissions';
 
 const CustomToolbarSelect = ({
@@ -33,12 +33,7 @@ const CustomToolbarSelect = ({
         <div>
           <IconButton
             onClick={handleClickDelete}
-            disabled={
-              !CAN(
-                Keys.CatalogManagementDeleteADesign.id,
-                Keys.CatalogManagementDeleteADesign.function,
-              )
-            }
+            permissionKey={Keys.CatalogManagementDeleteADesign}
           >
             <DeleteIcon />
           </IconButton>

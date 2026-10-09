@@ -3,6 +3,7 @@ title: mesheryctl-design-apply
 display_title: false
 command: design
 subcommand: apply
+categories: [mesheryctl-design]
 ---
 
 # mesheryctl design apply
@@ -11,11 +12,14 @@ Apply design file
 
 ## Synopsis
 
-Apply design will trigger deploy of the design file
+Apply design will trigger deploy of the design file.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design apply [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -24,16 +28,20 @@ mesheryctl design apply [flags]
 apply a design file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design apply -f [file | URL]
 
+</div>
 </div>
 </pre> 
 
 deploy a saved design
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design apply [design-name]
 
+</div>
 </div>
 </pre> 
 

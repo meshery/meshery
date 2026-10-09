@@ -220,8 +220,10 @@ ui/
 
 ### What's going away
 
-- `ui/themes/` — renamed to `ui/theme/` and shrunk to a Sistent re-export.
-- `ui/constants/colors.ts` — deleted; callers move to `theme.palette.*`.
+- `ui/themes/` — **done**: collapsed into `ui/theme/` (`index.ts`, `hooks.tsx`,
+  `rjsf.ts`, `snackbar.tsx`); app-shell layout styles moved to
+  `components/App.styles.tsx`.
+- `ui/constants/colors.ts` — **done**: deleted; callers use `theme.palette.*`.
 - `ui/components/icons/` and `ui/assets/new-icons/` — merged into `ui/assets/icons/` with consistent naming.
 - `ui/components/hooks/` — merged into `ui/utils/hooks/`.
 - `ui/components/General/` — split into `shared/` (primitives) and `layout/` (chrome).

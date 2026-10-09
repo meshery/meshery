@@ -41,7 +41,9 @@ const RegisterConnectionModal: FC<RegisterConnectionModalProps> = ({
 
   const cancelConnectionRegister = (id?: string) => {
     if (!id) return;
-    cancelConnection({ body: { id } })
+    // Schemas contract: the registration tracker id travels in the path
+    // (DELETE /api/integrations/connections/register/{registrationId}).
+    cancelConnection({ registrationId: id })
       .unwrap()
       .then(() => {
         notify({

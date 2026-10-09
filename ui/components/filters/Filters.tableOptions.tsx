@@ -15,12 +15,6 @@ type BuildFiltersTableOptionsArgs = {
   setSearch: (_search: string) => void;
   setSortOrder: (_sortOrder: string) => void;
   setSelectedRowData: (_row: any) => void;
-  initFiltersSubscription: (
-    _pageNo?: string,
-    _pagesize?: string,
-    _searchText?: string,
-    _order?: string,
-  ) => void;
   showmodal: (_count: number) => Promise<string | undefined>;
   deleteFilter: (_id: string) => void;
 };
@@ -40,7 +34,6 @@ export function buildFiltersTableOptions({
   setSearch,
   setSortOrder,
   setSelectedRowData,
-  initFiltersSubscription,
   showmodal,
   deleteFilter,
 }: BuildFiltersTableOptionsArgs) {
@@ -92,21 +85,9 @@ export function buildFiltersTableOptions({
 
       switch (action) {
         case 'changePage':
-          initFiltersSubscription(
-            tableState.page.toString(),
-            pageSize.toString(),
-            search,
-            sortOrder,
-          );
           setPage(tableState.page);
           break;
         case 'changeRowsPerPage':
-          initFiltersSubscription(
-            page.toString(),
-            tableState.rowsPerPage.toString(),
-            search,
-            sortOrder,
-          );
           setPageSize(tableState.rowsPerPage);
           break;
         case 'search':
@@ -128,7 +109,6 @@ export function buildFiltersTableOptions({
             }
           }
           if (order !== sortOrder) {
-            initFiltersSubscription(page.toString(), pageSize.toString(), search, order);
             setSortOrder(order);
           }
           break;

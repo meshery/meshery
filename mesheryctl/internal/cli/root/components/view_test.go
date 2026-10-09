@@ -28,7 +28,7 @@ func TestComponentView(t *testing.T) {
 		{
 			Name:           "given no argument provided when component view then throw error",
 			Args:           []string{"view"},
-			URL:            "/api/meshmodels/components",
+			URL:            "/api/registry/components",
 			Fixture:        "components.empty.api.response.golden",
 			IsOutputGolden: false,
 			ExpectError:    true,

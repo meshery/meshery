@@ -47,20 +47,30 @@ export default function CustomSelectWidget({
   const { enumOptions, enumDisabled, emptyValue: optEmptyVal } = options;
   const xRjsfGridArea = schema?.['x-rjsf-grid-area']; // check if the field is used in different modal (e.g. publish)
 
-  multiple = typeof multiple === 'undefined' ? false : !!multiple;
-  const emptyValue = multiple ? [] : '';
+  // RJSF may sometimes pass multiple=false or undefined even for array enums.
+  // We force it to true if the schema type is array or it has items.
+  const isMultiple =
+    multiple || schema?.type === 'array' || schema?.items !== undefined || options?.multiple;
+
+  const emptyValue = isMultiple ? [] : '';
   const isEmpty =
     typeof value === 'undefined' ||
-    (multiple && value.length < 1) ||
-    (!multiple && value === emptyValue);
+    (isMultiple && value.length < 1) ||
+    (!isMultiple && value === emptyValue);
 
-  const _onChange = ({ target: { value } }) =>
-    onChange(enumOptionsValueForIndex(value, enumOptions, optEmptyVal));
+  const _onChange = ({ target: { value } }) => {
+    let safeValue = value;
+    if (isMultiple && typeof value === 'string') {
+      safeValue = value.split(',').filter(Boolean);
+    }
+    const nextValue = enumOptionsValueForIndex(safeValue, enumOptions, optEmptyVal);
+    onChange(isMultiple && !Array.isArray(nextValue) ? (nextValue ? [nextValue] : []) : nextValue);
+  };
   const _onBlur = ({ target: { value } }) =>
     onBlur(id, enumOptionsValueForIndex(value, enumOptions, optEmptyVal));
   const _onFocus = ({ target: { value } }) =>
     onFocus(id, enumOptionsValueForIndex(value, enumOptions, optEmptyVal));
-  const selectedIndexes = enumOptionsIndexForValue(value, enumOptions, multiple);
+  const selectedIndexes = enumOptionsIndexForValue(value, enumOptions, isMultiple);
   const theme = useTheme();
 
   const labelContent = labelValue(label, hideLabel || !label, false);
@@ -136,13 +146,13 @@ export default function CustomSelectWidget({
         SelectProps={{
           ...textFieldProps.SelectProps,
           renderValue: (selected) => {
-            if (multiple && Array.isArray(selected)) {
+            if (isMultiple && Array.isArray(selected)) {
               return selected.map((i) => safeDisplayValue(enumOptions?.[i]?.label)).join(', ');
             }
             const idx = selected as number;
             return safeDisplayValue(enumOptions?.[idx]?.label);
           },
-          multiple,
+          multiple: isMultiple,
           MenuProps: {
             anchorOrigin: {
               vertical: 'bottom',
@@ -167,7 +177,7 @@ export default function CustomSelectWidget({
             const disabled = Array.isArray(enumDisabled) && enumDisabled?.indexOf(value) !== -1;
             return (
               <MenuItem key={i} value={String(i)} disabled={disabled}>
-                {multiple && <Checkbox checked={selectedIndexes?.indexOf(String(i)) !== -1} />}
+                {isMultiple && <Checkbox checked={selectedIndexes?.indexOf(String(i)) !== -1} />}
                 <ListItemText primary={safeDisplayValue(label)} />
               </MenuItem>
             );

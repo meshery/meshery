@@ -1,0 +1,56 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "relationships.meshery.io/v1beta3",
+  "version": "v1.0.0",
+  "kind": "edge",
+  "type": "non-binding",
+  "subType": "permission",
+  "status": "enabled",
+  "evaluationQuery": "",
+  "metadata": {
+    "description": "A non-enforcing permission link: a policy document refers to a role by name without assigning subjects. The Role's name (mutator) is written into the policy document's roleRef (mutated); the Role itself is never modified.",
+    "isAnnotation": false
+  },
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "aws-iam-controller",
+    "version": "v1.0.0",
+    "displayName": "aws-iam-controller",
+    "registrant": { "kind": "github" },
+    "model": { "version": "v1.7.3" }
+  },
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Policy",
+            "model": { "name": "aws-iam-controller", "registrant": { "kind": "github" }, "model": { "version": "" } },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                ["configuration", "spec", "roleRef", "name"]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Role",
+            "model": { "name": "aws-iam-controller", "registrant": { "kind": "github" }, "model": { "version": "" } },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                ["displayName"]
+              ]
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}

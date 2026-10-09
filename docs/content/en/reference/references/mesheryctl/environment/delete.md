@@ -3,6 +3,7 @@ title: mesheryctl-environment-delete
 display_title: false
 command: environment
 subcommand: delete
+categories: [mesheryctl-environment]
 ---
 
 # mesheryctl environment delete
@@ -15,8 +16,10 @@ Delete an environment by providing the environment ID
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl environment delete [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +28,10 @@ mesheryctl environment delete [flags]
 delete a new environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl environment delete [environmentId]
 
+</div>
 </div>
 </pre> 
 

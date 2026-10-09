@@ -74,17 +74,14 @@ const buildErrorDescription = (endpointName: string, payload: any) => {
 
 /**
  * RTK Query middleware that dispatches error events into the notification
- * system for failed API calls. Skips 401 errors (handled by authMiddleware).
+ * system for failed API calls. Every rejected status is reported, including
+ * 401: this used to skip 401 and defer to an `authMiddleware` that has never
+ * existed in this codebase, so an unauthorized response was swallowed and the
+ * user saw nothing at all.
  */
 export const rtkErrorMiddleware: Middleware = (storeApi) => (next) => (action) => {
   if (isRejectedWithValue(action)) {
     const status = action.payload?.status || action.payload?.originalStatus;
-
-    // 401 is handled by authMiddleware
-    if (status === 401) {
-      return next(action);
-    }
-
     const endpointName = action.meta?.arg?.endpointName || 'API call';
     const errorMessage =
       action.payload?.data?.message ||

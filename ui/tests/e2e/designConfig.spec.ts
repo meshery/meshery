@@ -82,7 +82,7 @@ test.describe('Design Configurator Tests', () => {
       });
     });
 
-    await page.route('**/api/meshmodels/categories**', async (route: Route) => {
+    await page.route('**/api/registry/categories**', async (route: Route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -93,7 +93,7 @@ test.describe('Design Configurator Tests', () => {
     });
 
     await page.route(
-      `**/api/meshmodels/categories/${MOCK_CATEGORY}/models**`,
+      `**/api/registry/categories/${MOCK_CATEGORY}/models**`,
       async (route: Route) => {
         await route.fulfill({
           status: 200,
@@ -111,33 +111,30 @@ test.describe('Design Configurator Tests', () => {
       },
     );
 
-    await page.route(
-      `**/api/meshmodels/models/${MOCK_MODEL}/components**`,
-      async (route: Route) => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            components: [
-              {
-                id: 'comp-1',
-                component: { kind: 'FlexibleServer', version: 'v1', schema: '{}' },
-                displayName: 'Flexible Server',
-                model: {
-                  name: MOCK_MODEL,
-                  version: MOCK_MODEL_VERSION,
-                  category: { name: MOCK_CATEGORY, metadata: null },
-                  registrant: { hostname: 'artifacthub', kind: 'artifacthub' },
-                  metadata: {},
-                  model: { version: MOCK_MODEL_VERSION },
-                },
+    await page.route(`**/api/registry/models/${MOCK_MODEL}/components**`, async (route: Route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          components: [
+            {
+              id: 'comp-1',
+              component: { kind: 'FlexibleServer', version: 'v1', schema: '{}' },
+              displayName: 'Flexible Server',
+              model: {
+                name: MOCK_MODEL,
+                version: MOCK_MODEL_VERSION,
+                category: { name: MOCK_CATEGORY, metadata: null },
+                registrant: { hostname: 'artifacthub', kind: 'artifacthub' },
                 metadata: {},
+                model: { version: MOCK_MODEL_VERSION },
               },
-            ],
-          } as ComponentsResponse),
-        });
-      },
-    );
+              metadata: {},
+            },
+          ],
+        } as ComponentsResponse),
+      });
+    });
 
     designConfigPage = new DesignConfiguratorPage(page);
     await designConfigPage.navigateTo(DESIGN_ID);

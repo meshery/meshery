@@ -13,6 +13,7 @@ var (
 	ErrUnsupportedFormatCode      = "mesheryctl-1184"
 	ErrOutputFileNotSpecifiedCode = "mesheryctl-1194"
 	ErrInvalidOutputFormatCode    = "mesheryctl-1198"
+	ErrAmbiguousSelectionCode     = "mesheryctl-1253"
 )
 
 func ErrPagination(err error, currentPage int) error {
@@ -43,5 +44,21 @@ func ErrInvalidOutputFormat(format string) error {
 		[]string{fmt.Sprintf("Provided output format %q is invalid", format)},
 		[]string{"The specified output format is not supported"},
 		[]string{fmt.Sprintf("Ensure using [%s] as the output format", strings.Join(validOutputFormat, "|"))},
+	)
+}
+
+// ErrAmbiguousSelection reports a lookup that matched more than one item while
+// running without a terminal to disambiguate it on. Selecting one on the user's
+// behalf would act on a resource they did not name, so this is a hard failure -
+// but it must say so plainly, rather than surfacing the selection library's
+// "open /dev/tty" as if the device were the problem.
+func ErrAmbiguousSelection(matches int64) error {
+	return errors.New(
+		ErrAmbiguousSelectionCode,
+		errors.Alert,
+		[]string{"Ambiguous match, and no terminal to resolve it on"},
+		[]string{fmt.Sprintf("%d items matched, which requires an interactive selection, but mesheryctl is not attached to a terminal", matches)},
+		[]string{"The command is running in a script, pipeline or CI job where stdin or stdout is redirected"},
+		[]string{"Identify the item by its unique ID instead of its name", "Narrow the search so exactly one item matches"},
 	)
 }

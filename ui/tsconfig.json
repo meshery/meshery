@@ -19,7 +19,6 @@
       "@/assets/*": ["assets/*"],
       "@/theme": ["theme/index"],
       "@/theme/*": ["theme/*"],
-      "@/themes/*": ["themes/*"],
       "@/store/*": ["store/*"]
     },
     // Environment Settings

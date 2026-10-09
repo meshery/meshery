@@ -77,7 +77,12 @@ export type KubeconfigImportOptions = {
 };
 
 export type WizardServices = {
-  notify: (opts: { message: string; event_type: number; details?: string }) => void;
+  notify: (opts: {
+    message: string;
+    event_type: number | string | { type?: string };
+    details?: string;
+    link?: { href: string; label: string };
+  }) => void;
   /** POST /integrations/connections/register with the given body. */
   registerConnection: (body: GenericRecord) => Promise<GenericRecord>;
   /** POST /integrations/connections/register (status: connect). */
@@ -103,6 +108,8 @@ export type WizardContext = {
   patchPostConfig: (partial: GenericRecord) => void;
   services: WizardServices;
   formRefs: WizardFormRefs;
+  /** Advance to the next step immediately, bypassing the primary ("Next") button. */
+  advance: () => void;
 };
 
 export type WizardStep = {
@@ -121,6 +128,11 @@ export type WizardStep = {
   nextLabel?: (ctx: WizardContext) => string;
   /** Skip the step entirely when this returns true. */
   hidden?: (ctx: WizardContext) => boolean;
+  /**
+   * Footer info-popover copy for this step. Prefer markdown with docs.meshery.io
+   * links so HelperTextPopover can render them. Static string or ctx-aware fn.
+   */
+  helpText?: string | ((ctx: WizardContext) => string);
 };
 
 /**

@@ -1,0 +1,48 @@
+---
+title: v1.0.60
+date: 2026-07-21
+tag: v1.0.60
+prerelease: false
+---
+
+## What's New
+## 🔤 General
+- \[Chore\]: Bump meshery/schemas to v1.3.35 @l5io (#20833)
+- Bump shell-quote from 1.8.4 to 1.10.0 in /install/docker-extension/ui @\[dependabot\[bot\]\](https://github.com/apps/dependabot) (#20836)
+- Bump body-parser from 1.20.4 to 1.20.6 in /install/docker-extension/ui @\[dependabot\[bot\]\](https://github.com/apps/dependabot) (#20842)
+- purge old model versions @simihablo (#20846)
+- upgrade to schemas 1.3.35 @simihablo (#20838)
+- \[Server\] Fix variable name typo sucess to success in design engine handler @shivv23 (#20816)
+- \[Server\] Fix master build break: restore loop in auto_register.go toConnectionDefinitions @marblom007 (#20814)
+- \[Server\] Fix nil pointer crash in MeshSync auto-registration @Atishyy27 (#20733)
+- \[Server\] Accept camelCase sort keys in SanitizeOrderInput @leecalcote (#20717)
+- \[Server\] Fix typo respone body to response body in remote provider error strings @shivv23 (#20811)
+
+## 🖥 Meshery UI
+
+- Bump js-yaml from 5.2.0 to 5.2.1 in /ui @\[dependabot\[bot\]\](https://github.com/apps/dependabot) (#20834)
+- \[UI\] Source catalog compatibility widget from schemas (correct #20786) @simihablo (#20843)
+- \[UI\] Reorganize reusable components into components/general/ @simihablo (#20841)
+- \[Chore\]: Update to Sistent v0.21.38 @l5io (#20839)
+- \[UI\] Derive organization from session in create/edit environment & workspace forms @simihablo (#20832)
+- Bump axios from 1.16.1 to 1.18.1 in /ui @\[dependabot\[bot\]\](https://github.com/apps/dependabot) (#20828)
+- \[UI\] Fix icon disappearing on first hover when sidebar is collapsed @Katotodan (#20827)
+- \[Server\] Fix connected clusters showing no MeshSync data when kubernetesServerId is stale @marblom007 (#20798)
+- \[UI\] Fix performance page sizing issues, modal closing, and align environment card flip actions @rishiraj38 (#20805)
+
+## 🧰 Maintenance
+
+- Bump js-yaml from 5.2.0 to 5.2.1 in /ui @\[dependabot\[bot\]\](https://github.com/apps/dependabot) (#20834)
+- Bump axios from 1.16.1 to 1.18.1 in /ui @\[dependabot\[bot\]\](https://github.com/apps/dependabot) (#20828)
+- \[CI\] Add Self-paced Contributor Trainings link to playground issue template @Sathwik-parimi-07 (#20792)
+
+## 📖 Documentation
+
+- Bump tar from 7.5.11 to 7.5.20 in /docs @\[dependabot\[bot\]\](https://github.com/apps/dependabot) (#20835)
+- docs: fix broken MetalLB installation link #20810 @Zara-5 (#20815)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@Atishyy27, @Bhumikagarggg, @Katotodan, @Sathwik-parimi-07, @Zara-5, @dependabot\[bot\], @fitzergerald, @l5io, @leecalcote, @marblom007, @meshery-ci, @rishiraj38, @ritzorama, @shivv23, @simihablo and \[dependabot\[bot\]\](https://github.com/apps/dependabot)
+

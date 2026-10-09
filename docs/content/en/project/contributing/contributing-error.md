@@ -71,17 +71,24 @@ New
 
 {{< code code=`bd, err := json.Marshal(providers)
   if err != nil {
-          obj := "provider"
-          http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+          marshalErr := ErrMarshal(err, "providers")
+          h.log.Error(marshalErr)
+          writeMeshkitError(w, marshalErr, http.StatusInternalServerError)
           return
       }` >}}
+
+`http.Error` is rejected by CI in the `./server` module: it writes a plain-text
+body and strips the MeshKit code, severity, and remediation that clients parse.
+See [HTTP Error Response Contract]({{< ref "project/contributing/error-contract.md" >}})
+for the response shape, the `writeMeshkitError` / `writeJSONError` helpers, and
+how to choose the status code.
 
 ## Replacing logrus
 
 There already exists an [interface for logger](https://github.com/meshery/meshkit/blob/master/logger/logger.go) in MeshKit.<br><br>
 
 {{% alert color="warning" title="WARNING" %}}
-To enforce the use of meshkit errors, meshkit logger was designed such that it only works with meshkit errors. If a non-meshkit error is logged through the logger, it would panic and kill the process. See: [meshkit#119](https://github.com/meshery/meshkit/pull/119) for more insight.
+To enforce the use of meshkit errors, the meshkit logger reads its structured fields - code, severity, probable cause, suggested remediation - straight off a meshkit error. A plain Go error still logs, but every one of those fields renders as `None`, leaving the operator a bare message with no code to look up and no remediation to follow. Wrap an error in a meshkit error before logging it. See: [meshkit#119](https://github.com/meshery/meshkit/pull/119) for more insight.
 {{% /alert %}}
 
 #### Defining a Logger
@@ -184,3 +191,24 @@ func ErrOpeningFile(err error) error {
 		[]string{"pass a non-empty string as filename ", "create file before opening it"})
 }` >}}
 
+
+## Generating error codes in meshery/meshery
+
+`make error` regenerates codes for the server but **skips `mesheryctl`**. The two components keep the same contract in different files.
+
+- **`mesheryctl`**: take the next code from `mesheryctl/helpers/component_info.json` (`next_error_code`) and bump that value in the same commit.
+- **Server**: the same contract lives in `server/helpers/component_info.json`. `errorutil` refuses to run at all - "next_error_code is lower than or equal to highest used code" - until `next_error_code` is bumped past every code you added, so bump it in the same commit.
+
+`.github/workflows/error-codes-updater.yaml` re-runs `errorutil` on every pull request and fails it if the analysis reports anything.
+
+### Naming and formatting
+
+Name each constant `<BuilderFuncName>Code` - `errorutil` keys the export off that pairing. Adding a constant longer than the block's current widest name makes `gofmt` realign the entire `error.go` const block, so prefer a shorter name over a 300-line whitespace diff.
+
+### Regenerating the docs reference
+
+`server/helpers/errorutil_errors_export.json` is gitignored, but the reference data at `docs/data/errorref/meshery-server_errors_export.json` is tracked. Regenerate it with the `jq --slurpfile` wrapper the workflow uses, or the published error reference silently omits the new codes.
+
+### Rendering errors to the user
+
+Only `utils.Log.Error(err)` renders a MeshKit error's code, cause and remediation; cobra's default print shows just the message. In `mesheryctl` commands, log the structured error for the user *and* return it for the exit path.

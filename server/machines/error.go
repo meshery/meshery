@@ -12,6 +12,7 @@ const (
 	ErrInititalizeK8sMachineCode  = "meshery-server-1216"
 	ErrAssetMachineCtxCode        = "meshery-server-1217"
 	ErrInvalidTypeCode            = "meshery-server-1218"
+	ErrConnectionNotFoundCode     = "meshery-server-1444"
 )
 
 func ErrInvalidTransition(from, to StateType) error {
@@ -32,4 +33,8 @@ func ErrAssertMachineCtx(err error) error {
 
 func ErrInvalidType(err error) error {
 	return errors.New(ErrInvalidTypeCode, errors.Alert, []string{"Provided connection id is invalid"}, []string{err.Error()}, []string{"Provided ID is not a valid uuid."}, []string{"Hard delete and reinitialise the connection process."})
+}
+
+func ErrConnectionNotFound(id string) error {
+	return errors.New(ErrConnectionNotFoundCode, errors.Alert, []string{fmt.Sprintf("No connection found with id \"%s\" while updating its status.", id)}, []string{"The provider returned no connection for the given id without reporting an error."}, []string{"The connection may have been deleted, or the persisted record is missing."}, []string{"Reinitialise the connection, or verify the connection id exists in the provider."})
 }

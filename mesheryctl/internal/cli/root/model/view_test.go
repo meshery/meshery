@@ -24,13 +24,13 @@ func TestViewModel(t *testing.T) {
 	const modelId = "00000000-0000-0000-0000-000000000000"
 
 	currDir := filepath.Dir(filename)
-	modelsApiPath = "api/meshmodels/models"
+	modelsApiPath = "api/registry/models"
 
 	tests := []utils.MesheryCommandTest{
 		{
 			Name:           "given no argument provided when running mesheryctl model view then an error message is displayed",
 			Args:           []string{"view"},
-			URL:            "/api/meshmodels/models",
+			URL:            "/api/registry/models",
 			HttpMethod:     "GET",
 			HttpStatusCode: 200,
 			Fixture:        "list.model.empty.api.response.golden",
@@ -41,7 +41,7 @@ func TestViewModel(t *testing.T) {
 		{
 			Name:             "given a valid model-id when model view then display detailed information",
 			Args:             []string{"view", modelId},
-			URL:              fmt.Sprintf("/api/meshmodels/models?id=%s&page=0&pagesize=10", url.QueryEscape(modelId)),
+			URL:              fmt.Sprintf("/api/registry/models?id=%s&page=0&pagesize=10", url.QueryEscape(modelId)),
 			HttpMethod:       "GET",
 			HttpStatusCode:   200,
 			Fixture:          "list.model.api.response.golden",
@@ -52,7 +52,7 @@ func TestViewModel(t *testing.T) {
 		{
 			Name:             "given a valid model-name when model view then display detailed information",
 			Args:             []string{"view", modelName},
-			URL:              fmt.Sprintf("/api/meshmodels/models?page=0&pagesize=10&search=%s", url.QueryEscape(modelName)),
+			URL:              fmt.Sprintf("/api/registry/models?page=0&pagesize=10&search=%s", url.QueryEscape(modelName)),
 			HttpMethod:       "GET",
 			HttpStatusCode:   200,
 			Fixture:          "list.model.api.response.golden",
@@ -63,7 +63,7 @@ func TestViewModel(t *testing.T) {
 		{
 			Name:             "given a non-existent model-name when model view then display not found message",
 			Args:             []string{"view", nonExistentModelName},
-			URL:              fmt.Sprintf("/api/meshmodels/models?page=0&pagesize=10&search=%s", url.QueryEscape(nonExistentModelName)),
+			URL:              fmt.Sprintf("/api/registry/models?page=0&pagesize=10&search=%s", url.QueryEscape(nonExistentModelName)),
 			HttpMethod:       "GET",
 			HttpStatusCode:   404,
 			Fixture:          "list.model.api.response.golden",

@@ -44,7 +44,7 @@ func (h *Handler) grafanaClientForConnection(token string, connectionID uuid.UUI
 			return nil, connection, sc, cerr
 		}
 		if cred != nil {
-			secret, _ = cred.Secret["secret"].(string)
+			secret = models.CredentialAuthSecret(cred.Secret)
 		}
 	}
 	return grafana.New(baseURL, secret, h.log), connection, http.StatusOK, nil

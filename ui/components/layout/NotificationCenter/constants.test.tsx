@@ -2,15 +2,11 @@ import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@sistent/sistent', () => ({
   InfoIcon: () => null,
-}));
-
-vi.mock('../../../themes', () => ({
-  NOTIFICATIONCOLORS: {
-    INFO: '#info',
-    ERROR: '#error',
-    ERROR_DARK: '#error_dark',
-    WARNING: '#warning',
-    SUCCESS: '#success',
+  notificationColors: {
+    info: { main: '#info' },
+    error: { main: '#error', dark: '#error_dark' },
+    warning: { main: '#warning', light: '#warning_light' },
+    success: { main: '#success' },
   },
 }));
 
@@ -34,6 +30,7 @@ import {
   eventDetailFormatterKey,
   getStatusStyle,
 } from './constants';
+import { notificationColors } from '@sistent/sistent';
 
 describe('NotificationCenter constants', () => {
   it('defines severity levels', () => {
@@ -60,11 +57,11 @@ describe('NotificationCenter constants', () => {
   });
 
   it('provides severity styles that resolve to palette colors', () => {
-    expect(SEVERITY_STYLE[SEVERITY.INFO].color).toBe('#info');
-    expect(SEVERITY_STYLE[SEVERITY.ERROR].color).toBe('#error');
-    expect(SEVERITY_STYLE[SEVERITY.ERROR].darkColor).toBe('#error_dark');
-    expect(SEVERITY_STYLE[SEVERITY.WARNING].color).toBe('#warning');
-    expect(SEVERITY_STYLE[SEVERITY.SUCCESS].color).toBe('#success');
+    expect(SEVERITY_STYLE[SEVERITY.INFO].color).toBe(notificationColors.info.main);
+    expect(SEVERITY_STYLE[SEVERITY.ERROR].color).toBe(notificationColors.error.main);
+    expect(SEVERITY_STYLE[SEVERITY.ERROR].darkColor).toBe(notificationColors.error.dark);
+    expect(SEVERITY_STYLE[SEVERITY.WARNING].color).toBe(notificationColors.warning.main);
+    expect(SEVERITY_STYLE[SEVERITY.SUCCESS].color).toBe(notificationColors.success.main);
     Object.values(SEVERITY_STYLE).forEach((style) => {
       expect(style.icon).toBeDefined();
     });

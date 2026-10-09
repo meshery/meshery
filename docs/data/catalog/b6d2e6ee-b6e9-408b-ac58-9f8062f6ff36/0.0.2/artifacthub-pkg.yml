@@ -1,0 +1,24 @@
+version: 0.0.2
+name: devops-k8s-ci/cd-platform
+displayName: DevOps K8s CI/CD Platform
+createdAt: "2026-09-20T05:53:02Z"
+description: |-
+    A Kubernetes-based DevOps CI/CD platform for deploying a Node.js REST API
+    to a staging environment. The design includes a Deployment, Service,
+    ConfigMaps, Secret, ServiceAccount, Role, RoleBinding, and a
+    two-replica application deployment.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/b6d2e6ee-b6e9-408b-ac58-9f8062f6ff36/0.0.2/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Docker\nGitHub Actions \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 70238d84-bf22-43b9-b50b-83e9f47c2d7e
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -37,6 +37,13 @@ vi.mock('@sistent/sistent', () => ({
     return StyledComponent;
   },
   accentGrey: 'gray',
+  DataTableToolbar: ({ search, filter, columnVisibility }) => (
+    <div data-testid="datatable-toolbar">
+      {search}
+      {filter}
+      {columnVisibility}
+    </div>
+  ),
 }));
 
 vi.mock('../../../utils/hooks/useNotification', () => ({
@@ -98,10 +105,6 @@ vi.mock('../styles', () => ({
   ContentContainer: ({ children }) => <div>{children}</div>,
   ConnectionStyledSelect: ({ children }) => <div>{children}</div>,
   InnerTableContainer: ({ children }) => <div>{children}</div>,
-}));
-
-vi.mock('@/assets/styles/general/tool.styles', () => ({
-  ToolWrapper: ({ children }) => <div>{children}</div>,
 }));
 
 vi.mock('@/store/slices/mesheryUi', () => ({

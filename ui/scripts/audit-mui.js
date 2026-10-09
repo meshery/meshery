@@ -53,7 +53,6 @@ const SCANS = [
       'components',
       'pages',
       'utils',
-      'themes',
       'theme',
       'machines',
       'store',

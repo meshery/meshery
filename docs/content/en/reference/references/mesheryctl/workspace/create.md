@@ -3,6 +3,7 @@ title: mesheryctl-workspace-create
 display_title: false
 command: workspace
 subcommand: create
+categories: [mesheryctl-workspace]
 ---
 
 # mesheryctl workspace create
@@ -15,8 +16,10 @@ Create a new workspace by providing the name, description, and organization ID
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl workspace create [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +28,10 @@ mesheryctl workspace create [flags]
 Create a new workspace in an organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl workspace create --orgId [orgId] --name [name] --description [description]
 
+</div>
 </div>
 </pre> 
 

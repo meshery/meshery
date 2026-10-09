@@ -1,15 +1,22 @@
 import React, { memo } from 'react';
-import { Avatar, AssignmentTurnedInIcon, CustomTooltip, useTheme } from '@sistent/sistent';
+import {
+  Avatar,
+  AssignmentTurnedInIcon,
+  CustomTooltip,
+  notificationColors,
+  useTheme,
+} from '@sistent/sistent';
 import {
   CheckCircle as CheckCircleIcon,
   Explore as ExploreIcon,
   RemoveCircle as RemoveCircleIcon,
   DeleteForever as DeleteForeverIcon,
   Handyman as HandymanIcon,
-  NotInterestedRounded as NotInterestedRoundedIcon,
+  // Warning — not Cancel/X. CancelIcon was re-exported as NotInterestedRounded
+  // and read as a destructive delete action on "not found" chips.
+  Warning as WarningIcon,
 } from '@/assets/icons';
-import BadgeAvatars from '../CustomAvatar';
-import { notificationColors } from '../../themes';
+import BadgeAvatars from '../general/CustomAvatar';
 import DisconnectIcon from '../../assets/icons/disconnect';
 import {
   CONNECTION_STATE_TO_TRANSITION_MAP,
@@ -50,16 +57,28 @@ type ConnectionStateChipProps = {
   actionable?: boolean;
 };
 
+// Status-dot color buckets. Keep in sync with ConnectionStateChip styling
+// intent: green = healthy, yellow = transitional, orange = degraded, gray = inactive.
 const HEALTHY_STATUSES = new Set(
-  [CONNECTION_STATES.CONNECTED, CONTROLLER_STATES.DEPLOYED].map((status) => status.toLowerCase()),
+  [CONNECTION_STATES.CONNECTED, CONTROLLER_STATES.DEPLOYED, CONTROLLER_STATES.CONNECTED].map(
+    (status) => status.toLowerCase(),
+  ),
 );
+// Yellow / amber — not fully healthy yet, but not failed.
 const PARTIAL_STATUSES = new Set(
   [
     CONTROLLER_STATES.ENABLED,
     CONTROLLER_STATES.RUNNING,
     CONTROLLER_STATES.DEPLOYING,
     CONNECTION_STATES.REGISTERED,
+    CONNECTION_STATES.DISCOVERED,
   ].map((status) => status.toLowerCase()),
+);
+// Orange — reachable-but-off / under maintenance (matches Disconnected/Maintenance chips).
+const WARNING_STATUSES = new Set(
+  [CONNECTION_STATES.DISCONNECTED, CONNECTION_STATES.MAINTENANCE].map((status) =>
+    status.toLowerCase(),
+  ),
 );
 
 const STATE_CHIP_CONFIG = {
@@ -89,11 +108,20 @@ const STATE_CHIP_CONFIG = {
   },
   [CONNECTION_STATES.DISCONNECTED]: {
     Component: DisconnectedChip,
-    avatar: <DisconnectIcon fill={notificationColors.lightwarning} width={24} height={24} />,
+    avatar: <DisconnectIcon fill={notificationColors.warning.light} width={24} height={24} />,
   },
   [CONNECTION_STATES.NOTFOUND]: {
     Component: NotFoundChip,
-    avatar: <NotInterestedRoundedIcon />,
+    // Explicit fill + size: WarningIcon has no path fill by default, so without
+    // currentColor the glyph can disappear on dark/disabled chip backgrounds.
+    avatar: (
+      <WarningIcon
+        data-testid="not-found-warning-icon"
+        fill="currentColor"
+        width={20}
+        height={20}
+      />
+    ),
   },
 } as const;
 
@@ -102,7 +130,7 @@ const DEFAULT_STATE_CHIP = {
   avatar: <ExploreIcon />,
 };
 
-const getStatusLevel = (status?: string) => {
+const getStatusLevel = (status?: string): 'healthy' | 'partial' | 'warning' | 'error' => {
   if (!status) {
     return 'error';
   }
@@ -117,16 +145,27 @@ const getStatusLevel = (status?: string) => {
     return 'partial';
   }
 
+  if (WARNING_STATUSES.has(normalizedStatus)) {
+    return 'warning';
+  }
+
+  // ignored / deleted / not found / unknown → gray
   return 'error';
 };
 
 const getStatusColor = (theme: ReturnType<typeof useTheme>, status?: string) => {
   switch (getStatusLevel(status)) {
     case 'healthy':
+      // Green
       return theme.palette.background.brand.default;
     case 'partial':
+      // Yellow / amber
       return theme.palette.background.warning.default;
+    case 'warning':
+      // Orange (same token used by the disconnected state chip icon)
+      return notificationColors.warning.light;
     default:
+      // Gray
       return theme.palette.text.disabled;
   }
 };

@@ -33,7 +33,7 @@ func connectionDefinitionsFromEntities(entities []entity.Entity) []*connectionv1
 // GetConnectionDefinitions returns a paginated list of connection definitions
 // registered in the registry, optionally filtered by model or kind.
 //
-// swagger:route GET /api/meshmodels/connections GetConnectionDefinitions
+// swagger:route GET /api/registry/connections GetConnectionDefinitions
 // responses:
 //
 //	200: ConnectionDefinitionPage
@@ -83,7 +83,7 @@ func (h *Handler) GetConnectionDefinitions(rw http.ResponseWriter, r *http.Reque
 
 // GetConnectionDefinitionByID returns a single connection definition by its ID.
 //
-// swagger:route GET /api/meshmodels/connections/{connectionDefinitionId} GetConnectionDefinitionByID
+// swagger:route GET /api/registry/connections/{connectionDefinitionId} GetConnectionDefinitionByID
 // responses:
 //
 //	200: ConnectionDefinition
@@ -120,7 +120,7 @@ func (h *Handler) GetConnectionDefinitionByID(rw http.ResponseWriter, r *http.Re
 // RegisterConnectionDefinition registers a new connection definition into the
 // registry under the model (and registrant) carried in the request body.
 //
-// swagger:route POST /api/meshmodels/connections RegisterConnectionDefinition
+// swagger:route POST /api/registry/connections RegisterConnectionDefinition
 // responses:
 //
 //	201: ConnectionDefinition
@@ -158,7 +158,7 @@ func (h *Handler) RegisterConnectionDefinition(rw http.ResponseWriter, r *http.R
 
 // UpdateConnectionDefinition updates an existing connection definition.
 //
-// swagger:route PUT /api/meshmodels/connections/{connectionDefinitionId} UpdateConnectionDefinition
+// swagger:route PUT /api/registry/connections/{connectionDefinitionId} UpdateConnectionDefinition
 // responses:
 //
 //	200: ConnectionDefinition
@@ -198,7 +198,7 @@ func (h *Handler) UpdateConnectionDefinition(rw http.ResponseWriter, r *http.Req
 // DeleteConnectionDefinition removes a connection definition and its registry
 // entry. Mirrors the registry-cleanup approach used by DeleteModel.
 //
-// swagger:route DELETE /api/meshmodels/connections/{connectionDefinitionId} DeleteConnectionDefinition
+// swagger:route DELETE /api/registry/connections/{connectionDefinitionId} DeleteConnectionDefinition
 // responses:
 //
 //	204:

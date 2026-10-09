@@ -1,6 +1,6 @@
 import React from 'react';
 import MesheryPerformanceComponent from '@/components/performance/Dashboard';
-import { MesheryPage } from '../../components/MesheryPage';
+import { MesheryPage } from '../../components/general/MesheryPage';
 
 function Performance() {
   return (

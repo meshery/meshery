@@ -2,7 +2,6 @@ package kubernetes
 
 import (
 	"context"
-	"os"
 	"time"
 
 	"github.com/meshery/meshery/server/machines"
@@ -31,8 +30,7 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 		LogLevel: logLevel,
 	})
 	if err != nil {
-		logrus.Error(err)
-		os.Exit(1)
+		return machines.NoOp, nil, models.ErrInitLogger(err)
 	}
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
@@ -52,7 +50,7 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}, dat
 	go func() {
 
 		machinectx.MesheryCtrlsHelper.UpdateOperatorsStatusMap(machinectx.OperatorTracker).
-			UndeployDeployedOperators(machinectx.OperatorTracker).
+			UndeployDeployedOperators(machinectx.OperatorTracker, contextID).
 			RemoveCtxControllerHandler(ctx, contextID)
 
 		machinectx.MesheryCtrlsHelper.RemoveMeshSyncDataHandler(ctx, contextID)

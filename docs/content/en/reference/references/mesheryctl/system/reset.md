@@ -3,6 +3,7 @@ title: mesheryctl-system-reset
 display_title: false
 command: system
 subcommand: reset
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system reset
@@ -15,8 +16,10 @@ Reset Meshery to it's default configuration.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system reset [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +28,10 @@ mesheryctl system reset [flags]
 Resets meshery.yaml file with a copy from Meshery repo
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system reset
 
+</div>
 </div>
 </pre> 
 

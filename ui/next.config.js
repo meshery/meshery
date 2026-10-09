@@ -66,7 +66,7 @@ const nextConfig = {
       '/management/adapter': { page: '/management/adapter' },
       '/management/environments': { page: '/management/environments' },
       '/management/connections': { page: '/management/connections' },
-      '/management/credentials': { page: '/management/connections' },
+      '/management/credentials': { page: '/management/credentials' },
       '/telemetry/metrics': { page: '/telemetry/metrics' },
       '/telemetry/charts': { page: '/telemetry/charts' },
       '/management/workspaces': { page: '/management/workspaces' },

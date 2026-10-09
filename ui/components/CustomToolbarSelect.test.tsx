@@ -52,7 +52,7 @@ vi.mock('@sistent/sistent', () => ({
   NoSsr: ({ children }: any) => <>{children}</>,
 }));
 
-vi.mock('./MesheryChartDialog', () => ({
+vi.mock('./general/MesheryChartDialog', () => ({
   default: ({ open, content, handleClose }: any) =>
     open ? (
       <div data-testid="chart-dialog">

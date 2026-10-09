@@ -3,6 +3,7 @@ title: mesheryctl-model-search
 display_title: false
 command: model
 subcommand: search
+categories: [mesheryctl-model]
 ---
 
 # mesheryctl model search
@@ -15,8 +16,10 @@ Search model(s) by search string
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model search [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,24 +28,30 @@ mesheryctl model search [flags]
 Search model from current provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model search [query-text]
 
+</div>
 </div>
 </pre> 
 
 Search list of models for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model search [query-text] --page [page-number]
 
+</div>
 </div>
 </pre> 
 
 Search list of models for a specified pagesize
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl model search [query-text] --pagesize [pagesize-number]
 
+</div>
 </div>
 </pre> 
 

@@ -1,5 +1,5 @@
 Cloud Native Filter Management
-Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl#command-reference
 
 Usage:
   filter [flags]
@@ -20,6 +20,7 @@ Available Commands:
   view        View filter(s)
 
 Flags:
+      --count          (optional) Get the number of filters in total
   -h, --help           help for filter
   -t, --token string   Path to token file default from current context
 

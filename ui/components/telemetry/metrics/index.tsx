@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/router';
 import {
   AddIcon,
   Box,
@@ -9,6 +8,7 @@ import {
   InsertChartIcon,
   Typography,
   styled,
+  useHasPermission,
   useTheme,
 } from '@sistent/sistent';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
@@ -17,6 +17,10 @@ import {
   usePingPrometheusConnectionQuery,
   useUpdatePrometheusPanelsMutation,
 } from '@/rtk-query/telemetryPrometheus';
+import { CoreConnectionKinds } from '@/utils/Enum';
+import { Keys } from '@meshery/schemas/permissions';
+import DefaultError from '../../general/error-404/index';
+import { useConnectionWizardModal } from '@/utils/context/ConnectionWizardContextProvider';
 import ConnectionPicker, { TelemetryConnection } from '../common/ConnectionPicker';
 import PingStatus from '../common/PingStatus';
 import TimeRangePicker from '../common/TimeRangePicker';
@@ -85,17 +89,24 @@ const newId = () =>
  */
 const TelemetryMetrics: React.FC = () => {
   const theme = useTheme();
-  const router = useRouter();
+  const { openCreateConnection } = useConnectionWizardModal();
+  const canViewMetrics = useHasPermission(Keys.MesherySystemViewMetrics);
 
-  const { data: connectionsData, isLoading: connectionsLoading } = useGetConnectionsQuery({
-    kind: JSON.stringify(['prometheus']),
-    pagesize: 200,
-  });
+  // kind is a plain repeated query param (?kind=prometheus) — never JSON-encoded.
+  // JSON.stringify(['prometheus']) becomes kind=["prometheus"] and matches nothing.
+  // Use CoreConnectionKinds (schemas) so literals stay single-sourced after #20949.
+  const { data: connectionsData, isLoading: connectionsLoading } = useGetConnectionsQuery(
+    {
+      kind: CoreConnectionKinds.prometheus,
+      pageSize: 100,
+    },
+    { skip: !canViewMetrics },
+  );
 
   const connections: TelemetryConnection[] = useMemo(
     () =>
       ((connectionsData as any)?.connections ?? [])
-        .filter((c: any) => c.kind === 'prometheus' && c.status !== 'deleted')
+        .filter((c: any) => c.kind === CoreConnectionKinds.prometheus && c.status !== 'deleted')
         .map((c: any) => ({ id: c.id, name: c.name, kind: c.kind, metadata: c.metadata })),
     [connectionsData],
   );
@@ -120,7 +131,7 @@ const TelemetryMetrics: React.FC = () => {
 
   const { data: panelsData } = useGetPrometheusPanelsQuery(
     { connectionID },
-    { skip: !connectionID },
+    { skip: !canViewMetrics || !connectionID },
   );
   const panels = (panelsData as MetricPanel[] | undefined) ?? [];
   const [updatePanels] = useUpdatePrometheusPanelsMutation();
@@ -144,6 +155,10 @@ const TelemetryMetrics: React.FC = () => {
 
   const handleRemove = (panel: MetricPanel) => persist(panels.filter((p) => p.id !== panel.id));
 
+  if (!canViewMetrics) {
+    return <DefaultError permissionKey={Keys.MesherySystemViewMetrics} />;
+  }
+
   if (connectionsLoading) {
     return (
       <Centered>
@@ -161,14 +176,20 @@ const TelemetryMetrics: React.FC = () => {
             No Prometheus connections yet
           </Typography>
           <Typography color="textSecondary" sx={{ maxWidth: 460 }}>
-            Add a Prometheus connection to explore its metrics and build panels here. Connections
-            are managed from the Connections page.
+            Add a Prometheus connection to explore its metrics and build panels here. You can manage
+            all connections anytime under Lifecycle → Connections.
           </Typography>
         </Box>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => router.push('/management/connections')}
+          onClick={() =>
+            openCreateConnection({
+              kind: CoreConnectionKinds.prometheus,
+              skipKindSelection: true,
+            })
+          }
+          permissionKey={Keys.MesherySystemConnectMetrics}
         >
           Add a Prometheus connection
         </Button>

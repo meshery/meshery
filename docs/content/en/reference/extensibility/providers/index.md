@@ -76,7 +76,16 @@ For production deployments, consider the following security best practices regar
 - **Enforce a specific provider** using the `PROVIDER` environment variable only when you have a clear operational requirement to do so, such as locking a deployment to a particular identity provider.
 - **Use `mesheryctl system provider set`** to explicitly configure a provider for a given context when needed.
 - **Use `mesheryctl system provider reset`** to clear an enforced provider and return to the provider selection UI.
+- **Vet the provider before you allow it.** A Remote Provider's capabilities document names the extension package Meshery downloads and loads, so selecting a provider decides whose code runs in Meshery UI's browser context and, where the package carries a server-side plugin, in-process inside Meshery Server. Prefer first-party and maintained providers, and pin what you have reviewed with [`SKIP_DOWNLOAD_EXTENSIONS`](#skip_download_extensions) and [`PROVIDER_CAPABILITIES_FILEPATH`](#provider_capabilities_filepath). See [Trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}}) for the full production guidance.
 
+{{% alert color="warning" title="Provider selection is a code-trust decision" %}}
+Beyond identity and persistence, the provider you select supplies loadable extension code.
+Treat adding an unfamiliar Remote Provider the way you would treat adding an unfamiliar
+binary to a production host. See
+[Trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}})
+and
+[Authentication, Authorization & Identity]({{< ref "installation/production/authentication-and-identity.md" >}}).
+{{% /alert %}}
 
 #### AI Provider Usage in Production
 
@@ -160,24 +169,71 @@ Understanding how provider selection leads to authentication and dashboard acces
 
 When the `PROVIDER` environment variable is set (e.g., `PROVIDER=Local` or `PROVIDER=Meshery`):
 
-1. Provider selection UI is bypassed
-2. The specified provider is automatically activated and cookie is set
-3. User is redirected directly to `/user/login`
-4. Login flow proceeds as described above based on provider type
+1. At **server boot**, only that provider is registered. If the value is a remote, the Local Provider is not registered at all.
+2. Provider selection UI is bypassed; cookie, header, and `?provider=` cannot select a different provider.
+3. User is redirected directly to `/user/login`.
+4. Login flow proceeds as described above based on provider type.
+5. If `PROVIDER` is set but cannot be resolved to a registered provider, Meshery refuses to start (it does not fall back to the chooser).
+6. Changing `PROVIDER` on an existing deployment requires a restart. It is not a build-time flag. Re-login is required; data does not migrate between providers.
+
+Boot-time work is unaffected by the pin. Model seeding, connection seeding, and
+key seeding all run before any user request and are provider-independent, so a
+pinned deployment seeds exactly what an unpinned one does, and the system events
+raised while seeding (the `For registrant ... imported ...` summaries and any
+registration failures) are persisted to the same `events` table either way.
+
+{{% alert color="warning" title="Contributing: do not look a provider up by name at boot" %}}
+Because enforcement empties the registration map of everything but the pinned
+provider, server code that runs at boot must not resolve a provider by name from
+`HandlerConfig.Providers` - `Providers["Local"]` yields a nil `Provider` on a
+pinned deployment. Code needing to persist an event outside a user request takes
+`HandlerConfig.SystemEventPersister` instead, which is wired directly to the
+database and is independent of which providers are registered. Reaching into the
+registration map for a sink is what made a pinned deployment panic at boot in
+[#21584](https://github.com/meshery/meshery/issues/21584). Request-path code is
+unaffected: it receives its provider from the request context, which enforcement
+resolves consistently.
+{{% /alert %}}
+
+{{% alert color="warning" title="Contributing: a seeding fault must not terminate the server" %}}
+Every boot seeding stage runs through `models.RunSeedStage`, which recovers a
+panic raised inside that stage, logs it as
+[`meshery-server-1483`]({{< ref "reference/references/error-codes.md" >}}) with
+the stage name and stack trace, and lets the remaining stages run. A Meshery
+Server with an incomplete registry is still useful and its operator can read the
+error; one that exits at boot leaves them a crash loop and no UI to read it in.
+
+`recover` reaches only the goroutine that deferred it, so wrapping a stage does
+not cover a goroutine that stage spawns - a fault there would still take the
+process down. A stage that spawns one therefore recovers at its own spawn site
+and reports through the same `ErrSeedingStagePanic`, making the failure
+indistinguishable in the log from one `RunSeedStage` caught itself. `SeedKeys`
+(`server/models/keys_helper.go`), which parses `keys.csv` on a spawned
+goroutine, is the only seeding callee that spawns one today; give any new one
+the same deferred recover rather than widening `RunSeedStage`, which cannot
+reach a child goroutine. Both halves are pinned by tests in `server/models`:
+`TestRunSeedStageRecoversPanic` and
+`TestSeedKeysChildGoroutinePanicIsContained`.
+{{% /alert %}}
 
 ### Deep-Link Preservation
 
-Meshery preserves the originally requested URL when authentication is required, enabling seamless navigation after login:
+Meshery preserves the originally requested in-app destination - its path and query, plus its fragment where the browser captured one - on the entry paths that capture it: an unauthenticated first visit, which is routed through provider selection (`/provider`) with the page attached, and the **Sign In** control offered during an anonymous session, which sends the page the user is standing on. A session that expires mid-use takes neither path - it is sent to `/auth/login` carrying that page's own query but not the page itself - so re-authentication lands on the default page rather than the original destination.
 
-- When an unauthenticated user attempts to access a protected page, the URL is base64-encoded into a `ref` query parameter
-- After successful login, the provider decodes `ref` and redirects to the original destination
-- The Local Provider supports this functionality, validating `ref` values to prevent open redirects (absolute URLs, protocol-relative URLs, and URLs with schemes/hosts are rejected)
-- If `ref` validation fails or is absent, users are redirected to the dashboard (`/`)
+- Where the destination is captured, the in-app URL is base64-encoded into a `ref` query parameter
+- Meshery owns that destination for the rest of the flow: `InitiateLogin` records it in a one-shot, `HttpOnly` cookie on Meshery's own domain rather than trusting the value back out of the provider's auth chain, where a custom-domain bounce can rewrite it. A login carrying no `ref` deletes any cookie an abandoned earlier attempt left behind, so a stale destination cannot outrank this login's own
+- When the provider returns to `/api/user/token`, that cookie supplies the destination and is deleted. Only if it is absent or empty does Meshery fall back to the `?ref=` the provider echoed back. A deployment that offers anonymous sessions writes no cookie at all, because its exit resolves the destination from the request in hand - which is how a Sign In taken during an anonymous session keeps its query
+- The same validation gate runs at every entry point: the Local Provider's login, the Remote Provider's token handler, and the anonymous-session exit
+- If validation fails, or no `ref` is present at all, the user lands on the default page for that provider - the dashboard (`/`) or a [provider-defined redirect](#provider-defined-redirects) target
 
-**Example**: User visits `https://meshery.example.com/extension/meshmap` while unauthenticated → redirected to login with `ref` parameter → after login, automatically returned to the extension.
+**Example**: A user who has not yet selected a provider visits `https://meshery.example.com/extension/meshmap?mode=design` → redirected to provider selection and on to login, with the page carried in a `ref` parameter → after login, automatically returned to the extension with `mode=design` intact.
 
 {{% alert color="info" title="Deep-Link Security" %}}
-Deep-link targets are validated to prevent open redirect vulnerabilities. Only relative paths within the Meshery application are accepted.
+Deep-link targets are validated to prevent open redirect vulnerabilities and post-login redirect loops:
+
+- A relative in-app path is used as-is. An absolute URL is accepted only when its host is Meshery's own, and is then reduced to its path and query; every other host is rejected. The host compared against is taken from `MESHERY_SERVER_CALLBACK_URL` when set, falling back to the request's `Host` - so a rewritten `Host` header cannot widen the test
+- Protocol-relative values (`//host`) and backslashes in the path are rejected, because a browser reads either as the start of a new authority
+- Routes whose job is to *start* authentication are rejected as destinations, otherwise the browser immediately re-enters the OAuth dance and the original target is lost: `/user/login`, `/auth/login`, `/api/user/token`, `/provider`, and `/login` (the Remote Provider's own login page, which a custom-domain bounce can synthesize into the `ref` it echoes back). The check runs on the normalized target as well as the decoded one, so encoded or fragment-hidden traversal onto one of those routes is caught too
 {{% /alert %}}
 
 ## Runtime Configuration Options
@@ -188,7 +244,7 @@ For the full server-wide reference, including provider-independent settings such
 
 ### PROVIDER
 
-This environment variable enforces a specific provider, bypassing the provider selection UI. This is useful for:
+This environment variable hard-enforces a specific provider at server boot: only that provider is registered, the chooser is skipped, and client hints cannot override it. This is useful for:
 - Dedicated deployments where only one provider should be available
 - Automated environments and CI/CD pipelines
 - Simplified user experience when provider choice is predetermined
@@ -229,6 +285,13 @@ Example: `SKIP_DOWNLOAD_EXTENSIONS=true`
 - Release channel updates
 
 When `SKIP_DOWNLOAD_EXTENSIONS` is enabled, existing extension packages will still be loaded if present, but no new versions will be retrieved.
+
+**Security use:** because existing packages continue to load, this variable doubles as a
+pin. Setting it to `true` holds a production deployment on an extension package you have
+already reviewed instead of accepting whatever the provider publishes next. Pair it with
+[`PROVIDER_CAPABILITIES_FILEPATH`](#provider_capabilities_filepath) when the capability set
+itself should not drift, and see
+[Trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}}).
 
 ## Design Principles: Meshery Remote Provider Framework
 

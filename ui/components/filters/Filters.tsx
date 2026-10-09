@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useTableUrlState } from '@/utils/hooks/useTableUrlState';
 import { useColumnVisibilityPreference } from '@/utils/hooks/useColumnVisibilityPreference';
-import { NoSsr } from '@sistent/sistent';
+import { NoSsr, useHasPermission } from '@sistent/sistent';
 import { Publish as PublishIcon } from '@/assets/icons';
-import _PromptComponent from '../PromptComponent';
+import _PromptComponent from '../general/PromptComponent';
 import { MesheryFiltersCatalog, VISIBILITY } from '../../utils/Enum';
-import ViewSwitch from '../ViewSwitch';
+import ViewSwitch from '../general/ViewSwitch';
 import FiltersGrid from './FiltersGrid';
 import fetchCatalogFilter from '@/graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../../css/icons.styles';
@@ -27,7 +27,7 @@ import {
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import InfoModal from '../shared/Modal/Information/InfoModal';
-import CAN from '@/utils/can';
+
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '../general/error-404/index';
 import {
@@ -60,7 +60,6 @@ import {
   createHandlePublish,
   createHandleSubmit,
   createHandleUnpublishModal,
-  createInitFiltersSubscription,
   createUploadHandler,
 } from './Filters.fileActions';
 import type { TypeView } from './Filters.types';
@@ -70,6 +69,10 @@ function resetSelectedFilter() {
 }
 
 function MesheryFilters() {
+  const canViewFilters = useHasPermission(Keys.CatalogManagementViewFilters);
+  const canPublishWasmFilter = useHasPermission(Keys.CatalogManagementPublishWasmFilter);
+  const canImportFilter = useHasPermission(Keys.CatalogManagementImportFilter);
+  const canViewFilterDetails = useHasPermission(Keys.CatalogManagementDetailsOfWasmFilter);
   const { tableState, updateTableState } = useTableUrlState({
     tableKey: 'fil',
     defaults: {
@@ -129,7 +132,6 @@ function MesheryFilters() {
 
   const catalogContentRef = useRef<any[]>([]);
   const catalogVisibilityRef = useRef<boolean>(false);
-  const disposeConfSubscriptionRef = useRef<{ dispose: () => void } | null>(null);
   const [selectedFilters, setSelectedFilters] = useState<{ visibility: string }>(() => ({
     visibility: tableState.filters.vis || 'All',
   }));
@@ -204,7 +206,10 @@ function MesheryFilters() {
   const handleInfoModal = (filter: any) => {
     setInfoModal({
       open: true,
-      ownerID: filter.userId,
+      // Filters key the owner as `owner`, not `userId`: that is the canonical
+      // wire key in the schemas v1beta3 filter contract and what both providers
+      // emit. Designs are the ones that use `userId`.
+      ownerID: filter.owner,
       selectedResource: filter,
     });
   };
@@ -260,13 +265,6 @@ function MesheryFilters() {
   const handleClone = createHandleClone({ cloneFilter, notify, handleError });
   const handleDownload = createHandleDownload({ notify });
   const deleteFilter = createDeleteFilter({ deleteFilterFile, notify, handleError });
-  const initFiltersSubscription = createInitFiltersSubscription({
-    page,
-    pageSize,
-    search,
-    sortOrder,
-    disposeConfSubscriptionRef,
-  });
   const handleSubmit = createHandleSubmit({
     notify,
     handleError,
@@ -348,14 +346,12 @@ function MesheryFilters() {
     }).subscribe({
       next: (result) => {
         catalogContentRef.current = result?.catalogFilters;
-        initFiltersSubscription();
       },
       error: (err) => console.log('There was an error fetching Catalog Filter: ', err),
     });
 
     return () => {
       fetchCatalogFilters.unsubscribe();
-      disposeConfSubscriptionRef.current?.dispose();
     };
   }, []);
 
@@ -386,7 +382,6 @@ function MesheryFilters() {
     setSearch,
     setSortOrder,
     setSelectedRowData,
-    initFiltersSubscription,
     showmodal,
     deleteFilter,
   });
@@ -441,7 +436,7 @@ function MesheryFilters() {
     <>
       <>
         <NoSsr>
-          {CAN(Keys.CatalogManagementViewFilters.id, Keys.CatalogManagementViewFilters.function) ? (
+          {canViewFilters ? (
             <>
               {selectedRowData && Object.keys(selectedRowData).length > 0 && (
                 <YAMLEditor
@@ -461,12 +456,7 @@ function MesheryFilters() {
                           color="primary"
                           size="large"
                           onClick={handleUploadImport}
-                          disabled={
-                            !CAN(
-                              Keys.CatalogManagementImportFilter.id,
-                              Keys.CatalogManagementImportFilter.function,
-                            )
-                          }
+                          permissionKey={Keys.CatalogManagementImportFilter}
                         >
                           <PublishIcon style={iconMedium} data-cy="import-button" />
                           <BtnText> Import Filters </BtnText>
@@ -486,12 +476,6 @@ function MesheryFilters() {
                   <SearchBar
                     onSearch={(value) => {
                       setSearch(value);
-                      initFiltersSubscription(
-                        page.toString(),
-                        pageSize.toString(),
-                        value,
-                        sortOrder,
-                      );
                     }}
                     expanded={isSearchExpanded}
                     setExpanded={setIsSearchExpanded}
@@ -551,50 +535,37 @@ function MesheryFilters() {
                   handleInfoModal={handleInfoModal}
                 />
               )}
-              {canPublishFilter &&
-                publishModal.open &&
-                CAN(
-                  Keys.CatalogManagementPublishWasmFilter.id,
-                  Keys.CatalogManagementPublishWasmFilter.function,
-                ) && (
-                  <PublishModal
-                    handleClose={handlePublishModalClose}
-                    title={publishModal.filter?.name}
-                    handleSubmit={handlePublish}
-                  />
-                )}
-              {importModal.open &&
-                CAN(
-                  Keys.CatalogManagementImportFilter.id,
-                  Keys.CatalogManagementImportFilter.function,
-                ) && (
-                  <ImportModal
-                    handleClose={handleUploadImportClose}
-                    handleImportFilter={handleImportFilter}
-                  />
-                )}
-              {infoModal.open &&
-                CAN(
-                  Keys.CatalogManagementDetailsOfWasmFilter.id,
-                  Keys.CatalogManagementDetailsOfWasmFilter.function,
-                ) && (
-                  <InfoModal
-                    handlePublish={handlePublish}
-                    infoModalOpen={true}
-                    handleInfoModalClose={handleInfoModalClose}
-                    dataName="filters"
-                    selectedResource={infoModal.selectedResource}
-                    resourceOwnerID={infoModal.ownerID}
-                    currentUser={user}
-                    formSchema={publishSchema}
-                    meshModels={meshModels}
-                    patternFetcher={getFilters}
-                  />
-                )}
+              {canPublishFilter && publishModal.open && canPublishWasmFilter && (
+                <PublishModal
+                  handleClose={handlePublishModalClose}
+                  title={publishModal.filter?.name}
+                  handleSubmit={handlePublish}
+                />
+              )}
+              {importModal.open && canImportFilter && (
+                <ImportModal
+                  handleClose={handleUploadImportClose}
+                  handleImportFilter={handleImportFilter}
+                />
+              )}
+              {infoModal.open && canViewFilterDetails && (
+                <InfoModal
+                  handlePublish={handlePublish}
+                  infoModalOpen={true}
+                  handleInfoModalClose={handleInfoModalClose}
+                  dataName="filters"
+                  selectedResource={infoModal.selectedResource}
+                  resourceOwnerID={infoModal.ownerID}
+                  currentUser={user}
+                  formSchema={publishSchema}
+                  meshModels={meshModels}
+                  patternFetcher={getFilters}
+                />
+              )}
               <_PromptComponent ref={modalRef} />
             </>
           ) : (
-            <DefaultError />
+            <DefaultError permissionKey={Keys.CatalogManagementViewFilters} />
           )}
         </NoSsr>
       </>

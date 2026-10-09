@@ -9,13 +9,13 @@ import {
   Card,
   CardContent,
   CustomTooltip,
-  Button,
   DeleteIcon,
   DragIcon,
   type Theme,
 } from '@sistent/sistent';
 
 import { iconMedium } from 'css/icons.styles';
+import { ActionButton } from './style';
 
 type Widget = {
   key: string;
@@ -29,6 +29,12 @@ const layoutIconProps = (theme: Theme) => ({
   primaryFill: theme.palette.background.neutral.default,
   width: '30',
   height: '30',
+});
+
+const actionIconProps = (theme: Theme) => ({
+  fill: theme.palette.background.neutral.default,
+  primaryFill: theme.palette.background.neutral.default,
+  ...iconMedium,
 });
 
 type AddWidgetsToLayoutPanelProps = {
@@ -155,8 +161,8 @@ type LayoutActionButtonProps = {
   Icon: React.ComponentType<{
     fill?: string;
     primaryFill?: string;
-    width?: string;
-    height?: string;
+    width?: string | number;
+    height?: string | number;
   }>;
   label: React.ReactNode;
   action: () => void;
@@ -172,23 +178,18 @@ export const LayoutActionButton = ({
   isShown,
 }: LayoutActionButtonProps) => {
   const theme = useTheme();
-  const iconsProps = layoutIconProps(theme);
+  const iconsProps = actionIconProps(theme);
 
   if (!isShown) {
     return null;
   }
 
   return (
-    <Button
-      variant="text"
-      style={{ color: iconsProps.fill }}
-      onClick={action}
-      endIcon={<Icon {...iconsProps} />}
-    >
-      <CustomTooltip title={description} fontSize="1rem" variant="standard">
+    <ActionButton variant="text" onClick={action} endIcon={<Icon {...iconsProps} />}>
+      <CustomTooltip title={description} variant="standard">
         <div>{label}</div>
       </CustomTooltip>
-    </Button>
+    </ActionButton>
   );
 };
 
