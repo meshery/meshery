@@ -108,7 +108,7 @@ Unless you are specifically working on the model registry or on an archived docu
 
 ```bash
 # 1. Blobless partial clone - fetches history metadata, not every file's contents
-git clone --no-checkout --filter=blob:none https://github.com/meshery/meshery.git
+git clone --no-checkout --filter=blob:none https://github.com/YOUR-USERNAME/meshery/meshery.git
 cd meshery
 
 # 2. Check out everything EXCEPT the bulky generated directories:
