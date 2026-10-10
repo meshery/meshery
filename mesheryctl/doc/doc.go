@@ -182,8 +182,8 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, manuallyAddedContent map
 	if len(cmd.Long) > 0 {
 		buf.WriteString("## Synopsis\n\n")
 		longContent := cmd.Long
-		// Since the long description is used for synopsis, we need to remove the "Find more information at:" line
-		findIndex := strings.Index(longContent, "Find")
+		// Since the long description is used for synopsis, we need to remove the "Find more information at" footer line
+		findIndex := strings.Index(longContent, "Find more information at")
 		if findIndex != -1 {
 			buf.WriteString(longContent[:findIndex])
 		} else {
