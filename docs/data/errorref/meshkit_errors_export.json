@@ -1748,6 +1748,69 @@
         "short_description": "Unable to decode validated document",
         "probable_cause": "The document is valid against the schema but could not be decoded into the requested Go type",
         "suggested_remediation": "Ensure the destination Go type matches the target schema model"
+      },
+      "11328": {
+        "name": "ErrResolvingGitRefCode",
+        "code": "11328",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not resolve the git reference to a commit",
+        "probable_cause": "The reference does not exist on the remote repository\nThe repository is private and no access token was supplied\nThe GitHub API rate limit has been exhausted",
+        "suggested_remediation": "Verify the branch, tag or reference name exists on the remote\nSupply a GitHub App or OAuth token with the Token option so private repositories and higher rate limits are available"
+      },
+      "11329": {
+        "name": "ErrFetchingGitTreeCode",
+        "code": "11329",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not fetch the git tree of the repository",
+        "probable_cause": "The commit does not exist on the remote repository\nThe repository is private and no access token was supplied\nThe GitHub API rate limit has been exhausted",
+        "suggested_remediation": "Verify the reference exists on the remote\nSupply a GitHub App or OAuth token with the Token option so private repositories and higher rate limits are available"
+      },
+      "11330": {
+        "name": "ErrFetchingGitBlobCode",
+        "code": "11330",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not fetch the contents of a file in the repository",
+        "probable_cause": "The blob was removed after the tree was listed\nThe repository is private and no access token was supplied\nThe GitHub API rate limit has been exhausted",
+        "suggested_remediation": "Retry the import so a fresh tree is listed\nSupply a GitHub App or OAuth token with the Token option so private repositories and higher rate limits are available"
+      },
+      "11331": {
+        "name": "ErrInvalidBaseURLCode",
+        "code": "11331",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not use the repository base URL for the GitHub API",
+        "probable_cause": "The base URL passed to the walker is not a valid URL\nThe base URL names a host other than github.com, which the Git Trees API cannot answer for",
+        "suggested_remediation": "Pass a valid base URL such as https://github.com to the BaseURL option\nWalk a repository hosted elsewhere with Walk or WalkContext, which clone it with go-git"
+      },
+      "11332": {
+        "name": "ErrNoFileInterceptorCode",
+        "code": "11332",
+        "severity": "Alert",
+        "long_description": "Fetching hands every file it downloads to a registered file interceptor, and the walker has none",
+        "short_description": "No file interceptor is registered to receive the fetched files",
+        "probable_cause": "RegisterFileInterceptor was not called on the walker before the files were fetched",
+        "suggested_remediation": "Call RegisterFileInterceptor with the function that should receive each fetched file"
+      },
+      "11333": {
+        "name": "ErrRootNotFoundCode",
+        "code": "11333",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not find the configured root path in the repository",
+        "probable_cause": "The directory or file was renamed or removed on the reference being walked\nThe root belongs to a different branch, tag or reference than the one configured",
+        "suggested_remediation": "Verify the root path exists on the reference being walked\nWalk the repository with no root configured to read every file it holds"
+      },
+      "11334": {
+        "name": "ErrSymlinkedRootCode",
+        "code": "11334",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not list a root that is a symbolic link",
+        "probable_cause": "The configured root names a committed symbolic link rather than a directory or a file",
+        "suggested_remediation": "Walk or WalkContext the same configuration instead, which clones the repository and reads through the link\nConfigure the root the link points at rather than the link itself"
       }
     }
   }

@@ -1,0 +1,25 @@
+version: 0.0.1
+name: untitled-design
+displayName: Untitled Design
+createdAt: "2026-09-16T18:55:56Z"
+description: |-
+    “Deploys an NGINX pod with a service for HTTP traffic.”
+
+    “Configures DigitalOcean icons showcase for catalog visualization.”
+
+    “Sets resource limits for node memory requests.”
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/66ca6523-f21c-4fc1-a247-fa32f0ad753b/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "“Deploys an NGINX pod with a service for HTTP traffic.”\n\n“Configures DigitalOcean icons showcase for catalog visualization.”\n\n“Sets resource limits for node memory requests.” \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: e6044d51-3e24-448f-864d-ecc498948651
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
