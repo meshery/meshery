@@ -100,7 +100,7 @@ func getPaginationParams(req *http.Request) (page, offset, limit int, search, or
 	}
 	if limitstr != "all" {
 		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 {
+		if limit <= 0 {
 			limit = defaultPageSize
 		}
 	}

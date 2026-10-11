@@ -13,7 +13,15 @@ components:
   colorIcon: extensions/models/gitlab-runner-operator/components/runner/icons/color/runner-color.svg
   whiteIcon: extensions/models/gitlab-runner-operator/components/runner/icons/white/runner-white.svg
   description: 
-components-count: 1
+- name: multi-runner
+  colorIcon: extensions/models/gitlab-runner-operator/components/multi-runner/icons/color/multi-runner-color.svg
+  whiteIcon: extensions/models/gitlab-runner-operator/components/multi-runner/icons/white/multi-runner-white.svg
+  description: 
+- name: multi-runner
+  colorIcon: extensions/models/gitlab-runner-operator/components/multi-runner/icons/color/multi-runner-color.svg
+  whiteIcon: extensions/models/gitlab-runner-operator/components/multi-runner/icons/white/multi-runner-white.svg
+  description: 
+components-count: 3
 relationships: 
 relationship-count: 0
 featureList: [

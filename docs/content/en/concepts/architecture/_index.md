@@ -12,7 +12,7 @@ Meshery and its components are written using the following languages and technol
 | Components                                                           | Languages and Technologies                                                        |
 | :------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
 | Meshery Server                                                       | Golang, gRPC, GraphQL, [SMP](https://smp-spec.io)                                 |
-|   [Meshery Database]({{< ref "concepts/architecture/database/index.md" >}})                | Golang, SQLlite                                                                   |
+|   [Meshery Database]({{< ref "concepts/architecture/database/index.md" >}})                | Golang, SQLite                                                                   |
 | Meshery UI                                                           | ReactJS, NextJS, BillboardJS                                                      |
 | Meshery Provider UI                                                  | ReactJS, NextJS                                                                   |
 | [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}})                  | Golang                                                                            |
@@ -27,6 +27,8 @@ Meshery and its components are written using the following languages and technol
 ## Deployments
 
 Meshery deploys as a set of containers. Meshery's containers can be deployed to either Docker or Kubernetes. Meshery components connect to one another via gRPC requests. Meshery Server stores the location of the other components and connects with those components as needed. Typically, a connection from Meshery Server to Meshery Adapters is initiated from a client request (usually either `mesheryctl` or Meshery UI) to gather information from the Adapter or invoke an Adapter's operation.
+
+Deploying a [Design]({{< ref "concepts/logical/designs.md" >}}) is one such request. Meshery Server resolves each component of the Design to the registrant of its model and, on that basis, either applies the component itself or delegates it to an Adapter - so a single deployment can involve both. See [**Deployment Engine**]({{< ref "concepts/architecture/deployment-engine/index.md" >}}).
 
 ### Adapters
 

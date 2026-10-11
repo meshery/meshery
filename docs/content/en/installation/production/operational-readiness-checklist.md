@@ -189,6 +189,24 @@ Work through these before going live. Each group links to its source page.
 - [ ] Secrets (kubeconfig, provider, pull) sourced from Secrets/external manager.
 - [ ] Images pinned to immutable tags from a trusted/mirrored registry.
 
+### Extensions
+
+- [ ] Every enabled extension attributed to a publisher you trust, and reviewed
+      before it reached production.
+      [Trusting an extension]({{< ref "installation/production/security-hardening.md#trusting-an-extension" >}})
+- [ ] Unused extension points left disabled; adapters enabled only where needed
+      (`ADAPTER_URLS`, chart adapter subcharts off by default).
+- [ ] Adapters given scoped ServiceAccounts (`serviceAccountNameOverride`) rather
+      than sharing `meshery-server`, and reachable only from Meshery Server.
+- [ ] Extension packages pinned (`SKIP_DOWNLOAD_EXTENSIONS`), and the capability
+      set pinned (`PROVIDER_CAPABILITIES_FILEPATH`) where it should not drift.
+      [Providers reference]({{< ref "reference/extensibility/providers/index.md#runtime-configuration-options" >}})
+- [ ] Extension versions validated against the Meshery version you run.
+      [Extension compatibility]({{< ref "reference/extensibility/verify-compatibility.md" >}})
+- [ ] Egress policy covers every destination an enabled extension requires.
+- [ ] Rollback path known: removing a server-side extension requires a Meshery
+      Server restart, not just a configuration change.
+
 ### Multi-cluster & multi-cloud
 
 - [ ] One least-privilege kubeconfig context per cluster.

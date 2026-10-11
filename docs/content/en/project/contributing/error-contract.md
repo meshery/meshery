@@ -25,6 +25,8 @@ as JSON before surfacing errors to users.
 > error events through the active SSE writer instead); and binary/tar/YAML
 > downloads and HTTP redirects, which use `w.Write` or `http.Redirect`
 > rather than `http.Error` and so are not governed by the lint rule.
+> This rule and the other repo-specific Go lint gates are listed in
+> [Go Lint Rules]({{< ref "project/contributing/contributing-lint.md" >}}).
 
 ## Shape
 

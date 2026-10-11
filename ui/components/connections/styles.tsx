@@ -63,22 +63,32 @@ export const ConnectionTabs = styled(Tabs)(({ theme }) => ({
   },
 }));
 
-export const ConnectionStyledSelect = styled(Select)({
+export const ConnectionStyledSelect = styled(Select)(({ theme }) => ({
   '& .MuiSelect-select': {
     padding: '0 !important',
   },
-  '& .MuiMenuItem-root': {
-    padding: '0 !important',
+  '& .MuiOutlinedInput-notchedOutline': {
+    borderColor: theme.palette.border.normal,
   },
-});
+  '&:hover .MuiOutlinedInput-notchedOutline': {
+    borderColor: theme.palette.border.brand,
+  },
+}));
 
 export const ConnectionStyledMenuItem = styled(MenuItem)({
   padding: 0,
-  '&.MuiMenuItem-root': {
-    padding: 0,
+  // Override MUI's 48px minHeight; lock to pill height.
+  height: '32px',
+  minHeight: 0,
+  borderRadius: '3px',
+  '& + &': {
+    marginTop: '4px',
   },
-  '& .MuiButtonBase-root': {
-    padding: 0,
+  '& .MuiChip-root': {
+    minWidth: 'unset !important',
+    maxWidth: 'none !important',
+    width: '100%',
+    height: '100%',
   },
 });
 
@@ -92,18 +102,13 @@ export const ChipWrapper = styled(Chip)(({ theme }) => ({
   width: '13rem',
   textAlign: 'left',
   cursor: 'pointer',
-  fontSize: theme.typography.body2.fontSize,
-  fontWeight: theme.typography.body2.fontWeight,
-  lineHeight: theme.typography.body2.lineHeight,
   '& .MuiChip-label': {
     flexGrow: 1,
-    fontWeight: 'inherit',
-    lineHeight: 'inherit',
   },
   overflow: 'hidden',
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
-  border: `1px solid ${alpha(theme.palette.common.white, 0.23)}`,
+  border: `1px solid ${theme.palette.border.normal}`,
   textTransform: 'lowercase',
   color: theme.palette.text.primary,
 }));
@@ -115,7 +120,6 @@ const baseChipStyles = (theme: Theme) => ({
   justifyContent: 'flex-start !important',
   borderRadius: '3px !important',
   padding: '6px 8px',
-  fontSize: theme.typography.body2.fontSize,
   '& .MuiChip-label': {
     paddingTop: '3px',
     fontWeight: '400',
@@ -197,14 +201,13 @@ export const DisconnectedChip = styled(Chip)(({ theme }) => ({
 
 export const NotFoundChip = styled(Chip)(({ theme }) => ({
   ...baseChipStyles(theme),
-  // Keep not-found readable on both light and dark surfaces -- disabled-only
+  // Keep not-found readable on both light and dark surfaces — disabled-only
   // tokens made the chip (and custom SVG avatars that use currentColor) hard to
   // see on the wizard receipt step.
   '& .MuiChip-label': {
     color: theme.palette.text.secondary,
   },
   background: `${alpha(theme.palette.text.secondary, 0.13)} !important`,
-  border: `1px solid ${alpha(theme.palette.text.secondary, 0.35)}`,
   '& .MuiSvgIcon-root, & svg': {
     color: `${theme.palette.text.secondary} !important`,
     fill: `${theme.palette.text.secondary} !important`,

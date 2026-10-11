@@ -11,7 +11,29 @@ import (
 
 // ProviderHandler - handles the choice of provider
 func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
-	providerKey, ok := models.ResolveProviderKey(r.URL.Query().Get("provider"), h.config.Providers)
+	requested := r.URL.Query().Get("provider")
+	if models.NormalizeProviderName(h.Provider) != "" {
+		providerKey, ok := models.ResolveProviderKey(h.Provider, h.config.Providers)
+		if !ok {
+			http.Redirect(w, r, "/provider", http.StatusFound)
+			return
+		}
+		if requested != "" {
+			if reqKey, reqOK := models.ResolveProviderKey(requested, h.config.Providers); !reqOK || reqKey != providerKey {
+				h.log.Infof("ignoring provider switch to %q; PROVIDER is pinned to %q", requested, providerKey)
+			}
+		}
+		http.SetCookie(w, &http.Cookie{
+			Name:     h.config.ProviderCookieName,
+			Value:    providerKey,
+			Path:     "/",
+			HttpOnly: true,
+		})
+		redirectURL := "/user/login?" + r.URL.RawQuery
+		http.Redirect(w, r, redirectURL, http.StatusFound)
+		return
+	}
+	providerKey, ok := models.ResolveProviderKey(requested, h.config.Providers)
 	if !ok {
 		// An unknown or unregistered provider (e.g. a stale UI sending a
 		// name that no longer maps to a registered provider) would
@@ -59,6 +81,17 @@ func (h *Handler) ProvidersHandler(w http.ResponseWriter, _ *http.Request) {
 		// is still bounded.
 		for key, p := range h.config.Providers {
 			providers[key] = p.GetProviderProperties()
+		}
+	}
+	// Intentionally defensive. RestrictToEnforcedProvider already trimmed the
+	// registration map at boot, so on the real startup path this is a no-op.
+	// It is kept because this handler also serves wiring that builds
+	// h.config.Providers directly (tests, embedders) and never runs that boot
+	// step - and because the enforced provider must never be a listing away
+	// from being reintroduced if that map is ever repopulated.
+	if enforcedKey, ok := models.ResolveProviderKey(h.Provider, h.config.Providers); ok {
+		if props, exists := providers[enforcedKey]; exists {
+			providers = map[string]models.ProviderProperties{enforcedKey: props}
 		}
 	}
 	bd, err := json.Marshal(providers)
@@ -120,6 +153,9 @@ func (h *Handler) ProvidersStreamHandler(w http.ResponseWriter, r *http.Request)
 		case evt, ok := <-events:
 			if !ok {
 				return
+			}
+			if enforcedKey, enfOK := models.ResolveProviderKey(h.Provider, h.config.Providers); enfOK && evt.Key != enforcedKey {
+				continue
 			}
 			data, err := json.Marshal(evt)
 			if err != nil {

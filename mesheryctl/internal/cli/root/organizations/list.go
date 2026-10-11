@@ -24,8 +24,7 @@ var listOrgCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered organizations",
 	Long: `List all registered organizations with their id, name and date of creation. Organization will be returned based on provider you logged in.
-Find more information at: https://docs.meshery.io/reference/references/mesheryctl/organization/list
-	`,
+Find more information at: https://docs.meshery.io/reference/references/mesheryctl/organization/list`,
 	Example: `
 // list all organizations
 mesheryctl organization list

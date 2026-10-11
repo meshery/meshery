@@ -8,7 +8,6 @@ import (
 	"time"
 )
 
-
 func GetLatestVersionForMesheryctl() (string, error) {
 	req, err := http.NewRequest(http.MethodGet, "https://docs.meshery.io/project/releases/latest", nil)
 
@@ -16,7 +15,6 @@ func GetLatestVersionForMesheryctl() (string, error) {
 		return "", err
 	}
 
-	
 	client := &http.Client{Timeout: 10 * time.Second}
 
 	resp, err := client.Do(req)

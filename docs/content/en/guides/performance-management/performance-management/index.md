@@ -17,7 +17,7 @@ _Meshery dashboard_
 
 <a href="images/smi-dashboard.png"><img alt="Meshery Dashboard" src="images/smi-dashboard.png" /></a>
 
-If you are looking to run performance benchmarks on cloud native infrastructur, you can use Meshery's cloud native infrastructurelifecycle management capabilities to deploy all kinds of cloud native infrastructure on Kubernets. With Meshery's performance benchmarking feature, you can also deploy you application off the mesh and compare the performance and determine the overhead when the app runs on the mesh.
+If you are looking to run performance benchmarks on cloud native infrastructur, you can use Meshery's cloud native infrastructurelifecycle management capabilities to deploy all kinds of cloud native infrastructure on Kubernetes. With Meshery's performance benchmarking feature, you can also deploy you application off the mesh and compare the performance and determine the overhead when the app runs on the mesh.
 
 Next, we navigate to the main Performance Testing dashboard. See [Performance Management]({{< ref "guides/performance-management/managing-performance/index.md" >}}) to learn more about performance profiles, load generators, Kubernetes cluster, and all kinds of cloud native infrastructure metrics.
 
@@ -121,7 +121,7 @@ mesheryctl perf apply -f perf-config.yaml --url http://localhost:2323/productpag
 
 ## Running Performance Benchmarks in your Pipelines
 
-Meshery also has a [meshery-performance-action](https://github.com/meshery-extensions/meshery-performance-action) which is a GitHub action that can be used to run performance tests in your CI/CD pipelines.
+Meshery also has a [meshery-performance-action](https://github.com/layer5io/meshery-performance-action) which is a GitHub action that can be used to run performance tests in your CI/CD pipelines.
 
 Download the token from the Meshery Dashboard by clicking on the profile icon on the top-right corner.
 
@@ -135,7 +135,7 @@ You can use this token to authenticate the instance of Meshery running in your C
 You can use the <a href='https://docs.github.com/en/actions/reference/encrypted-secrets'>secrets feature in GitHub</a> to store the token.
 {{% /alert %}}
 
-The action can be used by defining your test configuration in a performance profile in Meshery or by writing your test configuration in [SMP compatible format](https://github.com/meshery-extensions/meshery-performance-action#smp-compatible-test-configuration-file).
+The action can be used by defining your test configuration in a performance profile in Meshery or by writing your test configuration in [SMP compatible format](https://github.com/layer5io/meshery-performance-action#smp-compatible-test-configuration-file).
 
 The action can then be configured as shown below:
 
@@ -164,13 +164,13 @@ jobs:
           driver: docker
 
       - name: Run Performance Test
-        uses: meshery-extensions/meshery-performance-action@master
+        uses: layer5io/meshery-performance-action@master
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: docker
           profile_name: soak-test
 ```
 
-More configuration details of the action can be found [here](https://github.com/meshery-extensions/meshery-performance-action/blob/master/action.yml).
+More configuration details of the action can be found in [action.yml](https://github.com/layer5io/meshery-performance-action/blob/master/action.yml).
 
-See [sample configurations](https://github.com/meshery-extensions/meshery-performance-action#sample-configuration) for more workflow examples using this action.
+See [sample configurations](https://github.com/layer5io/meshery-performance-action#sample-configuration) for more workflow examples using this action.

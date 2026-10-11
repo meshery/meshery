@@ -113,7 +113,7 @@ To get the filtered view shown above, click the filter icon and adjust the follo
 
 - For `view Selector` select `single namespace`
 - For `Kinds` select `Deployment, Pod, secret`
-- For `namspace` select `ack-system`
+- For `namespace` select `ack-system`
 
 ### 3. Deploy the VPC Workflow
 
@@ -127,7 +127,7 @@ This step involves deploying all the necessary resources to create the VPC and o
 - 2 Subnets (1 Public, 1 Private)
 - 1 Security Group
 
-1. Start by [cloning the design](https://cloud.meshery.io/catalog/content/catalog/vpc-workflow-design-50cac19e-209c-4acf-b91c-4784281db033) from the catalog.
+1. Start by [cloning the design](https://meshery.io/catalog/deployment/vpc-workflow-design-2f7597bd-9713-461e-b64f-c571415d2a86.html) from the catalog.
 
 2. Once cloned, open the design in the playground, and you will see it displayed on the canvas.
 
@@ -141,7 +141,7 @@ This step involves deploying all the necessary resources to create the VPC and o
 
 With the VPC and networking resources set up, deploy the EC2 instances within the VPC using the following steps.
 
-1. [Clone the EC2 instances design](https://cloud.meshery.io/catalog/content/catalog/ec2-instances-design-a344f109-2d92-41da-8644-3bc285c3ca9e) from the catalog.
+1. [Clone the EC2 instances design](https://meshery.io/catalog/deployment/ec2-instances-cca2fb89-48e1-419d-8e1b-e69e1e12931a.html) from the catalog.
 
 2. Open the design on the Playground and deploy the instances.
 

@@ -3,6 +3,7 @@ title: mesheryctl-system-token-delete
 display_title: false
 command: system
 subcommand: token
+categories: [mesheryctl-system]
 ---
 
 # mesheryctl system token delete
@@ -14,8 +15,10 @@ Delete a token from your meshconfig
 Delete the token with provided token name from your meshconfig tokens.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system token delete [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -23,8 +26,10 @@ mesheryctl system token delete [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl system token delete [token-name]
 
+</div>
 </div>
 </pre> 
 
