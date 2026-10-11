@@ -93,15 +93,18 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
   const { timeout, ...fetchOptions } = options as RequestInit & { timeout?: number };
   let timer;
   let timedOut = false;
+  let detachCallerSignal = () => {};
   if (timeout > 0) {
     const controller = new AbortController();
     const callerSignal = fetchOptions.signal;
     if (callerSignal?.aborted) {
       controller.abort(callerSignal.reason);
     } else {
-      callerSignal?.addEventListener('abort', () => controller.abort(callerSignal.reason), {
-        once: true,
-      });
+      // Detached once the request settles, so a long-lived signal reused across
+      // requests doesn't keep every finished request's controller alive.
+      const onCallerAbort = () => controller.abort(callerSignal.reason);
+      callerSignal?.addEventListener('abort', onCallerAbort, { once: true });
+      detachCallerSignal = () => callerSignal?.removeEventListener('abort', onCallerAbort);
     }
     timer = setTimeout(() => {
       timedOut = true;
@@ -131,6 +134,7 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
     .then((res) => {
       if (res.status === 401 || res.redirected) {
         clearTimeout(timer);
+        detachCallerSignal();
         showSessionExpiredAndRedirect();
         return new Promise(() => {});
       }
@@ -162,7 +166,10 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
     })
     .then(successFn)
     .catch((err) => errorFn(err))
-    .finally(() => clearTimeout(timer));
+    .finally(() => {
+      clearTimeout(timer);
+      detachCallerSignal();
+    });
 };
 
 /**
