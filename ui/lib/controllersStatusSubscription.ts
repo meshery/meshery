@@ -90,3 +90,27 @@ export function subscribeToControllersStatus(
     },
   };
 }
+
+/**
+ * Like subscribeToControllersStatus, but reopens the stream after the browser
+ * permanently closes it (e.g. a proxy answering 502 while Meshery Server
+ * restarts). Without this, controller status freezes until a page reload.
+ * Reopens are paced by RECONNECT_NOTIFY_DELAY_MS, and the server writes a full
+ * snapshot on connect, so the reopened stream restores current state at once.
+ */
+export function watchControllersStatus(
+  connectionIds: string[],
+  onNext: ControllersStatusCallback,
+): ControllersStatusSubscription {
+  let current: ControllersStatusSubscription;
+  const open = () => {
+    current = subscribeToControllersStatus(connectionIds, onNext, () => {
+      current.dispose();
+      open();
+    });
+  };
+  open();
+  // onError is never raised after dispose, so disposing the current stream
+  // also stops any further reopening.
+  return { dispose: () => current.dispose() };
+}
