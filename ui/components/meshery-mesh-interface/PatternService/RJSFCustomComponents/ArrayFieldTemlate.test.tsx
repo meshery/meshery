@@ -52,11 +52,6 @@ vi.mock('../../../../assets/icons/ErrorOutlineIcon', () => ({
   default: () => <svg data-testid="error-icon" />,
 }));
 
-vi.mock('@rjsf/utils', () => ({
-  isMultiSelect: (schema: any) => !!schema?.uniqueItems && Array.isArray(schema.items?.enum),
-  getDefaultFormState: () => ({ rootSchema: {} }),
-}));
-
 vi.mock('../../../../css/icons.styles', () => ({ iconSmall: {} }));
 
 vi.mock('pluralize', () => ({
@@ -74,7 +69,15 @@ describe('ArrayFieldTemplate', () => {
   const baseProps = {
     schema: { items: { type: 'string' } },
     uiSchema: {},
-    idSchema: { $id: 'array1' },
+    fieldPathId: { $id: 'array1', path: ['array1'] },
+    // RJSF always supplies a registry; the template calls `registry.schemaUtils.isMultiSelect`,
+    // which is the validator/rootSchema-bound form of `isMultiSelect` from `@rjsf/utils`.
+    registry: {
+      schemaUtils: {
+        isMultiSelect: (schema: any) =>
+          !!schema?.uniqueItems && !!schema?.items && Array.isArray(schema.items?.enum),
+      },
+    },
     items: [
       {
         key: 'a',
@@ -126,19 +129,23 @@ describe('ArrayFieldTemplate', () => {
   });
 
   it('renders the fixed template variant when isMultiSelect returns true', () => {
-    render(
+    const { container } = render(
       <ArrayFieldTemplate
         {...(baseProps as any)}
-        schema={{ uniqueItems: true, items: { enum: ['a', 'b'] } }}
+        schema={{ uniqueItems: true, items: { enum: ['a', 'b'] }, description: 'pick some' }}
       />,
     );
-    expect(screen.getByTestId('array-item-add')).toBeInTheDocument();
+    // The fixed variant renders the description inline, the normal one behind a help tooltip.
+    expect(container.querySelector('.field-description')).toHaveTextContent('pick some');
+    expect(screen.queryByTestId('help-icon')).not.toBeInTheDocument();
   });
 
   it('shows the help tooltip when description is provided via uiSchema', () => {
-    render(
+    const { container } = render(
       <ArrayFieldTemplate {...(baseProps as any)} uiSchema={{ 'ui:description': 'array desc' }} />,
     );
     expect(screen.getByTestId('help-icon')).toBeInTheDocument();
+    // Guards the counterpart: this is the normal variant, which never inlines the description.
+    expect(container.querySelector('.field-description')).not.toBeInTheDocument();
   });
 });
