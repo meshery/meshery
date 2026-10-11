@@ -1,6 +1,8 @@
 import { useCallback, useRef, useState, type SetStateAction } from 'react';
 
-const STORAGE_KEY_PREFIX = 'meshery_cols_';
+// v2: v1 stored every column's visibility, responsive defaults included, which
+// pinned columns that should auto-hide. Changing the prefix drops those maps.
+const STORAGE_KEY_PREFIX = 'meshery_cols_v2_';
 
 function loadFromStorage(tableKey: string): Record<string, boolean> {
   if (typeof window === 'undefined') return {};
