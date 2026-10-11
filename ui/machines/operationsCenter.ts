@@ -92,7 +92,9 @@ export const operationsCenterActor = setup({
           actions: ['storeInRedux', 'notifyUI', 'emitBack'],
         },
         [OPERATION_CENTER_EVENTS.ERROR_OCCURRED_IN_SUBSCRIPTION]: {
-          actions: [stopChild('subscriptionActor'), 'spawnSubscriptionActor'],
+          // Events raised while the stream was down are never replayed by the
+          // new stream; refetch the persisted list so they aren't lost.
+          actions: [stopChild('subscriptionActor'), 'spawnSubscriptionActor', 'invalidateRtk'],
         },
       },
     },
