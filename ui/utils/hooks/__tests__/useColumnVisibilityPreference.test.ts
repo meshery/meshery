@@ -3,7 +3,7 @@ import { renderHook, act } from '@testing-library/react';
 import { useColumnVisibilityPreference } from '../useColumnVisibilityPreference';
 
 const KEY = 'test-table';
-const STORAGE_KEY = `meshery_cols_${KEY}`;
+const STORAGE_KEY = `meshery_cols_v2_${KEY}`;
 const WIDE = { name: true, created_at: true, owner: true };
 const NARROW = { name: true, created_at: false, owner: false };
 
@@ -80,6 +80,14 @@ describe('useColumnVisibilityPreference', () => {
     const { result } = renderHook(() => useColumnVisibilityPreference(KEY, WIDE));
 
     expect(result.current.columnVisibility).toEqual({ ...WIDE, owner: false });
+  });
+
+  it('ignores maps saved under the v1 key', () => {
+    localStorage.setItem(`meshery_cols_${KEY}`, JSON.stringify(WIDE));
+
+    const { result } = renderHook(() => useColumnVisibilityPreference(KEY, NARROW));
+
+    expect(result.current.columnVisibility).toEqual(NARROW);
   });
 
   it('falls back to responsive defaults when storage holds malformed JSON', () => {
