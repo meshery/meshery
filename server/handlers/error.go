@@ -217,6 +217,7 @@ const (
 	ErrMeshsyncReconcileCode               = "meshery-server-1442"
 	ErrUnsafeFilePathCode                  = "meshery-server-1443"
 	ErrModelNotFoundCode                   = "meshery-server-1485"
+	ErrGetConnectionCode                   = "meshery-server-1487"
 	// Environment, workspace, organization, user and key operations previously
 	// reported every failure as ErrGetResult ("unable to get result", probable
 	// cause "Result Identifier provided is not valid") - a performance-results
@@ -1242,5 +1243,23 @@ func ErrModelNotFound(modelName string) error {
 		[]string{fmt.Sprintf("Model %q was not found in the provided CSV input", modelName)},
 		[]string{"The requested model is not present in the CSV input"},
 		[]string{"Verify that the requested model exists in the CSV input"},
+	)
+}
+
+// ErrGetConnection reports a failure to retrieve a specific connection by ID.
+func ErrGetConnection(err error, connectionID string) error {
+	return errors.New(
+		ErrGetConnectionCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("Failed to get connection with ID: %s", connectionID)},
+		[]string{err.Error()},
+		[]string{
+			"Connection may not exist or has been deleted",
+			"The provider could not be reached or the database query failed",
+		},
+		[]string{
+			"Verify that the connection ID is correct and exists",
+			"Ensure the provider and database are reachable and healthy",
+		},
 	)
 }
