@@ -66,8 +66,6 @@ deployment.yaml
 service.yaml
 ```
 
-You can also import the archive from a direct URL. Meshery fetches the file before identifying and converting it into a design.
-
 ### Import Processing Details
 
 After you initiate an import, Meshery executes a **dataflow sequence** to properly handle the design:
