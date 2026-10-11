@@ -785,7 +785,7 @@ func (r RegistrantDataEntity) PkgUnit(regErrStore registration.RegistrationError
 			c.Model = &_model.ModelDefinition{}
 		}
 		if c.Model.Registrant.Kind == "" {
-			c.Model.Registrant.Kind = r.Data.Connection.Kind
+			c.Model.Registrant = r.Data.Connection
 		}
 		pkg.Model = *c.Model
 		pkg.Components = append(pkg.Components, c)
@@ -795,8 +795,11 @@ func (r RegistrantDataEntity) PkgUnit(regErrStore registration.RegistrationError
 		if err := json.Unmarshal(r.Data.Entity, &m); err != nil {
 			return pkg, err
 		}
+		if strings.TrimSpace(m.Name) == "" {
+			return pkg, fmt.Errorf("model name cannot be empty")
+		}
 		if m.Registrant.Kind == "" {
-			m.Registrant.Kind = r.Data.Connection.Kind
+			m.Registrant = r.Data.Connection
 		}
 		pkg.Model = m
 
@@ -844,7 +847,20 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 		for _, regErr := range regErrors {
 			h.log.Error(regErr.Err)
 		}
+
+		if err := helpers.WriteLogsToFiles(); err != nil {
+			wrappedErr := ErrWriteRegistryLogs(err)
+			h.log.Error(wrappedErr)
+		}
+
 		writeMeshkitError(rw, regErrors[0].Err, http.StatusInternalServerError)
+		return
+	}
+
+	if err := helpers.WriteLogsToFiles(); err != nil {
+		wrappedErr := ErrWriteRegistryLogs(err)
+		h.log.Error(wrappedErr)
+		writeMeshkitError(rw, wrappedErr, http.StatusInternalServerError)
 		return
 	}
 }
