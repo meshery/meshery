@@ -21,9 +21,9 @@ components:
       version: v1.0.0
     styles:
       background-image: none
-      background-opacity: 0
-          body-text: |
-      # Design Critique Template
+    background-opacity: 0
+    body-text: |
+            # Design Critique Template
 
       ## Overview & Purpose
       This template provides a structured format to review cloud-native architecture designs, assess trade-offs, and ensure alignment with Meshery design standards.
