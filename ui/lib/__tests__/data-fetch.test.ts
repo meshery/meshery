@@ -321,6 +321,25 @@ describe('dataFetch error reporting', () => {
       await vi.waitFor(() => expect(clearTimeoutSpy).toHaveBeenCalledWith(requestTimer));
     });
 
+    it('detaches its listener from a reused caller signal once the request settles', async () => {
+      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
+        ok: true,
+        status: 200,
+        redirected: false,
+        text: () => Promise.resolve('{}'),
+      });
+      const caller = new AbortController();
+      const addSpy = vi.spyOn(caller.signal, 'addEventListener');
+      const removeSpy = vi.spyOn(caller.signal, 'removeEventListener');
+      const successFn = vi.fn();
+
+      dataFetch('/api/test', { timeout: 1000, signal: caller.signal }, successFn, vi.fn());
+
+      await vi.waitFor(() => expect(successFn).toHaveBeenCalled());
+      await vi.waitFor(() => expect(removeSpy).toHaveBeenCalled());
+      expect(removeSpy.mock.calls[0][1]).toBe(addSpy.mock.calls[0][1]);
+    });
+
     it('passes a caller abort through as-is instead of reporting a timeout', async () => {
       hangingFetch();
       const caller = new AbortController();
