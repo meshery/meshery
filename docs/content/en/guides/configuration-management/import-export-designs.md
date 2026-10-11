@@ -66,6 +66,8 @@ deployment.yaml
 service.yaml
 ```
 
+You can also import the archive from a direct URL. Meshery downloads the file and takes its name from the response's `Content-Disposition` header or the last segment of the URL, so make sure that name ends in `.zip` or `.tar.gz`.
+
 ### Import Processing Details
 
 After you initiate an import, Meshery executes a **dataflow sequence** to properly handle the design:
