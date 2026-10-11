@@ -22,15 +22,30 @@ components:
     styles:
       background-image: none
       background-opacity: 0
-      body-text: |
-        Design Critique Template
+          body-text: |
+      # Design Critique Template
 
-        ​Strengths
-        ​Concerns
-        ​Action Items
+      ## Overview & Purpose
+      This template provides a structured format to review cloud-native architecture designs, assess trade-offs, and ensure alignment with Meshery design standards.
 
-        Action Items & Next Steps
-        Tips: Focus on architecture clarity & constructive feedback
+      ## Guidelines & Best Practices
+      1. Review the proposed architecture and visual workflow.
+      2. Identify architectural strengths and well-defined patterns.
+      3. Note bottlenecks, edge cases, security concerns, or misconfigurations.
+      4. List constructive, prioritized action items for the author.
+
+      ## Feedback Sections
+      ### 1. Strengths
+      - Highlight effective component design, modularity, and clarity.
+
+      ### 2. Concerns & Considerations
+      - Highlight missing relationships, resource limits, or scalability concerns.
+
+      ### 3. Action Items & Next Steps
+      - Document concrete, prioritized adjustments required before finalizing the design.
+
+      > Tip: Focus on architectural clarity, reliability, and constructive actionable guidance.
+
       body-text-color: '#808080'
       body-text-font-family: Qanelas Soft
       body-text-font-weight: "700"
