@@ -74,7 +74,7 @@ func TestListComponent(t *testing.T) {
 			Name:             "list components with model and pagination",
 			Args:             []string{"list", "--model", "kubernetes", "--page", "2", "--pagesize", "20"},
 			URL:              "/api/registry/models/kubernetes/components?page=1&pagesize=20",
-			Fixture:          "components.kubernetes.api.response.golden",
+			Fixture:          "components.kubernetes.page2.api.response.golden",
 			ExpectedResponse: "components.list.kubernetes.page2.output.golden",
 			ExpectError:      false,
 		},
