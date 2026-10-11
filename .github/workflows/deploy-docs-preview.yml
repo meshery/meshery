@@ -32,7 +32,7 @@ jobs:
           egress-policy: audit
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: docs-preview-build
           path: docs-preview-build
@@ -50,34 +50,49 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: docs-preview-build
           path: docs-preview-build
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      # pr-preview-action v1.8.1 still embeds a Node 20 deployment action.
+      # Use its deploy backend directly for both paths, preserving the same
+      # gh-pages target folder and non-force push behavior.
       - name: Deploy PR preview
-        id: preview
-        uses: rossjrw/pr-preview-action@ffa7509e91a3ec8dfc2e5536c4d5c1acdf7a6de9 #1.8.1
+        if: needs.read-metadata.outputs.action != 'closed'
+        uses: JamesIves/github-pages-deploy-action@fa24774553152dd7873cd16ebd8d959b010c5445 # v4.9.0
         with:
-          source-dir: ./docs-preview-build/docs/public
-          pages-base-url: docs.meshery.io # otherwise meshery.github.io/meshery is used as a default
-          umbrella-dir: pr-preview # must match the /pr-preview/ baseURL the build bakes
-          qr-code: false
-          comment: false
-          action: ${{ needs.read-metadata.outputs.action == 'closed' && 'remove' || 'deploy' }}
-          pr-number: ${{ needs.read-metadata.outputs.pr-number }}
+          branch: gh-pages
+          folder: docs-preview-build/docs/public
+          target-folder: pr-preview/pr-${{ needs.read-metadata.outputs.pr-number }}
+          force: false
+
+      - name: Prepare empty preview directory
+        if: needs.read-metadata.outputs.action == 'closed'
+        run: mkdir -p empty-preview
+
+      - name: Remove closed PR preview
+        if: needs.read-metadata.outputs.action == 'closed'
+        uses: JamesIves/github-pages-deploy-action@fa24774553152dd7873cd16ebd8d959b010c5445 # v4.9.0
+        with:
+          branch: gh-pages
+          folder: empty-preview
+          target-folder: pr-preview/pr-${{ needs.read-metadata.outputs.pr-number }}
+          force: false
 
       - name: Comment preview URL on the PR
-        uses: marocchino/sticky-pull-request-comment@67d0dec7b07ed060a405f9b2a64b8ab319fdd7db # v2.9.2
+        uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
         with:
           header: pr-preview
-          number: ${{ needs.read-metadata.outputs.pr-number }}
+          number_force: ${{ needs.read-metadata.outputs.pr-number }}
           message: |
-            📖 Docs preview: ${{ steps.preview.outputs.preview-url }}
+            ${{ needs.read-metadata.outputs.action == 'closed' && 'Docs preview removed.' || format('📖 Docs preview: https://docs.meshery.io/pr-preview/pr-{0}/', needs.read-metadata.outputs.pr-number) }}
 
   prune:
     needs: read-metadata

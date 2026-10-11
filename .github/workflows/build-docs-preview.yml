@@ -21,7 +21,6 @@ concurrency:
 jobs:
   build-docs-preview:
     runs-on: ubuntu-24.04
-    if: github.event.action != 'closed'
     env:
       HUGO_VERSION: 0.157.0
 
@@ -32,6 +31,7 @@ jobs:
           egress-policy: audit
           
       - name: Checkout PR
+        if: github.event.action != 'closed'
         uses: actions/checkout@v6
         with:
           persist-credentials: false
@@ -44,11 +44,13 @@ jobs:
             pr-preview
 
       - name: Install Hugo CLI
+        if: github.event.action != 'closed'
         run: |
           wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
           && sudo dpkg -i ${{ runner.temp }}/hugo.deb
 
       - name: Install Dart Sass
+        if: github.event.action != 'closed'
         # Direct download from the dart-sass GitHub release rather than
         # `sudo snap install dart-sass` (snap.io's storeserver was flaky
         # in GitHub-hosted runners and broke this workflow on unrelated
@@ -67,22 +69,26 @@ jobs:
           dart-sass --version
 
       - name: Setup Go
-        uses: actions/setup-go@v5
+        if: github.event.action != 'closed'
+        uses: actions/setup-go@v6
         with:
           go-version-file: docs/go.mod
           cache: false
 
       - name: Setup Node
+        if: github.event.action != 'closed'
         uses: actions/setup-node@v6
         with:
           node-version: "22"
 
       - name: Install dependencies
+        if: github.event.action != 'closed'
         run: |
           cd docs
           [[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true
 
       - name: Build PR preview
+        if: github.event.action != 'closed'
         env:
           HUGO_ENVIRONMENT: production
           HUGO_ENV: production
@@ -103,12 +109,17 @@ jobs:
             echo "${{ github.event.number }}" > ./pr/number
             echo "${{ github.event.pull_request.head.sha }}" > ./pr/sha
             echo "${{ github.event.action }}" > ./pr/action
+            if [ "${{ github.event.action }}" = "closed" ]; then
+              # Keep the same artifact directory structure on both paths.
+              mkdir -p docs/public
+              echo closed > docs/public/close-preview
+            fi
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: docs-preview-build
           path: |
-            ${{ github.event.action != 'closed' && 'docs/public' || '' }}
+            docs/public
             pr/
           if-no-files-found: error
