@@ -172,4 +172,32 @@ describe('operationsCenter machine', () => {
 
     actor.stop();
   });
+
+  it('refetches persisted events after re-subscribing, so events missed while down appear', () => {
+    const { actor } = startActor();
+    dispatch.mockClear();
+
+    actor.send({
+      type: OPERATION_CENTER_EVENTS.ERROR_OCCURRED_IN_SUBSCRIPTION,
+      data: { error: new Error('stream closed') },
+    });
+
+    expect(subscriptionState.dispose).toHaveBeenCalled();
+    expect(dispatch).toHaveBeenCalledWith({ type: 'api/invalidate', tags: ['Event'] });
+
+    actor.stop();
+  });
+
+  it('does not refetch events for ordinary received events', () => {
+    const { actor } = startActor();
+    dispatch.mockClear();
+
+    actor.send({
+      type: OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
+      data: { event: { id: 'e', description: 'd', severity: 'informational' } },
+    });
+
+    expect(dispatch).not.toHaveBeenCalledWith(expect.objectContaining({ type: 'api/invalidate' }));
+    actor.stop();
+  });
 });
