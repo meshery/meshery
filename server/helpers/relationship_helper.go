@@ -6,8 +6,8 @@ import (
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 )
 
-// NormalizeRelationshipDefinition lowercases relationship classification fields
-// (Kind, RelationshipType, SubType) to prevent case-sensitive duplicate registrations.
+// NormalizeRelationshipDefinition canonicalizes relationship classification fields
+// (Kind, RelationshipType, SubType) to lowercase for consistent lookups and queries.
 func NormalizeRelationshipDefinition(r *relationship.RelationshipDefinition) {
 	if r == nil {
 		return

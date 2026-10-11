@@ -1513,7 +1513,6 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) er
 		if err != nil {
 			return meshkitutils.ErrUnmarshal(err)
 		}
-		helpers.NormalizeRelationshipDefinition(&r)
 		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(registry.RegistrantHostToV1beta3(connection.Connection{
 			Kind: r.Model.Registrant.Kind,
 		}), &r)
