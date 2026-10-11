@@ -1117,6 +1117,101 @@ func TestSaveK8sContextRepeatSaveWithID(t *testing.T) {
 	}
 }
 
+// TestSaveK8sContextWithEmptyID verifies that SaveK8sContext correctly assigns
+// a stable ID when the input context has an empty ID, and that a subsequent
+// save with the same logical identity uses the assigned ID (repeat-save case).
+func TestSaveK8sContextWithEmptyID(t *testing.T) {
+	provider := newK8sContextFixture(t)
+	instanceID := core.Uuid(uuid.Must(uuid.NewV4()))
+
+	// Create initial context with empty ID (discovery case)
+	initialCtx := K8sContext{
+		ID:                "", // Empty ID - should be generated
+		Name:              "empty-id-context",
+		Auth:              sql.Map{"user": map[string]interface{}{"token": "token-v1"}},
+		Cluster:           sql.Map{"server": "https://10.0.0.1:443"},
+		Server:            "https://10.0.0.1:443",
+		MesheryInstanceID: &instanceID,
+		DeploymentType:    "in_cluster",
+		Version:           "v1.0.0",
+	}
+
+	// First save - should generate ID and create connection
+	conn1, err := provider.SaveK8sContext("test-token", initialCtx, nil)
+	if err != nil {
+		t.Fatalf("first SaveK8sContext() error = %v", err)
+	}
+
+	// Verify connection was created with a valid ID
+	if conn1.ID == uuid.Nil {
+		t.Fatal("first SaveK8sContext() returned empty connection ID")
+	}
+
+	// Load the context to verify ID was assigned
+	mkcp := provider.MesheryK8sContextPersister
+	var loadedCtx K8sContext
+	err = mkcp.DB.Model(&K8sContext{}).Where("connection_id = ?", conn1.ID.String()).First(&loadedCtx).Error
+	if err != nil {
+		t.Fatalf("failed to load context after first save: %v", err)
+	}
+
+	// Verify ID was generated and is not empty
+	if loadedCtx.ID == "" {
+		t.Errorf("context ID was not assigned on first save")
+	}
+
+	// Create a second context with the same logical identity but empty ID
+	// This simulates a repeat save where the caller provides an empty ID
+	repeatCtx := K8sContext{
+		ID:                "", // Empty ID again - should use existing connection
+		Name:              "empty-id-context",
+		Auth:              sql.Map{"user": map[string]interface{}{"token": "token-v2"}},
+		Cluster:           sql.Map{"server": "https://10.0.0.1:443"},
+		Server:            "https://10.0.0.1:443",
+		MesheryInstanceID: &instanceID,
+		DeploymentType:    "in_cluster",
+		Version:           "v1.0.1",
+	}
+
+	// Second save - should find existing connection by stable fields and update it
+	conn2, err := provider.SaveK8sContext("test-token", repeatCtx, nil)
+	if err != nil {
+		t.Fatalf("second SaveK8sContext() error = %v", err)
+	}
+
+	// Verify connection ID remains the same (no duplicate created)
+	if conn1.ID != conn2.ID {
+		t.Errorf("connection ID changed on repeat save with empty ID: got %v, want %v", conn2.ID, conn1.ID)
+	}
+
+	// Reload context to verify it was updated
+	err = mkcp.DB.Model(&K8sContext{}).Where("connection_id = ?", conn2.ID.String()).First(&loadedCtx).Error
+	if err != nil {
+		t.Fatalf("failed to load context after second save: %v", err)
+	}
+
+	// Verify token was updated
+	token, ok := loadedCtx.Auth["user"].(map[string]interface{})["token"].(string)
+	if !ok || token != "token-v2" {
+		t.Errorf("token not updated on repeat save with empty ID: got %v, want token-v2", loadedCtx.Auth)
+	}
+
+	// Verify version was updated
+	if loadedCtx.Version != "v1.0.1" {
+		t.Errorf("version not updated on repeat save with empty ID: got %v, want v1.0.1", loadedCtx.Version)
+	}
+
+	// Verify there is still only one connection
+	var connectionCount int64
+	err = provider.GetGenericPersister().Model(&connections.Connection{}).Count(&connectionCount).Error
+	if err != nil {
+		t.Fatalf("failed to count connections: %v", err)
+	}
+	if connectionCount != 1 {
+		t.Errorf("expected 1 connection after repeat save with empty ID, found %d", connectionCount)
+	}
+}
+
 // TestInClusterContextCARotationStability verifies that in-cluster context IDs
 // remain stable when CA certificate data rotates. For in-cluster contexts,
 // certificate-authority-data is excluded from the ID hash.
