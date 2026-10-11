@@ -1,0 +1,2081 @@
+id: e51e6461-2941-4043-bd4c-72f6377b1242
+name: Design Critique Template
+schemaVersion: designs.meshery.io/v1beta3
+version: 0.0.78
+components:
+  - id: 6cde10f4-64f3-4231-99c8-8485a73ea645
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 0
+      body-text: |
+        Design Critique Template
+
+        ​Strengths
+        ​Concerns
+        ​Action Items
+
+        Action Items & Next Steps
+        Tips: Focus on architecture clarity & constructive feedback
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-weight: "700"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: '#808080'
+      border-style: dashed
+      border-width: 2
+      data:
+        label: ""
+      height: 60
+      opacity: 1
+      padding: 6
+      position:
+        x: 351.559432779909
+        y: -286.66715953816674
+      primaryColor: '#00B39F'
+      secondaryColor: '#FFDE00'
+      shape: bottom-round-rectangle
+      svgColor: ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg
+      width: 180
+      z-index: 36
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: false
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: TextBox
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 504df5d3-675a-4494-81f3-0762a7a0c6c2
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 0
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-style: dashed
+      border-width: 1
+      data:
+        label: ""
+      height: 80
+      opacity: 1
+      padding: 6
+      position:
+        x: 516.7334242810357
+        y: 435.5796109471988
+      primaryColor: '#00B39F'
+      secondaryColor: '#00D3A9'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/meshery-core/color/section-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/meshery-core/white/section-white.svg
+      width: 80
+      z-index: 4
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: parent
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: false
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: Section
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: ff5200e4-5155-4127-9a47-28c0103930a3
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 0
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: '#808080'
+      border-style: dashed
+      border-width: 1
+      data:
+        label: ""
+      height: 60
+      opacity: 1
+      padding: 6
+      position:
+        x: 526.8965881807542
+        y: 433.8537108264666
+      primaryColor: '#00B39F'
+      secondaryColor: '#FFDE00'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg
+      width: 180
+      z-index: 13
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: false
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: TextBox
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 869829da-e08a-4a71-a5c5-50636f877412
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-opacity: 0
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: '#808080'
+      border-width: 0
+      height: 22
+      menu-forground-color: '#424242'
+      opacity: 1
+      padding: 2
+      position:
+        x: 672.8920928641146
+        y: 269.74872724630404
+      primaryColor: '#FFDE00'
+      secondaryColor: '#FFDE00'
+      shape: tag
+      svgColor: ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg
+      svgComplete: ui/public/static/img/meshmodels/meshery-core/complete/comment-complete.svg
+      svgWhite: ui/public/static/img/meshmodels/meshery-core/white/comment-white.svg
+      width: 22
+      x: 1.5
+      y: 7.5
+      z-index: 15
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: false
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: Comment
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 5ac217e2-7ccf-4050-a312-452b97b21e44
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-image-opacity: 0.4
+      background-opacity: 0.4
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: '#808080'
+      border-style: dashed
+      border-width: 1
+      data:
+        label: ""
+      height: 60
+      opacity: 1
+      padding: 6
+      position:
+        x: 540.101552164283
+        y: 432.06272704522604
+      primaryColor: '#00B39F'
+      secondaryColor: '#FFDE00'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg
+      width: 180
+      z-index: 16
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: false
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: TextBox
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 14d9e23a-b9b9-4ca5-82ec-5645879f6e71
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 0
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: '#808080'
+      border-style: dashed
+      border-width: 1
+      data:
+        label: ""
+      height: 60
+      opacity: 1
+      padding: 6
+      position:
+        x: 512.9229042545928
+        y: 438.76668112151566
+      primaryColor: '#00B39F'
+      secondaryColor: '#FFDE00'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg
+      width: 180
+      z-index: 8
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: false
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: TextBox
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 2d660b7f-2646-4f39-9acf-edb27ffa0453
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 1
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: transparent
+      border-style: dashed
+      border-width: 0
+      data:
+        label: ""
+      height: 1
+      opacity: 1
+      padding: 2
+      position:
+        x: 195.95159548931903
+        y: -656.4224254100533
+      primaryColor: '#00D3a9'
+      secondaryColor: '#00D3A9'
+      shape: circle
+      svgColor: ""
+      svgComplete: ""
+      svgWhite: ""
+      width: 1
+      z-index: 9
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: PenTerminal
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 8237808c-3978-49d3-8069-6559355138f5
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 1
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: transparent
+      border-style: dashed
+      border-width: 0
+      data:
+        label: ""
+      height: 1
+      opacity: 1
+      padding: 2
+      position:
+        x: 231.2771926823683
+        y: -637.4009406106163
+      primaryColor: '#00D3a9'
+      secondaryColor: '#00D3A9'
+      shape: circle
+      svgColor: ""
+      svgComplete: ""
+      svgWhite: ""
+      width: 1
+      z-index: 10
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: PenTerminal
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 7335782b-3e5f-4cab-b4be-c60f28e185d2
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 1
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: transparent
+      border-style: dashed
+      border-width: 0
+      data:
+        label: ""
+      height: 1
+      opacity: 1
+      padding: 2
+      position:
+        x: 291.05904999683844
+        y: -648.2703692132472
+      primaryColor: '#00D3a9'
+      secondaryColor: '#00D3A9'
+      shape: circle
+      svgColor: ""
+      svgComplete: ""
+      svgWhite: ""
+      width: 1
+      z-index: 11
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: PenTerminal
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 20903eda-8aa4-44a6-920d-2fbb4d99648e
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 1
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: transparent
+      border-style: dashed
+      border-width: 0
+      data:
+        label: ""
+      height: 1
+      opacity: 1
+      padding: 2
+      position:
+        x: 309.1747134839997
+        y: -630.1546752157517
+      primaryColor: '#00D3a9'
+      secondaryColor: '#00D3A9'
+      shape: circle
+      svgColor: ""
+      svgComplete: ""
+      svgWhite: ""
+      width: 1
+      z-index: 12
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: PenTerminal
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: c88dbdff-40fd-4a03-8124-6a1955b3e36c
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 1
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: transparent
+      border-style: dashed
+      border-width: 0
+      data:
+        label: ""
+      height: 1
+      opacity: 1
+      padding: 2
+      position:
+        x: 287.4728958244653
+        y: -635.8229003599216
+      primaryColor: '#00D3a9'
+      secondaryColor: '#00D3A9'
+      shape: circle
+      svgColor: ""
+      svgComplete: ""
+      svgWhite: ""
+      width: 1
+      z-index: 13
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: PenTerminal
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: b22a363c-c807-4a26-ab23-923b4303639b
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 1
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: transparent
+      border-style: dashed
+      border-width: 0
+      data:
+        label: ""
+      height: 1
+      opacity: 1
+      padding: 2
+      position:
+        x: 620.4124023304329
+        y: 11.00506333872977
+      primaryColor: '#00D3a9'
+      secondaryColor: '#00D3A9'
+      shape: circle
+      svgColor: ""
+      svgComplete: ""
+      svgWhite: ""
+      width: 1
+      z-index: 14
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: PenTerminal
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 59650ce0-6641-4d66-ac84-af4f9ba7c31b
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      animation:
+        delay: 0
+        duration: 500
+        easing: ease-in-out
+        iterations: infinite
+        minOpacity: 0.1
+        type: blink
+      background-image: none
+      background-opacity: 0
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 0
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: '#808080'
+      border-style: dashed
+      border-width: 1
+      data:
+        label: ""
+      height: 60
+      opacity: 1
+      padding: 6
+      position:
+        x: 683.8920928641146
+        y: 232.74872724630404
+      primaryColor: '#00B39F'
+      secondaryColor: '#FFDE00'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg
+      width: 180
+      z-index: 15
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: false
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: TextBox
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 6d21578c-82a4-44a2-8d8b-755116335436
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 1
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: transparent
+      border-style: dashed
+      border-width: 0
+      data:
+        label: ""
+      height: 1
+      opacity: 1
+      padding: 2
+      position:
+        x: 359.14106067035624
+        y: -670.5032497499911
+      primaryColor: '#00D3a9'
+      secondaryColor: '#00D3A9'
+      shape: circle
+      svgColor: ""
+      svgComplete: ""
+      svgWhite: ""
+      width: 1
+      z-index: 16
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: PenTerminal
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: dce7e2e9-4171-43ab-9435-d03f4d31f3c7
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 1
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: transparent
+      border-style: dashed
+      border-width: 0
+      data:
+        label: ""
+      height: 1
+      opacity: 1
+      padding: 2
+      position:
+        x: 372.7304245468854
+        y: 275.0129989151817
+      primaryColor: '#00D3a9'
+      secondaryColor: '#00D3A9'
+      shape: circle
+      svgColor: ""
+      svgComplete: ""
+      svgWhite: ""
+      width: 1
+      z-index: 17
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: PenTerminal
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 64a1dbdd-d6a0-4518-9978-e262952de7c5
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 1
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: rgb(38,38,43)
+      border-style: dashed
+      border-width: 0
+      data:
+        label: ""
+      height: 1
+      opacity: 1
+      padding: 2
+      position:
+        x: 322.85335059841896
+        y: 84.2804515699845
+      primaryColor: '#00D3a9'
+      secondaryColor: '#00D3A9'
+      shape: circle
+      svgColor: ""
+      svgComplete: ""
+      svgWhite: ""
+      width: 1
+      z-index: 18
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: PenTerminal
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: f3543dce-b34c-48d1-b317-3e6c6182dc93
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 1
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: transparent
+      border-style: dashed
+      border-width: 0
+      data:
+        label: ""
+      height: 1
+      opacity: 1
+      padding: 2
+      position:
+        x: 520.5418269981656
+        y: 312.91501077001885
+      primaryColor: '#00D3a9'
+      secondaryColor: '#00D3A9'
+      shape: circle
+      svgColor: ""
+      svgComplete: ""
+      svgWhite: ""
+      width: 1
+      z-index: 19
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: PenTerminal
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 27a668a4-0f47-491d-ab80-483f76435a88
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 1
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: transparent
+      border-style: dashed
+      border-width: 0
+      data:
+        label: ""
+      height: 1
+      opacity: 1
+      padding: 2
+      position:
+        x: 531.8922205092379
+        y: 409.1007920194213
+      primaryColor: '#00D3a9'
+      secondaryColor: '#00D3A9'
+      shape: circle
+      svgColor: ""
+      svgComplete: ""
+      svgWhite: ""
+      width: 1
+      z-index: 20
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: PenTerminal
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: d2cccd68-2439-4e75-8547-009ee4589e25
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 1
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: transparent
+      border-style: dashed
+      border-width: 0
+      data:
+        label: ""
+      height: 1
+      opacity: 1
+      padding: 2
+      position:
+        x: 343.60220847932754
+        y: 539.5147747611104
+      primaryColor: '#00D3a9'
+      secondaryColor: '#00D3A9'
+      shape: circle
+      svgColor: ""
+      svgComplete: ""
+      svgWhite: ""
+      width: 1
+      z-index: 21
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: PenTerminal
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 40a4a41c-ae37-4cbf-a790-8c56846b51ae
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 1
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: transparent
+      border-style: dashed
+      border-width: 0
+      data:
+        label: ""
+      height: 1
+      opacity: 1
+      padding: 2
+      position:
+        x: 234.79518676812273
+        y: 381.3202784344612
+      primaryColor: '#00D3a9'
+      secondaryColor: '#00D3A9'
+      shape: circle
+      svgColor: ""
+      svgComplete: ""
+      svgWhite: ""
+      width: 1
+      z-index: 22
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: PenTerminal
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 8c798a04-0e5b-4c9f-bda7-a9bf8bb1d345
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 1
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: transparent
+      border-style: dashed
+      border-width: 0
+      data:
+        label: ""
+      height: 1
+      opacity: 1
+      padding: 2
+      position:
+        x: 498.7099742942403
+        y: 409.8724593921884
+      primaryColor: '#00D3a9'
+      secondaryColor: '#00D3A9'
+      shape: circle
+      svgColor: ""
+      svgComplete: ""
+      svgWhite: ""
+      width: 1
+      z-index: 23
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: PenTerminal
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 4942cb5a-5e28-49cb-b8ab-9e47a5ad9d1e
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 1
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: transparent
+      border-style: dashed
+      border-width: 0
+      data:
+        label: ""
+      height: 1
+      opacity: 1
+      padding: 2
+      position:
+        x: 621.4071002462541
+        y: 524.8529726372003
+      primaryColor: '#00D3a9'
+      secondaryColor: '#00D3A9'
+      shape: circle
+      svgColor: ""
+      svgComplete: ""
+      svgWhite: ""
+      width: 1
+      z-index: 24
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: PenTerminal
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: ede183a0-499f-4405-9785-6bc0bf044cfa
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      animation:
+        type: none
+      background-image: none
+      background-opacity: 0
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: '#808080'
+      border-style: dashed
+      border-width: 1
+      data:
+        label: ""
+      height: 60
+      opacity: 1
+      padding: 6
+      position:
+        x: 499.3109787426381
+        y: 432.13415031664977
+      primaryColor: '#00B39F'
+      secondaryColor: '#FFDE00'
+      shape: round-tag
+      svgColor: ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg
+      width: 180
+      z-index: 37
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: false
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: TextBox
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 6c5b9c41-0150-4123-88c3-80dd3cbc92c7
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-image-opacity: 0.4
+      background-opacity: 0.4
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: '#808080'
+      border-style: dashed
+      border-width: 1
+      data:
+        label: ""
+      height: 60
+      opacity: 1
+      padding: 6
+      position:
+        x: 514.0502172574265
+        y: 434.2158015479052
+      primaryColor: '#00B39F'
+      secondaryColor: '#FFDE00'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg
+      width: 180
+      z-index: 14
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: false
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: TextBox
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 8b38121e-69eb-4590-bbe4-6ec8d73dd803
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 1
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: transparent
+      border-style: dashed
+      border-width: 0
+      data:
+        label: ""
+      height: 1
+      opacity: 1
+      padding: 2
+      position:
+        x: 595.897799651224
+        y: 301.83966962911654
+      primaryColor: '#00D3a9'
+      secondaryColor: '#00D3A9'
+      shape: circle
+      svgColor: ""
+      svgComplete: ""
+      svgWhite: ""
+      width: 1
+      z-index: 27
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: PenTerminal
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 235b0ad0-b2c7-4717-a732-e7268b6d09e3
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-opacity: 0
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: '#808080'
+      border-width: 0
+      height: 22
+      menu-forground-color: '#424242'
+      opacity: 1
+      padding: 2
+      position:
+        x: 647.5290862723177
+        y: 351.06379072286654
+      primaryColor: '#FFDE00'
+      secondaryColor: '#FFDE00'
+      shape: tag
+      svgColor: ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg
+      svgComplete: ui/public/static/img/meshmodels/meshery-core/complete/comment-complete.svg
+      svgWhite: ui/public/static/img/meshmodels/meshery-core/white/comment-white.svg
+      width: 22
+      x: 1.5
+      y: 7.5
+      z-index: 28
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: false
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: Comment
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: dcce64fe-0785-4275-8d9e-eebabd81bb6b
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 1
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: transparent
+      border-style: dashed
+      border-width: 0
+      data:
+        label: ""
+      height: 1
+      opacity: 1
+      padding: 2
+      position:
+        x: 250.2780219855471
+        y: 367.89504490079935
+      primaryColor: '#00D3a9'
+      secondaryColor: '#00D3A9'
+      shape: circle
+      svgColor: ""
+      svgComplete: ""
+      svgWhite: ""
+      width: 1
+      z-index: 29
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: true
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: PenTerminal
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: a0183321-06b3-4a10-82fb-e0dc205d3740
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 0
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-color: '#808080'
+      border-style: dashed
+      border-width: 1
+      data:
+        label: ""
+      height: 60
+      opacity: 1
+      padding: 6
+      position:
+        x: 506.57026038131715
+        y: 437.3055110679309
+      primaryColor: '#00B39F'
+      secondaryColor: '#FFDE00'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg
+      width: 180
+      z-index: 30
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: ""
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: false
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: TextBox
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: 134b1843-5710-4d95-a968-de01e05d91d1
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 0
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-style: dashed
+      border-width: 1
+      data:
+        label: ""
+      height: 80
+      opacity: 1
+      padding: 6
+      position:
+        x: 946.6439251488324
+        y: 728.7439892510555
+      primaryColor: '#00B39F'
+      secondaryColor: '#00D3A9'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/meshery-core/color/section-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/meshery-core/white/section-white.svg
+      width: 80
+      z-index: 31
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: parent
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: false
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: Section
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: db48e046-5789-4de7-bf3d-d30eef04efd6
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 0
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-style: dashed
+      border-width: 1
+      data:
+        label: ""
+      height: 80
+      opacity: 1
+      padding: 6
+      position:
+        x: 1301.0104913419418
+        y: 749.1962402026169
+      primaryColor: '#00B39F'
+      secondaryColor: '#00D3A9'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/meshery-core/color/section-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/meshery-core/white/section-white.svg
+      width: 80
+      z-index: 32
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: parent
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: false
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: Section
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+  - id: d842162d-1a81-41ce-85f8-a4c39b6272e4
+    schemaVersion: components.meshery.io/v1beta1
+    version: v1.0.0
+    displayName: ""
+    description: ""
+    format: JSON
+    model: null
+    modelReference:
+      displayName: Meshery Core
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-core
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    styles:
+      background-image: none
+      background-opacity: 0
+      body-text: ""
+      body-text-color: '#808080'
+      body-text-font-family: Qanelas Soft
+      body-text-font-size: 12
+      body-text-font-weight: "400"
+      body-text-horizontal-align: center
+      body-text-text-decoration: none
+      body-text-vertical-align: center
+      border-style: dashed
+      border-width: 1
+      data:
+        label: ""
+      height: 80
+      opacity: 1
+      padding: 6
+      position:
+        x: 1146.6934581627934
+        y: 742.1182431416358
+      primaryColor: '#00B39F'
+      secondaryColor: '#00D3A9'
+      shape: rectangle
+      svgColor: ui/public/static/img/meshmodels/meshery-core/color/section-color.svg
+      svgComplete: ""
+      svgWhite: ui/public/static/img/meshmodels/meshery-core/white/section-white.svg
+      width: 80
+      z-index: 33
+    capabilities: null
+    status: enabled
+    metadata:
+      configurationUISchema: ""
+      genealogy: parent
+      hasInvalidSchema: true
+      instanceDetails: null
+      isAnnotation: true
+      isNamespaced: false
+      published: false
+    configuration: {}
+    component:
+      version: core.meshery.io/v1alpha1
+      kind: Section
+      schema: ""
+    created_at: "0001-01-01T00:00:00Z"
+    updated_at: "0001-01-01T00:00:00Z"
+relationships:
+  - id: b6895f36-b8b6-4376-ad13-f2ebf773ec48
+    evaluationQuery: null
+    kind: hierarchical
+    metadata:
+      description: A relationship that defines annotation edges between components
+      isAnnotation: false
+      styles:
+        primaryColor: ""
+        svgColor: ""
+        svgWhite: ""
+    model:
+      displayName: Meshery Shapes
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-shapes
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    schemaVersion: ""
+    selectors:
+      - allow:
+          from:
+            - id: a0183321-06b3-4a10-82fb-e0dc205d3740
+              kind: '*'
+              match: {}
+              matchStrategyMatrix: null
+              model:
+                displayName: ""
+                id: 00000000-0000-0000-0000-000000000000
+                model:
+                  version: ""
+                name: '*'
+                registrant:
+                  kind: ""
+                version: ""
+              patch: null
+          to:
+            - id: 504df5d3-675a-4494-81f3-0762a7a0c6c2
+              kind: Section
+              match: {}
+              matchStrategyMatrix: null
+              model:
+                displayName: ""
+                id: 00000000-0000-0000-0000-000000000000
+                model:
+                  version: ""
+                name: meshery-core
+                registrant:
+                  kind: ""
+                version: ""
+              patch: null
+    subType: inventory
+    status: pending
+    type: parent
+    version: ""
+  - id: cacc621a-cb49-4458-823d-7e97f4e1da0a
+    evaluationQuery: null
+    kind: hierarchical
+    metadata:
+      description: A relationship that defines annotation edges between components
+      isAnnotation: false
+      styles:
+        primaryColor: ""
+        svgColor: ""
+        svgWhite: ""
+    model:
+      displayName: Meshery Shapes
+      id: 00000000-0000-0000-0000-000000000000
+      model:
+        version: 0.7.2
+      name: meshery-shapes
+      registrant:
+        kind: meshery
+      version: v1.0.0
+    schemaVersion: ""
+    selectors:
+      - allow:
+          from:
+            - id: ff5200e4-5155-4127-9a47-28c0103930a3
+              kind: '*'
+              match: {}
+              matchStrategyMatrix: null
+              model:
+                displayName: ""
+                id: 00000000-0000-0000-0000-000000000000
+                model:
+                  version: ""
+                name: '*'
+                registrant:
+                  kind: ""
+                version: ""
+              patch: null
+          to:
+            - id: 504df5d3-675a-4494-81f3-0762a7a0c6c2
+              kind: Section
+              match: {}
+              matchStrategyMatrix: null
+              model:
+                displayName: ""
+                id: 00000000-0000-0000-0000-000000000000
+                model:
+                  version: ""
+                name: meshery-core
+                registrant:
+                  kind: ""
+                version: ""
+              patch: null
+    subType: inventory
+    status: pending
+    type: parent
+    version: ""
