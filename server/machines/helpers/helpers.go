@@ -99,13 +99,14 @@ func registerActionForKind(mtype string) machines.Action {
 //     machine could not be built at all (e.g. the cluster's API server was
 //     unreachable, so the client set could not be generated and
 //     AssignInitialCtx returned an error);
-//   - a non-nil instance whose Context is nil. InitializeMachineWithContext
-//     caches the instance via smInstanceTracker.Add *before* checking the Start
-//     error, so every later call for that connection takes the cache-hit path
-//     and gets back the same half-built instance, this time paired with a nil
-//     error (meshery#20820). The tracker is only ever cleared by an explicit
-//     user action (deleting the connection, cancelling registration), so this
-//     state persists for the life of the process.
+//   - a non-nil instance whose Context is nil. A machine started with a nil
+//     InitFunc is exactly this shape, and so was every cache hit for a
+//     connection whose Start had failed, back when the instance was registered
+//     before the Start error was checked (meshery#20820). Initialization is
+//     single-flight now and a failed initializer leaves no tracker entry, so
+//     that second shape is retried rather than cached — but callers must still
+//     reject it, because the retry can fail again and the nil-InitFunc case is
+//     unaffected.
 //
 // Driving either shape nil-dereferences, or type-asserts a nil interface and
 // logs meshkit-11180 ("nil interface cannot be type casted") - which, on the
@@ -138,22 +139,21 @@ func InitializeMachineWithContext(
 	mtype string,
 	initFunc connections.InitFunc,
 ) (*machines.StateMachine, error) {
-	inst, ok := smInstanceTracker.Get(ID)
-	if ok {
+	return smInstanceTracker.GetOrInitialize(ID, func() (*machines.StateMachine, error) {
+		var dbHandler *database.Handler
+		if provider != nil {
+			dbHandler = provider.GetGenericPersister()
+		}
+		inst, err := getMachine(initialState, mtype, ID.String(), userID, log, dbHandler)
+		if err != nil {
+			log.Error(err)
+			return nil, err
+		}
+		inst.Provider = provider
+		_, err = inst.Start(ctx, machineCtx, log, initFunc)
+		if err != nil {
+			return nil, err
+		}
 		return inst, nil
-	}
-
-	inst, err := getMachine(initialState, mtype, ID.String(), userID, log, provider.GetGenericPersister())
-	if err != nil {
-		log.Error(err)
-		return nil, err
-	}
-	inst.Provider = provider
-	_, err = inst.Start(ctx, machineCtx, log, initFunc)
-	smInstanceTracker.Add(ID, inst)
-	if err != nil {
-		return nil, err
-	}
-
-	return inst, nil
+	})
 }
