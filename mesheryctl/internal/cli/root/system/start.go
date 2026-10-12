@@ -301,11 +301,7 @@ func buildAllowedDockerServices(currCtx *config.Context, mesheryImageVersion, ca
 	}
 
 	for _, component := range currCtx.GetComponents() {
-
-		service, ok := utils.Services[component]
-		if !ok {
-			return nil, errors.Errorf("No Docker Compose service exists for Meshery component `%s`.", component)
-		}
+		service := utils.Services[component]
 
 		spliter := strings.Split(service.Image, ":")
 		service.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), "latest")
