@@ -374,9 +374,15 @@ const Environments = () => {
   };
 
   const handleBulkDeleteEnv = () => {
-    selectedEnvironments.map((envId) => {
-      handleDeleteEnvironment(envId);
-    });
+    const administrativeIds = environments
+      .filter((env) => env.purpose === 'administrative')
+      .map((env) => env.id);
+
+    selectedEnvironments
+      .filter((envId) => !administrativeIds.includes(envId))
+      .forEach((envId) => {
+        handleDeleteEnvironment(envId);
+      });
     setSelectedEnvironments([]);
   };
 
@@ -566,7 +572,7 @@ const Environments = () => {
                 />
               }
               message="No environment available"
-              pointerLabel="Click “Create” to establish your first environment."
+              pointerLabel='Click "Create" to establish your first environment.'
             />
           )}
           {(canCreateEnv || canEditEnv) && environmentModal.open && (
