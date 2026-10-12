@@ -80,7 +80,9 @@ jobs:
       - name: Install dependencies
         run: |
           cd docs
-          [[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true
+          if [[ -f package-lock.json || -f npm-shrinkwrap.json ]]; then
+            npm ci
+          fi
 
       - name: Build PR preview
         env:
