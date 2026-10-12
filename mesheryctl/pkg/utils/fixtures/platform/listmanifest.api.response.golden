@@ -114,22 +114,6 @@
       "url": "https://api.github.com/repos/meshery/meshery/git/blobs/593256d6fd435d6a728a6980b50e1d32d146a8a7"
     },
     {
-      "path": "meshery-octarine-deployment.yaml",
-      "mode": "100644",
-      "type": "blob",
-      "sha": "f3aceae575cea3957703e8996f6462b84d441fab",
-      "size": 780,
-      "url": "https://api.github.com/repos/meshery/meshery/git/blobs/f3aceae575cea3957703e8996f6462b84d441fab"
-    },
-    {
-      "path": "meshery-octarine-service.yaml",
-      "mode": "100644",
-      "type": "blob",
-      "sha": "750a9c447577d53e410f4650f68faaf042fcf8b8",
-      "size": 403,
-      "url": "https://api.github.com/repos/meshery/meshery/git/blobs/750a9c447577d53e410f4650f68faaf042fcf8b8"
-    },
-    {
       "path": "meshery-service.yaml",
       "mode": "100644",
       "type": "blob",
