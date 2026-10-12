@@ -61,7 +61,7 @@ mesheryctl design deploy -f [filepath] -s [source type]
 ## Screenshots
 
 Usage of mesheryctl design deploy
-![pattern-onboard-usage](../../../images/app-onboard.png)
+![pattern-onboard-usage](../../images/app-onboard.png)
 
 ## See Also
 

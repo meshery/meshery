@@ -82,7 +82,7 @@ mesheryctl perf result saturday-profile --view
 ## Screenshots
 
 Usage of mesheryctl perf result
-![perf-result-usage](../../../images/perf-result.png)
+![perf-result-usage](../../images/perf-result.png)
 
 ## See Also
 
