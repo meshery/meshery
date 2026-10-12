@@ -84,7 +84,7 @@ function PatternServiceForm({
                 boxShadow: `0px 2px 4px -1px "#677E88"`,
                 background: `${theme.palette.mode === 'dark' ? '#202020' : '#647881'}`,
                 position: 'sticky',
-                zIndex: 'auto',
+                zIndex: '2',
               }}
             >
               <Toolbar
