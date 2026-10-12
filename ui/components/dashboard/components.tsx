@@ -170,6 +170,7 @@ type LayoutActionButtonProps = {
   action: () => void;
   description: React.ReactNode;
   isShown: boolean;
+  alwaysShowLabel?: boolean;
 };
 
 export const LayoutActionButton = ({
@@ -178,6 +179,7 @@ export const LayoutActionButton = ({
   action,
   description,
   isShown,
+  alwaysShowLabel = false,
 }: LayoutActionButtonProps) => {
   const theme = useTheme();
   const iconsProps = actionIconProps(theme);
@@ -189,7 +191,7 @@ export const LayoutActionButton = ({
     return null;
   }
 
-  if (label !== 'Edit' && ((isSmallTablet && !isDrawerCollapsed) || isMobile)) {
+  if (!alwaysShowLabel && ((isSmallTablet && !isDrawerCollapsed) || isMobile)) {
     return (
       <CustomTooltip title={description} variant="standard">
         <ActionButton

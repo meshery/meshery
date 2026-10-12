@@ -177,6 +177,24 @@ describe('LayoutActionButton', () => {
     expect(screen.getByTestId('tooltip')).toHaveAttribute('data-title', 'Share layout');
   });
 
+  it('keeps the label visible below md when alwaysShowLabel is set', () => {
+    setMediaQueries(true, false);
+    render(
+      <Provider store={createTestStore()}>
+        <LayoutActionButton
+          Icon={FakeIcon}
+          label="Modifier"
+          action={vi.fn()}
+          description="Configure dashboard layout"
+          isShown={true}
+          alwaysShowLabel
+        />
+      </Provider>,
+    );
+
+    expect(screen.getByText('Modifier')).toBeInTheDocument();
+  });
+
   it('keeps the label visible below md with a collapsed drawer', () => {
     setMediaQueries(true, false);
     render(
