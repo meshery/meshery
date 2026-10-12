@@ -185,6 +185,7 @@ func TestAskForConfirmation(t *testing.T) {
 		question string
 		input    string
 		want     bool
+		wantErr  bool
 	}{
 		{
 			name:     "test with input 'yes'",
@@ -197,6 +198,12 @@ func TestAskForConfirmation(t *testing.T) {
 			question: "question?",
 			input:    "no\n",
 			want:     false,
+		},
+		{
+			name:     "stdin EOF returns error without fatal",
+			question: "question?",
+			input:    "",
+			wantErr:  true,
 		},
 	}
 	for _, tt := range tests {
@@ -216,7 +223,16 @@ func TestAskForConfirmation(t *testing.T) {
 			defer func() { os.Stdin = stdin }()
 			os.Stdin = r
 
-			got := AskForConfirmation(tt.question)
+			got, err := AskForConfirmation(tt.question)
+			if tt.wantErr {
+				if err == nil {
+					t.Fatalf("AskForConfirmation error = nil, want error")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("AskForConfirmation unexpected error = %v", err)
+			}
 			if got != tt.want {
 				t.Errorf("AskForConfirmation got = %v want = %v", got, tt.want)
 			}
@@ -361,9 +377,28 @@ func TestAskForInput(t *testing.T) {
 	defer func() { os.Stdin = stdin }()
 	os.Stdin = r
 
-	got := AskForInput("Prompt", []string{"data1", "data2"})
+	got, err := AskForInput("Prompt", []string{"data1", "data2"})
+	if err != nil {
+		t.Fatalf("AskForInput unexpected error = %v", err)
+	}
 	if got != input {
 		t.Errorf("AskForInput got = %v want = %v", got, input)
+	}
+}
+
+func TestAskForInputStdinEOF(t *testing.T) {
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	_ = w.Close()
+	stdin := os.Stdin
+	defer func() { os.Stdin = stdin }()
+	os.Stdin = r
+
+	got, err := AskForInput("Prompt", []string{"data1", "data2"})
+	if err == nil {
+		t.Fatalf("AskForInput error = nil, want error; got %q", got)
 	}
 }
 
