@@ -28,7 +28,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 
 	tokenString := req.Context().Value(models.TokenCtxKey).(string)
 
-	bdr, err := p.FetchResults(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), profileID)
+	bdr, err := p.FetchResults(tokenString, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"), profileID)
 	if err != nil {
 		h.log.Error(ErrFetchResults(err))
 		writeMeshkitError(w, ErrFetchResults(err), http.StatusInternalServerError)
@@ -50,7 +50,7 @@ func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Reques
 
 	tokenString := req.Context().Value(models.TokenCtxKey).(string)
 
-	bdr, err := p.FetchAllResults(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("from"), q.Get("to"))
+	bdr, err := p.FetchAllResults(tokenString, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"), q.Get("from"), q.Get("to"))
 	if err != nil {
 		h.log.Error(ErrFetchResults(err))
 		writeMeshkitError(w, ErrFetchResults(err), http.StatusInternalServerError)
@@ -118,7 +118,7 @@ func (h *Handler) FetchSmiResultsHandler(w http.ResponseWriter, req *http.Reques
 	}
 	q := req.Form
 
-	bdr, err := p.FetchSmiResults(req, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
+	bdr, err := p.FetchSmiResults(req, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"))
 	if err != nil {
 		h.log.Error(ErrFetchSMIResults(err))
 		writeMeshkitError(w, ErrFetchSMIResults(err), http.StatusInternalServerError)

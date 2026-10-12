@@ -16,7 +16,7 @@ func (h *Handler) GetOrganizations(w http.ResponseWriter, req *http.Request, _ *
 	}
 
 	q := req.URL.Query()
-	resp, err := provider.GetOrganizations(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
+	resp, err := provider.GetOrganizations(token, q.Get("page"), getPageSizeParam(q), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
 		handlerErr := ErrGetOrganizations(err)
 		h.log.Error(handlerErr)
