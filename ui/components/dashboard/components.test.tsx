@@ -42,8 +42,8 @@ vi.mock('@sistent/sistent', () => ({
       {children}
     </div>
   ),
-  Button: ({ children, onClick, endIcon }: any) => (
-    <button type="button" onClick={onClick}>
+  Button: ({ children, onClick, endIcon, 'aria-label': ariaLabel }: any) => (
+    <button type="button" onClick={onClick} aria-label={ariaLabel}>
       {children}
       {endIcon}
     </button>
@@ -175,6 +175,7 @@ describe('LayoutActionButton', () => {
     expect(screen.queryByText('Share')).not.toBeInTheDocument();
     expect(screen.getByTestId('fake-icon')).toBeInTheDocument();
     expect(screen.getByTestId('tooltip')).toHaveAttribute('data-title', 'Share layout');
+    expect(screen.getByRole('button', { name: 'Share' })).toBeInTheDocument();
   });
 
   it('keeps the label visible below md when alwaysShowLabel is set', () => {

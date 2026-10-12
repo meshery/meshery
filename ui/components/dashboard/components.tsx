@@ -166,7 +166,7 @@ type LayoutActionButtonProps = {
     width?: string | number;
     height?: string | number;
   }>;
-  label: React.ReactNode;
+  label: string;
   action: () => void;
   description: React.ReactNode;
   isShown: boolean;
@@ -197,6 +197,7 @@ export const LayoutActionButton = ({
         <ActionButton
           variant="text"
           onClick={action}
+          aria-label={label}
           endIcon={<Icon {...iconsProps} />}
         ></ActionButton>
       </CustomTooltip>
