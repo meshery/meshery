@@ -58,7 +58,7 @@ mesheryctl design import -f ./app-deployment.yaml -s manifest
 
 ### Importing a Kustomize Package
 
-To import a Kustomize package, upload a `.zip`, `.tar.gz`, or `.tgz` archive with a file named `kustomization.yaml` at the root of the archive. Include the files it references in the same archive. For example:
+To import a Kustomize package, upload a `.zip`, `.tar`, `.tar.gz`, or `.tgz` archive with a file named `kustomization.yaml` at the root of the archive. Include the files it references in the same archive. For example:
 
 ```text
 kustomization.yaml
@@ -66,7 +66,7 @@ deployment.yaml
 service.yaml
 ```
 
-You can also import the archive from a direct URL. Meshery downloads the file and takes its name from the response's `Content-Disposition` header or the last segment of the URL, so make sure that name ends in `.zip`, `.tar.gz`, or `.tgz`.
+You can also import the archive from a direct URL. Meshery downloads the file and takes its name from the response's `Content-Disposition` header or the last segment of the URL, so make sure that name ends in `.zip`, `.tar`, `.tar.gz`, or `.tgz`.
 
 ### Import Processing Details
 
