@@ -613,10 +613,18 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 	// if the ref points to some page other than under /extension then skip ref
 	refUrl, err := servercore.GetRefURLFromRequest(req)
 	l.Log.Infof("Referrer URL: %s , %v", refUrl, err)
+	// safePostLoginTarget is the same gate TokenHandler and the local provider
+	// use. The "/extension" prefix alone passes a raw string that http.Redirect
+	// then normalizes: "/extension/../../api/user/token" cleans onto the token
+	// endpoint, which re-enters TokenHandler with no token and wipes the session
+	// just minted here.
 	if strings.HasPrefix(refUrl, "/extension") {
-		l.Log.Infof("Redirecting to referrer %s", refUrl)
-		http.Redirect(res, req, refUrl, http.StatusFound)
-		return
+		if target, ok := safePostLoginTarget(refUrl, postLoginHost(req)); ok {
+			l.Log.Infof("Redirecting to referrer %s", target)
+			http.Redirect(res, req, target, http.StatusFound)
+			return
+		}
+		l.Log.Infof("Referrer %s is not a safe post-login destination, falling back", refUrl)
 	}
 
 	if redirectURL == "/" {
@@ -625,6 +633,37 @@ func (l *RemoteProvider) InterceptLoginAndInitiateAnonymousUserSession(req *http
 	}
 	l.Log.Infof("No source refs resolved , Redirecting to base extension page  %s", redirectURL)
 	http.Redirect(res, req, redirectURL, http.StatusFound)
+}
+
+// clearRefCookie removes the post-login ref cookie, so that neither an
+// abandoned login attempt nor a redeemed one can supply the destination of the
+// next one.
+func (l *RemoteProvider) clearRefCookie(w http.ResponseWriter) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     l.RefCookieName,
+		Path:     "/",
+		HttpOnly: true,
+		MaxAge:   -1,
+	})
+}
+
+// persistRefCookie records this login attempt's post-login destination, and
+// deletes whatever a previous attempt left behind when this one carries none.
+// An empty value is never written: it would still parse as a present cookie on
+// the way back in and outrank the ?ref= the provider echoes back.
+func (l *RemoteProvider) persistRefCookie(w http.ResponseWriter, ref string) {
+	if ref == "" {
+		l.clearRefCookie(w)
+		return
+	}
+	http.SetCookie(w, &http.Cookie{
+		Name:     l.RefCookieName,
+		Value:    ref,
+		Expires:  time.Now().Add(l.LoginCookieDuration),
+		Path:     "/",
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode, // sent on top-level cross-site GET back from the provider
+	})
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
@@ -647,22 +686,6 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 
 	ck, err := r.Cookie(TokenCookieName)
 	if err != nil || ck.Value == "" {
-		// Capture the originally-requested in-app path as the post-login
-		// redirect target. Meshery owns this state in a cookie on its own
-		// domain rather than round-tripping it through the remote provider's
-		// auth chain, where intermediate hops (e.g. custom-domain bounces)
-		// could drop or rewrite the value and land the user on a non-existent
-		// route after authentication. TokenHandler reads the cookie back when
-		// the provider redirects to /api/user/token.
-		http.SetCookie(w, &http.Cookie{
-			Name:     l.RefCookieName,
-			Value:    refURLqueryParam,
-			Expires:  time.Now().Add(l.LoginCookieDuration),
-			Path:     "/",
-			HttpOnly: true,
-			SameSite: http.SameSiteLaxMode, // sent on top-level cross-site GET back from the provider
-		})
-
 		queryParams := url.Values{
 			"source": []string{base64.RawURLEncoding.EncodeToString([]byte(baseCallbackURL))},
 		}
@@ -673,10 +696,27 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 			queryParams.Set("meshery_version", mesheryVersion)
 		}
 
+		// The anonymous exit resolves its destination from this request's own
+		// ref and never returns through TokenHandler, so a cookie here would
+		// only outlive the attempt that set it and outrank the ?ref= a later
+		// Sign In carries - which is how mode=design got dropped. Clear it.
 		if supportsAnonymousUserSessions {
+			l.clearRefCookie(w)
 			l.InterceptLoginAndInitiateAnonymousUserSession(r, w)
 			return
 		}
+
+		// Capture the originally-requested in-app path as the post-login
+		// redirect target. Meshery owns this state in a cookie on its own
+		// domain rather than round-tripping it through the remote provider's
+		// auth chain, where intermediate hops (e.g. custom-domain bounces)
+		// could drop or rewrite the value and land the user on a non-existent
+		// route after authentication. TokenHandler reads the cookie back when
+		// the provider redirects to /api/user/token, and clears it there. A
+		// login that carries no ref deletes the cookie rather than leaving one:
+		// an abandoned earlier attempt would otherwise outrank this login's own
+		// fallback for the whole LoginCookieDuration.
+		l.persistRefCookie(w, refURLqueryParam)
 
 		w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
 		w.Header().Set("Pragma", "no-cache")
@@ -4147,19 +4187,14 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 		redirectURL = GetRedirectURLForNavigatorExtension(&providerProperties, l.Log)
 	}
 
-	// Post-login redirect target: read from the cookie set by InitiateLogin.
-	// resolvePostLoginRedirect's "/" fallback handles the missing-cookie case
-	// without us needing to trust any provider-side state. See
-	// selectPostLoginRefValue for the rationale.
-	redirectURL = resolvePostLoginRedirect(selectPostLoginRefValue(r, l.RefCookieName), redirectURL)
+	// Post-login redirect target. A ref cookie set by InitiateLogin wins; when
+	// it is absent or empty, selectPostLoginRefValue falls back to ?ref=. An
+	// absolute ref on Meshery's own host is reduced to its path and query.
+	// Refs on any other host are rejected.
+	redirectURL = resolvePostLoginRedirect(selectPostLoginRefValue(r, l.RefCookieName), redirectURL, postLoginHost(r))
 	// One-shot cookie: clear it now that we've resolved the destination so a
 	// stale value can't override the next login flow.
-	http.SetCookie(w, &http.Cookie{
-		Name:     l.RefCookieName,
-		Path:     "/",
-		HttpOnly: true,
-		MaxAge:   -1,
-	})
+	l.clearRefCookie(w)
 
 	go func() {
 		credential := make(map[string]interface{}, 0)
