@@ -98,3 +98,125 @@ func TestProviderUnmarshalJSON(t *testing.T) {
 		}
 	})
 }
+
+func TestChooseDirectProvider(t *testing.T) {
+	tests := []struct {
+		name           string
+		provs          map[string]Provider
+		option         string
+		expectedProv   Provider
+		expectError    bool
+		expectedErrSub string
+	}{
+		{
+			name: "single provider with invalid requested provider (regression test)",
+			provs: map[string]Provider{
+				"None": {
+					ProviderName: "None",
+					ProviderURL:  "",
+				},
+			},
+			option:         "invalid-provider",
+			expectedProv:   Provider{},
+			expectError:    true,
+			expectedErrSub: "the specified provider 'invalid-provider' is not available. Please try giving correct provider name",
+		},
+		{
+			name: "single provider with valid requested provider",
+			provs: map[string]Provider{
+				"None": {
+					ProviderName: "None",
+					ProviderURL:  "",
+				},
+			},
+			option: "None",
+			expectedProv: Provider{
+				ProviderName: "None",
+				ProviderURL:  "",
+			},
+			expectError: false,
+		},
+		{
+			name: "single provider with valid requested provider case-insensitive",
+			provs: map[string]Provider{
+				"None": {
+					ProviderName: "None",
+					ProviderURL:  "",
+				},
+			},
+			option: "none",
+			expectedProv: Provider{
+				ProviderName: "None",
+				ProviderURL:  "",
+			},
+			expectError: false,
+		},
+		{
+			name: "multiple providers with invalid requested provider",
+			provs: map[string]Provider{
+				"None": {
+					ProviderName: "None",
+					ProviderURL:  "",
+				},
+				"Meshery": {
+					ProviderName: "Meshery",
+					ProviderURL:  "https://cloud.meshery.io",
+				},
+			},
+			option:         "invalid-provider",
+			expectedProv:   Provider{},
+			expectError:    true,
+			expectedErrSub: "the specified provider 'invalid-provider' is not available. Please try giving correct provider name",
+		},
+		{
+			name: "multiple providers with valid requested provider",
+			provs: map[string]Provider{
+				"None": {
+					ProviderName: "None",
+					ProviderURL:  "",
+				},
+				"Meshery": {
+					ProviderName: "Meshery",
+					ProviderURL:  "https://cloud.meshery.io",
+				},
+			},
+			option: "Meshery",
+			expectedProv: Provider{
+				ProviderName: "Meshery",
+				ProviderURL:  "https://cloud.meshery.io",
+			},
+			expectError: false,
+		},
+		{
+			name:           "empty providers with invalid requested provider",
+			provs:          map[string]Provider{},
+			option:         "Meshery",
+			expectedProv:   Provider{},
+			expectError:    true,
+			expectedErrSub: "the specified provider 'Meshery' is not available. Please try giving correct provider name",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotProv, err := chooseDirectProvider(tt.provs, tt.option)
+
+			if tt.expectError {
+				if err == nil {
+					t.Fatalf("expected error, got nil")
+				}
+				if tt.expectedErrSub != "" && err.Error() != tt.expectedErrSub {
+					t.Fatalf("expected error %q, got %q", tt.expectedErrSub, err.Error())
+				}
+			} else {
+				if err != nil {
+					t.Fatalf("unexpected error: %v", err)
+				}
+			}
+
+			if gotProv != tt.expectedProv {
+				t.Fatalf("expected provider %+v, got %+v", tt.expectedProv, gotProv)
+			}
+		})
+	}
+}
