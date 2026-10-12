@@ -99,8 +99,8 @@ func (r *queryResolver) FetchPatterns(ctx context.Context, selector model.PageFi
 }
 
 // GetKubectlDescribe is the resolver for the getKubectlDescribe field.
-func (r *queryResolver) GetKubectlDescribe(ctx context.Context, name string, kind string, namespace string) (*model.KctlDescribeDetails, error) {
-	return r.getKubectlDescribe(ctx, name, kind, namespace)
+func (r *queryResolver) GetKubectlDescribe(ctx context.Context, name string, kind string, namespace string, k8scontextID string) (*model.KctlDescribeDetails, error) {
+	return r.getKubectlDescribe(ctx, name, kind, namespace, k8scontextID)
 }
 
 // FetchPatternCatalogContent is the resolver for the fetchPatternCatalogContent field.

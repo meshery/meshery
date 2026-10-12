@@ -527,7 +527,12 @@ type Query {
   fetchPatterns(selector: PageFilter!): PatternPageResult!
 
   # Query for getting kubectl describe details with meshkit
-  getKubectlDescribe(name: String!, kind: String!, namespace: String!): KctlDescribeDetails!
+  getKubectlDescribe(
+    name: String!
+    kind: String!
+    namespace: String!
+    k8scontextID: String!
+  ): KctlDescribeDetails! @KubernetesMiddleware
 
   # Query for getting Pattern Catalog from remote provider
   fetchPatternCatalogContent(selector: CatalogSelector): [CatalogPattern!]!
