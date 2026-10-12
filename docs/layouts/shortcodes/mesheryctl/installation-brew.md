@@ -76,3 +76,14 @@ Removing: /Users/lee/Library/Caches/Homebrew/mesheryctl--0.3.2.zip... (3.9MB)
 </code></pre>
 <br />
 </details>
+
+### Uninstall `mesheryctl` using Brew
+
+To uninstall `mesheryctl`, execute the following command.
+
+<pre class="codeblock-pre"><div class="codeblock">
+<div class="clipboardjs">
+ $ brew uninstall mesheryctl
+</div></div>
+</pre>
+

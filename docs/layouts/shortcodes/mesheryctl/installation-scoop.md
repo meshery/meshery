@@ -32,3 +32,12 @@ To upgrade `mesheryctl`, execute the following command.
 <pre class="codeblock-pre"><div class="codeblock">
 <div class="clipboardjs">scoop update mesheryctl</div></div>
 </pre>
+
+### Uninstall `mesheryctl` using Scoop
+
+To uninstall `mesheryctl`, execute the following command.
+
+<pre class="codeblock-pre"><div class="codeblock">
+<div class="clipboardjs">scoop uninstall mesheryctl</div></div>
+</pre>
+
