@@ -1,13 +1,10 @@
 import {
   Breadcrumbs,
+  DataTableToolbar,
   ErrorBoundary,
   NoSsr,
   WorkspaceRecentActivityModal,
   WorkspaceTeamsTable,
-} from '@sistent/sistent';
-import {
-  Box,
-  CustomColumnVisibilityControl,
   TeamsIcon,
   WorkspaceIcon,
   Modal,
@@ -42,9 +39,7 @@ import _PromptComponent from '../general/PromptComponent';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { Keys } from '@meshery/schemas/permissions';
 import DefaultError from '../general/error-404/index';
-import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import ViewSwitch from '@/components/general/ViewSwitch';
-import { CreateButtonWrapper } from './styles';
 import WorkspaceGridView from './WorkspaceGridView';
 import RightArrowIcon from '@/assets/icons/RightArrowIcon';
 import { useGetUsersForOrgQuery, useRemoveUserFromTeamMutation } from '@/rtk-query/user';
@@ -439,8 +434,8 @@ const Workspaces = ({ onSelectWorkspace }) => {
           </Breadcrumbs>
         </div>
         {!selectedWorkspace.id && (
-          <ToolWrapper>
-            <CreateButtonWrapper style={{ marginRight: '2rem' }}>
+          <DataTableToolbar
+            primaryActions={
               <Button
                 type="submit"
                 variant="contained"
@@ -468,33 +463,28 @@ const Workspaces = ({ onSelectWorkspace }) => {
                   Create
                 </Typography>
               </Button>
-            </CreateButtonWrapper>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              {!selectedWorkspace?.id && (
-                <>
-                  <SearchBar
-                    onSearch={(value) => {
-                      setSearch(value);
-                    }}
-                    placeholder="Search Workspaces..."
-                    expanded={isSearchExpanded}
-                    setExpanded={setIsSearchExpanded}
-                  />
-                  {viewType !== 'grid' && (
-                    <CustomColumnVisibilityControl
-                      columns={columnList}
-                      customToolsProps={{ columnVisibility, setColumnVisibility }}
-                    />
-                  )}
-                </>
-              )}
+            }
+            search={
+              <SearchBar
+                onSearch={(value) => {
+                  setSearch(value);
+                }}
+                placeholder="Search by name"
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
+              />
+            }
+            columns={viewType !== 'grid' ? columnList : undefined}
+            columnVisibilityState={columnVisibility}
+            onColumnVisibilityChange={setColumnVisibility}
+            viewSwitch={
               <ViewSwitch
                 view={viewType}
                 changeView={handleViewChange}
-                key={`view-switch-${viewType}`} // Add key to force re-render when viewType changes
+                key={`view-switch-${viewType}`}
               />
-            </Box>
-          </ToolWrapper>
+            }
+          />
         )}
         <>
           {workspaces.length === 0 ? (
