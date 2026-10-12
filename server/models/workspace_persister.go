@@ -11,7 +11,10 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/helpers/utils"
+	isql "github.com/meshery/meshery/server/internal/sql"
 	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/models/catalog/v1alpha1"
+	catalogv1beta1 "github.com/meshery/schemas/models/v1beta1/catalog"
 	"github.com/meshery/schemas/models/v1beta3/environment"
 	// NOTE: workspace_persister uses v1beta3/workspace for the canonical
 	// camelCase wire form (Phase 5 identifier-naming flip). Designs nested
@@ -521,10 +524,7 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID core.Uuid, search,
 		stampLocalProviderOwner(d)
 	}
 
-	schemaDesigns, err := schemaMesheryPatterns(designsFetched)
-	if err != nil {
-		return nil, err
-	}
+	schemaDesigns := schemaMesheryPatterns(designsFetched)
 
 	designsPage := &workspace.MesheryDesignPage{
 		Page:       int(pageUint),
@@ -541,30 +541,97 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID core.Uuid, search,
 	return designsJSON, nil
 }
 
-func schemaMesheryPatterns(patterns []*MesheryPattern) ([]patternv1beta1.MesheryPattern, error) {
-	encoded, err := json.Marshal(patterns)
-	if err != nil {
-		return nil, err
-	}
-
-	decoded := []patternv1beta1.MesheryPattern{}
-	if err := json.Unmarshal(encoded, &decoded); err != nil {
-		return nil, err
-	}
-
-	// The two contracts spell the owner differently - MesheryPattern emits
-	// "userId" (schemas v1beta3 design.MesheryPattern) while the v1beta1
-	// workspace design page declares "user_id" - so the round-trip above cannot
-	// carry it. Copy it across the version boundary explicitly, otherwise every
-	// workspace design listing reports the nil UUID as its owner.
-	for i := range decoded {
-		if i >= len(patterns) || patterns[i] == nil || patterns[i].UserID == nil {
+// schemaMesheryPatterns maps local designs onto the schemas v1beta1 pattern
+// contract that the workspace design page declares. It maps field by field
+// rather than JSON round-tripping, because the two contracts disagree on key
+// spellings (createdAt vs created_at, userId vs user_id, patternCaveats vs
+// pattern_caveats) and on the type of patternFile - a stored YAML string
+// locally, a structured document in v1beta1. A round-trip silently drops the
+// former and fails every non-empty page on the latter (meshery/meshery#21948).
+//
+// patternFile is deliberately left unset. It is optional in the contract, no
+// consumer of the listing reads it (the full design is fetched by id), and
+// stored designs use the v1beta3 design schema, so decoding them into the
+// v1beta1 document would silently drop fields.
+func schemaMesheryPatterns(patterns []*MesheryPattern) []patternv1beta1.MesheryPattern {
+	designs := make([]patternv1beta1.MesheryPattern, 0, len(patterns))
+	for _, p := range patterns {
+		if p == nil {
 			continue
 		}
-		decoded[i].UserId = *patterns[i].UserID
+
+		design := patternv1beta1.MesheryPattern{
+			CatalogData: schemaCatalogData(p.CatalogData),
+			Location:    schemaLocation(p.Location),
+			Name:        p.Name,
+			Visibility:  p.Visibility,
+		}
+		if p.ID != nil {
+			design.ID = *p.ID
+		}
+		if p.UserID != nil {
+			design.UserId = *p.UserID
+		}
+		if p.CreatedAt != nil {
+			design.CreatedAt = *p.CreatedAt
+		}
+		if p.UpdatedAt != nil {
+			design.UpdatedAt = *p.UpdatedAt
+		}
+
+		designs = append(designs, design)
 	}
 
-	return decoded, nil
+	return designs
+}
+
+func schemaCatalogData(catalogData v1alpha1.CatalogData) *catalogv1beta1.CatalogData {
+	compatibility := make([]catalogv1beta1.CatalogDataCompatibility, 0, len(catalogData.Compatibility))
+	for _, c := range catalogData.Compatibility {
+		compatibility = append(compatibility, catalogv1beta1.CatalogDataCompatibility(c))
+	}
+
+	schemaCatalog := &catalogv1beta1.CatalogData{
+		Compatibility:  compatibility,
+		PatternCaveats: catalogData.PatternCaveats,
+		PatternInfo:    catalogData.PatternInfo,
+		Type:           catalogv1beta1.CatalogDataType(catalogData.Type),
+	}
+	if class := catalogData.ContentClass.String(); class != "" {
+		schemaCatalog.Class = &class
+	}
+	if catalogData.PublishedVersion != "" {
+		publishedVersion := catalogData.PublishedVersion
+		schemaCatalog.PublishedVersion = &publishedVersion
+	}
+	if len(catalogData.SnapshotURL) > 0 {
+		snapshotURL := append([]string(nil), catalogData.SnapshotURL...)
+		schemaCatalog.SnapshotURL = &snapshotURL
+	}
+
+	return schemaCatalog
+}
+
+// schemaLocation narrows the stored location map to the contract's
+// string-valued map.
+func schemaLocation(location isql.Map) core.MapObject {
+	if len(location) == 0 {
+		return nil
+	}
+
+	schemaLoc := make(core.MapObject, len(location))
+	for key, value := range location {
+		if value == nil {
+			continue
+		}
+		if str, ok := value.(string); ok {
+			schemaLoc[key] = str
+			continue
+		}
+		schemaLoc[key] = fmt.Sprint(value)
+	}
+
+	return schemaLoc
 }
 
 func (wp *WorkspacePersister) AddViewToWorkspace(workspaceID, viewID core.Uuid) ([]byte, error) {
