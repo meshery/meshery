@@ -4,7 +4,7 @@ import AddIcon from '../../../../assets/icons/AddIcon';
 import SimpleAccordion from './Accordion';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
-import type { ArrayFieldTemplateProps } from '@rjsf/utils';
+import { isFixedItems, type ArrayFieldTemplateProps } from '@rjsf/utils';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { iconSmall } from '../../../../css/icons.styles';
 import pluralize from 'pluralize';
@@ -19,11 +19,10 @@ function getTitle(props: ArrayFieldTemplateProps): string {
 }
 
 const ArrayFieldTemplate = (props: ArrayFieldTemplateProps) => {
-  // `registry` is required by RJSF for every template, and `registry.schemaUtils` is the
-  // validator/rootSchema-bound wrapper around `isMultiSelect`, so there is nothing to default
-  // and no cast to make: it resolves `$ref`s for us.
-  const { schema, registry } = props;
-  if (registry.schemaUtils.isMultiSelect(schema)) {
+  // A tuple `items` is the only shape that reaches this template as a fixed array: RJSF routes a
+  // multi-select array to its own widget before ever calling the template, so `isMultiSelect`
+  // is false here, and `isFixedItems` is the very test RJSF's own `ArrayField` used to pick it.
+  if (isFixedItems(props.schema)) {
     return <DefaultFixedArrayFieldTemplate {...props} />;
   } else {
     return <DefaultNormalArrayFieldTemplate {...props} />;
@@ -44,53 +43,20 @@ const ArrayFieldTitle = ({ title }: { title?: string }) => {
   );
 };
 
-// RJSF types the `items` entries as `ReactElement[]`, but at runtime each entry is the prop bag
-// for one `ArrayFieldItemTemplate`, so the public types do not describe what is read here.
-const DefaultArrayItem = (props) => {
-  const btnStyle = {
-    flex: 1,
-    paddingLeft: 0,
-    paddingRight: 6,
-    fontWeight: 'bold',
-  };
-
+// RJSF hands each entry of `items` as a ready-to-render element for one array item (keyed by a
+// stable item key), so the item is rendered as-is and only wrapped in the Meshery accordion
+// chrome; its fields and its own toolbox come from rendering the element.
+const DefaultArrayItem = ({ heading, item }: { heading: string; item: React.ReactElement }) => {
   return (
-    <SimpleAccordion heading={props.heading} childProps={props}>
-      <Grid2 container={true} key={props.key} alignItems="center" size="grow">
+    <SimpleAccordion heading={heading} childProps={item.props}>
+      <Grid2 container={true} alignItems="center" size="grow">
         <Grid2 size={{ xs: 12 }}>
           <Box mb={2} style={{ border: '0.5px solid black' }}>
             <Paper elevation={0}>
-              <Box p={2}>{props.children}</Box>
+              <Box p={2}>{item}</Box>
             </Paper>
           </Box>
         </Grid2>
-
-        {props.hasToolbar && (
-          <Grid2>
-            {(props.hasMoveUp || props.hasMoveDown) && (
-              <IconButton
-                icon="arrow-up"
-                className="array-item-move-up"
-                tabIndex={-1}
-                style={btnStyle}
-                iconProps={{ fontSize: 'small' }}
-                disabled={props.disabled || props.readonly || !props.hasMoveUp}
-                onClick={props.onReorderClick(props.index, props.index - 1)}
-              />
-            )}
-
-            {(props.hasMoveUp || props.hasMoveDown) && (
-              <IconButton
-                icon="arrow-down"
-                tabIndex={-1}
-                style={btnStyle}
-                iconProps={{ fontSize: 'small' }}
-                disabled={props.disabled || props.readonly || !props.hasMoveDown}
-                onClick={props.onReorderClick(props.index, props.index + 1)}
-              />
-            )}
-          </Grid2>
-        )}
       </Grid2>
     </SimpleAccordion>
   );
@@ -123,7 +89,11 @@ const DefaultFixedArrayFieldTemplate = (props: ArrayFieldTemplateProps) => {
         {props.items &&
           props.items.map((item, idx) => {
             return (
-              <DefaultArrayItem heading={`${getTitleForItem(props)} (${idx})`} {...item} />
+              <DefaultArrayItem
+                key={item.key}
+                heading={`${getTitleForItem(props)} (${idx})`}
+                item={item}
+              />
             );
           })}
       </div>
@@ -212,7 +182,11 @@ const DefaultNormalArrayFieldTemplate = (props: ArrayFieldTemplateProps) => {
           {props.items &&
             props.items.map((item, idx) => {
               return (
-                <DefaultArrayItem heading={`${getTitleForItem(props)} (${idx})`} {...item} />
+                <DefaultArrayItem
+                  key={item.key}
+                  heading={`${getTitleForItem(props)} (${idx})`}
+                  item={item}
+                />
               );
             })}
         </Grid2>

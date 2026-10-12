@@ -64,40 +64,24 @@ vi.mock('../helper', () => ({
 }));
 
 import ArrayFieldTemplate from './ArrayFieldTemlate';
+import Form from '@rjsf/core';
+import validator from '../../../../utils/rjsfValidator';
+
+// A stand-in for the element RJSF builds per array item: a keyed element carrying the item's
+// props and rendering its own content, exactly like `ArrayFieldItem` does.
+const ArrayItem = (props: any) => <div data-testid={props.itemKey}>{props.children}</div>;
+const makeArrayItem = (key: string, index: number) => (
+  <ArrayItem key={key} itemKey={key} index={index} disabled={false} readonly={false}>
+    <span>{`item ${key}`}</span>
+  </ArrayItem>
+);
 
 describe('ArrayFieldTemplate', () => {
   const baseProps = {
     schema: { items: { type: 'string' } },
     uiSchema: {},
     fieldPathId: { $id: 'array1', path: ['array1'] },
-    // RJSF always supplies a registry; the template calls `registry.schemaUtils.isMultiSelect`,
-    // which is the validator/rootSchema-bound form of `isMultiSelect` from `@rjsf/utils`.
-    registry: {
-      schemaUtils: {
-        isMultiSelect: (schema: any) =>
-          !!schema?.uniqueItems && !!schema?.items && Array.isArray(schema.items?.enum),
-      },
-    },
-    items: [
-      {
-        key: 'a',
-        children: <div>item-a</div>,
-        index: 0,
-        hasMoveUp: false,
-        hasMoveDown: true,
-        hasToolbar: false,
-        onReorderClick: () => vi.fn(),
-      },
-      {
-        key: 'b',
-        children: <div>item-b</div>,
-        index: 1,
-        hasMoveUp: true,
-        hasMoveDown: false,
-        hasToolbar: false,
-        onReorderClick: () => vi.fn(),
-      },
-    ],
+    items: [makeArrayItem('a', 0), makeArrayItem('b', 1)],
     canAdd: true,
     onAddClick: vi.fn(),
     title: 'Items',
@@ -109,6 +93,13 @@ describe('ArrayFieldTemplate', () => {
     expect(screen.getByText('Items')).toBeInTheDocument();
     const accordions = screen.getAllByTestId('accordion');
     expect(accordions).toHaveLength(2);
+  });
+
+  it('renders the content of each item element', () => {
+    render(<ArrayFieldTemplate {...(baseProps as any)} />);
+    // Each entry of `items` is rendered as an element, so its own content shows up.
+    expect(screen.getByText('item a')).toBeInTheDocument();
+    expect(screen.getByText('item b')).toBeInTheDocument();
   });
 
   it('renders an Add icon button when canAdd is true', () => {
@@ -128,16 +119,51 @@ describe('ArrayFieldTemplate', () => {
     expect(screen.getByTestId('error-icon')).toBeInTheDocument();
   });
 
-  it('renders the fixed template variant when isMultiSelect returns true', () => {
+  it('renders the fixed template variant for a fixed-items array through RJSF', () => {
+    // RJSF routes a multi-select array to its own widget before the template runs, so only a
+    // tuple `items` reaches it as a fixed array — render that through the real entrypoint.
     const { container } = render(
-      <ArrayFieldTemplate
-        {...(baseProps as any)}
-        schema={{ uniqueItems: true, items: { enum: ['a', 'b'] }, description: 'pick some' }}
+      <Form
+        validator={validator}
+        schema={{
+          title: 'Items',
+          type: 'array',
+          description: 'pick some',
+          items: [{ type: 'string' }, { type: 'string' }],
+        }}
+        formData={['a', 'b']}
+        templates={{ ArrayFieldTemplate }}
       />,
     );
     // The fixed variant renders the description inline, the normal one behind a help tooltip.
     expect(container.querySelector('.field-description')).toHaveTextContent('pick some');
     expect(screen.queryByTestId('help-icon')).not.toBeInTheDocument();
+    expect(container.querySelector('fieldset')).toBeInTheDocument();
+    expect(screen.getAllByTestId('accordion')).toHaveLength(2);
+    // Every item renders the field RJSF built for it.
+    expect(screen.getAllByRole('textbox')).toHaveLength(2);
+  });
+
+  it('renders the normal template variant for a single-item schema', () => {
+    const { container } = render(
+      <Form
+        validator={validator}
+        schema={{
+          title: 'Items',
+          type: 'array',
+          description: 'pick some',
+          items: { type: 'string' },
+        }}
+        formData={['a', 'b']}
+        templates={{ ArrayFieldTemplate }}
+      />,
+    );
+    expect(screen.getByTestId('help-icon')).toBeInTheDocument();
+    expect(container.querySelector('.field-description')).not.toBeInTheDocument();
+    // Only the fixed variant wraps the items in a fieldset.
+    expect(container.querySelector('fieldset')).not.toBeInTheDocument();
+    // The rendered item brings its own reorder buttons with it.
+    expect(container.querySelectorAll('.rjsf-array-item-move-up')).toHaveLength(2);
   });
 
   it('shows the help tooltip when description is provided via uiSchema', () => {
