@@ -2,12 +2,14 @@ package utils
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net"
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
@@ -136,7 +138,7 @@ func (pf *PortForward) run() error {
 
 	err = fw.ForwardPorts()
 	if err != nil {
-		err = fmt.Errorf("%s for %s/%s", err, pf.namespace, pf.podName)
+		err = fmt.Errorf("%w for %s/%s", err, pf.namespace, pf.podName)
 		return err
 	}
 	return nil
@@ -192,6 +194,11 @@ func (pf *PortForward) AddressAndPort() string {
 	return fmt.Sprintf("%s:%d", pf.host, pf.localPort)
 }
 
+// LocalPort returns the local port used for the port-forward connection.
+func (pf *PortForward) LocalPort() int {
+	return pf.localPort
+}
+
 // GetEphemeralPort selects a port for the port-forwarding. It binds to a free
 // ephemeral port and returns the port number.
 func GetEphemeralPort() (int, error) {
@@ -209,4 +216,25 @@ func GetEphemeralPort() (int, error) {
 	}
 
 	return tcpAddr.Port, nil
+}
+
+// IsBindError checks whether an error is caused by a local port bind failure (e.g., port already in use).
+func IsBindError(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	var opErr *net.OpError
+	if errors.As(err, &opErr) {
+		if opErr.Op == "listen" {
+			return true
+		}
+	}
+
+	errStr := strings.ToLower(err.Error())
+	return strings.Contains(errStr, "address already in use") ||
+		strings.Contains(errStr, "unable to listen on any of the requested ports") ||
+		strings.Contains(errStr, "only one usage of each socket address") ||
+		strings.Contains(errStr, "bind: permission denied") ||
+		strings.Contains(errStr, "bind:")
 }

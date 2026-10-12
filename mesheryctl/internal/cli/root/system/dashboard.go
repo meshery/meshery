@@ -152,8 +152,31 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 				}
 
 				if err = portforward.Init(); err != nil {
-					// TODO: consider falling back to an ephemeral port if defaultPort is taken
-					return ErrRunPortForward(err)
+					// Fall back to an ephemeral port only if default port was used and failed due to local bind error
+					if !cmd.Flags().Changed("port") && utils.IsBindError(err) {
+						utils.Log.Warnf("Default port %d is unavailable or in use (%v). Falling back to an ephemeral port...", dashboardCmdFlags.Port, err)
+						portforward.Stop()
+						portforward, err = utils.NewPortForward(
+							cmd.Context(),
+							client,
+							utils.MesheryNamespace,
+							"meshery",
+							options.host,
+							0,
+							options.podPort,
+							false,
+						)
+						if err != nil {
+							return ErrInitPortForward(err)
+						}
+
+						if err = portforward.Init(); err != nil {
+							return ErrRunPortForward(err)
+						}
+						dashboardCmdFlags.Port = portforward.LocalPort()
+					} else {
+						return ErrRunPortForward(err)
+					}
 				}
 				utils.Log.Info("Port-forwarding for Meshery UI...")
 
