@@ -669,7 +669,11 @@ func (h *Handler) GetMesheryPatternsHandler(
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
-	tokenString := r.Context().Value(models.TokenCtxKey).(string)
+	tokenString, ok := r.Context().Value(models.TokenCtxKey).(string)
+	if !ok {
+		writeMeshkitError(rw, ErrFetchToken(fmt.Errorf("token not found in request context")), http.StatusInternalServerError)
+		return
+	}
 	updateAfter := q.Get("updated_after")
 	includeMetrics := q.Get("metrics")
 	err := r.ParseForm() // necessary to get r.Form["visibility"], i.e, ?visibility=public&visbility=private
@@ -723,7 +727,11 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
-	tokenString := r.Context().Value(models.TokenCtxKey).(string)
+	tokenString, ok := r.Context().Value(models.TokenCtxKey).(string)
+	if !ok {
+		writeMeshkitError(rw, ErrFetchToken(fmt.Errorf("token not found in request context")), http.StatusInternalServerError)
+		return
+	}
 
 	// Canonical form is `orgId`; `orgID` is dual-accepted during the Phase 2
 	// deprecation window. Merge both lists (canonical first, legacy appended
