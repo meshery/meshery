@@ -3,6 +3,7 @@ title: mesheryctl-design-view
 display_title: false
 command: design
 subcommand: view
+categories: [mesheryctl-design]
 ---
 
 # mesheryctl design view
@@ -15,8 +16,10 @@ Display the content of a specific design based on name or id.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design view design name [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,8 +28,10 @@ mesheryctl design view design name [flags]
 view a design
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl design view [design-name | ID]
 
+</div>
 </div>
 </pre> 
 

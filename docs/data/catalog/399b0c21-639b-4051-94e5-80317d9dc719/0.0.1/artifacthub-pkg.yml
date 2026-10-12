@@ -1,0 +1,20 @@
+version: 0.0.1
+name: twenty-crm-deployment
+displayName: Twenty CRM Deployment
+createdAt: "2026-09-11T08:35:12Z"
+description: Production-ready Kubernetes design pattern for deploying Twenty CRM open-source application along with its PostgreSQL database (pgvector) and Redis caching layer.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/399b0c21-639b-4051-94e5-80317d9dc719/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Requires PostgreSQL 15+ with the pgvector extension enabled for vector searches. Ensure persistent volumes (PVCs) are configured for PostgreSQL data storage in production. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: e9d85eb2-150b-43fb-9484-8c8b29e4357e
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

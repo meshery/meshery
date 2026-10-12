@@ -145,6 +145,25 @@ tests in adapters are end-to-end tests and use patternfile. The reusable workflo
       secrets:
         token: ${{ secrets.PROVIDER_TOKEN }}
 
+#### Two traps when calling a Meshery reusable workflow
+
+Both of these fail silently - the workflow runs and reports success while doing nothing you
+expected - so they are worth checking before you debug anything else:
+
+1. **A `with:` value is not evaluated by a shell.** Only `${{ ... }}` expressions are evaluated; shell-style expansions such as `${GITHUB_SHA}` or `${GITHUB_REF/refs\/tags\//}` in a `with:` value are
+   forwarded to the workflow verbatim, because nothing ever evaluates them. Use
+   `${{ github.sha }}` or `${{ github.ref_name }}` instead. The same expansion inside a `run:`
+   step is correct, because a shell evaluates it there.
+2. **A job guarded by `if: github.repository == 'meshery/meshery'` never runs for you.** In a
+   reusable workflow the `github` context belongs to the *caller*, so that condition is false
+   from any other repository. The adapter workflows described above carry no such guard, so
+   this does not affect them; it is a caveat for the other reusable workflows in
+   `meshery/meshery`, notably the CNCF Playground deployments.
+
+Contributors changing a shared workflow should also read the "Reusable Workflows Consumed by
+Other Repos" section of [`AGENTS.md`](https://github.com/meshery/meshery/blob/master/AGENTS.md)
+in the repository root.
+
 ### Functionality of Central Workflow
 
 1. Checks out the code of the repository(on the ref of latest commit of branch which made the PR) in which it is referenced.
@@ -498,12 +517,7 @@ If you are passionate about CI/CD pipelines, DevOps, automated testing, managing
 Note: This biweekly meeting series is currently on hiatus. We'll share an update when it resumes. Thank you for your patience!
   
 
-<div class="iframe-container training-video">
-  <iframe width="560" height="315"
-    src="https://www.youtube.com/embed/dlr_nzJV16Q"
-    title="Training Video" frameborder="0" allowfullscreen>
-  </iframe>
-</div>
+{{< youtube id="dlr_nzJV16Q" class="yt-embed-container training-video" >}}
 
 ## Cutting a release
 

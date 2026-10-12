@@ -3,20 +3,23 @@ title: mesheryctl-relationship-view
 display_title: false
 command: relationship
 subcommand: view
+categories: [mesheryctl-relationship]
 ---
 
 # mesheryctl relationship view
 
-view relationships of a model by its name
+View relationships of a model by its name
 
 ## Synopsis
 
-view a relationship queried by the model name.
+View a relationship queried by the model name.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl relationship view [flags]
 
+</div>
 </div>
 </pre> 
 
@@ -25,24 +28,30 @@ mesheryctl relationship view [flags]
 View relationships of a model in default format yaml
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl relationship view [model-name]
 
+</div>
 </div>
 </pre> 
 
 View relationships of a model in JSON format
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl relationship view [model-name] --output-format json
 
+</div>
 </div>
 </pre> 
 
 View relationships of a model in json format and save it to a file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+<div class='clipboardjs'>
 mesheryctl relationship view [model-name] --output-format json --save
 
+</div>
 </div>
 </pre> 
 

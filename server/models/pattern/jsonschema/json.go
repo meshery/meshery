@@ -9,6 +9,7 @@ import (
 
 var JSONSchema = &Schema{}
 
+// GlobalJSONSchema returns the package's shared Schema instance.
 // This approach is bad, and we are not the ones implementing this. The qri-io/jsonschema internally is creating a global instance of Schema.
 // Hence for concurrent operations, we have to make sure that the package qri-io/jsonschema is accessed in a thread-safe way.
 // So use this Global instance for now.
@@ -21,6 +22,7 @@ type Schema struct {
 	Lock sync.Mutex
 }
 
+// ValidateBytes validates data against the schema while holding the schema instance's lock.
 // JsonSchema package creates a global instance(without any locks) of Schema struct which panics when concurrent routines try to call ValidateBytes.
 // So this package creates a thin shim to avoid internal concurrent map writes
 func (s *Schema) ValidateBytes(ctx context.Context, data []byte) ([]jsonschema.KeyError, error) {

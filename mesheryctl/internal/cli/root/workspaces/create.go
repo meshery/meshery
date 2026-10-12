@@ -62,7 +62,7 @@ mesheryctl workspace create --orgId [orgId] --name [name] --description [descrip
 		}
 		payloadBytes, err := json.Marshal(workspaceCreatePayload)
 		if err != nil {
-			return utils.ErrUnmarshal(err)
+			return utils.ErrMarshal(err)
 		}
 
 		_, err = api.Add(workspacesApiPath, bytes.NewBuffer(payloadBytes), nil)

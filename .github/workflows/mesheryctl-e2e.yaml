@@ -244,7 +244,7 @@ jobs:
         if: ${{ !cancelled() && github.event_name == 'push' && matrix.publish_to_qa == true }}
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "[mesheryctl] Sync mesheryctl E2E Test Results - ${GITHUB_SHA}"
+          commit_message: "[mesheryctl] Sync mesheryctl E2E Test Results - ${{ github.sha }}"
           commit_options: "--signoff"
           repository: qa
           commit_user_name: meshery-ci
