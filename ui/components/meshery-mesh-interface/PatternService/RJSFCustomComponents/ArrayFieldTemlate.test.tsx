@@ -52,11 +52,6 @@ vi.mock('../../../../assets/icons/ErrorOutlineIcon', () => ({
   default: () => <svg data-testid="error-icon" />,
 }));
 
-vi.mock('@rjsf/utils', () => ({
-  isMultiSelect: (schema: any) => !!schema?.uniqueItems && Array.isArray(schema.items?.enum),
-  getDefaultFormState: () => ({ rootSchema: {} }),
-}));
-
 vi.mock('../../../../css/icons.styles', () => ({ iconSmall: {} }));
 
 vi.mock('pluralize', () => ({
@@ -71,10 +66,14 @@ vi.mock('../helper', () => ({
 import ArrayFieldTemplate from './ArrayFieldTemlate';
 
 describe('ArrayFieldTemplate', () => {
+  const isMultiSelect = vi.fn(
+    (schema: any) => !!schema?.uniqueItems && Array.isArray(schema.items?.enum),
+  );
   const baseProps = {
     schema: { items: { type: 'string' } },
     uiSchema: {},
-    idSchema: { $id: 'array1' },
+    registry: { schemaUtils: { isMultiSelect } },
+    fieldPathId: { $id: 'array1', path: [] },
     items: [
       {
         key: 'a',
@@ -132,7 +131,12 @@ describe('ArrayFieldTemplate', () => {
         schema={{ uniqueItems: true, items: { enum: ['a', 'b'] } }}
       />,
     );
-    expect(screen.getByTestId('array-item-add')).toBeInTheDocument();
+    expect(screen.getByTestId('array-item-add')).toHaveTextContent('Add');
+  });
+
+  it('checks for multi-select through the registry schemaUtils', () => {
+    render(<ArrayFieldTemplate {...(baseProps as any)} />);
+    expect(isMultiSelect).toHaveBeenCalledWith(baseProps.schema);
   });
 
   it('shows the help tooltip when description is provided via uiSchema', () => {
