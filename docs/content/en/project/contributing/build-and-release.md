@@ -415,7 +415,7 @@ ReleaseDrafter generates a GitHub tag and release draft. ReleaseDrafter action w
 
 #### Automated Release Notes Publishing
 
-The publishing of release notes to Meshery Docs is automated. Triggered by a release event, a workflow will checkout the Meshery repo, copy the auto-drafted release notes into a Jekyll collection in Meshery Docs, and generate a pull request.
+The publishing of release notes to Meshery Docs is automated. Triggered by a release event, the `release-notes.yml` workflow checks out the Meshery repo, creates a release notes file at `docs/content/en/project/releases/<tag>.md` from the auto-drafted release notes, and commits it directly to the `master` branch. Because Meshery Docs is built with Hugo, the new page is published automatically.
 
 #### Automated Release Notes Sending
 
