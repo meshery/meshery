@@ -10,7 +10,7 @@ Meshery Broker
 | ---- | ------ | --- |
 | Meshery Authors | <maintainers@meshery.io> |  |
 | darrenlau | <panyuenlau@gmail.com> |  |
-
+| maintainers | <maintainers@meshery.io> |  |
 
 ## Values
 
