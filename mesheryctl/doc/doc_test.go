@@ -326,3 +326,47 @@ func TestCodeBlockCopyButton(t *testing.T) {
 		assert.NotContains(t, output, "<div class='clipboardjs'>\n\n\n")
 	})
 }
+
+// TestGenMarkdownCustomSynopsisFooter checks that only the trailing
+// "Find more information at" footer is stripped from the synopsis.
+// Ordinary text containing the word "Find" must survive.
+func TestGenMarkdownCustomSynopsisFooter(t *testing.T) {
+	render := func(t *testing.T, long string) string {
+		t.Helper()
+		cmd := &cobra.Command{
+			Use:               "test",
+			Long:              long,
+			Run:               func(cmd *cobra.Command, args []string) {},
+			DisableAutoGenTag: true,
+		}
+		buf := &bytes.Buffer{}
+		assert.NoError(t, GenMarkdownCustom(cmd, buf, nil))
+		return buf.String()
+	}
+
+	t.Run("Ordinary Find text survives in the synopsis", func(t *testing.T) {
+		output := render(t, "Find and list all models")
+
+		assert.Contains(t, output, "## Synopsis\n\nFind and list all models")
+	})
+
+	t.Run("Footer is removed when it has no colon", func(t *testing.T) {
+		output := render(t, "Delete a model.\nFind more information at https://docs.meshery.io/reference/references/mesheryctl/model/delete")
+
+		assert.Contains(t, output, "Delete a model.")
+		assert.NotContains(t, output, "Find more information at")
+	})
+
+	t.Run("Footer is removed when it has a colon", func(t *testing.T) {
+		output := render(t, "Delete a model.\nFind more information at: https://docs.meshery.io/reference/references/mesheryctl#command-reference")
+
+		assert.Contains(t, output, "Delete a model.")
+		assert.NotContains(t, output, "Find more information at")
+	})
+
+	t.Run("Full text is kept when there is no footer", func(t *testing.T) {
+		output := render(t, "List all models")
+
+		assert.Contains(t, output, "## Synopsis\n\nList all models")
+	})
+}
