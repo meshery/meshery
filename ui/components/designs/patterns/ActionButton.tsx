@@ -10,12 +10,48 @@ import {
   Popper,
 } from '@sistent/sistent';
 
+export interface ActionButtonOption {
+  label: string;
+  icon?: React.ReactNode;
+  onClick: (event: React.MouseEvent<HTMLLIElement, MouseEvent>, index: number) => void;
+  disabled?: boolean;
+  permissionKey?: unknown;
+  permissionAction?: string;
+}
+
+export interface ActionButtonProps {
+  /**
+   * Optional primary click handler. When provided, clicking the main button
+   * invokes this callback; otherwise, clicking the main button toggles the dropdown.
+   */
+  defaultActionClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  /** List of menu item options rendered inside the dropdown popper. */
+  options: ActionButtonOption[];
+  /** Permission key passed down to Button for CASL gating. */
+  permissionKey?: unknown;
+  /** Permission action (e.g. 'hide' | 'disable') for CASL gating. */
+  permissionAction?: string;
+  /** Button label text; defaults to `'Action'`. */
+  label?: string;
+  /** Dropdown menu popper placement; defaults to `'bottom-start'`. */
+  placement?: 'bottom-start' | 'bottom' | 'bottom-end' | 'top-start' | 'top' | 'top-end';
+}
+
+/**
+ * ActionButton — Split-button component with a primary action and a nested dropdown menu.
+ *
+ * The main button invokes `defaultActionClick` when provided; otherwise, it toggles the
+ * dropdown. The menu is anchored to the ButtonGroup with `placement="bottom-start"` by default
+ * to ensure consistent alignment regardless of whether the main button or arrow is clicked.
+ */
 export default function ActionButton({
   defaultActionClick,
   options,
   permissionKey,
   permissionAction,
-}) {
+  label = 'Action',
+  placement = 'bottom-start',
+}: ActionButtonProps) {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
 
@@ -36,6 +72,14 @@ export default function ActionButton({
     setOpen(false);
   };
 
+  const handleMainClick = (event) => {
+    if (defaultActionClick) {
+      defaultActionClick(event);
+    } else {
+      handleToggle(event);
+    }
+  };
+
   return (
     <React.Fragment>
       <ButtonGroup
@@ -49,12 +93,12 @@ export default function ActionButton({
             padding: '6px 9px',
             borderRadius: '8px',
           }}
-          onClick={defaultActionClick}
+          onClick={handleMainClick}
           variant="outlined"
           permissionKey={permissionKey}
           permissionAction={permissionAction}
         >
-          Action
+          {label}
         </Button>
         <Button
           sx={{
@@ -75,14 +119,7 @@ export default function ActionButton({
         }}
         open={open}
         anchorEl={anchorRef.current}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
+        placement={placement}
       >
         <Paper>
           <ClickAwayListener onClickAway={handleClose}>
