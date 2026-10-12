@@ -25,8 +25,23 @@ type MeshSyncResourceKindSummary struct {
 	Count int64  `json:"count"`
 }
 
+// MeshSyncLabel is one distinct label found on the resources in scope of
+// GET /api/system/meshsync/resources/summary.
+//
+// gorm scans the `DISTINCT kubernetes_key_values.key, kubernetes_key_values.value`
+// projection into it, so it carries exactly those two columns. It replaces
+// meshsync's model.KubernetesKeyValue on the wire: that type's id, unique_id and
+// kind were always empty here because the query never selects them, and its
+// value was dropped (omitempty) for labels whose value is empty. The wire shape
+// is MeshSyncLabel in meshery/schemas v1beta1/meshsync; switch to the generated
+// type once a schemas release carries it.
+type MeshSyncLabel struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
 type MeshSyncResourcesSummaryAPIResponse struct {
 	Kinds      []MeshSyncResourceKindSummary `json:"kinds"`
 	Namespaces []string                      `json:"namespaces"`
-	Labels     []model.KubernetesKeyValue    `json:"labels"`
+	Labels     []MeshSyncLabel               `json:"labels"`
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"github.com/meshery/schemas/models/core"
@@ -230,6 +231,36 @@ func filterByKey(query *gorm.DB, kind string, keyValues []string) *gorm.DB {
 		Where("kubernetes_key_values.kind = ? AND  (kubernetes_key_values.key || '=' || kubernetes_key_values.value) IN (?)", kind, keyValues)
 }
 
+// meshSyncClusterIDsFromQuery returns the cluster IDs a MeshSync resources
+// request is scoped to.
+//
+// The canonical form is a repeated `clusterId` query parameter
+// (`?clusterId=a&clusterId=b`), as declared by getMeshSyncResources in
+// meshery/schemas v1beta1/meshsync and as the summary endpoint already reads it.
+// The legacy `clusterIds` parameter, a single JSON-encoded array
+// (`?clusterIds=["a","b"]`), is still accepted so clients written before that
+// contract keep working; values from both forms are merged. A malformed legacy
+// value is an error so the caller can answer 400 rather than silently scoping
+// the query to nothing.
+func meshSyncClusterIDsFromQuery(query url.Values) ([]string, error) {
+	clusterIDs := make([]string, 0, len(query["clusterId"]))
+	for _, id := range query["clusterId"] {
+		if id != "" {
+			clusterIDs = append(clusterIDs, id)
+		}
+	}
+
+	if legacy := query.Get("clusterIds"); legacy != "" {
+		var legacyIDs []string
+		if err := json.Unmarshal([]byte(legacy), &legacyIDs); err != nil {
+			return nil, err
+		}
+		clusterIDs = append(clusterIDs, legacyIDs...)
+	}
+
+	return clusterIDs, nil
+}
+
 func selectDistinctKeyValues(db *gorm.DB, kind string) *gorm.DB {
 
 	return db.
@@ -260,27 +291,18 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	kind := r.URL.Query()["kind"]
 	modelNames := r.URL.Query()["model"]
 
-	filter := struct {
-		ClusterIds []string `json:"clusterIds"`
-	}{}
-
-	clusterIds := r.URL.Query().Get("clusterIds")
-	if clusterIds != "" {
-		err := json.Unmarshal([]byte(clusterIds), &filter.ClusterIds)
-		if err != nil {
-			// Client-side payload parse — 400.
-			h.log.Error(ErrRequestBody(err))
-			writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
-			return
-		}
-	} else {
-		filter.ClusterIds = []string{}
+	clusterIDs, parseErr := meshSyncClusterIDsFromQuery(r.URL.Query())
+	if parseErr != nil {
+		// Client-side payload parse — 400.
+		h.log.Error(ErrRequestBody(parseErr))
+		writeMeshkitError(rw, ErrRequestBody(parseErr), http.StatusBadRequest)
+		return
 	}
 
 	query := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
 		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
 		Preload("KubernetesResourceMeta").
-		Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds)
+		Where("kubernetes_resources.cluster_id IN (?)", clusterIDs)
 
 	query = filterByNamespaces(query, namespaces)
 	query = searchResources(query, search)
@@ -496,7 +518,7 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 		h.log.Error(ErrFetchMeshSyncResources(err2))
 	}
 
-	var labels []model.KubernetesKeyValue
+	var labels []models.MeshSyncLabel
 
 	labelsQuery := selectDistinctKeyValues(provider.GetGenericPersister().Model(&model.KubernetesResource{}), "label")
 	labelsQuery = filterByClusters(labelsQuery, clusterIds)
