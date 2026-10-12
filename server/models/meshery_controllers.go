@@ -77,6 +77,19 @@ type MesheryControllersHelper struct {
 	// operator status for a particular context
 	ctxOperatorStatus controllers.MesheryControllerStatus
 
+	// msMu serializes the MeshSync data-handler lifecycle for this context.
+	// AddMeshsyncDataHandlers (connect), the deployment-mode reconcile handler,
+	// and the controllers-config apply path can all fire concurrently on the same
+	// helper instance, and none of them share a lock otherwise: the connection
+	// FSM releases its lock the moment SendEvent returns, and two of those three
+	// paths bypass the FSM entirely. Without this, the nil-check/Run/assign below
+	// races the Stop/clear in RemoveMeshSyncDataHandler, so two callers can each
+	// start a handler — duplicate broker subscriptions and duplicate ingestion,
+	// with the losing handler orphaned and leaked. msMu guards ctxMeshsyncDataHandler
+	// and brokerPortForward; it is held across the whole add/remove so the
+	// check-then-act stays atomic.
+	msMu sync.Mutex
+
 	// meshsync data handler for a particular context
 	ctxMeshsyncDataHandler *MeshsyncDataHandler
 
@@ -208,6 +221,8 @@ func (mch *MesheryControllersHelper) GetControllerHandlersForEachContext() map[M
 }
 
 func (mch *MesheryControllersHelper) GetMeshSyncDataHandlersForEachContext() *MeshsyncDataHandler {
+	mch.msMu.Lock()
+	defer mch.msMu.Unlock()
 	return mch.ctxMeshsyncDataHandler
 }
 
@@ -265,6 +280,8 @@ func (mch *MesheryControllersHelper) GetMeshsyncDeploymentMode() connections.Mes
 // port-forward when one is active (out-of-cluster Meshery), else "". Used to
 // surface how Meshery reaches the broker.
 func (mch *MesheryControllersHelper) GetBrokerPortForwardAddr() string {
+	mch.msMu.Lock()
+	defer mch.msMu.Unlock()
 	if mch.brokerPortForward == nil {
 		return ""
 	}
@@ -315,6 +332,13 @@ func (mch *MesheryControllersHelper) ResolveControllersConfigForConnection(metad
 // updating the map. The presence of a handler for a context in a map indicate that
 // the meshsync data for that context is properly being handled
 func (mch *MesheryControllersHelper) AddMeshsyncDataHandlers(ctx context.Context, k8scontext K8sContext, userID, mesheryInstanceID core.Uuid, provider Provider) *MesheryControllersHelper {
+	// Hold msMu across the whole check-then-act so at most one MeshsyncDataHandler
+	// is created per context even when connect / mode-reconcile / config-apply run
+	// concurrently. meshsyncDataHandlersNatsBroker -> ensureBrokerPortForward (which
+	// mutates brokerPortForward) run under this lock and must not re-acquire it.
+	mch.msMu.Lock()
+	defer mch.msMu.Unlock()
+
 	// only checking those contexts whose MesheryControllers are active
 	// go func(mch *MesheryControllersHelper) {
 
@@ -643,6 +667,10 @@ func runningInCluster() bool {
 // broker's NATS pod when Meshery runs out-of-cluster, and returns its stable local
 // address (or "" when not applicable). The forwarder is stored on the helper and
 // torn down in RemoveMeshSyncDataHandler.
+//
+// The caller must hold mch.msMu: it reads and writes brokerPortForward. It is only
+// reached from AddMeshsyncDataHandlers (via meshsyncDataHandlersNatsBroker), which
+// holds the lock, so it must not re-acquire it.
 func (mch *MesheryControllersHelper) ensureBrokerPortForward(broker controllers.IMesheryController) string {
 	if !managedBrokerPortForwardEnabled() || runningInCluster() || broker == nil {
 		return ""
@@ -725,6 +753,8 @@ func (mch *MesheryControllersHelper) meshsyncDataHandlersStartLibMeshsyncRun(
 }
 
 func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Context, contextID string) {
+	mch.msMu.Lock()
+	defer mch.msMu.Unlock()
 	if mch.ctxMeshsyncDataHandler != nil {
 		mch.log.Infof("MesheryControllersHelper::RemoveMeshSyncDataHandler for contextID = %s", contextID)
 		mch.ctxMeshsyncDataHandler.Stop()
@@ -740,8 +770,15 @@ func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Conte
 }
 
 func (mch *MesheryControllersHelper) ResyncMeshsync(ctx context.Context) error {
-	if mch.ctxMeshsyncDataHandler != nil {
-		return mch.ctxMeshsyncDataHandler.Resync()
+	// Read the handler under the lock, then Resync outside it: Resync publishes to
+	// the broker and can block, and holding msMu across it would stall a concurrent
+	// connect/disconnect. A handler torn down right after this read is safe to call
+	// Resync on (it no-ops on a disconnected broker).
+	mch.msMu.Lock()
+	handler := mch.ctxMeshsyncDataHandler
+	mch.msMu.Unlock()
+	if handler != nil {
+		return handler.Resync()
 	}
 	return nil
 }
