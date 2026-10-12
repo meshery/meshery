@@ -81,11 +81,26 @@ type StateMachine struct {
 	Log logger.Handler
 
 	Provider models.Provider
+
+	LifecycleCtx    context.Context
+	CancelLifecycle context.CancelFunc
 }
 
 func (sm *StateMachine) AssignProvider(provider models.Provider) *StateMachine {
 	sm.Provider = provider
 	return sm
+}
+
+func (sm *StateMachine) GetCurrentState() StateType {
+	sm.mx.RLock()
+	defer sm.mx.RUnlock()
+	return sm.CurrentState
+}
+
+func (sm *StateMachine) GetLifecycleCtx() context.Context {
+	sm.mx.RLock()
+	defer sm.mx.RUnlock()
+	return sm.LifecycleCtx
 }
 
 func (sm *StateMachine) Start(ctx context.Context, machinectx interface{}, log logger.Handler, init connections.InitFunc) (*events.Event, error) {
@@ -227,7 +242,11 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		// Execute exit actions before entering new state.
 		action := sm.States[sm.CurrentState].Action
 		if action != nil {
-			_, event, err = action.ExecuteOnExit(ctx, sm.Context, nil)
+			exitCtx := ctx
+			if sm.LifecycleCtx != nil {
+				exitCtx = sm.LifecycleCtx
+			}
+			_, event, err = action.ExecuteOnExit(exitCtx, sm.Context, nil)
 			if err != nil {
 				sm.Log.Error(err)
 				sm.Log.Debug(event)
@@ -250,9 +269,19 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			}
 		}
 
+		prevLifecycleCtx, prevCancelLifecycle := sm.LifecycleCtx, sm.CancelLifecycle
+		sm.LifecycleCtx, sm.CancelLifecycle = context.WithCancel(context.WithoutCancel(ctx))
+		transitionCancel := sm.CancelLifecycle
+
+		abandonTransitionGeneration := func() {
+			transitionCancel()
+			sm.LifecycleCtx = prevLifecycleCtx
+			sm.CancelLifecycle = prevCancelLifecycle
+		}
+
 		if state.Action != nil {
 			// Execute entry actions for the state entered.
-			eventType, event, err = state.Action.ExecuteOnEntry(ctx, sm.Context, nil)
+			eventType, event, err = state.Action.ExecuteOnEntry(sm.LifecycleCtx, sm.Context, nil)
 			sm.Log.Debugf("%s: entry action executed, event emitted %v", sm.Name, eventType)
 
 			if err != nil {
@@ -264,10 +293,11 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 				}
 				if eventType == NoOp {
 					haltedWithoutTransition = true
+					abandonTransitionGeneration()
 					break
 				}
 			} else {
-				eventType, event, err = state.Action.Execute(ctx, sm.Context, payload)
+				eventType, event, err = state.Action.Execute(sm.LifecycleCtx, sm.Context, payload)
 
 				sm.Log.Debugf("%s: inside action executed, event emitted %v", sm.Name, eventType)
 				if err != nil {
@@ -279,11 +309,16 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 					}
 					if eventType == NoOp {
 						haltedWithoutTransition = true
+						abandonTransitionGeneration()
 						break
 					}
 
 				}
 			}
+		}
+
+		if prevCancelLifecycle != nil {
+			prevCancelLifecycle()
 		}
 
 		sm.PreviousState = sm.CurrentState
