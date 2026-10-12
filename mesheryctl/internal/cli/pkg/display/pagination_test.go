@@ -4,10 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
+	"github.com/manifoldco/promptui"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
@@ -336,4 +338,94 @@ func TestPromptAsyncPagination(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestPromptAsyncPagination_MultiplePages(t *testing.T) {
+	withTerminal(t, true)
+
+	type testItem struct {
+		ID   string `json:"id"`
+		Name string `json:"name"`
+	}
+
+	type promptAPIResponse struct {
+		Items      []testItem `json:"items"`
+		TotalCount int64      `json:"total_count"`
+	}
+
+	extractItems := func(data *promptAPIResponse) ([]testItem, int64) {
+		return data.Items, data.TotalCount
+	}
+
+	formatLabel := func(rows []testItem) []string {
+		labels := []string{}
+		for _, r := range rows {
+			labels = append(labels, fmt.Sprintf("%s (%s)", r.Name, r.ID))
+		}
+		return labels
+	}
+
+	utils.SetupContextEnv(t)
+	utils.StartMockery(t)
+	testContext := utils.NewTestHelper(t)
+	utils.TokenFlag = utils.GetToken(t)
+	defer func() {
+		utils.TokenFlag = "Not Set"
+	}()
+
+	// Page 0 has 10 items, total 11
+	page0Items := make([]testItem, 10)
+	for i := 0; i < 10; i++ {
+		page0Items[i] = testItem{ID: fmt.Sprintf("id-%d", i+1), Name: fmt.Sprintf("Item %d", i+1)}
+	}
+	respPage0, err := json.Marshal(promptAPIResponse{Items: page0Items, TotalCount: 11})
+	assert.NoError(t, err)
+
+	// Page 1 has 1 item (Item 11), total 11
+	page1Items := []testItem{{ID: "id-11", Name: "Item 11"}}
+	respPage1, err := json.Marshal(promptAPIResponse{Items: page1Items, TotalCount: 11})
+	assert.NoError(t, err)
+
+	urlPage0 := testContext.BaseURL + "/test?page=0&pagesize=10"
+	urlPage1 := testContext.BaseURL + "/test?page=1&pagesize=10"
+
+	page1Requested := false
+	httpmock.RegisterResponder("GET", urlPage0, httpmock.NewStringResponder(200, string(respPage0)))
+	httpmock.RegisterResponder("GET", urlPage1, func(req *http.Request) (*http.Response, error) {
+		page1Requested = true
+		return httpmock.NewStringResponse(200, string(respPage1)), nil
+	})
+
+	promptCount := 0
+	origRunPrompt := RunSelectPrompt
+	RunSelectPrompt = func(p promptui.Select) (int, string, error) {
+		promptCount++
+		if promptCount == 1 {
+			// On page 0, select "Load More....." which is the last item (index len(rows))
+			return len(page0Items), "Load More.....", nil
+		}
+		// On page 1, select Item 11 (index 0)
+		return 0, "Item 11", nil
+	}
+	defer func() {
+		RunSelectPrompt = origRunPrompt
+	}()
+
+	_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+	var result testItem
+	err = PromptAsyncPagination(
+		DisplayDataAsync{
+			UrlPath: "test",
+		},
+		formatLabel,
+		extractItems,
+		&result,
+	)
+
+	assert.NoError(t, err)
+	assert.True(t, page1Requested, "expected page 1 to be requested from server")
+	assert.Equal(t, 2, promptCount, "expected 2 prompts to be displayed (page 0 and page 1)")
+	assert.Equal(t, "id-11", result.ID)
+	assert.Equal(t, "Item 11", result.Name)
 }

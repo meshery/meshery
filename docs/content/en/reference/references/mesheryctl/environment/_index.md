@@ -59,7 +59,7 @@ View a particular environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 <div class='clipboardjs'>
-mesheryctl environment view --orgId [orgId]
+mesheryctl environment view [environment-name|environment-id] --orgId [orgId]
 
 </div>
 </div>

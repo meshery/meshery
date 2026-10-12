@@ -1,0 +1,16 @@
+{
+  "environments": [
+    {
+      "id": "00000000-0000-0000-0000-000000001001",
+      "name": "env-1",
+      "description": "env 1",
+      "organizationId": "2d2c0b60-076a-4f0a-8a63-de538570a553",
+      "owner": "00000000-0000-0000-0000-000000000000",
+      "createdAt": "2024-05-01T14:24:26.84361Z",
+      "updatedAt": "2024-05-01T14:24:26.84362Z"
+    }
+  ],
+  "page": 1,
+  "pageSize": 10,
+  "totalCount": 11
+}
