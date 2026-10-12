@@ -2,12 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import {
-  AddWidgetsToLayoutPanel,
-  LayoutActionButton,
-  LayoutWidget,
-  StyledCard,
-} from './components';
+import { LayoutActionButton, LayoutWidget, StyledCard } from './components';
 
 vi.mock('@sistent/sistent', () => ({
   Box: ({ children }: any) => <div data-testid="box">{children}</div>,
@@ -24,8 +19,8 @@ vi.mock('@sistent/sistent', () => ({
   Typography: ({ children, variant }: any) => <span data-variant={variant}>{children}</span>,
   Stack: ({ children }: any) => <div>{children}</div>,
   AddIcon: (props: any) => <svg data-testid="add-icon" data-fill={props.fill} />,
-  IconButton: ({ children, onClick }: any) => (
-    <button type="button" onClick={onClick}>
+  IconButton: ({ children, onClick, 'aria-label': ariaLabel }: any) => (
+    <button type="button" aria-label={ariaLabel} onClick={onClick}>
       {children}
     </button>
   ),
@@ -44,6 +39,46 @@ vi.mock('@sistent/sistent', () => ({
   ),
   DeleteIcon: (props: any) => <svg data-testid="delete-icon" data-fill={props.fill} />,
   DragIcon: (props: any) => <svg data-testid="drag-icon" data-fill={props.fill} />,
+  WidgetPicker: ({ widgetsToAdd, onAddWidget, onClose }: any) => (
+    <div data-testid="widget-picker">
+      <span>Widgets</span>
+      {onClose && (
+        <button type="button" aria-label="Close widget picker" onClick={onClose}>
+          Close
+        </button>
+      )}
+      {widgetsToAdd.length === 0 && <span>All widgets added to the layout.</span>}
+      {widgetsToAdd.map((widget: any) => (
+        <div key={widget.key}>
+          <span>{widget.title}</span>
+          {widget.thumbnail && <img src={widget.thumbnail} alt={widget.title} />}
+          <button
+            type="button"
+            aria-label={`Add ${widget.title} widget`}
+            onClick={() => {
+              const { key, ...rest } = widget;
+              onAddWidget(rest, key);
+            }}
+          >
+            Add
+          </button>
+        </div>
+      ))}
+    </div>
+  ),
+  DashboardLayout: ({ children, isSidebarOpen, sidebarContent }: any) => (
+    <div data-testid="dashboard-layout" data-sidebar-open={String(isSidebarOpen)}>
+      <div data-testid="dashboard-children">{children}</div>
+      {isSidebarOpen && <div data-testid="dashboard-sidebar">{sidebarContent}</div>}
+    </div>
+  ),
+  WidgetEmptyState: ({ message, icon, action }: any) => (
+    <div data-testid="widget-empty-state" role="status">
+      {icon}
+      <span>{message}</span>
+      {action && <button onClick={action.onClick}>{action.label}</button>}
+    </div>
+  ),
   styled: (Component: any) => () => (props: any) => {
     if (typeof Component === 'string') {
       const Tag = Component as any;
@@ -62,42 +97,14 @@ vi.mock('css/icons.styles', () => ({
   iconMedium: {},
 }));
 
-describe('AddWidgetsToLayoutPanel', () => {
-  it('returns null when not in edit mode', () => {
-    const { container } = render(
-      <AddWidgetsToLayoutPanel widgetsToAdd={[]} editMode={false} onAddWidget={vi.fn()} />,
-    );
-    expect(container.firstChild).toBeNull();
-  });
-
-  it('shows the empty state when in edit mode but with no widgets to add', () => {
-    render(<AddWidgetsToLayoutPanel widgetsToAdd={[]} editMode={true} onAddWidget={vi.fn()} />);
-    expect(screen.getByText(/All widgets added to the layout/i)).toBeInTheDocument();
-  });
-
-  it('renders widget cards and invokes onAddWidget on click', async () => {
-    const user = userEvent.setup();
-    const onAddWidget = vi.fn();
-    render(
-      <AddWidgetsToLayoutPanel
-        widgetsToAdd={[{ key: 'OVERVIEW', title: 'Overview', thumbnail: '/a.png' }]}
-        editMode={true}
-        onAddWidget={onAddWidget}
-      />,
-    );
-
-    expect(screen.getByText('Overview')).toBeInTheDocument();
-    const img = screen.getByRole('img', { name: /overview/i });
-    expect(img).toHaveAttribute('src', '/a.png');
-
-    await user.click(screen.getByRole('button'));
-    expect(onAddWidget).toHaveBeenCalledTimes(1);
-    expect(onAddWidget).toHaveBeenCalledWith(
-      { title: 'Overview', thumbnail: '/a.png' },
-      'OVERVIEW',
-    );
-  });
-});
+// NOTE: WidgetPicker is exported from @sistent/sistent. Because this file
+// mocks the entire @sistent/sistent module, any test that imports and renders
+// WidgetPicker from here only exercises the local vi.mock stub — not the real
+// component — and cannot catch regressions in Sistent. Real WidgetPicker
+// coverage belongs in layer5io/sistent's own test suite. If Meshery-specific
+// integration behavior needs asserting (e.g. the onClose callback restores
+// orgDashboardLayout), write an integration test against the Dashboard component
+// directly rather than the WidgetPicker sub-component in isolation.
 
 describe('LayoutActionButton', () => {
   const FakeIcon = (props: any) => <svg data-testid="fake-icon" {...props} />;
