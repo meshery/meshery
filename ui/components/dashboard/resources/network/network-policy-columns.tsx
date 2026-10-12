@@ -7,6 +7,7 @@ import { TooltipWrappedConnectionChip } from '../../../connections/ConnectionChi
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CoreConnectionKinds } from '../../../../utils/Enum';
 import { FormatId } from '@/components/data-formatter';
+import { safeJsonParse } from '../../../../utils/json-parse';
 
 export const buildNetworkPolicyColumns = ({
   switchView,
@@ -81,7 +82,7 @@ export const buildNetworkPolicyColumns = ({
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(val) {
-          let attribute = JSON.parse(val);
+          const attribute = safeJsonParse<{ policyTypes?: string[] }>(val);
           let policyTypes = attribute?.policyTypes;
           return (
             <>
