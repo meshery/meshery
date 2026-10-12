@@ -2117,6 +2117,15 @@
         "short_description": "Unexpected response from GitHub API",
         "probable_cause": "GitHub API may be rate-limiting requests or the requested resource may not exist",
         "suggested_remediation": "Wait a few minutes and try again, or check https://www.githubstatus.com for GitHub API status"
+      },
+      "1256": {
+        "name": "ErrUninstallMesheryCode",
+        "code": "1256",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error uninstalling Meshery",
+        "probable_cause": "Meshery is not uninstalled, some of the Meshery resources are still present",
+        "suggested_remediation": "Verify all Meshery resources (Docker containers, Kubernetes resources) are removed and retry with `mesheryctl system uninstall --force`. See https://docs.meshery.io/reference/references/mesheryctl/system/uninstall for usage details"
       }
     }
   }
