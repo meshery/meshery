@@ -691,6 +691,24 @@ func FlushMeshSyncResourcesForCluster(db *database.Handler, clusterID string) er
 	})
 }
 
+// StripCredentialsForContext returns a copy of ctx with the cluster and auth
+// blocks removed but its identity (ID, name, server, reachability, connection
+// ID) intact.
+//
+// RedactCredentialsForContext blanks the identity too, which is correct for the
+// event metadata it feeds but wrong for the API responses that list contexts:
+// the connection wizard selects contexts by ID and displays the name and server,
+// and mesheryctl reads the name. Use this wherever a context must reach a client
+// but its credentials must not - the cluster and auth maps carry the uploaded
+// kubeconfig's credentials verbatim, including any certificate bytes inlined by
+// helpers.FlattenMinifyKubeConfig.
+func StripCredentialsForContext(ctx *K8sContext) K8sContext {
+	strippedContext := *ctx
+	strippedContext.Auth = nil
+	strippedContext.Cluster = nil
+	return strippedContext
+}
+
 func RedactCredentialsForContext(ctx *K8sContext) (redactedContext K8sContext) {
 	redactedContext = *ctx
 	redactedContext.Auth = sql.Map{}
