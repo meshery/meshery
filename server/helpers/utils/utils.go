@@ -304,12 +304,10 @@ func isRunningInContainer() bool {
 
 func SanitizeFileName(fileName string) string {
 	extensionIndex := strings.LastIndex(fileName, ".")
-	tempPath := strings.Split(fileName, "")
-
-	finalPath := tempPath[:extensionIndex]
-	suffixPath := strings.Join(tempPath[(extensionIndex+1):len(fileName)], "")
-	finalPath = append(finalPath, "-*.", suffixPath)
-	return strings.Join(finalPath, "")
+	if extensionIndex == -1 {
+		return fileName + "-*"
+	}
+	return fileName[:extensionIndex] + "-*" + fileName[extensionIndex:]
 }
 
 func GetComponentFieldPathFromK8sFieldPath(path string) (newpath string) {

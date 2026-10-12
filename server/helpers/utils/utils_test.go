@@ -77,3 +77,25 @@ func TestSplitAndTrim(t *testing.T) {
 		})
 	}
 }
+
+func TestSanitizeFileName(t *testing.T) {
+	tests := []struct {
+		in   string
+		want string
+	}{
+		{in: "ca.crt", want: "ca-*.crt"},
+		{in: "bundle.tar.gz", want: "bundle.tar-*.gz"},
+		{in: ".pem", want: "-*.pem"},
+		{in: "ca-cert", want: "ca-cert-*"},
+		{in: "", want: "-*"},
+		{in: "zertifikat-ü.pem", want: "zertifikat-ü-*.pem"},
+		{in: "証明書.crt", want: "証明書-*.crt"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.in, func(t *testing.T) {
+			if got := SanitizeFileName(tt.in); got != tt.want {
+				t.Errorf("SanitizeFileName(%q) = %q, want %q", tt.in, got, tt.want)
+			}
+		})
+	}
+}
