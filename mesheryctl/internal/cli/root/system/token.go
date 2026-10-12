@@ -232,6 +232,13 @@ mesheryctl system token view (show token of current context)
 			tokenNames = append(tokenNames, t.Name)
 		}
 
+		if !utils.IsInteractiveTerminal() {
+			return utils.ErrNoTerminalForPrompt(
+				"which token to use",
+				"Pass a valid token name so no selection is needed",
+			)
+		}
+
 		utils.Log.Info("Invalid token name. Select from available tokens-")
 		prompt := promptui.Select{
 			Label: "Select a token from the list",

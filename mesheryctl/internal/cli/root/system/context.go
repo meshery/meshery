@@ -179,6 +179,13 @@ mesheryctl system context delete [context name]
 					}
 				}
 
+				if !utils.IsInteractiveTerminal() {
+					return utils.ErrNoTerminalForPrompt(
+						"which context to switch to",
+						"Name the context explicitly so no selection is needed",
+					)
+				}
+
 				prompt := promptui.Select{
 					Label: "Select context",
 					Items: listContexts,
