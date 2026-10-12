@@ -250,7 +250,7 @@ func TestK8sContextsFromKubeconfigDiscoversAllContexts(t *testing.T) {
 
 	// includeUnreachable=true mirrors the import wizard: unreachable contexts are
 	// still returned (flagged Reachable=false) so the user can register them.
-	got := K8sContextsFromKubeconfigWithOptions(nil, uuid.Must(uuid.NewV4()).String(), nil, kubeconfig, &instanceID, eventMetadata, log, true)
+	got := K8sContextsFromKubeconfigWithOptions(nil, uuid.Must(uuid.NewV4()).String(), nil, kubeconfig, &instanceID, eventMetadata, log, true, nil)
 
 	if len(got) != wantContexts {
 		var names []string
