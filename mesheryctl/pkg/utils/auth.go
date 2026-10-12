@@ -99,11 +99,13 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 	// If statuscode = 302, then we either have an expired or invalid token
 	// We return the response and correct error message
 	if resp.StatusCode == 302 {
+		_ = resp.Body.Close()
 		return nil, ErrInvalidToken()
 	}
 
 	// failsafe for not being authenticated
 	if ContentTypeIsHTML(resp) {
+		_ = resp.Body.Close()
 		return nil, ErrUnauthenticated()
 	}
 
@@ -350,6 +352,7 @@ func GetProviderInfo(mctCfg *config.MesheryCtlConfig) (map[string]Provider, erro
 	if err != nil {
 		return nil, err
 	}
+	defer func() { _ = resp.Body.Close() }()
 
 	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
 		return nil, err
