@@ -7,11 +7,12 @@ import (
 )
 
 func Discovered() State {
-	state := &State{}
+	state := &State{
+		Action: &DefaultAction{},
+	}
 	return *state.
 		RegisterEvent(Register, REGISTERED).
 		RegisterEvent(Ignore, IGNORED)
-	// RegisterAction(DiscoverAction)
 }
 
 func Registered() State {
@@ -29,10 +30,26 @@ func Connected() State {
 }
 
 func Disconnected() State {
-	state := &State{}
+	state := &State{
+		Action: &DefaultAction{},
+	}
 	return *state.
 		RegisterEvent(Connect, CONNECTED).
 		RegisterEvent(Delete, DELETED)
+}
+
+func Deleted() State {
+	return State{
+		Events: Events{},
+		Action: &DefaultAction{},
+	}
+}
+
+func Ignored() State {
+	return State{
+		Events: Events{},
+		Action: &DefaultAction{},
+	}
 }
 
 func Initial() State {
@@ -40,7 +57,11 @@ func Initial() State {
 	return *state.
 		RegisterEvent(Discovery, DISCOVERED).
 		RegisterEvent(Register, REGISTERED).
-		RegisterEvent(Connect, CONNECTED)
+		RegisterEvent(Connect, CONNECTED).
+		RegisterEvent(Disconnect, DISCONNECTED).
+		RegisterEvent(Delete, DELETED).
+		RegisterEvent(Ignore, IGNORED).
+		RegisterEvent(NotFound, NOTFOUND)
 }
 
 func New(initialState StateType, ID string, userID core.Uuid, log logger.Handler, mtype string) (*StateMachine, error) {
@@ -62,6 +83,8 @@ func New(initialState StateType, ID string, userID core.Uuid, log logger.Handler
 			REGISTERED:   Registered(),
 			CONNECTED:    Connected(),
 			DISCONNECTED: Disconnected(),
+			DELETED:      Deleted(),
+			IGNORED:      Ignored(),
 			InitialState: Initial(),
 		},
 	}, nil

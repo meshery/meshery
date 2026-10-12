@@ -471,6 +471,15 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	eventBuilder = eventBuilder.WithDescription(description)
 
 	if connection.Status != "" {
+		if connection.ID == uuid.Nil {
+			connection.ID = connectionID
+		}
+		if connection.Kind == "" && updatedConnection != nil {
+			connection.Kind = updatedConnection.Kind
+		}
+		if connection.Name == "" && updatedConnection != nil {
+			connection.Name = updatedConnection.Name
+		}
 		event, _ := h.NotifySmOfConnectionStatusChange(req.Context(), userID, provider, token, connection)
 		_ = provider.PersistEvent(event, token)
 	}
@@ -483,28 +492,46 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 }
 
 func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID core.Uuid, provider models.Provider, token string, connection *connections.ConnectionPayload) (events.Event, error) {
-	connectionID := connection.ID
+	if connection == nil {
+		eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+		return *eventBuilder.Build(), nil
+	}
 
+	connectionID := connection.ID
 	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
 
-	if connection.Status != "" {
-		smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
-		// token, _ := req.Context().Value(models.TokenCtxKey).(string)
-		k8scontext, err := provider.GetK8sContext(token, connectionID.String())
+	if connection.Status == "" {
+		return *eventBuilder.Build(), nil
+	}
 
-		if err != nil {
+	if ctx.Value(models.UserCtxKey) == nil {
+		ctx = context.WithValue(ctx, models.UserCtxKey, &models.User{ID: userID})
+	}
+	if ctx.Value(models.SystemIDKey) == nil && h.SystemID != nil {
+		ctx = context.WithValue(ctx, models.SystemIDKey, h.SystemID)
+	}
+	if ctx.Value(models.TokenCtxKey) == nil && token != "" {
+		ctx = context.WithValue(ctx, models.TokenCtxKey, token)
+	}
+
+	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
+	var (
+		inst           *machines.StateMachine
+		usable         bool
+		err            error
+		payload        interface{}
+		connectionName string
+	)
+
+	if strings.EqualFold(connection.Kind, "kubernetes") {
+		k8scontext, k8sErr := provider.GetK8sContext(token, connectionID.String())
+		if k8sErr != nil {
 			eventBuilder = eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", connectionID)).WithMetadata(map[string]interface{}{
-				"error": err,
+				"error": k8sErr,
 			})
-
-			return *eventBuilder.Build(), err
+			return *eventBuilder.Build(), k8sErr
 		}
-
-		eventBuilder = eventBuilder.WithSeverity(events.Informational).
-			WithDescription(fmt.Sprintf("Processing status update to \"%s\" for connection %s", connection.Status, k8scontext.Name)).
-			WithMetadata(map[string]interface{}{
-				"connectionName": k8scontext.Name,
-			})
+		connectionName = k8scontext.Name
 
 		machineCtx := &kubernetes.MachineCtx{
 			K8sContext:         k8scontext,
@@ -516,7 +543,7 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 			RegistryManager:    h.registryManager,
 		}
 
-		inst, err := helpers.InitializeMachineWithContext(
+		inst, err = helpers.InitializeMachineWithContext(
 			machineCtx,
 			ctx,
 			connectionID,
@@ -528,55 +555,85 @@ func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID c
 			"kubernetes",
 			kubernetes.AssignInitialCtx,
 		)
-
-		// A connection being deleted must not leave a tracker entry behind,
-		// whichever way its machine failed. InitializeMachineWithContext caches
-		// the instance *before* surfacing a Start error, so both the error return
-		// below and the no-context return after it would otherwise strand the
-		// entry - the first for a fresh failure, the second for every later cache
-		// hit. Nothing can drive that machine afterwards, and the delete paths
-		// that normally Remove it (the goroutine below, DeleteContext) both do so
-		// only after a SendEvent that cannot succeed without a Context.
-		usable := err == nil && helpers.HasMachineContext(inst)
-		if !usable && connection.Status == connections.DELETED {
-			smInstanceTracker.Remove(connectionID)
-		}
-
-		if err != nil {
-			eventBuilder = eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", connectionID)).WithMetadata(map[string]interface{}{
-				"error": err,
-			})
+		usable = err == nil && helpers.HasMachineContext(inst)
+		payload = nil
+	} else {
+		if connection.Kind == "" {
+			err = fmt.Errorf("connection kind is empty")
+			eventBuilder = eventBuilder.WithSeverity(events.Error).
+				WithDescription(fmt.Sprintf("Failed to update connection status for %s: connection kind is unspecified", connectionID)).
+				WithMetadata(map[string]interface{}{"error": err})
 			return *eventBuilder.Build(), err
 		}
-		// A machine whose Context was never assigned cannot service the event:
-		// SendEvent would only fail on ErrAssertMachineCtx and publish an error
-		// the user can do nothing about. Same shape as the DeleteContext guard in
-		// contexts_handler.go; see helpers.HasMachineContext.
-		if !usable {
-			h.log.Debug(fmt.Sprintf("machine instance for connection %s has no context assigned, skipping the %q event", connectionID, connection.Status))
-			return *eventBuilder.Build(), nil
+
+		connectionName = connection.Name
+		if connectionName == "" {
+			connectionName = connectionID.String()
 		}
 
-		// detach from the http request lifecycle so that the goroutine isn't cancelled when
-		// the handler returns, while preserving context values (e.g. TokenCtxKey) that downstream calls depend on.
-		detachedCtx := context.WithoutCancel(ctx)
-		go func(inst *machines.StateMachine, status connections.ConnectionStatus) {
-			event, err := inst.SendEvent(detachedCtx, machines.EventType(helpers.StatusToEvent(status)), nil)
-			if err != nil {
-				h.log.Error(err)
-				_ = provider.PersistEvent(*event, token)
-				h.config.EventBroadcaster.Publish(userID, event)
-				return
-			}
-
-			if status == connections.DELETED {
-				smInstanceTracker.Remove(inst.ID)
-			}
-
-			_ = provider.PersistEvent(*event, token)
-			h.config.EventBroadcaster.Publish(userID, event)
-		}(inst, connection.Status)
+		machineCtx := make(map[string]string, 0)
+		inst, err = helpers.InitializeMachineWithContext(
+			machineCtx,
+			ctx,
+			connectionID,
+			userID,
+			smInstanceTracker,
+			h.log,
+			provider,
+			machines.InitialState,
+			strings.ToLower(connection.Kind),
+			nil,
+		)
+		usable = err == nil && inst != nil
+		payload = *connection
 	}
+
+	eventBuilder = eventBuilder.WithSeverity(events.Informational).
+		WithDescription(fmt.Sprintf("Processing status update to \"%s\" for connection %s", connection.Status, connectionName)).
+		WithMetadata(map[string]interface{}{
+			"connectionName": connectionName,
+		})
+
+	if !usable && connection.Status == connections.DELETED {
+		smInstanceTracker.Remove(connectionID)
+	}
+
+	if err != nil {
+		eventBuilder = eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", connectionID)).WithMetadata(map[string]interface{}{
+			"error": err,
+		})
+		return *eventBuilder.Build(), err
+	}
+	if !usable {
+		h.log.Debug(fmt.Sprintf("machine instance for connection %s could not be initialized or has no context, skipping the %q event", connectionID, connection.Status))
+		return *eventBuilder.Build(), nil
+	}
+
+	detachedCtx := context.WithoutCancel(ctx)
+	go func(inst *machines.StateMachine, status connections.ConnectionStatus, data interface{}) {
+		event, err := inst.SendEvent(detachedCtx, machines.EventType(helpers.StatusToEvent(status)), data)
+		if err != nil {
+			h.log.Error(err)
+			if event != nil {
+				_ = provider.PersistEvent(*event, token)
+				if h.config != nil && h.config.EventBroadcaster != nil {
+					h.config.EventBroadcaster.Publish(userID, event)
+				}
+			}
+			return
+		}
+
+		if status == connections.DELETED {
+			smInstanceTracker.Remove(inst.ID)
+		}
+
+		if event != nil {
+			_ = provider.PersistEvent(*event, token)
+			if h.config != nil && h.config.EventBroadcaster != nil {
+				h.config.EventBroadcaster.Publish(userID, event)
+			}
+		}
+	}(inst, connection.Status, payload)
 
 	return *eventBuilder.Build(), nil
 }
