@@ -17,33 +17,61 @@ Milestones on Meshery's high-level roadmap:
 
 ### [v1.2.0](../../milestone/9)
 
-**CLI**
+**Infrastructure Knowledge & Registry**
+
+- [Server] Workflow Engine, policy (CRUD)
+- [UI] Operations Center (for Workflows)
 
 - [CLI] Meshconfig: Support for multi-cluster (spec)
 
-**UI**
+**Sustaining**
 
-- [UI] Operations Center (for Workflows)
-
-**Server**
-
-- [Server] Workflow Engine, policy (crud)
-- [Server] SQLite → Postgres (spec)
+- [Server] Scalability: Postgres support/migration plan (spec)
 
 **Performance Management**
 
-- [Adapter] Distributed performance management
+- [Adapter] Distributed Performance Testing
 - [Adapter] Adaptive load optimizers
-
-**Extensibility / Extensions**
-
-- [Adapter] Adaptive load optimizer plugin
+- [Server/UI] Multiple Telemetry Providers and Custom Boards ([spec](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_5_21))
+- [Server/UI] User-defined Dashboards and Metrics ([spec](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.gcb74201a11_0_119))
 
 ### [v1.1.0](../../milestone/8)
 
-**UI**
+**Infrastructure Knowledge & Registry**
 
-- [UI] [Restructure](https://groups.google.com/a/meshery.io/g/developers/c/-xRKOsrNdg0)
+- [Server/UI] Registry governance: team-level model controls, Ignore action hardening  
+- [Server] Model sub-categories; Models in Catalog; Catalog tags and filters  
+- [Catalog] Payment-processing readiness (see v1.1.0 **Catalog** section below for details)
+
+**Governed Change & Lifecycle Orchestration**
+
+- [Server] Enhanced GitHub connection with repo ingest; design import wizard  
+
+**Multi-Cluster & Fleet Operations**
+
+- [Server] Fine-grained Kubernetes RBAC integration; embedded MeshSync mode without CRD installation (spec)  
+- [Server] Realtime MeshSync APIs
+
+**Collaborative and Visual Infrastructure Operations**
+
+- [UI] UI restructure is a cross-cutting effort tracked elsewhere on this roadmap; referenced here because it impacts visual infrastructure operations.  
+- [UI/Server] Interactive consoles: terminal and logs over WebSockets, dockable panel (\#20622)  
+- [Server/UI] User-defined dashboards and metrics; multiple telemetry providers (spec)
+
+**Agentic Infrastructure Management**
+
+- [Extensions] Meshery MCP Server: read-only access to Registry, designs, and cluster state (meshery-mcp-server)  
+- [Server] Semantic retrieval and context assembly over the Registry (\#19645, spec)
+
+**Performance & Reliability Intelligence**
+
+- [Server] Prometheus and Grafana connection management
+
+**Sustaining**
+
+- [CLI] `system report` diagnostics; gRPC streaming of status and events; colorized output; coverage 50 percent  
+- \[Server\] API stability and deprecation policy for v1 schemas  
+- \[Docs/CI\] E2E coverage 50 percent; automated publication of e2e results
 
 **Configuration Management**
 
@@ -52,12 +80,6 @@ Milestones on Meshery's high-level roadmap:
 **Extensibility / Extensions**
 
 - [Server] Remote provider: gitops
-
-**Performance Management**
-
-- [Adapter] Distributed Performance Testing
-- [Server/UI] Multiple Telemetry Providers and Custom Boards ([spec](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_5_21))
-- [Server/UI] User-defined Dashboards and Metrics ([spec](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.gcb74201a11_0_119))
 
 **CLI**
 
@@ -80,7 +102,8 @@ Milestones on Meshery's high-level roadmap:
 - [MeshSync] Composite Fingerprints
 
 **General / Maintenance**
-
+- [UI] Restructure is tracked in the canonical UI roadmap entry; reference that section for status and updates.
+- [UI] Sistent as sole theme provider; Material UI v5 completion  
 - [System] hardening, release process, integration tests, user acceptance testing
 - [System] Schema-driven development with meshery/schemas as canonical source of resource definition
 
@@ -99,6 +122,8 @@ Milestones on Meshery's high-level roadmap:
 **Extensibility / Extensions**
 
 - [CLI] kubectl Snapshot
+
+_See [(detailed v0.9.0 roadmap)](https://discuss.meshery.io/t/meshery-v0-9-roadmap/6296)_
 
 ### [v0.8.0](./docs/_releases/roadmap-v0.8.md)
 
@@ -130,8 +155,9 @@ Code coverage goal: 25%
 - [CLI] Deprecate: Full migration from Apps to Designs
 - [CLI] Mesheryctl Code coverage goal: 50%
 
-### [v0.7.0](./docs/_releases/roadmap-v0.7.md)
+_See [(detailed v0.8.0 roadmap)](https://discuss.meshery.io/t/meshery-v0-8-0-roadmap/4336)_
 
+### [v0.7.0](./docs/_releases/roadmap-v0.7.md)
 
 **Sustainability**
 
@@ -156,6 +182,8 @@ Code coverage goal: 25%
 **Extensibility**
 
 - [Provider] GitOps Snapshots
+
+_See [(detailed v0.7.0 roadmap)](https://discuss.meshery.io/t/meshery-v0-7-0-roadmap/232)_
 
 ### [v0.6.0](../../milestone/3)
 
@@ -205,6 +233,3 @@ Code coverage goal: 25%
 **Lifecycle Management**
 
 - [UI] Connection Wizard
-
-
-Refer to [Meshery Roadmap](https://docs.google.com/document/d/1kvcz8jdvFwXmYBBaY2-3fHHUUoy1GJLpZZXuoxZQoOk/edit#) document for detailed info.

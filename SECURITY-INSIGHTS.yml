@@ -1,8 +1,8 @@
 header:
-  schema-version: 2.0.0
-  last-updated: '2026-03-03'
-  last-reviewed: '2026-03-03'
-  url: https://github.com/meshery/meshery/blob/master/SECURITY-INSIGHTS.yml
+  schema-version: 2.2.0
+  last-updated: '2026-10-09'
+  last-reviewed: '2026-10-09'
+  url: https://github.com/meshery/meshery/raw/refs/heads/master/SECURITY-INSIGHTS.yml
   comment: |
     This file contains the security information for the Meshery project.
 
@@ -64,8 +64,11 @@ project:
     bug-bounty-available: false
     contact:
       name: Meshery Security
-      email: security@meshery.dev
+      email: security@meshery.io
       primary: true
+  steward:
+    uri: https://www.cncf.io
+    comment: Meshery is an Incubating project of the Cloud Native Computing Foundation (CNCF).
 
 repository:
   url: https://github.com/meshery/meshery
@@ -77,7 +80,7 @@ repository:
       affiliation: Layer5
       primary: false
     - name: Sangram Rath
-      affiliation: OD10
+      affiliation: OD10 Ventures
       primary: true
     - name: Mia Grenell
       affiliation: The University of Texas at Austin
@@ -88,8 +91,9 @@ repository:
   security:
     assessments:
       self:
+        evidence: https://github.com/meshery/meshery/blob/master/.github/security-self-assessment.md
         comment: |
-          Self assessment has not yet been completed.
+          CNCF TAG Security based self-assessment.
   documentation:
     contributing-guide: https://docs.meshery.io/project/contributing
     governance: https://github.com/meshery/meshery/blob/master/GOVERNANCE.md
