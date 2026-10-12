@@ -51,6 +51,19 @@ var (
 	componentCSVFlag    string
 	relationshipCSVFlag string
 
+	// Flags for exporting models and components to CSV files
+	exportModelsCSVFlag     string
+	exportComponentsCSVFlag string
+
+	// Flags evaluated during PreRunE and reused in RunE
+	spreadsheetIdFlag   string
+	registrantDefFlag   string
+	directoryFlag       string
+	modelCSV            string
+	componentCSV        string
+	exportModelsCSV     string
+	exportComponentsCSV string
+
 	// Per-model timeout duration (default 5 minutes)
 	modelTimeout time.Duration
 	// Whether to generate only the latest version of each model
@@ -82,27 +95,48 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 
 // Generate only the latest version of each model.
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred "$CRED" --latest-only
+
+// Export model definitions to a local CSV file without spreadsheet credentials
+mesheryctl registry generate --export-models-csv ./Models.csv
+
+// Export component definitions to a local CSV file without spreadsheet credentials
+mesheryctl registry generate --export-components-csv ./Components.csv
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
 		// TODO: Include a prerequisite check to confirm that this command IS being the executED from within a fork of the Meshery repo, and is being executed at the root of that fork.
-		const errorMsg = "[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory | Individual CSV files ] isn't specified\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nmesheryctl registry generate --model-csv [path] --component-csv [path] --relationship-csv [path]\nRun 'mesheryctl registry generate --help' to see detailed help message"
+		const errorMsg = "[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory | Individual CSV files | Export CSV flags ] isn't specified\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nmesheryctl registry generate --model-csv [path] --component-csv [path] --relationship-csv [path]\nmesheryctl registry generate --export-models-csv [path] --export-components-csv [path]\nRun 'mesheryctl registry generate --help' to see detailed help message"
 
-		spreadsheetIdFlag, _ := cmd.Flags().GetString("spreadsheet-id")
-		registrantDefFlag, _ := cmd.Flags().GetString("registrant-def")
-		directory, _ := cmd.Flags().GetString("directory")
-		modelCSV, _ := cmd.Flags().GetString("model-csv")
-		componentCSV, _ := cmd.Flags().GetString("component-csv")
-
-		// Check if individual CSV flags are provided
-		hasIndividualCSVs := modelCSV != "" && componentCSV != ""
-
-		if spreadsheetIdFlag == "" && registrantDefFlag == "" && directory == "" && !hasIndividualCSVs {
-			return errors.New(utils.RegistryError(errorMsg, "generate"))
-		}
+		spreadsheetIdFlag, _ = cmd.Flags().GetString("spreadsheet-id")
+		registrantDefFlag, _ = cmd.Flags().GetString("registrant-def")
+		directoryFlag, _ = cmd.Flags().GetString("directory")
+		modelCSV, _ = cmd.Flags().GetString("model-csv")
+		componentCSV, _ = cmd.Flags().GetString("component-csv")
+		exportModelsCSV, _ = cmd.Flags().GetString("export-models-csv")
+		exportComponentsCSV, _ = cmd.Flags().GetString("export-components-csv")
 
 		spreadsheetCredFlag, _ := cmd.Flags().GetString("spreadsheet-cred")
 		registrantCredFlag, _ := cmd.Flags().GetString("registrant-cred")
+		relationshipCSV, _ := cmd.Flags().GetString("relationship-csv")
+
+		// Check if individual CSV flags are provided
+		hasIndividualCSVs := modelCSV != "" && componentCSV != ""
+		hasExportFlags := exportModelsCSV != "" || exportComponentsCSV != ""
+
+		hasGenerationFlags := spreadsheetIdFlag != "" || spreadsheetCredFlag != "" ||
+			registrantDefFlag != "" || registrantCredFlag != "" ||
+			directoryFlag != "" || modelCSV != "" || componentCSV != "" || relationshipCSV != ""
+
+		// Reject mixed invocations: export flags cannot be combined with generation inputs
+		if hasExportFlags && hasGenerationFlags {
+			return errors.New(utils.RegistryError("Export flags (--export-models-csv, --export-components-csv) cannot be combined with generation input flags (--spreadsheet-id, --spreadsheet-cred, --registrant-def, --registrant-cred, --directory, --model-csv, --component-csv, --relationship-csv)", "generate"))
+		}
+
+		hasGenerationInputs := spreadsheetIdFlag != "" || registrantDefFlag != "" || directoryFlag != "" || hasIndividualCSVs
+
+		if !hasGenerationInputs && !hasExportFlags {
+			return errors.New(utils.RegistryError(errorMsg, "generate"))
+		}
 
 		if spreadsheetIdFlag != "" && spreadsheetCredFlag == "" {
 			return errors.New(utils.RegistryError("Spreadsheet Credentials is required\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nRun 'mesheryctl registry generate --help'", "generate"))
@@ -120,7 +154,6 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 			if _, err := os.Stat(componentCSV); os.IsNotExist(err) {
 				return errors.New(utils.RegistryError(fmt.Sprintf("Component CSV file not found: %s", componentCSV), "generate"))
 			}
-			relationshipCSV, _ := cmd.Flags().GetString("relationship-csv")
 			if relationshipCSV != "" {
 				if _, err := os.Stat(relationshipCSV); os.IsNotExist(err) {
 					return errors.New(utils.RegistryError(fmt.Sprintf("Relationship CSV file not found: %s", relationshipCSV), "generate"))
@@ -142,6 +175,24 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 			outputLocation = defaultModelsLocation()
 		}
 		registryLocation = filepath.Join(cwd, outputLocation)
+
+		// Handle model and component CSV export flags
+		if exportModelsCSVFlag != "" {
+			if err := InvokeModelsExport(registryLocation, modelName, exportModelsCSVFlag); err != nil {
+				return err
+			}
+		}
+		if exportComponentsCSVFlag != "" {
+			if err := InvokeComponentsExport(registryLocation, modelName, exportComponentsCSVFlag); err != nil {
+				return err
+			}
+		}
+
+		// If this is an export execution, exit cleanly without running generation
+		// (mixed invocations are rejected in PreRunE).
+		if exportModelsCSVFlag != "" || exportComponentsCSVFlag != "" {
+			return nil
+		}
 
 		if pathToRegistrantConnDefinition != "" {
 			utils.Log.Info("Model generation from Registrant definitions not yet supported.")
@@ -277,4 +328,8 @@ func init() {
 	// New flags for per-model timeout and latest version only
 	generateCmd.PersistentFlags().DurationVar(&modelTimeout, "timeout", meshkitRegistryUtils.DefaultModelTimeout, "timeout duration for generating each model (e.g., 5m, 10m, 1h), default: 5m")
 	generateCmd.PersistentFlags().BoolVar(&latestVersionOnly, "latest-only", false, "generate only the latest version of each model")
+
+	// Flags for exporting models and components to CSV files
+	generateCmd.PersistentFlags().StringVar(&exportModelsCSVFlag, "export-models-csv", "", "path to export scanned model definitions to a local CSV file")
+	generateCmd.PersistentFlags().StringVar(&exportComponentsCSVFlag, "export-components-csv", "", "path to export scanned component definitions to a local CSV file")
 }
