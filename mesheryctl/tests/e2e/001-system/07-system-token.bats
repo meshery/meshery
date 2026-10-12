@@ -68,3 +68,24 @@ teardown_file() {
     assert_success
     refute_output --partial "$TOKEN"
 }
+
+# bats test_tags=system:token
+@test "[cut=System][tg=Token Management] mesheryctl system token view fails when the current context has no matching token" {
+    local config_file="$BATS_TEST_TMPDIR/missing-token-config.yaml"
+    cat > "$config_file" <<'YAML'
+contexts:
+  local:
+    endpoint: http://localhost:9081
+    token: missing-token
+    platform: docker
+    provider: Meshery
+current-context: local
+tokens:
+  - location: auth.json
+    name: default
+YAML
+
+    run "$MESHERYCTL_BIN" --config "$config_file" system token view
+    assert_failure
+    assert_output --partial "Unable to get token"
+}
