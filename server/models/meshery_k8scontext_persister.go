@@ -88,3 +88,22 @@ func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContext(id string) (K8sCont
 	err := mkcp.DB.First(&mesheryK8sContext, "id = ?", id).Error
 	return mesheryK8sContext, err
 }
+
+// UpdateMesheryK8sContext updates an existing k8s context's fields (e.g., auth token on rotation)
+func (mkcp *MesheryK8sContextPersister) UpdateMesheryK8sContext(mkc K8sContext) error {
+	if mkc.ID == "" {
+		return ErrContextID
+	}
+
+	// Update only the fields that can change (auth, cluster, version)
+	// Preserves id, name, server, mesheryInstanceId, deploymentType, etc.
+	// GORM automatically updates updated_at; we don't set it explicitly
+	// to avoid overwriting with nil from fresh contexts.
+	return mkcp.DB.Model(&K8sContext{}).
+		Where("id = ?", mkc.ID).
+		Updates(map[string]interface{}{
+			"auth":    mkc.Auth,
+			"cluster": mkc.Cluster,
+			"version": mkc.Version,
+		}).Error
+}
