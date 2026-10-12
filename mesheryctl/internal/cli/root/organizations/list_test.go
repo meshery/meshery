@@ -9,13 +9,15 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
-	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/schemas/models/v1beta2/organization"
 	"gopkg.in/yaml.v3"
 )
 
 func TestListOrganizations(t *testing.T) {
+	mesheryctlflags.InitValidators(OrgCmd)
+
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -38,7 +40,7 @@ func TestListOrganizations(t *testing.T) {
 			Args:          []string{"list", "--output-format", "foo"},
 			Fixture:       "list.organization.response.golden",
 			ExpectError:   true,
-			ExpectedError: display.ErrInvalidOutputFormat("foo"),
+			ExpectedError: utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --output-format 'foo': valid values are json yaml")),
 		},
 		{
 			Name:          "List organizations with --count and --output-format together returns an error",
@@ -54,17 +56,17 @@ func TestListOrganizations(t *testing.T) {
 
 // TestListOrganizationsStructuredOutput exercises `organization list
 // --output-format json|yaml` directly rather than through the golden-file
-// harness: the response envelope's custom MarshalJSON (see
-// server/models/organization.go) makes an exact byte-for-byte golden fragile
-// to hand-maintain, so this instead round-trips the command's output back
-// into models.OrganizationsPage and asserts on the decoded fields, plus
-// asserts on the raw serialized key names (see the yaml case below).
+// harness, round-tripping the command's output back into the schema's
+// organization.OrganizationsPage and asserting on the raw serialized keys.
 //
-// Output is captured via cmd.SetOut(&buf) (listOrgsAsStructuredOutput writes
-// to cmd.OutOrStdout(), see list.go) rather than redirecting the
-// process-global os.Stdout, so this test is safe to run alongside others
-// even if a future change adds t.Parallel() to this package.
+// Each case registers the mock responder at the exact URL the command should
+// build for the given --page/--pagesize. If the 1-based-to-0-based page
+// conversion regresses, the request misses this URL, httpmock returns an
+// error, and the command fails. (The decoded response's Page/PageSize are not
+// asserted against the request: the fixture is a fixed canned response.)
 func TestListOrganizationsStructuredOutput(t *testing.T) {
+	mesheryctlflags.InitValidators(OrgCmd)
+
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
 		t.Fatal("Not able to get current working directory")
@@ -72,18 +74,6 @@ func TestListOrganizationsStructuredOutput(t *testing.T) {
 	currentDirectory := filepath.Dir(filename)
 	fixturesDir := filepath.Join(currentDirectory, "fixtures")
 
-	// Each case registers the mock responder at the exact URL
-	// listOrgsAsStructuredOutput should build for the given --page/--pagesize
-	// flags. If the 1-based-to-0-based page conversion (or the pagesize
-	// default/pass-through) regresses, the request will miss this exact URL,
-	// httpmock will return a "no responder found" error, and the command
-	// will fail - so a passing test here is itself the assertion that the
-	// pagination math produced the right request. (We don't additionally
-	// assert the decoded response's Page/PageSize fields: the fixture below
-	// is a fixed canned response - it always reports page=0/pageSize=10
-	// regardless of what was requested - so asserting those against the
-	// requested values would be asserting something the fixture can't
-	// actually reflect.)
 	cases := []struct {
 		name         string
 		extraArgs    []string
@@ -130,7 +120,7 @@ func TestListOrganizationsStructuredOutput(t *testing.T) {
 
 				out := buf.Bytes()
 
-				var page models.OrganizationsPage
+				var page organization.OrganizationsPage
 				switch format {
 				case "json":
 					if err := json.Unmarshal(out, &page); err != nil {
@@ -143,29 +133,28 @@ func TestListOrganizationsStructuredOutput(t *testing.T) {
 					if err := yaml.Unmarshal(out, &page); err != nil {
 						t.Fatalf("output is not valid YAML: %v\noutput:\n%s", err, out)
 					}
-					// Regression guard: models.OrganizationsPage previously had
-					// no yaml struct tags, so yaml.v3 fell back to lowercasing
-					// Go field names (totalcount, pagesize) instead of the
-					// canonical camelCase used by JSON and the API. A plain
-					// yaml.Unmarshal round-trip doesn't catch this, since
-					// decoding back into the same struct accepts either
-					// casing - so assert on the raw serialized text instead.
+					// A plain round-trip decode accepts either key casing, so
+					// assert on the raw serialized text instead.
 					if !bytes.Contains(out, []byte("totalCount:")) {
-						t.Fatalf("yaml output is missing the canonical \"totalCount:\" key (got lowercased/legacy key instead):\n%s", out)
+						t.Fatalf("yaml output is missing the canonical \"totalCount:\" key:\n%s", out)
 					}
 					if bytes.Contains(out, []byte("totalcount:")) {
-						t.Fatalf("yaml output contains lowercased \"totalcount:\" key, want camelCase \"totalCount:\":\n%s", out)
+						t.Fatalf("yaml output contains lowercased \"totalcount:\" key, want camelCase:\n%s", out)
 					}
 				}
 
-				if page.TotalCount != 1 {
-					t.Fatalf("TotalCount = %d, want 1", page.TotalCount)
+				gotTotal := -1
+				if page.TotalCount != nil {
+					gotTotal = *page.TotalCount
 				}
-				if len(page.Organizations) != 1 {
-					t.Fatalf("len(Organizations) = %d, want 1", len(page.Organizations))
+				if gotTotal != 1 {
+					t.Fatalf("TotalCount = %d, want 1", gotTotal)
 				}
-				if page.Organizations[0].Name != "name" {
-					t.Fatalf("Organizations[0].Name = %q, want %q", page.Organizations[0].Name, "name")
+				if page.Organizations == nil || len(*page.Organizations) != 1 {
+					t.Fatalf("Organizations = %v, want exactly 1 entry", page.Organizations)
+				}
+				if got := (*page.Organizations)[0].Name; got != "name" {
+					t.Fatalf("Organizations[0].Name = %q, want %q", got, "name")
 				}
 			})
 		}
