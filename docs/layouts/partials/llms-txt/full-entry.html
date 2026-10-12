@@ -1,0 +1,42 @@
+{{- /*
+  Returns one llms-full.txt stanza for a page: a rule-delimited metadata header
+  followed by the page's Markdown body. Returns an empty string for pages that
+  carry neither a body nor a description, so that data-only pages do not pad the
+  file with empty stanzas.
+
+  The body comes from .RenderShortcodes, not .RawContent. .RawContent is the
+  unprocessed source, which in this site would emit literal shortcode calls --
+  every "ref" shortcode would reach the agent as template syntax instead of the
+  URL it resolves to. .RenderShortcodes expands them first.
+
+  Call with a Page.
+*/ -}}
+{{- $rule := strings.Repeat 80 "-" -}}
+{{- $body := "" -}}
+{{- if .RawContent -}}
+  {{- $body = printf "%s" .RenderShortcodes -}}
+{{- else -}}
+  {{- $body = .Description -}}
+{{- end -}}
+{{- $out := "" -}}
+{{- if $body -}}
+  {{- $lines := slice $rule -}}
+  {{- $lines = $lines | append (printf "title: %s" (.Title | default "Untitled")) -}}
+  {{- $lines = $lines | append (printf "url: %s" (partial "llms-txt/md-url.html" .)) -}}
+  {{- with .Description -}}
+    {{- $lines = $lines | append (printf "description: %s" (trim (. | plainify | replaceRE "\\s+" " ") " ")) -}}
+  {{- end -}}
+  {{- /* Test IsZero explicitly rather than leaning on `with`. Hugo's own
+         truthiness honours the IsZero interface, so `with .Date` happens to
+         skip undated pages -- but plain Go templates treat any struct as true,
+         and that implicit dependency is not worth relying on for a date line
+         that would otherwise read "0001-01-01" on 294 of 296 stanzas. */ -}}
+  {{- if not .Date.IsZero -}}
+    {{- $lines = $lines | append (printf "date: %s" (.Date.Format "2006-01-02")) -}}
+  {{- end -}}
+  {{- $lines = $lines | append $rule -}}
+  {{- $lines = $lines | append "" -}}
+  {{- $lines = $lines | append (trim $body "\r\n") -}}
+  {{- $out = delimit $lines "\n" -}}
+{{- end -}}
+{{- return $out -}}
