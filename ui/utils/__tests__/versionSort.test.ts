@@ -5,7 +5,7 @@ import getMostRecentVersion, {
   getGreaterVersion,
   sortAndGroupVersionsInModel,
 } from '../versionSort';
-import { WILDCARD_V } from '../hooks/useMeshModelComponents';
+import { WILDCARD_V, getProcessedMeshModelResponseData } from '../hooks/useMeshModelComponents';
 
 describe('getMostRecentVersion', () => {
   it('returns undefined when called without a list', () => {
@@ -164,5 +164,30 @@ describe('sortAndGroupVersionsInModel', () => {
 
   it('handles an empty array', () => {
     expect(sortAndGroupVersionsInModel([])).toEqual([]);
+  });
+});
+
+describe('getProcessedMeshModelResponseData', () => {
+  it('places WILDCARD_V at the front while ordering other versions in decreasing order', () => {
+    const response = [
+      {
+        version: '1.0.0',
+        components: [{ component: { kind: 'B' } }, { component: { kind: 'A' } }],
+      },
+      {
+        version: '2.0.0',
+        components: [{ component: { kind: 'C' } }],
+      },
+      {
+        version: WILDCARD_V,
+        components: [{ component: { kind: 'A' } }, { component: { kind: 'B' } }],
+      },
+    ];
+
+    const result = getProcessedMeshModelResponseData(response);
+    expect(result).toHaveLength(3);
+    expect(result[0].version).toBe(WILDCARD_V);
+    expect(result[1].version).toBe('2.0.0');
+    expect(result[2].version).toBe('1.0.0');
   });
 });

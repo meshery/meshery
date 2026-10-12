@@ -74,14 +74,19 @@ export const removeDuplicatesAndSortByAlphabet = _.flowRight(
 );
 
 // processing includes sorting and deduplicating components
-function getProcessedMeshModelResponseData(meshModelResponse) {
-  return [...meshModelResponse]
+export function getProcessedMeshModelResponseData(meshModelResponse) {
+  const sortedModels = [...meshModelResponse]
     .map((meshmodel) => ({
       ...meshmodel,
       components: removeDuplicatesAndSortByAlphabet(meshmodel.components),
     }))
     .sort((modelA, modelB) => versionSortComparatorFn(modelA.version, modelB.version))
     .reverse(); // sort the versions in reverse order
+
+  return [
+    ...sortedModels.filter((model) => model.version === WILDCARD_V),
+    ...sortedModels.filter((model) => model.version !== WILDCARD_V),
+  ];
 }
 
 function deduplicatedListOfComponentsFromAllVersions(componentDefs) {
