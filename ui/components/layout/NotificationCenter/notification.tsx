@@ -327,8 +327,8 @@ export const Notification = ({ event_id }) => {
   ];
 
   const title =
-    uiConfig?.history_mode && event.metadata?.history_title
-      ? event.metadata.history_title
+    uiConfig?.history_mode && event.metadata?.historyTitle
+      ? event.metadata.historyTitle
       : event.description;
 
   const Detail = () => (
