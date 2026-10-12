@@ -10,6 +10,7 @@ vi.mock('@sistent/sistent', () => ({
   }),
   DownloadIcon: () => <svg data-testid="download-icon" />,
   InfoIcon: () => <svg data-testid="info-icon" />,
+  CheckCircleIcon: () => <svg data-testid="check-circle-icon" />,
   createTheme: () => ({ breakpoints: { up: () => '', down: () => '' } }),
   notificationColors: {
     info: { main: '#info' },
