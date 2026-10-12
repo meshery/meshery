@@ -130,22 +130,6 @@
       "url": "https://api.github.com/repos/meshery/meshery/git/blobs/750a9c447577d53e410f4650f68faaf042fcf8b8"
     },
     {
-      "path": "meshery-osm-deployment.yaml",
-      "mode": "100644",
-      "type": "blob",
-      "sha": "185e39d8ebfbebefc9a598544a0bceb76c0b20d2",
-      "size": 734,
-      "url": "https://api.github.com/repos/meshery/meshery/git/blobs/185e39d8ebfbebefc9a598544a0bceb76c0b20d2"
-    },
-    {
-      "path": "meshery-osm-service.yaml",
-      "mode": "100644",
-      "type": "blob",
-      "sha": "0cf2dc0d314fe4420bdba63074f5252146e6e100",
-      "size": 388,
-      "url": "https://api.github.com/repos/meshery/meshery/git/blobs/0cf2dc0d314fe4420bdba63074f5252146e6e100"
-    },
-    {
       "path": "meshery-service.yaml",
       "mode": "100644",
       "type": "blob",
