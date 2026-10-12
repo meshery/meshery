@@ -63,6 +63,20 @@ tags:
     description: APIs for managing Meshery views.
   - name: Academy_API_Academy
     description: Operations related to Meshery Academy content and curriculum
+  - name: BlowhornBinding_blowhornBindings
+    description: Operations related to Blowhorn bindings.
+  - name: BlowhornContent_blowhornContent
+    description: Operations related to Blowhorn content.
+  - name: BlowhornDestination_blowhornDestinations
+    description: Operations related to Blowhorn destinations.
+  - name: BlowhornHealth_blowhornHealth
+    description: Operations related to Blowhorn health.
+  - name: BlowhornLedger_blowhornLedger
+    description: Operations related to Blowhorn ledger entries, contacts and mentees.
+  - name: BlowhornProfile_blowhornProfiles
+    description: Operations related to Blowhorn profiles.
+  - name: BlowhornRun_blowhornRuns
+    description: Operations related to Blowhorn run records and analytics.
   - name: Design_designs
     description: Operations related to designs and infrastructure patterns
   - name: Environment_environments
@@ -73,6 +87,8 @@ tags:
     description: Operations related to Meshery filters.
   - name: Invitation_Invitation
     description: Operations related to invitation
+  - name: JobLease_jobLeases
+    description: Operations related to shared job leases.
   - name: PatternResource_patternResources
     description: Operations related to Meshery pattern resources.
   - name: Performance_Profile_performance
@@ -48165,7 +48181,10 @@ paths:
                               What the environment exists for. `user` is an ordinary environment that people create to
                               logically group Connections and their Credentials. `administrative` designates an
                               environment the platform itself provisions to hold organization-level configuration, and
-                              which resolvers of that configuration therefore trust.
+                              which resolvers of that configuration therefore trust. `blowhorn` designates an
+                              environment the platform itself provisions to hold an organization's Blowhorn
+                              configuration and secrets, resolved by the purpose-typed credential chain; it is
+                              privileged in the same sense as `administrative`.
 
 
                               Absent means `user`. Nothing may read an unset or unrecognised value as administrative:
@@ -48200,9 +48219,11 @@ paths:
                             enum:
                               - user
                               - administrative
+                              - blowhorn
                             x-enum-varnames:
                               - EnvironmentPurposeUser
                               - EnvironmentPurposeAdministrative
+                              - EnvironmentPurposeBlowhorn
                             x-go-type-skip-optional-pointer: true
                             x-oapi-codegen-extra-tags:
                               db: purpose
@@ -58332,7 +58353,10 @@ paths:
                               What the environment exists for. `user` is an ordinary environment that people create to
                               logically group Connections and their Credentials. `administrative` designates an
                               environment the platform itself provisions to hold organization-level configuration, and
-                              which resolvers of that configuration therefore trust.
+                              which resolvers of that configuration therefore trust. `blowhorn` designates an
+                              environment the platform itself provisions to hold an organization's Blowhorn
+                              configuration and secrets, resolved by the purpose-typed credential chain; it is
+                              privileged in the same sense as `administrative`.
 
 
                               Absent means `user`. Nothing may read an unset or unrecognised value as administrative:
@@ -58367,9 +58391,11 @@ paths:
                             enum:
                               - user
                               - administrative
+                              - blowhorn
                             x-enum-varnames:
                               - EnvironmentPurposeUser
                               - EnvironmentPurposeAdministrative
+                              - EnvironmentPurposeBlowhorn
                             x-go-type-skip-optional-pointer: true
                             x-oapi-codegen-extra-tags:
                               db: purpose
@@ -70997,7 +71023,10 @@ paths:
                                   What the environment exists for. `user` is an ordinary environment that people create
                                   to logically group Connections and their Credentials. `administrative` designates an
                                   environment the platform itself provisions to hold organization-level configuration,
-                                  and which resolvers of that configuration therefore trust.
+                                  and which resolvers of that configuration therefore trust. `blowhorn` designates an
+                                  environment the platform itself provisions to hold an organization's Blowhorn
+                                  configuration and secrets, resolved by the purpose-typed credential chain; it is
+                                  privileged in the same sense as `administrative`.
 
 
                                   Absent means `user`. Nothing may read an unset or unrecognised value as
@@ -71033,9 +71062,11 @@ paths:
                                 enum:
                                   - user
                                   - administrative
+                                  - blowhorn
                                 x-enum-varnames:
                                   - EnvironmentPurposeUser
                                   - EnvironmentPurposeAdministrative
+                                  - EnvironmentPurposeBlowhorn
                                 x-go-type-skip-optional-pointer: true
                                 x-oapi-codegen-extra-tags:
                                   db: purpose
@@ -72463,7 +72494,10 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust.
+                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
+                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
+                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
+                            `administrative`.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -72498,9 +72532,11 @@ paths:
                           enum:
                             - user
                             - administrative
+                            - blowhorn
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
+                            - EnvironmentPurposeBlowhorn
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -73664,7 +73700,10 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust.
+                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
+                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
+                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
+                            `administrative`.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -73699,9 +73738,11 @@ paths:
                           enum:
                             - user
                             - administrative
+                            - blowhorn
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
+                            - EnvironmentPurposeBlowhorn
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -75113,7 +75154,10 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust.
+                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
+                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
+                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
+                            `administrative`.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -75148,9 +75192,11 @@ paths:
                           enum:
                             - user
                             - administrative
+                            - blowhorn
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
+                            - EnvironmentPurposeBlowhorn
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -76171,7 +76217,10 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust.
+                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
+                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
+                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
+                            `administrative`.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -76206,9 +76255,11 @@ paths:
                           enum:
                             - user
                             - administrative
+                            - blowhorn
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
+                            - EnvironmentPurposeBlowhorn
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -79351,7 +79402,9 @@ paths:
                       What the environment exists for. `user` is an ordinary environment that people create to logically
                       group Connections and their Credentials. `administrative` designates an environment the platform
                       itself provisions to hold organization-level configuration, and which resolvers of that
-                      configuration therefore trust.
+                      configuration therefore trust. `blowhorn` designates an environment the platform itself provisions
+                      to hold an organization's Blowhorn configuration and secrets, resolved by the purpose-typed
+                      credential chain; it is privileged in the same sense as `administrative`.
 
 
                       Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test for
@@ -79382,9 +79435,11 @@ paths:
                     enum:
                       - user
                       - administrative
+                      - blowhorn
                     x-enum-varnames:
                       - EnvironmentPurposeUser
                       - EnvironmentPurposeAdministrative
+                      - EnvironmentPurposeBlowhorn
                     x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: purpose
@@ -79639,7 +79694,10 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust.
+                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
+                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
+                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
+                            `administrative`.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -79674,9 +79732,11 @@ paths:
                           enum:
                             - user
                             - administrative
+                            - blowhorn
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
+                            - EnvironmentPurposeBlowhorn
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -79907,7 +79967,10 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust.
+                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
+                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
+                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
+                            `administrative`.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -79942,9 +80005,11 @@ paths:
                           enum:
                             - user
                             - administrative
+                            - blowhorn
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
+                            - EnvironmentPurposeBlowhorn
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -80223,7 +80288,10 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust.
+                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
+                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
+                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
+                            `administrative`.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -80258,9 +80326,11 @@ paths:
                           enum:
                             - user
                             - administrative
+                            - blowhorn
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
+                            - EnvironmentPurposeBlowhorn
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -84655,7 +84725,10 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust.
+                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
+                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
+                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
+                            `administrative`.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -84690,9 +84763,11 @@ paths:
                           enum:
                             - user
                             - administrative
+                            - blowhorn
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
+                            - EnvironmentPurposeBlowhorn
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
