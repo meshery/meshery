@@ -14,7 +14,7 @@ import DefaultError from '@/components/general/error-404/index';
 import { api } from '../../rtk-query';
 import { useGetUserPrefWithContextQuery } from '@/rtk-query/user';
 import { useSavePerformanceProfileMutation } from '@/rtk-query/performance-profile';
-import { useGetMeshQuery } from '@/rtk-query/mesh';
+
 import { CenterTimer } from './style';
 import { getMeshModels } from '@/api/meshmodel';
 import { useDispatch, useSelector } from 'react-redux';
@@ -85,8 +85,7 @@ const MesheryPerformanceComponent_ = (props) => {
   );
   const [testUUIDState, setTestUUID] = useState(generateUUID());
   const [selectedMeshState, setSelectedMesh] = useState('');
-  const [availableAdaptersState, setAvailableAdapters] = useState([]);
-  const [availableSMPMeshesState, setAvailableSMPMeshes] = useState([]);
+
   const [metadataState, setMetadata] = useState(metadata);
   const { notify } = useNotification();
   const dispatch = useDispatch();
@@ -94,11 +93,6 @@ const MesheryPerformanceComponent_ = (props) => {
     useGetUserPrefWithContextQuery(selectedK8sContexts);
 
   const [savePerformanceProfile] = useSavePerformanceProfileMutation();
-  const {
-    data: smpMeshes,
-    isSuccess: isSMPMeshesFetched,
-    isError: isSMPMeshError,
-  } = useGetMeshQuery();
 
   useEffect(() => {
     const fetchMeshModels = async () => {
@@ -360,10 +354,12 @@ const MesheryPerformanceComponent_ = (props) => {
   }
   useEffect(() => {
     scanForMeshes();
+  }, [k8sConfig, selectedK8sContexts]);
+
+  useEffect(() => {
     getLoadTestPrefs();
-    getSMPMeshes();
     if (props.runTestOnMount) handleSubmit();
-  }, [userData, isUserDataFetched, smpMeshes]);
+  }, [userData, isUserDataFetched, props.runTestOnMount]);
 
   const getLoadTestPrefs = () => {
     if (!isUserDataFetched || !userData) return;
@@ -399,20 +395,6 @@ const MesheryPerformanceComponent_ = (props) => {
       next: (res) => {
         let result = res?.controlPlanesState;
         if (typeof result !== 'undefined' && Object.keys(result).length > 0) {
-          const adaptersList = [];
-          result.forEach((mesh) => {
-            if (mesh?.members.length > 0) {
-              let name = mesh?.name;
-              adaptersList.push(
-                // Capatilize First Letter and replace undersocres
-                name
-                  .split(/ |_/i)
-                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                  .join(' '),
-              );
-            }
-          });
-          setAvailableAdapters(adaptersList);
           result.forEach((mesh) => {
             setSelectedMesh(mesh?.name);
           });
@@ -420,16 +402,6 @@ const MesheryPerformanceComponent_ = (props) => {
       },
       error: (err) => console.error(err),
     });
-  };
-
-  const getSMPMeshes = () => {
-    if (isSMPMeshesFetched && smpMeshes) {
-      setAvailableSMPMeshes(
-        [...(smpMeshes.availableMeshes || [])].sort((m1, m2) => m1.localeCompare(m2)),
-      );
-    } else if (isSMPMeshError) {
-      handleError('unable to fetch SMP meshes');
-    }
   };
 
   function handleError(msg) {
@@ -470,11 +442,6 @@ const MesheryPerformanceComponent_ = (props) => {
   if (timerDialogOpenState) {
     chartStyle = { opacity: 0.3 };
   }
-
-  availableAdaptersState.forEach((item) => {
-    const index = availableSMPMeshesState.indexOf(item);
-    if (index !== -1) availableSMPMeshesState.splice(index, 1);
-  });
 
   if (testResultsOpen) {
     return (
