@@ -7,6 +7,8 @@ import { SecondaryTab, SecondaryTabs, WrapperPaper } from '../style';
 import GetKubernetesNodeIcon from '../utils';
 import { iconMedium } from 'css/icons.styles';
 import { styled } from '@sistent/sistent';
+import { K8sEmptyState } from '@/components/shared/EmptyState/K8sContextEmptyState';
+import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
 
 const DashboardIconText = styled('div')({
   display: 'flex',
@@ -78,48 +80,65 @@ const ResourcesSubMenu = ({
     () => tabs.findIndex((resourceName) => resourceName === selectedResource),
     [selectedResource, tabs],
   );
+  const clusterIds =
+    isCRDS && !CRDsKeys.length && Array.isArray(k8sConfig)
+      ? getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig)
+      : [];
+  const emptyStateMessage =
+    !Array.isArray(k8sConfig) || k8sConfig.length === 0
+      ? 'Connect a Kubernetes cluster to discover and view its custom resources.'
+      : !Array.isArray(selectedK8sContexts) || selectedK8sContexts.length === 0
+        ? 'Select a connected Kubernetes cluster to discover and view its custom resources.'
+        : clusterIds.length === 0
+          ? 'The selected Kubernetes connection is unavailable. Check its health in Connections, then select it again.'
+          : 'No custom resources are available for the selected Kubernetes cluster.';
 
   return (
     <>
-      <WrapperPaper>
-        <SecondaryTabs
-          sx={{
-            [`& .${TABS_SCROLL_BUTTONS_CLASS}`]: {
-              '&.Mui-disabled': { display: 'none' },
-            },
-            '& .MuiTabs-scroller': {
-              flexGrow: '0',
-            },
-            justifyContent: 'center',
-          }}
-          value={selectedTabIndex}
-          onChange={(_e, value) => handleChangeSelectedResource(tabs[value])}
-          variant={'scrollable'}
-          allowScrollButtonsMobile
-          scrollButtons="auto"
-          centered
-        >
-          {tabs.map((key, index) => {
-            const title = isCRDS ? key : tableConfigResult[key].name;
-            return (
-              <SecondaryTab
-                key={index}
-                value={index}
-                label={
-                  <DashboardIconText>
-                    <GetKubernetesNodeIcon
-                      kind={key}
-                      model={crdsModelName[index]}
-                      size={iconMedium}
-                    />
-                    {title}
-                  </DashboardIconText>
-                }
-              />
-            );
-          })}
-        </SecondaryTabs>
-      </WrapperPaper>
+      {isCRDS && !CRDsKeys.length ? (
+        <K8sEmptyState message={emptyStateMessage} />
+      ) : (
+        <WrapperPaper>
+          <SecondaryTabs
+            sx={{
+              [`& .${TABS_SCROLL_BUTTONS_CLASS}`]: {
+                '&.Mui-disabled': { display: 'none' },
+              },
+              '& .MuiTabs-scroller': {
+                flexGrow: '0',
+              },
+              justifyContent: 'center',
+            }}
+            value={selectedTabIndex}
+            onChange={(_e, value) => handleChangeSelectedResource(tabs[value])}
+            variant={'scrollable'}
+            allowScrollButtonsMobile
+            scrollButtons="auto"
+            centered
+          >
+            {tabs.map((key, index) => {
+              const title = isCRDS ? key : tableConfigResult[key].name;
+              return (
+                <SecondaryTab
+                  key={index}
+                  value={index}
+                  label={
+                    <DashboardIconText>
+                      <GetKubernetesNodeIcon
+                        kind={key}
+                        model={crdsModelName[index]}
+                        size={iconMedium}
+                      />
+                      {title}
+                    </DashboardIconText>
+                  }
+                />
+              );
+            })}
+          </SecondaryTabs>
+        </WrapperPaper>
+      )}
+
       {tabs.map((key, index) => (
         <TabPanel value={selectedResource} index={key} key={`${key}-${index}`}>
           <ResourcesTable
