@@ -26,22 +26,6 @@
       "url": "https://api.github.com/repos/meshery/meshery/git/blobs/ef6741270323035cb921bfb5f98be24bd1ba9009"
     },
     {
-      "path": "meshery-cpx-deployment.yaml",
-      "mode": "100644",
-      "type": "blob",
-      "sha": "0686215afe3a252167fda98e801627faeb23df14",
-      "size": 749,
-      "url": "https://api.github.com/repos/meshery/meshery/git/blobs/0686215afe3a252167fda98e801627faeb23df14"
-    },
-    {
-      "path": "meshery-cpx-service.yaml",
-      "mode": "100644",
-      "type": "blob",
-      "sha": "35b0848218b7236637a2a3b51d9d7e56fbba212e",
-      "size": 382,
-      "url": "https://api.github.com/repos/meshery/meshery/git/blobs/35b0848218b7236637a2a3b51d9d7e56fbba212e"
-    },
-    {
       "path": "meshery-deployment.yaml",
       "mode": "100644",
       "type": "blob",
