@@ -12,7 +12,9 @@ import {
   DeleteIcon,
   DragIcon,
   type Theme,
+  useMediaQuery,
 } from '@sistent/sistent';
+import { useSelector } from 'react-redux';
 
 import { iconMedium } from 'css/icons.styles';
 import { ActionButton } from './style';
@@ -164,10 +166,11 @@ type LayoutActionButtonProps = {
     width?: string | number;
     height?: string | number;
   }>;
-  label: React.ReactNode;
+  label: string;
   action: () => void;
   description: React.ReactNode;
   isShown: boolean;
+  alwaysShowLabel?: boolean;
 };
 
 export const LayoutActionButton = ({
@@ -176,12 +179,29 @@ export const LayoutActionButton = ({
   action,
   description,
   isShown,
+  alwaysShowLabel = false,
 }: LayoutActionButtonProps) => {
   const theme = useTheme();
   const iconsProps = actionIconProps(theme);
+  const { isDrawerCollapsed } = useSelector((state) => state.ui);
+  const isSmallTablet = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   if (!isShown) {
     return null;
+  }
+
+  if (!alwaysShowLabel && ((isSmallTablet && !isDrawerCollapsed) || isMobile)) {
+    return (
+      <CustomTooltip title={description} variant="standard">
+        <ActionButton
+          variant="text"
+          onClick={action}
+          aria-label={label}
+          endIcon={<Icon {...iconsProps} />}
+        ></ActionButton>
+      </CustomTooltip>
+    );
   }
 
   return (
