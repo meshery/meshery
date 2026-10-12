@@ -98,13 +98,13 @@ mesheryctl filter view "filter name"
 
 		urlString := ""
 		if len(filter) == 0 {
-			urlString = "api/filter?pagesize=10000"
+			urlString = "api/content/filters?pagesize=10000"
 		} else if isID {
 			// if filter is a valid uuid, then directly fetch the filter
-			urlString = "api/filter/" + filter
+			urlString = "api/content/filters/" + filter
 		} else {
 			// else search filter by name
-			urlString = "api/filter?search=" + url.QueryEscape(filter)
+			urlString = "api/content/filters?search=" + url.QueryEscape(filter)
 		}
 
 		var selectedFilter *models.MesheryFilter

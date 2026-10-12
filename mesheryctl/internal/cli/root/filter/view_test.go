@@ -26,7 +26,7 @@ func TestViewCmd(t *testing.T) {
 			Args:             []string{"view", "KumaTest"},
 			ExpectedResponse: "view.filter.output.golden",
 			Fixture:          "view.filter.api.response.golden",
-			URL:              "/api/filter",
+			URL:              "/api/content/filters",
 			ExpectError:      false,
 		},
 		{
@@ -34,7 +34,7 @@ func TestViewCmd(t *testing.T) {
 			Args:             []string{"view", "957fbc9b-a655-4892-823d-375102a9587c"},
 			ExpectedResponse: "view.id.filter.output.golden",
 			Fixture:          "view.id.filter.api.response.golden",
-			URL:              "/api/filter/957fbc9b-a655-4892-823d-375102a9587c",
+			URL:              "/api/content/filters/957fbc9b-a655-4892-823d-375102a9587c",
 			ExpectError:      false,
 		},
 	}
@@ -45,7 +45,7 @@ func TestViewCmd(t *testing.T) {
 			Args:             []string{"view", "xyz"},
 			ExpectedResponse: "view.nonexisting.filter.output.golden",
 			Fixture:          "view.nonexisting.filter.api.response.golden",
-			URL:              "/api/filter",
+			URL:              "/api/content/filters",
 			HttpMethod:       "GET",
 			HttpStatusCode:   200,
 			ExpectError:      false,

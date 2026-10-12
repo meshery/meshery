@@ -46,7 +46,7 @@ func buildFilterRequestBodyMulti(entries map[string]string) string {
 }
 
 // TestMesheryFilterRequestBody_UnmarshalAcceptsBothSpellings locks in
-// the deprecation-window contract for POST /api/filter: the handler
+// the deprecation-window contract for POST /api/content/filters: the handler
 // accepts both the canonical `filterData` (camelCase) and the legacy
 // `filter_data` (snake_case) wrapper keys.
 func TestMesheryFilterRequestBody_UnmarshalAcceptsBothSpellings(t *testing.T) {
