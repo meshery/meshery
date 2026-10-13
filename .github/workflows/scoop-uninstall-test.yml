@@ -22,7 +22,6 @@ jobs:
   test-scoop:
     name: Verify Scoop Package Lifecycle
     runs-on: windows-latest
-    continue-on-error: true
     defaults:
       run:
         shell: powershell
@@ -47,10 +46,12 @@ jobs:
           scoop bucket list
 
       - name: Install mesheryctl (with retry)
+        env:
+          EXPECTED_VERSION: ${{ inputs.expected-version }}
         run: |
           $scoopRoot = if ($env:SCOOP) { $env:SCOOP } else { Join-Path $env:USERPROFILE "scoop" }
           $appDir = Join-Path $scoopRoot "apps\mesheryctl"
-          $expected = "${{ inputs.expected-version }}".Trim()
+          $expected = if ($env:EXPECTED_VERSION) { $env:EXPECTED_VERSION.Trim() } else { "" }
           $strippedExpected = $expected -replace '^v', ''
           $expectedWithV = if ($expected -and -not $expected.StartsWith('v')) { "v$expected" } else { $expected }
 
