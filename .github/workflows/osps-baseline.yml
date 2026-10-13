@@ -1,10 +1,10 @@
-name: OSPS Baseline
+name: OSPS Baseline Scan
 
 on:
   schedule:
     - cron: "0 9 * * 0" # Weekly, Sundays 09:00 UTC
-  push:
-    branches: [master]
+  #push:
+    #branches: [master]
   workflow_dispatch:
 
 permissions: {}
