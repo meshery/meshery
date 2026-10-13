@@ -44,7 +44,7 @@ vi.mock('../../rtk-query', () => ({
 }));
 
 vi.mock('@/rtk-query/notificationCenter', () => ({
-  PROVIDER_TAGS: { EVENT: 'Event' },
+  PROVIDER_TAGS: { EVENT: 'event' }, // matches rtk-query/notificationCenter
 }));
 
 vi.mock('@/components/layout/NotificationCenter/constants', () => ({
@@ -183,7 +183,7 @@ describe('operationsCenter machine', () => {
     });
 
     expect(subscriptionState.dispose).toHaveBeenCalled();
-    expect(dispatch).toHaveBeenCalledWith({ type: 'api/invalidate', tags: ['Event'] });
+    expect(dispatch).toHaveBeenCalledWith({ type: 'api/invalidate', tags: ['event'] });
 
     actor.stop();
   });
