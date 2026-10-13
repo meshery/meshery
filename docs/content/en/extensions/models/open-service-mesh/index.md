@@ -2,7 +2,7 @@
 title: Open Service Mesh
 subtitle: Access all that Open Service Mesh has to offer
 image: /extensions/models/open-service-mesh/icons/color/open-service-mesh-color.svg
-docURL: https://docs.meshery.io/extensibility/adapters/osm
+docURL: https://docs.meshery.io/extensibility/integrations/open-service-mesh
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Mesh

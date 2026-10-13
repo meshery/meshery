@@ -56,6 +56,18 @@ mesheryctl design import -f ./app-deployment.yaml -s manifest
 3. Select the source type from the dropdown (e.g., Kubernetes manifest, Helm chart).
 4. Submit the design for processing.
 
+### Importing a Kustomize Package
+
+To import a Kustomize package, upload a `.zip`, `.tar`, `.tar.gz`, or `.tgz` archive with a file named `kustomization.yaml` at the root of the archive. Include the files it references in the same archive. For example:
+
+```text
+kustomization.yaml
+deployment.yaml
+service.yaml
+```
+
+You can also import the archive from a direct URL. Meshery downloads the file and takes its name from the response's `Content-Disposition` header or the last segment of the URL, so make sure that name ends in `.zip`, `.tar`, `.tar.gz`, or `.tgz`.
+
 ### Import Processing Details
 
 After you initiate an import, Meshery executes a **dataflow sequence** to properly handle the design:
