@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach } from 'vitest';
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useColumnVisibilityPreference } from '../useColumnVisibilityPreference';
 
@@ -12,6 +12,10 @@ const stored = () => JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null');
 describe('useColumnVisibilityPreference', () => {
   beforeEach(() => {
     localStorage.clear();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('starts from the responsive defaults when nothing is stored', () => {
@@ -88,6 +92,41 @@ describe('useColumnVisibilityPreference', () => {
     const { result } = renderHook(() => useColumnVisibilityPreference(KEY, NARROW));
 
     expect(result.current.columnVisibility).toEqual(NARROW);
+  });
+
+  it('removes the v1 map from storage', () => {
+    localStorage.setItem(`meshery_cols_${KEY}`, JSON.stringify(WIDE));
+
+    renderHook(() => useColumnVisibilityPreference(KEY, NARROW));
+
+    expect(localStorage.getItem(`meshery_cols_${KEY}`)).toBeNull();
+  });
+
+  it('keeps a column toggled back to its default as an explicit choice', () => {
+    const { result } = renderHook(() => useColumnVisibilityPreference(KEY, WIDE));
+
+    act(() => {
+      result.current.setColumnVisibilityByUser((prev) => ({ ...prev, owner: false }));
+    });
+    act(() => {
+      result.current.setColumnVisibilityByUser((prev) => ({ ...prev, owner: true }));
+    });
+    act(() => {
+      result.current.setColumnVisibilityByResponsive(NARROW);
+    });
+
+    expect(stored()).toEqual({ owner: true });
+    expect(result.current.columnVisibility.owner).toBe(true);
+  });
+
+  it('still loads stored preferences when localStorage access throws', () => {
+    vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {
+      throw new Error('SecurityError');
+    });
+
+    const { result } = renderHook(() => useColumnVisibilityPreference(KEY, WIDE));
+
+    expect(result.current.columnVisibility).toEqual(WIDE);
   });
 
   it('falls back to responsive defaults when storage holds malformed JSON', () => {
