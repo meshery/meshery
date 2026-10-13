@@ -614,7 +614,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 			Summary: []patterns.DeploymentMessagePerComp{
 				{
 					Kind:       ccp.Component.Component.Kind,
-					Model:      ccp.Component.Model.Name,
+					Model:      patternutils.ModelName(&ccp.Component),
 					CompName:   ccp.Component.DisplayName,
 					DesignName: sap.patternName,
 					Success:    success,
