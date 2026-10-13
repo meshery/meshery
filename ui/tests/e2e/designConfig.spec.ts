@@ -146,10 +146,8 @@ test.describe('Design Configurator Tests', () => {
   });
 
   test('should edit design in Design Configurator', async ({ page }: { page: Page }) => {
-    await designConfigPage.categorySelector.click();
+    await designConfigPage.categoryModelSelector.click();
     await designConfigPage.databaseCategory.click();
-
-    await designConfigPage.modelSelector.click();
     await designConfigPage.modelAzure.click();
 
     await expect(designConfigPage.modelContainer).toBeVisible();
@@ -165,5 +163,22 @@ test.describe('Design Configurator Tests', () => {
       id: DESIGN_ID,
       name: 'Sample Design',
     });
+  });
+
+  test('should deselect model in Design Configurator', async () => {
+    await designConfigPage.categoryModelSelector.click();
+    await designConfigPage.databaseCategory.click();
+    await designConfigPage.modelAzure.click();
+    await expect(designConfigPage.modelContainer).toBeVisible();
+
+    await designConfigPage.categoryModelSelector.click();
+    await designConfigPage.clearSelector.click();
+
+    await expect(designConfigPage.modelContainer).not.toBeVisible();
+    await expect(designConfigPage.categoryModelInput).toHaveValue('');
+    await expect(designConfigPage.categoryModelInput).toHaveAttribute(
+      'placeholder',
+      'Select Category & Model',
+    );
   });
 });
