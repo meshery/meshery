@@ -152,7 +152,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 				}
 
 				if err = portforward.Init(); err != nil {
-					if !utils.IsPortBusyError(err) {
+					if !utils.IsPortBusyError(err) || cmd.Flags().Changed("port") {
 						return ErrRunPortForward(err)
 					}
 					requestedPort := dashboardCmdFlags.Port
