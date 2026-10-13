@@ -161,10 +161,16 @@ func TreePath() *cobra.Command {
 }
 
 // initConfig reads in config file and ENV variables if set.
-func initConfig() {
+func initConfig() { // Skip config initialization for completion command
+	for _, arg := range os.Args[1:] {
+		if arg == "completion" {
+			return
+		}
+	}
 	utils.CfgFile = cfgFile
 	// initialize the path to the kubeconfig file
 	utils.SetKubeConfig()
+
 	// Allow user to override config file with use of --config global flag
 	if cfgFile != utils.DefaultConfigPath {
 		// Use config file from the flag.
