@@ -22,12 +22,10 @@ function getTitle(props) {
 
 const ArrayFieldTemplate = (props: ArrayFieldTemplateProps) => {
   const { schema, registry } = props;
-  const safeId = props.fieldPathId?.$id ?? 'array-field';
-  const safeProps = { ...props, idSchema: { $id: safeId } };
   if (registry.schemaUtils.isMultiSelect(schema)) {
-    return <DefaultFixedArrayFieldTemplate {...safeProps} />;
+    return <DefaultFixedArrayFieldTemplate {...props} />;
   } else {
-    return <DefaultNormalArrayFieldTemplate {...safeProps} />;
+    return <DefaultNormalArrayFieldTemplate {...props} />;
   }
 };
 
@@ -98,7 +96,7 @@ const DefaultArrayItem = (props) => {
 
 const DefaultFixedArrayFieldTemplate = (props) => {
   const { classes } = props;
-  const safeId = props.idSchema?.$id ?? 'array-field';
+  const safeId = props.fieldPathId?.$id ?? 'array-field';
 
   return (
     <fieldset className={props.className}>
@@ -115,7 +113,6 @@ const DefaultFixedArrayFieldTemplate = (props) => {
       <ArrayFieldTitle
         key={`array-field-title-${safeId}`}
         TitleField={props.TitleField}
-        idSchema={props.idSchema}
         title={getTitle(props)}
         required={props.required}
         classes={classes}
@@ -146,7 +143,7 @@ const DefaultFixedArrayFieldTemplate = (props) => {
 const DefaultNormalArrayFieldTemplate = (props) => {
   const theme = useTheme();
   const { classes } = props;
-  const safeId = props.idSchema?.$id ?? 'array-field';
+  const safeId = props.fieldPathId?.$id ?? 'array-field';
 
   return (
     <Paper elevation={0}>
@@ -161,7 +158,6 @@ const DefaultNormalArrayFieldTemplate = (props) => {
             <ArrayFieldTitle
               key={`array-field-title-${safeId}`}
               TitleField={props.TitleField}
-              idSchema={props.idSchema}
               title={getTitle(props)}
               required={props.required}
               classes={classes}
