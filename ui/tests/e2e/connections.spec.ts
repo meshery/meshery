@@ -130,7 +130,7 @@ test.describe.serial('Connection Management Tests', () => {
       // The hidden file input is present (attached, not visible) and the
       // dropzone prompt + wizard navigation are rendered.
       await expect(page.locator('#connection-wizard-kubeconfig-input')).toBeAttached();
-      await expect(page.getByText('Click to choose a kubeconfig file')).toBeVisible();
+      await expect(page.getByText('Click to choose a kubeconfig file', { exact: true })).toBeVisible();
       await expect(page.getByTestId('connection-wizard-next')).toBeVisible();
     },
   );
@@ -280,7 +280,7 @@ test.describe.serial('Connection Management Tests', () => {
       }
 
       // Open the row's status dropdown and choose "disconnected".
-      await row.locator('#connection-status-select').click();
+      await row.getByRole('combobox', { name: /status/i }).click();
       await page.getByRole('option', { name: 'disconnected' }).click();
 
       // Confirm the transition in the shared modal.
@@ -300,7 +300,7 @@ test.describe.serial('Connection Management Tests', () => {
         .filter({ hasText: clusterMetaData.name })
         .filter({ has: page.getByText('disconnected', { exact: true }) })
         .first();
-      await restored.locator('#connection-status-select').click();
+      await restored.getByRole('combobox', { name: /status/i }).click();
       await page.getByRole('option', { name: 'connected' }).click();
       await expect(page.getByTestId('connection-transition-modal')).toBeVisible();
       // Verify the restore PUT like the disconnect leg, so a failed restore is
