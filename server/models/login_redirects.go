@@ -85,6 +85,7 @@ var authInitiationPaths = []string{
 	"/login",
 	"/user/login",
 	"/auth/login",
+	"/login",
 	"/api/user/token",
 	"/provider",
 }
