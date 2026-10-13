@@ -101,10 +101,10 @@ repository:
           - osps-baseline-2026-08
         integration:
           adhoc: true
-          ci: false
+          ci: true
           release: false
         results:
-          adhoc:
+          ci:
             name: OSPS Baseline evaluation
             predicate-uri: https://github.com/revanite-io/osps-baseline-action
             location: https://github.com/meshery/meshery/actions/workflows/osps-baseline.yml
