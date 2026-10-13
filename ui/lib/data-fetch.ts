@@ -67,12 +67,27 @@ export class DataFetchError extends Error {
   }
 }
 
+// JSON error bodies carry their text in a field: `{"error": "..."}`, or
+// `message` in a MeshKit envelope. Fall back to the raw text otherwise.
+function messageFromBody(body) {
+  try {
+    const parsed = JSON.parse(body);
+    const field = parsed?.message ?? parsed?.error;
+    if (typeof field === 'string' && field.trim() !== '') return field;
+  } catch {
+    // Not JSON; the text itself is the message.
+  }
+  return body;
+}
+
 function errorFromResponse(url, res, body) {
   // An empty body or an HTML page (e.g. a proxy's 502/504) is not a useful
   // message; describe the status instead and keep the raw text on `body`.
   const readable = body.trim() !== '' && !/^\s*</.test(body);
   const status = res.statusText ? `${res.status} ${res.statusText}` : `${res.status}`;
-  const message = readable ? body : `Request to ${url} failed with status ${status}`;
+  const message = readable
+    ? messageFromBody(body)
+    : `Request to ${url} failed with status ${status}`;
   return new DataFetchError(message, { url, status: res.status, body });
 }
 
