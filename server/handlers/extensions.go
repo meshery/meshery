@@ -79,10 +79,10 @@ func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, _ *http.Reques
 	if provider.GetProviderType() == models.LocalProviderType {
 		err := json.NewEncoder(w).Encode("extension not available for current provider")
 		if err != nil {
-			h.log.Error(models.ErrEncoding(err, "extension version"))
-			writeMeshkitError(w, models.ErrEncoding(err, "extension version"), http.StatusNotFound)
-		}
-		return
+		h.log.Error(models.ErrEncoding(err, "extension version"))
+		writeMeshkitError(w, models.ErrEncoding(err, "extension version"), http.StatusInternalServerError)
+	}
+	return
 	}
 
 	// gets the extension version from provider properties
@@ -96,7 +96,7 @@ func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, _ *http.Reques
 	err := json.NewEncoder(w).Encode(extensionVersion)
 	if err != nil {
 		h.log.Error(models.ErrEncoding(err, "extension version"))
-		writeMeshkitError(w, models.ErrEncoding(err, "extension version"), http.StatusNotFound)
+		writeMeshkitError(w, models.ErrEncoding(err, "extension version"), http.StatusInternalServerError)
 	}
 }
 
