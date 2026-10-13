@@ -287,15 +287,19 @@ func (l *RemoteProvider) fetchCapabilities(ctx context.Context, token string, ve
 		ProviderURL: l.RemoteProviderURL,
 	}
 
-	osName := viper.GetString("OS")
-	playground := viper.GetString("PLAYGROUND")
+	osName := strings.TrimSpace(viper.GetString("OS"))
+	playground := strings.TrimSpace(viper.GetString("PLAYGROUND"))
+
+	params := url.Values{}
+	params.Set("os", osName)
+	params.Set("playground", playground)
 
 	var finalURL string
 	if versioned {
 		version := viper.GetString("BUILD")
-		finalURL = fmt.Sprintf("%s/%s/capabilities?os=%s&playground=%s", l.RemoteProviderURL, version, osName, playground)
+		finalURL = fmt.Sprintf("%s/%s/capabilities?%s", l.RemoteProviderURL, version, params.Encode())
 	} else {
-		finalURL = fmt.Sprintf("%s/capabilities?os=%s&playground=%s", l.RemoteProviderURL, osName, playground)
+		finalURL = fmt.Sprintf("%s/capabilities?%s", l.RemoteProviderURL, params.Encode())
 	}
 	finalURL = strings.TrimSuffix(finalURL, "\n")
 	remoteProviderURL, err := url.Parse(finalURL)
