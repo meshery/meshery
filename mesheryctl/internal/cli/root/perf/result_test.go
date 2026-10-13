@@ -93,6 +93,15 @@ func TestResultCmd(t *testing.T) {
 			ExpectedError:    display.ErrInvalidOutputFormat("invalid"),
 		},
 		{
+			Name:             "invalid page number",
+			Args:             []string{"result", "abhishek", "--page", "0"},
+			URLs:             []utils.MockURL{},
+			ExpectedResponse: "",
+			ExpectError:      true,
+			IsOutputGolden:   false,
+			ExpectedError:    utils.ErrFlagsInvalid(fmt.Errorf("Invalid value for --page '0'")),
+		},
+		{
 			Name: "Unmarshal error",
 			Args: []string{"result", "abhishek"},
 			URLs: []utils.MockURL{
