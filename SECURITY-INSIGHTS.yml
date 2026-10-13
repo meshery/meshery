@@ -100,7 +100,7 @@ repository:
         rulesets:
           - osps-baseline-2026-08
         integration:
-          adhoc: true
+          adhoc: false
           ci: true
           release: false
         results:
