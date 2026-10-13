@@ -261,6 +261,7 @@ func (h *Handler) handleRegistrationAndError(registrationHelper registration.Reg
 			addSuccessfulEntry(componentBytes, entity.ComponentDefinition, response)
 		}
 		for _, rel := range pkg.Relationships {
+			helpers.NormalizeRelationshipDefinition(&rel)
 			incrementCountersOnSuccess(mu, entity.RelationshipDefinition, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
 			relationshipBytes, _ := json.Marshal(rel)
 			addSuccessfulEntry(relationshipBytes, entity.RelationshipDefinition, response)
