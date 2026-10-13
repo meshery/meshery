@@ -123,13 +123,18 @@ describe('controllers status subscription', () => {
   });
 
   describe('watchControllersStatus', () => {
+    // A permanent close is reported after the 3s throttle; the reopen then
+    // waits the backoff delay for that attempt.
+    const NOTIFY_MS = 3000;
+    const closeLatest = () => latest().fail(true);
+
     it('reopens the same stream after a permanent close', () => {
       const onNext = vi.fn();
       watchControllersStatus(['c1'], onNext);
       const first = latest();
 
-      first.fail(true);
-      vi.advanceTimersByTime(3000);
+      closeLatest();
+      vi.advanceTimersByTime(NOTIFY_MS + 1000);
 
       expect(FakeEventSource.instances).toHaveLength(2);
       const second = latest();
@@ -144,43 +149,70 @@ describe('controllers status subscription', () => {
       watchControllersStatus(['c1'], vi.fn());
 
       latest().fail(false);
-      vi.advanceTimersByTime(10_000);
+      vi.advanceTimersByTime(60_000);
 
       expect(FakeEventSource.instances).toHaveLength(1);
     });
 
-    it('keeps reopening across repeated permanent closes, one per delay', () => {
+    it('backs off 1s, 2s, 4s ... between reopens, capped at 30s', () => {
       watchControllersStatus(['c1'], vi.fn());
+      const expected = [1000, 2000, 4000, 8000, 16_000, 30_000, 30_000];
 
-      for (let i = 0; i < 3; i++) {
-        latest().fail(true);
-        vi.advanceTimersByTime(3000);
-      }
-
-      expect(FakeEventSource.instances).toHaveLength(4);
+      expected.forEach((delay, i) => {
+        closeLatest();
+        vi.advanceTimersByTime(NOTIFY_MS + delay - 1);
+        expect(FakeEventSource.instances).toHaveLength(i + 1);
+        vi.advanceTimersByTime(1);
+        expect(FakeEventSource.instances).toHaveLength(i + 2);
+      });
     });
 
-    it('stops reopening once disposed while a reopen is pending', () => {
+    it('resets the backoff once the reopened stream delivers a frame', () => {
+      watchControllersStatus(['c1'], vi.fn());
+      for (const delay of [1000, 2000, 4000]) {
+        closeLatest();
+        vi.advanceTimersByTime(NOTIFY_MS + delay);
+      }
+
+      latest().emit(JSON.stringify([ITEM]));
+      closeLatest();
+      vi.advanceTimersByTime(NOTIFY_MS + 1000);
+
+      expect(FakeEventSource.instances).toHaveLength(5);
+    });
+
+    it('stops reopening once disposed before the close is reported', () => {
       const subscription = watchControllersStatus(['c1'], vi.fn());
 
-      latest().fail(true);
+      closeLatest();
       subscription.dispose();
-      vi.advanceTimersByTime(10_000);
+      vi.advanceTimersByTime(60_000);
+
+      expect(FakeEventSource.instances).toHaveLength(1);
+    });
+
+    it('stops reopening once disposed during the backoff wait', () => {
+      const subscription = watchControllersStatus(['c1'], vi.fn());
+
+      closeLatest();
+      vi.advanceTimersByTime(NOTIFY_MS + 500);
+      subscription.dispose();
+      vi.advanceTimersByTime(60_000);
 
       expect(FakeEventSource.instances).toHaveLength(1);
     });
 
     it('closes the reopened stream, not just the first one, on dispose', () => {
       const subscription = watchControllersStatus(['c1'], vi.fn());
-      latest().fail(true);
-      vi.advanceTimersByTime(3000);
+      closeLatest();
+      vi.advanceTimersByTime(NOTIFY_MS + 1000);
       const reopened = latest();
 
       subscription.dispose();
 
       expect(reopened.close).toHaveBeenCalled();
       reopened.fail(true);
-      vi.advanceTimersByTime(10_000);
+      vi.advanceTimersByTime(60_000);
       expect(FakeEventSource.instances).toHaveLength(2);
     });
   });
