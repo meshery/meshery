@@ -14,50 +14,59 @@ Meshery Catalog functions much like a cloud marketplace, providing a user-friend
 
 It also supports a collaborative environment, where DevOps engineers can share their experiences, feedback, and best practices with others in the community. Import cloud native patterns published by others into your Meshery Server. Benefit from and build upon each pattern by incorporating your own tips and tricks, then publish and share with the community at-large. This facilitates knowledge-sharing and helps to build a strong ecosystem of cloud native infrastructure experts.
 
-### To publish a design to catalog using Meshery UI
+### Prerequisites for Publishing to Catalog
 
-1. In your web browser, navigate to the designs page (e.g. https://playground.meshery.io/configuration/designs).
-2. Find your design, and click Edit to update your design's details.
-3. Verify that your design has the appropriate technologies, description, and any caveats or other considerations of its purpose of use listed.
-4. Click "Publish to Catalog", and your design is queued for review and approval by Workspace administrators.
+To publish designs to the Meshery Catalog, ensure:
+1. **Meshery Server** is running and accessible.
+2. **Authentication**: You are logged in with a valid Meshery Cloud / Remote Provider account (via `mesheryctl system login` or through the UI).
+3. **Valid Design**: Your design has been validated against [Meshery Schemas](https://github.com/meshery/schemas) (either an Annotation-only visual design or a Deployable infrastructure design).
+
+---
+
+### Step-by-Step: Publishing a Design via Meshery UI
+
+1. **Navigate to Designs**: In your browser, open Meshery UI and go to **Designs** (e.g., `http://localhost:9081/configuration/designs` or [Meshery Playground](https://playground.meshery.io/configuration/designs)).
+2. **Open Design Info**: Locate the design card you want to publish, click the **Action menu** (or **Info** icon), and select **Edit Info**.
+3. **Fill in Required Metadata**:
+   - **Design Name**: Provide a clear, human-readable name.
+   - **Description**: Explain the architecture pattern, key components, and intended use case.
+   - **Category / Type**: Select the primary domain (e.g., *Deployment*, *Observability*, *Security*, *Resiliency*, *Architecture Diagram*).
+   - **Technology Tags**: Add tags for the integrated tools (e.g., `Kubernetes`, `Istio`, `AWS`, `Helm`, `ArgoCD`).
+   - **Caveats & Considerations**: List any prerequisites, required secrets, environment parameters, or operational caveats.
+4. **Submit for Review**: Click **Publish to Catalog**. Your request is submitted to workspace administrators and maintainers for review.
 
 <a href="./images/publish-to-catalog-screenshot.png" class="lightbox-image">
-<img src="./images/publish-to-catalog-screenshot.png" width="70%" /></a>
+<img src="./images/publish-to-catalog-screenshot.png" alt="Meshery UI showing the Publish to Catalog workflow: design info panel with metadata fields and the Publish to Catalog submit button" width="70%" /></a>
 <figure>
   <figcaption>Figure: Workflow to publish a design in catalog</figcaption>
 </figure>
 
-### To create design pattern using Meshery CLI
+---
 
-1. Ensure that you have [Meshery CLI](https://docs.meshery.io/installation/mesheryctl) installed on your machine and it is configured to connect to your desired Meshery instance.
-2. Open a terminal or command prompt.
-3. Use the Meshery CLI commands to interact with the catalog. `mesheryctl design`
-4. Follow the prompts or instructions provided by the Meshery CLI help.
-    - Apply [design file]({{< ref "guides/configuration-management/_index.md" >}}):  `mesheryctl design apply --file [path to design file | URL of the file]`
-    - Delete design file:  `mesheryctl design delete --file [path to design file]`
-    - View design file:  `mesheryctl design view [design name | ID]`
-    - List all designs: `mesheryctl design list`
-5. [Importing]({{< ref "reference/references/mesheryctl/_index.md#infrastructure-design-configuration-and-management" >}}) a design. `mesheryctl design import -f [file-path] -s [manifest | compose | helm]`
-6. Applying [WASM Filter]({{< ref "guides/configuration-management/_index.md#wasm-filters" >}}). `mesheryctl filter import [file | URL] --wasm-config [filepath|string]`
+### Catalog Review & Publishing Lifecycle
 
+The catalog publishing pipeline follows a structured approval and distribution lifecycle:
 
-### Publishing a Design to Meshery Catalog
+```text
+┌─────────────────┐       Submit        ┌─────────────────┐       Review        ┌─────────────────┐
+│ Design Author   ├────────────────────►│ Workspace Admin ├────────────────────►│ Schema Validation │
+│ (Meshery UI)    │   Publish Request   │ & Maintainers   │      Approve        │ & Compatibility │
+└─────────────────┘                     └─────────────────┘                     └────────┬────────┘
+                                                                                         │
+                                        ┌─────────────────┐       Trigger                │
+                                        │ Meshery.io Site │◄─────────────────────────────┘
+                                        │ Catalog Live    │    GitHub Publishing Action
+                                        └─────────────────┘
+```
 
-1. **Request to Publish**: The author submits a request to publish their design to the Meshery Catalog, including a description and any relevant considerations.
-2. **Review by Admin**: The workspace owner or admin reviews the design. They have the option to approve, deny, or request changes by commenting on the design.
-3. **Approval Process**:
-    - If the admin or workspace admin **approves** the design, a validation is performed to ensure the design data is accurate. Once validated, the design is published to the catalog.
-    - If the admin **denies** the design, feedback is provided for necessary changes. After the changes are made, the design is automatically published with appropriate versioning.
-4. **Ongoing Management**:
-    - The author or workspace owner retains permission to edit, delete, or unpublish their designs from the catalog at any time.
-5. **Notification for Changes**: If the design no longer adds value to the Meshery Catalog, a prior notification is sent to the author, and the design may be unpublished.
-6. **GitHub Workflow Integration**: Once approved, a GitHub workflow is triggered to publish the design to the Meshery.io Catalog.
+1. **Request to Publish**: The author submits a publish request with all required metadata and compatibility details.
+2. **Review by Admin / Maintainer**: Workspace owners and catalog maintainers review the submission for quality, schema conformance, and descriptive clarity. They may approve, deny, or leave feedback requesting modifications.
+3. **Automated Schema Validation**: Upon approval, the design data undergoes automated schema validation against the Meshery Catalog specification.
+4. **GitHub Workflow & Site Ingestion**: Once approved and validated, an automated GitHub Actions workflow ingests the design artifact and publishes it to the public [Meshery.io Catalog](https://meshery.io/catalog).
+5. **Ongoing Maintenance & Updates**:
+   - Authors and workspace owners retain permission to update, re-publish, or unpublish their designs at any time.
+   - If updates are pushed to a published design, a new version is validated and published.
 
-<a href="./images/Catalog-Publishing-Workflow.svg" class="lightbox-image">
-<img src="./images/Catalog-Publishing-Workflow.svg" width="70%" /></a>
-<figure>
-  <figcaption>Figure: Approval workflow for reviewing design publishing requests in catalog</figcaption>
-</figure>
 
 ### FAQ
 <details>
