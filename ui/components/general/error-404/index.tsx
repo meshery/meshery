@@ -15,17 +15,9 @@ import { Typography, InfoCircleIcon, CustomTooltip, useTheme } from '@sistent/si
 import OrgSwitcher from './OrgSwitcher';
 // import RequestForm from './RequestForm';
 import CurrentSessionInfo from './CurrentSession';
+import MesheryVersionCompatibilityNotice from '../MesheryVersionCompatibilityNotice';
 
-//TODO: Add component for meshery version compatiblity error
-// const MesheryVersionCompatiblity = () => {
-//   return (
-//     <div>
-//       <Typography variant="p" component="p" align="center">
-//         <InstallMeshery action={MesheryAction.UPGRADE.KEY} />
-//       </Typography>
-//     </div>
-//   );
-// };
+export { MesheryVersionCompatibilityNotice };
 
 const UnknownServerSideError = (props) => {
   const { errorContent } = props;
@@ -41,7 +33,7 @@ const UnknownServerSideError = (props) => {
 };
 
 const DefaultError = (props) => {
-  const { errorTitle, errorContent, errorType, permissionKey } = props;
+  const { errorTitle, errorContent, errorType } = props;
   const theme = useTheme();
 
   return (
@@ -75,7 +67,7 @@ const DefaultError = (props) => {
             <Typography variant="h5" component="h5" align="center" fontWeight={600}>
               YOUR CURRENT SESSION
             </Typography>
-            <CurrentSessionInfo permissionKey={permissionKey} />
+            <CurrentSessionInfo />
           </ErrorSection>
           <StyledDivider orientation="vertical" flexItem />
           <ErrorSection>
@@ -90,7 +82,7 @@ const DefaultError = (props) => {
                 justifyContent: 'center',
               }}
             >
-              <OrgSwitcher permissionKey={permissionKey} />
+              <OrgSwitcher />
               {/*<Divider />
                 <RequestForm />*/}
             </ErrorSectionContent>
