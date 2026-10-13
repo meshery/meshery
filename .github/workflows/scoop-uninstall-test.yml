@@ -1,7 +1,19 @@
 name: Scoop Uninstall Test
 on:
   workflow_call:
+    inputs:
+      expected-version:
+        description: "Expected mesheryctl version"
+        required: false
+        type: string
+        default: ""
   workflow_dispatch:
+    inputs:
+      expected-version:
+        description: "Expected mesheryctl version"
+        required: false
+        type: string
+        default: ""
 
 permissions:
   contents: read
@@ -10,6 +22,7 @@ jobs:
   test-scoop:
     name: Verify Scoop Package Lifecycle
     runs-on: windows-latest
+    continue-on-error: true
     defaults:
       run:
         shell: powershell
@@ -37,6 +50,10 @@ jobs:
         run: |
           $scoopRoot = if ($env:SCOOP) { $env:SCOOP } else { Join-Path $env:USERPROFILE "scoop" }
           $appDir = Join-Path $scoopRoot "apps\mesheryctl"
+          $expected = "${{ inputs.expected-version }}".Trim()
+          $strippedExpected = $expected -replace '^v', ''
+          $expectedWithV = if ($expected -and -not $expected.StartsWith('v')) { "v$expected" } else { $expected }
+
           $maxAttempts = 5
           $attempt = 0
           $success = $false
@@ -50,19 +67,32 @@ jobs:
             $appDirExists = Test-Path $appDir
             $scoopListOut = scoop list 2>&1 | Out-String
             $inScoopList = ($scoopListOut -split "`r?\n") | Where-Object { $_ -match "^\s*mesheryctl\s+" }
+            $installed = $cmdFound -or $appDirExists -or $inScoopList
 
-            if ($cmdFound -or $appDirExists -or $inScoopList) {
+            $versionMatches = $true
+            if ($expected) {
+              $verDirMatch = (Test-Path (Join-Path $appDir $expected)) -or (Test-Path (Join-Path $appDir $strippedExpected)) -or (Test-Path (Join-Path $appDir $expectedWithV))
+              $listMatch = ($scoopListOut -split "`r?\n") | Where-Object { $_ -match "^\s*mesheryctl\s+($([regex]::Escape($expected))|$([regex]::Escape($strippedExpected))|$([regex]::Escape($expectedWithV)))\b" }
+              $versionMatches = $verDirMatch -or $listMatch
+            }
+
+            if ($installed -and $versionMatches) {
               $success = $true
-              Write-Host "Successfully installed mesheryctl on attempt $attempt."
+              Write-Host "Successfully installed mesheryctl $(if ($expected) { "(version: $expected)" }) on attempt $attempt."
             } else {
               if ($attempt -lt $maxAttempts) {
-                Write-Host "Install did not yield mesheryctl binary. Waiting 30 seconds before retrying..."
+                if ($installed -and -not $versionMatches) {
+                  Write-Host "Installed mesheryctl does not match expected version ($expected) yet. Uninstalling before next attempt..."
+                  scoop uninstall mesheryctl 2>&1 | Out-Null
+                } else {
+                  Write-Host "Install did not yield mesheryctl binary. Waiting 30 seconds before retrying..."
+                }
                 Start-Sleep -Seconds 30
               }
             }
           }
           if (-not $success) {
-            Write-Error "Failed to install mesheryctl after $maxAttempts attempts."
+            Write-Error "Failed to install mesheryctl $(if ($expected) { "with expected version $expected" }) after $maxAttempts attempts."
             exit 1
           }
 

@@ -44,4 +44,7 @@ jobs:
   call-scoop-uninstall-test:
     needs: ctlrelease
     name: Verify Scoop Package Lifecycle
-    uses: meshery/meshery/.github/workflows/scoop-uninstall-test.yml@master
+    uses: ./.github/workflows/scoop-uninstall-test.yml
+    with:
+      expected-version: ${{ inputs.release-tag }}
+
