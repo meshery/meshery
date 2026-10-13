@@ -60,7 +60,7 @@ jobs:
     # The E2E workflow uploads its report before enforcing the Playwright
     # verdict. Run this publisher after a failed suite so the failure remains
     # visible in Allure; never publish after cancellation or when E2E did not run.
-    if: ${{ always() && github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.build-meshery.result == 'success' && needs.tests-e2e.result != 'cancelled' && needs.tests-e2e.result != 'skipped' }}
+    if: ${{ !cancelled() && github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.build-meshery.result == 'success' && needs.tests-e2e.result != 'cancelled' && needs.tests-e2e.result != 'skipped' }}
     needs: [build-meshery, tests-e2e]
     uses: ./.github/workflows/publish-allure-report.yml
     with:
