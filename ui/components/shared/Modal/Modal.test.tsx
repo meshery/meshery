@@ -58,7 +58,9 @@ vi.mock('@sistent/sistent', () => ({
       {children}
     </span>
   ),
-  Typography: ({ children, variant }: any) => <p data-variant={variant}>{children}</p>,
+  Typography: ({ children, variant, component: Component = 'p' }: any) => (
+    <Component data-variant={variant}>{children}</Component>
+  ),
   CircularProgress: () => <div data-testid="circular-progress" />,
   ModalBody: ({ children }: any) => <div data-testid="modal-body">{children}</div>,
   ModalFooter: ({ children, helpText, hasHelpText }: any) => (
@@ -184,7 +186,37 @@ describe('Modal (RJSF version)', () => {
     expect(handleSubmit).toHaveBeenCalledWith({ name: 'submission' });
   });
 
-  it('uses the schema_array dropdown when schema_array has length less than 1', () => {
+  it('renders the schema dropdown when schemas are provided in schema_array and handles selection', async () => {
+    const user = userEvent.setup();
+    const schemaChangeHandler = vi.fn();
+
+    render(
+      <Modal
+        open={true}
+        title="Schemed"
+        schema={{ type: 'object' }}
+        schema_array={['prometheus', 'grafana', 'kubernetes']}
+        type="prometheus"
+        schemaChangeHandler={schemaChangeHandler}
+        handleClose={vi.fn()}
+        handleSubmit={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId('arrow-drop-down')).toBeInTheDocument();
+
+    await user.click(screen.getByTestId('arrow-drop-down'));
+    expect(screen.getByTestId('menu')).toBeInTheDocument();
+
+    const menuItems = screen.getAllByTestId('menu-item');
+    expect(menuItems).toHaveLength(3);
+    expect(menuItems[0]).toHaveAttribute('data-selected', 'true');
+
+    await user.click(menuItems[1]);
+    expect(schemaChangeHandler).toHaveBeenCalledWith('grafana');
+  });
+
+  it('does not render the schema dropdown when schema_array is empty', () => {
     render(
       <Modal
         open={true}
@@ -198,7 +230,21 @@ describe('Modal (RJSF version)', () => {
       />,
     );
 
-    expect(screen.getByTestId('arrow-drop-down')).toBeInTheDocument();
+    expect(screen.queryByTestId('arrow-drop-down')).not.toBeInTheDocument();
+  });
+
+  it('does not render the schema dropdown when schema_array is undefined', () => {
+    render(
+      <Modal
+        open={true}
+        title="Schemed"
+        schema={{ type: 'object' }}
+        handleClose={vi.fn()}
+        handleSubmit={vi.fn()}
+      />,
+    );
+
+    expect(screen.queryByTestId('arrow-drop-down')).not.toBeInTheDocument();
   });
 
   it('uses custom submitBtnText if provided', () => {
