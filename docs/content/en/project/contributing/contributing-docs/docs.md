@@ -125,7 +125,7 @@ Gitpod will automatically clone and open the repository for you in a browser-bas
   </code>
   </div></pre>
 
-You should be able to access the site on port `1313`. If you want to access it in your localhost read the [docs for port-forwarding using ssh](https://www.gitpod.io/docs/configure/workspaces/ports#local-port-forwarding-via-ssh).
+You should be able to access the site on port `1313`. To access it from your local machine, read the [docs for port-forwarding using SSH](https://www.gitpod.io/docs/configure/workspaces/ports#local-port-forwarding-via-ssh).
 
 ### Using GitHub Codespaces
 
@@ -152,7 +152,7 @@ GitHub Codespaces will automatically clone and open the repository for you in a 
   </code>
   </div></pre>
 
-You should be able to access the site on port `1313`. If you want to access it in your localhost just click the `code` button on your forked repository and select open with Visual Studio Code under your GitHub Codespace this will launch a GitHub Codespace instance in your local machine and connects with the remote GitHub Codespace environment after that run `cd docs` then `make setup && make site` and it will start the development server on port `1313`.
+You should be able to access the site on port `1313` within Codespaces. To access it from your local machine, use the Codespaces port-forwarding controls provided by GitHub.
 
 ### Make Necessary Changes
 - Make changes as required based on the issue you are solving.
