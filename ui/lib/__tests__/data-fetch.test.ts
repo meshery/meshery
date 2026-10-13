@@ -159,6 +159,38 @@ describe('dataFetch error reporting', () => {
     vi.restoreAllMocks();
   });
 
+  it.each([
+    ['an `error` field', '{"error":"design not found"}', 'design not found'],
+    [
+      'a MeshKit `message` field',
+      '{"code":"meshery-server-1033","message":"invalid id"}',
+      'invalid id',
+    ],
+    ['`message` over `error`', '{"message":"preferred","error":"other"}', 'preferred'],
+  ])('uses %s of a JSON error body as the message', async (_label, body, expected) => {
+    (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(
+      errorResponse(400, 'Bad Request', () => Promise.resolve(body)),
+    );
+
+    const err = await fetchError();
+    expect(err.message).toBe(expected);
+    expect(err.body).toBe(body);
+  });
+
+  it.each([
+    ['has no message or error field', '{"code":42}'],
+    ['has a non-string field', '{"error":{"nested":true}}'],
+    ['has an empty field', '{"error":"  "}'],
+    ['is a JSON array', '["a","b"]'],
+    ['is JSON null', 'null'],
+  ])('keeps the raw body as the message when the JSON %s', async (_label, body) => {
+    (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(
+      errorResponse(400, 'Bad Request', () => Promise.resolve(body)),
+    );
+
+    expect((await fetchError()).message).toBe(body);
+  });
+
   it('describes the status when the error body is empty', async () => {
     (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(
       errorResponse(500, 'Internal Server Error', () => Promise.resolve('')),
