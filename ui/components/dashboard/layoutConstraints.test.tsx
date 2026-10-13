@@ -50,6 +50,29 @@ describe('applyMinSizeConstraints', () => {
     expect(result.lg[0].w).toBe(12);
   });
 
+  it('keeps dashboard widgets inside the breakpoint columns', () => {
+    const layouts = {
+      lg: [{ i: 'WIDGET', x: 20, y: -2, w: 50, h: 1 }],
+    };
+
+    const result = applyMinSizeConstraints(layouts, {}, cols);
+
+    expect(result.lg[0]).toMatchObject({ x: 0, y: 0, w: 12, h: 1 });
+  });
+
+  it('clamps an oversized default widget before using it as a minimum', () => {
+    const layouts = {
+      lg: [{ i: 'OVERVIEW', x: 0, y: 0, w: 1, h: 1 }],
+    };
+    const defaults = {
+      lg: [{ i: 'OVERVIEW', x: 0, y: 0, w: 50, h: 2 }],
+    };
+
+    const result = applyMinSizeConstraints(layouts, defaults, cols);
+
+    expect(result.lg[0]).toMatchObject({ x: 0, y: 0, w: 12, minW: 12, h: 2 });
+  });
+
   it('falls back to widget sizing when no default item matches', () => {
     const layouts = {
       lg: [{ i: 'NEW_WIDGET', x: 0, y: 0, w: 1, h: 1 }],
