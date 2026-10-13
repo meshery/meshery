@@ -44,6 +44,31 @@ func TestUndeployCmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
+			// Referencing a saved design by name must undeploy it (DELETE
+			// /api/pattern/deploy), never delete the saved design record
+			// (DELETE /api/pattern/{id}). The delete endpoint is deliberately
+			// not mocked, so if the command tried to delete the design the
+			// request would fail with no matching responder.
+			Name:             "given a design name when design undeploy then design is undeployed not deleted",
+			Args:             []string{"undeploy", "TestDesign"},
+			ExpectedResponse: "undeploy.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          "/api/pattern",
+					Response:     "undeploy.byname.patterns.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "DELETE",
+					URL:          "/api/pattern/deploy",
+					Response:     "undeploy.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			ExpectError: false,
+		},
+		{
 			Name:             "given invalid file path when design undeploy then error is thrown",
 			Args:             []string{"undeploy", "-f", invalidFilePath},
 			ExpectedResponse: "",
