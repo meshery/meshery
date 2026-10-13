@@ -9,7 +9,11 @@ Every Kubernetes cluster that Meshery manages is served by up to three component
 
 This guide walks through the full configuration surface of all three components: what each setting does, how to change it, its default, and the behavioral impact of changing it. It is written for platform engineers operating real clusters with `kubectl`, `mesheryctl`, and the Meshery UI.
 
-## How the three components fit together
+## Understanding the Components {#understanding-the-components}
+
+Background you need before changing settings.
+
+### How the three components fit together {#how-the-three-components-fit-together}
 
 Meshery Server does not watch your clusters directly. It delegates that work:
 
@@ -20,14 +24,14 @@ Meshery Server does not watch your clusters directly. It delegates that work:
 
 One Operator, one MeshSync, and one Broker serve each managed cluster. For architectural depth, see the concept pages for the [Operator]({{< ref "concepts/architecture/operator/index.md" >}}), [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}), and [Broker]({{< ref "concepts/architecture/broker/index.md" >}}); this guide focuses on configuration and its consequences.
 
-## Choosing a deployment mode
+### Choosing a deployment mode {#choosing-a-deployment-mode}
 
 The first and most consequential choice is *where MeshSync runs*. Meshery supports two deployment modes per Kubernetes connection:
 
 - **Operator mode** - Meshery Server installs Meshery Operator into the cluster. The Operator deploys the Broker and MeshSync. MeshSync streams events to the Broker, and Meshery Server subscribes to the Broker over NATS.
 - **Embedded mode** (the default) - MeshSync runs as a library inside the Meshery Server process. Nothing is installed into the managed cluster, and no Broker is involved: discovery events flow to the server over in-process channels.
 
-### Behavioral impacts of each mode
+#### Behavioral impacts of each mode {#behavioral-impacts-of-each-mode}
 
 | Consideration | Operator mode | Embedded mode |
 | --- | --- | --- |
@@ -39,7 +43,7 @@ The first and most consequential choice is *where MeshSync runs*. Meshery suppor
 | Resource cost | Paid by the managed cluster | Paid by the Meshery Server host; each embedded connection adds informer caches to the server process |
 | Survives Meshery Server restarts | In-cluster discovery keeps running; the server re-subscribes on reconnect | Discovery restarts with the server |
 
-### Where the mode is set, and precedence
+#### Where the mode is set, and precedence {#where-the-mode-is-set-and-precedence}
 
 The deployment mode is resolved per connection, in this order:
 
@@ -58,7 +62,11 @@ Two lifecycle behaviors are worth knowing when you change modes or connections:
 - **Disconnecting a connection undeploys only what Meshery installed** (Operator, Broker, MeshSync). Your workloads are never touched, and the discovered inventory is retained in Meshery's database.
 - **Deleting a connection flushes its discovered inventory**, and only when it is the last connection referencing that cluster - multiple kubeconfig contexts pointing at the same cluster are refcounted.
 
-## Configuring Meshery Operator
+## How to Configure Each Component {#how-to-configure-each-component}
+
+Task steps for each component, from configuration files or Meshery UI.
+
+### Configuring Meshery Operator {#configuring-meshery-operator}
 
 Meshery Operator itself has little to configure by design: it is a controller whose job is to reconcile the `Broker` and `MeshSync` custom resources described below.
 
@@ -82,7 +90,7 @@ kubectl -n meshery get deploy meshery-operator \
   -o jsonpath='{.spec.template.spec.containers[0].image}{"\n"}'
 ```
 
-## Configuring MeshSync
+### Configuring MeshSync {#configuring-meshsync}
 
 MeshSync's configuration spans three mechanisms: fields on the `MeshSync` custom resource, environment variables on the MeshSync Deployment, and CLI flags. The table below is the complete surface as of current releases; the sections that follow explain each in detail.
 
@@ -102,7 +110,7 @@ MeshSync's configuration spans three mechanisms: fields on the `MeshSync` custom
 MeshSync's discovery never creates, modifies, or deletes anything in your cluster - it only lists and watches. Two <em>on-request</em> operations served over the Broker go further: pod log streaming (reads <code>pods/log</code>) and interactive exec sessions (opens a shell in a target container via <code>pods/exec</code>). These power Meshery's log viewer and interactive terminal, run only when a client requests them, and are never part of discovery (file/snapshot mode does not start them at all). Factor them into your RBAC review if your security posture distinguishes read from exec.
 {{% /alert %}}
 
-### Scoping discovery with the watch-list
+#### Scoping discovery with the watch-list {#scoping-discovery-with-the-watch-list}
 
 The watch-list is MeshSync's primary discovery-scope control. It lives on the `MeshSync` custom resource (`meshery-meshsync` in the `meshery` namespace) under `spec.watch-list`, and it is read by the MeshSync agent itself at startup. Note that the Operator deploys MeshSync but does not act on the watch-list; the agent reads its own custom resource, which is why changes require a pod restart rather than waiting for operator reconciliation.
 
@@ -154,7 +162,7 @@ Behavioral details worth knowing:
 MeshSync looks for its watch-list in the <code>meshery-meshsync</code> custom resource of the target cluster, in <em>any</em> deployment mode. In embedded mode against a cluster that has never run Meshery Operator, that custom resource (and its CRD) does not exist, so MeshSync uses its built-in default watch list. To customize discovery scope for an embedded-mode connection, install the MeshSync CRD and create the <code>meshery-meshsync</code> resource in the target cluster.
 {{% /alert %}}
 
-### Filtering output by namespace or resource type
+#### Filtering output by namespace or resource type {#filtering-output-by-namespace-or-resource-type}
 
 Two CLI flags narrow what MeshSync emits, and they behave differently:
 
@@ -174,7 +182,7 @@ kubectl -n meshery patch deploy meshery-meshsync --type json -p '[
 Meshery Operator reconciles the MeshSync Deployment with Server-Side Apply. Fields the Operator manages (image, command, resources, probes) are converged back to the declared state of the <code>MeshSync</code> custom resource, so do not hand-edit those. Fields the Operator does not manage, such as extra environment variables and container args, persist across reconciliation. Prefer expressing intent through the custom resource wherever a field exists for it.
 {{% /alert %}}
 
-### Redacting Secret contents
+#### Redacting Secret contents {#redacting-secret-contents}
 
 MeshSync watches `secrets.v1.` by default, and Secret objects are published to the Broker and persisted in Meshery's database with their payloads intact. In security-sensitive environments you have two options:
 
@@ -187,7 +195,7 @@ kubectl -n meshery set env deploy/meshery-meshsync MESHSYNC_REDACT_SECRETS=true
 
 With redaction enabled, MeshSync replaces every value in a Secret's `data` and `stringData` fields with the placeholder `[REDACTED]` before publishing. Keys are preserved, so Meshery still shows that a Secret exists and which keys it defines - only the sensitive values are withheld. ConfigMaps are not affected. Redaction is off by default; accepted truthy values are `true` and `1`. Changing an environment variable on the Deployment triggers a rollout automatically. (Requires MeshSync v1.0.2 or newer; older images ignore the variable.)
 
-### Deduplicating Broker traffic
+#### Deduplicating Broker traffic {#deduplicating-broker-traffic}
 
 Kubernetes controllers sometimes rewrite objects without meaningful change, and MeshSync republishes on each such event. MeshSync already suppresses updates whose `resourceVersion` has not changed; for clusters where objects churn with identical content under new resource versions, an additional opt-in deduplicator is available:
 
@@ -199,7 +207,7 @@ When enabled, MeshSync keeps an in-memory content hash (SHA-256) per resource UI
 
 It is off by default for a reason: the dedup cache persists across informer resyncs, and a resync is also a recovery path that intentionally republishes everything. With dedup enabled, a recovery resync will not republish objects that have not changed since they were last published. Enable it when reduced Broker and database churn is worth that trade-off. Accepted truthy values follow Go's `strconv.ParseBool` (`true`, `1`, `t`, and so on). (Requires MeshSync v1.0.2 or newer; older images ignore the variable.)
 
-### Debug logging
+#### Debug logging {#debug-logging}
 
 Set `DEBUG=true` (or `1`) on the MeshSync Deployment to switch from info-level to debug-level logging, including caller information:
 
@@ -209,7 +217,7 @@ kubectl -n meshery set env deploy/meshery-meshsync DEBUG=true
 
 Debug logs show discovery pipeline construction, informer registration per resource type, and broker connectivity attempts - the first place to look when resources are missing from Meshery's view. Remember to unset it afterward (`kubectl -n meshery set env deploy/meshery-meshsync DEBUG-`); debug volume on a busy cluster is substantial.
 
-### Version and replica count
+#### Version and replica count {#version-and-replica-count}
 
 The `MeshSync` custom resource declares the desired MeshSync version and scale:
 
@@ -234,7 +242,7 @@ spec:
 
 The `MeshSync` resource's `status` reports where MeshSync is publishing (`publishing-to`) and reconciliation `conditions`. MeshSync deliberately does not write its running version back into `spec.version`: the spec is your (and the Operator's) declaration of desired state, and the running version is advertised over the Broker instead.
 
-### Health endpoints and probes
+#### Health endpoints and probes {#health-endpoints-and-probes}
 
 MeshSync serves two HTTP endpoints on port `11000` from the moment the process starts:
 
@@ -253,7 +261,7 @@ The operator-managed Deployment currently ships an exec-based liveness probe (it
 
 The port is fixed at `11000` and is not configurable.
 
-### Broker connectivity at startup
+#### Broker connectivity at startup {#broker-connectivity-at-startup}
 
 Before opening its NATS connection, MeshSync verifies the Broker is reachable by polling the Broker's HTTP monitoring endpoint, `http://<broker-host>:8222/connz`, once per second for up to 5 minutes (each probe times out after 5 seconds). While this retry loop runs, `/readyz` reports `503`. If the Broker never becomes reachable, MeshSync exits with an error; in operator mode, Kubernetes restarts the pod with backoff, so a Broker that comes up late is tolerated.
 
@@ -267,7 +275,7 @@ kubectl -n meshery get deploy meshery-meshsync \
 kubectl -n meshery get broker meshery-broker -o jsonpath='{.status.endpoint}{"\n"}'
 ```
 
-## Configuring Meshery Broker
+### Configuring Meshery Broker {#configuring-meshery-broker}
 
 Meshery Broker is NATS, deployed by the Operator from the `Broker` custom resource (`meshery-broker` in the `meshery` namespace). Clients authenticate with a token the Operator generates into the `meshery-nats-auth` Secret; MeshSync's `BROKER_URL` receives it automatically.
 
@@ -280,7 +288,7 @@ Meshery Broker is NATS, deployed by the Operator from the `Broker` custom resour
 | Load balancer class / source ranges | `spec.service.loadBalancerClass`, `spec.service.loadBalancerSourceRanges` | None | LoadBalancer-type only; CRD validation rejects them for other types |
 | Advertised external endpoint | `spec.service.externalEndpointOverride` | Derived from the Service | Pins the advertised `host:port` for ingress, gateway, NAT, or air-gapped topologies |
 
-### Broker service networking
+#### Broker service networking {#broker-service-networking}
 
 The Broker's exposure is declarative and **reconfigurable on a live Broker**: change `spec.service`, and the Operator updates the Service in place (no pod restart), re-derives `status.endpoint`, and re-reconciles MeshSync so it reconnects to the new address.
 
@@ -310,7 +318,7 @@ Older Meshery Operator releases exposed the Broker as a <code>LoadBalancer</code
 
 Two ports matter: `4222` is the NATS client port that MeshSync and Meshery Server connect to; `8222` is the HTTP monitoring port, which MeshSync probes (`/connz`) before connecting and which the Broker pods use for their own health probes.
 
-### Broker sizing and delivery semantics
+#### Broker sizing and delivery semantics {#broker-sizing-and-delivery-semantics}
 
 Scale the Broker by data volume:
 
@@ -320,7 +328,7 @@ kubectl -n meshery patch broker meshery-broker --type merge -p '{"spec":{"size":
 
 Messages are held in memory and delivered at-most-once (core NATS): if Meshery Server is disconnected when an event is published, that event is not replayed on reconnect; the state is instead rebuilt by a later resync. Durable, replayable delivery via NATS JetStream is on the [roadmap](#what-is-coming).
 
-## Configuring from Meshery UI
+### Configuring from Meshery UI {#configuring-from-meshery-ui}
 
 Meshery UI exposes this configuration surface in two places today, with a broader configuration experience in active development.
 
@@ -338,7 +346,7 @@ Meshery UI exposes this configuration surface in two places today, with a broade
 
 Until that ships, the `kubectl` and environment variable mechanisms in this guide are the way to change these settings, and the per-connection deployment mode remains the one setting already manageable end to end from the UI.
 
-## Performance tuning for large clusters
+### Performance tuning for large clusters {#performance-tuning-for-large-clusters}
 
 On large or busy clusters, tune in this order:
 
@@ -350,19 +358,7 @@ On large or busy clusters, tune in this order:
 6. **Size the components.** The MeshSync container defaults to requests of 500m CPU / 512Mi memory with limits of 4 CPU / 4Gi memory; the initial full-cluster sync is the resource-intensive phase. Scale the Broker (`spec.size`) with event volume. Keep MeshSync at `size: 1` (see [Version and replica count](#version-and-replica-count)).
 7. **Place the Broker deliberately.** Keep it `ClusterIP` unless Meshery Server genuinely needs external reachability, and restrict exposure with `loadBalancerSourceRanges` when using a load balancer.
 
-## What applies live, and what needs a restart
-
-| Change | Applies |
-| --- | --- |
-| `Broker` `spec.service.*` (type, annotations, override) | Live; Service updated in place, endpoint re-derived, MeshSync reconnected |
-| `Broker` `spec.size`, `spec.version` | Operator-driven StatefulSet rollout |
-| `MeshSync` `spec.version`, `spec.size`, `spec.broker` | Operator-driven Deployment update/rollout |
-| `MeshSync` `spec.watch-list` | Requires a MeshSync pod restart (`kubectl -n meshery rollout restart deploy/meshery-meshsync`) |
-| Env vars (`DEBUG`, `MESHSYNC_REDACT_SECRETS`, `MESHSYNC_BROKER_CONTENT_DEDUP`) | Setting them on the Deployment triggers an automatic rollout |
-| CRDs added/removed in the cluster | Live; MeshSync rebuilds its pipeline automatically |
-| Deployment mode (operator/embedded) | Meshery Server undeploys and redeploys MeshSync for that connection |
-
-## Verifying behavior
+### Verifying behavior {#verifying-behavior}
 
 After any configuration change, confirm the components are healthy and data is flowing:
 
@@ -382,7 +378,24 @@ curl -sS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:11000/readyz
 In Meshery UI, the connection's MeshSync state should read **CONNECTED**; the meanings of each state, and what to do when they diverge, are covered in the [Meshery Operator, MeshSync, Broker Troubleshooting Guide]({{< ref "guides/troubleshooting/meshery-operator-meshsync.md" >}}).
 
 <a id="what-is-coming"></a>
-## What is coming
+
+## Configuration Reference {#configuration-reference}
+
+Which settings take effect live and which need a restart.
+
+### What applies live, and what needs a restart {#what-applies-live-and-what-needs-a-restart}
+
+| Change | Applies |
+| --- | --- |
+| `Broker` `spec.service.*` (type, annotations, override) | Live; Service updated in place, endpoint re-derived, MeshSync reconnected |
+| `Broker` `spec.size`, `spec.version` | Operator-driven StatefulSet rollout |
+| `MeshSync` `spec.version`, `spec.size`, `spec.broker` | Operator-driven Deployment update/rollout |
+| `MeshSync` `spec.watch-list` | Requires a MeshSync pod restart (`kubectl -n meshery rollout restart deploy/meshery-meshsync`) |
+| Env vars (`DEBUG`, `MESHSYNC_REDACT_SECRETS`, `MESHSYNC_BROKER_CONTENT_DEDUP`) | Setting them on the Deployment triggers an automatic rollout |
+| CRDs added/removed in the cluster | Live; MeshSync rebuilds its pipeline automatically |
+| Deployment mode (operator/embedded) | Meshery Server undeploys and redeploys MeshSync for that connection |
+
+## What is coming {#what-is-coming}
 
 Several discovery and delivery controls are designed but not yet shipped. They are listed here so you can plan; none of the knobs below exist in current releases.
 
@@ -391,7 +404,7 @@ Several discovery and delivery controls are designed but not yet shipped. They a
 - **Durable delivery via NATS JetStream** ([meshery/meshsync#580](https://github.com/meshery/meshsync/issues/580)) - at-least-once, replayable event delivery with configurable stream retention on the `Broker` resource, closing the gap described in [delivery semantics](#broker-sizing-and-delivery-semantics).
 - **Periodic reconciliation** ([meshery/meshsync#581](https://github.com/meshery/meshsync/issues/581)) - an optional timer-driven re-list that detects and publishes only genuine drift (including missed deletes), off by default with an enforced minimum interval.
 
-## Related
+## Related {#related}
 
 - [MeshSync]({{< ref "concepts/architecture/meshsync.md" >}}), [Meshery Operator]({{< ref "concepts/architecture/operator/index.md" >}}), and [Meshery Broker]({{< ref "concepts/architecture/broker/index.md" >}}) - architecture concepts.
 - [Registering a Connection]({{< ref "guides/infrastructure-management/registering-a-connection.md" >}}) - importing clusters and choosing the deployment mode.
