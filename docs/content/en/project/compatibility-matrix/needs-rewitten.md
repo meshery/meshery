@@ -1,7 +1,5 @@
 ---
 title: Compatibility Matrix
-aliases:
-- /project/compatibility-matrix/
 description: Understand which environments, dependencies, and installation paths Meshery supports.
 display_title: false
 cascade:
