@@ -24,7 +24,6 @@ on:
       - ".github/*.md"
       - ".github/*.yml"
       - ".github/*.yaml"
-      - "Makefile"
   push:
     branches:
       - "master"
