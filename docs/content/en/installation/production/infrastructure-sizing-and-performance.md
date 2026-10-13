@@ -136,7 +136,7 @@ data and events between each cluster and the Server. Production guidance:
   `POLICY_EVAL_TIMEOUT` (default `3m`). If you see evaluations timing out on
   large designs, raise the timeout or allocate more CPU. The engine selection
   (`USE_GO_POLICY_ENGINE`) also affects evaluation characteristics. See the
-  [environment variables reference]({{< ref "installation/advanced/environment-variables.md" >}}).
+  [environment variables reference]({{< ref "reference/environment-variables.md" >}}).
 
 ## Scalability levers, at a glance
 

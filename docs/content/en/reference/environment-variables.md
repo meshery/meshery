@@ -2,7 +2,7 @@
 title: Server Environment Variables
 description: Installation and runtime configuration reference for the environment variables consumed by Meshery Server.
 aliases:
-- /reference/environment-variables
+- /installation/advanced/environment-variables/
 - /reference/meshery-server-environment-variables
 ---
 

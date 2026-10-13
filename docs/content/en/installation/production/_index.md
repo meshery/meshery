@@ -100,11 +100,11 @@ deployment decisions:
 ## Before you begin
 
 If you have not yet chosen an installation method, review the
-[Installation Overview]({{< ref "installation/overview.md" >}}) and the
+[Installation Overview]({{< ref "concepts/overview.md" >}}) and the
 [platform-specific guides]({{< ref "installation/_index.md" >}}). For Kubernetes production
 deployments, the [Helm chart]({{< ref "installation/kubernetes/helm.md" >}}) is the recommended
 path and is referenced throughout this set. For runtime configuration, keep the
-[Meshery Server Environment Variables]({{< ref "installation/advanced/environment-variables.md" >}})
+[Meshery Server Environment Variables]({{< ref "reference/environment-variables.md" >}})
 reference close at hand.
 
 {{< related-discussions tag="meshery" >}}

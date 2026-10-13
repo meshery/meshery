@@ -3,6 +3,7 @@ title: Identifying Meshery Components
 description: A guide to help you identify and understand the various component icons, shapes, and visual styles used across the Meshery UI.
 categories: [configuration]
 aliases:
+- /guides/configuration-management/identifying-components/
 - /extensions/component-shape-guide
 ---
 
@@ -58,7 +59,7 @@ These components help you document and organize your designs without affecting t
 While these components are ignored during deployment, they support the same visual customization options as semantic components.
 
 {{% alert color="info" title="Edge Components" %}}
-To learn more about edge components and their visual styles, visit the <strong><a href='{{< ref "guides/configuration-management/edges-guide.md" >}}'>Edge Components Guide</a></strong>
+To learn more about edge components and their visual styles, visit the <strong><a href='{{< ref "reference/visual-notation/edges.md" >}}'>Edge Components Guide</a></strong>
 {{% /alert %}}
 
 ## Foundational Elements

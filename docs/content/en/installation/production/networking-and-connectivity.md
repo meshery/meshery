@@ -185,7 +185,7 @@ loop when behind a proxy, a missing or incorrect callback URL is the usual
 cause. See
 [Authentication, Authorization & Identity]({{< ref "installation/production/authentication-and-identity.md" >}})
 and the
-[environment variables reference]({{< ref "installation/advanced/environment-variables.md" >}}).
+[environment variables reference]({{< ref "reference/environment-variables.md" >}}).
 
 ## Exposing the Broker
 
@@ -235,7 +235,7 @@ Meshery Server typically needs outbound connectivity to:
   installed keep reporting status and version without it - only installing or
   upgrading the Operator is withheld, with the reason shown on the connection's
   Operator status card and in its
-  [Diagnostics]({{< ref "guides/infrastructure-management/kubernetes-connection-lifecycle.md#diagnostics" >}}).
+  [Diagnostics]({{< ref "concepts/architecture/kubernetes-connection-lifecycle.md#diagnostics" >}}).
   A blip is not sticky: redeploying the Operator re-resolves the version.
 
 In restricted networks, allow-list the Remote Provider, the chart repository,
