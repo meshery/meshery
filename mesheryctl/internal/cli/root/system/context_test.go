@@ -533,4 +533,5 @@ func TestContextSwitchCmd(t *testing.T) {
 func resetVariables() {
 	//reset context before tests
 	tempCntxt = ""
+	contextViewFlags = cmdContextViewFlags{}
 }
