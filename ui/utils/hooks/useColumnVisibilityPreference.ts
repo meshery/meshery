@@ -3,10 +3,13 @@ import { useCallback, useRef, useState, type SetStateAction } from 'react';
 // v2: v1 stored every column's visibility, responsive defaults included, which
 // pinned columns that should auto-hide. Changing the prefix drops those maps.
 const STORAGE_KEY_PREFIX = 'meshery_cols_v2_';
+const LEGACY_STORAGE_KEY_PREFIX = 'meshery_cols_';
 
 function loadFromStorage(tableKey: string): Record<string, boolean> {
   if (typeof window === 'undefined') return {};
   try {
+    // Drop the v1 map so it doesn't linger in localStorage.
+    window.localStorage.removeItem(`${LEGACY_STORAGE_KEY_PREFIX}${tableKey}`);
     const raw = window.localStorage.getItem(`${STORAGE_KEY_PREFIX}${tableKey}`);
     return raw ? (JSON.parse(raw) as Record<string, boolean>) : {};
   } catch {
@@ -58,7 +61,9 @@ export function useColumnVisibilityPreference(
         const next = typeof updater === 'function' ? updater(prev) : updater;
         // Persist only the columns this update changed. `next` is the full map
         // (responsive defaults included), so storing all of it would freeze
-        // every column at its current-width value.
+        // every column at its current-width value. A column the user toggles
+        // back to its responsive default stays stored: it is still an explicit
+        // choice, so it keeps applying at other widths.
         const toStore: Record<string, boolean> = { ...storedPrefs.current };
         for (const [col, val] of Object.entries(next)) {
           if (val !== undefined && val !== prev[col]) toStore[col] = val;
