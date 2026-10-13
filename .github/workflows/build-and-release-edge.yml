@@ -52,6 +52,21 @@ jobs:
       - name: Docker edge build & tag
         run: |
           DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t ${{ secrets.IMAGE_NAME }}:edge-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${{ steps.source.outputs.sha }} --build-arg GIT_VERSION=${{ env.LATEST_TAG }} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
+      - name: Verify built image commit
+        env:
+          EXPECTED_SHA: ${{ steps.source.outputs.sha }}
+          IMAGE_NAME: ${{ secrets.IMAGE_NAME }}:edge-latest
+        run: |
+          container_id=$(docker create "$IMAGE_NAME")
+          trap 'docker rm "$container_id" >/dev/null 2>&1 || true; rm -f "$RUNNER_TEMP/meshery-server"' EXIT
+          docker cp "$container_id":/app/server/cmd/meshery "$RUNNER_TEMP/meshery-server"
+          if ! strings -a "$RUNNER_TEMP/meshery-server" | grep -Fqx -- "$EXPECTED_SHA"; then
+            echo "::error::Built image does not contain the checked-out commit $EXPECTED_SHA"
+            exit 1
+          fi
+          echo "Verified built image contains checked-out commit $EXPECTED_SHA"
+      - name: Tag edge image
+        run: |
           docker tag ${{ secrets.IMAGE_NAME }}:edge-latest ${{ secrets.IMAGE_NAME }}:edge-${{ steps.source.outputs.short-sha }}
           docker tag ${{ secrets.IMAGE_NAME }}:edge-latest ${{ secrets.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
       - name: Docker edge push
