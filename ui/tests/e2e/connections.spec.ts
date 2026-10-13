@@ -280,7 +280,7 @@ test.describe.serial('Connection Management Tests', () => {
       }
 
       // Open the row's status dropdown and choose "disconnected".
-      await row.getByRole('combobox', { name: /status/i }).click();
+      await row.locator('#connection-status-select').click();
       await page.getByRole('option', { name: 'disconnected' }).click();
 
       // Confirm the transition in the shared modal.
@@ -300,7 +300,7 @@ test.describe.serial('Connection Management Tests', () => {
         .filter({ hasText: clusterMetaData.name })
         .filter({ has: page.getByText('disconnected', { exact: true }) })
         .first();
-      await restored.getByRole('combobox', { name: /status/i }).click();
+      await restored.locator('#connection-status-select').click();
       await page.getByRole('option', { name: 'connected' }).click();
       await expect(page.getByTestId('connection-transition-modal')).toBeVisible();
       // Verify the restore PUT like the disconnect leg, so a failed restore is
