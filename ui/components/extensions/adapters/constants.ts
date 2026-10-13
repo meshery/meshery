@@ -95,16 +95,6 @@ export const adaptersList: AdaptersListType = {
     enabled: false,
     url: '',
   },
-  APP_MESH: {
-    name: 'App Mesh',
-    label: 'meshery-app-mesh',
-    imageSrc: '/static/img/adapters/app_mesh.svg',
-    darkImageSrc: '/static/img/adapters/app_mesh-white.svg',
-    description: adaptersDescription('App Mesh'),
-    defaultPort: 10005,
-    enabled: false,
-    url: '',
-  },
 };
 
 export const ADAPTER_STATUS = {
