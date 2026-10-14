@@ -131,8 +131,8 @@ As a self-service engineering platform, Meshery enables collaborative design and
   notAlternative = true
 
 [params.llms]
-  enable = true
-  enable_full = true
+  generate_llms_txt = true
+  generate_llms_full_txt = true
   include = []
 
   exclude = [
