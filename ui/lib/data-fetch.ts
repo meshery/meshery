@@ -72,8 +72,10 @@ export class DataFetchError extends Error {
 function messageFromBody(body) {
   try {
     const parsed = JSON.parse(body);
-    const field = parsed?.message ?? parsed?.error;
-    if (typeof field === 'string' && field.trim() !== '') return field;
+    // `message` first, but skip a blank or non-string one so `error` still counts.
+    for (const field of [parsed?.message, parsed?.error]) {
+      if (typeof field === 'string' && field.trim() !== '') return field;
+    }
   } catch {
     // Not JSON; the text itself is the message.
   }
@@ -162,7 +164,10 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
           (text) => {
             throw errorFromResponse(url, res, text ?? '');
           },
-          () => {
+          (err) => {
+            // An abort mid-body (timeout or the caller's signal) must stay an
+            // abort, so toDataFetchError can report it as such.
+            if (err?.name === 'AbortError') throw err;
             throw errorFromResponse(url, res, '');
           },
         );
