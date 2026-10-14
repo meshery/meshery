@@ -35,7 +35,7 @@ spec:
 
 The following section outlines the fields and their descriptions
 
-- **apiVersion** – API version being used. Must be **v1alpha1** as its the only version supported at the moment.
+- **apiVersion** – API version being used. Must be **v1alpha1** as it's the only version supported at the moment.
 - **kind** – Resource type. Must be set to **Broker**, also helps in querying for custom resources in the cluster using its plural form **brokers**
 - **metadata** - The metadata section allows us to pass data that uniquely identifies a specific custom resource. For Broker, the following metadata is required
   - **name** : The name of this custom resource
@@ -108,7 +108,7 @@ spec:
 
 The following section outlines the fields and their descriptions
 
-- **apiVersion** – API version being used. Must be **v1alpha1** as its the only version supported at the moment.
+- **apiVersion** – API version being used. Must be **v1alpha1** as it's the only version supported at the moment.
 
 - **kind** – Resource type. Must be set to **MeshSync**, also helps in querying for custom resources in the cluster using its plural form **meshsyncs**
 
