@@ -8,8 +8,8 @@ on:
         type: boolean
         default: false
   schedule:
-    # Run once a week (Mondays at 6:00 UTC)
-    - cron: "0 6 * * 1"
+    # Run once a week (Mondays at 6:45 UTC)
+    - cron: "45 6 * * 1"
   # Push events are intentionally omitted because grc.store rate-limits publications.
   release:
     types: [published]
@@ -18,26 +18,24 @@ permissions: {}
 
 jobs:
   version:
-    name: resolve-version
+    name: version
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: read # Read the latest release tag
     outputs:
-      version: ${{ steps.resolve.outputs.version }}
+      version: ${{ steps.tag.outputs.version }}
     steps:
-      - name: Resolve target version
-        id: resolve
+      - uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+        with:
+          egress-policy: audit
+      - name: latest release
+        id: tag
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          if [[ "${{ github.ref_type }}" == "tag" ]]; then
-            raw_tag="${{ github.ref_name }}"
-          else
-            # Fall back to latest published release tag for branch/scheduled runs
-            raw_tag=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName --jq .tagName 2>/dev/null || echo "v0.7.0")
-          fi
-          echo "version=${raw_tag#v}" >> "$GITHUB_OUTPUT"
+          tag=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName --jq .tagName)
+          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
 
   results:
     name: publish-results
