@@ -1,6 +1,7 @@
 package connections
 
 import (
+	"bytes"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -140,12 +141,25 @@ func TestSaveK8sContextResponseWireContract(t *testing.T) {
 
 // TestCreateConnectionFlags guards the flag registrations on `connection create`.
 func TestCreateConnectionFlags(t *testing.T) {
-	fileFlag := createConnectionCmd.Flags().Lookup("file")
-	if fileFlag == nil {
-		t.Fatal("expected --file flag to be registered on createConnectionCmd")
+	origKubeconfigPath := kubeconfigPath
+	defer func() {
+		kubeconfigPath = origKubeconfigPath
+	}()
+
+	kubeconfigPathFlag := createConnectionCmd.Flags().Lookup("kubeconfig-path")
+	if kubeconfigPathFlag == nil {
+		t.Fatal("expected --kubeconfig-path flag to be registered on createConnectionCmd")
 	}
-	if fileFlag.Shorthand != "f" {
-		t.Errorf("expected shorthand 'f' for --file, got %q", fileFlag.Shorthand)
+	if kubeconfigPathFlag.Shorthand != "p" {
+		t.Errorf("expected shorthand 'p' for --kubeconfig-path, got %q", kubeconfigPathFlag.Shorthand)
+	}
+
+	// Verify old --file and -f flags are not registered on createConnectionCmd
+	if oldFlag := createConnectionCmd.Flags().Lookup("file"); oldFlag != nil {
+		t.Errorf("expected --file flag to not be registered on createConnectionCmd")
+	}
+	if oldShorthand := createConnectionCmd.Flags().ShorthandLookup("f"); oldShorthand != nil {
+		t.Errorf("expected -f shorthand to not be registered on createConnectionCmd")
 	}
 
 	contextFlagObj := createConnectionCmd.Flags().Lookup("context")
@@ -162,6 +176,22 @@ func TestCreateConnectionFlags(t *testing.T) {
 	}
 	if typeFlag.Shorthand != "t" {
 		t.Errorf("expected shorthand 't' for --type, got %q", typeFlag.Shorthand)
+	}
+
+	// Verify --kubeconfig-path flag parsing
+	if err := createConnectionCmd.ParseFlags([]string{"--kubeconfig-path", "/custom/kubeconfig/path"}); err != nil {
+		t.Fatalf("failed to parse --kubeconfig-path: %v", err)
+	}
+	if kubeconfigPath != "/custom/kubeconfig/path" {
+		t.Errorf("kubeconfigPath = %q, want %q", kubeconfigPath, "/custom/kubeconfig/path")
+	}
+
+	// Verify -p shorthand flag parsing
+	if err := createConnectionCmd.ParseFlags([]string{"-p", "/shorthand/kubeconfig/path"}); err != nil {
+		t.Fatalf("failed to parse -p shorthand: %v", err)
+	}
+	if kubeconfigPath != "/shorthand/kubeconfig/path" {
+		t.Errorf("kubeconfigPath = %q, want %q", kubeconfigPath, "/shorthand/kubeconfig/path")
 	}
 }
 
@@ -183,11 +213,11 @@ func TestCreateConnectionArgsValidation(t *testing.T) {
 		errContain string
 	}{
 		{
-			name:       "neither file nor type provided errors",
+			name:       "neither kubeconfig-path nor type provided errors",
 			connType:   "",
 			filePath:   "",
 			wantErr:    true,
-			errContain: "either --file or --type is required",
+			errContain: "either --kubeconfig-path or --type is required",
 		},
 		{
 			name:       "unsupported type provided errors",
@@ -197,14 +227,14 @@ func TestCreateConnectionArgsValidation(t *testing.T) {
 			errContain: "Invalid connection type",
 		},
 		{
-			name:       "file combined with cloud provider type errors",
+			name:       "kubeconfig-path combined with cloud provider type errors",
 			connType:   "aks",
 			filePath:   "/path/to/kubeconfig",
 			wantErr:    true,
-			errContain: "--file cannot be used with --type aks",
+			errContain: "--kubeconfig-path cannot be used with --type aks",
 		},
 		{
-			name:     "valid file without type succeeds",
+			name:     "valid kubeconfig-path without type succeeds",
 			connType: "",
 			filePath: "/path/to/kubeconfig",
 			wantErr:  false,
@@ -222,7 +252,7 @@ func TestCreateConnectionArgsValidation(t *testing.T) {
 			wantErr:  false,
 		},
 		{
-			name:     "valid type kubernetes with file succeeds",
+			name:     "valid type kubernetes with kubeconfig-path succeeds",
 			connType: "kubernetes",
 			filePath: "/path/to/kubeconfig",
 			wantErr:  false,
@@ -453,4 +483,144 @@ func TestCreateKubeconfigConnection_EdgeCases(t *testing.T) {
 			}
 		}
 	})
+}
+
+// TestCreateConnectionCmd_KubeconfigPathAndShorthand verifies that invoking createConnectionCmd
+// with --kubeconfig-path and -p shorthand correctly creates a Kubernetes connection and preserves
+// context selection behavior.
+func TestCreateConnectionCmd_KubeconfigPathAndShorthand(t *testing.T) {
+	origKubeconfigPath := kubeconfigPath
+	origContextFlag := contextFlag
+	origConnectionType := connectionType
+	origConfigPath := utils.ConfigPath
+	origTokenFlag := utils.TokenFlag
+	defer func() {
+		kubeconfigPath = origKubeconfigPath
+		contextFlag = origContextFlag
+		connectionType = origConnectionType
+		utils.ConfigPath = origConfigPath
+		utils.TokenFlag = origTokenFlag
+	}()
+
+	var receivedContexts []string
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/api/system/kubernetes/contexts":
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode([]map[string]interface{}{
+				{"name": "ctx-1"},
+				{"name": "ctx-2"},
+			})
+		case "/api/system/kubernetes":
+			_ = r.ParseMultipartForm(1 << 20)
+			receivedContexts = append(receivedContexts, r.FormValue("contextName"))
+			resp := saveK8sContextResponse{
+				RegisteredContexts: []registeredK8sContext{
+					{Name: r.FormValue("contextName"), ConnectionID: "conn-test-id"},
+				},
+			}
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(resp)
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer ts.Close()
+
+	utils.SetupContextEnv(t)
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		t.Fatalf("failed to get mesheryctl config: %v", err)
+	}
+	currCtx, err := mctlCfg.GetCurrentContext()
+	if err != nil {
+		t.Fatalf("failed to get current context: %v", err)
+	}
+	currCtx.Endpoint = ts.URL
+	if err := config.UpdateContextInConfig(currCtx, mctlCfg.CurrentContext); err != nil {
+		t.Fatalf("failed to update context in config: %v", err)
+	}
+
+	tmpDir := t.TempDir()
+	tokenFile := filepath.Join(tmpDir, "auth.json")
+	if err := os.WriteFile(tokenFile, []byte(`{"token": "test-token", "meshery-provider": "Local"}`), 0600); err != nil {
+		t.Fatalf("failed to write dummy token file: %v", err)
+	}
+	utils.TokenFlag = tokenFile
+	utils.ConfigPath = filepath.Join(tmpDir, "meshery-config.yaml")
+
+	kubeconfigFile := filepath.Join(tmpDir, "multi-ctx-kubeconfig.yaml")
+	kubeconfigContent := `apiVersion: v1
+kind: Config
+clusters:
+- cluster:
+    server: https://127.0.0.1:6443
+  name: c1
+- cluster:
+    server: https://127.0.0.1:6444
+  name: c2
+contexts:
+- context:
+    cluster: c1
+    user: u1
+  name: ctx-1
+- context:
+    cluster: c2
+    user: u2
+  name: ctx-2
+users:
+- name: u1
+  user:
+    token: t1
+- name: u2
+  user:
+    token: t2
+`
+	if err := os.WriteFile(kubeconfigFile, []byte(kubeconfigContent), 0644); err != nil {
+		t.Fatalf("failed to write kubeconfig file: %v", err)
+	}
+
+	t.Run("execute with --kubeconfig-path and --context", func(t *testing.T) {
+		ConnectionsCmd.SetArgs([]string{"create", "--kubeconfig-path", kubeconfigFile, "--context", "ctx-1"})
+		if err := ConnectionsCmd.Execute(); err != nil {
+			t.Fatalf("ConnectionsCmd.Execute() failed: %v", err)
+		}
+		if kubeconfigPath != kubeconfigFile {
+			t.Errorf("kubeconfigPath = %q, want %q", kubeconfigPath, kubeconfigFile)
+		}
+	})
+
+	t.Run("execute with -p shorthand and -c shorthand", func(t *testing.T) {
+		ConnectionsCmd.SetArgs([]string{"create", "-p", kubeconfigFile, "-c", "ctx-2"})
+		if err := ConnectionsCmd.Execute(); err != nil {
+			t.Fatalf("ConnectionsCmd.Execute() failed: %v", err)
+		}
+		if kubeconfigPath != kubeconfigFile {
+			t.Errorf("kubeconfigPath = %q, want %q", kubeconfigPath, kubeconfigFile)
+		}
+	})
+
+	if len(receivedContexts) != 2 || receivedContexts[0] != "ctx-1" || receivedContexts[1] != "ctx-2" {
+		t.Errorf("received contexts = %v, want [ctx-1 ctx-2]", receivedContexts)
+	}
+}
+
+// TestCreateConnectionHelpText verifies that createConnectionCmd help output
+// documents --kubeconfig-path and -p and does not reference the old --file flag.
+func TestCreateConnectionHelpText(t *testing.T) {
+	buf := new(bytes.Buffer)
+	createConnectionCmd.SetOut(buf)
+	if err := createConnectionCmd.Help(); err != nil {
+		t.Fatalf("createConnectionCmd.Help() failed: %v", err)
+	}
+	help := buf.String()
+	if !strings.Contains(help, "-p, --kubeconfig-path string") {
+		t.Errorf("expected help text to contain '-p, --kubeconfig-path string', got:\n%s", help)
+	}
+	if !strings.Contains(help, "--kubeconfig-path ~/.kube/config") {
+		t.Errorf("expected help text to contain '--kubeconfig-path ~/.kube/config', got:\n%s", help)
+	}
+	if strings.Contains(help, "--file") {
+		t.Errorf("help text unexpectedly contains '--file':\n%s", help)
+	}
 }

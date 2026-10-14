@@ -53,8 +53,8 @@ var createConnectionCmd = &cobra.Command{
 	Find more information at: https://docs.meshery.io/reference/references/mesheryctl/connection/create`,
 	Example: `
 // Create a new Kubernetes connection from a kubeconfig file
-mesheryctl connection create --file ~/.kube/config
-mesheryctl connection create --file ~/.kube/config --context my-cluster
+mesheryctl connection create --kubeconfig-path ~/.kube/config
+mesheryctl connection create --kubeconfig-path ~/.kube/config --context my-cluster
 
 // Create a new Kubernetes connection using a specific type
 mesheryctl connection create --type aks
@@ -67,13 +67,13 @@ mesheryctl connection create --type gke --token auth.json
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		if connectionType == "" && kubeconfigPath == "" {
-			return utils.ErrInvalidArgument(fmt.Errorf("either --file or --type is required. Specify a kubeconfig with --file or use --type (%s)", strings.Join(supportedConnectionTypes, "|")))
+			return utils.ErrInvalidArgument(fmt.Errorf("either --kubeconfig-path or --type is required. Specify a kubeconfig with --kubeconfig-path or use --type (%s)", strings.Join(supportedConnectionTypes, "|")))
 		}
 		if connectionType != "" && !slices.Contains(supportedConnectionTypes, connectionType) {
 			return errInvalidConnectionType(connectionType)
 		}
 		if kubeconfigPath != "" && connectionType != "" && connectionType != "kubernetes" {
-			return utils.ErrInvalidArgument(fmt.Errorf("--file cannot be used with --type %s", connectionType))
+			return utils.ErrInvalidArgument(fmt.Errorf("--kubeconfig-path cannot be used with --type %s", connectionType))
 		}
 		return nil
 	},
@@ -528,7 +528,7 @@ func setToken(specifiedContext string) error {
 
 func init() {
 	createConnectionCmd.Flags().StringVarP(&connectionType, "type", "t", "", "Type of connection to create (aks|eks|gke|kubernetes|minikube)")
-	createConnectionCmd.Flags().StringVarP(&kubeconfigPath, "file", "f", "", "Path to kubeconfig file")
+	createConnectionCmd.Flags().StringVarP(&kubeconfigPath, "kubeconfig-path", "p", "", "Path to kubeconfig file")
 	createConnectionCmd.Flags().StringVarP(&contextFlag, "context", "c", "", "Context name to select from the kubeconfig (optional)")
 	createConnectionCmd.Flags().StringVar(&utils.TokenFlag, "token", "", "Path to token for authenticating to Meshery API")
 }
