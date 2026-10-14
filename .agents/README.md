@@ -39,6 +39,13 @@ Neither `.codex/skills` nor `.opencode/skills` is created: both tools already re
 real OpenCode search root, just an unnecessary one here; `.codex/skills` is not a path Codex
 scans at all.
 
+### Skills adapted from third-party sources
+
+Skills adapted from outside this repo are copied into `.agents/skills/<name>/` and rewritten
+for Meshery, never installed by an external installer (see the hazard below). Each records its
+upstream URL and version in its frontmatter, and its source and license are listed in
+`.agents/skills/ATTRIBUTIONS.md`.
+
 ### Skills address their own files through `.agents/`, never `.claude/`
 
 Skill content must address its own files by their canonical `.agents/skills/...` path.
