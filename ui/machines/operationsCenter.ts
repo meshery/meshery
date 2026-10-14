@@ -2,9 +2,9 @@ import { SEVERITY_TO_NOTIFICATION_TYPE_MAPPING } from '@/components/layout/Notif
 import { subscribeToEvents } from 'lib/eventsSubscription';
 import { emit, fromCallback, setup, spawnChild, stopChild } from 'xstate';
 import { store } from '../store';
-import { pushEvent } from '@/store/slices/events';
+import { loadEvents, pushEvent } from '@/store/slices/events';
 import { api as mesheryApi } from '../rtk-query';
-import { PROVIDER_TAGS } from '@/rtk-query/notificationCenter';
+import { notificationCenterApi, PROVIDER_TAGS } from '@/rtk-query/notificationCenter';
 export const OPERATION_CENTER_EVENTS = {
   EVENT_RECEIVED_FROM_SERVER: 'EVENT_RECEIVED_FROM_SERVER',
   ERROR_OCCURRED_IN_SUBSCRIPTION: 'ERROR_OCCURRED_IN_SUBSCRIPTION',
@@ -63,6 +63,22 @@ export const operationsCenterActor = setup({
     invalidateRtk: () => {
       store.dispatch(mesheryApi.util.invalidateTags([PROVIDER_TAGS.EVENT]));
     },
+    // The notification list renders the events slice, which only loadEvents
+    // fills (RTK cache invalidation doesn't reach it). Reload the first page of
+    // the current view, the same way the notification center does.
+    reloadEvents: () => {
+      const fetchEvents = async (args) => {
+        const request = store.dispatch(
+          notificationCenterApi.endpoints.getEvents.initiate(args, { forceRefetch: true }),
+        );
+        try {
+          return await request;
+        } finally {
+          request.unsubscribe();
+        }
+      };
+      store.dispatch(loadEvents(fetchEvents, 0, store.getState().events.current_view.filters));
+    },
     notifyUI: ({ context, event }) => {
       const validatedEvent = event.data.event;
       context.notify({
@@ -93,8 +109,14 @@ export const operationsCenterActor = setup({
         },
         [OPERATION_CENTER_EVENTS.ERROR_OCCURRED_IN_SUBSCRIPTION]: {
           // Events raised while the stream was down are never replayed by the
-          // new stream; refetch the persisted list so they aren't lost.
-          actions: [stopChild('subscriptionActor'), 'spawnSubscriptionActor', 'invalidateRtk'],
+          // new stream; reload the persisted list (and the unread summary) so
+          // they aren't lost.
+          actions: [
+            stopChild('subscriptionActor'),
+            'spawnSubscriptionActor',
+            'invalidateRtk',
+            'reloadEvents',
+          ],
         },
       },
     },
