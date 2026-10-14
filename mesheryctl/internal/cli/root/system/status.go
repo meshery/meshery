@@ -178,14 +178,11 @@ mesheryctl system status --verbose
 				var containerReady int
 				var totalContainers int
 
-				if len(pod.Spec.Containers) > 0 && len(podStatus.ContainerStatuses) > 0 {
-					// If a pod has multiple containers, get the status from all
-					for container := range pod.Spec.Containers {
-						containerRestarts += podStatus.ContainerStatuses[container].RestartCount
-						if podStatus.ContainerStatuses[container].Ready {
-							containerReady++
-						}
-						totalContainers++
+				totalContainers = len(pod.Spec.Containers)
+				for _, cs := range podStatus.ContainerStatuses {
+					containerRestarts += cs.RestartCount
+					if cs.Ready {
+						containerReady++
 					}
 				}
 

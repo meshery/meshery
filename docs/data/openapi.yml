@@ -63,6 +63,20 @@ tags:
     description: APIs for managing Meshery views.
   - name: Academy_API_Academy
     description: Operations related to Meshery Academy content and curriculum
+  - name: BlowhornBinding_blowhornBindings
+    description: Operations related to Blowhorn bindings.
+  - name: BlowhornContent_blowhornContent
+    description: Operations related to Blowhorn content.
+  - name: BlowhornDestination_blowhornDestinations
+    description: Operations related to Blowhorn destinations.
+  - name: BlowhornHealth_blowhornHealth
+    description: Operations related to Blowhorn health.
+  - name: BlowhornLedger_blowhornLedger
+    description: Operations related to Blowhorn ledger entries, contacts and mentees.
+  - name: BlowhornProfile_blowhornProfiles
+    description: Operations related to Blowhorn profiles.
+  - name: BlowhornRun_blowhornRuns
+    description: Operations related to Blowhorn run records and analytics.
   - name: Design_designs
     description: Operations related to designs and infrastructure patterns
   - name: Environment_environments
@@ -73,6 +87,8 @@ tags:
     description: Operations related to Meshery filters.
   - name: Invitation_Invitation
     description: Operations related to invitation
+  - name: JobLease_jobLeases
+    description: Operations related to shared job leases.
   - name: PatternResource_patternResources
     description: Operations related to Meshery pattern resources.
   - name: Performance_Profile_performance
@@ -48165,7 +48181,10 @@ paths:
                               What the environment exists for. `user` is an ordinary environment that people create to
                               logically group Connections and their Credentials. `administrative` designates an
                               environment the platform itself provisions to hold organization-level configuration, and
-                              which resolvers of that configuration therefore trust.
+                              which resolvers of that configuration therefore trust. `blowhorn` designates an
+                              environment the platform itself provisions to hold an organization's Blowhorn
+                              configuration and secrets, resolved by the purpose-typed credential chain; it is
+                              privileged in the same sense as `administrative`.
 
 
                               Absent means `user`. Nothing may read an unset or unrecognised value as administrative:
@@ -48200,9 +48219,11 @@ paths:
                             enum:
                               - user
                               - administrative
+                              - blowhorn
                             x-enum-varnames:
                               - EnvironmentPurposeUser
                               - EnvironmentPurposeAdministrative
+                              - EnvironmentPurposeBlowhorn
                             x-go-type-skip-optional-pointer: true
                             x-oapi-codegen-extra-tags:
                               db: purpose
@@ -58332,7 +58353,10 @@ paths:
                               What the environment exists for. `user` is an ordinary environment that people create to
                               logically group Connections and their Credentials. `administrative` designates an
                               environment the platform itself provisions to hold organization-level configuration, and
-                              which resolvers of that configuration therefore trust.
+                              which resolvers of that configuration therefore trust. `blowhorn` designates an
+                              environment the platform itself provisions to hold an organization's Blowhorn
+                              configuration and secrets, resolved by the purpose-typed credential chain; it is
+                              privileged in the same sense as `administrative`.
 
 
                               Absent means `user`. Nothing may read an unset or unrecognised value as administrative:
@@ -58367,9 +58391,11 @@ paths:
                             enum:
                               - user
                               - administrative
+                              - blowhorn
                             x-enum-varnames:
                               - EnvironmentPurposeUser
                               - EnvironmentPurposeAdministrative
+                              - EnvironmentPurposeBlowhorn
                             x-go-type-skip-optional-pointer: true
                             x-oapi-codegen-extra-tags:
                               db: purpose
@@ -65484,7 +65510,10 @@ paths:
       security:
         - Organization_jwt: []
       summary: Delete an organization
-      description: Deletes the organization.
+      description: >-
+        Soft-deletes the organization. An organization that still has live child organizations is not deleted: the
+        request is refused with 409 and nothing changes. Children are neither reparented nor cascade-deleted; delete or
+        leave them first.
       operationId: deleteOrg
       parameters:
         - name: orgId
@@ -65529,6 +65558,8 @@ paths:
             text/plain:
               schema:
                 type: string
+        '409':
+          description: Conflict - the organization still has live child organizations, so it was not deleted
         '500':
           description: Internal server error
           content:
@@ -65820,6 +65851,817 @@ paths:
       responses:
         '200':
           description: Single-organization page response for the updated organization
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Single-organization wrapper used by current meshery-cloud organization handlers.
+                properties:
+                  page:
+                    type: integer
+                    description: Zero-based page index returned in this response.
+                    minimum: 0
+                  pageSize:
+                    type: integer
+                    description: Maximum number of items returned on each page.
+                    minimum: 1
+                    x-oapi-codegen-extra-tags:
+                      json: pageSize,omitempty
+                  totalCount:
+                    type: integer
+                    description: Total number of items across all pages.
+                    minimum: 0
+                    x-oapi-codegen-extra-tags:
+                      json: totalCount,omitempty
+                  organizations:
+                    type: array
+                    description: Organizations returned in this single-item page wrapper.
+                    maxItems: 1
+                    items:
+                      type: object
+                      description: Organization listing record used in list and get responses.
+                      additionalProperties: false
+                      properties:
+                        id:
+                          description: Organization ID.
+                          x-go-name: ID
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                        name:
+                          description: Name of the organization.
+                          type: string
+                          x-go-type-skip-optional-pointer: true
+                        description:
+                          description: Description of the organization.
+                          type: string
+                          x-go-type-skip-optional-pointer: true
+                        country:
+                          description: Country of the organization.
+                          type: string
+                          x-go-type-skip-optional-pointer: true
+                        region:
+                          description: Region of the organization.
+                          type: string
+                          x-go-type-skip-optional-pointer: true
+                        domain:
+                          description: Custom domain assigned to the organization, when configured.
+                          type: string
+                          x-go-type-skip-optional-pointer: true
+                        owner:
+                          description: Display name of the organization owner.
+                          type: string
+                          x-go-type-skip-optional-pointer: true
+                        metadata:
+                          x-go-type: OrgMetadata
+                          type: object
+                          description: Free-form metadata associated with an organization, including preferences.
+                          required:
+                            - preferences
+                          properties:
+                            preferences:
+                              x-go-type: Preferences
+                              type: object
+                              description: Organization-level user experience preferences.
+                              required:
+                                - theme
+                                - dashboard
+                              properties:
+                                theme:
+                                  x-go-type: Theme
+                                  type: object
+                                  description: UI theme configured for an organization.
+                                  required:
+                                    - id
+                                    - logo
+                                  properties:
+                                    id:
+                                      type: string
+                                      description: Theme identifier.
+                                      format: uuid
+                                      maxLength: 36
+                                    logo:
+                                      x-go-type: Logo
+                                      type: object
+                                      description: Themed logo assets used across light and dark, desktop and mobile presentations.
+                                      required:
+                                        - desktopView
+                                        - mobileView
+                                        - darkDesktopView
+                                        - darkMobileView
+                                      properties:
+                                        desktopView:
+                                          x-go-type: Location
+                                          type: object
+                                          description: Image asset anchored to a named location within an organization theme.
+                                          required:
+                                            - svg
+                                            - location
+                                          properties:
+                                            svg:
+                                              type: string
+                                              description: SVG markup for the asset.
+                                              maxLength: 500
+                                            location:
+                                              type: string
+                                              description: Named location of the asset (e.g. header, footer).
+                                              maxLength: 500
+                                        mobileView:
+                                          x-go-type: Location
+                                          type: object
+                                          description: Image asset anchored to a named location within an organization theme.
+                                          required:
+                                            - svg
+                                            - location
+                                          properties:
+                                            svg:
+                                              type: string
+                                              description: SVG markup for the asset.
+                                              maxLength: 500
+                                            location:
+                                              type: string
+                                              description: Named location of the asset (e.g. header, footer).
+                                              maxLength: 500
+                                        darkDesktopView:
+                                          x-go-type: Location
+                                          type: object
+                                          description: Image asset anchored to a named location within an organization theme.
+                                          required:
+                                            - svg
+                                            - location
+                                          properties:
+                                            svg:
+                                              type: string
+                                              description: SVG markup for the asset.
+                                              maxLength: 500
+                                            location:
+                                              type: string
+                                              description: Named location of the asset (e.g. header, footer).
+                                              maxLength: 500
+                                        darkMobileView:
+                                          x-go-type: Location
+                                          type: object
+                                          description: Image asset anchored to a named location within an organization theme.
+                                          required:
+                                            - svg
+                                            - location
+                                          properties:
+                                            svg:
+                                              type: string
+                                              description: SVG markup for the asset.
+                                              maxLength: 500
+                                            location:
+                                              type: string
+                                              description: Named location of the asset (e.g. header, footer).
+                                              maxLength: 500
+                                    vars:
+                                      type: object
+                                      additionalProperties: true
+                                      description: Arbitrary theme variables keyed by name.
+                                dashboard:
+                                  x-go-type: DashboardPrefs
+                                  type: object
+                                  description: Preferences specific to dashboard behavior.
+                                  additionalProperties: true
+                                authBranding:
+                                  x-go-type: AuthBranding
+                                  type: object
+                                  x-internal:
+                                    - cloud
+                                  description: >-
+                                    Optional per-organization branding overrides for the auth pages: carousel slides and
+                                    FAQ entries. Stored as JSON inside organization.metadata.preferences, so no
+                                    dedicated column backs it. Empty or omitted fields fall back to the platform
+                                    defaults.
+                                  properties:
+                                    carousel:
+                                      type: array
+                                      description: Ordered slides rendered in the auth-page feature carousel.
+                                      items:
+                                        type: object
+                                        x-internal:
+                                          - cloud
+                                        description: A single slide in the auth-page feature carousel.
+                                        required:
+                                          - imageUrl
+                                          - title
+                                          - description
+                                        properties:
+                                          imageUrl:
+                                            type: string
+                                            format: uri
+                                            maxLength: 2048
+                                            description: URL of the slide image asset.
+                                            x-go-name: ImageURL
+                                          title:
+                                            type: string
+                                            maxLength: 500
+                                            description: Slide title.
+                                          description:
+                                            type: string
+                                            maxLength: 2048
+                                            description: Slide description text.
+                                    faqs:
+                                      type: array
+                                      description: FAQ entries rendered on the auth pages.
+                                      items:
+                                        type: object
+                                        x-internal:
+                                          - cloud
+                                        description: A single question/answer pair for the auth-page FAQ section.
+                                        required:
+                                          - question
+                                          - answer
+                                        properties:
+                                          question:
+                                            type: string
+                                            maxLength: 500
+                                            description: The question text.
+                                          answer:
+                                            type: string
+                                            maxLength: 5000
+                                            description: The answer text.
+                                links:
+                                  x-go-type: Links
+                                  type: object
+                                  x-internal:
+                                    - cloud
+                                  description: >-
+                                    Per-organization overrides for the legal, support, and social links shown on the
+                                    auth pages and the error page. termsOfService and privacy are the named legal links;
+                                    support is an open-ended set of named support contacts/links; social carries the
+                                    organization's brand profiles. Empty or omitted fields fall back to the platform
+                                    defaults.
+                                  properties:
+                                    termsOfService:
+                                      type: string
+                                      format: uri
+                                      maxLength: 2048
+                                      description: URL of the organization's Terms of Service page.
+                                    privacy:
+                                      type: string
+                                      format: uri
+                                      maxLength: 2048
+                                      description: URL of the organization's Privacy Policy page.
+                                    support:
+                                      type: object
+                                      additionalProperties:
+                                        type: string
+                                        maxLength: 2048
+                                      description: >-
+                                        Open-ended set of named support contacts/links rendered on the auth and error
+                                        pages, keyed by display name with a value that is a URL, a mailto:/tel: link, or
+                                        free text. For example a "slack" entry pointing at https://slack.meshery.io, a
+                                        "discussion forum" entry, or a "support desk" entry holding a phone number.
+                                    social:
+                                      x-go-type: Social
+                                      type: object
+                                      x-internal:
+                                        - cloud
+                                      description: >-
+                                        The organization's social brand profiles. Deliberately a sibling of support
+                                        rather than an entry in it: support renders as support contacts on the auth and
+                                        error pages, where a brand profile does not belong. Each platform is a named,
+                                        individually validated URL so consumers can render the matching platform icon.
+                                        Empty or omitted fields fall back to the platform defaults.
+                                      properties:
+                                        linkedin:
+                                          type: string
+                                          format: uri
+                                          maxLength: 2048
+                                          description: URL of the organization's LinkedIn profile.
+                                          x-go-name: LinkedIn
+                                        x:
+                                          type: string
+                                          format: uri
+                                          maxLength: 2048
+                                          description: URL of the organization's X (formerly Twitter) profile.
+                                          x-go-name: X
+                                        youtube:
+                                          type: string
+                                          format: uri
+                                          maxLength: 2048
+                                          description: URL of the organization's YouTube channel.
+                                          x-go-name: YouTube
+                                showAuthCarousel:
+                                  type: boolean
+                                  default: true
+                                  description: >-
+                                    Whether the feature carousel renders on the organization's auth pages. Unset is
+                                    treated as true (shown); set false to hide it.
+                        createdAt:
+                          description: Timestamp when the organization was created.
+                          x-oapi-codegen-extra-tags:
+                            json: createdAt,omitempty
+                          type: string
+                          format: date-time
+                          x-go-type-skip-optional-pointer: true
+                        updatedAt:
+                          description: Timestamp when the organization was last updated.
+                          x-oapi-codegen-extra-tags:
+                            json: updatedAt,omitempty
+                          type: string
+                          format: date-time
+                          x-go-type-skip-optional-pointer: true
+                        deletedAt:
+                          description: Timestamp when the organization was soft-deleted.
+                          x-oapi-codegen-extra-tags:
+                            json: deletedAt,omitempty
+                          type: string
+                          format: date-time
+                          x-go-type: sql.NullTime
+                          x-go-type-import:
+                            path: database/sql
+                          x-go-type-skip-optional-pointer: true
+        '400':
+          description: Invalid request body or request param
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Result not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /api/identity/orgs/{orgId}/children:
+    get:
+      x-internal:
+        - cloud
+        - meshery
+      tags:
+        - Organization_Organizations
+      security:
+        - Organization_jwt: []
+      summary: Read the direct child organizations of an organization
+      description: >-
+        Returns the live organizations whose parent is the organization named by orgId, as the ChildOrganization
+        projection. Only direct children are returned; the hierarchy has no depth limit, and a listed child may itself
+        be a parent, but this operation never walks grandchildren or ancestors. Authorization is the View Organizations
+        permission key evaluated in the parent (orgId); a caller without it receives 403 before any lookup, and a parent
+        the caller may see but that has no children is a 200 with an empty page. The Provider Organization is never a
+        parent, so it has no children to list.
+      operationId: getChildOrgs
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          description: Organization ID.
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: org_id
+              json: org_id
+            x-go-type-name: OrganizationId
+            x-go-type-skip-optional-pointer: true
+        - name: page
+          in: query
+          description: Zero-based index of the result page to return.
+          schema:
+            type: integer
+            minimum: 0
+        - name: pageSize
+          in: query
+          description: Maximum number of items returned on each page.
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Direct child organizations of the parent organization
+          content:
+            application/json:
+              schema:
+                type: object
+                description: >-
+                  Page of the direct child organizations of one parent. Carries only the organizations list and the
+                  total count; it is not the OrganizationsPage wrapper, whose AvailableOrganization rows expose owner
+                  and metadata.
+                additionalProperties: false
+                required:
+                  - organizations
+                  - totalCount
+                properties:
+                  organizations:
+                    type: array
+                    description: Direct child organizations in this page.
+                    items:
+                      type: object
+                      description: >-
+                        Direct child organization as listed under its parent. A deliberately narrow projection of the
+                        organization record: it carries no owner, metadata, invite id, or members, because every holder
+                        of View Organizations in the parent can read this list and those fields are not part of what the
+                        parent is entitled to see. parentId, when present, is the id of the parent organization named in
+                        the request path.
+                      additionalProperties: false
+                      required:
+                        - id
+                        - name
+                        - createdAt
+                        - updatedAt
+                      properties:
+                        id:
+                          description: Organization ID of the child.
+                          x-go-name: ID
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                        name:
+                          description: Name of the child organization.
+                          type: string
+                          x-go-type-skip-optional-pointer: true
+                        description:
+                          description: Description of the child organization.
+                          type: string
+                          x-go-type-skip-optional-pointer: true
+                        country:
+                          description: Country of the child organization.
+                          type: string
+                          x-go-type-skip-optional-pointer: true
+                        region:
+                          description: Region of the child organization.
+                          type: string
+                          x-go-type-skip-optional-pointer: true
+                        domain:
+                          description: Custom domain assigned to the child organization, when configured.
+                          type: string
+                          x-go-type-skip-optional-pointer: true
+                        parentId:
+                          description: >-
+                            ID of the parent organization. Stamped at creation and never changed; absent only on a
+                            top-level organization, which this listing never returns.
+                          x-go-name: ParentID
+                          x-oapi-codegen-extra-tags:
+                            json: parentId,omitempty
+                          type: string
+                          format: uuid
+                          x-go-type: uuid.UUID
+                          x-go-type-import:
+                            path: github.com/gofrs/uuid
+                        createdAt:
+                          description: Timestamp when the child organization was created.
+                          x-oapi-codegen-extra-tags:
+                            json: createdAt
+                          type: string
+                          format: date-time
+                          x-go-type-skip-optional-pointer: true
+                        updatedAt:
+                          description: Timestamp when the child organization was last updated.
+                          x-oapi-codegen-extra-tags:
+                            json: updatedAt
+                          type: string
+                          format: date-time
+                          x-go-type-skip-optional-pointer: true
+                  totalCount:
+                    type: integer
+                    description: Total number of live direct children across all pages.
+                    minimum: 0
+                    x-oapi-codegen-extra-tags:
+                      json: totalCount
+        '401':
+          description: Expired JWT token used or insufficient privilege
+          content:
+            text/plain:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Result not found
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+    post:
+      x-internal:
+        - cloud
+        - meshery
+      tags:
+        - Organization_Organizations
+      security:
+        - Organization_jwt: []
+      summary: Create a child organization
+      description: >-
+        Creates a new organization whose parent is the organization named by orgId. The path is the parent; the body is
+        the same organization payload the flat create accepts (name, country, region, description) and carries no
+        parentId - a parentId in the body is ignored. The parent is stamped at creation and cannot be changed
+        afterwards. Authorization is the Create Organization permission key evaluated in the parent (orgId). The
+        Provider Organization is never a valid parent: naming it, or the "all" scope, as orgId is refused with 403. A
+        missing or soft-deleted parent is 404, and the body does not distinguish the two. An empty name is 400. On
+        success the creator receives Organization Admin in the new child and the response is the same
+        single-organization page wrapper the flat create returns; parentId is absent from it.
+      operationId: createChildOrg
+      parameters:
+        - name: orgId
+          in: path
+          required: true
+          description: Organization ID.
+          schema:
+            type: string
+            format: uuid
+            x-go-type: uuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+            x-oapi-codegen-extra-tags:
+              db: org_id
+              json: org_id
+            x-go-type-name: OrganizationId
+            x-go-type-skip-optional-pointer: true
+      requestBody:
+        description: Body for creating or updating an organization
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Payload for creating or updating an organization. Contains only client-settable fields.
+              properties:
+                name:
+                  description: Name of the organization.
+                  type: string
+                  x-go-type-skip-optional-pointer: true
+                country:
+                  description: Country of the organization.
+                  type: string
+                  x-go-type-skip-optional-pointer: true
+                region:
+                  description: Region of the organization.
+                  type: string
+                  x-go-type-skip-optional-pointer: true
+                description:
+                  description: Description of the organization.
+                  type: string
+                  x-go-type-skip-optional-pointer: true
+                notifyOrgUpdate:
+                  type: boolean
+                  description: Indicates whether organization members should be notified of this update.
+                preferences:
+                  description: Organization-level user experience preferences.
+                  type: object
+                  required:
+                    - theme
+                    - dashboard
+                  properties:
+                    theme:
+                      x-go-type: Theme
+                      type: object
+                      description: UI theme configured for an organization.
+                      required:
+                        - id
+                        - logo
+                      properties:
+                        id:
+                          type: string
+                          description: Theme identifier.
+                          format: uuid
+                          maxLength: 36
+                        logo:
+                          x-go-type: Logo
+                          type: object
+                          description: Themed logo assets used across light and dark, desktop and mobile presentations.
+                          required:
+                            - desktopView
+                            - mobileView
+                            - darkDesktopView
+                            - darkMobileView
+                          properties:
+                            desktopView:
+                              x-go-type: Location
+                              type: object
+                              description: Image asset anchored to a named location within an organization theme.
+                              required:
+                                - svg
+                                - location
+                              properties:
+                                svg:
+                                  type: string
+                                  description: SVG markup for the asset.
+                                  maxLength: 500
+                                location:
+                                  type: string
+                                  description: Named location of the asset (e.g. header, footer).
+                                  maxLength: 500
+                            mobileView:
+                              x-go-type: Location
+                              type: object
+                              description: Image asset anchored to a named location within an organization theme.
+                              required:
+                                - svg
+                                - location
+                              properties:
+                                svg:
+                                  type: string
+                                  description: SVG markup for the asset.
+                                  maxLength: 500
+                                location:
+                                  type: string
+                                  description: Named location of the asset (e.g. header, footer).
+                                  maxLength: 500
+                            darkDesktopView:
+                              x-go-type: Location
+                              type: object
+                              description: Image asset anchored to a named location within an organization theme.
+                              required:
+                                - svg
+                                - location
+                              properties:
+                                svg:
+                                  type: string
+                                  description: SVG markup for the asset.
+                                  maxLength: 500
+                                location:
+                                  type: string
+                                  description: Named location of the asset (e.g. header, footer).
+                                  maxLength: 500
+                            darkMobileView:
+                              x-go-type: Location
+                              type: object
+                              description: Image asset anchored to a named location within an organization theme.
+                              required:
+                                - svg
+                                - location
+                              properties:
+                                svg:
+                                  type: string
+                                  description: SVG markup for the asset.
+                                  maxLength: 500
+                                location:
+                                  type: string
+                                  description: Named location of the asset (e.g. header, footer).
+                                  maxLength: 500
+                        vars:
+                          type: object
+                          additionalProperties: true
+                          description: Arbitrary theme variables keyed by name.
+                    dashboard:
+                      x-go-type: DashboardPrefs
+                      type: object
+                      description: Preferences specific to dashboard behavior.
+                      additionalProperties: true
+                    authBranding:
+                      x-go-type: AuthBranding
+                      type: object
+                      x-internal:
+                        - cloud
+                      description: >-
+                        Optional per-organization branding overrides for the auth pages: carousel slides and FAQ
+                        entries. Stored as JSON inside organization.metadata.preferences, so no dedicated column backs
+                        it. Empty or omitted fields fall back to the platform defaults.
+                      properties:
+                        carousel:
+                          type: array
+                          description: Ordered slides rendered in the auth-page feature carousel.
+                          items:
+                            type: object
+                            x-internal:
+                              - cloud
+                            description: A single slide in the auth-page feature carousel.
+                            required:
+                              - imageUrl
+                              - title
+                              - description
+                            properties:
+                              imageUrl:
+                                type: string
+                                format: uri
+                                maxLength: 2048
+                                description: URL of the slide image asset.
+                                x-go-name: ImageURL
+                              title:
+                                type: string
+                                maxLength: 500
+                                description: Slide title.
+                              description:
+                                type: string
+                                maxLength: 2048
+                                description: Slide description text.
+                        faqs:
+                          type: array
+                          description: FAQ entries rendered on the auth pages.
+                          items:
+                            type: object
+                            x-internal:
+                              - cloud
+                            description: A single question/answer pair for the auth-page FAQ section.
+                            required:
+                              - question
+                              - answer
+                            properties:
+                              question:
+                                type: string
+                                maxLength: 500
+                                description: The question text.
+                              answer:
+                                type: string
+                                maxLength: 5000
+                                description: The answer text.
+                    links:
+                      x-go-type: Links
+                      type: object
+                      x-internal:
+                        - cloud
+                      description: >-
+                        Per-organization overrides for the legal, support, and social links shown on the auth pages and
+                        the error page. termsOfService and privacy are the named legal links; support is an open-ended
+                        set of named support contacts/links; social carries the organization's brand profiles. Empty or
+                        omitted fields fall back to the platform defaults.
+                      properties:
+                        termsOfService:
+                          type: string
+                          format: uri
+                          maxLength: 2048
+                          description: URL of the organization's Terms of Service page.
+                        privacy:
+                          type: string
+                          format: uri
+                          maxLength: 2048
+                          description: URL of the organization's Privacy Policy page.
+                        support:
+                          type: object
+                          additionalProperties:
+                            type: string
+                            maxLength: 2048
+                          description: >-
+                            Open-ended set of named support contacts/links rendered on the auth and error pages, keyed
+                            by display name with a value that is a URL, a mailto:/tel: link, or free text. For example a
+                            "slack" entry pointing at https://slack.meshery.io, a "discussion forum" entry, or a
+                            "support desk" entry holding a phone number.
+                        social:
+                          x-go-type: Social
+                          type: object
+                          x-internal:
+                            - cloud
+                          description: >-
+                            The organization's social brand profiles. Deliberately a sibling of support rather than an
+                            entry in it: support renders as support contacts on the auth and error pages, where a brand
+                            profile does not belong. Each platform is a named, individually validated URL so consumers
+                            can render the matching platform icon. Empty or omitted fields fall back to the platform
+                            defaults.
+                          properties:
+                            linkedin:
+                              type: string
+                              format: uri
+                              maxLength: 2048
+                              description: URL of the organization's LinkedIn profile.
+                              x-go-name: LinkedIn
+                            x:
+                              type: string
+                              format: uri
+                              maxLength: 2048
+                              description: URL of the organization's X (formerly Twitter) profile.
+                              x-go-name: X
+                            youtube:
+                              type: string
+                              format: uri
+                              maxLength: 2048
+                              description: URL of the organization's YouTube channel.
+                              x-go-name: YouTube
+                    showAuthCarousel:
+                      type: boolean
+                      default: true
+                      description: >-
+                        Whether the feature carousel renders on the organization's auth pages. Unset is treated as true
+                        (shown); set false to hide it.
+      responses:
+        '201':
+          description: Single-organization page response for the created child organization
           content:
             application/json:
               schema:
@@ -67420,7 +68262,11 @@ paths:
                           properties:
                             teamsWithRoles:
                               type: array
-                              description: Team memberships for the user with their assigned roles.
+                              nullable: true
+                              description: >-
+                                Team memberships for the user with their assigned roles. null means the team memberships
+                                were not measured: the read failed, so the list is unknown. An empty array is only ever
+                                a measured absence of memberships.
                               items:
                                 type: object
                                 additionalProperties: false
@@ -67527,7 +68373,11 @@ paths:
                                 json: teamsWithRoles
                             totalCount:
                               type: integer
-                              description: Total number of team memberships returned for the user.
+                              nullable: true
+                              description: >-
+                                Total number of team memberships for the user. null means the count was not measured:
+                                the membership read failed, so the value is unknown and must be presented as unknown,
+                                never as 0. A number, including 0, is always a measured value.
                               minimum: 0
                               x-oapi-codegen-extra-tags:
                                 db: total_count
@@ -67541,7 +68391,11 @@ paths:
                           properties:
                             organizationsWithRoles:
                               type: array
-                              description: Organization memberships for the user with their assigned roles.
+                              nullable: true
+                              description: >-
+                                Organization memberships for the user with their assigned roles. null means the
+                                organization memberships were not measured: the read failed, so the list is unknown. An
+                                empty array is only ever a measured absence of memberships.
                               items:
                                 type: object
                                 additionalProperties: false
@@ -67653,7 +68507,11 @@ paths:
                                 json: organizationsWithRoles
                             totalCount:
                               type: integer
-                              description: Total number of organization memberships returned for the user.
+                              nullable: true
+                              description: >-
+                                Total number of organization memberships for the user. null means the count was not
+                                measured: the membership read failed, so the value is unknown and must be presented as
+                                unknown, never as 0. A number, including 0, is always a measured value.
                               minimum: 0
                               x-oapi-codegen-extra-tags:
                                 db: total_count
@@ -68070,7 +68928,11 @@ paths:
                     properties:
                       teamsWithRoles:
                         type: array
-                        description: Team memberships for the user with their assigned roles.
+                        nullable: true
+                        description: >-
+                          Team memberships for the user with their assigned roles. null means the team memberships were
+                          not measured: the read failed, so the list is unknown. An empty array is only ever a measured
+                          absence of memberships.
                         items:
                           type: object
                           additionalProperties: false
@@ -68177,7 +69039,11 @@ paths:
                           json: teamsWithRoles
                       totalCount:
                         type: integer
-                        description: Total number of team memberships returned for the user.
+                        nullable: true
+                        description: >-
+                          Total number of team memberships for the user. null means the count was not measured: the
+                          membership read failed, so the value is unknown and must be presented as unknown, never as 0.
+                          A number, including 0, is always a measured value.
                         minimum: 0
                         x-oapi-codegen-extra-tags:
                           db: total_count
@@ -68191,7 +69057,11 @@ paths:
                     properties:
                       organizationsWithRoles:
                         type: array
-                        description: Organization memberships for the user with their assigned roles.
+                        nullable: true
+                        description: >-
+                          Organization memberships for the user with their assigned roles. null means the organization
+                          memberships were not measured: the read failed, so the list is unknown. An empty array is only
+                          ever a measured absence of memberships.
                         items:
                           type: object
                           additionalProperties: false
@@ -68303,7 +69173,11 @@ paths:
                           json: organizationsWithRoles
                       totalCount:
                         type: integer
-                        description: Total number of organization memberships returned for the user.
+                        nullable: true
+                        description: >-
+                          Total number of organization memberships for the user. null means the count was not measured:
+                          the membership read failed, so the value is unknown and must be presented as unknown, never as
+                          0. A number, including 0, is always a measured value.
                         minimum: 0
                         x-oapi-codegen-extra-tags:
                           db: total_count
@@ -68705,7 +69579,11 @@ paths:
                     properties:
                       teamsWithRoles:
                         type: array
-                        description: Team memberships for the user with their assigned roles.
+                        nullable: true
+                        description: >-
+                          Team memberships for the user with their assigned roles. null means the team memberships were
+                          not measured: the read failed, so the list is unknown. An empty array is only ever a measured
+                          absence of memberships.
                         items:
                           type: object
                           additionalProperties: false
@@ -68812,7 +69690,11 @@ paths:
                           json: teamsWithRoles
                       totalCount:
                         type: integer
-                        description: Total number of team memberships returned for the user.
+                        nullable: true
+                        description: >-
+                          Total number of team memberships for the user. null means the count was not measured: the
+                          membership read failed, so the value is unknown and must be presented as unknown, never as 0.
+                          A number, including 0, is always a measured value.
                         minimum: 0
                         x-oapi-codegen-extra-tags:
                           db: total_count
@@ -68826,7 +69708,11 @@ paths:
                     properties:
                       organizationsWithRoles:
                         type: array
-                        description: Organization memberships for the user with their assigned roles.
+                        nullable: true
+                        description: >-
+                          Organization memberships for the user with their assigned roles. null means the organization
+                          memberships were not measured: the read failed, so the list is unknown. An empty array is only
+                          ever a measured absence of memberships.
                         items:
                           type: object
                           additionalProperties: false
@@ -68938,7 +69824,11 @@ paths:
                           json: organizationsWithRoles
                       totalCount:
                         type: integer
-                        description: Total number of organization memberships returned for the user.
+                        nullable: true
+                        description: >-
+                          Total number of organization memberships for the user. null means the count was not measured:
+                          the membership read failed, so the value is unknown and must be presented as unknown, never as
+                          0. A number, including 0, is always a measured value.
                         minimum: 0
                         x-oapi-codegen-extra-tags:
                           db: total_count
@@ -70133,7 +71023,10 @@ paths:
                                   What the environment exists for. `user` is an ordinary environment that people create
                                   to logically group Connections and their Credentials. `administrative` designates an
                                   environment the platform itself provisions to hold organization-level configuration,
-                                  and which resolvers of that configuration therefore trust.
+                                  and which resolvers of that configuration therefore trust. `blowhorn` designates an
+                                  environment the platform itself provisions to hold an organization's Blowhorn
+                                  configuration and secrets, resolved by the purpose-typed credential chain; it is
+                                  privileged in the same sense as `administrative`.
 
 
                                   Absent means `user`. Nothing may read an unset or unrecognised value as
@@ -70169,9 +71062,11 @@ paths:
                                 enum:
                                   - user
                                   - administrative
+                                  - blowhorn
                                 x-enum-varnames:
                                   - EnvironmentPurposeUser
                                   - EnvironmentPurposeAdministrative
+                                  - EnvironmentPurposeBlowhorn
                                 x-go-type-skip-optional-pointer: true
                                 x-oapi-codegen-extra-tags:
                                   db: purpose
@@ -71599,7 +72494,10 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust.
+                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
+                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
+                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
+                            `administrative`.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -71634,9 +72532,11 @@ paths:
                           enum:
                             - user
                             - administrative
+                            - blowhorn
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
+                            - EnvironmentPurposeBlowhorn
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -72800,7 +73700,10 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust.
+                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
+                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
+                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
+                            `administrative`.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -72835,9 +73738,11 @@ paths:
                           enum:
                             - user
                             - administrative
+                            - blowhorn
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
+                            - EnvironmentPurposeBlowhorn
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -74249,7 +75154,10 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust.
+                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
+                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
+                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
+                            `administrative`.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -74284,9 +75192,11 @@ paths:
                           enum:
                             - user
                             - administrative
+                            - blowhorn
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
+                            - EnvironmentPurposeBlowhorn
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -75307,7 +76217,10 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust.
+                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
+                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
+                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
+                            `administrative`.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -75342,9 +76255,11 @@ paths:
                           enum:
                             - user
                             - administrative
+                            - blowhorn
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
+                            - EnvironmentPurposeBlowhorn
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -77887,7 +78802,11 @@ paths:
                           properties:
                             teamsWithRoles:
                               type: array
-                              description: Team memberships for the user with their assigned roles.
+                              nullable: true
+                              description: >-
+                                Team memberships for the user with their assigned roles. null means the team memberships
+                                were not measured: the read failed, so the list is unknown. An empty array is only ever
+                                a measured absence of memberships.
                               items:
                                 type: object
                                 additionalProperties: false
@@ -77994,7 +78913,11 @@ paths:
                                 json: teamsWithRoles
                             totalCount:
                               type: integer
-                              description: Total number of team memberships returned for the user.
+                              nullable: true
+                              description: >-
+                                Total number of team memberships for the user. null means the count was not measured:
+                                the membership read failed, so the value is unknown and must be presented as unknown,
+                                never as 0. A number, including 0, is always a measured value.
                               minimum: 0
                               x-oapi-codegen-extra-tags:
                                 db: total_count
@@ -78008,7 +78931,11 @@ paths:
                           properties:
                             organizationsWithRoles:
                               type: array
-                              description: Organization memberships for the user with their assigned roles.
+                              nullable: true
+                              description: >-
+                                Organization memberships for the user with their assigned roles. null means the
+                                organization memberships were not measured: the read failed, so the list is unknown. An
+                                empty array is only ever a measured absence of memberships.
                               items:
                                 type: object
                                 additionalProperties: false
@@ -78120,7 +79047,11 @@ paths:
                                 json: organizationsWithRoles
                             totalCount:
                               type: integer
-                              description: Total number of organization memberships returned for the user.
+                              nullable: true
+                              description: >-
+                                Total number of organization memberships for the user. null means the count was not
+                                measured: the membership read failed, so the value is unknown and must be presented as
+                                unknown, never as 0. A number, including 0, is always a measured value.
                               minimum: 0
                               x-oapi-codegen-extra-tags:
                                 db: total_count
@@ -78471,7 +79402,9 @@ paths:
                       What the environment exists for. `user` is an ordinary environment that people create to logically
                       group Connections and their Credentials. `administrative` designates an environment the platform
                       itself provisions to hold organization-level configuration, and which resolvers of that
-                      configuration therefore trust.
+                      configuration therefore trust. `blowhorn` designates an environment the platform itself provisions
+                      to hold an organization's Blowhorn configuration and secrets, resolved by the purpose-typed
+                      credential chain; it is privileged in the same sense as `administrative`.
 
 
                       Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test for
@@ -78502,9 +79435,11 @@ paths:
                     enum:
                       - user
                       - administrative
+                      - blowhorn
                     x-enum-varnames:
                       - EnvironmentPurposeUser
                       - EnvironmentPurposeAdministrative
+                      - EnvironmentPurposeBlowhorn
                     x-go-type-skip-optional-pointer: true
                     x-oapi-codegen-extra-tags:
                       db: purpose
@@ -78759,7 +79694,10 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust.
+                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
+                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
+                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
+                            `administrative`.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -78794,9 +79732,11 @@ paths:
                           enum:
                             - user
                             - administrative
+                            - blowhorn
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
+                            - EnvironmentPurposeBlowhorn
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -79027,7 +79967,10 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust.
+                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
+                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
+                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
+                            `administrative`.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -79062,9 +80005,11 @@ paths:
                           enum:
                             - user
                             - administrative
+                            - blowhorn
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
+                            - EnvironmentPurposeBlowhorn
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -79343,7 +80288,10 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust.
+                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
+                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
+                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
+                            `administrative`.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -79378,9 +80326,11 @@ paths:
                           enum:
                             - user
                             - administrative
+                            - blowhorn
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
+                            - EnvironmentPurposeBlowhorn
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -83163,13 +84113,16 @@ paths:
                 properties:
                   page:
                     type: integer
-                    x-go-type-skip-optional-pointer: true
-                  page_size:
+                    description: Current page number of the result set.
+                    minimum: 0
+                  pageSize:
                     type: integer
-                    x-go-type-skip-optional-pointer: true
-                  total_count:
+                    description: Number of items per page.
+                    minimum: 1
+                  totalCount:
                     type: integer
-                    x-go-type-skip-optional-pointer: true
+                    description: Total number of items available.
+                    minimum: 0
                   teams:
                     type: array
                     x-go-type-skip-optional-pointer: true
@@ -83186,6 +84139,8 @@ paths:
                       required:
                         - id
                         - name
+                        - createdAt
+                        - updatedAt
                       properties:
                         id:
                           description: Team ID
@@ -83193,7 +84148,6 @@ paths:
                           x-go-name: ID
                           x-oapi-codegen-extra-tags:
                             db: id
-                            yaml: id
                           type: string
                           format: uuid
                           x-go-type: uuid.UUID
@@ -83202,7 +84156,6 @@ paths:
                         name:
                           x-oapi-codegen-extra-tags:
                             db: name
-                            yaml: name
                           x-order: 2
                           type: string
                           description: Team name
@@ -83211,7 +84164,6 @@ paths:
                         description:
                           x-oapi-codegen-extra-tags:
                             db: description
-                            yaml: description
                           x-order: 3
                           type: string
                           description: Team description
@@ -83219,7 +84171,6 @@ paths:
                         owner:
                           x-oapi-codegen-extra-tags:
                             db: owner
-                            yaml: owner
                           x-order: 4
                           description: User ID of the owner of the team
                           type: string
@@ -83230,38 +84181,36 @@ paths:
                         metadata:
                           x-oapi-codegen-extra-tags:
                             db: metadata
-                            yaml: metadata
                           x-order: 5
                           x-go-type: core.Map
                           x-go-type-skip-optional-pointer: true
                           type: object
                           description: Additional metadata for the team
-                        created_at:
+                        createdAt:
+                          description: Timestamp when the team was created.
                           x-oapi-codegen-extra-tags:
                             db: created_at
-                            yaml: created_at
+                            json: createdAt
                           x-order: 6
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
-                        updated_at:
+                        updatedAt:
+                          description: Timestamp when the team was last updated.
                           x-oapi-codegen-extra-tags:
                             db: updated_at
-                            yaml: updated_at
+                            json: updatedAt
                           x-order: 7
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
-                        deleted_at:
+                        deletedAt:
+                          description: Timestamp when the team was soft-deleted, if applicable.
                           x-oapi-codegen-extra-tags:
                             db: deleted_at
-                            yaml: deleted_at
+                            json: deletedAt
                           x-order: 8
-                          description: SQL null Timestamp to handle null values of time.
-                          x-go-type: meshcore.NullTime
-                          x-go-type-import:
-                            name: meshcore
-                            path: github.com/meshery/schemas/models/core
+                          x-go-type: NullTime
                           type: string
                           format: date-time
                           x-go-type-skip-optional-pointer: true
@@ -83341,24 +84290,24 @@ paths:
                 description: Paginated list of workspace-team mappings.
                 properties:
                   page:
-                    type: integer
-                    x-go-type-skip-optional-pointer: true
                     description: Zero-based page index returned in this response.
                     minimum: 0
-                  pageSize:
                     type: integer
                     x-go-type-skip-optional-pointer: true
+                  pageSize:
                     description: Maximum number of items returned on each page.
                     minimum: 1
                     x-oapi-codegen-extra-tags:
                       json: pageSize,omitempty
-                  totalCount:
                     type: integer
                     x-go-type-skip-optional-pointer: true
+                  totalCount:
                     description: Total number of items across all pages.
                     minimum: 0
                     x-oapi-codegen-extra-tags:
                       json: totalCount,omitempty
+                    type: integer
+                    x-go-type-skip-optional-pointer: true
                   workspacesTeamsMapping:
                     type: array
                     description: Workspace-team mapping entries.
@@ -83776,7 +84725,10 @@ paths:
                             What the environment exists for. `user` is an ordinary environment that people create to
                             logically group Connections and their Credentials. `administrative` designates an
                             environment the platform itself provisions to hold organization-level configuration, and
-                            which resolvers of that configuration therefore trust.
+                            which resolvers of that configuration therefore trust. `blowhorn` designates an environment
+                            the platform itself provisions to hold an organization's Blowhorn configuration and secrets,
+                            resolved by the purpose-typed credential chain; it is privileged in the same sense as
+                            `administrative`.
 
 
                             Absent means `user`. Nothing may read an unset or unrecognised value as administrative: test
@@ -83811,9 +84763,11 @@ paths:
                           enum:
                             - user
                             - administrative
+                            - blowhorn
                           x-enum-varnames:
                             - EnvironmentPurposeUser
                             - EnvironmentPurposeAdministrative
+                            - EnvironmentPurposeBlowhorn
                           x-go-type-skip-optional-pointer: true
                           x-oapi-codegen-extra-tags:
                             db: purpose
@@ -83896,24 +84850,24 @@ paths:
                 description: Paginated list of workspace-environment mappings.
                 properties:
                   page:
-                    type: integer
-                    x-go-type-skip-optional-pointer: true
                     description: Zero-based page index returned in this response.
                     minimum: 0
-                  pageSize:
                     type: integer
                     x-go-type-skip-optional-pointer: true
+                  pageSize:
                     description: Maximum number of items returned on each page.
                     minimum: 1
                     x-oapi-codegen-extra-tags:
                       json: pageSize,omitempty
-                  totalCount:
                     type: integer
                     x-go-type-skip-optional-pointer: true
+                  totalCount:
                     description: Total number of items across all pages.
                     minimum: 0
                     x-oapi-codegen-extra-tags:
                       json: totalCount,omitempty
+                    type: integer
+                    x-go-type-skip-optional-pointer: true
                   workspacesEnvironmentsMapping:
                     type: array
                     description: Workspace-environment mapping entries.
@@ -84160,24 +85114,24 @@ paths:
                 description: Paginated list of designs.
                 properties:
                   page:
-                    type: integer
-                    x-go-type-skip-optional-pointer: true
                     description: Zero-based page index returned in this response.
                     minimum: 0
-                  pageSize:
                     type: integer
                     x-go-type-skip-optional-pointer: true
+                  pageSize:
                     description: Maximum number of items returned on each page.
                     minimum: 1
                     x-oapi-codegen-extra-tags:
                       json: pageSize,omitempty
-                  totalCount:
                     type: integer
                     x-go-type-skip-optional-pointer: true
+                  totalCount:
                     description: Total number of items across all pages.
                     minimum: 0
                     x-oapi-codegen-extra-tags:
                       json: totalCount,omitempty
+                    type: integer
+                    x-go-type-skip-optional-pointer: true
                   designs:
                     type: array
                     description: Designs in this page.
@@ -88778,24 +89732,24 @@ paths:
                 description: Paginated list of workspace-design mappings.
                 properties:
                   page:
-                    type: integer
-                    x-go-type-skip-optional-pointer: true
                     description: Zero-based page index returned in this response.
                     minimum: 0
-                  pageSize:
                     type: integer
                     x-go-type-skip-optional-pointer: true
+                  pageSize:
                     description: Maximum number of items returned on each page.
                     minimum: 1
                     x-oapi-codegen-extra-tags:
                       json: pageSize,omitempty
-                  totalCount:
                     type: integer
                     x-go-type-skip-optional-pointer: true
+                  totalCount:
                     description: Total number of items across all pages.
                     minimum: 0
                     x-oapi-codegen-extra-tags:
                       json: totalCount,omitempty
+                    type: integer
+                    x-go-type-skip-optional-pointer: true
                   workspacesDesignsMapping:
                     type: array
                     description: Workspace-design mapping entries.
