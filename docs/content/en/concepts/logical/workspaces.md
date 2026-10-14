@@ -4,7 +4,6 @@ description: Meshery Workspaces act as central collaboration point for teams.
 aliases:
 - /concepts/workspaces/
 ---
-
 Like a Google Drive, Meshery Workspaces serve as a virtual space for your team-based work. Create a Workspace to organize your work and to serve as the central point of collaboration for you and your teams and a central point of access control to Environments and their resources.
 
 You may create Workspaces to organize project-based work or to create domains of responsibility for your teams or segregate Designs and Environments and track team activity.
@@ -26,7 +25,7 @@ Workspaces facilitate collaboration between you and your teams, allow you to con
 - Access to Workspaces may be granted to one or more teams.
 - As a point of collaboration to facilitate work, Workspaces may have zero or more Environments associated.
 
-After creating a Workspace, of your next steps is to resource that Workspace. Like a shared drive (or or shared collection of files). Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
+After creating a Workspace, one of your next steps is to resource that Workspace. Like a shared drive (or a shared collection of files). Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
 
 ## Key Components
 
@@ -41,7 +40,7 @@ See "[Environments]({{< ref "concepts/logical/environments.md" >}})" section for
 ### Designs
 
 - Infrastructure Designs are essential for creating reusable deployment templates. Users belonging to teams with access to a workspace can utilize these designs to deploy resources in the Kubernetes clusters associated with that workspace.
-- Like a shared drive (or or shared collection of files), Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
+- Like a shared drive (or a shared collection of files), Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
 - One or more designs can be assigned to a workspace.
 - Same design can be assigned to multiple workspaces.
 
@@ -58,7 +57,7 @@ See "[Organizations]({{< ref "concepts/logical/organizations.md" >}})" section f
 
 Related reading: Learn more about [extensible authorization]({{< ref "reference/extensibility/authorization/index.md" >}}).
 
- <!-- "[Organizations](https://docs.meshery.io/extensions/team-management)" section for more information. -->
+<!-- "[Organizations](https://docs.meshery.io/extensions/team-management)" section for more information. -->
 
 <!-- ### Teams
 
