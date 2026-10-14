@@ -42,6 +42,17 @@
   {{- end -}}
 {{- end -}}
 
+{{- /* Keep only the newest N dated pages (by date) under each params.llms.limit_sections prefix */ -}}
+{{- $dropped := dict -}}
+{{- range $prefix, $max := ($llms.limit_sections | default dict) -}}
+  {{- with site.GetPage (strings.TrimSuffix "/" $prefix) -}}
+    {{- $dated := where .RegularPagesRecursive "Date.IsZero" false -}}
+    {{- range after (int $max) $dated.ByDate.Reverse -}}
+      {{- $dropped = merge $dropped (dict .RelPermalink true) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
 # {{ site.Title }}
 
 > {{ site.Params.metadata.description | default site.Params.description | default site.Title }}
@@ -98,7 +109,7 @@ url: {{ $url }}
 {{ with .Params.description }}description: {{ . }}
 {{ end -}}
 --------------------------------------------------------------------------------
-{{ if .RawContent }}{{ .RawContent }}{{ else }}{{ .Summary | plainify }}{{ end }}
+{{ if .RawContent }}{{ .RenderShortcodes }}{{ else }}{{ .Summary | plainify }}{{ end }}
 {{- end }}
 {{- end }}
 
@@ -125,7 +136,7 @@ url: {{ $sectionUrl }}
 {{- range where .RegularPagesRecursive ".Permalink" "ne" "" }}
 {{- if .Title }}
 {{- $show := partial "llms_full_is_valid_page.html" (dict "url" .RelPermalink "includeList" $includeList "excludeList" $excludeList) }}
-{{- if $show }}
+{{- if and $show (not (index $dropped .RelPermalink)) }}
 {{- $url := .Permalink -}}
 {{- with .OutputFormats.Get "md" }}{{- $url = .Permalink -}}{{- end }}
 
@@ -137,7 +148,7 @@ url: {{ $url }}
 {{ with .Params.description }}description: {{ . }}
 {{ end -}}
 --------------------------------------------------------------------------------
-{{ if .RawContent }}{{ .RawContent }}{{ else }}{{ .Summary | plainify }}{{ end }}
+{{ if .RawContent }}{{ .RenderShortcodes }}{{ else }}{{ .Summary | plainify }}{{ end }}
 {{- end }}
 {{- end }}
 {{- end }}

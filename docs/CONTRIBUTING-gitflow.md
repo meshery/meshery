@@ -137,28 +137,30 @@ This will open up a text editor where you can specify which commits to squash.
 Every documentation page is also published as Markdown at `<page-url>/index.md`,
 with the page title, description, and body content and no navigation, sidebar,
 footer, or styling. A **View as Markdown** link to it appears in the page's
-right-hand meta column (wide screens). The home page show no link, but it Markdown is still
+right-hand meta column (wide screens). The home page shows no link, but its Markdown is still
 published and listed in `llms.txt`. Hugo also generates
 [`/llms.txt`](https://llmstxt.org/) (an index of pages) and `/llms-full.txt`
 (full content of every page) at the site root for AI agents.
 
 This comes from the [llms-txt Hugo module](https://github.com/gethugothemes/hugo-modules/tree/master/llms-txt),
-imported in `hugo.toml`, which registers the `llms`, `llmsfull`, and `md` output
-formats. Hugo core defines a `markdown` output format but ships no templates for
-it, and Docsy v0.14.3 has no equivalent; see the
+imported in `hugo.toml`, whose templates `hugo.toml` wires up through the `llmstxt`,
+`llmsfull`, and `md` output formats (named `llmstxt`, not `llms`, so the
+module's template is not shadowed by Docsy's own `index.llms.txt`). Hugo core defines a `markdown` output format but ships no templates for
+it, and Docsy v0.15.0 (the version pinned in `go.mod`) only ships a site-level
+`llms.txt` that lists the home page and menu, with no per-page Markdown link; see the
 [module announcement](https://discourse.gohugo.io/t/hugo-module-for-llms-txt-and-llms-full-txt/56990).
 `layouts/_default/single.md` and `list.md` override the module's templates so
 shortcodes (including `ref` links) are expanded in each page's Markdown.
 
 If you add a new page layout, render the link only through
 `{{ partial "page-meta-links.html" . }}` in the right-hand meta column. Don't call
-`page-markdown-link.html` directly, or the link appears outside the meta column.
+`view-as-markdown.html` directly, or the link appears outside the meta column.
 
 To leave a path out of `llms.txt` and `llms-full.txt`, add it to `exclude` under
 `[params.llms]` in `hugo.toml`. To keep only the newest N pages of a section
-(by front matter `date`), add it to `[params.llms.limit_sections]`; Kanvas
-releases are capped at 5 this way. That cap lives in `layouts/index.llms` and
-`layouts/index.llmsfull`, which are copies of the module's templates with one
+(by front matter `date`), add it to `[params.llms.limit_sections]`; Meshery
+releases under `/project/releases/` are capped at 5 this way. That cap lives in `layouts/index.llmstxt` (for `llms.txt`) and
+`layouts/index.llmsfull` (for `llms-full.txt`), which are copies of the module's templates with one
 added block, so re-check them against the module when you update it.
 
 <li><h3>References</h3></li>

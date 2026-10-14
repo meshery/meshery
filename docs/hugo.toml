@@ -142,7 +142,7 @@ As a self-service engineering platform, Meshery enables collaborative design and
     "v0.8/*"
   ]
   # Keep only the newest N pages (by `date`) of a section in llms.txt / llms-full.txt.
-  # Implemented by the local overrides layouts/index.llms and layouts/index.llmsfull.
+  # Implemented by the local overrides layouts/index.llmstxt and layouts/index.llmsfull.
   [params.llms.limit_sections]
     "/project/releases/" = 5
 
