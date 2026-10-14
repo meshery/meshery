@@ -1,13 +1,17 @@
 package utils
 
 import (
+	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net"
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
+	"syscall"
 
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
@@ -31,6 +35,7 @@ type PortForward struct {
 	emitLogs   bool
 	stopCh     chan struct{}
 	readyCh    chan struct{}
+	forwarder  *portforward.PortForwarder
 	config     *rest.Config
 }
 
@@ -84,16 +89,8 @@ func newPortForward(
 		Name(podName).
 		SubResource("portforward")
 
-	var err error
-	if localPort == 0 {
-		if host != "localhost" {
-			return nil, fmt.Errorf("local port must be specified when host is not localhost")
-		}
-
-		localPort, err = GetEphemeralPort()
-		if err != nil {
-			return nil, err
-		}
+	if localPort == 0 && host != "localhost" {
+		return nil, fmt.Errorf("local port must be specified when host is not localhost")
 	}
 
 	return &PortForward{
@@ -120,10 +117,11 @@ func (pf *PortForward) run() error {
 	}
 
 	out := io.Discard
-	errOut := io.Discard
+	var portForwardErrors bytes.Buffer
+	errOut := io.Writer(&portForwardErrors)
 	if pf.emitLogs {
 		out = os.Stdout
-		errOut = os.Stderr
+		errOut = io.MultiWriter(os.Stderr, &portForwardErrors)
 	}
 
 	ports := []string{fmt.Sprintf("%d:%d", pf.localPort, pf.remotePort)}
@@ -133,10 +131,14 @@ func (pf *PortForward) run() error {
 	if err != nil {
 		return err
 	}
+	pf.forwarder = fw
 
 	err = fw.ForwardPorts()
 	if err != nil {
-		err = fmt.Errorf("%s for %s/%s", err, pf.namespace, pf.podName)
+		if portForwardErrors.Len() > 0 {
+			err = fmt.Errorf("%w: %s", err, strings.TrimSpace(portForwardErrors.String()))
+		}
+		err = fmt.Errorf("%w for %s/%s", err, pf.namespace, pf.podName)
 		return err
 	}
 	return nil
@@ -162,6 +164,16 @@ func (pf *PortForward) Init() error {
 	select {
 	case <-pf.readyCh:
 		log.Debug("Port forward initialized")
+		if pf.forwarder != nil {
+			ports, err := pf.forwarder.GetPorts()
+			if err != nil {
+				return err
+			}
+			if len(ports) != 1 {
+				return fmt.Errorf("expected one forwarded port, got %d", len(ports))
+			}
+			pf.localPort = int(ports[0].Local)
+		}
 	case err := <-failure:
 		log.Debugf("Port forward failed: %v", err)
 		return err
@@ -192,6 +204,11 @@ func (pf *PortForward) AddressAndPort() string {
 	return fmt.Sprintf("%s:%d", pf.host, pf.localPort)
 }
 
+// LocalPort returns the local port used for the port-forward connection.
+func (pf *PortForward) LocalPort() int {
+	return pf.localPort
+}
+
 // GetEphemeralPort selects a port for the port-forwarding. It binds to a free
 // ephemeral port and returns the port number.
 func GetEphemeralPort() (int, error) {
@@ -210,3 +227,47 @@ func GetEphemeralPort() (int, error) {
 
 	return tcpAddr.Port, nil
 }
+
+// IsBindError checks whether an error is caused by a local port bind conflict (address already in use).
+// It specifically checks for underlying address-in-use errors and known client-go port-forward error formats,
+// while excluding permission-denied or unrelated network/transport errors.
+func IsBindError(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	// 1. Check underlying syscall.EADDRINUSE using errors.Is
+	if errors.Is(err, syscall.EADDRINUSE) {
+		return true
+	}
+
+	// 2. Check *net.OpError with underlying syscall.Errno
+	var opErr *net.OpError
+	if errors.As(err, &opErr) {
+		if errors.Is(opErr.Err, syscall.EADDRINUSE) {
+			return true
+		}
+		var sysErr *os.SyscallError
+		if errors.As(opErr.Err, &sysErr) {
+			if errors.Is(sysErr.Err, syscall.EADDRINUSE) {
+				return true
+			}
+		}
+	}
+
+	// 3. Check known string representations from client-go and OS socket layers.
+	// Explicitly exclude permission-denied or operation-not-permitted errors.
+	errStr := strings.ToLower(err.Error())
+	if strings.Contains(errStr, "permission denied") || strings.Contains(errStr, "operation not permitted") {
+		return false
+	}
+
+	return strings.Contains(errStr, "address already in use") ||
+		strings.Contains(errStr, "only one usage of each socket address")
+}
+
+// IsPortBusyError is an alias for IsBindError to identify address-in-use conflicts.
+func IsPortBusyError(err error) bool {
+	return IsBindError(err)
+}
+
