@@ -17,6 +17,8 @@ package registry
 import (
 	"fmt"
 	"path/filepath"
+	"slices"
+	"sort"
 	"strings"
 
 	"github.com/meshery/schemas/models/v1beta1/model"
@@ -40,61 +42,74 @@ var (
 	outputFormat          string
 )
 
-// Example publishing to meshery docs
-// cd docs;
-// mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/pages/integrations docs/assets/img/integrations -o md
+var supportedPublishSystems = []string{"meshery", "remote-provider", "website"}
 
-// Example publishing to mesheryio docs
-// mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
-
-// Example publishing to remove provider docs
-// mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw /src/collections/integrations /src/collections/integrations -o mdx
+const publishUsage = `Usage:
+mesheryctl registry publish --system [system] --spreadsheet-cred [credential] --spreadsheet-id [sheet-id] --models-output-path [models-output-path] --imgs-output-path [imgs-output-path]
+mesheryctl registry publish --system [system] --spreadsheet-cred [credential] --spreadsheet-id [sheet-id] --models-output-path [models-output-path] --imgs-output-path [imgs-output-path] -o [output-format]
+Run 'mesheryctl registry publish --help' for usage instructions`
 
 // publishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
 var publishCmd = &cobra.Command{
-	Use:   "publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]",
+	Use:   "publish",
 	Short: "Publish Meshery Models to Websites, Remote Provider, Meshery Server",
 	Long: `Publishes metadata about Meshery Models to Websites, Remote Provider, or Meshery Server, including model and component icons by reading from a Google Spreadsheet and outputing to markdown or json format.
 Find more information at: https://docs.meshery.io/reference/references/mesheryctl/registry/publish`,
 	Example: `
 // Publish To System
-mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]
+mesheryctl registry publish --system [system] --spreadsheet-cred [credential] --spreadsheet-id [sheet-id] --models-output-path [models-output-path] --imgs-output-path [imgs-output-path] -o [output-format]
 
 // Publish To Meshery
-mesheryctl registry publish meshery GoogleCredential GoogleSheetID [repo]/models
+mesheryctl registry publish --system meshery --spreadsheet-cred "$CRED" --spreadsheet-id GoogleSheetID --models-output-path [repo]/models
 
 // Publish To Remote Provider
-mesheryctl registry publish remote-provider GoogleCredential GoogleSheetID [repo]/meshmodels/models [repo]/ui/public/img/meshmodels
+mesheryctl registry publish --system remote-provider --spreadsheet-cred "$CRED" --spreadsheet-id GoogleSheetID --models-output-path [repo]/meshmodels/models --imgs-output-path [repo]/ui/public/img/meshmodels
 
 // Publish To Website
-mesheryctl registry publish website GoogleCredential GoogleSheetID [repo]/integrations [repo]/ui/public/img/meshmodels
+mesheryctl registry publish --system website --spreadsheet-cred "$CRED" --spreadsheet-id GoogleSheetID --models-output-path [repo]/integrations --imgs-output-path [repo]/ui/public/img/meshmodels -o md
 
 // Publishing to meshery docs
 cd docs;
-mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/pages/integrations docs/assets/img/integrations -o md
+mesheryctl registry publish --system website --spreadsheet-cred "$CRED" --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --models-output-path docs/pages/integrations --imgs-output-path docs/assets/img/integrations -o md
 
 // Publishing to mesheryio site
-mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
+mesheryctl registry publish --system website --spreadsheet-cred "$CRED" --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --models-output-path meshery.io/integrations --imgs-output-path meshery.io/assets/images/integration -o js
 
 // Publishing to any website
-mesheryctl registry publish website "$CRED" 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw path/to/models path/to/icons -o mdx
+mesheryctl registry publish --system website --spreadsheet-cred "$CRED" --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --models-output-path path/to/models --imgs-output-path path/to/icons -o mdx
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) > 0 {
+			return ErrPublishInvalidArgs(fmt.Sprintf("unexpected positional arguments: %s. registry publish now takes flags instead of positional arguments\n\n%s", strings.Join(args, " "), publishUsage))
+		}
 
-		if len(args) != 5 {
-			return errors.New(utils.RegistryError("[ system, google sheet credential, sheet-id, models output path, imgs output path] are required\n\nUsage: \nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]\nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]\nRun 'mesheryctl registry publish --help'", "publish"))
+		requiredFlags := []string{"system", "spreadsheet-cred", "spreadsheet-id", "models-output-path"}
+		var missing []string
+		for _, name := range requiredFlags {
+			value, _ := cmd.Flags().GetString(name)
+			if strings.TrimSpace(value) == "" {
+				missing = append(missing, "--"+name)
+			}
+		}
+		if len(missing) > 0 {
+			sort.Strings(missing)
+			return ErrPublishInvalidArgs(fmt.Sprintf("missing required flag(s): %s\n\n%s", strings.Join(missing, ", "), publishUsage))
+		}
+
+		sys, _ := cmd.Flags().GetString("system")
+		if !slices.Contains(supportedPublishSystems, sys) {
+			return ErrPublishInvalidArgs(fmt.Sprintf("invalid system: '%s'. Supported systems are %s\n\n%s", sys, strings.Join(supportedPublishSystems, ", "), publishUsage))
+		}
+
+		// remote-provider and website always write icons, so imgs-output-path is mandatory.
+		imgsPath, _ := cmd.Flags().GetString("imgs-output-path")
+		if sys != "meshery" && strings.TrimSpace(imgsPath) == "" {
+			return ErrPublishInvalidArgs(fmt.Sprintf("--imgs-output-path is required for the '%s' system\n\n%s", sys, publishUsage))
 		}
 
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-
-		system = args[0]
-		googleSheetCredential = args[1]
-		sheetID = args[2]
-		modelsOutputPath = args[3]
-		imgsOutputPath = args[4]
-
 		srv, err := meshkitUtils.NewSheetSRV(googleSheetCredential)
 		if err != nil {
 			return errors.New(utils.RegistryError("Invalid JWT Token: Ensure the provided token is a base64-encoded, valid Google Spreadsheets API token.", "publish"))
@@ -273,21 +288,12 @@ func websiteSystem() error {
 }
 
 func init() {
-	// these flags are making the command too long. So currently using args instead of flags @theBeginner86
-
-	// publishCmd.Flags().StringVarP(&system, "system", "s", "", "system to publish to")
-	// publishCmd.Flags().StringVarP(&googleSheetCredential, "google-sheet-credential", "g", "", "google sheet credential")
-	// publishCmd.Flags().StringVarP(&sheetID, "sheet-id", "i", "", "sheet id")
-	// publishCmd.Flags().StringVarP(&modelsOutputPath, "models-output-path", "m", "", "models output path")
-	// publishCmd.Flags().StringVarP(&imgsOutputPath, "imgs-output-path", "p", "", "images output path")
-
+	publishCmd.Flags().StringVarP(&system, "system", "s", "", "system to publish to [meshery | remote-provider | website]")
+	publishCmd.Flags().StringVar(&googleSheetCredential, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
+	publishCmd.Flags().StringVar(&sheetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
+	publishCmd.Flags().StringVarP(&modelsOutputPath, "models-output-path", "m", "", "path to write the published models to")
+	publishCmd.Flags().StringVarP(&imgsOutputPath, "imgs-output-path", "i", "", "path to write model and component icons to (required for remote-provider and website)")
 	publishCmd.Flags().StringVarP(&outputFormat, "output-format", "o", "", "output format [md | mdx | js]")
-
-	// publishCmd.MarkFlagRequired("system")
-	// publishCmd.MarkFlagRequired("google-sheet-credential")
-	// publishCmd.MarkFlagRequired("sheet-id")
-	// publishCmd.MarkFlagRequired("models-output-path")
-	// publishCmd.MarkFlagRequired("imgs-output-path")
 }
 
 func WriteModelDefToFileSystem(model *meshkitRegistryUtils.ModelCSV, version string, location string) (string, *model.ModelDefinition, error) {
