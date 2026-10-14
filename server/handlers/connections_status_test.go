@@ -239,18 +239,33 @@ func TestUpdateConnectionStatus_Kubernetes_PreservesExistingBehavior(t *testing.
 }
 
 // TestNotifySmOfConnectionStatusChange_NilConnection ensures calling NotifySmOfConnectionStatusChange
-// with a nil connection does not panic and returns safely.
+// with a nil connection returns an explicit error, an empty event, and that callers do not persist an event.
 func TestNotifySmOfConnectionStatusChange_NilConnection(t *testing.T) {
-	h, provider, _ := newConnectionStatusFixture(t)
-	systemID := *h.SystemID
+	h, provider, db := newConnectionStatusFixture(t)
 	userID := uuid.Must(uuid.NewV4())
 
 	ev, err := h.NotifySmOfConnectionStatusChange(context.Background(), userID, provider, "test-token", nil)
-	if err != nil {
-		t.Fatalf("expected nil error on nil connection, got: %v", err)
+	if err == nil {
+		t.Fatalf("expected error on nil connection payload, got nil")
 	}
-	if ev.SystemID != systemID {
-		t.Errorf("event systemID = %v, want %v", ev.SystemID, systemID)
+	if err.Error() != "connection payload is required" {
+		t.Errorf("error = %q, want %q", err.Error(), "connection payload is required")
+	}
+	if ev.Description != "" || ev.Metadata != nil {
+		t.Errorf("expected empty event on nil connection, got: %+v", ev)
+	}
+
+	// Caller behavior check: on error, callers must skip persisting empty/invalid events
+	if ev.Description != "" {
+		_ = provider.PersistEvent(ev, "test-token")
+	}
+
+	var count int64
+	if err := db.Model(&events.Event{}).Count(&count).Error; err != nil {
+		t.Fatalf("count events: %v", err)
+	}
+	if count != 0 {
+		t.Errorf("expected 0 persisted events for nil connection error, got %d", count)
 	}
 }
 

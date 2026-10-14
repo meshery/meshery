@@ -480,8 +480,13 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		if connection.Name == "" && updatedConnection != nil {
 			connection.Name = updatedConnection.Name
 		}
-		event, _ := h.NotifySmOfConnectionStatusChange(req.Context(), userID, provider, token, connection)
-		_ = provider.PersistEvent(event, token)
+		event, err := h.NotifySmOfConnectionStatusChange(req.Context(), userID, provider, token, connection)
+		if err != nil {
+			h.log.Error(err)
+		}
+		if event.Description != "" {
+			_ = provider.PersistEvent(event, token)
+		}
 	}
 
 	event := eventBuilder.WithSeverity(events.Informational).Build()
@@ -493,8 +498,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 
 func (h *Handler) NotifySmOfConnectionStatusChange(ctx context.Context, userID core.Uuid, provider models.Provider, token string, connection *connections.ConnectionPayload) (events.Event, error) {
 	if connection == nil {
-		eventBuilder := events.NewEvent().FromOwner(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
-		return *eventBuilder.Build(), nil
+		return events.Event{}, fmt.Errorf("connection payload is required")
 	}
 
 	connectionID := connection.ID
