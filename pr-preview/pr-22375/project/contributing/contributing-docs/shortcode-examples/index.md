@@ -656,13 +656,13 @@ This is the content for the second tab.
 
 #### Rendered output
 
-<div class="tab-container tab-level-1"><input id="example-tab-group-3-1" type="radio" name="example-tab-group-3" checked>
-    <label for="example-tab-group-3-1">Tab 1 Title
+<div class="tab-container tab-level-1"><input id="example-tab-group-4-1" type="radio" name="example-tab-group-4" checked>
+    <label for="example-tab-group-4-1">Tab 1 Title
     </label>
-    <section class="tabbed" id="example-tab-group-3-content-1">This is the content for the first tab.</section><input id="example-tab-group-3-2" type="radio" name="example-tab-group-3">
-    <label for="example-tab-group-3-2"><i class="fas fa-cog" aria-hidden="true"></i>Tab 2 Title
+    <section class="tabbed" id="example-tab-group-4-content-1">This is the content for the first tab.</section><input id="example-tab-group-4-2" type="radio" name="example-tab-group-4">
+    <label for="example-tab-group-4-2"><i class="fas fa-cog" aria-hidden="true"></i>Tab 2 Title
     </label>
-    <section class="tabbed" id="example-tab-group-3-content-2">This is the content for the second tab.</section></div>
+    <section class="tabbed" id="example-tab-group-4-content-2">This is the content for the second tab.</section></div>
 
 ### Snippet shortcodes
 

@@ -13,10 +13,10 @@ This section walks you through the **Create** workflow — perfect for users who
 
 > Tip: If you don’t have any files yet, start with **Create**. You can always [export](/pr-preview/pr-22375/guides/configuration-management/exporting-models/) or re-import your model later.
 
-<div class="tab-container tab-level-1"><input id="creating-models-tabs-4-1" type="radio" name="creating-models-tabs-4" checked>
-    <label for="creating-models-tabs-4-1"><i class="fa fa-desktop" aria-hidden="true"></i>Meshery UI
+<div class="tab-container tab-level-1"><input id="creating-models-tabs-6-1" type="radio" name="creating-models-tabs-6" checked>
+    <label for="creating-models-tabs-6-1"><i class="fa fa-desktop" aria-hidden="true"></i>Meshery UI
     </label>
-    <section class="tabbed" id="creating-models-tabs-4-content-1"><p>The URL Create feature allows you to create models in Meshery by providing URLs to source repositories or package registries. Here's how to use it:</p>
+    <section class="tabbed" id="creating-models-tabs-6-content-1"><p>The URL Create feature allows you to create models in Meshery by providing URLs to source repositories or package registries. Here's how to use it:</p>
 <h4>Step 1: Open the Model Generation Interface</h4>
 <p>Go to the <a href="https://playground.meshery.io/settings?settingsCategory=Registry&tab=Models">Registry</a> section in the Meshery UI. Click the <strong>create</strong> button to start creating a new model.</p>
 <a href="./images/create-ui-where.gif">
@@ -93,10 +93,10 @@ This section walks you through the **Create** workflow — perfect for users who
 <p>A notification will also appear in the <a href="/pr-preview/pr-22375/guides/infrastructure-management/notification-management/">Notification Center</a> to confirm whether the operation succeeded or failed, providing additional context if needed.</p>
 <div class="alert alert-warning" role="alert"><div class="h4 alert-heading" role="heading">Note on Deletion</div>
 <p>Once a model is generated, it cannot be deleted from the Meshery UI. If you no longer wish to use it, you may mark it as ignored instead.</p>
-</div></section><input id="creating-models-tabs-4-2" type="radio" name="creating-models-tabs-4">
-    <label for="creating-models-tabs-4-2"><i class="fa fa-terminal" aria-hidden="true"></i>mesheryctl
+</div></section><input id="creating-models-tabs-6-2" type="radio" name="creating-models-tabs-6">
+    <label for="creating-models-tabs-6-2"><i class="fa fa-terminal" aria-hidden="true"></i>mesheryctl
     </label>
-    <section class="tabbed" id="creating-models-tabs-4-content-2"><h3>Prerequisites:</h3>
+    <section class="tabbed" id="creating-models-tabs-6-content-2"><h3>Prerequisites:</h3>
 <ul>
   <li>Fork the <a href="https://github.com/meshery/meshery" target="_blank" rel="noopener">meshery/meshery repository.</a></li>
   <li>Install the Meshery CLI by following the <a href="/pr-preview/pr-22375/installation/" target="_blank" rel="noopener">installation instructions.</a></li>
@@ -105,10 +105,10 @@ This section walks you through the **Create** workflow — perfect for users who
 <p>Meshery Server is not required to generate models. The Meshery CLI can be used to generate models. Model and Component generation logic is MeshKit. <code>mesheryctl</code> and Meshery Server both utilize MeshKit&rsquo;s libraries for ongoing programmatic generation of models and components.</p>
 </div>
 <br />
-<div class="tab-container tab-level-2 tab-container--nested"><input id="mesheryctl-tabs-3-1" type="radio" name="mesheryctl-tabs-3" checked>
-    <label for="mesheryctl-tabs-3-1"><i class="fa fa-folder-tree" aria-hidden="true"></i>Using Scaffold (model init)
+<div class="tab-container tab-level-2 tab-container--nested"><input id="mesheryctl-tabs-5-1" type="radio" name="mesheryctl-tabs-5" checked>
+    <label for="mesheryctl-tabs-5-1"><i class="fa fa-folder-tree" aria-hidden="true"></i>Using Scaffold (model init)
     </label>
-    <section class="tabbed" id="mesheryctl-tabs-3-content-1"><p>The scaffold workflow is the most direct way to hand-author a model - especially an <strong>annotation-only</strong> model (a curated set of icons used purely for visual diagramming). Unlike the CSV and Spreadsheet workflows, it does not require forking <code>meshery/meshery</code> or a Google Spreadsheet credential; it produces model files locally, packages them as an OCI image, and registers them into a running Meshery Server.</p>
+    <section class="tabbed" id="mesheryctl-tabs-5-content-1"><p>The scaffold workflow is the most direct way to hand-author a model - especially an <strong>annotation-only</strong> model (a curated set of icons used purely for visual diagramming). Unlike the CSV and Spreadsheet workflows, it does not require forking <code>meshery/meshery</code> or a Google Spreadsheet credential; it produces model files locally, packages them as an OCI image, and registers them into a running Meshery Server.</p>
 <h4>1. Scaffold the model</h4>
 <p>Generate the folder structure with <code>mesheryctl model init</code>:</p>
 <code>mesheryctl model init digitalocean-icons --version v0.1.0</code>
@@ -150,10 +150,10 @@ digitalocean-icons/
 <code>mesheryctl model import -f digitalocean-icons-v0-1-0.tar</code>
 <p>Verify the result:</p>
 <code>mesheryctl model view digitalocean-icons</code>
-<p>See <a href="/pr-preview/pr-22375/guides/configuration-management/importing-models/">Importing Models</a> for the full set of import sources and <a href="/pr-preview/pr-22375/guides/configuration-management/push-pull-model-image/">Push or Pull a Model Image</a> for packaging details.</p></section><input id="mesheryctl-tabs-3-2" type="radio" name="mesheryctl-tabs-3">
-    <label for="mesheryctl-tabs-3-2"><i class="fa fa-list" aria-hidden="true"></i>Using CSV
+<p>See <a href="/pr-preview/pr-22375/guides/configuration-management/importing-models/">Importing Models</a> for the full set of import sources and <a href="/pr-preview/pr-22375/guides/configuration-management/push-pull-model-image/">Push or Pull a Model Image</a> for packaging details.</p></section><input id="mesheryctl-tabs-5-2" type="radio" name="mesheryctl-tabs-5">
+    <label for="mesheryctl-tabs-5-2"><i class="fa fa-list" aria-hidden="true"></i>Using CSV
     </label>
-    <section class="tabbed" id="mesheryctl-tabs-3-content-2"><h4>1. Understanding the Template Directory</h4>
+    <section class="tabbed" id="mesheryctl-tabs-5-content-2"><h4>1. Understanding the Template Directory</h4>
 <p>Inside your forked Meshery repository, you'll find the <code>template-csvs</code> directory containing three essential CSV files:</p>
 <code>
     mesheryctl/templates/template-csvs/
@@ -179,10 +179,10 @@ digitalocean-icons/
   <li>Examine the detailed error logs at <code>~/.meshery/logs/registry/</code> to understand specific generation issues.</li>
   <li>Review your CSV files for proper formatting, ensuring all required columns are present and correctly populated.</li>
   <li>Confirm you're executing the command from the root of your forked Meshery repository.</li>
-</ul></section><input id="mesheryctl-tabs-3-3" type="radio" name="mesheryctl-tabs-3">
-    <label for="mesheryctl-tabs-3-3"><i class="fa fa-table" aria-hidden="true"></i>Using Integration Spreadsheet
+</ul></section><input id="mesheryctl-tabs-5-3" type="radio" name="mesheryctl-tabs-5">
+    <label for="mesheryctl-tabs-5-3"><i class="fa fa-table" aria-hidden="true"></i>Using Integration Spreadsheet
     </label>
-    <section class="tabbed" id="mesheryctl-tabs-3-content-3"><h3>Setting Up Your Environment</h3>
+    <section class="tabbed" id="mesheryctl-tabs-5-content-3"><h3>Setting Up Your Environment</h3>
 <p>Before you begin working with the Integration Spreadsheet, you'll need to complete several important setup steps:</p>
 <h4>1. Spreadsheet Preparation</h4>
 <p>Start by creating your own copy of the Meshery Integration Sheet:</p>

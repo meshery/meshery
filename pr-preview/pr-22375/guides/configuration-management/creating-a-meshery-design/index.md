@@ -10,10 +10,10 @@ See [Meshery Designs](/pr-preview/pr-22375/concepts/logical/designs/) for a full
 
 ## Ways to Create a Design
 
-<div class="tab-container tab-level-1"><input id="creating-a-meshery-design-tabs-2-1" type="radio" name="creating-a-meshery-design-tabs-2" checked>
-    <label for="creating-a-meshery-design-tabs-2-1"><i class="fa fa-desktop" aria-hidden="true"></i>Meshery UI
+<div class="tab-container tab-level-1"><input id="creating-a-meshery-design-tabs-3-1" type="radio" name="creating-a-meshery-design-tabs-3" checked>
+    <label for="creating-a-meshery-design-tabs-3-1"><i class="fa fa-desktop" aria-hidden="true"></i>Meshery UI
     </label>
-    <section class="tabbed" id="creating-a-meshery-design-tabs-2-content-1"><h2 id="using-the-design-configurator-in-meshery-ui">
+    <section class="tabbed" id="creating-a-meshery-design-tabs-3-content-1"><h2 id="using-the-design-configurator-in-meshery-ui">
 	Using the Design Configurator in Meshery UI
 </h2>
 <p>The Design Configurator is a built-in tool in Meshery UI. It lets you browse infrastructure categories and models, add components to a design, configure each component through guided forms, and save the resulting design — all without writing YAML by hand.</p>
@@ -70,10 +70,10 @@ The Design Configurator opens with an empty canvas and a component panel on the 
 </h2>
 <p>When you start Meshery for the first time, a set of seed designs is available. These cover common Kubernetes patterns and serve as a starting point for exploration.</p>
 <p>You can also import community designs from the <a href="https://meshery.io/catalog">Meshery Catalog</a> or from a Git repository.</p>
-<img src="../images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" /></section><input id="creating-a-meshery-design-tabs-2-2" type="radio" name="creating-a-meshery-design-tabs-2">
-    <label for="creating-a-meshery-design-tabs-2-2"><i class="fa fa-terminal" aria-hidden="true"></i>mesheryctl
+<img src="../images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" /></section><input id="creating-a-meshery-design-tabs-3-2" type="radio" name="creating-a-meshery-design-tabs-3">
+    <label for="creating-a-meshery-design-tabs-3-2"><i class="fa fa-terminal" aria-hidden="true"></i>mesheryctl
     </label>
-    <section class="tabbed" id="creating-a-meshery-design-tabs-2-content-2"><h2 id="using-mesheryctl">
+    <section class="tabbed" id="creating-a-meshery-design-tabs-3-content-2"><h2 id="using-mesheryctl">
 	Using mesheryctl
 </h2>
 <p>You can also create and manage designs from the command line using <code>mesheryctl</code>.</p>

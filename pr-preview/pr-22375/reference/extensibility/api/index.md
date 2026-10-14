@@ -10,16 +10,16 @@ Each of Meshery's APIs are subject to the following authentication and authoriza
 
 ### API Reference
 
-<div class="tab-container tab-level-1"><input id="api-reference-tabs-2-1" type="radio" name="api-reference-tabs-2" checked>
-    <label for="api-reference-tabs-2-1"><i class="fa fa-cube" aria-hidden="true"></i>REST API
+<div class="tab-container tab-level-1"><input id="api-reference-tabs-3-1" type="radio" name="api-reference-tabs-3" checked>
+    <label for="api-reference-tabs-3-1"><i class="fa fa-cube" aria-hidden="true"></i>REST API
     </label>
-    <section class="tabbed" id="api-reference-tabs-2-content-1"><p>Meshery Server's REST API is available at <code>http://[hostname]:[port]/api/</code>.</p>
+    <section class="tabbed" id="api-reference-tabs-3-content-1"><p>Meshery Server's REST API is available at <code>http://[hostname]:[port]/api/</code>.</p>
 <div class="alert alert-dark" role="alert"><div class="h4 alert-heading" role="heading">Meshery's REST API Reference</div>
 <p>See <a href="/pr-preview/pr-22375/reference/references/rest-apis/">REST API Reference</a> Self-generated API documentation for Meshery&rsquo;s REST API. Documentation is generated from Meshery&rsquo;s Open API schema.</p>
-</div></section><input id="api-reference-tabs-2-2" type="radio" name="api-reference-tabs-2">
-    <label for="api-reference-tabs-2-2"><i class="fa fa-globe" aria-hidden="true"></i>GraphQL API
+</div></section><input id="api-reference-tabs-3-2" type="radio" name="api-reference-tabs-3">
+    <label for="api-reference-tabs-3-2"><i class="fa fa-globe" aria-hidden="true"></i>GraphQL API
     </label>
-    <section class="tabbed" id="api-reference-tabs-2-content-2"><p>Meshery Server's GraphQl API is available at <code>{hostname]:[port]/api/graphql/query</code>. A GraphQL request can be made as a POST request to the endpoint with the query as the payload. Meshery Server's GraphQL API can be used to perform three operations:</p>
+    <section class="tabbed" id="api-reference-tabs-3-content-2"><p>Meshery Server's GraphQl API is available at <code>{hostname]:[port]/api/graphql/query</code>. A GraphQL request can be made as a POST request to the endpoint with the query as the payload. Meshery Server's GraphQL API can be used to perform three operations:</p>
 <ul>
 <li>Queries for data retrieval.</li>
 <li>Mutations for creating, updating, and deleting data.</li>
