@@ -41,12 +41,12 @@ You can import designs into Meshery through either **[Meshery CLI]({{< ref "refe
 ### 1. Using Meshery CLI
 
 ```bash
-mesheryctl design import --file <PATH/URL> --source-type <TYPE>
+mesheryctl design import --file <PATH/URL>
 ```
 
 ```bash
 # Example: Import Kubernetes manifest
-mesheryctl design import -f ./app-deployment.yaml -s manifest
+mesheryctl design import -f ./app-deployment.yaml
 ```
 
 #### 2. Using Meshery UI

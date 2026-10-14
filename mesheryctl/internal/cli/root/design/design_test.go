@@ -12,4 +12,6 @@ func resetVariables() {
 	skipSave = false
 	designFile = ""
 	file = ""
+	sourceType = ""
+	name = ""
 }
