@@ -55,7 +55,7 @@ func TestDeleteCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&page_size=10000",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&pagesize=10000",
 					Response:     "delete.idList.response.golden",
 					ResponseCode: 200,
 				},

@@ -652,7 +652,7 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 	if configuration == "pattern" {
 		url += "populate=pattern_file&"
 	}
-	url += "page_size=10000"
+	url += "pagesize=10000"
 	configType := configuration + "s"
 	var idList []string
 	req, err := NewRequest("GET", url, nil)
@@ -688,7 +688,7 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 
 // GetName returns a of name:id from meshery server endpoint /api/{configurations}
 func GetName(mesheryServerUrl, configuration string) (map[string]string, error) {
-	url := mesheryServerUrl + "/api/" + configuration + "?page_size=10000"
+	url := mesheryServerUrl + "/api/" + configuration + "?pagesize=10000"
 	configType := configuration + "s"
 	nameIdMap := make(map[string]string)
 	req, err := NewRequest("GET", url, nil)
@@ -757,26 +757,34 @@ func ValidId(mesheryServerUrl, args string, configuration string) (string, bool,
 	return args, isID, nil
 }
 
-// ValidName - Check if args is a valid name or a valid name prefix and returns the full name and ID
+// ValidName - Check if args is a valid name or a valid name prefix and returns the full name and ID.
+// An exact name match wins; a prefix shared by more than one name is rejected as ambiguous.
 func ValidName(mesheryServerUrl, args string, configuration string) (string, string, bool, error) {
-	isName := false
 	nameIdMap, err := GetName(mesheryServerUrl, configuration)
 	if err != nil {
 		return "", "", false, err
 	}
 
-	fullName := ""
-	ID := ""
+	if ID, ok := nameIdMap[args]; ok {
+		return args, ID, true, nil
+	}
 
+	var matches []string
 	for name := range nameIdMap {
 		if strings.HasPrefix(name, args) {
-			fullName = name
-			ID = nameIdMap[name]
-			isName = true
+			matches = append(matches, name)
 		}
 	}
 
-	return fullName, ID, isName, nil
+	switch len(matches) {
+	case 0:
+		return "", "", false, nil
+	case 1:
+		return matches[0], nameIdMap[matches[0]], true, nil
+	default:
+		sort.Strings(matches)
+		return "", "", false, errors.Errorf("%q matches more than one %s (%s); use the full name or the ID", args, configuration, strings.Join(matches, ", "))
+	}
 }
 
 // AskForInput asks the user for an input and checks if it is in the available values
