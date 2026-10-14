@@ -4,6 +4,7 @@
 {{ $gh_subdir := $.Param "github_subdir" | default "" -}}
 {{ $gh_branch := $.Param "github_branch" | default "main" -}}
 <div class="td-page-meta ms-2 pb-1 pt-2 mb-0">
+{{ partial "view-as-markdown.html" . -}}
 {{ if $gh_repo -}}
 
   {{/* Adjust $path based on path_base_for_github_subdir */ -}}
