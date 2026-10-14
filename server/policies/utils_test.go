@@ -55,6 +55,16 @@ func TestMatchName(t *testing.T) {
 		{"Namespace", "Namespace", true},
 		{"Namespace", "Service", false},
 		{"Deployment", "Deploy.*", true},
+		{"ClusterRole", "Role", false},
+		{"ClusterRoleBinding", "RoleBinding", false},
+		{"ClusterRoleBinding", "Binding", false},
+		{"RoleBinding", "Binding", false},
+		{"Role", "Role", true},
+		{"ClusterRole", "ClusterRole", true},
+		{"ClusterRoleBinding", "ClusterRoleBinding", true},
+		{"RoleBinding", "Role|ClusterRole", false},
+		{"Role", "Role|ClusterRole", true},
+		{"ClusterRole", "Role|ClusterRole", true},
 	}
 
 	for _, tt := range tests {
