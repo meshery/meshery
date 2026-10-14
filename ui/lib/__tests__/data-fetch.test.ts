@@ -167,6 +167,12 @@ describe('dataFetch error reporting', () => {
       'invalid id',
     ],
     ['`message` over `error`', '{"message":"preferred","error":"other"}', 'preferred'],
+    [
+      '`error` when `message` is blank',
+      '{"message":"  ","error":"design not found"}',
+      'design not found',
+    ],
+    ['`error` when `message` is not a string', '{"message":{"x":1},"error":"bad id"}', 'bad id'],
   ])('uses %s of a JSON error body as the message', async (_label, body, expected) => {
     (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(
       errorResponse(400, 'Bad Request', () => Promise.resolve(body)),
@@ -305,6 +311,51 @@ describe('dataFetch error reporting', () => {
       expect(err).toBeInstanceOf(DataFetchError);
       expect(err.message).toBe('Request to /api/test timed out after 1000ms');
       expect(err.cause.name).toBe('AbortError');
+    });
+
+    // A non-OK response whose body stalls until the request is aborted.
+    const stalledErrorBody = () =>
+      (global.fetch as ReturnType<typeof vi.fn>).mockImplementation((_url, init) =>
+        Promise.resolve({
+          ok: false,
+          status: 500,
+          statusText: 'Internal Server Error',
+          redirected: false,
+          text: () =>
+            new Promise((_resolve, reject) => {
+              init.signal.addEventListener('abort', () =>
+                reject(new DOMException('The operation was aborted.', 'AbortError')),
+              );
+            }),
+        }),
+      );
+
+    it('reports a timeout that fires while the error body is still loading', async () => {
+      vi.useFakeTimers();
+      stalledErrorBody();
+      const errorFn = vi.fn();
+
+      dataFetch('/api/test', { timeout: 1000 }, vi.fn(), errorFn);
+      await vi.advanceTimersByTimeAsync(1000);
+
+      const err = errorFn.mock.calls[0][0];
+      expect(err.message).toBe('Request to /api/test timed out after 1000ms');
+    });
+
+    it('passes a caller abort during the error body through as-is', async () => {
+      stalledErrorBody();
+      const caller = new AbortController();
+      const errorFn = vi.fn();
+
+      dataFetch('/api/test', { timeout: 1000, signal: caller.signal }, vi.fn(), errorFn);
+      await vi.waitFor(() => expect(global.fetch).toHaveBeenCalled());
+      await Promise.resolve();
+      caller.abort();
+
+      await vi.waitFor(() => expect(errorFn).toHaveBeenCalled());
+      const err = errorFn.mock.calls[0][0];
+      expect(err).not.toBeInstanceOf(DataFetchError);
+      expect(err.name).toBe('AbortError');
     });
 
     it('does not pass the timeout option through to fetch', async () => {
