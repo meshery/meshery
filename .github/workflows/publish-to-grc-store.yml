@@ -10,11 +10,7 @@ on:
   schedule:
     # Run once a week (Mondays at 6:00 UTC)
     - cron: "0 6 * * 1"
-  push:
-    branches:
-      - master
-    tags:
-      - "v*"
+  # Push events are intentionally omitted because grc.store rate-limits publications.
   release:
     types: [published]
 
