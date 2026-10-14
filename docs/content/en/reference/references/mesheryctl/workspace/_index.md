@@ -45,6 +45,16 @@ mesheryctl workspace create --orgId [orgId] --name [name] --description [descrip
 </div>
 </pre> 
 
+To update a workspace
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+<div class='clipboardjs'>
+mesheryctl workspace update [workspace-id] --orgId [orgId] --name [new-name] --description [new-description]
+
+</div>
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>
