@@ -119,8 +119,19 @@ describe('useColumnVisibilityPreference', () => {
     expect(result.current.columnVisibility.owner).toBe(true);
   });
 
-  it('still loads stored preferences when localStorage access throws', () => {
+  it('still loads saved v2 choices when the v1 cleanup throws', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ owner: false }));
     vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {
+      throw new Error('SecurityError');
+    });
+
+    const { result } = renderHook(() => useColumnVisibilityPreference(KEY, WIDE));
+
+    expect(result.current.columnVisibility).toEqual({ ...WIDE, owner: false });
+  });
+
+  it('falls back to responsive defaults when localStorage cannot be read', () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
       throw new Error('SecurityError');
     });
 

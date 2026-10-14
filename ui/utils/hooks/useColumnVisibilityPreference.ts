@@ -8,8 +8,13 @@ const LEGACY_STORAGE_KEY_PREFIX = 'meshery_cols_';
 function loadFromStorage(tableKey: string): Record<string, boolean> {
   if (typeof window === 'undefined') return {};
   try {
-    // Drop the v1 map so it doesn't linger in localStorage.
+    // Drop the v1 map so it doesn't linger in localStorage. Its own try, so a
+    // failed cleanup can't stop the saved v2 choices from loading.
     window.localStorage.removeItem(`${LEGACY_STORAGE_KEY_PREFIX}${tableKey}`);
+  } catch {
+    // Storage blocked or unavailable; reading below degrades the same way.
+  }
+  try {
     const raw = window.localStorage.getItem(`${STORAGE_KEY_PREFIX}${tableKey}`);
     return raw ? (JSON.parse(raw) as Record<string, boolean>) : {};
   } catch {
