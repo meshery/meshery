@@ -1,0 +1,15 @@
+# v0.8.14
+
+date: 2025-01-16
+
+
+
+## What's New
+## 🔤 General
+- \[Server\] Chore: Revert gqlgen version @leecalcote (#13289)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@leecalcote
+

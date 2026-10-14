@@ -1,0 +1,10 @@
+# v0.0.2
+
+date: 2019-03-20
+
+
+
+**What's new?**
+
+- Ability to support running custom yaml on Kubernetes with Istio.
+

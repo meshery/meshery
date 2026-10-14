@@ -1,0 +1,11 @@
+# v0.3.3
+
+date: 2019-12-21
+
+
+
+### What's new?
+
+- Meshery Server
+  - Providers - a new project construct that allows users to select authentication, long-term storage, and so on provider.
+

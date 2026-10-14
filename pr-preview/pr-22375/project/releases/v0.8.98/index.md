@@ -1,0 +1,17 @@
+# v0.8.98
+
+date: 2025-06-04
+
+
+
+## What's New
+## 🔤 General
+## ⌨️ Meshery CLI
+
+- redirect to provider page when not selected @aabidsofi19 (#14921)
+
+## 👨🏽‍💻 Contributors
+
+Thank you to our contributors for making this release possible:
+@aabidsofi19
+

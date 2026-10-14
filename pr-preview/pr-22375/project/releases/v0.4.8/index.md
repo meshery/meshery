@@ -1,0 +1,16 @@
+# v0.4.8
+
+date: 2020-09-28
+
+
+
+### What's new?
+
+- General
+
+  - Fixed broken image Signed-off-by: Bart Kalanski bkalanski@gmail.com @bartkalanski (#1609)
+
+- Documentation
+
+  - Meshery releases documentation update w/ sign off @bartkalanski (#1607)
+

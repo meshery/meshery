@@ -1,0 +1,11 @@
+# v0.3.14
+
+date: 2020-04-24
+
+
+
+### What's new?
+
+- Mesheryctl
+  - Behavior change in `mesheryctl start` to check for new Meshery server images by default.
+

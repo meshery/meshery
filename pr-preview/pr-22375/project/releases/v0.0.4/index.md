@@ -1,0 +1,12 @@
+# v0.0.4
+
+date: 2019-04-07
+
+
+
+**What's new?**
+-Ability to view persisted results.
+
+- Integration and support for Grafana charts.
+- Embedding panels in iframe.
+
