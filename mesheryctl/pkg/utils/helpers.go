@@ -320,7 +320,7 @@ var Services = map[string]Service{
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Environment: []string{
 			"PROVIDER_BASE_URLS=" + DefaultProviderBaseURLs,
-			"ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-traefik-mesh:10006 meshery-nginx-sm:10010 meshery-cilium:10012",
+			"ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-traefik-mesh:10006 meshery-cilium:10012",
 			"EVENT=mesheryLocal",
 			"PORT=9081",
 		},
@@ -361,11 +361,6 @@ var Services = map[string]Service{
 		Image:  "meshery/meshery-kuma:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10007:10007"},
-	},
-	"meshery-nginx-sm": {
-		Image:  "meshery/meshery-nginx-sm:stable-latest",
-		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
-		Ports:  []string{"10010:10010"},
 	},
 	"meshery-cilium": {
 		Image:  "meshery/meshery-cilium:stable-latest",
@@ -1141,9 +1136,6 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, pr
 			"enabled": false,
 		},
 		"meshery-nsm": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-nginx-sm": map[string]interface{}{
 			"enabled": false,
 		},
 		"meshery-traefik-mesh": map[string]interface{}{

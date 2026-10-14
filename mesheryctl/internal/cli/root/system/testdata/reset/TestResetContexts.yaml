@@ -11,7 +11,6 @@ contexts:
             - meshery-nsm
             - meshery-kuma
             - meshery-traefik-mesh
-            - meshery-nginx-sm
             - meshery-cilium
         channel: stable
         version: latest
