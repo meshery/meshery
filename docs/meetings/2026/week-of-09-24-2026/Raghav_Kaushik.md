@@ -1,0 +1,1 @@
+Hi I am Raghav Kaushik, a student at VIT. To say about myself, I am very enthusiastic about technology, I like solving system level problems, I am good at full stack and have been exploring system engineering recently. I work with golang, react, next, express, python, C++. I have been wanting to contribute to open source and I feel like meshery would help me in this field.

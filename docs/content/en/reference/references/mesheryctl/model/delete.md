@@ -3,6 +3,7 @@ title: mesheryctl-model-delete
 display_title: false
 command: model
 subcommand: delete
+categories: [mesheryctl-model]
 ---
 
 # mesheryctl model delete
