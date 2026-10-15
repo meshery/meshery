@@ -35,7 +35,7 @@ jobs:
   golangci-server:
     strategy:
       matrix:
-        go: [1.26.4]
+        go: [1.27.1]
         os: [ubuntu-24.04]
     name: golangci-lint-server
     if: github.repository == 'meshery/meshery'
@@ -118,7 +118,7 @@ jobs:
   golangci-cli:
     strategy:
       matrix:
-        go: [1.26.4]
+        go: [1.27.1]
         os: [ubuntu-24.04]
     name: golangci-lint-cli
     if: github.repository == 'meshery/meshery'

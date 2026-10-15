@@ -10,9 +10,9 @@ Each entry here is a failure whose message points somewhere other than the actua
 
 A build that fails with `compile: version "goX.Y.Z" does not match go tool version` across many dependencies is an environment mismatch, not a code problem. A stale `GOROOT` points at one Go installation while the `go` on `PATH` is a different one.
 
-Any toolchain at or above the version in `go.mod` works - `go 1.26.4` there does not mean 1.26.5 is wrong - so the fix is to make the two agree, not to pin an exact patch release. Drop the stale `GOROOT` and use one installation's own binary:
+Any toolchain at or above the version in `go.mod` works - `go 1.27.1` there does not mean 1.26.5 is wrong - so the fix is to make the two agree, not to pin an exact patch release. Drop the stale `GOROOT` and use one installation's own binary:
 
-{{< code code=`env -u GOROOT PATH="$HOME/.gvm/gos/go1.26.4/bin:$PATH" go test ./...` >}}
+{{< code code=`env -u GOROOT PATH="$HOME/.gvm/gos/go1.27.1/bin:$PATH" go test ./...` >}}
 
 ## `ui/tsconfig.tsbuildinfo` gets committed by accident
 

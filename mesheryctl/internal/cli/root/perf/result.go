@@ -182,7 +182,7 @@ mesheryctl perf result saturday-profile --view
 
 // Fetch results for a specific profile
 func fetchPerformanceProfileResults(baseURL, profileID string, pageSize, pageNumber int) ([]models.PerformanceResult, []byte, error) {
-	var response *models.PerformanceResultsAPIResponse
+	var response models.PerformanceResultsAPIResponse
 
 	url := baseURL + "/api/user/performance/profiles/" + profileID + "/results"
 

@@ -149,7 +149,7 @@ mesheryctl perf profile test --view
 
 // Fetch performance profiles
 func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber int) ([]perfprofile.PerformanceProfile, []byte, error) {
-	var response *perfprofile.PerformanceProfilePage
+	var response perfprofile.PerformanceProfilePage
 
 	url := baseURL + "/api/performance/profiles"
 
