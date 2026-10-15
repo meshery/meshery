@@ -33,7 +33,6 @@ import {
 } from './style';
 import SourceIcon from '@/assets/icons/SourceIcon';
 import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
-import { capitalize } from 'lodash';
 import { DeploymentSelectorIcon } from '@/assets/icons/DeploymentSelectorIcon';
 import {
   CategoryDefinitionV1Beta1OpenApiSchema,
@@ -41,6 +40,11 @@ import {
   SubCategoryDefinitionV1Beta1OpenApiSchema,
 } from '@meshery/schemas';
 import FinishModelGenerateStep from './FinishModelGenerateStep';
+
+const modelSources = [
+  { label: 'Artifact Hub', value: 'artifacthub' },
+  { label: 'GitHub', value: 'github' },
+];
 
 type UrlStepperProps = { handleClose: () => void };
 
@@ -493,16 +497,16 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
                 aria-label="source"
                 name="source"
                 value={modelSource}
-                onChange={(e) => setModelSource(e.target.value.toLowerCase())}
+                onChange={(e) => setModelSource(e.target.value)}
                 style={{ gap: '2rem' }}
               >
-                {['Artifact Hub', 'GitHub'].map((source, idx) => (
+                {modelSources.map((source) => (
                   <FormControlLabel
-                    key={idx}
-                    value={source.toLowerCase()}
+                    key={source.value}
+                    value={source.value}
                     control={<Radio />}
-                    label={<>{source}</>}
-                    data-testid={`UrlStepper-Select-Source-${source}`}
+                    label={<>{source.label}</>}
+                    data-testid={`UrlStepper-Select-Source-${source.label}`}
                   />
                 ))}
               </RadioGroup>
@@ -521,7 +525,7 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
                 placeholder={
                   modelSource === 'github'
                     ? 'git://github.com/cert-manager/cert-manager/master/deploy/crds'
-                    : modelSource === 'artifact hub'
+                    : modelSource === 'artifacthub'
                       ? 'https://artifacthub.io/packages/search?ts_query_web={model-name}'
                       : 'Select a source first'
                 }
@@ -669,7 +673,10 @@ const UrlStepper = React.memo(({ handleClose }: UrlStepperProps) => {
               <SectionHeading variant="subtitle1">Source</SectionHeading>
               <Grid2 container spacing={2} size="grow">
                 <Grid2 size={{ xs: 12, sm: 6 }}>
-                  <SummaryField label="Source Type" value={capitalize(modelSource || '')} />
+                  <SummaryField
+                    label="Source Type"
+                    value={modelSources.find((source) => source.value === modelSource)?.label || ''}
+                  />
                 </Grid2>
                 <Grid2 size={{ xs: 12, sm: 6 }}>
                   <SummaryField label="URL" value={modelUrl} />
