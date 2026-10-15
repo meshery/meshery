@@ -34,15 +34,25 @@ func (da *DefaultConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx i
 
 func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
 
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*core.Uuid)
-	userUUID := user.ID
-
+	userUUID, sysID := ExtractActorIDs(ctx)
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromOwner(userUUID).WithDescription("Failed to interact with the connection.")
+	eventBuilder := events.NewEvent().WithCategory("connection").WithAction("update").WithDescription("Failed to interact with the connection.")
+	if userUUID != core.Uuid(uuid.Nil) {
+		eventBuilder.ActedUpon(userUUID)
+	}
+	ApplyEventAttribution(eventBuilder, userUUID, sysID)
 
-	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	if !HasActorAttribution(userUUID, sysID) {
+		errAttr := ErrEventAttribution(fmt.Errorf("event attribution requires either user ID or system ID"))
+		return NoOp, eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": errAttr}).Build(), errAttr
+	}
+
+	provider, ok := ExtractProvider(ctx)
+	if !ok {
+		errProvider := ErrNilProvider(fmt.Errorf("provider is missing or invalid"))
+		return NoOp, eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": errProvider}).Build(), errProvider
+	}
 
 	payload, err := utils.Cast[connections.ConnectionPayload](data)
 	if err != nil {
@@ -52,6 +62,10 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 	credential := &models.Credential{}
 	// If existing credential is used do not persist again
 	if !ok {
+		if userUUID == core.Uuid(uuid.Nil) {
+			errUser := ErrEventAttribution(fmt.Errorf("user ID is required to persist new credential"))
+			return NoOp, eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": errUser}).Build(), errUser
+		}
 		credName, _ := payload.CredentialSecret["name"].(string)
 		credential, err = provider.SaveUserCredential(token, &models.Credential{
 			Name:   credName,

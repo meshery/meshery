@@ -582,3 +582,174 @@ func TestSendEvent_ExitActionFailureHaltsWithoutTransition(t *testing.T) {
 		t.Fatalf("expected persisted status to remain CONNECTED, got %q", provider.status)
 	}
 }
+
+// TestSendEvent_MissingUserPreservesMachineUserID verifies that when context.Context
+// does not contain models.UserCtxKey (such as in background tasks), SendEvent preserves
+// the initiating actor's user ID from sm.UserID for event attribution and propagates
+// it into the downstream context passed to actions.
+func TestSendEvent_MissingUserPreservesMachineUserID(t *testing.T) {
+	initialUserID := core.Uuid(uuid.Must(uuid.NewV4()))
+	var capturedCtx context.Context
+
+	action := &stubAction{
+		execNext: NoOp,
+	}
+	// Wrap action to inspect the context received by the action
+	inspectAction := &contextInspectAction{
+		Action: action,
+		onExec: func(ctx context.Context) {
+			capturedCtx = ctx
+		},
+	}
+
+	provider := &fakeProvider{status: connections.DISCOVERED}
+	sm := newTestMachine(t, provider, inspectAction)
+	sm.UserID = initialUserID
+
+	// Context with token and system ID, but NO UserCtxKey
+	sysID := core.Uuid(uuid.Must(uuid.NewV4()))
+	ctx := context.WithValue(context.Background(), models.SystemIDKey, &sysID)
+	ctx = context.WithValue(ctx, models.TokenCtxKey, "test-token")
+
+	event, err := sm.SendEvent(ctx, Discovery, nil)
+	if err != nil {
+		t.Fatalf("unexpected error on SendEvent: %v", err)
+	}
+	if event == nil {
+		t.Fatal("expected non-nil event on successful SendEvent")
+	}
+
+	// Verify that the event was attributed to the preserved sm.UserID
+	if event.Owner == nil || *event.Owner != initialUserID {
+		t.Fatalf("expected event.Owner to be preserved sm.UserID %v, got %v", initialUserID, event.Owner)
+	}
+	if event.ActedUpon != sm.ID {
+		t.Fatalf("expected event.ActedUpon to be %v, got %v", sm.ID, event.ActedUpon)
+	}
+
+	// Verify that downstream context received by the action has UserCtxKey populated
+	user, ok := capturedCtx.Value(models.UserCtxKey).(*models.User)
+	if !ok || user == nil || user.ID != initialUserID {
+		t.Fatalf("expected action context to have user ID %v, got %#v", initialUserID, user)
+	}
+}
+
+// TestSendEvent_MissingSystemIDDoesNotPanic verifies that SendEvent executes cleanly
+// without panic when models.SystemIDKey is absent from context.
+func TestSendEvent_MissingSystemIDDoesNotPanic(t *testing.T) {
+	action := &stubAction{execNext: NoOp}
+	provider := &fakeProvider{status: connections.DISCOVERED}
+	sm := newTestMachine(t, provider, action)
+
+	userID := core.Uuid(uuid.Must(uuid.NewV4()))
+	ctx := context.WithValue(context.Background(), models.UserCtxKey, &models.User{ID: userID})
+	ctx = context.WithValue(ctx, models.TokenCtxKey, "test-token")
+	// Deliberately omit models.SystemIDKey
+
+	event, err := sm.SendEvent(ctx, Discovery, nil)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if event == nil {
+		t.Fatal("expected non-nil event")
+	}
+	if event.Owner == nil || *event.Owner != userID {
+		t.Fatalf("expected event.Owner %v, got %v", userID, event.Owner)
+	}
+	if event.SystemID != core.Uuid(uuid.Nil) {
+		t.Fatalf("expected zero SystemID when not provided, got %v", event.SystemID)
+	}
+}
+
+// TestSendEvent_NilUserDoesNotPanic verifies that passing a typed-nil (*models.User)(nil)
+// does not trigger a nil pointer dereference panic and falls back to sm.UserID.
+func TestSendEvent_NilUserDoesNotPanic(t *testing.T) {
+	action := &stubAction{execNext: NoOp}
+	provider := &fakeProvider{status: connections.DISCOVERED}
+	sm := newTestMachine(t, provider, action)
+	sm.UserID = core.Uuid(uuid.Must(uuid.NewV4()))
+
+	var nilUser *models.User
+	ctx := context.WithValue(context.Background(), models.UserCtxKey, nilUser)
+	ctx = context.WithValue(ctx, models.TokenCtxKey, "test-token")
+
+	event, err := sm.SendEvent(ctx, Discovery, nil)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if event == nil {
+		t.Fatal("expected non-nil event")
+	}
+	if event.Owner == nil || *event.Owner != sm.UserID {
+		t.Fatalf("expected event.Owner to fall back to sm.UserID %v, got %v", sm.UserID, event.Owner)
+	}
+}
+
+// TestSendEvent_NilContextPreservesUserID verifies that calling SendEvent with a nil
+// context does not panic and safely attributes the event using sm.UserID.
+func TestSendEvent_NilContextPreservesUserID(t *testing.T) {
+	action := &stubAction{execNext: NoOp}
+	provider := &fakeProvider{status: connections.DISCOVERED}
+	sm := newTestMachine(t, provider, action)
+	sm.UserID = core.Uuid(uuid.Must(uuid.NewV4()))
+
+	event, err := sm.SendEvent(nil, Discovery, nil)
+	if err != nil {
+		t.Fatalf("unexpected error on nil context with sm.UserID set: %v", err)
+	}
+	if event == nil {
+		t.Fatal("expected non-nil event")
+	}
+	if event.Owner == nil || *event.Owner != sm.UserID {
+		t.Fatalf("expected event.Owner to fall back to sm.UserID %v, got %v", sm.UserID, event.Owner)
+	}
+}
+
+// TestSendEvent_MissingAttributionReturnsStructuredError verifies that when both
+// user ID (context and sm.UserID) and system ID are missing, SendEvent halts and
+// returns an ErrEventAttribution structured error rather than emitting an orphan event.
+func TestSendEvent_MissingAttributionReturnsStructuredError(t *testing.T) {
+	action := &stubAction{execNext: NoOp}
+	provider := &fakeProvider{status: connections.DISCOVERED}
+	sm := newTestMachine(t, provider, action)
+	sm.UserID = core.Uuid(uuid.Nil)
+
+	// Context with token, but no user or system ID
+	ctx := context.WithValue(context.Background(), models.TokenCtxKey, "test-token")
+
+	event, err := sm.SendEvent(ctx, Discovery, nil)
+	if err == nil {
+		t.Fatal("expected ErrEventAttribution error when attribution is missing, got nil")
+	}
+	if event == nil {
+		t.Fatal("expected non-nil event on attribution error")
+	}
+	if event.Severity != events.Error {
+		t.Fatalf("expected Error severity, got %v", event.Severity)
+	}
+	if event.Metadata == nil || event.Metadata["error"] == nil {
+		t.Fatalf("expected error in event metadata, got %v", event.Metadata)
+	}
+}
+
+
+// contextInspectAction is a helper action that captures the context passed into Execute.
+type contextInspectAction struct {
+	Action
+	onExec func(ctx context.Context)
+}
+
+func (c *contextInspectAction) ExecuteOnEntry(ctx context.Context, m interface{}, d interface{}) (EventType, *events.Event, error) {
+	return NoOp, nil, nil
+}
+
+func (c *contextInspectAction) Execute(ctx context.Context, m interface{}, d interface{}) (EventType, *events.Event, error) {
+	if c.onExec != nil {
+		c.onExec(ctx)
+	}
+	return c.Action.Execute(ctx, m, d)
+}
+
+func (c *contextInspectAction) ExecuteOnExit(ctx context.Context, m interface{}, d interface{}) (EventType, *events.Event, error) {
+	return NoOp, nil, nil
+}
