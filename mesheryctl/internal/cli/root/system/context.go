@@ -101,6 +101,9 @@ mesheryctl system context create [context-name] --components [meshery-nsm] --pla
 		}
 
 		if len(contextCreateFlags.Components) >= 1 {
+			if err := validateComponents(contextCreateFlags.Components); err != nil {
+				return err
+			}
 			tempCntxt.Components = contextCreateFlags.Components
 		}
 
