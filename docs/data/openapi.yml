@@ -67,16 +67,12 @@ tags:
     description: Operations related to Blowhorn bindings.
   - name: BlowhornContent_blowhornContent
     description: Operations related to Blowhorn content.
-  - name: BlowhornDestination_blowhornDestinations
-    description: Operations related to Blowhorn destinations.
   - name: BlowhornHealth_blowhornHealth
     description: Operations related to Blowhorn health.
   - name: BlowhornLedger_blowhornLedger
     description: Operations related to Blowhorn ledger entries, contacts and mentees.
   - name: BlowhornProfile_blowhornProfiles
     description: Operations related to Blowhorn profiles.
-  - name: BlowhornRun_blowhornRuns
-    description: Operations related to Blowhorn run records and analytics.
   - name: Design_designs
     description: Operations related to designs and infrastructure patterns
   - name: Environment_environments
