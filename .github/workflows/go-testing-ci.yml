@@ -48,7 +48,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
-          version: v2.12.2
+          version: v2.13.0
           args: --config=../.github/.golangci.yml --timeout=10m
           only-new-issues: ${{ github.event_name == 'pull_request' }}
           working-directory: ./server
@@ -131,7 +131,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
-          version: v2.12.2
+          version: v2.13.0
           args: --config=../.github/.golangci.yml --timeout=10m
           only-new-issues: ${{ github.event_name == 'pull_request' }}
           working-directory: ./mesheryctl
