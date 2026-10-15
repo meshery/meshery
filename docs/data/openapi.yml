@@ -75,6 +75,8 @@ tags:
     description: Operations related to Blowhorn profiles.
   - name: Design_designs
     description: Operations related to designs and infrastructure patterns
+  - name: Design_github
+    description: GitHub repository reads that back design import and remap
   - name: Environment_environments
     description: APIs for environments
   - name: Events_events
@@ -79054,7 +79056,9 @@ paths:
                                 json: totalCount
                       additionalProperties: false
                     location:
-                      description: Optional structured location metadata (branch, host, path, ...).
+                      description: >
+                        Optional structured location metadata (branch, host, path, ...). For a design bound to a GitHub
+                        source the keys are those of DesignSourceLocation, including commitSha.
                       type: object
                       additionalProperties:
                         type: string
