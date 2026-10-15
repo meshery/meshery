@@ -32,9 +32,10 @@ func (f *fakeK8sProvider) GetConnectionByID(_ string, id core.Uuid) (*connection
 	}, 200, nil
 }
 
-func (f *fakeK8sProvider) SaveK8sContext(_ string, _ models.K8sContext, _ *bool) (string, error) {
-	return "test-context-id", nil
+func (f *fakeK8sProvider) SaveK8sContext(_ string, _ models.K8sContext, _ map[string]any) (connections.Connection, error) {
+	return connections.Connection{ID: core.Uuid(uuid.Must(uuid.NewV4()))}, nil
 }
+
 
 func newTestMachineCtx(t *testing.T) *MachineCtx {
 	t.Helper()
@@ -74,6 +75,34 @@ func TestConnectAction_MissingProvider(t *testing.T) {
 	}
 	if event == nil {
 		t.Fatal("expected non-nil event on error")
+	}
+	if event.Metadata == nil || event.Metadata["error"] == nil {
+		t.Fatalf("expected error metadata on event, got %v", event.Metadata)
+	}
+}
+
+func TestConnectAction_TypedNilProvider(t *testing.T) {
+	action := &ConnectAction{}
+	mCtx := newTestMachineCtx(t)
+
+	userID := core.Uuid(uuid.Must(uuid.NewV4()))
+	sysID := core.Uuid(uuid.Must(uuid.NewV4()))
+	var fp *fakeK8sProvider
+	var nilProvider models.Provider = fp
+	ctx := context.WithValue(context.Background(), models.UserCtxKey, &models.User{ID: userID})
+	ctx = context.WithValue(ctx, models.SystemIDKey, &sysID)
+	ctx = context.WithValue(ctx, models.TokenCtxKey, "test-token")
+	ctx = context.WithValue(ctx, models.ProviderCtxKey, nilProvider)
+
+	nextEvent, event, err := action.Execute(ctx, mCtx, nil)
+	if err == nil {
+		t.Fatal("expected error on typed-nil provider, got nil")
+	}
+	if nextEvent != machines.NoOp {
+		t.Fatalf("expected next event NoOp, got %v", nextEvent)
+	}
+	if event == nil {
+		t.Fatal("expected non-nil event on typed-nil provider")
 	}
 	if event.Metadata == nil || event.Metadata["error"] == nil {
 		t.Fatalf("expected error metadata on event, got %v", event.Metadata)
@@ -171,6 +200,29 @@ func TestDiscoverAction_MissingProvider(t *testing.T) {
 	}
 }
 
+func TestDiscoverAction_TypedNilProvider(t *testing.T) {
+	action := &DiscoverAction{}
+	mCtx := newTestMachineCtx(t)
+
+	var fp *fakeK8sProvider
+	var nilProvider models.Provider = fp
+	ctx := context.WithValue(context.Background(), models.ProviderCtxKey, nilProvider)
+
+	nextEvent, event, err := action.Execute(ctx, mCtx, nil)
+	if err == nil {
+		t.Fatal("expected error on typed-nil provider, got nil")
+	}
+	if nextEvent != machines.NoOp {
+		t.Fatalf("expected next event NoOp, got %v", nextEvent)
+	}
+	if event == nil {
+		t.Fatal("expected non-nil event")
+	}
+	if event.Metadata == nil || event.Metadata["error"] == nil {
+		t.Fatalf("expected error metadata on event, got %v", event.Metadata)
+	}
+}
+
 func TestRegisterAction_MissingProvider(t *testing.T) {
 	action := &RegisterAction{}
 	mCtx := newTestMachineCtx(t)
@@ -189,7 +241,6 @@ func TestRegisterAction_MissingProvider(t *testing.T) {
 	}
 	_ = nextEvent
 }
-
 
 func TestAssignInitialCtx_DegradedContextDoesNotPanic(t *testing.T) {
 	log, err := logger.New("test", logger.Options{})

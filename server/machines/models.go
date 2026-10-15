@@ -143,11 +143,6 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	}
 	ctx = context.WithValue(ctx, models.ProviderCtxKey, sm.Provider)
 
-	if !HasActorAttribution(userUUID, sysID) {
-		errAttr := ErrEventAttribution(fmt.Errorf("event attribution requires either a valid user ID or system ID"))
-		eb := events.NewEvent().WithDescription(fmt.Sprintf("%s connection action failed.", sm.Name)).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": errAttr})
-		return eb.Build(), errAttr
-	}
 	sm.mx.Lock()
 	defer sm.mx.Unlock()
 	var event *events.Event
@@ -210,6 +205,14 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	// CurrentState would corrupt the persisted status) and treat it as no-change
 	// so the repeated background failure is suppressed.
 	haltedWithoutTransition := false
+
+	if !HasActorAttribution(userUUID, sysID) {
+		failureErr = ErrEventAttribution(fmt.Errorf("event attribution requires either a valid user ID or system ID"))
+		eb := events.NewEvent().WithDescription(fmt.Sprintf("%s connection action failed.", sm.Name)).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": failureErr})
+		failureEvent = eb.Build()
+		haltedWithoutTransition = true
+		eventType = NoOp
+	}
 
 	for eventType != NoOp {
 		nextState, err := sm.getNextState(eventType)

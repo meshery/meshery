@@ -68,7 +68,8 @@ func TestDefaultConnectAction_MissingProvider(t *testing.T) {
 func TestDefaultConnectAction_TypedNilProvider(t *testing.T) {
 	action := &DefaultConnectAction{}
 	sysID := core.Uuid(uuid.Must(uuid.NewV4()))
-	var nilProvider models.Provider
+	var fp *mockActionProvider
+	var nilProvider models.Provider = fp
 	ctx := context.WithValue(context.Background(), models.SystemIDKey, &sysID)
 	ctx = context.WithValue(ctx, models.ProviderCtxKey, nilProvider)
 
@@ -86,6 +87,9 @@ func TestDefaultConnectAction_TypedNilProvider(t *testing.T) {
 	}
 	if event == nil {
 		t.Fatal("expected non-nil event")
+	}
+	if event.Metadata == nil || event.Metadata["error"] == nil {
+		t.Fatalf("expected error metadata on event, got %v", event.Metadata)
 	}
 }
 

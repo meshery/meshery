@@ -693,10 +693,12 @@ func TestSendEvent_NilContextPreservesUserID(t *testing.T) {
 	sm := newTestMachine(t, provider, action)
 	sm.UserID = core.Uuid(uuid.Must(uuid.NewV4()))
 
-	event, err := sm.SendEvent(nil, Discovery, nil)
+	var nilCtx context.Context
+	event, err := sm.SendEvent(nilCtx, Discovery, nil)
 	if err != nil {
 		t.Fatalf("unexpected error on nil context with sm.UserID set: %v", err)
 	}
+
 	if event == nil {
 		t.Fatal("expected non-nil event")
 	}
@@ -705,10 +707,10 @@ func TestSendEvent_NilContextPreservesUserID(t *testing.T) {
 	}
 }
 
-// TestSendEvent_MissingAttributionReturnsStructuredError verifies that when both
-// user ID (context and sm.UserID) and system ID are missing, SendEvent halts and
+// TestSendEvent_UserInitiatedMissingAttributionReturnsStructuredError verifies that
+// when both user ID and system ID are missing, a user-initiated event halts and
 // returns an ErrEventAttribution structured error rather than emitting an orphan event.
-func TestSendEvent_MissingAttributionReturnsStructuredError(t *testing.T) {
+func TestSendEvent_UserInitiatedMissingAttributionReturnsStructuredError(t *testing.T) {
 	action := &stubAction{execNext: NoOp}
 	provider := &fakeProvider{status: connections.DISCOVERED}
 	sm := newTestMachine(t, provider, action)
@@ -717,9 +719,9 @@ func TestSendEvent_MissingAttributionReturnsStructuredError(t *testing.T) {
 	// Context with token, but no user or system ID
 	ctx := context.WithValue(context.Background(), models.TokenCtxKey, "test-token")
 
-	event, err := sm.SendEvent(ctx, Discovery, nil)
+	event, err := sm.SendEvent(ctx, Register, nil)
 	if err == nil {
-		t.Fatal("expected ErrEventAttribution error when attribution is missing, got nil")
+		t.Fatal("expected ErrEventAttribution error on user action when attribution is missing, got nil")
 	}
 	if event == nil {
 		t.Fatal("expected non-nil event on attribution error")
@@ -730,8 +732,44 @@ func TestSendEvent_MissingAttributionReturnsStructuredError(t *testing.T) {
 	if event.Metadata == nil || event.Metadata["error"] == nil {
 		t.Fatalf("expected error in event metadata, got %v", event.Metadata)
 	}
+	if sm.CurrentState != InitialState {
+		t.Fatalf("expected state machine not to advance on attribution failure, stayed %v", sm.CurrentState)
+	}
 }
 
+// TestSendEvent_BackgroundDiscoveryMissingAttributionDeDuplicates verifies that
+// background discovery with missing attribution follows the established de-duplication
+// behavior, returning nil, nil so repeated discovery does not spam error notifications.
+func TestSendEvent_BackgroundDiscoveryMissingAttributionDeDuplicates(t *testing.T) {
+	action := &stubAction{execNext: NoOp}
+	provider := &fakeProvider{status: connections.DISCOVERED}
+	sm := newTestMachine(t, provider, action)
+	sm.UserID = core.Uuid(uuid.Nil)
+
+	// Context with token, but no user or system ID
+	ctx := context.WithValue(context.Background(), models.TokenCtxKey, "test-token")
+
+	// First background discovery
+	event1, err1 := sm.SendEvent(ctx, Discovery, nil)
+	if err1 != nil {
+		t.Fatalf("expected background discovery with missing attribution to de-duplicate, got error: %v", err1)
+	}
+	if event1 != nil {
+		t.Fatalf("expected nil event on de-duplicated background discovery, got: %v", event1)
+	}
+
+	// Repeated background discovery
+	event2, err2 := sm.SendEvent(ctx, Discovery, nil)
+	if err2 != nil {
+		t.Fatalf("expected repeated background discovery to de-duplicate, got error: %v", err2)
+	}
+	if event2 != nil {
+		t.Fatalf("expected nil event on repeated background discovery, got: %v", event2)
+	}
+	if provider.updateCalls != 0 {
+		t.Fatalf("expected 0 provider update calls when halted without transition, got %d", provider.updateCalls)
+	}
+}
 
 // contextInspectAction is a helper action that captures the context passed into Execute.
 type contextInspectAction struct {

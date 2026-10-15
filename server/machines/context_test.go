@@ -120,9 +120,26 @@ func TestExtractProvider(t *testing.T) {
 			wantOk: false,
 		},
 		{
-			name: "typed nil provider",
+			name: "nil interface provider",
 			ctx: func() context.Context {
 				var p models.Provider
+				return context.WithValue(context.Background(), models.ProviderCtxKey, p)
+			}(),
+			wantOk: false,
+		},
+		{
+			name: "typed nil concrete pointer implementing Provider",
+			ctx: func() context.Context {
+				var fp *fakeProvider
+				return context.WithValue(context.Background(), models.ProviderCtxKey, fp)
+			}(),
+			wantOk: false,
+		},
+		{
+			name: "typed nil concrete pointer assigned to Provider interface",
+			ctx: func() context.Context {
+				var fp *fakeProvider
+				var p models.Provider = fp
 				return context.WithValue(context.Background(), models.ProviderCtxKey, p)
 			}(),
 			wantOk: false,

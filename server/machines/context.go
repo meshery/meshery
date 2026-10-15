@@ -2,6 +2,7 @@ package machines
 
 import (
 	"context"
+	"reflect"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models"
@@ -36,14 +37,34 @@ func ExtractActorIDs(ctx context.Context) (core.Uuid, *core.Uuid) {
 	return userUUID, sysID
 }
 
+// isNilSafe checks if an interface contains nil or an underlying nil pointer/chan/func/interface/map/slice.
+// It avoids calling reflect.Value.IsNil() on non-nil-capable kinds.
+func isNilSafe(i interface{}) bool {
+	if i == nil {
+		return true
+	}
+	val := reflect.ValueOf(i)
+	switch val.Kind() {
+	case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Pointer, reflect.Slice, reflect.UnsafePointer:
+		return val.IsNil()
+	default:
+		return false
+	}
+}
+
 // ExtractProvider safely retrieves models.Provider from context.Context.
-// It guards against missing context keys, non-provider types, and typed-nil pointers.
+// It guards against missing context keys, non-provider types, ordinary nil interfaces,
+// and typed-nil pointers that pass interface type assertions.
 func ExtractProvider(ctx context.Context) (models.Provider, bool) {
 	if ctx == nil {
 		return nil, false
 	}
-	p, ok := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	if !ok || p == nil {
+	raw := ctx.Value(models.ProviderCtxKey)
+	if isNilSafe(raw) {
+		return nil, false
+	}
+	p, ok := raw.(models.Provider)
+	if !ok || isNilSafe(p) {
 		return nil, false
 	}
 	return p, true
