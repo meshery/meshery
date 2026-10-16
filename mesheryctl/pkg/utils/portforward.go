@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"io"
@@ -8,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 
 	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
@@ -31,6 +33,7 @@ type PortForward struct {
 	emitLogs   bool
 	stopCh     chan struct{}
 	readyCh    chan struct{}
+	forwarder  *portforward.PortForwarder
 	config     *rest.Config
 }
 
@@ -84,16 +87,8 @@ func newPortForward(
 		Name(podName).
 		SubResource("portforward")
 
-	var err error
-	if localPort == 0 {
-		if host != "localhost" {
-			return nil, fmt.Errorf("local port must be specified when host is not localhost")
-		}
-
-		localPort, err = GetEphemeralPort()
-		if err != nil {
-			return nil, err
-		}
+	if localPort == 0 && host != "localhost" {
+		return nil, fmt.Errorf("local port must be specified when host is not localhost")
 	}
 
 	return &PortForward{
@@ -121,9 +116,15 @@ func (pf *PortForward) run() error {
 
 	out := io.Discard
 	errOut := io.Discard
+	var portForwardErrors bytes.Buffer
 	if pf.emitLogs {
 		out = os.Stdout
 		errOut = os.Stderr
+	} else {
+		// client-go reports listener creation details to errOut, but returns a
+		// generic error from ForwardPorts. Keep those details so callers can
+		// distinguish a busy local port from other setup failures.
+		errOut = &portForwardErrors
 	}
 
 	ports := []string{fmt.Sprintf("%d:%d", pf.localPort, pf.remotePort)}
@@ -133,10 +134,14 @@ func (pf *PortForward) run() error {
 	if err != nil {
 		return err
 	}
+	pf.forwarder = fw
 
 	err = fw.ForwardPorts()
 	if err != nil {
-		err = fmt.Errorf("%s for %s/%s", err, pf.namespace, pf.podName)
+		if portForwardErrors.Len() > 0 {
+			err = fmt.Errorf("%w: %s", err, strings.TrimSpace(portForwardErrors.String()))
+		}
+		err = fmt.Errorf("%w for %s/%s", err, pf.namespace, pf.podName)
 		return err
 	}
 	return nil
@@ -162,6 +167,14 @@ func (pf *PortForward) Init() error {
 	select {
 	case <-pf.readyCh:
 		log.Debug("Port forward initialized")
+		ports, err := pf.forwarder.GetPorts()
+		if err != nil {
+			return err
+		}
+		if len(ports) != 1 {
+			return fmt.Errorf("expected one forwarded port, got %d", len(ports))
+		}
+		pf.localPort = int(ports[0].Local)
 	case err := <-failure:
 		log.Debugf("Port forward failed: %v", err)
 		return err
@@ -185,6 +198,29 @@ func (pf *PortForward) GetStop() <-chan struct{} {
 // URLFor returns the URL for the port-forward connection.
 func (pf *PortForward) URLFor(path string) string {
 	return fmt.Sprintf("http://%s:%d%s", pf.host, pf.localPort, path)
+}
+
+// LocalPort returns the local port the port-forward connection listens on.
+func (pf *PortForward) LocalPort() int {
+	return pf.localPort
+}
+
+// IsPortBusyError reports whether err indicates the requested local port is
+// already in use.
+func IsPortBusyError(err error) bool {
+	if err == nil {
+		return false
+	}
+	msg := strings.ToLower(err.Error())
+	for _, s := range []string{
+		"address already in use",
+		"only one usage of each socket",
+	} {
+		if strings.Contains(msg, s) {
+			return true
+		}
+	}
+	return false
 }
 
 // AddressAndPort returns the address and port for the port-forward connection.
