@@ -395,7 +395,7 @@ func (h *Handler) GetConnectionByID(w http.ResponseWriter, req *http.Request, _ 
 	obj := "connection"
 
 	if err != nil {
-		if errors.GetCode(err) == models.ErrResultNotFoundCode || providerStatus(err) == http.StatusNotFound || statusCode == http.StatusNotFound {
+		if statusCode == http.StatusNotFound || providerStatus(err) == http.StatusNotFound {
 			h.log.Warnf("No connection with ID %q found", connectionID)
 			writeMeshkitError(w, ErrGetConnection(err, connectionID.String()), http.StatusNotFound)
 			return
