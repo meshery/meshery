@@ -135,16 +135,9 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	patternFile.ID = patternID
-	// Generate the pattern file object
-	description := fmt.Sprintf("%sed design '%s'", action, patternFile.Name)
 
 	if isDryRun {
 		action = "dry-run"
-		description = fmt.Sprintf("Dry Run completed for design '%s'", patternFile.Name)
-	}
-
-	if action == "deploy" {
-		description = fmt.Sprintf("Deployment completed for design '%s'", patternFile.Name)
 	}
 
 	opts := &patterncore.ProcessPatternOptions{
@@ -194,17 +187,12 @@ func (h *Handler) PatternFileHandler(
 	// (event_trackers.metadata wire) but the URL is left as-is until the
 	// extension contract is migrated.
 	viewLink := fmt.Sprintf("%s/extension/meshmap?mode=operator&type=view&design_id=%s", serverURL, patternID)
-	description = fmt.Sprintf("%s.", description)
 	metadata["viewLink"] = viewLink
 	metadata["designName"] = patternFile.Name
 	metadata["designId"] = patternID
 
-	var event *events.Event
-	if action == "deploy" || action == "dry-run" {
-		event = eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
-	} else {
-		event = eventBuilder.WithSeverity(events.Success).WithDescription(description).WithMetadata(metadata).Build()
-	}
+	severity, description := deploymentOutcome(action, patternFile.Name, response)
+	event := eventBuilder.WithSeverity(severity).WithDescription(description).WithMetadata(metadata).Build()
 
 	_ = provider.PersistEvent(*event, token)
 	go func() {
@@ -214,6 +202,53 @@ func (h *Handler) PatternFileHandler(
 
 	ec := json.NewEncoder(rw)
 	_ = ec.Encode(response)
+}
+
+// deploymentOutcome picks the severity and description of the event reporting
+// a deploy, undeploy or dry run that ran to completion.
+//
+// Running to completion does not mean every component made it: a component
+// that fails to apply is reported on its own outcome in the summary, not as an
+// error from the chain. A partial failure is a warning and a total one an
+// error, so that neither reads as a success.
+func deploymentOutcome(action, designName string, response map[string]interface{}) (events.EventSeverity, string) {
+	if action != "dry-run" {
+		if failed, total := countFailedComponents(response); failed > 0 {
+			severity := events.Warning
+			if failed == total {
+				severity = events.Error
+			}
+			return severity, fmt.Sprintf("Failed to %s %d of %d components in design '%s'.", action, failed, total, designName)
+		}
+	}
+
+	switch action {
+	case "deploy":
+		return events.Informational, fmt.Sprintf("Deployment completed for design '%s'.", designName)
+	case "dry-run":
+		return events.Informational, fmt.Sprintf("Dry Run completed for design '%s'.", designName)
+	default:
+		return events.Success, fmt.Sprintf("%sed design '%s'.", action, designName)
+	}
+}
+
+// countFailedComponents counts the components in a deploy or undeploy summary,
+// and how many of them failed, by the same rule the Provision stage uses to
+// decide whether a component's dependents may proceed.
+func countFailedComponents(response map[string]interface{}) (failed, total int) {
+	for _, outcome := range response {
+		msgs, ok := outcome.([]patterns.DeploymentMessagePerContext)
+		if !ok {
+			continue
+		}
+
+		total++
+		if !stages.ProvisionSucceeded(msgs) {
+			failed++
+		}
+	}
+
+	return failed, total
 }
 
 func _processPattern(opts *patterncore.ProcessPatternOptions) (map[string]interface{}, error) {

@@ -57,40 +57,77 @@ const StepContent = styled('div', {
   backgroundColor: backgroundColor || theme.palette.background.default,
 }));
 
-export const FinishDeploymentStep = ({ perform_deployment, deployment_type, autoOpenView }) => {
+// How long the Finish step waits for the server to report the outcome before
+// telling the user that nothing has arrived.
+export const DEPLOYMENT_RESULT_TIMEOUT_MS = 5 * 60 * 1000;
+
+export const FinishDeploymentStep = ({
+  perform_deployment,
+  deployment_type,
+  autoOpenView,
+  design,
+}) => {
   const { operationsCenterActorRef } = useContext(NotificationCenterContext);
 
-  const [isDeploying, setIsDeploying] = useState(false);
   const [deployEvent, setDeployEvent] = useState();
   const [deployError, setDeployError] = useState(null);
   const router = useRouter();
+  const designId = design?.id;
 
   useEffect(() => {
-    try {
-      setIsDeploying(true);
-      perform_deployment();
-    } catch (error) {
-      setDeployError(error);
-      setIsDeploying(false);
-    }
+    // An RTK Query mutation resolves with `{ error }` rather than rejecting, so
+    // a failed request (expired session, proxy error) shows up on the result.
+    Promise.resolve()
+      .then(perform_deployment)
+      .then((result) => {
+        if (result?.error) {
+          setDeployError(result.error);
+        }
+      })
+      .catch(setDeployError);
   }, []);
+
+  useEffect(() => {
+    if (deployEvent) {
+      return;
+    }
+
+    const timeout = setTimeout(
+      () =>
+        setDeployError(
+          `No ${deployment_type} result was received from Meshery Server within ${
+            DEPLOYMENT_RESULT_TIMEOUT_MS / 60000
+          } minutes. Check the notification center for its status.`,
+        ),
+      DEPLOYMENT_RESULT_TIMEOUT_MS,
+    );
+
+    return () => clearTimeout(timeout);
+  }, [deployEvent]);
 
   useEffect(() => {
     const subscription = operationsCenterActorRef.on(
       OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
       (event) => {
         const serverEvent = event.data.event;
-        if (serverEvent.action === deployment_type) {
-          setIsDeploying(false);
-          setDeployEvent(serverEvent);
+        if (serverEvent.action !== deployment_type) {
+          return;
+        }
 
-          if (autoOpenView && serverEvent.severity == SEVERITY.SUCCESS) {
-            openViewScopedToDesignInOperator(
-              serverEvent?.metadata?.design_name,
-              serverEvent?.metadata?.design_id,
-              router,
-            );
-          }
+        // Every deploy or undeploy raises an event with the same action, so
+        // only the one for this design may settle the step.
+        if (designId && serverEvent.actedUpon !== designId) {
+          return;
+        }
+
+        setDeployEvent(serverEvent);
+
+        if (autoOpenView && serverEvent.severity == SEVERITY.SUCCESS) {
+          openViewScopedToDesignInOperator(
+            serverEvent?.metadata?.design_name,
+            serverEvent?.metadata?.design_id,
+            router,
+          );
         }
       },
     );
@@ -98,25 +135,26 @@ export const FinishDeploymentStep = ({ perform_deployment, deployment_type, auto
     return () => subscription.unsubscribe();
   }, []);
 
-  const progressMessage = `${capitalize(deployment_type)}ing  design`;
-
-  if (isDeploying) {
-    return <Loading message={progressMessage} />;
+  // The event carries the per-component summary, so it is shown even when it
+  // arrives after the request has been reported as failed.
+  if (deployEvent) {
+    return <DeploymentSummaryFormatter event={deployEvent} />;
   }
 
   if (deployError) {
+    const message =
+      typeof deployError === 'string'
+        ? deployError
+        : deployError?.message || JSON.stringify(deployError);
+
     return (
       <Typography variant="h5" color="error">
-        Error deploying design: {JSON.stringify(deployError)}
+        Error {deployment_type}ing design: {message}
       </Typography>
     );
   }
 
-  if (!deployEvent) {
-    return null;
-  }
-
-  return <DeploymentSummaryFormatter event={deployEvent} />;
+  return <Loading message={`${capitalize(deployment_type)}ing  design`} />;
 };
 
 const SelectTargetStep = () => {
@@ -209,12 +247,11 @@ export const UpdateDeploymentStepper = ({
   );
 
   const FinalizeBackgroundColor = theme.palette?.background?.blur.light;
-  const actionFunction = () => {
+  const actionFunction = () =>
     handlePerformDeployment({
       design,
       selectedK8sContexts: selectedDeployableK8scontextIds,
     });
-  };
   const deployStepper = useStepper({
     steps: [
       {
