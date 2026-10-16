@@ -34,7 +34,7 @@ import (
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	_model "github.com/meshery/schemas/models/v1beta1/model"
-	"github.com/meshery/schemas/models/v1beta3/component"
+	"github.com/meshery/schemas/models/v1beta1/component"
 
 	"github.com/meshery/meshkit/models/meshmodel/entity"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
@@ -791,7 +791,7 @@ func (r RegistrantDataEntity) PkgUnit(regErrStore registration.RegistrationError
 			return pkg, fmt.Errorf("invalid model name: contains directory traversal characters")
 		}
 		if c.Model.Registrant.Kind == "" {
-			c.Model.Registrant = r.Data.Connection
+			c.Model.Registrant = registry.RegistrantHostToV1beta1(r.Data.Connection)
 		}
 		pkg.Model = *c.Model
 		pkg.Components = append(pkg.Components, c)
@@ -808,7 +808,7 @@ func (r RegistrantDataEntity) PkgUnit(regErrStore registration.RegistrationError
 			return pkg, fmt.Errorf("invalid model name: contains directory traversal characters")
 		}
 		if m.Registrant.Kind == "" {
-			m.Registrant = r.Data.Connection
+			m.Registrant = registry.RegistrantHostToV1beta1(r.Data.Connection)
 		}
 		pkg.Model = m
 
