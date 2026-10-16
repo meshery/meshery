@@ -188,6 +188,7 @@ function initTableOfContentsScrollSpy() {
         isUserClicking = false;
         clearTimeout(clickIdleTimer);
         clearTimeout(clickFallbackTimer);
+        determineActiveHeading();
     }
 
     function scrollTocLinkIntoView(link) {
