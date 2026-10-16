@@ -767,42 +767,108 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	}
 }
 
+// RegistrantDataEntity adapts registry.MeshModelRegistrantData to registration.RegisterableEntity
+type RegistrantDataEntity struct {
+	Data registry.MeshModelRegistrantData
+}
+
+func (r RegistrantDataEntity) PkgUnit(regErrStore registration.RegistrationErrorStore) (registration.PackagingUnit, error) {
+	var pkg registration.PackagingUnit
+
+	switch r.Data.EntityType {
+	case entity.ComponentDefinition:
+		var c component.ComponentDefinition
+		if err := json.Unmarshal(r.Data.Entity, &c); err != nil {
+			return pkg, err
+		}
+		if strings.Contains(c.Component.Kind, "..") || strings.ContainsAny(c.Component.Kind, "/\\") {
+			return pkg, fmt.Errorf("invalid component kind: contains directory traversal characters")
+		}
+		if c.Model == nil {
+			c.Model = &_model.ModelDefinition{}
+		}
+		if strings.Contains(c.Model.Name, "..") || strings.ContainsAny(c.Model.Name, "/\\") {
+			return pkg, fmt.Errorf("invalid model name: contains directory traversal characters")
+		}
+		if c.Model.Registrant.Kind == "" {
+			c.Model.Registrant = registry.RegistrantHostToV1beta1(r.Data.Connection)
+		}
+		pkg.Model = *c.Model
+		pkg.Components = append(pkg.Components, c)
+
+	case entity.Model:
+		var m _model.ModelDefinition
+		if err := json.Unmarshal(r.Data.Entity, &m); err != nil {
+			return pkg, err
+		}
+		if strings.TrimSpace(m.Name) == "" {
+			return pkg, fmt.Errorf("model name cannot be empty")
+		}
+		if strings.Contains(m.Name, "..") || strings.ContainsAny(m.Name, "/\\") {
+			return pkg, fmt.Errorf("invalid model name: contains directory traversal characters")
+		}
+		if m.Registrant.Kind == "" {
+			m.Registrant = registry.RegistrantHostToV1beta1(r.Data.Connection)
+		}
+		pkg.Model = m
+
+	case entity.RelationshipDefinition:
+		var rel relationship.RelationshipDefinition
+		if err := json.Unmarshal(r.Data.Entity, &rel); err != nil {
+			return pkg, err
+		}
+		pkg.Relationships = append(pkg.Relationships, rel)
+
+	default:
+		return pkg, fmt.Errorf("unsupported entity type: %s", r.Data.EntityType)
+	}
+
+	return pkg, nil
+}
+
 // RegisterMeshmodelComponents expects the request body to be JSON, decoded into a registry.MeshModelRegistrantData.
 func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
 	var cc registry.MeshModelRegistrantData
-	err := dec.Decode(&cc)
-	if err != nil {
+	if err := dec.Decode(&cc); err != nil {
 		h.log.Error(ErrRequestBody(err))
 		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
 		return
 	}
-	var c component.ComponentDefinition
-	switch cc.EntityType {
-	case entity.ComponentDefinition:
-		var isModelError bool
-		var isRegistranError bool
-		err = json.Unmarshal(cc.Entity, &c)
-		if err != nil {
-			h.log.Error(models.ErrUnmarshal(err, "component definition"))
-			writeMeshkitError(rw, models.ErrUnmarshal(err, "component definition"), http.StatusBadRequest)
-			return
-		}
-		utils.WriteSVGsOnFileSystem(&c)
-		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Connection, &c)
-		helpers.HandleError(registry.RegistrantHostToV1beta1(cc.Connection), &c, err, isModelError, isRegistranError)
+
+	regErrorStore := models.NewRegistrationFailureLogHandler()
+	regHelper := registration.NewRegistrationHelper(
+		utils.UI,
+		h.registryManager,
+		regErrorStore,
+	)
+
+	entityAdapter := RegistrantDataEntity{Data: cc}
+	if _, err := entityAdapter.PkgUnit(regErrorStore); err != nil {
+		h.log.Error(ErrRequestBody(err))
+		writeMeshkitError(rw, ErrRequestBody(err), http.StatusBadRequest)
+		return
 	}
-	err = helpers.WriteLogsToFiles()
-	if err != nil {
-		// WriteLogsToFiles is an internal flush of registry-attempt
-		// state to REGISTRY_LOG_FILE — the failure is server-side
-		// (filesystem permissions, disk full, marshal error), so
-		// surface a 500 with structured remediation instead of the
-		// previous raw 400.
+
+	regHelper.Register(entityAdapter)
+
+	if regErrors := regErrorStore.GetEntityRegErrors(); len(regErrors) > 0 {
+		for _, regErr := range regErrors {
+			h.log.Error(regErr.Err)
+		}
+
+		if err := helpers.WriteLogsToFiles(); err != nil {
+			wrappedErr := ErrWriteRegistryLogs(err)
+			h.log.Error(wrappedErr)
+		}
+
+		writeMeshkitError(rw, regErrors[0].Err, http.StatusInternalServerError)
+		return
+	}
+
+	if err := helpers.WriteLogsToFiles(); err != nil {
 		wrappedErr := ErrWriteRegistryLogs(err)
 		h.log.Error(wrappedErr)
-		writeMeshkitError(rw, wrappedErr, http.StatusInternalServerError)
-		return
 	}
 }
 
