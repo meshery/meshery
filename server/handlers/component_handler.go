@@ -781,8 +781,14 @@ func (r RegistrantDataEntity) PkgUnit(regErrStore registration.RegistrationError
 		if err := json.Unmarshal(r.Data.Entity, &c); err != nil {
 			return pkg, err
 		}
+		if strings.Contains(c.Kind, "..") || strings.ContainsAny(c.Kind, "/\\") {
+			return pkg, fmt.Errorf("invalid component kind: contains directory traversal characters")
+		}
 		if c.Model == nil {
 			c.Model = &_model.ModelDefinition{}
+		}
+		if strings.Contains(c.Model.Name, "..") || strings.ContainsAny(c.Model.Name, "/\\") {
+			return pkg, fmt.Errorf("invalid model name: contains directory traversal characters")
 		}
 		if c.Model.Registrant.Kind == "" {
 			c.Model.Registrant = r.Data.Connection
@@ -797,6 +803,9 @@ func (r RegistrantDataEntity) PkgUnit(regErrStore registration.RegistrationError
 		}
 		if strings.TrimSpace(m.Name) == "" {
 			return pkg, fmt.Errorf("model name cannot be empty")
+		}
+		if strings.Contains(m.Name, "..") || strings.ContainsAny(m.Name, "/\\") {
+			return pkg, fmt.Errorf("invalid model name: contains directory traversal characters")
 		}
 		if m.Registrant.Kind == "" {
 			m.Registrant = r.Data.Connection
@@ -860,8 +869,6 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 	if err := helpers.WriteLogsToFiles(); err != nil {
 		wrappedErr := ErrWriteRegistryLogs(err)
 		h.log.Error(wrappedErr)
-		writeMeshkitError(rw, wrappedErr, http.StatusInternalServerError)
-		return
 	}
 }
 
