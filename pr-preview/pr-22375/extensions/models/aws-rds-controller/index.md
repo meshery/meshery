@@ -1,4 +1,0 @@
-# AWS Relational Database Service
-
-
-

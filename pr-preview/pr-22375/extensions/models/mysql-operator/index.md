@@ -1,4 +1,0 @@
-# MySQL Operator
-
-
-

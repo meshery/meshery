@@ -1,4 +1,0 @@
-# Tikv Operator
-
-
-

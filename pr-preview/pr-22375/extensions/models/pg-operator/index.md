@@ -1,4 +1,0 @@
-# Percona Postgres Operator
-
-
-

@@ -1,4 +1,0 @@
-# Gitlab Runner Operator
-
-
-

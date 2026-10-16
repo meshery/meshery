@@ -1,4 +1,0 @@
-# Mesheryctl-Model
-
-
-<no value>

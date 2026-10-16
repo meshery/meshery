@@ -1,4 +1,0 @@
-# AWS Simple Queuing Service
-
-
-

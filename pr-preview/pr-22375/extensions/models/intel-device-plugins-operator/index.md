@@ -1,4 +1,0 @@
-# Intel Device Plugins Operator
-
-
-

@@ -1,4 +1,0 @@
-# Jfrog Distribution
-
-
-

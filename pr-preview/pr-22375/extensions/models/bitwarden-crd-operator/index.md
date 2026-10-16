@@ -1,4 +1,0 @@
-# Bitwarden by Lerentis
-
-
-

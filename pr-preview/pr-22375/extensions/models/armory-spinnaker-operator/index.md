@@ -1,4 +1,0 @@
-# Armory Spinnaker Operator
-
-
-

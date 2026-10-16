@@ -1,4 +1,0 @@
-# Mesheryctl-Adapter
-
-
-<no value>

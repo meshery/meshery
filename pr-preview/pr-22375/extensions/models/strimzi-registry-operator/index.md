@@ -1,4 +1,0 @@
-# Strimzi Registry Operator
-
-
-

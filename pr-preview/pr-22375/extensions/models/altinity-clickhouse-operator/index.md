@@ -1,4 +1,0 @@
-# Altinity ClickHouse
-
-
-

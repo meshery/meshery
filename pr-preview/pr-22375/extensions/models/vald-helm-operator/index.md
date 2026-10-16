@@ -1,4 +1,0 @@
-# Vald Helm Operator
-
-
-

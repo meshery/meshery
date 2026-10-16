@@ -1,4 +1,0 @@
-# Azure Operational Insights
-
-
-

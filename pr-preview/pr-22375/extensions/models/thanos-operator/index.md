@@ -1,4 +1,0 @@
-# Thanos Operator
-
-
-

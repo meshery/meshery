@@ -1,4 +1,0 @@
-# Jira Service Desk Operator
-
-
-

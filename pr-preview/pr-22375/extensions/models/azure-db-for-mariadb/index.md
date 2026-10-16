@@ -1,4 +1,0 @@
-# Azure DB for MariaDB
-
-
-

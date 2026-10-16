@@ -1,4 +1,0 @@
-# EDP Argocd Operator
-
-
-

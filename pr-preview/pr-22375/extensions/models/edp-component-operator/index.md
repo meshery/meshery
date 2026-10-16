@@ -1,4 +1,0 @@
-# EDP Component Operator
-
-
-

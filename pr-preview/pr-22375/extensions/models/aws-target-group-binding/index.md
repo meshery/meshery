@@ -1,4 +1,0 @@
-# AWS Target Group Binding
-
-
-

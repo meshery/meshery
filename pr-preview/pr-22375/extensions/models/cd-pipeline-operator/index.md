@@ -1,4 +1,0 @@
-# KubeRocketCI Pipeline Operator
-
-
-

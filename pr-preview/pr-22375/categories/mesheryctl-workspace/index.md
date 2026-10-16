@@ -1,4 +1,0 @@
-# Mesheryctl-Workspace
-
-
-<no value>

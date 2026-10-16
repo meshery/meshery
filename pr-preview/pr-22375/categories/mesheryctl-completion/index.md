@@ -1,4 +1,0 @@
-# Mesheryctl-Completion
-
-
-<no value>

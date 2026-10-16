@@ -1,4 +1,0 @@
-# Strimzi Kafka Operator
-
-
-

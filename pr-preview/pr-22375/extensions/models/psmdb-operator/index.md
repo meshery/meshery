@@ -1,4 +1,0 @@
-# Percona Operator for MongoDB
-
-
-

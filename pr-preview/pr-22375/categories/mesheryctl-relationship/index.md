@@ -1,4 +1,0 @@
-# Mesheryctl-Relationship
-
-
-<no value>

@@ -1,4 +1,0 @@
-# KEDA HTTP Scaler
-
-
-

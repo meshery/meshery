@@ -1,4 +1,0 @@
-# Kubegems Models
-
-
-

@@ -1,4 +1,0 @@
-# Kubernetes Secret Generator
-
-
-

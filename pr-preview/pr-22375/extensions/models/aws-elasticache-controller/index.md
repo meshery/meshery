@@ -1,4 +1,0 @@
-# AWS ElastiCache
-
-
-

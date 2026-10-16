@@ -1,4 +1,0 @@
-# cert-manager CRDs
-
-
-

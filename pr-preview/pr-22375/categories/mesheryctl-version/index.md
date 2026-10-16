@@ -1,4 +1,0 @@
-# Mesheryctl-Version
-
-
-<no value>

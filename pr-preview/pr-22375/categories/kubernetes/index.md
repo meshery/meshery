@@ -1,4 +1,0 @@
-# Kubernetes
-
-
-<no value>

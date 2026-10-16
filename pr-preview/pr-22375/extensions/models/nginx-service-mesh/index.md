@@ -1,4 +1,0 @@
-# NGINX Service Mesh
-
-
-
