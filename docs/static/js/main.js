@@ -146,5 +146,176 @@ document.addEventListener("click", (event) => {
             sidebarNav.classList.remove("main-navbar--active")
         }
     }
-})
+});
+
+/* Table of Contents Scrollspy & Auto-scroll */
+function initTableOfContentsScrollSpy() {
+    const tocWrapper = document.querySelector(".content-table-wrapper");
+    const toc = document.getElementById("TableOfContents");
+    if (!toc || !tocWrapper) return;
+
+    const tocLinks = Array.from(toc.querySelectorAll('a[href^="#"]'));
+    if (!tocLinks.length) return;
+
+    const linksByTargetId = new Map();
+    const targets = [];
+
+    tocLinks.forEach((link) => {
+        const href = link.getAttribute("href");
+        if (!href || href === "#") return;
+        let id = href.slice(1);
+        try {
+            id = decodeURIComponent(id);
+        } catch (e) {
+            // Keep original if decoding fails
+        }
+        const target = document.getElementById(id);
+        if (target) {
+            targets.push(target);
+            linksByTargetId.set(id, link);
+        }
+    });
+
+    if (!targets.length) return;
+
+    let currentActiveLink = null;
+    let isUserClicking = false;
+    let clickTimeout = null;
+
+    function scrollTocLinkIntoView(link) {
+        if (!tocWrapper || tocWrapper.offsetParent === null) return;
+
+        const wrapperRect = tocWrapper.getBoundingClientRect();
+        const linkRect = link.getBoundingClientRect();
+        const padding = 24;
+
+        const isAbove = linkRect.top < wrapperRect.top + padding;
+        const isBelow = linkRect.bottom > wrapperRect.bottom - padding;
+
+        if (isAbove || isBelow) {
+            const targetScrollTop = tocWrapper.scrollTop + (linkRect.top - wrapperRect.top) - (wrapperRect.height / 3);
+            tocWrapper.scrollTo({
+                top: Math.max(0, targetScrollTop),
+                behavior: "smooth"
+            });
+        }
+    }
+
+    function setActiveLink(link, shouldScrollContainer) {
+        if (!link || link === currentActiveLink) return;
+        if (currentActiveLink) {
+            currentActiveLink.classList.remove("active");
+        }
+        link.classList.add("active");
+        currentActiveLink = link;
+
+        if (shouldScrollContainer) {
+            scrollTocLinkIntoView(link);
+        }
+    }
+
+    function determineActiveHeading() {
+        if (isUserClicking) return;
+
+        // 1. If at bottom of page, activate the last heading
+        const scrollBottom = window.innerHeight + window.scrollY;
+        const documentHeight = document.documentElement.scrollHeight;
+        if (scrollBottom >= documentHeight - 2) {
+            const lastTarget = targets[targets.length - 1];
+            const link = linksByTargetId.get(lastTarget.id);
+            if (link) setActiveLink(link, true);
+            return;
+        }
+
+        // 2. If at top of document (before first heading)
+        if (window.scrollY < 80 && targets.length > 0) {
+            const firstTarget = targets[0];
+            const link = linksByTargetId.get(firstTarget.id);
+            if (link) setActiveLink(link, true);
+            return;
+        }
+
+        // 3. Reading focus line (standard in Docusaurus, VitePress, Nextra)
+        // Highlights the last heading that has passed above the reading threshold
+        const readingOffset = 130;
+        let activeTarget = targets[0];
+
+        for (let i = 0; i < targets.length; i++) {
+            const top = targets[i].getBoundingClientRect().top;
+            if (top <= readingOffset) {
+                activeTarget = targets[i];
+            } else {
+                break;
+            }
+        }
+
+        if (activeTarget) {
+            const link = linksByTargetId.get(activeTarget.id);
+            if (link) setActiveLink(link, true);
+        }
+    }
+
+    // Handle smooth clicks and avoid intermediate flickering during jump
+    tocLinks.forEach((link) => {
+        link.addEventListener("click", () => {
+            const href = link.getAttribute("href");
+            if (!href || href === "#") return;
+            isUserClicking = true;
+            setActiveLink(link, true);
+            clearTimeout(clickTimeout);
+            clickTimeout = setTimeout(() => {
+                isUserClicking = false;
+            }, 800);
+        });
+    });
+
+    // Observe heading intersections
+    if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver(() => {
+            determineActiveHeading();
+        }, {
+            rootMargin: "-80px 0px -60% 0px",
+            threshold: [0, 1.0]
+        });
+
+        targets.forEach((target) => observer.observe(target));
+    }
+
+    // Throttled scroll listener via requestAnimationFrame
+    let ticking = false;
+    window.addEventListener("scroll", () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                determineActiveHeading();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }, { passive: true });
+
+    // Initial check on load (check hash or current scroll position)
+    if (window.location.hash) {
+        let hashId = window.location.hash.slice(1);
+        try {
+            hashId = decodeURIComponent(hashId);
+        } catch (e) {
+            // Keep original
+        }
+        const initialLink = linksByTargetId.get(hashId);
+        if (initialLink) {
+            setActiveLink(initialLink, true);
+        } else {
+            determineActiveHeading();
+        }
+    } else {
+        determineActiveHeading();
+    }
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initTableOfContentsScrollSpy);
+} else {
+    initTableOfContentsScrollSpy();
+}
+
 
