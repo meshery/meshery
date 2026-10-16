@@ -180,7 +180,15 @@ function initTableOfContentsScrollSpy() {
 
     let currentActiveLink = null;
     let isUserClicking = false;
-    let clickTimeout = null;
+    let clickIdleTimer = null;
+    let clickFallbackTimer = null;
+
+    function resetClickLock() {
+        if (!isUserClicking) return;
+        isUserClicking = false;
+        clearTimeout(clickIdleTimer);
+        clearTimeout(clickFallbackTimer);
+    }
 
     function scrollTocLinkIntoView(link) {
         if (!tocWrapper || tocWrapper.offsetParent === null) return;
@@ -262,12 +270,21 @@ function initTableOfContentsScrollSpy() {
             if (!href || href === "#") return;
             isUserClicking = true;
             setActiveLink(link, true);
-            clearTimeout(clickTimeout);
-            clickTimeout = setTimeout(() => {
-                isUserClicking = false;
-            }, 800);
+            clearTimeout(clickIdleTimer);
+            clearTimeout(clickFallbackTimer);
+            // Fallback safety timeout in case no scroll occurs (e.g. already at target)
+            clickFallbackTimer = setTimeout(resetClickLock, 1500);
         });
     });
+
+    // Reset click lock immediately if user manually interacts
+    window.addEventListener("wheel", resetClickLock, { passive: true });
+    window.addEventListener("touchmove", resetClickLock, { passive: true });
+    window.addEventListener("keydown", (e) => {
+        if (["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "].includes(e.key)) {
+            resetClickLock();
+        }
+    }, { passive: true });
 
     // Observe heading intersections
     if ("IntersectionObserver" in window) {
@@ -284,6 +301,12 @@ function initTableOfContentsScrollSpy() {
     // Throttled scroll listener via requestAnimationFrame
     let ticking = false;
     window.addEventListener("scroll", () => {
+        if (isUserClicking) {
+            // Keep extending the lock until smooth scrolling settles (idle for 150ms)
+            clearTimeout(clickIdleTimer);
+            clickIdleTimer = setTimeout(resetClickLock, 150);
+        }
+
         if (!ticking) {
             window.requestAnimationFrame(() => {
                 determineActiveHeading();
