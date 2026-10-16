@@ -236,6 +236,13 @@ func userPrompt(key string, label string, data [][]string) (int, error) {
 		return nil
 	}
 
+	if !utils.IsInteractiveTerminal() {
+		return -1, utils.ErrNoTerminalForPrompt(
+			fmt.Sprintf("a value for %s", key),
+			"Supply the value as a flag so no prompt is needed",
+		)
+	}
+
 	prompt := promptui.Prompt{
 		Label:    label,
 		Validate: validate,
