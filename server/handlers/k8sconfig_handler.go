@@ -5,9 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
+	"os"
 	"path/filepath"
+	"strconv"
 
+	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
@@ -112,7 +116,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	eventMetadata := map[string]interface{}{}
 	// Include unreachable contexts so they are still registered as discovered
 	// connections; reachability is only required to transition to connected.
-	contexts := models.K8sContextsFromKubeconfigWithOptions(provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log, true)
+	contexts := models.K8sContextsFromKubeconfigWithOptions(provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log, true, nil)
 
 	// Parse contexts configuration if provided
 	var contextsConfig map[string]ContextOptions
@@ -448,7 +452,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	// Discovery surfaces unreachable contexts too (flagged Reachable=false) so
 	// the wizard can let the user register them as discovered connections;
 	// reachability only gates connecting.
-	contexts := models.K8sContextsFromKubeconfigWithOptions(provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log, true)
+	contexts := models.K8sContextsFromKubeconfigWithOptions(provider, user.ID.String(), h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log, true, nil)
 
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
 	_ = provider.PersistEvent(*event, token)
@@ -531,6 +535,43 @@ func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Reques
 	writeJSONMessage(w, map[string]string{"status": "accepted"}, http.StatusAccepted)
 }
 
+// parkedK8sContexts returns a predicate that is true for a kubeconfig context
+// whose persisted connection is no longer manageable (DISCONNECTED after a
+// rejected credential, IGNORED by the user, ...). Greedy discovery must leave
+// those alone rather than re-probing them on every request; only an explicit user
+// action (such as clicking Connect) may revive them. Contexts in a manageable
+// status (including NOTFOUND, which is meant to be retried) and unknown contexts
+// are not parked. On a lookup failure nothing is parked, so a momentarily
+// unreachable provider degrades to standard discovery behavior.
+func (h *Handler) parkedK8sContexts(token string, prov models.Provider) func(*models.K8sContext) bool {
+	parked := map[string]bool{}
+	for page := 0; ; page++ {
+		res, err := prov.GetK8sContexts(token, strconv.Itoa(page), "25", "", "", "", false)
+		if err != nil {
+			h.log.Warn(ErrGetK8sContexts(err))
+			break
+		}
+		var known models.MesheryK8sContextPage
+		if err := json.Unmarshal(res, &known); err != nil || len(known.Contexts) == 0 {
+			break
+		}
+		for _, kc := range known.Contexts {
+			id := uuid.FromStringOrNil(kc.ConnectionID)
+			if id == uuid.Nil {
+				continue
+			}
+			conn, _, err := prov.GetConnectionByID(token, id)
+			if err == nil && conn != nil && !connections.ShouldConnectionBeManaged(*conn) {
+				parked[kc.Name+"|"+kc.Server] = true
+			}
+		}
+		if (page+1)*25 >= known.TotalCount {
+			break
+		}
+	}
+	return func(kc *models.K8sContext) bool { return parked[kc.Name+"|"+kc.Server] }
+}
+
 func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, prov models.Provider) ([]*models.K8sContext, error) {
 	var contexts []*models.K8sContext
 	// userUUID := uuid.FromStringOrNil(userID)
@@ -540,6 +581,8 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 	if !ok {
 		return contexts, models.ErrMesheryInstanceID
 	}
+
+	skip := h.parkedK8sContexts(token, prov)
 
 	// Attempt to get kubeconfig from the filesystem
 	if h.config == nil {
@@ -553,6 +596,9 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 	if err != nil {
 		// Could be an in-cluster deployment
 		ctxName := "in-cluster"
+		if host, port := os.Getenv("KUBERNETES_SERVICE_HOST"), os.Getenv("KUBERNETES_SERVICE_PORT"); skip(&models.K8sContext{Name: ctxName, Server: "https://" + net.JoinHostPort(host, port)}) {
+			return contexts, nil
+		}
 
 		cc, err := models.NewK8sContextFromInClusterConfig(ctxName, mid, h.log)
 		if err != nil {
@@ -590,11 +636,18 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		return contexts, err
 	}
 
-	ctxs := models.K8sContextsFromKubeconfig(prov, userID, h.config.EventBroadcaster, cfg, mid, eventMetadata, h.log)
+	// Ask for unreachable contexts too, then keep only the ones the API server
+	// rejected with 401/403. Those are registered like reachable ones so the
+	// state machine can move them to DISCONNECTED (and notify) exactly once;
+	// contexts that were unreachable at the network level stay skipped.
+	ctxs := models.K8sContextsFromKubeconfigWithOptions(prov, userID, h.config.EventBroadcaster, cfg, mid, eventMetadata, h.log, true, skip)
 
 	// Do not persist the generated contexts
 	// consolidate this func and addK8sConfig. In this we explicitly updated status as well as this func perfomr greeedy upload so while consolidating make sure to handle the case.
 	for _, ctx := range ctxs {
+		if !ctx.Reachable && !ctx.Unauthorized {
+			continue
+		}
 		metadata := map[string]interface{}{}
 		metadata["context"] = models.RedactCredentialsForContext(ctx)
 		metadata["description"] = fmt.Sprintf("K8S context \"%s\" discovered with cluster at %s", ctx.Name, ctx.Server)
