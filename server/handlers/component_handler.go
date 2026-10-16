@@ -34,7 +34,7 @@ import (
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	_model "github.com/meshery/schemas/models/v1beta1/model"
-	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta3/component"
 
 	"github.com/meshery/meshkit/models/meshmodel/entity"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
@@ -781,7 +781,7 @@ func (r RegistrantDataEntity) PkgUnit(regErrStore registration.RegistrationError
 		if err := json.Unmarshal(r.Data.Entity, &c); err != nil {
 			return pkg, err
 		}
-		if strings.Contains(c.Kind, "..") || strings.ContainsAny(c.Kind, "/\\") {
+		if strings.Contains(c.Component.Kind, "..") || strings.ContainsAny(c.Component.Kind, "/\\") {
 			return pkg, fmt.Errorf("invalid component kind: contains directory traversal characters")
 		}
 		if c.Model == nil {
