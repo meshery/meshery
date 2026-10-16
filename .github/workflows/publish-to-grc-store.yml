@@ -63,4 +63,4 @@ jobs:
             vars:
               owner: meshery
               repo: meshery
-              token: ${{ secrets.GITHUB_TOKEN }}
+              token: ${{ secrets.GH_ACCESS_TOKEN }}
