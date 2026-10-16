@@ -35,11 +35,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - go: '1.26.4'
+          - go: '1.27.1'
             k8s_version: 'v1.33.0'
             platform: 'kubernetes'
             publish_to_qa: false
-          - go: '1.26.4'
+          - go: '1.27.1'
             k8s_version: 'v1.34.3'
             platform: 'kubernetes'
             publish_to_qa: true
