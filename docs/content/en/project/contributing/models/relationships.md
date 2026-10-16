@@ -276,6 +276,65 @@ The first selector-set item (WASMFilter → EnvoyFilter) is independent of the s
 
 The WASMFilter example is hierarchical parent **wallet** (child config patched into the parent). The ConfigMap example is edge **reference** (a name pointer), not hierarchical inventory.
 
+#### Matching: match_strategy_matrix
+
+Before an edge `non-binding` relationship is identified between two components, the evaluation engine compares the value at each `mutatorRef` path on the `from` component with the value at the paired `mutatedRef` path on the `to` component. `match_strategy_matrix` controls how each pair is compared. It is a list of lists: entry `i` holds the strategies for path pair `i`, and every strategy in that entry must pass.
+
+This excerpt is the Service to Deployment edge `non-binding` `network` definition in the Kubernetes model (`edge-non-binding-network-duixv.json`):
+
+```json
+"from": [
+  {
+    "kind": "Service",
+    "model": { "name": "kubernetes" },
+    "match_strategy_matrix": [
+      ["to_contains_from", "not_null"],
+      ["equal_as_strings", "not_null"],
+      ["equal"]
+    ],
+    "patch": {
+      "patchStrategy": "replace",
+      "mutatorRef": [
+        ["configuration", "spec", "selector"],
+        ["configuration", "spec", "ports", "0", "targetPort"],
+        ["configuration", "spec", "ports", "0", "protocol"]
+      ]
+    }
+  }
+],
+"to": [
+  {
+    "kind": "Deployment",
+    "model": { "name": "kubernetes" },
+    "match_strategy_matrix": null,
+    "patch": {
+      "patchStrategy": "replace",
+      "mutatedRef": [
+        ["configuration", "spec", "selector", "matchLabels"],
+        ["configuration", "spec", "template", "spec", "containers", "0", "ports", "0", "containerPort"],
+        ["configuration", "spec", "template", "spec", "containers", "0", "ports", "0", "protocol"]
+      ]
+    }
+  }
+]
+```
+
+The Service selector must be contained in the Deployment's `matchLabels`, the `targetPort` must equal the `containerPort` as a string (`8080` matches `"8080"`), and the protocols must be equal.
+
+| Strategy | Passes when |
+|---|---|
+| `equal` | Both values are equal (numbers, strings, arrays, objects). |
+| `equal_as_strings` | Both values are equal after conversion to strings (`8080` matches `"8080"`). |
+| `to_contains_from` | The `from` value is a subset of the `to` value (objects and arrays). Use it for label selectors. |
+| `not_null` | Both values are present and not `null`. |
+
+Rules the engine applies (`models/meshery-core/<version>/v1.0.0/policies/eval_rules.rego`):
+
+1. Only the matrix on the `from` selector is read. A matrix on a `to` selector is ignored; leave it `null` or omit it.
+2. If the matrix is `null` or missing, or has no entry for a path pair, that pair falls back to `["equal"]`.
+3. Strategy names are exact strings. An unknown name (for example a typo such as `not_nul`) never passes, so the relationship is silently never identified.
+4. The key is written in snake_case (`match_strategy_matrix`) in every in-tree definition and in the policies, even though the v1beta2 and v1beta3 schemas name the property `matchStrategyMatrix`. Use the snake_case key until the engine reads the schema name.
+
 #### Understanding Relationship Policies and their Evaluation
 
 Meshery evaluates designs with Open Policy Agent. The engine enters through the fixed policy package `data.relationship_evaluation_policy` and dispatches on each definition's `kind`, `type`, and `subType`. The policies live under `models/meshery-core/<version>/<definition-version>/policies/`.
@@ -293,7 +352,7 @@ An empty string. The property is deprecated (see the schema's deprecation notice
 
 #### General
 
-1. Use camelCase on the wire (`subType`, `mutatorRef`, `schemaVersion`).
+1. Use camelCase on the wire (`subType`, `mutatorRef`, `schemaVersion`). The one exception today is `match_strategy_matrix` (see above).
 2. Author against `relationships.meshery.io/v1beta3` (declare `v1beta2` while current servers require it - see the top of this page). Do not use `core.meshery.io/v1alpha2` or `v1beta1`.
 
 #### Scoping
@@ -312,8 +371,9 @@ An empty string. The property is deprecated (see the schema's deprecation notice
 #### Matching
 
 1. Targets of a Relationship can be specific Components or entire Models.
-2. Leave `evaluationQuery` empty (`""`); evaluation dispatches on `kind`, `type`, and `subType`.
-3. `metadata.isAnnotation: true` means Meshery must not evaluate or patch the relationship.
+2. For edge `non-binding` relationships that compare values, set `match_strategy_matrix` on the `from` selector. Prefer adding `not_null` so empty fields do not match each other. See [Matching: match_strategy_matrix](#matching-match_strategy_matrix).
+3. Leave `evaluationQuery` empty (`""`); evaluation dispatches on `kind`, `type`, and `subType`.
+4. `metadata.isAnnotation: true` means Meshery must not evaluate or patch the relationship.
 
 #### Conflicts
 

@@ -369,7 +369,7 @@ Designs are evaluated by the [Policy Engine]({{< ref "concepts/logical/policies/
 
 ### Patch Strategies
 
-Patches in Meshery relationships utilize strategies and references (mutatorRef/mutatedRef) for the from and to fields. These convey the property path that will be updated as the relationship is created.
+Patches in Meshery relationships utilize strategies and references (`mutatorRef`/`mutatedRef`) for the `from` and `to` fields. These convey the property path that will be updated as the relationship is created. Before a relationship is identified, Meshery can also compare the values at those paths using the `match_strategy_matrix` on the `from` selector (for example, requiring that a Service selector is contained in a Pod's labels). See [Matching: match_strategy_matrix]({{< ref "project/contributing/models/relationships#matching-match_strategy_matrix" >}}).
 
 ### Caveats and Considerations
 
