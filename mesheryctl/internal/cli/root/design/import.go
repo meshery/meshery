@@ -26,8 +26,6 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/patterns"
 	pattern "github.com/meshery/schemas/models/v1beta3/design"
-
-	"github.com/meshery/schemas/models/core"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -40,7 +38,7 @@ var importCmd = &cobra.Command{
 	Short: "Import a Meshery design",
 	Long: `
 		Import Helm Charts, Kubernetes Manifest, Docker Compose or Meshery designs by passing
-		remote URL or local file system path to the file. Providing source type is optional.
+		remote URL or local file system path to the file.
 
 		YAML and TGZ (with helm only) format of file is accepted, if you are importing Meshery Design OCI file format is also supported
 
@@ -49,14 +47,13 @@ var importCmd = &cobra.Command{
 	`,
 	Example: `
 // Import design manifest
-mesheryctl design import -f [file/URL] -s [source-type] -n [name]
+mesheryctl design import -f [file/URL] -n [name]
 
 mesheryctl design import -f design.tar
 mesheryctl design import -f design.yml -n design-name
-mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl design import -f [file/URL] -s [source-type] -n [name]\n"
+		const errMsg = "Usage: mesheryctl design import -f [file/URL] -n [name]\n"
 		if file == "" {
 			utils.Log.Debug("File path not provided\n" + errMsg)
 			return ErrDesignFileNotProvided()
@@ -73,29 +70,18 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 
 		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/import"
 
-		// If pattern file is passed via flags
+		// If pattern file is passed via flags, validate for backward compatibility
 		if sourceType != "" {
 			validSourceTypes, err := getDesignSourceTypes()
 			if err != nil {
 				return err
 			}
-			if sourceType, err = retrieveProvidedSourceType(sourceType, validSourceTypes); err != nil {
+			if _, err = retrieveProvidedSourceType(sourceType, validSourceTypes); err != nil {
 				return err
 			}
 		}
 
-		switch sourceType {
-		case "Helm Chart":
-			sourceType = string(core.HelmChart)
-		case "Kubernetes Manifest":
-			sourceType = string(core.K8sManifest)
-		case "Meshery Design":
-			sourceType = string(core.MesheryDesign)
-		case "Docker Compose":
-			sourceType = string(core.DockerCompose)
-		}
-
-		pattern, err := importPattern(sourceType, file, patternURL)
+		pattern, err := importPattern(file, patternURL)
 		if err != nil {
 			return err
 		}
@@ -129,7 +115,7 @@ func marshalDesignImportBody(variant func(*pattern.MesheryPatternImportRequestBo
 	return jsonValues, nil
 }
 
-func importPattern(sourceType string, file string, patternURL string) (*models.MesheryPattern, error) {
+func importPattern(file string, patternURL string) (*models.MesheryPattern, error) {
 	// If design name is not provided
 	// use file name as default
 	var patternName string
@@ -225,6 +211,7 @@ func postDesignImport(patternURL string, jsonValues []byte) (*models.MesheryPatt
 func init() {
 	importCmd.Flags().StringVarP(&file, "file", "f", "", "Path/URL to design file")
 	importCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm / design)")
+	_ = importCmd.Flags().MarkDeprecated("source-type", "the server automatically detects the design source type from the file contents")
 	importCmd.Flags().StringVarP(&name, "name", "n", "", "Name for the design file")
 }
 

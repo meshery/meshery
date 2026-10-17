@@ -17,7 +17,6 @@ package design
 import (
 	"errors"
 	"fmt"
-	"slices"
 	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
@@ -96,8 +95,10 @@ func getDesignSourceTypes() ([]string, error) {
 
 func retrieveProvidedSourceType(sType string, validDesignSourceTypes []string) (string, error) {
 	sType = strings.ToLower(sType)
-	if slices.Contains(validDesignSourceTypes, sType) {
-		return sType, nil
+	for _, validType := range validDesignSourceTypes {
+		if strings.EqualFold(validType, sType) {
+			return sType, nil
+		}
 	}
 	return "", ErrInValidSource(sType, validDesignSourceTypes)
 }
