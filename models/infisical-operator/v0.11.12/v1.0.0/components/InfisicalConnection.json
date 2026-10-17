@@ -3,7 +3,7 @@
   "schemaVersion": "components.meshery.io/v1beta2",
   "version": "v1.0.0",
   "displayName": "Infisical Connection",
-  "description": "",
+  "description": "Defines how the Infisical Operator connects to an Infisical instance: the instance address and optional TLS settings (a CA certificate from a Kubernetes Secret). Define it once per Infisical instance and reference it from any number of InfisicalAuth resources.",
   "format": "JSON",
   "model": {
     "id": "00000000-0000-0000-0000-000000000000",

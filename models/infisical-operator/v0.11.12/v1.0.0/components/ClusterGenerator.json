@@ -3,7 +3,7 @@
   "schemaVersion": "components.meshery.io/v1beta2",
   "version": "v1.0.0",
   "displayName": "Cluster Generator",
-  "description": "",
+  "description": "A cluster-scoped generator that defines how secret values are generated, either as passwords (length, digits, symbols, casing) or as UUIDs. InfisicalPushSecret resources reference it through push.generators[].generatorRef to create new values in Infisical.",
   "format": "JSON",
   "model": {
     "id": "00000000-0000-0000-0000-000000000000",

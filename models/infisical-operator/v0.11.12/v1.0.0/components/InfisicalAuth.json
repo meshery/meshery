@@ -3,7 +3,7 @@
   "schemaVersion": "components.meshery.io/v1beta2",
   "version": "v1.0.0",
   "displayName": "Infisical Auth",
-  "description": "",
+  "description": "Defines how the Infisical Operator authenticates to Infisical with a machine identity (Universal Auth, Kubernetes, AWS IAM, Azure, GCP, or LDAP), with credentials read from Kubernetes Secrets. It references an InfisicalConnection and can be shared by many InfisicalStaticSecret resources; the operator caches the resulting access token.",
   "format": "JSON",
   "model": {
     "id": "00000000-0000-0000-0000-000000000000",
