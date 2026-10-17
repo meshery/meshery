@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"testing"
 
@@ -527,6 +528,76 @@ func TestContextSwitchCmd(t *testing.T) {
 			}
 		})
 		t.Log("SwitchContextCmd test passed")
+	}
+}
+
+// switch is how a user repairs an unset or dangling current-context, so it must
+// succeed in those states. It used to exit the process through
+// MesheryCtlConfig.GetCurrentContext's Log.Fatal.
+func TestContextSwitchRepairsInvalidCurrentContextCmd(t *testing.T) {
+	resetVariables()
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	testdataDir := filepath.Join(currDir, "testdata/context")
+	baseFixture := filepath.Join(currDir, "fixtures/.meshery/TestContext.yaml")
+
+	tests := []struct {
+		name           string
+		currentContext string
+	}{
+		{
+			name:           "given current-context is unset when system context switch then context is switched",
+			currentContext: `""`,
+		},
+		{
+			name:           "given current-context names a missing context when system context switch then context is switched",
+			currentContext: "no-such-context",
+		},
+	}
+
+	mesheryctlflags.InitValidators(SystemCmd)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Work on a private copy so the tracked fixture is never mutated.
+			configPath := utils.CopyMeshconfigFixture(t, baseFixture)
+			content, err := os.ReadFile(configPath)
+			if err != nil {
+				t.Fatal(err)
+			}
+			// Match the line, not its terminator, so CRLF checkouts behave the same.
+			currentContextLine := regexp.MustCompile(`(?m)^current-context:.*$`)
+			if !currentContextLine.Match(content) {
+				t.Fatal("fixture does not contain a current-context line")
+			}
+			invalid := currentContextLine.ReplaceAllLiteralString(string(content), "current-context: "+tt.currentContext)
+			if err := os.WriteFile(configPath, []byte(invalid), 0o600); err != nil {
+				t.Fatal(err)
+			}
+			utils.SetupCustomContextEnv(t, configPath)
+
+			buf := utils.SetupMeshkitLoggerTesting(t, false)
+			defer buf.Reset()
+
+			SystemCmd.SetOut(buf)
+			SystemCmd.SetErr(buf)
+			SystemCmd.SetArgs([]string{"context", "switch", "local2"})
+			if err := SystemCmd.Execute(); err != nil {
+				t.Fatal(err)
+			}
+
+			expectedOutput := utils.NewGoldenFile(t, "switch.context.golden", testdataDir).Load()
+			assert.Equal(t, expectedOutput, buf.String())
+
+			written, err := os.ReadFile(configPath)
+			if err != nil {
+				t.Fatal(err)
+			}
+			expectedConfig := utils.NewGoldenFile(t, "switchExpected.golden", testdataDir).Load()
+			assert.Equal(t, expectedConfig, string(written))
+		})
 	}
 }
 
