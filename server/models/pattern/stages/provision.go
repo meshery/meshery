@@ -126,7 +126,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 				return false
 			}
 
-			return provisionSucceeded(msg)
+			return ProvisionSucceeded(msg)
 		}, func(name string, component component.ComponentDefinition, failedDependency string) {
 			data.Lock.Lock()
 			data.Other[fmt.Sprintf("%s%s", name, ProvisionSuffixKey)] = withheldMessage(component, displayNames[failedDependency], data.Pattern.Name, prov.IsDelete())
@@ -143,7 +143,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 	}
 }
 
-// provisionSucceeded reports whether the component itself was applied
+// ProvisionSucceeded reports whether the component itself was applied
 // successfully everywhere it was acted on.
 //
 // Neither fulfillment path returns an error when the component itself fails to
@@ -155,7 +155,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 // decision. Installing them is fail-forward and the component is applied
 // regardless, so counting them here would withhold the dependents of a
 // component that did deploy.
-func provisionSucceeded(msgs []patterns.DeploymentMessagePerContext) bool {
+func ProvisionSucceeded(msgs []patterns.DeploymentMessagePerContext) bool {
 	for _, msg := range msgs {
 		for _, summary := range msg.Summary {
 			if summary.IsPrerequisite {

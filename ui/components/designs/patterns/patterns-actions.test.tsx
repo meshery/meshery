@@ -126,6 +126,21 @@ describe('createPatternsActions', () => {
     });
   });
 
+  it('handleDeploy and handleUndeploy return the mutation result', async () => {
+    const deps = baseDeps();
+    const failed = { error: { status: 401 } };
+    deps.deployPatternMutation.mockResolvedValue(failed);
+    deps.undeployPatternMutation.mockResolvedValue(failed);
+    const actions = createPatternsActions(deps);
+
+    await expect(
+      actions.handleDeploy({ design: { id: 'd1' }, selectedK8sContexts: [] }),
+    ).resolves.toBe(failed);
+    await expect(
+      actions.handleUndeploy({ design: { id: 'd1' }, selectedK8sContexts: [] }),
+    ).resolves.toBe(failed);
+  });
+
   it('handleUndeploy invokes the undeploy mutation', async () => {
     const deps = baseDeps();
     const actions = createPatternsActions(deps);

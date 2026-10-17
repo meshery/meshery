@@ -4,8 +4,11 @@ import (
 	"testing"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/models/pattern/patterns"
 	"github.com/meshery/meshery/server/models/pattern/planner"
+	"github.com/meshery/meshery/server/models/pattern/stages"
 	"github.com/meshery/meshkit/logger"
+	events "github.com/meshery/meshkit/models/events"
 	"github.com/meshery/schemas/models/v1beta2/component"
 	pattern "github.com/meshery/schemas/models/v1beta3/design"
 )
@@ -112,5 +115,119 @@ func TestMutateDoesNotRepeatADependencyTheDesignAlreadyDeclares(t *testing.T) {
 
 	if len(dependsOn) != 1 || dependsOn[0] != crd.DisplayName {
 		t.Errorf("%q depends on %v, want [%q]", widget.DisplayName, dependsOn, crd.DisplayName)
+	}
+}
+
+func componentOutcome(name string, success bool) []patterns.DeploymentMessagePerContext {
+	return []patterns.DeploymentMessagePerContext{
+		{
+			Summary: []patterns.DeploymentMessagePerComp{
+				{Kind: "Widget", CompName: name, Success: success},
+			},
+		},
+	}
+}
+
+// A deploy whose components did not all make it has to say so, rather than
+// reporting a completed deployment the way a fully successful one does.
+func TestDeploymentOutcomeReportsFailedComponents(t *testing.T) {
+	failedPrerequisite := componentOutcome("with-prerequisite", true)
+	failedPrerequisite[0].Summary = append(failedPrerequisite[0].Summary, patterns.DeploymentMessagePerComp{
+		CompName:       "with-prerequisite",
+		Success:        false,
+		IsPrerequisite: true,
+	})
+
+	tests := []struct {
+		name            string
+		action          string
+		response        map[string]interface{}
+		wantSeverity    events.EventSeverity
+		wantDescription string
+	}{
+		{
+			name:   "every component deployed",
+			action: "deploy",
+			response: map[string]interface{}{
+				"a": componentOutcome("a", true),
+				"b": componentOutcome("b", true),
+			},
+			wantSeverity:    events.Informational,
+			wantDescription: "Deployment completed for design 'outcome-test'.",
+		},
+		{
+			name:   "some components failed to deploy",
+			action: "deploy",
+			response: map[string]interface{}{
+				"a": componentOutcome("a", true),
+				"b": componentOutcome("b", false),
+				"c": componentOutcome("c", true),
+			},
+			wantSeverity:    events.Warning,
+			wantDescription: "Failed to deploy 1 of 3 components in design 'outcome-test'.",
+		},
+		{
+			name:   "every component failed to deploy",
+			action: "deploy",
+			response: map[string]interface{}{
+				"a": componentOutcome("a", false),
+				"b": componentOutcome("b", false),
+			},
+			wantSeverity:    events.Error,
+			wantDescription: "Failed to deploy 2 of 2 components in design 'outcome-test'.",
+		},
+		{
+			name:   "some components failed to undeploy",
+			action: "undeploy",
+			response: map[string]interface{}{
+				"a": componentOutcome("a", false),
+				"b": componentOutcome("b", true),
+			},
+			wantSeverity:    events.Warning,
+			wantDescription: "Failed to undeploy 1 of 2 components in design 'outcome-test'.",
+		},
+		{
+			name:   "every component undeployed",
+			action: "undeploy",
+			response: map[string]interface{}{
+				"a": componentOutcome("a", true),
+			},
+			wantSeverity:    events.Success,
+			wantDescription: "undeployed design 'outcome-test'.",
+		},
+		{
+			// Installing prerequisites is fail-forward, so a failed one does not
+			// make the component it was installed for a failure.
+			name:   "only a prerequisite failed",
+			action: "deploy",
+			response: map[string]interface{}{
+				"with-prerequisite": failedPrerequisite,
+			},
+			wantSeverity:    events.Informational,
+			wantDescription: "Deployment completed for design 'outcome-test'.",
+		},
+		{
+			name:   "dry run",
+			action: "dry-run",
+			response: map[string]interface{}{
+				stages.DryRunResponseKey: map[string]interface{}{},
+			},
+			wantSeverity:    events.Informational,
+			wantDescription: "Dry Run completed for design 'outcome-test'.",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			severity, description := deploymentOutcome(tt.action, "outcome-test", tt.response)
+
+			if severity != tt.wantSeverity {
+				t.Errorf("severity is %q, want %q", severity, tt.wantSeverity)
+			}
+
+			if description != tt.wantDescription {
+				t.Errorf("description is %q, want %q", description, tt.wantDescription)
+			}
+		})
 	}
 }

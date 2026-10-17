@@ -62,24 +62,28 @@ export function createPatternsActions(deps) {
     };
   }
 
+  // Both return the mutation result so that the deploy stepper can surface a
+  // request that failed before the server raised an event for it.
   const handleDeploy = async ({ design, selectedK8sContexts }) => {
     updateProgress({ showProgress: true });
-    await deployPatternMutation({
+    const result = await deployPatternMutation({
       patternFile: encodeDesignFile(design),
       patternId: design.id,
       selectedK8sContexts,
     });
     updateProgress({ showProgress: false });
+    return result;
   };
 
   const handleUndeploy = async ({ design, selectedK8sContexts }) => {
     updateProgress({ showProgress: true });
-    await undeployPatternMutation({
+    const result = await undeployPatternMutation({
       patternFile: encodeDesignFile(design),
       patternId: design.id,
       selectedK8sContexts,
     });
     updateProgress({ showProgress: false });
+    return result;
   };
 
   const handleUploadImport = () => {
