@@ -106,12 +106,17 @@ Unless you are specifically working on the model registry or on an archived docu
 
 ### Recommended: sparse clone
 
+[Fork](https://github.com/meshery/meshery/fork) `meshery/meshery` first, then clone your fork, replacing `USERNAME` with your GitHub username:
+
 ```bash
-# 1. Blobless partial clone - fetches history metadata, not every file's contents
-git clone --no-checkout --filter=blob:none https://github.com/meshery/meshery.git
+# 1. Blobless partial clone of your fork - fetches history metadata, not every file's contents
+git clone --no-checkout --filter=blob:none https://github.com/USERNAME/meshery.git
 cd meshery
 
-# 2. Check out everything EXCEPT the bulky generated directories:
+# 2. Track the original repository as 'upstream' to keep your fork up to date
+git remote add upstream https://github.com/meshery/meshery.git
+
+# 3. Check out everything EXCEPT the bulky generated directories:
 #      - every model except meshery-core and kubernetes
 #      - archived docs snapshots (keep only the latest, docs/static/v0.9)
 git sparse-checkout set --no-cone \
@@ -121,7 +126,7 @@ git sparse-checkout set --no-cone \
   '/models/kubernetes/' \
   '!/docs/static/v0.8/'
 
-# 3. Populate the working tree
+# 4. Populate the working tree
 git checkout master
 ```
 
