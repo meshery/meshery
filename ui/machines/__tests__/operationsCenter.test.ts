@@ -244,6 +244,66 @@ describe('operationsCenter machine', () => {
     actor.stop();
   });
 
+  const failSubscription = (actor) =>
+    actor.send({
+      type: OPERATION_CENTER_EVENTS.ERROR_OCCURRED_IN_SUBSCRIPTION,
+      data: { error: new Error('stream closed') },
+    });
+
+  it('rejects a failed reload so loadEvents keeps the current list', async () => {
+    const { actor } = startActor();
+    failSubscription(actor);
+    const fetchEvents = hoisted.loadEvents.mock.calls[0][0] as (args: unknown) => Promise<unknown>;
+
+    const unsubscribe = vi.fn();
+    const failure = { status: 500, data: 'boom' };
+    dispatch.mockReturnValueOnce(
+      Object.assign(Promise.resolve({ error: failure }), { unsubscribe }),
+    );
+
+    await expect(fetchEvents({ page: 0, filters: {} })).rejects.toBe(failure);
+    expect(unsubscribe).toHaveBeenCalled();
+    actor.stop();
+  });
+
+  it('re-adds events that arrive while the reload is in flight', async () => {
+    let finishReload: () => void = () => {};
+    dispatch.mockImplementation((action) =>
+      action?.type === 'events/loadEvents'
+        ? new Promise<void>((resolve) => {
+            finishReload = resolve;
+          })
+        : action,
+    );
+    const { actor } = startActor();
+    failSubscription(actor);
+
+    const live = { id: 'during-reload', description: 'd', severity: 'informational' };
+    actor.send({ type: OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER, data: { event: live } });
+    expect(pushEvent).toHaveBeenCalledTimes(1);
+
+    finishReload();
+    await vi.waitFor(() => expect(pushEvent).toHaveBeenCalledTimes(2));
+    expect(pushEvent).toHaveBeenLastCalledWith(live);
+    actor.stop();
+  });
+
+  it('does not re-add events that arrive after the reload finished', async () => {
+    const { actor } = startActor();
+    failSubscription(actor);
+    await Promise.resolve();
+
+    const later = { id: 'after-reload', description: 'd', severity: 'informational' };
+    actor.send({
+      type: OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
+      data: { event: later },
+    });
+    await Promise.resolve();
+
+    expect(pushEvent).toHaveBeenCalledTimes(1);
+    actor.stop();
+  });
+
   it('does not refetch events for ordinary received events', () => {
     const { actor } = startActor();
     dispatch.mockClear();
